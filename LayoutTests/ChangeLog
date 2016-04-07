@@ -1,3 +1,12 @@
+2016-04-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Mark http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html as timeout in ios-simulator-wk2
+        https://bugs.webkit.org/show_bug.cgi?id=149087
+
+        Unreviewed, test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-04-07  Alexey Proskuryakov  <ap@apple.com>
 
         Test expectation gardening for
