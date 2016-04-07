@@ -15,7 +15,8 @@ Particle.prototype =
     {
         var randSize = Math.round(Math.pow(Pseudo.random(), 4) * this.sizeRange + this.sizeMinimum);
         this.size = new Point(randSize, randSize);
-        this.maxPosition = this.stage.size.subtract(this.size);
+        this.minPosition = this.size.multiply(.5);
+        this.maxPosition = this.stage.size.subtract(this.minPosition);
     },
 
     animate: function(timeDelta)
@@ -30,11 +31,11 @@ Particle.prototype =
             if (this.velocity.x > 0)
                 this.velocity.x *= -1;
             this.position.x = this.maxPosition.x;
-        } else if (this.position.x < 0) {
+        } else if (this.position.x < this.minPosition.x) {
             // If particle is going to move off left side
             if (this.velocity.x < 0)
                 this.velocity.x *= -1;
-            this.position.x = 0;
+            this.position.x = this.minPosition.x;
         }
 
         // If particle is going to move off bottom side
@@ -50,14 +51,14 @@ Particle.prototype =
                     this.velocity.y *= -0.999;
                 this.position.y = this.maxPosition.y;
             }
-        } else if (this.position.y < 0) {
+        } else if (this.position.y < this.minPosition.y) {
             // If particle is going to move off top side
             var magnitude = this.velocity.length();
             this.velocity.x *= 1.5 + .005 * this.size.x;
             this.velocity = this.velocity.normalize().multiply(magnitude);
             if (this.velocity.y < 0)
                 this.velocity.y *= -0.998;
-            this.position.y = 0;
+            this.position.y = this.minPosition.y;
         }
 
         this.move();

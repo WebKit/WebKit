@@ -45,8 +45,8 @@ Suites.push(new Suite("Animometer",
             name: "Design"
         },
         {
-            url: "master/particles.html",
-            name: "DOM particles, SVG masks"
+            url: "master/svg-particles.html",
+            name: "Suits"
         },
     ]
 ));

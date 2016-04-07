@@ -170,6 +170,10 @@ Suites.push(new Suite("HTML suite",
             name: "Leaves 2.0"
         },
         {
+            url: "dom/particles.html",
+            name: "DOM particles, SVG masks"
+        },
+        {
             url: "dom/compositing-transforms.html?particleWidth=50&particleHeight=50&filters=yes&imageSrc=../resources/yin-yang.svg",
             name: "Composited Transforms"
         }

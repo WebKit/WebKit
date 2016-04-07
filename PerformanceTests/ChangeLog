@@ -1,3 +1,29 @@
+2016-04-06  Jon Lee  <jonlee@apple.com>
+
+        Update master benchmark with SVG test
+        https://bugs.webkit.org/show_bug.cgi?id=156273
+
+        Reviewed by Dean Jackson.
+        Provisionally reviewed by Said Abou-Hallawa.
+
+        Switch masks tests for SVG path test.
+
+        * Animometer/resources/debug-runner/tests.js: Move mask test here.
+        * Animometer/resources/runner/tests.js: Add SVG test here.
+        * Animometer/tests/dom/particles.html: Renamed from PerformanceTests/Animometer/tests/master/particles.html.
+        * Animometer/tests/dom/resources/dom-particles.js: Renamed from PerformanceTests/Animometer/tests/master/resources/dom-particles.js.
+
+        * Animometer/tests/master/resources/particles.js: Add minPosition for bounds checking. Prevents particle from being
+        partially obscured.
+        * Animometer/tests/master/resources/svg-particles.js: Added.
+        (Particle): The particle is either a path object or a rect using a path as a clip. The
+        same path is used either way. For each particle create a linear gradient with a random
+        rotation.
+        (SVGParticlesStage): Look in #shapes to see how many different kinds of paths are available.
+        This makes the test more generic in case other shapes need to be tested.
+        * Animometer/tests/master/svg-particles.html: Added. Have two defs, one that houses each
+        particle's gradient, and one that holds the shape templates.
+
 2016-03-27  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] REGRESSION(r188793): It made 200 layout tests and Bindings/event-target-wrapper.html performance test fail
