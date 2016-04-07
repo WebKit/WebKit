@@ -141,6 +141,7 @@ private:
             else {
                 node->setArithMode(Arith::DoOverflow);
                 node->setResult(NodeResultDouble);
+                node->clearFlags(NodeMustGenerate);
             }
             break;
         }

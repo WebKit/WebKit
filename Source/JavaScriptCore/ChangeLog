@@ -1,3 +1,16 @@
+2016-04-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] UInt32ToNumber should be NodeMustGenerate
+        https://bugs.webkit.org/show_bug.cgi?id=156329
+
+        Reviewed by Filip Pizlo.
+
+        It exits on negative numbers on the integer path.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+
 2016-04-04  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling out r199016.
