@@ -210,6 +210,21 @@
         "category": "webapps"
     },
     {
+        "name": "WOFF File Format 2.0",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://www.w3.org/TR/WOFF2/",
+        "keywords": ["woff"],
+        "category": "css",
+        "description": "Improves compression to reduce bandwidth with content-aware preprocessing.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
+        }
+    },
+    {
         "name": "Web Components",
         "url": "http://www.w3.org/wiki/WebComponents/",
         "keywords": ["web components", "shadow dom", "html imports", "custom elements", "template element"],
