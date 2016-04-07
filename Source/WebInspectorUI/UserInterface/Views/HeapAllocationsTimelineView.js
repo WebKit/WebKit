@@ -53,7 +53,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
         };
 
         let snapshotTooltip = WebInspector.UIString("Take snapshot");
-        this._takeHeapSnapshotButtonItem = new WebInspector.ButtonNavigationItem("take-snapshot", snapshotTooltip, "Images/HeapSnapshot.svg", 16, 16);
+        this._takeHeapSnapshotButtonItem = new WebInspector.ButtonNavigationItem("take-snapshot", snapshotTooltip, "Images/Camera.svg", 16, 16);
         this._takeHeapSnapshotButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._takeHeapSnapshotClicked, this);
 
         let defaultToolTip = WebInspector.UIString("Compare snapshots");

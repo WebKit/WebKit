@@ -1,5 +1,18 @@
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Take snapshot navigation button should match navigation button styles
+        https://bugs.webkit.org/show_bug.cgi?id=156355
+        <rdar://problem/25325172>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Images/Camera.svg: Added.
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView):
+        Use the new image for the navigation bar button.
+
+2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Inspector hangs when trying to view a large XHR resource
         https://bugs.webkit.org/show_bug.cgi?id=144107
         <rdar://problem/20669463>
