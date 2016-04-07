@@ -547,7 +547,8 @@ private:
     bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*) override;
     void mediaPlayerRenderingModeChanged(MediaPlayer*) override;
     void mediaPlayerEngineUpdated(MediaPlayer*) override;
-    
+    void mediaEngineWasUpdated();
+
     void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*) override;
     void mediaPlayerCharacteristicChanged(MediaPlayer*) override;
 

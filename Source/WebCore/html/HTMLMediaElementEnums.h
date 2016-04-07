@@ -41,6 +41,7 @@ public:
         ConfigureTextTrackDisplay = 1 << 3,
         CheckPlaybackTargetCompatablity = 1 << 4,
         CheckMediaState = 1 << 5,
+        MediaEngineUpdated = 1 << 6,
 
         EveryDelayedAction = LoadMediaResource | ConfigureTextTracks | TextTrackChangesNotification | ConfigureTextTrackDisplay | CheckPlaybackTargetCompatablity | CheckMediaState,
     };

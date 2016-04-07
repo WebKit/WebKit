@@ -617,6 +617,7 @@ private:
     bool m_privateBrowsing;
     bool m_shouldPrepareToRender;
     bool m_contentMIMETypeWasInferredFromExtension;
+    bool m_initializingMediaEngine { false };
 
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<MediaSourcePrivateClient> m_mediaSource;

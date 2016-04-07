@@ -1,3 +1,33 @@
+2016-04-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS Simulator WK1] Crash in MediaPlayer::setPrivateBrowsingMode()
+        https://bugs.webkit.org/show_bug.cgi?id=155721
+        <rdar://problem/18590481>
+
+        Speculative fix for a crash that appears to happen when the media engine is destroyed
+        during a callback.
+
+        Reviewed by Dean Jackson.
+
+        No new tests, this prevents existing tests from crashing.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::actionName): Log MediaEngineUpdated.
+        (WebCore::HTMLMediaElement::scheduleDelayedAction): Support MediaEngineUpdated.
+        (WebCore::HTMLMediaElement::pendingActionTimerFired): Ditto. Clear m_pendingActionFlags.
+        (WebCore::HTMLMediaElement::mediaEngineWasUpdated): New.
+        (WebCore::HTMLMediaElement::mediaPlayerEngineUpdated): Move guts to mediaEngineWasUpdated and
+          call it on a timer so we can't change the media engine in the middle of a callback from
+          MediaPlayer or the media engine.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElementEnums.h:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::~MediaPlayer): Assert if new flag m_initializingMediaEngine is set to
+          catch HTMLMediaElement destroying the media engine during a callback.
+        (WebCore::MediaPlayer::loadWithNextMediaEngine): Set/clear m_initializingMediaEngine.
+        * platform/graphics/MediaPlayer.h:
+
 2016-04-06  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Make sure SQLite backing store records have a INTEGER PRIMARY KEY column.

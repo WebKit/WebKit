@@ -328,6 +328,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient& client)
 
 MediaPlayer::~MediaPlayer()
 {
+    ASSERT(!m_initializingMediaEngine);
 }
 
 bool MediaPlayer::load(const URL& url, const ContentType& contentType, const String& keySystem)
@@ -434,6 +435,9 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 #define MEDIASTREAM 0
 #endif
 
+    ASSERT(!m_initializingMediaEngine);
+    m_initializingMediaEngine = true;
+
     const MediaPlayerFactory* engine = nullptr;
 
     if (!m_contentMIMEType.isEmpty() || MEDIASTREAM || MEDIASOURCE)
@@ -476,6 +480,8 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
         m_client.mediaPlayerEngineUpdated(this);
         m_client.mediaPlayerResourceNotSupported(this);
     }
+
+    m_initializingMediaEngine = false;
 }
 
 bool MediaPlayer::hasAvailableVideoFrame() const
