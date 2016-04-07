@@ -1223,10 +1223,6 @@ bdo {
     unicode-bidi: bidi-override;
 }
 
-slot {
-    display: contents;
-}
-
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
 applet, embed, object, img {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);

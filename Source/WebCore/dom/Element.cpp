@@ -1375,18 +1375,6 @@ ElementStyle Element::resolveStyle(RenderStyle* parentStyle)
     return styleResolver().styleForElement(*this, parentStyle);
 }
 
-bool Element::hasDisplayContents() const
-{
-    return hasRareData() && elementRareData()->hasDisplayContents();
-}
-
-void Element::setHasDisplayContents(bool value)
-{
-    if (hasDisplayContents() == value)
-        return;
-    ensureElementRareData().setHasDisplayContents(value);
-}
-
 // Returns true is the given attribute is an event handler.
 // We consider an event handler any attribute that begins with "on".
 // It is a simple solution that has the advantage of not requiring any
@@ -1490,7 +1478,7 @@ const AtomicString& Element::imageSourceURL() const
 
 bool Element::rendererIsNeeded(const RenderStyle& style)
 {
-    return style.display() != NONE && style.display() != CONTENTS;
+    return style.display() != NONE;
 }
 
 RenderPtr<RenderElement> Element::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)

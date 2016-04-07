@@ -1388,9 +1388,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDisplay e)
     case NONE:
         m_value.valueID = CSSValueNone;
         break;
-    case CONTENTS:
-        m_value.valueID = CSSValueContents;
-        break;
     }
 }
 

@@ -50,8 +50,8 @@ public:
     bool operator==(const ElementAndTextDescendantIterator& other) const;
     bool operator!=(const ElementAndTextDescendantIterator& other) const;
 
-    bool operator!() const { return !m_depth; }
-    explicit operator bool() const { return m_depth; }
+    bool operator!() const { return !m_current; }
+    explicit operator bool() const { return m_current; }
 
     void dropAssertions();
 
@@ -115,7 +115,7 @@ inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(Contai
 }
 
 inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(ContainerNode& root, Node* current)
-    : m_current(current)
+    : m_current(current != &root ? current : nullptr)
 #if !ASSERT_DISABLED
     , m_assertions(m_current)
 #endif
@@ -123,8 +123,6 @@ inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(Contai
     if (!m_current)
         return;
     ASSERT(isElementOrText(*m_current));
-    if (m_current == &root)
-        return;
 
     Vector<Node*, 20> ancestorStack;
     auto* ancestor = m_current->parentNode();
@@ -287,7 +285,7 @@ inline const Node* ElementAndTextDescendantIterator::operator->() const
 inline bool ElementAndTextDescendantIterator::operator==(const ElementAndTextDescendantIterator& other) const
 {
     ASSERT(!m_assertions.domTreeHasMutated());
-    return m_current == other.m_current || (!m_depth && !other.m_depth);
+    return m_current == other.m_current;
 }
 
 inline bool ElementAndTextDescendantIterator::operator!=(const ElementAndTextDescendantIterator& other) const

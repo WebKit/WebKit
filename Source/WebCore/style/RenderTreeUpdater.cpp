@@ -68,7 +68,7 @@ static ContainerNode* findRenderingRoot(ContainerNode& node)
     for (auto& ancestor : composedTreeAncestors(node)) {
         if (ancestor.renderer())
             return &ancestor;
-        if (!ancestor.hasDisplayContents())
+        if (!hasImplicitDisplayContents(ancestor))
             return nullptr;
     }
     return &node.document();
@@ -151,7 +151,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         updateElementRenderer(element, *elementUpdate);
 
-        bool mayHaveRenderedDescendants = element.renderer() || (element.hasDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent()));
+        bool mayHaveRenderedDescendants = element.renderer() || (hasImplicitDisplayContents(element) && shouldCreateRenderer(element, renderTreePosition().parent()));
         if (!mayHaveRenderedDescendants) {
             it.traverseNextSkippingChildren();
             continue;
@@ -244,10 +244,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     if (shouldTearDownRenderers)
         tearDownRenderers(element, TeardownType::KeepHoverAndActive);
 
-    bool hasDisplayContest = update.style && update.style->display() == CONTENTS;
-    element.setHasDisplayContents(hasDisplayContest);
-
-    bool shouldCreateNewRenderer = !element.renderer() && update.style && !hasDisplayContest;
+    bool shouldCreateNewRenderer = !element.renderer() && update.style && !hasImplicitDisplayContents(element);
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();
