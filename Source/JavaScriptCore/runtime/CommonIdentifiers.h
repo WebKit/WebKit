@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2007, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2009, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -419,6 +419,7 @@
     macro(print) \
     macro(isSet) \
     macro(isMap) \
+    macro(regExpCreate) \
     macro(SetIterator) \
     macro(setIteratorNext) \
     macro(MapIterator) \

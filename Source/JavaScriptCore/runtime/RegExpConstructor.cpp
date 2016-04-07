@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2016 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2007-2008, 2016 Apple Inc. All Rights Reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *
  *  This library is free software; you can redistribute it and/or
@@ -277,6 +277,27 @@ inline RegExpFlags toFlags(ExecState* exec, JSValue flags)
     return result;
 }
 
+static JSObject* regExpCreate(ExecState* exec, JSGlobalObject* globalObject, JSValue newTarget, JSValue patternArg, JSValue flagsArg)
+{
+    VM& vm = exec->vm();
+    String pattern = patternArg.isUndefined() ? emptyString() : patternArg.toString(exec)->value(exec);
+    if (exec->hadException())
+        return nullptr;
+
+    RegExpFlags flags = toFlags(exec, flagsArg);
+    if (flags == InvalidFlags)
+        return nullptr;
+
+    RegExp* regExp = RegExp::create(vm, pattern, flags);
+    if (!regExp->isValid())
+        return vm.throwException(exec, createSyntaxError(exec, regExp->errorMessage()));
+
+    Structure* structure = getRegExpStructure(exec, globalObject, newTarget);
+    if (vm.exception())
+        return nullptr;
+    return RegExpObject::create(vm, structure, regExp);
+}
+
 JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args,  JSObject* callee, JSValue newTarget)
 {
     VM& vm = exec->vm();
@@ -319,22 +340,15 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
         patternArg = pattern;
     }
 
-    String pattern = patternArg.isUndefined() ? emptyString() : patternArg.toString(exec)->value(exec);
-    if (exec->hadException())
-        return nullptr;
+    return regExpCreate(exec, globalObject, newTarget, patternArg, flagsArg);
+}
 
-    RegExpFlags flags = toFlags(exec, flagsArg);
-    if (flags == InvalidFlags)
-        return nullptr;
-
-    RegExp* regExp = RegExp::create(vm, pattern, flags);
-    if (!regExp->isValid())
-        return vm.throwException(exec, createSyntaxError(exec, regExp->errorMessage()));
-
-    Structure* structure = getRegExpStructure(exec, globalObject, newTarget);
-    if (vm.exception())
-        return nullptr;
-    return RegExpObject::create(vm, structure, regExp);
+EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(ExecState* exec)
+{
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    JSValue patternArg = exec->argument(0);
+    JSValue flagsArg = exec->argument(1);
+    return JSValue::encode(regExpCreate(exec, globalObject, jsUndefined(), patternArg, flagsArg));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState* exec)

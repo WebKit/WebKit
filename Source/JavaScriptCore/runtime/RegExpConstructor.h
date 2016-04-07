@@ -148,6 +148,8 @@ ALWAYS_INLINE bool isRegExp(VM& vm, ExecState* exec, JSValue value)
     return object->inherits(RegExpObject::info());
 }
 
+EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(ExecState*);
+
 } // namespace JSC
 
 #endif // RegExpConstructor_h
