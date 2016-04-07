@@ -27,6 +27,20 @@
         "keywords": ["Intl", "Collator", "ECMA-402"]
     },
     {
+        "name": "Web Animations",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://www.w3.org/TR/web-animations-1/",
+        "keywords": ["web animations"],
+        "description": "An API to synchronize with the timing for presentation changes of a web page.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
+        }
+    },
+    {
         "name": "WebAssembly",
         "status": {
             "status": "In Development"
