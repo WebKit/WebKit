@@ -1,3 +1,17 @@
+2016-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling in r199016.
+        https://bugs.webkit.org/show_bug.cgi?id=156140
+
+        It might work this time without regression because 16kB aligned requests
+        now take the allocation fast path.
+
+        Restored changeset:
+
+        CopiedBlock should be 16kB
+        https://bugs.webkit.org/show_bug.cgi?id=156168
+        http://trac.webkit.org/changeset/199016
+
 2016-04-06  Mark Lam  <mark.lam@apple.com>
 
         Update es6.yaml to expect es6/Proxy_internal_get_calls_RegExp_constructor.js to pass.
