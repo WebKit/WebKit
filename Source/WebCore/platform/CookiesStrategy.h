@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,7 @@ public:
     virtual String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&) = 0;
     virtual bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&) = 0;
     virtual void deleteCookie(const NetworkStorageSession&, const URL&, const String& cookieName) = 0;
+    virtual void addCookie(const NetworkStorageSession&, const URL&, const Cookie&) = 0;
 
 protected:
     virtual ~CookiesStrategy() { }

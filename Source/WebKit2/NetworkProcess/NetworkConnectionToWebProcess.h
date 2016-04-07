@@ -86,6 +86,7 @@ private:
     void cookieRequestHeaderFieldValue(WebCore::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, String& result);
     void getRawCookies(WebCore::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&);
     void deleteCookie(WebCore::SessionID, const WebCore::URL&, const String& cookieName);
+    void addCookie(WebCore::SessionID, const WebCore::URL&, const WebCore::Cookie&);
 
     void registerFileBlobURL(const WebCore::URL&, const String& path, const SandboxExtension::Handle&, const String& contentType);
     void registerBlobURL(const WebCore::URL&, Vector<WebCore::BlobPart>, const String& contentType);

@@ -56,7 +56,7 @@ extern "C" {
 #endif
 #endif // defined(__OBJC__) && PLATFORM(COCOA)
 
-#else // PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
+#else // !PLATFORM(WIN) && !USE(APPLE_INTERNAL_SDK)
 
 typedef CF_ENUM(int64_t, _TimingDataOptions)
 {
@@ -69,6 +69,7 @@ typedef const struct _CFURLCredential* CFURLCredentialRef;
 typedef const struct _CFURLRequest* CFURLRequestRef;
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 typedef const struct __CFData* CFDataRef;
+typedef const struct OpaqueCFHTTPCookie* CFHTTPCookieRef;
 typedef struct _CFURLConnection* CFURLConnectionRef;
 typedef struct _CFURLCredentialStorage* CFURLCredentialStorageRef;
 typedef struct _CFURLProtectionSpace* CFURLProtectionSpaceRef;
@@ -97,6 +98,10 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 - (NSDictionary *)_timingData;
 @end
 
+@interface NSHTTPCookie ()
+- (CFHTTPCookieRef)_CFHTTPCookie;
+@end
+
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
 @interface NSURLSessionConfiguration ()
 @property (assign) _TimingDataOptions _timingDataOptions;
@@ -122,7 +127,7 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 
 #endif // defined(__OBJC__)
 
-#endif // PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
+#endif // !PLATFORM(WIN) && !USE(APPLE_INTERNAL_SDK)
 
 EXTERN_C void CFURLRequestSetShouldStartSynchronously(CFURLRequestRef, Boolean);
 
@@ -152,6 +157,7 @@ EXTERN_C const CFStringRef _kCFURLConnectionPropertyShouldSniff;
 #endif
 
 EXTERN_C CFHTTPCookieStorageRef _CFHTTPCookieStorageGetDefault(CFAllocatorRef);
+EXTERN_C void CFHTTPCookieStorageSetCookie(CFHTTPCookieStorageRef, CFHTTPCookieRef);
 EXTERN_C void CFHTTPCookieStorageSetCookieAcceptPolicy(CFHTTPCookieStorageRef, CFHTTPCookieStorageAcceptPolicy);
 EXTERN_C void _CFNetworkSetOverrideSystemProxySettings(CFDictionaryRef);
 EXTERN_C CFURLCredentialStorageRef CFURLCredentialStorageCreate(CFAllocatorRef);

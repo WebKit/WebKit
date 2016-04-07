@@ -1,3 +1,40 @@
+2016-04-07  Brian Burg  <bburg@apple.com>
+
+        CookieJar should support adding synthetic cookies for developer tools
+        https://bugs.webkit.org/show_bug.cgi?id=156091
+        <rdar://problem/25581340>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch adds an API that can set an arbitrary cookie in cookie storage
+        in order to support developer tools and automated testing. It delegates storing
+        the cookie to a platform implementation.
+
+        No new tests because the code isn't used by any clients yet.
+
+        * loader/CookieJar.cpp:
+        (WebCore::addCookie): Added.
+        * loader/CookieJar.h:
+
+        * platform/Cookie.h:
+        Remove an outdated comment. This struct is used in many places.
+
+        * platform/CookiesStrategy.h: Add new method.
+        * platform/network/PlatformCookieJar.h: Add new method.
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::addCookie): Add a stub.
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::addCookie): Add a stub.
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::addCookie): Add an implementation that turns the WebCore::Cookie into
+        an NSHTTPCookie and converts it again to CFHTTPCookie if necessary.
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::addCookie): Add a stub.
+
+        * platform/spi/cf/CFNetworkSPI.h:
+        Add -[NSHTTPCookie _CFHTTPCookie] SPI.
+
 2016-04-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199128 and r199141.

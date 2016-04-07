@@ -31,6 +31,10 @@
 #import "NetworkStorageSession.h"
 #import "WebCoreSystemInterface.h"
 
+namespace WebCore {
+static NSHTTPCookieStorage *cookieStorage(const NetworkStorageSession&);
+}
+
 #if !USE(CFNETWORK)
 
 #import "Cookie.h"
@@ -238,6 +242,38 @@ void deleteCookie(const NetworkStorageSession& session, const URL& url, const St
         if ([[cookie name] isEqualToString:cookieNameString])
             wkDeleteHTTPCookie(cookieStorage.get(), cookie);
     }
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void addCookie(const NetworkStorageSession& session, const URL& url, const Cookie& cookie)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = session.cookieStorage();
+
+    // FIXME: existing APIs do not provide a way to set httpOnly without parsing headers from scratch.
+
+    NSURL *originURL = url;
+    NSHTTPCookie *httpCookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookieName: cookie.name,
+        NSHTTPCookieValue: cookie.value,
+        NSHTTPCookieDomain: cookie.domain,
+        NSHTTPCookiePath: cookie.path,
+        NSHTTPCookieOriginURL: originURL,
+        NSHTTPCookieSecure: @(cookie.secure),
+        NSHTTPCookieDiscard: @(cookie.session),
+        NSHTTPCookieExpires: [NSDate dateWithTimeIntervalSince1970:cookie.expires / 1000.0],
+    }];
+
+#if !USE(CFNETWORK)
+    if (!cookieStorage) {
+        [WebCore::cookieStorage(session) setCookie:httpCookie];
+        return;
+    }
+#endif // !USE(CFNETWORK)
+
+    CFHTTPCookieStorageSetCookie(cookieStorage.get(), [httpCookie _CFHTTPCookie]);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,6 +82,11 @@ bool getRawCookies(const Document* document, const URL& url, Vector<Cookie>& coo
 void deleteCookie(const Document* document, const URL& url, const String& cookieName)
 {
     platformStrategies()->cookiesStrategy()->deleteCookie(storageSession(document), url, cookieName);
+}
+
+void addCookie(const Document* document, const URL& url, const Cookie& cookie)
+{
+    platformStrategies()->cookiesStrategy()->addCookie(storageSession(document), url, cookie);
 }
 
 }

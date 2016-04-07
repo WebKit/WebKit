@@ -31,9 +31,6 @@
 
 namespace WebCore {
 
-    // This struct is currently only used to provide more cookies information
-    // to the Web Inspector.
-
     struct Cookie {
         Cookie() { }
 

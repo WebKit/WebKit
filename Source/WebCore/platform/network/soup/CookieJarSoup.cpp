@@ -28,6 +28,7 @@
 #include "GUniquePtrSoup.h"
 #include "URL.h"
 #include "NetworkingContext.h"
+#include "NotImplemented.h"
 #include "PlatformCookieJar.h"
 #include "SoupNetworkSession.h"
 #include <wtf/glib/GRefPtr.h>
@@ -189,6 +190,12 @@ void deleteCookie(const NetworkStorageSession& session, const URL& url, const St
         }
         soup_cookie_free(cookie);
     }
+}
+
+void addCookie(const NetworkStorageSession&, const URL&, const Cookie&)
+{
+    // FIXME: implement this command. <https://webkit.org/b/156295>
+    notImplemented();
 }
 
 void getHostnamesWithCookies(const NetworkStorageSession& session, HashSet<String>& hostnames)

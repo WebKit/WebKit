@@ -1,3 +1,16 @@
+2016-04-07  Brian Burg  <bburg@apple.com>
+
+        CookieJar should support adding synthetic cookies for developer tools
+        https://bugs.webkit.org/show_bug.cgi?id=156091
+        <rdar://problem/25581340>
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::addCookie):
+        Add new method override.
+
 2016-04-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake DumpRenderTree

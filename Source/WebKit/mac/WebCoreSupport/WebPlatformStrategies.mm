@@ -112,6 +112,11 @@ void WebPlatformStrategies::deleteCookie(const NetworkStorageSession& session, c
     WebCore::deleteCookie(session, url, cookieName);
 }
 
+void WebPlatformStrategies::addCookie(const NetworkStorageSession& session, const URL& url, const Cookie& cookie)
+{
+    WebCore::addCookie(session, url, cookie);
+}
+
 void WebPlatformStrategies::refreshPlugins()
 {
     [[WebPluginDatabase sharedDatabaseIfExists] refresh];

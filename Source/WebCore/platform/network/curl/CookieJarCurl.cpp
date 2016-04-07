@@ -20,6 +20,7 @@
 #if USE(CURL)
 
 #include "Cookie.h"
+#include "NotImplemented.h"
 #include "URL.h"
 #include "ResourceHandleManager.h"
 
@@ -323,6 +324,12 @@ bool getRawCookies(const NetworkStorageSession&, const URL& /*firstParty*/, cons
 void deleteCookie(const NetworkStorageSession&, const URL&, const String&)
 {
     // FIXME: Not yet implemented
+}
+
+void addCookie(const NetworkStorageSession&, const URL&, const Cookie&)
+{
+    // FIXME: implement this command. <https://webkit.org/b/156296>
+    notImplemented();
 }
 
 void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames)

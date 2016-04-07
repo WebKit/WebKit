@@ -38,6 +38,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     CookieRequestHeaderFieldValue(WebCore::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (String result)
     GetRawCookies(WebCore::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (Vector<WebCore::Cookie> cookies)
     DeleteCookie(WebCore::SessionID sessionID, WebCore::URL url, String cookieName)
+    AddCookie(WebCore::SessionID sessionID, WebCore::URL url, struct WebCore::Cookie cookie)
 
     RegisterFileBlobURL(WebCore::URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
     RegisterBlobURL(WebCore::URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
