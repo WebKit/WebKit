@@ -70,7 +70,6 @@ String DebuggerScope::className(const JSObject* object)
 bool DebuggerScope::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     DebuggerScope* scope = jsCast<DebuggerScope*>(object);
-    ASSERT(scope->isValid());
     if (!scope->isValid())
         return false;
     JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());

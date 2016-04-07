@@ -1,5 +1,21 @@
 2016-04-07  Saam barati  <sbarati@apple.com>
 
+        Invalid assertion inside DebuggerScope::getOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=156357
+
+        Reviewed by Keith Miller.
+
+        The Type Profiler might profile JS code that uses DebuggerScope and accesses properties
+        on it. Therefore, it may have a DebuggerScope object in its log. Objects in the log
+        are subject to having their getOwnPropertySlot method called. Therefore, the DebuggerScope
+        might not always be in a valid state when its getOwnPropertySlot method is called.
+        Therefore, the assertion invalid.
+
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::getOwnPropertySlot):
+
+2016-04-07  Saam barati  <sbarati@apple.com>
+
         Initial implementation of annex b.3.3 behavior was incorrect
         https://bugs.webkit.org/show_bug.cgi?id=156276
 
