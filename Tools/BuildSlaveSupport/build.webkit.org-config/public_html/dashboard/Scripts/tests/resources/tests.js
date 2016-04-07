@@ -23,6 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+}
+
+QUnit.done = function(details) {
+    if (window.testRunner) {
+        var element = document.getElementById("qunit-testresult");
+        element.parentNode.removeChild(element);
+        element = document.getElementById("qunit-userAgent");
+        element.parentNode.removeChild(element);
+        window.testRunner.notifyDone();
+    }
+};
+
 module("Trac", {
     setup: function() {
         this.trac = new MockTrac();
@@ -33,7 +48,7 @@ test("_loaded", function()
 {
     this.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
     var client = new XMLHttpRequest();
-    client.open('GET', 'test-fixture-trac-rss.xml', false);
+    client.open("GET", "resources/test-fixture-trac-rss.xml", false);
     client.onload = function () {
         this.trac._loaded(client.responseXML);
     }.bind(this);
@@ -50,7 +65,7 @@ test("_loaded", function()
 test("parse gitBranches", function()
 {
     var client = new XMLHttpRequest();
-    client.open("GET", "test-fixture-git-trac-rss.xml", false);
+    client.open("GET", "resources/test-fixture-git-trac-rss.xml", false);
     client.onload = function () {
         this.trac._loaded(client.responseXML);
     }.bind(this);

@@ -1,3 +1,38 @@
+2016-04-07  Jason Marcell  <jmarcell@apple.com>
+
+        Adding layout tests for the bot watcher's dashboard QUnit tests.
+        https://bugs.webkit.org/show_bug.cgi?id=155272
+
+        Reviewed by Daniel Bates.
+
+        Moved supporting resources into a resources folder and updated index.html accordingly
+        to point to the new locations. Added code to tests.js to dumpAsText when QUnit is done.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/index-expected.txt: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/index.html: Updated to point to tests.js and Mock files in resources directory.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockBuildbotQueue.js: Renamed from
+        Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/MockBuildbotQueue.js.
+        (MockBuildbotQueue):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockBuildbotQueueView.js: Renamed from
+        Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/MockBuildbotQueueView.js.
+        (MockBuildbotQueueView):
+        (MockBuildbotQueueView.prototype._latestProductiveIteration):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockTrac.js: Renamed from
+        Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/MockTrac.js.
+        (MockTrac):
+        (MockTrac.prototype.get oldestRecordedRevisionNumber):
+        (MockTrac.prototype.get latestRecordedRevisionNumber):
+        (MockTrac.prototype.loadMoreHistoricalData):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/test-fixture-git-trac-rss.xml: Renamed from
+        Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/test-fixture-git-trac-rss.xml.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/test-fixture-trac-rss.xml: Renamed from
+        Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/test-fixture-trac-rss.xml.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/tests.js: Renamed from
+        Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/tests.js.
+        Updated the unit tests for Trac._loaded() to point to the XML files that are now located in the 'resources' directory.
+        (QUnit.done): Added. Removes machine-specific output from test results and calls testRunner.notifyDone to let the layout test harness know that all testing is done.
+        * Scripts/run-dashboard-tests: Added.
+
 2016-04-06  ChangSeok Oh  <changseok@webkit.org>
 
         Unreviewed, Update my primary email address and expertise.
