@@ -1,3 +1,14 @@
+2016-04-07  Beth Dakin  <bdakin@apple.com>
+
+        Attempted build fix.
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (-[WebPlaybackControlsManager seekToTime:toleranceBefore:toleranceAfter:]):
+        (-[WebPlaybackControlsManager setCurrentAudioMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager setCurrentLegibleMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager currentAudioMediaSelectionOption]): Deleted.
+        (-[WebPlaybackControlsManager currentLegibleMediaSelectionOption]): Deleted.
+
 2016-04-07  Ada Chan  <adachan@apple.com>
 
         Add WebKitAdditions extension point in HTMLVideoElement::supportsFullscreen()

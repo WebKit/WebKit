@@ -53,6 +53,7 @@ using namespace WebCore;
 @end
 
 @implementation WebAVMediaSelectionOptionMac
+@synthesize localizedDisplayName=_localizedDisplayName;
 @end
 
 @interface WebPlaybackControlsManager : NSObject {
@@ -125,11 +126,6 @@ using namespace WebCore;
     _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->seekToTime(time);
 }
 
-- (AVMediaSelectionOption *)currentAudioMediaSelectionOption
-{
-    return _currentAudioMediaSelectionOption;
-}
-
 - (void)setCurrentAudioMediaSelectionOption:(AVMediaSelectionOption *)audioMediaSelectionOption
 {
     if (audioMediaSelectionOption == _currentAudioMediaSelectionOption)
@@ -143,11 +139,6 @@ using namespace WebCore;
         index = [self.audioMediaSelectionOptions indexOfObject:audioMediaSelectionOption];
     
     _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
-}
-
-- (AVMediaSelectionOption *)currentLegibleMediaSelectionOption
-{
-    return _currentLegibleMediaSelectionOption;
 }
 
 - (void)setCurrentLegibleMediaSelectionOption:(AVMediaSelectionOption *)legibleMediaSelectionOption
