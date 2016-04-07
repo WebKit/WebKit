@@ -11,6 +11,6 @@ layer at (0,0) size 800x67
         text run at (617,17) width 113: "The bottom of the"
         text run at (0,34) width 248: "scrolling mechanism should be clipped."
       RenderText {#text} at (0,0) size 0x0
-layer at (8,59) size 120x220 backgroundClip at (18,69) size 100x100 clip at (18,69) size 85x100 outlineClip at (18,69) size 100x100 scrollHeight 1000
+layer at (8,59) size 120x220 backgroundClip at (18,69) size 100x100 clip at (18,69) size 85x100 scrollHeight 1000
   RenderBlock (positioned) {DIV} at (8,59) size 120x220 [bgcolor=#008000] [border: (10px solid #FF0000)]
     RenderBlock {DIV} at (10,10) size 85x1000

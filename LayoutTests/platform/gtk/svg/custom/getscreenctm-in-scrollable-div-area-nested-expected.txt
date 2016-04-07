@@ -5,7 +5,7 @@ layer at (0,0) size 800x550
     RenderBody {body} at (0,0) size 800x550
 layer at (0,0) size 750x550 clip at (0,0) size 735x535 scrollY 300 scrollHeight 1000
   RenderBlock {div} at (0,0) size 750x550
-layer at (0,-300) size 725x1000 backgroundClip at (0,0) size 725x535 clip at (0,0) size 710x535 outlineClip at (0,0) size 735x535 scrollY 1400 scrollHeight 4099
+layer at (0,-300) size 725x1000 backgroundClip at (0,0) size 725x535 clip at (0,0) size 710x535 scrollY 1400 scrollHeight 4099
   RenderBlock {div} at (0,0) size 725x1000
     RenderSVGRoot {svg} at (271,250) size 258x153
       RenderSVGRect {rect} at (350,250) size 100x100 [fill={[type=SOLID] [color=#000080] [opacity=0.50]}] [x=350.00] [y=1950.00] [width=100.00] [height=100.00]

@@ -5,7 +5,7 @@ layer at (0,0) size 785x600
 layer at (8,8) size 500x750
   RenderBody {BODY} at (8,8) size 500x750
     RenderMultiColumnSet at (0,0) size 500x750
-layer at (8,8) size 930x367 backgroundClip at (0,0) size 785x758 clip at (0,0) size 785x758 outlineClip at (0,0) size 785x758
+layer at (8,8) size 930x367 backgroundClip at (0,0) size 785x758 clip at (0,0) size 785x758
   RenderMultiColumnFlowThread at (0,0) size 930x367
     RenderBlock {H1} at (21,0) size 37x367
       RenderText {#text} at (0,0) size 36x166
@@ -49,10 +49,10 @@ layer at (8,8) size 930x367 backgroundClip at (0,0) size 785x758 clip at (0,0) s
       RenderText {#text} at (0,0) size 34x354
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (17,0) width 154: "Nulla varius enim ac mi."
-layer at (621,8) size 204x367 backgroundClip at (0,0) size 785x758 clip at (0,0) size 785x758 outlineClip at (0,0) size 785x758
+layer at (621,8) size 204x367 backgroundClip at (0,0) size 785x758 clip at (0,0) size 785x758
   RenderBlock {DIV} at (612,0) size 205x367
     RenderMultiColumnSet at (0,0) size 204x367
-layer at (621,8) size 408x176 backgroundClip at (0,0) size 785x758 clip at (0,0) size 785x758 outlineClip at (0,0) size 785x758
+layer at (621,8) size 408x176 backgroundClip at (0,0) size 785x758 clip at (0,0) size 785x758
   RenderMultiColumnFlowThread at (0,0) size 408x176
     RenderText {#text} at (0,0) size 374x175
       text run at (0,0) width 139: "Lorem ipsum dolor sit"

@@ -5,7 +5,7 @@ layer at (0,0) size 350x600
 layer at (8,8) size 334x1500
   RenderBody {BODY} at (8,8) size 334x1500
     RenderMultiColumnSet at (0,0) size 334x1500
-layer at (8,8) size 998x479 backgroundClip at (0,0) size 785x1508 clip at (0,0) size 785x1508 outlineClip at (0,0) size 785x1508
+layer at (8,8) size 998x479 backgroundClip at (0,0) size 785x1508 clip at (0,0) size 785x1508
   RenderMultiColumnFlowThread at (0,0) size 998x479
     RenderBlock {DIV} at (19,0) size 53x479 [bgcolor=#00FFFF]
       RenderBlock (floating) {DIV} at (4,4) size 509x241 [bgcolor=#FFFF00]

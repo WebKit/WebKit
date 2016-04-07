@@ -14,7 +14,7 @@ layer at (13,47) size 759x544
 layer at (8,42) size 769x554 layerType: foreground only
   RenderBlock (relative positioned) {DIV} at (0,34) size 769x554 [bgcolor=#FF0000] [border: (5px solid #000000)]
     RenderMultiColumnSet at (35,5) size 699x544
-layer at (43,47) size 222x1598 backgroundClip at (0,0) size 785x604 clip at (0,0) size 785x604 outlineClip at (0,0) size 785x604
+layer at (43,47) size 222x1598 backgroundClip at (0,0) size 785x604 clip at (0,0) size 785x604
   RenderMultiColumnFlowThread at (35,5) size 223x1598
     RenderText {#text} at (0,0) size 221x1598
       text run at (0,0) width 177: "Lorem ipsum dolor sit amet,"

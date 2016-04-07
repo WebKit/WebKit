@@ -8,7 +8,7 @@ layer at (0,0) size 785x1010
 layer at (8,8) size 769x350
   RenderBlock {DIV} at (0,0) size 769x350
     RenderMultiColumnSet at (0,0) size 769x350
-layer at (8,8) size 377x1123 backgroundClip at (0,0) size 1562x1010 clip at (0,0) size 1562x1010 outlineClip at (0,0) size 1562x1010
+layer at (8,8) size 377x1123 backgroundClip at (0,0) size 1562x1010 clip at (0,0) size 1562x1010
   RenderMultiColumnFlowThread at (0,0) size 377x1123
     RenderTable {TABLE} at (0,0) size 377x1123 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 375x1121
@@ -142,7 +142,7 @@ layer at (8,8) size 377x1123 backgroundClip at (0,0) size 1562x1010 clip at (0,0
 layer at (8,376) size 769x300
   RenderBlock {DIV} at (0,368) size 769x300
     RenderMultiColumnSet at (0,0) size 769x300
-layer at (8,376) size 377x1134 backgroundClip at (0,0) size 1562x1010 clip at (0,0) size 1562x1010 outlineClip at (0,0) size 1562x1010
+layer at (8,376) size 377x1134 backgroundClip at (0,0) size 1562x1010 clip at (0,0) size 1562x1010
   RenderMultiColumnFlowThread at (0,0) size 377x1134
     RenderTable {TABLE} at (0,0) size 377x1134 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 375x1132
@@ -276,7 +276,7 @@ layer at (8,376) size 377x1134 backgroundClip at (0,0) size 1562x1010 clip at (0
 layer at (8,702) size 769x300
   RenderBlock {DIV} at (0,694) size 769x300
     RenderMultiColumnSet at (0,0) size 769x300
-layer at (8,702) size 377x1066 backgroundClip at (0,0) size 1562x1010 clip at (0,0) size 1562x1010 outlineClip at (0,0) size 1562x1010
+layer at (8,702) size 377x1066 backgroundClip at (0,0) size 1562x1010 clip at (0,0) size 1562x1010
   RenderMultiColumnFlowThread at (0,0) size 377x1066
     RenderTable {TABLE} at (0,0) size 377x1066 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 375x1064

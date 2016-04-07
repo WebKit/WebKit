@@ -34,6 +34,6 @@ layer at (10,46) size 220x88
         RenderText {#text} at (0,17) size 196x34
           text run at (0,17) width 196: "Should not be identical with"
           text run at (0,34) width 152: "the current password."
-layer at (42,34) size 18x18 backgroundClip at (10,34) size 220x16 clip at (10,34) size 220x16 outlineClip at (10,34) size 220x16
+layer at (42,34) size 18x18 backgroundClip at (10,34) size 220x16 clip at (10,34) size 220x16
   RenderBlock (relative positioned) zI: 2147483645 {DIV} at (0,0) size 18x18 [bgcolor=#F8ECEC] [border: (2px solid #440000) none (2px solid #440000)]
 caret: position 0 of child 0 {DIV} of child 0 {DIV} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 0 {FORM} of body

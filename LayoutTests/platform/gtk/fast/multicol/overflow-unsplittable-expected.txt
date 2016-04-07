@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
 layer at (8,8) size 506x505
   RenderBlock {DIV} at (0,0) size 506x505 [border: (3px solid #000000)]
     RenderMultiColumnSet at (3,3) size 500x499
-layer at (11,11) size 159x1478 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+layer at (11,11) size 159x1478 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderMultiColumnFlowThread at (3,3) size 159x1478
     RenderBlock (anonymous) at (0,0) size 159x360
       RenderText {#text} at (0,5) size 159x350
@@ -55,7 +55,7 @@ layer at (11,11) size 159x1478 backgroundClip at (0,0) size 800x600 clip at (0,0
         text run at (0,608) width 159: "amet ligula mattis porttitor sit"
         text run at (0,632) width 159: "amet id felis. Integer volutpat"
         text run at (0,656) width 110: "aliquam odio et feugiat."
-layer at (11,510) size 159x304 backgroundClip at (11,510) size 159x90 clip at (13,512) size 140x88 outlineClip at (0,0) size 800x600 scrollHeight 456
+layer at (11,510) size 159x304 backgroundClip at (11,510) size 159x90 clip at (13,512) size 140x88 scrollHeight 456
   RenderBlock {DIV} at (0,499) size 160x304 [border: (2px solid #000000)]
     RenderText {#text} at (2,7) size 141x446
       text run at (2,7) width 141: "Aenean diam enim, suscipit"
