@@ -1,3 +1,13 @@
+2016-04-07  Ada Chan  <adachan@apple.com>
+
+        Add WebKitAdditions extension point in HTMLVideoElement::supportsFullscreen()
+        https://bugs.webkit.org/show_bug.cgi?id=156366
+
+        Reviewed by Alex Christensen.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::supportsFullscreen):
+
 2016-04-07  Jon Davis  <jond@apple.com>
 
         Add WOFF2 to the Feature Status page
