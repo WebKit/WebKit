@@ -68,7 +68,7 @@ using namespace WebCore;
     NSArray<AVMediaSelectionOption *> *_audioMediaSelectionOptions;
     AVMediaSelectionOption *_currentAudioMediaSelectionOption;
     NSArray<AVMediaSelectionOption *> *_legibleMediaSelectionOptions;
-    AVMediaSelectionOption *_currentLegibleMediaSelectionOption
+    AVMediaSelectionOption *_currentLegibleMediaSelectionOption;
     
     float _rate;
 

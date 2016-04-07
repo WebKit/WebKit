@@ -1,3 +1,9 @@
+2016-04-07  Beth Dakin  <bdakin@apple.com>
+
+        Build fix.
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+
 2016-04-07  Jeremy Jones  <jeremyj@apple.com>
 
         In WK1 WebVideoFullscreen interface may be accessed from WK1 main thread instead of UI thread.
