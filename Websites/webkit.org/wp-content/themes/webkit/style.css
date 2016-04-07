@@ -118,7 +118,7 @@ p > a[name]::before {
     margin-left: -1.7rem;
     position: relative;
     top: 3rem;
-    
+
 }
 
 a[name]:hover {
@@ -492,7 +492,7 @@ footer .menu {
 .has-post-thumbnail .background-image {
     filter: saturate(0);
     -webkit-filter: saturate(0);
-    opacity: 0.1;    
+    opacity: 0.1;
 }
 
 .has-post-thumbnail .background-image.loaded,
@@ -1285,7 +1285,7 @@ article,
     width: 252px;
     background: #ffffff;
     z-index: 5;
-    
+
 }
 
 .table-of-contents ul {
@@ -1428,7 +1428,7 @@ header .menu-item-has-children .label-toggle::after {
     margin-left: 0.5rem;
     margin-top: -0.1rem;
     content: '';
-    
+
     -webkit-transition: transform 0.3s ease-out;
     -moz-transition: transform 0.3s ease-out;
     transition: transform 0.3s ease-out;
@@ -1446,19 +1446,21 @@ header .menu-item { /* add bottom dimension to main menu items */
     width: 21rem;
     margin-left: -11rem;
     margin-top: -99rem;
-    
+
     position: absolute;
-    top: 7rem;    
-    
+    top: 8rem;
+    transform: translateY(-1rem);
+
     background: rgba(255,255,255,0.95);
     box-shadow: 0px 3px 20px 0px rgba(0, 0, 0, 0.10);
     border: 1px solid #e7e7e7;
     border-radius: 5px;
 
-    -webkit-transition: opacity 0.6s, top 0.6s;
-    -moz-transition: opacity 0.6s, top 0.6s;
-    transition: opacity 0.6s, top 0.6s;
+    -webkit-transition: opacity 0.6s, transform 0.6s;
+    -moz-transition: opacity 0.6s, transform 0.6s;
+    transition: opacity 0.6s, transform 0.6s;
     opacity: 0;
+
 }
 
 .sub-menu-layer:after, .sub-menu-layer:before {
@@ -1470,6 +1472,7 @@ header .menu-item { /* add bottom dimension to main menu items */
     width: 0;
     position: absolute;
     pointer-events: none;
+
 }
 
 .sub-menu-layer:after {
@@ -1486,7 +1489,7 @@ header .menu-item { /* add bottom dimension to main menu items */
 
 .sub-menu-layer .menu-item {
     padding: 1.5rem 0 0 0;
-    width: 100%;    
+    width: 100%;
 }
 
 .sub-menu-layer .menu-item:first-child {
@@ -1501,7 +1504,7 @@ header .menu-item { /* add bottom dimension to main menu items */
     box-sizing: border-box;
     z-index: 1;
     opacity: 1;
-    top: 8rem;    
+    transform: translateY(0);
     margin-top: 0;
 }
 
@@ -1730,7 +1733,6 @@ header .menu-item { /* add bottom dimension to main menu items */
 /** Screen Breakpoints **/
 
 @media only screen and (max-width: 1180px) {
-    
     .page-width {
         max-width: 1140px;
         padding-left: 2rem;
@@ -1748,16 +1750,14 @@ header .menu-item { /* add bottom dimension to main menu items */
     article .byline p {
         display: inline;
     }
-
 }
 
 @media only screen and (max-width: 1000px) {
-
     article.page h1 {
         width: 90%;
         margin-bottom: 3rem;
     }
-    
+
     article .byline {
         width: 60%;
         margin: 0 auto;
@@ -1773,11 +1773,9 @@ header .menu-item { /* add bottom dimension to main menu items */
     article .bodycopy {
         width: 90%;
     }
-
 }
 
 @media only screen and (max-width: 920px) {
-    
     .main-menu.label-toggle {
         display: inline-block;
         margin: 1.5rem 0 2.5rem;
@@ -1785,12 +1783,12 @@ header .menu-item { /* add bottom dimension to main menu items */
         width: 3rem;
         background: url('images/menu-down.svg') no-repeat 50%;
         cursor: pointer;
-        
+
         -webkit-transition: transform 0.3s ease-out;
         -moz-transition: transform 0.3s ease-out;
         transition: transform 0.3s ease-out;
     }
-    
+
     .menu-toggle:checked + .main-menu.label-toggle,
     header .menu-item > .menu-toggle:checked + a > .label-toggle::after {
         -webkit-transform: rotateX(-180deg);
@@ -1847,11 +1845,12 @@ header .menu-item { /* add bottom dimension to main menu items */
         border-left: none;
         border-right: none;
         opacity: 0;
+        transform: translateY(0);
         -webkit-transition: opacity 0.6s;
         -moz-transition: opacity 0.6s;
         transition: opacity 0.6s;
     }
-    
+
     header .sub-menu-layer:after, .sub-menu-layer:before {
         bottom: 100%;
         left: 71%;
@@ -1867,26 +1866,24 @@ header .menu-item { /* add bottom dimension to main menu items */
         border: none;
         margin-left: -10px;
     }
-    
+
     header .sub-menu-layer:before {
         border: none;
         margin-left: -11px;
     }
-    
+
     header .menu > .menu-item > .menu-toggle:checked ~ .sub-menu {
         position: relative;
         top: 1.5rem;
         margin-top: 0;
     }
-        
+
     footer nav li {
         padding: 0 3rem 3rem 0;
     }
-
 }
 
 @media only screen and (max-width: 690px) {
-    
     .featured-tile {
         padding: 0;
     }
@@ -1931,23 +1928,23 @@ header .menu-item { /* add bottom dimension to main menu items */
         border-left: none;
         border-right: none;
     }
-   
+
     .table-of-contents { /* hug the edge */
         right: 0;
     }
-    
+
     .pagination .prev-post,
     .pagination .next-post {
         min-width: auto;
         width: 90%;
         text-align: right;
     }
-    
+
     .pagination .prev-post {
         margin-bottom: 1rem;
         text-align: left;
     }
-    
+
     article .scrollable {
         overflow: auto;
         -webkit-overflow-scrolling: touch;
@@ -1965,20 +1962,18 @@ header .menu-item { /* add bottom dimension to main menu items */
         display: inline-block;
         padding: 0 3rem;
     }
-
 }
 
 @media only screen and (max-width: 600px) {
-        
     header {
         padding-top: 1rem;
     }
-        
+
     .site-logo {
         font-size: 4rem;
         padding-left: 6rem;
     }
-    
+
     .site-logo .tagline {
         font-size: 1.6rem;
         line-height: 1;
@@ -2019,25 +2014,25 @@ header .menu-item { /* add bottom dimension to main menu items */
         -moz-transform: rotateX(-180deg);
         transform: rotateX(-180deg);
     }
-    
+
     #wpadminbar {
         position: absolute;
     }
-    
+
     .table-of-contents {
         height: 9rem;
         overflow: hidden;
         margin-right: -10%;
     }
-    
+
     .menu-toggle:checked ~ .table-of-contents {
         height: auto;
     }
-    
+
     .table-of-contents label {
         display: block;
     }
-    
+
     .table-of-contents label:after {
         display: inline-block;
         content: "";
@@ -2053,27 +2048,25 @@ header .menu-item { /* add bottom dimension to main menu items */
         transition: transform 0.3s ease-out;
         perspective: 600;
     }
-    
+
     .menu-toggle:checked ~ .table-of-contents label:after {
         -webkit-transform: rotateX(-180deg);
         -moz-transform: rotateX(-180deg);
         transform: rotateX(-180deg);
     }
-    
+
     .table-of-contents h6 {
         margin-bottom: 3rem;
     }
-    
+
     .with-toc pre:nth-child(-n+6),
     #post-4132 pre:nth-child(-n+8) {
         width: 100vw;
     }
-        
 }
 
 @media only screen and (max-width: 415px) {
-    
-    .table-of-contents { 
+    .table-of-contents {
         /* Go one-column */
         width: 100vw;
         left: 50%;
@@ -2082,35 +2075,33 @@ header .menu-item { /* add bottom dimension to main menu items */
         float: none;
         margin: 0 0 3rem 0;
     }
-    
 }
 
 @media only screen and (max-height: 415px) {
-    
     .hero .logo,
     .hero .tagline,
     .hero .particle {
         display: none;
     }
-    
+
     .home .site-logo {
         opacity: 1;
         margin-top: 0;
     }
-    
+
     .home .hero {
         margin: 7rem 0 0;
     }
-    
+
     .home.admin-bar .hero {
         margin-top: 12rem;
     }
-    
+
     header,
     .home header {
         padding-top: 1rem;
     }
-    
+
     .home header {
         border-bottom: 1px solid #e7e7e7;
         background: rgba(255,255,255,0.9);
@@ -2123,17 +2114,17 @@ header .menu-item { /* add bottom dimension to main menu items */
             background: rgba(255,255,255,0.8);
         }
     }
-    
+
     .tile {
         min-height: 200px;
         max-height: 400px;
         overflow: hidden;
     }
-    
+
     .tile .background-image {
         padding-bottom: 33%;
     }
-    
+
     .tile.category-performance .background-image {
         background-position-y: 21.5%;
     }
@@ -2141,21 +2132,21 @@ header .menu-item { /* add bottom dimension to main menu items */
     .tile.category-web-inspector .background-image {
         background-position-y: 12.5%;
     }
-    
+
     .table-of-contents {
         height: 9rem;
         overflow: hidden;
         margin-right: -10%;
     }
-    
+
     .menu-toggle:checked ~ .table-of-contents {
         height: auto;
     }
-    
+
     .table-of-contents label {
         display: block;
     }
-    
+
     .table-of-contents label:after {
         display: inline-block;
         content: "";
@@ -2171,28 +2162,25 @@ header .menu-item { /* add bottom dimension to main menu items */
         transition: transform 0.3s ease-out;
         perspective: 600;
     }
-    
+
     .menu-toggle:checked ~ .table-of-contents label:after {
         -webkit-transform: rotateX(-180deg);
         -moz-transform: rotateX(-180deg);
         transform: rotateX(-180deg);
     }
-    
+
     .table-of-contents h6 {
         margin-bottom: 3rem;
     }
-    
+
     .with-toc pre:nth-child(-n+6),
     #post-4132 pre:nth-child(-n+8) {
         width: 100vw;
     }
-    
 }
 
 @media only screen and (max-width: 320px) {
-
     .home .hero {
         position: absolute;
     }
-    
 }

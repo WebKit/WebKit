@@ -1,3 +1,29 @@
+2016-04-07  Jon Davis  <jond@apple.com>
+
+        Improved drop down menu with translate; cleaned up unnecessary whitespace.
+        https://bugs.webkit.org/show_bug.cgi?id=156342
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/style.css:
+        (p > a[name]::before):
+        (.has-post-thumbnail .background-image):
+        (.table-of-contents):
+        (header .menu-item-has-children .label-toggle::after):
+        (.sub-menu-layer):
+        (.sub-menu-layer:after, .sub-menu-layer:before):
+        (.sub-menu-layer .menu-item):
+        (.menu > .menu-item > .menu-toggle:checked + .sub-menu):
+        (@media only screen and (max-width: 920px)):
+        (header .sub-menu-layer):
+        (@media only screen and (max-width: 415px)):
+        (@media only screen and (max-width: 1180px)): Deleted.
+        (@media only screen and (max-width: 1000px)): Deleted.
+        (@media only screen and (max-width: 690px)): Deleted.
+        (@media only screen and (max-width: 600px)): Deleted.
+        (@media only screen and (max-height: 415px)): Deleted.
+        (@media only screen and (max-width: 320px)): Deleted.
+
 2016-04-05  Jon Davis  <jond@apple.com>
 
         Make the @webkit link on the front page link to the feed
