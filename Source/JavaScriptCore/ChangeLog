@@ -1,3 +1,16 @@
+2016-04-07  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Fix for JSC stress test failures.
+        https://bugs.webkit.org/show_bug.cgi?id=156343
+
+        Reviewed by Filip Pizlo.
+
+        We need to make it clear to MSVC that the method loadPtr(ImplicitAddress address, RegisterID dest)
+        should be used, and not loadPtr(const void* address, RegisterID dest).
+
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::setupShadowChickenPacket):
+
 2016-04-06  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] UInt32ToNumber should be NodeMustGenerate

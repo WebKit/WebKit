@@ -52,16 +52,16 @@ void CCallHelpers::logShadowChickenTailPacket()
 void CCallHelpers::setupShadowChickenPacket()
 {
     move(TrustedImmPtr(vm()->shadowChicken().addressOfLogCursor()), GPRInfo::regT0);
-    loadPtr(GPRInfo::regT0, GPRInfo::regT1);
+    loadPtr(Address(GPRInfo::regT0), GPRInfo::regT1);
     Jump ok = branchPtr(Below, GPRInfo::regT1, TrustedImmPtr(vm()->shadowChicken().logEnd()));
     setupArgumentsExecState();
     move(TrustedImmPtr(bitwise_cast<void*>(operationProcessShadowChickenLog)), GPRInfo::nonArgGPR0);
     call(GPRInfo::nonArgGPR0);
     move(TrustedImmPtr(vm()->shadowChicken().addressOfLogCursor()), GPRInfo::regT0);
-    loadPtr(GPRInfo::regT0, GPRInfo::regT1);
+    loadPtr(Address(GPRInfo::regT0), GPRInfo::regT1);
     ok.link(this);
     addPtr(TrustedImm32(sizeof(ShadowChicken::Packet)), GPRInfo::regT1, GPRInfo::regT2);
-    storePtr(GPRInfo::regT2, GPRInfo::regT0);
+    storePtr(GPRInfo::regT2, Address(GPRInfo::regT0));
 }
 
 } // namespace JSC
