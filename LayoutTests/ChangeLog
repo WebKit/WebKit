@@ -1,3 +1,14 @@
+2016-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION (r188591): thingiverse.com direct messaging UI is not rendered properly
+        https://bugs.webkit.org/show_bug.cgi?id=156241
+        <rdar://problem/25262213>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/zero-sized-fonts-expected.txt: Added.
+        * fast/text/zero-sized-fonts.html: Added.
+
 2016-04-06  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Improve filtering in OpenResourceDialog

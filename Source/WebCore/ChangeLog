@@ -1,5 +1,26 @@
 2016-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        REGRESSION (r188591): thingiverse.com direct messaging UI is not rendered properly
+        https://bugs.webkit.org/show_bug.cgi?id=156241
+        <rdar://problem/25262213>
+
+        Reviewed by Simon Fraser.
+
+        When creating a CoreText font with a size of 0, the CoreText docs say that it will
+        interpret this as a missing argument, and create a font of size 12 instead. However,
+        this doesn't cause a problem (at least on this particular website) because we will
+        use CGFontGetGlyphAdvancesForStyle(), which gets scaled by the supplied font 
+        size (which is 0). However, if you turn on text-rendering: optimizeLegibility, we
+        will use CTFontGetAdvancesForGlyphs() instead, which does not scale by the font size.
+        The solution is to detect this case, and force the advance to 0.
+
+        Test: fast/text/zero-sized-fonts.html
+
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformWidthForGlyph):
+
+2016-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Rename MidpointState to WhitespaceCollapsingState
         https://bugs.webkit.org/show_bug.cgi?id=156304
 

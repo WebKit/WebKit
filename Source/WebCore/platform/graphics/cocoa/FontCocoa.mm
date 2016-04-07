@@ -694,7 +694,7 @@ float Font::platformWidthForGlyph(Glyph glyph) const
             LOG_ERROR("Unable to cache glyph widths for %@ %f", fullName.get(), pointSize);
             advance.width = 0;
         }
-    } else if (!populatedAdvance)
+    } else if (!populatedAdvance && platformData().m_size)
         CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), horizontal ? kCTFontOrientationHorizontal : kCTFontOrientationVertical, &glyph, &advance, 1);
 
     return advance.width + m_syntheticBoldOffset;
