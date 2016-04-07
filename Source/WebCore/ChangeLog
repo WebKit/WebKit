@@ -1,3 +1,31 @@
+2016-04-07  Beth Dakin  <bdakin@apple.com>
+
+        WebPlaybackControlsManager should support mediaSelectionOptions
+        https://bugs.webkit.org/show_bug.cgi?id=156358
+        -and corresponding-
+        rdar://problem/25048743
+
+        Reviewed by Jer Noble.
+
+        This patch just implements 
+        WebVideoFullscreenInterfaceMac::setAudioMediaSelectionOptions and 
+        WebVideoFullscreenInterfaceMac::setLegibleMediaSelectionOptions and passes that 
+        information on to WebPlaybackControlsManager. If selection options are set via 
+        the WebPlaybackControlsManager, then it gets the webVideoFullscreenModel() to 
+        set the new value.
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (-[WebPlaybackControlsManager currentAudioMediaSelectionOption]):
+        (-[WebPlaybackControlsManager setCurrentAudioMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager currentLegibleMediaSelectionOption]):
+        (-[WebPlaybackControlsManager setCurrentLegibleMediaSelectionOption:]):
+        (WebCore::mediaSelectionOptions):
+        (WebCore::WebVideoFullscreenInterfaceMac::setAudioMediaSelectionOptions):
+        (WebCore::WebVideoFullscreenInterfaceMac::setLegibleMediaSelectionOptions):
+        (-[WebPlaybackControlsManager audioMediaSelectionOptions]): Deleted.
+        (-[WebPlaybackControlsManager legibleMediaSelectionOptions]): Deleted.
+
 2016-04-07  Brent Fulgham  <bfulgham@apple.com>
 
         Wheel event callback removing the window causes crash in WebCore.

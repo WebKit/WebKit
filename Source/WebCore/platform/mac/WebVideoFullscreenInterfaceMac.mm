@@ -48,6 +48,13 @@ SOFT_LINK_CLASS(AVKit, AVValueTiming)
 
 using namespace WebCore;
 
+@interface WebAVMediaSelectionOptionMac : NSObject
+@property (retain) NSString *localizedDisplayName;
+@end
+
+@implementation WebAVMediaSelectionOptionMac
+@end
+
 @interface WebPlaybackControlsManager : NSObject {
     NSTimeInterval _contentDuration;
     AVValueTiming *_timing;
@@ -67,6 +74,10 @@ using namespace WebCore;
 @property (nonatomic, retain, readwrite) NSArray *seekableTimeRanges;
 @property (readwrite) BOOL hasEnabledAudio;
 @property (readwrite) BOOL hasEnabledVideo;
+@property (nonatomic, retain, readwrite) NSArray<AVMediaSelectionOption *> *audioMediaSelectionOptions;
+@property (nonatomic, retain, readwrite) AVMediaSelectionOption *currentAudioMediaSelectionOption;
+@property (nonatomic, retain, readwrite) NSArray<AVMediaSelectionOption *> *legibleMediaSelectionOptions;
+@property (nonatomic, retain, readwrite) AVMediaSelectionOption *currentLegibleMediaSelectionOption;
 
 @property (nonatomic) float rate;
 
@@ -87,6 +98,10 @@ using namespace WebCore;
 @synthesize hasEnabledAudio=_hasEnabledAudio;
 @synthesize hasEnabledVideo=_hasEnabledVideo;
 @synthesize rate=_rate;
+@synthesize audioMediaSelectionOptions=_audioMediaSelectionOptions;
+@synthesize currentAudioMediaSelectionOption=_currentAudioMediaSelectionOption;
+@synthesize legibleMediaSelectionOptions=_legibleMediaSelectionOptions;
+@synthesize currentLegibleMediaSelectionOption=_currentLegibleMediaSelectionOption;
 
 - (instancetype)initWithWebVideoFullscreenInterfaceMac:(WebCore::WebVideoFullscreenInterfaceMac*)webVideoFullscreenInterfaceMac
 {
@@ -110,34 +125,44 @@ using namespace WebCore;
     _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->seekToTime(time);
 }
 
-- (NSArray *)audioMediaSelectionOptions
-{
-    return @[];
-}
-
 - (AVMediaSelectionOption *)currentAudioMediaSelectionOption
 {
-    return nil;
+    return _currentAudioMediaSelectionOption;
 }
 
 - (void)setCurrentAudioMediaSelectionOption:(AVMediaSelectionOption *)audioMediaSelectionOption
 {
-    UNUSED_PARAM(audioMediaSelectionOption);
-}
-
-- (NSArray *)legibleMediaSelectionOptions
-{
-    return @[];
+    if (audioMediaSelectionOption == _currentAudioMediaSelectionOption)
+        return;
+    
+    _currentAudioMediaSelectionOption = audioMediaSelectionOption;
+    
+    NSInteger index = NSNotFound;
+    
+    if (audioMediaSelectionOption && self.audioMediaSelectionOptions)
+        index = [self.audioMediaSelectionOptions indexOfObject:audioMediaSelectionOption];
+    
+    _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
 - (AVMediaSelectionOption *)currentLegibleMediaSelectionOption
 {
-    return nil;
+    return _currentLegibleMediaSelectionOption;
 }
 
 - (void)setCurrentLegibleMediaSelectionOption:(AVMediaSelectionOption *)legibleMediaSelectionOption
 {
-    UNUSED_PARAM(legibleMediaSelectionOption);
+    if (legibleMediaSelectionOption == _currentLegibleMediaSelectionOption)
+        return;
+    
+    _currentLegibleMediaSelectionOption = legibleMediaSelectionOption;
+    
+    NSInteger index = NSNotFound;
+    
+    if (legibleMediaSelectionOption && self.legibleMediaSelectionOptions)
+        index = [self.legibleMediaSelectionOptions indexOfObject:legibleMediaSelectionOption];
+    
+    _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
 - (void)cancelThumbnailAndAudioAmplitudeSampleGeneration
@@ -234,6 +259,37 @@ void WebVideoFullscreenInterfaceMac::setSeekableRanges(const TimeRanges& timeRan
     }
     
     [controlsManager setSeekableTimeRanges:seekableRanges.get()];
+}
+
+static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& options)
+{
+    RetainPtr<NSMutableArray> webOptions = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
+    for (auto& name : options) {
+        RetainPtr<WebAVMediaSelectionOptionMac> webOption = adoptNS([[WebAVMediaSelectionOptionMac alloc] init]);
+        [webOption setLocalizedDisplayName:name];
+        [webOptions addObject:webOption.get()];
+    }
+    return webOptions;
+}
+
+void WebVideoFullscreenInterfaceMac::setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
+{
+    WebPlaybackControlsManager* controlsManager = playBackControlsManager();
+
+    RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
+    [controlsManager setAudioMediaSelectionOptions:webOptions.get()];
+    if (selectedIndex < [webOptions count])
+        [controlsManager setCurrentAudioMediaSelectionOption:[webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)]];
+}
+
+void WebVideoFullscreenInterfaceMac::setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
+{
+    WebPlaybackControlsManager* controlsManager = playBackControlsManager();
+
+    RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
+    [controlsManager setLegibleMediaSelectionOptions:webOptions.get()];
+    if (selectedIndex < [webOptions count])
+        [controlsManager setCurrentLegibleMediaSelectionOption:[webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)]];
 }
 
 void WebVideoFullscreenInterfaceMac::ensureControlsManager()
