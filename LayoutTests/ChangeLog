@@ -1,3 +1,19 @@
+2016-04-06  Sam Weinig  <sam@webkit.org>
+
+        window.Crypto is missing
+        <rdar://problem/25584034>
+        https://bugs.webkit.org/show_bug.cgi?id=156307
+
+        Reviewed by Joseph Pecoraro.
+
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        Update for the new Crypto constructor.
+
 2016-04-07  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (197987): Ingredient lists on smittenkitchen.com are full justified instead of left justified.

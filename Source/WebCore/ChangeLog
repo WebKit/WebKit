@@ -1,3 +1,15 @@
+2016-04-06  Sam Weinig  <sam@webkit.org>
+
+        window.Crypto is missing
+        <rdar://problem/25584034>
+        https://bugs.webkit.org/show_bug.cgi?id=156307
+
+        Reviewed by Joseph Pecoraro.
+
+        Expose the Crypto constructor on the window object.
+
+        * page/Crypto.idl:
+
 2016-04-07  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
 
         [CMake][Win] WEBKIT_WRAP_SOURCELIST is not applied in WebCore project

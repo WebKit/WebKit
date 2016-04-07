@@ -28,7 +28,6 @@
  */
 
 [
-    NoInterfaceObject,
     GenerateIsReachable=ImplDocument,
 ] interface Crypto {
     [Custom, RaisesException] ArrayBufferView getRandomValues(ArrayBufferView array);

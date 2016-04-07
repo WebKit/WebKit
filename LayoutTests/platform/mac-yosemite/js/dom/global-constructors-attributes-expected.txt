@@ -273,6 +273,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Counter').hasOwnProperty('get') is
 PASS Object.getOwnPropertyDescriptor(global, 'Counter').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Counter').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Counter').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'Crypto').value is Crypto
+PASS Object.getOwnPropertyDescriptor(global, 'Crypto').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Crypto').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Crypto').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'Crypto').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'CustomEvent').value is CustomEvent
 PASS Object.getOwnPropertyDescriptor(global, 'CustomEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CustomEvent').hasOwnProperty('set') is false
