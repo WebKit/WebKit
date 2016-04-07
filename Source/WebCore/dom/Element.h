@@ -501,6 +501,9 @@ public:
     StyleResolver& styleResolver();
     ElementStyle resolveStyle(RenderStyle* parentStyle);
 
+    bool hasDisplayContents() const;
+    void setHasDisplayContents(bool);
+
     virtual void isVisibleInViewportChanged() { }
 
     using ContainerNode::setAttributeEventListener;

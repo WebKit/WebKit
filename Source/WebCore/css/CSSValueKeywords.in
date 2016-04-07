@@ -417,6 +417,7 @@ flex
 -webkit-flex
 inline-flex
 -webkit-inline-flex
+contents
 -webkit-grid
 -webkit-inline-grid
 //none
@@ -1184,7 +1185,7 @@ style
 
 // will-change
 scroll-position
-contents
+//contents
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
 // touch-action

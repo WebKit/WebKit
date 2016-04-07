@@ -89,7 +89,7 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
 
     while (it != end) {
         auto& node = *it;
-        bool hasDisplayContents = is<Element>(node) && hasImplicitDisplayContents(downcast<Element>(node));
+        bool hasDisplayContents = is<Element>(node) && downcast<Element>(node).hasDisplayContents();
         if (hasDisplayContents) {
             it.traverseNext();
             continue;

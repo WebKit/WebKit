@@ -210,6 +210,18 @@
 
 2016-04-06  Antti Koivisto  <antti@apple.com>
 
+        Shadow DOM: Implement display: contents for slots
+        https://bugs.webkit.org/show_bug.cgi?id=149439
+        <rdar://problem/22731922>
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/mac/TestExpectations:
+
+        Enable fast/shadow-dom/css-scoping-shadow-slot-display-override.html, the test for overriding slot display value.
+
+2016-04-06  Antti Koivisto  <antti@apple.com>
+
         REGRESSION(r196629): Messages text size only changes for sending text, conversation text size does not change
         https://bugs.webkit.org/show_bug.cgi?id=156287
         <rdar://problem/24264756>
