@@ -1,3 +1,13 @@
+2016-04-07  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
+
+        [CMake][Win] Generating autoversion.h of WebKitGUID is triggered again and again
+        https://bugs.webkit.org/show_bug.cgi?id=156332
+
+        Reviewed by Brent Fulgham.
+
+        * PlatformWin.cmake:
+        Correct the output path of autoversion.h.
+
 2016-04-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake DumpRenderTree
