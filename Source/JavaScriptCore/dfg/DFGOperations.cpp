@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DFGOperations.h"
 
-#include "ArrayConstructor.h"
 #include "ButterflyInlines.h"
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
@@ -175,19 +174,6 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
     if (proto.isObject())
         return constructEmptyObject(exec, asObject(proto));
     return constructEmptyObject(exec);
-}
-
-JSCell* JIT_OPERATION operationObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedTarget)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-
-    JSValue value = JSValue::decode(encodedTarget);
-    ASSERT(!value.isObject());
-
-    if (value.isUndefinedOrNull())
-        return constructEmptyObject(exec, globalObject->objectPrototype());
-    return value.toObject(exec, globalObject);
 }
 
 EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -722,22 +708,6 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject*
     if (!input)
         return false;
     return asRegExpObject(base)->test(exec, globalObject, input);
-}
-
-size_t JIT_OPERATION operationIsArrayConstructor(ExecState* exec, EncodedJSValue encodedTarget)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-
-    return isArrayConstructor(JSValue::decode(encodedTarget));
-}
-
-size_t JIT_OPERATION operationIsArrayObject(ExecState* exec, EncodedJSValue encodedTarget)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-
-    return isArray(exec, JSValue::decode(encodedTarget));
 }
 
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

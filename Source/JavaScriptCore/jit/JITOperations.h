@@ -163,7 +163,6 @@ typedef JSCell* JIT_OPERATION (*C_JITOperation_ECZ)(ExecState*, JSCell*, int32_t
 typedef JSCell* JIT_OPERATION (*C_JITOperation_ECZC)(ExecState*, JSCell*, int32_t, JSCell*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EGC)(ExecState*, JSGlobalObject*, JSCell*);
-typedef JSCell* JIT_OPERATION (*C_JITOperation_EGJ)(ExecState*, JSGlobalObject*, EncodedJSValue);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EIcf)(ExecState*, InlineCallFrame*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJsc)(ExecState*, JSScope*);

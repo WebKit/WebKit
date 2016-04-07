@@ -68,7 +68,7 @@ void ArrayConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Arra
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
     putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isArray, arrayConstructorIsArray, DontEnum, 1, IsArrayIntrinsic);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isArray, arrayConstructorIsArray, DontEnum, 1);
 }
 
 bool ArrayConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
@@ -135,7 +135,7 @@ EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArrayConstructor(ExecState* exec)
 {
-    return JSValue::encode(jsBoolean(isArrayConstructor(exec->uncheckedArgument(0))));
+    return JSValue::encode(jsBoolean(jsDynamicCast<ArrayConstructor*>(exec->uncheckedArgument(0))));
 }
 
 } // namespace JSC
