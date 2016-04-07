@@ -38,7 +38,7 @@ PASS canonicalize('?foo=bar#com') is 'http://host/a?foo=bar#com'
 PASS canonicalize('#ref') is 'http://host/a#ref'
 PASS canonicalize('#') is 'http://host/a#'
 PASS canonicalize('#bye') is 'http://host/a?foo=bar#bye'
-FAIL canonicalize('baz.html') should be . Was baz.html.
+FAIL canonicalize('baz.html') should be . Was about:blank.
 PASS canonicalize('data:baz') is 'data:baz'
 PASS canonicalize('data:/base') is 'data:/base'
 PASS canonicalize('http://host/') is 'http://host/'
@@ -46,7 +46,7 @@ PASS canonicalize('http:host') is 'http://host/'
 PASS canonicalize('./asd:fgh') is 'http://foo/asd:fgh'
 PASS canonicalize(':foo') is 'http://foo/:foo'
 PASS canonicalize(' hello world') is 'http://foo/hello%20world'
-FAIL canonicalize(':foo') should be . Was :foo.
+FAIL canonicalize(':foo') should be . Was about:blank.
 PASS canonicalize(';foo') is 'http://host/;foo'
 PASS canonicalize(';foo') is 'http://host/;foo'
 PASS canonicalize(';/../bar') is 'http://host/bar'

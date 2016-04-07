@@ -1,3 +1,16 @@
+2016-04-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        fast/loader/opaque-base-url.html crashing during mac and ios debug tests
+        https://bugs.webkit.org/show_bug.cgi?id=156179
+        <rdar://problem/25507719>
+
+        Reviewed by Andy Estes.
+
+        * TestExpectations:
+        * fast/url/data-uri-based-urls-expected.txt: Added.
+        * fast/url/data-uri-based-urls.html: Added.
+        * fast/url/relative-expected.txt:
+
 2016-04-07  Ada Chan  <adachan@apple.com>
 
         Skip a couple more tests that are asserting in FrameView::scheduleRelayoutOfSubtree().

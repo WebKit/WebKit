@@ -1,3 +1,21 @@
+2016-04-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        fast/loader/opaque-base-url.html crashing during mac and ios debug tests
+        https://bugs.webkit.org/show_bug.cgi?id=156179
+        <rdar://problem/25507719>
+
+        Reviewed by Andy Estes.
+
+        A relative URL other than "#" with a non-hierarchical base is invalid, but prior to this
+        change the URL's string would still contain the invalid relative URL. To avoid mistakes
+        where we might later treat this URL string as a parsed URL string, set the string to
+        "about:blank" instead.
+
+        Test: fast/url/data-uri-based-urls.html
+
+        * platform/URL.cpp:
+        (WebCore::URL::init):
+
 2016-04-07  Brian Burg  <bburg@apple.com>
 
         Web Automation: implement Automation.addSingleCookie
