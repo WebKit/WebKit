@@ -161,6 +161,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, Ref<RenderSt
 
     switch (style.get().display()) {
     case NONE:
+    case CONTENTS:
         return nullptr;
     case INLINE:
         return createRenderer<RenderInline>(element, WTFMove(style));

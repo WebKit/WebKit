@@ -1,3 +1,91 @@
+2016-04-07  Antti Koivisto  <antti@apple.com>
+
+        Shadow DOM: Implement display: contents for slots
+        https://bugs.webkit.org/show_bug.cgi?id=149439
+        <rdar://problem/22731922>
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds support for value 'contents' of the 'display' property for <slot> elements only. The value is ignored
+        for other elements for now. With this display value the element does not generate a box for itself but its descendants
+        generate them normally.
+
+        Slots already have implicit "display: contents". With this patch the value comes from the user agent stylesheet and can
+        be overriden by the author.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+
+            Suport parsing display: contents.
+
+        * css/StyleResolver.cpp:
+        (WebCore::equivalentBlockDisplay):
+        (WebCore::StyleResolver::adjustRenderStyle):
+
+            Disallow for non-slots for now.
+
+        * css/html.css:
+        (slot):
+
+            Add "slot { display: contents }" to the UA sheet.
+
+        * dom/Element.cpp:
+        (WebCore::Element::resolveStyle):
+        (WebCore::Element::hasDisplayContents):
+        (WebCore::Element::setHasDisplayContents):
+
+            Add a rare data bit for elements with display:contents (as we don't save the RenderStyle for them).
+
+        (WebCore::Element::rendererIsNeeded):
+
+            Don't need renderer for display:contents.
+
+        (WebCore::Element::createElementRenderer):
+        * dom/Element.h:
+        (WebCore::Element::isVisibleInViewportChanged):
+        * dom/ElementAndTextDescendantIterator.h:
+        (WebCore::ElementAndTextDescendantIterator::operator!):
+        (WebCore::ElementAndTextDescendantIterator::operator bool):
+        (WebCore::ElementAndTextDescendantIterator::ElementAndTextDescendantIterator):
+        (WebCore::ElementAndTextDescendantIterator::operator==):
+        (WebCore::ElementAndTextDescendantIterator::operator!=):
+
+            Support initializing ElementAndTextDescendantIterator with root==current so that m_current is not nulled.
+            This is needed for ComposedTreeIterator to be initialized correctly when root is a slot and the current node
+            is a slotted node. The case happens in RenderTreePosition::previousSiblingRenderer when slot display is overriden
+            to something else than 'contents'.
+
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::hasDisplayContents):
+        (WebCore::ElementRareData::setHasDisplayContents):
+        (WebCore::ElementRareData::ElementRareData):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+        * rendering/style/RenderStyleConstants.h:
+        * style/RenderTreePosition.cpp:
+        (WebCore::RenderTreePosition::nextSiblingRenderer):
+
+            Test for dynamic display:contents.
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::findRenderingRoot):
+        (WebCore::RenderTreeUpdater::updateRenderTree):
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+
+            Test for dynamic display:contents.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::affectsRenderedSubtree):
+
+            No need for special case.
+
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+
+            Test for dynamic display:contents.
+
 2016-04-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Content box incorrectly used as non-auto min-height

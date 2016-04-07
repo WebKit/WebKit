@@ -723,6 +723,7 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
     case TABLE_COLUMN:
     case TABLE_CELL:
     case TABLE_CAPTION:
+    case CONTENTS:
         return BLOCK;
     case NONE:
         ASSERT_NOT_REACHED();
@@ -765,6 +766,15 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     style.setOriginalDisplay(style.display());
 
     if (style.display() != NONE) {
+        if (style.display() == CONTENTS) {
+            // FIXME: Enable for all elements.
+            bool elementSupportsDisplayContents = false;
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
+            elementSupportsDisplayContents = is<HTMLSlotElement>(e);
+#endif
+            if (!elementSupportsDisplayContents)
+                style.setDisplay(INLINE);
+        }
         // If we have a <td> that specifies a float property, in quirks mode we just drop the float
         // property.
         // Sites also commonly use display:inline/block on <td>s and <table>s. In quirks mode we force

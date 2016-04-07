@@ -1,3 +1,15 @@
+2016-04-07  Antti Koivisto  <antti@apple.com>
+
+        Shadow DOM: Implement display: contents for slots
+        https://bugs.webkit.org/show_bug.cgi?id=149439
+        <rdar://problem/22731922>
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/mac/TestExpectations:
+
+        Enable fast/shadow-dom/css-scoping-shadow-slot-display-override.html, the test for overriding slot display value.
+
 2016-04-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Content box incorrectly used as non-auto min-height
@@ -223,18 +235,6 @@
 
         * fast/block/float/float-moves-between-lines-expected.txt: Added.
         * fast/block/float/float-moves-between-lines.html: Added.
-
-2016-04-06  Antti Koivisto  <antti@apple.com>
-
-        Shadow DOM: Implement display: contents for slots
-        https://bugs.webkit.org/show_bug.cgi?id=149439
-        <rdar://problem/22731922>
-
-        Reviewed by Ryosuke Niwa.
-
-        * platform/mac/TestExpectations:
-
-        Enable fast/shadow-dom/css-scoping-shadow-slot-display-override.html, the test for overriding slot display value.
 
 2016-04-06  Antti Koivisto  <antti@apple.com>
 
