@@ -493,7 +493,9 @@ IntSize TileController::tileSize() const
     if (m_inLiveResize || m_tileSizeLocked)
         return tileGrid().tileSize();
 
-    IntSize maxTileSize(kGiantTileSize, kGiantTileSize);
+    const int kLowestCommonDenominatorMaxTileSize = 4 * 1024;
+    IntSize maxTileSize(kLowestCommonDenominatorMaxTileSize, kLowestCommonDenominatorMaxTileSize);
+
 #if USE(IOSURFACE)
     IntSize surfaceSizeLimit = IOSurface::maximumSize();
     surfaceSizeLimit.scale(1 / m_deviceScaleFactor);

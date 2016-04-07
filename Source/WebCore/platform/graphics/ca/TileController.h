@@ -49,9 +49,6 @@ class TileGrid;
 typedef Vector<RetainPtr<PlatformLayer>> PlatformLayerList;
 
 const int kDefaultTileSize = 512;
-// This is an experimental value for debugging and evaluating the overhead which may be
-// incurred due to a large tile size.
-const int kGiantTileSize = 4096;
 
 class TileController final : public TiledBacking {
     WTF_MAKE_NONCOPYABLE(TileController); WTF_MAKE_FAST_ALLOCATED;

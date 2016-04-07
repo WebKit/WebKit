@@ -190,6 +190,15 @@ inline int clampToInteger(unsigned x)
     return static_cast<int>(x);
 }
 
+inline int clampToInteger(size_t x)
+{
+    const size_t intMax = static_cast<size_t>(std::numeric_limits<int>::max());
+
+    if (x >= intMax)
+        return std::numeric_limits<int>::max();
+    return static_cast<int>(x);
+}
+
 inline bool isWithinIntRange(float x)
 {
     return x > static_cast<float>(std::numeric_limits<int>::min()) && x < static_cast<float>(std::numeric_limits<int>::max());

@@ -36,6 +36,7 @@
 #import "ImageBufferDataCG.h"
 #import "MachSendRight.h"
 #import <wtf/Assertions.h>
+#import <wtf/MathExtras.h>
 
 #if PLATFORM(IOS)
 // Move this into the SPI header once it's possible to put inside the APPLE_INTERNAL_SDK block.
@@ -239,13 +240,20 @@ IOSurface::IOSurface(IOSurfaceRef surface, ColorSpace colorSpace)
 
 IntSize IOSurface::maximumSize()
 {
-    IntSize maxSize(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth), IOSurfaceGetPropertyMaximum(kIOSurfaceHeight));
+    IntSize maxSize(clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth)), clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)));
+
+    // Protect against maxSize being { 0, 0 }.
+    const int iOSMaxSurfaceDimensionLowerBound = 1024;
+
 #if PLATFORM(IOS)
-    // Match limits imposed by CA. FIXME: should have API for this <rdar://problem/25454148>
+    // Match limits imposed by Core Animation. FIXME: should have API for this <rdar://problem/25454148>
     const int iOSMaxSurfaceDimension = 8 * 1024;
-    maxSize = maxSize.shrunkTo({ iOSMaxSurfaceDimension, iOSMaxSurfaceDimension });
+#else
+    // IOSurface::maximumSize() can return { INT_MAX, INT_MAX } when hardware acceleration is unavailable.
+    const int iOSMaxSurfaceDimension = 32 * 1024;
 #endif
-    return maxSize;
+
+    return maxSize.constrainedBetween({ iOSMaxSurfaceDimensionLowerBound, iOSMaxSurfaceDimensionLowerBound }, { iOSMaxSurfaceDimension, iOSMaxSurfaceDimension });
 }
 
 MachSendRight IOSurface::createSendRight() const

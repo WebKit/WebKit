@@ -1,3 +1,28 @@
+2016-04-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Page tiles are missing when graphics acceleration is unavailable
+        https://bugs.webkit.org/show_bug.cgi?id=156325
+        rdar://problem/25587476
+
+        Reviewed by Tim Horton.
+
+        When graphics acceleration is unavailable on Mac (e.g. in a VM or when running from
+        the recovery partition), page contents were missing. This is because
+        IOSurfaceGetPropertyMaximum(kIOSurfaceWidth) and IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)
+        returned INT_MAX, causing us to compute a tile size of 0x0.
+
+        Fix by changing IOSurface::maximumSize() to report a value between 1K x 1K and 32K x 32K.
+
+        Rename kGiantTileSize to better describe its purpose.
+
+        Add correct clamping in IOSurface::maximumSize().
+
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::tileSize):
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::maximumSize):
+
 2016-03-29  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add support for Symbol.isConcatSpreadable.
