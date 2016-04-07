@@ -153,7 +153,12 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
     {
         console.assert(representedObject);
 
+        // Some represented objects attempt to resolve a better represented object.
+        // This may result in null, for example a Breakpoint which doesn't have a SourceCode.
         let resolvedRepresentedObject = WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject);
+        if (!resolvedRepresentedObject)
+            return null;
+
         let existingContentView = resolvedRepresentedObject[WebInspector.ContentView.ContentViewForRepresentedObjectSymbol];
         console.assert(!existingContentView || existingContentView instanceof WebInspector.ContentView);
         if (existingContentView)

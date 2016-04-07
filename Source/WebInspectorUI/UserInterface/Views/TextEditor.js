@@ -64,6 +64,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         this._ignoreCodeMirrorContentDidChangeEvent = 0;
 
         this._formatted = false;
+        this._formattingPromise = null;
         this._formatterSourceMap = null;
 
         this._delegate = delegate || null;
@@ -89,20 +90,18 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
             if (this._initialStringNotSet)
                 this._codeMirror.removeLineClass(0, "wrap");
 
-            this._codeMirror.setValue(newString);
-            console.assert(this.string.length === newString.length, "A lot of our code depends on precise text offsets, so the string should remain the same.");
+            if (this._codeMirror.getValue() !== newString) {
+                this._codeMirror.setValue(newString);
+                console.assert(this.string.length === newString.length, "A lot of our code depends on precise text offsets, so the string should remain the same.");
+            } else {
+                // Ensure we at display content even if the value did not change. This often happens when auto formatting.
+                this.layout();
+            }
 
             if (this._initialStringNotSet) {
                 this._codeMirror.clearHistory();
                 this._codeMirror.markClean();
-                delete this._initialStringNotSet;
-            }
-
-            // Automatically format the content.
-            if (this._autoFormat) {
-                console.assert(!this.formatted);
-                this.formatted = true;
-                delete this._autoFormat;
+                this._initialStringNotSet = false;
             }
 
             // Update the execution line now that we might have content for that line.
@@ -137,39 +136,15 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         return this._formatted;
     }
 
-    set formatted(formatted)
+    updateFormattedState(formatted)
     {
-        if (this._formatted === formatted)
-            return;
-
-        console.assert(!formatted || this.canBeFormatted());
-        if (formatted && !this.canBeFormatted())
-            return;
-
-        this._ignoreCodeMirrorContentDidChangeEvent++;
-        this.prettyPrint(formatted);
-        this._ignoreCodeMirrorContentDidChangeEvent--;
-        console.assert(this._ignoreCodeMirrorContentDidChangeEvent >= 0);
-
-        this._formatted = formatted;
-
-        this.dispatchEventToListeners(WebInspector.TextEditor.Event.FormattingDidChange);
-    }
-
-    set autoFormat(auto)
-    {
-        this._autoFormat = auto;
+        return this._format(formatted).catch(handlePromiseException);
     }
 
     hasFormatter()
     {
-        var supportedModes = {
-            "javascript": true,
-            "css": true,
-        };
-
-        var mode = this._codeMirror.getMode();
-        return mode.name in supportedModes;
+        let mode = this._codeMirror.getMode().name;
+        return mode === "javascript" || mode === "css";
     }
 
     canBeFormatted()
@@ -464,8 +439,9 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         // If we need to unformat, reveal the line after a wait.
         // Otherwise the line highlight doesn't work properly.
         if (this._formatted && forceUnformatted) {
-            this.formatted = false;
-            setTimeout(this.revealPosition.bind(this), 0, position, textRangeToSelect);
+            this.updateFormattedState(false).then(() => {
+                setTimeout(this.revealPosition.bind(this), 0, position, textRangeToSelect);
+            });
             return;
         }
 
@@ -721,101 +697,186 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
             this._codeMirror.refresh();
     }
 
+    _format(formatted)
+    {
+        if (this._formatted === formatted)
+            return Promise.resolve(this._formatted);
+
+        console.assert(!formatted || this.canBeFormatted());
+        if (formatted && !this.canBeFormatted())
+            return Promise.resolve(this._formatted);
+
+        if (this._formattingPromise)
+            return this._formattingPromise;
+
+        this._ignoreCodeMirrorContentDidChangeEvent++;
+        this._formattingPromise = this.prettyPrint(formatted).then(() => {
+            this._ignoreCodeMirrorContentDidChangeEvent--;
+            console.assert(this._ignoreCodeMirrorContentDidChangeEvent >= 0);
+
+            this._formattingPromise = null;
+
+            let originalFormatted = this._formatted;
+            this._formatted = !!this._formatterSourceMap;
+
+            if (this._formatted !== originalFormatted)
+                this.dispatchEventToListeners(WebInspector.TextEditor.Event.FormattingDidChange);
+
+            return this._formatted;
+        });
+
+        return this._formattingPromise;
+    }
+
     prettyPrint(pretty)
     {
-        function prettyPrintAndUpdateEditor()
-        {
-            var start = {line: 0, ch: 0};
-            var end = {line: this._codeMirror.lineCount() - 1};
+        return new Promise((resolve, reject) => {
+            let beforePrettyPrintState = {
+                selectionAnchor: this._codeMirror.getCursor("anchor"),
+                selectionHead: this._codeMirror.getCursor("head"),
+            };
 
-            var oldSelectionAnchor = this._codeMirror.getCursor("anchor");
-            var oldSelectionHead = this._codeMirror.getCursor("head");
-            var newSelectionAnchor, newSelectionHead;
-            var newExecutionLocation = null;
+            if (!pretty)
+                this._undoFormatting(beforePrettyPrintState, resolve);
+            else if (this._canUseFormatterWorker())
+                this._startWorkerPrettyPrint(beforePrettyPrintState, resolve);
+            else
+                this._startCodeMirrorPrettyPrint(beforePrettyPrintState, resolve);
+        });
+    }
 
-            if (pretty) {
-                // <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
-                var indentString = "    ";
-                var builder = new FormatterContentBuilder(indentString);
-                var formatter = new WebInspector.Formatter(this._codeMirror, builder);
-                formatter.format(start, end);
+    _canUseFormatterWorker()
+    {
+        return this._codeMirror.getMode().name === "javascript";
+    }
 
-                this._formatterSourceMap = WebInspector.FormatterSourceMap.fromSourceMapData(builder.sourceMapData);
+    _startWorkerPrettyPrint(beforePrettyPrintState, callback)
+    {
+        // <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
+        let indentString = "    ";
+        let sourceText = this._codeMirror.getValue();
+        let includeSourceMapData = true;
 
-                this._codeMirror.setValue(builder.formattedContent);
+        let workerProxy = WebInspector.FormatterWorkerProxy.singleton();
+        workerProxy.formatJavaScript(sourceText, indentString, includeSourceMapData, ({formattedText, sourceMapData}) => {
+            // Handle if formatting failed, which is possible for invalid programs.
+            if (formattedText === null) {
+                callback();
+                return;
+            }
+            this._finishPrettyPrint(beforePrettyPrintState, formattedText, sourceMapData, callback);
+        });
+    }
 
-                if (this._positionToReveal) {
-                    var newRevealPosition = this._formatterSourceMap.originalToFormatted(this._positionToReveal.lineNumber, this._positionToReveal.columnNumber);
-                    this._positionToReveal = new WebInspector.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
-                }
+    _startCodeMirrorPrettyPrint(beforePrettyPrintState, callback)
+    {
+        // <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
+        let indentString = "    ";
+        let start = {line: 0, ch: 0};
+        let end = {line: this._codeMirror.lineCount() - 1};
+        let builder = new FormatterContentBuilder(indentString);
+        let formatter = new WebInspector.Formatter(this._codeMirror, builder);
+        formatter.format(start, end);
 
-                if (this._textRangeToSelect) {
-                    var mappedRevealSelectionStart = this._formatterSourceMap.originalToFormatted(this._textRangeToSelect.startLine, this._textRangeToSelect.startColumn);
-                    var mappedRevealSelectionEnd = this._formatterSourceMap.originalToFormatted(this._textRangeToSelect.endLine, this._textRangeToSelect.endColumn);
-                    this._textRangeToSelect = new WebInspector.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
-                }
+        let formattedText = builder.formattedContent;
+        let sourceMapData = builder.sourceMapData;
+        this._finishPrettyPrint(beforePrettyPrintState, formattedText, sourceMapData, callback);
+    }
 
-                if (!isNaN(this._executionLineNumber)) {
-                    console.assert(!isNaN(this._executionColumnNumber));
-                    newExecutionLocation = this._formatterSourceMap.originalToFormatted(this._executionLineNumber, this._executionColumnNumber);
-                }
+    _finishPrettyPrint(beforePrettyPrintState, formattedText, sourceMapData, callback)
+    {
+        this._codeMirror.operation(() => {
+            this._formatterSourceMap = WebInspector.FormatterSourceMap.fromSourceMapData(sourceMapData);
+            this._codeMirror.setValue(formattedText);
+            this._updateAfterFormatting(true, beforePrettyPrintState);
+        });
 
-                var mappedAnchorLocation = this._formatterSourceMap.originalToFormatted(oldSelectionAnchor.line, oldSelectionAnchor.ch);
-                var mappedHeadLocation = this._formatterSourceMap.originalToFormatted(oldSelectionHead.line, oldSelectionHead.ch);
-                newSelectionAnchor = {line: mappedAnchorLocation.lineNumber, ch: mappedAnchorLocation.columnNumber};
-                newSelectionHead = {line: mappedHeadLocation.lineNumber, ch: mappedHeadLocation.columnNumber};
-            } else {
-                this._codeMirror.undo();
+        callback();
+    }
 
-                if (this._positionToReveal) {
-                    var newRevealPosition = this._formatterSourceMap.formattedToOriginal(this._positionToReveal.lineNumber, this._positionToReveal.columnNumber);
-                    this._positionToReveal = new WebInspector.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
-                }
+    _undoFormatting(beforePrettyPrintState, callback)
+    {
+        this._codeMirror.operation(() => {
+            this._codeMirror.undo();
+            this._updateAfterFormatting(false, beforePrettyPrintState);
+        });
 
-                if (this._textRangeToSelect) {
-                    var mappedRevealSelectionStart = this._formatterSourceMap.formattedToOriginal(this._textRangeToSelect.startLine, this._textRangeToSelect.startColumn);
-                    var mappedRevealSelectionEnd = this._formatterSourceMap.formattedToOriginal(this._textRangeToSelect.endLine, this._textRangeToSelect.endColumn);
-                    this._textRangeToSelect = new WebInspector.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
-                }
+        callback();
+    }
 
-                if (!isNaN(this._executionLineNumber)) {
-                    console.assert(!isNaN(this._executionColumnNumber));
-                    newExecutionLocation = this._formatterSourceMap.formattedToOriginal(this._executionLineNumber, this._executionColumnNumber);
-                }
+    _updateAfterFormatting(pretty, beforePrettyPrintState)
+    {
+        let oldSelectionAnchor = beforePrettyPrintState.selectionAnchor;
+        let oldSelectionHead = beforePrettyPrintState.selectionHead;        
+        let newSelectionAnchor, newSelectionHead;
+        let newExecutionLocation = null;
 
-                var mappedAnchorLocation = this._formatterSourceMap.formattedToOriginal(oldSelectionAnchor.line, oldSelectionAnchor.ch);
-                var mappedHeadLocation = this._formatterSourceMap.formattedToOriginal(oldSelectionHead.line, oldSelectionHead.ch);
-                newSelectionAnchor = {line: mappedAnchorLocation.lineNumber, ch: mappedAnchorLocation.columnNumber};
-                newSelectionHead = {line: mappedHeadLocation.lineNumber, ch: mappedHeadLocation.columnNumber};
-
-                this._formatterSourceMap = null;
+        if (pretty) {
+            if (this._positionToReveal) {
+                let newRevealPosition = this._formatterSourceMap.originalToFormatted(this._positionToReveal.lineNumber, this._positionToReveal.columnNumber);
+                this._positionToReveal = new WebInspector.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
             }
 
-            this._scrollIntoViewCentered(newSelectionAnchor);
-            this._codeMirror.setSelection(newSelectionAnchor, newSelectionHead);
-
-            if (newExecutionLocation) {
-                delete this._executionLineHandle;
-                this.executionColumnNumber = newExecutionLocation.columnNumber;
-                this.executionLineNumber = newExecutionLocation.lineNumber;
+            if (this._textRangeToSelect) {
+                let mappedRevealSelectionStart = this._formatterSourceMap.originalToFormatted(this._textRangeToSelect.startLine, this._textRangeToSelect.startColumn);
+                let mappedRevealSelectionEnd = this._formatterSourceMap.originalToFormatted(this._textRangeToSelect.endLine, this._textRangeToSelect.endColumn);
+                this._textRangeToSelect = new WebInspector.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
             }
 
-            // FIXME: <rdar://problem/13129955> FindBanner: New searches should not lose search position (start from current selection/caret)
-            if (this.currentSearchQuery) {
-                var searchQuery = this.currentSearchQuery;
-                this.searchCleared();
-                // Set timeout so that this happens after the current CodeMirror operation.
-                // The editor has to update for the value and selection changes.
-                setTimeout(function(query) {
-                    this.performSearch(searchQuery);
-                }.bind(this), 0);
+            if (!isNaN(this._executionLineNumber)) {
+                console.assert(!isNaN(this._executionColumnNumber));
+                newExecutionLocation = this._formatterSourceMap.originalToFormatted(this._executionLineNumber, this._executionColumnNumber);
             }
 
-            if (this._delegate && typeof this._delegate.textEditorUpdatedFormatting === "function")
-                this._delegate.textEditorUpdatedFormatting(this);
+            let mappedAnchorLocation = this._formatterSourceMap.originalToFormatted(oldSelectionAnchor.line, oldSelectionAnchor.ch);
+            let mappedHeadLocation = this._formatterSourceMap.originalToFormatted(oldSelectionHead.line, oldSelectionHead.ch);
+            newSelectionAnchor = {line: mappedAnchorLocation.lineNumber, ch: mappedAnchorLocation.columnNumber};
+            newSelectionHead = {line: mappedHeadLocation.lineNumber, ch: mappedHeadLocation.columnNumber};
+        } else {
+            if (this._positionToReveal) {
+                let newRevealPosition = this._formatterSourceMap.formattedToOriginal(this._positionToReveal.lineNumber, this._positionToReveal.columnNumber);
+                this._positionToReveal = new WebInspector.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
+            }
+
+            if (this._textRangeToSelect) {
+                let mappedRevealSelectionStart = this._formatterSourceMap.formattedToOriginal(this._textRangeToSelect.startLine, this._textRangeToSelect.startColumn);
+                let mappedRevealSelectionEnd = this._formatterSourceMap.formattedToOriginal(this._textRangeToSelect.endLine, this._textRangeToSelect.endColumn);
+                this._textRangeToSelect = new WebInspector.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
+            }
+
+            if (!isNaN(this._executionLineNumber)) {
+                console.assert(!isNaN(this._executionColumnNumber));
+                newExecutionLocation = this._formatterSourceMap.formattedToOriginal(this._executionLineNumber, this._executionColumnNumber);
+            }
+
+            let mappedAnchorLocation = this._formatterSourceMap.formattedToOriginal(oldSelectionAnchor.line, oldSelectionAnchor.ch);
+            let mappedHeadLocation = this._formatterSourceMap.formattedToOriginal(oldSelectionHead.line, oldSelectionHead.ch);
+            newSelectionAnchor = {line: mappedAnchorLocation.lineNumber, ch: mappedAnchorLocation.columnNumber};
+            newSelectionHead = {line: mappedHeadLocation.lineNumber, ch: mappedHeadLocation.columnNumber};
+
+            this._formatterSourceMap = null;
         }
 
-        this._codeMirror.operation(prettyPrintAndUpdateEditor.bind(this));
+        this._scrollIntoViewCentered(newSelectionAnchor);
+        this._codeMirror.setSelection(newSelectionAnchor, newSelectionHead);
+
+        if (newExecutionLocation) {
+            this._executionLineHandle = null;
+            this.executionColumnNumber = newExecutionLocation.columnNumber;
+            this.executionLineNumber = newExecutionLocation.lineNumber;
+        }
+
+        // FIXME: <rdar://problem/13129955> FindBanner: New searches should not lose search position (start from current selection/caret)
+        if (this.currentSearchQuery) {
+            let searchQuery = this.currentSearchQuery;
+            this.searchCleared();
+            // Set timeout so that this happens after the current CodeMirror operation.
+            // The editor has to update for the value and selection changes.
+            setTimeout(() => { this.performSearch(searchQuery) }, 0);
+        }
+
+        if (this._delegate && typeof this._delegate.textEditorUpdatedFormatting === "function")
+            this._delegate.textEditorUpdatedFormatting(this);
     }
 
     // Private

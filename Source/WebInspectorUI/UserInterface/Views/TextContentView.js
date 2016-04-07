@@ -152,7 +152,7 @@ WebInspector.TextContentView = class TextContentView extends WebInspector.Conten
     _togglePrettyPrint(event)
     {
         var activated = !this._prettyPrintButtonNavigationItem.activated;
-        this._textEditor.formatted = activated;
+        this._textEditor.updateFormattedState(formatted);
     }
 
     _textEditorFormattingDidChange(event)

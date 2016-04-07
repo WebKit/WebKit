@@ -40,11 +40,13 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         this._contentPopulated = false;
         this._invalidLineNumbers = {0: true};
         this._ignoreContentDidChange = 0;
+        this._requestingScriptContent = false;
 
         this._typeTokenScrollHandler = null;
         this._typeTokenAnnotator = null;
         this._basicBlockAnnotator = null;
 
+        this._autoFormat = false;
         this._isProbablyMinified = false;
 
         // FIXME: Currently this just jumps between resources and related source map resources. It doesn't "jump to symbol" yet.
@@ -260,8 +262,12 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             return false;
 
         var newActivatedState = !this._typeTokenAnnotator.isActive();
-        if (newActivatedState && this._isProbablyMinified && !this.formatted)
-            this.formatted = true;
+        if (newActivatedState && this._isProbablyMinified && !this.formatted) {
+            this.updateFormattedState(true).then(() => {
+                this._setTypeTokenAnnotatorEnabledState(newActivatedState);
+            });
+            return;
+        }
 
         this._setTypeTokenAnnotatorEnabledState(newActivatedState);
         return newActivatedState;
@@ -298,16 +304,16 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         if (shouldResumeTypeTokenAnnotator || shouldResumeBasicBlockAnnotator)
             this._setTypeTokenAnnotatorEnabledState(false);
 
-        super.prettyPrint(pretty);
-
-        if (pretty || !this._isProbablyMinified) {
-            if (shouldResumeTypeTokenAnnotator || shouldResumeBasicBlockAnnotator)
-                this._setTypeTokenAnnotatorEnabledState(true);
-        } else {
-            console.assert(!pretty && this._isProbablyMinified);
-            if (this._typeTokenAnnotator || this._basicBlockAnnotator)
-                this._setTypeTokenAnnotatorEnabledState(false);
-        }
+        return super.prettyPrint(pretty).then(() => {
+            if (pretty || !this._isProbablyMinified) {
+                if (shouldResumeTypeTokenAnnotator || shouldResumeBasicBlockAnnotator)
+                    this._setTypeTokenAnnotatorEnabledState(true);
+            } else {
+                console.assert(!pretty && this._isProbablyMinified);
+                if (this._typeTokenAnnotator || this._basicBlockAnnotator)
+                    this._setTypeTokenAnnotatorEnabledState(false);
+            }
+        });
     }
 
     // Private
@@ -358,11 +364,81 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             delete this._breakpointMap[lineInfo.lineNumber];
     }
 
-    _contentWillPopulate(content)
+    _isLikelyMinified(content)
+    {
+        let whiteSpaceCount = 0;
+        let ratio = 0;
+
+        for (let i = 0, size = Math.min(5000, content.length); i < size; i++) {
+            let char = content[i];
+            if (char === " " || char === "\n" || char === "\t")
+                whiteSpaceCount++;
+
+            if (i >= 500) {
+                ratio = whiteSpaceCount / i;
+                if (ratio < 0.05)
+                    return true;
+            }
+        }
+
+        return ratio < 0.1;
+    }
+
+    _populateWithContent(content)
+    {
+        content = content || "";
+
+        this._prepareEditorForInitialContent(content);
+
+        // If we can auto format, format the TextEditor before showing it.
+        if (this._autoFormat) {
+            console.assert(!this.formatted);
+            this._autoFormat = false;
+            this.string = content;
+            this.updateFormattedState(true).then(() => {
+                this._proceedPopulateWithContent(this.string);
+            });
+            return;
+        }
+
+        this._proceedPopulateWithContent(content);
+    }
+
+    _proceedPopulateWithContent(content)
     {
         this.dispatchEventToListeners(WebInspector.SourceCodeTextEditor.Event.ContentWillPopulate);
 
-        // We only do the rest of this work before the first populate.
+        this.string = content;
+
+        this._makeTypeTokenAnnotator();
+        this._makeBasicBlockAnnotator();
+
+        if (WebInspector.showJavaScriptTypeInformationSetting.value) {
+            if (this._basicBlockAnnotator || this._typeTokenAnnotator)
+                this._setTypeTokenAnnotatorEnabledState(true);
+        }
+
+        this._contentDidPopulate();
+    }
+
+    _contentDidPopulate()
+    {
+        this._contentPopulated = true;
+
+        this.dispatchEventToListeners(WebInspector.SourceCodeTextEditor.Event.ContentDidPopulate);
+
+        // We add the issues each time content is populated. This is needed because lines might not exist
+        // if we tried added them before when the full content wasn't available. (When populating with
+        // partial script content this can be called multiple times.)
+
+        this._reinsertAllIssues();
+
+        this._updateEditableMarkers();
+    }
+
+    _prepareEditorForInitialContent(content)
+    {
+        // Only do this work before the first populate.
         if (this._contentPopulated)
             return;
 
@@ -384,65 +460,12 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         else if (this._sourceCode instanceof WebInspector.Script)
             this.mimeType = "text/javascript";
 
-        // Automatically format the content if it looks minified and it can be formatted.
+        // Decide to automatically format the content if it looks minified and it can be formatted.
         console.assert(!this.formatted);
         if (this.canBeFormatted() && this._isLikelyMinified(content)) {
-            this.autoFormat = true;
+            this._autoFormat = true;
             this._isProbablyMinified = true;
         }
-    }
-
-    _isLikelyMinified(content)
-    {
-        let whiteSpaceCount = 0;
-        let ratio = 0;
-
-        for (let i = 0, size = Math.min(5000, content.length); i < size; i++) {
-            let char = content[i];
-            if (char === " " || char === "\n" || char === "\t")
-                whiteSpaceCount++;
-
-            if (i >= 500) {
-                ratio = whiteSpaceCount / i;
-                if (ratio < 0.05)
-                    return true;
-            }
-        }
-
-        return ratio < 0.1;
-    }
-
-    _contentDidPopulate()
-    {
-        this._contentPopulated = true;
-
-        this.dispatchEventToListeners(WebInspector.SourceCodeTextEditor.Event.ContentDidPopulate);
-
-        // We add the issues each time content is populated. This is needed because lines might not exist
-        // if we tried added them before when the full content wasn't available. (When populating with
-        // partial script content this can be called multiple times.)
-
-        this._reinsertAllIssues();
-
-        this._updateEditableMarkers();
-    }
-
-    _populateWithContent(content)
-    {
-        content = content || "";
-
-        this._contentWillPopulate(content);
-        this.string = content;
-
-        this._makeTypeTokenAnnotator();
-        this._makeBasicBlockAnnotator();
-
-        if (WebInspector.showJavaScriptTypeInformationSetting.value) {
-            if (this._basicBlockAnnotator || this._typeTokenAnnotator)
-                this._setTypeTokenAnnotatorEnabledState(true);
-        }
-
-        this._contentDidPopulate();
     }
 
     _contentAvailable(parameters)
@@ -662,7 +685,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             if (--pendingRequestCount)
                 return;
 
-            delete this._requestingScriptContent;
+            this._requestingScriptContent = false;
 
             // Abort if the full content populated while waiting for these async callbacks.
             if (this._fullContentPopulated)
@@ -727,7 +750,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         function scriptContentAvailable(parameters)
         {
             var content = parameters.content;
-            delete this._requestingScriptContent;
+            this._requestingScriptContent = false;
 
             // Abort if the full content populated while waiting for this async callback.
             if (this._fullContentPopulated)
@@ -1137,7 +1160,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
     {
         this._ignoreAllBreakpointLocationUpdates = true;
         this._sourceCode.formatterSourceMap = this.formatterSourceMap;
-        delete this._ignoreAllBreakpointLocationUpdates;
+        this._ignoreAllBreakpointLocationUpdates = false;
 
         // Always put the source map on both the Script and Resource if both exist. For example,
         // if this SourceCode is a Resource, then there might also be a Script. In the debugger,

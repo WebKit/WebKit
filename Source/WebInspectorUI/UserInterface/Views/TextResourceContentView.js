@@ -203,7 +203,7 @@ WebInspector.TextResourceContentView = class TextResourceContentView extends Web
     _togglePrettyPrint(event)
     {
         var activated = !this._prettyPrintButtonNavigationItem.activated;
-        this._textEditor.formatted = activated;
+        this._textEditor.updateFormattedState(activated);
     }
 
     _toggleTypeAnnotations(event)

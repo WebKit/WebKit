@@ -1,5 +1,117 @@
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Inspector hangs when trying to view a large XHR resource
+        https://bugs.webkit.org/show_bug.cgi?id=144107
+        <rdar://problem/20669463>
+
+        Reviewed by Timothy Hatcher.
+
+        Previously auto formatting (initial pretty print of source code) in TextEditor
+        was done synchronously in this order:
+        
+          (1) revealing the Editor as soon as we have content
+          (2) set the CodeMirror value
+          (3) pretty print with the CodeMirror editor
+          (4) set the CodeMirror value
+              => Layout
+          
+        At the end, CodeMirror would layout once with the new content. This approach
+        performs very poorly when step (3) is an asynchronous action, because it would
+        mean CodeMirror would layout for both (2) and at the end (4) and the layout
+        itself can be very costly if the content is minified and so has very long
+        lines at the top of the file that need to be syntax highlighted and visible
+        since we do not wrap.
+
+        This patch changes the order of operations to benefit asynchronous formatting.
+        When SourceCodeTextEditor determines that it can autoformat it:
+
+          (1) set the CodeMirror value
+          (2) pretty print to source text
+          (3) reveal the Editor when pretty printing is done
+          (4) set the CodeMirror value
+              => Layout
+
+        This maintains the fact that to undo pretty printing we can just "undo" the
+        editor to get the original text. This also means we only do a single
+        CodeMirror layout, with the pretty printed and therefore more manageable
+        source text for highlighting. It also means we continue to show a loading
+        indicator in the editor while we are pretty printing. If this is truely
+        done asynchronously, which is the case for JavaScript with FormatterWorker,
+        then the loading indicator will animate smoothly.
+
+        This sequence also works with the traditional synchronous formatters,
+        which we still have for CSS.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.contentViewForRepresentedObject):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.showDefaultContentViewForTreeElement):
+        (WebInspector.NavigationSidebarPanel.prototype._checkElementsForPendingViewStateCookie):
+        BreakpointTreeElements can now be restored and reselected when its
+        source code is null. Avoid deleting the pending cookie data if a
+        ContentView was not shown for the resource. When the Breakpoint
+        and SourceCode get hooked up, this code will run again and work.
+
+        * UserInterface/Views/ScriptContentView.js:
+        (WebInspector.ScriptContentView.prototype._togglePrettyPrint):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView.prototype._togglePrettyPrint):
+        * UserInterface/Views/TextContentView.js:
+        (WebInspector.TextContentView.prototype._togglePrettyPrint):
+        New API for toggling formatting, now that it is an async operation.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype.toggleTypeAnnotations):
+        (WebInspector.SourceCodeTextEditor.prototype.prettyPrint):
+        (WebInspector.SourceCodeTextEditor.prototype._populateWithContent):
+        (WebInspector.SourceCodeTextEditor.prototype._proceedPopulateWithContent):
+        (WebInspector.SourceCodeTextEditor.prototype._prepareEditorForInitialContent):
+        (WebInspector.SourceCodeTextEditor.prototype._populateWithInlineScriptContent.scriptContentAvailable):
+        (WebInspector.SourceCodeTextEditor.prototype._populateWithInlineScriptContent):
+        (WebInspector.SourceCodeTextEditor.prototype._populateWithScriptContent):
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorUpdatedFormatting):
+        (WebInspector.SourceCodeTextEditor.prototype._contentWillPopulate): Deleted.
+        Move auto formatting logic into SourceCodeTextEditor, because it
+        determines if content should be auto formatted, and it loads the
+        initial content so it can determine when to show the editor for
+        the first time.
+
+        When we get the initial content and determine we have to autoformat,
+        setup the TextEditor, but don't proceed with WillPopulate/DidPopulate
+        until after we have formatted text.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.set string.update):
+        (WebInspector.TextEditor.prototype.set string):
+        (WebInspector.TextEditor.prototype.updateFormattedState):
+        (WebInspector.TextEditor.prototype.hasFormatter):
+        (WebInspector.TextEditor.prototype._format):
+        (WebInspector.TextEditor.prototype.prettyPrint):
+        (WebInspector.TextEditor.prototype._canUseFormatterWorker):
+        (WebInspector.TextEditor.prototype._startWorkerPrettyPrint):
+        (WebInspector.TextEditor.prototype._startCodeMirrorPrettyPrint):
+        (WebInspector.TextEditor.prototype._finishPrettyPrint):
+        (WebInspector.TextEditor.prototype._undoFormatting):
+        (WebInspector.TextEditor.prototype._updateAfterFormatting):
+        Break up the synchronous pretty printing code into multiple steps.
+        One path can be asynchronous formatting via FormatterWorker, another
+        path may be synchronous formatting using the CodeMirror formatters.
+
+        (WebInspector.TextEditor.prototype.set formatted): Deleted.
+        Remove the synchronous `set formatted` setter. Replace with
+        updateFormattedState().
+
+        (WebInspector.TextEditor.prototype.set autoFormat): Deleted.
+        Remove the TextEditor's autoformat. Since formatting can be async, having
+        the TextEditor showing and asynchronously format its initial contents is
+        a recipe for poor performance causing multiple layouts of different content.
+        Instead, autoformatting is handled by SourceCodeTextEditor, and TextEditor
+        can then be shown when it has the right data.
+
+2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve JavaScript pretty printing
         https://bugs.webkit.org/show_bug.cgi?id=156178
         <rdar://problem/25535719>

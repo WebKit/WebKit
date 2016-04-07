@@ -202,10 +202,14 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         console.assert(treeElement);
         console.assert(treeElement.representedObject);
         if (!treeElement || !treeElement.representedObject)
-            return;
+            return false;
 
-        this.contentBrowser.showContentViewForRepresentedObject(treeElement.representedObject);
+        let contentView = this.contentBrowser.showContentViewForRepresentedObject(treeElement.representedObject);
+        if (!contentView)
+            return false;
+
         treeElement.revealAndSelect(true, false, true, true);
+        return true;
     }
 
     saveStateToCookie(cookie)
@@ -740,7 +744,9 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         }, this);
 
         if (matchedElement) {
-            this.showDefaultContentViewForTreeElement(matchedElement);
+            let didShowContentView = this.showDefaultContentViewForTreeElement(matchedElement);
+            if (!didShowContentView)
+                return;
 
             this._pendingViewStateCookie = null;
 

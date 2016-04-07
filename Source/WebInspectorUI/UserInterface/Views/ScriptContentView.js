@@ -209,7 +209,7 @@ WebInspector.ScriptContentView = class ScriptContentView extends WebInspector.Co
     _togglePrettyPrint(event)
     {
         var activated = !this._prettyPrintButtonNavigationItem.activated;
-        this._textEditor.formatted = activated;
+        this._textEditor.updateFormattedState(activated);
     }
 
     _toggleTypeAnnotations(event)
