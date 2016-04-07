@@ -46,6 +46,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
+#include "URLUtils.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -74,15 +75,6 @@ Ref<HTMLAnchorElement> HTMLAnchorElement::create(const QualifiedName& tagName, D
 HTMLAnchorElement::~HTMLAnchorElement()
 {
     clearRootEditableElementForSelectionOnMouseDown();
-}
-
-// This function does not allow leading spaces before the port number.
-static unsigned parsePortFromStringPosition(const String& value, unsigned portStart, unsigned& portEnd)
-{
-    portEnd = portStart;
-    while (isASCIIDigit(value[portEnd]))
-        ++portEnd;
-    return value.substring(portStart, portEnd - portStart).toUInt();
 }
 
 bool HTMLAnchorElement::supportsFocus() const

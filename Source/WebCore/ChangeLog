@@ -1,3 +1,18 @@
+2016-04-06  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Remove duplicated parsePortFromStringPosition()
+        https://bugs.webkit.org/show_bug.cgi?id=156289
+
+        Reviewed by Simon Fraser.
+
+        Same parsePortFromStringPosition() functions have been defined in both URLUtils.h and HTMLAnchorElement.cpp.
+        Remove duplicated one in HTMLAnchorElement.cpp.
+
+        No new tests, no behavior change.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::parsePortFromStringPosition): Deleted.
+
 2016-04-06  Simon Fraser  <simon.fraser@apple.com>
 
         Page tiles are missing when graphics acceleration is unavailable
