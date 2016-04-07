@@ -402,7 +402,12 @@ public:
     float logicalLeftOffset() const { return m_logicalLeftOffset; }
     const TextFragmentIterator::TextFragment& overflowedFragment() const { return m_overflowedFragment; }
     bool hasTrailingWhitespace() const { return m_trailingWhitespaceLength; }
-    TextFragmentIterator::TextFragment lastFragment() const { return m_fragments.last(); }
+    Optional<TextFragmentIterator::TextFragment> lastFragment() const
+    {
+        if (m_fragments.size())
+            return m_fragments.last();
+        return Nullopt;
+    }
     bool isWhitespaceOnly() const { return m_trailingWhitespaceWidth && m_runsWidth == m_trailingWhitespaceWidth; }
     bool fits(float extra) const { return m_availableWidth >= m_runsWidth + extra; }
     bool firstCharacterFits() const { return m_firstCharacterFits; }
@@ -733,7 +738,8 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
                 break;
             }
             // Non-breakable non-whitespace fragment when there's already content on the line. Push it to the next line.
-            if (line.lastFragment().overlapsToNextRenderer()) {
+            ASSERT(line.lastFragment());
+            if (line.lastFragment().value().overlapsToNextRenderer()) {
                 // Check if this fragment is a continuation of a previous segment. In such cases, we need to remove them all.
                 const auto& lastCompleteFragment = line.revertToLastCompleteFragment(runs);
                 textFragmentIterator.revertToEndOfFragment(lastCompleteFragment);
@@ -757,14 +763,13 @@ static ExpansionBehavior expansionBehavior(bool isAfterExpansion, bool lastRunOn
     return expansionBehavior;
 }
 
-static void justifyRuns(const LineState& line, Layout::RunVector& runs, Optional<unsigned> lastRunIndexOfPreviousLine)
+static void justifyRuns(const LineState& line, Layout::RunVector& runs, unsigned firstRunIndex)
 {
     ASSERT(runs.size());
     auto widthToDistribute = line.availableWidth() - line.width();
     if (widthToDistribute <= 0)
         return;
 
-    auto firstRunIndex = lastRunIndexOfPreviousLine ? lastRunIndexOfPreviousLine.value() + 1 : 0;
     auto lastRunIndex = runs.size() - 1;
     ASSERT(firstRunIndex <= lastRunIndex);
     Vector<std::pair<unsigned, ExpansionBehavior>> expansionOpportunityList;
@@ -794,8 +799,17 @@ static void justifyRuns(const LineState& line, Layout::RunVector& runs, Optional
     }
 }
 
+static ETextAlign textAlignForLine(const TextFragmentIterator::Style& style, bool lastLine)
+{
+    // Fallback to LEFT (START) alignment for non-collapsable content and for the last line before a forced break or the end of the block.
+    auto textAlign = style.textAlign;
+    if (textAlign == JUSTIFY && (!style.collapseWhitespace || lastLine))
+        textAlign = LEFT;
+    return textAlign;
+}
+
 static void closeLineEndingAndAdjustRuns(LineState& line, Layout::RunVector& runs, Optional<unsigned> lastRunIndexOfPreviousLine, unsigned& lineCount,
-    const TextFragmentIterator& textFragmentIterator, bool lastLine)
+    const TextFragmentIterator& textFragmentIterator, bool lastLineInFlow)
 {
     if (!runs.size() || (lastRunIndexOfPreviousLine && runs.size() - 1 == lastRunIndexOfPreviousLine.value()))
         return;
@@ -804,17 +818,13 @@ static void closeLineEndingAndAdjustRuns(LineState& line, Layout::RunVector& run
         return;
     // Adjust runs' position by taking line's alignment into account.
     const auto& style = textFragmentIterator.style();
-    auto textAlign = style.textAlign;
-    // Fallback to LEFT alignment both for non-collapsable content and for the last line.
-    if (textAlign == JUSTIFY && (!style.collapseWhitespace || lastLine))
-        textAlign = LEFT;
-
+    auto firstRunIndex = lastRunIndexOfPreviousLine ? lastRunIndexOfPreviousLine.value() + 1 : 0;
     auto lineLogicalLeft = line.logicalLeftOffset();
+    auto textAlign = textAlignForLine(style, lastLineInFlow || (line.lastFragment() && line.lastFragment().value().type() == TextFragmentIterator::TextFragment::HardLineBreak));
     if (textAlign == JUSTIFY)
-        justifyRuns(line, runs, lastRunIndexOfPreviousLine);
+        justifyRuns(line, runs, firstRunIndex);
     else
         lineLogicalLeft = computeLineLeft(textAlign, line.availableWidth(), line.width(), line.logicalLeftOffset());
-    auto firstRunIndex = lastRunIndexOfPreviousLine ? lastRunIndexOfPreviousLine.value() + 1 : 0;
     for (auto i = firstRunIndex; i < runs.size(); ++i) {
         runs[i].logicalLeft += lineLogicalLeft;
         runs[i].logicalRight += lineLogicalLeft;

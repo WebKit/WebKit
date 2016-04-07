@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that ignore text-align: justify for last lines.</title>
+<style>
+div {
+    display: inline-block;
+    border: 1px solid green;
+    text-align: justify;
+    margin-left: 10px;
+}
+</style>
+</head>
+<body>
+<script>
+if (window.internals)
+    internals.settings.setSimpleLineLayoutEnabled(false);
+var width = 50;
+var content = "Lo rem ip<br>sum do lor<br>sit a met, con sec te tur<br>ad ip is cing el it<br>sed do e i us mod tempor.";
+for (var i = 0; i < 20; ++i, width += 5) {
+    var element = document.createElement("div");
+    element.style.width = width + "px";
+    element.innerHTML = content;
+    document.body.appendChild(element);
+}
+</script>
+</body>
+</html>

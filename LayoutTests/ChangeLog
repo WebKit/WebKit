@@ -1,3 +1,22 @@
+2016-04-07  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (197987): Ingredient lists on smittenkitchen.com are full justified instead of left justified.
+        https://bugs.webkit.org/show_bug.cgi?id=156326
+        <rdar://problem/25519393>
+
+        Reviewed by Antti Koivisto.
+
+        According to the spec (https://drafts.csswg.org/css-text-3/#text-align-property) 
+        unless otherwise specified by text-align-last, the last line before
+        a forced break or the end of the block is start-aligned.
+
+        In this patch we check if a forced break is present and we apply text alignment accordingly.
+
+        Test: fast/css3-text/css3-text-justify/text-justify-last-line-simple-line-layout.html
+
+        * fast/css3-text/css3-text-justify/text-justify-last-line-simple-line-layout-expected.html: Added.
+        * fast/css3-text/css3-text-justify/text-justify-last-line-simple-line-layout.html: Added.
+
 2016-04-07  Antti Koivisto  <antti@apple.com>
 
         Shadow DOM: Implement display: contents for slots

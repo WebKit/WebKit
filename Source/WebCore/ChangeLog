@@ -1,3 +1,26 @@
+2016-04-07  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (197987): Ingredient lists on smittenkitchen.com are full justified instead of left justified.
+        https://bugs.webkit.org/show_bug.cgi?id=156326
+        <rdar://problem/25519393>
+
+        Reviewed by Antti Koivisto.
+
+        According to the spec (https://drafts.csswg.org/css-text-3/#text-align-property) 
+        unless otherwise specified by text-align-last, the last line before
+        a forced break or the end of the block is start-aligned.
+
+        In this patch we check if a forced break is present and we apply text alignment accordingly.
+
+        Test: fast/css3-text/css3-text-justify/text-justify-last-line-simple-line-layout.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::lastFragment): Make it optional so that we don't just check against a default fragment.
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::justifyRuns): Do not compute first run index on the current line twice.
+        (WebCore::SimpleLineLayout::textAlignForLine):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+
 2016-04-07  Antti Koivisto  <antti@apple.com>
 
         FrameView::qualifiesAsVisuallyNonEmpty() returns false when loading a Google search results page before search results are loaded, even though the header is visible
