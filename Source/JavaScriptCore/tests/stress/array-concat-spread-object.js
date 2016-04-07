@@ -12,7 +12,7 @@ function arrayEq(a, b) {
 
 
 {
-    // let o = {0:1, 1:2, 2:3, length:3};
+    let o = {0:1, 1:2, 2:3, length:3};
 
     // Test it works with proxies by default
     for (let i = 0; i < 100000; i++) {

@@ -1,3 +1,9 @@
+2016-04-06  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, uncomment accidentally commented line in test.
+
+        * tests/stress/array-concat-spread-object.js:
+
 2016-04-06  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should have a simple way of gathering IC statistics
