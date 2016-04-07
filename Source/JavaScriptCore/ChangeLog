@@ -1,5 +1,17 @@
 2016-04-06  Filip Pizlo  <fpizlo@apple.com>
 
+        32-bit JSC stress/multi-put-by-offset-multiple-transitions.js failing
+        https://bugs.webkit.org/show_bug.cgi?id=156292
+
+        Reviewed by Benjamin Poulain.
+
+        Make sure that we stash the callsite index before calling operationReallocateStorageAndFinishPut.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate):
+
+2016-04-06  Filip Pizlo  <fpizlo@apple.com>
+
         JSC test stress/arrowfunction-lexical-bind-superproperty.js failing
         https://bugs.webkit.org/show_bug.cgi?id=156309
 

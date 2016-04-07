@@ -1189,6 +1189,9 @@ void AccessCase::generate(AccessGenerationState& state)
             allocator.preserveUsedRegistersToScratchBufferForCall(jit, scratchBuffer, scratchGPR);
             if (needsToMakeRoomOnStackForCCall)
                 jit.makeSpaceOnStackForCCall();
+            jit.store32(
+                CCallHelpers::TrustedImm32(state.originalCallSiteIndex().bits()),
+                CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
 #if USE(JSVALUE64)
             jit.setupArgumentsWithExecState(
                 baseGPR,
