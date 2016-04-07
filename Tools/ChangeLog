@@ -1,3 +1,9 @@
+2016-04-06  ChangSeok Oh  <changseok@webkit.org>
+
+        Unreviewed, Update my primary email address and expertise.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-04-06  Jon Lee  <jonlee@apple.com>
 
         Update the Animometer patch and plan files
