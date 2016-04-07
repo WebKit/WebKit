@@ -33,6 +33,7 @@
 #include <WebCore/CookieStorage.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PlatformCookieJar.h>
+#include <WebCore/URL.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -81,6 +82,11 @@ void WebCookieManager::deleteAllCookies()
 void WebCookieManager::deleteAllCookiesModifiedSince(std::chrono::system_clock::time_point time)
 {
     WebCore::deleteAllCookiesModifiedSince(NetworkStorageSession::defaultStorageSession(), time);
+}
+
+void WebCookieManager::addCookie(const Cookie& cookie, const String& hostname)
+{
+    WebCore::addCookie(NetworkStorageSession::defaultStorageSession(), URL(URL(), hostname), cookie);
 }
 
 void WebCookieManager::startObservingCookieChanges()

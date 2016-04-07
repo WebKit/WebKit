@@ -1,3 +1,32 @@
+2016-04-07  Brian Burg  <bburg@apple.com>
+
+        Web Automation: implement Automation.addSingleCookie
+        https://bugs.webkit.org/show_bug.cgi?id=156319
+        <rdar://problem/25589605>
+
+        Reviewed by Timothy Hatcher.
+
+        Implement this command by converting the protocol cookie to
+        WebCore::Cookie, then sending the cookie to NetworkProcess to
+        be added to the storage session using CookieJar::addCookie.
+
+        * UIProcess/Automation/Automation.json:
+        Clarify the units used in the 'expires' field and how the default value
+        for the domain field should be computed.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::addSingleCookie):
+        Parse the cookie and send it out via WebCookieManagerProxy.
+
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::addCookie): Added.
+        * UIProcess/WebCookieManagerProxy.h:
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::addCookie):
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Cookies/WebCookieManager.messages.in:
+        Forward the message to WebCore::addCookie.
+
 2016-04-06  Ada Chan  <adachan@apple.com>
 
         Add WebKitAdditions extension points around preferences

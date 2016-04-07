@@ -1,3 +1,13 @@
+2016-04-07  Brian Burg  <bburg@apple.com>
+
+        Web Automation: implement Automation.addSingleCookie
+        https://bugs.webkit.org/show_bug.cgi?id=156319
+        <rdar://problem/25589605>
+
+        Reviewed by Timothy Hatcher.
+
+        * platform/Cookie.h: Document the units used by the 'expires' field.
+
 2016-04-07  Jon Davis  <jond@apple.com>
 
         Add ImageBitmap as under consideration on Feature Status page

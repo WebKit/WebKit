@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
     void DeleteCookiesForHostname(String hostname)
     void DeleteAllCookies()
     void DeleteAllCookiesModifiedSince(std::chrono::system_clock::time_point time)
+    void AddCookie(struct WebCore::Cookie cookie, String hostname)
 
     void SetHTTPCookieAcceptPolicy(uint32_t policy)
     void GetHTTPCookieAcceptPolicy(uint64_t callbackID)

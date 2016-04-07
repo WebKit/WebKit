@@ -196,7 +196,7 @@
                 { "name": "value", "type": "string", "description": "Cookie value." },
                 { "name": "domain", "type": "string", "description": "Cookie domain. If empty, the domain is inherited from the relevant browsing context." },
                 { "name": "path", "type": "string", "description": "Cookie path." },
-                { "name": "expires", "type": "number", "description": "Cookie expires." },
+                { "name": "expires", "type": "number", "description": "Cookie expiration in seconds since the UNIX epoch." },
                 { "name": "size", "type": "integer", "description": "Cookie size." },
                 { "name": "httpOnly", "type": "boolean", "description": "True if cookie is http-only." },
                 { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },

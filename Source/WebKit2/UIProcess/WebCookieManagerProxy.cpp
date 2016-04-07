@@ -128,6 +128,11 @@ void WebCookieManagerProxy::deleteAllCookiesModifiedSince(std::chrono::system_cl
     processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookiesModifiedSince(time));
 }
 
+void WebCookieManagerProxy::addCookie(const WebCore::Cookie& cookie, const String& hostname)
+{
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::AddCookie(cookie, hostname));
+}
+
 void WebCookieManagerProxy::startObservingCookieChanges()
 {
     processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StartObservingCookieChanges());

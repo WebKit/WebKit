@@ -43,6 +43,9 @@ namespace API {
 class Array;
 }
 
+namespace WebCore {
+struct Cookie;
+}
 
 namespace WebKit {
 
@@ -65,6 +68,7 @@ public:
     void deleteCookiesForHostname(const String& hostname);
     void deleteAllCookies();
     void deleteAllCookiesModifiedSince(std::chrono::system_clock::time_point);
+    void addCookie(const WebCore::Cookie&, const String& hostname);
 
     void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
     void getHTTPCookieAcceptPolicy(std::function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>);

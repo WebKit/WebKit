@@ -745,16 +745,55 @@ void WebAutomationSession::didDeleteCookie(uint64_t callbackID, const String& er
     callback->sendSuccess();
 }
 
-void WebAutomationSession::addSingleCookie(ErrorString& errorString, const String& browsingContextHandle, const Inspector::InspectorObject& cookie, Ref<AddSingleCookieCallback>&& callback)
+void WebAutomationSession::addSingleCookie(ErrorString& errorString, const String& browsingContextHandle, const Inspector::InspectorObject& cookieObject, Ref<AddSingleCookieCallback>&& callback)
 {
-    // FIXME: Implementing this command requires a new CookieJar API <https://webkit.org/b/156091>
-    UNUSED_PARAM(browsingContextHandle);
-    // FIXME: if the incoming cookie's domain is the string '(inherit)',
-    // then it should be inherited from the main frame's domain.
-    UNUSED_PARAM(cookie);
-    UNUSED_PARAM(callback);
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(WindowNotFound);
 
-    FAIL_WITH_PREDEFINED_ERROR_MESSAGE(NotImplemented);
+    WebCore::URL activeURL = WebCore::URL(WebCore::URL(), page->pageLoadState().activeURL());
+    ASSERT(activeURL.isValid());
+
+    WebCore::Cookie cookie;
+
+    if (!cookieObject.getString(WTF::ASCIILiteral("name"), cookie.name))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+    if (!cookieObject.getString(WTF::ASCIILiteral("value"), cookie.value))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+    String domain;
+    if (!cookieObject.getString(WTF::ASCIILiteral("domain"), domain))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+    // Inherit the domain/host from the main frame's URL if it is not explicitly set.
+    if (domain.isEmpty())
+        domain = activeURL.host();
+
+    cookie.domain = domain;
+
+    if (!cookieObject.getString(WTF::ASCIILiteral("path"), cookie.path))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+    double expires;
+    if (!cookieObject.getDouble(WTF::ASCIILiteral("expires"), expires))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+    cookie.expires = expires * 1000.0;
+
+    if (!cookieObject.getBoolean(WTF::ASCIILiteral("secure"), cookie.secure))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+    if (!cookieObject.getBoolean(WTF::ASCIILiteral("session"), cookie.session))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+    if (!cookieObject.getBoolean(WTF::ASCIILiteral("httpOnly"), cookie.httpOnly))
+        FAIL_WITH_PREDEFINED_ERROR_MESSAGE(MissingParameter);
+
+    WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();
+    cookieManager->addCookie(cookie, activeURL.host());
+
+    callback->sendSuccess();
 }
 
 void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const String& browsingContextHandle, Ref<DeleteAllCookiesCallback>&& callback)

@@ -52,6 +52,7 @@ namespace WebCore {
         String value;
         String domain;
         String path;
+        // Expiration date, expressed as milliseconds since the UNIX epoch.
         double expires;
         bool httpOnly;
         bool secure;
