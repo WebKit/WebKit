@@ -1,3 +1,16 @@
+2016-04-06  Jon Lee  <jonlee@apple.com>
+
+        Update the Animometer patch and plan files
+        https://bugs.webkit.org/show_bug.cgi?id=156263
+
+        Reviewed by Ryosuke Niwa.
+
+        Measure the latest set of tests by updating the plan revision to r199134.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/Animometer.patch: Update to run the master suite only.
+        * Scripts/webkitpy/benchmark_runner/data/plans/animometer.plan: Update to use the release page instead
+        of the developer page.
+
 2016-04-06  Saam barati  <sbarati@apple.com>
 
         jsc-layout-tests.yaml/js/script-tests/regress-141098.js failing on Yosemite Debug after r198989

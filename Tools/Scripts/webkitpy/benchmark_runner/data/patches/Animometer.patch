@@ -1,11 +1,11 @@
-diff --git a/PerformanceTests/Animometer/resources/debug-runner/animometer.js b/PerformanceTests/Animometer/resources/debug-runner/animometer.js
-index ffc71ba..02a5d49 100644
---- a/resources/debug-runner/animometer.js
-+++ b/resources/debug-runner/animometer.js
-@@ -119,6 +119,57 @@ Utilities.extendObject(window.benchmarkRunnerClient, {
+diff --git a/resources/runner/animometer.js b/resources/runner/animometer.js
+index b20a1c9..e434e89 100644
+--- a/resources/runner/animometer.js
++++ b/resources/runner/animometer.js
+@@ -320,6 +320,57 @@ window.benchmarkRunnerClient = {
+     didFinishLastIteration: function()
      {
-         this.progressBar.incrementRange();
-         this.results.calculateScore(testData);
+         benchmarkController.showResults();
 +    },
 +
 +    _computeTestReport: function(testName, testResults)
@@ -58,99 +58,14 @@ index ffc71ba..02a5d49 100644
 +        }
 +        xhr.send(results);
      }
- });
+ };
 
-@@ -255,10 +307,10 @@ window.suitesManager =
-         startButton.disabled = true;
-     },
-
--    _onChangeSuiteCheckbox: function(event)
-+    _onChangeSuiteCheckbox: function(suiteCheckbox)
-     {
--        var selected = event.target.checked;
--        event.target.testsElements.forEach(function(testElement) {
-+        var selected = suiteCheckbox.checked;
-+        suiteCheckbox.testsElements.forEach(function(testElement) {
-             var testCheckbox = this._checkboxElement(testElement);
-             testCheckbox.checked = selected;
-         }, this);
-@@ -279,7 +331,9 @@ window.suitesManager =
-
-         var suiteCheckbox = Utilities.createElement("input", { type: "checkbox" }, label);
-         suiteCheckbox.suite = suite;
--        suiteCheckbox.onchange = this._onChangeSuiteCheckbox.bind(this);
-+        suiteCheckbox.onchange = function(event) {
-+            this._onChangeSuiteCheckbox(event.target);
-+        }.bind(this);
-         suiteCheckbox.testsElements = [];
-
-         label.appendChild(document.createTextNode(" " + suite.name));
-@@ -428,45 +482,8 @@ window.suitesManager =
- Utilities.extendObject(window.benchmarkController, {
+@@ -357,7 +408,7 @@ window.sectionsManager =
+ window.benchmarkController = {
      initialize: function()
      {
--        document.forms["benchmark-options"].addEventListener("change", benchmarkController.onBenchmarkOptionsChanged, true);
--        document.forms["graph-type"].addEventListener("change", benchmarkController.onGraphTypeChanged, true);
--        document.forms["time-graph-options"].addEventListener("change", benchmarkController.onTimeGraphOptionsChanged, true);
--        document.forms["complexity-graph-options"].addEventListener("change", benchmarkController.onComplexityGraphOptionsChanged, true);
--        optionsManager.updateUIFromLocalStorage();
-         suitesManager.createElements();
--        suitesManager.updateUIFromLocalStorage();
--        suitesManager.updateDisplay();
--        suitesManager.updateEditsElementsState();
--
--        var dropTarget = document.getElementById("drop-target");
--        function stopEvent(e) {
--            e.stopPropagation();
--            e.preventDefault();
--        }
--        dropTarget.addEventListener("dragenter", stopEvent, false);
--        dropTarget.addEventListener("dragover", stopEvent, false);
--        dropTarget.addEventListener("dragleave", stopEvent, false);
--        dropTarget.addEventListener("drop", function (e) {
--            e.stopPropagation();
--            e.preventDefault();
--
--            if (!e.dataTransfer.files.length)
--                return;
--
--            var file = e.dataTransfer.files[0];
--
--            var reader = new FileReader();
--            reader.filename = file.name;
--            reader.onload = function(e) {
--                var run = JSON.parse(e.target.result);
--                benchmarkRunnerClient.results = new ResultsDashboard(run.options, run.data);
--                benchmarkController.showResults();
--            };
--
--            reader.readAsText(file);
--            document.title = "File: " + reader.filename;
--        }, false);
--
+-        benchmarkController.addOrientationListenerIfNecessary();
 +        setTimeout(benchmarkController.startBenchmark.bind(benchmarkController), 3000);
      },
 
-     onBenchmarkOptionsChanged: function(event)
-@@ -482,7 +499,20 @@ Utilities.extendObject(window.benchmarkController, {
-
-     startBenchmark: function()
-     {
--        var options = optionsManager.updateLocalStorageFromUI();
-+        var options = {
-+            "test-interval": 20,
-+            "display": "minimal",
-+            "controller": "ramp",
-+            "kalman-process-error": 1,
-+            "kalman-measurement-error": 4,
-+            "time-measurement": "performance"
-+        };
-+
-+        for (var suiteIndex = 0; suiteIndex < 5; ++suiteIndex) {
-+            var suiteCheckbox = document.querySelector("label[for=suite-" + suiteIndex + "] input[type=checkbox]");
-+            suiteCheckbox.checked = true;
-+            suitesManager._onChangeSuiteCheckbox(suiteCheckbox);
-+        }
-         var suites = suitesManager.updateLocalStorageFromUI();
-         this._startBenchmark(suites, options, "running-test");
-     },
+     addOrientationListenerIfNecessary: function() {
