@@ -1,3 +1,67 @@
+2016-04-07  Daniel Bates  <dabates@apple.com>
+
+        CSP: Remove tests for unimplemented directive referrer
+        https://bugs.webkit.org/show_bug.cgi?id=156353
+
+        Reviewed by Andy Estes.
+
+        The Content Security Policy directive referrer was removed from the Content Security Policy Level 2 spec.,
+        <https://w3c.github.io/webappsec-csp/2/> (Editor's Draft, 29 August 2015). It was never implemented.
+        The functionality provided by this directive has been incorporated into its own meta tag and is covered
+        by the Referrer Policy spec., <https://w3c.github.io/webappsec-referrer-policy/>.
+
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-http-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-http-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-http-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-http-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-https-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-https-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-https-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-https-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-http-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-http-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-http-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-http-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-https-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-https-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-https-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-https-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-http-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-http-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-http-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-http-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-https-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-https-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-https-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-https-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-http-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-http-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-http-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-http-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-https-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-https-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-https-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-https-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-http-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-http-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-http-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-http-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-https-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-https-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-https-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-https-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-http-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-http-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-http-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-http-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-https-http-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-https-http.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-https-https-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-https-https.html: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/referrer-test-endpoint.php: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/referrer-test.js: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/referrer-test.php: Removed.
+
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed follow-up fix to r199168. Add missing newline in expected output.
