@@ -119,7 +119,7 @@
     {
         "name": "Classes",
         "status": {
-            "status": "In Development",
+            "status": "Done",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-class-definitions",

@@ -573,11 +573,9 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
 
         break;
     }
-#if ENABLE(ES6_CLASS_SYNTAX)
     case CLASSTOKEN:
         result = parseClassDeclaration(context);
         break;
-#endif
     case FUNCTION:
         result = parseFunctionDeclaration(context);
         break;
@@ -2828,11 +2826,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         SavePoint savePoint = createSavePoint();
 
         bool startsWithFunction = match(FUNCTION);
-        if (startsWithFunction
-#if ENABLE(ES6_CLASS_SYNTAX)
-                || match(CLASSTOKEN)
-#endif
-                ) {
+        if (startsWithFunction || match(CLASSTOKEN)) {
             isFunctionOrClassDeclaration = true;
             next();
 
@@ -2851,13 +2845,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
                 DepthManager statementDepth(&m_statementDepth);
                 m_statementDepth = 1;
                 result = parseFunctionDeclaration(context);
-            }
-#if ENABLE(ES6_CLASS_SYNTAX)
-            else {
+            } else {
                 ASSERT(match(CLASSTOKEN));
                 result = parseClassDeclaration(context);
             }
-#endif
         } else {
             // export default expr;
             //
@@ -2968,11 +2959,9 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             break;
         }
 
-#if ENABLE(ES6_CLASS_SYNTAX)
         case CLASSTOKEN:
             result = parseClassDeclaration(context, ExportType::Exported);
             break;
-#endif
 
         default:
             failWithMessage("Expected either a declaration or a variable statement");
@@ -3721,12 +3710,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     switch (m_token.m_type) {
     case FUNCTION:
         return parseFunctionExpression(context);
-#if ENABLE(ES6_CLASS_SYNTAX)
     case CLASSTOKEN: {
         ParserClassInfo<TreeBuilder> info;
         return parseClass(context, FunctionNoRequirements, info);
     }
-#endif
     case OPENBRACE:
         if (strictMode())
             return parseStrictObjectLiteral(context);
@@ -3906,12 +3893,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         newCount++;
     }
 
-#if ENABLE(ES6_CLASS_SYNTAX)
     bool baseIsSuper = match(SUPER);
     semanticFailIfTrue(baseIsSuper && newCount, "Cannot use new with super");
-#else
-    bool baseIsSuper = false;
-#endif
 
     bool baseIsNewTarget = false;
     if (newCount && match(DOT)) {

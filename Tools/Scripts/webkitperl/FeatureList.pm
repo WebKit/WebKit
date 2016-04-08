@@ -185,9 +185,6 @@ my @features = (
     { option => "channel-messaging", desc => "Toggle Channel Messaging support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
 
-    { option => "class-syntax", desc => "Toggle ES6 class syntax support",
-      define => "ENABLE_ES6_CLASS_SYNTAX", default => 1, value => \$classSyntax },
-
     { option => "generators", desc => "Toggle ES6 generators support",
       define => "ENABLE_ES6_GENERATORS", default => 1, value => \$generatorsSupport },
 
