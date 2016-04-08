@@ -1,3 +1,23 @@
+2016-04-08  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Remove unnecessary iteration in populateGridPositions loop
+        https://bugs.webkit.org/show_bug.cgi?id=156376
+
+        Reviewed by Darin Adler.
+
+        The populateGridPositions loop limit was set to 'lastLine'. However, the
+        the position of last track's start line is updated after the loop, since
+        it does not follow the same pattern; it does not have a content
+        distribution offset.
+
+        So, since we are essentially overwriting the value stored in the last
+        iteration, we can just lower the loop limit.
+
+        No new tests added, because there is no change in the functionality.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::populateGridPositions):
+
 2016-04-08  John Wilander  <wilander@apple.com>
 
         CSP: Block XHR when calling XMLHttpRequest.send() and throw network error.
