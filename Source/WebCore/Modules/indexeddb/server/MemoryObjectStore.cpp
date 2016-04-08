@@ -32,6 +32,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBError.h"
 #include "IDBKeyRangeData.h"
+#include "IDBValue.h"
 #include "IndexKey.h"
 #include "Logging.h"
 #include "MemoryBackingStoreTransaction.h"
@@ -247,7 +248,7 @@ void MemoryObjectStore::deleteRange(const IDBKeyRangeData& inputRange)
     }
 }
 
-IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction, const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
+IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction, const IDBKeyData& keyData, const IDBValue& value)
 {
     LOG(IndexedDB, "MemoryObjectStore::addRecord");
 
@@ -262,13 +263,13 @@ IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction
         m_orderedKeys = std::make_unique<std::set<IDBKeyData>>();
     }
 
-    auto mapResult = m_keyValueStore->set(keyData, value);
+    auto mapResult = m_keyValueStore->set(keyData, value.data());
     ASSERT(mapResult.isNewEntry);
     auto listResult = m_orderedKeys->insert(keyData);
     ASSERT(listResult.second);
 
     // If there was an error indexing this addition, then revert it.
-    auto error = updateIndexesForPutRecord(keyData, value);
+    auto error = updateIndexesForPutRecord(keyData, value.data());
     if (!error.isNull()) {
         m_keyValueStore->remove(mapResult.iterator);
         m_orderedKeys->erase(listResult.first);

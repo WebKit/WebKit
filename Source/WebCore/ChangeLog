@@ -1,5 +1,41 @@
 2016-04-08  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Use more IDBValue and IDBGetResult in IDBBackingStore.
+        https://bugs.webkit.org/show_bug.cgi?id=156418
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, no change in behavior).
+
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+        * Modules/indexeddb/IDBValue.h:
+        
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp:
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::abort):
+        
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::addRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getRecord):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::addRecord):
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetRecord):
+
+2016-04-08  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Make IDBGetResult contain an IDBValue instead of a buffer, and remove unused methods.
         https://bugs.webkit.org/show_bug.cgi?id=156416
 

@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKeyRangeData.h"
+#include "IDBValue.h"
 #include "IndexedDB.h"
 #include "Logging.h"
 #include "MemoryIDBBackingStore.h"
@@ -230,7 +231,7 @@ void MemoryBackingStoreTransaction::abort()
 
         for (auto entry : *keyValueMap) {
             objectStore->deleteRecord(entry.key);
-            objectStore->addRecord(*this, entry.key, entry.value);
+            objectStore->addRecord(*this, entry.key, { entry.value });
         }
     }
 
