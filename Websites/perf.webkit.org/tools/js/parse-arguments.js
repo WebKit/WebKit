@@ -1,5 +1,5 @@
 
-function parseArgument(argv, acceptedOptions) {
+function parseArguments(argv, acceptedOptions) {
     var args = argv.slice(2);
     var options = {}
     for (var i = 0; i < args.length; i += 2) {
@@ -31,4 +31,4 @@ function parseArgument(argv, acceptedOptions) {
 }
 
 if (typeof module != 'undefined')
-    module.exports.parseArgument = parseArgument;
+    module.exports.parseArguments = parseArguments;

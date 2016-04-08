@@ -83,7 +83,6 @@ class BuildbotTriggerable {
         let associatedRequests = new Set;
         let self = this;
         return Promise.all(this._syncers.map(function (syncer) {
-            self._logger.log(`Fetching builds on ${syncer.builderName()}`);
             return syncer.pullBuildbot(self._lookbackCount).then(function (entryList) {
                 for (let entry of entryList) {
                     let request = BuildRequest.findById(entry.buildRequestId());

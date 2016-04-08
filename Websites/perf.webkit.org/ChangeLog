@@ -1,3 +1,32 @@
+2016-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix various bugs in the new syncing script
+        https://bugs.webkit.org/show_bug.cgi?id=156393
+
+        Reviewed by Darin Adler.
+
+        * server-tests/resources/common-operations.js: Added. This file was supposed to be added in r199191.
+        (addBuilderForReport):
+        (addSlaveForReport):
+        (connectToDatabaseInEveryTest):
+        (submitReport):
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype._pullBuildbotOnAllSyncers): Don't log every time we pull from buildbot
+        builder as this dramatically increases the amount of log we generate.
+        * tools/js/parse-arguments.js:
+        (parseArguments): Fixed a typo. This should be parseArgument*s*, not parseArgument.
+        * tools/js/remote.js:
+        (RemoteAPI.prototype.url): Fixed a bug that portSuffix wasn't being expanded in the template literal.
+        (RemoteAPI.prototype.configure): Added more validations with nice error messages.
+        (RemoteAPI.prototype.sendHttpRequest): Falling back to port 80 isn't right when scheme is https. Compute
+        the right port in configure instead based on the scheme.
+        * tools/sync-buildbot.js:
+        (syncLoop): Fixed the bug that syncing multiple times fail because Manifest.fetch() create new Platform
+        and Test objects. This results in various references in BuildRequest objects to get outdated. Fixing this
+        properly in Manifest.fetch() because we do need to "forget" about some tests and platforms in some cases.
+        For now, delete all v3 model objects and start over in each syncing cycle.
+        * unit-tests/tools-js-remote-tests.js: Added. Unit tests for the aforementioned changes to RemoteAPI.
+
 2016-04-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         sync-buildbot.js doesn't mark disappeared builds as failed
