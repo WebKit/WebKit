@@ -440,5 +440,45 @@ describe('BuildbotTriggerable', function () {
                 done();
             }).catch(done);
         });
+
+        it('should schedule a build request of an user created test group before ones created by automatic change detection', function (done) {
+            let db = TestServer.database();
+            let syncPromise;
+            db.connect().then(function () {
+                return Promise.all([
+                    MockData.addMockData(db, ['pending', 'pending', 'pending', 'pending']),
+                    MockData.addAnotherMockTestGroup(db, ['pending', 'pending', 'pending', 'pending'], 'rniwa'),
+                ]);
+            }).then(function () {
+                return Manifest.fetch();
+            }).then(function () {
+                let config = MockData.mockTestSyncConfigWithSingleBuilder();
+                let logger = new MockLogger;
+                let slaveInfo = {name: 'sync-slave', password: 'password'};
+                let triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
+                syncPromise = triggerable.syncOnce();
+                syncPromise.catch(done);
+                return MockRemoteAPI.waitForRequest();
+            }).then(function () {
+                assert.equal(MockRemoteAPI.requests.length, 1);
+                assert.equal(MockRemoteAPI.requests[0].method, 'GET');
+                assert.equal(MockRemoteAPI.requests[0].url, '/json/builders/some-builder-1/pendingBuilds');
+                MockRemoteAPI.requests[0].resolve([]);
+                return MockRemoteAPI.waitForRequest();
+            }).then(function () {
+                assert.equal(MockRemoteAPI.requests.length, 2);
+                assert.equal(MockRemoteAPI.requests[1].method, 'GET');
+                assert.equal(MockRemoteAPI.requests[1].url, '/json/builders/some-builder-1/builds/?select=-1&select=-2');
+                MockRemoteAPI.requests[1].resolve({});
+                return MockRemoteAPI.waitForRequest();
+            }).then(function () {
+                assert.equal(MockRemoteAPI.requests.length, 3);
+                assert.equal(MockRemoteAPI.requests[2].method, 'POST');
+                assert.equal(MockRemoteAPI.requests[2].url, '/builders/some-builder-1/force');
+                assert.deepEqual(MockRemoteAPI.requests[2].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '710'});
+                MockRemoteAPI.requests[2].resolve('OK');
+                done();
+            }).catch(done);
+        });
     });
 });

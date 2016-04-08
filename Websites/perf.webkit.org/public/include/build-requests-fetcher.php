@@ -26,12 +26,13 @@ class BuildRequestsFetcher {
     }
 
     function fetch_incomplete_requests_for_triggerable($triggerable_id) {
-        $this->rows = $this->db->query_and_fetch_all('SELECT * FROM build_requests
-            WHERE request_triggerable = $1 AND request_group
-                IN (SELECT testgroup_id FROM analysis_test_groups WHERE EXISTS
+        $this->rows = $this->db->query_and_fetch_all('SELECT * FROM build_requests,
+            (SELECT testgroup_id, (case when testgroup_author is not null then 0 else 1 end) as author_order, testgroup_created_at
+                FROM analysis_test_groups WHERE EXISTS
                     (SELECT 1 FROM build_requests WHERE testgroup_id = request_group AND request_status
-                        IN (\'pending\', \'scheduled\', \'running\')))
-            ORDER BY request_group, request_order', array($triggerable_id));
+                        IN (\'pending\', \'scheduled\', \'running\'))) AS test_groups
+            WHERE request_triggerable = $1 AND request_group = test_groups.testgroup_id
+            ORDER BY author_order, testgroup_created_at, request_order', array($triggerable_id));
     }
 
     function fetch_request($request_id) {

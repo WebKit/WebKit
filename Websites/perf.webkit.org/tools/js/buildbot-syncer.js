@@ -66,6 +66,7 @@ class BuildbotSyncer {
         this._slaveList = object.slaveList;
         this._buildRequestPropertyName = object.buildRequestArgument;
         this._entryList = null;
+        this._slavesWithNewRequests = new Set;
     }
 
     builderName() { return this._builderName; }
@@ -89,12 +90,14 @@ class BuildbotSyncer {
 
     scheduleRequest(newRequest, slaveName)
     {
+        assert(!this._slavesWithNewRequests.has(slaveName));
         let properties = this._propertiesForBuildRequest(newRequest);
 
         assert.equal(!this._slavePropertyName, !slaveName);
         if (this._slavePropertyName)
             properties[this._slavePropertyName] = slaveName;
 
+        this._slavesWithNewRequests.add(slaveName);
         return this._remote.postFormUrlencodedData(this.pathForForceBuild(), properties);
     }
 
@@ -116,13 +119,13 @@ class BuildbotSyncer {
         }
 
         if (!this._slaveList || hasPendingBuildsWithoutSlaveNameSpecified) {
-            if (usedSlaves.size)
+            if (usedSlaves.size || this._slavesWithNewRequests.size)
                 return null;
             return this.scheduleRequest(newRequest, null);
         }
 
         for (let slaveName of this._slaveList) {
-            if (!usedSlaves.has(slaveName))
+            if (!usedSlaves.has(slaveName) && !this._slavesWithNewRequests.has(slaveName))
                 return this.scheduleRequest(newRequest, slaveName);
         }
 
@@ -148,6 +151,7 @@ class BuildbotSyncer {
                     entryList.push(entryByRequest[id]);
 
                 self._entryList = entryList;
+                self._slavesWithNewRequests.clear();
 
                 return entryList;
             });

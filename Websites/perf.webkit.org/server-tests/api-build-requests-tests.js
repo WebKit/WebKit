@@ -326,10 +326,41 @@ describe('/api/build-requests', function () {
         }).catch(done);
     });
 
-    it('should order build requests based on test group and order', function (done) {
+    it('should order build requests based on test group creation time and order', function (done) {
         let db = TestServer.database();
         db.connect().then(function () {
-            return Promise.all([MockData.addMockData(db), MockData.addAnotherMockTestGroup(db)])
+            return Promise.all([MockData.addMockData(db), MockData.addAnotherMockTestGroup(db)]);
+        }).then(function () {
+            return Manifest.fetch();
+        }).then(function () {
+            return BuildRequest.fetchForTriggerable('build-webkit');
+        }).then(function (buildRequests) {
+            assert.equal(buildRequests.length, 8);
+            assert.equal(buildRequests[0].id(), 700);
+            assert.equal(buildRequests[0].testGroupId(), 600);
+            assert.equal(buildRequests[1].id(), 701);
+            assert.equal(buildRequests[1].testGroupId(), 600);
+            assert.equal(buildRequests[2].id(), 702);
+            assert.equal(buildRequests[2].testGroupId(), 600);
+            assert.equal(buildRequests[3].id(), 703);
+            assert.equal(buildRequests[3].testGroupId(), 600);
+
+            assert.equal(buildRequests[4].id(), 710);
+            assert.equal(buildRequests[4].testGroupId(), 599);
+            assert.equal(buildRequests[5].id(), 711);
+            assert.equal(buildRequests[5].testGroupId(), 599);
+            assert.equal(buildRequests[6].id(), 712);
+            assert.equal(buildRequests[6].testGroupId(), 599);
+            assert.equal(buildRequests[7].id(), 713);
+            assert.equal(buildRequests[7].testGroupId(), 599);
+            done();
+        }).catch(done);
+    });
+
+    it('should place build requests created by user before automatically created ones', function (done) {
+        let db = TestServer.database();
+        db.connect().then(function () {
+            return Promise.all([MockData.addMockData(db), MockData.addAnotherMockTestGroup(db, null, 'rniwa')]);
         }).then(function () {
             return Manifest.fetch();
         }).then(function () {
@@ -344,8 +375,16 @@ describe('/api/build-requests', function () {
             assert.equal(buildRequests[2].testGroupId(), 599);
             assert.equal(buildRequests[3].id(), 713);
             assert.equal(buildRequests[3].testGroupId(), 599);
+
+            assert.equal(buildRequests[4].id(), 700);
+            assert.equal(buildRequests[4].testGroupId(), 600);
+            assert.equal(buildRequests[5].id(), 701);
+            assert.equal(buildRequests[5].testGroupId(), 600);
+            assert.equal(buildRequests[6].id(), 702);
+            assert.equal(buildRequests[6].testGroupId(), 600);
+            assert.equal(buildRequests[7].id(), 703);
+            assert.equal(buildRequests[7].testGroupId(), 600);
             done();
         }).catch(done);
     });
-
 });
