@@ -644,8 +644,7 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
         return downcast<RenderMathMLOperator>(*m_renderer).element().textContent();
 #endif
 
-    // rangeOfContents does not include CSS-generated content.
-    if (m_renderer->isBeforeOrAfterContent())
+    if (shouldGetTextFromNode(mode))
         return AccessibilityNodeObject::textUnderElement(mode);
 
     // We use a text iterator for text objects AND for those cases where we are
@@ -657,12 +656,6 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
         Document* nodeDocument = nullptr;
         RefPtr<Range> textRange;
         if (Node* node = m_renderer->node()) {
-            // rangeOfContents does not include CSS-generated content.
-            Node* firstChild = node->pseudoAwareFirstChild();
-            Node* lastChild = node->pseudoAwareLastChild();
-            if ((firstChild && firstChild->isPseudoElement()) || (lastChild && lastChild->isPseudoElement()))
-                return AccessibilityNodeObject::textUnderElement(mode);
-
             nodeDocument = &node->document();
             textRange = rangeOfContents(*node);
         } else {
@@ -718,6 +711,31 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
     }
     
     return AccessibilityNodeObject::textUnderElement(mode);
+}
+
+bool AccessibilityRenderObject::shouldGetTextFromNode(AccessibilityTextUnderElementMode mode) const
+{
+    if (!m_renderer)
+        return false;
+
+    // AccessibilityRenderObject::textUnderElement() gets the text of anonymous blocks by using
+    // the child nodes to define positions. CSS tables and their anonymous descendants lack
+    // children with nodes.
+    if (m_renderer->isAnonymous() && m_renderer->isTablePart())
+        return mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren;
+
+    // AccessibilityRenderObject::textUnderElement() calls rangeOfContents() to create the text
+    // range. rangeOfContents() does not include CSS-generated content.
+    if (m_renderer->isBeforeOrAfterContent())
+        return true;
+    if (Node* node = m_renderer->node()) {
+        Node* firstChild = node->pseudoAwareFirstChild();
+        Node* lastChild = node->pseudoAwareLastChild();
+        if ((firstChild && firstChild->isPseudoElement()) || (lastChild && lastChild->isPseudoElement()))
+            return true;
+    }
+
+    return false;
 }
 
 Node* AccessibilityRenderObject::node() const

@@ -1,0 +1,18 @@
+foo
+bar
+baz
+End of test
+AXRole: AXWebArea 
+    AXRole: AXSection AXValue: foo !
+    AXRole: AXSection AXValue: bar !
+    AXRole: AXSection AXValue: baz
+    AXRole: AXSection AXValue: End of test
+This verifies that getting content of an element with generated content in CSS table doesn't cause a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -279,6 +279,8 @@ private:
 
     bool inheritsPresentationalRole() const override;
 
+    bool shouldGetTextFromNode(AccessibilityTextUnderElementMode) const;
+
 #if ENABLE(MATHML)
     // All math elements return true for isMathElement().
     bool isMathElement() const override;

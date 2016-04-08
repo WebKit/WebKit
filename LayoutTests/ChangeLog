@@ -1,3 +1,18 @@
+2016-04-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Crash getting text under element in CSS table
+        https://bugs.webkit.org/show_bug.cgi?id=156328
+
+        Reviewed by Chris Fleizach.
+
+        While this crash is currently seen only for ATK, there is nothing to
+        prevent another port from attempting to get all the text under a CSS
+        RenderTable. Hence the shared test.
+
+        * accessibility/generated-content-with-display-table-crash.html: Added.
+        * platform/gtk/accessibility/generated-content-with-display-table-crash-expected.txt: Added.
+        * platform/mac/accessibility/generated-content-with-display-table-crash-expected.txt: Added.
+
 2016-04-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Quick Open fails to match pattern "bB" in file "abBc"

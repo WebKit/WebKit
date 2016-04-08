@@ -1,3 +1,24 @@
+2016-04-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Crash getting text under element in CSS table
+        https://bugs.webkit.org/show_bug.cgi?id=156328
+
+        Reviewed by Chris Fleizach.
+
+        AccessibilityRenderObject::textUnderElement() assumes (and asserts) that
+        the first and last child of an anonymous block will each have nodes with
+        which to define positions. This is not the case for CSS Tables and their
+        anonymous descendants. AccessibilityNodeObject:textUnderElement() is our
+        fallback for the instances where a text range cannot be created based on
+        positions, so let it handle anonymous RenderTable parts.
+
+        Test: accessibility/generated-content-with-display-table-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        (WebCore::AccessibilityRenderObject::shouldGetTextFromNode):
+        * accessibility/AccessibilityRenderObject.h:
+
 2016-04-08  Darin Adler  <darin@apple.com>
 
         Remove unneeded UsePointersEvenForNonNullableObjectArguments from event classes
