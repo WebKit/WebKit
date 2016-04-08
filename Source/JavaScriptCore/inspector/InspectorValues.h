@@ -51,11 +51,14 @@ class JS_EXPORT_PRIVATE InspectorValue : public RefCounted<InspectorValue> {
 public:
     static const int maxDepth = 1000;
 
-    InspectorValue()
-        : m_type(Type::Null) { }
     virtual ~InspectorValue() { }
 
     static Ref<InspectorValue> null();
+    static Ref<InspectorValue> create(bool);
+    static Ref<InspectorValue> create(int);
+    static Ref<InspectorValue> create(double);
+    static Ref<InspectorValue> create(const String&);
+    static Ref<InspectorValue> create(const char*);
 
     enum class Type {
         Null = 0,
@@ -64,24 +67,24 @@ public:
         Integer,
         String,
         Object,
-        Array
+        Array,
     };
 
     Type type() const { return m_type; }
-
     bool isNull() const { return m_type == Type::Null; }
 
-    virtual bool asBoolean(bool&) const;
-    virtual bool asInteger(int&) const;
-    virtual bool asInteger(unsigned&) const;
-    virtual bool asInteger(long&) const;
-    virtual bool asInteger(long long&) const;
-    virtual bool asInteger(unsigned long&) const;
-    virtual bool asInteger(unsigned long long&) const;
-    virtual bool asDouble(double&) const;
-    virtual bool asDouble(float&) const;
-    virtual bool asString(String&) const;
-    virtual bool asValue(RefPtr<InspectorValue>&);
+    bool asBoolean(bool&) const;
+    bool asInteger(int&) const;
+    bool asInteger(unsigned&) const;
+    bool asInteger(long&) const;
+    bool asInteger(long long&) const;
+    bool asInteger(unsigned long&) const;
+    bool asInteger(unsigned long long&) const;
+    bool asDouble(double&) const;
+    bool asDouble(float&) const;
+    bool asString(String&) const;
+    bool asValue(RefPtr<InspectorValue>&);
+
     virtual bool asObject(RefPtr<InspectorObject>&);
     virtual bool asArray(RefPtr<InspectorArray>&);
 
@@ -91,71 +94,39 @@ public:
     virtual void writeJSON(StringBuilder& output) const;
 
 protected:
-    explicit InspectorValue(Type type) : m_type(type) { }
+    InspectorValue()
+        : m_type(Type::Null) { }
 
-private:
-    Type m_type;
-};
+    explicit InspectorValue(Type type)
+        : m_type(type) { }
 
-class JS_EXPORT_PRIVATE InspectorBasicValue : public InspectorValue {
-public:
-
-    static Ref<InspectorBasicValue> create(bool);
-    static Ref<InspectorBasicValue> create(int);
-    static Ref<InspectorBasicValue> create(double);
-
-    bool asBoolean(bool&) const override;
-    // Numbers from the frontend are always parsed as doubles, so we allow
-    // clients to convert to integral values with this function.
-    bool asInteger(int&) const override;
-    bool asInteger(unsigned&) const override;
-    bool asInteger(long&) const override;
-    bool asInteger(long long&) const override;
-    bool asInteger(unsigned long&) const override;
-    bool asInteger(unsigned long long&) const override;
-    bool asDouble(double&) const override;
-    bool asDouble(float&) const override;
-
-    void writeJSON(StringBuilder& output) const override;
-
-private:
-    explicit InspectorBasicValue(bool value)
-        : InspectorValue(Type::Boolean)
+    explicit InspectorValue(bool value)
+        : m_type(Type::Boolean)
         , m_booleanValue(value) { }
 
-    explicit InspectorBasicValue(int value)
-        : InspectorValue(Type::Integer)
+    explicit InspectorValue(int value)
+        : m_type(Type::Integer)
         , m_doubleValue(static_cast<double>(value)) { }
 
-    explicit InspectorBasicValue(double value)
-        : InspectorValue(Type::Double)
+    explicit InspectorValue(double value)
+        : m_type(Type::Double)
         , m_doubleValue(value) { }
 
+    explicit InspectorValue(const String& value)
+        : m_type(Type::String)
+        , m_stringValue(value) { }
+
+    explicit InspectorValue(const char* value)
+        : m_type(Type::String)
+        , m_stringValue(value) { }
+
+private:
+    Type m_type { Type::Null };
     union {
         bool m_booleanValue;
         double m_doubleValue;
+        String m_stringValue;
     };
-};
-
-class JS_EXPORT_PRIVATE InspectorString : public InspectorValue {
-public:
-    static Ref<InspectorString> create(const String&);
-    static Ref<InspectorString> create(const char*);
-
-    bool asString(String& output) const override;
-
-    void writeJSON(StringBuilder& output) const override;
-
-private:
-    explicit InspectorString(const String& value)
-        : InspectorValue(Type::String)
-        , m_stringValue(value) { }
-
-    explicit InspectorString(const char* value)
-        : InspectorValue(Type::String)
-        , m_stringValue(value) { }
-
-    String m_stringValue;
 };
 
 class JS_EXPORT_PRIVATE InspectorObjectBase : public InspectorValue {
@@ -329,22 +300,22 @@ inline InspectorObjectBase::const_iterator InspectorObjectBase::find(const Strin
 
 inline void InspectorObjectBase::setBoolean(const String& name, bool value)
 {
-    setValue(name, InspectorBasicValue::create(value));
+    setValue(name, InspectorValue::create(value));
 }
 
 inline void InspectorObjectBase::setInteger(const String& name, int value)
 {
-    setValue(name, InspectorBasicValue::create(value));
+    setValue(name, InspectorValue::create(value));
 }
 
 inline void InspectorObjectBase::setDouble(const String& name, double value)
 {
-    setValue(name, InspectorBasicValue::create(value));
+    setValue(name, InspectorValue::create(value));
 }
 
 inline void InspectorObjectBase::setString(const String& name, const String& value)
 {
-    setValue(name, InspectorString::create(value));
+    setValue(name, InspectorValue::create(value));
 }
 
 inline void InspectorObjectBase::setValue(const String& name, RefPtr<InspectorValue>&& value)
@@ -370,22 +341,22 @@ inline void InspectorObjectBase::setArray(const String& name, RefPtr<InspectorAr
 
 inline void InspectorArrayBase::pushBoolean(bool value)
 {
-    m_data.append(InspectorBasicValue::create(value));
+    m_data.append(InspectorValue::create(value));
 }
 
 inline void InspectorArrayBase::pushInteger(int value)
 {
-    m_data.append(InspectorBasicValue::create(value));
+    m_data.append(InspectorValue::create(value));
 }
 
 inline void InspectorArrayBase::pushDouble(double value)
 {
-    m_data.append(InspectorBasicValue::create(value));
+    m_data.append(InspectorValue::create(value));
 }
 
 inline void InspectorArrayBase::pushString(const String& value)
 {
-    m_data.append(InspectorString::create(value));
+    m_data.append(InspectorValue::create(value));
 }
 
 inline void InspectorArrayBase::pushValue(RefPtr<InspectorValue>&& value)

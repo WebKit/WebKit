@@ -1,3 +1,13 @@
+2016-04-08  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: get rid of InspectorBasicValue and InspectorString subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=156407
+        <rdar://problem/25627659>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorDatabaseAgent.cpp: Don't use deleted subclasses.
+
 2016-04-08  Beth Dakin  <bdakin@apple.com>
 
         Fix leaks in WebAVMediaSelectionOptionMac and WebPlaybackControlsManager
