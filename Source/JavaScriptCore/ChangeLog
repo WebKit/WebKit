@@ -1,5 +1,21 @@
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Remote Inspector: When disallowing remote inspection on a debuggable, a listing is still sent to debuggers
+        https://bugs.webkit.org/show_bug.cgi?id=156380
+        <rdar://problem/25323727>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::updateTarget):
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        When a target has been updated and it no longer generates a listing,
+        we should remove the old listing as that is now stale and should
+        not be sent. Not generating a listing means this target is no
+        longer allowed to be debugged.
+
+2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Not necessary to validate webinspectord connection on iOS
         https://bugs.webkit.org/show_bug.cgi?id=156377
         <rdar://problem/25612460>
