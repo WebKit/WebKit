@@ -1,3 +1,12 @@
+2016-04-06  Dean Jackson  <dino@apple.com>
+
+        Watchlist modifications:
+        - remove roger_fong
+        - add myself to a few areas
+        - remove graouts from WebInspectorAPI
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2016-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to test effect of view exposed rect on tiled backing
