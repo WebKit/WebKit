@@ -299,6 +299,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case UInt32ToNumber: {
         JSValue child = forNode(node->child1()).value();
         if (doesOverflow(node->arithMode())) {
+            if (enableInt52()) {
+                if (child && child.isMachineInt()) {
+                    setConstant(node, jsNumber(child.asMachineInt()));
+                    break;
+                }
+                forNode(node).setType(SpecMachineInt);
+                break;
+            }
             if (child && child.isInt32()) {
                 uint32_t value = child.asInt32();
                 setConstant(node, jsNumber(value));

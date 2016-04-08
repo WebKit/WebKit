@@ -2125,10 +2125,10 @@ private:
         LValue value = lowInt32(m_node->child1());
 
         if (doesOverflow(m_node->arithMode())) {
-            setDouble(m_out.unsignedToDouble(value));
+            setStrictInt52(m_out.zeroExtPtr(value));
             return;
         }
-        
+
         speculate(Overflow, noValue(), 0, m_out.lessThan(value, m_out.int32Zero));
         setInt32(value);
     }

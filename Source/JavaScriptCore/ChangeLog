@@ -1,3 +1,24 @@
+2016-04-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        UInt32ToNumber should have an Int52 path
+        https://bugs.webkit.org/show_bug.cgi?id=125704
+
+        Reviewed by Filip Pizlo.
+
+        When dealing with big numbers, fall back to Int52 instead
+        of double when possible.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileUInt32ToNumber):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileUInt32ToNumber):
+
 2016-04-08  Brian Burg  <bburg@apple.com>
 
         Web Inspector: protocol generator should emit an error when 'type' is used instead of '$ref'
