@@ -1,3 +1,20 @@
+2016-04-08  Zalan Bujtas  <zalan@apple.com>
+
+        Focus ring drawn at incorrect location on image map with CSS transform.
+        https://bugs.webkit.org/show_bug.cgi?id=143527
+        <rdar://problem/21908735>
+
+        Reviewed by Simon Fraser.
+
+        Implement pathForFocusRing for HTMLAreaElement.
+
+        * fast/images/image-map-outline-in-positioned-container-expected.html: Added.
+        * fast/images/image-map-outline-in-positioned-container.html: Added.
+        * fast/images/image-map-outline-with-paint-root-offset-expected.html: Added.
+        * fast/images/image-map-outline-with-paint-root-offset.html: Added.
+        * fast/images/image-map-outline-with-scale-transform-expected.html: Added.
+        * fast/images/image-map-outline-with-scale-transform.html: Added.
+
 2016-04-08  Filip Pizlo  <fpizlo@apple.com>
 
         Add IC support for arguments.length

@@ -117,7 +117,7 @@ private:
     // Update the size of the image to be rendered. Object-fit may cause this to be different from the CSS box's content rect.
     void updateInnerContentRect();
 
-    void paintAreaElementFocusRing(PaintInfo&);
+    void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
     
     void layoutShadowControls(const LayoutSize& oldSize);
 

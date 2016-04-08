@@ -116,6 +116,11 @@ Path HTMLAreaElement::computePath(RenderObject* obj) const
     return p;
 }
 
+Path HTMLAreaElement::computePathForFocusRing(const LayoutSize& elementSize) const
+{
+    return getRegion(m_shape == Default ? elementSize : m_lastSize);
+}
+
 // FIXME: Use RenderElement* instead of RenderObject* once we upstream iOS's DOMUIKitExtensions.{h, mm}.
 LayoutRect HTMLAreaElement::computeRect(RenderObject* obj) const
 {

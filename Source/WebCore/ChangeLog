@@ -1,3 +1,32 @@
+2016-04-08  Zalan Bujtas  <zalan@apple.com>
+
+        Focus ring drawn at incorrect location on image map with CSS transform.
+        https://bugs.webkit.org/show_bug.cgi?id=143527
+        <rdar://problem/21908735>
+
+        Reviewed by Simon Fraser.
+
+        Implement pathForFocusRing for HTMLAreaElement. It follows the logic of RenderObject::addFocusRingRects().
+
+        Tests: fast/images/image-map-outline-in-positioned-container.html
+               fast/images/image-map-outline-with-paint-root-offset.html
+               fast/images/image-map-outline-with-scale-transform.html
+               fast/images/image-map-outline.html
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::pathForFocusRing):
+        * html/HTMLAreaElement.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintFocusRing): Move addFocusRingRects() out of focus ring painting.
+        (WebCore::RenderElement::paintOutline):
+        * rendering/RenderElement.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+
 2016-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         [WK1] Wheel event callback removing the window causes crash in WebCore

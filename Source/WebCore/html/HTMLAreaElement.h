@@ -44,6 +44,7 @@ public:
     // FIXME: Use RenderElement* instead of RenderObject* once we upstream iOS's DOMUIKitExtensions.{h, mm}.
     LayoutRect computeRect(RenderObject*) const;
     Path computePath(RenderObject*) const;
+    Path computePathForFocusRing(const LayoutSize& elementSize) const;
 
     // The parent map's image.
     HTMLImageElement* imageElement() const;

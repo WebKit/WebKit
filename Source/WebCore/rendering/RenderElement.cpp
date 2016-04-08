@@ -2040,12 +2040,9 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
     }
 }
 
-void RenderElement::paintFocusRing(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderStyle& style)
+void RenderElement::paintFocusRing(PaintInfo& paintInfo, const RenderStyle& style, const Vector<LayoutRect>& focusRingRects)
 {
     ASSERT(style.outlineStyleIsAuto());
-
-    Vector<LayoutRect> focusRingRects;
-    addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
     float outlineOffset = style.outlineOffset();
     Vector<FloatRect> pixelSnappedFocusRingRects;
     float deviceScaleFactor = document().deviceScaleFactor();
@@ -2086,8 +2083,11 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
     float outlineOffset = floorToDevicePixel(styleToUse.outlineOffset(), document().deviceScaleFactor());
 
     // Only paint the focus ring by hand if the theme isn't able to draw it.
-    if (styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(styleToUse))
-        paintFocusRing(paintInfo, paintRect.location(), styleToUse);
+    if (styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(styleToUse)) {
+        Vector<LayoutRect> focusRingRects;
+        addFocusRingRects(focusRingRects, paintRect.location(), paintInfo.paintContainer);
+        paintFocusRing(paintInfo, styleToUse, focusRingRects);
+    }
 
     if (hasOutlineAnnotation() && !styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(styleToUse))
         addPDFURLRect(paintInfo, paintRect.location());

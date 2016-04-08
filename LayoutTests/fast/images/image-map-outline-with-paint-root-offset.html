@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we paint area outline properly when the paintroot is shifted.</title>
+<style>
+.paintroot {
+  transform: translateZ(0);
+  position: absolute;
+  left: 5px;
+  top: 5px;
+}
+</style>
+<script>
+window.onload = function() {
+    document.getElementById("area").focus();
+}
+</script>
+</head>
+<body>
+<div class=paintroot>
+  <img src="./resources/green.jpg" width=50 height=50 usemap="#map"/>
+  <map name="map"><area id=area shape="rectangle" coords="5, 5, 25, 25" href="#"></map>
+</div>
+</body>
+</html>

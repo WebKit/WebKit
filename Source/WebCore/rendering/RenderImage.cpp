@@ -30,6 +30,7 @@
 
 #include "BitmapImage.h"
 #include "CachedImage.h"
+#include "FocusController.h"
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "Frame.h"
@@ -484,18 +485,22 @@ void RenderImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     RenderReplaced::paint(paintInfo, paintOffset);
     
     if (paintInfo.phase == PaintPhaseOutline)
-        paintAreaElementFocusRing(paintInfo);
+        paintAreaElementFocusRing(paintInfo, paintOffset);
 }
     
-void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
+void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
 #if PLATFORM(IOS)
     UNUSED_PARAM(paintInfo);
+    UNUSED_PARAM(paintOffset);
 #else
     if (document().printing() || !frame().selection().isFocusedAndActive())
         return;
     
     if (paintInfo.context().paintingDisabled() && !paintInfo.context().updatingControlTints())
+        return;
+
+    if (!document().page())
         return;
 
     Element* focusedElement = document().focusedElement();
@@ -506,23 +511,36 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
     if (areaElement.imageElement() != element())
         return;
 
-    // Even if the theme handles focus ring drawing for entire elements, it won't do it for
-    // an area within an image, so we don't call RenderTheme::supportsFocusRing here.
-
-    Path path = areaElement.computePath(this);
-    if (path.isEmpty())
+    auto* areaElementStyle = areaElement.computedStyle();
+    if (!areaElementStyle)
         return;
 
-    // FIXME: Do we need additional code to clip the path to the image's bounding box?
-
-    RenderStyle* areaElementStyle = areaElement.computedStyle();
     float outlineWidth = areaElementStyle->outlineWidth();
     if (!outlineWidth)
         return;
 
-    paintInfo.context().drawFocusRing(path, outlineWidth,
-        areaElementStyle->outlineOffset(),
-        areaElementStyle->visitedDependentColor(CSSPropertyOutlineColor));
+    // Even if the theme handles focus ring drawing for entire elements, it won't do it for
+    // an area within an image, so we don't call RenderTheme::supportsFocusRing here.
+    auto path = areaElement.computePathForFocusRing(size());
+    if (path.isEmpty())
+        return;
+
+    AffineTransform zoomTransform;
+    zoomTransform.scale(style().effectiveZoom());
+    path.transform(zoomTransform);
+
+    auto adjustedOffset = paintOffset;
+    adjustedOffset.moveBy(location());
+    path.translate(toFloatSize(adjustedOffset));
+
+#if PLATFORM(MAC)
+    bool needsRepaint;
+    paintInfo.context().drawFocusRing(path, document().page()->focusController().timeSinceFocusWasSet(), needsRepaint);
+    if (needsRepaint)
+        document().page()->focusController().setFocusedElementNeedsRepaint();
+#else
+    paintInfo.context().drawFocusRing(path, outlineWidth, areaElementStyle->outlineOffset(), areaElementStyle->visitedDependentColor(CSSPropertyOutlineColor));
+#endif
 #endif
 }
 
