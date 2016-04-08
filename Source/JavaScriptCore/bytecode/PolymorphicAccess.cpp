@@ -31,11 +31,13 @@
 #include "BinarySwitch.h"
 #include "CCallHelpers.h"
 #include "CodeBlock.h"
+#include "DirectArguments.h"
 #include "GetterSetter.h"
 #include "Heap.h"
 #include "JITOperations.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
+#include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "StructureStubClearingWatchpoint.h"
 #include "StructureStubInfo.h"
@@ -81,6 +83,7 @@ void AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling(co
             RELEASE_ASSERT(JITCode::isOptimizingJIT(jit->codeBlock()->jitType()));
 
         m_liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite, allocator->usedRegisters());
+        m_liveRegistersForCall.merge(extra);
         m_liveRegistersForCall.exclude(RegisterSet::registersToNotSaveForJSCall());
         m_liveRegistersForCall.merge(extra);
     }
@@ -395,6 +398,8 @@ bool AccessCase::guardedByStructureCheck() const
     case MegamorphicLoad:
     case ArrayLength:
     case StringLength:
+    case DirectArgumentsLength:
+    case ScopedArgumentsLength:
         return false;
     default:
         return true;
@@ -520,6 +525,46 @@ void AccessCase::generateWithGuard(
                 CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
                 CCallHelpers::TrustedImm32(StringType)));
         break;
+    }
+        
+    case DirectArgumentsLength: {
+        ASSERT(!viaProxy());
+        fallThrough.append(
+            jit.branch8(
+                CCallHelpers::NotEqual,
+                CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
+                CCallHelpers::TrustedImm32(DirectArgumentsType)));
+
+        fallThrough.append(
+            jit.branchTestPtr(
+                CCallHelpers::NonZero,
+                CCallHelpers::Address(baseGPR, DirectArguments::offsetOfOverrides())));
+        jit.load32(
+            CCallHelpers::Address(baseGPR, DirectArguments::offsetOfLength()),
+            valueRegs.payloadGPR());
+        jit.boxInt32(valueRegs.payloadGPR(), valueRegs, CCallHelpers::DoNotHaveTagRegisters);
+        state.succeed();
+        return;
+    }
+        
+    case ScopedArgumentsLength: {
+        ASSERT(!viaProxy());
+        fallThrough.append(
+            jit.branch8(
+                CCallHelpers::NotEqual,
+                CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
+                CCallHelpers::TrustedImm32(ScopedArgumentsType)));
+
+        fallThrough.append(
+            jit.branchTest8(
+                CCallHelpers::NonZero,
+                CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfOverrodeThings())));
+        jit.load32(
+            CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfTotalLength()),
+            valueRegs.payloadGPR());
+        jit.boxInt32(valueRegs.payloadGPR(), valueRegs, CCallHelpers::DoNotHaveTagRegisters);
+        state.succeed();
+        return;
     }
         
     case MegamorphicLoad: {
@@ -1036,7 +1081,7 @@ void AccessCase::generate(AccessGenerationState& state)
     }
 
     case Transition: {
-        // AccessCase::transition() should have returned null.
+        // AccessCase::transition() should have returned null if this wasn't true.
         RELEASE_ASSERT(GPRInfo::numberOfRegisters >= 6 || !structure()->outOfLineCapacity() || structure()->outOfLineCapacity() == newStructure()->outOfLineCapacity());
 
         if (InferredType* type = newStructure()->inferredTypeFor(ident.impl())) {
@@ -1257,7 +1302,7 @@ void AccessCase::generate(AccessGenerationState& state)
         state.succeed();
         return;
     }
-
+        
     case IntrinsicGetter: {
         RELEASE_ASSERT(isValidOffset(offset()));
 
@@ -1273,11 +1318,13 @@ void AccessCase::generate(AccessGenerationState& state)
         emitIntrinsicGetter(state);
         return;
     }
-    
+
+    case DirectArgumentsLength:
+    case ScopedArgumentsLength:
     case MegamorphicLoad:
-        // These need to be handled by generateWithGuard(), since the guard is part of the megamorphic load
-        // algorithm. We can be sure that nobody will call generate() directly for MegamorphicLoad since
-        // MegamorphicLoad is not guarded by a structure check.
+        // These need to be handled by generateWithGuard(), since the guard is part of the
+        // algorithm. We can be sure that nobody will call generate() directly for these since they
+        // are not guarded by structure checks.
         RELEASE_ASSERT_NOT_REACHED();
     }
     
@@ -1678,6 +1725,12 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
         return;
     case AccessCase::StringLength:
         out.print("StringLength");
+        return;
+    case AccessCase::DirectArgumentsLength:
+        out.print("DirectArgumentsLength");
+        return;
+    case AccessCase::ScopedArgumentsLength:
+        out.print("ScopedArgumentsLength");
         return;
     }
 

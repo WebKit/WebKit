@@ -188,6 +188,8 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(ExecState* exec, Struct
 
 EncodedJSValue JIT_OPERATION operationGetById(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -203,6 +205,8 @@ EncodedJSValue JIT_OPERATION operationGetById(ExecState* exec, StructureStubInfo
 
 EncodedJSValue JIT_OPERATION operationGetByIdGeneric(ExecState* exec, EncodedJSValue base, UniquedStringImpl* uid)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -215,6 +219,8 @@ EncodedJSValue JIT_OPERATION operationGetByIdGeneric(ExecState* exec, EncodedJSV
 
 EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     Identifier ident = Identifier::fromUid(vm, uid);
@@ -232,6 +238,8 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, Structure
 
 EncodedJSValue JIT_OPERATION operationInOptimize(ExecState* exec, StructureStubInfo* stubInfo, JSCell* base, UniquedStringImpl* key)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -257,6 +265,8 @@ EncodedJSValue JIT_OPERATION operationInOptimize(ExecState* exec, StructureStubI
 
 EncodedJSValue JIT_OPERATION operationIn(ExecState* exec, StructureStubInfo* stubInfo, JSCell* base, UniquedStringImpl* key)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -274,6 +284,8 @@ EncodedJSValue JIT_OPERATION operationIn(ExecState* exec, StructureStubInfo* stu
 
 EncodedJSValue JIT_OPERATION operationGenericIn(ExecState* exec, JSCell* base, EncodedJSValue key)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
@@ -282,6 +294,8 @@ EncodedJSValue JIT_OPERATION operationGenericIn(ExecState* exec, JSCell* base, E
 
 void JIT_OPERATION operationPutByIdStrict(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -297,6 +311,8 @@ void JIT_OPERATION operationPutByIdStrict(ExecState* exec, StructureStubInfo* st
 
 void JIT_OPERATION operationPutByIdNonStrict(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -311,6 +327,8 @@ void JIT_OPERATION operationPutByIdNonStrict(ExecState* exec, StructureStubInfo*
 
 void JIT_OPERATION operationPutByIdDirectStrict(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -325,6 +343,8 @@ void JIT_OPERATION operationPutByIdDirectStrict(ExecState* exec, StructureStubIn
 
 void JIT_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -339,6 +359,8 @@ void JIT_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, StructureStu
 
 void JIT_OPERATION operationPutByIdStrictOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -362,6 +384,8 @@ void JIT_OPERATION operationPutByIdStrictOptimize(ExecState* exec, StructureStub
 
 void JIT_OPERATION operationPutByIdNonStrictOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -385,6 +409,8 @@ void JIT_OPERATION operationPutByIdNonStrictOptimize(ExecState* exec, StructureS
 
 void JIT_OPERATION operationPutByIdDirectStrictOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -408,6 +434,8 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(ExecState* exec, Structu
 
 void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     

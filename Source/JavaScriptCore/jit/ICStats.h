@@ -40,6 +40,11 @@ namespace JSC {
 
 #define FOR_EACH_ICEVENT_KIND(macro) \
     macro(InvalidKind) \
+    macro(GetByIdAddAccessCase) \
+    macro(GetByIdReplaceWithJump) \
+    macro(GetByIdSelfPatch) \
+    macro(InAddAccessCase) \
+    macro(InReplaceWithJump) \
     macro(OperationGetById) \
     macro(OperationGetByIdGeneric) \
     macro(OperationGetByIdBuildList) \
@@ -58,7 +63,10 @@ namespace JSC {
     macro(OperationPutByIdStrictBuildList) \
     macro(OperationPutByIdNonStrictBuildList) \
     macro(OperationPutByIdDirectStrictBuildList) \
-    macro(OperationPutByIdDirectNonStrictBuildList)
+    macro(OperationPutByIdDirectNonStrictBuildList) \
+    macro(PutByIdAddAccessCase) \
+    macro(PutByIdReplaceWithJump) \
+    macro(PutByIdSelfPatch)
 
 class ICEvent {
 public:

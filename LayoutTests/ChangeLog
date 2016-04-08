@@ -1,3 +1,37 @@
+2016-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Add IC support for arguments.length
+        https://bugs.webkit.org/show_bug.cgi?id=156389
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/direct-arguments-length-expected.txt: Added.
+        * js/regress/direct-arguments-length.html: Added.
+        * js/regress/direct-arguments-overridden-length-expected.txt: Added.
+        * js/regress/direct-arguments-overridden-length.html: Added.
+        * js/regress/direct-arguments-possibly-overridden-length-expected.txt: Added.
+        * js/regress/direct-arguments-possibly-overridden-length.html: Added.
+        * js/regress/scoped-arguments-length-expected.txt: Added.
+        * js/regress/scoped-arguments-length.html: Added.
+        * js/regress/scoped-arguments-overridden-length-expected.txt: Added.
+        * js/regress/scoped-arguments-overridden-length.html: Added.
+        * js/regress/scoped-arguments-possibly-overridden-length-expected.txt: Added.
+        * js/regress/scoped-arguments-possibly-overridden-length.html: Added.
+        * js/regress/script-tests/direct-arguments-length.js: Added.
+        (args):
+        * js/regress/script-tests/direct-arguments-overridden-length.js: Added.
+        (args):
+        * js/regress/script-tests/direct-arguments-possibly-overridden-length.js: Added.
+        (args1):
+        (args2):
+        * js/regress/script-tests/scoped-arguments-length.js: Added.
+        (args):
+        * js/regress/script-tests/scoped-arguments-overridden-length.js: Added.
+        (args):
+        * js/regress/script-tests/scoped-arguments-possibly-overridden-length.js: Added.
+        (args1):
+        (args2):
+
 2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Redefining a method of the same name hits an assertion

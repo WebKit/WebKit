@@ -1,3 +1,44 @@
+2016-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Add IC support for arguments.length
+        https://bugs.webkit.org/show_bug.cgi?id=156389
+
+        Reviewed by Geoffrey Garen.
+        
+        This adds support for caching accesses to arguments.length for both DirectArguments and
+        ScopedArguments. In strict mode, we already cached these accesses since they were just
+        normal properties.
+
+        Amazingly, we also already supported caching of overridden arguments.length in both
+        DirectArguments and ScopedArguments. This is because when you override, the property gets
+        materialized as a normal JS property and the structure is changed.
+        
+        This patch painstakingly preserves our previous caching of overridden length while
+        introducing caching of non-overridden length (i.e. the common case). In fact, we even cache
+        the case where it could either be overridden or not, since we just end up with an AccessCase
+        for each and they cascade to each other.
+
+        This is a >3x speed-up on microbenchmarks that do arguments.length in a polymorphic context.
+        Entirely monomorphic accesses were already handled by the DFG.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling):
+        (JSC::AccessCase::guardedByStructureCheck):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generate):
+        (WTF::printInternal):
+        * bytecode/PolymorphicAccess.h:
+        * jit/ICStats.h:
+        * jit/JITOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryRepatchIn):
+        * tests/stress/direct-arguments-override-length-then-access-normal-length.js: Added.
+        (args):
+        (foo):
+        (result.foo):
+
 2016-04-08  Benjamin Poulain  <bpoulain@apple.com>
 
         UInt32ToNumber should have an Int52 path

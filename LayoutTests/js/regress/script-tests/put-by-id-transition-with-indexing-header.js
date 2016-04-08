@@ -3,7 +3,7 @@
         return {};
     };
     
-    for (var i = 0; i < 1000; ++i) {
+    for (var i = 0; i < 300; ++i) {
         var o;
         var n = 100;
         for (var j = 0; j < n; ++j) {

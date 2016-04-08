@@ -68,7 +68,9 @@ public:
         InHit,
         InMiss,
         ArrayLength,
-        StringLength
+        StringLength,
+        DirectArgumentsLength,
+        ScopedArgumentsLength
     };
 
     static std::unique_ptr<AccessCase> tryGet(
