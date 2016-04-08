@@ -1532,6 +1532,10 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
             end = m_columnPositions[endLine] - m_columnPositions[0] + paddingStart();
         else
             end = m_rowPositions[endLine] - m_rowPositions[0] + paddingBefore();
+
+        // These vectors store line positions including gaps, but we shouldn't consider them for the edges of the grid.
+        if (endLine > firstExplicitLine && endLine < lastExplicitLine)
+            end -= guttersSize(direction, 2);
     }
 
     breadth = end - start;
@@ -1546,6 +1550,9 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
             LayoutUnit alignmentOffset =  m_columnPositions[0] - borderAndPaddingStart();
             LayoutUnit offsetFromLastLine = m_columnPositions[m_columnPositions.size() - 1] - m_columnPositions[endLine];
             offset = paddingLeft() +  alignmentOffset + offsetFromLastLine;
+
+            if (endLine > firstExplicitLine && endLine < lastExplicitLine)
+                offset += guttersSize(direction, 2);
         }
     }
 

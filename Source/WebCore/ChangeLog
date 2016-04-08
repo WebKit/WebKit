@@ -1,3 +1,20 @@
+2016-04-08  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix positioned items with grid gaps
+        https://bugs.webkit.org/show_bug.cgi?id=156288
+
+        Reviewed by Darin Adler.
+
+        When we place a positioned items in a grid with gaps,
+        we were not taking into accounts the gutter size.
+        We've to use that size to properly place and size the item.
+
+        Tests: fast/css-grid-layout/grid-positioned-items-gaps-rtl.html
+               fast/css-grid-layout/grid-positioned-items-gaps.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+
 2016-04-08  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Remove unnecessary iteration in populateGridPositions loop
