@@ -441,6 +441,62 @@ describe('BuildbotTriggerable', function () {
             }).catch(done);
         });
 
+        it('should update the status of a supposedly scheduled build that went missing', function (done) {
+            let db = TestServer.database();
+            let syncPromise;
+            db.connect().then(function () {
+                return MockData.addMockData(db, ['scheduled', 'pending', 'pending', 'pending']);
+            }).then(function () {
+                return Manifest.fetch();
+            }).then(function () {
+                let config = MockData.mockTestSyncConfigWithSingleBuilder();
+                let logger = new MockLogger;
+                let slaveInfo = {name: 'sync-slave', password: 'password'};
+                let triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
+                syncPromise = triggerable.syncOnce();
+                syncPromise.catch(done);
+                return MockRemoteAPI.waitForRequest();
+            }).then(function () {
+                assert.equal(MockRemoteAPI.requests.length, 1);
+                assert.equal(MockRemoteAPI.requests[0].method, 'GET');
+                assert.equal(MockRemoteAPI.requests[0].url, '/json/builders/some-builder-1/pendingBuilds');
+                MockRemoteAPI.requests[0].resolve([]);
+                return MockRemoteAPI.waitForRequest();
+            }).then(function () {
+                assert.equal(MockRemoteAPI.requests.length, 2);
+                assert.equal(MockRemoteAPI.requests[1].method, 'GET');
+                assert.equal(MockRemoteAPI.requests[1].url, '/json/builders/some-builder-1/builds/?select=-1&select=-2');
+                MockRemoteAPI.requests[1].resolve({});
+                return MockRemoteAPI.waitForRequest();
+            }).then(function () {
+                assert.equal(MockRemoteAPI.requests.length, 3);
+                assert.equal(MockRemoteAPI.requests[2].method, 'GET');
+                assert.equal(MockRemoteAPI.requests[2].url, '/json/builders/some-builder-1/pendingBuilds');
+                MockRemoteAPI.requests[2].resolve([]);
+                return MockRemoteAPI.waitForRequest();
+            }).then(function () {
+                assert.equal(MockRemoteAPI.requests.length, 4);
+                assert.equal(MockRemoteAPI.requests[3].method, 'GET');
+                assert.equal(MockRemoteAPI.requests[3].url, '/json/builders/some-builder-1/builds/?select=-1&select=-2');
+                MockRemoteAPI.requests[3].resolve({});
+                return syncPromise;
+            }).then(function () {
+                assert.equal(BuildRequest.all().length, 4);
+                assert.equal(BuildRequest.findById(700).status(), 'scheduled');
+                assert.equal(BuildRequest.findById(701).status(), 'pending');
+                assert.equal(BuildRequest.findById(702).status(), 'pending');
+                assert.equal(BuildRequest.findById(703).status(), 'pending');
+                return BuildRequest.fetchForTriggerable(MockData.mockTestSyncConfigWithTwoBuilders().triggerableName);
+            }).then(function () {
+                assert.equal(BuildRequest.all().length, 4);
+                assert.equal(BuildRequest.findById(700).status(), 'failed');
+                assert.equal(BuildRequest.findById(701).status(), 'pending');
+                assert.equal(BuildRequest.findById(702).status(), 'pending');
+                assert.equal(BuildRequest.findById(703).status(), 'pending');
+                done();
+            }).catch(done);
+        });
+
         it('should schedule a build request of an user created test group before ones created by automatic change detection', function (done) {
             let db = TestServer.database();
             let syncPromise;

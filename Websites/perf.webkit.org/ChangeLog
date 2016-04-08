@@ -1,5 +1,22 @@
 2016-04-07  Ryosuke Niwa  <rniwa@webkit.org>
 
+        sync-buildbot.js doesn't mark disappeared builds as failed
+        https://bugs.webkit.org/show_bug.cgi?id=156386
+
+        Reviewed by Chris Dumez.
+
+        Fix a bug that new syncing script doesn't mark builds that it scheduled but doesn't appear when queried
+        by buildbot's JSON API. These are builds that got canceled by humans (e.g. buildbot was restarted, data
+        loss, pending build was canceled, etc...)
+
+        * server-tests/tools-buildbot-triggerable-tests.js: Added a test case.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype._pullBuildbotOnAllSyncers): Added a set of build requests we've matched
+        against BuildbotBuildEntry's. Mark build requests that didn't have any entry but supposed to be in either
+        'scheduled' or 'running' status as failed.
+
+2016-04-07  Ryosuke Niwa  <rniwa@webkit.org>
+
         A/B testing bots should prioritize user created test groups
         https://bugs.webkit.org/show_bug.cgi?id=156375
 
