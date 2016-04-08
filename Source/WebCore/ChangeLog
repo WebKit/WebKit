@@ -1,3 +1,17 @@
+2016-04-08  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        Timing attack on SVG feComposite filter circumvents same-origin policy
+        https://bugs.webkit.org/show_bug.cgi?id=154338
+
+        Reviewed by Oliver Hunt.
+
+        Ensure the FEComposite arithmetic filter is clamping the resulted color
+        components in a constant time.
+
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::clampByte):
+        (WebCore::computeArithmeticPixels):
+
 2016-04-08  Brian Burg  <bburg@apple.com>
 
         Web Inspector: get rid of InspectorBasicValue and InspectorString subclasses
