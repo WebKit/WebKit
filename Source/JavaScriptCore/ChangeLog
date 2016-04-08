@@ -1,3 +1,23 @@
+2016-04-08  Saam barati  <sbarati@apple.com>
+
+        Debugger may dereference m_currentCallFrame even after the VM has gone idle
+        https://bugs.webkit.org/show_bug.cgi?id=156413
+
+        Reviewed by Mark Lam.
+
+        There is a bug where the debugger may dereference its m_currentCallFrame
+        pointer after that pointer becomes invalid to read from. This happens like so:
+
+        We may step over an instruction which causes the end of execution for the
+        current program. This causes the VM to exit. Then, we perform a GC which
+        causes us to collect the global object. The global object being collected
+        causes us to detach the debugger. In detaching, we think we still have a 
+        valid m_currentCallFrame, we dereference it, and crash. The solution is to
+        make sure we're paused when dereferencing this pointer inside ::detach().
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::detach):
+
 2016-04-08  Brian Burg  <bburg@apple.com>
 
         Web Inspector: get rid of InspectorBasicValue and InspectorString subclasses
