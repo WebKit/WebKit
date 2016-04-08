@@ -312,14 +312,24 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
     }
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
+
+        CALayer *maskOwnerLayer = view.layer;
+
+        if (properties.customAppearance == GraphicsLayer::LightBackdropAppearance || properties.customAppearance == GraphicsLayer::DarkBackdropAppearance) {
+            // This is a UIBackdropView, which means any mask must be applied to the CABackdropLayer rather
+            // that the view's layer. The backdrop is the first layer child.
+            if (view.layer.sublayers.count && [view.layer.sublayers[0] isKindOfClass:[CABackdropLayer class]])
+                maskOwnerLayer = view.layer.sublayers[0];
+        }
+
         if (!properties.maskLayerID)
-            view.layer.mask = nullptr;
+            maskOwnerLayer.mask = nullptr;
         else {
             UIView *maskView = relatedLayers.get(properties.maskLayerID);
             // FIXME: need to check that the mask view is kept alive.
             ASSERT(!maskView.layer.superlayer);
             if (!maskView.layer.superlayer)
-                view.layer.mask = maskView.layer;
+                maskOwnerLayer.mask = maskView.layer;
         }
     }
     END_BLOCK_OBJC_EXCEPTIONS;

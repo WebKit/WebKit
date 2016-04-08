@@ -1,3 +1,22 @@
+2016-04-07  Dean Jackson  <dino@apple.com>
+
+        [iOS] Play button on video is too dark
+        https://bugs.webkit.org/show_bug.cgi?id=156383
+        <rdar://problem/23540816>
+
+        Reviewed by Simon Fraser.
+
+        Elements that are backed by a layer with either LightBackdropAppearance
+        or DarkBackdropAppearance are actually a combination of a
+        few layers (inside a special view). If we apply a mask to one
+        of those layers, it needs to be attached to the correct
+        child layer.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties): If we have
+        one of the special appearance flags, apply the mask layer to
+        a particular child, rather than the layer itself.
+
 2016-04-07  Jeremy Jones  <jeremyj@apple.com>
 
         Clearing the application cache doesn't work.

@@ -1,3 +1,20 @@
+2016-04-07  Dean Jackson  <dino@apple.com>
+
+        [iOS] Play button on video is too dark
+        https://bugs.webkit.org/show_bug.cgi?id=156383
+        <rdar://problem/23540816>
+
+        Reviewed by Simon Fraser.
+
+        Add a manual test for iOS that shows the expected appearance
+        of a video element. Unfortunately, due to the way we take
+        snapshots on iOS within our test runner, we don't get the
+        platform blurring effect, which means an automated test
+        won't work.
+
+        * ManualTests/ios/start-playback-button-appearance-expected.html: Added.
+        * ManualTests/ios/start-playback-button-appearance.html: Added.
+
 2016-04-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake DumpRenderTree
