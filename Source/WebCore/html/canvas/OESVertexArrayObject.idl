@@ -25,7 +25,6 @@
 
 [
     Conditional=WEBGL, 
-    UsePointersEvenForNonNullableObjectArguments,
     DoNotCheckConstants,
     GenerateIsReachable=ImplWebGLRenderingContext,
     NoInterfaceObject,
@@ -33,7 +32,7 @@
     const unsigned int VERTEX_ARRAY_BINDING_OES = 0x85B5;
     
     [StrictTypeChecking] WebGLVertexArrayObjectOES createVertexArrayOES();
-    [StrictTypeChecking] void         deleteVertexArrayOES([Default=Undefined] optional WebGLVertexArrayObjectOES arrayObject);
-    [StrictTypeChecking] boolean      isVertexArrayOES([Default=Undefined] optional WebGLVertexArrayObjectOES arrayObject);
-    [StrictTypeChecking, RaisesException] void         bindVertexArrayOES([Default=Undefined] optional WebGLVertexArrayObjectOES arrayObject);
+    [StrictTypeChecking] void deleteVertexArrayOES([Default=Undefined] optional WebGLVertexArrayObjectOES arrayObject);
+    [StrictTypeChecking] boolean isVertexArrayOES([Default=Undefined] optional WebGLVertexArrayObjectOES arrayObject);
+    [StrictTypeChecking, RaisesException] void bindVertexArrayOES([Default=Undefined] optional WebGLVertexArrayObjectOES arrayObject);
 };

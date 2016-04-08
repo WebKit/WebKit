@@ -19,7 +19,6 @@
  */
 
 [
-    UsePointersEvenForNonNullableObjectArguments,
     JSCustomHeader,
     JSGenerateToNativeObject,
 ] interface Element : Node {
@@ -46,8 +45,8 @@
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
     // For ObjC this is defined on Node for legacy support.
-    readonly attribute NamedNodeMap     attributes;
-    boolean            hasAttributes();
+    readonly attribute NamedNodeMap attributes;
+    boolean hasAttributes();
 #endif
 
     // DOM Level 2 Core
@@ -55,8 +54,7 @@
     [ObjCLegacyUnnamedParameters] DOMString? getAttributeNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
 
     [ObjCLegacyUnnamedParameters, RaisesException, InvokesCustomElementLifecycleCallbacks]
-    void setAttributeNS([Default=Undefined] optional DOMString? namespaceURI,
-        [Default=Undefined] optional DOMString qualifiedName, [Default=Undefined] optional DOMString value);
+    void setAttributeNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString qualifiedName, [Default=Undefined] optional DOMString value);
 
     [ObjCLegacyUnnamedParameters, InvokesCustomElementLifecycleCallbacks] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
 

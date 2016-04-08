@@ -25,7 +25,6 @@
 
 [
     Conditional=ENCRYPTED_MEDIA_V2,
-    UsePointersEvenForNonNullableObjectArguments,
     InterfaceName=WebKitMediaKeySession,
     ActiveDOMObject,
 ] interface MediaKeySession : EventTarget {

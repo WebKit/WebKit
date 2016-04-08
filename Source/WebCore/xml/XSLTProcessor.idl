@@ -33,7 +33,6 @@
 [
     Conditional=XSLT,
     Constructor,
-    UsePointersEvenForNonNullableObjectArguments,
     ImplementationLacksVTable,
 ] interface XSLTProcessor {
     

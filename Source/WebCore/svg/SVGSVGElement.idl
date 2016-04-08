@@ -20,18 +20,17 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// TODO: no css::ViewCSS available!
-// TODO: Fix SVGSVGElement inheritance (css::DocumentCSS)! 
-// TODO: no events::DocumentEvent available!
-[
-    UsePointersEvenForNonNullableObjectArguments,
-] interface SVGSVGElement : SVGGraphicsElement {
+// FIXME: no css::ViewCSS available!
+// FIXME: Fix SVGSVGElement inheritance (css::DocumentCSS)!
+// FIXME: no events::DocumentEvent available!
+
+interface SVGSVGElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
     readonly attribute SVGAnimatedLength width;
     readonly attribute SVGAnimatedLength height;
-             attribute DOMString contentScriptType;
-             attribute DOMString contentStyleType;
+    attribute DOMString contentScriptType;
+    attribute DOMString contentStyleType;
     readonly attribute SVGRect viewport;
     readonly attribute unrestricted float pixelUnitToMillimeterX;
     readonly attribute unrestricted float pixelUnitToMillimeterY;
@@ -39,7 +38,7 @@
     readonly attribute unrestricted float screenPixelToMillimeterY;
     readonly attribute boolean useCurrentView;
     readonly attribute SVGViewSpec currentView;
-             attribute unrestricted float currentScale;
+    attribute unrestricted float currentScale;
     readonly attribute SVGPoint currentTranslate;
 
     unsigned long suspendRedraw([Default=Undefined] optional unsigned long maxWaitMilliseconds);
@@ -51,14 +50,10 @@
     boolean animationsPaused();
     unrestricted float getCurrentTime();
     void setCurrentTime([Default=Undefined] optional unrestricted float seconds);
-    NodeList getIntersectionList([Default=Undefined] optional SVGRect rect, 
-                                 [Default=Undefined] optional SVGElement referenceElement);
-    NodeList getEnclosureList([Default=Undefined] optional SVGRect rect, 
-                              [Default=Undefined] optional SVGElement referenceElement);
-    boolean checkIntersection([Default=Undefined] optional SVGElement element, 
-                              [Default=Undefined] optional SVGRect rect);
-    boolean checkEnclosure([Default=Undefined] optional SVGElement element, 
-                           [Default=Undefined] optional SVGRect rect);
+    NodeList getIntersectionList([Default=Undefined] optional SVGRect rect, [Default=Undefined] optional SVGElement referenceElement);
+    NodeList getEnclosureList([Default=Undefined] optional SVGRect rect, [Default=Undefined] optional SVGElement referenceElement);
+    boolean checkIntersection([Default=Undefined] optional SVGElement element, [Default=Undefined] optional SVGRect rect);
+    boolean checkEnclosure([Default=Undefined] optional SVGElement element, [Default=Undefined] optional SVGRect rect);
     void deselectAll();
 
     SVGNumber createSVGNumber();

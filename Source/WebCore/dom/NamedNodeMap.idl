@@ -19,28 +19,19 @@
  */
 
 [
-    UsePointersEvenForNonNullableObjectArguments,
     GenerateIsReachable=ImplElementRoot,
     ImplementationLacksVTable,
 ] interface NamedNodeMap {
 
     getter Node getNamedItem([Default=Undefined] optional DOMString name);
-
     [RaisesException] Node setNamedItem([Default=Undefined] optional Node node);
-
     [RaisesException] Node removeNamedItem([Default=Undefined] optional DOMString name);
-
     getter Node item([Default=Undefined] optional unsigned long index);
-    
     readonly attribute unsigned long length;
-
 
     // Introduced in DOM Level 2:
 
     [ObjCLegacyUnnamedParameters] Node getNamedItemNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
-
     [RaisesException] Node setNamedItemNS([Default=Undefined] optional Node node);
-
     [ObjCLegacyUnnamedParameters, RaisesException] Node removeNamedItemNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
 };
-

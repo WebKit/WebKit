@@ -27,12 +27,9 @@
     Conditional=ENCRYPTED_MEDIA_V2,
     Constructor(DOMString keySystem),
     ConstructorRaisesException,
-    UsePointersEvenForNonNullableObjectArguments,
     InterfaceName=WebKitMediaKeys,
 ] interface MediaKeys {
     [CallWith=ScriptExecutionContext, RaisesException] MediaKeySession createSession([Default=Undefined] optional DOMString type, [Default=Undefined] optional Uint8Array initData);
-
     static boolean isTypeSupported(DOMString keySystem, [Default=NullString] optional DOMString type);
-
     readonly attribute DOMString keySystem;
 };
