@@ -1,3 +1,23 @@
+2016-04-08  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: stress_aligned test fails if you increase smallMax
+        https://bugs.webkit.org/show_bug.cgi?id=156414
+
+        Reviewed by Oliver Hunt.
+
+        When size exceeds alignment and is a multiple of alignment and is not
+        a power of two, such as 24kB with 8kB alignment, the small allocator
+        did not always guarantee alignment. Let's fix that.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::divideRoundingUp): Math is hard.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocate): Align to the page size unconditionally.
+        Even if the page size is not a power of two, it might be a multiple of
+        a power of two, and we want alignment to that smaller power of two to
+        be guaranteed.
+
 2016-04-06  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: handle aligned allocations on the fast path
