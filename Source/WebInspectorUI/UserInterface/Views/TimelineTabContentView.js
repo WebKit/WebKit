@@ -496,8 +496,6 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
 
     _changeViewMode(mode, selectedByUser)
     {
-        console.assert(WebInspector.FPSInstrument.supported());
-
         if (this._viewMode === mode)
             return;
 

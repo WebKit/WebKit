@@ -54,7 +54,8 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
         this.addSubview(this._dataGrid);
 
         this._networkTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Network);
-        this._networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
+        if (this._networkTimeline)
+            this._networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
         recording.addEventListener(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
         recording.addEventListener(WebInspector.TimelineRecording.Event.MarkerAdded, this._markerAdded, this);
@@ -85,7 +86,8 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
 
     closed()
     {
-        this._networkTimeline.removeEventListener(null, null, this);
+        if (this._networkTimeline)
+            this._networkTimeline.removeEventListener(null, null, this);
         this._recording.removeEventListener(null, null, this);
     }
 

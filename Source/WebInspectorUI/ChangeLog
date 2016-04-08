@@ -1,3 +1,20 @@
+2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSContext Inspector: Fix asserts and uncaught exception showing Timeline Tab
+        https://bugs.webkit.org/show_bug.cgi?id=156411
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView):
+        (WebInspector.OverviewTimelineView.prototype.closed):
+        Gracefully handle if we do not have a Network Timeline.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.prototype._changeViewMode):
+        This function is always called by the constructor, so the assert
+        is not useful since it can be called when FPS is not supported.
+
 2016-04-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Attempting to dismiss a popover that is already being dismissed causes an error
