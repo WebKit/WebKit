@@ -246,6 +246,9 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
 
     _conditionCodeMirrorEscapeOrEnterKey()
     {
+        if (!this._popover)
+            return;
+
         this._popover.dismiss();
     }
 

@@ -38,6 +38,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         this._preferredEdges = null;
 
         this._contentNeedsUpdate = false;
+        this._dismissing = false;
 
         this._element = document.createElement("div");
         this._element.className = "popover";
@@ -132,8 +133,10 @@ WebInspector.Popover = class Popover extends WebInspector.Object
 
     dismiss()
     {
-        if (this._element.parentNode !== document.body)
+        if (this._dismissing || this._element.parentNode !== document.body)
             return;
+
+        this._dismissing = true;
 
         console.assert(this._isListeningForPopoverEvents);
         this._isListeningForPopoverEvents = false;
@@ -161,6 +164,8 @@ WebInspector.Popover = class Popover extends WebInspector.Object
                 this._container.textContent = "";
                 if (this.delegate && typeof this.delegate.didDismissPopover === "function")
                     this.delegate.didDismissPopover(this);
+
+                this._dismissing = false;
                 break;
             }
         }

@@ -1,5 +1,32 @@
 2016-04-08  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Attempting to dismiss a popover that is already being dismissed causes an error
+        https://bugs.webkit.org/show_bug.cgi?id=156385
+        <rdar://problem/25617962>
+
+        Reviewed by Timothy Hatcher.
+
+        The Popover element is removed from the DOM once it's fade-out transition
+        completes. Since Popover.dismiss proceeds as long as it's element has a
+        parent, successive calls to dismiss can run before the popover is removed.
+
+        Rather than rely on the presence of the popover in the DOM, set a "dismissing"
+        flag the first time dismiss is called, before the fade-out animation begins.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WebInspector.BreakpointPopoverController.prototype._conditionCodeMirrorEscapeOrEnterKey):
+        Check for null popover.
+
+        * UserInterface/Views/Popover.js:
+        (WebInspector.Popover):
+        (WebInspector.Popover.prototype.dismiss):
+        Do nothing if already dismissing.
+
+        (WebInspector.Popover.prototype.handleEvent):
+        Reset dismissing flag after style transition completes.
+
+2016-04-08  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Quick Open fails to match pattern "bB" in file "abBc"
         https://bugs.webkit.org/show_bug.cgi?id=156398
 
