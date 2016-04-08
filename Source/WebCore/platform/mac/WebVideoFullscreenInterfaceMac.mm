@@ -49,26 +49,36 @@ SOFT_LINK_CLASS(AVKit, AVValueTiming)
 using namespace WebCore;
 
 @interface WebAVMediaSelectionOptionMac : NSObject {
-    NSString *_localizedDisplayName;
+    RetainPtr<NSString> _localizedDisplayName;
 }
 @property (retain) NSString *localizedDisplayName;
 @end
 
 @implementation WebAVMediaSelectionOptionMac
-@synthesize localizedDisplayName=_localizedDisplayName;
+
+- (NSString *)localizedDisplayName
+{
+    return _localizedDisplayName.get();
+}
+
+- (void)setLocalizedDisplayName:(NSString *)name
+{
+    _localizedDisplayName = name;
+}
+
 @end
 
 @interface WebPlaybackControlsManager : NSObject {
     NSTimeInterval _contentDuration;
-    AVValueTiming *_timing;
+    RetainPtr<AVValueTiming> _timing;
     NSTimeInterval _seekToTime;
-    NSArray *_seekableTimeRanges;
+    RetainPtr<NSArray> _seekableTimeRanges;
     BOOL _hasEnabledAudio;
     BOOL _hasEnabledVideo;
-    NSArray<AVMediaSelectionOption *> *_audioMediaSelectionOptions;
-    AVMediaSelectionOption *_currentAudioMediaSelectionOption;
-    NSArray<AVMediaSelectionOption *> *_legibleMediaSelectionOptions;
-    AVMediaSelectionOption *_currentLegibleMediaSelectionOption;
+    RetainPtr<NSArray<AVMediaSelectionOption *>> _audioMediaSelectionOptions;
+    RetainPtr<AVMediaSelectionOption> _currentAudioMediaSelectionOption;
+    RetainPtr<NSArray<AVMediaSelectionOption *>> _legibleMediaSelectionOptions;
+    RetainPtr<AVMediaSelectionOption> _currentLegibleMediaSelectionOption;
     
     float _rate;
 
@@ -100,16 +110,10 @@ using namespace WebCore;
 @implementation WebPlaybackControlsManager
 
 @synthesize contentDuration=_contentDuration;
-@synthesize timing=_timing;
 @synthesize seekToTime=_seekToTime;
-@synthesize seekableTimeRanges=_seekableTimeRanges;
 @synthesize hasEnabledAudio=_hasEnabledAudio;
 @synthesize hasEnabledVideo=_hasEnabledVideo;
 @synthesize rate=_rate;
-@synthesize audioMediaSelectionOptions=_audioMediaSelectionOptions;
-@synthesize currentAudioMediaSelectionOption=_currentAudioMediaSelectionOption;
-@synthesize legibleMediaSelectionOptions=_legibleMediaSelectionOptions;
-@synthesize currentLegibleMediaSelectionOption=_currentLegibleMediaSelectionOption;
 
 - (instancetype)initWithWebVideoFullscreenInterfaceMac:(WebCore::WebVideoFullscreenInterfaceMac*)webVideoFullscreenInterfaceMac
 {
@@ -119,6 +123,26 @@ using namespace WebCore;
     _webVideoFullscreenInterfaceMac = webVideoFullscreenInterfaceMac;
 
     return self;
+}
+
+- (AVValueTiming *)timing
+{
+    return _timing.get();
+}
+
+- (void)setTiming:(AVValueTiming *)timing
+{
+    _timing = timing;
+}
+
+- (NSArray *)seekableTimeRanges
+{
+    return _seekableTimeRanges.get();
+}
+
+- (void)setSeekableTimeRanges:(NSArray *)timeRanges
+{
+    _seekableTimeRanges = timeRanges;
 }
 
 - (BOOL)isSeeking
@@ -131,6 +155,21 @@ using namespace WebCore;
     UNUSED_PARAM(toleranceBefore);
     UNUSED_PARAM(toleranceAfter);
     _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->seekToTime(time);
+}
+
+- (NSArray<AVMediaSelectionOption *> *)audioMediaSelectionOptions
+{
+    return _audioMediaSelectionOptions.get();
+}
+
+- (void)setAudioMediaSelectionOptions:(NSArray<AVMediaSelectionOption *> *)audioOptions
+{
+    _audioMediaSelectionOptions = audioOptions;
+}
+
+- (AVMediaSelectionOption *)currentAudioMediaSelectionOption
+{
+    return _currentAudioMediaSelectionOption.get();
 }
 
 - (void)setCurrentAudioMediaSelectionOption:(AVMediaSelectionOption *)audioMediaSelectionOption
@@ -146,6 +185,21 @@ using namespace WebCore;
         index = [self.audioMediaSelectionOptions indexOfObject:audioMediaSelectionOption];
     
     _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
+}
+
+- (NSArray<AVMediaSelectionOption *> *)legibleMediaSelectionOptions
+{
+    return _legibleMediaSelectionOptions.get();
+}
+
+- (void)setLegibleMediaSelectionOptions:(NSArray<AVMediaSelectionOption *> *)legibleOptions
+{
+    _legibleMediaSelectionOptions = legibleOptions;
+}
+
+- (AVMediaSelectionOption *)currentLegibleMediaSelectionOption
+{
+    return _currentLegibleMediaSelectionOption.get();
 }
 
 - (void)setCurrentLegibleMediaSelectionOption:(AVMediaSelectionOption *)legibleMediaSelectionOption

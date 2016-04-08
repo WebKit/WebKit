@@ -1,3 +1,27 @@
+2016-04-08  Beth Dakin  <bdakin@apple.com>
+
+        Fix leaks in WebAVMediaSelectionOptionMac and WebPlaybackControlsManager
+        https://bugs.webkit.org/show_bug.cgi?id=156379
+
+        Reviewed by Tim Horton.
+
+        These classes should use RetainPtrs.
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (-[WebAVMediaSelectionOptionMac localizedDisplayName]):
+        (-[WebAVMediaSelectionOptionMac setLocalizedDisplayName:]):
+        (-[WebPlaybackControlsManager timing]):
+        (-[WebPlaybackControlsManager setTiming:]):
+        (-[WebPlaybackControlsManager seekableTimeRanges]):
+        (-[WebPlaybackControlsManager setSeekableTimeRanges:]):
+        (-[WebPlaybackControlsManager audioMediaSelectionOptions]):
+        (-[WebPlaybackControlsManager setAudioMediaSelectionOptions:]):
+        (-[WebPlaybackControlsManager currentAudioMediaSelectionOption]):
+        (-[WebPlaybackControlsManager setCurrentAudioMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager legibleMediaSelectionOptions]):
+        (-[WebPlaybackControlsManager setLegibleMediaSelectionOptions:]):
+        (-[WebPlaybackControlsManager currentLegibleMediaSelectionOption]):
+        (-[WebPlaybackControlsManager setCurrentLegibleMediaSelectionOption:]):
+
 2016-04-08  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
 
         Touching any IDL files rebuilds all bindings in CMake Ninja build
