@@ -120,27 +120,22 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
 
     didDismissDialog()
     {
+        WebInspector.Frame.removeEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WebInspector.Frame.removeEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+
         this._queryController.reset();
     }
 
     didPresentDialog()
     {
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+
+        if (WebInspector.frameResourceManager.mainFrame)
+            this._addResourcesForFrame(WebInspector.frameResourceManager.mainFrame);
+
         this._inputElement.focus();
         this._clear();
-
-        let frames = [WebInspector.frameResourceManager.mainFrame];
-        while (frames.length) {
-            let frame = frames.shift();
-            let resources = [frame.mainResource].concat(frame.resources);
-            for (let resource of resources) {
-                if (!this.representedObjectIsValid(resource))
-                    continue;
-
-                this._queryController.addResource(resource);
-            }
-
-            frames = frames.concat(frame.childFrames);
-        }
     }
 
     // Private
@@ -247,6 +242,48 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
             return;
 
         this.dismiss(treeElement.representedObject);
+    }
+
+    _addResource(resource, suppressFilterUpdate)
+    {
+        if (!this.representedObjectIsValid(resource))
+            return;
+
+        this._queryController.addResource(resource);
+        if (suppressFilterUpdate)
+            return;
+
+        this._updateFilter();
+    }
+
+    _addResourcesForFrame(frame)
+    {
+        const suppressFilterUpdate = true;
+
+        let frames = [frame];
+        while (frames.length) {
+            let currentFrame = frames.shift();
+            let resources = [currentFrame.mainResource].concat(currentFrame.resources);
+            for (let resource of resources)
+                this._addResource(resource, suppressFilterUpdate);
+
+            frames = frames.concat(frame.childFrames);
+        }
+
+        this._updateFilter();
+    }
+
+    _mainResourceDidChange(event)
+    {
+        if (event.target.isMainFrame())
+            this._queryController.reset();
+
+        this._addResource(event.target.mainResource);
+    }
+
+    _resourceWasAdded(event)
+    {
+        this._addResource(event.data.resource);
     }
 };
 

@@ -1,3 +1,33 @@
+2016-04-07  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: OpenResourceDialog should keep its resources list up-to-date
+        https://bugs.webkit.org/show_bug.cgi?id=155321
+        <rdar://problem/25093890>
+
+        Reviewed by Timothy Hatcher.
+
+        The Quick Open dialog should listen for resource change events, refreshing
+        the resource list and current query results as needed.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WebInspector.OpenResourceDialog):
+        (WebInspector.OpenResourceDialog.prototype.didDismissDialog):
+        Unregister resource event handlers.
+
+        (WebInspector.OpenResourceDialog.prototype.didPresentDialog):
+        Register resource event handlers and add main frame resources.
+
+        (WebInspector.OpenResourceDialog.prototype._addResource):
+        Add resource to the query controller, if valid. Optionally suppress
+        the potentially expensive filter update, which is useful when adding
+        multiple resources at once.
+
+        (WebInspector.OpenResourceDialog.prototype._addResourcesForFrame):
+        Add the entire frame resource tree and update dialog filter.
+
+        (WebInspector.OpenResourceDialog.prototype._mainResourceDidChange):
+        (WebInspector.OpenResourceDialog.prototype._resourceWasAdded):
+
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ProfileView source links are off by 1 line, worse in pretty printed code
