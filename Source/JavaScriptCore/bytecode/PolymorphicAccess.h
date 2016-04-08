@@ -376,7 +376,6 @@ struct AccessGenerationState {
     GPRReg baseGPR { InvalidGPRReg };
     JSValueRegs valueRegs;
     GPRReg scratchGPR { InvalidGPRReg };
-    Vector<std::function<void(LinkBuffer&)>> callbacks;
     const Identifier* ident;
     std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
     Vector<WriteBarrier<JSCell>> weakReferences;
@@ -386,11 +385,11 @@ struct AccessGenerationState {
     void restoreScratch();
     void succeed();
 
-    void calculateLiveRegistersForCallAndExceptionHandling();
+    void calculateLiveRegistersForCallAndExceptionHandling(const RegisterSet& extra = RegisterSet());
 
-    void preserveLiveRegistersToStackForCall();
+    void preserveLiveRegistersToStackForCall(const RegisterSet& extra = RegisterSet());
 
-    void restoreLiveRegistersFromStackForCall(bool isGetter);
+    void restoreLiveRegistersFromStackForCall(bool isGetter = false);
     void restoreLiveRegistersFromStackForCallWithThrownException();
     void restoreLiveRegistersFromStackForCall(const RegisterSet& dontRestore);
 
@@ -418,6 +417,8 @@ struct AccessGenerationState {
 
     bool needsToRestoreRegistersIfException() const { return m_needsToRestoreRegistersIfException; }
     CallSiteIndex originalCallSiteIndex() const;
+    
+    void emitExplicitExceptionHandler();
     
 private:
     const RegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite()

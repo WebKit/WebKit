@@ -377,6 +377,9 @@ char* JIT_OPERATION operationSwitchStringWithUnknownKeyType(ExecState*, EncodedJ
 EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState*, Instruction* bytecodePC) WTF_INTERNAL;
 void JIT_OPERATION operationPutToScope(ExecState*, Instruction* bytecodePC) WTF_INTERNAL;
 
+char* JIT_OPERATION operationReallocateButterflyToHavePropertyStorageWithInitialCapacity(ExecState*, JSObject*) WTF_INTERNAL;
+char* JIT_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*, JSObject*, size_t newSize) WTF_INTERNAL;
+
 void JIT_OPERATION operationFlushWriteBarrierBuffer(ExecState*, JSCell*);
 void JIT_OPERATION operationWriteBarrier(ExecState*, JSCell*, JSCell*);
 void JIT_OPERATION operationUnconditionalWriteBarrier(ExecState*, JSCell*);

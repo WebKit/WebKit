@@ -1,3 +1,37 @@
+2016-04-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Implementing caching transition puts that need to reallocate with indexing storage
+        https://bugs.webkit.org/show_bug.cgi?id=130914
+
+        Reviewed by Saam Barati.
+
+        This enables the IC's put_by_id path to handle reallocating the out-of-line storage even if
+        the butterfly has indexing storage. Like the DFG, we do this by calling operations that
+        reallocate the butterfly. Those use JSObject API and do all of the nasty work for us, like
+        triggering a barrier.
+
+        This does a bunch of refactoring to how PolymorphicAccess makes calls. It's a lot easier to
+        do it now because the hard work is hidden under AccessGenerationState methods. This means
+        that custom accessors now share logic with put_by_id transitions.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::succeed):
+        (JSC::AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling):
+        (JSC::AccessGenerationState::preserveLiveRegistersToStackForCall):
+        (JSC::AccessGenerationState::originalCallSiteIndex):
+        (JSC::AccessGenerationState::emitExplicitExceptionHandler):
+        (JSC::AccessCase::AccessCase):
+        (JSC::AccessCase::transition):
+        (JSC::AccessCase::generate):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationState::needsToRestoreRegistersIfException):
+        (JSC::AccessGenerationState::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remote Inspector: When disallowing remote inspection on a debuggable, a listing is still sent to debuggers
