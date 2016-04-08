@@ -1,3 +1,15 @@
+2016-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Enable Concurrent JIT by default
+        https://bugs.webkit.org/show_bug.cgi?id=156341
+
+        Reviewed by Filip Pizlo.
+
+        We enable Concurrent JIT by default when DFG JIT and JSVALUE64 are enabled.
+        This change offers Concurrent JIT to the JSCOnly port.
+
+        * wtf/Platform.h:
+
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(ENABLE_ES6_CLASS_SYNTAX) guards
