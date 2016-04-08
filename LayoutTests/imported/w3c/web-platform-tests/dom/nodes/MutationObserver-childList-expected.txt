@@ -1,6 +1,8 @@
 MutationObservers: childList mutations
 
 
+Harness Error (TIMEOUT), message = null
+
 PASS childList Node.nodeValue: no mutation 
 PASS childList Node.textContent: replace content mutation 
 PASS childList Node.textContent: no previous content mutation 
@@ -23,6 +25,7 @@ PASS childList Node.appendChild: addition outside document tree mutation
 PASS childList Node.replaceChild: replacement mutation 
 PASS childList Node.replaceChild: removal mutation 
 PASS childList Node.replaceChild: internal replacement mutation 
+TIMEOUT childList Node.replaceChild: self internal replacement mutation Test timed out
 PASS childList Node.removeChild: removal mutation 
 PASS Range (r70) is created 
 PASS childList Range.deleteContents: child removal mutation 
