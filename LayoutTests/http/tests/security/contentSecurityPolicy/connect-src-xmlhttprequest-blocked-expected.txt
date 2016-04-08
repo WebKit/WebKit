@@ -1,3 +1,20 @@
 CONSOLE MESSAGE: Refused to connect to http://localhost:8000/xmlhttprequest/resources/get.txt because it does not appear in the connect-src directive of the Content Security Policy.
-Pass
+CONSOLE MESSAGE: Refused to connect to http://localhost:8000/xmlhttprequest/resources/get.txt because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to http://localhost:8000/xmlhttprequest/resources/get.txt because it does not appear in the connect-src directive of the Content Security Policy.
+This tests that a Content Security Policy violation for an XHR is triggered when calling XMLHttpRequest.send().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS xhrSync.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", false) did not throw exception.
+PASS xhrSync.send() threw exception Error: NetworkError: DOM Exception 19.
+PASS xhrAsync.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", true) did not throw exception.
+PASS xhrAsync.send() did not throw exception.
+PASS xhrAsyncAbort.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", true) did not throw exception.
+PASS xhrAsyncAbort.send();xhrAsyncAbort.abort();  did not throw exception.
+PASS An error event was received for the asynchronous call.
+PASS An error event was received for the aborted asynchronous call.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

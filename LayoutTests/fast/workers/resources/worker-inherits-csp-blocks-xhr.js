@@ -7,8 +7,8 @@ try {
 } catch (e) {
     exception = e;
 }
-// FIXME: We should be throwing a DOMException.NETWORK_ERR. See <https://bugs.webkit.org/show_bug.cgi?id=153598>.
-var expectedExceptionCode = 18; // DOMException.SECURITY_ERR
+
+var expectedExceptionCode = 19; // DOMException.NETWORK_ERR
 if (!exception)
     self.postMessage("FAIL should throw " + expectedExceptionCode + ". But did not throw an exception.");
 else {

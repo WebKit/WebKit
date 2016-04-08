@@ -1,3 +1,22 @@
+2016-04-08  John Wilander  <wilander@apple.com>
+
+        CSP: Block XHR when calling XMLHttpRequest.send() and throw network error.
+        https://bugs.webkit.org/show_bug.cgi?id=153598
+        <rdar://problem/24391483>
+
+        Reviewed by Darin Adler.
+
+        No new tests. Changes to existing tests are sufficient.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::initSend):
+            Moved the CSP check from XMLHttpRequest::open() to XMLHttpRequest::initSend().
+            Changed the thrown error type from Security to Network for synchronous requests.
+            Changed from throwing an error to firing an error event for asynchronous requests.
+            These changes are in conformance with connect-src of Content Security Policy Level 2.
+            https://www.w3.org/TR/CSP2/#directive-connect-src (W3C Candidate Recommendation, 21 July 2015)
+
 2016-04-07  Darin Adler  <darin@apple.com>
 
         FontFaceSet binding does not handle null correctly

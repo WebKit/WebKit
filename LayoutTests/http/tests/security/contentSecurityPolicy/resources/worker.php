@@ -58,13 +58,15 @@ try {
 } else if ($_GET["type"] == "make-xhr") {
 ?>
 
-try {
-    var xhr = new XMLHttpRequest;
-    xhr.open("GET", "http://127.0.0.1:8000/xmlhttprequest/resources/get.txt", true);
+var xhr = new XMLHttpRequest;
+xhr.addEventListener("load", function () {
     postMessage("xhr allowed");
-} catch(e) {
+});
+xhr.addEventListener("error", function () {
     postMessage("xhr blocked");
-}
+});
+xhr.open("GET", "http://127.0.0.1:8000/xmlhttprequest/resources/get.txt", true);
+xhr.send();
 
 <?php
 } else if ($_GET["type"] == "set-timeout") {
@@ -115,13 +117,15 @@ onconnect = function (e) {
 } else if ($_GET["type"] == "multiple-headers") {
 ?>
 
-try {
-    var xhr = new XMLHttpRequest;
-    xhr.open("GET", "http://127.0.0.1:8000/xmlhttprequest/resources/get.txt", true);
+var xhr = new XMLHttpRequest;
+xhr.addEventListener("load", function () {
     postMessage("xhr allowed");
-} catch(e) {
+});
+xhr.addEventListener("error", function () {
     postMessage("xhr blocked");
-}
+});
+xhr.open("GET", "http://127.0.0.1:8000/xmlhttprequest/resources/get.txt", true);
+xhr.send();
 
 var id = 0;
 try {

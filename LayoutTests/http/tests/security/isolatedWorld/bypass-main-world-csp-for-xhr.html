@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
+<head>
     <script src="../../js-test-resources/js-test-pre.js"></script>
     <meta http-equiv="Content-Security-Policy" content="connect-src 'none'">
+</head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
@@ -11,15 +13,38 @@ description('Tests that isolated worlds can have XHRs that the page\'s CSP would
 
 jsTestIsAsync = true;
 
+const SameOrigin = true;
+const CrossOrigin = false;
+const Asynchronous = true;
+const Synchronous = false;
+const ShouldBlock = true;
+const ShouldNotBlock = false;
+
 var tests = [
     function() {
-        debug('XHR from main world');
-        xhr(true);
+        debug('Synchronous XHR same-origin from main world');
+        xhr({sameOrigin : true}, Synchronous, ShouldBlock);
     },
     function() {
-        debug('XHR from isolated world');
-        runTestInWorld(1, 'xhr', 'false');
+        debug('Asynchronous XHR same-origin from main world');
+        xhr({sameOrigin : true}, Asynchronous, ShouldBlock);
     },
+    function() {
+        debug('Synchronous XHR same-origin from isolated world');
+        invokeInWorld(1, xhr, SameOrigin, Synchronous, ShouldNotBlock);
+    },
+    function() {
+        debug('Asynchronous XHR same-origin from isolated world');
+        invokeInWorld(2, xhr, SameOrigin, Asynchronous, ShouldNotBlock);
+    },
+    function() {
+        debug('Synchronous XHR cross-origin from isolated world');
+        invokeInWorld(3, xhr, CrossOrigin, Synchronous, ShouldNotBlock);
+    },
+    function() {
+        debug('Asynchronous XHR cross-origin from isolated world');
+        invokeInWorld(4, xhr, CrossOrigin, Asynchronous, ShouldNotBlock);
+    }
 ];
 var currentTest = 0;
 
@@ -52,14 +77,15 @@ if (window.testRunner) {
     testFailed('Test depends on LayoutTestController and must be run by DRT');
 }
 
-function runTestInWorld(worldId, funcName, param)
-{
-    testRunner.evaluateScriptInIsolatedWorld(
-        worldId, String(eval(funcName)) + "\n" + funcName + "(" + param + ");");
+// This function will only successfully pass on JSON-stringifieable arguments such as numbers and strings to aNamedFunction
+function invokeInWorld(worldId, aNamedFunction) {
+    console.assert(aNamedFunction.name);
+    var argumentsToPass = Array.prototype.slice.call(arguments, 2);
+    var script = aNamedFunction.toString() + '; ' + aNamedFunction.name + '(' + argumentsToPass.map(JSON.stringify).join(', ') + ');';
+    testRunner.evaluateScriptInIsolatedWorld(worldId, script);
 }
 
-function xhr(shouldBlock)
-{
+function xhr(isSameOrigin, isAsync, shouldBlock) {
     function debug(message) {
         window.postMessage(JSON.stringify({
                 'type': 'debug',
@@ -68,25 +94,58 @@ function xhr(shouldBlock)
             '*');
     }
 
+    var url = (isSameOrigin ? 'http://127.0.0.1:8000/' : 'http://localhost:8000/') + 'xmlhttprequest/resources/access-control-basic-allow.cgi';
     var xhr = new XMLHttpRequest();
+    var asyncCallDone = false;
+    var finallyClauseDone = false;
+
+    xhr.open('GET', url, isAsync);
+
+    if (isAsync) {
+        xhr.addEventListener('load', function() {
+            if (shouldBlock)
+                debug('FAIL: XHR.send should not have received a load event.');
+            else
+                debug('PASS: XHR.send received a load event.');
+
+            if (finallyClauseDone)
+                window.postMessage(JSON.stringify({'type': 'test-done'}), '*');
+            else
+                asyncCallDone = true;
+        });
+
+        xhr.addEventListener('error', function() {
+            if (shouldBlock)
+                debug('PASS: XHR.send received an error event.');
+            else
+                debug('FAIL: XHR.send should not have received an error event.');
+
+            if (finallyClauseDone)
+                window.postMessage(JSON.stringify({'type': 'test-done'}), '*');
+            else
+                asyncCallDone = true;
+        });
+    }
+
     try {
-        xhr.open('GET', 'http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt', true);
-        if (shouldBlock)
-            debug('FAIL: XHR.open should have thrown an exception.');
+        xhr.send();
+        if (shouldBlock && !isAsync)
+            debug('FAIL: XHR.send should have thrown an exception.');
         else
-            debug('PASS: XHR.open did not throw an exception.');
+            debug('PASS: XHR.send did not throw an exception.');
     } catch (e) {
-        if (shouldBlock)
-            debug('PASS: XHR.open threw an exception.');
+        if (shouldBlock && !isAsync)
+            debug('PASS: XHR.send threw an exception.');
         else
-            debug('FAIL: XHR.open should not have thrown an exception.');
+            debug('FAIL: XHR.send should not have thrown an exception.');
     } finally {
-        window.postMessage(JSON.stringify({'type': 'test-done'}), '*');
+        if (!isAsync || asyncCallDone)
+            window.postMessage(JSON.stringify({'type': 'test-done'}), '*');
+        else
+            finallyClauseDone = true;
     }
 }
-
 </script>
-
 <script src="../../js-test-resources/js-test-post.js"></script>
 </body>
 </html>

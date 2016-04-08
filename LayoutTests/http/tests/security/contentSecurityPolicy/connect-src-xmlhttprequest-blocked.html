@@ -2,27 +2,40 @@
 <html>
 <head>
 <meta http-equiv="Content-Security-Policy" content="connect-src http://127.0.0.1:8000">
-<script>
-if (window.testRunner)
-    testRunner.dumpAsText();
-</script>
+<script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<pre id="console"></pre>
 <script>
-function log(msg)
-{
-    document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
-}
+description("This tests that a Content Security Policy violation for an XHR is triggered when calling XMLHttpRequest.send().");
 
-try {
-    var xhr = new XMLHttpRequest;
-    xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", true); 
-    log("Fail");
-} catch(e) {
-    log("Pass");
-}
+jsTestIsAsync = true;
+
+var xhrSync = new XMLHttpRequest;
+xhrSync.addEventListener("error", function () {
+    debug("FAIL An error event should not have been received.");
+});
+
+var xhrAsync = new XMLHttpRequest;
+xhrAsync.addEventListener("error", function () {
+    debug("PASS An error event was received for the asynchronous call.");
+});
+
+var xhrAsyncAbort = new XMLHttpRequest;
+xhrAsyncAbort.addEventListener("error", function () {
+    debug("PASS An error event was received for the aborted asynchronous call.");
+    finishJSTest();
+});
+
+shouldNotThrow('xhrSync.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", false)'); // Synchronous request
+shouldThrow("xhrSync.send()", "'Error: NetworkError: DOM Exception 19'");
+
+shouldNotThrow('xhrAsync.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", true)'); // Asynchronous request
+shouldNotThrow("xhrAsync.send()");
+
+shouldNotThrow('xhrAsyncAbort.open("GET", "http://localhost:8000/xmlhttprequest/resources/get.txt", true)'); // Asynchronous request
+shouldNotThrow("xhrAsyncAbort.send();xhrAsyncAbort.abort(); ");
 
 </script>
+<script src="/js-test-resources/js-test-post.js"></script>
 </body>
 </html>

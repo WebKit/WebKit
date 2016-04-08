@@ -497,13 +497,6 @@ void XMLHttpRequest::open(const String& method, const URL& url, bool async, Exce
         return;
     }
 
-    // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-    if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectToSource(url, scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy())) {
-        // FIXME: Should this be throwing an exception?
-        ec = SECURITY_ERR;
-        return;
-    }
-
     if (!async && scriptExecutionContext()->isDocument()) {
         if (document()->settings() && !document()->settings()->syncXHRInDocumentsEnabled()) {
             logConsoleError(scriptExecutionContext(), "Synchronous XMLHttpRequests are disabled for this page.");
@@ -572,6 +565,17 @@ bool XMLHttpRequest::initSend(ExceptionCode& ec)
         return false;
     }
     ASSERT(!m_loader);
+
+    // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
+    if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectToSource(m_url, scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy())) {
+        if (m_async) {
+            setPendingActivity(this);
+            m_timeoutTimer.stop();
+            m_networkErrorTimer.startOneShot(0);
+        } else
+            ec = NETWORK_ERR;
+        return false;
+    }
 
     m_error = false;
     return true;
