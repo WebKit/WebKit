@@ -93,7 +93,7 @@ class RemoteAPI {
                 port: server.port,
                 auth: server.auth ? server.auth.username + ':' + server.auth.password : null,
                 method: method,
-                path: path,
+                path: escape(path),
             };
 
             let request = (server.scheme == 'http' ? http : https).request(options, function (response) {
