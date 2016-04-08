@@ -669,8 +669,6 @@ webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-3.html [ Failure ]
 
 [ Debug ] js/regress-141098.html [ Slow ]
 
-webkit.org/b/144258 [ Debug ] js/class-syntax-semicolon.html [ Skip ]
-
 # IDBVersionChangeEvent tests need to be rewritten to use event constructors instead of createEvent,
 # after we implement the IDBVersionChangeEvent constructor.
 webkit.org/b/145390 storage/indexeddb/events.html [ Failure ]

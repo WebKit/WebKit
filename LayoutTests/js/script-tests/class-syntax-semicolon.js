@@ -1,5 +1,3 @@
-//@ skip
-
 description('Tests for ES6 class syntax containing semicolon in the class body');
 
 shouldThrow("class A { foo;() { } }", "'SyntaxError: Unexpected token \\';\\'. Expected an opening \\'(\\' before a method\\'s parameter list.'");
