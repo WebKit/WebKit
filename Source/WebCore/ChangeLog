@@ -1,3 +1,13 @@
+2016-04-08  Brady Eidson  <beidson@apple.com>
+
+        Build fix followup to http://trac.webkit.org/changeset/199230
+
+        Unreviewed.
+
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::hardLinkOrCopyFile): Stricter POSIX systems require a umask for O_CREAT opens,
+          so let's provide one.
+
 2016-04-08  Darin Adler  <darin@apple.com>
 
         Remove 14 more unnecessary uses of UsePointersEvenForNonNullableObjectArguments

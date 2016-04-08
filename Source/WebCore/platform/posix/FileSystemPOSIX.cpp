@@ -363,7 +363,7 @@ bool hardLinkOrCopyFile(const String& source, const String& destination)
         return true;
 
     // Hard link failed. Perform a copy instead.
-    auto handle = open(fsDestination.data(), O_WRONLY | O_CREAT | O_EXCL);
+    auto handle = open(fsDestination.data(), O_WRONLY | O_CREAT | O_EXCL, 0666);
     if (handle == -1)
         return false;
 
