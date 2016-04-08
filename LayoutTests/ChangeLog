@@ -1,3 +1,15 @@
+2016-04-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Testharness-based tests that time out should be able to produce a detailled output
+        https://bugs.webkit.org/show_bug.cgi?id=145313
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * TestExpectations: Removed TIMEOUT for some tests for which testharness.timeout will be called just before WTR times out.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/request/request-cache-expected.txt: GTK specific baseline.
+        * resources/testharnessreport.js:
+        (add_completion_callback): Improving error logging message. Dumping of the tests status in error case.
+
 2016-04-08  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix positioned items with grid gaps

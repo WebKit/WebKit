@@ -1,3 +1,21 @@
+2016-04-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Testharness-based tests that time out should be able to produce a detailed output
+        https://bugs.webkit.org/show_bug.cgi?id=145313
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Adding timeout readonly accessor to TestRunner for both WK1 and WK2.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (getTimeoutCallback): The js "timeout" property getter.
+        (TestRunner::staticValues): Adding "timeout" property to DumpRenderTree so that testRunner.timeout called from JS returns the timeout value.
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::timeout): Adding access to DRT m_timeout private value.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl: Adding timeout readonly attribute so that testRunner.timeout can be called from JS.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h: Adding DOM timeout getter to implement timeout IDL definition.
+        (WTR::TestRunner::timeout):
+
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         stylebot should know about TestWebKitAPI FeatureDefines.xcconfig

@@ -1,7 +1,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL RequestCache "default" mode checks the cache for previously cached content and goes to the network for stale responses with Etag and stale response assert_array_equals: property 0, expected 200 but got 500
+TIMEOUT RequestCache "default" mode checks the cache for previously cached content and goes to the network for stale responses with Etag and stale response Test timed out
 TIMEOUT RequestCache "default" mode checks the cache for previously cached content and goes to the network for stale responses with date and stale response Test timed out
 TIMEOUT RequestCache "default" mode checks the cache for previously cached content and avoids going to the network if a fresh response exists with Etag and fresh response Test timed out
 TIMEOUT RequestCache "default" mode checks the cache for previously cached content and avoids going to the network if a fresh response exists with date and fresh response Test timed out

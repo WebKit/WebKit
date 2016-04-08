@@ -71,6 +71,7 @@ public:
     void waitUntilDone();
     void notifyDone();
     double preciseTime();
+    double timeout() { return m_timeout; }
 
     // Other dumping.
     void dumpBackForwardList() { m_shouldDumpBackForwardListsForAllWindows = true; }

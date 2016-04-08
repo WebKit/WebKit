@@ -358,6 +358,7 @@ public:
     bool hasPendingWebNotificationClick() const { return m_hasPendingWebNotificationClick; }
 
     void setCustomTimeout(int duration) { m_timeout = duration; }
+    double timeout() { return m_timeout; }
 
 private:
     TestRunner(const std::string& testURL, const std::string& expectedPixelHash);

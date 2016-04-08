@@ -32,6 +32,7 @@ interface TestRunner {
     void waitUntilDownloadFinished();
     void notifyDone();
     double preciseTime();
+    readonly attribute double timeout;
 
     // Other dumping.
     void dumpBackForwardList();

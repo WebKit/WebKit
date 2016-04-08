@@ -323,8 +323,6 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ Skip ]
 
-imported/w3c/web-platform-tests/fetch/api/request/request-cache.html [ Timeout ]
-
 # New W3C ref tests that are failing.
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 
@@ -386,12 +384,6 @@ imported/w3c/web-platform-tests/tools [ Skip ]
 # Tests marked as pass or fail until wpt server proves to be stable enough
 imported/w3c/web-platform-tests/domparsing/DOMParser-parseFromString-html.html [ Pass Failure ]
 imported/w3c/web-platform-tests/domparsing/insert-adjacent.html [ Pass Failure ]
-
-# W3C html timing out tests
-imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/010.html [ Failure Timeout ]
-imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01.html [ Timeout ]
-imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style-error-01.html [ Timeout ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change.html [ Timeout ]
 
 # Imported W3C canvas failed tests
 webkit.org/b/138676 imported/w3c/canvas/2d.pattern.image.null.html [ Failure ]
@@ -508,6 +500,9 @@ imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-pre
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-N-between-Rs.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/style-01.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/010.html [ Failure Timeout ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change.html [ Failure ]
 
 # Imported Mozilla SVG tests
 webkit.org/b/5968 imported/mozilla/svg/linearGradient-basic-03.svg [ ImageOnlyFailure ]

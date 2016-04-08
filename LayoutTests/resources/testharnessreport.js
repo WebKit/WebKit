@@ -16,6 +16,11 @@
 if (self.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
+    // Let's restrict calling testharness timeout() to wptserve tests for the moment.
+    // That will limit the impact to a small number of tests.
+    // The risk is that testharness timeout() might be called to late on slow bots to finish properly.
+    if (testRunner.timeout && location.port == 8800)
+        setTimeout(timeout, testRunner.timeout * 0.9);
 }
 
 // Function used to convert the test status code into
@@ -52,30 +57,28 @@ add_completion_callback(function (tests, harness_status){
 	// Check harness_status.  If it is not 0, tests did not
 	// execute correctly, output the error code and message
 	if(harness_status.status != 0){
-		resultStr += "Harness Error. harness_status.status = " + 
-					 harness_status.status +
-					 " , harness_status.message = " +
-					 harness_status.message;
+		resultStr += "Harness Error (" + 
+					 convertResult(harness_status.status) +
+					 "), message = " +
+					 harness_status.message + "\n\n";
 	}
-	else {
-		// Iterate through tests array and build string that contains
-		// results for all tests
-		for(var i=0; i<tests.length; i++){				 
-			var message = (tests[i].message != null) ? tests[i].message : "";
-			if (tests[i].status == 1 && !tests[i].dumpStack) {
-				// Remove stack for failed tests for proper string comparison without file paths.
-				// For a test to dump the stack set its dumpStack attribute to true.
-				var stackIndex = message.indexOf("(stack:");
-				if (stackIndex > 0) {
-					message = message.substr(0, stackIndex);
-				}
+	// Iterate through tests array and build string that contains
+	// results for all tests
+	for(var i = 0; i < tests.length; i++) {
+		var message = (tests[i].message != null) ? tests[i].message : "";
+		if (tests[i].status == 1 && !tests[i].dumpStack) {
+			// Remove stack for failed tests for proper string comparison without file paths.
+			// For a test to dump the stack set its dumpStack attribute to true.
+			var stackIndex = message.indexOf("(stack:");
+			if (stackIndex > 0) {
+				message = message.substr(0, stackIndex);
 			}
-			resultStr += convertResult(tests[i].status) + " " + 
-						( (tests[i].name!=null) ? tests[i].name : "" ) + " " +
-						message +
-						"\n";
-		}			
-	}
+		}
+		resultStr += convertResult(tests[i].status) + " " + 
+					( (tests[i].name!=null) ? tests[i].name : "" ) + " " +
+					message +
+					"\n";
+        }			
 
 	results.innerText = resultStr;
 
