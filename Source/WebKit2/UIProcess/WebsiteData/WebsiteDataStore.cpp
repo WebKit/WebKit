@@ -336,7 +336,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
         callbackAggregator->addPendingCallback();
 
         m_queue->dispatch([fetchOptions, applicationCacheDirectory, callbackAggregator] {
-            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "Files");
+            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "ApplicationCache");
 
             WebsiteData* websiteData = new WebsiteData;
 
@@ -600,9 +600,9 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
         callbackAggregator->addPendingCallback();
 
         m_queue->dispatch([applicationCacheDirectory, callbackAggregator] {
-            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "Files");
+            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "ApplicationCache");
 
-            storage->deleteAllEntries();
+            storage->deleteAllCaches();
 
             WTF::RunLoop::main().dispatch([callbackAggregator] {
                 callbackAggregator->removePendingCallback();
@@ -839,7 +839,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
         callbackAggregator->addPendingCallback();
         m_queue->dispatch([origins, applicationCacheDirectory, callbackAggregator] {
-            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "Files");
+            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "ApplicationCache");
 
             for (const auto& origin : origins)
                 storage->deleteCacheForOrigin(*origin);

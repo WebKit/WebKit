@@ -1,3 +1,18 @@
+2016-04-07  Jeremy Jones  <jeremyj@apple.com>
+
+        Clearing the application cache doesn't work.
+        https://bugs.webkit.org/show_bug.cgi?id=156354
+        rdar://problem/22369239
+
+        Reviewed by Brady Eidson.
+
+        Use the correct "ApplicationCache" directory.
+        Delete the caches, not just the entries.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::removeData):
+
 2016-04-07  Brian Burg  <bburg@apple.com>
 
         Web Automation: implement Automation.addSingleCookie
