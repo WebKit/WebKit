@@ -1,3 +1,15 @@
+2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Not necessary to validate webinspectord connection on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=156377
+        <rdar://problem/25612460>
+
+        Reviewed by Simon Fraser.
+
+        * inspector/remote/RemoteInspectorXPCConnection.h:
+        * inspector/remote/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::handleEvent):
+
 2016-04-07  Keith Miller  <keith_miller@apple.com>
 
         Rename ArrayMode::supportsLength to supportsSelfLength
