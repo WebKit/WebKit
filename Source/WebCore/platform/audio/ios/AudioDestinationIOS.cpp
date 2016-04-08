@@ -220,7 +220,7 @@ OSStatus AudioDestinationIOS::render(UInt32 numberOfFrames, AudioBufferList* ioD
     while (framesRemaining > 0) {
         if (m_startSpareFrame < m_endSpareFrame) {
             ASSERT(m_startSpareFrame < m_endSpareFrame);
-            UInt32 framesThisTime = std::min(m_endSpareFrame - m_startSpareFrame, numberOfFrames);
+            UInt32 framesThisTime = std::min<UInt32>(m_endSpareFrame - m_startSpareFrame, numberOfFrames);
             assignAudioBuffersToBus(buffers, *m_renderBus, numberOfBuffers, numberOfFrames, frameOffset, framesThisTime);
             m_renderBus->copyFromRange(*m_spareBus, m_startSpareFrame, m_endSpareFrame);
             frameOffset += framesThisTime;

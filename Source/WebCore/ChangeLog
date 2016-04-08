@@ -1,5 +1,12 @@
 2016-04-08  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed 32-bit build fix; make type of std::min<> explicit.
+
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationIOS::render):
+
+2016-04-08  Jer Noble  <jer.noble@apple.com>
+
         CRASH in AudioDestinationNode::render()
         https://bugs.webkit.org/show_bug.cgi?id=156308
 
