@@ -1,3 +1,15 @@
+2016-04-08  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
+
+        Touching any IDL files rebuilds all bindings in CMake Ninja build
+        https://bugs.webkit.org/show_bug.cgi?id=156400
+
+        Reviewed by Brent Fulgham.
+
+        * bindings/scripts/preprocess-idls.pl:
+        (GenerateConstructorAttribute):
+        WriteFileIfChanged does not work due to flaky results of 'keys'.
+        Sort results of 'keys'.
+
 2016-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Stop using exposedContentRect for history scroll state restoration

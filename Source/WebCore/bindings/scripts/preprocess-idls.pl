@@ -77,7 +77,7 @@ my $dedicatedWorkerGlobalScopeConstructorsCode = "";
 my %idlFileHash = map { $_, 1 } @idlFiles;
 
 # Populate $idlFileToInterfaceName and $interfaceNameToIdlFile.
-foreach my $idlFile (keys %idlFileHash) {
+foreach my $idlFile (sort keys %idlFileHash) {
     my $fullPath = Cwd::realpath($idlFile);
     my $interfaceName = fileparse(basename($idlFile), ".idl");
     $idlFileToInterfaceName{$fullPath} = $interfaceName;
@@ -131,7 +131,7 @@ GeneratePartialInterface("WorkerGlobalScope", $workerGlobalScopeConstructorsCode
 GeneratePartialInterface("DedicatedWorkerGlobalScope", $dedicatedWorkerGlobalScopeConstructorsCode, $dedicatedWorkerGlobalScopeConstructorsFile);
 
 # Resolves partial interfaces and implements dependencies.
-foreach my $idlFile (keys %supplementalDependencies) {
+foreach my $idlFile (sort keys %supplementalDependencies) {
     my $baseFiles = $supplementalDependencies{$idlFile};
     foreach my $baseFile (@{$baseFiles}) {
         my $targetIdlFile = $interfaceNameToIdlFile{$baseFile};
@@ -227,7 +227,7 @@ sub GenerateConstructorAttribute
 
     my $code = "    ";
     my @extendedAttributesList;
-    foreach my $attributeName (keys %{$extendedAttributes}) {
+    foreach my $attributeName (sort keys %{$extendedAttributes}) {
       next unless ($attributeName eq "Conditional" || $attributeName eq "EnabledAtRuntime" || $attributeName eq "EnabledBySetting");
       my $extendedAttribute = $attributeName;
       $extendedAttribute .= "=" . $extendedAttributes->{$attributeName} unless $extendedAttributes->{$attributeName} eq "VALUE_IS_MISSING";
