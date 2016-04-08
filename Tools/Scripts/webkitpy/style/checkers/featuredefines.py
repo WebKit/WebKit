@@ -44,7 +44,9 @@ class FeatureDefinesChecker(object):
             "Source/JavaScriptCore/Configurations/FeatureDefines.xcconfig",
             "Source/WebCore/Configurations/FeatureDefines.xcconfig",
             "Source/WebKit/mac/Configurations/FeatureDefines.xcconfig",
-            "Source/WebKit2/Configurations/FeatureDefines.xcconfig"]
+            "Source/WebKit2/Configurations/FeatureDefines.xcconfig",
+            "Tools/TestWebKitAPI/Configurations/FeatureDefines.xcconfig",
+        ]
 
         if self._file_path not in feature_defines_files:
             self._handle_style_error(0, 'featuredefines/new', 5, "Patch introduces a new FeatureDefines.xcconfig, which check-webkit-style doesn't know about. Please add it to the list in featuredefines.py.")
