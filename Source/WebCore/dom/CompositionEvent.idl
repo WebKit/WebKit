@@ -26,7 +26,6 @@
 [
     ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
     ConstructorTemplate=Event,
-    UsePointersEvenForNonNullableObjectArguments,
 ] interface CompositionEvent : UIEvent {
 
     [InitializedByEventConstructor] readonly attribute DOMString data;

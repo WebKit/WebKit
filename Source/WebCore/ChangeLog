@@ -1,3 +1,20 @@
+2016-04-08  Darin Adler  <darin@apple.com>
+
+        Remove unneeded UsePointersEvenForNonNullableObjectArguments from event classes
+        https://bugs.webkit.org/show_bug.cgi?id=156396
+
+        Reviewed by Youenn Fablet.
+
+        * dom/CompositionEvent.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/TextEvent.idl:
+        * dom/TouchEvent.idl:
+        * dom/UIEvent.idl:
+        * dom/WheelEvent.idl:
+        Removed UsePointersEvenForNonNullableObjectArguments, which was having no effect.
+
 2016-04-08  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix positioned items with grid gaps

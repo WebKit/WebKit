@@ -24,9 +24,7 @@
  */
 
 // Introduced in DOM Level 3:
-[
-    UsePointersEvenForNonNullableObjectArguments,
-] interface TextEvent : UIEvent {
+interface TextEvent : UIEvent {
 
     readonly attribute DOMString data;
 

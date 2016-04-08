@@ -18,9 +18,7 @@
  */
 
 // Introduced in DOM Level 2:
-[
-    UsePointersEvenForNonNullableObjectArguments,
-] interface MutationEvent : Event {
+interface MutationEvent : Event {
 
     // attrChangeType
     const unsigned short MODIFICATION = 1;

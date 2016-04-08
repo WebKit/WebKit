@@ -20,7 +20,6 @@
 [
     ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
     ConstructorTemplate=Event,
-    UsePointersEvenForNonNullableObjectArguments,
 ] interface UIEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMWindow view;
     [InitializedByEventConstructor] readonly attribute long detail;

@@ -20,7 +20,6 @@
 [
     ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
     ConstructorTemplate=Event,
-    UsePointersEvenForNonNullableObjectArguments,
     DoNotCheckConstants,
 ] interface MouseEvent : UIEvent {
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
