@@ -35,13 +35,13 @@ void IDBGetResult::dataFromBuffer(SharedBuffer& buffer)
     Vector<uint8_t> data(buffer.size());
     memcpy(data.data(), buffer.data(), buffer.size());
 
-    m_valueBuffer = ThreadSafeDataBuffer::adoptVector(data);
+    m_value = ThreadSafeDataBuffer::adoptVector(data);
 }
 
 IDBGetResult IDBGetResult::isolatedCopy() const
 {
     IDBGetResult result;
-    result.m_valueBuffer = m_valueBuffer;
+    result.m_value = m_value.isolatedCopy();
     result.m_keyData = m_keyData.isolatedCopy();
     result.m_primaryKeyData = m_primaryKeyData.isolatedCopy();
     result.m_keyPath = m_keyPath.isolatedCopy();

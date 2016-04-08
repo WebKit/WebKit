@@ -42,6 +42,11 @@ IDBValue::IDBValue(const SerializedScriptValue& scriptValue)
 {
 }
 
+IDBValue::IDBValue(const ThreadSafeDataBuffer& value)
+    : m_data(value)
+{
+}
+
 IDBValue::IDBValue(const SerializedScriptValue& scriptValue, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths)
     : m_data(ThreadSafeDataBuffer::copyVector(scriptValue.data()))
     , m_blobURLs(blobURLs)

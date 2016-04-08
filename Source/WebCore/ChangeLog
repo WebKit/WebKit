@@ -1,3 +1,39 @@
+2016-04-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Make IDBGetResult contain an IDBValue instead of a buffer, and remove unused methods.
+        https://bugs.webkit.org/show_bug.cgi?id=156416
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, no change in behavior).
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::setGetResult):
+        
+        * Modules/indexeddb/IDBGetResult.cpp:
+        (WebCore::IDBGetResult::dataFromBuffer):
+        (WebCore::IDBGetResult::isolatedCopy):
+        * Modules/indexeddb/IDBGetResult.h:
+        (WebCore::IDBGetResult::IDBGetResult):
+        (WebCore::IDBGetResult::value):
+        (WebCore::IDBGetResult::encode):
+        (WebCore::IDBGetResult::decode):
+        (WebCore::IDBGetResult::valueBuffer): Deleted.
+        (WebCore::IDBGetResult::setValueBuffer): Deleted.
+        (WebCore::IDBGetResult::setKeyData): Deleted.
+        (WebCore::IDBGetResult::setPrimaryKeyData): Deleted.
+        (WebCore::IDBGetResult::setKeyPath): Deleted.
+        
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::didGetRecordOnServer):
+        
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+        * Modules/indexeddb/IDBValue.h:
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getIndexRecord):
+
 2016-04-08  Zalan Bujtas  <zalan@apple.com>
 
         Focus ring drawn at incorrect location on image map with CSS transform.
