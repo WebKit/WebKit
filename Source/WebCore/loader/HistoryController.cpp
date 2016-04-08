@@ -82,6 +82,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
 #if PLATFORM(IOS)
     item->setExposedContentRect(frameView->exposedContentRect());
     item->setUnobscuredContentRect(frameView->unobscuredContentRect());
+    item->setObscuredInset(frameView->platformObscuredInset());
 #endif
 
     Page* page = m_frame.page();

@@ -36,6 +36,7 @@ void VisibleContentRectUpdateInfo::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_unobscuredContentRect;
     encoder << m_unobscuredRectInScrollViewCoordinates;
     encoder << m_customFixedPositionRect;
+    encoder << m_obscuredInset;
     encoder << m_lastLayerTreeTransactionID;
     encoder << m_scale;
     encoder << m_timestamp;
@@ -56,6 +57,8 @@ bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, Visible
     if (!decoder.decode(result.m_unobscuredRectInScrollViewCoordinates))
         return false;
     if (!decoder.decode(result.m_customFixedPositionRect))
+        return false;
+    if (!decoder.decode(result.m_obscuredInset))
         return false;
     if (!decoder.decode(result.m_lastLayerTreeTransactionID))
         return false;

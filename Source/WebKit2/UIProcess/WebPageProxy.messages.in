@@ -358,7 +358,7 @@ messages -> WebPageProxy {
 #if PLATFORM(IOS)
     DynamicViewportUpdateChangedTarget(double newTargetScale, WebCore::FloatPoint newScrollPosition, uint64_t dynamicViewportSizeUpdateID)
     CouldNotRestorePageState()
-    RestorePageState(WebCore::FloatRect exposedContentRect, WebCore::IntPoint scrollOrigin, double scale)
+    RestorePageState(WebCore::FloatPoint scrollPosition, WebCore::FloatPoint scrollOrigin, WebCore::FloatSize obscuredInsetOnSave, double scale)
     RestorePageCenterAndScale(WebCore::FloatPoint unobscuredCenter, double scale)
     DidGetTapHighlightGeometries(uint64_t requestID, WebCore::Color color, Vector<WebCore::FloatQuad> geometries, WebCore::IntSize topLeftRadius, WebCore::IntSize topRightRadius, WebCore::IntSize bottomLeftRadius, WebCore::IntSize bottomRightRadius)
 

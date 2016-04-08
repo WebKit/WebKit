@@ -182,12 +182,12 @@ void WebPageProxy::autocorrectionContextCallback(const String& beforeText, const
     callback->performCallbackWithReturnValue(beforeText, markedText, selectedText, afterText, location, length);
 }
 
-void WebPageProxy::updateVisibleContentRects(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate)
+void WebPageProxy::updateVisibleContentRects(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, const WebCore::FloatSize& obscuredInset, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate)
 {
     if (!isValid())
         return;
 
-    VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(exposedRect, unobscuredRect, unobscuredRectInScrollViewCoordinates, customFixedPositionRect, scale, inStableState, isChangingObscuredInsetsInteractively, allowShrinkToFit, timestamp, horizontalVelocity, verticalVelocity, scaleChangeRate, downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).lastCommittedLayerTreeTransactionID());
+    VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(exposedRect, unobscuredRect, unobscuredRectInScrollViewCoordinates, customFixedPositionRect, obscuredInset, scale, inStableState, isChangingObscuredInsetsInteractively, allowShrinkToFit, timestamp, horizontalVelocity, verticalVelocity, scaleChangeRate, downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).lastCommittedLayerTreeTransactionID());
 
     if (visibleContentRectUpdateInfo == m_lastVisibleContentRectUpdate)
         return;
@@ -819,9 +819,9 @@ void WebPageProxy::couldNotRestorePageState()
     m_pageClient.couldNotRestorePageState();
 }
 
-void WebPageProxy::restorePageState(const WebCore::FloatRect& exposedContentRect, const WebCore::IntPoint& scrollOrigin, double scale)
+void WebPageProxy::restorePageState(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatSize& obscuredInsetOnSave, double scale)
 {
-    m_pageClient.restorePageState(exposedContentRect, scrollOrigin, scale);
+    m_pageClient.restorePageState(scrollPosition, scrollOrigin, obscuredInsetOnSave, scale);
 }
 
 void WebPageProxy::restorePageCenterAndScale(const WebCore::FloatPoint& center, double scale)

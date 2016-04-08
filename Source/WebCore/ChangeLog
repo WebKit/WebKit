@@ -1,3 +1,31 @@
+2016-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Stop using exposedContentRect for history scroll state restoration
+        https://bugs.webkit.org/show_bug.cgi?id=156392
+
+        Reviewed by Tim Horton.
+
+        A future commit will alter the meaning of exposedContentRect on iOS to take into
+        account clipped out parts of the WKWebView. To achieve this, wean history restoration
+        off of using exposedContentRect for scroll state restoration. It did this to restore
+        the page to the same position relative to the view's top-left (to avoid jiggles caused
+        by changing obscured insets).
+
+        Do this by pushing the left/top obscured insets down with visible content rects updates,
+        storing them on ScrollView, and adding them to HistoryItem. Those insets are then used
+        for scroll state restoration in WKWebView.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::obscuredInset):
+        (WebCore::HistoryItem::setObscuredInset):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::platformObscuredInset):
+        (WebCore::ScrollView::platformSetObscuredInset):
+
 2016-04-08  Brady Eidson  <beidson@apple.com>
 
         Build fix followup to http://trac.webkit.org/changeset/199230

@@ -119,7 +119,7 @@ private:
 
     void dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition, uint64_t transactionID) override;
     void couldNotRestorePageState() override;
-    void restorePageState(const WebCore::FloatRect&, const WebCore::IntPoint&, double) override;
+    void restorePageState(const WebCore::FloatPoint&, const WebCore::FloatPoint&, const WebCore::FloatSize&, double) override;
     void restorePageCenterAndScale(const WebCore::FloatPoint&, double) override;
 
     void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, API::Object* userData) override;

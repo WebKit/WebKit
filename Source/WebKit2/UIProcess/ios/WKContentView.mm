@@ -356,7 +356,7 @@ private:
 }
 
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
-    scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
+    obscuredInset:(CGSize)obscuredInset scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
 {
     double timestamp = monotonicallyIncreasingTime();
     HistoricalVelocityData::VelocityData velocityData;
@@ -366,7 +366,7 @@ private:
         _historicalKinematicData.clear();
 
     FloatRect fixedPositionRectForLayout = _page->computeCustomFixedPositionRect(unobscuredRect, zoomScale, WebPageProxy::UnobscuredRectConstraint::ConstrainedToDocumentRect);
-    _page->updateVisibleContentRects(visibleRect, unobscuredRect, unobscuredRectInScrollViewCoordinates, fixedPositionRectForLayout,
+    _page->updateVisibleContentRects(visibleRect, unobscuredRect, unobscuredRectInScrollViewCoordinates, fixedPositionRectForLayout, WebCore::FloatSize(obscuredInset),
         zoomScale, isStableState, isChangingObscuredInsetsInteractively, _webView._allowsViewportShrinkToFit, timestamp, velocityData.horizontalVelocity, velocityData.verticalVelocity, velocityData.scaleChangeRate);
 
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();

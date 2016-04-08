@@ -378,6 +378,11 @@ public:
 
     WEBCORE_EXPORT void scrollOffsetChangedViaPlatformWidget(const ScrollOffset& oldOffset, const ScrollOffset& newOffset);
 
+#if PLATFORM(IOS)
+    FloatSize platformObscuredInset() const { return m_obscuredInset; }
+    void platformSetObscuredInset(FloatSize inset) { m_obscuredInset = inset; }
+#endif
+
 protected:
     ScrollView();
 
@@ -447,11 +452,13 @@ private:
     // whether it is safe to blit on scroll.
     bool m_canBlitOnScroll;
 
+#if PLATFORM(IOS)
     // FIXME: exposedContentRect is a very similar concept to fixedVisibleContentRect except it does not differentiate
     // between exposed and unobscured areas. The two attributes should eventually be merged.
-#if PLATFORM(IOS)
     FloatRect m_exposedContentRect;
     FloatSize m_unobscuredContentSize;
+    // This is only used for history scroll position restoration.
+    FloatSize m_obscuredInset;
 #else
     IntRect m_fixedVisibleContentRect;
 #endif

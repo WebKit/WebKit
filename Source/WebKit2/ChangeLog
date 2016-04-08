@@ -1,3 +1,55 @@
+2016-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Stop using exposedContentRect for history scroll state restoration
+        https://bugs.webkit.org/show_bug.cgi?id=156392
+
+        Reviewed by Tim Horton.
+
+        A future commit will alter the meaning of exposedContentRect on iOS to take into
+        account clipped out parts of the WKWebView. To achieve this, wean history restoration
+        off of using exposedContentRect for scroll state restoration. It did this to restore
+        the page to the same position relative to the view's top-left (to avoid jiggles caused
+        by changing obscured insets).
+
+        Do this by pushing the left/top obscured insets down with visible content rects updates,
+        storing them on ScrollView, and adding them to HistoryItem. Those insets are then used
+        for scroll state restoration in WKWebView.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp: Add FloatSize for obscuredInset.
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::obscuredInset):
+        (WebKit::operator==):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processDidExit]): Rename _needsToRestoreExposedRect to _needsToRestoreScrollPosition
+        (-[WKWebView _didCommitLayerTree:]): Restore the scroll position using the scaled scrollOffset minus
+        the old obscuredInset.
+        (-[WKWebView _layerTreeCommitComplete]):
+        (-[WKWebView _restorePageScrollPosition:scrollOrigin:previousObscuredInset:scale:]):
+        (-[WKWebView _restorePageStateToUnobscuredCenter:scale:]):
+        (-[WKWebView _scrollToContentScrollPosition:scrollOrigin:]):
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _restorePageStateToExposedRect:scrollOrigin:scale:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::restorePageState):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateVisibleContentRects):
+        (WebKit::WebPageProxy::restorePageState):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::restorePageState):
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2016-04-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Blob support): Write blobs to temporary files and move them to the correct location when storing them.

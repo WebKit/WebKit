@@ -68,6 +68,7 @@ class WebProcessPool;
 
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
+    obscuredInset:(CGSize)topInset
     scale:(CGFloat)scale minimumScale:(CGFloat)minimumScale
     inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively;
 

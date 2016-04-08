@@ -285,8 +285,8 @@ public:
 
     virtual void dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition, uint64_t transactionID) = 0;
     virtual void couldNotRestorePageState() = 0;
-    virtual void restorePageState(const WebCore::FloatRect& exposedContentRect, const WebCore::IntPoint& scrollOrigin, double scale) = 0;
-    virtual void restorePageCenterAndScale(const WebCore::FloatPoint&, double) = 0;
+    virtual void restorePageState(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatSize& obscuredInsetOnSave, double scale) = 0;
+    virtual void restorePageCenterAndScale(const WebCore::FloatPoint& center, double scale) = 0;
 
     virtual void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, API::Object* userData) = 0;
     virtual void stopAssistingNode() = 0;

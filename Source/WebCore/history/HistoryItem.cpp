@@ -62,11 +62,6 @@ HistoryItem::HistoryItem()
     , m_itemSequenceNumber(generateSequenceNumber())
     , m_documentSequenceNumber(generateSequenceNumber())
     , m_pruningReason(PruningReason::None)
-#if PLATFORM(IOS)
-    , m_scale(0)
-    , m_scaleIsInitial(false)
-    , m_bookmarkID(0)
-#endif
 {
 }
 
@@ -80,12 +75,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title)
     , m_itemSequenceNumber(generateSequenceNumber())
     , m_documentSequenceNumber(generateSequenceNumber())
     , m_pruningReason(PruningReason::None)
-#if PLATFORM(IOS)
-    , m_scale(0)
-    , m_scaleIsInitial(false)
-    , m_bookmarkID(0)
-#endif
-{    
+{
     iconDatabase().retainIconForPageURL(m_urlString);
 }
 
@@ -100,11 +90,6 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     , m_itemSequenceNumber(generateSequenceNumber())
     , m_documentSequenceNumber(generateSequenceNumber())
     , m_pruningReason(PruningReason::None)
-#if PLATFORM(IOS)
-    , m_scale(0)
-    , m_scaleIsInitial(false)
-    , m_bookmarkID(0)
-#endif
 {
     iconDatabase().retainIconForPageURL(m_urlString);
 }
@@ -132,6 +117,7 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_formContentType(item.m_formContentType)
     , m_pruningReason(PruningReason::None)
 #if PLATFORM(IOS)
+    , m_obscuredInset(item.m_obscuredInset)
     , m_scale(item.m_scale)
     , m_scaleIsInitial(item.m_scaleIsInitial)
     , m_bookmarkID(item.m_bookmarkID)

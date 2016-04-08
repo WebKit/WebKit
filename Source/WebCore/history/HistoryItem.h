@@ -179,6 +179,9 @@ public:
     IntRect unobscuredContentRect() const { return m_unobscuredContentRect; }
     void setUnobscuredContentRect(IntRect unobscuredContentRect) { m_unobscuredContentRect = unobscuredContentRect; }
 
+    FloatSize obscuredInset() const { return m_obscuredInset; }
+    void setObscuredInset(const FloatSize& inset) { m_obscuredInset = inset; }
+
     FloatSize minimumLayoutSizeInScrollViewCoordinates() const { return m_minimumLayoutSizeInScrollViewCoordinates; }
     void setMinimumLayoutSizeInScrollViewCoordinates(FloatSize minimumLayoutSizeInScrollViewCoordinates) { m_minimumLayoutSizeInScrollViewCoordinates = minimumLayoutSizeInScrollViewCoordinates; }
 
@@ -265,11 +268,12 @@ private:
     IntRect m_unobscuredContentRect;
     FloatSize m_minimumLayoutSizeInScrollViewCoordinates;
     IntSize m_contentSize;
-    float m_scale;
-    bool m_scaleIsInitial;
+    FloatSize m_obscuredInset;
+    float m_scale { 1 };
+    bool m_scaleIsInitial { false };
     ViewportArguments m_viewportArguments;
 
-    uint32_t m_bookmarkID;
+    uint32_t m_bookmarkID { 0 };
     String m_sharedLinkUniqueIdentifier;
 #endif
 
