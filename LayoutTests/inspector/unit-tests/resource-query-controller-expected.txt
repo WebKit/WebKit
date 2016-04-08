@@ -45,6 +45,7 @@ PASS: Query "abcde" should match "A B C D E" in "AaBbCcDdEe".
 PASS: Query "abcde" should match "A   B  C De" in "AbcdBcdCdDe".
 PASS: Query "abcdex" should match "A B C d ex" in "AxBxCxdxexDxyxEF".
 PASS: Query "bc" should match " bC" in "abCd".
+PASS: Query "bb" should match " bB" in "abBc".
 
 -- Running test case: ExecuteQueryShouldIgnoreCase
 All case permutations of query "abcd" should match "abcd" in "abcde".

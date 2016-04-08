@@ -1,3 +1,18 @@
+2016-04-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Quick Open fails to match pattern "bB" in file "abBc"
+        https://bugs.webkit.org/show_bug.cgi?id=156398
+
+        Reviewed by Timothy Hatcher.
+
+        Correct an off-by-one error in the backtrack routine that set the dead
+        branch index to the character just before the match that was popped.
+        The dead branch index should equal the index of the popped match.
+
+        * UserInterface/Controllers/ResourceQueryController.js:
+        (WebInspector.ResourceQueryController.prototype._findQueryMatches.backtrack):
+        (WebInspector.ResourceQueryController.prototype._findQueryMatches):
+
 2016-04-07  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: OpenResourceDialog should keep its resources list up-to-date

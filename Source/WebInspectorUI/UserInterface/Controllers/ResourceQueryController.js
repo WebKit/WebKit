@@ -129,7 +129,7 @@ WebInspector.ResourceQueryController = class ResourceQueryController extends Web
                 if (lastMatch.type !== WebInspector.ResourceQueryMatch.Type.Special)
                     continue;
 
-                deadBranches[lastMatch.queryIndex] = lastMatch.index - 1;
+                deadBranches[lastMatch.queryIndex] = lastMatch.index;
                 searchIndex = matches.lastValue ? matches.lastValue.index + 1 : 0;
                 return true;
             }

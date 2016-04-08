@@ -179,6 +179,11 @@ function test()
                     filename: "abCd",
                     expected: " bC"
                 },
+                {
+                    query: "bb",
+                    filename: "abBc",
+                    expected: " bB"
+                }
             ];
 
             for (let {query, filename, expected} of tests) {
@@ -187,7 +192,7 @@ function test()
 
                 let results = matcher.executeQuery(query);
                 InspectorTest.assert(results.length === 1, "Should return exactly one match.");
-                let actual = results[0].__test_createMatchesMask();
+                let actual = results.length ? results[0].__test_createMatchesMask() : null;
                 InspectorTest.expectThat(actual === expected, `Query "${query}" should match "${expected}" in "${filename}".`);
             }
         }
