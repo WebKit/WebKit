@@ -1,5 +1,16 @@
 2016-04-08  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r199253.
+
+    2016-04-08  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed 32-bit build fix; make type of std::min<> explicit.
+
+            * platform/audio/ios/AudioDestinationIOS.cpp:
+            (WebCore::AudioDestinationIOS::render):
+
+2016-04-08  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r199252.
 
     2016-04-08  Jer Noble  <jer.noble@apple.com>
