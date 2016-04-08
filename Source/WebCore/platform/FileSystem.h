@@ -181,6 +181,9 @@ int readFromFile(PlatformFileHandle, char* data, int length);
 // Returns true if the write was successful, false if it was not.
 bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle&);
 
+// Hard links a file if possible, copies it if not.
+bool hardLinkOrCopyFile(const String& source, const String& destination);
+
 #if USE(FILE_LOCK)
 bool lockFile(PlatformFileHandle, FileLockMode);
 bool unlockFile(PlatformFileHandle);

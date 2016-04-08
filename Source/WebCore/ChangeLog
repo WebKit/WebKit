@@ -1,3 +1,67 @@
+2016-04-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Blob support): Write blobs to temporary files and move them to the correct location when storing them.
+        https://bugs.webkit.org/show_bug.cgi?id=156321
+
+        Reviewed by Alex Christensen, Andy Estes, and Darin Adler.
+
+        No new tests (No testable change in behavior yet, current tests pass).
+
+        When asked to store a Blob (including Files) in IndexedDB, the Blob is written out to a temporary file.
+        
+        Then when the putOrAdd request is received by IDBServer it includes a list of blobURLs and their mappings
+        to temporary files.
+        
+        Finally, as part of storing the Blob value in the database, those temporary files are moved in to place
+        under the IndexedDB directory for storage and later retrieval.
+
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        (WebCore::IDBServer::IDBBackingStoreTemporaryFileHandler::~IDBBackingStoreTemporaryFileHandler):
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::create):
+        (WebCore::IDBServer::IDBServer::IDBServer):
+        (WebCore::IDBServer::IDBServer::createBackingStore):
+        * Modules/indexeddb/server/IDBServer.h:
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::blobRecordsTableSchema):
+        (WebCore::IDBServer::blobRecordsTableSchemaAlternate):
+        (WebCore::IDBServer::blobFilesTableSchema):
+        (WebCore::IDBServer::blobFilesTableSchemaAlternate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::SQLiteIDBBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidBlobTables):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::temporaryFileHandler):
+
+        * Modules/indexeddb/server/SQLiteIDBTransaction.cpp:
+        (WebCore::IDBServer::SQLiteIDBTransaction::commit):
+        (WebCore::IDBServer::SQLiteIDBTransaction::moveBlobFilesIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBTransaction::abort):
+        (WebCore::IDBServer::SQLiteIDBTransaction::reset):
+        (WebCore::IDBServer::SQLiteIDBTransaction::addBlobFile):
+        * Modules/indexeddb/server/SQLiteIDBTransaction.h:
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::InProcessIDBServer):
+        (WebCore::InProcessIDBServer::accessToTemporaryFileComplete):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::blobURLsIsolatedCopy):
+        * bindings/js/SerializedScriptValue.h:
+
+        * platform/FileSystem.h:
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::hardLinkOrCopyFile):
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::hardLinkOrCopyFile):
+
 2016-04-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Crash getting text under element in CSS table

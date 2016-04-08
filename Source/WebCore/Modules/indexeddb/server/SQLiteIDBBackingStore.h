@@ -47,7 +47,7 @@ class SQLiteIDBCursor;
 
 class SQLiteIDBBackingStore : public IDBBackingStore {
 public:
-    SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseRootDirectory);
+    SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler&);
     
     ~SQLiteIDBBackingStore() final;
 
@@ -81,13 +81,17 @@ public:
 
     void unregisterCursor(SQLiteIDBCursor&);
 
+    String fullDatabaseDirectory() const;
+
+    IDBBackingStoreTemporaryFileHandler& temporaryFileHandler() const { return m_temporaryFileHandler; }
+
 private:
     String filenameForDatabaseName() const;
-    String fullDatabaseDirectory() const;
     String fullDatabasePath() const;
 
     bool ensureValidRecordsTable();
     bool ensureValidIndexRecordsTable();
+    bool ensureValidBlobTables();
     std::unique_ptr<IDBDatabaseInfo> createAndPopulateInitialDatabaseInfo();
     std::unique_ptr<IDBDatabaseInfo> extractExistingDatabaseInfo();
 
@@ -118,6 +122,8 @@ private:
 
     RefPtr<JSC::VM> m_vm;
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
+
+    IDBBackingStoreTemporaryFileHandler& m_temporaryFileHandler;
 };
 
 } // namespace IDBServer

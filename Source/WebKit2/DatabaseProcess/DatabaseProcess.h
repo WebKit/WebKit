@@ -29,6 +29,8 @@
 #if ENABLE(DATABASE_PROCESS)
 
 #include "ChildProcess.h"
+#include "SandboxExtension.h"
+#include <WebCore/IDBBackingStore.h>
 #include <WebCore/IDBServer.h>
 #include <WebCore/UniqueIDBDatabase.h>
 #include <wtf/NeverDestroyed.h>
@@ -45,7 +47,7 @@ class DatabaseToWebProcessConnection;
 enum class WebsiteDataType;
 struct DatabaseProcessCreationParameters;
 
-class DatabaseProcess : public ChildProcess {
+class DatabaseProcess : public ChildProcess, public WebCore::IDBServer::IDBBackingStoreTemporaryFileHandler {
     WTF_MAKE_NONCOPYABLE(DatabaseProcess);
     friend class NeverDestroyed<DatabaseProcess>;
 public:
@@ -64,6 +66,10 @@ public:
     WorkQueue& queue() { return m_queue.get(); }
 
     void postDatabaseTask(std::unique_ptr<WebCore::CrossThreadTask>);
+
+    // WebCore::IDBServer::IDBBackingStoreFileHandler
+    void prepareForAccessToTemporaryFile(const String& path) final;
+    void accessToTemporaryFileComplete(const String& path) final;
 
 private:
     DatabaseProcess();
@@ -90,6 +96,7 @@ private:
     void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID);
     void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
     void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& origins, uint64_t callbackID);
+    void grantSandboxExtensionsForBlobs(const Vector<String>& paths, const SandboxExtension::HandleArray&);
 
 #if ENABLE(INDEXED_DATABASE)
     Vector<RefPtr<WebCore::SecurityOrigin>> indexedDatabaseOrigins();
@@ -109,6 +116,8 @@ private:
     String m_indexedDatabaseDirectory;
 
     RefPtr<WebCore::IDBServer::IDBServer> m_idbServer;
+
+    HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
 #endif
 
     Deque<std::unique_ptr<WebCore::CrossThreadTask>> m_databaseTasks;

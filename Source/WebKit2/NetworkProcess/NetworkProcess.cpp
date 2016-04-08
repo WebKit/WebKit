@@ -293,6 +293,21 @@ void NetworkProcess::destroyPrivateBrowsingSession(SessionID sessionID)
     SessionTracker::destroySession(sessionID);
 }
 
+void NetworkProcess::grantSandboxExtensionsToDatabaseProcessForBlobs(const Vector<String>& filenames, std::function<void ()> completionHandler)
+{
+    static uint64_t lastRequestID;
+
+    uint64_t requestID = ++lastRequestID;
+    m_sandboxExtensionForBlobsCompletionHandlers.set(requestID, completionHandler);
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::GrantSandboxExtensionsToDatabaseProcessForBlobs(requestID, filenames), 0);
+}
+
+void NetworkProcess::didGrantSandboxExtensionsToDatabaseProcessForBlobs(uint64_t requestID)
+{
+    if (auto handler = m_sandboxExtensionForBlobsCompletionHandlers.take(requestID))
+        handler();
+}
+
 static void fetchDiskCacheEntries(SessionID sessionID, OptionSet<WebsiteDataFetchOption> fetchOptions, std::function<void (Vector<WebsiteData::Entry>)> completionHandler)
 {
 #if ENABLE(NETWORK_CACHE)

@@ -67,4 +67,6 @@ messages -> NetworkProcess LegacyReceiver {
     PrepareToSuspend()
     CancelPrepareToSuspend()
     ProcessDidResume()
+
+    DidGrantSandboxExtensionsToDatabaseProcessForBlobs(uint64_t requestID)
 }

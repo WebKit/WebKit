@@ -106,6 +106,7 @@ private:
     void didFetchWebsiteData(uint64_t callbackID, const WebsiteData&);
     void didDeleteWebsiteData(uint64_t callbackID);
     void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
+    void grantSandboxExtensionsToDatabaseProcessForBlobs(uint64_t requestID, const Vector<String>& paths);
     void logSampledDiagnosticMessage(uint64_t pageID, const String& message, const String& description);
     void logSampledDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result);
     void logSampledDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, const String& value);

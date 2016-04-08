@@ -1,3 +1,40 @@
+2016-04-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Blob support): Write blobs to temporary files and move them to the correct location when storing them.
+        https://bugs.webkit.org/show_bug.cgi?id=156321
+
+        Reviewed by Alex Christensen, Andy Estes, and Darin Adler.
+
+        The NetworkProcess writes a blob to a temporary file, then tells the UIProcess to grant the DatabaseProcess
+        a Sandbox Extension to that path.
+        
+        It then tells the WebProcess the paths for the temporary files, which then tells the DatabaseProcess to store
+        the contents of those files as blob references in the database.
+        
+        Since the UIProcess had already granted it a Sandbox Extension, it is able to do so.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::idbServer):
+        (WebKit::DatabaseProcess::grantSandboxExtensionsForBlobs):
+        (WebKit::DatabaseProcess::prepareForAccessToTemporaryFile):
+        (WebKit::DatabaseProcess::accessToTemporaryFileComplete):
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseProcess.messages.in:
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles):
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::grantSandboxExtensionsToDatabaseProcessForBlobs):
+        (WebKit::NetworkProcess::didGrantSandboxExtensionsToDatabaseProcessForBlobs):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::grantSandboxExtensionsToDatabaseProcessForBlobs):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(ENABLE_ES6_CLASS_SYNTAX) guards

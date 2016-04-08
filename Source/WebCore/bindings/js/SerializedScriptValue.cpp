@@ -2748,6 +2748,16 @@ uint32_t SerializedScriptValue::wireFormatVersion()
 }
 
 #if ENABLE(INDEXED_DATABASE)
+Vector<String> SerializedScriptValue::blobURLsIsolatedCopy() const
+{
+    Vector<String> result;
+    result.reserveInitialCapacity(m_blobURLs.size());
+    for (auto& url : m_blobURLs)
+        result.uncheckedAppend(url.isolatedCopy());
+
+    return result;
+}
+
 void SerializedScriptValue::writeBlobsToDiskForIndexedDB(std::function<void (const IDBValue&)> completionHandler)
 {
     ASSERT(isMainThread());
@@ -2769,6 +2779,6 @@ void SerializedScriptValue::writeBlobsToDiskForIndexedDB(std::function<void (con
         completionHandler({ *this, m_blobURLs, blobFilePaths });
     });
 }
-#endif
+#endif // ENABLE(INDEXED_DATABASE)
 
 } // namespace WebCore

@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "FileSystem.h"
 #include "IDBConnectionToClient.h"
 #include "IDBConnectionToServer.h"
 #include "IDBCursorInfo.h"
@@ -56,7 +57,7 @@ Ref<InProcessIDBServer> InProcessIDBServer::create(const String& databaseDirecto
 }
 
 InProcessIDBServer::InProcessIDBServer()
-    : m_server(IDBServer::IDBServer::create())
+    : m_server(IDBServer::IDBServer::create(*this))
 {
     relaxAdoptionRequirement();
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
@@ -64,7 +65,7 @@ InProcessIDBServer::InProcessIDBServer()
 }
 
 InProcessIDBServer::InProcessIDBServer(const String& databaseDirectoryPath)
-    : m_server(IDBServer::IDBServer::create(databaseDirectoryPath))
+    : m_server(IDBServer::IDBServer::create(databaseDirectoryPath, *this))
 {
     relaxAdoptionRequirement();
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
@@ -398,6 +399,11 @@ void InProcessIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionId
     RunLoop::current().dispatch([this, self, databaseConnectionIdentifier, requestIdentifier] {
         m_server->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier);
     });
+}
+
+void InProcessIDBServer::accessToTemporaryFileComplete(const String& path)
+{
+    deleteFile(path);
 }
 
 } // namespace WebCore

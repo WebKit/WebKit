@@ -346,4 +346,35 @@ end:
 }
 #endif
 
+bool hardLinkOrCopyFile(const String& source, const String& destination)
+{
+    if (source.isEmpty() || destination.isEmpty())
+        return false;
+
+    CString fsSource = fileSystemRepresentation(source);
+    if (!fsSource.data())
+        return false;
+
+    CString fsDestination = fileSystemRepresentation(destination);
+    if (!fsDestination.data())
+        return false;
+
+    if (!link(fsSource.data(), fsDestination.data()))
+        return true;
+
+    // Hard link failed. Perform a copy instead.
+    auto handle = open(fsDestination.data(), O_WRONLY | O_CREAT | O_EXCL);
+    if (handle == -1)
+        return false;
+
+    bool appendResult = appendFileContentsToFileHandle(source, handle);
+    close(handle);
+
+    // If the copy failed, delete the unusable file.
+    if (!appendResult)
+        unlink(fsDestination.data());
+
+    return appendResult;
+}
+
 } // namespace WebCore

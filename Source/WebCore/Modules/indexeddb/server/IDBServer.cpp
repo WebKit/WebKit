@@ -39,24 +39,26 @@
 namespace WebCore {
 namespace IDBServer {
 
-Ref<IDBServer> IDBServer::create()
+Ref<IDBServer> IDBServer::create(IDBBackingStoreTemporaryFileHandler& fileHandler)
 {
-    return adoptRef(*new IDBServer());
+    return adoptRef(*new IDBServer(fileHandler));
 }
 
-Ref<IDBServer> IDBServer::create(const String& databaseDirectoryPath)
+Ref<IDBServer> IDBServer::create(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler& fileHandler)
 {
-    return adoptRef(*new IDBServer(databaseDirectoryPath));
+    return adoptRef(*new IDBServer(databaseDirectoryPath, fileHandler));
 }
 
-IDBServer::IDBServer()
+IDBServer::IDBServer(IDBBackingStoreTemporaryFileHandler& fileHandler)
+    : m_backingStoreTemporaryFileHandler(fileHandler)
 {
     Locker<Lock> locker(m_databaseThreadCreationLock);
     m_threadID = createThread(IDBServer::databaseThreadEntry, this, "IndexedDatabase Server");
 }
 
-IDBServer::IDBServer(const String& databaseDirectoryPath)
+IDBServer::IDBServer(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler& fileHandler)
     : m_databaseDirectoryPath(databaseDirectoryPath)
+    , m_backingStoreTemporaryFileHandler(fileHandler)
 {
     LOG(IndexedDB, "IDBServer created at path %s", databaseDirectoryPath.utf8().data());
 
@@ -120,7 +122,7 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
     if (m_databaseDirectoryPath.isEmpty())
         return MemoryIDBBackingStore::create(identifier);
 
-    return std::make_unique<SQLiteIDBBackingStore>(identifier, m_databaseDirectoryPath);
+    return std::make_unique<SQLiteIDBBackingStore>(identifier, m_databaseDirectoryPath, m_backingStoreTemporaryFileHandler);
 }
 
 void IDBServer::openDatabase(const IDBRequestData& requestData)

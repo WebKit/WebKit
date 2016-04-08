@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "FileSystem.h"
 #include "IDBCursorInfo.h"
 #include "IndexedDB.h"
 #include "SQLiteIDBBackingStore.h"
@@ -75,12 +76,36 @@ IDBError SQLiteIDBTransaction::commit()
     if (m_sqliteTransaction->inProgress())
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to commit SQLite transaction in database backend") };
 
+    moveBlobFilesIfNecessary();
+
     reset();
     return { };
 }
 
+void SQLiteIDBTransaction::moveBlobFilesIfNecessary()
+{
+    String databaseDirectory = m_backingStore.fullDatabaseDirectory();
+    for (auto& entry : m_blobTemporaryAndStoredFilenames) {
+        m_backingStore.temporaryFileHandler().prepareForAccessToTemporaryFile(entry.first);
+
+        if (!hardLinkOrCopyFile(entry.first, pathByAppendingComponent(databaseDirectory, entry.second)))
+            LOG_ERROR("Failed to link/copy temporary blob file '%s' to location '%s'", entry.first.utf8().data(), pathByAppendingComponent(databaseDirectory, entry.second).utf8().data());
+
+        m_backingStore.temporaryFileHandler().accessToTemporaryFileComplete(entry.first);
+    }
+
+    m_blobTemporaryAndStoredFilenames.clear();
+}
+
 IDBError SQLiteIDBTransaction::abort()
 {
+    for (auto& entry : m_blobTemporaryAndStoredFilenames) {
+        m_backingStore.temporaryFileHandler().prepareForAccessToTemporaryFile(entry.first);
+        m_backingStore.temporaryFileHandler().accessToTemporaryFileComplete(entry.first);
+    }
+
+    m_blobTemporaryAndStoredFilenames.clear();
+
     if (!m_sqliteTransaction || !m_sqliteTransaction->inProgress())
         return { IDBDatabaseException::UnknownError, ASCIILiteral("No SQLite transaction in progress to abort") };
 
@@ -97,6 +122,7 @@ void SQLiteIDBTransaction::reset()
 {
     m_sqliteTransaction = nullptr;
     clearCursors();
+    ASSERT(m_blobTemporaryAndStoredFilenames.isEmpty());
 }
 
 std::unique_ptr<SQLiteIDBCursor> SQLiteIDBTransaction::maybeOpenBackingStoreCursor(uint64_t objectStoreID, uint64_t indexID, const IDBKeyRangeData& range)
@@ -169,6 +195,11 @@ void SQLiteIDBTransaction::clearCursors()
 bool SQLiteIDBTransaction::inProgress() const
 {
     return m_sqliteTransaction && m_sqliteTransaction->inProgress();
+}
+
+void SQLiteIDBTransaction::addBlobFile(const String& temporaryPath, const String& storedFilename)
+{
+    m_blobTemporaryAndStoredFilenames.append({ temporaryPath, storedFilename });
 }
 
 } // namespace IDBServer

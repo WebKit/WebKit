@@ -49,10 +49,12 @@ class IDBValue;
 
 namespace IDBServer {
 
+class IDBBackingStoreTemporaryFileHandler;
+
 class IDBServer : public RefCounted<IDBServer> {
 public:
-    static Ref<IDBServer> create();
-    WEBCORE_EXPORT static Ref<IDBServer> create(const String& databaseDirectoryPath);
+    static Ref<IDBServer> create(IDBBackingStoreTemporaryFileHandler&);
+    WEBCORE_EXPORT static Ref<IDBServer> create(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler&);
 
     WEBCORE_EXPORT void registerConnection(IDBConnectionToClient&);
     WEBCORE_EXPORT void unregisterConnection(IDBConnectionToClient&);
@@ -93,8 +95,8 @@ public:
     std::unique_ptr<IDBBackingStore> createBackingStore(const IDBDatabaseIdentifier&);
 
 private:
-    IDBServer();
-    IDBServer(const String& databaseDirectoryPath);
+    IDBServer(IDBBackingStoreTemporaryFileHandler&);
+    IDBServer(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler&);
 
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
 
@@ -117,6 +119,7 @@ private:
     HashMap<IDBResourceIdentifier, UniqueIDBDatabaseTransaction*> m_transactions;
 
     String m_databaseDirectoryPath;
+    IDBBackingStoreTemporaryFileHandler& m_backingStoreTemporaryFileHandler;
 };
 
 } // namespace IDBServer

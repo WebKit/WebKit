@@ -112,6 +112,8 @@ public:
 
     void ensurePrivateBrowsingSession(WebCore::SessionID);
 
+    void grantSandboxExtensionsToDatabaseProcessForBlobs(const Vector<String>& filenames, std::function<void ()> completionHandler);
+
 private:
     NetworkProcess();
     ~NetworkProcess();
@@ -178,6 +180,8 @@ private:
     void getNetworkProcessStatistics(uint64_t callbackID);
     void clearCacheForAllOrigins(uint32_t cachesToClear);
 
+    void didGrantSandboxExtensionsToDatabaseProcessForBlobs(uint64_t requestID);
+
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);
     void userPreferredLanguagesChanged(const Vector<String>&);
@@ -199,6 +203,8 @@ private:
 
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;
+
+    HashMap<uint64_t, std::function<void ()>> m_sandboxExtensionForBlobsCompletionHandlers;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

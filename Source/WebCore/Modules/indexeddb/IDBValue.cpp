@@ -38,6 +38,7 @@ IDBValue::IDBValue()
 
 IDBValue::IDBValue(const SerializedScriptValue& scriptValue)
     : m_data(ThreadSafeDataBuffer::copyVector(scriptValue.data()))
+    , m_blobURLs(scriptValue.blobURLsIsolatedCopy())
 {
 }
 

@@ -98,7 +98,7 @@ void DatabaseProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringRefe
 IDBServer::IDBServer& DatabaseProcess::idbServer()
 {
     if (!m_idbServer)
-        m_idbServer = IDBServer::IDBServer::create(indexedDatabaseDirectory());
+        m_idbServer = IDBServer::IDBServer::create(indexedDatabaseDirectory(), DatabaseProcess::singleton());
 
     return *m_idbServer;
 }
@@ -303,6 +303,33 @@ void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<
         }));
     }
 #endif
+}
+
+void DatabaseProcess::grantSandboxExtensionsForBlobs(const Vector<String>& paths, const SandboxExtension::HandleArray& handles)
+{
+    ASSERT(paths.size() == handles.size());
+
+    for (size_t i = 0; i < paths.size(); ++i) {
+        auto result = m_blobTemporaryFileSandboxExtensions.add(paths[i], SandboxExtension::create(handles[i]));
+        ASSERT_UNUSED(result, result.isNewEntry);
+    }
+}
+
+void DatabaseProcess::prepareForAccessToTemporaryFile(const String& path)
+{
+    if (auto extension = m_blobTemporaryFileSandboxExtensions.get(path))
+        extension->consume();
+}
+
+void DatabaseProcess::accessToTemporaryFileComplete(const String& path)
+{
+    // We've either hard linked the temporary blob file to the database directory, copied it there,
+    // or the transaction is being aborted.
+    // In any of those cases, we can delete the temporary blob file now.
+    deleteFile(path);
+
+    if (auto extension = m_blobTemporaryFileSandboxExtensions.take(path))
+        extension->revoke();
 }
 
 #if ENABLE(INDEXED_DATABASE)
