@@ -28,7 +28,9 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy"
 )
 
-set(WebKit_SYSTEM_INCLUDE_DIRECTORIES "")
+set(WebKit_SYSTEM_INCLUDE_DIRECTORIES
+    "${ICU_INCLUDE_DIRS}"
+)
 
 set(WebKit_LIBRARIES
     PRIVATE JavaScriptCore${DEBUG_SUFFIX}
