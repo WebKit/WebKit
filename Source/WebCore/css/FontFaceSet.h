@@ -28,41 +28,28 @@
 
 #include "ActiveDOMObject.h"
 #include "CSSFontFaceSet.h"
-#include "DOMCoreException.h"
 #include "EventTarget.h"
 #include "JSDOMPromise.h"
-#include <wtf/HashTraits.h>
-#include <wtf/Optional.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
-namespace JSC {
-class ExecState;
-}
 
 namespace WebCore {
 
-class Document;
-class FontFace;
+class DOMCoreException;
 
-class FontFaceSet final : public RefCounted<FontFaceSet>, public CSSFontFaceSetClient, public EventTargetWithInlineData, public ActiveDOMObject {
+class FontFaceSet final : public RefCounted<FontFaceSet>, private CSSFontFaceSetClient, public EventTargetWithInlineData, private ActiveDOMObject {
 public:
     static Ref<FontFaceSet> create(Document&, const Vector<RefPtr<FontFace>>& initialFaces);
     static Ref<FontFaceSet> create(Document&, CSSFontFaceSet& backing);
     virtual ~FontFaceSet();
 
-    bool has(RefPtr<WebCore::FontFace>) const;
+    bool has(FontFace&) const;
     size_t size() const;
-    FontFaceSet& add(RefPtr<WebCore::FontFace>);
-    bool remove(RefPtr<WebCore::FontFace>);
+    FontFaceSet& add(FontFace&);
+    bool remove(FontFace&);
     void clear();
 
-    void load(JSC::ExecState& execState, const String& font, DeferredWrapper&& promise, ExceptionCode& ec) { load(execState, font, String(" ", String::ConstructFromLiteral), WTFMove(promise), ec); }
+    void load(JSC::ExecState&, const String& font, DeferredWrapper&& promise, ExceptionCode&);
     void load(JSC::ExecState&, const String& font, const String& text, DeferredWrapper&& promise, ExceptionCode&);
-    bool check(const String& font, ExceptionCode& ec) { return check(font, String(" ", String::ConstructFromLiteral), ec); }
+    bool check(const String& font, ExceptionCode&);
     bool check(const String& font, const String& text, ExceptionCode&);
 
     String status() const;
@@ -83,11 +70,11 @@ public:
     };
     Iterator createIterator() { return Iterator(*this); }
 
-    using RefCounted<FontFaceSet>::ref;
-    using RefCounted<FontFaceSet>::deref;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
 private:
-    struct PendingPromise : public RefCounted<PendingPromise> {
+    struct PendingPromise : RefCounted<PendingPromise> {
         typedef DOMPromise<Vector<RefPtr<FontFace>>&, DOMCoreException&> Promise;
         static Ref<PendingPromise> create(Promise&& promise)
         {
@@ -110,19 +97,19 @@ private:
     void fulfillPromise();
 
     // CSSFontFaceSetClient
-    void startedLoading() override;
-    void completedLoading() override;
-    void faceFinished(CSSFontFace&, CSSFontFace::Status) override;
+    void startedLoading() final;
+    void completedLoading() final;
+    void faceFinished(CSSFontFace&, CSSFontFace::Status) final;
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const override { return "FontFaceSet"; }
-    bool canSuspendForDocumentSuspension() const override;
+    const char* activeDOMObjectName() const final { return "FontFaceSet"; }
+    bool canSuspendForDocumentSuspension() const final;
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const override { return FontFaceSetEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
-    void refEventTarget() override { ref(); }
-    void derefEventTarget() override { deref(); }
+    EventTargetInterface eventTargetInterface() const final { return FontFaceSetEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
     Ref<CSSFontFaceSet> m_backing;
     HashMap<RefPtr<CSSFontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;

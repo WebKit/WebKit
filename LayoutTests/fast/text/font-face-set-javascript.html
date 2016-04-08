@@ -5,7 +5,7 @@
 <body>
 <script>
 if (window.internals)
-    window.internals.clearMemoryCache();
+    internals.clearMemoryCache();
 
 var fontFace1 = new FontFace("family1", "url('asdf')", {});
 var fontFace2 = new FontFace("family2", "url('asdf')", {});
@@ -44,6 +44,8 @@ shouldBeTrue("item.done");
 shouldBe("fontFaceSet.add(fontFace2)", "fontFaceSet");
 shouldBe("fontFaceSet.size", "2");
 
+shouldThrow("fontFaceSet.add(null)");
+
 iterator = fontFaceSet.keys();
 item = iterator.next();
 shouldBeFalse("item.done");
@@ -56,7 +58,15 @@ shouldBeTrue("item.done");
 
 shouldBe("fontFaceSet.delete(fontFace1)", "true");
 shouldBe("fontFaceSet.delete(fontFace3)", "false");
+
+shouldThrow("fontFaceSet.delete(null)");
+
+shouldBeFalse("fontFaceSet.has(fontFace1)");
+shouldBeTrue("fontFaceSet.has(fontFace2)");
+shouldThrow("fontFaceSet.has(null)");
+
 fontFaceSet.clear();
+
 shouldBe("fontFaceSet.size", "0");
 shouldBeTrue("fontFaceSet.values().next().done");
 shouldThrow("fontFaceSet.check('garbage')");

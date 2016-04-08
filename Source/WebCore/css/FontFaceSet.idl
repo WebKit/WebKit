@@ -31,7 +31,6 @@ enum FontFaceSetLoadStatus {
 [
     ConstructorCallWith=Document,
     Constructor(sequence<FontFace> initialFaces),
-    UsePointersEvenForNonNullableObjectArguments,
 ] interface FontFaceSet : EventTarget {
     boolean has(FontFace font);
 

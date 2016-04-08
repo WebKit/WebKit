@@ -1,3 +1,14 @@
+2016-04-07  Darin Adler  <darin@apple.com>
+
+        FontFaceSet binding does not handle null correctly
+        https://bugs.webkit.org/show_bug.cgi?id=156141
+
+        Reviewed by Youenn Fablet.
+
+        * fast/text/font-face-set-javascript-expected.txt: Added expected results for new tests.
+        * fast/text/font-face-set-javascript.html: Added tests for handling of null, also added tests for
+        the has function.
+
 2016-04-07  Filip Pizlo  <fpizlo@apple.com>
 
         Implementing caching transition puts that need to reallocate with indexing storage

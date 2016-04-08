@@ -62,7 +62,7 @@ FontFaceSet::FontFaceSet(Document& document, const Vector<RefPtr<FontFace>>& ini
 {
     m_backing->addClient(*this);
     for (auto& face : initialFaces)
-        add(face.get());
+        add(*face);
 }
 
 FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
@@ -99,11 +99,9 @@ FontFaceSet::PendingPromise::~PendingPromise()
 {
 }
 
-bool FontFaceSet::has(RefPtr<WebCore::FontFace> face) const
+bool FontFaceSet::has(FontFace& face) const
 {
-    if (!face)
-        return false;
-    return m_backing->hasFace(face->backing());
+    return m_backing->hasFace(face.backing());
 }
 
 size_t FontFaceSet::size() const
@@ -111,21 +109,18 @@ size_t FontFaceSet::size() const
     return m_backing->faceCount();
 }
 
-FontFaceSet& FontFaceSet::add(RefPtr<WebCore::FontFace> face)
+FontFaceSet& FontFaceSet::add(FontFace& face)
 {
-    if (face && !m_backing->hasFace(face->backing()))
-        m_backing->add(face->backing());
+    if (!m_backing->hasFace(face.backing()))
+        m_backing->add(face.backing());
     return *this;
 }
 
-bool FontFaceSet::remove(RefPtr<WebCore::FontFace> face)
+bool FontFaceSet::remove(FontFace& face)
 {
-    if (!face)
-        return false;
-
-    bool result = m_backing->hasFace(face->backing());
+    bool result = m_backing->hasFace(face.backing());
     if (result)
-        m_backing->remove(face->backing());
+        m_backing->remove(face.backing());
     return result;
 }
 
@@ -137,6 +132,7 @@ void FontFaceSet::clear()
 
 void FontFaceSet::load(JSC::ExecState& execState, const String& font, const String& text, DeferredWrapper&& promise, ExceptionCode& ec)
 {
+    ec = 0;
     auto matchingFaces = m_backing->matchingFaces(font, text, ec);
     if (ec)
         return;
@@ -149,23 +145,22 @@ void FontFaceSet::load(JSC::ExecState& execState, const String& font, const Stri
     for (auto& face : matchingFaces)
         face.get().load();
 
-    auto pendingPromise = PendingPromise::create(WTFMove(promise));
-    bool waiting = false;
-
     for (auto& face : matchingFaces) {
         if (face.get().status() == CSSFontFace::Status::Failure) {
-            pendingPromise->promise.reject(DOMCoreException::create(ExceptionCodeDescription(NETWORK_ERR)));
+            promise.reject(DOMCoreException::create(ExceptionCodeDescription(NETWORK_ERR)).ptr());
             return;
         }
     }
+
+    auto pendingPromise = PendingPromise::create(WTFMove(promise));
+    bool waiting = false;
 
     for (auto& face : matchingFaces) {
         pendingPromise->faces.append(face.get().wrapper(execState));
         if (face.get().status() == CSSFontFace::Status::Success)
             continue;
         waiting = true;
-        auto& vector = m_pendingPromises.add(RefPtr<CSSFontFace>(&face.get()), Vector<Ref<PendingPromise>>()).iterator->value;
-        vector.append(pendingPromise.copyRef());
+        m_pendingPromises.add(&face.get(), Vector<Ref<PendingPromise>>()).iterator->value.append(pendingPromise.copyRef());
     }
 
     if (!waiting)
@@ -191,12 +186,12 @@ String FontFaceSet::status() const
 {
     switch (m_backing->status()) {
     case CSSFontFaceSet::Status::Loading:
-        return String("loading", String::ConstructFromLiteral);
+        return ASCIILiteral("loading");
     case CSSFontFaceSet::Status::Loaded:
-        return String("loaded", String::ConstructFromLiteral);
+        return ASCIILiteral("loaded");
     }
     ASSERT_NOT_REACHED();
-    return String("loaded", String::ConstructFromLiteral);
+    return ASCIILiteral("loaded");
 }
 
 bool FontFaceSet::canSuspendForDocumentSuspension() const
@@ -235,21 +230,31 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
         return;
 
     for (auto& pendingPromise : iterator->value) {
+        if (pendingPromise->hasReachedTerminalState)
+            continue;
         if (newStatus == CSSFontFace::Status::Success) {
-            if (pendingPromise->hasOneRef() && !pendingPromise->hasReachedTerminalState) {
+            if (pendingPromise->hasOneRef()) {
                 pendingPromise->promise.resolve(pendingPromise->faces);
                 pendingPromise->hasReachedTerminalState = true;
             }
         } else {
             ASSERT(newStatus == CSSFontFace::Status::Failure);
-            if (!pendingPromise->hasReachedTerminalState) {
-                pendingPromise->promise.reject(DOMCoreException::create(ExceptionCodeDescription(NETWORK_ERR)));
-                pendingPromise->hasReachedTerminalState = true;
-            }
+            pendingPromise->promise.reject(DOMCoreException::create(ExceptionCodeDescription(NETWORK_ERR)));
+            pendingPromise->hasReachedTerminalState = true;
         }
     }
 
     m_pendingPromises.remove(iterator);
+}
+
+void FontFaceSet::load(JSC::ExecState& state, const String& font, DeferredWrapper&& promise, ExceptionCode& ec)
+{
+    load(state, font, ASCIILiteral(" "), WTFMove(promise), ec);
+}
+
+bool FontFaceSet::check(const String& font, ExceptionCode& ec)
+{
+    return check(font, ASCIILiteral(" "), ec);
 }
 
 }
