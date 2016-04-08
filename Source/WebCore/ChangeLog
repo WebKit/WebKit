@@ -1,3 +1,19 @@
+2016-04-08  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in AudioDestinationNode::render()
+        https://bugs.webkit.org/show_bug.cgi?id=156308
+
+        Reviewed by Eric Carlson.
+
+        Yet another math error in AudioDestinationIOS::render(). It is possible for the difference between
+        m_startSpareFrame and m_endSpareFrame to be greater than the numberOfFrames to be rendered. Protect
+        against this case by taking the min() of those two values and only advancing m_startSpareFrame by
+        that amount.  This guarantees that framesThisTime will never underflow, and that data will not be
+        written past the end of the ioData parameter.
+
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationIOS::render):
+
 2016-04-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Use more IDBValue and IDBGetResult in IDBBackingStore.
