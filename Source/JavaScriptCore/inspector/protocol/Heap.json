@@ -76,7 +76,7 @@
             "name": "garbageCollected",
             "description": "Information about the garbage collection.",
             "parameters": [
-                { "name": "collection", "type": "GarbageCollection" }
+                { "name": "collection", "$ref": "GarbageCollection" }
             ]
         },
         {

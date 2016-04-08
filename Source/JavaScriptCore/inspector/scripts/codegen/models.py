@@ -119,6 +119,10 @@ class TypeReference:
         if type_kind is not None and referenced_type_name is not None:
             raise ParseException("Type reference cannot have both 'type' and '$ref' keys.")
 
+        all_primitive_types = ["integer", "number", "string", "boolean", "enum", "object", "array", "any"]
+        if type_kind is not None and type_kind not in all_primitive_types:
+            raise ParseException("Type reference '%s' is not a primitive type. Allowed values: %s" % (type_kind, ', '.join(all_primitive_types)))
+
         if type_kind == "array" and array_items is None:
             raise ParseException("Type reference with type 'array' must have key 'items' to define array element type.")
 
@@ -129,7 +133,7 @@ class TypeReference:
         if self.referenced_type_name is not None:
             return self.referenced_type_name
         else:
-            return self.type_kind  # integer, string, number, boolean, enum, object, array
+            return self.type_kind  # one of all_primitive_types
 
 
 class Type:

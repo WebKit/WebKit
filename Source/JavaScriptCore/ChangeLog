@@ -1,3 +1,23 @@
+2016-04-08  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: protocol generator should emit an error when 'type' is used instead of '$ref'
+        https://bugs.webkit.org/show_bug.cgi?id=156275
+        <rdar://problem/25569331>
+
+        Reviewed by Darin Adler.
+
+        * inspector/protocol/Heap.json: Fix a mistake that's now caught by the protocol generator.
+
+        * inspector/scripts/codegen/models.py:
+        (TypeReference.__init__): Check here if type_kind is on a whitelist of primitive types.
+        (TypeReference.referenced_name): Update comment.
+
+        Add a new test specifically for the case when the type would otherwise be resolved. Rebaseline.
+
+        * inspector/scripts/tests/expected/fail-on-type-reference-as-primitive-type.json-error: Added.
+        * inspector/scripts/tests/expected/fail-on-unknown-type-reference-in-type-declaration.json-error:
+        * inspector/scripts/tests/fail-on-type-reference-as-primitive-type.json: Added.
+
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(ENABLE_ES6_CLASS_SYNTAX) guards

@@ -1,1 +1,1 @@
-ERROR: Lookup failed for type reference: dragon (referenced from domain: Runtime)
+ERROR: Type reference 'dragon' is not a primitive type. Allowed values: integer, number, string, boolean, enum, object, array, any
