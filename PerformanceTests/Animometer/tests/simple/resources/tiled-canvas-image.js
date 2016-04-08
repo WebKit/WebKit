@@ -41,7 +41,7 @@ TiledCanvasImageStage = Utilities.createSubclass(Stage,
 
         this._tiles = new Array(maxTilesPerRow * maxTilesPerCol);
 
-        var source = Point.zero();
+        var source = Point.zero;
         for (var index = 0; index < this._tiles.length; ++index) {
             this._tiles[index] = new CanvasImageTile(this, source);
             source = this._nextTilePosition(source);

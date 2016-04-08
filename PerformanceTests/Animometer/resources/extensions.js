@@ -286,10 +286,7 @@ Point = Utilities.createClass(
 });
 
 Utilities.extendObject(Point, {
-    zero: function()
-    {
-        return new Point(0, 0);
-    },
+    zero: new Point(0, 0),
 
     pointOnCircle: function(angle, radius)
     {

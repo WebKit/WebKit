@@ -1,3 +1,19 @@
+2016-04-08  Jon Lee  <jonlee@apple.com>
+
+        Fix SVG benchmark test
+        https://bugs.webkit.org/show_bug.cgi?id=156410
+
+        Reviewed by Dean Jackson.
+
+        * Animometer/resources/extensions.js: Update Point.zero to be a static Point.
+        * Animometer/tests/simple/resources/tiled-canvas-image.js:
+        (Stage.call._setupTiles): Refactor.
+        * Animometer/tests/master/resources/particles.js:
+        (Particle.prototype.reset): Use Point.center.
+        (complexity): We are not using a gradient background anymore, so remove the +1.
+        * Animometer/tests/master/resources/svg-particles.js: Update to use SVG transform
+        instead of CSS transform.
+
 2016-04-06  Jon Lee  <jonlee@apple.com>
 
         Update master benchmark with SVG test

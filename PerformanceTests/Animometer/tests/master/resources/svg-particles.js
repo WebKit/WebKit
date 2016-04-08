@@ -42,9 +42,9 @@ SVGParticle = Utilities.createSubclass(Particle,
         if (this.isClipPath) {
             this.element.setAttribute("width", this.size.x);
             this.element.setAttribute("height", this.size.y);
-            this.transformSuffix = "translate(-" + (this.size.x >> 1) + "px,-" + (this.size.y >> 1) + "px)";
+            this.transformSuffix = " translate(-" + this.size.center.x + ",-" + this.size.center.y + ")";
         } else
-            this.transformSuffix = "scale(" + this.size.x + ")translate(-.5px,-.5px)";
+            this.transformSuffix = " scale(" + this.size.x + ") translate(-.5,-.5)";
 
         this.stage.colorOffset = (this.stage.colorOffset + .5) % 360;
 
@@ -59,7 +59,7 @@ SVGParticle = Utilities.createSubclass(Particle,
 
     move: function()
     {
-        this.element.style.transform = "translate(" + this.position.x + "px," + this.position.y + "px)" + this.rotater.rotateZ() + this.transformSuffix;
+        this.element.setAttribute("transform", "translate(" + this.position.x + "," + this.position.y + ") " + this.rotater.rotate(Point.zero) + this.transformSuffix);
     }
 });
 

@@ -15,7 +15,7 @@ Particle.prototype =
     {
         var randSize = Math.round(Math.pow(Pseudo.random(), 4) * this.sizeRange + this.sizeMinimum);
         this.size = new Point(randSize, randSize);
-        this.minPosition = this.size.multiply(.5);
+        this.minPosition = this.size.center;
         this.maxPosition = this.stage.size.subtract(this.minPosition);
     },
 
@@ -107,7 +107,6 @@ ParticlesStage = Utilities.createSubclass(Stage,
 
     complexity: function()
     {
-        // We add one to represent the gradient background.
-        return this.particles.length + 1;
+        return this.particles.length;
     }
 });
