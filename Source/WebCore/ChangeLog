@@ -1,3 +1,24 @@
+2016-04-07  Dean Jackson  <dino@apple.com>
+
+        [iOS] Media playback button should use appearance
+        https://bugs.webkit.org/show_bug.cgi?id=156388
+        <rdar://problem/25618352>
+
+        Reviewed by Simon Fraser.
+
+        With the recent change in backdrop appearance, we can
+        now use the system style directly for the play button.
+
+        While I was here I also updated the artwork to the
+        latest style (slightly rounded corners on the triangle).
+
+        Covered by the test in ManualTests/ios/start-playback-button-appearance.html.
+
+        * Modules/mediacontrols/mediaControlsiOS.css: Move the clip onto the backdrop
+        element. Use an appearance insted.
+        * Modules/mediacontrols/mediaControlsiOS.js: Remove the tint element, and
+        set the highlight on the glyph instead.
+
 2016-04-07  Ada Chan  <adachan@apple.com>
 
         Roll out the css change in mediaControlsApple.css that has been causing assertions in layout for multiple tests

@@ -48,10 +48,6 @@ ControllerIOS.prototype = {
         startPlaybackBackground.classList.add('webkit-media-controls-start-playback-background');
         startPlaybackButton.appendChild(startPlaybackBackground);
 
-        var startPlaybackTint = document.createElement('div');
-        startPlaybackTint.setAttribute('pseudo', '-webkit-media-controls-start-playback-tint');
-        startPlaybackButton.appendChild(startPlaybackTint);
-
         var startPlaybackGlyph = document.createElement('div');
         startPlaybackGlyph.setAttribute('pseudo', '-webkit-media-controls-start-playback-glyph');
         startPlaybackGlyph.classList.add('webkit-media-controls-start-playback-glyph');
@@ -434,12 +430,12 @@ ControllerIOS.prototype = {
 
     handleStartPlaybackButtonTouchStart: function(event) {
         this.controls.startPlaybackButton.classList.add('active');
-        this.controls.startPlaybackButton.querySelector('.webkit-media-controls-start-playback-background').classList.add('active');
+        this.controls.startPlaybackButton.querySelector('.webkit-media-controls-start-playback-glyph').classList.add('active');
     },
 
     handleStartPlaybackButtonTouchEnd: function(event) {
         this.controls.startPlaybackButton.classList.remove('active');
-        this.controls.startPlaybackButton.querySelector('.webkit-media-controls-start-playback-background').classList.remove('active');
+        this.controls.startPlaybackButton.querySelector('.webkit-media-controls-start-playback-glyph').classList.remove('active');
 
         if (this.video.error)
             return true;
