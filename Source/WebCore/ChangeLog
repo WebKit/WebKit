@@ -1,3 +1,24 @@
+2016-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK1] Wheel event callback removing the window causes crash in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=156409
+        <rdar://problem/25631267>
+
+        Reviewed by Simon Fraser.
+
+        Null check the Widget before using it, since the iframe may have been removed
+        from its parent document inside the event handler.
+
+        This is the WK1 fix for https://bugs.webkit.org/show_bug.cgi?id=150871.
+
+        Tested by fast/events/wheel-event-destroys-frame.html
+
+        * page/EventHandler.cpp:
+        (WebCore::widgetForElement): Added.
+        (WebCore::EventHandler::handleWheelEvent): Use new helper function to
+        clean up the code, and allow us to check that the Widget has not been
+        destroyed during the event handler.
+
 2016-04-08  Said Abou-Hallawa  <sabouhallawa@apple,com>
 
         Timing attack on SVG feComposite filter circumvents same-origin policy
