@@ -1,3 +1,14 @@
+2016-04-07  Ada Chan  <adachan@apple.com>
+
+        Roll out the css change in mediaControlsApple.css that has been causing assertions in layout for multiple tests
+        https://bugs.webkit.org/show_bug.cgi?id=156381
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/media/media-document-audio-repaint-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+
 2016-04-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, rolling out r199199.
