@@ -349,7 +349,7 @@ public:
         }
     }
     
-    bool supportsLength() const
+    bool supportsSelfLength() const
     {
         switch (type()) {
         case Array::SelectUsingPredictions:

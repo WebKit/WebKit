@@ -1,3 +1,22 @@
+2016-04-07  Keith Miller  <keith_miller@apple.com>
+
+        Rename ArrayMode::supportsLength to supportsSelfLength
+        https://bugs.webkit.org/show_bug.cgi?id=156374
+
+        Reviewed by Filip Pizlo.
+
+        The name supportsLength is confusing because TypedArray have a
+        length function however it is on the prototype and not on the
+        instance. supportsSelfLength makes more sense since we use the
+        function during fixup to tell if we can intrinsic the length
+        property lookup on self accesses.
+
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::supportsSelfLength):
+        (JSC::DFG::ArrayMode::supportsLength): Deleted.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::attemptToMakeGetArrayLength):
+
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ProfileView source links are off by 1 line, worse in pretty printed code

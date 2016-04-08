@@ -2214,7 +2214,7 @@ private:
                 attemptToForceStringArrayModeByToStringConversion<StringOrStringObjectUse>(arrayMode, node);
         }
             
-        if (!arrayMode.supportsLength())
+        if (!arrayMode.supportsSelfLength())
             return false;
         
         convertToGetArrayLength(node, arrayMode);
