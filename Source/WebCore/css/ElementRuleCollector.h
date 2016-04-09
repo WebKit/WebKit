@@ -89,7 +89,7 @@ private:
     void sortMatchedRules();
     void sortAndTransferMatchedRules();
 
-    void addMatchedRule(const RuleData&, unsigned specificity, StyleResolver::RuleRange&);
+    void addMatchedRule(const MatchedRule&);
 
     const Element& m_element;
     const RuleSet& m_authorStyle;

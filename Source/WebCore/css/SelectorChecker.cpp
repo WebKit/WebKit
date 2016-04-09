@@ -199,25 +199,6 @@ bool SelectorChecker::match(const CSSSelector& selector, const Element& element,
     return true;
 }
 
-
-bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const Element& element, CheckingContext& checkingContext, unsigned& specificity) const
-{
-    ASSERT(element.shadowRoot());
-    ASSERT(selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassHost);
-    ASSERT(checkingContext.resolvingMode != SelectorChecker::Mode::QueryingRules);
-    // :host doesn't combine with any other selectors.
-    if (selector.tagHistory())
-        return false;
-    specificity = selector.simpleSelectorSpecificity();
-    if (auto* selectorList = selector.selectorList()) {
-        LocalContext context(selector, element, VisitedMatchType::Enabled, NOPSEUDO);
-        unsigned ignoredSpecificity;
-        if (!matchSelectorList(checkingContext, context, element, *selectorList, ignoredSpecificity))
-            return false;
-    }
-    return true;
-}
-
 inline static bool hasScrollbarPseudoElement(const PseudoIdSet& dynamicPseudoIdSet)
 {
     PseudoIdSet scrollbarIdSet = { SCROLLBAR, SCROLLBAR_THUMB, SCROLLBAR_BUTTON, SCROLLBAR_TRACK, SCROLLBAR_TRACK_PIECE, SCROLLBAR_CORNER };

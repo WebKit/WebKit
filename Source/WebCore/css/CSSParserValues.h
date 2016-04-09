@@ -206,7 +206,6 @@ public:
     static CSSParserSelector* parsePseudoElementCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>*);
 #if ENABLE(SHADOW_DOM)
     static CSSParserSelector* parsePseudoElementSlottedFunctionSelector(const CSSParserString& functionIdentifier, CSSParserSelector*);
-    static CSSParserSelector* parsePseudoClassHostFunctionSelector(const CSSParserString& functionIdentifier, CSSParserSelector*);
 #endif
     static CSSParserSelector* parsePseudoClassAndCompatibilityElementSelector(CSSParserString& pseudoTypeString);
 

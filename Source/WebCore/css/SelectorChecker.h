@@ -95,8 +95,6 @@ public:
 
     bool match(const CSSSelector&, const Element&, CheckingContext&, unsigned& specificity) const;
 
-    bool matchHostPseudoClass(const CSSSelector&, const Element&, CheckingContext&, unsigned& specificity) const;
-
     static bool isCommonPseudoClassSelector(const CSSSelector*);
     static bool matchesFocusPseudoClass(const Element&);
     static bool attributeSelectorMatches(const Element&, const QualifiedName&, const AtomicString& attributeValue, const CSSSelector&);

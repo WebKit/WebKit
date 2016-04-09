@@ -70,6 +70,10 @@ static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CSSSelector
     }
     if (SelectorChecker::isCommonPseudoClassSelector(&selector))
         return MatchBasedOnRuleHash::ClassB;
+#if ENABLE(SHADOW_DOM)
+    if (selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassHost)
+        return MatchBasedOnRuleHash::ClassB;
+#endif
     if (selector.match() == CSSSelector::Id)
         return MatchBasedOnRuleHash::ClassA;
     if (selector.match() == CSSSelector::Class)
