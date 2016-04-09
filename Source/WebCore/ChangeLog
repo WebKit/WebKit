@@ -1,3 +1,50 @@
+2016-04-09  Antti Koivisto  <antti@apple.com>
+
+        Implement functional :host() pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=156397
+        <rdar://problem/25621445>
+
+        Reviewed by Darin Adler.
+
+        We already support :host. Add functional syntax too.
+
+        * css/CSSGrammar.y.in:
+
+            Parse functional :host().
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectFunctionTypeToken):
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePseudoClassHostFunctionSelector):
+        * css/CSSParserValues.h:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchedRuleList):
+        (WebCore::ElementRuleCollector::addMatchedRule):
+
+            Factor some shared code here.
+
+        (WebCore::ElementRuleCollector::matchHostPseudoClassRules):
+
+            Instead of using the generic paths use a :host specific code path for matching.
+            This makes it easier to avoid :host matching when it shouldn't.
+
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        * css/ElementRuleCollector.h:
+        * css/RuleSet.cpp:
+        (WebCore::computeMatchBasedOnRuleHash):
+
+            :host is always handled by the special matching path.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::match):
+        (WebCore::SelectorChecker::matchHostPseudoClass):
+
+            Add a function specifically for checking :host. In always fails on the normal code paths.
+            Check the argument selector if provided.
+
+        (WebCore::hasScrollbarPseudoElement):
+        * css/SelectorChecker.h:
+
 2016-04-07  Darin Adler  <darin@apple.com>
 
         Improve IDL support for object arguments that are neither optional nor nullable

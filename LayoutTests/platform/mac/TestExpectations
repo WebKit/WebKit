@@ -1224,7 +1224,6 @@ webkit.org/b/153108 [ Debug ] inspector/model/scope-chain-node.html [ Pass Timeo
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 webkit.org/b/148695 fast/shadow-dom [ Pass ]
-webkit.org/b/149440 fast/shadow-dom/css-scoping-shadow-host-functional-rule.html [ ImageOnlyFailure ]
 
 # Touch events is not enabled on Mac
 webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Failure ]
