@@ -25,7 +25,8 @@
 
 [
     NoInterfaceObject,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface TypeConversions {
     attribute long testLong;
     [EnforceRange] attribute long testEnforceRangeLong;

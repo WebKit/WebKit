@@ -231,51 +231,11 @@ sub SkipIncludeHeader
     return $typesWithoutHeader{$type};
 }
 
-my %testSupportClasses = (
-    "JSInternals" => 1,
-    "JSInternalSettings" => 1,
-    "JSInternalSettingsGenerated" => 1,
-    "JSMallocStatistics" => 1,
-    "JSMemoryInfo" => 1,
-    "JSTypeConversions" => 1,
-
-    # This is for the bindings tests.
-    "JSTestNode" => 1,
-);
-
-my %classesNeedingWebCoreExport = (
-    "JSAudioContext" => 1,
-    "JSClientRect" => 1,
-    "JSClientRectList" => 1,
-    "JSCSSStyleDeclaration" => 1,
-    "JSDocument" => 1,
-    "JSDOMPath" => 1,
-    "JSDOMURL" => 1,
-    "JSDOMWindow" => 1,
-    "JSElement" => 1,
-    "JSFile" => 1,
-    "JSHTMLElement" => 1,
-    "JSHTMLMediaElement" => 1,
-    "JSMediaSession" => 1,
-    "JSNode" => 1,
-    "JSNotification" => 1,
-    "JSRange" => 1,
-    "JSScriptProfile" => 1,
-    "JSScriptProfileNode" => 1,
-    "JSSourceBuffer" => 1,
-    "JSTimeRanges" => 1,
-    "JSXMLHttpRequest" => 1,
-
-    # This is for the bindings tests.
-    "JSTestInterface" => 1,
-);
-
-sub ExportLabelForClass
+sub GetExportMacroForJSClass
 {
-    my $class = shift;
+    my $interface = shift;
 
-    return "WEBCORE_TESTSUPPORT_EXPORT " if $testSupportClasses{$class};
-    return "WEBCORE_EXPORT " if $classesNeedingWebCoreExport{$class};
+    return $interface->extendedAttributes->{"ExportMacro"} . " " if $interface->extendedAttributes->{"ExportMacro"};
     return "";
 }
 
@@ -940,10 +900,10 @@ sub GenerateHeader
     AddClassForwardIfNeeded("JSDOMWindowShell") if $interfaceName eq "DOMWindow";
     AddClassForwardIfNeeded("JSDictionary") if $codeGenerator->IsConstructorTemplate($interface, "Event");
 
-    my $exportLabel = ExportLabelForClass($className);
+    my $exportMacro = GetExportMacroForJSClass($interface);
 
     # Class declaration
-    push(@headerContent, "class $exportLabel$className : public $parentClassName {\n");
+    push(@headerContent, "class $exportMacro$className : public $parentClassName {\n");
 
     # Static create methods
     push(@headerContent, "public:\n");
@@ -1314,7 +1274,7 @@ sub GenerateHeader
         if ($implType eq "Node" or $implType eq "NodeList") {
             push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
         } else {
-            push(@headerContent, $exportLabel."JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
+            push(@headerContent, $exportMacro."JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
         }
         push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $implType& impl) { return toJS(state, globalObject, &impl); }\n");
 

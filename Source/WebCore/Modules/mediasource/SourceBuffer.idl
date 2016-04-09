@@ -38,6 +38,7 @@
     NoInterfaceObject,
     ActiveDOMObject,
     UsePointersEvenForNonNullableObjectArguments,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface SourceBuffer : EventTarget {
 
     [SetterRaisesException] attribute AppendMode mode;

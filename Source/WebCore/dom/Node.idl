@@ -26,6 +26,7 @@
     CustomToJSObject,
     UsePointersEvenForNonNullableObjectArguments,
     ObjCPolymorphic,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface Node
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     : Object, EventTarget

@@ -26,7 +26,8 @@
 
 [
     NoInterfaceObject,
-    SkipVTableValidation
+    SkipVTableValidation,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface ScriptProfile {
     readonly attribute DOMString title;
     readonly attribute unsigned long uid;

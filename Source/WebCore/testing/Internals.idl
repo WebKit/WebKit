@@ -66,6 +66,7 @@ enum AutoFillButtonType {
 [
     UsePointersEvenForNonNullableObjectArguments,
     NoInterfaceObject,
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface Internals {
     DOMString address(Node node);
     [RaisesException] boolean nodeNeedsStyleRecalc(Node node);

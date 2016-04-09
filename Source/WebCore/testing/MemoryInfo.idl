@@ -30,7 +30,8 @@
 
 [
     NoInterfaceObject,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface MemoryInfo {
     readonly attribute unsigned long usedJSHeapSize;
     readonly attribute unsigned long totalJSHeapSize;

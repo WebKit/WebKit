@@ -25,6 +25,7 @@
     UsePointersEvenForNonNullableObjectArguments,
     JSCustomHeader,
     JSGenerateToNativeObject,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface Document : Node {
 
     // DOM Level 1 Core

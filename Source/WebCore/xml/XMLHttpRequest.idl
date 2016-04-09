@@ -43,6 +43,7 @@ enum XMLHttpRequestResponseType {
     JSCustomMarkFunction,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface XMLHttpRequest : XMLHttpRequestEventTarget {
     attribute EventHandler onreadystatechange;
 

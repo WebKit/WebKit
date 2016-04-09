@@ -21,6 +21,7 @@
 [
     JSCustomHeader,
     JSGenerateToNativeObject,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface Element : Node {
 
     // DOM Level 1 Core

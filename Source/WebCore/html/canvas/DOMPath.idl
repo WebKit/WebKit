@@ -32,6 +32,7 @@
     Constructor(DOMString text),
     UsePointersEvenForNonNullableObjectArguments,
     InterfaceName=Path2D,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface DOMPath {
 
 #if defined(ENABLE_CANVAS_PATH) && ENABLE_CANVAS_PATH

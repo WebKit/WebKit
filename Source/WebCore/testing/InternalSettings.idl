@@ -26,7 +26,8 @@
 
 [
     NoInterfaceObject,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface InternalSettings : InternalSettingsGenerated {
     [RaisesException] void setTouchEventEmulationEnabled(boolean enabled);
 

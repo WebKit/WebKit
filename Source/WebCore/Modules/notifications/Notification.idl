@@ -32,6 +32,7 @@
 [
     Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
     ActiveDOMObject,
+    ExportMacro=WEBCORE_EXPORT,
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
     Constructor(DOMString title, [Default=Undefined] optional Dictionary options),
     ConstructorCallWith=Document,

@@ -26,7 +26,8 @@
 
 [
     NoInterfaceObject,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface ScriptProfileNode {
     readonly attribute unsigned long id;
 

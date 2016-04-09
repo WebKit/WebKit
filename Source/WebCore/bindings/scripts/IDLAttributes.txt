@@ -62,6 +62,7 @@ DocumentEventHandler
 EnabledAtRuntime=*
 EnabledBySetting=*
 EnforceRange
+ExportMacro=WEBCORE_EXPORT|WEBCORE_TESTSUPPORT_EXPORT
 ForwardDeclareInHeader
 GenerateIsReachable=|Impl|ImplWebGLRenderingContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot
 GetterRaisesException

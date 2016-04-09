@@ -24,6 +24,7 @@
 #endif
     JSGenerateToNativeObject,
     JSCustomPushEventHandlerScope,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface HTMLElement : Element {
     [Reflect] attribute DOMString title;
     [Reflect] attribute DOMString lang;

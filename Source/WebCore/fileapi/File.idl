@@ -26,6 +26,7 @@
 [
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface File : Blob {
     readonly attribute DOMString name;
 #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT

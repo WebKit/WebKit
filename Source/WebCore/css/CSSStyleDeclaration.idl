@@ -27,6 +27,7 @@
     CustomNamedSetter,
     CustomEnumerateProperty,
     SkipVTableValidation,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface CSSStyleDeclaration {
     [SetterRaisesException] attribute DOMString? cssText;
 

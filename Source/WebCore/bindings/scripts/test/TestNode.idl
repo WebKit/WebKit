@@ -20,6 +20,7 @@
 
 [
     Constructor,
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface TestNode : Node {
     attribute DOMString name;
 };

@@ -25,7 +25,8 @@
  */
 
 [
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface ClientRect {
     readonly attribute unrestricted float top;
     readonly attribute unrestricted float right;

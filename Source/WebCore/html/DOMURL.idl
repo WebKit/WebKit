@@ -35,6 +35,7 @@
     JSGenerateToJSObject,
     InterfaceName=URL,
     ImplementationLacksVTable,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface DOMURL {
     [CallWith=ScriptExecutionContext] static DOMString? createObjectURL(Blob? blob);
     [CallWith=ScriptExecutionContext] static void revokeObjectURL(DOMString url);

@@ -36,6 +36,7 @@
     Constructor(DOMString str1, [Default=Undefined] optional DOMString str2),
     ConstructorRaisesException,
     ConstructorConditional=TEST_INTERFACE,
+    ExportMacro=WEBCORE_EXPORT,
     ImplementationLacksVTable
 ] interface TestInterface {
 };

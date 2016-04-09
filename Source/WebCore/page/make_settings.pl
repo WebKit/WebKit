@@ -359,6 +359,7 @@ sub generateInternalSettingsIdlFile($)
 
     print $file "[\n";
     print $file "    NoInterfaceObject,\n";
+    print $file "    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,\n";
     print $file "] interface InternalSettingsGenerated {\n";
 
     sub writeIdlSetter($$$) {

@@ -1,3 +1,54 @@
+2016-04-08  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Add support for [ExportMacro=XXX] IDL extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=156428
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for [ExportMacro=XXX] IDL extended attribute (e.g. [ExportMacro=WEBCORE_EXPORT])
+        so developers can indicate in the IDL which macro to use to export the generated JS bindings
+        class.
+
+        We previously supported this by hard-coding JS class names in the bindings generator which
+        was ugly.
+
+        * Modules/mediasession/MediaSession.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetExportMacroForJSClass):
+        (GenerateHeader):
+        (AddIncludesForType): Deleted.
+        (AddToImplIncludes): Deleted.
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestNode.idl:
+        * css/CSSStyleDeclaration.idl:
+        * dom/ClientRect.idl:
+        * dom/ClientRectList.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Node.idl:
+        * dom/Range.idl:
+        * fileapi/File.idl:
+        * html/DOMURL.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/TimeRanges.idl:
+        * html/canvas/DOMPath.idl:
+        * inspector/ScriptProfile.idl:
+        * inspector/ScriptProfileNode.idl:
+        * page/DOMWindow.idl:
+        * page/make_settings.pl:
+        (generateInternalSettingsIdlFile):
+        * testing/InternalSettings.idl:
+        * testing/Internals.idl:
+        * testing/MallocStatistics.idl:
+        * testing/MemoryInfo.idl:
+        * testing/TypeConversions.idl:
+        * xml/XMLHttpRequest.idl:
+
 2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: XHRs and Web Worker scripts are not searchable

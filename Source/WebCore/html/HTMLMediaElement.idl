@@ -28,6 +28,7 @@
     UsePointersEvenForNonNullableObjectArguments,
     JSGenerateToNativeObject,
     ActiveDOMObject,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface HTMLMediaElement : HTMLElement {
 
     // error state

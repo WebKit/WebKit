@@ -28,6 +28,7 @@
     CustomConstructor(optional MediaSessionKind kind),
     ConstructorCallWith=ScriptExecutionContext,
     ImplementationLacksVTable,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface MediaSession {
     readonly attribute MediaSessionKind kind;
     readonly attribute MediaRemoteControls? controls;
