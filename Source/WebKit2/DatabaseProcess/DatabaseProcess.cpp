@@ -305,6 +305,7 @@ void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<
 #endif
 }
 
+#if ENABLE(INDEXED_DATABASE)
 void DatabaseProcess::grantSandboxExtensionsForBlobs(const Vector<String>& paths, const SandboxExtension::HandleArray& handles)
 {
     ASSERT(paths.size() == handles.size());
@@ -332,7 +333,6 @@ void DatabaseProcess::accessToTemporaryFileComplete(const String& path)
         extension->revoke();
 }
 
-#if ENABLE(INDEXED_DATABASE)
 Vector<RefPtr<WebCore::SecurityOrigin>> DatabaseProcess::indexedDatabaseOrigins()
 {
     if (m_indexedDatabaseDirectory.isEmpty())
