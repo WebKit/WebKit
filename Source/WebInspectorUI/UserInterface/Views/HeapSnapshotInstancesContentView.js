@@ -96,6 +96,13 @@ WebInspector.HeapSnapshotInstancesContentView = class HeapSnapshotInstancesConte
 
     // Protected
 
+    shown()
+    {
+        super.shown();
+
+        this._heapSnapshotDataGridTree.shown();
+    }
+
     hidden()
     {
         super.hidden();

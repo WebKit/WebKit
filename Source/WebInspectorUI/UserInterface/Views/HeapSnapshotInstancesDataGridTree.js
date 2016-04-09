@@ -37,6 +37,7 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
         this._sortComparator = sortComparator;
         this._includeInternalObjects = includeInternalObjects;
 
+        this._visible = false;
         this._popover = null;
         this._popoverNode = null;
 
@@ -83,6 +84,11 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
 
         this._populateTopLevel();
         this.sort();
+    }
+
+    get visible()
+    {
+        return this._visible;
     }
 
     get popover()
@@ -140,8 +146,15 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
         }
     }
 
+    shown()
+    {
+        this._visible = true;
+    }
+
     hidden()
     {
+        this._visible = false;
+
         if (this._popover && this._popover.visible)
             this._popover.dismiss();
     }

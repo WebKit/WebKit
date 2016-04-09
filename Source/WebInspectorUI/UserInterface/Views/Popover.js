@@ -188,6 +188,8 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         else
             this._element.classList.remove(WebInspector.Popover.FadeOutClassName);
 
+        this._dismissing = false;
+
         if (this._contentNeedsUpdate) {
             // Reset CSS properties on element so that the element may be sized to fit its content.
             this._element.style.removeProperty("left");

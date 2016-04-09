@@ -286,6 +286,9 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
         }
 
         this._node.shortestGCRootPath((path) => {
+            if (!this._tree.visible)
+                return;
+
             if (path.length)
                 appendPath(path);
             else if (this._node.gcRoot) {
@@ -295,7 +298,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
                 let emptyElement = popoverContentElement.appendChild(document.createElement("div"));
                 emptyElement.textContent = WebInspector.UIString("This object is referenced by internal objects");
             }
-            
+
             this._tree.popover.presentNewContentWithFrame(popoverContentElement, targetFrame.pad(2), [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
         });
     }

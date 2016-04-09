@@ -1,5 +1,31 @@
 2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Allocation snapshot hover persists after switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=156430
+        <rdar://problem/25633800>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler):
+        Don't show the popover if the tree is no longer visible.
+
+        * UserInterface/Views/HeapSnapshotInstancesContentView.js:
+        (WebInspector.HeapSnapshotInstancesContentView.prototype.shown):
+        * UserInterface/Views/HeapSnapshotInstancesDataGridTree.js:
+        (WebInspector.HeapSnapshotInstancesDataGridTree):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.get visible):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.shown):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.hidden):
+        Give the tree a visible state and have its containing ContentView
+        update it with normal ContentView shown/hidden.
+
+        * UserInterface/Views/Popover.js:
+        We are presenting while we were dismissing, so completely clear the
+        dismissing state.
+
+2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         JSContext Inspector: Fix asserts and uncaught exception showing Timeline Tab
         https://bugs.webkit.org/show_bug.cgi?id=156411
 
