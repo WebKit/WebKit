@@ -1,3 +1,10 @@
+2016-04-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Don't treat a build number 0 as a pending build.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry.prototype.isPending):
+
 2016-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Escape builder names in url* and pathFor* methods of BuildbotSyncer

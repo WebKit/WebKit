@@ -30,7 +30,7 @@ class BuildbotBuildEntry {
     buildNumber() { return this._buildNumber; }
     slaveName() { return this._slaveName; }
     buildRequestId() { return this._buildRequestId; }
-    isPending() { return !this._buildNumber; }
+    isPending() { return typeof(this._buildNumber) != 'number'; }
     isInProgress() { return this._isInProgress; }
     hasFinished() { return !this.isPending() && !this.isInProgress(); }
     url() { return this.isPending() ? this._syncer.url() : this._syncer.urlForBuildNumber(this._buildNumber); }
