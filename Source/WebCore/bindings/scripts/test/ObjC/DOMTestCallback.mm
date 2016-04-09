@@ -76,7 +76,9 @@
 - (BOOL)callbackWithArrayParam:(DOMFloat32Array *)arrayParam
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->callbackWithArrayParam(core(arrayParam));
+    if (!arrayParam)
+        WebCore::raiseTypeErrorException();
+    return IMPL->callbackWithArrayParam(*core(arrayParam));
 }
 
 - (BOOL)callbackWithSerializedScriptValueParam:(NSString *)srzParam strArg:(NSString *)strArg
@@ -94,13 +96,19 @@
 - (int)customCallback:(DOMClass5 *)class5Param class6Param:(DOMClass6 *)class6Param
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->customCallback(core(class5Param), core(class6Param));
+    if (!class5Param)
+        WebCore::raiseTypeErrorException();
+    if (!class6Param)
+        WebCore::raiseTypeErrorException();
+    return IMPL->customCallback(*core(class5Param), *core(class6Param));
 }
 
 - (BOOL)callbackWithStringList:(DOMDOMStringList *)listParam
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->callbackWithStringList(core(listParam));
+    if (!listParam)
+        WebCore::raiseTypeErrorException();
+    return IMPL->callbackWithStringList(*core(listParam));
 }
 
 - (BOOL)callbackWithBoolean:(BOOL)boolParam
@@ -112,7 +120,9 @@
 - (BOOL)callbackRequiresThisToPass:(int)longParam testNodeParam:(DOMTestNode *)testNodeParam
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->callbackRequiresThisToPass(longParam, core(testNodeParam));
+    if (!testNodeParam)
+        WebCore::raiseTypeErrorException();
+    return IMPL->callbackRequiresThisToPass(longParam, *core(testNodeParam));
 }
 
 @end

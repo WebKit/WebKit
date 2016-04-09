@@ -161,7 +161,7 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
     if (!state->argument(0).isFunction())
         return throwArgumentMustBeFunctionError(*state, 0, "listener", "TestMediaQueryListListener", "method");
     RefPtr<MediaQueryListListener> listener = JSMediaQueryListListener::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
-    impl.method(listener);
+    impl.method(WTFMove(listener));
     return JSValue::encode(jsUndefined());
 }
 

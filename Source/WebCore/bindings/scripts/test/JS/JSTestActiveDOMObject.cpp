@@ -206,10 +206,8 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
     Node* nextChild = JSNode::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!nextChild) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!nextChild)
+        return throwVMTypeError(state);
     impl.excitingFunction(*nextChild);
     return JSValue::encode(jsUndefined());
 }

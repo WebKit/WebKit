@@ -58,7 +58,9 @@
 - (void)method:(DOMMediaQueryListListener *)listener
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->method(core(listener));
+    if (!listener)
+        WebCore::raiseTypeErrorException();
+    IMPL->method(*core(listener));
 }
 
 @end

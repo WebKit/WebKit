@@ -801,10 +801,8 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     TestObj* objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!objArg)
+        return throwVMTypeError(state);
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(*context, strArg, *objArg, ec)));
 
     setDOMException(state, ec);
@@ -871,10 +869,8 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     TestObj* objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!objArg)
+        return throwVMTypeError(state);
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(impl, *context, strArg, *objArg, ec)));
 
     setDOMException(state, ec);

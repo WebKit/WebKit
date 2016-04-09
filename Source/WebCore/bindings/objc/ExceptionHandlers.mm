@@ -42,8 +42,8 @@ void raiseDOMException(ExceptionCode ec)
 
     ExceptionCodeDescription description(ec);
 
+    // FIXME: This should use type and code exclusively and not try to use typeName.
     NSString *exceptionName;
-    // FIXME: We can use the enum to do these comparisons faster.
     if (strcmp(description.typeName, "DOM Range") == 0)
         exceptionName = DOMRangeException;
     else if (strcmp(description.typeName, "DOM Events") == 0)
@@ -67,6 +67,13 @@ void raiseDOMException(ExceptionCode ec)
     [userInfo release];
 
     [exception raise];
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void raiseTypeErrorException()
+{
+    raiseDOMException(TypeError);
 }
 
 } // namespace WebCore

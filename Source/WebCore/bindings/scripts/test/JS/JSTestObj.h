@@ -102,11 +102,6 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestObj*);
 inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestObj& impl) { return toJS(state, globalObject, &impl); }
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestObj*);
 
-// Functions
-
-JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomBindingMethod(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomBindingMethodWithArgs(JSC::ExecState*);
-
 
 } // namespace WebCore
 

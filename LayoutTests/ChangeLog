@@ -1,3 +1,14 @@
+2016-04-07  Darin Adler  <darin@apple.com>
+
+        Improve IDL support for object arguments that are neither optional nor nullable
+        https://bugs.webkit.org/show_bug.cgi?id=156149
+
+        Reviewed by Chris Dumez.
+
+        * fast/canvas/canvas-path-addPath-expected.txt: Updated expected result to expect
+        TypeError rather than TYPE_MISMATCH_ERR. A progression.
+        * fast/text/font-face-set-javascript-expected.txt: Ditto.
+
 2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: XHRs and Web Worker scripts are not searchable

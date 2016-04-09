@@ -30,24 +30,22 @@
 
     // DOM Level 2
 
-    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] DocumentType createDocumentType([Default=Undefined] optional DOMString? qualifiedName,
-        [Default=Undefined] optional DOMString? publicId, [Default=Undefined] optional DOMString? systemId);
+    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] DocumentType createDocumentType([Default=Undefined] optional DOMString? qualifiedName, [Default=Undefined] optional DOMString? publicId, [Default=Undefined] optional DOMString? systemId);
 
+    [NewObject, ObjCLegacyUnnamedParameters, RaisesException]
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    [ObjCLegacyUnnamedParameters, RaisesException] Document createDocument(optional DOMString namespaceURI, optional DOMString qualifiedName,
-        optional DocumentType doctype);
+        Document
 #else
-    [RaisesException, NewObject] XMLDocument createDocument([Default=Undefined] optional DOMString? namespaceURI,
-        [TreatNullAs=EmptyString, Default=Undefined] optional DOMString qualifiedName, [Default=Undefined] optional DocumentType? doctype);
+        XMLDocument
 #endif
+        createDocument([Default=Undefined] optional DOMString? namespaceURI, [TreatNullAs=EmptyString, Default=Undefined] optional DOMString qualifiedName, [Default=Undefined] optional DocumentType? doctype);
 
     // DOMImplementationCSS interface from DOM Level 2 CSS
 
-    [ObjCLegacyUnnamedParameters, RaisesException] CSSStyleSheet createCSSStyleSheet([Default=Undefined] optional DOMString title,
-                                                     [Default=Undefined] optional DOMString media);
+    [ObjCLegacyUnnamedParameters, RaisesException] CSSStyleSheet createCSSStyleSheet([Default=Undefined] optional DOMString title, [Default=Undefined] optional DOMString media);
 
     // HTMLDOMImplementation interface from DOM Level 2 HTML
 
     [NewObject] HTMLDocument createHTMLDocument([Default=NullString] optional DOMString title);
-};
 
+};

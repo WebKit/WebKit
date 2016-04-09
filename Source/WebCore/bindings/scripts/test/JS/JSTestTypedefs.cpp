@@ -134,7 +134,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(Exe
     if (!state->argument(1).isObject())
         return throwArgumentMustBeFunctionError(*state, 1, "testCallback", "TestTypedefs", nullptr);
     RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
-    RefPtr<TestTypedefs> object = TestTypedefs::create(hello, testCallback);
+    RefPtr<TestTypedefs> object = TestTypedefs::create(hello, *testCallback);
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 

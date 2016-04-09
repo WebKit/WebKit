@@ -53,7 +53,7 @@ my %numericTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1,
 
 my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1);
 
-my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
+my %stringTypeHash = ("DOMString" => 1);
 
 # WebCore types used directly in IDL files.
 my %webCoreTypeHash = (
@@ -884,6 +884,20 @@ sub InheritsExtendedAttribute
     }, 0);
 
     return $found;
+}
+
+sub ShouldPassWrapperByReference
+{
+    my $object = shift;
+    my $parameter = shift;
+    my $interface = shift;
+
+    return 0 if $parameter->isVariadic;
+    return 0 if $parameter->isNullable;
+    return 0 if $parameter->isOptional and $parameter->extendedAttributes->{"Default"} and $parameter->extendedAttributes->{"Default"} eq "Undefined";
+    return 0 if !$object->IsWrapperType($parameter->type) && !$object->IsTypedArrayType($parameter->type);
+    return 0 if $interface->extendedAttributes->{"UsePointersEvenForNonNullableObjectArguments"};
+    return 1;
 }
 
 1;

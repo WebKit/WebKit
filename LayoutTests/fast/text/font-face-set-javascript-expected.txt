@@ -13,7 +13,7 @@ PASS item.value is fontFace1
 PASS item.done is true
 PASS fontFaceSet.add(fontFace2) is fontFaceSet
 PASS fontFaceSet.size is 2
-PASS fontFaceSet.add(null) threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS fontFaceSet.add(null) threw exception TypeError: Type error.
 PASS item.done is false
 PASS item.value is fontFace1
 PASS item.done is false
@@ -21,10 +21,10 @@ PASS item.value is fontFace2
 PASS item.done is true
 PASS fontFaceSet.delete(fontFace1) is true
 PASS fontFaceSet.delete(fontFace3) is false
-PASS fontFaceSet.delete(null) threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS fontFaceSet.delete(null) threw exception TypeError: Type error.
 PASS fontFaceSet.has(fontFace1) is false
 PASS fontFaceSet.has(fontFace2) is true
-PASS fontFaceSet.has(null) threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS fontFaceSet.has(null) threw exception TypeError: Type error.
 PASS fontFaceSet.size is 0
 PASS fontFaceSet.values().next().done is true
 PASS fontFaceSet.check('garbage') threw exception Error: SyntaxError: DOM Exception 12.

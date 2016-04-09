@@ -64,7 +64,9 @@
 - (void)excitingFunction:(DOMNode *)nextChild
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->excitingFunction(core(nextChild));
+    if (!nextChild)
+        WebCore::raiseTypeErrorException();
+    IMPL->excitingFunction(*core(nextChild));
 }
 
 - (void)postMessage:(NSString *)message

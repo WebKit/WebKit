@@ -19,8 +19,8 @@
 #
 
 ActiveDOMObject
+AppleCopyright
 AtomicString
-CPPPureInterface
 CachedAttribute
 CallbackNeedsOperatorEqual
 Callback=FunctionOnly
@@ -35,7 +35,6 @@ ConstructorConditional=*
 ConstructorRaisesException
 ConstructorTemplate=Event|TypedArray
 Custom
-CustomBinding
 CustomCall
 CustomConstructor
 CustomDeleteProperty
@@ -51,7 +50,6 @@ CustomPutFunction
 CustomReturn
 CustomSetter
 CustomToJSObject
-UsePointersEvenForNonNullableObjectArguments
 Default=NullString|Undefined
 Deletable
 DoNotCheckConstants
@@ -127,7 +125,5 @@ TreatReturnedNaNDateAs=Null|NaN
 TypedArray=*
 URL
 Unforgeable
+UsePointersEvenForNonNullableObjectArguments
 WindowEventHandler
-
-# PLATFORM(IOS)
-AppleCopyright

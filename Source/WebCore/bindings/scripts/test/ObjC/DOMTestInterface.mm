@@ -194,8 +194,10 @@
 - (DOMTestObj *)implementsMethod2:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
     WebCore::JSMainThreadNullState state;
+    if (!objArg)
+        WebCore::raiseTypeErrorException();
     WebCore::ExceptionCode ec = 0;
-    DOMTestObj *result = kit(WTF::getPtr(IMPL->implementsMethod2(strArg, core(objArg), ec)));
+    DOMTestObj *result = kit(WTF::getPtr(IMPL->implementsMethod2(strArg, *core(objArg), ec)));
     WebCore::raiseOnDOMError(ec);
     return result;
 }
@@ -237,8 +239,10 @@
 - (DOMTestObj *)supplementalMethod2:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
     WebCore::JSMainThreadNullState state;
+    if (!objArg)
+        WebCore::raiseTypeErrorException();
     WebCore::ExceptionCode ec = 0;
-    DOMTestObj *result = kit(WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(*IMPL, strArg, core(objArg), ec)));
+    DOMTestObj *result = kit(WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(*IMPL, strArg, *core(objArg), ec)));
     WebCore::raiseOnDOMError(ec);
     return result;
 }

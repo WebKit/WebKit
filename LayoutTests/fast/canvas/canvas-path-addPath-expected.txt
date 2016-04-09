@@ -31,12 +31,12 @@ Add path B to path A with singular transformation matrix (3).
 PASS refTest(result.data, expected.data) is true
 
 Various tests of invalid values.
-PASS pathA.addPath(matrix, pathB) threw exception Error: TypeMismatchError: DOM Exception 17.
-PASS pathA.addPath(pathB, ctx.canvas) threw exception Error: TypeMismatchError: DOM Exception 17.
-PASS pathA.addPath(pathB, null) threw exception Error: TypeMismatchError: DOM Exception 17.
-PASS pathA.addPath(pathB, undefined) threw exception Error: TypeMismatchError: DOM Exception 17.
-PASS pathA.addPath(pathB, 0) threw exception Error: TypeMismatchError: DOM Exception 17.
-PASS pathA.addPath(pathB, "0") threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS pathA.addPath(matrix, pathB) threw exception TypeError: Type error.
+PASS pathA.addPath(pathB, ctx.canvas) threw exception TypeError: Type error.
+PASS pathA.addPath(pathB, null) threw exception TypeError: Type error.
+PASS pathA.addPath(pathB, undefined) threw exception TypeError: Type error.
+PASS pathA.addPath(pathB, 0) threw exception TypeError: Type error.
+PASS pathA.addPath(pathB, "0") threw exception TypeError: Type error.
 PASS successfullyParsed is true
 
 TEST COMPLETE

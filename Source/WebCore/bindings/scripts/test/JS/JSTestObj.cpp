@@ -508,7 +508,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(ExecStat
     if (!state->argument(1).isFunction())
         return throwArgumentMustBeFunctionError(*state, 1, "testCallbackFunction", "TestObj", nullptr);
     RefPtr<TestCallbackFunction> testCallbackFunction = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
-    RefPtr<TestObj> object = TestObj::create(testCallback, testCallbackFunction);
+    RefPtr<TestObj> object = TestObj::create(*testCallback, *testCallbackFunction);
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 
@@ -661,8 +661,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithExceptionWithMessage", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithExceptionWithMessage), (intptr_t) (0) } },
     { "customMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethod), (intptr_t) (0) } },
     { "customMethodWithArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethodWithArgs), (intptr_t) (3) } },
-    { "customBindingMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomBindingMethod), (intptr_t) (0) } },
-    { "customBindingMethodWithArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomBindingMethodWithArgs), (intptr_t) (3) } },
 #if ENABLE(Condition3)
     { "jsBuiltinMethod", JSC::Builtin, NoIntrinsic, { (intptr_t)static_cast<BuiltinGenerator>(testObjJsBuiltinMethodCodeGenerator), (intptr_t) (0) } },
 #else
@@ -3316,10 +3314,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
     TestObj* objArg = JSTestObj::toWrapped(state->argument(2));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!objArg)
+        return throwVMTypeError(state);
     impl.voidMethodWithArgs(longArg, strArg, *objArg);
     return JSValue::encode(jsUndefined());
 }
@@ -3355,10 +3351,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecSt
     TestObj* objArg = JSTestObj::toWrapped(state->argument(2));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!objArg)
+        return throwVMTypeError(state);
     JSValue result = jsNumber(impl.byteMethodWithArgs(byteArg, strArg, *objArg));
     return JSValue::encode(result);
 }
@@ -3394,10 +3388,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecS
     TestObj* objArg = JSTestObj::toWrapped(state->argument(2));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!objArg)
+        return throwVMTypeError(state);
     JSValue result = jsNumber(impl.octetMethodWithArgs(octetArg, strArg, *objArg));
     return JSValue::encode(result);
 }
@@ -3433,10 +3425,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecSt
     TestObj* objArg = JSTestObj::toWrapped(state->argument(2));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!objArg)
+        return throwVMTypeError(state);
     JSValue result = jsNumber(impl.longMethodWithArgs(longArg, strArg, *objArg));
     return JSValue::encode(result);
 }
@@ -3472,10 +3462,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
     TestObj* objArg = JSTestObj::toWrapped(state->argument(2));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!objArg)
+        return throwVMTypeError(state);
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.objMethodWithArgs(longArg, strArg, *objArg)));
     return JSValue::encode(result);
 }
@@ -3645,10 +3633,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
     TestObj* objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!objArg)
+        return throwVMTypeError(state);
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.methodThatRequiresAllArgsAndThrows(strArg, *objArg, ec)));
 
     setDOMException(state, ec);
@@ -4134,7 +4120,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
     if (!state->argument(0).isObject())
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "methodWithCallbackArg");
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
-    impl.methodWithCallbackArg(callback);
+    impl.methodWithCallbackArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
 
@@ -4154,7 +4140,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
     if (!state->argument(1).isObject())
         return throwArgumentMustBeFunctionError(*state, 1, "callback", "TestObj", "methodWithNonCallbackArgAndCallbackArg");
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
-    impl.methodWithNonCallbackArgAndCallbackArg(nonCallback, callback);
+    impl.methodWithNonCallbackArgAndCallbackArg(nonCallback, WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
 
@@ -4172,7 +4158,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOpti
             return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "methodWithCallbackAndOptionalArg");
         callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     }
-    impl.methodWithCallbackAndOptionalArg(callback);
+    impl.methodWithCallbackAndOptionalArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
 
@@ -4189,7 +4175,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctio
     if (!state->argument(0).isFunction())
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "methodWithCallbackFunctionArg");
     RefPtr<TestCallbackFunction> callback = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
-    impl.methodWithCallbackFunctionArg(callback);
+    impl.methodWithCallbackFunctionArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
 
@@ -4209,7 +4195,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
     if (!state->argument(1).isFunction())
         return throwArgumentMustBeFunctionError(*state, 1, "callback", "TestObj", "methodWithNonCallbackArgAndCallbackFunctionArg");
     RefPtr<TestCallbackFunction> callback = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
-    impl.methodWithNonCallbackArgAndCallbackFunctionArg(nonCallback, callback);
+    impl.methodWithNonCallbackArgAndCallbackFunctionArg(nonCallback, WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
 
@@ -4227,7 +4213,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctio
             return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "methodWithCallbackFunctionAndOptionalArg");
         callback = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     }
-    impl.methodWithCallbackFunctionAndOptionalArg(callback);
+    impl.methodWithCallbackFunctionAndOptionalArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
 
@@ -4239,7 +4225,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
             return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "staticMethodWithCallbackAndOptionalArg");
         callback = createFunctionOnlyCallback<JSTestCallback>(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), state->uncheckedArgument(0));
     }
-    TestObj::staticMethodWithCallbackAndOptionalArg(callback);
+    TestObj::staticMethodWithCallbackAndOptionalArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
 
@@ -4250,7 +4236,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
     if (!state->argument(0).isObject())
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "staticMethodWithCallbackArg");
     RefPtr<TestCallback> callback = createFunctionOnlyCallback<JSTestCallback>(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), state->uncheckedArgument(0));
-    TestObj::staticMethodWithCallbackArg(callback);
+    TestObj::staticMethodWithCallbackArg(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
 
@@ -4393,7 +4379,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5(ExecSta
     if (!state->argument(0).isObject())
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "overloadedMethod");
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
-    impl.overloadedMethod(callback);
+    impl.overloadedMethod(WTFMove(callback));
     return JSValue::encode(jsUndefined());
 }
 
@@ -4444,10 +4430,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod8(ExecSta
     TestObj* objArg = JSTestObj::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!objArg)
+        return throwVMTypeError(state);
     impl.overloadedMethod(*objArg);
     return JSValue::encode(jsUndefined());
 }
@@ -4856,10 +4840,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* state
     TestNode* value = JSTestNode::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!value) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!value)
+        return throwVMTypeError(state);
     impl.convert1(*value);
     return JSValue::encode(jsUndefined());
 }
@@ -4993,10 +4975,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequenc
     TestObj* objArg = JSTestObj::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!objArg)
+        return throwVMTypeError(state);
     Vector<unsigned> a = toNativeArray<unsigned>(state, state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
@@ -5022,10 +5002,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(E
     TestObj* objArg = JSTestObj::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!objArg)
+        return throwVMTypeError(state);
     Vector<int> array = toNativeArray<int>(state, state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
@@ -5088,10 +5066,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
     Node* head = JSNode::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!head) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!head)
+        return throwVMTypeError(state);
     Vector<Node*> tail;
     for (unsigned i = 1, count = state->argumentCount(); i < count; ++i) {
         if (!state->uncheckedArgument(i).inherits(JSNode::info()))
@@ -5159,10 +5135,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFl
     float a = state->argument(0).toFloat(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!std::isfinite(a)) {
-        setDOMException(state, TypeError);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!std::isfinite(a))
+        return throwVMTypeError(state);
     impl.testPromiseFunctionWithFloatArgument(a, DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }
@@ -5234,10 +5208,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     float a = state->argument(0).toFloat(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!std::isfinite(a)) {
-        setDOMException(state, TypeError);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!std::isfinite(a))
+        return throwVMTypeError(state);
     impl.testPromiseOverloadedFunction(a, DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }
@@ -5261,10 +5233,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     FetchRequest* request = JSFetchRequest::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!request) {
-        setDOMException(state, TYPE_MISMATCH_ERR);
-        return JSValue::encode(jsUndefined());
-    }
+    if (!request)
+        return throwVMTypeError(state);
     impl.testPromiseOverloadedFunction(*request, DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }

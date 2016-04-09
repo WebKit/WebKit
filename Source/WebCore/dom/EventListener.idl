@@ -22,7 +22,6 @@
 [
     NoInterfaceObject,
     ObjCProtocol,
-    CPPPureInterface,
 ] interface EventListener {
     void handleEvent(Event event);
 };

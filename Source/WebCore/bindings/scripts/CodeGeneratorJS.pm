@@ -1154,7 +1154,7 @@ sub GenerateHeader
     foreach my $function (@{$interface->functions}) {
         $numCustomFunctions++ if HasCustomMethod($function->signature->extendedAttributes);
 
-        if ($function->signature->extendedAttributes->{"ForwardDeclareInHeader"} or $function->signature->extendedAttributes->{"CustomBinding"}) {
+        if ($function->signature->extendedAttributes->{"ForwardDeclareInHeader"}) {
             $hasForwardDeclaringFunctions = 1;
         }
     }
@@ -1293,7 +1293,7 @@ sub GenerateHeader
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$interface->functions}) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
-            next unless $function->signature->extendedAttributes->{"ForwardDeclareInHeader"} or $function->signature->extendedAttributes->{"CustomBinding"};
+            next unless $function->signature->extendedAttributes->{"ForwardDeclareInHeader"};
 
             my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
             if ($needsAppleCopyright) {
@@ -1850,7 +1850,6 @@ sub GenerateImplementation
         foreach my $function (@functions) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
             next if $function->signature->extendedAttributes->{"ForwardDeclareInHeader"};
-            next if $function->signature->extendedAttributes->{"CustomBinding"};
             next if IsJSBuiltin($interface, $function);
 
             my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
@@ -2796,7 +2795,7 @@ sub GenerateImplementation
 
                 if ($attribute->signature->type eq "double" or $attribute->signature->type eq "float") {
                     push(@implContent, "    if (!std::isfinite(nativeValue)) {\n");
-                    push(@implContent, "        setDOMException(state, TypeError);\n");
+                    push(@implContent, "        throwVMTypeError(state);\n");
                     push(@implContent, "        return false;\n");
                     push(@implContent, "    }\n");
                 }
@@ -2899,7 +2898,6 @@ sub GenerateImplementation
     if ($numFunctions > 0) {
         my $inAppleCopyright = 0;
         foreach my $function (@{$interface->functions}) {
-            next if $function->signature->extendedAttributes->{"CustomBinding"};
             next if IsJSBuiltin($interface, $function);
             my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
             if ($needsAppleCopyright) {
@@ -3425,12 +3423,13 @@ sub GenerateParametersCheck
     $implIncludes{"JSDOMBinding.h"} = 1;
     foreach my $parameter (@{$function->parameters}) {
         my $argType = $parameter->type;
+
         # Optional arguments with [Optional] should generate an early call with fewer arguments.
         # Optional arguments with [Optional=...] should not generate the early call.
         # Optional Dictionary arguments always considered to have default of empty dictionary.
         my $optional = $parameter->isOptional;
         my $defaultAttribute = $parameter->extendedAttributes->{"Default"};
-        if ($optional && !$defaultAttribute && $argType ne "Dictionary" && !$codeGenerator->IsCallbackInterface($parameter->type)) {
+        if ($optional && !$defaultAttribute && $argType ne "Dictionary" && !$codeGenerator->IsCallbackInterface($argType)) {
             # Generate early call if there are enough parameters.
             if (!$hasOptionalArguments) {
                 push(@$outputArray, "\n    size_t argsCount = state->argumentCount();\n");
@@ -3446,6 +3445,7 @@ sub GenerateParametersCheck
         }
 
         my $name = $parameter->name;
+        my $value = $name;
 
         if ($argType eq "XPathNSResolver") {
             push(@$outputArray, "    RefPtr<XPathNSResolver> customResolver;\n");
@@ -3456,13 +3456,13 @@ sub GenerateParametersCheck
             push(@$outputArray, "            return JSValue::encode(jsUndefined());\n");
             push(@$outputArray, "        resolver = customResolver.get();\n");
             push(@$outputArray, "    }\n");
-        } elsif ($codeGenerator->IsCallbackInterface($parameter->type)) {
+        } elsif ($codeGenerator->IsCallbackInterface($argType)) {
             my $callbackClassName = GetCallbackClassName($argType);
             $implIncludes{"$callbackClassName.h"} = 1;
             if ($optional) {
                 push(@$outputArray, "    RefPtr<$argType> $name;\n");
                 push(@$outputArray, "    if (!state->argument($argsIndex).isUndefinedOrNull()) {\n");
-                if ($codeGenerator->IsFunctionOnlyCallbackInterface($parameter->type)) {
+                if ($codeGenerator->IsFunctionOnlyCallbackInterface($argType)) {
                     push(@$outputArray, "        if (!state->uncheckedArgument($argsIndex).isFunction())\n");
                 } else {
                     push(@$outputArray, "        if (!state->uncheckedArgument($argsIndex).isObject())\n");
@@ -3476,7 +3476,7 @@ sub GenerateParametersCheck
                 }
                 push(@$outputArray, "    }\n");
             } else {
-                if ($codeGenerator->IsFunctionOnlyCallbackInterface($parameter->type)) {
+                if ($codeGenerator->IsFunctionOnlyCallbackInterface($argType)) {
                     push(@$outputArray, "    if (!state->argument($argsIndex).isFunction())\n");
                 } else {
                     push(@$outputArray, "    if (!state->argument($argsIndex).isObject())\n");
@@ -3489,6 +3489,7 @@ sub GenerateParametersCheck
                     push(@$outputArray, "    RefPtr<$argType> $name = ${callbackClassName}::create(asObject(state->uncheckedArgument($argsIndex)), castedThis->globalObject());\n");
                 }
             }
+            $value = "WTFMove($name)";
         } elsif ($parameter->extendedAttributes->{"Clamp"}) {
             my $nativeValue = "${name}NativeValue";
             push(@$outputArray, "    $argType $name = 0;\n");
@@ -3518,7 +3519,6 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
-
         } elsif ($codeGenerator->IsEnumType($argType)) {
             $implIncludes{"<runtime/Error.h>"} = 1;
 
@@ -3603,30 +3603,22 @@ sub GenerateParametersCheck
             push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
             push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
 
-            if (IsPointerParameterPassedByReference($parameter, $interface) or ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $interfaceName =~ /List$/)) {
-                push(@$outputArray, "    if (!$name) {\n");
-                push(@$outputArray, "        setDOMException(state, TYPE_MISMATCH_ERR);\n");
-                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
-                push(@$outputArray, "    }\n");
+            my $isTearOff = $codeGenerator->IsSVGTypeNeedingTearOff($argType) && $interfaceName !~ /List$/;
+            if ($isTearOff or ShouldPassWrapperByReference($parameter, $interface)) {
+                push(@$outputArray, "    if (!$name)\n");
+                push(@$outputArray, "        return throwVMTypeError(state);\n");
+                $value = $isTearOff ? "$name->propertyReference()" : "*$name";
             }
 
-            if ($parameter->type eq "double" or $parameter->type eq "float") {
-                push(@$outputArray, "    if (!std::isfinite($name)) {\n");
-                push(@$outputArray, "        setDOMException(state, TypeError);\n");
-                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
-                push(@$outputArray, "    }\n");
+            if ($argType eq "double" or $argType eq "float") {
+                push(@$outputArray, "    if (!std::isfinite($name))\n");
+                push(@$outputArray, "        return throwVMTypeError(state);\n");
             }
+
+            $value = "$name.get()" if $codeGenerator->IsTypedArrayType($argType) and $argType ne "ArrayBuffer";
         }
 
-        if ($argType eq "NodeFilter" || ($codeGenerator->IsTypedArrayType($argType) and not $argType eq "ArrayBuffer")) {
-            push @arguments, "$name.get()";
-        } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $interfaceName =~ /List$/) {
-            push @arguments, "$name->propertyReference()";
-        } elsif (IsPointerParameterPassedByReference($parameter, $interface)) {
-            push @arguments, "*$name";
-        } else {
-            push @arguments, $name;
-        }
+        push(@arguments, $value);
         $argsIndex++;
     }
 
@@ -4111,26 +4103,17 @@ sub GetNativeType
     my $arrayOrSequenceType = $arrayType || $sequenceType;
 
     return "Vector<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">" if $arrayOrSequenceType;
-
-    if ($codeGenerator->IsEnumType($type)) {
-        return "String";
-    }
+    return "String" if $codeGenerator->IsEnumType($type);
 
     # For all other types, the native type is a pointer with same type name as the IDL type.
     return "${type}*";
 }
 
-sub IsPointerParameterPassedByReference
+sub ShouldPassWrapperByReference
 {
     my $parameter = shift;
     my $interface = shift;
-
-    return 0 if $parameter->isVariadic;
-    return 0 if $parameter->isNullable;
-    return 0 if $interface->extendedAttributes->{"UsePointersEvenForNonNullableObjectArguments"};
-    return 0 if $codeGenerator->IsCallbackInterface($parameter->type);
-    return 0 if $parameter->isOptional and $parameter->extendedAttributes->{"Default"} and $parameter->extendedAttributes->{"Default"} eq "Undefined";
-    return substr(GetNativeType($parameter->type), -1) eq '*';
+    return $codeGenerator->ShouldPassWrapperByReference($parameter, $interface) && substr(GetNativeType($parameter->type), -1) eq '*';
 }
 
 sub GetNativeVectorInnerType
@@ -5010,7 +4993,7 @@ END
             my $index = 0;
             foreach my $parameter (@{$function->parameters}) {
                 last if $index eq $paramIndex;
-                if (IsPointerParameterPassedByReference($parameter, $interface)) {
+                if (ShouldPassWrapperByReference($parameter, $interface)) {
                     push(@constructorArgList, "*" . $parameter->name);
                 } else {
                     push(@constructorArgList, $parameter->name);

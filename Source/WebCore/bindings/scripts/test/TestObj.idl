@@ -137,10 +137,6 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [Custom] void customMethod();
     [Custom] void customMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
 
-    // 'CustomBinding' extended attribute
-    [CustomBinding] void customBindingMethod();
-    [CustomBinding] void customBindingMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
-
     // 'JSBuiltin' extended attribute
     [Conditional=Condition3, JSBuiltin] void jsBuiltinMethod();
     [Conditional=Condition3, JSBuiltin] void jsBuiltinMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);

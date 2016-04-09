@@ -1,3 +1,83 @@
+2016-04-07  Darin Adler  <darin@apple.com>
+
+        Improve IDL support for object arguments that are neither optional nor nullable
+        https://bugs.webkit.org/show_bug.cgi?id=156149
+
+        Reviewed by Chris Dumez.
+
+        After this patch, we are almost ready to change some more DOM functions to
+        use references instead of pointers. Remaining blocking issue is lack of support
+        for ShouldPassWrapperByReference in the gobject bindings.
+
+        * bindings/objc/ExceptionHandlers.h: Add NO_RETURN to raiseDOMException.
+        Added a new raiseTypeErrorException. Re-indented header and removed unneeded
+        include and forward declarations.
+
+        * bindings/objc/ExceptionHandlers.mm:
+        (WebCore::raiseDOMException): Added RELEASE_ASSERT_NOT_REACHED so the compiler
+        will understand this is NO_RETURN. Also updated FIXME comment.
+        (WebCore::raiseTypeErrorException): Added.
+
+        * bindings/scripts/CodeGenerator.pm: Removed unneeded code that allows the type
+        "AtomicString" in IDL files.
+        (ShouldPassWrapperByReference): Added. Contains the logic from the function in
+        the JavaScript code generator that was named IsPointerParameterPassedByReference,
+        minus a couple checks that are unneeded. For use in other code generators so they
+        are all consistent about how they call the DOM implementation.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipFunction): Removed support for unused CustomBinding extended attribute.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Removed support for unused CustomBinding extended attribute.
+        (GenerateImplementation): Ditto. Also changed type checking code to throw a
+        type error in a more efficient way, using throwVMTypeError directly.
+        (GenerateParametersCheck): Rearranged code a bit so that arguments that need to
+        be passed in unusual ways are handled all in one place. Use WTFMove for newly
+        created NodeFilter objects. Simplified the reference logic so it doesn't need
+        to do an additional check to see if a type is a callback. Also changed type
+        checking code to throw a type error in a more efficient way, using throwVMTypeError
+        directly. Also corrected mistake where null checking code was throwing
+        TYPE_MISMATCH_ERR instead of a type error.
+        (GetNativeType): Coding style tweak.
+        (ShouldPassWrapperByReference): Renamed from IsPointerParameterPassedByReference.
+        Changed to call underlying ShouldPassWrapperByReference function in the language-
+        independent code generator.
+        (GenerateConstructorDefinition): Updated for name change.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (SkipFunction): Removed support for unused CustomBinding extended attribute.
+        (GenerateImplementation): Added code to null check and pass a reference when
+        ShouldPassWrapperByReference returns true.
+
+        * bindings/scripts/IDLAttributes.txt: Sorted in the AppleCopyright and
+        UsePointersEvenForNonNullableObjectArguments arguments. Removed the unused
+        CPPPureInterface and CustomBinding attributes.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp: Regenerated test results.
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.h: Ditto.
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestActiveDOMObject.mm: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestCallback.mm: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestCallbackFunction.mm: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestMediaQueryListListener.mm: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestObj.mm: Ditto.
+
+        * bindings/scripts/test/TestObj.idl: Removed test for CustomBinding.
+
+        * dom/DOMImplementation.idl: Fixed #if so that only the return type is different
+        between JavaScript and the other bindings. Without this change, the different
+        bindings got different results for ShouldPassWrapperByReference. Also formatted
+        functions all on a single line.
+
+        * dom/EventListener.idl: Removed CPPPureInterface, since it had no effect.
+        * dom/EventTarget.idl: Ditto.
+
 2016-04-08  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Add support for [ExportMacro=XXX] IDL extended attribute

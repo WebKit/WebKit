@@ -26,22 +26,20 @@
 #ifndef ExceptionHandlers_h
 #define ExceptionHandlers_h
 
-#include <wtf/Assertions.h>
-
 namespace WebCore {
     
-    typedef int ExceptionCode;
-    
-    class FrameSelection;
-    class Range;
+typedef int ExceptionCode;
 
-    void raiseDOMException(ExceptionCode);
+NO_RETURN void raiseDOMException(ExceptionCode);
+NO_RETURN void raiseTypeErrorException();
 
-    inline void raiseOnDOMError(ExceptionCode ec) 
-    {
-        if (ec) 
-            raiseDOMException(ec);
-    }
+void raiseOnDOMError(ExceptionCode);
+
+inline void raiseOnDOMError(ExceptionCode code)
+{
+    if (code)
+        raiseDOMException(code);
+}
 
 } // namespace WebCore
 
