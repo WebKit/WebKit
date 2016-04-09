@@ -1,3 +1,15 @@
+2016-04-08  Guillaume Emont  <guijemont@igalia.com>
+
+        MIPS: support Signed cond in branchTest32()
+        https://bugs.webkit.org/show_bug.cgi?id=156260
+
+        This is needed since r197688 makes use of it.
+
+        Reviewed by Mark Lam.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchTest32):
+
 2016-04-08  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards running CMake WebKit2 on Mac
