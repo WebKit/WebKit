@@ -2503,8 +2503,6 @@ webkit.org/b/151267 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirk
 
 webkit.org/b/152057 accessibility/textarea-selected-text-range.html [ Failure Timeout ]
 
-webkit.org/b/152643 storage/indexeddb/connection-leak.html [ Failure ]
-
 webkit.org/b/152788 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure ]
 webkit.org/b/152788 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
 webkit.org/b/152788 svg/filters/color-space-conversion.svg [ ImageOnlyFailure ]
