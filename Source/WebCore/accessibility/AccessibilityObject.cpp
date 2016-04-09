@@ -317,7 +317,6 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     case ImageRole:
     case ListRole:
     case ListBoxRole:
-    case LandmarkApplicationRole:
     case LandmarkBannerRole:
     case LandmarkComplementaryRole:
     case LandmarkContentInfoRole:
@@ -340,6 +339,7 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     case ToolbarRole:
     case TreeGridRole:
     case TreeRole:
+    case WebApplicationRole:
         return false;
     default:
         break;
@@ -396,8 +396,7 @@ bool AccessibilityObject::isLandmark() const
 {
     AccessibilityRole role = roleValue();
     
-    return role == LandmarkApplicationRole
-        || role == LandmarkBannerRole
+    return role == LandmarkBannerRole
         || role == LandmarkComplementaryRole
         || role == LandmarkContentInfoRole
         || role == LandmarkMainRole
@@ -2028,7 +2027,7 @@ static void initializeRoleMap()
     const RoleEntry roles[] = {
         { "alert", ApplicationAlertRole },
         { "alertdialog", ApplicationAlertDialogRole },
-        { "application", LandmarkApplicationRole },
+        { "application", WebApplicationRole },
         { "article", DocumentArticleRole },
         { "banner", LandmarkBannerRole },
         { "button", ButtonRole },

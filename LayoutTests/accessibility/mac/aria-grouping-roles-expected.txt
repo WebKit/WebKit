@@ -21,8 +21,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS obj.childAtIndex(k).role is 'AXRole: AXGroup'
-PASS obj.childAtIndex(k).subrole is "AXSubrole: AXLandmarkApplication"
-PASS obj.childAtIndex(k).roleDescription is "AXRoleDescription: application"
+PASS obj.childAtIndex(k).subrole is "AXSubrole: AXWebApplication"
+PASS obj.childAtIndex(k).roleDescription is "AXRoleDescription: web application"
 PASS obj.childAtIndex(k).role is 'AXRole: AXGroup'
 PASS obj.childAtIndex(k).subrole is "AXSubrole: AXDocumentArticle"
 PASS obj.childAtIndex(k).roleDescription is "AXRoleDescription: article"

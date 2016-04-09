@@ -716,7 +716,7 @@
 "alert dialog" = "web alert dialog";
 
 /* An ARIA accessibility group that acts as an application. */
-"application" = "application";
+"web application" = "web application";
 
 /* An ARIA accessibility group that acts as a status update. */
 "application status" = "application status";

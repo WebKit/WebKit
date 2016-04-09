@@ -974,7 +974,7 @@ static long MSAARole(AccessibilityRole role)
             return ROLE_SYSTEM_EQUATION;
         case WebCore::HelpTagRole:
             return ROLE_SYSTEM_HELPBALLOON;
-        case WebCore::LandmarkApplicationRole:
+        case WebCore::WebApplicationRole:
         case WebCore::LandmarkBannerRole:
         case WebCore::LandmarkComplementaryRole:
         case WebCore::LandmarkContentInfoRole:

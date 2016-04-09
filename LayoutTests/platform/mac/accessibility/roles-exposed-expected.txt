@@ -811,8 +811,8 @@ div[role=alertdialog]
       
 div[role=application]
       AXRole: AXGroup
-      AXSubrole: AXLandmarkApplication
-      AXRoleDescription: application
+      AXSubrole: AXWebApplication
+      AXRoleDescription: web application
       
 div[role=article]
       AXRole: AXGroup

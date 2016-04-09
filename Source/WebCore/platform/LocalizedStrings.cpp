@@ -712,8 +712,8 @@ String AXARIAContentGroupText(const String& ariaType)
         return WEB_UI_STRING("note", "An ARIA accessibility group that acts as a note in a document.");
     if (ariaType == "ARIADocumentRegion")
         return WEB_UI_STRING("region", "An ARIA accessibility group that acts as a distinct region in a document.");
-    if (ariaType == "ARIALandmarkApplication")
-        return WEB_UI_STRING("application", "An ARIA accessibility group that acts as an application.");
+    if (ariaType == "ARIAWebApplication")
+        return WEB_UI_STRING("web application", "An ARIA accessibility group that acts as an application.");
     if (ariaType == "ARIALandmarkBanner")
         return WEB_UI_STRING("banner", "An ARIA accessibility group that acts as a banner.");
     if (ariaType == "ARIALandmarkComplementary")

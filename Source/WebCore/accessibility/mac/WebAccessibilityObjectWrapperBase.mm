@@ -322,8 +322,6 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
 - (NSString *)ariaLandmarkRoleDescription
 {
     switch (m_object->roleValue()) {
-    case LandmarkApplicationRole:
-        return AXARIAContentGroupText(@"ARIALandmarkApplication");
     case LandmarkBannerRole:
         return AXARIAContentGroupText(@"ARIALandmarkBanner");
     case LandmarkComplementaryRole:
@@ -364,6 +362,8 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
         return AXARIAContentGroupText(@"ARIAUserInterfaceTooltip");
     case TabPanelRole:
         return AXARIAContentGroupText(@"ARIATabPanel");
+    case WebApplicationRole:
+        return AXARIAContentGroupText(@"ARIAWebApplication");
     default:
         return nil;
     }

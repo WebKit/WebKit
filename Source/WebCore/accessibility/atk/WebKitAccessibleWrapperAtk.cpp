@@ -660,7 +660,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_TOOL_TIP;
     case WebAreaRole:
         return ATK_ROLE_DOCUMENT_WEB;
-    case LandmarkApplicationRole:
+    case WebApplicationRole:
         return ATK_ROLE_EMBEDDED;
 #if ATK_CHECK_VERSION(2, 11, 3)
     case ApplicationLogRole:

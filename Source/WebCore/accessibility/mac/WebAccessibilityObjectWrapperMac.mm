@@ -2153,7 +2153,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { DescriptionListTermRole, NSAccessibilityGroupRole },
         { DescriptionListRole, NSAccessibilityListRole },
         { SliderThumbRole, NSAccessibilityValueIndicatorRole },
-        { LandmarkApplicationRole, NSAccessibilityGroupRole },
+        { WebApplicationRole, NSAccessibilityGroupRole },
         { LandmarkBannerRole, NSAccessibilityGroupRole },
         { LandmarkComplementaryRole, NSAccessibilityGroupRole },
         { LandmarkContentInfoRole, NSAccessibilityGroupRole },
@@ -2288,8 +2288,6 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     // ARIA content subroles.
     switch (role) {
-        case LandmarkApplicationRole:
-            return @"AXLandmarkApplication";
         case LandmarkBannerRole:
             return @"AXLandmarkBanner";
         case LandmarkComplementaryRole:
@@ -2338,6 +2336,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXTerm";
         case DescriptionListDetailRole:
             return @"AXDescription";
+        case WebApplicationRole:
+            return @"AXWebApplication";
             // Default doesn't return anything, so roles defined below can be chosen.
         default:
             break;
