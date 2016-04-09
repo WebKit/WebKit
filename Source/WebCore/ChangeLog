@@ -1,3 +1,13 @@
+2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS Simulator] Build failure (property 'contentsFormat' not found on object of type 'LegacyTileLayer *')
+        https://bugs.webkit.org/show_bug.cgi?id=156415
+
+        Reviewed by Simon Fraser.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+        Provide SPI forward declaration of the CALayer contentsFormat property.
+
 2016-04-08  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards running CMake WebKit2 on Mac

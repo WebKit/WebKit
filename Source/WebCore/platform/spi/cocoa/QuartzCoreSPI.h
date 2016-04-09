@@ -79,6 +79,9 @@
 @property BOOL hitTestsAsOpaque;
 @property BOOL needsLayoutOnGeometryChange;
 @property BOOL shadowPathIsBounds;
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300
+@property (copy) NSString *contentsFormat;
+#endif
 @end
 
 @interface CATiledLayer ()
