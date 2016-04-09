@@ -934,3 +934,5 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/MockContentFilter.cpp
     testing/MockContentFilterSettings.cpp
 )
+
+set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")

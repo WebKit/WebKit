@@ -417,10 +417,6 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page"
 )
 
-set(WEBKIT2_EXTRA_DEPENDENCIES
-     WebKit2-forwarding-headers
-)
-
 set(XPCService_SOURCES
     Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm
     Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm
@@ -447,8 +443,8 @@ list(APPEND DatabaseProcess_SOURCES
 )
 
 # FIXME: These should not have Development in production builds.
-set(WebKit2_WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development.xpc)
-set(WebKit2_NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development.xpc)
+set(WebKit2_WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
+set(WebKit2_NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
 
 add_definitions("-include WebKit2Prefix.h")
 

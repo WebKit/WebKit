@@ -307,3 +307,6 @@ file(WRITE "${WebCore_POST_BUILD_COMMAND}" "@xcopy /y /s /d /f \"${DERIVED_SOURC
 set(WebCore_OUTPUT_NAME
     WebCore${DEBUG_SUFFIX}
 )
+
+list(APPEND WebCore_LIBRARIES WTF${DEBUG_SUFFIX})
+list(APPEND WebCoreTestSupport_LIBRARIES WTF${DEBUG_SUFFIX})

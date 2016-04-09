@@ -388,3 +388,5 @@ foreach (_file ${WebKitLegacy_WebCore_FORWARDING_HEADERS})
         file(WRITE ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/${_file} "#import <WebCore/${_file}>")
     endif ()
 endforeach ()
+
+set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")

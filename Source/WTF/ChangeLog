@@ -1,3 +1,12 @@
+2016-04-08  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards running CMake WebKit2 on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=156426
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformMac.cmake:
+
 2016-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Enable Concurrent JIT by default

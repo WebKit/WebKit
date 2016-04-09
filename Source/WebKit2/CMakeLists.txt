@@ -903,6 +903,7 @@ if (APPLE)
     add_custom_target(WebContentProcessNib COMMAND
         ibtool --compile ${_web_xpc_dir}/Resources/WebContentProcess.nib ${WEBKIT2_DIR}/Resources/WebContentProcess.xib
         VERBATIM)
+    add_dependencies(WebKit2 WebContentProcessNib)
 
     # FIXME: This shouldn't be two operations.
     file(COPY ${WEBKIT2_DIR}/WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist DESTINATION ${_web_xpc_dir})
@@ -913,7 +914,6 @@ if (APPLE)
 
     set(_net_xpc_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.Networking.Development.xpc/Contents)
     make_directory(${_net_xpc_dir}/MacOS)
-    make_directory(${_net_xpc_dir}/Resources)
     make_directory(${_net_xpc_dir}/_CodeSignature)
 
     # FIXME: This shouldn't be two operations.

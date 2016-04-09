@@ -1,5 +1,16 @@
 2016-04-08  Alex Christensen  <achristensen@webkit.org>
 
+        Progress towards running CMake WebKit2 on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=156426
+
+        Reviewed by Tim Horton.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        Put the xpc service binaries in the right place.
+
+2016-04-08  Alex Christensen  <achristensen@webkit.org>
+
         Build fix with IndexedDB disabled but DatabaseProcess enabled after r199230
         https://bugs.webkit.org/show_bug.cgi?id=156321
 
