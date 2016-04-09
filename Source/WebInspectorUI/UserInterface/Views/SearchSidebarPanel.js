@@ -124,14 +124,14 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
             if (error)
                 return;
 
-            function resourceCallback(url, error, resourceMatches)
+            function resourceCallback(frameId, url, error, resourceMatches)
             {
                 updateEmptyContentPlaceholderSoon.call(this);
 
                 if (error || !resourceMatches || !resourceMatches.length)
                     return;
 
-                var frame = WebInspector.frameResourceManager.frameForIdentifier(searchResult.frameId);
+                var frame = WebInspector.frameResourceManager.frameForIdentifier(frameId);
                 if (!frame)
                     return;
 
@@ -160,7 +160,8 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
                 if (!searchResult.url || !searchResult.frameId)
                     continue;
 
-                PageAgent.searchInResource(searchResult.frameId, searchResult.url, searchQuery, isCaseSensitive, isRegex, resourceCallback.bind(this, searchResult.url));
+                // COMPATIBILITY (iOS 9): Page.searchInResources did not have the optional requestId parameter.
+                PageAgent.searchInResource(searchResult.frameId, searchResult.url, searchQuery, isCaseSensitive, isRegex, searchResult.requestId, resourceCallback.bind(this, searchResult.frameId, searchResult.url));
             }
         }
 

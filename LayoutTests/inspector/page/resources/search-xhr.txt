@@ -1,0 +1,2 @@
+XHR Resource with the SEARCH-STRING.
+XHR Resource with the SEARCH-STRING again!

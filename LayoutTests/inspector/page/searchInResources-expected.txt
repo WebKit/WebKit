@@ -1,0 +1,21 @@
+Tests for the Page.searchInResources and Page.searchInResource commands.
+
+
+== Running test suite: Page.searchInResources and Page.searchInResource
+-- Running test case: SearchAllResources
+PASS: Should find results in multiple resources.
+FOUND: inspector/page/resources/search-script.js (1)
+FOUND: inspector/page/resources/search-stylesheet.css (1)
+FOUND: inspector/page/resources/search-worker.js (1)
+FOUND: inspector/page/resources/search-xhr.txt (2)
+FOUND: inspector/page/searchInResources.html (1)
+
+-- Running test case: SearchInScriptResource
+PASS: Should find previously mentioned number of matches.
+MATCH: {"lineNumber":0,"lineContent":"// Script resource with the SEARCH-STRING.\n"}
+
+-- Running test case: SearchInXHRResource
+PASS: Should find previously mentioned number of matches.
+MATCH: {"lineNumber":0,"lineContent":"XHR Resource with the SEARCH-STRING.\n"}
+MATCH: {"lineNumber":1,"lineContent":"XHR Resource with the SEARCH-STRING again!\n"}
+

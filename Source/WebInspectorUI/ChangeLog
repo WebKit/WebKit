@@ -1,5 +1,18 @@
 2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: XHRs and Web Worker scripts are not searchable
+        https://bugs.webkit.org/show_bug.cgi?id=154214
+        <rdar://problem/24643587>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.resourceCallback):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.resourcesCallback):
+        Carry forward the requestId property if it is available.
+
+2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Allocation snapshot hover persists after switching tabs
         https://bugs.webkit.org/show_bug.cgi?id=156430
         <rdar://problem/25633800>

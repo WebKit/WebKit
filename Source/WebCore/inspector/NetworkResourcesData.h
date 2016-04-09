@@ -127,6 +127,7 @@ public:
     ResourceData const* data(const String& requestId);
     Vector<String> removeCachedResource(CachedResource*);
     void clear(const String& preservedLoaderId = String());
+    Vector<ResourceData*> resources();
 
 private:
     ResourceData* resourceDataForRequestId(const String& requestId);

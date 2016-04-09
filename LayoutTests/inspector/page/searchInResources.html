@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<link rel="stylesheet" href="resources/search-stylesheet.css">
+<script src="resources/search-script.js"></script>
+<script>
+function triggerDownloadingResources() {
+    let worker = new Worker("resources/search-worker.js");
+
+    let xhr = new XMLHttpRequest;
+    xhr.open("GET", "resources/search-xhr.txt", true);
+    xhr.addEventListener("load", done);
+    xhr.send();
+
+    function done() {
+        TestPage.dispatchEventToFrontend('PageIsReady');
+    }
+}
+
+function test()
+{
+    function sanitizeURL(url) {
+        return url.replace(/^.*?LayoutTests\//, "");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Page.searchInResources and Page.searchInResource");
+
+    let searchResults;
+    const searchString = "SEARCH-STRING";
+
+    suite.addTestCase({
+        name: "SearchAllResources",
+        description: "Able to find text results in different resources.",
+        test: (resolve, reject) => {
+            PageAgent.searchInResources(searchString, (error, results) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(results.length > 0, "Should find results in multiple resources.");
+                searchResults = results.sort((a, b) => a.url.localeCompare(b.url));
+                for (let result of searchResults)
+                    InspectorTest.log(`FOUND: ${sanitizeURL(result.url)} (${result.matchesCount})`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SearchInScriptResource",
+        description: "Able to find text results in an individual Script resource.",
+        test: (resolve, reject) => {
+            let result = searchResults.find((result) => /search-script\.js$/.test(result.url));
+            if (!result)
+                reject();
+
+            PageAgent.searchInResource(result.frameId, result.url, searchString, (error, matches) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(matches.length === result.matchesCount, "Should find previously mentioned number of matches.");
+                for (let match of matches)
+                    InspectorTest.log(`MATCH: ${JSON.stringify(match)}`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SearchInXHRResource",
+        description: "Able to find text results in an individual XHR resource.",
+        test: (resolve, reject) => {
+            let result = searchResults.find((result) => /search-xhr\.txt$/.test(result.url));
+            if (!result)
+                reject();
+
+            const isRegex = undefined;
+            const caseSensitive = undefined;
+
+            PageAgent.searchInResource(result.frameId, result.url, searchString, caseSensitive, isRegex, result.requestId, (error, matches) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(matches.length === result.matchesCount, "Should find previously mentioned number of matches.");
+                for (let match of matches)
+                    InspectorTest.log(`MATCH: ${JSON.stringify(match)}`);
+                resolve();
+            });
+        }
+    });
+
+    InspectorTest.evaluateInPage("triggerDownloadingResources()");
+    InspectorTest.singleFireEventListener("PageIsReady", (event) => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the Page.searchInResources and Page.searchInResource commands.</p>
+</body>
+</html>

@@ -60,6 +60,7 @@
 #include "ThreadableLoaderClient.h"
 #include "URL.h"
 #include "WebSocketFrame.h"
+#include <inspector/ContentSearchUtilities.h>
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorFrontendRouter.h>
 #include <inspector/InspectorValues.h>
@@ -452,10 +453,7 @@ void InspectorNetworkAgent::didReceiveScriptResponse(unsigned long identifier)
 
 void InspectorNetworkAgent::didFinishXHRLoading(ThreadableLoaderClient*, unsigned long identifier, const String& sourceString)
 {
-    // For Asynchronous XHRs, the inspector can grab the data directly off of the CachedResource. For sync XHRs, we need to
-    // provide the data here, since no CachedResource was involved.
-    if (m_loadingXHRSynchronously)
-        m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), sourceString);
+    m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), sourceString);
 }
 
 void InspectorNetworkAgent::didReceiveXHRResponse(unsigned long identifier)
@@ -695,6 +693,45 @@ void InspectorNetworkAgent::loadResource(ErrorString& errorString, const String&
         return;
 
     inspectorThreadableLoaderClient->setLoader(loader.release());
+}
+
+static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(const String& requestId, const String& frameId, const String& url, int matchesCount)
+{
+    auto searchResult = Inspector::Protocol::Page::SearchResult::create()
+        .setUrl(url)
+        .setFrameId(frameId)
+        .setMatchesCount(matchesCount)
+        .release();
+    searchResult->setRequestId(requestId);
+    return searchResult;
+}
+
+void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpression& regex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>>& result)
+{
+    Vector<NetworkResourcesData::ResourceData*> resources = m_resourcesData->resources();
+    for (auto* resourceData : resources) {
+        if (resourceData->hasContent()) {
+            int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, resourceData->content());
+            if (matchesCount)
+                result->addItem(buildObjectForSearchResult(resourceData->requestId(), resourceData->frameId(), resourceData->url(), matchesCount));
+        }
+    }
+}
+
+void InspectorNetworkAgent::searchInRequest(ErrorString& errorString, const String& requestId, const String& query, bool caseSensitive, bool isRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
+{
+    NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
+    if (!resourceData) {
+        errorString = ASCIILiteral("No resource with given identifier found");
+        return;
+    }
+
+    if (!resourceData->hasContent()) {
+        errorString = ASCIILiteral("No resource content");
+        return;
+    }
+
+    results = ContentSearchUtilities::searchInTextByLines(resourceData->content(), query, caseSensitive, isRegex);
 }
 
 void InspectorNetworkAgent::mainFrameNavigated(DocumentLoader& loader)

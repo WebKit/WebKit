@@ -55,6 +55,7 @@
 #include "ImageBuffer.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorNetworkAgent.h"
 #include "InspectorOverlay.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
@@ -115,7 +116,10 @@ static bool prepareCachedResourceBuffer(CachedResource* cachedResource, bool* ha
 static bool hasTextContent(CachedResource* cachedResource)
 {
     InspectorPageAgent::ResourceType type = InspectorPageAgent::cachedResourceType(*cachedResource);
-    return type == InspectorPageAgent::DocumentResource || type == InspectorPageAgent::StylesheetResource || type == InspectorPageAgent::ScriptResource || type == InspectorPageAgent::XHRResource;
+    return type == InspectorPageAgent::DocumentResource
+        || type == InspectorPageAgent::StylesheetResource
+        || type == InspectorPageAgent::ScriptResource
+        || type == InspectorPageAgent::XHRResource;
 }
 
 static RefPtr<TextResourceDecoder> createXHRTextDecoder(const String& mimeType, const String& textEncodingName)
@@ -566,18 +570,25 @@ static bool textContentForCachedResource(CachedResource* cachedResource, String*
     return false;
 }
 
-void InspectorPageAgent::searchInResource(ErrorString&, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
+void InspectorPageAgent::searchInResource(ErrorString& errorString, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, const String* optionalRequestId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
 {
     results = Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>::create();
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
 
-    Frame* frame = frameForId(frameId);
+    if (optionalRequestId) {
+        if (InspectorNetworkAgent* networkAgent = m_instrumentingAgents.inspectorNetworkAgent()) {
+            networkAgent->searchInRequest(errorString, *optionalRequestId, query, caseSensitive, isRegex, results);
+            return;
+        }
+    }
+
+    Frame* frame = assertFrame(errorString, frameId);
     if (!frame)
         return;
 
-    DocumentLoader* loader = frame->loader().documentLoader();
+    DocumentLoader* loader = assertDocumentLoader(errorString, frame);
     if (!loader)
         return;
 
@@ -634,6 +645,9 @@ void InspectorPageAgent::searchInResources(ErrorString&, const String& text, con
                 result->addItem(buildObjectForSearchResult(frameId(frame), frame->document()->url(), matchesCount));
         }
     }
+
+    if (InspectorNetworkAgent* networkAgent = m_instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->searchOtherRequests(regex, result);
 }
 
 void InspectorPageAgent::setDocumentContent(ErrorString& errorString, const String& frameId, const String& html)

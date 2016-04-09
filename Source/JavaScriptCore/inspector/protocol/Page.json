@@ -58,7 +58,8 @@
             "properties": [
                 { "name": "url", "type": "string", "description": "Resource URL." },
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Resource frame id." },
-                { "name": "matchesCount", "type": "number", "description": "Number of matches in the resource content." }
+                { "name": "matchesCount", "type": "number", "description": "Number of matches in the resource content." },
+                { "name": "requestId", "$ref": "Network.RequestId", "optional": true, "description": "Network request id." }
             ]
         },
         {
@@ -164,7 +165,8 @@
                 { "name": "url", "type": "string", "description": "URL of the resource to search in." },
                 { "name": "query", "type": "string", "description": "String to search for." },
                 { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, search is case sensitive." },
-                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats string parameter as regex." }
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats string parameter as regex." },
+                { "name": "requestId", "$ref": "Network.RequestId", "optional": true, "description": "Request id for resource to search in." }
             ],
             "returns": [
                 { "name": "result", "type": "array", "items": { "$ref": "GenericTypes.SearchMatch" }, "description": "List of search matches." }

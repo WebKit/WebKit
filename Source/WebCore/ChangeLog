@@ -1,3 +1,34 @@
+2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: XHRs and Web Worker scripts are not searchable
+        https://bugs.webkit.org/show_bug.cgi?id=154214
+        <rdar://problem/24643587>
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector/page/searchInResources.html
+
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::searchInResource):
+        (WebCore::InspectorPageAgent::searchInResources):
+        Let the NetworkAgent handle individual search requests
+        with a requestId. And provide global search results for
+        "other" resources and will include requestId properties.
+
+        * inspector/InspectorNetworkAgent.h:
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didFinishXHRLoading):
+        (WebCore::buildObjectForSearchResult):
+        (WebCore::InspectorNetworkAgent::searchOtherRequests):
+        (WebCore::InspectorNetworkAgent::searchInRequest):
+        Search saved "other" resource data content.
+
+        * inspector/NetworkResourcesData.h:
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::resources):
+        Expose the resources for iteration by the NetworkAgent.
+
 2016-04-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: "AXLandmarkApplication" is an inappropriate subrole for ARIA "application" since it's no longer a landmark

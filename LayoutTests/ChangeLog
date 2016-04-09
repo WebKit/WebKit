@@ -1,3 +1,19 @@
+2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: XHRs and Web Worker scripts are not searchable
+        https://bugs.webkit.org/show_bug.cgi?id=154214
+        <rdar://problem/24643587>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/page/resources/search-script.js: Added.
+        * inspector/page/resources/search-stylesheet.css: Added.
+        * inspector/page/resources/search-worker.js: Added.
+        * inspector/page/resources/search-xhr.txt: Added.
+        * inspector/page/searchInResources-expected.txt: Added.
+        * inspector/page/searchInResources.html: Added.
+        Test for the Page domain's search commands.
+
 2016-04-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: "AXLandmarkApplication" is an inappropriate subrole for ARIA "application" since it's no longer a landmark

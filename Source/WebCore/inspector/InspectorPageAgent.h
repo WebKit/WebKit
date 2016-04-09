@@ -102,7 +102,7 @@ public:
     void deleteCookie(ErrorString&, const String& cookieName, const String& url) override;
     void getResourceTree(ErrorString&, RefPtr<Inspector::Protocol::Page::FrameResourceTree>&) override;
     void getResourceContent(ErrorString&, const String& frameId, const String& url, String* content, bool* base64Encoded) override;
-    void searchInResource(ErrorString&, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>&) override;
+    void searchInResource(ErrorString&, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, const String* optionalRequestId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>&) override;
     void searchInResources(ErrorString&, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>>&) override;
     void setDocumentContent(ErrorString&, const String& frameId, const String& html) override;
     void setShowPaintRects(ErrorString&, bool show) override;

@@ -37,6 +37,7 @@
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
+#include <yarr/RegularExpression.h>
 
 namespace Inspector {
 class InspectorObject;
@@ -99,6 +100,9 @@ public:
     void mainFrameNavigated(DocumentLoader&);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);
     void didScheduleStyleRecalculation(Document&);
+
+    void searchOtherRequests(const JSC::Yarr::RegularExpression&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>>&);
+    void searchInRequest(ErrorString&, const String& requestId, const String& query, bool caseSensitive, bool isRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>&);
 
     RefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*);
 
