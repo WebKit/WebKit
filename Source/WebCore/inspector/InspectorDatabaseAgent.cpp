@@ -87,8 +87,8 @@ public:
         for (auto& value : rowList->values()) {
             RefPtr<InspectorValue> inspectorValue;
             switch (value.type()) {
-            case SQLValue::StringValue: inspectorValue = InspectorValue::create(value.string()); break;
-            case SQLValue::NumberValue: inspectorValue = InspectorValue::create(value.number()); break;
+            case SQLValue::StringValue: inspectorValue = InspectorString::create(value.string()); break;
+            case SQLValue::NumberValue: inspectorValue = InspectorBasicValue::create(value.number()); break;
             case SQLValue::NullValue: inspectorValue = InspectorValue::null(); break;
             }
             

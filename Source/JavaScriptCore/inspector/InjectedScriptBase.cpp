@@ -99,9 +99,9 @@ void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefP
     if (!hadException) {
         *result = resultValue.toInspectorValue(m_injectedScriptObject.scriptState());
         if (!*result)
-            *result = InspectorValue::create(String::format("Object has too long reference chain (must not be longer than %d)", InspectorValue::maxDepth));
+            *result = InspectorString::create(String::format("Object has too long reference chain (must not be longer than %d)", InspectorValue::maxDepth));
     } else
-        *result = InspectorValue::create("Exception while making a call.");
+        *result = InspectorString::create("Exception while making a call.");
 }
 
 void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>* objectResult, Protocol::OptOutput<bool>* wasThrown, Protocol::OptOutput<int>* savedResultIndex)

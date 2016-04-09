@@ -59,12 +59,12 @@ public:
 
     static EncodedValue createString(const String& value)
     {
-        return EncodedValue(Inspector::InspectorValue::create(value));
+        return EncodedValue(Inspector::InspectorString::create(value));
     }
 
     static EncodedValue createString(const char* value)
     {
-        return EncodedValue(Inspector::InspectorValue::create(value));
+        return EncodedValue(Inspector::InspectorString::create(value));
     }
 
     template<typename T>

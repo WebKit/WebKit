@@ -363,17 +363,17 @@ RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UC
         result = InspectorValue::null();
         break;
     case BOOL_TRUE:
-        result = InspectorValue::create(true);
+        result = InspectorBasicValue::create(true);
         break;
     case BOOL_FALSE:
-        result = InspectorValue::create(false);
+        result = InspectorBasicValue::create(false);
         break;
     case NUMBER: {
         bool ok;
         double value = charactersToDouble(tokenStart, tokenEnd - tokenStart, &ok);
         if (!ok)
             return nullptr;
-        result = InspectorValue::create(value);
+        result = InspectorBasicValue::create(value);
         break;
     }
     case STRING: {
@@ -381,7 +381,7 @@ RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UC
         bool ok = decodeString(tokenStart + 1, tokenEnd - 1, value);
         if (!ok)
             return nullptr;
-        result = InspectorValue::create(value);
+        result = InspectorString::create(value);
         break;
     }
     case ARRAY_BEGIN: {
@@ -498,39 +498,59 @@ inline void doubleQuoteString(const String& str, StringBuilder& dst)
 
 } // anonymous namespace
 
-Ref<InspectorValue> InspectorValue::null()
+bool InspectorValue::asBoolean(bool&) const
 {
-    return adoptRef(*new InspectorValue);
+    return false;
 }
 
-Ref<InspectorValue> InspectorValue::create(bool value)
+bool InspectorValue::asDouble(double&) const
 {
-    return adoptRef(*new InspectorValue(value));
+    return false;
 }
 
-Ref<InspectorValue> InspectorValue::create(int value)
+bool InspectorValue::asDouble(float&) const
 {
-    return adoptRef(*new InspectorValue(value));
+    return false;
 }
 
-Ref<InspectorValue> InspectorValue::create(double value)
+bool InspectorValue::asInteger(int&) const
 {
-    return adoptRef(*new InspectorValue(value));
+    return false;
 }
 
-Ref<InspectorValue> InspectorValue::create(const String& value)
+bool InspectorValue::asInteger(unsigned&) const
 {
-    return adoptRef(*new InspectorValue(value));
+    return false;
 }
 
-Ref<InspectorValue> InspectorValue::create(const char* value)
+bool InspectorValue::asInteger(long&) const
 {
-    return adoptRef(*new InspectorValue(value));
+    return false;
 }
 
-bool InspectorValue::asValue(RefPtr<Inspector::InspectorValue> & value)
+bool InspectorValue::asInteger(long long&) const
 {
-    value = this;
+    return false;
+}
+
+bool InspectorValue::asInteger(unsigned long&) const
+{
+    return false;
+}
+
+bool InspectorValue::asInteger(unsigned long long&) const
+{
+    return false;
+}
+
+bool InspectorValue::asString(String&) const
+{
+    return false;
+}
+
+bool InspectorValue::asValue(RefPtr<InspectorValue>& output)
+{
+    output = this;
     return true;
 }
 
@@ -567,7 +587,14 @@ String InspectorValue::toJSONString() const
     return result.toString();
 }
 
-bool InspectorValue::asBoolean(bool& output) const
+void InspectorValue::writeJSON(StringBuilder& output) const
+{
+    ASSERT(m_type == Type::Null);
+
+    output.appendLiteral("null");
+}
+
+bool InspectorBasicValue::asBoolean(bool& output) const
 {
     if (type() != Type::Boolean)
         return false;
@@ -576,7 +603,7 @@ bool InspectorValue::asBoolean(bool& output) const
     return true;
 }
 
-bool InspectorValue::asDouble(double& output) const
+bool InspectorBasicValue::asDouble(double& output) const
 {
     if (type() != Type::Double)
         return false;
@@ -585,7 +612,7 @@ bool InspectorValue::asDouble(double& output) const
     return true;
 }
 
-bool InspectorValue::asDouble(float& output) const
+bool InspectorBasicValue::asDouble(float& output) const
 {
     if (type() != Type::Double)
         return false;
@@ -594,7 +621,7 @@ bool InspectorValue::asDouble(float& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(int& output) const
+bool InspectorBasicValue::asInteger(int& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -603,7 +630,7 @@ bool InspectorValue::asInteger(int& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(unsigned& output) const
+bool InspectorBasicValue::asInteger(unsigned& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -612,7 +639,7 @@ bool InspectorValue::asInteger(unsigned& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(long& output) const
+bool InspectorBasicValue::asInteger(long& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -621,7 +648,7 @@ bool InspectorValue::asInteger(long& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(long long& output) const
+bool InspectorBasicValue::asInteger(long long& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -630,7 +657,7 @@ bool InspectorValue::asInteger(long long& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(unsigned long& output) const
+bool InspectorBasicValue::asInteger(unsigned long& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -639,7 +666,7 @@ bool InspectorValue::asInteger(unsigned long& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(unsigned long long& output) const
+bool InspectorBasicValue::asInteger(unsigned long long& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -648,32 +675,16 @@ bool InspectorValue::asInteger(unsigned long long& output) const
     return true;
 }
 
-bool InspectorValue::asString(String& output) const
+void InspectorBasicValue::writeJSON(StringBuilder& output) const
 {
-    if (type() != Type::String)
-        return false;
+    ASSERT(type() == Type::Boolean || type() == Type::Double || type() == Type::Integer);
 
-    output = m_stringValue;
-    return true;
-}
-
-void InspectorValue::writeJSON(StringBuilder& output) const
-{
-    switch (m_type) {
-    case Type::Null:
-        output.appendLiteral("null");
-        break;
-    case Type::Boolean:
+    if (type() == Type::Boolean) {
         if (m_booleanValue)
             output.appendLiteral("true");
         else
             output.appendLiteral("false");
-        break;
-    case Type::String:
-        doubleQuoteString(m_stringValue, output);
-        break;
-    case Type::Double:
-    case Type::Integer: {
+    } else if (type() == Type::Double || type() == Type::Integer) {
         NumberToLStringBuffer buffer;
         if (!std::isfinite(m_doubleValue)) {
             output.appendLiteral("null");
@@ -692,11 +703,19 @@ void InspectorValue::writeJSON(StringBuilder& output) const
         } else
             length = decimal.toStringDecimal(buffer, WTF::NumberToStringBufferLength);
         output.append(buffer, length);
-        break;
     }
-    default:
-        ASSERT_NOT_REACHED();
-    }
+}
+
+bool InspectorString::asString(String& output) const
+{
+    output = m_stringValue;
+    return true;
+}
+
+void InspectorString::writeJSON(StringBuilder& output) const
+{
+    ASSERT(type() == Type::String);
+    doubleQuoteString(m_stringValue, output);
 }
 
 InspectorObjectBase::~InspectorObjectBase()
@@ -786,7 +805,7 @@ void InspectorObjectBase::writeJSON(StringBuilder& output) const
 }
 
 InspectorObjectBase::InspectorObjectBase()
-    : Inspector::InspectorValue(Type::Object)
+    : InspectorValue(Type::Object)
     , m_data()
     , m_order()
 {
@@ -834,6 +853,36 @@ Ref<InspectorObject> InspectorObject::create()
 Ref<InspectorArray> InspectorArray::create()
 {
     return adoptRef(*new InspectorArray);
+}
+
+Ref<InspectorValue> InspectorValue::null()
+{
+    return adoptRef(*new InspectorValue);
+}
+
+Ref<InspectorString> InspectorString::create(const String& value)
+{
+    return adoptRef(*new InspectorString(value));
+}
+
+Ref<InspectorString> InspectorString::create(const char* value)
+{
+    return adoptRef(*new InspectorString(value));
+}
+
+Ref<InspectorBasicValue> InspectorBasicValue::create(bool value)
+{
+    return adoptRef(*new InspectorBasicValue(value));
+}
+
+Ref<InspectorBasicValue> InspectorBasicValue::create(int value)
+{
+    return adoptRef(*new InspectorBasicValue(value));
+}
+
+Ref<InspectorBasicValue> InspectorBasicValue::create(double value)
+{
+    return adoptRef(*new InspectorBasicValue(value));
 }
 
 } // namespace Inspector

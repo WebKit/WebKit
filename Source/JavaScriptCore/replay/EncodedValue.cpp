@@ -67,37 +67,37 @@ bool EncodingTraits<Vector<char>>::decodeValue(EncodedValue& encodedBuffer, Vect
 
 template<> EncodedValue ScalarEncodingTraits<bool>::encodeValue(const bool& value)
 {
-    return EncodedValue(InspectorValue::create(value));
+    return EncodedValue(InspectorBasicValue::create(value));
 }
 
 template<> EncodedValue ScalarEncodingTraits<double>::encodeValue(const double& value)
 {
-    return EncodedValue(InspectorValue::create(value));
+    return EncodedValue(InspectorBasicValue::create(value));
 }
 
 template<> EncodedValue ScalarEncodingTraits<float>::encodeValue(const float& value)
 {
-    return EncodedValue(InspectorValue::create((double)value));
+    return EncodedValue(InspectorBasicValue::create((double)value));
 }
 
 template<> EncodedValue ScalarEncodingTraits<int32_t>::encodeValue(const int32_t& value)
 {
-    return EncodedValue(InspectorValue::create((double)value));
+    return EncodedValue(InspectorBasicValue::create((double)value));
 }
 
 template<> EncodedValue ScalarEncodingTraits<int64_t>::encodeValue(const int64_t& value)
 {
-    return EncodedValue(InspectorValue::create((double)value));
+    return EncodedValue(InspectorBasicValue::create((double)value));
 }
 
 template<> EncodedValue ScalarEncodingTraits<uint32_t>::encodeValue(const uint32_t& value)
 {
-    return EncodedValue(InspectorValue::create((double)value));
+    return EncodedValue(InspectorBasicValue::create((double)value));
 }
 
 template<> EncodedValue ScalarEncodingTraits<uint64_t>::encodeValue(const uint64_t& value)
 {
-    return EncodedValue(InspectorValue::create((double)value));
+    return EncodedValue(InspectorBasicValue::create((double)value));
 }
 
 template<> bool EncodedValue::convertTo<bool>()
