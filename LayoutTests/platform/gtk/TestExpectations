@@ -465,7 +465,6 @@ webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 # HighDPI support is not enabled
 webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position.html [ ImageOnlyFailure Pass ]
-webkit.org/b/131347 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-border-radius-with-subpixel-margin-not-renderable.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
@@ -670,20 +669,14 @@ webkit.org/b/153833 fast/events/can-click-element-on-page-with-active-pseudo-cla
 webkit.org/b/153833 fast/shadow-dom/touch-event-ios.html [ Skip ]
 
 # Tests failing with GStreamer 1.6.3
-webkit.org/b/154390 http/tests/media/reload-after-dialog.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/media/video-referer.html [ Failure ]
-webkit.org/b/154390 http/tests/media/video-cancel-load.html [ Timeout Failure ]
-webkit.org/b/154390 http/tests/media/video-play-stall-before-meta-data.html [ Failure ]
+webkit.org/b/154390 http/tests/media/video-cancel-load.html [ Pass Timeout Failure ]
 webkit.org/b/154390 http/tests/media/video-useragent.html [ Failure ]
-webkit.org/b/154390 http/tests/media/video-buffered-range-contains-currentTime.html [ Timeout Failure ]
+webkit.org/b/154390 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout Failure ]
 webkit.org/b/154390 http/tests/media/video-load-suspend.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/media/video-query-url.html [ Failure ]
-webkit.org/b/154390 http/tests/media/video-error-abort.html [ Timeout Failure ]
-webkit.org/b/154390 http/tests/media/remove-while-loading.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/media/video-throttled-load-metadata.html [ Failure ]
 webkit.org/b/154390 http/tests/media/video-served-as-text.html [ Failure ]
-webkit.org/b/154390 http/tests/media/video-load-twice.html [ Timeout Failure ]
-webkit.org/b/154390 http/tests/media/video-auth.html [ Failure ]
 webkit.org/b/154390 http/tests/media/video-redirect.html [ Failure ]
 webkit.org/b/154390 http/tests/media/hls/video-controller-getStartDate.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Timeout Failure ]
@@ -756,8 +749,6 @@ webkit.org/b/118422 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-
 webkit.org/b/118423 http/tests/misc/iframe-reparenting-id-collision.html [ Crash Pass ]
 
 webkit.org/b/118902 svg/animations/svgenum-animation-6.html [ Crash Pass ]
-
-webkit.org/b/152610 fast/text/text-combine-placement.html [ Crash ]
 
 # Crashing after the FTL merge
 webkit.org/b/119255 [ Debug ] fast/workers/stress-js-execution.html [ Crash Pass ]
@@ -1310,6 +1301,10 @@ webkit.org/b/153947 imported/w3c/css/css-color-3/t425-hsla-parsing-f.xht [ Image
 
 webkit.org/b/153948 imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html [ Failure Pass ]
 
+webkit.org/b/156436 fast/harness/sample-fail-mismatch-reftest.html [ Failure Pass ]
+
+webkit.org/b/156437 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1516,7 +1511,6 @@ webkit.org/b/142292 fast/images/animated-gif-zooming.html [ Timeout Pass ]
 webkit.org/b/142488 http/tests/appcache/404-resource-with-slow-main-resource.php [ Timeout ]
 webkit.org/b/141959 [ Release ] http/tests/media/clearkey/clear-key-hls-aes128.html [ Crash Timeout ]
 webkit.org/b/142489 http/tests/media/video-play-waiting.html [ Timeout ]
-webkit.org/b/142490 inspector/css/selector-dynamic-specificity.html [ Timeout ]
 webkit.org/b/142491 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
 
 webkit.org/b/142820 fast/images/animated-gif-body-outside-viewport.html [ Timeout Pass ]
@@ -2154,23 +2148,9 @@ webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]
 
 webkit.org/b/125406 fast/regions/relative-in-absolute-borders-overflow.html [ ImageOnlyFailure ]
 
-# Subpixel rendering: borders are reporting float values.
-webkit.org/b/128061 fast/repaint/repaint-during-scroll-with-zoom.html [ Failure ]
-webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-initial-value-001.htm [ Failure ]
-webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm [ Failure ]
-webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-style-002.htm [ Failure ]
-webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-style-004.htm [ Failure ]
-webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-with-three-values-001.htm [ Failure ]
-webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-with-two-values-001.htm [ Failure ]
-webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-003.htm [ Failure ]
-webkit.org/b/128061 media/video-zoom.html [ Failure ]
 webkit.org/b/128061 svg/custom/svg-fonts-in-html.html [ Failure ]
-webkit.org/b/128061 svg/zoom/page/zoom-background-image-tiled.html [ Failure ]
-webkit.org/b/128061 svg/zoom/page/zoom-background-images.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
-webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
-# End of subpixel failures.
 
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-006.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-007.svg [ ImageOnlyFailure ]
@@ -2365,8 +2345,6 @@ webkit.org/b/139352 accessibility/inline-block-assertion.html [ Failure ]
 
 webkit.org/b/139354 fast/repaint/selection-ruby-rl.html [ Failure ]
 
-webkit.org/b/139355 fast/css/fontloader-svg-select.svg [ Failure ]
-
 webkit.org/b/139358 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
 
 webkit.org/b/139361 fast/css/data-attribute-style-sharing-5.html [ ImageOnlyFailure ]
@@ -2525,112 +2503,7 @@ webkit.org/b/151267 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirk
 
 webkit.org/b/152057 accessibility/textarea-selected-text-range.html [ Failure Timeout ]
 
-## IndexedDB related failures
-
-# Blink tests with unexplained timeouts
-webkit.org/b/152643 storage/indexeddb/database-deletepending-flag.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/exceptions.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/intversion-gated-on-delete.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/intversion-long-queue.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/open-ordering.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/transaction-basics.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
-
-# Blink tests with non-trivial text failures.
-webkit.org/b/152643 storage/indexeddb/createIndex-after-failure.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/create-object-store-options.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/cursor-advance.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/cursor-basics.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/cursor-continue.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/cursor-continue-validity.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/cursor-index-delete.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/cursor-key-order.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/cursor-leak.html [ Skip ] # Missing needed WKTR feature?
-webkit.org/b/152643 storage/indexeddb/cursor-overloads.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/cursor-primary-key-order.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/cursor-request-cycle.html [ Skip ] # Missing needed WKTR feature?
-webkit.org/b/152643 storage/indexeddb/cursor-update.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/database-close.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/database-closepending-flag.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/database-quota.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/deleteIndex.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/delete-in-upgradeneeded-close-in-open-success.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/deletedatabase-blocked.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/deletedatabase-not-blocked.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/deleted-objects.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/duplicates.html [ Skip ] # Difference between null + undefined
-webkit.org/b/152643 storage/indexeddb/events.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/factory-cmp.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/factory-deletedatabase.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/get-keyrange.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/index-basics.html [ Skip ] # Difference between null + undefined
-webkit.org/b/152643 storage/indexeddb/index-duplicate-keypaths.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/index-multientry.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/index-population.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/index-unique.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/intversion-blocked.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/intversion-close-between-events.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/intversion-open-in-upgradeneeded.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/intversion-open-with-version.html [ Skip ] # INTMAX exposed to script as database version
-webkit.org/b/152643 storage/indexeddb/intversion-pending-version-changes-ascending.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/intversion-pending-version-changes-descending.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/intversion-pending-version-changes-same.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/intversion-two-opens-no-versions.html [ Skip ] # INTMAX exposed to script as database version
-webkit.org/b/152643 storage/indexeddb/intversion-upgrades.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/key-generator.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/key-type-binary.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/lazy-index-population.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/metadata.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/noblobs.html [ Skip ] # Missing DRT file/blob support
-webkit.org/b/152643 storage/indexeddb/objectstore-autoincrement.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/objectstore-basics.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/odd-strings.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/optional-arguments.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/persistence.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/request-leak.html [ Skip ] # Missing WKTR support? GC?
-webkit.org/b/152643 storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/setversion-not-blocked.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/structured-clone.html [ Skip ] # Missing DRT file/blob support
-webkit.org/b/152643 storage/indexeddb/transaction-and-objectstore-calls.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/transaction-error.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/transaction-scope-sequencing.html [ Skip ]
-
-# Blink tests that crash the WebProcess.
-webkit.org/b/152643 storage/indexeddb/cursor-cast.html [ Skip ]
-
-# We don't currently support indexeddb in workers
-webkit.org/b/152643 storage/indexeddb/basics-workers.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/cursor-advance-workers.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/dont-commit-on-blocked.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/factory-basics-workers.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/index-basics-workers.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/objectstore-basics-workers.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/open-twice-workers.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/pending-activity-workers.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/pending-version-change-on-exit.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/pending-version-change-stuck.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/transaction-complete-workers.html [ Skip ]
-webkit.org/b/152643 storage/indexeddb/unprefix-workers.html [ Skip ]
-webkit.org/b/152643 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
-webkit.org/b/152643 http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
-
-webkit.org/b/152643 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance.htm [ Failure ]
-webkit.org/b/152643 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continue.htm [ Failure ]
-webkit.org/b/152643 imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction-index.htm [ Failure ]
-webkit.org/b/152643 imported/w3c/web-platform-tests/IndexedDB/idbindex_get2.htm [ Failure ]
-webkit.org/b/152643 imported/w3c/web-platform-tests/IndexedDB/idbindex_getKey2.htm [ Failure ]
-
-webkit.org/b/152643 storage/indexeddb/clone-exception.html [ Failure ]
 webkit.org/b/152643 storage/indexeddb/connection-leak.html [ Failure ]
-webkit.org/b/152643 storage/indexeddb/database-wrapper.html [ Failure ]
-webkit.org/b/152643 storage/indexeddb/keypath-basics.html [ Failure ]
-
-webkit.org/b/152643 storage/indexeddb/mozilla/cursor-update-updates-indexes.html [ Failure Pass ]
 
 webkit.org/b/152788 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure ]
 webkit.org/b/152788 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
@@ -2729,3 +2602,8 @@ fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
 
 # This test relies on iOS-specific font fallback.
 fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
+
+# All other shadow DOM tests are expected to fail.
+fast/shadow-dom/text-slot-child-crash.svg [ Pass ]
+
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]

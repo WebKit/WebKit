@@ -1,3 +1,11 @@
+2016-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Gardening unexpected passes and IndexedDB tests.
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2016-04-09  Antti Koivisto  <antti@apple.com>
 
         Implement functional :host() pseudo class
