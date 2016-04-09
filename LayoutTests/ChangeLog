@@ -1,5 +1,13 @@
 2016-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Update another GStreamer test expectation
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations:
+
+2016-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Update some more IndexedDB test expectations.
 
         Unreviewed.
