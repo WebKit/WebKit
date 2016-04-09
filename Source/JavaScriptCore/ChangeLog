@@ -1,3 +1,47 @@
+2016-04-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Debug JSC test failure: stress/multi-put-by-offset-reallocation-butterfly-cse.js.ftl-no-cjit-small-pool
+        https://bugs.webkit.org/show_bug.cgi?id=156406
+
+        Reviewed by Saam Barati.
+
+        The failure was because the GC ran from within the butterfly allocation call in a put_by_id
+        transition AccessCase that had to deal with indexing storage. When the GC runs in a call from a stub,
+        then we need to be extra careful:
+
+        1) The GC may reset the IC and delete the stub. So, the stub needs to tell the GC that it might be on
+           the stack during GC, so that the GC keeps it alive if it's currently running.
+        
+        2) If the stub uses (dereferences or stores) some object after the call, then we need to ensure that
+           the stub routine knows about that object independently of the IC.
+        
+        In the case of put_by_id transitions that use a helper to allocate the butterfly, we have both
+        issues. A long time ago, we had to deal with (2), and we still had code to handle that case, although
+        it appears to be dead. This change revives that code and glues it together with PolymorphicAccess.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::alternateBase):
+        (JSC::AccessCase::doesCalls):
+        (JSC::AccessCase::couldStillSucceed):
+        (JSC::AccessCase::generate):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessCase::customSlotBase):
+        (JSC::AccessCase::isGetter):
+        (JSC::AccessCase::doesCalls): Deleted.
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::markRequiredObjectsInternal):
+        (JSC::MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine):
+        (JSC::MarkingGCAwareJITStubRoutine::~MarkingGCAwareJITStubRoutine):
+        (JSC::MarkingGCAwareJITStubRoutine::markRequiredObjectsInternal):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler):
+        (JSC::createJITStubRoutine):
+        (JSC::MarkingGCAwareJITStubRoutineWithOneObject::MarkingGCAwareJITStubRoutineWithOneObject): Deleted.
+        (JSC::MarkingGCAwareJITStubRoutineWithOneObject::~MarkingGCAwareJITStubRoutineWithOneObject): Deleted.
+        (JSC::MarkingGCAwareJITStubRoutineWithOneObject::markRequiredObjectsInternal): Deleted.
+        * jit/GCAwareJITStubRoutine.h:
+        (JSC::createJITStubRoutine):
+
 2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: XHRs and Web Worker scripts are not searchable

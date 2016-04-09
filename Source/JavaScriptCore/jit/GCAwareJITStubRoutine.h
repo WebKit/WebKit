@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,28 +76,28 @@ private:
 
 // Use this if you want to mark one additional object during GC if your stub
 // routine is known to be executing.
-class MarkingGCAwareJITStubRoutineWithOneObject : public GCAwareJITStubRoutine {
+class MarkingGCAwareJITStubRoutine : public GCAwareJITStubRoutine {
 public:
-    MarkingGCAwareJITStubRoutineWithOneObject(
-        const MacroAssemblerCodeRef&, VM&, const JSCell* owner, JSCell*);
-    virtual ~MarkingGCAwareJITStubRoutineWithOneObject();
+    MarkingGCAwareJITStubRoutine(
+        const MacroAssemblerCodeRef&, VM&, const JSCell* owner, const Vector<JSCell*>&);
+    virtual ~MarkingGCAwareJITStubRoutine();
     
 protected:
     void markRequiredObjectsInternal(SlotVisitor&) override;
 
 private:
-    WriteBarrier<JSCell> m_object;
+    Vector<WriteBarrier<JSCell>> m_cells;
 };
 
 
 // The stub has exception handlers in it. So it clears itself from exception
 // handling table when it dies. It also frees space in CodeOrigin table
 // for new exception handlers to use the same CallSiteIndex.
-class GCAwareJITStubRoutineWithExceptionHandler : public GCAwareJITStubRoutine {
+class GCAwareJITStubRoutineWithExceptionHandler : public MarkingGCAwareJITStubRoutine {
 public:
     typedef GCAwareJITStubRoutine Base;
 
-    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef&, VM&, CodeBlock*, CallSiteIndex);
+    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef&, VM&, const JSCell* owner, const Vector<JSCell*>&, CodeBlock*, CallSiteIndex);
 
     void aboutToDie() override;
     void observeZeroRefCount() override;
@@ -128,13 +128,8 @@ private:
 
 PassRefPtr<JITStubRoutine> createJITStubRoutine(
     const MacroAssemblerCodeRef&, VM&, const JSCell* owner, bool makesCalls,
-    JSCell* = nullptr, 
+    const Vector<JSCell*>& = { }, 
     CodeBlock* codeBlockForExceptionHandlers = nullptr, CallSiteIndex exceptionHandlingCallSiteIndex = CallSiteIndex(std::numeric_limits<unsigned>::max()));
-
-// Helper for the creation of simple stub routines that need no help from the GC. Note
-// that codeBlock gets "executed" more than once.
-#define FINALIZE_CODE_FOR_GC_AWARE_STUB(codeBlock, patchBuffer, makesCalls, cell, dataLogFArguments) \
-    (createJITStubRoutine(FINALIZE_CODE_FOR((codeBlock), (patchBuffer), dataLogFArguments), *(codeBlock)->vm(), (codeBlock), (makesCalls), (cell)))
 
 } // namespace JSC
 

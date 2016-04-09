@@ -153,21 +153,10 @@ public:
     }
 
     JSObject* alternateBase() const;
-    
-    bool doesCalls() const
-    {
-        switch (type()) {
-        case Getter:
-        case Setter:
-        case CustomValueGetter:
-        case CustomAccessorGetter:
-        case CustomValueSetter:
-        case CustomAccessorSetter:
-            return true;
-        default:
-            return false;
-        }
-    }
+
+    // If you supply the optional vector, this will append the set of cells that this will need to keep alive
+    // past the call.
+    bool doesCalls(Vector<JSCell*>* cellsToMark = nullptr) const;
 
     bool isGetter() const
     {

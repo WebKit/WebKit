@@ -413,6 +413,29 @@ JSObject* AccessCase::alternateBase() const
     return conditionSet().slotBaseCondition().object();
 }
 
+bool AccessCase::doesCalls(Vector<JSCell*>* cellsToMark) const
+{
+    switch (type()) {
+    case Getter:
+    case Setter:
+    case CustomValueGetter:
+    case CustomAccessorGetter:
+    case CustomValueSetter:
+    case CustomAccessorSetter:
+        return true;
+    case Transition:
+        if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity()
+            && structure()->couldHaveIndexingHeader()) {
+            if (cellsToMark)
+                cellsToMark->append(newStructure());
+            return true;
+        }
+        return false;
+    default:
+        return false;
+    }
+}
+
 bool AccessCase::couldStillSucceed() const
 {
     return m_conditionSet.structuresEnsureValidityAssumingImpurePropertyWatchpoint();
@@ -1093,6 +1116,8 @@ void AccessCase::generate(AccessGenerationState& state)
         } else if (verbose)
             dataLog("Don't have type.\n");
         
+        // NOTE: This logic is duplicated in AccessCase::doesCalls(). It's important that doesCalls() knows
+        // exactly when this would make calls.
         bool allocating = newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity();
         bool reallocating = allocating && structure()->outOfLineCapacity();
         bool allocatingInline = allocating && !structure()->couldHaveIndexingHeader();
@@ -1632,10 +1657,11 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
         ("%s", toCString("Access stub for ", *codeBlock, " ", stubInfo.codeOrigin, " with return point ", successLabel, ": ", listDump(cases)).data()));
 
     bool doesCalls = false;
+    Vector<JSCell*> cellsToMark;
     for (auto& entry : cases)
-        doesCalls |= entry->doesCalls();
+        doesCalls |= entry->doesCalls(&cellsToMark);
     
-    m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, nullptr, codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
+    m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, cellsToMark, codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
     m_watchpoints = WTFMove(state.watchpoints);
     if (!state.weakReferences.isEmpty())
         m_weakReferences = std::make_unique<Vector<WriteBarrier<JSCell>>>(WTFMove(state.weakReferences));
