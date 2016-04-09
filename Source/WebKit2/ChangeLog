@@ -1,3 +1,61 @@
+2016-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] WKWebViews should consult ancestor UIScrollViews to determine tiling area
+        https://bugs.webkit.org/show_bug.cgi?id=156429
+        rdar://problem/25455111
+
+        Reviewed by Tim Horton.
+
+        When a WKWebView is expanded to full size, then embedded in UIScrollView, it would
+        create huge tiles that cover the entire view area (since it considered itself non-scrollable).
+
+        Fix to always use 512x512 tiles in this configuration, and to adjust the tile coverage
+        for the area exposed through the enclosing UIScrollView.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp: Add enclosedInScrollView(), which is used to
+        trigger normal-sized tiles.
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::enclosedInScrollView):
+        (WebKit::operator==):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didInvokeUIScrollViewDelegateCallback]): Pass our scrollView.
+        (-[WKWebView _didFinishScrolling]):
+        (-[WKWebView scrollViewDidScroll:]):
+        (-[WKWebView scrollViewDidZoom:]):
+        (-[WKWebView scrollViewDidEndZooming:withView:atScale:]):
+        (-[WKWebView _scrollViewDidInterruptDecelerating:]):
+        (-[WKWebView _visibleRectInEnclosingScrollView:]):
+        (-[WKWebView _visibleContentRect]): Compute the exposed part of the content relative
+        to the WKWebView, then intersect with the exposed part via any ancestor UIScrollView.
+        (-[WKWebView _didScroll]): This is called by UIKit when some ancestor UIScrollView scrolls.
+        However, we don't get all the UIScrollView delegate callbacks, so have to use a timer to
+        trigger a call to -_updateVisibleContentRects when we're in a stable state.
+        (-[WKWebView _enclosingScrollerScrollingEnded:]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _updateVisibleContentRectAfterScrollInView:]): Get the stable state from the
+        scroll view that the user is interacting with.
+        (-[WKWebView _updateContentRectsWithState:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/WebPageProxy.h: Rather than pass a bazillion arguments through updateVisibleContentRects(), just
+        pass the VisibleContentRectUpdateInfo struct.
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollView:]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateVisibleContentRects):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::indicatorLocation):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS Simulator] Build failure (property 'contentsFormat' not found on object of type 'LegacyTileLayer *')
@@ -79,13 +137,15 @@
         * UIProcess/ios/WKContentView.h:
         * UIProcess/ios/WKContentView.mm:
         (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]):
+        Make the VisibleContentRectUpdateInfo here and pass it down.
         (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]): Deleted.
         * UIProcess/ios/WebPageProxyIOS.mm:
         (WebKit::WebPageProxy::updateVisibleContentRects):
         (WebKit::WebPageProxy::restorePageState):
         * WebProcess/WebPage/ios/WebPageIOS.mm:
         (WebKit::WebPage::restorePageState):
-        (WebKit::WebPage::updateVisibleContentRects):
+        (WebKit::WebPage::updateVisibleContentRects): setObscuredInset() moved from FrameView to Page.
+        Also call setEnclosedInScrollView() on Page.
 
 2016-04-08  Brady Eidson  <beidson@apple.com>
 

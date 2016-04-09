@@ -378,11 +378,6 @@ public:
 
     WEBCORE_EXPORT void scrollOffsetChangedViaPlatformWidget(const ScrollOffset& oldOffset, const ScrollOffset& newOffset);
 
-#if PLATFORM(IOS)
-    FloatSize platformObscuredInset() const { return m_obscuredInset; }
-    void platformSetObscuredInset(FloatSize inset) { m_obscuredInset = inset; }
-#endif
-
 protected:
     ScrollView();
 
@@ -458,7 +453,6 @@ private:
     FloatRect m_exposedContentRect;
     FloatSize m_unobscuredContentSize;
     // This is only used for history scroll position restoration.
-    FloatSize m_obscuredInset;
 #else
     IntRect m_fixedVisibleContentRect;
 #endif

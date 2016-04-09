@@ -240,6 +240,9 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     RetainPtr<UIView <WKWebViewContentProvider>> _customContentView;
     RetainPtr<UIView> _customContentFixedOverlayView;
 
+    RetainPtr<NSTimer> _enclosingScrollViewScrollTimer;
+    BOOL _didScrollSinceLastTimerFire;
+
     WebCore::Color _scrollViewBackgroundColor;
 
     // This value tracks the current adjustment added to the bottom inset due to the keyboard sliding out from the bottom
@@ -1006,7 +1009,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     _delayUpdateVisibleContentRects = NO;
     if (_hadDelayedUpdateVisibleContentRects) {
         _hadDelayedUpdateVisibleContentRects = NO;
-        [self _updateVisibleContentRects];
+        [self _updateVisibleContentRectAfterScrollInView:_scrollView.get()];
     }
 }
 
@@ -1750,7 +1753,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (![self usesStandardContentView])
         return;
 
-    [self _updateVisibleContentRects];
+    [self _updateVisibleContentRectAfterScrollInView:_scrollView.get()];
     [_contentView didFinishScrolling];
 }
 
@@ -1804,7 +1807,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (![self usesStandardContentView])
         [_customContentView scrollViewDidScroll:(UIScrollView *)scrollView];
 
-    [self _updateVisibleContentRects];
+    [self _updateVisibleContentRectAfterScrollInView:scrollView];
     
     if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = _page->scrollingPerformanceData())
         scrollPerfData->didScroll([self visibleRectInViewCoordinates]);
@@ -1813,13 +1816,13 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
     [self _updateScrollViewBackground];
-    [self _updateVisibleContentRects];
+    [self _updateVisibleContentRectAfterScrollInView:scrollView];
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
     ASSERT(scrollView == _scrollView);
-    [self _updateVisibleContentRects];
+    [self _updateVisibleContentRectAfterScrollInView:scrollView];
     [_contentView didZoomToScale:scale];
 }
 
@@ -1834,7 +1837,55 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     [_contentView didInterruptScrolling];
+    [self _updateVisibleContentRectAfterScrollInView:scrollView];
+}
+
+- (CGRect)_visibleRectInEnclosingScrollView:(UIScrollView *)enclosingScrollView
+{
+    if (!enclosingScrollView)
+        return self.bounds;
+
+    CGRect exposedRect = [enclosingScrollView convertRect:enclosingScrollView.bounds toView:self];
+    return CGRectIntersectsRect(exposedRect, self.bounds) ? CGRectIntersection(exposedRect, self.bounds) : CGRectZero;
+}
+
+- (CGRect)_visibleContentRect
+{
+    CGRect visibleRectInContentCoordinates = _frozenVisibleContentRect ? _frozenVisibleContentRect.value() : [self convertRect:self.bounds toView:_contentView.get()];
+    
+    if (UIScrollView *enclosingScroller = [self _scroller]) {
+        CGRect viewVisibleRect = [self _visibleRectInEnclosingScrollView:enclosingScroller];
+        CGRect viewVisibleContentRect = [self convertRect:viewVisibleRect toView:_contentView.get()];
+        visibleRectInContentCoordinates = CGRectIntersection(visibleRectInContentCoordinates, viewVisibleContentRect);
+    }
+
+    return visibleRectInContentCoordinates;
+}
+
+// Called when some ancestor UIScrollView scrolls.
+- (void)_didScroll
+{
+    [self _updateVisibleContentRectAfterScrollInView:[self _scroller]];
+
+    const NSTimeInterval ScrollingEndedTimerInterval = 0.032;
+    if (!_enclosingScrollViewScrollTimer) {
+        _enclosingScrollViewScrollTimer = adoptNS([[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:ScrollingEndedTimerInterval]
+            interval:0 target:self selector:@selector(_enclosingScrollerScrollingEnded:) userInfo:nil repeats:YES]);
+        [[NSRunLoop mainRunLoop] addTimer:_enclosingScrollViewScrollTimer.get() forMode:NSDefaultRunLoopMode];
+    }
+    _didScrollSinceLastTimerFire = YES;
+}
+
+- (void)_enclosingScrollerScrollingEnded:(NSTimer *)timer
+{
+    if (_didScrollSinceLastTimerFire) {
+        _didScrollSinceLastTimerFire = NO;
+        return;
+    }
+
     [self _updateVisibleContentRects];
+    [_enclosingScrollViewScrollTimer invalidate];
+    _enclosingScrollViewScrollTimer = nil;
 }
 
 - (void)_frameOrBoundsChanged
@@ -1847,7 +1898,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
             _page->setViewportConfigurationMinimumLayoutSize(WebCore::FloatSize(bounds.size));
         if (!_overridesMaximumUnobscuredSize)
             _page->setMaximumUnobscuredSize(WebCore::FloatSize(bounds.size));
-        if (WebKit::DrawingAreaProxy* drawingArea = _page->drawingArea())
+        if (auto drawingArea = _page->drawingArea())
             drawingArea->setSize(WebCore::IntSize(bounds.size), WebCore::IntSize(), WebCore::IntSize());
     }
 
@@ -1877,6 +1928,29 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_updateVisibleContentRects
 {
+    // For visible rect updates not associated with a spefic UIScrollView, just consider our own scroller.
+    [self _updateVisibleContentRectAfterScrollInView:_scrollView.get()];
+}
+
+- (void)_updateVisibleContentRectAfterScrollInView:(UIScrollView *)scrollView
+{
+    BOOL isStableState = !([scrollView isDragging] || [scrollView isDecelerating] || [scrollView isZooming] || [scrollView _isAnimatingZoom] || [scrollView _isScrollingToTop]);
+
+    if (isStableState && scrollView == _scrollView.get())
+        isStableState = !_isChangingObscuredInsetsInteractively;
+    
+    if (isStableState && scrollView == _scrollView.get())
+        isStableState = ![self _scrollViewIsRubberBanding];
+
+    // FIXME: this can be made static after we stop supporting iOS 8.x.
+    if (isStableState && [scrollView respondsToSelector:@selector(_isInterruptingDeceleration)])
+        isStableState = ![scrollView performSelector:@selector(_isInterruptingDeceleration)];
+
+    [self _updateContentRectsWithState:isStableState];
+}
+
+- (void)_updateContentRectsWithState:(BOOL)inStableState
+{
     if (![self usesStandardContentView]) {
         [_customContentView web_computedContentInsetDidChange];
         return;
@@ -1894,7 +1968,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     CGRect fullViewRect = self.bounds;
-    CGRect visibleRectInContentCoordinates = _frozenVisibleContentRect ? _frozenVisibleContentRect.value() : [self convertRect:fullViewRect toView:_contentView.get()];
+    CGRect visibleRectInContentCoordinates = [self _visibleContentRect];
 
     UIEdgeInsets computedContentInsetUnadjustedForKeyboard = [self _computedContentInset];
     if (!_haveSetObscuredInsets)
@@ -1905,17 +1979,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     CGFloat scaleFactor = contentZoomScale(self);
 
-    BOOL isStableState = !(_isChangingObscuredInsetsInteractively || [_scrollView isDragging] || [_scrollView isDecelerating] || [_scrollView isZooming] || [_scrollView _isAnimatingZoom] || [_scrollView _isScrollingToTop] || [self _scrollViewIsRubberBanding]);
-
-    // FIXME: this can be made static after we stop supporting iOS 8.x.
-    if (isStableState && [_scrollView respondsToSelector:@selector(_isInterruptingDeceleration)])
-        isStableState = ![_scrollView performSelector:@selector(_isInterruptingDeceleration)];
-
 #if ENABLE(CSS_SCROLL_SNAP) && ENABLE(ASYNC_SCROLLING)
-    if (isStableState) {
+    if (inStableState) {
         WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
         if (coordinator && coordinator->hasActiveSnapPoint()) {
-            CGRect fullViewRect = self.bounds;
             CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, computedContentInsetUnadjustedForKeyboard);
             
             CGPoint currentPoint = [_scrollView contentOffset];
@@ -1936,8 +2003,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         unobscuredRectInScrollViewCoordinates:unobscuredRect
         obscuredInset:CGSizeMake(_obscuredInsets.left, _obscuredInsets.top)
         scale:scaleFactor minimumScale:[_scrollView minimumZoomScale]
-        inStableState:isStableState
-        isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively];
+        inStableState:inStableState
+        isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively
+        enclosedInScrollView:[self _scroller] != nil];
 }
 
 - (void)_didFinishLoadForMainFrame

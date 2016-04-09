@@ -1,3 +1,32 @@
+2016-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] WKWebViews should consult ancestor UIScrollViews to determine tiling area
+        https://bugs.webkit.org/show_bug.cgi?id=156429
+        rdar://problem/25455111
+
+        Reviewed by Tim Horton.
+
+        When a WKWebView is expanded to full size, then embedded in UIScrollView, it would
+        create huge tiles that cover the entire view area (since it considered itself non-scrollable).
+
+        Fix to always use 512x512 tiles in this configuration, and to adjust the tile coverage
+        for the area exposed through the enclosing UIScrollView.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem): setObscuredInset()
+        moved from FrameView to Page.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustTiledBackingScrollability): If we're clipped by an ancestor scrollView,
+        just assume we're scrollable on both axes.
+        * page/Page.h:
+        (WebCore::Page::obscuredInset):
+        (WebCore::Page::setObscuredInset):
+        (WebCore::Page::enclosedInScrollView):
+        (WebCore::Page::setEnclosedInScrollView):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::platformObscuredInset): Deleted.
+        (WebCore::ScrollView::platformSetObscuredInset): Deleted.
+
 2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS Simulator] Build failure (property 'contentsFormat' not found on object of type 'LegacyTileLayer *')

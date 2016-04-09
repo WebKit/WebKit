@@ -46,6 +46,7 @@ void VisibleContentRectUpdateInfo::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_inStableState;
     encoder << m_isChangingObscuredInsetsInteractively;
     encoder << m_allowShrinkToFit;
+    encoder << m_enclosedInScrollView;
 }
 
 bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, VisibleContentRectUpdateInfo& result)
@@ -77,6 +78,8 @@ bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, Visible
     if (!decoder.decode(result.m_isChangingObscuredInsetsInteractively))
         return false;
     if (!decoder.decode(result.m_allowShrinkToFit))
+        return false;
+    if (!decoder.decode(result.m_enclosedInScrollView))
         return false;
 
     return true;

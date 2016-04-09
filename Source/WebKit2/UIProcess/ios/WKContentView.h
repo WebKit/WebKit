@@ -70,7 +70,9 @@ class WebProcessPool;
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
     obscuredInset:(CGSize)topInset
     scale:(CGFloat)scale minimumScale:(CGFloat)minimumScale
-    inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively;
+    inStableState:(BOOL)isStableState
+    isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
+    enclosedInScrollView:(BOOL)enclosedInScrollView;
 
 - (void)didFinishScrolling;
 - (void)didInterruptScrolling;

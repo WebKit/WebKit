@@ -293,7 +293,15 @@ public:
 
     float topContentInset() const { return m_topContentInset; }
     WEBCORE_EXPORT void setTopContentInset(float);
+
+#if PLATFORM(IOS)
+    FloatSize obscuredInset() const { return m_obscuredInset; }
+    void setObscuredInset(FloatSize inset) { m_obscuredInset = inset; }
     
+    bool enclosedInScrollView() const { return m_enclosedInScrollView; }
+    void setEnclosedInScrollView(bool f) { m_enclosedInScrollView = f; }
+#endif
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     float textAutosizingWidth() const { return m_textAutosizingWidth; }
     void setTextAutosizingWidth(float textAutosizingWidth) { m_textAutosizingWidth = textAutosizingWidth; }
@@ -599,7 +607,13 @@ private:
     float m_viewScaleFactor { 1 };
 
     float m_topContentInset;
-    
+
+#if PLATFORM(IOS)
+    // This is only used for history scroll position restoration.
+    FloatSize m_obscuredInset;
+    bool m_enclosedInScrollView { false };
+#endif
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     float m_textAutosizingWidth;
 #endif
