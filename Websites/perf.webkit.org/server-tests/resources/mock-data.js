@@ -96,7 +96,7 @@ MockData = {
                 {
                     'platform': 'some platform',
                     'test': ['some test'],
-                    'builder': 'some-builder-2',
+                    'builder': 'some builder 2',
                     'arguments': {
                         'wk': {'root': 'WebKit'},
                         'os': {'root': 'OS X'},

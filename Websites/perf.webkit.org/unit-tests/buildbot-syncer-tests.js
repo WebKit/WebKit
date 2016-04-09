@@ -850,7 +850,7 @@ describe('BuildbotSyncer', function () {
                 syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
             }).then(function () {
                 assert.equal(requests.length, 1);
-                assert.equal(requests[0].url, '/builders/some builder/force');
+                assert.equal(requests[0].url, '/builders/some%20builder/force');
                 assert.equal(requests[0].method, 'POST');
                 assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id()});
                 done();
@@ -864,7 +864,7 @@ describe('BuildbotSyncer', function () {
                 syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
             }).then(function () {
                 assert.equal(requests.length, 1);
-                assert.equal(requests[0].url, '/builders/some builder/force');
+                assert.equal(requests[0].url, '/builders/some%20builder/force');
                 assert.equal(requests[0].method, 'POST');
                 assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id()});
                 done();

@@ -1,5 +1,41 @@
 2016-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Escape builder names in url* and pathFor* methods of BuildbotSyncer
+        https://bugs.webkit.org/show_bug.cgi?id=156427
+
+        Reviewed by Darin Adler.
+
+        The build fix in r199251 breaks other usage of RemoteAPI. Fix it properly by escaping builder names in
+        various methods of BuildbotSyncer.
+
+        Also fixed a typo in the logging and a bug that the new syncing script never updated "scheduled" to "running".
+
+        * server-tests/resources/mock-data.js:
+        (MockData.mockTestSyncConfigWithTwoBuilders): Renamed "some-builder-2" to "some builder 2" to test the
+        new escaping behavior in tools-buildbot-triggerable-tests.js and buildbot-syncer-tests.js.
+
+        * server-tests/tools-buildbot-triggerable-tests.js: Added tests for status url, and added a new test case
+        for updating "scheduled" to "running".
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry.buildRequestStatusIfUpdateIsNeeded): Update the status to "running" when the request's
+        status is "scheduled" and the buildbot's build is currently in progress.
+        (BuildbotSyncer.prototype.pathForPendingBuildsJSON): Escape the builder name.
+        (BuildbotSyncer.prototype.pathForBuildJSON): Ditto.
+        (BuildbotSyncer.prototype.pathForForceBuild): Ditto.
+        (BuildbotSyncer.prototype.url): Ditto.
+        (BuildbotSyncer.prototype.urlForBuildNumber): Ditto.
+
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype._pullBuildbotOnAllSyncers):
+        (BuildbotTriggerable.prototype._scheduleNextRequestInGroupIfSlaveIsAvailable): Fixed a typo. We are
+        scheduling new build requests, not syncing them.
+        * tools/js/remote.js:
+        (RemoteAPI.sendHttpRequest): Reverted r199251.
+        * unit-tests/buildbot-syncer-tests.js:
+
+2016-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix. We need to escape the path or http.request would fail.
 
         * tools/js/remote.js:

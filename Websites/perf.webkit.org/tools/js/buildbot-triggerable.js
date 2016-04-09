@@ -102,12 +102,16 @@ class BuildbotTriggerable {
                     if (newStatus) {
                         self._logger.log(`Updating the status of build request ${request.id()} from ${request.status()} to ${newStatus}`);
                         updates[entry.buildRequestId()] = {status: newStatus, url: entry.url()};
+                    } else if (!request.statusUrl()) {
+                        self._logger.log(`Setting the status URL of build request ${request.id()} to ${entry.url()}`);
+                        updates[entry.buildRequestId()] = {status: request.status(), url: entry.url()};
                     }
                 }
             });
         })).then(function () {
             for (let request of BuildRequest.all()) {
                 if (request.hasStarted() && !request.hasFinished() && !associatedRequests.has(request)) {
+                    self._logger.log(`Updating the status of build request ${request.id()} from ${request.status()} to failedIfNotCompleted`);
                     assert(!(request.id() in updates));
                     updates[request.id()] = {status: 'failedIfNotCompleted'};
                 }
@@ -132,7 +136,7 @@ class BuildbotTriggerable {
 
         let firstRequest = !nextRequest.order();
         if (firstRequest) {
-            this._logger.log(`Syncing build request ${nextRequest.id()} on ${groupInfo.slaveName} in ${groupInfo.syncer.builderName()}`);
+            this._logger.log(`Scheduling build request ${nextRequest.id()} on ${groupInfo.slaveName} in ${groupInfo.syncer.builderName()}`);
             return groupInfo.syncer.scheduleRequest(request, groupInfo.slaveName);
         }
 
@@ -140,7 +144,7 @@ class BuildbotTriggerable {
             let promise = syncer.scheduleFirstRequestInGroupIfAvailable(nextRequest);
             if (promise) {
                 let slaveName = groupInfo.slaveName ? ` on ${groupInfo.slaveName}` : '';
-                this._logger.log(`Syncing build request ${nextRequest.id()}${slaveName} in ${syncer.builderName()}`);
+                this._logger.log(`Scheduling build request ${nextRequest.id()}${slaveName} in ${syncer.builderName()}`);
                 return promise;
             }
         }
