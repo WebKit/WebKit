@@ -1,3 +1,48 @@
+2016-04-09  Saam barati  <sbarati@apple.com>
+
+        Allocation sinking SSA Defs are allowed to have replacements
+        https://bugs.webkit.org/show_bug.cgi?id=156444
+
+        Reviewed by Filip Pizlo.
+
+        Consider the following program and the annotations that explain why
+        the SSA defs we create in allocation sinking can have replacements.
+
+        function foo(a1) {
+            let o1 = {x: 20, y: 50};
+            let o2 = {y: 40, o1: o1};
+            let o3 = {};
+        
+            // We're Defing a new variable here, call it o3_field.
+            // o3_field is defing the value that is the result of 
+            // a GetByOffset that gets eliminated through allocation sinking.
+            o3.field = o1.y;
+        
+            dontCSE();
+        
+            // This control flow is here to not allow the phase to consult
+            // its local SSA mapping (which properly handles replacements)
+            // for the value of o3_field.
+            if (a1) {
+                a1 = true; 
+            } else {
+                a1 = false;
+            }
+        
+            // Here, we ask for the reaching def of o3_field, and assert
+            // it doesn't have a replacement. It does have a replacement
+            // though. The original Def was the GetByOffset. We replaced
+            // that GetByOffset with the value of the o1_y variable.
+            let value = o3.field;
+            assert(value === 50);
+        }
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * tests/stress/allocation-sinking-defs-may-have-replacements.js: Added.
+        (dontCSE):
+        (assert):
+        (foo):
+
 2016-04-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199242.
