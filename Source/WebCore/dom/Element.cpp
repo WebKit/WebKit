@@ -1056,7 +1056,7 @@ inline void Element::setAttributeInternal(unsigned index, const QualifiedName& n
     const Attribute& attribute = attributeAt(index);
     AtomicString oldValue = attribute.value();
     bool valueChanged = newValue != oldValue;
-    const QualifiedName& attributeName = (!inSynchronizationOfLazyAttribute || valueChanged) ? attribute.name() : name;
+    QualifiedName attributeName = (!inSynchronizationOfLazyAttribute || valueChanged) ? attribute.name() : name;
 
     if (!inSynchronizationOfLazyAttribute)
         willModifyAttribute(attributeName, oldValue, newValue);
