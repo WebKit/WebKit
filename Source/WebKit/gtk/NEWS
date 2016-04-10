@@ -1,4 +1,12 @@
 =================
+WebKitGTK+ 2.4.11
+=================
+
+  - Fix a crash when changing elment attributes with DOM bindings.
+  - Fix the build on ARM64.
+  - Translation updates: Chinese, Japanese.
+
+=================
 WebKitGTK+ 2.4.10
 =================
 
