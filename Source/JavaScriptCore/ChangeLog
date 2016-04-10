@@ -1,3 +1,71 @@
+2016-04-09  Keith Miller  <keith_miller@apple.com>
+
+        tryGetById should be supported by the DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=156378
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds support for tryGetById in the DFG/FTL. It adds a new DFG node
+        TryGetById, which acts similarly to the normal GetById DFG node. One key
+        difference between GetById and TryGetById is that in the LLInt and Baseline
+        we do not profile the result type. This profiling is unnessary for the current
+        use case of tryGetById, which is expected to be a strict equality comparision
+        against a specific object or undefined. In either case other DFG optimizations
+        will make this equally fast with or without the profiling information.
+
+        Additionally, this patch adds new reuse modes for JSValueRegsTemporary that take
+        an operand and attempt to reuse the registers for that operand if they are free
+        after the current DFG node.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIdentifier):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileTryGetById):
+        (JSC::DFG::JSValueRegsTemporary::JSValueRegsTemporary):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::GPRTemporary::operator=):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * tests/stress/try-get-by-id.js:
+        (tryGetByIdTextStrict):
+        (get let):
+        (let.get createBuiltin):
+        (get throw):
+        (getCaller.obj.1.throw.new.Error): Deleted.
+
 2016-04-09  Saam barati  <sbarati@apple.com>
 
         Allocation sinking SSA Defs are allowed to have replacements

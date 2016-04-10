@@ -75,7 +75,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
     
-    if (instruction[0].u.opcode == LLInt::getOpcode(op_get_array_length))
+    if (instruction[0].u.opcode == LLInt::getOpcode(op_get_array_length) || instruction[0].u.opcode == LLInt::getOpcode(op_try_get_by_id))
         return GetByIdStatus(NoInformation, false);
 
     StructureID structureID = instruction[4].u.structureID;
@@ -210,7 +210,8 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                 JSFunction* intrinsicFunction = nullptr;
 
                 switch (access.type()) {
-                case AccessCase::Load: {
+                case AccessCase::Load:
+                case AccessCase::GetGetter: {
                     break;
                 }
                 case AccessCase::IntrinsicGetter: {

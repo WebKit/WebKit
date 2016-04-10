@@ -288,6 +288,7 @@ void JIT_OPERATION operationThrowOutOfBoundsAccessError(ExecState*) WTF_INTERNAL
 int32_t JIT_OPERATION operationCallArityCheck(ExecState*) WTF_INTERNAL;
 int32_t JIT_OPERATION operationConstructArityCheck(ExecState*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationTryGetById(ExecState*, StructureStubInfo*, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationTryGetByIdGeneric(ExecState*, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(ExecState*, StructureStubInfo*, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetById(ExecState*, StructureStubInfo*, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByIdGeneric(ExecState*, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;

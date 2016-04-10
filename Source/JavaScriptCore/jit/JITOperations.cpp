@@ -170,6 +170,20 @@ EncodedJSValue JIT_OPERATION operationTryGetById(ExecState* exec, StructureStubI
     return JSValue::encode(slot.getPureResult());
 }
 
+
+EncodedJSValue JIT_OPERATION operationTryGetByIdGeneric(ExecState* exec, EncodedJSValue base, UniquedStringImpl* uid)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    Identifier ident = Identifier::fromUid(vm, uid);
+
+    JSValue baseValue = JSValue::decode(base);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
+    baseValue.getPropertySlot(exec, ident, slot);
+
+    return JSValue::encode(slot.getPureResult());
+}
+
 EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
 {
     VM* vm = &exec->vm();

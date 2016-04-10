@@ -593,9 +593,12 @@ private:
         case PutStructure:
             compilePutStructure();
             break;
+        case TryGetById:
+            compileGetById(AccessType::GetPure);
+            break;
         case GetById:
         case GetByIdFlush:
-            compileGetById();
+            compileGetById(AccessType::Get);
             break;
         case In:
             compileIn();
@@ -2302,11 +2305,12 @@ private:
             cell, m_heaps.JSCell_structureID);
     }
     
-    void compileGetById()
+    void compileGetById(AccessType type)
     {
+        ASSERT(type == AccessType::Get || type == AccessType::GetPure);
         switch (m_node->child1().useKind()) {
         case CellUse: {
-            setJSValue(getById(lowCell(m_node->child1())));
+            setJSValue(getById(lowCell(m_node->child1()), type));
             return;
         }
             
@@ -2324,12 +2328,18 @@ private:
                 isCell(value, provenType(m_node->child1())), unsure(cellCase), unsure(notCellCase));
             
             LBasicBlock lastNext = m_out.appendTo(cellCase, notCellCase);
-            ValueFromBlock cellResult = m_out.anchor(getById(value));
+            ValueFromBlock cellResult = m_out.anchor(getById(value, type));
             m_out.jump(continuation);
-            
+
+            J_JITOperation_EJI getByIdFunction;
+            if (type == AccessType::Get)
+                getByIdFunction = operationGetByIdGeneric;
+            else
+                getByIdFunction = operationTryGetByIdGeneric;
+
             m_out.appendTo(notCellCase, continuation);
             ValueFromBlock notCellResult = m_out.anchor(vmCall(
-                m_out.int64, m_out.operation(operationGetByIdGeneric),
+                m_out.int64, m_out.operation(getByIdFunction),
                 m_callFrame, value,
                 m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
             m_out.jump(continuation);
@@ -7293,7 +7303,7 @@ private:
         return m_out.phi(m_out.intPtr, fastButterfly, slowButterfly);
     }
     
-    LValue getById(LValue base)
+    LValue getById(LValue base, AccessType type)
     {
         Node* node = m_node;
         UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
@@ -7331,7 +7341,7 @@ private:
                 auto generator = Box<JITGetByIdGenerator>::create(
                     jit.codeBlock(), node->origin.semantic, callSiteIndex,
                     params.unavailableRegisters(), JSValueRegs(params[1].gpr()),
-                    JSValueRegs(params[0].gpr()), AccessType::Get);
+                    JSValueRegs(params[0].gpr()), type);
 
                 generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();
@@ -7340,11 +7350,17 @@ private:
                     [=] (CCallHelpers& jit) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
 
+                        J_JITOperation_ESsiJI optimizationFunction;
+                        if (type == AccessType::Get)
+                            optimizationFunction = operationGetByIdOptimize;
+                        else
+                            optimizationFunction = operationTryGetByIdOptimize;
+
                         generator->slowPathJump().link(&jit);
                         CCallHelpers::Label slowPathBegin = jit.label();
                         CCallHelpers::Call slowPathCall = callOperation(
                             *state, params.unavailableRegisters(), jit, node->origin.semantic,
-                            exceptions.get(), operationGetByIdOptimize, params[0].gpr(),
+                            exceptions.get(), optimizationFunction, params[0].gpr(),
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
                             CCallHelpers::TrustedImmPtr(uid)).call();
                         jit.jump().linkTo(done, &jit);

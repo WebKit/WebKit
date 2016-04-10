@@ -703,14 +703,17 @@ public:
     void compileMovHint(Node*);
     void compileMovHintAndCheck(Node*);
 
+    void cachedGetById(CodeOrigin, JSValueRegs base, JSValueRegs result, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill, AccessType = AccessType::Get);
+
 #if USE(JSVALUE64)
-    void cachedGetById(CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
+    void cachedGetById(CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill, AccessType = AccessType::Get);
     void cachedPutById(CodeOrigin, GPRReg base, GPRReg value, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
 #elif USE(JSVALUE32_64)
-    void cachedGetById(CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
+    void cachedGetById(CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill, AccessType = AccessType::Get);
     void cachedPutById(CodeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
 #endif
-    
+
+    void compileTryGetById(Node*);
     void compileIn(Node*);
     
     void compileBaseValueStoreBarrier(Edge& baseEdge, Edge& valueEdge);
@@ -2940,6 +2943,17 @@ public:
     GPRTemporary(SpeculativeJIT*, ReuseTag, JSValueOperand&, WhichValueWord);
 #endif
 
+    GPRTemporary(GPRTemporary& other) = delete;
+
+    GPRTemporary& operator=(GPRTemporary&& other)
+    {
+        ASSERT(!m_jit);
+        ASSERT(m_gpr == InvalidGPRReg);
+        std::swap(m_jit, other.m_jit);
+        std::swap(m_gpr, other.m_gpr);
+        return *this;
+    }
+
     void adopt(GPRTemporary&);
 
     ~GPRTemporary()
@@ -2962,6 +2976,9 @@ class JSValueRegsTemporary {
 public:
     JSValueRegsTemporary();
     JSValueRegsTemporary(SpeculativeJIT*);
+    template<typename T>
+    JSValueRegsTemporary(SpeculativeJIT*, ReuseTag, T& operand, WhichValueWord resultRegWord = PayloadWord);
+    JSValueRegsTemporary(SpeculativeJIT*, ReuseTag, JSValueOperand&);
     ~JSValueRegsTemporary();
     
     JSValueRegs regs();

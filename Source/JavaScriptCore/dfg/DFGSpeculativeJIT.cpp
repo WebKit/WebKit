@@ -964,6 +964,47 @@ void SpeculativeJIT::useChildren(Node* node)
     }
 }
 
+void SpeculativeJIT::compileTryGetById(Node* node)
+{
+    switch (node->child1().useKind()) {
+    case CellUse: {
+        SpeculateCellOperand base(this, node->child1());
+        JSValueRegsTemporary result(this, Reuse, base);
+
+        JSValueRegs baseRegs = JSValueRegs::payloadOnly(base.gpr());
+        JSValueRegs resultRegs = result.regs();
+
+        base.use();
+
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->identifierNumber(), JITCompiler::Jump(), DontSpill, AccessType::GetPure);
+
+        jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
+        break;
+    }
+
+    case UntypedUse: {
+        JSValueOperand base(this, node->child1());
+        JSValueRegsTemporary result(this, Reuse, base);
+
+        JSValueRegs baseRegs = base.jsValueRegs();
+        JSValueRegs resultRegs = result.regs();
+
+        base.use();
+
+        JITCompiler::Jump notCell = m_jit.branchIfNotCell(baseRegs);
+
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->identifierNumber(), notCell, DontSpill, AccessType::GetPure);
+
+        jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
+        break;
+    }
+
+    default:
+        DFG_CRASH(m_jit.graph(), node, "Bad use kind");
+        break;
+    } 
+}
+
 void SpeculativeJIT::compileIn(Node* node)
 {
     SpeculateCellOperand base(this, node->child2());
@@ -1167,6 +1208,44 @@ JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit)
 #endif
 {
 }
+
+#if USE(JSVALUE64)
+template<typename T>
+JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, T& operand, WhichValueWord)
+    : m_gpr(jit, Reuse, operand)
+{
+}
+#else
+template<typename T>
+JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, T& operand, WhichValueWord resultWord)
+{
+    if (resultWord == PayloadWord) {
+        m_payloadGPR = GPRTemporary(jit, Reuse, operand);
+        m_tagGPR = GPRTemporary(jit);
+    } else {
+        m_payloadGPR = GPRTemporary(jit);
+        m_tagGPR = GPRTemporary(jit, Reuse, operand);
+    }
+}
+#endif
+
+#if USE(JSVALUE64)
+JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, JSValueOperand& operand)
+{
+    m_gpr = GPRTemporary(jit, Reuse, operand);
+}
+#else
+JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, JSValueOperand& operand)
+{
+    if (jit->canReuse(operand.node())) {
+        m_payloadGPR = GPRTemporary(jit, Reuse, operand, PayloadWord);
+        m_tagGPR = GPRTemporary(jit, Reuse, operand, TagWord);
+    } else {
+        m_payloadGPR = GPRTemporary(jit);
+        m_tagGPR = GPRTemporary(jit);
+    }
+}
+#endif
 
 JSValueRegsTemporary::~JSValueRegsTemporary() { }
 

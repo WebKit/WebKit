@@ -166,6 +166,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CallStringConstructor:
     case MakeRope:
     case NewArrayWithSize:
+    case TryGetById:
     case GetById:
     case GetByIdFlush:
     case ToThis:

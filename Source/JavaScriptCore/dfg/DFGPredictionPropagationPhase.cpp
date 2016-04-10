@@ -172,7 +172,12 @@ private:
             changed |= setPrediction(SpecInt32);
             break;
         }
-            
+
+        case TryGetById: {
+            changed |= setPrediction(SpecBytecodeTop);
+            break;
+        }
+
         case ArrayPop:
         case ArrayPush:
         case RegExpExec:

@@ -866,6 +866,7 @@ struct Node {
     bool hasIdentifier()
     {
         switch (op()) {
+        case TryGetById:
         case GetById:
         case GetByIdFlush:
         case PutById:

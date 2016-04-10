@@ -848,7 +848,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(NamedPropertyLoc, heap, node->child2()), LazyNode(node));
         return;
     }
-        
+
+    case TryGetById: {
+        read(Heap);
+        return;
+    }
+
     case MultiGetByOffset: {
         read(JSCell_structureID);
         read(JSObject_butterfly);
