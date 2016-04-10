@@ -70,7 +70,7 @@ void MediaPlaybackTargetPickerMock::timerFired()
     currentDeviceDidChange();
 }
 
-void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute, const String&)
+void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute)
 {
     if (!client() || m_showingMenu)
         return;

@@ -482,9 +482,7 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void addPlaybackTargetPickerClient(uint64_t);
     void removePlaybackTargetPickerClient(uint64_t);
-
-    void showPlaybackTargetPicker(uint64_t, const IntPoint&, bool, const String&);
-
+    void showPlaybackTargetPicker(uint64_t, const IntPoint&, bool);
     void playbackTargetPickerClientStateDidChange(uint64_t, MediaProducer::MediaStateFlags);
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerEnabled(bool);
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::State);
@@ -492,7 +490,6 @@ public:
     WEBCORE_EXPORT void setPlaybackTarget(uint64_t, Ref<MediaPlaybackTarget>&&);
     WEBCORE_EXPORT void playbackTargetAvailabilityDidChange(uint64_t, bool);
     WEBCORE_EXPORT void setShouldPlayToPlaybackTarget(uint64_t, bool);
-    WEBCORE_EXPORT void customPlaybackActionSelected(uint64_t);
 #endif
 
     RefPtr<WheelEventTestTrigger> testTrigger() const { return m_testTrigger; }

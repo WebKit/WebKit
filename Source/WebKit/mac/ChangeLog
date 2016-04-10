@@ -1,3 +1,29 @@
+2016-04-08  Sam Weinig  <sam@webkit.org>
+
+        Remove support for custom target picker actions
+        <rdar://problem/24987783>
+        https://bugs.webkit.org/show_bug.cgi?id=156434
+
+        Reviewed by Eric Carlson.
+
+        This mostly entailed rolling out r197429 and r197569.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::removePlaybackTargetPickerClient):
+        (WebChromeClient::showPlaybackTargetPicker):
+        * WebView/WebMediaPlaybackTargetPicker.h:
+        * WebView/WebMediaPlaybackTargetPicker.mm:
+        (WebMediaPlaybackTargetPicker::removePlaybackTargetPickerClient):
+        (WebMediaPlaybackTargetPicker::showPlaybackTargetPicker):
+        (WebMediaPlaybackTargetPicker::playbackTargetPickerClientStateDidChange):
+        (WebMediaPlaybackTargetPicker::setShouldPlayToPlaybackTarget):
+        (WebMediaPlaybackTargetPicker::invalidate):
+        (WebMediaPlaybackTargetPicker::customPlaybackActionSelected): Deleted.
+        * WebView/WebView.mm:
+        (-[WebView _showPlaybackTargetPicker:location:hasVideo:]):
+        (-[WebView _playbackTargetPickerClientStateDidChange:state:]):
+
 2016-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(ENABLE_ES6_CLASS_SYNTAX) guards

@@ -1181,7 +1181,6 @@ private:
     void playbackTargetSelected(uint64_t, const WebCore::MediaPlaybackTargetContext& outputDevice) const;
     void playbackTargetAvailabilityDidChange(uint64_t, bool);
     void setShouldPlayToPlaybackTarget(uint64_t, bool);
-    void customPlaybackActionSelected(uint64_t);
 #endif
 
     void clearWheelEventTestTrigger();

@@ -125,13 +125,6 @@ NS_CLASS_AVAILABLE_MAC(10_11)
 - (void)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName;
 - (BOOL)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName allowReselectionOfSelectedOutputDevice:(BOOL)allowReselectionOfSelectedOutputDevice;
 
-typedef NS_ENUM(NSInteger, AVOutputDeviceMenuControllerSelection) {
-    AVOutputDeviceMenuControllerSelectionOutputDevice,
-    AVOutputDeviceMenuControllerSelectionCustomMenuItem,
-    AVOutputDeviceMenuControllerSelectionNone
-};
-
-- (AVOutputDeviceMenuControllerSelection)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName allowReselectionOfSelectedOutputDevice:(BOOL)allowReselectionOfSelectedOutputDevice customMenuItemTitle:(NSString *)customMenuItemTitle customMenuItemEnabled:(BOOL)customMenuItemEnabled;
 @end
 
 

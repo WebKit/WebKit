@@ -116,7 +116,6 @@ private:
     void setPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
     void externalOutputDeviceAvailableDidChange(bool) override;
     void setShouldPlayToPlaybackTarget(bool) override;
-    void customPlaybackActionSelected() override;
 #endif
 #if PLATFORM(IOS)
     bool requiresPlaybackTargetRouteMonitoring() const override;

@@ -418,7 +418,6 @@ messages -> WebPage LegacyReceiver {
     PlaybackTargetSelected(uint64_t contextId, WebCore::MediaPlaybackTargetContext target)
     PlaybackTargetAvailabilityDidChange(uint64_t contextId, bool available)
     SetShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)
-    CustomPlaybackActionSelected(uint64_t contextId)
 #endif
 
     ClearWheelEventTestTrigger()

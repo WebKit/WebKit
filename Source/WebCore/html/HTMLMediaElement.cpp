@@ -151,10 +151,6 @@
 #include <bindings/ScriptObject.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/HTMLMediaElementAdditions.cpp>
-#endif
-
 namespace WebCore {
 
 static const double SeekRepeatDelay = 0.1;
@@ -5233,7 +5229,7 @@ bool HTMLMediaElement::removeEventListener(const AtomicString& eventType, EventL
 
 void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
 {
-    bool hasTargets = m_mediaSession->hasWirelessPlaybackTargets(*this) || !playbackTargetPickerCustomActionName().isEmpty();
+    bool hasTargets = m_mediaSession->hasWirelessPlaybackTargets(*this);
     LOG(Media, "HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent(%p) - hasTargets = %s", this, boolString(hasTargets));
     RefPtr<Event> event = WebKitPlaybackTargetAvailabilityEvent::create(eventNames().webkitplaybacktargetavailabilitychangedEvent, hasTargets);
     event->setTarget(this);
@@ -5273,19 +5269,6 @@ void HTMLMediaElement::setShouldPlayToPlaybackTarget(bool shouldPlay)
     if (m_player)
         m_player->setShouldPlayToPlaybackTarget(shouldPlay);
 }
-
-#if !USE(APPLE_INTERNAL_SDK)
-void HTMLMediaElement::customPlaybackActionSelected()
-{
-    LOG(Media, "HTMLMediaElement::customPlaybackActionSelected(%p)", this);
-}
-
-String HTMLMediaElement::playbackTargetPickerCustomActionName() const
-{
-    return { };
-}
-#endif
-
 #else // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 bool HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless() const

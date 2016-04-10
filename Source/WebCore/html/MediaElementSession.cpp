@@ -36,7 +36,6 @@
 #include "FrameView.h"
 #include "HTMLAudioElement.h"
 #include "HTMLMediaElement.h"
-#include "HTMLMediaElementEnums.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
 #include "HitTestResult.h"
@@ -260,8 +259,7 @@ void MediaElementSession::showPlaybackTargetPicker(const HTMLMediaElement& eleme
     }
 #endif
 
-    String customMenuItemTitle = element.playbackTargetPickerCustomActionName();
-    element.document().showPlaybackTargetPicker(*this, is<HTMLVideoElement>(element), customMenuItemTitle);
+    element.document().showPlaybackTargetPicker(*this, is<HTMLVideoElement>(element));
 }
 
 bool MediaElementSession::hasWirelessPlaybackTargets(const HTMLMediaElement&) const
@@ -383,11 +381,6 @@ void MediaElementSession::setShouldPlayToPlaybackTarget(bool shouldPlay)
     LOG(Media, "MediaElementSession::setShouldPlayToPlaybackTarget - shouldPlay %s", shouldPlay ? "TRUE" : "FALSE");
     m_shouldPlayToPlaybackTarget = shouldPlay;
     client().setShouldPlayToPlaybackTarget(shouldPlay);
-}
-
-void MediaElementSession::customPlaybackActionSelected()
-{
-    client().customPlaybackActionSelected();
 }
 
 void MediaElementSession::mediaStateDidChange(const HTMLMediaElement& element, MediaProducer::MediaStateFlags state)

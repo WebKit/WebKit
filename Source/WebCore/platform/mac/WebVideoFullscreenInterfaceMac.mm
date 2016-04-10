@@ -389,10 +389,6 @@ void WebVideoFullscreenInterfaceMac::preparedToReturnToInline(bool, const IntRec
 {
 }
 
-void WebVideoFullscreenInterfaceMac::setExternalPlayback(bool, ExternalPlaybackTargetType, WTF::String)
-{
-}
-
 void WebVideoFullscreenInterfaceMac::setVideoDimensions(bool, float, float)
 {
 }

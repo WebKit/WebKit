@@ -1,3 +1,82 @@
+2016-04-08  Sam Weinig  <sam@webkit.org>
+
+        Remove support for custom target picker actions
+        <rdar://problem/24987783>
+        https://bugs.webkit.org/show_bug.cgi?id=156434
+
+        Reviewed by Eric Carlson.
+
+        This mostly entailed rolling out r197429 and r197569.
+
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::removeAllPlaybackTargetPickerClients):
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker):
+        (WebCore::WebMediaSessionManager::clientStateDidChange):
+        (WebCore::WebMediaSessionManager::externalOutputDeviceAvailableDidChange):
+        (WebCore::WebMediaSessionManager::configureNewClients):
+        (WebCore::WebMediaSessionManager::customPlaybackActionSelected): Deleted.
+        * Modules/mediasession/WebMediaSessionManager.h:
+        * Modules/mediasession/WebMediaSessionManagerClient.h:
+        * dom/Document.cpp:
+        (WebCore::Document::removePlaybackTargetPickerClient):
+        (WebCore::Document::showPlaybackTargetPicker):
+        (WebCore::Document::playbackTargetPickerClientStateDidChange):
+        (WebCore::Document::setShouldPlayToPlaybackTarget):
+        (WebCore::Document::customPlaybackActionSelected): Deleted.
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent):
+        (WebCore::HTMLMediaElement::setShouldPlayToPlaybackTarget):
+        (WebCore::HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless):
+        (WebCore::HTMLMediaElement::customPlaybackActionSelected): Deleted.
+        (WebCore::HTMLMediaElement::playbackTargetPickerCustomActionName): Deleted.
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::showPlaybackTargetPicker):
+        (WebCore::MediaElementSession::hasWirelessPlaybackTargets):
+        (WebCore::MediaElementSession::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaElementSession::mediaStateDidChange):
+        (WebCore::MediaElementSession::customPlaybackActionSelected): Deleted.
+        * html/MediaElementSession.h:
+        * page/ChromeClient.h:
+        * page/Page.cpp:
+        (WebCore::Page::removePlaybackTargetPickerClient):
+        (WebCore::Page::showPlaybackTargetPicker):
+        (WebCore::Page::setShouldPlayToPlaybackTarget):
+        (WebCore::Page::ensureTestTrigger):
+        (WebCore::Page::customPlaybackActionSelected): Deleted.
+        * page/Page.h:
+        (WebCore::Page::testTrigger):
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSessionClient::canPlayToWirelessPlaybackTarget):
+        (WebCore::PlatformMediaSessionClient::isPlayingToWirelessPlaybackTarget):
+        (WebCore::PlatformMediaSessionClient::setShouldPlayToPlaybackTarget):
+        (WebCore::PlatformMediaSessionClient::customPlaybackActionSelected): Deleted.
+        * platform/graphics/MediaPlaybackTargetClient.h:
+        * platform/graphics/MediaPlaybackTargetPicker.cpp:
+        (WebCore::MediaPlaybackTargetPicker::pendingActionTimerFired):
+        (WebCore::MediaPlaybackTargetPicker::addPendingAction):
+        (WebCore::MediaPlaybackTargetPicker::showPlaybackTargetPicker):
+        * platform/graphics/MediaPlaybackTargetPicker.h:
+        (WebCore::MediaPlaybackTargetPicker::availableDevicesDidChange):
+        (WebCore::MediaPlaybackTargetPicker::currentDeviceDidChange):
+        (WebCore::MediaPlaybackTargetPicker::Client::customPlaybackActionSelected): Deleted.
+        (WebCore::MediaPlaybackTargetPicker::customPlaybackActionSelected): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::devicePicker):
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker):
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (WebCore::WebVideoFullscreenInterfaceMac::preparedToReturnToInline):
+        (WebCore::WebVideoFullscreenInterfaceMac::setVideoDimensions):
+        (WebCore::WebVideoFullscreenInterfaceMac::setExternalPlayback): Deleted.
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        (WebCore::MediaPlaybackTargetPickerMock::timerFired):
+        (WebCore::MediaPlaybackTargetPickerMock::showPlaybackTargetPicker):
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+        * platform/spi/cocoa/AVKitSPI.h:
+
 2016-04-09  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixed compilation of JPEGImageDecoder with libjpeg v9.

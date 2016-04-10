@@ -1159,11 +1159,6 @@ void WebPage::setShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)
 {
     m_page->setShouldPlayToPlaybackTarget(contextId, shouldPlay);
 }
-
-void WebPage::customPlaybackActionSelected(uint64_t contextId)
-{
-    m_page->customPlaybackActionSelected(contextId);
-}
 #endif
 
 

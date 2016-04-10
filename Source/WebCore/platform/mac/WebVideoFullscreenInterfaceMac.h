@@ -69,9 +69,9 @@ public:
     WEBCORE_EXPORT void setVideoDimensions(bool hasVideo, float width, float height) final;
     WEBCORE_EXPORT void setSeekableRanges(const TimeRanges&) override;
     WEBCORE_EXPORT void setCanPlayFastReverse(bool) override { }
-    WEBCORE_EXPORT void setAudioMediaSelectionOptions(const Vector<WTF::String>& /*options*/, uint64_t /*selectedIndex*/) override;
-    WEBCORE_EXPORT void setLegibleMediaSelectionOptions(const Vector<WTF::String>& /*options*/, uint64_t /*selectedIndex*/) override;
-    WEBCORE_EXPORT void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) override;
+    WEBCORE_EXPORT void setAudioMediaSelectionOptions(const Vector<String>& /*options*/, uint64_t /*selectedIndex*/) override;
+    WEBCORE_EXPORT void setLegibleMediaSelectionOptions(const Vector<String>& /*options*/, uint64_t /*selectedIndex*/) override;
+    WEBCORE_EXPORT void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, String localizedDeviceName) override;
     WEBCORE_EXPORT void setWirelessVideoPlaybackDisabled(bool) override { }
 
     WEBCORE_EXPORT void setupFullscreen(NSView& layerHostedView, const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);

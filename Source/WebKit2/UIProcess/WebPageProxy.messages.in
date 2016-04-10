@@ -435,7 +435,7 @@ messages -> WebPageProxy {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
     AddPlaybackTargetPickerClient(uint64_t contextId)
     RemovePlaybackTargetPickerClient(uint64_t contextId)
-    ShowPlaybackTargetPicker(uint64_t clientId, WebCore::FloatRect pickerLocation, bool hasVideo, String customMenuItemTitle)
+    ShowPlaybackTargetPicker(uint64_t clientId, WebCore::FloatRect pickerLocation, bool hasVideo)
     PlaybackTargetPickerClientStateDidChange(uint64_t contextId, unsigned mediaState)
     SetMockMediaPlaybackTargetPickerEnabled(bool enabled)
     SetMockMediaPlaybackTargetPickerState(String name, unsigned pickerState)

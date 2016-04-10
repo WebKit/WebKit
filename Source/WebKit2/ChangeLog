@@ -1,3 +1,33 @@
+2016-04-08  Sam Weinig  <sam@webkit.org>
+
+        Remove support for custom target picker actions
+        <rdar://problem/24987783>
+        https://bugs.webkit.org/show_bug.cgi?id=156434
+
+        Reviewed by Eric Carlson.
+
+        This mostly entailed rolling out r197429 and r197569.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::removePlaybackTargetPickerClient):
+        (WebKit::WebPageProxy::showPlaybackTargetPicker):
+        (WebKit::WebPageProxy::playbackTargetPickerClientStateDidChange):
+        (WebKit::WebPageProxy::setShouldPlayToPlaybackTarget):
+        (WebKit::WebPageProxy::didChangeBackgroundColor):
+        (WebKit::WebPageProxy::customPlaybackActionSelected): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::removePlaybackTargetPickerClient):
+        (WebKit::WebChromeClient::showPlaybackTargetPicker):
+        (WebKit::WebChromeClient::playbackTargetPickerClientStateDidChange):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setShouldPlayToPlaybackTarget):
+        (WebKit::WebPage::customPlaybackActionSelected): Deleted.
+
 2016-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] WKWebViews should consult ancestor UIScrollViews to determine tiling area

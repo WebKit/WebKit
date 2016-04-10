@@ -55,9 +55,7 @@ public:
     WEBCORE_EXPORT uint64_t addPlaybackTargetPickerClient(WebMediaSessionManagerClient&, uint64_t);
     WEBCORE_EXPORT void removePlaybackTargetPickerClient(WebMediaSessionManagerClient&, uint64_t);
     WEBCORE_EXPORT void removeAllPlaybackTargetPickerClients(WebMediaSessionManagerClient&);
-
-    WEBCORE_EXPORT void showPlaybackTargetPicker(WebMediaSessionManagerClient&, uint64_t, const IntRect&, bool, const String&);
-
+    WEBCORE_EXPORT void showPlaybackTargetPicker(WebMediaSessionManagerClient&, uint64_t, const IntRect&, bool);
     WEBCORE_EXPORT void clientStateDidChange(WebMediaSessionManagerClient&, uint64_t, WebCore::MediaProducer::MediaStateFlags);
 
 protected:
@@ -75,7 +73,6 @@ private:
     // MediaPlaybackTargetPicker::Client
     void setPlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) override;
     void externalOutputDeviceAvailableDidChange(bool) override;
-    void customPlaybackActionSelected() override;
 
     size_t find(WebMediaSessionManagerClient*, uint64_t);
 
