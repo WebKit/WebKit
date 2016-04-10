@@ -1,3 +1,10 @@
+2016-04-10  Sam Weinig  <sam@webkit.org>
+
+        Fix the build.
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker):
+
 2016-04-08  Sam Weinig  <sam@webkit.org>
 
         Remove support for custom target picker actions
