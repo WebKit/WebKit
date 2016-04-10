@@ -1,0 +1,2490 @@
+# Chinese translations for WebKitGTK package
+# WebKitGTK 套件的傳統字漢語翻譯.
+# Copyright (C) 2015 THE WebKitGTK'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the WebKitGTK package.
+# Automatically generated, 2015.
+# ccheng <ccheng@redhat.com>, 2016. #zanata
+# pnemade <pnemade@redhat.com>, 2016. #zanata
+msgid ""
+msgstr ""
+"Project-Id-Version: webkitgtk 2.4.9\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
+"POT-Creation-Date: 2016-02-16 16:40+0530\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2016-03-04 06:17+0000\n"
+"Last-Translator: ccheng <ccheng@redhat.com>\n"
+"Language-Team: none\n"
+"Language: zh-TW\n"
+"X-Generator: Zanata 3.8.2\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+
+#: ../ErrorsGtk.cpp:33
+msgid "Load request cancelled"
+msgstr "已取消載入請求"
+
+#: ../ErrorsGtk.cpp:39
+msgid "Not allowed to use restricted network port"
+msgstr "不允許使用受限的網路連接埠"
+
+#: ../ErrorsGtk.cpp:45
+msgid "URL cannot be shown"
+msgstr "無法顯示 URL"
+
+#: ../ErrorsGtk.cpp:51
+msgid "Frame load was interrupted"
+msgstr "頁框載入中斷"
+
+#: ../ErrorsGtk.cpp:57
+msgid "Content with the specified MIME type cannot be shown"
+msgstr "無法顯示所指定之 MINE 類型的內容"
+
+# translation auto-copied from project gvfs, version 1.16.3, document gvfs
+#: ../ErrorsGtk.cpp:63
+msgid "File does not exist"
+msgstr "檔案不存在"
+
+#: ../ErrorsGtk.cpp:69
+msgid "Plugin will handle load"
+msgstr "外掛程式會處理負載"
+
+#: ../ErrorsGtk.cpp:81
+msgid "User cancelled the download"
+msgstr "使用者已取消下載"
+
+#: ../ErrorsGtk.cpp:97
+msgid "Printer not found"
+msgstr "找不到印表機"
+
+#: ../ErrorsGtk.cpp:102
+msgid "Invalid page range"
+msgstr "無效的頁面範圍"
+
+#: ../LocalizedStringsGtk.cpp:55 ../LocalizedStringsGtk.cpp:60
+msgid "Submit"
+msgstr "提交"
+
+# translation auto-copied from project control-center, version 3.8.6, document gnome-control-center-2.0
+#: ../LocalizedStringsGtk.cpp:65
+msgid "Reset"
+msgstr "重設"
+
+# translation auto-copied from project gnote, version 3.8.1, document gnote
+#: ../LocalizedStringsGtk.cpp:70
+msgid "Details"
+msgstr "詳細資訊"
+
+#: ../LocalizedStringsGtk.cpp:75
+msgid "This is a searchable index. Enter search keywords: "
+msgstr "這是個可搜尋的索引。請輸入搜尋關鍵字："
+
+#: ../LocalizedStringsGtk.cpp:80
+msgid "Choose File"
+msgstr "選擇檔案"
+
+#: ../LocalizedStringsGtk.cpp:85
+msgid "Choose Files"
+msgstr "選擇檔案"
+
+# translation auto-copied from project shotwell-core, version 0.14.1, document shotwell-core
+#: ../LocalizedStringsGtk.cpp:90 ../LocalizedStringsGtk.cpp:95
+msgid "(None)"
+msgstr "(無)"
+
+# translation auto-copied from project yelp, version 3.8.1, document yelp
+#: ../LocalizedStringsGtk.cpp:100
+msgid "Open Link in New _Window"
+msgstr "在新的視窗中開啟連結(_W)"
+
+#: ../LocalizedStringsGtk.cpp:105
+msgid "_Download Linked File"
+msgstr "下載連接的檔案(_D)"
+
+#: ../LocalizedStringsGtk.cpp:110
+msgid "Copy Link Loc_ation"
+msgstr "複製連結位置(_a)"
+
+#: ../LocalizedStringsGtk.cpp:115
+msgid "Open _Image in New Window"
+msgstr "在新視窗中開啓影像(_I)"
+
+#: ../LocalizedStringsGtk.cpp:120
+msgid "Sa_ve Image As"
+msgstr "儲存影像為(_v)"
+
+#: ../LocalizedStringsGtk.cpp:125
+msgid "Cop_y Image"
+msgstr "複製影像(_y)"
+
+#: ../LocalizedStringsGtk.cpp:130
+msgid "Copy Image _Address"
+msgstr "複製影像位址(_A)"
+
+#: ../LocalizedStringsGtk.cpp:135
+msgid "Open _Video in New Window"
+msgstr "在新視窗中開啓影片(_V)"
+
+#: ../LocalizedStringsGtk.cpp:140
+msgid "Open _Audio in New Window"
+msgstr "在新視窗中開啓音效(_A)"
+
+#: ../LocalizedStringsGtk.cpp:145
+msgid "Download _Video"
+msgstr "下載視訊(_V)"
+
+#: ../LocalizedStringsGtk.cpp:150
+msgid "Download _Audio"
+msgstr "下載音訊(_A)"
+
+#: ../LocalizedStringsGtk.cpp:155
+msgid "Cop_y Video Link Location"
+msgstr "複製影片連結位置(_y)"
+
+#: ../LocalizedStringsGtk.cpp:160
+msgid "Cop_y Audio Link Location"
+msgstr "複製音訊連結位置(_y)"
+
+#: ../LocalizedStringsGtk.cpp:165
+msgid "_Toggle Media Controls"
+msgstr "開啟媒體控制(_T)"
+
+#: ../LocalizedStringsGtk.cpp:170
+msgid "_Show Media Controls"
+msgstr "顯示媒體控制(_S)"
+
+#: ../LocalizedStringsGtk.cpp:175
+msgid "_Hide Media Controls"
+msgstr "隱藏媒體控制(_H)"
+
+#: ../LocalizedStringsGtk.cpp:180
+msgid "Toggle Media _Loop Playback"
+msgstr "開啟媒體循環播放(_L)"
+
+#: ../LocalizedStringsGtk.cpp:185
+msgid "Switch Video to _Fullscreen"
+msgstr "切換影片至全螢幕(_F)"
+
+#: ../LocalizedStringsGtk.cpp:190
+msgid "_Play"
+msgstr "播放(_P)"
+
+# translation auto-copied from project virt-manager, version 0.10.0, document virt-manager
+#: ../LocalizedStringsGtk.cpp:195
+msgid "_Pause"
+msgstr "暫停(_P)"
+
+#: ../LocalizedStringsGtk.cpp:200
+msgid "_Mute"
+msgstr "靜音(_M)"
+
+#: ../LocalizedStringsGtk.cpp:205
+msgid "Open _Frame in New Window"
+msgstr "在新視窗中開啟框架(_F)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:228
+msgid "_Insert Unicode Control Character"
+msgstr "插入萬國碼控制字元(_I)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:233
+msgid "Input _Methods"
+msgstr "輸入法(_M)"
+
+# translation auto-copied from project nautilus, version 3.8.2, document nautilus
+#: ../LocalizedStringsGtk.cpp:256
+msgid "_Reload"
+msgstr "重新載入(_R)"
+
+#: ../LocalizedStringsGtk.cpp:273
+msgid "No Guesses Found"
+msgstr "找不到相近的猜測"
+
+#: ../LocalizedStringsGtk.cpp:278
+msgid "_Ignore Spelling"
+msgstr "忽略拼字(_I)"
+
+#: ../LocalizedStringsGtk.cpp:283
+msgid "_Learn Spelling"
+msgstr "學習拼字(_L)"
+
+#: ../LocalizedStringsGtk.cpp:288
+msgid "_Search the Web"
+msgstr "搜尋網路(_S)"
+
+#: ../LocalizedStringsGtk.cpp:293
+msgid "_Look Up in Dictionary"
+msgstr "查詢字典(_L)"
+
+# translation auto-copied from project gnote, version 3.8.1, document gnote
+#: ../LocalizedStringsGtk.cpp:298
+msgid "_Open Link"
+msgstr "開啟連結(_O)"
+
+#: ../LocalizedStringsGtk.cpp:303
+msgid "Ignore _Grammar"
+msgstr "忽略文法(_G)"
+
+#: ../LocalizedStringsGtk.cpp:308
+msgid "Spelling and _Grammar"
+msgstr "拼字與文法(_G)"
+
+#: ../LocalizedStringsGtk.cpp:313
+msgid "_Show Spelling and Grammar"
+msgstr "顯示拼字與文法(_S)"
+
+#: ../LocalizedStringsGtk.cpp:313
+msgid "_Hide Spelling and Grammar"
+msgstr "隱藏拼字與文法(_H)"
+
+#: ../LocalizedStringsGtk.cpp:318
+msgid "_Check Document Now"
+msgstr "即刻檢查文件(_C)"
+
+#: ../LocalizedStringsGtk.cpp:323
+msgid "Check Spelling While _Typing"
+msgstr "輸入時檢查拼字(_T)"
+
+#: ../LocalizedStringsGtk.cpp:328
+msgid "Check _Grammar With Spelling"
+msgstr "檢查文法與拼字(_G)"
+
+#: ../LocalizedStringsGtk.cpp:333
+msgid "_Font"
+msgstr "字型(_F)"
+
+#: ../LocalizedStringsGtk.cpp:356
+msgid "_Outline"
+msgstr "概述(_O)"
+
+#: ../LocalizedStringsGtk.cpp:361
+msgid "Inspect _Element"
+msgstr "審閱要素(_E)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:366
+msgid "LRM _Left-to-right mark"
+msgstr "LRM 左至右標記(_L)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:371
+msgid "RLM _Right-to-left mark"
+msgstr "RLM 右至左標記(_R)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:376
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE 左至右內嵌(_e)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:381
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE 右至左內嵌(_m)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:386
+msgid "LRO Left-to-right _override"
+msgstr "LRO 強制左至右(_o)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:391
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO 強制右至左(_v)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:396
+msgid "PDF _Pop directional formatting"
+msgstr "PDF 回復以往方向(_P)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:401
+msgid "ZWS _Zero width space"
+msgstr "ZWS 零寬度空格(_Z)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:406
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ 零寬度連接符(_j)"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../LocalizedStringsGtk.cpp:411
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ 零寬度非連接符(_n)"
+
+#: ../LocalizedStringsGtk.cpp:416
+msgid "No recent searches"
+msgstr "無最近的搜尋"
+
+#: ../LocalizedStringsGtk.cpp:421
+msgid "Recent searches"
+msgstr "最近的搜尋"
+
+#: ../LocalizedStringsGtk.cpp:426
+msgid "_Clear recent searches"
+msgstr "清除最近的搜尋(_C)"
+
+#: ../LocalizedStringsGtk.cpp:431
+msgid "definition"
+msgstr "定義"
+
+#: ../LocalizedStringsGtk.cpp:436
+msgid "description list"
+msgstr "描述清單"
+
+#: ../LocalizedStringsGtk.cpp:441
+msgid "term"
+msgstr "名稱"
+
+# translation auto-copied from project anaconda, version 19.31.34, document anaconda
+#: ../LocalizedStringsGtk.cpp:446
+msgid "description"
+msgstr "描述"
+
+#: ../LocalizedStringsGtk.cpp:451
+msgid "footer"
+msgstr "頁尾"
+
+#: ../LocalizedStringsGtk.cpp:456
+msgid "cancel"
+msgstr "取消"
+
+#: ../LocalizedStringsGtk.cpp:461
+msgid "press"
+msgstr "按下"
+
+#: ../LocalizedStringsGtk.cpp:466
+msgid "select"
+msgstr "選擇"
+
+#: ../LocalizedStringsGtk.cpp:471
+msgid "activate"
+msgstr "啟用"
+
+#: ../LocalizedStringsGtk.cpp:476
+msgid "uncheck"
+msgstr "反選"
+
+#: ../LocalizedStringsGtk.cpp:481
+msgid "check"
+msgstr "檢查"
+
+#: ../LocalizedStringsGtk.cpp:486
+msgid "jump"
+msgstr "跳過"
+
+#: ../LocalizedStringsGtk.cpp:506
+msgid "Missing Plug-in"
+msgstr "外掛遺失"
+
+#: ../LocalizedStringsGtk.cpp:512
+msgid "Plug-in Failure"
+msgstr "外掛錯誤"
+
+#: ../LocalizedStringsGtk.cpp:536
+msgid " files"
+msgstr "檔案"
+
+# translation auto-copied from project gnote, version 3.8.1, document gnote, author tchuang
+#: ../LocalizedStringsGtk.cpp:541
+msgid "Unknown"
+msgstr "不明"
+
+# translation auto-copied from project evolution, version 3.8.5, document evolution-3.8
+#: ../LocalizedStringsGtk.cpp:557
+msgid "Loading..."
+msgstr "載入中…"
+
+#: ../LocalizedStringsGtk.cpp:562
+msgid "Live Broadcast"
+msgstr "即時廣播"
+
+#: ../LocalizedStringsGtk.cpp:568
+msgid "audio playback"
+msgstr "播放音訊"
+
+#: ../LocalizedStringsGtk.cpp:570
+msgid "video playback"
+msgstr "播放視訊"
+
+#: ../LocalizedStringsGtk.cpp:572
+msgid "mute"
+msgstr "靜音"
+
+#: ../LocalizedStringsGtk.cpp:574
+msgid "unmute"
+msgstr "消除靜音"
+
+#: ../LocalizedStringsGtk.cpp:576
+msgid "play"
+msgstr "播放"
+
+#: ../LocalizedStringsGtk.cpp:578
+msgid "pause"
+msgstr "暫停"
+
+#: ../LocalizedStringsGtk.cpp:580
+msgid "movie time"
+msgstr "影片時間"
+
+#: ../LocalizedStringsGtk.cpp:582
+msgid "timeline slider thumb"
+msgstr "時間軸捲動方塊"
+
+#: ../LocalizedStringsGtk.cpp:584
+msgid "back 30 seconds"
+msgstr "退回 30 秒"
+
+#: ../LocalizedStringsGtk.cpp:586
+msgid "return to realtime"
+msgstr "返回真實時間"
+
+#: ../LocalizedStringsGtk.cpp:588
+msgid "elapsed time"
+msgstr "已經過的時間"
+
+#: ../LocalizedStringsGtk.cpp:590
+msgid "remaining time"
+msgstr "剩下的時間"
+
+#: ../LocalizedStringsGtk.cpp:592
+msgid "status"
+msgstr "狀態"
+
+#: ../LocalizedStringsGtk.cpp:594
+msgid "enter fullscreen"
+msgstr "進入全螢幕"
+
+#: ../LocalizedStringsGtk.cpp:596
+msgid "exit fullscreen"
+msgstr "退出全螢幕"
+
+#: ../LocalizedStringsGtk.cpp:598
+msgid "fast forward"
+msgstr "快轉"
+
+#: ../LocalizedStringsGtk.cpp:600
+msgid "fast reverse"
+msgstr "快速倒轉"
+
+#: ../LocalizedStringsGtk.cpp:602
+msgid "show closed captions"
+msgstr "顯示關閉的字幕"
+
+#: ../LocalizedStringsGtk.cpp:604
+msgid "hide closed captions"
+msgstr "隱藏關閉的字幕"
+
+#: ../LocalizedStringsGtk.cpp:606
+msgid "media controls"
+msgstr "媒體控制"
+
+#: ../LocalizedStringsGtk.cpp:615
+msgid "audio element playback controls and status display"
+msgstr "音效要素播放控制與狀態顯示"
+
+#: ../LocalizedStringsGtk.cpp:617
+msgid "video element playback controls and status display"
+msgstr "影片要素播放控制與狀態顯示"
+
+#: ../LocalizedStringsGtk.cpp:619
+msgid "mute audio tracks"
+msgstr "將音軌轉成靜音"
+
+#: ../LocalizedStringsGtk.cpp:621
+msgid "unmute audio tracks"
+msgstr "取消音軌靜音"
+
+#: ../LocalizedStringsGtk.cpp:623
+msgid "begin playback"
+msgstr "開始播放"
+
+#: ../LocalizedStringsGtk.cpp:625
+msgid "pause playback"
+msgstr "暫停播放"
+
+#: ../LocalizedStringsGtk.cpp:627
+msgid "movie time scrubber"
+msgstr "影片時間清除程式"
+
+#: ../LocalizedStringsGtk.cpp:629
+msgid "movie time scrubber thumb"
+msgstr "影片時間清除程式捲動方塊"
+
+#: ../LocalizedStringsGtk.cpp:631
+msgid "seek movie back 30 seconds"
+msgstr "搜尋 30 秒前的影片"
+
+#: ../LocalizedStringsGtk.cpp:633
+msgid "return streaming movie to real time"
+msgstr "返回真實時間播放的影片串流"
+
+#: ../LocalizedStringsGtk.cpp:635
+msgid "current movie time in seconds"
+msgstr "目前影片時間（以秒為單位）"
+
+#: ../LocalizedStringsGtk.cpp:637
+msgid "number of seconds of movie remaining"
+msgstr "影片剩餘秒數"
+
+#: ../LocalizedStringsGtk.cpp:639
+msgid "current movie status"
+msgstr "目前的影片狀態"
+
+#: ../LocalizedStringsGtk.cpp:641
+msgid "seek quickly back"
+msgstr "快速向後搜尋"
+
+#: ../LocalizedStringsGtk.cpp:643
+msgid "seek quickly forward"
+msgstr "快速向前搜尋"
+
+#: ../LocalizedStringsGtk.cpp:645
+msgid "Play movie in fullscreen mode"
+msgstr "在全畫面模式下播放影片"
+
+#: ../LocalizedStringsGtk.cpp:647
+msgid "Exit fullscreen mode"
+msgstr "退出全螢幕模式"
+
+#: ../LocalizedStringsGtk.cpp:649
+msgid "start displaying closed captions"
+msgstr "開始顯示已關閉的字幕"
+
+#: ../LocalizedStringsGtk.cpp:651
+msgid "stop displaying closed captions"
+msgstr "停止顯示已關閉的字幕"
+
+#: ../LocalizedStringsGtk.cpp:660
+msgid "indefinite time"
+msgstr "不確定的時間"
+
+#: ../LocalizedStringsGtk.cpp:690
+msgid "value missing"
+msgstr "值遺失"
+
+#: ../LocalizedStringsGtk.cpp:726
+msgid "type mismatch"
+msgstr "類型不符"
+
+#: ../LocalizedStringsGtk.cpp:749
+msgid "pattern mismatch"
+msgstr "模式不符"
+
+#: ../LocalizedStringsGtk.cpp:754
+msgid "too long"
+msgstr "過長"
+
+#: ../LocalizedStringsGtk.cpp:759
+msgid "range underflow"
+msgstr "範圍下溢"
+
+#: ../LocalizedStringsGtk.cpp:764
+msgid "range overflow"
+msgstr "範圍溢出"
+
+#: ../LocalizedStringsGtk.cpp:769
+msgid "step mismatch"
+msgstr "步驟不符"
+
+#: ../LocalizedStringsGtk.cpp:774
+msgid "Unacceptable TLS certificate"
+msgstr "不接受的 TLS 憑證"
+
+#: WebKitAuthenticationWidget.cpp:155
+#, c-format
+msgid "The site %s:%i requests a username and password"
+msgstr "網站 %s:%i 要求輸入一組使用者名稱和密碼"
+
+# translation auto-copied from project evolution, version 3.8.5, document evolution-3.8
+#: WebKitAuthenticationWidget.cpp:159
+msgid "_Remember password"
+msgstr "記住密碼(_R)"
+
+#: WebKitAuthenticationWidget.cpp:167
+msgid "Server message:"
+msgstr "伺服器訊息："
+
+# translation auto-copied from project evolution, version 3.8.5, document evolution-3.8
+#: WebKitAuthenticationWidget.cpp:168 WebKitAuthenticationWidget.cpp:177
+msgid "Username:"
+msgstr "使用者名稱："
+
+# translation auto-copied from project subscription-manager, version 1.10.7, document keys
+#: WebKitAuthenticationWidget.cpp:169 WebKitAuthenticationWidget.cpp:178
+msgid "Password:"
+msgstr "密碼："
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:279
+msgid "Network Request"
+msgstr "網路請求"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:280
+msgid "The network request for the URI that should be downloaded"
+msgstr "應下載之 URI 的網路請求"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:294
+msgid "Network Response"
+msgstr "網路回應"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:295
+msgid "The network response for the URI that should be downloaded"
+msgstr "應下載之 URI 的網路回應"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:309
+msgid "Destination URI"
+msgstr "目的地 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:310
+msgid "The destination URI where to save the file"
+msgstr "欲儲存檔案的目的地 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:324
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:150
+msgid "Suggested Filename"
+msgstr "建議的檔案名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:325
+msgid "The filename suggested as default when saving"
+msgstr "儲存時建議設為預設值的檔案名稱"
+
+# translation auto-copied from project anaconda, version 19.31.34, document anaconda
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:342
+msgid "Progress"
+msgstr "進度"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:343
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:176
+msgid "Determines the current progress of the download"
+msgstr "判斷目前的下載進度"
+
+# translation auto-copied from project subscription-manager, version 1.10.7, document keys
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:356
+msgid "Status"
+msgstr "狀態"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:357
+msgid "Determines the current status of the download"
+msgstr "判斷目前的下載狀態"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:372
+msgid "Current Size"
+msgstr "目前的大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:373
+msgid "The length of the data already downloaded"
+msgstr "已下載的資料長度"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:387
+msgid "Total Size"
+msgstr "總大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:388
+msgid "The total size of the file"
+msgstr "檔案的總大小"
+
+# translation auto-copied from project libsoup, version 2.42.2, document libsoup
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:144
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:579
+msgid "Operation was cancelled"
+msgstr "操作已被取消"
+
+# translation auto-copied from project policycoreutils, version 2.1.14, document policycoreutils, author tchuang
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:253
+#: ../../../../WebKit/gtk/webkit/webkiticondatabase.cpp:148
+msgid "Path"
+msgstr "路徑"
+
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:254
+#: ../../../../WebKit/gtk/webkit/webkiticondatabase.cpp:149
+msgid "The absolute path of the icon database folder"
+msgstr "圖示資料庫資料夾的絕對路徑"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:128
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:129
+msgid "MIME types filter"
+msgstr "MIME 類型的篩選器"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:129
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:130
+msgid "The filter currently associated with the request"
+msgstr "目前與請求相聯的篩選器"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:144
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:143
+msgid "MIME types"
+msgstr "MIME 類型"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:145
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:144
+msgid "The list of MIME types associated with the request"
+msgstr "與請求相聯的 MIME 類型清單"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:160
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:158
+msgid "Select multiple files"
+msgstr "選擇多個檔案"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:161
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:159
+msgid "Whether the file chooser should allow selecting multiple files"
+msgstr "檔案選擇程式是否應允許選擇多個檔案"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:176
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:172
+msgid "Selected files"
+msgstr "已選擇的檔案"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:177
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:173
+msgid "The list of selected files associated with the request"
+msgstr "與請求相聯、所選擇的檔案之清單"
+
+# translation auto-copied from project gnome-dictionary, version 3.8.0, document gnome-dictionary
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:174
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:152
+msgid "Context"
+msgstr "Context"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:175
+msgid "Flags indicating the kind of target that received the event."
+msgstr "顯示取得事件的目標類型的旗標。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:189
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:166
+msgid "Link URI"
+msgstr "連結 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:190
+msgid "The URI to which the target that received the event points, if any."
+msgstr "目標取得事件點（若存在的話）的 URI。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:203
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:205
+msgid "Image URI"
+msgstr "影像 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:204
+msgid ""
+"The URI of the image that is part of the target that received the event, if "
+"any."
+msgstr "屬於取得了事件（若存在的話）的目標其中一部份的影像檔之 URI。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:217
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:218
+msgid "Media URI"
+msgstr "媒體 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:218
+msgid ""
+"The URI of the media that is part of the target that received the event, if "
+"any."
+msgstr "屬於取得了事件（若存在的話）的目標其中一部份的媒體之 URI。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:239
+msgid "Inner node"
+msgstr "內部節點"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:240
+msgid "The inner DOM node associated with the hit test result."
+msgstr "與點擊測試結果相聯的內部 DOM 節點。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:253
+msgid "X coordinate"
+msgstr "X 座標"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:254
+msgid "The x coordinate of the event relative to the view's window."
+msgstr "與視點視窗相聯之事件的 x 座標。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:267
+msgid "Y coordinate"
+msgstr "Y 座標"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:268
+msgid "The y coordinate of the event relative to the view's window."
+msgstr "與視點視窗相聯之事件的 y 座標。"
+
+# translation auto-copied from project gnome-boxes, version 3.8.3, document gnome-boxes
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:134
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:143
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:464
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:176
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:209
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3264
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:99
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:109
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:734
+msgid "URI"
+msgstr "網址"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:135
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
+msgid "The URI to which the request will be made."
+msgstr "將對其進行請求的 URI。"
+
+# translation auto-copied from project system-config-printer, version 1.4.1, document system-config-printer
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:148
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:157
+msgid "Message"
+msgstr "訊息"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:149
+msgid "The SoupMessage that backs the request."
+msgstr "支援請求的 SoupMessage。"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:144
+msgid "The URI to which the response will be made."
+msgstr "將進行回應的 URI。"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:158
+msgid "The SoupMessage that backs the response."
+msgstr "支援回應的 SoupMessage。"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:171
+msgid "Suggested filename"
+msgstr "建議的檔案名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:172
+msgid "The suggested filename for the response."
+msgstr "建議的反應檔案名稱。"
+
+# translation auto-copied from project firewalld, version 0.3.8, document firewalld
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:150
+msgid "Protocol"
+msgstr "協定"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:151
+msgid "The protocol of the security origin"
+msgstr "安全性原始來源的協定"
+
+# translation auto-copied from project setroubleshoot, version 3.2.11, document setroubleshoot
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:164
+msgid "Host"
+msgstr "主機"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:165
+msgid "The host of the security origin"
+msgstr "安全性原始來源的主機"
+
+# translation auto-copied from project firewalld, version 0.3.8, document firewalld
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:178
+msgid "Port"
+msgstr "連接埠"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:179
+msgid "The port of the security origin"
+msgstr "安全性原始來源的連接埠"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:192
+msgid "Web Database Usage"
+msgstr "網站資料庫使用量"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:193
+msgid "The cumulative size of all web databases in the security origin"
+msgstr "安全性原始來源中，所有網站資料庫的總大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:205
+msgid "Web Database Quota"
+msgstr "網站資料庫配額"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:206
+msgid "The web database quota of the security origin in bytes"
+msgstr "安全性原始來源的網站資料庫配額（單位為位元組）"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:139
+msgid "Device Width"
+msgstr "裝置寬度"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:140
+msgid "The width of the screen."
+msgstr "螢幕寬度。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:161
+msgid "Device Height"
+msgstr "裝置高度"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:162
+msgid "The height of the screen."
+msgstr "螢幕高度。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:185
+msgid "Available Width"
+msgstr "可用寬度"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:186
+msgid "The width of the visible area."
+msgstr "可見面積的寬度。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:209
+msgid "Available Height"
+msgstr "可用高度"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:210
+msgid "The height of the visible area."
+msgstr "可見面積的高度。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:231
+msgid "Desktop Width"
+msgstr "桌面寬度"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:232
+msgid ""
+"The width of viewport that works well for most web pages designed for "
+"desktop."
+msgstr "為桌面環境設計，適用於大部分網頁的檢視區寬度。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:254
+msgid "Device DPI"
+msgstr "裝置 DPI"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:255
+msgid "The number of dots per inch of the screen."
+msgstr "螢幕每寸的畫素。"
+
+# translation auto-copied from project shotwell-core, version 0.14.1, document shotwell-core
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:273
+msgid "Width"
+msgstr "寬度"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:274
+msgid "The width of the viewport."
+msgstr "檢視區的寬度。"
+
+# translation auto-copied from project shotwell-core, version 0.14.1, document shotwell-core
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:292
+msgid "Height"
+msgstr "高度"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:293
+msgid "The height of the viewport."
+msgstr "檢視區的高度。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:311
+msgid "Initial Scale Factor"
+msgstr "初始比例大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:312
+msgid "The initial scale of the viewport."
+msgstr "檢視區的初始比例大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:330
+msgid "Minimum Scale Factor"
+msgstr "最小比例大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:331
+msgid "The minimum scale of the viewport."
+msgstr "檢視區的最小比例。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:349
+msgid "Maximum Scale Factor"
+msgstr "最大比例大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:350
+msgid "The maximum scale of the viewport."
+msgstr "檢視區的最大比例。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:368
+msgid "Device Pixel Ratio"
+msgstr "裝置畫素比例"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:369
+msgid "The device pixel ratio of the viewport."
+msgstr "檢視區的裝置畫素比例。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:388
+msgid "User Scalable"
+msgstr "使用者可縮放性"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:389
+msgid "Determines whether or not the user can zoom in and out."
+msgstr "決定使用者是否能放大和縮小。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:407
+msgid "Valid"
+msgstr "有效"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:408
+msgid "Determines whether or not the attributes are valid, and can be used."
+msgstr "決定屬性是否有效，以及是否可使用。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:176
+msgid "Security Origin"
+msgstr "安全性原始來源"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:177
+msgid "The security origin of the database"
+msgstr "資料庫的安全性原始來源"
+
+# translation auto-copied from project evolution-ews, version 3.8.4, document evolution-ews, author ccheng
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:190
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:450
+msgid "Name"
+msgstr "名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:191
+msgid "The name of the Web Database database"
+msgstr "Web Database 資料庫的名稱"
+
+# translation auto-copied from project evolution, version 3.8.5, document evolution-3.8
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:204
+msgid "Display Name"
+msgstr "顯示名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:205
+msgid "The display name of the Web Storage database"
+msgstr "Web Storage 資料庫的顯示名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:218
+msgid "Expected Size"
+msgstr "預期的大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:219
+msgid "The expected size of the Web Database database"
+msgstr "Web Database 資料庫的預期大小"
+
+# translation auto-copied from project evolution, version 3.8.5, document evolution-3.8
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:231
+msgid "Size"
+msgstr "大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:232
+msgid "The current size of the Web Database database"
+msgstr "Web Database 資料庫的目前大小"
+
+# translation auto-copied from project totem, version 3.8.2, document totem
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:244
+msgid "Filename"
+msgstr "檔案名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:245
+msgid "The absolute filename of the Web Storage database"
+msgstr "Web Storage 資料庫的絕對檔案名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:451
+msgid "The name of the frame"
+msgstr "框架的名稱"
+
+# translation auto-copied from project libvirt, version 1.1.1, document libvirt
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:457
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:144
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3250
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:690
+msgid "Title"
+msgstr "標題"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:458
+msgid "The document title of the frame"
+msgstr "框架的文件標題"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:465
+msgid "The current URI of the contents displayed by the frame"
+msgstr "框架所顯示之內容的目前 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:496
+msgid "Horizontal Scrollbar Policy"
+msgstr "橫向捲軸政策"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:497
+msgid ""
+"Determines the current policy for the horizontal scrollbar of the frame."
+msgstr "決定框架橫向捲軸的目前政策。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:514
+msgid "Vertical Scrollbar Policy"
+msgstr "垂直捲軸政策"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:515
+msgid "Determines the current policy for the vertical scrollbar of the frame."
+msgstr "決定框架垂直捲軸的目前政策。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:145
+msgid "The title of the history item"
+msgstr "歷史項目的標題"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:160
+msgid "Alternate Title"
+msgstr "交替標題"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:161
+msgid "The alternate title of the history item"
+msgstr "歷史項目的其它標題"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:177
+msgid "The URI of the history item"
+msgstr "歷史項目的 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:192
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:163
+msgid "Original URI"
+msgstr "原始的 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:193
+msgid "The original URI of the history item"
+msgstr "歷史項目的原始 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:208
+msgid "Last visited Time"
+msgstr "最後存取時間"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:209
+msgid "The time at which the history item was last visited"
+msgstr "歷史項目最後被存取的時間"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:273
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:146
+msgid "Web View"
+msgstr "網站檢視"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:274
+msgid "The Web View that renders the Web Inspector itself"
+msgstr "呈現網站審閱程式本身的網站畫面"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:287
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:122
+msgid "Inspected URI"
+msgstr "受到審閱的 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:288
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:123
+msgid "The URI that is currently being inspected"
+msgstr "目前正被審閱的 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:304
+msgid "Enable JavaScript profiling"
+msgstr "啟用 JavaScript 分析"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:305
+msgid "Profile the executed JavaScript."
+msgstr "分析已執行的 JavaScript。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:320
+msgid "Enable Timeline profiling"
+msgstr "啟用時間軸分析"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:321
+msgid "Profile the WebCore instrumentation."
+msgstr "分析 WebCore 檢測。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:148
+msgid "Reason"
+msgstr "理由"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:149
+msgid "The reason why this navigation is occurring"
+msgstr "此導覽發生的原因"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:164
+msgid "The URI that was requested as the target for the navigation"
+msgstr "被請求作為導覽目標的 URI"
+
+# translation auto-copied from project control-center, version 3.8.6, document gnome-control-center-2.0
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:178
+msgid "Button"
+msgstr "按鈕"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:179
+msgid "The button used to click"
+msgstr "用來點選的按鈕"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:194
+msgid "Modifier state"
+msgstr "修改程式狀態"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:195
+msgid "A bitmask representing the state of the modifier keys"
+msgstr "代表修改程式按鍵狀態的位元遮罩"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:210
+msgid "Target frame"
+msgstr "目標框架"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:211
+msgid "The target frame for the navigation"
+msgstr "導覽的目標框架"
+
+# translation auto-copied from project policycoreutils, version 2.1.14, document policycoreutils, author ccheng
+#: ../../../../WebKit/gtk/webkit/webkitwebplugin.cpp:114
+msgid "Enabled"
+msgstr "已啟用"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebplugin.cpp:115
+msgid "Whether the plugin is enabled"
+msgstr "外掛是否已啟用"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:210
+msgid "The URI of the resource"
+msgstr "資源的 URI"
+
+# translation auto-copied from project nautilus, version 3.8.2, document nautilus
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:224
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:137
+msgid "MIME Type"
+msgstr "MIME 類型"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:225
+msgid "The MIME type of the resource"
+msgstr "資源的 MIME 類型"
+
+# translation auto-copied from project evince, version 3.8.3, document evince
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:239
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3399
+msgid "Encoding"
+msgstr "編碼"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:240
+msgid "The text encoding name of the resource"
+msgstr "資源的文字編碼名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:255
+msgid "Frame Name"
+msgstr "框架名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:256
+msgid "The frame name of the resource"
+msgstr "資源的框架名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:150
+msgid "Default Encoding"
+msgstr "預設編碼"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:151
+msgid "The default encoding used to display text."
+msgstr "用來顯示文字的預設編碼。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:159
+msgid "Cursive Font Family"
+msgstr "草稿字型家族"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:160
+msgid "The default Cursive font family used to display text."
+msgstr "用來顯示文字的預設草稿（cursive）字型家族。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:168
+msgid "Default Font Family"
+msgstr "預設字型家族"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:169
+msgid "The default font family used to display text."
+msgstr "用來顯示文字的預設字型家族。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:177
+msgid "Fantasy Font Family"
+msgstr "幻想字型家族"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:178
+msgid "The default Fantasy font family used to display text."
+msgstr "用來顯示字型的預設幻想字型家族。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:186
+msgid "Monospace Font Family"
+msgstr "等寬字型家族"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:187
+msgid "The default font family used to display monospace text."
+msgstr "用來顯示等寬文字的預設字型家族。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:195
+msgid "Sans Serif Font Family"
+msgstr "新細明體字型家族"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:196
+msgid "The default Sans Serif font family used to display text."
+msgstr "用來顯示文字的預設新細明體字型家族。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:204
+msgid "Serif Font Family"
+msgstr "細明體字型家族"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:205
+msgid "The default Serif font family used to display text."
+msgstr "用來顯示文字的預設細明體字型家族。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:213
+msgid "Default Font Size"
+msgstr "預設字型大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:214
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:769
+msgid "The default font size used to display text."
+msgstr "用來顯示文字的預設字型大小。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:222
+msgid "Default Monospace Font Size"
+msgstr "預設等寬字型大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:223
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:783
+msgid "The default font size used to display monospace text."
+msgstr "用來顯示等寬文字的預設字型大小。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:231
+msgid "Minimum Font Size"
+msgstr "最小字型大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:232
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:798
+msgid "The minimum font size used to display text."
+msgstr "用來顯示文字的最小字型大小。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:240
+msgid "Minimum Logical Font Size"
+msgstr "最小邏輯字型大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:241
+msgid "The minimum logical font size used to display text."
+msgstr "用來顯示文字的最小邏輯字型大小。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:260
+msgid "Enforce 96 DPI"
+msgstr "強制 96 DPI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:261
+msgid "Enforce a resolution of 96 DPI"
+msgstr "強制使用 96 DPI 的解析度"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:269
+msgid "Auto Load Images"
+msgstr "自動影像載入"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:270
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:510
+msgid "Load images automatically."
+msgstr "自動載入影像。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:278
+msgid "Auto Shrink Images"
+msgstr "自動影像縮小"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:279
+msgid "Automatically shrink standalone images to fit."
+msgstr "將獨立影像自動縮小以符合螢幕。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:287
+msgid "Respect Image Orientation"
+msgstr "採用影像列印方向"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:288
+msgid "Whether WebKit should respect image orientation."
+msgstr "WebKit 是否應採用影像的列印方向。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:296
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:922
+msgid "Print Backgrounds"
+msgstr "列印背景"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:297
+msgid "Whether background images should be printed."
+msgstr "是否應印出背景影像。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:305
+msgid "Enable Scripts"
+msgstr "啟用 Script"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:306
+msgid "Enable embedded scripting languages."
+msgstr "啟用內嵌的 script 語言。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:314
+msgid "Enable Plugins"
+msgstr "啟用外掛程式"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:315
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:620
+msgid "Enable embedded plugin objects."
+msgstr "啟用內嵌的外掛程式物件。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:323
+msgid "Resizable Text Areas"
+msgstr "可改變大小的文字區域"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:324
+msgid "Whether text areas are resizable."
+msgstr "文字區域是否能改變大小。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:331
+msgid "User Stylesheet URI"
+msgstr "使用者樣式表 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:332
+msgid "The URI of a stylesheet that is applied to every page."
+msgstr "套用至每個網頁的樣式表之 URI。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:347
+msgid "Zoom Stepping Value"
+msgstr "放大步進值"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:348
+msgid "The value by which the zoom level is changed when zooming in or out."
+msgstr "進行縮放時的縮放改變值。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:366
+msgid "Enable Developer Extras"
+msgstr "啟用開發人員進階選項"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:367
+msgid "Enables special extensions that help developers"
+msgstr "啟用能協助開發人員的特殊延伸選項"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:387
+msgid "Enable Private Browsing"
+msgstr "啟用私密瀏覽"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:388
+msgid "Enables private browsing mode"
+msgstr "啟用私密瀏覽模式"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:403
+msgid "Enable Spell Checking"
+msgstr "啟用拼字檢查"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:404
+msgid "Enables spell checking while typing"
+msgstr "啟用輸入文字時的拼字檢查"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:427
+msgid "Languages to use for spell checking"
+msgstr "用來進行拼字檢查的語言"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:428
+msgid "Comma separated list of languages to use for spell checking"
+msgstr "用來進行拼字檢查的語言清單，以逗號區隔開"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:442
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:893
+msgid "Enable Caret Browsing"
+msgstr "啟用鍵盤瀏覽"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:443
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:894
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr "是否要啟用存取性增強的鍵盤導覽"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:458
+msgid "Enable HTML5 Database"
+msgstr "啟用 HTML5 資料庫"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:459
+msgid "Whether to enable HTML5 database support"
+msgstr "是否要啟用 HTML5 資料庫的支援"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:474
+msgid "Enable HTML5 Local Storage"
+msgstr "啟用 HTML5 本機儲存裝置"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:475
+msgid "Whether to enable HTML5 Local Storage support"
+msgstr "是否要啟用 HTML5 本機儲存裝置上的支援"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:490
+msgid "Local Storage Database Path"
+msgstr "本機儲存裝置資料庫路徑"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:491
+msgid "The path to where HTML5 Local Storage databases are stored."
+msgstr "HTML5 存放本機儲存裝置資料庫的路徑。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:505
+msgid "Enable XSS Auditor"
+msgstr "啟用 XSS 稽核程式"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:506
+msgid "Whether to enable the XSS auditor"
+msgstr "是否要啟用 XSS 稽核程式"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:524
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1199
+msgid "Enable Spatial Navigation"
+msgstr "啟用空間瀏覽"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:525
+msgid "Whether to enable Spatial Navigation"
+msgstr "是否要啟用空間瀏覽"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:543
+msgid "Enable Frame Flattening"
+msgstr "使用框架簡維"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:544
+msgid "Whether to enable Frame Flattening"
+msgstr "是否要啟用框架簡維"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:561
+msgid "User Agent"
+msgstr "使用者代理程式"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:562
+msgid "The User-Agent string used by WebKitGtk"
+msgstr "WebKitGtk 所使用的使用者代理程式字串"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:577
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:646
+msgid "JavaScript can open windows automatically"
+msgstr "JavaScript 可自動開啟視窗"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:578
+msgid "Whether JavaScript can open windows automatically"
+msgstr "JavaScript 是否能自動開啟視窗"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:592
+msgid "JavaScript can access Clipboard"
+msgstr "JavaScript 可存取剪貼簿"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:593
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1006
+msgid "Whether JavaScript can access Clipboard"
+msgstr "JavaScript 是否能存取剪貼簿"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:609
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:541
+msgid "Enable offline web application cache"
+msgstr "啟用離線網站應用程式快取"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:610
+msgid "Whether to enable offline web application cache"
+msgstr "是否要啟用離線網站應用程式快取"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:635
+msgid "Editing behavior"
+msgstr "編輯特性"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:636
+msgid "The behavior mode to use in editing mode"
+msgstr "使用於編輯模式中的特性模式"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:652
+msgid "Enable universal access from file URIs"
+msgstr "啟用透過檔案 URI 進行統一存取"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:653
+msgid "Whether to allow universal access from file URIs"
+msgstr "是否要允許透過檔案 URI 來進行統一存取"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:668
+msgid "Enable DOM paste"
+msgstr "啟用 DOM 貼上"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:669
+msgid "Whether to enable DOM paste"
+msgstr "是否啟用 DOM 貼上"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:687
+msgid "Tab key cycles through elements"
+msgstr "Tab 鍵循環"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:688
+msgid "Whether the tab key cycles through elements on the page."
+msgstr "Tab 鍵是否能在網頁上的瀏覽要素之間進行移動。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:710
+msgid "Enable Default Context Menu"
+msgstr "啟用預設內容選單"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:711
+msgid ""
+"Enables the handling of right-clicks for the creation of the default context "
+"menu"
+msgstr "啟用右鍵處理，以建立預設的內容選單"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:731
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1072
+msgid "Enable Site Specific Quirks"
+msgstr "啟用網站特屬的 Quirks"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:732
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1073
+msgid "Enables the site-specific compatibility workarounds"
+msgstr "啟用網站特屬的相容性因應措施"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:754
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1093
+msgid "Enable page cache"
+msgstr "啟用網頁快取"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:755
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1094
+msgid "Whether the page cache should be used"
+msgstr "是否應使用網頁快取"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:775
+msgid "Auto Resize Window"
+msgstr "自動調整視窗大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:776
+msgid "Automatically resize the toplevel window when a page requests it"
+msgstr "當網頁請求視窗時，自動調整頂層視窗的大小"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:808
+msgid "Enable Java Applet"
+msgstr "啟用 Java 小程式"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:809
+msgid "Whether Java Applet support through <applet> should be enabled"
+msgstr "Java 小程式是否能透過 <applet> 支援"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:823
+msgid "Enable Hyperlink Auditing"
+msgstr "啟用超連結稽核"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:824
+msgid "Whether <a ping> should be able to send pings"
+msgstr "<a ping> 是否能傳送 ping"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:842
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:909
+msgid "Enable Fullscreen"
+msgstr "啟用全螢幕"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:843
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:910
+msgid "Whether to enable the Javascript Fullscreen API"
+msgstr "是否啟用 Javascriipt Fullscreen API"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:859
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:956
+msgid "Enable WebGL"
+msgstr "啟用 WebGL"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:860
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:957
+msgid "Whether WebGL content should be rendered"
+msgstr "是否應呈現 WebGL 的內容"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:876
+msgid "Enable accelerated compositing"
+msgstr "啟用加速結合"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:877
+msgid "Whether accelerated compositing should be enabled"
+msgstr "是否應啟用加速結合"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:895
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:941
+msgid "Enable WebAudio"
+msgstr "啟用 WebAudio"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:896
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:942
+msgid "Whether WebAudio content should be handled"
+msgstr "是否應處理 WebAudio 的內容"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:912
+msgid "WebKit prefetches domain names"
+msgstr "WebKit 預先提取區域名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:913
+msgid "Whether WebKit prefetches domain names"
+msgstr "WebKit 是否會預先提取區域名稱"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:931
+msgid "Enable Media Stream"
+msgstr "啟用媒體串流"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:932
+msgid "Whether Media Stream should be enabled"
+msgstr "媒體串流是否應啟用"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:947
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1126
+msgid "Enable smooth scrolling"
+msgstr "啟用平滑捲動"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:948
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1127
+msgid "Whether to enable smooth scrolling"
+msgstr "是否要啟用平滑捲動"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:966
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1022
+msgid "Media playback requires user gesture"
+msgstr "媒體播放需經過使用者手動進行"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:967
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1023
+msgid "Whether media playback requires user gesture"
+msgstr "媒體播放是否需要經過使用者手動進行"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:983
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1037
+msgid "Media playback allows inline"
+msgstr "媒體播放允許內嵌"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:984
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1038
+msgid "Whether media playback allows inline"
+msgstr "媒體播放是否允許內嵌"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:999
+msgid "Enable display of insecure content"
+msgstr "啟用顯示不安全的內容"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1000
+msgid "Whether non-HTTPS resources can display on HTTPS pages."
+msgstr "是否能在 HTTPS 網頁上顯示非 HTTPS 的資源"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1015
+msgid "Enable running of insecure content"
+msgstr "啟用執行不安全的內容"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1016
+msgid "Whether non-HTTPS resources can run on HTTPS pages."
+msgstr "是否能在 HTTPS 網頁上執行非 HTTPS 的資源。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1035
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1219
+msgid "Enable MediaSource"
+msgstr "啟用 MediaSource"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1036
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1220
+msgid "Whether MediaSource should be enabled."
+msgstr "是否要啟用 MediaSource 支援。"
+
+# translation auto-copied from project brasero, version 3.8.0, document brasero
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1330
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:473
+msgid "Select Files"
+msgstr "選擇檔案"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1330
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:473
+msgid "Select File"
+msgstr "選擇檔案"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3251
+msgid "Returns the @web_view's document title"
+msgstr "回傳 @web_vier 的文件標題"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3265
+msgid "Returns the current URI of the contents displayed by the @web_view"
+msgstr "回傳 @web_view 所顯示之內容的目前 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3278
+msgid "Copy target list"
+msgstr "複製目標清單"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3279
+msgid "The list of targets this web view supports for clipboard copying"
+msgstr "此網站檢視支援進行剪貼簿複製的目標清單"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3292
+msgid "Paste target list"
+msgstr "貼上目標清單"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3293
+msgid "The list of targets this web view supports for clipboard pasting"
+msgstr "此網站檢視支援進行剪貼簿貼上的目標清單"
+
+# translation auto-copied from project control-center, version 3.8.6, document gnome-control-center-2.0
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3299
+msgid "Settings"
+msgstr "設定值"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3300
+msgid "An associated WebKitWebSettings instance"
+msgstr "相聯的 WebKitWebSettings instance"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3313
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:82
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:147
+msgid "Web Inspector"
+msgstr "Web 審閱程式"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3314
+msgid "The associated WebKitWebInspector instance"
+msgstr "相聯的 WebKitWebInspector instance"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3327
+msgid "Viewport Attributes"
+msgstr "Viewport 屬性"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3328
+msgid "The associated WebKitViewportAttributes instance"
+msgstr "相聯的 WebKitViewportAttributes instance"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3348
+msgid "Editable"
+msgstr "可編輯"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3349
+msgid "Whether content can be modified by the user"
+msgstr "使用者是否能修改內容"
+
+# translation auto-copied from project evince, version 3.8.3, document evince
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3355
+msgid "Transparent"
+msgstr "透明"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3356
+msgid "Whether content has a transparent background"
+msgstr "內容是否擁有透明背景"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3369
+msgid "Zoom level"
+msgstr "縮放層級"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3370
+msgid "The level of zoom of the content"
+msgstr "內容的縮放層級"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3385
+msgid "Full content zoom"
+msgstr "完整的內容縮放"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3386
+msgid "Whether the full content is scaled when zooming"
+msgstr "完整的內容縮放時是否比例正確"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3400
+msgid "The default encoding of the web view"
+msgstr "網站畫面的預設編碼"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3413
+msgid "Custom Encoding"
+msgstr "自訂編碼"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3414
+msgid "The custom encoding of the web view"
+msgstr "網站的自訂編碼"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3466
+msgid "Icon URI"
+msgstr "圖示 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3467
+msgid "The URI for the favicon for the #WebKitWebView."
+msgstr "#WebKitWebView 的 favicon URI。"
+
+#: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:101
+#, c-format
+msgid ""
+"Cannot determine destination URI for download with suggested filename %s"
+msgstr "提供的檔案名稱 %s 沒有可下載的目的地 URI"
+
+# translation auto-copied from project firewalld, version 0.3.8, document firewalld
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:144
+msgid "Destination"
+msgstr "目的地"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:145
+msgid "The local URI to where the download will be saved"
+msgstr "下載的項目將會被存放的本機 URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:157
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:122
+msgid "Response"
+msgstr "反應"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:158
+msgid "The response of the download"
+msgstr "下載項目的反應"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:175
+msgid "Estimated Progress"
+msgstr "預測的進度"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:142
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:322
+#, c-format
+msgid "Unknown favicon for page %s"
+msgstr "網站 %s 的 favicon 不明"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:148
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:278
+#, c-format
+msgid "Page %s does not have a favicon"
+msgstr "網站 %s 沒有 favicon"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:272
+msgid "Favicons database not initialized yet"
+msgstr "Favicon 資料庫尚未初始化"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:177
+msgid "Search text"
+msgstr "搜尋文字"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:178
+msgid "Text to search for in the view"
+msgstr "畫面上欲搜尋的文字"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:190
+msgid "Search Options"
+msgstr "搜尋選項"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:191
+msgid "Search options to be used in the search operation"
+msgstr "在進行搜尋作業時，欲使用的搜尋選項"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:204
+msgid "Maximum matches count"
+msgstr "最大符合計數"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:205
+msgid "The maximum number of matches in a given text to report"
+msgstr "特定文字中，可回報的最大相符數量"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:217
+msgid "WebView"
+msgstr "WebView"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:218
+msgid "The WebView associated with this find controller"
+msgstr "與此控制器相聯的 WebView"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:153
+msgid "Flags with the context of the WebKitHitTestResult"
+msgstr "含有 WebKitHitTestResult 內容的旗標"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
+msgid "The link URI"
+msgstr "連結 URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
+msgid "Link Title"
+msgstr "連結標題"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:180
+msgid "The link title"
+msgstr "連結的標題"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:192
+msgid "Link Label"
+msgstr "連結標籤"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
+msgid "The link label"
+msgstr "連結的標籤"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:206
+msgid "The image URI"
+msgstr "影像 URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:219
+msgid "The media URI"
+msgstr "媒體 URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:105
+msgid "Navigation type"
+msgstr "瀏覽類型"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:106
+msgid "The type of navigation triggering this decision"
+msgstr "啟用此決定的瀏覽類型"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:123
+msgid "Mouse button"
+msgstr "滑鼠按鍵"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:124
+msgid "The mouse button used if this decision was triggered by a mouse event"
+msgstr "所使用的滑鼠按鈕（若此決定是由滑鼠事件所啟用的）"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:140
+msgid "Mouse event modifiers"
+msgstr "滑鼠事件修改程式"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:141
+msgid "The modifiers active if this decision was triggered by a mouse event"
+msgstr "若此決定是由滑鼠事件所啟用的話，修改程式便會啟用"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:154
+msgid "Navigation URI request"
+msgstr "瀏覽 URI 請求"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:155
+msgid "The URI request that is associated with this navigation"
+msgstr "與此瀏覽相聯的 URI 請求"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:170
+msgid "Frame name"
+msgstr "框架名稱"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:171
+msgid "The name of the new frame this navigation action targets"
+msgstr "此瀏覽動作針對的新框架名稱"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:147
+msgid "The web view that will be printed"
+msgstr "將被印出的 web 畫面"
+
+# translation auto-copied from project system-config-printer, version 1.4.1, document system-config-printer
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:159
+msgid "Print Settings"
+msgstr "列印設定值"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:160
+msgid "The initial print settings for the print operation"
+msgstr "列印作業的初始列印設定"
+
+# translation auto-copied from project gtk3, version 3.8.2, document gtk30
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:171
+msgid "Page Setup"
+msgstr "頁面設定"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:172
+msgid "The initial page setup for the print operation"
+msgstr "列印作業的初始頁面設定"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:92
+msgid "Response URI request"
+msgstr "反應 URI 請求"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:93
+msgid "The URI request that is associated with this policy decision"
+msgstr "與此政策決定相聯的 URI 請求"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:106
+msgid "URI response"
+msgstr "URI 反應"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:107
+msgid "The URI response that is associated with this policy decision"
+msgstr "與此政策決定相聯的 URI 反應"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:494
+msgid "Enable JavaScript"
+msgstr "啟用 JavaScript"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:495
+msgid "Enable JavaScript."
+msgstr "啟用 JavaScript。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:509
+msgid "Auto load images"
+msgstr "自動載入影像"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:523
+msgid "Load icons ignoring image load setting"
+msgstr "載入圖示並忽略影像載入設定"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:524
+msgid "Whether to load site icons ignoring image load setting."
+msgstr "是否要載入網站圖示並忽略影像載入設定。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:542
+msgid "Whether to enable offline web application cache."
+msgstr "是否要啟用離線網站應用程式快取。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:558
+msgid "Enable HTML5 local storage"
+msgstr "啟用 HTML5 本機儲存裝置"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:559
+msgid "Whether to enable HTML5 Local Storage support."
+msgstr "是否要啟用 HTML5 本機儲存裝置上的支援。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:576
+msgid "Enable HTML5 database"
+msgstr "啟用 HTML5 資料庫"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:577
+msgid "Whether to enable HTML5 database support."
+msgstr "是否要啟用 HTML5 資料庫上的支援。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:590
+msgid "Enable XSS auditor"
+msgstr "啟用 XSS 稽核程式"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:591
+msgid "Whether to enable the XSS auditor."
+msgstr "是否要啟用 XSS 稽核程式。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:606
+msgid "Enable frame flattening"
+msgstr "啟用框架簡維"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:607
+msgid "Whether to enable frame flattening."
+msgstr "是否要啟用框架簡維。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:619
+msgid "Enable plugins"
+msgstr "啟用外掛程式"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:632
+msgid "Enable Java"
+msgstr "啟用 Java"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:633
+msgid "Whether Java support should be enabled."
+msgstr "是否要啟用 Java 支援。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:647
+msgid "Whether JavaScript can open windows automatically."
+msgstr "JavaScript 是否能自動開啟視窗。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:662
+msgid "Enable hyperlink auditing"
+msgstr "啟用超連結稽核"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:663
+msgid "Whether <a ping> should be able to send pings."
+msgstr "<a ping> 是否能傳送 ping。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:675
+msgid "Default font family"
+msgstr "預設字型家族"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:676
+msgid ""
+"The font family to use as the default for content that does not specify a "
+"font."
+msgstr "未指定字型之內容所使用的預設字型家族。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:689
+msgid "Monospace font family"
+msgstr "等寬字型家族"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:690
+msgid "The font family used as the default for content using monospace font."
+msgstr "使用等寬字型之內容所使用的預設字型家族。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:702
+msgid "Serif font family"
+msgstr "細明體字型家族"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:703
+msgid "The font family used as the default for content using serif font."
+msgstr "使用細明體字型之內容所使用的預設字型家族。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:715
+msgid "Sans-serif font family"
+msgstr "新細明體字型家族"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:716
+msgid "The font family used as the default for content using sans-serif font."
+msgstr "使用新細明體字型之內容所使用的預設字型家族。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:728
+msgid "Cursive font family"
+msgstr "草稿字型家族"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:729
+msgid "The font family used as the default for content using cursive font."
+msgstr "使用草稿字型之內容所使用的預設字型家族。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:741
+msgid "Fantasy font family"
+msgstr "幻想字型家族"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:742
+msgid "The font family used as the default for content using fantasy font."
+msgstr "使用幻想字型之內容所使用的預設字型家族。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:754
+msgid "Pictograph font family"
+msgstr "象形文字字型家族"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:755
+msgid "The font family used as the default for content using pictograph font."
+msgstr "使用象形文字字型之內容所使用的預設字型家族。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:768
+msgid "Default font size"
+msgstr "預設字型大小"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:782
+msgid "Default monospace font size"
+msgstr "預設等寬字型大小"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:797
+msgid "Minimum font size"
+msgstr "最小字型大小"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:810
+msgid "Default charset"
+msgstr "預設字元集"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:811
+msgid ""
+"The default text charset used when interpreting content with unspecified "
+"charset."
+msgstr "當轉譯未指定字元集的內容時，所使用的預設文字字元集。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:824
+msgid "Enable private browsing"
+msgstr "啟用私密瀏覽"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:825
+msgid "Whether to enable private browsing"
+msgstr "是否要啟用私密瀏覽"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:837
+msgid "Enable developer extras"
+msgstr "啟用開發人員進階選項"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:838
+msgid "Whether to enable developer extras"
+msgstr "是否要啟用開發人員的進階選項"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:850
+msgid "Enable resizable text areas"
+msgstr "啟用可改變大小的文字區域"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:851
+msgid "Whether to enable resizable text areas"
+msgstr "是否要啟用可改變大小的文字區域"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:866
+msgid "Enable tabs to links"
+msgstr "啟用 tab 鍵連結切換"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:867
+msgid "Whether to enable tabs to links"
+msgstr "是否啟用 tab 鍵以切換連結"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:880
+msgid "Enable DNS prefetching"
+msgstr "啟用 DNS 預提取"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:881
+msgid "Whether to enable DNS prefetching"
+msgstr "是否啟用 DNS 預提取"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:923
+msgid "Whether background images should be drawn during printing"
+msgstr "列印時背景影像是否應被繪入"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:974
+msgid "Allow modal dialogs"
+msgstr "允許強制回應對話方塊"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:975
+msgid "Whether it is possible to create modal dialogs"
+msgstr "是否可能建立強制回應對話方塊"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:990
+msgid "Zoom Text Only"
+msgstr "僅縮放文字"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:991
+msgid "Whether zoom level of web view changes only the text size"
+msgstr "網站畫面的縮放，是否能夠只改變文字的大小"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1005
+msgid "JavaScript can access clipboard"
+msgstr "JavaScript 可存取剪貼簿"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1052
+msgid "Draw compositing indicators"
+msgstr "繪入結合指標"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1053
+msgid "Whether to draw compositing borders and repaint counters"
+msgstr "是否繪入結合的邊框並重繪計數器"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1113
+msgid "User agent string"
+msgstr "使用者代理程式字串"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1114
+msgid "The user agent string"
+msgstr "使用者代理程式字串"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1144
+msgid "Enable accelerated 2D canvas"
+msgstr "啟用加速 2D 畫布"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1145
+msgid "Whether to enable accelerated 2D canvas"
+msgstr "是否啟用加速 2D 畫布"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1160
+msgid "Write console messages on stdout"
+msgstr "在 stdout 上寫入主控台訊息"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1161
+msgid "Whether to write console messages on stdout"
+msgstr "是否在 stdout 上寫入主控台訊息"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1179
+msgid "Enable MediaStream"
+msgstr "啟用 MediaStream"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1180
+msgid "Whether MediaStream content should be handled"
+msgstr "是否要處理 MediaStream 內容"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1200
+msgid "Whether to enable Spatial Navigation support."
+msgstr "是否要啟用空間瀏覽支援。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:100
+msgid "The URI for which the response was made."
+msgstr "進行回應的 URI。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:111
+msgid "Status Code"
+msgstr "狀態代碼"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:112
+msgid "The status code of the response as returned by the server."
+msgstr "伺服器所回傳的反應狀態碼。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:124
+msgid "Content Length"
+msgstr "內容長度"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:125
+msgid "The expected content length of the response."
+msgstr "反應的預期內容長度。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:138
+msgid "The MIME type of the response"
+msgstr "反應的 MIME 類型"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:151
+msgid "The suggested filename for the URI response"
+msgstr "URI 反應的建議檔案名稱"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:134
+msgid "Attached Height"
+msgstr "連接的高度"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:135
+msgid "The height that the inspector view should have when it is attached"
+msgstr "審閱畫面連上時應有的高度"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
+msgid "The current active URI of the resource"
+msgstr "資源目前啟用的 URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
+msgid "The response of the resource"
+msgstr "資源的反應"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:643
+msgid "Web Context"
+msgstr "網站 Context"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:644
+msgid "The web context for the view"
+msgstr "畫面的網站 context"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:661
+msgid "Related WebView"
+msgstr "相關的 WebView"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:662
+msgid ""
+"The related WebKitWebView used when creating the view to share the same web "
+"process"
+msgstr "建立檢視來共享同樣網頁程序時，使用的相關 WebKitWebView"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:676
+msgid "WebView Group"
+msgstr "WebView 群組"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:677
+msgid "The WebKitWebViewGroup of the view"
+msgstr "畫面的 WebKitWebViewGroup"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:691
+msgid "Main frame document title"
+msgstr "主要框架文件標題"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:709
+msgid "Estimated Load Progress"
+msgstr "預估的負載進度"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:710
+msgid "An estimate of the percent completion for a document load"
+msgstr "文件負載的完成度百分比估計"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:722
+msgid "Favicon"
+msgstr "Favicon"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:723
+msgid "The favicon associated to the view, if any"
+msgstr "與畫面相聯的 favicon（若存在的話）"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:735
+msgid "The current active URI of the view"
+msgstr "畫面目前啟用的 URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:749
+msgid "The zoom level of the view content"
+msgstr "畫面內容的縮放層級"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:767
+msgid "Whether the view is loading a page"
+msgstr "畫面是否正在載入網頁"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:781
+msgid "The view mode to display the web view contents"
+msgstr "顯示網站畫面內容的畫面模式"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2625
+msgid "An exception was raised in JavaScript"
+msgstr "JavaScript 中發生了例外狀況"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3110
+msgid "There was an error creating the snapshot"
+msgstr "建立 snapshot 時發生了錯誤"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:209
+msgid "Geometry"
+msgstr "幾何"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
+msgid "The size and position of the window on the screen."
+msgstr "視窗在螢幕上的大小與位置。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:222
+msgid "Toolbar Visible"
+msgstr "顯示工具列"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:223
+msgid "Whether the toolbar should be visible for the window."
+msgstr "視窗的工具列是否應顯示。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:235
+msgid "Statusbar Visible"
+msgstr "顯示狀態列"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:236
+msgid "Whether the statusbar should be visible for the window."
+msgstr "視窗的狀態列是否應顯示。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:248
+msgid "Scrollbars Visible"
+msgstr "顯示捲軸"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:249
+msgid "Whether the scrollbars should be visible for the window."
+msgstr "視窗的捲軸是否應顯示。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:261
+msgid "Menubar Visible"
+msgstr "顯示選單列"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:262
+msgid "Whether the menubar should be visible for the window."
+msgstr "視窗的選單列是否應顯示。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:274
+msgid "Locationbar Visible"
+msgstr "顯示位置列"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:275
+msgid "Whether the locationbar should be visible for the window."
+msgstr "視窗的位置列是否應顯示。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:286
+msgid "Resizable"
+msgstr "可改變大小"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
+msgid "Whether the window can be resized."
+msgstr "視窗大小是否能改變。"
+
+# translation auto-copied from project totem, version 3.8.2, document totem
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:299
+msgid "Fullscreen"
+msgstr "全螢幕"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
+msgid "Whether window will be displayed fullscreen."
+msgstr "視窗是否將以全螢幕模式顯示。"
