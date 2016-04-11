@@ -156,7 +156,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     UNUSED_PARAM(renderStyle);
 
 #if PLATFORM(IOS)
-    m_contextObj = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    EAGLRenderingAPI api = m_attrs.useGLES3 ? kEAGLRenderingAPIOpenGLES3 : kEAGLRenderingAPIOpenGLES2;
+    m_contextObj = [[EAGLContext alloc] initWithAPI:api];
     makeContextCurrent();
 #else
     Vector<CGLPixelFormatAttribute> attribs;

@@ -1,3 +1,21 @@
+2016-04-11  Antoine Quint  <graouts@apple.com>
+
+        [WebGL2] Use Open GL ES 3.0 to back WebGL2 contexts
+        https://bugs.webkit.org/show_bug.cgi?id=141178
+
+        Reviewed by Dean Jackson.
+
+        We add a new `useGLES3` attribute when creating a GraphicsContext3D in the event that the
+        context type is "webgl2". This attribute is then read by the GraphicsContext3D constructor
+        to request an Open GL ES 3.0 backend when creating the EAGLContext on iOS.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::Attributes::Attributes):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2016-04-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         fast/loader/opaque-base-url.html crashing during mac and ios debug tests

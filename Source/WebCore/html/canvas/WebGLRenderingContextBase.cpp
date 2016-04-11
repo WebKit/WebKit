@@ -400,6 +400,11 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     if (page)
         attributes.devicePixelRatio = page->deviceScaleFactor();
 
+#if ENABLE(WEBGL2)
+    if (type == "webgl2")
+        attributes.useGLES3 = true;
+#endif
+
     if (isPendingPolicyResolution) {
         LOG(WebGL, "Create a WebGL context that looks real, but will require a policy resolution if used.");
         std::unique_ptr<WebGLRenderingContextBase> renderingContext = nullptr;
