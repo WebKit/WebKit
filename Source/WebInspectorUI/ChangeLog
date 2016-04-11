@@ -1,5 +1,21 @@
 2016-04-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Unstyled nodes in ObjectTree previews look poor
+        https://bugs.webkit.org/show_bug.cgi?id=156475
+        <rdar://problem/25667351>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._appendPreview):
+        Treat nodes as simple values.
+
+        (WebInspector.ObjectPreviewView.prototype._initTitleElement):
+        (WebInspector.ObjectPreviewView.prototype._appendValuePreview):
+        Format nodes nicely, and treat them as lossy since they have properties.
+
+2016-04-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: HeapSnapshot instance property path popover should include a descriptive header
         https://bugs.webkit.org/show_bug.cgi?id=156431
         <rdar://problem/25633594>
