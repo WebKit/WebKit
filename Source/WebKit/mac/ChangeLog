@@ -1,3 +1,13 @@
+2016-04-09  Gavin Barraclough  <barraclough@apple.com>
+
+        WebKit should adopt journal_mode=wal for all SQLite databases.
+        https://bugs.webkit.org/show_bug.cgi?id=133496
+
+        Reviewed by Darin Adler.
+
+        * Storage/WebDatabaseManagerPrivate.h:
+            - renamed deleteAllDatabases -> deleteAllDatabasesImmediately.
+
 2016-04-05  Oliver Hunt  <oliver@apple.com>
 
         Remove compile time define for SEPARATED_HEAP

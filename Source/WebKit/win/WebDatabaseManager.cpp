@@ -285,7 +285,7 @@ HRESULT WebDatabaseManager::deleteAllDatabases()
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    DatabaseManager::singleton().deleteAllDatabases();
+    DatabaseManager::singleton().deleteAllDatabasesImmediately();
 
     return S_OK;
 }

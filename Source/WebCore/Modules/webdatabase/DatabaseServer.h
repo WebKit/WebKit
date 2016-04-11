@@ -58,7 +58,7 @@ public:
 
     void setQuota(SecurityOrigin*, unsigned long long) override;
 
-    void deleteAllDatabases() override;
+    void deleteAllDatabasesImmediately() override;
     bool deleteOrigin(SecurityOrigin*) override;
     bool deleteDatabase(SecurityOrigin*, const String& name) override;
 

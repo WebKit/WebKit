@@ -776,16 +776,13 @@ void DatabaseTracker::setQuota(SecurityOrigin* origin, unsigned long long quota)
             LOG_ERROR("Failed to set quota %llu in tracker database for origin %s", quota, origin->databaseIdentifier().ascii().data());
     }
 
-    if (m_client)
+    if (m_client) {
 #if PLATFORM(IOS)
-    {
         if (insertedNewOrigin)
             m_client->dispatchDidAddNewOrigin(origin);
 #endif
         m_client->dispatchDidModifyOrigin(origin);
-#if PLATFORM(IOS)
     }
-#endif
 }
 
 bool DatabaseTracker::addDatabase(SecurityOrigin* origin, const String& name, const String& path)
@@ -818,13 +815,17 @@ bool DatabaseTracker::addDatabase(SecurityOrigin* origin, const String& name, co
     return true;
 }
 
-void DatabaseTracker::deleteAllDatabases()
+void DatabaseTracker::deleteAllDatabasesImmediately()
 {
     Vector<RefPtr<SecurityOrigin>> originsCopy;
     origins(originsCopy);
 
+    // This method is only intended for use by DumpRenderTree / WebKitTestRunner.
+    // Actually deleting the databases is necessary to reset to a known state before running
+    // each test case, but may be unsafe in deployment use cases (where multiple applications
+    // may be accessing the same databases concurrently).
     for (auto& origin : originsCopy)
-        deleteOrigin(origin.get());
+        deleteOrigin(origin.get(), DeletionMode::Immediate);
 }
 
 void DatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::time_point time)
@@ -862,6 +863,11 @@ void DatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::ti
 // taking place.
 bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
 {
+    return deleteOrigin(origin, DeletionMode::Default);
+}
+
+bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin, DeletionMode deletionMode)
+{
     Vector<String> databaseNames;
     {
         LockHolder lockDatabase(m_databaseGuard);
@@ -883,7 +889,7 @@ bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
 
     // We drop the lock here because holding locks during a call to deleteDatabaseFile will deadlock.
     for (auto& name : databaseNames) {
-        if (!deleteDatabaseFile(origin, name)) {
+        if (!deleteDatabaseFile(origin, name, deletionMode)) {
             // Even if the file can't be deleted, we want to try and delete the rest, don't return early here.
             LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), origin->databaseIdentifier().ascii().data());
         }
@@ -1084,7 +1090,7 @@ bool DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
     }
 
     // We drop the lock here because holding locks during a call to deleteDatabaseFile will deadlock.
-    if (!deleteDatabaseFile(origin, name)) {
+    if (!deleteDatabaseFile(origin, name, DeletionMode::Default)) {
         LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), origin->databaseIdentifier().ascii().data());
         LockHolder lockDatabase(m_databaseGuard);
         doneDeletingDatabase(origin, name);
@@ -1123,7 +1129,7 @@ bool DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
 
 // deleteDatabaseFile has to release locks between looking up the list of databases to close and closing them.  While this is in progress, the caller
 // is responsible for making sure no new databases are opened in the file to be deleted.
-bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& name)
+bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& name, DeletionMode deletionMode)
 {
     String fullPath = fullPathForDatabase(origin, name, false);
     if (fullPath.isEmpty())
@@ -1162,19 +1168,23 @@ bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& n
     for (auto& database : deletedDatabases)
         database->markAsDeletedAndClose();
 
-#if !PLATFORM(IOS)
-    return SQLiteFileSystem::deleteDatabaseFile(fullPath);
-#else
-    // On the phone, other background processes may still be accessing this database.  Deleting the database directly
-    // would nuke the POSIX file locks, potentially causing Safari/WebApp to corrupt the new db if it's running in the background.
-    // We'll instead truncate the database file to 0 bytes.  If another process is operating on this same database file after
-    // the truncation, it should get an error since the database file is no longer valid.  When Safari is launched
-    // next time, it'll go through the database files and clean up any zero-bytes ones.
-    SQLiteDatabase database;
-    if (database.open(fullPath))
+#if PLATFORM(IOS)
+    if (deletionMode == DeletionMode::Deferred) {
+        // On the phone, other background processes may still be accessing this database. Deleting the database directly
+        // would nuke the POSIX file locks, potentially causing Safari/WebApp to corrupt the new db if it's running in the background.
+        // We'll instead truncate the database file to 0 bytes. If another process is operating on this same database file after
+        // the truncation, it should get an error since the database file is no longer valid. When Safari is launched
+        // next time, it'll go through the database files and clean up any zero-bytes ones.
+        SQLiteDatabase database;
+        if (!database.open(fullPath))
+            return false;
         return SQLiteFileSystem::truncateDatabaseFile(database.sqlite3Handle());
-    return false;
+    }
+#else
+    UNUSED_PARAM(deletionMode);
 #endif
+
+    return SQLiteFileSystem::deleteDatabaseFile(fullPath);
 }
     
 #if PLATFORM(IOS)

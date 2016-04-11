@@ -69,7 +69,7 @@ public:
 
     virtual void setQuota(SecurityOrigin*, unsigned long long) = 0;
 
-    virtual void deleteAllDatabases() = 0;
+    virtual void deleteAllDatabasesImmediately() = 0;
     virtual bool deleteOrigin(SecurityOrigin*) = 0;
     virtual bool deleteDatabase(SecurityOrigin*, const String& name) = 0;
 

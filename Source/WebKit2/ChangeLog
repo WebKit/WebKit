@@ -1,3 +1,14 @@
+2016-04-09  Gavin Barraclough  <barraclough@apple.com>
+
+        WebKit should adopt journal_mode=wal for all SQLite databases.
+        https://bugs.webkit.org/show_bug.cgi?id=133496
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleClearAllDatabases):
+            - renamed deleteAllDatabases -> deleteAllDatabasesImmediately.
+
 2016-04-11  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r198933): Unable to login to Google account from Internet Accounts preference pane

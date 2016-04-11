@@ -378,9 +378,9 @@ void DatabaseManager::setQuota(SecurityOrigin* origin, unsigned long long quotaS
     m_server->setQuota(origin, quotaSize);
 }
 
-void DatabaseManager::deleteAllDatabases()
+void DatabaseManager::deleteAllDatabasesImmediately()
 {
-    m_server->deleteAllDatabases();
+    m_server->deleteAllDatabasesImmediately();
 }
 
 bool DatabaseManager::deleteOrigin(SecurityOrigin* origin)

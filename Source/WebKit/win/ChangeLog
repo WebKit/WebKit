@@ -1,3 +1,14 @@
+2016-04-11  Gavin Barraclough  <barraclough@apple.com>
+
+        WebKit should adopt journal_mode=wal for all SQLite databases.
+        https://bugs.webkit.org/show_bug.cgi?id=133496
+
+        Reviewed by Darin Adler.
+
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::deleteAllDatabases):
+            - renamed deleteAllDatabases -> deleteAllDatabasesImmediately.
+
 2016-04-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: "AXLandmarkApplication" is an inappropriate subrole for ARIA "application" since it's no longer a landmark

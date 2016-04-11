@@ -101,7 +101,7 @@ public:
 
     WEBCORE_EXPORT void setQuota(SecurityOrigin*, unsigned long long);
 
-    WEBCORE_EXPORT void deleteAllDatabases();
+    WEBCORE_EXPORT void deleteAllDatabasesImmediately();
     WEBCORE_EXPORT bool deleteOrigin(SecurityOrigin*);
     WEBCORE_EXPORT bool deleteDatabase(SecurityOrigin*, const String& name);
 

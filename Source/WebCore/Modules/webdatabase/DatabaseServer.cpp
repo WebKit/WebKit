@@ -92,9 +92,9 @@ void DatabaseServer::setQuota(SecurityOrigin* origin, unsigned long long quotaSi
     DatabaseTracker::tracker().setQuota(origin, quotaSize);
 }
 
-void DatabaseServer::deleteAllDatabases()
+void DatabaseServer::deleteAllDatabasesImmediately()
 {
-    DatabaseTracker::tracker().deleteAllDatabases();
+    DatabaseTracker::tracker().deleteAllDatabasesImmediately();
 }
 
 bool DatabaseServer::deleteOrigin(SecurityOrigin* origin)

@@ -1,3 +1,37 @@
+2016-04-09  Gavin Barraclough  <barraclough@apple.com>
+
+        WebKit should adopt journal_mode=wal for all SQLite databases.
+        https://bugs.webkit.org/show_bug.cgi?id=133496
+
+        Reviewed by Darin Adler.
+
+        The statement intended to enable WAL mode is always failing because it is missing a
+        prepare(). Fix this. We were also previously permitting SQLITE_OK results - this
+        was in error (we were only getting these because stepping the unprepared statement
+        returned SQLITE_OK). Also set the SQLITE_OPEN_AUTOPROXY flag when opening the
+        database - this will improve perfomance when the database is accessed via an AFP
+        mount.
+
+        This exposed a bug, that deleteAllDatabases does not actually delete the databases on
+        iOS, for testing to reset back to a known state between tests it should be doing so.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::deleteAllDatabases):
+            - force databases to actually be deleted on iOS.
+              This method is only used from testing code (DumpRenderTree / WebKitTestRunner).
+        (WebCore::DatabaseTracker::deleteOrigin):
+            - added IOSDeletionMode.
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+            - added IOSDeletionMode, modified to actually delete if this is set.
+        * Modules/webdatabase/DatabaseTracker.h:
+            - added IOSDeletionMode.
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+            - call prepareAndStep(), only check for SQLITE_ROW result.
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::openDatabase):
+            - should set SQLITE_OPEN_AUTOPROXY flag when opening database.
+
 2016-04-11  Zalan Bujtas  <zalan@apple.com>
 
         Simplify InlineTextBox::selectionStartEnd()
