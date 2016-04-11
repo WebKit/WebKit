@@ -1,3 +1,5 @@
+set_property(DIRECTORY . PROPERTY FOLDER "WebKit2")
+
 set(WebKit2_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/llint"
     "${WEBKIT2_DIR}"
@@ -853,7 +855,6 @@ endif ()
 add_executable(WebProcess ${WebProcess_SOURCES})
 add_webkit2_prefix_header(WebProcess)
 target_link_libraries(WebProcess ${WebProcess_LIBRARIES})
-set_target_properties(WebProcess PROPERTIES FOLDER "WebKit")
 
 if (WebKit2_WebProcess_OUTPUT_NAME)
     set_target_properties(WebProcess PROPERTIES OUTPUT_NAME ${WebKit2_WebProcess_OUTPUT_NAME})
@@ -862,7 +863,6 @@ endif ()
 add_executable(NetworkProcess ${NetworkProcess_SOURCES})
 add_webkit2_prefix_header(NetworkProcess)
 target_link_libraries(NetworkProcess ${NetworkProcess_LIBRARIES})
-set_target_properties(NetworkProcess PROPERTIES FOLDER "WebKit")
 
 if (WebKit2_NetworkProcess_OUTPUT_NAME)
     set_target_properties(NetworkProcess PROPERTIES OUTPUT_NAME ${WebKit2_NetworkProcess_OUTPUT_NAME})
@@ -873,7 +873,6 @@ if (ENABLE_PLUGIN_PROCESS AND NOT APPLE)
     add_executable(PluginProcess ${PluginProcess_SOURCES})
     add_webkit2_prefix_header(PluginProcess)
     target_link_libraries(PluginProcess ${PluginProcess_LIBRARIES})
-    set_target_properties(PluginProcess PROPERTIES FOLDER "WebKit")
     install(TARGETS PluginProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
 
     if (WebKit2_PluginProcess_OUTPUT_NAME)
@@ -886,7 +885,6 @@ if (ENABLE_DATABASE_PROCESS AND NOT APPLE)
     add_executable(DatabaseProcess ${DatabaseProcess_SOURCES})
     add_webkit2_prefix_header(DatabaseProcess)
     target_link_libraries(DatabaseProcess ${DatabaseProcess_LIBRARIES})
-    set_target_properties(DatabaseProcess PROPERTIES FOLDER "WebKit")
     install(TARGETS DatabaseProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
 
     if (WebKit2_DatabaseProcess_OUTPUT_NAME)

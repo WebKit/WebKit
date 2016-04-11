@@ -24,6 +24,7 @@ if ("${AR_VERSION}" MATCHES "^GNU ar")
 endif ()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+define_property(TARGET PROPERTY FOLDER INHERITED BRIEF_DOCS "folder" FULL_DOCS "IDE folder name")
 
 if (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fno-exceptions -fno-strict-aliasing")

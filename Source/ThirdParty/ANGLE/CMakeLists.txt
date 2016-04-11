@@ -303,6 +303,4 @@ foreach (_file ${_files_khr})
     file(COPY ${_file} DESTINATION ${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include/khr)
 endforeach ()
 
-set_target_properties(libANGLE PROPERTIES FOLDER "ANGLE")
-set_target_properties(libEGL PROPERTIES FOLDER "ANGLE")
-set_target_properties(libGLESv2 PROPERTIES FOLDER "ANGLE")
+set_property(DIRECTORY . PROPERTY FOLDER "ANGLE")

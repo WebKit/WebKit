@@ -129,16 +129,13 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT
 add_definitions(-DUSE_CONSOLE_ENTRY_POINT)
 
 add_library(DumpRenderTreeLib SHARED ${DumpRenderTreeLib_SOURCES})
-set_target_properties(DumpRenderTreeLib PROPERTIES FOLDER "Tools")
 target_link_libraries(DumpRenderTreeLib ${DumpRenderTreeLib_LIBRARIES})
 
 add_executable(ImageDiff ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp)
 target_link_libraries(ImageDiff shlwapi)
-set_target_properties(ImageDiff PROPERTIES FOLDER "Tools")
 set_target_properties(ImageDiff PROPERTIES OUTPUT_NAME "ImageDiff")
 
 add_library(ImageDiffLib SHARED ${ImageDiff_SOURCES})
-set_target_properties(ImageDiffLib PROPERTIES FOLDER "Tools")
 target_link_libraries(ImageDiffLib ${ImageDiff_LIBRARIES})
 
 add_dependencies(ImageDiff ImageDiffLib)

@@ -7,7 +7,6 @@ list(APPEND JSC_LIBRARIES
 )
 
 target_link_libraries(jscLib ${JSC_LIBRARIES})
-set_target_properties(jscLib PROPERTIES FOLDER "JavaScriptCore")
 
 if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DWIN_CAIRO)
@@ -20,7 +19,6 @@ add_definitions(-DUSE_CONSOLE_ENTRY_POINT)
 set(JSC_OUTPUT_NAME "jsc${DEBUG_SUFFIX}")
 
 add_library(testRegExpLib SHARED ../testRegExp.cpp)
-set_target_properties(testRegExpLib PROPERTIES FOLDER "JavaScriptCore")
 add_executable(testRegExp ${JSC_SOURCES})
 set_target_properties(testRegExp PROPERTIES OUTPUT_NAME "testRegExp${DEBUG_SUFFIX}")
 target_link_libraries(testRegExp shlwapi)
@@ -38,7 +36,6 @@ add_library(testapiLib SHARED
 )
 set_source_files_properties(../API/tests/CustomGlobalObjectClassTest.c PROPERTIES COMPILE_FLAGS "/TP /MT")
 set_source_files_properties(../API/tests/testapi.c PROPERTIES COMPILE_FLAGS "/TP /MT")
-set_target_properties(testapiLib PROPERTIES FOLDER "JavaScriptCore")
 add_executable(testapi ${JSC_SOURCES})
 set_target_properties(testapi PROPERTIES OUTPUT_NAME "testapi${DEBUG_SUFFIX}")
 target_link_libraries(testapi shlwapi)

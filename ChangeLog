@@ -1,3 +1,21 @@
+2016-04-11  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
+
+        [CMake] Make FOLDER property INHERITED
+        https://bugs.webkit.org/show_bug.cgi?id=156460
+
+        Reviewed by Brent Fulgham.
+
+        Some CMake targets are not setting the FOLDER property. This causes the
+        generated projects to be displayed in the top-level folder of the solution.
+
+        Making the FOLDER property INHERITED ensures that all the targets
+        are placed in their proper directories.
+
+        * Source/cmake/OptionsCommon.cmake:
+        Define FOLDER property as a inherited property.
+        * Source/cmake/WebKitMacros.cmake:
+        Do not set FOLDER target property.
+
 2016-04-08  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards running CMake WebKit2 on Mac

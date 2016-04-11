@@ -58,6 +58,5 @@ include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
 include_directories(SYSTEM ${MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES})
 add_executable(MiniBrowser ${MiniBrowser_SOURCES})
 target_link_libraries(MiniBrowser ${MiniBrowser_LIBRARIES})
-set_target_properties(MiniBrowser PROPERTIES FOLDER "Tools")
 
 install(TARGETS MiniBrowser DESTINATION "${EXEC_INSTALL_DIR}")

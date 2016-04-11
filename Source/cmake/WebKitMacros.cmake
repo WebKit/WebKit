@@ -252,7 +252,6 @@ macro(WEBKIT_FRAMEWORK _target)
     )
     target_link_libraries(${_target} ${${_target}_LIBRARIES})
     set_target_properties(${_target} PROPERTIES COMPILE_DEFINITIONS "BUILDING_${_target}")
-    set_target_properties(${_target} PROPERTIES FOLDER "${_target}")
 
     if (${_target}_OUTPUT_NAME)
         set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${${_target}_OUTPUT_NAME})

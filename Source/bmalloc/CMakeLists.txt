@@ -1,3 +1,5 @@
+set_property(DIRECTORY . PROPERTY FOLDER "bmalloc")
+
 set(bmalloc_INCLUDE_DIRECTORIES
     "${BMALLOC_DIR}"
 )

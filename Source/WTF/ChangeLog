@@ -1,3 +1,13 @@
+2016-04-11  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
+
+        [CMake] Make FOLDER property INHERITED
+        https://bugs.webkit.org/show_bug.cgi?id=156460
+
+        Reviewed by Brent Fulgham.
+
+        * CMakeLists.txt:
+        Set FOLDER directory property
+
 2016-04-08  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards running CMake WebKit2 on Mac
