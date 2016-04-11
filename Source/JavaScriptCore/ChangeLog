@@ -1,3 +1,80 @@
+2016-04-11  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: get rid of InspectorBasicValue and InspectorString subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=156407
+        <rdar://problem/25627659>
+
+        Reviewed by Joseph Pecoraro.
+
+        There's no point having these subclasses as they don't save any space.
+        Add a StringImpl to the union and merge some implementations of writeJSON.
+
+        Rename m_data to m_map and explicitly name the union as InspectorValue::m_value.
+        If the value is a string and the string is not empty or null (i.e., it has a
+        StringImpl), then we need to ref() and deref() the string as the InspectorValue
+        is created or destroyed.
+
+        Move uses of the subclass to InspectorValue and delete redundant methods.
+        Now, most InspectorValue methods are non-virtual so they can be templated.
+
+        * bindings/ScriptValue.cpp:
+        (Deprecated::jsToInspectorValue):
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::makeCall):
+        Don't used deleted subclasses.
+
+        * inspector/InspectorValues.cpp:
+        (Inspector::InspectorValue::null):
+        (Inspector::InspectorValue::create):
+        (Inspector::InspectorValue::asValue):
+        (Inspector::InspectorValue::asBoolean):
+        (Inspector::InspectorValue::asDouble):
+        (Inspector::InspectorValue::asInteger):
+        (Inspector::InspectorValue::asString):
+        These only need one implementation now.
+
+        (Inspector::InspectorValue::writeJSON):
+        Still a virtual method since Object and Array need their members.
+
+        (Inspector::InspectorObjectBase::InspectorObjectBase):
+        (Inspector::InspectorBasicValue::asBoolean): Deleted.
+        (Inspector::InspectorBasicValue::asDouble): Deleted.
+        (Inspector::InspectorBasicValue::asInteger): Deleted.
+        (Inspector::InspectorBasicValue::writeJSON): Deleted.
+        (Inspector::InspectorString::asString): Deleted.
+        (Inspector::InspectorString::writeJSON): Deleted.
+        (Inspector::InspectorString::create): Deleted.
+        (Inspector::InspectorBasicValue::create): Deleted.
+
+        * inspector/InspectorValues.h:
+        (Inspector::InspectorObjectBase::find):
+        (Inspector::InspectorObjectBase::setBoolean):
+        (Inspector::InspectorObjectBase::setInteger):
+        (Inspector::InspectorObjectBase::setDouble):
+        (Inspector::InspectorObjectBase::setString):
+        (Inspector::InspectorObjectBase::setValue):
+        (Inspector::InspectorObjectBase::setObject):
+        (Inspector::InspectorObjectBase::setArray):
+        (Inspector::InspectorArrayBase::pushBoolean):
+        (Inspector::InspectorArrayBase::pushInteger):
+        (Inspector::InspectorArrayBase::pushDouble):
+        (Inspector::InspectorArrayBase::pushString):
+        (Inspector::InspectorArrayBase::pushValue):
+        (Inspector::InspectorArrayBase::pushObject):
+        (Inspector::InspectorArrayBase::pushArray):
+        Use new factory methods.
+
+        * replay/EncodedValue.cpp:
+        (JSC::ScalarEncodingTraits<bool>::encodeValue):
+        (JSC::ScalarEncodingTraits<double>::encodeValue):
+        (JSC::ScalarEncodingTraits<float>::encodeValue):
+        (JSC::ScalarEncodingTraits<int32_t>::encodeValue):
+        (JSC::ScalarEncodingTraits<int64_t>::encodeValue):
+        (JSC::ScalarEncodingTraits<uint32_t>::encodeValue):
+        (JSC::ScalarEncodingTraits<uint64_t>::encodeValue):
+        * replay/EncodedValue.h:
+        Use new factory methods.
+
 2016-04-11  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to edit StructureStubInfo without recompiling the world

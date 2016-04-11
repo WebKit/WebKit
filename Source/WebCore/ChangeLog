@@ -1,3 +1,13 @@
+2016-04-11  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: get rid of InspectorBasicValue and InspectorString subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=156407
+        <rdar://problem/25627659>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorDatabaseAgent.cpp: Don't use deleted subclasses.
+
 2016-04-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r198909.

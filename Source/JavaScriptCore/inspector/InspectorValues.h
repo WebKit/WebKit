@@ -51,11 +51,30 @@ class JS_EXPORT_PRIVATE InspectorValue : public RefCounted<InspectorValue> {
 public:
     static const int maxDepth = 1000;
 
-    InspectorValue()
-        : m_type(Type::Null) { }
-    virtual ~InspectorValue() { }
+    virtual ~InspectorValue()
+    {
+        switch (m_type) {
+        case Type::Null:
+        case Type::Boolean:
+        case Type::Double:
+        case Type::Integer:
+            break;
+        case Type::String:
+            if (m_value.string)
+                m_value.string->deref();
+            break;
+        case Type::Object:
+        case Type::Array:
+            break;
+        }
+    }
 
     static Ref<InspectorValue> null();
+    static Ref<InspectorValue> create(bool);
+    static Ref<InspectorValue> create(int);
+    static Ref<InspectorValue> create(double);
+    static Ref<InspectorValue> create(const String&);
+    static Ref<InspectorValue> create(const char*);
 
     enum class Type {
         Null = 0,
@@ -64,24 +83,24 @@ public:
         Integer,
         String,
         Object,
-        Array
+        Array,
     };
 
     Type type() const { return m_type; }
-
     bool isNull() const { return m_type == Type::Null; }
 
-    virtual bool asBoolean(bool&) const;
-    virtual bool asInteger(int&) const;
-    virtual bool asInteger(unsigned&) const;
-    virtual bool asInteger(long&) const;
-    virtual bool asInteger(long long&) const;
-    virtual bool asInteger(unsigned long&) const;
-    virtual bool asInteger(unsigned long long&) const;
-    virtual bool asDouble(double&) const;
-    virtual bool asDouble(float&) const;
-    virtual bool asString(String&) const;
-    virtual bool asValue(RefPtr<InspectorValue>&);
+    bool asBoolean(bool&) const;
+    bool asInteger(int&) const;
+    bool asInteger(unsigned&) const;
+    bool asInteger(long&) const;
+    bool asInteger(long long&) const;
+    bool asInteger(unsigned long&) const;
+    bool asInteger(unsigned long long&) const;
+    bool asDouble(double&) const;
+    bool asDouble(float&) const;
+    bool asString(String&) const;
+    bool asValue(RefPtr<InspectorValue>&);
+
     virtual bool asObject(RefPtr<InspectorObject>&);
     virtual bool asArray(RefPtr<InspectorArray>&);
 
@@ -91,71 +110,54 @@ public:
     virtual void writeJSON(StringBuilder& output) const;
 
 protected:
-    explicit InspectorValue(Type type) : m_type(type) { }
+    InspectorValue()
+        : m_type(Type::Null) { }
+
+    explicit InspectorValue(Type type)
+        : m_type(type) { }
+
+    explicit InspectorValue(bool value)
+        : m_type(Type::Boolean)
+    {
+        m_value.boolean = value;
+    }
+
+    explicit InspectorValue(int value)
+        : m_type(Type::Integer)
+    {
+        m_value.number = static_cast<double>(value);
+    }
+
+    explicit InspectorValue(double value)
+        : m_type(Type::Double)
+    {
+        m_value.number = value;
+    }
+
+    explicit InspectorValue(const String& value)
+        : m_type(Type::String)
+    {
+        m_value.string = value.impl();
+        if (m_value.string)
+            m_value.string->ref();
+    }
+
+    explicit InspectorValue(const char* value)
+        : m_type(Type::String)
+    {
+        String wrapper(value);
+        m_value.string = wrapper.impl();
+        if (m_value.string)
+            m_value.string->ref();
+    }
 
 private:
-    Type m_type;
-};
-
-class JS_EXPORT_PRIVATE InspectorBasicValue : public InspectorValue {
-public:
-
-    static Ref<InspectorBasicValue> create(bool);
-    static Ref<InspectorBasicValue> create(int);
-    static Ref<InspectorBasicValue> create(double);
-
-    bool asBoolean(bool&) const override;
-    // Numbers from the frontend are always parsed as doubles, so we allow
-    // clients to convert to integral values with this function.
-    bool asInteger(int&) const override;
-    bool asInteger(unsigned&) const override;
-    bool asInteger(long&) const override;
-    bool asInteger(long long&) const override;
-    bool asInteger(unsigned long&) const override;
-    bool asInteger(unsigned long long&) const override;
-    bool asDouble(double&) const override;
-    bool asDouble(float&) const override;
-
-    void writeJSON(StringBuilder& output) const override;
-
-private:
-    explicit InspectorBasicValue(bool value)
-        : InspectorValue(Type::Boolean)
-        , m_booleanValue(value) { }
-
-    explicit InspectorBasicValue(int value)
-        : InspectorValue(Type::Integer)
-        , m_doubleValue(static_cast<double>(value)) { }
-
-    explicit InspectorBasicValue(double value)
-        : InspectorValue(Type::Double)
-        , m_doubleValue(value) { }
-
+    Type m_type { Type::Null };
     union {
-        bool m_booleanValue;
-        double m_doubleValue;
-    };
-};
-
-class JS_EXPORT_PRIVATE InspectorString : public InspectorValue {
-public:
-    static Ref<InspectorString> create(const String&);
-    static Ref<InspectorString> create(const char*);
-
-    bool asString(String& output) const override;
-
-    void writeJSON(StringBuilder& output) const override;
-
-private:
-    explicit InspectorString(const String& value)
-        : InspectorValue(Type::String)
-        , m_stringValue(value) { }
-
-    explicit InspectorString(const char* value)
-        : InspectorValue(Type::String)
-        , m_stringValue(value) { }
-
-    String m_stringValue;
+        bool boolean;
+        double number;
+        StringImpl* string;
+    } m_value;
 };
 
 class JS_EXPORT_PRIVATE InspectorObjectBase : public InspectorValue {
@@ -213,18 +215,18 @@ protected:
 
     void writeJSON(StringBuilder& output) const override;
 
-    iterator begin() { return m_data.begin(); }
-    iterator end() { return m_data.end(); }
-    const_iterator begin() const { return m_data.begin(); }
-    const_iterator end() const { return m_data.end(); }
+    iterator begin() { return m_map.begin(); }
+    iterator end() { return m_map.end(); }
+    const_iterator begin() const { return m_map.begin(); }
+    const_iterator end() const { return m_map.end(); }
 
-    int size() const { return m_data.size(); }
+    int size() const { return m_map.size(); }
 
 protected:
     InspectorObjectBase();
 
 private:
-    Dictionary m_data;
+    Dictionary m_map;
     Vector<String> m_order;
 };
 
@@ -265,7 +267,7 @@ public:
     typedef Vector<RefPtr<InspectorValue>>::iterator iterator;
     typedef Vector<RefPtr<InspectorValue>>::const_iterator const_iterator;
 
-    unsigned length() const { return static_cast<unsigned>(m_data.size()); }
+    unsigned length() const { return static_cast<unsigned>(m_map.size()); }
 
 protected:
     virtual ~InspectorArrayBase();
@@ -284,16 +286,16 @@ protected:
 
     void writeJSON(StringBuilder& output) const override;
 
-    iterator begin() { return m_data.begin(); }
-    iterator end() { return m_data.end(); }
-    const_iterator begin() const { return m_data.begin(); }
-    const_iterator end() const { return m_data.end(); }
+    iterator begin() { return m_map.begin(); }
+    iterator end() { return m_map.end(); }
+    const_iterator begin() const { return m_map.begin(); }
+    const_iterator end() const { return m_map.end(); }
 
 protected:
     InspectorArrayBase();
 
 private:
-    Vector<RefPtr<InspectorValue>> m_data;
+    Vector<RefPtr<InspectorValue>> m_map;
 };
 
 class InspectorArray : public InspectorArrayBase {
@@ -319,91 +321,91 @@ public:
 
 inline InspectorObjectBase::iterator InspectorObjectBase::find(const String& name)
 {
-    return m_data.find(name);
+    return m_map.find(name);
 }
 
 inline InspectorObjectBase::const_iterator InspectorObjectBase::find(const String& name) const
 {
-    return m_data.find(name);
+    return m_map.find(name);
 }
 
 inline void InspectorObjectBase::setBoolean(const String& name, bool value)
 {
-    setValue(name, InspectorBasicValue::create(value));
+    setValue(name, InspectorValue::create(value));
 }
 
 inline void InspectorObjectBase::setInteger(const String& name, int value)
 {
-    setValue(name, InspectorBasicValue::create(value));
+    setValue(name, InspectorValue::create(value));
 }
 
 inline void InspectorObjectBase::setDouble(const String& name, double value)
 {
-    setValue(name, InspectorBasicValue::create(value));
+    setValue(name, InspectorValue::create(value));
 }
 
 inline void InspectorObjectBase::setString(const String& name, const String& value)
 {
-    setValue(name, InspectorString::create(value));
+    setValue(name, InspectorValue::create(value));
 }
 
 inline void InspectorObjectBase::setValue(const String& name, RefPtr<InspectorValue>&& value)
 {
     ASSERT(value);
-    if (m_data.set(name, WTFMove(value)).isNewEntry)
+    if (m_map.set(name, WTFMove(value)).isNewEntry)
         m_order.append(name);
 }
 
 inline void InspectorObjectBase::setObject(const String& name, RefPtr<InspectorObjectBase>&& value)
 {
     ASSERT(value);
-    if (m_data.set(name, WTFMove(value)).isNewEntry)
+    if (m_map.set(name, WTFMove(value)).isNewEntry)
         m_order.append(name);
 }
 
 inline void InspectorObjectBase::setArray(const String& name, RefPtr<InspectorArrayBase>&& value)
 {
     ASSERT(value);
-    if (m_data.set(name, WTFMove(value)).isNewEntry)
+    if (m_map.set(name, WTFMove(value)).isNewEntry)
         m_order.append(name);
 }
 
 inline void InspectorArrayBase::pushBoolean(bool value)
 {
-    m_data.append(InspectorBasicValue::create(value));
+    m_map.append(InspectorValue::create(value));
 }
 
 inline void InspectorArrayBase::pushInteger(int value)
 {
-    m_data.append(InspectorBasicValue::create(value));
+    m_map.append(InspectorValue::create(value));
 }
 
 inline void InspectorArrayBase::pushDouble(double value)
 {
-    m_data.append(InspectorBasicValue::create(value));
+    m_map.append(InspectorValue::create(value));
 }
 
 inline void InspectorArrayBase::pushString(const String& value)
 {
-    m_data.append(InspectorString::create(value));
+    m_map.append(InspectorValue::create(value));
 }
 
 inline void InspectorArrayBase::pushValue(RefPtr<InspectorValue>&& value)
 {
     ASSERT(value);
-    m_data.append(WTFMove(value));
+    m_map.append(WTFMove(value));
 }
 
 inline void InspectorArrayBase::pushObject(RefPtr<InspectorObjectBase>&& value)
 {
     ASSERT(value);
-    m_data.append(WTFMove(value));
+    m_map.append(WTFMove(value));
 }
 
 inline void InspectorArrayBase::pushArray(RefPtr<InspectorArrayBase>&& value)
 {
     ASSERT(value);
-    m_data.append(WTFMove(value));
+    m_map.append(WTFMove(value));
 }
 
 } // namespace Inspector
