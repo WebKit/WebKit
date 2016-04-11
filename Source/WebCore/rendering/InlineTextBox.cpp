@@ -165,13 +165,14 @@ RenderObject::SelectionState InlineTextBox::selectionState()
     if (m_truncation != cNoTruncation && root().ellipsisBox()) {
         EllipsisBox* ellipsis = root().ellipsisBox();
         if (state != RenderObject::SelectionNone) {
-            int start, end;
-            selectionStartEnd(start, end);
+            int selectionStart;
+            int selectionEnd;
+            std::tie(selectionStart, selectionEnd) = selectionStartEnd();
             // The ellipsis should be considered to be selected if the end of
             // the selection is past the beginning of the truncation and the
             // beginning of the selection is before or at the beginning of the
             // truncation.
-            ellipsis->setSelectionState(end >= m_truncation && start <= m_truncation ?
+            ellipsis->setSelectionState(selectionEnd >= m_truncation && selectionStart <= m_truncation ?
                 RenderObject::SelectionInside : RenderObject::SelectionNone);
         } else
             ellipsis->setSelectionState(RenderObject::SelectionNone);
@@ -519,7 +520,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     int selectionStart = 0;
     int selectionEnd = 0;
     if (haveSelection && (paintSelectedTextOnly || paintSelectedTextSeparately))
-        selectionStartEnd(selectionStart, selectionEnd);
+        std::tie(selectionStart, selectionEnd) = selectionStartEnd();
 
     if (m_truncation != cNoTruncation) {
         selectionStart = std::min<int>(selectionStart, m_truncation);
@@ -595,22 +596,20 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
-void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
+std::pair<int, int> InlineTextBox::selectionStartEnd() const
 {
-    int startPos, endPos;
-    if (renderer().selectionState() == RenderObject::SelectionInside) {
-        startPos = 0;
-        endPos = renderer().textLength();
-    } else {
-        renderer().selectionStartEnd(startPos, endPos);
-        if (renderer().selectionState() == RenderObject::SelectionStart)
-            endPos = renderer().textLength();
-        else if (renderer().selectionState() == RenderObject::SelectionEnd)
-            startPos = 0;
-    }
-
-    sPos = std::max(startPos - m_start, 0);
-    ePos = std::min(endPos - m_start, (int)m_len);
+    auto selectionState = renderer().selectionState();
+    if (selectionState == RenderObject::SelectionInside)
+        return {0, m_len};
+    
+    int start;
+    int end;
+    renderer().selectionStartEnd(start, end);
+    if (selectionState == RenderObject::SelectionStart)
+        end = renderer().textLength();
+    else if (selectionState == RenderObject::SelectionEnd)
+        start = 0;
+    return { std::max(start - m_start, 0), std::min<int>(end - m_start, m_len) };
 }
 
 void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, Color textColor)
@@ -620,9 +619,10 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
         return;
 
     // See if we have a selection to paint at all.
-    int sPos, ePos;
-    selectionStartEnd(sPos, ePos);
-    if (sPos >= ePos)
+    int selectionStart;
+    int selectionEnd;
+    std::tie(selectionStart, selectionEnd) = selectionStartEnd();
+    if (selectionStart >= selectionEnd)
         return;
 
     Color c = renderer().selectionBackgroundColor();
@@ -648,10 +648,10 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
     }
 
     String hyphenatedStringBuffer;
-    bool respectHyphen = ePos == length && hasHyphen();
+    bool respectHyphen = selectionEnd == length && hasHyphen();
     TextRun textRun = constructTextRun(style, string, renderer().textLength() - m_start, respectHyphen ? &hyphenatedStringBuffer : nullptr);
     if (respectHyphen)
-        ePos = textRun.length();
+        selectionEnd = textRun.length();
 
     const RootInlineBox& rootBox = root();
     LayoutUnit selectionBottom = rootBox.selectionBottom();
@@ -661,7 +661,7 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
     LayoutUnit selectionHeight = std::max<LayoutUnit>(0, selectionBottom - selectionTop);
 
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, m_logicalWidth, selectionHeight);
-    font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
+    font.adjustSelectionRectForText(textRun, selectionRect, selectionStart, selectionEnd);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), c);
 #else
     UNUSED_PARAM(context);
@@ -675,10 +675,9 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
 void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, int startPos, int endPos)
 {
     int offset = m_start;
-    int sPos = std::max(startPos - offset, 0);
-    int ePos = std::min(endPos - offset, (int)m_len);
-
-    if (sPos >= ePos)
+    int selectionStart = std::max(startPos - offset, 0);
+    int selectionEnd = std::min<int>(endPos - offset, m_len);
+    if (selectionStart >= selectionEnd)
         return;
 
     GraphicsContextStateSaver stateSaver(context);
@@ -688,7 +687,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const F
     LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight());
     TextRun textRun = constructTextRun(style);
-    font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
+    font.adjustSelectionRectForText(textRun, selectionRect, selectionStart, selectionEnd);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), compositionColor);
 }
 

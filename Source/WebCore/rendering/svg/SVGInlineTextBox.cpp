@@ -203,8 +203,9 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
 
     RenderStyle& style = parentRenderer.style();
 
-    int startPosition, endPosition;
-    selectionStartEnd(startPosition, endPosition);
+    int startPosition;
+    int endPosition;
+    std::tie(startPosition, endPosition) = selectionStartEnd();
 
     int fragmentStartPosition = 0;
     int fragmentEndPosition = 0;
@@ -592,7 +593,7 @@ void SVGInlineTextBox::paintText(GraphicsContext& context, RenderStyle* style, R
     int startPosition = 0;
     int endPosition = 0;
     if (hasSelection) {
-        selectionStartEnd(startPosition, endPosition);
+        std::tie(startPosition, endPosition) = selectionStartEnd();
         hasSelection = mapStartEndPositionsIntoFragmentCoordinates(fragment, startPosition, endPosition);
     }
 

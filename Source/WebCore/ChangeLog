@@ -1,5 +1,25 @@
 2016-04-11  Zalan Bujtas  <zalan@apple.com>
 
+        Simplify InlineTextBox::selectionStartEnd()
+        https://bugs.webkit.org/show_bug.cgi?id=156459
+
+        Reviewed by Darin Adler.
+
+        No change in functionality.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionState):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::selectionStartEnd):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        * rendering/InlineTextBox.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+        (WebCore::SVGInlineTextBox::paintText):
+
+2016-04-11  Zalan Bujtas  <zalan@apple.com>
+
         REGRESSION (r193857): Text selection causes text to disappear.
         https://bugs.webkit.org/show_bug.cgi?id=156448
         rdar://problem/25578952
