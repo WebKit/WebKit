@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class AttributeDOMTokenList;
+class DOMTokenList;
 
 class HTMLIFrameElement final : public HTMLFrameElementBase {
 public:
@@ -50,7 +50,7 @@ private:
     bool rendererIsNeeded(const RenderStyle&) override;
     RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 
-    std::unique_ptr<AttributeDOMTokenList> m_sandbox;
+    std::unique_ptr<DOMTokenList> m_sandbox;
 };
 
 } // namespace WebCore

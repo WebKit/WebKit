@@ -31,7 +31,7 @@
 #ifndef HTMLOutputElement_h
 #define HTMLOutputElement_h
 
-#include "AttributeDOMTokenList.h"
+#include "DOMTokenList.h"
 #include "HTMLFormControlElement.h"
 
 namespace WebCore {
@@ -65,7 +65,7 @@ private:
     bool m_isDefaultValueMode;
     bool m_isSetTextContentInProgress;
     String m_defaultValue;
-    std::unique_ptr<AttributeDOMTokenList> m_tokens;
+    std::unique_ptr<DOMTokenList> m_tokens;
 };
 
 } // namespace

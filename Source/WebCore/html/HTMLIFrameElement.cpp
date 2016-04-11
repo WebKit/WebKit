@@ -25,8 +25,8 @@
 #include "config.h"
 #include "HTMLIFrameElement.h"
 
-#include "AttributeDOMTokenList.h"
 #include "CSSPropertyNames.h"
+#include "DOMTokenList.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
@@ -51,7 +51,7 @@ Ref<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, D
 DOMTokenList& HTMLIFrameElement::sandbox()
 {
     if (!m_sandbox)
-        m_sandbox = std::make_unique<AttributeDOMTokenList>(*this, sandboxAttr);
+        m_sandbox = std::make_unique<DOMTokenList>(*this, sandboxAttr);
     return *m_sandbox;
 }
 

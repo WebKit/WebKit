@@ -1728,8 +1728,6 @@
 		45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BAC2AF1360BBAB005DA258 /* IconURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45FEA5CF156DDE8C00654101 /* Decimal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45FEA5CD156DDE8C00654101 /* Decimal.cpp */; };
 		45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FEA5CE156DDE8C00654101 /* Decimal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		46233EEE1BA0F187000EBEBB /* AttributeDOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 46233EED1BA0F17A000EBEBB /* AttributeDOMTokenList.h */; };
-		46233EEF1BA0F18B000EBEBB /* AttributeDOMTokenList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46233EEC1BA0F17A000EBEBB /* AttributeDOMTokenList.cpp */; };
 		4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */; };
 		463EB6221B8789E00096ED51 /* TagCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463EB6201B8789CB0096ED51 /* TagCollection.cpp */; };
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };
@@ -9249,8 +9247,6 @@
 		45BAC2AF1360BBAB005DA258 /* IconURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconURL.h; sourceTree = "<group>"; };
 		45FEA5CD156DDE8C00654101 /* Decimal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Decimal.cpp; sourceTree = "<group>"; };
 		45FEA5CE156DDE8C00654101 /* Decimal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decimal.h; sourceTree = "<group>"; };
-		46233EEC1BA0F17A000EBEBB /* AttributeDOMTokenList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AttributeDOMTokenList.cpp; path = ../AttributeDOMTokenList.cpp; sourceTree = "<group>"; };
-		46233EED1BA0F17A000EBEBB /* AttributeDOMTokenList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AttributeDOMTokenList.h; path = ../AttributeDOMTokenList.h; sourceTree = "<group>"; };
 		4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerObserverMac.cpp; sourceTree = "<group>"; };
 		463EB6201B8789CB0096ED51 /* TagCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagCollection.cpp; sourceTree = "<group>"; };
 		463EB6211B8789CB0096ED51 /* TagCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagCollection.h; sourceTree = "<group>"; };
@@ -21164,8 +21160,6 @@
 		B1AD4E7713A12A7200846B27 /* track */ = {
 			isa = PBXGroup;
 			children = (
-				46233EEC1BA0F17A000EBEBB /* AttributeDOMTokenList.cpp */,
-				46233EED1BA0F17A000EBEBB /* AttributeDOMTokenList.h */,
 				BE88E0CC1715D2A200658D98 /* AudioTrack.cpp */,
 				BE88E0CD1715D2A200658D98 /* AudioTrack.h */,
 				BE88E0CE1715D2A200658D98 /* AudioTrack.idl */,
@@ -25024,7 +25018,6 @@
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
 				E4A814DA1C70E10D00BF85AC /* AttributeChangeInvalidation.h in Headers */,
-				46233EEE1BA0F187000EBEBB /* AttributeDOMTokenList.h in Headers */,
 				FD31607A12B026F700C1A359 /* AudioArray.h in Headers */,
 				FD629EA3154B47160006D026 /* AudioBasicInspectorNode.h in Headers */,
 				FD315FF712B0267600C1A359 /* AudioBasicProcessorNode.h in Headers */,
@@ -28992,7 +28985,6 @@
 				0FFD4D6018651FA300512F6E /* AsyncScrollingCoordinator.cpp in Sources */,
 				A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */,
 				E4A814D81C70E10500BF85AC /* AttributeChangeInvalidation.cpp in Sources */,
-				46233EEF1BA0F18B000EBEBB /* AttributeDOMTokenList.cpp in Sources */,
 				FD629EA4154B47160006D026 /* AudioBasicInspectorNode.cpp in Sources */,
 				FD315FF612B0267600C1A359 /* AudioBasicProcessorNode.cpp in Sources */,
 				FD315FF812B0267600C1A359 /* AudioBuffer.cpp in Sources */,

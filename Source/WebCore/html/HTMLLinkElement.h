@@ -24,10 +24,10 @@
 #ifndef HTMLLinkElement_h
 #define HTMLLinkElement_h
 
-#include "AttributeDOMTokenList.h"
 #include "CSSStyleSheet.h"
 #include "CachedStyleSheetClient.h"
 #include "CachedResourceHandle.h"
+#include "DOMTokenList.h"
 #include "HTMLElement.h"
 #include "LinkLoader.h"
 #include "LinkLoaderClient.h"
@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class AttributeDOMTokenList;
+class DOMTokenList;
 class HTMLLinkElement;
 class URL;
 
@@ -128,7 +128,7 @@ private:
 
     String m_type;
     String m_media;
-    std::unique_ptr<AttributeDOMTokenList> m_sizes;
+    std::unique_ptr<DOMTokenList> m_sizes;
     DisabledState m_disabledState;
     LinkRelAttribute m_relAttribute;
     bool m_loading;
@@ -139,7 +139,7 @@ private:
 
     PendingSheetType m_pendingSheetType;
 
-    std::unique_ptr<AttributeDOMTokenList> m_relList;
+    std::unique_ptr<DOMTokenList> m_relList;
 };
 
 } //namespace

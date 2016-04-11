@@ -26,23 +26,23 @@
 #ifndef DOMTokenList_h
 #define DOMTokenList_h
 
+#include <Element.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class Element;
-
 typedef int ExceptionCode;
 
 class DOMTokenList {
     WTF_MAKE_NONCOPYABLE(DOMTokenList); WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~DOMTokenList() { }
+    DOMTokenList(Element&, const QualifiedName& attributeName);
+    void attributeValueChanged(const AtomicString&);
 
-    virtual void ref() = 0;
-    virtual void deref() = 0;
+    void ref() { m_element.ref(); }
+    void deref() { m_element.deref(); }
 
     unsigned length() const;
     const AtomicString& item(unsigned index) const;
@@ -56,23 +56,23 @@ public:
 
     const AtomicString& toString() const { return value(); }
 
-    virtual Element* element() const { return nullptr; }
+    Element& element() const { return m_element; }
 
     void setValue(const String&);
     const AtomicString& value() const;
 
-protected:
-    DOMTokenList() = default;
-    void setValueInternal(const String&);
-
-    virtual void updateAfterTokenChange() { m_cachedValue = nullAtom; }
-
 private:
+    void setValueInternal(const String&);
+    void updateAfterTokenChange();
+
     static bool validateToken(const String&, ExceptionCode&);
     static bool validateTokens(const String* tokens, size_t length, ExceptionCode&);
     void addInternal(const String* tokens, size_t length, ExceptionCode&);
     void removeInternal(const String* tokens, size_t length, ExceptionCode&);
 
+    Element& m_element;
+    const WebCore::QualifiedName& m_attributeName;
+    bool m_isUpdatingAttributeValue { false };
     Vector<AtomicString> m_tokens;
     mutable AtomicString m_cachedValue;
 };

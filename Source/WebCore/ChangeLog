@@ -1,5 +1,49 @@
 2016-04-11  Chris Dumez  <cdumez@apple.com>
 
+        Merge AttributedDOMTokenList into DOMTokenList
+        https://bugs.webkit.org/show_bug.cgi?id=156468
+
+        Reviewed by Ryosuke Niwa.
+
+        Merge AttributedDOMTokenList into DOMTokenList to simplify the code.
+        DOMTokenList is not constructible and AttributedDOMTokenList is its
+        only constructible subclass after r196123.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::Element::classList):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::classList):
+        (WebCore::ElementRareData::setClassList):
+        * html/AttributeDOMTokenList.cpp: Removed.
+        * html/AttributeDOMTokenList.h: Removed.
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::DOMTokenList):
+        (WebCore::DOMTokenList::attributeValueChanged):
+        (WebCore::DOMTokenList::updateAfterTokenChange):
+        * html/DOMTokenList.h:
+        (WebCore::DOMTokenList::ref):
+        (WebCore::DOMTokenList::deref):
+        (WebCore::DOMTokenList::element):
+        (WebCore::DOMTokenList::~DOMTokenList): Deleted.
+        (WebCore::DOMTokenList::updateAfterTokenChange): Deleted.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::relList):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::sandbox):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::sizes):
+        (WebCore::HTMLLinkElement::relList):
+        * html/HTMLLinkElement.h:
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::htmlFor):
+        * html/HTMLOutputElement.h:
+
+2016-04-11  Chris Dumez  <cdumez@apple.com>
+
         DOMTokenList.contains() should not throw
         https://bugs.webkit.org/show_bug.cgi?id=156453
 

@@ -24,7 +24,7 @@
 #include "config.h"
 #include "HTMLAnchorElement.h"
 
-#include "AttributeDOMTokenList.h"
+#include "DOMTokenList.h"
 #include "ElementIterator.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -303,7 +303,7 @@ bool HTMLAnchorElement::hasRel(uint32_t relation) const
 DOMTokenList& HTMLAnchorElement::relList()
 {
     if (!m_relList) 
-        m_relList = std::make_unique<AttributeDOMTokenList>(*this, HTMLNames::relAttr);
+        m_relList = std::make_unique<DOMTokenList>(*this, HTMLNames::relAttr);
     return *m_relList;
 }
 
