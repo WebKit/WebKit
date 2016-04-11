@@ -154,16 +154,17 @@ void TextPainter::paintText(const TextRun& textRun, int length, const FloatRect&
         // effect, so only when we know we're stroking, do a save/restore.
         GraphicsContextStateSaver stateSaver(m_context, m_textPaintStyle.strokeWidth > 0);
         updateGraphicsContext(m_context, m_textPaintStyle);
-        if (paintSelectedTextSeparately) {
+        bool fullPaint = !paintSelectedTextSeparately || selectionEnd <= selectionStart;
+        if (fullPaint)
+            paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, 0, length, m_textPaintStyle, m_textShadow);
+        else {
             // Paint the before and after selection parts.
             if (selectionStart > 0)
                 paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, 0, selectionStart, m_textPaintStyle, m_textShadow);
             if (selectionEnd < length)
                 paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, selectionEnd, length, m_textPaintStyle, m_textShadow);
-        } else
-            paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, 0, length, m_textPaintStyle, m_textShadow);
+        }
     }
-
     // Paint only the text that is selected.
     if ((paintSelectedTextOnly || paintSelectedTextSeparately) && selectionStart < selectionEnd) {
         GraphicsContextStateSaver stateSaver(m_context, m_selectionPaintStyle.strokeWidth > 0);

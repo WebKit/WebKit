@@ -1,3 +1,17 @@
+2016-04-11  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r193857): Text selection causes text to disappear.
+        https://bugs.webkit.org/show_bug.cgi?id=156448
+        rdar://problem/25578952
+
+        Reviewed by Simon Fraser.
+
+        Apparently when the end position of the selection range is smaller than the start position, we need
+        to repaint the entire text as it indicates selection clearing.
+
+        * fast/text/text-disappear-on-deselect-expected.html: Added.
+        * fast/text/text-disappear-on-deselect.html: Added.
+
 2016-04-11  Chris Dumez  <cdumez@apple.com>
 
         DOMTokenList.contains() should not throw
