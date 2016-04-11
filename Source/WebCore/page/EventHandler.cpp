@@ -735,22 +735,6 @@ static inline bool canMouseDownStartSelect(Node* node)
     return node->canStartSelection() || Position::nodeIsUserSelectAll(node);
 }
 
-#if ENABLE(DRAG_SUPPORT)
-static bool isSingleMouseDownOnLinkOrImage(const MouseEventWithHitTestResults& event)
-{
-    auto& platformEvent = event.event();
-    if (platformEvent.type() != PlatformEvent::MousePressed || platformEvent.button() != LeftButton || platformEvent.clickCount() != 1)
-        return false;
-
-    return event.isOverLink() || event.hitTestResult().image();
-}
-
-static bool eventMayStartDragInternal(const MouseEventWithHitTestResults& event)
-{
-    return !event.event().shiftKey() || isSingleMouseDownOnLinkOrImage(event);
-}
-#endif
-
 bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& event)
 {
 #if ENABLE(DRAG_SUPPORT)
@@ -776,7 +760,13 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     m_mouseDownMayStartSelect = canMouseDownStartSelect(event.targetNode()) && !event.scrollbar();
     
 #if ENABLE(DRAG_SUPPORT)
-    m_mouseDownMayStartDrag = eventMayStartDragInternal(event);
+    // Careful that the drag starting logic stays in sync with eventMayStartDrag()
+    // FIXME: eventMayStartDrag() does not check for shift key press, link or image event targets.
+    // Bug: https://bugs.webkit.org/show_bug.cgi?id=155390
+
+    // Single mouse down on links or images can always trigger drag-n-drop.
+    bool isMouseDownOnLinkOrImage = event.isOverLink() || event.hitTestResult().image();
+    m_mouseDownMayStartDrag = singleClick && (!event.event().shiftKey() || isMouseDownOnLinkOrImage);
 #endif
 
     m_mouseDownWasSingleClickInSelection = false;
@@ -824,14 +814,6 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     return swallowEvent;
 }
 
-static LayoutPoint documentPointForWindowPoint(Frame& frame, const IntPoint& windowPoint)
-{
-    FrameView* view = frame.view();
-    // FIXME: Is it really OK to use the wrong coordinates here when view is 0?
-    // Historically the code would just crash; this is clearly no worse than that.
-    return view ? view->windowToContents(windowPoint) : windowPoint;
-}
-
 #if ENABLE(DRAG_SUPPORT)
 bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& event)
 {
@@ -876,7 +858,7 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
     updateSelectionForMouseDrag(event.hitTestResult());
     return true;
 }
-
+    
 bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
 {
     // This is a pre-flight check of whether the event might lead to a drag being started.  Be careful
@@ -884,6 +866,9 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     // in handleMousePressEvent
     RenderView* renderView = m_frame.contentRenderer();
     if (!renderView)
+        return false;
+
+    if (event.button() != LeftButton || event.clickCount() != 1)
         return false;
 
     FrameView* view = m_frame.view();
@@ -894,15 +879,10 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     if (!page)
         return false;
 
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowShadowContent);
-    LayoutPoint documentPoint = documentPointForWindowPoint(m_frame, event.position());
-    MouseEventWithHitTestResults mouseEvent = m_frame.document()->prepareMouseEvent(request, documentPoint, event);
-    if (!eventMayStartDragInternal(mouseEvent))
-        return false;
-
     updateDragSourceActionsAllowed();
-
-    HitTestResult result = mouseEvent.hitTestResult();
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowShadowContent);
+    HitTestResult result(view->windowToContents(event.position()));
+    renderView->hitTest(request, result);
     DragState state;
     return result.innerElement() && page->dragController().draggableElement(&m_frame, result.innerElement(), result.roundedPointInInnerNodeFrame(), state);
 }
@@ -1594,6 +1574,14 @@ void EventHandler::autoHideCursorTimerFired()
         view->setCursor(m_currentMouseCursor);
 }
 #endif
+
+static LayoutPoint documentPointForWindowPoint(Frame& frame, const IntPoint& windowPoint)
+{
+    FrameView* view = frame.view();
+    // FIXME: Is it really OK to use the wrong coordinates here when view is 0?
+    // Historically the code would just crash; this is clearly no worse than that.
+    return view ? view->windowToContents(windowPoint) : windowPoint;
+}
 
 static Scrollbar* scrollbarForMouseEvent(const MouseEventWithHitTestResults& mouseEvent, FrameView* view)
 {

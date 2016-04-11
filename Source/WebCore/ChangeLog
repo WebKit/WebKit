@@ -1,3 +1,18 @@
+2016-04-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r198909.
+        https://bugs.webkit.org/show_bug.cgi?id=156479
+
+        made double-click-and-drag on text drag instead of
+        highlighting (Requested by alexchristensen_ on #webkit).
+
+        Reverted changeset:
+
+        "eventMayStartDrag() does not check for shiftKey or
+        isOverLink"
+        https://bugs.webkit.org/show_bug.cgi?id=155746
+        http://trac.webkit.org/changeset/198909
+
 2016-04-11  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Add support for [ImplementedAs] for EventHandler attributes
