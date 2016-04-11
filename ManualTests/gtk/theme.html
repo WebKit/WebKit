@@ -1,0 +1,151 @@
+<html>
+
+  <body id="body">
+  <h1>GTK+ themed elements</h1>
+
+  <p>This is a manual tests to check how all elements having a native appearance are rendered by WebKitGTK+.
+    To test different themes, open this test in MiniBrowser (or any other WebKitGTK+ based browser) passing
+    GTK_THEME=theme-name[:variant] environment variable.
+  </p>
+
+  <p>Text direction: <select onchange="body = document.getElementById('body'); if (this.selectedIndex == 0) body.style.direction='ltr'; else body.style.direction='rtl';">
+      <option>Left to right</option><option>Right to left</option></select>
+  </p>
+
+  <h1>Buttons</h1>
+  <table>
+    <tr>
+      <td><button type="button">Button</button></td>
+      <td><button type="button" disabled>Disabled</button></td>
+    </tr>
+    <tr>
+      <td><input type="radio" name="radio"/>Radio 1</td>
+      <td><input type="radio" name="radio"/>Radio 2</td>
+    </tr>
+    <tr>
+      <td><input type="radio" name="radio-disabled" disabled/>Disabled</td>
+      <td><input type="radio" name="radio-disabled" disabled checked/>Checked Disabled</td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" name="check"/>Check</td>
+      <td><input type="checkbox" name="check-disabled" checked disabled/>Check Disabled</td>
+    </tr>
+  </table>
+
+  <h1>Combos</h1>
+  <table>
+    <tr>
+      <td><select><option>A</option><option selected>B</option><option>C</option></td>
+      <td><select><option>Combo option 1</option><option>Combo option 2</option><option>Combo option 3</option></td>
+    </tr>
+  </table>
+
+  <h1>Text areas</h1>
+  <table>
+    <tr>
+      <td><input value="Entry"></td>
+      <td><input value="Disabled" disabled></td>
+      <td><input value="Read only" readonly></td>
+    </tr>
+    <tr>
+      <td><input type="password" value="Password"></td>
+      <td><input type="password" value="Disabled" disabled></td>
+      <td><input type="password" value="Read only" readonly></td>
+    </tr>
+    <tr>
+      <td><textarea rows="1">Single row text area</textarea></td>
+      <td><textarea rows="1" disabled>Disabled</textarea></td>
+      <td><textarea rows="1" readonly>Read only</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea rows="5">No scrollbars initially</textarea></td>
+      <td><textarea rows="5">With vertical scrollbar
+
+
+
+
+
+
+      </textarea></td>
+      <td><textarea rows="5" style='white-space: nowrap'>With horizontal scrollbars..................</textarea></td>
+    </tr>
+  </table>
+
+  <h1>Search field</h1>
+  <table>
+    <tr>
+      <td><input type="search" results value="Small" style="font-size: 8px;"></td>
+      <td><input type="search" results value="Big" style="font-size: 32px;"></td>
+    </tr>
+  </table>
+
+  <h1>Spin buttons</h1>
+  <table>
+    <tr>
+      <td><input type="number" value="Small" style="font-size: 8px;"></td>
+      <td><input type="number" value="Big" style="font-size: 32px;"></td>
+    </tr>
+  </table>
+
+  <h1>Option lists</h1>
+  <table>
+    <tr>
+      <td>
+        <select size="5">
+          <option>Option 1</option><option>Option 2</option><option>Option 3</option><option selected>Option 4</option><option>Option 5</option>
+        </select>
+      </td>
+      <td>
+        <select size="3">
+          <option>Option 1</option><option>Option 2</option><option>Option 3</option><option selected>Option 4</option><option>Option 5</option>
+        </select>
+      </td>
+      <td>
+        <select size="3">
+          <option disabled>Option 1</option><option disabled>Option 2</option><option>Option 3</option><option selected>Option 4</option><option>Option 5</option>
+        </select>
+      </td>
+      <td>
+        <select size="3" disabled>
+          <option>Option 1</option><option>Option 2</option><option>Option 3</option><option selected>Option 4</option><option>Option 5</option>
+        </select>
+      </td>
+    </tr>
+  </table>
+
+  <h1>Progress bars</h1>
+  <table>
+    <tr>
+      <td><progress value="50" max="100"></progress></td>
+      <td><progress indeterminate="true"></progress></td>
+      <td><progress value="50" max="100" style="width: 150px; height: 16px;"></progress></td>
+      <td><progress indeterminate="true" style="width: 150px; height: 16px;"></progress></td>
+    </tr>
+  </table>
+
+  <h1>Range selector</h1>
+  <table>
+    <tr>
+      <td><input type="range" value="50" max="100"></input></td>
+      <td><input type="range" value="50" max="100" style="-webkit-appearance: slider-vertical"></input></td>
+      <td><input type="range" value="50" max="100" disabled></input></td>
+      <td><input type="range" value="50" max="100" style="-webkit-appearance: slider-vertical" disabled></input></td>
+    </tr>
+  </table>
+
+  <h1>Iframe scrollbars</h1>
+  <iframe width="200" height="100" scrolling="yes" src="data:text/html,
+      <html>
+        <body>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+          dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+          proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </body>
+      </html>">
+  </iframe>
+
+  <h1>Media controls</h1>
+  <video controls></video>
+  </body>
+</html>

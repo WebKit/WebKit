@@ -1,3 +1,14 @@
+2016-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rework the theming code for GTK+ 3.20
+        https://bugs.webkit.org/show_bug.cgi?id=156333
+
+        Reviewed by Michael Catanzaro.
+
+        Add a manual test to check how themed elements are rendered.
+
+        * ManualTests/gtk/theme.html: Added.
+
 2016-04-11  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
 
         [CMake] Make FOLDER property INHERITED

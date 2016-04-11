@@ -105,6 +105,7 @@ public:
     bool shouldHaveCapsLockIndicator(HTMLInputElement&) const override;
 
 private:
+    RenderThemeGtk();
     virtual ~RenderThemeGtk();
 
     bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) override;
@@ -116,6 +117,7 @@ private:
     void adjustButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
+    void adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
@@ -170,8 +172,10 @@ private:
     double animationRepeatIntervalForProgressBar(RenderProgress&) const override;
     double animationDurationForProgressBar(RenderProgress&) const override;
     void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const override;
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
+    InnerSpinButtonLayout innerSpinButtonLayout(const RenderObject&) const override;
     void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 

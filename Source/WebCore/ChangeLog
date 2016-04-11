@@ -1,3 +1,96 @@
+2016-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rework the theming code for GTK+ 3.20
+        https://bugs.webkit.org/show_bug.cgi?id=156333
+
+        Reviewed by Michael Catanzaro.
+
+        During the 3.19 GTK+ release cycle, the GTK+ css system was reworked, making themes and programs rendering
+        themed widgets, incompatible with the new system. We were trying to fix our rendering every time GTK+ broke
+        something, but we were just changing whatever it was needed to make our rendering look like current GTK+ with
+        the default theme Adwaita. This means that our rendering will be broken for other themes or that changes in
+        Adwaita can break our rendering. This solution was good enough to ensure WebKitGTK+ 2.12 looked good with GTK+
+        3.20, but it doesn't work in the long term. We need to ensure that our theming code honors the new GTK+ CSS
+        properties (max-width, min-width, margin, padding, border, ...) in all the cases, not only the cases where
+        Adwaita uses them like we currently do.
+        This patch splits all rendering methods to keep the current code for previous GTK+ versions and adds new code
+        for GTK+ >= 3.20 using the new RenderThemeGadget classes. This makes the code easier to read, since there aren't
+        ifdef blocks in the functions, and we ensure we don't break previous rendering.
+
+        * PlatformGTK.cmake: Add new files to compilation.
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::defaultEventHandler): Check the button layout used by the theme to decide the
+        current buttons state.
+        * platform/gtk/RenderThemeGadget.cpp: Added.
+        (WebCore::RenderThemeGadget::create):
+        (WebCore::createStyleContext):
+        (WebCore::appendElementToPath):
+        (WebCore::RenderThemeGadget::RenderThemeGadget):
+        (WebCore::RenderThemeGadget::~RenderThemeGadget):
+        (WebCore::RenderThemeGadget::marginBox):
+        (WebCore::RenderThemeGadget::borderBox):
+        (WebCore::RenderThemeGadget::paddingBox):
+        (WebCore::RenderThemeGadget::contentsBox):
+        (WebCore::RenderThemeGadget::color):
+        (WebCore::RenderThemeGadget::backgroundColor):
+        (WebCore::RenderThemeGadget::minimumSize):
+        (WebCore::RenderThemeGadget::preferredSize):
+        (WebCore::RenderThemeGadget::render):
+        (WebCore::RenderThemeGadget::renderFocus):
+        (WebCore::RenderThemeBoxGadget::RenderThemeBoxGadget):
+        (WebCore::RenderThemeTextFieldGadget::RenderThemeTextFieldGadget):
+        (WebCore::RenderThemeTextFieldGadget::minimumSize):
+        (WebCore::RenderThemeToggleGadget::RenderThemeToggleGadget):
+        (WebCore::RenderThemeToggleGadget::render):
+        (WebCore::RenderThemeArrowGadget::RenderThemeArrowGadget):
+        (WebCore::RenderThemeArrowGadget::render):
+        (WebCore::RenderThemeIconGadget::RenderThemeIconGadget):
+        (WebCore::RenderThemeIconGadget::gtkIconSizeForPixelSize):
+        (WebCore::RenderThemeIconGadget::render):
+        (WebCore::RenderThemeIconGadget::minimumSize):
+        * platform/gtk/RenderThemeGadget.h: Added.
+        (WebCore::RenderThemeGadget::context):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::innerSpinButtonLayout): Added this method to allow themes use a different layout for the
+        buttons.
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::themeChangedCallback): Just moved this code to a common place.
+        (WebCore::RenderThemeGtk::RenderThemeGtk): Initialize the theme monitor in the constructor.
+        (WebCore::createStyleContext): Remove the render parts that are specific to GTK+ 3.20.
+        (WebCore::RenderThemeGtk::adjustRepaintRect): Moved inside a GTK+ < 3.20 ifdef block.
+        (WebCore::themePartStateFlags): Helper function to get the GtkStateFlags of a theme part for a given RenderObject.
+        (WebCore::shrinkToMinimumSizeAndCenterRectangle): Move this common code to a helper function.
+        (WebCore::setToggleSize):
+        (WebCore::paintToggle):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::RenderThemeGtk::popupInternalPaddingBox):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle): For GTK+ 3.20 we need to ensure a minimum size for spin buttons,
+        so if the text field is for a spin button, we adjust the desired size here.
+        (WebCore::RenderThemeGtk::paintTextField): In GTK+ 3.20 the CSS gadgets used to render spin buttons are
+        different, so we check here if this is the entry of a spin button to use the right gadgets.
+        (WebCore::adjustSearchFieldIconStyle):
+        (WebCore::RenderThemeGtk::paintTextArea):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldCancelButtonStyle):
+        (WebCore::paintSearchFieldIcon):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        (WebCore::centerRectVerticallyInParentInputElement): Moved inside a GTK+ < 3.20 ifdef block.
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::progressBarRectForBounds): Ensure a minimum size of progress bars in GTK+ 3.20.
+        (WebCore::RenderThemeGtk::paintProgressBar):
+        (WebCore::RenderThemeGtk::innerSpinButtonLayout): Use an horizontal layout for spin buttons.
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeGtk::paintInnerSpinButton):
+        (WebCore::styleColor):
+        (WebCore::RenderThemeGtk::paintMediaButton):
+        * rendering/RenderThemeGtk.h:
+
 2016-04-11  Antti Koivisto  <antti@apple.com>
 
         Implement functional :host() pseudo class

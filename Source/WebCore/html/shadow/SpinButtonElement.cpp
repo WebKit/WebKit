@@ -35,6 +35,7 @@
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderBox.h"
+#include "RenderTheme.h"
 #include "ScrollbarTheme.h"
 #include "WheelEvent.h"
 #include <wtf/Ref.h>
@@ -122,7 +123,17 @@ void SpinButtonElement::defaultEventHandler(Event* event)
                 }
             }
             UpDownState oldUpDownState = m_upDownState;
-            m_upDownState = local.y() < box->height() / 2 ? Up : Down;
+            switch (renderer()->theme().innerSpinButtonLayout(*renderer())) {
+            case RenderTheme::InnerSpinButtonLayout::Vertical:
+                m_upDownState = local.y() < box->height() / 2 ? Up : Down;
+                break;
+            case RenderTheme::InnerSpinButtonLayout::HorizontalUpLeft:
+                m_upDownState = local.x() < box->width() / 2 ? Up : Down;
+                break;
+            case RenderTheme::InnerSpinButtonLayout::HorizontalUpRight:
+                m_upDownState = local.x() > box->width() / 2 ? Up : Down;
+                break;
+            }
             if (m_upDownState != oldUpDownState)
                 renderer()->repaint();
         } else {
