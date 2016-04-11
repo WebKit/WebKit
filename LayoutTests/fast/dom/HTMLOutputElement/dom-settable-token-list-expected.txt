@@ -32,8 +32,8 @@ PASS element.htmlFor.toString() is "x y"
 PASS element.htmlFor.toString() is "x y"
 PASS element.htmlFor.toString() is "y"
 - Test invalid tokens
-PASS element.htmlFor.contains('') threw expected DOMException with code 12
-PASS element.htmlFor.contains('x y') threw expected DOMException with code 5
+PASS element.htmlFor.contains('') is false
+PASS element.htmlFor.contains('x y') is false
 PASS element.htmlFor.add('') threw expected DOMException with code 12
 PASS element.htmlFor.add('x y') threw expected DOMException with code 5
 PASS element.htmlFor.remove('') threw expected DOMException with code 12

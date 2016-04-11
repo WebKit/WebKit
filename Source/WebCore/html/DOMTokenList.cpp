@@ -62,11 +62,8 @@ bool DOMTokenList::validateTokens(const String* tokens, size_t length, Exception
     return true;
 }
 
-bool DOMTokenList::contains(const AtomicString& token, ExceptionCode& ec) const
+bool DOMTokenList::contains(const AtomicString& token) const
 {
-    if (!validateToken(token, ec))
-        return false;
-
     return m_tokens.contains(token);
 }
 

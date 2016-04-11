@@ -143,10 +143,10 @@ function test()
     debug('Test invalid tokens');
 
     createElement('x');
-    shouldThrow('element.relList.contains("")');
+    shouldBeFalse('element.relList.contains("")');
 
     createElement('x y');
-    shouldThrow('element.relList.contains("x y")');
+    shouldBeFalse('element.relList.contains("x y")');
 
     createElement('');
     shouldThrow('element.relList.add("")');

@@ -61,8 +61,8 @@ PASS element.rel is "x y"
 PASS element.rel is "x y"
 PASS element.rel is "y"
 Test invalid tokens
-PASS element.relList.contains("") threw exception Error: SyntaxError: DOM Exception 12.
-PASS element.relList.contains("x y") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS element.relList.contains("") is false
+PASS element.relList.contains("x y") is false
 PASS element.relList.add("") threw exception Error: SyntaxError: DOM Exception 12.
 PASS element.relList.add("x y") threw exception Error: InvalidCharacterError: DOM Exception 5.
 PASS element.relList.remove("") threw exception Error: SyntaxError: DOM Exception 12.
@@ -184,8 +184,8 @@ PASS element.rel is "x y"
 PASS element.rel is "x y"
 PASS element.rel is "y"
 Test invalid tokens
-PASS element.relList.contains("") threw exception Error: SyntaxError: DOM Exception 12.
-PASS element.relList.contains("x y") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS element.relList.contains("") is false
+PASS element.relList.contains("x y") is false
 PASS element.relList.add("") threw exception Error: SyntaxError: DOM Exception 12.
 PASS element.relList.add("x y") threw exception Error: InvalidCharacterError: DOM Exception 5.
 PASS element.relList.remove("") threw exception Error: SyntaxError: DOM Exception 12.
@@ -307,8 +307,8 @@ PASS element.rel is "x y"
 PASS element.rel is "x y"
 PASS element.rel is "y"
 Test invalid tokens
-PASS element.relList.contains("") threw exception Error: SyntaxError: DOM Exception 12.
-PASS element.relList.contains("x y") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS element.relList.contains("") is false
+PASS element.relList.contains("x y") is false
 PASS element.relList.add("") threw exception Error: SyntaxError: DOM Exception 12.
 PASS element.relList.add("x y") threw exception Error: InvalidCharacterError: DOM Exception 5.
 PASS element.relList.remove("") threw exception Error: SyntaxError: DOM Exception 12.

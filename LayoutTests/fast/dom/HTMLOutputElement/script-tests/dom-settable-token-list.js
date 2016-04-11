@@ -139,14 +139,10 @@ function shouldThrowDOMException(f, ec)
 }
 
 createElement('x');
-shouldThrowDOMException(function() {
-    element.htmlFor.contains('');
-}, DOMException.SYNTAX_ERR);
+shouldBeFalse("element.htmlFor.contains('')");
 
 createElement('x y');
-shouldThrowDOMException(function() {
-    element.htmlFor.contains('x y');
-}, DOMException.INVALID_CHARACTER_ERR);
+shouldBeFalse("element.htmlFor.contains('x y')");
 
 createElement('');
 shouldThrowDOMException(function() {

@@ -40,8 +40,8 @@ PASS element.className is "x y"
 PASS element.className is "x y"
 PASS element.className is "y"
 Test invalid tokens
-PASS element.classList.contains('') threw expected DOMException with code 12
-PASS element.classList.contains('x y') threw expected DOMException with code 5
+PASS element.classList.contains('') is false
+PASS element.classList.contains('x y') is false
 PASS element.classList.add('') threw expected DOMException with code 12
 PASS element.classList.add('x y') threw expected DOMException with code 5
 PASS element.classList.remove('') threw expected DOMException with code 12

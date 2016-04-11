@@ -29,7 +29,7 @@
 ] interface DOMTokenList {
     readonly attribute unsigned long length;
     getter DOMString? item(unsigned long index);
-    [RaisesException] boolean contains(DOMString token);
+    boolean contains(DOMString token);
     [RaisesException] void add(DOMString... tokens);
     [RaisesException] void remove(DOMString... tokens);
     [RaisesException, Custom] boolean toggle(DOMString token, optional boolean force);

@@ -1,3 +1,15 @@
+2016-04-11  Chris Dumez  <cdumez@apple.com>
+
+        DOMTokenList.contains() should not throw
+        https://bugs.webkit.org/show_bug.cgi?id=156453
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-sync dom/nodes/Element-classlist.html with upstream @26308720.
+
+        * web-platform-tests/dom/nodes/Element-classlist-expected.txt:
+        * web-platform-tests/dom/nodes/Element-classlist.html:
+
 2016-04-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Testharness-based tests that time out should be able to produce detailed output

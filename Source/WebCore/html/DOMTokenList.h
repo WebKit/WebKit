@@ -47,7 +47,7 @@ public:
     unsigned length() const;
     const AtomicString& item(unsigned index) const;
 
-    bool contains(const AtomicString&, ExceptionCode&) const;
+    bool contains(const AtomicString&) const;
     void add(const Vector<String>&, ExceptionCode&);
     void add(const AtomicString&, ExceptionCode&);
     void remove(const Vector<String>&, ExceptionCode&);
