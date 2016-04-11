@@ -98,7 +98,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, IDBAny* idbAny)
     case IDBAny::Type::IDBTransaction:
         return toJS(exec, globalObject, idbAny->idbTransaction());
     case IDBAny::Type::ScriptValue:
-        return idbAny->scriptValue();
+        return idbAny->scriptValue().jsValue();
     case IDBAny::Type::String:
         return jsStringWithCache(exec, idbAny->string());
     case IDBAny::Type::Integer:

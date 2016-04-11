@@ -326,13 +326,13 @@ void IDBRequest::uncaughtExceptionInEventHandler()
 
 void IDBRequest::setResult(const IDBKeyData* keyData)
 {
-    auto* context = scriptExecutionContext();
-    if (!context || !keyData) {
+    if (!keyData) {
         m_result = nullptr;
         return;
     }
 
-    m_result = IDBAny::create(idbKeyDataToScriptValue(*context, *keyData));
+    Deprecated::ScriptValue value = idbKeyDataToScriptValue(scriptExecutionContext(), *keyData);
+    m_result = IDBAny::create(WTFMove(value));
 }
 
 void IDBRequest::setResult(uint64_t number)
@@ -349,7 +349,7 @@ void IDBRequest::setResultToStructuredClone(const ThreadSafeDataBuffer& valueDat
     if (!context)
         return;
 
-    auto value = deserializeIDBValueDataToJSValue(*context, valueData);
+    Deprecated::ScriptValue value = deserializeIDBValueData(*context, valueData);
     m_result = IDBAny::create(WTFMove(value));
 }
 

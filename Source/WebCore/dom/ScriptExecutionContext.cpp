@@ -487,15 +487,4 @@ bool ScriptExecutionContext::hasPendingActivity() const
     return false;
 }
 
-JSC::ExecState* ScriptExecutionContext::execState()
-{
-    if (is<Document>(*this)) {
-        Document& document = downcast<Document>(*this);
-        return execStateFromPage(mainThreadNormalWorld(), document.page());
-    }
-
-    WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(this);
-    return execStateFromWorkerGlobalScope(workerGlobalScope);
-}
-
 } // namespace WebCore

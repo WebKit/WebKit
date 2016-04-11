@@ -40,8 +40,6 @@
 #include "ScriptExecutionContext.h"
 #include <wtf/NeverDestroyed.h>
 
-using namespace JSC;
-
 namespace WebCore {
 
 const AtomicString& IDBCursor::directionNext()
@@ -159,19 +157,19 @@ const String& IDBCursor::direction() const
     return IDBCursor::directionToString(m_info.cursorDirection());
 }
 
-JSValue IDBCursor::key(ExecState&) const
+const Deprecated::ScriptValue& IDBCursor::key() const
 {
-    return m_currentKey;
+    return m_deprecatedCurrentKey;
 }
 
-JSValue IDBCursor::primaryKey(ExecState&) const
+const Deprecated::ScriptValue& IDBCursor::primaryKey() const
 {
-    return m_currentPrimaryKey;
+    return m_deprecatedCurrentPrimaryKey;
 }
 
-JSValue IDBCursor::value(ExecState&) const
+const Deprecated::ScriptValue& IDBCursor::value() const
 {
-    return m_currentValue;
+    return m_deprecatedCurrentValue;
 }
 
 IDBAny* IDBCursor::source()
@@ -226,7 +224,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::
         }
     }
 
-    auto request = effectiveObjectStore().putForCursorUpdate(exec, value.jsValue(), m_currentPrimaryKey, ec);
+    auto request = effectiveObjectStore().putForCursorUpdate(exec, value.jsValue(), m_deprecatedCurrentPrimaryKey.jsValue(), ec);
     if (ec.code)
         return nullptr;
 
@@ -282,9 +280,10 @@ void IDBCursor::continueFunction(ScriptExecutionContext&, ExceptionCodeWithMessa
 
 void IDBCursor::continueFunction(ScriptExecutionContext& context, const Deprecated::ScriptValue& keyValue, ExceptionCodeWithMessage& ec)
 {
+    DOMRequestState requestState(&context);
     RefPtr<IDBKey> key;
     if (!keyValue.jsValue().isUndefined())
-        key = scriptValueToIDBKey(context, keyValue);
+        key = scriptValueToIDBKey(&requestState, keyValue);
 
     continueFunction(key.get(), ec);
 }
@@ -381,7 +380,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext& co
         return nullptr;
     }
 
-    auto request = effectiveObjectStore().modernDelete(context, m_currentPrimaryKey, ec);
+    auto request = effectiveObjectStore().modernDelete(context, m_deprecatedCurrentPrimaryKey.jsValue(), ec);
     if (ec.code)
         return nullptr;
 
@@ -401,25 +400,25 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
         return;
 
     if (!getResult.isDefined()) {
-        m_currentKey = { };
+        m_deprecatedCurrentKey = { };
         m_currentKeyData = { };
-        m_currentPrimaryKey = { };
+        m_deprecatedCurrentPrimaryKey = { };
         m_currentPrimaryKeyData = { };
-        m_currentValue = { };
+        m_deprecatedCurrentValue = { };
 
         m_gotValue = false;
         return;
     }
 
-    m_currentKey = idbKeyDataToScriptValue(*context, getResult.keyData());
+    m_deprecatedCurrentKey = idbKeyDataToScriptValue(context, getResult.keyData());
     m_currentKeyData = getResult.keyData();
-    m_currentPrimaryKey = idbKeyDataToScriptValue(*context, getResult.primaryKeyData());
+    m_deprecatedCurrentPrimaryKey = idbKeyDataToScriptValue(context, getResult.primaryKeyData());
     m_currentPrimaryKeyData = getResult.primaryKeyData();
 
     if (isKeyCursor())
-        m_currentValue = { };
+        m_deprecatedCurrentValue = { };
     else
-        m_currentValue = deserializeIDBValueDataToJSValue(*context, getResult.value().data());
+        m_deprecatedCurrentValue = deserializeIDBValueData(*context, getResult.value().data());
 
     m_gotValue = true;
 }

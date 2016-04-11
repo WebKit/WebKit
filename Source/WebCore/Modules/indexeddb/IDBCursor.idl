@@ -32,8 +32,8 @@
 ] interface IDBCursor {
     readonly attribute IDBAny source;
     readonly attribute DOMString direction;
-    [CallWith=ScriptState, ImplementationReturnType=JSValue] readonly attribute any key;
-    [CallWith=ScriptState, ImplementationReturnType=JSValue] readonly attribute any primaryKey;
+    readonly attribute any key;
+    readonly attribute any primaryKey;
 
     [CallWith=ScriptState, RaisesExceptionWithMessage] IDBRequest update(any value);
     [RaisesExceptionWithMessage] void advance([EnforceRange] unsigned long count);

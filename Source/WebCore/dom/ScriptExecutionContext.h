@@ -188,8 +188,6 @@ public:
     int timerNestingLevel() const { return m_timerNestingLevel; }
     void setTimerNestingLevel(int timerNestingLevel) { m_timerNestingLevel = timerNestingLevel; }
 
-    JSC::ExecState* execState();
-
 protected:
     class AddConsoleMessageTask : public Task {
     public:

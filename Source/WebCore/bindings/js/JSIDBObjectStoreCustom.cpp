@@ -119,7 +119,7 @@ JSValue JSIDBObjectStore::createIndex(ExecState& state)
     IDBKeyPath keyPath;
     JSValue keyPathValue = state.argument(1);
     if (!keyPathValue.isUndefinedOrNull())
-        keyPath = idbKeyPathFromValue(state, keyPathValue);
+        keyPath = idbKeyPathFromValue(&state, keyPathValue);
     else {
         ExceptionCodeWithMessage ec;
         ec.code = IDBDatabaseException::SyntaxError;

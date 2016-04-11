@@ -58,8 +58,8 @@ public:
     IDBKey* lower() const { return m_lower.get(); }
     IDBKey* upper() const { return m_upper.get(); }
 
-    JSC::JSValue  lowerValue(ScriptExecutionContext&) const;
-    JSC::JSValue upperValue(ScriptExecutionContext&) const;
+    Deprecated::ScriptValue lowerValue(ScriptExecutionContext&) const;
+    Deprecated::ScriptValue upperValue(ScriptExecutionContext&) const;
     bool lowerOpen() const { return m_lowerType == LowerBoundOpen; }
     bool upperOpen() const { return m_upperType == UpperBoundOpen; }
 

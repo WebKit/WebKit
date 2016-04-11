@@ -31,7 +31,6 @@
 #include "ExceptionCode.h"
 #include "IDBAny.h"
 #include "IDBCursorInfo.h"
-#include <runtime/JSCJSValue.h>
 
 namespace WebCore {
 
@@ -57,9 +56,9 @@ public:
 
     // Implement the IDL
     const String& direction() const;
-    JSC::JSValue key(JSC::ExecState&) const;
-    JSC::JSValue primaryKey(JSC::ExecState&) const;
-    JSC::JSValue value(JSC::ExecState&) const;
+    const Deprecated::ScriptValue& key() const;
+    const Deprecated::ScriptValue& primaryKey() const;
+    const Deprecated::ScriptValue& value() const;
     IDBAny* source();
 
     RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&);
@@ -112,9 +111,11 @@ private:
     IDBKeyData m_currentKeyData;
     IDBKeyData m_currentPrimaryKeyData;
 
-    JSC::JSValue m_currentKey;
-    JSC::JSValue m_currentPrimaryKey;
-    JSC::JSValue m_currentValue;
+    // FIXME: When ditching Legacy IDB and combining this implementation with the abstract IDBCursor,
+    // these Deprecated::ScriptValue members should be JSValues instead.
+    Deprecated::ScriptValue m_deprecatedCurrentKey;
+    Deprecated::ScriptValue m_deprecatedCurrentPrimaryKey;
+    Deprecated::ScriptValue m_deprecatedCurrentValue;
 };
 
 } // namespace WebCore
