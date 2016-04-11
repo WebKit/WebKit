@@ -42,14 +42,14 @@ GIFImageDecoder::~GIFImageDecoder()
 {
 }
 
-void GIFImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
+void GIFImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 {
     if (failed())
         return;
 
     ImageDecoder::setData(data, allDataReceived);
     if (m_reader)
-        m_reader->setData(data);
+        m_reader->setData(&data);
 }
 
 bool GIFImageDecoder::isSizeAvailable()
@@ -303,7 +303,7 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
 
     if (!m_reader) {
         m_reader = std::make_unique<GIFImageReader>(this);
-        m_reader->setData(m_data);
+        m_reader->setData(m_data.get());
     }
 
     if (query == GIFSizeQuery) {

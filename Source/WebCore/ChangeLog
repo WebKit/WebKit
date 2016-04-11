@@ -1,3 +1,166 @@
+2016-04-11  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        Merge CG ImageSource and non CG ImageSource implementation in one file
+        https://bugs.webkit.org/show_bug.cgi?id=155456
+
+        Reviewed by Darin Adler.
+
+        ImageSource for CG and CG code paths look very similar. All the platform
+        specific code can be moved to ImageDecoder classes for CG and non CG. And
+        we can have the ImageSource be platform independent and we get rid of
+        ImageSourceCG.cpp.
+
+        Test: fast/images/image-subsampling.html
+
+        * CMakeLists.txt:
+        * PlatformAppleWin.cmake:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        Delete ImageSourceCG.cpp form all make files and add ImageSource.cpp to
+        CMakeLists.txt.
+        
+        * platform/Cursor.cpp:
+        (WebCore::determineHotSpot):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::hotSpot):
+        (WebCore::BitmapImage::getHotSpot): Deleted.
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::hotSpot):
+        (WebCore::Image::getHotSpot): Deleted.
+        Rename getHotSpot() to hotSpot() and change it to return Optional<IntPoint>.
+        
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::~ImageSource): Remove clear(true) call. It does nothing.
+        (WebCore::ImageSource::clearFrameBufferCache): A wrapper which calls ImageDecoder::clearFrameBufferCache().
+        (WebCore::ImageSource::clear): Calls clearFrameBufferCache() which will do nothing for CG.
+        
+        (WebCore::ImageSource::ensureDecoderIsCreated): Change SharedBuffer* to
+        const SharedBuffer& and remove the call to ImageDecoder::setMaxNumPixels().
+        The value of const static int CG ImageDecoder::m_maxNumPixels will be set
+        based on IMAGE_DECODER_DOWN_SAMPLING.
+        
+        (WebCore::ImageSource::setData): Pass SharedBuffer& to the underlying functions.
+        
+        (WebCore::ImageSource::calculateMaximumSubsamplingLevel): Returns the maximum
+        subsampling level allowed for an image.
+        
+        (WebCore::ImageSource::subsamplingLevelForScale): Converts from a scale to
+        SubsamplingLevel taking into consideration the maximumSubsamplingLevel for
+        a particular image.
+        
+        (WebCore::ImageSource::bytesDecodedToDetermineProperties): Returns the number
+        of encoded bytes which can determine the image properties. For non CG it's
+        zero. For CG it is a maximum value which can be corrected later.
+        
+        (WebCore::ImageSource::isSizeAvailable):
+        (WebCore::ImageSource::sizeRespectingOrientation):
+        (WebCore::ImageSource::frameCount):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::filenameExtension):
+        (WebCore::ImageSource::getHotSpot):
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        (WebCore::ImageSource::allowSubsamplingOfFrameAtIndex):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::frameBytesAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::orientationAtIndex):
+        (WebCore::ImageSource::createFrameImageAtIndex):
+        These are wrappers for the ImageDecoder APIs. The purpose of these functions
+        is to ensure the ImageDecoder is created.
+        
+        (WebCore::ImageSource::dump): Called from BitmapImage::dump().
+        
+        (WebCore::ImageSource::getHotSpot): Deleted.
+        
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::setAllowSubsampling): Called from BitmapImage::setAllowSubsampling().
+        
+        (WebCore::ImageSource::maxPixelsPerDecodedImage): Deleted.
+        (WebCore::ImageSource::setMaxPixelsPerDecodedImage): Deleted.
+        Setting maxPixelsPerDecodedImage was moved to the non CG ImageDecoder.
+        
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::setData): Change SharedBuffer* to SharedBuffer&.
+
+        (WebCore::ImageDecoder::subsamplingLevelForScale): Deleted.
+        The code was moved to ImageSource::subsamplingLevelForScale().
+        
+        * platform/graphics/cg/ImageDecoderCG.h:
+        (WebCore::ImageDecoder::create): Make the prototype of this function
+        suitable for CG and non CG cases.
+        (WebCore::ImageDecoder::clearFrameBufferCache): Empty functions for CG.
+        
+        * platform/graphics/cg/ImageSourceCG.cpp: Removed.
+        
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::frameIsCompleteAtIndex): A mew function to return
+        whether the frame decoding is complete or not.
+        
+        (WebCore::ImageDecoder::frameHasAlphaAtIndex): Simplify the logic.
+        
+        (WebCore::ImageDecoder::frameDurationAtIndex): The code was moved from
+        ImageSource::frameDurationAtIndex() in ImageSource.cpp.
+        
+        (WebCore::ImageDecoder::createFrameImageAtIndex): The code was moved from
+        ImageSource::createFrameImageAtIndex() in ImageSource.cpp.
+        
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::ImageDecoder): Initialize the members in class.
+        (WebCore::ImageDecoder::~ImageDecoder): Fix the braces style.
+        (WebCore::ImageDecoder::setData): Change the type of the argument from
+        SharedBuffer* to SharedBuffer&.
+        (WebCore::ImageDecoder::frameSizeAtIndex): Add the argument SubsamplingLevel
+        so it can have the same prototype as CG.
+        (WebCore::ImageDecoder::orientationAtIndex): Rename it to the same of CG.
+        
+        (WebCore::ImageDecoder::allowSubsamplingOfFrameAtIndex):
+        (WebCore::ImageDecoder::bytesDecodedToDetermineProperties):
+        (WebCore::ImageDecoder::subsamplingLevelForScale): Add these functions
+        and return the default values so we do not have to add directive compiled
+        non CG blocks in ImageSource.cpp.
+
+        (WebCore::ImageDecoder::hotSpot): Return Optional<IntPoint>.
+        
+        (WebCore::ImageDecoder::orientation): Deleted.
+        (WebCore::ImageDecoder::setMaxNumPixels): Deleted.
+        
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::setData):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::setData):
+        (WebCore::GIFImageDecoder::decode):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageReader.h:
+        (GIFImageReader::setData):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::setData):
+        Use reference SharedBuffer instead of pointer SharedBuffer.
+        
+        (WebCore::ICOImageDecoder::hotSpot):
+        (WebCore::ICOImageDecoder::hotSpotAtIndex):
+        Change hotSpot() to return Optional<IntPoint>.
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+                
+        (WebCore::ICOImageDecoder::setDataForPNGDecoderAtIndex):
+        Pass reference SharedBuffer instead of pointer SharedBuffer.
+
+2016-04-08  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        Timing attack on SVG feComposite filter circumvents same-origin policy
+        https://bugs.webkit.org/show_bug.cgi?id=154338
+
+        Reviewed by Oliver Hunt.
+
+        Ensure the FEComposite arithmetic filter is clamping the resulted color
+        components in a constant time.
+
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::clampByte):
+        (WebCore::computeArithmeticPixels):
+
 2016-04-11  Brady Eidson  <beidson@apple.com>
 
         Clean up IDBBindingUtilities.

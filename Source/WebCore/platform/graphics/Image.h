@@ -33,6 +33,7 @@
 #include "GraphicsTypes.h"
 #include "ImageOrientation.h"
 #include "NativeImagePtr.h"
+#include <wtf/Optional.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -107,7 +108,7 @@ public:
     FloatRect rect() const { return FloatRect(FloatPoint(), size()); }
     float width() const { return size().width(); }
     float height() const { return size().height(); }
-    virtual bool getHotSpot(IntPoint&) const { return false; }
+    virtual Optional<IntPoint> hotSpot() const { return Nullopt; }
 
 #if PLATFORM(IOS)
     virtual FloatSize originalSize() const { return size(); }

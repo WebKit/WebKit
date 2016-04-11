@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2016 Apple Inc.  All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
@@ -270,6 +271,12 @@ template <MatchType type> int getScaledValue(const Vector<int>& scaledValues, in
 
 }
 
+bool ImageDecoder::frameIsCompleteAtIndex(size_t index)
+{
+    ImageFrame* buffer = frameBufferAtIndex(index);
+    return buffer && buffer->status() == ImageFrame::FrameComplete;
+}
+
 bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
 {
     if (m_frameBufferCache.size() <= index)
@@ -285,6 +292,38 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index) const
         return 0;
     // FIXME: Use the dimension of the requested frame.
     return m_size.area() * sizeof(ImageFrame::PixelData);
+}
+
+float ImageDecoder::frameDurationAtIndex(size_t index)
+{
+    ImageFrame* buffer = frameBufferAtIndex(index);
+    if (!buffer || buffer->status() == ImageFrame::FrameEmpty)
+        return 0;
+    
+    // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
+    // We follow Firefox's behavior and use a duration of 100 ms for any frames that specify
+    // a duration of <= 10 ms. See <rdar://problem/7689300> and <http://webkit.org/b/36082>
+    // for more information.
+    const float duration = buffer->duration() / 1000.0f;
+    if (duration < 0.011f)
+        return 0.100f;
+    return duration;
+}
+
+NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel)
+{
+    // Zero-height images can cause problems for some ports. If we have an
+    // empty image dimension, just bail.
+    if (size().isEmpty())
+        return nullptr;
+
+    ImageFrame* buffer = frameBufferAtIndex(index);
+    if (!buffer || buffer->status() == ImageFrame::FrameEmpty)
+        return nullptr;
+
+    // Return the buffer contents as a native image. For some ports, the data
+    // is already in a native container, and this just increments its refcount.
+    return buffer->asNewNativeImage();
 }
 
 void ImageDecoder::prepareScaleDataIfNecessary()

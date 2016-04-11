@@ -55,7 +55,7 @@ ICOImageDecoder::~ICOImageDecoder()
 {
 }
 
-void ICOImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
+void ICOImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 {
     if (failed())
         return;
@@ -64,7 +64,7 @@ void ICOImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 
     for (BMPReaders::iterator i(m_bmpReaders.begin()); i != m_bmpReaders.end(); ++i) {
         if (*i)
-            (*i)->setData(data);
+            (*i)->setData(&data);
     }
     for (size_t i = 0; i < m_pngDecoders.size(); ++i)
         setDataForPNGDecoderAtIndex(i);
@@ -128,21 +128,20 @@ bool ICOImageDecoder::setFailed()
     return ImageDecoder::setFailed();
 }
 
-bool ICOImageDecoder::hotSpot(IntPoint& hotSpot) const
+Optional<IntPoint> ICOImageDecoder::hotSpot() const
 {
     // When unspecified, the default frame is always frame 0. This is consistent with
     // BitmapImage where currentFrame() starts at 0 and only increases when animation is
     // requested.
-    return hotSpotAtIndex(0, hotSpot);
+    return hotSpotAtIndex(0);
 }
 
-bool ICOImageDecoder::hotSpotAtIndex(size_t index, IntPoint& hotSpot) const
+Optional<IntPoint> ICOImageDecoder::hotSpotAtIndex(size_t index) const
 {
     if (index >= m_dirEntries.size() || m_fileType != CURSOR)
-        return false;
+        return Nullopt;
 
-    hotSpot = m_dirEntries[index].m_hotSpot;
-    return true;
+    return m_dirEntries[index].m_hotSpot;
 }
 
 
@@ -165,7 +164,7 @@ void ICOImageDecoder::setDataForPNGDecoderAtIndex(size_t index)
     // FIXME: Save this copy by making the PNG decoder able to take an
     // optional offset.
     RefPtr<SharedBuffer> pngData(SharedBuffer::create(&m_data->data()[dirEntry.m_imageOffset], m_data->size() - dirEntry.m_imageOffset));
-    m_pngDecoders[index]->setData(pngData.get(), isAllDataReceived());
+    m_pngDecoders[index]->setData(*pngData, isAllDataReceived());
 }
 
 void ICOImageDecoder::decode(size_t index, bool onlySize)
