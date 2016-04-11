@@ -59,6 +59,7 @@
 #include "Repatch.h"
 #include "SlotVisitorInlines.h"
 #include "StackVisitor.h"
+#include "StructureStubInfo.h"
 #include "TypeLocationCache.h"
 #include "TypeProfiler.h"
 #include "UnlinkedInstructionStream.h"

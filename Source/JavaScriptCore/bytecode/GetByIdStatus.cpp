@@ -33,6 +33,7 @@
 #include "LLIntData.h"
 #include "LowLevelInterpreter.h"
 #include "PolymorphicAccess.h"
+#include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {

@@ -31,11 +31,13 @@
 #include "ConcurrentJITLock.h"
 #include "ExitingJITType.h"
 #include "GetByIdVariant.h"
-#include "StructureStubInfo.h"
 
 namespace JSC {
 
 class CodeBlock;
+class StructureStubInfo;
+
+typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
 class GetByIdStatus {
 public:

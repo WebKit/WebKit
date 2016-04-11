@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "LinkBuffer.h"
 #include "JSCInlines.h"
+#include "StructureStubInfo.h"
 
 namespace JSC {
 

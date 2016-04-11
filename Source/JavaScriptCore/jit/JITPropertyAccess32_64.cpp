@@ -40,6 +40,7 @@
 #include "LinkBuffer.h"
 #include "ResultType.h"
 #include "SlowPathCall.h"
+#include "StructureStubInfo.h"
 #include <wtf/StringPrintStream.h>
 
 

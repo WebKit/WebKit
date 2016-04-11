@@ -37,6 +37,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "PolymorphicAccess.h"
+#include "StructureStubInfo.h"
 
 namespace JSC {
 

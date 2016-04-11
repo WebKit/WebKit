@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,6 @@
 #include "ProfilerJettisonReason.h"
 #include "PutPropertySlot.h"
 #include "RegExpObject.h"
-#include "StructureStubInfo.h"
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
 #include "VirtualRegister.h"
@@ -80,11 +79,16 @@
 namespace JSC {
 
 class ExecState;
-class LLIntOffsetsExtractor;
-class RegisterAtOffsetList;
-class TypeLocation;
 class JSModuleEnvironment;
+class LLIntOffsetsExtractor;
 class PCToCodeOriginMap;
+class RegisterAtOffsetList;
+class StructureStubInfo;
+class TypeLocation;
+
+enum class AccessType : int8_t;
+
+typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
 enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
 

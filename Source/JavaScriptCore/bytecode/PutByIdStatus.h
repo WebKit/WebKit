@@ -29,7 +29,6 @@
 #include "CallLinkStatus.h"
 #include "ExitingJITType.h"
 #include "PutByIdVariant.h"
-#include "StructureStubInfo.h"
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {
@@ -39,6 +38,9 @@ class VM;
 class JSGlobalObject;
 class Structure;
 class StructureChain;
+class StructureStubInfo;
+
+typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
 class PutByIdStatus {
 public:

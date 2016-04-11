@@ -33,11 +33,15 @@
 #include "JSCJSValue.h"
 #include "PutKind.h"
 #include "RegisterSet.h"
-#include "StructureStubInfo.h"
 
 namespace JSC {
 
 class CodeBlock;
+class StructureStubInfo;
+
+struct CallSiteIndex;
+
+enum class AccessType : int8_t;
 
 class JITInlineCacheGenerator {
 protected:

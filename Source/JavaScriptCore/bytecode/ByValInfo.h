@@ -32,11 +32,12 @@
 #include "IndexingType.h"
 #include "JITStubRoutine.h"
 #include "Structure.h"
-#include "StructureStubInfo.h"
 
 namespace JSC {
 
 #if ENABLE(JIT)
+
+class StructureStubInfo;
 
 enum JITArrayMode {
     JITInt32,

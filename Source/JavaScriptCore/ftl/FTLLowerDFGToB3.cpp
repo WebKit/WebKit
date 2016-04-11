@@ -68,8 +68,9 @@
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
 #include "ScratchRegisterAllocator.h"
-#include "ShadowChicken.h"
 #include "SetupVarargsFrame.h"
+#include "ShadowChicken.h"
+#include "StructureStubInfo.h"
 #include "VirtualRegister.h"
 #include "Watchdog.h"
 #include <atomic>

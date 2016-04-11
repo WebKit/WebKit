@@ -34,6 +34,7 @@
 #include "PolymorphicAccess.h"
 #include "Structure.h"
 #include "StructureChain.h"
+#include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {

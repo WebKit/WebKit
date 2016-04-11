@@ -1,3 +1,37 @@
+2016-04-11  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to edit StructureStubInfo without recompiling the world
+        https://bugs.webkit.org/show_bug.cgi?id=156470
+
+        Reviewed by Keith Miller.
+
+        This change makes it less painful to make changes to the IC code. It used to be that any
+        change to StructureStubInfo caused every JIT-related file to get recompiled. Now only a
+        smaller set of files - ones that actually peek into StructureStubInfo - will recompile. This
+        is mainly because CodeBlock.h no longer includes StructureStubInfo.h.
+
+        * bytecode/ByValInfo.h:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        * bytecode/GetByIdStatus.cpp:
+        * bytecode/GetByIdStatus.h:
+        * bytecode/PutByIdStatus.cpp:
+        * bytecode/PutByIdStatus.h:
+        * bytecode/StructureStubInfo.h:
+        (JSC::getStructureStubInfoCodeOrigin):
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGJITCompiler.cpp:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        * ftl/FTLSlowPathCall.h:
+        * jit/IntrinsicEmitter.cpp:
+        * jit/JITInlineCacheGenerator.cpp:
+        * jit/JITInlineCacheGenerator.h:
+        * jit/JITOperations.cpp:
+        * jit/JITPropertyAccess.cpp:
+        * jit/JITPropertyAccess32_64.cpp:
+
 2016-04-11  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         Remove NewArrowFunction from DFG IR

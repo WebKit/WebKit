@@ -31,7 +31,6 @@
 #include "CCallHelpers.h"
 #include "FTLSlowPathCallKey.h"
 #include "JITOperations.h"
-#include "StructureStubInfo.h"
 
 namespace JSC { namespace FTL {
 

@@ -42,6 +42,7 @@
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
 #include "SlowPathCall.h"
+#include "StructureStubInfo.h"
 #include <wtf/StringPrintStream.h>
 
 

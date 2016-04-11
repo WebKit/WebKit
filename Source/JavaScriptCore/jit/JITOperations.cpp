@@ -60,6 +60,7 @@
 #include "Repatch.h"
 #include "ScopedArguments.h"
 #include "ShadowChicken.h"
+#include "StructureStubInfo.h"
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"

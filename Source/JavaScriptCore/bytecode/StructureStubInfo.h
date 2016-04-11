@@ -168,13 +168,13 @@ inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStu
     return structureStubInfo.codeOrigin;
 }
 
-typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
-
 #else
 
-typedef HashMap<int, void*> StubInfoMap;
+class StructureStubInfo;
 
 #endif // ENABLE(JIT)
+
+typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
 } // namespace JSC
 

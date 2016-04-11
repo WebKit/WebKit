@@ -40,6 +40,7 @@
 #include "MarkedAllocator.h"
 #include "PutKind.h"
 #include "SpillRegistersMode.h"
+#include "StructureStubInfo.h"
 #include "ValueRecovery.h"
 #include "VirtualRegister.h"
 

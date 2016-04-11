@@ -33,6 +33,7 @@
 #include "JIT.h"
 #include "JSCJSValueInlines.h"
 #include "JSCInlines.h"
+#include "StructureStubInfo.h"
 
 namespace JSC { namespace DFG {
 
