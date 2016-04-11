@@ -1,0 +1,13 @@
+Test passes if the first child frame prints about:blank.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+about:blank
+
+--------
+Frame: 'iframe'
+--------
+

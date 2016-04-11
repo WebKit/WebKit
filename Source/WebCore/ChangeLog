@@ -1,3 +1,19 @@
+2016-04-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        fast/loader/opaque-base-url.html crashing during mac and ios debug tests
+        https://bugs.webkit.org/show_bug.cgi?id=156179
+        <rdar://problem/25507719>
+
+        Reviewed by Ryosuke Niwa.
+
+        Navigate to about:blank if the provided src of an iframe/frame cannot be
+        resolved to a valid URL.
+
+        Test: fast/loader/iframe-src-invalid-url.html
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestFrame):
+
 2016-04-11  Said Abou-Hallawa  <sabouhallawa@apple,com>
 
         Merge CG ImageSource and non CG ImageSource implementation in one file
