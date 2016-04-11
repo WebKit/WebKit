@@ -580,6 +580,7 @@ public:
     JS_EXPORT_PRIVATE void deleteAllLinkedCode();
     JS_EXPORT_PRIVATE void deleteAllRegExpCode();
 
+    WatchpointSet* ensureWatchpointSetForImpureProperty(const Identifier&);
     void registerWatchpointForImpureProperty(const Identifier&, Watchpoint*);
     
     // FIXME: Use AtomicString once it got merged with Identifier.

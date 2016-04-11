@@ -112,9 +112,12 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     if (!accessCase)
         return AccessGenerationResult::GaveUp;
     
-    if (cacheType == CacheType::Stub)
+    if (cacheType == CacheType::Stub) {
+        SuperSamplerScope superSamplerScope(true);
+    
         return u.stub->regenerateWithCase(vm, codeBlock, *this, ident, WTFMove(accessCase));
-
+    }
+    
     std::unique_ptr<PolymorphicAccess> access = std::make_unique<PolymorphicAccess>();
     
     Vector<std::unique_ptr<AccessCase>> accessCases;

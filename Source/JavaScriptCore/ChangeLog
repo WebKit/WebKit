@@ -1,3 +1,59 @@
+2016-04-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Clean up how we reason about the states of AccessCases
+        https://bugs.webkit.org/show_bug.cgi?id=156454
+
+        Reviewed by Mark Lam.
+        
+        Currently when we add an AccessCase to a PolymorphicAccess stub, we regenerate the stub.
+        That means that as we grow a stub to have N cases, we will do O(N^2) generation work. I want
+        to explore buffering AccessCases so that we can do O(N) generation work instead. But to
+        before I go there, I want to make sure that the statefulness of AccessCase makes sense. So,
+        I broke it down into three different states and added assertions about the transitions. I
+        also broke out a separate operation called AccessCase::commit(), which is the work that
+        cannot be buffered since there cannot be any JS effects between when the AccessCase was
+        created and when we do the work in commit().
+        
+        This opens up a fairly obvious path to buffering AccessCases: add them to the list without
+        regenerating. Then when we do eventually trigger regeneration, those cases will get cloned
+        and generated automagically. This patch doesn't implement this technique yet, but gives us
+        an opportunity to independently test the scaffolding necessary to do it.
+
+        This is perf-neutral on lots of tests.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationResult::dump):
+        (JSC::AccessCase::clone):
+        (JSC::AccessCase::commit):
+        (JSC::AccessCase::guardedByStructureCheck):
+        (JSC::AccessCase::dump):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generate):
+        (JSC::AccessCase::generateImpl):
+        (JSC::PolymorphicAccess::regenerateWithCases):
+        (JSC::PolymorphicAccess::regenerate):
+        (WTF::printInternal):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessCase::type):
+        (JSC::AccessCase::state):
+        (JSC::AccessCase::offset):
+        (JSC::AccessCase::viaProxy):
+        (JSC::AccessCase::callLinkInfo):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase):
+        * bytecode/Watchpoint.h:
+        * dfg/DFGOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::repatchGetByID):
+        (JSC::repatchPutByID):
+        (JSC::repatchIn):
+        * runtime/VM.cpp:
+        (JSC::VM::dumpRegExpTrace):
+        (JSC::VM::ensureWatchpointSetForImpureProperty):
+        (JSC::VM::registerWatchpointForImpureProperty):
+        (JSC::VM::addImpureProperty):
+        * runtime/VM.h:
+
 2016-04-11  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
 
         [CMake] Make FOLDER property INHERITED

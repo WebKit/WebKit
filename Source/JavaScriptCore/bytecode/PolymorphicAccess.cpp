@@ -48,6 +48,14 @@ namespace JSC {
 
 static const bool verbose = false;
 
+// EncodedJSValue in JSVALUE32_64 is a 64-bit integer. When being compiled in ARM EABI, it must be aligned on an even-numbered register (r0, r2 or [sp]).
+// To prevent the assembler from using wrong registers, let's occupy r1 or r3 with a dummy argument when necessary.
+#if (COMPILER_SUPPORTS(EABI) && CPU(ARM)) || CPU(MIPS)
+#define EABI_32BIT_DUMMY_ARG      CCallHelpers::TrustedImm32(0),
+#else
+#define EABI_32BIT_DUMMY_ARG
+#endif
+
 void AccessGenerationResult::dump(PrintStream& out) const
 {
     out.print(m_kind);
@@ -389,6 +397,24 @@ std::unique_ptr<AccessCase> AccessCase::clone() const
     return result;
 }
 
+Vector<WatchpointSet*, 2> AccessCase::commit(VM& vm, const Identifier& ident)
+{
+    RELEASE_ASSERT(m_state == Primordial);
+    
+    Vector<WatchpointSet*, 2> result;
+    
+    if ((structure() && structure()->needImpurePropertyWatchpoint())
+        || m_conditionSet.needImpurePropertyWatchpoint())
+        result.append(vm.ensureWatchpointSetForImpureProperty(ident));
+
+    if (additionalSet())
+        result.append(additionalSet());
+    
+    m_state = Committed;
+    
+    return result;
+}
+
 bool AccessCase::guardedByStructureCheck() const
 {
     if (viaProxy())
@@ -470,6 +496,8 @@ void AccessCase::dump(PrintStream& out) const
     out.print(m_type, ":(");
 
     CommaPrinter comma;
+    
+    out.print(comma, m_state);
 
     if (m_type == Transition)
         out.print(comma, "structure = ", pointerDump(structure()), " -> ", pointerDump(newStructure()));
@@ -517,6 +545,11 @@ bool AccessCase::visitWeak(VM& vm) const
 void AccessCase::generateWithGuard(
     AccessGenerationState& state, CCallHelpers::JumpList& fallThrough)
 {
+    SuperSamplerScope superSamplerScope(false);
+
+    RELEASE_ASSERT(m_state == Committed);
+    m_state = Generated;
+    
     CCallHelpers& jit = *state.jit;
     VM& vm = *jit.vm();
     const Identifier& ident = *state.ident;
@@ -730,21 +763,24 @@ void AccessCase::generateWithGuard(
         break;
     } };
 
-    generate(state);
+    generateImpl(state);
 }
-
-// EncodedJSValue in JSVALUE32_64 is a 64-bit integer. When being compiled in ARM EABI, it must be aligned on an even-numbered register (r0, r2 or [sp]).
-// To prevent the assembler from using wrong registers, let's occupy r1 or r3 with a dummy argument when necessary.
-#if (COMPILER_SUPPORTS(EABI) && CPU(ARM)) || CPU(MIPS)
-#define EABI_32BIT_DUMMY_ARG      CCallHelpers::TrustedImm32(0),
-#else
-#define EABI_32BIT_DUMMY_ARG
-#endif
 
 void AccessCase::generate(AccessGenerationState& state)
 {
+    RELEASE_ASSERT(m_state == Committed);
+    m_state = Generated;
+    
+    generateImpl(state);
+}
+
+void AccessCase::generateImpl(AccessGenerationState& state)
+{
+    SuperSamplerScope superSamplerScope(false);
     if (verbose)
         dataLog("Generating code for: ", *this, "\n");
+    
+    ASSERT(m_state == Generated); // We rely on the callers setting this for us.
     
     CCallHelpers& jit = *state.jit;
     VM& vm = *jit.vm();
@@ -757,13 +793,6 @@ void AccessCase::generate(AccessGenerationState& state)
 
     ASSERT(m_conditionSet.structuresEnsureValidityAssumingImpurePropertyWatchpoint());
 
-    if ((structure() && structure()->needImpurePropertyWatchpoint())
-        || m_conditionSet.needImpurePropertyWatchpoint())
-        vm.registerWatchpointForImpureProperty(ident, state.addWatchpoint());
-
-    if (additionalSet())
-        additionalSet()->add(state.addWatchpoint());
-
     for (const ObjectPropertyCondition& condition : m_conditionSet) {
         Structure* structure = condition.object()->structure();
 
@@ -773,6 +802,10 @@ void AccessCase::generate(AccessGenerationState& state)
         }
 
         if (!condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint(structure)) {
+            // The reason why this cannot happen is that we require that PolymorphicAccess calls
+            // AccessCase::generate() only after it has verified that
+            // AccessCase::couldStillSucceed() returned true.
+            
             dataLog("This condition is no longer met: ", condition, "\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -1363,6 +1396,8 @@ AccessGenerationResult PolymorphicAccess::regenerateWithCases(
     VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident,
     Vector<std::unique_ptr<AccessCase>> originalCasesToAdd)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     // This method will add the originalCasesToAdd to the list one at a time while preserving the
     // invariants:
     // - If a newly added case canReplace() any existing case, then the existing case is removed before
@@ -1503,6 +1538,8 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident,
     PolymorphicAccess::ListType& cases)
 {
+    SuperSamplerScope superSamplerScope(false);
+    
     if (verbose)
         dataLog("Generating code for cases: ", listDump(cases), "\n");
     
@@ -1538,6 +1575,9 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     bool allGuardedByStructureCheck = true;
     bool hasJSGetterSetterCall = false;
     for (auto& entry : cases) {
+        for (WatchpointSet* set : entry->commit(vm, ident))
+            set->add(state.addWatchpoint());
+        
         allGuardedByStructureCheck &= entry->guardedByStructureCheck();
         if (entry->type() == AccessCase::Getter || entry->type() == AccessCase::Setter)
             hasJSGetterSetterCall = true;
@@ -1757,6 +1797,23 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
         return;
     case AccessCase::ScopedArgumentsLength:
         out.print("ScopedArgumentsLength");
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void printInternal(PrintStream& out, AccessCase::State state)
+{
+    switch (state) {
+    case AccessCase::Primordial:
+        out.print("Primordial");
+        return;
+    case AccessCase::Committed:
+        out.print("Committed");
+        return;
+    case AccessCase::Generated:
+        out.print("Generated");
         return;
     }
 

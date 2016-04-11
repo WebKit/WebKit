@@ -691,7 +691,7 @@ size_t JIT_OPERATION operationRegExpTest(ExecState* exec, JSGlobalObject* global
 
 size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
 {
-    SuperSamplerScope superSamplerScope;
+    SuperSamplerScope superSamplerScope(false);
     
     VM& vm = globalObject->vm();
     NativeCallFrameTracer tracer(&vm, exec);

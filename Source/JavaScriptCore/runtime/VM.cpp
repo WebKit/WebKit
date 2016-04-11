@@ -755,12 +755,17 @@ void VM::dumpRegExpTrace()
 }
 #endif
 
-void VM::registerWatchpointForImpureProperty(const Identifier& propertyName, Watchpoint* watchpoint)
+WatchpointSet* VM::ensureWatchpointSetForImpureProperty(const Identifier& propertyName)
 {
     auto result = m_impurePropertyWatchpointSets.add(propertyName.string(), nullptr);
     if (result.isNewEntry)
         result.iterator->value = adoptRef(new WatchpointSet(IsWatched));
-    result.iterator->value->add(watchpoint);
+    return result.iterator->value.get();
+}
+
+void VM::registerWatchpointForImpureProperty(const Identifier& propertyName, Watchpoint* watchpoint)
+{
+    ensureWatchpointSetForImpureProperty(propertyName)->add(watchpoint);
 }
 
 void VM::addImpureProperty(const String& propertyName)
