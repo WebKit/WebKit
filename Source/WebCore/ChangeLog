@@ -1,3 +1,23 @@
+2016-04-11  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Add support for [ImplementedAs] for EventHandler attributes
+        https://bugs.webkit.org/show_bug.cgi?id=156421
+
+        Reviewed by Darin Adler.
+
+        Add support for [ImplementedAs] for EventHandler attributes so we can
+        get rid of some ugly name hard-coding in the bindings generator.
+
+        * Modules/notifications/Notification.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (EventHandlerAttributeEventName):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjOnwebkitfoo):
+        (WebCore::setJSTestObjOnwebkitfoo):
+        * bindings/scripts/test/TestObj.idl:
+        * dom/Element.idl:
+        * page/DOMWindow.idl:
+
 2016-04-11  Jeremy Jones  <jeremyj@apple.com>
 
         When clearing cache, also clear AVFoundation cache.

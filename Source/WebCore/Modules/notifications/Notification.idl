@@ -47,7 +47,7 @@
 
     attribute EventHandler onclick;
     attribute EventHandler onclose;
-    attribute EventHandler ondisplay;
+    [ImplementedAs=onshow] attribute EventHandler ondisplay;
     attribute EventHandler onerror;
     attribute EventHandler onshow;
 
