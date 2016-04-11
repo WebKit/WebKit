@@ -76,7 +76,6 @@ bool clobbersExitState(Graph& graph, Node* node)
         // Like above, but with the activation allocation caveat.
         return node->castOperand<SymbolTable*>()->singletonScope()->isStillValid();
 
-    case NewArrowFunction:
     case NewFunction:
     case NewGeneratorFunction:
         // Like above, but with the JSFunction allocation caveat.

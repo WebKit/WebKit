@@ -4627,7 +4627,6 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case NewFunction:
-    case NewArrowFunction:
     case NewGeneratorFunction:
         compileNewFunction(node);
         break;

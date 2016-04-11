@@ -275,7 +275,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CreateClonedArguments:
     case GetFromArguments:
     case PutToArguments:
-    case NewArrowFunction:
     case NewFunction:
     case NewGeneratorFunction:
     case Jump:

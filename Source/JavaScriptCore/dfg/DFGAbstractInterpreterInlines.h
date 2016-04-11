@@ -1835,11 +1835,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CreateClonedArguments:
         forNode(node).set(m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->clonedArgumentsStructure());
         break;
-            
-    case NewArrowFunction:
-        forNode(node).set(
-            m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->functionStructure());
-        break;
 
     case NewGeneratorFunction:
         forNode(node).set(

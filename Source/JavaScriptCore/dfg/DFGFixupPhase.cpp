@@ -1442,12 +1442,6 @@ private:
             break;
         }
 
-        case NewArrowFunction: {
-            fixEdge<CellUse>(node->child1());
-            fixEdge<CellUse>(node->child2());
-            break;
-        }
-
         case SetFunctionName: {
             // The first child is guaranteed to be a cell because op_set_function_name is only used
             // on a newly instantiated function object (the first child).

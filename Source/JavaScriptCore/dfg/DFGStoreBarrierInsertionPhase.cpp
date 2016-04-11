@@ -311,7 +311,6 @@ private:
             case CreateDirectArguments:
             case CreateScopedArguments:
             case CreateClonedArguments:
-            case NewArrowFunction:
             case NewFunction:
             case NewGeneratorFunction:
                 // Nodes that allocate get to set their epoch because for those nodes we know

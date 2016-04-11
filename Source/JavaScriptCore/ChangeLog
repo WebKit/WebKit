@@ -1,3 +1,35 @@
+2016-04-11  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Remove NewArrowFunction from DFG IR
+        https://bugs.webkit.org/show_bug.cgi?id=156439
+
+        Reviewed by Saam Barati.
+
+        It seems that NewArrowFunction was left in DFG IR during refactoring by mistake.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        * dfg/DFGDoesGC.cpp:
+        * dfg/DFGFixupPhase.cpp:
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPhantomNewFunction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+
 2016-04-05  Oliver Hunt  <oliver@apple.com>
 
         Remove compile time define for SEPARATED_HEAP

@@ -1085,8 +1085,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;
-    
-    case NewArrowFunction:
+
     case NewFunction:
     case NewGeneratorFunction:
         if (node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid())

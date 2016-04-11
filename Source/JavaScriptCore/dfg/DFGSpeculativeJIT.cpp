@@ -5663,7 +5663,7 @@ template <typename ClassType> void SpeculativeJIT::compileNewFunctionCommon(GPRR
 void SpeculativeJIT::compileNewFunction(Node* node)
 {
     NodeType nodeType = node->op();
-    ASSERT(nodeType == NewFunction || nodeType == NewArrowFunction || nodeType == NewGeneratorFunction);
+    ASSERT(nodeType == NewFunction || nodeType == NewGeneratorFunction);
     
     SpeculateCellOperand scope(this, node->child1());
     GPRReg scopeGPR = scope.gpr();
@@ -5699,7 +5699,7 @@ void SpeculativeJIT::compileNewFunction(Node* node)
     
     JITCompiler::JumpList slowPath;
     
-    if (nodeType == NewFunction || nodeType == NewArrowFunction) {
+    if (nodeType == NewFunction) {
         compileNewFunctionCommon<JSFunction>(resultGPR, structure, scratch1GPR, scratch2GPR, scopeGPR, slowPath, JSFunction::allocationSize(0), executable, JSFunction::offsetOfScopeChain(), JSFunction::offsetOfExecutable(), JSFunction::offsetOfRareData());
             
         addSlowPathGenerator(slowPathCall(slowPath, this, operationNewFunctionWithInvalidatedReallocationWatchpoint, resultGPR, scopeGPR, executable));

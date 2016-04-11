@@ -256,7 +256,6 @@ bool doesGC(Graph& graph, Node* node)
     case NewRegexp:
     case NewStringObject:
     case MakeRope:
-    case NewArrowFunction:
     case NewFunction:
     case NewGeneratorFunction:
     case NewTypedArray:

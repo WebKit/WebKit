@@ -574,7 +574,7 @@ struct Node {
 
     void convertToPhantomNewFunction()
     {
-        ASSERT(m_op == NewFunction || m_op == NewArrowFunction || m_op == NewGeneratorFunction);
+        ASSERT(m_op == NewFunction || m_op == NewGeneratorFunction);
         m_op = PhantomNewFunction;
         m_flags |= NodeMustGenerate;
         m_opInfo = 0;
@@ -1387,7 +1387,6 @@ struct Node {
         case CheckCell:
         case OverridesHasInstance:
         case NewFunction:
-        case NewArrowFunction:
         case NewGeneratorFunction:
         case CreateActivation:
         case MaterializeCreateActivation:
@@ -1616,7 +1615,6 @@ struct Node {
     bool isFunctionAllocation()
     {
         switch (op()) {
-        case NewArrowFunction:
         case NewFunction:
         case NewGeneratorFunction:
             return true;

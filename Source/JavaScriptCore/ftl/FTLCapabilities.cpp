@@ -114,7 +114,6 @@ inline CapabilityLevel canCompile(Node* node)
     case SkipScope:
     case GetGlobalObject:
     case CreateActivation:
-    case NewArrowFunction:
     case NewFunction:
     case NewGeneratorFunction:
     case GetClosureVar:

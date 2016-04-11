@@ -658,7 +658,6 @@ private:
             compileCreateActivation();
             break;
         case NewFunction:
-        case NewArrowFunction:
         case NewGeneratorFunction:
             compileNewFunction();
             break;
@@ -3345,7 +3344,7 @@ private:
     
     void compileNewFunction()
     {
-        ASSERT(m_node->op() == NewFunction || m_node->op() == NewArrowFunction || m_node->op() == NewGeneratorFunction);
+        ASSERT(m_node->op() == NewFunction || m_node->op() == NewGeneratorFunction);
         bool isGeneratorFunction = m_node->op() == NewGeneratorFunction;
         
         LValue scope = lowCell(m_node->child1());
