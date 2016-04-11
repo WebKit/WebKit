@@ -77,6 +77,7 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/GCController.h>
 #include <WebCore/GlyphPage.h>
+#include <WebCore/HTMLMediaElement.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/Language.h>
@@ -292,6 +293,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     if (!parameters.applicationCacheDirectory.isEmpty())
         ApplicationCacheStorage::singleton().setCacheDirectory(parameters.applicationCacheDirectory);
+
+    if (!parameters.mediaCacheDirectory.isEmpty())
+        WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
 
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
 

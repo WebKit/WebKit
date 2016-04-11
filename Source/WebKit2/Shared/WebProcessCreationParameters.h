@@ -72,6 +72,8 @@ struct WebProcessCreationParameters {
     SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
     String webSQLDatabaseDirectory;
     SandboxExtension::Handle webSQLDatabaseDirectoryExtensionHandle;
+    String mediaCacheDirectory;
+    SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
 #if ENABLE(SECCOMP_FILTERS)
     String cookieStorageDirectory;
 #endif

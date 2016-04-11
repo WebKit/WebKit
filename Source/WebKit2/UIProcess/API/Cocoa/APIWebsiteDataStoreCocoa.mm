@@ -57,6 +57,11 @@ String WebsiteDataStore::defaultNetworkCacheDirectory()
     return cacheDirectoryFileSystemRepresentation("NetworkCache");
 }
 
+String WebsiteDataStore::defaultMediaCacheDirectory()
+{
+    return tempDirectoryFileSystemRepresentation("MediaCache");
+}
+
 String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation("IndexedDB");
@@ -80,6 +85,33 @@ String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation("ResourceLoadStatistics");
+}
+
+String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& directoryName)
+{
+    static dispatch_once_t onceToken;
+    static NSURL *tempURL;
+    
+    dispatch_once(&onceToken, ^{
+        NSURL *url = [NSURL fileURLWithPath:NSTemporaryDirectory()];
+        if (!url)
+            RELEASE_ASSERT_NOT_REACHED();
+        
+        if (!WebKit::processHasContainer()) {
+            NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
+            if (!bundleIdentifier)
+                bundleIdentifier = [NSProcessInfo processInfo].processName;
+            url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
+        }
+        
+        tempURL = [[url URLByAppendingPathComponent:@"WebKit" isDirectory:YES] retain];
+    });
+    
+    NSURL *url = [tempURL URLByAppendingPathComponent:directoryName isDirectory:YES];
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
+        LOG_ERROR("Failed to create directory %@", url);
+    
+    return url.absoluteURL.path.fileSystemRepresentation;
 }
 
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)
@@ -144,6 +176,7 @@ WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfig
 
     configuration.applicationCacheDirectory = defaultApplicationCacheDirectory();
     configuration.networkCacheDirectory = defaultNetworkCacheDirectory();
+    configuration.mediaCacheDirectory = defaultMediaCacheDirectory();
 
     configuration.webSQLDatabaseDirectory = defaultWebSQLDatabaseDirectory();
     configuration.localStorageDirectory = defaultLocalStorageDirectory();

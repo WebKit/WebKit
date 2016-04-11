@@ -137,5 +137,13 @@ String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
 }
 
 #endif
+    
+#if !PLATFORM(COCOA)
+String WebsiteDataStore::defaultMediaCacheDirectory()
+{
+    // FIXME: Implement. https://bugs.webkit.org/show_bug.cgi?id=156369 and https://bugs.webkit.org/show_bug.cgi?id=156370
+    return String();
+}
+#endif
 
 }
