@@ -1,3 +1,26 @@
+2016-04-11  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLUnderOver layout functions to avoid using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=153742
+
+        Reviewed by Sergio Villar Senin.
+
+        Apply some small adjustments to the expectations of MathML tests after
+        the refactoring of RenderMathMLUnderOver. We also add a test for
+        non-stretchy horizontal operators in underover.
+
+        * platform/gtk/mathml/opentype/horizontal-expected.png:
+        * platform/gtk/mathml/opentype/horizontal-expected.txt:
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.png:
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.txt:
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.png:
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.txt:
+        * mathml/mn-as-list-item-assert.html: Move the test description out of the invalid munderover
+        so that it is still displayed.
+        * mathml/mn-as-list-item-assert-expected.txt: Update the text expectation.
+        * mathml/presentation/underover-nonstretchy-horizontal.html: Ensure that nonstretchy horizontal operators are not stretched in munderover.
+        * mathml/presentation/underover-nonstretchy-horizontal-expected.html: Ditto.
+
 2016-04-11  Antti Koivisto  <antti@apple.com>
 
         Implement functional :host() pseudo class

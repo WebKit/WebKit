@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,12 +44,12 @@ RenderMathMLUnderOver::RenderMathMLUnderOver(Element& element, Ref<RenderStyle>&
 {
     // Determine what kind of under/over expression we have by element name
     if (element.hasTagName(MathMLNames::munderTag))
-        m_kind = Under;
+        m_scriptType = Under;
     else if (element.hasTagName(MathMLNames::moverTag))
-        m_kind = Over;
+        m_scriptType = Over;
     else {
         ASSERT(element.hasTagName(MathMLNames::munderoverTag));
-        m_kind = UnderOver;
+        m_scriptType = UnderOver;
     }
 }
 
@@ -65,13 +66,11 @@ Optional<int> RenderMathMLUnderOver::firstLineBaseline() const
     RenderBox* base = firstChildBox();
     if (!base)
         return Optional<int>();
-    Optional<int> baseline = base->firstLineBaseline();
-    if (baseline)
-        baseline.value() += static_cast<int>(base->logicalTop());
-    return baseline;
+
+    return Optional<int>(static_cast<int>(lroundf(ascentForChild(*base) + base->logicalTop())));
 }
 
-void RenderMathMLUnderOver::layout()
+void RenderMathMLUnderOver::computeOperatorsHorizontalStretch()
 {
     LayoutUnit stretchWidth = 0;
     Vector<RenderMathMLOperator*, 2> renderOperators;
@@ -80,7 +79,7 @@ void RenderMathMLUnderOver::layout()
         if (child->needsLayout()) {
             if (is<RenderMathMLBlock>(child)) {
                 if (auto renderOperator = downcast<RenderMathMLBlock>(*child).unembellishedOperator()) {
-                    if (!renderOperator->isVertical()) {
+                    if (renderOperator->hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && !renderOperator->isVertical()) {
                         renderOperator->resetStretchSize();
                         renderOperators.append(renderOperator);
                     }
@@ -99,8 +98,137 @@ void RenderMathMLUnderOver::layout()
     // Set the sizes of (possibly embellished) stretchy operator children.
     for (auto& renderOperator : renderOperators)
         renderOperator->stretchTo(stretchWidth);
+}
 
-    RenderMathMLBlock::layout();
+bool RenderMathMLUnderOver::isValid() const
+{
+    // Verify whether the list of children is valid:
+    // <munder> base under </munder>
+    // <mover> base over </mover>
+    // <munderover> base under over </munderover>
+    RenderBox* child = firstChildBox();
+    if (!child)
+        return false;
+    child = child->nextSiblingBox();
+    if (!child)
+        return false;
+    child = child->nextSiblingBox();
+    switch (m_scriptType) {
+    case Over:
+    case Under:
+        return !child;
+    case UnderOver:
+        return child && !child->nextSiblingBox();
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
+RenderBox& RenderMathMLUnderOver::base() const
+{
+    ASSERT(isValid());
+    return *firstChildBox();
+}
+
+RenderBox& RenderMathMLUnderOver::under() const
+{
+    ASSERT(isValid());
+    ASSERT(m_scriptType == Under || m_scriptType == UnderOver);
+    return *firstChildBox()->nextSiblingBox();
+}
+
+RenderBox& RenderMathMLUnderOver::over() const
+{
+    ASSERT(isValid());
+    ASSERT(m_scriptType == Over || m_scriptType == UnderOver);
+    RenderBox* secondChild = firstChildBox()->nextSiblingBox();
+    return m_scriptType == Over ? *secondChild : *secondChild->nextSiblingBox();
+}
+
+
+void RenderMathMLUnderOver::computePreferredLogicalWidths()
+{
+    ASSERT(preferredLogicalWidthsDirty());
+
+    if (!isValid()) {
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
+        setPreferredLogicalWidthsDirty(false);
+        return;
+    }
+
+    LayoutUnit preferredWidth = base().maxPreferredLogicalWidth();
+
+    if (m_scriptType == Under || m_scriptType == UnderOver)
+        preferredWidth = std::max(preferredWidth, under().maxPreferredLogicalWidth());
+
+    if (m_scriptType == Over || m_scriptType == UnderOver)
+        preferredWidth = std::max(preferredWidth, over().maxPreferredLogicalWidth());
+
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth;
+
+    setPreferredLogicalWidthsDirty(false);
+}
+
+LayoutUnit RenderMathMLUnderOver::horizontalOffset(const RenderBox& child) const
+{
+    return (logicalWidth() - child.logicalWidth()) / 2;
+}
+
+void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit)
+{
+    ASSERT(needsLayout());
+
+    if (!relayoutChildren && simplifiedLayout())
+        return;
+
+    if (!isValid()) {
+        setLogicalWidth(0);
+        setLogicalHeight(0);
+        clearNeedsLayout();
+        return;
+    }
+
+    recomputeLogicalWidth();
+
+    computeOperatorsHorizontalStretch();
+
+    base().layoutIfNeeded();
+    if (m_scriptType == Under || m_scriptType == UnderOver)
+        under().layoutIfNeeded();
+    if (m_scriptType == Over || m_scriptType == UnderOver)
+        over().layoutIfNeeded();
+
+    LayoutUnit logicalWidth = base().logicalWidth();
+    if (m_scriptType == Under || m_scriptType == UnderOver)
+        logicalWidth = std::max(logicalWidth, under().logicalWidth());
+    if (m_scriptType == Over || m_scriptType == UnderOver)
+        logicalWidth = std::max(logicalWidth, over().logicalWidth());
+    setLogicalWidth(logicalWidth);
+
+    LayoutUnit verticalOffset = 0;
+    if (m_scriptType == Over || m_scriptType == UnderOver) {
+        over().setLocation(LayoutPoint(horizontalOffset(over()), 0));
+        verticalOffset += over().logicalHeight();
+    }
+    base().setLocation(LayoutPoint(horizontalOffset(base()), verticalOffset));
+    verticalOffset += base().logicalHeight();
+    if (m_scriptType == Under || m_scriptType == UnderOver) {
+        under().setLocation(LayoutPoint(horizontalOffset(under()), verticalOffset));
+        verticalOffset += under().logicalHeight();
+    }
+
+    setLogicalHeight(verticalOffset);
+
+    clearNeedsLayout();
+}
+
+void RenderMathMLUnderOver::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
+{
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (!paintChild(*child, paintInfo, paintOffset, paintInfoForChild, usePrintRect, PaintAsInlineBlock))
+            return;
+    }
 }
 
 }

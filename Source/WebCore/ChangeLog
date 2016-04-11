@@ -1,3 +1,44 @@
+2016-04-11  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLUnderOver layout functions to avoid using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=153742
+
+        Reviewed by Sergio Villar Senin.
+
+        Based on a patch by Javier Fernandez <jfernandez@igalia.com>
+
+        Refactor the UnderOver renderer to use its own layoutBlock method that
+        does all the layout calculations without considering the flexbox
+        restrictions.
+
+        * css/mathml.css:
+        (mo, mfrac, munder, mover, munderover): Delete the underover elements from the line defining
+        the column direction.
+        (munder, mover, munderover): Deleted. This flexbox property is no longer needed.
+        (mover > :last-child, munderover > :last-child): Deleted. This flexbox property is no longer
+        needed.
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::firstLineBaseline): Use ascentForChild.
+        (WebCore::RenderMathMLUnderOver::computeOperatorsHorizontalStretch): Avoid stretching
+        operators that are not stretchy.
+        (WebCore::RenderMathMLUnderOver::isValid): Helper function to ensure that the child list is
+        valid with respect to the MathML specification.
+        (WebCore::RenderMathMLUnderOver::base): Added. Helper function.
+        (WebCore::RenderMathMLUnderOver::under): Added. Helper function.
+        (WebCore::RenderMathMLUnderOver::over): Added. Helper function.
+        (WebCore::RenderMathMLUnderOver::computePreferredLogicalWidths): Added.
+        The preferred width is the maximum preferred width of the base, under and over scripts.
+        (WebCore::RenderMathMLUnderOver::horizontalOffset): Added, helper to calculate the
+        horizontal position of children (horizontally centered).
+        (WebCore::RenderMathMLUnderOver::layoutBlock): Added, it lays out the base, underscript and
+        overscript. It calculates the exact logical width, which may differ from the preferred width when
+        one child contains stretchy operators. It later sets the locations of children accordingly
+        and sets the heigth of the render element.
+        (WebCore::RenderMathMLUnderOver::paintChildren): Added, we have to use the usual traverse
+        instead of the one that comes from the flexbox. This will be removed in a follow-up patch.
+        (WebCore::RenderMathMLUnderOver::layout): Deleted.
+        * rendering/mathml/RenderMathMLUnderOver.h: Added new functions definitions.
+
 2016-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rework the theming code for GTK+ 3.20

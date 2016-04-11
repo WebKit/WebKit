@@ -44,12 +44,8 @@ ms, mtext, mi, mn, mo, annotation, mtd {
     white-space: nowrap !important;
 }
 
-mo, mfrac, munder, mover, munderover {
+mo, mfrac {
     flex-direction: column;
-}
-
-munder, mover, munderover {
-    align-items: center;
 }
 
 mfrac > * {
@@ -76,10 +72,6 @@ mfrac > :last-child {
 mfrac {
     -webkit-margin-start: 1px;
     -webkit-margin-end: 1px;
-}
-
-mover > :last-child, munderover > :last-child {
-    order: -1;
 }
 
 msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
