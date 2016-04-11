@@ -31,7 +31,7 @@
 #import "WKAPICast.h"
 #import "WKInspectorPrivateMac.h"
 #import "WKMutableArray.h"
-#import "WKOpenPanelParameters.h"
+#import "WKOpenPanelParametersRef.h"
 #import "WKOpenPanelResultListener.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"

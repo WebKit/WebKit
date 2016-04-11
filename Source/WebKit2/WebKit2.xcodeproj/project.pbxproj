@@ -1506,9 +1506,9 @@
 		BC857F8612B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC857F8412B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp */; };
 		BC857FB512B830E600EDEB2E /* WebOpenPanelParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = BC857FB312B830E600EDEB2E /* WebOpenPanelParameters.h */; };
 		BC857FB612B830E600EDEB2E /* WebOpenPanelParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC857FB412B830E600EDEB2E /* WebOpenPanelParameters.cpp */; };
-		BC857FE612B843D800EDEB2E /* WKOpenPanelParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = BC857FE412B843D800EDEB2E /* WKOpenPanelParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC857FE612B843D800EDEB2E /* WKOpenPanelParametersRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BC857FE412B843D800EDEB2E /* WKOpenPanelParametersRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC85806212B8505700EDEB2E /* WKOpenPanelResultListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1DFE8E12B31CA8005DF730 /* WKOpenPanelResultListener.cpp */; };
-		BC85806312B8505700EDEB2E /* WKOpenPanelParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC857FE512B843D800EDEB2E /* WKOpenPanelParameters.cpp */; };
+		BC85806312B8505700EDEB2E /* WKOpenPanelParametersRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC857FE512B843D800EDEB2E /* WKOpenPanelParametersRef.cpp */; };
 		BC8699B5116AADAA002A925B /* WKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8699B2116AADAA002A925B /* WKView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC8699B6116AADAA002A925B /* WKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8699B3116AADAA002A925B /* WKView.mm */; };
 		BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8699B4116AADAA002A925B /* WKViewInternal.h */; };
@@ -3563,8 +3563,8 @@
 		BC857F8412B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebOpenPanelResultListener.cpp; sourceTree = "<group>"; };
 		BC857FB312B830E600EDEB2E /* WebOpenPanelParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebOpenPanelParameters.h; sourceTree = "<group>"; };
 		BC857FB412B830E600EDEB2E /* WebOpenPanelParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebOpenPanelParameters.cpp; sourceTree = "<group>"; };
-		BC857FE412B843D800EDEB2E /* WKOpenPanelParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParameters.h; sourceTree = "<group>"; };
-		BC857FE512B843D800EDEB2E /* WKOpenPanelParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKOpenPanelParameters.cpp; sourceTree = "<group>"; };
+		BC857FE412B843D800EDEB2E /* WKOpenPanelParametersRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParametersRef.h; sourceTree = "<group>"; };
+		BC857FE512B843D800EDEB2E /* WKOpenPanelParametersRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKOpenPanelParametersRef.cpp; sourceTree = "<group>"; };
 		BC8699B2116AADAA002A925B /* WKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKView.h; sourceTree = "<group>"; };
 		BC8699B3116AADAA002A925B /* WKView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKView.mm; sourceTree = "<group>"; };
 		BC8699B4116AADAA002A925B /* WKViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKViewInternal.h; sourceTree = "<group>"; };
@@ -6104,8 +6104,8 @@
 				31A2EC75148D65BB00810D71 /* WKNotificationPermissionRequest.cpp */,
 				31A2EC72148D59BB00810D71 /* WKNotificationPermissionRequest.h */,
 				312C0C49146DDC8A0016C911 /* WKNotificationProvider.h */,
-				BC857FE512B843D800EDEB2E /* WKOpenPanelParameters.cpp */,
-				BC857FE412B843D800EDEB2E /* WKOpenPanelParameters.h */,
+				BC857FE512B843D800EDEB2E /* WKOpenPanelParametersRef.cpp */,
+				BC857FE412B843D800EDEB2E /* WKOpenPanelParametersRef.h */,
 				BC1DFE8E12B31CA8005DF730 /* WKOpenPanelResultListener.cpp */,
 				BC1DFE8D12B31CA8005DF730 /* WKOpenPanelResultListener.h */,
 				BCD597D4112B56DC00EC8C23 /* WKPage.cpp */,
@@ -7955,7 +7955,7 @@
 				BC407602124FF0270068F20A /* WKNumber.h in Headers */,
 				7CD5EBB91746A15B000C1C45 /* WKObjCTypeWrapperRef.h in Headers */,
 				378E1A40181EDA010031007A /* WKObject.h in Headers */,
-				BC857FE612B843D800EDEB2E /* WKOpenPanelParameters.h in Headers */,
+				BC857FE612B843D800EDEB2E /* WKOpenPanelParametersRef.h in Headers */,
 				BC1DFE8F12B31CA8005DF730 /* WKOpenPanelResultListener.h in Headers */,
 				BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */,
 				7C89D29C1A67837B003A5FDE /* WKPageConfigurationRef.h in Headers */,
@@ -9400,7 +9400,7 @@
 				BC407601124FF0270068F20A /* WKNumber.cpp in Sources */,
 				7CD5EBB81746A15B000C1C45 /* WKObjCTypeWrapperRef.mm in Sources */,
 				374436881820E7240049579F /* WKObject.mm in Sources */,
-				BC85806312B8505700EDEB2E /* WKOpenPanelParameters.cpp in Sources */,
+				BC85806312B8505700EDEB2E /* WKOpenPanelParametersRef.cpp in Sources */,
 				BC85806212B8505700EDEB2E /* WKOpenPanelResultListener.cpp in Sources */,
 				BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */,
 				7C89D29B1A67837B003A5FDE /* WKPageConfigurationRef.cpp in Sources */,

@@ -27,7 +27,7 @@
 #include "ewk_file_chooser_request.h"
 
 #include "WKArray.h"
-#include "WKOpenPanelParameters.h"
+#include "WKOpenPanelParametersRef.h"
 #include "WKOpenPanelResultListener.h"
 #include "WKSharedAPICast.h"
 #include "WKString.h"

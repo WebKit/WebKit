@@ -48,7 +48,7 @@
 #include <WebKit/WKMutableDictionary.h>
 #include <WebKit/WKNavigationDataRef.h>
 #include <WebKit/WKNumber.h>
-#include <WebKit/WKOpenPanelParameters.h>
+#include <WebKit/WKOpenPanelParametersRef.h>
 #include <WebKit/WKOpenPanelResultListener.h>
 #include <WebKit/WKPage.h>
 #include <WebKit/WKPageConfigurationRef.h>

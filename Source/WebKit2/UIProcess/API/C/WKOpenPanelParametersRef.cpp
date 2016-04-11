@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "WKOpenPanelParameters.h"
+#include "WKOpenPanelParametersRef.h"
 
 #include "APIArray.h"
 #include "WKAPICast.h"

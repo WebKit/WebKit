@@ -24,8 +24,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKOpenPanelParameters_h
-#define WKOpenPanelParameters_h
+#ifndef WKOpenPanelParametersRef_h
+#define WKOpenPanelParametersRef_h
 
 #include <WebKit/WKBase.h>
 
@@ -54,4 +54,4 @@ WK_EXPORT WKArrayRef WKOpenPanelParametersCopySelectedFileNames(WKOpenPanelParam
 }
 #endif
 
-#endif /* WKOpenPanelParameters_h */
+#endif /* WKOpenPanelParametersRef_h */
