@@ -67,9 +67,10 @@ GetterRaisesException
 GetterRaisesExceptionWithMessage
 GlobalContext=DOMWindow|WorkerGlobalScope|DedicatedWorkerGlobalScope
 Immutable
+ImplementedAs=*
 ImplementationLacksVTable
 ImplementationNamespace=*
-ImplementedAs=*
+ImplementationReturnType=*
 ImplicitThis
 InitializedByEventConstructor
 InterfaceName=*

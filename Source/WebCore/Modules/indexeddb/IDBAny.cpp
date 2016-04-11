@@ -78,7 +78,7 @@ IDBAny::IDBAny(const IDBKeyPath& keyPath)
 {
 }
 
-IDBAny::IDBAny(const Deprecated::ScriptValue& value)
+IDBAny::IDBAny(const JSC::JSValue& value)
     : m_type(IDBAny::Type::ScriptValue)
     , m_scriptValue(value)
 {
@@ -133,7 +133,7 @@ RefPtr<IDBTransaction> IDBAny::idbTransaction()
     return nullptr;
 }
 
-const Deprecated::ScriptValue& IDBAny::scriptValue()
+JSC::JSValue IDBAny::scriptValue()
 {
     return m_scriptValue;
 }

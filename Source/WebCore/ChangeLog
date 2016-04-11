@@ -1,3 +1,89 @@
+2016-04-11  Brady Eidson  <beidson@apple.com>
+
+        Clean up IDBBindingUtilities.
+        https://bugs.webkit.org/show_bug.cgi?id=156472
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No change in behavior).
+
+        - Get rid of a whole bunch of unused functions (since we got rid of Legacy IDB).
+        - Make more functions deal in ExecState/ScriptExecutionContexts instead of DOMRequestState.
+        - Make more functions deal in JSValue instead of Deprecated::ScriptValue.
+
+        * bindings/scripts/IDLAttributes.txt: Add a new attribute to signify that an implementation returns
+          JSValues instead of Deprecated::ScriptState
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue): Use that new attribute.
+        
+        * Modules/indexeddb/IDBAny.cpp:
+        (WebCore::IDBAny::IDBAny):
+        (WebCore::IDBAny::scriptValue):
+        * Modules/indexeddb/IDBAny.h:
+        (WebCore::IDBAny::create):
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::key):
+        (WebCore::IDBCursor::primaryKey):
+        (WebCore::IDBCursor::value):
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::deleteFunction):
+        (WebCore::IDBCursor::setGetResult):
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBCursorWithValue.idl:
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::cmp):
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::count):
+        (WebCore::IDBIndex::get):
+        (WebCore::IDBIndex::getKey):
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::lowerValue):
+        (WebCore::IDBKeyRange::upperValue):
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        * Modules/indexeddb/IDBKeyRange.h:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::modernDelete):
+        (WebCore::IDBObjectStore::count):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::setResult):
+        (WebCore::IDBRequest::setResultToStructuredClone):
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::updateIndexesForPutRecord):
+        (WebCore::IDBServer::MemoryObjectStore::populateIndexWithExistingRecords):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::idbKeyPathFromValue):
+        (WebCore::deserializeIDBValueDataToJSValue):
+        (WebCore::scriptValueToIDBKey):
+        (WebCore::idbKeyDataToScriptValue):
+        (WebCore::idbKeyDataToJSValue): Deleted.
+        (WebCore::injectIDBKeyIntoScriptValue): Deleted.
+        (WebCore::createIDBKeyFromScriptValueAndKeyPath): Deleted.
+        (WebCore::maybeCreateIDBKeyFromScriptValueAndKeyPath): Deleted.
+        (WebCore::canInjectIDBKeyIntoScriptValue): Deleted.
+        (WebCore::deserializeIDBValue): Deleted.
+        (WebCore::deserializeIDBValueData): Deleted.
+        (WebCore::deserializeIDBValueBuffer): Deleted.
+        (WebCore::idbValueDataToJSValue): Deleted.
+        (WebCore::idbKeyToScriptValue): Deleted.
+        * bindings/js/IDBBindingUtilities.h:
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSIDBDatabaseCustom.cpp:
+        (WebCore::JSIDBDatabase::createObjectStore):
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+        (WebCore::JSIDBObjectStore::createIndex):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::execState):
+        * dom/ScriptExecutionContext.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+
 2016-04-09  Gavin Barraclough  <barraclough@apple.com>
 
         WebKit should adopt journal_mode=wal for all SQLite databases.

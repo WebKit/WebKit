@@ -4358,9 +4358,12 @@ sub NativeToJSValue
         return "jsArray(state, $thisValue->globalObject(), $value)";
     }
 
+    my $returnType = $signature->extendedAttributes->{"ImplementationReturnType"};
     if ($type eq "any") {
         if ($interfaceName eq "Document") {
             AddToImplIncludes("JSCanvasRenderingContext2D.h", $conditional);
+        } elsif (defined $returnType and $returnType eq "JSValue") {
+            return "$value";
         } else {
             return "($value.hasNoValue() ? jsNull() : $value.jsValue())";
         }

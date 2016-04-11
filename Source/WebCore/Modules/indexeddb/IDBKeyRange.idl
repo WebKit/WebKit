@@ -28,8 +28,8 @@
     ImplementationLacksVTable,
     EnabledAtRuntime=IndexedDB,
 ] interface IDBKeyRange {
-    [ImplementedAs=lowerValue,CallWith=ScriptExecutionContext] readonly attribute any lower;
-    [ImplementedAs=upperValue,CallWith=ScriptExecutionContext] readonly attribute any upper;
+    [ImplementedAs=lowerValue, CallWith=ScriptExecutionContext, ImplementationReturnType=JSValue] readonly attribute any lower;
+    [ImplementedAs=upperValue, CallWith=ScriptExecutionContext, ImplementationReturnType=JSValue] readonly attribute any upper;
     readonly attribute boolean lowerOpen;
     readonly attribute boolean upperOpen;
 
