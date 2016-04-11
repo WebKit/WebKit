@@ -105,12 +105,11 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink = macroAssembler.jumpsToLink();
     m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
     uint8_t* inData = reinterpret_cast<uint8_t*>(m_assemblerStorage.buffer());
-#if ENABLE(SEPARATED_WX_HEAP)
+
     AssemblerData outBuffer(m_size);
     uint8_t* outData = reinterpret_cast<uint8_t*>(outBuffer.buffer());
-#else
-    uint8_t* outData = reinterpret_cast<uint8_t*>(m_code);
-#endif
+    uint8_t* codeOutData = reinterpret_cast<uint8_t*>(m_code);
+
     int readPtr = 0;
     int writePtr = 0;
     unsigned jumpCount = jumpsToLink.size();
@@ -136,11 +135,11 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
         // branches we need to be precise, forward branches we are pessimistic
         const uint8_t* target;
         if (jumpsToLink[i].to() >= jumpsToLink[i].from())
-            target = outData + jumpsToLink[i].to() - offset; // Compensate for what we have collapsed so far
+            target = codeOutData + jumpsToLink[i].to() - offset; // Compensate for what we have collapsed so far
         else
-            target = outData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
+            target = codeOutData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
             
-        JumpLinkType jumpLinkType = MacroAssembler::computeJumpType(jumpsToLink[i], outData + writePtr, target);
+        JumpLinkType jumpLinkType = MacroAssembler::computeJumpType(jumpsToLink[i], codeOutData + writePtr, target);
         // Compact branch if we can...
         if (MacroAssembler::canCompact(jumpsToLink[i].type())) {
             // Step back in the write stream
@@ -157,17 +156,15 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     recordLinkOffsets(m_assemblerStorage, readPtr, m_initialSize, readPtr - writePtr);
         
     for (unsigned i = 0; i < jumpCount; ++i) {
-        uint8_t* location = outData + jumpsToLink[i].from();
-        uint8_t* target = outData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
-        MacroAssembler::link(jumpsToLink[i], location, target);
+        uint8_t* location = codeOutData + jumpsToLink[i].from();
+        uint8_t* target = codeOutData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
+        MacroAssembler::link(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
     }
 
     jumpsToLink.clear();
     shrink(writePtr + m_initialSize - readPtr);
 
-#if ENABLE(SEPARATED_WX_HEAP)
     performJITMemcpy(m_code, outBuffer.buffer(), m_size);
-#endif
 
 #if DUMP_LINK_STATISTICS
     dumpLinkStatistics(m_code, m_initialSize, m_size);
@@ -193,7 +190,7 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCom
 #if CPU(ARM_TRADITIONAL)
     macroAssembler.m_assembler.prepareExecutableCopy(m_code);
 #endif
-    memcpy(m_code, buffer.data(), buffer.codeSize());
+    performJITMemcpy(m_code, buffer.data(), buffer.codeSize());
 #if CPU(MIPS)
     macroAssembler.m_assembler.relocateJumps(buffer.data(), m_code);
 #endif

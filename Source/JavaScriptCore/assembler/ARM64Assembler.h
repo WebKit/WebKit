@@ -2472,23 +2472,23 @@ public:
         m_jumpsToLink.append(LinkRecord(from.m_offset, to.m_offset, type, condition, bitNumber, compareRegister));
     }
 
-    void linkJump(AssemblerLabel from, AssemblerLabel to)
+    void linkJump(AssemblerLabel from, void* executableCode, AssemblerLabel to)
     {
         ASSERT(from.isSet());
         ASSERT(to.isSet());
-        relinkJumpOrCall<false>(addressOf(from), addressOf(to));
+        relinkJumpOrCall<false>(addressOf(from), addressOf(executableCode, from), addressOf(to));
     }
     
     static void linkJump(void* code, AssemblerLabel from, void* to)
     {
         ASSERT(from.isSet());
-        relinkJumpOrCall<false>(addressOf(code, from), to);
+        relinkJumpOrCall<false>(addressOf(code, from), addressOf(code, from), to);
     }
 
     static void linkCall(void* code, AssemblerLabel from, void* to)
     {
         ASSERT(from.isSet());
-        linkJumpOrCall<true>(addressOf(code, from) - 1, to);
+        linkJumpOrCall<true>(addressOf(code, from) - 1, addressOf(code, from) - 1, to);
     }
 
     static void linkPointer(void* code, AssemblerLabel where, void* valuePtr)
@@ -2656,15 +2656,20 @@ public:
         return readPointer(reinterpret_cast<int*>(from) - 4);
     }
 
+    // The static relink, repatch, and replace methods can use can
+    // use |from| for both the write and executable address for call
+    // and jump patching as they're modifying existing (linked) code,
+    // so the address being provided is correct for relative address
+    // computation.
     static void relinkJump(void* from, void* to)
     {
-        relinkJumpOrCall<false>(reinterpret_cast<int*>(from), to);
+        relinkJumpOrCall<false>(reinterpret_cast<int*>(from), reinterpret_cast<const int*>(from), to);
         cacheFlush(from, sizeof(int));
     }
     
     static void relinkCall(void* from, void* to)
     {
-        relinkJumpOrCall<true>(reinterpret_cast<int*>(from) - 1, to);
+        relinkJumpOrCall<true>(reinterpret_cast<int*>(from) - 1, reinterpret_cast<const int*>(from) - 1, to);
         cacheFlush(reinterpret_cast<int*>(from) - 1, sizeof(int));
     }
     
@@ -2806,29 +2811,30 @@ public:
         return m_jumpsToLink;
     }
 
-    static void ALWAYS_INLINE link(LinkRecord& record, uint8_t* from, uint8_t* to)
+    static void ALWAYS_INLINE link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction8, uint8_t* to)
     {
+        const int* fromInstruction = reinterpret_cast<const int*>(fromInstruction8);
         switch (record.linkType()) {
         case LinkJumpNoCondition:
-            linkJumpOrCall<false>(reinterpret_cast<int*>(from), to);
+            linkJumpOrCall<false>(reinterpret_cast<int*>(from), fromInstruction, to);
             break;
         case LinkJumpConditionDirect:
-            linkConditionalBranch<true>(record.condition(), reinterpret_cast<int*>(from), to);
+            linkConditionalBranch<true>(record.condition(), reinterpret_cast<int*>(from), fromInstruction, to);
             break;
         case LinkJumpCondition:
-            linkConditionalBranch<false>(record.condition(), reinterpret_cast<int*>(from) - 1, to);
+            linkConditionalBranch<false>(record.condition(), reinterpret_cast<int*>(from) - 1, fromInstruction - 1, to);
             break;
         case LinkJumpCompareAndBranchDirect:
-            linkCompareAndBranch<true>(record.condition(), record.is64Bit(), record.compareRegister(), reinterpret_cast<int*>(from), to);
+            linkCompareAndBranch<true>(record.condition(), record.is64Bit(), record.compareRegister(), reinterpret_cast<int*>(from), fromInstruction, to);
             break;
         case LinkJumpCompareAndBranch:
-            linkCompareAndBranch<false>(record.condition(), record.is64Bit(), record.compareRegister(), reinterpret_cast<int*>(from) - 1, to);
+            linkCompareAndBranch<false>(record.condition(), record.is64Bit(), record.compareRegister(), reinterpret_cast<int*>(from) - 1, fromInstruction - 1, to);
             break;
         case LinkJumpTestBitDirect:
-            linkTestAndBranch<true>(record.condition(), record.bitNumber(), record.compareRegister(), reinterpret_cast<int*>(from), to);
+            linkTestAndBranch<true>(record.condition(), record.bitNumber(), record.compareRegister(), reinterpret_cast<int*>(from), fromInstruction, to);
             break;
         case LinkJumpTestBit:
-            linkTestAndBranch<false>(record.condition(), record.bitNumber(), record.compareRegister(), reinterpret_cast<int*>(from) - 1, to);
+            linkTestAndBranch<false>(record.condition(), record.bitNumber(), record.compareRegister(), reinterpret_cast<int*>(from) - 1, fromInstruction - 1, to);
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -2870,7 +2876,7 @@ private:
     }
 
     template<bool isCall>
-    static void linkJumpOrCall(int* from, void* to)
+    static void linkJumpOrCall(int* from, const int* fromInstruction, void* to)
     {
         bool link;
         int imm26;
@@ -2880,7 +2886,7 @@ private:
         ASSERT_UNUSED(isCall, (link == isCall) || disassembleNop(from));
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
-        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(from)) >> 2;
+        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
 
         int insn = unconditionalBranchImmediate(isCall, static_cast<int>(offset));
@@ -2888,11 +2894,11 @@ private:
     }
 
     template<bool isDirect>
-    static void linkCompareAndBranch(Condition condition, bool is64Bit, RegisterID rt, int* from, void* to)
+    static void linkCompareAndBranch(Condition condition, bool is64Bit, RegisterID rt, int* from, const int* fromInstruction, void* to)
     {
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
-        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(from)) >> 2;
+        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
         ASSERT(((offset << 38) >> 38) == offset);
 
         bool useDirect = ((offset << 45) >> 45) == offset; // Fits in 19 bits
@@ -2908,16 +2914,16 @@ private:
         } else {
             int insn = compareAndBranchImmediate(is64Bit ? Datasize_64 : Datasize_32, invert(condition) == ConditionNE, 2, rt);
             performJITMemcpy(from, &insn, sizeof(int));
-            linkJumpOrCall<false>(from + 1, to);
+            linkJumpOrCall<false>(from + 1, fromInstruction + 1, to);
         }
     }
 
     template<bool isDirect>
-    static void linkConditionalBranch(Condition condition, int* from, void* to)
+    static void linkConditionalBranch(Condition condition, int* from, const int* fromInstruction, void* to)
     {
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
-        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(from)) >> 2;
+        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
         ASSERT(((offset << 38) >> 38) == offset);
 
         bool useDirect = ((offset << 45) >> 45) == offset; // Fits in 19 bits
@@ -2933,16 +2939,16 @@ private:
         } else {
             int insn = conditionalBranchImmediate(2, invert(condition));
             performJITMemcpy(from, &insn, sizeof(int));
-            linkJumpOrCall<false>(from + 1, to);
+            linkJumpOrCall<false>(from + 1, fromInstruction + 1, to);
         }
     }
 
     template<bool isDirect>
-    static void linkTestAndBranch(Condition condition, unsigned bitNumber, RegisterID rt, int* from, void* to)
+    static void linkTestAndBranch(Condition condition, unsigned bitNumber, RegisterID rt, int* from, const int* fromInstruction, void* to)
     {
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
-        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(from)) >> 2;
+        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
         ASSERT(((offset << 38) >> 38) == offset);
 
@@ -2959,12 +2965,12 @@ private:
         } else {
             int insn = testAndBranchImmediate(invert(condition) == ConditionNE, static_cast<int>(bitNumber), 2, rt);
             performJITMemcpy(from, &insn, sizeof(int));
-            linkJumpOrCall<false>(from + 1, to);
+            linkJumpOrCall<false>(from + 1, fromInstruction + 1, to);
         }
     }
 
     template<bool isCall>
-    static void relinkJumpOrCall(int* from, void* to)
+    static void relinkJumpOrCall(int* from, const int* fromInstruction, void* to)
     {
         if (!isCall && disassembleNop(from)) {
             unsigned op01;
@@ -2979,7 +2985,7 @@ private:
                 if (imm19 == 8)
                     condition = invert(condition);
 
-                linkConditionalBranch<false>(condition, from - 1, to);
+                linkConditionalBranch<false>(condition, from - 1, fromInstruction - 1, to);
                 return;
             }
 
@@ -2992,7 +2998,7 @@ private:
                 if (imm19 == 8)
                     op = !op;
 
-                linkCompareAndBranch<false>(op ? ConditionNE : ConditionEQ, opSize == Datasize_64, rt, from - 1, to);
+                linkCompareAndBranch<false>(op ? ConditionNE : ConditionEQ, opSize == Datasize_64, rt, from - 1, fromInstruction - 1, to);
                 return;
             }
 
@@ -3004,12 +3010,12 @@ private:
                 if (imm14 == 8)
                     op = !op;
 
-                linkTestAndBranch<false>(op ? ConditionNE : ConditionEQ, bitNumber, rt, from - 1, to);
+                linkTestAndBranch<false>(op ? ConditionNE : ConditionEQ, bitNumber, rt, from - 1, fromInstruction - 1, to);
                 return;
             }
         }
 
-        linkJumpOrCall<isCall>(from, to);
+        linkJumpOrCall<isCall>(from, fromInstruction, to);
     }
 
     static int* addressOf(void* code, AssemblerLabel label)

@@ -1,3 +1,87 @@
+2016-04-05  Oliver Hunt  <oliver@apple.com>
+
+        Remove compile time define for SEPARATED_HEAP
+        https://bugs.webkit.org/show_bug.cgi?id=155508
+
+        Reviewed by Mark Lam.
+
+        Remove the SEPARATED_HEAP compile time flag. The separated
+        heap is available, but off by default, on x86_64, ARMv7, and
+        ARM64.
+
+        Working through the issues that happened last time essentially
+        required implementing the ARMv7 path for the separated heap
+        just so I could find all the ways it was going wrong.
+
+        We fixed all the logic by making the branch and jump logic in
+        the linker and assemblers take two parameters, the location to
+        write to, and the location we'll actually be writing to. We 
+        need to do this because it's no longer sufficient to compute
+        jumps relative to region the linker is writing to.
+
+        The repatching jump, branch, and call functions only need the
+        executable address as the patching is performed directly using
+        performJITMemcpy function which works in terms of the executable
+        address.
+
+        There is no performance impact on jsc-benchmarks with the separate
+        heap either emabled or disabled.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::linkJump):
+        (JSC::ARM64Assembler::linkCall):
+        (JSC::ARM64Assembler::relinkJump):
+        (JSC::ARM64Assembler::relinkCall):
+        (JSC::ARM64Assembler::link):
+        (JSC::ARM64Assembler::linkJumpOrCall):
+        (JSC::ARM64Assembler::linkCompareAndBranch):
+        (JSC::ARM64Assembler::linkConditionalBranch):
+        (JSC::ARM64Assembler::linkTestAndBranch):
+        (JSC::ARM64Assembler::relinkJumpOrCall):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::revertJumpTo_movT3movtcmpT2):
+        (JSC::ARMv7Assembler::revertJumpTo_movT3):
+        (JSC::ARMv7Assembler::link):
+        (JSC::ARMv7Assembler::linkJump):
+        (JSC::ARMv7Assembler::relinkJump):
+        (JSC::ARMv7Assembler::repatchCompact):
+        (JSC::ARMv7Assembler::replaceWithJump):
+        (JSC::ARMv7Assembler::replaceWithLoad):
+        (JSC::ARMv7Assembler::replaceWithAddressComputation):
+        (JSC::ARMv7Assembler::setInt32):
+        (JSC::ARMv7Assembler::setUInt7ForLoad):
+        (JSC::ARMv7Assembler::isB):
+        (JSC::ARMv7Assembler::isBX):
+        (JSC::ARMv7Assembler::isMOV_imm_T3):
+        (JSC::ARMv7Assembler::isMOVT):
+        (JSC::ARMv7Assembler::isNOP_T1):
+        (JSC::ARMv7Assembler::isNOP_T2):
+        (JSC::ARMv7Assembler::linkJumpT1):
+        (JSC::ARMv7Assembler::linkJumpT2):
+        (JSC::ARMv7Assembler::linkJumpT3):
+        (JSC::ARMv7Assembler::linkJumpT4):
+        (JSC::ARMv7Assembler::linkConditionalJumpT4):
+        (JSC::ARMv7Assembler::linkBX):
+        (JSC::ARMv7Assembler::linkConditionalBX):
+        (JSC::ARMv7Assembler::linkJumpAbsolute):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::link):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::link):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::initializeSeparatedWXHeaps):
+        (JSC::FixedVMPoolExecutableAllocator::jitWriteThunkGenerator):
+        (JSC::FixedVMPoolExecutableAllocator::genericWriteToJITRegion):
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator): Deleted.
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2016-04-10  Filip Pizlo  <fpizlo@apple.com>
 
         Clean up how we reason about the states of AccessCases

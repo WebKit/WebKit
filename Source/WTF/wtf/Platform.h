@@ -1142,10 +1142,4 @@
 #endif
 #endif
 
-#if defined(ENABLE_SEPARATED_WX_HEAP)
-#if !(CPU(ARM64) && ((PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)))
-#undef ENABLE_SEPARATED_WX_HEAP
-#endif
-#endif
-
 #endif /* WTF_Platform_h */
