@@ -49,7 +49,6 @@ public:
 
     static String defaultApplicationCacheDirectory();
     static String defaultNetworkCacheDirectory();
-    static String defaultMediaCacheDirectory();
 
     static String defaultIndexedDBDatabaseDirectory();
     static String defaultLocalStorageDirectory();
@@ -61,7 +60,6 @@ private:
     WebsiteDataStore(WebKit::WebsiteDataStore::Configuration);
     WebsiteDataStore();
 
-    static String tempDirectoryFileSystemRepresentation(const String& directoryName);
     static String cacheDirectoryFileSystemRepresentation(const String& directoryName);
     static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
 

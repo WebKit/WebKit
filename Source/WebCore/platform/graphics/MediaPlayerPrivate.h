@@ -214,9 +214,9 @@ public:
     virtual unsigned audioDecodedByteCount() const { return 0; }
     virtual unsigned videoDecodedByteCount() const { return 0; }
 
-    HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String&) { return { }; }
-    void clearMediaCache(const String&, std::chrono::system_clock::time_point) { }
-    void clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>&) { }
+    void getSitesInMediaCache(Vector<String>&) { }
+    void clearMediaCache() { }
+    void clearMediaCacheForSite(const String&) { }
 
     virtual void setPrivateBrowsingMode(bool) { }
 

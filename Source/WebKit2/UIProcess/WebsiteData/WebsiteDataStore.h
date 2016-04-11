@@ -61,7 +61,6 @@ public:
         String networkCacheDirectory;
         String applicationCacheDirectory;
 
-        String mediaCacheDirectory;
         String webSQLDatabaseDirectory;
         String localStorageDirectory;
         String mediaKeysStorageDirectory;
@@ -118,7 +117,6 @@ private:
 
     const String m_networkCacheDirectory;
     const String m_applicationCacheDirectory;
-    const String m_mediaCacheDirectory;
 
     const String m_webSQLDatabaseDirectory;
     const String m_mediaKeysStorageDirectory;

@@ -175,7 +175,7 @@ void MediaPlayerPrivateQTKit::registerMediaEngine(MediaEngineRegistrar registrar
 {
     if (isAvailable())
         registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateQTKit>(player); }, getSupportedTypes,
-            supportsType, originsInMediaCache, clearMediaCache, clearMediaCacheForOrigins, 0);
+            supportsType, getSitesInMediaCache, clearMediaCache, clearMediaCacheForSite, 0);
 }
 
 MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
@@ -1339,30 +1339,23 @@ bool MediaPlayerPrivateQTKit::isAvailable()
     return QTKitLibrary();
 }
 
-HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateQTKit::originsInMediaCache(const String&)
+void MediaPlayerPrivateQTKit::getSitesInMediaCache(Vector<String>& sites) 
 {
-    HashSet<RefPtr<SecurityOrigin>> origins;
     NSArray *mediaSites = wkQTGetSitesInMediaDownloadCache();
-    
-    for (NSString *site in mediaSites) {
-        URL siteAsURL = URL(URL(), site);
-        if (siteAsURL.isValid())
-            origins.add(SecurityOrigin::create(siteAsURL));
-    }
-    return origins;
+    for (NSString *site in mediaSites)
+        sites.append(site);
 }
 
-void MediaPlayerPrivateQTKit::clearMediaCache(const String&, std::chrono::system_clock::time_point)
+void MediaPlayerPrivateQTKit::clearMediaCache()
 {
     LOG(Media, "MediaPlayerPrivateQTKit::clearMediaCache()");
     wkQTClearMediaDownloadCache();
 }
 
-void MediaPlayerPrivateQTKit::clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>& origins)
+void MediaPlayerPrivateQTKit::clearMediaCacheForSite(const String& site)
 {
-    LOG(Media, "MediaPlayerPrivateQTKit::clearMediaCacheForOrigins()");
-    for (auto& origin : origins)
-        wkQTClearMediaDownloadCacheForSite(origin->toRawString());
+    LOG(Media, "MediaPlayerPrivateQTKit::clearMediaCacheForSite()");
+    wkQTClearMediaDownloadCacheForSite(site);
 }
 
 void MediaPlayerPrivateQTKit::disableUnsupportedTracks()

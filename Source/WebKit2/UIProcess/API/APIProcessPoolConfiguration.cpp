@@ -46,7 +46,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
 
     configuration->m_applicationCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory();
     configuration->m_diskCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory();
-    configuration->m_mediaCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory();
     configuration->m_indexedDBDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory();
     configuration->m_localStorageDirectory = WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory();
     configuration->m_mediaKeysStorageDirectory = WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory();
@@ -58,7 +57,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
 ProcessPoolConfiguration::ProcessPoolConfiguration()
     : m_applicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory())
     , m_diskCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory())
-    , m_mediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory())
     , m_indexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory())
     , m_localStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory())
     , m_webSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory())
@@ -81,7 +79,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_diskCacheSizeOverride = this->m_diskCacheSizeOverride;
     copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;
     copy->m_diskCacheDirectory = this->m_diskCacheDirectory;
-    copy->m_mediaCacheDirectory = this->m_mediaCacheDirectory;
     copy->m_indexedDBDatabaseDirectory = this->m_indexedDBDatabaseDirectory;
     copy->m_injectedBundlePath = this->m_injectedBundlePath;
     copy->m_localStorageDirectory = this->m_localStorageDirectory;

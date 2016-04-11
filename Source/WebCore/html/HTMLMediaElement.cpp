@@ -5593,36 +5593,21 @@ void HTMLMediaElement::setShouldDelayLoadEvent(bool shouldDelay)
     else
         document().decrementLoadEventDelayCount();
 }
+    
 
-static String& sharedMediaCacheDirectory()
+void HTMLMediaElement::getSitesInMediaCache(Vector<String>& sites)
 {
-    static NeverDestroyed<String> sharedMediaCacheDirectory;
-    return sharedMediaCacheDirectory;
+    MediaPlayer::getSitesInMediaCache(sites);
 }
 
-void HTMLMediaElement::setMediaCacheDirectory(const String& path)
+void HTMLMediaElement::clearMediaCache()
 {
-    sharedMediaCacheDirectory() = path;
+    MediaPlayer::clearMediaCache();
 }
 
-const String& HTMLMediaElement::mediaCacheDirectory()
+void HTMLMediaElement::clearMediaCacheForSite(const String& site)
 {
-    return sharedMediaCacheDirectory();
-}
-
-HashSet<RefPtr<SecurityOrigin>> HTMLMediaElement::originsInMediaCache(const String& path)
-{
-    return MediaPlayer::originsInMediaCache(path);
-}
-
-void HTMLMediaElement::clearMediaCache(const String& path, std::chrono::system_clock::time_point modifiedSince)
-{
-    MediaPlayer::clearMediaCache(path, modifiedSince);
-}
-
-void HTMLMediaElement::clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
-{
-    MediaPlayer::clearMediaCacheForOrigins(path, origins);
+    MediaPlayer::clearMediaCacheForSite(site);
 }
 
 void HTMLMediaElement::resetMediaEngines()
@@ -6205,11 +6190,6 @@ bool HTMLMediaElement::mediaPlayerShouldUsePersistentCache() const
         return !page->usesEphemeralSession() && !page->isResourceCachingDisabled();
 
     return false;
-}
-
-const String& HTMLMediaElement::mediaPlayerMediaCacheDirectory() const
-{
-    return mediaCacheDirectory();
 }
 
 bool HTMLMediaElement::mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge& challenge)

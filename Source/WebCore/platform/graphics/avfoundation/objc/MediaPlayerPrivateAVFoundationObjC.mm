@@ -158,7 +158,6 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 SOFT_LINK_CLASS(AVFoundation, AVURLAsset)
 SOFT_LINK_CLASS(AVFoundation, AVAssetImageGenerator)
 SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
-SOFT_LINK_CLASS(AVFoundation, AVAssetCache)
 
 SOFT_LINK_CLASS(CoreImage, CIContext)
 SOFT_LINK_CLASS(CoreImage, CIImage)
@@ -228,7 +227,6 @@ SOFT_LINK_POINTER(AVFoundation, AVPlayerItemLegibleOutputTextStylingResolutionSo
 #endif
 
 #if ENABLE(AVF_CAPTIONS)
-SOFT_LINK_POINTER(AVFoundation, AVURLAssetCacheKey, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVURLAssetHTTPCookiesKey, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVURLAssetOutOfBandAlternateTracksKey, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVURLAssetUsesNoPersistentCacheKey, NSString*)
@@ -244,7 +242,6 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicIsAuxiliaryContent, NSStrin
 
 #define AVURLAssetHTTPCookiesKey getAVURLAssetHTTPCookiesKey()
 #define AVURLAssetOutOfBandAlternateTracksKey getAVURLAssetOutOfBandAlternateTracksKey()
-#define AVURLAssetCacheKey getAVURLAssetCacheKey()
 #define AVURLAssetUsesNoPersistentCacheKey getAVURLAssetUsesNoPersistentCacheKey()
 #define AVOutOfBandAlternateTrackDisplayNameKey getAVOutOfBandAlternateTrackDisplayNameKey()
 #define AVOutOfBandAlternateTrackExtendedLanguageTagKey getAVOutOfBandAlternateTrackExtendedLanguageTagKey()
@@ -425,95 +422,7 @@ void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistra
 {
     if (isAvailable())
         registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateAVFoundationObjC>(player); },
-            getSupportedTypes, supportsType, originsInMediaCache, clearMediaCache, clearMediaCacheForOrigins, supportsKeySystem);
-}
-
-static AVAssetCache *assetCacheForPath(const String& path)
-{
-    NSURL *assetCacheURL;
-    
-    if (path.isEmpty())
-        assetCacheURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()] URLByAppendingPathComponent:@"MediaCache" isDirectory:YES];
-    else
-        assetCacheURL = [NSURL fileURLWithPath:path isDirectory:YES];
-
-    return [getAVAssetCacheClass() assetCacheWithURL:assetCacheURL];
-}
-
-HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateAVFoundationObjC::originsInMediaCache(const String& path)
-{
-    HashSet<RefPtr<SecurityOrigin>> origins;
-    for (NSString *key in [assetCacheForPath(path) allKeys]) {
-        URL keyAsURL = URL(URL(), key);
-        if (keyAsURL.isValid())
-            origins.add(SecurityOrigin::create(keyAsURL));
-    }
-    return origins;
-}
-
-static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
-{
-    ASSERT(date);
-    using namespace std::chrono;
-
-    return system_clock::time_point(duration_cast<system_clock::duration>(duration<double>(date.timeIntervalSince1970)));
-}
-
-void MediaPlayerPrivateAVFoundationObjC::clearMediaCache(const String& path, std::chrono::system_clock::time_point modifiedSince)
-{
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::clearMediaCache()");
-    
-    AVAssetCache* assetCache = assetCacheForPath(path);
-    
-    for (NSString *key in [assetCache allKeys]) {
-        if (toSystemClockTime([assetCache lastModifiedDateOfEntryForKey:key]) > modifiedSince)
-            [assetCache removeEntryForKey:key];
-    }
-
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *baseURL = [assetCache URL];
-
-    if (modifiedSince <= std::chrono::system_clock::time_point { }) {
-        [fileManager removeItemAtURL:baseURL error:nil];
-        return;
-    }
-    
-    NSArray *propertyKeys = @[NSURLNameKey, NSURLContentModificationDateKey, NSURLIsRegularFileKey];
-    NSDirectoryEnumerator *enumerator = [fileManager enumeratorAtURL:baseURL includingPropertiesForKeys:
-        propertyKeys options:NSDirectoryEnumerationSkipsSubdirectoryDescendants
-        errorHandler:nil];
-    
-    RetainPtr<NSMutableArray<NSURL *>> urlsToDelete = adoptNS([[NSMutableArray alloc] init]);
-    for (NSURL *fileURL : enumerator) {
-        NSDictionary<NSString *, id> *fileAttributes = [fileURL resourceValuesForKeys:propertyKeys error:nil];
-    
-        if (![fileAttributes[NSURLNameKey] hasPrefix:@"CachedMedia-"])
-            continue;
-        
-        if (![fileAttributes[NSURLIsRegularFileKey] boolValue])
-            continue;
-        
-        if (toSystemClockTime(fileAttributes[NSURLContentModificationDateKey]) <= modifiedSince)
-            continue;
-        
-        [urlsToDelete addObject:fileURL];
-    }
-    
-    for (NSURL *fileURL in urlsToDelete.get())
-        [fileManager removeItemAtURL:fileURL error:nil];
-}
-
-void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
-{
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins()");
-    AVAssetCache* assetCache = assetCacheForPath(path);
-    for (NSString *key in [assetCache allKeys]) {
-        URL keyAsURL = URL(URL(), key);
-        if (keyAsURL.isValid()) {
-            if (origins.contains(SecurityOrigin::create(keyAsURL)))
-                [assetCache removeEntryForKey:key];
-        }
-    }
+            getSupportedTypes, supportsType, 0, 0, 0, supportsKeySystem);
 }
 
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
@@ -965,11 +874,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     }
 #endif
 
-    bool usePersistentCache = player()->client().mediaPlayerShouldUsePersistentCache();
-    [options setObject:@(!usePersistentCache) forKey:AVURLAssetUsesNoPersistentCacheKey];
-    
-    if (usePersistentCache)
-        [options setObject:assetCacheForPath(player()->client().mediaPlayerMediaCacheDirectory()) forKey:AVURLAssetCacheKey];
+    [options setObject:[NSNumber numberWithBool:!player()->client().mediaPlayerShouldUsePersistentCache()] forKey:AVURLAssetUsesNoPersistentCacheKey];
 
     NSURL *cocoaURL = canonicalURL(url);
     m_avAsset = adoptNS([allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);

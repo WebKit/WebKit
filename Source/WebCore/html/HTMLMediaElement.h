@@ -380,11 +380,9 @@ public:
     void privateBrowsingStateDidChange() override;
 
     // Media cache management.
-    WEBCORE_EXPORT static void setMediaCacheDirectory(const String&);
-    WEBCORE_EXPORT static const String& mediaCacheDirectory();
-    WEBCORE_EXPORT static HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String&);
-    WEBCORE_EXPORT static void clearMediaCache(const String&, std::chrono::system_clock::time_point modifiedSince = { });
-    WEBCORE_EXPORT static void clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>&);
+    WEBCORE_EXPORT static void getSitesInMediaCache(Vector<String>&);
+    WEBCORE_EXPORT static void clearMediaCache();
+    WEBCORE_EXPORT static void clearMediaCacheForSite(const String&);
     static void resetMediaEngines();
 
     bool isPlaying() const { return m_playing; }
@@ -599,7 +597,6 @@ private:
     CachedResourceLoader* mediaPlayerCachedResourceLoader() override;
     RefPtr<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() override;
     bool mediaPlayerShouldUsePersistentCache() const override;
-    const String& mediaPlayerMediaCacheDirectory() const override;
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter(const MediaPlayer*) const override;
