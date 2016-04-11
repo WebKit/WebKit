@@ -2471,8 +2471,9 @@ def check_braces(clean_lines, line_number, error):
             or search(r'^#\S*', clean_lines.elided[begin_line_number + 1])):
             begin_line_number = begin_line_number + 1
             begin_line = clean_lines.elided[begin_line_number]
-            if search(r'.*{$', begin_line):
-                has_braces = True
+
+        if search(r'.*{(.*?\\)?$', begin_line):
+            has_braces = True
 
         next_line = clean_lines.elided[begin_line_number + 1]
         after_next_line = clean_lines.elided[begin_line_number + 2]

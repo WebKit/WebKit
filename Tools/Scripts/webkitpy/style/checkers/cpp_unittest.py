@@ -4244,6 +4244,19 @@ class WebKitStyleTest(CppStyleTestBase):
             'WTF_MAKE_NONCOPYABLE(ClassName); WTF_MAKE_FAST_ALLOCATED;\n',
             '')
         self.assert_multi_line_lint(
+            '#define MyMacro(name, status) \\\n'
+            '    if (strstr(arg, #name) { \\\n'
+            '        name##_ = !status; \\\n'
+            '        continue; \\\n'
+            '    }\n',
+            '')
+        self.assert_multi_line_lint(
+            '#define MyMacro(name, status) \\\n'
+            '    if (strstr(arg, #name) \\\n'
+            '        name##_ = !status; \\\n'
+            '        continue;\n',
+            'Multi line control clauses should use braces.  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
             'if (condition) {\n'
             '    doSomething();\n'
             '    doSomethingAgain();\n'

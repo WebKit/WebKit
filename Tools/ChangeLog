@@ -1,3 +1,26 @@
+2016-04-10  Caitlin Potter  <caitp@igalia.com>
+
+        [Tools] correctly check for braces in multiline branches in macro definition
+        https://bugs.webkit.org/show_bug.cgi?id=156441
+
+        Reviewed by Darin Adler.
+
+        Prevents emitting whitespace/braces warning for code like the
+        following:
+
+        ```
+        #define MACRO(x) \
+            if (x) { \
+                doTheThing(); \
+                continue; \
+            }
+        ```
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_braces):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_line_breaking):
+
 2016-04-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Testharness-based tests that time out should be able to produce a detailed output
