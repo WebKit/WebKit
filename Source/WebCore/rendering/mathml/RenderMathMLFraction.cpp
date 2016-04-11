@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
  * Copyright (C) 2010 François Sausset (sausset@gmail.com). All rights reserved.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,131 +39,200 @@ namespace WebCore {
     
 using namespace MathMLNames;
 
+// FIXME: The "MathML in HTML5" implementation note suggests the values 50% for "thin" and 200% for "thick" (http://webkit.org/b/155639).
 static const float gLineThin = 0.33f;
 static const float gLineMedium = 1.f;
 static const float gLineThick = 3.f;
 static const float gFractionBarWidth = 0.05f;
 
+// FIXME: We should read the gaps and shifts from the MATH table (http://webkit.org/b/155639).
+static const float gNumeratorGap = 0.2f;
+static const float gDenominatorGap = 0.2f;
+
 RenderMathMLFraction::RenderMathMLFraction(MathMLInlineContainerElement& element, Ref<RenderStyle>&& style)
     : RenderMathMLBlock(element, WTFMove(style))
-    , m_lineThickness(gLineMedium)
+    , m_defaultLineThickness(1)
+    , m_lineThickness(0)
+    , m_numeratorAlign(FractionAlignmentCenter)
+    , m_denominatorAlign(FractionAlignmentCenter)
 {
 }
 
-void RenderMathMLFraction::fixChildStyle(RenderObject* child)
+RenderMathMLFraction::FractionAlignment RenderMathMLFraction::parseAlignmentAttribute(const String& value)
 {
-    ASSERT(child->isAnonymous() && child->style().refCount() == 1);
-    child->style().setFlexDirection(FlowColumn);
+    if (equalLettersIgnoringASCIICase(value, "left"))
+        return FractionAlignmentLeft;
+    if (equalLettersIgnoringASCIICase(value, "right"))
+        return FractionAlignmentRight;
+    return FractionAlignmentCenter;
 }
 
-// FIXME: It's cleaner to only call updateFromElement when an attribute has changed. Move parts
-// of this to fixChildStyle or other methods, and call them when needed.
+bool RenderMathMLFraction::isValid() const
+{
+    // Verify whether the list of children is valid:
+    // <mfrac> numerator denominator </mfrac>
+    RenderBox* child = firstChildBox();
+    if (!child)
+        return false;
+    child = child->nextSiblingBox();
+    return child && !child->nextSiblingBox();
+}
+
+RenderBox& RenderMathMLFraction::numerator() const
+{
+    ASSERT(isValid());
+    return *firstChildBox();
+}
+
+RenderBox& RenderMathMLFraction::denominator() const
+{
+    ASSERT(isValid());
+    return *firstChildBox()->nextSiblingBox();
+}
+
 void RenderMathMLFraction::updateFromElement()
 {
-    // FIXME: mfrac where bevelled=true will need to reorganize the descendants
-    if (isEmpty()) 
+    if (isEmpty())
         return;
 
-    RenderObject* numeratorWrapper = firstChild();
-    RenderObject* denominatorWrapper = numeratorWrapper->nextSibling();
-    if (!denominatorWrapper)
-        return;
+    // We first determine the default line thickness.
+    const auto& primaryFont = style().fontCascade().primaryFont();
+    if (auto* mathData = style().fontCascade().primaryFont().mathData())
+        m_defaultLineThickness = mathData->getMathConstant(primaryFont, OpenTypeMathData::FractionRuleThickness);
+    else
+        m_defaultLineThickness = gFractionBarWidth * style().fontSize();
 
+    // Next, we parse the linethickness attribute.
     String thickness = element().getAttribute(MathMLNames::linethicknessAttr);
-    m_lineThickness = gLineMedium;
     if (equalLettersIgnoringASCIICase(thickness, "thin"))
-        m_lineThickness = gLineThin;
+        m_lineThickness = m_defaultLineThickness * gLineThin;
     else if (equalLettersIgnoringASCIICase(thickness, "medium"))
-        m_lineThickness = gLineMedium;
+        m_lineThickness = m_defaultLineThickness * gLineMedium;
     else if (equalLettersIgnoringASCIICase(thickness, "thick"))
-        m_lineThickness = gLineThick;
+        m_lineThickness = m_defaultLineThickness * gLineThick;
     else {
-        // This function parses the thickness attribute using gLineMedium as
-        // the default value. If the parsing fails, m_lineThickness will not be
-        // modified i.e. the default value will be used.
+        // Parse the thickness using m_defaultLineThickness as the default value.
+        m_lineThickness = m_defaultLineThickness;
         parseMathMLLength(thickness, m_lineThickness, &style(), false);
     }
 
-    // Update the style for the padding of the denominator for the line thickness
-    lastChild()->style().setPaddingTop(Length(static_cast<int>(m_lineThickness), Fixed));
-}
-
-void RenderMathMLFraction::addChild(RenderObject* child, RenderObject* /* beforeChild */)
-{
-    if (isEmpty()) {
-        RenderPtr<RenderMathMLBlock> numeratorWrapper = createAnonymousMathMLBlock();
-        fixChildStyle(numeratorWrapper.get());
-        RenderMathMLBlock::addChild(numeratorWrapper.leakPtr());
-        
-        RenderPtr<RenderMathMLBlock> denominatorWrapper = createAnonymousMathMLBlock();
-        fixChildStyle(denominatorWrapper.get());
-        RenderMathMLBlock::addChild(denominatorWrapper.leakPtr());
-    }
-    
-    if (firstChild()->isEmpty())
-        downcast<RenderElement>(*firstChild()).addChild(child);
-    else
-        downcast<RenderElement>(*lastChild()).addChild(child);
-    
-    updateFromElement();
+    m_numeratorAlign = parseAlignmentAttribute(element().getAttribute(MathMLNames::numalignAttr));
+    m_denominatorAlign = parseAlignmentAttribute(element().getAttribute(MathMLNames::denomalignAttr));
 }
 
 void RenderMathMLFraction::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        fixChildStyle(child);
     updateFromElement();
 }
 
 RenderMathMLOperator* RenderMathMLFraction::unembellishedOperator()
 {
-    RenderObject* numeratorWrapper = firstChild();
-    if (!numeratorWrapper)
+    if (!isValid() || !is<RenderMathMLBlock>(numerator()))
         return nullptr;
-    RenderObject* numerator = numeratorWrapper->firstChildSlow();
-    if (!is<RenderMathMLBlock>(numerator))
-        return nullptr;
-    return downcast<RenderMathMLBlock>(*numerator).unembellishedOperator();
+
+    return downcast<RenderMathMLBlock>(numerator()).unembellishedOperator();
 }
 
-void RenderMathMLFraction::layout()
+void RenderMathMLFraction::computePreferredLogicalWidths()
 {
+    ASSERT(preferredLogicalWidthsDirty());
+
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
+
+    if (isValid()) {
+        LayoutUnit numeratorWidth = numerator().maxPreferredLogicalWidth();
+        LayoutUnit denominatorWidth = denominator().maxPreferredLogicalWidth();
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = std::max(numeratorWidth, denominatorWidth);
+    }
+
+    setPreferredLogicalWidthsDirty(false);
+}
+
+LayoutUnit RenderMathMLFraction::horizontalOffset(RenderBox& child, FractionAlignment align)
+{
+    switch (align) {
+    case FractionAlignmentRight:
+        return LayoutUnit(logicalWidth() - child.logicalWidth());
+    case FractionAlignmentCenter:
+        return LayoutUnit((logicalWidth() - child.logicalWidth()) / 2);
+    case FractionAlignmentLeft:
+        return LayoutUnit(0);
+    }
+
+    ASSERT_NOT_REACHED();
+    return LayoutUnit(0);
+}
+
+void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
+{
+    ASSERT(needsLayout());
+
+    // FIXME: We should be able to remove this.
     updateFromElement();
 
-    // Adjust the fraction line thickness for the zoom
-    if (lastChild() && lastChild()->isRenderBlock())
-        m_lineThickness *= ceilf(gFractionBarWidth * style().fontSize());
+    if (!relayoutChildren && simplifiedLayout())
+        return;
 
-    RenderMathMLBlock::layout();
+    if (!isValid()) {
+        setLogicalWidth(0);
+        setLogicalHeight(0);
+        clearNeedsLayout();
+        return;
+    }
+
+    LayoutUnit verticalOffset = 0;
+
+    numerator().layoutIfNeeded();
+    denominator().layoutIfNeeded();
+
+    setLogicalWidth(std::max<LayoutUnit>(numerator().logicalWidth(), denominator().logicalWidth()));
+
+    LayoutPoint numeratorLocation(horizontalOffset(numerator(), m_numeratorAlign), verticalOffset);
+    numerator().setLocation(numeratorLocation);
+
+    verticalOffset += numerator().logicalHeight() + gNumeratorGap * style().fontSize() + m_lineThickness + gDenominatorGap * style().fontSize();
+
+    LayoutPoint denominatorLocation(horizontalOffset(denominator(), m_denominatorAlign), verticalOffset);
+    denominator().setLocation(denominatorLocation);
+
+    setLogicalHeight(verticalOffset + denominator().logicalHeight());
+
+    clearNeedsLayout();
 }
 
 void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
-    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE)
-        return;
-    
-    RenderBox* denominatorWrapper = lastChildBox();
-    if (!denominatorWrapper || !m_lineThickness)
+    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || !isValid())
         return;
 
-    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + denominatorWrapper->location() + LayoutPoint(0, m_lineThickness / 2));
+    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + LayoutPoint(0, numerator().logicalHeight() + gNumeratorGap * style().fontSize() + m_lineThickness / 2));
     
     GraphicsContextStateSaver stateSaver(info.context());
     
     info.context().setStrokeThickness(m_lineThickness);
     info.context().setStrokeStyle(SolidStroke);
     info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor));
-    info.context().drawLine(adjustedPaintOffset, roundedIntPoint(LayoutPoint(adjustedPaintOffset.x() + denominatorWrapper->offsetWidth(), adjustedPaintOffset.y())));
+    info.context().drawLine(adjustedPaintOffset, roundedIntPoint(LayoutPoint(adjustedPaintOffset.x() + logicalWidth(), adjustedPaintOffset.y())));
 }
 
 Optional<int> RenderMathMLFraction::firstLineBaseline() const
 {
-    if (RenderBox* denominatorWrapper = lastChildBox())
-        return Optional<int>(denominatorWrapper->logicalTop() + static_cast<int>(lroundf((m_lineThickness + style().fontMetrics().xHeight()) / 2)));
+    if (isValid()) {
+        LayoutUnit axisHeight = mathAxisHeight();
+        return Optional<int>(numerator().logicalHeight() + gNumeratorGap * style().fontSize() + static_cast<int>(lroundf(m_lineThickness / 2 + axisHeight)));
+    }
     return RenderMathMLBlock::firstLineBaseline();
+}
+
+void RenderMathMLFraction::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
+{
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (!paintChild(*child, paintInfo, paintOffset, paintInfoForChild, usePrintRect, PaintAsInlineBlock))
+            return;
+    }
 }
 
 }

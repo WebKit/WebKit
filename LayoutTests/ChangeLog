@@ -1,3 +1,26 @@
+2016-04-11  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLFraction layout to avoid using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=153917
+
+        Reviewed by Sergio Villar Senin.
+
+        * TestExpectations: No longer skip mathml/presentation/fractions-positions.html
+        * mathml/opentype/fraction-line-expected.html: Added. New test to verify AxisHeight and
+        FractionRuleThickness parameters.
+        * mathml/opentype/fraction-line.html: Added. New test to verify axis height and rule
+        thickness parameters.
+        * mathml/presentation/fractions-linethickness-expected.html: Adjust the test to be sure that
+        the default rule thickness is 1px.
+        * mathml/presentation/fractions-linethickness.html: Adjust the test to be sure that the
+        default rule thickness is 1px.
+        * platform/gtk/mathml/presentation/roots-expected.txt: Update reference to take into account
+        changes in the render tree.
+        * platform/ios-simulator/mathml/presentation/roots-expected.txt: Ditto
+        * platform/mac/TestExpectations: Mark fraction-line and fractions-linethickness as
+        possibly failing since these tests require Latin Modern Math to work reliably.
+        * platform/ios-simulator/TestExpectations: Ditto
+
 2016-04-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199290.

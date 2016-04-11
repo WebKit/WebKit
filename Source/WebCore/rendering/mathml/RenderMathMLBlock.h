@@ -63,6 +63,8 @@ public:
     
     // Create a new RenderMathMLBlock, with a new style inheriting from this->style().
     RenderPtr<RenderMathMLBlock> createAnonymousMathMLBlock();
+
+    LayoutUnit mathAxisHeight() const;
     
 protected:
     static LayoutUnit ascentForChild(const RenderBox& child)

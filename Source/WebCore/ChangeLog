@@ -1,3 +1,73 @@
+2016-04-11  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLFraction layout to avoid using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=153917
+
+        Reviewed by Sergio Villar Senin.
+
+        Based on a patch by Alejandro G. Castro <alex@igalia.com>
+
+        Implement the layoutBlock method to handle the layout calculations
+        directly in the class. This also fixes parsing of absolute values for
+        linethickness attribute (e.g. 10px) and adds support for the AxisHeight
+        and FractionRuleThickness MATH parameters.
+
+        Test: mathml/opentype/fraction-line.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::mathLineThickness): Use the thickness relative to the
+        default line thickness since that's really what is expected by mathml-line-fraction.html
+        * css/mathml.css: Remove flexbox properties for mfrac.
+        (mfrac): Deleted.
+        (mfrac > *): Deleted.
+        (mfrac[numalign="left"] > :first-child): Deleted.
+        (mfrac[numalign="right"] > :first-child): Deleted.
+        (mfrac[denomalign="left"] > :last-child): Deleted.
+        (mfrac[denomalign="right"] > :last-child): Deleted.
+        (mfrac > :first-child): Deleted.
+        (mfrac > :last-child): Deleted.
+        (mfrac): Deleted.
+        * rendering/mathml/RenderMathMLBlock.cpp: Introduce a helper function to retrieve the math
+        axis height.
+        (WebCore::RenderMathMLBlock::mathAxisHeight):
+        * rendering/mathml/RenderMathMLBlock.h: Declare mathAxisHeight.
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::RenderMathMLFraction):
+        (WebCore::RenderMathMLFraction::parseAlignmentAttribute): Helper function to parse the align
+        attribute.
+        (WebCore::RenderMathMLFraction::isValid): Helper function to verify whether the child list
+        is valid with respect to the MathML specificitation.
+        (WebCore::RenderMathMLFraction::numerator): Helper function to retrieve the numerator.
+        (WebCore::RenderMathMLFraction::denominator): Helper function to retrieve the denominator.
+        (WebCore::RenderMathMLFraction::updateFromElement): Use the FractionRuleThickness parameter
+        when avaiable to calculate the default linethickness.
+        Fix computation of linethickness for absolute values (e.g. 10px), the default linethickness
+        must not be involved for such values.
+        We no longer need to manage style of anonymous wrappers.
+        (WebCore::RenderMathMLFraction::unembellishedOperator): Use the helper function and we no
+        longer care about anonymous wrappers.
+        (WebCore::RenderMathMLFraction::computePreferredLogicalWidths): Implement this function
+        without using flexbox.
+        (WebCore::RenderMathMLFraction::horizontalOffset): Helper function to get the horizontal
+        offsets of children depending of the alignment.
+        (WebCore::RenderMathMLFraction::layoutBlock): Implement this function without using flexbox.
+        (WebCore::RenderMathMLFraction::paint): Do not paint if the fraction is invalid. Use helper
+        function. Use the width of the renderer (instead of the one of the denominator) as the
+        length of the fraction bar.
+        (WebCore::RenderMathMLFraction::firstLineBaseline): Use the helper functions to get children
+        and axis height.
+        (WebCore::RenderMathMLFraction::paintChildren): Temporary function to remove in a
+        follow-up patch.
+        (WebCore::RenderMathMLFraction::fixChildStyle): Deleted. We no longer need to manage style
+        of anonymous wrappers.
+        (WebCore::RenderMathMLFraction::addChild): Deleted. We no longer need to manage
+        anonymous wrappers.
+        (WebCore::RenderMathMLFraction::styleDidChange): We no longer need to manage style of
+        anonymous wrappers.
+        (WebCore::RenderMathMLFraction::layout): Deleted.
+        * rendering/mathml/RenderMathMLFraction.h: Replace lineThickness with relativeLineThickness,
+        as needed by the accessibility code. Update function and members declarations.
+
 2016-04-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199290.

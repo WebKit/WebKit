@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fraction line (axis height and rule thickness)</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+      /* For Latin Modern Math
+         AxisHeight = 250 * 100 / 1000 = 25px;
+         FractionRuleThickness = 40 * 100 / 1000 = 4px;
+       */
+      math {
+        font-family: "Latin Modern Math";
+        font-size: 100px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- This test passes if the (red) fraction bar is hidden by the green bar -->
+    <div style="position: absolute; left: 0px; top: 0px;">
+      <math>
+        <mspace height="50px" depth="50px"/>
+        <mfrac mathcolor="red">
+          <mspace width="50px"/>
+          <mspace width="50px"/>
+        </mfrac>
+      </math>
+    </div>
+
+    <!-- This green bar is moved up by AxisHeight and has thickness height + depth = FractionRuleThickness. -->
+    <div style="position: absolute; left: 0px; top: -25px;">
+      <math>
+        <mspace height="50px" depth="50px"/>
+        <mspace width="100px" height="2px" depth="2px" mathbackground="green"/>
+      </math>
+    </div>
+
+  </body>
+</html>

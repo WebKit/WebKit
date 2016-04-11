@@ -44,34 +44,8 @@ ms, mtext, mi, mn, mo, annotation, mtd {
     white-space: nowrap !important;
 }
 
-mo, mfrac {
+mo {
     flex-direction: column;
-}
-
-mfrac > * {
-    align-self: center;
-}
-mfrac[numalign="left"] > :first-child {
-    align-self: flex-start;
-}
-mfrac[numalign="right"] > :first-child {
-    align-self: flex-end;
-}
-mfrac[denomalign="left"] > :last-child {
-    align-self: flex-start;
-}
-mfrac[denomalign="right"] > :last-child {
-    align-self: flex-end;
-}
-mfrac > :first-child {
-    -webkit-margin-after: 0.2em;
-}
-mfrac > :last-child {
-    -webkit-margin-before: 0.2em;
-}
-mfrac {
-    -webkit-margin-start: 1px;
-    -webkit-margin-end: 1px;
 }
 
 msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {

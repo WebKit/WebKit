@@ -65,6 +65,15 @@ RenderPtr<RenderMathMLBlock> RenderMathMLBlock::createAnonymousMathMLBlock()
     return newBlock;
 }
 
+LayoutUnit RenderMathMLBlock::mathAxisHeight() const
+{
+    const auto& primaryFont = style().fontCascade().primaryFont();
+    if (auto* mathData = primaryFont.mathData())
+        return mathData->getMathConstant(primaryFont, OpenTypeMathData::AxisHeight);
+
+    return style().fontMetrics().xHeight() / 2;
+}
+
 int RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     // mathml.css sets math { -webkit-line-box-contain: glyphs replaced; line-height: 0; }, so when linePositionMode == PositionOfInteriorLineBoxes we want to

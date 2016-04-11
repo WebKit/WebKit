@@ -3,6 +3,15 @@
   <head>
     <title>fractions linethickness</title>
     <meta charset="utf-8"/>
+    <style type="text/css">
+      /* For Latin Modern Math
+         FractionRuleThickness = 40 * 25 / 1000 = 1px;
+       */
+      math {
+        font-family: "Latin Modern Math";
+        font-size: 25px;
+      }
+    </style>
   </head>
   <body>
 
@@ -20,7 +29,7 @@
          gLineThick = 3.f;
       -->
 
-    <math mathsize="32px">
+    <math>
       <mfrac linethickness="0.33px"><mn>1</mn><mn>2</mn></mfrac>
       <mfrac linethickness="1px"><mn>1</mn><mn>2</mn></mfrac>
       <mfrac linethickness="3px"><mn>1</mn><mn>2</mn></mfrac>
