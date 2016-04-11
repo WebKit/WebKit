@@ -199,6 +199,33 @@ bool SelectorChecker::match(const CSSSelector& selector, const Element& element,
     return true;
 }
 
+#if ENABLE(SHADOW_DOM)
+bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const Element& element, CheckingContext& checkingContext, unsigned& specificity) const
+{
+    ASSERT(element.shadowRoot());
+    ASSERT(selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassHost);
+    ASSERT(checkingContext.resolvingMode != SelectorChecker::Mode::QueryingRules);
+
+    specificity = selector.simpleSelectorSpecificity();
+
+    // :host doesn't combine with any other selectors.
+    if (selector.tagHistory())
+        return false;
+    
+    if (auto* selectorList = selector.selectorList()) {
+        LocalContext context(*selectorList->first(), element, VisitedMatchType::Enabled, NOPSEUDO);
+        context.inFunctionalPseudoClass = true;
+        context.pseudoElementEffective = false;
+        PseudoIdSet ignoreDynamicPseudo;
+        unsigned subselectorSpecificity = 0;
+        if (matchRecursively(checkingContext, context, ignoreDynamicPseudo, subselectorSpecificity).match != Match::SelectorMatches)
+            return false;
+        specificity = CSSSelector::addSpecificities(specificity, subselectorSpecificity);
+    }
+    return true;
+}
+#endif
+
 inline static bool hasScrollbarPseudoElement(const PseudoIdSet& dynamicPseudoIdSet)
 {
     PseudoIdSet scrollbarIdSet = { SCROLLBAR, SCROLLBAR_THUMB, SCROLLBAR_BUTTON, SCROLLBAR_TRACK, SCROLLBAR_TRACK_PIECE, SCROLLBAR_CORNER };

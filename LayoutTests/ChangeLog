@@ -1,3 +1,16 @@
+2016-04-11  Antti Koivisto  <antti@apple.com>
+
+        Implement functional :host() pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=156397
+        <rdar://problem/25621445>
+
+        Reviewed by Darin Adler.
+
+        Enable, fix and expand the test.
+
+        * fast/shadow-dom/css-scoping-shadow-host-functional-rule.html:
+        * platform/mac/TestExpectations:
+
 2016-04-11  Said Abou-Hallawa  <sabouhallawa@apple,com>
 
         Merge CG ImageSource and non CG ImageSource implementation in one file

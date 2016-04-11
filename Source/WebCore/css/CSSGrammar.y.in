@@ -368,6 +368,7 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 #if ENABLE_SHADOW_DOM
 
 %token <string> SLOTTEDFUNCTION
+%token <string> HOSTFUNCTION
 
 #endif
 
@@ -1366,6 +1367,9 @@ pseudo:
 #if ENABLE_SHADOW_DOM
     | ':' ':' SLOTTEDFUNCTION maybe_space compound_selector maybe_space ')' {
         $$ = CSSParserSelector::parsePseudoElementSlottedFunctionSelector($3, $5);
+    }
+    | ':' HOSTFUNCTION maybe_space compound_selector maybe_space ')' {
+        $$ = CSSParserSelector::parsePseudoClassHostFunctionSelector($2, $4);
     }
 #endif
     // use by :-webkit-any.

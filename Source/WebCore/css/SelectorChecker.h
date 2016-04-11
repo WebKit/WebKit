@@ -95,6 +95,10 @@ public:
 
     bool match(const CSSSelector&, const Element&, CheckingContext&, unsigned& specificity) const;
 
+#if ENABLE(SHADOW_DOM)
+    bool matchHostPseudoClass(const CSSSelector&, const Element&, CheckingContext&, unsigned& specificity) const;
+#endif
+
     static bool isCommonPseudoClassSelector(const CSSSelector*);
     static bool matchesFocusPseudoClass(const Element&);
     static bool attributeSelectorMatches(const Element&, const QualifiedName&, const AtomicString& attributeValue, const CSSSelector&);

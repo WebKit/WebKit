@@ -255,6 +255,30 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementSlottedFunctionSelector(
     selector->adoptSelectorVector(*selectorVector);
     return selector.release();
 }
+
+CSSParserSelector* CSSParserSelector::parsePseudoClassHostFunctionSelector(const CSSParserString& functionIdentifier, CSSParserSelector* parsedSelector)
+{
+    ASSERT_UNUSED(functionIdentifier, String(functionIdentifier) == "host(");
+
+    if (!parsedSelector)
+        return nullptr;
+
+    std::unique_ptr<CSSParserSelector> ownedParsedSelector(parsedSelector);
+
+    for (auto* component = parsedSelector; component; component = component->tagHistory()) {
+        if (component->matchesPseudoElement())
+            return nullptr;
+    }
+
+    auto selectorVector = std::make_unique<Vector<std::unique_ptr<CSSParserSelector>>>();
+    selectorVector->append(WTFMove(ownedParsedSelector));
+
+    auto selector = std::make_unique<CSSParserSelector>();
+    selector->m_selector->setMatch(CSSSelector::PseudoClass);
+    selector->m_selector->setPseudoClassType(CSSSelector::PseudoClassHost);
+    selector->adoptSelectorVector(*selectorVector);
+    return selector.release();
+}
 #endif
 
 CSSParserSelector* CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector(CSSParserString& pseudoTypeString)

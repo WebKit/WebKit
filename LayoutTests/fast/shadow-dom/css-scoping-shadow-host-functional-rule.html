@@ -8,41 +8,56 @@
 </head>
 <body>
     <style>
-        my-host, good-host, other-host, other-good-host {
+        host1, host2, host3, host4, host5 {
             display: block;
             width: 100px;
-            height: 50px;
+            height: 20px;
             background: red;
         }
-        good-host, other-good-host {
+        host3, host4, host5  {
             background: green;
         }
     </style>
-    <p>Test passes if you see a single 100px by 100px green box below.</p> 
-    <my-host>
+    <p>Test passes if you see a single 100px by 100px green box below.</p>
+    <host1>
         <div>FAIL</div>
-    </my-host>
-    <div class="container">
-        <good-host>
-            <div>FAIL</div>
-        </good-host>
+    </host1>
+    <host2 id="bar" class="foo" name="baz">
+        <div>FAIL</div>
+    </host2>
+    <div>
+        <host3>
+            FAIL
+        </host3>
     </div>
-    <other-host id="bar" class="foo" name="baz">
-        <div>FAIL</div>
-    </other-host>
-    <other-good-host>
+    <host4>
         <div class="child">FAIL</div>
-    </other-good-host>
+    </host4>
+    <host5>
+        <div>FAIL</div>
+    </host5>
     <script>
 
         try {
-            var shadowHost = document.querySelector('other-host');
+            var shadowHost = document.querySelector('host1');
             shadowRoot = shadowHost.attachShadow({mode: 'open'});
-            shadowRoot.innerHTML = '<style> :host(other-host.foo#bar[name=baz]) { background: green; } </style>';
+            shadowRoot.innerHTML = '<style> :host(host1) { background: green !important; } </style>';
 
-            shadowHost = document.querySelector('other-good-host');
+            shadowHost = document.querySelector('host2');
             shadowRoot = shadowHost.attachShadow({mode: 'open'});
-            shadowRoot.innerHTML = '<style> :host(.child) { background: red; } </style>';
+            shadowRoot.innerHTML = '<style> :host(host2.foo#bar[name=baz]) { background: green !important; } </style>';
+
+            shadowHost = document.querySelector('host3');
+            shadowRoot = shadowHost.attachShadow({mode: 'open'});
+            shadowRoot.innerHTML = '<style> :host(div host3) { background: red !important; } </style>';
+
+            shadowHost = document.querySelector('host4');
+            shadowRoot = shadowHost.attachShadow({mode: 'open'});
+            shadowRoot.innerHTML = '<style> :host(.child) { background: red !important; } </style>';
+
+            shadowHost = document.querySelector('host5');
+            shadowRoot = shadowHost.attachShadow({mode: 'open'});
+            shadowRoot.innerHTML = '<style> :host(host1) { background: red !important; } </style>';
         } catch (exception) {
             document.body.appendChild(document.createTextNode(exception));
         }
