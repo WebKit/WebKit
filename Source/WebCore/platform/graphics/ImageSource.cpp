@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010, 2011, 2012, 2014, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * Copyright (C) 2008, Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc
@@ -29,15 +29,18 @@
 #include "config.h"
 #include "ImageSource.h"
 
-#if USE(CG)
-#include "ImageDecoderCG.h"
-#else
+#if !USE(CG)
+
 #include "ImageDecoder.h"
-#endif
 
 #include "ImageOrientation.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
+
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+unsigned ImageSource::s_maxPixelsPerDecodedImage = 1024 * 1024;
+#endif
 
 ImageSource::ImageSource(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
     : m_alphaOption(alphaOption)
@@ -47,21 +50,14 @@ ImageSource::ImageSource(ImageSource::AlphaOption alphaOption, ImageSource::Gamm
 
 ImageSource::~ImageSource()
 {
+    clear(true);
 }
 
-void ImageSource::clearFrameBufferCache(size_t clearBeforeFrame)
+void ImageSource::clear(bool destroyAll, size_t clearBeforeFrame, SharedBuffer* data, bool allDataReceived)
 {
-    if (!initialized())
-        return;
-    m_decoder->clearFrameBufferCache(clearBeforeFrame);
-}
-
-void ImageSource::clear(bool destroyAllFrames, size_t clearBeforeFrame, SharedBuffer* data, bool allDataReceived)
-{
-    // There's no need to throw away the decoder unless we're explicitly asked
-    // to destroy all of the frames.
-    if (!destroyAllFrames) {
-        clearFrameBufferCache(clearBeforeFrame);
+    if (!destroyAll) {
+        if (m_decoder)
+            m_decoder->clearFrameBufferCache(clearBeforeFrame);
         return;
     }
 
@@ -71,12 +67,20 @@ void ImageSource::clear(bool destroyAllFrames, size_t clearBeforeFrame, SharedBu
         setData(data, allDataReceived);
 }
 
-void ImageSource::ensureDecoderIsCreated(const SharedBuffer& data)
+void ImageSource::ensureDecoderIsCreated(SharedBuffer* data)
 {
     if (initialized())
         return;
     
-    m_decoder = ImageDecoder::create(data, m_alphaOption, m_gammaAndColorProfileOption);
+    // Make the decoder by sniffing the bytes.
+    // This method will examine the data and instantiate an instance of the appropriate decoder plugin.
+    // If insufficient bytes are available to determine the image type, no decoder plugin will be
+    // made.
+    m_decoder = ImageDecoder::create(*data, m_alphaOption, m_gammaAndColorProfileOption);
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    if (m_decoder && s_maxPixelsPerDecodedImage)
+        m_decoder->setMaxNumPixels(s_maxPixelsPerDecodedImage);
+#endif
 }
 
 void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
@@ -84,7 +88,7 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     if (!data)
         return;
     
-    ensureDecoderIsCreated(*data);
+    ensureDecoderIsCreated(data);
     
     if (!initialized()) {
         ASSERT_NOT_REACHED();
@@ -92,48 +96,25 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     }
 
     if (m_decoder)
-        m_decoder->setData(*data, allDataReceived);
+        m_decoder->setData(data, allDataReceived);
 }
 
-SubsamplingLevel ImageSource::calculateMaximumSubsamplingLevel() const
+String ImageSource::filenameExtension() const
 {
-    if (!m_allowSubsampling || !allowSubsamplingOfFrameAtIndex(0))
-        return 0;
-    
-    // FIXME: this value was chosen to be appropriate for iOS since the image
-    // subsampling is only enabled by default on iOS. Choose a different value
-    // if image subsampling is enabled on other platform.
-    const int maximumImageAreaBeforeSubsampling = 5 * 1024 * 1024;
-    const SubsamplingLevel maxSubsamplingLevel = 3;
-    
-    for (SubsamplingLevel level = 0; level < maxSubsamplingLevel; ++level) {
-        if (frameSizeAtIndex(0, level).area() < maximumImageAreaBeforeSubsampling)
-            return level;
-    }
-    
-    return maxSubsamplingLevel;
+    return m_decoder ? m_decoder->filenameExtension() : String();
 }
 
-SubsamplingLevel ImageSource::subsamplingLevelForScale(float scale) const
+SubsamplingLevel ImageSource::subsamplingLevelForScale(float) const
 {
-    if (!(scale > 0 && scale <= 1))
-        return 0;
-    
-    SubsamplingLevel maximumSubsamplingLevel = calculateMaximumSubsamplingLevel();
-    if (!maximumSubsamplingLevel)
-        return 0;
-
-    // There are four subsampling levels: 0 = 1x, 1 = 0.5x, 2 = 0.25x, 3 = 0.125x.
-    SubsamplingLevel result = std::ceil(std::log2(1 / scale));
-    return std::min(result, maximumSubsamplingLevel);
+    return 0;
 }
 
-size_t ImageSource::bytesDecodedToDetermineProperties()
+bool ImageSource::allowSubsamplingOfFrameAtIndex(size_t) const
 {
-    return ImageDecoder::bytesDecodedToDetermineProperties();
+    return false;
 }
 
-bool ImageSource::isSizeAvailable() const
+bool ImageSource::isSizeAvailable()
 {
     return initialized() && m_decoder->isSizeAvailable();
 }
@@ -148,9 +129,25 @@ IntSize ImageSource::sizeRespectingOrientation() const
     return frameSizeAtIndex(0, 0, RespectImageOrientation);
 }
 
-size_t ImageSource::frameCount() const
+IntSize ImageSource::frameSizeAtIndex(size_t index, SubsamplingLevel, RespectImageOrientationEnum shouldRespectImageOrientation) const
 {
-    return initialized() ? m_decoder->frameCount() : 0;
+    if (!initialized())
+        return { };
+
+    IntSize size = m_decoder->frameSizeAtIndex(index);
+    ImageOrientation orientation = m_decoder->orientation();
+    
+    return shouldRespectImageOrientation == RespectImageOrientation && orientation.usesWidthAsHeight() ? size.transposedSize() : size;
+}
+
+bool ImageSource::getHotSpot(IntPoint& hotSpot) const
+{
+    return initialized() && m_decoder->hotSpot(hotSpot);
+}
+
+size_t ImageSource::bytesDecodedToDetermineProperties() const
+{
+    return 0;
 }
 
 int ImageSource::repetitionCount()
@@ -158,19 +155,52 @@ int ImageSource::repetitionCount()
     return initialized() ? m_decoder->repetitionCount() : cAnimationNone;
 }
 
-String ImageSource::filenameExtension() const
+size_t ImageSource::frameCount() const
 {
-    return initialized() ? m_decoder->filenameExtension() : String();
+    return initialized() ? m_decoder->frameCount() : 0;
 }
 
-Optional<IntPoint> ImageSource::hotSpot() const
+NativeImagePtr ImageSource::createFrameImageAtIndex(size_t index, SubsamplingLevel)
 {
-    return initialized() ? m_decoder->hotSpot() : Nullopt;
+    if (!initialized())
+        return nullptr;
+
+    // Zero-height images can cause problems for some ports.  If we have an
+    // empty image dimension, just bail.
+    if (size().isEmpty())
+        return nullptr;
+
+    ImageFrame* buffer = m_decoder->frameBufferAtIndex(index);
+    if (!buffer || buffer->status() == ImageFrame::FrameEmpty)
+        return nullptr;
+
+    // Return the buffer contents as a native image.  For some ports, the data
+    // is already in a native container, and this just increments its refcount.
+    return buffer->asNewNativeImage();
 }
 
-bool ImageSource::frameIsCompleteAtIndex(size_t index)
+float ImageSource::frameDurationAtIndex(size_t index)
 {
-    return initialized() && m_decoder->frameIsCompleteAtIndex(index);
+    if (!initialized())
+        return 0;
+
+    ImageFrame* buffer = m_decoder->frameBufferAtIndex(index);
+    if (!buffer || buffer->status() == ImageFrame::FrameEmpty)
+        return 0;
+
+    // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
+    // We follow Firefox's behavior and use a duration of 100 ms for any frames that specify
+    // a duration of <= 10 ms. See <rdar://problem/7689300> and <http://webkit.org/b/36082>
+    // for more information.
+    const float duration = buffer->duration() / 1000.0f;
+    if (duration < 0.011f)
+        return 0.100f;
+    return duration;
+}
+
+ImageOrientation ImageSource::orientationAtIndex(size_t) const
+{
+    return initialized() ? m_decoder->orientation() : ImageOrientation();
 }
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)
@@ -178,41 +208,18 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
     return !initialized() || m_decoder->frameHasAlphaAtIndex(index);
 }
 
-bool ImageSource::allowSubsamplingOfFrameAtIndex(size_t index) const
-{
-    return initialized() && m_decoder->allowSubsamplingOfFrameAtIndex(index);
-}
-
-IntSize ImageSource::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel, RespectImageOrientationEnum shouldRespectImageOrientation) const
+bool ImageSource::frameIsCompleteAtIndex(size_t index)
 {
     if (!initialized())
-        return { };
+        return false;
 
-    IntSize size = m_decoder->frameSizeAtIndex(index, subsamplingLevel);
-    if (shouldRespectImageOrientation != RespectImageOrientation)
-        return size;
-
-    return orientationAtIndex(index).usesWidthAsHeight() ? size.transposedSize() : size;
+    ImageFrame* buffer = m_decoder->frameBufferAtIndex(index);
+    return buffer && buffer->status() == ImageFrame::FrameComplete;
 }
 
-unsigned ImageSource::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
+unsigned ImageSource::frameBytesAtIndex(size_t index, SubsamplingLevel) const
 {
-    return frameSizeAtIndex(index, subsamplingLevel).area() * 4;
-}
-
-float ImageSource::frameDurationAtIndex(size_t index)
-{
-    return initialized() ? m_decoder->frameDurationAtIndex(index) : 0;
-}
-
-ImageOrientation ImageSource::orientationAtIndex(size_t index) const
-{
-    return initialized() ? m_decoder->orientationAtIndex(index) : ImageOrientation();
-}
-    
-NativeImagePtr ImageSource::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
-{
-    return initialized() ? m_decoder->createFrameImageAtIndex(index, subsamplingLevel) : nullptr;
+    return initialized() ? m_decoder->frameBytesAtIndex(index) : 0;
 }
 
 void ImageSource::dump(TextStream& ts) const
@@ -226,3 +233,5 @@ void ImageSource::dump(TextStream& ts) const
 }
     
 }
+
+#endif // USE(CG)

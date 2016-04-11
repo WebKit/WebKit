@@ -44,10 +44,10 @@ IntPoint determineHotSpot(Image* image, const IntPoint& specifiedHotSpot)
         return specifiedHotSpot;
 
     // If hot spot is not specified externally, it can be extracted from some image formats (e.g. .cur).
-    if (auto intrinsicHotSpot = image->hotSpot()) {
-        if (imageRect.contains(intrinsicHotSpot.value()))
-            return intrinsicHotSpot.value();
-    }
+    IntPoint intrinsicHotSpot;
+    bool imageHasIntrinsicHotSpot = image->getHotSpot(intrinsicHotSpot);
+    if (imageHasIntrinsicHotSpot && imageRect.contains(intrinsicHotSpot))
+        return intrinsicHotSpot;
 
     return IntPoint();
 }

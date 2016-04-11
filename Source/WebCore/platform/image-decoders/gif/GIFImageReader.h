@@ -246,7 +246,7 @@ public:
     {
     }
 
-    void setData(WebCore::SharedBuffer* data) { m_data = data; }
+    void setData(PassRefPtr<WebCore::SharedBuffer> data) { m_data = data; }
     // FIXME: haltAtFrame should be size_t.
     bool decode(WebCore::GIFImageDecoder::GIFQuery, unsigned haltAtFrame);
 

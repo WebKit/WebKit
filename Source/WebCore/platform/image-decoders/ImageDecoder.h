@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc.  All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
@@ -34,7 +34,6 @@
 #include "PlatformScreen.h"
 #include "SharedBuffer.h"
 #include <wtf/Assertions.h>
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -236,14 +235,15 @@ namespace WebCore {
         WTF_MAKE_NONCOPYABLE(ImageDecoder); WTF_MAKE_FAST_ALLOCATED;
     public:
         ImageDecoder(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
-            : m_premultiplyAlpha(alphaOption == ImageSource::AlphaPremultiplied)
+            : m_scaled(false)
+            , m_premultiplyAlpha(alphaOption == ImageSource::AlphaPremultiplied)
             , m_ignoreGammaAndColorProfile(gammaAndColorProfileOption == ImageSource::GammaAndColorProfileIgnored)
-        {
-        }
+            , m_sizeAvailable(false)
+            , m_maxNumPixels(-1)
+            , m_isAllDataReceived(false)
+            , m_failed(false) { }
 
-        virtual ~ImageDecoder()
-        {
-        }
+        virtual ~ImageDecoder() { }
 
         // Returns a caller-owned decoder of the appropriate type.  Returns 0 if
         // we can't sniff a supported type from the provided data (possibly
@@ -254,11 +254,11 @@ namespace WebCore {
 
         bool isAllDataReceived() const { return m_isAllDataReceived; }
 
-        virtual void setData(SharedBuffer& data, bool allDataReceived)
+        virtual void setData(SharedBuffer* data, bool allDataReceived)
         {
             if (m_failed)
                 return;
-            m_data = &data;
+            m_data = data;
             m_isAllDataReceived = allDataReceived;
         }
 
@@ -282,7 +282,7 @@ namespace WebCore {
         // sizes.  This does NOT differ from size() for GIF, since decoding GIFs
         // composites any smaller frames against previous frames to create full-
         // size frames.
-        virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel) const
+        virtual IntSize frameSizeAtIndex(size_t) const
         {
             return size();
         }
@@ -310,24 +310,16 @@ namespace WebCore {
         // ImageDecoder-owned pointer.
         virtual ImageFrame* frameBufferAtIndex(size_t) = 0;
 
-        bool frameIsCompleteAtIndex(size_t) const;
-
         // Make the best effort guess to check if the requested frame has alpha channel.
-        bool frameHasAlphaAtIndex(size_t) const;
+        virtual bool frameHasAlphaAtIndex(size_t) const;
 
         // Number of bytes in the decoded frame requested. Return 0 if not yet decoded.
-        unsigned frameBytesAtIndex(size_t) const;
-        
-        float frameDurationAtIndex(size_t) const;
-        
-        NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel) const;
+        virtual unsigned frameBytesAtIndex(size_t) const;
 
         void setIgnoreGammaAndColorProfile(bool flag) { m_ignoreGammaAndColorProfile = flag; }
         bool ignoresGammaAndColorProfile() const { return m_ignoreGammaAndColorProfile; }
 
-        ImageOrientation orientationAtIndex(size_t) const { return m_orientation; }
-        
-        bool allowSubsamplingOfFrameAtIndex(size_t) const { return false; }
+        ImageOrientation orientation() const { return m_orientation; }
 
         enum { iccColorProfileHeaderLength = 128 };
 
@@ -337,10 +329,6 @@ namespace WebCore {
 
             return !memcmp(&profileData[16], "RGB ", 4);
         }
-
-        static size_t bytesDecodedToDetermineProperties() { return 0; }
-        
-        static SubsamplingLevel subsamplingLevelForScale(float, SubsamplingLevel) { return 0; }
 
         static bool inputDeviceColorProfile(const char* profileData, unsigned profileLength)
         {
@@ -366,9 +354,13 @@ namespace WebCore {
         // compositing).
         virtual void clearFrameBufferCache(size_t) { }
 
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+        void setMaxNumPixels(int m) { m_maxNumPixels = m; }
+#endif
+
         // If the image has a cursor hot-spot, stores it in the argument
         // and returns true. Otherwise returns false.
-        virtual Optional<IntPoint> hotSpot() const { return Nullopt; }
+        virtual bool hotSpot(IntPoint&) const { return false; }
 
     protected:
         void prepareScaleDataIfNecessary();
@@ -382,7 +374,7 @@ namespace WebCore {
         Vector<ImageFrame, 1> m_frameBufferCache;
         // FIXME: Do we need m_colorProfile any more, for any port?
         ColorProfile m_colorProfile;
-        bool m_scaled { false };
+        bool m_scaled;
         Vector<int> m_scaledColumns;
         Vector<int> m_scaledRows;
         bool m_premultiplyAlpha;
@@ -400,14 +392,10 @@ namespace WebCore {
         }
 
         IntSize m_size;
-        bool m_sizeAvailable { false };
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-        static const int m_maxNumPixels { 1024 * 1024 };
-#else
-        static const int m_maxNumPixels { -1 };
-#endif
-        bool m_isAllDataReceived { false };
-        bool m_failed { false };
+        bool m_sizeAvailable;
+        int m_maxNumPixels;
+        bool m_isAllDataReceived;
+        bool m_failed;
     };
 
 } // namespace WebCore

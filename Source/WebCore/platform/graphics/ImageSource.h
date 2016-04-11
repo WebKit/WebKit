@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010, 2012, 2014, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,14 +28,17 @@
 #define ImageSource_h
 
 #include "ImageOrientation.h"
-#include "IntPoint.h"
 #include "NativeImagePtr.h"
 #include "TextStream.h"
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
+
+#if USE(CG)
+typedef struct CGImageSource* CGImageSourceRef;
+typedef const struct __CFData* CFDataRef;
+#endif
 
 namespace WebCore {
 
@@ -80,7 +83,7 @@ public:
         GammaAndColorProfileIgnored
     };
 
-    ImageSource(AlphaOption = AlphaPremultiplied, GammaAndColorProfileOption = GammaAndColorProfileApplied);
+    ImageSource(AlphaOption alphaOption = AlphaPremultiplied, GammaAndColorProfileOption gammaAndColorProfileOption = GammaAndColorProfileApplied);
     ~ImageSource();
 
     // Tells the ImageSource that the Image no longer cares about decoded frame
@@ -104,61 +107,76 @@ public:
     // who set |destroyAll| to true if they wish to be able to continue using
     // the ImageSource.  This way implementations which choose to destroy their
     // decoders in some cases can reconstruct them correctly.
-    void clear(bool destroyAll, size_t clearBeforeFrame = 0, SharedBuffer* data = nullptr, bool allDataReceived = false);
+    void clear(bool destroyAll,
+               size_t clearBeforeFrame = 0,
+               SharedBuffer* data = NULL,
+               bool allDataReceived = false);
 
     bool initialized() const { return m_decoder.get(); }
 
     void setData(SharedBuffer* data, bool allDataReceived);
+    String filenameExtension() const;
 
     SubsamplingLevel subsamplingLevelForScale(float) const;
+    bool allowSubsamplingOfFrameAtIndex(size_t) const;
     void setAllowSubsampling(bool allowSubsampling) { m_allowSubsampling = allowSubsampling; }
-    static size_t bytesDecodedToDetermineProperties();
+    SubsamplingLevel maximumSubsamplingLevel() const;
+
+    bool isSizeAvailable();
     
-    bool isSizeAvailable() const;
     // Always original size, without subsampling.
     IntSize size() const;
     IntSize sizeRespectingOrientation() const;
-
-    size_t frameCount() const;
-    int repetitionCount();
-    String filenameExtension() const;
-    Optional<IntPoint> hotSpot() const;
-
-    bool frameIsCompleteAtIndex(size_t); // Whether or not the frame is completely decoded.
-    bool frameHasAlphaAtIndex(size_t); // Whether or not the frame actually used any alpha.
-    bool allowSubsamplingOfFrameAtIndex(size_t) const;
     
     // Size of optionally subsampled frame.
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = 0, RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
-    
-    // Return the number of bytes in the decoded frame. If the frame is not yet
-    // decoded then return 0.
-    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = 0) const;
-    
-    float frameDurationAtIndex(size_t);
-    ImageOrientation orientationAtIndex(size_t) const; // EXIF image orientation
-    
+
+    bool getHotSpot(IntPoint&) const;
+
+    size_t bytesDecodedToDetermineProperties() const;
+
+    int repetitionCount();
+
+    size_t frameCount() const;
+
     // Callers should not call this after calling clear() with a higher index;
     // see comments on clear() above.
     NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = 0);
-    
+
+    float frameDurationAtIndex(size_t);
+    bool frameHasAlphaAtIndex(size_t); // Whether or not the frame actually used any alpha.
+    bool frameIsCompleteAtIndex(size_t); // Whether or not the frame is completely decoded.
+    ImageOrientation orientationAtIndex(size_t) const; // EXIF image orientation
+
+    // Return the number of bytes in the decoded frame. If the frame is not yet
+    // decoded then return 0.
+    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = 0) const;
+
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    static unsigned maxPixelsPerDecodedImage() { return s_maxPixelsPerDecodedImage; }
+    static void setMaxPixelsPerDecodedImage(unsigned maxPixels) { s_maxPixelsPerDecodedImage = maxPixels; }
+#endif
+
 private:
-    void clearFrameBufferCache(size_t);
-    void ensureDecoderIsCreated(const SharedBuffer&);
+    void ensureDecoderIsCreated(SharedBuffer*);
     SubsamplingLevel calculateMaximumSubsamplingLevel() const;
     void dump(TextStream&) const;
     
     std::unique_ptr<ImageDecoder> m_decoder;
-
-    // The default value of m_allowSubsampling should be the same as defaultImageSubsamplingEnabled in Settings.cpp
+    
 #if PLATFORM(IOS)
     bool m_allowSubsampling { true };
 #else
     bool m_allowSubsampling { false };
 #endif
 
+#if !USE(CG)
     AlphaOption m_alphaOption;
     GammaAndColorProfileOption m_gammaAndColorProfileOption;
+#endif
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    static unsigned s_maxPixelsPerDecodedImage;
+#endif
 };
 
 }

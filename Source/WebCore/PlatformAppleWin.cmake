@@ -72,6 +72,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/ImageBufferDataCG.cpp
     platform/graphics/cg/ImageCG.cpp
     platform/graphics/cg/ImageDecoderCG.cpp
+    platform/graphics/cg/ImageSourceCG.cpp
     platform/graphics/cg/ImageSourceCGWin.cpp
     platform/graphics/cg/IntPointCG.cpp
     platform/graphics/cg/IntRectCG.cpp

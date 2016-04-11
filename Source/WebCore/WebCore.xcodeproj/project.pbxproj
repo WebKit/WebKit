@@ -4986,6 +4986,7 @@
 		B275355A0B053814002CE64F /* FloatRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352C0B053814002CE64F /* FloatRectCG.cpp */; };
 		B275355B0B053814002CE64F /* FloatSizeCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352D0B053814002CE64F /* FloatSizeCG.cpp */; };
 		B275355E0B053814002CE64F /* ImageCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535300B053814002CE64F /* ImageCG.cpp */; };
+		B275355F0B053814002CE64F /* ImageSourceCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535310B053814002CE64F /* ImageSourceCG.cpp */; };
 		B27535600B053814002CE64F /* IntPointCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535320B053814002CE64F /* IntPointCG.cpp */; };
 		B27535610B053814002CE64F /* IntRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535330B053814002CE64F /* IntRectCG.cpp */; };
 		B27535620B053814002CE64F /* IntSizeCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535340B053814002CE64F /* IntSizeCG.cpp */; };
@@ -12876,6 +12877,7 @@
 		B275352C0B053814002CE64F /* FloatRectCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRectCG.cpp; sourceTree = "<group>"; };
 		B275352D0B053814002CE64F /* FloatSizeCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatSizeCG.cpp; sourceTree = "<group>"; };
 		B27535300B053814002CE64F /* ImageCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageCG.cpp; sourceTree = "<group>"; };
+		B27535310B053814002CE64F /* ImageSourceCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSourceCG.cpp; sourceTree = "<group>"; };
 		B27535320B053814002CE64F /* IntPointCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntPointCG.cpp; sourceTree = "<group>"; };
 		B27535330B053814002CE64F /* IntRectCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntRectCG.cpp; sourceTree = "<group>"; };
 		B27535340B053814002CE64F /* IntSizeCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntSizeCG.cpp; sourceTree = "<group>"; };
@@ -21783,6 +21785,7 @@
 				B27535300B053814002CE64F /* ImageCG.cpp */,
 				555B87EA1CAAF0AB00349425 /* ImageDecoderCG.cpp */,
 				555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */,
+				B27535310B053814002CE64F /* ImageSourceCG.cpp */,
 				4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */,
 				4B3480910EEF50D400AC1B41 /* ImageSourceCGMac.mm */,
 				B27535320B053814002CE64F /* IntPointCG.cpp */,
@@ -30001,6 +30004,7 @@
 				2D5A592F152525230036EE51 /* ImageOrientation.cpp in Sources */,
 				B51A2F4117D7D5DE0072517A /* ImageQualityController.cpp in Sources */,
 				0F3C725E1974874B00AEDD0C /* ImageSource.cpp in Sources */,
+				B275355F0B053814002CE64F /* ImageSourceCG.cpp in Sources */,
 				4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */,
 				316FE1170E6E1DA700BF6088 /* ImplicitAnimation.cpp in Sources */,
 				BE961C5418AD338500D07DC5 /* InbandDataTextTrack.cpp in Sources */,

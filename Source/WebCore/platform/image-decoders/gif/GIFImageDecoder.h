@@ -42,7 +42,7 @@ namespace WebCore {
 
         // ImageDecoder
         virtual String filenameExtension() const { return "gif"; }
-        virtual void setData(SharedBuffer& data, bool allDataReceived);
+        virtual void setData(SharedBuffer* data, bool allDataReceived);
         virtual bool isSizeAvailable();
         virtual bool setSize(unsigned width, unsigned height);
         virtual size_t frameCount();

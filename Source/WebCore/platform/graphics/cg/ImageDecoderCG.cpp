@@ -122,6 +122,15 @@ ImageDecoder::ImageDecoder()
     m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(nullptr));
 }
 
+SubsamplingLevel ImageDecoder::subsamplingLevelForScale(float scale, SubsamplingLevel maximumSubsamplingLevel)
+{
+    // There are four subsampling levels: 0 = 1x, 1 = 0.5x, 2 = 0.25x, 3 = 0.125x.
+    float clampedScale = std::max<float>(0.125, std::min<float>(1, scale));
+    SubsamplingLevel result = ceilf(log2f(1 / clampedScale));
+    ASSERT(result >=0 && result <= 3);
+    return std::min(result, maximumSubsamplingLevel);
+}
+
 size_t ImageDecoder::bytesDecodedToDetermineProperties()
 {
     // Measured by tracing malloc/calloc calls on Mac OS 10.6.6, x86_64.
@@ -201,25 +210,26 @@ int ImageDecoder::repetitionCount() const
     return cAnimationNone;
 }
 
-Optional<IntPoint> ImageDecoder::hotSpot() const
+bool ImageDecoder::hotSpot(IntPoint& hotSpot) const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
     if (!properties)
-        return Nullopt;
+        return false;
     
     int x = -1, y = -1;
     CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(properties.get(), CFSTR("hotspotX"));
     if (!num || !CFNumberGetValue(num, kCFNumberIntType, &x))
-        return Nullopt;
+        return false;
     
     num = (CFNumberRef)CFDictionaryGetValue(properties.get(), CFSTR("hotspotY"));
     if (!num || !CFNumberGetValue(num, kCFNumberIntType, &y))
-        return Nullopt;
+        return false;
     
     if (x < 0 || y < 0)
-        return Nullopt;
+        return false;
     
-    return IntPoint(x, y);
+    hotSpot = IntPoint(x, y);
+    return true;
 }
 
 IntSize ImageDecoder::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
@@ -376,21 +386,21 @@ void ImageDecoder::setData(CFDataRef data, bool allDataReceived)
     CGImageSourceUpdateData(m_nativeDecoder.get(), data, allDataReceived);
 }
 
-void ImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
+void ImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 {
 #if PLATFORM(COCOA)
     // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.
     // We use SharedBuffer's ability to wrap itself inside CFData to get around this, ensuring that ImageIO is
     // really looking at the SharedBuffer.
-    setData(data.createCFData().get(), allDataReceived);
+    setData(data->createCFData().get(), allDataReceived);
 #else
     // Create a CGDataProvider to wrap the SharedBuffer.
-    data.ref();
+    data->ref();
     // We use the GetBytesAtPosition callback rather than the GetBytePointer one because SharedBuffer
     // does not provide a way to lock down the byte pointer and guarantee that it won't move, which
     // is a requirement for using the GetBytePointer callback.
     CGDataProviderDirectCallbacks providerCallbacks = { 0, 0, 0, sharedBufferGetBytesAtPosition, sharedBufferRelease };
-    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateDirect(&data, data.size(), &providerCallbacks));
+    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateDirect(data, data->size(), &providerCallbacks));
     CGImageSourceUpdateDataProvider(m_nativeDecoder.get(), dataProvider.get(), allDataReceived);
 #endif
 }
