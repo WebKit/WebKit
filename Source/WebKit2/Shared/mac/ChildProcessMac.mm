@@ -90,13 +90,13 @@ static String codeSigningIdentifierForProcess(pid_t pid, OSStatus& errorCode)
     RetainPtr<SecCodeRef> codePtr = adoptCF(code);
     RELEASE_ASSERT(codePtr);
 
-    CFStringRef appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement = CFSTR("(anchor apple) or (anchor apple generic and certificate leaf[field.1.2.840.113635.100.6.1.9]) or (anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13])");
+    CFStringRef macAppStoreSignedOrAppleDeveloperSignedRequirement = CFSTR("(anchor apple generic and certificate leaf[field.1.2.840.113635.100.6.1.9]) or (anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13])");
     SecRequirementRef signingRequirement = nullptr;
-    RELEASE_ASSERT(!SecRequirementCreateWithString(appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement, kSecCSDefaultFlags, &signingRequirement));
+    RELEASE_ASSERT(!SecRequirementCreateWithString(macAppStoreSignedOrAppleDeveloperSignedRequirement, kSecCSDefaultFlags, &signingRequirement));
     RetainPtr<SecRequirementRef> signingRequirementPtr = adoptCF(signingRequirement);
     errorCode = SecCodeCheckValidity(codePtr.get(), kSecCSDefaultFlags, signingRequirementPtr.get());
     if (errorCode == errSecCSUnsigned || errorCode == errSecCSReqFailed)
-        return String(); // Unsigned or signed by a third-party
+        return String(); // Unsigned, signed by Apple, or signed by a third-party
     if (errorCode != errSecSuccess)
         return emptyString(); // e.g. invalid/malformed signature
     String codeSigningIdentifier;
