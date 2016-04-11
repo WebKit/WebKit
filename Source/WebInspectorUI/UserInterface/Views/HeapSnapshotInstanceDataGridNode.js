@@ -206,9 +206,24 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
         let popoverContentElement = document.createElement("div");
         popoverContentElement.classList.add("heap-snapshot", "heap-snapshot-instance-popover-content");
 
+        function appendTitle(node) {
+            let idElement = document.createElement("span");
+            idElement.classList.add("object-id");
+            idElement.textContent = "@" + node.id;
+            idElement.addEventListener("click", WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode.bind(null, node));
+
+            let title = popoverContentElement.appendChild(document.createElement("div"));
+            title.classList.add("title");
+            let localizedString = WebInspector.UIString("Shortest property path to %s").format("@@@");
+            let [before, after] = localizedString.split(/\s*@@@\s*/);
+            title.append(before + " ", idElement, " " + after);
+        }
+
         function appendPath(path) {
-            let tableElement = popoverContentElement.appendChild(document.createElement("table"));
-            tableElement.classList.add("table");
+            let tableContainer = popoverContentElement.appendChild(document.createElement("div"));
+            tableContainer.classList.add("table-container");
+
+            let tableElement = tableContainer.appendChild(document.createElement("table"));
 
             path = path.slice().reverse();
             let windowIndex = path.findIndex((x) => {
@@ -256,11 +271,11 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
             iconElement.classList.add("icon", WebInspector.HeapSnapshotClusterContentView.iconStyleClassNameForClassName(node.className, node.internal));
 
             let classNameElement = containerElement.appendChild(document.createElement("span"));
-            classNameElement.textContent = sanitizeClassName(node.className);
+            classNameElement.textContent = sanitizeClassName(node.className) + " ";
 
             let idElement = containerElement.appendChild(document.createElement("span"));
             idElement.classList.add("object-id");
-            idElement.textContent = " @" + node.id;
+            idElement.textContent = "@" + node.id;
             idElement.addEventListener("click", WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode.bind(null, node));
         }
 
@@ -289,9 +304,10 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
             if (!this._tree.visible)
                 return;
 
-            if (path.length)
+            if (path.length) {
+                appendTitle(this._node);
                 appendPath(path);
-            else if (this._node.gcRoot) {
+            } else if (this._node.gcRoot) {
                 let textElement = popoverContentElement.appendChild(document.createElement("div"));
                 textElement.textContent = WebInspector.UIString("This object is a root");
             } else {

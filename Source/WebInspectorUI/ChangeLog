@@ -1,3 +1,37 @@
+2016-04-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: HeapSnapshot instance property path popover should include a descriptive header
+        https://bugs.webkit.org/show_bug.cgi?id=156431
+        <rdar://problem/25633594>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler.appendTitle):
+        Title for the popover. Because localization may change the location of the @1234
+        in the string, localize first with a placeholder, and then replace the placeholder
+        with the @1234 link.
+
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler.appendPath):
+        Give the table a container for extra padding.
+
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler.appendPathRow):
+        Do not include the space before @1234 as part of the clickable link.
+
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler):
+        Include a title when the popover shows a root path.
+
+        * UserInterface/Views/HeapSnapshotInstancesContentView.css:
+        (.heap-snapshot-instance-popover-content > .title):
+        (.heap-snapshot-instance-popover-content):
+        (.heap-snapshot-instance-popover-content > .table-container):
+        (.heap-snapshot-instance-popover-content table):
+        Provide styles for the title. Let the title extend across the entire
+        popover horizontally, but pad the table so that it appears more
+        centered under the title. Because the table has border collapse we have
+        to wrap it in a container to give it back the padding we want.
+
 2016-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: XHRs and Web Worker scripts are not searchable
