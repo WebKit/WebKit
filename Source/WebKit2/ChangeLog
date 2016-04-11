@@ -1,3 +1,14 @@
+2016-04-11  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
+        Merge CG ImageSource and non CG ImageSource implementation in one file
+        https://bugs.webkit.org/show_bug.cgi?id=155456
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::setCursor):
+        Replace the call to Image::getHotSpot() by Image::hotSpot().
+
 2016-04-11  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
 
         [CMake] Make FOLDER property INHERITED

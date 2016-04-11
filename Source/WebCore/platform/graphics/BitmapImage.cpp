@@ -254,9 +254,9 @@ IntSize BitmapImage::sizeRespectingOrientation() const
     return m_sizeRespectingOrientation;
 }
 
-bool BitmapImage::getHotSpot(IntPoint& hotSpot) const
+Optional<IntPoint> BitmapImage::hotSpot() const
 {
-    bool result = m_source.getHotSpot(hotSpot);
+    auto result = m_source.hotSpot();
     didDecodeProperties();
     return result;
 }

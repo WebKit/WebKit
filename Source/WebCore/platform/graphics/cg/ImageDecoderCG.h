@@ -29,19 +29,23 @@
 #include "ImageSourceCG.h"
 #include "IntSize.h"
 
+#include <wtf/Optional.h>
+
+typedef struct CGImageSource* CGImageSourceRef;
+typedef const struct __CFData* CFDataRef;
+
 namespace WebCore {
 
 class ImageDecoder {
 public:
     ImageDecoder();
     
-    static std::unique_ptr<ImageDecoder> create()
+    static std::unique_ptr<ImageDecoder> create(const SharedBuffer&, ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption)
     {
         return std::make_unique<ImageDecoder>();
     }
     
     static size_t bytesDecodedToDetermineProperties();
-    static SubsamplingLevel subsamplingLevelForScale(float scale, SubsamplingLevel maximumSubsamplingLevel);
     
     String filenameExtension() const;
     bool isSizeAvailable() const;
@@ -50,7 +54,7 @@ public:
     IntSize size() const;
     size_t frameCount() const;
     int repetitionCount() const;
-    bool hotSpot(IntPoint& hotSpot) const;
+    Optional<IntPoint> hotSpot() const;
     
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel) const;
     bool frameIsCompleteAtIndex(size_t) const;
@@ -64,7 +68,9 @@ public:
     NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel) const;
     
     void setData(CFDataRef, bool allDataReceived);
-    void setData(SharedBuffer*, bool allDataReceived);
+    void setData(SharedBuffer&, bool allDataReceived);
+    
+    void clearFrameBufferCache(size_t) { }
     
 protected:
     mutable IntSize m_size;

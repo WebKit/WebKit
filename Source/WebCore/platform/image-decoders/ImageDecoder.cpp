@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2016 Apple Inc.  All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
@@ -270,13 +271,16 @@ template <MatchType type> int getScaledValue(const Vector<int>& scaledValues, in
 
 }
 
-bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
+bool ImageDecoder::frameIsCompleteAtIndex(size_t index) const
 {
     if (m_frameBufferCache.size() <= index)
-        return true;
-    if (m_frameBufferCache[index].status() == ImageFrame::FrameComplete)
-        return m_frameBufferCache[index].hasAlpha();
-    return true;
+        return false;
+    return m_frameBufferCache[index].status() == ImageFrame::FrameComplete;
+}
+
+bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
+{
+    return !frameIsCompleteAtIndex(index) || m_frameBufferCache[index].hasAlpha();
 }
 
 unsigned ImageDecoder::frameBytesAtIndex(size_t index) const
@@ -285,6 +289,42 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index) const
         return 0;
     // FIXME: Use the dimension of the requested frame.
     return m_size.area() * sizeof(ImageFrame::PixelData);
+}
+
+float ImageDecoder::frameDurationAtIndex(size_t index) const
+{
+    if (m_frameBufferCache.size() <= index)
+        return 0;
+
+    if (m_frameBufferCache[index].status() == ImageFrame::FrameEmpty)
+        return 0;
+
+    // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
+    // We follow Firefox's behavior and use a duration of 100 ms for any frames that specify
+    // a duration of <= 10 ms. See <rdar://problem/7689300> and <http://webkit.org/b/36082>
+    // for more information.
+    const float duration = m_frameBufferCache[index].duration() / 1000.0f;
+    if (duration < 0.011f)
+        return 0.100f;
+    return duration;
+}
+
+NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel) const
+{
+    if (m_frameBufferCache.size() <= index)
+        return nullptr;
+
+    // Zero-height images can cause problems for some ports. If we have an
+    // empty image dimension, just bail.
+    if (size().isEmpty())
+        return nullptr;
+
+    if (m_frameBufferCache[index].status() == ImageFrame::FrameEmpty)
+        return nullptr;
+
+    // Return the buffer contents as a native image. For some ports, the data
+    // is already in a native container, and this just increments its refcount.
+    return m_frameBufferCache[index].asNewNativeImage();
 }
 
 void ImageDecoder::prepareScaleDataIfNecessary()

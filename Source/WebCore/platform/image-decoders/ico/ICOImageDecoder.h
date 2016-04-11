@@ -45,7 +45,7 @@ namespace WebCore {
 
         // ImageDecoder
         virtual String filenameExtension() const { return "ico"; }
-        virtual void setData(SharedBuffer*, bool allDataReceived);
+        virtual void setData(SharedBuffer&, bool allDataReceived);
         virtual bool isSizeAvailable();
         virtual IntSize size() const;
         virtual IntSize frameSizeAtIndex(size_t) const;
@@ -56,7 +56,7 @@ namespace WebCore {
         // avoid accessing deleted memory, especially when calling this from
         // inside BMPImageReader!
         virtual bool setFailed();
-        virtual bool hotSpot(IntPoint&) const;
+        virtual Optional<IntPoint> hotSpot() const;
 
     private:
         enum ImageType {
@@ -116,9 +116,8 @@ namespace WebCore {
         // could be decoded.
         bool processDirectoryEntries();
 
-        // Stores the hot-spot for |index| in |hotSpot| and returns true,
-        // or returns false if there is none.
-        bool hotSpotAtIndex(size_t index, IntPoint& hotSpot) const;
+        // Returns the hot-spot for |index|, returns Nullopt if there is none.
+        Optional<IntPoint> hotSpotAtIndex(size_t) const;
 
         // Reads and returns a directory entry from the current offset into
         // |data|.

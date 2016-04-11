@@ -125,7 +125,7 @@ public:
     FloatSize size() const override;
     IntSize sizeRespectingOrientation() const;
 
-    bool getHotSpot(IntPoint&) const override;
+    Optional<IntPoint> hotSpot() const override;
 
     unsigned decodedSize() const { return m_decodedSize; }
 

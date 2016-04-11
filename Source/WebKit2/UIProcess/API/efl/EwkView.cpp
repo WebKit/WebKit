@@ -450,10 +450,9 @@ void EwkView::setCursor(const Cursor& cursor)
         if (cursorImage == m_cursorIdentifier.image)
             return;
 
-        IntPoint hotSpot;
-        cursorImage->getHotSpot(hotSpot);
-
-        Ecore_X_Cursor customCursor = createCustomCursor(window, cursorImage, IntSize(cursorImage->size()), hotSpot);
+        
+        Optional<IntPoint> hotSpot = cursorImage->hotSpot();
+        Ecore_X_Cursor customCursor = createCustomCursor(window, cursorImage, IntSize(cursorImage->size()), hotSpot ? hotSpot.value() : IntPoint());
         if (!customCursor)
             return;
 

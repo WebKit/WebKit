@@ -47,14 +47,14 @@ BMPImageDecoder::BMPImageDecoder(ImageSource::AlphaOption alphaOption,
 {
 }
 
-void BMPImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
+void BMPImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 {
     if (failed())
         return;
 
     ImageDecoder::setData(data, allDataReceived);
     if (m_reader)
-        m_reader->setData(data);
+        m_reader->setData(&data);
 }
 
 bool BMPImageDecoder::isSizeAvailable()
