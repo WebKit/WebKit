@@ -1,3 +1,17 @@
+2016-04-12  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fixed uninitialization of Node::DataUnion with GCC 4.8.
+        https://bugs.webkit.org/show_bug.cgi?id=156507
+
+        Reviewed by Michael Catanzaro.
+
+        This change fixes run time crashes caused by access to uninitialized
+        memory in Node::renderer().
+
+        No new tests needed.
+
+        * dom/Node.h:
+
 2016-04-12  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] do not exit AirPlay when the screen locks
