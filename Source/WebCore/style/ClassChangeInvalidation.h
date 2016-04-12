@@ -44,18 +44,13 @@ public:
     ~ClassChangeInvalidation();
 
 private:
-    using ClassChangeVector = Vector<AtomicStringImpl*, 4>;
-
-    void computeClassChange(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
-    void invalidateStyle(const ClassChangeVector&);
-
-    static ClassChangeVector collectClasses(const SpaceSplitString&);
+    void invalidateStyle(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
+    void invalidateDescendantStyle();
 
     const bool m_isEnabled;
     Element& m_element;
 
-    ClassChangeVector m_addedClasses;
-    ClassChangeVector m_removedClasses;
+    Vector<const RuleSet*, 4> m_descendantInvalidationRuleSets;
 };
 
 inline ClassChangeInvalidation::ClassChangeInvalidation(Element& element, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
@@ -65,15 +60,15 @@ inline ClassChangeInvalidation::ClassChangeInvalidation(Element& element, const 
 {
     if (!m_isEnabled)
         return;
-    computeClassChange(oldClasses, newClasses);
-    invalidateStyle(m_removedClasses);
+    invalidateStyle(oldClasses, newClasses);
+    invalidateDescendantStyle();
 }
 
 inline ClassChangeInvalidation::~ClassChangeInvalidation()
 {
     if (!m_isEnabled)
         return;
-    invalidateStyle(m_addedClasses);
+    invalidateDescendantStyle();
 }
     
 }

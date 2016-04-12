@@ -42,6 +42,10 @@
     color: rgb(9, 0, 0);
 }
 
+root:not([mynotattr]) target {
+    color: rgb(10, 0, 0);
+}
+
 </style>
 </head>
 <body>
@@ -124,6 +128,8 @@ function checkStyle(n) {
     }
     shouldBeTrue("hasExpectedStyle");
 }
+
+setAttribute('mynotattr', '');
 
 checkStyle(0);
 testStyleInvalidation("NoStyleChange");
@@ -235,6 +241,14 @@ checkStyle(1);
 
 setAttribute('myattr2', 'foo');
 testStyleInvalidation("NoStyleChange");
+checkStyle(1);
+
+removeAttribute('mynotattr');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(10);
+
+setAttribute('mynotattr', 'value');
+testStyleInvalidation("InlineStyleChange");
 checkStyle(1);
 
 </script>
