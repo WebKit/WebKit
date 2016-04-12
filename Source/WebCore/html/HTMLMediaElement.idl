@@ -24,11 +24,10 @@
  */
 
 [
-    Conditional=VIDEO,
-    UsePointersEvenForNonNullableObjectArguments,
-    JSGenerateToNativeObject,
     ActiveDOMObject,
+    Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToNativeObject,
 ] interface HTMLMediaElement : HTMLElement {
 
     // error state
@@ -47,9 +46,7 @@
 
     readonly attribute TimeRanges buffered;
     void load();
-#if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
-    DOMString canPlayType([Default=Undefined] optional DOMString type, optional DOMString? keySystem);
-#elif defined(ENABLE_ENCRYPTED_MEDIA_V2) && ENABLE_ENCRYPTED_MEDIA_V2
+#if (defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA) || (defined(ENABLE_ENCRYPTED_MEDIA_V2) && ENABLE_ENCRYPTED_MEDIA_V2)
     DOMString canPlayType([Default=Undefined] optional DOMString type, optional DOMString? keySystem);
 #else
     DOMString canPlayType([Default=Undefined] optional DOMString type);
@@ -98,14 +95,13 @@
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
 #endif
 
-    // Work around shortcomings in the gobject binding generator handling of conditional features by turning these off for gobject.
 #if (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT) && (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C)
     [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitGenerateKeyRequest(DOMString? keySystem, optional Uint8Array initData);
     [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitAddKey(DOMString? keySystem, Uint8Array key, optional Uint8Array initData, [Default=NullString] optional DOMString sessionId);
     [Conditional=ENCRYPTED_MEDIA, RaisesException] void webkitCancelKeyRequest(DOMString? keySystem, [Default=NullString] optional DOMString sessionId);
 
     [Conditional=ENCRYPTED_MEDIA_V2, ImplementedAs=keys] readonly attribute MediaKeys webkitKeys;
-    [Conditional=ENCRYPTED_MEDIA_V2, ImplementedAs=setMediaKeys] void webkitSetMediaKeys(MediaKeys mediaKeys);
+    [Conditional=ENCRYPTED_MEDIA_V2, ImplementedAs=setMediaKeys] void webkitSetMediaKeys(MediaKeys? mediaKeys);
 
     [Conditional=VIDEO_TRACK, RaisesException] TextTrack addTextTrack(DOMString kind, optional DOMString label, optional DOMString language);
     [Conditional=VIDEO_TRACK] readonly attribute AudioTrackList audioTracks;
