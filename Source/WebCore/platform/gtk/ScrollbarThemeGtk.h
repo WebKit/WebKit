@@ -46,13 +46,7 @@ public:
 #ifndef GTK_API_VERSION_2
     ScrollbarThemeGtk();
 
-    using ScrollbarThemeComposite::thumbRect;
-    IntRect thumbRect(Scrollbar&, const IntRect& unconstrainedTrackRect);
     bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
-    void paintScrollbarBackground(GraphicsContext&, Scrollbar&) override;
-    void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
-    void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
-    void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
     ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
     int scrollbarThickness(ScrollbarControlSize) override;
     int minimumThumbLength(Scrollbar&) override;
@@ -67,24 +61,11 @@ public:
 
 private:
     void updateThemeProperties();
-    enum class StyleContextMode { Layout, Paint };
-    GRefPtr<GtkStyleContext> getOrCreateStyleContext(Scrollbar* = nullptr, StyleContextMode = StyleContextMode::Layout);
 
-    IntSize buttonSize(Scrollbar&, ScrollbarPart);
-    int stepperSize(Scrollbar&, ScrollbarPart);
-    int thumbFatness(Scrollbar&);
-    int thumbFatness(GtkStyleContext*, ScrollbarOrientation = VerticalScrollbar);
-    void getTroughBorder(Scrollbar&, GtkBorder*);
-    void getTroughBorder(GtkStyleContext*, GtkBorder*);
-    int scrollbarThickness(GtkStyleContext*, ScrollbarOrientation = VerticalScrollbar);
-    void getStepperSpacing(Scrollbar&, ScrollbarPart, GtkBorder*);
-    bool troughUnderSteppers(Scrollbar&);
-
-    GRefPtr<GtkStyleContext> m_cachedStyleContext;
-    gboolean m_hasForwardButtonStartPart;
-    gboolean m_hasForwardButtonEndPart;
-    gboolean m_hasBackButtonStartPart;
-    gboolean m_hasBackButtonEndPart;
+    bool m_hasForwardButtonStartPart : 1;
+    bool m_hasForwardButtonEndPart : 1;
+    bool m_hasBackButtonStartPart : 1;
+    bool m_hasBackButtonEndPart : 1;
     bool m_usesOverlayScrollbars { false };
 #endif // GTK_API_VERSION_2
 };

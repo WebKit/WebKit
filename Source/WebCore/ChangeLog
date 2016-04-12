@@ -1,3 +1,49 @@
+2016-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rework scrollbars theming code for GTK+ 3.20
+        https://bugs.webkit.org/show_bug.cgi?id=156462
+
+        Reviewed by Michael Catanzaro.
+
+        In r199292, we reworked the theming code to ensure it works with the new GTK+ CSS theming system. The same is
+        needed for scrollbars, this patch uses the RenderThemeGadget classes introduced in r199292 to render the native
+        scrollbars. The code is now split in 3 parts: stub methods for GTK+2 (since this file is compiled for
+        WebCoreGTK, but not used), the implementation for GTK+ < 3.20 and the implementation for GTK+ >= 3.20. This
+        reduces the amount of ifdefed code, and ensures that changes in new code don't break the rendering with older
+        versions of GTK+. I noticed that we were overriding both, the specific paint methods to render scrollbars
+        parts and the global paint method that renders all the scrollbar parts. We don't really need the specific paint
+        methods, so I've removed the implemention leaving only the paint method. This also allows us to get rid of the
+        GtkStyleContext cache.
+
+        * platform/gtk/RenderThemeGadget.cpp:
+        (WebCore::RenderThemeGadget::create): Handle scrollbars gadgets.
+        (WebCore::appendElementToPath): In case of scrollbar gadget, use the scrollbar GType when creating the path to
+        be able to get non-CSS style properties.
+        (WebCore::RenderThemeGadget::opacity): Add method to get the opacity CSS style property.
+        (WebCore::RenderThemeScrollbarGadget::RenderThemeScrollbarGadget): Initialize m_steppers option set with the
+        steppers used by the theme.
+        * platform/gtk/RenderThemeGadget.h:
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::themeChangedCallback):
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk):
+        (WebCore::createStyleContext):
+        (WebCore::createChildStyleContext):
+        (WebCore::ScrollbarThemeGtk::themeChanged):
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties):
+        (WebCore::scrollbarPartStateFlags):
+        (WebCore::scrollbarGadgetForLayout):
+        (WebCore::contentsGadgetForLayout):
+        (WebCore::ScrollbarThemeGtk::trackRect):
+        (WebCore::ScrollbarThemeGtk::hasThumb):
+        (WebCore::ScrollbarThemeGtk::backButtonRect):
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect):
+        (WebCore::ScrollbarThemeGtk::paint):
+        (WebCore::paintStepper):
+        (WebCore::adjustRectAccordingToMargin):
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness):
+        (WebCore::ScrollbarThemeGtk::minimumThumbLength):
+        * platform/gtk/ScrollbarThemeGtk.h:
+
 2016-03-17  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Add parsing support for <auto-repeat> syntax
