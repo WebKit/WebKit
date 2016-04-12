@@ -221,14 +221,14 @@ void DOMTokenList::updateAssociatedAttributeFromTokens()
     m_cachedValue = nullAtom;
 
     TemporaryChange<bool> inAttributeUpdate(m_inUpdateAssociatedAttributeFromTokens, true);
-    m_element.setAttributeWithoutSynchronization(m_attributeName, value());
+    m_element.setAttribute(m_attributeName, value());
     ASSERT_WITH_MESSAGE(m_cachedValue, "Calling value() should have cached its results");
 }
 
 Vector<AtomicString>& DOMTokenList::tokens()
 {
     if (m_tokensNeedUpdating)
-        updateTokensFromAttributeValue(m_element.fastGetAttribute(m_attributeName));
+        updateTokensFromAttributeValue(m_element.getAttribute(m_attributeName));
     ASSERT(!m_tokensNeedUpdating);
     return m_tokens;
 }
