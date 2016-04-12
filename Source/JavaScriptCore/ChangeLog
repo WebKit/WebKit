@@ -1,3 +1,52 @@
+2016-04-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] B3 can use undefined bits or not defined required bits when spilling
+        https://bugs.webkit.org/show_bug.cgi?id=156486
+
+        Reviewed by Filip Pizlo.
+
+        Spilling had issues when replacing arguments in place.
+
+        The problems are:
+        1) If we have a 32bit stackslot, a x86 instruction could still try to load 64bits from it.
+        2) If we have a 64bit stackslot, Move32 would only set half the bits.
+        3) We were reducing Move to Move32 even if the top bits are read from the stack slot.
+
+        The case 1 appear with something like this:
+            Move32 %tmp0, %tmp1
+            Op64 %tmp1, %tmp2, %tmp3
+        When we spill %tmp1, the stack slot is 32bit, Move32 sets 32bits
+        but Op64 supports addressing for %tmp1. When we substitute %tmp1 in Op64,
+        we are creating a 64bit read for a 32bit stack slot.
+
+        The case 2 is an other common one. If we have:
+            BB#1
+                Move32 %tmp0, %tmp1
+                Jump #3
+            BB#2
+                Op64 %tmp0, %tmp1
+                Jump #3
+            BB#3
+                Use64 %tmp1
+
+        We have a stack slot of 64bits. When spilling %tmp1 in #1, we are
+        effectively doing a 32bit store on the stack slot, leaving the top bits undefined.
+
+        Case 3 is pretty much the same as 2 but we create the Move32 ourself
+        because the source is a 32bit with ZDef.
+
+        Case (1) is solved by requiring that the stack slot is at least as large as the largest
+        use/def of that tmp.
+
+        Case (2) and (3) are solved by not replacing a Tmp by an Address if the Def
+        is smaller than the stack slot.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testSpillDefSmallerThanUse):
+        (JSC::B3::testSpillUseLargerThanDef):
+        (JSC::B3::run):
+
 2016-04-11  Brian Burg  <bburg@apple.com>
 
         Web Inspector: get rid of InspectorBasicValue and InspectorString subclasses

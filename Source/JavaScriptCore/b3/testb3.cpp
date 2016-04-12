@@ -11408,6 +11408,97 @@ void testPatchpointDoubleRegs()
     CHECK(invoke<double>(*code, 42.5) == 42.5);
 }
 
+void testSpillDefSmallerThanUse()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    // Move32.
+    Value* arg32 = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg64 = root->appendNew<Value>(proc, ZExt32, Origin(), arg32);
+
+    // Make sure arg64 is on the stack.
+    PatchpointValue* forceSpill = root->appendNew<PatchpointValue>(proc, Int64, Origin());
+    RegisterSet clobberSet = RegisterSet::allGPRs();
+    clobberSet.exclude(RegisterSet::stackRegisters());
+    clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
+    clobberSet.clear(GPRInfo::returnValueGPR); // Force the return value for aliasing below.
+    forceSpill->clobberLate(clobberSet);
+    forceSpill->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.xor64(params[0].gpr(), params[0].gpr());
+        });
+
+    // On x86, Sub admit an address for any operand. If it uses the stack, the top bits must be zero.
+    Value* result = root->appendNew<Value>(proc, Sub, Origin(), forceSpill, arg64);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    auto code = compile(proc);
+    CHECK(invoke<int64_t>(*code, 0xffffffff00000000) == 0);
+}
+
+void testSpillUseLargerThanDef()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* tail = proc.addBlock();
+
+    RegisterSet clobberSet = RegisterSet::allGPRs();
+    clobberSet.exclude(RegisterSet::stackRegisters());
+    clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
+
+    Value* condition = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            condition),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    Value* truncated = thenCase->appendNew<Value>(proc, ZExt32, Origin(),
+        thenCase->appendNew<Value>(proc, Trunc, Origin(), argument));
+    UpsilonValue* thenResult = thenCase->appendNew<UpsilonValue>(proc, Origin(), truncated);
+    thenCase->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(tail));
+
+    UpsilonValue* elseResult = elseCase->appendNew<UpsilonValue>(proc, Origin(), argument);
+    elseCase->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(tail));
+
+    for (unsigned i = 0; i < 100; ++i) {
+        PatchpointValue* preventTailDuplication = tail->appendNew<PatchpointValue>(proc, Void, Origin());
+        preventTailDuplication->clobberLate(clobberSet);
+        preventTailDuplication->setGenerator([] (CCallHelpers&, const StackmapGenerationParams&) { });
+    }
+
+    PatchpointValue* forceSpill = tail->appendNew<PatchpointValue>(proc, Void, Origin());
+    forceSpill->clobberLate(clobberSet);
+    forceSpill->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            clobberSet.forEach([&] (Reg reg) {
+                jit.move(CCallHelpers::TrustedImm64(0xffffffffffffffff), reg.gpr());
+            });
+        });
+
+    Value* phi = tail->appendNew<Value>(proc, Phi, Int64, Origin());
+    thenResult->setPhi(phi);
+    elseResult->setPhi(phi);
+    tail->appendNew<ControlValue>(proc, Return, Origin(), phi);
+
+    auto code = compile(proc);
+    CHECK(invoke<uint64_t>(*code, 1, 0xffffffff00000000) == 0);
+    CHECK(invoke<uint64_t>(*code, 0, 0xffffffff00000000) == 0xffffffff00000000);
+
+    // A second time since the previous run is still on the stack.
+    CHECK(invoke<uint64_t>(*code, 1, 0xffffffff00000000) == 0);
+
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -12783,6 +12874,9 @@ void run(const char* filter)
     RUN(testLShiftSelf64());
 
     RUN(testPatchpointDoubleRegs());
+
+    RUN(testSpillDefSmallerThanUse());
+    RUN(testSpillUseLargerThanDef());
 
     if (tasks.isEmpty())
         usage();
