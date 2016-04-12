@@ -203,7 +203,8 @@ inline ComposedTreeChildAdapter composedTreeChildren(ContainerNode& parent)
     return ComposedTreeChildAdapter(parent);
 }
 
-WEBCORE_EXPORT String composedTreeAsText(ContainerNode& root);
+enum class ComposedTreeAsTextMode { Normal, WithPointers };
+WEBCORE_EXPORT String composedTreeAsText(ContainerNode& root, ComposedTreeAsTextMode = ComposedTreeAsTextMode::Normal);
 
 }
 

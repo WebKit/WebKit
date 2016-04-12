@@ -1,0 +1,53 @@
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+
+<template id=shadow1></template>
+<template id=shadow2><slot><div></div></slot></template>
+
+<template test=1><div shadow=shadow1></div></template>
+<template test=2><div shadow=shadow1>text</div></template>
+<template test=3><div shadow=shadow2></div></template>
+<template test=4><div shadow=shadow2>text</div></template>
+
+<body>
+<pre id=console></pre>
+<script>
+function installShadows(tree)
+{
+    var shadowHosts = tree.querySelectorAll("[shadow]");
+    for (var i = 0; i < shadowHosts.length; ++i) {
+        var shadowId = shadowHosts[i].getAttribute("shadow");
+        var shadowContents = document.querySelector("#"+shadowId).content.cloneNode(true);
+
+        installShadows(shadowContents);
+
+        var shadowRoot = shadowHosts[i].attachShadow({ mode: "open" });
+        shadowRoot.appendChild(shadowContents);
+    }
+}
+
+var console = document.querySelector("#console");
+
+var tests = document.querySelectorAll("[test]");
+for (var i = 0; i < tests.length; ++i) {
+    var test = tests[i].content.cloneNode(true);
+    installShadows(test);
+    console.innerText += "\nTest " + tests[i].getAttribute("test") + "\n";
+    console.innerText += internals.composedTreeAsText(test);
+
+    console.innerText += "\nShadow host subtree\n"
+    var shadowSubtree = test.querySelector("[shadow]");
+    console.innerText += internals.composedTreeAsText(shadowSubtree);
+
+    var slotSubtree = shadowSubtree.shadowRoot.querySelector("slot");
+    if (slotSubtree) {
+        console.innerText += "\nSlot subtree\n"
+        console.innerText += internals.composedTreeAsText(slotSubtree);
+    }
+}
+
+</script>
+</body>

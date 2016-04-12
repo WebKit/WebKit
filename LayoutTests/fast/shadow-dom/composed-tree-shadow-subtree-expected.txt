@@ -1,0 +1,35 @@
+
+Test 1
+  div (shadow root)
+
+Shadow host subtree
+
+Test 2
+  div (shadow root)
+
+Shadow host subtree
+
+Test 3
+  div (shadow root)
+    slot
+      div
+
+Shadow host subtree
+  slot
+    div
+
+Slot subtree
+  div
+
+Test 4
+  div (shadow root)
+    slot
+      #text
+
+Shadow host subtree
+  slot
+    #text
+
+Slot subtree
+  #text
+
