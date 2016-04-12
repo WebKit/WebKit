@@ -1,3 +1,26 @@
+2016-03-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r190840): crash inside details element's slotNameFunction
+        https://bugs.webkit.org/show_bug.cgi?id=155388
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by HTMLDetailsElement::isActiveSummary calling findAssignedSlot with a summary element
+        inside the shadow tree of the detials element. Fixed it by existing early when the summary element passed
+        to isActiveSummary is not a direct child of the details element.
+
+        Test: fast/html/details-summary-tabindex-crash.html
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::findAssignedSlot): Added an assertion for regression testing.
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::findAssignedSlot): Removed the superfluous call to assignSlots added in r190840.
+        There is no need to update the slot assignments here (entires in m_slots are added or removed by
+        addSlotElementByName or removeSlotElementByName and assignSlots only updates assignedNodes in each SlotInfo
+        which is never used in this function or findFirstSlotElement.
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::isActiveSummary): Fixed the bug.
+
 2016-03-13  Antti Koivisto  <antti@apple.com>
 
         ComposedTreeIterator fails to traverse slots if root is shadow host

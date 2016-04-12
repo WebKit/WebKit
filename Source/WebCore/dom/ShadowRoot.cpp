@@ -182,6 +182,7 @@ void ShadowRoot::removeAllEventListeners()
 
 HTMLSlotElement* ShadowRoot::findAssignedSlot(const Node& node)
 {
+    ASSERT(node.parentNode() == host());
     if (!m_slotAssignment)
         return nullptr;
     return m_slotAssignment->findAssignedSlot(node, *this);
