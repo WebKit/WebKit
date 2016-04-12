@@ -1,3 +1,13 @@
+2016-04-12  Alex Christensen  <achristensen@webkit.org>
+
+        Remove failing assertion in ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=156485
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/fragment-shader-assertion-expected.txt: Added.
+        * fast/canvas/webgl/fragment-shader-assertion.html: Added.
+
 2016-04-11  Brent Fulgham  <bfulgham@apple.com>
 
         Use WeakPtrs to avoid using deallocated Widgets and ScrollableAreas

@@ -393,7 +393,7 @@ O           [0-7]
 
 [ \t\v\n\f\r] { }
 <*><<EOF>>    { yyterminate(); }
-<*>.          { assert(false); return 0; }
+<*>.          { return 0; }
 
 %%
 

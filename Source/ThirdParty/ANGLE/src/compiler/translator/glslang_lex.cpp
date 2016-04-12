@@ -2082,7 +2082,7 @@ case YY_STATE_EOF(FIELDS):
 	YY_BREAK
 case 238:
 YY_RULE_SETUP
-{ assert(false); return 0; }
+{ return 0; }
 	YY_BREAK
 case 239:
 YY_RULE_SETUP

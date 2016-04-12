@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+	testRunner.dumpAsText();
+
+function runTest() {
+    var canvas = document.getElementById("myCanvas");
+    var gl = canvas.getContext("webgl");
+    var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, "void main() { vec4 x; vec4 y = vec4(1.0+x.,1.0,0.0,1.0); }");
+    gl.compileShader(vertexShader);
+
+    document.getElementById("result").innerText = "PASS: This test did not assert because of this expected syntax error:\n" + gl.getShaderInfoLog(vertexShader);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<canvas id="myCanvas"></canvas>
+<div id="result">FAIL: Test did not run</div>
+</body>
+</html>

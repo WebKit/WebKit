@@ -1,0 +1,3 @@
+PASS: This test did not assert because of this expected syntax error:
+ERROR: 0:1: ',' : syntax error 
+
