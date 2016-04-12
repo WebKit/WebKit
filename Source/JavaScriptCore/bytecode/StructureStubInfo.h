@@ -35,6 +35,7 @@
 #include "Options.h"
 #include "RegisterSet.h"
 #include "Structure.h"
+#include "StructureSet.h"
 #include "StructureStubClearingWatchpoint.h"
 
 namespace JSC {
@@ -81,13 +82,26 @@ public:
     // either entirely or just enough to ensure that those dead pointers don't get used anymore.
     void visitWeakReferences(CodeBlock*);
         
-    ALWAYS_INLINE bool considerCaching()
+    ALWAYS_INLINE bool considerCaching(Structure* structure)
     {
+        // We never cache non-cells.
+        if (!structure)
+            return false;
+        
+        // This method is called from the Optimize variants of IC slow paths. The first part of this
+        // method tries to determine if the Optimize variant should really behave like the
+        // non-Optimize variant and leave the IC untouched.
+        //
+        // If we determine that we should do something to the IC then the next order of business is
+        // to determine if this Structure would impact the IC at all. We know that it won't, if we
+        // have already buffered something on its behalf. That's what the bufferedStructures set is
+        // for.
+        
         everConsidered = true;
         if (!countdown) {
             // Check if we have been doing repatching too frequently. If so, then we should cool off
             // for a while.
-            willRepatch();
+            WTF::incrementWithSaturation(repatchCount);
             if (repatchCount > Options::repatchCountForCoolDown()) {
                 // We've been repatching too much, so don't do it now.
                 repatchCount = 0;
@@ -99,23 +113,31 @@ public:
                     static_cast<uint8_t>(Options::initialCoolDownCount()),
                     numberOfCoolDowns,
                     static_cast<uint8_t>(std::numeric_limits<uint8_t>::max() - 1));
-                willCoolDown();
-                return false;
+                WTF::incrementWithSaturation(numberOfCoolDowns);
+                
+                // We may still have had something buffered. Trigger generation now.
+                bufferingCountdown = 0;
+                return true;
             }
-            return true;
+            
+            // We don't want to return false due to buffering indefinitely.
+            if (!bufferingCountdown) {
+                // Note that when this returns true, it's possible that we will not even get an
+                // AccessCase because this may cause Repatch.cpp to simply do an in-place
+                // repatching.
+                return true;
+            }
+            
+            bufferingCountdown--;
+            
+            // Now protect the IC buffering. We want to proceed only if this is a structure that
+            // we don't already have a case buffered for. Note that if this returns true but the
+            // bufferingCountdown is not zero then we will buffer the access case for later without
+            // immediately generating code for it.
+            return bufferedStructures.add(structure);
         }
         countdown--;
         return false;
-    }
-
-    ALWAYS_INLINE void willRepatch()
-    {
-        WTF::incrementWithSaturation(repatchCount);
-    }
-
-    ALWAYS_INLINE void willCoolDown()
-    {
-        WTF::incrementWithSaturation(numberOfCoolDowns);
     }
 
     CodeLocationCall callReturnLocation;
@@ -132,7 +154,13 @@ public:
         } byIdSelf;
         PolymorphicAccess* stub;
     } u;
-
+    
+    // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.
+    // Note that it's always safe to clear this. If we clear it prematurely, then if we see the same
+    // structure again during this buffering countdown, we will create an AccessCase object for it.
+    // That's not so bad - we'll get rid of the redundant ones once we regenerate.
+    StructureSet bufferedStructures;
+    
     struct {
         int8_t baseGPR;
 #if USE(JSVALUE32_64)
@@ -158,6 +186,7 @@ public:
     uint8_t countdown; // We repatch only when this is zero. If not zero, we decrement.
     uint8_t repatchCount;
     uint8_t numberOfCoolDowns;
+    uint8_t bufferingCountdown;
     bool resetByGC : 1;
     bool tookSlowPath : 1;
     bool everConsidered : 1;

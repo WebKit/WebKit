@@ -125,6 +125,7 @@ typedef const char* optionString;
     \
     v(unsigned, repatchCountForCoolDown, 10, nullptr) \
     v(unsigned, initialCoolDownCount, 20, nullptr) \
+    v(unsigned, repatchBufferingCountdown, 7, nullptr) \
     \
     v(bool, dumpGeneratedBytecodes, false, nullptr) \
     v(bool, dumpBytecodeLivenessResults, false, nullptr) \

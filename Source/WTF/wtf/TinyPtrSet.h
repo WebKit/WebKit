@@ -101,6 +101,7 @@ public:
         return result;
     }
     
+    // Returns true if the value was added, or false if the value was already there.
     bool add(T value)
     {
         ASSERT(value);

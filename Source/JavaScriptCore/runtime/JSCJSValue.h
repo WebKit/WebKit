@@ -308,6 +308,7 @@ public:
     JSCell* asCell() const;
     JS_EXPORT_PRIVATE bool isValidCallee();
 
+    Structure* structureOrNull() const;
     JSValue structureOrUndefined() const;
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;

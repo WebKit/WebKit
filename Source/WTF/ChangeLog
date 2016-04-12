@@ -1,3 +1,13 @@
+2016-04-12  Filip Pizlo  <fpizlo@apple.com>
+
+        PolymorphicAccess should buffer AccessCases before regenerating
+        https://bugs.webkit.org/show_bug.cgi?id=156457
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/TinyPtrSet.h:
+        (WTF::TinyPtrSet::add): Add a helpful comment because I had forgotten what the bool return meant.
+
 2016-04-12  Tomas Popela  <tpopela@redhat.com>
 
         S390X and PPC64 architectures detection is wrong

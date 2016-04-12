@@ -1392,7 +1392,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 PolymorphicAccess::PolymorphicAccess() { }
 PolymorphicAccess::~PolymorphicAccess() { }
 
-AccessGenerationResult PolymorphicAccess::regenerateWithCases(
+AccessGenerationResult PolymorphicAccess::addCases(
     VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident,
     Vector<std::unique_ptr<AccessCase>> originalCasesToAdd)
 {
@@ -1438,76 +1438,26 @@ AccessGenerationResult PolymorphicAccess::regenerateWithCases(
     if (casesToAdd.isEmpty())
         return AccessGenerationResult::MadeNoChanges;
 
-    // Now construct the list of cases as they should appear if we are successful. This means putting
-    // all of the previous cases in this list in order but excluding those that can be replaced, and
-    // then adding the new cases.
-    ListType newCases;
-    for (auto& oldCase : m_list) {
-        // Ignore old cases that cannot possibly succeed anymore.
-        if (!oldCase->couldStillSucceed())
-            continue;
-
-        // Figure out if this is replaced by any new cases.
-        bool found = false;
-        for (auto& caseToAdd : casesToAdd) {
-            if (caseToAdd->canReplace(*oldCase)) {
-                found = true;
-                break;
-            }
-        }
-        if (found)
-            continue;
-        
-        newCases.append(oldCase->clone());
+    // Now add things to the new list. Note that at this point, we will still have old cases that
+    // may be replaced by the new ones. That's fine. We will sort that out when we regenerate.
+    for (auto& caseToAdd : casesToAdd) {
+        commit(vm, m_watchpoints, codeBlock, stubInfo, ident, *caseToAdd);
+        m_list.append(WTFMove(caseToAdd));
     }
-    for (auto& caseToAdd : casesToAdd)
-        newCases.append(WTFMove(caseToAdd));
-
-    if (verbose)
-        dataLog("newCases: ", listDump(newCases), "\n");
     
-    // See if we are close to having too many cases and if some of those cases can be subsumed by a
-    // megamorphic load.
-    if (newCases.size() >= Options::maxAccessVariantListSize()) {
-        unsigned numSelfLoads = 0;
-        for (auto& newCase : newCases) {
-            if (newCase->canBeReplacedByMegamorphicLoad())
-                numSelfLoads++;
-        }
-        
-        if (numSelfLoads >= Options::megamorphicLoadCost()) {
-            if (auto mega = AccessCase::megamorphicLoad(vm, codeBlock)) {
-                newCases.removeAllMatching(
-                    [&] (std::unique_ptr<AccessCase>& newCase) -> bool {
-                        return newCase->canBeReplacedByMegamorphicLoad();
-                    });
-                
-                newCases.append(WTFMove(mega));
-            }
-        }
-    }
+    if (verbose)
+        dataLog("After addCases: m_list: ", listDump(m_list), "\n");
 
-    if (newCases.size() > Options::maxAccessVariantListSize()) {
-        if (verbose)
-            dataLog("Too many cases.\n");
-        return AccessGenerationResult::GaveUp;
-    }
-
-    MacroAssemblerCodePtr result = regenerate(vm, codeBlock, stubInfo, ident, newCases);
-    if (!result)
-        return AccessGenerationResult::GaveUp;
-
-    m_list = WTFMove(newCases);
-    return result;
+    return AccessGenerationResult::Buffered;
 }
 
-AccessGenerationResult PolymorphicAccess::regenerateWithCase(
+AccessGenerationResult PolymorphicAccess::addCase(
     VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident,
     std::unique_ptr<AccessCase> newAccess)
 {
     Vector<std::unique_ptr<AccessCase>> newAccesses;
     newAccesses.append(WTFMove(newAccess));
-    return regenerateWithCases(vm, codeBlock, stubInfo, ident, WTFMove(newAccesses));
+    return addCases(vm, codeBlock, stubInfo, ident, WTFMove(newAccesses));
 }
 
 bool PolymorphicAccess::visitWeak(VM& vm) const
@@ -1534,14 +1484,32 @@ void PolymorphicAccess::dump(PrintStream& out) const
     out.print("]");
 }
 
-MacroAssemblerCodePtr PolymorphicAccess::regenerate(
-    VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident,
-    PolymorphicAccess::ListType& cases)
+void PolymorphicAccess::commit(
+    VM& vm, std::unique_ptr<WatchpointsOnStructureStubInfo>& watchpoints, CodeBlock* codeBlock,
+    StructureStubInfo& stubInfo, const Identifier& ident, AccessCase& accessCase)
+{
+    // NOTE: We currently assume that this is relatively rare. It mainly arises for accesses to
+    // properties on DOM nodes. For sure we cache many DOM node accesses, but even in
+    // Real Pages (TM), we appear to spend most of our time caching accesses to properties on
+    // vanilla objects or exotic objects from within JSC (like Arguments, those are super popular).
+    // Those common kinds of JSC object accesses don't hit this case.
+    
+    for (WatchpointSet* set : accessCase.commit(vm, ident)) {
+        Watchpoint* watchpoint =
+            WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
+                watchpoints, codeBlock, &stubInfo, ObjectPropertyCondition());
+        
+        set->add(watchpoint);
+    }
+}
+
+AccessGenerationResult PolymorphicAccess::regenerate(
+    VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident)
 {
     SuperSamplerScope superSamplerScope(false);
     
     if (verbose)
-        dataLog("Generating code for cases: ", listDump(cases), "\n");
+        dataLog("Regenerate with m_list: ", listDump(m_list), "\n");
     
     AccessGenerationState state;
 
@@ -1572,14 +1540,73 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     state.preservedReusedRegisterState =
         allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
+    // Regenerating is our opportunity to figure out what our list of cases should look like. We
+    // do this here. The newly produced 'cases' list may be smaller than m_list. We don't edit
+    // m_list in-place because we may still fail, in which case we want the PolymorphicAccess object
+    // to be unmutated. For sure, we want it to hang onto any data structures that may be referenced
+    // from the code of the current stub (aka previous).
+    ListType cases;
+    for (unsigned i = 0; i < m_list.size(); ++i) {
+        AccessCase& someCase = *m_list[i];
+        // Ignore cases that cannot possibly succeed anymore.
+        if (!someCase.couldStillSucceed())
+            continue;
+        
+        // Figure out if this is replaced by any later case.
+        bool found = false;
+        for (unsigned j = i + 1; j < m_list.size(); ++j) {
+            if (m_list[j]->canReplace(someCase)) {
+                found = true;
+                break;
+            }
+        }
+        if (found)
+            continue;
+        
+        // FIXME: Do we have to clone cases that aren't generated? Maybe we can just take those
+        // from m_list, since we don't have to keep those alive if we fail.
+        // https://bugs.webkit.org/show_bug.cgi?id=156493
+        cases.append(someCase.clone());
+    }
+    
+    if (verbose)
+        dataLog("In regenerate: cases: ", listDump(cases), "\n");
+    
+    // Now that we've removed obviously unnecessary cases, we can check if the megamorphic load
+    // optimization is applicable. Note that we basically tune megamorphicLoadCost according to code
+    // size. It would be faster to just allow more repatching with many load cases, and avoid the
+    // megamorphicLoad optimization, if we had infinite executable memory.
+    if (cases.size() >= Options::megamorphicLoadCost()) {
+        unsigned numSelfLoads = 0;
+        for (auto& newCase : cases) {
+            if (newCase->canBeReplacedByMegamorphicLoad())
+                numSelfLoads++;
+        }
+        
+        if (numSelfLoads >= Options::megamorphicLoadCost()) {
+            if (auto mega = AccessCase::megamorphicLoad(vm, codeBlock)) {
+                cases.removeAllMatching(
+                    [&] (std::unique_ptr<AccessCase>& newCase) -> bool {
+                        return newCase->canBeReplacedByMegamorphicLoad();
+                    });
+                
+                cases.append(WTFMove(mega));
+            }
+        }
+    }
+    
+    if (verbose)
+        dataLog("Optimized cases: ", listDump(cases), "\n");
+    
+    // At this point we're convinced that 'cases' contains the cases that we want to JIT now and we
+    // won't change that set anymore.
+    
     bool allGuardedByStructureCheck = true;
     bool hasJSGetterSetterCall = false;
-    for (auto& entry : cases) {
-        for (WatchpointSet* set : entry->commit(vm, ident))
-            set->add(state.addWatchpoint());
-        
-        allGuardedByStructureCheck &= entry->guardedByStructureCheck();
-        if (entry->type() == AccessCase::Getter || entry->type() == AccessCase::Setter)
+    for (auto& newCase : cases) {
+        commit(vm, state.watchpoints, codeBlock, stubInfo, ident, *newCase);
+        allGuardedByStructureCheck &= newCase->guardedByStructureCheck();
+        if (newCase->type() == AccessCase::Getter || newCase->type() == AccessCase::Setter)
             hasJSGetterSetterCall = true;
     }
 
@@ -1677,7 +1704,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     if (linkBuffer.didFailToAllocate()) {
         if (verbose)
             dataLog("Did fail to allocate.\n");
-        return MacroAssemblerCodePtr();
+        return AccessGenerationResult::GaveUp;
     }
 
     CodeLocationLabel successLabel =
@@ -1707,12 +1734,22 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
         m_weakReferences = std::make_unique<Vector<WriteBarrier<JSCell>>>(WTFMove(state.weakReferences));
     if (verbose)
         dataLog("Returning: ", code.code(), "\n");
-    return code.code();
+    
+    m_list = WTFMove(cases);
+    
+    AccessGenerationResult::Kind resultKind;
+    if (m_list.size() >= Options::maxAccessVariantListSize())
+        resultKind = AccessGenerationResult::GeneratedFinalCode;
+    else
+        resultKind = AccessGenerationResult::GeneratedNewCode;
+    
+    return AccessGenerationResult(resultKind, code.code());
 }
 
 void PolymorphicAccess::aboutToDie()
 {
-    m_stubRoutine->aboutToDie();
+    if (m_stubRoutine)
+        m_stubRoutine->aboutToDie();
 }
 
 } // namespace JSC
@@ -1730,8 +1767,14 @@ void printInternal(PrintStream& out, AccessGenerationResult::Kind kind)
     case AccessGenerationResult::GaveUp:
         out.print("GaveUp");
         return;
+    case AccessGenerationResult::Buffered:
+        out.print("Buffered");
+        return;
     case AccessGenerationResult::GeneratedNewCode:
         out.print("GeneratedNewCode");
+        return;
+    case AccessGenerationResult::GeneratedFinalCode:
+        out.print("GeneratedFinalCode");
         return;
     }
     

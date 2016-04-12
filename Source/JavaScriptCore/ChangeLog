@@ -1,3 +1,97 @@
+2016-04-11  Filip Pizlo  <fpizlo@apple.com>
+
+        PolymorphicAccess should buffer AccessCases before regenerating
+        https://bugs.webkit.org/show_bug.cgi?id=156457
+
+        Reviewed by Benjamin Poulain.
+
+        Prior to this change, whenever we added an AccessCase to a PolymorphicAccess, we would
+        regenerate the whole stub. That meant that we'd do O(N^2) work for N access cases.
+
+        One way to fix this is to have each AccessCase generate a stub just for itself, which
+        cascades down to the already-generated cases. But that removes the binary switch
+        optimization, which makes the IC perform great even when there are many cases.
+
+        This change fixes the issue by buffering access cases. When we take slow path and try to add
+        a new case, the StructureStubInfo will usually just buffer the new case without generating
+        new code. We simply guarantee that after we buffer a case, we will take at most
+        Options::repatchBufferingCountdown() slow path calls before generating code for it. That
+        option is currently 7. Taking 7 more slow paths means that we have 7 more opportunities to
+        gather more access cases, or to realize that this IC is too crazy to bother with.
+
+        This change ensures that the DFG still gets the same kind of profiling. This is because the
+        buffered AccessCases are still part of PolymorphicAccess and so are still scanned by
+        GetByIdStatus and PutByIdStatus. The fact that the AccessCases hadn't been generated and so
+        hadn't executed doesn't change much. Mainly, it increases the likelihood that the DFG will
+        see an access case that !couldStillSucceed(). The DFG's existing profile parsing logic can
+        handle this just fine.
+        
+        There are a bunch of algorithmic changes here. StructureStubInfo now caches the set of
+        structures that it has seen as a guard to prevent adding lots of redundant cases, in case
+        we see the same 7 cases after buffering the first one. This cache means we won't wastefully
+        allocate 7 identical AccessCase instances. PolymorphicAccess is now restructured around
+        having separate addCase() and regenerate() calls. That means a bit more moving data around.
+        So far that seems OK for performance, probably since it's O(N) work rather than O(N^2) work.
+        There is room for improvement for future patches, to be sure.
+        
+        This is benchmarking as slightly positive or neutral on JS benchmarks. It's meant to reduce
+        pathologies I saw in page loads.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::PolymorphicAccess):
+        (JSC::PolymorphicAccess::~PolymorphicAccess):
+        (JSC::PolymorphicAccess::addCases):
+        (JSC::PolymorphicAccess::addCase):
+        (JSC::PolymorphicAccess::visitWeak):
+        (JSC::PolymorphicAccess::dump):
+        (JSC::PolymorphicAccess::commit):
+        (JSC::PolymorphicAccess::regenerate):
+        (JSC::PolymorphicAccess::aboutToDie):
+        (WTF::printInternal):
+        (JSC::PolymorphicAccess::regenerateWithCases): Deleted.
+        (JSC::PolymorphicAccess::regenerateWithCase): Deleted.
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessCase::isGetter):
+        (JSC::AccessCase::callLinkInfo):
+        (JSC::AccessGenerationResult::AccessGenerationResult):
+        (JSC::AccessGenerationResult::madeNoChanges):
+        (JSC::AccessGenerationResult::gaveUp):
+        (JSC::AccessGenerationResult::buffered):
+        (JSC::AccessGenerationResult::generatedNewCode):
+        (JSC::AccessGenerationResult::generatedFinalCode):
+        (JSC::AccessGenerationResult::shouldGiveUpNow):
+        (JSC::AccessGenerationResult::generatedSomeCode):
+        (JSC::PolymorphicAccess::isEmpty):
+        (JSC::PolymorphicAccess::size):
+        (JSC::PolymorphicAccess::at):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::StructureStubInfo::addAccessCase):
+        (JSC::StructureStubInfo::reset):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::considerCaching):
+        (JSC::StructureStubInfo::willRepatch): Deleted.
+        (JSC::StructureStubInfo::willCoolDown): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::repatchGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::repatchPutByID):
+        (JSC::tryRepatchIn):
+        (JSC::repatchIn):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::putByIndex):
+        (JSC::JSValue::structureOrNull):
+        (JSC::JSValue::structureOrUndefined):
+        * runtime/Options.h:
+
 2016-04-12  Saam barati  <sbarati@apple.com>
 
         There is a race with the compiler thread and the main thread with result profiles

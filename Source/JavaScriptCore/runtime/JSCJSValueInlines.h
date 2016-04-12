@@ -849,6 +849,13 @@ inline bool JSValue::putByIndex(ExecState* exec, unsigned propertyName, JSValue 
     return asCell()->methodTable(exec->vm())->putByIndex(asCell(), exec, propertyName, value, shouldThrow);
 }
 
+inline Structure* JSValue::structureOrNull() const
+{
+    if (isCell())
+        return asCell()->structure();
+    return nullptr;
+}
+
 inline JSValue JSValue::structureOrUndefined() const
 {
     if (isCell())

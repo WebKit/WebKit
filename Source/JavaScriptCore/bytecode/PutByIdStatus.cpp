@@ -225,12 +225,12 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                     return PutByIdStatus(slowPathState);
                     
                 case ComplexGetStatus::Inlineable: {
-                    CallLinkInfo* callLinkInfo = access.callLinkInfo();
-                    ASSERT(callLinkInfo);
                     std::unique_ptr<CallLinkStatus> callLinkStatus =
-                        std::make_unique<CallLinkStatus>(
-                            CallLinkStatus::computeFor(
-                                locker, profiledBlock, *callLinkInfo, callExitSiteData));
+                        std::make_unique<CallLinkStatus>();
+                    if (CallLinkInfo* callLinkInfo = access.callLinkInfo()) {
+                        *callLinkStatus = CallLinkStatus::computeFor(
+                            locker, profiledBlock, *callLinkInfo, callExitSiteData);
+                    }
                     
                     variant = PutByIdVariant::setter(
                         structure, complexGetStatus.offset(), complexGetStatus.conditionSet(),
