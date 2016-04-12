@@ -1,6 +1,16 @@
 2016-04-12  David Kilzer  <ddkilzer@apple.com>
 
         Web Inspector: inspector/heap/getRemoteObject.html is flakey
+        <http://webkit.org/b/156077>
+
+        Unreviewed test expectations update.
+
+        * platform/mac-wk2/TestExpectations:
+        (inspector/heap/getRemoteObject.html): Update bug number.
+
+2016-04-12  David Kilzer  <ddkilzer@apple.com>
+
+        Web Inspector: inspector/heap/getRemoteObject.html is flakey
         <http://webkit.org/b/156514>
 
         Unreviewed test expectations update.

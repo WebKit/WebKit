@@ -304,7 +304,7 @@ webkit.org/b/155151 [ Debug ElCapitan ] media/track/track-cues-pause-on-exit.htm
 
 webkit.org/b/155312 inspector/heap/getPreview.html [ Pass Timeout ]
 
-webkit.org/b/156514 inspector/heap/getRemoteObject.html [ Pass Failure ]
+webkit.org/b/156077 inspector/heap/getRemoteObject.html [ Pass Failure ]
 
 ### END OF (1) Classified failures with bug reports
 ########################################
