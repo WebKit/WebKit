@@ -210,7 +210,7 @@ private:
         RELEASE_ASSERT(!result);
 
         // Zero out writableAddr to avoid leaking the address of the writable mapping.
-        memset(&writableAddr, 0, sizeof(writableAddr));
+        memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
 
         jitWriteFunction = reinterpret_cast<JITWriteFunction>(writeThunk.code().executableAddress());
     }
