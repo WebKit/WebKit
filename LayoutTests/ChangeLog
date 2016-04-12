@@ -1,5 +1,14 @@
 2016-04-11  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Unskip imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm
+        https://bugs.webkit.org/show_bug.cgi?id=156480
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-04-11  Jiewen Tan  <jiewen_tan@apple.com>
+
         Skip imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm on ios-simulators
         https://bugs.webkit.org/show_bug.cgi?id=156480
 

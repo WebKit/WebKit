@@ -129,7 +129,6 @@ http/tests/w3c/webperf
 
 # IndexedDB tests have numerous unexpected failures on iOS
 webkit.org/b/144475 storage/indexeddb
-webkit.org/b/156480 imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Skip ]
 
 # TODO Animation triggers not supported
 animations/trigger-container-scroll-boundaries.html [ Failure ]
