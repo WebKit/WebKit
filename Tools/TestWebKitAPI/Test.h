@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
 #ifndef Test_h
 #define Test_h
 
+#include <type_traits>
+
 namespace TestWebKitAPI {
 
 #define EXPECT_NOT_NULL(expression) \
@@ -39,6 +41,18 @@ namespace TestWebKitAPI {
 
 #define ASSERT_NULL(expression) \
     ASSERT_TRUE(!(expression))
+
+template<typename T>
+static inline ::testing::AssertionResult assertStrongEnum(const char* expected_expression, const char* actual_expression, T expected, T actual)
+{
+    static_assert(std::is_enum<T>::value, "T is not an enum type");
+    typedef typename std::underlying_type<T>::type UnderlyingStorageType;
+    return ::testing::internal::CmpHelperEQ(expected_expression, actual_expression, static_cast<UnderlyingStorageType>(expected), static_cast<UnderlyingStorageType>(actual));
+}
+
+#define EXPECT_STRONG_ENUM_EQ(expected, actual) \
+    EXPECT_PRED_FORMAT2(TestWebKitAPI::assertStrongEnum, expected, actual)
+
 
 } // namespace TestWebKitAPI
 
