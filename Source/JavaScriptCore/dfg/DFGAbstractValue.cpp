@@ -328,7 +328,7 @@ FiltrationResult AbstractValue::filter(SpeculatedType type)
     // the passed type is Array. At this point we'll have (None, TOP). The best way
     // to ensure that the structure filtering does the right thing is to filter on
     // the new type (None) rather than the one passed (Array).
-    m_structure.filter(type);
+    m_structure.filter(m_type);
     filterArrayModesByType();
     filterValueByType();
     return normalizeClarity();

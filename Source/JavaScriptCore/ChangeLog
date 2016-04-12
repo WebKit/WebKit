@@ -1,3 +1,25 @@
+2016-04-12  Keith Miller  <keith_miller@apple.com>
+
+        AbstractValue should use the result type to filter structures
+        https://bugs.webkit.org/show_bug.cgi?id=156516
+
+        Reviewed by Geoffrey Garen.
+
+        When filtering an AbstractValue with a SpeculatedType we would not use the merged type when
+        filtering out the valid structures (despite what the comment directly above said). This
+        would cause us to crash if our structure-set was Top and the two speculated types were
+        different kinds of cells.
+
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filter):
+        * tests/stress/ai-consistency-filter-cells.js: Added.
+        (get value):
+        (attribute.value.get record):
+        (attribute.attrs.get this):
+        (get foo):
+        (let.thisValue.return.serialize):
+        (let.thisValue.transformFor):
+
 2016-04-12  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, remove FIXME for https://bugs.webkit.org/show_bug.cgi?id=156457 and replace it
