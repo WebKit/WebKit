@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011, 2014-2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "Scrollbar.h"
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -62,6 +63,8 @@ public:
     virtual bool requestScrollPositionUpdate(const ScrollPosition&) { return false; }
 
     WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&);
+
+    WeakPtr<ScrollableArea> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     const Vector<LayoutUnit>* horizontalSnapOffsets() const { return m_horizontalSnapOffsets.get(); };
@@ -348,6 +351,8 @@ private:
     virtual void setScrollOffset(const ScrollOffset&) = 0;
 
     mutable std::unique_ptr<ScrollAnimator> m_scrollAnimator;
+
+    WeakPtrFactory<ScrollableArea> m_weakPtrFactory { this };
 
 #if ENABLE(CSS_SCROLL_SNAP)
     std::unique_ptr<Vector<LayoutUnit>> m_horizontalSnapOffsets;

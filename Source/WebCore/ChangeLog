@@ -1,3 +1,56 @@
+2016-04-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Use WeakPtrs to avoid using deallocated Widgets and ScrollableAreas
+        https://bugs.webkit.org/show_bug.cgi?id=156420
+        <rdar://problem/25637378>
+
+        Reviewed by Darin Adler.
+
+        Avoid the risk of using deallocated Widgets and ScrollableAreas by using WeakPtrs instead of
+        bare pointers. This allows us to remove some explicit calls to get ScrollableArea and Widget
+        members in the event handling logic. Instead, null checks are sufficient to ensure we never
+        accidentally dereference a deleted element.
+
+        1. Modify the ScrollableArea class to support vending WeakPtrs.
+        2. Modify the Event Handling code to use WeakPtrs to hold ScrollableArea and RenderWidget
+           objects, and to null-check these elements after event handling dispatching is finished
+           to handle cases where these objects are destroyed.
+
+        Test: fast/events/wheel-event-destroys-frame.html
+              fast/events/wheel-event-destroys-overflow.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::platformPrepareForWheelEvents): Change signature for WeakPtr.
+        (WebCore::EventHandler::platformCompleteWheelEvent): Ditto.
+        (WebCore::EventHandler::platformNotifyIfEndGesture): Ditto.
+        (WebCore::widgetForElement): Change to return a WeakPtr.
+        (WebCore::EventHandler::handleWheelEvent): Use WeakPtrs to hold elements that might be destroyed
+        during event handling.
+        * page/EventHandler.h:
+        * page/mac/EventHandlerEfl.cpp: Rename passWheelEventToWidget to widgetDidHandleWheelEvent.
+        * page/mac/EventHandlerGtk.cpp: Ditto.
+        * page/mac/EventHandlerIOS.mm: Ditto.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::scrollableAreaForEventTarget): Renamed from scrollViewForEventTarget. Return
+        a WeakPtr rather than a bare pointer.
+        (WebCore::scrollableAreaForContainerNode): Return WeakPtr rather than bare pointer.
+        (WebCore::EventHandler::completeWidgetWheelEvent): Added.
+        (WebCore::EventHandler::passWheelEventToWidget): Deleted.
+        (WebCore::EventHandler::platformPrepareForWheelEvents): Convert to WeakPtrs.
+        (WebCore::EventHandler::platformCompleteWheelEvent): Ditto.
+        (WebCore::EventHandler::platformCompletePlatformWidgetWheelEvent): Ditto.
+        (WebCore::EventHandler::platformNotifyIfEndGesture): Ditto.
+        (WebCore::EventHandler::widgetDidHandleWheelEvent): Renamed from passWheelEventToWidget.
+        (WebCore::EventHandler::widgetForEventTarget): Converted from static function to static
+        method so it can be shared with EventHandlerMac.
+        (WebCore::scrollViewForEventTarget): Deleted.
+        * page/mac/EventHandlerWin.cpp: Rename passWheelEventToWidget to widgetDidHandleWheelEvent.
+        * platform/ScrollableArea.cpp:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::createWeakPtr): Added.
+        * platform/Widget.h:
+        (WebCore::ScrollableArea::createWeakPtr): Added.
+
 2016-04-11  Dean Jackson  <dino@apple.com>
 
         putImageData needs to premultiply input

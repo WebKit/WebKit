@@ -58,6 +58,7 @@ fast/history/page-cache-suspended-audiocontext.html
 fast/scrolling/iframe-scrollable-after-back.html [ Skip ]
 fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
 fast/events/wheel-event-destroys-frame.html [ Skip ]
+fast/events/wheel-event-destroys-overflow.html [ Skip ]
 
 # Not supported on iOS
 batterystatus

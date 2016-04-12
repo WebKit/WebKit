@@ -48,10 +48,10 @@ namespace WebCore {
 struct SameSizeAsScrollableArea {
     virtual ~SameSizeAsScrollableArea();
 #if ENABLE(CSS_SCROLL_SNAP)
-    void* pointers[3];
+    void* pointers[4];
     unsigned currentIndices[2];
 #else
-    void* pointer;
+    void* pointer[2];
 #endif
     IntPoint origin;
     unsigned bitfields : 16;

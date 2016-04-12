@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -406,7 +406,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
     return false;
 }
 
-bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget& widget)
+bool EventHandler::widgetDidHandleWheelEvent(const PlatformWheelEvent&, Widget& widget)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

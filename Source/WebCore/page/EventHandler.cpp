@@ -2559,7 +2559,7 @@ bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, c
 
 #if !PLATFORM(MAC)
 
-void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent&, const HitTestResult&, RefPtr<Element>&, RefPtr<ContainerNode>&, ScrollableArea*&, bool&)
+void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent&, const HitTestResult&, RefPtr<Element>&, RefPtr<ContainerNode>&, WeakPtr<ScrollableArea>&, bool&)
 {
 }
 
@@ -2568,7 +2568,7 @@ void EventHandler::platformRecordWheelEvent(const PlatformWheelEvent& event)
     m_frame.mainFrame().wheelEventDeltaFilter()->updateFromDelta(FloatSize(event.deltaX(), event.deltaY()));
 }
 
-bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& event, ContainerNode*, ScrollableArea*)
+bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& event, ContainerNode*, const WeakPtr<ScrollableArea>&)
 {
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     FrameView* view = m_frame.view();
@@ -2583,7 +2583,7 @@ bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelE
     return true;
 }
 
-void EventHandler::platformNotifyIfEndGesture(const PlatformWheelEvent&, ScrollableArea*)
+void EventHandler::platformNotifyIfEndGesture(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&)
 {
 }
 
@@ -2598,16 +2598,44 @@ void EventHandler::clearOrScheduleClearingLatchedStateIfNeeded(const PlatformWhe
 }
 #endif
 
-static Widget* widgetForElement(const Element& element)
+Widget* EventHandler::widgetForEventTarget(Element* eventTarget)
 {
-    RenderElement* target = element.renderer();
-    if (!target)
+    if (!eventTarget)
         return nullptr;
 
+    auto* target = eventTarget->renderer();
     if (!is<RenderWidget>(target))
         return nullptr;
 
     return downcast<RenderWidget>(*target).widget();
+}
+
+static WeakPtr<Widget> widgetForElement(const Element& element)
+{
+    auto target = element.renderer();
+    if (!is<RenderWidget>(target) || !downcast<RenderWidget>(*target).widget())
+        return { };
+
+    return downcast<RenderWidget>(*target).widget()->createWeakPtr();
+}
+
+bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, const WeakPtr<Widget>& widget, const WeakPtr<ScrollableArea>& scrollableArea, ContainerNode* scrollableContainer)
+{
+    m_isHandlingWheelEvent = false;
+    
+    // We do another check on the widget because the event handler can run JS which results in the frame getting destroyed.
+    if (!widget)
+        return false;
+    
+    if (scrollableArea)
+        scrollableArea->setScrolledProgrammatically(false);
+
+    platformNotifyIfEndGesture(event, scrollableArea);
+
+    if (!widget->platformWidget())
+        return true;
+
+    return platformCompletePlatformWidgetWheelEvent(event, *widget.get(), scrollableContainer);
 }
 
 bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
@@ -2631,7 +2659,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 
     RefPtr<Element> element = result.innerElement();
     RefPtr<ContainerNode> scrollableContainer;
-    ScrollableArea* scrollableArea = nullptr;
+    WeakPtr<ScrollableArea> scrollableArea;
     bool isOverWidget = result.isOverWidget();
     platformPrepareForWheelEvents(event, result, element, scrollableContainer, scrollableArea, isOverWidget);
 
@@ -2650,21 +2678,9 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 
     if (element) {
         if (isOverWidget) {
-            Widget* widget = widgetForElement(*element);
-            if (widget && passWheelEventToWidget(event, *widget)) {
-                m_isHandlingWheelEvent = false;
-
-                // We do another check on the widget because the event handler can run JS which results in the frame getting destroyed.
-                Widget* widget = widgetForElement(*element);
-                if (!widget)
-                    return false;
-
-                if (scrollableArea)
-                    scrollableArea->setScrolledProgrammatically(false);
-                platformNotifyIfEndGesture(adjustedEvent, scrollableArea);
-                if (!widget->platformWidget())
-                    return true;
-                return platformCompletePlatformWidgetWheelEvent(event, *widget, scrollableContainer.get());
+            if (WeakPtr<Widget> widget = widgetForElement(*element)) {
+                if (widgetDidHandleWheelEvent(event, *widget.get()))
+                    return completeWidgetWheelEvent(adjustedEvent, widget, scrollableArea, scrollableContainer.get());
             }
         }
 
