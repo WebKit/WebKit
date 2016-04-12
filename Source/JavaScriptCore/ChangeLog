@@ -1,3 +1,10 @@
+2016-04-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, remove FIXME for https://bugs.webkit.org/show_bug.cgi?id=156457 and replace it
+        with a comment that describes what we do now.
+
+        * bytecode/PolymorphicAccess.h:
+
 2016-04-12  Saam barati  <sbarati@apple.com>
 
         isLocked() assertion broke builds because ConcurrentJITLock isn't always a real lock.

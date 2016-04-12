@@ -84,10 +84,9 @@ struct AccessGenerationState;
 //
 // An AccessCase may be destroyed while in any of these states.
 //
-// Note that right now, an AccessCase goes from Primordial to Generated quite quickly.
-// FIXME: Make it possible for PolymorphicAccess to hold onto AccessCases that haven't been
-// generated. That would allow us to significantly reduce the number of regeneration events.
-// https://bugs.webkit.org/show_bug.cgi?id=156457
+// We will sometimes buffer committed AccessCases in the PolymorphicAccess object before generating
+// code. This allows us to only regenerate once we've accumulated (hopefully) more than one new
+// AccessCase.
 class AccessCase {
     WTF_MAKE_NONCOPYABLE(AccessCase);
     WTF_MAKE_FAST_ALLOCATED;
