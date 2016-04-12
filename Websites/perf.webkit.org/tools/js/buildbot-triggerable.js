@@ -132,19 +132,30 @@ class BuildbotTriggerable {
         if (!nextRequest)
             return null;
 
+        let promise;
+        let syncer;
         if (!!nextRequest.order()) {
-            this._logger.log(`Scheduling build request ${nextRequest.id()} on ${groupInfo.slaveName} in ${groupInfo.syncer.builderName()}`);
-            return groupInfo.syncer.scheduleRequest(nextRequest, groupInfo.slaveName);
+            syncer = groupInfo.syncer;
+            if (!syncer)
+                this._logger.error(`Could not identify the syncer for ${nextRequest.id()}.`);
+            else
+                promise = syncer.scheduleRequestInGroupIfAvailable(nextRequest, groupInfo.slaveName);
         }
 
-        for (let syncer of this._syncers) {
-            let promise = syncer.scheduleFirstRequestInGroupIfAvailable(nextRequest);
-            if (promise) {
-                let slaveName = groupInfo.slaveName ? ` on ${groupInfo.slaveName}` : '';
-                this._logger.log(`Scheduling build request ${nextRequest.id()}${slaveName} in ${syncer.builderName()}`);
-                return promise;
+        if (!syncer) {
+            for (syncer of this._syncers) {
+                let promise = syncer.scheduleRequestInGroupIfAvailable(nextRequest);
+                if (promise)
+                    break;
             }
         }
+
+        if (promise) {
+            let slaveName = groupInfo.slaveName ? ` on ${groupInfo.slaveName}` : '';
+            this._logger.log(`Scheduling build request ${nextRequest.id()}${slaveName} in ${syncer.builderName()}`);
+            return promise;
+        }
+
         return null;
     }
 

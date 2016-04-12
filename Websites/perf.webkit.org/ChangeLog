@@ -1,3 +1,29 @@
+2016-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make sync-buildbot.js fault safe
+        https://bugs.webkit.org/show_bug.cgi?id=156498
+
+        Reviewed by Chris Dumez.
+
+        Fixed a bug that sync-buildbot.js will continue to schedule build requests from multiple test groups
+        if multiple test groups are simultaneously in-progress on the same builder. Also fixed a bug that if
+        a build request had failed without leaving a trace (i.e. no entry on any of the builders we know of),
+        sync-buildbot.js throws an exception.
+
+        * server-tests/tools-buildbot-triggerable-tests.js: Added test cases.
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer.prototype.scheduleRequestInGroupIfAvailable): Renamed. Optionally takes the slave name.
+        When this parameter is specified, schedule the request only if the specified slave is available.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype._scheduleNextRequestInGroupIfSlaveIsAvailable): Always use
+        scheduleRequestInGroupIfAvailable to schedule a new build request. Using scheduleRequest for non-first
+        build requests was problematic when there were multiple test groups with pending requests because then
+        we would schedule those pending requests without checking whether there is already a pending job or if
+        we have previously scheduled a job. Also fallback to use any syncer / builder when groupInfo.syncer is
+        not set even if the next request was not the first one in the test group since we can't determine on
+        which builder preceding requests are processed in such cases.
+        * unit-tests/buildbot-syncer-tests.js:
+
 2016-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace script runner to use mocha.js tests

@@ -827,7 +827,7 @@ describe('BuildbotSyncer', function () {
         });
     });
 
-    describe('scheduleFirstRequestInGroupIfAvailable', function () {
+    describe('scheduleRequestInGroupIfAvailable', function () {
 
         function pullBuildbotWithAssertion(syncer, pendingBuilds, inProgressAndFinishedBuilds)
         {
@@ -847,7 +847,7 @@ describe('BuildbotSyncer', function () {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]})[0];
 
             pullBuildbotWithAssertion(syncer, [], {}).then(function () {
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
             }).then(function () {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/some%20builder/force');
@@ -861,7 +861,7 @@ describe('BuildbotSyncer', function () {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]})[0];
 
             pullBuildbotWithAssertion(syncer, [], {[-1]: smallFinishedBuild()}).then(function () {
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
             }).then(function () {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/some%20builder/force');
@@ -875,7 +875,7 @@ describe('BuildbotSyncer', function () {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, {'configurations': [smallConfiguration()]})[0];
 
             pullBuildbotWithAssertion(syncer, [smallPendingBuild()], {}).then(function () {
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
             }).then(function () {
                 assert.equal(requests.length, 0);
                 done();
@@ -886,7 +886,7 @@ describe('BuildbotSyncer', function () {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[0];
 
             pullBuildbotWithAssertion(syncer, [], {}).then(function () {
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             }).then(function () {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/ABTest-iPhone-RunBenchmark-Tests/force');
@@ -899,7 +899,7 @@ describe('BuildbotSyncer', function () {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             pullBuildbotWithAssertion(syncer, [], {[-1]: sampleFinishedBuild()}).then(function () {
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
             }).then(function () {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/ABTest-iPad-RunBenchmark-Tests/force');
@@ -912,7 +912,7 @@ describe('BuildbotSyncer', function () {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             pullBuildbotWithAssertion(syncer, [samplePendingBuild()], {}).then(function () {
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
             }).then(function () {
                 assert.equal(requests.length, 0);
                 done();
@@ -923,7 +923,7 @@ describe('BuildbotSyncer', function () {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             pullBuildbotWithAssertion(syncer, [samplePendingBuild(1, 1, 'another-slave')], {}).then(function () {
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
             }).then(function () {
                 assert.equal(requests.length, 1);
                 done();
@@ -934,7 +934,7 @@ describe('BuildbotSyncer', function () {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             pullBuildbotWithAssertion(syncer, [], {[-1]: sampleInProgressBuild()}).then(function () {
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
             }).then(function () {
                 assert.equal(requests.length, 1);
                 done();
@@ -945,7 +945,7 @@ describe('BuildbotSyncer', function () {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[1];
 
             pullBuildbotWithAssertion(syncer, [], {[-1]: sampleInProgressBuild('other-slave')}).then(function () {
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
             }).then(function () {
                 assert.equal(requests.length, 1);
                 done();
@@ -956,7 +956,7 @@ describe('BuildbotSyncer', function () {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig())[0];
 
             pullBuildbotWithAssertion(syncer, [], {}).then(function () {
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
             }).then(function () {
                 assert.equal(requests.length, 0);
                 done();
@@ -971,7 +971,7 @@ describe('BuildbotSyncer', function () {
                 syncer.scheduleRequest(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-1');
             }).then(function () {
                 assert.equal(requests.length, 2);
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer));
             }).then(function () {
                 assert.equal(requests.length, 2);
                 done();
@@ -985,7 +985,7 @@ describe('BuildbotSyncer', function () {
                 syncer.scheduleRequest(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-0');
             }).then(function () {
                 assert.equal(requests.length, 1);
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-1');
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.ipad, MockModels.speedometer), 'ABTest-iPad-1');
             }).then(function () {
                 assert.equal(requests.length, 2);
                 done();
@@ -999,7 +999,7 @@ describe('BuildbotSyncer', function () {
                 syncer.scheduleRequest(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest), null);
             }).then(function () {
                 assert.equal(requests.length, 1);
-                syncer.scheduleFirstRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
+                syncer.scheduleRequestInGroupIfAvailable(createSampleBuildRequest(MockModels.somePlatform, MockModels.someTest));
             }).then(function () {
                 assert.equal(requests.length, 1);
                 done();

@@ -101,7 +101,7 @@ class BuildbotSyncer {
         return this._remote.postFormUrlencodedData(this.pathForForceBuild(), properties);
     }
 
-    scheduleFirstRequestInGroupIfAvailable(newRequest)
+    scheduleRequestInGroupIfAvailable(newRequest, slaveName)
     {
         assert(newRequest instanceof BuildRequest);
 
@@ -122,6 +122,12 @@ class BuildbotSyncer {
             if (usedSlaves.size || this._slavesWithNewRequests.size)
                 return null;
             return this.scheduleRequest(newRequest, null);
+        }
+
+        if (slaveName) {
+            if (!usedSlaves.has(slaveName) && !this._slavesWithNewRequests.has(slaveName))
+                return this.scheduleRequest(newRequest, slaveName);
+            return null;
         }
 
         for (let slaveName of this._slaveList) {
