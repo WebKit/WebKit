@@ -1,3 +1,25 @@
+2016-04-12  Saam barati  <sbarati@apple.com>
+
+        Lets not iterate over the constant pool twice every time we link a code block
+        https://bugs.webkit.org/show_bug.cgi?id=156517
+
+        Reviewed by Mark Lam.
+
+        I introduced a second iteration over the constant pool when I implemented
+        block scoping. I did this because we must clone all the symbol tables when
+        we link a CodeBlock. We can just do this cloning when setting the constant
+        registers for the first time. There is no need to iterate over the constant
+        pool a second time.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::setAlternative):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::replaceConstant):
+        (JSC::CodeBlock::setConstantRegisters): Deleted.
+
 2016-04-12  Mark Lam  <mark.lam@apple.com>
 
         ES6: Implement String.prototype.split and RegExp.prototype[@@split].

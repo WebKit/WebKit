@@ -936,15 +936,7 @@ private:
 
     void updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 
-    void setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants, const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation)
-    {
-        ASSERT(constants.size() == constantsSourceCodeRepresentation.size());
-        size_t count = constants.size();
-        m_constantRegisters.resizeToFit(count);
-        for (size_t i = 0; i < count; i++)
-            m_constantRegisters[i].set(*m_vm, this, constants[i].get());
-        m_constantsSourceCodeRepresentation = constantsSourceCodeRepresentation;
-    }
+    void setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants, const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation);
 
     void replaceConstant(int index, JSValue value)
     {
