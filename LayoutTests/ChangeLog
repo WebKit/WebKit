@@ -1,3 +1,17 @@
+2016-04-11  Dean Jackson  <dino@apple.com>
+
+        putImageData needs to premultiply input
+        https://bugs.webkit.org/show_bug.cgi?id=156488
+        <rdar://problem/25672675>
+
+        Reviewed by Zalan Bujtas.
+
+        Tests that putImageData is taking unmultiplied data,
+        premultiplying it, then copying into the backing store.
+
+        * fast/canvas/putImageData-unmultiplied-expected.html: Added.
+        * fast/canvas/putImageData-unmultiplied.html: Added.
+
 2016-04-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unskip imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm
