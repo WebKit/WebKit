@@ -679,7 +679,7 @@ void JSGlobalObject::addGlobalVar(const Identifier& ident)
     ScopeOffset offset = symbolTable()->takeNextScopeOffset(locker);
     SymbolTableEntry newEntry(VarOffset(offset), 0);
     newEntry.prepareToWatch();
-    symbolTable()->add(locker, ident.impl(), newEntry);
+    symbolTable()->add(locker, ident.impl(), WTFMove(newEntry));
     
     ScopeOffset offsetForAssert = addVariables(1, jsUndefined());
     RELEASE_ASSERT(offsetForAssert == offset);
@@ -979,15 +979,19 @@ void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
         GlobalPropertyInfo& global = globals[i];
         ASSERT(global.attributes & DontDelete);
         
-        ScopeOffset offset;
+        WatchpointSet* watchpointSet = nullptr;
+        WriteBarrierBase<Unknown>* variable = nullptr;
         {
             ConcurrentJITLocker locker(symbolTable()->m_lock);
-            offset = symbolTable()->takeNextScopeOffset(locker);
+            ScopeOffset offset = symbolTable()->takeNextScopeOffset(locker);
             RELEASE_ASSERT(offset = startOffset + i);
             SymbolTableEntry newEntry(VarOffset(offset), global.attributes);
-            symbolTable()->add(locker, global.identifier.impl(), newEntry);
+            newEntry.prepareToWatch();
+            watchpointSet = newEntry.watchpointSet();
+            symbolTable()->add(locker, global.identifier.impl(), WTFMove(newEntry));
+            variable = &variableAt(offset);
         }
-        variableAt(offset).set(vm(), this, global.value);
+        symbolTablePutTouchWatchpointSet(vm(), this, global.identifier, global.value, variable, watchpointSet);
     }
 }
 

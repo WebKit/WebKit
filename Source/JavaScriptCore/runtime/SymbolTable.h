@@ -199,6 +199,23 @@ public:
         return *this;
     }
     
+    SymbolTableEntry(SymbolTableEntry&& other)
+        : m_bits(SlimFlag)
+    {
+        swap(other);
+    }
+
+    SymbolTableEntry& operator=(SymbolTableEntry&& other)
+    {
+        swap(other);
+        return *this;
+    }
+
+    void swap(SymbolTableEntry& other)
+    {
+        std::swap(m_bits, other.m_bits);
+    }
+
     bool isNull() const
     {
         return !(bits() & ~SlimFlag);
@@ -552,31 +569,35 @@ public:
         return takeNextScopeOffset(locker);
     }
     
-    void add(const ConcurrentJITLocker&, UniquedStringImpl* key, const SymbolTableEntry& entry)
+    template<typename Entry>
+    void add(const ConcurrentJITLocker&, UniquedStringImpl* key, Entry&& entry)
     {
         RELEASE_ASSERT(!m_localToEntry);
         didUseVarOffset(entry.varOffset());
-        Map::AddResult result = m_map.add(key, entry);
+        Map::AddResult result = m_map.add(key, std::forward<Entry>(entry));
         ASSERT_UNUSED(result, result.isNewEntry);
     }
     
-    void add(UniquedStringImpl* key, const SymbolTableEntry& entry)
+    template<typename Entry>
+    void add(UniquedStringImpl* key, Entry&& entry)
     {
         ConcurrentJITLocker locker(m_lock);
-        add(locker, key, entry);
+        add(locker, key, std::forward<Entry>(entry));
     }
     
-    void set(const ConcurrentJITLocker&, UniquedStringImpl* key, const SymbolTableEntry& entry)
+    template<typename Entry>
+    void set(const ConcurrentJITLocker&, UniquedStringImpl* key, Entry&& entry)
     {
         RELEASE_ASSERT(!m_localToEntry);
         didUseVarOffset(entry.varOffset());
-        m_map.set(key, entry);
+        m_map.set(key, std::forward<Entry>(entry));
     }
     
-    void set(UniquedStringImpl* key, const SymbolTableEntry& entry)
+    template<typename Entry>
+    void set(UniquedStringImpl* key, Entry&& entry)
     {
         ConcurrentJITLocker locker(m_lock);
-        set(locker, key, entry);
+        set(locker, key, std::forward<Entry>(entry));
     }
     
     bool contains(const ConcurrentJITLocker&, UniquedStringImpl* key)

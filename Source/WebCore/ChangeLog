@@ -1,3 +1,13 @@
+2016-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] addStaticGlobals should emit SymbolTableEntry watchpoints to encourage constant folding in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=155110
+
+        Reviewed by Saam Barati.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::updateDocument):
+
 2016-04-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Pass GridSizingData instead of columnTracks to track sizing methods

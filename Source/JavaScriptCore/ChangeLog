@@ -1,3 +1,39 @@
+2016-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] addStaticGlobals should emit SymbolTableEntry watchpoints to encourage constant folding in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=155110
+
+        Reviewed by Saam Barati.
+
+        `addStaticGlobals` does not emit SymbolTableEntry watchpoints for the added entries.
+        So, all the global variable lookups pointing to these static globals are not converted
+        into constants in DFGBytecodeGenerator: this fact leaves these lookups as GetGlobalVar.
+        Such thing avoids constant folding chance and emits CheckCell for @privateFunction inlining.
+        This operation is pure overhead.
+
+        Static globals are not configurable, and they are typically non-writable.
+        So they are constants in almost all the cases.
+
+        This patch initializes watchpoints for these static globals.
+        These watchpoints allow DFG to convert these nodes into constants in DFG BytecodeParser.
+        These watchpoints includes many builtin operations and `undefined`.
+
+        The microbenchmark, many-foreach-calls shows 5 - 7% improvement since it removes unnecessary CheckCell.
+
+        * bytecode/VariableWriteFireDetail.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addGlobalVar):
+        (JSC::JSGlobalObject::addStaticGlobals):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTablePutTouchWatchpointSet):
+        (JSC::symbolTablePutInvalidateWatchpointSet):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributesTouchWatchpointSet): Deleted.
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTableEntry::SymbolTableEntry):
+        (JSC::SymbolTableEntry::operator=):
+        (JSC::SymbolTableEntry::swap):
+
 2016-04-12  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r199299.

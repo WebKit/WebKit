@@ -101,10 +101,15 @@ void JSDOMWindowBase::destroy(JSCell* cell)
 
 void JSDOMWindowBase::updateDocument()
 {
+    // Since "document" property is defined as { configurable: false, writable: false, enumerable: true },
+    // users cannot change its attributes further.
+    // Reaching here, the attributes of "document" property should be never changed.
     ASSERT(m_wrapped->document());
     ExecState* exec = globalExec();
+    bool shouldThrowReadOnlyError = false;
+    bool ignoreReadOnlyErrors = true;
     bool putResult = false;
-    symbolTablePutWithAttributesTouchWatchpointSet(this, exec, exec->vm().propertyNames->document, toJS(exec, this, m_wrapped->document()), DontDelete | ReadOnly, putResult);
+    symbolTablePutTouchWatchpointSet(this, exec, exec->vm().propertyNames->document, toJS(exec, this, m_wrapped->document()), shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
 }
 
 ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
