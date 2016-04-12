@@ -410,7 +410,7 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
 
         this.element.classList.add("collapsed");
 
-        if (firstNormalTabItem.element.offsetWidth >= 60)
+        if (firstNormalTabItem.element.offsetWidth >= 75)
             return;
 
         this.element.classList.add("hide-titles");

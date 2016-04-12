@@ -1,5 +1,17 @@
 2016-04-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Tab Bar items get unreadable at narrow window widths, should collapse earlier
+        https://bugs.webkit.org/show_bug.cgi?id=156477
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar.prototype.layout):
+        Hide-titles sooner since a width of 60 results in only a few characters
+        and looks poor.
+
+2016-04-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Unstyled nodes in ObjectTree previews look poor
         https://bugs.webkit.org/show_bug.cgi?id=156475
         <rdar://problem/25667351>
