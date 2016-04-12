@@ -1,3 +1,15 @@
+2016-04-11  Alex Christensen  <achristensen@webkit.org>
+
+        Build MiniBrowser with CMake on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=156471
+
+        Reviewed by Daniel Bates.
+
+        * CMakeLists.txt:
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/PlatformWin.cmake:
+        * MiniBrowser/mac/CMakeLists.txt: Added.
+
 2016-04-11  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Do not pass context to EwkViewCreate
