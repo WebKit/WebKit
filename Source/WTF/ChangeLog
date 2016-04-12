@@ -1,3 +1,17 @@
+2016-04-12  Tomas Popela  <tpopela@redhat.com>
+
+        S390X and PPC64 architectures detection is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=156337
+
+        Reviewed by Carlos Garcia Campos.
+
+        After the http://trac.webkit.org/changeset/198919 was committed
+        it showed that the PPC64 detection is wrong as the CPU(PPC) path was
+        activated even for PPC64. The thing is that GCC defines __ppc__
+        even on PPC64 and not just on PPC(32). The same applies for S390X.
+
+        * wtf/Platform.h:
+
 2016-04-05  Oliver Hunt  <oliver@apple.com>
 
         Remove compile time define for SEPARATED_HEAP
