@@ -1,3 +1,16 @@
+2016-04-12  Guillaume Emont  <guijemont@igalia.com>
+
+        MIPS: add MacroAssemblerMIPS::store8(TrustedImm32,ImplicitAddress)
+        https://bugs.webkit.org/show_bug.cgi?id=156481
+
+        This method with this signature is used by r199075, and therefore
+        WebKit doesn't build on MIPS since then.
+
+        Reviewed by Mark Lam.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::store8):
+
 2016-04-12  Saam barati  <sbarati@apple.com>
 
         We incorrectly parse arrow function expressions

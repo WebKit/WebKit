@@ -1055,6 +1055,33 @@ public:
         }
     }
 
+    void store8(TrustedImm32 imm, ImplicitAddress address)
+    {
+        if (address.offset >= -32768 && address.offset <= 32767
+            && !m_fixedWidth) {
+            if (!imm.m_value)
+                m_assembler.sb(MIPSRegisters::zero, address.base, address.offset);
+            else {
+                move(imm, immTempRegister);
+                m_assembler.sb(immTempRegister, address.base, address.offset);
+            }
+        } else {
+            /*
+                lui     addrTemp, (offset + 0x8000) >> 16
+                addu    addrTemp, addrTemp, base
+                sb      immTemp, (offset & 0xffff)(addrTemp)
+              */
+            m_assembler.lui(addrTempRegister, (address.offset + 0x8000) >> 16);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            if (!imm.m_value && !m_fixedWidth)
+                m_assembler.sb(MIPSRegisters::zero, addrTempRegister, address.offset);
+            else {
+                move(imm, immTempRegister);
+                m_assembler.sb(immTempRegister, addrTempRegister, address.offset);
+            }
+        }
+    }
+
     void store16(RegisterID src, BaseIndex address)
     {
         if (address.offset >= -32768 && address.offset <= 32767
