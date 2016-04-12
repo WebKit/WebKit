@@ -1,3 +1,91 @@
+2016-04-12  Mark Lam  <mark.lam@apple.com>
+
+        ES6: Implement String.prototype.split and RegExp.prototype[@@split].
+        https://bugs.webkit.org/show_bug.cgi?id=156013
+
+        Reviewed by Keith Miller.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/GlobalObject.js:
+        (speciesConstructor):
+        * builtins/PromisePrototype.js:
+        - refactored to use the @speciesConstructor internal function.
+
+        * builtins/RegExpPrototype.js:
+        (advanceStringIndex):
+        - refactored from @advanceStringIndexUnicode() to be match the spec.
+          Benchmarks show that there's no advantage in doing the unicode check outside
+          of the advanceStringIndexUnicode part.  So, I simplified the code to match the
+          spec (especially since @@split needs to call advanceStringIndex from more than
+          1 location).
+        (match):
+        - Removed an unnecessary call to @Object because it was already proven above.
+        - Changed to use advanceStringIndex instead of advanceStringIndexUnicode.
+          Again, there's no perf regression for this.
+        (regExpExec):
+        (hasObservableSideEffectsForRegExpSplit):
+        (split):
+        (advanceStringIndexUnicode): Deleted.
+
+        * builtins/StringPrototype.js:
+        (split):
+        - Modified to use RegExp.prototype[@@split].
+
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        (JSC::BytecodeIntrinsicRegistry::lookup):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        - Added the @@split symbol.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/ECMAScriptSpecInternalFunctions.cpp: Added.
+        (JSC::esSpecIsConstructor):
+        (JSC::esSpecIsRegExp):
+        * runtime/ECMAScriptSpecInternalFunctions.h: Added.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::getGetterById):
+        (JSC::JSGlobalObject::init):
+
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::setDescriptor):
+        - Removed an assert that is no longer valid.
+
+        * runtime/RegExpObject.h:
+        - Made advanceStringUnicode() public so that it can be re-used by the regexp split
+          fast path.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncSearch):
+        (JSC::advanceStringIndex):
+        (JSC::regExpProtoFuncSplitFast):
+        * runtime/RegExpPrototype.h:
+
+        * runtime/StringObject.h:
+        (JSC::jsStringWithReuse):
+        (JSC::jsSubstring):
+        - Hoisted some utility functions from StringPrototype.cpp so that they can be
+          reused by the regexp split fast path.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::stringProtoFuncSplitFast):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::builtinStringSubstrInternal):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringIncludesImpl):
+        (JSC::stringProtoFuncIncludes):
+        (JSC::builtinStringIncludesInternal):
+        (JSC::jsStringWithReuse): Deleted.
+        (JSC::jsSubstring): Deleted.
+        (JSC::stringProtoFuncSplit): Deleted.
+        * runtime/StringPrototype.h:
+
+        * tests/es6.yaml:
+
 2016-04-12  Keith Miller  <keith_miller@apple.com>
 
         AbstractValue should use the result type to filter structures

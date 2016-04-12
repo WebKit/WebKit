@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,4 +60,19 @@ function isDictionary(object)
 function speciesGetter()
 {
     return this;
+}
+
+function speciesConstructor(obj, defaultConstructor)
+{
+    var constructor = obj.constructor;
+    if (constructor === @undefined)
+        return defaultConstructor;
+    if (!@isObject(constructor))
+        throw new @TypeError("|this|.constructor is not an Object or undefined");
+    constructor = constructor[@symbolSpecies];
+    if (constructor == null)
+        return defaultConstructor;
+    if (@isConstructor(constructor))
+        return constructor;
+    throw new @TypeError("|this|.constructor[Symbol.species] is not a constructor");
 }

@@ -310,7 +310,6 @@
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL_NOT_IMPLEMENTED_YET(macro)\
     macro(isConcatSpreadable) \
     macro(replace) \
-    macro(split)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
     macro(hasInstance) \
@@ -318,6 +317,7 @@
     macro(match) \
     macro(search) \
     macro(species) \
+    macro(split) \
     macro(toPrimitive) \
     macro(toStringTag) \
     macro(unscopables)
@@ -412,6 +412,8 @@
     macro(instanceOf) \
     macro(isArray) \
     macro(isArrayConstructor) \
+    macro(isConstructor) \
+    macro(isRegExp) \
     macro(isSet) \
     macro(isMap) \
     macro(regExpCreate) \
@@ -419,7 +421,17 @@
     macro(setIteratorNext) \
     macro(MapIterator) \
     macro(mapIteratorNext) \
-
+    macro(regExpProtoFlagsGetter) \
+    macro(regExpProtoGlobalGetter) \
+    macro(regExpProtoIgnoreCaseGetter) \
+    macro(regExpProtoMultilineGetter) \
+    macro(regExpProtoSourceGetter) \
+    macro(regExpProtoStickyGetter) \
+    macro(regExpProtoUnicodeGetter) \
+    macro(regExpSplitFast) \
+    macro(stringIncludesInternal) \
+    macro(stringSplitFast) \
+    macro(stringSubstrInternal) \
 
 namespace JSC {
     
