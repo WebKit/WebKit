@@ -2749,11 +2749,6 @@ void Internals::setUsesMockScrollAnimator(bool enabled)
     WebCore::Settings::setUsesMockScrollAnimator(enabled);
 }
 
-void Internals::setMockScrollbarsEnabled(bool enabled)
-{
-    WebCore::Settings::setMockScrollbarsEnabled(enabled);
-}
-
 void Internals::forceReload(bool endToEnd)
 {
     frame()->loader().reload(endToEnd);

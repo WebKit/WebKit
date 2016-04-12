@@ -41,6 +41,7 @@ struct TestOptions {
     bool isHiDPITest { false };
     bool useDataDetection { false };
     bool useRTLScrollbars { false };
+    bool useMockScrollbars { true };
 
     Vector<String> overrideLanguages;
     

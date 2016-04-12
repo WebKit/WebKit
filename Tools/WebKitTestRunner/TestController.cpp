@@ -489,7 +489,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
 
     // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
     // FIXME: Migrate these preferences to WKContextConfigurationRef.
-    resetPreferencesToConsistentValues();
+    resetPreferencesToConsistentValues(options);
 
     platformCreateWebView(configuration.get(), options);
     WKPageUIClientV6 pageUIClient = {
@@ -633,11 +633,11 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
 
     createWebViewWithOptions(options);
 
-    if (!resetStateToConsistentValues())
+    if (!resetStateToConsistentValues(options))
         TestInvocation::dumpWebProcessUnresponsiveness("<unknown> - TestController::run - Failed to reset state to consistent values\n");
 }
 
-void TestController::resetPreferencesToConsistentValues()
+void TestController::resetPreferencesToConsistentValues(const TestOptions& options)
 {
     // Reset preferences
     WKPreferencesRef preferences = platformPreferences();
@@ -664,7 +664,7 @@ void TestController::resetPreferencesToConsistentValues()
     WKPreferencesSetArtificialPluginInitializationDelayEnabled(preferences, false);
     WKPreferencesSetTabToLinksEnabled(preferences, false);
     WKPreferencesSetInteractiveFormValidationEnabled(preferences, true);
-    WKPreferencesSetMockScrollbarsEnabled(preferences, true);
+    WKPreferencesSetMockScrollbarsEnabled(preferences, options.useMockScrollbars);
 
     static WKStringRef defaultTextEncoding = WKStringCreateWithUTF8CString("ISO-8859-1");
     WKPreferencesSetDefaultTextEncodingName(preferences, defaultTextEncoding);
@@ -704,7 +704,7 @@ void TestController::resetPreferencesToConsistentValues()
     platformResetPreferencesToConsistentValues();
 }
 
-bool TestController::resetStateToConsistentValues()
+bool TestController::resetStateToConsistentValues(const TestOptions& options)
 {
     TemporaryChange<State> changeState(m_state, Resetting);
     m_beforeUnloadReturnValue = true;
@@ -744,7 +744,7 @@ bool TestController::resetStateToConsistentValues()
 
     // FIXME: Is this needed? Nothing in TestController changes preferences during tests, and if there is
     // some other code doing this, it should probably be responsible for cleanup too.
-    resetPreferencesToConsistentValues();
+    resetPreferencesToConsistentValues(options);
 
 #if !PLATFORM(COCOA)
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);
@@ -954,6 +954,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.useDataDetection = parseBooleanTestHeaderValue(value);
         if (key == "rtlScrollbars")
             testOptions.useRTLScrollbars = parseBooleanTestHeaderValue(value);
+        if (key == "useMockScrollbars")
+            testOptions.useMockScrollbars = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

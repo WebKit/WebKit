@@ -351,7 +351,6 @@ public:
 
     void setUsesOverlayScrollbars(bool);
     void setUsesMockScrollAnimator(bool);
-    void setMockScrollbarsEnabled(bool);
 
     String getCurrentCursorInfo(ExceptionCode&);
 

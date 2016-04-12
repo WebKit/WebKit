@@ -1,3 +1,14 @@
+2016-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Flakey crash after ScrollAnimatorMac destruction
+        https://bugs.webkit.org/show_bug.cgi?id=156372
+
+        Reviewed by Darin Adler.
+
+        Migrate to the new mechanism for disabling mock scrollbars in tests.
+
+        * fast/scrolling/rtl-scrollbars-animation-property.html:
+
 2016-04-12  Saam barati  <sbarati@apple.com>
 
         We incorrectly parse arrow function expressions

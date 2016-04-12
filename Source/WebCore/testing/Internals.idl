@@ -354,7 +354,6 @@ enum AutoFillButtonType {
 
     void setUsesOverlayScrollbars(boolean enabled);
     void setUsesMockScrollAnimator(boolean enabled);
-    void setMockScrollbarsEnabled(boolean enabled);
 
     void forceReload(boolean endToEnd);
 

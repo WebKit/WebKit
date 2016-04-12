@@ -171,7 +171,7 @@ end:
 
     if (m_webProcessIsUnresponsive)
         dumpWebProcessUnresponsiveness();
-    else if (!TestController::singleton().resetStateToConsistentValues()) {
+    else if (!TestController::singleton().resetStateToConsistentValues(m_options)) {
         // The process froze while loading about:blank, let's start a fresh one.
         // It would be nice to report that the previous test froze after dumping results, but we have no way to do that.
         TestController::singleton().terminateWebContentProcess();

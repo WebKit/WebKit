@@ -1,3 +1,25 @@
+2016-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Flakey crash after ScrollAnimatorMac destruction
+        https://bugs.webkit.org/show_bug.cgi?id=156372
+
+        Reviewed by Darin Adler.
+
+        Implement the new <!-- webkit-test-runner --> flag.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::ensureViewSupportsOptionsForTest):
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WKR::PlatformWebView::viewSupportsOptions):
+
 2016-04-12  Tomas Popela  <tpopela@redhat.com>
 
         Modify the CXXFLAGS in webkitdirs.pm just on architectures where the flags are supported

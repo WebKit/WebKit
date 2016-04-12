@@ -1,3 +1,46 @@
+2016-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Flakey crash after ScrollAnimatorMac destruction
+        https://bugs.webkit.org/show_bug.cgi?id=156372
+
+        Reviewed by Darin Adler.
+
+        Previously, we were disabling the mock scrollbars using JavaScript after
+        the WebView was created. However, enabling these mock scrollbars can be
+        triggered with a bit of state inside the WebPreferences object, which
+        means WebKit clients can change it at any point. DumpRenderTree is doing
+        this during the document's lifetime.
+
+        This means that the creation of the Scrollbar objects saw a non-mock
+        ScrollbarTheme, but the destruction of the Scrollbar objects saw a mock
+        ScrollbarTheme. Therefore, the non-mock ScrollbarTheme doesn't get
+        cleaned up correctly (ScrollAnimatorMac::willRemoveVerticalScrollbar()
+        returns early because it sees that there is nothing to deregister
+        due to the ScrollbarTheme being mocked).
+
+        This cleanup is necessary because it sets the NSScrollerImp's delegate
+        to nil before the NSScrollerImpDelegate gets destroyed. Because the
+        cleanup wasn't happening, the delegate pointer wasn't getting set to
+        nil, so the pointer was dangling, and AppKit was following it and
+        crashing.
+
+        Because the clients of this bit of state can change it at any time,
+        it is incorrect to change it in JavaScript. Instead, the client must
+        manage this bit of state (so the client and the web process are always
+        in sync). Therefore, the correct way to set this bit of state must be
+        done in the test runner rather than Javascript internals. The mechanism
+        we have to do that is the <!-- webkit-test-runner --> comment at the
+        beginning of the test. This patch migrates to this mechanism and removes
+        the old internals method.
+
+        Test: fast/scrolling/rtl-scrollbars-animation-property.html
+
+        * page/Settings.cpp:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMockScrollbarsEnabled): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-04-12  Darin Adler  <darin@apple.com>
 
         Remove UsePointersEvenForNonNullableObjectArguments from SVG lists

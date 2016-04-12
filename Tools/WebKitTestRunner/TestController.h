@@ -111,8 +111,8 @@ public:
     // Page Visibility.
     void setHidden(bool);
 
-    bool resetStateToConsistentValues();
-    void resetPreferencesToConsistentValues();
+    bool resetStateToConsistentValues(const TestOptions&);
+    void resetPreferencesToConsistentValues(const TestOptions&);
 
     void terminateWebContentProcess();
     void reattachPageToWebProcess();
