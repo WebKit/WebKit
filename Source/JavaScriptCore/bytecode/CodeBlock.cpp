@@ -4229,12 +4229,41 @@ unsigned CodeBlock::rareCaseProfileCountForBytecodeOffset(int bytecodeOffset)
 
 ResultProfile* CodeBlock::resultProfileForBytecodeOffset(int bytecodeOffset)
 {
+    ConcurrentJITLocker locker(m_lock);
+    return resultProfileForBytecodeOffset(locker, bytecodeOffset);
+}
+
+ResultProfile* CodeBlock::resultProfileForBytecodeOffset(const ConcurrentJITLocker&, int bytecodeOffset)
+{
+    ASSERT(m_lock.isLocked());
     if (!m_bytecodeOffsetToResultProfileIndexMap)
         return nullptr;
     auto iterator = m_bytecodeOffsetToResultProfileIndexMap->find(bytecodeOffset);
     if (iterator == m_bytecodeOffsetToResultProfileIndexMap->end())
         return nullptr;
     return &m_resultProfiles[iterator->value];
+}
+
+
+ResultProfile* CodeBlock::ensureResultProfile(int bytecodeOffset)
+{
+    ConcurrentJITLocker locker(m_lock);
+    return ensureResultProfile(locker, bytecodeOffset);
+}
+
+ResultProfile* CodeBlock::ensureResultProfile(const ConcurrentJITLocker& locker, int bytecodeOffset)
+{
+    ASSERT(m_lock.isLocked());
+    ResultProfile* profile = resultProfileForBytecodeOffset(locker, bytecodeOffset);
+    if (!profile) {
+        m_resultProfiles.append(ResultProfile(bytecodeOffset));
+        profile = &m_resultProfiles.last();
+        ASSERT(&m_resultProfiles.last() == &m_resultProfiles[m_resultProfiles.size() - 1]);
+        if (!m_bytecodeOffsetToResultProfileIndexMap)
+            m_bytecodeOffsetToResultProfileIndexMap = std::make_unique<BytecodeOffsetToResultProfileIndexMap>();
+        m_bytecodeOffsetToResultProfileIndexMap->add(bytecodeOffset, m_resultProfiles.size() - 1);
+    }
+    return profile;
 }
 
 #if ENABLE(JIT)

@@ -436,21 +436,11 @@ public:
         return value >= Options::couldTakeSlowCaseMinimumCount();
     }
 
-    ResultProfile* ensureResultProfile(int bytecodeOffset)
-    {
-        ResultProfile* profile = resultProfileForBytecodeOffset(bytecodeOffset);
-        if (!profile) {
-            m_resultProfiles.append(ResultProfile(bytecodeOffset));
-            profile = &m_resultProfiles.last();
-            ASSERT(&m_resultProfiles.last() == &m_resultProfiles[m_resultProfiles.size() - 1]);
-            if (!m_bytecodeOffsetToResultProfileIndexMap)
-                m_bytecodeOffsetToResultProfileIndexMap = std::make_unique<BytecodeOffsetToResultProfileIndexMap>();
-            m_bytecodeOffsetToResultProfileIndexMap->add(bytecodeOffset, m_resultProfiles.size() - 1);
-        }
-        return profile;
-    }
+    ResultProfile* ensureResultProfile(int bytecodeOffset);
+    ResultProfile* ensureResultProfile(const ConcurrentJITLocker&, int bytecodeOffset);
     unsigned numberOfResultProfiles() { return m_resultProfiles.size(); }
     ResultProfile* resultProfileForBytecodeOffset(int bytecodeOffset);
+    ResultProfile* resultProfileForBytecodeOffset(const ConcurrentJITLocker&, int bytecodeOffset);
 
     unsigned specialFastCaseProfileCountForBytecodeOffset(int bytecodeOffset)
     {
