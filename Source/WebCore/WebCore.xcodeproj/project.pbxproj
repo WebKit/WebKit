@@ -6334,6 +6334,8 @@
 		E10B9B6D0B747599003ED890 /* NativeXPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10B9B6B0B747599003ED890 /* NativeXPathNSResolver.cpp */; };
 		E10B9CCC0B747A44003ED890 /* DOMCustomXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B9CCA0B747A44003ED890 /* DOMCustomXPathNSResolver.h */; };
 		E10B9CCD0B747A44003ED890 /* DOMCustomXPathNSResolver.mm in Sources */ = {isa = PBXBuildFile; fileRef = E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */; };
+		E11003301C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E110032E1C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.cpp */; };
+		E11003311C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.h in Headers */ = {isa = PBXBuildFile; fileRef = E110032F1C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.h */; };
 		E11AF15111B9A1A300805103 /* Cursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E11AF15011B9A1A300805103 /* Cursor.cpp */; };
 		E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E11C9DB00EB3699500E409DB /* ScriptExecutionContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */; };
@@ -14349,6 +14351,8 @@
 		E10B9B6B0B747599003ED890 /* NativeXPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeXPathNSResolver.cpp; sourceTree = "<group>"; };
 		E10B9CCA0B747A44003ED890 /* DOMCustomXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCustomXPathNSResolver.h; sourceTree = "<group>"; };
 		E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCustomXPathNSResolver.mm; sourceTree = "<group>"; };
+		E110032E1C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGridAutoRepeatValue.cpp; sourceTree = "<group>"; };
+		E110032F1C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGridAutoRepeatValue.h; sourceTree = "<group>"; };
 		E11AF15011B9A1A300805103 /* Cursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cursor.cpp; sourceTree = "<group>"; };
 		E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptExecutionContext.h; sourceTree = "<group>"; };
 		E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptExecutionContext.cpp; sourceTree = "<group>"; };
@@ -23547,6 +23551,8 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
+				E110032E1C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.cpp */,
+				E110032F1C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.h */,
 				FBD6AF8415EF21D4008B7110 /* BasicShapeFunctions.cpp */,
 				FBD6AF8515EF21D4008B7110 /* BasicShapeFunctions.h */,
 				A80E6CDA0A1989CA007FB8C5 /* Counter.h */,
@@ -27655,6 +27661,7 @@
 				934F713C0D5A6F1900018D69 /* ResourceErrorBase.h in Headers */,
 				514C76790CE923A1007EF3CD /* ResourceHandle.h in Headers */,
 				26FAE4CD1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h in Headers */,
+				E11003311C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.h in Headers */,
 				26C15CF71857E15E00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.h in Headers */,
 				514C767A0CE923A1007EF3CD /* ResourceHandleClient.h in Headers */,
 				514C767B0CE923A1007EF3CD /* ResourceHandleInternal.h in Headers */,
@@ -29327,6 +29334,7 @@
 				FEB26D28167A8F2A00FDD26B /* DatabaseServer.cpp in Sources */,
 				97BC6A2D1505F081001B74AC /* DatabaseTask.cpp in Sources */,
 				97BC6A2F1505F081001B74AC /* DatabaseThread.cpp in Sources */,
+				E11003301C9AC3DE00412DD0 /* CSSGridAutoRepeatValue.cpp in Sources */,
 				97BC6A311505F081001B74AC /* DatabaseTracker.cpp in Sources */,
 				BE23480C18A9870B00E4B6E8 /* DataCue.cpp in Sources */,
 				C5227DF21C3C6DF900F5ED54 /* DataDetection.mm in Sources */,

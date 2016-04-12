@@ -111,6 +111,7 @@ public:
     bool isWebKitCSSFilterValue() const { return m_classType == WebKitCSSFilterClass; }
     bool isContentDistributionValue() const { return m_classType == CSSContentDistributionClass; }
 #if ENABLE(CSS_GRID_LAYOUT)
+    bool isGridAutoRepeatValue() const { return m_classType == GridAutoRepeatClass; }
     bool isGridTemplateAreasValue() const { return m_classType == GridTemplateAreasClass; }
     bool isGridLineNamesValue() const { return m_classType == GridLineNamesClass; }
 #endif
@@ -202,6 +203,7 @@ protected:
         WebKitCSSTransformClass,
 #if ENABLE(CSS_GRID_LAYOUT)
         GridLineNamesClass,
+        GridAutoRepeatClass,
 #endif
         // Do not append non-list class types here.
     };

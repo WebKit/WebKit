@@ -1201,3 +1201,9 @@ last
 // color-gamut
 p3
 rec2020
+
+#if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
+// auto-repeat
+auto-fill
+auto-fit
+#endif

@@ -1,0 +1,60 @@
+Test that setting/getting -webkit-grid-template-{columns|rows} with repeat(auto-fill|auto-fit,) works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test auto-repeat syntax.
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "[foo bar] 10px"
+PASS element.style.webkitGridTemplateColumns is "[foo bar] 10px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "20px [foo bar]"
+PASS element.style.webkitGridTemplateRows is "2em [foo bar]"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "[foo bar] 800px"
+PASS element.style.webkitGridTemplateColumns is "[foo bar] minmax(10px, 1fr)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "[foo] 20px [bar]"
+PASS element.style.webkitGridTemplateRows is "[foo] minmax(2em, -webkit-max-content) [bar]"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "100px 20px 20px"
+PASS element.style.webkitGridTemplateColumns is "minmax(10px, 100px) 20px 20px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "70px 20px [bar foo] 10px [foo] 10px"
+PASS element.style.webkitGridTemplateRows is "70px minmax(2em, -webkit-max-content) [bar] [foo] 1em [foo] 1em"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "[foo bar] 10px"
+PASS element.style.webkitGridTemplateColumns is "[foo bar] 10px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "20px [foo bar]"
+PASS element.style.webkitGridTemplateRows is "2em [foo bar]"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "[foo bar] 800px"
+PASS element.style.webkitGridTemplateColumns is "[foo bar] minmax(10px, 1fr)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "[foo] 20px [bar]"
+PASS element.style.webkitGridTemplateRows is "[foo] minmax(2em, -webkit-max-content) [bar]"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "10px 20px 20px"
+PASS element.style.webkitGridTemplateColumns is "minmax(10px, -webkit-min-content) 20px 20px"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "60px 20px [bar foo] 10px [foo] 10px"
+PASS element.style.webkitGridTemplateRows is "10% minmax(2em, -webkit-max-content) [bar] [foo] 1em [foo] 1em"
+
+Test invalid repeat syntax.
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,42 @@
+2016-03-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Add parsing support for <auto-repeat> syntax
+        https://bugs.webkit.org/show_bug.cgi?id=155583
+
+        Reviewed by Antti Koivisto.
+
+        The repeat() notation allows now to specify auto-fill or auto-fit instead of
+        a fixed number of repetitions meaning that it will be automatically computed
+        depending on the available space.
+
+        This patch just adds the parsing support, the expansion of the repeat notation
+        will be implemented in a follow up patch because it cannot be done at
+        parsing level (since it requires knowledge about the available space).
+
+        Test: fast/css-grid-layout/grid-element-auto-repeat-get-set.html
+
+        * CMakeLists.txt:
+        * css/CSSGridAutoRepeatValue.cpp: Added.
+        (WebCore::CSSGridAutoRepeatValue::customCSSText):
+        * css/CSSGridAutoRepeatValue.h: Added.
+        (WebCore::CSSGridAutoRepeatValue::create):
+        (WebCore::CSSGridAutoRepeatValue::autoRepeatID):
+        (WebCore::CSSGridAutoRepeatValue::CSSGridAutoRepeatValue):
+        * css/CSSParser.cpp:
+        (WebCore::allTracksAreFixedSized):
+        (WebCore::CSSParser::parseGridTrackList):
+        (WebCore::CSSParser::parseGridTrackRepeatFunction):
+        (WebCore::CSSParser::parseGridTrackSize):
+        (WebCore::CSSParser::parseGridBreadth):
+        * css/CSSParser.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isGridAutoRepeatValue):
+        * css/CSSValueKeywords.in:
+
 2016-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] addStaticGlobals should emit SymbolTableEntry watchpoints to encourage constant folding in DFG

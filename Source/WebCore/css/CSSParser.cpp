@@ -109,6 +109,7 @@
 #include <wtf/text/StringImpl.h>
 
 #if ENABLE(CSS_GRID_LAYOUT)
+#include "CSSGridAutoRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #endif
@@ -5840,6 +5841,28 @@ bool CSSParser::parseGridLineNames(CSSParserValueList& inputList, CSSValueList& 
     return true;
 }
 
+static bool allTracksAreFixedSized(CSSValueList& valueList)
+{
+    for (auto& value : valueList) {
+        if (is<CSSGridLineNamesValue>(value))
+            continue;
+        // The auto-repeat value holds a <fixed-size> = <fixed-breadth> | minmax( <fixed-breadth>, <track-breadth> )
+        if (is<CSSGridAutoRepeatValue>(value)) {
+            if (!allTracksAreFixedSized(downcast<CSSValueList>(value.get())))
+                return false;
+            continue;
+        }
+        ASSERT(value->isPrimitiveValue() || (value->isFunctionValue() && downcast<CSSFunctionValue>(value.get()).arguments()));
+        const CSSPrimitiveValue& primitiveValue = value->isPrimitiveValue()
+            ? downcast<CSSPrimitiveValue>(value.get())
+            : downcast<CSSPrimitiveValue>(*downcast<CSSFunctionValue>(value.get()).arguments()->item(0));
+        CSSValueID valueID = primitiveValue.getValueID();
+        if (valueID == CSSValueWebkitMinContent || valueID == CSSValueWebkitMaxContent || valueID == CSSValueAuto || primitiveValue.isFlex())
+            return false;
+    }
+    return true;
+}
+
 RefPtr<CSSValue> CSSParser::parseGridTrackList()
 {
     CSSParserValue* value = m_valueList->current();
@@ -5855,14 +5878,19 @@ RefPtr<CSSValue> CSSParser::parseGridTrackList()
         parseGridLineNames(*m_valueList, *values);
 
     bool seenTrackSizeOrRepeatFunction = false;
+    bool seenAutoRepeat = false;
     while (CSSParserValue* currentValue = m_valueList->current()) {
         if (isForwardSlashOperator(*currentValue))
             break;
         if (currentValue->unit == CSSParserValue::Function && equalLettersIgnoringASCIICase(currentValue->function->name, "repeat(")) {
-            if (!parseGridTrackRepeatFunction(*values))
+            bool isAutoRepeat;
+            if (!parseGridTrackRepeatFunction(*values, isAutoRepeat))
                 return nullptr;
+            if (isAutoRepeat && seenAutoRepeat)
+                return nullptr;
+            seenAutoRepeat = seenAutoRepeat || isAutoRepeat;
         } else {
-            RefPtr<CSSValue> value = parseGridTrackSize(*m_valueList);
+            RefPtr<CSSValue> value = parseGridTrackSize(*m_valueList, seenAutoRepeat ? FixedSizeOnly : AllowAll);
             if (!value)
                 return nullptr;
             values->append(value.releaseNonNull());
@@ -5878,24 +5906,33 @@ RefPtr<CSSValue> CSSParser::parseGridTrackList()
     if (!seenTrackSizeOrRepeatFunction)
         return nullptr;
 
+    // <auto-repeat> requires definite minimum track sizes in order to compute the number of repetitions.
+    // The above while loop detects those appearances after the <auto-repeat> but not the ones before.
+    if (seenAutoRepeat && !allTracksAreFixedSized(*values))
+        return nullptr;
+
     return values;
 }
 
-bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
+bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list, bool& isAutoRepeat)
 {
     CSSParserValueList* arguments = m_valueList->current()->function->args.get();
-    if (!arguments || arguments->size() < 3)
+    if (!arguments || arguments->size() < 3 || !isComma(arguments->valueAt(1)))
         return false;
 
     ValueWithCalculation firstValueWithCalculation(*arguments->valueAt(0));
-    if (!validateUnit(firstValueWithCalculation, FPositiveInteger) || !isComma(arguments->valueAt(1)))
+    CSSValueID firstValueID = firstValueWithCalculation.value().id;
+    isAutoRepeat = firstValueID == CSSValueAutoFill || firstValueID == CSSValueAutoFit;
+    if (!isAutoRepeat && !validateUnit(firstValueWithCalculation, FPositiveInteger))
         return false;
 
     // If arguments->valueAt(0)->fValue > SIZE_MAX then repetitions becomes 0 during the type casting, that's why we
     // clamp it down to kGridMaxTracks before the type casting.
-    unsigned repetitions = clampTo<unsigned>(parsedDouble(firstValueWithCalculation), 0, kGridMaxTracks);
+    // The number of repetitions for <auto-repeat> is not important at parsing level
+    // because it will be computed later, let's set it to 1.
+    unsigned repetitions = isAutoRepeat ? 1 : clampTo<unsigned>(parsedDouble(firstValueWithCalculation), 0, kGridMaxTracks);
 
-    RefPtr<CSSValueList> repeatedValues = CSSValueList::createSpaceSeparated();
+    RefPtr<CSSValueList> repeatedValues = isAutoRepeat ? CSSGridAutoRepeatValue::create(firstValueID).get() : CSSValueList::createSpaceSeparated();
     arguments->next(); // Skip the repetition count.
     arguments->next(); // Skip the comma.
 
@@ -5905,8 +5942,12 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
         parseGridLineNames(*arguments, *repeatedValues);
 
     unsigned numberOfTracks = 0;
+    TrackSizeRestriction restriction = isAutoRepeat ? FixedSizeOnly : AllowAll;
     while (arguments->current()) {
-        RefPtr<CSSValue> trackSize = parseGridTrackSize(*arguments);
+        if (isAutoRepeat && numberOfTracks)
+            return false;
+
+        RefPtr<CSSValue> trackSize = parseGridTrackSize(*arguments, restriction);
         if (!trackSize)
             return false;
 
@@ -5936,7 +5977,7 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
     return true;
 }
 
-RefPtr<CSSValue> CSSParser::parseGridTrackSize(CSSParserValueList& inputList)
+RefPtr<CSSValue> CSSParser::parseGridTrackSize(CSSParserValueList& inputList, TrackSizeRestriction restriction)
 {
     CSSParserValue& currentValue = *inputList.current();
     inputList.next();
@@ -5950,7 +5991,7 @@ RefPtr<CSSValue> CSSParser::parseGridTrackSize(CSSParserValueList& inputList)
         if (!arguments || arguments->size() != 3 || !isComma(arguments->valueAt(1)))
             return nullptr;
 
-        RefPtr<CSSPrimitiveValue> minTrackBreadth = parseGridBreadth(*arguments->valueAt(0));
+        RefPtr<CSSPrimitiveValue> minTrackBreadth = parseGridBreadth(*arguments->valueAt(0), restriction);
         if (!minTrackBreadth)
             return nullptr;
 
@@ -5964,15 +6005,21 @@ RefPtr<CSSValue> CSSParser::parseGridTrackSize(CSSParserValueList& inputList)
         return CSSFunctionValue::create("minmax(", parsedArguments);
     }
 
-    return parseGridBreadth(currentValue);
+    return parseGridBreadth(currentValue, restriction);
 }
 
-RefPtr<CSSPrimitiveValue> CSSParser::parseGridBreadth(CSSParserValue& value)
+RefPtr<CSSPrimitiveValue> CSSParser::parseGridBreadth(CSSParserValue& value, TrackSizeRestriction restriction)
 {
-    if (value.id == CSSValueWebkitMinContent || value.id == CSSValueWebkitMaxContent || value.id == CSSValueAuto)
+    if (value.id == CSSValueWebkitMinContent || value.id == CSSValueWebkitMaxContent || value.id == CSSValueAuto) {
+        if (restriction == FixedSizeOnly)
+            return nullptr;
         return CSSValuePool::singleton().createIdentifierValue(value.id);
+    }
 
     if (value.unit == CSSPrimitiveValue::CSS_FR) {
+        if (restriction == FixedSizeOnly)
+            return nullptr;
+
         double flexValue = value.fValue;
 
         // Fractional unit is a non-negative dimension.

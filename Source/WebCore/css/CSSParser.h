@@ -218,9 +218,10 @@ public:
     bool parseGridGapShorthand(bool important);
     bool parseSingleGridAreaLonghand(RefPtr<CSSValue>&);
     RefPtr<CSSValue> parseGridTrackList();
-    bool parseGridTrackRepeatFunction(CSSValueList&);
-    RefPtr<CSSValue> parseGridTrackSize(CSSParserValueList& inputList);
-    RefPtr<CSSPrimitiveValue> parseGridBreadth(CSSParserValue&);
+    bool parseGridTrackRepeatFunction(CSSValueList&, bool& isAutoRepeat);
+    enum TrackSizeRestriction { FixedSizeOnly, AllowAll };
+    RefPtr<CSSValue> parseGridTrackSize(CSSParserValueList& inputList, TrackSizeRestriction = AllowAll);
+    RefPtr<CSSPrimitiveValue> parseGridBreadth(CSSParserValue&, TrackSizeRestriction = AllowAll);
     bool parseGridTemplateAreasRow(NamedGridAreaMap&, const unsigned, unsigned&);
     RefPtr<CSSValue> parseGridTemplateAreas();
     bool parseGridLineNames(CSSParserValueList&, CSSValueList&, CSSGridLineNamesValue* = nullptr);

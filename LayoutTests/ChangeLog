@@ -1,3 +1,13 @@
+2016-03-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Add parsing support for <auto-repeat> syntax
+        https://bugs.webkit.org/show_bug.cgi?id=155583
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css-grid-layout/grid-element-auto-repeat-get-set-expected.txt: Added.
+        * fast/css-grid-layout/grid-element-auto-repeat-get-set.html: Added.
+
 2016-04-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove failing assertion in ANGLE

@@ -65,6 +65,7 @@
 #include "WebKitCSSTransformValue.h"
 
 #if ENABLE(CSS_GRID_LAYOUT)
+#include "CSSGridAutoRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #endif
@@ -208,6 +209,8 @@ bool CSSValue::equals(const CSSValue& other) const
         case RevertClass:
             return compareCSSValues<CSSRevertValue>(*this, other);
 #if ENABLE(CSS_GRID_LAYOUT)
+        case GridAutoRepeatClass:
+            return compareCSSValues<CSSGridAutoRepeatValue>(*this, other);
         case GridLineNamesClass:
             return compareCSSValues<CSSGridLineNamesValue>(*this, other);
         case GridTemplateAreasClass:
@@ -312,6 +315,8 @@ String CSSValue::cssText() const
     case RevertClass:
         return downcast<CSSRevertValue>(*this).customCSSText();
 #if ENABLE(CSS_GRID_LAYOUT)
+    case GridAutoRepeatClass:
+        return downcast<CSSGridAutoRepeatValue>(*this).customCSSText();
     case GridLineNamesClass:
         return downcast<CSSGridLineNamesValue>(*this).customCSSText();
     case GridTemplateAreasClass:
@@ -427,6 +432,9 @@ void CSSValue::destroy()
         delete downcast<CSSRevertValue>(this);
         return;
 #if ENABLE(CSS_GRID_LAYOUT)
+    case GridAutoRepeatClass:
+        delete downcast<CSSGridAutoRepeatValue>(this);
+        return;
     case GridLineNamesClass:
         delete downcast<CSSGridLineNamesValue>(this);
         return;

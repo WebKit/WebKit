@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<link href="resources/grid.css" rel="stylesheet">
+<script src="../../resources/js-test.js"></script>
+<script src="resources/grid-definitions-parsing-utils.js"></script>
+
+<body>
+</body>
+<script>
+    description('Test that setting/getting -webkit-grid-template-{columns|rows} with repeat(auto-fill|auto-fit,) works as expected');
+
+    debug("Test auto-repeat syntax.");
+    testGridTemplatesSetJSValues("repeat(auto-fill, [foo bar] 10px)", "repeat(auto-fill, 2em [foo bar])", "[foo bar] 10px", "20px [foo bar]", "[foo bar] 10px", "2em [foo bar]");
+    testGridTemplatesSetJSValues("repeat(auto-fill, [foo bar] minmax(10px, 1fr))", "repeat(auto-fill, [foo] minmax(2em, -webkit-max-content) [bar])", "[foo bar] 800px", "[foo] 20px [bar]", "[foo bar] minmax(10px, 1fr)", "[foo] minmax(2em, -webkit-max-content) [bar]");
+    testGridTemplatesSetJSValues("repeat(auto-fill, minmax(10px, 100px)) repeat(2, 20px)", "repeat(1, 70px) repeat(auto-fill, minmax(2em, -webkit-max-content) [bar]) repeat(2, [foo] 1em)", "100px 20px 20px", "70px 20px [bar foo] 10px [foo] 10px", "minmax(10px, 100px) 20px 20px", "70px minmax(2em, -webkit-max-content) [bar] [foo] 1em [foo] 1em");
+    testGridTemplatesSetJSValues("repeat(auto-fit, [foo bar] 10px)", "repeat(auto-fit, 2em [foo bar])", "[foo bar] 10px", "20px [foo bar]", "[foo bar] 10px", "2em [foo bar]");
+    testGridTemplatesSetJSValues("repeat(auto-fit, [foo bar] minmax(10px, 1fr))", "repeat(auto-fit, [foo] minmax(2em, -webkit-max-content) [bar])", "[foo bar] 800px", "[foo] 20px [bar]", "[foo bar] minmax(10px, 1fr)", "[foo] minmax(2em, -webkit-max-content) [bar]");
+    testGridTemplatesSetJSValues("repeat(auto-fit, minmax(10px, -webkit-min-content)) repeat(2, 20px)", "repeat(1, 10%) repeat(auto-fit, minmax(2em, -webkit-max-content) [bar]) repeat(2, [foo] 1em)", "10px 20px 20px", "60px 20px [bar foo] 10px [foo] 10px", "minmax(10px, -webkit-min-content) 20px 20px", "10% minmax(2em, -webkit-max-content) [bar] [foo] 1em [foo] 1em");
+
+    debug("");
+    debug("Test invalid repeat syntax.");
+    function testInvalidSyntax(gridColumn) {
+        element = document.createElement("div");
+        document.body.appendChild(element);
+        element.style.webkitGridTemplateColumns = gridColumn;
+        shouldBeEqualToString("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "none");
+        document.body.removeChild(element);
+    }
+
+    testInvalidSyntax("repeat(auto-fill, 1fr)");
+    testInvalidSyntax("repeat(auto-fill, minmax(-webkit-min-content, 20px))");
+    testInvalidSyntax("repeat(auto-fill, [bar] auto)");
+    testInvalidSyntax("repeat(auto-fill, 20px 10px)");
+    testInvalidSyntax("repeat(auto-fill, 20px [foo bar] 10px)");
+    testInvalidSyntax("repeat(auto-fill,)");
+    testInvalidSyntax("repeat(auto-fill, [foo])");
+    testInvalidSyntax("repeat(auto-fit, 1fr)");
+    testInvalidSyntax("repeat(auto-fit, minmax(-webkit-min-content, 20px))");
+    testInvalidSyntax("repeat(auto-fit, [bar] auto)");
+    testInvalidSyntax("repeat(auto-fit, 20px 10px)");
+    testInvalidSyntax("repeat(auto-fit, 20px [foo bar] 10px)");
+    testInvalidSyntax("repeat(auto-fit,)");
+    testInvalidSyntax("repeat(auto-fit, [foo])");
+
+    // <auto-repeat> can only be used once in a <track-list>.
+    testInvalidSyntax("repeat(auto-fill, 10px) repeat(auto-fill, [foo] 2em)");
+    testInvalidSyntax("repeat(auto-fill, 10em [bar]) auto repeat(auto-fill, [foo] 2em)");
+    testInvalidSyntax("repeat(auto-fit, 10px) repeat(auto-fit, [foo] 2em)");
+    testInvalidSyntax("repeat(auto-fit, 10em [bar]) auto repeat(auto-fit, [foo] 2em)");
+    testInvalidSyntax("repeat(auto-fill, [foo] 1em [bar]) auto repeat(auto-fit, [foo] 32px)");
+    testInvalidSyntax("repeat(auto-fill, 1em [bar]) repeat(3, -webkit-max-content [last]) repeat(auto-fit, 32px)");
+
+    // <auto-repeat> requires definite minimum track sizes.
+    testInvalidSyntax("repeat(auto-fill, 10px) repeat(10, minmax(-webkit-min-content, auto))");
+    testInvalidSyntax("auto repeat(auto-fit, [foo] 10px)");
+    testInvalidSyntax("10% repeat(auto-fit, [foo] 10px) -webkit-min-content");
+    testInvalidSyntax("20px [bar] repeat(4, auto) [foo] repeat(auto-fill, 3em)");
+</script>
