@@ -1,3 +1,13 @@
+2016-04-12  Saam barati  <sbarati@apple.com>
+
+        isLocked() assertion broke builds because ConcurrentJITLock isn't always a real lock.
+
+        Rubber-stamped by Filip Pizlo.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resultProfileForBytecodeOffset):
+        (JSC::CodeBlock::ensureResultProfile):
+
 2016-04-11  Filip Pizlo  <fpizlo@apple.com>
 
         PolymorphicAccess should buffer AccessCases before regenerating

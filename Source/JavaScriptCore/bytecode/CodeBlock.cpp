@@ -4235,7 +4235,6 @@ ResultProfile* CodeBlock::resultProfileForBytecodeOffset(int bytecodeOffset)
 
 ResultProfile* CodeBlock::resultProfileForBytecodeOffset(const ConcurrentJITLocker&, int bytecodeOffset)
 {
-    ASSERT(m_lock.isLocked());
     if (!m_bytecodeOffsetToResultProfileIndexMap)
         return nullptr;
     auto iterator = m_bytecodeOffsetToResultProfileIndexMap->find(bytecodeOffset);
@@ -4253,7 +4252,6 @@ ResultProfile* CodeBlock::ensureResultProfile(int bytecodeOffset)
 
 ResultProfile* CodeBlock::ensureResultProfile(const ConcurrentJITLocker& locker, int bytecodeOffset)
 {
-    ASSERT(m_lock.isLocked());
     ResultProfile* profile = resultProfileForBytecodeOffset(locker, bytecodeOffset);
     if (!profile) {
         m_resultProfiles.append(ResultProfile(bytecodeOffset));
