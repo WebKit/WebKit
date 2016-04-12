@@ -1,3 +1,78 @@
+2016-04-11  Darin Adler  <darin@apple.com>
+
+        Remove UsePointersEvenForNonNullableObjectArguments from HTMLSelectElement
+        https://bugs.webkit.org/show_bug.cgi?id=156458
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::remove): Updated to call remove with a reference
+        rather than a pointer.
+
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::JSHTMLSelectElement::remove): Updated to call remove with a reference
+        rather than a pointer.
+        (WebCore::selectIndexSetter): Updated to call setOption with a reference rather
+        than a pointer.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction): Added basic support for passing wrappers by reference.
+        GObject bindings already check arguments for null, so didn't add any new checks.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallbackFunction.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        Updated.
+
+        * editing/FrameSelection.cpp: Updated includes.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setSelected): Pass reference when calling
+        HTMLSelectElement::optionSelectionStateChanged.
+        (WebCore::HTMLOptionElement::insertedInto): Ditto.
+
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::add): Moved null checking behavior here.
+        Preserves existing "silently do nothing if null".
+        (WebCore::HTMLOptionsCollection::remove): Changed function to take a reference
+        instead of a pointer.
+
+        * html/HTMLOptionsCollection.h: Updated include. Changed remove to take a
+        reference instead of a pointer.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::add): Changed to take a reference instead of
+        a pointer. Also removed unneeded protect code, since insertBefore already
+        protects itself, and unneeded call to updateValidity, since the
+        HTMLSelectElement::childrenChanged function already calls updateValidity.
+        (WebCore::HTMLSelectElement::remove): Changed to take a reference instead
+        of a pointer.
+        (WebCore::HTMLSelectElement::setOption): Changed to take a reference
+        instead of a pointer.
+        (WebCore::HTMLSelectElement::setLength): Renamed "newLen" to "newLength".
+        Use Ref instead of RefPtr for result of createElement, which makes the
+        argument passed to add be a reference rather than a pointer.
+        (WebCore::HTMLSelectElement::willRespondToMouseClickEvents): Put the #if
+        for this here instead of in the header.
+        (WebCore::HTMLSelectElement::optionSelectionStateChanged): Changed to take
+        a reference instead of a pointer for the option element.
+
+        * html/HTMLSelectElement.h: Removed unneeded includes. Derive privately
+        from TypeAheadDataSource instead of publicly. Make all overrides final
+        except for the one that is actually overridden by a derived class.
+        Changed the arguments of the add, remove, setOption, and
+        optionSelectionStateChanged functions to be references instead of pointers.
+        Tweaked formatting a bit and used nullptr instead of 0. Override
+        willRespondToMouseClickEvents on all platforms, not just iOS.
+
+        * html/HTMLSelectElement.idl: Removed UsePointersEvenForNonNullableObjectArguments.
+        Removed a comment that is no longer needed. Made some types nullable to match
+        the specification, in places that currently have no effect on code generation.
+        Added a FIXME comment about the argument to setCustomValidity incorrectly being
+        marked as nullable.
+
 2016-04-11  Brent Fulgham  <bfulgham@apple.com>
 
         Use WeakPtrs to avoid using deallocated Widgets and ScrollableAreas

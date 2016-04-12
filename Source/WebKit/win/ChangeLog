@@ -1,3 +1,12 @@
+2016-04-11  Darin Adler  <darin@apple.com>
+
+        Remove UsePointersEvenForNonNullableObjectArguments from HTMLSelectElement
+        https://bugs.webkit.org/show_bug.cgi?id=156458
+
+        Reviewed by Chris Dumez.
+
+        * DOMCoreClasses.cpp: Added now-needed include.
+
 2016-04-11  Gavin Barraclough  <barraclough@apple.com>
 
         WebKit should adopt journal_mode=wal for all SQLite databases.

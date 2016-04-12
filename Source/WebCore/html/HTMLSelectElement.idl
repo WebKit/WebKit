@@ -20,11 +20,10 @@
 
 [
     CustomIndexedSetter,
-    UsePointersEvenForNonNullableObjectArguments,
 ] interface HTMLSelectElement : HTMLElement {
     [Reflect] attribute boolean autofocus;
     [Reflect] attribute boolean disabled;
-    readonly attribute HTMLFormElement form;
+    readonly attribute HTMLFormElement? form;
     attribute boolean multiple;
     [Reflect] attribute DOMString name;
     [Reflect] attribute boolean required;
@@ -39,8 +38,6 @@
 
     readonly attribute HTMLOptionsCollection options;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    // DOM Level 2 changes type of length attribute to unsigned long, 
-    // for compatibility we keep DOM Level 1 definition.
     readonly attribute long length;
 #else
     [SetterRaisesException] attribute unsigned long length;
@@ -50,8 +47,8 @@
     getter Node item(unsigned long index);
     Node namedItem([Default=Undefined] optional DOMString name);
 #else
-    getter HTMLOptionElement item(unsigned long index);
-    HTMLOptionElement namedItem([Default=Undefined] optional DOMString name);
+    getter HTMLOptionElement? item(unsigned long index);
+    HTMLOptionElement? namedItem([Default=Undefined] optional DOMString name);
 #endif
 
     [ObjCLegacyUnnamedParameters, RaisesException] void add(HTMLElement element, [Default=Undefined] optional HTMLElement? before);
@@ -63,17 +60,17 @@
 #else
     [ImplementedAs=removeByIndex] void remove(long index);
 #endif
+
     readonly attribute HTMLCollection selectedOptions;
     attribute long selectedIndex;
 
-    // FIXME: This should not use [TreatNullAs=LegacyNullString].
-    [TreatNullAs=LegacyNullString] attribute DOMString value;
+    [TreatNullAs=LegacyNullString] attribute DOMString value; // FIXME: This should not use [TreatNullAs=LegacyNullString].
 
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;
     readonly attribute DOMString validationMessage;
     boolean checkValidity();
-    void setCustomValidity(DOMString? error);
+    void setCustomValidity(DOMString? error); // FIXME: Argument should not be nullable.
 
     readonly attribute NodeList labels;
 

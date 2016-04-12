@@ -135,7 +135,7 @@ gboolean webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallbac
     g_return_val_if_fail(WEBKIT_DOM_IS_FLOAT32ARRAY(arrayParam), FALSE);
     WebCore::TestCallback* item = WebKit::core(self);
     WebCore::Float32Array* convertedArrayParam = WebKit::core(arrayParam);
-    gboolean result = item->callbackWithArrayParam(convertedArrayParam);
+    gboolean result = item->callbackWithArrayParam(*convertedArrayParam);
     return result;
 #else
     UNUSED_PARAM(self);
@@ -191,7 +191,7 @@ gboolean webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallbac
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_STRING_LIST(listParam), FALSE);
     WebCore::TestCallback* item = WebKit::core(self);
     WebCore::DOMStringList* convertedListParam = WebKit::core(listParam);
-    gboolean result = item->callbackWithStringList(convertedListParam);
+    gboolean result = item->callbackWithStringList(*convertedListParam);
     return result;
 #else
     UNUSED_PARAM(self);
@@ -225,7 +225,7 @@ gboolean webkit_dom_test_callback_callback_requires_this_to_pass(WebKitDOMTestCa
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_NODE(testNodeParam), FALSE);
     WebCore::TestCallback* item = WebKit::core(self);
     WebCore::TestNode* convertedTestNodeParam = WebKit::core(testNodeParam);
-    gboolean result = item->callbackRequiresThisToPass(longParam, convertedTestNodeParam);
+    gboolean result = item->callbackRequiresThisToPass(longParam, *convertedTestNodeParam);
     return result;
 #else
     UNUSED_PARAM(self);

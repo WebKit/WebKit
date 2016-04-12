@@ -37,6 +37,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/DragImage.h>
 #include <WebCore/Element.h>
+#include <WebCore/Event.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/Frame.h>

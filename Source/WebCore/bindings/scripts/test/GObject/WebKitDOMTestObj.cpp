@@ -1216,7 +1216,7 @@ void webkit_dom_test_obj_void_method_with_args(WebKitDOMTestObj* self, glong lon
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
-    item->voidMethodWithArgs(longArg, convertedStrArg, convertedObjArg);
+    item->voidMethodWithArgs(longArg, convertedStrArg, *convertedObjArg);
 }
 
 gint8 webkit_dom_test_obj_byte_method(WebKitDOMTestObj* self)
@@ -1237,7 +1237,7 @@ gint8 webkit_dom_test_obj_byte_method_with_args(WebKitDOMTestObj* self, gint8 by
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
-    gint8 result = item->byteMethodWithArgs(byteArg, convertedStrArg, convertedObjArg);
+    gint8 result = item->byteMethodWithArgs(byteArg, convertedStrArg, *convertedObjArg);
     return result;
 }
 
@@ -1259,7 +1259,7 @@ guint8 webkit_dom_test_obj_octet_method_with_args(WebKitDOMTestObj* self, guint8
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
-    guint8 result = item->octetMethodWithArgs(octetArg, convertedStrArg, convertedObjArg);
+    guint8 result = item->octetMethodWithArgs(octetArg, convertedStrArg, *convertedObjArg);
     return result;
 }
 
@@ -1281,7 +1281,7 @@ glong webkit_dom_test_obj_long_method_with_args(WebKitDOMTestObj* self, glong lo
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
-    glong result = item->longMethodWithArgs(longArg, convertedStrArg, convertedObjArg);
+    glong result = item->longMethodWithArgs(longArg, convertedStrArg, *convertedObjArg);
     return result;
 }
 
@@ -1303,7 +1303,7 @@ WebKitDOMTestObj* webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* sel
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
-    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->objMethodWithArgs(longArg, convertedStrArg, convertedObjArg));
+    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->objMethodWithArgs(longArg, convertedStrArg, *convertedObjArg));
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -1375,7 +1375,7 @@ WebKitDOMTestObj* webkit_dom_test_obj_method_that_requires_all_args_and_throws(W
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
     WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->methodThatRequiresAllArgsAndThrows(convertedStrArg, convertedObjArg, ec));
+    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->methodThatRequiresAllArgsAndThrows(convertedStrArg, *convertedObjArg, ec));
     if (ec) {
         WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
@@ -1646,7 +1646,7 @@ void webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMTestNode* val
     g_return_if_fail(WEBKIT_DOM_IS_TEST_NODE(value));
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::TestNode* convertedValue = WebKit::core(value);
-    item->convert1(convertedValue);
+    item->convert1(*convertedValue);
 }
 
 void webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMTestNode* value)
@@ -1733,7 +1733,7 @@ WebKitDOMbool* webkit_dom_test_obj_strict_function_with_array(WebKitDOMTestObj* 
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
     WebCore::long[]* convertedArray = WebKit::core(array);
     WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::bool> gobjectResult = WTF::getPtr(item->strictFunctionWithArray(convertedObjArg, array, ec));
+    RefPtr<WebCore::bool> gobjectResult = WTF::getPtr(item->strictFunctionWithArray(*convertedObjArg, array, ec));
     if (ec) {
         WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
@@ -1770,7 +1770,7 @@ void webkit_dom_test_obj_variadic_node_method(WebKitDOMTestObj* self, WebKitDOMN
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::Node* convertedHead = WebKit::core(head);
     WebCore::Node* convertedTail = WebKit::core(tail);
-    item->variadicNodeMethod(convertedHead, convertedTail);
+    item->variadicNodeMethod(*convertedHead, convertedTail);
 }
 
 void webkit_dom_test_obj_any(WebKitDOMTestObj* self, gfloat a, glong b)

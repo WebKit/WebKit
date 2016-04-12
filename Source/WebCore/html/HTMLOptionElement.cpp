@@ -213,7 +213,7 @@ void HTMLOptionElement::setSelected(bool selected)
     setSelectedState(selected);
 
     if (HTMLSelectElement* select = ownerSelectElement())
-        select->optionSelectionStateChanged(this, selected);
+        select->optionSelectionStateChanged(*this, selected);
 }
 
 void HTMLOptionElement::setSelectedState(bool selected)
@@ -314,7 +314,7 @@ Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode
         // FIXME: Might be better to call this unconditionally, always passing m_isSelected,
         // rather than only calling it if we are selected.
         if (m_isSelected)
-            select->optionSelectionStateChanged(this, true);
+            select->optionSelectionStateChanged(*this, true);
         select->scrollToSelection();
     }
 

@@ -25,6 +25,7 @@
 #define HTMLOptionsCollection_h
 
 #include "CachedHTMLCollection.h"
+#include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 
 namespace WebCore {
@@ -46,7 +47,7 @@ public:
     void add(HTMLElement*, HTMLElement* beforeElement, ExceptionCode&);
     void add(HTMLElement*, int beforeIndex, ExceptionCode&);
     void remove(int index);
-    void remove(HTMLOptionElement*);
+    void remove(HTMLOptionElement&);
 
     int selectedIndex() const;
     void setSelectedIndex(int);

@@ -1109,6 +1109,9 @@ sub GenerateFunction {
         }
         if ($paramIsGDOMType || ($paramIDLType eq "DOMString")) {
             $paramName = "converted" . $codeGenerator->WK_ucfirst($paramName);
+            if ($prefix ne "set_" && $codeGenerator->ShouldPassWrapperByReference($param, $parentNode)) {
+                $paramName = "*$paramName";
+            }
         }
         if ($paramIDLType eq "NodeFilter" || $paramIDLType eq "XPathNSResolver") {
             $paramName = "WTF::getPtr(" . $paramName . ")";

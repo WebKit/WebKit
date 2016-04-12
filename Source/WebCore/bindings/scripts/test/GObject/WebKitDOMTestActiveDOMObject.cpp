@@ -141,7 +141,7 @@ void webkit_dom_test_active_dom_object_exciting_function(WebKitDOMTestActiveDOMO
     g_return_if_fail(WEBKIT_DOM_IS_NODE(nextChild));
     WebCore::TestActiveDOMObject* item = WebKit::core(self);
     WebCore::Node* convertedNextChild = WebKit::core(nextChild);
-    item->excitingFunction(convertedNextChild);
+    item->excitingFunction(*convertedNextChild);
 }
 
 void webkit_dom_test_active_dom_object_post_message(WebKitDOMTestActiveDOMObject* self, const gchar* message)
