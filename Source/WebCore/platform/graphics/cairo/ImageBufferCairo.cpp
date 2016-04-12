@@ -68,9 +68,10 @@ using namespace std;
 
 namespace WebCore {
 
-ImageBufferData::ImageBufferData(const IntSize& size)
+ImageBufferData::ImageBufferData(const IntSize& size, RenderingMode renderingMode)
     : m_platformContext(0)
     , m_size(size)
+    , m_renderingMode(renderingMode)
 #if ENABLE(ACCELERATED_2D_CANVAS)
 #if USE(COORDINATED_GRAPHICS_THREADED)
     , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxy))
@@ -79,6 +80,28 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     , m_texture(0)
 #endif
 {
+}
+
+ImageBufferData::~ImageBufferData()
+{
+    if (m_renderingMode != Accelerated)
+        return;
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    GLContext* previousActiveContext = GLContext::getCurrent();
+    GLContext::sharingContext()->makeContextCurrent();
+
+    if (m_texture)
+        glDeleteTextures(1, &m_texture);
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    if (m_compositorTexture)
+        glDeleteTextures(1, &m_compositorTexture);
+#endif
+
+    if (previousActiveContext)
+        previousActiveContext->makeContextCurrent();
+#endif
 }
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
@@ -163,7 +186,7 @@ void ImageBufferData::createCairoGLSurface()
 #endif
 
 ImageBuffer::ImageBuffer(const FloatSize& size, float /* resolutionScale */, ColorSpace, RenderingMode renderingMode, bool& success)
-    : m_data(IntSize(size))
+    : m_data(IntSize(size), renderingMode)
     , m_size(size)
     , m_logicalSize(size)
 {
@@ -172,14 +195,14 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float /* resolutionScale */, Col
         return;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    if (renderingMode == Accelerated) {
+    if (m_data.m_renderingMode == Accelerated) {
         m_data.createCairoGLSurface();
         if (!m_data.m_surface || cairo_surface_status(m_data.m_surface.get()) != CAIRO_STATUS_SUCCESS)
-            renderingMode = Unaccelerated; // If allocation fails, fall back to non-accelerated path.
+            m_data.m_renderingMode = Unaccelerated; // If allocation fails, fall back to non-accelerated path.
     }
-    if (renderingMode == Unaccelerated)
+    if (m_data.m_renderingMode == Unaccelerated)
 #else
-    ASSERT_UNUSED(renderingMode, renderingMode != Accelerated);
+    ASSERT(m_data.m_renderingMode != Accelerated);
 #endif
         m_data.m_surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(), size.height()));
 
