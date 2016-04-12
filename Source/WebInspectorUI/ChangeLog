@@ -1,3 +1,26 @@
+2016-04-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: save inspector's zoom factor as a persistent setting across sessions
+        https://bugs.webkit.org/show_bug.cgi?id=156522
+        <rdar://problem/25635774>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        Initialize the setting and immediately set the zoom before the frontend page loads.
+
+        (WebInspector._increaseZoom):
+        (WebInspector._decreaseZoom):
+        (WebInspector._resetZoom):
+        Use the internal get/set method which updates the WebInspector.Setting.
+
+        (WebInspector._setZoomFactor):
+        Added. Round-trip through the frontend host method in case it further clamps the value.
+
+        (WebInspector._zoomFactor):
+        Added. Just return the setting, since there's no other way for zoom to have changed.
+
 2016-04-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show the normal Native icon for all Internal objects in Heap Snapshots

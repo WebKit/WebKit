@@ -170,6 +170,9 @@ WebInspector.loaded = function()
     if (this.showPaintRectsSetting.value && window.PageAgent && PageAgent.setShowPaintRects)
         PageAgent.setShowPaintRects(true);
 
+    this._zoomFactorSetting = new WebInspector.Setting("zoom-factor", 1);
+    this._setZoomFactor(this._zoomFactorSetting.value);
+
     this.mouseCoords = {
         x: 0,
         y: 0
@@ -1638,7 +1641,7 @@ WebInspector._dockedResizerMouseDown = function(event)
         let dimension = Math.max(0, window[windowProperty] - delta);
         // If zoomed in/out, there be greater/fewer document pixels shown, but the inspector's
         // width or height should be the same in device pixels regardless of the document zoom.
-        dimension *= InspectorFrontendHost.zoomFactor();
+        dimension *= this._zoomFactor();
 
         if (this._dockSide === "bottom")
             InspectorFrontendHost.setAttachedWindowHeight(dimension);
@@ -1958,12 +1961,12 @@ WebInspector._increaseZoom = function(event)
 {
     const epsilon = 0.0001;
     const maximumZoom = 2.4;
-    let currentZoom = InspectorFrontendHost.zoomFactor();
+    let currentZoom = this._zoomFactor();
     if (currentZoom + epsilon >= maximumZoom)
         return;
 
     let newZoom = Math.min(maximumZoom, currentZoom + 0.2);
-    InspectorFrontendHost.setZoomFactor(newZoom);
+    this._setZoomFactor(newZoom);
     event.preventDefault();
 };
 
@@ -1971,19 +1974,31 @@ WebInspector._decreaseZoom = function(event)
 {
     const epsilon = 0.0001;
     const minimumZoom = 0.6;
-    let currentZoom = InspectorFrontendHost.zoomFactor();    
+    let currentZoom = this._zoomFactor();
     if (currentZoom - epsilon <= minimumZoom)
         return;
 
     let newZoom = Math.max(minimumZoom, currentZoom - 0.2);
-    InspectorFrontendHost.setZoomFactor(newZoom);
+    this._setZoomFactor(newZoom);
     event.preventDefault();
 };
 
 WebInspector._resetZoom = function(event)
 {
-    InspectorFrontendHost.setZoomFactor(1);
+    this._setZoomFactor(1);
 };
+
+WebInspector._zoomFactor = function()
+{
+    return this._zoomFactorSetting.value;
+}
+
+WebInspector._setZoomFactor = function(factor)
+{
+    InspectorFrontendHost.setZoomFactor(factor);
+    // Round-trip through the frontend host API in case the requested factor is not used.
+    this._zoomFactorSetting.value = InspectorFrontendHost.zoomFactor();
+}
 
 WebInspector._showTabAtIndex = function(i, event)
 {
