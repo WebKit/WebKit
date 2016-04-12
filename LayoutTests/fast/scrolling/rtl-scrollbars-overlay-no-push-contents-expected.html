@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<html>
+<head>
+<script>
+if (window.internals)
+    internals.setUsesOverlayScrollbars(true);
+</script>
+</head>
+<body style="margin: 0px;">
+This test makes sure that overlay scrollbars don't push contents over.
+<div style="width: 370px; height: 400px; overflow: hidden">
+<div style="width: 400px; height: 400px; overflow-x: hidden; overflow-y: auto; position: relative; left: -15px; background: blue;">
+<div style="background: green;">This is some text and each pixel should match exactly.</div>
+</div>
+</div>
+</body>
+</html>

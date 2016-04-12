@@ -1,5 +1,16 @@
 2016-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [RTL Scrollbars] Overlay scrollbars push contents inwards
+        https://bugs.webkit.org/show_bug.cgi?id=156225
+        <rdar://problem/25137040>
+
+        Reviewed by Darin Adler.
+
+        * fast/scrolling/rtl-scrollbars-overlay-no-push-contents-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-overlay-no-push-contents.html: Added.
+
+2016-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [OS X] Flakey crash after ScrollAnimatorMac destruction
         https://bugs.webkit.org/show_bug.cgi?id=156372
 

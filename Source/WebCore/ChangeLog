@@ -1,5 +1,21 @@
 2016-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [RTL Scrollbars] Overlay scrollbars push contents inwards
+        https://bugs.webkit.org/show_bug.cgi?id=156225
+        <rdar://problem/25137040>
+
+        Reviewed by Darin Adler.
+
+        The contents should be pushed in by the occupied width of the
+        scrollbar, which is 0 for overlay scrollbars.
+
+        Test: fast/scrolling/rtl-scrollbars-overlay-no-push-contents.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::computeScrollDimensions):
+
+2016-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [OS X] Flakey crash after ScrollAnimatorMac destruction
         https://bugs.webkit.org/show_bug.cgi?id=156372
 

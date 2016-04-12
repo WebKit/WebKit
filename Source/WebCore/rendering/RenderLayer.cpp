@@ -3377,7 +3377,7 @@ void RenderLayer::computeScrollDimensions()
 
     int scrollableLeftOverflow = overflowLeft() - box->borderLeft();
     if (box->style().isLeftToRightDirection() && box->style().shouldPlaceBlockDirectionScrollbarOnLeft() && m_vBar)
-        scrollableLeftOverflow -= m_vBar->width();
+        scrollableLeftOverflow -= m_vBar->occupiedWidth();
     int scrollableTopOverflow = overflowTop() - box->borderTop();
     setScrollOrigin(IntPoint(-scrollableLeftOverflow, -scrollableTopOverflow));
 }
