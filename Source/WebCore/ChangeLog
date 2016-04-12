@@ -1,3 +1,65 @@
+2016-04-11  Jeremy Jones  <jeremyj@apple.com>
+
+        When clearing cache, also clear AVFoundation cache.
+        https://bugs.webkit.org/show_bug.cgi?id=155783
+        rdar://problem/25252541
+
+        Reviewed by Darin Adler.
+
+        Use AVAssetCache at a specified location on disk for all AVURLAssets. This AVAssetCache
+        can then be used to manage the cache storage used by AVFoundation. It is used to query the
+        contents of the cache in originsInMediaCache() and to clear the cache completely or partially in
+        clearMediaCache() and clearMediaCacheForOrigins().
+
+        Use SecurityOrigin instead of the less formal site String to represent origins in the cache.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::sharedMediaCacheDirectory): Added.
+        (WebCore::HTMLMediaElement::setMediaCacheDirectory): Added.
+        (WebCore::HTMLMediaElement::mediaCacheDirectory): Added.
+        (WebCore::HTMLMediaElement::originsInMediaCache): Added.
+        (WebCore::HTMLMediaElement::clearMediaCache): Added parameter.
+        (WebCore::HTMLMediaElement::clearMediaCacheForOrigins): Added.
+        (WebCore::HTMLMediaElement::mediaPlayerMediaCacheDirectory): Added.
+        (WebCore::HTMLMediaElement::getSitesInMediaCache): Deleted.
+        (WebCore::HTMLMediaElement::clearMediaCacheForSite): Deleted.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::clearMediaCache): Added parameter.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::addMediaEngine): Add new cache methods.
+        (WebCore::addToHash): Added.
+        (WebCore::MediaPlayer::originsInMediaCache): Added.
+        (WebCore::MediaPlayer::clearMediaCache): Added parameter.
+        (WebCore::MediaPlayer::clearMediaCacheForOrigins): Added.
+        (WebCore::MediaPlayer::getSitesInMediaCache): Deleted.
+        (WebCore::MediaPlayer::clearMediaCacheForSite): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerMediaCacheDirectory): Added.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::originsInMediaCache): Added.
+        (WebCore::MediaPlayerPrivateInterface::clearMediaCache): Added parameter.
+        (WebCore::MediaPlayerPrivateInterface::clearMediaCacheForOrigins): Added.
+        (WebCore::MediaPlayerPrivateInterface::getSitesInMediaCache): Deleted.
+        (WebCore::MediaPlayerPrivateInterface::clearMediaCacheForSite): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::registerMediaEngine): Added cache methods.
+        (WebCore::assetCacheForPath): Added.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::originsInMediaCache): Added.
+        (WebCore::toSystemClockTime): Added.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::clearMediaCache): Added parameter.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins): Added.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Added.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::registerMediaEngine): Added cache methods.
+        (WebCore::MediaPlayerPrivateQTKit::originsInMediaCache): Added.
+        (WebCore::MediaPlayerPrivateQTKit::clearMediaCache): Added parameter.
+        (WebCore::MediaPlayerPrivateQTKit::clearMediaCacheForOrigins): Added.
+        (WebCore::MediaPlayerPrivateQTKit::getSitesInMediaCache): Deleted.
+        (WebCore::MediaPlayerPrivateQTKit::clearMediaCacheForSite): Deleted.
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2016-04-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199310.

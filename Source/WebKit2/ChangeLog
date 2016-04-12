@@ -1,3 +1,51 @@
+2016-04-11  Jeremy Jones  <jeremyj@apple.com>
+
+        When clearing cache, also clear AVFoundation cache.
+        https://bugs.webkit.org/show_bug.cgi?id=155783
+        rdar://problem/25252541
+
+        Reviewed by Darin Adler.
+
+        Include the HTMLMediaElement media cache when doing disk cache operations.
+        Add a sandbox extension for media cache directory. This allows the UI process and the web process
+        to access the same cache.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Add media cache directory.
+        (WebKit::WebProcessCreationParameters::decode): Add media cache directory.
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        (API::ProcessPoolConfiguration::ProcessPoolConfiguration): Add media cache directory.
+        (API::ProcessPoolConfiguration::copy): Add media cache directory.
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::defaultMediaCacheDirectory): Default implementation.
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultMediaCacheDirectory): Media cache is in temporary directory.
+        (API::WebsiteDataStore::tempDirectoryFileSystemRepresentation): For resources in temporary directory.
+        (API::WebsiteDataStore::defaultDataStoreConfiguration): Init media cache directory.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::legacyWebsiteDataStoreConfiguration): Add mediaCacheDirectory.
+        (WebKit::WebProcessPool::createNewWebProcess): Add mediaCacheDirectory.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::fetchData): Implement for mediaCacheDirectory.
+        (WebKit::WebsiteDataStore::removeData): Implement for mediaCacheDirectory.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory): Added.
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory): Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Initialize media cache directory.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Consume sandbox extension.
+
 2016-04-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199315.

@@ -55,6 +55,21 @@ NS_ASSUME_NONNULL_END
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <AVFoundation/AVAssetCache_Private.h>
+#else
+NS_ASSUME_NONNULL_BEGIN
+@interface AVAssetCache : NSObject
++ (AVAssetCache *)assetCacheWithURL:(NSURL *)URL;
+- (id)initWithURL:(NSURL *)URL;
+- (NSArray *)allKeys;
+- (NSDate *)lastModifiedDateOfEntryForKey:(NSString *)key;
+- (void)removeEntryForKey:(NSString *)key;
+@property (nonatomic, readonly, copy) NSURL *URL;
+@end
+NS_ASSUME_NONNULL_END
+#endif
+
 #if PLATFORM(IOS)
 
 #if HAVE(AVKIT) && USE(APPLE_INTERNAL_SDK)

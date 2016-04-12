@@ -361,6 +361,7 @@ public:
     static String legacyPlatformDefaultIndexedDBDatabaseDirectory();
     static String legacyPlatformDefaultWebSQLDatabaseDirectory();
     static String legacyPlatformDefaultMediaKeysStorageDirectory();
+    static String legacyPlatformDefaultMediaCacheDirectory();
     static String legacyPlatformDefaultApplicationCacheDirectory();
     static String legacyPlatformDefaultNetworkCacheDirectory();
     static bool isNetworkCacheEnabled();

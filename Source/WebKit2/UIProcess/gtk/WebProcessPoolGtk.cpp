@@ -86,6 +86,11 @@ WTF::String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()
     return API::WebsiteDataStore::defaultApplicationCacheDirectory();
 }
 
+WTF::String WebProcessPool::legacyPlatformDefaultMediaCacheDirectory()
+{
+    return API::WebsiteDataStore::defaultMediaCacheDirectory();
+}
+
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     initInspectorServer();
