@@ -62,17 +62,22 @@ UserMessageHandler* UserMessageHandlersNamespace::handler(const AtomicString& na
         return nullptr;
 
     RefPtr<UserMessageHandlerDescriptor> descriptor = userMessageHandlerDescriptors->get(std::make_pair(name, &world));
-    if (!descriptor) {
-        m_messageHandlers.removeFirstMatching([&name, &world](Ref<UserMessageHandler>& handler) {
-            return handler->name() == name && &handler->world() == &world;
-        });
+    if (!descriptor)
         return nullptr;
-    }
 
     for (auto& handler : m_messageHandlers) {
-        if (handler->name() == name && &handler->world() == &world)
+        if (&handler->descriptor() == descriptor.get())
             return &handler.get();
     }
+
+    auto liveHandlers = userMessageHandlerDescriptors->values();
+    m_messageHandlers.removeAllMatching([liveHandlers](const Ref<UserMessageHandler>& handler) {
+        for (const auto& liveHandler : liveHandlers) {
+            if (liveHandler.get() == &handler->descriptor())
+                return true;
+        }
+        return false;
+    });
 
     m_messageHandlers.append(UserMessageHandler::create(*frame(), *descriptor));
     return &m_messageHandlers.last().get();
