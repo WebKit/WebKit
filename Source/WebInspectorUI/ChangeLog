@@ -1,5 +1,20 @@
 2016-04-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Keyboard shortcut for "Inspect Element" only works when Web Inspector is open.
+        https://bugs.webkit.org/show_bug.cgi?id=111193
+        <rdar://problem/13325889>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype.set inspectModeEnabled):
+        (WebInspector.DOMTreeManager.set inspectModeEnabled.callback):
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setElementSelectionEnabled):
+        Frontend API to enable element selection.
+
+2016-04-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Should be able to expand Objects in Heap Allocations View to see exactly what it retains
         https://bugs.webkit.org/show_bug.cgi?id=156419
         <rdar://problem/25633863>

@@ -62,6 +62,7 @@ public:
     virtual void setShowPaintRects(bool) { }
     virtual void showPaintRect(const FloatRect&) { }
     virtual void didSetSearchingForNode(bool) { }
+    virtual void elementSelectionChanged(bool) { }
 
     virtual bool handleJavaScriptDialog(bool, const String*) { return false; }
 

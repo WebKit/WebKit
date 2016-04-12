@@ -192,6 +192,11 @@ void WebInspectorClient::didSetSearchingForNode(bool enabled)
 }
 #endif
 
+void WebInspectorClient::elementSelectionChanged(bool active)
+{
+    m_page->inspector()->elementSelectionChanged(active);
+}
+
 void WebInspectorClient::pageOverlayDestroyed(PageOverlay&)
 {
 }

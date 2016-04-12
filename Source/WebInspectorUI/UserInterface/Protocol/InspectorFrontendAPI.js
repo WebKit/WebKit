@@ -55,6 +55,11 @@ InspectorFrontendAPI = {
         }
     },
 
+    setElementSelectionEnabled: function(enabled)
+    {
+        WebInspector.domTreeManager.inspectModeEnabled = enabled;
+    },
+
     setDockingUnavailable: function(unavailable)
     {
         WebInspector.updateDockingAvailability(!unavailable);

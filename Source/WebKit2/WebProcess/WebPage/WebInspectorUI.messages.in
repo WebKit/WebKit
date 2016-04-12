@@ -36,6 +36,9 @@ messages -> WebInspectorUI {
     StartPageProfiling()
     StopPageProfiling()
 
+    StartElementSelection()
+    StopElementSelection()
+
     DidSave(String url)
     DidAppend(String url)
 

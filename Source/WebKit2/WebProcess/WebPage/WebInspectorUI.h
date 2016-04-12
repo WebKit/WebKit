@@ -63,6 +63,9 @@ public:
     void startPageProfiling();
     void stopPageProfiling();
 
+    void startElementSelection();
+    void stopElementSelection();
+
     void attachedBottom() { setDockSide(DockSide::Bottom); }
     void attachedRight() { setDockSide(DockSide::Right); }
     void detached() { setDockSide(DockSide::Undocked); }

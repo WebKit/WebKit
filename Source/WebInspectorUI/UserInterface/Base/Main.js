@@ -327,8 +327,8 @@ WebInspector.contentLoaded = function()
 
     // The toolbar button for node inspection.
     if (this.debuggableType === WebInspector.DebuggableType.Web) {
-        var toolTip = WebInspector.UIString("Enable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
-        var activatedToolTip = WebInspector.UIString("Disable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
+        var toolTip = WebInspector.UIString("Start element selection (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
+        var activatedToolTip = WebInspector.UIString("Stop element selection (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
         this._inspectModeToolbarButton = new WebInspector.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, null, "Images/Crosshair.svg");
         this._inspectModeToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleInspectMode, this);
     }

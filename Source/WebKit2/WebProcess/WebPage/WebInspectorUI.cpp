@@ -233,6 +233,16 @@ void WebInspectorUI::stopPageProfiling()
     m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setTimelineProfilingEnabled"), false);
 }
 
+void WebInspectorUI::startElementSelection()
+{
+    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setElementSelectionEnabled"), true);
+}
+
+void WebInspectorUI::stopElementSelection()
+{
+    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setElementSelectionEnabled"), false);
+}
+
 void WebInspectorUI::didSave(const String& url)
 {
     m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("savedURL"), url);

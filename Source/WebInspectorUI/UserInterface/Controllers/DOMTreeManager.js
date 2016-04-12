@@ -448,13 +448,13 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
 
     set inspectModeEnabled(enabled)
     {
-        function callback(error)
-        {
+        if (enabled === this._inspectModeEnabled)
+            return;
+
+        DOMAgent.setInspectModeEnabled(enabled, this._buildHighlightConfig(), (error) => {
             this._inspectModeEnabled = error ? false : enabled;
             this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.InspectModeStateChanged);
-        }
-
-        DOMAgent.setInspectModeEnabled(enabled, this._buildHighlightConfig(), callback.bind(this));
+        });
     }
 
     _buildHighlightConfig(mode = "all")

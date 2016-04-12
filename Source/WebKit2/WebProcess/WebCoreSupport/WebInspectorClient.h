@@ -66,6 +66,8 @@ private:
     void didSetSearchingForNode(bool) override;
 #endif
 
+    void elementSelectionChanged(bool) override;
+
     bool overridesShowPaintRects() const override { return true; }
     void showPaintRect(const WebCore::FloatRect&) override;
 

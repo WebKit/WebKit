@@ -79,6 +79,10 @@ public:
     void startPageProfiling();
     void stopPageProfiling();
 
+    void startElementSelection();
+    void stopElementSelection();
+    void elementSelectionChanged(bool);
+
     void sendMessageToBackend(const String&);
 
 #if ENABLE(INSPECTOR_SERVER)

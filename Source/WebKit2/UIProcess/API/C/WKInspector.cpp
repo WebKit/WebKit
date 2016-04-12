@@ -120,4 +120,14 @@ void WKInspectorTogglePageProfiling(WKInspectorRef inspectorRef)
     toImpl(inspectorRef)->togglePageProfiling();
 }
 
+bool WKInspectorIsElementSelectionActive(WKInspectorRef inspectorRef)
+{
+    return toImpl(inspectorRef)->isElementSelectionActive();
+}
+
+void WKInspectorToggleElementSelection(WKInspectorRef inspectorRef)
+{
+    toImpl(inspectorRef)->toggleElementSelection();
+}
+
 #endif // !PLATFORM(IOS)

@@ -63,6 +63,8 @@
 #include "HTMLNames.h"
 #include "HTMLTemplateElement.h"
 #include "HitTestResult.h"
+#include "InspectorClient.h"
+#include "InspectorController.h"
 #include "InspectorHistory.h"
 #include "InspectorNodeFinder.h"
 #include "InspectorOverlay.h"
@@ -1015,7 +1017,9 @@ void InspectorDOMAgent::setSearchingForNode(ErrorString& errorString, bool enabl
 {
     if (m_searchingForNode == enabled)
         return;
+
     m_searchingForNode = enabled;
+
     if (enabled) {
         m_inspectModeHighlightConfig = highlightConfigFromInspectorObject(errorString, highlightInspectorObject);
         if (!m_inspectModeHighlightConfig)
@@ -1024,6 +1028,9 @@ void InspectorDOMAgent::setSearchingForNode(ErrorString& errorString, bool enabl
         hideHighlight(errorString);
 
     m_overlay->didSetSearchingForNode(m_searchingForNode);
+
+    if (InspectorClient* client = m_pageAgent->page().inspectorController().inspectorClient())
+        client->elementSelectionChanged(m_searchingForNode);
 }
 
 std::unique_ptr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspectorObject(ErrorString& errorString, const InspectorObject* highlightInspectorObject)

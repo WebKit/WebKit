@@ -61,6 +61,9 @@ WK_EXPORT void WKInspectorDetach(WKInspectorRef inspector);
 WK_EXPORT bool WKInspectorIsProfilingPage(WKInspectorRef inspector);
 WK_EXPORT void WKInspectorTogglePageProfiling(WKInspectorRef inspector);
 
+WK_EXPORT bool WKInspectorIsElementSelectionActive(WKInspectorRef inspector);
+WK_EXPORT void WKInspectorToggleElementSelection(WKInspectorRef inspector);
+
 #ifdef __cplusplus
 }
 #endif

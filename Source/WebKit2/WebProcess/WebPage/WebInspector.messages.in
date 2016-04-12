@@ -36,6 +36,9 @@ messages -> WebInspector {
     StartPageProfiling()
     StopPageProfiling()
 
+    StartElementSelection()
+    StopElementSelection()
+
     SendMessageToBackend(String message)
 
 #if ENABLE(INSPECTOR_SERVER)

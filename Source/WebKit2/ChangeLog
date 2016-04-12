@@ -1,3 +1,53 @@
+2016-04-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Keyboard shortcut for "Inspect Element" only works when Web Inspector is open.
+        https://bugs.webkit.org/show_bug.cgi?id=111193
+        <rdar://problem/13325889>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorIsElementSelectionActive):
+        (WKInspectorToggleElementSelection):
+        * UIProcess/API/C/WKInspector.h:
+        API for WebKit clients to toggle element selection.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::toggleElementSelection):
+        (WebKit::WebInspectorProxy::elementSelectionChanged):
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::isElementSelectionActive):
+        * UIProcess/WebInspectorProxy.messages.in:
+        UIProcess update according to the state of the page
+        and action to tell the page to toggle.
+        When starting, pre-connect the inspector. When the
+        state changes, if we were stopping and nothing was
+        selected, then disconnect. Otherwise, we will bring
+        the inspector to the front.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::elementSelectionChanged):
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        Let the UIProcess update its cached state of whether or
+        not element selection is enabled or disabled.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::startElementSelection):
+        (WebKit::WebInspector::stopElementSelection):
+        (WebKit::WebInspector::elementSelectionChanged):
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.messages.in:
+        Messages in both directions.
+        UIProcess -> InspectorProcess enable/disable.
+        WebProcess -> UIProcess updated element selection state.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::startElementSelection):
+        (WebKit::WebInspectorUI::stopElementSelection):
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.messages.in:
+        Open the inspector and enable element selection.
+
 2016-04-11  Alex Christensen  <achristensen@webkit.org>
 
         Build MiniBrowser with CMake on Mac

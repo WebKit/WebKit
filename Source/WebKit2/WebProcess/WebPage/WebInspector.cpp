@@ -209,6 +209,27 @@ void WebInspector::stopPageProfiling()
     m_frontendConnection->send(Messages::WebInspectorUI::StopPageProfiling(), 0);
 }
 
+void WebInspector::startElementSelection()
+{
+    if (!m_page->corePage())
+        return;
+
+    m_frontendConnection->send(Messages::WebInspectorUI::StartElementSelection(), 0);
+}
+
+void WebInspector::stopElementSelection()
+{
+    if (!m_page->corePage())
+        return;
+
+    m_frontendConnection->send(Messages::WebInspectorUI::StopElementSelection(), 0);
+}
+
+void WebInspector::elementSelectionChanged(bool active)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::ElementSelectionChanged(active), m_page->pageID());
+}
+
 bool WebInspector::canAttachWindow()
 {
     if (!m_page->corePage())

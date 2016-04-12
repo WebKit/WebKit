@@ -303,6 +303,20 @@ void WebInspectorProxy::togglePageProfiling()
     m_isProfilingPage = !m_isProfilingPage;
 }
 
+void WebInspectorProxy::toggleElementSelection()
+{
+    if (!m_inspectedPage)
+        return;
+
+    if (m_elementSelectionActive) {
+        m_ignoreElementSelectionChange = true;
+        m_inspectedPage->process().send(Messages::WebInspector::StopElementSelection(), m_inspectedPage->pageID());
+    } else {
+        connect();
+        m_inspectedPage->process().send(Messages::WebInspector::StartElementSelection(), m_inspectedPage->pageID());
+    }
+}
+
 static WebProcessPool* s_mainInspectorProcessPool;
 static WebProcessPool* s_nestedInspectorProcessPool;
 
@@ -621,6 +635,21 @@ void WebInspectorProxy::attachAvailabilityChanged(bool available)
 void WebInspectorProxy::inspectedURLChanged(const String& urlString)
 {
     platformInspectedURLChanged(urlString);
+}
+
+void WebInspectorProxy::elementSelectionChanged(bool active)
+{
+    m_elementSelectionActive = active;
+
+    if (m_ignoreElementSelectionChange) {
+        m_ignoreElementSelectionChange = false;
+        if (!m_isVisible)
+            close();
+        return;
+    }
+
+    if (!active && isConnected())
+        bringToFront();
 }
 
 void WebInspectorProxy::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)

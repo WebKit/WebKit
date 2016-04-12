@@ -27,6 +27,7 @@ messages -> WebInspectorProxy {
     BringToFront()
 
     InspectedURLChanged(String urlString)
+    ElementSelectionChanged(bool active)
 
     Save(String filename, String content, bool base64Encoded, bool forceSaveAs)
     Append(String filename, String content)
