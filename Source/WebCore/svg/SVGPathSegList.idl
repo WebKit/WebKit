@@ -23,17 +23,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-[
-    UsePointersEvenForNonNullableObjectArguments,
-] interface SVGPathSegList {
+
+interface SVGPathSegList {
     readonly attribute unsigned long numberOfItems;
 
     [RaisesException] void clear();
-    [StrictTypeChecking, RaisesException] SVGPathSeg initialize(SVGPathSeg newItem);
+    [StrictTypeChecking, RaisesException] SVGPathSeg initialize(SVGPathSeg? newItem); // FIXME: Should not be nullable.
     [StrictTypeChecking, RaisesException] SVGPathSeg getItem(unsigned long index);
-    [StrictTypeChecking, RaisesException] SVGPathSeg insertItemBefore(SVGPathSeg newItem, unsigned long index);
-    [StrictTypeChecking, RaisesException] SVGPathSeg replaceItem(SVGPathSeg newItem, unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGPathSeg insertItemBefore(SVGPathSeg? newItem, unsigned long index); // FIXME: Should not be nullable.
+    [StrictTypeChecking, RaisesException] SVGPathSeg replaceItem(SVGPathSeg? newItem, unsigned long index); // FIXME: Should not be nullable.
     [StrictTypeChecking, RaisesException] SVGPathSeg removeItem(unsigned long index);
-    [StrictTypeChecking, RaisesException] SVGPathSeg appendItem(SVGPathSeg newItem);
+    [StrictTypeChecking, RaisesException] SVGPathSeg appendItem(SVGPathSeg? newItem); // FIXME: Should not be nullable.
 };
-

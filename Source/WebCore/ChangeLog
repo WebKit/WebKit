@@ -1,3 +1,25 @@
+2016-04-12  Darin Adler  <darin@apple.com>
+
+        Remove UsePointersEvenForNonNullableObjectArguments from SVG lists
+        https://bugs.webkit.org/show_bug.cgi?id=156494
+
+        Reviewed by Chris Dumez.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ShouldPassWrapperByReference): For now, don't do this for any tear-off classes.
+        This includes the items stored in most SVG list classes.
+
+        * svg/SVGLengthList.idl: Removed UsePointersEvenForNonNullableObjectArguments.
+        * svg/SVGNumberList.idl: Ditto.
+        * svg/SVGPointList.idl: Ditto.
+        * svg/SVGTransformList.idl: Ditto.
+
+        * svg/SVGPathSegList.idl: Removed UsePointersEvenForNonNullableObjectArguments.
+        Marked the arguments nullable, and added FIXMEs about returning later since they
+        don't really need to be nullable. But fixing this requires some reworking of the
+        SVG list template and it's not urgent at this time. Preserves behavior where we
+        get an exception when passing null, it's just an SVG exception instead of TypeError.
+
 2016-04-12  Chris Dumez  <cdumez@apple.com>
 
         Lazily update tokens in DOMTokenList when the associated attribute value changes
