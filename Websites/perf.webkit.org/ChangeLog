@@ -1,3 +1,35 @@
+2016-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New syncing script sometimes schedules a build request on a wrong builder
+        https://bugs.webkit.org/show_bug.cgi?id=156489
+
+        Reviewed by Stephanie Lewis.
+
+        The bug was caused by _scheduleNextRequestInGroupIfSlaveIsAvailable scheduling the next build request on
+        any available syncer regardless of whether the request is the first one in the test group or not because
+        BuildRequest.order was returning a string instead of a number.
+
+        Also fixed a bug that BuildbotTriggerable.syncOnce was re-ordering test groups by their id's instead of
+        respecting the order in which the perf dashboard returned.
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.order): Force the order to be a number.
+        * server-tests/api-build-requests-tests.js: Assert the order as numbers.
+        * server-tests/resources/mock-data.js:
+        (MockData.addAnotherMockTestGroup): Changed the test group id to 601, which is after the first mock data.
+        The old number was masking a bug in BuildbotTriggerable that it was re-ordering test groups by their id's
+        instead of using the order set forth by the perf dashboard.
+        (MockData.mockTestSyncConfigWithSingleBuilder):
+        * server-tests/tools-buildbot-triggerable-tests.js: Added a test case for scheduling two build requests in
+        a single call to syncOnce. Each build request should be scheduled on the same builder as the previous build
+        requests in the same test group.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.syncOnce): Order test groups by groupOrder, which is the index at which first
+        build request in the group appeared.
+        (BuildbotTriggerable.prototype._scheduleNextRequestInGroupIfSlaveIsAvailable): Don't re-order build requests
+        as they're already sorted on the server side.
+        (BuildbotTriggerable._testGroupMapForBuildRequests): Added groupOrder to test group info 
+
 2016-04-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. Don't treat a build number 0 as a pending build.

@@ -37,7 +37,7 @@ class BuildRequest extends DataModelObject {
     testGroup() { return this._testGroup; }
     platform() { return this._platform; }
     test() { return this._test; }
-    order() { return this._order; }
+    order() { return +this._order; }
     rootSet() { return this._rootSet; }
 
     status() { return this._status; }

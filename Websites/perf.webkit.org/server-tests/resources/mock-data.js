@@ -51,11 +51,11 @@ MockData = {
         if (!statusList)
             statusList = ['pending', 'pending', 'pending', 'pending'];
         return Promise.all([
-            db.insert('analysis_test_groups', {id: 599, task: 500, name: 'another test group', author: author}),
-            db.insert('build_requests', {id: 713, status: statusList[3], triggerable: 1, platform: 65, test: 200, group: 599, order: 3, root_set: 402}),
-            db.insert('build_requests', {id: 710, status: statusList[0], triggerable: 1, platform: 65, test: 200, group: 599, order: 0, root_set: 401}),
-            db.insert('build_requests', {id: 712, status: statusList[2], triggerable: 1, platform: 65, test: 200, group: 599, order: 2, root_set: 401}),
-            db.insert('build_requests', {id: 711, status: statusList[1], triggerable: 1, platform: 65, test: 200, group: 599, order: 1, root_set: 402}),
+            db.insert('analysis_test_groups', {id: 601, task: 500, name: 'another test group', author: author}),
+            db.insert('build_requests', {id: 713, status: statusList[3], triggerable: 1, platform: 65, test: 200, group: 601, order: 3, root_set: 402}),
+            db.insert('build_requests', {id: 710, status: statusList[0], triggerable: 1, platform: 65, test: 200, group: 601, order: 0, root_set: 401}),
+            db.insert('build_requests', {id: 712, status: statusList[2], triggerable: 1, platform: 65, test: 200, group: 601, order: 2, root_set: 401}),
+            db.insert('build_requests', {id: 711, status: statusList[1], triggerable: 1, platform: 65, test: 200, group: 601, order: 1, root_set: 402}),
         ]);
     },
     mockTestSyncConfigWithSingleBuilder: function ()
