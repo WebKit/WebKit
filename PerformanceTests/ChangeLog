@@ -1,3 +1,30 @@
+2016-04-09  Jon Lee  <jonlee@apple.com>
+
+        Update Animometer to accommodate different screens
+        https://bugs.webkit.org/show_bug.cgi?id=156449
+
+        Reviewed by Darin Adler.
+        Provisionally reviewed by Said Abou-Hallawa.
+
+        * Animometer/index.html: Wrap button in a container to add padding at the bottom.
+        * Animometer/resources/debug-runner/animometer.css:
+        (@media screen and (min-device-width: 1800px)): Deleted.
+        (@media screen and (min-width: 1800px)): Cannot use min-device-width since it may match incorrectly.
+        (screen and (max-device-height: 414px) and (orientation: landscape)): Some devices swap device width
+        and height with orientation change.
+        * Animometer/resources/runner/animometer.css: Similar.
+        (screen and (min-device-width: 1024px) and (orientation: landscape)):
+        (screen and (max-device-height: 414px) and (orientation: landscape)):
+        (.frame-container): On smaller iPhones, adding 1px prevents the navigation bars from appearing.
+        (@media screen and (min-device-width: 768px) and (max-device-width: 1024px)): Deleted.
+        (@media (min-device-height: 768px) and (max-device-height: 1024px)): Target iPad Airs and similar.
+        (@media screen and (min-device-width: 1024px) and (max-device-width: 1366px)): Deleted.
+        (@media screen and (max-device-width: 1024px) and (min-device-height: 1366px)): Target iPad Pro.
+        (#results footer): Add padding below the button for testing again.
+        * Animometer/tests/master/multiply.html: Remove the center text.
+        * Animometer/tests/master/resources/text.js: Update the test so that in every frame the text moves.
+        * Animometer/tests/master/text.html: Update the text sizing depending on the size of the device.
+
 2016-04-08  Jon Lee  <jonlee@apple.com>
 
         Have Animometer benchmark always start with complexity of 1

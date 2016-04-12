@@ -71,13 +71,14 @@ var TextStage = Utilities.createSubclass(Stage,
     animate: function(timeDelta) {
         var angle = Stage.dateCounterValue(this.millisecondsPerRotation);
 
-        var x = 0;
-        var y = 0;
         var progress = 0;
         var stepX = Math.sin(angle) * this.particleDistanceX;
         var stepY = Math.cos(angle) * this.particleDistanceY;
+        var x = -stepX * 3;
+        var y = -stepY * 3;
         var gradient = this.gradients[Math.floor(angle/(Math.PI * 2)) % this.gradients.length];
         var offset = Stage.dateCounterValue(200);
+        this._template.style.transform = "translate(" + Math.floor(x) + "px," + Math.floor(y) + "px)";
         for (var i = 0; i < this._offsetIndex; ++i) {
             var element = this.testElements[i];
 
@@ -91,7 +92,7 @@ var TextStage = Utilities.createSubclass(Stage,
 
             x += stepX;
             y += stepY;
-            element.style.transform = "translateX(" + Math.floor(x) + "px) translateY(" + Math.floor(y) + "px)";
+            element.style.transform = "translate(" + Math.floor(x) + "px," + Math.floor(y) + "px)";
 
             progress += this._stepProgress;
         }

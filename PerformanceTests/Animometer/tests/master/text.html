@@ -10,14 +10,27 @@
             font-size: 48px;
             background-color: #313534;/* #d1948c;*/
         }
-        @media screen and (max-device-width: 414px) {
+        @media (min-device-height: 768px) and (max-device-height: 1024px) {
+            #stage {
+                font-size: 40px;
+            }
+        }
+        @media screen and (max-device-width: 414px),
+            screen and (max-device-height: 414px) and (orientation: landscape) {
             #stage {
                 font-size: 36px;
             }
         }
-        @media screen and (max-device-width: 320px) {
+        @media screen and (max-device-width: 375px),
+            screen and (max-device-height: 375px) and (orientation: landscape) {
             #stage {
-                font-size: 24px;
+                font-size: 30px;
+            }
+        }
+        @media screen and (max-device-width: 320px),
+            screen and (max-device-height: 320px) and (orientation: landscape) {
+            #stage {
+                font-size: 28px;
             }
         }
 

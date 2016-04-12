@@ -27,7 +27,7 @@ button:active {
     background-color: rgba(255, 255, 255, .2);
 }
 
-@media screen and (min-device-width: 1800px) {
+@media screen and (min-width: 1800px) {
     section {
         width: 1600px;
         height: 800px;
@@ -107,7 +107,8 @@ label.tree-label {
     margin-left: 2em;
 }
 
-@media screen and (max-device-width: 414px) {
+@media screen and (max-device-width: 414px),
+    screen and (max-device-height: 414px) and (orientation: landscape) {
     .tree {
         padding-left: 1em;
     }
@@ -236,7 +237,8 @@ label.tree-label {
     }
 }
 
-@media screen and (max-device-width: 414px) {
+@media screen and (max-device-width: 414px),
+    screen and (max-device-height: 414px) and (orientation: landscape) {
     #intro {
         min-height: 100%;
     }

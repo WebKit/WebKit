@@ -54,7 +54,6 @@ button {
     flex: 0 0 auto;
     display: block;
     font-size: 1.5em;
-    margin-bottom: 10vh;
     border: 2px solid rgb(96, 96, 96);
     color: rgb(96, 96, 96);
     background: transparent;
@@ -77,7 +76,8 @@ button:disabled {
     color: rgba(96, 96, 96, .5);
 }
 
-@media screen and (min-device-width: 768px) {
+@media screen and (min-device-height: 1024px),
+    screen and (min-device-width: 1024px) and (orientation: landscape) {
     section {
         padding: 0 20px;
     }
@@ -90,7 +90,8 @@ button:disabled {
     }
 }
 
-@media screen and (max-device-width: 414px) {
+@media screen and (max-device-width: 414px),
+    screen and (max-device-height: 414px) and (orientation: landscape) {
     h1 {
         font-size: 2.5em;
     }
@@ -136,14 +137,16 @@ button:disabled {
     margin: 0 auto;
 }
 
-@media screen and (min-device-width: 768px) {
+@media screen and (min-device-height: 1024px),
+    screen and (min-device-width: 1024px) and (orientation: landscape) {
     #intro p {
         max-width: 800px;
         margin: 0;
     }
 }
 
-@media screen and (max-device-width: 414px) {
+@media screen and (max-device-width: 414px),
+    screen and (max-device-height: 414px) and (orientation: landscape) {
     #intro.selected {
         display: flex;
         align-items: center;
@@ -173,14 +176,15 @@ button:disabled {
     margin: 0 auto;
 }
 
-@media screen and (max-device-width: 414px) {
+@media screen and (max-device-width: 414px),
+    screen and (max-device-height: 414px) and (orientation: landscape) {
     #test-container {
         padding: 0;
     }
 
     .frame-container {
         width: 100%;
-        height: 100%;
+        height: calc(100% + 1px);
     }
 
     .frame-container > iframe {
@@ -189,14 +193,14 @@ button:disabled {
     }
 }
 
-@media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+@media (min-device-height: 768px) and (max-device-height: 1024px) {
     .frame-container > iframe {
         width: 900px;
         height: 600px;
     }
 }
 
-@media screen and (min-device-width: 1024px) and (max-device-width: 1366px) {
+@media screen and (max-device-width: 1024px) and (min-device-height: 1366px) {
     .frame-container > iframe {
         width: 1200px;
         height: 800px;
@@ -258,8 +262,12 @@ button:disabled {
 #results-score td, #results-score th {
     text-align: right;
 }
+#results footer {
+    padding-bottom: 10vh;
+}
 
-@media screen and (max-device-width: 414px) {
+@media screen and (max-device-width: 414px),
+    screen and (max-device-height: 414px) and (orientation: landscape) {
     #results.selected {
         padding: 0 20px;
         display: flex;
