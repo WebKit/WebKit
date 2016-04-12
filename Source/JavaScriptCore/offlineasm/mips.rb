@@ -265,9 +265,10 @@ def lowerMIPSCondBranch(list, condOp, node)
                                 [node.operands[0], MIPS_ZERO_REG, node.operands[-1]],
                                 node.annotation)
     elsif node.operands.size == 3
+        tl = condOp[-1, 1]
         tmp = Tmp.new(node.codeOrigin, :gpr)
         list << Instruction.new(node.codeOrigin,
-                                "andi",
+                                "and" + tl,
                                 [node.operands[0], node.operands[1], tmp],
                                 node.annotation)
         list << Instruction.new(node.codeOrigin,
@@ -587,6 +588,10 @@ def mipsLowerMisplacedAddresses(list)
             when "sltub", "sltb"
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
+                                           riscAsRegisters(newList, [], node.operands, "b"))
+            when "andb"
+                newList << Instruction.new(node.codeOrigin,
+                                           "andi",
                                            riscAsRegisters(newList, [], node.operands, "b"))
             when /^(bz|bnz|bs|bo)/
                 tl = $~.post_match == "" ? "i" : $~.post_match
