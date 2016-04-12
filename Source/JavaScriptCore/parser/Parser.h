@@ -1257,11 +1257,6 @@ private:
         return isIdentifierOrKeyword(m_token);
     }
     
-    ALWAYS_INLINE bool isEndOfArrowFunction()
-    {
-        return match(SEMICOLON) || match(COMMA) || match(CLOSEPAREN) || match(CLOSEBRACE) || match(CLOSEBRACKET) || match(EOFTOK) || m_lexer->prevTerminator();
-    }
-
     ALWAYS_INLINE unsigned tokenStart()
     {
         return m_token.m_location.startOffset;
@@ -1482,11 +1477,6 @@ private:
         return allowAutomaticSemicolon();
     }
     
-    void setEndOfStatement()
-    {
-        m_lexer->setTokenPosition(&m_token);
-    }
-
     bool canRecurse()
     {
         return m_vm->isSafeToRecurse();

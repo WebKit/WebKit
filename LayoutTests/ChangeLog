@@ -1,3 +1,14 @@
+2016-04-12  Saam barati  <sbarati@apple.com>
+
+        We incorrectly parse arrow function expressions
+        https://bugs.webkit.org/show_bug.cgi?id=156373
+
+        Reviewed by Mark Lam.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+        (catch):
+
 2016-03-17  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Add parsing support for <auto-repeat> syntax

@@ -1766,16 +1766,6 @@ bool Lexer<T>::nextTokenIsColon()
 }
 
 template <typename T>
-void Lexer<T>::setTokenPosition(JSToken* tokenRecord)
-{
-    JSTokenData* tokenData = &tokenRecord->m_data;
-    tokenData->line = lineNumber();
-    tokenData->offset = currentOffset();
-    tokenData->lineStartOffset = currentLineStartOffset();
-    ASSERT(tokenData->offset >= tokenData->lineStartOffset);
-}
-
-template <typename T>
 JSTokenType Lexer<T>::lex(JSToken* tokenRecord, unsigned lexerFlags, bool strictMode)
 {
     JSTokenData* tokenData = &tokenRecord->m_data;

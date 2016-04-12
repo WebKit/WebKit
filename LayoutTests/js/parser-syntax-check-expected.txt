@@ -1231,6 +1231,34 @@ PASS Invalid: "foo(x ==> x)"
 PASS Invalid: "function f() { foo(x ==> x) }"
 PASS Invalid: "foo(x = x ==> x)"
 PASS Invalid: "function f() { foo(x = x ==> x) }"
+PASS Valid:   "var f = cond ? ()=>20 : ()=>20" with ReferenceError
+PASS Valid:   "function f() { var f = cond ? ()=>20 : ()=>20 }"
+PASS Valid:   "var f = cond ? (x)=>{x} : ()=>20" with ReferenceError
+PASS Valid:   "function f() { var f = cond ? (x)=>{x} : ()=>20 }"
+PASS Valid:   "var f = cond ? (x)=>x : ()=>{2}" with ReferenceError
+PASS Valid:   "function f() { var f = cond ? (x)=>x : ()=>{2} }"
+PASS Valid:   "var f = cond ? (x)=>x : x=>2" with ReferenceError
+PASS Valid:   "function f() { var f = cond ? (x)=>x : x=>2 }"
+PASS Valid:   "var f = cond ? x=>x : x=>2" with ReferenceError
+PASS Valid:   "function f() { var f = cond ? x=>x : x=>2 }"
+PASS Valid:   "var f = cond ? x=>x*2 : x=>2" with ReferenceError
+PASS Valid:   "function f() { var f = cond ? x=>x*2 : x=>2 }"
+PASS Valid:   "var f = cond ? x=>x.foo : x=>2" with ReferenceError
+PASS Valid:   "function f() { var f = cond ? x=>x.foo : x=>2 }"
+PASS Valid:   "var f = cond ? x=>x.foo : x=>x + x + x + x + x + x + x" with ReferenceError
+PASS Valid:   "function f() { var f = cond ? x=>x.foo : x=>x + x + x + x + x + x + x }"
+PASS Valid:   "var f = cond ? x=>{x.foo } : x=>x + x + x + x + x + x + (x =>x) " with ReferenceError
+PASS Valid:   "function f() { var f = cond ? x=>{x.foo } : x=>x + x + x + x + x + x + (x =>x)  }"
+PASS Valid:   "var f = (x) => x => (x) => ({y}) => y"
+PASS Valid:   "function f() { var f = (x) => x => (x) => ({y}) => y }"
+PASS Invalid: "var f = cond ? x=>x.foo; : x=>x + x + x + x + x + x + x"
+PASS Invalid: "function f() { var f = cond ? x=>x.foo; : x=>x + x + x + x + x + x + x }"
+PASS Invalid: "var f = cond ? x=>x.foo : : x=>x + x + x + x + x + x + x"
+PASS Invalid: "function f() { var f = cond ? x=>x.foo : : x=>x + x + x + x + x + x + x }"
+PASS Invalid: "var f = cond ? x=>{x.foo :} : x=>x + x + x + x + x + x + x"
+PASS Invalid: "function f() { var f = cond ? x=>{x.foo :} : x=>x + x + x + x + x + x + x }"
+PASS Invalid: "var f = cond ? x=>{x.foo } => : x=>x + x + x + x + x + x + x"
+PASS Invalid: "function f() { var f = cond ? x=>{x.foo } => : x=>x + x + x + x + x + x + x }"
 PASS e.line is 1
 PASS foo is 'PASS'
 PASS bar is 'PASS'

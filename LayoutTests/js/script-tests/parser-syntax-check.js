@@ -726,6 +726,20 @@ invalid("foo(([x = 25]) => x => x =>)");
 invalid("foo(([x = 25]) => x => x => {)");
 invalid("foo(x ==> x)");
 invalid("foo(x = x ==> x)");
+valid("var f = cond ? ()=>20 : ()=>20");
+valid("var f = cond ? (x)=>{x} : ()=>20");
+valid("var f = cond ? (x)=>x : ()=>{2}");
+valid("var f = cond ? (x)=>x : x=>2");
+valid("var f = cond ? x=>x : x=>2");
+valid("var f = cond ? x=>x*2 : x=>2");
+valid("var f = cond ? x=>x.foo : x=>2");
+valid("var f = cond ? x=>x.foo : x=>x + x + x + x + x + x + x");
+valid("var f = cond ? x=>{x.foo } : x=>x + x + x + x + x + x + (x =>x) ");
+valid("var f = (x) => x => (x) => ({y}) => y");
+invalid("var f = cond ? x=>x.foo; : x=>x + x + x + x + x + x + x");
+invalid("var f = cond ? x=>x.foo : : x=>x + x + x + x + x + x + x");
+invalid("var f = cond ? x=>{x.foo :} : x=>x + x + x + x + x + x + x");
+invalid("var f = cond ? x=>{x.foo } => : x=>x + x + x + x + x + x + x");
 
 
 try { eval("a.b.c = {};"); } catch(e1) { e=e1; shouldBe("e.line", "1") }

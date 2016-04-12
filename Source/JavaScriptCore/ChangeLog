@@ -1,3 +1,45 @@
+2016-04-12  Saam barati  <sbarati@apple.com>
+
+        We incorrectly parse arrow function expressions
+        https://bugs.webkit.org/show_bug.cgi?id=156373
+
+        Reviewed by Mark Lam.
+
+        This patch removes the notion of "isEndOfArrowFunction".
+        This was a very weird function and it was incorrect.
+        It checked that the arrow functions with concise body
+        grammar production "had a valid ending". "had a valid
+        ending" is in quotes because concise body arrow functions
+        have a valid ending as long as their body has a valid
+        assignment expression. I've removed all notion of this
+        function because it was wrong and was causing us
+        to throw syntax errors on valid programs.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::nextTokenIsColon):
+        (JSC::Lexer<T>::lex):
+        (JSC::Lexer<T>::setTokenPosition): Deleted.
+        * parser/Lexer.h:
+        (JSC::Lexer::setIsReparsingFunction):
+        (JSC::Lexer::isReparsingFunction):
+        (JSC::Lexer::lineNumber):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseArrowFunctionSingleExpressionBodySourceElements):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Parser::matchIdentifierOrKeyword):
+        (JSC::Parser::tokenStart):
+        (JSC::Parser::autoSemiColon):
+        (JSC::Parser::canRecurse):
+        (JSC::Parser::isEndOfArrowFunction): Deleted.
+        (JSC::Parser::setEndOfStatement): Deleted.
+        * tests/stress/arrowfunction-others.js:
+        (testCase):
+        (simpleArrowFunction):
+        (truthy):
+        (falsey):
+
 2016-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] addStaticGlobals should emit SymbolTableEntry watchpoints to encourage constant folding in DFG
