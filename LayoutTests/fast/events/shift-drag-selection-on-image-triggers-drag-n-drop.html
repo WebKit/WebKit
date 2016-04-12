@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test ensures drag-n-drop does start when extending an existing selecting with shift + mouse drag, starting over an image.</p>
+<span style='font-size: 30px; padding: 10px;'>Some text with an image <img src="resources/webkit-logo.png" width="50" height="50"> at end.</span>
+<pre>
+<script>
+
+var span = document.getElementsByTagName('span')[0];
+span.focus();
+
+var img = document.getElementsByTagName('img')[0];
+
+var dragStartCount = 0;
+document.addEventListener('dragstart', function (event) { dragStartCount++; });
+
+if (!window.testRunner || !window.eventSender)
+    document.write('This test requires eventSender');
+else {
+    testRunner.dumpAsText();
+
+    var y = span.offsetTop + span.offsetHeight / 2;
+    eventSender.mouseMoveTo(span.offsetLeft + 5, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(200);
+    eventSender.mouseUp();
+
+    eventSender.mouseMoveTo(span.offsetLeft + span.offsetWidth / 4, y);
+    eventSender.mouseDown(0, ['shiftKey']);
+    eventSender.leapForward(200);
+    eventSender.mouseUp();
+
+    eventSender.mouseMoveTo(img.offsetLeft + img.offsetWidth / 2 , y);
+    eventSender.mouseDown(0, ['shiftKey']);
+    eventSender.leapForward(200);
+    eventSender.mouseMoveTo(img.offsetLeft + img.offsetWidth / 2 , y + 120);
+    eventSender.leapForward(200);
+    eventSender.mouseUp();
+
+    document.writeln("Drag count: " + dragStartCount);
+    span.parentNode.removeChild(span);
+}
+</script></pre>
+</body>
+</html>

@@ -1,0 +1,4 @@
+This test ensures drag-n-drop does not start when extending an existing selecting with shift + mouse drag, starting over a #text.
+
+ Drag count: 0
+
