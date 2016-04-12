@@ -50,6 +50,26 @@ WebInspector.HeapSnapshotRootPath = class HeapSnapshotRootPath extends WebInspec
         return new WebInspector.HeapSnapshotRootPath(null);
     }
 
+    static pathComponentForIndividualEdge(edge)
+    {
+        switch (edge.type) {
+        case WebInspector.HeapSnapshotEdgeProxy.EdgeType.Internal:
+            return null;
+        case WebInspector.HeapSnapshotEdgeProxy.EdgeType.Index:
+            return "[" + edge.data + "]";
+        case WebInspector.HeapSnapshotEdgeProxy.EdgeType.Property:
+        case WebInspector.HeapSnapshotEdgeProxy.EdgeType.Variable:
+            if (WebInspector.HeapSnapshotRootPath.canPropertyNameBeDotAccess(edge.data))
+                return edge.data;
+            return "[" + doubleQuotedString(edge.data) + "]";
+        }
+    }
+
+    static canPropertyNameBeDotAccess(propertyName)
+    {
+        return /^(?![0-9])\w+$/.test(propertyName);
+    }
+
     // Public
 
     get node() { return this._node; }
@@ -117,7 +137,7 @@ WebInspector.HeapSnapshotRootPath = class HeapSnapshotRootPath extends WebInspec
 
     appendPropertyName(node, propertyName)
     {
-        let component = this._canPropertyNameBeDotAccess(propertyName) ? "." + propertyName : "[" + doubleQuotedString(propertyName) + "]";
+        let component = WebInspector.HeapSnapshotRootPath.canPropertyNameBeDotAccess(propertyName) ? "." + propertyName : "[" + doubleQuotedString(propertyName) + "]";
         return new WebInspector.HeapSnapshotRootPath(node, component, this);
     }
 
@@ -150,13 +170,6 @@ WebInspector.HeapSnapshotRootPath = class HeapSnapshotRootPath extends WebInspec
         }
 
         console.error("Unexpected edge type", edge.type);
-    }
-
-    // Private
-
-    _canPropertyNameBeDotAccess(propertyName)
-    {
-        return /^(?![0-9])\w+$/.test(propertyName);
     }
 };
 

@@ -25,16 +25,13 @@
 
 WebInspector.HeapSnapshotSummaryContentView = class HeapSnapshotSummaryContentView extends WebInspector.ContentView
 {
-    constructor(heapSnapshot, extraArguments)
+    constructor(heapSnapshot)
     {
         console.assert(heapSnapshot instanceof WebInspector.HeapSnapshotProxy || heapSnapshot instanceof WebInspector.HeapSnapshotDiffProxy);
 
         super(heapSnapshot);
 
         this._heapSnapshot = heapSnapshot;
-
-        // FIXME: Show/hide internal objects.
-        let {showInternalObjects} = extraArguments;
 
         this.element.classList.add("heap-snapshot-summary");
 

@@ -25,17 +25,25 @@
 
 WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode extends WebInspector.DataGridNode
 {
-    constructor(node, tree)
+    constructor(node, tree, edge)
     {
-        super(node, false);
+        // Don't treat strings as having child nodes, even if they have a Structure.
+        let hasChildren = node.hasChildren && node.className !== "string";
+
+        super(node, hasChildren);
 
         console.assert(node instanceof WebInspector.HeapSnapshotNodeProxy);
+        console.assert(!edge || edge instanceof WebInspector.HeapSnapshotEdgeProxy);
 
         this._node = node;
         this._tree = tree;
+        this._edge = edge || null;
 
         // FIXME: Make instance grid nodes copyable.
         this.copyable = false;
+
+        if (hasChildren)
+            this.addEventListener("populate", this._populate, this);
     }
 
     // Static
@@ -121,6 +129,15 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
             let iconElement = containerElement.appendChild(document.createElement("img"));
             iconElement.classList.add("icon", WebInspector.HeapSnapshotClusterContentView.iconStyleClassNameForClassName(className, internal));
 
+            if (this._edge) {
+                let nameElement = containerElement.appendChild(document.createElement("span"));
+                let edgeText = WebInspector.HeapSnapshotRootPath.pathComponentForIndividualEdge(this._edge);
+                if (edgeText)
+                    nameElement.textContent = edgeText + ": " + this._node.className + " ";
+                else
+                    nameElement.textContent = this._node.className + " ";
+            }
+
             let idElement = containerElement.appendChild(document.createElement("span"));
             idElement.classList.add("object-id");
             idElement.textContent = "@" + id;
@@ -180,10 +197,38 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
 
     sort()
     {
-        // No children to sort.
+        let children = this.children;
+        children.sort(this._tree._sortComparator);
+
+        for (let i = 0; i < children.length; ++i) {
+            children[i]._recalculateSiblings(i);
+            children[i].sort();
+        }
     }
 
     // Private
+
+    _populate()
+    {
+        this.removeEventListener("populate", this._populate, this);
+
+        this._node.retainedNodes((instances, edges) => {
+            // Reference edge from instance so we can get it after sorting.
+            for (let i = 0; i < instances.length; ++i)
+                instances[i].__edge = edges[i];
+
+            instances.sort((a, b) => {
+                let fakeDataGridNodeA = {data: a};
+                let fakeDataGridNodeB = {data: b};
+                return this._tree._sortComparator(fakeDataGridNodeA, fakeDataGridNodeB);
+            });
+
+            // FIXME: This should gracefully handle a node that references many objects.
+
+            for (let instance of instances)
+                this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this._tree, instance.__edge));
+        });        
+    }
 
     _contextMenuHandler(event)
     {

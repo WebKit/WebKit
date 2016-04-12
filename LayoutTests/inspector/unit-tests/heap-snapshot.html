@@ -229,10 +229,11 @@ function test()
             let expectedNodes = testSnapshotNodeForWindowObject.outgoingEdges.map((edge) => edge.to);
             expectedNodes.sort((a, b) => a.id - b.id);
 
-            snapshotNodeForWindowObject.retainedNodes((nodes) => {
+            snapshotNodeForWindowObject.retainedNodes((nodes, edges) => {
                 nodes.sort((a, b) => a.id - b.id);
                 InspectorTest.assert(nodes.length > 0, "Test only makes since if there are retained nodes");
                 InspectorTest.expectThat(nodes.length === expectedNodes.length, "Number of retained nodes should match.");
+                InspectorTest.expectThat(nodes.length === edges.length, "Number of edges should match the number of nodes.");
                 InspectorTest.expectThat(nodes.every((node, i) => compareNodes(node, expectedNodes[i])), "Node values should match.");
                 resolve();
             });

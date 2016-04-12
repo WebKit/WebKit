@@ -25,7 +25,7 @@
 
 WebInspector.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
 {
-    constructor(snapshotObjectId, identifier, className, size, retainedSize, internal, gcRoot)
+    constructor(snapshotObjectId, identifier, className, size, retainedSize, internal, gcRoot, hasChildren)
     {
         this._proxyObjectId = snapshotObjectId;
 
@@ -35,14 +35,15 @@ WebInspector.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
         this.retainedSize = retainedSize;
         this.internal = internal;
         this.gcRoot = gcRoot;
+        this.hasChildren = hasChildren;
     }
 
     // Static
 
     static deserialize(objectId, serializedNode)
     {
-        let {id, className, size, retainedSize, internal, gcRoot} = serializedNode;
-        return new WebInspector.HeapSnapshotNodeProxy(objectId, id, className, size, retainedSize, internal, gcRoot);
+        let {id, className, size, retainedSize, internal, gcRoot, hasChildren} = serializedNode;
+        return new WebInspector.HeapSnapshotNodeProxy(objectId, id, className, size, retainedSize, internal, gcRoot, hasChildren);
     }
 
     // Proxied
@@ -78,8 +79,10 @@ WebInspector.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
 
     retainedNodes(callback)
     {
-        WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "retainedNodes", this.id, (serializedNodes) => {
-            callback(serializedNodes.map(WebInspector.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId)));
+        WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "retainedNodes", this.id, ({retainedNodes: serializedNodes, edges: serializedEdges}) => {
+            let deserializedNodes = serializedNodes.map(WebInspector.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId));
+            let deserializedEdges = serializedEdges.map(WebInspector.HeapSnapshotEdgeProxy.deserialize.bind(null, this._proxyObjectId));
+            callback(deserializedNodes, deserializedEdges);
         });
     }
 

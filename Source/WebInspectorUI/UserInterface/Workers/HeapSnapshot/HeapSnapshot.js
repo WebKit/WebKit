@@ -30,7 +30,7 @@
  */
 
 // nodes
-// [<0:id>, <1:size>, <2:classNameTableIndex>, <3:internal>];
+// [<0:id>, <1:size>, <2:classNameTableIndex>, <3:internal>]
 const nodeFieldCount = 4;
 const nodeIdOffset = 0;
 const nodeSizeOffset = 1;
@@ -213,7 +213,7 @@ HeapSnapshot = class HeapSnapshot
                 instances.push(nodeIndex);
         }
 
-        return instances.map(snapshot.serializeNode.bind(snapshot));
+        return instances.map(snapshot.serializeNode, snapshot);
     }
 
     // Worker Methods
@@ -269,12 +269,13 @@ HeapSnapshot = class HeapSnapshot
                 dominatedNodes.push(nodeOrdinal * nodeFieldCount);
         }
 
-        return dominatedNodes.map(this.serializeNode.bind(this));
+        return dominatedNodes.map(this.serializeNode, this);
     }
 
     retainedNodes(nodeIdentifier)
     {
         let retainedNodes = [];
+        let edges = [];
 
         let nodeOrdinal = this._nodeIdentifierToOrdinal.get(nodeIdentifier);
         let edgeIndex = this._nodeOrdinalToFirstOutgoingEdge[nodeOrdinal];
@@ -283,9 +284,13 @@ HeapSnapshot = class HeapSnapshot
             let toNodeOrdinal = this._nodeIdentifierToOrdinal.get(toNodeIdentifier);
             let toNodeIndex = toNodeOrdinal * nodeFieldCount;
             retainedNodes.push(toNodeIndex);
+            edges.push(edgeIndex);
         }
 
-        return retainedNodes.map(this.serializeNode.bind(this));
+        return {
+            retainedNodes: retainedNodes.map(this.serializeNode, this),
+            edges: edges.map(this.serializeEdge, this),
+        };
     }
 
     retainers(nodeIdentifier)
@@ -301,7 +306,7 @@ HeapSnapshot = class HeapSnapshot
             retainers.push(fromNodeIndex);
         }
 
-        return retainers.map(this.serializeNode.bind(this));
+        return retainers.map(this.serializeNode, this);
     }
 
     // Public
@@ -321,15 +326,19 @@ HeapSnapshot = class HeapSnapshot
     {
         console.assert((nodeIndex % nodeFieldCount) === 0, "Invalid nodeIndex to serialize");
 
+        let nodeIdentifier = this._nodes[nodeIndex + nodeIdOffset];
         let nodeOrdinal = nodeIndex / nodeFieldCount;
+        let edgeIndex = this._nodeOrdinalToFirstOutgoingEdge[nodeOrdinal];
+        let hasChildren = this._edges[edgeIndex + edgeFromIdOffset] === nodeIdentifier;
 
         return {
-            id: this._nodes[nodeIndex + nodeIdOffset],
+            id: nodeIdentifier,
             className: this._nodeClassNamesTable[this._nodes[nodeIndex + nodeClassNameOffset]],
             size: this._nodes[nodeIndex + nodeSizeOffset],
             retainedSize: this._nodeOrdinalToRetainedSizes[nodeOrdinal],
             internal: this._nodes[nodeIndex + nodeInternalOffset] ? true : false,
             gcRoot: this._nodeOrdinalIsGCRoot[nodeOrdinal] ? true : false,
+            hasChildren,
         };
     }
 

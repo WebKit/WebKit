@@ -34,6 +34,7 @@ PASS: Large count should match.
 
 -- Running test case: HeapSnapshotNodeProxy.prototype.retainedNodes
 PASS: Number of retained nodes should match.
+PASS: Number of edges should match the number of nodes.
 PASS: Node values should match.
 
 -- Running test case: HeapSnapshotNodeProxy.prototype.retainers

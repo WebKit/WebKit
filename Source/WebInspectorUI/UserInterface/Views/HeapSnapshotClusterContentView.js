@@ -44,14 +44,6 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
         this._summaryContentView = null;
         this._instancesContentView = null;
 
-        if (!WebInspector.HeapSnapshotClusterContentView.showInternalObjectsSetting)
-            WebInspector.HeapSnapshotClusterContentView.showInternalObjectsSetting = new WebInspector.Setting("heap-snapshot-cluster-content-view-show-internal-objects", false);
-
-        // FIXME: Need an image for showing / hiding internal objects.
-        this._showInternalObjectsButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-internal-objects", WebInspector.UIString("Show internal objects"), WebInspector.UIString("Hide internal objects"), "Images/ShadowDOM.svg", 13, 13);
-        this._showInternalObjectsButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleShowInternalObjectsSetting, this);
-        this._updateShowInternalObjectsButtonNavigationItem();
-
         this._summaryPathComponent = createPathComponent.call(this, WebInspector.UIString("Summary"), "heap-snapshot-summary-icon", WebInspector.HeapSnapshotClusterContentView.SummaryIdentifier);
         this._instancesPathComponent = createPathComponent.call(this, WebInspector.UIString("Instances"), "heap-snapshot-instances-icon", WebInspector.HeapSnapshotClusterContentView.InstancesIdentifier);
 
@@ -115,20 +107,15 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
     get summaryContentView()
     {
         if (!this._summaryContentView)
-            this._summaryContentView = new WebInspector.HeapSnapshotSummaryContentView(this._heapSnapshot, this._contentViewExtraArguments());
+            this._summaryContentView = new WebInspector.HeapSnapshotSummaryContentView(this._heapSnapshot);
         return this._summaryContentView;
     }
 
     get instancesContentView()
     {
         if (!this._instancesContentView)
-            this._instancesContentView = new WebInspector.HeapSnapshotInstancesContentView(this._heapSnapshot, this._contentViewExtraArguments());
+            this._instancesContentView = new WebInspector.HeapSnapshotInstancesContentView(this._heapSnapshot);
         return this._instancesContentView;
-    }
-
-    get navigationItems()
-    {
-        return [this._showInternalObjectsButtonNavigationItem];
     }
 
     get selectionPathComponents()
@@ -145,10 +132,8 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
     {
         super.shown();
 
-        if (this._shownInitialContent) {
-            this._updateViewsForShowInternalObjectsSettingValue();
+        if (this._shownInitialContent)
             return;
-        }
 
         this._showContentViewForIdentifier(this._currentContentViewSetting.value);
     }
@@ -183,11 +168,6 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
     }
 
     // Private
-
-    _contentViewExtraArguments()
-    {
-        return {showInternalObjects: WebInspector.HeapSnapshotClusterContentView.showInternalObjectsSetting.value};
-    }
 
     _pathComponentForContentView(contentView)
     {
@@ -243,30 +223,6 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
     _pathComponentSelected(event)
     {
         this._showContentViewForIdentifier(event.data.pathComponent.representedObject);
-    }
-
-    _toggleShowInternalObjectsSetting(event)
-    {
-        WebInspector.HeapSnapshotClusterContentView.showInternalObjectsSetting.value = !WebInspector.HeapSnapshotClusterContentView.showInternalObjectsSetting.value;
-
-        this._updateViewsForShowInternalObjectsSettingValue();
-    }
-
-    _updateViewsForShowInternalObjectsSettingValue(force)
-    {
-        let value = WebInspector.HeapSnapshotClusterContentView.showInternalObjectsSetting.value;
-        if (this._showInternalObjectsButtonNavigationItem.activated === value)
-            return;
-
-        if (this._instancesContentView)
-            this._instancesContentView.showInternalObjects = value;
-
-        this._updateShowInternalObjectsButtonNavigationItem();
-    }
-
-    _updateShowInternalObjectsButtonNavigationItem()
-    {
-        this._showInternalObjectsButtonNavigationItem.activated = WebInspector.HeapSnapshotClusterContentView.showInternalObjectsSetting.value;
     }
 };
 

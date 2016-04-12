@@ -1,3 +1,79 @@
+2016-04-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should be able to expand Objects in Heap Allocations View to see exactly what it retains
+        https://bugs.webkit.org/show_bug.cgi?id=156419
+        <rdar://problem/25633863>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        Remove strings, and fix sort.
+
+        * UserInterface/Models/HeapSnapshotRootPath.js:
+        (WebInspector.HeapSnapshotRootPath.pathComponentForIndividualEdge):
+        (WebInspector.HeapSnapshotRootPath.canPropertyNameBeDotAccess):
+        (WebInspector.HeapSnapshotRootPath.prototype.appendPropertyName):
+        (WebInspector.HeapSnapshotRootPath.prototype._canPropertyNameBeDotAccess):
+        Provide a helper to get an path component string for an individual edge.
+
+        * UserInterface/Models/PropertyPreview.js:
+        (WebInspector.PropertyPreview):
+        Fix an assert that may have errantly fired for an empty string name.
+
+        * UserInterface/Proxies/HeapSnapshotNodeProxy.js:
+        (WebInspector.HeapSnapshotNodeProxy):
+        (WebInspector.HeapSnapshotNodeProxy.deserialize):
+        Include "hasChildren" property in the original proxy message.
+
+        (WebInspector.HeapSnapshotNodeProxy.prototype.retainedNodes):
+        The method now also returns a list of edges for each of the retained nodes.
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.createCellContent):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.sort):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populate):
+        An instance DataGrid node can now show children. It can expand to show
+        its retained node graph.
+
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshot.js:
+        (HeapSnapshot.instancesWithClassName):
+        (HeapSnapshot.prototype.dominatedNodes):
+        (HeapSnapshot.prototype.retainers):
+        (HeapSnapshot.prototype.serializeNode):
+        Remove unnecessary calls to bind in favor of using the `thisObject` argument.
+
+        (HeapSnapshot.prototype.retainedNodes):
+        Return a parallel list of edges for each of the nodes.
+
+        * UserInterface/Views/HeapSnapshotClassDataGridNode.js:
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype.createCellContent):
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype._populate):
+        * UserInterface/Views/HeapSnapshotClusterContentView.js:
+        (WebInspector.HeapSnapshotClusterContentView.prototype.get summaryContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.get instancesContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.shown):
+        (WebInspector.HeapSnapshotClusterContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.get navigationItems): Deleted.
+        (WebInspector.HeapSnapshotClusterContentView.prototype._contentViewExtraArguments): Deleted.
+        (WebInspector.HeapSnapshotClusterContentView.prototype._toggleShowInternalObjectsSetting): Deleted.
+        (WebInspector.HeapSnapshotClusterContentView.prototype._updateViewsForShowInternalObjectsSettingValue): Deleted.
+        (WebInspector.HeapSnapshotClusterContentView.prototype._updateShowInternalObjectsButtonNavigationItem): Deleted.
+        * UserInterface/Views/HeapSnapshotInstancesContentView.js:
+        (WebInspector.HeapSnapshotInstancesContentView):
+        (WebInspector.HeapSnapshotInstancesContentView.prototype.get showInternalObjects): Deleted.
+        (WebInspector.HeapSnapshotInstancesContentView.prototype.set showInternalObjects): Deleted.
+        * UserInterface/Views/HeapSnapshotInstancesDataGridTree.js:
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype._populateTopLevel):
+        (WebInspector.HeapSnapshotInstancesDataGridTree):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.get includeInternalObjects): Deleted.
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.set includeInternalObjects): Deleted.
+        * UserInterface/Views/HeapSnapshotSummaryContentView.js:
+        Remove the show/hide internal objects button. In the Instances view we will
+        only show non-Internal objects at the top level, and show internal objects
+        when those instances are expanded.
+
 2016-04-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: clearing the console should exit all console groups

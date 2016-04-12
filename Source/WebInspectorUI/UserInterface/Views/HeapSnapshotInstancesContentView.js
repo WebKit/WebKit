@@ -25,15 +25,13 @@
 
 WebInspector.HeapSnapshotInstancesContentView = class HeapSnapshotInstancesContentView extends WebInspector.ContentView
 {
-    constructor(representedObject, extraArguments)
+    constructor(representedObject)
     {
         console.assert(representedObject instanceof WebInspector.HeapSnapshotProxy || representedObject instanceof WebInspector.HeapSnapshotDiffProxy);
 
         super(representedObject);
 
         this.element.classList.add("heap-snapshot");
-
-        let {showInternalObjects} = extraArguments;
 
         let columns = {
             retainedSize: {
@@ -68,30 +66,13 @@ WebInspector.HeapSnapshotInstancesContentView = class HeapSnapshotInstancesConte
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
 
         let sortComparator = WebInspector.HeapSnapshotInstancesDataGridTree.buildSortComparator(this._dataGrid.sortColumnIdentifier, this._dataGrid.sortOrder);
-        this._heapSnapshotDataGridTree = new WebInspector.HeapSnapshotInstancesDataGridTree(this.representedObject, sortComparator, showInternalObjects);
+        this._heapSnapshotDataGridTree = new WebInspector.HeapSnapshotInstancesDataGridTree(this.representedObject, sortComparator);
 
         for (let child of this._heapSnapshotDataGridTree.children)
             this._dataGrid.appendChild(child);
 
         this.addSubview(this._dataGrid);
         this._dataGrid.updateLayout();
-    }
-
-    // Public
-
-    get showInternalObjects()
-    {
-        return this._heapSnapshotDataGridTree.includeInternalObjects;
-    }
-
-    set showInternalObjects(showInternalObjects)
-    {
-        if (this.showInternalObjects === showInternalObjects)
-            return;
-
-        this._heapSnapshotDataGridTree.includeInternalObjects = showInternalObjects;
-
-        this._sortDataGrid();
     }
 
     // Protected

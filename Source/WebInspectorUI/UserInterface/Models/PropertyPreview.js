@@ -29,7 +29,7 @@ WebInspector.PropertyPreview = class PropertyPreview extends WebInspector.Object
     {
         super();
 
-        console.assert(name);
+        console.assert(typeof name === "string");
         console.assert(type);
         console.assert(!value || typeof value === "string");
         console.assert(!valuePreview || valuePreview instanceof WebInspector.ObjectPreview);
