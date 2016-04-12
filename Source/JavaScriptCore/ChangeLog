@@ -1,3 +1,14 @@
+2016-04-12  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix after r199299.
+        https://bugs.webkit.org/show_bug.cgi?id=155508
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::initializeSeparatedWXHeaps):
+        memset_s is not defined.  __STDC_WANT_LIB_EXT1__ is not defined anywhere.
+        Since the return value is unused and set_constraint_handler_s is never called
+        I'm chaning it to memset.
+
 2016-04-11  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] B3 can use undefined bits or not defined required bits when spilling
