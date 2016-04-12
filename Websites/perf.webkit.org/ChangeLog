@@ -1,5 +1,20 @@
 2016-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Replace script runner to use mocha.js tests
+        https://bugs.webkit.org/show_bug.cgi?id=156490
+
+        Reviewed by Chris Dumez.
+
+        Replaced run-tests.js, which was a whole test harness for running legacy tests by tools/run-tests.py
+        which is a thin wrapper around mocha.js.
+
+        * run-tests.js: Removed.
+        * tests: Removed.
+        * tools/run-tests.py: Added.
+        (main):
+
+2016-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         New syncing script sometimes schedules a build request on a wrong builder
         https://bugs.webkit.org/show_bug.cgi?id=156489
 
