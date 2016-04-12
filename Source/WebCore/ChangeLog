@@ -1,3 +1,31 @@
+2016-04-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Pass GridSizingData instead of columnTracks to track sizing methods
+        https://bugs.webkit.org/show_bug.cgi?id=156466
+
+        Reviewed by Darin Adler.
+
+        Several methods used to compute the items' size contribution to the tracks they span in, get
+        as an argument a vector with the sizes of the column tracks.
+
+        In order to support grids with orthogonal flows (among other things) it's much better to
+        pass the GridSizingData struct and let those methods decide whether to use the columns or
+        the rows.
+
+        No new tests as this is just a minor refactoring with no change in behavior.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::logicalContentHeightForChild):
+        (WebCore::RenderGrid::minSizeForChild):
+        (WebCore::RenderGrid::minContentForChild):
+        (WebCore::RenderGrid::maxContentForChild):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForNonSpanningItems):
+        (WebCore::RenderGrid::currentItemSizeForTrackSizeComputationPhase):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        * rendering/RenderGrid.h:
+
 2016-04-11  Darin Adler  <darin@apple.com>
 
         Remove UsePointersEvenForNonNullableObjectArguments from HTMLOptionsCollection
