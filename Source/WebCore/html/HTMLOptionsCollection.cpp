@@ -36,14 +36,12 @@ Ref<HTMLOptionsCollection> HTMLOptionsCollection::create(HTMLSelectElement& sele
     return adoptRef(*new HTMLOptionsCollection(select));
 }
 
-void HTMLOptionsCollection::add(HTMLElement* element, HTMLElement* beforeElement, ExceptionCode& ec)
+void HTMLOptionsCollection::add(HTMLElement& element, HTMLElement* beforeElement, ExceptionCode& ec)
 {
-    if (!element)
-        return;
-    selectElement().add(*element, beforeElement, ec);
+    selectElement().add(element, beforeElement, ec);
 }
 
-void HTMLOptionsCollection::add(HTMLElement* element, int beforeIndex, ExceptionCode& ec)
+void HTMLOptionsCollection::add(HTMLElement& element, int beforeIndex, ExceptionCode& ec)
 {
     add(element, item(beforeIndex), ec);
 }

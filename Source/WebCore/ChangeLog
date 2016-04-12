@@ -1,5 +1,21 @@
 2016-04-11  Darin Adler  <darin@apple.com>
 
+        Remove UsePointersEvenForNonNullableObjectArguments from HTMLOptionsCollection
+        https://bugs.webkit.org/show_bug.cgi?id=156491
+
+        Reviewed by Chris Dumez.
+
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::add): Take a reference instead of a pointer.
+        * html/HTMLOptionsCollection.h: Removed unneeded forward declaration. Changed
+        add to take a reference instead of a pointer for the element to add. Used
+        final instead of override on virtual functions.
+        * html/HTMLOptionsCollection.idl: Removed now-unneeded attribute
+        UsePointersEvenForNonNullableObjectArguments; the only function affected was
+        add, and the overloading code was already checking for null.
+
+2016-04-11  Darin Adler  <darin@apple.com>
+
         Remove UsePointersEvenForNonNullableObjectArguments from HTMLSelectElement
         https://bugs.webkit.org/show_bug.cgi?id=156458
 
