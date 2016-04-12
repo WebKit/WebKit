@@ -252,7 +252,7 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
         if (SpaceSplitString::spaceSplitStringContainsValue(value, "noreferrer", true))
             m_linkRelations |= RelationNoReferrer;
         if (m_relList)
-            m_relList->attributeValueChanged(value);
+            m_relList->associatedAttributeValueChanged(value);
     }
     else
         HTMLElement::parseAttribute(name, value);

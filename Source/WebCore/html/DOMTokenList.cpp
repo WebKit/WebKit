@@ -40,7 +40,6 @@ DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName)
     : m_element(element)
     , m_attributeName(attributeName)
 {
-    setValueInternal(m_element.getAttribute(m_attributeName));
 }
 
 bool DOMTokenList::validateToken(const String& token, ExceptionCode& ec)
@@ -72,26 +71,27 @@ bool DOMTokenList::validateTokens(const String* tokens, size_t length, Exception
 
 bool DOMTokenList::contains(const AtomicString& token) const
 {
-    return m_tokens.contains(token);
+    return tokens().contains(token);
 }
 
-inline void DOMTokenList::addInternal(const String* tokens, size_t length, ExceptionCode& ec)
+inline void DOMTokenList::addInternal(const String* newTokens, size_t length, ExceptionCode& ec)
 {
     // This is usually called with a single token.
-    Vector<AtomicString, 1> uniqueTokens;
-    uniqueTokens.reserveInitialCapacity(length);
+    Vector<AtomicString, 1> uniqueNewTokens;
+    uniqueNewTokens.reserveInitialCapacity(length);
 
+    auto& tokens = this->tokens();
     for (size_t i = 0; i < length; ++i) {
-        if (!validateToken(tokens[i], ec))
+        if (!validateToken(newTokens[i], ec))
             return;
-        if (!m_tokens.contains(tokens[i]) && !uniqueTokens.contains(tokens[i]))
-            uniqueTokens.uncheckedAppend(tokens[i]);
+        if (!tokens.contains(newTokens[i]) && !uniqueNewTokens.contains(newTokens[i]))
+            uniqueNewTokens.uncheckedAppend(newTokens[i]);
     }
 
-    if (!uniqueTokens.isEmpty())
-        m_tokens.appendVector(uniqueTokens);
+    if (!uniqueNewTokens.isEmpty())
+        tokens.appendVector(uniqueNewTokens);
 
-    updateAfterTokenChange();
+    updateAssociatedAttributeFromTokens();
 }
 
 void DOMTokenList::add(const Vector<String>& tokens, ExceptionCode& ec)
@@ -104,15 +104,16 @@ void DOMTokenList::add(const WTF::AtomicString& token, ExceptionCode& ec)
     addInternal(&token.string(), 1, ec);
 }
 
-inline void DOMTokenList::removeInternal(const String* tokens, size_t length, ExceptionCode& ec)
+inline void DOMTokenList::removeInternal(const String* tokensToRemove, size_t length, ExceptionCode& ec)
 {
-    if (!validateTokens(tokens, length, ec))
+    if (!validateTokens(tokensToRemove, length, ec))
         return;
 
+    auto& tokens = this->tokens();
     for (size_t i = 0; i < length; ++i)
-        m_tokens.removeFirst(tokens[i]);
+        tokens.removeFirst(tokensToRemove[i]);
 
-    updateAfterTokenChange();
+    updateAssociatedAttributeFromTokens();
 }
 
 void DOMTokenList::remove(const Vector<String>& tokens, ExceptionCode& ec)
@@ -130,10 +131,12 @@ bool DOMTokenList::toggle(const AtomicString& token, Optional<bool> force, Excep
     if (!validateToken(token, ec))
         return false;
 
-    if (m_tokens.contains(token)) {
+    auto& tokens = this->tokens();
+
+    if (tokens.contains(token)) {
         if (!force.valueOr(false)) {
-            m_tokens.removeFirst(token);
-            updateAfterTokenChange();
+            tokens.removeFirst(token);
+            updateAssociatedAttributeFromTokens();
             return false;
         }
         return true;
@@ -142,8 +145,8 @@ bool DOMTokenList::toggle(const AtomicString& token, Optional<bool> force, Excep
     if (force && !force.value())
         return false;
 
-    m_tokens.append(token);
-    updateAfterTokenChange();
+    tokens.append(token);
+    updateAssociatedAttributeFromTokens();
     return true;
 }
 
@@ -152,7 +155,7 @@ const AtomicString& DOMTokenList::value() const
     if (m_cachedValue.isNull()) {
         // https://dom.spec.whatwg.org/#concept-ordered-set-serializer
         StringBuilder builder;
-        for (auto& token : m_tokens) {
+        for (auto& token : tokens()) {
             if (!builder.isEmpty())
                 builder.append(' ');
             builder.append(token);
@@ -160,16 +163,17 @@ const AtomicString& DOMTokenList::value() const
         m_cachedValue = builder.toAtomicString();
         ASSERT(!m_cachedValue.isNull());
     }
+    ASSERT(!m_tokensNeedUpdating);
     return m_cachedValue;
 }
 
 void DOMTokenList::setValue(const String& value)
 {
-    setValueInternal(value);
-    updateAfterTokenChange();
+    updateTokensFromAttributeValue(value);
+    updateAssociatedAttributeFromTokens();
 }
 
-void DOMTokenList::setValueInternal(const WTF::String& value)
+void DOMTokenList::updateTokensFromAttributeValue(const String& value)
 {
     // Clear tokens but not capacity.
     m_tokens.shrink(0);
@@ -195,24 +199,38 @@ void DOMTokenList::setValueInternal(const WTF::String& value)
     }
 
     m_tokens.shrinkToFit();
+    m_tokensNeedUpdating = false;
     m_cachedValue = nullAtom;
 }
 
-void DOMTokenList::attributeValueChanged(const AtomicString& newValue)
+void DOMTokenList::associatedAttributeValueChanged(const AtomicString&)
 {
     // Do not reset the DOMTokenList value if the attribute value was changed by us.
-    if (m_isUpdatingAttributeValue)
+    if (m_inUpdateAssociatedAttributeFromTokens)
         return;
 
-    setValueInternal(newValue);
+    m_tokensNeedUpdating = true;
+    m_cachedValue = nullAtom;
 }
 
-void DOMTokenList::updateAfterTokenChange()
+// https://dom.spec.whatwg.org/#concept-dtl-update
+void DOMTokenList::updateAssociatedAttributeFromTokens()
 {
+    ASSERT(!m_tokensNeedUpdating);
+
     m_cachedValue = nullAtom;
 
-    TemporaryChange<bool> inAttributeUpdate(m_isUpdatingAttributeValue, true);
-    m_element.setAttribute(m_attributeName, value());
+    TemporaryChange<bool> inAttributeUpdate(m_inUpdateAssociatedAttributeFromTokens, true);
+    m_element.setAttributeWithoutSynchronization(m_attributeName, value());
+    ASSERT_WITH_MESSAGE(m_cachedValue, "Calling value() should have cached its results");
+}
+
+Vector<AtomicString>& DOMTokenList::tokens()
+{
+    if (m_tokensNeedUpdating)
+        updateTokensFromAttributeValue(m_element.fastGetAttribute(m_attributeName));
+    ASSERT(!m_tokensNeedUpdating);
+    return m_tokens;
 }
 
 } // namespace WebCore

@@ -1330,7 +1330,7 @@ void Element::classAttributeChanged(const AtomicString& newClassString)
 
     if (hasRareData()) {
         if (auto* classList = elementRareData()->classList())
-            classList->attributeValueChanged(newClassString);
+            classList->associatedAttributeValueChanged(newClassString);
     }
 }
 

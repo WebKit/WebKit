@@ -85,7 +85,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicSt
 {
     if (name == sandboxAttr) {
         if (m_sandbox)
-            m_sandbox->attributeValueChanged(value);
+            m_sandbox->associatedAttributeValueChanged(value);
 
         String invalidTokens;
         setSandboxFlags(value.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(value, invalidTokens));

@@ -39,7 +39,8 @@ class DOMTokenList {
     WTF_MAKE_NONCOPYABLE(DOMTokenList); WTF_MAKE_FAST_ALLOCATED;
 public:
     DOMTokenList(Element&, const QualifiedName& attributeName);
-    void attributeValueChanged(const AtomicString&);
+
+    void associatedAttributeValueChanged(const AtomicString&);
 
     void ref() { m_element.ref(); }
     void deref() { m_element.deref(); }
@@ -62,8 +63,11 @@ public:
     const AtomicString& value() const;
 
 private:
-    void setValueInternal(const String&);
-    void updateAfterTokenChange();
+    void updateTokensFromAttributeValue(const String&);
+    void updateAssociatedAttributeFromTokens();
+
+    Vector<AtomicString>& tokens();
+    const Vector<AtomicString>& tokens() const { return const_cast<DOMTokenList&>(*this).tokens(); }
 
     static bool validateToken(const String&, ExceptionCode&);
     static bool validateTokens(const String* tokens, size_t length, ExceptionCode&);
@@ -72,19 +76,21 @@ private:
 
     Element& m_element;
     const WebCore::QualifiedName& m_attributeName;
-    bool m_isUpdatingAttributeValue { false };
+    bool m_inUpdateAssociatedAttributeFromTokens { false };
+    bool m_tokensNeedUpdating { true };
     Vector<AtomicString> m_tokens;
     mutable AtomicString m_cachedValue;
 };
 
 inline unsigned DOMTokenList::length() const
 {
-    return m_tokens.size();
+    return tokens().size();
 }
 
 inline const AtomicString& DOMTokenList::item(unsigned index) const
 {
-    return index < m_tokens.size() ? m_tokens[index] : nullAtom;
+    auto& tokens = this->tokens();
+    return index < tokens.size() ? tokens[index] : nullAtom;
 }
 
 } // namespace WebCore

@@ -1,3 +1,47 @@
+2016-04-12  Chris Dumez  <cdumez@apple.com>
+
+        Lazily update tokens in DOMTokenList when the associated attribute value changes
+        https://bugs.webkit.org/show_bug.cgi?id=156474
+
+        Reviewed by Ryosuke Niwa.
+
+        Lazily update tokens in DOMTokenList when the associated attribute value
+        changes for performance. Constructing the sanitized vector of tokens
+        every time the associated Element attribute changes is too expensive.
+        Instead, we mark the vector as dirty whenever the attribute changes, and
+        we only construct the sanitized vector when it is actually required.
+
+        Also do some renaming for clarity.
+
+        There is no web-exposed behavior change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::classAttributeChanged):
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::contains):
+        (WebCore::DOMTokenList::addInternal):
+        (WebCore::DOMTokenList::removeInternal):
+        (WebCore::DOMTokenList::toggle):
+        (WebCore::DOMTokenList::value):
+        (WebCore::DOMTokenList::setValue):
+        (WebCore::DOMTokenList::updateTokensFromAttributeValue):
+        (WebCore::DOMTokenList::associatedAttributeValueChanged):
+        (WebCore::DOMTokenList::updateAssociatedAttributeFromTokens):
+        (WebCore::DOMTokenList::tokens):
+        (WebCore::DOMTokenList::DOMTokenList): Deleted.
+        * html/DOMTokenList.h:
+        (WebCore::DOMTokenList::tokens):
+        (WebCore::DOMTokenList::length):
+        (WebCore::DOMTokenList::item):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseAttribute):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseAttribute):
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::parseAttribute):
+
 2016-04-12  Darin Adler  <darin@apple.com>
 
         Remove UsePointersEvenForNonNullableObjectArguments from HTMLMediaElement

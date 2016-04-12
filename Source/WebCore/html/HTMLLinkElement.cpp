@@ -141,7 +141,7 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
     if (name == relAttr) {
         m_relAttribute = LinkRelAttribute(value);
         if (m_relList)
-            m_relList->attributeValueChanged(value);
+            m_relList->associatedAttributeValueChanged(value);
         process();
         return;
     }
@@ -160,7 +160,7 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
     }
     if (name == sizesAttr) {
         if (m_sizes)
-            m_sizes->attributeValueChanged(value);
+            m_sizes->associatedAttributeValueChanged(value);
         process();
         return;
     }

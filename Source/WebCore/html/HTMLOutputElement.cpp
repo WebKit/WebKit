@@ -68,7 +68,7 @@ void HTMLOutputElement::parseAttribute(const QualifiedName& name, const AtomicSt
 {
     if (name == forAttr) {
         if (m_tokens)
-            m_tokens->attributeValueChanged(value);
+            m_tokens->associatedAttributeValueChanged(value);
     } else
         HTMLFormControlElement::parseAttribute(name, value);
 }
