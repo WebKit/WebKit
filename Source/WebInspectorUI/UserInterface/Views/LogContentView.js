@@ -633,6 +633,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
     _logCleared(event)
     {
         this._logViewController.clear();
+        this._nestingLevel = 0;
 
         let searchQuery = this._findBanner.searchQuery;
         if (searchQuery)
