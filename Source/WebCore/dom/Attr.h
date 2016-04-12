@@ -51,8 +51,9 @@ public:
     Element* ownerElement() const { return m_element; }
 
     const AtomicString& value() const;
-    void setValue(const AtomicString&, ExceptionCode&);
     void setValue(const AtomicString&);
+    const AtomicString& valueForBindings() const { return value(); }
+    void setValueForBindings(const AtomicString&);
 
     const QualifiedName& qualifiedName() const { return m_name; }
 

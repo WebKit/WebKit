@@ -1,3 +1,18 @@
+2016-04-12  Chris Dumez  <cdumez@apple.com>
+
+        Attr.value should not be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=156515
+
+        Reviewed by Benjamin Poulain.
+
+        Add layout test and rebaseline existing one now that Attr.value is no
+        longer nullable.
+
+        * fast/dom/Attr/value-not-nullable-expected.txt: Added.
+        * fast/dom/Attr/value-not-nullable.html: Added.
+        * fast/dom/coreDOM-element-attribute-js-null-expected.txt:
+        * fast/dom/coreDOM-element-attribute-js-null.xhtml:
+
 2016-04-12  David Kilzer  <ddkilzer@apple.com>
 
         Web Inspector: inspector/heap/getRemoteObject.html is flakey

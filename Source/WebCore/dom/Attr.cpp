@@ -120,7 +120,7 @@ void Attr::setValue(const AtomicString& value)
     invalidateNodeListAndCollectionCachesInAncestors(&m_name, m_element);
 }
 
-void Attr::setValue(const AtomicString& value, ExceptionCode&)
+void Attr::setValueForBindings(const AtomicString& value)
 {
     AtomicString oldValue = this->value();
     if (m_element)
@@ -132,9 +132,9 @@ void Attr::setValue(const AtomicString& value, ExceptionCode&)
         m_element->didModifyAttribute(qualifiedName(), oldValue, value);
 }
 
-void Attr::setNodeValue(const String& v, ExceptionCode& ec)
+void Attr::setNodeValue(const String& v, ExceptionCode&)
 {
-    setValue(v, ec);
+    setValueForBindings(v);
 }
 
 Ref<Node> Attr::cloneNodeInternal(Document& targetDocument, CloningOperation)

@@ -30,7 +30,7 @@
 
     readonly attribute boolean specified;
 
-    [SetterRaisesException] attribute DOMString? value;
+    [ImplementedAs=valueForBindings] attribute DOMString value;
 
     // DOM Level 2
 
