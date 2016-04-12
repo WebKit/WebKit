@@ -82,6 +82,7 @@ public:
     virtual bool sessionWillBeginPlayback(PlatformMediaSession&);
     virtual void sessionWillEndPlayback(PlatformMediaSession&);
     virtual bool sessionCanLoadMedia(const PlatformMediaSession&) const;
+    virtual void clientCharacteristicsChanged(PlatformMediaSession&) { }
 
 #if PLATFORM(IOS)
     virtual void configureWireLessTargetMonitoring() { }
@@ -99,7 +100,7 @@ protected:
     explicit PlatformMediaSessionManager();
 
     void addSession(PlatformMediaSession&);
-    void removeSession(PlatformMediaSession&);
+    virtual void removeSession(PlatformMediaSession&);
 
     Vector<PlatformMediaSession*> sessions() { return m_sessions; }
 

@@ -56,9 +56,12 @@ private:
 
     MediaSessionManageriOS();
 
+    void removeSession(PlatformMediaSession&) override;
+
     bool sessionWillBeginPlayback(PlatformMediaSession&) override;
     void sessionWillEndPlayback(PlatformMediaSession&) override;
-    
+    void clientCharacteristicsChanged(PlatformMediaSession&) override;
+
     void updateNowPlayingInfo();
     
     void resetRestrictions() override;
@@ -66,8 +69,11 @@ private:
     void configureWireLessTargetMonitoring() override;
 
     bool sessionCanLoadMedia(const PlatformMediaSession&) const override;
+
+    PlatformMediaSession* nowPlayingEligibleSession();
     
     RetainPtr<WebMediaSessionHelper> m_objcObserver;
+    RetainPtr<NSMutableDictionary> m_nowPlayingInfo;
     bool m_isInBackground { false };
 };
 

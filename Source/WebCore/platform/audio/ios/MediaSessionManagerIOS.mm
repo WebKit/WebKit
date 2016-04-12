@@ -193,43 +193,87 @@ bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSession& sess
     if (!PlatformMediaSessionManager::sessionWillBeginPlayback(session))
         return false;
 
+    LOG(Media, "MediaSessionManageriOS::sessionWillBeginPlayback");
     updateNowPlayingInfo();
     return true;
 }
-    
+
+void MediaSessionManageriOS::removeSession(PlatformMediaSession& session)
+{
+    PlatformMediaSessionManager::removeSession(session);
+    LOG(Media, "MediaSessionManageriOS::removeSession");
+    updateNowPlayingInfo();
+}
+
 void MediaSessionManageriOS::sessionWillEndPlayback(PlatformMediaSession& session)
 {
     PlatformMediaSessionManager::sessionWillEndPlayback(session);
+    LOG(Media, "MediaSessionManageriOS::sessionWillEndPlayback");
     updateNowPlayingInfo();
 }
-    
+
+void MediaSessionManageriOS::clientCharacteristicsChanged(PlatformMediaSession&)
+{
+    LOG(Media, "MediaSessionManageriOS::clientCharacteristicsChanged");
+    updateNowPlayingInfo();
+}
+
+PlatformMediaSession* MediaSessionManageriOS::nowPlayingEligibleSession()
+{
+    for (auto session : sessions()) {
+        PlatformMediaSession::MediaType type = session->mediaType();
+        if (type != PlatformMediaSession::Video && type != PlatformMediaSession::Audio)
+            continue;
+
+        if (session->characteristics() & PlatformMediaSession::HasAudio)
+            return session;
+    }
+
+    return nullptr;
+}
+
 void MediaSessionManageriOS::updateNowPlayingInfo()
 {
-    LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo");
-
     MPNowPlayingInfoCenter *nowPlaying = (MPNowPlayingInfoCenter *)[getMPNowPlayingInfoCenterClass() defaultCenter];
-    const PlatformMediaSession* currentSession = this->currentSession();
-    
+    const PlatformMediaSession* currentSession = this->nowPlayingEligibleSession();
+
+    LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - currentSession = %p", currentSession);
+
     if (!currentSession) {
-        [nowPlaying setNowPlayingInfo:nil];
+        if (m_nowPlayingInfo) {
+            LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - clearing now playing info");
+            [nowPlaying setNowPlayingInfo:nil];
+            m_nowPlayingInfo = nil;
+        }
+
         return;
     }
-    
+
     RetainPtr<NSMutableDictionary> info = adoptNS([[NSMutableDictionary alloc] init]);
-    
+
     String title = currentSession->title();
     if (!title.isEmpty())
         [info setValue:static_cast<NSString *>(title) forKey:MPMediaItemPropertyTitle];
-    
+
     double duration = currentSession->duration();
     if (std::isfinite(duration) && duration != MediaPlayer::invalidTime())
         [info setValue:@(duration) forKey:MPMediaItemPropertyPlaybackDuration];
-    
+
+    [info setValue:(currentSession->state() == PlatformMediaSession::Playing ? @YES : @NO) forKey:MPNowPlayingInfoPropertyPlaybackRate];
+
+    if ([m_nowPlayingInfo.get() isEqualToDictionary:info.get()]) {
+        LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - nothing new to show");
+        return;
+    }
+
+    m_nowPlayingInfo = info;
+
     double currentTime = currentSession->currentTime();
     if (std::isfinite(currentTime) && currentTime != MediaPlayer::invalidTime())
         [info setValue:@(currentTime) forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
-    
-    [info setValue:(currentSession->state() == PlatformMediaSession::Playing ? @YES : @NO) forKey:MPNowPlayingInfoPropertyPlaybackRate];
+
+    LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - title = \"%s\"", [[info.get() valueForKey:MPMediaItemPropertyTitle] UTF8String]);
+
     [nowPlaying setNowPlayingInfo:info.get()];
 }
 

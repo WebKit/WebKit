@@ -86,6 +86,16 @@ public:
         MayResumePlaying = 1 << 0,
     };
 
+    enum Characteristics {
+        HasNothing = 0,
+        HasAudio = 1 << 0,
+        HasVideo = 1 << 1,
+    };
+    typedef unsigned CharacteristicsFlags;
+
+    CharacteristicsFlags characteristics() const;
+    void clientCharacteristicsChanged();
+
     void beginInterruption(InterruptionType);
     void endInterruption(EndInterruptionFlags);
 
@@ -94,6 +104,7 @@ public:
     bool clientWillPausePlayback();
 
     void pauseSession();
+    void stopSession();
     
     void visibilityChanged();
 
@@ -173,6 +184,7 @@ public:
     virtual PlatformMediaSession::MediaType mediaType() const = 0;
     virtual PlatformMediaSession::MediaType presentationType() const = 0;
     virtual PlatformMediaSession::DisplayType displayType() const { return PlatformMediaSession::Normal; }
+    virtual PlatformMediaSession::CharacteristicsFlags characteristics() const = 0;
 
     virtual void resumeAutoplaying() { }
     virtual void mayResumePlayback(bool shouldResume) = 0;

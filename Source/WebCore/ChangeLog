@@ -1,3 +1,45 @@
+2016-04-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] media title sometimes remain in Control Center after tab is closed
+        https://bugs.webkit.org/show_bug.cgi?id=156243
+        <rdar://problem/20167445>
+
+        Reviewed by Darin Adler.
+
+        * Modules/webaudio/AudioContext.h: Implement characteristics.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaLoadingFailed): Call mediaSession->clientCharacteristicsChanged.
+        (WebCore::HTMLMediaElement::setReadyState): Ditto.
+        (WebCore::HTMLMediaElement::clearMediaPlayer): Ditto.
+        (WebCore::HTMLMediaElement::stop): Call mediaSession->stopSession.
+        (WebCore::HTMLMediaElement::characteristics): New, return current characteristics.
+        * html/HTMLMediaElement.h:
+
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::stopSession): Suspend playback, and remove the session 
+          from the manager, it will never play again.
+        (WebCore::PlatformMediaSession::characteristics): Return client characteristics.
+        (WebCore::PlatformMediaSession::clientCharacteristicsChanged):
+        * platform/audio/PlatformMediaSession.h:
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::stopAllMediaPlaybackForProcess): Call stopSession 
+          instead of pauseSession to signal that playback will never start again.
+        * platform/audio/PlatformMediaSessionManager.h:
+
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::sessionWillBeginPlayback): Add logging.
+        (WebCore::MediaSessionManageriOS::removeSession): Update NowPlaying.
+        (WebCore::MediaSessionManageriOS::sessionWillEndPlayback): Add logging.
+        (WebCore::MediaSessionManageriOS::clientCharacteristicsChanged): Update NowPlaying.
+        (WebCore::MediaSessionManageriOS::nowPlayingEligibleSession): New, return the first session
+          that is an audio or video element with playable audio. WebAudio is not currently controllable
+          so it isn't appropriate to show it in the NowPlaying info center.
+        (WebCore::MediaSessionManageriOS::updateNowPlayingInfo): Remember the last state passed to
+          NowPlaying so we can call it only when something has changed.
+
 2016-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rework scrollbars theming code for GTK+ 3.20

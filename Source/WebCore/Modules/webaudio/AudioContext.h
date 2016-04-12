@@ -318,6 +318,7 @@ private:
     // PlatformMediaSessionClient
     PlatformMediaSession::MediaType mediaType() const override { return PlatformMediaSession::WebAudio; }
     PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::WebAudio; }
+    PlatformMediaSession::CharacteristicsFlags characteristics() const override { return m_state == State::Running ? PlatformMediaSession::HasAudio : PlatformMediaSession::HasNothing; }
     void mayResumePlayback(bool shouldResume) override;
     void suspendPlayback() override;
     bool canReceiveRemoteControlCommands() const override { return false; }
