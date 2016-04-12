@@ -1,3 +1,13 @@
+2016-04-12  David Kilzer  <ddkilzer@apple.com>
+
+        Web Inspector: inspector/heap/getRemoteObject.html is flakey
+        <http://webkit.org/b/156514>
+
+        Unreviewed test expectations update.
+
+        * platform/mac-wk2/TestExpectations:
+        (inspector/heap/getRemoteObject.html): Mark as flakey.
+
 2016-04-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should be able to expand Objects in Heap Allocations View to see exactly what it retains
