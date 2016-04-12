@@ -454,14 +454,11 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 
 bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if ([m_inspectorWindow styleMask] & NSFullScreenWindowMask)
+    if ([m_inspectorWindow styleMask] & NSWindowStyleMaskFullScreen)
         return false;
-#pragma clang diagnostic pop
 
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
-    if ([inspectedView isKindOfClass:[WKView class]] || [inspectedView isKindOfClass:[WKWebView class]])
+    if ([inspectedView isKindOfClass:[WKWebInspectorWKWebView class]])
         return webProcessCanAttach;
 
     static const float minimumAttachedHeight = 250;

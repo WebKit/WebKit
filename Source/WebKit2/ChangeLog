@@ -1,5 +1,20 @@
 2016-04-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Dock controls are not available in toolbar if Web Inspector window leaves fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=156520
+        <rdar://problem/22101106>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCanAttach):
+        Be more explicit about the attachment view check. Its intent
+        was to prevent allowing a 2nd level inspector from attaching
+        to a 1st level inspector. We can use a stronger check. Also,
+        remove deprecated pragmas by switching to new value.
+
+2016-04-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Keyboard shortcut for "Inspect Element" only works when Web Inspector is open.
         https://bugs.webkit.org/show_bug.cgi?id=111193
         <rdar://problem/13325889>
