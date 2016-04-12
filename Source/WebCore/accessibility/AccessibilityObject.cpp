@@ -1623,7 +1623,7 @@ void AccessibilityObject::updateBackingStore()
     RefPtr<AccessibilityObject> protector(this);
 
     if (Document* document = this->document()) {
-        if (!document->view()->isInLayout())
+        if (!document->view()->isInRenderTreeLayout())
             document->updateLayoutIgnorePendingStylesheets();
     }
     
