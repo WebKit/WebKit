@@ -1,0 +1,22 @@
+<html>
+<head>
+<script>
+function runTest()
+{
+    try {
+        if (window.localStorage) {
+            console.log("FAIL: window.localStorage WAS accessible");
+        }
+    } catch(e) {
+        console.log("PASS: window.localStorage is NOT accessible");
+        console.log("Exception: " + e.message);
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>
