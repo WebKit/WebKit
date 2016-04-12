@@ -1,3 +1,18 @@
+2016-04-12  Tomas Popela  <tpopela@redhat.com>
+
+        Modify the CXXFLAGS in webkitdirs.pm just on architectures where the flags are supported
+        https://bugs.webkit.org/show_bug.cgi?id=156338
+
+        Reviewed by Michael Catanzaro.
+
+        Add the "-march=pentium4 -msse2 -mfpmath=sse " into the CXXFLAGS just
+        for the i686 where it is supported and not for other architectures
+        (such as s390(x) and ppc(64)) where the build will fail with these
+        CXXFLAGS.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2016-04-11  Alex Christensen  <achristensen@webkit.org>
 
         Build MiniBrowser with CMake on Mac
