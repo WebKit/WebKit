@@ -1,3 +1,17 @@
+2016-04-11  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Do not pass context to EwkViewCreate
+        https://bugs.webkit.org/show_bug.cgi?id=156461
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2/CoordinatedGraphics/WKViewUserViewportToContents.cpp:
+        (TestWebKitAPI::TEST): Removed context argument from EwkViewCreate calls.
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::PlatformWebView::PlatformWebView): Ditto.
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView): Ditto.
+
 2016-04-11  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
 
         [CMake] Make FOLDER property INHERITED

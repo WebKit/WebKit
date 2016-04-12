@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-EAPI Evas_Object* EWKViewCreate(WKContextRef, WKPageConfigurationRef, Evas*, Evas_Smart*);
+EAPI Evas_Object* EWKViewCreate(WKPageConfigurationRef, Evas*, Evas_Smart*);
 EAPI WKViewRef EWKViewGetWKView(Evas_Object*);
 
 #ifdef __cplusplus

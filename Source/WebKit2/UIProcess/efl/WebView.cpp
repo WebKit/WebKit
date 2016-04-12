@@ -64,12 +64,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<WebView> WebView::create(WebProcessPool* processPool, API::PageConfiguration& pageConfiuration)
+Ref<WebView> WebView::create(API::PageConfiguration& pageConfiuration)
 {
-    return adoptRef(*new WebView(processPool, pageConfiuration));
+    return adoptRef(*new WebView(pageConfiuration));
 }
 
-WebView::WebView(WebProcessPool* context, API::PageConfiguration& pageConfiguration)
+WebView::WebView(API::PageConfiguration& pageConfiguration)
     : m_ewkView(0)
     , m_focused(false)
     , m_visible(false)
@@ -77,7 +77,7 @@ WebView::WebView(WebProcessPool* context, API::PageConfiguration& pageConfigurat
     , m_opacity(1.0)
 {
     // Need to call createWebPage after other data members, specifically m_visible, are initialized.
-    m_page = context->createWebPage(*this, pageConfiguration.copy());
+    m_page = pageConfiguration.processPool()->createWebPage(*this, pageConfiguration.copy());
     m_page->initializeWebPage();
 
     m_page->pageGroup().preferences().setAcceleratedCompositingEnabled(true);

@@ -1,3 +1,29 @@
+2016-04-11  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Do not pass context to EwkViewCreate
+        https://bugs.webkit.org/show_bug.cgi?id=156461
+
+        Reviewed by Darin Adler.
+
+        EWKViewCreate already has pageConfiguration which contains context.
+        So, this patch removes context argument from EWKViewCreate.
+
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewCreate):
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (EWKViewCreate): Call WebView::Create instead of WKViewCreate not to use WK API.
+        (ewk_view_smart_add):
+        (ewk_view_add_with_configuration):
+        (ewk_view_add_with_context):
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::create):
+        (WebKit::WebView::WebView):
+        * UIProcess/efl/WebView.h:
+
 2016-04-11  Darin Adler  <darin@apple.com>
 
         Remove UsePointersEvenForNonNullableObjectArguments from HTMLSelectElement

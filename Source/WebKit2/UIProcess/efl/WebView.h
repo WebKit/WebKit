@@ -62,7 +62,7 @@ class WebView : public API::ObjectImpl<API::Object::Type::View>, public PageClie
 public:
     virtual ~WebView();
 
-    static Ref<WebView> create(WebProcessPool*, API::PageConfiguration&);
+    static Ref<WebView> create(API::PageConfiguration&);
 
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const { return m_size; }
@@ -144,7 +144,7 @@ public:
     WebCore::Color viewBackgroundColor();
 
 private:
-    WebView(WebProcessPool*, API::PageConfiguration&);
+    WebView(API::PageConfiguration&);
 
     CoordinatedGraphicsScene* coordinatedGraphicsScene();
 

@@ -64,7 +64,7 @@ typedef struct WKViewClientV0 {
     WKViewDoneWithTouchEventCallback                 doneWithTouchEvent;
 } WKViewClientV0;
 
-WK_EXPORT WKViewRef WKViewCreate(WKContextRef context, WKPageConfigurationRef pageConfiguration);
+WK_EXPORT WKViewRef WKViewCreate(WKPageConfigurationRef pageConfiguration);
 
 WK_EXPORT WKSize WKViewGetSize(WKViewRef);
 WK_EXPORT void WKViewSetSize(WKViewRef, WKSize size);
