@@ -1,3 +1,22 @@
+2016-04-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] do not exit AirPlay when the screen locks
+        https://bugs.webkit.org/show_bug.cgi?id=156502
+        <rdar://problem/24616592>
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction): Add logging.
+        (WebCore::HTMLMediaElement::purgeBufferedDataIfPossible): Don't tell the media engine to purge 
+          data if it is playing to a wireless target because that will drop the connection.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted): Add logging.
+        (WebCore::MediaElementSession::canPlayToWirelessPlaybackTarget): Drive by fix: iOS doesn't 
+          have an explicit playbackTarget, don't test for it.
+        (WebCore::MediaElementSession::isPlayingToWirelessPlaybackTarget): Ditto.
+
 2016-04-12  Gavin Barraclough  <barraclough@apple.com>
 
         WebKit should adopt journal_mode=wal for all SQLite databases.
