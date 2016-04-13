@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/clearSessionStorage.js"></script>
+<script>
+function runTest()
+{
+    try {
+        if (window.sessionStorage)
+            console.log("PASS: window.sessionStorage was accessible");
+    } catch (e) {
+        console.log("FAIL: window.sessionStorage was not accessible");
+        console.log("Exception: " + e.message);
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="runTest();">
+</body>
+</html>
