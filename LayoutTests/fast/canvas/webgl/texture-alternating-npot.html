@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebGL Non-Power of 2 texture conformance test.</title>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"> </script>
+<script src="resources/webgl-test-utils.js"> </script>
+</head>
+<body>
+<canvas id="example" width="4" height="4" style="width: 40px; height: 30px;"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec2 texCoord0;
+varying vec2 texCoord;
+void main()
+{
+    gl_Position = vPosition;
+    texCoord = texCoord0;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision mediump float;
+#endif
+uniform samplerCube tex;
+varying vec2 texCoord;
+void main()
+{
+    gl_FragColor = textureCube(tex, normalize(vec3(texCoord, 1)));
+}
+</script>
+<script>
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var wtu = WebGLTestUtils;
+var canvas = document.getElementById("example");
+var gl = wtu.create3DContext(canvas);
+var program = wtu.setupTexturedQuad(gl);
+
+glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
+
+// Make 3 textures by using 3 active texture units.
+var textures = [];
+for (var ii = 0; ii < 3; ++ii) {
+    var tex = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0 + ii);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    textures[ii] = tex;
+}
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+// Alternate POT and NPOT textures, ending with NPOT.
+//
+// 1. Check that an NPOT texture not on level 0 generates INVALID_VALUE (alternating, ending in NPOT texture)
+gl.activeTexture(gl.TEXTURE0 + 0);
+wtu.fillTexture(gl, textures[0], 5, 3, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.INVALID_VALUE, "gl.texImage2D[0] with NPOT texture with level > 0 should return INVALID_VALUE");
+
+gl.activeTexture(gl.TEXTURE0 + 1);
+wtu.fillTexture(gl, textures[1], 4, 4, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D[1] with POT texture with level > 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 2);
+wtu.fillTexture(gl, textures[2], 5, 3, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.INVALID_VALUE, "gl.texImage2D[2] with NPOT texture with level > 0 should return INVALID_VALUE");
+
+// 2. Check that an NPOT texture not on level 0 generates INVALID_VALUE (alternating, ending in POT texture)
+gl.activeTexture(gl.TEXTURE0 + 0);
+wtu.fillTexture(gl, textures[0], 4, 4, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D[0] with POT texture with level > 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 1);
+wtu.fillTexture(gl, textures[1], 5, 3, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.INVALID_VALUE, "gl.texImage2D[1] with POT texture with level > 0 should return INVALID_VALUE");
+
+gl.activeTexture(gl.TEXTURE0 + 2);
+wtu.fillTexture(gl, textures[2], 4, 4, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D[2] with POT texture with level > 0 should succeed");
+
+// 3. Check that an NPOT texture on level 0 succeeds (alternating, ending in NPOT texture)
+gl.activeTexture(gl.TEXTURE0 + 0);
+wtu.fillTexture(gl, textures[0], 5, 3, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D[0] with NPOT texture at level 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 1);
+wtu.fillTexture(gl, textures[1], 4, 4, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D[1] with POT texture at level 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 2);
+wtu.fillTexture(gl, textures[2], 5, 3, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D[2] with NPOT texture at level 0 should succeed");
+
+// 4. Check that an NPOT texture on level 0 succeeds (alternating, ending in POT texture)
+gl.activeTexture(gl.TEXTURE0 + 0);
+wtu.fillTexture(gl, textures[0], 4, 4, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D[0] with POT texture at level 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 1);
+wtu.fillTexture(gl, textures[1], 5, 3, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D[1] with NPOT texture at level 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 2);
+wtu.fillTexture(gl, textures[2], 4, 4, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D[2] with POT texture at level 0 should succeed");
+
+debug("");
+debug("check using cubemap");
+var program = wtu.setupProgram(
+    gl,
+    [wtu.loadShaderFromScript(gl, 'vshader', gl.VERTEX_SHADER),
+     wtu.loadShaderFromScript(gl, 'fshader', gl.FRAGMENT_SHADER)],
+    ['vPosition', 'texCoord0'], [0, 1]);
+
+// Make 3 textures by using 3 active texture units.
+var cubeTextures = [];
+for (var ii = 0; ii < 3; ++ii) {
+    var tex = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0 + ii);
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, tex);
+    cubeTextures[ii] = tex;
+}
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+// 5. Check that an NPOT texture not on level 0 generates INVALID_VALUE (alternating, ending in NPOT texture)
+gl.activeTexture(gl.TEXTURE0 + 0);
+fillCubeTexture(gl, cubeTextures[0], 5, 3, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.INVALID_VALUE, "gl.texImage2D with NPOT texture with level > 0 should return INVALID_VALUE");
+
+gl.activeTexture(gl.TEXTURE0 + 1);
+fillCubeTexture(gl, cubeTextures[1], 4, 4, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D with POT texture with level > 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 2);
+fillCubeTexture(gl, cubeTextures[2], 5, 3, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.INVALID_VALUE, "gl.texImage2D with NPOT texture with level > 0 should return INVALID_VALUE");
+
+// 6. Check that an NPOT texture not on level 0 generates INVALID_VALUE (alternating, ending in POT texture)
+gl.activeTexture(gl.TEXTURE0 + 0);
+fillCubeTexture(gl, cubeTextures[0], 4, 4, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D with POT texture with level > 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 1);
+fillCubeTexture(gl, cubeTextures[1], 5, 3, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.INVALID_VALUE, "gl.texImage2D with NPOT texture with level > 0 should return INVALID_VALUE");
+
+gl.activeTexture(gl.TEXTURE0 + 2);
+fillCubeTexture(gl, cubeTextures[2], 4, 4, [0, 192, 128, 255], 1);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D with POT texture with level > 0 should succeed");
+
+// 7. Check that an NPOT texture on level 0 succeeds (alternating, ending in NPOT texture)
+gl.activeTexture(gl.TEXTURE0 + 0);
+fillCubeTexture(gl, cubeTextures[0], 5, 5, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D with NPOT texture at level 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 1);
+fillCubeTexture(gl, cubeTextures[1], 4, 4, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D with POT texture at level 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 2);
+fillCubeTexture(gl, cubeTextures[2], 5, 5, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D with NPOT texture at level 0 should succeed");
+
+// 8. Check that an NPOT texture on level 0 succeeds (alternating, ending in POT texture)
+gl.activeTexture(gl.TEXTURE0 + 0);
+fillCubeTexture(gl, cubeTextures[0], 4, 4, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D with POT texture at level 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 1);
+fillCubeTexture(gl, cubeTextures[1], 5, 5, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D with NPOT texture at level 0 should succeed");
+
+gl.activeTexture(gl.TEXTURE0 + 2);
+fillCubeTexture(gl, cubeTextures[2], 4, 4, [0, 192, 128, 255]);
+glErrorShouldBe(gl, gl.NO_ERROR, "gl.texImage2D with POT texture at level 0 should succeed");
+
+function fillCubeTexture(gl, tex, width, height, color, opt_level) {
+  opt_level = opt_level || 0;
+  var canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  var ctx2d = canvas.getContext('2d');
+  ctx2d.fillStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + "," + color[3] + ")";
+  ctx2d.fillRect(0, 0, width, height);
+  gl.bindTexture(gl.TEXTURE_CUBE_MAP, tex);
+  var targets = [
+    gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Z];
+  for (var tt = 0; tt < targets.length; ++tt) {
+    gl.texImage2D(
+        targets[tt], opt_level, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+  }
+};
+
+</script>
+</body>
+</html>
+
