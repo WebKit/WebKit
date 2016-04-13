@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                findMediaElement();
+
+                run('internals.setMediaElementRestrictions(video, "RequireUserGestureForVideoRateChange")');
+
+                waitForEvent('loadedmetadata', loadedmetadata, false, true, document)
+                waitForEventAndEnd('timeupdate')
+
+                consoleWrite('* set video.src');
+                video.src = findMediaFile('video', 'content/test');
+            }
+
+            function loadedmetadata()
+            {
+                consoleWrite('<br>* video.play() should fail ');
+                run('video.play()');
+                testExpected('video.paused', true);
+
+                consoleWrite('<br>* Send a play command, it should succeed.');
+                run("internals.postRemoteControlCommand('play')");
+                consoleWrite('');
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that a remote control command is treated as a user gesture.</p>
+        <video controls></video>
+    </body>
+</html>

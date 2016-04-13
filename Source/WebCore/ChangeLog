@@ -1,3 +1,20 @@
+2016-04-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] remote command should be considered user events
+        https://bugs.webkit.org/show_bug.cgi?id=156546
+        <rdar://problem/25560877>
+
+        Reviewed by Jer Noble.
+
+        Test: media/remote-control-command-is-user-gesture.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didReceiveRemoteControlCommand): Increment/decrement 
+          m_processingRemoteControlCommand around calling remote command method.
+        (WebCore::HTMLMediaElement::processingUserGesture): Return true if called while handling
+          a remote control command.
+        * html/HTMLMediaElement.h:
+
 2016-04-13  Antonio Gomes  <tonikitoo@webkit.org>
 
         Non-resizable text field looks resizable

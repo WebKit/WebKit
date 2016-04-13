@@ -85,6 +85,7 @@
 #include "ShadowRoot.h"
 #include "TimeRanges.h"
 #include "UserContentController.h"
+#include "UserGestureIndicator.h"
 #include <limits>
 #include <runtime/Uint8Array.h>
 #include <wtf/CurrentTime.h>
@@ -6640,6 +6641,7 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
 {
     LOG(Media, "HTMLMediaElement::didReceiveRemoteControlCommand(%p) - %i", this, static_cast<int>(command));
 
+    UserGestureIndicator remoteControlUserGesture(DefinitelyProcessingUserGesture, &document());
     switch (command) {
     case PlatformMediaSession::PlayCommand:
         play();

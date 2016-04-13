@@ -1,3 +1,14 @@
+2016-04-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] remote command should be considered user events
+        https://bugs.webkit.org/show_bug.cgi?id=156546
+        <rdar://problem/25560877>
+
+        Reviewed by Jer Noble.
+
+        * media/remote-control-command-is-user-gesture-expected.txt: Added.
+        * media/remote-control-command-is-user-gesture.html: Added.
+
 2016-04-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199502 and r199511.

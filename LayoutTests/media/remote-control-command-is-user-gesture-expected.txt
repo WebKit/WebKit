@@ -1,0 +1,17 @@
+Test that a remote control command is treated as a user gesture.
+
+
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForVideoRateChange"))
+* set video.src
+EVENT(loadedmetadata)
+
+* video.play() should fail 
+RUN(video.play())
+EXPECTED (video.paused == 'true') OK
+
+* Send a play command, it should succeed.
+RUN(internals.postRemoteControlCommand('play'))
+
+EVENT(timeupdate)
+END OF TEST
+
