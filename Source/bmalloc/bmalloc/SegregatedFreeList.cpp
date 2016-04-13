@@ -30,7 +30,7 @@ namespace bmalloc {
 SegregatedFreeList::SegregatedFreeList(VMState::HasPhysical hasPhysical)
     : m_hasPhysical(hasPhysical)
 {
-    BASSERT(static_cast<size_t>(&select(largeMax) - m_freeLists.begin()) == m_freeLists.size() - 1);
+    BASSERT(static_cast<size_t>(&select(largeObjectMax) - m_freeLists.begin()) == m_freeLists.size() - 1);
 }
 
 void SegregatedFreeList::insert(const LargeObject& largeObject)
