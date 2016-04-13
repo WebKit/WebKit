@@ -58,8 +58,6 @@ private:
     WriteBarrier<RegExp> m_emptyRegExp;
 };
 
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState*);
-
 } // namespace JSC
 
 #endif // RegExpPrototype_h

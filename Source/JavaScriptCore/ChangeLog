@@ -1,5 +1,74 @@
 2016-04-12  Mark Lam  <mark.lam@apple.com>
 
+        Rollout: ES6: Implement String.prototype.split and RegExp.prototype[@@split].
+        https://bugs.webkit.org/show_bug.cgi?id=156013
+
+        Speculative rollout to fix 32-bit shadow-chicken.yaml/tests/v8-v6/v8-regexp.js.shadow-chicken test failure.
+
+        Not reviewed.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/GlobalObject.js:
+        (speciesGetter):
+        (speciesConstructor): Deleted.
+        * builtins/PromisePrototype.js:
+        * builtins/RegExpPrototype.js:
+        (advanceStringIndexUnicode):
+        (match):
+        (advanceStringIndex): Deleted.
+        (regExpExec): Deleted.
+        (hasObservableSideEffectsForRegExpSplit): Deleted.
+        (split): Deleted.
+        * builtins/StringPrototype.js:
+        (repeat):
+        (split): Deleted.
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        (JSC::BytecodeIntrinsicRegistry::lookup):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/ECMAScriptSpecInternalFunctions.cpp: Removed.
+        * runtime/ECMAScriptSpecInternalFunctions.h: Removed.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::setGlobalThis):
+        (JSC::JSGlobalObject::init):
+        (JSC::getGetterById): Deleted.
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::setDescriptor):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::offsetOfLastIndexIsWritable):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncSearch):
+        (JSC::advanceStringIndex): Deleted.
+        (JSC::regExpProtoFuncSplitFast): Deleted.
+        * runtime/RegExpPrototype.h:
+        * runtime/StringObject.h:
+        (JSC::jsStringWithReuse): Deleted.
+        (JSC::jsSubstring): Deleted.
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::jsStringWithReuse):
+        (JSC::jsSubstring):
+        (JSC::substituteBackreferencesSlow):
+        (JSC::splitStringByOneCharacterImpl):
+        (JSC::stringProtoFuncSplit):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncEndsWith):
+        (JSC::stringProtoFuncIncludes):
+        (JSC::stringProtoFuncIterator):
+        (JSC::stringProtoFuncSplitFast): Deleted.
+        (JSC::builtinStringSubstrInternal): Deleted.
+        (JSC::stringIncludesImpl): Deleted.
+        (JSC::builtinStringIncludesInternal): Deleted.
+        * runtime/StringPrototype.h:
+        * tests/es6.yaml:
+
+2016-04-12  Mark Lam  <mark.lam@apple.com>
+
         Remove 2 unused JSC options.
         https://bugs.webkit.org/show_bug.cgi?id=156526
 

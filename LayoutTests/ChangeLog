@@ -1,3 +1,71 @@
+2016-04-12  Mark Lam  <mark.lam@apple.com>
+
+        Rollout: ES6: Implement String.prototype.split and RegExp.prototype[@@split].
+        https://bugs.webkit.org/show_bug.cgi?id=156013
+
+        Speculative rollout to fix 32-bit shadow-chicken.yaml/tests/v8-v6/v8-regexp.js.shadow-chicken test failure.
+
+        Not reviewed.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/dom/string-prototype-properties-expected.txt:
+        * js/regress/regexp-prototype-split-observable-side-effects-expected.txt: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects.html: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects2-expected.txt: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects2.html: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-flags-expected.txt: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-flags.html: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-global-expected.txt: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-global.html: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-ignoreCase-expected.txt: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-ignoreCase.html: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-multiline-expected.txt: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-multiline.html: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-sticky-expected.txt: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-sticky.html: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-unicode-expected.txt: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects3-unicode.html: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects4-expected.txt: Removed.
+        * js/regress/regexp-prototype-split-observable-side-effects4.html: Removed.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects.js: Removed.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects2.js: Removed.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-flags.js: Removed.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-global.js: Removed.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-ignoreCase.js: Removed.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-multiline.js: Removed.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-sticky.js: Removed.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-unicode.js: Removed.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects4.js: Removed.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects.js: Removed.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects2.js: Removed.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-flags.js: Removed.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-global.js: Removed.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-ignoreCase.js: Removed.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-multiline.js: Removed.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-sticky.js: Removed.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-unicode.js: Removed.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects4.js: Removed.
+        * js/regress/string-prototype-split-observable-side-effects-expected.txt: Removed.
+        * js/regress/string-prototype-split-observable-side-effects.html: Removed.
+        * js/regress/string-prototype-split-observable-side-effects2-expected.txt: Removed.
+        * js/regress/string-prototype-split-observable-side-effects2.html: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-flags-expected.txt: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-flags.html: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-global-expected.txt: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-global.html: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-ignoreCase-expected.txt: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-ignoreCase.html: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-multiline-expected.txt: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-multiline.html: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-sticky-expected.txt: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-sticky.html: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-unicode-expected.txt: Removed.
+        * js/regress/string-prototype-split-observable-side-effects3-unicode.html: Removed.
+        * js/regress/string-prototype-split-observable-side-effects4-expected.txt: Removed.
+        * js/regress/string-prototype-split-observable-side-effects4.html: Removed.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T3-expected.txt:
+
 2016-04-12  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add support for Symbol.isConcatSpreadable.

@@ -1007,7 +1007,7 @@
 - path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.search].js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.split].js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/Proxy_internal_get_calls_RegExp_constructor.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_String.prototype.match.js
@@ -1017,7 +1017,7 @@
 - path: es6/Proxy_internal_get_calls_String.prototype.search.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_String.prototype.split.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/Proxy_internal_get_calls_String.raw.js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_ToPrimitive.js
@@ -1093,7 +1093,7 @@
 - path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.search].js
   cmd: runES6 :normal
 - path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.split].js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/RegExp.prototype_properties_RegExp[Symbol.species].js
   cmd: runES6 :normal
 - path: es6/RegExp_is_subclassable_correct_prototype_chain.js
@@ -1215,9 +1215,9 @@
 - path: es6/well-known_symbols_Symbol.species_existence.js
   cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.species_RegExp.prototype[Symbol.split].js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/well-known_symbols_Symbol.split.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/well-known_symbols_Symbol.toPrimitive.js
   cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.toStringTag.js
