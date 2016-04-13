@@ -60,6 +60,32 @@ void ChildProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchO
 {
     if (const char* userDirectorySuffix = getenv("DIRHELPER_USER_DIR_SUFFIX"))
         launchOptions.extraInitializationData.add(ASCIILiteral("user-directory-suffix"), userDirectorySuffix);
+
+#if !defined(NDEBUG) && (PLATFORM(GTK) || PLATFORM(EFL))
+    const char* varname;
+    switch (launchOptions.processType) {
+    case ProcessLauncher::ProcessType::Web:
+        varname = "WEB_PROCESS_CMD_PREFIX";
+        break;
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    case ProcessLauncher::ProcessType::Plugin64:
+    case ProcessLauncher::ProcessType::Plugin32:
+        varname = "PLUGIN_PROCESS_CMD_PREFIX";
+        break;
+#endif
+    case ProcessLauncher::ProcessType::Network:
+        varname = "NETWORK_PROCESS_CMD_PREFIX";
+        break;
+#if ENABLE(DATABASE_PROCESS)
+    case ProcessLauncher::ProcessType::Database:
+        varname = "DATABASE_PROCESS_CMD_PREFIX";
+        break;
+#endif
+    }
+    const char* processCmdPrefix = getenv(varname);
+    if (processCmdPrefix && *processCmdPrefix)
+        launchOptions.processCmdPrefix = String::fromUTF8(processCmdPrefix);
+#endif // !defined(NDEBUG) && (PLATFORM(GTK) || PLATFORM(EFL)
 }
 
 void ChildProcessProxy::connect()
