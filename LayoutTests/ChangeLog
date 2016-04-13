@@ -1,5 +1,19 @@
 2016-03-18  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        crossorigin element resource loading should check HTTP redirection
+        https://bugs.webkit.org/show_bug.cgi?id=130578
+
+        Reviewed by Daniel Bates and Brent Fulgham.
+
+        shape-image-cors-redirect.html checks that cross-origin redirections are checked against CORS.
+        It also checks that same-origin redirections are not checked against CORS.
+
+        * http/tests/security/resources/redirect-allow-star.php: Added.
+        * http/tests/security/shape-image-cors-redirect-expected.html: Added.
+        * http/tests/security/shape-image-cors-redirect.html: Added.
+
+2016-03-18  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Move IndexedDB regular test to web-platform-tests
         https://bugs.webkit.org/show_bug.cgi?id=155581
 

@@ -208,9 +208,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
         bool allowRedirect = false;
         if (m_simpleRequest) {
             String accessControlErrorDescription;
-            allowRedirect = SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(request.url().protocol())
-                            && request.url().user().isEmpty()
-                            && request.url().pass().isEmpty()
+            allowRedirect = isValidCrossOriginRedirectionURL(request.url())
                             && (m_sameOriginRequest || passesAccessControlCheck(redirectResponse, m_options.allowCredentials(), securityOrigin(), accessControlErrorDescription));
         }
 
@@ -233,13 +231,8 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
             if (m_options.credentialRequest() == ClientDidNotRequestCredentials)
                 m_options.setAllowCredentials(DoNotAllowStoredCredentials);
 
-            // Remove any headers that may have been added by the network layer that cause access control to fail.
-            request.clearHTTPContentType();
-            request.clearHTTPReferrer();
-            request.clearHTTPOrigin();
-            request.clearHTTPUserAgent();
-            request.clearHTTPAccept();
-            request.clearHTTPAcceptEncoding();
+            cleanRedirectedRequestForAccessControl(request);
+
             makeCrossOriginAccessRequest(request);
             return;
         }

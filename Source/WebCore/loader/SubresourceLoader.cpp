@@ -30,6 +30,7 @@
 #include "SubresourceLoader.h"
 
 #include "CachedResourceLoader.h"
+#include "CrossOriginAccessControl.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
@@ -146,6 +147,13 @@ bool SubresourceLoader::init(const ResourceRequest& request)
     ASSERT(!reachedTerminalState());
     m_state = Initialized;
     m_documentLoader->addSubresourceLoader(this);
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=155633.
+    // SubresourceLoader could use the document origin as a default and set PotentiallyCrossOriginEnabled requests accordingly.
+    // This would simplify resource loader users as they would only need to set the policy to PotentiallyCrossOriginEnabled.
+    if (options().requestOriginPolicy() == PotentiallyCrossOriginEnabled)
+        m_origin = SecurityOrigin::createFromString(request.httpOrigin());
+
     return true;
 }
 
@@ -182,6 +190,12 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
             cancel();
             return;
         }
+
+        if (options().requestOriginPolicy() == PotentiallyCrossOriginEnabled && !checkCrossOriginAccessControl(request(), redirectResponse, newRequest)) {
+            cancel();
+            return;
+        }
+
         if (m_resource->isImage() && m_documentLoader->cachedResourceLoader().shouldDeferImageLoad(newRequest.url())) {
             cancel();
             return;
@@ -368,6 +382,31 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
         break;
     }
     frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceKey(), DiagnosticLoggingKeys::loadedKey(), resourceType, ShouldSample::Yes);
+}
+
+bool SubresourceLoader::checkCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest)
+{
+    if (m_origin->canRequest(newRequest.url()))
+        return true;
+
+    String errorDescription;
+    bool responsePassesCORS = m_origin->canRequest(previousRequest.url())
+        || passesAccessControlCheck(redirectResponse, options().allowCredentials(), m_origin.get(), errorDescription);
+    if (!responsePassesCORS || !isValidCrossOriginRedirectionURL(newRequest.url())) {
+        if (m_frame && m_frame->document()) {
+            String errorMessage = "Cross-origin redirection denied by Cross-Origin Resource Sharing policy: " +
+                (!responsePassesCORS ? errorDescription : "Redirected to either a non-HTTP URL or a URL that contains credentials.");
+            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
+        }
+        return false;
+    }
+
+    // If the request URL origin is not the same as the original origin, the request origin should be set to a globally unique identifier.
+    m_origin = SecurityOrigin::createUnique();
+    cleanRedirectedRequestForAccessControl(newRequest);
+    updateRequestForAccessControl(newRequest, m_origin.get(), options().allowCredentials());
+
+    return true;
 }
 
 void SubresourceLoader::didFinishLoading(double finishTime)
