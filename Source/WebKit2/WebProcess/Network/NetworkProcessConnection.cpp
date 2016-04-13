@@ -71,6 +71,7 @@ void NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection&, IPC::Mess
 void NetworkProcessConnection::didClose(IPC::Connection&)
 {
     // The NetworkProcess probably crashed.
+    Ref<NetworkProcessConnection> protector(*this);
     WebProcess::singleton().networkProcessConnectionClosed(this);
 
     Vector<String> dummyFilenames;
