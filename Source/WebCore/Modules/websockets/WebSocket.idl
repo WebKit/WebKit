@@ -60,7 +60,7 @@
     [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString protocol;
     [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString extensions;
 
-    attribute DOMString binaryType;
+    [SetterRaisesException] attribute DOMString binaryType;
 
     [RaisesException] void send(ArrayBuffer data);
     [RaisesException] void send(ArrayBufferView data);
