@@ -49,7 +49,7 @@ class TweetListener {
 
         $Tweet = new StdClass();
         $Tweet->id = substr($data->link, strrpos($data->link, '/') + 1);
-        $Tweet->text = $data->text;
+        $Tweet->text = stripslashes($data->text);
 
         $Tweet->entities = new StdClass();
         $Tweet->entities->urls = array();

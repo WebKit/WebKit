@@ -1,5 +1,13 @@
 2016-04-13  Jon Davis  <jond@apple.com>
 
+        Remove database quote escapes.
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/plugins/tweet-listener.php:
+
+2016-04-13  Jon Davis  <jond@apple.com>
+
         Added background color for Safari Technology Preview posts.
 
         Reviewed by Timothy Hatcher.
