@@ -1,3 +1,17 @@
+2016-04-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Tapping on tabs in webpages caused WK crash at WebKit: WebKit::WebFrame::didReceivePolicyDecision
+        https://bugs.webkit.org/show_bug.cgi?id=156119
+        <rdar://problem/20732167>
+
+        Reviewed by Andy Estes.
+
+        Protect the m_frame so that it is present for completion handlers.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2016-04-04  Emanuele Aina  <emanuele.aina@collabora.com>
 
         Fix WEB_PROCESS_CMD_PREFIX and NETWORK_PROCESS_CMD_PREFIX after r196500
