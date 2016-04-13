@@ -30,6 +30,7 @@
 #include "FileSystem.h"
 #include "IDBCursorInfo.h"
 #include "IndexedDB.h"
+#include "Logging.h"
 #include "SQLiteIDBBackingStore.h"
 #include "SQLiteIDBCursor.h"
 #include "SQLiteTransaction.h"
@@ -68,6 +69,7 @@ IDBError SQLiteIDBTransaction::begin(SQLiteDatabase& database)
 
 IDBError SQLiteIDBTransaction::commit()
 {
+    LOG(IndexedDB, "SQLiteIDBTransaction::commit");
     if (!m_sqliteTransaction || !m_sqliteTransaction->inProgress())
         return { IDBDatabaseException::UnknownError, ASCIILiteral("No SQLite transaction in progress to commit") };
 
@@ -76,6 +78,7 @@ IDBError SQLiteIDBTransaction::commit()
     if (m_sqliteTransaction->inProgress())
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to commit SQLite transaction in database backend") };
 
+    deleteBlobFilesIfNecessary();
     moveBlobFilesIfNecessary();
 
     reset();
@@ -95,6 +98,18 @@ void SQLiteIDBTransaction::moveBlobFilesIfNecessary()
     }
 
     m_blobTemporaryAndStoredFilenames.clear();
+}
+
+void SQLiteIDBTransaction::deleteBlobFilesIfNecessary()
+{
+    String databaseDirectory = m_backingStore.fullDatabaseDirectory();
+    for (auto& entry : m_blobRemovedFilenames) {
+        String fullPath = pathByAppendingComponent(databaseDirectory, entry);
+        m_backingStore.temporaryFileHandler().prepareForAccessToTemporaryFile(entry);
+        m_backingStore.temporaryFileHandler().accessToTemporaryFileComplete(entry);
+    }
+
+    m_blobRemovedFilenames.clear();
 }
 
 IDBError SQLiteIDBTransaction::abort()
@@ -201,6 +216,13 @@ void SQLiteIDBTransaction::addBlobFile(const String& temporaryPath, const String
 {
     m_blobTemporaryAndStoredFilenames.append({ temporaryPath, storedFilename });
 }
+
+void SQLiteIDBTransaction::addRemovedBlobFile(const String& removedFilename)
+{
+    ASSERT(!m_blobRemovedFilenames.contains(removedFilename));
+    m_blobRemovedFilenames.add(removedFilename);
+}
+
 
 } // namespace IDBServer
 } // namespace WebCore

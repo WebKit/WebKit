@@ -941,9 +941,24 @@ IDBError SQLiteIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& t
         }
     }
 
+    // Delete all unused Blob URL records.
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM BlobRecords WHERE objectStoreRow NOT IN (SELECT recordID FROM Records)"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not delete Blob URL records(%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not delete stored blob records for deleted object store") };
+        }
+    }
+
+    // Delete all unused Blob File records.
+    auto error = deleteUnusedBlobFileRecords(*transaction);
+    if (!error.isNull())
+        return error;
+
     m_databaseInfo->deleteObjectStore(objectStoreIdentifier);
 
-    return true;
+    return { };
 }
 
 IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID)
@@ -1251,6 +1266,47 @@ IDBError SQLiteIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifi
     return { };
 }
 
+IDBError SQLiteIDBBackingStore::deleteUnusedBlobFileRecords(SQLiteIDBTransaction& transaction)
+{
+    LOG(IndexedDB, "SQLiteIDBBackingStore::deleteUnusedBlobFileRecords");
+
+    // Gather the set of blob URLs and filenames that are no longer in use.
+    HashSet<String> removedBlobFilenames;
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT fileName FROM BlobFiles WHERE blobURL NOT IN (SELECT blobURL FROM BlobRecords)"));
+
+        if (sql.prepare() != SQLITE_OK) {
+            LOG_ERROR("Error deleting stored blobs (%i) (Could not gather unused blobURLs) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Error deleting stored blobs") };
+        }
+
+        int result = sql.step();
+        while (result == SQLITE_ROW)
+            removedBlobFilenames.add(sql.getColumnText(1));
+
+        if (result != SQLITE_DONE) {
+            LOG_ERROR("Error deleting stored blobs (%i) (Could not gather unused blobURLs) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Error deleting stored blobs") };
+        }
+    }
+
+    // Remove the blob records that are no longer in use.
+    if (!removedBlobFilenames.isEmpty()) {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM BlobFiles WHERE blobURL NOT IN (SELECT blobURL FROM BlobRecords)"));
+
+        if (sql.prepare() != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Error deleting stored blobs (%i) (Could not delete blobFile records) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Error deleting stored blobs") };
+        }
+    }
+
+    for (auto& file : removedBlobFilenames)
+        transaction.addRemovedBlobFile(file);
+
+    return { };
+}
+
 IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, int64_t objectStoreID, const IDBKeyData& keyData)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::deleteRecord - key %s, object store %" PRIu64, keyData.loggingString().utf8().data(), objectStoreID);
@@ -1266,6 +1322,53 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
         LOG_ERROR("Unable to serialize IDBKeyData to be removed from the database");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to serialize IDBKeyData to be removed from the database") };
     }
+
+    // Get the record ID
+    int64_t recordID;
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT recordID FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"));
+
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, objectStoreID) != SQLITE_OK
+            || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK) {
+            LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Failed to delete record from object store") };
+        }
+
+        int result = sql.step();
+
+        // If there's no record ID, there's no record to delete.
+        if (result == SQLITE_DONE)
+            return { };
+
+        if (result != SQLITE_ROW) {
+            LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) (unable to fetch record ID) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Failed to delete record from object store") };
+        }
+
+        recordID = sql.getColumnInt64(0);
+    }
+
+    if (recordID < 1) {
+        LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) (record ID is invalid) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Failed to delete record from object store") };
+    }
+
+    // Delete the blob records for this object store record.
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM BlobRecords WHERE objectStoreRow = ?;"));
+
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, recordID) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) (Could not delete BlobRecords records) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Failed to delete record from object store") };
+        }
+    }
+
+    auto error = deleteUnusedBlobFileRecords(transaction);
+    if (!error.isNull())
+        return error;
 
     // Delete record from object store
     {
@@ -1464,6 +1567,8 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
             LOG_ERROR("Indexing new object store record failed, but unable to remove the object store record itself");
             return { IDBDatabaseException::UnknownError, ASCIILiteral("Indexing new object store record failed, but unable to remove the object store record itself") };
         }
+
+        return error;
     }
 
     const Vector<String>& blobURLs = value.blobURLs();
@@ -1861,6 +1966,32 @@ void SQLiteIDBBackingStore::deleteBackingStore()
     String dbFilename = fullDatabasePath();
 
     LOG(IndexedDB, "SQLiteIDBBackingStore::deleteBackingStore deleting file '%s' on disk", dbFilename.utf8().data());
+
+    Vector<String> blobFiles;
+    {
+        bool errored = true;
+
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT fileName FROM BlobFiles;"));
+        if (sql.prepare() == SQLITE_OK) {
+            int result = sql.step();
+            while (result == SQLITE_ROW) {
+                blobFiles.append(sql.getColumnText(0));
+                result = sql.step();
+            }
+
+            if (result == SQLITE_DONE)
+                errored = false;
+        }
+
+        if (errored)
+            LOG_ERROR("Error getting all blob filenames to be deleted");
+    }
+
+    String databaseDirectory = fullDatabaseDirectory();
+    for (auto& file : blobFiles) {
+        String fullPath = pathByAppendingComponent(databaseDirectory, file);
+        deleteFile(fullPath);
+    }
 
     if (m_sqliteDB) {
         m_sqliteDB->close();

@@ -105,6 +105,8 @@ private:
     IDBError uncheckedPutIndexRecord(int64_t objectStoreID, int64_t indexID, const IDBKeyData& keyValue, const IDBKeyData& indexKey);
     IDBError uncheckedHasIndexRecord(const IDBIndexInfo&, const IDBKeyData&, bool& hasRecord);
 
+    IDBError deleteUnusedBlobFileRecords(SQLiteIDBTransaction&);
+
     JSC::VM& vm();
     JSC::JSGlobalObject& globalObject();
     void initializeVM();
