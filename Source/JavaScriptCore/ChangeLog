@@ -1,3 +1,20 @@
+2016-04-13  Alberto Garcia  <berto@igalia.com>
+
+        Fix build in glibc-based BSD systems
+        https://bugs.webkit.org/show_bug.cgi?id=156533
+
+        Reviewed by Carlos Garcia Campos.
+
+        Change the order of the #elif conditionals so glibc-based BSD
+        systems (e.g. Debian GNU/kFreeBSD) use the code inside the
+        OS(FREEBSD) blocks.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::Thread::Registers::stackPointer):
+        (JSC::MachineThreads::Thread::Registers::framePointer):
+        (JSC::MachineThreads::Thread::Registers::instructionPointer):
+        (JSC::MachineThreads::Thread::Registers::llintPC):
+
 2016-04-12  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed undo change from ArrayClass to ArrayWithUndecided, which
