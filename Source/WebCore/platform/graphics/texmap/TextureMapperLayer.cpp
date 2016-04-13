@@ -444,6 +444,13 @@ TextureMapperLayer::~TextureMapperLayer()
         child->m_parent = nullptr;
 
     removeFromParent();
+
+    if (m_effectTarget) {
+        if (m_effectTarget->m_state.maskLayer == this)
+            m_effectTarget->m_state.maskLayer = nullptr;
+        if (m_effectTarget->m_state.replicaLayer == this)
+            m_effectTarget->m_state.replicaLayer = nullptr;
+    }
 }
 
 #if !USE(COORDINATED_GRAPHICS)
