@@ -1,3 +1,17 @@
+2016-04-13  Zalan Bujtas  <zalan@apple.com>
+
+        Text on compositing layer with negative letter-spacing is truncated.
+        https://bugs.webkit.org/show_bug.cgi?id=156550
+        <rdar://problem/24212140>
+
+        Reviewed by Antti Koivisto.
+
+        Negative letter-spacing affects the right edge of content's visual overflow (for both RTL and LTR).
+        This is similar to how normal line layout adjusts it at InlineFlowBox::addTextBoxVisualOverflow().
+
+        * fast/text/negative-letter-spacing-visual-overflow-expected.html: Added.
+        * fast/text/negative-letter-spacing-visual-overflow.html: Added.
+
 2016-04-13  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] remote command should be considered user events

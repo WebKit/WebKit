@@ -65,6 +65,20 @@ static void paintDebugBorders(GraphicsContext& context, LayoutRect borderRect, c
     context.drawRect(snappedRect);
 }
 
+static FloatRect computeOverflow(const RenderBlockFlow& flow, const FloatRect& layoutRect)
+{
+    auto overflowRect = layoutRect;
+    auto strokeOverflow = std::ceil(flow.style().textStrokeWidth());
+    overflowRect.inflate(strokeOverflow);
+
+    auto letterSpacing = flow.style().fontCascade().letterSpacing();
+    if (letterSpacing >= 0)
+        return overflowRect;
+    // Last letter's negative spacing shrinks layout rect. Push it to visual overflow.
+    overflowRect.expand(-letterSpacing, 0);
+    return overflowRect;
+}
+
 void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhaseForeground)
@@ -94,15 +108,13 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     paintRect.moveBy(-paintOffset);
 
     auto resolver = runResolver(flow, layout);
-    float strokeOverflow = std::ceil(flow.style().textStrokeWidth());
     float deviceScaleFactor = flow.document().deviceScaleFactor();
     for (auto run : resolver.rangeForRect(paintRect)) {
         if (run.start() == run.end())
             continue;
 
         FloatRect rect = run.rect();
-        FloatRect visualOverflowRect = rect;
-        visualOverflowRect.inflate(strokeOverflow);
+        FloatRect visualOverflowRect = computeOverflow(flow, rect);
         if (paintRect.y() > visualOverflowRect.maxY() || paintRect.maxY() < visualOverflowRect.y())
             continue;
 
@@ -151,12 +163,10 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
 
 void collectFlowOverflow(RenderBlockFlow& flow, const Layout& layout)
 {
-    float strokeOverflow = std::ceil(flow.style().textStrokeWidth());
-    for (FloatRect lineRect : lineResolver(flow, layout)) {
-        LayoutRect inflatedLineRect(lineRect);
-        inflatedLineRect.inflate(strokeOverflow);
-        flow.addLayoutOverflow(inflatedLineRect);
-        flow.addVisualOverflow(inflatedLineRect);
+    for (auto lineRect : lineResolver(flow, layout)) {
+        LayoutRect visualOverflowRect = LayoutRect(computeOverflow(flow, lineRect));
+        flow.addLayoutOverflow(LayoutRect(lineRect));
+        flow.addVisualOverflow(visualOverflowRect);
     }
 }
 
