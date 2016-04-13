@@ -47,6 +47,8 @@ std::unique_ptr<RenderThemeGadget> RenderThemeGadget::create(const RenderThemeGa
         return std::make_unique<RenderThemeArrowGadget>(info, parent, siblings, position);
     case RenderThemeGadget::Type::Icon:
         return std::make_unique<RenderThemeIconGadget>(info, parent, siblings, position);
+    case RenderThemeGadget::Type::Scrollbar:
+        return std::make_unique<RenderThemeScrollbarGadget>(info, parent, siblings, position);
     }
 
     ASSERT_NOT_REACHED();
@@ -65,7 +67,8 @@ static GRefPtr<GtkStyleContext> createStyleContext(GtkWidgetPath* path, GtkStyle
 
 static void appendElementToPath(GtkWidgetPath* path, const RenderThemeGadget::Info& info)
 {
-    gtk_widget_path_append_type(path, G_TYPE_NONE);
+    // Scrollbars need to use its GType to be able to get non-CSS style properties.
+    gtk_widget_path_append_type(path, info.type == RenderThemeGadget::Type::Scrollbar ? GTK_TYPE_SCROLLBAR : G_TYPE_NONE);
     gtk_widget_path_iter_set_object_name(path, -1, info.name);
     for (const auto* className : info.classList)
         gtk_widget_path_iter_add_class(path, -1, className);
@@ -133,6 +136,13 @@ Color RenderThemeGadget::backgroundColor() const
 {
     GdkRGBA returnValue;
     gtk_style_context_get_background_color(m_context.get(), gtk_style_context_get_state(m_context.get()), &returnValue);
+    return returnValue;
+}
+
+double RenderThemeGadget::opacity() const
+{
+    double returnValue;
+    gtk_style_context_get(m_context.get(), gtk_style_context_get_state(m_context.get()), "opacity", &returnValue, nullptr);
     return returnValue;
 }
 
@@ -320,6 +330,22 @@ IntSize RenderThemeIconGadget::minimumSize() const
         return IntSize(iconWidth, iconHeight);
 
     return IntSize(m_iconSize, m_iconSize);
+}
+
+RenderThemeScrollbarGadget::RenderThemeScrollbarGadget(const RenderThemeGadget::Info& info, RenderThemeGadget* parent, const Vector<RenderThemeGadget::Info> siblings, unsigned position)
+    : RenderThemeGadget(info, parent, siblings, position)
+{
+    gboolean hasBackward, hasForward, hasSecondaryBackward, hasSecondaryForward;
+    gtk_style_context_get_style(m_context.get(), "has-backward-stepper", &hasBackward, "has-forward-stepper", &hasForward,
+        "has-secondary-backward-stepper", &hasSecondaryBackward, "has-secondary-forward-stepper", &hasSecondaryForward, nullptr);
+    if (hasBackward)
+        m_steppers |= Steppers::Backward;
+    if (hasForward)
+        m_steppers |= Steppers::Forward;
+    if (hasSecondaryBackward)
+        m_steppers |= Steppers::SecondaryBackward;
+    if (hasSecondaryForward)
+        m_steppers |= Steppers::SecondaryForward;
 }
 
 } // namespace WebCore

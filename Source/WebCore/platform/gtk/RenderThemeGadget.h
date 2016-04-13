@@ -31,6 +31,7 @@
 
 #include "Color.h"
 #include "IntSize.h"
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -48,7 +49,8 @@ public:
         Check,
         Radio,
         Arrow,
-        Icon
+        Icon,
+        Scrollbar
     };
 
     struct Info {
@@ -71,6 +73,7 @@ public:
     GtkBorder contentsBox() const;
     Color color() const;
     Color backgroundColor() const;
+    double opacity() const;
 
 protected:
     GtkStyleContext* context() const { return m_context.get(); }
@@ -142,6 +145,22 @@ private:
 
     CString m_iconName;
     unsigned m_iconSize { 0 };
+};
+
+class RenderThemeScrollbarGadget final : public RenderThemeGadget {
+public:
+    RenderThemeScrollbarGadget(const Info&, RenderThemeGadget* parent, const Vector<RenderThemeGadget::Info> siblings, unsigned position);
+
+    enum class Steppers {
+        Backward = 1 << 0,
+        Forward = 1 << 1,
+        SecondaryBackward = 1 << 2,
+        SecondaryForward = 1 << 3
+    };
+    OptionSet<Steppers> steppers() const { return m_steppers; };
+
+private:
+    OptionSet<Steppers> m_steppers;
 };
 
 } // namespace WebCore
