@@ -1510,6 +1510,7 @@ private:
         case IsNumber:
         case IsObjectOrNull:
         case IsFunction:
+        case IsRegExpObject:
         case CreateDirectArguments:
         case CreateClonedArguments:
         case Jump:

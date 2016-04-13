@@ -870,6 +870,9 @@ private:
         case IsFunction:
             compileIsFunction();
             break;
+        case IsRegExpObject:
+            compileIsRegExpObject();
+            break;
         case TypeOf:
             compileTypeOf();
             break;
@@ -5902,7 +5905,26 @@ private:
             m_out.boolean, notCellResult, functionResult, objectResult, slowResult);
         setBoolean(result);
     }
-    
+
+    void compileIsRegExpObject()
+    {
+        LValue value = lowJSValue(m_node->child1());
+
+        LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(
+            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
+        ValueFromBlock cellResult = m_out.anchor(isRegExpObject(value, provenType(m_node->child1())));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(m_out.boolean, notCellResult, cellResult));
+    }
+
     void compileTypeOf()
     {
         Edge child = m_node->child1();
@@ -9950,7 +9972,16 @@ private:
             m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoFlags),
             m_out.constInt32(MasqueradesAsUndefined | TypeOfShouldCallGetCallData));
     }
-    
+
+    LValue isRegExpObject(LValue cell, SpeculatedType type = SpecFullTop)
+    {
+        if (LValue proven = isProvenValue(type & SpecCell, SpecRegExpObject))
+            return proven;
+        return m_out.equal(
+            m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
+            m_out.constInt32(RegExpObjectType));
+    }
+
     LValue isType(LValue cell, JSType type)
     {
         return m_out.equal(

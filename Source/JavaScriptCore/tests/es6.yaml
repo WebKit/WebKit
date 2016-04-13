@@ -1005,7 +1005,7 @@
 - path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.replace].js
   cmd: runES6 :fail
 - path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.search].js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_RegExp.prototype[Symbol.split].js
   cmd: runES6 :normal
 - path: es6/Proxy_internal_get_calls_RegExp_constructor.js

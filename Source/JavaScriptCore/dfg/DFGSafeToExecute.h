@@ -262,6 +262,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case IsObject:
     case IsObjectOrNull:
     case IsFunction:
+    case IsRegExpObject:
     case TypeOf:
     case LogicalNot:
     case CallObjectConstructor:

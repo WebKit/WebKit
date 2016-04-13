@@ -31,7 +31,7 @@
 namespace JSC {
 
 EncodedJSValue JSC_HOST_CALL esSpecIsConstructor(ExecState*);
-EncodedJSValue JSC_HOST_CALL esSpecIsRegExp(ExecState*);
+EncodedJSValue JSC_HOST_CALL esSpecIsRegExpObject(ExecState*);
 
 } // namespace JSC
 

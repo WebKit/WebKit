@@ -59,7 +59,7 @@ var primitives = [
 for (var primitive of primitives) {
     shouldThrow(function () {
         RegExp.prototype[Symbol.search].call(primitive)
-    }, 'TypeError: Type error');
+    }, 'TypeError: RegExp.prototype.@@search requires that |this| be an Object');
 }
 
 shouldThrow(function () {

@@ -108,6 +108,40 @@ function regExpExec(regexp, str)
     return builtinExec.@call(regexp, str);
 }
 
+// 21.2.5.9 RegExp.prototype[@@search] (string)
+function search(strArg)
+{
+    "use strict";
+
+    let regexp = this;
+
+    // Check for observable side effects and call the fast path if there aren't any.
+    if (@isRegExpObject(regexp) && @tryGetById(regexp, "exec") === @RegExp.prototype.@exec)
+        return @regExpSearchFast.@call(regexp, strArg);
+
+    // 1. Let rx be the this value.
+    // 2. If Type(rx) is not Object, throw a TypeError exception.
+    if (!@isObject(this))
+        throw new @TypeError("RegExp.prototype.@@search requires that |this| be an Object");
+
+    // 3. Let S be ? ToString(string).
+    let str = @toString(strArg)
+
+    // 4. Let previousLastIndex be ? Get(rx, "lastIndex").
+    let previousLastIndex = regexp.lastIndex;
+    // 5. Perform ? Set(rx, "lastIndex", 0, true).
+    regexp.lastIndex = 0;
+    // 6. Let result be ? RegExpExec(rx, S).
+    let result = @regExpExec(regexp, str);
+    // 7. Perform ? Set(rx, "lastIndex", previousLastIndex, true).
+    regexp.lastIndex = previousLastIndex;
+    // 8. If result is null, return -1.
+    if (result === null)
+        return -1;
+    // 9. Return ? Get(result, "index").
+    return result.index;
+}
+
 function hasObservableSideEffectsForRegExpSplit(regexp) {
     // This is accessed by the RegExpExec internal function.
     let regexpExec = @tryGetById(regexp, "exec");
@@ -141,7 +175,7 @@ function hasObservableSideEffectsForRegExpSplit(regexp) {
     if (regexpSource !== @regExpProtoSourceGetter)
         return true;
     
-    return !@isRegExp(regexp);
+    return !@isRegExpObject(regexp);
 }
 
 // ES 21.2.5.11 RegExp.prototype[@@split](string, limit)

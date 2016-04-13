@@ -2242,6 +2242,15 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case IsRegExpObjectIntrinsic: {
+        ASSERT(argumentCountIncludingThis == 2);
+
+        insertChecks();
+        Node* isRegExpObject = addToGraph(IsRegExpObject, OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset)));
+        set(VirtualRegister(resultOperand), isRegExpObject);
+        return true;
+    }
+
     case StringPrototypeReplaceIntrinsic: {
         if (argumentCountIncludingThis != 3)
             return false;
