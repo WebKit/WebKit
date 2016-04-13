@@ -45,19 +45,22 @@ public:
     static BeginTag* beginTag(void*);
     static EndTag* endTag(void*, size_t);
 
-    Chunk(std::lock_guard<StaticMutex>&);
+    Chunk(std::lock_guard<StaticMutex>&, ObjectType);
 
     size_t offset(void*);
 
-    void* object(size_t offset);
+    char* object(size_t offset);
     SmallPage* page(size_t offset);
     SmallLine* line(size_t offset);
 
     SmallLine* lines() { return m_lines.begin(); }
     SmallPage* pages() { return m_pages.begin(); }
 
-    char* begin() { return m_memory; }
+    char* begin() { return roundUpToMultipleOf(vmPageSizePhysical(), m_memory); }
     char* end() { return reinterpret_cast<char*>(this) + chunkSize; }
+    size_t size() { return end() - begin(); }
+
+    ObjectType objectType() { return m_objectType; }
 
 private:
     static const size_t boundaryTagCount = chunkSize / largeMin;
@@ -77,17 +80,34 @@ private:
     //
     // We use the X's for boundary tags and the O's for edge sentinels.
 
-    std::array<SmallLine, chunkSize / smallLineSize> m_lines;
-    std::array<SmallPage, chunkSize / smallPageSize> m_pages;
-    std::array<BoundaryTag, boundaryTagCount> m_boundaryTags;
-    char m_memory[] __attribute__((aligned(largeAlignment + 0)));
+    union {
+        // The first few bytes of metadata cover the metadata region, so they're
+        // not used. We can steal them to store m_objectType.
+        ObjectType m_objectType;
+        std::array<SmallLine, chunkSize / smallLineSize> m_lines;
+    };
+
+    union {
+        // A chunk is either small or large for its lifetime, so we can union
+        // small and large metadata, and then use one or the other at runtime.
+        std::array<SmallPage, chunkSize / smallPageSize> m_pages;
+        std::array<BoundaryTag, boundaryTagCount> m_boundaryTags;
+    };
+    char m_memory[];
 };
 
 static_assert(sizeof(Chunk) + largeMax <= chunkSize, "largeMax is too big");
 
-inline Chunk::Chunk(std::lock_guard<StaticMutex>& lock)
+static_assert(sizeof(Chunk) / smallLineSize > sizeof(ObjectType),
+    "Chunk::m_objectType overlaps with metadata");
+
+inline Chunk::Chunk(std::lock_guard<StaticMutex>&, ObjectType objectType)
+    : m_objectType(objectType)
 {
-    Range range(begin(), end() - begin());
+    if (objectType != ObjectType::Large)
+        return;
+
+    Range range(begin(), size());
     BASSERT(range.size() <= largeObjectMax);
 
     BeginTag* beginTag = Chunk::beginTag(range.begin());
@@ -111,13 +131,6 @@ inline Chunk::Chunk(std::lock_guard<StaticMutex>& lock)
     BASSERT(rightSentinel >= m_boundaryTags.begin());
     BASSERT(rightSentinel < m_boundaryTags.end());
     rightSentinel->initSentinel();
-
-    // Track the memory used for metadata by allocating imaginary objects.
-    for (char* it = reinterpret_cast<char*>(this); it < m_memory; it += smallLineSize) {
-        Object object(it);
-        object.line()->ref(lock);
-        object.page()->ref(lock);
-    }
 }
 
 inline Chunk* Chunk::get(void* object)
@@ -152,7 +165,7 @@ inline size_t Chunk::offset(void* object)
     return static_cast<char*>(object) - reinterpret_cast<char*>(this);
 }
 
-inline void* Chunk::object(size_t offset)
+inline char* Chunk::object(size_t offset)
 {
     return reinterpret_cast<char*>(this) + offset;
 }
@@ -192,12 +205,6 @@ inline SmallLine* SmallPage::begin()
     return &chunk->lines()[lineNumber];
 }
 
-inline SmallLine* SmallPage::end()
-{
-    BASSERT(!m_slide);
-    return begin() + m_smallPageCount * smallPageLineCount;
-}
-
 inline Object::Object(void* object)
     : m_chunk(Chunk::get(object))
     , m_offset(m_chunk->offset(object))
@@ -211,7 +218,7 @@ inline Object::Object(Chunk* chunk, void* object)
     BASSERT(chunk == Chunk::get(object));
 }
 
-inline void* Object::begin()
+inline char* Object::begin()
 {
     return m_chunk->object(m_offset);
 }

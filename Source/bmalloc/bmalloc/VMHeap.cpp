@@ -38,13 +38,39 @@ VMHeap::VMHeap()
 LargeObject VMHeap::allocateChunk(std::lock_guard<StaticMutex>& lock)
 {
     Chunk* chunk =
-        new (vmAllocate(chunkSize, chunkSize)) Chunk(lock);
+        new (vmAllocate(chunkSize, chunkSize)) Chunk(lock, ObjectType::Large);
 
 #if BOS(DARWIN)
     m_zone.addChunk(chunk);
 #endif
 
     return LargeObject(chunk->begin());
+}
+
+void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageClass)
+{
+    Chunk* chunk =
+        new (vmAllocate(chunkSize, chunkSize)) Chunk(lock, ObjectType::Small);
+
+#if BOS(DARWIN)
+    m_zone.addChunk(chunk);
+#endif
+
+    size_t pageSize = bmalloc::pageSize(pageClass);
+    size_t smallPageCount = pageSize / smallPageSize;
+
+    Object begin(chunk->begin());
+    Object end(begin + chunk->size());
+
+    for (Object it = begin; it + pageSize <= end; it = it + pageSize) {
+        SmallPage* page = it.page();
+        new (page) SmallPage;
+
+        for (size_t i = 0; i < smallPageCount; ++i)
+            page[i].setSlide(i);
+
+        m_smallPages[pageClass].push(page);
+    }
 }
 
 } // namespace bmalloc
