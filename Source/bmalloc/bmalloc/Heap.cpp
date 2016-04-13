@@ -429,6 +429,7 @@ void* Heap::tryAllocateXLarge(std::lock_guard<StaticMutex>&, size_t alignment, s
 
     m_isAllocatingPages = true;
 
+    size = std::max(vmPageSize, size);
     alignment = roundUpToMultipleOf<xLargeAlignment>(alignment);
 
     XLargeRange range = m_xLargeMap.takeFree(alignment, size);
