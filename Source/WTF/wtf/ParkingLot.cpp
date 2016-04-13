@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -177,6 +177,12 @@ public:
     char padding[64];
 };
 
+struct Hashtable;
+
+// We track all allocated hashtables so that hashtable resizing doesn't anger leak detectors.
+Vector<Hashtable*>* hashtables;
+StaticWordLock hashtablesLock;
+
 struct Hashtable {
     unsigned size;
     Atomic<Bucket*> data[1];
@@ -188,11 +194,28 @@ struct Hashtable {
         Hashtable* result = static_cast<Hashtable*>(
             fastZeroedMalloc(sizeof(Hashtable) + sizeof(Atomic<Bucket*>) * (size - 1)));
         result->size = size;
+
+        {
+            // This is not fast and it's not data-access parallel, but that's fine, because
+            // hashtable resizing is guaranteed to be rare and it will never happen in steady
+            // state.
+            WordLockHolder locker(hashtablesLock);
+            if (!hashtables)
+                hashtables = new Vector<Hashtable*>();
+            hashtables->append(result);
+        }
+        
         return result;
     }
 
     static void destroy(Hashtable* hashtable)
     {
+        {
+            // This is not fast, but that's OK. See comment in create().
+            WordLockHolder locker(hashtablesLock);
+            hashtables->removeFirst(hashtable);
+        }
+        
         fastFree(hashtable);
     }
 };
