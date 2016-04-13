@@ -1,0 +1,35 @@
+Tests that MessageEvent.source is correct and can be used for messaging (reified Window case).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Sending message 1 to child
+* Parent received message 2 from child
+PASS messageEvent.source is frames[0]
+PASS messageEvent.data is counter + 1
+* Sending message 3 to child
+* Parent received message 4 from child
+PASS messageEvent.source is frames[0]
+PASS messageEvent.data is counter + 1
+* Sending message 5 to child
+* Parent received message 6 from child
+PASS messageEvent.source is frames[0]
+PASS messageEvent.data is counter + 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+* Child received message 1 from parent
+PASS messageEvent.source is parent
+* Sending message 2 to parent
+* Child received message 3 from parent
+PASS messageEvent.source is parent
+* Sending message 4 to parent
+* Child received message 5 from parent
+PASS messageEvent.source is parent
+* Sending message 6 to parent
+

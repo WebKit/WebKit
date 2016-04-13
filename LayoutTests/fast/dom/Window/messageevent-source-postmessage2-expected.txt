@@ -1,0 +1,11 @@
+Checks that MessageEvent.source window is correct when postMessage() is called cross-frame via a function in the other frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS messageEvent.data is "msg"
+PASS messageEvent.source is frames[0]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
