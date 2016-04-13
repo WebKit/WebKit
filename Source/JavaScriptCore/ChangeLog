@@ -1,3 +1,31 @@
+2016-04-13  Mark Lam  <mark.lam@apple.com>
+
+        ShadowChicken::visitChildren() should not visit tailMarkers and throwMarkers.
+        https://bugs.webkit.org/show_bug.cgi?id=156532
+
+        Reviewed by Saam Barati and Filip Pizlo.
+
+        ShadowChicken can store tailMarkers and throwMarkers in its log, specifically in
+        the callee field of a log packet.  However, ShadowChicken::visitChildren()
+        unconditionally visits the callee field of each packet as if they are real
+        objects.  If visitChildren() encounters one of these markers in the log, we get a
+        crash.
+
+        This crash was observed in the v8-v6/v8-regexp.js stress test running with shadow
+        chicken when r199393 landed.  r199393 introduced tail calls to a RegExp split
+        fast path, and the v8-regexp.js test exercised this fast path a lot.  Throw in
+        some timely GCs, and we get a crash party.
+
+        The fix is to have ShadowChicken::visitChildren() filter out the tailMarker and
+        throwMarker.
+
+        Alternatively, if perf is an issue, we can allocate 2 dedicated objects for
+        these markers so that ShadowChicken can continue to visit them.  For now, I'm
+        going with the filter.
+
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::visitChildren):
+
 2016-04-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Add @@toStringTag to GeneratorFunction

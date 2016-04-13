@@ -354,8 +354,11 @@ void ShadowChicken::update(VM&, ExecState* exec)
 
 void ShadowChicken::visitChildren(SlotVisitor& visitor)
 {
-    for (unsigned i = m_logCursor - m_log; i--;)
-        visitor.appendUnbarrieredReadOnlyPointer(m_log[i].callee);
+    for (unsigned i = m_logCursor - m_log; i--;) {
+        JSObject* callee = m_log[i].callee;
+        if (callee != Packet::tailMarker() && callee != Packet::throwMarker())
+            visitor.appendUnbarrieredReadOnlyPointer(callee);
+    }
     
     for (Frame& frame : m_stack)
         visitor.appendUnbarrieredReadOnlyPointer(frame.callee);
