@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008, 2013, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2008, 2013, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -66,6 +66,10 @@ EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
 String substituteBackreferences(const String& replacement, StringView source, const int* ovector, RegExp* reg);
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState*);
+
+EncodedJSValue JSC_HOST_CALL builtinStringSubstrInternal(ExecState*);
+EncodedJSValue JSC_HOST_CALL builtinStringIncludesInternal(ExecState*);
 
 } // namespace JSC
 

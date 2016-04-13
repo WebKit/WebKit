@@ -1,3 +1,76 @@
+2016-04-13  Mark Lam  <mark.lam@apple.com>
+
+        ES6: Implement String.prototype.split and RegExp.prototype[@@split].
+        https://bugs.webkit.org/show_bug.cgi?id=156013
+
+        Reviewed by Keith Miller.
+
+        Re-landing r199393 now that the shadow chicken crash has been fixed.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/dom/string-prototype-properties-expected.txt:
+
+        * js/regress/regexp-prototype-split-observable-side-effects-expected.txt: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects.html: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects2-expected.txt: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects2.html: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-flags-expected.txt: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-flags.html: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-global-expected.txt: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-global.html: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-ignoreCase-expected.txt: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-ignoreCase.html: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-multiline-expected.txt: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-multiline.html: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-sticky-expected.txt: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-sticky.html: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-unicode-expected.txt: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects3-unicode.html: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects4-expected.txt: Added.
+        * js/regress/regexp-prototype-split-observable-side-effects4.html: Added.
+
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects.js: Added.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects2.js: Added.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-flags.js: Added.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-global.js: Added.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-ignoreCase.js: Added.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-multiline.js: Added.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-sticky.js: Added.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects3-unicode.js: Added.
+        * js/regress/script-tests/regexp-prototype-split-observable-side-effects4.js: Added.
+
+        * js/regress/script-tests/string-prototype-split-observable-side-effects.js: Added.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects2.js: Added.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-flags.js: Added.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-global.js: Added.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-ignoreCase.js: Added.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-multiline.js: Added.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-sticky.js: Added.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects3-unicode.js: Added.
+        * js/regress/script-tests/string-prototype-split-observable-side-effects4.js: Added.
+
+        * js/regress/string-prototype-split-observable-side-effects-expected.txt: Added.
+        * js/regress/string-prototype-split-observable-side-effects.html: Added.
+        * js/regress/string-prototype-split-observable-side-effects2-expected.txt: Added.
+        * js/regress/string-prototype-split-observable-side-effects2.html: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-flags-expected.txt: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-flags.html: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-global-expected.txt: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-global.html: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-ignoreCase-expected.txt: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-ignoreCase.html: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-multiline-expected.txt: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-multiline.html: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-sticky-expected.txt: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-sticky.html: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-unicode-expected.txt: Added.
+        * js/regress/string-prototype-split-observable-side-effects3-unicode.html: Added.
+        * js/regress/string-prototype-split-observable-side-effects4-expected.txt: Added.
+        * js/regress/string-prototype-split-observable-side-effects4.html: Added.
+
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T3-expected.txt:
+
 2016-04-12  Antti Koivisto  <antti@apple.com>
 
         Crash at com.apple.JavaScriptCore: bool WTF::startsWith<WTF::StringImpl, WTF::StringImpl> + 8
