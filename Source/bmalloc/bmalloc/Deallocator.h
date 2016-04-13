@@ -27,10 +27,12 @@
 #define Deallocator_h
 
 #include "FixedVector.h"
+#include <mutex>
 
 namespace bmalloc {
 
 class Heap;
+class StaticMutex;
 
 // Per-cache object deallocator.
 
@@ -42,13 +44,15 @@ public:
     void deallocate(void*);
     void scavenge();
     
+    void processObjectLog();
+    void processObjectLog(std::lock_guard<StaticMutex>&);
+
 private:
     bool deallocateFastCase(void*);
     void deallocateSlowCase(void*);
 
     void deallocateLarge(void*);
     void deallocateXLarge(void*);
-    void processObjectLog();
 
     FixedVector<void*, deallocatorLogCapacity> m_objectLog;
     bool m_isBmallocEnabled;
