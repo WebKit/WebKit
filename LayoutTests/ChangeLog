@@ -1,3 +1,17 @@
+2016-04-12  Antti Koivisto  <antti@apple.com>
+
+        Crash at com.apple.JavaScriptCore: bool WTF::startsWith<WTF::StringImpl, WTF::StringImpl> + 8
+        https://bugs.webkit.org/show_bug.cgi?id=156512
+        rdar://problem/24220567
+
+        Reviewed by Benjamin Poulain.
+
+        Land a test that verifies that setting attr to null does not crash with attribute selectors.
+        This was fixed by http://trac.webkit.org/changeset/199392.
+
+        * fast/css/attribute-selector-null-crash-expected.html: Added.
+        * fast/css/attribute-selector-null-crash.html: Added.
+
 2016-04-12  Mark Lam  <mark.lam@apple.com>
 
         Rollout: ES6: Implement String.prototype.split and RegExp.prototype[@@split].
