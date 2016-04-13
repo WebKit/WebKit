@@ -77,15 +77,12 @@ void* Allocator::allocate(size_t alignment, size_t size)
             return nullptr;
         return result;
     }
-    
-    if (size <= smallMax && alignment <= smallLineSize) {
-        size_t alignmentMask = alignment - 1;
-        while (void* p = allocate(size)) {
-            if (!test(p, alignmentMask))
-                return p;
-            m_deallocator.deallocate(p);
-        }
-    }
+
+    if (!size)
+        size = alignment;
+
+    if (size <= smallMax && alignment <= smallMax)
+        return allocate(roundUpToMultipleOf(alignment, size));
 
     if (size <= largeMax && alignment <= largeMax) {
         size = std::max(largeMin, roundUpToMultipleOf<largeAlignment>(size));
