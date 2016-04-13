@@ -35,16 +35,16 @@ VMHeap::VMHeap()
 {
 }
 
-LargeObject VMHeap::allocateLargeChunk(std::lock_guard<StaticMutex>& lock)
+LargeObject VMHeap::allocateChunk(std::lock_guard<StaticMutex>& lock)
 {
-    LargeChunk* largeChunk =
-        new (vmAllocate(largeChunkSize, largeChunkSize)) LargeChunk(lock);
+    Chunk* chunk =
+        new (vmAllocate(chunkSize, chunkSize)) Chunk(lock);
 
 #if BOS(DARWIN)
-    m_zone.addLargeChunk(largeChunk);
+    m_zone.addChunk(chunk);
 #endif
 
-    return LargeObject(largeChunk->begin());
+    return LargeObject(chunk->begin());
 }
 
 } // namespace bmalloc

@@ -24,7 +24,7 @@
  */
 
 #include "BAssert.h"
-#include "LargeChunk.h"
+#include "Chunk.h"
 #include "Deallocator.h"
 #include "Heap.h"
 #include "Inline.h"

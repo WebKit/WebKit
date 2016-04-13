@@ -36,12 +36,12 @@ namespace bmalloc {
 
 class BeginTag;
 class EndTag;
-class LargeChunk;
+class Chunk;
 class Range;
 
 class BoundaryTag {
 public:
-    static Range init(LargeChunk*);
+    static Range init(Chunk*);
     static unsigned compactBegin(void*);
 
     bool isFree() { return m_isFree; }

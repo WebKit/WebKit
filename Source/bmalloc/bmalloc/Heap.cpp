@@ -25,7 +25,7 @@
 
 #include "Heap.h"
 #include "BumpAllocator.h"
-#include "LargeChunk.h"
+#include "Chunk.h"
 #include "LargeObject.h"
 #include "PerProcess.h"
 #include "SmallLine.h"
@@ -334,7 +334,7 @@ void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, 
     BASSERT(unalignedSize <= largeMax);
     BASSERT(unalignedSize >= largeMin);
     BASSERT(unalignedSize == roundUpToMultipleOf<largeAlignment>(unalignedSize));
-    BASSERT(alignment <= largeChunkSize / 2);
+    BASSERT(alignment <= chunkSize / 2);
     BASSERT(alignment >= largeAlignment);
     BASSERT(isPowerOfTwo(alignment));
 
