@@ -924,6 +924,7 @@ webkit.org/b/147944 media/video-seek-to-current-time.html [ Pass Failure ]
 webkit.org/b/114177 media/event-queue-crash.html [ Pass Failure ]
 webkit.org/b/150408 http/tests/media/video-load-suspend.html [ Pass Timeout ]
 webkit.org/b/155956 media/track/track-remove-track.html [ Pass Failure Timeout ]
+webkit.org/b/124222 [ Yosemite ] media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Pass Crash Timeout ]
 ## --- End flaky media tests
 
 # Skipped while Eric Carlson works on a fix.
