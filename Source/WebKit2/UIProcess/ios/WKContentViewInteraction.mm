@@ -216,11 +216,13 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 - (void)scheduleChineseTransliterationForText:(NSString *)text;
 - (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)lookup:(NSString *)textWithContext fromRect:(CGRect)presentationRect;
+- (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
 @end
 
 @interface UIWKSelectionAssistant (StagingToRemove)
 - (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)lookup:(NSString *)textWithContext fromRect:(CGRect)presentationRect;
+- (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
 @end
 
 @interface UIKeyboardImpl (StagingToRemove)
@@ -1615,18 +1617,26 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)_lookup:(id)sender
 {
     RetainPtr<WKContentView> view = self;
-    _page->getSelectionOrContentsAsString([view](const String& string, CallbackBase::Error error) {
+    _page->getSelectionContext([view](const String& selectedText, const String& textBefore, const String& textAfter, CallbackBase::Error error) {
         if (error != CallbackBase::Error::None)
             return;
-        if (!string)
+        if (!selectedText)
             return;
         
         CGRect presentationRect = view->_page->editorState().selectionIsRange ? view->_page->editorState().postLayoutData().selectionRects[0].rect() : view->_page->editorState().postLayoutData().caretRectAtStart;
         
-        if (view->_textSelectionAssistant && [view->_textSelectionAssistant respondsToSelector:@selector(lookup:fromRect:)])
-            [view->_textSelectionAssistant lookup:string fromRect:presentationRect];
-        else if (view->_webSelectionAssistant && [view->_webSelectionAssistant respondsToSelector:@selector(lookup:fromRect:)])
-            [view->_webSelectionAssistant lookup:string fromRect:presentationRect];
+        String selectionContext = textBefore + selectedText + textAfter;
+        if (view->_textSelectionAssistant) {
+            if ([view->_textSelectionAssistant respondsToSelector:@selector(lookup:withRange:fromRect:)])
+                [view->_textSelectionAssistant lookup:selectionContext withRange:NSMakeRange(textBefore.length(), selectedText.length()) fromRect:presentationRect];
+            else
+                [view->_textSelectionAssistant lookup:selectedText fromRect:presentationRect];
+        } else {
+            if ([view->_webSelectionAssistant respondsToSelector:@selector(lookup:withRange:fromRect:)])
+                [view->_webSelectionAssistant lookup:selectionContext withRange:NSMakeRange(textBefore.length(), selectedText.length()) fromRect:presentationRect];
+            else
+                [view->_webSelectionAssistant lookup:selectedText fromRect:presentationRect];
+        }
     });
 }
 

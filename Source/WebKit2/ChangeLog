@@ -1,3 +1,41 @@
+2016-04-12  Enrica Casucci  <enrica@apple.com>
+
+        Should retrieve text surrounding the selection when performing lookup.
+        https://bugs.webkit.org/show_bug.cgi?id=156525
+        rdar://problem/25043678
+
+        Reviewed by Tim Horton.
+
+        The lookup functionality requires the surrounding text to improve
+        the quality of the results. This patch changes the implementation of
+        _lookup to retrieve the text before and the text after the selection.
+        It also renames DictationContextCallback to SelectionContextCallback so
+        that it can be used for both dictation and lookup, since they both need
+        the surrounding text.
+
+        * UIProcess/AutoCorrectionCallback.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _lookup:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::autocorrectionDataCallback):
+        (WebKit::WebPageProxy::selectionContextCallback):
+        (WebKit::WebPageProxy::getAutocorrectionContext):
+        (WebKit::WebPageProxy::getSelectionContext):
+        (WebKit::WebPageProxy::handleTwoFingerTapAtPoint):
+        (WebKit::WebPageProxy::dictationContextCallback): Deleted.
+        (WebKit::WebPageProxy::getLookupContextAtPoint): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        (WebKit::WebPage::getSelectionContext):
+        (WebKit::WebPage::accessibilityObjectForMainFramePlugin):
+        (WebKit::WebPage::requestDictationContext):
+        (WebKit::WebPage::replaceSelectedText):
+        (WebKit::WebPage::getLookupContextAtPoint): Deleted.
+
 2016-04-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Dock controls are not available in toolbar if Web Inspector window leaves fullscreen

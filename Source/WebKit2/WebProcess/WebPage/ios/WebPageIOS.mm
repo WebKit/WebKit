@@ -395,18 +395,20 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
     return false;
 }
 
-void WebPage::getLookupContextAtPoint(const WebCore::IntPoint point, uint64_t callbackID)
+void WebPage::getSelectionContext(uint64_t callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    VisiblePosition position = frame.visiblePositionForPoint(point);
-    String resultString;
-    if (!position.isNull()) {
-        // As context, we are going to use 250 characters of text before and after the point.
-        RefPtr<Range> fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
-        if (fullCharacterRange)
-            resultString = plainText(fullCharacterRange.get());
+    if (!frame.selection().isRange()) {
+        send(Messages::WebPageProxy::SelectionContextCallback(String(), String(), String(), callbackID));
+        return;
     }
-    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
+    const int selectionExtendedContextLength = 350;
+    
+    String selectedText = plainTextReplacingNoBreakSpace(frame.selection().selection().toNormalizedRange().get());
+    String textBefore = plainTextReplacingNoBreakSpace(rangeExpandedByCharactersInDirectionAtWordBoundary(frame.selection().selection().start(), selectionExtendedContextLength, DirectionBackward).get(), TextIteratorDefaultBehavior, true);
+    String textAfter = plainTextReplacingNoBreakSpace(rangeExpandedByCharactersInDirectionAtWordBoundary(frame.selection().selection().end(), selectionExtendedContextLength, DirectionForward).get(), TextIteratorDefaultBehavior, true);
+
+    send(Messages::WebPageProxy::SelectionContextCallback(selectedText, textBefore, textAfter, callbackID));
 }
 
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()
@@ -1911,7 +1913,7 @@ void WebPage::requestDictationContext(uint64_t callbackID)
             contextAfter = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), endPosition, lastPosition).ptr());
     }
 
-    send(Messages::WebPageProxy::DictationContextCallback(selectedText, contextBefore, contextAfter, callbackID));
+    send(Messages::WebPageProxy::SelectionContextCallback(selectedText, contextBefore, contextAfter, callbackID));
 }
 
 void WebPage::replaceSelectedText(const String& oldText, const String& newText)

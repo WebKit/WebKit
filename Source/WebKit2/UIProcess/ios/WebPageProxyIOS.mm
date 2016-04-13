@@ -160,9 +160,9 @@ void WebPageProxy::autocorrectionDataCallback(const Vector<WebCore::FloatRect>& 
     callback->performCallbackWithReturnValue(rects, fontName, fontSize, fontTraits);
 }
 
-void WebPageProxy::dictationContextCallback(const String& selectedText, const String& beforeText, const String& afterText, uint64_t callbackID)
+void WebPageProxy::selectionContextCallback(const String& selectedText, const String& beforeText, const String& afterText, uint64_t callbackID)
 {
-    auto callback = m_callbacks.take<DictationContextCallback>(callbackID);
+    auto callback = m_callbacks.take<SelectionContextCallback>(callbackID);
     if (!callback) {
         ASSERT_NOT_REACHED();
         return;
@@ -553,15 +553,15 @@ void WebPageProxy::getAutocorrectionContext(String& beforeContext, String& marke
     m_process->sendSync(Messages::WebPage::GetAutocorrectionContext(), Messages::WebPage::GetAutocorrectionContext::Reply(beforeContext, markedText, selectedText, afterContext, location, length), m_pageID);
 }
 
-void WebPageProxy::getLookupContextAtPoint(const WebCore::IntPoint& point, std::function<void(const String&, CallbackBase::Error)> callbackFunction)
+void WebPageProxy::getSelectionContext(std::function<void(const String&, const String&, const String&, CallbackBase::Error)> callbackFunction)
 {
     if (!isValid()) {
-        callbackFunction(String(), CallbackBase::Error::Unknown);
+        callbackFunction(String(), String(), String(), CallbackBase::Error::Unknown);
         return;
     }
     
     uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::GetLookupContextAtPoint(point, callbackID), m_pageID);
+    m_process->send(Messages::WebPage::GetSelectionContext(callbackID), m_pageID);
 }
 
 void WebPageProxy::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, std::function<void(const String&, CallbackBase::Error)> callbackFunction)

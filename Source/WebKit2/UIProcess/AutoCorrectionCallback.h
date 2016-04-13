@@ -36,7 +36,7 @@ namespace WebKit {
 
 typedef GenericCallback<const Vector<WebCore::FloatRect>&, const String&, double, uint64_t> AutocorrectionDataCallback;
 typedef GenericCallback<const String&, const String&, const String&, const String&, uint64_t, uint64_t> AutocorrectionContextCallback;
-typedef GenericCallback<const String&, const String&, const String&> DictationContextCallback;
+typedef GenericCallback<const String&, const String&, const String&> SelectionContextCallback;
 
 } // namespace WebKit
 

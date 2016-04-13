@@ -515,7 +515,7 @@ public:
     void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID);
     void didFinishDrawingPagesToPDF(const IPC::DataReference&);
     void contentSizeCategoryDidChange(const String& contentSizeCategory);
-    void getLookupContextAtPoint(const WebCore::IntPoint&, std::function<void(const String&, CallbackBase::Error)>);
+    void getSelectionContext(std::function<void(const String&, const String&, const String&, CallbackBase::Error)>);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, std::function<void(const String&, CallbackBase::Error)>);
     void updateForceAlwaysUserScalable();
 #endif
@@ -1365,7 +1365,7 @@ private:
     void touchesCallback(const WebCore::IntPoint&, uint32_t, uint64_t);
     void autocorrectionDataCallback(const Vector<WebCore::FloatRect>&, const String&, float, uint64_t, uint64_t);
     void autocorrectionContextCallback(const String&, const String&, const String&, const String&, uint64_t, uint64_t, uint64_t);
-    void dictationContextCallback(const String&, const String&, const String&, uint64_t);
+    void selectionContextCallback(const String&, const String&, const String&, uint64_t);
     void interpretKeyEvent(const EditorState&, bool isCharEvent, bool& handled);
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect);
 #endif
