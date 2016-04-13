@@ -160,26 +160,26 @@ static void webkit_user_media_permission_request_class_init(WebKitUserMediaPermi
     /**
      * WebKitUserPermissionRequest:is-for-audio-device:
      *
-     * Wether the media device to which the permission was requested has a microphone or not.
+     * Whether the media device to which the permission was requested has a microphone or not.
      *
      * Since: 2.8
      */
     g_object_class_install_property(objectClass, PROP_IS_FOR_AUDIO_DEVICE,
         g_param_spec_boolean("is-for-audio-device", _("Is for audio device"),
-            _("Wether the media device to which the permission was requested has a microphone or not."),
+            _("Whether the media device to which the permission was requested has a microphone or not."),
             FALSE,
             WEBKIT_PARAM_READABLE));
 
     /**
      * WebKitUserPermissionRequest:is-for-video-device:
      *
-     * Wether the media device to which the permission was requested has a video capture capability or not.
+     * Whether the media device to which the permission was requested has a video capture capability or not.
      *
      * Since: 2.8
      */
     g_object_class_install_property(objectClass, PROP_IS_FOR_VIDEO_DEVICE,
         g_param_spec_boolean("is-for-video-device", _("Is for video device"),
-            _("Wether the media device to which the permission was requested has a video capture capability or not."),
+            _("Whether the media device to which the permission was requested has a video capture capability or not."),
             FALSE,
             WEBKIT_PARAM_READABLE));
 }

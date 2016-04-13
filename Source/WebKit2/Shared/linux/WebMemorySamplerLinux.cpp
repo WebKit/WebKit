@@ -162,7 +162,7 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     totalBytesCommitted += globalMemoryStats.stackBytes + globalMemoryStats.JITBytes;
 
     appendKeyValuePair(webKitMemoryStats, ASCIILiteral("JavaScript Heap In Use"), jscHeapBytesInUse);
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("JavaScript Heap Commited Memory"), jscHeapBytesCommitted);
+    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("JavaScript Heap Committed Memory"), jscHeapBytesCommitted);
     
     appendKeyValuePair(webKitMemoryStats, ASCIILiteral("JavaScript Stack Bytes"), globalMemoryStats.stackBytes);
     appendKeyValuePair(webKitMemoryStats, ASCIILiteral("JavaScript JIT Bytes"), globalMemoryStats.JITBytes);
