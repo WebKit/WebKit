@@ -237,7 +237,7 @@ inline unsigned RenderTableCell::rowSpan() const
 inline void RenderTableCell::setCol(unsigned column)
 {
     if (UNLIKELY(column > maxColumnIndex))
-        CRASH();
+        column = maxColumnIndex;
     m_column = column;
 }
 
