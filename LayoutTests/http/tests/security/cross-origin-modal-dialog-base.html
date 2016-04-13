@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<script>
+    if (window.testRunner)
+        testRunner.setCanOpenWindows();
+
+    description("Tests that a modal dialog doesn't fall back to its openers origin when document.location is set to a relative path.");
+
+    var triggeredCaptureListener = false;
+    var triggeredBubbleListener = false;
+
+    onload = function () {
+        debug('Showing modal dialog.');
+        showModalDialog('http://localhost:8000/security/resources/cross-origin-modal-dialog-base-1.html');
+        debug('Returned from modal dialog.');
+        debug('If test passed, console messages above should both show the same document.location.origin, <http://localhost:8000>.');
+        finishJSTest();
+    };
+
+    var jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
