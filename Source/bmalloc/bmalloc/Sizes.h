@@ -51,41 +51,27 @@ namespace Sizes {
 #else
     static const size_t vmPageSize = 4 * kB;
 #endif
-    static const size_t vmPageMask = ~(vmPageSize - 1);
     
-    static const size_t superChunkSize = 2 * MB;
-    static const size_t superChunkMask = ~(superChunkSize - 1);
-
-    static const size_t smallChunkSize = superChunkSize / 2;
-    static const size_t smallChunkOffset = superChunkSize / 2;
-    static const size_t smallChunkMask = ~(smallChunkSize - 1ul);
-
     static const size_t smallLineSize = 256;
     static const size_t smallLineCount = vmPageSize / smallLineSize;
 
     static const size_t smallMax = 1 * kB;
     static const size_t maskSizeClassMax = 512;
 
-    static const size_t largeChunkSize = superChunkSize / 2;
-    static const size_t largeChunkOffset = 0;
+    static const size_t largeChunkSize = 2 * MB;
     static const size_t largeChunkMask = ~(largeChunkSize - 1ul);
 
     static const size_t largeAlignment = 64;
     static const size_t largeMin = smallMax;
-    static const size_t largeChunkMetadataSize = 4 * kB; // sizeof(LargeChunk)
-    static const size_t largeObjectMax = largeChunkSize - largeChunkMetadataSize;
+    static const size_t largeObjectMax = largeChunkSize;
     static const size_t largeMax = largeObjectMax / 2;
 
-    static const size_t xLargeAlignment = superChunkSize;
+    static const size_t xLargeAlignment = largeChunkSize;
     static const size_t xLargeMask = ~(xLargeAlignment - 1);
     static const size_t xLargeMax = std::numeric_limits<size_t>::max() - xLargeAlignment; // Make sure that rounding up to xLargeAlignment does not overflow.
 
     static const size_t freeListSearchDepth = 16;
     static const size_t freeListGrowFactor = 2;
-
-    static const uintptr_t typeMask = (superChunkSize - 1) & ~((superChunkSize / 2) - 1); // 2 taggable chunks
-    static const uintptr_t largeMask = typeMask & (superChunkSize + largeChunkOffset);
-    static const uintptr_t smallMask = typeMask & (superChunkSize + smallChunkOffset);
 
     static const size_t deallocatorLogCapacity = 256;
     static const size_t bumpRangeCacheCapacity = 3;

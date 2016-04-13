@@ -61,7 +61,7 @@ private:
     FreeList& select(size_t);
 
     VMState::HasPhysical m_hasPhysical;
-    std::array<FreeList, 15> m_freeLists;
+    std::array<FreeList, 16> m_freeLists;
 };
 
 } // namespace bmalloc

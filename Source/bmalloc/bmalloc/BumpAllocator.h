@@ -76,7 +76,6 @@ inline void* BumpAllocator::allocate()
     --m_remaining;
     char* result = m_ptr;
     m_ptr += m_size;
-    BASSERT(isSmall(result));
     return result;
 }
 

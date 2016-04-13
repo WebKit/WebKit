@@ -32,7 +32,6 @@
 #include "LargeObject.h"
 #include "Range.h"
 #include "SegregatedFreeList.h"
-#include "SmallChunk.h"
 #include "VMState.h"
 #include "Vector.h"
 #if BOS(DARWIN)
@@ -44,44 +43,25 @@ namespace bmalloc {
 class BeginTag;
 class EndTag;
 class Heap;
-class SuperChunk;
 
 class VMHeap {
 public:
     VMHeap();
 
-    SmallPage* allocateSmallPage(std::lock_guard<StaticMutex>&);
     LargeObject allocateLargeObject(std::lock_guard<StaticMutex>&, size_t);
     LargeObject allocateLargeObject(std::lock_guard<StaticMutex>&, size_t, size_t, size_t);
 
-    void deallocateSmallPage(std::unique_lock<StaticMutex>&, SmallPage*);
     void deallocateLargeObject(std::unique_lock<StaticMutex>&, LargeObject);
     
 private:
-    void allocateSmallChunk(std::lock_guard<StaticMutex>&);
     LargeObject allocateLargeChunk(std::lock_guard<StaticMutex>&);
-    void allocateSuperChunk(std::lock_guard<StaticMutex>&);
 
-    List<SmallPage> m_smallPages;
     SegregatedFreeList m_largeObjects;
-
-    Vector<SuperChunk*> m_smallChunks;
-    Vector<SuperChunk*> m_largeChunks;
 
 #if BOS(DARWIN)
     Zone m_zone;
 #endif
 };
-
-inline SmallPage* VMHeap::allocateSmallPage(std::lock_guard<StaticMutex>& lock)
-{
-    if (m_smallPages.isEmpty())
-        allocateSmallChunk(lock);
-
-    SmallPage* page = m_smallPages.pop();
-    vmAllocatePhysicalPages(page->begin()->begin(), vmPageSize);
-    return page;
-}
 
 inline LargeObject VMHeap::allocateLargeObject(std::lock_guard<StaticMutex>& lock, size_t size)
 {
@@ -99,15 +79,6 @@ inline LargeObject VMHeap::allocateLargeObject(std::lock_guard<StaticMutex>& loc
 
     BASSERT(unalignedSize <= largeMax);
     return allocateLargeChunk(lock);
-}
-
-inline void VMHeap::deallocateSmallPage(std::unique_lock<StaticMutex>& lock, SmallPage* page)
-{
-    lock.unlock();
-    vmDeallocatePhysicalPages(page->begin()->begin(), vmPageSize);
-    lock.lock();
-    
-    m_smallPages.push(page);
 }
 
 inline void VMHeap::deallocateLargeObject(std::unique_lock<StaticMutex>& lock, LargeObject largeObject)

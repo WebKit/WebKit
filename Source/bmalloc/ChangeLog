@@ -1,3 +1,150 @@
+2016-03-24  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: small and large objects should share memory
+        https://bugs.webkit.org/show_bug.cgi?id=155866
+
+        Reviewed by Andreas Kling.
+
+        This patch cuts our VM footprint in half. (VM footprint usually doesn't
+        matter, but on iOS there's an artificial VM limit around 700MB, and if
+        you hit it you jetsam / crash.)
+
+        It's also a step toward honoring the hardware page size at runtime,
+        which will reduce memory usage on iOS.
+
+        This patch is a small improvement in peak memory usage because it allows
+        small and large objects to recycle each other's memory. The tradeoff is
+        that we require more metadata, which causes more memory usage after
+        shrinking down from peak memory usage. In the end, we have some memory
+        wins and some losses, and a small win in the mean on our standard memory
+        benchmarks.
+
+        * bmalloc.xcodeproj/project.pbxproj: Removed SuperChunk.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate): Adopt a new Heap API for shrinking
+        large objects because it's a little more complicated than it used to be.
+
+        Don't check for equality in the XLarge case because we don't do it in
+        other cases, and it's unlikely that we'll be called for no reason.
+
+        * bmalloc/BumpAllocator.h:
+        (bmalloc::BumpAllocator::allocate): Don't ASSERT isSmall because that's
+        an old concept from when small and large objects were in distinct memory
+        regions.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::deallocateSlowCase): Large objects are not
+        segregated anymore.
+
+        (bmalloc::Deallocator::deallocateLarge): Deleted.
+
+        * bmalloc/Deallocator.h:
+        (bmalloc::Deallocator::deallocateFastCase): Don't ASSERT isSmall(). See
+        above.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeSmallPage):
+        (bmalloc::Heap::scavengeSmallPages): New helpers for returning cached
+        small pages to the large object heap.
+
+        (bmalloc::Heap::allocateSmallPage): Allocate small pages from the large
+        object heap. This is how we accomplish sharing.
+
+        (bmalloc::Heap::deallocateSmallLine): Handle large objects since we can
+        encounter them on this code path now.
+
+        (bmalloc::Heap::splitAndAllocate): Fixed a bug where we would sometimes
+        not split even though we could.
+
+        Allocating a large object also requires ref'ing its small line so that
+        we can alias memory between small and large objects.
+
+        (bmalloc::Heap::allocateLarge): Return cached small pages before
+        allocating a large object that would fit in a cached small page. This
+        allows some large allocations to reuse small object memory.
+
+        (bmalloc::Heap::shrinkLarge): New helper.
+
+        (bmalloc::Heap::deallocateLarge): Deleted.
+
+        * bmalloc/Heap.h:
+
+        * bmalloc/LargeChunk.h:
+        (bmalloc::LargeChunk::pageBegin):
+        (bmalloc::LargeChunk::pageEnd):
+        (bmalloc::LargeChunk::lines):
+        (bmalloc::LargeChunk::pages):
+        (bmalloc::LargeChunk::begin):
+        (bmalloc::LargeChunk::end):
+        (bmalloc::LargeChunk::LargeChunk):
+        (bmalloc::LargeChunk::get):
+        (bmalloc::LargeChunk::endTag):
+        (bmalloc::LargeChunk::offset):
+        (bmalloc::LargeChunk::object):
+        (bmalloc::LargeChunk::page):
+        (bmalloc::LargeChunk::line):
+        (bmalloc::SmallLine::begin):
+        (bmalloc::SmallLine::end):
+        (bmalloc::SmallPage::begin):
+        (bmalloc::SmallPage::end):
+        (bmalloc::Object::Object):
+        (bmalloc::Object::begin):
+        (bmalloc::Object::pageBegin):
+        (bmalloc::Object::line):
+        (bmalloc::Object::page): I merged all the SmallChunk metadata and code
+        into LargeChunk. Now we use a single class to track both small and large
+        metadata, so we can share memory between small and large objects.
+
+        I'm going to rename this class to Chunk in a follow-up patch.
+
+        * bmalloc/Object.h:
+        (bmalloc::Object::chunk): Updated for LargeChunk transition.
+
+        * bmalloc/ObjectType.cpp:
+        (bmalloc::objectType):
+        * bmalloc/ObjectType.h:
+        (bmalloc::isXLarge):
+        (bmalloc::isSmall): Deleted. The difference between small and large
+        objects is now stored in metadata and is not a property of their
+        virtual address range.
+
+        * bmalloc/SegregatedFreeList.h: One more entry because we cover all of
+        what used to be the super chunk in a large chunk now.
+
+        * bmalloc/Sizes.h: Removed bit masking helpers because we don't use
+        address masks to distinguish small vs large object type anymore.
+
+        * bmalloc/SmallChunk.h: Removed.
+
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::SmallPage): Store object type per page because any
+        given page can be used for large objects or small objects.
+
+        * bmalloc/SuperChunk.h: Removed.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::VMHeap):
+        (bmalloc::VMHeap::allocateLargeChunk):
+        (bmalloc::VMHeap::allocateSmallChunk): Deleted.
+        (bmalloc::VMHeap::allocateSuperChunk): Deleted.
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateLargeObject):
+        (bmalloc::VMHeap::deallocateLargeObject):
+        (bmalloc::VMHeap::allocateSmallPage): Deleted.
+        (bmalloc::VMHeap::deallocateSmallPage): Deleted. Removed super chunk and
+        small chunk support.
+
+        * bmalloc/Zone.cpp:
+        (bmalloc::enumerator):
+        * bmalloc/Zone.h:
+        (bmalloc::Zone::largeChunks):
+        (bmalloc::Zone::addLargeChunk):
+        (bmalloc::Zone::superChunks): Deleted.
+        (bmalloc::Zone::addSuperChunk): Deleted. Removed super chunk and
+        small chunk support.
+
 2016-03-23  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Added an Object helper class

@@ -30,7 +30,6 @@
 #include "Inline.h"
 #include "Object.h"
 #include "PerProcess.h"
-#include "SmallChunk.h"
 #include <algorithm>
 #include <cstdlib>
 #include <sys/mman.h>
@@ -58,12 +57,6 @@ void Deallocator::scavenge()
 {
     if (m_isBmallocEnabled)
         processObjectLog();
-}
-
-void Deallocator::deallocateLarge(void* object)
-{
-    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-    PerProcess<Heap>::getFastCase()->deallocateLarge(lock, object);
 }
 
 void Deallocator::deallocateXLarge(void* object)
@@ -97,20 +90,15 @@ void Deallocator::deallocateSlowCase(void* object)
         return;
     }
 
-    BASSERT(objectType(nullptr) == XLarge);
     if (!object)
         return;
 
-    if (isSmall(object)) {
-        processObjectLog();
-        m_objectLog.push(object);
-        return;
-    }
+    if (isXLarge(object))
+        return deallocateXLarge(object);
 
-    if (!isXLarge(object))
-        return deallocateLarge(object);
-    
-    return deallocateXLarge(object);
+    BASSERT(m_objectLog.size() == m_objectLog.capacity());
+    processObjectLog();
+    m_objectLog.push(object);
 }
 
 } // namespace bmalloc

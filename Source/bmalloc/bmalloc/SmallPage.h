@@ -38,6 +38,7 @@ class SmallPage : public ListNode<SmallPage> {
 public:
     SmallPage()
         : m_hasFreeLines(true)
+        , m_objectType(ObjectType::Large)
     {
     }
 
@@ -48,6 +49,9 @@ public:
     size_t sizeClass() { return m_sizeClass; }
     void setSizeClass(size_t sizeClass) { m_sizeClass = sizeClass; }
     
+    ObjectType objectType() const { return m_objectType; }
+    void setObjectType(ObjectType objectType) { m_objectType = objectType; }
+
     bool hasFreeLines(std::lock_guard<StaticMutex>&) const { return m_hasFreeLines; }
     void setHasFreeLines(std::lock_guard<StaticMutex>&, bool hasFreeLines) { m_hasFreeLines = hasFreeLines; }
     
@@ -58,6 +62,7 @@ private:
     unsigned char m_hasFreeLines: 1;
     unsigned char m_refCount: 7;
     unsigned char m_sizeClass;
+    ObjectType m_objectType;
 
 static_assert(
     sizeClassCount <= std::numeric_limits<decltype(m_sizeClass)>::max(),
