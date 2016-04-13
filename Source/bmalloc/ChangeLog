@@ -1,5 +1,51 @@
 2016-03-29  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: support physical page sizes that don't match the virtual page size (take 2)
+        https://bugs.webkit.org/show_bug.cgi?id=156003
+
+        Reviewed by Andreas Kling.
+
+        This is a memory savings on iOS devices where the virtual page size
+        is 16kB but the physical page size is 4kB.
+
+        Take 1 was a memory regression on 16kB virtual / 16kB physical systems
+        because it used a 4kB page size within a 16kB page size, allowing up to
+        4 different object types to mix within a physical page. Because objects
+        of the same type tend to deallocate at the same time, mixing objects of
+        different types made pages less likely to become completely empty.
+
+        (Take 1 also had a bug where it used a platform #ifdef that didn't exist.
+        Oops.)
+
+        Take 2 allocates units of SmallPages equal to the physical page size.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::initializeLineMetadata):
+        (bmalloc::Heap::allocateSmallBumpRanges):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateXLarge):
+        (bmalloc::Heap::shrinkXLarge):
+        * bmalloc/Heap.h: Use the physical page size for our VM operations because
+        we're only concerned with returning physical pages to the OS.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmPageSize):
+        (bmalloc::vmPageShift):
+        (bmalloc::vmSize):
+        (bmalloc::vmValidate):
+        (bmalloc::vmPageSizePhysical):
+        (bmalloc::vmValidatePhysical):
+        (bmalloc::tryVMAllocate):
+        (bmalloc::vmDeallocatePhysicalPages):
+        (bmalloc::vmAllocatePhysicalPages):
+        (bmalloc::vmDeallocatePhysicalPagesSloppy):
+        (bmalloc::vmAllocatePhysicalPagesSloppy): Use the physical page size.
+
+2016-03-29  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: page size should be configurable at runtime
         https://bugs.webkit.org/show_bug.cgi?id=155993
 
