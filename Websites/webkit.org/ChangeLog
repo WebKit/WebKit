@@ -1,3 +1,12 @@
+2016-04-13  Jon Davis  <jond@apple.com>
+
+        Added background color for Safari Technology Preview posts.
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/style.css:
+        (.tile.category-safari-technology-preview .background-image):
+
 2016-04-07  Jon Davis  <jond@apple.com>
 
         Improved drop down menu with translate; cleaned up unnecessary whitespace.

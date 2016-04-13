@@ -434,6 +434,10 @@ footer .menu {
     background-position: 50% 79.45%;
 }
 
+.tile.category-safari-technology-preview .background-image {
+    background-color: #8e56b1;
+}
+
 .tile.tag-console .background-image,
 .tile.tag-debugger .background-image,
 .tile.tag-shortcuts .background-image,
