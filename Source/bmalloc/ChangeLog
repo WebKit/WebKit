@@ -1,5 +1,75 @@
 2016-03-22  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: use a log scale for large-ish size classes
+        https://bugs.webkit.org/show_bug.cgi?id=155770
+
+        Reviewed by Michael Saboff.
+
+        At larger sizes, precise allocation sizes don't save much memory -- and
+        they can cost memory when objects of distinct size classes can't
+        allocate together.
+
+        This is a small savings up to our current allocation limits, and it may
+        enable changing those limits in the long term.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::log2): We use this to compute large-ish size classes.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator): Iterate by size class instead of by
+        object size so we can change object size limits without breaking stuff.
+
+        (bmalloc::Allocator::scavenge): Ditto.
+
+        (bmalloc::Allocator::allocateLogSizeClass): New helper function for
+        allocating based on log size classes.
+
+        (bmalloc::Allocator::allocateSlowCase): Account for extra size class
+        possibilities.
+
+        * bmalloc/Allocator.h:
+        (bmalloc::Allocator::allocateFastCase): We only handle up to 512b on
+        the fastest fast path now.
+
+        * bmalloc/BumpAllocator.h:
+        (bmalloc::BumpAllocator::validate): Deleted. I noticed that this function
+        had been refactored not to do anything anymore.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::initializeLineMetadata): Iterate by size class. (See
+        Allocator::Allocator.)
+
+        * bmalloc/Heap.h: Use the sizeClassCount constant instead of hard coding
+        things.
+
+        * bmalloc/Sizes.h:
+        (bmalloc::Sizes::maskSizeClass):
+        (bmalloc::Sizes::maskObjectSize):
+        (bmalloc::Sizes::logSizeClass):
+        (bmalloc::Sizes::logObjectSize):
+        (bmalloc::Sizes::sizeClass):
+        (bmalloc::Sizes::objectSize): Separate size class calculation between
+        simple size classes that can be computed with a mask and are 8-byte-precise
+        and complex size classes that require more math and are less precise.
+
+        * bmalloc/SmallLine.h:
+        (bmalloc::SmallLine::ref):
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::SmallPage):
+        (bmalloc::SmallPage::ref):
+        (bmalloc::SmallPage::deref): Cleaned up some ASSERTs that triggered
+        while working on this patch.
+
+        * bmalloc/Zone.cpp:
+        (bmalloc::statistics):
+        (bmalloc::zoneSize):
+        (bmalloc::Zone::Zone):
+        (bmalloc::size): Deleted. Renamed these symbols to work around an lldb
+        bug that makes it impossible to print out variables named 'size' -- which
+        can be a problem when working on malloc.
+
+2016-03-22  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: shrink largeMax
         https://bugs.webkit.org/show_bug.cgi?id=155759
 

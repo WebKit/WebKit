@@ -108,6 +108,11 @@ template<typename T> inline constexpr size_t bitCount()
     return sizeof(T) * 8;
 }
 
+inline constexpr unsigned long log2(unsigned long value)
+{
+    return bitCount<unsigned long>() - 1 - __builtin_clzl(value);
+}
+
 } // namespace bmalloc
 
 #endif // Algorithm_h

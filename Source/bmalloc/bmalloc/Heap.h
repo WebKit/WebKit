@@ -92,9 +92,9 @@ private:
     void scavengeLargeObjects(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
     void scavengeXLargeObjects(std::unique_lock<StaticMutex>&, std::chrono::milliseconds);
 
-    std::array<std::array<LineMetadata, smallLineCount>, smallMax / alignment> m_smallLineMetadata;
+    std::array<std::array<LineMetadata, smallLineCount>, sizeClassCount> m_smallLineMetadata;
 
-    std::array<List<SmallPage>, smallMax / alignment> m_smallPagesWithFreeLines;
+    std::array<List<SmallPage>, sizeClassCount> m_smallPagesWithFreeLines;
 
     List<SmallPage> m_smallPages;
 

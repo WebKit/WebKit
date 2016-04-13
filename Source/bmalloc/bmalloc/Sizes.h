@@ -60,9 +60,11 @@ namespace Sizes {
     static const size_t smallChunkOffset = superChunkSize / 2;
     static const size_t smallChunkMask = ~(smallChunkSize - 1ul);
 
-    static const size_t smallMax = 1024;
     static const size_t smallLineSize = 256;
     static const size_t smallLineCount = vmPageSize / smallLineSize;
+
+    static const size_t smallMax = 1 * kB;
+    static const size_t maskSizeClassMax = 512;
 
     static const size_t largeChunkSize = superChunkSize / 2;
     static const size_t largeChunkOffset = 0;
@@ -90,17 +92,54 @@ namespace Sizes {
     
     static const std::chrono::milliseconds scavengeSleepDuration = std::chrono::milliseconds(512);
 
+    static const size_t maskSizeClassCount = maskSizeClassMax / alignment;
+
+    inline constexpr size_t maskSizeClass(size_t size)
+    {
+        // We mask to accommodate zero.
+        return mask((size - 1) / alignment, maskSizeClassCount - 1);
+    }
+
+    inline size_t maskObjectSize(size_t maskSizeClass)
+    {
+        return (maskSizeClass + 1) * alignment;
+    }
+
+    static const size_t logWasteFactor = 8;
+    static const size_t logAlignmentMin = maskSizeClassMax / logWasteFactor;
+
+    static const size_t logSizeClassCount = (log2(smallMax) - log2(maskSizeClassMax)) * logWasteFactor;
+
+    inline size_t logSizeClass(size_t size)
+    {
+        size_t base = log2(size - 1) - log2(maskSizeClassMax);
+        size_t offset = (size - 1 - (maskSizeClassMax << base));
+        return base * logWasteFactor + offset / (logAlignmentMin << base);
+    }
+
+    inline size_t logObjectSize(size_t logSizeClass)
+    {
+        size_t base = logSizeClass / logWasteFactor;
+        size_t offset = logSizeClass % logWasteFactor;
+        return (maskSizeClassMax << base) + (offset + 1) * (logAlignmentMin << base);
+    }
+
+    static const size_t sizeClassCount = maskSizeClassCount + logSizeClassCount;
+
     inline size_t sizeClass(size_t size)
     {
-        static const size_t sizeClassMask = (smallMax / alignment) - 1;
-        return mask((size - 1) / alignment, sizeClassMask);
+        if (size <= maskSizeClassMax)
+            return maskSizeClass(size);
+        return maskSizeClassCount + logSizeClass(size);
     }
 
     inline size_t objectSize(size_t sizeClass)
     {
-        return (sizeClass + 1) * alignment;
+        if (sizeClass < maskSizeClassCount)
+            return maskObjectSize(sizeClass);
+        return logObjectSize(sizeClass - maskSizeClassCount);
     }
-};
+}
 
 using namespace Sizes;
 

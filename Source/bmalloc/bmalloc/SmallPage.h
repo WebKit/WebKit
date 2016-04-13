@@ -36,9 +36,6 @@ namespace bmalloc {
 
 class SmallPage : public ListNode<SmallPage> {
 public:
-    static const unsigned char maxRefCount = std::numeric_limits<unsigned char>::max();
-    static_assert(smallLineCount < maxRefCount, "maximum line count must fit in SmallPage");
-    
     static SmallPage* get(SmallLine*);
 
     SmallPage()
@@ -63,12 +60,16 @@ private:
     unsigned char m_hasFreeLines: 1;
     unsigned char m_refCount: 7;
     unsigned char m_sizeClass;
+
+static_assert(
+    sizeClassCount <= std::numeric_limits<decltype(m_sizeClass)>::max(),
+    "Largest size class must fit in SmallPage metadata");
 };
 
 inline void SmallPage::ref(std::lock_guard<StaticMutex>&)
 {
-    BASSERT(m_refCount < maxRefCount);
     ++m_refCount;
+    BASSERT(m_refCount);
 }
 
 inline bool SmallPage::deref(std::lock_guard<StaticMutex>&)

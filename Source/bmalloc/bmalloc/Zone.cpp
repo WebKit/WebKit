@@ -78,7 +78,7 @@ static void statistics(malloc_zone_t*, malloc_statistics_t* statistics)
     memset(statistics, 0, sizeof(malloc_statistics_t));
 }
 
-static size_t size(malloc_zone_t*, const void*)
+static size_t zoneSize(malloc_zone_t*, const void*)
 {
     // Our zone is not public API, so no pointer can belong to us.
     return 0;
@@ -104,7 +104,7 @@ static kern_return_t enumerator(task_t task, void* context, unsigned type_mask, 
 // The memory analysis API requires the contents of this struct to be a static
 // constant in the program binary. The leaks process will load this struct
 // out of the program binary (and not out of the running process).
-static malloc_introspection_t introspect = {
+static malloc_introspection_t zoneIntrospect = {
     .enumerator = bmalloc::enumerator,
     .good_size = bmalloc::good_size,
     .check = bmalloc::check,
@@ -117,9 +117,9 @@ static malloc_introspection_t introspect = {
 
 Zone::Zone()
 {
-    malloc_zone_t::size = &bmalloc::size;
+    malloc_zone_t::size = &bmalloc::zoneSize;
     malloc_zone_t::zone_name = "WebKit Malloc";
-    malloc_zone_t::introspect = &bmalloc::introspect;
+    malloc_zone_t::introspect = &bmalloc::zoneIntrospect;
     malloc_zone_t::version = 4;
     malloc_zone_register(this);
 }
