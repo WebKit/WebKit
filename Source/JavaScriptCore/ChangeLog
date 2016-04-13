@@ -1,3 +1,20 @@
+2016-04-12  Filip Pizlo  <fpizlo@apple.com>
+
+        PolymorphicAccess::regenerate() shouldn't have to clone non-generated AccessCases
+        https://bugs.webkit.org/show_bug.cgi?id=156493
+
+        Reviewed by Geoffrey Garen.
+
+        Cloning AccessCases is only necessary if they hold some artifacts that are used by code that
+        they already generated. So, if the state is not Generated, we don't have to bother with
+        cloning them.
+
+        This should speed up PolymorphicAccess regeneration a bit more.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::commit):
+        (JSC::PolymorphicAccess::regenerate):
+
 2016-04-13  Mark Lam  <mark.lam@apple.com>
 
         ES6: Implement String.prototype.split and RegExp.prototype[@@split].

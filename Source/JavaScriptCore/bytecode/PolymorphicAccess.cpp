@@ -399,7 +399,10 @@ std::unique_ptr<AccessCase> AccessCase::clone() const
 
 Vector<WatchpointSet*, 2> AccessCase::commit(VM& vm, const Identifier& ident)
 {
-    RELEASE_ASSERT(m_state == Primordial);
+    // It's fine to commit something that is already committed. That arises when we switch to using
+    // newly allocated watchpoints. When it happens, it's not efficient - but we think that's OK
+    // because most AccessCases have no extra watchpoints anyway.
+    RELEASE_ASSERT(m_state == Primordial || m_state == Committed);
     
     Vector<WatchpointSet*, 2> result;
     
@@ -1546,28 +1549,36 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     // to be unmutated. For sure, we want it to hang onto any data structures that may be referenced
     // from the code of the current stub (aka previous).
     ListType cases;
-    for (unsigned i = 0; i < m_list.size(); ++i) {
-        AccessCase& someCase = *m_list[i];
-        // Ignore cases that cannot possibly succeed anymore.
-        if (!someCase.couldStillSucceed())
-            continue;
+    unsigned srcIndex = 0;
+    unsigned dstIndex = 0;
+    while (srcIndex < m_list.size()) {
+        std::unique_ptr<AccessCase> someCase = WTFMove(m_list[srcIndex++]);
         
-        // Figure out if this is replaced by any later case.
-        bool found = false;
-        for (unsigned j = i + 1; j < m_list.size(); ++j) {
-            if (m_list[j]->canReplace(someCase)) {
-                found = true;
-                break;
+        // If the case had been generated, then we have to keep the original in m_list in case we
+        // fail to regenerate. That case may have data structures that are used by the code that it
+        // had generated. If the case had not been generated, then we want to remove it from m_list.
+        bool isGenerated = someCase->state() == AccessCase::Generated;
+        
+        [&] () {
+            if (!someCase->couldStillSucceed())
+                return;
+
+            // Figure out if this is replaced by any later case.
+            for (unsigned j = srcIndex; j < m_list.size(); ++j) {
+                if (m_list[j]->canReplace(*someCase))
+                    return;
             }
-        }
-        if (found)
-            continue;
+            
+            if (isGenerated)
+                cases.append(someCase->clone());
+            else
+                cases.append(WTFMove(someCase));
+        }();
         
-        // FIXME: Do we have to clone cases that aren't generated? Maybe we can just take those
-        // from m_list, since we don't have to keep those alive if we fail.
-        // https://bugs.webkit.org/show_bug.cgi?id=156493
-        cases.append(someCase.clone());
+        if (isGenerated)
+            m_list[dstIndex++] = WTFMove(someCase);
     }
+    m_list.resize(dstIndex);
     
     if (verbose)
         dataLog("In regenerate: cases: ", listDump(cases), "\n");
