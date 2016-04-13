@@ -87,13 +87,18 @@ template<size_t divisor, typename T> inline constexpr T roundDownToMultipleOf(T 
     return roundDownToMultipleOf(divisor, x);
 }
 
-template<typename T> void divideRoundingUp(T numerator, T denominator, T& quotient, T& remainder)
+template<typename T> inline void divideRoundingUp(T numerator, T denominator, T& quotient, T& remainder)
 {
     // We expect the compiler to emit a single divide instruction to extract both the quotient and the remainder.
     quotient = numerator / denominator;
     remainder = numerator % denominator;
     if (remainder)
         quotient += 1;
+}
+
+template<typename T> inline T divideRoundingUp(T numerator, T denominator)
+{
+    return (numerator + denominator - 1) / denominator;
 }
 
 // Version of sizeof that returns 0 for empty classes.
