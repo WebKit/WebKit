@@ -1205,12 +1205,12 @@ void RenderLayerBacking::updateInternalHierarchy()
 
 void RenderLayerBacking::resetContentsRect()
 {
-    m_graphicsLayer->setContentsRect(snappedIntRect(contentsBox()));
+    m_graphicsLayer->setContentsRect(snapRectToDevicePixels(contentsBox(), deviceScaleFactor()));
     
     if (is<RenderBox>(renderer())) {
         LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
+        boxRect.move(contentOffsetInCompostingLayer());
         FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
-        contentsClippingRect.move(contentOffsetInCompostingLayer());
         m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
     }
 
@@ -1549,8 +1549,8 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
         if (is<RenderBox>(renderer()) && (renderer().style().clipPath() || renderer().style().hasBorderRadius())) {
             // FIXME: we shouldn't get geometry here as layout may not have been udpated.
             LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
+            boxRect.move(contentOffsetInCompostingLayer());
             FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
-            contentsClippingRect.move(contentOffsetInCompostingLayer());
             if (clippingLayer()->setMasksToBoundsRect(contentsClippingRect)) {
                 if (m_childClippingMaskLayer) 
                     m_childClippingMaskLayer = nullptr;
@@ -2062,11 +2062,11 @@ void RenderLayerBacking::updateImageContents()
         return;
 
     // This is a no-op if the layer doesn't have an inner layer for the image.
-    m_graphicsLayer->setContentsRect(snappedIntRect(contentsBox()));
+    m_graphicsLayer->setContentsRect(snapRectToDevicePixels(contentsBox(), deviceScaleFactor()));
 
     LayoutRect boxRect(LayoutPoint(), imageRenderer.size());
+    boxRect.move(contentOffsetInCompostingLayer());
     FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
-    contentsClippingRect.move(contentOffsetInCompostingLayer());
     m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
 
     m_graphicsLayer->setContentsToImage(image);
