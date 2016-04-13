@@ -1,3 +1,15 @@
+2016-04-13  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Non-resizable text field looks resizable
+        https://bugs.webkit.org/show_bug.cgi?id=152271
+
+        Reviewed by Darin Adler.
+
+        * fast/css/resize-not-inherited-expected.html: Added.
+        * fast/css/resize-not-inherited.html: Added.
+        * fast/css/resize-single-line-input-no-paint-expected.html: Added.
+        * fast/css/resize-single-line-input-no-paint.html: Added.
+
 2016-04-13  Mark Lam  <mark.lam@apple.com>
 
         ES6: Implement RegExp.prototype[@@search].

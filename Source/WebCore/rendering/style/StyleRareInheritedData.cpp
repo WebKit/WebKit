@@ -85,7 +85,6 @@ StyleRareInheritedData::StyleRareInheritedData()
     , overflowWrap(RenderStyle::initialOverflowWrap())
     , nbspMode(NBNORMAL)
     , lineBreak(LineBreakAuto)
-    , resize(RenderStyle::initialResize())
     , userSelect(RenderStyle::initialUserSelect())
     , speak(SpeakNormal)
     , hyphens(HyphensManual)
@@ -168,7 +167,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , overflowWrap(o.overflowWrap)
     , nbspMode(o.nbspMode)
     , lineBreak(o.lineBreak)
-    , resize(o.resize)
     , userSelect(o.userSelect)
     , speak(o.speak)
     , hyphens(o.hyphens)
@@ -269,7 +267,6 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 #if ENABLE(IOS_TEXT_AUTOSIZING)
         && textSizeAdjust == o.textSizeAdjust
 #endif
-        && resize == o.resize
         && userSelect == o.userSelect
         && speak == o.speak
         && hyphens == o.hyphens

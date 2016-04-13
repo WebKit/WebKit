@@ -999,7 +999,7 @@ public:
     const AtomicString& hyphenationString() const { return rareInheritedData->hyphenationString; }
     const AtomicString& locale() const { return fontDescription().locale(); }
     EBorderFit borderFit() const { return static_cast<EBorderFit>(rareNonInheritedData->m_borderFit); }
-    EResize resize() const { return static_cast<EResize>(rareInheritedData->resize); }
+    EResize resize() const { return static_cast<EResize>(rareNonInheritedData->m_resize); }
     ColumnAxis columnAxis() const { return static_cast<ColumnAxis>(rareNonInheritedData->m_multiCol->m_axis); }
     bool hasInlineColumnAxis() const {
         ColumnAxis axis = columnAxis();
@@ -1573,7 +1573,7 @@ public:
     void setHyphenationLimitLines(short limit) { SET_VAR(rareInheritedData, hyphenationLimitLines, limit); }
     void setHyphenationString(const AtomicString& h) { SET_VAR(rareInheritedData, hyphenationString, h); }
     void setBorderFit(EBorderFit b) { SET_VAR(rareNonInheritedData, m_borderFit, b); }
-    void setResize(EResize r) { SET_VAR(rareInheritedData, resize, r); }
+    void setResize(EResize r) { SET_VAR(rareNonInheritedData, m_resize, r); }
     void setColumnAxis(ColumnAxis axis) { SET_NESTED_VAR(rareNonInheritedData, m_multiCol, m_axis, axis); }
     void setColumnProgression(ColumnProgression progression) { SET_NESTED_VAR(rareNonInheritedData, m_multiCol, m_progression, progression); }
     void setColumnWidth(float f) { SET_NESTED_VAR(rareNonInheritedData, m_multiCol, m_autoWidth, false); SET_NESTED_VAR(rareNonInheritedData, m_multiCol, m_width, f); }

@@ -225,6 +225,7 @@ public:
     unsigned m_breakBefore : 4; // BreakBetween
     unsigned m_breakAfter : 4;
     unsigned m_breakInside : 3; // BreakInside
+    unsigned m_resize : 2; // EResize
 
 private:
     StyleRareNonInheritedData();
