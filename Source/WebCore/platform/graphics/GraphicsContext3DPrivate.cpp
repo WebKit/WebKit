@@ -37,7 +37,7 @@
 #include "OpenGLShims.h"
 #endif
 
-#if USE(TEXTURE_MAPPER) && USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL)
 #include <texmap/TextureMapperGL.h>
 #endif
 
@@ -111,7 +111,7 @@ void GraphicsContext3DPrivate::swapBuffersIfNeeded()
 
     m_context->markLayerComposited();
 }
-#elif USE(TEXTURE_MAPPER) && !USE(COORDINATED_GRAPHICS_THREADED)
+#elif USE(TEXTURE_MAPPER)
 void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     if (!m_glContext)
