@@ -135,6 +135,8 @@ private:
     std::unique_ptr<SpeculativeLoadManager> m_speculativeLoadManager;
 #endif
     std::unique_ptr<Statistics> m_statistics;
+
+    unsigned m_traverseCount { 0 };
 };
 
 }
