@@ -28,6 +28,7 @@
 #include "Counters.h"
 #include "MoveOnly.h"
 #include <wtf/HashSet.h>
+#include <wtf/RefPtr.h>
 
 namespace TestWebKitAPI {
 
@@ -274,6 +275,77 @@ TEST(WTF_HashSet, CopyCapacityIsNotOnBoundary)
         EXPECT_EQ(copy1.capacity(), copy3.capacity());
         EXPECT_TRUE(copy3.contains(size + 2));
     }
+}
+
+TEST(WTF_HashSet, RefPtrNotZeroedBeforeDeref)
+{
+    struct DerefObserver {
+        NEVER_INLINE void ref()
+        {
+            ++count;
+        }
+        NEVER_INLINE void deref()
+        {
+            --count;
+            observedBucket = bucketAddress->get();
+        }
+        unsigned count { 1 };
+        const RefPtr<DerefObserver>* bucketAddress { nullptr };
+        const DerefObserver* observedBucket { nullptr };
+    };
+
+    auto observer = std::make_unique<DerefObserver>();
+
+    HashSet<RefPtr<DerefObserver>> set;
+    set.add(adoptRef(observer.get()));
+
+    auto iterator = set.find(observer.get());
+    EXPECT_TRUE(iterator != set.end());
+
+    observer->bucketAddress = iterator.get();
+
+    EXPECT_TRUE(observer->observedBucket == nullptr);
+    EXPECT_TRUE(set.remove(observer.get()));
+
+    // It if fine to either leave the old value intact at deletion or already set it to the deleted
+    // value.
+    // A zero would be a incorrect outcome as it would mean we nulled the bucket before an opaque
+    // call.
+    EXPECT_TRUE(observer->observedBucket == observer.get() || observer->observedBucket == RefPtr<DerefObserver>::hashTableDeletedValue());
+    EXPECT_EQ(observer->count, 0u);
+}
+
+
+TEST(WTF_HashSet, UniquePtrNotZeroedBeforeDestructor)
+{
+    struct DestructorObserver {
+        ~DestructorObserver()
+        {
+            observe();
+        }
+        std::function<void()> observe;
+    };
+
+    const std::unique_ptr<DestructorObserver>* bucketAddress = nullptr;
+    const DestructorObserver* observedBucket = nullptr;
+    std::unique_ptr<DestructorObserver> observer(new DestructorObserver { [&]() {
+        observedBucket = bucketAddress->get();
+    }});
+
+    const DestructorObserver* observerAddress = observer.get();
+
+    HashSet<std::unique_ptr<DestructorObserver>> set;
+    auto addResult = set.add(WTFMove(observer));
+
+    EXPECT_TRUE(addResult.isNewEntry);
+    EXPECT_TRUE(observedBucket == nullptr);
+
+    bucketAddress = addResult.iterator.get();
+
+    EXPECT_TRUE(observedBucket == nullptr);
+    EXPECT_TRUE(set.remove(*addResult.iterator));
+
+    EXPECT_TRUE(observedBucket == observerAddress || observedBucket == reinterpret_cast<const DestructorObserver*>(-1));
 }
 
 
