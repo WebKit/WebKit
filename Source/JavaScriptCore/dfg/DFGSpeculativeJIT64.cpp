@@ -3882,7 +3882,12 @@ void SpeculativeJIT::compile(Node* node)
         cellResult(result.gpr(), node);
         break;
     }
-        
+
+    case CallObjectConstructor: {
+        compileCallObjectConstructor(node);
+        break;
+    }
+
     case ToThis: {
         ASSERT(node->child1().useKind() == UntypedUse);
         JSValueOperand thisValue(this, node->child1());
@@ -4488,6 +4493,21 @@ void SpeculativeJIT::compile(Node* node)
         
         done.link(&m_jit);
         jsValueResult(result.gpr(), node, DataFormatJSBoolean);
+        break;
+    }
+
+    case IsJSArray: {
+        compileIsJSArray(node);
+        break;
+    }
+
+    case IsArrayObject: {
+        compileIsArrayObject(node);
+        break;
+    }
+
+    case IsArrayConstructor: {
+        compileIsArrayConstructor(node);
         break;
     }
 
