@@ -1,3 +1,11 @@
+2016-04-12  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed undo change from ArrayClass to ArrayWithUndecided, which
+        was not intedend to land with r199397.
+
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::createStructure):
+
 2016-04-12  Mark Lam  <mark.lam@apple.com>
 
         Rollout: ES6: Implement String.prototype.split and RegExp.prototype[@@split].
