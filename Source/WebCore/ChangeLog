@@ -1,3 +1,13 @@
+2016-04-13  Darin Adler  <darin@apple.com>
+
+        Remove UsePointersEvenForNonNullableObjectArguments from DataTransfer
+        https://bugs.webkit.org/show_bug.cgi?id=156495
+
+        Reviewed by Chris Dumez.
+
+        * dom/DataTransfer.idl: Removed UsePointersEvenForNonNullableObjectArguments
+        and marked the element argument to setDragImage as nullable.
+
 2016-04-13  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Blob support): Support deleting stored blob files.

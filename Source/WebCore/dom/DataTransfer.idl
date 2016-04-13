@@ -27,7 +27,6 @@
  */
 
 [
-    UsePointersEvenForNonNullableObjectArguments,
     SkipVTableValidation,
 ] interface DataTransfer {
     attribute DOMString dropEffect;
@@ -39,7 +38,7 @@
     void clearData(optional DOMString type);
     DOMString getData(DOMString type);
     void setData(DOMString type, DOMString data);
-    void setDragImage(Element image, long x, long y);
+    void setDragImage(Element? image, long x, long y); // FIXME: Element argument is not nullable in the HTML standard.
 
     [Conditional=DATA_TRANSFER_ITEMS] readonly attribute DataTransferItemList items;
 };
