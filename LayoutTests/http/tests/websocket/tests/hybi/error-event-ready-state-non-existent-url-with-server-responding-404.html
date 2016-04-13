@@ -11,7 +11,7 @@ description("Test that readyState is CLOSED within onerror event");
 
 window.jsTestIsAsync = true;
 
-var ws = new WebSocket("ws://localhost:8880/non-existent-url");
+var ws = new WebSocket("ws://localhost:8000/websocket/tests/hybi/resources/status-404-without-body.php");
 
 ws.onerror = function(event) {
     debug("onerror() was called.");

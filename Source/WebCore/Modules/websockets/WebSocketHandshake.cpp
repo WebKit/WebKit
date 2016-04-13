@@ -47,6 +47,7 @@
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include <wtf/ASCIICType.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MD5.h>
 #include <wtf/SHA1.h>
@@ -56,6 +57,7 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -390,6 +392,31 @@ URL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
     return url;
 }
 
+// https://tools.ietf.org/html/rfc6455#section-4.1
+// "The HTTP version MUST be at least 1.1."
+static inline bool headerHasValidHTTPVersion(const String& httpVersionString, const size_t headerLength)
+{
+    const size_t posOfHttp = httpVersionString.find("HTTP/");
+    if (posOfHttp == notFound)
+        return false;
+
+    // Check that there is a version number which should be three characters after "HTTP/"
+    const size_t posOfHttpVersionNumberString = posOfHttp + 5;
+    if (posOfHttpVersionNumberString + 3 >= headerLength)
+        return false;
+
+    // Check that the version number is 1.1 or above
+    bool versionNumberIsOneDotOneOrAbove = false;
+    if (httpVersionString.characterAt(posOfHttpVersionNumberString + 1) == '.') {
+        UChar majorVersion = httpVersionString.characterAt(posOfHttpVersionNumberString);
+        UChar minorVersion = httpVersionString.characterAt(posOfHttpVersionNumberString + 2);
+        if ((majorVersion == '1' && minorVersion >= '1' && minorVersion <= '9')
+            || (majorVersion > '1' && majorVersion <= '9' && minorVersion >= '0' && minorVersion <= '9'))
+            versionNumberIsOneDotOneOrAbove = true;
+    }
+    return versionNumberIsOneDotOneOrAbove;
+}
+
 // Returns the header length (including "\r\n"), or -1 if we have not received enough data yet.
 // If the line is malformed or the status code is not a 3-digit number,
 // statusCode and statusText will be set to -1 and a null string, respectively.
@@ -419,6 +446,9 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
             // does, so we'll just treat this as an error.
             m_failureReason = "Status line contains embedded null";
             return p + 1 - header;
+        } else if (!isASCII(*p)) {
+            m_failureReason = "Status line contains non-ASCII character";
+            return p + 1 - header;
         } else if (*p == '\n')
             break;
     }
@@ -440,6 +470,12 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
 
     if (!space1 || !space2) {
         m_failureReason = "No response code found: " + trimInputSample(header, lineLength - 2);
+        return lineLength;
+    }
+
+    String httpVersionString(header, space1 - header);
+    if (!headerHasValidHTTPVersion(httpVersionString, headerLength)) {
+        m_failureReason = "Invalid HTTP version string: " + httpVersionString;
         return lineLength;
     }
 
@@ -478,9 +514,19 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
         if (name.isEmpty())
             break;
 
+        // https://tools.ietf.org/html/rfc7230#section-3.2.4
+        // "Newly defined header fields SHOULD limit their field values to US-ASCII octets."
+        if ((equalLettersIgnoringASCIICase(name, "sec-websocket-extensions")
+            || equalLettersIgnoringASCIICase(name, "sec-websocket-accept")
+            || equalLettersIgnoringASCIICase(name, "sec-websocket-protocol"))
+            && !value.containsOnlyASCII()) {
+            m_failureReason = name + " header value should only contain ASCII characters";
+            return nullptr;
+        }
+        
         if (equalLettersIgnoringASCIICase(name, "sec-websocket-extensions")) {
             if (sawSecWebSocketExtensionsHeaderField) {
-                m_failureReason = "The Sec-WebSocket-Extensions header MUST NOT appear more than once in an HTTP response";
+                m_failureReason = "The Sec-WebSocket-Extensions header must not appear more than once in an HTTP response";
                 return nullptr;
             }
             if (!m_extensionDispatcher.processHeaderValue(value)) {
@@ -490,14 +536,14 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
             sawSecWebSocketExtensionsHeaderField = true;
         } else if (equalLettersIgnoringASCIICase(name, "sec-websocket-accept")) {
             if (sawSecWebSocketAcceptHeaderField) {
-                m_failureReason = "The Sec-WebSocket-Accept header MUST NOT appear more than once in an HTTP response";
+                m_failureReason = "The Sec-WebSocket-Accept header must not appear more than once in an HTTP response";
                 return nullptr;
             }
             m_serverHandshakeResponse.addHTTPHeaderField(name, value);
             sawSecWebSocketAcceptHeaderField = true;
         } else if (equalLettersIgnoringASCIICase(name, "sec-websocket-protocol")) {
             if (sawSecWebSocketProtocolHeaderField) {
-                m_failureReason = "The Sec-WebSocket-Protocol header MUST NOT appear more than once in an HTTP response";
+                m_failureReason = "The Sec-WebSocket-Protocol header must not appear more than once in an HTTP response";
                 return nullptr;
             }
             m_serverHandshakeResponse.addHTTPHeaderField(name, value);
