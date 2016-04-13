@@ -1,8 +1,8 @@
-layer at (0,0) size 785x769
+layer at (0,0) size 785x767
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x769
-  RenderBlock {html} at (0,0) size 785x770
-    RenderBody {body} at (11,11) size 763x736
+layer at (0,0) size 785x767
+  RenderBlock {html} at (0,0) size 785x767
+    RenderBody {body} at (11,11) size 763x733
       RenderBlock (anonymous) at (0,0) size 762x52
         RenderText {#text} at (0,0) size 747x52
           text run at (0,0) width 352: "The two blocks should look identical. "
@@ -11,17 +11,17 @@ layer at (0,0) size 785x769
       RenderBlock {p} at (0,75) size 762x27
         RenderText {#text} at (0,0) size 517x26
           text run at (0,0) width 517: "There should be a red, white and blue pattern below this"
-      RenderSVGRoot {svg} at (25,149) size 203x203
-        RenderSVGRect {rect} at (25,149) size 203x203 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-      RenderBlock {p} at (0,354) size 762x27
+      RenderSVGRoot {svg} at (25,149) size 202x202
+        RenderSVGRect {rect} at (25,149) size 202x202 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderBlock {p} at (0,353) size 762x27
         RenderText {#text} at (0,0) size 516x26
           text run at (0,0) width 516: "There should be a red, white and blue pattern above this"
-      RenderBlock {hr} at (0,403) size 762x4 [border: (1.44px inset #000000)]
-      RenderBlock {p} at (0,429) size 762x27
+      RenderBlock {hr} at (0,402) size 762x3 [border: (1px inset #000000)]
+      RenderBlock {p} at (0,427) size 762x27
         RenderText {#text} at (0,0) size 517x26
           text run at (0,0) width 517: "There should be a red, white and blue pattern below this"
-      RenderBlock (floating) {div} at (14,492) size 202x203 [border: (14.39px solid #FF0000)]
+      RenderBlock (floating) {div} at (14,491) size 202x201 [border: (14px solid #FF0000)]
         RenderBlock {div} at (28,28) size 145x145 [bgcolor=#0000FF]
-      RenderBlock {p} at (0,708) size 762x27
+      RenderBlock {p} at (0,706) size 762x27
         RenderText {#text} at (0,0) size 516x26
           text run at (0,0) width 516: "There should be a red, white and blue pattern above this"
