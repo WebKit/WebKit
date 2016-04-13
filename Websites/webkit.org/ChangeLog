@@ -1,6 +1,6 @@
 2016-04-13  Jon Davis  <jond@apple.com>
 
-        Remove database quote escapes.
+        Remove database quote escapes from pushed tweets.
 
         Reviewed by Timothy Hatcher.
 
