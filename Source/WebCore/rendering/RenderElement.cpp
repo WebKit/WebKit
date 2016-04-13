@@ -1729,7 +1729,7 @@ bool RenderElement::getTrailingCorner(FloatPoint& point) const
         if (is<RenderText>(*o) || o->isReplaced()) {
             point = FloatPoint();
             if (is<RenderText>(*o)) {
-                IntRect linesBox = downcast<RenderText>(*o).linesBoundingBox();
+                LayoutRect linesBox = downcast<RenderText>(*o).linesBoundingBox();
                 if (!linesBox.maxX() && !linesBox.maxY())
                     continue;
                 point.moveBy(linesBox.maxXMaxYCorner());
