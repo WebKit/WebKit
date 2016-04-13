@@ -287,7 +287,12 @@ inline JSArray* asArray(JSValue value)
     return asArray(value.asCell());
 }
 
-inline bool isJSArray(JSCell* cell) { return cell->classInfo() == JSArray::info(); }
+inline bool isJSArray(JSCell* cell)
+{
+    ASSERT((cell->classInfo() == JSArray::info()) == (cell->type() == ArrayType));
+    return cell->type() == ArrayType;
+}
+
 inline bool isJSArray(JSValue v) { return v.isCell() && isJSArray(v.asCell()); }
 
 inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const ArgList& values)
