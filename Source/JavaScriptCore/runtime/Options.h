@@ -279,9 +279,6 @@ typedef const char* optionString;
     \
     v(unsigned, reoptimizationRetryCounterMax, 0, nullptr)  \
     \
-    v(bool, assertICSizing, false, "crash if estimated IC sizes are inadequate")  \
-    v(bool, dumpFailedICSizing, false, "dumps a log entry if estimated IC sizes are inadequate")  \
-    \
     v(unsigned, minimumOptimizationDelay, 1, nullptr) \
     v(unsigned, maximumOptimizationDelay, 5, nullptr) \
     v(double, desiredProfileLivenessRate, 0.75, nullptr) \

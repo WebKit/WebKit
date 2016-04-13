@@ -1,3 +1,15 @@
+2016-04-12  Mark Lam  <mark.lam@apple.com>
+
+        Remove 2 unused JSC options.
+        https://bugs.webkit.org/show_bug.cgi?id=156526
+
+        Reviewed by Benjamin Poulain.
+
+        The options JSC_assertICSizing and JSC_dumpFailedICSizing are no longer in use
+        now that we have B3.
+
+        * runtime/Options.h:
+
 2016-04-12  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add support for Symbol.isConcatSpreadable.
