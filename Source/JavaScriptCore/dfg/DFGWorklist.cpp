@@ -367,7 +367,7 @@ void Worklist::runThread(ThreadData* data)
         
             RELEASE_ASSERT(!plan->vm.heap.isCollecting());
             plan->compileInThread(longLivedState, data);
-            RELEASE_ASSERT(!plan->vm.heap.isCollecting());
+            RELEASE_ASSERT(plan->stage == Plan::Cancelled || !plan->vm.heap.isCollecting());
             
             {
                 LockHolder locker(m_lock);
