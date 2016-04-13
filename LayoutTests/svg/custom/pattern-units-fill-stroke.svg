@@ -1,0 +1,19 @@
+<svg width='400' height='400' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' >
+    <defs>
+        <symbol id="symbol-1">
+            <rect width='50' height='50' fill='skyblue'/>
+            <rect x='5' y='5' width='40' height='40' fill='green'/>
+        </symbol>
+        <pattern id='pattern-1' width='50' height='50' patternUnits='userSpaceOnUse'>
+            <use width='50' height='50' xlink:href='#symbol-1' />
+        </pattern>
+        <pattern id='pattern-2' x='0' y='0' width='0.25' height='0.25' patternUnits='objectBoundingBox'>
+            <use width='50' height='50' xlink:href='#symbol-1' />
+        </pattern>
+    </defs>
+    <rect x='0' y='0' width='200' height='200' fill='url(#pattern-1)'/>
+    <line x1='200' y1='100' x2='400' y2='100' stroke-width='200' stroke='url(#pattern-1)'/>
+    <rect x='0' y='200' width='200' height='200' fill='url(#pattern-2)'/>
+    <!-- This line won't be drawn since pattern-2 has 'objectBoundingBox' and the line box is empty -->
+    <line x1='200' y1='300' x2='400' y2='300' stroke-width='200' stroke='url(#pattern-2)'/>
+</svg>
