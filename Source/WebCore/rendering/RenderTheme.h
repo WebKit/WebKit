@@ -184,10 +184,7 @@ public:
 
     virtual void adjustSliderThumbSize(RenderStyle&, Element*) const;
 
-    virtual int popupInternalPaddingLeft(const RenderStyle&) const { return 0; }
-    virtual int popupInternalPaddingRight(const RenderStyle&) const { return 0; }
-    virtual int popupInternalPaddingTop(const RenderStyle&) const { return 0; }
-    virtual int popupInternalPaddingBottom(const RenderStyle&) const { return 0; }
+    virtual LengthBox popupInternalPaddingBox(const RenderStyle&) const { return { 0, 0, 0, 0 }; }
     virtual bool popupOptionSupportsTextIndent() const { return false; }
     virtual PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle&, IntRect&) const { return PopupMenuStyle::PopupMenuSizeNormal; }
 

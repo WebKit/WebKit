@@ -761,61 +761,25 @@ void RenderThemeGtk::adjustMenuListButtonStyle(StyleResolver& styleResolver, Ren
     adjustMenuListStyle(styleResolver, style, e);
 }
 
-static void getComboBoxMetrics(const RenderStyle& style, GtkBorder& border, int& focus)
+LengthBox RenderThemeGtk::popupInternalPaddingBox(const RenderStyle& style) const
 {
-    // If this menu list button isn't drawn using the native theme, we
-    // don't add any extra padding beyond what WebCore already uses.
     if (style.appearance() == NoControlPart)
-        return;
+        return { 0, 0, 0, 0 };
 
     GRefPtr<GtkStyleContext> parentContext = createStyleContext(ComboBox);
     GRefPtr<GtkStyleContext> context = createStyleContext(ComboBoxButton, parentContext.get());
     gtk_style_context_set_direction(context.get(), static_cast<GtkTextDirection>(gtkTextDirection(style.direction())));
     gtk_style_context_set_state(context.get(), static_cast<GtkStateFlags>(0));
-    gtk_style_context_get_border(context.get(), gtk_style_context_get_state(context.get()), &border);
+    GtkBorder borderWidth = { 0, 0, 0, 0 };
+    gtk_style_context_get_border(context.get(), gtk_style_context_get_state(context.get()), &borderWidth);
 
     gboolean interiorFocus;
     gint focusWidth, focusPad;
     gtk_style_context_get_style(context.get(), "interior-focus", &interiorFocus, "focus-line-width", &focusWidth, "focus-padding", &focusPad, nullptr);
-    focus = interiorFocus ? focusWidth + focusPad : 0;
-}
+    focusWidth = interiorFocus ? focusWidth + focusPad : 0;
 
-int RenderThemeGtk::popupInternalPaddingLeft(const RenderStyle& style) const
-{
-    GtkBorder borderWidth = { 0, 0, 0, 0 };
-    int focusWidth = 0;
-    getComboBoxMetrics(style, borderWidth, focusWidth);
-    int left = borderWidth.left + focusWidth;
-    if (style.direction() == RTL)
-        left += minArrowSize;
-    return left;
-}
-
-int RenderThemeGtk::popupInternalPaddingRight(const RenderStyle& style) const
-{
-    GtkBorder borderWidth = { 0, 0, 0, 0 };
-    int focusWidth = 0;
-    getComboBoxMetrics(style, borderWidth, focusWidth);
-    int right = borderWidth.right + focusWidth;
-    if (style.direction() == LTR)
-        right += minArrowSize;
-    return right;
-}
-
-int RenderThemeGtk::popupInternalPaddingTop(const RenderStyle& style) const
-{
-    GtkBorder borderWidth = { 0, 0, 0, 0 };
-    int focusWidth = 0;
-    getComboBoxMetrics(style, borderWidth, focusWidth);
-    return borderWidth.top + focusWidth;
-}
-
-int RenderThemeGtk::popupInternalPaddingBottom(const RenderStyle& style) const
-{
-    GtkBorder borderWidth = { 0, 0, 0, 0 };
-    int focusWidth = 0;
-    getComboBoxMetrics(style, borderWidth, focusWidth);
-    return borderWidth.bottom + focusWidth;
+    return { borderWidth.top + focusWidth, borderWidth.right + focusWidth + (style.direction() == LTR ? minArrowSize : 0),
+        borderWidth.bottom + focusWidth, borderWidth.left + focusWidth + (style.direction() == RTL ? minArrowSize : 0) };
 }
 
 bool RenderThemeGtk::paintMenuList(const RenderObject& renderObject, const PaintInfo& paintInfo, const FloatRect& r)

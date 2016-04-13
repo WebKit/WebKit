@@ -75,11 +75,8 @@ public:
     virtual int sliderTickOffsetFromTrackCenter() const override;
 #endif
 
-    virtual int popupInternalPaddingLeft(const RenderStyle&) const override;
-    virtual int popupInternalPaddingRight(const RenderStyle&) const override;
-    virtual int popupInternalPaddingTop(const RenderStyle&) const override;
-    virtual int popupInternalPaddingBottom(const RenderStyle&) const override;
-    virtual PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle&, IntRect&) const override;
+    LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
+    PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle&, IntRect&) const override;
 
     virtual bool popsMenuByArrowKeys() const override { return true; }
 
