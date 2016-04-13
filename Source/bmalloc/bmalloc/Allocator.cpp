@@ -120,12 +120,13 @@ void* Allocator::reallocate(void* object, size_t newSize)
         break;
     }
     case ObjectType::Large: {
+        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+
         LargeObject largeObject(object);
         oldSize = largeObject.size();
 
         if (newSize < oldSize && newSize > smallMax) {
             if (oldSize - newSize >= largeMin) {
-                std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
                 newSize = roundUpToMultipleOf<largeAlignment>(newSize);
                 PerProcess<Heap>::getFastCase()->shrinkLarge(lock, largeObject, newSize);
                 return object;
