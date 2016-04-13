@@ -86,6 +86,9 @@ private:
         else
             m_decodeTask->completionHandler({ });
 
+        // Ensure DecodeTask gets deleted in the main thread.
+        m_decodeTask = nullptr;
+
         deref();
     }
 
