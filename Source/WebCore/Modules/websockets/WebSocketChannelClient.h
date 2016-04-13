@@ -43,7 +43,7 @@ namespace WebCore {
         virtual ~WebSocketChannelClient() { }
         virtual void didConnect() { }
         virtual void didReceiveMessage(const String&) { }
-        virtual void didReceiveBinaryData(Vector<char>&&) { }
+        virtual void didReceiveBinaryData(Vector<uint8_t>&&) { }
         virtual void didReceiveMessageError() { }
         virtual void didUpdateBufferedAmount(unsigned long /* bufferedAmount */) { }
         virtual void didStartClosingHandshake() { }

@@ -48,7 +48,7 @@ public:
         return adoptRef(*new Blob);
     }
 
-    static Ref<Blob> create(Vector<char> data, const String& contentType)
+    static Ref<Blob> create(Vector<uint8_t> data, const String& contentType)
     {
         return adoptRef(*new Blob(WTFMove(data), contentType));
     }
@@ -91,7 +91,7 @@ public:
 
 protected:
     Blob();
-    Blob(Vector<char>, const String& contentType);
+    Blob(Vector<uint8_t>, const String& contentType);
     Blob(Vector<BlobPart>, const String& contentType);
 
     enum UninitializedContructor { uninitializedContructor };

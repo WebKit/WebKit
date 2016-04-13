@@ -40,15 +40,9 @@ namespace WebCore {
 // Normalize all line-endings in the given string to CRLF.
 CString normalizeLineEndingsToCRLF(const CString& from);
 
-// Normalize all line-endings in the given string to CR and append the result to the given buffer.
-void normalizeLineEndingsToCR(const CString& from, Vector<char>& result);
-
-// Normalize all line-endings in the given string to LF and append the result to the given buffer.
-void normalizeLineEndingsToLF(const CString& from, Vector<char>& result);
-
 // Normalize all line-endings in the given string to the native line-endings and append the result to the given buffer.
 // (Normalize to CRLF on Windows and normalize to LF on all other platforms.)
-void normalizeLineEndingsToNative(const CString& from, Vector<char>& result);
+void normalizeLineEndingsToNative(const CString& from, Vector<uint8_t>& result);
 
 } // namespace WebCore
 

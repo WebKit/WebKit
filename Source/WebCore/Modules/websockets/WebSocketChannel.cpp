@@ -586,7 +586,7 @@ bool WebSocketChannel::processFrame()
             // so we should pretend that we have finished to read this frame and
             // make sure that the member variables are in a consistent state before
             // the handler is invoked.
-            Vector<char> continuousFrameData = WTFMove(m_continuousFrameData);
+            Vector<uint8_t> continuousFrameData = WTFMove(m_continuousFrameData);
             m_hasContinuousFrame = false;
             if (m_continuousFrameOpCode == WebSocketFrame::OpCodeText) {
                 String message;
@@ -626,7 +626,7 @@ bool WebSocketChannel::processFrame()
 
     case WebSocketFrame::OpCodeBinary:
         if (frame.final) {
-            Vector<char> binaryData(frame.payloadLength);
+            Vector<uint8_t> binaryData(frame.payloadLength);
             memcpy(binaryData.data(), frame.payload, frame.payloadLength);
             skipBuffer(frameEnd - m_buffer.data());
             m_client->didReceiveBinaryData(WTFMove(binaryData));

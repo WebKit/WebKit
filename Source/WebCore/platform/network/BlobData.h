@@ -32,52 +32,31 @@
 #define BlobData_h
 
 #include "BlobDataFileReference.h"
+#include "ThreadSafeDataBuffer.h"
 #include "URL.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class RawData : public RefCounted<RawData> {
+class BlobDataItem {
 public:
-    static Ref<RawData> create(Vector<char>&& data)
-    {
-        return adoptRef(*new RawData(WTFMove(data)));
-    }
-
-    static Ref<RawData> create(const char* data, size_t size)
-    {
-        Vector<char> dataVector(size);
-        memcpy(dataVector.data(), data, size);
-        return adoptRef(*new RawData(WTFMove(dataVector)));
-    }
-
-    const char* data() const { return m_data.data(); }
-    size_t length() const { return m_data.size(); }
-
-private:
-    RawData(Vector<char>&& data)
-        : m_data(WTFMove(data))
-    {
-    }
-
-    Vector<char> m_data;
-};
-
-struct BlobDataItem {
     WEBCORE_EXPORT static const long long toEndOfFile;
 
-    enum {
+    enum class Type {
         Data,
         File
-    } type;
+    };
+
+    Type type() const { return m_type; }
 
     // For Data type.
-    RefPtr<RawData> data;
+    const ThreadSafeDataBuffer& data() const { return m_data; }
 
     // For File type.
-    RefPtr<BlobDataFileReference> file;
+    BlobDataFileReference* file() const { return m_file.get(); }
 
     long long offset() const { return m_offset; }
     long long length() const; // Computes file length if it's not known yet.
@@ -86,28 +65,32 @@ private:
     friend class BlobData;
 
     explicit BlobDataItem(PassRefPtr<BlobDataFileReference> file)
-        : type(File)
-        , file(file)
+        : m_type(Type::File)
+        , m_file(file)
         , m_offset(0)
         , m_length(toEndOfFile)
     {
     }
 
-    BlobDataItem(PassRefPtr<RawData> data, long long offset, long long length)
-        : type(Data)
-        , data(data)
+    BlobDataItem(ThreadSafeDataBuffer data, long long offset, long long length)
+        : m_type(Type::Data)
+        , m_data(data)
         , m_offset(offset)
         , m_length(length)
     {
     }
 
     BlobDataItem(BlobDataFileReference* file, long long offset, long long length)
-        : type(File)
-        , file(file)
+        : m_type(Type::File)
+        , m_file(file)
         , m_offset(offset)
         , m_length(length)
     {
     }
+
+    Type m_type;
+    ThreadSafeDataBuffer m_data;
+    RefPtr<BlobDataFileReference> m_file;
 
     long long m_offset;
     long long m_length;
@@ -115,26 +98,26 @@ private:
 
 typedef Vector<BlobDataItem> BlobDataItemList;
 
-class BlobData : public RefCounted<BlobData> {
+class BlobData : public ThreadSafeRefCounted<BlobData> {
 public:
-    static Ref<BlobData> create()
+    static Ref<BlobData> create(const String& contentType)
     {
-        return adoptRef(*new BlobData);
+        return adoptRef(*new BlobData(contentType));
     }
 
     const String& contentType() const { return m_contentType; }
-    WEBCORE_EXPORT void setContentType(const String&);
 
     const BlobDataItemList& items() const { return m_items; }
     void swapItems(BlobDataItemList&);
 
-    void appendData(PassRefPtr<RawData>);
+    void appendData(const ThreadSafeDataBuffer&);
     void appendFile(PassRefPtr<BlobDataFileReference>);
 
 private:
     friend class BlobRegistryImpl;
+    BlobData(const String& contentType);
 
-    void appendData(PassRefPtr<RawData>, long long offset, long long length);
+    void appendData(const ThreadSafeDataBuffer&, long long offset, long long length);
     void appendFile(BlobDataFileReference*, long long offset, long long length);
 
     String m_contentType;
