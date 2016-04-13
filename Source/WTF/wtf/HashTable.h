@@ -412,6 +412,7 @@ namespace WTF {
 
         ValueType* lookup(const Key& key) { return lookup<IdentityTranslatorType>(key); }
         template<typename HashTranslator, typename T> ValueType* lookup(const T&);
+        template<typename HashTranslator, typename T> ValueType* inlineLookup(const T&);
 
 #if !ASSERT_DISABLED
         void checkTableConsistency() const;
@@ -594,6 +595,13 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     template<typename HashTranslator, typename T>
     inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::lookup(const T& key) -> ValueType*
+    {
+        return inlineLookup<HashTranslator>(key);
+    }
+
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename HashTranslator, typename T>
+    ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::inlineLookup(const T& key) -> ValueType*
     {
         checkKey<HashTranslator>(key);
 

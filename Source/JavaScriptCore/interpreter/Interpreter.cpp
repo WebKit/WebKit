@@ -159,12 +159,8 @@ JSValue eval(CallFrame* callFrame)
     JSScope* callerScopeChain = callerFrame->uncheckedR(callerCodeBlock->scopeRegister().offset()).Register::scope();
     UnlinkedCodeBlock* callerUnlinkedCodeBlock = callerCodeBlock->unlinkedCodeBlock();
 
-    ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded;
-    if (callerUnlinkedCodeBlock->constructorKind() == ConstructorKind::Derived)
-        thisTDZMode = ThisTDZMode::AlwaysCheck;
-
-    SourceCode sourceCode(makeSource(programSource));
-    EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(callerCodeBlock->isStrictMode(), sourceCode, thisTDZMode, callerScopeChain);
+    bool isArrowFunctionContext = callerUnlinkedCodeBlock->isArrowFunction() || callerUnlinkedCodeBlock->isArrowFunctionContext();
+    EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(callerCodeBlock->isStrictMode(), programSource, isArrowFunctionContext, callerScopeChain);
 
     if (!eval) {
         if (!callerCodeBlock->isStrictMode()) {
@@ -182,8 +178,11 @@ JSValue eval(CallFrame* callFrame)
         // If the literal parser bailed, it should not have thrown exceptions.
         ASSERT(!callFrame->vm().exception());
 
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, callerCodeBlock->unlinkedCodeBlock()->derivedContextType(), callerCodeBlock->unlinkedCodeBlock()->isArrowFunction(), sourceCode, callerScopeChain);
+        ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded;
+        if (callerUnlinkedCodeBlock->constructorKind() == ConstructorKind::Derived)
+            thisTDZMode = ThisTDZMode::AlwaysCheck;
 
+        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, callerCodeBlock->unlinkedCodeBlock()->derivedContextType(), callerCodeBlock->unlinkedCodeBlock()->isArrowFunction(), programSource, callerScopeChain);
         if (!eval)
             return jsUndefined();
     }
