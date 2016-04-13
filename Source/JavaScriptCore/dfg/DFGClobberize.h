@@ -160,7 +160,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case IsNumber:
     case IsString:
     case IsObject:
-    case IsRegExpObject:
     case LogicalNot:
     case CheckInBounds:
     case DoubleRep:

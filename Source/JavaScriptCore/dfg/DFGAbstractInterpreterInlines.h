@@ -974,8 +974,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IsString:
     case IsObject:
     case IsObjectOrNull:
-    case IsFunction:
-    case IsRegExpObject: {
+    case IsFunction: {
         AbstractValue child = forNode(node->child1());
         if (child.value()) {
             bool constantWasSet = true;
@@ -1049,9 +1048,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     }
                 } else
                     setConstant(node, jsBoolean(false));
-                break;
-            case IsRegExpObject:
-                setConstant(node, jsBoolean(child.value().isObject() && child.value().getObject()->type() == RegExpObjectType));
                 break;
             default:
                 constantWasSet = false;
@@ -1195,21 +1191,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
             break;
-
-        case IsRegExpObject:
-            // We don't have a SpeculatedType for Proxies yet so we can't do better at proving false.
-            if (!(child.m_type & ~SpecRegExpObject)) {
-                setConstant(node, jsBoolean(true));
-                constantWasSet = true;
-                break;
-            }
-            if (!(child.m_type & SpecObject)) {
-                setConstant(node, jsBoolean(false));
-                constantWasSet = true;
-                break;
-            }
-            break;
-
         default:
             break;
         }

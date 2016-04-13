@@ -4529,12 +4529,6 @@ void SpeculativeJIT::compile(Node* node)
         compileIsFunction(node);
         break;
     }
-
-    case IsRegExpObject: {
-        compileIsRegExpObject(node);
-        break;
-    }
-
     case TypeOf: {
         compileTypeOf(node);
         break;

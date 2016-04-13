@@ -57,8 +57,8 @@ function search(regexp)
     }
 
     if (regexp != null) {
-        var searcher = regexp[@symbolSearch];
-        if (searcher != @undefined)
+         var searcher = regexp[@symbolSearch];
+         if (searcher != @undefined)
             return searcher.@call(regexp, this);
     }
 
@@ -124,23 +124,4 @@ function repeat(count)
     }
 
     return @repeatSlowPath(string, count);
-}
-
-function split(separator, limit)
-{
-    "use strict";
-    
-    if (this == null) {
-        if (this === null)
-            throw new @TypeError("String.prototype.split requires that |this| not be null");
-        throw new @TypeError("String.prototype.split requires that |this| not be undefined");
-    }
-    
-    if (separator != null) {
-        var splitter = separator[@symbolSplit];
-        if (splitter != @undefined)
-            return splitter.@call(separator, this, limit);
-    }
-    
-    return @stringSplitFast.@call(this, separator, limit);
 }

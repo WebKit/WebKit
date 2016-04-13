@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2008, 2013, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2013, 2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *  Copyright (C) 2015 Jordan Harband (ljharb@gmail.com)
  *
@@ -70,6 +70,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncPadEnd(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncPadStart(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState*);
@@ -112,7 +113,6 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, &st
     match     JSBuiltin    DontEnum|Function 1
     repeat    JSBuiltin    DontEnum|Function 1
     search    JSBuiltin    DontEnum|Function 1
-    split     JSBuiltin    DontEnum|Function 1
 @end
 */
 
@@ -139,6 +139,7 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("padStart", stringProtoFuncPadStart, DontEnum, 1);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replace", stringProtoFuncReplace, DontEnum, 2, StringPrototypeReplaceIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("slice", stringProtoFuncSlice, DontEnum, 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("split", stringProtoFuncSplit, DontEnum, 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substr", stringProtoFuncSubstr, DontEnum, 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substring", stringProtoFuncSubstring, DontEnum, 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLowerCase", stringProtoFuncToLowerCase, DontEnum, 0);
@@ -193,6 +194,28 @@ bool StringPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 }
 
 // ------------------------------ Functions --------------------------
+
+// Helper for producing a JSString for 'string', where 'string' was been produced by
+// calling ToString on 'originalValue'. In cases where 'originalValue' already was a
+// string primitive we can just use this, otherwise we need to allocate a new JSString.
+static inline JSString* jsStringWithReuse(ExecState* exec, JSValue originalValue, const String& string)
+{
+    if (originalValue.isString()) {
+        ASSERT(asString(originalValue)->value(exec) == string);
+        return asString(originalValue);
+    }
+    return jsString(exec, string);
+}
+
+// Helper that tries to use the JSString substring sharing mechanism if 'originalValue' is a JSString.
+static inline JSString* jsSubstring(ExecState* exec, JSValue originalValue, const String& string, unsigned offset, unsigned length)
+{
+    if (originalValue.isString()) {
+        ASSERT(asString(originalValue)->value(exec) == string);
+        return jsSubstring(exec, asString(originalValue), offset, length);
+    }
+    return jsSubstring(exec, string, offset, length);
+}
 
 static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, StringView source, const int* ovector, RegExp* reg, size_t i)
 {
@@ -1158,58 +1181,169 @@ static ALWAYS_INLINE bool splitStringByOneCharacterImpl(ExecState* exec, JSArray
     return false;
 }
 
-// ES 21.1.3.17 String.prototype.split(separator, limit)
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState* exec)
+// ES 5.1 - 15.5.4.14 String.prototype.split (separator, limit)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
 {
+    // 1. Call CheckObjectCoercible passing the this value as its argument.
     JSValue thisValue = exec->thisValue();
-    ASSERT(checkObjectCoercible(thisValue));
+    if (!checkObjectCoercible(thisValue))
+        return throwVMTypeError(exec);
 
-    // 3. Let S be the result of calling ToString, giving it the this value as its argument.
-    // 7. Let s be the number of characters in S.
+    // 2. Let S be the result of calling ToString, giving it the this value as its argument.
+    // 6. Let s be the number of characters in S.
     String input = thisValue.toString(exec)->value(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     ASSERT(!input.isNull());
 
-    // 4. Let A be a new array created as if by the expression new Array()
+    // 3. Let A be a new array created as if by the expression new Array()
     //    where Array is the standard built-in constructor with that name.
     JSArray* result = constructEmptyArray(exec, 0);
 
-    // 5. Let lengthA be 0.
+    // 4. Let lengthA be 0.
     unsigned resultLength = 0;
 
-    // 6. If limit is undefined, let lim = 2^32-1; else let lim = ToUint32(limit).
-    JSValue limitValue = exec->uncheckedArgument(1);
+    // 5. If limit is undefined, let lim = 2^32-1; else let lim = ToUint32(limit).
+    JSValue limitValue = exec->argument(1);
     unsigned limit = limitValue.isUndefined() ? 0xFFFFFFFFu : limitValue.toUInt32(exec);
 
-    // 8. Let p = 0.
+    // 7. Let p = 0.
     size_t position = 0;
 
-    // 9. If separator is a RegExp object (its [[Class]] is "RegExp"), let R = separator;
+    // 8. If separator is a RegExp object (its [[Class]] is "RegExp"), let R = separator;
     //    otherwise let R = ToString(separator).
-    JSValue separatorValue = exec->uncheckedArgument(0);
-    { // FIXME: Keeping this indentation here to minimize the diff. Will unindent and remove this later.
+    JSValue separatorValue = exec->argument(0);
+    if (separatorValue.inherits(RegExpObject::info())) {
+        VM* vm = &exec->vm();
+        RegExp* reg = asRegExpObject(separatorValue)->regExp();
+
+        // 9. If lim == 0, return A.
+        if (!limit)
+            return JSValue::encode(result);
+
+        // 10. If separator is undefined, then
+        if (separatorValue.isUndefined()) {
+            // a. Call the [[DefineOwnProperty]] internal method of A with arguments "0",
+            //    Property Descriptor {[[Value]]: S, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
+            result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input));
+            // b. Return A.
+            return JSValue::encode(result);
+        }
+
+        // 11. If s == 0, then
+        if (input.isEmpty()) {
+            // a. Call SplitMatch(S, 0, R) and let z be its MatchResult result.
+            // b. If z is not failure, return A.
+            // c. Call the [[DefineOwnProperty]] internal method of A with arguments "0",
+            //    Property Descriptor {[[Value]]: S, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
+            // d. Return A.
+            if (!reg->match(*vm, input, 0))
+                result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input));
+            return JSValue::encode(result);
+        }
+
+        // 12. Let q = p.
+        size_t matchPosition = 0;
+        // 13. Repeat, while q != s
+        while (matchPosition < input.length()) {
+            // a. Call SplitMatch(S, q, R) and let z be its MatchResult result.
+            Vector<int, 32> ovector;
+            int mpos = reg->match(*vm, input, matchPosition, ovector);
+
+            // b. If z is a failure then we can break because there are no matches
+            if (mpos < 0)
+                break;
+            matchPosition = mpos;
+
+            // if the match is the empty match at the end, break.
+            if (matchPosition >= input.length())
+                break;
+
+            // c. Else, z is not failure
+            // i. z must be a State. Let e be z's endIndex and let cap be z's captures array.
+            size_t matchEnd = ovector[1];
+
+            // ii. If e == p, then let q = q + 1.
+            if (matchEnd == position) {
+                ++matchPosition;
+                continue;
+            }
+            // iii. if matchEnd == 0 then position should also be zero and thus matchEnd should equal position.
+            ASSERT(matchEnd);
+
+            // iii. Else, e != p
+
+            // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
+            //    through q (exclusive).
+            // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
+            //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
+            result->putDirectIndex(exec, resultLength, jsSubstring(exec, thisValue, input, position, matchPosition - position));
+
+            // 3. Increment lengthA by 1.
+            // 4. If lengthA == lim, return A.
+            ++resultLength;
+            if (resultLength == limit)
+                return JSValue::encode(result);
+            if (resultLength >= MAX_STORAGE_VECTOR_INDEX) {
+                // Let's consider what's best for users here. We're about to increase the length of
+                // the split array beyond the maximum length that we can support efficiently. This
+                // will cause us to use a HashMap for the new entries after this point. That's going
+                // to result in a very long running time of this function and very large memory
+                // usage. In my experiments, JSC will sit spinning for minutes after getting here and
+                // it was using >4GB of memory and eventually grew to 8GB. It kept running without
+                // finishing until I killed it. That's probably not what the user wanted. The user,
+                // or the program that the user is running, probably made a mistake by calling this
+                // method in such a way that it resulted in such an obnoxious array. Therefore, to
+                // protect ourselves, we bail at this point.
+                throwOutOfMemoryError(exec);
+                return JSValue::encode(jsUndefined());
+            }
+
+            // 5. Let p = e.
+            // 8. Let q = p.
+            position = matchEnd;
+            matchPosition = matchEnd;
+
+            // 6. Let i = 0.
+            // 7. Repeat, while i is not equal to the number of elements in cap.
+            //  a Let i = i + 1.
+            for (unsigned i = 1; i <= reg->numSubpatterns(); ++i) {
+                // b Call the [[DefineOwnProperty]] internal method of A with arguments
+                //   ToString(lengthA), Property Descriptor {[[Value]]: cap[i], [[Writable]]:
+                //   true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
+                int sub = ovector[i * 2];
+                result->putDirectIndex(exec, resultLength, sub < 0 ? jsUndefined() : jsSubstring(exec, thisValue, input, sub, ovector[i * 2 + 1] - sub));
+                // c Increment lengthA by 1.
+                // d If lengthA == lim, return A.
+                if (++resultLength == limit)
+                    return JSValue::encode(result);
+            }
+        }
+    } else {
         String separator = separatorValue.toString(exec)->value(exec);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
 
-        // 10. If lim == 0, return A.
+        // 9. If lim == 0, return A.
         if (!limit)
             return JSValue::encode(result);
 
-        // 11. If separator is undefined, then
+        // 10. If separator is undefined, then
+        JSValue separatorValue = exec->argument(0);
         if (separatorValue.isUndefined()) {
             // a.  Call the [[DefineOwnProperty]] internal method of A with arguments "0",
+            //     Property Descriptor {[[Value]]: S, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
             result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input));
             // b.  Return A.
             return JSValue::encode(result);
         }
 
-        // 12. If s == 0, then
+        // 11. If s == 0, then
         if (input.isEmpty()) {
-            // a. Let z be SplitMatch(S, 0, R) where S is input, R is separator.
-            // b. If z is not false, return A.
-            // c. Call CreateDataProperty(A, "0", S).
+            // a. Call SplitMatch(S, 0, R) and let z be its MatchResult result.
+            // b. If z is not failure, return A.
+            // c. Call the [[DefineOwnProperty]] internal method of A with arguments "0",
+            //    Property Descriptor {[[Value]]: S, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
             // d. Return A.
             if (!separator.isEmpty())
                 result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input));
@@ -1252,16 +1386,17 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState* exec)
                     return JSValue::encode(result);
             }
         } else {
-            // 13. Let q = p.
+            // 12. Let q = p.
             size_t matchPosition;
-            // 14. Repeat, while q != s
-            //   a. let e be SplitMatch(S, q, R).
-            //   b. If e is failure, then let q = q+1.
-            //   c. Else, e is an integer index <= s.
+            // 13. Repeat, while q != s
+            //   a. Call SplitMatch(S, q, R) and let z be its MatchResult result.
+            //   b. If z is failure, then let q = q+1.
+            //   c. Else, z is not failure
             while ((matchPosition = stringImpl->find(separatorImpl, position)) != notFound) {
                 // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
                 //    through q (exclusive).
-                // 2. Call CreateDataProperty(A, ToString(lengthA), T).
+                // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
+                //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
                 result->putDirectIndex(exec, resultLength, jsSubstring(exec, thisValue, input, position, matchPosition - position));
                 // 3. Increment lengthA by 1.
                 // 4. If lengthA == lim, return A.
@@ -1269,18 +1404,19 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState* exec)
                     return JSValue::encode(result);
 
                 // 5. Let p = e.
-                // 6. Let q = p.
+                // 8. Let q = p.
                 position = matchPosition + separator.length();
             }
         }
-    } // FIXME: Keeping this indentation here to minimize the diff. Will unindent and remove this later.
+    }
 
-    // 15. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
+    // 14. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
     //     through s (exclusive).
-    // 16. Call CreateDataProperty(A, ToString(lengthA), T).
+    // 15. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA), Property Descriptor
+    //     {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
     result->putDirectIndex(exec, resultLength++, jsSubstring(exec, thisValue, input, position, input.length() - position));
 
-    // 17. Return A.
+    // 16. Return A.
     return JSValue::encode(result);
 }
 
@@ -1321,23 +1457,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
     if (jsString)
         return JSValue::encode(jsSubstring(exec, jsString, substringStart, substringLength));
     return JSValue::encode(jsSubstring(exec, uString, substringStart, substringLength));
-}
-
-EncodedJSValue JSC_HOST_CALL builtinStringSubstrInternal(ExecState* exec)
-{
-    // @substrInternal should not have any observable side effects (e.g. it should not call
-    // GetMethod(..., @@toPrimitive) on the thisValue).
-
-    // It is ok to use the default stringProtoFuncSubstr as the implementation of
-    // @substrInternal because @substrInternal will only be called by builtins, which will
-    // guarantee that we only pass it a string thisValue. As a result, stringProtoFuncSubstr
-    // will not need to call toString() on the thisValue, and there will be no observable
-    // side-effects.
-#if !ASSERT_DISABLED
-    JSValue thisValue = exec->thisValue();
-    ASSERT(thisValue.isString());
-#endif
-    return stringProtoFuncSubstr(exec);
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
@@ -1876,21 +1995,6 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
     return JSValue::encode(jsBoolean(stringToSearchIn.hasInfixEndingAt(searchString, std::min(end, length))));
 }
 
-static EncodedJSValue JSC_HOST_CALL stringIncludesImpl(VM& vm, ExecState* exec, String stringToSearchIn, String searchString, JSValue positionArg)
-{
-    unsigned start = 0;
-    if (positionArg.isInt32())
-        start = std::max(0, positionArg.asInt32());
-    else {
-        unsigned length = stringToSearchIn.length();
-        start = clampAndTruncateToUnsigned(positionArg.toInteger(exec), 0, length);
-        if (vm.exception())
-            return JSValue::encode(jsUndefined());
-    }
-
-    return JSValue::encode(jsBoolean(stringToSearchIn.contains(searchString, true, start)));
-}
-
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
@@ -1914,28 +2018,17 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     JSValue positionArg = exec->argument(1);
+    unsigned start = 0;
+    if (positionArg.isInt32())
+        start = std::max(0, positionArg.asInt32());
+    else {
+        unsigned length = stringToSearchIn.length();
+        start = clampAndTruncateToUnsigned(positionArg.toInteger(exec), 0, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+    }
 
-    return stringIncludesImpl(vm, exec, stringToSearchIn, searchString, positionArg);
-}
-
-EncodedJSValue JSC_HOST_CALL builtinStringIncludesInternal(ExecState* exec)
-{
-    JSValue thisValue = exec->thisValue();
-    ASSERT(checkObjectCoercible(thisValue));
-
-    String stringToSearchIn = thisValue.toString(exec)->value(exec);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    JSValue a0 = exec->uncheckedArgument(0);
-    VM& vm = exec->vm();
-    String searchString = a0.toString(exec)->value(exec);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    JSValue positionArg = exec->argument(1);
-
-    return stringIncludesImpl(vm, exec, stringToSearchIn, searchString, positionArg);
+    return JSValue::encode(jsBoolean(stringToSearchIn.contains(searchString, true, start)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState* exec)

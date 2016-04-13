@@ -1,3 +1,22 @@
+2016-04-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r199502 and r199511.
+        https://bugs.webkit.org/show_bug.cgi?id=156557
+
+        Appears to have in-browser perf regression (Requested by mlam
+        on #webkit).
+
+        Reverted changesets:
+
+        "ES6: Implement String.prototype.split and
+        RegExp.prototype[@@split]."
+        https://bugs.webkit.org/show_bug.cgi?id=156013
+        http://trac.webkit.org/changeset/199502
+
+        "ES6: Implement RegExp.prototype[@@search]."
+        https://bugs.webkit.org/show_bug.cgi?id=156331
+        http://trac.webkit.org/changeset/199511
+
 2016-04-13  Antonio Gomes  <tonikitoo@webkit.org>
 
         Non-resizable text field looks resizable

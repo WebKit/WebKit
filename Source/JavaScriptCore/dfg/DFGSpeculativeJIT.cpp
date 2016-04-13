@@ -3425,30 +3425,6 @@ void SpeculativeJIT::compileIsArrayConstructor(Node* node)
     unblessedBooleanResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileIsRegExpObject(Node* node)
-{
-    JSValueOperand value(this, node->child1());
-    GPRFlushedCallResult result(this);
-
-    JSValueRegs valueRegs = value.jsValueRegs();
-    GPRReg resultGPR = result.gpr();
-
-    JITCompiler::Jump isNotCell = m_jit.branchIfNotCell(valueRegs);
-
-    m_jit.compare8(JITCompiler::Equal,
-        JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()),
-        TrustedImm32(RegExpObjectType),
-        resultGPR);
-    blessBoolean(resultGPR);
-    JITCompiler::Jump done = m_jit.jump();
-
-    isNotCell.link(&m_jit);
-    moveFalseTo(resultGPR);
-
-    done.link(&m_jit);
-    blessedBooleanResult(resultGPR, node);
-}
-
 void SpeculativeJIT::compileCallObjectConstructor(Node* node)
 {
     RELEASE_ASSERT(node->child1().useKind() == UntypedUse);

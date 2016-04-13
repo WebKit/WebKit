@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007-2008, 2016 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2016 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,6 @@
 #include "RegExpCache.h"
 #include "RegExpConstructor.h"
 #include "RegExpMatchesArray.h"
-#include "StringObject.h"
 #include "StringRecursionChecker.h"
 
 namespace JSC {
@@ -49,6 +48,7 @@ static EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchPrivate(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearch(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState*);
@@ -80,8 +80,7 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_GETTER(vm.propertyNames->flags, regExpProtoGetterFlags, DontEnum | Accessor);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().matchPrivateName(), regExpProtoFuncMatchPrivate, DontEnum | DontDelete | ReadOnly, 1);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->matchSymbol, regExpPrototypeMatchCodeGenerator, DontEnum);
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->searchSymbol, regExpPrototypeSearchCodeGenerator, DontEnum);
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->splitSymbol, regExpPrototypeSplitCodeGenerator, DontEnum);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->searchSymbol, regExpProtoFuncSearch, DontEnum, 1);
 
     JSFunction* execFunction = JSFunction::create(vm, globalObject, 1, vm.propertyNames->exec.string(), regExpProtoFuncExec, RegExpExecIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->execPrivateName, execFunction, DontEnum | DontDelete | ReadOnly);
@@ -116,7 +115,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(RegExpObject::info()))
-        return throwVMTypeError(exec, "Builtin RegExp exec can only be called on a RegExp object");
+        return throwVMTypeError(exec);
     JSString* string = exec->argument(0).toStringOrNull(exec);
     if (!string)
         return JSValue::encode(jsUndefined());
@@ -418,183 +417,21 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(ExecState* exec)
     return JSValue::encode(regExpProtoGetterSourceInternal(exec, pattern, pattern.characters16(), pattern.length()));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearchFast(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearch(ExecState* exec)
 {
-    VM& vm = exec->vm();
     JSValue thisValue = exec->thisValue();
+    if (!thisValue.inherits(RegExpObject::info()))
+        return throwVMTypeError(exec);
     RegExp* regExp = asRegExpObject(thisValue)->regExp();
 
-    JSString* string = exec->uncheckedArgument(0).toString(exec);
+    JSString* string = exec->argument(0).toString(exec);
     String s = string->value(exec);
-    if (vm.exception())
+    if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-    MatchResult result = regExpConstructor->performMatch(vm, regExp, string, s, 0);
+    MatchResult result = regExpConstructor->performMatch(exec->vm(), regExp, string, s, 0);
     return JSValue::encode(result ? jsNumber(result.start) : jsNumber(-1));
-}
-
-static inline unsigned advanceStringIndex(String str, unsigned strSize, unsigned index, bool isUnicode)
-{
-    if (!isUnicode)
-        return ++index;
-    return RegExpObject::advanceStringUnicode(str, strSize, index);
-}
-
-// ES 21.2.5.11 RegExp.prototype[@@split](string, limit)
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
-{
-    VM& vm = exec->vm();
-
-    // 1. [handled by JS builtin] Let rx be the this value.
-    // 2. [handled by JS builtin] If Type(rx) is not Object, throw a TypeError exception.
-    JSValue thisValue = exec->thisValue();
-    RegExp* regexp = asRegExpObject(thisValue)->regExp();
-
-    // 3. [handled by JS builtin] Let S be ? ToString(string).
-    String input = exec->argument(0).toString(exec)->value(exec);
-    if (vm.exception())
-        return JSValue::encode(jsUndefined());
-    ASSERT(!input.isNull());
-
-    // 4. [handled by JS builtin] Let C be ? SpeciesConstructor(rx, %RegExp%).
-    // 5. [handled by JS builtin] Let flags be ? ToString(? Get(rx, "flags")).
-    // 6. [handled by JS builtin] If flags contains "u", let unicodeMatching be true.
-    // 7. [handled by JS builtin] Else, let unicodeMatching be false.
-    // 8. [handled by JS builtin] If flags contains "y", let newFlags be flags.
-    // 9. [handled by JS builtin] Else, let newFlags be the string that is the concatenation of flags and "y".
-    // 10. [handled by JS builtin] Let splitter be ? Construct(C, « rx, newFlags »).
-
-    // 11. Let A be ArrayCreate(0).
-    // 12. Let lengthA be 0.
-    JSArray* result = constructEmptyArray(exec, 0);
-    unsigned resultLength = 0;
-
-    // 13. If limit is undefined, let lim be 2^32-1; else let lim be ? ToUint32(limit).
-    JSValue limitValue = exec->argument(1);
-    unsigned limit = limitValue.isUndefined() ? 0xFFFFFFFFu : limitValue.toUInt32(exec);
-
-    // 14. Let size be the number of elements in S.
-    unsigned inputSize = input.length();
-
-    // 15. Let p = 0.
-    unsigned position = 0;
-
-    // 16. If lim == 0, return A.
-    if (!limit)
-        return JSValue::encode(result);
-
-    // 17. If size == 0, then
-    if (input.isEmpty()) {
-        // a. Let z be ? RegExpExec(splitter, S).
-        // b. If z is not null, return A.
-        // c. Perform ! CreateDataProperty(A, "0", S).
-        // d. Return A.
-        if (!regexp->match(vm, input, 0))
-            result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input));
-        return JSValue::encode(result);
-    }
-
-    // 18. Let q = p.
-    unsigned matchPosition = position;
-    // 19. Repeat, while q < size
-    bool regExpIsSticky = regexp->sticky();
-    bool regExpIsUnicode = regexp->unicode();
-    while (matchPosition < inputSize) {
-        Vector<int, 32> ovector;
-
-        // a. Perform ? Set(splitter, "lastIndex", q, true).
-        // b. Let z be ? RegExpExec(splitter, S).
-        int mpos = regexp->match(vm, input, matchPosition, ovector);
-
-        // c. If z is null, let q be AdvanceStringIndex(S, q, unicodeMatching).
-        if (mpos < 0) {
-            if (!regExpIsSticky)
-                break;
-            matchPosition = advanceStringIndex(input, inputSize, matchPosition, regExpIsUnicode);
-            continue;
-        }
-        if (static_cast<unsigned>(mpos) >= inputSize) {
-            // The spec redoes the RegExpExec starting at the next character of the input.
-            // But in our case, mpos < 0 means that the native regexp already searched all permutations
-            // and know that we won't be able to find a match for the separator even if we redo the
-            // RegExpExec starting at the next character of the input. So, just bail.
-            break;
-        }
-
-        // d. Else, z is not null
-        //    i. Let e be ? ToLength(? Get(splitter, "lastIndex")).
-        //   ii. Let e be min(e, size).
-        matchPosition = mpos;
-        unsigned matchEnd = ovector[1];
-
-        //  iii. If e = p, let q be AdvanceStringIndex(S, q, unicodeMatching).
-        if (matchEnd == position) {
-            matchPosition = advanceStringIndex(input, inputSize, matchPosition, regExpIsUnicode);
-            continue;
-        }
-        // if matchEnd == 0 then position should also be zero and thus matchEnd should equal position.
-        ASSERT(matchEnd);
-
-        //   iv. Else e != p,
-        {
-            unsigned numberOfCaptures = regexp->numSubpatterns();
-            unsigned newResultLength = resultLength + numberOfCaptures + 1;
-            if (newResultLength < numberOfCaptures || newResultLength >= MAX_STORAGE_VECTOR_INDEX) {
-                // Let's consider what's best for users here. We're about to increase the length of
-                // the split array beyond the maximum length that we can support efficiently. This
-                // will cause us to use a HashMap for the new entries after this point. That's going
-                // to result in a very long running time of this function and very large memory
-                // usage. In my experiments, JSC will sit spinning for minutes after getting here and
-                // it was using >4GB of memory and eventually grew to 8GB. It kept running without
-                // finishing until I killed it. That's probably not what the user wanted. The user,
-                // or the program that the user is running, probably made a mistake by calling this
-                // method in such a way that it resulted in such an obnoxious array. Therefore, to
-                // protect ourselves, we bail at this point.
-                throwOutOfMemoryError(exec);
-                return JSValue::encode(jsUndefined());
-            }
-
-            // 1. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through q (exclusive).
-            // 2. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
-            result->putDirectIndex(exec, resultLength, jsSubstring(exec, thisValue, input, position, matchPosition - position));
-
-            // 3. Let lengthA be lengthA + 1.
-            // 4. If lengthA = lim, return A.
-            if (++resultLength == limit)
-                return JSValue::encode(result);
-
-            // 5. Let p be e.
-            position = matchEnd;
-
-            // 6. Let numberOfCaptures be ? ToLength(? Get(z, "length")).
-            // 7. Let numberOfCaptures be max(numberOfCaptures-1, 0).
-            // 8. Let i be 1.
-            // 9. Repeat, while i <= numberOfCaptures,
-            for (unsigned i = 1; i <= numberOfCaptures; ++i) {
-                // a. Let nextCapture be ? Get(z, ! ToString(i)).
-                // b. Perform ! CreateDataProperty(A, ! ToString(lengthA), nextCapture).
-                int sub = ovector[i * 2];
-                result->putDirectIndex(exec, resultLength, sub < 0 ? jsUndefined() : jsSubstring(exec, thisValue, input, sub, ovector[i * 2 + 1] - sub));
-
-                // c. Let i be i + 1.
-                // d. Let lengthA be lengthA + 1.
-                // e. If lengthA = lim, return A.
-                if (++resultLength == limit)
-                    return JSValue::encode(result);
-            }
-
-            // 10. Let q be p.
-            matchPosition = position;
-        }
-    }
-
-    // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
-    // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
-    result->putDirectIndex(exec, resultLength++, jsSubstring(exec, thisValue, input, position, inputSize - position));
-
-    // 22. Return A.
-    return JSValue::encode(result);
 }
 
 } // namespace JSC
