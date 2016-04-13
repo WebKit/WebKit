@@ -1,3 +1,15 @@
+2016-03-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [XSS Auditor] Off by one in XSSAuditor::canonicalizedSnippetForJavaScript()
+        https://bugs.webkit.org/show_bug.cgi?id=155624
+        <rdar://problem/25219962>
+
+        Unreviewed merge from Blink (patch by Tom Sepez <tsepez@chromium.org>):
+        <https://src.chromium.org/viewvc/blink?revision=201803&view=revision>
+
+        * http/tests/security/xssAuditor/script-tag-with-trailing-script-and-urlencode-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-trailing-script-and-urlencode.html: Added.
+
 2016-03-17  Zalan Bujtas  <zalan@apple.com>
 
         Images in feed on ebay.com jiggle when one is hovered
