@@ -119,10 +119,10 @@ private:
     virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    virtual int popupInternalPaddingLeft(RenderStyle&) const override;
-    virtual int popupInternalPaddingRight(RenderStyle&) const override;
-    virtual int popupInternalPaddingTop(RenderStyle&) const override;
-    virtual int popupInternalPaddingBottom(RenderStyle&) const override;
+    virtual int popupInternalPaddingLeft(const RenderStyle&) const override;
+    virtual int popupInternalPaddingRight(const RenderStyle&) const override;
+    virtual int popupInternalPaddingTop(const RenderStyle&) const override;
+    virtual int popupInternalPaddingBottom(const RenderStyle&) const override;
 
     // The Mac port differentiates between the "menu list" and the "menu list button."
     // The former is used when a menu list button has been styled. This is used to ensure
