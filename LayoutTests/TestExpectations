@@ -741,6 +741,7 @@ webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-zero-height-001.xht
 webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-span-all-child-001.xht [ ImageOnlyFailure ]
 
 webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html [ Pass Failure ]
+webkit.org/b/155760 imported/w3c/web-platform-tests/streams/readable-streams/general.https.html [ Pass Failure ]
 
 webkit.org/b/148922 svg/as-object/svg-in-object-dynamic-attribute-change.html [ Pass ImageOnlyFailure ]
 webkit.org/b/148925 svg/dom/svg-root-lengths.html [ Pass Failure ]
