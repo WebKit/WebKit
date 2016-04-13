@@ -59,12 +59,7 @@ enum SerializationErrorMode { NonThrowing, Throwing };
 
 class SharedBuffer;
 
-class SerializedScriptValue :
-#if ENABLE(INDEXED_DATABASE)
-    public ThreadSafeRefCounted<SerializedScriptValue> {
-#else
-    public RefCounted<SerializedScriptValue> {
-#endif
+class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
 public:
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, MessagePortArray*, ArrayBufferArray*, SerializationErrorMode = Throwing);
 
@@ -89,12 +84,6 @@ public:
     const Vector<uint8_t>& data() const { return m_data; }
     bool hasBlobURLs() const { return !m_blobURLs.isEmpty(); }
     void blobURLs(Vector<String>&) const;
-
-#if ENABLE(INDEXED_DATABASE)
-    // FIXME: Get rid of these. The only caller immediately deserializes the result, so it's a very roundabout way to create a JSValue.
-    static Ref<SerializedScriptValue> numberValue(double value);
-    static Ref<SerializedScriptValue> undefinedValue();
-#endif
 
     static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&& data)
     {
