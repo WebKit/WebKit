@@ -22,21 +22,17 @@
 
 #include "GLContext.h"
 #include "GraphicsContext3D.h"
-
-#if USE(COORDINATED_GRAPHICS_THREADED)
-#include "BitmapTextureGL.h"
-#include "TextureMapperPlatformLayerProxy.h"
-#elif USE(TEXTURE_MAPPER)
+#include "PlatformLayer.h"
 #include "TextureMapperPlatformLayer.h"
-#endif
+#include "TextureMapperPlatformLayerProxy.h"
 
 namespace WebCore {
 
+class BitmapTextureGL;
+
 class GraphicsContext3DPrivate
-#if USE(COORDINATED_GRAPHICS_THREADED)
-    : public TextureMapperPlatformLayerProxyProvider
-#elif USE(TEXTURE_MAPPER)
-    : public TextureMapperPlatformLayer
+#if USE(TEXTURE_MAPPER)
+    : public PlatformLayer
 #endif
 {
 public:
