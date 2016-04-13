@@ -94,6 +94,14 @@ void MemoryBackingStoreTransaction::indexDeleted(Ref<MemoryIndex>&& index)
 {
     m_indexes.remove(&index.get());
 
+    // If this MemoryIndex belongs to an object store that will not get restored if this transaction aborts,
+    // then we can forget about it altogether.
+    auto& objectStore = index->objectStore();
+    if (auto deletedObjectStore = m_deletedObjectStores.get(objectStore.info().name())) {
+        if (deletedObjectStore != &objectStore)
+            return;
+    }
+
     auto addResult = m_deletedIndexes.add(index->info().name(), nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = WTFMove(index);
