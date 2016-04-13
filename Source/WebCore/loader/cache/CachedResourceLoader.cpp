@@ -161,7 +161,7 @@ CachedResource* CachedResourceLoader::cachedResource(const URL& resourceURL) con
 
 Frame* CachedResourceLoader::frame() const
 {
-    return m_documentLoader ? m_documentLoader->frame() : 0;
+    return m_documentLoader ? m_documentLoader->frame() : nullptr;
 }
 
 SessionID CachedResourceLoader::sessionID() const
@@ -742,7 +742,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
 
     // FIXME: We should use the same cache policy for all resource types. The raw resource policy is overly strict
     //        while the normal subresource policy is too loose.
-    if (existingResource->isMainOrRawResource()) {
+    if (existingResource->isMainOrRawResource() && frame()) {
         bool strictPolicyDisabled = frame()->loader().isStrictRawResourceValidationPolicyDisabledForTesting();
         bool canReuseRawResource = strictPolicyDisabled || downcast<CachedRawResource>(*existingResource).canReuse(request);
         if (!canReuseRawResource)
