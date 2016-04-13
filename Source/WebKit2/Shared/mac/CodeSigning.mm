@@ -49,6 +49,12 @@ static RetainPtr<SecCodeRef> secCodeForProcess(pid_t pid)
     const void* values[] = { pidCFNumber.get() };
     RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     SecCodeRef code = nullptr;
+    OSStatus errorCode = noErr;
+    // FIXME: We should RELEASE_ASSERT() that SecCodeCopyGuestWithAttributes() returns without error. See <rdar://problem/25706517>.
+    if ((errorCode = SecCodeCopyGuestWithAttributes(nullptr, attributes.get(), kSecCSDefaultFlags, &code))) {
+        WTFLogAlways("SecCodeCopyGuestWithAttributes() failed with error: %ld\n", static_cast<long>(errorCode));
+        return nullptr;
+    }
     RELEASE_ASSERT(!SecCodeCopyGuestWithAttributes(nullptr, attributes.get(), kSecCSDefaultFlags, &code));
     return adoptCF(code);
 }
@@ -92,7 +98,10 @@ String codeSigningIdentifier()
 
 String codeSigningIdentifierForProcess(pid_t pid)
 {
-    return secCodeSigningIdentifier(secCodeForProcess(pid).get());
+    auto code = secCodeForProcess(pid);
+    if (!code)
+        return String();
+    return secCodeSigningIdentifier(code.get());
 }
     
 } // namespace WebKit
