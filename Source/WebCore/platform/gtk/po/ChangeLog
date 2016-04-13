@@ -1,3 +1,12 @@
+2016-04-05  Rafael Fontenelle  <rafaelff@gnome.org>
+
+        Updated Brazilian Portuguese translation
+        https://bugs.webkit.org/show_bug.cgi?id=156236
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * pt_BR.po:
+
 2016-03-22  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed typo fix "choosen" => "chosen"
