@@ -253,6 +253,9 @@ public:
     virtual int attachmentBaseline(const RenderAttachment&) const { return -1; }
 #endif
 
+    enum class InnerSpinButtonLayout { Vertical, HorizontalUpLeft, HorizontalUpRight };
+    virtual InnerSpinButtonLayout innerSpinButtonLayout(const RenderObject&) const { return InnerSpinButtonLayout::Vertical; }
+
 protected:
     virtual FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const;
     virtual void updateCachedSystemFontDescription(CSSValueID systemFontID, FontCascadeDescription&) const = 0;
