@@ -127,4 +127,23 @@ TEST(WebCore, URLExtras_Space)
     EXPECT_STREQ("site.com\xE3\x80\x80othersite.org", [WebCore::decodeHostName(@"site.com\xE3\x80\x80othersite.org") UTF8String]);
 }
 
+TEST(WebCore, URLExtras_ParsingError)
+{
+    // Expect IDN failure.
+    NSURL *url = WebCore::URLWithUserTypedString(@"http://.com", nil);
+    EXPECT_TRUE(url == nil);
+
+    NSString *encodedHostName = WebCore::encodeHostName(@"http://.com");
+    EXPECT_TRUE(encodedHostName == nil);
+}
+
+TEST(WebCore, URLExtras_Nil)
+{
+    NSURL *url1 = WebCore::URLWithUserTypedString(nil, nil);
+    EXPECT_TRUE(url1 == nil);
+
+    NSURL *url2 = WebCore::URLWithUserTypedStringDeprecated(nil, nil);
+    EXPECT_TRUE(url2 == nil);
+}
+
 } // namespace TestWebKitAPI

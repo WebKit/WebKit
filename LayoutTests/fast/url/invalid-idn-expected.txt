@@ -1,0 +1,4 @@
+Test passes if all the invalid urls are converted to about:blank.
+about:blank
+about:blank
+

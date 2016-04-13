@@ -98,7 +98,7 @@ static NSMutableDictionary *descriptions = nil;
 
 + (NSError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URLString
 {
-    return [self _webKitErrorWithDomain:WebKitErrorDomain code:code URL:[NSURL _web_URLWithUserTypedString:URLString]];
+    return [self _webKitErrorWithDomain:WebKitErrorDomain code:code URL:[NSURL _webkit_URLWithUserTypedString:URLString]];
 }
 
 - (id)_initWithPluginErrorCode:(int)code

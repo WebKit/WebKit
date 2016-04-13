@@ -333,7 +333,7 @@ WebHistoryItem *kit(HistoryItem* item)
     // Check if we've read a broken URL from the file that has non-Latin1 chars.  If so, try to convert
     // as if it was from user typing.
     if (![URLString canBeConvertedToEncoding:NSISOLatin1StringEncoding]) {
-        NSURL *tempURL = [NSURL _web_URLWithUserTypedString:URLString];
+        NSURL *tempURL = [NSURL _webkit_URLWithUserTypedString:URLString];
         ASSERT(tempURL);
         NSString *newURLString = [tempURL _web_originalDataAsString];
         core(_private)->setURLString(newURLString);
