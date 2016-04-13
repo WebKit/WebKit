@@ -86,7 +86,11 @@ static void pthreadSignalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
     }
 
     ucontext_t* userContext = static_cast<ucontext_t*>(ucontext);
+#if CPU(PPC)
+    thread->suspendedMachineContext = *userContext->uc_mcontext.uc_regs;
+#else
     thread->suspendedMachineContext = userContext->uc_mcontext;
+#endif
 
     // Allow suspend caller to see that this thread is suspended.
     // sem_post is async-signal-safe function. It means that we can call this from a signal handler.
