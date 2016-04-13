@@ -58,10 +58,15 @@ Ref<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const Qua
 void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)
 {
     if (renderer()) {
+        // FIXME: Parsing of operator properties should be done in the element classes rather than in the renderer classes.
+        // See http://webkit.org/b/156537
         if (is<RenderMathMLRow>(*renderer()))
             downcast<RenderMathMLRow>(*renderer()).updateOperatorProperties();
-        else if (hasTagName(mathTag) || hasTagName(msqrtTag)) {
-            auto* childRenderer = renderer()->firstChild();
+        else if (hasTagName(msqrtTag)) {
+            // Update operator properties for the base wrapper.
+            // FIXME: This won't be necessary when RenderMathMLSquareRoot derives from RenderMathMLRow and does not use anonymous wrappers.
+            // See http://webkit.org/b/153987
+            auto* childRenderer = renderer()->lastChild();
             if (is<RenderMathMLRow>(childRenderer))
                 downcast<RenderMathMLRow>(*childRenderer).updateOperatorProperties();
         }

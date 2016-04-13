@@ -1,3 +1,28 @@
+2016-04-13  Frederic Wang  <fwang@igalia.com>
+
+        Fix two coding mistakes in MathMLInlineContainerElement::childrenChanged
+        https://bugs.webkit.org/show_bug.cgi?id=156538
+
+        Reviewed by Darin Adler.
+
+        We fix the call to updateOperatorProperties inside MathMLInlineContainerElement::childrenChanged
+        for the <math> and <msqrt> tags.
+
+        The <math> tag is already a RenderMathMLRow so the hasTagName(mathTag)
+        conditional is never executed. The tag does not create any anonymous
+        wrapper so we do not need a special case for it anyway.
+
+        The <msqrt> tag is not a RenderMathMLRow (yet). However, the anonymous
+        wrapper behaving as a RenderMathMLRow is actually the last child, not
+        the first one.
+
+        No new tests, this is already covered by mathml/presentation/mo-form-dynamic.html
+        Note that for some reason the coding error for <msqrt> only shows up
+        after the refactoring of bug 152244.
+
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::childrenChanged): Fix the two mistakes and add some FIXME comments.
+
 2016-04-12  Chris Dumez  <cdumez@apple.com>
 
         Attr.value should not be nullable
