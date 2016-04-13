@@ -46,8 +46,6 @@ using namespace HTMLNames;
 TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVector& data)
 {
     AtomicString tagName(data);
-    if (tagName == iframeTag)
-        return TagId::Iframe;
     if (tagName == imgTag)
         return TagId::Img;
     if (tagName == inputTag)
@@ -74,8 +72,6 @@ TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVe
 String TokenPreloadScanner::initiatorFor(TagId tagId)
 {
     switch (tagId) {
-    case TagId::Iframe:
-        return "iframe";
     case TagId::Source:
     case TagId::Img:
         return "img";
@@ -176,10 +172,6 @@ private:
         bool alreadyMatchedSource = inPicture && pictureState.last();
 
         switch (m_tagId) {
-        case TagId::Iframe:
-            if (match(attributeName, srcAttr))
-                setUrlToLoad(attributeValue);
-            break;
         case TagId::Img:
             if (inPicture && alreadyMatchedSource)
                 break;
@@ -272,8 +264,6 @@ private:
     CachedResource::Type resourceType() const
     {
         switch (m_tagId) {
-        case TagId::Iframe:
-            return CachedResource::MainResource;
         case TagId::Script:
             return CachedResource::Script;
         case TagId::Img:

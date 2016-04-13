@@ -1,6 +1,0 @@
-js-test-pre.js has MIME type text/javascript
-testFrame.html has MIME type text/html
-PASS internals.isPreloaded("resources/testFrame.html"); is true
-Tests that iframes are preloaded.
-
-
