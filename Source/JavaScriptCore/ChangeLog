@@ -1,3 +1,19 @@
+2016-04-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Add @@toStringTag to GeneratorFunction
+        https://bugs.webkit.org/show_bug.cgi?id=156499
+
+        Reviewed by Mark Lam.
+
+        GeneratorFunction.prototype has @@toStringTag property, "GeneratorFunction".
+        https://tc39.github.io/ecma262/#sec-generatorfunction.prototype-@@tostringtag
+
+        * runtime/GeneratorFunctionPrototype.cpp:
+        (JSC::GeneratorFunctionPrototype::finishCreation):
+        * tests/es6.yaml:
+        * tests/es6/well-known_symbols_Symbol.toStringTag_new_built-ins.js: Added.
+        (test):
+
 2016-04-13  Alberto Garcia  <berto@igalia.com>
 
         Fix build in glibc-based BSD systems

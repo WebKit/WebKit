@@ -1224,6 +1224,8 @@
   cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.toStringTag_misc._built-ins.js
   cmd: runES6 :normal
+- path: es6/well-known_symbols_Symbol.toStringTag_new_built-ins.js
+  cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.match_String.prototype.startsWith.js
   cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.match_String.prototype.endsWith.js
