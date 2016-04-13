@@ -620,14 +620,14 @@ void FrameSelection::willBeModified(EAlteration alter, SelectionDirection direct
 
 VisiblePosition FrameSelection::positionForPlatform(bool isGetStart) const
 {
-    if (m_frame && (m_frame->settings().editingBehaviorType() == EditingMacBehavior || m_frame->settings().editingBehaviorType() == EditingIOSBehavior))
-        return isGetStart ? m_selection.visibleStart() : m_selection.visibleEnd();
-    // Linux and Windows always extend selections from the extent endpoint.
     // FIXME: VisibleSelection should be fixed to ensure as an invariant that
     // base/extent always point to the same nodes as start/end, but which points
     // to which depends on the value of isBaseFirst. Then this can be changed
     // to just return m_sel.extent().
-    return m_selection.isBaseFirst() ? m_selection.visibleEnd() : m_selection.visibleStart();
+    if (m_frame && m_frame->editor().behavior().shouldAlwaysExtendSelectionFromExtentEndpoint())
+        return m_selection.isBaseFirst() ? m_selection.visibleEnd() : m_selection.visibleStart();
+
+    return isGetStart ? m_selection.visibleStart() : m_selection.visibleEnd();
 }
 
 VisiblePosition FrameSelection::startForPlatform() const
