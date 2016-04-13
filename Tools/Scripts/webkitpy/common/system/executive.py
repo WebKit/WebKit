@@ -205,7 +205,6 @@ class Executive(object):
                 # already exited, and forcefully kill it if SIGTERM wasn't enough.
                 os.kill(pid, signal.SIGTERM)
                 os.kill(pid, signal.SIGKILL)
-                _ = os.waitpid(pid, os.WNOHANG)
             except OSError, e:
                 if e.errno == errno.EAGAIN:
                     if retries_left <= 0:
