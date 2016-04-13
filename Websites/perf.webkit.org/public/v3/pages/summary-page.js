@@ -11,9 +11,8 @@ class SummaryPage extends PageWithHeading {
         };
         this._shouldConstructTable = true;
         this._renderQueue = [];
+        this._configGroups = [];
 
-        var current = Date.now();
-        var timeRange = [current - 7 * 24 * 3600 * 1000, current];
         for (var metricGroup of summarySettings.metricGroups) {
             var group = {name: metricGroup.name, rows: []};
             this._table.groups.push(group);
@@ -21,7 +20,7 @@ class SummaryPage extends PageWithHeading {
                 var row = {name: subMetricGroup.name, cells: []};
                 group.rows.push(row);
                 for (var platformGroup of summarySettings.platformGroups)
-                    row.cells.push(this._createConfigurationGroupAndStartFetchingData(platformGroup.platforms, subMetricGroup.metrics, timeRange));
+                    row.cells.push(this._createConfigurationGroup(platformGroup.platforms, subMetricGroup.metrics));
             }
         }
     }
@@ -31,6 +30,11 @@ class SummaryPage extends PageWithHeading {
     open(state)
     {
         super.open(state);
+
+        var current = Date.now();
+        var timeRange = [current - 7 * 24 * 3600 * 1000, current];
+        for (var group of this._configGroups)
+            group.fetchAndComputeSummary(timeRange).then(this.render.bind(this));
     }
     
     render()
@@ -44,12 +48,12 @@ class SummaryPage extends PageWithHeading {
             render();
     }
 
-    _createConfigurationGroupAndStartFetchingData(platformIdList, metricIdList, timeRange)
+    _createConfigurationGroup(platformIdList, metricIdList)
     {
         var platforms = platformIdList.map(function (id) { return Platform.findById(id); }).filter(function (obj) { return !!obj; });
         var metrics = metricIdList.map(function (id) { return Metric.findById(id); }).filter(function (obj) { return !!obj; });
         var configGroup = new SummaryPageConfigurationGroup(platforms, metrics);
-        configGroup.fetchAndComputeSummary(timeRange).then(this.render.bind(this));
+        this._configGroups.push(configGroup);
         return configGroup;
     }
 
