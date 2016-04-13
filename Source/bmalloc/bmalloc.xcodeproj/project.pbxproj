@@ -22,6 +22,7 @@
 		1440AFCD1A9527AF00837FAA /* Zone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440AFCC1A9527AF00837FAA /* Zone.cpp */; };
 		1448C30018F3754600502839 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1448C2FF18F3754300502839 /* mbmalloc.cpp */; };
 		1448C30118F3754C00502839 /* bmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1448C2FE18F3754300502839 /* bmalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		144BE11F1CA346520099C8C0 /* Object.h in Headers */ = {isa = PBXBuildFile; fileRef = 144BE11E1CA346520099C8C0 /* Object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		144C07F41C7B70260051BB6A /* XLargeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144C07F21C7B70260051BB6A /* XLargeMap.cpp */; };
 		144C07F51C7B70260051BB6A /* XLargeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 144C07F31C7B70260051BB6A /* XLargeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		146041E71C7FF2EF00E9F94E /* SortedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 146041E61C7FF2EF00E9F94E /* SortedVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -103,6 +104,7 @@
 		14446A0717A61FA400F9EA1D /* PerProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PerProcess.h; path = bmalloc/PerProcess.h; sourceTree = "<group>"; };
 		1448C2FE18F3754300502839 /* bmalloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bmalloc.h; path = bmalloc/bmalloc.h; sourceTree = "<group>"; };
 		1448C2FF18F3754300502839 /* mbmalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = mbmalloc.cpp; path = bmalloc/mbmalloc.cpp; sourceTree = "<group>"; };
+		144BE11E1CA346520099C8C0 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Object.h; path = bmalloc/Object.h; sourceTree = "<group>"; };
 		144C07F21C7B70260051BB6A /* XLargeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XLargeMap.cpp; path = bmalloc/XLargeMap.cpp; sourceTree = "<group>"; };
 		144C07F31C7B70260051BB6A /* XLargeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XLargeMap.h; path = bmalloc/XLargeMap.h; sourceTree = "<group>"; };
 		144DCED617A649D90093B2F2 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mutex.h; path = bmalloc/Mutex.h; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 				14DA320E18875D9F007269E0 /* Heap.cpp */,
 				14DA320C18875B09007269E0 /* Heap.h */,
 				140FA00419CE4B6800FFD3C8 /* LineMetadata.h */,
+				144BE11E1CA346520099C8C0 /* Object.h */,
 				14105E8318E14374003A106E /* ObjectType.cpp */,
 				1485656018A43DBA00ED6942 /* ObjectType.h */,
 				145F6874179DF84100D65598 /* Sizes.h */,
@@ -322,6 +325,7 @@
 				140FA00519CE4B6800FFD3C8 /* LineMetadata.h in Headers */,
 				14DD78CC18F48D7500950702 /* PerThread.h in Headers */,
 				14DD78CA18F48D7500950702 /* Mutex.h in Headers */,
+				144BE11F1CA346520099C8C0 /* Object.h in Headers */,
 				143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */,
 				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
 				14C6216F1A9A9A6200E72293 /* LargeObject.h in Headers */,

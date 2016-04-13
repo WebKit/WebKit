@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SmallLine_h
-#define SmallLine_h
-
-#include "BAssert.h"
-#include "Mutex.h"
-#include "ObjectType.h"
-#include <mutex>
+#ifndef Object_h
+#define Object_h
 
 namespace bmalloc {
 
-class SmallLine {
+class SmallChunk;
+class SmallLine;
+class SmallPage;
+
+class Object {
 public:
-    void ref(std::lock_guard<StaticMutex>&, unsigned char = 1);
-    bool deref(std::lock_guard<StaticMutex>&);
-    unsigned refCount(std::lock_guard<StaticMutex>&) { return m_refCount; }
+    Object(void*);
+    Object(SmallChunk*, void*);
     
-    char* begin();
-    char* end();
+    SmallChunk* chunk() { return m_chunk; }
+
+    SmallLine* line();
+    SmallPage* page();
 
 private:
-    unsigned char m_refCount;
-
-static_assert(
-    smallLineSize / alignment <= std::numeric_limits<decltype(m_refCount)>::max(),
-    "maximum object count must fit in SmallLine::m_refCount");
-
+    SmallChunk* m_chunk;
+    size_t m_offset;
 };
 
-inline void SmallLine::ref(std::lock_guard<StaticMutex>&, unsigned char refCount)
-{
-    BASSERT(!m_refCount);
-    m_refCount = refCount;
-}
+}; // namespace bmalloc
 
-inline bool SmallLine::deref(std::lock_guard<StaticMutex>&)
-{
-    BASSERT(m_refCount);
-    --m_refCount;
-    return !m_refCount;
-}
-
-} // namespace bmalloc
-
-#endif // SmallLine_h
+#endif // Object_h

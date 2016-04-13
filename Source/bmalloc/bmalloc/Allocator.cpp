@@ -115,8 +115,8 @@ void* Allocator::reallocate(void* object, size_t newSize)
     size_t oldSize = 0;
     switch (objectType(object)) {
     case Small: {
-        SmallPage* page = SmallPage::get(SmallLine::get(object));
-        oldSize = objectSize(page->sizeClass());
+        size_t sizeClass = Object(object).page()->sizeClass();
+        oldSize = objectSize(sizeClass);
         break;
     }
     case Large: {
