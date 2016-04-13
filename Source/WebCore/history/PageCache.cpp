@@ -37,6 +37,7 @@
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "FocusController.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -391,6 +392,11 @@ void PageCache::addIfCacheable(HistoryItem& item, Page* page)
 
     // Make sure all the documents know they are being added to the PageCache.
     setInPageCache(*page, true);
+
+    // Focus the main frame, defocusing a focused subframe (if we have one). We do this here,
+    // before the page enters the page cache, while we still can dispatch DOM blur/focus events.
+    if (page->focusController().focusedFrame())
+        page->focusController().setFocusedFrame(&page->mainFrame());
 
     // Fire the pagehide event in all frames.
     firePageHideEventRecursively(page->mainFrame());

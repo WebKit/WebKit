@@ -1,3 +1,32 @@
+2016-03-31  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r195605): ASSERTION FAILED: !NoEventDispatchAssertion::isEventDispatchForbidden()
+        when pressing the back button on a page with a focused subframe
+        https://bugs.webkit.org/show_bug.cgi?id=156033
+        <rdar://problem/25446561>
+
+        Reviewed by Chris Dumez.
+
+        Fixes an assertion failure when navigating back, by pressing the browser back button, to
+        the previous page from a page with a focused subframe.
+
+        Following r195605 (https://bugs.webkit.org/show_bug.cgi?id=153449), the responsibility for
+        dispatching a DOM pagehide event moved from CachedFrame to PageCache and we now instantiate
+        a NoEventDispatchAssertion object to enforce the invariant that no additional DOM events are
+        dispatched as part of adding a page to the page cache. When adding a page with a focused
+        subframe to the page cache we focus its main frame, which implicitly defocuses the subframe
+        and dispatches a DOM blur event at it. Therefore an assertion failure occurs when dispatching
+        this DOM blur event (because a NoEventDispatchAssertion object was allocated on the stack).
+
+        Test: fast/history/back-from-page-with-focused-iframe.html
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame): Move logic to focus the main frame from here...
+        * history/PageCache.cpp:
+        (WebCore::PageCache::addIfCacheable): to here such that any DOM blur and focus events
+        are dispatched before instantiate the NoEventDispatchAssertion object and enter the page
+        cache.
+
 2016-03-31  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r191180): Safari does not send Referer Header to iframe src in certain situations

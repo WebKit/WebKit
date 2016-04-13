@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function runTest()
+{
+    var test = [
+        '<!DOCTYPE html>',
+        '<html>',
+        '<iframe srcdoc="<script>',
+        '                window.onfocus = function() {',
+        '                    window.onblur = function () { alert(/iframe blurred/); };',
+        '                    window.top.onfocus = function () { alert(/main frame focused/); };',
+        '                    window.top.history.back();',
+        '                };',
+        '                window.focus();',
+        '                <' + '/script>">',
+        '</iframe>',
+        '</html>',
+    ].join("");
+    window.location.href = "data:text/html," + test;
+}
+
+window.onpageshow = function (pageTransitionEvent)
+{
+    if (pageTransitionEvent.persisted) {
+        // Navigated back to this page
+        if (window.testRunner)
+            testRunner.notifyDone();
+    } else {
+        // Newly loaded
+        if (window.testRunner) {
+            testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+            testRunner.dumpAsText();
+            testRunner.dumpBackForwardList();
+            testRunner.waitUntilDone();
+        }
+        window.setTimeout(runTest, 0); // Navigate on a zero timer to create a history entry.
+    }
+}
+</script>
+</head>
+<body>
+<p>This test PASSED if there is no assertion failure and you see two JavaScript alerts with messages &quot;iframe blurred&quot; and &quot;main frame focused&quot; in order. Otherwise, it FAILED.</p>
+</body>
+</html>
