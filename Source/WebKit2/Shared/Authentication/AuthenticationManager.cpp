@@ -188,7 +188,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(Download& download
 
 // Currently, only Mac knows how to respond to authentication challenges with certificate info.
 #if !HAVE(SEC_IDENTITY)
-bool AuthenticationManager::tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const CertificateInfo&)
+bool AuthenticationManager::tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const CertificateInfo&, ChallengeCompletionHandler)
 {
     return false;
 }
@@ -207,14 +207,20 @@ void AuthenticationManager::useCredentialForSingleChallenge(uint64_t challengeID
     auto challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.challenge.isNull());
 
-    if (tryUseCertificateInfoForChallenge(challenge.challenge, certificateInfo))
+#if USE(NETWORK_SESSION)
+    auto completionHandler = challenge.completionHandler;
+#else
+    ChallengeCompletionHandler completionHandler = nullptr;
+#endif
+    
+    if (tryUseCertificateInfoForChallenge(challenge.challenge, certificateInfo, completionHandler))
         return;
 
     AuthenticationClient* coreClient = challenge.challenge.authenticationClient();
 #if USE(NETWORK_SESSION)
     // If there is a completion handler, then there is no AuthenticationClient.
     // FIXME: Remove the use of AuthenticationClient in WebKit2 once NETWORK_SESSION is used for all loads.
-    if (challenge.completionHandler) {
+    if (completionHandler) {
         ASSERT(!coreClient);
         challenge.completionHandler(AuthenticationChallengeDisposition::UseCredential, credential);
         return;

@@ -360,7 +360,7 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
         return;
     }
     
-    if (!m_challenge.protectionSpace().isPasswordBased()) {
+    if (m_challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
         completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(m_challenge));
         return;
     }

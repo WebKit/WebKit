@@ -37,7 +37,7 @@ using namespace WebCore;
 namespace WebKit {
 
 // FIXME: This function creates an identity from a certificate, which should not be needed. We should pass an identity over IPC (as we do on iOS).
-bool AuthenticationManager::tryUseCertificateInfoForChallenge(const AuthenticationChallenge& challenge, const CertificateInfo& certificateInfo)
+bool AuthenticationManager::tryUseCertificateInfoForChallenge(const AuthenticationChallenge& challenge, const CertificateInfo& certificateInfo, ChallengeCompletionHandler completionHandler)
 {
     CFArrayRef chain = certificateInfo.certificateChain();
     if (!chain)
@@ -50,7 +50,10 @@ bool AuthenticationManager::tryUseCertificateInfoForChallenge(const Authenticati
     OSStatus result = SecIdentityCreateWithCertificate(NULL, (SecCertificateRef)CFArrayGetValueAtIndex(chain, 0), &identity);
     if (result != errSecSuccess) {
         LOG_ERROR("Unable to create SecIdentityRef with certificate - %i", result);
-        [challenge.sender() cancelAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
+        if (completionHandler)
+            completionHandler(AuthenticationChallengeDisposition::Cancel, { });
+        else
+            [challenge.sender() cancelAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
         return true;
     }
 
@@ -61,7 +64,10 @@ bool AuthenticationManager::tryUseCertificateInfoForChallenge(const Authenticati
                                                              certificates:nsChain
                                                               persistence:NSURLCredentialPersistenceNone];
 
-    [challenge.sender() useCredential:credential forAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
+    if (completionHandler)
+        completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential(credential));
+    else
+        [challenge.sender() useCredential:credential forAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
     return true;
 }
 

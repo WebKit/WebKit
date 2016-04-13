@@ -1,3 +1,22 @@
+2016-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        Fix client certificate authentication with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=156527
+        <rdar://problem/25489156>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        We only want to use serverTrustCredential for ServerTrustEvaluation authentication challenges, not 
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::tryUseCertificateInfoForChallenge):
+        (WebKit::AuthenticationManager::useCredentialForSingleChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        (WebKit::AuthenticationManager::tryUseCertificateInfoForChallenge):
+        Don't use challenge.sender with NSURLSession, which requires callbacks instead.
+
 2016-04-12  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r198933): Unable to login to Google account from Internet Accounts preference pane
