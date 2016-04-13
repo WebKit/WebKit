@@ -523,16 +523,18 @@ Data Storage::encodeRecord(const Record& record, Optional<BlobStorage::Blob> blo
     return { headerData };
 }
 
-bool Storage::removeFromPendingWriteOperations(const Key& key)
+void Storage::removeFromPendingWriteOperations(const Key& key)
 {
-    auto end = m_pendingWriteOperations.end();
-    for (auto it = m_pendingWriteOperations.begin(); it != end; ++it) {
-        if ((*it)->record.key == key) {
-            m_pendingWriteOperations.remove(it);
-            return true;
-        }
+    while (true) {
+        auto found = m_pendingWriteOperations.findIf([&key](const std::unique_ptr<WriteOperation>& operation) {
+            return operation->record.key == key;
+        });
+
+        if (found == m_pendingWriteOperations.end())
+            break;
+
+        m_pendingWriteOperations.remove(found);
     }
-    return false;
 }
 
 void Storage::remove(const Key& key)
