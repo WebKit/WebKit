@@ -1,5 +1,62 @@
 2016-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a summary page to v3 UI
+        https://bugs.webkit.org/show_bug.cgi?id=156531
+
+        Reviewed by Stephanie Lewis.
+
+        Add new "Summary" page, which shows the average difference (better or worse) from the baseline across
+        multiple platforms and tests by a single number.
+
+        * public/include/manifest.php:
+        (ManifestGenerator::generate): Include "summary" in manifest.json.
+        * public/shared/statistics.js:
+        (Statistics.mean): Added.
+        (Statistics.median): Added.
+        * public/v3/components/ratio-bar-graph.js: Added.
+        (RatioBarGraph): Shows a horizontal bar graph that visualizes the relative difference (e.g. 3% better).
+        (RatioBarGraph.prototype.update):
+        (RatioBarGraph.prototype.render):
+        (RatioBarGraph.cssTemplate):
+        (RatioBarGraph.htmlTemplate):
+        * public/v3/index.html:
+        * public/v3/main.js:
+        (main): Instantiate SummaryPage and add it to the navigation bar and the router.
+        * public/v3/models/manifest.js:
+        (Manifest._didFetchManifest): Let "summary" pass through from manifest.json to main().
+        * public/v3/models/measurement-set.js:
+        (MeasurementSet.prototype._failedToFetchJSON): Invoke the callback with an error or true in order for
+        the callback can detect a failure.
+        (MeasurementSet.prototype._invokeCallbacks): Ditto.
+        * public/v3/pages/charts-page.js:
+        (ChartsPage.createStateForConfigurationList): Added to add a hyperlink from summary page to charts page.
+        * public/v3/pages/summary-page.js: Added.
+        (SummaryPage): Added.
+        (SummaryPage.prototype.routeName): Added.
+        (SummaryPage.prototype.open): Added.
+        (SummaryPage.prototype.render): Added.
+        (SummaryPage.prototype._createConfigurationGroupAndStartFetchingData): Added.
+        (SummaryPage.prototype._constructTable): Added.
+        (SummaryPage.prototype._constructRatioGraph): Added.
+        (SummaryPage.htmlTemplate): Added.
+        (SummaryPage.cssTemplate): Added.
+        (SummaryPageConfigurationGroup): Added. Represents a set of platforms and tests shown in a single cell.
+        (SummaryPageConfigurationGroup.prototype.ratio): Added.
+        (SummaryPageConfigurationGroup.prototype.label): Added.
+        (SummaryPageConfigurationGroup.prototype.changeType): Added.
+        (SummaryPageConfigurationGroup.prototype.configurationList): Added.
+        (SummaryPageConfigurationGroup.prototype.fetchAndComputeSummary): Added.
+        (SummaryPageConfigurationGroup.prototype._computeSummary): Added.
+        (SummaryPageConfigurationGroup.prototype._fetchAndComputeRatio): Added. Invoked for each time series in
+        the set, and stores the computed ratio of the current values to the baseline in this._setToRatio.
+        The results are aggregated by _computeSummary as a single number later.
+        (SummaryPageConfigurationGroup._medianForTimeRange): Added.
+        (SummaryPageConfigurationGroup._fetchData): A thin wrapper to make MeasurementSet.fetchBetween promise
+        friendly since MeasurementSet doesn't support Promise at the moment (but it should!).
+        * server-tests/api-manifest.js: Updated a test case.
+
+2016-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Make sync-buildbot.js fault safe
         https://bugs.webkit.org/show_bug.cgi?id=156498
 

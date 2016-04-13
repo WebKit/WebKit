@@ -37,6 +37,13 @@ class ChartsPage extends PageWithHeading {
         return state;
     }
 
+    static createStateForConfigurationList(configurationList, startTime)
+    {
+        console.assert(configurationList instanceof Array);
+        var state = {paneList: configurationList};
+        return state;
+    }
+
     open(state)
     {
         this.toolbar().setNumberOfDaysCallback(this.setNumberOfDaysFromToolbar.bind(this));

@@ -18,10 +18,10 @@ function main() {
         }
 
         var router = new PageRouter();
-
         var chartsToolbar = new ChartsToolbar;
-        var chartsPage = new ChartsPage(chartsToolbar);
 
+        var summaryPage = new SummaryPage(manifest.summary);
+        var chartsPage = new ChartsPage(chartsToolbar);
         var analysisCategoryPage = new AnalysisCategoryPage();
 
         var createAnalysisTaskPage = new CreateAnalysisTaskPage();
@@ -31,12 +31,13 @@ function main() {
         analysisTaskPage.setParentPage(analysisCategoryPage);
 
         var heading = new Heading(manifest.siteTitle);
-        heading.addPageGroup([chartsPage, analysisCategoryPage]);
+        heading.addPageGroup([summaryPage, chartsPage, analysisCategoryPage]);
 
         heading.setTitle(manifest.siteTitle);
         heading.addPageGroup(dashboardPages);
 
         var router = new PageRouter();
+        router.addPage(summaryPage);
         router.addPage(chartsPage);
         router.addPage(createAnalysisTaskPage);
         router.addPage(analysisTaskPage);

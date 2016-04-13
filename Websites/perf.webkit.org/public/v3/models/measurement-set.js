@@ -166,22 +166,22 @@ class MeasurementSet {
     _failedToFetchJSON(clusterEndTime, error)
     {
         if (clusterEndTime) {
-            this._invokeCallbacks(clusterEndTime);
+            this._invokeCallbacks(clusterEndTime, error || true);
             return;
         }
 
         console.assert(!this._fetchedPrimary);
         console.assert(this._waitingForPrimaryCluster instanceof Array);
         for (var entry of this._waitingForPrimaryCluster)
-            entry.callback();
+            entry.callback(error || true);
         this._waitingForPrimaryCluster = false;
     }
 
-    _invokeCallbacks(clusterEndTime)
+    _invokeCallbacks(clusterEndTime, error)
     {
         var callbackList = this._endTimeToCallback[clusterEndTime];
         for (var callback of callbackList)
-            callback();
+            callback(error);
         this._endTimeToCallback[clusterEndTime] = true;
     }
 

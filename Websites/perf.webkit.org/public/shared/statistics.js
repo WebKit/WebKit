@@ -12,6 +12,14 @@ var Statistics = new (function () {
         return values.length ? values.reduce(function (a, b) { return a + b; }) : 0;
     }
 
+    this.mean = function (values) {
+        return this.sum(values) / values.length;
+    }
+
+    this.median = function (values) {
+        return values.sort(function (a, b) { return a - b; })[Math.floor(values.length / 2)];
+    }
+
     this.squareSum = function (values) {
         return values.length ? values.reduce(function (sum, value) { return sum + value * value;}, 0) : 0;
     }
