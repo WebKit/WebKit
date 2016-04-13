@@ -122,6 +122,7 @@ list(APPEND WebKit2_SOURCES
     Shared/mac/ArgumentCodersMac.mm
     Shared/mac/AttributedString.mm
     Shared/mac/ChildProcessMac.mm
+    Shared/mac/CodeSigning.mm
     Shared/mac/ColorSpaceData.mm
     Shared/mac/CookieStorageShim.mm
     Shared/mac/CookieStorageShimLibrary.cpp

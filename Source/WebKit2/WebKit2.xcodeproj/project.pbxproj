@@ -1711,6 +1711,8 @@
 		CDC3831017212440008A2FC3 /* CookieStorageShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC3830D1721242D008A2FC3 /* CookieStorageShim.mm */; };
 		CDCA85C8132ABA4E00E961DF /* WKFullScreenWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */; };
 		CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */; };
+		CE11AD501CBC47F800681EE5 /* CodeSigning.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */; };
+		CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */ = {isa = PBXBuildFile; fileRef = CE11AD511CBC482F00681EE5 /* CodeSigning.h */; };
 		CE1A0BD21A48E6C60054EF74 /* AssertionServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BCC1A48E6C60054EF74 /* AssertionServicesSPI.h */; };
 		CE1A0BD31A48E6C60054EF74 /* CorePDFSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BCD1A48E6C60054EF74 /* CorePDFSPI.h */; };
 		CE1A0BD41A48E6C60054EF74 /* DataDetectorsUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BCE1A48E6C60054EF74 /* DataDetectorsUISPI.h */; };
@@ -3786,6 +3788,8 @@
 		CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFullScreenWindowController.mm; sourceTree = "<group>"; };
 		CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullScreenWindowController.h; sourceTree = "<group>"; };
 		CDCA85D4132AC2B300E961DF /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CodeSigning.mm; sourceTree = "<group>"; };
+		CE11AD511CBC482F00681EE5 /* CodeSigning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSigning.h; sourceTree = "<group>"; };
 		CE1A0BCC1A48E6C60054EF74 /* AssertionServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssertionServicesSPI.h; sourceTree = "<group>"; };
 		CE1A0BCD1A48E6C60054EF74 /* CorePDFSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorePDFSPI.h; sourceTree = "<group>"; };
 		CE1A0BCE1A48E6C60054EF74 /* DataDetectorsUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsUISPI.h; sourceTree = "<group>"; };
@@ -6223,6 +6227,8 @@
 				E1A31731134CEA6C007C9A4F /* AttributedString.h */,
 				E1A31734134CEA80007C9A4F /* AttributedString.mm */,
 				9F54F88E16488E87007DF81A /* ChildProcessMac.mm */,
+				CE11AD511CBC482F00681EE5 /* CodeSigning.h */,
+				CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */,
 				1A2A4AFE158693920090C9E9 /* ColorSpaceData.h */,
 				1A2A4AFD158693920090C9E9 /* ColorSpaceData.mm */,
 				CDC3830E1721242D008A2FC3 /* CookieStorageShim.h */,
@@ -7319,6 +7325,7 @@
 				51FAEC3A1B0657630009C4E7 /* ChildProcessMessages.h in Headers */,
 				E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */,
 				290F4272172A0C7400939FF0 /* ChildProcessSupplement.h in Headers */,
+				CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */,
 				1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */,
 				37BEC4E119491486008B4286 /* CompletionHandlerCallChecker.h in Headers */,
 				37C4E9F6131C6E7E0029BD5A /* config.h in Headers */,
@@ -8761,6 +8768,7 @@
 				9F54F88F16488E87007DF81A /* ChildProcessMac.mm in Sources */,
 				51FAEC3B1B0657680009C4E7 /* ChildProcessMessageReceiver.cpp in Sources */,
 				E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */,
+				CE11AD501CBC47F800681EE5 /* CodeSigning.mm in Sources */,
 				1A2A4B0E1586A2240090C9E9 /* ColorSpaceData.mm in Sources */,
 				1A6F9FB711E1408500DB1371 /* CommandLinePOSIX.cpp in Sources */,
 				37BEC4E019491486008B4286 /* CompletionHandlerCallChecker.mm in Sources */,

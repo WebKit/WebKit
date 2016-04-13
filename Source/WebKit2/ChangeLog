@@ -1,3 +1,45 @@
+2016-04-12  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r198933): Unable to login to Google account from Internet Accounts preference pane
+        https://bugs.webkit.org/show_bug.cgi?id=156447
+        <rdar://problem/25628133>
+
+        Reviewed by Darin Adler.
+
+        Reverts the workaround landed in r199301 and teaches ProcessLauncherMac to use the code
+        signing identifier of the UI process as the client-identifier if it is signed. Otherwise,
+        we fall back to using the main bundle identifier or _NSGetProgname() depending on whether
+        the UI process has an associated app bundle.
+
+        * PlatformMac.cmake: Add file Shared/mac/CodeSigning.mm.
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+        (WebKit::codeSigningIdentifierForProcess): Deleted; moved from here to file Shared/mac/CodeSigning.mm.
+        * Shared/mac/CodeSigning.h: Added.
+        * Shared/mac/CodeSigning.mm: Added.
+        (WebKit::secCodeForCurrentProcess): Added.
+        (WebKit::secCodeForProcess): Added.
+        (WebKit::secCodeSigningInformation): Added.
+        (WebKit::appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement): Added.
+        (WebKit::secCodeSigningIdentifier): Added.
+        (WebKit::codeSigningIdentifier): Returns the code signing identifier for the current process.
+        (WebKit::codeSigningIdentifierForProcess): Moved from file Shared/mac/ChildProcessMac.mm. Extracted logic
+        into various helper functions (above) so that it can be shared with WebKit::codeSigningIdentifier() as
+        well as to improve the readability of the code. Removed the OSStatus out argument that was used by callers
+        for logging purposes and moved such logging responsibility into WebKit::secCodeSigningIdentifier() as
+        a release assertion message since we always want to log this error when code signing validation fails. We
+        use a release assertion to cause a noticeable crash because we such failures should not occur and if they
+        do then we want to see crash reports so that we can handle such failures. Using a release assertion for
+        validation failures also simplifies the possible return values of this function as such failures represented
+        the only case where this function would return an empty string. We now return either a null string or a non-
+        empty string. We return a null string when the specified process is either unsigned or signed by a third-party;
+        otherwise, we return a non-empty string that represents the code signing identifier.
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService): Use the code signing identifier for the client-identifier if we have one (e.g.
+        we are signed app). If we do not have a code signing identifier then take client-identifier to be the
+        bundle identifier of our main bundle. Failing that we take client-identifier to be _NSGetProgname().
+        * WebKit2.xcodeproj/project.pbxproj: Add files Shared/mac/CodeSigning.{h, mm}.
+
 2016-04-12  Enrica Casucci  <enrica@apple.com>
 
         Should retrieve text surrounding the selection when performing lookup.

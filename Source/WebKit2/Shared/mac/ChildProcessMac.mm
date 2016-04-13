@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 #import "ChildProcess.h"
 
+#import "CodeSigning.h"
 #import "SandboxInitializationParameters.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/CFNetworkSPI.h>
@@ -38,7 +39,6 @@
 #import <pwd.h>
 #import <stdlib.h>
 #import <sysexits.h>
-#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -76,39 +76,6 @@ void ChildProcess::platformInitialize()
 {
     initializeTimerCoalescingPolicy();
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
-}
-
-static String codeSigningIdentifierForProcess(pid_t pid, OSStatus& errorCode)
-{
-    RetainPtr<CFNumberRef> pidCFNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &pid));
-    const void* keys[] = { kSecGuestAttributePid };
-    const void* values[] = { pidCFNumber.get() };
-    RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    SecCodeRef code = nullptr;
-    if ((errorCode = SecCodeCopyGuestWithAttributes(nullptr, attributes.get(), kSecCSDefaultFlags, &code)))
-        return String();
-    RetainPtr<SecCodeRef> codePtr = adoptCF(code);
-    RELEASE_ASSERT(codePtr);
-
-    CFStringRef macAppStoreSignedOrAppleDeveloperSignedRequirement = CFSTR("(anchor apple generic and certificate leaf[field.1.2.840.113635.100.6.1.9]) or (anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13])");
-    SecRequirementRef signingRequirement = nullptr;
-    RELEASE_ASSERT(!SecRequirementCreateWithString(macAppStoreSignedOrAppleDeveloperSignedRequirement, kSecCSDefaultFlags, &signingRequirement));
-    RetainPtr<SecRequirementRef> signingRequirementPtr = adoptCF(signingRequirement);
-    errorCode = SecCodeCheckValidity(codePtr.get(), kSecCSDefaultFlags, signingRequirementPtr.get());
-    if (errorCode == errSecCSUnsigned || errorCode == errSecCSReqFailed)
-        return String(); // Unsigned, signed by Apple, or signed by a third-party
-    if (errorCode != errSecSuccess)
-        return emptyString(); // e.g. invalid/malformed signature
-    String codeSigningIdentifier;
-    CFDictionaryRef signingInfo = nullptr;
-    RELEASE_ASSERT(!SecCodeCopySigningInformation(codePtr.get(), kSecCSDefaultFlags, &signingInfo));
-    RetainPtr<CFDictionaryRef> signingInfoPtr = adoptCF(signingInfo);
-    if (CFDictionaryRef plist = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(signingInfoPtr.get(), kSecCodeInfoPList)))
-        codeSigningIdentifier = String(dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(plist, kCFBundleIdentifierKey)));
-    else
-        codeSigningIdentifier = String(dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(signingInfoPtr.get(), kSecCodeInfoIdentifier)));
-    RELEASE_ASSERT(!codeSigningIdentifier.isEmpty());
-    return codeSigningIdentifier;
 }
 
 void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
@@ -210,11 +177,10 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
 
     if (willUseUserDirectorySuffixInitializationParameter)
         return;
-    error = noErr;
-    String clientCodeSigningIdentifier = codeSigningIdentifierForProcess(xpc_connection_get_pid(parameters.connectionIdentifier.xpcConnection.get()), error);
+    String clientCodeSigningIdentifier = codeSigningIdentifierForProcess(xpc_connection_get_pid(parameters.connectionIdentifier.xpcConnection.get()));
     bool isClientCodeSigned = !clientCodeSigningIdentifier.isNull();
     if (isClientCodeSigned && clientCodeSigningIdentifier != parameters.clientIdentifier) {
-        WTFLogAlways("%s: Code signing identifier of client differs from passed client identifier: %ld\n", getprogname(), static_cast<long>(error));
+        WTFLogAlways("%s: Code signing identifier of client differs from passed client identifier.\n", getprogname());
         exit(EX_NOPERM);
     }
 }

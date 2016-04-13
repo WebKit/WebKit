@@ -44,6 +44,10 @@
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC)
+#import "CodeSigning.h"
+#endif
+
 namespace WebKit {
 
 typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(pid_t, IPC::Connection::Identifier);
@@ -136,8 +140,12 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     // Insert a send right so we can send to it.
     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
 
-    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-    CString clientIdentifier = bundleIdentifier ? String([[NSBundle mainBundle] bundleIdentifier]).utf8() : *_NSGetProgname();
+    String clientIdentifier;
+#if PLATFORM(MAC)
+    clientIdentifier = codeSigningIdentifier();
+#endif
+    if (clientIdentifier.isNull())
+        clientIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 
     // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
     auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
@@ -146,7 +154,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
     mach_port_deallocate(mach_task_self(), listeningPort);
 
-    xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", clientIdentifier.data());
+    xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", !clientIdentifier.isEmpty() ? clientIdentifier.utf8().data() : *_NSGetProgname());
     xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
 
     if (forDevelopment) {
