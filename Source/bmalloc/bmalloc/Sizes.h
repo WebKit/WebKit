@@ -46,14 +46,9 @@ namespace Sizes {
     static const size_t alignment = 8;
     static const size_t alignmentMask = alignment - 1ul;
 
-#if BPLATFORM(IOS)
-    static const size_t vmPageSize = 16 * kB;
-#else
-    static const size_t vmPageSize = 4 * kB;
-#endif
-    
     static const size_t smallLineSize = 256;
-    static const size_t smallLineCount = vmPageSize / smallLineSize;
+    static const size_t smallPageSize = 4 * kB;
+    static const size_t smallPageLineCount = smallPageSize / smallLineSize;
 
     static const size_t smallMax = 1 * kB;
     static const size_t maskSizeClassMax = 512;
