@@ -1,3 +1,43 @@
+2016-04-14  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Allow listbox content and scrollbar to intrude padding area.
+        https://bugs.webkit.org/show_bug.cgi?id=128489
+
+        Reviewed by Myles C. Maxfield.
+
+        Originally when the RenderListBox::controlClipRect method was implemented (see [1]), it used
+        to allow its content (<option>'s) to intrude padding to get rendered. Overlay scrollbars were also
+        allowed to paint over the padding area, if necessary.
+
+        [2] changed this behavior to restrict list-box'es content within the content box rect (excluding padding and border).
+
+        This had two consequences:
+        1) it made WebKit disallow list-box' content to intrude the padding area, diverging from other vendors.
+        like Firefox and Chrome.
+        2) Since overlay scrollbar might get painted over the padding area, if any, [2] could result
+        in the scrollbar being clipped out if padding-right is set (or padding-left in case of RTL content).
+
+        Patch changed WebKit back so that it allows list-box' content and overlay scrollbars to intrude the
+        padding area, matching other browsers vendors
+
+        [1] https://trac.webkit.org/changeset/18819/trunk/WebCore/rendering/RenderListBox.cpp
+        [2] https://trac.webkit.org/changeset/19037/trunk/WebCore/rendering/RenderListBox.cpp
+
+        Tests: fast/forms/listbox-selection-3.html
+               fast/forms/listbox-padding-clip-selected.html
+               fast/forms/listbox-padding-clip-expected-mismatch.html (renamed from listbox-padding-clip-overlay-expected.html)
+               fast/forms/listbox-padding-clip-overlay-expected-mismatch.html (renamed from listbox-padding-clip-expected.html)
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::numVisibleItems): changed to allow list-box items to get rendered on the padding-bottom area.
+        This matches Firefox and Chrome.
+        (WebCore::RenderListBox::listIndexAtOffset): relax the check for a given list-box item at a specific offset in the vertical axis.
+        This means if an list-box item has its content painted into the padding-bottom area, it will be actionable by mouse clicking.
+        This matches Firefox and Chrome.
+        (WebCore::RenderListBox::controlClipRect): clips list-box content against the padding box rect rather than the content box rect,
+        to allow its list-box items' content intrude the padding area.
+        This matches Firefox and Chrome.
+
 2016-04-14  Antti Koivisto  <antti@apple.com>
 
         Collapsed border cache invalidation can lead to O(n^2) during style resolve

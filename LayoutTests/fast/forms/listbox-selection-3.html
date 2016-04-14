@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Clicking on items of &lt;select> with padding set.');
+
+var parent = document.createElement('div');
+parent.innerHTML = '<select id="sl1" multiple size=5>'
+    + '<option id="opt1">one</option>'
+    + '<option id="opt2">two</option>'
+    + '<option id="opt3">three</option>'
+    + '<option id="opt4">four</option>'
+    + '<option id="opt5">five</option>'
+    + '<option id="opt6">six</option>'
+    + '<option id="opt7">seven</option>'
+    + '<option id="opt8">eight</option>'
+    + '<option id="opt9">nine</option>'
+    + '<option id="opt10">ten</option>'
+    + '<option id="opt11">eleven</option>'
+    + '<option id="opt12">twelve</option>'
+    + '<option id="opt13">thirteen</option>'
+    + '<option id="opt14">fourteen</option>'
+    + '<option id="opt15">fifteen</option>'
+    + '<option id="opt16">sixteen</option>'
+    + '<option id="opt17">seventeen</option>'
+    + '</select>';
+document.body.appendChild(parent);
+
+// Determine the item height.
+var sl1 = document.getElementById('sl1');
+var sl2 = document.getElementById('sl2');
+var itemHeight = Math.floor(sl1.offsetHeight / sl1.size);
+sl1.removeAttribute('size');
+var height = itemHeight * 9;
+sl1.setAttribute('style', 'height: ' + height + 'px; border: 0px; padding-top: 0px; padding-left: 25px; padding-right: 25px; padding-bottom: 20px;');
+
+var kClickOnPaddingLeftArea = 1;
+var kClickOnPaddingRightArea = 2;
+var kClickOnOptionElement = 3;
+
+function mouseDownOnSelect(selId, index, fudge)
+{
+    var sl = document.getElementById(selId);
+    var opt = document.getElementById("opt" + index);
+    var paddingTop = 0;
+    var paddingLeft = 25;
+    var paddingRight = 25;
+
+    // default clicking to the middle of the option element.
+    var x = ((sl.offsetLeft + sl.offsetWidth - paddingRight) - (sl.offsetLeft + paddingLeft)) / 2;
+    x += sl.offsetLeft + paddingLeft;
+
+    var y = (index - 1) * itemHeight + itemHeight / 3 - window.pageYOffset + paddingTop;
+    y += sl.offsetTop;
+
+    if (fudge == kClickOnPaddingLeftArea) {
+       x = opt.offsetLeft + (paddingLeft / 2); // middle of the padding left area.
+    } else if (fudge == kClickOnOptionElement) {
+       // do nothing, already set as default value above.
+    } else if (fudge == kClickOnPaddingRightArea) {
+       x = opt.offsetRight + (paddingRight / 2); // middle of the padding right area.
+    }
+    var event = document.createEvent("MouseEvent");
+    event.initMouseEvent("mousedown", true, true, document.defaultView, 1, x, y, x, y, false, false, false, false, 0, document);
+    sl.dispatchEvent(event);
+}
+
+function selectionPattern(selectId)
+{
+    var select = document.getElementById(selectId);
+    var result = "";
+    for (var i = 0; i < select.options.length; i++)
+        result += select.options[i].selected ? '1' : '0';
+    return result;
+}
+
+window.onload = function () {
+  mouseDownOnSelect("sl1", 2, kClickOnPaddingRightArea);
+  shouldBe('selectionPattern("sl1")', '"00000000000000000"');
+
+  mouseDownOnSelect("sl1", 2, kClickOnOptionElement);
+  shouldBe('selectionPattern("sl1")', '"01000000000000000"');
+
+  mouseDownOnSelect("sl1", 1, kClickOnOptionElement);
+  shouldBe('selectionPattern("sl1")', '"10000000000000000"');
+
+  mouseDownOnSelect("sl1", 2, kClickOnPaddingRightArea);
+  shouldBe('selectionPattern("sl1")', '"10000000000000000"');
+
+  mouseDownOnSelect("sl1", 2, kClickOnPaddingLeftArea);
+  shouldBe('selectionPattern("sl1")', '"10000000000000000"');
+
+  mouseDownOnSelect("sl1", 9, kClickOnOptionElement);
+  shouldBe('selectionPattern("sl1")', '"00000000100000000"');
+};
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1762,6 +1762,7 @@ fast/forms/listbox-deselect-scroll.html [ Failure ]
 fast/forms/listbox-non-contiguous-keyboard-selection.html [ Failure ]
 fast/forms/listbox-onchange.html [ Failure ]
 fast/forms/listbox-selection-2.html [ Failure ]
+fast/forms/listbox-selection-3.html [ Failure ]
 fast/forms/listbox-selection-after-typeahead.html [ Failure ]
 fast/forms/listbox-selection.html [ Failure ]
 fast/forms/listbox-typeahead-scroll.html [ Failure ]
@@ -3029,9 +3030,9 @@ fast/scrolling/rtl-scrollbars-sticky-iframe.html [ ImageOnlyFailure ]
 # iOS list box controls are not drawn in the standard way.
 fast/forms/listbox-padding-clip.html [ ImageOnlyFailure ]
 fast/forms/listbox-padding-clip-overlay.html [ ImageOnlyFailure ]
+fast/forms/listbox-padding-clip-selected.html [ ImageOnlyFailure ]
 
 # No focusring on iOS.
 fast/images/image-map-outline-in-positioned-container.html [ Pass ImageOnlyFailure ]
 fast/images/image-map-outline-with-paint-root-offset.html [ Pass ImageOnlyFailure ]
 fast/images/image-map-outline-with-scale-transform.html [ Pass ImageOnlyFailure ]
- 

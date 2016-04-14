@@ -1,3 +1,17 @@
+2016-04-14  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Allow listbox content and scrollbar to intrude padding area.
+        https://bugs.webkit.org/show_bug.cgi?id=128489
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/forms/listbox-selection-3-expected.txt: Added.
+        * fast/forms/listbox-selection-3.html: Added.
+        * fast/forms/listbox-padding-clip-selected.html: Added.
+        * fast/forms/listbox-padding-clip-selected-expected.html: Added.
+        * fast/forms/listbox-padding-clip-expected-mismatch.html: Renamed from listbox-padding-clip-overlay-expected.html.
+        * fast/forms/listbox-padding-clip-overlay-expected-mismatch.html: Renamed from listbox-padding-clip-expected.html.
+
 2016-04-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Implement CSSGridTemplateAreasValue::equals

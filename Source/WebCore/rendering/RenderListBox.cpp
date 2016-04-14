@@ -239,7 +239,7 @@ int RenderListBox::size() const
 int RenderListBox::numVisibleItems() const
 {
     // Only count fully visible rows. But don't return 0 even if only part of a row shows.
-    return std::max<int>(1, (contentHeight() + rowSpacing) / itemHeight());
+    return std::max<int>(1, (contentHeight() + paddingBottom() + rowSpacing) / itemHeight());
 }
 
 int RenderListBox::numItems() const
@@ -466,7 +466,7 @@ int RenderListBox::listIndexAtOffset(const LayoutSize& offset)
     if (!numItems())
         return -1;
 
-    if (offset.height() < borderTop() + paddingTop() || offset.height() > height() - paddingBottom() - borderBottom())
+    if (offset.height() < borderTop() || offset.height() > height() - borderBottom())
         return -1;
 
     int scrollbarWidth = m_vBar ? m_vBar->width() : 0;
@@ -726,7 +726,9 @@ bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
 LayoutRect RenderListBox::controlClipRect(const LayoutPoint& additionalOffset) const
 {
-    LayoutRect clipRect = contentBoxRect();
+    // Clip against the padding box, to give <option>s and overlay scrollbar some extra space
+    // to get painted.
+    LayoutRect clipRect = paddingBoxRect();
     if (verticalScrollbarIsOnLeft() && (!layer() || !layer()->verticalScrollbarIsOnLeft()))
         clipRect.move(m_vBar->occupiedWidth(), 0);
     clipRect.moveBy(additionalOffset);
