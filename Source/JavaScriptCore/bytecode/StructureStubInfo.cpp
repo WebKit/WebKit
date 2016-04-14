@@ -43,7 +43,7 @@ StructureStubInfo::StructureStubInfo(AccessType accessType)
     , countdown(1) // For a totally clear stub, we'll patch it after the first execution.
     , repatchCount(0)
     , numberOfCoolDowns(0)
-    , bufferingCountdown(0)
+    , bufferingCountdown(Options::repatchBufferingCountdown())
     , resetByGC(false)
     , tookSlowPath(false)
     , everConsidered(false)

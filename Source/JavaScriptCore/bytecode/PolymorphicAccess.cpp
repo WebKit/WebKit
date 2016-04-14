@@ -472,6 +472,9 @@ bool AccessCase::couldStillSucceed() const
 
 bool AccessCase::canBeReplacedByMegamorphicLoad() const
 {
+    if (type() == MegamorphicLoad)
+        return true;
+    
     return type() == Load
         && !viaProxy()
         && conditionSet().isEmpty()
@@ -481,17 +484,23 @@ bool AccessCase::canBeReplacedByMegamorphicLoad() const
 
 bool AccessCase::canReplace(const AccessCase& other) const
 {
-    // We could do a lot better here, but for now we just do something obvious.
-    
-    if (type() == MegamorphicLoad && other.canBeReplacedByMegamorphicLoad())
-        return true;
+    // This puts in a good effort to try to figure out if 'other' is made superfluous by '*this'.
+    // It's fine for this to return false if it's in doubt.
 
-    if (!guardedByStructureCheck() || !other.guardedByStructureCheck()) {
-        // FIXME: Implement this!
-        return false;
+    switch (type()) {
+    case MegamorphicLoad:
+        return other.canBeReplacedByMegamorphicLoad();
+    case ArrayLength:
+    case StringLength:
+    case DirectArgumentsLength:
+    case ScopedArgumentsLength:
+        return other.type() == type();
+    default:
+        if (!guardedByStructureCheck() || !other.guardedByStructureCheck())
+            return false;
+        
+        return structure() == other.structure();
     }
-
-    return structure() == other.structure();
 }
 
 void AccessCase::dump(PrintStream& out) const
@@ -1587,7 +1596,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     // optimization is applicable. Note that we basically tune megamorphicLoadCost according to code
     // size. It would be faster to just allow more repatching with many load cases, and avoid the
     // megamorphicLoad optimization, if we had infinite executable memory.
-    if (cases.size() >= Options::megamorphicLoadCost()) {
+    if (cases.size() >= Options::maxAccessVariantListSize()) {
         unsigned numSelfLoads = 0;
         for (auto& newCase : cases) {
             if (newCase->canBeReplacedByMegamorphicLoad())
@@ -1658,9 +1667,14 @@ AccessGenerationResult PolymorphicAccess::regenerate(
         // of something that isn't patchable. The slow path will decrement "countdown" and will only
         // patch things if the countdown reaches zero. We increment the slow path count here to ensure
         // that the slow path does not try to patch.
+#if CPU(X86) || CPU(X86_64)
+        jit.move(CCallHelpers::TrustedImmPtr(&stubInfo.countdown), state.scratchGPR);
+        jit.add8(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(state.scratchGPR));
+#else
         jit.load8(&stubInfo.countdown, state.scratchGPR);
         jit.add32(CCallHelpers::TrustedImm32(1), state.scratchGPR);
         jit.store8(state.scratchGPR, &stubInfo.countdown);
+#endif
     }
 
     CCallHelpers::JumpList failure;

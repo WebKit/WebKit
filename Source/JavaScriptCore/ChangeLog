@@ -1,3 +1,42 @@
+2016-04-14  Filip Pizlo  <fpizlo@apple.com>
+
+        PolymorphicAccess should try to generate a stub only once
+        https://bugs.webkit.org/show_bug.cgi?id=156555
+
+        Reviewed by Geoffrey Garen.
+        
+        This changes the PolymorphicAccess heuristics to reduce the amount of code generation even
+        more than before. We used to always generate a monomorphic stub for the first case we saw.
+        This change disables that. This change also increases the buffering countdown to match the
+        cool-down repatch count. This means that we will allow for ten slow paths for adding cases,
+        then we will generate a stub, and then we will go into cool-down and the repatching slow
+        paths will not even attempt repatching for a while. After we emerge from cool-down - which
+        requires a bunch of slow path calls - we will again wait for ten slow paths to get new
+        cases. Note that it only takes 13 cases to cause the stub to give up on future repatching
+        entirely. Also, most stubs don't ever get to 10 cases. Therefore, for most stubs this change
+        means that each IC will repatch once. If they make it to two repatching, then the likelihood
+        of a third becomes infinitesimal because of all of the rules that come into play at that
+        point (the size limit being 13, the fact that we go into exponential cool-down every time we
+        generate code, and the fact that if we have lots of self cases then we will create a
+        catch-all megamorphic load case).
+
+        This also undoes a change to the megamorphic optimization that I think was unintentional.
+        As in the change that originally introduced megamorphic loads, we want to do this only if we
+        would otherwise exhaust the max size of the IC. This is because megamorphic loads are pretty
+        expensive and it's best to use them only if we know that the alternative is giving up on
+        caching.
+
+        This is neutral on JS benchmarks, but looks like it's another speed-up for page loading.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::canBeReplacedByMegamorphicLoad):
+        (JSC::AccessCase::canReplace):
+        (JSC::AccessCase::dump):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        * runtime/Options.h:
+
 2016-04-14  Mark Lam  <mark.lam@apple.com>
 
         Update treatment of invoking RegExp.prototype methods on RegExp.prototype.
