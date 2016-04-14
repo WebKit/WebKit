@@ -1,3 +1,13 @@
+2016-04-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GObject DOM bindings API break after r199392.
+
+        Since r199392 webkit_dom_attr_set_value() no longer raises exceptions, but we need to keep the GError parameter
+        to keep backwards compatibility.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (FunctionUsedToRaiseException):
+
 2016-04-13  Daniel Bates  <dabates@apple.com>
 
         CSP: Nested browsing context created for <object> or <embed> should respect object-src directive
