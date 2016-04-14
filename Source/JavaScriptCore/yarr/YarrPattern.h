@@ -287,9 +287,11 @@ std::unique_ptr<CharacterClass> newlineCreate();
 std::unique_ptr<CharacterClass> digitsCreate();
 std::unique_ptr<CharacterClass> spacesCreate();
 std::unique_ptr<CharacterClass> wordcharCreate();
+std::unique_ptr<CharacterClass> wordUnicodeIgnoreCaseCharCreate();
 std::unique_ptr<CharacterClass> nondigitsCreate();
 std::unique_ptr<CharacterClass> nonspacesCreate();
 std::unique_ptr<CharacterClass> nonwordcharCreate();
+std::unique_ptr<CharacterClass> nonwordUnicodeIgnoreCaseCharCreate();
 
 struct TermChain {
     TermChain(PatternTerm term)
@@ -317,9 +319,11 @@ struct YarrPattern {
         digitsCached = 0;
         spacesCached = 0;
         wordcharCached = 0;
+        wordUnicodeIgnoreCaseCharCached = 0;
         nondigitsCached = 0;
         nonspacesCached = 0;
         nonwordcharCached = 0;
+        nonwordUnicodeIgnoreCasecharCached = 0;
 
         m_disjunctions.clear();
         m_userCharacterClasses.clear();
@@ -367,6 +371,14 @@ struct YarrPattern {
         }
         return wordcharCached;
     }
+    CharacterClass* wordUnicodeIgnoreCaseCharCharacterClass()
+    {
+        if (!wordUnicodeIgnoreCaseCharCached) {
+            m_userCharacterClasses.append(wordUnicodeIgnoreCaseCharCreate());
+            wordUnicodeIgnoreCaseCharCached = m_userCharacterClasses.last().get();
+        }
+        return wordUnicodeIgnoreCaseCharCached;
+    }
     CharacterClass* nondigitsCharacterClass()
     {
         if (!nondigitsCached) {
@@ -391,6 +403,14 @@ struct YarrPattern {
         }
         return nonwordcharCached;
     }
+    CharacterClass* nonwordUnicodeIgnoreCaseCharCharacterClass()
+    {
+        if (!nonwordUnicodeIgnoreCasecharCached) {
+            m_userCharacterClasses.append(nonwordUnicodeIgnoreCaseCharCreate());
+            nonwordUnicodeIgnoreCasecharCached = m_userCharacterClasses.last().get();
+        }
+        return nonwordUnicodeIgnoreCasecharCached;
+    }
 
     bool ignoreCase() const { return m_flags & FlagIgnoreCase; }
     bool multiline() const { return m_flags & FlagMultiline; }
@@ -414,9 +434,11 @@ private:
     CharacterClass* digitsCached;
     CharacterClass* spacesCached;
     CharacterClass* wordcharCached;
+    CharacterClass* wordUnicodeIgnoreCaseCharCached;
     CharacterClass* nondigitsCached;
     CharacterClass* nonspacesCached;
     CharacterClass* nonwordcharCached;
+    CharacterClass* nonwordUnicodeIgnoreCasecharCached;
 };
 
 } } // namespace JSC::Yarr

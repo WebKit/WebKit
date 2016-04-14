@@ -349,7 +349,13 @@ public:
             m_alternative->m_terms.append(PatternTerm(m_pattern.spacesCharacterClass(), invert));
             break;
         case WordClassID:
-            m_alternative->m_terms.append(PatternTerm(m_pattern.wordcharCharacterClass(), invert));
+            if (m_pattern.unicode() && m_pattern.ignoreCase()) {
+                if (invert)
+                    m_alternative->m_terms.append(PatternTerm(m_pattern.nonwordUnicodeIgnoreCaseCharCharacterClass(), false));
+                else
+                    m_alternative->m_terms.append(PatternTerm(m_pattern.wordUnicodeIgnoreCaseCharCharacterClass(), false));
+            } else
+                m_alternative->m_terms.append(PatternTerm(m_pattern.wordcharCharacterClass(), invert));
             break;
         case NewlineClassID:
             m_alternative->m_terms.append(PatternTerm(m_pattern.newlineCharacterClass(), invert));
@@ -386,7 +392,10 @@ public:
             break;
         
         case WordClassID:
-            m_characterClassConstructor.append(invert ? m_pattern.nonwordcharCharacterClass() : m_pattern.wordcharCharacterClass());
+            if (m_pattern.unicode() && m_pattern.ignoreCase())
+                m_characterClassConstructor.append(invert ? m_pattern.nonwordUnicodeIgnoreCaseCharCharacterClass() : m_pattern.wordUnicodeIgnoreCaseCharCharacterClass());
+            else
+                m_characterClassConstructor.append(invert ? m_pattern.nonwordcharCharacterClass() : m_pattern.wordcharCharacterClass());
             break;
         
         default:
@@ -884,9 +893,11 @@ YarrPattern::YarrPattern(const String& pattern, RegExpFlags flags, const char** 
     , digitsCached(0)
     , spacesCached(0)
     , wordcharCached(0)
+    , wordUnicodeIgnoreCaseCharCached(0)
     , nondigitsCached(0)
     , nonspacesCached(0)
     , nonwordcharCached(0)
+    , nonwordUnicodeIgnoreCasecharCached(0)
 {
     *error = compile(pattern);
 }
