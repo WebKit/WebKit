@@ -54,6 +54,8 @@ public:
     size_t rowCount() const { return m_rowCount; }
     size_t columnCount() const { return m_columnCount; }
 
+    bool equals(const CSSGridTemplateAreasValue&) const;
+
 private:
     CSSGridTemplateAreasValue(const NamedGridAreaMap&, size_t rowCount, size_t columnCount);
 

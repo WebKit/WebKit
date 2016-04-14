@@ -1,3 +1,22 @@
+2016-04-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Implement CSSGridTemplateAreasValue::equals
+        https://bugs.webkit.org/show_bug.cgi?id=156578
+
+        Reviewed by Darin Adler.
+
+        This was causing an infinite loop setting grid-template-areas
+        from JavaScript.
+
+        The reason was that CSSGridTemplateAreasValue needs
+        an specific implementation of equals() method.
+
+        Test: fast/css-grid-layout/grid-template-areas-infinite-loop.html
+
+        * css/CSSGridTemplateAreasValue.cpp:
+        (WebCore::CSSGridTemplateAreasValue::equals):
+        * css/CSSGridTemplateAreasValue.h:
+
 2016-04-14  Brent Fulgham  <bfulgham@apple.com>
 
         [CMake] Clean up CMake files

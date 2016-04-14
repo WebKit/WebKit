@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<link href="resources/grid.css" rel="stylesheet">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</style>
+<p>This test checks that setting grid-template-areas from JavaScript doesn't cause an infinite loop.</p>
+<div id="grid">
+</div>
+<script>
+    var grid = document.getElementById("grid");
+    grid.style.webkitGridTemplateAreas = '"a"';
+    grid.style.webkitGridTemplateAreas = '"b"';
+</script>

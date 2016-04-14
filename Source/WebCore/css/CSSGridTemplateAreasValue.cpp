@@ -85,6 +85,11 @@ String CSSGridTemplateAreasValue::customCSSText() const
     return builder.toString();
 }
 
+bool CSSGridTemplateAreasValue::equals(const CSSGridTemplateAreasValue& other) const
+{
+    return m_gridAreaMap == other.m_gridAreaMap && m_rowCount == other.m_rowCount && m_columnCount == other.m_columnCount;
+}
+
 } // namespace WebCore
 
 #endif /* ENABLE(CSS_GRID_LAYOUT) */

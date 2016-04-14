@@ -1,0 +1,3 @@
+This test checks that setting grid-template-areas from JavaScript doesn't cause an infinite loop.
+
+
