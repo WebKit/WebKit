@@ -1,5 +1,20 @@
 2016-04-13  Daniel Bates  <dabates@apple.com>
 
+        CSP: Remove duplicate test meta-outside-head.html
+        https://bugs.webkit.org/show_bug.cgi?id=156556
+
+        Reviewed by Brent Fulgham.
+
+        It is unnecessary to keep the test http/tests/security/contentSecurityPolicy/1.1/meta-outside-head.html as
+        the functionality it exercises is covered by test http/tests/security/contentSecurityPolicy/meta-tag-ignored-if-not-in-head.html.
+        The output of the latter test better conveys the purpose of the test and how to interpret its result than
+        the former.
+
+        * http/tests/security/contentSecurityPolicy/1.1/meta-outside-head-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/meta-outside-head.html: Removed.
+
+2016-04-13  Daniel Bates  <dabates@apple.com>
+
         CSP: Remove experimental directive reflected-xss
         https://bugs.webkit.org/show_bug.cgi?id=156554
 
