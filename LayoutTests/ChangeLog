@@ -1,5 +1,33 @@
 2016-04-13  Daniel Bates  <dabates@apple.com>
 
+        CSP: Nested browsing context created for <object> or <embed> should respect object-src directive
+        https://bugs.webkit.org/show_bug.cgi?id=156563
+        <rdar://problem/25715713>
+
+        Reviewed by Darin Adler.
+
+        Add tests to ensure that nested browsing context created for <object> and <embed> respect
+        the object-src directive.
+
+        * http/tests/security/contentSecurityPolicy/object-src-allows-embed-blocked-by-child-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-allows-embed-blocked-by-child-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-allows-embed-blocked-by-frame-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-allows-embed-blocked-by-frame-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-allows-object-blocked-by-child-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-allows-object-blocked-by-child-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-allows-object-blocked-by-frame-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-allows-object-blocked-by-frame-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-blocks-embed-allowed-by-child-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-blocks-embed-allowed-by-child-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-blocks-embed-allowed-by-frame-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-blocks-embed-allowed-by-frame-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-blocks-object-allowed-by-child-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-blocks-object-allowed-by-child-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-blocks-object-allowed-by-frame-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-blocks-object-allowed-by-frame-src.html: Added.
+
+2016-04-13  Daniel Bates  <dabates@apple.com>
+
         CSP: Remove duplicate test meta-outside-head.html
         https://bugs.webkit.org/show_bug.cgi?id=156556
 

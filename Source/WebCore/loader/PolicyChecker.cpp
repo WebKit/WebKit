@@ -40,6 +40,7 @@
 #include "FrameLoaderClient.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLPlugInElement.h"
 #include "SecurityOrigin.h"
 
 #if USE(QUICK_LOOK)
@@ -47,6 +48,15 @@
 #endif
 
 namespace WebCore {
+
+static bool isAllowedByContentSecurityPolicy(const URL& url, const Element* ownerElement)
+{
+    if (!ownerElement)
+        return true;
+    if (is<HTMLPlugInElement>(ownerElement))
+        return ownerElement->document().contentSecurityPolicy()->allowObjectFromSource(url, ownerElement->isInUserAgentShadowTree());
+    return ownerElement->document().contentSecurityPolicy()->allowChildFrameFromSource(url, ownerElement->isInUserAgentShadowTree());
+}
 
 PolicyChecker::PolicyChecker(Frame& frame)
     : m_frame(frame)
@@ -86,7 +96,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
         return;
     }
 
-    if (m_frame.ownerElement() && !m_frame.ownerElement()->document().contentSecurityPolicy()->allowChildFrameFromSource(request.url(), m_frame.ownerElement()->isInUserAgentShadowTree())) {
+    if (!isAllowedByContentSecurityPolicy(request.url(), m_frame.ownerElement())) {
         function(request, 0, false);
         return;
     }
