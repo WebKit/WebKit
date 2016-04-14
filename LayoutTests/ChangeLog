@@ -1,3 +1,34 @@
+2016-04-14  Daniel Bates  <dabates@apple.com>
+
+        CSP: Ignore report-only policy delivered via meta element
+        https://bugs.webkit.org/show_bug.cgi?id=156565
+        <rdar://problem/25718167>
+
+        Reviewed by Brent Fulgham.
+
+        Add new test LayoutTests/http/tests/security/contentSecurityPolicy/1.1/reportonly-in-meta-ignored2.html
+        to ensure that we ignore X-WebKit-CSP-Report-Only when delivered via a meta element.
+
+        Rename test report-multiple-violations-0{1, 2}.html and eval-allowed-in-report-only-mode-and-sends-report.html
+        to report-multiple-violations-0{1, 2}.php and eval-allowed-in-report-only-mode-and-sends-report.php, respectively,
+        so that we can make use of PHP to deliver the report-only policy via an HTTP header instead of via a meta element
+        as the latter is no longer supported. Additionally, fix up code style in some tests to make them more
+        consistent with the code style we use for tests.
+
+        * TestExpectations: Update some entries due to renaming and mark tests reportonly-in-meta-ignored.html
+        and reportonly-in-meta-ignored2.html as PASS so that we run them.
+        * http/tests/security/contentSecurityPolicy/1.1/reportonly-in-meta-ignored-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/reportonly-in-meta-ignored.html:
+        * http/tests/security/contentSecurityPolicy/1.1/reportonly-in-meta-ignored2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/reportonly-in-meta-ignored2.html: Added.
+        * http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.html.
+        * http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-expected.txt:
+        * http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode.html.
+        * http/tests/security/contentSecurityPolicy/report-multiple-violations-01.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-multiple-violations-01.html.
+        * http/tests/security/contentSecurityPolicy/report-multiple-violations-02.php: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/report-multiple-violations-02.html.
+        * http/tests/security/contentSecurityPolicy/report-only-report-uri-missing.html: Removed.
+        * http/tests/security/contentSecurityPolicy/report-only-report-uri-missing.php: Added.
+
 2016-04-14  Antoine Quint  <graouts@apple.com>
 
         WebGL based canvases composite incorrectly after changing size

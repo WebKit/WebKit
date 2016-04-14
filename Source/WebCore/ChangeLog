@@ -1,3 +1,29 @@
+2016-04-14  Daniel Bates  <dabates@apple.com>
+
+        CSP: Ignore report-only policy delivered via meta element
+        https://bugs.webkit.org/show_bug.cgi?id=156565
+        <rdar://problem/25718167>
+
+        Reviewed by Brent Fulgham.
+
+        Only honor a report-only policy delivered via the HTTP header Content-Security-Policy-Report-Only
+        or X-WebKit-CSP-Report-Only as per section Content-Security-Policy-Report-Only Header Field of 
+        the Content Security Policy Level 2 spec., <https://w3c.github.io/webappsec-csp/2/> (Editor's Draft, 29 August 2015).
+
+        Currently we honor a report-only policy delivered via a meta element or an HTTP header. Instead
+        we should only honor such a policy when delivered via an HTTP header.
+
+        Tests: http/tests/security/contentSecurityPolicy/1.1/reportonly-in-meta-ignored2.html
+               http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.php
+               http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode.php
+               http/tests/security/contentSecurityPolicy/report-multiple-violations-01.php
+               http/tests/security/contentSecurityPolicy/report-multiple-violations-02.php
+               http/tests/security/contentSecurityPolicy/report-only-report-uri-missing.php
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Do not process policy for HTTP equivalent header
+        Content-Security-Policy-Report-Only and X-WebKit-CSP-Report-Only.
+
 2016-04-14  Antoine Quint  <graouts@apple.com>
 
         Dashboard is spelled as Dashbard in several source files

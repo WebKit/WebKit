@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Security-Policy-Report-Only" content="this-should-be-ignored">
-    <script>
-        if (window.testRunner)
-            testRunner.dumpAsText();
-    </script>
+<meta http-equiv="Content-Security-Policy-Report-Only" content="script-src 'none'">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
 </head>
 <body>
-    <p>This tests that report-only Content Security Policy headers are ignored if contained in meta elements.</p>
+<p>This tests that a Content-Security-Policy-Report-Only header is ignored if delivered in a meta element. This test PASSED if there are no console warnings.</p>
 </body>
 </html>

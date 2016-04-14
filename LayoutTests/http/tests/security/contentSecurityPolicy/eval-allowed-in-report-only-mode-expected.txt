@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: The Content Security Policy 'script-src 'self'' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.
-CONSOLE MESSAGE: line 7: [Report Only] Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 4: [Report Only] Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 ALERT: PASS: eval() executed as expected.
 
