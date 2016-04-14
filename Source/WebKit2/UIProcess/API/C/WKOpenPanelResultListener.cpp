@@ -28,6 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WebOpenPanelResultListenerProxy.h"
+#include <WebCore/URL.h>
 
 using namespace WebKit;
 
@@ -36,9 +37,25 @@ WKTypeID WKOpenPanelResultListenerGetTypeID()
     return toAPI(WebOpenPanelResultListenerProxy::APIType);
 }
 
+static Vector<String> filePathsFromFileURLs(const API::Array& fileURLs)
+{
+    Vector<String> filePaths;
+
+    size_t size = fileURLs.size();
+    filePaths.reserveInitialCapacity(size);
+
+    for (size_t i = 0; i < size; ++i) {
+        API::URL* apiURL = fileURLs.at<API::URL>(i);
+        if (apiURL)
+            filePaths.uncheckedAppend(WebCore::URL(WebCore::URL(), apiURL->string()).fileSystemPath());
+    }
+
+    return filePaths;
+}
+
 void WKOpenPanelResultListenerChooseFiles(WKOpenPanelResultListenerRef listenerRef, WKArrayRef fileURLsRef)
 {
-    toImpl(listenerRef)->chooseFiles(toImpl(fileURLsRef));
+    toImpl(listenerRef)->chooseFiles(filePathsFromFileURLs(*toImpl(fileURLsRef)));
 }
 
 void WKOpenPanelResultListenerCancel(WKOpenPanelResultListenerRef listenerRef)

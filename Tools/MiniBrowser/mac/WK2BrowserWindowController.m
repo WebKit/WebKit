@@ -448,6 +448,20 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
     }];
 }
 
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * _Nullable result))completionHandler
+{
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+
+    openPanel.allowsMultipleSelection = parameters.allowsMultipleSelection;
+
+    [openPanel beginSheetModalForWindow:webView.window completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton)
+            completionHandler(openPanel.URLs);
+        else
+            completionHandler(@[]);
+    }];
+}
+
 - (void)updateTextFieldFromURL:(NSURL *)URL
 {
     if (!URL)

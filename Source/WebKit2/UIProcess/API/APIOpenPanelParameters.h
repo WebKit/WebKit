@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +24,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#pragma once
 
-#import <UIKit/UIViewController.h>
-
-@class WKContentView;
-@protocol WKFileUploadPanelDelegate;
+#include "APIObject.h"
+#include <WebCore/FileChooser.h>
 
 namespace API {
-class OpenPanelParameters;
-}
 
-namespace WebKit {
-class WebOpenPanelResultListenerProxy;
-}
+class Array;
 
-@interface WKFileUploadPanel : UIViewController
-@property (nonatomic, assign) id <WKFileUploadPanelDelegate> delegate;
-- (instancetype)initWithView:(WKContentView *)view;
-- (void)presentWithParameters:(API::OpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
-- (void)dismiss;
-@end
+class OpenPanelParameters : public API::ObjectImpl<API::Object::Type::OpenPanelParameters> {
+public:
+    static Ref<OpenPanelParameters> create(const WebCore::FileChooserSettings&);
+    ~OpenPanelParameters();
 
-@protocol WKFileUploadPanelDelegate <NSObject>
-@optional
-- (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel;
-@end
+    bool allowMultipleFiles() const { return m_settings.allowsMultipleFiles; }
+    Ref<API::Array> acceptMIMETypes() const;
+    Ref<API::Array> selectedFileNames() const;
+#if ENABLE(MEDIA_CAPTURE)
+    bool capture() const;
+#endif
 
-#endif // PLATFORM(IOS)
+private:
+    explicit OpenPanelParameters(const WebCore::FileChooserSettings&);
+
+    WebCore::FileChooserSettings m_settings;
+};
+
+} // namespace API
