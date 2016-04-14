@@ -25,8 +25,8 @@
  */
 
 enum PageOverlayType {
-"view",
-"document"
+    "view",
+    "document"
 };
 
 // These map to ResourceRequestCachePolicy.
@@ -64,24 +64,23 @@ enum AutoFillButtonType {
 };
 
 [
-    UsePointersEvenForNonNullableObjectArguments,
-    NoInterfaceObject,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    NoInterfaceObject,
 ] interface Internals {
     DOMString address(Node node);
-    [RaisesException] boolean nodeNeedsStyleRecalc(Node node);
-    [RaisesException] DOMString styleChangeType(Node node);
+    boolean nodeNeedsStyleRecalc(Node node);
+    DOMString styleChangeType(Node node);
     DOMString description(any value);
 
     // Animated image pausing testing.
-    [RaisesException] boolean hasPausedImageAnimations(Element element);
+    boolean hasPausedImageAnimations(Element element);
 
     [RaisesException] DOMString elementRenderTreeAsText(Element element);
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
     DOMString xhrResponseSource(XMLHttpRequest xhr);
-    boolean isSharingStyleSheetContents(Element linkA, Element linkB);
-    boolean isStyleSheetLoadingSubresources(Element link);
+    boolean isSharingStyleSheetContents(HTMLLinkElement a, HTMLLinkElement b);
+    boolean isStyleSheetLoadingSubresources(HTMLLinkElement link);
     void clearMemoryCache();
     void pruneMemoryCacheToSize(long size);
     long memoryCacheSize();
@@ -90,21 +89,20 @@ enum AutoFillButtonType {
     void setStrictRawResourceValidationPolicyDisabled(boolean disabled);
 
     void clearPageCache();
-    unsigned int pageCacheSize();
+    unsigned long pageCacheSize();
 
-    [RaisesException] CSSStyleDeclaration computedStyleIncludingVisitedInfo(Node node);
+    CSSStyleDeclaration computedStyleIncludingVisitedInfo(Node node);
 
     [RaisesException] Node ensureShadowRoot(Element host);
-    [RaisesException] Node ensureUserAgentShadowRoot(Element host);
+    Node ensureUserAgentShadowRoot(Element host);
     [RaisesException] Node createShadowRoot(Element host);
-    [RaisesException] Node shadowRoot(Element host);
+    Node shadowRoot(Element host);
 
     [RaisesException] DOMString shadowRootType(Node root);
-    [RaisesException] Element includerFor(Node node);
-    [RaisesException] DOMString shadowPseudoId(Element element);
-    [RaisesException] void setShadowPseudoId(Element element, DOMString id);
-    [RaisesException] Node treeScopeRootNode(Node node);
-    [RaisesException] Node parentTreeScope(Node node);
+    DOMString shadowPseudoId(Element element);
+    void setShadowPseudoId(Element element, DOMString id);
+    Node treeScopeRootNode(Node node);
+    Node parentTreeScope(Node node);
 
     // Spatial Navigation testing
     [RaisesException] unsigned long lastSpatialNavigationCandidateCount();
@@ -121,16 +119,14 @@ enum AutoFillButtonType {
     [RaisesException] boolean pauseTransitionAtTimeOnElement(DOMString propertyName, unrestricted double pauseTime, Element element);
     [RaisesException] boolean pauseTransitionAtTimeOnPseudoElement(DOMString property, unrestricted double pauseTime, Element element, DOMString pseudoId);
 
-    [RaisesException] boolean attached(Node node);
-
     DOMString visiblePlaceholder(Element element);
-    void selectColorInColorChooser(Element element, DOMString colorValue);
+    void selectColorInColorChooser(HTMLInputElement element, DOMString colorValue);
     [RaisesException] DOMString[] formControlStateOfPreviousHistoryItem();
     [RaisesException] void setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
 
     [RaisesException] ClientRect absoluteCaretBounds();
 
-    [RaisesException] ClientRect boundingBox(Element element);
+    ClientRect boundingBox(Element element);
 
     [RaisesException] ClientRectList inspectorHighlightRects();
     [RaisesException] DOMString inspectorHighlightObject();
@@ -158,10 +154,10 @@ enum AutoFillButtonType {
                                        long availableHeight);
 
     [RaisesException] boolean wasLastChangeUserEdit(Element textField);
-    [RaisesException] boolean elementShouldAutoComplete(Element inputElement);
-    [RaisesException] void setEditingValue(Element inputElement, DOMString value);
-    [RaisesException] void setAutofilled(Element inputElement, boolean enabled);
-    [RaisesException] void setShowAutoFillButton(Element inputElement, AutoFillButtonType autoFillButtonType);
+    boolean elementShouldAutoComplete(HTMLInputElement inputElement);
+    void setEditingValue(HTMLInputElement inputElement, DOMString value);
+    void setAutofilled(HTMLInputElement inputElement, boolean enabled);
+    void setShowAutoFillButton(HTMLInputElement inputElement, AutoFillButtonType autoFillButtonType);
     [RaisesException] unsigned long countMatchesForText(DOMString text, unsigned long findOptions, DOMString markMatches);
 
     [RaisesException] DOMString autofillFieldName(Element formControlElement);
@@ -170,11 +166,11 @@ enum AutoFillButtonType {
 
     [RaisesException] void scrollElementToRect(Element element, long x, long y, long w, long h);
 
-    [RaisesException] Range rangeFromLocationAndLength(Element scope, long rangeLocation, long rangeLength);
-    [RaisesException] unsigned long locationFromRange(Element scope, Range range);
-    [RaisesException] unsigned long lengthFromRange(Element scope, Range range);
-    [RaisesException] DOMString rangeAsText(Range range);
-    [RaisesException] Range subrange(Range range, long rangeLocation, long rangeLength);
+    Range rangeFromLocationAndLength(Element scope, long rangeLocation, long rangeLength);
+    unsigned long locationFromRange(Element scope, Range range);
+    unsigned long lengthFromRange(Element scope, Range range);
+    DOMString rangeAsText(Range range);
+    Range subrange(Range range, long rangeLocation, long rangeLength);
     [RaisesException] Range rangeForDictionaryLookupAtLocation(long x, long y);
 
     [RaisesException] void setDelegatesScrolling(boolean enabled);
@@ -219,7 +215,7 @@ enum AutoFillButtonType {
 
     [RaisesException] boolean isPageBoxVisible(long pageNumber);
 
-    [RaisesException] unsigned long imageFrameIndex(Element element);
+    unsigned long imageFrameIndex(HTMLImageElement element);
 
     readonly attribute InternalSettings settings;
     readonly attribute unsigned long workerThreadCount;
@@ -335,17 +331,17 @@ enum AutoFillButtonType {
 
     // |node| should be Document, HTMLIFrameElement, or unspecified.
     // If |node| is an HTMLIFrameElement, it assumes node.contentDocument is
-    // specified without security checks. Unspecified means this document.
-    [RaisesException] void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(optional Node node);
+    // specified without security checks. Unspecified or null means this document.
+    [RaisesException] void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(optional Node? node);
 
     readonly attribute unsigned long layoutCount;
 
     // Returns a string with information about the mouse cursor used at the specified client location.
     [RaisesException] DOMString getCurrentCursorInfo();
 
-    [RaisesException] DOMString markerTextForListItem(Element element);
+    DOMString markerTextForListItem(Element element);
 
-    [RaisesException] DOMString toolTipFromElement(Element element);
+    DOMString toolTipFromElement(Element element);
 
     SerializedScriptValue deserializeBuffer(ArrayBuffer buffer);
     ArrayBuffer serializeObject(SerializedScriptValue obj);
@@ -359,14 +355,14 @@ enum AutoFillButtonType {
 
     void enableAutoSizeMode(boolean enabled, long minimumWidth, long minimumHeight, long maximumWidth, long maximumHeight);
 
-    [Conditional=VIDEO] void simulateAudioInterruption(Node node);
-    [Conditional=VIDEO, RaisesException] boolean mediaElementHasCharacteristic(Node node, DOMString characteristic);
+    [Conditional=VIDEO] void simulateAudioInterruption(HTMLMediaElement element);
+    [Conditional=VIDEO, RaisesException] boolean mediaElementHasCharacteristic(HTMLMediaElement element, DOMString characteristic);
 
     [Conditional=ENCRYPTED_MEDIA_V2] void initializeMockCDM();
 
     [Conditional=SPEECH_SYNTHESIS] void enableMockSpeechSynthesizer();
 
-    [RaisesException] DOMString getImageSourceURL(Element element);
+    DOMString getImageSourceURL(Element element);
 
     [Conditional=VIDEO_TRACK, RaisesException] DOMString captionsStyleSheetOverride();
     [Conditional=VIDEO_TRACK, RaisesException] void setCaptionsStyleSheetOverride(DOMString override);
@@ -377,14 +373,14 @@ enum AutoFillButtonType {
      endTimes);
     [Conditional=VIDEO] unrestricted double closestTimeToTimeRanges(unrestricted double time, TimeRanges ranges);
 
-    boolean isSelectPopupVisible(Node node);
+    boolean isSelectPopupVisible(HTMLSelectElement element);
 
 #if defined(ENABLE_VIBRATION) && ENABLE_VIBRATION
     boolean isVibrating();
 #endif
 
     [RaisesException] boolean isPluginUnavailabilityIndicatorObscured(Element element);
-    [RaisesException] boolean isPluginSnapshotted(Element element);
+    boolean isPluginSnapshotted(Element element);
 
     [RaisesException] ClientRect selectionBounds();
 
@@ -402,8 +398,8 @@ enum AutoFillButtonType {
     [Conditional=VIDEO] void applicationDidEnterForeground();
     [Conditional=VIDEO] void applicationWillEnterBackground();
     [Conditional=VIDEO, RaisesException] void setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
-    [Conditional=VIDEO, RaisesException] void setMediaElementRestrictions(HTMLMediaElement element, DOMString restrictions);
-    [Conditional=WEB_AUDIO, RaisesException] void setAudioContextRestrictions(AudioContext context, DOMString restrictions);
+    [Conditional=VIDEO] void setMediaElementRestrictions(HTMLMediaElement element, DOMString restrictions);
+    [Conditional=WEB_AUDIO] void setAudioContextRestrictions(AudioContext context, DOMString restrictions);
     [Conditional=VIDEO, RaisesException] void postRemoteControlCommand(DOMString command);
     [Conditional=WIRELESS_PLAYBACK_TARGET] void setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
     [Conditional=WIRELESS_PLAYBACK_TARGET, RaisesException] void setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
@@ -411,7 +407,7 @@ enum AutoFillButtonType {
 
     [Conditional=VIDEO] void simulateSystemSleep();
     [Conditional=VIDEO] void simulateSystemWake();
-    [Conditional=VIDEO] boolean elementIsBlockingDisplaySleep(Element element);
+    [Conditional=VIDEO] boolean elementIsBlockingDisplaySleep(HTMLMediaElement element);
 
     [RaisesException] MockPageOverlay installMockPageOverlay(PageOverlayType type);
     [RaisesException] DOMString pageOverlayLayerTreeAsText();

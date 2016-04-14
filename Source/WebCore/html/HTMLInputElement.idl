@@ -19,7 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLInputElement : HTMLElement {
+[
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToNativeObject,
+] interface HTMLInputElement : HTMLElement {
     [Reflect] attribute DOMString accept;
     [Reflect] attribute DOMString alt;
     attribute DOMString autocomplete;

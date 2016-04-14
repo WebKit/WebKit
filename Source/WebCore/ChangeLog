@@ -1,3 +1,128 @@
+2016-04-14  Darin Adler  <darin@apple.com>
+
+        Remove UsePointersEvenForNonNullableObjectArguments from Internals
+        https://bugs.webkit.org/show_bug.cgi?id=156539
+
+        Reviewed by Alex Christensen.
+
+        * html/HTMLImageElement.idl: Exported this so it can be used as the type for
+        a function argument in Internals.idl.
+        * html/HTMLInputElement.idl: Ditto.
+        * html/HTMLLinkElement.idl: Ditto.
+        * html/HTMLSelectElement.idl: Ditto.
+
+        * testing/Internals.cpp:
+        (WebCore::InspectorStubFrontend::InspectorStubFrontend): Take a Page&.
+        (WebCore::Internals::create): Take a Document&.
+        (WebCore::Internals::resetToConsistentState): Take a Page&.
+        (WebCore::Internals::Internals): Take a Document&.
+        (WebCore::Internals::settings): Use nullptr instead of 0.
+        (WebCore::Internals::address): Take a Node&.
+        (WebCore::Internals::nodeNeedsStyleRecalc): Take a Node& and no ExceptionCode&.
+        (WebCore::Internals::styleChangeType): Ditto.
+        (WebCore::Internals::xhrResponseSource): Take an XMLHttpRequest&.
+        (WebCore::Internals::isSharingStyleSheetContents): Take two
+        HTMLLinkElement&.
+        (WebCore::Internals::isStyleSheetLoadingSubresources): Take an HTMLLinkElement&.
+        (WebCore::Internals::imageFrameIndex): Take an HTMLImageElement& and no
+        ExceptionCode&. Also return an unsigned rather than size_t, since the IDL expects
+        unsigned long, which means unsigned in C++ code.
+        (WebCore::Internals::treeScopeRootNode): Take a Node& and no ExceptionCode&.
+        (WebCore::Internals::parentTreeScope): Ditto.
+        (WebCore::Internals::pauseAnimationAtTimeOnElement): Take an Element&.
+        (WebCore::Internals::pauseAnimationAtTimeOnPseudoElement): Ditto.
+        (WebCore::Internals::pauseTransitionAtTimeOnElement): Ditto.
+        (WebCore::Internals::pauseTransitionAtTimeOnPseudoElement): Ditto.
+        (WebCore::Internals::attached): Deleted.
+        (WebCore::Internals::elementRenderTreeAsText): Take an Element&.
+        (WebCore::Internals::hasPausedImageAnimations): Take an Element& and no
+        ExceptionCode&.
+        (WebCore::Internals::computedStyleIncludingVisitedInfo): Take a Node& and no
+        ExceptionCode&.
+        (WebCore::Internals::ensureShadowRoot): Take an Element&.
+        (WebCore::Internals::ensureUserAgentShadowRoot): Take an Element& and no
+        ExceptionCode&.
+        (WebCore::Internals::createShadowRoot): Take an Element&.
+        (WebCore::Internals::shadowRoot): Take an Element& and no ExceptionCode&.
+        (WebCore::Internals::shadowRootType): Take a Node&.
+        (WebCore::Internals::includerFor): Deleted.
+        (WebCore::Internals::shadowPseudoId): Take an Element& and no ExceptionCode&.
+        (WebCore::Internals::setShadowPseudoId): Ditto.
+        (WebCore::Internals::visiblePlaceholder): Take an Element&.
+        (WebCore::Internals::selectColorInColorChooser): Take an HTMLInputElement&.
+        (WebCore::Internals::boundingBox): Take an Element& and no ExceptionCode&.
+        (WebCore::Internals::markerCountForNode): Take a Node&.
+        (WebCore::Internals::markerAt): Ditto.
+        (WebCore::Internals::markerRangeForNode): Ditto.
+        (WebCore::Internals::markerDescriptionForNode): Ditto.
+        (WebCore::Internals::addTextMatchMarker): Take a const Range&.
+        (WebCore::Internals::setScrollViewPosition): Take int instead of long; long in
+        IDL means int in C++ code.
+        (WebCore::Internals::wasLastChangeUserEdit): Take an Element&.
+        (WebCore::Internals::elementShouldAutoComplete): Take an HTMLInputElement&.
+        (WebCore::Internals::setEditingValue): Take an HTMLInputElement& and no
+        ExceptionCode&.
+        (WebCore::Internals::setAutofilled): Ditto.
+        (WebCore::Internals::setShowAutoFillButton): Ditto.
+        (WebCore::Internals::scrollElementToRect): Take an Element& and int instead of long.
+        (WebCore::Internals::autofillFieldName): Take an Element&.
+        (WebCore::Internals::rangeFromLocationAndLength): Take an Element& and no ExceptionCode&.
+        (WebCore::Internals::locationFromRange): Ditto.
+        (WebCore::Internals::lengthFromRange): Take an Element& and const Range& and no
+        ExceptionCode&.
+        (WebCore::Internals::rangeAsText): Take const Range& an no ExceptionCode&.
+        (WebCore::Internals::subrange): Take Range& an no ExceptionCode&.
+        (WebCore::Internals::nodesFromRect): Take a Document&.
+        (WebCore::Internals::openDummyInspectorFrontend): Ditto.
+        (WebCore::Internals::layerTreeAsText): Take an Element&.
+        (WebCore::Internals::setElementUsesDisplayListDrawing): Ditto.
+        (WebCore::Internals::setElementTracksDisplayListReplay): Ditto.
+        (WebCore::Internals::displayListForElement): Ditto.
+        (WebCore::Internals::replayDisplayListForElement): Ditto.
+        (WebCore::Internals::counterValue): Ditto.
+        (WebCore::Internals::pageNumber): Ditto.
+        (WebCore::Internals::webkitWillEnterFullScreenForElement): Ditto.
+        (WebCore::Internals::webkitDidEnterFullScreenForElement): Ditto.
+        (WebCore::Internals::webkitWillExitFullScreenForElement): Ditto.
+        (WebCore::Internals::webkitDidExitFullScreenForElement): Ditto.
+        (WebCore::Internals::layerFlushCount): Return unsigned instead of unsigned long.
+        IDL unsigned long means unsigned in C++ code.
+        (WebCore::Internals::styleRecalcCount): Ditto.
+        (WebCore::Internals::compositingUpdateCount): Ditto.
+        (WebCore::Internals::deserializeBuffer): Take an ArrayBuffer&.
+        (WebCore::Internals::markerTextForListItem): Take an Element& and no ExceptionCode&.
+        (WebCore::Internals::toolTipFromElement): Ditto.
+        (WebCore::Internals::getImageSourceURL): Ditto.
+        (WebCore::Internals::simulateAudioInterruption): Take an HTMLMediaElement&.
+        (WebCore::Internals::mediaElementHasCharacteristic): Ditto.
+        (WebCore::Internals::isSelectPopupVisible): Take an HTMLSelectElement&.
+        (WebCore::Internals::closestTimeToTimeRanges): Take a TimeRange&.
+        (WebCore::Internals::isPluginUnavailabilityIndicatorObscured): Take an Element&.
+        (WebCore::Internals::isPluginSnapshotted): Take an Element& and no ExceptionCode&.
+        (WebCore::Internals::bufferedSamplesForTrackID): Take a SourceBuffer&.
+        (WebCore::Internals::setShouldGenerateTimestamps): Ditto.
+        (WebCore::Internals::setMediaElementRestrictions): Take an HTMLMediaElement&.
+        (WebCore::Internals::elementIsBlockingDisplaySleep): Take an HTMLMediaElement&.
+        (WebCore::Internals::setAudioContextRestrictions): Take an AudioContext&.
+        (WebCore::Internals::scrollSnapOffsets): Take an Element&.
+        (WebCore::Internals::getCurrentMediaControlsStatusForElement): Take an HTMLMediaElement&.
+        (WebCore::Internals::userVisibleString): Take a const DOMURL&.
+        (WebCore::Internals::composedTreeAsText): Take a Node&.
+
+        * testing/Internals.h: Update for all the changes listed above.
+
+        * testing/Internals.idl: Removed UsePointersEvenForNonNullableObjectArguments. Removed
+        many unneeded [RaisesException]. Used more specific types for many arguments. Removed
+        unused, and unimplemented, attached and includedFor functions. Made the node argument to
+        updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks nullable as well as optional.
+
+        * testing/Internals.mm:
+        (WebCore::Internals::userVisibleString): Take a const DOMURL&.
+
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::injectInternalsObject): Pass a Document& rather than a Document*.
+        (WebCoreTestSupport::resetInternalsObject): Pass a Page& rather than a Page*.
+
 2016-04-14  Daniel Bates  <dabates@apple.com>
 
         CSP: Ignore report-only policy delivered via meta element

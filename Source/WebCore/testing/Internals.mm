@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-String Internals::userVisibleString(const DOMURL* url)
+String Internals::userVisibleString(const DOMURL& url)
 {
-    return contextDocument()->frame()->editor().client()->userVisibleString(url->href());
+    return contextDocument()->frame()->editor().client()->userVisibleString(url.href());
 }
 
 }

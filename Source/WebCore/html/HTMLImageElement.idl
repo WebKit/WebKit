@@ -19,6 +19,7 @@
  */
 
 [
+    ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
 ] interface HTMLImageElement : HTMLElement {
     [Reflect] attribute DOMString name;

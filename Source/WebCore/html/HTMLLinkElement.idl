@@ -19,7 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLLinkElement : HTMLElement {
+[
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToNativeObject,
+] interface HTMLLinkElement : HTMLElement {
     [Reflect] attribute boolean disabled;
     [Reflect] attribute DOMString charset;
     [Reflect, URL] attribute DOMString href;

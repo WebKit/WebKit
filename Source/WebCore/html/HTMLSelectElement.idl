@@ -20,6 +20,8 @@
 
 [
     CustomIndexedSetter,
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToNativeObject,
 ] interface HTMLSelectElement : HTMLElement {
     [Reflect] attribute boolean autofocus;
     [Reflect] attribute boolean disabled;

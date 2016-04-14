@@ -35,10 +35,6 @@ eventSender.mouseDown();
 eventSender.mouseUp();
 
 shouldBe('onChangeCount', '0');
-// Test that incorrect element arguments are (not) handled.
-evalAndLog("internals.selectColorInColorChooser({}, '#ff0000');");
-evalAndLog("internals.selectColorInColorChooser(document, '#ff0000');");
-shouldBe('onChangeCount', '0');
 
 // input.onchange should be called
 internals.selectColorInColorChooser(input, '#ff0000');

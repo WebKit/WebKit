@@ -1,3 +1,15 @@
+2016-04-14  Darin Adler  <darin@apple.com>
+
+        Remove UsePointersEvenForNonNullableObjectArguments from Internals
+        https://bugs.webkit.org/show_bug.cgi?id=156539
+
+        Reviewed by Alex Christensen.
+
+        * fast/forms/color/input-color-onchange-event-expected.txt: Updated.
+        * fast/forms/color/input-color-onchange-event.html: Removed unneeded test of how the
+        internals object handles incorrect values passed to the test function. This wasn't testing
+        actual WebKit code at all, it was just a test of the internals object implementation.
+
 2016-04-14  Daniel Bates  <dabates@apple.com>
 
         CSP: Ignore report-only policy delivered via meta element
