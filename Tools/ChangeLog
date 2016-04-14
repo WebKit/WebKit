@@ -1,5 +1,11 @@
 2016-04-14  Anders Carlsson  <andersca@apple.com>
 
+        Another build fix attempt.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+
+2016-04-14  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * MiniBrowser/mac/WK2BrowserWindowController.m:
