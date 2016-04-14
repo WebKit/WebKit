@@ -202,6 +202,18 @@ bool RenderMathMLOperator::isChildAllowed(const RenderObject&, const RenderStyle
     return false;
 }
 
+LayoutUnit RenderMathMLOperator::italicCorrection() const
+{
+    if (isLargeOperatorInDisplayStyle()) {
+        const auto& primaryFont = style().fontCascade().primaryFont();
+        if (auto* mathData = primaryFont.mathData()) {
+            StretchyData largeOperator = getDisplayStyleLargeOperator(m_textContent);
+            return mathData->getItalicCorrection(primaryFont, largeOperator.variant().glyph);
+        }
+    }
+    return 0;
+}
+
 void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline)
 {
     ASSERT(hasOperatorFlag(MathMLOperatorDictionary::Stretchy));

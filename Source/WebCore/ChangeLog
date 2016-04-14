@@ -1,3 +1,16 @@
+2016-04-14  Frederic Wang  <fred.wang@free.fr>
+
+        RenderMathMLOperator: Add helper function to retrieve italic correction
+        https://bugs.webkit.org/show_bug.cgi?id=156572
+
+        Reviewed by Darin Adler.
+
+        No new tests, the helper function will only be used in bug 153918.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::italicCorrection): Return the italic correction from the MATH table if it's a large operator.
+        * rendering/mathml/RenderMathMLOperator.h: Declare italicCorrection.
+
 2016-04-14  Frederic Wang  <fwang@igalia.com>
 
         RenderMathMLOperator: Move glyph measuring helper functions outside the class

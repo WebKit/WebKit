@@ -51,6 +51,7 @@ public:
     // FIXME: The displaystyle property is not implemented (https://bugs.webkit.org/show_bug.cgi?id=118737).
     bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp); }
     bool isVertical() const { return m_isVertical; }
+    LayoutUnit italicCorrection() const;
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void updateStyle() final;
