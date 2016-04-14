@@ -52,7 +52,7 @@ namespace WebCore {
         void addColorStop(float value, const String& color, ExceptionCode&);
 
 #if ENABLE(DASHBOARD_SUPPORT)
-        void setDashboardCompatibilityMode() { m_dashbardCompatibilityMode = true; }
+        void setDashboardCompatibilityMode() { m_dashboardCompatibilityMode = true; }
 #endif
 
     private:
@@ -61,7 +61,7 @@ namespace WebCore {
         
         Ref<Gradient> m_gradient;
 #if ENABLE(DASHBOARD_SUPPORT)
-        bool m_dashbardCompatibilityMode;
+        bool m_dashboardCompatibilityMode;
 #endif
     };
 

@@ -1,5 +1,20 @@
 2016-04-14  Antoine Quint  <graouts@apple.com>
 
+        Dashboard is spelled as Dashbard in several source files
+        https://bugs.webkit.org/show_bug.cgi?id=156577
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * html/canvas/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::CanvasGradient):
+        (WebCore::CanvasGradient::addColorStop):
+        * html/canvas/CanvasGradient.h:
+        (WebCore::CanvasGradient::setDashboardCompatibilityMode):
+
+2016-04-14  Antoine Quint  <graouts@apple.com>
+
         WebGL based canvases composite incorrectly after changing size
         https://bugs.webkit.org/show_bug.cgi?id=152556
         <rdar://problem/24012678>
