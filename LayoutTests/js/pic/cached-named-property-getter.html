@@ -92,9 +92,9 @@ you'll see a series of PASS messages below.
 
     shouldThrow(function () {
         testCustomGetter({__proto__: r});
-    }, "TypeError: Type error");
+    }, "TypeError: The RegExp.prototype.source getter can only be called on a RegExp object");
     shouldThrow(function () {
         testCustomGetter({__proto__: {__proto__: r}});
-    }, "TypeError: Type error");
+    }, "TypeError: The RegExp.prototype.source getter can only be called on a RegExp object");
 })();
 </script>

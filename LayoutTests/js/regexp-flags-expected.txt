@@ -14,10 +14,10 @@ PASS /a/gmi.flags is 'gim'
 PASS new RegExp('a', 'gmi').flags is 'gim'
 PASS flags.call(/a/ig) is 'gi'
 non-object receivers
-PASS flags.call(undefined) threw exception TypeError: Type error.
-PASS flags.call(null) threw exception TypeError: Type error.
-PASS flags.call(false) threw exception TypeError: Type error.
-PASS flags.call(true) threw exception TypeError: Type error.
+PASS flags.call(undefined) threw exception TypeError: The RegExp.prototype.flags getter can only be called on an object.
+PASS flags.call(null) threw exception TypeError: The RegExp.prototype.flags getter can only be called on an object.
+PASS flags.call(false) threw exception TypeError: The RegExp.prototype.flags getter can only be called on an object.
+PASS flags.call(true) threw exception TypeError: The RegExp.prototype.flags getter can only be called on an object.
 non-regex objects
 PASS flags.call({}) is ''
 PASS flags.call({global: true, multiline: true, ignoreCase: true}) is 'gim'

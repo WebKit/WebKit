@@ -16,10 +16,10 @@ shouldBe("new RegExp('a', 'gmi').flags", "'gim'");
 shouldBe("flags.call(/a/ig)", "'gi'");
 
 debug("non-object receivers");
-shouldThrow("flags.call(undefined)", "'TypeError: Type error'");
-shouldThrow("flags.call(null)", "'TypeError: Type error'");
-shouldThrow("flags.call(false)", "'TypeError: Type error'");
-shouldThrow("flags.call(true)", "'TypeError: Type error'");
+shouldThrow("flags.call(undefined)", "'TypeError: The RegExp.prototype.flags getter can only be called on an object'");
+shouldThrow("flags.call(null)", "'TypeError: The RegExp.prototype.flags getter can only be called on an object'");
+shouldThrow("flags.call(false)", "'TypeError: The RegExp.prototype.flags getter can only be called on an object'");
+shouldThrow("flags.call(true)", "'TypeError: The RegExp.prototype.flags getter can only be called on an object'");
 
 debug("non-regex objects");
 shouldBe("flags.call({})", "''");

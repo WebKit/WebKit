@@ -244,8 +244,11 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
-    if (!thisValue.inherits(RegExpObject::info()))
-        return JSValue::encode(jsUndefined());
+    if (UNLIKELY(!thisValue.inherits(RegExpObject::info()))) {
+        if (thisValue.inherits(RegExpPrototype::info()))
+            return JSValue::encode(jsUndefined());
+        return throwVMTypeError(exec, ASCIILiteral("The RegExp.prototype.global getter can only be called on a RegExp object"));
+    }
 
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->global()));
 }
@@ -253,8 +256,11 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
-    if (!thisValue.inherits(RegExpObject::info()))
-        return JSValue::encode(jsUndefined());
+    if (UNLIKELY(!thisValue.inherits(RegExpObject::info()))) {
+        if (thisValue.inherits(RegExpPrototype::info()))
+            return JSValue::encode(jsUndefined());
+        return throwVMTypeError(exec, ASCIILiteral("The RegExp.prototype.ignoreCase getter can only be called on a RegExp object"));
+    }
 
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->ignoreCase()));
 }
@@ -262,8 +268,11 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
-    if (!thisValue.inherits(RegExpObject::info()))
-        return JSValue::encode(jsUndefined());
+    if (UNLIKELY(!thisValue.inherits(RegExpObject::info()))) {
+        if (thisValue.inherits(RegExpPrototype::info()))
+            return JSValue::encode(jsUndefined());
+        return throwVMTypeError(exec, ASCIILiteral("The RegExp.prototype.multiline getter can only be called on a RegExp object"));
+    }
 
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->multiline()));
 }
@@ -271,8 +280,11 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterSticky(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
-    if (!thisValue.inherits(RegExpObject::info()))
-        return JSValue::encode(jsUndefined());
+    if (UNLIKELY(!thisValue.inherits(RegExpObject::info()))) {
+        if (thisValue.inherits(RegExpPrototype::info()))
+            return JSValue::encode(jsUndefined());
+        return throwVMTypeError(exec, ASCIILiteral("The RegExp.prototype.sticky getter can only be called on a RegExp object"));
+    }
     
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->sticky()));
 }
@@ -280,8 +292,11 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterSticky(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterUnicode(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
-    if (!thisValue.inherits(RegExpObject::info()))
-        return JSValue::encode(jsUndefined());
+    if (UNLIKELY(!thisValue.inherits(RegExpObject::info()))) {
+        if (thisValue.inherits(RegExpPrototype::info()))
+            return JSValue::encode(jsUndefined());
+        return throwVMTypeError(exec, ASCIILiteral("The RegExp.prototype.unicode getter can only be called on a RegExp object"));
+    }
     
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->unicode()));
 }
@@ -289,8 +304,8 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterUnicode(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
-    if (!thisValue.isObject())
-        return throwVMTypeError(exec);
+    if (UNLIKELY(!thisValue.isObject()))
+        return throwVMTypeError(exec, ASCIILiteral("The RegExp.prototype.flags getter can only be called on an object"));
 
     auto flags = flagsString(exec, asObject(thisValue));
     if (exec->hadException())
@@ -408,8 +423,11 @@ static inline JSValue regExpProtoGetterSourceInternal(ExecState* exec, const Str
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
-    if (!thisValue.inherits(RegExpObject::info()))
-        return throwVMTypeError(exec);
+    if (UNLIKELY(!thisValue.inherits(RegExpObject::info()))) {
+        if (thisValue.inherits(RegExpPrototype::info()))
+            return JSValue::encode(jsString(exec, ASCIILiteral("(?:)")));
+        return throwVMTypeError(exec, ASCIILiteral("The RegExp.prototype.source getter can only be called on a RegExp object"));
+    }
 
     String pattern = asRegExpObject(thisValue)->regExp()->pattern();
     if (pattern.is8Bit())

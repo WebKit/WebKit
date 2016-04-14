@@ -24,14 +24,9 @@ id: "15.10.7.1-1",
 
 path: "TestCases/chapter15/15.10/15.10.7/15.10.7.1/15.10.7.1-1.js",
 
-description: "RegExp.prototype.source should throw because RegExp.prototype is not a RegExp",
+description: "RegExp.prototype.source should be '(?:)'",
 
 test: function testcase() {
-    try {
-        RegExp.prototype.source;
-        return false;
-    } catch (e) {
-        return true;
-    }
+    return RegExp.prototype.source === '(?:)';
  }
 });

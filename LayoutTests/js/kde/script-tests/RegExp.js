@@ -147,7 +147,7 @@ shouldBe("Object.prototype.toString.apply(RegExp.prototype)",
 
 // not sure what this should return. most importantly
 // it doesn't throw an exception
-shouldThrow("RegExp.prototype.toString()", "'TypeError: Type error'");
+shouldBe("RegExp.prototype.toString()", "'/(?:)/'");
 
 // Empty regular expressions have string representation /(?:)/
 shouldBe("new RegExp().toString()", "'/(?:)/'");

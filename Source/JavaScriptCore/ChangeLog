@@ -1,3 +1,40 @@
+2016-04-14  Mark Lam  <mark.lam@apple.com>
+
+        Update treatment of invoking RegExp.prototype methods on RegExp.prototype.
+        https://bugs.webkit.org/show_bug.cgi?id=155922
+
+        Reviewed by Keith Miller.
+
+        According to the TC39 committee, when invoking the following RegExp.prototype
+        methods on the RegExp.prototype:
+        1. RegExp.prototype.flags yields ""
+        2. RegExp.prototype.global yields undefined
+        3. RegExp.prototype.ignoreCase yields undefined
+        4. RegExp.prototype.multiline yields undefined
+        5. RegExp.prototype.unicode yields undefined
+        6. RegExp.prototype.source yields "(?:)"
+        7. RegExp.prototype.sticky yields undefined
+        8. RegExp.prototype.toString() yields "/(?:)/"
+
+        and RegExp.prototype is still NOT an instance of RegExp.  The above behavior
+        changes is a special dispensation applicable only to RegExp.prototype.  The ES6
+        spec of throwing errors still applies if those methods are applied to anything =
+        else that is not a RegExp object.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoGetterGlobal):
+        (JSC::regExpProtoGetterIgnoreCase):
+        (JSC::regExpProtoGetterMultiline):
+        (JSC::regExpProtoGetterSticky):
+        (JSC::regExpProtoGetterUnicode):
+        (JSC::regExpProtoGetterFlags):
+        (JSC::regExpProtoGetterSource):
+        - Implemented new behavior.
+
+        * tests/es6/miscellaneous_built-in_prototypes_are_not_instances.js:
+        (test):
+        - Updated to match current kangax test.
+
 2016-04-14  Geoffrey Garen  <ggaren@apple.com>
 
         Some imported ES6 tests are missing __createIterableObject

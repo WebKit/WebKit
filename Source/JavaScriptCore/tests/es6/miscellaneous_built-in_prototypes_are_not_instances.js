@@ -1,7 +1,7 @@
 function test() {
 
 try {
-  RegExp.prototype.source; return false;
+  RegExp.prototype.exec(); return false;
 } catch(e) {}
 try {
   Date.prototype.valueOf(); return false;

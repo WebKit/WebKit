@@ -19,11 +19,11 @@ function testLineTerminator(pattern)
 
 shouldBe("RegExp('/').source", '"\\\\/"');
 shouldBe("RegExp('').source", '"(?:)"');
-shouldThrow("RegExp.prototype.source", '"TypeError: Type error"');
+shouldBe("RegExp.prototype.source", '"(?:)"');
 
 shouldBe("RegExp('/').toString()", '"/\\\\//"');
 shouldBe("RegExp('').toString()", '"/(?:)/"');
-shouldThrow("RegExp.prototype.toString()", '"TypeError: Type error"');
+shouldBe("RegExp.prototype.toString()", '"/(?:)/"');
 
 // These strings are equivalent, since the '\' is identity escaping the '/' at the string level.
 shouldBeTrue('testForwardSlash("^/$", "/");');
