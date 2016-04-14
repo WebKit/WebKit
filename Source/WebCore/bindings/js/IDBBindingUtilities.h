@@ -39,6 +39,7 @@ class IDBIndexInfo;
 class IDBKey;
 class IDBKeyData;
 class IDBKeyPath;
+class IDBValue;
 class IndexKey;
 class SharedBuffer;
 class ThreadSafeDataBuffer;
@@ -57,6 +58,7 @@ bool canInjectIDBKeyIntoScriptValue(JSC::ExecState&, const JSC::JSValue&, const 
 
 Deprecated::ScriptValue deserializeIDBValue(DOMRequestState*, PassRefPtr<SerializedScriptValue>);
 Deprecated::ScriptValue deserializeIDBValueData(ScriptExecutionContext&, const ThreadSafeDataBuffer& valueData);
+Deprecated::ScriptValue deserializeIDBValue(ScriptExecutionContext&, const IDBValue&);
 Deprecated::ScriptValue deserializeIDBValueBuffer(DOMRequestState*, PassRefPtr<SharedBuffer>, bool keyIsDefined);
 WEBCORE_EXPORT Deprecated::ScriptValue deserializeIDBValueBuffer(JSC::ExecState*, Vector<uint8_t>&&, bool keyIsDefined);
 

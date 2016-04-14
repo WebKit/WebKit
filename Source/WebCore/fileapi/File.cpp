@@ -58,7 +58,7 @@ File::File(const String& path, const String& nameOverride)
 }
 
 File::File(DeserializationContructor, const String& path, const URL& url, const String& type, const String& name)
-    : Blob(deserializationContructor, url, type, -1)
+    : Blob(deserializationContructor, url, type, -1, path)
     , m_path(path)
     , m_name(name)
 {

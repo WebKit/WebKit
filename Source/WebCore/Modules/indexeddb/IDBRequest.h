@@ -44,6 +44,7 @@ class IDBIndex;
 class IDBKeyData;
 class IDBObjectStore;
 class IDBResultData;
+class IDBValue;
 class ThreadSafeDataBuffer;
 
 namespace IDBClient {
@@ -98,7 +99,7 @@ public:
 
     void setResult(const IDBKeyData*);
     void setResult(uint64_t);
-    void setResultToStructuredClone(const ThreadSafeDataBuffer&);
+    void setResultToStructuredClone(const IDBValue&);
     void setResultToUndefined();
 
     IDBAny* modernResult() { return m_result.get(); }

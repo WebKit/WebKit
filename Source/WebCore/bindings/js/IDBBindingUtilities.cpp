@@ -34,6 +34,7 @@
 #include "IDBKey.h"
 #include "IDBKeyData.h"
 #include "IDBKeyPath.h"
+#include "IDBValue.h"
 #include "IndexKey.h"
 #include "JSDOMBinding.h"
 #include "Logging.h"
@@ -428,18 +429,7 @@ Deprecated::ScriptValue deserializeIDBValue(DOMRequestState* requestState, PassR
     return Deprecated::ScriptValue(exec->vm(), result);
 }
 
-Deprecated::ScriptValue deserializeIDBValueData(ScriptExecutionContext& context, const ThreadSafeDataBuffer& valueData)
-{
-    DOMRequestState state(&context);
-    auto* execState = state.exec();
-
-    if (!execState)
-        return Deprecated::ScriptValue();
-
-    return Deprecated::ScriptValue(execState->vm(), deserializeIDBValueDataToJSValue(*execState, valueData));
-}
-
-JSC::JSValue deserializeIDBValueDataToJSValue(JSC::ExecState& exec, const ThreadSafeDataBuffer& valueData)
+static JSC::JSValue deserializeIDBValueDataToJSValue(JSC::ExecState& exec, const ThreadSafeDataBuffer& valueData, const Vector<String> blobURLs, const Vector<String> blobFilePaths)
 {
     if (!valueData.data())
         return jsUndefined();
@@ -450,12 +440,40 @@ JSC::JSValue deserializeIDBValueDataToJSValue(JSC::ExecState& exec, const Thread
         RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
 
         exec.vm().apiLock().lock();
-        result = serializedValue->deserialize(&exec, exec.lexicalGlobalObject(), 0, NonThrowing);
+        result = serializedValue->deserialize(&exec, exec.lexicalGlobalObject(), 0, NonThrowing, blobURLs, blobFilePaths);
         exec.vm().apiLock().unlock();
     } else
         result = jsNull();
 
     return result;
+}
+
+Deprecated::ScriptValue deserializeIDBValueData(ScriptExecutionContext& context, const ThreadSafeDataBuffer& valueData)
+{
+    DOMRequestState state(&context);
+    auto* execState = state.exec();
+
+    if (!execState)
+        return { };
+
+    return { execState->vm(), deserializeIDBValueDataToJSValue(*execState, valueData) };
+}
+
+Deprecated::ScriptValue deserializeIDBValue(ScriptExecutionContext& context, const IDBValue& value)
+{
+    DOMRequestState state(&context);
+    auto* execState = state.exec();
+
+    if (!execState)
+        return { };
+
+    return { execState->vm(), deserializeIDBValueDataToJSValue(*execState, value.data(), value.blobURLs(), value.blobFilePaths()) };
+}
+
+JSC::JSValue deserializeIDBValueDataToJSValue(JSC::ExecState& exec, const ThreadSafeDataBuffer& valueData)
+{
+    Vector<String> dummyURLs, dummyFilePaths;
+    return deserializeIDBValueDataToJSValue(exec, valueData, dummyURLs, dummyFilePaths);
 }
 
 Deprecated::ScriptValue deserializeIDBValueBuffer(DOMRequestState* requestState, PassRefPtr<SharedBuffer> prpBuffer, bool keyIsDefined)

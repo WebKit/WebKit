@@ -85,6 +85,8 @@ public:
 
     IDBBackingStoreTemporaryFileHandler& temporaryFileHandler() const { return m_temporaryFileHandler; }
 
+    IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
+
 private:
     String filenameForDatabaseName() const;
     String fullDatabasePath() const;

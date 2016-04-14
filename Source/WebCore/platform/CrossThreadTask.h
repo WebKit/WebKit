@@ -62,6 +62,17 @@ public:
     }
 };
 
+template <typename... Arguments>
+class CrossThreadTaskStaticImpl final : public CrossThreadTask {
+public:
+    CrossThreadTaskStaticImpl(void (*method)(Arguments...), Arguments&&... arguments)
+    {
+        m_taskFunction = [method, arguments...] {
+            method(arguments...);
+        };
+    }
+};
+
 template<typename T>
 std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     T& callee,
@@ -107,6 +118,20 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
 {
     return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3>>(
         &callee,
+        method,
+        WebCore::CrossThreadCopier<P1>::copy(parameter1),
+        WebCore::CrossThreadCopier<P2>::copy(parameter2),
+        WebCore::CrossThreadCopier<P3>::copy(parameter3));
+}
+
+template<typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
+std::unique_ptr<CrossThreadTask> createCrossThreadTask(
+    void (*method)(MP1, MP2, MP3),
+    const P1& parameter1,
+    const P2& parameter2,
+    const P3& parameter3)
+{
+    return std::make_unique<CrossThreadTaskStaticImpl<MP1, MP2, MP3>>(
         method,
         WebCore::CrossThreadCopier<P1>::copy(parameter1),
         WebCore::CrossThreadCopier<P2>::copy(parameter2),

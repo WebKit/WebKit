@@ -341,7 +341,7 @@ void IDBRequest::setResult(uint64_t number)
     m_result = IDBAny::create(Deprecated::ScriptValue(scriptExecutionContext()->vm(), JSC::JSValue(number)));
 }
 
-void IDBRequest::setResultToStructuredClone(const ThreadSafeDataBuffer& valueData)
+void IDBRequest::setResultToStructuredClone(const IDBValue& value)
 {
     LOG(IndexedDB, "IDBRequest::setResultToStructuredClone");
 
@@ -349,8 +349,8 @@ void IDBRequest::setResultToStructuredClone(const ThreadSafeDataBuffer& valueDat
     if (!context)
         return;
 
-    Deprecated::ScriptValue value = deserializeIDBValueData(*context, valueData);
-    m_result = IDBAny::create(WTFMove(value));
+    Deprecated::ScriptValue scriptValue = deserializeIDBValue(*context, value);
+    m_result = IDBAny::create(WTFMove(scriptValue));
 }
 
 void IDBRequest::setResultToUndefined()

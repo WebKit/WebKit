@@ -418,7 +418,7 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
     if (isKeyCursor())
         m_deprecatedCurrentValue = { };
     else
-        m_deprecatedCurrentValue = deserializeIDBValueData(*context, getResult.value().data());
+        m_deprecatedCurrentValue = deserializeIDBValue(*context, getResult.value());
 
     m_gotValue = true;
 }

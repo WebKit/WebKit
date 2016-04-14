@@ -1,3 +1,100 @@
+2016-04-13  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Blob support): Support retrieving Blobs from IDB.
+        https://bugs.webkit.org/show_bug.cgi?id=156367
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No testable change in behavior yet, current tests pass).
+
+        This patch does the following:
+        - Pulls BlobURLs and stored filenames out of IDB whenever an IDB record is fetched.
+        - Adds those URLs and filenames to IDBValue.
+        - Uses IDBValue in more places instead of SharedBuffer/ThreadSafeBuffer.
+        - Teaches SerializedScriptValue, Blob, and File how to read the URLs and filenames when they exist.
+        - Teaches the Blob registry to register a new type of Blob that is not a "File" but is backed by one.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::setGetResult):
+        
+        * Modules/indexeddb/IDBGetResult.h:
+        (WebCore::IDBGetResult::IDBGetResult):
+        
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::setResultToStructuredClone):
+        * Modules/indexeddb/IDBRequest.h:
+        
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::didGetRecordOnServer):
+        
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+        * Modules/indexeddb/IDBValue.h:
+        
+        * Modules/indexeddb/server/MemoryIndexCursor.cpp:
+        (WebCore::IDBServer::MemoryIndexCursor::currentData):
+        
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.cpp:
+        (WebCore::IDBServer::MemoryObjectStoreCursor::currentData):
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getIndexRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::currentData):
+        (WebCore::IDBServer::SQLiteIDBCursor::internalAdvanceOnce):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+        (WebCore::IDBServer::SQLiteIDBCursor::currentValue):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentValueBuffer): Deleted.
+        
+        * Modules/indexeddb/server/SQLiteIDBTransaction.h:
+        (WebCore::IDBServer::SQLiteIDBTransaction::backingStore):
+        
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::deserializeIDBValueDataToJSValue):
+        (WebCore::deserializeIDBValueData):
+        (WebCore::deserializeIDBValue):
+        * bindings/js/IDBBindingUtilities.h:
+        
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readFile):
+        (WebCore::CloneDeserializer::readTerminal):
+        (WebCore::CloneDeserializer::blobFilePathForBlobURL):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.h:
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        * fileapi/Blob.h:
+        (WebCore::Blob::deserialize):
+
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::threadableQueue):
+        (WebCore::ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked):
+        * fileapi/ThreadableBlobRegistry.h:
+
+        * platform/CrossThreadTask.h:
+        (WebCore::createCrossThreadTask):
+
+        * platform/network/BlobRegistry.h:
+
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURLOptionallyFileBacked):
+        * platform/network/BlobRegistryImpl.h:
+
 2016-04-13  Zalan Bujtas  <zalan@apple.com>
 
         Text on compositing layer with negative letter-spacing is truncated.

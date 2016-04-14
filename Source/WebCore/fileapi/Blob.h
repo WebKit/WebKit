@@ -58,10 +58,10 @@ public:
         return adoptRef(*new Blob(WTFMove(blobParts), contentType));
     }
 
-    static Ref<Blob> deserialize(const URL& srcURL, const String& type, long long size)
+    static Ref<Blob> deserialize(const URL& srcURL, const String& type, long long size, const String& fileBackedPath)
     {
         ASSERT(Blob::isNormalizedContentType(type));
-        return adoptRef(*new Blob(deserializationContructor, srcURL, type, size));
+        return adoptRef(*new Blob(deserializationContructor, srcURL, type, size, fileBackedPath));
     }
 
     virtual ~Blob();
@@ -98,7 +98,7 @@ protected:
     Blob(UninitializedContructor);
 
     enum DeserializationContructor { deserializationContructor };
-    Blob(DeserializationContructor, const URL& srcURL, const String& type, long long size);
+    Blob(DeserializationContructor, const URL& srcURL, const String& type, long long size, const String& fileBackedPath);
 
     // For slicing.
     Blob(const URL& srcURL, long long start, long long end, const String& contentType);

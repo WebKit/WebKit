@@ -35,6 +35,7 @@ public:
     void registerFileBlobURL(const WebCore::URL&, RefPtr<WebCore::BlobDataFileReference>&&, const String& contentType) override;
     void registerBlobURL(const WebCore::URL&, Vector<WebCore::BlobPart>, const String& contentType) override;
     void registerBlobURL(const WebCore::URL&, const WebCore::URL& srcURL) override;
+    void registerBlobURLOptionallyFileBacked(const WebCore::URL&, const WebCore::URL& srcURL, const String& fileBackedPath) override;
     void unregisterBlobURL(const WebCore::URL&) override;
     void registerBlobURLForSlice(const WebCore::URL&, const WebCore::URL& srcURL, long long start, long long end) override;
     unsigned long long blobSize(const WebCore::URL&) override;

@@ -1482,13 +1482,11 @@ public:
         return str;
     }
 
-    static DeserializationResult deserialize(ExecState* exec, JSGlobalObject* globalObject,
-                                             MessagePortArray* messagePorts, ArrayBufferContentsArray* arrayBufferContentsArray,
-                                             const Vector<uint8_t>& buffer)
+    static DeserializationResult deserialize(ExecState* exec, JSGlobalObject* globalObject, MessagePortArray* messagePorts, ArrayBufferContentsArray* arrayBufferContentsArray, const Vector<uint8_t>& buffer, const Vector<String>& blobURLs, const Vector<String> blobFilePaths)
     {
         if (!buffer.size())
             return std::make_pair(jsNull(), UnspecifiedError);
-        CloneDeserializer deserializer(exec, globalObject, messagePorts, arrayBufferContentsArray, buffer);
+        CloneDeserializer deserializer(exec, globalObject, messagePorts, arrayBufferContentsArray, buffer, blobURLs, blobFilePaths);
         if (!deserializer.isValid())
             return std::make_pair(JSValue(), ValidationError);
         return deserializer.deserialize();
@@ -1533,9 +1531,7 @@ private:
         size_t m_index;
     };
 
-    CloneDeserializer(ExecState* exec, JSGlobalObject* globalObject, 
-                      MessagePortArray* messagePorts, ArrayBufferContentsArray* arrayBufferContents,
-                      const Vector<uint8_t>& buffer)
+    CloneDeserializer(ExecState* exec, JSGlobalObject* globalObject, MessagePortArray* messagePorts, ArrayBufferContentsArray* arrayBufferContents, const Vector<uint8_t>& buffer)
         : CloneBase(exec)
         , m_globalObject(globalObject)
         , m_isDOMGlobalObject(globalObject->inherits(JSDOMGlobalObject::info()))
@@ -1545,6 +1541,23 @@ private:
         , m_messagePorts(messagePorts)
         , m_arrayBufferContents(arrayBufferContents)
         , m_arrayBuffers(arrayBufferContents ? arrayBufferContents->size() : 0)
+    {
+        if (!read(m_version))
+            m_version = 0xFFFFFFFF;
+    }
+
+    CloneDeserializer(ExecState* exec, JSGlobalObject* globalObject, MessagePortArray* messagePorts, ArrayBufferContentsArray* arrayBufferContents, const Vector<uint8_t>& buffer, const Vector<String>& blobURLs, const Vector<String> blobFilePaths)
+        : CloneBase(exec)
+        , m_globalObject(globalObject)
+        , m_isDOMGlobalObject(globalObject->inherits(JSDOMGlobalObject::info()))
+        , m_ptr(buffer.data())
+        , m_end(buffer.data() + buffer.size())
+        , m_version(0xFFFFFFFF)
+        , m_messagePorts(messagePorts)
+        , m_arrayBufferContents(arrayBufferContents)
+        , m_arrayBuffers(arrayBufferContents ? arrayBufferContents->size() : 0)
+        , m_blobURLs(blobURLs)
+        , m_blobFilePaths(blobFilePaths)
     {
         if (!read(m_version))
             m_version = 0xFFFFFFFF;
@@ -1773,8 +1786,14 @@ private:
         CachedStringRef name;
         if (!readStringData(name))
             return 0;
+
+        // If the blob URL for this file has an associated blob file path, prefer that one over the "built-in" path.
+        String filePath = blobFilePathForBlobURL(url->string());
+        if (filePath.isEmpty())
+            filePath = path->string();
+
         if (m_isDOMGlobalObject)
-            file = File::deserialize(path->string(), URL(URL(), url->string()), type->string(), name->string());
+            file = File::deserialize(filePath, URL(URL(), url->string()), type->string(), name->string());
         return true;
     }
 
@@ -2273,7 +2292,7 @@ private:
                 return JSValue();
             if (!m_isDOMGlobalObject)
                 return jsNull();
-            return getJSValue(Blob::deserialize(URL(URL(), url->string()), type->string(), size).get());
+            return getJSValue(Blob::deserialize(URL(URL(), url->string()), type->string(), size, blobFilePathForBlobURL(url->string())).get());
         }
         case StringTag: {
             CachedStringRef cachedString;
@@ -2405,6 +2424,19 @@ private:
     MessagePortArray* m_messagePorts;
     ArrayBufferContentsArray* m_arrayBufferContents;
     ArrayBufferArray m_arrayBuffers;
+    Vector<String> m_blobURLs;
+    Vector<String> m_blobFilePaths;
+
+    String blobFilePathForBlobURL(const String& blobURL)
+    {
+        size_t i = 0;
+        for (; i < m_blobURLs.size(); ++i) {
+            if (m_blobURLs[i] == blobURL)
+                break;
+        }
+
+        return i < m_blobURLs.size() ? m_blobFilePaths[i] : String();
+    }
 };
 
 DeserializationResult CloneDeserializer::deserialize()
@@ -2683,11 +2715,15 @@ String SerializedScriptValue::toString()
     return CloneDeserializer::deserializeString(m_data);
 }
 
-JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* globalObject,
-                                           MessagePortArray* messagePorts, SerializationErrorMode throwExceptions)
+JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* globalObject, MessagePortArray* messagePorts, SerializationErrorMode throwExceptions)
 {
-    DeserializationResult result = CloneDeserializer::deserialize(exec, globalObject, messagePorts,
-                                                                  m_arrayBufferContentsArray.get(), m_data);
+    Vector<String> dummyBlobs, dummyPaths;
+    return deserialize(exec, globalObject, messagePorts, throwExceptions, dummyBlobs, dummyPaths);
+}
+
+JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* globalObject, MessagePortArray* messagePorts, SerializationErrorMode throwExceptions, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths)
+{
+    DeserializationResult result = CloneDeserializer::deserialize(exec, globalObject, messagePorts, m_arrayBufferContentsArray.get(), m_data, blobURLs, blobFilePaths);
     if (throwExceptions == Throwing)
         maybeThrowExceptionIfSerializationFailed(exec, result.second);
     return result.first ? result.first : jsNull();

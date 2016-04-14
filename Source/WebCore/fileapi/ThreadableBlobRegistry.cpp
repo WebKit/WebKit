@@ -35,10 +35,12 @@
 #include "BlobPart.h"
 #include "BlobRegistry.h"
 #include "BlobURL.h"
+#include "CrossThreadTask.h"
 #include "SecurityOrigin.h"
 #include <mutex>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
+#include <wtf/MessageQueue.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/text/StringHash.h>
@@ -98,6 +100,17 @@ static ThreadSpecific<BlobUrlOriginMap>& originMap()
     return *map;
 }
 
+static MessageQueue<CrossThreadTask>& threadableQueue()
+{
+    static std::once_flag onceFlag;
+    static MessageQueue<CrossThreadTask>* queue;
+    std::call_once(onceFlag, [] {
+        queue = new MessageQueue<CrossThreadTask>;
+    });
+
+    return *queue;
+}
+
 void ThreadableBlobRegistry::registerFileBlobURL(const URL& url, const String& path, const String& contentType)
 {
     if (isMainThread())
@@ -140,6 +153,21 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, const URL& 
         callOnMainThread([context] {
             std::unique_ptr<BlobRegistryContext> blobRegistryContext(context);
             blobRegistry().registerBlobURL(blobRegistryContext->url, blobRegistryContext->srcURL);
+        });
+    }
+}
+
+void ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath)
+{
+    if (isMainThread())
+        blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, fileBackedPath);
+    else {
+        threadableQueue().append(createCrossThreadTask(ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked, url, srcURL, fileBackedPath));
+
+        callOnMainThread([] {
+            auto task = threadableQueue().tryGetMessage();
+            ASSERT(task);
+            task->performTask();
         });
     }
 }

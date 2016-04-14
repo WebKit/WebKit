@@ -160,13 +160,26 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart> blobPart
 
 void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
 {
+    registerBlobURLOptionallyFileBacked(url, srcURL, { });
+}
+
+void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath)
+{
     ASSERT(isMainThread());
 
     BlobData* src = getBlobDataFromURL(srcURL);
-    if (!src)
+    if (src) {
+        m_blobs.set(url.string(), src);
+        return;
+    }
+
+    if (fileBackedPath.isEmpty())
         return;
 
-    m_blobs.set(url.string(), src);
+    RefPtr<BlobData> backingFile = BlobData::create({ });
+    backingFile->appendFile(BlobDataFileReference::create(fileBackedPath));
+
+    m_blobs.set(url.string(), backingFile.release());
 }
 
 void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end)

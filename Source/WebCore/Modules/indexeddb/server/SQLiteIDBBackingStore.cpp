@@ -1049,7 +1049,8 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
 
     while (!cursor->currentKey().isNull()) {
         auto& key = cursor->currentKey();
-        auto valueBuffer = ThreadSafeDataBuffer::copyVector(cursor->currentValueBuffer());
+        auto* value = cursor->currentValue();
+        ThreadSafeDataBuffer valueBuffer = value ? value->data() : ThreadSafeDataBuffer();
 
         IDBError error = updateOneIndexForAddRecord(info, key, valueBuffer);
         if (!error.isNull()) {
@@ -1627,6 +1628,60 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
     return error;
 }
 
+IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths)
+{
+    ASSERT(objectStoreRecord);
+
+    HashSet<String> blobURLSet;
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT blobURL FROM BlobRecords WHERE objectStoreRow = ?"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, objectStoreRecord) != SQLITE_OK) {
+            LOG_ERROR("Could not prepare statement to fetch blob URLs for object store record (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Failed to look up blobURL records in object store by key range") };
+        }
+
+        int sqlResult = sql.step();
+        if (sqlResult == SQLITE_OK || sqlResult == SQLITE_DONE) {
+            // There are no blobURLs in the database for this object store record.
+            return { };
+        }
+
+        while (sqlResult == SQLITE_ROW) {
+            blobURLSet.add(sql.getColumnText(0));
+            sqlResult = sql.step();
+        }
+
+        if (sqlResult != SQLITE_DONE) {
+            LOG_ERROR("Could not fetch blob URLs for object store record (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Failed to look up blobURL records in object store by key range") };
+        }
+    }
+
+    ASSERT(!blobURLSet.isEmpty());
+    String databaseDirectory = fullDatabaseDirectory();
+    for (auto& blobURL : blobURLSet) {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT fileName FROM BlobFiles WHERE blobURL = ?"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindText(1, blobURL) != SQLITE_OK) {
+            LOG_ERROR("Could not prepare statement to fetch blob filename for object store record (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Failed to look up blobURL records in object store by key range") };
+        }
+
+        if (sql.step() != SQLITE_ROW) {
+            LOG_ERROR("Entry for blob filename for blob url %s does not exist (%i) - %s", blobURL.utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Failed to look up blobURL records in object store by key range") };
+        }
+
+        blobURLs.append(blobURL);
+
+        String fileName = sql.getColumnText(0);
+        blobFilePaths.append(pathByAppendingComponent(databaseDirectory, fileName));
+    }
+
+    return { };
+}
+
 IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, const IDBKeyRangeData& keyRange, IDBGetResult& resultValue)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::getRecord - key range %s, object store %" PRIu64, keyRange.loggingString().utf8().data(), objectStoreID);
@@ -1658,11 +1713,13 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to serialize upper IDBKey in lookup range") };
     }
 
+    int64_t recordID = 0;
+    ThreadSafeDataBuffer resultBuffer;
     {
-        static NeverDestroyed<const ASCIILiteral> lowerOpenUpperOpen("SELECT value FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;");
-        static NeverDestroyed<const ASCIILiteral> lowerOpenUpperClosed("SELECT value FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;");
-        static NeverDestroyed<const ASCIILiteral> lowerClosedUpperOpen("SELECT value FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;");
-        static NeverDestroyed<const ASCIILiteral> lowerClosedUpperClosed("SELECT value FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;");
+        static NeverDestroyed<const ASCIILiteral> lowerOpenUpperOpen("SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;");
+        static NeverDestroyed<const ASCIILiteral> lowerOpenUpperClosed("SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;");
+        static NeverDestroyed<const ASCIILiteral> lowerClosedUpperOpen("SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;");
+        static NeverDestroyed<const ASCIILiteral> lowerClosedUpperClosed("SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;");
 
         const ASCIILiteral* query = nullptr;
 
@@ -1703,9 +1760,20 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
 
         Vector<uint8_t> buffer;
         sql.getColumnBlobAsVector(0, buffer);
-        resultValue = ThreadSafeDataBuffer::adoptVector(buffer);
+        resultBuffer = ThreadSafeDataBuffer::adoptVector(buffer);
+
+        recordID = sql.getColumnInt64(1);
     }
 
+    ASSERT(recordID);
+    Vector<String> blobURLs, blobFilePaths;
+    auto error = getBlobRecordsForObjectStoreRecord(recordID, blobURLs, blobFilePaths);
+    ASSERT(blobURLs.size() == blobFilePaths.size());
+
+    if (!error.isNull())
+        return error;
+
+    resultValue = { { resultBuffer, WTFMove(blobURLs), WTFMove(blobFilePaths) } };
     return { };
 }
 
@@ -1739,7 +1807,7 @@ IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& tran
         if (type == IndexedDB::IndexRecordType::Key)
             getResult = { cursor->currentPrimaryKey() };
         else
-            getResult = { SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size()), cursor->currentPrimaryKey() };
+            getResult = { cursor->currentValue() ? *cursor->currentValue() : IDBValue(), cursor->currentPrimaryKey() };
     }
 
     return { };

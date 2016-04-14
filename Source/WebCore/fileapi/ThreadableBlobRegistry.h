@@ -45,6 +45,7 @@ public:
     static void registerFileBlobURL(const URL&, const String& path, const String& contentType);
     static void registerBlobURL(const URL&, Vector<BlobPart> blobParts, const String& contentType);
     static void registerBlobURL(SecurityOrigin*, const URL&, const URL& srcURL);
+    static void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, const String& fileBackedPath);
     static void registerBlobURLForSlice(const URL& newURL, const URL& srcURL, long long start, long long end);
     static void unregisterBlobURL(const URL&);
 

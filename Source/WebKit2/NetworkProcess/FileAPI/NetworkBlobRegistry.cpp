@@ -83,6 +83,17 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
     mapIterator->value.add(url);
 }
 
+void NetworkBlobRegistry::registerBlobURLOptionallyFileBacked(NetworkConnectionToWebProcess* connection, const URL& url, const URL& srcURL, const String& fileBackedPath)
+{
+    blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, fileBackedPath);
+
+    ASSERT(!m_blobsForConnection.get(connection).contains(url));
+    BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);
+    if (mapIterator == m_blobsForConnection.end())
+        mapIterator = m_blobsForConnection.add(connection, HashSet<URL>()).iterator;
+    mapIterator->value.add(url);
+}
+
 void NetworkBlobRegistry::registerBlobURLForSlice(NetworkConnectionToWebProcess* connection, const WebCore::URL& url, const WebCore::URL& srcURL, int64_t start, int64_t end)
 {
     // The connection may not be registered if NetworkProcess prevously crashed for any reason.

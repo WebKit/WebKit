@@ -70,6 +70,7 @@ public:
     bool inProgress() const;
 
     SQLiteTransaction* sqliteTransaction() const { return m_sqliteTransaction.get(); }
+    SQLiteIDBBackingStore& backingStore() { return m_backingStore; }
 
     void addBlobFile(const String& temporaryPath, const String& storedFilename);
     void addRemovedBlobFile(const String& removedFilename);

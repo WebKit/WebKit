@@ -43,14 +43,19 @@ public:
     {
     }
 
-    IDBGetResult(Ref<SharedBuffer>&& buffer, const IDBKeyData& currentPrimaryKey)
-        : m_primaryKeyData(currentPrimaryKey)
+    IDBGetResult(const IDBValue& value, const IDBKeyData& currentPrimaryKey)
+        : m_value(value)
+        , m_primaryKeyData(currentPrimaryKey)
     {
-        dataFromBuffer(buffer.get());
     }
 
     IDBGetResult(const ThreadSafeDataBuffer& buffer)
         : m_value(buffer)
+    {
+    }
+
+    IDBGetResult(IDBValue&& buffer)
+        : m_value(WTFMove(buffer))
     {
     }
 
@@ -78,8 +83,15 @@ public:
     {
     }
 
-    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, const ThreadSafeDataBuffer& valueBuffer)
-        : m_value(valueBuffer)
+    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value)
+        : m_value(WTFMove(value))
+        , m_keyData(keyData)
+        , m_primaryKeyData(primaryKeyData)
+    {
+    }
+
+    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, const IDBValue& value)
+        : m_value(value)
         , m_keyData(keyData)
         , m_primaryKeyData(primaryKeyData)
     {
@@ -97,7 +109,7 @@ public:
     template<class Decoder> static bool decode(Decoder&, IDBGetResult&);
 
 private:
-    WEBCORE_EXPORT void dataFromBuffer(SharedBuffer&);
+    void dataFromBuffer(SharedBuffer&);
 
     IDBValue m_value;
     IDBKeyData m_keyData;

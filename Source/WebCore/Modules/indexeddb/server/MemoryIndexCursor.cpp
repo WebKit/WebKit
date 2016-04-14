@@ -74,8 +74,10 @@ void MemoryIndexCursor::currentData(IDBGetResult& getResult)
 
     if (m_info.cursorType() == IndexedDB::CursorType::KeyOnly)
         getResult = { m_currentKey, m_currentPrimaryKey };
-    else
-        getResult = { m_currentKey, m_currentPrimaryKey, m_index.objectStore().valueForKey(m_currentPrimaryKey) };
+    else {
+        IDBValue value = { m_index.objectStore().valueForKey(m_currentPrimaryKey), { }, { } };
+        getResult = { m_currentKey, m_currentPrimaryKey, WTFMove(value) };
+    }
 }
 
 void MemoryIndexCursor::iterate(const IDBKeyData& key, uint32_t count, IDBGetResult& getResult)

@@ -189,7 +189,8 @@ void MemoryObjectStoreCursor::currentData(IDBGetResult& data)
     }
 
     m_currentPositionKey = **m_iterator;
-    data = { m_currentPositionKey, m_currentPositionKey, m_objectStore.valueForKeyRange(m_currentPositionKey) };
+    IDBValue value = { m_objectStore.valueForKeyRange(m_currentPositionKey), { }, { } };
+    data = { m_currentPositionKey, m_currentPositionKey, WTFMove(value) };
 }
 
 void MemoryObjectStoreCursor::incrementForwardIterator(std::set<IDBKeyData>& set, const IDBKeyData& key, uint32_t count)

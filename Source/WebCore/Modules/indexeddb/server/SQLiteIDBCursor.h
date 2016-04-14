@@ -31,6 +31,7 @@
 #include "IDBKeyData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBResourceIdentifier.h"
+#include "IDBValue.h"
 #include "SQLiteStatement.h"
 #include <wtf/Noncopyable.h>
 
@@ -61,7 +62,7 @@ public:
 
     const IDBKeyData& currentKey() const { return m_currentKey; }
     const IDBKeyData& currentPrimaryKey() const { return m_currentPrimaryKey; }
-    const Vector<uint8_t>& currentValueBuffer() const { return m_currentValueBuffer; }
+    IDBValue* currentValue() const { return m_currentValue.get(); }
 
     bool advance(uint64_t count);
     bool iterate(const IDBKeyData& targetKey);
@@ -102,7 +103,7 @@ private:
 
     IDBKeyData m_currentKey;
     IDBKeyData m_currentPrimaryKey;
-    Vector<uint8_t> m_currentValueBuffer;
+    std::unique_ptr<IDBValue> m_currentValue;
 
     std::unique_ptr<SQLiteStatement> m_statement;
     bool m_statementNeedsReset { false };
