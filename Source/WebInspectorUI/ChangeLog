@@ -1,3 +1,19 @@
+2016-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION: Web Inspector: Remote inspector doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=156543
+
+        Reviewed by Timothy Hatcher.
+
+        WebSocket connection is blocked by CSP, but needed by the remote web inspector to work, so allow connect to ws
+        URLs from the web inspector. Also add stubs for zoomFactor and setZoomFactor to InspectorFrontendHostStub,
+        required after r199396.
+
+        * UserInterface/Base/InspectorFrontendHostStub.js:
+        (window.InspectorFrontendHost.WebInspector.InspectorFrontendHostStub.prototype.setZoomFactor):
+        (window.InspectorFrontendHost.WebInspector.InspectorFrontendHostStub.prototype.zoomFactor):
+        * UserInterface/Main.html:
+
 2016-04-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: save inspector's zoom factor as a persistent setting across sessions

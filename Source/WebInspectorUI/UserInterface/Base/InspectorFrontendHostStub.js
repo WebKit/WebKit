@@ -168,6 +168,15 @@ if (!window.InspectorFrontendHost) {
             console.log.apply(console, arguments);
         },
 
+        setZoomFactor: function(zoom)
+        {
+        },
+
+        zoomFactor: function()
+        {
+            return 1;
+        },
+
         // Private
 
         _sendPendingMessagesToBackendIfNeeded: function()
