@@ -1,3 +1,9 @@
+2016-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.12.1 release.
+
+        * gtk/NEWS: Add release notes for 2.12.1.
+
 2016-04-05  Chris Dumez  <cdumez@apple.com>
 
         We sometimes fail to remove outdated entry from the disk cache after revalidation and when the resource is no longer cacheable

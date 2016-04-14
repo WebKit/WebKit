@@ -1,4 +1,20 @@
 ==================
+WebKitGTK+  2.12.1
+==================
+
+What's new in WebKitGTK+ 2.12.1?
+
+  - Fix spotify player.
+  - Improve themed control elements rendering to better match GTK+ widgets.
+  - Make remote web inspector work again.
+  - Fix several crashes and rendering issues.
+  - Fix several memory leaks.
+  - Fix the build in Linux / PowerPC.
+  - Fix detection of S390X and PPC64 architectures.
+  - Fix the build in glibc-based BSD systems
+  - Translation updates: Brazilian Portuguese.
+
+==================
 WebKitGTK+  2.12.0
 ==================
 
