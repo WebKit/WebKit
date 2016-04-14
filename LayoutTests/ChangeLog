@@ -1,3 +1,25 @@
+2016-04-14  Frederic Wang  <fwang@igalia.com>
+
+        Ensure that RenderMathMLOperator::stretchTo functions are called with stretchy operators that have the correct direction
+        https://bugs.webkit.org/show_bug.cgi?id=156542
+
+        Reviewed by Darin Adler.
+
+        Add a test to ensure that nonstretchy or horizontal operators in a
+        RenderMathMLRow do not stretch. This is similar to the existing test
+        for munderover and we improve a bit that one too.
+        Besides the verification of the rendering, these two tests will also
+        check that the RenderMathMLOperator::stretchTo calls are not done in a
+        way that violates the ASSERT at the top of stretchTo.
+
+        * mathml/presentation/row-nonstretchy-or-horizontal.html: Added.
+        * mathml/presentation/row-nonstretchy-or-horizontal-expected.html: Added.
+        * mathml/presentation/underover-nonstretchy-horizontal.html: Removed.
+        * mathml/presentation/underover-nonstretchy-horizontal-expected.html: Removed.
+        * mathml/presentation/underover-nonstretchy-or-vertical.html: Renamed from LayoutTests/mathml/presentation/underover-nonstretchy-horizontal.html.
+        We now also test the case of vertical operators in munderover.
+        * mathml/presentation/underover-nonstretchy-or-vertical-expected.html: Renamed from LayoutTests/mathml/presentation/underover-nonstretchy-horizontal-expected.html.
+
 2016-04-14  Darin Adler  <darin@apple.com>
 
         Remove UsePointersEvenForNonNullableObjectArguments from Internals

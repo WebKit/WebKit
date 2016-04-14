@@ -94,16 +94,6 @@ RenderMathMLOperator::RenderMathMLOperator(Document& document, Ref<RenderStyle>&
     updateTokenContent(operatorString);
 }
 
-void RenderMathMLOperator::setOperatorFlagAndScheduleLayoutIfNeeded(MathMLOperatorDictionary::Flag flag, const AtomicString& attributeValue)
-{
-    unsigned short oldOperatorFlags = m_operatorFlags;
-
-    setOperatorFlagFromAttributeValue(flag, attributeValue);
-
-    if (oldOperatorFlags != m_operatorFlags)
-        setNeedsLayoutAndPrefWidthsRecalc();
-}
-
 void RenderMathMLOperator::setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag flag, const QualifiedName& name)
 {
     setOperatorFlagFromAttributeValue(flag, element().fastGetAttribute(name));
@@ -215,6 +205,9 @@ bool RenderMathMLOperator::isChildAllowed(const RenderObject&, const RenderStyle
 
 void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline)
 {
+    ASSERT(hasOperatorFlag(MathMLOperatorDictionary::Stretchy));
+    ASSERT(m_isVertical);
+
     if (!m_isVertical || (heightAboveBaseline == m_stretchHeightAboveBaseline && depthBelowBaseline == m_stretchDepthBelowBaseline))
         return;
 
@@ -247,6 +240,9 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
 
 void RenderMathMLOperator::stretchTo(LayoutUnit width)
 {
+    ASSERT(hasOperatorFlag(MathMLOperatorDictionary::Stretchy));
+    ASSERT(!m_isVertical);
+
     if (m_isVertical || m_stretchWidth == width)
         return;
 
@@ -371,6 +367,12 @@ void RenderMathMLOperator::updateOperatorProperties()
 bool RenderMathMLOperator::shouldAllowStretching() const
 {
     return m_textContent && (hasOperatorFlag(MathMLOperatorDictionary::Stretchy) || isLargeOperatorInDisplayStyle());
+}
+
+void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderMathMLBlock::styleDidChange(diff, oldStyle);
+    updateOperatorProperties();
 }
 
 bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::AssemblyPart> assemblyParts, StretchyData& stretchyData) const

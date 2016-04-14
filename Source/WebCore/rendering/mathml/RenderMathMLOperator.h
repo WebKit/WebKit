@@ -52,6 +52,7 @@ public:
     bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp); }
     bool isVertical() const { return m_isVertical; }
 
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void updateStyle() final;
 
     void paint(PaintInfo&, const LayoutPoint&) override;
@@ -59,7 +60,7 @@ public:
     void updateTokenContent(const String& operatorString);
     void updateTokenContent() final;
     void updateOperatorProperties();
-    void setOperatorFlagAndScheduleLayoutIfNeeded(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
+    void updateFromElement() final;
     LayoutUnit trailingSpaceError();
 
 protected:
@@ -137,7 +138,6 @@ private:
     Optional<int> firstLineBaseline() const override;
     RenderMathMLOperator* unembellishedOperator() override { return this; }
     void rebuildTokenContent(const String& operatorString);
-    void updateFromElement() override;
 
     bool shouldAllowStretching() const;
 

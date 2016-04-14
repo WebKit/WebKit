@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<p>Vertical or non-stretchy operators inside an munderover element should not stretch.</p>
+<math>
+  <munderover>
+    <mspace width="100px" height="10px" mathbackground="red"/>
+    <mo lspace="0px" rspace="0px">|</mo> <!-- stretchy vertical operator -->
+    <mo lspace="0px" rspace="0px" stretchy="false" >_</mo> <!-- non-stretchy horizontal operator -->
+  </munderover>
+</math>

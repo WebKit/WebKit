@@ -66,9 +66,9 @@ void MathMLTextElement::childrenChanged(const ChildChange& change)
 
 void MathMLTextElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == stretchyAttr) {
+    if (name == stretchyAttr || name == lspaceAttr || name == rspaceAttr) {
         if (is<RenderMathMLOperator>(renderer()))
-            downcast<RenderMathMLOperator>(*renderer()).setOperatorFlagAndScheduleLayoutIfNeeded(MathMLOperatorDictionary::Stretchy, value);
+            downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
         return;
     }
 

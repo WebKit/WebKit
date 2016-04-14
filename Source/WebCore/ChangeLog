@@ -1,3 +1,35 @@
+2016-04-14  Frederic Wang  <fwang@igalia.com>
+
+        Ensure that RenderMathMLOperator::stretchTo functions are called with stretchy operators that have the correct direction
+        https://bugs.webkit.org/show_bug.cgi?id=156542
+
+        Reviewed by Darin Adler.
+
+        In the RenderMathMLUnderOver refactoring (r199293), we avoided doing a
+        horizontal stretchTo call for non-stretchy operators. Here we do the
+        same for RenderMathMLRow and avoid doing a vertical stretchTo call for
+        horizontal or non-stretchy operators. We also add appropriate ASSERT in
+        the RenderMathMLOperator::stretchTo functions. To avoid failing tests
+        with DOM/style update, we make our updates a bit stricter. Hopefully,
+        we could manage such things better in the future (bug 156536).
+
+        Tests: mathml/presentation/row-nonstretchy-or-horizontal.html
+               mathml/presentation/underover-nonstretchy-or-vertical.html
+
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::parseAttribute): Replace setOperatorFlagAndScheduleLayoutIfNeeded with a stronger rendering update.
+        Also ensure that this is done when the lspace/rspace attributes change.
+        This avoids breaking mathml/presentation/mo-lspace-rspace-dynamic.html
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::stretchTo): Add ASSERT to ensure that it is only called with stretchy operators that have the correct direction.
+        (WebCore::RenderMathMLOperator::styleDidChange): Do a stronger rendering update when the style changes.
+        This avoids breaking mathml/presentation/style-changed.html
+        (WebCore::RenderMathMLOperator::setOperatorFlagAndScheduleLayoutIfNeeded): Deleted.
+        * rendering/mathml/RenderMathMLOperator.h: Make updateFromElement public so that it can be called from MathMLTextElement::parseAttribute
+        Remove setOperatorFlagAndScheduleLayoutIfNeeded and declare styleDidChange.
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::layoutRowItems): Only call stretchTo for vertical stretchy operators.
+
 2016-04-14  Anders Carlsson  <andersca@apple.com>
 
         When FileInputType::setFiles is called with an empty file list, the last set icon is not cleared

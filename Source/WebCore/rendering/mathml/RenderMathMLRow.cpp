@@ -120,7 +120,8 @@ void RenderMathMLRow::layoutRowItems(int stretchHeightAboveBaseline, int stretch
             continue;
 
         if (is<RenderMathMLBlock>(child)) {
-            if (auto renderOperator = downcast<RenderMathMLBlock>(child)->unembellishedOperator())
+            auto renderOperator = downcast<RenderMathMLBlock>(child)->unembellishedOperator();
+            if (renderOperator && renderOperator->hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && renderOperator->isVertical())
                 renderOperator->stretchTo(stretchHeightAboveBaseline, stretchDepthBelowBaseline);
         }
 
