@@ -451,7 +451,7 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 - (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * URLs))completionHandler
 #else
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray* _Nullable result))completionHandler
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray *URLs))completionHandler
 #endif
 {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];

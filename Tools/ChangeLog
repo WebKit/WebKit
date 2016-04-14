@@ -1,5 +1,12 @@
 2016-04-14  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:]):
+
+2016-04-14  Anders Carlsson  <andersca@apple.com>
+
         [Mac] Add API for open panel handling to WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=137759
         rdar://problem/23278623
