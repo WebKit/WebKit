@@ -1,3 +1,241 @@
+2016-04-13  Daniel Bates  <dabates@apple.com>
+
+        CSP: Remove experimental directive reflected-xss
+        https://bugs.webkit.org/show_bug.cgi?id=156554
+
+        Reviewed by Brent Fulgham.
+
+        Remove tests for directive reflected-xss and update the expected results of existing XSS Auditor tests
+        to reflect the change made to the wording of the error message emitted when an XSS attack is blocked.
+
+        * fast/frames/xss-auditor-handles-file-urls-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-allow-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-allow.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-allow-allow-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-allow-allow.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-allow-block-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-allow-block.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-allow-filter-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-allow-filter.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-allow-invalid-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-allow-invalid.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-allow-unset-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-allow-unset.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-allow-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-allow.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-block-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-block.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-filter-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-filter.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-invalid-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-invalid.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-unset-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-unset.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-filter-allow-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-filter-allow.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-filter-block-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-filter-block.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-filter-filter-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-filter-filter.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-filter-invalid-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-filter-invalid.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-filter-unset-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-filter-unset.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-invalid-allow-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-invalid-allow.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-invalid-block-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-invalid-block.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-invalid-filter-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-invalid-filter.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-invalid-invalid-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-invalid-invalid.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-invalid-unset-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-invalid-unset.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-unset-allow-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-unset-allow.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-unset-block-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-unset-block.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-unset-filter-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-unset-filter.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-unset-invalid-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-unset-invalid.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-unset-unset-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-unset-unset.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-block-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-block.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-empty-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-empty.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-filter-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-filter.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-invalid-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-invalid.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-parsing-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/reflected-xss-parsing.html: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/reflected-xss-and-xss-protection.js: Removed.
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-expected.txt:
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-expected.txt:
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-null-char-expected.txt:
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-javascript-URL-expected.txt:
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location2-expected.txt:
+        * http/tests/security/xssAuditor/base-href-control-char-expected.txt:
+        * http/tests/security/xssAuditor/base-href-expected.txt:
+        * http/tests/security/xssAuditor/base-href-null-char-expected.txt:
+        * http/tests/security/xssAuditor/base-href-scheme-relative-expected.txt:
+        * http/tests/security/xssAuditor/cookie-injection-expected.txt:
+        * http/tests/security/xssAuditor/dom-write-URL-expected.txt:
+        * http/tests/security/xssAuditor/dom-write-location-expected.txt:
+        * http/tests/security/xssAuditor/dom-write-location-inline-event-expected.txt:
+        * http/tests/security/xssAuditor/dom-write-location-javascript-URL-expected.txt:
+        * http/tests/security/xssAuditor/embed-tag-code-attribute-2-expected.txt:
+        * http/tests/security/xssAuditor/embed-tag-code-attribute-expected.txt:
+        * http/tests/security/xssAuditor/embed-tag-control-char-expected.txt:
+        * http/tests/security/xssAuditor/embed-tag-expected.txt:
+        * http/tests/security/xssAuditor/embed-tag-in-path-unterminated-expected.txt:
+        * http/tests/security/xssAuditor/embed-tag-javascript-url-expected.txt:
+        * http/tests/security/xssAuditor/embed-tag-null-char-expected.txt:
+        * http/tests/security/xssAuditor/form-action-expected.txt:
+        * http/tests/security/xssAuditor/formaction-on-button-expected.txt:
+        * http/tests/security/xssAuditor/formaction-on-input-expected.txt:
+        * http/tests/security/xssAuditor/frameset-injection-expected.txt:
+        * http/tests/security/xssAuditor/full-block-iframe-no-inherit-expected.txt:
+        * http/tests/security/xssAuditor/get-from-iframe-expected.txt:
+        * http/tests/security/xssAuditor/iframe-injection-expected.txt:
+        * http/tests/security/xssAuditor/iframe-javascript-url-expected.txt:
+        * http/tests/security/xssAuditor/iframe-javascript-url-more-encoding-expected.txt:
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode-expected.txt:
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode2-expected.txt:
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode3-expected.txt:
+        * http/tests/security/xssAuditor/iframe-javascript-url-url-encoded-expected.txt:
+        * http/tests/security/xssAuditor/iframe-onload-GBK-char-expected.txt:
+        * http/tests/security/xssAuditor/iframe-onload-in-svg-tag-expected.txt:
+        * http/tests/security/xssAuditor/iframe-srcdoc-expected.txt:
+        * http/tests/security/xssAuditor/iframe-srcdoc-property-blocked-expected.txt:
+        * http/tests/security/xssAuditor/img-onerror-GBK-char-expected.txt:
+        * http/tests/security/xssAuditor/img-onerror-accented-char-expected.txt:
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char-default-encoding-expected.txt:
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char-expected.txt:
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char2-default-encoding-expected.txt:
+        * http/tests/security/xssAuditor/img-onerror-non-ASCII-char2-expected.txt:
+        * http/tests/security/xssAuditor/img-tag-with-comma-expected.txt:
+        * http/tests/security/xssAuditor/inline-event-HTML-entities-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-control-char-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-named-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-ampersand-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-control-char-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-null-char-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-one-plus-one-expected.txt:
+        * http/tests/security/xssAuditor/javascript-link-url-encoded-expected.txt:
+        * http/tests/security/xssAuditor/link-onclick-ampersand-expected.txt:
+        * http/tests/security/xssAuditor/link-onclick-control-char-expected.txt:
+        * http/tests/security/xssAuditor/link-onclick-entities-expected.txt:
+        * http/tests/security/xssAuditor/link-onclick-expected.txt:
+        * http/tests/security/xssAuditor/link-onclick-null-char-expected.txt:
+        * http/tests/security/xssAuditor/link-opens-new-window-expected.txt:
+        * http/tests/security/xssAuditor/malformed-HTML-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-1-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-2-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-3-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-4-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-5-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-6-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-7-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-8-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-9-expected.txt:
+        * http/tests/security/xssAuditor/meta-tag-http-refresh-javascript-url-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-control-char-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-null-char-expected.txt:
+        * http/tests/security/xssAuditor/object-tag-expected.txt:
+        * http/tests/security/xssAuditor/object-tag-javascript-url-expected.txt:
+        * http/tests/security/xssAuditor/open-attribute-body-expected.txt:
+        * http/tests/security/xssAuditor/open-event-handler-iframe-expected.txt:
+        * http/tests/security/xssAuditor/open-iframe-src-01-expected.txt:
+        * http/tests/security/xssAuditor/open-iframe-src-02-expected.txt:
+        * http/tests/security/xssAuditor/open-iframe-src-03-expected.txt:
+        * http/tests/security/xssAuditor/open-script-src-01-expected.txt:
+        * http/tests/security/xssAuditor/open-script-src-02-expected.txt:
+        * http/tests/security/xssAuditor/open-script-src-03-expected.txt:
+        * http/tests/security/xssAuditor/open-script-src-04-expected.txt:
+        * http/tests/security/xssAuditor/post-from-iframe-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-comment-01-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-comment-02-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-comment-03-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-entity-01-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-entity-02-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-entity-03-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-long-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-quote-01-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-quote-02-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-quote-03-expected.txt:
+        * http/tests/security/xssAuditor/reflection-in-path-expected.txt:
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * http/tests/security/xssAuditor/script-tag-Big5-char-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-Big5-char-twice-url-encode-16bit-unicode-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-Big5-char-twice-url-encode-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-Big5-char2-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-addslashes-backslash-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-addslashes-double-quote-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-addslashes-null-char-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-addslashes-single-quote-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-control-char-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-convoluted-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-entities-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-expression-follows-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-inside-svg-tag-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-inside-svg-tag2-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-inside-svg-tag3-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-near-start-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-null-char-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-post-control-char-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-post-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-post-null-char-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode-surrogate-pair-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode2-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode3-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode4-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode5-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-actual-comma-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-callbacks-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-comma-01-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-comma-02-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-fancy-unicode-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-injected-comment-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-invalid-closing-tag-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-invalid-url-encoding-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-control-char-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-data-url-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-data-url2-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-data-url3-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-double-quote-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-entities-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-no-quote-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-null-char-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-relative-scheme-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-same-host-with-query-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-unterminated-01-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-unterminated-02-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-source-unterminated-03-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-three-times-url-encoded-16bit-unicode-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-trailing-comment-U2028-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-trailing-comment-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-trailing-comment2-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-trailing-comment3-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-trailing-comment4-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-trailing-comment5-expected.txt:
+        * http/tests/security/xssAuditor/script-tag-with-trailing-script-and-urlencode-expected.txt:
+        * http/tests/security/xssAuditor/svg-animate-expected.txt:
+        * http/tests/security/xssAuditor/svg-script-tag-expected.txt:
+        * http/tests/security/xssAuditor/xss-filter-bypass-big5-expected.txt:
+        * http/tests/security/xssAuditor/xss-filter-bypass-long-string-expected.txt:
+        * http/tests/security/xssAuditor/xss-filter-bypass-sjis-expected.txt:
+
 2016-04-13  Michael Saboff  <msaboff@apple.com>
 
         Some tests fail with ES6 `u` (Unicode) flag for regular expressions

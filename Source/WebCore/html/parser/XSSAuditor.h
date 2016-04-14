@@ -106,8 +106,7 @@ private:
     URL m_documentURL;
     bool m_isEnabled;
 
-    ContentSecurityPolicy::ReflectedXSSDisposition m_xssProtection;
-    bool m_didSendValidCSPHeader;
+    XSSProtectionDisposition m_xssProtection;
     bool m_didSendValidXSSProtectionHeader;
 
     String m_decodedURL;

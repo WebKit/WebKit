@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/resources/echo-frame-src.pl?q=%22srcdoc=%22%3Cscript%3Ealert(0)%3C/script%3E' because its source code was found within the request. The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.
+CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/resources/echo-frame-src.pl?q=%22srcdoc=%22%3Cscript%3Ealert(0)%3C/script%3E' because its source code was found within the request. The auditor was enabled because the server did not send an 'X-XSS-Protection' header.
 Catch injected srcdoc properties when there is punctuation enabling the auditor
 
 

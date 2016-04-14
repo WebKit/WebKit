@@ -65,16 +65,6 @@ public:
 
     void didCreateWindowShell(JSDOMWindowShell&) const;
 
-    // Be sure to update the behavior of XSSAuditor::combineXSSProtectionHeaderAndCSP whenever you change this enum's content or ordering.
-    enum ReflectedXSSDisposition {
-        ReflectedXSSUnset = 0,
-        AllowReflectedXSS,
-        ReflectedXSSInvalid,
-        FilterReflectedXSS,
-        BlockReflectedXSS
-    };
-    ReflectedXSSDisposition reflectedXSSDisposition() const;
-
     enum class PolicyFrom {
         HTTPEquivMeta,
         HTTPHeader,
@@ -130,7 +120,6 @@ public:
     void reportDuplicateDirective(const String&) const;
     void reportInvalidDirectiveValueCharacter(const String& directiveName, const String& value) const;
     void reportInvalidSandboxFlags(const String&) const;
-    void reportInvalidReflectedXSS(const String&) const;
     void reportInvalidDirectiveInReportOnlyMode(const String&) const;
     void reportInvalidDirectiveInHTTPEquivMeta(const String&) const;
     void reportMissingReportURI(const String&) const;

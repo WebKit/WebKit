@@ -523,16 +523,6 @@ bool ContentSecurityPolicy::allowBaseURI(const URL& url, bool overrideContentSec
     return violatedDirective->directiveList().isReportOnly();
 }
 
-ContentSecurityPolicy::ReflectedXSSDisposition ContentSecurityPolicy::reflectedXSSDisposition() const
-{
-    ReflectedXSSDisposition disposition = ReflectedXSSUnset;
-    for (auto& policy : m_policies) {
-        if (policy->reflectedXSSDisposition() > disposition)
-            disposition = std::max(disposition, policy->reflectedXSSDisposition());
-    }
-    return disposition;
-}
-
 static String stripURLForUseInReport(Document& document, const URL& url)
 {
     if (!url.isValid())
@@ -675,11 +665,6 @@ void ContentSecurityPolicy::reportInvalidPluginTypes(const String& pluginType) c
 void ContentSecurityPolicy::reportInvalidSandboxFlags(const String& invalidFlags) const
 {
     logToConsole("Error while parsing the 'sandbox' Content Security Policy directive: " + invalidFlags);
-}
-
-void ContentSecurityPolicy::reportInvalidReflectedXSS(const String& invalidValue) const
-{
-    logToConsole("The 'reflected-xss' Content Security Policy directive has the invalid value \"" + invalidValue + "\". Value values are \"allow\", \"filter\", and \"block\".");
 }
 
 void ContentSecurityPolicy::reportInvalidDirectiveInReportOnlyMode(const String& directiveName) const

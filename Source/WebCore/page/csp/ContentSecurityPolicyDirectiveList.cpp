@@ -101,7 +101,6 @@ ContentSecurityPolicyDirectiveList::ContentSecurityPolicyDirectiveList(ContentSe
     , m_headerType(type)
     , m_reportOnly(false)
     , m_haveSandboxPolicy(false)
-    , m_reflectedXSSDisposition(ContentSecurityPolicy::ReflectedXSSUnset)
 {
     m_reportOnly = (type == ContentSecurityPolicyHeaderType::Report || type == ContentSecurityPolicyHeaderType::PrefixedReport);
 }
@@ -435,52 +434,6 @@ void ContentSecurityPolicyDirectiveList::applySandboxPolicy(const String& name, 
         m_policy.reportInvalidSandboxFlags(invalidTokens);
 }
 
-void ContentSecurityPolicyDirectiveList::parseReflectedXSS(const String& name, const String& value)
-{
-    if (m_reflectedXSSDisposition != ContentSecurityPolicy::ReflectedXSSUnset) {
-        m_policy.reportDuplicateDirective(name);
-        m_reflectedXSSDisposition = ContentSecurityPolicy::ReflectedXSSInvalid;
-        return;
-    }
-
-    if (value.isEmpty()) {
-        m_reflectedXSSDisposition = ContentSecurityPolicy::ReflectedXSSInvalid;
-        m_policy.reportInvalidReflectedXSS(value);
-        return;
-    }
-
-    auto characters = StringView(value).upconvertedCharacters();
-    const UChar* position = characters;
-    const UChar* end = position + value.length();
-
-    skipWhile<UChar, isASCIISpace>(position, end);
-    const UChar* begin = position;
-    skipWhile<UChar, isNotASCIISpace>(position, end);
-
-    // value1
-    //       ^
-    if (equalLettersIgnoringASCIICase(begin, position - begin, "allow"))
-        m_reflectedXSSDisposition = ContentSecurityPolicy::AllowReflectedXSS;
-    else if (equalLettersIgnoringASCIICase(begin, position - begin, "filter"))
-        m_reflectedXSSDisposition = ContentSecurityPolicy::FilterReflectedXSS;
-    else if (equalLettersIgnoringASCIICase(begin, position - begin, "block"))
-        m_reflectedXSSDisposition = ContentSecurityPolicy::BlockReflectedXSS;
-    else {
-        m_reflectedXSSDisposition = ContentSecurityPolicy::ReflectedXSSInvalid;
-        m_policy.reportInvalidReflectedXSS(value);
-        return;
-    }
-
-    skipWhile<UChar, isASCIISpace>(position, end);
-    if (position == end && m_reflectedXSSDisposition != ContentSecurityPolicy::ReflectedXSSUnset)
-        return;
-
-    // value1 value2
-    //        ^
-    m_reflectedXSSDisposition = ContentSecurityPolicy::ReflectedXSSInvalid;
-    m_policy.reportInvalidReflectedXSS(value);
-}
-
 void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const String& value)
 {
     ASSERT(!name.isEmpty());
@@ -527,14 +480,6 @@ void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const 
         applySandboxPolicy(name, value);
     else if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::reportURI))
         parseReportURI(name, value);
-#if ENABLE(CSP_NEXT)
-    else if (m_policy.experimentalFeaturesEnabled()) {
-        if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::reflectedXSS))
-            parseReflectedXSS(name, value);
-        else
-            m_policy.reportUnsupportedDirective(name);
-    }
-#endif
     else
         m_policy.reportUnsupportedDirective(name);
 }

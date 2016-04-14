@@ -61,12 +61,10 @@ static inline String buildConsoleError(const XSSInfo& xssInfo)
     message.append(xssInfo.m_didBlockEntirePage ? "the source code of a script" : "its source code");
     message.appendLiteral(" was found within the request.");
 
-    if (xssInfo.m_didSendCSPHeader)
-        message.appendLiteral(" The server sent a 'Content-Security-Policy' header requesting this behavior.");
-    else if (xssInfo.m_didSendXSSProtectionHeader)
+    if (xssInfo.m_didSendXSSProtectionHeader)
         message.appendLiteral(" The server sent an 'X-XSS-Protection' header requesting this behavior.");
     else
-        message.appendLiteral(" The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.");
+        message.appendLiteral(" The auditor was enabled because the server did not send an 'X-XSS-Protection' header.");
 
     return message.toString();
 }

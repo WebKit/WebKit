@@ -31,12 +31,19 @@
 #ifndef HTTPParsers_h
 #define HTTPParsers_h
 
-#include "ContentSecurityPolicy.h"
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+enum class XSSProtectionDisposition {
+    Invalid,
+    Disabled,
+    Enabled,
+    BlockEnabled,
+};
 
 enum ContentDispositionType {
     ContentDispositionNone,
@@ -70,7 +77,7 @@ String filenameFromHTTPContentDisposition(const String&);
 String extractMIMETypeFromMediaType(const String&);
 String extractCharsetFromMediaType(const String&); 
 void findCharsetInMediaType(const String& mediaType, unsigned int& charsetPos, unsigned int& charsetLen, unsigned int start = 0);
-ContentSecurityPolicy::ReflectedXSSDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL);
+XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL);
 String extractReasonPhraseFromHTTPStatusLine(const String&);
 XFrameOptionsDisposition parseXFrameOptionsHeader(const String&);
 

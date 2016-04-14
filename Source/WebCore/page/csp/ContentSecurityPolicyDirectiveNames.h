@@ -46,10 +46,6 @@ extern const char* const sandbox;
 extern const char* const scriptSrc;
 extern const char* const styleSrc;
 
-#if ENABLE(CSP_NEXT)
-extern const char* const reflectedXSS;
-#endif
-
 } // namespace ContentSecurityPolicyDirectiveNames
 
 } // namespace WebCore

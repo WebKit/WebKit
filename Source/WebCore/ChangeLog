@@ -1,3 +1,52 @@
+2016-04-13  Daniel Bates  <dabates@apple.com>
+
+        CSP: Remove experimental directive reflected-xss
+        https://bugs.webkit.org/show_bug.cgi?id=156554
+
+        Reviewed by Brent Fulgham.
+
+        The Content Security Policy directive reflected-xss was removed from the Content Security
+        Policy Level 2 spec., <https://w3c.github.io/webappsec-csp/2/> (Editor's Draft, 29 August 2015).
+        This directive was considered experimental and was guarded by a run-time flag that was never
+        enabled by default. We should remove support for this directive.
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::XSSAuditor): Initialize m_xssProtection to XSSProtectionDisposition::Enabled.
+        (WebCore::XSSAuditor::init): Write logic in terms of enum class XSSProtectionDisposition.
+        (WebCore::XSSAuditor::filterToken): Ditto.
+        (WebCore::combineXSSProtectionHeaderAndCSP): Deleted.
+        * html/parser/XSSAuditor.h: Change data type of m_xssProtection from ContentSecurityPolicy::ReflectedXSSDisposition
+        to XSSProtectionDisposition.
+        * html/parser/XSSAuditorDelegate.cpp: Ditto.
+        (WebCore::buildConsoleError): Remove logic to emit a remarks in the console error when a XSS is
+        blocked because of the directive reflected-xss. Also substituted "because" for "as" in the remark
+        added to the error message when the XSS Auditor is enabled because the server did not send HTTP
+        header X-XSS-Protection.
+        * html/parser/XSSAuditorDelegate.h:
+        (WebCore::XSSInfo::XSSInfo): Removed argument didSendCSPHeader as we are removing support for the
+        directive reflected-xss.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reflectedXSSDisposition): Deleted.
+        (WebCore::ContentSecurityPolicy::reportInvalidReflectedXSS): Deleted.
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::ContentSecurityPolicyDirectiveList): Remove initialization
+        of m_reflectedXSSDisposition as we are removing support for the directive reflected-xss.
+        (WebCore::ContentSecurityPolicyDirectiveList::parseReflectedXSS): Deleted.
+        (WebCore::ContentSecurityPolicyDirectiveList::addDirective): Remove logic to parse directive reflected-xss.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        (WebCore::ContentSecurityPolicyDirectiveList::reflectedXSSDisposition): Deleted.
+        * page/csp/ContentSecurityPolicyDirectiveNames.cpp:
+        * page/csp/ContentSecurityPolicyDirectiveNames.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::isCSPDirectiveName):
+        (WebCore::isExperimentalDirectiveName): Deleted.
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseXSSProtectionHeader): Write it terms of enum class XSSProtectionDisposition.
+        * platform/network/HTTPParsers.h: Define enum class XSSProtectionDisposition. Change return type
+        of parseXSSProtectionHeader() from ContentSecurityPolicy::ReflectedXSSDisposition to XSSProtectionDisposition
+        as we are removing the former.
+
 2016-04-13  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Blob support): Support retrieving Blobs from IDB.

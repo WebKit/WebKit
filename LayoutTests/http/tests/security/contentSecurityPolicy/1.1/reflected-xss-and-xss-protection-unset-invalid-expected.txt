@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 1: Error parsing header X-XSS-Protection: 12345678901234567: expected semicolon at character position 2. The default protections will be applied.
-CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?q=%3Cscript%3Ealert(String.fromCharCode(0x58,0x53,0x53))%3C/script%3E&malformed-header=1' because its source code was found within the request. The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.
-ALERT: Loaded http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?q=%3Cscript%3Ealert(String.fromCharCode(0x58,0x53,0x53))%3C/script%3E&malformed-header=1 into the IFrame.
-Testing behavior when "reflected-xss" is set to unset, and "X-XSS-Protection" is set to invalid.

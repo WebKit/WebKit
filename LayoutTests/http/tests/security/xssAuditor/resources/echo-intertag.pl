@@ -65,14 +65,6 @@ if ($cgi->param('malformed-header')) {
     }
 }
 
-if (defined($cgi->param('csp'))) {
-    if ($cgi->param('csp') eq '_empty_') {
-        print "X-WebKit-CSP: reflected-xss\n";
-    } else {
-        print "X-WebKit-CSP: reflected-xss " . $cgi->param('csp') . "\n";
-    }
-}
-
 print "Content-Type: text/html; charset=";
 print $cgi->param('charset') ? $cgi->param('charset') : "UTF-8";
 print "\n\n";

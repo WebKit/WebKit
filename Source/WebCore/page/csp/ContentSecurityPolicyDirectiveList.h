@@ -73,7 +73,6 @@ public:
     const ContentSecurityPolicyDirective* defaultSrc() const { return m_defaultSrc.get(); }
 
     const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }
-    ContentSecurityPolicy::ReflectedXSSDisposition reflectedXSSDisposition() const { return m_reflectedXSSDisposition; }
     bool isReportOnly() const { return m_reportOnly; }
     const Vector<String>& reportURIs() const { return m_reportURIs; }
 
@@ -86,7 +85,6 @@ private:
     bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
     void parseReportURI(const String& name, const String& value);
     void parsePluginTypes(const String& name, const String& value);
-    void parseReflectedXSS(const String& name, const String& value);
     void addDirective(const String& name, const String& value);
     void applySandboxPolicy(const String& name, const String& sandboxPolicy);
 
@@ -105,7 +103,6 @@ private:
 
     bool m_reportOnly;
     bool m_haveSandboxPolicy;
-    ContentSecurityPolicy::ReflectedXSSDisposition m_reflectedXSSDisposition;
 
     std::unique_ptr<ContentSecurityPolicyMediaListDirective> m_pluginTypes;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_baseURI;

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/intercept/echo-intertag.pl/%3Cembed%20height=%22500%22src=%22https://127.0.0.1:8443/security/xssAuditor/resources/dummy.swf%22.xml&clutter=%3Cp%3E' because its source code was found within the request. The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.
+CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/intercept/echo-intertag.pl/%3Cembed%20height=%22500%22src=%22https://127.0.0.1:8443/security/xssAuditor/resources/dummy.swf%22.xml&clutter=%3Cp%3E' because its source code was found within the request. The auditor was enabled because the server did not send an 'X-XSS-Protection' header.
 Check that the XSSAuditor catches reflected tags in path components
 
 

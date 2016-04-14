@@ -33,7 +33,6 @@
 #include "config.h"
 #include "HTTPParsers.h"
 
-#include "ContentSecurityPolicy.h"
 #include <wtf/DateMath.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
@@ -364,7 +363,7 @@ void findCharsetInMediaType(const String& mediaType, unsigned int& charsetPos, u
     }
 }
 
-ContentSecurityPolicy::ReflectedXSSDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL)
+XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL)
 {
     static NeverDestroyed<String> failureReasonInvalidToggle(ASCIILiteral("expected 0 or 1"));
     static NeverDestroyed<String> failureReasonInvalidSeparator(ASCIILiteral("expected semicolon"));
@@ -378,17 +377,17 @@ ContentSecurityPolicy::ReflectedXSSDisposition parseXSSProtectionHeader(const St
     unsigned pos = 0;
 
     if (!skipWhiteSpace(header, pos, false))
-        return ContentSecurityPolicy::ReflectedXSSUnset;
+        return XSSProtectionDisposition::Enabled;
 
     if (header[pos] == '0')
-        return ContentSecurityPolicy::AllowReflectedXSS;
+        return XSSProtectionDisposition::Disabled;
 
     if (header[pos++] != '1') {
         failureReason = failureReasonInvalidToggle;
-        return ContentSecurityPolicy::ReflectedXSSInvalid;
+        return XSSProtectionDisposition::Invalid;
     }
 
-    ContentSecurityPolicy::ReflectedXSSDisposition result = ContentSecurityPolicy::FilterReflectedXSS;
+    XSSProtectionDisposition result = XSSProtectionDisposition::Enabled;
     bool modeDirectiveSeen = false;
     bool reportDirectiveSeen = false;
 
@@ -400,7 +399,7 @@ ContentSecurityPolicy::ReflectedXSSDisposition parseXSSProtectionHeader(const St
         if (header[pos++] != ';') {
             failureReason = failureReasonInvalidSeparator;
             failurePosition = pos;
-            return ContentSecurityPolicy::ReflectedXSSInvalid;
+            return XSSProtectionDisposition::Invalid;
         }
 
         if (!skipWhiteSpace(header, pos, false))
@@ -411,44 +410,44 @@ ContentSecurityPolicy::ReflectedXSSDisposition parseXSSProtectionHeader(const St
             if (modeDirectiveSeen) {
                 failureReason = failureReasonDuplicateMode;
                 failurePosition = pos;
-                return ContentSecurityPolicy::ReflectedXSSInvalid;
+                return XSSProtectionDisposition::Invalid;
             }
             modeDirectiveSeen = true;
             if (!skipEquals(header, pos)) {
                 failureReason = failureReasonInvalidEquals;
                 failurePosition = pos;
-                return ContentSecurityPolicy::ReflectedXSSInvalid;
+                return XSSProtectionDisposition::Invalid;
             }
             if (!skipToken(header, pos, "block")) {
                 failureReason = failureReasonInvalidMode;
                 failurePosition = pos;
-                return ContentSecurityPolicy::ReflectedXSSInvalid;
+                return XSSProtectionDisposition::Invalid;
             }
-            result = ContentSecurityPolicy::BlockReflectedXSS;
+            result = XSSProtectionDisposition::BlockEnabled;
         } else if (skipToken(header, pos, "report")) {
             if (reportDirectiveSeen) {
                 failureReason = failureReasonDuplicateReport;
                 failurePosition = pos;
-                return ContentSecurityPolicy::ReflectedXSSInvalid;
+                return XSSProtectionDisposition::Invalid;
             }
             reportDirectiveSeen = true;
             if (!skipEquals(header, pos)) {
                 failureReason = failureReasonInvalidEquals;
                 failurePosition = pos;
-                return ContentSecurityPolicy::ReflectedXSSInvalid;
+                return XSSProtectionDisposition::Invalid;
             }
             size_t startPos = pos;
             if (!skipValue(header, pos)) {
                 failureReason = failureReasonInvalidReport;
                 failurePosition = pos;
-                return ContentSecurityPolicy::ReflectedXSSInvalid;
+                return XSSProtectionDisposition::Invalid;
             }
             reportURL = header.substring(startPos, pos - startPos);
             failurePosition = startPos; // If later semantic check deems unacceptable.
         } else {
             failureReason = failureReasonInvalidDirective;
             failurePosition = pos;
-            return ContentSecurityPolicy::ReflectedXSSInvalid;
+            return XSSProtectionDisposition::Invalid;
         }
     }
 }

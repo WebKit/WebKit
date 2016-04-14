@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/formaction-on-button.html&q=%3Cform%3E%3Cbutton%20formaction='http://example.com/'%3E&notifyDone=1&showFormaction=1' because its source code was found within the request. The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.
+CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/formaction-on-button.html&q=%3Cform%3E%3Cbutton%20formaction='http://example.com/'%3E&notifyDone=1&showFormaction=1' because its source code was found within the request. The auditor was enabled because the server did not send an 'X-XSS-Protection' header.
 ALERT: formaction present on BUTTON with value of about:blank
 

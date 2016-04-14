@@ -38,18 +38,16 @@ class FormData;
 
 class XSSInfo {
 public:
-    XSSInfo(const String& originalURL, bool didBlockEntirePage, bool didSendXSSProtectionHeader, bool didSendCSPHeader)
+    XSSInfo(const String& originalURL, bool didBlockEntirePage, bool didSendXSSProtectionHeader)
         : m_originalURL(originalURL.isolatedCopy())
         , m_didBlockEntirePage(didBlockEntirePage)
         , m_didSendXSSProtectionHeader(didSendXSSProtectionHeader)
-        , m_didSendCSPHeader(didSendCSPHeader)
     {
     }
 
     String m_originalURL;
     bool m_didBlockEntirePage;
     bool m_didSendXSSProtectionHeader;
-    bool m_didSendCSPHeader;
     TextPosition m_textPosition;
 };
 
