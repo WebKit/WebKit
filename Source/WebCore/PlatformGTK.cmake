@@ -76,6 +76,8 @@ list(APPEND WebCore_SOURCES
     loader/soup/CachedRawResourceSoup.cpp
     loader/soup/SubresourceLoaderSoup.cpp
 
+    platform/KillRingNone.cpp
+
     platform/audio/glib/AudioBusGLib.cpp
 
     platform/crypto/gnutls/CryptoDigestGnuTLS.cpp

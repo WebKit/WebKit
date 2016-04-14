@@ -82,6 +82,8 @@ list(APPEND WebCore_SOURCES
 
     page/scrolling/AxisScrollSnapOffsets.cpp
 
+    platform/KillRingNone.cpp
+
     platform/audio/efl/AudioBusEfl.cpp
 
     platform/crypto/gnutls/CryptoDigestGnuTLS.cpp

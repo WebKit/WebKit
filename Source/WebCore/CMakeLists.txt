@@ -2105,7 +2105,6 @@ set(WebCore_SOURCES
     platform/FileChooser.cpp
     platform/FileStream.cpp
     platform/FileSystem.cpp
-    platform/KillRingNone.cpp
     platform/Language.cpp
     platform/Length.cpp
     platform/LengthPoint.cpp
