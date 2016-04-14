@@ -1,3 +1,13 @@
+2016-04-14  Anders Carlsson  <andersca@apple.com>
+
+        When FileInputType::setFiles is called with an empty file list, the last set icon is not cleared
+        https://bugs.webkit.org/show_bug.cgi?id=156582
+
+        Reviewed by Beth Dakin.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::requestIcon):
+
 2016-04-14  Darin Adler  <darin@apple.com>
 
         Remove UsePointersEvenForNonNullableObjectArguments from Internals

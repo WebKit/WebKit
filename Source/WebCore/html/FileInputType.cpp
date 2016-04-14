@@ -295,8 +295,10 @@ void FileInputType::requestIcon(const Vector<String>& paths)
 #if PLATFORM(IOS)
     UNUSED_PARAM(paths);
 #else
-    if (!paths.size())
+    if (!paths.size()) {
+        updateRendering(nullptr);
         return;
+    }
 
     Chrome* chrome = this->chrome();
     if (!chrome)
