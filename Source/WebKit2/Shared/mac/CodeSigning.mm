@@ -55,7 +55,6 @@ static RetainPtr<SecCodeRef> secCodeForProcess(pid_t pid)
         WTFLogAlways("SecCodeCopyGuestWithAttributes() failed with error: %ld\n", static_cast<long>(errorCode));
         return nullptr;
     }
-    RELEASE_ASSERT(!SecCodeCopyGuestWithAttributes(nullptr, attributes.get(), kSecCSDefaultFlags, &code));
     return adoptCF(code);
 }
 

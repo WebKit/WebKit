@@ -1,3 +1,18 @@
+2016-04-13  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r199401): Internal builds of Safari hang on launch
+        https://bugs.webkit.org/show_bug.cgi?id=156545
+        <rdar://problem/25697779>
+
+        As pointed out by Darin Adler, remove RELEASE_ASSERT() that I inadvertently left in
+        WebCore::secCodeForProcess() as part of r199504. For now, we handle
+        SecCodeCopyGuestWithAttributes() returning an error. In a subsequent commit we will
+        look to re-introduce the use of a RELEASE_ASSERT() to enforce the invariant that
+        SecCodeCopyGuestWithAttributes() returns a success status.
+
+        * Shared/mac/CodeSigning.mm:
+        (WebKit::secCodeForProcess):
+
 2016-04-13  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Blob support): Support retrieving Blobs from IDB.
