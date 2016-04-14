@@ -292,7 +292,7 @@ STEP: console.table([john, jane, emily])
         "_type": "object",
         "_subtype": "array",
         "_description": "Array",
-        "_lossless": true,
+        "_lossless": false,
         "_overflow": false,
         "_size": 3,
         "_properties": [
@@ -304,7 +304,7 @@ STEP: console.table([john, jane, emily])
               "_listeners": null,
               "_type": "object",
               "_description": "Person",
-              "_lossless": true,
+              "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {
@@ -331,7 +331,7 @@ STEP: console.table([john, jane, emily])
               "_listeners": null,
               "_type": "object",
               "_description": "Person",
-              "_lossless": true,
+              "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {
@@ -358,7 +358,7 @@ STEP: console.table([john, jane, emily])
               "_listeners": null,
               "_type": "object",
               "_description": "Person",
-              "_lossless": true,
+              "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {
@@ -410,7 +410,7 @@ STEP: console.table([john, jane, emily], ['firstName'])
         "_type": "object",
         "_subtype": "array",
         "_description": "Array",
-        "_lossless": true,
+        "_lossless": false,
         "_overflow": false,
         "_size": 3,
         "_properties": [
@@ -422,7 +422,7 @@ STEP: console.table([john, jane, emily], ['firstName'])
               "_listeners": null,
               "_type": "object",
               "_description": "Person",
-              "_lossless": true,
+              "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {
@@ -449,7 +449,7 @@ STEP: console.table([john, jane, emily], ['firstName'])
               "_listeners": null,
               "_type": "object",
               "_description": "Person",
-              "_lossless": true,
+              "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {
@@ -476,7 +476,7 @@ STEP: console.table([john, jane, emily], ['firstName'])
               "_listeners": null,
               "_type": "object",
               "_description": "Person",
-              "_lossless": true,
+              "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {

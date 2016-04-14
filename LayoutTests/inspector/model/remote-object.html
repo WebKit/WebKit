@@ -175,6 +175,7 @@ function test()
 
         {expression: "Person = class Person { constructor(name){} get fullName(){} methodName(p1, p2){} }; Person"}, // Constructor => class type
         {expression: "Person.prototype.methodName"}, // Method => just a function type
+        {expression: "new Person"}, // Instance, not lossless, it's prototype may have interesting methods to show
         {expression: "Alpha = class A { methodA(){} }; Beta = class B extends Alpha { methodB(){} }; Beta"},
         {expression: "[Beta]"},
 

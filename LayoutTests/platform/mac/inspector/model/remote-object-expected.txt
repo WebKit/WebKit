@@ -1120,7 +1120,7 @@ EXPRESSION: new Int32Array(new ArrayBuffer(16))
     "_type": "object",
     "_subtype": "array",
     "_description": "Int32Array",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_size": 4,
     "_properties": [
@@ -1166,7 +1166,7 @@ EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; 
     "_type": "object",
     "_subtype": "array",
     "_description": "Int32Array",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_size": 4,
     "_properties": [
@@ -1481,7 +1481,7 @@ EXPRESSION: function Foo() {}; new Foo
     "_listeners": null,
     "_type": "object",
     "_description": "Foo",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [],
     "_entries": null
@@ -1498,7 +1498,7 @@ EXPRESSION: var Foo2 = function() {}; new Foo2
     "_listeners": null,
     "_type": "object",
     "_description": "Foo2",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [],
     "_entries": null
@@ -1515,7 +1515,7 @@ EXPRESSION: var namespace = {}; namespace.Foo3 = function() {}; new namespace.Fo
     "_listeners": null,
     "_type": "object",
     "_description": "Foo3",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [],
     "_entries": null
@@ -1567,7 +1567,7 @@ EXPRESSION: function Bar2() { this._x = 5 }; Bar.prototype = {get x() {return th
     "_listeners": null,
     "_type": "object",
     "_description": "Bar2",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -1640,7 +1640,7 @@ EXPRESSION: new ArrayBuffer(16)
     "_listeners": null,
     "_type": "object",
     "_description": "ArrayBuffer",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -1664,7 +1664,7 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
     "_listeners": null,
     "_type": "object",
     "_description": "DataView",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -1678,6 +1678,12 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
         "_name": "byteLength",
         "_type": "number",
         "_value": "16"
+      },
+      {
+        "_listeners": null,
+        "_name": "buffer",
+        "_type": "object",
+        "_value": "ArrayBuffer"
       }
     ],
     "_entries": null
@@ -2297,7 +2303,7 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
     "_type": "object",
     "_subtype": "error",
     "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -2341,7 +2347,7 @@ EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
     "_type": "object",
     "_subtype": "error",
     "_description": "SyntaxError: Unexpected token ')'",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -4492,7 +4498,7 @@ EXPRESSION: new Promise(function(){})
     "_listeners": null,
     "_type": "object",
     "_description": "Promise",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -4517,7 +4523,7 @@ EXPRESSION: Promise.reject()
     "_listeners": null,
     "_type": "object",
     "_description": "Promise",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -4549,7 +4555,7 @@ EXPRESSION: Promise.reject('result')
     "_listeners": null,
     "_type": "object",
     "_description": "Promise",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -4581,7 +4587,7 @@ EXPRESSION: Promise.resolve()
     "_listeners": null,
     "_type": "object",
     "_description": "Promise",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -4613,7 +4619,7 @@ EXPRESSION: Promise.resolve({result:1})
     "_listeners": null,
     "_type": "object",
     "_description": "Promise",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -4751,6 +4757,23 @@ EXPRESSION: Person.prototype.methodName
   "_type": "function",
   "_objectId": "<filtered>",
   "_description": "function methodName(p1, p2){}"
+}
+
+-----------------------------------------------------
+EXPRESSION: new Person
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Person",
+  "_preview": {
+    "_listeners": null,
+    "_type": "object",
+    "_description": "Person",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
 }
 
 -----------------------------------------------------

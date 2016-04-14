@@ -1,3 +1,16 @@
+2016-04-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSContext Inspector: Improve Class instances and JSC API Exported Values view in Console / ObjectTree
+        https://bugs.webkit.org/show_bug.cgi?id=156566
+        <rdar://problem/16392365>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.RemoteObject.prototype._appendPropertyPreviews):
+        Treat non-basic object types as not lossless so they can be expanded.
+        Show non-enumerable native getters in Object previews.
+
 2016-04-13  Michael Saboff  <msaboff@apple.com>
 
         Some tests fail with ES6 `u` (Unicode) flag for regular expressions

@@ -1128,15 +1128,24 @@ InjectedScript.RemoteObject.prototype = {
 
             // Do not show "__proto__" in preview.
             var name = descriptor.name;
-            if (name === "__proto__")
+            if (name === "__proto__") {
+                // Non basic __proto__ objects may have interesting, non-enumerable, methods to show.
+                if (descriptor.value && descriptor.value.constructor
+                    && descriptor.value.constructor !== Object
+                    && descriptor.value.constructor !== Array
+                    && descriptor.value.constructor !== RegExp)
+                    preview.lossless = false;
                 continue;
+            }
 
             // For arrays, only allow indexes.
             if (this.subtype === "array" && !isUInt32(name))
                 continue;
 
-            // Do not show non-enumerable non-own properties. Special case to allow array indexes that may be on the prototype.
-            if (!descriptor.enumerable && !descriptor.isOwn && this.subtype !== "array")
+            // Do not show non-enumerable non-own properties.
+            // Special case to allow array indexes that may be on the prototype.
+            // Special case to allow native getters on non-RegExp objects.
+            if (!descriptor.enumerable && !descriptor.isOwn && !(this.subtype === "array" || (this.subtype !== "regexp" && descriptor.nativeGetter)))
                 continue;
 
             // If we have a filter, only show properties in the filter.
