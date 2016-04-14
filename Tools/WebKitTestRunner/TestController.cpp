@@ -426,6 +426,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
         WKContextSetIconDatabasePath(m_context.get(), toWK(emptyString()).get());
     }
 
+    WKContextSetDiskCacheSpeculativeValidationEnabled(m_context.get(), true);
     WKContextUseTestingNetworkSession(m_context.get());
     WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
 

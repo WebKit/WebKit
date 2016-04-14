@@ -65,6 +65,7 @@ private:
     void didBecomeDownload() override { ASSERT_NOT_REACHED(); }
 #endif
 
+    void abort();
     void didComplete();
 
     GlobalFrameID m_frameID;
@@ -77,8 +78,6 @@ private:
 
     RefPtr<WebCore::SharedBuffer> m_bufferedDataForCache;
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryForValidation;
-
-    WebCore::RedirectChainCacheStatus m_redirectChainCacheStatus;
 };
 
 } // namespace NetworkCache

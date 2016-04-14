@@ -65,8 +65,9 @@ SpeculativeLoad::~SpeculativeLoad()
 
 void SpeculativeLoad::willSendRedirectedRequest(const ResourceRequest&, const ResourceRequest& redirectRequest, const ResourceResponse& redirectResponse)
 {
-    updateRedirectChainStatus(m_redirectChainCacheStatus, redirectResponse);
-    m_networkLoad->continueWillSendRequest(redirectRequest);
+    LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculative revalidation for %s hit a redirect, aborting the load.", redirectResponse.url().string().utf8().data());
+    // We drop speculative revalidations if they redirect for now as we would need to notify WebCore of such redirects.
+    abort();
 }
 
 auto SpeculativeLoad::didReceiveResponse(const ResourceResponse& receivedResponse) -> ShouldContinueDidReceiveResponse
@@ -79,13 +80,10 @@ auto SpeculativeLoad::didReceiveResponse(const ResourceResponse& receivedRespons
     ASSERT(m_cacheEntryForValidation);
 
     bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
-    if (validationSucceeded) {
+    if (validationSucceeded)
         m_cacheEntryForValidation = NetworkCache::singleton().update(m_originalRequest, m_frameID, *m_cacheEntryForValidation, m_response);
-        didComplete();
-        return ShouldContinueDidReceiveResponse::No;
-    }
-
-    m_cacheEntryForValidation = nullptr;
+    else
+        m_cacheEntryForValidation = nullptr;
 
     return ShouldContinueDidReceiveResponse::Yes;
 }
@@ -106,23 +104,8 @@ void SpeculativeLoad::didReceiveBuffer(RefPtr<SharedBuffer>&& buffer, int report
 
 void SpeculativeLoad::didFinishLoading(double finishTime)
 {
-    ASSERT(!m_cacheEntryForValidation);
-
-    bool allowStale = m_originalRequest.cachePolicy() >= ReturnCacheDataElseLoad;
-    bool hasCacheableRedirect = m_response.isHTTP() && redirectChainAllowsReuse(m_redirectChainCacheStatus, allowStale ? ReuseExpiredRedirection : DoNotReuseExpiredRedirection);
-    if (hasCacheableRedirect && m_redirectChainCacheStatus.status == RedirectChainCacheStatus::CachedRedirection) {
-        // Maybe we should cache the actual redirects instead of the end result?
-        auto now = std::chrono::system_clock::now();
-        auto responseEndOfValidity = now + computeFreshnessLifetimeForHTTPFamily(m_response, now) - computeCurrentAge(m_response, now);
-        hasCacheableRedirect = responseEndOfValidity <= m_redirectChainCacheStatus.endOfValidity;
-    }
-
-    if (m_bufferedDataForCache && hasCacheableRedirect)
+    if (!m_cacheEntryForValidation && m_bufferedDataForCache)
         m_cacheEntryForValidation = NetworkCache::singleton().store(m_originalRequest, m_response, WTFMove(m_bufferedDataForCache), [](NetworkCache::MappedBody& mappedBody) { });
-    else if (!hasCacheableRedirect) {
-        // Make sure we don't keep a stale entry in the cache.
-        NetworkCache::singleton().remove(m_originalRequest);
-    }
 
     didComplete();
 }
@@ -131,6 +114,15 @@ void SpeculativeLoad::didFailLoading(const ResourceError&)
 {
     m_cacheEntryForValidation = nullptr;
 
+    didComplete();
+}
+
+void SpeculativeLoad::abort()
+{
+    if (m_networkLoad)
+        m_networkLoad->cancel();
+
+    m_cacheEntryForValidation = nullptr;
     didComplete();
 }
 

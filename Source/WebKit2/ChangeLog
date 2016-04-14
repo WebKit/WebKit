@@ -1,3 +1,53 @@
+2016-04-13  Chris Dumez  <cdumez@apple.com>
+
+        We should not speculatively revalidate cached redirects
+        https://bugs.webkit.org/show_bug.cgi?id=156548
+        <rdar://problem/25583886>
+
+        Reviewed by Darin Adler.
+
+        Stop speculatively revalidating cached redirects. This matches matches
+        the behavior in NetworkCache's makeUseDecision() which reuses cached
+        redirects only if they do not need revalidation.
+
+        This was breaking fonts.css loading on stripe.com because the
+        SpeculativeLoadManager would wrongly speculatively revalidate the
+        redirect and then serve a 302 response the NetworkResourceLoader
+        when the actual request came in. This would cause us to not follow
+        the redirect.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+        Abort the speculative load if it hits a redirect. This is the safe thing
+        to do in this case, as we are supposed to do a hand-shake with WebCore
+        in such case.
+
+        (WebKit::NetworkCache::SpeculativeLoad::didReceiveResponse):
+        Let successful validations fall through instead of calling didComplete()
+        early. This matches what is not in NetworkResourceLoader. This way,
+        didFinishLoading() ends up getting called for both successful and
+        unsuccessful (i.e. did not return a 302 status code) network validation.
+
+        (WebKit::NetworkCache::SpeculativeLoad::didFinishLoading):
+        - Stop dealing with redirects as we abort the load as soon as we hit a
+          redirect now.
+        - Stop asserting that m_cacheEntryForValidation is null now that this
+          is called for successful validations as well.
+
+        (WebKit::NetworkCache::SpeculativeLoad::abort):
+        New method that aborts the network loads, calls the completion handler
+        and clean up. It is called in the case we hit a redirect while
+        revalidating.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        Drop m_redirectChainCacheStatus member as we no longer deal with
+        redirects.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveEntryFromStorage):
+        If the resource needs revalidation AND is a cached redirect, then do not
+        use it. This matches what is done in NetworkCache's makeUseDecision().
+
 2016-04-13  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: NetworkProcessConnection::didClose needs to have a self ref.

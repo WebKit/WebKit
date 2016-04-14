@@ -425,8 +425,14 @@ void SpeculativeLoadManager::retrieveEntryFromStorage(const Key& key, const Retr
             return true;
         }
 
-        if (responseNeedsRevalidation(response, entry->timeStamp()))
+        if (responseNeedsRevalidation(response, entry->timeStamp())) {
+            // Do not use cached redirects that have expired.
+            if (entry->redirectRequest()) {
+                completionHandler(nullptr);
+                return true;
+            }
             entry->setNeedsValidation(true);
+        }
 
         completionHandler(WTFMove(entry));
         return true;
