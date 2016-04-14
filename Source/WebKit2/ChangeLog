@@ -1,3 +1,15 @@
+2016-04-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, rolling out r199554.
+
+        The change breaks Yosemite Release/Debug build
+
+        Reverted changeset:
+
+        "[Mac] Add API for open panel handling to WKWebView"
+        https://bugs.webkit.org/show_bug.cgi?id=137759
+        http://trac.webkit.org/changeset/199554
+
 2016-04-14  Anders Carlsson  <andersca@apple.com>
 
         [Mac] Add API for open panel handling to WKWebView

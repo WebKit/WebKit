@@ -560,7 +560,7 @@ void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elem
     [m_contentView _showPlaybackTargetPicker:hasVideo fromRect:elementRect];
 }
 
-bool PageClientImpl::handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::OpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
+bool PageClientImpl::handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
 {
     [m_contentView _showRunOpenPanel:parameters resultListener:listener];
     return true;

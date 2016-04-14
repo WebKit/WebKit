@@ -30,18 +30,15 @@
 @class WKContentView;
 @protocol WKFileUploadPanelDelegate;
 
-namespace API {
-class OpenPanelParameters;
-}
-
 namespace WebKit {
+class WebOpenPanelParameters;
 class WebOpenPanelResultListenerProxy;
 }
 
 @interface WKFileUploadPanel : UIViewController
 @property (nonatomic, assign) id <WKFileUploadPanelDelegate> delegate;
 - (instancetype)initWithView:(WKContentView *)view;
-- (void)presentWithParameters:(API::OpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
+- (void)presentWithParameters:(WebKit::WebOpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
 - (void)dismiss;
 @end
 

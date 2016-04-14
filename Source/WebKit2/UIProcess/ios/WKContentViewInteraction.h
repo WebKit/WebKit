@@ -44,10 +44,6 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
-namespace API {
-class OpenPanelParameters;
-}
-
 namespace WebCore {
 class Color;
 class FloatQuad;
@@ -57,6 +53,7 @@ class IntSize;
 namespace WebKit {
 class NativeWebTouchEvent;
 class SmartMagnificationController;
+class WebOpenPanelParameters;
 class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 }
@@ -212,7 +209,7 @@ struct WKAutoCorrectionData {
 - (void)_overflowScrollingDidEnd;
 - (void)_didUpdateBlockSelectionWithTouch:(WebKit::SelectionTouch)touch withFlags:(WebKit::SelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold;
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect;
-- (void)_showRunOpenPanel:(API::OpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
+- (void)_showRunOpenPanel:(WebKit::WebOpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
 - (void)accessoryDone;
 - (void)_didHandleKeyEvent:(WebIOSEvent *)event eventWasHandled:(BOOL)eventWasHandled;
 - (Vector<WebKit::OptionItem>&) assistedNodeSelectOptions;

@@ -34,7 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WKFrameInfo;
 @class WKNavigationAction;
-@class WKOpenPanelParameters;
 @class WKPreviewElementInfo;
 @class WKWebViewConfiguration;
 @class WKWindowFeatures;
@@ -144,7 +143,7 @@ NS_ASSUME_NONNULL_BEGIN
  Returning nil will result in WebKit's default preview behavior. webView:commitPreviewingViewController: will only be invoked
  if a non-nil view controller was returned.
  */
-- (nullable UIViewController *)webView:(WKWebView *)webView previewingViewControllerForElement:(WKPreviewElementInfo *)elementInfo defaultActions:(NSArray<id <WKPreviewActionItem>> *)previewActions WK_AVAILABLE(NA, WK_IOS_TBA);
+- (nullable UIViewController *)webView:(WKWebView *)webView previewingViewControllerForElement:(WKPreviewElementInfo *)elementInfo defaultActions:(NSArray <id <WKPreviewActionItem>> *)previewActions WK_AVAILABLE(NA, WK_IOS_TBA);
 
 /*! @abstract Allows your app to pop to the view controller it created.
  @param webView The web view invoking the delegate method.
@@ -153,20 +152,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_AVAILABLE(NA, WK_IOS_TBA);
 
 #endif // TARGET_OS_IPHONE
-
-#if !TARGET_OS_IPHONE
-
-/*! @abstract Displays a file upload panel.
- @param webView The web view invoking the delegate method.
- @param parameters Parameters describing the file upload control.
- @param frame Information about the frame whose file upload control initiated this call.
- @param completionHandler The completion handler to call after open panel has been dismissed. Pass the selected URLs if the user chose OK, otherwise nil.
-
- If you do not implement this method, the web view will behave as if the user selected the Cancel button.
- */
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * WK_NULLABLE_SPECIFIER URLs))completionHandler WK_AVAILABLE(WK_MAC_TBA, NA);
-
-#endif
 
 @end
 

@@ -28,14 +28,14 @@
 #include "WKOpenPanelParametersRef.h"
 
 #include "APIArray.h"
-#include "APIOpenPanelParameters.h"
 #include "WKAPICast.h"
+#include "WebOpenPanelParameters.h"
 
 using namespace WebKit;
 
 WKTypeID WKOpenPanelParametersGetTypeID()
 {
-    return toAPI(API::OpenPanelParameters::APIType);
+    return toAPI(WebOpenPanelParameters::APIType);
 }
 
 bool WKOpenPanelParametersGetAllowsMultipleFiles(WKOpenPanelParametersRef parametersRef)

@@ -3661,7 +3661,7 @@ static bool isAssistableInputType(InputType type)
     [_airPlayRoutePicker show:hasVideo fromRect:elementRect];
 }
 
-- (void)_showRunOpenPanel:(API::OpenPanelParameters*)parameters resultListener:(WebOpenPanelResultListenerProxy*)listener
+- (void)_showRunOpenPanel:(WebOpenPanelParameters*)parameters resultListener:(WebOpenPanelResultListenerProxy*)listener
 {
     ASSERT(!_fileUploadPanel);
     if (_fileUploadPanel)

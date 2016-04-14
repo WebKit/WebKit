@@ -40,7 +40,6 @@
 #include "APINavigationAction.h"
 #include "APINavigationClient.h"
 #include "APINavigationResponse.h"
-#include "APIOpenPanelParameters.h"
 #include "APIPageConfiguration.h"
 #include "APIPolicyClient.h"
 #include "APISessionState.h"
@@ -62,6 +61,7 @@
 #include "WebFormClient.h"
 #include "WebImage.h"
 #include "WebInspectorProxy.h"
+#include "WebOpenPanelParameters.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageMessages.h"
@@ -2053,7 +2053,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             completionHandler(m_client.exceededDatabaseQuota(toAPI(page), toAPI(frame), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, m_client.base.clientInfo));
         }
 
-        bool runOpenPanel(WebPageProxy* page, WebFrameProxy* frame, const WebCore::SecurityOriginData&, API::OpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener) override
+        bool runOpenPanel(WebPageProxy* page, WebFrameProxy* frame, WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener) override
         {
             if (!m_client.runOpenPanel)
                 return false;

@@ -132,7 +132,7 @@ private:
     void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold) override;
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) override;
 
-    bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
+    bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
     void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID) override;
     double minimumZoomScale() const override;
     WebCore::FloatRect documentRect() const override;

@@ -58,7 +58,6 @@ class Navigation;
 class NavigationAction;
 class NavigationData;
 class NavigationResponse;
-class OpenPanelParameters;
 class PageConfiguration;
 class ProcessPoolConfiguration;
 class SessionState;
@@ -98,6 +97,7 @@ class WebMediaSessionMetadata;
 class WebNotification;
 class WebNotificationManagerProxy;
 class WebNotificationProvider;
+class WebOpenPanelParameters;
 class WebOpenPanelResultListenerProxy;
 class WebPageGroup;
 class WebPageProxy;
@@ -146,7 +146,7 @@ WK_ADD_API_MAPPING(WKNotificationManagerRef, WebNotificationManagerProxy)
 WK_ADD_API_MAPPING(WKNotificationPermissionRequestRef, NotificationPermissionRequest)
 WK_ADD_API_MAPPING(WKNotificationProviderRef, WebNotificationProvider)
 WK_ADD_API_MAPPING(WKNotificationRef, WebNotification)
-WK_ADD_API_MAPPING(WKOpenPanelParametersRef, API::OpenPanelParameters)
+WK_ADD_API_MAPPING(WKOpenPanelParametersRef, WebOpenPanelParameters)
 WK_ADD_API_MAPPING(WKOpenPanelResultListenerRef, WebOpenPanelResultListenerProxy)
 WK_ADD_API_MAPPING(WKPageGroupRef, WebPageGroup)
 WK_ADD_API_MAPPING(WKPageConfigurationRef, API::PageConfiguration)

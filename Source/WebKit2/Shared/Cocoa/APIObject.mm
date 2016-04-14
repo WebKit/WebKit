@@ -46,7 +46,6 @@
 #import "WKNavigationDataInternal.h"
 #import "WKNavigationInternal.h"
 #import "WKNavigationResponseInternal.h"
-#import "WKOpenPanelParametersInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKSecurityOriginInternal.h"
@@ -180,10 +179,6 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::NavigationResponse:
         wrapper = [WKNavigationResponse alloc];
-        break;
-
-    case Type::OpenPanelParameters:
-        wrapper = [WKOpenPanelParameters alloc];
         break;
 
     case Type::PageGroup:
