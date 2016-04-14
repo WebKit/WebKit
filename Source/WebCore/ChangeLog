@@ -1,3 +1,26 @@
+2016-04-14  Antoine Quint  <graouts@apple.com>
+
+        WebGL based canvases composite incorrectly after changing size
+        https://bugs.webkit.org/show_bug.cgi?id=152556
+        <rdar://problem/24012678>
+
+        Reviewed by Dean Jackson.
+
+        On iOS, we use the CAEAGLLayer's bounds to set the size of the backing store.
+        However, that layer's bounds is also used to size the layer during layout. If
+        the canvas backing store is resized after layout has been performed, the call
+        to setBounds loses the layout value and the <canvas> element is incorrectly
+        sized on screen.
+
+        To address this, when updating the backing store, we keep track of the previous
+        layer bounds so we can reset it after we sized the backing store.
+
+        Test: webgl/webgl-backing-store-size-update.html
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::setRenderbufferStorageFromDrawable):
+
 2016-04-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GObject DOM bindings API break after r199392.

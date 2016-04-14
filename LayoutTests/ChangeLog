@@ -1,3 +1,19 @@
+2016-04-14  Antoine Quint  <graouts@apple.com>
+
+        WebGL based canvases composite incorrectly after changing size
+        https://bugs.webkit.org/show_bug.cgi?id=152556
+        <rdar://problem/24012678>
+
+        Reviewed by Dean Jackson.
+
+        Adding a new test that sets the size of the backing store to a different
+        size than the layout size after the layout size of the <canvas> element
+        has been applied to ensure that the implementation correctly retains the
+        layout size as the canvas backing store is resized.
+
+        * webgl/webgl-backing-store-size-update-expected.html: Added.
+        * webgl/webgl-backing-store-size-update.html: Added.
+
 2016-04-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSContext Inspector: Improve Class instances and JSC API Exported Values view in Console / ObjectTree

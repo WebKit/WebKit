@@ -1291,7 +1291,7 @@ private:
     void readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels);
 
 #if PLATFORM(IOS)
-    bool setRenderbufferStorageFromDrawable(GC3Dsizei width, GC3Dsizei height);
+    void setRenderbufferStorageFromDrawable(GC3Dsizei width, GC3Dsizei height);
 #endif
 
     bool reshapeFBOs(const IntSize&);
