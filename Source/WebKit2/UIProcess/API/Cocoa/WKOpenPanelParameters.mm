@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#import "config.h"
+#import "WKOpenPanelParametersInternal.h"
 
-#import <UIKit/UIViewController.h>
+#if WK_API_ENABLED
 
-@class WKContentView;
-@protocol WKFileUploadPanelDelegate;
+@implementation WKOpenPanelParameters
 
-namespace API {
-class OpenPanelParameters;
+- (BOOL)allowsMultipleSelection
+{
+    return _openPanelParameters->allowMultipleFiles();
 }
 
-namespace WebKit {
-class WebOpenPanelResultListenerProxy;
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_openPanelParameters;
 }
 
-@interface WKFileUploadPanel : UIViewController
-@property (nonatomic, assign) id <WKFileUploadPanelDelegate> delegate;
-- (instancetype)initWithView:(WKContentView *)view;
-- (void)presentWithParameters:(API::OpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
-- (void)dismiss;
 @end
 
-@protocol WKFileUploadPanelDelegate <NSObject>
-@optional
-- (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel;
-@end
-
-#endif // PLATFORM(IOS)
+#endif

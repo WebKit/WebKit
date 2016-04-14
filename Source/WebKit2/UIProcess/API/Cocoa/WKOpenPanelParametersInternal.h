@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,38 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebOpenPanelParameters_h
-#define WebOpenPanelParameters_h
+#import "WKOpenPanelParameters.h"
 
-#include "APIObject.h"
-#include <WebCore/FileChooser.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#if WK_API_ENABLED
+
+#import "APIOpenPanelParameters.h"
+#import "WKObject.h"
 
 namespace API {
-class Array;
+
+inline WKOpenPanelParameters *wrapper(OpenPanelParameters& openPanelParameters)
+{
+    ASSERT([openPanelParameters.wrapper() isKindOfClass:[WKOpenPanelParameters class]]);
+
+    return (WKOpenPanelParameters *)openPanelParameters.wrapper();
 }
 
-namespace WebKit {
+}
 
-class WebOpenPanelParameters : public API::ObjectImpl<API::Object::Type::OpenPanelParameters> {
-public:
-    static PassRefPtr<WebOpenPanelParameters> create(const WebCore::FileChooserSettings&);
-    ~WebOpenPanelParameters();
+@interface WKOpenPanelParameters () <WKObject> {
+@package
+    API::ObjectStorage<API::OpenPanelParameters> _openPanelParameters;
+}
+@end
 
-    bool allowMultipleFiles() const { return m_settings.allowsMultipleFiles; }
-    Ref<API::Array> acceptMIMETypes() const;
-    Ref<API::Array> selectedFileNames() const;
-#if ENABLE(MEDIA_CAPTURE)
-    bool capture() const;
 #endif
-
-private:
-    explicit WebOpenPanelParameters(const WebCore::FileChooserSettings&);
-
-    WebCore::FileChooserSettings m_settings;
-};
-
-} // namespace WebKit
-
-#endif // WebOpenPanelParameters_h

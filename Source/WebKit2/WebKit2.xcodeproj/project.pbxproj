@@ -285,6 +285,7 @@
 		1A6563E41B7A8C50009CF787 /* APIWindowFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6563E21B7A8C50009CF787 /* APIWindowFeatures.cpp */; };
 		1A6563E51B7A8C50009CF787 /* APIWindowFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6563E31B7A8C50009CF787 /* APIWindowFeatures.h */; };
 		1A66BF8F18A052ED002071B4 /* WKWebViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */; };
+		1A67CD2E1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A67CD2D1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h */; };
 		1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */; };
 		1A6F9FB711E1408500DB1371 /* CommandLinePOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6F9FB611E1408500DB1371 /* CommandLinePOSIX.cpp */; };
 		1A6FA21E1BD0435B00AAA650 /* WKFrameInfoPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FA21D1BD0435B00AAA650 /* WKFrameInfoPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -436,6 +437,8 @@
 		1AC75380183BE50F0072CB15 /* DataReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC7537E183BE50F0072CB15 /* DataReference.h */; };
 		1AC75A1B1B3368270056745B /* HangDetectionDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC75A1A1B3368270056745B /* HangDetectionDisabler.h */; };
 		1AC75A1E1B33695E0056745B /* HangDetectionDisablerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AC75A1C1B33695E0056745B /* HangDetectionDisablerMac.mm */; };
+		1ACC50F11CBC381D003C7D03 /* WKOpenPanelParameters.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACC50EF1CBC381D003C7D03 /* WKOpenPanelParameters.mm */; };
+		1ACC50F21CBC381D003C7D03 /* WKOpenPanelParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACC50F01CBC381D003C7D03 /* WKOpenPanelParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1ACC87BA1981C341003D1AF4 /* WKNavigationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACC87B91981C341003D1AF4 /* WKNavigationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1ACECD2417162DB1001FC9EF /* StorageAreaMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */; };
 		1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */; };
@@ -1504,8 +1507,8 @@
 		BC857F7E12B82CEE00EDEB2E /* WebOpenPanelResultListenerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1DFEA312B31F87005DF730 /* WebOpenPanelResultListenerProxy.cpp */; };
 		BC857F8512B82D0B00EDEB2E /* WebOpenPanelResultListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BC857F8312B82D0B00EDEB2E /* WebOpenPanelResultListener.h */; };
 		BC857F8612B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC857F8412B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp */; };
-		BC857FB512B830E600EDEB2E /* WebOpenPanelParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = BC857FB312B830E600EDEB2E /* WebOpenPanelParameters.h */; };
-		BC857FB612B830E600EDEB2E /* WebOpenPanelParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC857FB412B830E600EDEB2E /* WebOpenPanelParameters.cpp */; };
+		BC857FB512B830E600EDEB2E /* APIOpenPanelParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = BC857FB312B830E600EDEB2E /* APIOpenPanelParameters.h */; };
+		BC857FB612B830E600EDEB2E /* APIOpenPanelParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC857FB412B830E600EDEB2E /* APIOpenPanelParameters.cpp */; };
 		BC857FE612B843D800EDEB2E /* WKOpenPanelParametersRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BC857FE412B843D800EDEB2E /* WKOpenPanelParametersRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC85806212B8505700EDEB2E /* WKOpenPanelResultListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1DFE8E12B31CA8005DF730 /* WKOpenPanelResultListener.cpp */; };
 		BC85806312B8505700EDEB2E /* WKOpenPanelParametersRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC857FE512B843D800EDEB2E /* WKOpenPanelParametersRef.cpp */; };
@@ -2230,6 +2233,7 @@
 		1A6563E21B7A8C50009CF787 /* APIWindowFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIWindowFeatures.cpp; sourceTree = "<group>"; };
 		1A6563E31B7A8C50009CF787 /* APIWindowFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIWindowFeatures.h; sourceTree = "<group>"; };
 		1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewInternal.h; sourceTree = "<group>"; };
+		1A67CD2D1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParametersInternal.h; sourceTree = "<group>"; };
 		1A6D141F1B0167D500785FF0 /* Info-OSX-10.9-10.10.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-OSX-10.9-10.10.plist"; sourceTree = "<group>"; };
 		1A6D14211B01681600785FF0 /* PluginService.32-64-10.9-10.10.Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "PluginService.32-64-10.9-10.10.Info.plist"; path = "PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist"; sourceTree = SOURCE_ROOT; };
 		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
@@ -2404,6 +2408,8 @@
 		1AC7537E183BE50F0072CB15 /* DataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataReference.h; sourceTree = "<group>"; };
 		1AC75A1A1B3368270056745B /* HangDetectionDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HangDetectionDisabler.h; sourceTree = "<group>"; };
 		1AC75A1C1B33695E0056745B /* HangDetectionDisablerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HangDetectionDisablerMac.mm; sourceTree = "<group>"; };
+		1ACC50EF1CBC381D003C7D03 /* WKOpenPanelParameters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKOpenPanelParameters.mm; sourceTree = "<group>"; };
+		1ACC50F01CBC381D003C7D03 /* WKOpenPanelParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParameters.h; sourceTree = "<group>"; };
 		1ACC87B91981C341003D1AF4 /* WKNavigationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationPrivate.h; sourceTree = "<group>"; };
 		1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaMap.cpp; sourceTree = "<group>"; };
 		1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaMap.h; sourceTree = "<group>"; };
@@ -3563,8 +3569,8 @@
 		BC857E8512B71EBB00EDEB2E /* WebPageProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageProxyMac.mm; sourceTree = "<group>"; };
 		BC857F8312B82D0B00EDEB2E /* WebOpenPanelResultListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebOpenPanelResultListener.h; sourceTree = "<group>"; };
 		BC857F8412B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebOpenPanelResultListener.cpp; sourceTree = "<group>"; };
-		BC857FB312B830E600EDEB2E /* WebOpenPanelParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebOpenPanelParameters.h; sourceTree = "<group>"; };
-		BC857FB412B830E600EDEB2E /* WebOpenPanelParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebOpenPanelParameters.cpp; sourceTree = "<group>"; };
+		BC857FB312B830E600EDEB2E /* APIOpenPanelParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIOpenPanelParameters.h; sourceTree = "<group>"; };
+		BC857FB412B830E600EDEB2E /* APIOpenPanelParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIOpenPanelParameters.cpp; sourceTree = "<group>"; };
 		BC857FE412B843D800EDEB2E /* WKOpenPanelParametersRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParametersRef.h; sourceTree = "<group>"; };
 		BC857FE512B843D800EDEB2E /* WKOpenPanelParametersRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKOpenPanelParametersRef.cpp; sourceTree = "<group>"; };
 		BC8699B2116AADAA002A925B /* WKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKView.h; sourceTree = "<group>"; };
@@ -4512,8 +4518,6 @@
 				905620E912BC248B000799B6 /* WebMemorySampler.h */,
 				C0337DAF127A28D0008FF4F4 /* WebMouseEvent.cpp */,
 				BCF69F981176CED600471A52 /* WebNavigationDataStore.h */,
-				BC857FB412B830E600EDEB2E /* WebOpenPanelParameters.cpp */,
-				BC857FB312B830E600EDEB2E /* WebOpenPanelParameters.h */,
 				C06C6093124C14430001682F /* WebPageCreationParameters.cpp */,
 				C06C6094124C14430001682F /* WebPageCreationParameters.h */,
 				BC7B625112A43C9600D174A4 /* WebPageGroupData.cpp */,
@@ -5136,6 +5140,9 @@
 				1AD60F5C18E20F4C0020C034 /* WKWindowFeatures.h */,
 				1AD60F5B18E20F4C0020C034 /* WKWindowFeatures.mm */,
 				1AD60F5F18E20F740020C034 /* WKWindowFeaturesInternal.h */,
+				1ACC50EF1CBC381D003C7D03 /* WKOpenPanelParameters.mm */,
+				1ACC50F01CBC381D003C7D03 /* WKOpenPanelParameters.h */,
+				1A67CD2D1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -5982,6 +5989,8 @@
 				BC111B47112F616900337BAB /* mac */,
 				99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */,
 				990D28B31C6526D400986977 /* APIAutomationSessionClient.h */,
+				BC857FB412B830E600EDEB2E /* APIOpenPanelParameters.cpp */,
+				BC857FB312B830E600EDEB2E /* APIOpenPanelParameters.h */,
 				076E884D1A13CADF005E90FC /* APIContextMenuClient.h */,
 				83891B621A68B3420030F386 /* APIDiagnosticLoggingClient.h */,
 				1F7D36C018DA513F00D9D659 /* APIDownloadClient.h */,
@@ -7347,6 +7356,7 @@
 				83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */,
 				A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */,
 				1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */,
+				1ACC50F21CBC381D003C7D03 /* WKOpenPanelParameters.h in Headers */,
 				1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */,
 				1AB7D61A1288B9D900CFD08C /* DownloadProxyMessages.h in Headers */,
 				C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */,
@@ -7707,7 +7717,7 @@
 				31BA924E148831260062EDB5 /* WebNotificationManagerMessages.h in Headers */,
 				31A2EC4B148997C200810D71 /* WebNotificationManagerProxy.h in Headers */,
 				31A2EC4E148997C200810D71 /* WebNotificationProvider.h in Headers */,
-				BC857FB512B830E600EDEB2E /* WebOpenPanelParameters.h in Headers */,
+				BC857FB512B830E600EDEB2E /* APIOpenPanelParameters.h in Headers */,
 				BC857F8512B82D0B00EDEB2E /* WebOpenPanelResultListener.h in Headers */,
 				BC1DFEA412B31F87005DF730 /* WebOpenPanelResultListenerProxy.h in Headers */,
 				BC032D8F10F437A00058C15A /* WebPage.h in Headers */,
@@ -7824,6 +7834,7 @@
 				BC7043CC12F75EE0006472B9 /* WKBundleNavigationAction.h in Headers */,
 				51A728DE1B1BAD3800102EEE /* WKBundleNavigationActionPrivate.h in Headers */,
 				BC4BEFE1120A1A4C00FBA0C7 /* WKBundleNodeHandle.h in Headers */,
+				1A67CD2E1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h in Headers */,
 				BC57450C1263B155006F0F12 /* WKBundleNodeHandlePrivate.h in Headers */,
 				BC20528111C94284008F3375 /* WKBundlePage.h in Headers */,
 				7CF47FF717275B71008ACB91 /* WKBundlePageBanner.h in Headers */,
@@ -9035,6 +9046,7 @@
 				753E3E0D1887398500188496 /* SessionTracker.cpp in Sources */,
 				1A6420E412DCE2FF00CAAE2C /* ShareableBitmap.cpp in Sources */,
 				C01A260112662F2100C9ED55 /* ShareableBitmapCG.cpp in Sources */,
+				1ACC50F11CBC381D003C7D03 /* WKOpenPanelParameters.mm in Sources */,
 				51217460164C20E30037A5C1 /* ShareableResource.cpp in Sources */,
 				1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */,
 				2DAF06D718BD1A470081CEB1 /* SmartMagnificationController.mm in Sources */,
@@ -9190,7 +9202,7 @@
 				31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */,
 				31A2EC4A148997C200810D71 /* WebNotificationManagerProxy.cpp in Sources */,
 				31A2EC4D148997C200810D71 /* WebNotificationProvider.cpp in Sources */,
-				BC857FB612B830E600EDEB2E /* WebOpenPanelParameters.cpp in Sources */,
+				BC857FB612B830E600EDEB2E /* APIOpenPanelParameters.cpp in Sources */,
 				BC857F8612B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp in Sources */,
 				BC857F7E12B82CEE00EDEB2E /* WebOpenPanelResultListenerProxy.cpp in Sources */,
 				9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */,

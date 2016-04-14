@@ -55,7 +55,6 @@ class UserMediaPermissionCheckProxy;
 class UserMediaPermissionRequestProxy;
 class WebColorPickerResultListenerProxy;
 class WebFrameProxy;
-class WebOpenPanelParameters;
 class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 struct NavigationActionData;
@@ -70,6 +69,7 @@ namespace API {
 class Data;
 class Dictionary;
 class Object;
+class OpenPanelParameters;
 class SecurityOrigin;
 
 class UIClient {
@@ -130,7 +130,7 @@ public:
         completionHandler(currentQuota);
     }
 
-    virtual bool runOpenPanel(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebOpenPanelParameters*, WebKit::WebOpenPanelResultListenerProxy*) { return false; }
+    virtual bool runOpenPanel(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, OpenPanelParameters*, WebKit::WebOpenPanelResultListenerProxy*) { return false; }
     virtual bool decidePolicyForGeolocationPermissionRequest(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, SecurityOrigin*, WebKit::GeolocationPermissionRequestProxy*) { return false; }
     virtual bool decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, SecurityOrigin&, SecurityOrigin&, WebKit::UserMediaPermissionRequestProxy&) { return false; }
     virtual bool checkUserMediaPermissionForOrigin(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, SecurityOrigin&, SecurityOrigin&, WebKit::UserMediaPermissionCheckProxy&) { return false; }

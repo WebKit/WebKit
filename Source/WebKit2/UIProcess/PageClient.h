@@ -151,7 +151,7 @@ public:
 
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
 
-    virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }
+    virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }
 
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 

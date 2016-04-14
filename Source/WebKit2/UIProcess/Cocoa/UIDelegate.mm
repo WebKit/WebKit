@@ -32,11 +32,13 @@
 #import "NavigationActionData.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNavigationActionInternal.h"
+#import "WKOpenPanelParametersInternal.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWindowFeaturesInternal.h"
 #import "WKUIDelegatePrivate.h"
+#import "WebOpenPanelResultListenerProxy.h"
 #import "_WKContextMenuElementInfo.h"
 #import "_WKFrameHandleInternal.h"
 #import <WebCore/SecurityOriginData.h>
@@ -78,6 +80,11 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)];
+
+#if PLATFORM(MAC)
+    m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
+#endif
+
     m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler = [delegate respondsToSelector:@selector(_webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:)];
     m_delegateMethods.webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded = [delegate respondsToSelector:@selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:)];
     m_delegateMethods.webViewPrintFrame = [delegate respondsToSelector:@selector(_webView:printFrame:)];
@@ -249,6 +256,40 @@ void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, 
         completionHandler(newQuota);
     }];
 }
+
+#if PLATFORM(MAC)
+bool UIDelegate::UIClient::runOpenPanel(WebPageProxy*, WebFrameProxy* webFrameProxy, const WebCore::SecurityOriginData& securityOriginData, API::OpenPanelParameters* openPanelParameters, WebOpenPanelResultListenerProxy* listener)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler)
+        return false;
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return false;
+
+    auto frame = API::FrameInfo::create(*webFrameProxy, securityOriginData.securityOrigin());
+    RefPtr<WebOpenPanelResultListenerProxy> resultListener = listener;
+
+    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:));
+
+    [delegate webView:m_uiDelegate.m_webView runOpenPanelWithParameters:wrapper(*openPanelParameters) initiatedByFrame:wrapper(frame) completionHandler:[checker, resultListener](NSArray<NSURL *> *URLs) {
+        checker->didCallCompletionHandler();
+
+        if (!URLs) {
+            resultListener->cancel();
+            return;
+        }
+
+        Vector<String> filenames;
+        for (NSURL *url in URLs)
+            filenames.append(url.fileSystemRepresentation);
+
+        resultListener->chooseFiles(filenames);
+    }];
+
+    return true;
+}
+#endif
 
 void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin& securityOrigin, uint64_t currentQuota, uint64_t totalBytesNeeded, std::function<void (unsigned long long)> completionHandler)
 {

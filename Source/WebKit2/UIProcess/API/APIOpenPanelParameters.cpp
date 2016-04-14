@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "WebOpenPanelParameters.h"
+#include "APIOpenPanelParameters.h"
 
 #include "APIArray.h"
 #include "APIString.h"
@@ -33,35 +33,35 @@
 
 using namespace WebCore;
 
-namespace WebKit {
+namespace API {
 
-PassRefPtr<WebOpenPanelParameters> WebOpenPanelParameters::create(const FileChooserSettings& settings)
+Ref<OpenPanelParameters> OpenPanelParameters::create(const FileChooserSettings& settings)
 {
-    return adoptRef(new WebOpenPanelParameters(settings));
+    return adoptRef(*new OpenPanelParameters(settings));
 }
 
-WebOpenPanelParameters::WebOpenPanelParameters(const FileChooserSettings& settings)
+OpenPanelParameters::OpenPanelParameters(const FileChooserSettings& settings)
     : m_settings(settings)
 {
 }
 
-WebOpenPanelParameters::~WebOpenPanelParameters()
+OpenPanelParameters::~OpenPanelParameters()
 {
 }
 
-Ref<API::Array> WebOpenPanelParameters::acceptMIMETypes() const
+Ref<API::Array> OpenPanelParameters::acceptMIMETypes() const
 {
     return API::Array::createStringArray(m_settings.acceptMIMETypes);
 }
 
 #if ENABLE(MEDIA_CAPTURE)
-bool WebOpenPanelParameters::capture() const
+bool OpenPanelParameters::capture() const
 {
     return m_settings.capture;
 }
 #endif
 
-Ref<API::Array> WebOpenPanelParameters::selectedFileNames() const
+Ref<API::Array> OpenPanelParameters::selectedFileNames() const
 {
     return API::Array::createStringArray(m_settings.selectedFiles);
 }

@@ -30,13 +30,13 @@
 
 #import "APIArray.h"
 #import "APIData.h"
+#import "APIOpenPanelParameters.h"
 #import "APIString.h"
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
 #import "WKData.h"
 #import "WKStringCF.h"
 #import "WKURLCF.h"
-#import "WebOpenPanelParameters.h"
 #import "WebOpenPanelResultListenerProxy.h"
 #import "WebPageProxy.h"
 #import <AVFoundation/AVFoundation.h>
@@ -333,24 +333,21 @@ static UIImage* iconForFile(NSURL *file)
         return;
     }
 
-    Vector<RefPtr<API::Object>> urls;
-    urls.reserveInitialCapacity(count);
+    Vector<String> filenames;
+    filenames.reserveInitialCapacity(count);
     for (NSURL *fileURL in fileURLs)
-        urls.uncheckedAppend(adoptRef(toImpl(WKURLCreateWithCFURL((CFURLRef)fileURL))));
-    Ref<API::Array> fileURLsRef = API::Array::create(WTFMove(urls));
+        filenames.uncheckedAppend(fileURL.fileSystemRepresentation);
 
     NSData *jpeg = UIImageJPEGRepresentation(iconImage, 1.0);
     RefPtr<API::Data> iconImageDataRef = adoptRef(toImpl(WKDataCreate(reinterpret_cast<const unsigned char*>([jpeg bytes]), [jpeg length])));
 
-    RefPtr<API::String> displayStringRef = adoptRef(toImpl(WKStringCreateWithCFString((CFStringRef)displayString)));
-
-    _listener->chooseFiles(fileURLsRef.ptr(), displayStringRef.get(), iconImageDataRef.get());
+    _listener->chooseFiles(filenames, displayString, iconImageDataRef.get());
     [self _dispatchDidDismiss];
 }
 
 #pragma mark - Present / Dismiss API
 
-- (void)presentWithParameters:(WebKit::WebOpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener
+- (void)presentWithParameters:(API::OpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener
 {
     ASSERT(!_listener);
 

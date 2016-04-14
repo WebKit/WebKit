@@ -27,8 +27,10 @@
 #define WebOpenPanelResultListenerProxy_h
 
 #include "APIObject.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace API {
 class Array;
@@ -50,9 +52,9 @@ public:
     virtual ~WebOpenPanelResultListenerProxy();
 
 #if PLATFORM(IOS)
-    void chooseFiles(API::Array*, API::String* displayString, const API::Data* iconImageData);
+    void chooseFiles(const Vector<String>& filenames, const String& displayString, const API::Data* iconImageData);
 #endif
-    void chooseFiles(API::Array*);
+    void chooseFiles(const Vector<String>& filenames);
     void cancel();
 
     void invalidate();

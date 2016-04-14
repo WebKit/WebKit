@@ -1,3 +1,100 @@
+2016-04-14  Anders Carlsson  <andersca@apple.com>
+
+        [Mac] Add API for open panel handling to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=137759
+        rdar://problem/23278623
+
+        Reviewed by Tim Horton.
+
+        Based on a patch by Brian Michel.
+
+        * Shared/API/Cocoa/WebKit.h:
+        Import WKOpenPanelParameters.h.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        Create a WKOpenPanelParameters for Type::OpenPanelParameters.
+
+        * UIProcess/API/APIOpenPanelParameters.cpp: Renamed from Source/WebKit2/Shared/WebOpenPanelParameters.cpp.
+        * UIProcess/API/APIOpenPanelParameters.h: Renamed from Source/WebKit2/Shared/WebOpenPanelParameters.h.
+        Rename WebKit::WebOpenPanelParameters to API::OpenPanelParameters.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::runOpenPanel):
+        Change this to take a SecurityOriginData.
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKOpenPanelParametersRef.cpp:
+        (WKOpenPanelParametersGetTypeID):
+        Rename WebKit::WebOpenPanelParameters to API::OpenPanelParameters.
+
+        * UIProcess/API/C/WKOpenPanelResultListener.cpp:
+        (filePathsFromFileURLs):
+        (WKOpenPanelResultListenerChooseFiles):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        Change chooseFiles to take a Vector<String> instead of an API::Array of URLs.
+
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.h: Added.
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.mm: Added.
+        (-[WKOpenPanelParameters allowsMultipleSelection]):
+        (-[WKOpenPanelParameters _apiObject]):
+        * UIProcess/API/Cocoa/WKOpenPanelParametersInternal.h:
+        Add a WKOpenPanelParameters class which contains information about a file upload control.
+
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        Add new delegate method.
+
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        Record whether the UI delegate implements the new delegate method.
+
+        (WebKit::UIDelegate::UIClient::runOpenPanel):
+        Invoke the new delegate method.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::handleRunOpenPanel):
+        Rename WebKit::WebOpenPanelParameters to API::OpenPanelParameters.
+
+        * UIProcess/WebOpenPanelResultListenerProxy.cpp:
+        (WebKit::WebOpenPanelResultListenerProxy::chooseFiles):
+        * UIProcess/WebOpenPanelResultListenerProxy.h:
+        Change chooseFiles to take a Vector<String> instead of an API::Array of URLs.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runOpenPanel):
+        * UIProcess/WebPageProxy.h:
+        Change this to take a SecurityOriginData.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Change RunOpenPanel to take a SecurityOriginData.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::handleRunOpenPanel):
+        Rename WebKit::WebOpenPanelParameters to API::OpenPanelParameters.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showRunOpenPanel:resultListener:]):
+        Change chooseFiles to take a Vector<String> instead of an API::Array of URLs.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.h:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _chooseFiles:displayString:iconImage:]):
+        Change chooseFiles to take a Vector<String> instead of an API::Array of URLs.
+
+        (-[WKFileUploadPanel presentWithParameters:resultListener:]):
+        Rename WebKit::WebOpenPanelParameters to API::OpenPanelParameters.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new file.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runOpenPanel):
+        Pass the security origin of the frame along.
+
 2016-04-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, rolling out r199554.

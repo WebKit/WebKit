@@ -45,38 +45,22 @@ WebOpenPanelResultListenerProxy::~WebOpenPanelResultListenerProxy()
 {
 }
 
-static Vector<String> filePathsFromFileURLs(const API::Array& fileURLs)
-{
-    Vector<String> filePaths;
-
-    size_t size = fileURLs.size();
-    filePaths.reserveInitialCapacity(size);
-
-    for (size_t i = 0; i < size; ++i) {
-        API::URL* apiURL = fileURLs.at<API::URL>(i);
-        if (apiURL)
-            filePaths.uncheckedAppend(URL(URL(), apiURL->string()).fileSystemPath());
-    }
-
-    return filePaths;
-}
-
 #if PLATFORM(IOS)
-void WebOpenPanelResultListenerProxy::chooseFiles(API::Array* fileURLsArray, API::String* displayString, const API::Data* iconImageData)
+void WebOpenPanelResultListenerProxy::chooseFiles(const Vector<WTF::String>& filenames, const String& displayString, const API::Data* iconImageData)
 {
     if (!m_page)
         return;
 
-    m_page->didChooseFilesForOpenPanelWithDisplayStringAndIcon(filePathsFromFileURLs(*fileURLsArray), displayString ? displayString->string() : String(), iconImageData);
+    m_page->didChooseFilesForOpenPanelWithDisplayStringAndIcon(filenames, displayString, iconImageData);
 }
 #endif
 
-void WebOpenPanelResultListenerProxy::chooseFiles(API::Array* fileURLsArray)
+void WebOpenPanelResultListenerProxy::chooseFiles(const Vector<String>& filenames)
 {
     if (!m_page)
         return;
 
-    m_page->didChooseFilesForOpenPanel(filePathsFromFileURLs(*fileURLsArray));
+    m_page->didChooseFilesForOpenPanel(filenames);
 }
 
 void WebOpenPanelResultListenerProxy::cancel()

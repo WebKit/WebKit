@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#import <WebKit/WKFoundation.h>
 
-#import <UIKit/UIViewController.h>
+#if WK_API_ENABLED
 
-@class WKContentView;
-@protocol WKFileUploadPanelDelegate;
+#import <Foundation/Foundation.h>
 
-namespace API {
-class OpenPanelParameters;
-}
+NS_ASSUME_NONNULL_BEGIN
 
-namespace WebKit {
-class WebOpenPanelResultListenerProxy;
-}
+/*! WKOpenPanelParameters contains parameters that a file upload control has specified.
+ */
+WK_CLASS_AVAILABLE(WK_MAC_TBA, NA)
+@interface WKOpenPanelParameters : NSObject
 
-@interface WKFileUploadPanel : UIViewController
-@property (nonatomic, assign) id <WKFileUploadPanelDelegate> delegate;
-- (instancetype)initWithView:(WKContentView *)view;
-- (void)presentWithParameters:(API::OpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
-- (void)dismiss;
+/*! @abstract Whether the file upload control supports multiple files.
+ */
+@property (nonatomic, readonly) BOOL allowsMultipleSelection;
+
 @end
 
-@protocol WKFileUploadPanelDelegate <NSObject>
-@optional
-- (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel;
-@end
+NS_ASSUME_NONNULL_END
 
-#endif // PLATFORM(IOS)
+#endif
