@@ -1,3 +1,25 @@
+2016-04-14  Geoffrey Garen  <ggaren@apple.com>
+
+        CopiedBlock should be 8kB
+        https://bugs.webkit.org/show_bug.cgi?id=156610
+
+        Reviewed by Michael Saboff.
+
+        On Mac Pro, this is:
+
+            15% faster on kraken-audio-beat-detection
+
+            5% faster on v8-splay
+
+        Hopefully, this will be OK on MacBook* bots as well.
+
+        32kB is the full size of L1 cache on x86. So, allocating and zero-filling
+        a 32kB CopiedBlock would basically flush the L1 cache. We can ameliorate
+        this problem by using smaller blocks -- or, if that doesn't work, we can
+        use larger blocks to amortize the cost.
+
+        * heap/CopiedBlock.h:
+
 2016-04-14  Filip Pizlo  <fpizlo@apple.com>
 
         PolymorphicAccess should try to generate a stub only once
