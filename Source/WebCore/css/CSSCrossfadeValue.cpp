@@ -194,6 +194,8 @@ bool CSSCrossfadeValue::traverseSubresources(const std::function<bool (const Cac
 RefPtr<CSSCrossfadeValue> CSSCrossfadeValue::blend(const CSSCrossfadeValue& from, double progress) const
 {
     ASSERT(equalInputImages(from));
+    if (!m_cachedToImage || !m_cachedFromImage)
+        return nullptr;
     RefPtr<StyleCachedImage> toStyledImage = StyleCachedImage::create(m_cachedToImage.get());
     RefPtr<StyleCachedImage> fromStyledImage = StyleCachedImage::create(m_cachedFromImage.get());
 

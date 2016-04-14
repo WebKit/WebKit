@@ -1,3 +1,16 @@
+2016-04-14  Dean Jackson  <dino@apple.com>
+
+        CrashTracer: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::CachedResource::addClientToSet + 27
+        https://bugs.webkit.org/show_bug.cgi?id=156602
+        <rdar://problem/18921091>
+
+        Reviewed by Simon Fraser.
+
+        Tests that an animation between two inherited crossfade elements will not crash.
+
+        * transitions/crossfade-transition-expected.txt: Added.
+        * transitions/crossfade-transition.html: Added.
+
 2016-04-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add a JavaScript Formatting test for template strings

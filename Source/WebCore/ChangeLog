@@ -1,3 +1,23 @@
+2016-04-14  Dean Jackson  <dino@apple.com>
+
+        CrashTracer: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::CachedResource::addClientToSet + 27
+        https://bugs.webkit.org/show_bug.cgi?id=156602
+        <rdar://problem/18921091>
+
+        Reviewed by Simon Fraser.
+
+        The CSS property list-style-image is inherited, so a transition on a parent
+        might cause a transition on a child. On that child, the value might be between
+        two generated crossfade images which haven't yet resolved, causing a crash.
+
+        Test: transitions/crossfade-transition.html
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::blend): Return null if there are no cached images.
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): If we don't have an actual image to blend between, fall
+        out to the default case.
+
 2016-04-14  Antonio Gomes  <tonikitoo@webkit.org>
 
         Allow listbox content and scrollbar to intrude padding area.

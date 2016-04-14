@@ -318,8 +318,10 @@ static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleI
         if (is<CSSCrossfadeValue>(fromGenerated) && is<CSSCrossfadeValue>(toGenerated)) {
             CSSCrossfadeValue& fromCrossfade = downcast<CSSCrossfadeValue>(fromGenerated);
             CSSCrossfadeValue& toCrossfade = downcast<CSSCrossfadeValue>(toGenerated);
-            if (fromCrossfade.equalInputImages(toCrossfade))
-                return StyleGeneratedImage::create(*toCrossfade.blend(fromCrossfade, progress));
+            if (fromCrossfade.equalInputImages(toCrossfade)) {
+                if (auto crossfadeBlend = toCrossfade.blend(fromCrossfade, progress))
+                    return StyleGeneratedImage::create(*crossfadeBlend);
+            }
         }
 
         // FIXME: Add support for animation between two *gradient() functions.
