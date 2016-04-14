@@ -586,14 +586,32 @@ void RenderTable::layout()
     clearNeedsLayout();
 }
 
-void RenderTable::invalidateCollapsedBorders()
+void RenderTable::invalidateCollapsedBorders(RenderTableCell* cellWithStyleChange)
 {
     m_collapsedBordersValid = false;
     m_collapsedBorders.clear();
-    for (auto& section : childrenOfType<RenderTableSection>(*this)) {
+
+    for (auto& section : childrenOfType<RenderTableSection>(*this))
         section.clearCachedCollapsedBorders();
-        if (!m_collapsedEmptyBorderIsPresent)
-            continue;
+
+    if (!m_collapsedEmptyBorderIsPresent)
+        return;
+
+    if (cellWithStyleChange) {
+        // It is enough to invalidate just the surrounding cells when cell border style changes.
+        cellWithStyleChange->invalidateHasEmptyCollapsedBorders();
+        if (auto* below = cellBelow(cellWithStyleChange))
+            below->invalidateHasEmptyCollapsedBorders();
+        if (auto* above = cellAbove(cellWithStyleChange))
+            above->invalidateHasEmptyCollapsedBorders();
+        if (auto* before = cellBefore(cellWithStyleChange))
+            before->invalidateHasEmptyCollapsedBorders();
+        if (auto* after = cellAfter(cellWithStyleChange))
+            after->invalidateHasEmptyCollapsedBorders();
+        return;
+    }
+
+    for (auto& section : childrenOfType<RenderTableSection>(*this)) {
         for (auto* row = section.firstRow(); row; row = row->nextRow()) {
             for (auto* cell = row->firstCell(); cell; cell = cell->nextCell()) {
                 ASSERT(cell->table() == this);

@@ -1,3 +1,27 @@
+2016-04-14  Antti Koivisto  <antti@apple.com>
+
+        Collapsed border cache invalidation can lead to O(n^2) during style resolve
+        https://bugs.webkit.org/show_bug.cgi?id=156570
+
+        Reviewed by Darin Adler.
+
+        RenderTable::invalidateCollapsedBorders traverses all cells. It is called when table cell border changes.
+        This can result in O(n^2) during style resolve.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::invalidateCollapsedBorders):
+
+            For cell border style change invalidate the hasEmptyCollapsedBorder bits only for the neighbouring cells.
+            They are the only ones that can be affected.
+
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::collapsedBordersAreValid):
+        (WebCore::RenderTable::collapsedEmptyBorderIsPresent):
+        (WebCore::RenderTable::currentBorderValue):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleDidChange):
+
 2016-04-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Implement CSSGridTemplateAreasValue::equals
