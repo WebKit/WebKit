@@ -129,14 +129,14 @@ private:
     };
 
     const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
-    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
-    bool isRenderMathMLOperator() const override { return true; }
+    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) final;
+    bool isRenderMathMLOperator() const final { return true; }
     // The following operators are invisible: U+2061 FUNCTION APPLICATION, U+2062 INVISIBLE TIMES, U+2063 INVISIBLE SEPARATOR, U+2064 INVISIBLE PLUS.
     bool isInvisibleOperator() const { return 0x2061 <= m_textContent && m_textContent <= 0x2064; }
-    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const final;
 
-    Optional<int> firstLineBaseline() const override;
-    RenderMathMLOperator* unembellishedOperator() override { return this; }
+    Optional<int> firstLineBaseline() const final;
+    RenderMathMLOperator* unembellishedOperator() final { return this; }
     void rebuildTokenContent(const String& operatorString);
 
     bool shouldAllowStretching() const;
