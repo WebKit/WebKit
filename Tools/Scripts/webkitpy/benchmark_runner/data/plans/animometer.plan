@@ -1,7 +1,7 @@
 {
     "timeout": 1800,
     "count": 1,
-    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/Animometer/@r199134",
+    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/Animometer/@r199328",
     "benchmark_patch": "data/patches/Animometer.patch",
     "entry_point": "index.html",
     "output_file": "animometer.result"
