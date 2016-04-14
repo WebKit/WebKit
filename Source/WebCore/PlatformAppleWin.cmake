@@ -16,18 +16,14 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
-    editing/SmartReplaceCF.cpp
-
     loader/cf/ResourceLoaderCFNet.cpp
 
     page/CaptionUserPreferencesMediaAF.cpp
 
     page/win/FrameCGWin.cpp
 
-    platform/cf/CFURLExtras.cpp
     platform/cf/CoreMediaSoftLink.cpp
     platform/cf/MediaAccessibilitySoftLink.cpp
-    platform/cf/URLCF.cpp
 
     platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
     platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp

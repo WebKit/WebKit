@@ -68,8 +68,6 @@ list(APPEND WebCore_SOURCES
     accessibility/atk/WebKitAccessibleUtil.cpp
     accessibility/atk/WebKitAccessibleWrapperAtk.cpp
 
-    editing/SmartReplace.cpp
-
     editing/atk/FrameSelectionAtk.cpp
 
     editing/efl/EditorEfl.cpp
@@ -83,8 +81,6 @@ list(APPEND WebCore_SOURCES
     page/efl/EventHandlerEfl.cpp
 
     page/scrolling/AxisScrollSnapOffsets.cpp
-
-    platform/KillRingNone.cpp
 
     platform/audio/efl/AudioBusEfl.cpp
 
@@ -123,9 +119,7 @@ list(APPEND WebCore_SOURCES
     platform/glib/KeyedDecoderGlib.cpp
     platform/glib/KeyedEncoderGlib.cpp
 
-    platform/graphics/ImageSource.cpp
     platform/graphics/PlatformDisplay.cpp
-    platform/graphics/WOFFFileFormat.cpp
 
     platform/graphics/cairo/BackingStoreBackendCairoImpl.cpp
     platform/graphics/cairo/BitmapImageCairo.cpp

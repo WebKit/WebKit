@@ -45,6 +45,7 @@ list(APPEND WebCore_SOURCES
     accessibility/win/AccessibilityObjectWin.cpp
     accessibility/win/AccessibilityObjectWrapperWin.cpp
 
+    editing/SmartReplaceCF.cpp
     editing/win/EditorWin.cpp
 
     html/HTMLSelectElementWin.cpp
@@ -56,17 +57,17 @@ list(APPEND WebCore_SOURCES
     page/win/FrameWin.cpp
 
     platform/Cursor.cpp
-    platform/KillRingNone.cpp
     platform/LocalizedStrings.cpp
-    platform/PlatformStrategies.cpp
     platform/VNodeTracker.cpp
 
     platform/audio/PlatformMediaSessionManager.cpp
 
+    platform/cf/CFURLExtras.cpp
     platform/cf/FileSystemCF.cpp
     platform/cf/KeyedDecoderCF.cpp
     platform/cf/KeyedEncoderCF.cpp
     platform/cf/SharedBufferCF.cpp
+    platform/cf/URLCF.cpp
 
     platform/cf/win/CertificateCFWin.cpp
 
@@ -74,7 +75,6 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/FontPlatformData.cpp
     platform/graphics/GraphicsContext3DPrivate.cpp
-    platform/graphics/WOFFFileFormat.cpp
 
     platform/graphics/egl/GLContextEGL.cpp
 

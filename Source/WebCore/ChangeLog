@@ -1,3 +1,20 @@
+2016-04-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [CMake] Clean up CMake files
+        https://bugs.webkit.org/show_bug.cgi?id=156580
+
+        Reviewed by Alex Christensen.
+
+        Revise the various CMake input files to reduce the amount of duplicated file references in
+        the various ports.
+
+        * CMakeLists.txt:
+        * PlatformAppleWin.cmake:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformWin.cmake:
+        * PlatformWinCairo.cmake:
+
 2016-04-14  Frederic Wang  <fred.wang@free.fr>
 
         RenderMathMLOperator: Add helper function to retrieve italic correction
