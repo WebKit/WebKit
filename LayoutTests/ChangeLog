@@ -1,3 +1,15 @@
+2016-04-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add a JavaScript Formatting test for template strings
+        https://bugs.webkit.org/show_bug.cgi?id=156600
+
+        Reviewed by Brian Burg.
+
+        * inspector/formatting/formatting-javascript-expected.txt:
+        * inspector/formatting/formatting-javascript.html:
+        * inspector/formatting/resources/javascript-tests/template-strings-expected.js: Added.
+        * inspector/formatting/resources/javascript-tests/template-strings.js: Added.
+
 2016-04-14  Antonio Gomes  <tonikitoo@webkit.org>
 
         Allow listbox content and scrollbar to intrude padding area.

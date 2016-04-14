@@ -56,6 +56,9 @@ PASS
 -- Running test case: EsprimaFormatter.JavaScript.switch-case-default.js
 PASS
 
+-- Running test case: EsprimaFormatter.JavaScript.template-strings.js
+PASS
+
 -- Running test case: EsprimaFormatter.JavaScript.ternary-expressions.js
 PASS
 
