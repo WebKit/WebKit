@@ -1,3 +1,29 @@
+2016-04-14  Frederic Wang  <fwang@igalia.com>
+
+        RenderMathMLOperator: Move glyph measuring helper functions outside the class
+        https://bugs.webkit.org/show_bug.cgi?id=156571
+
+        Reviewed by Darin Adler.
+
+        No new tests, this is just a simple refactoring to prepare the patch
+        for bug 156542, without any behavior change.
+
+        * rendering/mathml/RenderMathMLOperator.cpp: MATHML_OPDICT_SIZE was removed in bug 152242, so no need to undef it.
+        (WebCore::boundsForGlyph): Static inline helper function moved from the RenderMathMLOperator class.
+        (WebCore::heightForGlyph): Ditto.
+        (WebCore::advanceWidthForGlyph): Ditto and renamed.
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths): Rename advanceForGlyph.
+        (WebCore::RenderMathMLOperator::findStretchyData): Ditto.
+        (WebCore::RenderMathMLOperator::updateStyle): Ditto.
+        (WebCore::RenderMathMLOperator::paintGlyph): Ditto.
+        (WebCore::RenderMathMLOperator::paint): Ditto.
+        (WebCore::RenderMathMLOperator::trailingSpaceError): Ditto.
+        (WebCore::RenderMathMLOperator::setOperatorProperties): Deleted.
+        (WebCore::RenderMathMLOperator::boundsForGlyph): Deleted.
+        (WebCore::RenderMathMLOperator::heightForGlyph): Deleted.
+        (WebCore::RenderMathMLOperator::advanceForGlyph): Deleted.
+        * rendering/mathml/RenderMathMLOperator.h:
+
 2016-04-14  Frederic Wang  <fred.wang@free.fr>
 
         Set some RenderMathMLOperator members as final

@@ -67,7 +67,6 @@ protected:
     virtual void setOperatorProperties();
     void computePreferredLogicalWidths() override;
     void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
-    float advanceForGlyph(const GlyphData&) const;
     void setLeadingSpace(LayoutUnit leadingSpace) { m_leadingSpace = leadingSpace; }
     void setTrailingSpace(LayoutUnit trailingSpace) { m_trailingSpace = trailingSpace; }
     UChar textContent() const { return m_textContent; }
@@ -140,9 +139,6 @@ private:
     void rebuildTokenContent(const String& operatorString);
 
     bool shouldAllowStretching() const;
-
-    FloatRect boundsForGlyph(const GlyphData&) const;
-    float heightForGlyph(const GlyphData&) const;
 
     bool getGlyphAssemblyFallBack(Vector<OpenTypeMathData::AssemblyPart>, StretchyData&) const;
     StretchyData getDisplayStyleLargeOperator(UChar) const;
