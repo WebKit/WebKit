@@ -185,6 +185,9 @@ void WebEditorClient::toggleSmartInsertDelete()
 
 bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
 {
+    if (m_page->isControlledByAutomation())
+        return false;
+
     return WebProcess::singleton().textCheckerState().isAutomaticQuoteSubstitutionEnabled;
 }
 
@@ -207,6 +210,9 @@ void WebEditorClient::toggleAutomaticLinkDetection()
 
 bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
 {
+    if (m_page->isControlledByAutomation())
+        return false;
+
     return WebProcess::singleton().textCheckerState().isAutomaticDashSubstitutionEnabled;
 }
 
@@ -218,6 +224,9 @@ void WebEditorClient::toggleAutomaticDashSubstitution()
 
 bool WebEditorClient::isAutomaticTextReplacementEnabled()
 {
+    if (m_page->isControlledByAutomation())
+        return false;
+
     return WebProcess::singleton().textCheckerState().isAutomaticTextReplacementEnabled;
 }
 
@@ -229,6 +238,9 @@ void WebEditorClient::toggleAutomaticTextReplacement()
 
 bool WebEditorClient::isAutomaticSpellingCorrectionEnabled()
 {
+    if (m_page->isControlledByAutomation())
+        return false;
+
     return WebProcess::singleton().textCheckerState().isAutomaticSpellingCorrectionEnabled;
 }
 

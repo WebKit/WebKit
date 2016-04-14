@@ -1,3 +1,21 @@
+2016-04-14  Brian Burg  <bburg@apple.com>
+
+        Web Automation: suppress automatic text correction in pages controlled by automation
+        https://bugs.webkit.org/show_bug.cgi?id=156599
+        <rdar://problem/25712646>
+
+        Reviewed by Timothy Hatcher.
+
+        If the page is controlled by automation, then automatic text corrections will
+        cause unexpected behaviors by nondeterministically modifying text inserted by
+        a test. Just pretend these behaviors are disabled if controlled by automation.
+
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::isAutomaticQuoteSubstitutionEnabled):
+        (WebKit::WebEditorClient::isAutomaticDashSubstitutionEnabled):
+        (WebKit::WebEditorClient::isAutomaticTextReplacementEnabled):
+        (WebKit::WebEditorClient::isAutomaticSpellingCorrectionEnabled):
+
 2016-04-14  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Yosemite build.
