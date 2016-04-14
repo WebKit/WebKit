@@ -102,9 +102,9 @@ private:
     void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID);
     void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
     void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& origins, uint64_t callbackID);
+    void grantSandboxExtensionsForBlobs(const Vector<String>& paths, const SandboxExtension::HandleArray&);
 
 #if ENABLE(INDEXED_DATABASE)
-    void grantSandboxExtensionsForBlobs(const Vector<String>& paths, const SandboxExtension::HandleArray&);
     Vector<RefPtr<WebCore::SecurityOrigin>> indexedDatabaseOrigins();
     void deleteIndexedDatabaseEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>&);
     void deleteIndexedDatabaseEntriesModifiedSince(std::chrono::system_clock::time_point modifiedSince);
@@ -120,11 +120,9 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     String m_indexedDatabaseDirectory;
-
     RefPtr<WebCore::IDBServer::IDBServer> m_idbServer;
-
-    HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
 #endif
+    HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
 
     Deque<std::unique_ptr<WebCore::CrossThreadTask>> m_databaseTasks;
     Lock m_databaseTaskMutex;

@@ -305,7 +305,6 @@ void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<
 #endif
 }
 
-#if ENABLE(INDEXED_DATABASE)
 void DatabaseProcess::grantSandboxExtensionsForBlobs(const Vector<String>& paths, const SandboxExtension::HandleArray& handles)
 {
     ASSERT(paths.size() == handles.size());
@@ -316,6 +315,7 @@ void DatabaseProcess::grantSandboxExtensionsForBlobs(const Vector<String>& paths
     }
 }
 
+#if ENABLE(INDEXED_DATABASE)
 void DatabaseProcess::prepareForAccessToTemporaryFile(const String& path)
 {
     if (auto extension = m_blobTemporaryFileSandboxExtensions.get(path))

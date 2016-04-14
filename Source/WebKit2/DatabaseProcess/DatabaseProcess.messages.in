@@ -32,9 +32,7 @@ messages -> DatabaseProcess LegacyReceiver {
     FetchWebsiteData(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, uint64_t callbackID)
     DeleteWebsiteData(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
     DeleteWebsiteDataForOrigins(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins, uint64_t callbackID)
-#if ENABLE(INDEXED_DATABASE)
     GrantSandboxExtensionsForBlobs(Vector<String> paths, WebKit::SandboxExtension::HandleArray extensions)
-#endif
 }
 
 #endif // ENABLE(DATABASE_PROCESS)

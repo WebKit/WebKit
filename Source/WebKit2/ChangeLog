@@ -1,3 +1,14 @@
+2016-04-14  Alex Christensen  <achristensen@webkit.org>
+
+        Fix build without IndexedDB.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::deleteWebsiteDataForOrigins):
+        (WebKit::DatabaseProcess::grantSandboxExtensionsForBlobs):
+        (WebKit::DatabaseProcess::prepareForAccessToTemporaryFile):
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseProcess.messages.in:
+
 2016-04-13  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r199401): Internal builds of Safari hang on launch
