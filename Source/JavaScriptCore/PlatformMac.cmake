@@ -16,7 +16,7 @@ list(APPEND JavaScriptCore_SOURCES
     inspector/remote/RemoteInspector.mm
     inspector/remote/RemoteInspectorXPCConnection.mm
 )
-add_definitions(-DSTATICALLY_LINKED_WITH_WTF)
+add_definitions(-DSTATICALLY_LINKED_WITH_WTF -D__STDC_WANT_LIB_EXT1__)
 
 find_library(SECURITY_LIBRARY Security)
 list(APPEND JavaScriptCore_LIBRARIES

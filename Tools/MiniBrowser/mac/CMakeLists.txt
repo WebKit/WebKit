@@ -28,6 +28,17 @@ set(MiniBrowser_LIBRARIES
     WebKit2
 )
 
+set(EXECUTABLE_NAME MiniBrowser)
+set(PRODUCT_NAME MiniBrowser)
+
+set(MiniBrowser_Contents_Directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MiniBrowser.app/Contents)
+make_directory(${MiniBrowser_Contents_Directory}/Resources)
+add_custom_target(BrowserWindowNib COMMAND ibtool --compile ${MiniBrowser_Contents_Directory}/Resources/BrowserWindow.nib ${MINIBROWSER_DIR}/BrowserWindow.xib VERBATIM)
+add_custom_target(ExtensionManagerWindowControllerNib COMMAND ibtool --compile ${MiniBrowser_Contents_Directory}/Resources/ExtensionManagerWindowController.nib ${MINIBROWSER_DIR}/ExtensionManagerWindowController.xib VERBATIM)
+add_custom_target(MainMenuNib COMMAND ibtool --compile ${MiniBrowser_Contents_Directory}/Resources/MainMenu.nib ${MINIBROWSER_DIR}/MainMenu.xib VERBATIM)
+
 include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
-add_executable(MiniBrowser ${MiniBrowser_SOURCES})
+add_executable(MiniBrowser MACOSX_BUNDLE ${MiniBrowser_SOURCES})
+set_target_properties(MiniBrowser PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${MINIBROWSER_DIR}/Info.plist)
 target_link_libraries(MiniBrowser ${MiniBrowser_LIBRARIES})
+add_dependencies(MiniBrowser BrowserWindowNib ExtensionManagerWindowControllerNib MainMenuNib)
