@@ -1967,3 +1967,5 @@ webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-vary-no-body.html [ P
 
 webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html [ Pass Failure ]
 webkit.org/b/156620 fast/animation/request-animation-frame-iframe2.html [ Pass Failure ]
+
+webkit.org/b/153049 perf/array-binary-search.html [ Pass Failure Timeout ]
