@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<meta http-equiv="content-language" content="en-gb">
+<body id="body">
+<div id="content">
+<svg>
+  <circle id="test1" cx="50" cy="100" r="15" data-expected="name: generic title; description: generic desc">
+    <title>generic title</title>
+    <desc>generic desc</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test2" cx="50" cy="100" r="15" data-expected="name: title for en; description: desc for en">
+    <title lang="de">title for de</title>
+    <title lang="fr">title for fr</title>
+    <title lang="en">title for en</title>
+    <desc lang="fr">desc for fr</desc>
+    <desc lang="en">desc for en</desc>
+    <desc lang="es">desc for es</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test3" cx="50" cy="100" r="15" data-expected="name: title for en; description: desc for en">
+    <title>generic title</title>
+    <title lang="fr">title for fr</title>
+    <title lang="en">title for en</title>
+    <desc>generic desc</desc>
+    <desc lang="en">desc for en</desc>
+    <desc lang="es">desc for es</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test4" cx="50" cy="100" r="15" data-expected="name: title for EN; description: desc for EN">
+    <title>generic title</title>
+    <title lang="fr">title for fr</title>
+    <title lang="EN">title for EN</title>
+    <desc>generic desc</desc>
+    <desc lang="EN">desc for EN</desc>
+    <desc lang="es">desc for es</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test5" cx="50" cy="100" r="15" data-expected="name: generic title; description: generic desc">
+    <title>generic title</title>
+    <title lang="fr">title for fr</title>
+    <desc>generic desc</desc>
+    <desc lang="es">desc for es</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test6" cx="50" cy="100" r="15" data-expected="name: generic title; description: generic desc">
+    <title lang="fr">title for fr</title>
+    <title>generic title</title>
+    <desc lang="es">desc for es</desc>
+    <desc>generic desc</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test7" cx="50" cy="100" r="15" data-expected="name: title for en-gb; description: desc for en-gb">
+    <title>generic title</title>
+    <title lang="en-us">title for en-us</title>
+    <title lang="en-gb">title for en-gb</title>
+    <desc>generic desc</desc>
+    <desc lang="en-gb">desc for en-gb</desc>
+    <desc lang="en-us">desc for en-us</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test7" cx="50" cy="100" r="15" data-expected="name: title for en_GB; description: desc for en_GB">
+    <title>generic title</title>
+    <title lang="en-us">title for en-us</title>
+    <title lang="en_GB">title for en_GB</title>
+    <desc>generic desc</desc>
+    <desc lang="en_GB">desc for en_GB</desc>
+    <desc lang="en-us">desc for en-us</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test8" cx="50" cy="100" r="15" data-expected="name: title for en_GB; description: desc for en_GB">
+    <title>generic title</title>
+    <title lang="en">title for en</title>
+    <title lang="en_GB">title for en_GB</title>
+    <desc>generic desc</desc>
+    <desc lang="en_GB">desc for en_GB</desc>
+    <desc lang="en">desc for en</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test9" cx="50" cy="100" r="15" data-expected="name: title for en; description: desc for en">
+    <title>generic title</title>
+    <title lang="en">title for en</title>
+    <title lang="en_US">title for en_US</title>
+    <desc>generic desc</desc>
+    <desc lang="en_US">desc for en_US</desc>
+    <desc lang="en">desc for en</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test10" cx="50" cy="100" r="15" data-expected="name: title for en-us; description: desc for en-us">
+    <title lang="fr">title for fr</title>
+    <title lang="en-us">title for en-us</title>
+    <desc lang="fr">desc for fr</desc>
+    <desc lang="en-us">desc for en-us</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test11" cx="50" cy="100" r="15" data-expected="name: title for en-us; description: desc for en-us">
+    <title>generic title</title>
+    <title lang="en-us">title for en-us</title>
+    <desc>generic desc</desc>
+    <desc lang="en-us">desc for en-us</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test12" cx="50" cy="100" r="15" data-expected="name: generic title; description: generic desc">
+    <title>generic title</title>
+    <title lang="fr">title for fr</title>
+    <desc lang="fr">desc for fr</desc>
+    <desc>generic desc</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test13" cx="50" cy="100" r="15" data-expected="name: 1st title for en_GB; description: 1st desc for en_GB">
+    <title>generic title</title>
+    <title lang="en_GB">1st title for en_GB</title>
+    <title lang="en_GB">2nd title for en_GB</title>
+    <desc>generic desc</desc>
+    <desc lang="en_GB">1st desc for en_GB</desc>
+    <desc lang="en_GB">2nd desc for en_GB</desc>
+    <desc lang="en">desc for en</desc>
+  </circle>
+</svg>
+<svg>
+  <circle id="test14" cx="50" cy="100" r="15" data-expected="name: 1st generic title; description: 1st generic desc">
+    <title>1st generic title</title>
+    <title>2nd generic title</title>
+    <desc>1st generic desc</desc>
+    <desc>2nd generic desc</desc>
+  </circle>
+</svg>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    function textAlternatives(axElement) {
+        if (!axElement)
+            return "Element not exposed";
+
+       result = axElement.title + "\n\t" + axElement.description;
+       if (accessibilityController.platformName == "mac")
+           result += "\n\t" + axElement.helpText;
+       return result;
+    }
+
+    description("This tests the accessible text alternatives results for SVG when the content-language attribute is set.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 14; i++) {
+            var element = document.getElementById("test" + i);
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            var result = textAlternatives(axElement);
+            debug("test" + i + ":\n\tExpected " + element.getAttribute("data-expected") + "\n\t" + result);
+        }
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

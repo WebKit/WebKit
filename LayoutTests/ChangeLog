@@ -1,3 +1,21 @@
+2016-04-15  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Presentational role on SVG elements is trumped by child 'title' and 'desc' elements
+        https://bugs.webkit.org/show_bug.cgi?id=156519
+
+        Reviewed by Chris Fleizach.
+
+        Update w3c-svg-presentational-role.html expectations because there are test cases in which
+        elements are now being included in the accessibility tree as a result of this change. Also
+        add new test cases which lack child 'title' and 'desc' elements.
+
+        * accessibility/w3c-svg-content-language-attribute.html: Added.
+        * accessibility/w3c-svg-presentational-role.html: New test cases added.
+        * platform/gtk/accessibility/w3c-svg-content-language-attribute-expected.txt: Added.
+        * platform/gtk/accessibility/w3c-svg-presentational-role-expected.txt: Updated.
+        * platform/mac/accessibility/w3c-svg-content-language-attribute-expected.txt: Added.
+        * platform/mac/accessibility/w3c-svg-presentational-role-expected.txt: Updated.
+
 2016-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Selection.deleteFromDocument should not leave a selection character

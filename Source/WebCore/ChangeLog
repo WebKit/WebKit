@@ -1,3 +1,34 @@
+2016-04-15  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Presentational role on SVG elements is trumped by child 'title' and 'desc' elements
+        https://bugs.webkit.org/show_bug.cgi?id=156519
+
+        Reviewed by Chris Fleizach.
+
+        Override the presentational role on SVG elements which have a child 'title' or 'desc'
+        element. As a result of this change, AccessibilitySVGRoot objects would be exposed
+        with an AccessibilityRole of UnknownRole. Therefore map included AccessibilitySVGRoot
+        objects to GroupRole as per the SVG Accessibility API Mapping specification.
+
+        Also use indexOfBestMatchingLanguageInList() to identify which child 'title' or 'desc'
+        element is the best match for the parent element.
+
+        New Test: accessibility/w3c-svg-content-language-attribute.html
+
+        Also: Update w3c-svg-presentational-role.html expectations because there are test cases
+        in which elements are now being included in the accessibility tree as a result of this
+        change. Also add new test cases which lack child 'title' and 'desc' elements.
+
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilitySVGElement.cpp:
+        (WebCore::AccessibilitySVGElement::childElementWithMatchingLanguage):
+        (WebCore::AccessibilitySVGElement::accessibilityDescription):
+        (WebCore::AccessibilitySVGElement::helpText):
+        (WebCore::AccessibilitySVGElement::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilitySVGElement::determineAriaRoleAttribute):
+        * accessibility/AccessibilitySVGElement.h:
+        * accessibility/AccessibilitySVGRoot.h:
+
 2016-04-15  Chris Dumez  <cdumez@apple.com>
 
         Rename [GlobalContext] extended attribute to [Exposed] and align with WebIDL

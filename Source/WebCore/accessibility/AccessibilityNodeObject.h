@@ -174,7 +174,7 @@ protected:
 
     bool canHaveChildren() const override;
     AccessibilityRole ariaRoleAttribute() const override;
-    AccessibilityRole determineAriaRoleAttribute() const;
+    virtual AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
     bool isDescendantOfBarrenParent() const override;
     void alterSliderValue(bool increase);

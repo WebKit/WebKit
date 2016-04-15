@@ -4,30 +4,30 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 test1: AXRole: AXGroup
-test2: Element not exposed
-test3: Element not exposed
-test4: Element not exposed
+test2: AXRole: AXGroup
+test3: AXRole: AXImage
+test4: AXRole: AXGroup
 test5: AXRole: AXImage
-test6: Element not exposed
+test6: AXRole: AXImage
 test7: AXRole: AXImage
-test8: Element not exposed
+test8: AXRole: AXImage
 test9: AXRole: AXImage
 test10: AXRole: AXImage
-test11: Element not exposed
+test11: AXRole: AXImage
 test12: Element not exposed
 test13: Element not exposed
 test14: Element not exposed
 test15: AXRole: AXGroup
-test16: Element not exposed
-test17: Element not exposed
-test18: Element not exposed
+test16: AXRole: AXGroup
+test17: AXRole: AXImage
+test18: AXRole: AXGroup
 test19: AXRole: AXImage
-test20: Element not exposed
+test20: AXRole: AXImage
 test21: AXRole: AXImage
-test22: Element not exposed
+test22: AXRole: AXImage
 test23: AXRole: AXImage
 test24: AXRole: AXImage
-test25: Element not exposed
+test25: AXRole: AXImage
 test26: Element not exposed
 test27: Element not exposed
 test28: Element not exposed
@@ -37,6 +37,11 @@ test31: Element not exposed
 test32: Element not exposed
 test33: Element not exposed
 test34: Element not exposed
+test35: Element not exposed
+test36: Element not exposed
+test37: Element not exposed
+test38: Element not exposed
+test39: Element not exposed
 PASS successfullyParsed is true
 
 TEST COMPLETE

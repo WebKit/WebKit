@@ -156,13 +156,32 @@
 <svg>
   <polyline id="test34" fill="presentation" stroke="blue" stroke-width="10" points="50,375 150,375 150,325 250,325 250,375 350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375 750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375 1150,375" role="presentation"/>
 </svg>
+<svg>
+  <g id="test35" role="presentation">
+    <circle cx="50" cy="50" r="20" aria-label="set A"/>
+    <circle cx="50" cy="75" r="20" aria-label="set B"/>
+  </g>
+</svg>
+<svg>
+  <image id="test36" x="200" y="200" width="100px" height="100px" href="myimage.png" role="presentation"></image>
+</svg>
+<svg>
+  <path id="test37" d="M 100 100 L 300 100 L 200 300 z" fill="red" role="presentation"></path>
+</svg>
+<svg>
+  <ellipse id="test38" cx="10" cy="100" rx="25" ry="15" role="presentation"></ellipse>
+</svg>
+<svg>
+  <polygon id="test39" fill="magenta" points="850,75 958,137.5 958,262.5 850,325 742,262.6 742,137.5" role="presentation">
+  </polygon>
+</svg>
 </div>
 <p id="description"></p>
 <div id="console"></div>
 <script>
     description("This tests that SVG elements with role presentation are not exposed.");
     if (window.accessibilityController) {
-        for (var i = 1; i <= 34; i++) {
+        for (var i = 1; i <= 39; i++) {
             var element = document.getElementById("test" + i);
             var axElement = accessibilityController.accessibleElementById("test" + i);
             debug("test" + i + ": " + (axElement ? axElement.role : "Element not exposed"));

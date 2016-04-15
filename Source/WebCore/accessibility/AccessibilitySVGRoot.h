@@ -47,6 +47,7 @@ private:
     bool isAccessibilitySVGRoot() const override { return true; }
 
     AccessibilityObject* m_parent;
+    AccessibilityRole roleValue() const override { return GroupRole; }
 };
     
 } // namespace WebCore 

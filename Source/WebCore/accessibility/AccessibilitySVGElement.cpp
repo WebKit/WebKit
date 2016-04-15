@@ -72,6 +72,41 @@ AccessibilityObject* AccessibilitySVGElement::targetForUseElement() const
     return nullptr;
 }
 
+template <typename ChildrenType>
+Element* AccessibilitySVGElement::childElementWithMatchingLanguage(ChildrenType& children) const
+{
+    String languageCode = language();
+    if (languageCode.isEmpty())
+        languageCode = defaultLanguage();
+
+    // The best match for a group of child SVG2 'title' or 'desc' elements may be the one
+    // which lacks a 'lang' attribute value. However, indexOfBestMatchingLanguageInList()
+    // currently bases its decision on non-empty strings. Furthermore, we cannot count on
+    // that child element having a given position. So we'll look for such an element while
+    // building the language list and save it as our fallback.
+
+    Element* fallback = nullptr;
+    Vector<String> childLanguageCodes;
+    Vector<Element*> elements;
+    for (auto& child : children) {
+        String lang = child.fastGetAttribute(SVGNames::langAttr);
+        childLanguageCodes.append(lang);
+        elements.append(&child);
+
+        // The current draft of the SVG2 spec states if there are multiple equally-valid
+        // matches, the first match should be used.
+        if (lang.isEmpty() && !fallback)
+            fallback = &child;
+    }
+
+    bool exactMatch;
+    size_t index = indexOfBestMatchingLanguageInList(languageCode, childLanguageCodes, exactMatch);
+    if (index < childLanguageCodes.size())
+        return elements[index];
+
+    return fallback;
+}
+
 void AccessibilitySVGElement::accessibilityText(Vector<AccessibilityText>& textOrder)
 {
     String description = accessibilityDescription();
@@ -97,16 +132,9 @@ String AccessibilitySVGElement::accessibilityDescription() const
     if (!ariaDescription.isEmpty())
         return ariaDescription;
 
-    String lang = language();
-    if (lang.isEmpty())
-        lang = defaultLanguage().substring(0, 2);
-
-    String childLang;
-    for (const auto& child : childrenOfType<SVGTitleElement>(*element())) {
-        childLang = child.getAttribute(SVGNames::langAttr);
-        if (childLang == lang || childLang.isEmpty())
-            return child.textContent();
-    }
+    auto titleElements = childrenOfType<SVGTitleElement>(*element());
+    if (auto titleChild = childElementWithMatchingLanguage(titleElements))
+        return titleChild->textContent();
 
     if (is<SVGAElement>(element())) {
         String xlinkTitle = element()->fastGetAttribute(XLinkNames::titleAttr);
@@ -151,16 +179,9 @@ String AccessibilitySVGElement::helpText() const
     if (!describedBy.isEmpty())
         return describedBy;
 
-    String lang = language();
-    if (lang.isEmpty())
-        lang = defaultLanguage().substring(0, 2);
-
-    String childLang;
-    for (const auto& child : childrenOfType<SVGDescElement>(*element())) {
-        childLang = child.getAttribute(SVGNames::langAttr);
-        if (childLang == lang || childLang.isEmpty())
-            return child.textContent();
-    }
+    auto descriptionElements = childrenOfType<SVGDescElement>(*element());
+    if (auto descriptionChild = childElementWithMatchingLanguage(descriptionElements))
+        return descriptionChild->textContent();
 
     if (is<SVGUseElement>(element())) {
         AccessibilityObject* target = targetForUseElement();
@@ -177,10 +198,10 @@ String AccessibilitySVGElement::helpText() const
             return text;
     }
 
-    for (const auto& child : childrenOfType<SVGTitleElement>(*element())) {
-        childLang = child.getAttribute(SVGNames::langAttr);
-        if ((childLang == lang || childLang.isEmpty()) && child.textContent() != description)
-            return child.textContent();
+    auto titleElements = childrenOfType<SVGTitleElement>(*element());
+    if (auto titleChild = childElementWithMatchingLanguage(titleElements)) {
+        if (titleChild->textContent() != description)
+            return titleChild->textContent();
     }
 
     return String();
@@ -191,7 +212,8 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
     // According to the SVG Accessibility API Mappings spec, items should be excluded if:
     // * They would be excluded according to the Core Accessibility API Mappings.
     // * They are neither perceivable nor interactive.
-    // * Their first mappable role is presentational, regardless of other ARIA attributes.
+    // * Their first mappable role is presentational, unless they have a global ARIA
+    //   attribute (covered by Core AAM) or at least one 'title' or 'desc' child element.
     // * They have an ancestor with Children Presentational: True (covered by Core AAM)
 
     AccessibilityObjectInclusion decision = defaultObjectInclusion();
@@ -201,17 +223,18 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
     if (m_renderer->isSVGHiddenContainer())
         return true;
 
+    // The SVG AAM states objects with at least one 'title' or 'desc' element MUST be included.
+    // At this time, the presence of a matching 'lang' attribute is not mentioned in the spec.
+    for (const auto& child : childrenOfType<SVGElement>(*element())) {
+        if ((is<SVGTitleElement>(child) || is<SVGDescElement>(child)))
+            return false;
+    }
+
     if (roleValue() == PresentationalRole || inheritsPresentationalRole())
         return true;
 
     if (ariaRoleAttribute() != UnknownRole)
         return false;
-
-    // The SVG AAM states objects with at least one 'title' or 'desc' element MUST be included.
-    for (const auto& child : childrenOfType<SVGElement>(*element())) {
-        if ((is<SVGTitleElement>(child) || is<SVGDescElement>(child)))
-            return false;
-    }
 
     // The SVG AAM states text elements should also be included, if they have content.
     if (m_renderer->isSVGText() || m_renderer->isSVGTextPath()) {
@@ -244,6 +267,23 @@ bool AccessibilitySVGElement::inheritsPresentationalRole() const
     }
 
     return false;
+}
+
+AccessibilityRole AccessibilitySVGElement::determineAriaRoleAttribute() const
+{
+    AccessibilityRole role = AccessibilityRenderObject::determineAriaRoleAttribute();
+    if (role != PresentationalRole)
+        return role;
+
+    // The presence of a 'title' or 'desc' child element trumps PresentationalRole.
+    // https://lists.w3.org/Archives/Public/public-svg-a11y/2016Apr/0016.html
+    // At this time, the presence of a matching 'lang' attribute is not mentioned.
+    for (const auto& child : childrenOfType<SVGElement>(*element())) {
+        if ((is<SVGTitleElement>(child) || is<SVGDescElement>(child)))
+            return UnknownRole;
+    }
+
+    return role;
 }
 
 AccessibilityRole AccessibilitySVGElement::determineAccessibilityRole()

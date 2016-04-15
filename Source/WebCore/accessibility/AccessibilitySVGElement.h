@@ -47,11 +47,15 @@ protected:
 private:
     void accessibilityText(Vector<AccessibilityText>&) final;
     AccessibilityRole determineAccessibilityRole() final;
+    AccessibilityRole determineAriaRoleAttribute() const final;
     bool inheritsPresentationalRole() const final;
     bool isAccessibilitySVGElement() const final { return true; }
     bool computeAccessibilityIsIgnored() const final;
 
     AccessibilityObject* targetForUseElement() const;
+
+    template <typename ChildrenType>
+    Element* childElementWithMatchingLanguage(ChildrenType&) const;
 };
 
 
