@@ -1961,3 +1961,5 @@ webkit.org/b/156067 http/tests/security/anchor-download-allow-blob.html [ Skip ]
 webkit.org/b/156067 http/tests/security/anchor-download-allow-data.html [ Skip ]
 webkit.org/b/156067 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
 webkit.org/b/156067 http/tests/security/anchor-download-block-crossorigin.html [ Skip ]
+
+webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-vary.html [ Pass Timeout ]
