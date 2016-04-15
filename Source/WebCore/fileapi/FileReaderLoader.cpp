@@ -60,9 +60,6 @@ FileReaderLoader::FileReaderLoader(ReadType readType, FileReaderLoaderClient* cl
     , m_variableLength(false)
     , m_bytesLoaded(0)
     , m_totalBytes(0)
-    , m_hasRange(false)
-    , m_rangeStart(0)
-    , m_rangeEnd(0)
     , m_errorCode(0)
 {
 }
@@ -87,8 +84,6 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
     // Construct and load the request.
     ResourceRequest request(m_urlForReading);
     request.setHTTPMethod("GET");
-    if (m_hasRange)
-        request.setHTTPHeaderField(HTTPHeaderName::Range, String::format("bytes=%d-%d", m_rangeStart, m_rangeEnd));
 
     ThreadableLoaderOptions options;
     options.setSendLoadCallbacks(SendCallbacks);
@@ -142,10 +137,7 @@ void FileReaderLoader::didReceiveResponse(unsigned long, const ResourceResponse&
     // A negative value means that the content length wasn't specified, so the buffer will need to be dynamically grown.
     if (length < 0) {
         m_variableLength = true;
-        if (m_hasRange)
-            length = 1 + m_rangeEnd - m_rangeStart;
-        else
-            length = defaultBufferLength;
+        length = defaultBufferLength;
     }
 
     // Check that we can cast to unsigned since we have to do

@@ -114,10 +114,6 @@ private:
     unsigned m_bytesLoaded;
     unsigned m_totalBytes;
 
-    bool m_hasRange;
-    unsigned m_rangeStart;
-    unsigned m_rangeEnd;
-
     int m_errorCode;
 };
 

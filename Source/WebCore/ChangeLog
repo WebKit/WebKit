@@ -1,3 +1,22 @@
+2016-04-14  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r158956): Remove vestigial range code in FileReaderLoader class after removing ENABLE(STREAM)
+        <http://webkit.org/b/156609>
+
+        Reviewed by Brent Fulgham.
+
+        This code was left behind when ENABLE(STREAM) was removed in
+        November 2013.
+
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::FileReaderLoader): Remove
+        initializers.
+        (WebCore::FileReaderLoader::start): Remove code that uses
+        m_hasRange, which is always false.
+        (WebCore::FileReaderLoader::didReceiveResponse): Ditto.
+        * fileapi/FileReaderLoader.h:
+        (WebCore::FileReaderLoader): Remove unused instance variables.
+
 2016-04-14  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r199549.
