@@ -1,3 +1,21 @@
+2016-04-15  Chris Dumez  <cdumez@apple.com>
+
+        [COCOA] Do not unnecessarily initialize ResourceResponse::m_httpVersion as part of common fields
+        https://bugs.webkit.org/show_bug.cgi?id=156606
+
+        Reviewed by Darin Adler.
+
+        Do not unnecessarily initialize ResourceResponse::m_httpVersion as part of common fields.
+
+        We previously initialized m_httpVersion when calling platformLazyInit(CommonFieldsOnly),
+        even though this is not a common field. The corresponding getter/setter in
+        HTTPResponseBase call lazyInit(AllFields).
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformLazyInit):
+
 2016-04-15  John Wilander  <wilander@apple.com>
 
         Refactor WebSockets handshake to use StringView instead of String for header validation.

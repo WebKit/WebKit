@@ -186,8 +186,6 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         if ([m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
 
-            CFHTTPMessageRef messageRef = CFURLResponseGetHTTPResponse([httpResponse _CFURLResponse]);
-            m_httpVersion = String(adoptCF(CFHTTPMessageCopyVersion(messageRef)).get()).convertToASCIIUppercase();
             m_httpStatusCode = [httpResponse statusCode];
             
             if (initLevel < AllFields) {
@@ -212,6 +210,9 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
                 m_httpStatusText = extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
             else
                 m_httpStatusText = AtomicString("OK", AtomicString::ConstructFromLiteral);
+
+            CFHTTPMessageRef messageRef = CFURLResponseGetHTTPResponse([httpResponse _CFURLResponse]);
+            m_httpVersion = String(adoptCF(CFHTTPMessageCopyVersion(messageRef)).get()).convertToASCIIUppercase();
 
             NSDictionary *headers = [httpResponse allHeaderFields];
             for (NSString *name in headers)
