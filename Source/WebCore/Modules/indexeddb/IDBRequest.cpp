@@ -321,7 +321,7 @@ void IDBRequest::uncaughtExceptionInEventHandler()
     LOG(IndexedDB, "IDBRequest::uncaughtExceptionInEventHandler");
 
     if (m_transaction && m_idbError.code() != IDBDatabaseException::AbortError)
-        m_transaction->abortDueToFailedRequest(DOMError::create(IDBDatabaseException::getErrorName(IDBDatabaseException::AbortError)));
+        m_transaction->abortDueToFailedRequest(DOMError::create(IDBDatabaseException::getErrorName(IDBDatabaseException::AbortError), ASCIILiteral("IDBTransaction will abort due to uncaught exception in an event handler")));
 }
 
 void IDBRequest::setResult(const IDBKeyData* keyData)
@@ -421,7 +421,7 @@ void IDBRequest::onError()
     LOG(IndexedDB, "IDBRequest::onError");
 
     ASSERT(!m_idbError.isNull());
-    m_domError = DOMError::create(m_idbError.name());
+    m_domError = DOMError::create(m_idbError.name(), m_idbError.message());
     enqueueEvent(Event::create(eventNames().errorEvent, true, true));
 }
 

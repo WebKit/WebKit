@@ -1,3 +1,37 @@
+2016-04-15  Brady Eidson  <beidson@apple.com>
+
+        Add the message property to DOMError.
+        https://bugs.webkit.org/show_bug.cgi?id=139173
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Updated existing tests).
+        
+        Adding this property brings us up to date with other browsers, and will help
+        test the few web features that still use DOMError.
+
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::onError):
+        (WebCore::IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion):
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::uncaughtExceptionInEventHandler):
+        (WebCore::IDBRequest::onError):
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::didCreateIndexOnServer):
+
+        * Modules/mediastream/NavigatorUserMediaError.h:
+        (WebCore::NavigatorUserMediaError::NavigatorUserMediaError):
+
+        * dom/DOMError.cpp:
+        (WebCore::DOMError::DOMError):
+
+        * dom/DOMError.h:
+        (WebCore::DOMError::create):
+        (WebCore::DOMError::message):
+        * dom/DOMError.idl:
+
 2016-04-14  Brent Fulgham  <bfulgham@apple.com>
 
         Make <a download> a runtime enabled option

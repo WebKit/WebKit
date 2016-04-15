@@ -64,7 +64,7 @@ IDBOpenDBRequest::~IDBOpenDBRequest()
 
 void IDBOpenDBRequest::onError(const IDBResultData& data)
 {
-    m_domError = DOMError::create(data.error().name());
+    m_domError = DOMError::create(data.error().name(), data.error().message());
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, true, true, *this));
 }
 
@@ -97,7 +97,7 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
     ASSERT(hasPendingActivity());
 
     IDBError idbError(IDBDatabaseException::AbortError);
-    m_domError = DOMError::create(idbError.name());
+    m_domError = DOMError::create(idbError.name(), idbError.message());
     m_result = IDBAny::createUndefined();
 
     m_transaction->addRequest(*this);

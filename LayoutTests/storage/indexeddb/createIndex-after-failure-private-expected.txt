@@ -16,8 +16,8 @@ PASS ename is 'NotFoundError'
 Exception message: Failed to execute 'deleteIndex' on 'IDBObjectStore': The specified index was not found.
 Now requesting object2
 now we wait.
-Error function called: (AbortError) undefined
-PASS Abort function called: (ConstraintError) undefined
+Error function called: (AbortError) The transaction was aborted, so the request cannot be fulfilled.
+PASS Abort function called: (ConstraintError) A mutation operation in the transaction failed because a constraint was not satisfied.
 PASS successfullyParsed is true
 
 TEST COMPLETE

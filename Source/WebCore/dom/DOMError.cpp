@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +27,11 @@
 #include "config.h"
 #include "DOMError.h"
 
-
 namespace WebCore {
 
-DOMError::DOMError(const String& name)
+DOMError::DOMError(const String& name, const String& message)
     : m_name(name)
+    , m_message(message)
 {
 }
 

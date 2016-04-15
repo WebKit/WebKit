@@ -54,7 +54,7 @@ request = indexedDB.open(dbname, 1)
 request.onerror = errorWhenTryingLowVersion
 
 errorWhenTryingLowVersion():
-request.error.message = undefined
+request.error.message = An attempt was made to open a database using a lower version than the existing version.
 request = indexedDB.open(dbname, 4)
 request.onupgradeneeded = connection4UpgradeNeeded
 request.onsuccess = connection4Success

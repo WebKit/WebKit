@@ -50,7 +50,7 @@ public:
 
 private:
     NavigatorUserMediaError(const String& name, const String& constraintName)
-        : DOMError(name)
+        : DOMError(name, { })
         , m_constraintName(constraintName)
     {
     }

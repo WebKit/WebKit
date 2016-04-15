@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,19 +34,21 @@ namespace WebCore {
 
 class DOMError : public RefCounted<DOMError> {
 public:
-    static Ref<DOMError> create(const String& name)
+    static Ref<DOMError> create(const String& name, const String& message = { })
     {
-        return adoptRef(*new DOMError(name));
+        return adoptRef(*new DOMError(name, message));
     }
     virtual ~DOMError() { }
 
     const String& name() const { return m_name; }
+    const String& message() const { return m_message; }
 
 protected:
-    explicit DOMError(const String& name);
+    explicit DOMError(const String& name, const String& message);
 
 private:
-    const String m_name;
+    String m_name;
+    String m_message;
 };
 
 } // namespace WebCore
