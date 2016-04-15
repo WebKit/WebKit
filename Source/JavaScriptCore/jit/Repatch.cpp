@@ -926,8 +926,11 @@ void linkPolymorphicCall(
     
     RELEASE_ASSERT(callCases.size() == calls.size());
     for (CallToCodePtr callToCodePtr : calls) {
+        // Tail call special-casing ensures proper linking on ARM Thumb2, where a tail call jumps to an address
+        // with a non-decorated bottom bit but a normal call calls an address with a decorated bottom bit.
+        bool isTailCall = callToCodePtr.call.isFlagSet(CCallHelpers::Call::Tail);
         patchBuffer.link(
-            callToCodePtr.call, FunctionPtr(callToCodePtr.codePtr.executableAddress()));
+            callToCodePtr.call, FunctionPtr(isTailCall ? callToCodePtr.codePtr.dataLocation() : callToCodePtr.codePtr.executableAddress()));
     }
     if (JITCode::isOptimizingJIT(callerCodeBlock->jitType()))
         patchBuffer.link(done, callLinkInfo.callReturnLocation().labelAtOffset(0));

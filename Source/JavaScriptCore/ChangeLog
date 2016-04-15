@@ -1,3 +1,19 @@
+2016-04-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        Tail call optimizations lead to crashes on ARM Thumb + Linux
+        https://bugs.webkit.org/show_bug.cgi?id=150083
+
+        Reviewed by Csaba Osztrogonác.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::repatchNearCall): In case of a tail call relink to the
+        data location of the destination, and not the executable address. This is needed for
+        the ARM Thumb2 platform where both the source and destination addresses of a jump relink
+        must not have the bottom bit decorated, as asserted in ARMv7Assembler::relinkJump().
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall): Similarly, when linking a tail call we must link to the
+        address that has a non-decorated bottom bit, as asserted in ARMv7Assembler::linkJumpAbsolute().
+
 2016-04-14  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling out r199567.
