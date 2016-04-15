@@ -49,13 +49,14 @@
 
 namespace WebCore {
 
-static bool isAllowedByContentSecurityPolicy(const URL& url, const Element* ownerElement)
+static bool isAllowedByContentSecurityPolicy(const URL& url, const Element* ownerElement, bool didReceiveRedirectResponse)
 {
     if (!ownerElement)
         return true;
+    auto redirectResponseReceived = didReceiveRedirectResponse ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
     if (is<HTMLPlugInElement>(ownerElement))
-        return ownerElement->document().contentSecurityPolicy()->allowObjectFromSource(url, ownerElement->isInUserAgentShadowTree());
-    return ownerElement->document().contentSecurityPolicy()->allowChildFrameFromSource(url, ownerElement->isInUserAgentShadowTree());
+        return ownerElement->document().contentSecurityPolicy()->allowObjectFromSource(url, ownerElement->isInUserAgentShadowTree(), redirectResponseReceived);
+    return ownerElement->document().contentSecurityPolicy()->allowChildFrameFromSource(url, ownerElement->isInUserAgentShadowTree(), redirectResponseReceived);
 }
 
 PolicyChecker::PolicyChecker(Frame& frame)
@@ -66,12 +67,12 @@ PolicyChecker::PolicyChecker(Frame& frame)
 {
 }
 
-void PolicyChecker::checkNavigationPolicy(const ResourceRequest& newRequest, NavigationPolicyDecisionFunction function)
+void PolicyChecker::checkNavigationPolicy(const ResourceRequest& newRequest, bool didReceiveRedirectResponse, NavigationPolicyDecisionFunction function)
 {
-    checkNavigationPolicy(newRequest, m_frame.loader().activeDocumentLoader(), nullptr, WTFMove(function));
+    checkNavigationPolicy(newRequest, didReceiveRedirectResponse, m_frame.loader().activeDocumentLoader(), nullptr, WTFMove(function));
 }
 
-void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, DocumentLoader* loader, PassRefPtr<FormState> formState, NavigationPolicyDecisionFunction function)
+void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool didReceiveRedirectResponse, DocumentLoader* loader, PassRefPtr<FormState> formState, NavigationPolicyDecisionFunction function)
 {
     NavigationAction action = loader->triggeringAction();
     if (action.isEmpty()) {
@@ -96,7 +97,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
         return;
     }
 
-    if (!isAllowedByContentSecurityPolicy(request.url(), m_frame.ownerElement())) {
+    if (!isAllowedByContentSecurityPolicy(request.url(), m_frame.ownerElement(), didReceiveRedirectResponse)) {
         function(request, 0, false);
         return;
     }

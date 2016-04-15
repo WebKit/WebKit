@@ -43,13 +43,13 @@ ContentSecurityPolicySource::ContentSecurityPolicySource(const ContentSecurityPo
 {
 }
 
-bool ContentSecurityPolicySource::matches(const URL& url) const
+bool ContentSecurityPolicySource::matches(const URL& url, bool didReceiveRedirectResponse) const
 {
     if (!schemeMatches(url))
         return false;
     if (isSchemeOnly())
         return true;
-    return hostMatches(url) && portMatches(url) && pathMatches(url);
+    return hostMatches(url) && portMatches(url) && (didReceiveRedirectResponse || pathMatches(url));
 }
 
 bool ContentSecurityPolicySource::schemeMatches(const URL& url) const

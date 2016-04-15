@@ -40,11 +40,11 @@ ContentSecurityPolicySourceListDirective::ContentSecurityPolicySourceListDirecti
     m_sourceList.parse(value);
 }
 
-bool ContentSecurityPolicySourceListDirective::allows(const URL& url, ShouldAllowEmptyURLIfSourceListIsNotNone shouldAllowEmptyURLIfSourceListEmpty)
+bool ContentSecurityPolicySourceListDirective::allows(const URL& url, bool didReceiveRedirectResponse, ShouldAllowEmptyURLIfSourceListIsNotNone shouldAllowEmptyURLIfSourceListEmpty)
 {
     if (url.isEmpty())
         return shouldAllowEmptyURLIfSourceListEmpty == ShouldAllowEmptyURLIfSourceListIsNotNone::Yes && !m_sourceList.isNone();
-    return m_sourceList.matches(url);
+    return m_sourceList.matches(url, didReceiveRedirectResponse);
 }
 
 bool ContentSecurityPolicySourceListDirective::allows(const String& nonce) const

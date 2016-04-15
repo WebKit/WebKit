@@ -55,8 +55,8 @@ class PolicyChecker {
 public:
     explicit PolicyChecker(Frame&);
 
-    void checkNavigationPolicy(const ResourceRequest&, DocumentLoader*, PassRefPtr<FormState>, NavigationPolicyDecisionFunction);
-    void checkNavigationPolicy(const ResourceRequest&, NavigationPolicyDecisionFunction);
+    void checkNavigationPolicy(const ResourceRequest&, bool didReceiveRedirectResponse, DocumentLoader*, PassRefPtr<FormState>, NavigationPolicyDecisionFunction);
+    void checkNavigationPolicy(const ResourceRequest&, bool didReceiveRedirectResponse, NavigationPolicyDecisionFunction);
     void checkNewWindowPolicy(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, NewWindowPolicyDecisionFunction);
     void checkContentPolicy(const ResourceResponse&, ContentPolicyDecisionFunction);
 

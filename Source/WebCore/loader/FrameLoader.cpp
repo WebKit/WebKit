@@ -936,12 +936,13 @@ String FrameLoader::outgoingOrigin() const
     return m_frame.document()->securityOrigin()->toString();
 }
 
-bool FrameLoader::checkIfFormActionAllowedByCSP(const URL& url) const
+bool FrameLoader::checkIfFormActionAllowedByCSP(const URL& url, bool didReceiveRedirectResponse) const
 {
     if (m_submittedFormURL.isEmpty())
         return true;
 
-    return m_frame.document()->contentSecurityPolicy()->allowFormAction(url);
+    auto redirectResponseReceived = didReceiveRedirectResponse ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
+    return m_frame.document()->contentSecurityPolicy()->allowFormAction(url, false /* overrideContentSecurityPolicy */, redirectResponseReceived);
 }
 
 Frame* FrameLoader::opener()
@@ -1240,7 +1241,7 @@ void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
         policyChecker().setLoadType(newLoadType);
-        policyChecker().checkNavigationPolicy(request, oldDocumentLoader.get(), formState.release(), [this](const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue) {
+        policyChecker().checkNavigationPolicy(request, false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState.release(), [this](const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue) {
             continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
         });
         return;
@@ -1430,7 +1431,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         oldDocumentLoader->setTriggeringAction(action);
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
-        policyChecker().checkNavigationPolicy(loader->request(), oldDocumentLoader.get(), formState, [this](const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue) {
+        policyChecker().checkNavigationPolicy(loader->request(), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this](const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue) {
             continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
         });
         return;
@@ -1457,7 +1458,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         }
     }
 
-    policyChecker().checkNavigationPolicy(loader->request(), loader, formState, [this, allowNavigationToInvalidURL](const ResourceRequest& request, PassRefPtr<FormState> formState, bool shouldContinue) {
+    policyChecker().checkNavigationPolicy(loader->request(), false /* didReceiveRedirectResponse */, loader, formState, [this, allowNavigationToInvalidURL](const ResourceRequest& request, PassRefPtr<FormState> formState, bool shouldContinue) {
         continueLoadAfterNavigationPolicy(request, formState, shouldContinue, allowNavigationToInvalidURL);
     });
 }

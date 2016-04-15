@@ -89,8 +89,12 @@ http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html
+http/tests/security/contentSecurityPolicy/embed-redirect-blocked2.html
+http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html
 http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-default-src-star.html
 http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-star.html
+http/tests/security/contentSecurityPolicy/object-redirect-blocked2.html
+http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html
 http/tests/security/contentSecurityPolicy/object-src-param-code-blocked.html
 http/tests/security/contentSecurityPolicy/object-src-param-movie-blocked.html
 http/tests/security/contentSecurityPolicy/object-src-param-src-blocked.html

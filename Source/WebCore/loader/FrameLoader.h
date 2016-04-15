@@ -226,7 +226,7 @@ public:
     void forceSandboxFlags(SandboxFlags flags) { m_forcedSandboxFlags |= flags; }
     SandboxFlags effectiveSandboxFlags() const;
 
-    bool checkIfFormActionAllowedByCSP(const URL&) const;
+    bool checkIfFormActionAllowedByCSP(const URL&, bool didReceiveRedirectResponse) const;
 
     Frame* opener();
     WEBCORE_EXPORT void setOpener(Frame*);

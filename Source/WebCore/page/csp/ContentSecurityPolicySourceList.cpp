@@ -128,7 +128,7 @@ bool ContentSecurityPolicySourceList::isProtocolAllowedByStar(const URL& url) co
     return isAllowed;
 }
 
-bool ContentSecurityPolicySourceList::matches(const URL& url)
+bool ContentSecurityPolicySourceList::matches(const URL& url, bool didReceiveRedirectResponse)
 {
     if (m_allowStar && isProtocolAllowedByStar(url))
         return true;
@@ -137,7 +137,7 @@ bool ContentSecurityPolicySourceList::matches(const URL& url)
         return true;
 
     for (auto& entry : m_list) {
-        if (entry.matches(url))
+        if (entry.matches(url, didReceiveRedirectResponse))
             return true;
     }
 

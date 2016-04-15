@@ -57,18 +57,18 @@ public:
     const ContentSecurityPolicyDirective* violatedDirectiveForStyleNonce(const String&) const;
 
     const ContentSecurityPolicyDirective* violatedDirectiveForBaseURI(const URL&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForChildContext(const URL&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForConnectSource(const URL&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForFont(const URL&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForFormAction(const URL&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForFrame(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForChildContext(const URL&, bool didReceiveRedirectResponse) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForConnectSource(const URL&, bool didReceiveRedirectResponse) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForFont(const URL&, bool didReceiveRedirectResponse) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForFormAction(const URL&, bool didReceiveRedirectResponse) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForFrame(const URL&, bool didReceiveRedirectResponse) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForFrameAncestor(const Frame&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForImage(const URL&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForMedia(const URL&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForObjectSource(const URL&, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForImage(const URL&, bool didReceiveRedirectResponse) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForMedia(const URL&, bool didReceiveRedirectResponse) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForObjectSource(const URL&, bool didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForPluginType(const String& type, const String& typeAttribute) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForScript(const URL&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForStyle(const URL&) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForScript(const URL&, bool didReceiveRedirectResponse) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForStyle(const URL&, bool didReceiveRedirectResponse) const;
 
     const ContentSecurityPolicyDirective* defaultSrc() const { return m_defaultSrc.get(); }
 

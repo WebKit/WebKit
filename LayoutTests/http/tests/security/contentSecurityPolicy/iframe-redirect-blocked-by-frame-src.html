@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/dump-as-text.js"></script>
+<meta http-equiv="Content-Security-Policy" content="frame-src http://127.0.0.1:8000/resources/redirect.php">
+</head>
+<body>
+<p>Tests that an &lt;iframe&gt; that loads a cross-origin page via a redirect is blocked by the Content Security Policy <code>frame-src</code> directive. This test PASSED if there is a console warning message.</p>
+<iframe src="http://127.0.0.1:8000/resources/redirect.php?code=307&url=http%3A%2F%2Flocalhost%3A8000/security/contentSecurityPolicy/resources/alert-fail.html"></iframe>
+</body>
+</html>

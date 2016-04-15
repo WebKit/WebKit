@@ -45,7 +45,7 @@ public:
 
     void parse(const String&);
 
-    bool matches(const URL&);
+    bool matches(const URL&, bool didReceiveRedirectResponse);
     bool matches(const ContentSecurityPolicyHash&) const;
     bool matches(const String& nonce) const;
 

@@ -1,3 +1,126 @@
+2016-04-15  Daniel Bates  <dabates@apple.com>
+
+        CSP: Ignore paths in CSP matching after redirects
+        https://bugs.webkit.org/show_bug.cgi?id=153154
+        <rdar://problem/24383215>
+
+        Reviewed by Brent Fulgham.
+
+        For sub-resources that redirect, match the URL that is the result of the redirect against
+        the source expressions in Content Security Policy ignoring any paths in those source
+        expressions as per section Paths and Redirects of the Content Security Policy Level 2 spec.,
+        <https://w3c.github.io/webappsec-csp/2/> (Editor's Draft, 29 August 2015).
+
+        Tests: http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/embed-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/embed-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/embed-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/embed-redirect-blocked2.html
+               http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html
+               http/tests/security/contentSecurityPolicy/font-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/form-action-src-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/form-action-src-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-child-src.html
+               http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-child-src2.html
+               http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-frame-src.html
+               http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-frame-src2.html
+               http/tests/security/contentSecurityPolicy/iframe-redirect-blocked-by-child-src.html
+               http/tests/security/contentSecurityPolicy/iframe-redirect-blocked-by-frame-src.html
+               http/tests/security/contentSecurityPolicy/image-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/object-redirect-allowed.html
+               http/tests/security/contentSecurityPolicy/object-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/object-redirect-blocked.html
+               http/tests/security/contentSecurityPolicy/object-redirect-blocked2.html
+               http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html
+               http/tests/security/contentSecurityPolicy/script-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/stylesheet-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/svg-font-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/svg-image-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/track-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html
+               http/tests/security/contentSecurityPolicy/xsl-redirect-allowed2.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest): Define a local variable didReceiveRedirectResponse as
+        to whether this request follows from having received a redirect response from the server. Pass this
+        information to FrameLoader::checkIfFormActionAllowedByCSP() and PolicyChecker::checkNavigationPolicy()
+        for its consideration.
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived): Pass whether we have a non-null redirect
+        response (i.e. received a redirect response from the server) to DocumentThreadableLoader::isAllowedByContentSecurityPolicy()
+        for its consideration.
+        (WebCore::DocumentThreadableLoader::loadRequest): Pass whether we performed a redirect to
+        DocumentThreadableLoader::isAllowedByContentSecurityPolicy() for its consideration.
+        (WebCore::DocumentThreadableLoader::isAllowedByContentSecurityPolicy): Modified to take a boolean
+        argument as to whether a redirect was performed. We pass this information to the appropriate
+        ContentSecurityPolicy method.
+        * loader/DocumentThreadableLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkIfFormActionAllowedByCSP): Modified to take a boolean argument as to whether
+        a redirect response was received and passes this information to ContentSecurityPolicy::allowFormAction()
+        for its consideration.
+        (WebCore::FrameLoader::loadURL): Modified to tell PolicyChecker::checkNavigationPolicy() that the navigation
+        is not in response to having received a redirect response from the server.
+        (WebCore::FrameLoader::loadWithDocumentLoader): Ditto.
+        * loader/FrameLoader.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::isAllowedByContentSecurityPolicy): Modified to take a boolean argument as to whether
+        a redirect response was received and passes this information to the appropriate ContentSecurityPolicy member
+        function for consideration.
+        (WebCore::PolicyChecker::checkNavigationPolicy): Modified to take a boolean argument as to whether a redirect
+        response was received and passes this information through to WebCore::isAllowedByContentSecurityPolicy().
+        * loader/PolicyChecker.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal): Modified to tell CachedResourceLoader::canRequest() that
+        the request is in response to having received a redirect response from the server.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest): Modified to take a boolean argument as to whether a redirect
+        response was received and passes this information through to the appropriate ContentSecurityPolicy member
+        function for consideration.
+        * loader/cache/CachedResourceLoader.h:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource): Modified to take an argument as to whether a
+        redirect response was received and passes this information through to ContentSecurityPolicyDirectiveList.
+        (WebCore::ContentSecurityPolicy::allowObjectFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowChildFrameFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowChildContextFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowImageFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowStyleFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowFontFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowMediaFromSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowConnectToSource): Ditto.
+        (WebCore::ContentSecurityPolicy::allowFormAction): Ditto.
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::checkSource):
+        (WebCore::checkFrameAncestors):
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForChildContext): Modified to take an argument
+        as to whether a redirect response was received and passes this information through to the CSP directive.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForConnectSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForFont): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForFormAction): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForFrame): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForImage): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForMedia): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForObjectSource): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForScript): Ditto.
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForStyle): Ditto.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        * page/csp/ContentSecurityPolicySource.cpp:
+        (WebCore::ContentSecurityPolicySource::matches): Modified to take an argument as to whether a redirect response
+        was received. When the specified URL follows from having received a redirect response then ignore the path
+        component of the source expression when checking for a match. Otherwise, consider the path component of the
+        source expression when performing the match.
+        * page/csp/ContentSecurityPolicySource.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::matches): Modified to take an argument as to whether a redirect
+        response was received and pass this information through to ContentSecurityPolicySource::matches().
+        * page/csp/ContentSecurityPolicySourceList.h:
+        * page/csp/ContentSecurityPolicySourceListDirective.cpp:
+        (WebCore::ContentSecurityPolicySourceListDirective::allows): Modified to take an argument as to whether a
+        redirect response was received and pass this information through to ContentSecurityPolicySourceList::matches().
+        * page/csp/ContentSecurityPolicySourceListDirective.h:
+
 2016-04-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [CSS Font Loading] FontFace's promise may never be resolved/rejected if Content Security Policy blocks all the URLs

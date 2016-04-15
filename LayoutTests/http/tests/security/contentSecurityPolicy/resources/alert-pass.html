@@ -1,3 +1,7 @@
 <script>
-alert('PASS');
+alert("PASS");
+
+var shouldNotifyDone = document.location.search.indexOf("?notifyDone=1") !== -1 && window.testRunner;
+if (shouldNotifyDone)
+    testRunner.notifyDone();
 </script>

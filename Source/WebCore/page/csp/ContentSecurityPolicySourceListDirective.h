@@ -39,7 +39,7 @@ public:
     ContentSecurityPolicySourceListDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
 
     enum class ShouldAllowEmptyURLIfSourceListIsNotNone { No, Yes };
-    bool allows(const URL&, ShouldAllowEmptyURLIfSourceListIsNotNone);
+    bool allows(const URL&, bool didReceiveRedirectResponse, ShouldAllowEmptyURLIfSourceListIsNotNone);
     bool allows(const ContentSecurityPolicyHash&) const;
     bool allows(const String& nonce) const;
     bool allowInline() const { return m_sourceList.allowInline(); }

@@ -38,7 +38,7 @@ class ContentSecurityPolicySource {
 public:
     ContentSecurityPolicySource(const ContentSecurityPolicy&, const String& scheme, const String& host, int port, const String& path, bool hostHasWildcard, bool portHasWildcard);
 
-    bool matches(const URL&) const;
+    bool matches(const URL&, bool didReceiveRedirectResponse = false) const;
 
 private:
     bool schemeMatches(const URL&) const;

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/dump-as-text.js"></script>
+<meta http-equiv="Content-Security-Policy" content="font-src http://127.0.0.1:8000/resources/redirect.php http://localhost:8000/this-path-should-be-ignored-when-matching-a-redirected-request">
+</head>
+<body>
+<p>Tests that a SVG font-face element is allowed to load a cross-origin external SVG font via a redirect by the Content Security Policy even though the policy does not contain a source expression that is an exact match of the redirected URL. This test PASSED if there are no console warning messages. This test PASSED if there are no console warning messages.</p>
+<svg viewBox="0 0 100 100">
+    <font-face>
+        <font-face-src>
+            <font-face-uri font-family="ABCFont" xlink:href="http://127.0.0.1:8000/resources/redirect.php?code=307&url=http%3A%2F%2Flocalhost%3A8000/security/contentSecurityPolicy/resources/ABCFont.svg#ABCFont"></font-face-uri>
+        </font-face-src>
+    </font-face>
+</svg>
+</body>
+</html>

@@ -42,6 +42,9 @@
 ########################################
 ### START OF (1) Classified failures with bug reports
 
+webkit.org/b/156612 http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html [ Failure ]
+webkit.org/b/156612 http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html [ Failure ]
+
 # WebKitTestRunner needs to implement testRunner.dumpIconChanges().
 webkit.org/b/44046 http/tests/security/contentSecurityPolicy/icon-allowed.html
 webkit.org/b/44046 http/tests/security/contentSecurityPolicy/icon-blocked.html

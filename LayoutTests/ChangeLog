@@ -1,3 +1,82 @@
+2016-04-15  Daniel Bates  <dabates@apple.com>
+
+        CSP: Ignore paths in CSP matching after redirects
+        https://bugs.webkit.org/show_bug.cgi?id=153154
+        <rdar://problem/24383215>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests to ensure that we ignore the path component of a source expression when matching
+        a sub-resource URL that is the result of a redirect.
+
+        * TestExpectations: Unskip test http/tests/security/contentSecurityPolicy/redirect-does-not-match-paths.html as it now passes.
+        * http/tests/security/contentSecurityPolicy/audio-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/embed-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/embed-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/embed-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/embed-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/embed-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/embed-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/embed-redirect-blocked2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/embed-redirect-blocked2.html: Added.
+        * http/tests/security/contentSecurityPolicy/embed-redirect-blocked3-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html: Added.
+        * http/tests/security/contentSecurityPolicy/font-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/font-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/form-action-src-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/form-action-src-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/form-action-src-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/form-action-src-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-child-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-child-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-child-src2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-child-src2.html: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-frame-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-frame-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-frame-src2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-allowed-by-frame-src2.html: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-blocked-by-child-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-blocked-by-child-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-blocked-by-frame-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-redirect-blocked-by-frame-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/image-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/image-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-redirect-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-redirect-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-redirect-blocked2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-redirect-blocked2.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-redirect-blocked3-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html: Added.
+        * http/tests/security/contentSecurityPolicy/redirect-does-not-match-paths-expected.txt: Update expected result now that we pass this test.
+        * http/tests/security/contentSecurityPolicy/resources/alert-pass.html:
+        * http/tests/security/contentSecurityPolicy/resources/redirect.pl: For resourceType == "image", load image http://127.0.0.1:8000/security/resources/abe.png
+        instead of http://127.0.0.1:8000/resources/square20.jpg as the latter does not exist.
+        * http/tests/security/contentSecurityPolicy/resources/xsl-redirect-allowed.php:
+        * http/tests/security/contentSecurityPolicy/script-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/script-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/stylesheet-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/stylesheet-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/svg-font-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/svg-font-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/svg-image-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/svg-image-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/track-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/track-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/video-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-allowed.html:
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-allowed2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-allowed2.html: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/xsl-redirect-allowed.html.
+        * platform/ios-simulator/TestExpectations: Skip tests {embed, object}-redirect-blocked{2, 3}.html as they make
+        use of a plug-in and plug-ins are not supported on iOS.
+        * platform/wk2/TestExpectations: Skip tests {embed, object}-redirect-blocked3.html on WebKit2 as they fail
+        because of <https://bugs.webkit.org/show_bug.cgi?id=156612>.
+
 2016-04-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [CSS Font Loading] FontFace's promise may never be resolved/rejected if Content Security Policy blocks all the URLs

@@ -61,9 +61,9 @@ static inline bool checkInline(ContentSecurityPolicySourceListDirective* directi
     return !directive || directive->allowInline();
 }
 
-static inline bool checkSource(ContentSecurityPolicySourceListDirective* directive, const URL& url, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone shouldAllowEmptyURLIfSourceListEmpty = ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No)
+static inline bool checkSource(ContentSecurityPolicySourceListDirective* directive, const URL& url, bool didReceiveRedirectResponse = false, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone shouldAllowEmptyURLIfSourceListEmpty = ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No)
 {
-    return !directive || directive->allows(url, shouldAllowEmptyURLIfSourceListEmpty);
+    return !directive || directive->allows(url, didReceiveRedirectResponse, shouldAllowEmptyURLIfSourceListEmpty);
 }
 
 static inline bool checkHash(ContentSecurityPolicySourceListDirective* directive, const ContentSecurityPolicyHash& hash)
@@ -80,8 +80,9 @@ static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective*
 {
     if (!directive)
         return true;
+    bool didReceiveRedirectResponse = false;
     for (Frame* current = frame.tree().parent(); current; current = current->tree().parent()) {
-        if (!directive->allows(current->document()->url(), ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
+        if (!directive->allows(current->document()->url(), didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
             return false;
     }
     return true;
@@ -189,38 +190,38 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return m_baseURI.get();
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForChildContext(const URL& url) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForChildContext(const URL& url, bool didReceiveRedirectResponse) const
 {
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_childSrc.get());
-    if (checkSource(operativeDirective, url))
+    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
         return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForConnectSource(const URL& url) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForConnectSource(const URL& url, bool didReceiveRedirectResponse) const
 {
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_connectSrc.get());
-    if (checkSource(operativeDirective, url))
+    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
         return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFont(const URL& url) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFont(const URL& url, bool didReceiveRedirectResponse) const
 {
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_fontSrc.get());
-    if (checkSource(operativeDirective, url))
+    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
         return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFormAction(const URL& url) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFormAction(const URL& url, bool didReceiveRedirectResponse) const
 {
-    if (checkSource(m_formAction.get(), url))
+    if (checkSource(m_formAction.get(), url, didReceiveRedirectResponse))
         return nullptr;
     return m_formAction.get();
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFrame(const URL& url) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFrame(const URL& url, bool didReceiveRedirectResponse) const
 {
     if (url.isBlankURL())
         return nullptr;
@@ -228,7 +229,7 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     // We must enforce the frame-src directive (if specified) before enforcing the child-src directive for a nested browsing
     // context by <https://w3c.github.io/webappsec-csp/2/#directive-child-src-nested> (29 August 2015).
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_frameSrc ? m_frameSrc.get() : m_childSrc.get());
-    if (checkSource(operativeDirective, url))
+    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
         return nullptr;
     return operativeDirective;
 }
@@ -240,28 +241,28 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return m_frameAncestors.get();
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForImage(const URL& url) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForImage(const URL& url, bool didReceiveRedirectResponse) const
 {
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_imgSrc.get());
-    if (checkSource(operativeDirective, url))
+    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
         return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForMedia(const URL& url) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForMedia(const URL& url, bool didReceiveRedirectResponse) const
 {
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_mediaSrc.get());
-    if (checkSource(operativeDirective, url))
+    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
         return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForObjectSource(const URL& url, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone shouldAllowEmptyURLIfSourceListEmpty) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForObjectSource(const URL& url, bool didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone shouldAllowEmptyURLIfSourceListEmpty) const
 {
     if (url.isBlankURL())
         return nullptr;
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_objectSrc.get());
-    if (checkSource(operativeDirective, url, shouldAllowEmptyURLIfSourceListEmpty))
+    if (checkSource(operativeDirective, url, didReceiveRedirectResponse, shouldAllowEmptyURLIfSourceListEmpty))
         return nullptr;
     return operativeDirective;
 }
@@ -273,18 +274,18 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return m_pluginTypes.get();
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForScript(const URL& url) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForScript(const URL& url, bool didReceiveRedirectResponse) const
 {
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_scriptSrc.get());
-    if (checkSource(operativeDirective, url))
+    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
         return nullptr;
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForStyle(const URL& url) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForStyle(const URL& url, bool didReceiveRedirectResponse) const
 {
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_styleSrc.get());
-    if (checkSource(operativeDirective, url))
+    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
         return nullptr;
     return operativeDirective;
 }

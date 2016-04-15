@@ -94,7 +94,7 @@ namespace WebCore {
 
         void loadRequest(const ResourceRequest&, SecurityCheckPolicy);
         bool isAllowedRedirect(const URL&);
-        bool isAllowedByContentSecurityPolicy(const URL&);
+        bool isAllowedByContentSecurityPolicy(const URL&, bool didRedirect = false);
 
         bool isXMLHttpRequest() const final;
 

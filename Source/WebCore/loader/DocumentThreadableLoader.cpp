@@ -191,7 +191,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
     ASSERT_UNUSED(resource, resource == m_resource);
 
     Ref<DocumentThreadableLoader> protect(*this);
-    if (!isAllowedByContentSecurityPolicy(request.url())) {
+    if (!isAllowedByContentSecurityPolicy(request.url(), !redirectResponse.isNull())) {
         m_client->didFailRedirectCheck();
         request = ResourceRequest();
         return;
@@ -419,7 +419,8 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     // FIXME: FrameLoader::loadSynchronously() does not tell us whether a redirect happened or not, so we guess by comparing the
     // request and response URLs. This isn't a perfect test though, since a server can serve a redirect to the same URL that was
     // requested. Also comparing the request and response URLs as strings will fail if the requestURL still has its credentials.
-    if (requestURL != response.url() && (!isAllowedByContentSecurityPolicy(response.url()) || !isAllowedRedirect(response.url()))) {
+    bool didRedirect = requestURL != response.url();
+    if (didRedirect && (!isAllowedByContentSecurityPolicy(response.url(), didRedirect) || !isAllowedRedirect(response.url()))) {
         m_client->didFailRedirectCheck();
         return;
     }
@@ -431,17 +432,20 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     didFinishLoading(identifier, 0.0);
 }
 
-bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url)
+bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url, bool didRedirect)
 {
+    bool overrideContentSecurityPolicy = false;
+    ContentSecurityPolicy::RedirectResponseReceived redirectResponseReceived = didRedirect ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
+
     switch (m_options.contentSecurityPolicyEnforcement) {
     case ContentSecurityPolicyEnforcement::DoNotEnforce:
         return true;
     case ContentSecurityPolicyEnforcement::EnforceChildSrcDirective:
-        return contentSecurityPolicy().allowChildContextFromSource(url, false); // Do not override policy
+        return contentSecurityPolicy().allowChildContextFromSource(url, overrideContentSecurityPolicy, redirectResponseReceived);
     case ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective:
-        return contentSecurityPolicy().allowConnectToSource(url, false); // Do not override policy
+        return contentSecurityPolicy().allowConnectToSource(url, overrideContentSecurityPolicy, redirectResponseReceived);
     case ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective:
-        return contentSecurityPolicy().allowScriptFromSource(url, false); // Do not override policy
+        return contentSecurityPolicy().allowScriptFromSource(url, overrideContentSecurityPolicy, redirectResponseReceived);
     }
     ASSERT_NOT_REACHED();
     return false;

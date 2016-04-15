@@ -503,13 +503,14 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     // callbacks is meant to prevent.
     ASSERT(!newRequest.isNull());
 
-    if (!frameLoader()->checkIfFormActionAllowedByCSP(newRequest.url())) {
+    bool didReceiveRedirectResponse = !redirectResponse.isNull();
+    if (!frameLoader()->checkIfFormActionAllowedByCSP(newRequest.url(), didReceiveRedirectResponse)) {
         cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
         return;
     }
 
     ASSERT(timing().fetchStart());
-    if (!redirectResponse.isNull()) {
+    if (didReceiveRedirectResponse) {
         // If the redirecting url is not allowed to display content from the target origin,
         // then block the redirect.
         Ref<SecurityOrigin> redirectingOrigin(SecurityOrigin::create(redirectResponse.url()));
@@ -561,7 +562,7 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
 
     setRequest(newRequest);
 
-    if (!redirectResponse.isNull()) {
+    if (didReceiveRedirectResponse) {
         // We checked application cache for initial URL, now we need to check it for redirected one.
         ASSERT(!m_substituteData.isValid());
         m_applicationCacheHost->maybeLoadMainResourceForRedirect(newRequest, m_substituteData);
@@ -576,12 +577,12 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     // listener. But there's no way to do that in practice. So instead we cancel later if the
     // listener tells us to. In practice that means the navigation policy needs to be decided
     // synchronously for these redirect cases.
-    if (redirectResponse.isNull())
+    if (!didReceiveRedirectResponse)
         return;
 
     ASSERT(!m_waitingForNavigationPolicy);
     m_waitingForNavigationPolicy = true;
-    frameLoader()->policyChecker().checkNavigationPolicy(newRequest, [this](const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue) {
+    frameLoader()->policyChecker().checkNavigationPolicy(newRequest, didReceiveRedirectResponse, [this](const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue) {
         continueAfterNavigationPolicy(request, shouldContinue);
     });
 }
