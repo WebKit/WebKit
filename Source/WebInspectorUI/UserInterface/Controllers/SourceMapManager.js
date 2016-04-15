@@ -44,6 +44,11 @@ WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Obje
 
     downloadSourceMap(sourceMapURL, baseURL, originalSourceCode)
     {
+        // The baseURL could have come from a "//# sourceURL". Attempt to get a
+        // reasonable absolute URL for the base by using the main resource's URL.
+        if (WebInspector.frameResourceManager.mainFrame)
+            baseURL = absoluteURL(WebInspector.frameResourceManager.mainFrame.url, baseURL);
+
         sourceMapURL = absoluteURL(sourceMapURL, baseURL);
         if (!sourceMapURL)
             return;

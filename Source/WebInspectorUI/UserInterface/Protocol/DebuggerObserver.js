@@ -25,6 +25,11 @@
 
 WebInspector.DebuggerObserver = class DebuggerObserver
 {
+    constructor()
+    {
+        this._legacyScriptParsed = DebuggerAgent.hasEventParameter("scriptParsed", "hasSourceURL");
+    }
+
     // Events defined by the "Debugger" domain.
 
     globalObjectCleared()
@@ -32,9 +37,20 @@ WebInspector.DebuggerObserver = class DebuggerObserver
         WebInspector.debuggerManager.reset();
     }
 
-    scriptParsed(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL)
+    scriptParsed(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL)
     {
-        WebInspector.debuggerManager.scriptDidParse(scriptId, url, isContentScript, startLine, startColumn, endLine, endColumn, sourceMapURL);
+        if (this._legacyScriptParsed) {
+            // COMPATIBILITY (iOS 9): Debugger.scriptParsed had slightly different arguments.
+            // Debugger.scriptParsed: (scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL)
+            // Note that in this legacy version, url could be the sourceURL name, and the resource URL could be lost.
+            let legacySourceMapURL = arguments[7];
+            let hasSourceURL = arguments[8];
+            let legacySourceURL = hasSourceURL ? url : undefined;
+            WebInspector.debuggerManager.scriptDidParse(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, legacySourceURL, legacySourceMapURL);
+            return;
+        }
+
+        WebInspector.debuggerManager.scriptDidParse(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL);
     }
 
     scriptFailedToParse(url, scriptSource, startLine, errorLine, errorMessage)

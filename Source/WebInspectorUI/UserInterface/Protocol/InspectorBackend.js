@@ -426,6 +426,12 @@ InspectorBackend.Agent = class InspectorBackendAgent
         return eventName in this._events;
     }
 
+    hasEventParameter(eventName, eventParameterName)
+    {
+        let event = this._events[eventName];
+        return event && event.parameterNames.includes(eventParameterName);
+    }
+
     activate()
     {
         this._active = true;

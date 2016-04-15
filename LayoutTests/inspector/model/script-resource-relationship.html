@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>function inlineScriptOne() { return 1; }</script>
+  <script>
+  function inlineScriptTwo() {
+      return 2;
+  }
+  //# sourceURL=inline-script-two.js
+  </script>
+<script>
+function triggerResourceWithNormalScript() {
+    let script = document.createElement("script");
+    script.src = "resources/relationship-normal.js";
+    document.body.appendChild(script);
+}
+
+function triggerResourceWithNamedScript() {
+    let script = document.createElement("script");
+    script.src = "resources/relationship-named.js";
+    document.body.appendChild(script);
+}
+
+function triggerScriptWithoutResource() {
+    eval("//# sourceURL=script-only.js\n1+1");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebInspector.Script and WebInspector.Resource relationship");
+
+    InspectorTest.dumpActivityToSystemConsole = true;
+    InspectorBackend.dumpInspectorProtocolMessages = true;
+
+    function validateNormalRelationship(resource, script) {
+        InspectorTest.expectThat(resource.url === script.url, "Resource and Script have the same URL.");
+        InspectorTest.expectThat(resource.scripts.length === 1, "Resource should be related to one script.");
+        InspectorTest.expectThat(resource.scripts[0] === script, "Resource should be related to the newly added script.");
+        InspectorTest.expectThat(script.resource === resource, "Script should be related to the resource.");
+    }
+
+    suite.addTestCase({
+        name: "ScriptWithResource",
+        description: "Normal relationship between a script and a resource.",
+        test: (resolve, reject) => {
+            let script = null, resource = null;
+            
+            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                InspectorTest.pass("Resource was added.");
+                resource = event.data.resource;
+            });
+            
+            function scriptListener(event) {
+                if (!event.data.script.url)
+                    return;
+                InspectorTest.pass("Script was added.");
+                script = event.data.script;
+                validateRelationship();
+            }
+
+            function validateRelationship() {
+                validateNormalRelationship(resource, script);
+                InspectorTest.expectThat(!script.sourceURL, "Script should not have a sourceURL.");
+
+                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener, null);
+                resolve();
+            }
+
+            InspectorTest.evaluateInPage("triggerResourceWithNormalScript()");
+        }
+    });
+
+    suite.addTestCase({
+        name: "NamedScriptWithResource",
+        description: "Normal relationship between a named script and a resource.",
+        test: (resolve, reject) => {
+            let script = null, resource = null;
+
+            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
+            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                InspectorTest.pass("Resource was added.");
+                resource = event.data.resource;
+            });
+
+            function scriptListener(event) {
+                if (!event.data.script.url)
+                    return;
+                InspectorTest.pass("Script was added.");
+                script = event.data.script;
+                validateRelationship();
+            }
+
+            function validateRelationship() {
+                validateNormalRelationship(resource, script);
+                InspectorTest.expectThat(script.sourceURL === "foo.js", "Script should have a sourceURL.");
+                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener, null);
+                resolve();
+            }
+
+            InspectorTest.evaluateInPage("triggerResourceWithNamedScript()");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ScriptWithoutResource",
+        description: "A named eval does not have a resource.",
+        test: (resolve, reject) => {
+            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
+            let resourceListener = WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                InspectorTest.fail("Resource should not be added.");
+                reject();
+            });
+
+            function scriptListener(event) {
+                if (!event.data.script.sourceURL)
+                    return;
+
+                InspectorTest.pass("Script was added.");
+                let script = event.data.script;
+
+                InspectorTest.expectThat(script.resource === null, "Script should not be associated with a Resource.");
+                InspectorTest.expectThat(script.sourceURL === "script-only.js", "Script should have a sourceURL.");
+
+                WebInspector.Frame.removeEventListener(WebInspector.Frame.Event.ResourceWasAdded, resourceListener, null);
+                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener, null);
+                resolve();
+            }
+
+            InspectorTest.evaluateInPage("triggerScriptWithoutResource()");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DocumentWithInlineScripts",
+        description: "A document resource may be associated with multiple inline scripts.",
+        test: (resolve, reject) => {
+            let mainResource = WebInspector.frameResourceManager.mainFrame.mainResource;
+            let scripts = mainResource.scripts.slice().sort((a, b) => a.range.startLine - b.range.startLine);
+
+            // Scripts are:
+            //   1. <script> with inlineScriptOne()
+            //   2. <script> with inlineScriptTwo()
+            //   3. This <script> with test()
+            //   4. The <body onload> inline script event listener
+
+            InspectorTest.expectThat(scripts.length === 4, "Main Resource should have 4 scripts.");
+            InspectorTest.expectThat(!scripts[0].sourceURL, "Inline script 1 does not have a sourceURL.");
+            InspectorTest.expectThat(scripts[1].sourceURL === "inline-script-two.js", "Inline script 2 has a sourceURL.");
+            InspectorTest.expectThat(!scripts[2].sourceURL, "Inline script 3 does not have a sourceURL.");
+            InspectorTest.expectThat(!scripts[3].sourceURL, "Inline script 4 does not have a sourceURL.");
+
+            InspectorTest.expectThat(scripts[0].range.startLine < 15, "Inline script 1 should have a low start line.");
+            InspectorTest.expectThat(scripts[1].range.startLine < 15, "Inline script 2 should have a low start line.");
+            InspectorTest.expectThat(scripts[2].range.startLine < 15, "Inline script 3 should have a low start line.");
+            InspectorTest.expectThat(scripts[3].range.startLine > 100, "Inline script 4 should have a high start line.");
+
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>WebInspector.Script and WebInspector.Resource relationship.</p>
+</body>
+</html>

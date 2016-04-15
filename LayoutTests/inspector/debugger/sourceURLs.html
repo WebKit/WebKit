@@ -36,12 +36,12 @@ function test()
 
             InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject) {
                 // Ignore named inspector internal scripts.
-                if (messageObject.params.url.startsWith("__WebInspector"))
+                if (messageObject.params.sourceURL && messageObject.params.sourceURL.startsWith("__WebInspector"))
                     return;
 
                 // Has a sourceURL, must be one of the valid ones.
-                if (messageObject.params.hasSourceURL) {
-                    let sourceURL = messageObject.params.url;
+                if (messageObject.params.sourceURL) {
+                    let sourceURL = messageObject.params.sourceURL;
                     ProtocolTest.log(`Found Script with sourceURL '${sourceURL}'`);
                     ProtocolTest.assert(sourceURLExpectations[0] === sourceURL, "Did not expect to see sourceURL: " + sourceURL);
                     sourceURLExpectations.shift();

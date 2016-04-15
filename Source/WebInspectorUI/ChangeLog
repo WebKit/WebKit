@@ -1,3 +1,68 @@
+2016-04-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: sourceMappingURL not used when sourceURL is set
+        https://bugs.webkit.org/show_bug.cgi?id=156021
+        <rdar://problem/25438417>
+
+        Reviewed by Timothy Hatcher.
+
+        Previously Debugger.sourceParsed only providing the sourceURL, and
+        wiping out the resourceURL, meant that a Script from a Resource that
+        set a sourceURL directive would fail to be associated with its Resource.
+
+        This would result in duplicated tree elements in the Resources Sidebar,
+        one for the Resource, and one for the Script. With the Script getting
+        ultimately getting the SourceMap resources. However, since the frontend
+        prefers Resources over Scripts when possible, an error that generated
+        from the script would point to a location in the Resource, not following
+        source maps.
+
+        By always providing the resource URL in Debugger.sourceParsed, a Script
+        can better be associated with its Resource. The result is now a single
+        shared tree element in the Resources Sidebar, and the Resource getting
+        the SourceMap resources. Now the script error goes through the Resource
+        to its SourceMap resources as we would expect.
+
+        * UserInterface/Protocol/DebuggerObserver.js:
+        (WebInspector.DebuggerObserver):
+        (WebInspector.DebuggerObserver.prototype.scriptParsed):
+        We now have to handle two different signatures of scriptParsed. One
+        for legacy, and one for non-legacy. Cache that value early on, since
+        scriptParsed happens a lot.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackend.Agent.prototype.hasEventParameter):
+        Runtime check a protocol event to see if it has a parameter. This
+        is used to check if Debugger.sourceParsed is legacy or not based
+        on if it has the legacy "hasSourceURL" parameter.
+
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script):
+        (WebInspector.Script.prototype.get sourceURL):
+        Treat sourceURL and url separately.
+
+        (WebInspector.Script.prototype.get displayName):
+        Handle both the url and sourceURL in displayName.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.get knownNonResourceScripts):
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+        (WebInspector.DebuggerManager.prototype.scriptDidParse):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.findFunctionSourceCodeLocation):
+        Update code that checks the sourceURL to explicitly use sourceURL.
+
+        * UserInterface/Controllers/SourceMapManager.js:
+        (WebInspector.SourceMapManager.prototype.downloadSourceMap):
+        For legacy backends, or in case we get a resource that has an incomplete
+        baseURL, attempt to get an absolute URL based on the main resource.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._addScript):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+        Ignore scripts without a url or sourceURL.
+
 2016-04-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cleanup inspector/debugger tests

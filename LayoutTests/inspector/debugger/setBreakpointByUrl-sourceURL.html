@@ -13,9 +13,9 @@ function test()
 
     InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
-        if (/sourceURL-test\.js$/.test(messageObject.params.url)) {
+        if (/sourceURL-test\.js$/.test(messageObject.params.sourceURL)) {
             ProtocolTest.log("Found sourceURL-test.js");
-            var params = {url: messageObject.params.url, lineNumber: 3, columnNumber: 0};
+            var params = {url: messageObject.params.sourceURL, lineNumber: 3, columnNumber: 0};
             InspectorProtocol.sendCommand("Debugger.setBreakpointByUrl", params, function(responseObject) {
                 InspectorProtocol.checkForError(responseObject);
                 ProtocolTest.log("Running sourceURLFunction");

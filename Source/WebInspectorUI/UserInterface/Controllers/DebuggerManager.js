@@ -337,7 +337,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         for (let script of this._scriptIdMap.values()) {
             if (script.resource)
                 continue;
-            if (!WebInspector.isDebugUIEnabled() && isWebKitInternalScript(script.url))
+            if (!WebInspector.isDebugUIEnabled() && isWebKitInternalScript(script.sourceURL))
                 continue;
             knownScripts.push(script);
         }
@@ -535,7 +535,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
                 continue;
 
             // Exclude the case where the call frame is in the inspector code.
-            if (!WebInspector.isDebugUIEnabled() && isWebKitInternalScript(sourceCodeLocation.sourceCode.url))
+            if (!WebInspector.isDebugUIEnabled() && isWebKitInternalScript(sourceCodeLocation.sourceCode.sourceURL))
                 continue;
 
             let scopeChain = this._scopeChainFromPayload(callFramePayload.scopeChain);
@@ -565,7 +565,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         InspectorFrontendHost.beep();
     }
 
-    scriptDidParse(scriptIdentifier, url, isContentScript, startLine, startColumn, endLine, endColumn, sourceMapURL)
+    scriptDidParse(scriptIdentifier, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL)
     {
         // Don't add the script again if it is already known.
         if (this._scriptIdMap.has(scriptIdentifier)) {
@@ -578,10 +578,10 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             return;
         }
 
-        if (isWebInspectorInternalScript(url))
+        if (isWebInspectorInternalScript(sourceURL))
             return;
 
-        var script = new WebInspector.Script(scriptIdentifier, new WebInspector.TextRange(startLine, startColumn, endLine, endColumn), url, isContentScript, sourceMapURL);
+        let script = new WebInspector.Script(scriptIdentifier, new WebInspector.TextRange(startLine, startColumn, endLine, endColumn), url, isContentScript, sourceURL, sourceMapURL);
 
         this._scriptIdMap.set(scriptIdentifier, script);
 
@@ -594,7 +594,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             scripts.push(script);
         }
 
-        if (isWebKitInternalScript(script.url)) {
+        if (isWebKitInternalScript(script.sourceURL)) {
             this._internalWebKitScripts.push(script);
             if (!WebInspector.isDebugUIEnabled())
                 return;

@@ -428,7 +428,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
     _addScript(script)
     {
         // COMPATIBILITY(iOS 9): Backends could send the frontend built-in code, filter out JSC internals.
-        if (!script.url)
+        if (!script.url && !script.sourceURL)
             return;
 
         // Don't add breakpoints if the script is represented by a Resource. They were

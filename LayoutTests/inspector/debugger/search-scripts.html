@@ -27,12 +27,12 @@ function test()
 
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
         var script = event.data.script;
-        if (!/LayoutTests/.test(script.url) && !/eval\d\.js/.test(script.url))
+        if (!/LayoutTests/.test(script.url) && !/eval\d\.js/.test(script.sourceURL))
             return;
 
         DebuggerAgent.searchInContent(script.id, "SEARCHTEST", false, false, function(error, results) {
             InspectorTest.log("");
-            InspectorTest.log("SCRIPT: " + sanitizeScriptURL(script.url));
+            InspectorTest.log("SCRIPT: " + sanitizeScriptURL(script.sourceURL || script.url));
             InspectorTest.log("RESULTS: " + results.length);
             for (var result of results) {
                 InspectorTest.log("  LINE: " + result.lineNumber);

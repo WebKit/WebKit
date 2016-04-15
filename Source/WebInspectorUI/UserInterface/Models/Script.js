@@ -25,7 +25,7 @@
 
 WebInspector.Script = class Script extends WebInspector.SourceCode
 {
-    constructor(id, range, url, injected, sourceMapURL)
+    constructor(id, range, url, injected, sourceURL, sourceMapURL)
     {
         super();
 
@@ -35,6 +35,7 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         this._id = id || null;
         this._range = range || null;
         this._url = url || null;
+        this._sourceURL = sourceURL || null;
         this._injected = injected || false;
 
         this._resource = this._resolveResource();
@@ -71,6 +72,11 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         return this._url;
     }
 
+    get sourceURL()
+    {
+        return this._sourceURL;
+    }
+
     get urlComponents()
     {
         if (!this._urlComponents)
@@ -87,6 +93,12 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
     {
         if (this._url)
             return WebInspector.displayNameForURL(this._url, this.urlComponents);
+
+        if (this._sourceURL) {
+            if (!this._sourceURLComponents)
+                this._sourceURLComponents = parseURL(this._sourceURL);
+            return WebInspector.displayNameForURL(this._sourceURL, this._sourceURLComponents);
+        }
 
         // Assign a unique number to the script object so it will stay the same.
         if (!this._uniqueDisplayNameNumber)

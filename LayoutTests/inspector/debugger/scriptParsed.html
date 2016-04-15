@@ -46,15 +46,15 @@ function test()
     }
 
     function isEvalScript(params) {
-        return params.hasSourceURL && params.url === "eval.js";
+        return params.sourceURL === "eval.js";
     }
 
     function isInjectedScriptSourceScript(params) {
-        return params.hasSourceURL && params.url === "__WebInspectorInjectedScript__";
+        return params.sourceURL === "__WebInspectorInjectedScript__";
     }
 
     function isCommandLineAPISourceScript(params) {
-        return params.hasSourceURL && params.url === "__WebInspectorCommandLineAPIModuleSource__";
+        return params.sourceURL === "__WebInspectorCommandLineAPIModuleSource__";
     }
 
     suite.addTestCase({

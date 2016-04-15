@@ -320,8 +320,8 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int li
 
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, condition, breakpointActions, autoContinue, ignoreCount);
     for (ScriptsMap::iterator it = m_scripts.begin(); it != m_scripts.end(); ++it) {
-        String scriptURL = !it->value.sourceURL.isEmpty() ? it->value.sourceURL : it->value.url;
-        if (!matches(scriptURL, url, isRegex))
+        String scriptURLForBreakpoints = !it->value.sourceURL.isEmpty() ? it->value.sourceURL : it->value.url;
+        if (!matches(scriptURLForBreakpoints, url, isRegex))
             continue;
 
         RefPtr<Inspector::Protocol::Debugger::Location> location = resolveBreakpoint(breakpointIdentifier, it->key, breakpoint);
@@ -613,18 +613,21 @@ String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
 
 void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script& script)
 {
-    bool hasSourceURL = !script.sourceURL.isEmpty();
-    String scriptURL = hasSourceURL ? script.sourceURL : script.url;
-    bool* hasSourceURLParam = hasSourceURL ? &hasSourceURL : nullptr;
-    String sourceMappingURL = sourceMapURLForScript(script);
-    String* sourceMapURLParam = sourceMappingURL.isNull() ? nullptr : &sourceMappingURL;
-    const bool* isContentScript = script.isContentScript ? &script.isContentScript : nullptr;
     String scriptIDStr = String::number(sourceID);
-    m_frontendDispatcher->scriptParsed(scriptIDStr, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam);
+    bool hasSourceURL = !script.sourceURL.isEmpty();
+    String sourceURL = script.sourceURL;
+    String sourceMappingURL = sourceMapURLForScript(script);
+
+    const bool* isContentScript = script.isContentScript ? &script.isContentScript : nullptr;
+    String* sourceURLParam = hasSourceURL ? &sourceURL : nullptr;
+    String* sourceMapURLParam = sourceMappingURL.isEmpty() ? nullptr : &sourceMappingURL;
+
+    m_frontendDispatcher->scriptParsed(scriptIDStr, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceURLParam, sourceMapURLParam);
 
     m_scripts.set(sourceID, script);
 
-    if (scriptURL.isEmpty())
+    String scriptURLForBreakpoints = hasSourceURL ? script.sourceURL : script.url;
+    if (scriptURLForBreakpoints.isEmpty())
         return;
 
     for (auto it = m_javaScriptBreakpoints.begin(), end = m_javaScriptBreakpoints.end(); it != end; ++it) {
@@ -633,10 +636,10 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
             return;
 
         bool isRegex;
-        breakpointObject->getBoolean(ASCIILiteral("isRegex"), isRegex);
         String url;
+        breakpointObject->getBoolean(ASCIILiteral("isRegex"), isRegex);
         breakpointObject->getString(ASCIILiteral("url"), url);
-        if (!matches(scriptURL, url, isRegex))
+        if (!matches(scriptURLForBreakpoints, url, isRegex))
             continue;
 
         ScriptBreakpoint breakpoint;
