@@ -1,5 +1,14 @@
 2016-04-14  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Mark inspector/console/addInspectedNode.html as flaky on mac-wk2 for ElCapitan
+        https://bugs.webkit.org/show_bug.cgi?id=155138
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2016-04-14  Jiewen Tan  <jiewen_tan@apple.com>
+
         Mark http/tests/cache/disk-cache/disk-cache-vary-no-body.html as flaky on ios-simulator-wk2
         https://bugs.webkit.org/show_bug.cgi?id=149087
 

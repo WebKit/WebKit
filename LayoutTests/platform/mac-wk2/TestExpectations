@@ -296,7 +296,7 @@ webkit.org/b/152492 [ Debug ] inspector/debugger/break-on-exception-catch.html [
 
 webkit.org/b/155050 storage/indexeddb/intversion-open-in-upgradeneeded.html [ Skip ]
 
-webkit.org/b/155138 [ Yosemite ] inspector/console/addInspectedNode.html [ Pass Timeout ]
+webkit.org/b/155138 [ Yosemite ElCapitan ] inspector/console/addInspectedNode.html [ Pass Timeout ]
 
 webkit.org/b/154606 [ Release Yosemite ] imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm [ Pass Timeout ]
 
