@@ -1,5 +1,14 @@
 2016-04-15  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Mark fast/text/font-face-javascript.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=156631
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2016-04-15  Jiewen Tan  <jiewen_tan@apple.com>
+
         Mark imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html as flaky on mac-wk1
         https://bugs.webkit.org/show_bug.cgi?id=156629
 
