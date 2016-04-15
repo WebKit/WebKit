@@ -21,9 +21,9 @@
 #include "WebKitFileChooserRequest.h"
 
 #include "APIArray.h"
+#include "APIOpenPanelParameters.h"
 #include "APIString.h"
 #include "WebKitFileChooserRequestPrivate.h"
-#include "WebOpenPanelParameters.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include <WebCore/FileSystem.h>
 #include <glib/gi18n-lib.h>
@@ -59,7 +59,7 @@ using namespace WebCore;
  */
 
 struct _WebKitFileChooserRequestPrivate {
-    RefPtr<WebOpenPanelParameters> parameters;
+    RefPtr<API::OpenPanelParameters> parameters;
     RefPtr<WebOpenPanelResultListenerProxy> listener;
     GRefPtr<GtkFileFilter> filter;
     GRefPtr<GPtrArray> mimeTypes;
@@ -175,7 +175,7 @@ static void webkit_file_chooser_request_class_init(WebKitFileChooserRequestClass
                                                       WEBKIT_PARAM_READABLE));
 }
 
-WebKitFileChooserRequest* webkitFileChooserRequestCreate(WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
+WebKitFileChooserRequest* webkitFileChooserRequestCreate(API::OpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
 {
     WebKitFileChooserRequest* request = WEBKIT_FILE_CHOOSER_REQUEST(g_object_new(WEBKIT_TYPE_FILE_CHOOSER_REQUEST, NULL));
     request->priv->parameters = parameters;
@@ -299,23 +299,15 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
     g_return_if_fail(files);
 
     GRefPtr<GPtrArray> selectedFiles = adoptGRef(g_ptr_array_new_with_free_func(g_free));
-    Vector<RefPtr<API::Object> > chosenFiles;
+    Vector<String> chosenFiles;
     for (int i = 0; files[i]; i++) {
-        GRefPtr<GFile> filename = adoptGRef(g_file_new_for_path(files[i]));
-
-        // Make sure the file path is presented as an URI (escaped
-        // string, with the 'file://' prefix) to WebCore otherwise the
-        // FileChooser won't actually choose it.
-        GUniquePtr<char> uri(g_file_get_uri(filename.get()));
-        chosenFiles.append(API::URL::create(String::fromUTF8(uri.get())));
-
-        // Do not use the URI here because this won't reach WebCore.
+        chosenFiles.append(WebCore::decodeURLEscapeSequences(String::fromUTF8(files[i])));
         g_ptr_array_add(selectedFiles.get(), g_strdup(files[i]));
     }
-    g_ptr_array_add(selectedFiles.get(), 0);
+    g_ptr_array_add(selectedFiles.get(), nullptr);
 
     // Select the files in WebCore and update local private attributes.
-    request->priv->listener->chooseFiles(API::Array::create(WTFMove(chosenFiles)).ptr());
+    request->priv->listener->chooseFiles(chosenFiles);
     request->priv->selectedFiles = selectedFiles;
     request->priv->handledRequest = true;
 }

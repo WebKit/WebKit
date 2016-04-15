@@ -160,7 +160,7 @@ private:
         completionHandler(defaultQuota);
     }
 
-    bool runOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener) override
+    bool runOpenPanel(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, API::OpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener) override
     {
         GRefPtr<WebKitFileChooserRequest> request = adoptGRef(webkitFileChooserRequestCreate(parameters, listener));
         webkitWebViewRunFileChooserRequest(m_webView, request.get());

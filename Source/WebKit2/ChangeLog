@@ -1,3 +1,13 @@
+2016-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r199558.
+
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        (webkitFileChooserRequestCreate):
+        (webkit_file_chooser_request_select_files):
+        * UIProcess/API/gtk/WebKitFileChooserRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+
 2016-04-14  Brent Fulgham  <bfulgham@apple.com>
 
         Make <a download> a runtime enabled option

@@ -23,6 +23,6 @@
 #include "WebKitFileChooserRequest.h"
 #include "WebKitPrivate.h"
 
-WebKitFileChooserRequest* webkitFileChooserRequestCreate(WebKit::WebOpenPanelParameters*, WebKit::WebOpenPanelResultListenerProxy*);
+WebKitFileChooserRequest* webkitFileChooserRequestCreate(API::OpenPanelParameters*, WebKit::WebOpenPanelResultListenerProxy*);
 
 #endif // WebKitFileChooserRequestPrivate_h
