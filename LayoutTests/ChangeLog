@@ -1,3 +1,15 @@
+2016-04-14  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Run all Content Security Policy 1.1 tests by default
+
+        It is now feasible to run all tests in directory LayoutTests/http/tests/security/contentSecurityPolicy/1.1
+        by default following r199172, r199525 and r199538. There is still work to be done to make all CSP 1.1 tests
+        pass. The number of 1.1 tests that either fail or timeout now represent a minority of all 1.1 tests.
+
+        * TestExpectations: Remove all CSP tests marked PASS, remove the entry to skip all tests in directory
+        LayoutTests/http/tests/security/contentSecurityPolicy/1.1, and sort the list of failing tests by
+        bug number, filename.
+
 2016-04-14  Mark Lam  <mark.lam@apple.com>
 
         Add svn:eol-style=LF to LayoutTests/ietestcenter/Javascript/TestCases/ files.

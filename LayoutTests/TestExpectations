@@ -805,84 +805,29 @@ webkit.org/b/155634 http/tests/security/shape-image-cors-redirect-error-message-
 webkit.org/b/155634 http/tests/security/shape-image-cors-redirect-error-message-logging-4.html [ Pass Failure ]
 
 # Content Security Policy failures
-webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
-http/tests/security/contentSecurityPolicy/1.1/child-src [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/frame-ancestors [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/form-action-src-allowed.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/form-action-src-default-ignored.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-allowed.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/base-uri-allow.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/base-uri-default-ignored.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/base-uri-deny.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive.php [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/reportonly-in-meta-ignored.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/reportonly-in-meta-ignored2.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scripthash-default-src.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scripthash-ignore-unsafeinline.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scripthash-malformed.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scripthash-multiple-policies.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scripthash-tests.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scripthash-unicode-normalization.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scriptnonce-and-scripthash.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scriptnonce-basic-blocked.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scriptnonce-ignore-unsafeinline.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/scriptnonce-redirect.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-basics.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image-from-script.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-from-script.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-child-src.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-default-src.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-frame-src.html  [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/stylehash-allowed.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/stylehash-multiple-policies.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/stylenonce-allowed.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/stylenonce-blocked.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-data.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html [ Pass ]
-http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html [ Pass ]
-webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-xfo.html
 webkit.org/b/111869 http/tests/security/contentSecurityPolicy/eval-blocked-and-sends-report.html
 webkit.org/b/153148 http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.php
-webkit.org/b/153150 http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html
 webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-blocked.html
 webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-redirect-blocked.html
+webkit.org/b/153150 http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html
 webkit.org/b/153151 http/tests/security/contentSecurityPolicy/icon-allowed.html [ Failure ]
 webkit.org/b/153151 http/tests/security/contentSecurityPolicy/icon-blocked.html [ Failure ]
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html # Needs testRunner.getManifestThen()
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html # Needs testRunner.getManifestThen()
 webkit.org/b/153154 http/tests/security/contentSecurityPolicy/redirect-does-not-match-paths.html
-webkit.org/b/153155 http/tests/security/contentSecurityPolicy/style-src-blocked-error-event.html
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked-error-event.html
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked-error-event.html
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylehash-svg-style-basic-blocked-error-event.html
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylenonce-basic-blocked-error-event.html
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylenonce-svg-style-basic-blocked-error-event.html
+webkit.org/b/153155 http/tests/security/contentSecurityPolicy/style-src-blocked-error-event.html
 webkit.org/b/153159 http/tests/security/contentSecurityPolicy/image-document-default-src-none.html [ Failure ]
 webkit.org/b/153160 http/tests/security/contentSecurityPolicy/object-src-does-not-affect-child.html [ Failure ]
 webkit.org/b/153160 http/tests/security/contentSecurityPolicy/plugin-in-iframe-with-csp.html [ Failure ]
 webkit.org/b/153161 http/tests/security/contentSecurityPolicy/register-bypassing-scheme-partial.html [ Failure ]
 webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-violations-01.php [ Failure ]
 webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-violations-02.php [ Failure ]
+webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-xfo.html
 webkit.org/b/154522 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Failure ]
 http/tests/security/contentSecurityPolicy/script-src-blocked-error-event.html [ Pass Failure ]
