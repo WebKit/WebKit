@@ -48,6 +48,8 @@ SimDevice *getTestingSimDevice(SimDeviceType *deviceType, SimRuntime *runtime, N
     NSString *deviceName = [[[[deviceType identifier] componentsSeparatedByString:@"."] lastObject] stringByReplacingOccurrencesOfString:@"-" withString:@" "];
     deviceName = [NSString stringWithFormat:@"%@%@%@", deviceName, @" WebKit Tester", suffix];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     for (SimDevice *device in [[SimDeviceSet defaultSet] devices]) {
         if ([[device name] isEqualToString:deviceName] && [[device deviceType] isEqualTo:deviceType] && [[device runtime] isEqualTo:runtime])
             return device;
@@ -55,6 +57,7 @@ SimDevice *getTestingSimDevice(SimDeviceType *deviceType, SimRuntime *runtime, N
 
     NSError *error;
     SimDevice *device = [[SimDeviceSet defaultSet] createDeviceWithType:deviceType runtime:runtime name:deviceName error:&error];
+#pragma clang diagnostic pop
 
     if (error) {
         NSLog(@"Couldn't create device: %@", [error description]);
@@ -119,14 +122,20 @@ int main(int argc, const char * argv[])
         }
         NSString *appPath = getRequiredStringArgument(@"app");
         NSString *runtimeIdentifier = getRequiredStringArgument(@"runtime");
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         SimRuntime *runtime = [SimRuntime supportedRuntimesByIdentifier][runtimeIdentifier];
+#pragma clang diagnostic pop
         if (!runtime) {
             NSLog(@"There is no supported runtime \"%@\"", runtimeIdentifier);
             exit(EXIT_FAILURE);
         }
 
         NSString *deviceTypeIdentifier = getRequiredStringArgument(@"deviceType");
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         SimDeviceType *deviceType = [SimDeviceType supportedDeviceTypesByIdentifier][deviceTypeIdentifier];
+#pragma clang diagnostic pop
         if (!deviceType) {
             NSLog(@"There is no supported device type \"%@\"", deviceTypeIdentifier);
             exit(EXIT_FAILURE);
