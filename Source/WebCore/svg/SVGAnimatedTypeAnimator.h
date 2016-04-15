@@ -203,7 +203,8 @@ private:
                 break;
             case StopAnimationAction:
                 ASSERT(!type);
-                property->animationEnded();
+                if (property->isAnimating())
+                    property->animationEnded();
                 break;
             case AnimValWillChangeAction:
                 ASSERT(!type);
