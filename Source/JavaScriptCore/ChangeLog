@@ -1,3 +1,15 @@
+2016-04-14  Geoffrey Garen  <ggaren@apple.com>
+
+        CopiedBlock should be 64kB
+
+        Reviewed by Benjamin Poulain.
+
+        Let's try another value.
+
+        This is 25% faster on kraken-audio-beat-detection on Mac Pro.
+
+        * heap/CopiedBlock.h:
+
 2016-04-15  Zan Dobersek  <zdobersek@igalia.com>
 
         Tail call optimizations lead to crashes on ARM Thumb + Linux
