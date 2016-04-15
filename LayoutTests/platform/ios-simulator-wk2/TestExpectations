@@ -1963,3 +1963,4 @@ webkit.org/b/156067 http/tests/security/anchor-download-allow-sameorigin.html [ 
 webkit.org/b/156067 http/tests/security/anchor-download-block-crossorigin.html [ Skip ]
 
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-vary.html [ Pass Timeout ]
+webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-vary-no-body.html [ Pass Timeout ]
