@@ -10,12 +10,12 @@
         var url = document.querySelector('iframe').contentWindow.location.href;
 
         if (!url)
-            console.log("PASS: Could not read contentWindow.location.href");
+            console.log("FAIL: Could not read contentWindow.location.href");
         else
-            console.log("FAIL: Could read contentWindow.location.href");
+            console.log("PASS: Could read contentWindow.location.href");
         testRunner.notifyDone();
     }
 </script>
 
-<p>There should be no content in the iframe below</p>
+<p>There should be content in the iframe below</p>
 <iframe style="width:500px; height:500px" src="http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html" onload="checkIfDone()"></iframe>

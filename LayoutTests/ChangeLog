@@ -1,3 +1,39 @@
+2016-04-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove support for X-Frame-Options in `<meta>`
+        https://bugs.webkit.org/show_bug.cgi?id=156625
+        <rdar://problem/25748714>
+
+        Reviewed by Darin Adler.
+
+        Revise tests to match our desired behavior based on RFC 7034 (Section 4).
+
+        * http/tests/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-in-body.html:
+        * http/tests/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html:
+        * http/tests/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html:
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Removed.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt: Removed.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html: Removed.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow-expected.txt: Removed.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html: Removed.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Removed.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html: Removed.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html: Removed.
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-in-body-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-in-body.html: Copied from LayoutTests/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html.
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-parent-same-origin-allow-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-parent-same-origin-allow.html: Copied from LayoutTests/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html.
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-parent-same-origin-deny-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-parent-same-origin-deny.html: Copied from LayoutTests/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html.
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag.html: Copied from LayoutTests/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html.
+        * http/tests/security/xssAuditor/meta-tag-http-refresh-x-frame-options-expected.txt: Removed.
+        * http/tests/security/xssAuditor/meta-tag-http-refresh-x-frame-options-ignored-expected.txt: Added.
+        * http/tests/security/xssAuditor/meta-tag-http-refresh-x-frame-options-ignored.html: Copied from LayoutTests/http/tests/security/xssAuditor/meta-tag-http-refresh-x-frame-options.html.
+        * http/tests/security/xssAuditor/meta-tag-http-refresh-x-frame-options.html: Removed.
+        * inspector/console/x-frame-options-message-expected.txt: Rebaselined.
+        * platform/win/TestExpectations:
+
 2016-04-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         Mark inspector/formatting/formatting-javascript.html as flaky on mac

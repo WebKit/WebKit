@@ -3304,15 +3304,8 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
             unsigned long requestIdentifier = 0;
             if (frameLoader.activeDocumentLoader() && frameLoader.activeDocumentLoader()->mainResourceLoader())
                 requestIdentifier = frameLoader.activeDocumentLoader()->mainResourceLoader()->identifier();
-            if (frameLoader.shouldInterruptLoadForXFrameOptions(content, url(), requestIdentifier)) {
-                String message = "Refused to display '" + url().stringCenterEllipsizedToLength() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
-                frameLoader.stopAllLoaders();
-                // Stopping the loader isn't enough, as we're already parsing the document; to honor the header's
-                // intent, we must navigate away from the possibly partially-rendered document to a location that
-                // doesn't inherit the parent's SecurityOrigin.
-                frame->navigationScheduler().scheduleLocationChange(this, securityOrigin(), SecurityOrigin::urlWithUniqueSecurityOrigin(), String());
-                addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, requestIdentifier);
-            }
+
+            addConsoleMessage(MessageSource::Security, MessageLevel::Error, "X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.", requestIdentifier);
         }
         break;
 

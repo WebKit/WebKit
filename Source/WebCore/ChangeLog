@@ -1,3 +1,23 @@
+2016-04-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove support for X-Frame-Options in `<meta>`
+        https://bugs.webkit.org/show_bug.cgi?id=156625
+        <rdar://problem/25748714>
+
+        Reviewed by Darin Adler.
+
+        Follow RFC7034 (Section 4), which recommends that 'X-Frame-Options' be ignored when delivered as part of
+        a '<meta http-equiv="...">' tag. This brings us in line with Firefox, Edge, and Blink.
+
+        Tests: http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-in-body.html
+               http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-parent-same-origin-allow.html
+               http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-parent-same-origin-deny.html
+               http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag.html
+               http/tests/security/xssAuditor/meta-tag-http-refresh-x-frame-options-ignored.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Log error message instead of blocking the load.
+
 2016-04-15  Jer Noble  <jer.noble@apple.com>
 
         Audio elements should be able to have a controls manager.
