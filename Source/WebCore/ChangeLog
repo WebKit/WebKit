@@ -1,3 +1,10 @@
+2016-04-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [WinCairo] Unreviewed build fix.,
+
+        * platform/network/curl/MultipartHandle.cpp:
+        (WebCore::MultipartHandle::parseHeadersIfPossible): Correct for new method signature.
+
 2016-04-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ASSERT when loading github.com

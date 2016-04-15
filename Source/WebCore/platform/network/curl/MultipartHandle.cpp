@@ -138,7 +138,7 @@ bool MultipartHandle::parseHeadersIfPossible()
 
     // Parse the HTTP headers.
     String value;
-    String name;
+    StringView name;
     char* p = const_cast<char*>(content);
     const char* end = content + contentLength;
     size_t totalConsumedLength = 0;
