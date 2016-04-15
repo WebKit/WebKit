@@ -2467,7 +2467,6 @@ webkit.org/b/151267 imported/blink/css3/blending/mix-blend-mode-with-squashing-l
 webkit.org/b/151267 imported/blink/css3/blending/svg-blend-overlapping-elements.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/css3/blending/svg-isolation-foreign-no-isolation.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/css3/blending/svg-isolation-nested-svg-no-isolation.html [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/editing/selection/deleteFromDocument-crash.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/canvas/canvas-clip-stack-persistence.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/css/fixed-overlaps-absolute-in-clip.html [ ImageOnlyFailure Pass ]
 webkit.org/b/151267 imported/blink/fast/css/tab-size-complex-path.html [ ImageOnlyFailure ]

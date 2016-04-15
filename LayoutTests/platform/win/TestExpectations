@@ -3281,7 +3281,6 @@ imported/blink/css3/blending/svg-isolation-foreign-no-isolation.html [ ImageOnly
 imported/blink/css3/blending/svg-isolation-nested-svg-no-isolation.html [ ImageOnlyFailure ]
 imported/blink/css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
 imported/blink/css3/filters/effect-reference-on-transparent-element.html [ ImageOnlyFailure ]
-imported/blink/editing/selection/deleteFromDocument-crash.html [ ImageOnlyFailure ]
 imported/blink/fast/css/tab-size-complex-path.html [ ImageOnlyFailure ]
 imported/blink/fast/css/text-decoration-propagate.html [ ImageOnlyFailure ]
 imported/blink/fast/text/emoji-font-fallback-win.html [ ImageOnlyFailure ]

@@ -1,7 +1,9 @@
+PASS span1.textContent is "foobar"
+PASS span1.textContent is "foobar"
+PASS span1.firstChild.nextSibling.id is "span2"
+PASS span1.firstChild.nextSibling.firstChild.nodeValue is ""
+PASS test.textContent is "fz"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 fz
-Success: span1.textContent is fooar.
-Success: span1.textContent is foar.
-Success: span1.textContent is foar.
-Success: span1.firstChild.nextSibling.id is span2.
-Success: span1.firstChild.nextSibling.firstChild.nodeValue is .
-Success: test.textContent is fz.
