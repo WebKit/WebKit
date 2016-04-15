@@ -1,3 +1,16 @@
+2016-04-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Calling SVGAnimatedPropertyTearOff::animationEnded() will crash if the SVG property is not animating
+        https://bugs.webkit.org/show_bug.cgi?id=156549
+
+        Reviewed by Darin Adler.
+
+        A speculative fix for a crash which may happen when calling animationEnded()
+        of any SVGAnimatedProperty while it is not animating.
+
+        * svg/SVGAnimatedTypeAnimator.h:
+        (WebCore::SVGAnimatedTypeAnimator::executeAction):
+
 2016-04-15  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix for iOS simulator. Assert the correct variable.
