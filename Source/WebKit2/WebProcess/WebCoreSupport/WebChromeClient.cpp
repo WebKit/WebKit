@@ -75,6 +75,7 @@
 #include <WebCore/Settings.h>
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#include "WebPlaybackSessionManager.h"
 #include "WebVideoFullscreenManager.h"
 #endif
 
@@ -852,34 +853,34 @@ PassRefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Pag
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 bool WebChromeClient::supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
-    return m_page->videoFullscreenManager()->supportsVideoFullscreen(mode);
+    return m_page->videoFullscreenManager().supportsVideoFullscreen(mode);
 }
 
-void WebChromeClient::setUpVideoControlsManager(WebCore::HTMLVideoElement& videoElement)
+void WebChromeClient::setUpPlaybackControlsManager(WebCore::HTMLMediaElement& mediaElement)
 {
-    m_page->videoFullscreenManager()->setUpVideoControlsManager(videoElement);
+    m_page->playbackSessionManager().setUpPlaybackControlsManager(mediaElement);
 }
 
-void WebChromeClient::clearVideoControlsManager()
+void WebChromeClient::clearPlaybackControlsManager(WebCore::HTMLMediaElement& mediaElement)
 {
-    m_page->videoFullscreenManager()->clearVideoControlsManager();
+    m_page->playbackSessionManager().clearPlaybackControlsManager(mediaElement);
 }
 
 void WebChromeClient::enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
-    m_page->videoFullscreenManager()->enterVideoFullscreenForVideoElement(videoElement, mode);
+    m_page->videoFullscreenManager().enterVideoFullscreenForVideoElement(videoElement, mode);
 }
 
 void WebChromeClient::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement)
 {
-    m_page->videoFullscreenManager()->exitVideoFullscreenForVideoElement(videoElement);
+    m_page->videoFullscreenManager().exitVideoFullscreenForVideoElement(videoElement);
 }
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 void WebChromeClient::exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
-    m_page->videoFullscreenManager()->exitVideoFullscreenToModeWithoutAnimation(videoElement, targetMode);
+    m_page->videoFullscreenManager().exitVideoFullscreenToModeWithoutAnimation(videoElement, targetMode);
 }
 #endif
 

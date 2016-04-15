@@ -4826,7 +4826,7 @@ void HTMLMediaElement::updatePlayState()
     if (shouldBePlaying) {
         if (document().page() && m_mediaSession->canControlControlsManager(*this)) {
             HTMLVideoElement& asVideo = downcast<HTMLVideoElement>(*this);
-            document().page()->chrome().client().setUpVideoControlsManager(asVideo);
+            document().page()->chrome().client().setUpPlaybackControlsManager(asVideo);
         }
 
         setDisplayMode(Video);
@@ -4862,7 +4862,7 @@ void HTMLMediaElement::updatePlayState()
         setPlaying(true);
     } else {
         if (endedPlayback() && document().page() && is<HTMLVideoElement>(*this))
-            document().page()->chrome().client().clearVideoControlsManager();
+            document().page()->chrome().client().clearPlaybackControlsManager(*this);
 
         if (!playerPaused)
             m_player->pause();

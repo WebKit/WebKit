@@ -30,6 +30,7 @@
 #import "Attachment.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
+#import "WebPlaybackSessionManager.h"
 #import "WebProcess.h"
 #import "WebVideoFullscreenManagerMessages.h"
 #import "WebVideoFullscreenManagerProxyMessages.h"
@@ -59,16 +60,11 @@ static IntRect clientRectForElement(HTMLElement* element)
     return element->clientRect();
 }
 
-static uint64_t nextContextId()
-{
-    static uint64_t contextId = 0;
-    return ++contextId;
-}
-
 #pragma mark - WebVideoFullscreenInterfaceContext
 
-WebVideoFullscreenInterfaceContext::WebVideoFullscreenInterfaceContext(WebVideoFullscreenManager& manager, uint64_t contextId)
+WebVideoFullscreenInterfaceContext::WebVideoFullscreenInterfaceContext(WebVideoFullscreenManager& manager, WebPlaybackSessionInterfaceContext& playbackSessionInterface, uint64_t contextId)
     : m_manager(&manager)
+    , m_playbackSessionInterface(playbackSessionInterface)
     , m_contextId(contextId)
 {
 }
@@ -84,32 +80,27 @@ void WebVideoFullscreenInterfaceContext::setLayerHostingContext(std::unique_ptr<
 
 void WebVideoFullscreenInterfaceContext::resetMediaState()
 {
-    if (m_manager)
-        m_manager->resetMediaState(m_contextId);
+    m_playbackSessionInterface->resetMediaState();
 }
 
 void WebVideoFullscreenInterfaceContext::setDuration(double duration)
 {
-    if (m_manager)
-        m_manager->setDuration(m_contextId, duration);
+    m_playbackSessionInterface->setDuration(duration);
 }
 
 void WebVideoFullscreenInterfaceContext::setCurrentTime(double currentTime, double anchorTime)
 {
-    if (m_manager)
-        m_manager->setCurrentTime(m_contextId, currentTime, anchorTime);
+    m_playbackSessionInterface->setCurrentTime(currentTime, anchorTime);
 }
 
 void WebVideoFullscreenInterfaceContext::setBufferedTime(double bufferedTime)
 {
-    if (m_manager)
-        m_manager->setBufferedTime(m_contextId, bufferedTime);
+    m_playbackSessionInterface->setBufferedTime(bufferedTime);
 }
 
 void WebVideoFullscreenInterfaceContext::setRate(bool isPlaying, float playbackRate)
 {
-    if (m_manager)
-        m_manager->setRate(m_contextId, isPlaying, playbackRate);
+    m_playbackSessionInterface->setRate(isPlaying, playbackRate);
 }
 
 void WebVideoFullscreenInterfaceContext::setVideoDimensions(bool hasVideo, float width, float height)
@@ -120,51 +111,46 @@ void WebVideoFullscreenInterfaceContext::setVideoDimensions(bool hasVideo, float
 
 void WebVideoFullscreenInterfaceContext::setSeekableRanges(const WebCore::TimeRanges& ranges)
 {
-    if (m_manager)
-        m_manager->setSeekableRanges(m_contextId, ranges);
+    m_playbackSessionInterface->setSeekableRanges(ranges);
 }
 
 void WebVideoFullscreenInterfaceContext::setCanPlayFastReverse(bool value)
 {
-    if (m_manager)
-        m_manager->setCanPlayFastReverse(m_contextId, value);
+    m_playbackSessionInterface->setCanPlayFastReverse(value);
 }
 
 void WebVideoFullscreenInterfaceContext::setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
 {
-    if (m_manager)
-        m_manager->setAudioMediaSelectionOptions(m_contextId, options, selectedIndex);
+    m_playbackSessionInterface->setAudioMediaSelectionOptions(options, selectedIndex);
 }
 
 void WebVideoFullscreenInterfaceContext::setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
 {
-    if (m_manager)
-        m_manager->setLegibleMediaSelectionOptions(m_contextId, options, selectedIndex);
+    m_playbackSessionInterface->setLegibleMediaSelectionOptions(options, selectedIndex);
 }
 
 void WebVideoFullscreenInterfaceContext::setExternalPlayback(bool enabled, ExternalPlaybackTargetType type, WTF::String localizedDeviceName)
 {
-    if (m_manager)
-        m_manager->setExternalPlayback(m_contextId, enabled, type, localizedDeviceName);
+    m_playbackSessionInterface->setExternalPlayback(enabled, type, localizedDeviceName);
 }
 
 void WebVideoFullscreenInterfaceContext::setWirelessVideoPlaybackDisabled(bool disabled)
 {
-    if (m_manager)
-        m_manager->setWirelessVideoPlaybackDisabled(m_contextId, disabled);
+    m_playbackSessionInterface->setWirelessVideoPlaybackDisabled(disabled);
 }
 
 #pragma mark - WebVideoFullscreenManager
 
-Ref<WebVideoFullscreenManager> WebVideoFullscreenManager::create(PassRefPtr<WebPage> page)
+Ref<WebVideoFullscreenManager> WebVideoFullscreenManager::create(WebPage& page, WebPlaybackSessionManager& playbackSessionManager)
 {
-    return adoptRef(*new WebVideoFullscreenManager(page));
+    return adoptRef(*new WebVideoFullscreenManager(page, playbackSessionManager));
 }
 
-WebVideoFullscreenManager::WebVideoFullscreenManager(PassRefPtr<WebPage> page)
-    : m_page(page.get())
+WebVideoFullscreenManager::WebVideoFullscreenManager(WebPage& page, WebPlaybackSessionManager& playbackSessionManager)
+    : m_page(&page)
+    , m_playbackSessionManager(playbackSessionManager)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::WebVideoFullscreenManager::messageReceiverName(), page->pageID(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::WebVideoFullscreenManager::messageReceiverName(), page.pageID(), *this);
 }
 
 WebVideoFullscreenManager::~WebVideoFullscreenManager()
@@ -189,8 +175,10 @@ WebVideoFullscreenManager::~WebVideoFullscreenManager()
 
 WebVideoFullscreenManager::ModelInterfaceTuple WebVideoFullscreenManager::createModelAndInterface(uint64_t contextId)
 {
-    RefPtr<WebVideoFullscreenModelVideoElement> model = WebVideoFullscreenModelVideoElement::create();
-    RefPtr<WebVideoFullscreenInterfaceContext> interface = WebVideoFullscreenInterfaceContext::create(*this, contextId);
+    auto& playbackSessionModel = m_playbackSessionManager->ensureModel(contextId);
+    RefPtr<WebVideoFullscreenModelVideoElement> model = WebVideoFullscreenModelVideoElement::create(playbackSessionModel);
+    auto& playbackSessionInterface = m_playbackSessionManager->ensureInterface(contextId);
+    RefPtr<WebVideoFullscreenInterfaceContext> interface = WebVideoFullscreenInterfaceContext::create(*this, playbackSessionInterface, contextId);
 
     interface->setLayerHostingContext(LayerHostingContext::createForExternalHostingProcess());
     model->setWebVideoFullscreenInterface(interface.get());
@@ -272,12 +260,10 @@ void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoEle
 {
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
 
-    uint64_t contextId;
-
-    auto addResult = m_videoElements.add(&videoElement, 0);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = nextContextId();
-    contextId = addResult.iterator->value;
+    uint64_t contextId = m_playbackSessionManager->contextIdForMediaElement(videoElement);
+    auto addResult = m_videoElements.add(&videoElement, contextId);
+    UNUSED_PARAM(addResult);
+    ASSERT(addResult.iterator->value == contextId);
 
     RefPtr<WebVideoFullscreenModelVideoElement> model;
     RefPtr<WebVideoFullscreenInterfaceContext> interface;
@@ -321,41 +307,6 @@ void WebVideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTML
     m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(contextId, clientRectForElement(&videoElement)), m_page->pageID());
 }
 
-void WebVideoFullscreenManager::setUpVideoControlsManager(WebCore::HTMLVideoElement& videoElement)
-{
-#if PLATFORM(MAC)
-    if (m_videoElements.contains(&videoElement)) {
-        uint64_t contextId = m_videoElements.get(&videoElement);
-        if (m_controlsManagerContextId == contextId)
-            return;
-
-        if (m_controlsManagerContextId)
-            removeClientForContext(m_controlsManagerContextId);
-        m_controlsManagerContextId = contextId;
-    } else {
-        auto addResult = m_videoElements.ensure(&videoElement, [&] { return nextContextId(); });
-        auto contextId = addResult.iterator->value;
-        m_controlsManagerContextId = contextId;
-        ensureModel(contextId).setVideoElement(&videoElement);
-    }
-
-    addClientForContext(m_controlsManagerContextId);
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetUpVideoControlsManagerWithID(m_controlsManagerContextId), m_page->pageID());
-#endif
-}
-
-void WebVideoFullscreenManager::clearVideoControlsManager()
-{
-#if PLATFORM(MAC)
-    if (!m_controlsManagerContextId)
-        return;
-
-    removeClientForContext(m_controlsManagerContextId);
-    m_controlsManagerContextId = 0;
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::ClearVideoControlsManager(), m_page->pageID());
-#endif
-}
-
 void WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -375,148 +326,22 @@ void WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCor
 
 #pragma mark Interface to WebVideoFullscreenInterfaceContext:
 
-void WebVideoFullscreenManager::resetMediaState(uint64_t contextId)
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::ResetMediaState(contextId), m_page->pageID());
-}
-    
-void WebVideoFullscreenManager::setDuration(uint64_t contextId, double duration)
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetDuration(contextId, duration), m_page->pageID());
-}
-
-void WebVideoFullscreenManager::setCurrentTime(uint64_t contextId, double currentTime, double anchorTime)
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetCurrentTime(contextId, currentTime, anchorTime), m_page->pageID());
-}
-
-void WebVideoFullscreenManager::setBufferedTime(uint64_t contextId, double bufferedTime)
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetBufferedTime(contextId, bufferedTime), m_page->pageID());
-}
-
-void WebVideoFullscreenManager::setRate(uint64_t contextId, bool isPlaying, float playbackRate)
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetRate(contextId, isPlaying, playbackRate), m_page->pageID());
-}
-
 void WebVideoFullscreenManager::setVideoDimensions(uint64_t contextId, bool hasVideo, float width, float height)
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetVideoDimensions(contextId, hasVideo, width, height), m_page->pageID());
 }
-    
-void WebVideoFullscreenManager::setSeekableRanges(uint64_t contextId, const WebCore::TimeRanges& timeRanges)
-{
-    Vector<std::pair<double, double>> rangesVector;
-    
-    for (unsigned i = 0; i < timeRanges.length(); i++) {
-        ExceptionCode exceptionCode;
-        double start = timeRanges.start(i, exceptionCode);
-        double end = timeRanges.end(i, exceptionCode);
-        rangesVector.append(std::pair<double, double>(start, end));
-    }
-
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetSeekableRangesVector(contextId, WTFMove(rangesVector)), m_page->pageID());
-}
-
-void WebVideoFullscreenManager::setCanPlayFastReverse(uint64_t contextId, bool value)
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetCanPlayFastReverse(contextId, value), m_page->pageID());
-}
-
-void WebVideoFullscreenManager::setAudioMediaSelectionOptions(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex)
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetAudioMediaSelectionOptions(contextId, options, selectedIndex), m_page->pageID());
-}
-
-void WebVideoFullscreenManager::setLegibleMediaSelectionOptions(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex)
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetLegibleMediaSelectionOptions(contextId, options, selectedIndex), m_page->pageID());
-}
-
-void WebVideoFullscreenManager::setExternalPlayback(uint64_t contextId, bool enabled, WebVideoFullscreenInterface::ExternalPlaybackTargetType targetType, String localizedDeviceName)
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetExternalPlaybackProperties(contextId, enabled, static_cast<uint32_t>(targetType), localizedDeviceName), m_page->pageID());
-}
-
-void WebVideoFullscreenManager::setWirelessVideoPlaybackDisabled(uint64_t contextId, bool disabled)
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetWirelessVideoPlaybackDisabled(contextId, disabled));
-}
 
 #pragma mark Messages from WebVideoFullscreenManagerProxy:
-
-void WebVideoFullscreenManager::play(uint64_t contextId)
-{
-    ensureModel(contextId).play();
-}
-
-void WebVideoFullscreenManager::pause(uint64_t contextId)
-{
-    ensureModel(contextId).pause();
-}
-
-void WebVideoFullscreenManager::togglePlayState(uint64_t contextId)
-{
-    ensureModel(contextId).togglePlayState();
-}
-
-void WebVideoFullscreenManager::beginScrubbing(uint64_t contextId)
-{
-    ensureModel(contextId).beginScrubbing();
-}
-
-void WebVideoFullscreenManager::endScrubbing(uint64_t contextId)
-{
-    ensureModel(contextId).endScrubbing();
-}
-
-void WebVideoFullscreenManager::seekToTime(uint64_t contextId, double time)
-{
-    ensureModel(contextId).seekToTime(time);
-}
-
-void WebVideoFullscreenManager::fastSeek(uint64_t contextId, double time)
-{
-    ensureModel(contextId).fastSeek(time);
-}
-
-void WebVideoFullscreenManager::beginScanningForward(uint64_t contextId)
-{
-    ensureModel(contextId).beginScanningForward();
-}
-
-void WebVideoFullscreenManager::beginScanningBackward(uint64_t contextId)
-{
-    ensureModel(contextId).beginScanningBackward();
-}
-
-void WebVideoFullscreenManager::endScanning(uint64_t contextId)
-{
-    ensureModel(contextId).endScanning();
-}
 
 void WebVideoFullscreenManager::requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ensureModel(contextId).requestFullscreenMode(mode);
 }
 
-void WebVideoFullscreenManager::selectAudioMediaOption(uint64_t contextId, uint64_t index)
-{
-    ensureModel(contextId).selectAudioMediaOption(index);
-}
-
-void WebVideoFullscreenManager::selectLegibleMediaOption(uint64_t contextId, uint64_t index)
-{
-    ensureModel(contextId).selectLegibleMediaOption(index);
-}
-
 void WebVideoFullscreenManager::fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
 {
     ensureModel(contextId).fullscreenModeChanged(videoFullscreenMode);
 }
-
-#pragma mark Messages from WebVideoFullscreenManager:
 
 void WebVideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
 {

@@ -6083,6 +6083,15 @@
 		CDA07FBE18E0A16A004699FA /* SystemSleepListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA07FBC18E0A16A004699FA /* SystemSleepListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA07FC118E0A22B004699FA /* SystemSleepListenerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA07FBF18E0A22B004699FA /* SystemSleepListenerMac.mm */; };
 		CDA07FC218E0A22B004699FA /* SystemSleepListenerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA07FC018E0A22B004699FA /* SystemSleepListenerMac.h */; };
+		CDA29A091CBD99F400901CCF /* WebPlaybackSessionInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A081CBD99F400901CCF /* WebPlaybackSessionInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA29A0B1CBD9A7400901CCF /* WebPlaybackSessionModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A0A1CBD9A7400901CCF /* WebPlaybackSessionModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA29A0E1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A0C1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.mm */; };
+		CDA29A0F1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A0D1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA29A161CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A141CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.mm */; };
+		CDA29A171CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A151CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA29A301CBF74D400901CCF /* WebPlaybackSessionInterfaceAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A2F1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.mm */; };
+		CDA29A311CBF74DA00901CCF /* WebAVPlayerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A2D1CBF73FC00901CCF /* WebAVPlayerController.mm */; };
+		CDA29A321CC01A9500901CCF /* WebPlaybackSessionInterfaceAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A2E1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA79824170A258300D45C55 /* AudioSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA79823170A258300D45C55 /* AudioSession.cpp */; };
 		CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA79825170A279000D45C55 /* AudioSessionIOS.mm */; };
 		CDA7982A170A3D0000D45C55 /* AudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA79821170A22DC00D45C55 /* AudioSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14051,6 +14060,16 @@
 		CDA07FBC18E0A16A004699FA /* SystemSleepListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSleepListener.h; sourceTree = "<group>"; };
 		CDA07FBF18E0A22B004699FA /* SystemSleepListenerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemSleepListenerMac.mm; sourceTree = "<group>"; };
 		CDA07FC018E0A22B004699FA /* SystemSleepListenerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSleepListenerMac.h; sourceTree = "<group>"; };
+		CDA29A081CBD99F400901CCF /* WebPlaybackSessionInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionInterface.h; sourceTree = "<group>"; };
+		CDA29A0A1CBD9A7400901CCF /* WebPlaybackSessionModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionModel.h; sourceTree = "<group>"; };
+		CDA29A0C1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlaybackSessionModelMediaElement.mm; sourceTree = "<group>"; };
+		CDA29A0D1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionModelMediaElement.h; sourceTree = "<group>"; };
+		CDA29A141CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlaybackSessionInterfaceMac.mm; sourceTree = "<group>"; };
+		CDA29A151CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionInterfaceMac.h; sourceTree = "<group>"; };
+		CDA29A2C1CBF73FC00901CCF /* WebAVPlayerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAVPlayerController.h; sourceTree = "<group>"; };
+		CDA29A2D1CBF73FC00901CCF /* WebAVPlayerController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAVPlayerController.mm; sourceTree = "<group>"; };
+		CDA29A2E1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionInterfaceAVKit.h; sourceTree = "<group>"; };
+		CDA29A2F1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlaybackSessionInterfaceAVKit.mm; sourceTree = "<group>"; };
 		CDA79821170A22DC00D45C55 /* AudioSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSession.h; sourceTree = "<group>"; };
 		CDA79823170A258300D45C55 /* AudioSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSession.cpp; sourceTree = "<group>"; };
 		CDA79825170A279000D45C55 /* AudioSessionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSessionIOS.mm; sourceTree = "<group>"; };
@@ -17871,6 +17890,8 @@
 				BE8560510701F91100239769 /* WebCoreView.m */,
 				E1A3162B134BC32D007C9A4F /* WebNSAttributedStringExtras.h */,
 				E1A3162C134BC32D007C9A4F /* WebNSAttributedStringExtras.mm */,
+				CDA29A151CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.h */,
+				CDA29A141CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.mm */,
 				CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */,
 				CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */,
 				CD8203081395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h */,
@@ -19955,11 +19976,15 @@
 				44C9919E0F3D210E00586670 /* ThemeIOS.mm */,
 				1F72BF08187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.cpp */,
 				1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */,
+				CDA29A2C1CBF73FC00901CCF /* WebAVPlayerController.h */,
+				CDA29A2D1CBF73FC00901CCF /* WebAVPlayerController.mm */,
 				31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */,
 				31403798124BEA7F00AF40E4 /* WebCoreMotionManager.mm */,
 				E45390380EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm */,
 				FE0D84E810484348001A179E /* WebEvent.h */,
 				FE0D84EA1048436E001A179E /* WebEvent.mm */,
+				CDA29A2E1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.h */,
+				CDA29A2F1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.mm */,
 				A502C5DD13049B3500FC7D53 /* WebSafeGCActivityCallbackIOS.h */,
 				C2C4CB1D161A131200D214DA /* WebSafeIncrementalSweeperIOS.h */,
 				3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */,
@@ -20008,6 +20033,10 @@
 				CDC979F31C498C0900DB50D4 /* WebCoreNSErrorExtras.h */,
 				CDC979F21C498C0900DB50D4 /* WebCoreNSErrorExtras.mm */,
 				1A7E19441C5863BE00CCDDF3 /* WebKitAdditions.mm */,
+				CDA29A081CBD99F400901CCF /* WebPlaybackSessionInterface.h */,
+				CDA29A0A1CBD9A7400901CCF /* WebPlaybackSessionModel.h */,
+				CDA29A0C1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.mm */,
+				CDA29A0D1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.h */,
 				52B0D4BF1C57FD660077CE53 /* WebVideoFullscreenChangeObserver.h */,
 				52131E581C4F15220033F802 /* WebVideoFullscreenInterface.h */,
 				52D5A1A41C57488900DE34A3 /* WebVideoFullscreenModel.h */,
@@ -25224,6 +25253,7 @@
 				C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */,
 				F55B3DB41251F12D003EF269 /* ColorInputType.h in Headers */,
 				EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */,
+				CDA29A0F1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.h in Headers */,
 				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
 				BCDD454E1236C95C009A7985 /* ColumnInfo.h in Headers */,
 				43EDD67F1B485DBF00640E75 /* CombinedFiltersAlphabet.h in Headers */,
@@ -25378,6 +25408,7 @@
 				A80E6CFA0A1989CA007FB8C5 /* CSSImageValue.h in Headers */,
 				A80E6CF60A1989CA007FB8C5 /* CSSImportRule.h in Headers */,
 				A80E6D010A1989CA007FB8C5 /* CSSInheritedValue.h in Headers */,
+				CDA29A091CBD99F400901CCF /* WebPlaybackSessionInterface.h in Headers */,
 				A80E6D080A1989CA007FB8C5 /* CSSInitialValue.h in Headers */,
 				31288E730E3005D6003619AE /* CSSKeyframeRule.h in Headers */,
 				31288E750E3005D6003619AE /* CSSKeyframesRule.h in Headers */,
@@ -27495,6 +27526,7 @@
 				4A0FFAA61AAF5EF60062803B /* RealtimeMediaSourceCenterMac.h in Headers */,
 				4A4F65741AA997F100E38CDD /* RealtimeMediaSourceSettings.h in Headers */,
 				07C1C0E51BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h in Headers */,
+				CDA29A0B1CBD9A7400901CCF /* WebPlaybackSessionModel.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
 				FD45A958175D414C00C21EC8 /* RectangleShape.h in Headers */,
 				9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */,
@@ -28265,6 +28297,7 @@
 				B2C3DA400D006C1D00EF6F26 /* TextCodecUserDefined.h in Headers */,
 				B2C3DA420D006C1D00EF6F26 /* TextCodecUTF16.h in Headers */,
 				9343CB8212F25E510033C5EE /* TextCodecUTF8.h in Headers */,
+				CDA29A171CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.h in Headers */,
 				142B97CA13138943008BEF4B /* TextControlInnerElements.h in Headers */,
 				582DE3251C30C85400BE02A8 /* TextDecorationPainter.h in Headers */,
 				97BC84B412371180000C6161 /* TextDocument.h in Headers */,
@@ -28542,6 +28575,7 @@
 				1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */,
 				1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */,
 				1A569D1B0D7E2B82007C3983 /* WebScriptObjectProtocol.h in Headers */,
+				CDA29A321CC01A9500901CCF /* WebPlaybackSessionInterfaceAVKit.h in Headers */,
 				97AABD1B14FA09D5007457AE /* WebSocket.h in Headers */,
 				97AABD1E14FA09D5007457AE /* WebSocketChannel.h in Headers */,
 				97AABD1F14FA09D5007457AE /* WebSocketChannelClient.h in Headers */,
@@ -28966,6 +29000,7 @@
 				31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */,
 				490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */,
 				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,
+				CDA29A0E1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.mm in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
 				316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */,
 				319848021A1D818100A13318 /* AnimationEvent.cpp in Sources */,
@@ -31039,6 +31074,7 @@
 				FE9E89FB16E2DC0500A908F8 /* OriginLock.cpp in Sources */,
 				FD581FAE1520F91F003A7A75 /* OscillatorNode.cpp in Sources */,
 				1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */,
+				CDA29A301CBF74D400901CCF /* WebPlaybackSessionInterfaceAVKit.mm in Sources */,
 				65FEA86909833ADE00BED4AB /* Page.cpp in Sources */,
 				1477E7760BF4134A00152872 /* PageCache.cpp in Sources */,
 				CD5E5B611A15F156000C609E /* PageConfiguration.cpp in Sources */,
@@ -31657,6 +31693,7 @@
 				B2227A140D00BF220071B782 /* SVGFontFaceElement.cpp in Sources */,
 				B2227A170D00BF220071B782 /* SVGFontFaceFormatElement.cpp in Sources */,
 				B2227A1A0D00BF220071B782 /* SVGFontFaceNameElement.cpp in Sources */,
+				CDA29A161CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.mm in Sources */,
 				B2227A1D0D00BF220071B782 /* SVGFontFaceSrcElement.cpp in Sources */,
 				B2227A200D00BF220071B782 /* SVGFontFaceUriElement.cpp in Sources */,
 				B2227A230D00BF220071B782 /* SVGForeignObjectElement.cpp in Sources */,
@@ -31791,6 +31828,7 @@
 				9759E93F14EF1CF80026A2DD /* TextTrack.cpp in Sources */,
 				516103B01CADBA7A0016B4C7 /* IDBValue.cpp in Sources */,
 				9759E94214EF1CF80026A2DD /* TextTrackCue.cpp in Sources */,
+				CDA29A311CBF74DA00901CCF /* WebAVPlayerController.mm in Sources */,
 				071A9EC2168FBC43002629F9 /* TextTrackCueGeneric.cpp in Sources */,
 				9759E94514EF1CF80026A2DD /* TextTrackCueList.cpp in Sources */,
 				076970861463AD8700F502CF /* TextTrackList.cpp in Sources */,

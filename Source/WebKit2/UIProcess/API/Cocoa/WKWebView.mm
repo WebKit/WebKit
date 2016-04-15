@@ -303,7 +303,7 @@ static int32_t deviceOrientation()
 #if !HAVE(AVKIT)
     return false;
 #else
-    if (!_page || !_page->videoFullscreenManager())
+    if (!_page)
         return false;
 
     return _page->videoFullscreenManager()->mayAutomaticallyShowVideoPictureInPicture();

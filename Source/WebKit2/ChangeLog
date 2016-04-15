@@ -1,3 +1,217 @@
+2016-04-14  Jer Noble  <jer.noble@apple.com>
+
+        Allow WebVideoFullscreenManager and Proxy to be used by audio elements.
+        https://bugs.webkit.org/show_bug.cgi?id=156564
+
+        Reviewed by Beth Dakin.
+
+        Tease apart WebVideoFullscreenManager and …Proxy into WebPlaybackSessionManager and …Proxy
+        classes dealing exclusively with playback state and commands, leaving fullscreen state and
+        commands in the WebVideoFullscreenManager… classes.
+
+        WebVideoFullscreenManager and …Proxy will now require an associated
+        WebPlaybackSessionManager and …Proxy class. The WebPlaybackSessionManager classes can be
+        used separately and without the WebVideoFullscreenManager classes.
+
+        * DerivedSources.make:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mayAutomaticallyShowVideoPictureInPicture]):
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h: Copied from Source/WebKit2/UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h.
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.messages.in: Copied from Source/WebKit2/UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in.
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm: Added.
+        (WebKit::WebPlaybackSessionModelContext::play):
+        (WebKit::WebPlaybackSessionModelContext::pause):
+        (WebKit::WebPlaybackSessionModelContext::togglePlayState):
+        (WebKit::WebPlaybackSessionModelContext::beginScrubbing):
+        (WebKit::WebPlaybackSessionModelContext::endScrubbing):
+        (WebKit::WebPlaybackSessionModelContext::seekToTime):
+        (WebKit::WebPlaybackSessionModelContext::fastSeek):
+        (WebKit::WebPlaybackSessionModelContext::beginScanningForward):
+        (WebKit::WebPlaybackSessionModelContext::beginScanningBackward):
+        (WebKit::WebPlaybackSessionModelContext::endScanning):
+        (WebKit::WebPlaybackSessionModelContext::selectAudioMediaOption):
+        (WebKit::WebPlaybackSessionModelContext::selectLegibleMediaOption):
+        (WebKit::WebPlaybackSessionManagerProxy::create):
+        (WebKit::WebPlaybackSessionManagerProxy::WebPlaybackSessionManagerProxy):
+        (WebKit::WebPlaybackSessionManagerProxy::~WebPlaybackSessionManagerProxy):
+        (WebKit::WebPlaybackSessionManagerProxy::invalidate):
+        (WebKit::WebPlaybackSessionManagerProxy::createModelAndInterface):
+        (WebKit::WebPlaybackSessionManagerProxy::ensureModelAndInterface):
+        (WebKit::WebPlaybackSessionManagerProxy::ensureModel):
+        (WebKit::WebPlaybackSessionManagerProxy::ensureInterface):
+        (WebKit::WebPlaybackSessionManagerProxy::addClientForContext):
+        (WebKit::WebPlaybackSessionManagerProxy::removeClientForContext):
+        (WebKit::WebPlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID):
+        (WebKit::WebPlaybackSessionManagerProxy::clearPlaybackControlsManager):
+        (WebKit::WebPlaybackSessionManagerProxy::resetMediaState):
+        (WebKit::WebPlaybackSessionManagerProxy::setCurrentTime):
+        (WebKit::WebPlaybackSessionManagerProxy::setBufferedTime):
+        (WebKit::WebPlaybackSessionManagerProxy::setSeekableRangesVector):
+        (WebKit::WebPlaybackSessionManagerProxy::setCanPlayFastReverse):
+        (WebKit::WebPlaybackSessionManagerProxy::setAudioMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionManagerProxy::setLegibleMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionManagerProxy::setExternalPlaybackProperties):
+        (WebKit::WebPlaybackSessionManagerProxy::setWirelessVideoPlaybackDisabled):
+        (WebKit::WebPlaybackSessionManagerProxy::setDuration):
+        (WebKit::WebPlaybackSessionManagerProxy::setRate):
+        (WebKit::WebPlaybackSessionManagerProxy::play):
+        (WebKit::WebPlaybackSessionManagerProxy::pause):
+        (WebKit::WebPlaybackSessionManagerProxy::togglePlayState):
+        (WebKit::WebPlaybackSessionManagerProxy::beginScrubbing):
+        (WebKit::WebPlaybackSessionManagerProxy::endScrubbing):
+        (WebKit::WebPlaybackSessionManagerProxy::seekToTime):
+        (WebKit::WebPlaybackSessionManagerProxy::fastSeek):
+        (WebKit::WebPlaybackSessionManagerProxy::beginScanningForward):
+        (WebKit::WebPlaybackSessionManagerProxy::beginScanningBackward):
+        (WebKit::WebPlaybackSessionManagerProxy::endScanning):
+        (WebKit::WebPlaybackSessionManagerProxy::selectAudioMediaOption):
+        (WebKit::WebPlaybackSessionManagerProxy::selectLegibleMediaOption):
+        (WebKit::WebPlaybackSessionManagerProxy::controlsManagerInterface):
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenModelContext::WebVideoFullscreenModelContext):
+        (WebKit::WebVideoFullscreenModelContext::~WebVideoFullscreenModelContext):
+        (WebKit::WebVideoFullscreenModelContext::play):
+        (WebKit::WebVideoFullscreenModelContext::pause):
+        (WebKit::WebVideoFullscreenModelContext::togglePlayState):
+        (WebKit::WebVideoFullscreenModelContext::beginScrubbing):
+        (WebKit::WebVideoFullscreenModelContext::endScrubbing):
+        (WebKit::WebVideoFullscreenModelContext::seekToTime):
+        (WebKit::WebVideoFullscreenModelContext::fastSeek):
+        (WebKit::WebVideoFullscreenModelContext::beginScanningForward):
+        (WebKit::WebVideoFullscreenModelContext::beginScanningBackward):
+        (WebKit::WebVideoFullscreenModelContext::endScanning):
+        (WebKit::WebVideoFullscreenModelContext::selectAudioMediaOption):
+        (WebKit::WebVideoFullscreenModelContext::selectLegibleMediaOption):
+        (WebKit::WebVideoFullscreenManagerProxy::create):
+        (WebKit::WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy):
+        (WebKit::WebVideoFullscreenManagerProxy::createModelAndInterface):
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoDimensions): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::enterFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::exitFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::cleanupFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::preparedToReturnToInline): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::requestFullscreenMode): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::didSetupFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::didExitFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::didEnterFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::didCleanupFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerFrame): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::playbackSessionManager):
+        (WebKit::WebPageProxy::videoFullscreenManager):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::hasActiveVideoForControlsManager):
+        (WebKit::WebPageProxy::isPlayingMediaDidChange): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::supportsVideoFullscreen):
+        (WebKit::WebChromeClient::setUpPlaybackControlsManager):
+        (WebKit::WebChromeClient::clearPlaybackControlsManager):
+        (WebKit::WebChromeClient::enterVideoFullscreenForVideoElement):
+        (WebKit::WebChromeClient::exitVideoFullscreenForVideoElement):
+        (WebKit::WebChromeClient::exitVideoFullscreenToModeWithoutAnimation):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::playbackSessionManager):
+        (WebKit::WebPage::videoFullscreenManager):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/cocoa/WebPlaybackSessionManager.h: Copied from Source/WebKit2/WebProcess/cocoa/WebVideoFullscreenManager.h.
+        (WebKit::WebPlaybackSessionInterfaceContext::create):
+        (WebKit::WebPlaybackSessionInterfaceContext::invalidate):
+        * WebProcess/cocoa/WebPlaybackSessionManager.messages.in: Added.
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm: Added.
+        (WebKit::nextContextId):
+        (WebKit::WebPlaybackSessionInterfaceContext::WebPlaybackSessionInterfaceContext):
+        (WebKit::WebPlaybackSessionInterfaceContext::~WebPlaybackSessionInterfaceContext):
+        (WebKit::WebPlaybackSessionInterfaceContext::resetMediaState):
+        (WebKit::WebPlaybackSessionInterfaceContext::setDuration):
+        (WebKit::WebPlaybackSessionInterfaceContext::setCurrentTime):
+        (WebKit::WebPlaybackSessionInterfaceContext::setBufferedTime):
+        (WebKit::WebPlaybackSessionInterfaceContext::setRate):
+        (WebKit::WebPlaybackSessionInterfaceContext::setSeekableRanges):
+        (WebKit::WebPlaybackSessionInterfaceContext::setCanPlayFastReverse):
+        (WebKit::WebPlaybackSessionInterfaceContext::setAudioMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionInterfaceContext::setLegibleMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionInterfaceContext::setExternalPlayback):
+        (WebKit::WebPlaybackSessionInterfaceContext::setWirelessVideoPlaybackDisabled):
+        (WebKit::WebPlaybackSessionManager::create):
+        (WebKit::WebPlaybackSessionManager::WebPlaybackSessionManager):
+        (WebKit::WebPlaybackSessionManager::~WebPlaybackSessionManager):
+        (WebKit::WebPlaybackSessionManager::createModelAndInterface):
+        (WebKit::WebPlaybackSessionManager::ensureModelAndInterface):
+        (WebKit::WebPlaybackSessionManager::ensureModel):
+        (WebKit::WebPlaybackSessionManager::ensureInterface):
+        (WebKit::WebPlaybackSessionManager::removeContext):
+        (WebKit::WebPlaybackSessionManager::addClientForContext):
+        (WebKit::WebPlaybackSessionManager::removeClientForContext):
+        (WebKit::WebPlaybackSessionManager::setUpPlaybackControlsManager):
+        (WebKit::WebPlaybackSessionManager::clearPlaybackControlsManager):
+        (WebKit::WebPlaybackSessionManager::contextIdForMediaElement):
+        (WebKit::WebPlaybackSessionManager::resetMediaState):
+        (WebKit::WebPlaybackSessionManager::setDuration):
+        (WebKit::WebPlaybackSessionManager::setCurrentTime):
+        (WebKit::WebPlaybackSessionManager::setBufferedTime):
+        (WebKit::WebPlaybackSessionManager::setRate):
+        (WebKit::WebPlaybackSessionManager::setSeekableRanges):
+        (WebKit::WebPlaybackSessionManager::setCanPlayFastReverse):
+        (WebKit::WebPlaybackSessionManager::setAudioMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionManager::setLegibleMediaSelectionOptions):
+        (WebKit::WebPlaybackSessionManager::setExternalPlayback):
+        (WebKit::WebPlaybackSessionManager::setWirelessVideoPlaybackDisabled):
+        (WebKit::WebPlaybackSessionManager::play):
+        (WebKit::WebPlaybackSessionManager::pause):
+        (WebKit::WebPlaybackSessionManager::togglePlayState):
+        (WebKit::WebPlaybackSessionManager::beginScrubbing):
+        (WebKit::WebPlaybackSessionManager::endScrubbing):
+        (WebKit::WebPlaybackSessionManager::seekToTime):
+        (WebKit::WebPlaybackSessionManager::fastSeek):
+        (WebKit::WebPlaybackSessionManager::beginScanningForward):
+        (WebKit::WebPlaybackSessionManager::beginScanningBackward):
+        (WebKit::WebPlaybackSessionManager::endScanning):
+        (WebKit::WebPlaybackSessionManager::selectAudioMediaOption):
+        (WebKit::WebPlaybackSessionManager::selectLegibleMediaOption):
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+        (WebKit::WebVideoFullscreenInterfaceContext::create):
+        * WebProcess/cocoa/WebVideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenInterfaceContext::WebVideoFullscreenInterfaceContext):
+        (WebKit::WebVideoFullscreenInterfaceContext::resetMediaState):
+        (WebKit::WebVideoFullscreenInterfaceContext::setDuration):
+        (WebKit::WebVideoFullscreenInterfaceContext::setCurrentTime):
+        (WebKit::WebVideoFullscreenInterfaceContext::setBufferedTime):
+        (WebKit::WebVideoFullscreenInterfaceContext::setRate):
+        (WebKit::WebVideoFullscreenInterfaceContext::setSeekableRanges):
+        (WebKit::WebVideoFullscreenInterfaceContext::setCanPlayFastReverse):
+        (WebKit::WebVideoFullscreenInterfaceContext::setAudioMediaSelectionOptions):
+        (WebKit::WebVideoFullscreenInterfaceContext::setLegibleMediaSelectionOptions):
+        (WebKit::WebVideoFullscreenInterfaceContext::setExternalPlayback):
+        (WebKit::WebVideoFullscreenInterfaceContext::setWirelessVideoPlaybackDisabled):
+        (WebKit::WebVideoFullscreenManager::create):
+        (WebKit::WebVideoFullscreenManager::WebVideoFullscreenManager):
+        (WebKit::WebVideoFullscreenManager::createModelAndInterface):
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        (WebKit::WebVideoFullscreenInterfaceContext::setVideoDimensions): Deleted.
+        (WebKit::WebVideoFullscreenManager::~WebVideoFullscreenManager): Deleted.
+        (WebKit::WebVideoFullscreenManager::ensureModelAndInterface): Deleted.
+        (WebKit::WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation): Deleted.
+        (WebKit::WebVideoFullscreenManager::setVideoDimensions): Deleted.
+        (WebKit::WebVideoFullscreenManager::requestFullscreenMode): Deleted.
+        (WebKit::WebVideoFullscreenManager::fullscreenModeChanged): Deleted.
+        (WebKit::WebVideoFullscreenManager::didSetupFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManager::didEnterFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManager::didExitFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManager::didCleanupFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManager::setVideoLayerGravityEnum): Deleted.
+        (WebKit::WebVideoFullscreenManager::fullscreenMayReturnToInline): Deleted.
+        (WebKit::WebVideoFullscreenManager::setVideoLayerFrameFenced): Deleted.
+
 2016-04-15  John Wilander  <wilander@apple.com>
 
         Refactor WebSockets handshake to use StringView instead of String for header validation.

@@ -22,16 +22,6 @@
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 messages -> WebVideoFullscreenManager {
-    Play(uint64_t contextId)
-    Pause(uint64_t contextId)
-    TogglePlayState(uint64_t contextId)
-    BeginScrubbing(uint64_t contextId)
-    EndScrubbing(uint64_t contextId)
-    SeekToTime(uint64_t contextId, double time)
-    FastSeek(uint64_t contextId, double time)
-    BeginScanningForward(uint64_t contextId)
-    BeginScanningBackward(uint64_t contextId)
-    EndScanning(uint64_t contextId)
     RequestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
     DidSetupFullscreen(uint64_t contextId)
     DidExitFullscreen(uint64_t contextId)
@@ -39,8 +29,6 @@ messages -> WebVideoFullscreenManager {
     DidCleanupFullscreen(uint64_t contextId)
     SetVideoLayerFrameFenced(uint64_t contextId, WebCore::FloatRect bounds, IPC::Attachment fencePort)
     SetVideoLayerGravityEnum(uint64_t contextId, unsigned gravity)
-    SelectAudioMediaOption(uint64_t contextId, uint64_t index)
-    SelectLegibleMediaOption(uint64_t contextId, uint64_t index)
     FullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
     FullscreenMayReturnToInline(uint64_t contextId, bool isPageVisible)
 }

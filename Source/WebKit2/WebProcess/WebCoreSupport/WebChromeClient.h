@@ -244,8 +244,8 @@ private:
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
-    void setUpVideoControlsManager(WebCore::HTMLVideoElement&) override;
-    void clearVideoControlsManager() override;
+    void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&) override;
+    void clearPlaybackControlsManager(WebCore::HTMLMediaElement&) override;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) override;
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)

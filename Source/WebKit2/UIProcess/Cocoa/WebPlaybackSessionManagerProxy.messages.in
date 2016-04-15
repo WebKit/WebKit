@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,15 +21,19 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-messages -> WebVideoFullscreenManagerProxy {
-    SetVideoDimensions(uint64_t contextId, bool hasVideo, unsigned width, unsigned height)
-    SetupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, WebCore::IntRect initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture)
-    EnterFullscreen(uint64_t contextId)
-    ExitFullscreen(uint64_t contextId, WebCore::IntRect finalRect)
-    CleanupFullscreen(uint64_t contextId)
-    PreparedToReturnToInline(uint64_t contextId, bool visible, WebCore::IntRect inlineRect)
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-    ExitFullscreenWithoutAnimationToMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
-#endif
+messages -> WebPlaybackSessionManagerProxy {
+    ResetMediaState(uint64_t contextId)
+    SetCurrentTime(uint64_t contextId, double currentTime, double hostTime)
+    SetBufferedTime(uint64_t contextId, double bufferedTime)
+    SetSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges)
+    SetCanPlayFastReverse(uint64_t contextId, bool value)
+    SetAudioMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
+    SetLegibleMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
+    SetExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
+    SetWirelessVideoPlaybackDisabled(uint64_t contextId, bool disabled)
+    SetDuration(uint64_t contextId, double duration)
+    SetRate(uint64_t contextId, bool isPlaying, double rate)
+    SetUpPlaybackControlsManagerWithID(uint64_t contextId)
+    ClearPlaybackControlsManager()
 }
 #endif

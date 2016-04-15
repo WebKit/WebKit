@@ -42,13 +42,14 @@ namespace WebCore {
 class AudioTrack;
 class HTMLVideoElement;
 class TextTrack;
+class WebPlaybackSessionModelMediaElement;
 class WebVideoFullscreenInterface;
 
 class WebVideoFullscreenModelVideoElement : public WebVideoFullscreenModel, public EventListener {
 public:
-    static RefPtr<WebVideoFullscreenModelVideoElement> create()
+    static RefPtr<WebVideoFullscreenModelVideoElement> create(WebPlaybackSessionModelMediaElement& playbackSessionModel)
     {
-        return adoptRef(*new WebVideoFullscreenModelVideoElement());
+        return adoptRef(*new WebVideoFullscreenModelVideoElement(playbackSessionModel));
     }
     WEBCORE_EXPORT virtual ~WebVideoFullscreenModelVideoElement();
     WEBCORE_EXPORT void setWebVideoFullscreenInterface(WebVideoFullscreenInterface*);
@@ -80,12 +81,13 @@ public:
     WEBCORE_EXPORT bool isVisible() const override;
 
 protected:
-    WEBCORE_EXPORT WebVideoFullscreenModelVideoElement();
+    WEBCORE_EXPORT WebVideoFullscreenModelVideoElement(WebPlaybackSessionModelMediaElement&);
 
 private:
     static const Vector<WTF::AtomicString>& observedEventNames();
     const WTF::AtomicString& eventNameAll();
-    
+
+    Ref<WebPlaybackSessionModelMediaElement> m_playbackSessionModel;
     RefPtr<HTMLVideoElement> m_videoElement;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     bool m_isListening { false };
@@ -93,8 +95,6 @@ private:
     FloatRect m_videoFrame;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
-
-    void updateLegibleOptions();
 };
 
 }

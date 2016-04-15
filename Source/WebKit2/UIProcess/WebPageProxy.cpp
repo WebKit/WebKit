@@ -170,6 +170,10 @@
 #include <WebKitAdditions/WebPageProxyIncludes.h>
 #endif
 
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#include "WebPlaybackSessionManagerProxy.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -471,7 +475,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     m_fullScreenManager = WebFullScreenManagerProxy::create(*this, m_pageClient.fullScreenManagerProxyClient());
 #endif
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this);
+    m_playbackSessionManager = WebPlaybackSessionManagerProxy::create(*this);
+    m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this, *m_playbackSessionManager);
 #endif
 #if ENABLE(VIBRATION)
     m_vibration = WebVibrationProxy::create(this);
@@ -708,7 +713,8 @@ void WebPageProxy::reattachToWebProcess()
     m_fullScreenManager = WebFullScreenManagerProxy::create(*this, m_pageClient.fullScreenManagerProxyClient());
 #endif
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this);
+    m_playbackSessionManager = WebPlaybackSessionManagerProxy::create(*this);
+    m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this, *m_playbackSessionManager);
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -4029,9 +4035,14 @@ WebFullScreenManagerProxy* WebPageProxy::fullScreenManager()
 #endif
     
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-RefPtr<WebVideoFullscreenManagerProxy> WebPageProxy::videoFullscreenManager()
+WebPlaybackSessionManagerProxy* WebPageProxy::playbackSessionManager()
 {
-    return m_videoFullscreenManager;
+    return m_playbackSessionManager.get();
+}
+
+WebVideoFullscreenManagerProxy* WebPageProxy::videoFullscreenManager()
+{
+    return m_videoFullscreenManager.get();
 }
 #endif
 
@@ -5064,6 +5075,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_visibleScrollerThumbRect = IntRect();
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    if (m_playbackSessionManager) {
+        m_playbackSessionManager->invalidate();
+        m_playbackSessionManager = nullptr;
+    }
     if (m_videoFullscreenManager) {
         m_videoFullscreenManager->invalidate();
         m_videoFullscreenManager = nullptr;
@@ -6040,7 +6055,7 @@ void WebPageProxy::videoControlsManagerDidChange()
 bool WebPageProxy::hasActiveVideoForControlsManager() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    return m_videoFullscreenManager && m_videoFullscreenManager->controlsManagerInterface() && m_mediaState & MediaProducer::HasAudioOrVideo;
+    return m_playbackSessionManager && m_playbackSessionManager->controlsManagerInterface() && m_mediaState & MediaProducer::HasAudioOrVideo;
 #else
     return false;
 #endif

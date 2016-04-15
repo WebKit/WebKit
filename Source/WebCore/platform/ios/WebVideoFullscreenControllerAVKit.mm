@@ -33,6 +33,8 @@
 #import "QuartzCoreSPI.h"
 #import "SoftLinking.h"
 #import "TimeRanges.h"
+#import "WebPlaybackSessionInterfaceAVKit.h"
+#import "WebPlaybackSessionModelMediaElement.h"
 #import "WebVideoFullscreenChangeObserver.h"
 #import "WebVideoFullscreenInterfaceAVKit.h"
 #import "WebVideoFullscreenModelVideoElement.h"
@@ -554,14 +556,14 @@ void WebVideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& vide
     dispatch_async(dispatch_get_main_queue(), [strongThis, this, viewRef, mode] {
         ASSERT(isUIThread());
 
-        m_interface = WebVideoFullscreenInterfaceAVKit::create();
+        m_interface = WebVideoFullscreenInterfaceAVKit::create(WebPlaybackSessionInterfaceAVKit::create().get());
         m_interface->setWebVideoFullscreenChangeObserver(this);
         m_interface->setWebVideoFullscreenModel(this);
         m_videoFullscreenView = adoptNS([[getUIViewClass() alloc] init]);
         
         RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
         WebThreadRun([strongThis, this, viewRef, mode] {
-            m_model = WebVideoFullscreenModelVideoElement::create();
+            m_model = WebVideoFullscreenModelVideoElement::create(WebPlaybackSessionModelMediaElement::create().get());
             m_model->setWebVideoFullscreenInterface(this);
             m_model->setVideoElement(m_videoElement.get());
             

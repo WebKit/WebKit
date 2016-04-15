@@ -138,6 +138,8 @@ MESSAGE_RECEIVERS = \
     WebPage \
     WebPageProxy \
     WebPasteboardProxy \
+    WebPlaybackSessionManager \
+    WebPlaybackSessionManagerProxy \
     WebProcess \
     WebProcessConnection \
     WebProcessPool \

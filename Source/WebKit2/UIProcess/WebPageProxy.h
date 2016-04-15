@@ -192,6 +192,7 @@ class WebBackForwardListItem;
 class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebFullScreenManagerProxy;
+class WebPlaybackSessionManagerProxy;
 class WebNavigationState;
 class WebVideoFullscreenManagerProxy;
 class WebKeyboardEvent;
@@ -328,7 +329,8 @@ public:
     WebFullScreenManagerProxy* fullScreenManager();
 #endif
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    RefPtr<WebVideoFullscreenManagerProxy> videoFullscreenManager();
+    WebPlaybackSessionManagerProxy* playbackSessionManager();
+    WebVideoFullscreenManagerProxy* videoFullscreenManager();
 #endif
 
 #if PLATFORM(IOS)
@@ -1547,6 +1549,7 @@ private:
     RefPtr<WebFullScreenManagerProxy> m_fullScreenManager;
 #endif
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    RefPtr<WebPlaybackSessionManagerProxy> m_playbackSessionManager;
     RefPtr<WebVideoFullscreenManagerProxy> m_videoFullscreenManager;
 #endif
 #if PLATFORM(IOS)
