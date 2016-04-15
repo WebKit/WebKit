@@ -13,6 +13,7 @@ function test()
     // and one not inlined.
 
     InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
 
     var breakpointId = null;
     var scriptId = 0;

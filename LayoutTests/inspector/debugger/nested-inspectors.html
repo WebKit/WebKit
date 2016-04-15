@@ -9,6 +9,7 @@ function test()
         // This function runs in the second inspector window. We can use this one to debug the first inspector.
 
         InspectorProtocol.sendCommand("Debugger.enable", {});
+        InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
         InspectorProtocol.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, function(responseObject) {
             InspectorProtocol.checkForError(responseObject);
             ProtocolTest.log("Debugger.setPauseOnExceptions - all");

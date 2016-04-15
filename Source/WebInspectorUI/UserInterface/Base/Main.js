@@ -92,8 +92,7 @@ WebInspector.loaded = function()
         InspectorBackend.registerReplayDispatcher(new WebInspector.ReplayObserver);
 
     // Enable agents.
-    if (window.InspectorAgent)
-        InspectorAgent.enable();
+    InspectorAgent.enable();
 
     // Perform one-time tasks.
     WebInspector.CSSCompletions.requestCSSCompletions();
@@ -125,13 +124,12 @@ WebInspector.loaded = function()
     this.replayManager = new WebInspector.ReplayManager;
 
     // Enable the Console Agent after creating the singleton managers.
-    if (window.ConsoleAgent)
-        ConsoleAgent.enable();
+    ConsoleAgent.enable();
 
     // Tell the backend we are initialized after all our initialization messages have been sent.
     setTimeout(function() {
         // COMPATIBILITY (iOS 8): Inspector.initialized did not exist yet.
-        if (window.InspectorAgent && InspectorAgent.initialized)
+        if (InspectorAgent.initialized)
             InspectorAgent.initialized();
     }, 0);
 

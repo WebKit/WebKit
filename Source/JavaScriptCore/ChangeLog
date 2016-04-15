@@ -1,3 +1,19 @@
+2016-04-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cleanup inspector/debugger tests
+        https://bugs.webkit.org/show_bug.cgi?id=156619
+
+        Reviewed by Brian Burg.
+
+        While cleaning up the tests it exposed the fact that breakpoints
+        were not getting disabled when the inspector closes. This means
+        that opening the inspector, with breakpoints, and closing the
+        inspector, would leave the JSC::Debugger thinking breakpoints
+        are active. The JSC::Debugger should be reset.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::disable):
+
 2016-04-14  Geoffrey Garen  <ggaren@apple.com>
 
         CopiedBlock should be 64kB

@@ -8,6 +8,7 @@ function test()
 {
     InspectorProtocol.sendCommand("Console.enable", {});
     InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
 
     var logsSeen = 0;
     const expectedLogs = 2;

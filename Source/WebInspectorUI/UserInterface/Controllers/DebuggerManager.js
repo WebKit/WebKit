@@ -29,8 +29,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
     {
         super();
 
-        if (window.DebuggerAgent)
-            DebuggerAgent.enable();
+        DebuggerAgent.enable();
 
         WebInspector.notifications.addEventListener(WebInspector.Notification.DebugUIEnabledDidChange, this._debugUIEnabledDidChange, this);
 
@@ -79,8 +78,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             this._temporarilyDisabledBreakpointsRestoreSetting.value = null;
         }
 
-        if (window.DebuggerAgent)
-            DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
+        DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
 
         this._updateBreakOnExceptionsState();
 

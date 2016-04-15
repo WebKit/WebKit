@@ -9,6 +9,7 @@ eval("function sourceURLFunction() {\n    var a = 1;\n    var b = 2;\n    var c 
 function test()
 {
     InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
 
     InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {

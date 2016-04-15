@@ -1,3 +1,49 @@
+2016-04-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cleanup inspector/debugger tests
+        https://bugs.webkit.org/show_bug.cgi?id=156619
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/breakpoint-action-detach.html:
+        * inspector/debugger/breakpoint-action-with-exception.html:
+        * inspector/debugger/breakpoint-condition-detach.html:
+        * inspector/debugger/breakpoint-condition-with-bad-script.html:
+        * inspector/debugger/breakpoint-condition-with-exception.html:
+        * inspector/debugger/breakpoint-eval-with-exception.html:
+        * inspector/debugger/breakpoint-inside-conditons-and-actions.html:
+        * inspector/debugger/call-frame-function-name.html:
+        * inspector/debugger/call-frame-this-host.html:
+        * inspector/debugger/call-frame-this-nonstrict.html:
+        * inspector/debugger/call-frame-this-strict.html:
+        * inspector/debugger/debugger-statement.html:
+        * inspector/debugger/didSampleProbe-multiple-probes.html:
+        * inspector/debugger/hit-breakpoint-from-console.html:
+        * inspector/debugger/nested-inspectors.html:
+        * inspector/debugger/pause-on-assert.html:
+        * inspector/debugger/regress-133182.html:
+        * inspector/debugger/removeBreakpoint.html:
+        * inspector/debugger/setBreakpoint-actions.html:
+        * inspector/debugger/setBreakpoint-autoContinue.html:
+        * inspector/debugger/setBreakpoint-column.html:
+        * inspector/debugger/setBreakpoint-condition.html:
+        * inspector/debugger/setBreakpoint-dfg-and-modify-local.html:
+        * inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html:
+        * inspector/debugger/setBreakpoint-dfg.html:
+        * inspector/debugger/setBreakpoint-options-exception.html:
+        * inspector/debugger/setBreakpoint.html:
+        * inspector/debugger/setBreakpointByUrl-sourceURL.html:
+        * inspector/debugger/setPauseOnExceptions-all.html:
+        * inspector/debugger/setPauseOnExceptions-none.html:
+        * inspector/debugger/setPauseOnExceptions-uncaught.html:
+        Activate breakpoints in protocol tests that may set breakpoints and pause.
+        Inspector tests automatically enable breakpoints.
+
+        * inspector/debugger/setVariableValue-expected.txt: Removed.
+        * inspector/debugger/setVariableValue.html: Removed.
+        * platform/gtk/TestExpectations:
+        Remove references to bad test. The protocol command no longer exists.
+
 2016-04-15  John Wilander  <wilander@apple.com>
 
         Refactor WebSockets handshake to use StringView instead of String for header validation.

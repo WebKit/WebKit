@@ -1444,7 +1444,6 @@ webkit.org/b/122571 inspector/debugger/call-frame-this-nonstrict.html [ Timeout 
 webkit.org/b/122571 inspector/debugger/setBreakpoint-column.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/debugger/setBreakpoint-condition.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/debugger/removeBreakpoint.html [ Timeout Pass ]
-webkit.org/b/122571 inspector/debugger/setVariableValue.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/debugger/call-frame-this-strict.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/dom/request-child-nodes-depth.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/dom/focus.html [ Failure Timeout Pass ]

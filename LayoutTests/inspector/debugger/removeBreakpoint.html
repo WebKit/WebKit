@@ -6,6 +6,7 @@
 function test()
 {
     InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
 
     var breakpointTriggered = 0;
 

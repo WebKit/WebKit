@@ -34,6 +34,7 @@ function test()
     }
 
     InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
     InspectorProtocol.sendCommand("Debugger.setPauseOnExceptions", {state: "uncaught"}, function(responseObject) {
         InspectorProtocol.checkForError(responseObject);
         expectPause = true;

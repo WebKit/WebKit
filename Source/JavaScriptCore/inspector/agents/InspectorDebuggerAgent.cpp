@@ -104,6 +104,9 @@ void InspectorDebuggerAgent::disable(bool isBeingDestroyed)
     m_scriptDebugServer.removeListener(this, isBeingDestroyed);
     clearInspectorBreakpointState();
 
+    if (!isBeingDestroyed)
+        m_scriptDebugServer.deactivateBreakpoints();
+
     ASSERT(m_javaScriptBreakpoints.isEmpty());
 
     if (m_listener)

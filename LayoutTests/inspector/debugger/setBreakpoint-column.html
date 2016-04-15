@@ -12,6 +12,7 @@ function test()
     // by running some expressions at that call frame.
 
     InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
 
     InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
