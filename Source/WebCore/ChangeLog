@@ -1,3 +1,18 @@
+2016-04-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [CSS Font Loading] FontFace's promise may never be resolved/rejected if Content Security Policy blocks all the URLs
+        https://bugs.webkit.org/show_bug.cgi?id=156605
+
+        Reviewed by Daniel Bates.
+
+        If all the fonts are blocked, we will create a FontFace with no FontFaceSources.
+        Loading such a FontFace should reject the promise.
+
+        Test: fast/text/font-loading-csp-block-all.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::pump):
+
 2016-04-15  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Another unreviewed build fix.
