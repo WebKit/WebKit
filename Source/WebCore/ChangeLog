@@ -1,3 +1,12 @@
+2016-04-15  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix for iOS simulator. Assert the correct variable.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer layoutSublayers]):
+        (-[WebAVPlayerLayer resolveBounds]):
+        (-[WebAVPlayerLayer setVideoGravity:]):
+
 2016-04-14  Jer Noble  <jer.noble@apple.com>
 
         Allow WebVideoFullscreenManager and Proxy to be used by audio elements.

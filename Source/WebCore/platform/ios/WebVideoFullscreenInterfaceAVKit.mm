@@ -294,7 +294,7 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
     } else if ([getAVLayerVideoGravityResizeAspectFill() isEqualToString:self.videoGravity]) {
         sourceVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.modelVideoLayerFrame);
         self.modelVideoLayerFrame = CGRectMake(0, 0, sourceVideoFrame.width(), sourceVideoFrame.height());
-        ASSERT(fullscreenInterface->model());
+        ASSERT(_fullscreenInterface->model());
         _fullscreenInterface->model()->setVideoLayerFrame(self.modelVideoLayerFrame);
         targetVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.bounds);
     } else
@@ -327,7 +327,7 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
     [CATransaction setDisableActions:YES];
     
     self.modelVideoLayerFrame = [self bounds];
-    ASSERT(fullscreenInterface->model());
+    ASSERT(_fullscreenInterface->model());
     _fullscreenInterface->model()->setVideoLayerFrame(self.modelVideoLayerFrame);
     [(UIView *)[_videoSublayer delegate] setTransform:CGAffineTransformIdentity];
     
@@ -351,7 +351,7 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
     else
         ASSERT_NOT_REACHED();
     
-    ASSERT(fullscreenInterface->model());
+    ASSERT(_fullscreenInterface->model());
     _fullscreenInterface->model()->setVideoLayerGravity(gravity);
 }
 
