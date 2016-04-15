@@ -1,3 +1,14 @@
+2016-04-15  Chris Dumez  <cdumez@apple.com>
+
+        Mark NetworkLoad as FastAllocated
+        https://bugs.webkit.org/show_bug.cgi?id=156628
+
+        Reviewed by Alex Christensen.
+
+        Mark NetworkLoad as FastAllocated for performance.
+
+        * NetworkProcess/NetworkLoad.h:
+
 2016-04-14  Jer Noble  <jer.noble@apple.com>
 
         Allow WebVideoFullscreenManager and Proxy to be used by audio elements.
