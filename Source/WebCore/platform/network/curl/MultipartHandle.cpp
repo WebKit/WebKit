@@ -155,7 +155,7 @@ bool MultipartHandle::parseHeadersIfPossible()
         if (name.isEmpty())
             break;
 
-        m_headers.add(name, value);
+        m_headers.add(name.toString(), value);
     }
 
     m_buffer.remove(0, totalConsumedLength + 1);

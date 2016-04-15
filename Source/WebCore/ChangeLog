@@ -1,3 +1,10 @@
+2016-04-15  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Another unreviewed build fix.
+
+        * platform/network/curl/MultipartHandle.cpp:
+        (WebCore::MultipartHandle::parseHeadersIfPossible):
+
 2016-04-15  Brent Fulgham  <bfulgham@apple.com>
 
         [WinCairo] Unreviewed build fix.,
