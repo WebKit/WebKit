@@ -1,3 +1,10 @@
+2016-04-14  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix after r199554.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+
 2016-04-14  Brian Burg  <bburg@apple.com>
 
         Web Automation: suppress automatic text correction in pages controlled by automation

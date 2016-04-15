@@ -181,6 +181,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/WKNavigationAction.mm
     UIProcess/API/Cocoa/WKNavigationData.mm
     UIProcess/API/Cocoa/WKNavigationResponse.mm
+    UIProcess/API/Cocoa/WKOpenPanelParameters.mm
     UIProcess/API/Cocoa/WKPreferences.mm
     UIProcess/API/Cocoa/WKPreviewActionItem.mm
     UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.mm
