@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007, 2011, 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -486,6 +486,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 
 - (void)setFetchAPIEnabled:(BOOL)flag;
 - (BOOL)fetchAPIEnabled;
+
+- (void)setDownloadAttributeEnabled:(BOOL)flag;
+- (BOOL)downloadAttributeEnabled;
 
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
 @property (nonatomic) BOOL mediaDataLoadsAutomatically;

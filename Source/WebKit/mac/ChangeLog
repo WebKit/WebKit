@@ -1,3 +1,25 @@
+2016-04-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Make <a download> a runtime enabled option
+        https://bugs.webkit.org/show_bug.cgi?id=156583
+        <rdar://problem/25733449>
+
+        Reviewed by Alex Christensen.
+
+        Add a download attribute runtime flag based on preferences.
+        Disable the download attribute by default.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setFetchAPIEnabled:]):
+        (-[WebPreferences downloadAttributeEnabled]):
+        (-[WebPreferences setDownloadAttributeEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged]): Set the runtime flag properly
+        based on the user preferences.
+
 2016-04-09  Gavin Barraclough  <barraclough@apple.com>
 
         WebKit should adopt journal_mode=wal for all SQLite databases.

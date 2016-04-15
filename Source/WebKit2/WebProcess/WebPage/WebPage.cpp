@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
@@ -3103,6 +3103,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::fetchAPIEnabledKey()));
 #endif
 
+#if ENABLE(DOWNLOAD_ATTRIBUTE)
+    RuntimeEnabledFeatures::sharedFeatures().setDownloadAttributeEnabled(store.getBoolValueForKey(WebPreferencesKey::downloadAttributeEnabledKey()));
+#endif
+    
     bool processSuppressionEnabled = store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey());
     if (m_processSuppressionEnabled != processSuppressionEnabled) {
         m_processSuppressionEnabled = processSuppressionEnabled;

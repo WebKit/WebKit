@@ -2496,6 +2496,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled([preferences webGL2Enabled]);
 #endif
 
+#if ENABLE(DOWNLOAD_ATTRIBUTE)
+    RuntimeEnabledFeatures::sharedFeatures().setDownloadAttributeEnabled([preferences downloadAttributeEnabled]);
+#endif
+
     NSTimeInterval timeout = [preferences incrementalRenderingSuppressionTimeoutInSeconds];
     if (timeout > 0)
         settings.setIncrementalRenderingSuppressionTimeoutInSeconds(timeout);

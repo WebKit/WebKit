@@ -1,3 +1,25 @@
+2016-04-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Make <a download> a runtime enabled option
+        https://bugs.webkit.org/show_bug.cgi?id=156583
+        <rdar://problem/25733449>
+
+        Reviewed by Alex Christensen.
+
+        Add a download attribute runtime flag based on preferences.
+        Disable the download attribute by default.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesGetFetchAPIEnabled):
+        (WKPreferencesSetDownloadAttributeEnabled):
+        (WKPreferencesGetDownloadAttributeEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-04-14  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r199554.

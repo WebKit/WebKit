@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -229,6 +229,7 @@
     macro(CustomElementsEnabled, customElementsEnabled, Bool, bool, false) \
     macro(FetchAPIEnabled, fetchAPIEnabled, Bool, bool, false) \
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false) \
+    macro(DownloadAttributeEnabled, downloadAttributeEnabled, Bool, bool, false) \
     FOR_EACH_ADDITIONAL_WEBKIT_BOOL_PREFERENCE(macro) \
     \
 

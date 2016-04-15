@@ -122,6 +122,7 @@ public:
     void dispatchPendingLoadRequests();
     void setCacheModel(int);
     void setAsynchronousSpellCheckingEnabled(bool);
+    void setDownloadAttributeEnabled(bool);
 
     // Special DOM functions.
     void clearBackForwardList();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 interface HTMLAnchorElement : HTMLElement {
     [Reflect] attribute DOMString charset;
     [Reflect] attribute DOMString coords;
-    [Conditional=DOWNLOAD_ATTRIBUTE, Reflect] attribute DOMString download;
+    [Conditional=DOWNLOAD_ATTRIBUTE, EnabledAtRuntime=DownloadAttribute, Reflect] attribute DOMString download;
     [Reflect] attribute DOMString hreflang;
     [Reflect] attribute DOMString name;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -426,6 +426,10 @@ WK_EXPORT bool WKPreferencesGetCustomElementsEnabled(WKPreferencesRef);
 // Defaults to false
 WK_EXPORT void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef);
+
+// Defaults to false
+WK_EXPORT void WKPreferencesSetDownloadAttributeEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetDownloadAttributeEnabled(WKPreferencesRef);
 
 #ifdef __cplusplus
 }

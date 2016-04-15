@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -42,6 +42,7 @@
 #include "PlatformMouseEvent.h"
 #include "RenderImage.h"
 #include "ResourceRequest.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGImage.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
@@ -553,10 +554,10 @@ void HTMLAnchorElement::handleClick(Event* event)
     appendServerMapMousePosition(url, event);
     URL kurl = document().completeURL(url.toString());
 
-#if ENABLE(DOWNLOAD_ATTRIBUTE)
-    auto downloadAttribute = fastGetAttribute(downloadAttr);
-#else
     auto downloadAttribute = nullAtom;
+#if ENABLE(DOWNLOAD_ATTRIBUTE)
+    if (RuntimeEnabledFeatures::sharedFeatures().downloadAttributeEnabled())
+        downloadAttribute = fastGetAttribute(downloadAttr);
 #endif
 
     frame->loader().urlSelected(kurl, target(), event, LockHistory::No, LockBackForwardList::No, hasRel(RelationNoReferrer) ? NeverSendReferrer : MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), downloadAttribute);
