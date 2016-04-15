@@ -285,7 +285,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
 
 #if ENABLE(SHADOW_DOM)
     if (element.shadowRoot() && !element.shadowRoot()->styleResolver().ruleSets().authorStyle()->hostPseudoClassRules().isEmpty())
-        return nullptr;
+        return false;
 #endif
 
 #if ENABLE(VIDEO_TRACK)
