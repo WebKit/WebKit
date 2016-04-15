@@ -499,6 +499,9 @@ HTMLMediaElement::~HTMLMediaElement()
     setShouldDelayLoadEvent(false);
     unregisterWithDocument(document());
 
+    if (document().page())
+        document().page()->chrome().client().clearPlaybackControlsManager(*this);
+
 #if ENABLE(VIDEO_TRACK)
     if (m_audioTracks) {
         m_audioTracks->clearElement();
@@ -4824,10 +4827,8 @@ void HTMLMediaElement::updatePlayState()
     LOG(Media, "HTMLMediaElement::updatePlayState(%p) - shouldBePlaying = %s, playerPaused = %s", this, boolString(shouldBePlaying), boolString(playerPaused));
 
     if (shouldBePlaying) {
-        if (document().page() && m_mediaSession->canControlControlsManager(*this)) {
-            HTMLVideoElement& asVideo = downcast<HTMLVideoElement>(*this);
-            document().page()->chrome().client().setUpPlaybackControlsManager(asVideo);
-        }
+        if (document().page() && m_mediaSession->canControlControlsManager(*this))
+            document().page()->chrome().client().setUpPlaybackControlsManager(*this);
 
         setDisplayMode(Video);
         invalidateCachedTime();
@@ -4861,7 +4862,7 @@ void HTMLMediaElement::updatePlayState()
         startPlaybackProgressTimer();
         setPlaying(true);
     } else {
-        if (endedPlayback() && document().page() && is<HTMLVideoElement>(*this))
+        if (endedPlayback() && document().page())
             document().page()->chrome().client().clearPlaybackControlsManager(*this);
 
         if (!playerPaused)
@@ -5030,7 +5031,10 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
 
     if (m_videoFullscreenMode != VideoFullscreenModeNone)
         exitFullscreen();
-    
+
+    if (document().page())
+        document().page()->chrome().client().clearPlaybackControlsManager(*this);
+
     m_inActiveDocument = false;
 
     // Stop the playback without generating events

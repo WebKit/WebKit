@@ -1,3 +1,24 @@
+2016-04-15  Jer Noble  <jer.noble@apple.com>
+
+        Audio elements should be able to have a controls manager.
+        https://bugs.webkit.org/show_bug.cgi?id=156630
+
+        Reviewed by Beth Dakin.
+
+        Now that there is no longer a architectural restriction about what kind of media elements
+        can be used with WebPlaybackSessionManager, allow audio elements to create a controls
+        manager.
+
+        Drive-by fix: clear the controls manager when destroying the media player due to entering
+        the page cache, and when destroying the media element.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::stopWithoutDestroyingMediaPlayer):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canControlControlsManager):
+
 2016-04-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Calling SVGAnimatedPropertyTearOff::animationEnded() will crash if the SVG property is not animating

@@ -214,9 +214,7 @@ bool MediaElementSession::pageAllowsPlaybackAfterResuming(const HTMLMediaElement
 
 bool MediaElementSession::canControlControlsManager(const HTMLMediaElement& element) const
 {
-    // FIXME: rdar://problem/25537071 Audio elements should be able to have a controls manager as well.
-    // Audio elements should probably only have a controls manager if they started playing via a user gesture.
-    if (!element.isVideo())
+    if (!element.hasAudio())
         return false;
 
     if (!playbackPermitted(element))
@@ -226,10 +224,8 @@ bool MediaElementSession::canControlControlsManager(const HTMLMediaElement& elem
     if (!renderer)
         return false;
 
-    if (renderer->clientWidth() >= elementMainContentMinimumWidth && renderer->clientHeight() >= elementMainContentMinimumHeight) {
-        if (element.hasAudio() && element.hasVideo())
+    if (element.hasVideo() && renderer->clientWidth() >= elementMainContentMinimumWidth && renderer->clientHeight() >= elementMainContentMinimumHeight)
             return true;
-    }
 
     if (ScriptController::processingUserGestureForMedia())
         return true;
