@@ -921,6 +921,7 @@ void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& sour
 
     HTMLTextFormControlElement::copyNonAttributePropertiesFromElement(source);
 
+    updateValidity();
     setFormControlValueMatchesRenderer(false);
     m_inputType->updateInnerTextValue();
 }

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This test makes sure that calling checkValidity() on a cloned node does not crash a Debug build. The test passes if there is no crash (and if you don't see any 'FAIL's)");
+
+var element;
+var element2;
+
+function checkInputElement() {
+    element = document.createElement("input");
+    element.required = true;
+    element.value = "hi"
+    shouldBeTrue("element.checkValidity()");
+    element2 = element.cloneNode();
+    shouldBeTrue("element2.checkValidity()");
+}
+
+function checkDeepSelect() {
+    element = document.createElement("select")
+    element.innerHTML =   "<option>Volvo</option><option>Saab</option><option>Opel</option>";
+    element.required=true;
+    shouldBeTrue("element.checkValidity()");
+    element2 = element.cloneNode(true);
+    shouldBeTrue("element2.checkValidity()");
+}
+
+function checkShallowSelect() {
+    element = document.createElement("select")
+    element.innerHTML =   "<option>Volvo</option><option>Saab</option><option>Opel</option>";
+    element.required = true;
+    shouldBeTrue("element.checkValidity()");
+    element2 = element.cloneNode();
+    shouldBeFalse("element2.checkValidity()");
+}
+
+function checkTextArea() {
+    element = document.createElement("textarea")
+    element.required = true;
+    element.checkValidity();
+    element.value = "a";
+    shouldBeTrue("element.checkValidity()");
+    element2 = element.cloneNode();
+    // https://bugs.webkit.org/show_bug.cgi?id=156637 will fix this bug.
+    // shouldBeTrue("element2.checkValidity()");
+    element2.value = element.value;
+    shouldBeTrue("element2.checkValidity()");
+}
+
+checkInputElement();
+checkDeepSelect();
+checkShallowSelect();
+checkTextArea();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
