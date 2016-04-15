@@ -1073,6 +1073,19 @@ sub parseSerializationPatternList
     }
 }
 
+sub parseIdentifierList
+{
+    my $self = shift;
+    my $next = $self->nextToken();
+
+    my @identifiers = ();
+    if ($next->type == IdentifierToken) {
+        push(@identifiers, $self->getToken()->value());
+        push(@identifiers, @{$self->parseIdentifiers()});
+    }
+    return @identifiers;
+}
+
 sub parseIdentifiers
 {
     my $self = shift;
@@ -1690,6 +1703,12 @@ sub parseExtendedAttributeRest2
 {
     my $self = shift;
     my $next = $self->nextToken();
+    if ($next->value() eq "(") {
+        $self->assertTokenValue($self->getToken(), "(", __LINE__);
+        my @arguments = $self->parseIdentifierList();
+        $self->assertTokenValue($self->getToken(), ")", __LINE__);
+        return @arguments;
+    }
     if ($next->type() == IdentifierToken || $next->value() eq "::") {
         my $scopedName = $self->parseScopedName();
         return $self->parseExtendedAttributeRest3($scopedName);

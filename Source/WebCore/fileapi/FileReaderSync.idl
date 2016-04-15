@@ -31,7 +31,7 @@
 [
     Constructor,
     UsePointersEvenForNonNullableObjectArguments,
-    GlobalContext=WorkerGlobalScope,
+    Exposed=Worker,
 ] interface FileReaderSync {
     [CallWith=ScriptExecutionContext, RaisesException] ArrayBuffer readAsArrayBuffer(Blob blob);
     [CallWith=ScriptExecutionContext, RaisesException] DOMString readAsBinaryString(Blob blob);

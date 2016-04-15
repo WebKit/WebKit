@@ -29,7 +29,7 @@
  */
 
 [
-    GlobalContext=DedicatedWorkerGlobalScope,
+    Exposed=DedicatedWorker,
     CustomProxyToJSObject,
     JSGenerateToNativeObject,
 ] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {

@@ -25,7 +25,7 @@
  */
 
 [
-    GlobalContext=DOMWindow&WorkerGlobalScope,
+    Exposed=(Window,Worker),
     Conditional=CHANNEL_MESSAGING,
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,

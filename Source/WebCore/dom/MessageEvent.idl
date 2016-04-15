@@ -26,7 +26,7 @@
  */
 
 [
-    GlobalContext=DOMWindow&WorkerGlobalScope,
+    Exposed=(Window,Worker),
     ConstructorTemplate=Event,
 ] interface MessageEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString origin;

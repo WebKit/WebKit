@@ -29,7 +29,7 @@
  */
 
 [
-    GlobalContext=DOMWindow&WorkerGlobalScope,
+    Exposed=(Window,Worker),
     GenerateIsReachable=Impl,
     CustomToJSObject,
     CustomConstructor,

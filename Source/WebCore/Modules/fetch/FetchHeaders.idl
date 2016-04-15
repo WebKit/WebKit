@@ -29,7 +29,7 @@
 [
     Conditional=FETCH_API,
     EnabledAtRuntime=FetchAPI,
-    GlobalContext=DOMWindow&WorkerGlobalScope,
+    Exposed=(Window,Worker),
     ImplementationLacksVTable,
     InterfaceName=Headers,
     JSBuiltinConstructor

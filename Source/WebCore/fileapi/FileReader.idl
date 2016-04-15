@@ -30,7 +30,7 @@
  */
 
 [
-    GlobalContext=DOMWindow&WorkerGlobalScope,
+    Exposed=(Window,Worker),
     ActiveDOMObject,
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,

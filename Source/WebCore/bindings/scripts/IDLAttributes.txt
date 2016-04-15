@@ -61,11 +61,11 @@ EnabledAtRuntime=*
 EnabledBySetting=*
 EnforceRange
 ExportMacro=WEBCORE_EXPORT|WEBCORE_TESTSUPPORT_EXPORT
+Exposed=*
 ForwardDeclareInHeader
 GenerateIsReachable=|Impl|ImplWebGLRenderingContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot
 GetterRaisesException
 GetterRaisesExceptionWithMessage
-GlobalContext=DOMWindow|WorkerGlobalScope|DedicatedWorkerGlobalScope
 Immutable
 ImplementationLacksVTable
 ImplementationNamespace=*

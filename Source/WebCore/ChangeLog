@@ -1,3 +1,55 @@
+2016-04-15  Chris Dumez  <cdumez@apple.com>
+
+        Rename [GlobalContext] extended attribute to [Exposed] and align with WebIDL
+        https://bugs.webkit.org/show_bug.cgi?id=156615
+
+        Reviewed by Youenn Fablet.
+
+        Rename [GlobalContext] extended attribute to [Exposed] and align with WebIDL:
+        - http://heycam.github.io/webidl/#Exposed
+
+        * bindings/scripts/IDLAttributes.txt:
+        Stop recognizing [GlobalContext] and start recognizing [Exposed].
+
+        * bindings/scripts/IDLParser.pm:
+        (parseIdentifierList):
+        (parseExtendedAttributeRest2):
+        Add IDL parser support for having a list of identifiers as value
+        for an IDL extended attribute, e.g. Exposed=(Window, Worker).
+
+        * bindings/scripts/preprocess-idls.pl:
+        Tweak existing support for [GlobalContext] to use [Exposed] instead
+        and support the new syntax.
+
+        (getInterfaceExtendedAttributesFromIDL):
+        Do not split on commas that are within brackets.
+
+        * Modules/fetch/FetchBody.idl:
+        * Modules/fetch/FetchHeaders.idl:
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/streams/ByteLengthQueuingStrategy.idl:
+        * Modules/streams/CountQueuingStrategy.idl:
+        * Modules/streams/ReadableStream.idl:
+        * Modules/streams/ReadableStreamController.idl:
+        * Modules/streams/ReadableStreamReader.idl:
+        * Modules/websockets/WebSocket.idl:
+        * dom/MessageChannel.idl:
+        * dom/MessageEvent.idl:
+        * fileapi/Blob.idl:
+        * fileapi/FileReader.idl:
+        * fileapi/FileReaderSync.idl:
+        * html/DOMURL.idl:
+        * html/ImageData.idl:
+        * page/EventSource.idl:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/WorkerGlobalScope.idl:
+        * workers/WorkerLocation.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestEventTarget.idl:
+        Use [Exposed] instead of [GlobalContext] to match their respective
+        specifications.
+
 2016-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Selection.deleteFromDocument should not leave a selection character

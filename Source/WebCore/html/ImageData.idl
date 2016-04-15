@@ -27,7 +27,7 @@
  */
 
 [
-    GlobalContext=DOMWindow&WorkerGlobalScope,
+    Exposed=(Window,Worker),
     CustomToJSObject,
     // FIXME: Without [Default=Undefined] CodeGeneratorJS can't generate JSImageData. But with
     // the extended attribute we accept a value of 0 for sh and don't throw.

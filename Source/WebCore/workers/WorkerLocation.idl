@@ -27,7 +27,7 @@
  */
 
 [
-    GlobalContext=WorkerGlobalScope,
+    Exposed=Worker,
     GenerateIsReachable=Impl,
     ImplementationLacksVTable,
 ] interface WorkerLocation {

@@ -115,11 +115,21 @@ foreach my $idlFile (sort keys %idlFileHash) {
     my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFileContents);
     unless ($extendedAttributes->{"NoInterfaceObject"}) {
         if (!isCallbackInterfaceFromIDL($idlFileContents) || interfaceHasConstantAttribute($idlFileContents)) {
-            my @globalContexts = split("&", $extendedAttributes->{"GlobalContext"} || "DOMWindow");
+            my $exposedAttribute = $extendedAttributes->{"Exposed"} || "Window";
+            $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
+            my @globalContexts = split(",", $exposedAttribute);
             my $attributeCode = GenerateConstructorAttribute($interfaceName, $extendedAttributes);
-            $windowConstructorsCode .= $attributeCode if grep(/^DOMWindow$/, @globalContexts);
-            $workerGlobalScopeConstructorsCode .= $attributeCode if grep(/^WorkerGlobalScope$/, @globalContexts);
-            $dedicatedWorkerGlobalScopeConstructorsCode .= $attributeCode if grep(/^DedicatedWorkerGlobalScope$/, @globalContexts);
+            foreach my $globalContext (@globalContexts) {
+                if ($globalContext eq "Window") {
+                    $windowConstructorsCode .= $attributeCode;
+                } elsif ($globalContext eq "Worker") {
+                    $workerGlobalScopeConstructorsCode .= $attributeCode;
+                } elsif ($globalContext eq "DedicatedWorker") {
+                    $dedicatedWorkerGlobalScopeConstructorsCode .= $attributeCode;
+                } else {
+                    die "Unsupported global context '$globalContext' used in [Exposed] at $idlFile";
+                }
+            }
         }
     }
     $supplementals{$fullPath} = [];
@@ -309,7 +319,7 @@ sub getInterfaceExtendedAttributesFromIDL
     my $extendedAttributes = {};
 
     if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface|exception)\s+(\w+)/gs) {
-        my @parts = split(',', $1);
+        my @parts = split(m/,(?![^()]*\))/, $1);
         foreach my $part (@parts) {
             my @keyValue = split('=', $part);
             my $key = trim($keyValue[0]);

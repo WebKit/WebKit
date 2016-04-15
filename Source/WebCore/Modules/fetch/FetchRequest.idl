@@ -42,7 +42,7 @@ enum ReferrerPolicy { "", "no-referrer",  "no-referrer-when-downgrade", "origin-
     ConstructorRaisesException,
     Constructor(FetchRequest input, [Default=Undefined] optional Dictionary init),
     Constructor(DOMString input, [Default=Undefined]  optional Dictionary init),
-    GlobalContext=DOMWindow&WorkerGlobalScope,
+    Exposed=(Window,Worker),
     InterfaceName=Request
 ]
 interface FetchRequest {

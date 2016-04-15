@@ -27,7 +27,7 @@
  */
 
 [
-    GlobalContext=DOMWindow&WorkerGlobalScope,
+    Exposed=(Window,Worker),
     SuppressToJSObject,
 ] interface XMLHttpRequestEventTarget : EventTarget {
      attribute EventHandler onloadstart;

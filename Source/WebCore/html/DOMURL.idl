@@ -25,7 +25,7 @@
  */
 
 [
-    GlobalContext=DOMWindow&WorkerGlobalScope,
+    Exposed=(Window,Worker),
     Constructor(DOMString url),
     Constructor(DOMString url, DOMString base),
     Constructor(DOMString url, DOMURL base),
