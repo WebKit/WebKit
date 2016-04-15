@@ -48,6 +48,7 @@ PASS newFontFace is oldFontFace
 PASS newFontFace.status is "loaded"
 PASS newFontFace is oldFontFace
 PASS newFontFace.status is "loaded"
+PASS oldFontFace.code is oldFontFace.NETWORK_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

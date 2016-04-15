@@ -104,9 +104,16 @@ promiseEqualityCheck.loaded.then(function(x) {
     newFontFace = x;
     shouldBe("newFontFace", "oldFontFace");
     shouldBeEqualToString("newFontFace.status", "loaded");
-    finishJSTest();
+    return (new FontFace('family_name2', 'url(\'../../resources/Ahem.ttf\') format(\'garbage\')', {})).load()
 }, function(y) {
     testFailed("Legit URL should load");
+    finishJSTest();
+}).then(function() {
+    testFailed("Unknown format should not load successfully.");
+    finishJSTest();
+}, function(y) {
+    oldFontFace = y;
+    shouldBe("oldFontFace.code", "oldFontFace.NETWORK_ERR");
     finishJSTest();
 });
 
