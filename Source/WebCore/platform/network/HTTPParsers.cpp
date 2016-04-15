@@ -582,20 +582,20 @@ size_t parseHTTPRequestLine(const char* data, size_t length, String& failureReas
 
     // Haven't finished header line.
     if (consumedLength == length) {
-        failureReason = "Incomplete Request Line";
+        failureReason = ASCIILiteral("Incomplete Request Line");
         return 0;
     }
 
     // RequestLine does not contain 3 parts.
     if (!space1 || !space2) {
-        failureReason = "Request Line does not appear to contain: <Method> <Url> <HTTPVersion>.";
+        failureReason = ASCIILiteral("Request Line does not appear to contain: <Method> <Url> <HTTPVersion>.");
         return 0;
     }
 
     // The line must end with "\r\n".
     const char* end = p + 1;
     if (*(end - 2) != '\r') {
-        failureReason = "Request line does not end with CRLF";
+        failureReason = ASCIILiteral("Request line does not end with CRLF");
         return 0;
     }
 
@@ -619,14 +619,48 @@ size_t parseHTTPRequestLine(const char* data, size_t length, String& failureReas
     return end - data;
 }
 
-size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, String& nameStr, String& valueStr, bool strict)
+static inline bool isValidHeaderNameCharacter(const char* character)
+{
+    // https://tools.ietf.org/html/rfc7230#section-3.2
+    // A header name should only contain one or more of
+    // alphanumeric or ! # $ % & ' * + - . ^ _ ` | ~
+    if (isASCIIAlphanumeric(*character))
+        return true;
+    switch (*character) {
+    case '!':
+    case '#':
+    case '$':
+    case '%':
+    case '&':
+    case '\'':
+    case '*':
+    case '+':
+    case '-':
+    case '.':
+    case '^':
+    case '_':
+    case '`':
+    case '|':
+    case '~':
+        return true;
+    default:
+        return false;
+    }
+}
+
+size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, StringView& nameStr, String& valueStr, bool strict)
 {
     const char* p = start;
     const char* end = start + length;
 
     Vector<char> name;
     Vector<char> value;
-    nameStr = String();
+
+    bool foundFirstNameChar = false;
+    const char* namePtr;
+    size_t nameSize = 0;
+
+    nameStr = StringView();
     valueStr = String();
 
     for (; p < end; p++) {
@@ -635,18 +669,29 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
             if (name.isEmpty()) {
                 if (p + 1 < end && *(p + 1) == '\n')
                     return (p + 2) - start;
-                failureReason = "CR doesn't follow LF at " + trimInputSample(p, end - p);
+                failureReason = makeString("CR doesn't follow LF in header name at ", trimInputSample(p, end - p));
                 return 0;
             }
-            failureReason = "Unexpected CR in name at " + trimInputSample(name.data(), name.size());
+            failureReason = makeString("Unexpected CR in header name at ", trimInputSample(name.data(), name.size()));
             return 0;
         case '\n':
-            failureReason = "Unexpected LF in name at " + trimInputSample(name.data(), name.size());
+            failureReason = makeString("Unexpected LF in header name at ", trimInputSample(name.data(), name.size()));
             return 0;
         case ':':
             break;
         default:
+            if (!isValidHeaderNameCharacter(p)) {
+                if (name.size() < 1)
+                    failureReason = "Unexpected start character in header name";
+                else
+                    failureReason = makeString("Unexpected character in header name at ", trimInputSample(name.data(), name.size()));
+                return 0;
+            }
             name.append(*p);
+            if (!foundFirstNameChar) {
+                namePtr = p;
+                foundFirstNameChar = true;
+            }
             continue;
         }
         if (*p == ':') {
@@ -654,6 +699,9 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
             break;
         }
     }
+
+    nameSize = name.size();
+    nameStr = StringView(reinterpret_cast<const LChar*>(namePtr), nameSize);
 
     for (; p < end && *p == 0x20; p++) { }
 
@@ -663,7 +711,7 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
             break;
         case '\n':
             if (strict) {
-                failureReason = "Unexpected LF in value at " + trimInputSample(value.data(), value.size());
+                failureReason = makeString("Unexpected LF in header value at ", trimInputSample(value.data(), value.size()));
                 return 0;
             }
             break;
@@ -676,17 +724,12 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
         }
     }
     if (p >= end || (strict && *p != '\n')) {
-        failureReason = "CR doesn't follow LF after value at " + trimInputSample(p, end - p);
+        failureReason = makeString("CR doesn't follow LF after header value at ", trimInputSample(p, end - p));
         return 0;
     }
-    nameStr = String::fromUTF8(name.data(), name.size());
     valueStr = String::fromUTF8(value.data(), value.size());
-    if (nameStr.isNull()) {
-        failureReason = "Invalid UTF-8 sequence in header name";
-        return 0;
-    }
     if (valueStr.isNull()) {
-        failureReason = "Invalid UTF-8 sequence in header value";
+        failureReason = ASCIILiteral("Invalid UTF-8 sequence in header value");
         return 0;
     }
     return p - start;

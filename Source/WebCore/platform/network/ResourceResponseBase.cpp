@@ -334,15 +334,22 @@ void ResourceResponseBase::setHTTPHeaderField(HTTPHeaderName name, const String&
     // FIXME: Should invalidate or update platform response if present.
 }
 
-void ResourceResponseBase::addHTTPHeaderField(const String& name, const String& value)
+void ResourceResponseBase::addHTTPHeaderField(HTTPHeaderName name, const String& value)
 {
     lazyInit(AllFields);
+    updateHeaderParsedState(name);
+    m_httpHeaderFields.add(name, value);
+}
 
+void ResourceResponseBase::addHTTPHeaderField(const String& name, const String& value)
+{
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
-        updateHeaderParsedState(headerName);
-
-    m_httpHeaderFields.add(name, value);
+        addHTTPHeaderField(headerName, value);
+    else {
+        lazyInit(AllFields);
+        m_httpHeaderFields.add(name, value);
+    }
 }
 
 const HTTPHeaderMap& ResourceResponseBase::httpHeaderFields() const

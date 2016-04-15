@@ -1,3 +1,14 @@
+2016-04-15  John Wilander  <wilander@apple.com>
+
+        Refactor WebSockets handshake to use StringView instead of String for header validation.
+        https://bugs.webkit.org/show_bug.cgi?id=155602
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/InspectorServer/HTTPRequest.cpp:
+        (WebKit::HTTPRequest::parseHeaders):
+            Now declares the HTTP header name as a StringView to match the change in WebCore::parseHTTPHeader.
+
 2016-04-15  Alex Christensen  <achristensen@webkit.org>
 
         Don't copy entire NSURLSessionConfiguration just to test for credentials

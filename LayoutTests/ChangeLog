@@ -1,3 +1,19 @@
+2016-04-15  John Wilander  <wilander@apple.com>
+
+        Refactor WebSockets handshake to use StringView instead of String for header validation.
+        https://bugs.webkit.org/show_bug.cgi?id=155602
+
+        Reviewed by Darin Adler.
+
+        * http/tests/websocket/tests/hybi/bad-handshake-crash-expected.txt:
+            Fixed so that new error output is expected.
+        * http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1.html:
+        * http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1_wsh.py:
+            Now tests HTTP versions that are higher than 1.1, are lower than 1.1, have bad characters, and are empty.
+        * http/tests/websocket/tests/hybi/long-invalid-header-expected.txt:
+            Fixed so that slightly refined error output is expected.
+
 2016-04-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Presentational role on SVG elements is trumped by child 'title' and 'desc' elements

@@ -7,30 +7,63 @@
 <div id="description"></div>
 <div id="console"></div>
 <script>
-    description("Test whether WebSocket handshake is OK with if server sends status line with http version beyond 1.1.");
+    description("Test http version parsing and validation. HTTP version 1.1 and above should be accepted for WebSockets.");
 
     window.jsTestIsAsync = true;
 
-    var url = "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1";
-    var handshake_success = false;
-    var ws = new WebSocket(url);
-    var closeEvent;
+    var testCases = [
+        { url : "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?1.11", shouldSucceed : true }
+        ,{ url : "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?11.0", shouldSucceed : true }
+        ,{ url : "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?001.01", shouldSucceed : true }
 
-    function endTest() {
-        clearTimeout(timeoutID);
-        shouldBeTrue("handshake_success");
-        finishJSTest();
+        ,{ url : "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?01.00", shouldSucceed : false }
+        ,{ url : "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?000.99", shouldSucceed : false }
+        ,{ url : "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?0.00", shouldSucceed : false }
+        ,{ url : "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?-11.9", shouldSucceed : false }
+        ,{ url : "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?0x1.0x00", shouldSucceed : false }
+        ,{ url : "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?.1", shouldSucceed : false }
+        ,{ url : "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?", shouldSucceed : false }
+        ,{ url : "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?1.1", shouldSucceed : false }
+    ];
+
+    var currentTest = 0;
+    var allTestsPassed = true;
+
+    function runATest () {
+        if (currentTest === testCases.length) {
+            if (!allTestsPassed) {
+                testFailed("At least one test failed.");
+            } else {
+                debug("PASS for all URLs.");
+            }
+            finishJSTest();
+        } else {
+            var testCase = testCases[currentTest++];
+            var ws = new WebSocket(testCase.url);
+
+            ws.onopen = (function(shouldSucceed, url) {
+                    return function () {
+                            if (!shouldSucceed) {
+                                debug("FAIL The following URL should have caused an error: " + url);
+                                allTestsPassed = false;
+                            }
+                            runATest();
+                        };
+                })(testCase.shouldSucceed, testCase.url);
+
+            ws.onerror = (function(shouldSucceed, url) {
+                    return function () {
+                            if (shouldSucceed) {
+                                debug("FAIL The following URL should have been allowed to be opened: " + url);
+                                allTestsPassed = false;
+                            }
+                            runATest();
+                        };
+                })(testCase.shouldSucceed, testCase.url);
+        }
     }
-    ws.onopen = function() {
-        handshake_success = true;
-        ws.close();
-    };
 
-    ws.onclose = function () {
-        endTest();
-    };
-    
-    var timeoutID = setTimeout("endTest()", 2000);
+    runATest();
 </script>
 <script src="../../../../js-test-resources/js-test-post.js"></script>
 </body>

@@ -1,3 +1,43 @@
+2016-04-15  John Wilander  <wilander@apple.com>
+
+        Refactor WebSockets handshake to use StringView instead of String for header validation.
+        https://bugs.webkit.org/show_bug.cgi?id=155602
+
+        Reviewed by Darin Adler.
+
+        No new tests. Existing test have been augmented.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readServerHandshake):
+            Made sure failure reason was set consistently with makeString().
+        (WebCore::headerHasValidHTTPVersion):
+            Now operates on the HTTP status line with StringView.
+        (WebCore::WebSocketHandshake::readStatusLine):
+            Now operates on the HTTP status line with StringView.
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+            Now operates on header names with StringView.
+            Made sure failure reason was set consistently with makeString() and ASCIILiteral().
+        (WebCore::WebSocketHandshake::checkResponseHeaders):
+            Made sure failure reason was set consistently with ASCIILiteral().
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseHTTPRequestLine):
+            Made sure failure reason was set consistently with ASCIILiteral().
+        (WebCore::isValidHeaderNameCharacter):
+            Inlined function to check if a character is allowed in an HTTP header name according to RFC 7230.
+            https://tools.ietf.org/html/rfc7230 (June 2014)
+        (WebCore::parseHTTPHeader):
+        * platform/network/HTTPParsers.h:
+            Now receives the HTTP header name as a StringView.
+            Checks that header names only contain valid characters according to RFC 7230 (see above).
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::addHTTPHeaderField):
+        * platform/network/ResourceRequestBase.h:
+             Now has an overloaded function which receives the HTTP header name as an HTTPHeaderName enum value.
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::addHTTPHeaderField):
+        * platform/network/ResourceResponseBase.h:
+             Now has an overloaded function which receives the HTTP header name as an HTTPHeaderName enum value.
+
 2016-04-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Presentational role on SVG elements is trumped by child 'title' and 'desc' elements
