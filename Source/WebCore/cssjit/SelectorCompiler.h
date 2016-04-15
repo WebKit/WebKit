@@ -80,7 +80,7 @@ enum class SelectorContext {
 typedef unsigned (*RuleCollectorSimpleSelectorChecker)(const Element*, unsigned*);
 typedef unsigned (*QuerySelectorSimpleSelectorChecker)(const Element*);
 
-typedef unsigned (*RuleCollectorSelectorCheckerWithCheckingContext)(const Element*, const SelectorChecker::CheckingContext*, unsigned*);
+typedef unsigned (*RuleCollectorSelectorCheckerWithCheckingContext)(const Element*, SelectorChecker::CheckingContext*, unsigned*);
 typedef unsigned (*QuerySelectorSelectorCheckerWithCheckingContext)(const Element*, const SelectorChecker::CheckingContext*);
 
 SelectorCompilationStatus compileSelector(const CSSSelector*, JSC::VM*, SelectorContext, JSC::MacroAssemblerCodeRef& outputCodeRef);

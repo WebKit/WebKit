@@ -44,6 +44,7 @@ struct Relation {
         AffectedByEmpty,
         AffectedByHover,
         AffectedByPreviousSibling,
+        // For AffectsNextSibling 'value' tells how many element siblings to mark starting with 'element'.
         AffectsNextSibling,
         ChildrenAffectedByBackwardPositionalRules,
         ChildrenAffectedByFirstChildRules,
@@ -54,12 +55,12 @@ struct Relation {
         NthChildIndex,
         Unique,
     };
-    const Element& element;
+    const Element* element;
     Type type;
     unsigned value;
 
     Relation(const Element& element, Type type, unsigned value = 1)
-        : element(element)
+        : element(&element)
         , type(type)
         , value(value)
     { }

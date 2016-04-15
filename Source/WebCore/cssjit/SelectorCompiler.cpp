@@ -2198,15 +2198,55 @@ void SelectorCodeGenerator::generateAddStyleRelation(Assembler::RegisterID check
 {
     ASSERT(m_selectorContext != SelectorContext::QuerySelector);
 
+    Assembler::Address vectorAddress(checkingContext, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, styleRelations));
+    auto dataAddress = vectorAddress.withOffset(Style::Relations::dataMemoryOffset());
+    auto sizeAddress = vectorAddress.withOffset(Style::Relations::sizeMemoryOffset());
+
+    // For AffectsNextSibling we just increment the count if the previous added relation was in the same sibling chain.
+    Assembler::JumpList mergeSuccess;
+    if (relationType == Style::Relation::AffectsNextSibling) {
+        Assembler::JumpList mergeFailure;
+
+        LocalRegister lastRelation(m_registerAllocator);
+        m_assembler.load32(sizeAddress, lastRelation);
+
+        // if (!checkingContext.styleRelations.isEmpty())
+        mergeFailure.append(m_assembler.branchTest32(Assembler::Zero, lastRelation));
+
+        // Style::Relation& lastRelation = checkingContext.styleRelations.last();
+        m_assembler.sub32(Assembler::TrustedImm32(1), lastRelation);
+        m_assembler.mul32(Assembler::TrustedImm32(sizeof(Style::Relation)), lastRelation, lastRelation);
+        m_assembler.addPtr(dataAddress, lastRelation);
+
+        // if (lastRelation.type == Style::Relation::AffectsNextSibling)
+        Assembler::Address typeAddress(lastRelation, OBJECT_OFFSETOF(Style::Relation, type));
+        mergeFailure.append(m_assembler.branch32(Assembler::NotEqual, typeAddress, Assembler::TrustedImm32(Style::Relation::AffectsNextSibling)));
+
+        Assembler::Address elementAddress(lastRelation, OBJECT_OFFSETOF(Style::Relation, element));
+        {
+            // if (element.nextSiblingElement() == lastRelation.element)
+            LocalRegister nextSiblingElement(m_registerAllocator);
+            m_assembler.move(element, nextSiblingElement);
+            generateWalkToNextAdjacentElement(mergeFailure, nextSiblingElement);
+            mergeFailure.append(m_assembler.branchPtr(Assembler::NotEqual, nextSiblingElement, elementAddress));
+        }
+
+        // ++lastRelation.value;
+        Assembler::Address valueAddress(lastRelation, OBJECT_OFFSETOF(Style::Relation, value));
+        m_assembler.add32(Assembler::TrustedImm32(1), valueAddress);
+
+        // lastRelation.element = &element;
+        m_assembler.storePtr(element, elementAddress);
+
+        mergeSuccess.append(m_assembler.jump());
+        mergeFailure.link(&m_assembler);
+    }
+
     // FIXME: Append to vector without a function call at least when there is sufficient capacity.
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
     functionCall.setFunctionAddress(addStyleRelationFunction);
     functionCall.setTwoArguments(checkingContext, element);
     functionCall.call();
-
-    Assembler::Address vectorAddress(checkingContext, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, styleRelations));
-    auto dataAddress = vectorAddress.withOffset(Style::Relations::dataMemoryOffset());
-    auto sizeAddress = vectorAddress.withOffset(Style::Relations::sizeMemoryOffset());
 
     LocalRegister relationPointer(m_registerAllocator);
     m_assembler.load32(sizeAddress, relationPointer);
@@ -2221,6 +2261,8 @@ void SelectorCodeGenerator::generateAddStyleRelation(Assembler::RegisterID check
         Assembler::Address valueAddress(relationPointer, OBJECT_OFFSETOF(Style::Relation, value));
         m_assembler.store32(*value, valueAddress);
     }
+
+    mergeSuccess.link(&m_assembler);
 }
 
 Assembler::JumpList SelectorCodeGenerator::jumpIfNoPreviousAdjacentElement()

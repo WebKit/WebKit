@@ -89,6 +89,14 @@ static inline void addStyleRelation(SelectorChecker::CheckingContext& checkingCo
     ASSERT(value == 1 || type == Style::Relation::NthChildIndex || type == Style::Relation::AffectedByEmpty);
     if (checkingContext.resolvingMode != SelectorChecker::Mode::ResolvingStyle)
         return;
+    if (type == Style::Relation::AffectsNextSibling && !checkingContext.styleRelations.isEmpty()) {
+        auto& last = checkingContext.styleRelations.last();
+        if (last.type == Style::Relation::AffectsNextSibling && last.element == element.nextElementSibling()) {
+            ++last.value;
+            last.element = &element;
+            return;
+        }
+    }
     checkingContext.styleRelations.append({ element, type, value });
 }
 

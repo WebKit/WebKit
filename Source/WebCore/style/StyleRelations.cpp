@@ -45,7 +45,7 @@ std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, cons
     };
 
     for (auto& relation : relations) {
-        if (&relation.element != &element) {
+        if (relation.element != &element) {
             appendStyleRelation(relation);
             continue;
         }
@@ -91,7 +91,7 @@ void commitRelations(std::unique_ptr<Relations> relations, Update& update)
     if (!relations)
         return;
     for (auto& relation : *relations) {
-        auto& element = const_cast<Element&>(relation.element);
+        auto& element = const_cast<Element&>(*relation.element);
         switch (relation.type) {
         case Relation::AffectedByActive:
             element.setChildrenAffectedByActive();
@@ -108,9 +108,12 @@ void commitRelations(std::unique_ptr<Relations> relations, Update& update)
         case Relation::AffectedByPreviousSibling:
             element.setStyleIsAffectedByPreviousSibling();
             break;
-        case Relation::AffectsNextSibling:
-            element.setAffectsNextSiblingElementStyle();
+        case Relation::AffectsNextSibling: {
+            auto* sibling = &element;
+            for (unsigned i = 0; i < relation.value && sibling; ++i, sibling = sibling->nextElementSibling())
+                sibling->setAffectsNextSiblingElementStyle();
             break;
+        }
         case Relation::ChildrenAffectedByBackwardPositionalRules:
             element.setChildrenAffectedByBackwardPositionalRules();
             break;

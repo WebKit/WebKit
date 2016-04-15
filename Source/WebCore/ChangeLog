@@ -1,3 +1,38 @@
+2016-04-14  Antti Koivisto  <antti@apple.com>
+
+        AffectsNextSibling style relation marking is inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=156593
+
+        Reviewed by Benjamin Poulain.
+
+        We currently add a Style::Relation entry for each sibling to mark. With long sibling lists this can be inefficient
+        in terms of both memory and speed. Instead make a single entry that includes the sibling count to mark.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::addStyleRelation):
+
+            When adding AffectsNextSibling entry check if the last entry in the style relation vector has the
+            same type and is part of the same sibling chain. If so just update the existing entry.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAddStyleRelation):
+
+            The same thing in hand-crafted macro assembler.
+
+        * cssjit/SelectorCompiler.h:
+
+            Stop lying about the constness of the CheckingContext.
+
+        * style/StyleRelations.cpp:
+        (WebCore::Style::commitRelations):
+
+            Mark as many sibling elements as the value indicates.
+
+        * style/StyleRelations.h:
+        (WebCore::Style::Relation::Relation):
+
+            Make element a pointer so we can udpate it.
+
 2016-04-15  Brady Eidson  <beidson@apple.com>
 
         Add the message property to DOMError.
