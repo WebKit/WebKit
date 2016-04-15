@@ -1215,6 +1215,7 @@ webkit.org/b/155607 inspector/unit-tests/heap-snapshot.html [ Pass Timeout ]
 webkit.org/b/155607 inspector/heap/snapshot.html [ Pass Timeout ]
 webkit.org/b/143719 inspector/console/console-api.html [ Pass Timeout ]
 webkit.org/b/156078 inspector/console/heapSnapshot.html [ Pass Timeout ]
+webkit.org/b/156634 inspector/formatting/formatting-javascript.html [ Pass Timeout ]
 
 webkit.org/b/152029 inspector/debugger/command-line-api-exception.html [ Pass Timeout ]
 

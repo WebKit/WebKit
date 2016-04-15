@@ -1,3 +1,12 @@
+2016-04-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Mark inspector/formatting/formatting-javascript.html as flaky on mac
+        https://bugs.webkit.org/show_bug.cgi?id=156634
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-04-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: sourceMappingURL not used when sourceURL is set
