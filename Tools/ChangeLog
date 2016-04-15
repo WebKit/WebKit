@@ -1,3 +1,13 @@
+2016-04-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Some GuardMalloc bots are not happy when running many parallel processes
+        https://bugs.webkit.org/show_bug.cgi?id=156614
+        rdar://problem/24711525
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitpy/port/mac.py: (MacPort.default_child_processes):
+
 2016-04-14  Brent Fulgham  <bfulgham@apple.com>
 
         Make <a download> a runtime enabled option

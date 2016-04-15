@@ -155,7 +155,12 @@ class MacPort(ApplePort):
         should_throttle_for_wk2 = self.get_option('webkit_test_runner') and default_count > 4
         # We also want to throttle for leaks bots.
         if should_throttle_for_wk2 or self.get_option('leaks'):
-            default_count = int(.75 * default_count)
+            if self.get_option('guard_malloc'):
+                # Some 12 core Macs get a lot of tests time out when running 18 WebKitTestRunner processes (it's not clear what this depends on).
+                # Running 12 processes resolves this, and doesn't seem to introduce a measurable performance degradation on other machines.
+                default_count = int(.5 * default_count)
+            else:
+                default_count = int(.75 * default_count)
 
         # Make sure we have enough ram to support that many instances:
         total_memory = self.host.platform.total_bytes_memory()
