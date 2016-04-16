@@ -83,6 +83,16 @@
     return self;
 }
 
+- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray *)legacyWhitelist legacyBlacklist:(NSArray *)legacyBlacklist associatedURL:(NSURL *)associatedURL userContentWorld:(_WKUserContentWorld *)userContentWorld
+{
+    if (!(self = [super init]))
+        return nil;
+
+    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), WebCore::URL(associatedURL), API::toStringVector(legacyWhitelist), API::toStringVector(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames }, *userContentWorld->_userContentWorld);
+
+    return self;
+}
+
 - (_WKUserContentWorld *)_userContentWorld
 {
     return API::wrapper(_userScript->userContentWorld());
