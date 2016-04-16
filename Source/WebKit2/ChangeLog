@@ -1,3 +1,15 @@
+2016-04-15  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] WebContent, Networking and Databases services have i386 slices that are never used
+        https://bugs.webkit.org/show_bug.cgi?id=156654
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/BaseXPCService.xcconfig: Set VALID_ARCHS to ARCHS_STANDARD when not building only
+          for the active architecture.
+        * Configurations/PluginService.32.xcconfig: Removed now-redundant definitions.
+        * Configurations/PluginService.64.xcconfig: Ditto.
+
 2016-04-15  Sam Weinig  <sam@webkit.org>
 
         Need a way to specify a script name to show in the inspector for scripts injected via WKUserScript

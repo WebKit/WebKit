@@ -23,6 +23,10 @@
 
 #include "BaseTarget.xcconfig"
 
+VALID_ARCHS[sdk=macosx*] = $(VALID_ARCHS_macosx_$(ONLY_ACTIVE_ARCH));
+VALID_ARCHS_macosx_YES = $(VALID_ARCHS);
+VALID_ARCHS_macosx_NO = $(ARCHS_STANDARD);
+
 INSTALL_PATH[sdk=iphone*] = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/XPCServices;
 INSTALL_PATH[sdk=macosx*] = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/XPCServices;
 

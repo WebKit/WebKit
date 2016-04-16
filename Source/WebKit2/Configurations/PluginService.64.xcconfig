@@ -23,8 +23,6 @@
 
 #include "BaseXPCService.xcconfig"
 
-VALID_ARCHS[sdk=macosx*] = $(VALID_ARCHS_macosx_$(ONLY_ACTIVE_ARCH));
-VALID_ARCHS_macosx_YES = $(VALID_ARCHS);
 VALID_ARCHS_macosx_NO = x86_64;
 
 PRODUCT_NAME = com.apple.WebKit.Plugin.64$(WK_XPC_SERVICE_SUFFIX);
