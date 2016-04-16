@@ -1,3 +1,15 @@
+2016-04-16  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [mips] Implemented moveZeroToDouble.
+        https://bugs.webkit.org/show_bug.cgi?id=155429
+
+        Reviewed by Darin Adler.
+
+        This function is required to fix compilation after r197687.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::moveZeroToDouble):
+
 2016-04-15  Darin Adler  <darin@apple.com>
 
         Reduce use of Deprecated::ScriptXXX classes
