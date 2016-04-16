@@ -1,3 +1,12 @@
+2016-04-16  Zahari Yurukov  <zahari.yurukov@gmail.com>
+
+        [GTK] [l10n] Updated Bulgarian translation of WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=156656
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * bg.po:
+
 2016-04-06  Milo Casagrande  <milo@milo.name>
 
         [GTK] [l10n] Updated Italian translation of WebKitGTK+
