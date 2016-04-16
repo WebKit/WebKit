@@ -1,3 +1,12 @@
+2016-04-16  Jiri Grönroos  <jiri.gronroos+l10n@iki.fi>
+
+        Submit the first version of Finnish translation
+        https://bugs.webkit.org/show_bug.cgi?id=153406
+
+        Rubber-stamped by Michael Catanzaro. For FINLAN.
+
+        * fi.po: Added. Note it's pretty incomplete as of yet.
+
 2016-04-16  Zahari Yurukov  <zahari.yurukov@gmail.com>
 
         [GTK] [l10n] Updated Bulgarian translation of WebKitGTK+
