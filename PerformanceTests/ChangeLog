@@ -1,3 +1,22 @@
+2016-04-15  Jon Lee  <jonlee@apple.com>
+
+        Animometer test could report a NaN
+        https://bugs.webkit.org/show_bug.cgi?id=156646
+
+        Reviewed by Darin Adler.
+        Provisionally reviewed by Said Abou-Hallawa.
+
+        * Animometer/tests/resources/main.js:
+        (didFinishInterval): The ramp controller has a first phase where it ramps up the complexity and
+        reacts based on how well the system handles the load. The assumption was that it would handle at least
+        1 particle easily. That is not always the case. As a result, an interpolation calculation could
+        end up setting an upper bound of NaN.
+
+        This occurs because we never get out of the first tier, so this._lastTierComplexity is undefined.
+        Now that we guarantee a minimum complexity of 1, modify the conditional to check for this._lastTierComplexity
+        before interpolating the upper bound of the first ramp. In the case where the system struggles with
+        1 particle, set it to currentComplexity.
+
 2016-04-09  Jon Lee  <jonlee@apple.com>
 
         Update Animometer to accommodate different screens

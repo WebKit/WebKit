@@ -413,10 +413,11 @@ RampController = Utilities.createSubclass(Controller,
             this._possibleMinimumComplexity = this._minimumComplexity;
             this._minimumComplexityEstimator.sample(this._minimumComplexity);
 
-            // Sometimes this last tier will drop the frame length well below the threshold
-            // Avoid going down that far since it means fewer measurements are taken in the 60 fps area
-            // Interpolate a maximum complexity that gets us around the lowest threshold
-            if (this._lastTierComplexity != currentComplexity)
+            // Sometimes this last tier will drop the frame length well below the threshold.
+            // Avoid going down that far since it means fewer measurements are taken in the 60 fps area.
+            // Interpolate a maximum complexity that gets us around the lowest threshold.
+            // Avoid doing this calculation if we never get out of the first tier (where this._lastTierComplexity is undefined).
+            if (this._lastTierComplexity && this._lastTierComplexity != currentComplexity)
                 this._maximumComplexity = Math.floor(Utilities.lerp(Utilities.progressValue(this.frameLengthSlowestThreshold, this._lastTierFrameLength, currentFrameLength), this._lastTierComplexity, currentComplexity));
             else {
                 // If the browser is capable of handling the most complex version of the test, use that
