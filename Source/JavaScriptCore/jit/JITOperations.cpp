@@ -1115,6 +1115,9 @@ EncodedJSValue JIT_OPERATION operationNewGeneratorFunctionWithInvalidatedRealloc
 
 void JIT_OPERATION operationSetFunctionName(ExecState* exec, JSCell* funcCell, EncodedJSValue encodedName)
 {
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
     JSFunction* func = jsCast<JSFunction*>(funcCell);
     JSValue name = JSValue::decode(encodedName);
     func->setFunctionName(exec, name);

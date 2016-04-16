@@ -1,3 +1,22 @@
+2016-04-15  Keith Miller  <keith_miller@apple.com>
+
+        Some JIT/DFG operations need NativeCallFrameTracers
+        https://bugs.webkit.org/show_bug.cgi?id=156650
+
+        Reviewed by Michael Saboff.
+
+        Some of our operation functions did not have native call frame
+        tracers. This meant that we would crash occasionally on some
+        of our tests when they triggered a GC in one of the functions
+        without a tracer. In particular, this was exemplified by another
+        upcoming patch when calling operationSetFunctionName.
+
+        This patch does not add tests since this happens consistently in
+        the patch adding delete_by_id to the DFG.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+
 2016-04-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: sourceMappingURL not used when sourceURL is set

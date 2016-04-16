@@ -1036,6 +1036,9 @@ JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState* exec, 
 
 void JIT_OPERATION operationCopyRest(ExecState* exec, JSCell* arrayAsCell, Register* argumentStart, unsigned numberOfParamsToSkip, unsigned arraySize)
 {
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
     ASSERT(arraySize);
     JSArray* array = jsCast<JSArray*>(arrayAsCell);
     ASSERT(arraySize == array->length());
@@ -1309,6 +1312,9 @@ JSCell* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, Encode
 char* JIT_OPERATION operationFindSwitchImmTargetForDouble(
     ExecState* exec, EncodedJSValue encodedValue, size_t tableIndex)
 {
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
     CodeBlock* codeBlock = exec->codeBlock();
     SimpleJumpTable& table = codeBlock->switchJumpTable(tableIndex);
     JSValue value = JSValue::decode(encodedValue);
