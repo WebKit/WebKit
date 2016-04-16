@@ -317,22 +317,24 @@ void InspectorFrontendHost::sendMessageToBackend(const String& message)
 }
 
 #if ENABLE(CONTEXT_MENUS)
+
 void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMenuItem>& items)
 {
     if (!event)
         return;
 
     ASSERT(m_frontendPage);
-    JSC::ExecState* frontendExecState = execStateFromPage(debuggerWorld(), m_frontendPage);
-    Deprecated::ScriptObject frontendApiObject;
-    if (!ScriptGlobalObject::get(frontendExecState, "InspectorFrontendAPI", frontendApiObject)) {
+    auto& state = *execStateFromPage(debuggerWorld(), m_frontendPage);
+    JSC::JSObject* frontendApiObject;
+    if (!ScriptGlobalObject::get(state, "InspectorFrontendAPI", frontendApiObject)) {
         ASSERT_NOT_REACHED();
         return;
     }
-    RefPtr<FrontendMenuProvider> menuProvider = FrontendMenuProvider::create(this, frontendApiObject, items);
-    m_frontendPage->contextMenuController().showContextMenu(event, menuProvider);
-    m_menuProvider = menuProvider.get();
+    auto menuProvider = FrontendMenuProvider::create(this, { &state, frontendApiObject }, items);
+    m_frontendPage->contextMenuController().showContextMenu(event, menuProvider.ptr());
+    m_menuProvider = menuProvider.ptr();
 }
+
 #endif
 
 void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event* event)

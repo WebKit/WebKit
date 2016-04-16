@@ -3505,7 +3505,7 @@ HRESULT WebView::stringByEvaluatingJavaScriptFromString(_In_ BSTR script, // ass
     if (!coreFrame)
         return E_UNEXPECTED;
 
-    JSC::JSValue scriptExecutionResult = coreFrame->script().executeScript(WTF::String(script), true).jsValue();
+    auto scriptExecutionResult = coreFrame->script().executeScript(WTF::String(script), true);
     if (!scriptExecutionResult)
         return E_FAIL;
     else if (scriptExecutionResult.isString()) {

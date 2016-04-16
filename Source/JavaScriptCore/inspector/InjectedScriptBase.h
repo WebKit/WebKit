@@ -63,7 +63,7 @@ protected:
     bool hasAccessToInspectedScriptState() const;
 
     const Deprecated::ScriptObject& injectedScriptObject() const;
-    Deprecated::ScriptValue callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall&, bool& hadException) const;
+    JSC::JSValue callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall&, bool& hadException) const;
     void makeCall(Deprecated::ScriptFunctionCall&, RefPtr<InspectorValue>* result);
     void makeEvalCall(ErrorString&, Deprecated::ScriptFunctionCall&, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown, Protocol::OptOutput<int>* savedResult = nullptr);
 

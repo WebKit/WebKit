@@ -439,15 +439,17 @@ void PluginView::performRequest(PluginRequest* request)
     
     // Executing a script can cause the plugin view to be destroyed, so we keep a reference to it.
     RefPtr<PluginView> protector(this);
-    Deprecated::ScriptValue result = m_parentFrame->script().executeScript(jsString, request->shouldAllowPopups());
+    auto result = m_parentFrame->script().executeScript(jsString, request->shouldAllowPopups());
 
     if (targetFrameName.isNull()) {
-        String resultString;
-
-        JSC::ExecState* scriptState = m_parentFrame->script().globalObject(pluginWorld())->globalExec();
         CString cstr;
-        if (result.getString(scriptState, resultString))
-            cstr = resultString.utf8();
+        {
+            JSC::ExecState& state = *m_parentFrame->script().globalObject(pluginWorld())->globalExec();
+            JSC::JSLockHolder lock(&state);
+            String resultString;
+            if (result && result.getString(&state, resultString))
+                cstr = resultString.utf8();
+        }
 
         RefPtr<PluginStream> stream = PluginStream::create(this, m_parentFrame.get(), request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
         m_streams.add(stream);

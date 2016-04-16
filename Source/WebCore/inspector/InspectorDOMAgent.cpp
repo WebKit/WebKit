@@ -277,20 +277,20 @@ void InspectorDOMAgent::setDOMListener(DOMListener* listener)
     m_domListener = listener;
 }
 
-void InspectorDOMAgent::setDocument(Document* doc)
+void InspectorDOMAgent::setDocument(Document* document)
 {
-    if (doc == m_document.get())
+    if (document == m_document.get())
         return;
 
     reset();
 
-    m_document = doc;
+    m_document = document;
 
     if (!m_documentRequested)
         return;
 
-    // Immediately communicate 0 document or document that has finished loading.
-    if (!doc || !doc->parsing())
+    // Immediately communicate null document or document that has finished loading.
+    if (!document || !document->parsing())
         m_frontendDispatcher->documentUpdated();
 }
 
@@ -663,7 +663,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString& errorString, int elemen
     ExceptionCode ec = 0;
     parsedElement.get()->setInnerHTML("<span " + text + "></span>", ec);
     if (ec) {
-        errorString = InspectorDOMAgent::toErrorString(ec);
+        errorString = toErrorString(ec);
         return;
     }
 
@@ -998,7 +998,7 @@ void InspectorDOMAgent::focusNode()
     if (injectedScript.hasNoValue())
         return;
 
-    injectedScript.inspectObject(InspectorDOMAgent::nodeAsScriptValue(scriptState, node.get()));
+    injectedScript.inspectObject(nodeAsScriptValue(*scriptState, node.get()));
 }
 
 void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
@@ -1190,14 +1190,14 @@ void InspectorDOMAgent::undo(ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     m_history->undo(ec);
-    errorString = InspectorDOMAgent::toErrorString(ec);
+    errorString = toErrorString(ec);
 }
 
 void InspectorDOMAgent::redo(ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     m_history->redo(ec);
-    errorString = InspectorDOMAgent::toErrorString(ec);
+    errorString = toErrorString(ec);
 }
 
 void InspectorDOMAgent::markUndoableState(ErrorString&)
@@ -2111,8 +2111,7 @@ Node* InspectorDOMAgent::nodeForObjectId(const String& objectId)
     if (injectedScript.hasNoValue())
         return nullptr;
 
-    Deprecated::ScriptValue value = injectedScript.findObjectById(objectId);
-    return InspectorDOMAgent::scriptValueAsNode(value);
+    return scriptValueAsNode(injectedScript.findObjectById(objectId));
 }
 
 void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString& errorString, const String& path, int* nodeId)
@@ -2151,24 +2150,23 @@ RefPtr<Inspector::Protocol::Runtime::RemoteObject> InspectorDOMAgent::resolveNod
     if (injectedScript.hasNoValue())
         return 0;
 
-    return injectedScript.wrapObject(InspectorDOMAgent::nodeAsScriptValue(scriptState, node), objectGroup);
+    return injectedScript.wrapObject(nodeAsScriptValue(*scriptState, node), objectGroup);
 }
 
-Node* InspectorDOMAgent::scriptValueAsNode(Deprecated::ScriptValue value)
+Node* InspectorDOMAgent::scriptValueAsNode(JSC::JSValue value)
 {
-    if (!value.isObject() || value.isNull())
+    if (!value)
         return nullptr;
-
-    return JSNode::toWrapped(value.jsValue());
+    return JSNode::toWrapped(value);
 }
 
-Deprecated::ScriptValue InspectorDOMAgent::nodeAsScriptValue(JSC::ExecState* state, Node* node)
+JSC::JSValue InspectorDOMAgent::nodeAsScriptValue(JSC::ExecState& state, Node* node)
 {
-    if (!shouldAllowAccessToNode(state, node))
-        return Deprecated::ScriptValue(state->vm(), JSC::jsNull());
+    if (!shouldAllowAccessToNode(&state, node))
+        return JSC::jsNull();
 
-    JSC::JSLockHolder lock(state);
-    return Deprecated::ScriptValue(state->vm(), toJS(state, deprecatedGlobalObjectForPrototype(state), node));
+    JSC::JSLockHolder lock(&state);
+    return toJS(&state, deprecatedGlobalObjectForPrototype(&state), node);
 }
 
 } // namespace WebCore

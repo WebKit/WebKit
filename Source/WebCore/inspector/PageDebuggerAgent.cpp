@@ -103,9 +103,9 @@ void PageDebuggerAgent::unmuteConsole()
     PageConsoleClient::unmute();
 }
 
-void PageDebuggerAgent::breakpointActionLog(JSC::ExecState* exec, const String& message)
+void PageDebuggerAgent::breakpointActionLog(JSC::ExecState& state, const String& message)
 {
-    m_pageAgent->page().console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(exec, ScriptCallStack::maxCallStackSizeToCapture));
+    m_pageAgent->page().console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(&state, ScriptCallStack::maxCallStackSizeToCapture));
 }
 
 InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)

@@ -101,9 +101,9 @@ public:
 
     static void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
 
-    Deprecated::ScriptValue executeScript(const ScriptSourceCode&, ExceptionDetails* = nullptr);
-    WEBCORE_EXPORT Deprecated::ScriptValue executeScript(const String& script, bool forceUserGesture = false, ExceptionDetails* = nullptr);
-    WEBCORE_EXPORT Deprecated::ScriptValue executeScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture = false);
+    JSC::JSValue executeScript(const ScriptSourceCode&, ExceptionDetails* = nullptr);
+    WEBCORE_EXPORT JSC::JSValue executeScript(const String& script, bool forceUserGesture = false, ExceptionDetails* = nullptr);
+    WEBCORE_EXPORT JSC::JSValue executeScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture = false);
 
     // Returns true if argument is a JavaScript URL.
     bool executeIfJavaScriptURL(const URL&, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
@@ -112,8 +112,8 @@ public:
     // Darwin is an exception to this rule: it is OK to call this function from any thread, even reentrantly.
     static void initializeThreading();
 
-    Deprecated::ScriptValue evaluate(const ScriptSourceCode&, ExceptionDetails* = nullptr);
-    Deprecated::ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&, ExceptionDetails* = nullptr);
+    JSC::JSValue evaluate(const ScriptSourceCode&, ExceptionDetails* = nullptr);
+    JSC::JSValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&, ExceptionDetails* = nullptr);
 
     WTF::TextPosition eventHandlerPosition() const;
 

@@ -84,7 +84,7 @@ void WebInspectorUI::windowObjectCleared()
         m_frontendHost->disconnectClient();
 
     m_frontendHost = InspectorFrontendHost::create(this, m_page.corePage());
-    ScriptGlobalObject::set(execStateFromPage(mainThreadNormalWorld(), m_page.corePage()), ASCIILiteral("InspectorFrontendHost"), m_frontendHost.get());
+    ScriptGlobalObject::set(*execStateFromPage(mainThreadNormalWorld(), m_page.corePage()), ASCIILiteral("InspectorFrontendHost"), *m_frontendHost);
 }
 
 void WebInspectorUI::frontendLoaded()

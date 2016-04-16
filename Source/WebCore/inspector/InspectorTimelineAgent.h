@@ -95,11 +95,11 @@ public:
     InspectorTimelineAgent(WebAgentContext&, InspectorPageAgent*);
     virtual ~InspectorTimelineAgent();
 
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
 
-    void start(ErrorString&, const int* maxCallStackDepth = nullptr) override;
-    void stop(ErrorString&) override;
+    void start(ErrorString&, const int* maxCallStackDepth = nullptr) final;
+    void stop(ErrorString&) final;
 
     int id() const { return m_id; }
 
@@ -138,18 +138,17 @@ public:
     void time(Frame&, const String&);
     void timeEnd(Frame&, const String&);
 
-protected:
-    // ScriptDebugListener
-    void didParseSource(JSC::SourceID, const Script&) override { }
-    void failedToParseSource(const String&, const String&, int, int, const String&) override { }
-    void didPause(JSC::ExecState*, const Deprecated::ScriptValue&, const Deprecated::ScriptValue&) override { }
-    void didContinue() override { }
-
-    void breakpointActionLog(JSC::ExecState*, const String&) override { }
-    void breakpointActionSound(int) override { }
-    void breakpointActionProbe(JSC::ExecState*, const Inspector::ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue& result) override;
-
 private:
+    // ScriptDebugListener
+    void didParseSource(JSC::SourceID, const Script&) final { }
+    void failedToParseSource(const String&, const String&, int, int, const String&) final { }
+    void didPause(JSC::ExecState&, JSC::JSValue, JSC::JSValue) final { }
+    void didContinue() final { }
+
+    void breakpointActionLog(JSC::ExecState&, const String&) final { }
+    void breakpointActionSound(int) final { }
+    void breakpointActionProbe(JSC::ExecState&, const Inspector::ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue result) final;
+
     friend class TimelineRecordStack;
 
     struct TimelineRecordEntry {

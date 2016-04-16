@@ -2006,7 +2006,7 @@ HRESULT WebFrame::stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld* iWo
     // Get the frame frome the global object we've settled on.
     Frame* frame = anyWorldGlobalObject->wrapped().frame();
     ASSERT(frame->document());
-    JSValue result = frame->script().executeScriptInWorld(world->world(), string, true).jsValue();
+    JSValue result = frame->script().executeScriptInWorld(world->world(), string, true);
 
     if (!frame) // In case the script removed our frame from the page.
         return S_OK;

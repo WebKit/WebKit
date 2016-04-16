@@ -152,9 +152,8 @@ void InspectorFrontendClientLocal::windowObjectCleared()
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
     
-    JSC::ExecState* frontendExecState = execStateFromPage(debuggerWorld(), m_frontendPage);
     m_frontendHost = InspectorFrontendHost::create(this, m_frontendPage);
-    ScriptGlobalObject::set(frontendExecState, "InspectorFrontendHost", m_frontendHost.get());
+    ScriptGlobalObject::set(*execStateFromPage(debuggerWorld(), m_frontendPage), "InspectorFrontendHost", *m_frontendHost);
 }
 
 void InspectorFrontendClientLocal::frontendLoaded()
@@ -364,8 +363,8 @@ unsigned InspectorFrontendClientLocal::inspectionLevel() const
 
 bool InspectorFrontendClientLocal::evaluateAsBoolean(const String& expression)
 {
-    Deprecated::ScriptValue value = m_frontendPage->mainFrame().script().executeScript(expression);
-    return value.toString(mainWorldExecState(&m_frontendPage->mainFrame())) == "true";
+    auto& state = *mainWorldExecState(&m_frontendPage->mainFrame());
+    return m_frontendPage->mainFrame().script().executeScript(expression).toWTFString(&state) == "true";
 }
 
 void InspectorFrontendClientLocal::evaluateOnLoad(const String& expression)

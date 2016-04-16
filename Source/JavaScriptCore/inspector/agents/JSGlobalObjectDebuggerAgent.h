@@ -42,12 +42,12 @@ public:
 
     InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
 
-    void breakpointActionLog(JSC::ExecState*, const String&) override;
+    void breakpointActionLog(JSC::ExecState&, const String&) final;
 
     // NOTE: JavaScript inspector does not yet need to mute a console because no messages
     // are sent to the console outside of the API boundary or console object.
-    void muteConsole() override { }
-    void unmuteConsole() override { }
+    void muteConsole() final { }
+    void unmuteConsole() final { }
 
 private:
     InspectorConsoleAgent* m_consoleAgent { nullptr };

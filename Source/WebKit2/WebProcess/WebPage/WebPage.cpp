@@ -2656,7 +2656,7 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
     JSLockHolder lock(JSDOMWindow::commonVM());
     bool hadException = true;
     ExceptionDetails details;
-    if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScript(script, true, &details).jsValue()) {
+    if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScript(script, true, &details)) {
         hadException = false;
         serializedResultValue = SerializedScriptValue::create(m_mainFrame->jsContext(),
             toRef(m_mainFrame->coreFrame()->script().globalObject(mainThreadNormalWorld())->globalExec(), resultValue), nullptr);

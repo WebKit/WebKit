@@ -1,3 +1,58 @@
+2016-04-15  Darin Adler  <darin@apple.com>
+
+        Reduce use of Deprecated::ScriptXXX classes
+        https://bugs.webkit.org/show_bug.cgi?id=156632
+
+        Reviewed by Alex Christensen.
+
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptCallArgumentHandler::appendArgument): Deleted version that takes a Deprecated::ScriptValue.
+        (Deprecated::ScriptFunctionCall::call): Changed to return a JSValue.
+        * bindings/ScriptFunctionCall.h: Updated for the above.
+
+        * bindings/ScriptValue.cpp:
+        (Inspector::jsToInspectorValue): Moved from Deprecated namespace to Inspector namespace. Later, we should
+        move this to another source file in the inspector directory.
+        (Inspector::toInspectorValue): Added.
+        (Deprecated::ScriptValue::toInspectorValue): Updated for change to underlying function.
+        * bindings/ScriptValue.h: Update for the above.
+
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::evaluateOnCallFrame): Changed arguments and return values from
+        Deprecated::ScriptValue to JSC::JSValue.
+        (Inspector::InjectedScript::functionDetails): Ditto.
+        (Inspector::InjectedScript::wrapCallFrames): Ditto.
+        (Inspector::InjectedScript::wrapObject): Ditto.
+        (Inspector::InjectedScript::wrapTable): Ditto.
+        (Inspector::InjectedScript::previewValue): Ditto.
+        (Inspector::InjectedScript::setExceptionValue): Ditto.
+        (Inspector::InjectedScript::findObjectById): Ditto.
+        (Inspector::InjectedScript::inspectObject): Ditto.
+        * inspector/InjectedScript.h: Ditto.
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::callFunctionWithEvalEnabled): Ditto.
+        (Inspector::InjectedScriptBase::makeCall): Ditto.
+        * inspector/InjectedScriptBase.h: Ditto.
+        * inspector/InjectedScriptModule.cpp:
+        (Inspector::InjectedScriptModule::ensureInjected): Ditto.
+        * inspector/ScriptDebugListener.h: Ditto.
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::evaluateBreakpointAction): Ditto.
+        (Inspector::ScriptDebugServer::dispatchDidPause): Ditto.
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionProbe): Ditto.
+        (Inspector::ScriptDebugServer::exceptionOrCaughtValue): Ditto.
+        * inspector/ScriptDebugServer.h: Ditto.
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::buildExceptionPauseReason): Ditto.
+        (Inspector::InspectorDebuggerAgent::didPause): Ditto.
+        (Inspector::InspectorDebuggerAgent::breakpointActionProbe): Ditto.
+        (Inspector::InspectorDebuggerAgent::didContinue): Ditto.
+        (Inspector::InspectorDebuggerAgent::clearDebuggerBreakpointState): Ditto.
+        * inspector/agents/InspectorDebuggerAgent.h: Ditto.
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::getPreview): Ditto.
+        (Inspector::InspectorHeapAgent::getRemoteObject): Ditto.
+
 2016-04-15  Keith Miller  <keith_miller@apple.com>
 
         Some JIT/DFG operations need NativeCallFrameTracers

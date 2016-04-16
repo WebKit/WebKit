@@ -55,9 +55,9 @@ InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString& e
     return injectedScriptManager().injectedScriptFor(exec);
 }
 
-void JSGlobalObjectDebuggerAgent::breakpointActionLog(JSC::ExecState* exec, const String& message)
+void JSGlobalObjectDebuggerAgent::breakpointActionLog(JSC::ExecState& state, const String& message)
 {
-    m_consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(exec, ScriptCallStack::maxCallStackSizeToCapture), 0));
+    m_consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(&state, ScriptCallStack::maxCallStackSizeToCapture), 0));
 }
 
 } // namespace Inspector

@@ -44,12 +44,12 @@
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
-namespace Deprecated {
-class ScriptValue;
-}
-
 namespace Inspector {
 class InjectedScriptManager;
+}
+
+namespace JSC {
+class JSValue;
 }
 
 namespace WebCore {
@@ -206,8 +206,8 @@ public:
     Element* assertElement(ErrorString&, int nodeId);
     Document* assertDocument(ErrorString&, int nodeId);
 
-    static Node* scriptValueAsNode(Deprecated::ScriptValue);
-    static Deprecated::ScriptValue nodeAsScriptValue(JSC::ExecState*, Node*);
+    static Node* scriptValueAsNode(JSC::JSValue);
+    static JSC::JSValue nodeAsScriptValue(JSC::ExecState&, Node*);
 
     // Methods called from other agents.
     InspectorPageAgent* pageAgent() { return m_pageAgent; }

@@ -6921,7 +6921,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
         return nil;
     if (!coreFrame->document())
         return nil;
-    JSC::JSValue result = coreFrame->script().executeScript(script, true).jsValue();
+    JSC::JSValue result = coreFrame->script().executeScript(script, true);
     if (!result) // FIXME: pass errors
         return 0;
     JSLockHolder lock(coreFrame->script().globalObject(mainThreadNormalWorld())->globalExec());

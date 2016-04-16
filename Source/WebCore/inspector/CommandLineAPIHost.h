@@ -30,15 +30,10 @@
 #ifndef CommandLineAPIHost_h
 #define CommandLineAPIHost_h
 
-#include "ScriptState.h"
 #include <inspector/PerGlobalObjectWrapperWorld.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
-
-namespace Deprecated {
-class ScriptValue;
-}
 
 namespace JSC {
 class JSValue;
@@ -90,7 +85,7 @@ public:
     class InspectableObject {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        virtual Deprecated::ScriptValue get(JSC::ExecState*);
+        virtual JSC::JSValue get(JSC::ExecState&);
         virtual ~InspectableObject() { }
     };
     void addInspectedObject(std::unique_ptr<InspectableObject>);

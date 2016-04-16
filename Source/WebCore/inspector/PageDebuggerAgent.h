@@ -63,10 +63,10 @@ private:
     void muteConsole() override;
     void unmuteConsole() override;
 
-    void breakpointActionLog(JSC::ExecState*, const String&) override;
+    void breakpointActionLog(JSC::ExecState&, const String&) final;
 
     Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
-    void setOverlayMessage(ErrorString&, const String*) override;
+    void setOverlayMessage(ErrorString&, const String*) final;
 
     Page& m_page;
 

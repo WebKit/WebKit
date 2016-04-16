@@ -33,57 +33,34 @@
 
 #include "JSDOMBinding.h"
 #include "JSInspectorFrontendHost.h"
-#include <bindings/ScriptObject.h>
 #include <runtime/IdentifierInlines.h>
-#include <runtime/JSLock.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-static bool handleException(JSC::ExecState* scriptState)
+bool ScriptGlobalObject::set(ExecState& scriptState, const char* name, InspectorFrontendHost& value)
 {
-    if (!scriptState->hadException())
-        return true;
-
-    reportException(scriptState, scriptState->exception());
-    return false;
-}
-
-bool ScriptGlobalObject::set(JSC::ExecState* scriptState, const char* name, const Deprecated::ScriptObject& value)
-{
-    JSLockHolder lock(scriptState);
-    scriptState->lexicalGlobalObject()->putDirect(scriptState->vm(), Identifier::fromString(scriptState, name), value.jsObject());
-    return handleException(scriptState);
-}
-
-bool ScriptGlobalObject::set(JSC::ExecState* scriptState, const char* name, InspectorFrontendHost* value)
-{
-    JSLockHolder lock(scriptState);
-    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
-    globalObject->putDirect(scriptState->vm(), Identifier::fromString(scriptState, name), toJS(scriptState, globalObject, value));
-    return handleException(scriptState);
-}
-
-bool ScriptGlobalObject::get(JSC::ExecState* scriptState, const char* name, Deprecated::ScriptObject& value)
-{
-    JSLockHolder lock(scriptState);
-    JSValue jsValue = scriptState->lexicalGlobalObject()->get(scriptState, Identifier::fromString(scriptState, name));
-    if (!jsValue)
+    auto& vm = scriptState.vm();
+    JSLockHolder lock(vm);
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptState.lexicalGlobalObject());
+    globalObject.putDirect(vm, Identifier::fromString(&vm, name), toJS(&scriptState, &globalObject, value));
+    if (scriptState.hadException()) {
+        reportException(&scriptState, scriptState.exception());
         return false;
-
-    if (!jsValue.isObject())
-        return false;
-
-    value = Deprecated::ScriptObject(scriptState, asObject(jsValue));
+    }
     return true;
 }
 
-bool ScriptGlobalObject::remove(JSC::ExecState* scriptState, const char* name)
+bool ScriptGlobalObject::get(ExecState& scriptState, const char* name, JSObject*& object)
 {
-    JSLockHolder lock(scriptState);
-    scriptState->lexicalGlobalObject()->methodTable()->deleteProperty(scriptState->lexicalGlobalObject(), scriptState, Identifier::fromString(scriptState, name));
-    return handleException(scriptState);
+    auto& vm = scriptState.vm();
+    JSLockHolder lock(vm);
+    JSValue value = scriptState.lexicalGlobalObject()->get(&scriptState, Identifier::fromString(&vm, name));
+    if (!value || !value.isObject())
+        return false;
+    object = asObject(value);
+    return true;
 }
 
 } // namespace WebCore

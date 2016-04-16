@@ -681,7 +681,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     JSC::JSLockHolder jscLock(exec);
 #endif
 
-    JSC::JSValue result = _private->coreFrame->script().executeScript(string, forceUserGesture).jsValue();
+    JSC::JSValue result = _private->coreFrame->script().executeScript(string, forceUserGesture);
 
     if (!_private->coreFrame) // In case the script removed our frame from the page.
         return @"";
@@ -2107,7 +2107,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     ASSERT(frame->document());
     RetainPtr<WebFrame> webFrame(kit(frame)); // Running arbitrary JavaScript can destroy the frame.
 
-    JSC::JSValue result = frame->script().executeScriptInWorld(*core(world), string, true).jsValue();
+    JSC::JSValue result = frame->script().executeScriptInWorld(*core(world), string, true);
 
     if (!webFrame->_private->coreFrame) // In case the script removed our frame from the page.
         return @"";

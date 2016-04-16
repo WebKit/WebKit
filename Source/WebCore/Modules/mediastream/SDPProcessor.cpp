@@ -37,7 +37,6 @@
 #include "Frame.h"
 #include "SDPProcessorScriptResource.h"
 #include "ScriptController.h"
-#include "ScriptGlobalObject.h"
 #include "ScriptSourceCode.h"
 #include "inspector/InspectorValues.h"
 #include <bindings/ScriptObject.h>

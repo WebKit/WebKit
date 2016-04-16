@@ -1,3 +1,74 @@
+2016-04-15  Darin Adler  <darin@apple.com>
+
+        Reduce use of Deprecated::ScriptXXX classes
+        https://bugs.webkit.org/show_bug.cgi?id=156632
+
+        Reviewed by Alex Christensen.
+
+        * Modules/mediastream/SDPProcessor.cpp: Removed unneeded include.
+
+        * bindings/js/JSCommandLineAPIHostCustom.cpp:
+        (WebCore::JSCommandLineAPIHost::inspectedObject): Use JSValue.
+        * bindings/js/JSCustomEventCustom.cpp:
+        (WebCore::JSCustomEvent::detail): Ditto.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld): Ditto.
+        (WebCore::ScriptController::evaluate): Ditto.
+        (WebCore::ScriptController::executeScriptInWorld): Ditto.
+        (WebCore::ScriptController::executeScript): Ditto.
+        (WebCore::ScriptController::executeIfJavaScriptURL): Ditto.
+        * bindings/js/ScriptController.h: Ditto.
+
+        * bindings/js/ScriptGlobalObject.cpp: Removed unused overload of set,
+        and unused remove and folded handleException function into its one call site.
+        (WebCore::ScriptGlobalObject::set): Take references instead of pointers.
+        (WebCore::ScriptGlobalObject::get): Use JSObject instead of Deprecated::ScriptObject.
+        * bindings/js/ScriptGlobalObject.h: Updated for the above.
+
+        * dom/CustomEvent.cpp:
+        (WebCore::CustomEvent::initCustomEvent): Take JSValue and ExecState instead of
+        Deprecated::ScriptValue.
+        (WebCore::CustomEvent::trySerializeDetail): Take a reference instead of a pointer.
+        Also removed an unneeded null check.
+        * dom/CustomEvent.h: Use JSValue.
+        * dom/CustomEvent.idl: Updated for the above.
+
+        * html/HTMLMediaElement.cpp: Remove unneeded include.
+
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::InspectableObject::get): Take reference instead of
+        pointer and return JSValue.
+        * inspector/CommandLineAPIHost.h: Updated for the above.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setDocument): Use "document" instead of "doc".
+        (WebCore::InspectorDOMAgent::setAttributesAsText): Omit redundant class name.
+        (WebCore::InspectorDOMAgent::focusNode): Ditto. Pass reference instead of pointer.
+        (WebCore::InspectorDOMAgent::undo): Ditto.
+        (WebCore::InspectorDOMAgent::redo): Ditto.
+        (WebCore::InspectorDOMAgent::nodeForObjectId): Stop using Deprecated::ScriptValue.
+        (WebCore::InspectorDOMAgent::resolveNode): Ditto.
+        (WebCore::InspectorDOMAgent::scriptValueAsNode): Removed unneeded isObject check,
+        which is already done by JSNode::toWrapped. Use JSValue.
+        (WebCore::InspectorDOMAgent::nodeAsScriptValue): Use JSValue.
+        * inspector/InspectorDOMAgent.h: Updated for the above.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::windowObjectCleared): Use references instead of
+        pointers and removed unneeded local.
+        (WebCore::InspectorFrontendClientLocal::evaluateAsBoolean): More of the same.
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::showContextMenu): Ditto.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::breakpointActionProbe): Updated to take
+        reference instead of pointer and JSValue instead of ScriptValue.
+        * inspector/InspectorTimelineAgent.h: Ditto.
+        * inspector/PageConsoleAgent.cpp: Ditto.
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::breakpointActionLog): Ditto.
+        * inspector/PageDebuggerAgent.h: Ditto.
+
 2016-04-15  Daniel Bates  <dabates@apple.com>
 
         CSP: Ignore paths in CSP matching after redirects

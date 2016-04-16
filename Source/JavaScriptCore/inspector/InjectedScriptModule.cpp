@@ -65,9 +65,9 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
     Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), ASCIILiteral("module"), injectedScriptManager->inspectorEnvironment().functionCallHandler());
     function.appendArgument(name());
     bool hadException = false;
-    Deprecated::ScriptValue resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
+    auto resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
     ASSERT(!hadException);
-    if (hadException || resultValue.hasNoValue() || !resultValue.isObject()) {
+    if (hadException || !resultValue || !resultValue.isObject()) {
         Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), ASCIILiteral("injectModule"), injectedScriptManager->inspectorEnvironment().functionCallHandler());
         function.appendArgument(name());
         function.appendArgument(source());

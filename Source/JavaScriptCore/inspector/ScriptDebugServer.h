@@ -85,7 +85,7 @@ protected:
     void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
     void dispatchBreakpointActionLog(JSC::ExecState*, const String&);
     void dispatchBreakpointActionSound(JSC::ExecState*, int breakpointActionIdentifier);
-    void dispatchBreakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, const Deprecated::ScriptValue& sample);
+    void dispatchBreakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, JSC::JSValue sample);
 
     bool m_doneProcessingDebuggerEvents {true};
 
@@ -99,7 +99,7 @@ private:
     void handlePause(JSC::JSGlobalObject*, JSC::Debugger::ReasonForPause) final;
     void notifyDoneProcessingDebuggerEvents() final;
 
-    Deprecated::ScriptValue exceptionOrCaughtValue(JSC::ExecState*);
+    JSC::JSValue exceptionOrCaughtValue(JSC::ExecState*);
 
     BreakpointIDToActionsMap m_breakpointIDToActions;
 

@@ -50,11 +50,6 @@ void ScriptCallArgumentHandler::appendArgument(const Deprecated::ScriptObject& a
     m_arguments.append(argument.jsObject());
 }
 
-void ScriptCallArgumentHandler::appendArgument(const Deprecated::ScriptValue& argument)
-{
-    m_arguments.append(argument.jsValue());
-}
-
 void ScriptCallArgumentHandler::appendArgument(const String& argument)
 {
     JSLockHolder lock(m_exec);
@@ -115,7 +110,7 @@ ScriptFunctionCall::ScriptFunctionCall(const Deprecated::ScriptObject& thisObjec
 {
 }
 
-Deprecated::ScriptValue ScriptFunctionCall::call(bool& hadException)
+JSValue ScriptFunctionCall::call(bool& hadException)
 {
     JSObject* thisObject = m_thisObject.jsObject();
 
@@ -124,13 +119,13 @@ Deprecated::ScriptValue ScriptFunctionCall::call(bool& hadException)
     JSValue function = thisObject->get(m_exec, Identifier::fromString(m_exec, m_name));
     if (m_exec->hadException()) {
         hadException = true;
-        return Deprecated::ScriptValue();
+        return { };
     }
 
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallType::None)
-        return Deprecated::ScriptValue();
+        return { };
 
     JSValue result;
     NakedPtr<Exception> exception;
@@ -142,15 +137,15 @@ Deprecated::ScriptValue ScriptFunctionCall::call(bool& hadException)
     if (exception) {
         // Do not treat a terminated execution exception as having an exception. Just treat it as an empty result.
         hadException = !isTerminatedExecutionException(exception);
-        return Deprecated::ScriptValue();
+        return { };
     }
 
-    return Deprecated::ScriptValue(m_exec->vm(), result);
+    return result;
 }
 
-Deprecated::ScriptValue ScriptFunctionCall::call()
+JSC::JSValue ScriptFunctionCall::call()
 {
-    bool hadException = false;
+    bool hadException;
     return call(hadException);
 }
 

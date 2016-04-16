@@ -38,6 +38,71 @@
 using namespace JSC;
 using namespace Inspector;
 
+namespace Inspector {
+
+static RefPtr<InspectorValue> jsToInspectorValue(ExecState& scriptState, JSValue value, int maxDepth)
+{
+    if (!value) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    if (!maxDepth)
+        return nullptr;
+
+    maxDepth--;
+
+    if (value.isUndefinedOrNull())
+        return InspectorValue::null(); // FIXME: Why is it OK to turn undefined into null?
+    if (value.isBoolean())
+        return InspectorValue::create(value.asBoolean());
+    if (value.isNumber() && value.isDouble())
+        return InspectorValue::create(value.asNumber());
+    if (value.isNumber() && value.isMachineInt())
+        return InspectorValue::create(static_cast<int>(value.asMachineInt()));
+    if (value.isString())
+        return InspectorValue::create(value.getString(&scriptState));
+
+    if (value.isObject()) {
+        if (isJSArray(value)) {
+            auto inspectorArray = InspectorArray::create();
+            auto& array = *asArray(value);
+            unsigned length = array.length();
+            for (unsigned i = 0; i < length; i++) {
+                auto elementValue = jsToInspectorValue(scriptState, array.getIndex(&scriptState, i), maxDepth);
+                if (!elementValue)
+                    return nullptr;
+                inspectorArray->pushValue(WTFMove(elementValue));
+            }
+            return WTFMove(inspectorArray);
+        }
+        auto inspectorObject = InspectorObject::create();
+        auto& object = *value.getObject();
+        PropertyNameArray propertyNames(&scriptState, PropertyNameMode::Strings);
+        object.methodTable()->getOwnPropertyNames(&object, &scriptState, propertyNames, EnumerationMode());
+        for (auto& name : propertyNames) {
+            auto inspectorValue = jsToInspectorValue(scriptState, object.get(&scriptState, name), maxDepth);
+            if (!inspectorValue)
+                return nullptr;
+            inspectorObject->setValue(name.string(), WTFMove(inspectorValue));
+        }
+        return WTFMove(inspectorObject);
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+RefPtr<InspectorValue> toInspectorValue(ExecState& state, JSValue value)
+{
+    // FIXME: Maybe we should move the JSLockHolder stuff to the callers since this function takes a JSValue directly.
+    // Doing the locking here made sense when we were trying to abstract the difference between multiple JavaScript engines.
+    JSLockHolder holder(&state);
+    return jsToInspectorValue(state, value, InspectorValue::maxDepth);
+}
+
+} // namespace Inspector
+
 namespace Deprecated {
 
 ScriptValue::~ScriptValue()
@@ -97,66 +162,10 @@ bool ScriptValue::isFunction() const
     return getCallData(m_value.get(), callData) != CallType::None;
 }
 
-static RefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSValue value, int maxDepth)
-{
-    if (!value) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-
-    if (!maxDepth)
-        return nullptr;
-
-    maxDepth--;
-
-    if (value.isNull() || value.isUndefined())
-        return InspectorValue::null();
-    if (value.isBoolean())
-        return InspectorValue::create(value.asBoolean());
-    if (value.isNumber() && value.isDouble())
-        return InspectorValue::create(value.asNumber());
-    if (value.isNumber() && value.isMachineInt())
-        return InspectorValue::create(static_cast<int>(value.asMachineInt()));
-    if (value.isString())
-        return InspectorValue::create(value.getString(scriptState));
-
-    if (value.isObject()) {
-        if (isJSArray(value)) {
-            Ref<InspectorArray> inspectorArray = InspectorArray::create();
-            JSArray* array = asArray(value);
-            unsigned length = array->length();
-            for (unsigned i = 0; i < length; i++) {
-                JSValue element = array->getIndex(scriptState, i);
-                RefPtr<InspectorValue> elementValue = jsToInspectorValue(scriptState, element, maxDepth);
-                if (!elementValue)
-                    return nullptr;
-                inspectorArray->pushValue(WTFMove(elementValue));
-            }
-            return WTFMove(inspectorArray);
-        }
-        Ref<InspectorObject> inspectorObject = InspectorObject::create();
-        JSObject* object = value.getObject();
-        PropertyNameArray propertyNames(scriptState, PropertyNameMode::Strings);
-        object->methodTable()->getOwnPropertyNames(object, scriptState, propertyNames, EnumerationMode());
-        for (size_t i = 0; i < propertyNames.size(); i++) {
-            const Identifier& name = propertyNames[i];
-            JSValue propertyValue = object->get(scriptState, name);
-            RefPtr<InspectorValue> inspectorValue = jsToInspectorValue(scriptState, propertyValue, maxDepth);
-            if (!inspectorValue)
-                return nullptr;
-            inspectorObject->setValue(name.string(), WTFMove(inspectorValue));
-        }
-        return WTFMove(inspectorObject);
-    }
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 RefPtr<InspectorValue> ScriptValue::toInspectorValue(ExecState* scriptState) const
 {
     JSLockHolder holder(scriptState);
-    return jsToInspectorValue(scriptState, m_value.get(), InspectorValue::maxDepth);
+    return jsToInspectorValue(*scriptState, m_value.get(), InspectorValue::maxDepth);
 }
 
 } // namespace Deprecated

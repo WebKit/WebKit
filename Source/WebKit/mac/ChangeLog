@@ -1,3 +1,18 @@
+2016-04-15  Darin Adler  <darin@apple.com>
+
+        Reduce use of Deprecated::ScriptXXX classes
+        https://bugs.webkit.org/show_bug.cgi?id=156632
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]): Use references instead
+        of pointers.
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:withGlobalObject:inScriptWorld:]): Updated
+        since return value is a JSValue.
+        * WebView/WebView.mm:
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]): Ditto.
+
 2016-04-14  Brent Fulgham  <bfulgham@apple.com>
 
         Make <a download> a runtime enabled option

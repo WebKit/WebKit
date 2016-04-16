@@ -205,14 +205,12 @@ void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, 
 
     // Function preview.
     if (cell->inherits(JSFunction::info())) {
-        Deprecated::ScriptValue functionScriptValue(m_environment.vm(), JSValue(cell));
-        injectedScript.functionDetails(errorString, functionScriptValue, &functionDetails);
+        injectedScript.functionDetails(errorString, cell, &functionDetails);
         return;
     }
 
     // Object preview.
-    Deprecated::ScriptValue cellScriptValue(m_environment.vm(), JSValue(cell));
-    objectPreview = injectedScript.previewValue(cellScriptValue);
+    objectPreview = injectedScript.previewValue(cell);
 }
 
 void InspectorHeapAgent::getRemoteObject(ErrorString& errorString, int heapObjectId, const String* optionalObjectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
@@ -246,9 +244,8 @@ void InspectorHeapAgent::getRemoteObject(ErrorString& errorString, int heapObjec
         return;
     }
 
-    Deprecated::ScriptValue cellScriptValue(m_environment.vm(), JSValue(cell));
     String objectGroup = optionalObjectGroup ? *optionalObjectGroup : String();
-    result = injectedScript.wrapObject(cellScriptValue, objectGroup, true);
+    result = injectedScript.wrapObject(cell, objectGroup, true);
 }
 
 static Inspector::Protocol::Heap::GarbageCollection::Type protocolTypeForHeapOperation(HeapOperation operation)

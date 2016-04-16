@@ -411,12 +411,9 @@ void InspectorTimelineAgent::didFireAnimationFrame()
 
 // ScriptDebugListener
 
-void InspectorTimelineAgent::breakpointActionProbe(JSC::ExecState* exec, const Inspector::ScriptBreakpointAction& action, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue&)
+void InspectorTimelineAgent::breakpointActionProbe(JSC::ExecState& state, const Inspector::ScriptBreakpointAction& action, unsigned /*batchId*/, unsigned sampleId, JSC::JSValue)
 {
-    UNUSED_PARAM(batchId);
-    ASSERT(exec);
-
-    appendRecord(TimelineRecordFactory::createProbeSampleData(action, sampleId), TimelineRecordType::ProbeSample, false, frameFromExecState(exec));
+    appendRecord(TimelineRecordFactory::createProbeSampleData(action, sampleId), TimelineRecordType::ProbeSample, false, frameFromExecState(&state));
 }
 
 static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType type)

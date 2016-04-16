@@ -109,8 +109,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
             reportException(debuggerCallFrame->exec(), exception);
         
         JSC::ExecState* state = debuggerCallFrame->scope()->globalObject()->globalExec();
-        Deprecated::ScriptValue wrappedResult = Deprecated::ScriptValue(state->vm(), exception ? exception->value() : result);
-        dispatchBreakpointActionProbe(state, breakpointAction, wrappedResult);
+        dispatchBreakpointActionProbe(state, breakpointAction, exception ? exception->value() : result);
         break;
     }
     default:
@@ -131,11 +130,9 @@ void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
     ASSERT(isPaused());
     DebuggerCallFrame* debuggerCallFrame = currentDebuggerCallFrame();
     JSGlobalObject* globalObject = debuggerCallFrame->scope()->globalObject();
-    JSC::ExecState* state = globalObject->globalExec();
-    RefPtr<JavaScriptCallFrame> javaScriptCallFrame = JavaScriptCallFrame::create(debuggerCallFrame);
-    JSValue jsCallFrame = toJS(state, globalObject, javaScriptCallFrame.get());
-
-    listener->didPause(state, Deprecated::ScriptValue(state->vm(), jsCallFrame), exceptionOrCaughtValue(state));
+    JSC::ExecState& state = *globalObject->globalExec();
+    JSValue jsCallFrame = toJS(&state, globalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr());
+    listener->didPause(state, jsCallFrame, exceptionOrCaughtValue(&state));
 }
 
 void ScriptDebugServer::dispatchBreakpointActionLog(ExecState* exec, const String& message)
@@ -151,7 +148,7 @@ void ScriptDebugServer::dispatchBreakpointActionLog(ExecState* exec, const Strin
     Vector<ScriptDebugListener*> listenersCopy;
     copyToVector(m_listeners, listenersCopy);
     for (auto* listener : listenersCopy)
-        listener->breakpointActionLog(exec, message);
+        listener->breakpointActionLog(*exec, message);
 }
 
 void ScriptDebugServer::dispatchBreakpointActionSound(ExecState*, int breakpointActionIdentifier)
@@ -170,7 +167,7 @@ void ScriptDebugServer::dispatchBreakpointActionSound(ExecState*, int breakpoint
         listener->breakpointActionSound(breakpointActionIdentifier);
 }
 
-void ScriptDebugServer::dispatchBreakpointActionProbe(ExecState* exec, const ScriptBreakpointAction& action, const Deprecated::ScriptValue& sampleValue)
+void ScriptDebugServer::dispatchBreakpointActionProbe(ExecState* exec, const ScriptBreakpointAction& action, JSC::JSValue sampleValue)
 {
     if (m_callingListeners)
         return;
@@ -185,7 +182,7 @@ void ScriptDebugServer::dispatchBreakpointActionProbe(ExecState* exec, const Scr
     Vector<ScriptDebugListener*> listenersCopy;
     copyToVector(m_listeners, listenersCopy);
     for (auto* listener : listenersCopy)
-        listener->breakpointActionProbe(exec, action, m_currentProbeBatchId, sampleId, sampleValue);
+        listener->breakpointActionProbe(*exec, action, m_currentProbeBatchId, sampleId, sampleValue);
 }
 
 void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
@@ -352,20 +349,18 @@ void ScriptDebugServer::removeListener(ScriptDebugListener* listener, bool isBei
         detachDebugger(isBeingDestroyed);
 }
 
-Deprecated::ScriptValue ScriptDebugServer::exceptionOrCaughtValue(JSC::ExecState* state)
+JSC::JSValue ScriptDebugServer::exceptionOrCaughtValue(JSC::ExecState* state)
 {
     if (reasonForPause() == PausedForException)
-        return Deprecated::ScriptValue(state->vm(), currentException());
+        return currentException();
 
-    RefPtr<DebuggerCallFrame> debuggerCallFrame = currentDebuggerCallFrame();
-    while (debuggerCallFrame) {
-        DebuggerScope* scope = debuggerCallFrame->scope();
-        if (scope->isCatchScope())
-            return Deprecated::ScriptValue(state->vm(), scope->caughtValue(state));
-        debuggerCallFrame = debuggerCallFrame->callerFrame();
+    for (RefPtr<DebuggerCallFrame> frame = currentDebuggerCallFrame(); frame; frame = frame->callerFrame()) {
+        DebuggerScope& scope = *frame->scope();
+        if (scope.isCatchScope())
+            return scope.caughtValue(state);
     }
 
-    return Deprecated::ScriptValue();
+    return { };
 }
 
 } // namespace Inspector

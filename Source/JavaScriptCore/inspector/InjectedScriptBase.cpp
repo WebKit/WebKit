@@ -69,12 +69,12 @@ const Deprecated::ScriptObject& InjectedScriptBase::injectedScriptObject() const
     return m_injectedScriptObject;
 }
 
-Deprecated::ScriptValue InjectedScriptBase::callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall& function, bool& hadException) const
+JSC::JSValue InjectedScriptBase::callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall& function, bool& hadException) const
 {
     JSC::ExecState* scriptState = m_injectedScriptObject.scriptState();
     JSC::LegacyProfiler::profiler()->suspendProfiling(scriptState);
 
-    Deprecated::ScriptValue resultValue;
+    JSC::JSValue resultValue;
     {
         JSC::DebuggerEvalEnabler evalEnabler(scriptState);
         resultValue = function.call(hadException);
@@ -93,11 +93,11 @@ void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefP
     }
 
     bool hadException = false;
-    Deprecated::ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
+    auto resultValue = callFunctionWithEvalEnabled(function, hadException);
 
     ASSERT(!hadException);
     if (!hadException) {
-        *result = resultValue.toInspectorValue(m_injectedScriptObject.scriptState());
+        *result = toInspectorValue(*m_injectedScriptObject.scriptState(), resultValue);
         if (!*result)
             *result = InspectorValue::create(String::format("Object has too long reference chain (must not be longer than %d)", InspectorValue::maxDepth));
     } else

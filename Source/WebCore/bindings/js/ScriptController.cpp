@@ -137,7 +137,7 @@ JSDOMWindowShell& ScriptController::createWindowShell(DOMWrapperWorld& world)
     return *windowShell.get();
 }
 
-Deprecated::ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world, ExceptionDetails* exceptionDetails)
+JSValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world, ExceptionDetails* exceptionDetails)
 {
     JSLockHolder lock(world.vm());
 
@@ -168,14 +168,14 @@ Deprecated::ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode
     if (evaluationException) {
         reportException(exec, evaluationException, sourceCode.cachedScript(), exceptionDetails);
         m_sourceURL = savedSourceURL;
-        return Deprecated::ScriptValue();
+        return { };
     }
 
     m_sourceURL = savedSourceURL;
-    return Deprecated::ScriptValue(exec->vm(), returnValue);
+    return returnValue;
 }
 
-Deprecated::ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ExceptionDetails* exceptionDetails)
+JSValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ExceptionDetails* exceptionDetails)
 {
     return evaluateInWorld(sourceCode, mainThreadNormalWorld(), exceptionDetails);
 }
@@ -503,13 +503,13 @@ void ScriptController::clearScriptObjects()
 #endif
 }
 
-Deprecated::ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
+JSValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
     UserGestureIndicator gestureIndicator(forceUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     ScriptSourceCode sourceCode(script, m_frame.document()->url());
 
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
-        return Deprecated::ScriptValue();
+        return { };
 
     return evaluateInWorld(sourceCode, world);
 }
@@ -529,16 +529,16 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     return m_frame.loader().client().allowScript(m_frame.settings().isScriptEnabled());
 }
 
-Deprecated::ScriptValue ScriptController::executeScript(const String& script, bool forceUserGesture, ExceptionDetails* exceptionDetails)
+JSValue ScriptController::executeScript(const String& script, bool forceUserGesture, ExceptionDetails* exceptionDetails)
 {
     UserGestureIndicator gestureIndicator(forceUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     return executeScript(ScriptSourceCode(script, m_frame.document()->url()), exceptionDetails);
 }
 
-Deprecated::ScriptValue ScriptController::executeScript(const ScriptSourceCode& sourceCode, ExceptionDetails* exceptionDetails)
+JSValue ScriptController::executeScript(const ScriptSourceCode& sourceCode, ExceptionDetails* exceptionDetails)
 {
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
-        return Deprecated::ScriptValue();
+        return { }; // FIXME: Would jsNull be better?
 
     Ref<Frame> protect(m_frame); // Script execution can destroy the frame, and thus the ScriptController.
 
@@ -561,7 +561,7 @@ bool ScriptController::executeIfJavaScriptURL(const URL& url, ShouldReplaceDocum
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
 
     String decodedURL = decodeURLEscapeSequences(url.string());
-    Deprecated::ScriptValue result = executeScript(decodedURL.substring(javascriptSchemeLength));
+    auto result = executeScript(decodedURL.substring(javascriptSchemeLength));
 
     // If executing script caused this frame to be removed from the page, we
     // don't want to try to replace its document!
@@ -569,9 +569,7 @@ bool ScriptController::executeIfJavaScriptURL(const URL& url, ShouldReplaceDocum
         return true;
 
     String scriptResult;
-    JSDOMWindowShell* shell = windowShell(mainThreadNormalWorld());
-    JSC::ExecState* exec = shell->window()->globalExec();
-    if (!result.getString(exec, scriptResult))
+    if (!result || !result.getString(windowShell(mainThreadNormalWorld())->window()->globalExec(), scriptResult))
         return true;
 
     // FIXME: We should always replace the document, but doing so

@@ -107,9 +107,9 @@ void CommandLineAPIHost::copyText(const String& text)
     Pasteboard::createForCopyAndPaste()->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
-Deprecated::ScriptValue CommandLineAPIHost::InspectableObject::get(JSC::ExecState*)
+JSC::JSValue CommandLineAPIHost::InspectableObject::get(JSC::ExecState&)
 {
-    return Deprecated::ScriptValue();
+    return { };
 }
 
 void CommandLineAPIHost::addInspectedObject(std::unique_ptr<CommandLineAPIHost::InspectableObject> object)

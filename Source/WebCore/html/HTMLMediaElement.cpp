@@ -148,7 +148,6 @@
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
 #include "JSMediaControlsHost.h"
 #include "MediaControlsHost.h"
-#include "ScriptGlobalObject.h"
 #include <bindings/ScriptObject.h>
 #endif
 
