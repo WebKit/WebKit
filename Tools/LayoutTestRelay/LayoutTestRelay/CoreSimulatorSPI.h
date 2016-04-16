@@ -25,6 +25,7 @@
 
 #if __has_include(<CoreSimulator/CoreSimulator.h>)
 
+#define __coresim_unavailable_msg(msg)
 #import <CoreSimulator/CoreSimulator.h>
 
 #else
