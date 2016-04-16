@@ -1,3 +1,16 @@
+2016-04-15  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION( r199603): Pandora crashes WebKit in WebPlaybackSessionManager::removeClientForContext
+        https://bugs.webkit.org/show_bug.cgi?id=156648
+        <rdar://problem/25758117>
+
+        Reviewed by Beth Dakin.
+
+        Mistakenly checked in a reversed condition check, which causes a subsequent assert and crash.
+
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionManager::clearPlaybackControlsManager):
+
 2016-04-15  Chris Dumez  <cdumez@apple.com>
 
         Mark NetworkLoad as FastAllocated

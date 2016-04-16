@@ -256,7 +256,7 @@ void WebPlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaE
 void WebPlaybackSessionManager::clearPlaybackControlsManager(WebCore::HTMLMediaElement& mediaElement)
 {
 #if PLATFORM(MAC)
-    if (m_mediaElements.contains(&mediaElement))
+    if (!m_mediaElements.contains(&mediaElement))
         return;
 
     uint64_t contextId = m_mediaElements.get(&mediaElement);
