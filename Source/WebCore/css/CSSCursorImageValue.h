@@ -29,6 +29,7 @@ namespace WebCore {
 
 class Document;
 class Element;
+class SVGCursorElement;
 class SVGElement;
 
 class CSSCursorImageValue : public CSSValue {
@@ -51,13 +52,16 @@ public:
 
     String customCSSText() const;
 
-    bool updateIfSVGCursorIsUsed(Element*);
+    SVGCursorElement* updateCursorElement(const Document&);
     StyleImage* cachedImage(CachedResourceLoader&, const ResourceLoaderOptions&);
     StyleImage* cachedOrPendingImage(Document&);
 
     void removeReferencedElement(SVGElement*);
 
     bool equals(const CSSCursorImageValue&) const;
+
+    void cursorElementRemoved(SVGCursorElement&);
+    void cursorElementChanged(SVGCursorElement&);
 
 private:
     CSSCursorImageValue(Ref<CSSValue>&& imageValue, bool hasHotSpot, const IntPoint& hotSpot);
@@ -73,9 +77,8 @@ private:
     bool m_hasHotSpot;
     IntPoint m_hotSpot;
     RefPtr<StyleImage> m_image;
-    bool m_accessedImage;
-
-    HashSet<SVGElement*> m_referencedElements;
+    bool m_isImageValid { false };
+    HashSet<SVGCursorElement*> m_cursorElements;
 };
 
 } // namespace WebCore

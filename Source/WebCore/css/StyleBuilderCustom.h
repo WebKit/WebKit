@@ -1146,8 +1146,6 @@ inline void StyleBuilderCustom::applyValueCursor(StyleResolver& styleResolver, C
     for (auto& item : list) {
         if (is<CSSCursorImageValue>(item.get())) {
             auto& image = downcast<CSSCursorImageValue>(item.get());
-            if (image.updateIfSVGCursorIsUsed(styleResolver.element())) // Elements with SVG cursors are not allowed to share style.
-                styleResolver.style()->setUnique();
             styleResolver.style()->addCursor(styleResolver.styleImage(CSSPropertyCursor, image), image.hotSpot());
             continue;
         }

@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class CSSCursorImageValue;
+
 class SVGCursorElement final : public SVGElement,
                                public SVGTests,
                                public SVGExternalResourcesRequired,
@@ -40,9 +42,8 @@ public:
 
     virtual ~SVGCursorElement();
 
-    void addClient(SVGElement*);
-    void removeClient(SVGElement*);
-    void removeReferencedElement(SVGElement*);
+    void addClient(CSSCursorImageValue&);
+    void removeClient(CSSCursorImageValue&);
 
 private:
     SVGCursorElement(const QualifiedName&, Document&);
@@ -69,7 +70,7 @@ private:
     void synchronizeRequiredExtensions() override { SVGTests::synchronizeRequiredExtensions(this); }
     void synchronizeSystemLanguage() override { SVGTests::synchronizeSystemLanguage(this); }
 
-    HashSet<SVGElement*> m_clients;
+    HashSet<CSSCursorImageValue*> m_clients;
 };
 
 } // namespace WebCore

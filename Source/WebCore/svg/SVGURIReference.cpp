@@ -39,7 +39,7 @@ bool SVGURIReference::isKnownAttribute(const QualifiedName& attrName)
     return attrName.matches(XLinkNames::hrefAttr);
 }
 
-String SVGURIReference::fragmentIdentifierFromIRIString(const String& url, Document& document)
+String SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const Document& document)
 {
     size_t start = url.find('#');
     if (start == notFound)
@@ -55,7 +55,7 @@ String SVGURIReference::fragmentIdentifierFromIRIString(const String& url, Docum
     return emptyString();
 }
 
-static inline URL urlFromIRIStringWithFragmentIdentifier(const String& url, Document& document, String& fragmentIdentifier)
+static inline URL urlFromIRIStringWithFragmentIdentifier(const String& url, const Document& document, String& fragmentIdentifier)
 {
     size_t startOfFragmentIdentifier = url.find('#');
     if (startOfFragmentIdentifier == notFound)
@@ -71,7 +71,7 @@ static inline URL urlFromIRIStringWithFragmentIdentifier(const String& url, Docu
     return URL(document.baseURI(), url.substring(startOfFragmentIdentifier));
 }
 
-Element* SVGURIReference::targetElementFromIRIString(const String& iri, Document& document, String* fragmentIdentifier, Document* externalDocument)
+Element* SVGURIReference::targetElementFromIRIString(const String& iri, const Document& document, String* fragmentIdentifier, const Document* externalDocument)
 {
     // If there's no fragment identifier contained within the IRI string, we can't lookup an element.
     String id;

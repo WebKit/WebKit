@@ -48,14 +48,8 @@ public:
     bool instanceUpdatesBlocked() const { return m_instancesUpdatesBlocked; }
     void setInstanceUpdatesBlocked(bool value) { m_instancesUpdatesBlocked = value; }
 
-    SVGCursorElement* cursorElement() const { return m_cursorElement; }
-    void setCursorElement(SVGCursorElement* cursorElement) { m_cursorElement = cursorElement; }
-
     SVGElement* correspondingElement() { return m_correspondingElement; }
     void setCorrespondingElement(SVGElement* correspondingElement) { m_correspondingElement = correspondingElement; }
-
-    CSSCursorImageValue* cursorImageValue() const { return m_cursorImageValue; }
-    void setCursorImageValue(CSSCursorImageValue* cursorImageValue) { m_cursorImageValue = cursorImageValue; }
 
     MutableStyleProperties* animatedSMILStyleProperties() const { return m_animatedSMILStyleProperties.get(); }
     MutableStyleProperties& ensureAnimatedSMILStyleProperties()
@@ -84,8 +78,6 @@ public:
 
 private:
     HashSet<SVGElement*> m_instances;
-    SVGCursorElement* m_cursorElement { nullptr };
-    CSSCursorImageValue* m_cursorImageValue { nullptr };
     SVGElement* m_correspondingElement { nullptr };
     bool m_instancesUpdatesBlocked : 1;
     bool m_useOverrideComputedStyle : 1;

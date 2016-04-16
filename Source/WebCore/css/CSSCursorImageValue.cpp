@@ -44,21 +44,11 @@
 
 namespace WebCore {
 
-static inline SVGCursorElement* resourceReferencedByCursorElement(const String& url, Document& document)
-{
-    Element* element = SVGURIReference::targetElementFromIRIString(url, document);
-    if (is<SVGCursorElement>(element))
-        return downcast<SVGCursorElement>(element);
-
-    return nullptr;
-}
-
 CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, bool hasHotSpot, const IntPoint& hotSpot)
     : CSSValue(CursorImageClass)
     , m_imageValue(WTFMove(imageValue))
     , m_hasHotSpot(hasHotSpot)
     , m_hotSpot(hotSpot)
-    , m_accessedImage(false)
 {
 }
 
@@ -72,18 +62,8 @@ CSSCursorImageValue::~CSSCursorImageValue()
 {
     detachPendingImage();
 
-    if (!isSVGCursor())
-        return;
-
-    HashSet<SVGElement*>::const_iterator it = m_referencedElements.begin();
-    HashSet<SVGElement*>::const_iterator end = m_referencedElements.end();
-
-    for (; it != end; ++it) {
-        SVGElement* referencedElement = *it;
-        referencedElement->cursorImageValueRemoved();
-        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(downcast<CSSImageValue>(m_imageValue.get()).url(), referencedElement->document()))
-            cursorElement->removeClient(referencedElement);
-    }
+    for (auto* element : m_cursorElements)
+        element->removeClient(*this);
 }
 
 String CSSCursorImageValue::customCSSText() const
@@ -99,35 +79,41 @@ String CSSCursorImageValue::customCSSText() const
     return result.toString();
 }
 
-bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
+SVGCursorElement* CSSCursorImageValue::updateCursorElement(const Document& document)
 {
-    if (!element || !element->isSVGElement())
-        return false;
-
     if (!isSVGCursor())
-        return false;
+        return nullptr;
 
-    if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(downcast<CSSImageValue>(m_imageValue.get()).url(), element->document())) {
-        // FIXME: This will override hot spot specified in CSS, which is probably incorrect.
-        SVGLengthContext lengthContext(0);
-        m_hasHotSpot = true;
-        float x = roundf(cursorElement->x().value(lengthContext));
-        m_hotSpot.setX(static_cast<int>(x));
+    auto* element = SVGURIReference::targetElementFromIRIString(downcast<CSSImageValue>(m_imageValue.get()).url(), document);
+    if (!is<SVGCursorElement>(element))
+        return nullptr;
 
-        float y = roundf(cursorElement->y().value(lengthContext));
-        m_hotSpot.setY(static_cast<int>(y));
-
-        if (cachedImageURL() != element->document().completeURL(cursorElement->href()))
-            clearCachedImage();
-
-        SVGElement& svgElement = downcast<SVGElement>(*element);
-        m_referencedElements.add(&svgElement);
-        svgElement.setCursorImageValue(this);
-        cursorElement->addClient(&svgElement);
-        return true;
+    auto& cursorElement = downcast<SVGCursorElement>(*element);
+    if (m_cursorElements.add(&cursorElement).isNewEntry) {
+        cursorElementChanged(cursorElement);
+        cursorElement.addClient(*this);
     }
+    return &cursorElement;
+}
 
-    return false;
+void CSSCursorImageValue::cursorElementRemoved(SVGCursorElement& cursorElement)
+{
+    m_cursorElements.remove(&cursorElement);
+    clearCachedImage();
+}
+
+void CSSCursorImageValue::cursorElementChanged(SVGCursorElement& cursorElement)
+{
+    clearCachedImage();
+
+    // FIXME: This will override hot spot specified in CSS, which is probably incorrect.
+    SVGLengthContext lengthContext(nullptr);
+    m_hasHotSpot = true;
+    float x = std::round(cursorElement.x().value(lengthContext));
+    m_hotSpot.setX(static_cast<int>(x));
+
+    float y = std::round(cursorElement.y().value(lengthContext));
+    m_hotSpot.setY(static_cast<int>(y));
 }
 
 StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
@@ -137,21 +123,19 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader& loader, const
         return downcast<CSSImageSetValue>(m_imageValue.get()).cachedImageSet(loader, options);
 #endif
 
-    if (!m_accessedImage) {
-        m_accessedImage = true;
+    auto* cursorElement = loader.document() ? updateCursorElement(*loader.document()) : nullptr;
 
+    if (!m_isImageValid) {
+        m_isImageValid = true;
         // For SVG images we need to lazily substitute in the correct URL. Rather than attempt
         // to change the URL of the CSSImageValue (which would then change behavior like cssText),
         // we create an alternate CSSImageValue to use.
-        if (isSVGCursor() && loader.document()) {
-            // FIXME: This will fail if the <cursor> element is in a shadow DOM (bug 59827)
-            if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(downcast<CSSImageValue>(m_imageValue.get()).url(), *loader.document())) {
-                detachPendingImage();
-                Ref<CSSImageValue> svgImageValue(CSSImageValue::create(cursorElement->href()));
-                StyleCachedImage* cachedImage = svgImageValue->cachedImage(loader, options);
-                m_image = cachedImage;
-                return cachedImage;
-            }
+        if (cursorElement) {
+            detachPendingImage();
+            Ref<CSSImageValue> svgImageValue(CSSImageValue::create(cursorElement->href()));
+            StyleCachedImage* cachedImage = svgImageValue->cachedImage(loader, options);
+            m_image = cachedImage;
+            return cachedImage;
         }
 
         if (is<CSSImageValue>(m_imageValue.get())) {
@@ -202,12 +186,7 @@ void CSSCursorImageValue::clearCachedImage()
 {
     detachPendingImage();
     m_image = nullptr;
-    m_accessedImage = false;
-}
-
-void CSSCursorImageValue::removeReferencedElement(SVGElement* element)
-{
-    m_referencedElements.remove(element);
+    m_isImageValid = false;
 }
 
 bool CSSCursorImageValue::equals(const CSSCursorImageValue& other) const

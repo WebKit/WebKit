@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SVGCursorElement.h"
 
+#include "CSSCursorImageValue.h"
 #include "Document.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
@@ -59,7 +60,7 @@ Ref<SVGCursorElement> SVGCursorElement::create(const QualifiedName& tagName, Doc
 SVGCursorElement::~SVGCursorElement()
 {
     for (auto& client : m_clients)
-        client->cursorElementRemoved();
+        client->cursorElementRemoved(*this);
 }
 
 bool SVGCursorElement::isSupportedAttribute(const QualifiedName& attrName)
@@ -92,21 +93,14 @@ void SVGCursorElement::parseAttribute(const QualifiedName& name, const AtomicStr
     SVGURIReference::parseAttribute(name, value);
 }
 
-void SVGCursorElement::addClient(SVGElement* element)
+void SVGCursorElement::addClient(CSSCursorImageValue& value)
 {
-    m_clients.add(element);
-    element->setCursorElement(this);
+    m_clients.add(&value);
 }
 
-void SVGCursorElement::removeClient(SVGElement* element)
+void SVGCursorElement::removeClient(CSSCursorImageValue& value)
 {
-    if (m_clients.remove(element))
-        element->cursorElementRemoved();
-}
-
-void SVGCursorElement::removeReferencedElement(SVGElement* element)
-{
-    m_clients.remove(element);
+    m_clients.remove(&value);
 }
 
 void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -118,7 +112,7 @@ void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
 
     InstanceInvalidationGuard guard(*this);
     for (auto& client : m_clients)
-        client->setNeedsStyleRecalc();
+        client->cursorElementChanged(*this);
 }
 
 void SVGCursorElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

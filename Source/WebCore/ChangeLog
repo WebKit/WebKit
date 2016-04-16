@@ -1,3 +1,82 @@
+2016-04-16  Antti Koivisto  <antti@apple.com>
+
+        CSSCursorImageValue shouldn't mutate element during style resolution
+        https://bugs.webkit.org/show_bug.cgi?id=156659
+
+        Reviewed by Darin Adler.
+
+        CSSCursorImageValue::updateIfSVGCursorIsUsed may mutate the argument element.
+
+        This patch removes the code that caches cursor element and image to SVGElement rare data.
+        The whole things is basically unused. CSSCursorImageValue now maintains a weak map to
+        SVGCursorElements directly instead of indirectly via the using SVGElements.
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::~CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::customCSSText):
+        (WebCore::CSSCursorImageValue::updateCursorElement):
+
+            We no longer rely on SVGElement rare data so no need to test for SVGElement.
+
+        (WebCore::CSSCursorImageValue::cursorElementRemoved):
+        (WebCore::CSSCursorImageValue::cursorElementChanged):
+
+            Factor to a function.
+
+        (WebCore::CSSCursorImageValue::cachedImage):
+        (WebCore::CSSCursorImageValue::clearCachedImage):
+        (WebCore::CSSCursorImageValue::equals):
+        (WebCore::CSSCursorImageValue::removeReferencedElement): Deleted.
+
+            Don't track client elements anymore. Just track referenced SVGCursorElements.
+
+        * css/CSSCursorImageValue.h:
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueCursor):
+
+            No need to make style unique. Initialization is now done in updateSVGCursorElement.
+
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::~SVGCursorElement):
+        (WebCore::SVGCursorElement::isSupportedAttribute):
+        (WebCore::SVGCursorElement::parseAttribute):
+        (WebCore::SVGCursorElement::addClient):
+        (WebCore::SVGCursorElement::removeClient):
+
+            Client is now an CSSCursorImageValue rather than SVGElement.
+
+        (WebCore::SVGCursorElement::svgAttributeChanged):
+
+            Instead of invalidating element style just invalidate the CSSCursorImageValue directly.
+
+        (WebCore::SVGCursorElement::addSubresourceAttributeURLs):
+        (WebCore::SVGCursorElement::removeReferencedElement): Deleted.
+        * svg/SVGCursorElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement):
+        (WebCore::SVGElement::getBoundingBox):
+        (WebCore::SVGElement::correspondingElement):
+        (WebCore::SVGElement::setCursorElement): Deleted.
+        (WebCore::SVGElement::cursorElementRemoved): Deleted.
+        (WebCore::SVGElement::setCursorImageValue): Deleted.
+        (WebCore::SVGElement::cursorImageValueRemoved): Deleted.
+
+            SVGElements no longer need to know about their cursors.
+
+        * svg/SVGElement.h:
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::instanceUpdatesBlocked):
+        (WebCore::SVGElementRareData::setInstanceUpdatesBlocked):
+        (WebCore::SVGElementRareData::correspondingElement):
+        (WebCore::SVGElementRareData::setCorrespondingElement):
+        (WebCore::SVGElementRareData::animatedSMILStyleProperties):
+        (WebCore::SVGElementRareData::ensureAnimatedSMILStyleProperties):
+        (WebCore::SVGElementRareData::cursorElement): Deleted.
+        (WebCore::SVGElementRareData::setCursorElement): Deleted.
+        (WebCore::SVGElementRareData::cursorImageValue): Deleted.
+        (WebCore::SVGElementRareData::setCursorImageValue): Deleted.
+
 2016-04-15  Darin Adler  <darin@apple.com>
 
         Reduce use of Deprecated::ScriptXXX classes

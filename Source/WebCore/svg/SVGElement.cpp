@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SVGElement.h"
 
-#include "CSSCursorImageValue.h"
 #include "CSSParser.h"
 #include "DOMImplementation.h"
 #include "Document.h"
@@ -40,7 +39,6 @@
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
-#include "SVGCursorElement.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementRareData.h"
 #include "SVGGraphicsElement.h"
@@ -286,10 +284,6 @@ SVGElement::~SVGElement()
     if (m_svgRareData) {
         for (SVGElement* instance : m_svgRareData->instances())
             instance->m_svgRareData->setCorrespondingElement(nullptr);
-        if (SVGCursorElement* cursorElement = m_svgRareData->cursorElement())
-            cursorElement->removeClient(this);
-        if (CSSCursorImageValue* cursorImageValue = m_svgRareData->cursorImageValue())
-            cursorImageValue->removeReferencedElement(this);
         if (SVGElement* correspondingElement = m_svgRareData->correspondingElement())
             correspondingElement->m_svgRareData->instances().remove(this);
 
@@ -442,40 +436,6 @@ bool SVGElement::getBoundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrate
         return true;
     }
     return false;
-}
-
-void SVGElement::setCursorElement(SVGCursorElement* cursorElement)
-{
-    SVGElementRareData& rareData = ensureSVGRareData();
-    if (SVGCursorElement* oldCursorElement = rareData.cursorElement()) {
-        if (cursorElement == oldCursorElement)
-            return;
-        oldCursorElement->removeReferencedElement(this);
-    }
-    rareData.setCursorElement(cursorElement);
-}
-
-void SVGElement::cursorElementRemoved() 
-{
-    ASSERT(m_svgRareData);
-    m_svgRareData->setCursorElement(nullptr);
-}
-
-void SVGElement::setCursorImageValue(CSSCursorImageValue* cursorImageValue)
-{
-    SVGElementRareData& rareData = ensureSVGRareData();
-    if (CSSCursorImageValue* oldCursorImageValue = rareData.cursorImageValue()) {
-        if (cursorImageValue == oldCursorImageValue)
-            return;
-        oldCursorImageValue->removeReferencedElement(this);
-    }
-    rareData.setCursorImageValue(cursorImageValue);
-}
-
-void SVGElement::cursorImageValueRemoved()
-{
-    ASSERT(m_svgRareData);
-    m_svgRareData->setCursorImageValue(nullptr);
 }
 
 SVGElement* SVGElement::correspondingElement() const
