@@ -29,7 +29,8 @@
 
 #include "IDBKeyPath.h"
 #include "ScriptWrappable.h"
-#include <bindings/ScriptValue.h>
+#include <heap/Strong.h>
+#include <runtime/JSCJSValue.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -70,7 +71,7 @@ public:
         return adoptRef(new IDBAny(keyPath));
     }
 
-    static RefPtr<IDBAny> create(const Deprecated::ScriptValue& value)
+    static RefPtr<IDBAny> create(const JSC::Strong<JSC::Unknown>& value)
     {
         return adoptRef(new IDBAny(value));
     }
@@ -108,7 +109,7 @@ public:
     RefPtr<IDBIndex> idbIndex();
     RefPtr<IDBObjectStore> idbObjectStore();
     RefPtr<IDBTransaction> idbTransaction();
-    const Deprecated::ScriptValue& scriptValue();
+    JSC::JSValue scriptValue();
     int64_t integer();
     const String& string();
     const IDBKeyPath& keyPath();
@@ -120,7 +121,7 @@ private:
     explicit IDBAny(Ref<IDBIndex>&&);
     explicit IDBAny(Ref<IDBCursor>&&);
     explicit IDBAny(const IDBKeyPath&);
-    explicit IDBAny(const Deprecated::ScriptValue&);
+    explicit IDBAny(const JSC::Strong<JSC::Unknown>&);
 
     IDBAny::Type m_type { IDBAny::Type::Undefined };
     RefPtr<IDBDatabase> m_database;
@@ -130,7 +131,7 @@ private:
     RefPtr<IDBCursorWithValue> m_cursorWithValue;
 
     const IDBKeyPath m_idbKeyPath;
-    const Deprecated::ScriptValue m_scriptValue;
+    JSC::Strong<JSC::Unknown> m_scriptValue;
     const String m_string;
     const int64_t m_integer { 0 };
 };

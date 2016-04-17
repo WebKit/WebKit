@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DOMRequestState.h"
 #include "DOMStringList.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursor.h"
@@ -182,8 +181,7 @@ RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, const De
         return nullptr;
     }
 
-    DOMRequestState requestState(&context);
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
+    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBObjectStore': The parameter is not a valid key.");
@@ -399,8 +397,7 @@ RefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& contex
 
 RefPtr<IDBRequest> IDBObjectStore::modernDelete(ScriptExecutionContext& context, JSC::JSValue key, ExceptionCodeWithMessage& ec)
 {
-    DOMRequestState requestState(&context);
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
+    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key.");
@@ -594,8 +591,7 @@ RefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, const 
 {
     LOG(IndexedDB, "IDBObjectStore::count");
 
-    DOMRequestState requestState(&context);
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
+    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'count' on 'IDBObjectStore': The parameter is not a valid key.");

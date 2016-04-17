@@ -29,7 +29,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "DOMError.h"
-#include "DOMRequestState.h"
 #include "Event.h"
 #include "EventQueue.h"
 #include "IDBBindingUtilities.h"
@@ -326,19 +325,19 @@ void IDBRequest::uncaughtExceptionInEventHandler()
 
 void IDBRequest::setResult(const IDBKeyData* keyData)
 {
-    if (!keyData) {
+    auto* context = scriptExecutionContext();
+    if (!context || !keyData) {
         m_result = nullptr;
         return;
     }
 
-    Deprecated::ScriptValue value = idbKeyDataToScriptValue(scriptExecutionContext(), *keyData);
-    m_result = IDBAny::create(WTFMove(value));
+    m_result = IDBAny::create(idbKeyDataToScriptValue(*context, *keyData));
 }
 
 void IDBRequest::setResult(uint64_t number)
 {
     ASSERT(scriptExecutionContext());
-    m_result = IDBAny::create(Deprecated::ScriptValue(scriptExecutionContext()->vm(), JSC::JSValue(number)));
+    m_result = IDBAny::create(JSC::Strong<JSC::Unknown>(scriptExecutionContext()->vm(), JSC::JSValue(number)));
 }
 
 void IDBRequest::setResultToStructuredClone(const IDBValue& value)
@@ -349,8 +348,7 @@ void IDBRequest::setResultToStructuredClone(const IDBValue& value)
     if (!context)
         return;
 
-    Deprecated::ScriptValue scriptValue = deserializeIDBValue(*context, value);
-    m_result = IDBAny::create(WTFMove(scriptValue));
+    m_result = IDBAny::create(deserializeIDBValueToJSValue(*context, value));
 }
 
 void IDBRequest::setResultToUndefined()

@@ -67,9 +67,10 @@ GenerateIsReachable=|Impl|ImplWebGLRenderingContext|ImplDocument|ImplElementRoot
 GetterRaisesException
 GetterRaisesExceptionWithMessage
 Immutable
+ImplementedAs=*
 ImplementationLacksVTable
 ImplementationNamespace=*
-ImplementedAs=*
+ImplementationReturnType=*
 ImplicitThis
 InitializedByEventConstructor
 InterfaceName=*

@@ -765,18 +765,18 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     if (usedKeyIsGenerated && !objectStoreInfo->keyPath().isNull()) {
         JSLockHolder locker(databaseThreadVM());
 
-        JSValue value = deserializeIDBValueDataToJSValue(databaseThreadExecState(), originalRecordValue.data());
-        if (value.isUndefined()) {
+        auto value = deserializeIDBValueDataToJSValue(databaseThreadExecState(), originalRecordValue.data());
+        if (value.get().isUndefined()) {
             m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Unable to deserialize record value for record key injection")), usedKey));
             return;
         }
 
-        if (!injectIDBKeyIntoScriptValue(databaseThreadExecState(), usedKey, value, objectStoreInfo->keyPath())) {
+        if (!injectIDBKeyIntoScriptValue(databaseThreadExecState(), usedKey, value.get(), objectStoreInfo->keyPath())) {
             m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Unable to inject record key into record value")), usedKey));
             return;
         }
 
-        auto serializedValue = SerializedScriptValue::create(&databaseThreadExecState(), value, nullptr, nullptr);
+        auto serializedValue = SerializedScriptValue::create(&databaseThreadExecState(), value.get(), nullptr, nullptr);
         if (databaseThreadExecState().hadException()) {
             m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Unable to serialize record value after injecting record key")), usedKey));
             return;

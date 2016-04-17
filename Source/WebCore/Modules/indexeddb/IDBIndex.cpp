@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DOMRequestState.h"
 #include "IDBAny.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursor.h"
@@ -160,8 +159,7 @@ RefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext& context, const Deprec
 {
     LOG(IndexedDB, "IDBIndex::count");
 
-    DOMRequestState requestState(&context);
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
+    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'count' on 'IDBIndex': The parameter is not a valid key.");
@@ -242,8 +240,7 @@ RefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext& context, const Deprecat
 {
     LOG(IndexedDB, "IDBIndex::get");
 
-    DOMRequestState requestState(&context);
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
+    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBIndex': The parameter is not a valid key.");
@@ -287,8 +284,7 @@ RefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext& context, const Depre
 {
     LOG(IndexedDB, "IDBIndex::getKey");
 
-    DOMRequestState requestState(&context);
-    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
+    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'getKey' on 'IDBIndex': The parameter is not a valid key.");

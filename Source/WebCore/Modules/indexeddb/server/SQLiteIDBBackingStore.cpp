@@ -1468,7 +1468,7 @@ IDBError SQLiteIDBBackingStore::updateOneIndexForAddRecord(const IDBIndexInfo& i
         return { };
 
     IndexKey indexKey;
-    generateIndexKeyForValue(*m_globalObject->globalExec(), info, jsValue, indexKey);
+    generateIndexKeyForValue(*m_globalObject->globalExec(), info, jsValue.get(), indexKey);
 
     if (indexKey.isNull())
         return { };
@@ -1488,7 +1488,7 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
     bool anyRecordsSucceeded = false;
     for (auto& index : info.indexMap().values()) {
         IndexKey indexKey;
-        generateIndexKeyForValue(*m_globalObject->globalExec(), index, jsValue, indexKey);
+        generateIndexKeyForValue(*m_globalObject->globalExec(), index, jsValue.get(), indexKey);
 
         if (indexKey.isNull())
             continue;

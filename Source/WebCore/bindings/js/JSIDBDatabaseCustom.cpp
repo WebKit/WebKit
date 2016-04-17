@@ -66,7 +66,7 @@ JSValue JSIDBDatabase::createObjectStore(ExecState& state)
             return jsUndefined();
 
         if (!keyPathValue.isUndefinedOrNull()) {
-            keyPath = idbKeyPathFromValue(&state, keyPathValue);
+            keyPath = idbKeyPathFromValue(state, keyPathValue);
             if (state.hadException())
                 return jsUndefined();
         }
