@@ -1,3 +1,34 @@
+2016-04-16  Benjamin Poulain  <bpoulain@webkit.org>
+
+        [JSC] DFG should support relational comparisons of Number and Other
+        https://bugs.webkit.org/show_bug.cgi?id=156669
+
+        Reviewed by Darin Adler.
+
+        In Sunspider/3d-raytrace, DFG falls back to JSValue in some important
+        relational compare because profiling sees "undefined" from time to time.
+
+        This case is fairly common outside Sunspider too because of out-of-bounds array access.
+        Unfortunately for us, our fallback for compare is really inefficient.
+
+        Fortunately, relational comparison with null/undefined/true/false are trival.
+        We can just convert both side to Double. That's what this patch adds.
+
+        I also extended constant folding for those cases because I noticed
+        a bunch of "undefined" constant going through DoubleRep at runtime.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * tests/stress/compare-number-and-other.js: Added.
+        (opaqueSideEffect):
+        (let.operator.of.operators.eval.testPolymorphic):
+        (let.operator.of.operators.let.left.of.typeCases.let.right.of.typeCases.eval.testMonomorphic):
+        (let.operator.of.operators.let.left.of.typeCases.let.right.of.typeCases.testMonomorphicLeftConstant):
+        (let.operator.of.operators.let.left.of.typeCases.let.right.of.typeCases.testMonomorphicRightConstant):
+        (let.operator.of.operators.let.left.of.typeCases.let.right.of.typeCases.i.testPolymorphic):
+
 2016-04-16  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] FRound/Negate can produce an impure NaN out of a pure NaN

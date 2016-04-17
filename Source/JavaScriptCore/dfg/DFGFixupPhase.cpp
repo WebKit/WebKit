@@ -453,6 +453,18 @@ private:
             if (Node::shouldSpeculateNumberOrBoolean(node->child1().node(), node->child2().node())) {
                 fixDoubleOrBooleanEdge(node->child1());
                 fixDoubleOrBooleanEdge(node->child2());
+            }
+            if (node->op() != CompareEq
+                && node->child1()->shouldSpeculateNotCell()
+                && node->child2()->shouldSpeculateNotCell()) {
+                if (node->child1()->shouldSpeculateNumberOrBoolean())
+                    fixDoubleOrBooleanEdge(node->child1());
+                else
+                    fixEdge<DoubleRepUse>(node->child1());
+                if (node->child2()->shouldSpeculateNumberOrBoolean())
+                    fixDoubleOrBooleanEdge(node->child2());
+                else
+                    fixEdge<DoubleRepUse>(node->child2());
                 node->clearFlags(NodeMustGenerate);
                 break;
             }

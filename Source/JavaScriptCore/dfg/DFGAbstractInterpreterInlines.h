@@ -392,9 +392,23 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case DoubleRep: {
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
-            setConstant(node, jsDoubleNumber(child.asNumber()));
-            break;
+        if (child) {
+            if (child.isNumber()) {
+                setConstant(node, jsDoubleNumber(child.asNumber()));
+                break;
+            }
+            if (child.isUndefined()) {
+                setConstant(node, jsDoubleNumber(PNaN));
+                break;
+            }
+            if (child.isNull() || child.isFalse()) {
+                setConstant(node, jsDoubleNumber(0));
+                break;
+            }
+            if (child.isTrue()) {
+                setConstant(node, jsDoubleNumber(1));
+                break;
+            }
         }
 
         SpeculatedType type = forNode(node->child1()).m_type;
