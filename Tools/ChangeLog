@@ -1,3 +1,12 @@
+2016-04-16  Sam Weinig  <sam@webkit.org>
+
+        Fix 32-bit build.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController share:]):
+        (-[BrowserWindowController fetch:]):
+        (-[BrowserWindowController sharingService:transitionImageForShareItem:contentRect:]):
+
 2016-04-15  Sam Weinig  <sam@webkit.org>
 
         Add support for NSSharingService to MiniBrowser, for no great reasons

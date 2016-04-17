@@ -77,7 +77,7 @@
 {
     NSSharingServicePicker *picker = [[NSSharingServicePicker alloc] initWithItems:@[ self.currentURL ]];
     picker.delegate = self;
-    [picker showRelativeToRect:CGRectZero ofView:sender preferredEdge:NSRectEdgeMinY];
+    [picker showRelativeToRect:NSZeroRect ofView:sender preferredEdge:NSRectEdgeMinY];
 }
 
 - (IBAction)fetch:(id)sender
@@ -227,7 +227,7 @@ static CGRect coreGraphicsScreenRectForAppKitScreenRect(NSRect rect)
 {
     NSRect contentFrame = [self.window convertRectToScreen:self.mainContentView.bounds];
 
-    CGRect frame = coreGraphicsScreenRectForAppKitScreenRect(NSRectToCGRect(contentFrame));
+    CGRect frame = coreGraphicsScreenRectForAppKitScreenRect(contentFrame);
     CGImageRef imageRef = CGWindowListCreateImage(frame, kCGWindowListOptionIncludingWindow, (CGWindowID)[self.window windowNumber], kCGWindowImageBoundsIgnoreFraming);
     
     if (!imageRef)
