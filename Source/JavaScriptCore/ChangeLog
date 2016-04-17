@@ -1,3 +1,21 @@
+2016-04-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] FRound/Negate can produce an impure NaN out of a pure NaN
+        https://bugs.webkit.org/show_bug.cgi?id=156528
+
+        Reviewed by Filip Pizlo.
+
+        If you fround a double with the bits 0xfff7000000000000
+        you get 0xfffe000000000000. The first is a pure NaN, the second isn't.
+
+        This is without test because I could not find a way to create a 0xfff7000000000000
+        while convincing DFG that its pure.
+        When we purify NaNs from typed array, we use a specific value of NaN if the input
+        is any NaN, making testing tricky.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::typeOfDoubleNegation):
+
 2016-04-16  Konstantin Tokarev  <annulen@yandex.ru>
 
         JS::DFG::nodeValuePairListDump does not compile with libstdc++ 4.8

@@ -522,9 +522,10 @@ SpeculatedType typeOfDoubleMinMax(SpeculatedType a, SpeculatedType b)
 
 SpeculatedType typeOfDoubleNegation(SpeculatedType value)
 {
-    // Impure NaN could become pure NaN because bits might get cleared.
-    if (value & SpecDoubleImpureNaN)
-        value |= SpecDoublePureNaN;
+    // Changing bits can make pure NaN impure and vice versa:
+    // 0xefff000000000000 (pure) - 0xffff000000000000 (impure)
+    if (value & SpecDoubleNaN)
+        value |= SpecDoubleNaN;
     // We could get negative zero, which mixes SpecInt52AsDouble and SpecNotIntAsDouble.
     // We could also overflow a large negative int into something that is no longer
     // representable as an int.
@@ -540,9 +541,10 @@ SpeculatedType typeOfDoubleAbs(SpeculatedType value)
 
 SpeculatedType typeOfDoubleRounding(SpeculatedType value)
 {
-    // We might lose bits, which leads to a NaN being purified.
-    if (value & SpecDoubleImpureNaN)
-        value |= SpecDoublePureNaN;
+    // Double Pure NaN can becomes impure when converted back from Float.
+    // and vice versa.
+    if (value & SpecDoubleNaN)
+        value |= SpecDoubleNaN;
     // We might lose bits, which leads to a value becoming integer-representable.
     if (value & SpecNonIntAsDouble)
         value |= SpecInt52AsDouble;
