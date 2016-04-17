@@ -46,10 +46,10 @@ public:
     static StyleSheetContents* plugInsStyleSheet;
     static StyleSheetContents* imageControlsStyleSheet;
 
-    static void ensureDefaultStyleSheetsForElement(Element&);
+    static void ensureDefaultStyleSheetsForElement(const Element&);
     static void loadFullDefaultStyle();
     static void loadSimpleDefaultStyle();
-    static void initDefaultStyle(Element*);
+    static void initDefaultStyle(const Element*);
 };
 
 } // namespace WebCore

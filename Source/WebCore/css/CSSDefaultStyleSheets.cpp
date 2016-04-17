@@ -66,7 +66,7 @@ StyleSheetContents* CSSDefaultStyleSheets::imageControlsStyleSheet;
 // FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
 static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}head{display:none}body{margin:8px}div:focus,span:focus,a:focus{outline:auto 5px -webkit-focus-ring-color}a:any-link{color:-webkit-link;text-decoration:underline}a:any-link:active{color:-webkit-activelink}";
 
-static inline bool elementCanUseSimpleDefaultStyle(Element& element)
+static inline bool elementCanUseSimpleDefaultStyle(const Element& element)
 {
     return is<HTMLHtmlElement>(element) || is<HTMLHeadElement>(element)
         || is<HTMLBodyElement>(element) || is<HTMLDivElement>(element)
@@ -98,7 +98,7 @@ static StyleSheetContents* parseUASheet(const char* characters, unsigned size)
     return parseUASheet(String(characters, size));
 }
 
-void CSSDefaultStyleSheets::initDefaultStyle(Element* root)
+void CSSDefaultStyleSheets::initDefaultStyle(const Element* root)
 {
     if (!defaultStyle) {
         if (!root || elementCanUseSimpleDefaultStyle(*root))
@@ -153,7 +153,7 @@ void CSSDefaultStyleSheets::loadSimpleDefaultStyle()
     // No need to initialize quirks sheet yet as there are no quirk rules for elements allowed in simple default style.
 }
 
-void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element)
+void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(const Element& element)
 {
     if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(element)) {
         loadFullDefaultStyle();

@@ -141,11 +141,11 @@ public:
     StyleResolver(Document&);
     ~StyleResolver();
 
-    ElementStyle styleForElement(Element&, RenderStyle* parentStyle, RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
+    ElementStyle styleForElement(const Element&, RenderStyle* parentStyle, RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
 
-    void keyframeStylesForAnimation(Element&, const RenderStyle*, KeyframeList&);
+    void keyframeStylesForAnimation(const Element&, const RenderStyle*, KeyframeList&);
 
-    PassRefPtr<RenderStyle> pseudoStyleForElement(Element&, const PseudoStyleRequest&, RenderStyle& parentStyle);
+    PassRefPtr<RenderStyle> pseudoStyleForElement(const Element&, const PseudoStyleRequest&, RenderStyle& parentStyle);
 
     Ref<RenderStyle> styleForPage(int pageIndex);
     Ref<RenderStyle> defaultStyleForElement();
@@ -153,7 +153,7 @@ public:
     RenderStyle* style() const { return m_state.style(); }
     RenderStyle* parentStyle() const { return m_state.parentStyle(); }
     RenderStyle* rootElementStyle() const { return m_state.rootElementStyle(); }
-    Element* element() { return m_state.element(); }
+    const Element* element() { return m_state.element(); }
     Document& document() { return m_document; }
     Settings* documentSettings() { return m_document.settings(); }
 
@@ -179,8 +179,8 @@ public:
         AllButEmptyCSSRules = UAAndUserCSSRules | AuthorCSSRules | CrossOriginCSSRules,
         AllCSSRules         = AllButEmptyCSSRules | EmptyCSSRules,
     };
-    Vector<RefPtr<StyleRule>> styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
-    Vector<RefPtr<StyleRule>> pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
+    Vector<RefPtr<StyleRule>> styleRulesForElement(const Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
+    Vector<RefPtr<StyleRule>> pseudoStyleRulesForElement(const Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
 
 public:
     struct MatchResult;
@@ -215,7 +215,7 @@ public:
 
     void addKeyframeStyle(PassRefPtr<StyleRuleKeyframes>);
 
-    bool checkRegionStyle(Element* regionElement);
+    bool checkRegionStyle(const Element* regionElement);
 
     bool usesFirstLineRules() const { return m_ruleSets.features().usesFirstLineRules; }
     bool usesFirstLetterRules() const { return m_ruleSets.features().usesFirstLetterRules; }
@@ -323,7 +323,7 @@ private:
     void checkForTextSizeAdjust(RenderStyle*);
 #endif
 
-    void adjustRenderStyle(RenderStyle& styleToAdjust, const RenderStyle& parentStyle, Element*);
+    void adjustRenderStyle(RenderStyle& styleToAdjust, const RenderStyle& parentStyle, const Element*);
 #if ENABLE(CSS_GRID_LAYOUT)
     std::unique_ptr<GridPosition> adjustNamedGridItemPosition(const NamedGridAreaMap&, const NamedGridLinesMap&, const GridPosition&, GridPositionSide) const;
 #endif
@@ -361,13 +361,13 @@ public:
     class State {
     public:
         State() { }
-        State(Element&, RenderStyle* parentStyle, RenderStyle* documentElementStyle = nullptr, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
+        State(const Element&, RenderStyle* parentStyle, RenderStyle* documentElementStyle = nullptr, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
 
     public:
         void clear();
 
         Document& document() const { return m_element->document(); }
-        Element* element() const { return m_element; }
+        const Element* element() const { return m_element; }
 
         void setStyle(Ref<RenderStyle>&&);
         RenderStyle* style() const { return m_style.get(); }
@@ -425,7 +425,7 @@ public:
     private:
         void updateConversionData();
 
-        Element* m_element { nullptr };
+        const Element* m_element { nullptr };
         RefPtr<RenderStyle> m_style;
         RefPtr<RenderStyle> m_parentStyle;
         RenderStyle* m_rootElementStyle { nullptr };
@@ -568,7 +568,7 @@ inline bool StyleResolver::hasSelectorForId(const AtomicString& idValue) const
     return m_ruleSets.features().idsInRules.contains(idValue.impl());
 }
 
-inline bool checkRegionSelector(const CSSSelector* regionSelector, Element* regionElement)
+inline bool checkRegionSelector(const CSSSelector* regionSelector, const Element* regionElement)
 {
     if (!regionSelector || !regionElement)
         return false;

@@ -108,45 +108,45 @@ public:
 
     void adjustSizeConstraints(RenderStyle&, FormType) const;
 
-    void adjustCheckboxStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustCheckboxStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    void adjustRadioStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustRadioStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    void adjustButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    void adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustTextFieldStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustTextAreaStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustMenuListStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
-    void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
-    void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
-    void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, const Element*) const override;
 
-    void adjustSliderThumbSize(RenderStyle&, Element*) const override;
+    void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
 
 #if ENABLE(DATALIST_ELEMENT)
     IntSize sliderTickSize() const override;
@@ -158,12 +158,12 @@ public:
 
     bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     static void setDefaultFontSize(int fontsize);
 
-    void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
     double animationRepeatIntervalForProgressBar(RenderProgress&) const override;
     double animationDurationForProgressBar(RenderProgress&) const override;

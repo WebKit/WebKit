@@ -56,13 +56,13 @@ protected:
     bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer& background, const Color& backgroundColor) const override;
 
     // Methods for each appearance value.
-    void adjustCheckboxStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustCheckboxStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintCheckboxDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    void adjustRadioStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustRadioStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    void adjustButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
     bool paintPushButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
     void setButtonSize(RenderStyle&) const override;
@@ -72,13 +72,13 @@ protected:
     bool paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    void adjustSliderThumbSize(RenderStyle&, Element*) const override;
+    void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
     bool paintSliderThumbDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     // Returns the repeat interval of the animation for the progress bar.
@@ -93,7 +93,7 @@ protected:
     int sliderTickOffsetFromTrackCenter() const override;
 #endif
 
-    void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     Color platformActiveSelectionBackgroundColor() const override;
@@ -103,8 +103,8 @@ protected:
     Color platformTapHighlightColor() const override { return 0x4D1A1A1A; }
 #endif
 
-    bool shouldHaveSpinButton(HTMLInputElement&) const override;
-    bool shouldHaveCapsLockIndicator(HTMLInputElement&) const override;
+    bool shouldHaveSpinButton(const HTMLInputElement&) const override;
+    bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const override;
 
 #if ENABLE(VIDEO)
     String mediaControlsStyleSheet() override;

@@ -1,5 +1,219 @@
 2016-04-16  Antti Koivisto  <antti@apple.com>
 
+        Element should be const in StyleResolver
+        https://bugs.webkit.org/show_bug.cgi?id=156672
+
+        Reviewed by Darin Adler.
+
+        Resolving element style shouldn't mutate it.
+
+        This patch just does Element* -> const Element*, all the groundwork has been done already.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::sweepMatchedPropertiesCache):
+        (WebCore::StyleResolver::State::State):
+        (WebCore::StyleResolver::State::setStyle):
+        (WebCore::isAtShadowBoundary):
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::doesNotInheritTextDecoration):
+        (WebCore::StyleResolver::adjustStyleForInterCharacterRuby):
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::StyleResolver::checkRegionStyle):
+        (WebCore::StyleResolver::updateFont):
+        (WebCore::StyleResolver::styleRulesForElement):
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::style):
+        (WebCore::StyleResolver::parentStyle):
+        (WebCore::StyleResolver::rootElementStyle):
+        (WebCore::StyleResolver::element):
+        (WebCore::StyleResolver::document):
+        (WebCore::StyleResolver::documentSettings):
+        (WebCore::StyleResolver::usesFirstLineRules):
+        (WebCore::StyleResolver::usesFirstLetterRules):
+        (WebCore::StyleResolver::State::State):
+        (WebCore::StyleResolver::State::document):
+        (WebCore::StyleResolver::State::element):
+        (WebCore::StyleResolver::State::style):
+        (WebCore::StyleResolver::hasSelectorForId):
+        (WebCore::checkRegionSelector):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::RenderTheme):
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::adjustCheckboxStyle):
+        (WebCore::RenderTheme::adjustRadioStyle):
+        (WebCore::RenderTheme::adjustButtonStyle):
+        (WebCore::RenderTheme::adjustInnerSpinButtonStyle):
+        (WebCore::RenderTheme::adjustTextFieldStyle):
+        (WebCore::RenderTheme::adjustTextAreaStyle):
+        (WebCore::RenderTheme::adjustMenuListStyle):
+        (WebCore::RenderTheme::adjustMeterStyle):
+        (WebCore::RenderTheme::paintMeter):
+        (WebCore::RenderTheme::adjustCapsLockIndicatorStyle):
+        (WebCore::RenderTheme::paintCapsLockIndicator):
+        (WebCore::RenderTheme::adjustAttachmentStyle):
+        (WebCore::RenderTheme::animationDurationForProgressBar):
+        (WebCore::RenderTheme::adjustProgressBarStyle):
+        (WebCore::RenderTheme::shouldHaveCapsLockIndicator):
+        (WebCore::RenderTheme::adjustMenuListButtonStyle):
+        (WebCore::RenderTheme::adjustMediaControlStyle):
+        (WebCore::RenderTheme::adjustSliderTrackStyle):
+        (WebCore::RenderTheme::adjustSliderThumbStyle):
+        (WebCore::RenderTheme::adjustSliderThumbSize):
+        (WebCore::RenderTheme::adjustSearchFieldStyle):
+        (WebCore::RenderTheme::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderTheme::adjustSearchFieldDecorationPartStyle):
+        (WebCore::RenderTheme::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderTheme::adjustSearchFieldResultsButtonStyle):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::minimumMenuListSize):
+        (WebCore::RenderTheme::popupInternalPaddingBox):
+        (WebCore::RenderTheme::popupOptionSupportsTextIndent):
+        (WebCore::RenderTheme::paintRadioDecorations):
+        (WebCore::RenderTheme::paintButtonDecorations):
+        (WebCore::RenderTheme::paintTextField):
+        (WebCore::RenderTheme::paintTextFieldDecorations):
+        (WebCore::RenderTheme::paintTextArea):
+        (WebCore::RenderTheme::paintTextAreaDecorations):
+        (WebCore::RenderTheme::paintMenuList):
+        (WebCore::RenderTheme::paintMenuListDecorations):
+        (WebCore::RenderTheme::paintMenuListButtonDecorations):
+        (WebCore::RenderTheme::paintPushButtonDecorations):
+        (WebCore::RenderTheme::paintSquareButtonDecorations):
+        (WebCore::RenderTheme::paintProgressBar):
+        (WebCore::RenderTheme::paintSliderTrack):
+        (WebCore::RenderTheme::paintSliderThumb):
+        (WebCore::RenderTheme::paintSliderThumbDecorations):
+        (WebCore::RenderTheme::paintSearchField):
+        (WebCore::RenderTheme::paintSearchFieldDecorations):
+        (WebCore::RenderTheme::paintSearchFieldCancelButton):
+        (WebCore::RenderTheme::paintSearchFieldDecorationPart):
+        (WebCore::RenderTheme::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderTheme::paintSearchFieldResultsButton):
+        (WebCore::RenderTheme::paintMediaFullscreenButton):
+        (WebCore::RenderTheme::paintMediaPlayButton):
+        (WebCore::RenderTheme::paintMediaOverlayPlayButton):
+        * rendering/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintSliderTrack):
+        (WebCore::RenderThemeEfl::adjustSliderTrackStyle):
+        (WebCore::RenderThemeEfl::adjustSliderThumbStyle):
+        (WebCore::RenderThemeEfl::adjustSliderThumbSize):
+        (WebCore::RenderThemeEfl::paintSliderThumb):
+        (WebCore::RenderThemeEfl::adjustCheckboxStyle):
+        (WebCore::RenderThemeEfl::paintCheckbox):
+        (WebCore::RenderThemeEfl::adjustRadioStyle):
+        (WebCore::RenderThemeEfl::paintRadio):
+        (WebCore::RenderThemeEfl::adjustButtonStyle):
+        (WebCore::RenderThemeEfl::paintButton):
+        (WebCore::RenderThemeEfl::adjustMenuListStyle):
+        (WebCore::RenderThemeEfl::paintMenuList):
+        (WebCore::RenderThemeEfl::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeEfl::paintMenuListButtonDecorations):
+        (WebCore::RenderThemeEfl::adjustTextFieldStyle):
+        (WebCore::RenderThemeEfl::paintTextField):
+        (WebCore::RenderThemeEfl::adjustTextAreaStyle):
+        (WebCore::RenderThemeEfl::paintTextArea):
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeEfl::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeEfl::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeEfl::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeEfl::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeEfl::adjustSearchFieldStyle):
+        (WebCore::RenderThemeEfl::paintSearchField):
+        (WebCore::RenderThemeEfl::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeEfl::updateCachedSystemFontDescription):
+        (WebCore::RenderThemeEfl::adjustProgressBarStyle):
+        * rendering/RenderThemeEfl.h:
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustRepaintRect):
+        (WebCore::RenderThemeGtk::adjustButtonStyle):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::RenderThemeGtk::adjustMenuListStyle):
+        (WebCore::RenderThemeGtk::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeGtk::paintMenuListButtonDecorations):
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::RenderThemeGtk::paintTextArea):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeGtk::adjustSearchFieldStyle):
+        (WebCore::RenderThemeGtk::shouldHaveCapsLockIndicator):
+        (WebCore::RenderThemeGtk::adjustSliderTrackStyle):
+        (WebCore::RenderThemeGtk::adjustSliderThumbStyle):
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        (WebCore::RenderThemeGtk::innerSpinButtonLayout):
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+        (WebCore::spinButtonArrowSize):
+        (WebCore::RenderThemeGtk::paintMediaCurrentTime):
+        (WebCore::RenderThemeGtk::adjustProgressBarStyle):
+        * rendering/RenderThemeGtk.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::addRoundedBorderClip):
+        (WebCore::RenderThemeIOS::adjustCheckboxStyle):
+        (WebCore::RenderThemeIOS::isControlStyled):
+        (WebCore::RenderThemeIOS::adjustRadioStyle):
+        (WebCore::adjustInputElementButtonStyle):
+        (WebCore::RenderThemeIOS::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeIOS::adjustSliderTrackStyle):
+        (WebCore::RenderThemeIOS::paintSliderTrack):
+        (WebCore::RenderThemeIOS::adjustSliderThumbSize):
+        (WebCore::RenderThemeIOS::sliderTickOffsetFromTrackCenter):
+        (WebCore::RenderThemeIOS::adjustSearchFieldStyle):
+        (WebCore::RenderThemeIOS::paintSearchFieldDecorations):
+        (WebCore::RenderThemeIOS::adjustButtonStyle):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::adjustTextFieldStyle):
+        (WebCore::RenderThemeMac::paintTextArea):
+        (WebCore::RenderThemeMac::adjustTextAreaStyle):
+        (WebCore::RenderThemeMac::animationDurationForProgressBar):
+        (WebCore::RenderThemeMac::adjustProgressBarStyle):
+        (WebCore::menuListButtonSizes):
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        (WebCore::RenderThemeMac::popupMenuSize):
+        (WebCore::RenderThemeMac::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeMac::adjustSliderTrackStyle):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::adjustSliderThumbStyle):
+        (WebCore::RenderThemeMac::setSearchFieldSize):
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle):
+        (WebCore::RenderThemeMac::cancelButtonSizes):
+        (WebCore::RenderThemeMac::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeMac::resultsButtonSizes):
+        (WebCore::RenderThemeMac::adjustSearchFieldDecorationPartStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldDecorationPart):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeMac::adjustSliderThumbSize):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::paintButton):
+        (WebCore::RenderThemeWin::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeWin::paintMenuList):
+        (WebCore::RenderThemeWin::adjustMenuListStyle):
+        (WebCore::RenderThemeWin::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeWin::adjustSliderThumbSize):
+        (WebCore::RenderThemeWin::paintSearchField):
+        (WebCore::RenderThemeWin::adjustSearchFieldStyle):
+        (WebCore::RenderThemeWin::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeWin::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldDecorationPartStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeWin::adjustMeterStyle):
+        * rendering/RenderThemeWin.h:
+
+2016-04-16  Antti Koivisto  <antti@apple.com>
+
         CSSCursorImageValue shouldn't mutate element during style resolution
         https://bugs.webkit.org/show_bug.cgi?id=156659
 

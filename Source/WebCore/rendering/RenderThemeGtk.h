@@ -102,7 +102,7 @@ public:
 #endif
 #endif
 
-    bool shouldHaveCapsLockIndicator(HTMLInputElement&) const override;
+    bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const override;
 
 private:
     RenderThemeGtk();
@@ -114,10 +114,10 @@ private:
     bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&) override;
     void setRadioSize(RenderStyle&) const override;
 
-    void adjustButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    void adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustTextFieldStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
@@ -127,30 +127,30 @@ private:
     // The former is used when a menu list button has been styled. This is used to ensure
     // Aqua themed controls whenever possible. We always want to use GTK+ theming, so
     // we don't maintain this differentiation.
-    void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustMenuListStyle(StyleResolver&, RenderStyle&, const Element*) const override;
+    void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
-    void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
-    void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
     bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, const Element*) const override;
 
     bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, const Element*) const override;
 
-    void adjustSliderThumbSize(RenderStyle&, Element*) const override;
+    void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
 
 #if ENABLE(VIDEO)
     bool hasOwnDisabledStateHandlingFor(ControlPart) const override;
@@ -171,12 +171,12 @@ private:
 
     double animationRepeatIntervalForProgressBar(RenderProgress&) const override;
     double animationDurationForProgressBar(RenderProgress&) const override;
-    void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const override;
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     InnerSpinButtonLayout innerSpinButtonLayout(const RenderObject&) const override;
-    void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const override;
