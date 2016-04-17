@@ -1,3 +1,38 @@
+2016-04-16  Matt Baker  <mattbaker@apple.com>
+
+        display:inline on the tbody is causing the width of the iframe to be shrunk to the minimum size of its text.
+        https://bugs.webkit.org/show_bug.cgi?id=15666
+
+        Reviewed by Timothy Hatcher.
+
+        Fix a regression caused by the recent Timelines UI redesign, and
+        reorder TimelineDataGrid's constructor arguments now that most
+        timeline views no longer have an associated tree outline.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WebInspector.ScriptDetailsTimelineView):
+        Reorder constructor parameters and omit optional treeOutline and
+        synchronizerDelegate arguments when they aren't needed.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid):
+        Reorder constructor arguments so that treeOutline can be optional.
+        (WebInspector.TimelineDataGrid.prototype._refreshDirtyDataGridNodes):
+        Nodes should be refreshed and re-inserted in the data grid without
+        requiring a grid synchronizer. If a synchronizer exists, re-insert
+        the tree element for the node. Since the syncronizer is disabled the
+        order of grid/tree operations doesn't matter.
+
 2016-04-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: sourceMappingURL not used when sourceURL is set

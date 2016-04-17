@@ -87,7 +87,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         for (var column in columns)
             columns[column].sortable = true;
 
-        this._dataGrid = new WebInspector.TimelineDataGrid(null, columns);
+        this._dataGrid = new WebInspector.TimelineDataGrid(columns);
         this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("network-timeline-view-sort", "requestSent");

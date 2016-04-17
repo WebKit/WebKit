@@ -71,7 +71,7 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
         for (var column in columns)
             columns[column].sortable = true;
 
-        this._dataGrid = new WebInspector.ScriptTimelineDataGrid(null, columns, this);
+        this._dataGrid = new WebInspector.ScriptTimelineDataGrid(columns);
         this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("script-timeline-view-sort", "startTime");

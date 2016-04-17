@@ -68,7 +68,7 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         for (var column in columns)
             columns[column].sortable = true;
 
-        this._dataGrid = new WebInspector.LayoutTimelineDataGrid(null, columns);
+        this._dataGrid = new WebInspector.LayoutTimelineDataGrid(columns);
         this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
 

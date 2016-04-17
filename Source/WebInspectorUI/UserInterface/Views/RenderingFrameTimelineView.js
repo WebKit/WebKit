@@ -76,7 +76,7 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         for (var column in columns)
             columns[column].sortable = true;
 
-        this._dataGrid = new WebInspector.TimelineDataGrid(null, columns, this);
+        this._dataGrid = new WebInspector.TimelineDataGrid(columns);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("rendering-frame-timeline-view-sort", "startTime");
         this._dataGrid.sortOrderSetting = new WebInspector.Setting("rendering-frame-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);

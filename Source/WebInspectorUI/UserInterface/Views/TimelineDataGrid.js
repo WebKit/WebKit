@@ -25,7 +25,7 @@
 
 WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.DataGrid
 {
-    constructor(treeOutline, columns, delegate, editCallback, deleteCallback)
+    constructor(columns, treeOutline, delegate, editCallback, deleteCallback)
     {
         super(columns, editCallback, deleteCallback);
 
@@ -226,16 +226,16 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
             this._scheduledDataGridNodeRefreshIdentifier = undefined;
         }
 
-        if (!this._dirtyDataGridNodes || !this._treeOutlineDataGridSynchronizer)
+        if (!this._dirtyDataGridNodes)
             return;
 
-        var selectedNode = this.selectedNode;
-        var sortComparator = this._sortComparator.bind(this);
-        var treeOutline = this._treeOutlineDataGridSynchronizer.treeOutline;
+        let selectedNode = this.selectedNode;
+        let sortComparator = this._sortComparator.bind(this);
 
-        this._treeOutlineDataGridSynchronizer.enabled = false;
+        if (this._treeOutlineDataGridSynchronizer)
+            this._treeOutlineDataGridSynchronizer.enabled = false;
 
-        for (var dataGridNode of this._dirtyDataGridNodes) {
+        for (let dataGridNode of this._dirtyDataGridNodes) {
             dataGridNode.refresh();
 
             if (!this.sortColumnIdentifier)
@@ -244,32 +244,38 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
             if (dataGridNode === selectedNode)
                 this._ignoreSelectionEvent = true;
 
-            var treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
+            console.assert(!dataGridNode.parent || dataGridNode.parent === this);
+            if (dataGridNode.parent === this)
+                this.removeChild(dataGridNode);
+
+            let insertionIndex = insertionIndexForObjectInListSortedByFunction(dataGridNode, this.children, sortComparator);
+            this.insertChild(dataGridNode, insertionIndex);
+
+            if (dataGridNode === selectedNode) {
+                selectedNode.revealAndSelect();
+                this._ignoreSelectionEvent = false;
+            }
+
+            if (!this._treeOutlineDataGridSynchronizer)
+                continue;
+
+            let treeOutline = this._treeOutlineDataGridSynchronizer.treeOutline;
+            let treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
             console.assert(treeElement);
 
             console.assert(!treeElement.parent || treeElement.parent === treeOutline);
             if (treeElement.parent === treeOutline)
                 treeOutline.removeChild(treeElement);
 
-            console.assert(!dataGridNode.parent || dataGridNode.parent === this);
-            if (dataGridNode.parent === this)
-                this.removeChild(dataGridNode);
-
-            var insertionIndex = insertionIndexForObjectInListSortedByFunction(dataGridNode, this.children, sortComparator);
             treeOutline.insertChild(treeElement, insertionIndex);
-            this.insertChild(dataGridNode, insertionIndex);
 
             // Adding the tree element back to the tree outline subjects it to filters.
             // Make sure we keep the hidden state in-sync while the synchronizer is disabled.
             dataGridNode.element.classList.toggle("hidden", treeElement.hidden);
-
-            if (dataGridNode === selectedNode) {
-                selectedNode.revealAndSelect();
-                this._ignoreSelectionEvent = false;
-            }
         }
 
-        this._treeOutlineDataGridSynchronizer.enabled = true;
+        if (this._treeOutlineDataGridSynchronizer)
+            this._treeOutlineDataGridSynchronizer.enabled = true;
 
         this._dirtyDataGridNodes = null;
     }
