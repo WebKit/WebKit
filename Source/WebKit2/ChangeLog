@@ -1,3 +1,16 @@
+2016-04-17  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Do not dlopen() QuickLook in the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=156639
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        Move checks for main resource load and for MIME type inside of
+        QuickLookHandle::createIfNecessary(), for consistency with the
+        other QuickLookHandle factory functions.
+
 2016-04-16  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Web Content service with a restricted entitlement may load arbitrary dylibs

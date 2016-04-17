@@ -78,14 +78,13 @@ WEBCORE_EXPORT NSString *createTemporaryFileForQuickLook(NSString *fileName);
 class QuickLookHandle {
     WTF_MAKE_NONCOPYABLE(QuickLookHandle);
 public:
-    WEBCORE_EXPORT static bool shouldCreateForMIMEType(const String&);
-
-    static std::unique_ptr<QuickLookHandle> create(ResourceHandle*, NSURLConnection *, NSURLResponse *, id delegate);
+    static std::unique_ptr<QuickLookHandle> createIfNecessary(ResourceHandle&, NSURLConnection *, NSURLResponse *, id delegate);
 #if USE(CFNETWORK)
-    static std::unique_ptr<QuickLookHandle> create(ResourceHandle*, SynchronousResourceHandleCFURLConnectionDelegate*, CFURLResponseRef);
+    static std::unique_ptr<QuickLookHandle> createIfNecessary(ResourceHandle&, SynchronousResourceHandleCFURLConnectionDelegate*, CFURLResponseRef);
 #endif
+
     // FIXME: Use of ResourceLoader here is a platform violation.
-    WEBCORE_EXPORT static std::unique_ptr<QuickLookHandle> create(ResourceLoader&, const ResourceResponse&);
+    WEBCORE_EXPORT static std::unique_ptr<QuickLookHandle> createIfNecessary(ResourceLoader&, NSURLResponse *);
 
     WEBCORE_EXPORT ~QuickLookHandle();
 
@@ -108,6 +107,7 @@ public:
     QLPreviewConverter *converter() const { return m_converter.get(); }
 
 private:
+    static std::unique_ptr<QuickLookHandle> create(ResourceHandle&, NSURLConnection *, NSURLResponse *, id delegate);
     QuickLookHandle(NSURL *, NSURLConnection *, NSURLResponse *, id delegate);
 
     RetainPtr<NSURL> m_firstRequestURL;

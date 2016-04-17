@@ -166,9 +166,10 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLC
 #endif
 
 #if USE(QUICK_LOOK)
-    m_handle->setQuickLookHandle(QuickLookHandle::create(m_handle, this, cfResponse));
-    if (m_handle->quickLookHandle())
-        cfResponse = m_handle->quickLookHandle()->cfResponse();
+    if (auto quickLookHandle = QuickLookHandle::createIfNecessary(*m_handle, this, cfResponse)) {
+        cfResponse = quickLookHandle->cfResponse();
+        m_handle->setQuickLookHandle(WTFMove(quickLookHandle));
+    }
 #endif
     
     ResourceResponse resourceResponse(cfResponse);

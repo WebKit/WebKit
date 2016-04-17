@@ -1,3 +1,64 @@
+2016-04-17  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Do not dlopen() QuickLook in the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=156639
+
+        Reviewed by Darin Adler.
+
+        Do not unnecessarily dlopen() QuickLook in the NetworkProcess on iOS, as
+        we already dlopen() this library in the WebContent process. This patch
+        moves the resource response MIME type adjusting code for QuickLook from
+        adjustMIMETypeIfNecessary() to a new adjustMIMETypeForQuickLook() function.
+        adjustMIMETypeIfNecessary() is called in didReceiveResponse() in the Network
+        process side, for *every* resource response, even though QuickLook can only
+        be used to preview main resources. The new adjustMIMETypeForQuickLook()
+        function is called in the QuickLookHandle::createIfNecessary() factory
+        function, right before checking the MIME type to determine if we need to
+        use QuickLook, and after checking that the load is for a main resource.
+        In the WebKit2 case, the factory function is called from
+        WebResourceLoader::didReceiveResponse(), on the WebContent process side.
+
+        This patch speeds up the first page load during PLT by ~22%, because the
+        first load no longer triggers a dlopen() to QuickLook in the NetworkProcess.
+        The overall PLT score seems to be progressed by 0.9-1% as well. The change
+        should also be memory-positive as we no longer need to dlopen() the
+        QuickLook library in the NetworkProcess at all (and we would already dlopen()
+        it on the WebContent process side anyway). Sadly, PLUM benchmark does not
+        show the memory benefit because it does not measure the memory used by the
+        Network process.
+
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse):
+        Refactor the code a bit for clarity, so that we only
+        ResourceHandle::setQuickLookHandle() when QuickLookHandle::createIfNecessary()
+        returns a non-null pointer.
+
+        * platform/network/ios/QuickLook.h:
+        - Rename the factories from create() to createIfNecessary() given that they
+          return nullptr when it is unnecessary to create such handle (i.e. this is not
+          a main resource loader, or it is unecessary given the response's MIME type.
+        - Make shouldCreateForMIMEType() private now that this is always called inside
+          the factory functions.
+
+        * platform/network/ios/QuickLook.mm:
+        (adjustMIMETypeForQuickLook):
+        Extracted code for adjusting the MIME type for QuickLook from the generic
+        adjustMIMETypeIfNecessary() in WebCoreURLResponseIOS.mm to its own function
+        here.
+
+        (WebCore::QuickLookHandle::createIfNecessary):
+        Call adjustMIMETypeForQuickLook() before checking the MIME type.
+
+        * platform/network/ios/WebCoreURLResponseIOS.mm:
+        (WebCore::adjustMIMETypeIfNecessary):
+        Extracted QuickLook-specific code to QuickLook.mm.
+
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        Refactor the code a bit for clarity, so that we only
+        ResourceHandle::setQuickLookHandle() when QuickLookHandle::createIfNecessary()
+        returns a non-null pointer.
+
 2016-04-17  Brady Eidson  <beidson@apple.com>
 
         Clean up IDBBindingUtilities.

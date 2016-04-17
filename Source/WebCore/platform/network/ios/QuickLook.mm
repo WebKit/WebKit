@@ -36,10 +36,14 @@
 #import "ResourceHandle.h"
 #import "ResourceLoader.h"
 #import "RuntimeApplicationChecks.h"
+#import "SubresourceLoader.h"
 #import "SynchronousResourceHandleCFURLConnectionDelegate.h"
+#import "UTIUtilities.h"
 #import "WebCoreResourceHandleAsDelegate.h"
+#import "WebCoreSystemInterface.h"
 #import "WebCoreURLResponseIOS.h"
 #import <Foundation/Foundation.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
@@ -47,6 +51,14 @@
 #import <wtf/text/WTFString.h>
 
 #import "QuickLookSoftLink.h"
+
+SOFT_LINK_FRAMEWORK(MobileCoreServices)
+
+SOFT_LINK(MobileCoreServices, UTTypeCreatePreferredIdentifierForTag, CFStringRef, (CFStringRef inTagClass, CFStringRef inTag, CFStringRef inConformingToUTI), (inTagClass, inTag, inConformingToUTI))
+
+SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassFilenameExtension, CFStringRef)
+
+#define kUTTagClassFilenameExtension getkUTTagClassFilenameExtension()
 
 using namespace WebCore;
 
@@ -94,6 +106,43 @@ static NSMutableDictionary *QLContentDictionary()
 {
     static NSMutableDictionary *contentDictionary = [[NSMutableDictionary alloc] init];
     return contentDictionary;
+}
+
+// We must ensure that the MIME type is correct, so that QuickLook's web plugin is called when needed.
+// We filter the basic MIME types so that we don't do unnecessary work in standard browsing situations.
+static RetainPtr<CFStringRef> adjustMIMETypeForQuickLook(CFURLResponseRef cfResponse)
+{
+    RetainPtr<CFStringRef> mimeType = CFURLResponseGetMIMEType(cfResponse);
+    if (!shouldUseQuickLookForMIMEType(mimeType.get()))
+        return mimeType;
+
+    RetainPtr<CFStringRef> suggestedFilename = adoptCF(CFURLResponseCopySuggestedFilename(cfResponse));
+    RetainPtr<CFStringRef> quickLookMIMEType = adoptCF((CFStringRef)QLTypeCopyBestMimeTypeForFileNameAndMimeType((NSString *)suggestedFilename.get(), (NSString *)mimeType.get()));
+    if (!quickLookMIMEType) {
+        auto url = CFURLResponseGetURL(cfResponse);
+        if (![(NSURL *)url isFileURL])
+            return mimeType;
+        RetainPtr<CFStringRef> extension = adoptCF(CFURLCopyPathExtension(url));
+        if (!extension)
+            return mimeType;
+        RetainPtr<CFStringRef> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension.get(), nullptr));
+        quickLookMIMEType = mimeTypeFromUTITree(uti.get());
+        if (!quickLookMIMEType)
+            return mimeType;
+    }
+
+    if (!mimeType || CFStringCompare(mimeType.get(), quickLookMIMEType.get(), kCFCompareCaseInsensitive) != kCFCompareEqualTo) {
+        CFURLResponseSetMIMEType(cfResponse, quickLookMIMEType.get());
+        return quickLookMIMEType;
+    }
+
+    return mimeType;
+}
+
+static bool shouldCreateForResponse(CFURLResponseRef cfResponse)
+{
+    RetainPtr<CFStringRef> mimeType = adjustMIMETypeForQuickLook(cfResponse);
+    return [QLPreviewGetSupportedMIMETypesSet() containsObject:(NSString *)mimeType.get()];
 }
 
 void WebCore::addQLPreviewConverterWithFileForURL(NSURL *url, id converter, NSString *fileName)
@@ -396,29 +445,35 @@ QuickLookHandle::QuickLookHandle(NSURL *firstRequestURL, NSURLConnection *connec
     LOG(Network, "QuickLookHandle::QuickLookHandle() - previewFileName: %s", [m_converter previewFileName]);
 }
 
-std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, NSURLConnection *connection, NSURLResponse *nsResponse, id delegate)
+static bool shouldCreate(ResourceHandle& handle, CFURLResponseRef response)
 {
-    ASSERT_ARG(handle, handle);
-    if (handle->firstRequest().requester() != ResourceRequest::Requester::Main || ![QLPreviewGetSupportedMIMETypesSet() containsObject:[nsResponse MIMEType]])
-        return nullptr;
+    return handle.firstRequest().requester() == ResourceRequest::Requester::Main && shouldCreateForResponse(response);
+}
 
-    std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], connection, nsResponse, delegate));
-    handle->client()->didCreateQuickLookHandle(*quickLookHandle);
+std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle& handle, NSURLConnection *connection, NSURLResponse *response, id delegate)
+{
+    std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([handle.firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], connection, response, delegate));
+    handle.client()->didCreateQuickLookHandle(*quickLookHandle);
     return quickLookHandle;
 }
 
-#if USE(CFNETWORK)
-std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, SynchronousResourceHandleCFURLConnectionDelegate* connectionDelegate, CFURLResponseRef cfResponse)
+std::unique_ptr<QuickLookHandle> QuickLookHandle::createIfNecessary(ResourceHandle& handle, NSURLConnection *connection, NSURLResponse *response, id delegate)
 {
-    ASSERT_ARG(handle, handle);
-    if (handle->firstRequest().requester() != ResourceRequest::Requester::Main || ![QLPreviewGetSupportedMIMETypesSet() containsObject:(NSString *)CFURLResponseGetMIMEType(cfResponse)])
+    if (!shouldCreate(handle, response._CFURLResponse))
         return nullptr;
 
-    NSURLResponse *nsResponse = [NSURLResponse _responseWithCFURLResponse:cfResponse];
+    return create(handle, connection, response, delegate);
+}
+
+#if USE(CFNETWORK)
+std::unique_ptr<QuickLookHandle> QuickLookHandle::createIfNecessary(ResourceHandle& handle, SynchronousResourceHandleCFURLConnectionDelegate* connectionDelegate, CFURLResponseRef cfResponse)
+{
+    if (!shouldCreate(handle, cfResponse))
+        return nullptr;
+
+    NSURLResponse *response = [NSURLResponse _responseWithCFURLResponse:cfResponse];
     WebQuickLookHandleAsDelegate *delegate = [[[WebQuickLookHandleAsDelegate alloc] initWithConnectionDelegate:connectionDelegate] autorelease];
-    std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, nsResponse, delegate));
-    handle->client()->didCreateQuickLookHandle(*quickLookHandle);
-    return quickLookHandle;
+    return create(handle, nil, response, delegate);
 }
 
 CFURLResponseRef QuickLookHandle::cfResponse()
@@ -427,17 +482,17 @@ CFURLResponseRef QuickLookHandle::cfResponse()
 }
 #endif
 
-bool QuickLookHandle::shouldCreateForMIMEType(const String& mimeType)
+std::unique_ptr<QuickLookHandle> QuickLookHandle::createIfNecessary(ResourceLoader& loader, NSURLResponse *response)
 {
-    return [QLPreviewGetSupportedMIMETypesSet() containsObject:mimeType];
-}
+    bool isMainResourceLoad = loader.documentLoader()->mainResourceLoader() == &loader;
+    if (!isMainResourceLoad)
+        return nullptr;
 
-std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceLoader& loader, const ResourceResponse& response)
-{
-    ASSERT(shouldCreateForMIMEType(response.mimeType()));
+    if (!shouldCreateForResponse(response._CFURLResponse))
+        return nullptr;
 
     RetainPtr<WebResourceLoaderQuickLookDelegate> delegate = adoptNS([[WebResourceLoaderQuickLookDelegate alloc] initWithResourceLoader:&loader]);
-    std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([loader.originalRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, response.nsURLResponse(), delegate.get()));
+    std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([loader.originalRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, response, delegate.get()));
     [delegate setQuickLookHandle:quickLookHandle.get()];
     loader.didCreateQuickLookHandle(*quickLookHandle);
     return quickLookHandle;
