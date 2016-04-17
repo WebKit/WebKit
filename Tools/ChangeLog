@@ -1,5 +1,12 @@
 2016-04-16  Sam Weinig  <sam@webkit.org>
 
+        Another build fix.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController sharingServicePicker:sharingServicesForItems:proposedSharingServices:]):
+
+2016-04-16  Sam Weinig  <sam@webkit.org>
+
         Fix 32-bit build.
 
         * MiniBrowser/mac/BrowserWindowController.m:
