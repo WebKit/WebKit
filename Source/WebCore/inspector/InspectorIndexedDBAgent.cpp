@@ -58,6 +58,7 @@
 #include "IDBTransaction.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
+#include "ScriptState.h"
 #include "SecurityOrigin.h"
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>

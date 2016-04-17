@@ -24,21 +24,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentSecurityPolicyDirectiveList_h
-#define ContentSecurityPolicyDirectiveList_h
+#pragma once
 
 #include "ContentSecurityPolicy.h"
 #include "ContentSecurityPolicyHash.h"
 #include "ContentSecurityPolicyMediaListDirective.h"
 #include "ContentSecurityPolicySourceListDirective.h"
 #include "URL.h"
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
+class Frame;
+
 class ContentSecurityPolicyDirectiveList {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(ContentSecurityPolicyDirectiveList)
 public:
     static std::unique_ptr<ContentSecurityPolicyDirectiveList> create(ContentSecurityPolicy&, const String&, ContentSecurityPolicyHeaderType, ContentSecurityPolicy::PolicyFrom);
     ContentSecurityPolicyDirectiveList(ContentSecurityPolicy&, ContentSecurityPolicyHeaderType);
@@ -125,5 +124,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif /* ContentSecurityPolicyDirectiveList_h */

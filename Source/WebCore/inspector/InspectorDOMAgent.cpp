@@ -1496,7 +1496,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
     if (objectGroupId && handler && state) {
         InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(state);
         if (!injectedScript.hasNoValue())
-            value->setHandler(injectedScript.wrapObject(Deprecated::ScriptValue(state->vm(), handler), *objectGroupId));
+            value->setHandler(injectedScript.wrapObject(handler, *objectGroupId));
     }
     if (!scriptID.isNull()) {
         auto location = Inspector::Protocol::Debugger::Location::create()

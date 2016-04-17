@@ -23,12 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSNodeCustom_h
-#define JSNodeCustom_h
+#pragma once
 
 #include "JSDOMBinding.h"
 #include "JSNode.h"
-#include "ScriptState.h"
 #include "ShadowRoot.h"
 
 namespace WebCore {
@@ -91,5 +89,3 @@ ALWAYS_INLINE JSNode* jsNodeCast(JSC::JSValue value)
 }
 
 } // namespace WebCore
-
-#endif // JSDOMNodeCustom_h

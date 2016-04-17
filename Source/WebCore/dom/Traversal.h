@@ -22,34 +22,30 @@
  *
  */
 
-#ifndef Traversal_h
-#define Traversal_h
+#pragma once
 
-#include "ScriptState.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class Node;
-    class NodeFilter;
+class Node;
+class NodeFilter;
 
-    class NodeIteratorBase {
-    public:
-        Node* root() const { return m_root.get(); }
-        unsigned long whatToShow() const { return m_whatToShow; }
-        NodeFilter* filter() const { return m_filter.get(); }
-        bool expandEntityReferences() const { return false; }
+class NodeIteratorBase {
+public:
+    Node* root() const { return m_root.get(); }
+    unsigned whatToShow() const { return m_whatToShow; }
+    NodeFilter* filter() const { return m_filter.get(); }
+    bool expandEntityReferences() const { return false; }
 
-    protected:
-        NodeIteratorBase(Node&, unsigned long whatToShow, RefPtr<NodeFilter>&&);
-        short acceptNode(Node*) const;
+protected:
+    NodeIteratorBase(Node&, unsigned whatToShow, RefPtr<NodeFilter>&&);
+    short acceptNode(Node*) const;
 
-    private:
-        RefPtr<Node> m_root;
-        unsigned long m_whatToShow;
-        RefPtr<NodeFilter> m_filter;
-    };
+private:
+    RefPtr<Node> m_root;
+    unsigned m_whatToShow;
+    RefPtr<NodeFilter> m_filter;
+};
 
 } // namespace WebCore
-
-#endif // Traversal_h

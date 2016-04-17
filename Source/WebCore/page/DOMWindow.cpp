@@ -144,21 +144,20 @@ namespace WebCore {
 
 class PostMessageTimer : public TimerBase {
 public:
-    PostMessageTimer(DOMWindow* window, PassRefPtr<SerializedScriptValue> message, const String& sourceOrigin, PassRefPtr<DOMWindow> source, std::unique_ptr<MessagePortChannelArray> channels, SecurityOrigin* targetOrigin, PassRefPtr<ScriptCallStack> stackTrace)
+    PostMessageTimer(DOMWindow& window, PassRefPtr<SerializedScriptValue> message, const String& sourceOrigin, DOMWindow& source, std::unique_ptr<MessagePortChannelArray> channels, RefPtr<SecurityOrigin>&& targetOrigin, RefPtr<ScriptCallStack>&& stackTrace)
         : m_window(window)
         , m_message(message)
         , m_origin(sourceOrigin)
         , m_source(source)
         , m_channels(WTFMove(channels))
-        , m_targetOrigin(targetOrigin)
+        , m_targetOrigin(WTFMove(targetOrigin))
         , m_stackTrace(stackTrace)
     {
     }
 
-    Ref<MessageEvent> event(ScriptExecutionContext* context)
+    Ref<MessageEvent> event(ScriptExecutionContext& context)
     {
-        std::unique_ptr<MessagePortArray> messagePorts = MessagePort::entanglePorts(*context, WTFMove(m_channels));
-        return MessageEvent::create(WTFMove(messagePorts), m_message, m_origin, String(), m_source);
+        return MessageEvent::create(MessagePort::entanglePorts(context, WTFMove(m_channels)), WTFMove(m_message), m_origin, { }, m_source.ptr());
     }
     SecurityOrigin* targetOrigin() const { return m_targetOrigin.get(); }
     ScriptCallStack* stackTrace() const { return m_stackTrace.get(); }
@@ -171,10 +170,10 @@ private:
         m_window->postMessageTimerFired(*timer);
     }
 
-    RefPtr<DOMWindow> m_window;
+    Ref<DOMWindow> m_window;
     RefPtr<SerializedScriptValue> m_message;
     String m_origin;
-    RefPtr<DOMWindow> m_source;
+    Ref<DOMWindow> m_source;
     std::unique_ptr<MessagePortChannelArray> m_channels;
     RefPtr<SecurityOrigin> m_targetOrigin;
     RefPtr<ScriptCallStack> m_stackTrace;
@@ -899,7 +898,7 @@ void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, const Mes
         }
     }
 
-    std::unique_ptr<MessagePortChannelArray> channels = MessagePort::disentanglePorts(ports, ec);
+    auto channels = MessagePort::disentanglePorts(ports, ec);
     if (ec)
         return;
 
@@ -915,7 +914,7 @@ void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, const Mes
         stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), ScriptCallStack::maxCallStackSizeToCapture);
 
     // Schedule the message.
-    PostMessageTimer* timer = new PostMessageTimer(this, message, sourceOrigin, &source, WTFMove(channels), target.get(), stackTrace.release());
+    PostMessageTimer* timer = new PostMessageTimer(*this, message, sourceOrigin, source, WTFMove(channels), WTFMove(target), WTFMove(stackTrace));
     timer->startOneShot(0);
 }
 
@@ -924,7 +923,7 @@ void DOMWindow::postMessageTimerFired(PostMessageTimer& timer)
     if (!document() || !isCurrentlyDisplayedInFrame())
         return;
 
-    dispatchMessageEventWithOriginCheck(timer.targetOrigin(), timer.event(document()), timer.stackTrace());
+    dispatchMessageEventWithOriginCheck(timer.targetOrigin(), timer.event(*document()), timer.stackTrace());
 }
 
 void DOMWindow::dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, Event& event, PassRefPtr<ScriptCallStack> stackTrace)

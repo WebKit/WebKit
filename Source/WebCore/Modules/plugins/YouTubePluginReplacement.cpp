@@ -43,9 +43,9 @@ void YouTubePluginReplacement::registerPluginReplacement(PluginReplacementRegist
     registrar(ReplacementPlugin(create, supportsMimeType, supportsFileExtension, supportsURL));
 }
 
-PassRefPtr<PluginReplacement> YouTubePluginReplacement::create(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)
+Ref<PluginReplacement> YouTubePluginReplacement::create(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    return adoptRef(new YouTubePluginReplacement(plugin, paramNames, paramValues));
+    return adoptRef(*new YouTubePluginReplacement(plugin, paramNames, paramValues));
 }
 
 bool YouTubePluginReplacement::supportsMimeType(const String& mimeType)
@@ -77,11 +77,11 @@ RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlu
     return m_embedShadowElement->createElementRenderer(WTFMove(style), insertionPosition);
 }
 
-bool YouTubePluginReplacement::installReplacement(ShadowRoot* root)
+bool YouTubePluginReplacement::installReplacement(ShadowRoot& root)
 {
     m_embedShadowElement = YouTubeEmbedShadowElement::create(m_parentElement->document());
 
-    root->appendChild(*m_embedShadowElement);
+    root.appendChild(*m_embedShadowElement);
 
     Ref<HTMLIFrameElement> iframeElement = HTMLIFrameElement::create(HTMLNames::iframeTag, m_parentElement->document());
     if (m_attributes.contains("width"))

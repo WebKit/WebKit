@@ -327,7 +327,7 @@ void HTMLPlugInElement::didAddUserAgentShadowRoot(ShadowRoot* root)
         return;
     
     root->setResetStyleInheritance(true);
-    if (m_pluginReplacement->installReplacement(root)) {
+    if (m_pluginReplacement->installReplacement(*root)) {
         setDisplayState(DisplayingPluginReplacement);
         setNeedsStyleRecalc(ReconstructRenderTree);
     }

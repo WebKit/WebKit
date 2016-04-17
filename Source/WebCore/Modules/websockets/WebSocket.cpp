@@ -565,13 +565,10 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
 {
     LOG(Network, "WebSocket %p didReceiveBinaryData() %lu byte binary message", this, static_cast<unsigned long>(binaryData.size()));
     switch (m_binaryType) {
-    case BinaryTypeBlob: {
+    case BinaryTypeBlob:
         // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
-        RefPtr<Blob> blob = Blob::create(WTFMove(binaryData), emptyString());
-        dispatchEvent(MessageEvent::create(blob.release(), SecurityOrigin::create(m_url)->toString()));
+        dispatchEvent(MessageEvent::create(Blob::create(WTFMove(binaryData), emptyString()), SecurityOrigin::create(m_url)->toString()));
         break;
-    }
-
     case BinaryTypeArrayBuffer:
         dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData.data(), binaryData.size()), SecurityOrigin::create(m_url)->toString()));
         break;

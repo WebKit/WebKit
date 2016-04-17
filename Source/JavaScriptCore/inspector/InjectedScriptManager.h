@@ -74,7 +74,7 @@ protected:
 
 private:
     String injectedScriptSource();
-    Deprecated::ScriptObject createInjectedScript(const String& source, JSC::ExecState*, int id);
+    JSC::JSObject* createInjectedScript(const String& source, JSC::ExecState*, int id);
 
     InspectorEnvironment& m_environment;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;

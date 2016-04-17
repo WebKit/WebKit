@@ -25,21 +25,16 @@
  *
  */
 
-#ifndef MessageEvent_h
-#define MessageEvent_h
+#pragma once
 
-#include "Blob.h"
-#include "DOMWindow.h"
 #include "Event.h"
 #include "MessagePort.h"
 #include "SerializedScriptValue.h"
 #include <bindings/ScriptValue.h>
-#include <memory>
-#include <runtime/ArrayBuffer.h>
 
 namespace WebCore {
 
-class EventTarget;
+class Blob;
 
 struct MessageEventInit : public EventInit {
     Deprecated::ScriptValue data;
@@ -51,38 +46,13 @@ struct MessageEventInit : public EventInit {
 
 class MessageEvent final : public Event {
 public:
-    static Ref<MessageEvent> create(std::unique_ptr<MessagePortArray> ports, const Deprecated::ScriptValue& data = Deprecated::ScriptValue(), const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = nullptr)
-    {
-        return adoptRef(*new MessageEvent(data, origin, lastEventId, source, WTFMove(ports)));
-    }
-    static Ref<MessageEvent> create(std::unique_ptr<MessagePortArray> ports, PassRefPtr<SerializedScriptValue> data, const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = nullptr)
-    {
-        return adoptRef(*new MessageEvent(data, origin, lastEventId, source, WTFMove(ports)));
-    }
-    static Ref<MessageEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId)
-    {
-        return adoptRef(*new MessageEvent(type, canBubble, cancelable, data, origin, lastEventId));
-    }
-    static Ref<MessageEvent> create(const String& data, const String& origin = String())
-    {
-        return adoptRef(*new MessageEvent(data, origin));
-    }
-    static Ref<MessageEvent> create(PassRefPtr<Blob> data, const String& origin = String())
-    {
-        return adoptRef(*new MessageEvent(data, origin));
-    }
-    static Ref<MessageEvent> create(Ref<ArrayBuffer>&& data, const String& origin = String())
-    {
-        return adoptRef(*new MessageEvent(WTFMove(data), origin));
-    }
-    static Ref<MessageEvent> createForBindings()
-    {
-        return adoptRef(*new MessageEvent);
-    }
-    static Ref<MessageEvent> createForBindings(const AtomicString& type, const MessageEventInit& initializer)
-    {
-        return adoptRef(*new MessageEvent(type, initializer));
-    }
+    static Ref<MessageEvent> create(std::unique_ptr<MessagePortArray>, RefPtr<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, EventTarget* source = nullptr);
+    static Ref<MessageEvent> create(const AtomicString& type, RefPtr<SerializedScriptValue>&&, const String& origin, const String& lastEventId);
+    static Ref<MessageEvent> create(const String& data, const String& origin = { });
+    static Ref<MessageEvent> create(Ref<Blob>&& data, const String& origin);
+    static Ref<MessageEvent> create(Ref<ArrayBuffer>&& data, const String& origin = { });
+    static Ref<MessageEvent> createForBindings();
+    static Ref<MessageEvent> createForBindings(const AtomicString& type, const MessageEventInit&);
     virtual ~MessageEvent();
 
     void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const Deprecated::ScriptValue& data, const String& origin, const String& lastEventId, DOMWindow* source, std::unique_ptr<MessagePortArray>);
@@ -110,7 +80,7 @@ public:
         DataTypeArrayBuffer
     };
     DataType dataType() const { return m_dataType; }
-    const Deprecated::ScriptValue& dataAsScriptValue() const { ASSERT(m_dataType == DataTypeScriptValue); return m_dataAsScriptValue; }
+    JSC::JSValue dataAsScriptValue() const { ASSERT(m_dataType == DataTypeScriptValue); return m_dataAsScriptValue; }
     PassRefPtr<SerializedScriptValue> dataAsSerializedScriptValue() const { ASSERT(m_dataType == DataTypeSerializedScriptValue); return m_dataAsSerializedScriptValue; }
     String dataAsString() const { ASSERT(m_dataType == DataTypeString); return m_dataAsString; }
     Blob* dataAsBlob() const { ASSERT(m_dataType == DataTypeBlob); return m_dataAsBlob.get(); }
@@ -121,13 +91,11 @@ public:
 private:
     MessageEvent();
     MessageEvent(const AtomicString&, const MessageEventInit&);
-    MessageEvent(const Deprecated::ScriptValue& data, const String& origin, const String& lastEventId, PassRefPtr<EventTarget> source, std::unique_ptr<MessagePortArray>);
-    MessageEvent(PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, PassRefPtr<EventTarget> source, std::unique_ptr<MessagePortArray>);
-    MessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId);
-
-    explicit MessageEvent(const String& data, const String& origin);
-    explicit MessageEvent(PassRefPtr<Blob> data, const String& origin);
-    explicit MessageEvent(Ref<ArrayBuffer>&& data, const String& origin);
+    MessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, EventTarget* source, std::unique_ptr<MessagePortArray>);
+    MessageEvent(const AtomicString& type, RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId);
+    MessageEvent(const String& data, const String& origin);
+    MessageEvent(Ref<Blob>&& data, const String& origin);
+    MessageEvent(Ref<ArrayBuffer>&& data, const String& origin);
 
     DataType m_dataType;
     Deprecated::ScriptValue m_dataAsScriptValue;
@@ -143,5 +111,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // MessageEvent_h

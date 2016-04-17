@@ -23,46 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QuickTimePluginReplacement_h
-#define QuickTimePluginReplacement_h
+#pragma once
 
 #include "PluginReplacement.h"
-#include "ScriptState.h"
-#include <bindings/ScriptObject.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class HTMLPlugInElement;
+class DOMWrapperWorld;
 class HTMLVideoElement;
-class RenderElement;
-class RenderStyle;
-class ShadowRoot;
 
-class QuickTimePluginReplacement : public PluginReplacement {
+class QuickTimePluginReplacement final : public PluginReplacement {
 public:
     static void registerPluginReplacement(PluginReplacementRegistrar);
-    static bool supportsMimeType(const String&);
-    static bool supportsFileExtension(const String&);
-    static bool supportsURL(const URL&) { return true; }
-    
-    static PassRefPtr<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
-    ~QuickTimePluginReplacement();
 
-    bool installReplacement(ShadowRoot*) override;
-    JSC::JSObject* scriptObject() override { return m_scriptObject; }
-
-    bool willCreateRenderer() override { return m_mediaElement; }
-    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) override;
-
-    HTMLVideoElement* parentElement() { return m_mediaElement.get(); }
+    virtual ~QuickTimePluginReplacement();
 
     unsigned long long movieSize() const;
     void postEvent(const String&);
 
+    HTMLVideoElement* parentElement() { return m_mediaElement.get(); }
+
 private:
     QuickTimePluginReplacement(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
+    static Ref<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
+    static bool supportsMimeType(const String&);
+    static bool supportsFileExtension(const String&);
+    static bool supportsURL(const URL&) { return true; }
+
+    bool installReplacement(ShadowRoot&) final;
+    JSC::JSObject* scriptObject() final { return m_scriptObject; }
+
+    bool willCreateRenderer() final { return m_mediaElement; }
+    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) final;
 
     bool ensureReplacementScriptInjected();
     DOMWrapperWorld& isolatedWorld();
@@ -71,9 +63,7 @@ private:
     RefPtr<HTMLVideoElement> m_mediaElement;
     const Vector<String> m_names;
     const Vector<String> m_values;
-    JSC::JSObject* m_scriptObject;
+    JSC::JSObject* m_scriptObject; // FIXME: Why is it safe to have this pointer here? What keeps it alive during GC?
 };
 
 }
-
-#endif

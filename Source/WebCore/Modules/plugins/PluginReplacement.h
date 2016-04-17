@@ -23,11 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PluginReplacement_h
-#define PluginReplacement_h
+#pragma once
 
 #include "RenderPtr.h"
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -47,17 +45,14 @@ class PluginReplacement : public RefCounted<PluginReplacement> {
 public:
     virtual ~PluginReplacement() { }
 
-    virtual bool installReplacement(ShadowRoot*) = 0;
-    virtual JSC::JSObject* scriptObject() { return 0; }
+    virtual bool installReplacement(ShadowRoot&) = 0;
+    virtual JSC::JSObject* scriptObject() { return nullptr; }
 
     virtual bool willCreateRenderer() { return false; }
     virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) = 0;
-
-protected:
-    PluginReplacement() { }
 };
 
-typedef PassRefPtr<PluginReplacement> (*CreatePluginReplacement)(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
+typedef Ref<PluginReplacement> (*CreatePluginReplacement)(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 typedef bool (*PluginReplacementSupportsType)(const String&);
 typedef bool (*PluginReplacementSupportsFileExtension)(const String&);
 typedef bool (*PluginReplacementSupportsURL)(const URL&);
@@ -80,7 +75,7 @@ public:
     {
     }
 
-    PassRefPtr<PluginReplacement> create(HTMLPlugInElement& element, const Vector<String>& paramNames, const Vector<String>& paramValues) const { return m_constructor(element, paramNames, paramValues); }
+    Ref<PluginReplacement> create(HTMLPlugInElement& element, const Vector<String>& paramNames, const Vector<String>& paramValues) const { return m_constructor(element, paramNames, paramValues); }
     bool supportsType(const String& mimeType) const { return m_supportsType(mimeType); }
     bool supportsFileExtension(const String& extension) const { return m_supportsFileExtension(extension); }
     bool supportsURL(const URL& url) const { return m_supportsURL(url); }
@@ -95,5 +90,3 @@ private:
 typedef void (*PluginReplacementRegistrar)(const ReplacementPlugin&);
 
 }
-
-#endif

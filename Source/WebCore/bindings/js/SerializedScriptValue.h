@@ -24,10 +24,8 @@
  *
  */
 
-#ifndef SerializedScriptValue_h
-#define SerializedScriptValue_h
+#pragma once
 
-#include "ScriptState.h"
 #include <bindings/ScriptValue.h>
 #include <heap/Strong.h>
 #include <runtime/ArrayBuffer.h>
@@ -115,5 +113,3 @@ private:
 };
 
 }
-
-#endif // SerializedScriptValue_h

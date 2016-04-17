@@ -23,24 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef YouTubePluginReplacement_h
-#define YouTubePluginReplacement_h
+#pragma once
 
 #include "PluginReplacement.h"
-
 #include <wtf/HashMap.h>
-#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-class HTMLPlugInElement;
-class HTMLIFrameElement;
-class RenderElement;
-class RenderStyle;
-class ShadowRoot;
 class YouTubeEmbedShadowElement;
 
-class YouTubePluginReplacement : public PluginReplacement {
+class YouTubePluginReplacement final : public PluginReplacement {
 public:
     static void registerPluginReplacement(PluginReplacementRegistrar);
 
@@ -48,25 +40,21 @@ public:
 
 private:
     YouTubePluginReplacement(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
-
+    static Ref<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
     static bool supportsMimeType(const String&);
     static bool supportsFileExtension(const String&);
     static bool supportsURL(const URL&);
-    
-    static PassRefPtr<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
-    bool installReplacement(ShadowRoot*) override;
-    
+    bool installReplacement(ShadowRoot&) final;
+
     String youTubeURL(const String& rawURL);
-    
-    bool willCreateRenderer() override { return m_embedShadowElement; }
-    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    
+
+    bool willCreateRenderer() final { return m_embedShadowElement; }
+    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) final;
+
     HTMLPlugInElement* m_parentElement;
     RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;
     KeyValueMap m_attributes;
 };
 
 }
-
-#endif

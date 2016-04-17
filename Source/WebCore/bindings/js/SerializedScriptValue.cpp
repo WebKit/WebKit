@@ -49,6 +49,7 @@
 #include "JSMessagePort.h"
 #include "JSNavigator.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptState.h"
 #include "SharedBuffer.h"
 #include "WebCoreJSClientData.h"
 #include <limits>

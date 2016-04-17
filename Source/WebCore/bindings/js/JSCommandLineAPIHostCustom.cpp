@@ -122,12 +122,10 @@ JSValue JSCommandLineAPIHost::getEventListeners(ExecState& state)
 
 JSValue JSCommandLineAPIHost::inspect(ExecState& state)
 {
-    if (state.argumentCount() >= 2) {
-        Deprecated::ScriptValue object(state.vm(), state.uncheckedArgument(0));
-        Deprecated::ScriptValue hints(state.vm(), state.uncheckedArgument(1));
-        wrapped().inspectImpl(object.toInspectorValue(&state), hints.toInspectorValue(&state));
-    }
-
+    if (state.argumentCount() < 2)
+        return jsUndefined();
+    wrapped().inspectImpl(Inspector::toInspectorValue(state, state.uncheckedArgument(0)),
+        Inspector::toInspectorValue(state, state.uncheckedArgument(1)));
     return jsUndefined();
 }
 

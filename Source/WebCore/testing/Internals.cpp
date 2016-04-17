@@ -505,9 +505,9 @@ String Internals::styleChangeType(Node& node)
     return styleChangeTypeToString(node.styleChangeType());
 }
 
-String Internals::description(Deprecated::ScriptValue value)
+String Internals::description(JSC::JSValue value)
 {
-    return toString(value.jsValue());
+    return toString(value);
 }
 
 bool Internals::isPreloaded(const String& url)
@@ -1491,11 +1491,10 @@ private:
     mutable CodeBlock* m_codeBlock;
 };
 
-String Internals::parserMetaData(Deprecated::ScriptValue value)
+String Internals::parserMetaData(JSC::JSValue code)
 {
     JSC::VM& vm = contextDocument()->vm();
     JSC::ExecState* exec = vm.topCallFrame;
-    JSC::JSValue code = value.jsValue();
     ScriptExecutable* executable;
 
     if (!code || code.isNull() || code.isUndefined()) {
@@ -2525,7 +2524,7 @@ String Internals::getCurrentCursorInfo(ExceptionCode& ec)
 
 RefPtr<ArrayBuffer> Internals::serializeObject(PassRefPtr<SerializedScriptValue> value) const
 {
-    Vector<uint8_t> bytes = value->data();
+    auto& bytes = value->data();
     return ArrayBuffer::create(bytes.data(), bytes.size());
 }
 
@@ -2536,14 +2535,11 @@ RefPtr<SerializedScriptValue> Internals::deserializeBuffer(ArrayBuffer& buffer) 
     return SerializedScriptValue::adopt(WTFMove(bytes));
 }
 
-bool Internals::isFromCurrentWorld(Deprecated::ScriptValue value) const
+bool Internals::isFromCurrentWorld(JSC::JSValue value) const
 {
-    ASSERT(!value.hasNoValue());
-    
-    JSC::ExecState* exec = contextDocument()->vm().topCallFrame;
-    if (!value.isObject() || &worldForDOMObject(value.jsValue().getObject()) == &currentWorld(exec))
-        return true;
-    return false;
+    ASSERT(value);
+    JSC::ExecState& state = *contextDocument()->vm().topCallFrame;
+    return !value.isObject() || &worldForDOMObject(asObject(value)) == &currentWorld(&state);
 }
 
 void Internals::setUsesOverlayScrollbars(bool enabled)
@@ -3281,7 +3277,7 @@ void Internals::setShowAllPlugins(bool show)
 
 #if ENABLE(STREAMS_API)
 
-bool Internals::isReadableStreamDisturbed(ScriptState& state, JSValue stream)
+bool Internals::isReadableStreamDisturbed(JSC::ExecState& state, JSValue stream)
 {
     JSGlobalObject* globalObject = state.vmEntryGlobalObject();
     JSVMClientData* clientData = static_cast<JSVMClientData*>(state.vm().clientData);

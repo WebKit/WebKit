@@ -61,6 +61,7 @@
 #include "ProcessingInstruction.h"
 #include "RegisteredEventListener.h"
 #include "SVGElement.h"
+#include "ScriptState.h"
 #include "ShadowRoot.h"
 #include "StyleSheet.h"
 #include "StyledElement.h"

@@ -48,7 +48,7 @@ class Dictionary;
 
 class FontFace final : public RefCounted<FontFace>, public CSSFontFace::Client {
 public:
-    static RefPtr<FontFace> create(JSC::ExecState&, ScriptExecutionContext&, const String& family, const Deprecated::ScriptValue& source, const Dictionary& descriptors, ExceptionCode&);
+    static RefPtr<FontFace> create(JSC::ExecState&, ScriptExecutionContext&, const String& family, JSC::JSValue source, const Dictionary& descriptors, ExceptionCode&);
     static Ref<FontFace> create(JSC::ExecState&, CSSFontFace&);
     virtual ~FontFace();
 

@@ -41,15 +41,6 @@ using namespace JSC;
 
 namespace Deprecated {
 
-void ScriptCallArgumentHandler::appendArgument(const Deprecated::ScriptObject& argument)
-{
-    if (argument.scriptState() != m_exec) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    m_arguments.append(argument.jsObject());
-}
-
 void ScriptCallArgumentHandler::appendArgument(const String& argument)
 {
     JSLockHolder lock(m_exec);

@@ -23,12 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaControlsHost_h
-#define MediaControlsHost_h
+#pragma once
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
 
-#include "ScriptState.h"
 #include <bindings/ScriptObject.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -88,7 +86,5 @@ private:
 };
 
 }
-
-#endif
 
 #endif

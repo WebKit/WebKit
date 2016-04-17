@@ -24,14 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentSecurityPolicy_h
-#define ContentSecurityPolicy_h
+#pragma once
 
 #include "ContentSecurityPolicyResponseHeaders.h"
-#include "ScriptState.h"
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
+
+namespace JSC {
+class ExecState;
+}
 
 namespace WTF {
 class OrdinalNumber;
@@ -43,6 +45,7 @@ class ContentSecurityPolicyDirective;
 class ContentSecurityPolicyDirectiveList;
 class ContentSecurityPolicySource;
 class DOMStringList;
+class Frame;
 class JSDOMWindowShell;
 class ScriptExecutionContext;
 class SecurityOrigin;
@@ -184,5 +187,3 @@ inline const ContentSecurityPolicyDirective* ContentSecurityPolicy::violatedDire
 }
 
 }
-
-#endif

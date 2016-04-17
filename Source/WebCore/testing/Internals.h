@@ -24,20 +24,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Internals_h
-#define Internals_h
+#pragma once
 
 #include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
-#include "ExceptionCodePlaceholder.h"
-#include "NodeList.h"
 #include "PageConsoleClient.h"
-#include "ScriptState.h"
-#include <bindings/ScriptValue.h>
-#include <runtime/ArrayBuffer.h>
 #include <runtime/Float32Array.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -65,6 +57,7 @@ class MemoryInfo;
 class MockContentFilterSettings;
 class MockPageOverlay;
 class Node;
+class NodeList;
 class Page;
 class Range;
 class RenderedDocumentMarker;
@@ -77,7 +70,7 @@ class XMLHttpRequest;
 
 typedef int ExceptionCode;
 
-class Internals : public RefCounted<Internals>, public ContextDestructionObserver {
+class Internals final : public RefCounted<Internals>, private ContextDestructionObserver {
 public:
     static Ref<Internals> create(Document&);
     virtual ~Internals();
@@ -90,7 +83,7 @@ public:
     String address(Node&);
     bool nodeNeedsStyleRecalc(Node&);
     String styleChangeType(Node&);
-    String description(Deprecated::ScriptValue);
+    String description(JSC::JSValue);
 
     bool isPreloaded(const String& url);
     bool isLoadingFromMemoryCache(const String& url);
@@ -208,7 +201,7 @@ public:
     RefPtr<NodeList> nodesFromRect(Document&, int x, int y, unsigned topPadding, unsigned rightPadding,
         unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, bool allowChildFrameContent, ExceptionCode&) const;
 
-    String parserMetaData(Deprecated::ScriptValue = Deprecated::ScriptValue());
+    String parserMetaData(JSC::JSValue = { });
 
     void updateEditorUINowIfScheduled();
 
@@ -291,8 +284,8 @@ public:
     Vector<String> shortcutIconURLs() const;
 
     int numberOfPages(float pageWidthInPixels = 800, float pageHeightInPixels = 600);
-    String pageProperty(String, int, ExceptionCode& = ASSERT_NO_EXCEPTION) const;
-    String pageSizeAndMarginsInPixels(int, int, int, int, int, int, int, ExceptionCode& = ASSERT_NO_EXCEPTION) const;
+    String pageProperty(String, int, ExceptionCode&) const;
+    String pageSizeAndMarginsInPixels(int, int, int, int, int, int, int, ExceptionCode&) const;
 
     void setPageScaleFactor(float scaleFactor, int x, int y, ExceptionCode&);
     void setPageZoomFactor(float zoomFactor, ExceptionCode&);
@@ -344,7 +337,7 @@ public:
     RefPtr<ArrayBuffer> serializeObject(PassRefPtr<SerializedScriptValue>) const;
     RefPtr<SerializedScriptValue> deserializeBuffer(ArrayBuffer&) const;
 
-    bool isFromCurrentWorld(Deprecated::ScriptValue) const;
+    bool isFromCurrentWorld(JSC::JSValue) const;
 
     void setUsesOverlayScrollbars(bool);
     void setUsesMockScrollAnimator(bool);
@@ -472,7 +465,7 @@ public:
     void setResourceLoadStatisticsEnabled(bool);
 
 #if ENABLE(STREAMS_API)
-    bool isReadableStreamDisturbed(ScriptState&, JSC::JSValue);
+    bool isReadableStreamDisturbed(JSC::ExecState&, JSC::JSValue);
 #endif
 
     String composedTreeAsText(Node&);
@@ -490,5 +483,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

@@ -1,3 +1,128 @@
+2016-04-17  Darin Adler  <darin@apple.com>
+
+        Remove more uses of Deprecated::ScriptXXX
+        https://bugs.webkit.org/show_bug.cgi?id=156660
+
+        Reviewed by Antti Koivisto.
+
+        * Modules/mediacontrols/MediaControlsHost.h: Removed unneeded include.
+
+        * Modules/plugins/PluginReplacement.h: Removed unneeded include.
+        Changed argument to installReplacement into a reference. Changed return
+        value for creation function from PassRefPtr to Ref.
+
+        * Modules/plugins/QuickTimePluginReplacement.h: Removed unneeded includes and
+        forward declarations. Marked class final. Made almost everything private.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::create): Changed to return Ref.
+        (WebCore::QuickTimePluginReplacement::installReplacement): Changed to take
+        a reference.
+
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::create): Changed to return Ref.
+        (WebCore::YouTubePluginReplacement::installReplacement): Changed to take
+        a reference.
+
+        * Modules/plugins/YouTubePluginReplacement.h: Removed unneeded includes and
+        forward declarations. Marked class final. Changed return type of create.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveBinaryData): Removed local variable so the
+        MessageEvent::create function gets a Ref&& instead of a RefPtr without having
+        to add explicit WTFMove.
+
+        * bindings/js/DOMRequestState.h: Removed code that set m_exec twice.
+
+        * bindings/js/Dictionary.h: Reformatted function templates to use a single
+        line so they are easier to look at.
+        (WebCore::Dictionary::getEventListener): Rewrote this so it no longer uses
+        a Deprecated::ScriptValue and also make it a little more compact and terse.
+
+        * bindings/js/JSCommandLineAPIHostCustom.cpp:
+        (WebCore::JSCommandLineAPIHost::inspect): Rewrote to use JSValue instead of
+        Deprecated::ScriptValue. Considerably more efficient.
+
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::data): Streamlined to use Deprecated::ScriptValue
+        a little bit less.
+
+        * bindings/js/JSNodeCustom.cpp: Moved include here from header.
+        * bindings/js/JSNodeCustom.h: Moved include from here to cpp file.
+
+        * bindings/js/JSPopStateEventCustom.cpp:
+        (WebCore::JSPopStateEvent::state): Updated for changes to return value of the
+        state() and serializedState functions.
+
+        * bindings/js/ScriptState.h: Removed the ScriptState typedef.
+
+        * bindings/js/SerializedScriptValue.cpp: Moved include here from header.
+        * bindings/js/SerializedScriptValue.h: Moved include from here to cpp file.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create): Changed argument to JSValue instead of ScriptValue.
+        * css/FontFace.h: Ditto.
+
+        * dom/MessageEvent.cpp: Moved create functions in here from header file.
+        Removed some unused ones including one that took a Deprecated::ScriptValue.
+        * dom/MessageEvent.h: Streamlined create functions, removing unused functions,
+        unused arguments, and unused default values for arguments. Also moved them all
+        into the cpp file instead of inlining them. Also changed the return type of
+        dataAsScriptValue to JSValue.
+
+        * dom/NodeFilterCondition.h: Removed unneeded include. Tweaked formatting.
+
+        * dom/PopStateEvent.h: Changed return value of state to be a JSValue and of
+        serializedState to be a raw pointer, not a PassRefPtr.
+
+        * dom/Traversal.h: Removed unneeded include. Removed unnecessary use of
+        unsigned long instead of unsigned. Fixed indentation.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::didAddUserAgentShadowRoot): Pass reference.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener): Pass JSValue instead
+        of constructing a Deprecated::ScriptValue.
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::FrontendMenuProvider::disconnect): Initialize without explicitly
+        mentioning the Deprecated::ScriptObject type.
+
+        * inspector/InspectorIndexedDBAgent.cpp: Removed unneeded include.
+
+        * inspector/InspectorInstrumentation.h: Removed unneeded include and also
+        declaration of two non-existent functions.
+
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::PostMessageTimer): Tweaked types a little bit to
+        match what is used in MessageEvent now.
+        (WebCore::PostMessageTimer::event): Streamlined a bit and changed type to
+        reference.
+        (WebCore::DOMWindow::postMessage): Updated for changes above.
+        (WebCore::DOMWindow::postMessageTimerFired): Ditto.
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::createMessageEvent): Removed now-unneeded
+        "false, false" from MessageEvent::create function call.
+
+        * page/csp/ContentSecurityPolicy.h: Removed unneeded include.
+
+        * page/csp/ContentSecurityPolicyDirectiveList.h: Removed unneeded
+        include and also unneeded non-copyable, since the class has a reference as
+        a data member and so is automatically non-copyable.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::description): Changed to take JSValue.
+        (WebCore::Internals::parserMetaData): Ditto.
+        (WebCore::Internals::serializeObject): Removed unnecessary copying of vector.
+        (WebCore::Internals::isFromCurrentWorld): Changed to take JSValue.
+        (WebCore::Internals::isReadableStreamDisturbed): Changed to not rely on the
+        ScriptState typedef and call it JSC::ExecState.
+
+        * testing/Internals.h: Removed unneeded includes. Removed unneeded and
+        inappropriate use of ASSERT_NO_EXCEPTION.
+
 2016-04-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Consume HTTP data as a ReadableStream

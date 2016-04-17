@@ -43,7 +43,7 @@ namespace Inspector {
 
 class InspectorValue;
 
-RefPtr<InspectorValue> toInspectorValue(JSC::ExecState&, JSC::JSValue);
+JS_EXPORT_PRIVATE RefPtr<InspectorValue> toInspectorValue(JSC::ExecState&, JSC::JSValue);
 
 }
 

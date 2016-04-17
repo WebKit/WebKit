@@ -57,7 +57,7 @@ static inline Optional<String> valueFromDictionary(const Dictionary& dictionary,
     return result.isNull() ? Nullopt : Optional<String>(result);
 }
 
-RefPtr<FontFace> FontFace::create(JSC::ExecState& execState, ScriptExecutionContext& context, const String& family, const Deprecated::ScriptValue& source, const Dictionary& descriptors, ExceptionCode& ec)
+RefPtr<FontFace> FontFace::create(JSC::ExecState& execState, ScriptExecutionContext& context, const String& family, JSC::JSValue source, const Dictionary& descriptors, ExceptionCode& ec)
 {
     if (!context.isDocument()) {
         ec = TypeError;
@@ -66,20 +66,19 @@ RefPtr<FontFace> FontFace::create(JSC::ExecState& execState, ScriptExecutionCont
 
     Ref<FontFace> result = adoptRef(*new FontFace(execState, downcast<Document>(context).fontSelector()));
 
+    ec = 0;
     result->setFamily(family, ec);
     if (ec)
         return nullptr;
 
-    if (source.jsValue().isString()) {
-        String sourceString = source.jsValue().toString(&execState)->value(&execState);
+    if (source.isString()) {
+        String sourceString = source.toString(&execState)->value(&execState);
         auto value = FontFace::parseString(sourceString, CSSPropertySrc);
-        if (is<CSSValueList>(value.get())) {
-            CSSValueList& srcList = downcast<CSSValueList>(*value);
-            CSSFontFace::appendSources(result->backing(), srcList, &downcast<Document>(context), false);
-        } else {
+        if (!is<CSSValueList>(value.get())) {
             ec = SYNTAX_ERR;
             return nullptr;
         }
+        CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &downcast<Document>(context), false);
     }
 
     if (auto style = valueFromDictionary(descriptors, "style"))

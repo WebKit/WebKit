@@ -57,11 +57,10 @@ JSValue JSMessageEvent::data(ExecState& state) const
     JSValue result;
     switch (event.dataType()) {
     case MessageEvent::DataTypeScriptValue: {
-        Deprecated::ScriptValue scriptValue = event.dataAsScriptValue();
-        if (scriptValue.hasNoValue())
+        JSValue dataValue = event.dataAsScriptValue();
+        if (!dataValue)
             result = jsNull();
         else {
-            JSValue dataValue = scriptValue.jsValue();
             // We need to make sure MessageEvents do not leak objects in their state property across isolated DOM worlds.
             // Ideally, we would check that the worlds have different privileges but that's not possible yet.
             if (dataValue.isObject() && &worldForDOMObject(dataValue.getObject()) != &currentWorld(&state)) {
@@ -120,7 +119,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
         if (state.hadException())
             return jsUndefined();
     }
-    Deprecated::ScriptValue dataArg = Deprecated::ScriptValue(state.vm(), state.argument(3));
+    Deprecated::ScriptValue dataArg(state.vm(), state.argument(3));
     if (state.hadException())
         return jsUndefined();
 

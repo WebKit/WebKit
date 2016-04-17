@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMRequestState_h
-#define DOMRequestState_h
+#pragma once
 
 #include "DOMWrapperWorld.h"
 #include "Document.h"
@@ -41,7 +40,6 @@ class DOMRequestState {
 public:
     explicit DOMRequestState(ScriptExecutionContext* scriptExecutionContext)
         : m_scriptExecutionContext(scriptExecutionContext)
-        , m_exec(nullptr)
     {
         if (is<Document>(*m_scriptExecutionContext)) {
             Document& document = downcast<Document>(*m_scriptExecutionContext);
@@ -79,4 +77,3 @@ private:
 };
 
 }
-#endif

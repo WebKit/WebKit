@@ -68,7 +68,7 @@ public:
     
     void disconnect()
     {
-        m_frontendApiObject = Deprecated::ScriptObject();
+        m_frontendApiObject = { };
         m_frontendHost = nullptr;
     }
     

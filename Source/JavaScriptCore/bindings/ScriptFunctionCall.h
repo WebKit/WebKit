@@ -46,8 +46,6 @@ class JS_EXPORT_PRIVATE ScriptCallArgumentHandler {
 public:
     ScriptCallArgumentHandler(JSC::ExecState* state) : m_exec(state) { }
 
-    void appendArgument(const ScriptObject&);
-    void appendArgument(const ScriptValue&);
     void appendArgument(const char*);
     void appendArgument(const String&);
     void appendArgument(JSC::JSValue);
