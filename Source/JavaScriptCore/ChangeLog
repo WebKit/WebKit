@@ -1,3 +1,27 @@
+2016-04-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Use @isObject to check Object Type instead of using instanceof
+        https://bugs.webkit.org/show_bug.cgi?id=156676
+
+        Reviewed by Darin Adler.
+
+        Use @isObject instead of `instanceof @Object`.
+        The `instanceof` check is not enough to check Object Type.
+        For example, given 2 realms, the object created in one realm does not inherit the Object of another realm.
+        Another example is that the object which does not inherit Object.
+        This object can be easily created by calling `Object.create(null)`.
+
+        * builtins/RegExpPrototype.js:
+        (match):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionCreateGlobalObject):
+        * tests/stress/regexp-match-in-other-realm-should-work.js: Added.
+        (shouldBe):
+        * tests/stress/regexp-match-should-work-with-objects-not-inheriting-object-prototype.js: Added.
+        (shouldBe):
+        (regexp.exec):
+
 2016-04-17  Darin Adler  <darin@apple.com>
 
         Remove more uses of Deprecated::ScriptXXX

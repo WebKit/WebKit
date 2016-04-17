@@ -47,7 +47,7 @@ function match(str)
 {
     "use strict";
 
-    if (!(this instanceof @Object))
+    if (!@isObject(this))
         throw new @TypeError("RegExp.prototype.@@match requires that |this| be an Object");
 
     let regexp = @Object(this);
