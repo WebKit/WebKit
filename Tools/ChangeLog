@@ -1,3 +1,37 @@
+2016-04-15  Sam Weinig  <sam@webkit.org>
+
+        Add support for NSSharingService to MiniBrowser, for no great reasons
+        https://bugs.webkit.org/show_bug.cgi?id=156658
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/mac/BrowserWindow.xib:
+        * MiniBrowser/mac/BrowserWindowController.h:
+        Add the share button.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController windowDidLoad]):
+        Set the share button to fire it's actions on mouse down, as it is supposed to act like a menu.
+
+        (-[BrowserWindowController share:]):
+        Show the picker when the button is pressed.
+        (-[BrowserWindowController mainContentView]):
+        Add a new override to get the main content view of derived classes (either a WKWebView or the WebView).
+
+        (-[BrowserWindowController sharingServicePicker:sharingServicesForItems:proposedSharingServices:]):
+        (-[BrowserWindowController sharingServicePicker:delegateForSharingService:]):
+        (-[BrowserWindowController sharingServicePicker:didChooseSharingService:]):
+        (-[BrowserWindowController sharingService:sourceFrameOnScreenForShareItem:]):
+        (-[BrowserWindowController sharingService:transitionImageForShareItem:contentRect:]):
+        (-[BrowserWindowController sharingService:sourceWindowForShareItems:sharingContentScope:]):
+        Add delegate methods.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController mainContentView]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController mainContentView]):
+        Implement to return the web view.
+
 2016-04-16  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.

@@ -250,6 +250,11 @@
     return _webView.mainFrame.dataSource.request.URL;
 }
 
+- (NSView *)mainContentView
+{
+    return _webView;
+}
+
 - (void)didChangeSettings
 {
     SettingsController *settings = [SettingsController shared];

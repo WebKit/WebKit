@@ -30,6 +30,7 @@
     IBOutlet NSButton *reloadButton;
     IBOutlet NSButton *backButton;
     IBOutlet NSButton *forwardButton;
+    IBOutlet NSButton *share;
     IBOutlet NSToolbar *toolbar;
     IBOutlet NSTextField *urlText;
     IBOutlet NSView *containerView;
@@ -48,6 +49,7 @@
 - (IBAction)openLocation:(id)sender;
 
 - (IBAction)fetch:(id)sender;
+- (IBAction)share:(id)sender;
 - (IBAction)reload:(id)sender;
 - (IBAction)forceRepaint:(id)sender;
 - (IBAction)goBack:(id)sender;
@@ -75,6 +77,7 @@
 - (void)didChangeSettings;
 
 - (NSURL *)currentURL;
+- (NSView *)mainContentView;
 
 @end
 

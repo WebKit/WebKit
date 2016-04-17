@@ -25,8 +25,7 @@
 
 #import "BrowserWindowController.h"
 
-@interface BrowserWindowController ()
-
+@interface BrowserWindowController () <NSSharingServicePickerDelegate, NSSharingServiceDelegate>
 @end
 
 @implementation BrowserWindowController
@@ -40,6 +39,12 @@
 - (void)windowDidLoad
 {
     self.window.styleMask |= NSWindowStyleMaskFullSizeContentView;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    [share sendActionOn:NSEventMaskLeftMouseDown];
+#else
+    [share sendActionOn:NSLeftMouseDownMask];
+#endif
 
     [super windowDidLoad];
 }
@@ -66,6 +71,13 @@
         return address;
 
     return [@"http://" stringByAppendingString:address];
+}
+
+- (IBAction)share:(id)sender
+{
+    NSSharingServicePicker *picker = [[NSSharingServicePicker alloc] initWithItems:@[ self.currentURL ]];
+    picker.delegate = self;
+    [picker showRelativeToRect:CGRectZero ofView:sender preferredEdge:NSRectEdgeMinY];
 }
 
 - (IBAction)fetch:(id)sender
@@ -170,6 +182,67 @@
 {
     [self doesNotRecognizeSelector:_cmd];
     return nil;
+}
+
+- (NSView *)mainContentView
+{
+    [self doesNotRecognizeSelector:_cmd];
+    return nil;
+}
+
+#pragma mark -
+#pragma mark NSSharingServicePickerDelegate
+
+- (NSArray<NSSharingService *> *)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker sharingServicesForItems:(NSArray *)items proposedSharingServices:(NSArray<NSSharingService *> *)proposedServices
+{
+    return proposedServices;
+}
+
+- (nullable id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
+{
+    return self;
+}
+
+- (void)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker didChooseSharingService:(nullable NSSharingService *)service
+{
+}
+
+#pragma mark -
+#pragma mark NSSharingServiceDelegate
+
+- (NSRect)sharingService:(NSSharingService *)sharingService sourceFrameOnScreenForShareItem:(id)item
+{
+    NSRect rect = [self.window convertRectToScreen:self.mainContentView.bounds];
+    
+    return rect;
+}
+
+static CGRect coreGraphicsScreenRectForAppKitScreenRect(NSRect rect)
+{
+    NSScreen *firstScreen = [NSScreen screens][0];
+    return CGRectMake(NSMinX(rect), NSHeight(firstScreen.frame) - NSMinY(rect) - NSHeight(rect), NSWidth(rect), NSHeight(rect));
+}
+
+- (NSImage *)sharingService:(NSSharingService *)sharingService transitionImageForShareItem:(id)item contentRect:(NSRect *)contentRect
+{
+    NSRect contentFrame = [self.window convertRectToScreen:self.mainContentView.bounds];
+
+    CGRect frame = coreGraphicsScreenRectForAppKitScreenRect(NSRectToCGRect(contentFrame));
+    CGImageRef imageRef = CGWindowListCreateImage(frame, kCGWindowListOptionIncludingWindow, (CGWindowID)[self.window windowNumber], kCGWindowImageBoundsIgnoreFraming);
+    
+    if (!imageRef)
+        return nil;
+    
+    NSImage *image = [[NSImage alloc] initWithCGImage:imageRef size:NSZeroSize];
+    CGImageRelease(imageRef);
+
+    return image;
+}
+
+- (nullable NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
+{
+    *sharingContentScope = NSSharingContentScopeFull;
+    return self.window;
 }
 
 @end

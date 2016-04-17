@@ -260,6 +260,11 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
     return _webView.URL;
 }
 
+- (NSView *)mainContentView
+{
+    return _webView;
+}
+
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     SEL action = item.action;
