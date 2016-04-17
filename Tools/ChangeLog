@@ -1,5 +1,12 @@
 2016-04-16  Sam Weinig  <sam@webkit.org>
 
+        More build fixing.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController share:]):
+
+2016-04-16  Sam Weinig  <sam@webkit.org>
+
         Another build fix.
 
         * MiniBrowser/mac/BrowserWindowController.m:
