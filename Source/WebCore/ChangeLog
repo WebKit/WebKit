@@ -1,5 +1,14 @@
 2016-04-17  Conrad Shultz  <conrad_shultz@apple.com>
 
+        Try (again) to fix debug builds after r199643.
+
+        Unreviewed.
+
+        * dom/ScriptExecutionContext.cpp:
+        Add another missing include.
+
+2016-04-17  Conrad Shultz  <conrad_shultz@apple.com>
+
         Try to fix debug builds after r199643.
 
         Unreviewed.
