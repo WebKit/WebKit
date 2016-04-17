@@ -1,5 +1,15 @@
 2016-04-16  Konstantin Tokarev  <annulen@yandex.ru>
 
+        JS::DFG::nodeValuePairListDump does not compile with libstdc++ 4.8
+        https://bugs.webkit.org/show_bug.cgi?id=156670
+
+        Reviewed by Darin Adler.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::nodeValuePairListDump): Modified to use lambda as comparator.
+
+2016-04-16  Konstantin Tokarev  <annulen@yandex.ru>
+
         [mips] Implemented moveZeroToDouble.
         https://bugs.webkit.org/show_bug.cgi?id=155429
 

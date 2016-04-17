@@ -2328,17 +2328,14 @@ CString nodeMapDump(const T& nodeMap, DumpContext* context = 0)
     return out.toCString();
 }
 
-template<typename IteratorType>
-inline bool nodeValuePairComparator(IteratorType a, IteratorType b)
-{
-    return nodeComparator(a.node, b.node);
-}
-
 template<typename T>
 CString nodeValuePairListDump(const T& nodeValuePairList, DumpContext* context = 0)
 {
+    using V = typename T::ValueType;
     T sortedList = nodeValuePairList;
-    std::sort(sortedList.begin(), sortedList.end(), nodeValuePairComparator<decltype(*sortedList.begin())>);
+    std::sort(sortedList.begin(), sortedList.end(), [](const V& a, const V& b) {
+        return nodeComparator(a.node, b.node);
+    });
 
     StringPrintStream out;
     CommaPrinter comma;
