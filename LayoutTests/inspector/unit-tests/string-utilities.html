@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("StringUtilities");
+
+    suite.addTestCase({
+        name: "String.format",
+        test: () => {
+            InspectorTest.expectThat("%f".format(1.23456789) === "1.234568", "float format specifier with no sub-specifier should show 6 decimal digits");
+            InspectorTest.expectThat("%.0f".format(1.23456789) === "1", "float format specifier with precision 0 should show 0 decimal digits");
+            InspectorTest.expectThat("%.1f".format(1.23456789) === "1.2", "float format specifier with precision 1 should show 1 decimal digit");
+            InspectorTest.expectThat("%.2f".format(1.23456789) === "1.23", "float format specifier with precision 2 should show 2 decimal digits");
+            InspectorTest.expectThat("%.3f".format(1.23456789) === "1.235", "float format specifier with precision 3 should show 3 decimal digits");
+            InspectorTest.expectThat("%.4f".format(1.23456789) === "1.2346", "float format specifier with precision 4 should show 4 decimal digits");
+            InspectorTest.expectThat("%.5f".format(1.23456789) === "1.23457", "float format specifier with precision 5 should show 5 decimal digits");
+            InspectorTest.expectThat("%.6f".format(1.23456789) === "1.234568", "float format specifier with precision 6 should show 6 decimal digits");
+            InspectorTest.expectThat("%.7f".format(1.23456789) === "1.2345679", "float format specifier with precision 7 should show 7 decimal digits");
+            InspectorTest.expectThat("%.8f".format(1.23456789) === "1.23456789", "float format specifier with precision 8 should show 8 decimal digits");
+            InspectorTest.expectThat("%.9f".format(1.23456789) === "1.234567890", "float format specifier with precision 9 should show 9 decimal digits");
+            InspectorTest.expectThat("%f".format("1.23456789") === "1.234568", "float format specifier with string argument should attempt conversion to float");
+            InspectorTest.expectThat("%f".format(Infinity) === "\u221E", "float format specifier with Infinity argument should show \"\u221E\"");
+            InspectorTest.expectThat("%f".format(NaN) === "NaN", "float format specifier with NaN argument should show \"NaN\"");
+
+            InspectorTest.expectThat("%d".format(137.1) === "137", "integer format specifier with float argument should convert to integer");
+            InspectorTest.expectThat("%d".format("137") === "137", "integer format specifier with string argument should attempt conversion to integer");
+            InspectorTest.expectThat("%d".format(Infinity) === "NaN", "integer format specifier with Infinity argument should show \"NaN\"");
+            InspectorTest.expectThat("%d".format(NaN) === "NaN", "integer format specifier with NaN argument should show \"NaN\"");
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

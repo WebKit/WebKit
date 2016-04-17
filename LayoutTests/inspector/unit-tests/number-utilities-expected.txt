@@ -14,6 +14,7 @@ PASS: constrain of a value above max becomes max
 FAIL: constrain of NaN becomes min
 
 -- Running test case: Number.secondsToString
+PASS: normal resolution of 0ms should be ms with no decimals
 PASS: normal resolution of sub 1ms should be ms
 PASS: normal resolution of sub 10ms should be ms
 PASS: normal resolution of sub 100ms should be ms
@@ -25,6 +26,7 @@ PASS: normal resolution of greater than 1min but sub 1hr should be minutes
 PASS: normal resolution of greater than 1hr but sub 1 day should be hrs
 PASS: normal resolution of greater than 1 day should be days
 PASS: normal resolution of greater than 1 day should be days
+PASS: high resolution of 0ms should be ms with no decimals
 PASS: high resolution of sub 1ms should be ms with decimals
 PASS: high resolution of sub 10ms should be ms with decimals
 PASS: high resolution of sub 100ms should be ms with decimals
@@ -45,4 +47,7 @@ PASS: high resolution of sub 10k should be kilobytes
 PASS: high resolution of sub 10k should be kilobytes
 PASS: high resolution of sub 10mb should be megabytes
 PASS: high resolution of greater than 10mb should be megabytes
+
+-- Running test case: Number.percentageString
+PASS: precision should default to 1 if unspecified
 

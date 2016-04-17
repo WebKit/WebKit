@@ -640,15 +640,17 @@ Object.defineProperty(String, "tokenizeFormatString",
                 }
             }
 
-            var precision = -1;
+            const defaultPrecision = 6;
+
+            let precision = defaultPrecision;
             if (format[index] === ".") {
                 // This is a precision specifier. If no digit follows the ".",
-                // then the precision should be zero.
+                // then use the default precision of six digits (ISO C99 specification).
                 ++index;
 
                 precision = parseInt(format.substring(index), 10);
                 if (isNaN(precision))
-                    precision = 0;
+                    precision = defaultPrecision;
 
                 while (!isNaN(format[index]))
                     ++index;
@@ -715,14 +717,21 @@ Object.defineProperty(String, "standardFormatters",
     value: {
         d: function(substitution)
         {
-            return !isNaN(substitution) ? substitution : 0;
+            return parseInt(substitution);
         },
 
         f: function(substitution, token)
         {
-            if (substitution && token.precision > -1)
-                substitution = substitution.toFixed(token.precision);
-            return !isNaN(substitution) ? substitution : (token.precision > -1 ? Number(0).toFixed(token.precision) : 0);
+            let value = parseFloat(substitution);
+            if (isNaN(value))
+                return NaN;
+
+            let options = {
+                minimumFractionDigits: token.precision,
+                maximumFractionDigits: token.precision,
+                useGrouping: false
+            };
+            return value.toLocaleString(undefined, options);
         },
 
         s: function(substitution)
@@ -741,7 +750,7 @@ Object.defineProperty(String, "format",
 
         function prettyFunctionName()
         {
-            return "String.format(\"" + format + "\", \"" + substitutions.join("\", \"") + "\")";
+            return "String.format(\"" + format + "\", \"" + Array.from(substitutions).join("\", \"") + "\")";
         }
 
         function warn(msg)
@@ -912,10 +921,10 @@ Object.defineProperty(Number, "constrain",
 
 Object.defineProperty(Number, "percentageString",
 {
-    value: function(percent, precision = 1)
+    value: function(fraction, precision = 1)
     {
-        console.assert(percent >= 0 && percent <= 100);
-        return percent.toFixed(precision) + "%";
+        console.assert(fraction >= 0 && fraction <= 1);
+        return fraction.toLocaleString(undefined, {minimumFractionDigits: precision, style: "percent"});
     }
 });
 
@@ -936,6 +945,8 @@ Object.defineProperty(Number, "secondsToString",
     value: function(seconds, higherResolution)
     {
         let ms = seconds * 1000;
+        if (!ms)
+            return WebInspector.UIString("%.0fms").format(0);
 
         if (Math.abs(ms) < 10) {
             if (higherResolution)

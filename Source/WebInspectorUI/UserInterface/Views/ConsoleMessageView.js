@@ -599,18 +599,16 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             return obj.description;
         }
 
-        function floatFormatter(obj)
+        function floatFormatter(obj, token)
         {
-            if (typeof obj.value !== "number")
-                return parseFloat(obj.description);
-            return obj.value;
+            let value = typeof obj.value === "number" ? obj.value : obj.description;
+            return String.standardFormatters.f(value, token);
         }
 
         function integerFormatter(obj)
         {
-            if (typeof obj.value !== "number")
-                return parseInt(obj.description);
-            return Math.floor(obj.value);
+            let value = typeof obj.value === "number" ? obj.value : obj.description;
+            return String.standardFormatters.d(value);
         }
 
         var currentStyle = null;

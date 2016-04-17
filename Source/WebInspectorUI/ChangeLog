@@ -1,5 +1,62 @@
 2016-04-16  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Adopt Number.prototype.toLocaleString For All Sizes and Times
+        https://bugs.webkit.org/show_bug.cgi?id=152033
+        <rdar://problem/23815589>
+
+        Reviewed by Timothy Hatcher.
+
+        Update string formatters to localize float and percentage strings. Hook up
+        console message formatters to use String.standardFormatters so that console
+        statements (e.g. console.log("%.3f", 3.14159)) are properly formatted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Utilities.js:
+        (value):
+        tokenizeFormatString should default to 6 digits when no precision
+        sub-specifier is provided.
+
+        percentageString should localize formatting, and take a fraction value
+        (0 to 1) instead of a percentage.
+
+        secondsToString should perform special-case formatting for zero values
+        ("0ms") instead of the general purpose float formatter.
+
+        (value.d):
+        Switch to parseInt to floor floating point values and support numeric strings.
+        Return NaN instead of zero when passed a value that can't be converted to integer.
+
+        (value.f):
+        Switch to parseFloat to support numeric strings, and localize formatting.
+        Remove precision check, as it will never be less than zero. Return NaN
+        instead of zero when passed a value that can't be converted to float.
+
+        (prettyFunctionName):
+        Convert substitutions (an arguments object) to an array before calling join.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.floatFormatter):
+        Use String.standardFormatters.f.
+
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.integerFormatter):
+        Use String.standardFormatters.d.
+
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        (WebInspector.LayoutTimelineDataGridNode.prototype.createCellContent):
+        (WebInspector.LayoutTimelineDataGridNode):
+        Use integer formatting for pixel values.
+
+        * UserInterface/Views/ProfileDataGridNode.js:
+        (WebInspector.ProfileDataGridNode.prototype._recalculateData):
+        (WebInspector.ProfileDataGridNode.prototype._totalTimeContent):
+        Treat percentage as a fraction from 0 to 1.
+
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshImageSizeSection):
+        Use integer formatting for pixel values.
+
+2016-04-16  Matt Baker  <mattbaker@apple.com>
+
         display:inline on the tbody is causing the width of the iframe to be shrunk to the minimum size of its text.
         https://bugs.webkit.org/show_bug.cgi?id=15666
 

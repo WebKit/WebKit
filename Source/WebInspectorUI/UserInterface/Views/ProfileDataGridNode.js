@@ -188,14 +188,14 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
 
         let totalTime = duration;
         let selfTime = leafDuration + this._extraSelfTimeFromChargedChildren;
-        let percent = (totalTime / this._tree.totalSampleTime) * 100;
+        let fraction = totalTime / this._tree.totalSampleTime;
 
-        this._data = {totalTime, selfTime, percent};
+        this._data = {totalTime, selfTime, fraction};
     }
 
     _totalTimeContent()
     {
-        let {totalTime, percent} = this._data;
+        let {totalTime, fraction} = this._data;
 
         let fragment = document.createDocumentFragment();
         let timeElement = fragment.appendChild(document.createElement("span"));
@@ -203,7 +203,7 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
         timeElement.textContent = Number.secondsToMillisecondsString(totalTime);
         let percentElement = fragment.appendChild(document.createElement("span"));
         percentElement.classList.add("percentage");
-        percentElement.textContent = Number.percentageString(percent);
+        percentElement.textContent = Number.percentageString(fraction);
         return fragment;
     }
 

@@ -1,0 +1,22 @@
+
+== Running test suite: StringUtilities
+-- Running test case: String.format
+PASS: float format specifier with no sub-specifier should show 6 decimal digits
+PASS: float format specifier with precision 0 should show 0 decimal digits
+PASS: float format specifier with precision 1 should show 1 decimal digit
+PASS: float format specifier with precision 2 should show 2 decimal digits
+PASS: float format specifier with precision 3 should show 3 decimal digits
+PASS: float format specifier with precision 4 should show 4 decimal digits
+PASS: float format specifier with precision 5 should show 5 decimal digits
+PASS: float format specifier with precision 6 should show 6 decimal digits
+PASS: float format specifier with precision 7 should show 7 decimal digits
+PASS: float format specifier with precision 8 should show 8 decimal digits
+PASS: float format specifier with precision 9 should show 9 decimal digits
+PASS: float format specifier with string argument should attempt conversion to float
+PASS: float format specifier with Infinity argument should show "∞"
+PASS: float format specifier with NaN argument should show "NaN"
+PASS: integer format specifier with float argument should convert to integer
+PASS: integer format specifier with string argument should attempt conversion to integer
+PASS: integer format specifier with Infinity argument should show "NaN"
+PASS: integer format specifier with NaN argument should show "NaN"
+

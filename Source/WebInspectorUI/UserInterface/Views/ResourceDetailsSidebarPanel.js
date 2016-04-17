@@ -416,8 +416,8 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
         // Get the metrics for this resource and fill in the metrics rows with that information.
         resource.getImageSize(function(size) {
-            this._imageWidthRow.value = WebInspector.UIString("%fpx").format(size.width);
-            this._imageHeightRow.value = WebInspector.UIString("%fpx").format(size.height);
+            this._imageWidthRow.value = WebInspector.UIString("%dpx").format(size.width);
+            this._imageHeightRow.value = WebInspector.UIString("%dpx").format(size.height);
         }.bind(this));
     }
 

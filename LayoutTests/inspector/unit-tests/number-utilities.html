@@ -32,6 +32,7 @@ function test()
         name: "Number.secondsToString",
         test: () => {
             // Normal resolution.
+            InspectorTest.expectThat(Number.secondsToString(0, false) === "0ms", "normal resolution of 0ms should be ms with no decimals");
             InspectorTest.expectThat(Number.secondsToString(0.000123456, false) === "0.12ms", "normal resolution of sub 1ms should be ms");
             InspectorTest.expectThat(Number.secondsToString(0.00123456, false) === "1.23ms", "normal resolution of sub 10ms should be ms");
             InspectorTest.expectThat(Number.secondsToString(0.0123456, false) === "12.3ms", "normal resolution of sub 100ms should be ms");
@@ -45,6 +46,7 @@ function test()
             InspectorTest.expectThat(Number.secondsToString(1234567, false) === "14.3 days", "normal resolution of greater than 1 day should be days");
 
             // High resolution.
+            InspectorTest.expectThat(Number.secondsToString(0, true) === "0ms", "high resolution of 0ms should be ms with no decimals");
             InspectorTest.expectThat(Number.secondsToString(0.000123456, true) === "0.123ms", "high resolution of sub 1ms should be ms with decimals");
             InspectorTest.expectThat(Number.secondsToString(0.00123456, true) === "1.235ms", "high resolution of sub 10ms should be ms with decimals");
             InspectorTest.expectThat(Number.secondsToString(0.0123456, true) === "12.35ms", "high resolution of sub 100ms should be ms with decimals");
@@ -77,6 +79,15 @@ function test()
             InspectorTest.expectThat(Number.bytesToString(10.123 * kb, true) === "10.12 KB", "high resolution of sub 10k should be kilobytes");
             InspectorTest.expectThat(Number.bytesToString(1.123 * mb, true) === "1.12 MB", "high resolution of sub 10mb should be megabytes");
             InspectorTest.expectThat(Number.bytesToString(10.123 * mb, true) === "10.12 MB", "high resolution of greater than 10mb should be megabytes");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Number.percentageString",
+        test: () => {
+            InspectorTest.expectThat(Number.percentageString(1 / 3) === "33.3%", "precision should default to 1 if unspecified");
 
             return true;
         }
