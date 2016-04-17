@@ -1,3 +1,21 @@
+2016-04-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams] Consume HTTP data as a ReadableStream
+        https://bugs.webkit.org/show_bug.cgi?id=138968
+
+        Reviewed by Alex Christensen.
+
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-stream-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-stream.html: Added.
+        * http/tests/xmlhttprequest/streams/streams-read-api-cancelled-expected.txt: Added.
+        * http/tests/xmlhttprequest/streams/streams-read-api-cancelled.html: Added.
+        * http/tests/xmlhttprequest/streams/streams-read-api-closed-expected.txt: Added.
+        * http/tests/xmlhttprequest/streams/streams-read-api-closed.html: Added.
+        * http/tests/xmlhttprequest/streams/streams-read-api-expected.txt: Added.
+        * http/tests/xmlhttprequest/streams/streams-read-api.html: Added.
+        * http/tests/xmlhttprequest/streams/streams-read-expected.txt: Added.
+        * http/tests/xmlhttprequest/streams/streams-read.html: Added.
+
 2016-04-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Adopt Number.prototype.toLocaleString For All Sizes and Times

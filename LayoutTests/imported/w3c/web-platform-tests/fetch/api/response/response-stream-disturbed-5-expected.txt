@@ -1,0 +1,6 @@
+
+PASS Getting a null body after consuming as blob 
+PASS Getting a null body after consuming as text 
+PASS Getting a null body after consuming as json 
+PASS Getting a null body after consuming as arrayBuffer 
+

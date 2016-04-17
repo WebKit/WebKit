@@ -1,3 +1,33 @@
+2016-04-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Consume HTTP data as a ReadableStream
+        https://bugs.webkit.org/show_bug.cgi?id=138968
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/basic/stream-response-expected.txt:
+        * web-platform-tests/fetch/api/basic/stream-response-worker-expected.txt:
+        * web-platform-tests/fetch/api/request/request-consume.html:
+        * web-platform-tests/fetch/api/resources/data.json: Added.
+        * web-platform-tests/fetch/api/resources/utils.js:
+        (validateStreamFromString):
+        * web-platform-tests/fetch/api/response/response-cancel-stream-expected.txt: Added.
+        * web-platform-tests/fetch/api/response/response-cancel-stream.html: Added.
+        * web-platform-tests/fetch/api/response/response-clone-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-stream-expected.txt: Added.
+        * web-platform-tests/fetch/api/response/response-consume-stream.html: Added.
+        * web-platform-tests/fetch/api/response/response-init-002-expected.txt:
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-expected-1.txt: Added.
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-1.html: Added.
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-expected-2.txt: Added.
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-2.html: Added.
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-expected-3.txt: Added.
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-3.html: Added.
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-expected-4.txt: Added.
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-4.html: Added.
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-expected-5.txt: Added.
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-5.html: Added.
+
 2016-04-11  Chris Dumez  <cdumez@apple.com>
 
         DOMTokenList.contains() should not throw

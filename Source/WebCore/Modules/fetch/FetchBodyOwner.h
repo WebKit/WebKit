@@ -35,6 +35,7 @@
 #include "FetchBody.h"
 #include "FetchLoader.h"
 #include "FetchLoaderClient.h"
+#include "FetchResponseSource.h"
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ public:
     FetchBodyOwner(ScriptExecutionContext&, FetchBody&&);
 
     // Exposed Body API
-    bool isDisturbed() const { return m_isDisturbed; }
+    bool isDisturbed() const;
 
     void arrayBuffer(DeferredWrapper&&);
     void blob(DeferredWrapper&&);
@@ -68,7 +69,8 @@ private:
     // Blob loading routines
     void loadedBlobAsText(String&&);
     void loadedBlobAsArrayBuffer(RefPtr<ArrayBuffer>&& buffer) { m_body.loadedAsArrayBuffer(WTFMove(buffer)); }
-    void blobLoadingSucceeded() { finishBlobLoading(); }
+    void blobChunk(const char*, size_t);
+    void blobLoadingSucceeded();
     void blobLoadingFailed();
     void finishBlobLoading();
 
@@ -79,6 +81,7 @@ private:
         void didFinishLoadingAsText(String&& text) final { owner.loadedBlobAsText(WTFMove(text)); }
         void didFinishLoadingAsArrayBuffer(RefPtr<ArrayBuffer>&& buffer) final { owner.loadedBlobAsArrayBuffer(WTFMove(buffer)); }
         void didReceiveResponse(const ResourceResponse&) final;
+        void didReceiveData(const char* data, size_t size) final { owner.blobChunk(data, size); }
         void didFail() final;
         void didSucceed() final { owner.blobLoadingSucceeded(); }
 
@@ -89,6 +92,9 @@ private:
 protected:
     FetchBody m_body;
     bool m_isDisturbed { false };
+#if ENABLE(STREAMS_API)
+    RefPtr<FetchResponseSource> m_readableStreamSource;
+#endif
 
 private:
     Optional<BlobLoader> m_blobLoader;

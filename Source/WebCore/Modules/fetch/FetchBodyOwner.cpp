@@ -33,6 +33,7 @@
 
 #include "ExceptionCode.h"
 #include "FetchLoader.h"
+#include "FetchResponseSource.h"
 #include "JSBlob.h"
 #include "ResourceResponse.h"
 
@@ -50,9 +51,21 @@ void FetchBodyOwner::stop()
     if (m_blobLoader) {
         if (m_blobLoader->loader)
             m_blobLoader->loader->stop();
-        finishBlobLoading();
     }
     ASSERT(!m_blobLoader);
+}
+
+bool FetchBodyOwner::isDisturbed() const
+{
+    if (m_isDisturbed)
+        return true;
+
+#if ENABLE(STREAMS_API)
+    if (m_readableStreamSource && m_readableStreamSource->isReadableStreamLocked())
+        return true;
+#endif
+
+    return false;
 }
 
 void FetchBodyOwner::arrayBuffer(DeferredWrapper&& promise)
@@ -161,10 +174,44 @@ void FetchBodyOwner::loadedBlobAsText(String&& text)
     m_body.loadedAsText(WTFMove(text));
 }
 
+void FetchBodyOwner::blobLoadingSucceeded()
+{
+    ASSERT(m_body.type() == FetchBody::Type::Blob);
+
+#if ENABLE(STREAMS_API)
+    if (m_readableStreamSource) {
+        m_readableStreamSource->close();
+        m_readableStreamSource = nullptr;
+    }
+#endif
+
+    finishBlobLoading();
+}
+
 void FetchBodyOwner::blobLoadingFailed()
 {
-    m_body.loadingFailed();
+#if ENABLE(STREAMS_API)
+    if (m_readableStreamSource) {
+        if (!m_readableStreamSource->isCancelling())
+            m_readableStreamSource->error(ASCIILiteral("Blob loading failed"));
+        m_readableStreamSource = nullptr;
+    } else
+#endif
+        m_body.loadingFailed();
+
     finishBlobLoading();
+}
+
+void FetchBodyOwner::blobChunk(const char* data, size_t size)
+{
+#if ENABLE(STREAMS_API)
+    ASSERT(m_readableStreamSource);
+    // FIXME: If ArrayBuffer::tryCreate returns null, we should probably cancel the load.
+    m_readableStreamSource->enqueue(ArrayBuffer::tryCreate(data, size));
+#else
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(size);
+#endif
 }
 
 FetchBodyOwner::BlobLoader::BlobLoader(FetchBodyOwner& owner)

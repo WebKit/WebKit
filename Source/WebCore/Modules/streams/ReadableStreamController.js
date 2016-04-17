@@ -51,7 +51,7 @@ function error(error)
 
     const stream = this.@controlledReadableStream;
     if (stream.@state !== @streamReadable)
-        throw new @TypeError("ReaableStream is not readable");
+        throw new @TypeError("ReadableStream is not readable");
 
     @errorReadableStream(stream, error);
 }

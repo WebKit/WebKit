@@ -25,35 +25,62 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredirect" };
 
-[
-    ActiveDOMObject,
-    Conditional=FETCH_API,
-    EnabledAtRuntime=FetchAPI,
-    ConstructorCallWith=ScriptExecutionContext,
-    Exposed=(Window,Worker),
-    InterfaceName=Response,
-    JSBuiltinConstructor
-]
-interface FetchResponse {
-    // FIXME: NewObject does not seem to be supported for static methods.
-    [CallWith=ScriptExecutionContext] static FetchResponse error();
-    [CallWith=ScriptExecutionContext, RaisesException] static FetchResponse redirect(DOMString url, optional unsigned short status = 302);
+#include "config.h"
+#include "FetchResponseSource.h"
 
-    readonly attribute ResponseType type;
+#if ENABLE(FETCH_API) && ENABLE(STREAMS_API)
 
-    readonly attribute DOMString url;
-    readonly attribute boolean redirected;
-    readonly attribute unsigned short status;
-    readonly attribute boolean ok;
-    readonly attribute DOMString statusText;
-    // FIXME: Add support for SameObject keyword for headers
-    readonly attribute FetchHeaders headers;
-    [Custom, CachedAttribute] readonly attribute ReadableStream? body;
+#include "FetchResponse.h"
 
-    [NewObject, CallWith=ScriptExecutionContext, RaisesException] FetchResponse clone();
+namespace WebCore {
 
-    [Private, RaisesException] void initializeWith(Dictionary parameters);
-};
-FetchResponse implements FetchBody;
+FetchResponseSource::FetchResponseSource(FetchResponse& response)
+    : m_response(response)
+{
+}
+
+bool FetchResponseSource::isReadableStreamLocked() const
+{
+    return controller().isControlledReadableStreamLocked();
+}
+
+void FetchResponseSource::setActive()
+{
+    m_response.setPendingActivity(&m_response);
+}
+
+void FetchResponseSource::setInactive()
+{
+    m_response.unsetPendingActivity(&m_response);
+}
+
+void FetchResponseSource::doStart()
+{
+    // FIXME: We should consume body only if stream reader requested data, i.e. is disturbed.
+    // We might need a callback to be notified of the stream being disturbed.
+    m_response.consumeBodyAsStream();
+}
+
+void FetchResponseSource::doCancel()
+{
+    m_isCancelling = true;
+    static_cast<ActiveDOMObject&>(m_response).stop();
+}
+
+void FetchResponseSource::close()
+{
+    ASSERT(isStarting());
+    controller().close();
+    clean();
+}
+void FetchResponseSource::error(const String& value)
+{
+    ASSERT(isStarting());
+    controller().error(value);
+    clean();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(FETCH_API) && ENABLE(STREAMS_API)

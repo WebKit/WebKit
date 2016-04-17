@@ -1,7 +1,7 @@
 
 PASS Check Response's clone with default values, without body 
 PASS Check Response's clone has the expected attribute values 
-FAIL Check orginal response's body after cloning null is not an object (evaluating 'response.body.getReader')
-FAIL Check cloned response's body null is not an object (evaluating 'clonedResponse.body.getReader')
+PASS Check orginal response's body after cloning 
+PASS Check cloned response's body 
 FAIL Cannot clone a disturbed response assert_true: response is disturbed expected true got false
 

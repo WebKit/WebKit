@@ -25,35 +25,41 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredirect" };
 
-[
-    ActiveDOMObject,
-    Conditional=FETCH_API,
-    EnabledAtRuntime=FetchAPI,
-    ConstructorCallWith=ScriptExecutionContext,
-    Exposed=(Window,Worker),
-    InterfaceName=Response,
-    JSBuiltinConstructor
-]
-interface FetchResponse {
-    // FIXME: NewObject does not seem to be supported for static methods.
-    [CallWith=ScriptExecutionContext] static FetchResponse error();
-    [CallWith=ScriptExecutionContext, RaisesException] static FetchResponse redirect(DOMString url, optional unsigned short status = 302);
+#ifndef FetchResponseSource_h
+#define FetchResponseSource_h
 
-    readonly attribute ResponseType type;
+#if ENABLE(FETCH_API) && ENABLE(STREAMS_API)
 
-    readonly attribute DOMString url;
-    readonly attribute boolean redirected;
-    readonly attribute unsigned short status;
-    readonly attribute boolean ok;
-    readonly attribute DOMString statusText;
-    // FIXME: Add support for SameObject keyword for headers
-    readonly attribute FetchHeaders headers;
-    [Custom, CachedAttribute] readonly attribute ReadableStream? body;
+#include "ReadableStreamSource.h"
 
-    [NewObject, CallWith=ScriptExecutionContext, RaisesException] FetchResponse clone();
+namespace WebCore {
 
-    [Private, RaisesException] void initializeWith(Dictionary parameters);
+class FetchResponse;
+
+class FetchResponseSource final : public ReadableStreamSource {
+public:
+    FetchResponseSource(FetchResponse&);
+
+    template<typename T> void enqueue(const T& t) { controller().enqueue(t); }
+    void close();
+    void error(const String&);
+
+    bool isCancelling() const { return m_isCancelling; }
+    bool isReadableStreamLocked() const;
+
+private:
+    void doStart() final;
+    void doCancel() final;
+    void setActive() final;
+    void setInactive() final;
+
+    FetchResponse& m_response;
+    bool m_isCancelling { false };
 };
-FetchResponse implements FetchBody;
+
+} // namespace WebCore
+
+#endif // ENABLE(FETCH_API) && ENABLE(STREAMS_API)
+
+#endif // FetchResponseSource_h

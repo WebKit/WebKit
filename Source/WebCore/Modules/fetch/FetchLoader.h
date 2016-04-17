@@ -44,15 +44,18 @@ class ScriptExecutionContext;
 
 class FetchLoader final : public ThreadableLoaderClient {
 public:
-    enum class Type { ArrayBuffer, Text };
+    enum class Type { ArrayBuffer, Stream, Text };
 
     FetchLoader(Type, FetchLoaderClient&);
+
+    RefPtr<SharedBuffer> startStreaming();
 
     void start(ScriptExecutionContext&, const FetchRequest&);
     void start(ScriptExecutionContext&, Blob&);
     void stop();
 
-    bool isStarted() const { return !!m_loader; }
+    bool isStarted() const { return m_isStarted; }
+
 private:
     // ThreadableLoaderClient API.
     void didReceiveResponse(unsigned long, const ResourceResponse&) final;
@@ -61,11 +64,14 @@ private:
     void didFail(const ResourceError&) final;
     void didFailRedirectCheck() final;
 
+    Type type() const { return m_type; }
+
 private:
     Type m_type { Type::ArrayBuffer };
     FetchLoaderClient& m_client;
     RefPtr<ThreadableLoader> m_loader;
     RefPtr<SharedBuffer> m_data;
+    bool m_isStarted { false };
 };
 
 } // namespace WebCore

@@ -1,3 +1,118 @@
+2016-04-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Consume HTTP data as a ReadableStream
+        https://bugs.webkit.org/show_bug.cgi?id=138968
+
+        Reviewed by Alex Christensen.
+
+        This patch introduces ReadableStreamSource and ReadableStreamController which allow feeding a ReadableStream from DOM classes.
+        ReadableStreamSource is a base class for all DOM ReadableStream sources.
+        ReadableStreamController is a wrapper around JSReadableStreamController that can be invoked by DOM code to enqueue/close/error a ReadableStream.
+        A createReadableStream function is introduced to allow DOM classes creating ReadableStream.
+
+        Added support for a FetchResponse ReadableStream source.
+        Both synthetic FetchResponse and loading FetchResponse are supported.
+        A new "Stream" FetchLoader::Type is introduced to allow receiving data as chunks and feeding them to a ReadableStream through ReadableStreamSource.
+
+        Currently, FetchResponse is consumed and marked as disturbed as soon as a ReadableStreamSource is created.
+        This should be changed so that consumption happens on the first read call to the ReadableStreamReader, i.e. when stream gets disturbed.
+
+        FetchResponseSource never fulfills the start promise, which allows to enqueue, error or close the stream at any time.
+        FetchResponseSource must therefore always ensure to close or error the stream.
+        Added support for locked check in FetchResponse.
+
+        Tests: imported/w3c/web-platform-tests/fetch/api/response/response-cancel-stream.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-consume-stream.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-1.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-2.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-3.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-4.html
+               imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-5.html
+        Also covered by rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::consumeAsStream): Fill stream with body data.
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::type): Added accessor to body type, used for assertions.
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::isDisturbed): Adding stream isLocked check.
+        (WebCore::FetchBodyOwner::blobLoadingSucceeded): Added assertion that body type is blob. Closing stream if created.
+        (WebCore::FetchBodyOwner::blobLoadingFailed): Erroring the stream if created and not cancelled.
+        (WebCore::FetchBodyOwner::blobChunk): Filling stream with chunk.
+        (WebCore::FetchBodyOwner::stop): Rmoved call to finishBlobLoading as it should be called as part of FetchLoaderCLient::didFail callbacki.
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchLoader.cpp: Fixing the case of cancel being called when creating the ThreadableLoader by introducing FetchLoader::m_isStarted.
+        (WebCore::FetchLoader::start): Setting m_isStarted at the end of the start method.
+        (WebCore::FetchLoader::stop): Fixing the case that FetchLoader can be destroyed when cancelling its loader.
+        (WebCore::FetchLoader::startStreaming): Introduced to switch the loading type from ArayBuffer to Stream. Already buffered data is returned.
+        (WebCore::FetchLoader::didReceiveData): Handling of the new Stream type.
+        (WebCore::FetchLoader::didFinishLoading):
+        * Modules/fetch/FetchLoader.h:
+        * Modules/fetch/FetchLoaderClient.h:
+        (WebCore::FetchLoaderClient::didReceiveData): Callback to get data as chunks if loader is of type Stream.
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::clone): Removed m_isLocked as it is handled within isDisturbed().
+        (WebCore::FetchResponse::isDisturbed): Checking whether related ReadableStream is locked.
+        (WebCore::FetchResponse::BodyLoader::didSucceed): Introduced to handle ReadableStream case.
+        (WebCore::FetchResponse::BodyLoader::didFail): Ditto.
+        (WebCore::FetchResponse::BodyLoader::didReceiveData): Ditto.
+        (WebCore::FetchResponse::BodyLoader::startStreaming): Ditto.
+        (WebCore::FetchResponse::consumeBodyAsStream): Start filling the ReadableStream with data. Changing loader to Stream if there is one.
+        (WebCore::FetchResponse::createReadableStreamSource): Called by custom binding to create the source.
+        (WebCore::FetchResponse::stop): Fixing potential crash in case of cancelling the ibody stream.
+        (WebCore::FetchResponse::startFetching):
+        (WebCore::FetchResponse::BodyLoader::didFinishLoadingAsArrayBuffer):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/FetchResponseSource.cpp: Specialization of ReadableStreamSource for FetchResponse. It is a push source that never resolves the start promise.
+        (WebCore::FetchResponseSource::FetchResponseSource):
+        (WebCore::FetchResponseSource::isReadableStreamLocked):
+        (WebCore::FetchResponseSource::setActive):
+        (WebCore::FetchResponseSource::setInactive):
+        (WebCore::FetchResponseSource::doStart):
+        (WebCore::FetchResponseSource::doCancel):
+        (WebCore::FetchResponseSource::close):
+        (WebCore::FetchResponseSource::error):
+        * Modules/fetch/FetchResponseSource.h: Added.
+        * Modules/streams/ReadableStreamController.js:
+        (error):
+        * Modules/streams/ReadableStreamSource.h: Added (base class for ReadableStream DOM sources).
+        (WebCore::ReadableStreamSource::~ReadableStreamSource):
+        (WebCore::ReadableStreamSource::isStarting):
+        (WebCore::ReadableStreamSource::isPulling):
+        (WebCore::ReadableStreamSource::isCancelling):
+        (WebCore::ReadableStreamSource::controller):
+        (WebCore::ReadableStreamSource::doStart):
+        (WebCore::ReadableStreamSource::doCancel):
+        (WebCore::ReadableStreamSource::start):
+        (WebCore::ReadableStreamSource::cancel):
+        (WebCore::ReadableStreamSource::startFinished):
+        (WebCore::ReadableStreamSource::clean):
+        * Modules/streams/ReadableStreamSource.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSFetchResponseCustom.cpp: In case body is not created, call createReadableStreamSource.
+        (WebCore::JSFetchResponse::body):
+        * bindings/js/JSReadableStreamSourceCustom.cpp: Added.
+        (WebCore::JSReadableStreamSource::start):
+        (WebCore::JSReadableStreamSource::pull):
+        (WebCore::JSReadableStreamSource::controller):
+        * bindings/js/ReadableStreamController.cpp: Added.
+        (WebCore::callFunction):
+        (WebCore::ReadableStreamController::invoke):
+        (WebCore::ReadableStreamController::isControlledReadableStreamLocked):
+        (WebCore::createReadableStream):
+        * bindings/js/ReadableStreamController.h: The DOM wrapper for JSReadableStreamController.
+        (WebCore::ReadableStreamController::ReadableStreamController):
+        (WebCore::ReadableStreamController::close):
+        (WebCore::ReadableStreamController::error):
+        (WebCore::ReadableStreamController::enqueue):
+        (WebCore::ReadableStreamController::globalObject):
+        (WebCore::ReadableStreamController::enqueue<RefPtr<JSC::ArrayBuffer>>):
+        (WebCore::ReadableStreamController::error<String>):
+
 2016-04-16  Antti Koivisto  <antti@apple.com>
 
         Element should be const in StyleResolver

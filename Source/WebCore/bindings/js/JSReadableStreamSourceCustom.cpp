@@ -25,35 +25,35 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredirect" };
 
-[
-    ActiveDOMObject,
-    Conditional=FETCH_API,
-    EnabledAtRuntime=FetchAPI,
-    ConstructorCallWith=ScriptExecutionContext,
-    Exposed=(Window,Worker),
-    InterfaceName=Response,
-    JSBuiltinConstructor
-]
-interface FetchResponse {
-    // FIXME: NewObject does not seem to be supported for static methods.
-    [CallWith=ScriptExecutionContext] static FetchResponse error();
-    [CallWith=ScriptExecutionContext, RaisesException] static FetchResponse redirect(DOMString url, optional unsigned short status = 302);
+#include "config.h"
+#include "JSReadableStreamSource.h"
 
-    readonly attribute ResponseType type;
+#if ENABLE(STREAMS_API)
 
-    readonly attribute DOMString url;
-    readonly attribute boolean redirected;
-    readonly attribute unsigned short status;
-    readonly attribute boolean ok;
-    readonly attribute DOMString statusText;
-    // FIXME: Add support for SameObject keyword for headers
-    readonly attribute FetchHeaders headers;
-    [Custom, CachedAttribute] readonly attribute ReadableStream? body;
+using namespace JSC;
 
-    [NewObject, CallWith=ScriptExecutionContext, RaisesException] FetchResponse clone();
+namespace WebCore {
 
-    [Private, RaisesException] void initializeWith(Dictionary parameters);
-};
-FetchResponse implements FetchBody;
+JSValue JSReadableStreamSource::start(ExecState& state)
+{
+    JSReadableStreamController* controller = jsDynamicCast<JSReadableStreamController*>(state.argument(0));
+    ASSERT(controller);
+
+    JSReadableStreamSource* jsSource = const_cast<JSReadableStreamSource*>(this);
+    m_controller.set(state.vm(), jsSource, state.argument(0));
+
+    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, globalObject());
+    wrapped().start(ReadableStreamController(controller), DeferredWrapper(&state, globalObject(), promiseDeferred));
+    return promiseDeferred->promise();
+}
+
+JSValue JSReadableStreamSource::controller(ExecState&) const
+{
+    ASSERT_NOT_REACHED();
+    return jsUndefined();
+}
+
+}
+
+#endif // ENABLE(STREAMS_API)

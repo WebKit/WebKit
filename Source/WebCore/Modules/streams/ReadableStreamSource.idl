@@ -25,35 +25,16 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredirect" };
 
 [
-    ActiveDOMObject,
-    Conditional=FETCH_API,
-    EnabledAtRuntime=FetchAPI,
-    ConstructorCallWith=ScriptExecutionContext,
-    Exposed=(Window,Worker),
-    InterfaceName=Response,
-    JSBuiltinConstructor
-]
-interface FetchResponse {
-    // FIXME: NewObject does not seem to be supported for static methods.
-    [CallWith=ScriptExecutionContext] static FetchResponse error();
-    [CallWith=ScriptExecutionContext, RaisesException] static FetchResponse redirect(DOMString url, optional unsigned short status = 302);
+    NoInterfaceObject,
+    Conditional=STREAMS_API,
+    SkipVTableValidation
+] interface ReadableStreamSource {
+    // Methods to support push sources. To support all sources, pull method might need to be added, and cancel may return a promise.
+    [Custom] Promise start(ReadableStreamController controller);
+    void cancel(any reason);
 
-    readonly attribute ResponseType type;
-
-    readonly attribute DOMString url;
-    readonly attribute boolean redirected;
-    readonly attribute unsigned short status;
-    readonly attribute boolean ok;
-    readonly attribute DOMString statusText;
-    // FIXME: Add support for SameObject keyword for headers
-    readonly attribute FetchHeaders headers;
-    [Custom, CachedAttribute] readonly attribute ReadableStream? body;
-
-    [NewObject, CallWith=ScriptExecutionContext, RaisesException] FetchResponse clone();
-
-    [Private, RaisesException] void initializeWith(Dictionary parameters);
+    // Place holder to keep the controller linked to the source.
+    [CachedAttribute, CustomGetter] readonly attribute any controller;
 };
-FetchResponse implements FetchBody;

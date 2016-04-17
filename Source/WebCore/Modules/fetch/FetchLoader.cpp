@@ -68,6 +68,7 @@ void FetchLoader::start(ScriptExecutionContext& context, Blob& blob)
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     m_loader = ThreadableLoader::create(&context, this, request, options);
+    m_isStarted = true;
 }
 
 void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request)
@@ -83,6 +84,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     m_loader = ThreadableLoader::create(&context, this, request.internalRequest(), options);
+    m_isStarted = true;
 }
 
 FetchLoader::FetchLoader(Type type, FetchLoaderClient& client)
@@ -93,11 +95,18 @@ FetchLoader::FetchLoader(Type type, FetchLoaderClient& client)
 
 void FetchLoader::stop()
 {
-    if (m_loader) {
-        m_loader->cancel();
-        m_loader = nullptr;
-    }
     m_data = nullptr;
+    if (m_loader) {
+        RefPtr<ThreadableLoader> loader = WTFMove(m_loader);
+        loader->cancel();
+    }
+}
+
+RefPtr<SharedBuffer> FetchLoader::startStreaming()
+{
+    ASSERT(m_type == Type::ArrayBuffer);
+    m_type = Type::Stream;
+    return WTFMove(m_data);
 }
 
 void FetchLoader::didReceiveResponse(unsigned long, const ResourceResponse& response)
@@ -109,6 +118,10 @@ void FetchLoader::didReceiveResponse(unsigned long, const ResourceResponse& resp
 // We might also want to merge this class with FileReaderLoader.
 void FetchLoader::didReceiveData(const char* value, int size)
 {
+    if (m_type == Type::Stream) {
+        m_client.didReceiveData(value, size);
+        return;
+    }
     if (!m_data) {
         m_data = SharedBuffer::create(value, size);
         return;
@@ -120,7 +133,7 @@ void FetchLoader::didFinishLoading(unsigned long, double)
 {
     if (m_type == Type::ArrayBuffer)
         m_client.didFinishLoadingAsArrayBuffer(m_data ? m_data->createArrayBuffer() : ArrayBuffer::tryCreate(nullptr, 0));
-    else
+    else if (m_type == Type::Text)
         m_client.didFinishLoadingAsText(m_data ? TextResourceDecoder::create(ASCIILiteral("text/plain"), "UTF-8")->decodeAndFlush(m_data->data(), m_data->size()): String());
     m_data = nullptr;
 

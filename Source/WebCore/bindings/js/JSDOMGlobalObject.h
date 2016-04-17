@@ -69,6 +69,8 @@ namespace WebCore {
         DOMWrapperWorld& world() { return *m_world; }
         bool worldIsNormal() const { return m_worldIsNormal; }
 
+        JSBuiltinInternalFunctions& builtinInternalFunctions() { return m_builtinInternalFunctions; }
+
     protected:
         static const JSC::ClassInfo s_info;
 

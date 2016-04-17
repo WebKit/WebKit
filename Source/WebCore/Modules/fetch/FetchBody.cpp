@@ -34,10 +34,12 @@
 #include "DOMRequestState.h"
 #include "Dictionary.h"
 #include "FetchBodyOwner.h"
+#include "FetchResponseSource.h"
 #include "FormData.h"
 #include "HTTPParsers.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
+#include "ReadableStreamSource.h"
 
 namespace WebCore {
 
@@ -141,6 +143,36 @@ void FetchBody::consume(FetchBodyOwner& owner, Consumer::Type type, DeferredWrap
     // FIXME: Support other types.
     promise.reject<ExceptionCode>(0);
 }
+
+#if ENABLE(STREAMS_API)
+void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& source)
+{
+    ASSERT(m_type != Type::Loading);
+
+    switch (m_type) {
+    case Type::ArrayBuffer:
+        source.enqueue(m_data);
+        source.close();
+        return;
+    case Type::Text: {
+        Vector<uint8_t> data = extractFromText();
+        // FIXME: We should not close the source if ArrayBuffer;;tryCreate returns null.
+        source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
+        source.close();
+        return;
+    }
+    case Type::Blob:
+        ASSERT(m_blob);
+        owner.loadBlob(*m_blob, FetchLoader::Type::Stream);
+        return;
+    case Type::None:
+        source.close();
+        return;
+    default:
+        source.error(ASCIILiteral("not implemented"));
+    }
+}
+#endif
 
 void FetchBody::consumeArrayBuffer(Consumer::Type type, DeferredWrapper& promise)
 {

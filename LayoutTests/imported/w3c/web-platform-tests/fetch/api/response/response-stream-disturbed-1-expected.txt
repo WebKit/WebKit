@@ -1,0 +1,6 @@
+
+FAIL Getting blob after getting the Response body - not disturbed, not locked promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Getting text after getting the Response body - not disturbed, not locked promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Getting json after getting the Response body - not disturbed, not locked promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Getting arrayBuffer after getting the Response body - not disturbed, not locked promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

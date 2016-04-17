@@ -49,6 +49,7 @@ public:
 
     virtual void didFinishLoadingAsText(String&&) { }
     virtual void didFinishLoadingAsArrayBuffer(RefPtr<JSC::ArrayBuffer>&&) { }
+    virtual void didReceiveData(const char*, size_t) { }
 
     virtual void didSucceed() = 0;
     virtual void didFail() = 0;

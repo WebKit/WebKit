@@ -61,14 +61,16 @@ function validateStreamFromString(reader, expectedValue, retrievedArrayBuffer) {
     if (!data.done) {
       var newBuffer;
       if (retrievedArrayBuffer) {
-        newBuffer =  new ArrayBuffer(data.value.length + retrievedArrayBuffer.length);
+        newBuffer =  new ArrayBuffer(data.value.byteLength + retrievedArrayBuffer.byteLength);
         newBuffer.set(retrievedArrayBuffer, 0);
-        newBuffer.set(data.value, retrievedArrayBuffer.length);
+        newBuffer.set(data.value, retrievedArrayBuffer.byteLength);
       } else {
         newBuffer = data.value;
       }
       return validateStreamFromString(reader, expectedValue, newBuffer);
     }
+    if (!retrievedArrayBuffer)
+        retrievedArrayBuffer = new Uint8Array();
     validateBufferFromString(retrievedArrayBuffer, expectedValue, "Retrieve and verify stream");
   });
 }

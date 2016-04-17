@@ -119,7 +119,7 @@ FetchResponse::FetchResponse(ScriptExecutionContext& context, Type type, FetchBo
 
 RefPtr<FetchResponse> FetchResponse::clone(ScriptExecutionContext& context, ExceptionCode& ec)
 {
-    if (isDisturbed() || m_isLocked) {
+    if (isDisturbed()) {
         ec = TypeError;
         return nullptr;
     }
@@ -146,12 +146,6 @@ String FetchResponse::type() const
     };
     ASSERT_NOT_REACHED();
     return String();
-}
-
-// FIXME: Implement this, as a custom or through binding generator.
-JSC::JSValue JSFetchResponse::body(JSC::ExecState&) const
-{
-    return JSC::jsNull();
 }
 
 void FetchResponse::startFetching(ScriptExecutionContext& context, const FetchRequest& request, FetchPromise&& promise)
@@ -192,14 +186,30 @@ void FetchResponse::fetch(ScriptExecutionContext& context, const String& url, co
 
 void FetchResponse::BodyLoader::didSucceed()
 {
+    ASSERT(m_response.hasPendingActivity());
+#if ENABLE(STREAMS_API)
+    if (m_response.m_readableStreamSource) {
+        m_response.m_readableStreamSource->close();
+        m_response.m_readableStreamSource = nullptr;
+    }
+#endif
     m_response.m_bodyLoader = Nullopt;
     m_response.unsetPendingActivity(&m_response);
 }
 
 void FetchResponse::BodyLoader::didFail()
 {
+    ASSERT(m_response.hasPendingActivity());
     if (m_promise)
         std::exchange(m_promise, Nullopt)->reject(TypeError);
+
+#if ENABLE(STREAMS_API)
+    if (m_response.m_readableStreamSource) {
+        if (!m_response.m_readableStreamSource->isCancelling())
+            m_response.m_readableStreamSource->error(ASCIILiteral("Loading failed"));
+        m_response.m_readableStreamSource = nullptr;
+    }
+#endif
 
     // Check whether didFail is called as part of FetchLoader::start.
     if (m_loader->isStarted())
@@ -226,6 +236,19 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
     std::exchange(m_promise, Nullopt)->resolve(&m_response);
 }
 
+void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)
+{
+#if ENABLE(STREAMS_API)
+    ASSERT(m_response.m_readableStreamSource);
+
+    // FIXME: If ArrayBuffer::tryCreate returns null, we should probably cancel the load.
+    m_response.m_readableStreamSource->enqueue(ArrayBuffer::tryCreate(data, size));
+#else
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(size);
+#endif
+}
+
 void FetchResponse::BodyLoader::didFinishLoadingAsArrayBuffer(RefPtr<ArrayBuffer>&& buffer)
 {
     m_response.body().loadedAsArrayBuffer(WTFMove(buffer));
@@ -244,13 +267,53 @@ void FetchResponse::BodyLoader::stop()
         m_loader->stop();
 }
 
+#if ENABLE(STREAMS_API)
+void FetchResponse::consumeBodyAsStream()
+{
+    ASSERT(m_readableStreamSource);
+    m_isDisturbed = true;
+    if (body().type() != FetchBody::Type::Loading) {
+        body().consumeAsStream(*this, *m_readableStreamSource);
+        if (!m_readableStreamSource->isStarting())
+            m_readableStreamSource = nullptr;        
+        return;
+    }
+
+    ASSERT(m_bodyLoader);
+
+    RefPtr<SharedBuffer> data = m_bodyLoader->startStreaming();
+    if (data) {
+        // FIXME: We might want to enqueue each internal SharedBuffer chunk as an individual ArrayBuffer.
+        // Also, createArrayBuffer might return nullptr which will lead to erroring the stream.
+        // We might want to cancel the load and rename createArrayBuffer to tryCreateArrayBuffer.
+        m_readableStreamSource->enqueue(data->createArrayBuffer());
+    }
+}
+
+ReadableStreamSource* FetchResponse::createReadableStreamSource()
+{
+    ASSERT(!m_readableStreamSource);
+    if (body().isEmpty() || isDisturbed())
+        return nullptr;
+
+    m_readableStreamSource = adoptRef(*new FetchResponseSource(*this));
+    return m_readableStreamSource.get();
+}
+
+RefPtr<SharedBuffer> FetchResponse::BodyLoader::startStreaming()
+{
+    ASSERT(m_loader);
+    return m_loader->startStreaming();
+}
+#endif
+
 void FetchResponse::stop()
 {
+    RefPtr<FetchResponse> protect(this);
     FetchBodyOwner::stop();
     if (m_bodyLoader) {
-        RefPtr<FetchResponse> protect(this);
         m_bodyLoader->stop();
-        m_bodyLoader = Nullopt;
+        ASSERT(!m_bodyLoader);
     }
 }
 

@@ -44,6 +44,7 @@ class JSValue;
 namespace WebCore {
 
 class FetchBodyOwner;
+class FetchResponseSource;
 class FormData;
 
 class FetchBody {
@@ -53,6 +54,10 @@ public:
     void json(FetchBodyOwner&, DeferredWrapper&&);
     void text(FetchBodyOwner&, DeferredWrapper&&);
     void formData(FetchBodyOwner&, DeferredWrapper&& promise) { promise.reject<ExceptionCode>(0); }
+
+#if ENABLE(STREAMS_API)
+    void consumeAsStream(FetchBodyOwner&, FetchResponseSource&);
+#endif
 
     bool isEmpty() const { return m_type == Type::None; }
 
@@ -70,9 +75,10 @@ public:
 
     RefPtr<FormData> bodyForInternalRequest() const;
 
-private:
     enum class Type { None, ArrayBuffer, Loading, Text, Blob, FormData };
+    Type type() const { return m_type; }
 
+private:
     FetchBody(Ref<Blob>&&);
     FetchBody(Ref<DOMFormData>&&);
     FetchBody(String&&);
