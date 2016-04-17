@@ -1,3 +1,12 @@
+2016-04-17  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Try to fix debug builds after r199643.
+
+        Unreviewed.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        Add a missing include.
+
 2016-04-17  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Do not dlopen() QuickLook in the NetworkProcess

@@ -41,6 +41,7 @@
 #include "IDBTransaction.h"
 #include "IndexedDB.h"
 #include "Logging.h"
+#include "ScriptState.h"
 #include "SerializedScriptValue.h"
 #include <wtf/Locker.h>
 
