@@ -971,7 +971,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(API::Data* data, const String& MI
 
     auto transaction = m_pageLoadState.transaction();
 
-    m_pageLoadState.setPendingAPIRequestURL(transaction, !baseURL.isEmpty() ? baseURL : blankURL().string());
+    m_pageLoadState.setPendingAPIRequestURL(transaction, !baseURL.isEmpty() ? baseURL : ASCIILiteral("about:blank"));
 
     if (!isValid())
         reattachToWebProcess();
@@ -993,7 +993,7 @@ RefPtr<API::Navigation> WebPageProxy::loadHTMLString(const String& htmlString, c
 
     auto transaction = m_pageLoadState.transaction();
 
-    m_pageLoadState.setPendingAPIRequestURL(transaction, !baseURL.isEmpty() ? baseURL : blankURL().string());
+    m_pageLoadState.setPendingAPIRequestURL(transaction, !baseURL.isEmpty() ? baseURL : ASCIILiteral("about:blank"));
 
     if (!isValid())
         reattachToWebProcess();
@@ -1021,7 +1021,6 @@ void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const Strin
 
     auto transaction = m_pageLoadState.transaction();
 
-    m_pageLoadState.setPendingAPIRequestURL(transaction, unreachableURL);
     m_pageLoadState.setUnreachableURL(transaction, unreachableURL);
 
     if (m_mainFrame)
@@ -1041,9 +1040,6 @@ void WebPageProxy::loadPlainTextString(const String& string, API::Object* userDa
     if (!isValid())
         reattachToWebProcess();
 
-    auto transaction = m_pageLoadState.transaction();
-    m_pageLoadState.setPendingAPIRequestURL(transaction, blankURL().string());
-
     m_process->send(Messages::WebPage::LoadPlainTextString(string, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
     m_process->responsivenessTimer().start();
 }
@@ -1055,9 +1051,6 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
 
     if (!isValid())
         reattachToWebProcess();
-
-    auto transaction = m_pageLoadState.transaction();
-    m_pageLoadState.setPendingAPIRequestURL(transaction, blankURL().string());
 
     m_process->send(Messages::WebPage::LoadWebArchiveData(webArchiveData->dataReference(), UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
     m_process->responsivenessTimer().start();

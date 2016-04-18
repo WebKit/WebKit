@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0766DD201A5AD5200023E3BB /* PendingAPIRequestURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0766DD1F1A5AD5200023E3BB /* PendingAPIRequestURL.cpp */; };
 		0F139E771A423A5B00F590F5 /* WeakObjCPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */; };
 		0F139E781A423A6B00F590F5 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
 		0F139E791A42457000F590F5 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
@@ -507,7 +506,6 @@
 /* Begin PBXFileReference section */
 		00BC16851680FE810065F1E5 /* PublicSuffix.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PublicSuffix.mm; sourceTree = "<group>"; };
 		00CD9F6215BE312C002DA2CE /* BackForwardList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackForwardList.mm; sourceTree = "<group>"; };
-		0766DD1F1A5AD5200023E3BB /* PendingAPIRequestURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PendingAPIRequestURL.cpp; sourceTree = "<group>"; };
 		0BCD833414857CE400EA2003 /* HashMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HashMap.cpp; sourceTree = "<group>"; };
 		0BCD85691485C98B00EA2003 /* TemporaryChange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryChange.cpp; sourceTree = "<group>"; };
 		0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformUtilitiesCocoa.mm; path = cocoa/PlatformUtilitiesCocoa.mm; sourceTree = "<group>"; };
@@ -1201,7 +1199,6 @@
 		BC9096411255616000083756 /* WebKit2 */ = {
 			isa = PBXGroup;
 			children = (
-				0766DD1F1A5AD5200023E3BB /* PendingAPIRequestURL.cpp */,
 				0F139E741A423A4600F590F5 /* cocoa */,
 				C0C5D3BB14598B6F00A802A6 /* mac */,
 				BC90977B125571AE00083756 /* Resources */,
@@ -1955,7 +1952,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-                                0766DD201A5AD5200023E3BB /* PendingAPIRequestURL.cpp in Sources */,
 				2D9A53AF1B31FA8D0074D5AA /* ShrinkToFit.mm in Sources */,
 				51B454EC1B4E236B0085EAA6 /* WebViewCloseInsideDidFinishLoadForFrame.mm in Sources */,
 				57901FAD1CAF12C200ED64F9 /* LoadInvalidURLRequest.mm in Sources */,
