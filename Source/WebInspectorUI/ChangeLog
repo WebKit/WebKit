@@ -1,5 +1,18 @@
 2016-04-18  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Database query result DataGrids have misaligned header columns
+
+        https://bugs.webkit.org/show_bug.cgi?id=156701
+        rdar://problem/25778310
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.autoSizeColumns): Set the width on the <col> element
+        for the body table to match the <col> in the header.
+
+2016-04-18  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Fix the debounce function
 
         https://bugs.webkit.org/show_bug.cgi?id=156696

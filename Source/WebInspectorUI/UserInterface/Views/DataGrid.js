@@ -427,8 +427,11 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             }
         }
 
-        for (var [identifier, column] of this.columns)
+        for (var [identifier, column] of this.columns) {
             column["element"].style.width = widths[identifier] + "%";
+            column["bodyElement"].style.width = widths[identifier] + "%";
+        }
+
         this._columnWidthsInitialized = false;
         this.needsLayout();
     }
