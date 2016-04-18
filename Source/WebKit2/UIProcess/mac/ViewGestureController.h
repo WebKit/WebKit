@@ -109,6 +109,8 @@ public:
 
     bool shouldIgnorePinnedState() { return m_pendingSwipeTracker.shouldIgnorePinnedState(); }
     void setShouldIgnorePinnedState(bool ignore) { m_pendingSwipeTracker.setShouldIgnorePinnedState(ignore); }
+
+    bool isPhysicallySwipingLeft(SwipeDirection) const;
 #else
     void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);
     void setAlternateBackForwardListSourceView(WKWebView *);

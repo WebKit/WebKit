@@ -747,6 +747,13 @@ void PageClientImpl::didRestoreScrollPosition()
 {
 }
 
+UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()
+{
+    if (!m_webView)
+        return UserInterfaceLayoutDirection::LTR;
+    return ([UIView userInterfaceLayoutDirectionForSemanticContentAttribute:[m_webView semanticContentAttribute]] == UIUserInterfaceLayoutDirectionLeftToRight) ? UserInterfaceLayoutDirection::LTR : UserInterfaceLayoutDirection::RTL;
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

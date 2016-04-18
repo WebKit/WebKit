@@ -6275,4 +6275,9 @@ void WebPageProxy::setResourceCachingDisabled(bool disabled)
     m_process->send(Messages::WebPage::SetResourceCachingDisabled(disabled), m_pageID);
 }
 
+UserInterfaceLayoutDirection WebPageProxy::userInterfaceLayoutDirection()
+{
+    return m_pageClient.userInterfaceLayoutDirection();
+}
+
 } // namespace WebKit

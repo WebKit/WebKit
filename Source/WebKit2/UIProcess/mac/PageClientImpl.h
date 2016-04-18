@@ -220,6 +220,8 @@ private:
     void startWindowDrag() override;
     NSWindow *platformWindow() override;
 
+    UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
+
 #if WK_API_ENABLED
     NSView *inspectorAttachmentView() override;
     _WKRemoteObjectRegistry *remoteObjectRegistry() override;

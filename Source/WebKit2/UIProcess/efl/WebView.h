@@ -261,6 +261,8 @@ private:
     void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override { }
 #endif
 
+    UserInterfaceLayoutDirection userInterfaceLayoutDirection() override { return UserInterfaceLayoutDirection::LTR; }
+
     EwkView* m_ewkView;
 
     WebViewClient m_client;

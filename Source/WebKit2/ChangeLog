@@ -1,3 +1,41 @@
+2016-04-18  Tim Horton  <timothy_horton@apple.com>
+
+        Swipe view gesture should be reversed in right-to-left contexts
+        https://bugs.webkit.org/show_bug.cgi?id=156714
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/UserInterfaceLayoutDirection.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::userInterfaceLayoutDirection):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::userInterfaceLayoutDirection):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::userInterfaceLayoutDirection):
+        Plumb RTL-ness through to WebPageProxy.
+        We look at the WK(Web)View's UI layout direction.
+        For other platforms, we just assume LTR.
+
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe):
+        Decide which way to swipe (and which way to look for back-forward items)
+        based on the WebPageProxy's reported RTLness.
+
+        (WebKit::ViewGestureController::isPhysicallySwipingLeft):
+        "Back" means "swiping left" in LTR and "swiping right" in RTL.
+
+        (WebKit::ViewGestureController::trackSwipeGesture):
+        (WebKit::ViewGestureController::determineLayerAdjacentToSnapshotForParent):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::handleSwipeGesture):
+        Make things that were equating "back" with "left" instead check isPhysicallySwipingLeft.
+
 2016-04-18  Anders Carlsson  <andersca@apple.com>
 
         Fix build with newer versions of clang.
