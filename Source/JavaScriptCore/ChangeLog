@@ -1,3 +1,85 @@
+2016-04-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] ReduceDoubleToFloat should work accross Phis
+        https://bugs.webkit.org/show_bug.cgi?id=156603
+        <rdar://problem/25736205>
+
+        Reviewed by Saam Barati and Filip Pizlo.
+
+        This patch extends B3's ReduceDoubleToFloat phase to work accross
+        Upsilon-Phis. This is important to optimize loops and some crazy cases.
+
+        In its simplest form, we can have conversion propagated from something
+        like this:
+            Double @1 = Phi()
+            Float @2 = DoubleToFloat(@1)
+
+        When that happens, we just need to propagate that the result only
+        need float precision accross all values coming to this Phi.
+
+
+        There are more complicated cases when the value produced is effectively Float
+        but the user of the value does not do DoubleToFloat.
+
+        Typically, we have something like:
+            #1
+                @1 = ConstDouble(1)
+                @2 = Upsilon(@1, ^5)
+            #2
+                @3 = FloatToDouble(@x)
+                @4 = Upsilon(@3, ^5)
+            #3
+                @5 = Phi()
+                @6 = Add(@5, @somethingFloat)
+                @7 = DoubleToFloat(@6)
+
+        Here with a Phi-Upsilon that is a Double but can be represented
+        as Float without loss of precision.
+
+        It is valuable to convert such Phis to float if and only if the value
+        is used as float. Otherwise, you may be just adding useless conversions
+        (for example, two double constants that flow into a double Add should not
+        turn into two float constant flowing into a FloatToDouble then Add).
+
+
+        ReduceDoubleToFloat do two analysis passes to gather the necessary
+        meta information. Then we have a simplify() phase to actually reduce
+        operation. Finally, the cleanup() pass put the graph into a valid
+        state again.
+
+        The two analysis passes work by disproving that something is float.
+        -findCandidates() accumulates anything used as Double.
+        -findPhisContainingFloat() accumulates phis that would lose precision
+         by converting the input to float.
+
+        With this change, Unity3D improves by ~1.5%, box2d-f32 improves
+        by ~2.8% (on Haswell).
+
+        * b3/B3ReduceDoubleToFloat.cpp:
+        (JSC::B3::reduceDoubleToFloat):
+        * b3/testb3.cpp:
+        (JSC::B3::testCompareTwoFloatToDouble):
+        (JSC::B3::testCompareOneFloatToDouble):
+        (JSC::B3::testCompareFloatToDoubleThroughPhi):
+        (JSC::B3::testDoubleToFloatThroughPhi):
+        (JSC::B3::testDoubleProducerPhiToFloatConversion):
+        (JSC::B3::testDoubleProducerPhiToFloatConversionWithDoubleConsumer):
+        (JSC::B3::testDoubleProducerPhiWithNonFloatConst):
+        (JSC::B3::testStoreDoubleConstantAsFloat):
+        (JSC::B3::run):
+        * tests/stress/double-compare-to-float.js: Added.
+        (canSimplifyToFloat):
+        (canSimplifyToFloatWithConstant):
+        (cannotSimplifyA):
+        (cannotSimplifyB):
+        * tests/stress/double-to-float.js: Added.
+        (upsilonReferencingItsPhi):
+        (upsilonReferencingItsPhiAllFloat):
+        (upsilonReferencingItsPhiWithoutConversion):
+        (conversionPropagages):
+        (chainedUpsilonBothConvert):
+        (chainedUpsilonFirstConvert):
+
 2016-04-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Use @isObject to check Object Type instead of using instanceof
