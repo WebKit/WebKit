@@ -1,27 +1,3 @@
-2016-04-18  Joseph Pecoraro  <pecoraro@apple.com>
-
-        Web Inspector: sourceMappingURL not used when sourceURL is set
-        https://bugs.webkit.org/show_bug.cgi?id=156021
-        <rdar://problem/25438417>
-
-        Reviewed by Timothy Hatcher.
-
-        Clean up Debugger.sourceParsed to separately include:
-
-            - url ("resource URL", "source url" in JSC APIs)
-            - sourceURL - //# sourceURL directive
-
-        By always having the resource URL the Web Inspector frontend
-        can better match this Script to a Resource of the same URL,
-        and decide to use the sourceURL if it is available when
-        appropriate.
-
-        * inspector/protocol/Debugger.json:
-        * inspector/agents/InspectorDebuggerAgent.cpp:
-        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
-        (Inspector::InspectorDebuggerAgent::didParseSource):
-        Send the new sourceParsed parameters.
-
 2016-04-18  Filip Pizlo  <fpizlo@apple.com>
 
         ToThis should have a fast path based on type info flags
