@@ -1,3 +1,12 @@
+2016-04-18  Anders Carlsson  <andersca@apple.com>
+
+        Fix build with newer versions of clang.
+        rdar://problem/25749769
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        Forward declare some AppKit IPI.
+
 2016-04-18  Tina Liu  <iting_liu@apple.com>
 
         Implement functions to set plug-in load policies for private browsing mode

@@ -63,8 +63,10 @@
 
 using namespace WebCore;
 
-@interface NSApplication (AppKitSecretsIKnowAbout)
+@interface NSApplication ()
+- (BOOL)isSpeaking;
 - (void)speakString:(NSString *)string;
+- (void)stopSpeaking:(id)sender;
 @end
 
 WebContextMenuClient::WebContextMenuClient(WebView *webView)

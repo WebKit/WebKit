@@ -1,3 +1,12 @@
+2016-04-18  Anders Carlsson  <andersca@apple.com>
+
+        Fix build with newer versions of clang.
+        rdar://problem/25749769
+
+        Forward declare performClose:.
+
+        * platform/mac/WebCoreFullScreenWindow.mm:
+
 2016-04-18  Tina Liu  <iting_liu@apple.com>
 
         Declare a virtual function in PluginStrategy to be implemented by subclasses.

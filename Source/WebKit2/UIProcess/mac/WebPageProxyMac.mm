@@ -63,6 +63,12 @@
 
 using namespace WebCore;
 
+@interface NSApplication ()
+- (BOOL)isSpeaking;
+- (void)speakString:(NSString *)string;
+- (void)stopSpeaking:(id)sender;
+@end
+
 namespace WebKit {
 
 static inline bool expectsLegacyImplicitRubberBandControl()

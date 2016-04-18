@@ -93,6 +93,12 @@
 
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 
+@interface NSApplication ()
+- (BOOL)isSpeaking;
+- (void)speakString:(NSString *)string;
+- (void)stopSpeaking:(id)sender;
+@end
+
 // FIXME: Move to an SPI header.
 @interface NSTextInputContext (WKNSTextInputContextDetails)
 - (void)handleEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
@@ -111,6 +117,7 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 - (void)startObservingFontPanel;
 - (void)startObservingLookupDismissal;
 @end
+
 
 @implementation WKWindowVisibilityObserver
 

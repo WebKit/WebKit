@@ -627,6 +627,12 @@ static BOOL forceNSViewHitTest;
 
 // if YES, do the "top WebHTMLView" hit test (which we'd like to do all the time but can't because of Java requirements [see bug 4349721])
 static BOOL forceWebHTMLViewHitTest;
+
+@interface NSApplication ()
+- (BOOL)isSpeaking;
+- (void)stopSpeaking:(id)sender;
+@end
+
 #endif // !PLATFORM(IOS)
 
 static WebHTMLView *lastHitView;
