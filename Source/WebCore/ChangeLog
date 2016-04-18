@@ -1,3 +1,252 @@
+2016-04-17  Darin Adler  <darin@apple.com>
+
+        Get rid of IDBAny
+        https://bugs.webkit.org/show_bug.cgi?id=156681
+
+        Reviewed by Brady Eidson.
+
+        IDBAny is not part of the public interface of Indexed Database.
+        It was an implementation technique used to help create language bindings for
+        functions that have to deal with types that aren't easly expressed with the
+        normal IDL and C++ type system.
+
+        What was particularly dangerous about IDBAny is that it can be used to store
+        arbitrary JavaScript objects and it's not easy to handle garbage collection and
+        reference cycles when they are hidden behind this class's abstraction. It's also
+        a needless extra layer, a reference counted object just to carry the types from
+        the bindings to the C++ DOM implementation.
+
+        Ths patch also does many small style tweaks.
+
+        * CMakeLists.txt: Removed IDBAny source files. Added JSIDBRequestCustom.cpp.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * Modules/indexeddb/IDBAny.cpp: Removed.
+        * Modules/indexeddb/IDBAny.h: Removed.
+        * Modules/indexeddb/IDBAny.idl: Removed.
+
+        * Modules/indexeddb/IDBCursor.cpp: Added includes needed now that headers don't
+        include as much.
+        (WebCore::IDBCursor::stringToDirection): Removed unneeded IDBCursor namespacing.
+        (WebCore::IDBCursor::directionToString): Ditto.
+        (WebCore::IDBCursor::IDBCursor): Removed creation of IDBAny object.
+        (WebCore::IDBCursor::direction): Removed unneeded IDBCursor namespacing.
+        (WebCore::IDBCursor::key): Moved this function to the header.
+        (WebCore::IDBCursor::primaryKey): Ditto.
+        (WebCore::IDBCursor::value): Ditto.
+        (WebCore::IDBCursor::source): Deleted this function; replaced with multiple
+        type-specific functions; all but one will return null.
+        (WebCore::IDBCursor::update): Take JSValue instead of Deprecated::ScriptValue.
+        (WebCore::IDBCursor::advance): Take unsigned instead of unsigned long.
+        Fell prey to the confusion because "unsigned long" in IDL means "unsigned" in C++.
+        (WebCore::IDBCursor::continueFunction): Take JSValue instead of Deprecated::ScriptValue.
+        (WebCore::IDBCursor::uncheckedIterateCursor): Take unsigned instead of unsigned long.
+        (WebCore::IDBCursor::setGetResult): Rewrote to get the VM pointer from the
+        ScriptExecutionContext here instead of inside the binding utilities functions.
+
+        * Modules/indexeddb/IDBCursor.h: Removed many unneeded includes.
+        Changed key, primaryKey, and value to no longer take an unneeded ExecState.
+        Made more functions private.
+
+        * Modules/indexeddb/IDBCursor.idl: Changed type of "source" to "any", which matches
+        the IDB specification, rather than "IDBAny". Added [CustomGetter] so we can write the
+        getter that understands the multiple possible values. Removed unneeded
+        [CallWith=ScriptState] from key and primaryKey attributes.
+
+        * Modules/indexeddb/IDBCursorWithValue.h: Marked the class final.
+        * Modules/indexeddb/IDBCursorWithValue.idl: Removed unneeded [CallWith=ScriptState]
+        from the value attribute.
+
+        * Modules/indexeddb/IDBDatabase.cpp: Added now-needed include.
+        * Modules/indexeddb/IDBDatabase.h: Removed this header's include of itself!
+
+        * Modules/indexeddb/IDBFactory.cpp: Added some now-needed includes.
+        (WebCore::IDBFactory::~IDBFactory): Moved this out of the header file.
+        (WebCore::IDBFactory::getDatabaseNames): Removed function that always returns nullptr.
+        (WebCore::IDBFactory::open): Removed unneeded release() calls when returning a RefPtr.
+        (WebCore::IDBFactory::cmp): Take JSValue instead of Deprecated::ScriptValue.
+        Also removed unneeded typecast.
+
+        * Modules/indexeddb/IDBFactory.h: Removed many unneeded includes.
+        Removed the getDatabaseNames function. We still need a solution here, but there is
+        no reason to keep the placeholder function that returns nullptr here.
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::keyPathAny): Removed.
+        (WebCore::IDBIndex::openCursor): Take JSValue instead of Deprecated::ScriptValue.
+        (WebCore::IDBIndex::count): Ditto.
+        (WebCore::IDBIndex::openKeyCursor): Ditto.
+        (WebCore::IDBIndex::get): Ditto.
+        (WebCore::IDBIndex::getKey): Ditto.
+
+        * Modules/indexeddb/IDBIndex.h: Removed many unneeded includes, including this file
+        including itself. Marked class final. Updated for above changes.
+
+        * Modules/indexeddb/IDBIndex.idl: Changed type of "keyPath" to "any", which matches
+        the IDB specification, rather than "IDBAny". Specified [ImplementationReturnType=IDBKeyPath]
+        so the code generator creates the appropriate code to convert from an IDBKeyPath.
+        In the future, we may find a way to do this without an explicit attribute in the IDL
+        file but this is fine for now.
+
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::create): Moved this here from the header. Use booleans instead
+        of enums because all the call sites outside this class are using booleans.
+        (WebCore::IDBKeyRange::IDBKeyRange): Updated to use booleans.
+        (WebCore::IDBKeyRange::~IDBKeyRange): Moved here from the header.
+        (WebCore::IDBKeyRange::lowerValue): Removed now-unneeded get().
+        (WebCore::IDBKeyRange::upperValue): Ditto.
+        (WebCore::IDBKeyRange::only): Take JSValue instead of Deprecated::ScriptValue.
+        (WebCore::IDBKeyRange::lowerBound): Updated for above changes.
+        (WebCore::IDBKeyRange::upperBound): Ditto.
+        (WebCore::IDBKeyRange::bound): Ditto.
+        (WebCore::IDBKeyRange::isOnlyKey): Removed assertions that lower and upper are not null;
+        there is no real guarantee of this! Rewrote and streamlined and it handles the null case now.
+
+        * Modules/indexeddb/IDBKeyRange.h: Removed unneeded includes. Changed class to use booleans
+        instead of enums for m_isLowerOpen and m_isUpperOpen. Moved functions into the cpp file.
+
+        * Modules/indexeddb/IDBKeyRangeData.cpp:
+        (WebCore::IDBKeyRangeData::maybeCreateIDBKeyRange): Updated to use booleans instead of enums.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::name): Changed return type to const String& to cut down on
+        reference count churn.
+        (WebCore::IDBObjectStore::keyPathAny): Deleted.
+        (WebCore::IDBObjectStore::keyPath): Changed return type to const IDBKeyPath& to cut down on
+        unnecessary copies.
+        (WebCore::IDBObjectStore::openCursor): Take JSValue instead of Deprecated::SCriptValue.
+        (WebCore::IDBObjectStore::get): Ditto.
+        (WebCore::IDBObjectStore::putOrAdd): Ditto. Removed peculiar adoptRef/leakRef that was not needed.
+        (WebCore::IDBObjectStore::deleteFunction): Ditto.
+        (WebCore::IDBObjectStore::modernDelete): Ditto. Use releaseNonNull for better efficiency.
+        (WebCore::IDBObjectStore::count): Ditto.
+
+        * Modules/indexeddb/IDBObjectStore.h: Removed unneeded includes and changed types as mentioned
+        above in the cpp file function descriptions.
+
+        * Modules/indexeddb/IDBObjectStore.idl: Changed type of "keyPath" to "any" and
+        specified [ImplementationReturnType=IDBKeyPath] as above in IDBIndex.idl.
+
+        * Modules/indexeddb/IDBOpenDBRequest.cpp: Added now-needed includes.
+        (WebCore::IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit): Removed unneeded assertions
+        that depend on how m_result is implemented, which changed.
+        (WebCore::IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion): Call setResultToUndefined
+        instead of setting m_result directly.
+        (WebCore::IDBOpenDBRequest::onSuccess): Call setResult instead of setting m_result and
+        m_readyState directly.
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):: Ditto. Also use WTFMove to set
+        m_transaction instead of peculiar adoptRef/leakRef.
+        (WebCore::IDBOpenDBRequest::onDeleteDatabaseSuccess): Call setResultToUndefined
+        instead of setting m_result directly.
+
+        * Modules/indexeddb/IDBOpenDBRequest.h: Marked the class final. Removed some unneeded headers
+        and made more things private.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest): Don't initialize m_source any more. Instead initialize
+        m_objectStoreSource and m_indexSource, preserving the old behavior and not setting m_cursorSource
+        even when passed an IDBCursor.
+        (WebCore::IDBRequest::~IDBRequest): Simplify the code that calls clearRequest on the result
+        if it's a cursor. The logic is now simply a null check.
+        (WebCore::IDBRequest::result): Deleted. The logic is now in a custom binding.
+        (WebCore::IDBRequest::error): Updated to use m_isDone instead of m_readyState.
+        (WebCore::IDBRequest::source): Deleted. The logic is now in a custom binding.
+        (WebCore::IDBRequest::setSource): Set m_objectStoreSource, m_indexSource, and m_cursorSource
+        instead of setting m_source.
+        (WebCore::IDBRequest::readyState): Updated to use m_isDone instead of m_readyState.
+        (WebCore::IDBRequest::sourceObjectStoreIdentifier): Use m_objectStoreSource and
+        m_indexSource instead of using m_source. To preserve current behavior, this this does not
+        use m_cursorSource since the old code did not handle IDBCursor.
+        (WebCore::IDBRequest::sourceIndexIdentifier): Use m_indexSource instead of m_source, preserving
+        current behavior.
+        (WebCore::IDBRequest::requestedIndexRecordType): Ditto.
+        (WebCore::IDBRequest::dispatchEvent): Updated to use m_isDone instead of m_readyState.
+        (WebCore::IDBRequest::setResult): Rewrote to use the clearResult function so we don't
+        have to repeat the code to clear result pointers. Also take a reference.
+        (WebCore::IDBRequest::setResultToStructuredClone): Ditto.
+        (WebCore::IDBRequest::clearResult): Clear out m_scriptResult, m_cursorResult, and m_databaseResult
+        instead of m_result.
+        (WebCore::IDBRequest::setResultToUndefined): Set m_scriptResult instead of m_result.
+        (WebCore::IDBRequest::resultCursor): Use m_cursorResult instead of m_result.
+        (WebCore::IDBRequest::willIterateCursor): Updated to use m_isDone instead of m_readyState.
+        Also call setResultToUndefined instead of setting m_result.
+        (WebCore::IDBRequest::didOpenOrIterateCursor): Call setResultToUndefined and set m_cursorResult
+        instead of setting m_result.
+        (WebCore::IDBRequest::requestCompleted): Updated to use m_isDone instead of m_readyState.
+        (WebCore::IDBRequest::setResult): Added for use by the derived class; sets m_databaseResult.
+
+        * Modules/indexeddb/IDBRequest.h: Removed unneeded includes. Removed unused IDBRequestReadyState,
+        since that's now done with strings. Added cursorResult, databaseResult, scriptResult,
+        objectStoreSource, indexSource, and cursorSource function members and corresponding data members.
+        Later we might re-cast this as some sort of union, but for now these separate functions seem fine.
+        Removed unused modernResult function. Made more things private.
+
+        * Modules/indexeddb/IDBRequest.idl: Use "any" instead of "IDBAny" for "result" and "source".
+
+        * Modules/indexeddb/IDBTransaction.cpp: Added now-needed includes.
+        (WebCore::IDBTransaction::didGetRecordOnServer): Updated to call the version of setResult that takes
+        a reference.
+        (WebCore::IDBTransaction::didPutOrAddOnServer): Ditto.
+        * Modules/indexeddb/IDBTransaction.h: Removed unneeded includes, derive privately from ActiveDOMObject.
+        Removed some unneeded WebCore prefixes.
+
+        * Modules/indexeddb/server/MemoryIndex.h: Added now-needed include.
+
+        * Modules/indexeddb/server/MemoryObjectStore.cpp: Added now-needed includes.
+        (WebCore::IDBServer::MemoryObjectStore::updateIndexesForPutRecord): Remove unneeded get() call.
+        (WebCore::IDBServer::MemoryObjectStore::populateIndexWithExistingRecords): Ditto.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp: Added now-needed includes.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateOneIndexForAddRecord): Remove unneeded get() call.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord): Ditto.
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp: Added now-needed include.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp: Added now-needed includes.
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd): Updated to use JSValue.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.h: Added now-needed forward declaration of JSC::VM.
+
+        * bindings/js/IDBBindingUtilities.cpp: Added now-needed includes.
+        (WebCore::deserializeIDBValueToJSValue): Return JSValue instead of Strong<Unknown>.
+        (WebCore::deserializeIDBValueDataToJSValue): Ditto.
+        (WebCore::idbKeyDataToScriptValue): Ditto.
+        (WebCore::toJS): Added an overload of toJS for IDBKeyPath here. Moved here from JSIDBAnyCustom.cpp.
+
+        * bindings/js/IDBBindingUtilities.h: Removed unneeded include. Changed return types to JSValue.
+        Added the toJS function for IDBKeyPath.
+
+        * bindings/js/JSIDBAnyCustom.cpp: Removed.
+
+        * bindings/js/JSIDBCursorCustom.cpp: Added some now-needed includes.
+        (WebCore::JSIDBCursor::visitAdditionalChildren): Removed ann unneeded type cast.
+        (WebCore::JSIDBCursor::source): Added. Converts either the index source or the object source into
+        a JSValue.
+
+        * bindings/js/JSIDBRequestCustom.cpp: Added.
+        (WebCore::JSIDBRequest::result): Added. Throws an exception if isDone is false and then converts
+        cursor result, database result, or script result into a JSValue.
+        (WebCore::JSIDBRequest::source): Added. Converts the cursor source, index source, or object store
+        source into a JSValue.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue): Tweaked the code for array slightly. Added an ImplementationReturnType case
+        for IDBKeyPath. The code that's generated is pretty generic, just a call to toJS with the conventional
+        arguments, so at some point we may be able to do this with C++ overloading and not require a
+        special case in the code generator.
+
+        * inspector/InspectorIndexedDBAgent.cpp: Put #if 0 around the getDatabaseNames code, which was
+        dormant and not working.
+        (WebCore::OpenDatabaseCallback::handleEvent): Changed this to use IDBOpenDBRequest::databaseResult
+        instead of calling the result function checking for an exception and then doing type checking.
+        (WebCore::idbKeyRangeFromKeyRange): Updated to use booleans for key range bound open state.
+        (WebCore::OpenCursorCallback::handleEvent): Same kind of change as for OpenDatabaseCallback above.
+        Also use simpler interface to key, primaryKey, and value.
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNames): Put #if 0 around the getDatabaseNames
+        code, which was dormant and not working. Needs to be re-implemented.
+
 2016-04-18  Eric Carlson  <eric.carlson@apple.com>
 
         Media element "user gesture for fullscreen" restriction is never lifted

@@ -22,6 +22,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "SQLiteIDBCursor.h"
 
@@ -36,6 +37,7 @@
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include <sqlite3.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace IDBServer {

@@ -23,23 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MemoryIndex_h
-#define MemoryIndex_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBGetResult.h"
 #include "IDBIndexInfo.h"
-#include "IDBKeyData.h"
-#include "IndexValueStore.h"
-#include "MemoryIndexCursor.h"
-#include <set>
+#include "IDBResourceIdentifier.h"
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
+class IDBCursorInfo;
 class IDBError;
+class IDBGetResult;
+class IDBKeyData;
 class IndexKey;
 class ThreadSafeDataBuffer;
 
@@ -51,7 +49,9 @@ enum class IndexRecordType;
 
 namespace IDBServer {
 
+class IndexValueStore;
 class MemoryBackingStoreTransaction;
+class MemoryIndexCursor;
 class MemoryObjectStore;
 
 class MemoryIndex : public RefCounted<MemoryIndex> {
@@ -105,4 +105,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // MemoryIndex_h

@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMError.h"
 #include "IDBDatabase.h"
 #include "IDBError.h"
 #include "IDBRequestCompletionEvent.h"
@@ -80,8 +81,6 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
     LOG(IndexedDB, "IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()");
 
     ASSERT(hasPendingActivity());
-    ASSERT(m_result);
-    ASSERT(m_result->type() == IDBAny::Type::IDBDatabase);
     m_transaction->addRequest(*this);
 
     auto event = IDBRequestCompletionEvent::create(eventNames().successEvent, false, false, *this);
@@ -98,7 +97,7 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
 
     IDBError idbError(IDBDatabaseException::AbortError);
     m_domError = DOMError::create(idbError.name(), idbError.message());
-    m_result = IDBAny::createUndefined();
+    setResultToUndefined();
 
     m_transaction->addRequest(*this);
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, true, true, *this));
@@ -121,9 +120,8 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
     if (!scriptExecutionContext())
         return;
 
-    Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), connection(), resultData);
-    m_result = IDBAny::create(WTFMove(database));
-    m_readyState = IDBRequestReadyState::Done;
+    setResult(IDBDatabase::create(*scriptExecutionContext(), connection(), resultData));
+    m_isDone = true;
 
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().successEvent, false, false, *this));
 }
@@ -141,9 +139,9 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 
     LOG(IndexedDB, "IDBOpenDBRequest::onUpgradeNeeded() - current version is %" PRIu64 ", new is %" PRIu64, oldVersion, newVersion);
 
-    m_result = IDBAny::create(WTFMove(database));
-    m_readyState = IDBRequestReadyState::Done;
-    m_transaction = adoptRef(&transaction.leakRef());
+    setResult(WTFMove(database));
+    m_isDone = true;
+    m_transaction = WTFMove(transaction);
     m_transaction->addRequest(*this);
 
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, eventNames().upgradeneededEvent));
@@ -155,8 +153,8 @@ void IDBOpenDBRequest::onDeleteDatabaseSuccess(const IDBResultData& resultData)
 
     LOG(IndexedDB, "IDBOpenDBRequest::onDeleteDatabaseSuccess() - current version is %" PRIu64, oldVersion);
 
-    m_readyState = IDBRequestReadyState::Done;
-    m_result = IDBAny::createUndefined();
+    m_isDone = true;
+    setResultToUndefined();
 
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, 0, eventNames().successEvent));
 }

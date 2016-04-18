@@ -24,13 +24,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBBindingUtilities_h
-#define IDBBindingUtilities_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "Dictionary.h"
 #include <wtf/Forward.h>
+
+namespace JSC {
+class ExecState;
+class JSValue;
+}
 
 namespace WebCore {
 
@@ -40,19 +43,22 @@ class IDBKeyData;
 class IDBKeyPath;
 class IDBValue;
 class IndexKey;
+class JSDOMGlobalObject;
+class ScriptExecutionContext;
 class ThreadSafeDataBuffer;
 
 IDBKeyPath idbKeyPathFromValue(JSC::ExecState&, JSC::JSValue);
+JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, const IDBKeyPath&);
 
 RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSC::ExecState&, const JSC::JSValue&, const IDBKeyPath&);
 bool canInjectIDBKeyIntoScriptValue(JSC::ExecState&, const JSC::JSValue&, const IDBKeyPath&);
 bool injectIDBKeyIntoScriptValue(JSC::ExecState&, const IDBKeyData&, JSC::JSValue, const IDBKeyPath&);
 
-JSC::Strong<JSC::Unknown> idbKeyDataToScriptValue(ScriptExecutionContext&, const IDBKeyData&);
+JSC::JSValue idbKeyDataToScriptValue(ScriptExecutionContext&, const IDBKeyData&);
 void generateIndexKeyForValue(JSC::ExecState&, const IDBIndexInfo&, JSC::JSValue, IndexKey& outKey);
 
-JSC::Strong<JSC::Unknown> deserializeIDBValueToJSValue(ScriptExecutionContext&, const IDBValue&);
-JSC::Strong<JSC::Unknown> deserializeIDBValueDataToJSValue(JSC::ExecState&, const ThreadSafeDataBuffer& valueData);
+JSC::JSValue deserializeIDBValueToJSValue(ScriptExecutionContext&, const IDBValue&);
+JSC::JSValue deserializeIDBValueDataToJSValue(JSC::ExecState&, const ThreadSafeDataBuffer& valueData);
 
 RefPtr<IDBKey> scriptValueToIDBKey(ScriptExecutionContext&, const JSC::JSValue&);
 RefPtr<IDBKey> scriptValueToIDBKey(JSC::ExecState&, const JSC::JSValue&);
@@ -60,5 +66,3 @@ RefPtr<IDBKey> scriptValueToIDBKey(JSC::ExecState&, const JSC::JSValue&);
 }
 
 #endif // ENABLE(INDEXED_DATABASE)
-
-#endif // IDBBindingUtilities_h

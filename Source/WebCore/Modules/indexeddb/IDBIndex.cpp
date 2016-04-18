@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBAny.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursor.h"
 #include "IDBDatabaseException.h"
@@ -37,6 +36,8 @@
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "Logging.h"
+
+using namespace JSC;
 
 namespace WebCore {
 
@@ -75,11 +76,6 @@ const String& IDBIndex::name() const
 RefPtr<IDBObjectStore> IDBIndex::objectStore()
 {
     return &m_objectStore;
-}
-
-RefPtr<IDBAny> IDBIndex::keyPathAny() const
-{
-    return IDBAny::create(m_info.keyPath());
 }
 
 const IDBKeyPath& IDBIndex::keyPath() const
@@ -129,7 +125,7 @@ RefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext& context, IDBKeyR
     return m_objectStore.modernTransaction().requestOpenCursor(context, *this, info);
 }
 
-RefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext& context, JSValue key, const String& direction, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::openCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
@@ -155,7 +151,7 @@ RefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext& context, IDBKeyRange*
     return doCount(context, range ? IDBKeyRangeData(range) : IDBKeyRangeData::allKeys(), ec);
 }
 
-RefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext& context, JSValue key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::count");
 
@@ -218,7 +214,7 @@ RefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext& context, IDBK
     return m_objectStore.modernTransaction().requestOpenCursor(context, *this, info);
 }
 
-RefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext& context, JSValue key, const String& direction, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::openKeyCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
@@ -236,7 +232,7 @@ RefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext& context, IDBKeyRange* r
     return doGet(context, IDBKeyRangeData(range), ec);
 }
 
-RefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext& context, JSValue key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::get");
 
@@ -280,7 +276,7 @@ RefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext& context, IDBKeyRange
     return doGetKey(context, IDBKeyRangeData(range), ec);
 }
 
-RefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext& context, JSValue key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::getKey");
 

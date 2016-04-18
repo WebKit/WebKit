@@ -28,20 +28,26 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ActiveDOMObject.h"
-#include "IDBIndex.h"
-#include "IDBObjectStore.h"
 #include "IDBObjectStoreInfo.h"
 #include "IndexedDB.h"
+#include <wtf/HashSet.h>
+
+namespace JSC {
+class ExecState;
+class JSValue;
+class SlotVisitor;
+}
 
 namespace WebCore {
 
 class DOMStringList;
-class IDBAny;
 class IDBIndex;
 class IDBKey;
 class IDBKeyRange;
 class IDBRequest;
 class IDBTransaction;
+
+struct ExceptionCodeWithMessage;
 struct IDBKeyRangeData;
 
 class IDBObjectStore : public RefCounted<IDBObjectStore>, public ActiveDOMObject {
@@ -50,10 +56,8 @@ public:
 
     ~IDBObjectStore();
 
-    // Implement the IDBObjectStore IDL
-    const String name() const;
-    RefPtr<IDBAny> keyPathAny() const;
-    const IDBKeyPath keyPath() const;
+    const String& name() const;
+    const IDBKeyPath& keyPath() const;
     RefPtr<DOMStringList> indexNames() const;
     RefPtr<IDBTransaction> transaction();
     bool autoIncrement() const;
@@ -62,22 +66,22 @@ public:
     RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, JSC::JSValue key, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> get(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext&, JSC::JSValue key, const String& direction, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> get(ScriptExecutionContext&, JSC::JSValue key, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> get(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext&, JSC::JSValue key, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> clear(ScriptExecutionContext&, ExceptionCodeWithMessage&);
     RefPtr<IDBIndex> createIndex(ScriptExecutionContext&, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCodeWithMessage&);
     RefPtr<IDBIndex> index(const String& name, ExceptionCodeWithMessage&);
     void deleteIndex(const String& name, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> count(ScriptExecutionContext&, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> count(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> count(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> count(ScriptExecutionContext&, JSC::JSValue key, ExceptionCodeWithMessage&);
 
     RefPtr<IDBRequest> putForCursorUpdate(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> modernDelete(ScriptExecutionContext&, JSC::JSValue key, ExceptionCodeWithMessage&);

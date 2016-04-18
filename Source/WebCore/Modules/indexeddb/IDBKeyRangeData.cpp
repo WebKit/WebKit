@@ -68,7 +68,7 @@ RefPtr<IDBKeyRange> IDBKeyRangeData::maybeCreateIDBKeyRange() const
     if (isNull)
         return nullptr;
 
-    return IDBKeyRange::create(lowerKey.maybeCreateIDBKey(), upperKey.maybeCreateIDBKey(), lowerOpen ? IDBKeyRange::LowerBoundOpen : IDBKeyRange::LowerBoundClosed, upperOpen ? IDBKeyRange::UpperBoundOpen : IDBKeyRange::UpperBoundClosed);
+    return IDBKeyRange::create(lowerKey.maybeCreateIDBKey(), upperKey.maybeCreateIDBKey(), lowerOpen, upperOpen);
 }
 
 bool IDBKeyRangeData::isExactlyOneKey() const

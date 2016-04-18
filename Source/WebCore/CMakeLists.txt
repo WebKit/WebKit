@@ -182,7 +182,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/geolocation/PositionErrorCallback.idl
 
     Modules/indexeddb/DOMWindowIndexedDatabase.idl
-    Modules/indexeddb/IDBAny.idl
     Modules/indexeddb/IDBCursor.idl
     Modules/indexeddb/IDBCursorWithValue.idl
     Modules/indexeddb/IDBDatabase.idl
@@ -833,7 +832,6 @@ set(WebCore_SOURCES
     Modules/geolocation/NavigatorGeolocation.cpp
 
     Modules/indexeddb/DOMWindowIndexedDatabase.cpp
-    Modules/indexeddb/IDBAny.cpp
     Modules/indexeddb/IDBCursor.cpp
     Modules/indexeddb/IDBCursorWithValue.cpp
     Modules/indexeddb/IDBDatabase.cpp
@@ -1166,12 +1164,12 @@ set(WebCore_SOURCES
     bindings/js/JSHTMLSelectElementCustom.cpp
     bindings/js/JSHTMLTemplateElementCustom.cpp
     bindings/js/JSHistoryCustom.cpp
-    bindings/js/JSIDBAnyCustom.cpp
     bindings/js/JSIDBCursorCustom.cpp
     bindings/js/JSIDBCursorWithValueCustom.cpp
     bindings/js/JSIDBDatabaseCustom.cpp
     bindings/js/JSIDBIndexCustom.cpp
     bindings/js/JSIDBObjectStoreCustom.cpp
+    bindings/js/JSIDBRequestCustom.cpp
     bindings/js/JSImageConstructor.cpp
     bindings/js/JSImageDataCustom.cpp
     bindings/js/JSInspectorFrontendHostCustom.cpp

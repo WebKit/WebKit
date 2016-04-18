@@ -27,32 +27,43 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBConnectionToServer.h"
-#include "IDBFactory.h"
-#include "IDBOpenDBRequest.h"
+#include <wtf/Forward.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+
+namespace JSC {
+class JSValue;
+}
 
 namespace WebCore {
+
+class IDBOpenDBRequest;
+class ScriptExecutionContext;
+
+struct ExceptionCodeWithMessage;
+
+namespace IDBClient {
+class IDBConnectionToServer;
+}
+
+typedef int ExceptionCode;
 
 class IDBFactory : public RefCounted<IDBFactory> {
 public:
     static Ref<IDBFactory> create(IDBClient::IDBConnectionToServer&);
-
-    // FIXME: getDatabaseNames is no longer a web-facing API, and should be removed from IDBFactory.
-    // The Web Inspector currently uses this to enumerate the list of databases, but is more complicated as a result.
-    // We should provide a simpler API to the Web Inspector then remove getDatabaseNames.
-    RefPtr<IDBRequest> getDatabaseNames(ScriptExecutionContext&, ExceptionCode&);
+    ~IDBFactory();
 
     RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, ExceptionCode&);
     RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, unsigned long long version, ExceptionCode&);
     RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const String& name, ExceptionCode&);
 
-    short cmp(ScriptExecutionContext&, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCodeWithMessage&);
+    short cmp(ScriptExecutionContext&, JSC::JSValue first, JSC::JSValue second, ExceptionCodeWithMessage&);
 
 private:
-    IDBFactory(IDBClient::IDBConnectionToServer&);
-    
+    explicit IDBFactory(IDBClient::IDBConnectionToServer&);
+
     RefPtr<IDBOpenDBRequest> openInternal(ScriptExecutionContext&, const String& name, unsigned long long version, ExceptionCode&);
-    
+
     Ref<IDBClient::IDBConnectionToServer> m_connectionToServer;
 };
 

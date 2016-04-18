@@ -32,6 +32,7 @@
 #include "EventQueue.h"
 #include "IDBConnectionToServer.h"
 #include "IDBDatabaseException.h"
+#include "IDBObjectStore.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBResultData.h"
 #include "IDBTransaction.h"

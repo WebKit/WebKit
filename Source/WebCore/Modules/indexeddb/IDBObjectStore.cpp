@@ -45,6 +45,8 @@
 #include "SerializedScriptValue.h"
 #include <wtf/Locker.h>
 
+using namespace JSC;
+
 namespace WebCore {
 
 Ref<IDBObjectStore> IDBObjectStore::create(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
@@ -80,17 +82,12 @@ bool IDBObjectStore::hasPendingActivity() const
     return !m_transaction->isFinished();
 }
 
-const String IDBObjectStore::name() const
+const String& IDBObjectStore::name() const
 {
     return m_info.name();
 }
 
-RefPtr<IDBAny> IDBObjectStore::keyPathAny() const
-{
-    return IDBAny::create(m_info.keyPath());
-}
-
-const IDBKeyPath IDBObjectStore::keyPath() const
+const IDBKeyPath& IDBObjectStore::keyPath() const
 {
     return m_info.keyPath();
 }
@@ -125,7 +122,7 @@ RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, I
     return openCursor(context, keyRange, IDBCursor::directionNext(), ec);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, JSValue key, ExceptionCodeWithMessage& ec)
 {
     return openCursor(context, key, IDBCursor::directionNext(), ec);
 }
@@ -155,7 +152,7 @@ RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, I
     return WTFMove(request);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, JSValue key, const String& direction, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
     if (ec.code) {
@@ -166,7 +163,7 @@ RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, c
     return openCursor(context, keyRange.get(), direction, ec);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, JSValue key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::get");
 
@@ -218,12 +215,12 @@ RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, IDBKeyRa
     return WTFMove(request);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState& state, JSC::JSValue value, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::add(ExecState& state, JSValue value, ExceptionCodeWithMessage& ec)
 {
     return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, InlineKeyCheck::Perform, ec);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::add(ExecState& execState, JSValue value, JSValue key, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKey> idbKey;
     if (!key.isUndefined())
@@ -231,7 +228,7 @@ RefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState& execState, JSC::JSValue v
     return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, InlineKeyCheck::Perform, ec);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::put(ExecState& execState, JSValue value, JSValue key, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKey> idbKey;
     if (!key.isUndefined())
@@ -239,17 +236,17 @@ RefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState& execState, JSC::JSValue v
     return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::Overwrite, InlineKeyCheck::Perform, ec);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState& state, JSC::JSValue value, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::put(ExecState& state, JSValue value, ExceptionCodeWithMessage& ec)
 {
     return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::Overwrite, InlineKeyCheck::Perform, ec);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::putForCursorUpdate(JSC::ExecState& state, JSC::JSValue value, JSC::JSValue key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::putForCursorUpdate(ExecState& state, JSValue value, JSValue key, ExceptionCodeWithMessage& ec)
 {
     return putOrAdd(state, value, scriptValueToIDBKey(state, key), IndexedDB::ObjectStoreOverwriteMode::OverwriteForCursor, InlineKeyCheck::DoNotPerform, ec);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue value, RefPtr<IDBKey> key, IndexedDB::ObjectStoreOverwriteMode overwriteMode, InlineKeyCheck inlineKeyCheck, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::putOrAdd(ExecState& state, JSValue value, RefPtr<IDBKey> key, IndexedDB::ObjectStoreOverwriteMode overwriteMode, InlineKeyCheck inlineKeyCheck, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::putOrAdd");
 
@@ -344,8 +341,7 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue 
         return nullptr;
     }
 
-    Ref<IDBRequest> request = m_transaction->requestPutOrAdd(*context, *this, key.get(), *serializedValue, overwriteMode);
-    return adoptRef(request.leakRef());
+    return m_transaction->requestPutOrAdd(*context, *this, key.get(), *serializedValue, overwriteMode);
 }
 
 RefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
@@ -391,12 +387,12 @@ RefPtr<IDBRequest> IDBObjectStore::doDelete(ScriptExecutionContext& context, IDB
     return WTFMove(request);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& context, JSValue key, ExceptionCodeWithMessage& ec)
 {
-    return modernDelete(context, key.jsValue(), ec);
+    return modernDelete(context, key, ec);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::modernDelete(ScriptExecutionContext& context, JSC::JSValue key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::modernDelete(ScriptExecutionContext& context, JSValue key, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(context, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
@@ -405,7 +401,7 @@ RefPtr<IDBRequest> IDBObjectStore::modernDelete(ScriptExecutionContext& context,
         return nullptr;
     }
 
-    return doDelete(context, &IDBKeyRange::create(idbKey.get()).get(), ec);
+    return doDelete(context, &IDBKeyRange::create(idbKey.releaseNonNull()).get(), ec);
 }
 
 RefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
@@ -588,7 +584,7 @@ RefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, Except
     return doCount(context, IDBKeyRangeData::allKeys(), ec);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
+RefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, JSValue key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::count");
 
@@ -646,7 +642,7 @@ void IDBObjectStore::rollbackInfoForVersionChangeAbort()
     m_info = m_originalInfo;
 }
 
-void IDBObjectStore::visitReferencedIndexes(JSC::SlotVisitor& visitor) const
+void IDBObjectStore::visitReferencedIndexes(SlotVisitor& visitor) const
 {
     Locker<Lock> locker(m_referencedIndexLock);
     for (auto& index : m_referencedIndexes.values())

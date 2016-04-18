@@ -37,11 +37,12 @@
 #include "IDBValue.h"
 #include "IndexKey.h"
 #include "JSDOMBinding.h"
+#include "JSDOMStringList.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
+#include "SerializedScriptValue.h"
 #include "SharedBuffer.h"
 #include "ThreadSafeDataBuffer.h"
-
 #include <runtime/DateInstance.h>
 #include <runtime/ObjectConstructor.h>
 
@@ -305,27 +306,31 @@ bool canInjectIDBKeyIntoScriptValue(ExecState& execState, const JSValue& scriptV
 }
 
 
-static Strong<Unknown> deserializeIDBValueToJSValue(ExecState& exec, const IDBValue& value)
+static JSValue deserializeIDBValueToJSValue(ExecState& state, const IDBValue& value)
 {
+    // FIXME: I think it's peculiar to use undefined to mean "null data" and null to mean "empty data".
+    // But I am not changing this at the moment because at least some callers are specifically checking isUndefined.
+
     if (!value.data().data())
-        return { exec.vm(), jsUndefined() };
+        return jsUndefined();
 
-    const Vector<uint8_t>& data = *value.data().data();
-    JSValue result;
-    if (data.size()) {
-        RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
+    auto& data = *value.data().data();
+    if (data.isEmpty())
+        return jsNull();
 
-        exec.vm().apiLock().lock();
-        result = serializedValue->deserialize(&exec, exec.lexicalGlobalObject(), 0, NonThrowing, value.blobURLs(), value.blobFilePaths());
-        exec.vm().apiLock().unlock();
-    } else
-        result = jsNull();
+    auto serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
 
-    return { exec.vm(), result };
+    state.vm().apiLock().lock();
+    JSValue result = serializedValue->deserialize(&state, state.lexicalGlobalObject(), 0, NonThrowing, value.blobURLs(), value.blobFilePaths());
+    state.vm().apiLock().unlock();
+
+    return result;
 }
 
-Strong<Unknown> deserializeIDBValueToJSValue(ScriptExecutionContext& context, const IDBValue& value)
+JSValue deserializeIDBValueToJSValue(ScriptExecutionContext& context, const IDBValue& value)
 {
+    // FIXME: I think it's peculiar to return an empty JSValue, undefined, and null for three different error cases.
+
     auto* execState = context.execState();
     if (!execState)
         return { };
@@ -333,7 +338,7 @@ Strong<Unknown> deserializeIDBValueToJSValue(ScriptExecutionContext& context, co
     return deserializeIDBValueToJSValue(*execState, value);
 }
 
-Strong<Unknown> deserializeIDBValueDataToJSValue(ExecState& exec, const ThreadSafeDataBuffer& valueData)
+JSValue deserializeIDBValueDataToJSValue(ExecState& exec, const ThreadSafeDataBuffer& valueData)
 {
     return deserializeIDBValueToJSValue(exec, IDBValue(valueData));
 }
@@ -349,7 +354,7 @@ RefPtr<IDBKey> scriptValueToIDBKey(ScriptExecutionContext& context, const JSValu
     return execState ? scriptValueToIDBKey(*execState, scriptValue) : nullptr;
 }
 
-Strong<Unknown> idbKeyDataToScriptValue(ScriptExecutionContext& context, const IDBKeyData& keyData)
+JSC::JSValue idbKeyDataToScriptValue(ScriptExecutionContext& context, const IDBKeyData& keyData)
 {
     RefPtr<IDBKey> key = keyData.maybeCreateIDBKey();
 
@@ -357,7 +362,7 @@ Strong<Unknown> idbKeyDataToScriptValue(ScriptExecutionContext& context, const I
     if (!exec)
         return { };
 
-    return { exec->vm(), idbKeyToJSValue(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get()) };
+    return idbKeyToJSValue(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get());
 }
 
 static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, const IDBIndexInfo& info)
@@ -401,6 +406,24 @@ void generateIndexKeyForValue(ExecState& exec, const IDBIndexInfo& info, JSValue
         return;
 
     outKey = IndexKey(WTFMove(keyDatas));
+}
+
+JSValue toJS(ExecState& state, JSDOMGlobalObject& globalObject, const IDBKeyPath& value)
+{
+    switch (value.type()) {
+    case IndexedDB::KeyPathType::Null:
+        return jsNull();
+    case IndexedDB::KeyPathType::String:
+        return jsStringWithCache(&state, value.string());
+    case IndexedDB::KeyPathType::Array:
+        auto keyPaths = DOMStringList::create();
+        for (auto& path : value.array())
+            keyPaths->append(path);
+        return toJS(&state, &globalObject, keyPaths);
+    }
+
+    ASSERT_NOT_REACHED();
+    return jsNull();
 }
 
 } // namespace WebCore

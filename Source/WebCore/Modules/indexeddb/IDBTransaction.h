@@ -27,11 +27,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBDatabaseInfo.h"
+#include "ActiveDOMObject.h"
+#include "EventTarget.h"
 #include "IDBError.h"
-#include "IDBIndex.h"
-#include "IDBObjectStore.h"
-#include "IDBTransaction.h"
 #include "IDBTransactionInfo.h"
 #include "IndexedDB.h"
 #include "Timer.h"
@@ -40,23 +38,27 @@
 
 namespace WebCore {
 
+class DOMError;
 class IDBCursor;
 class IDBCursorInfo;
 class IDBDatabase;
 class IDBIndex;
 class IDBIndexInfo;
+class IDBKey;
 class IDBKeyData;
 class IDBObjectStore;
 class IDBObjectStoreInfo;
 class IDBOpenDBRequest;
 class IDBResultData;
+class SerializedScriptValue;
+
 struct IDBKeyRangeData;
 
 namespace IDBClient {
 class TransactionOperation;
 }
 
-class IDBTransaction : public RefCounted<IDBTransaction>, public EventTargetWithInlineData, public ActiveDOMObject {
+class IDBTransaction : public RefCounted<IDBTransaction>, public EventTargetWithInlineData, private ActiveDOMObject {
 public:
     static const AtomicString& modeReadOnly();
     static const AtomicString& modeReadWrite();
@@ -74,15 +76,15 @@ public:
 
     // IDBTransaction IDL
     const String& mode() const;
-    WebCore::IDBDatabase* db();
+    IDBDatabase* db();
     RefPtr<DOMError> error() const;
-    RefPtr<WebCore::IDBObjectStore> objectStore(const String& name, ExceptionCodeWithMessage&);
+    RefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCodeWithMessage&);
     void abort(ExceptionCodeWithMessage&);
 
     EventTargetInterface eventTargetInterface() const final { return IDBTransactionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-    void refEventTarget() final { RefCounted<IDBTransaction>::ref(); }
-    void derefEventTarget() final { RefCounted<IDBTransaction>::deref(); }
+    void refEventTarget() final { RefCounted::ref(); }
+    void derefEventTarget() final { RefCounted::deref(); }
     using EventTarget::dispatchEvent;
     bool dispatchEvent(Event&) final;
 

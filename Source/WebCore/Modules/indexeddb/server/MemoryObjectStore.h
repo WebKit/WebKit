@@ -42,6 +42,7 @@ namespace WebCore {
 class IDBCursorInfo;
 class IDBError;
 class IDBKeyData;
+class IDBValue;
 
 struct IDBKeyRangeData;
 

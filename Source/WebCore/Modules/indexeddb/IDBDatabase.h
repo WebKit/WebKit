@@ -31,7 +31,6 @@
 #include "EventTarget.h"
 #include "ExceptionCode.h"
 #include "IDBConnectionToServer.h"
-#include "IDBDatabase.h"
 #include "IDBDatabaseInfo.h"
 
 namespace WebCore {

@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBGetResult.h"
 #include "Logging.h"
 #include "MemoryObjectStore.h"
 

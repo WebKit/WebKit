@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSIDBRequest.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBCursor.h"
+#include "JSIDBCursor.h"
+#include "JSIDBDatabase.h"
+#include "JSIDBIndex.h"
+#include "JSIDBObjectStore.h"
+
+using namespace JSC;
 
 namespace WebCore {
 
-class IDBCursorWithValue final : public IDBCursor {
-public:
-    static Ref<IDBCursorWithValue> create(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
-    static Ref<IDBCursorWithValue> create(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
+JSValue JSIDBRequest::result(ExecState& state) const
+{
+    auto& request = wrapped();
 
-    virtual ~IDBCursorWithValue();
+    if (!request.isDone()) {
+        ExceptionCodeWithMessage ec;
+        ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to read the 'result' property from 'IDBRequest': The request has not finished.");
+        setDOMException(&state, ec);
+        return jsUndefined();
+    }
 
-    bool isKeyCursor() const final { return false; }
+    if (auto* cursor = request.cursorResult())
+        return toJS(&state, globalObject(), cursor);
+    if (auto* database = request.databaseResult())
+        return toJS(&state, globalObject(), database);
+    if (auto result = request.scriptResult())
+        return result;
+    return jsNull();
+}
 
-private:
-    IDBCursorWithValue(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
-    IDBCursorWithValue(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
-};
+JSValue JSIDBRequest::source(ExecState& state) const
+{
+    auto& request = wrapped();
+    if (auto* cursor = request.cursorSource())
+        return toJS(&state, globalObject(), cursor);
+    if (auto* index = request.indexSource())
+        return toJS(&state, globalObject(), index);
+    return toJS(&state, globalObject(), request.objectStoreSource());
+}
 
 } // namespace WebCore
 

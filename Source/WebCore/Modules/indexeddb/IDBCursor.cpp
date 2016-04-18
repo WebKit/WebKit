@@ -32,11 +32,14 @@
 #include "IDBBindingUtilities.h"
 #include "IDBDatabaseException.h"
 #include "IDBGetResult.h"
+#include "IDBIndex.h"
 #include "IDBObjectStore.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
+#include <heap/StrongInlines.h>
+#include <runtime/JSCJSValueInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
@@ -69,13 +72,13 @@ const AtomicString& IDBCursor::directionPrevUnique()
 
 IndexedDB::CursorDirection IDBCursor::stringToDirection(const String& directionString, ExceptionCode& ec)
 {
-    if (directionString == IDBCursor::directionNext())
+    if (directionString == directionNext())
         return IndexedDB::CursorDirection::Next;
-    if (directionString == IDBCursor::directionNextUnique())
+    if (directionString == directionNextUnique())
         return IndexedDB::CursorDirection::NextNoDuplicate;
-    if (directionString == IDBCursor::directionPrev())
+    if (directionString == directionPrev())
         return IndexedDB::CursorDirection::Prev;
-    if (directionString == IDBCursor::directionPrevUnique())
+    if (directionString == directionPrevUnique())
         return IndexedDB::CursorDirection::PrevNoDuplicate;
 
     ec = TypeError;
@@ -86,20 +89,20 @@ const AtomicString& IDBCursor::directionToString(IndexedDB::CursorDirection dire
 {
     switch (direction) {
     case IndexedDB::CursorDirection::Next:
-        return IDBCursor::directionNext();
+        return directionNext();
 
     case IndexedDB::CursorDirection::NextNoDuplicate:
-        return IDBCursor::directionNextUnique();
+        return directionNextUnique();
 
     case IndexedDB::CursorDirection::Prev:
-        return IDBCursor::directionPrev();
+        return directionPrev();
 
     case IndexedDB::CursorDirection::PrevNoDuplicate:
-        return IDBCursor::directionPrevUnique();
+        return directionPrevUnique();
 
     default:
         ASSERT_NOT_REACHED();
-        return IDBCursor::directionNext();
+        return directionNext();
     }
 }
 
@@ -111,7 +114,6 @@ Ref<IDBCursor> IDBCursor::create(IDBTransaction& transaction, IDBIndex& index, c
 IDBCursor::IDBCursor(IDBTransaction& transaction, IDBObjectStore& objectStore, const IDBCursorInfo& info)
     : ActiveDOMObject(transaction.scriptExecutionContext())
     , m_info(info)
-    , m_source(IDBAny::create(objectStore).leakRef())
     , m_objectStore(&objectStore)
 {
     suspendIfNeeded();
@@ -120,7 +122,6 @@ IDBCursor::IDBCursor(IDBTransaction& transaction, IDBObjectStore& objectStore, c
 IDBCursor::IDBCursor(IDBTransaction& transaction, IDBIndex& index, const IDBCursorInfo& info)
     : ActiveDOMObject(transaction.scriptExecutionContext())
     , m_info(info)
-    , m_source(IDBAny::create(index).leakRef())
     , m_index(&index)
 {
     suspendIfNeeded();
@@ -155,30 +156,10 @@ IDBTransaction& IDBCursor::transaction() const
 
 const String& IDBCursor::direction() const
 {
-    return IDBCursor::directionToString(m_info.cursorDirection());
+    return directionToString(m_info.cursorDirection());
 }
 
-JSValue IDBCursor::key(ExecState&) const
-{
-    return m_currentKey.get();
-}
-
-JSValue IDBCursor::primaryKey(ExecState&) const
-{
-    return m_currentPrimaryKey.get();
-}
-
-JSValue IDBCursor::value(ExecState&) const
-{
-    return m_currentValue.get();
-}
-
-IDBAny* IDBCursor::source()
-{
-    return &m_source.get();
-}
-
-RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::ScriptValue& value, ExceptionCodeWithMessage& ec)
+RefPtr<WebCore::IDBRequest> IDBCursor::update(ExecState& exec, JSValue value, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::update");
 
@@ -225,7 +206,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::
         }
     }
 
-    auto request = effectiveObjectStore().putForCursorUpdate(exec, value.jsValue(), m_currentPrimaryKey.get(), ec);
+    auto request = effectiveObjectStore().putForCursorUpdate(exec, value, m_currentPrimaryKey.get(), ec);
     if (ec.code)
         return nullptr;
 
@@ -236,7 +217,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::
     return request;
 }
 
-void IDBCursor::advance(unsigned long count, ExceptionCodeWithMessage& ec)
+void IDBCursor::advance(unsigned count, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::advance");
 
@@ -279,10 +260,10 @@ void IDBCursor::continueFunction(ScriptExecutionContext&, ExceptionCodeWithMessa
     continueFunction(IDBKeyData(), ec);
 }
 
-void IDBCursor::continueFunction(ScriptExecutionContext& context, const Deprecated::ScriptValue& keyValue, ExceptionCodeWithMessage& ec)
+void IDBCursor::continueFunction(ScriptExecutionContext& context, JSValue keyValue, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKey> key;
-    if (!keyValue.jsValue().isUndefined())
+    if (!keyValue.isUndefined())
         key = scriptValueToIDBKey(context, keyValue);
 
     continueFunction(key.get(), ec);
@@ -338,7 +319,7 @@ void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCodeWithMessage
     uncheckedIterateCursor(key, 0);
 }
 
-void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned long count)
+void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
 {
     ++m_outstandingRequestCount;
 
@@ -410,15 +391,17 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
         return;
     }
 
-    m_currentKey = idbKeyDataToScriptValue(*context, getResult.keyData());
+    auto& vm = context->vm();
+
+    m_currentKey = { vm, idbKeyDataToScriptValue(*context, getResult.keyData()) };
     m_currentKeyData = getResult.keyData();
-    m_currentPrimaryKey = idbKeyDataToScriptValue(*context, getResult.primaryKeyData());
+    m_currentPrimaryKey = { vm, idbKeyDataToScriptValue(*context, getResult.primaryKeyData()) };
     m_currentPrimaryKeyData = getResult.primaryKeyData();
 
     if (isKeyCursor())
         m_currentValue = { };
     else
-        m_currentValue = deserializeIDBValueToJSValue(*context, getResult.value());
+        m_currentValue = { vm, deserializeIDBValueToJSValue(*context, getResult.value()) };
 
     m_gotValue = true;
 }

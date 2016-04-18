@@ -31,13 +31,17 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "IDBBindingUtilities.h"
+#include "IDBConnectionToServer.h"
 #include "IDBDatabaseIdentifier.h"
+#include "IDBKey.h"
 #include "IDBOpenDBRequest.h"
 #include "Logging.h"
 #include "Page.h"
 #include "SchemeRegistry.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+
+using namespace JSC;
 
 namespace WebCore {
 
@@ -68,16 +72,15 @@ IDBFactory::IDBFactory(IDBClient::IDBConnectionToServer& connection)
 {
 }
 
-RefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext&, ExceptionCode&)
+IDBFactory::~IDBFactory()
 {
-    return nullptr;
 }
 
 RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, ExceptionCode& ec)
 {
     LOG(IndexedDB, "IDBFactory::open");
     
-    return openInternal(context, name, 0, ec).release();
+    return openInternal(context, name, 0, ec);
 }
 
 RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, unsigned long long version, ExceptionCode& ec)
@@ -89,7 +92,7 @@ RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const
         return nullptr;
     }
 
-    return openInternal(context, name, version, ec).release();
+    return openInternal(context, name, version, ec);
 }
 
 RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext& context, const String& name, unsigned long long version, ExceptionCode& ec)
@@ -146,7 +149,7 @@ RefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext& cont
     return adoptRef(&request.leakRef());
 }
 
-short IDBFactory::cmp(ScriptExecutionContext& context, const Deprecated::ScriptValue& firstValue, const Deprecated::ScriptValue& secondValue, ExceptionCodeWithMessage& ec)
+short IDBFactory::cmp(ScriptExecutionContext& context, JSValue firstValue, JSValue secondValue, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKey> first = scriptValueToIDBKey(context, firstValue);
     RefPtr<IDBKey> second = scriptValueToIDBKey(context, secondValue);
@@ -160,7 +163,7 @@ short IDBFactory::cmp(ScriptExecutionContext& context, const Deprecated::ScriptV
         return 0;
     }
 
-    return static_cast<short>(first->compare(second.get()));
+    return first->compare(second.get());
 }
 
 } // namespace WebCore

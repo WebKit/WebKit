@@ -26,39 +26,49 @@
 #include "config.h"
 #include "IDBKeyRange.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "IDBBindingUtilities.h"
 #include "IDBDatabaseException.h"
 #include "IDBKey.h"
 #include "IDBKeyData.h"
-
-#if ENABLE(INDEXED_DATABASE)
+#include <runtime/JSCJSValue.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-Ref<IDBKeyRange> IDBKeyRange::create(RefPtr<IDBKey>&& key)
+Ref<IDBKeyRange> IDBKeyRange::create(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool isLowerOpen, bool isUpperOpen)
 {
-    RefPtr<IDBKey> upperBound = key;
-    return adoptRef(*new IDBKeyRange(WTFMove(key), WTFMove(upperBound), LowerBoundClosed, UpperBoundClosed));
+    return adoptRef(*new IDBKeyRange(WTFMove(lower), WTFMove(upper), isLowerOpen, isUpperOpen));
 }
 
-IDBKeyRange::IDBKeyRange(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, LowerBoundType lowerType, UpperBoundType upperType)
+Ref<IDBKeyRange> IDBKeyRange::create(RefPtr<IDBKey>&& key)
+{
+    auto upper = key;
+    return create(WTFMove(key), WTFMove(upper), false, false);
+}
+
+IDBKeyRange::IDBKeyRange(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool isLowerOpen, bool isUpperOpen)
     : m_lower(WTFMove(lower))
     , m_upper(WTFMove(upper))
-    , m_lowerType(lowerType)
-    , m_upperType(upperType)
+    , m_isLowerOpen(isLowerOpen)
+    , m_isUpperOpen(isUpperOpen)
+{
+}
+
+IDBKeyRange::~IDBKeyRange()
 {
 }
 
 JSValue IDBKeyRange::lowerValue(ScriptExecutionContext& context) const
 {
-    return idbKeyDataToScriptValue(context, IDBKeyData(m_lower.get())).get();
+    return idbKeyDataToScriptValue(context, IDBKeyData(m_lower.get()));
 }
 
 JSValue IDBKeyRange::upperValue(ScriptExecutionContext& context) const
 {
-    return idbKeyDataToScriptValue(context, IDBKeyData(m_upper.get())).get();
+    return idbKeyDataToScriptValue(context, IDBKeyData(m_upper.get()));
 }
 
 RefPtr<IDBKeyRange> IDBKeyRange::only(RefPtr<IDBKey>&& key, ExceptionCode& ec)
@@ -71,9 +81,9 @@ RefPtr<IDBKeyRange> IDBKeyRange::only(RefPtr<IDBKey>&& key, ExceptionCode& ec)
     return create(WTFMove(key));
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext& context, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext& context, JSValue keyValue, ExceptionCode& ec)
 {
-    RefPtr<IDBKey> key = scriptValueToIDBKey(context, keyValue);
+    auto key = scriptValueToIDBKey(context, keyValue);
     if (!key || !key->isValid()) {
         ec = IDBDatabaseException::DataError;
         return nullptr;
@@ -82,32 +92,32 @@ RefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext& context, const Dep
     return create(WTFMove(key));
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ScriptExecutionContext& context, const Deprecated::ScriptValue& boundValue, bool open, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ScriptExecutionContext& context, JSValue boundValue, bool open, ExceptionCode& ec)
 {
-    RefPtr<IDBKey> bound = scriptValueToIDBKey(context, boundValue);
+    auto bound = scriptValueToIDBKey(context, boundValue);
     if (!bound || !bound->isValid()) {
         ec = IDBDatabaseException::DataError;
         return nullptr;
     }
 
-    return IDBKeyRange::create(WTFMove(bound), nullptr, open ? LowerBoundOpen : LowerBoundClosed, UpperBoundOpen);
+    return create(WTFMove(bound), nullptr, open, true);
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ScriptExecutionContext& context, const Deprecated::ScriptValue& boundValue, bool open, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ScriptExecutionContext& context, JSValue boundValue, bool open, ExceptionCode& ec)
 {
-    RefPtr<IDBKey> bound = scriptValueToIDBKey(context, boundValue);
+    auto bound = scriptValueToIDBKey(context, boundValue);
     if (!bound || !bound->isValid()) {
         ec = IDBDatabaseException::DataError;
         return nullptr;
     }
 
-    return IDBKeyRange::create(nullptr, WTFMove(bound), LowerBoundOpen, open ? UpperBoundOpen : UpperBoundClosed);
+    return create(nullptr, WTFMove(bound), true, open);
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext& context, const Deprecated::ScriptValue& lowerValue, const Deprecated::ScriptValue& upperValue, bool lowerOpen, bool upperOpen, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext& context, JSValue lowerValue, JSValue upperValue, bool lowerOpen, bool upperOpen, ExceptionCode& ec)
 {
-    RefPtr<IDBKey> lower = scriptValueToIDBKey(context, lowerValue);
-    RefPtr<IDBKey> upper = scriptValueToIDBKey(context, upperValue);
+    auto lower = scriptValueToIDBKey(context, lowerValue);
+    auto upper = scriptValueToIDBKey(context, upperValue);
 
     if (!lower || !lower->isValid() || !upper || !upper->isValid()) {
         ec = IDBDatabaseException::DataError;
@@ -122,17 +132,32 @@ RefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext& context, const De
         return nullptr;
     }
 
-    return IDBKeyRange::create(WTFMove(lower), WTFMove(upper), lowerOpen ? LowerBoundOpen : LowerBoundClosed, upperOpen ? UpperBoundOpen : UpperBoundClosed);
+    return create(WTFMove(lower), WTFMove(upper), lowerOpen, upperOpen);
 }
 
 bool IDBKeyRange::isOnlyKey() const
 {
-    if (m_lowerType != LowerBoundClosed || m_upperType != UpperBoundClosed)
-        return false;
+    return m_lower && m_upper && !m_isLowerOpen && !m_isUpperOpen && m_lower->isEqual(m_upper.get());
+}
 
-    ASSERT(m_lower);
-    ASSERT(m_upper);
-    return m_lower->isEqual(m_upper.get());
+RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ScriptExecutionContext& context, JSValue bound, ExceptionCode& ec)
+{
+    return lowerBound(context, bound, false, ec);
+}
+
+RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ScriptExecutionContext& context, JSValue bound, ExceptionCode& ec)
+{
+    return upperBound(context, bound, false, ec);
+}
+
+RefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext& context, JSValue lower, JSValue upper, ExceptionCode& ec)
+{
+    return bound(context, lower, upper, false, false, ec);
+}
+
+RefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext& context, JSValue lower, JSValue upper, bool lowerOpen, ExceptionCode& ec)
+{
+    return bound(context, lower, upper, lowerOpen, false, ec);
 }
 
 } // namespace WebCore

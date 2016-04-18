@@ -28,15 +28,15 @@
  */
 
 [
+    ActiveDOMObject,
     Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
-    ActiveDOMObject,
-    SkipVTableValidation,
     GenerateIsReachable=Impl,
+    SkipVTableValidation,
 ] interface IDBRequest : EventTarget {
-    [GetterRaisesExceptionWithMessage] readonly attribute IDBAny result;
+    [CustomGetter] readonly attribute any result;
     [GetterRaisesExceptionWithMessage] readonly attribute DOMError error;
-    readonly attribute IDBAny source;
+    [CustomGetter] readonly attribute any source;
     readonly attribute IDBTransaction transaction;
     readonly attribute DOMString readyState;
 

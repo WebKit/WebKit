@@ -27,27 +27,19 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DOMError.h"
 #include "IDBDatabaseIdentifier.h"
 #include "IDBRequest.h"
 
 namespace WebCore {
 
-class Event;
-class IDBDatabaseIdentifier;
 class IDBResultData;
-class ScriptExecutionContext;
 
-namespace IDBClient {
-class IDBConnectionToServer;
-}
-
-class IDBOpenDBRequest : public IDBRequest {
+class IDBOpenDBRequest final : public IDBRequest {
 public:
     static Ref<IDBOpenDBRequest> createDeleteRequest(IDBClient::IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&);
     static Ref<IDBOpenDBRequest> createOpenRequest(IDBClient::IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
 
-    ~IDBOpenDBRequest() final;
+    virtual ~IDBOpenDBRequest();
     
     const IDBDatabaseIdentifier& databaseIdentifier() const { return m_databaseIdentifier; }
     uint64_t version() const { return m_version; }
@@ -59,17 +51,17 @@ public:
     void fireSuccessAfterVersionChangeCommit();
     void fireErrorAfterVersionChangeCompletion();
 
-    bool dispatchEvent(Event&) final;
-
 private:
     IDBOpenDBRequest(IDBClient::IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version, IndexedDB::RequestType);
+
+    bool dispatchEvent(Event&) final;
 
     void onError(const IDBResultData&);
     void onSuccess(const IDBResultData&);
     void onUpgradeNeeded(const IDBResultData&);
     void onDeleteDatabaseSuccess(const IDBResultData&);
 
-    bool isOpenDBRequest() const override { return true; }
+    bool isOpenDBRequest() const final { return true; }
 
     IDBDatabaseIdentifier m_databaseIdentifier;
     uint64_t m_version { 0 };

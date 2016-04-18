@@ -36,7 +36,9 @@
 #include "IDBValue.h"
 #include "Logging.h"
 #include "ScopeGuard.h"
+#include "SerializedScriptValue.h"
 #include "UniqueIDBDatabaseConnection.h"
+#include <runtime/StructureInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -766,17 +768,17 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
         JSLockHolder locker(databaseThreadVM());
 
         auto value = deserializeIDBValueDataToJSValue(databaseThreadExecState(), originalRecordValue.data());
-        if (value.get().isUndefined()) {
+        if (value.isUndefined()) {
             m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Unable to deserialize record value for record key injection")), usedKey));
             return;
         }
 
-        if (!injectIDBKeyIntoScriptValue(databaseThreadExecState(), usedKey, value.get(), objectStoreInfo->keyPath())) {
+        if (!injectIDBKeyIntoScriptValue(databaseThreadExecState(), usedKey, value, objectStoreInfo->keyPath())) {
             m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Unable to inject record key into record value")), usedKey));
             return;
         }
 
-        auto serializedValue = SerializedScriptValue::create(&databaseThreadExecState(), value.get(), nullptr, nullptr);
+        auto serializedValue = SerializedScriptValue::create(&databaseThreadExecState(), value, nullptr, nullptr);
         if (databaseThreadExecState().hadException()) {
             m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Unable to serialize record value after injecting record key")), usedKey));
             return;

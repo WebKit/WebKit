@@ -4346,15 +4346,18 @@ sub NativeToJSValue
         }
         AddToImplIncludes("<runtime/JSArray.h>", $conditional);
 
-        return "jsArray(state, $thisValue->globalObject(), $value)";
+        return "jsArray(state, $globalObject, $value)";
     }
 
-    my $returnType = $signature->extendedAttributes->{"ImplementationReturnType"};
     if ($type eq "any") {
+        my $returnType = $signature->extendedAttributes->{"ImplementationReturnType"};
         if ($interfaceName eq "Document") {
             AddToImplIncludes("JSCanvasRenderingContext2D.h", $conditional);
         } elsif (defined $returnType and $returnType eq "JSValue") {
             return "$value";
+        } elsif (defined $returnType and $returnType eq "IDBKeyPath") {
+            AddToImplIncludes("IDBBindingUtilities.h", $conditional);
+            return "toJS(*state, *$globalObject, $value)";
         } else {
             return "($value.hasNoValue() ? jsNull() : $value.jsValue())";
         }

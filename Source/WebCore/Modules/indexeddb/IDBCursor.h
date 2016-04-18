@@ -28,18 +28,17 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ActiveDOMObject.h"
-#include "ExceptionCode.h"
-#include "IDBAny.h"
 #include "IDBCursorInfo.h"
-#include <runtime/JSCJSValue.h>
+#include <heap/Strong.h>
 
 namespace WebCore {
 
-class IDBAny;
 class IDBGetResult;
 class IDBIndex;
 class IDBObjectStore;
 class IDBTransaction;
+
+struct ExceptionCodeWithMessage;
 
 class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor>, public ActiveDOMObject {
 public:
@@ -55,18 +54,18 @@ public:
     
     virtual ~IDBCursor();
 
-    // Implement the IDL
     const String& direction() const;
-    JSC::JSValue key(JSC::ExecState&) const;
-    JSC::JSValue primaryKey(JSC::ExecState&) const;
-    JSC::JSValue value(JSC::ExecState&) const;
-    IDBAny* source();
+    JSC::JSValue key() const;
+    JSC::JSValue primaryKey() const;
+    JSC::JSValue value() const;
+    IDBObjectStore* objectStore() const { return m_objectStore.get(); }
+    IDBIndex* index() const { return m_index.get(); }
 
-    RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&);
-    void advance(unsigned long, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> update(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&);
+    void advance(unsigned, ExceptionCodeWithMessage&);
     void continueFunction(ScriptExecutionContext&, ExceptionCodeWithMessage&);
-    void continueFunction(ScriptExecutionContext&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
-    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext&, ExceptionCodeWithMessage&);
+    void continueFunction(ScriptExecutionContext&, JSC::JSValue key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext&, ExceptionCodeWithMessage&);
 
     void continueFunction(const IDBKeyData&, ExceptionCodeWithMessage&);
 
@@ -82,30 +81,29 @@ public:
 
     void decrementOutstandingRequestCount();
 
-    // ActiveDOMObject.
-    const char* activeDOMObjectName() const;
-    bool canSuspendForDocumentSuspension() const;
-    bool hasPendingActivity() const;
+    bool hasPendingActivity() const final;
 
 protected:
     IDBCursor(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
     IDBCursor(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
 
 private:
-    // Cursors are created with an outstanding iteration request.
-    unsigned m_outstandingRequestCount { 1 };
-
-    IDBCursorInfo m_info;
-    Ref<IDBAny> m_source;
-    IDBObjectStore* m_objectStore { nullptr };
-    IDBIndex* m_index { nullptr };
-    IDBRequest* m_request;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
 
     bool sourcesDeleted() const;
     IDBObjectStore& effectiveObjectStore() const;
     IDBTransaction& transaction() const;
 
-    void uncheckedIterateCursor(const IDBKeyData&, unsigned long count);
+    void uncheckedIterateCursor(const IDBKeyData&, unsigned count);
+
+    // Cursors are created with an outstanding iteration request.
+    unsigned m_outstandingRequestCount { 1 };
+
+    IDBCursorInfo m_info;
+    RefPtr<IDBObjectStore> m_objectStore;
+    RefPtr<IDBIndex> m_index;
+    IDBRequest* m_request { nullptr };
 
     bool m_gotValue { false };
 
@@ -116,6 +114,21 @@ private:
     JSC::Strong<JSC::Unknown> m_currentPrimaryKey;
     JSC::Strong<JSC::Unknown> m_currentValue;
 };
+
+inline JSC::JSValue IDBCursor::key() const
+{
+    return m_currentKey.get();
+}
+
+inline JSC::JSValue IDBCursor::primaryKey() const
+{
+    return m_currentPrimaryKey.get();
+}
+
+inline JSC::JSValue IDBCursor::value() const
+{
+    return m_currentValue.get();
+}
 
 } // namespace WebCore
 

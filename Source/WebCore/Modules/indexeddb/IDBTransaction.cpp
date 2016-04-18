@@ -36,6 +36,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBError.h"
 #include "IDBEventDispatcher.h"
+#include "IDBIndex.h"
 #include "IDBKeyData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBObjectStore.h"
@@ -733,7 +734,7 @@ void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultDa
 
     if (request.sourceIndexIdentifier() && request.requestedIndexRecordType() == IndexedDB::IndexRecordType::Key) {
         if (!result.keyData().isNull())
-            request.setResult(&result.keyData());
+            request.setResult(result.keyData());
         else
             request.setResultToUndefined();
     } else {
@@ -886,7 +887,10 @@ void IDBTransaction::didPutOrAddOnServer(IDBRequest& request, const IDBResultDat
 {
     LOG(IndexedDB, "IDBTransaction::didPutOrAddOnServer");
 
-    request.setResult(resultData.resultKey());
+    if (auto* result = resultData.resultKey())
+        request.setResult(*result);
+    else
+        request.setResultToUndefined();
     request.requestCompleted(resultData);
 }
 

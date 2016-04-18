@@ -34,6 +34,7 @@
 #include "IndexKey.h"
 #include "Logging.h"
 #include "MemoryBackingStoreTransaction.h"
+#include "MemoryIndexCursor.h"
 #include "MemoryObjectStore.h"
 #include "ThreadSafeDataBuffer.h"
 

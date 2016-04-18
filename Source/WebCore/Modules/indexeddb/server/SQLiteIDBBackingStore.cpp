@@ -45,6 +45,10 @@
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "ThreadSafeDataBuffer.h"
+#include <heap/StrongInlines.h>
+#include <runtime/JSCJSValueInlines.h>
+#include <runtime/JSGlobalObject.h>
+#include <runtime/StructureInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
@@ -1468,7 +1472,7 @@ IDBError SQLiteIDBBackingStore::updateOneIndexForAddRecord(const IDBIndexInfo& i
         return { };
 
     IndexKey indexKey;
-    generateIndexKeyForValue(*m_globalObject->globalExec(), info, jsValue.get(), indexKey);
+    generateIndexKeyForValue(*m_globalObject->globalExec(), info, jsValue, indexKey);
 
     if (indexKey.isNull())
         return { };
@@ -1488,7 +1492,7 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
     bool anyRecordsSucceeded = false;
     for (auto& index : info.indexMap().values()) {
         IndexKey indexKey;
-        generateIndexKeyForValue(*m_globalObject->globalExec(), index, jsValue.get(), indexKey);
+        generateIndexKeyForValue(*m_globalObject->globalExec(), index, jsValue, indexKey);
 
         if (indexKey.isNull())
             continue;

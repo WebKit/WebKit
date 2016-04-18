@@ -98,7 +98,6 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/geolocation/PositionError.idl \
     $(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
     $(WebCore)/Modules/indexeddb/DOMWindowIndexedDatabase.idl \
-    $(WebCore)/Modules/indexeddb/IDBAny.idl \
     $(WebCore)/Modules/indexeddb/IDBCursor.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorWithValue.idl \
     $(WebCore)/Modules/indexeddb/IDBDatabase.idl \

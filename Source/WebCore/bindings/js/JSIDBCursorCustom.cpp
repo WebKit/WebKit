@@ -28,7 +28,10 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBCursor.h"
+#include "JSDOMBinding.h"
+#include "JSIDBCursorWithValue.h"
+#include "JSIDBIndex.h"
+#include "JSIDBObjectStore.h"
 
 using namespace JSC;
 
@@ -36,9 +39,24 @@ namespace WebCore {
 
 void JSIDBCursor::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    auto& cursor = static_cast<IDBCursor&>(wrapped());
+    auto& cursor = wrapped();
     if (auto* request = cursor.request())
         visitor.addOpaqueRoot(request);
+}
+
+JSValue JSIDBCursor::source(ExecState& state) const
+{
+    auto& cursor = wrapped();
+    if (auto* index = cursor.index())
+        return toJS(&state, globalObject(), index);
+    return toJS(&state, globalObject(), cursor.objectStore());
+}
+
+JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, IDBCursor* cursor)
+{
+    if (cursor->isKeyCursor())
+        return wrap<JSIDBCursor>(globalObject, cursor);
+    return wrap<JSIDBCursorWithValue>(globalObject, static_cast<IDBCursorWithValue*>(cursor));
 }
 
 } // namespace WebCore

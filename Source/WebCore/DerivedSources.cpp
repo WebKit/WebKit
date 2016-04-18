@@ -298,7 +298,6 @@
 #include "JSHTMLUListElement.cpp"
 #include "JSHTMLVideoElement.cpp"
 #if ENABLE(INDEXED_DATABASE)
-#include "JSIDBAny.cpp"
 #include "JSIDBCursor.cpp"
 #include "JSIDBCursorWithValue.cpp"
 #include "JSIDBDatabase.cpp"

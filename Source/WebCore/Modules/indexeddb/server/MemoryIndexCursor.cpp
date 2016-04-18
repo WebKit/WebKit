@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursorInfo.h"
+#include "IDBGetResult.h"
 #include "IndexValueStore.h"
 #include "Logging.h"
 #include "MemoryCursor.h"

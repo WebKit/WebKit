@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UniqueIDBDatabase_h
-#define UniqueIDBDatabase_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -44,6 +43,10 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
+
+namespace JSC {
+class VM;
+}
 
 namespace WebCore {
 
@@ -221,4 +224,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // UniqueIDBDatabase_h
