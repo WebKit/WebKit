@@ -1,5 +1,21 @@
 2016-04-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Disable AVX.
+
+        Rubber stampted by Benjamin Poulain.
+
+        AVX is silly. If you use it and some of your other code isn't careful with float register bits, you
+        will run 10x slower. We could fix the underlying issue, but it's better to stay away from this odd
+        instruction subset.
+
+        This fixes a massive regression on some real code.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::supportsAVX):
+        (JSC::MacroAssemblerX86Common::updateEax1EcxFlags):
+
+2016-04-18  Filip Pizlo  <fpizlo@apple.com>
+
         ToThis should have a fast path based on type info flags
         https://bugs.webkit.org/show_bug.cgi?id=156712
 

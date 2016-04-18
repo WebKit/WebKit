@@ -2620,9 +2620,8 @@ public:
 
     static bool supportsAVX()
     {
-        if (s_avxCheckState == CPUIDCheckState::NotChecked)
-            updateEax1EcxFlags();
-        return s_avxCheckState == CPUIDCheckState::Set;
+        // AVX still causes mysterious regressions and those regressions can be massive.
+        return false;
     }
 
     static void updateEax1EcxFlags()
