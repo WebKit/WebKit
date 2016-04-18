@@ -670,7 +670,7 @@ mathml/presentation/scripts-subsup.html [ Pass ImageOnlyFailure ]
 mathml/opentype/horizontal.html [ Failure ]
 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
 mathml/mathml-in-dashboard.html [ Failure ]
-mathml/presentation/scripts-height.html [ Failure ]
+mathml/presentation/scripts-height.html [ ImageOnlyFailure ]
 
 # <rdar://problem/19221067> ASSERT(m_stretchyData.top().glyph) fails in RenderMathMLOperator.cpp
 mathml/presentation/style-changed.html
