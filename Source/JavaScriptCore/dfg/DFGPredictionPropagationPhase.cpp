@@ -411,7 +411,8 @@ private:
                 changed |= mergePrediction(speculatedDoubleTypeForPrediction(child));
             break;
         }
-            
+
+        case DeleteById:
         case LogicalNot:
         case CompareLess:
         case CompareLessEq:

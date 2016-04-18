@@ -3973,6 +3973,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_getter_by_val);
         }
 
+        case op_del_by_id: {
+            Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
+            addToGraph(DeleteById, OpInfo(identifierNumber), base);
+            NEXT_OPCODE(op_del_by_id);
+        }
+
         case op_profile_type: {
             Node* valueToProfile = get(VirtualRegister(currentInstruction[1].u.operand));
             addToGraph(ProfileType, OpInfo(currentInstruction[2].u.location), valueToProfile);

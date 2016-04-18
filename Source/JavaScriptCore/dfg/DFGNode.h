@@ -875,6 +875,7 @@ struct Node {
         case PutGetterById:
         case PutSetterById:
         case PutGetterSetterById:
+        case DeleteById:
             return true;
         default:
             return false;

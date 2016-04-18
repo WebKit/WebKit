@@ -107,6 +107,7 @@ bool doesGC(Graph& graph, Node* node)
     case PutGetterSetterById:
     case PutGetterByVal:
     case PutSetterByVal:
+    case DeleteById:
     case CheckStructure:
     case GetExecutable:
     case GetButterfly:

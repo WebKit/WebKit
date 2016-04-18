@@ -489,7 +489,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJ operatio
     return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJIdc operation, int dst, GPRReg arg1, const Identifier* arg2)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJI operation, int dst, GPRReg arg1, UniquedStringImpl* arg2)
 {
     setupArgumentsWithExecState(arg1, TrustedImmPtr(arg2));
     return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
@@ -537,6 +537,14 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJ operatio
     setupArgumentsWithExecState(regOp);
     return appendCallWithExceptionCheck(operation);
 }
+
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJI operation, GPRReg arg1, UniquedStringImpl* arg2)
+{
+    setupArgumentsWithExecState(arg1, TrustedImmPtr(arg2));
+    return appendCallWithExceptionCheck(operation);
+}
+
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJJ operation, RegisterID regOp1, RegisterID regOp2)
 {
@@ -660,7 +668,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(JIT::WithProfileTag, J_JIT
     return appendCallWithExceptionCheckSetJSValueResultWithProfile(operation, dst);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJIdc operation, int dst, GPRReg arg1Tag, GPRReg arg1Payload, const Identifier* arg2)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJI operation, int dst, GPRReg arg1Tag, GPRReg arg1Payload, UniquedStringImpl* arg2)
 {
     setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, TrustedImmPtr(arg2));
     return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
@@ -699,6 +707,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(P_JITOperation_EJS operati
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJ operation, RegisterID argTag, RegisterID argPayload)
 {
     setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG argPayload, argTag);
+    return appendCallWithExceptionCheck(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJI operation, GPRReg arg1Tag, GPRReg arg1Payload, UniquedStringImpl* arg2)
+{
+    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, TrustedImmPtr(arg2));
     return appendCallWithExceptionCheck(operation);
 }
 

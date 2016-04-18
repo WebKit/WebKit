@@ -2090,6 +2090,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(SpecInt32);
         break;
     }
+
+    case DeleteById: {
+        // FIXME: This could decide if the delete will be successful based on the set of structures that
+        // we get from our base value. https://bugs.webkit.org/show_bug.cgi?id=156611
+        clobberWorld(node->origin.semantic, clobberLimit);
+        forNode(node).setType(SpecBoolean);
+        break;
+    }
         
     case CheckStructure: {
         AbstractValue& value = forNode(node->child1());

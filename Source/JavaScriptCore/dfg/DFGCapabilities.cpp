@@ -161,6 +161,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_put_getter_setter_by_id:
     case op_put_getter_by_val:
     case op_put_setter_by_val:
+    case op_del_by_id:
     case op_jmp:
     case op_jtrue:
     case op_jfalse:

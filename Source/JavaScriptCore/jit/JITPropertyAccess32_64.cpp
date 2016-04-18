@@ -127,7 +127,7 @@ void JIT::emit_op_del_by_id(Instruction* currentInstruction)
     int base = currentInstruction[2].u.operand;
     int property = currentInstruction[3].u.operand;
     emitLoad(base, regT1, regT0);
-    callOperation(operationDeleteById, dst, regT1, regT0, &m_codeBlock->identifier(property));
+    callOperation(operationDeleteByIdJSResult, dst, regT1, regT0, m_codeBlock->identifier(property).impl());
 }
 
 JIT::CodeRef JIT::stringGetByValStubGenerator(VM* vm)

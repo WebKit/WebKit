@@ -1514,6 +1514,7 @@ private:
         case NewRegexp:
         case ProfileWillCall:
         case ProfileDidCall:
+        case DeleteById:
         case IsArrayObject:
         case IsJSArray:
         case IsArrayConstructor:
