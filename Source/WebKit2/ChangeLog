@@ -1,5 +1,22 @@
 2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Pending API request URL no set when loading Data, Alternate HTML or plain text
+        https://bugs.webkit.org/show_bug.cgi?id=136916
+
+        Reviewed by Darin Adler.
+
+        Set pending API request URL for all load methods in
+        WebPageProxy. This ensures that right after calling those methods,
+        the active URL is the requested one and that
+        PageLoadState::isLoading() returns true.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+        (WebKit::WebPageProxy::loadPlainTextString):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+
+2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [UNIX] Initialize WebKit before the platform initializations
         https://bugs.webkit.org/show_bug.cgi?id=156622
 

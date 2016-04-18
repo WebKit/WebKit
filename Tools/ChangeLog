@@ -1,3 +1,23 @@
+2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Pending API request URL no set when loading Data, Alternate HTML or plain text
+        https://bugs.webkit.org/show_bug.cgi?id=136916
+
+        Reviewed by Darin Adler.
+
+        Add new test to check that active URL is the requested one right
+        after calling WKPage load methods.
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/PendingAPIRequestURL.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (WebViewTest::loadPlainText): Remove FIXME.
+        (WebViewTest::loadBytes): Ditto.
+        (WebViewTest::loadAlternateHTML): Ditto.
+
 2016-04-18  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
 
         Fix incorrect assumption that APPLE implies Mac.
