@@ -33,7 +33,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
         this._visibleContentTreeOutlines = new Set;
 
-        this.contentView.element.addEventListener("scroll", this._updateContentOverflowShadowVisibility.bind(this));
+        this.contentView.element.addEventListener("scroll", this._updateContentOverflowShadowVisibilitySoon.bind(this));
 
         this._contentTreeOutline = this.createContentTreeOutline(true);
         this._selectedContentTreeOutline = null;
@@ -53,7 +53,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             this.element.appendChild(this._topOverflowShadowElement);
         }
 
-        this._boundUpdateContentOverflowShadowVisibility = this._updateContentOverflowShadowVisibility.bind(this);
+        this._boundUpdateContentOverflowShadowVisibility = this._updateContentOverflowShadowVisibilitySoon.bind(this);
         window.addEventListener("resize", this._boundUpdateContentOverflowShadowVisibility);
 
         this._filtersSetting = new WebInspector.Setting(identifier + "-navigation-sidebar-filters", {});
@@ -646,7 +646,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
     _treeElementDisclosureDidChange(event)
     {
-        this._updateContentOverflowShadowVisibility();
+        this._updateContentOverflowShadowVisibilitySoon();
     }
 
     _treeSelectionDidChange(event)

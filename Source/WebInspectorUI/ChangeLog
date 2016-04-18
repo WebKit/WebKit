@@ -1,5 +1,20 @@
 2016-04-18  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: NavigationSidebarPanel does a lot of style recalc and layout on busy sites
+
+        https://bugs.webkit.org/show_bug.cgi?id=156704
+        rdar://problem/25778744
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel):
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementDisclosureDidChange):
+        Use _updateContentOverflowShadowVisibilitySoon in more places so the style recalc
+        and layout changes are coalesced into one action after all rapid fire calls.
+
+2016-04-18  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Database query result DataGrids have misaligned header columns
 
         https://bugs.webkit.org/show_bug.cgi?id=156701
