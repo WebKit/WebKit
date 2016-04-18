@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe></iframe>
+<script>
+description("This test should create a Headers with strange Array, but the constructor should recognize it as an Array.");
+
+{
+    let array = [ [ 'hello', 'world' ] ];
+    array.__proto__ = null;
+    var headers = new Headers(array);
+    shouldBeEqualToString("headers.get('hello')", "world");
+}
+
+{
+    // From the other realm.
+    let frame = frames[0];
+    let array = new frame.Array();
+    array.push([ 'hello', 'world' ]);
+    var headers = new Headers(array);
+    shouldBeEqualToString("headers.get('hello')", "world");
+}
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -40,7 +40,7 @@ function initializeFetchHeaders(headersInit)
         return this;
     }
 
-    if (headersInit instanceof @Array) {
+    if (@isArray(headersInit)) {
         for (let i = 0; i < headersInit.length; i++) {
             let header = headersInit[i];
             if (header.length !== 2)

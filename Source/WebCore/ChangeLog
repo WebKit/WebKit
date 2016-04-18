@@ -1,3 +1,19 @@
+2016-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Fetch] Use @isArray instead of `instanceof @Array`
+        https://bugs.webkit.org/show_bug.cgi?id=156682
+
+        Reviewed by Alex Christensen.
+
+        Currently, we query whether the given value is Array by using `instanceof @Array`.
+        But it is not enough; Array from the other realm should be accepted. And Array
+        not inheriting @Array should be also accepted.
+
+        Test: fetch/header-constructor-is-array.html
+
+        * Modules/fetch/FetchHeaders.js:
+        (initializeFetchHeaders):
+
 2016-04-17  Yoav Weiss  <yoav@yoav.ws>
 
         Initial Link preload support
