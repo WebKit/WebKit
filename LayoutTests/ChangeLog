@@ -1,3 +1,23 @@
+2016-04-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: sourceMappingURL not used when sourceURL is set
+        https://bugs.webkit.org/show_bug.cgi?id=156021
+        <rdar://problem/25438417>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/debugger/scriptParsed.html:
+        * inspector/debugger/search-scripts.html:
+        * inspector/debugger/setBreakpointByUrl-sourceURL.html:
+        * inspector/debugger/sourceURLs.html:
+        Update tests that need to handle sourceURL separately.
+        
+        * inspector/model/resources/relationship-named.js: Added.
+        * inspector/model/resources/relationship-normal.js: Added.
+        * inspector/model/script-resource-relationship-expected.txt: Added.
+        * inspector/model/script-resource-relationship.html: Added.
+        Tests for Script and Resource relationships.
+
 2016-04-18  Brent Fulgham  <bfulgham@apple.com>
 
         CSP: Remove stubs for dynamically-added favicons (via link rel="icon")
