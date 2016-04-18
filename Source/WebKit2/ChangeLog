@@ -1,3 +1,56 @@
+2016-04-18  Brian Burg  <bburg@apple.com>
+
+        Web Automation: provide detailed error messages when an automation command fails
+        https://bugs.webkit.org/show_bug.cgi?id=156635
+        <rdar://problem/25754051>
+
+        Reviewed by Darin Adler and Timothy Hatcher.
+
+        Fill in lots of missing error message details now that the remote end knows
+        how to parse error strings with predefined error names and details.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        Rearrange the error message macros. Make it possible to pass a ErrorMessage
+        variable or just the enum value name and get out an encoded error message
+        that optionally includes a free-form details string. The predefined error
+        name and the details string are joined together with a semicolon.
+
+        (WebKit::WebAutomationSession::getBrowsingContext):
+        (WebKit::WebAutomationSession::createBrowsingContext):
+        (WebKit::WebAutomationSession::closeBrowsingContext):
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        (WebKit::WebAutomationSession::resizeWindowOfBrowsingContext):
+        (WebKit::WebAutomationSession::moveWindowOfBrowsingContext):
+        (WebKit::WebAutomationSession::navigateBrowsingContext):
+        (WebKit::WebAutomationSession::goBackInBrowsingContext):
+        (WebKit::WebAutomationSession::goForwardInBrowsingContext):
+        (WebKit::WebAutomationSession::reloadBrowsingContext):
+        (WebKit::WebAutomationSession::evaluateJavaScriptFunction):
+        (WebKit::WebAutomationSession::didEvaluateJavaScriptFunction):
+        (WebKit::WebAutomationSession::resolveChildFrameHandle):
+        (WebKit::WebAutomationSession::didResolveChildFrame):
+        (WebKit::WebAutomationSession::resolveParentFrameHandle):
+        (WebKit::WebAutomationSession::didResolveParentFrame):
+        (WebKit::WebAutomationSession::computeElementLayout):
+        (WebKit::WebAutomationSession::didComputeElementLayout):
+        (WebKit::WebAutomationSession::isShowingJavaScriptDialog):
+        (WebKit::WebAutomationSession::dismissCurrentJavaScriptDialog):
+        (WebKit::WebAutomationSession::acceptCurrentJavaScriptDialog):
+        (WebKit::WebAutomationSession::messageOfCurrentJavaScriptDialog):
+        (WebKit::WebAutomationSession::setUserInputForCurrentJavaScriptPrompt):
+        (WebKit::WebAutomationSession::getAllCookies):
+        (WebKit::WebAutomationSession::didGetCookiesForFrame):
+        (WebKit::WebAutomationSession::deleteSingleCookie):
+        (WebKit::WebAutomationSession::didDeleteCookie):
+        (WebKit::WebAutomationSession::addSingleCookie):
+        (WebKit::WebAutomationSession::deleteAllCookies):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        (WebKit::WebAutomationSession::takeScreenshot):
+        (WebKit::WebAutomationSession::didTakeScreenshot):
+        Audit almost all early exits and provide a relevant error details message
+        if the error itself is ambiguous. Make sure to format asynchronous errors.
+
 2016-04-18  Brent Fulgham  <bfulgham@apple.com>
 
         CSP: Remove stubs for dynamically-added favicons (via link rel="icon")
