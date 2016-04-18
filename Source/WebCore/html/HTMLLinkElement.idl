@@ -35,6 +35,8 @@
 #endif
     [Reflect] attribute DOMString target;
     [Reflect] attribute DOMString type;
+    [Reflect] attribute DOMString as;
+    attribute DOMString? crossOrigin;
 
     // DOM Level 2 Style
     readonly attribute StyleSheet sheet;

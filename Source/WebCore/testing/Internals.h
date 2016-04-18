@@ -471,6 +471,7 @@ public:
     String composedTreeAsText(Node&);
     
     void setViewportForceAlwaysUserScalable(bool);
+    void setLinkPreloadSupport(bool);
 
 private:
     explicit Internals(Document&);

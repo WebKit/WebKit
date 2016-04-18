@@ -63,7 +63,7 @@ using namespace WTF;
 
 namespace WebCore {
 
-static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type type)
+ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
 {
     switch (type) {
     case CachedResource::MainResource:
@@ -85,6 +85,8 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
         return ResourceLoadPriority::High;
 #endif
     case CachedResource::SVGDocumentResource:
+        return ResourceLoadPriority::Low;
+    case CachedResource::LinkPreload:
         return ResourceLoadPriority::Low;
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:

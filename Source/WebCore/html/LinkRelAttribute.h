@@ -42,6 +42,7 @@ struct LinkRelAttribute {
     IconType iconType { InvalidIcon };
     bool isAlternate { false };
     bool isDNSPrefetch { false };
+    bool isLinkPreload { false };
 #if ENABLE(LINK_PREFETCH)
     bool isLinkPrefetch { false };
     bool isLinkSubresource { false };

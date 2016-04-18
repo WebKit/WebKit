@@ -67,6 +67,9 @@ public:
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
     DOMTokenList& sizes();
 
+    void setCrossOrigin(const AtomicString&);
+    String crossOrigin() const;
+
     void dispatchPendingEvent(LinkEventSender*);
     static void dispatchPendingLoadEvents();
 

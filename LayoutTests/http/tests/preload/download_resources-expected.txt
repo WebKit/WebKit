@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 15: <link rel=preload> must have a valid `as` value
+PASS internals.isPreloaded('../resources/dummy.js'); is true
+PASS internals.isPreloaded('../resources/dummy.css'); is true
+PASS internals.isPreloaded('../resources/square.png'); is true
+PASS internals.isPreloaded('../resources/Ahem.ttf'); is true
+PASS internals.isPreloaded('../resources/test.mp4'); is true
+PASS internals.isPreloaded('../security/resources/captions.vtt'); is true
+PASS internals.isPreloaded('../resources/dummy.xml?badvalue'); is false
+PASS internals.isPreloaded('../resources/dummy.xml'); is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

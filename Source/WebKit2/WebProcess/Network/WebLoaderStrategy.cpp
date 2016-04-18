@@ -110,6 +110,7 @@ static std::chrono::milliseconds maximumBufferingTime(CachedResource* resource)
     case CachedResource::MainResource:
     case CachedResource::RawResource:
     case CachedResource::SVGDocumentResource:
+    case CachedResource::LinkPreload:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
     case CachedResource::LinkSubresource:

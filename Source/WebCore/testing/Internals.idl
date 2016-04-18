@@ -445,4 +445,5 @@ enum AutoFillButtonType {
     DOMString composedTreeAsText(Node parent);
 
     void setViewportForceAlwaysUserScalable(boolean scalable);
+    void setLinkPreloadSupport(boolean scalable);
 };

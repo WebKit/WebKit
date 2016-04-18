@@ -108,6 +108,8 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
     case CachedResource::XSLStyleSheet:
         return new CachedXSLStyleSheet(request, sessionID);
 #endif
+    case CachedResource::LinkPreload:
+        return new CachedResource(request, CachedResource::LinkPreload, sessionID);
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
         return new CachedResource(request, CachedResource::LinkPrefetch, sessionID);
@@ -313,6 +315,7 @@ static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResour
         return MixedContentChecker::ContentType::Active;
 #endif
 
+    case CachedResource::LinkPreload:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
     case CachedResource::LinkSubresource:
@@ -353,7 +356,8 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 #if ENABLE(SVG_FONTS)
     case CachedResource::SVGFontResource:
 #endif
-    case CachedResource::FontResource: {
+    case CachedResource::FontResource:
+    case CachedResource::LinkPreload: {
         // These resources can corrupt only the frame's pixels.
         if (Frame* f = frame()) {
             Frame& topFrame = f->tree().top();
@@ -399,6 +403,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
     case CachedResource::MediaResource:
     case CachedResource::FontResource:
     case CachedResource::RawResource:
+    case CachedResource::LinkPreload:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
     case CachedResource::LinkSubresource:
@@ -454,6 +459,8 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
     }
     case CachedResource::MainResource:
     case CachedResource::RawResource:
+    // FIXME: Preload should be subject to connect-src.
+    case CachedResource::LinkPreload:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
     case CachedResource::LinkSubresource:

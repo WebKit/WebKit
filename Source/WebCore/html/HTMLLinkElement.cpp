@@ -194,6 +194,16 @@ bool HTMLLinkElement::shouldLoadLink()
     return true;
 }
 
+void HTMLLinkElement::setCrossOrigin(const AtomicString& value)
+{
+    setAttributeWithoutSynchronization(crossoriginAttr, value);
+}
+
+String HTMLLinkElement::crossOrigin() const
+{
+    return parseCORSSettingsAttribute(fastGetAttribute(crossoriginAttr));
+}
+
 void HTMLLinkElement::process()
 {
     if (!inDocument() || m_isInShadowTree) {
@@ -203,7 +213,7 @@ void HTMLLinkElement::process()
 
     URL url = getNonEmptyURLAttribute(hrefAttr);
 
-    if (!m_linkLoader.loadLink(m_relAttribute, url, document()))
+    if (!m_linkLoader.loadLink(m_relAttribute, url, fastGetAttribute(asAttr), fastGetAttribute(crossoriginAttr), document()))
         return;
 
     bool treatAsStyleSheet = m_relAttribute.isStyleSheet

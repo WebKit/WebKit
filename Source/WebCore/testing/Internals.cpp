@@ -3328,4 +3328,9 @@ void Internals::setViewportForceAlwaysUserScalable(bool scalable)
 #endif
 }
 
+void Internals::setLinkPreloadSupport(bool enable)
+{
+    RuntimeEnabledFeatures::sharedFeatures().setLinkPreloadEnabled(enable);
+}
+
 }

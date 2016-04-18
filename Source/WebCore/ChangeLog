@@ -1,3 +1,56 @@
+2016-04-17  Yoav Weiss  <yoav@yoav.ws>
+
+        Initial Link preload support
+        https://bugs.webkit.org/show_bug.cgi?id=156334
+
+        Added basic `<link rel=preload>` functionality that enables preloading
+        of resources according to their type.
+
+        Reviewed by Darin Adler.
+
+        Tests: http/tests/preload/download_resources.html
+               http/tests/preload/dynamic_adding_preload.html
+               http/tests/preload/dynamic_remove_preload_href.html
+               http/tests/preload/dynamic_removing_preload.html
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp: Added a runtime flag for the feature.
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/generic/RuntimeEnabledFeatures.h: Added a runtime flag for the feature.
+        (WebCore::RuntimeEnabledFeatures::setLinkPreloadEnabled):
+        (WebCore::RuntimeEnabledFeatures::linkPreloadEnabled):
+        * html/HTMLAttributeNames.in: Added an `as` attribute.
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process): Added `as` and `crossorigin` attribute values to the loadLink() call.
+        (WebCore::HTMLLinkElement::setCrossOrigin): Setter for crossOrigin.
+        (WebCore::HTMLLinkElement::crossOrigin): Getter for crossOrigin.
+        * html/HTMLLinkElement.idl: Added `as` and `crossorigin` to HTMLLinkElement.
+        * html/HTMLLinkElement.h: Added getter and setter for crossorigin.
+        * html/LinkRelAttribute.cpp:
+        (WebCore::LinkRelAttribute::LinkRelAttribute): Added "preload" as a potential value.
+        * html/LinkRelAttribute.h: Added isLinkPreload.
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::resourceTypeFromAsAttribute): Translates an `as` value into a resource type.
+        (WebCore::preloadIfNeeded): Triggers a resource preload when link element is a preload one.
+        (WebCore::LinkLoader::loadLink): Added a call to preloadIfNeeded.
+        * loader/LinkLoader.h: Added signatures.
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType): Added LinkPreload as a possible CachedResource::type.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded): Added LinkPreload as a possible CachedResource::type.
+        * loader/cache/CachedResource.cpp: Turned defaultPriorityForResourceType into a static member, as it's now also called from LinkLoader.
+        (WebCore::CachedResource::defaultPriorityForResourceType): Added LinkPreload as a possible CachedResource::type, giving it low priority.
+        (WebCore::defaultPriorityForResourceType): Deleted.
+        * loader/cache/CachedResource.h: Added LinkPreload as a possible CachedResource::type. Added defaultPriorityForResourceType as static.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::contentTypeFromResourceType): Added LinkPreload as a possible CachedResource::type.
+        (WebCore::createResource): Added creation of a LinkPreload resource if needed.
+        (WebCore::CachedResourceLoader::checkInsecureContent): Added LinkPreload as a possible CachedResource::type.
+        (WebCore::CachedResourceLoader::canRequest): Added LinkPreload as a possible CachedResource::type.
+        * testing/Internals.cpp: Added function to turn on the link preload feature.
+        (WebCore::setLinkPreloadSupport):
+        * testing/Internals.idl: Added function to turn on the link preload feature.
+        * testing/Internals.h: Added function signature to turn on the link preload feature.
+
 2016-04-17  Conrad Shultz  <conrad_shultz@apple.com>
 
         Try (again) to fix debug builds after r199643.

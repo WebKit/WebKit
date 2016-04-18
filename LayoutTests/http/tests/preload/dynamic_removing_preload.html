@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<script>
+    var link = document.createElement("link");
+    link.as = "script";
+    link.rel = "preload";
+    link.href = "../resources/dummy.js";
+    document.body.appendChild(link);
+    document.body.removeChild(link);
+    window.addEventListener("load", function() {
+        shouldBeFalse("internals.isPreloaded('../resources/dummy.js');");
+    });
+</script>
+<script src="../resources/slow-script.pl?delay=200"></script>
+</body>

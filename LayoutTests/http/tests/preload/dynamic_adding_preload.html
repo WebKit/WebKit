@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.setLinkPreloadSupport(true);
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<script>
+    var link = document.createElement("link");
+    link.as = "script";
+    link.rel = "preload";
+    link.href = "../resources/dummy.js";
+    document.body.appendChild(link);
+</script>
+<script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=100"></script>
+<script>
+    shouldBeTrue("internals.isPreloaded('../resources/dummy.js');");
+
+    if (window.internals)
+        window.internals.setLinkPreloadSupport(false);
+</script>
+</body>

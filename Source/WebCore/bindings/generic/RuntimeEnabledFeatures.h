@@ -123,6 +123,9 @@ public:
     bool deviceOrientationEventEnabled() const { return m_isDeviceOrientationEnabled; }
     bool ondeviceorientationEnabled() const { return m_isDeviceOrientationEnabled; }
 
+    void setLinkPreloadEnabled(bool isEnabled) { m_isLinkPreloadEnabled = isEnabled; }
+    bool linkPreloadEnabled() const { return m_isLinkPreloadEnabled; }
+
 #if ENABLE(JAVASCRIPT_I18N_API)
     bool javaScriptI18NAPIEnabled() const;
     void setJavaScriptI18NAPIEnabled(bool isEnabled) { m_isJavaScriptI18NAPIEnabled = isEnabled; }
@@ -248,6 +251,7 @@ private:
     bool m_isTouchEnabled;
     bool m_isDeviceMotionEnabled;
     bool m_isDeviceOrientationEnabled;
+    bool m_isLinkPreloadEnabled;
     bool m_isCSSShapesEnabled;
     bool m_isCSSRegionsEnabled;
     bool m_isCSSCompositingEnabled;

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 16: <link rel=preload> has an invalid `href` value
+PASS internals.isPreloaded('../resources/dummy.js'); is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

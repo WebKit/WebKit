@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.setLinkPreloadSupport(true);
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<link rel=preload href="../resources/dummy.js" as=script>
+<link rel=preload href="../resources/dummy.css" as=style>
+<link rel=preload href="../resources/square.png" as=image>
+<link rel=preload href="../resources/Ahem.ttf" as=font crossorigin>
+<link rel=preload href="../resources/test.mp4" as=media>
+<link rel=preload href="../security/resources/captions.vtt" as=track>
+<link rel=preload href="../resources/dummy.xml?badvalue" as=foobarxmlthing>
+<link rel=preload href="../resources/dummy.xml">
+<script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=100"></script>
+</head>
+<body>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    shouldBeTrue("internals.isPreloaded('../resources/dummy.js');");
+    shouldBeTrue("internals.isPreloaded('../resources/dummy.css');");
+    shouldBeTrue("internals.isPreloaded('../resources/square.png');");
+    shouldBeTrue("internals.isPreloaded('../resources/Ahem.ttf');");
+    shouldBeTrue("internals.isPreloaded('../resources/test.mp4');");
+    shouldBeTrue("internals.isPreloaded('../security/resources/captions.vtt');");
+    shouldBeFalse("internals.isPreloaded('../resources/dummy.xml?badvalue');");
+    shouldBeTrue("internals.isPreloaded('../resources/dummy.xml');");
+</script>
+<script>
+    if (window.internals)
+        window.internals.setLinkPreloadSupport(false);
+</script>

@@ -1,3 +1,25 @@
+2016-04-17  Yoav Weiss  <yoav@yoav.ws>
+
+        Initial Link preload support
+        https://bugs.webkit.org/show_bug.cgi?id=156334
+
+        Added tests that make sure that `<link rel=preload>` performs its basic
+        tasks and preloads resources.
+
+        Reviewed by Darin Adler.
+
+        * http/tests/preload/download_resources-expected.txt: Added.
+        * http/tests/preload/download_resources.html: Added.
+        * http/tests/preload/dynamic_adding_preload-expected.txt: Added.
+        * http/tests/preload/dynamic_adding_preload.html: Added.
+        * http/tests/preload/dynamic_remove_preload_href-expected.txt: Added.
+        * http/tests/preload/dynamic_remove_preload_href.html: Added.
+        * http/tests/preload/dynamic_removing_preload-expected.txt: Added.
+        * http/tests/preload/dynamic_removing_preload.html: Added.
+        * imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Adjusted expected results to progressions.
+        * imported/w3c/web-platform-tests/html/dom/reflection-metadata-expected.txt: Adjusted expected results to progressions.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Adjusted expected results to progressions.
+
 2016-04-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams] Consume HTTP data as a ReadableStream

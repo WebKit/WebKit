@@ -56,6 +56,7 @@ ResourceType toResourceType(CachedResource::Type type)
         return ResourceType::Font;
 
     case CachedResource::MediaResource:
+    case CachedResource::LinkPreload:
     case CachedResource::RawResource:
         return ResourceType::Raw;
 

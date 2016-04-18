@@ -3051,132 +3051,132 @@ PASS link.href: IDL set to object "test-toString" followed by IDL get
 PASS link.href: IDL set to object "test-valueOf" should not throw 
 PASS link.href: IDL set to object "test-valueOf" followed by getAttribute() 
 PASS link.href: IDL set to object "test-valueOf" followed by IDL get 
-FAIL link.crossOrigin: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL link.crossOrigin: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
+FAIL link.crossOrigin: typeof IDL attribute assert_equals: expected "string" but got "object"
+FAIL link.crossOrigin: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (object) null
 PASS link.crossOrigin: setAttribute() to "" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS link.crossOrigin: setAttribute() to undefined followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to undefined followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to undefined followed by IDL get 
 PASS link.crossOrigin: setAttribute() to 7 followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to 7 followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to 7 followed by IDL get 
 PASS link.crossOrigin: setAttribute() to 1.5 followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to 1.5 followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to 1.5 followed by IDL get 
 PASS link.crossOrigin: setAttribute() to true followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to true followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to true followed by IDL get 
 PASS link.crossOrigin: setAttribute() to false followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to false followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to false followed by IDL get 
 PASS link.crossOrigin: setAttribute() to object "[object Object]" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to object "[object Object]" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to object "[object Object]" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to NaN followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to NaN followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to NaN followed by IDL get 
 PASS link.crossOrigin: setAttribute() to Infinity followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to Infinity followed by IDL get 
 PASS link.crossOrigin: setAttribute() to -Infinity followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to -Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to -Infinity followed by IDL get 
 PASS link.crossOrigin: setAttribute() to "\0" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "\0" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "\0" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to null followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to null followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to null followed by IDL get 
 PASS link.crossOrigin: setAttribute() to object "test-toString" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to object "test-toString" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to object "test-toString" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to object "test-valueOf" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to object "test-valueOf" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to object "test-valueOf" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to "anonymous" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "anonymous" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "anonymous" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to "xanonymous" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "xanonymous" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "xanonymous" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to "anonymous\0" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "anonymous\0" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "anonymous\0" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to "nonymous" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "nonymous" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "nonymous" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to "ANONYMOUS" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "ANONYMOUS" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "ANONYMOUS" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to "use-credentials" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "use-credentials" followed by IDL get assert_equals: expected (string) "use-credentials" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "use-credentials" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to "xuse-credentials" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "xuse-credentials" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "xuse-credentials" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to "use-credentials\0" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "use-credentials\0" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "use-credentials\0" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to "se-credentials" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "se-credentials" followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "se-credentials" followed by IDL get 
 PASS link.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by getAttribute() 
-FAIL link.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by IDL get assert_equals: expected (string) "use-credentials" but got (undefined) undefined
+PASS link.crossOrigin: setAttribute() to "USE-CREDENTIALS" followed by IDL get 
 PASS link.crossOrigin: IDL set to "" should not throw 
-FAIL link.crossOrigin: IDL set to "" followed by getAttribute() assert_equals: expected "" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to "" followed by IDL get assert_equals: expected "anonymous" but got ""
+PASS link.crossOrigin: IDL set to "" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to "" followed by IDL get 
 PASS link.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " should not throw 
-FAIL link.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() assert_equals: expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get assert_equals: expected "anonymous" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS link.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by getAttribute() 
+PASS link.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " followed by IDL get 
 PASS link.crossOrigin: IDL set to undefined should not throw 
-FAIL link.crossOrigin: IDL set to undefined followed by getAttribute() assert_equals: expected "undefined" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to undefined followed by IDL get assert_equals: expected (string) "anonymous" but got (undefined) undefined
+FAIL link.crossOrigin: IDL set to undefined followed by getAttribute() assert_equals: expected (string) "undefined" but got (object) null
+FAIL link.crossOrigin: IDL set to undefined followed by IDL get assert_equals: expected (string) "anonymous" but got (object) null
 PASS link.crossOrigin: IDL set to 7 should not throw 
-FAIL link.crossOrigin: IDL set to 7 followed by getAttribute() assert_equals: expected "7" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to 7 followed by IDL get assert_equals: expected (string) "anonymous" but got (number) 7
+PASS link.crossOrigin: IDL set to 7 followed by getAttribute() 
+PASS link.crossOrigin: IDL set to 7 followed by IDL get 
 PASS link.crossOrigin: IDL set to 1.5 should not throw 
-FAIL link.crossOrigin: IDL set to 1.5 followed by getAttribute() assert_equals: expected "1.5" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to 1.5 followed by IDL get assert_equals: expected (string) "anonymous" but got (number) 1.5
+PASS link.crossOrigin: IDL set to 1.5 followed by getAttribute() 
+PASS link.crossOrigin: IDL set to 1.5 followed by IDL get 
 PASS link.crossOrigin: IDL set to true should not throw 
-FAIL link.crossOrigin: IDL set to true followed by getAttribute() assert_equals: expected "true" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to true followed by IDL get assert_equals: expected (string) "anonymous" but got (boolean) true
+PASS link.crossOrigin: IDL set to true followed by getAttribute() 
+PASS link.crossOrigin: IDL set to true followed by IDL get 
 PASS link.crossOrigin: IDL set to false should not throw 
-FAIL link.crossOrigin: IDL set to false followed by getAttribute() assert_equals: expected "false" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to false followed by IDL get assert_equals: expected (string) "anonymous" but got (boolean) false
+PASS link.crossOrigin: IDL set to false followed by getAttribute() 
+PASS link.crossOrigin: IDL set to false followed by IDL get 
 PASS link.crossOrigin: IDL set to object "[object Object]" should not throw 
-FAIL link.crossOrigin: IDL set to object "[object Object]" followed by getAttribute() assert_equals: expected "[object Object]" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to object "[object Object]" followed by IDL get assert_equals: expected (string) "anonymous" but got (object) object "[object Object]"
+PASS link.crossOrigin: IDL set to object "[object Object]" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to object "[object Object]" followed by IDL get 
 PASS link.crossOrigin: IDL set to NaN should not throw 
-FAIL link.crossOrigin: IDL set to NaN followed by getAttribute() assert_equals: expected "NaN" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to NaN followed by IDL get assert_equals: expected (string) "anonymous" but got (number) NaN
+PASS link.crossOrigin: IDL set to NaN followed by getAttribute() 
+PASS link.crossOrigin: IDL set to NaN followed by IDL get 
 PASS link.crossOrigin: IDL set to Infinity should not throw 
-FAIL link.crossOrigin: IDL set to Infinity followed by getAttribute() assert_equals: expected "Infinity" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (number) Infinity
+PASS link.crossOrigin: IDL set to Infinity followed by getAttribute() 
+PASS link.crossOrigin: IDL set to Infinity followed by IDL get 
 PASS link.crossOrigin: IDL set to -Infinity should not throw 
-FAIL link.crossOrigin: IDL set to -Infinity followed by getAttribute() assert_equals: expected "-Infinity" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to -Infinity followed by IDL get assert_equals: expected (string) "anonymous" but got (number) -Infinity
+PASS link.crossOrigin: IDL set to -Infinity followed by getAttribute() 
+PASS link.crossOrigin: IDL set to -Infinity followed by IDL get 
 PASS link.crossOrigin: IDL set to "\0" should not throw 
-FAIL link.crossOrigin: IDL set to "\0" followed by getAttribute() assert_equals: expected "\0" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to "\0" followed by IDL get assert_equals: expected "anonymous" but got "\0"
+PASS link.crossOrigin: IDL set to "\0" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to "\0" followed by IDL get 
 PASS link.crossOrigin: IDL set to null should not throw 
 FAIL link.crossOrigin: IDL set to null followed by IDL get assert_equals: expected (string) "anonymous" but got (object) null
 PASS link.crossOrigin: IDL set to object "test-toString" should not throw 
-FAIL link.crossOrigin: IDL set to object "test-toString" followed by getAttribute() assert_equals: expected "test-toString" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to object "test-toString" followed by IDL get assert_equals: expected (string) "anonymous" but got (object) object "test-toString"
+PASS link.crossOrigin: IDL set to object "test-toString" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to object "test-toString" followed by IDL get 
 PASS link.crossOrigin: IDL set to object "test-valueOf" should not throw 
-FAIL link.crossOrigin: IDL set to object "test-valueOf" followed by getAttribute() assert_equals: expected "test-valueOf" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to object "test-valueOf" followed by IDL get assert_equals: expected (string) "anonymous" but got (object) object "test-valueOf"
+PASS link.crossOrigin: IDL set to object "test-valueOf" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to object "test-valueOf" followed by IDL get 
 PASS link.crossOrigin: IDL set to "anonymous" should not throw 
-FAIL link.crossOrigin: IDL set to "anonymous" followed by getAttribute() assert_equals: expected "anonymous" but got "USE-CREDENTIALS"
+PASS link.crossOrigin: IDL set to "anonymous" followed by getAttribute() 
 PASS link.crossOrigin: IDL set to "anonymous" followed by IDL get 
 PASS link.crossOrigin: IDL set to "xanonymous" should not throw 
-FAIL link.crossOrigin: IDL set to "xanonymous" followed by getAttribute() assert_equals: expected "xanonymous" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to "xanonymous" followed by IDL get assert_equals: expected "anonymous" but got "xanonymous"
+PASS link.crossOrigin: IDL set to "xanonymous" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to "xanonymous" followed by IDL get 
 PASS link.crossOrigin: IDL set to "anonymous\0" should not throw 
-FAIL link.crossOrigin: IDL set to "anonymous\0" followed by getAttribute() assert_equals: expected "anonymous\0" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to "anonymous\0" followed by IDL get assert_equals: expected "anonymous" but got "anonymous\0"
+PASS link.crossOrigin: IDL set to "anonymous\0" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to "anonymous\0" followed by IDL get 
 PASS link.crossOrigin: IDL set to "nonymous" should not throw 
-FAIL link.crossOrigin: IDL set to "nonymous" followed by getAttribute() assert_equals: expected "nonymous" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to "nonymous" followed by IDL get assert_equals: expected "anonymous" but got "nonymous"
+PASS link.crossOrigin: IDL set to "nonymous" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to "nonymous" followed by IDL get 
 PASS link.crossOrigin: IDL set to "ANONYMOUS" should not throw 
-FAIL link.crossOrigin: IDL set to "ANONYMOUS" followed by getAttribute() assert_equals: expected "ANONYMOUS" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to "ANONYMOUS" followed by IDL get assert_equals: expected "anonymous" but got "ANONYMOUS"
+PASS link.crossOrigin: IDL set to "ANONYMOUS" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to "ANONYMOUS" followed by IDL get 
 PASS link.crossOrigin: IDL set to "use-credentials" should not throw 
-FAIL link.crossOrigin: IDL set to "use-credentials" followed by getAttribute() assert_equals: expected "use-credentials" but got "USE-CREDENTIALS"
+PASS link.crossOrigin: IDL set to "use-credentials" followed by getAttribute() 
 PASS link.crossOrigin: IDL set to "use-credentials" followed by IDL get 
 PASS link.crossOrigin: IDL set to "xuse-credentials" should not throw 
-FAIL link.crossOrigin: IDL set to "xuse-credentials" followed by getAttribute() assert_equals: expected "xuse-credentials" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to "xuse-credentials" followed by IDL get assert_equals: expected "anonymous" but got "xuse-credentials"
+PASS link.crossOrigin: IDL set to "xuse-credentials" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to "xuse-credentials" followed by IDL get 
 PASS link.crossOrigin: IDL set to "use-credentials\0" should not throw 
-FAIL link.crossOrigin: IDL set to "use-credentials\0" followed by getAttribute() assert_equals: expected "use-credentials\0" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to "use-credentials\0" followed by IDL get assert_equals: expected "anonymous" but got "use-credentials\0"
+PASS link.crossOrigin: IDL set to "use-credentials\0" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to "use-credentials\0" followed by IDL get 
 PASS link.crossOrigin: IDL set to "se-credentials" should not throw 
-FAIL link.crossOrigin: IDL set to "se-credentials" followed by getAttribute() assert_equals: expected "se-credentials" but got "USE-CREDENTIALS"
-FAIL link.crossOrigin: IDL set to "se-credentials" followed by IDL get assert_equals: expected "anonymous" but got "se-credentials"
+PASS link.crossOrigin: IDL set to "se-credentials" followed by getAttribute() 
+PASS link.crossOrigin: IDL set to "se-credentials" followed by IDL get 
 PASS link.crossOrigin: IDL set to "USE-CREDENTIALS" should not throw 
 PASS link.crossOrigin: IDL set to "USE-CREDENTIALS" followed by getAttribute() 
-FAIL link.crossOrigin: IDL set to "USE-CREDENTIALS" followed by IDL get assert_equals: expected "use-credentials" but got "USE-CREDENTIALS"
+PASS link.crossOrigin: IDL set to "USE-CREDENTIALS" followed by IDL get 
 PASS link.rel: typeof IDL attribute 
 PASS link.rel: IDL get with DOM attribute unset 
 PASS link.rel: setAttribute() to "" followed by getAttribute() 

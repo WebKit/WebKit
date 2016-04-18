@@ -32,6 +32,7 @@
 #include "config.h"
 #include "LinkRelAttribute.h"
 
+#include "RuntimeEnabledFeatures.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -54,6 +55,8 @@ LinkRelAttribute::LinkRelAttribute(const String& rel)
 #endif
     else if (equalLettersIgnoringASCIICase(rel, "dns-prefetch"))
         isDNSPrefetch = true;
+    else if (RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled() && equalLettersIgnoringASCIICase(rel, "preload"))
+        isLinkPreload = true;
     else if (equalLettersIgnoringASCIICase(rel, "alternate stylesheet") || equalLettersIgnoringASCIICase(rel, "stylesheet alternate")) {
         isStyleSheet = true;
         isAlternate = true;
