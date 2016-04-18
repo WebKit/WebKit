@@ -1,3 +1,12 @@
+2016-04-18  Jon Lee  <jonlee@apple.com>
+
+        Update Animometer plan.
+        https://bugs.webkit.org/show_bug.cgi?id=156652
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/animometer.plan: Update to r199616.
+
 2016-04-18  Dana Burkart  <dburkart@apple.com>
 
         svn-apply: add option for ignoring changes to ChangeLog files
