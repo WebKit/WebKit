@@ -1,3 +1,17 @@
+2016-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Fix the debounce function
+
+        https://bugs.webkit.org/show_bug.cgi?id=156696
+        rdar://problem/25778133
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Utilities.js:
+        (Function.prototype.debounce): Store the timeout on the original function instead
+        of the bound function. Also simplify the implementation with arrow functions
+        and eliminate the bind altogether.
+
 2016-04-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Adopt Number.prototype.toLocaleString For All Sizes and Times

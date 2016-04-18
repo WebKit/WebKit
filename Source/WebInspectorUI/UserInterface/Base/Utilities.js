@@ -1194,17 +1194,23 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
 });
 
 (function() {
+    // The `debounce` function lets you call a function with a delay and
+    // if the function keeps getting called, the delay gets reset.
+    // Note: The last call's arguments end being the ones that get used.
+    // Use: foo.bar.debounce(200, foo)("Argument 1", "Argument 2")
+
     const debounceSymbol = Symbol("function-debounce-timeout");
+
     Object.defineProperty(Function.prototype, "debounce",
     {
         value: function(delay, thisObject)
         {
-            let callback = this.bind(thisObject);
-            return function() {
-                clearTimeout(callback[debounceSymbol]);
+            return () => {
+                clearTimeout(this[debounceSymbol]);
+
                 let args = arguments;
-                callback[debounceSymbol] = setTimeout(() => {
-                    callback.apply(null, args);
+                this[debounceSymbol] = setTimeout(() => {
+                    this.apply(thisObject, args);
                 }, delay);
             };
         }
