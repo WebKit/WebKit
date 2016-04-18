@@ -1547,9 +1547,7 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
         if (endIsAuto)
             offset = LayoutUnit();
         else {
-            LayoutUnit alignmentOffset =  m_columnPositions[0] - borderAndPaddingStart();
-            LayoutUnit offsetFromLastLine = m_columnPositions[m_columnPositions.size() - 1] - m_columnPositions[endLine];
-            offset = paddingLeft() +  alignmentOffset + offsetFromLastLine;
+            offset = translateRTLCoordinate(m_columnPositions[endLine]) - borderLeft();
 
             if (endLine > firstExplicitLine && endLine < lastExplicitLine)
                 offset += guttersSize(direction, 2);
@@ -2049,16 +2047,22 @@ ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(Gri
     return {0, 0};
 }
 
+LayoutUnit RenderGrid::translateRTLCoordinate(LayoutUnit coordinate) const
+{
+    ASSERT(!style().isLeftToRightDirection());
+
+    LayoutUnit alignmentOffset = m_columnPositions[0] - borderAndPaddingStart();
+    LayoutUnit rightGridEdgePosition = m_columnPositions[m_columnPositions.size() - 1];
+    return borderAndPaddingLogicalLeft() + rightGridEdgePosition + alignmentOffset - coordinate;
+}
+
 LayoutPoint RenderGrid::findChildLogicalPosition(const RenderBox& child) const
 {
     LayoutUnit rowAxisOffset = rowAxisOffsetForChild(child);
     // We stored m_columnPositions's data ignoring the direction, hence we might need now
     // to translate positions from RTL to LTR, as it's more convenient for painting.
-    if (!style().isLeftToRightDirection()) {
-        LayoutUnit alignmentOffset =  m_columnPositions[0] - borderAndPaddingStart();
-        LayoutUnit rightGridEdgePosition = m_columnPositions[m_columnPositions.size() - 1] + alignmentOffset + borderAndPaddingLogicalLeft();
-        rowAxisOffset = rightGridEdgePosition - (rowAxisOffset + child.logicalWidth());
-    }
+    if (!style().isLeftToRightDirection())
+        rowAxisOffset = translateRTLCoordinate(rowAxisOffset) - child.logicalWidth();
 
     return LayoutPoint(rowAxisOffset, columnAxisOffsetForChild(child));
 }

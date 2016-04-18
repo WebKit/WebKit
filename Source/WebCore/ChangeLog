@@ -1,3 +1,26 @@
+2016-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Add method to translate RTL coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=156589
+
+        Reviewed by Antonio Gomes.
+
+        This is just a small refactoring adding a new function
+        LayoutGrid::translateRTLCoordinate().
+        This method translates to physical coordinates the information
+        stored in m_columnPositions when you're using RTL direction.
+
+        No new tests, no change of behavior.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild): Use the new
+        method translateRTLCoordinate().
+        (WebCore::RenderGrid::translateRTLCoordinate): New method that converts
+        a coordinate from m_columnPositions in RTL into a physical coordinate.
+        (WebCore::RenderGrid::findChildLogicalPosition): Use the new method
+        translateRTLCoordinate().
+        * rendering/RenderGrid.h: Add method signature.
+
 2016-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [Fetch] Use @isArray instead of `instanceof @Array`

@@ -181,6 +181,7 @@ private:
     }
 
     bool hasDefiniteLogicalSize(GridTrackSizingDirection) const;
+    LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 
     Vector<Vector<Vector<RenderBox*, 1>>> m_grid;
     Vector<LayoutUnit> m_columnPositions;
