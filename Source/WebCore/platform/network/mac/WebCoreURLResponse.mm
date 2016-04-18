@@ -286,8 +286,9 @@ static CFDictionaryRef createExtensionToMIMETypeMap()
     return CFDictionaryCreate(kCFAllocatorDefault, (const void**)&keys, (const void**)&values, sizeof(keys)/sizeof(CFStringRef), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 }
 
-void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
+void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceLoad)
 {
+    UNUSED_PARAM(isMainResourceLoad);
     RetainPtr<CFStringRef> result = CFURLResponseGetMIMEType(cfResponse);
     RetainPtr<CFStringRef> originalResult = result;
 

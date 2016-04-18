@@ -1,3 +1,19 @@
+2016-04-18  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Only adjust network responses' MIME type for QuickLook in the context of a main resource load
+        https://bugs.webkit.org/show_bug.cgi?id=156639
+        <rdar://problem/25765848>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::firstRequest):
+        Add getter to return the first request.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        Pass flag to adjustMIMETypeIfNecessary() indicated if this is a main resource load.
+
 2016-04-18  Brian Burg  <bburg@apple.com>
 
         Web Automation: provide detailed error messages when an automation command fails

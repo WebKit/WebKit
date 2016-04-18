@@ -123,6 +123,7 @@ public:
     void setPendingDownloadLocation(const String& filename, const SandboxExtension::Handle&);
     const String& pendingDownloadLocation() { return m_pendingDownloadLocation; }
 
+    const WebCore::ResourceRequest& firstRequest() const { return m_firstRequest; }
     WebCore::ResourceRequest currentRequest();
     String suggestedFilename();
     void willPerformHTTPRedirection(const WebCore::ResourceResponse&, WebCore::ResourceRequest&&, RedirectCompletionHandler);

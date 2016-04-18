@@ -206,9 +206,11 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
         int statusCode = [response respondsToSelector:@selector(statusCode)] ? [(id)response statusCode] : 0;
-        if (statusCode != 304)
-            WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse);
-        
+        if (statusCode != 304) {
+            bool isMainResourceLoad = networkDataTask->firstRequest().requester() == WebCore::ResourceRequest::Requester::Main;
+            WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse, isMainResourceLoad);
+        }
+
         WebCore::ResourceResponse resourceResponse(response);
         copyTimingData([dataTask _timingData], resourceResponse.resourceLoadTiming());
         auto completionHandlerCopy = Block_copy(completionHandler);

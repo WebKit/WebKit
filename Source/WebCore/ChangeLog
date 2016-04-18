@@ -1,3 +1,43 @@
+2016-04-18  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Only adjust network responses' MIME type for QuickLook in the context of a main resource load
+        https://bugs.webkit.org/show_bug.cgi?id=156639
+        <rdar://problem/25765848>
+
+        Reviewed by Alex Christensen.
+
+        Only adjust network responses' MIME type for QuickLook in the context of a main
+        resource load since we can only preview main resources with QuickLook. This
+        avoids doing unnecessary work during page load. Also, this makes it a lot less
+        likely to dlopen() the QuickLook library during page load since we now only
+        adjust MIME type for QuickLook for main resources, and main resources usually
+        have the well-known 'text/html' MIME type for which we know we will not use
+        QuickLook.
+
+        After this change, we no longer need to dlopen() the QuickLook library in the
+        NetworkProcess in the context of the PLT. We would previously dlopen() the
+        library during the first page load, thus significantly slowing it down. As a
+        result, we see a ~22% speed up in the PLT's first page load and a 0.9-1% overall
+        PLT progression.
+
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        Pass flag to adjustMIMETypeIfNecessary() indicated if this is a main resource load.
+
+        * platform/network/ios/WebCoreURLResponseIOS.mm:
+        (WebCore::adjustMIMETypeIfNecessary):
+        Only adjust the MIME type for QuickLook if the isMainResourceLoad parameter is true.
+
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        Only adjust the MIME type for QuickLook if the isMainResourceLoad parameter is true.
+
+        * platform/network/mac/WebCoreURLResponse.h:
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::adjustMIMETypeIfNecessary):
+
 2016-04-18  Brent Fulgham  <bfulgham@apple.com>
 
         CSP: Remove stubs for dynamically-added favicons (via link rel="icon")

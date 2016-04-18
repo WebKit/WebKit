@@ -46,7 +46,7 @@ SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassFilenameExtension, CFStringRef
 
 namespace WebCore {
 
-void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
+void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceLoad)
 {
     RetainPtr<CFStringRef> mimeType = CFURLResponseGetMIMEType(cfResponse);
     RetainPtr<CFStringRef> updatedMIMEType = mimeType;
@@ -56,7 +56,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
 #if USE(QUICK_LOOK)
     // We must ensure that the MIME type is correct, so that QuickLook's web plugin is called when needed.
     // We filter the basic MIME types so that we don't do unnecessary work in standard browsing situations.
-    if (shouldUseQuickLookForMIMEType((NSString *)updatedMIMEType.get())) {
+    if (isMainResourceLoad && shouldUseQuickLookForMIMEType((NSString *)updatedMIMEType.get())) {
         RetainPtr<CFStringRef> suggestedFilename = adoptCF(CFURLResponseCopySuggestedFilename(cfResponse));
         RetainPtr<CFStringRef> quickLookMIMEType = adoptCF((CFStringRef)QLTypeCopyBestMimeTypeForFileNameAndMimeType((NSString *)suggestedFilename.get(), (NSString *)mimeType.get()));
         if (!quickLookMIMEType) {
@@ -73,6 +73,8 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
         if (quickLookMIMEType)
             updatedMIMEType = quickLookMIMEType;
     }
+#else
+    UNUSED_PARAM(isMainResourceLoad);
 #endif // USE(QUICK_LOOK)
     if (!mimeType || CFStringCompare(mimeType.get(), updatedMIMEType.get(), kCFCompareCaseInsensitive) != kCFCompareEqualTo)
         CFURLResponseSetMIMEType(cfResponse, updatedMIMEType.get());

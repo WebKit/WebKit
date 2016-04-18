@@ -153,8 +153,10 @@ using namespace WebCore;
 
     // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
     int statusCode = [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0;
-    if (statusCode != 304)
-        adjustMIMETypeIfNecessary([r _CFURLResponse]);
+    if (statusCode != 304) {
+        bool isMainResourceLoad = m_handle->firstRequest().requester() == ResourceRequest::Requester::Main;
+        adjustMIMETypeIfNecessary([r _CFURLResponse], isMainResourceLoad);
+    }
 
 #if !PLATFORM(IOS)
     if ([m_handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) _propertyForKey:@"ForceHTMLMIMEType"])
