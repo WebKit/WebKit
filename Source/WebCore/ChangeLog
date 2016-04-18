@@ -1,3 +1,27 @@
+2016-04-15  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][EME] Protected content over HLS is not notified when a HDCP violation occurs.
+        https://bugs.webkit.org/show_bug.cgi?id=156633
+
+        Reviewed by Eric Carlson.
+
+        Pass through the existing "outputObscuredDueToInsufficientExternalProtection" status as an
+        error, similarly to what we do for CDMSessionMediaSourceAVFObjC.
+
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        (WebCore::CDMSessionAVFoundationObjC::~CDMSessionAVFoundationObjC): Deleted.
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        (SOFT_LINK_CLASS):
+        (-[WebCDMSessionAVFoundationObjCListener initWithParent:player:]):
+        (-[WebCDMSessionAVFoundationObjCListener invalidate]):
+        (-[WebCDMSessionAVFoundationObjCListener observeValueForKeyPath:ofObject:change:context:]):
+        (WebCore::CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC):
+        (WebCore::CDMSessionAVFoundationObjC::~CDMSessionAVFoundationObjC):
+        (WebCore::CDMSessionAVFoundationObjC::generateKeyRequest):
+        (WebCore::CDMSessionAVFoundationObjC::playerDidReceiveError):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::avPlayer):
+
 2016-04-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r199644.

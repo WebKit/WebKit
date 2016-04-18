@@ -99,6 +99,7 @@ public:
     void processCue(NSArray *, NSArray *, const MediaTime&);
     void flushCues();
 #endif
+    AVPlayer *avPlayer() const { return m_avPlayer.get(); }
     
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     bool shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest*);

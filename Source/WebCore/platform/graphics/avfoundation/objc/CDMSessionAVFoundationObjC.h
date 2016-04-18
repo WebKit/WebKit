@@ -28,10 +28,12 @@
 
 #include "CDMSession.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
 OBJC_CLASS AVAssetResourceLoadingRequest;
+OBJC_CLASS WebCDMSessionAVFoundationObjCListener;
 
 namespace WebCore {
 
@@ -40,7 +42,7 @@ class MediaPlayerPrivateAVFoundationObjC;
 class CDMSessionAVFoundationObjC : public CDMSession {
 public:
     CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, CDMSessionClient*);
-    virtual ~CDMSessionAVFoundationObjC() { }
+    virtual ~CDMSessionAVFoundationObjC();
 
     CDMSessionType type() override { return CDMSessionTypeAVFoundationObjC; }
     void setClient(CDMSessionClient* client) override { m_client = client; }
@@ -49,11 +51,14 @@ public:
     void releaseKeys() override;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
 
+    void playerDidReceiveError(NSError *);
+
 protected:
-    MediaPlayerPrivateAVFoundationObjC* m_parent;
+    WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;
     CDMSessionClient* m_client;
     String m_sessionId;
     RetainPtr<AVAssetResourceLoadingRequest> m_request;
+    RetainPtr<WebCDMSessionAVFoundationObjCListener> m_listener;
 };
 
 }

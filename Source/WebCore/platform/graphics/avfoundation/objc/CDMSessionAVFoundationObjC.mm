@@ -38,6 +38,7 @@
 #import "WebCoreNSErrorExtras.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/objc-runtime.h>
+#import <wtf/MainThread.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVURLAsset)
@@ -45,18 +46,78 @@ SOFT_LINK_CLASS(AVFoundation, AVAssetResourceLoadingRequest)
 #define AVURLAsset getAVURLAssetClass()
 #define AVAssetResourceLoadingRequest getAVAssetResourceLoadingRequest()
 
+@interface WebCDMSessionAVFoundationObjCListener : NSObject {
+    WebCore::CDMSessionAVFoundationObjC* _parent;
+    RetainPtr<AVPlayer> _player;
+}
+- (id)initWithParent:(WebCore::CDMSessionAVFoundationObjC*)parent player:(AVPlayer *)player;
+- (void)invalidate;
+@end
+
+@implementation WebCDMSessionAVFoundationObjCListener
+- (id)initWithParent:(WebCore::CDMSessionAVFoundationObjC*)parent player:(AVPlayer *)player
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _parent = parent;
+    _player = player;
+    [player addObserver:self forKeyPath:@"outputObscuredDueToInsufficientExternalProtection" options:NSKeyValueObservingOptionNew context:nil];
+
+    return self;
+}
+
+- (void)invalidate
+{
+    _parent = nullptr;
+    [_player removeObserver:self forKeyPath:@"outputObscuredDueToInsufficientExternalProtection"];
+    _player = nullptr;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(object);
+    ASSERT(_parent);
+
+    if ([keyPath isEqualTo:@"outputObscuredDueToInsufficientExternalProtection"]) {
+        if ([[change valueForKey:NSKeyValueChangeNewKey] intValue] == 1) {
+            RetainPtr<NSError> error = [NSError errorWithDomain:@"com.apple.WebKit" code:'HDCP' userInfo:nil];
+            RetainPtr<WebCDMSessionAVFoundationObjCListener> strongSelf = { self };
+            callOnMainThread([strongSelf, error] {
+                if (strongSelf->_parent)
+                    strongSelf->_parent->playerDidReceiveError(error.get());
+            });
+        }
+    } else
+        ASSERT_NOT_REACHED();
+}
+@end
+
 namespace WebCore {
 
 CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, CDMSessionClient* client)
-    : m_parent(parent)
+    : m_parent(parent->createWeakPtr())
     , m_client(client)
     , m_sessionId(createCanonicalUUIDString())
+    , m_listener(adoptNS([[WebCDMSessionAVFoundationObjCListener alloc] initWithParent:this player:parent->avPlayer()]))
 {
+}
+
+CDMSessionAVFoundationObjC::~CDMSessionAVFoundationObjC()
+{
+    [m_listener invalidate];
 }
 
 RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
 {
     UNUSED_PARAM(mimeType);
+
+    if (!m_parent) {
+        errorCode = CDM::UnknownError;
+        return nullptr;
+    }
 
     String keyURI;
     String keyID;
@@ -106,6 +167,15 @@ bool CDMSessionAVFoundationObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nex
     nextMessage = nullptr;
 
     return true;
+}
+
+void CDMSessionAVFoundationObjC::playerDidReceiveError(NSError *error)
+{
+    if (!m_client)
+        return;
+
+    unsigned long code = mediaKeyErrorSystemCode(error);
+    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, code);
 }
 
 }
