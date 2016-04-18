@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -140,8 +141,6 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
     if (relAttribute.iconType != InvalidIcon && href.isValid() && !href.isEmpty()) {
         if (!m_client.shouldLoadLink())
             return false;
-        if (Frame* frame = document.frame())
-            frame->loader().client().dispatchDidChangeIcons(relAttribute.iconType);
     }
 
     if (relAttribute.isDNSPrefetch) {

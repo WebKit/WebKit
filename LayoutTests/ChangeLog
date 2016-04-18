@@ -1,3 +1,19 @@
+2016-04-18  Brent Fulgham  <bfulgham@apple.com>
+
+        CSP: Remove stubs for dynamically-added favicons (via link rel="icon")
+        https://bugs.webkit.org/show_bug.cgi?id=153151
+        <rdar://problem/24383176>
+
+        Reviewed by Darin Adler.
+
+        Remove the unused dynamic favicon code and tests.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/icon-allowed-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/icon-allowed.html: Removed.
+        * http/tests/security/contentSecurityPolicy/icon-blocked-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/icon-blocked.html: Removed.
+
 2016-04-18  Eric Carlson  <eric.carlson@apple.com>
 
         Media element "user gesture for fullscreen" restriction is never lifted

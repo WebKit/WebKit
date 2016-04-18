@@ -452,11 +452,6 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
     webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), title.string(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-void WebFrameLoaderClient::dispatchDidChangeIcons(WebCore::IconType)
-{
-    notImplemented();
-}
-
 void WebFrameLoaderClient::dispatchDidCommitLoad()
 {
     WebPage* webPage = m_frame->page();

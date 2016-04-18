@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -432,23 +432,6 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
     if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
         // FIXME: use direction of title.
         frameLoadDelegate->didReceiveTitle(webView, BString(title.string()), m_webFrame);
-}
-
-void WebFrameLoaderClient::dispatchDidChangeIcons(WebCore::IconType type)
-{
-    if (type != WebCore::Favicon)
-        return;
-
-    WebView* webView = m_webFrame->webView();
-    COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePriv;
-    if (FAILED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePriv)) || !frameLoadDelegatePriv)
-        return;
-
-    COMPtr<IWebFrameLoadDelegatePrivate2> frameLoadDelegatePriv2(Query, frameLoadDelegatePriv);
-    if (!frameLoadDelegatePriv2)
-        return;
-
-    frameLoadDelegatePriv2->didChangeIcons(webView, m_webFrame);
 }
 
 void WebFrameLoaderClient::dispatchDidCommitLoad()

@@ -1,3 +1,18 @@
+2016-04-18  Brent Fulgham  <bfulgham@apple.com>
+
+        CSP: Remove stubs for dynamically-added favicons (via link rel="icon")
+        https://bugs.webkit.org/show_bug.cgi?id=153151
+        <rdar://problem/24383176>
+
+        Reviewed by Darin Adler.
+
+        Remove the unused dynamic favicon code and tests.
+
+        * loader/EmptyClients.h:
+        * loader/FrameLoaderClient.h:
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLink):
+
 2016-04-15  Jer Noble  <jer.noble@apple.com>
 
         [Mac][EME] Protected content over HLS is not notified when a HDCP violation occurs.

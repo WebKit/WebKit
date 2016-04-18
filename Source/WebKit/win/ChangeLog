@@ -1,3 +1,17 @@
+2016-04-15  Brent Fulgham  <bfulgham@apple.com>
+
+        CSP: Make dynamically-added favicons (via link rel="icon") obey Content-Security-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=153151
+        <rdar://problem/24383176>
+
+        Reviewed by Darin Adler.
+
+        Remove the unused dynamic favicon code and tests.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidChangeIcons): Deleted.
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2016-04-15  Darin Adler  <darin@apple.com>
 
         Reduce use of Deprecated::ScriptXXX classes

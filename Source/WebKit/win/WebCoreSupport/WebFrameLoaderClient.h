@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,7 +88,6 @@ public:
     void dispatchDidReceiveIcon() override;
     void dispatchDidStartProvisionalLoad() override;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) override;
-    void dispatchDidChangeIcons(WebCore::IconType) override;
     void dispatchDidCommitLoad() override;
     void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&) override;
     void dispatchDidFailLoad(const WebCore::ResourceError&) override;

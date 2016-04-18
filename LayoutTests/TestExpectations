@@ -811,8 +811,6 @@ webkit.org/b/153148 http/tests/security/contentSecurityPolicy/eval-allowed-in-re
 webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-blocked.html
 webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-redirect-blocked.html
 webkit.org/b/153150 http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html
-webkit.org/b/153151 http/tests/security/contentSecurityPolicy/icon-allowed.html [ Failure ]
-webkit.org/b/153151 http/tests/security/contentSecurityPolicy/icon-blocked.html [ Failure ]
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html # Needs testRunner.getManifestThen()
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html # Needs testRunner.getManifestThen()
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked-error-event.html
