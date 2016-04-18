@@ -614,7 +614,6 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
         " <img style='position:absolute; left:1; top:10' src='0xdeadbeef' width=5 height=5></img>"
         " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
         " <input style='position:absolute; left:1; top:30' size='10'></input>"
-        " <div style='position:absolute; left:1; top:50; width:30; height:30; overflow:scroll'>&nbsp;</div>"
         " <video style='position:absolute; left:1; top:100' width='300' height='300' controls='controls' preload='none'><source src='movie.ogg' type='video/ogg' /></video>"
         " <p style='position:absolute; left:1; top:120' id='text_to_select'>Lorem ipsum.</p>"
         "</body></html>";
@@ -690,7 +689,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!test->m_mouseTargetModifiers);
 
     // Move over scrollbar.
-    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(5, 75);
+    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(gtk_widget_get_allocated_width(GTK_WIDGET(test->m_webView)) - 4, 5);
     g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
