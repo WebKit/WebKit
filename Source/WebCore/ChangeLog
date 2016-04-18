@@ -1,5 +1,12 @@
 2016-04-18  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix iOS9 build after r199682.
+
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse):
+
+2016-04-18  Chris Dumez  <cdumez@apple.com>
+
         [WK2][iOS] Only adjust network responses' MIME type for QuickLook in the context of a main resource load
         https://bugs.webkit.org/show_bug.cgi?id=156639
         <rdar://problem/25765848>
