@@ -233,8 +233,9 @@ void WebPlaybackSessionManager::removeClientForContext(uint64_t contextId)
 void WebPlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElement& mediaElement)
 {
 #if PLATFORM(MAC)
-    if (m_mediaElements.contains(&mediaElement)) {
-        uint64_t contextId = m_mediaElements.get(&mediaElement);
+    auto foundIterator = m_mediaElements.find(&mediaElement);
+    if (foundIterator != m_mediaElements.end()) {
+        uint64_t contextId = foundIterator->value;
         if (m_controlsManagerContextId == contextId)
             return;
 
@@ -256,11 +257,11 @@ void WebPlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaE
 void WebPlaybackSessionManager::clearPlaybackControlsManager(WebCore::HTMLMediaElement& mediaElement)
 {
 #if PLATFORM(MAC)
-    if (!m_mediaElements.contains(&mediaElement))
+    auto foundIterator = m_mediaElements.find(&mediaElement);
+    if (foundIterator == m_mediaElements.end())
         return;
 
-    uint64_t contextId = m_mediaElements.get(&mediaElement);
-    if (m_controlsManagerContextId != contextId)
+    if (m_controlsManagerContextId != foundIterator->value)
         return;
 
     removeClientForContext(m_controlsManagerContextId);
