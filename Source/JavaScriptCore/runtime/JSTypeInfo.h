@@ -42,7 +42,8 @@ static const unsigned TypeOfShouldCallGetCallData = 1 << 2; // Need this flag if
 static const unsigned OverridesGetOwnPropertySlot = 1 << 3;
 static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 4;
 static const unsigned StructureIsImmortal = 1 << 5;
-// There are two free bits at the end of the InlineTypeFlags.
+static const unsigned OverridesToThis = 1 << 6; // If this is false then this returns something other than 'this'. Non-object cells that are visible to JS have this set as do some exotic objects.
+// There is one free bit at the end of the InlineTypeFlags.
 
 static const unsigned ImplementsHasInstance = 1 << 8;
 static const unsigned OverridesGetPropertyNames = 1 << 9;
@@ -84,6 +85,7 @@ public:
     static bool overridesGetOwnPropertySlot(InlineTypeFlags flags) { return flags & OverridesGetOwnPropertySlot; }
     bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags1(InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero); }
     bool structureIsImmortal() const { return isSetOnFlags1(StructureIsImmortal); }
+    bool overridesToThis() const { return isSetOnFlags1(OverridesToThis); }
     bool overridesGetPropertyNames() const { return isSetOnFlags2(OverridesGetPropertyNames); }
     bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
     bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2(GetOwnPropertySlotIsImpure); }

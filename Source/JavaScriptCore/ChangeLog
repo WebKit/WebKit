@@ -1,5 +1,42 @@
 2016-04-18  Filip Pizlo  <fpizlo@apple.com>
 
+        ToThis should have a fast path based on type info flags
+        https://bugs.webkit.org/show_bug.cgi?id=156712
+
+        Reviewed by Geoffrey Garen.
+
+        Prior to this change, if we couldn't nail down the type of ToThis to something easy, we'd emit code
+        that would take slow path if the argument was not a final object. We'd end up taking that slow path
+        a lot.
+
+        This adds a type info flag for ToThis having non-obvious behavior and changes the DFG and FTL paths
+        to test this flag. This is a sub-1% speed-up on SunSpider and Octane.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileToThis):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::create):
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::create):
+        * runtime/JSString.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::overridesGetOwnPropertySlot):
+        (JSC::TypeInfo::interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero):
+        (JSC::TypeInfo::structureIsImmortal):
+        (JSC::TypeInfo::overridesToThis):
+        (JSC::TypeInfo::overridesGetPropertyNames):
+        (JSC::TypeInfo::prohibitsPropertyCaching):
+        (JSC::TypeInfo::getOwnPropertySlotIsImpure):
+        * runtime/StrictEvalActivation.h:
+        (JSC::StrictEvalActivation::create):
+        * runtime/Symbol.h:
+
+2016-04-18  Filip Pizlo  <fpizlo@apple.com>
+
         Check to see how the perf bots react to megamorphic load being disabled.
 
         Rubber stamped by Chris Dumez.

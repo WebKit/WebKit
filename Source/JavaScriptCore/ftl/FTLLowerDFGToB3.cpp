@@ -1461,7 +1461,11 @@ private:
         
         LBasicBlock lastNext = m_out.appendTo(isCellCase, slowCase);
         ValueFromBlock fastResult = m_out.anchor(value);
-        m_out.branch(isType(value, FinalObjectType), usually(continuation), rarely(slowCase));
+        m_out.branch(
+            m_out.testIsZero32(
+                m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoFlags),
+                m_out.constInt32(OverridesToThis)),
+            usually(continuation), rarely(slowCase));
         
         m_out.appendTo(slowCase, continuation);
         J_JITOperation_EJ function;

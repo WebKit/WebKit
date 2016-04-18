@@ -33,7 +33,7 @@ namespace JSC {
 class StrictEvalActivation : public JSScope {
 public:
     typedef JSScope Base;
-    static const unsigned StructureFlags = Base::StructureFlags | IsEnvironmentRecord;
+    static const unsigned StructureFlags = Base::StructureFlags | IsEnvironmentRecord | OverridesToThis;
 
     static StrictEvalActivation* create(ExecState* exec, JSScope* currentScope)
     {
