@@ -1,3 +1,11 @@
+2016-04-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Check to see how the perf bots react to megamorphic load being disabled.
+
+        Rubber stamped by Chris Dumez.
+
+        * runtime/Options.h:
+
 2016-04-18  Keith Miller  <keith_miller@apple.com>
 
         We should support delete in the DFG
