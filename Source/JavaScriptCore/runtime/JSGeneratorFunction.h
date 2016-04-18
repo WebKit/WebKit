@@ -50,6 +50,11 @@ public:
         ThrowMode = 2
     };
 
+    enum class GeneratorState : int32_t {
+        Completed = -1,
+        Executing = -2,
+    };
+
     const static unsigned StructureFlags = Base::StructureFlags;
 
     DECLARE_EXPORT_INFO;

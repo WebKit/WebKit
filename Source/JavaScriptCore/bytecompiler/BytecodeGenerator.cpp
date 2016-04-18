@@ -4406,6 +4406,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
             emitLabel(loopStart.get());
             emitLoopHint();
 
+            RefPtr<Label> branchOnResult = newLabel();
             {
                 emitYieldPoint(value.get());
 
@@ -4422,9 +4423,6 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                     // Fallthrough to ThrowMode.
                 }
 
-                RefPtr<Label> returnSequence = newLabel();
-                RefPtr<Label> returnWithIteratorResult = newLabel();
-                RefPtr<RegisterID> returnIteratorResult = newTemporary();
                 // Throw.
                 {
                     RefPtr<Label> throwMethodFound = newLabel();
@@ -4438,8 +4436,10 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                     CallArguments throwArguments(*this, nullptr, 1);
                     emitMove(throwArguments.thisRegister(), iterator.get());
                     emitMove(throwArguments.argumentRegister(0), generatorValueRegister());
-                    emitCall(returnIteratorResult.get(), throwMethod.get(), NoExpectedFunction, throwArguments, node->divot(), node->divotStart(), node->divotEnd());
-                    emitJump(returnWithIteratorResult.get());
+                    emitCall(value.get(), throwMethod.get(), NoExpectedFunction, throwArguments, node->divot(), node->divotStart(), node->divotEnd());
+
+                    emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), branchOnResult.get());
+                    emitThrowTypeError(ASCIILiteral("Iterator result interface is not an object."));
                 }
 
                 // Return.
@@ -4450,38 +4450,31 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                     emitJumpIfFalse(emitIsUndefined(newTemporary(), returnMethod.get()), returnMethodFound.get());
 
                     emitMove(value.get(), generatorValueRegister());
+
+                    RefPtr<Label> returnSequence = newLabel();
                     emitJump(returnSequence.get());
 
                     emitLabel(returnMethodFound.get());
                     CallArguments returnArguments(*this, nullptr, 1);
                     emitMove(returnArguments.thisRegister(), iterator.get());
                     emitMove(returnArguments.argumentRegister(0), generatorValueRegister());
-                    emitCall(returnIteratorResult.get(), returnMethod.get(), NoExpectedFunction, returnArguments, node->divot(), node->divotStart(), node->divotEnd());
+                    emitCall(value.get(), returnMethod.get(), NoExpectedFunction, returnArguments, node->divot(), node->divotStart(), node->divotEnd());
 
-                    // Fallthrough to returnWithIteratorResult.
-                }
-
-                emitLabel(returnWithIteratorResult.get());
-                {
                     RefPtr<Label> returnIteratorResultIsObject = newLabel();
-                    emitJumpIfTrue(emitIsObject(newTemporary(), returnIteratorResult.get()), returnIteratorResultIsObject.get());
+                    emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), returnIteratorResultIsObject.get());
                     emitThrowTypeError(ASCIILiteral("Iterator result interface is not an object."));
 
                     emitLabel(returnIteratorResultIsObject.get());
                     RefPtr<Label> returnFromGenerator = newLabel();
-                    emitJumpIfTrue(emitGetById(newTemporary(), returnIteratorResult.get(), propertyNames().done), returnFromGenerator.get());
+                    emitJumpIfTrue(emitGetById(newTemporary(), value.get(), propertyNames().done), returnFromGenerator.get());
 
-                    emitGetById(value.get(), returnIteratorResult.get(), propertyNames().value);
+                    emitGetById(value.get(), value.get(), propertyNames().value);
                     emitJump(loopStart.get());
 
                     emitLabel(returnFromGenerator.get());
-                    emitGetById(value.get(), returnIteratorResult.get(), propertyNames().value);
+                    emitGetById(value.get(), value.get(), propertyNames().value);
 
-                    // Fallthrough to returnSequence.
-                }
-
-                emitLabel(returnSequence.get());
-                {
+                    emitLabel(returnSequence.get());
                     if (isInFinallyBlock())
                         emitPopScopes(scopeRegister(), 0);
                     emitReturn(value.get());
@@ -4493,12 +4486,12 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
             }
 
             emitLabel(nextElement.get());
-            {
-                emitIteratorNextWithValue(value.get(), iterator.get(), value.get(), node);
-                emitJumpIfTrue(emitGetById(newTemporary(), value.get(), propertyNames().done), loopDone.get());
-                emitGetById(value.get(), value.get(), propertyNames().value);
-                emitJump(loopStart.get());
-            }
+            emitIteratorNextWithValue(value.get(), iterator.get(), value.get(), node);
+
+            emitLabel(branchOnResult.get());
+            emitJumpIfTrue(emitGetById(newTemporary(), value.get(), propertyNames().done), loopDone.get());
+            emitGetById(value.get(), value.get(), propertyNames().value);
+            emitJump(loopStart.get());
         }
         emitLabel(loopDone.get());
     }

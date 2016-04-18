@@ -263,14 +263,17 @@ class CallSite {
     function *gen()
     {
         let iter = new Iterator();
-        yield * iter;
+        let result = yield * iter;
+        shouldBe(result, 42);
+        yield 21;
     }
 
     let g = gen();
     shouldBe(g.next(0).value, undefined);
     shouldBe(g.next(1).value, 1);
     shouldBe(g.next(2).value, 2);
-    shouldBe(g.throw(42).value, 42);
+    shouldBe(g.throw(42).value, 21);
+    shouldBe(g.next().done, true);
     shouldThrow(() => {
         g.throw(44);
     }, `44`);

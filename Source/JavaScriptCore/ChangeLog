@@ -1,3 +1,49 @@
+2016-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES7] yield star should not return if the inner iterator.throw returns { done: true }
+        https://bugs.webkit.org/show_bug.cgi?id=156576
+
+        Reviewed by Saam Barati.
+
+        This is slight generator fix in ES7. When calling generator.throw(),
+        the yield-star should call the throw() of the inner generator. At that
+        time, when the result of throw() is { done: true}, the generator should
+        not stop itself.
+
+            function * gen()
+            {
+                yield * (function * () {
+                    try {
+                        yield 42;
+                    } catch (error) { }
+                }());
+                // Continue executing.
+                yield 42;
+            }
+
+            let g = gen();
+            g.next();
+            shouldBe(g.throw().value, 42);
+
+
+        * builtins/GeneratorPrototype.js:
+        (generatorResume):
+        (next):
+        (return):
+        (throw):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        * runtime/JSGeneratorFunction.h:
+        * tests/stress/generator-yield-star.js:
+        (gen):
+        * tests/stress/yield-star-throw-continue.js: Added.
+        (shouldBe):
+        (generator):
+        (shouldThrow):
+
 2016-04-17  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
 
         Fix incorrect assumption that APPLE implies Mac.
