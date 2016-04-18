@@ -1,3 +1,12 @@
+2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Menu list button doesn't use the text color from the theme
+        https://bugs.webkit.org/show_bug.cgi?id=118234
+
+        Reviewed by Darin Adler.
+
+        * ManualTests/gtk/theme.html: Add a disabled combo test.
+
 2016-04-13  Konstantin Tokarev  <annulen@yandex.ru>
 
         FindWebP should not be misguided by pkg-config when cross-compiling.
