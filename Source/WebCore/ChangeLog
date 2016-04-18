@@ -1,3 +1,24 @@
+2016-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Use grid-template-areas to determine the explicit grid
+        https://bugs.webkit.org/show_bug.cgi?id=156575
+
+        Reviewed by Darin Adler.
+
+        From the spec (https://drafts.csswg.org/css-grid/#grid-definition):
+        "The size of the explicit grid is determined by the larger of the number
+        of rows/columns defined by grid-template-areas and the number
+        of rows/columns sized by grid-template-rows/grid-template-columns."
+
+        So we need to take into account the rows/columns defined by
+        grid-template-areas to determine the size of the explicit grid.
+
+        Test: fast/css-grid-layout/explicit-grid-size.html
+
+        * rendering/style/GridPositionsResolver.cpp:
+        (WebCore::GridPositionsResolver::explicitGridColumnCount):
+        (WebCore::GridPositionsResolver::explicitGridRowCount):
+
 2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Menu list button doesn't use the text color from the theme

@@ -28,10 +28,10 @@
     -webkit-grid-template: [head] "a" [tail] / 10px;
 }
 #gridTemplateComplexFormWithLineNamesMultipleColumns {
-    -webkit-grid-template: [head] "a b" 15px [tail] / 10px;
+    -webkit-grid-template: [head] "a b" 15px [tail] / 10px 20px;
 }
 #gridTemplateComplexFormWithLineNamesMultipleColumnsWithoutRowSize {
-    -webkit-grid-template: [head] "a b" [tail] / 10px;
+    -webkit-grid-template: [head] "a b" [tail] / 10px 20px;
 }
 #gridTemplateComplexFormWithLineNamesMultipleRows {
     -webkit-grid-template: [head1] "a" 15px [tail1]
@@ -196,8 +196,8 @@
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexForm"), "10px", "15px", '"a"');
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNames"), "10px", "[head] 15px [tail]", '"a"');
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesWithoutRowSize"), "10px", "[head] 0px [tail]", '"a"');
-    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleColumns"), "10px", "[head] 15px [tail]", '"a b"');
-    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleColumnsWithoutRowSize"), "10px", "[head] 0px [tail]", '"a b"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleColumns"), "10px 20px", "[head] 15px [tail]", '"a b"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleColumnsWithoutRowSize"), "10px 20px", "[head] 0px [tail]", '"a b"');
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRows"), "10px", "[head1] 15px [tail1 head2] 20px [tail2]", '"a" "b"');
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRowsWithoutRowsSizes"), "10px", "[head1] 0px [tail1 head2] 0px [tail2]", '"a" "b"');
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRowsAndColumns"), "[first] 10px [nav nav2] 15px [nav nav2] 15px", "100px [nav nav2] 25px [nav nav2] 25px [last]", '"a b c" "d e f" "g h i"');

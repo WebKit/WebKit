@@ -104,12 +104,12 @@ static void adjustGridPositionsFromStyle(const RenderStyle& gridContainerStyle, 
 
 unsigned GridPositionsResolver::explicitGridColumnCount(const RenderStyle& gridContainerStyle)
 {
-    return std::min<unsigned>(gridContainerStyle.gridColumns().size(), kGridMaxTracks);
+    return std::min<unsigned>(std::max(gridContainerStyle.gridColumns().size(), gridContainerStyle.namedGridAreaColumnCount()), kGridMaxTracks);
 }
 
 unsigned GridPositionsResolver::explicitGridRowCount(const RenderStyle& gridContainerStyle)
 {
-    return std::min<unsigned>(gridContainerStyle.gridRows().size(), kGridMaxTracks);
+    return std::min<unsigned>(std::max(gridContainerStyle.gridRows().size(), gridContainerStyle.namedGridAreaRowCount()), kGridMaxTracks);
 }
 
 static unsigned explicitGridSizeForSide(const RenderStyle& gridContainerStyle, GridPositionSide side)

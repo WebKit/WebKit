@@ -1,5 +1,22 @@
 2016-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [css-grid] Use grid-template-areas to determine the explicit grid
+        https://bugs.webkit.org/show_bug.cgi?id=156575
+
+        Reviewed by Darin Adler.
+
+        Created new test to check the right behavior.
+
+        * fast/css-grid-layout/explicit-grid-size-expected.txt: Added.
+        * fast/css-grid-layout/explicit-grid-size.html: Added.
+        * fast/css-grid-layout/grid-template-shorthand-get-set-expected.txt:
+        Small modification as now the columns defined by
+        grid-tempalte-areas are in the explicit grid.
+        * fast/css-grid-layout/grid-template-shorthand-get-set.html:
+        Ditto.
+
+2016-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [css-grid] Fix positioned items with content alignment
         https://bugs.webkit.org/show_bug.cgi?id=156597
 
