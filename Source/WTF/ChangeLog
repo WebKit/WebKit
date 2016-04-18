@@ -1,3 +1,83 @@
+2016-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSCOnly] Implement RunLoop and remove glib dependency
+        https://bugs.webkit.org/show_bug.cgi?id=155706
+
+        Reviewed by Michael Catanzaro.
+
+        Add missing RunLoop and WorkQueue platform code for JSCOnly port.
+        The implementation does not use platform specific things. Instead, we
+        implement them on WTF framework; using condition variables to construct
+        the run loop and timers.
+
+        Since the fallback is implemented, it is not necessary for JSCOnly port
+        to depend on GLib's RunLoop abstraction. So this patch removes its
+        dependency. As a result, now, JSCOnly port removes dependencies except for the system ICU.
+
+        We clean up event loop ifdefs by introducing USE_XXX_EVENT_LOOP flags.
+        USE(XXX_EVENT_LOOP) is exclusive to each other. So from now, we do not need to take care
+        of the order of if-defs for the event loops. (For example, USE(GLIB) should have lead before
+        OS(DARWIN) in WorkQueue.h for WebKitGTK on Darwin.)
+
+        EVENT_LOOP determination is done in Platform.h. This follows the style of WTF PLATFORM.
+
+        * wtf/Platform.h:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/RunLoop.h:
+        * wtf/WorkQueue.h:
+        * wtf/generic/MainThreadGeneric.cpp: Renamed from Source/WTF/wtf/none/MainThreadNone.cpp.
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/generic/RunLoopGeneric.cpp: Added.
+        (WTF::RunLoop::TimerBase::ScheduledTask::create):
+        (WTF::RunLoop::TimerBase::ScheduledTask::ScheduledTask):
+        (WTF::RunLoop::TimerBase::ScheduledTask::fired):
+        (WTF::RunLoop::TimerBase::ScheduledTask::scheduledTimePoint):
+        (WTF::RunLoop::TimerBase::ScheduledTask::updateReadyTime):
+        (WTF::RunLoop::TimerBase::ScheduledTask::EarliestSchedule::operator()):
+        (WTF::RunLoop::TimerBase::ScheduledTask::isActive):
+        (WTF::RunLoop::TimerBase::ScheduledTask::deactivate):
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::~RunLoop):
+        (WTF::RunLoop::populateTasks):
+        (WTF::RunLoop::runImpl):
+        (WTF::RunLoop::run):
+        (WTF::RunLoop::iterate):
+        (WTF::RunLoop::stop):
+        (WTF::RunLoop::wakeUp):
+        (WTF::RunLoop::schedule):
+        (WTF::RunLoop::scheduleAndWakeUp):
+        (WTF::RunLoop::dispatchAfter):
+        (WTF::RunLoop::TimerBase::TimerBase):
+        (WTF::RunLoop::TimerBase::~TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive):
+        * wtf/generic/WorkQueueGeneric.cpp: Added.
+        (WorkQueue::platformInitialize):
+        (WorkQueue::platformInvalidate):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfter):
+        * wtf/none/MainThreadNone.cpp:
+        (WTF::initializeMainThreadPlatform): Deleted.
+        (WTF::scheduleDispatchFunctionsOnMainThread): Deleted.
+        * wtf/none/RunLoopNone.cpp:
+        (WTF::RunLoop::RunLoop): Deleted.
+        (WTF::RunLoop::~RunLoop): Deleted.
+        (WTF::RunLoop::run): Deleted.
+        (WTF::RunLoop::stop): Deleted.
+        (WTF::RunLoop::wakeUp): Deleted.
+        (WTF::RunLoop::TimerBase::TimerBase): Deleted.
+        (WTF::RunLoop::TimerBase::~TimerBase): Deleted.
+        (WTF::RunLoop::TimerBase::start): Deleted.
+        (WTF::RunLoop::TimerBase::stop): Deleted.
+        (WTF::RunLoop::TimerBase::isActive): Deleted.
+        * wtf/none/WorkQueueNone.cpp:
+        (WorkQueue::platformInitialize): Deleted.
+        (WorkQueue::platformInvalidate): Deleted.
+        (WorkQueue::dispatch): Deleted.
+        (WorkQueue::dispatchAfter): Deleted.
+
 2016-04-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199621.

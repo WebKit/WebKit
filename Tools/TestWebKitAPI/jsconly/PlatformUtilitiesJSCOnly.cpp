@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Konstantin Tokavev <annulen@yandex.ru>
+ * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,22 +24,34 @@
  */
 
 #include "config.h"
-#include "WorkQueue.h"
+#include "PlatformUtilities.h"
 
-void WorkQueue::platformInitialize(const char*, Type, QOS)
+#include <wtf/CurrentTime.h>
+#include <wtf/RunLoop.h>
+
+#if USE(GLIB_EVENT_LOOP)
+#include <glib.h>
+#include <wtf/glib/GRefPtr.h>
+#endif
+
+namespace TestWebKitAPI {
+namespace Util {
+
+void run(bool* done)
 {
+    while (!*done) {
+#if USE(GLIB_EVENT_LOOP)
+        g_main_context_iteration(RunLoop::current().mainContext(), false);
+#else
+        WTF::RunLoop::iterate();
+#endif
+    }
 }
 
-void WorkQueue::platformInvalidate()
+void sleep(double seconds)
 {
+    WTF::sleep(seconds);
 }
 
-void WorkQueue::dispatch(std::function<void()>)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void WorkQueue::dispatchAfter(std::chrono::nanoseconds, std::function<void()>)
-{
-    ASSERT_NOT_REACHED();
-}
+} // namespace Util
+} // namespace TestWebKitAPI

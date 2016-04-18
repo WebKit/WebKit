@@ -1144,4 +1144,34 @@
 #endif
 #endif
 
+
+#if !defined(WTF_DEFAULT_EVENT_LOOP)
+#define WTF_DEFAULT_EVENT_LOOP 1
+#endif
+
+#if WTF_DEFAULT_EVENT_LOOP
+#if PLATFORM(WIN)
+/* Use Windows message pump abstraction.
+ * Even if the port is AppleWin, we use the Windows message pump system for the event loop,
+ * so that USE(WINDOWS_EVENT_LOOP) && USE(CF) can be true.
+ * And PLATFORM(WIN), PLATFORM(EFL) and PLATFORM(GTK) are exclusive. If the port is GTK,
+ * PLATFORM(WIN) should be false. And in that case, GLib's event loop is used.
+ */
+#define USE_WINDOWS_EVENT_LOOP 1
+#elif PLATFORM(COCOA)
+/* OS X and IOS. Use CoreFoundation & GCD abstraction. */
+#define USE_COCOA_EVENT_LOOP 1
+#elif PLATFORM(EFL)
+/* EFL port uses GLib. But it uses its own event loop abstraction.
+ * Thus, USE(EFL_EVENT_LOOP) && USE(GLIB) can be true.
+ */
+#define USE_EFL_EVENT_LOOP 1
+#elif USE(GLIB)
+/* Use GLib's event loop abstraction. Primarily GTK port uses it. */
+#define USE_GLIB_EVENT_LOOP 1
+#else
+#define USE_GENERIC_EVENT_LOOP 1
+#endif
+#endif
+
 #endif /* WTF_Platform_h */

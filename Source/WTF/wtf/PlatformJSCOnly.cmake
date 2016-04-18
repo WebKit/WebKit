@@ -1,4 +1,4 @@
-if (LOWERCASE_EVENTLOOP_TYPE STREQUAL "glib")
+if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     list(APPEND WTF_SOURCES
         glib/GRefPtr.cpp
         glib/MainThreadGLib.cpp
@@ -15,9 +15,9 @@ if (LOWERCASE_EVENTLOOP_TYPE STREQUAL "glib")
     )
 else ()
     list(APPEND WTF_SOURCES
-        none/MainThreadNone.cpp
-        none/RunLoopNone.cpp
-        none/WorkQueueNone.cpp
+        generic/MainThreadGeneric.cpp
+        generic/RunLoopGeneric.cpp
+        generic/WorkQueueGeneric.cpp
     )
 endif ()
 

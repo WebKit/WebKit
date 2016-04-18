@@ -54,4 +54,113 @@ TEST(WTF_RunLoop, Deadlock)
     Util::run(&testFinished);
 }
 
+TEST(WTF_RunLoop, NestedRunLoop)
+{
+    RunLoop::initializeMainRunLoop();
+
+    bool testFinished = false;
+    RunLoop::current().dispatch([&] {
+        RunLoop::current().dispatch([&] {
+            testFinished = true;
+        });
+        Util::run(&testFinished);
+    });
+
+    Util::run(&testFinished);
+}
+
+TEST(WTF_RunLoop, OneShotTimer)
+{
+    RunLoop::initializeMainRunLoop();
+
+    bool testFinished = false;
+
+    class DerivedTimer : public RunLoop::Timer<DerivedTimer> {
+    public:
+        DerivedTimer(bool& testFinished)
+            : RunLoop::Timer<DerivedTimer>(RunLoop::current(), this, &DerivedTimer::fired)
+            , m_testFinished(testFinished)
+        {
+        }
+
+        void fired()
+        {
+            m_testFinished = true;
+            stop();
+        }
+
+    private:
+        bool& m_testFinished;
+    };
+
+    {
+        DerivedTimer timer(testFinished);
+        timer.startOneShot(0.1);
+        Util::run(&testFinished);
+    }
+}
+
+TEST(WTF_RunLoop, RepeatingTimer)
+{
+    RunLoop::initializeMainRunLoop();
+
+    bool testFinished = false;
+
+    class DerivedTimer : public RunLoop::Timer<DerivedTimer> {
+    public:
+        DerivedTimer(bool& testFinished)
+            : RunLoop::Timer<DerivedTimer>(RunLoop::current(), this, &DerivedTimer::fired)
+            , m_testFinished(testFinished)
+        {
+        }
+
+        void fired()
+        {
+            if (++m_count == 10) {
+                m_testFinished = true;
+                stop();
+            }
+        }
+
+    private:
+        unsigned m_count { 0 };
+        bool& m_testFinished;
+    };
+
+    {
+        DerivedTimer timer(testFinished);
+        timer.startRepeating(0.01);
+        Util::run(&testFinished);
+    }
+}
+
+TEST(WTF_RunLoop, ManyTimes)
+{
+    RunLoop::initializeMainRunLoop();
+
+    class Counter {
+    public:
+        void run()
+        {
+            if (++m_count == 100000) {
+                RunLoop::current().stop();
+                return;
+            }
+            RunLoop::current().dispatch([this] {
+                run();
+            });
+        }
+
+    private:
+        unsigned m_count { 0 };
+    };
+
+    Counter counter;
+
+    RunLoop::current().dispatch([&counter] {
+        counter.run();
+    });
+    RunLoop::run();
+}
+
 } // namespace TestWebKitAPI

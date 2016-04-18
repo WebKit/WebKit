@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Konstantin Tokavev <annulen@yandex.ru>
+ * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,52 +24,9 @@
  */
 
 #include "config.h"
-#include "RunLoop.h"
+#include "TestsController.h"
 
-namespace WTF {
-
-RunLoop::RunLoop()
+int main(int argc, char** argv)
 {
+    return TestWebKitAPI::TestsController::singleton().run(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-
-RunLoop::~RunLoop()
-{
-}
-
-void RunLoop::run()
-{
-}
-
-void RunLoop::stop()
-{
-}
-
-void RunLoop::wakeUp()
-{
-    ASSERT_NOT_REACHED();
-}
-
-RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
-    : m_runLoop(runLoop)
-{
-}
-
-RunLoop::TimerBase::~TimerBase()
-{
-    stop();
-}
-
-void RunLoop::TimerBase::start(double, bool)
-{
-}
-
-void RunLoop::TimerBase::stop()
-{
-}
-
-bool RunLoop::TimerBase::isActive() const
-{
-    return false;
-}
-
-} // namespace WTF

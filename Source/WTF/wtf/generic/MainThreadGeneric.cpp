@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Konstantin Tokavev <annulen@yandex.ru>
+ * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +27,8 @@
 #include "config.h"
 #include "MainThread.h"
 
+#include <wtf/RunLoop.h>
+
 namespace WTF {
 
 void initializeMainThreadPlatform()
@@ -34,6 +37,7 @@ void initializeMainThreadPlatform()
 
 void scheduleDispatchFunctionsOnMainThread()
 {
+    RunLoop::main().dispatch(std::function<void()>(dispatchFunctionsFromMainThread));
 }
 
 }

@@ -1,3 +1,12 @@
+2016-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSCOnly] Implement RunLoop and remove glib dependency
+        https://bugs.webkit.org/show_bug.cgi?id=155706
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+
 2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Menu list button doesn't use the text color from the theme
