@@ -13,6 +13,20 @@
 
 2016-04-18  Brent Fulgham  <bfulgham@apple.com>
 
+        Remove support for X-Frame-Options in `<meta>`
+        https://bugs.webkit.org/show_bug.cgi?id=156625
+        <rdar://problem/25748714>
+
+        Rubberstamped by Darin Adler.
+
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-expected.txt:
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-in-body-expected.txt:
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-parent-same-origin-allow-expected.txt:
+        * http/tests/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-parent-same-origin-deny-expected.txt:
+        * http/tests/security/xssAuditor/meta-tag-http-refresh-x-frame-options-ignored-expected.txt:
+
+2016-04-18  Brent Fulgham  <bfulgham@apple.com>
+
         CSP: Remove stubs for dynamically-added favicons (via link rel="icon")
         https://bugs.webkit.org/show_bug.cgi?id=153151
         <rdar://problem/24383176>

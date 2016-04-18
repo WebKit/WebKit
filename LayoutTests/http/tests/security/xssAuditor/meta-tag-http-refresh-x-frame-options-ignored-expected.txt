@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 4: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+CONSOLE MESSAGE: line 4: The X-Frame-Option 'deny' supplied in a <meta> element was ignored. X-Frame-Options may only be provided by an HTTP header sent with the document.
 

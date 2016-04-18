@@ -3305,7 +3305,8 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
             if (frameLoader.activeDocumentLoader() && frameLoader.activeDocumentLoader()->mainResourceLoader())
                 requestIdentifier = frameLoader.activeDocumentLoader()->mainResourceLoader()->identifier();
 
-            addConsoleMessage(MessageSource::Security, MessageLevel::Error, "X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.", requestIdentifier);
+            String message = "The X-Frame-Option '" + content + "' supplied in a <meta> element was ignored. X-Frame-Options may only be provided by an HTTP header sent with the document.";
+            addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, requestIdentifier);
         }
         break;
 

@@ -1,3 +1,14 @@
+2016-04-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove support for X-Frame-Options in `<meta>`
+        https://bugs.webkit.org/show_bug.cgi?id=156625
+        <rdar://problem/25748714>
+
+        Rubberstamped by Darin Adler.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Revise messaging based on Darin's comments.
+
 2016-04-18  Chris Dumez  <cdumez@apple.com>
 
         Crash in ElementDescendantIterator::operator--() when calling m_ancestorSiblingStack.last()
