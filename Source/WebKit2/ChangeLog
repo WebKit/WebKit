@@ -1,3 +1,14 @@
+2016-04-18  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
+
+        Fix incorrect assumption that APPLE implies Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=156679
+
+        Addresses build failure introduced in r198947
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+
 2016-04-17  Yoav Weiss  <yoav@yoav.ws>
 
         Initial Link preload support
