@@ -610,7 +610,7 @@ void AccessCase::generateWithGuard(
         jit.load32(
             CCallHelpers::Address(baseGPR, DirectArguments::offsetOfLength()),
             valueRegs.payloadGPR());
-        jit.boxInt32(valueRegs.payloadGPR(), valueRegs, CCallHelpers::DoNotHaveTagRegisters);
+        jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
         state.succeed();
         return;
     }
@@ -630,7 +630,7 @@ void AccessCase::generateWithGuard(
         jit.load32(
             CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfTotalLength()),
             valueRegs.payloadGPR());
-        jit.boxInt32(valueRegs.payloadGPR(), valueRegs, CCallHelpers::DoNotHaveTagRegisters);
+        jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
         state.succeed();
         return;
     }
@@ -1126,7 +1126,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 dataLog("Have type: ", type->descriptor(), "\n");
             state.failAndRepatch.append(
                 jit.branchIfNotType(
-                    valueRegs, scratchGPR, type->descriptor(), CCallHelpers::DoNotHaveTagRegisters));
+                    valueRegs, scratchGPR, type->descriptor(), CCallHelpers::HaveTagRegisters));
         } else if (verbose)
             dataLog("Don't have type.\n");
         
@@ -1157,7 +1157,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 dataLog("Have type: ", type->descriptor(), "\n");
             state.failAndRepatch.append(
                 jit.branchIfNotType(
-                    valueRegs, scratchGPR, type->descriptor(), CCallHelpers::DoNotHaveTagRegisters));
+                    valueRegs, scratchGPR, type->descriptor(), CCallHelpers::HaveTagRegisters));
         } else if (verbose)
             dataLog("Don't have type.\n");
         
@@ -1361,14 +1361,14 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         jit.load32(CCallHelpers::Address(scratchGPR, ArrayStorage::lengthOffset()), scratchGPR);
         state.failAndIgnore.append(
             jit.branch32(CCallHelpers::LessThan, scratchGPR, CCallHelpers::TrustedImm32(0)));
-        jit.boxInt32(scratchGPR, valueRegs, CCallHelpers::DoNotHaveTagRegisters);
+        jit.boxInt32(scratchGPR, valueRegs);
         state.succeed();
         return;
     }
 
     case StringLength: {
         jit.load32(CCallHelpers::Address(baseGPR, JSString::offsetOfLength()), valueRegs.payloadGPR());
-        jit.boxInt32(valueRegs.payloadGPR(), valueRegs, CCallHelpers::DoNotHaveTagRegisters);
+        jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
         state.succeed();
         return;
     }

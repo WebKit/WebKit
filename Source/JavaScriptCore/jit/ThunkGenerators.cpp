@@ -180,11 +180,9 @@ MacroAssemblerCodeRef virtualThunkFor(VM* vm, CallLinkInfo& callLinkInfo)
     // the DFG knows that the value is definitely a cell, or definitely a function.
     
 #if USE(JSVALUE64)
-    jit.move(CCallHelpers::TrustedImm64(TagMask), GPRInfo::regT4);
-    
     slowCase.append(
         jit.branchTest64(
-            CCallHelpers::NonZero, GPRInfo::regT0, GPRInfo::regT4));
+            CCallHelpers::NonZero, GPRInfo::regT0, GPRInfo::tagMaskRegister));
 #else
     slowCase.append(
         jit.branch32(

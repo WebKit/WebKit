@@ -2403,6 +2403,8 @@ private:
         B3::PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendSomeRegister(base);
         patchpoint->appendSomeRegister(value);
+        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
         // FIXME: If this is a PutByIdFlush, we might want to late-clobber volatile registers.
@@ -4865,6 +4867,8 @@ private:
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         
+        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
         patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
@@ -4953,6 +4957,9 @@ private:
 
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendVector(arguments);
+
+        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
 
         // Prevent any of the arguments from using the scratch register.
         patchpoint->clobberEarly(RegisterSet::macroScratchRegisters());
@@ -5071,6 +5078,9 @@ private:
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         
+        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
         patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
@@ -5934,6 +5944,8 @@ private:
                 UniquedStringImpl* str = bitwise_cast<UniquedStringImpl*>(string->tryGetValueImpl());
                 B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
                 patchpoint->appendSomeRegister(cell);
+                patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
+                patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
                 patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
                 State* state = &m_ftlState;
@@ -7393,6 +7405,8 @@ private:
 
         B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(base);
+        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
 
         // FIXME: If this is a GetByIdFlush, we might get some performance boost if we claim that it
         // clobbers volatile registers late. It's not necessary for correctness, though, since the

@@ -1,3 +1,35 @@
+2016-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should pin the tag registers at inline caches
+        https://bugs.webkit.org/show_bug.cgi?id=156678
+
+        Reviewed by Saam Barati.
+
+        This is a long-overdue fix to our inline caches. Back when we had LLVM, we couldn't rely on the tags
+        being pinned to any registers. So, if the inline caches needed tags, they'd have to materialize them.
+        
+        This removes those materializations. This should reduce the amount of code generated in inline caches
+        and it should make inline caches faster. The effect appears to be small.
+
+        It may be that after this change, we'll even be able to kill the
+        HaveTagRegisters/DoNotHaveTagRegisters logic.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIn):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        * jit/Repatch.cpp:
+        (JSC::readCallTarget):
+        (JSC::linkPolymorphicCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+
 2016-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES7] yield star should not return if the inner iterator.throw returns { done: true }
