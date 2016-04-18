@@ -1,3 +1,15 @@
+2016-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r199644.
+
+        Seems to have caused a 1-2% regression on warm PLT
+
+        Reverted changeset:
+
+        "[WK2][iOS] Do not dlopen() QuickLook in the NetworkProcess"
+        https://bugs.webkit.org/show_bug.cgi?id=156639
+        http://trac.webkit.org/changeset/199644
+
 2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Pending API Request URL is wrong after reloading

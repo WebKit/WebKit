@@ -162,10 +162,9 @@ using namespace WebCore;
 #endif
 
 #if USE(QUICK_LOOK)
-    if (auto quickLookHandle = QuickLookHandle::createIfNecessary(*m_handle, connection, r, self)) {
-        r = quickLookHandle->nsResponse();
-        m_handle->setQuickLookHandle(WTFMove(quickLookHandle));
-    }
+    m_handle->setQuickLookHandle(QuickLookHandle::create(m_handle, connection, r, self));
+    if (m_handle->quickLookHandle())
+        r = m_handle->quickLookHandle()->nsResponse();
 #endif
     
     ResourceResponse resourceResponse(r);

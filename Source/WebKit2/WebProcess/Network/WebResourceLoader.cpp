@@ -114,12 +114,12 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
     // Refrain from calling didReceiveResponse if QuickLook will convert this response, since the MIME type of the
     // converted resource isn't yet known. WebResourceLoaderQuickLookDelegate will later call didReceiveResponse upon
     // receiving the converted data.
-    if (auto quickLookHandle = QuickLookHandle::createIfNecessary(*m_coreLoader, response.nsURLResponse())) {
-        m_coreLoader->documentLoader()->setQuickLookHandle(WTFMove(quickLookHandle));
+    bool isMainLoad = m_coreLoader->documentLoader()->mainResourceLoader() == m_coreLoader;
+    if (isMainLoad && QuickLookHandle::shouldCreateForMIMEType(response.mimeType())) {
+        m_coreLoader->documentLoader()->setQuickLookHandle(QuickLookHandle::create(*m_coreLoader, response));
         shoudCallCoreLoaderDidReceiveResponse = false;
     }
 #endif
-
     if (shoudCallCoreLoaderDidReceiveResponse)
         m_coreLoader->didReceiveResponse(response);
 
