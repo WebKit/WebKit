@@ -1,5 +1,18 @@
 2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Pending API Request URL is wrong after reloading
+        https://bugs.webkit.org/show_bug.cgi?id=139342
+
+        Reviewed by Darin Adler.
+
+        Update test case to check that the active URL should remain the
+        same after a reload.
+
+        * TestWebKitAPI/Tests/WebKit2/PendingAPIRequestURL.cpp:
+        (TestWebKitAPI::TEST):
+
+2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Pending API request URL no set when loading Data, Alternate HTML or plain text
         https://bugs.webkit.org/show_bug.cgi?id=136916
 

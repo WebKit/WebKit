@@ -34,10 +34,18 @@
 
 namespace TestWebKitAPI {
 
+static bool done;
+
 TEST(WebKit2, PendingAPIRequestURL)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
+
+    WKPageLoaderClientV0 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+    loaderClient.base.version = 0;
+    loaderClient.didFinishLoadForFrame = [](WKPageRef, WKFrameRef, WKTypeRef, const void*) { done = true; };
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
     EXPECT_NULL(activeURL.get());
@@ -47,7 +55,15 @@ TEST(WebKit2, PendingAPIRequestURL)
     activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
     ASSERT_NOT_NULL(activeURL.get());
     EXPECT_TRUE(WKURLIsEqual(activeURL.get(), url.get()));
-    WKPageStopLoading(webView.page());
+    Util::run(&done);
+    done = false;
+
+    WKPageReload(webView.page());
+    activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
+    ASSERT_NOT_NULL(activeURL.get());
+    EXPECT_TRUE(WKURLIsEqual(activeURL.get(), url.get()));
+    Util::run(&done);
+    done = false;
 
     WKRetainPtr<WKStringRef> htmlString = Util::toWK("<body>Hello, World</body>");
     WKRetainPtr<WKURLRef> blankURL = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
@@ -55,40 +71,88 @@ TEST(WebKit2, PendingAPIRequestURL)
     activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
     ASSERT_NOT_NULL(activeURL.get());
     EXPECT_TRUE(WKURLIsEqual(activeURL.get(), blankURL.get()));
-    WKPageStopLoading(webView.page());
+    Util::run(&done);
+    done = false;
 
-    url = adoptWK(WKURLCreateWithUTF8CString("http://www.webkit.org"));
+    WKPageReload(webView.page());
+    activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
+    ASSERT_NOT_NULL(activeURL.get());
+    EXPECT_TRUE(WKURLIsEqual(activeURL.get(), blankURL.get()));
+    Util::run(&done);
+    done = false;
+
+    url = adoptWK(Util::createURLForResource("simple2", "html"));
     WKPageLoadHTMLString(webView.page(), htmlString.get(), url.get());
     activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
     ASSERT_NOT_NULL(activeURL.get());
     EXPECT_TRUE(WKURLIsEqual(activeURL.get(), url.get()));
-    WKPageStopLoading(webView.page());
+    Util::run(&done);
+    done = false;
+
+    WKPageReload(webView.page());
+    activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
+    ASSERT_NOT_NULL(activeURL.get());
+    EXPECT_TRUE(WKURLIsEqual(activeURL.get(), url.get()));
+    Util::run(&done);
+    done = false;
 
     WKRetainPtr<WKDataRef> data = adoptWK(WKDataCreate(nullptr, 0));
     WKPageLoadData(webView.page(), data.get(), nullptr, nullptr, nullptr);
     activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
     ASSERT_NOT_NULL(activeURL.get());
     EXPECT_TRUE(WKURLIsEqual(activeURL.get(), blankURL.get()));
-    WKPageStopLoading(webView.page());
+    Util::run(&done);
+    done = false;
+
+    WKPageReload(webView.page());
+    activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
+    ASSERT_NOT_NULL(activeURL.get());
+    EXPECT_TRUE(WKURLIsEqual(activeURL.get(), blankURL.get()));
+    Util::run(&done);
+    done = false;
 
     WKPageLoadData(webView.page(), data.get(), nullptr, nullptr, url.get());
     activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
     ASSERT_NOT_NULL(activeURL.get());
     EXPECT_TRUE(WKURLIsEqual(activeURL.get(), url.get()));
-    WKPageStopLoading(webView.page());
+    Util::run(&done);
+    done = false;
+
+    WKPageReload(webView.page());
+    activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
+    ASSERT_NOT_NULL(activeURL.get());
+    EXPECT_TRUE(WKURLIsEqual(activeURL.get(), url.get()));
+    Util::run(&done);
+    done = false;
 
     WKPageLoadAlternateHTMLString(webView.page(), htmlString.get(), nullptr, url.get());
     activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
     ASSERT_NOT_NULL(activeURL.get());
     EXPECT_TRUE(WKURLIsEqual(activeURL.get(), url.get()));
-    WKPageStopLoading(webView.page());
+    Util::run(&done);
+    done = false;
+
+    WKPageReload(webView.page());
+    activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
+    ASSERT_NOT_NULL(activeURL.get());
+    EXPECT_TRUE(WKURLIsEqual(activeURL.get(), url.get()));
+    Util::run(&done);
+    done = false;
 
     WKRetainPtr<WKStringRef> plainTextString = Util::toWK("Hello, World");
     WKPageLoadPlainTextString(webView.page(), plainTextString.get());
     activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
     ASSERT_NOT_NULL(activeURL.get());
     EXPECT_TRUE(WKURLIsEqual(activeURL.get(), blankURL.get()));
-    WKPageStopLoading(webView.page());
+    Util::run(&done);
+    done = false;
+
+    WKPageReload(webView.page());
+    activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
+    ASSERT_NOT_NULL(activeURL.get());
+    EXPECT_TRUE(WKURLIsEqual(activeURL.get(), blankURL.get()));
+    Util::run(&done);
+    done = false;
 
     url = adoptWK(WKURLCreateWithUTF8CString("file:///tmp/index.html"));
     WKPageLoadFile(webView.page(), url.get(), nullptr);
