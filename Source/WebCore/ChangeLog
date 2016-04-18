@@ -1,3 +1,16 @@
+2016-04-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] don't toggle playback when media engine rate changes
+        https://bugs.webkit.org/show_bug.cgi?id=156705
+        <rdar://problem/25779175>
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::rateChanged): Don't send the play/pause command
+          unless the player item state is >= MediaPlayerAVPlayerItemStatusPlaybackBufferFull and
+          the rate change is unexpected.
+
 2016-04-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix iOS9 build after r199682.

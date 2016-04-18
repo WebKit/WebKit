@@ -617,8 +617,14 @@ void MediaPlayerPrivateAVFoundation::metadataLoaded()
 void MediaPlayerPrivateAVFoundation::rateChanged()
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(IOS)
-    if (isCurrentPlaybackTargetWireless())
-        m_player->handlePlaybackCommand(rate() ? PlatformMediaSession::PlayCommand : PlatformMediaSession::PauseCommand);
+    LOG(Media, "MediaPlayerPrivateAVFoundation::rateChanged(%p) - rate = %f, requested rate = %f, item status = %i", this, rate(), requestedRate(), playerItemStatus());
+    if (isCurrentPlaybackTargetWireless() && playerItemStatus() >= MediaPlayerAVPlayerItemStatusPlaybackBufferFull) {
+        double rate = this->rate();
+        if (rate != requestedRate()) {
+            m_player->handlePlaybackCommand(rate ? PlatformMediaSession::PlayCommand : PlatformMediaSession::PauseCommand);
+            return;
+        }
+    }
 #endif
 
     m_player->rateChanged();
