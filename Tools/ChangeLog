@@ -1,3 +1,16 @@
+2016-04-17  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Bump gstreamer from 1.4.4 to 1.6.3
+        https://bugs.webkit.org/show_bug.cgi?id=156655
+
+        Reviewed by Antonio Gomes.
+
+        To support html5 video feature, we should bump gstreamer version.
+
+        * efl/jhbuild.modules:
+        * efl/patches/gst-libav.patch: Update against newer version.
+        * efl/patches/gst-plugins-bad-remove-gnustep-support.patch: Removed because this patch was merged.
+
 2016-04-16  Sam Weinig  <sam@webkit.org>
 
         More build fixing.
