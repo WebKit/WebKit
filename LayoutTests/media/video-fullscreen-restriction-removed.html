@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                findMediaElement();
+
+                run('internals.settings.setAllowsInlineMediaPlayback(false)');
+                run('internals.setMediaElementRestrictions(video, "RequireUserGestureForFullscreen")');
+
+                waitForEvent('loadedmetadata', loadedmetadata)
+                waitForEvent('webkitfullscreenchange', fullscreenChanged, false, true, document)
+                waitForEvent('click', clickHandler, false, true, document.getElementById('button'))
+
+                consoleWrite('* set video.src');
+                video.src = findMediaFile('video', 'content/test');
+                consoleWrite('');
+            }
+
+            function loadedmetadata()
+            {
+                consoleWrite('');
+                if (window.eventSender) {
+                    consoleWrite('* video.play() should fail ');
+                    run('video.play()');
+                    testExpected('video.paused', true);
+                    consoleWrite('');
+
+                    consoleWrite('* clicking button<br>');
+                    var button = document.getElementById('button');
+                    eventSender.mouseMoveTo(button.offsetLeft + 20, button.offsetTop + 7);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                } else {
+                    consoleWrite('* click on the "Click me!" button to proceed<br>');
+                }
+            }
+
+            function clickHandler()
+            {
+                consoleWrite('* video.play() should work from within a click handler');
+                testExpected('video.paused', true);
+                run('video.play()');
+                consoleWrite('');
+                failTestIn(2000);
+            }
+
+            function fullscreenChanged()
+            {
+                testExpected('video.paused', false);
+                consoleWrite('');
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that "fullscreen requires user gesture restriction" is removed by a user gesture.</p>
+        <video controls></video>
+        <button id="button" >Click me!</button><br>
+    </body>
+</html>

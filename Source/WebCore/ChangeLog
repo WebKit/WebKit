@@ -1,3 +1,17 @@
+2016-04-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Media element "user gesture for fullscreen" restriction is never lifted
+        https://bugs.webkit.org/show_bug.cgi?id=156547
+        <rdar://problem/25707814>
+
+        Reviewed by Jer Noble.
+
+        Test: media/video-fullscreen-restriction-removed.html
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted): Check fullscreenPermitted rather than
+          checking for a user gesture because the restriction can be removed.
+
 2016-04-18  Frederic Wang  <fwang@igalia.com>
 
         Refactor RenderMathMLScripts layout to avoid using flexbox

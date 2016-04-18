@@ -146,8 +146,8 @@ bool MediaElementSession::playbackPermitted(const HTMLMediaElement& element) con
     if (pageExplicitlyAllowsElementToAutoplayInline(element))
         return true;
 
-    if (requiresFullscreenForVideoPlayback(element) && !ScriptController::processingUserGestureForMedia()) {
-        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE");
+    if (requiresFullscreenForVideoPlayback(element) && !fullscreenPermitted(element)) {
+        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of fullscreen restriction");
         return false;
     }
 
@@ -155,12 +155,12 @@ bool MediaElementSession::playbackPermitted(const HTMLMediaElement& element) con
         return true;
 
     if (m_restrictions & RequireUserGestureForVideoRateChange && element.isVideo() && !ScriptController::processingUserGestureForMedia()) {
-        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE");
+        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of video rate change restriction");
         return false;
     }
 
     if (m_restrictions & RequireUserGestureForAudioRateChange && (!element.isVideo() || element.hasAudio()) && !ScriptController::processingUserGestureForMedia()) {
-        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE");
+        LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of audio rate change restriction");
         return false;
     }
 

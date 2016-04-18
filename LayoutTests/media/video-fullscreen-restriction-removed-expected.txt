@@ -1,0 +1,25 @@
+Test that "fullscreen requires user gesture restriction" is removed by a user gesture.
+
+Click me!
+RUN(internals.settings.setAllowsInlineMediaPlayback(false))
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForFullscreen"))
+* set video.src
+
+EVENT(loadedmetadata)
+
+* video.play() should fail 
+RUN(video.play())
+EXPECTED (video.paused == 'true') OK
+
+* clicking button
+
+EVENT(click)
+* video.play() should work from within a click handler
+EXPECTED (video.paused == 'true') OK
+RUN(video.play())
+
+EVENT(webkitfullscreenchange)
+EXPECTED (video.paused == 'false') OK
+
+END OF TEST
+
