@@ -1,3 +1,16 @@
+2016-04-18  Dana Burkart  <dburkart@apple.com>
+
+        svn-apply: add option for ignoring changes to ChangeLog files
+        https://bugs.webkit.org/show_bug.cgi?id=156618
+
+        Reviewed by Darin Adler.
+
+        This change adds a new option to svn-apply, --skip-changelogs, which short-circuits out of
+        patch() if the file in question is a ChangeLog.
+
+        * Scripts/svn-apply:
+        (patch):
+
 2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Pending API Request URL is wrong after reloading

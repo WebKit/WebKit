@@ -90,16 +90,18 @@ my $merge = 0;
 my $showHelp = 0;
 my $reviewer;
 my $force = 0;
+my $skipChangeLogs = 0;
 
 my $optionParseSuccess = GetOptions(
     "merge!" => \$merge,
     "help!" => \$showHelp,
     "reviewer=s" => \$reviewer,
-    "force!" => \$force
+    "force!" => \$force,
+    "skip-changelogs" => \$skipChangeLogs
 );
 
 if (!$optionParseSuccess || $showHelp) {
-    print STDERR basename($0) . " [-h|--help] [--force] [-m|--merge] [-r|--reviewer name] patch1 [patch2 ...]\n";
+    print STDERR basename($0) . " [-h|--help] [--force] [-m|--merge] [-r|--reviewer name] [--skip-changelogs] patch1 [patch2 ...]\n";
     exit 1;
 }
 
@@ -331,6 +333,11 @@ sub patch($)
 
     $addition = 1 if ($diffHashRef->{isNew} || $patch =~ /\n@@ -0,0 .* @@/);
     $deletion = 1 if ($diffHashRef->{isDeletion} || $patch =~ /\n@@ .* \+0,0 @@/);
+
+    if (basename($fullPath) eq "ChangeLog" && $skipChangeLogs) {
+        print "Skipping '$fullPath' since --skip-changelogs was passed on the command line.";
+        return;
+    }
 
     if (!$addition && !$deletion && !$isBinary && $hasTextChunks) {
         # Standard patch, patch tool can handle this.
