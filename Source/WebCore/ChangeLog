@@ -1,3 +1,12 @@
+2016-04-18  Tina Liu  <iting_liu@apple.com>
+
+        Declare a virtual function in PluginStrategy to be implemented by subclasses.
+        https://bugs.webkit.org/show_bug.cgi?id=156540
+
+        Reviewed by Anders Carlsson.
+
+        * plugins/PluginStrategy.h:
+
 2016-04-18  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] don't toggle playback when media engine rate changes

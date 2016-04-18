@@ -127,6 +127,7 @@ public:
     void plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID);
     void plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID);
     void setPluginLoadClientPolicy(uint8_t policy, const String& host, const String& bundleIdentifier, const String& versionString);
+    void setPrivateBrowsingPluginLoadClientPolicy(uint8_t policy, const String& host, const String& bundleIdentifier, const String& versionString);
     void clearPluginClientPolicies();
 
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
@@ -368,6 +369,10 @@ private:
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
+#if PLATFORM(MAC)
+    enum class PrivateBrowsing { Yes, No };
+    void setPluginLoadClientPolicies(const HashMap<String, HashMap<String, HashMap<String, uint8_t>>>&, PrivateBrowsing);
+#endif
     RefPtr<PluginProcessConnectionManager> m_pluginProcessConnectionManager;
 #endif
 

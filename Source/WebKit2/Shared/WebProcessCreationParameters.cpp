@@ -138,6 +138,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     encoder << pluginLoadClientPolicies;
+    encoder << pluginLoadClientPoliciesForPrivateBrowsing;
 #endif
 
 #if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
@@ -292,6 +293,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (!decoder.decode(parameters.pluginLoadClientPolicies))
+        return false;
+    if (!decoder.decode(parameters.pluginLoadClientPoliciesForPrivateBrowsing))
         return false;
 #endif
 

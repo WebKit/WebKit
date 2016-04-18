@@ -1,3 +1,14 @@
+2016-04-18  Tina Liu  <iting_liu@apple.com>
+
+        Overrode a virtual function of WebCore::PluginStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=156540
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::setPrivateBrowsingPluginLoadClientPolicy):
+
 2016-04-18  Brent Fulgham  <bfulgham@apple.com>
 
         CSP: Remove stubs for dynamically-added favicons (via link rel="icon")

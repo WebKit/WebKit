@@ -39,6 +39,7 @@ public:
     virtual void getWebVisiblePluginInfo(const Page*, Vector<PluginInfo>&) = 0;
 #if PLATFORM(MAC)
     virtual void setPluginLoadClientPolicy(PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString) = 0;
+    virtual void setPrivateBrowsingPluginLoadClientPolicy(PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString) = 0;
     virtual void clearPluginClientPolicies() = 0;
 #endif
 

@@ -1,3 +1,77 @@
+2016-04-18  Tina Liu  <iting_liu@apple.com>
+
+        Implement functions to set plug-in load policies for private browsing mode
+        https://bugs.webkit.org/show_bug.cgi?id=156540
+
+        Reviewed by Anders Carlsson.
+
+        This patch implements API and wrappers for clients to set policies to use when using
+        private browsing. WebPlatformStrategies would return which policies to use depending
+        on whether the page is in private browsing mode.
+
+        * Shared/WebProcessCreationParameters.h:
+        Add a hash map for plug-in load policies for private browsing.
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextSetPrivateBrowsingPluginLoadClientPolicy):
+        Add a wrapper.
+
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+        Set the WebProcessCreationParameters's pluginLoadClientPoliciesForPrivateBrowsing.
+        (WebKit::WebProcessPool::setPluginLoadClientPolicyForBrowsingMode):
+        A helper function that sets plug-in policies to the corresponding instance variable:
+        m_pluginLoadClientPolicies for general browsing and m_pluginLoadClientPoliciesForPrivateBrowsing
+        for private browsing. The logic is extracted from the original setPluginLoadClientPolicy.
+        While we are here, get rid of the .contains() lookup as .get() will just return a
+        constructed object if the key is not found.
+        (WebKit::WebProcessPool::setPluginLoadClientPolicy):
+        Switch to use the helper function to set policies.
+        (WebKit::WebProcessPool::setPrivateBrowsingPluginLoadClientPolicy):
+        Ditto. Also send a message to the WebProcess for setting policies for private browsing.
+        (WebKit::WebProcessPool::clearPluginClientPolicies):
+        Clear plug-ins' private browsing policies.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::setPluginLoadClientPolicyForBrowsingMode):
+        Ditto as WebProcessPool::setPluginLoadClientPolicyForBrowsingMode.
+        (WebKit::WebPlatformStrategies::setPluginLoadClientPolicy):
+        Switch to use setPluginLoadClientPolicyForBrowsingMode to set policies.
+        (WebKit::WebPlatformStrategies::setPrivateBrowsingPluginLoadClientPolicy):
+        Use setPluginLoadClientPolicyForBrowsingMode to set policies for private browsing.
+        (WebKit::WebPlatformStrategies::clearPluginClientPolicies):
+        Clear plug-ins' private browsing policies.
+        (WebKit::WebPlatformStrategies::longestMatchedWildcardHostForHost):
+        Add an argument for private browsing. Read from the corresponding ivar.
+        (WebKit::WebPlatformStrategies::replaceHostWithMatchedWildcardHost):
+        Ditto.
+        (WebKit::WebPlatformStrategies::pluginLoadClientPolicyForHost): Deleted.
+        Renamed this function as pluginLoadClientPolicyForHostForBrowsingMode.
+        (WebKit::WebPlatformStrategies::pluginLoadClientPolicyForHostForBrowsingMode):
+        Ditto.
+        (WebKit::WebPlatformStrategies::populatePluginCache):
+        Get the plug-in load policies for a specific host based on the page's session status. If the page
+        is using ephemeral session, use the private browsing policies.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        Switch to call the helper function setPluginLoadClientPolicyFromCreationParameters.
+        (WebKit::WebProcess::setPluginLoadClientPolicies):
+        Logic moved from initializeWebProcess. Call PluginStrategy::setPluginLoadClientPolicy or
+        PluginStrategy::setPrivateBrowsingPluginLoadClientPolicy depending on the input argument.
+        (WebKit::WebProcess::setPrivateBrowsingPluginLoadClientPolicy):
+        Add a wrapper to call PluginStrategy::setPrivateBrowsingPluginLoadClientPolicy.
+
+        * WebProcess/WebProcess.messages.in:
+        Declare an entry for setPrivateBrowsingPluginLoadClientPolicy.
+
 2016-04-18  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Only adjust network responses' MIME type for QuickLook in the context of a main resource load

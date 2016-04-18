@@ -218,28 +218,36 @@ void WebPlatformStrategies::getWebVisiblePluginInfo(const Page* page, Vector<Plu
 }
 
 #if PLATFORM(MAC)
-void WebPlatformStrategies::setPluginLoadClientPolicy(PluginLoadClientPolicy clientPolicy, const String& host, const String& bundleIdentifier, const String& versionString)
+void WebPlatformStrategies::setPluginLoadClientPolicyForPrivateBrowsing(PrivateBrowsing privateBrowsing, PluginLoadClientPolicy clientPolicy, const String& host, const String& bundleIdentifier, const String& versionString)
 {
     String hostToSet = host.isNull() || !host.length() ? "*" : host;
     String bundleIdentifierToSet = bundleIdentifier.isNull() || !bundleIdentifier.length() ? "*" : bundleIdentifier;
     String versionStringToSet = versionString.isNull() || !versionString.length() ? "*" : versionString;
 
-    PluginPolicyMapsByIdentifier policiesByIdentifier;
-    if (m_hostsToPluginIdentifierData.contains(hostToSet))
-        policiesByIdentifier = m_hostsToPluginIdentifierData.get(hostToSet);
+    auto& hostsToPluginIdentifierData = privateBrowsing == PrivateBrowsing::Yes ? m_hostsToPluginIdentifierDataInPrivateBrowsing : m_hostsToPluginIdentifierData;
 
-    PluginLoadClientPoliciesByBundleVersion versionsToPolicies;
-    if (policiesByIdentifier.contains(bundleIdentifierToSet))
-        versionsToPolicies = policiesByIdentifier.get(bundleIdentifierToSet);
+    PluginPolicyMapsByIdentifier policiesByIdentifier = hostsToPluginIdentifierData.get(hostToSet);
+    PluginLoadClientPoliciesByBundleVersion versionsToPolicies = policiesByIdentifier.get(bundleIdentifierToSet);
 
     versionsToPolicies.set(versionStringToSet, clientPolicy);
     policiesByIdentifier.set(bundleIdentifierToSet, versionsToPolicies);
-    m_hostsToPluginIdentifierData.set(hostToSet, policiesByIdentifier);
+    hostsToPluginIdentifierData.set(hostToSet, policiesByIdentifier);
+}
+
+void WebPlatformStrategies::setPluginLoadClientPolicy(PluginLoadClientPolicy clientPolicy, const String& host, const String& bundleIdentifier, const String& versionString)
+{
+    setPluginLoadClientPolicyForPrivateBrowsing(PrivateBrowsing::No, clientPolicy, host, bundleIdentifier, versionString);
+}
+
+void WebPlatformStrategies::setPrivateBrowsingPluginLoadClientPolicy(PluginLoadClientPolicy clientPolicy, const String& host, const String& bundleIdentifier, const String& versionString)
+{
+    setPluginLoadClientPolicyForPrivateBrowsing(PrivateBrowsing::Yes, clientPolicy, host, bundleIdentifier, versionString);
 }
 
 void WebPlatformStrategies::clearPluginClientPolicies()
 {
     m_hostsToPluginIdentifierData.clear();
+    m_hostsToPluginIdentifierDataInPrivateBrowsing.clear();
 }
 
 #endif
@@ -247,11 +255,12 @@ void WebPlatformStrategies::clearPluginClientPolicies()
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #if PLATFORM(MAC)
 
-String WebPlatformStrategies::longestMatchedWildcardHostForHost(const String& host) const
+String WebPlatformStrategies::longestMatchedWildcardHostForHost(const String& host, PrivateBrowsing privateBrowsing) const
 {
     String longestMatchedHost;
 
-    for (auto& key : m_hostsToPluginIdentifierData.keys()) {
+    auto& hostsToPluginIdentifierData = privateBrowsing == PrivateBrowsing::Yes ? m_hostsToPluginIdentifierDataInPrivateBrowsing : m_hostsToPluginIdentifierData;
+    for (auto& key : hostsToPluginIdentifierData.keys()) {
         if (key.contains('*') && key != "*" && stringMatchesWildcardString(host, key)) {
             if (key.length() > longestMatchedHost.length())
                 longestMatchedHost = key;
@@ -263,38 +272,40 @@ String WebPlatformStrategies::longestMatchedWildcardHostForHost(const String& ho
     return longestMatchedHost;
 }
 
-bool WebPlatformStrategies::replaceHostWithMatchedWildcardHost(String& host, const String& identifier) const
+bool WebPlatformStrategies::replaceHostWithMatchedWildcardHost(String& host, const String& identifier, PrivateBrowsing privateBrowsing) const
 {
-    String matchedWildcardHost = longestMatchedWildcardHostForHost(host);
+    String matchedWildcardHost = longestMatchedWildcardHostForHost(host, privateBrowsing);
 
     if (matchedWildcardHost.isNull())
         return false;
 
-    auto plugInIdentifierData = m_hostsToPluginIdentifierData.find(matchedWildcardHost);
-    if (plugInIdentifierData == m_hostsToPluginIdentifierData.end() || !plugInIdentifierData->value.contains(identifier))
+    auto& hostsToPluginIdentifierData = privateBrowsing == PrivateBrowsing::Yes ? m_hostsToPluginIdentifierDataInPrivateBrowsing : m_hostsToPluginIdentifierData;
+    auto plugInIdentifierData = hostsToPluginIdentifierData.find(matchedWildcardHost);
+    if (plugInIdentifierData == hostsToPluginIdentifierData.end() || !plugInIdentifierData->value.contains(identifier))
         return false;
 
     host = matchedWildcardHost;
     return true;
 }
 
-bool WebPlatformStrategies::pluginLoadClientPolicyForHost(const String& host, const PluginInfo& info, PluginLoadClientPolicy& policy) const
+bool WebPlatformStrategies::pluginLoadClientPolicyForHostForPrivateBrowsing(PrivateBrowsing privateBrowsing, const String& host, const PluginInfo& info, PluginLoadClientPolicy& policy) const
 {
     String hostToLookUp = host;
     String identifier = info.bundleIdentifier;
 
-    auto policiesByIdentifierIterator = m_hostsToPluginIdentifierData.find(hostToLookUp);
+    auto& hostsToPluginIdentifierData = privateBrowsing == PrivateBrowsing::Yes ? m_hostsToPluginIdentifierDataInPrivateBrowsing : m_hostsToPluginIdentifierData;
+    auto policiesByIdentifierIterator = hostsToPluginIdentifierData.find(hostToLookUp);
 
-    if (!identifier.isNull() && policiesByIdentifierIterator == m_hostsToPluginIdentifierData.end()) {
-        if (!replaceHostWithMatchedWildcardHost(hostToLookUp, identifier))
+    if (!identifier.isNull() && policiesByIdentifierIterator == hostsToPluginIdentifierData.end()) {
+        if (!replaceHostWithMatchedWildcardHost(hostToLookUp, identifier, privateBrowsing))
             hostToLookUp = "*";
-        policiesByIdentifierIterator = m_hostsToPluginIdentifierData.find(hostToLookUp);
-        if (hostToLookUp != "*" && policiesByIdentifierIterator == m_hostsToPluginIdentifierData.end()) {
+        policiesByIdentifierIterator = hostsToPluginIdentifierData.find(hostToLookUp);
+        if (hostToLookUp != "*" && policiesByIdentifierIterator == hostsToPluginIdentifierData.end()) {
             hostToLookUp = "*";
-            policiesByIdentifierIterator = m_hostsToPluginIdentifierData.find(hostToLookUp);
+            policiesByIdentifierIterator = hostsToPluginIdentifierData.find(hostToLookUp);
         }
     }
-    if (policiesByIdentifierIterator == m_hostsToPluginIdentifierData.end())
+    if (policiesByIdentifierIterator == hostsToPluginIdentifierData.end())
         return false;
 
     auto& policiesByIdentifier = policiesByIdentifierIterator->value;
@@ -345,7 +356,7 @@ void WebPlatformStrategies::populatePluginCache(const WebCore::Page& page)
     String pageHost = page.mainFrame().loader().documentLoader()->responseURL().host();
     for (PluginInfo& info : m_cachedPlugins) {
         PluginLoadClientPolicy clientPolicy;
-        if (pluginLoadClientPolicyForHost(pageHost, info, clientPolicy))
+        if (pluginLoadClientPolicyForHostForPrivateBrowsing(page.usesEphemeralSession() ? PrivateBrowsing::Yes : PrivateBrowsing::No, pageHost, info, clientPolicy))
             info.clientLoadPolicy = clientPolicy;
     }
 #else

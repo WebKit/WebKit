@@ -59,6 +59,13 @@ void WKContextSetPluginLoadClientPolicy(WKContextRef contextRef, WKPluginLoadCli
 #endif
 }
 
+void WKContextSetPrivateBrowsingPluginLoadClientPolicy(WKContextRef contextRef, WKPluginLoadClientPolicy policy, WKStringRef host, WKStringRef bundleIdentifier, WKStringRef versionString)
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    toImpl(contextRef)->setPrivateBrowsingPluginLoadClientPolicy(toPluginLoadClientPolicy(policy), toWTFString(host), toWTFString(bundleIdentifier), toWTFString(versionString));
+#endif
+}
+
 void WKContextClearPluginClientPolicies(WKContextRef contextRef)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)

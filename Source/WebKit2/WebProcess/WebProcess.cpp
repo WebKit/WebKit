@@ -385,14 +385,26 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
-    for (auto hostIter = parameters.pluginLoadClientPolicies.begin(); hostIter != parameters.pluginLoadClientPolicies.end(); ++hostIter) {
-        for (auto bundleIdentifierIter = hostIter->value.begin(); bundleIdentifierIter != hostIter->value.end(); ++bundleIdentifierIter) {
-            for (auto versionIter = bundleIdentifierIter->value.begin(); versionIter != bundleIdentifierIter->value.end(); ++versionIter)
-                platformStrategies()->pluginStrategy()->setPluginLoadClientPolicy(static_cast<PluginLoadClientPolicy>(versionIter->value), hostIter->key, bundleIdentifierIter->key, versionIter->key);
-        }
-    }
+    setPluginLoadClientPolicies(parameters.pluginLoadClientPoliciesForPrivateBrowsing, PrivateBrowsing::Yes);
+    setPluginLoadClientPolicies(parameters.pluginLoadClientPolicies, PrivateBrowsing::No);
 #endif
 }
+
+#if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
+void WebProcess::setPluginLoadClientPolicies(const HashMap<String, HashMap<String, HashMap<String, uint8_t>>> &pluginPolicies, PrivateBrowsing privateBrowsing)
+{
+    for (auto hostIter = pluginPolicies.begin(); hostIter != pluginPolicies.end(); ++hostIter) {
+        for (auto bundleIdentifierIter = hostIter->value.begin(); bundleIdentifierIter != hostIter->value.end(); ++bundleIdentifierIter) {
+            for (auto versionIter = bundleIdentifierIter->value.begin(); versionIter != bundleIdentifierIter->value.end(); ++versionIter) {
+                if (privateBrowsing == PrivateBrowsing::No)
+                    platformStrategies()->pluginStrategy()->setPluginLoadClientPolicy(static_cast<PluginLoadClientPolicy>(versionIter->value), hostIter->key, bundleIdentifierIter->key, versionIter->key);
+                else
+                    platformStrategies()->pluginStrategy()->setPrivateBrowsingPluginLoadClientPolicy(static_cast<PluginLoadClientPolicy>(versionIter->value), hostIter->key, bundleIdentifierIter->key, versionIter->key);
+            }
+        }
+    }
+}
+#endif
 
 void WebProcess::ensureNetworkProcessConnection()
 {
@@ -870,6 +882,13 @@ void WebProcess::setPluginLoadClientPolicy(uint8_t policy, const String& host, c
 {
 #if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
     platformStrategies()->pluginStrategy()->setPluginLoadClientPolicy(static_cast<PluginLoadClientPolicy>(policy), host, bundleIdentifier, versionString);
+#endif
+}
+
+void WebProcess::setPrivateBrowsingPluginLoadClientPolicy(uint8_t policy, const String& host, const String& bundleIdentifier, const String& versionString)
+{
+#if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
+    platformStrategies()->pluginStrategy()->setPrivateBrowsingPluginLoadClientPolicy(static_cast<PluginLoadClientPolicy>(policy), host, bundleIdentifier, versionString);
 #endif
 }
 
