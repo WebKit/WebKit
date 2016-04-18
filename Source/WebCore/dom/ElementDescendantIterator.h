@@ -171,7 +171,7 @@ ALWAYS_INLINE ElementDescendantIterator& ElementDescendantIterator::operator--()
     if (!previousSibling) {
         m_current = m_current->parentElement();
         // The stack optimizes for forward traversal only, this just maintains consistency.
-        if (m_current->nextSibling() == m_ancestorSiblingStack.last())
+        if (m_current->nextSibling() && m_current->nextSibling() == m_ancestorSiblingStack.last())
             m_ancestorSiblingStack.removeLast();
         return *this;
     }

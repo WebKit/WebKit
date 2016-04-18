@@ -1,3 +1,16 @@
+2016-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Crash in ElementDescendantIterator::operator--() when calling m_ancestorSiblingStack.last()
+        https://bugs.webkit.org/show_bug.cgi?id=156715
+        <rdar://problem/25750864>
+
+        Reviewed by Antti Koivisto.
+
+        Add regression test that reproduced the crash.
+
+        * fast/dom/collection-backward-traversal-crash-expected.txt: Added.
+        * fast/dom/collection-backward-traversal-crash.html: Added.
+
 2016-04-18  Brent Fulgham  <bfulgham@apple.com>
 
         CSP: Remove stubs for dynamically-added favicons (via link rel="icon")

@@ -1,3 +1,24 @@
+2016-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Crash in ElementDescendantIterator::operator--() when calling m_ancestorSiblingStack.last()
+        https://bugs.webkit.org/show_bug.cgi?id=156715
+        <rdar://problem/25750864>
+
+        Reviewed by Antti Koivisto.
+
+        Fix correctness of ElementDescendantIterator::operator--(). The last element
+        in the m_ancestorSiblingStack stack is nullptr. However, if our parent does
+        not have a sibling, m_current->nextSibling() == m_ancestorSiblingStack.last()
+        would be true and we would end up removing the nullptr element from
+        m_ancestorSiblingStack. We would crash on a follow-up call to operator--()
+        because m_ancestorSiblingStack.last() would do an out-of-bound access, given
+        that m_ancestorSiblingStack is empty.
+
+        Test: fast/dom/collection-backward-traversal-crash.html
+
+        * dom/ElementDescendantIterator.h:
+        (WebCore::ElementDescendantIterator::operator--):
+
 2016-04-18  Anders Carlsson  <andersca@apple.com>
 
         Fix build with newer versions of clang.
