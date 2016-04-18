@@ -1,3 +1,60 @@
+2016-04-18  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLScripts layout to avoid using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=153917
+
+        Reviewed by Martin Robinson.
+
+        We import tests from the MathML in HTML5 test suite to verify various OpenType MATH parameters.
+        We also add a test for the italic correction of large operators (bug 130325).
+        Finally, we adjust some tests and expectations to take into account the new rendering.
+
+        * imported/mathml-in-html5/LICENSE: Added.
+        * imported/mathml-in-html5/README.md: Added.
+        * imported/mathml-in-html5/fonts/math/scripts-spaceafterscript3000.woff: Renamed from LayoutTests/mathml/mathml-in-html5/fonts/scripts-spaceafterscript3000.woff.
+        * imported/mathml-in-html5/fonts/math/scripts-subscriptbaselinedropmin9000.woff: Renamed from LayoutTests/mathml/mathml-in-html5/fonts/scripts-subscriptbaselinedropmin9000.woff.
+        * imported/mathml-in-html5/fonts/math/scripts-subscriptshiftdown6000.woff: Renamed from LayoutTests/mathml/mathml-in-html5/fonts/scripts-subscriptshiftdown6000.woff.
+        * imported/mathml-in-html5/fonts/math/scripts-subscripttopmax4000.woff: Renamed from LayoutTests/mathml/mathml-in-html5/fonts/scripts-subscripttopmax4000.woff.
+        * imported/mathml-in-html5/fonts/math/scripts-subsuperscriptgapmin11000-superscriptbottommaxwithsubscript3000.woff: Renamed from LayoutTests/mathml/mathml-in-html5/fonts/scripts-subsuperscriptgapmin11000-superscriptbottommaxwithsubscript3000.woff.
+        * imported/mathml-in-html5/fonts/math/scripts-subsuperscriptgapmin11000.woff: Renamed from LayoutTests/mathml/mathml-in-html5/fonts/scripts-subsuperscriptgapmin11000.woff.
+        * imported/mathml-in-html5/fonts/math/scripts-superscriptbaselinedropmax10000.woff: Renamed from LayoutTests/mathml/mathml-in-html5/fonts/scripts-superscriptbaselinedropmax10000.woff.
+        * imported/mathml-in-html5/fonts/math/scripts-superscriptbottommin8000.woff: Renamed from LayoutTests/mathml/mathml-in-html5/fonts/scripts-superscriptbottommin8000.woff.
+        * imported/mathml-in-html5/fonts/math/scripts-superscriptshiftup7000.woff: Renamed from LayoutTests/mathml/mathml-in-html5/fonts/scripts-superscriptshiftup7000.woff.
+        * imported/mathml-in-html5/fonts/math/scripts-superscriptshiftupcramped5000.woff: Renamed from LayoutTests/mathml/mathml-in-html5/fonts/scripts-superscriptshiftupcramped5000.woff.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-parameters-1-expected.txt: Renamed from LayoutTests/mathml/mathml-in-html5/subsup-parameters-1-expected.txt.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-parameters-1.html: Renamed from LayoutTests/mathml/mathml-in-html5/subsup-parameters-1.html.
+        * mathml/msubsup-fuzz-expected.txt: Test adjustment: Update the reference now that nothing
+        is displayed for invalid markup.
+        * accessibility/mac/mathml-multiscript-expected.txt: ditto.
+        * mathml/opentype/large-operators-italic-correction.html: Added. This test verifies that the
+        italic correction from the MATH table is used for positioning subscripts of large operators.
+        * mathml/opentype/large-operators-italic-correction-expected.txt: Added.
+        * mathml/presentation/bug95015.html: Test adjustment: move down a bit the covering red
+        rectangle, since the script is slightly lower.
+        * mathml/presentation/bug95015-expected.html: ditto
+        * mathml/presentation/multiscripts-positions.html: Test adjustment: Modify the expected
+        vertical positions of scripts now that we follow Gecko's behavior.
+        * mathml/presentation/multiscripts-positions-expected.html: ditto.
+        * mathml/presentation/multiscripts-noscripts-expected.html: There seem to be small errors in
+        the ascent of mmultiscripts, probably due to the conversions between firstLineBaseline (int)
+        and LayoutUnit (fractional pixel). For now, let's tweak the tests.
+        * mathml/presentation/multiscripts-noscripts.html: ditto.
+        * mathml/presentation/scripts-height-expected.html: ditto
+        * mathml/presentation/scripts-height.html: ditto
+        * mathml/presentation/scripts-horizontal-alignment.html: Modify the test to make it work
+        with the new layout rules.
+        * mathml/presentation/scripts-horizontal-alignment-expected.html: ditto.
+        * platform/gtk/accessibility/math-multiscript-attributes-expected.txt: Test adjustment:
+        Update reference to take into account a small shift.
+        * platform/mac/accessibility/math-multiscript-attributes-expected.txt: ditto.
+        * platform/gtk/mathml/presentation/roots-expected.png: Test adjustment: Update reference to
+        take into account small rendering changes.
+        * platform/gtk/mathml/presentation/roots-expected.txt: ditto.
+        * platform/ios-simulator/mathml/presentation/roots-expected.txt: ditto.
+        * platform/mac/TestExpectations: Mark some tests for scripts as failing on mac. MATH fonts
+        are really needed to make them reliable.
+        * platform/ios-simulator/TestExpectations: Ditto
+
 2016-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Use grid-template-areas to determine the explicit grid

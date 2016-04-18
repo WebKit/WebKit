@@ -6,24 +6,22 @@
   </head>
   <body>
 
-    <!-- The MathML recommendation does not specify horizontal alignment of scripts.  We align the bottom (respectively top) edge of the subscript (respectively superscript) with the bottom (respectively top) edge of the flex container. -->
+    <!-- The MathML recommendation does not specify horizontal alignment of scripts. We apply the maximum vertical shifts necessary for all subscripts / superscripts. Here we need to shift the tall green scripts to avoid collision and so the red scripts will be shifted by the same distance. -->
     <math style="position: absolute;">
       <mspace height="100px" depth="100px"/>
       <mmultiscripts>
         <mn>0</mn>
         <mspace width="10px" height="50px" mathbackground="green"/>
+        <mspace width="10px" depth="50px" mathbackground="green"/>
         <mspace width="10px" height="10px" mathbackground="red"/>
-        <mspace width="10px" height="10px" mathbackground="blue"/>
-        <none/>
+        <mspace width="10px" depth="10px" mathbackground="red"/>
         <mprescripts/>
-        <none/>
-        <mspace width="10px" height="10px" mathbackground="blue"/>
         <mspace width="10px" height="10px" mathbackground="red"/>
-        <mspace width="10px" height="50px" mathbackground="green"/>
+        <mspace width="10px" depth="10px" mathbackground="red"/>
       </mmultiscripts>
     </math>
 
-    <!-- These black rectangles should hide the top/bottom of the <mmultiscripts> element. So the green and red scripts should not be visible -->
+    <!-- These black rectangles should hide the top/bottom of the <mmultiscripts> element. So the red scripts should not be visible -->
     <math style="position: absolute; top: -40px;">
       <mspace height="100px" depth="100px"/>
       <mspace width="200px" height="40px" depth="20px" mathbackground="black"/>

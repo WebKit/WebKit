@@ -1,3 +1,55 @@
+2016-04-18  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLScripts layout to avoid using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=153917
+
+        Reviewed by Martin Robinson.
+
+        Tests: mathml/mathml-in-html5/subsup-parameters-1.html
+               mathml/opentype/large-operators-italic-correction.html
+
+        Reimplement RenderMathMLScripts without any flexbox or anonymous.
+        We also rely on parameters from the MATH table to improve rendering.
+
+        * css/mathml.css:
+        (msub > * + * + *, msup > * + * + *, msubsup > * + * + * + *, msub > mprescripts, msup > mprescripts, msubsup > mprescripts, msub > none, msup > none, msubsup > none, mmultiscripts > mprescripts ~ mprescripts, mmultiscripts > mprescripts ~ mprescripts ~ *): Deleted.
+        Invalid markup for scripts is now just hidden.
+        * rendering/mathml/RenderMathMLOperator.h: ditto.
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::unembellishedOperator): Reimplemented.
+        (WebCore::RenderMathMLScripts::getBaseAndScripts): Helper function to verify whether the
+        child list is valid and retrieve pointers on important children.
+        (WebCore::RenderMathMLScripts::spaceAfterScript): Helper function to get the
+        space after a script.
+        (WebCore::RenderMathMLScripts::italicCorrection): Helper function to read the
+        italic correction of a largeop base.
+        (WebCore::RenderMathMLScripts::computePreferredLogicalWidths): Implement this function.
+        (WebCore::RenderMathMLScripts::getScriptMetricsAndLayoutIfNeeded): Helper function to get
+        the maximum ascent/descent of all the scripts and determine the minimal
+        sub/sup shifts to apply.
+        (WebCore::RenderMathMLScripts::mirrorIfNeeded): Helper function to calculate the horizontal
+        offset depending on the directionality.
+        (WebCore::RenderMathMLScripts::layoutBlock): Implement this function.
+        (WebCore::RenderMathMLScripts::firstLineBaseline): Implement this function.
+        (WebCore::RenderMathMLScripts::paintChildren): Implement this function.
+        (WebCore::RenderMathMLScripts::RenderMathMLScripts): Deleted.
+        (WebCore::RenderMathMLScripts::base): Deleted.
+        (WebCore::RenderMathMLScripts::fixAnonymousStyleForSubSupPair): Deleted.
+        (WebCore::RenderMathMLScripts::fixAnonymousStyles): Deleted.
+        (WebCore::RenderMathMLScripts::addChildInternal): Deleted.
+        (WebCore::RenderMathMLScripts::removeChildInternal): Deleted.
+        (WebCore::RenderMathMLScripts::addChild): Deleted.
+        (WebCore::RenderMathMLScripts::removeChild): Deleted.
+        (WebCore::RenderMathMLScripts::styleDidChange): Deleted.
+        (WebCore::RenderMathMLScripts::layout): Deleted.
+        (WebCore::RenderMathMLScriptsWrapper::createAnonymousWrapper): Deleted.
+        (WebCore::RenderMathMLScriptsWrapper::addChildInternal): Deleted.
+        (WebCore::RenderMathMLScriptsWrapper::addChild): Deleted.
+        (WebCore::RenderMathMLScriptsWrapper::removeChildInternal): Deleted.
+        (WebCore::RenderMathMLScriptsWrapper::removeChild): Deleted.
+        * rendering/mathml/RenderMathMLScripts.h: Update definitions and remove classes
+        for anonymous wrappers.
+
 2016-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Use grid-template-areas to determine the explicit grid

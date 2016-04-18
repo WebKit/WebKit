@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Large Operators Italic Correction</title>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <style type="text/css">
+      /* For Latin Modern Math,
+         italic correction of ∫ = 591
+         em = 1000
+         so the actual italic correction will be 591 * 64 / 1000;
+       */
+      math {
+        font-family: "Latin Modern Math";
+        font-size: 64px;
+      }
+    </style>
+    <script type="text/javascript">
+      var epsilon = 1;
+      setup({ "explicit_done": true });
+      function run() {
+        assert_approx_equals(document.getElementById("sup").getBoundingClientRect().left - document.getElementById("sub").getBoundingClientRect().left, 591 * 64 / 1000, epsilon);
+        done();
+      }
+    </script>
+  </head>
+  <body onload="run()">
+
+    <p>This test passes if the difference of horizontal positions between the
+      subscript and superscript corresponds to the italic correction of the
+      integral operator.</p>
+
+    <math display="block">
+      <msubsup>
+        <mo>∫</mo>
+        <mspace id="sub" width="10px" height="10px" mathbackground="red"/>
+        <mspace id="sup" width="10px" height="10px" mathbackground="green"/>
+      </msubsup>
+    </math>
+  </body>
+</html>

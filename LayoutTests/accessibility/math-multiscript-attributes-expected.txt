@@ -14,7 +14,7 @@ AXRoleDescription: group
 AXChildren: 
 AXHelp: 
 AXParent: 
-AXSize: NSSize: {12, 24}
+AXSize: NSSize: {12, 25}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -104,7 +104,7 @@ AXRoleDescription: group
 AXChildren: 
 AXHelp: 
 AXParent: 
-AXSize: NSSize: {9, 19}
+AXSize: NSSize: {10, 19}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -134,7 +134,7 @@ AXRoleDescription: group
 AXChildren: 
 AXHelp: 
 AXParent: 
-AXSize: NSSize: {9, 18}
+AXSize: NSSize: {10, 18}
 AXTitle: 
 AXDescription: 
 AXValue: 

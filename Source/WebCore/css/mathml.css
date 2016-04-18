@@ -101,12 +101,8 @@ mphantom {
     visibility: hidden;
 }
 
-/* This is a special style for erroneous markup:
-  - <merror> element.
-  - extra children in script elements.
-  - <mprescripts/> and <none/> elements in msub/msup/msubsup.
- */
-merror, msub > * + * + *, msup > * + * + *, msubsup > * + * + * + *, msub > mprescripts, msup > mprescripts, msubsup > mprescripts, msub > none, msup > none, msubsup > none, mmultiscripts > mprescripts ~ mprescripts, mmultiscripts > mprescripts ~ mprescripts ~ * {
+/* This is a special style for erroneous markup. */
+merror {
     outline: solid thin red;
     font-weight: bold;
     font-family: sans-serif;

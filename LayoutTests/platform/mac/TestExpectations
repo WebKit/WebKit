@@ -790,6 +790,9 @@ webkit.org/b/72828 mathml/opentype/horizontal-munderover.html [ Failure ]
 # These tests require the Latin Modern Math font.
 mathml/opentype/fraction-line.html [ Pass ImageOnlyFailure ]
 mathml/presentation/fractions-linethickness.html [ Pass ImageOnlyFailure ]
+mathml/opentype/large-operators-italic-correction.html [ Pass Failure ]
+mathml/presentation/multiscripts-positions.html [ Pass ImageOnlyFailure ]
+mathml/presentation/scripts-subsup.html [ Pass ImageOnlyFailure ]
 
 # Missing references
 webkit.org/b/119038 mathml/presentation/mo-stretch.html [ Failure ]

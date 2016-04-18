@@ -662,11 +662,15 @@ webkit.org/b/153337 pageoverlay/overlay-installation.html [ Pass Failure ]
 # These tests require the Latin Modern Math font.
 mathml/opentype/fraction-line.html [ Pass ImageOnlyFailure ]
 mathml/presentation/fractions-linethickness.html [ Pass ImageOnlyFailure ]
+mathml/opentype/large-operators-italic-correction.html [ Pass Failure ]
+mathml/presentation/multiscripts-positions.html [ Pass ImageOnlyFailure ]
+mathml/presentation/scripts-subsup.html [ Pass ImageOnlyFailure ]
 
 # MathML tests that fail:
 mathml/opentype/horizontal.html [ Failure ]
 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
 mathml/mathml-in-dashboard.html [ Failure ]
+mathml/presentation/scripts-height.html [ Failure ]
 
 # <rdar://problem/19221067> ASSERT(m_stretchyData.top().glyph) fails in RenderMathMLOperator.cpp
 mathml/presentation/style-changed.html
