@@ -290,17 +290,6 @@ void JIT::emitSlow_op_instanceof_custom(Instruction* currentInstruction, Vector<
     callOperation(operationInstanceOfCustom, regT1, regT0, regT2, regT4, regT3);
     emitStoreBool(dst, returnValueGPR);
 }
-    
-void JIT::emit_op_is_empty(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int value = currentInstruction[2].u.operand;
-    
-    emitLoad(value, regT1, regT0);
-    compare32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag), regT0);
-
-    emitStoreBool(dst, regT0);
-}
 
 void JIT::emit_op_is_undefined(Instruction* currentInstruction)
 {

@@ -1212,16 +1212,6 @@ _llint_op_instanceof_custom:
     dispatch(5)
 
 
-_llint_op_is_empty:
-    traceExecution()
-    loadi 8[PC], t1
-    loadi 4[PC], t0
-    loadConstantOrVariable(t1, t2, t3)
-    cieq t2, EmptyValueTag, t3
-    storei t3, PayloadOffset[cfr, t0, 8]
-    dispatch(3)
-
-
 _llint_op_is_undefined:
     traceExecution()
     loadi 8[PC], t1

@@ -156,7 +156,6 @@ bool doesGC(Graph& graph, Node* node)
     case IsArrayObject:
     case IsJSArray:
     case IsArrayConstructor:
-    case IsEmpty:
     case IsUndefined:
     case IsBoolean:
     case IsNumber:

@@ -49,7 +49,6 @@
             { "name" : "op_instanceof", "length" : 4 },
             { "name" : "op_instanceof_custom", "length" : 5 },
             { "name" : "op_typeof", "length" : 3 },
-            { "name" : "op_is_empty", "length" : 3 },
             { "name" : "op_is_undefined", "length" : 3 },
             { "name" : "op_is_boolean", "length" : 3 },
             { "name" : "op_is_number", "length" : 3 },

@@ -511,7 +511,6 @@ namespace JSC {
         void emit_op_overrides_has_instance(Instruction*);
         void emit_op_instanceof(Instruction*);
         void emit_op_instanceof_custom(Instruction*);
-        void emit_op_is_empty(Instruction*);
         void emit_op_is_undefined(Instruction*);
         void emit_op_is_boolean(Instruction*);
         void emit_op_is_number(Instruction*);

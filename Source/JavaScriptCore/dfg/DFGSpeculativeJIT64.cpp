@@ -4432,17 +4432,6 @@ void SpeculativeJIT::compile(Node* node)
         compileInstanceOfCustom(node);
         break;
     }
-
-    case IsEmpty: {        
-        JSValueOperand value(this, node->child1());
-        GPRTemporary result(this, Reuse, value);
-
-        m_jit.comparePtr(JITCompiler::Equal, value.gpr(), TrustedImm32(JSValue::encode(JSValue())), result.gpr());
-        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
-
-        jsValueResult(result.gpr(), node, DataFormatJSBoolean);
-        break;
-    }
         
     case IsUndefined: {
         JSValueOperand value(this, node->child1());
