@@ -1,3 +1,9 @@
+2016-04-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix iOS build after r199701
+
+        * platform/ios/WebAVPlayerController.mm:
+
 2016-04-18  Darin Adler  <darin@apple.com>
 
         Updated binding test result to reflect the change to not use Deprecated::ScriptValue.

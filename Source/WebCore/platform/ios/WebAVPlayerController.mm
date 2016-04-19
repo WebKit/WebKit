@@ -50,7 +50,7 @@ using namespace WebCore;
 
 - (instancetype)init
 {
-    if (!getAVPlayerController())
+    if (!getAVPlayerControllerClass())
         return nil;
 
     if (!(self = [super init]))
