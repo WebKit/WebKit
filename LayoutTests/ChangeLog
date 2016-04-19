@@ -1,3 +1,9 @@
+2016-04-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix after r199696.
+
+        * inspector/console/x-frame-options-message-expected.txt: Rebaseline.):
+
 2016-04-18  Gavin Barraclough  <barraclough@apple.com>
 
         WebKit should adopt journal_mode=wal for all SQLite databases.
