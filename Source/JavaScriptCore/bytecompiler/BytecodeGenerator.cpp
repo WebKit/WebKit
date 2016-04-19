@@ -4108,6 +4108,14 @@ RegisterID* BytecodeGenerator::emitIsUndefined(RegisterID* dst, RegisterID* src)
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitIsEmpty(RegisterID* dst, RegisterID* src)
+{
+    emitOpcode(op_is_empty);
+    instructions().append(dst->index());
+    instructions().append(src->index());
+    return dst;
+}
+    
 RegisterID* BytecodeGenerator::emitIteratorNext(RegisterID* dst, RegisterID* iterator, const ThrowableExpressionData* node)
 {
     {

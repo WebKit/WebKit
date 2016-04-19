@@ -306,6 +306,7 @@ namespace JSC { namespace DFG {
     macro(IsArrayObject, NodeMustGenerate | NodeResultBoolean) \
     macro(IsJSArray, NodeResultBoolean) \
     macro(IsArrayConstructor, NodeResultBoolean) \
+    macro(IsEmpty, NodeResultBoolean) \
     macro(IsUndefined, NodeResultBoolean) \
     macro(IsBoolean, NodeResultBoolean) \
     macro(IsNumber, NodeResultBoolean) \

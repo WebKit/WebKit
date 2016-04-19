@@ -979,6 +979,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case IsEmpty:
     case IsArrayObject:
     case IsJSArray:
     case IsArrayConstructor:
@@ -1063,6 +1064,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 } else
                     setConstant(node, jsBoolean(false));
                 break;
+            case IsEmpty:
+                setConstant(node, jsBoolean(child.value().isEmpty()));
+                break;
             default:
                 constantWasSet = false;
                 break;
@@ -1093,6 +1097,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
 
             break;
+        case IsEmpty: {
+            if (child.m_type && !(child.m_type & SpecEmpty)) {
+                setConstant(node, jsBoolean(false));
+                constantWasSet = true;
+                break;
+            }
+
+            if (child.m_type && !(child.m_type & ~SpecEmpty)) {
+                setConstant(node, jsBoolean(true));
+                constantWasSet = true;
+                break;
+            }
+
+            break;
+        }
         case IsUndefined:
             // FIXME: Use the masquerades-as-undefined watchpoint thingy.
             // https://bugs.webkit.org/show_bug.cgi?id=144456

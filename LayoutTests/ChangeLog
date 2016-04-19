@@ -1,3 +1,13 @@
+2016-04-09  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        calling super() a second time in a constructor should throw
+        https://bugs.webkit.org/show_bug.cgi?id=151113
+
+        Reviewed by Saam Barati and Keith Miller.
+
+        * js/class-syntax-super-expected.txt:
+        * js/script-tests/class-syntax-super.js:
+
 2016-04-18  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Possible off-by-one in hyphenation code

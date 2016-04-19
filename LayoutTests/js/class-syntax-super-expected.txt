@@ -49,6 +49,7 @@ PASS (function () { eval("super.method()");})():::SyntaxError: 'super' is only v
 PASS (function () { eval("super()");})():::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
 PASS new (class { constructor() { (function () { eval("super()");})(); } }):::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
 PASS (new (class { method() { (function () { eval("super.method()");})(); }})).method():::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
+PASS new (class extends Base { constructor() { super(); super();}}):::ReferenceError: 'super()' can't be called more than once in a constructor.
 PASS successfullyParsed
 
 TEST COMPLETE

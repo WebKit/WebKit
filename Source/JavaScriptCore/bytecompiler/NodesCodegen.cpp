@@ -758,10 +758,21 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
         ASSERT(generator.constructorKind() == ConstructorKind::Derived || generator.derivedContextType() == DerivedContextType::DerivedConstructorContext);
         generator.emitMove(callArguments.thisRegister(), generator.newTarget());
         RegisterID* ret = generator.emitConstruct(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
+
+        bool isConstructorKindDerived = generator.constructorKind() == ConstructorKind::Derived;
+        bool doWeUseArrowFunctionInConstructor = isConstructorKindDerived && generator.needsToUpdateArrowFunctionContext();
+
+        if (generator.isDerivedConstructorContext() || (doWeUseArrowFunctionInConstructor && generator.isSuperCallUsedInInnerArrowFunction()))
+            generator.emitLoadThisFromArrowFunctionLexicalEnvironment();
+        
+        RefPtr<Label> thisIsEmptyLabel = generator.newLabel();
+        generator.emitJumpIfTrue(generator.emitIsEmpty(generator.newTemporary(), generator.thisRegister()), thisIsEmptyLabel.get());
+        generator.emitThrowReferenceError(ASCIILiteral("'super()' can't be called more than once in a constructor."));
+        generator.emitLabel(thisIsEmptyLabel.get());
+
         generator.emitMove(generator.thisRegister(), ret);
         
-        bool isConstructorKindDerived = generator.constructorKind() == ConstructorKind::Derived;
-        if (generator.isDerivedConstructorContext() || (isConstructorKindDerived && generator.needsToUpdateArrowFunctionContext()))
+        if (generator.isDerivedConstructorContext() || doWeUseArrowFunctionInConstructor)
             generator.emitPutThisToArrowFunctionContextScope();
         
         return ret;

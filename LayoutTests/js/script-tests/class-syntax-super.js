@@ -135,4 +135,5 @@ shouldThrow('(function () { eval("super()");})()', '"SyntaxError: \'super\' is o
 shouldThrow('new (class { constructor() { (function () { eval("super()");})(); } })', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
 shouldThrow('(new (class { method() { (function () { eval("super.method()");})(); }})).method()', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
 
+shouldThrow('new (class extends Base { constructor() { super(); super();}})', '"ReferenceError: \'super()\' can\'t be called more than once in a constructor."');
 var successfullyParsed = true;
