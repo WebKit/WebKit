@@ -1,5 +1,14 @@
 2016-04-19  Alex Christensen  <achristensen@webkit.org>
 
+        Build fix.
+
+        * src/compiler/translator/Intermediate.h: Added.
+        (TIntermediate::TIntermediate):
+        * src/compiler/translator/intermediate.h: Removed.
+        Changed case of Intermediate.h file name for case sensitive file systems.
+
+2016-04-19  Alex Christensen  <achristensen@webkit.org>
+
         Update ANGLE
         https://bugs.webkit.org/show_bug.cgi?id=156755
 
