@@ -192,12 +192,14 @@ static inline PlatformThread getCurrentPlatformThread()
 MachineThreads::MachineThreads(Heap* heap)
     : m_registeredThreads(0)
     , m_threadSpecificForMachineThreads(0)
+    , m_threadSpecificForThread(0)
 #if !ASSERT_DISABLED
     , m_heap(heap)
 #endif
 {
     UNUSED_PARAM(heap);
     threadSpecificKeyCreate(&m_threadSpecificForMachineThreads, removeThread);
+    threadSpecificKeyCreate(&m_threadSpecificForThread, nullptr);
     activeMachineThreadsManager().add(this);
 }
 
@@ -205,6 +207,7 @@ MachineThreads::~MachineThreads()
 {
     activeMachineThreadsManager().remove(this);
     threadSpecificKeyDelete(m_threadSpecificForMachineThreads);
+    threadSpecificKeyDelete(m_threadSpecificForThread);
 
     LockHolder registeredThreadsLock(m_registeredThreadsMutex);
     for (Thread* t = m_registeredThreads; t;) {
@@ -231,6 +234,18 @@ bool MachineThreads::Thread::operator==(const PlatformThread& other) const
 #endif
 }
 
+#ifndef NDEBUG
+static bool isThreadInList(Thread* listHead, Thread* target)
+{
+    for (Thread* thread = listHead; thread; thread = thread->next) {
+        if (thread == target)
+            return true;
+    }
+
+    return false;
+}
+#endif
+
 void MachineThreads::addCurrentThread()
 {
     ASSERT(!m_heap->vm()->hasExclusiveThread() || m_heap->vm()->exclusiveThread() == std::this_thread::get_id());
@@ -239,12 +254,15 @@ void MachineThreads::addCurrentThread()
 #ifndef NDEBUG
         LockHolder lock(m_registeredThreadsMutex);
         ASSERT(threadSpecificGet(m_threadSpecificForMachineThreads) == this);
+        ASSERT(threadSpecificGet(m_threadSpecificForThread));
+        ASSERT(isThreadInList(m_registeredThreads, static_cast<Thread*>(threadSpecificGet(m_threadSpecificForThread))));
 #endif
         return;
     }
 
     Thread* thread = Thread::createForCurrentThread();
     threadSpecificSet(m_threadSpecificForMachineThreads, this);
+    threadSpecificSet(m_threadSpecificForThread, thread);
 
     LockHolder lock(m_registeredThreadsMutex);
 
@@ -254,15 +272,14 @@ void MachineThreads::addCurrentThread()
 
 Thread* MachineThreads::machineThreadForCurrentThread()
 {
+    Thread* result = static_cast<Thread*>(threadSpecificGet(m_threadSpecificForThread));
+    RELEASE_ASSERT(result);
+#ifndef NDEBUG
     LockHolder lock(m_registeredThreadsMutex);
-    PlatformThread platformThread = getCurrentPlatformThread();
-    for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
-        if (*thread == platformThread)
-            return thread;
-    }
+    ASSERT(isThreadInList(m_registeredThreads, result));
+#endif
 
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
+    return result;
 }
 
 void MachineThreads::removeThread(void* p)

@@ -437,10 +437,6 @@ storage/storagequota-query-usage.html [ Skip ]
 storage/storagequota-request-quota.html [ Skip ]
 fast/workers/worker-storagequota-query-usage.html [ Skip ]
 
-# The number of workers in this test exceeds the number of
-# ThreadSpecificValues we have on Windows.
-fast/workers/dedicated-worker-lifecycle.html [ Skip ] 
-
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 fast/dom/HTMLAnchorElement/anchor-nodownload.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-download.html [ Skip ]
