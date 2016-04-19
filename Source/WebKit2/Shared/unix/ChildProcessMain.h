@@ -49,10 +49,10 @@ int ChildProcessMain(int argc, char** argv)
 {
     ChildProcessMainType childMain;
 
-    InitializeWebKit2();
-
     if (!childMain.platformInitialize())
         return EXIT_FAILURE;
+
+    InitializeWebKit2();
 
     if (!childMain.parseCommandLine(argc, argv))
         return EXIT_FAILURE;
