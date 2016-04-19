@@ -2109,7 +2109,7 @@ macro checkTDZInGlobalPutToScopeIfNecessary()
     loadisFromInstruction(4, t0)
     andi InitializationModeMask, t0
     rshifti InitializationModeShift, t0
-    bieq t0, Initialization, .noNeedForTDZCheck
+    bineq t0, NotInitialization, .noNeedForTDZCheck
     loadpFromInstruction(6, t0)
     loadq [t0], t0
     bqeq t0, ValueEmpty, .pDynamic

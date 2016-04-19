@@ -236,6 +236,9 @@ inline CapabilityLevel canCompile(Node* node)
     case SetFunctionName:
     case LogShadowChickenPrologue:
     case LogShadowChickenTail:
+    case ResolveScope:
+    case GetDynamicVar:
+    case PutDynamicVar:
         // These are OK.
         break;
 

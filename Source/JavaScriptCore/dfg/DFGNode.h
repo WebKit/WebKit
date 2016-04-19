@@ -876,6 +876,9 @@ struct Node {
         case PutSetterById:
         case PutGetterSetterById:
         case DeleteById:
+        case GetDynamicVar:
+        case PutDynamicVar:
+        case ResolveScope:
             return true;
         default:
             return false;
@@ -886,6 +889,23 @@ struct Node {
     {
         ASSERT(hasIdentifier());
         return m_opInfo;
+    }
+
+    bool hasGetPutInfo()
+    {
+        switch (op()) {
+        case GetDynamicVar:
+        case PutDynamicVar:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    unsigned getPutInfo()
+    {
+        ASSERT(hasGetPutInfo());
+        return m_opInfo2;
     }
 
     bool hasAccessorAttributes()

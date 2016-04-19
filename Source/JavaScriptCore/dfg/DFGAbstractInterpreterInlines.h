@@ -2648,8 +2648,23 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetGlobalVar:
         forNode(node).makeHeapTop();
         break;
+
     case GetGlobalLexicalVariable:
         forNode(node).makeBytecodeTop();
+        break;
+
+    case GetDynamicVar:
+        clobberWorld(node->origin.semantic, clobberLimit);
+        forNode(node).makeBytecodeTop();
+        break;
+
+    case PutDynamicVar:
+        clobberWorld(node->origin.semantic, clobberLimit);
+        break;
+
+    case ResolveScope:
+        clobberWorld(node->origin.semantic, clobberLimit);
+        forNode(node).setType(m_graph, SpecObject);
         break;
         
     case VarInjectionWatchpoint:

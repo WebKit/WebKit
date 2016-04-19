@@ -1250,7 +1250,24 @@ public:
         return appendCall(operation);
     }
 
+    JITCompiler::Call callOperation(C_JITOperation_EJscI operation, GPRReg result, GPRReg arg1, UniquedStringImpl* impl)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(impl));
+        return appendCallSetResult(operation, result);
+    }
+
+
 #if USE(JSVALUE64)
+    JITCompiler::Call callOperation(V_JITOperation_EOJIUi operation, GPRReg arg1, GPRReg arg2, UniquedStringImpl* impl, unsigned value)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(impl), TrustedImm32(value));
+        return appendCall(operation);
+    }
+    JITCompiler::Call callOperation(J_JITOperation_EOIUi operation, GPRReg result, GPRReg arg1, UniquedStringImpl* impl, unsigned value)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(impl), TrustedImm32(value));
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(J_JITOperation_E operation, GPRReg result)
     {
         m_jit.setupArgumentsExecState();
@@ -1656,6 +1673,16 @@ public:
 #define SH4_32BIT_DUMMY_ARG
 #endif
 
+    JITCompiler::Call callOperation(V_JITOperation_EOJIUi operation, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, UniquedStringImpl* impl, unsigned value)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2Payload, arg2Tag, TrustedImmPtr(impl), TrustedImm32(value));
+        return appendCall(operation);
+    }
+    JITCompiler::Call callOperation(J_JITOperation_EOIUi operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, UniquedStringImpl* impl, unsigned value)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(impl), TrustedImm32(value));
+        return appendCallSetResult(operation, resultPayload, resultTag);
+    }
     JITCompiler::Call callOperation(D_JITOperation_G operation, FPRReg result, JSGlobalObject* globalObject)
     {
         m_jit.setupArguments(TrustedImmPtr(globalObject));
@@ -2477,6 +2504,9 @@ public:
     void compileMaterializeNewObject(Node*);
     void compileRecordRegExpCachedResult(Node*);
     void compileCallObjectConstructor(Node*);
+    void compileResolveScope(Node*);
+    void compileGetDynamicVar(Node*);
+    void compilePutDynamicVar(Node*);
 
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

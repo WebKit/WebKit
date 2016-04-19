@@ -461,6 +461,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case In:
     case ValueAdd:
     case SetFunctionName:
+    case GetDynamicVar:
+    case PutDynamicVar:
+    case ResolveScope:
         read(World);
         write(Heap);
         return;

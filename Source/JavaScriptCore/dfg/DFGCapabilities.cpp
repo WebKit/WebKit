@@ -101,6 +101,7 @@ inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, CapabilityLevel r
 CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruction* pc)
 {
     UNUSED_PARAM(codeBlock); // This function does some bytecode parsing. Ordinarily bytecode parsing requires the owning CodeBlock. It's sort of strange that we don't use it here right now.
+    UNUSED_PARAM(pc);
     
     switch (opcodeID) {
     case op_enter:
@@ -229,24 +230,9 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_get_rest_length:
     case op_log_shadow_chicken_prologue:
     case op_log_shadow_chicken_tail:
+    case op_put_to_scope:
+    case op_resolve_scope:
         return CanCompileAndInline;
-
-    case op_put_to_scope: {
-        ResolveType resolveType = GetPutInfo(pc[4].u.operand).resolveType();
-        // If we're writing to a readonly property we emit a Dynamic put that
-        // the DFG can't currently handle.
-        if (resolveType == Dynamic)
-            return CannotCompile;
-        return CanCompileAndInline;
-    }
-
-    case op_resolve_scope: {
-        // We don't compile 'catch' or 'with', so there's no point in compiling variable resolution within them.
-        ResolveType resolveType = static_cast<ResolveType>(pc[4].u.operand);
-        if (resolveType == Dynamic)
-            return CannotCompile;
-        return CanCompileAndInline;
-    }
 
     case op_new_regexp:
     case op_switch_string: // Don't inline because we don't want to copy string tables in the concurrent JIT.

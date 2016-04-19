@@ -4359,6 +4359,21 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case PutDynamicVar: {
+        compilePutDynamicVar(node);
+        break;
+    }
+
+    case GetDynamicVar: {
+        compileGetDynamicVar(node);
+        break;
+    }
+
+    case ResolveScope: {
+        compileResolveScope(node);
+        break;
+    }
+
     case NotifyWrite: {
         compileNotifyWrite(node);
         break;

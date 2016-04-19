@@ -971,7 +971,7 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
             RELEASE_ASSERT(constantScope);
             emitWriteBarrier(constantScope, value, ShouldFilterValue);
             emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
-            if (getPutInfo.initializationMode() != Initialization && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) {
+            if (!isInitialization(getPutInfo.initializationMode()) && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) {
                 // We need to do a TDZ check here because we can't always prove we need to emit TDZ checks statically.
                 if (indirectLoadForOperand)
                     emitGetVarFromIndirectPointer(bitwise_cast<JSValue**>(operandSlot), regT0);
@@ -1053,7 +1053,7 @@ void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowC
         linkCount++;
     if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks)
         linkCount++; // bad structure
-    if (getPutInfo.initializationMode() != Initialization && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) // TDZ check.
+    if (!isInitialization(getPutInfo.initializationMode()) && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) // TDZ check.
         linkCount++;
     if (resolveType == UnresolvedProperty || resolveType == UnresolvedPropertyWithVarInjectionChecks) {
         // GlobalProperty/GlobalPropertyWithVarInjectionsCheck
@@ -1061,7 +1061,7 @@ void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowC
         linkCount++; // emitLoadWithStructureCheck
 
         // GlobalLexicalVar
-        bool needsTDZCheck = getPutInfo.initializationMode() != Initialization;
+        bool needsTDZCheck = !isInitialization(getPutInfo.initializationMode());
         if (needsTDZCheck)
             linkCount++;
         linkCount++; // Notify write check.

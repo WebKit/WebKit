@@ -2045,7 +2045,7 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
     bool hasProperty = scope->hasProperty(exec, ident);
     if (hasProperty
         && scope->isGlobalLexicalEnvironment()
-        && getPutInfo.initializationMode() != Initialization) {
+        && !isInitialization(getPutInfo.initializationMode())) {
         // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
         PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
         JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, exec, ident, slot);
@@ -2060,7 +2060,7 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
         return;
     }
 
-    PutPropertySlot slot(scope, codeBlock->isStrictMode(), PutPropertySlot::UnknownContext, getPutInfo.initializationMode() == Initialization);
+    PutPropertySlot slot(scope, codeBlock->isStrictMode(), PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
     scope->methodTable()->put(scope, exec, ident, value, slot);
     
     if (exec->vm().exception())

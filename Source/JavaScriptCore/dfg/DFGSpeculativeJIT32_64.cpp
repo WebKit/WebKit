@@ -5048,6 +5048,21 @@ void SpeculativeJIT::compile(Node* node)
         compileMaterializeNewObject(node);
         break;
 
+    case PutDynamicVar: {
+        compilePutDynamicVar(node);
+        break;
+    }
+
+    case GetDynamicVar: {
+        compileGetDynamicVar(node);
+        break;
+    }
+
+    case ResolveScope: {
+        compileResolveScope(node);
+        break;
+    }
+
     case Unreachable:
         RELEASE_ASSERT_NOT_REACHED();
         break;

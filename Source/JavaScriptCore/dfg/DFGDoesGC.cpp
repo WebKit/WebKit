@@ -241,6 +241,9 @@ bool doesGC(Graph& graph, Node* node)
     case CopyRest:
     case LogShadowChickenPrologue:
     case LogShadowChickenTail:
+    case GetDynamicVar:
+    case PutDynamicVar:
+    case ResolveScope:
         return false;
 
     case CreateActivation:

@@ -204,6 +204,11 @@ private:
             changed |= setPrediction(node->getHeapPrediction());
             break;
         }
+
+        case GetDynamicVar: {
+            changed |= setPrediction(SpecBytecodeTop);
+            break;
+        }
             
         case GetGetterSetterByOffset:
         case GetExecutable: {
@@ -568,6 +573,11 @@ private:
             changed |= setPrediction(SpecObjectOther);
             break;
         }
+
+        case ResolveScope: {
+            changed |= setPrediction(SpecObjectOther);
+            break;
+        }
             
         case CreateThis:
         case NewObject: {
@@ -789,6 +799,7 @@ private:
         case ExitOK:
         case LoadVarargs:
         case CopyRest:
+        case PutDynamicVar:
             break;
             
         // This gets ignored because it only pretends to produce a value.

@@ -1479,6 +1479,13 @@ private:
             break;
         }
 
+        case ResolveScope:
+        case GetDynamicVar:
+        case PutDynamicVar: {
+            fixEdge<KnownCellUse>(node->child1());
+            break;
+        }
+
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:

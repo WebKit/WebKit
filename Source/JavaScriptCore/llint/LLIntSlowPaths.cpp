@@ -1483,7 +1483,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     bool hasProperty = scope->hasProperty(exec, ident);
     if (hasProperty
         && scope->isGlobalLexicalEnvironment()
-        && getPutInfo.initializationMode() != Initialization) {
+        && !isInitialization(getPutInfo.initializationMode())) {
         // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
         PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
         JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, exec, ident, slot);
@@ -1494,7 +1494,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     if (getPutInfo.resolveMode() == ThrowIfNotFound && !hasProperty)
         LLINT_THROW(createUndefinedVariableError(exec, ident));
 
-    PutPropertySlot slot(scope, codeBlock->isStrictMode(), PutPropertySlot::UnknownContext, getPutInfo.initializationMode() == Initialization);
+    PutPropertySlot slot(scope, codeBlock->isStrictMode(), PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
     scope->methodTable()->put(scope, exec, ident, value, slot);
     
     CommonSlowPaths::tryCachePutToScopeGlobal(exec, codeBlock, pc, scope, getPutInfo, slot, ident);

@@ -344,6 +344,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetRegExpObjectLastIndex:
     case SetRegExpObjectLastIndex:
     case RecordRegExpCachedResult:
+    case GetDynamicVar:
+    case PutDynamicVar:
+    case ResolveScope:
         return true;
 
     case BottomValue:

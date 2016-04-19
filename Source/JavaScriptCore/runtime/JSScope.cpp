@@ -92,13 +92,13 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
         JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(scope);
         SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
         if (!entry.isNull()) {
-            if (getOrPut == Put && entry.isReadOnly() && initializationMode != Initialization) {
+            if (getOrPut == Put && entry.isReadOnly() && !isInitialization(initializationMode)) {
                 // We know the property will be at global lexical environment, but we don't know how to cache it.
                 op = ResolveOp(Dynamic, 0, 0, 0, 0, 0);
                 return true;
             }
 
-            // We can try to force const Initialization to always go down the fast path. It is provably impossible to construct
+            // We can force const Initialization to always go down the fast path. It is provably impossible to construct
             // a program that needs a var injection check here. You can convince yourself of this as follows:
             // Any other let/const/class would be a duplicate of this in the global scope, so we would never get here in that situation.
             // Also, if we had an eval in the global scope that defined a const, it would also be a duplicate of this const, and so it would
@@ -106,7 +106,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
             // we will never have a Dynamic ResolveType here because if we were inside a "with" statement, that would mean the "const" definition 
             // isn't a global, it would be a local to the "with" block. 
             // We still need to make the slow path correct for when we need to fire a watchpoint.
-            ResolveType resolveType = initializationMode == Initialization ? GlobalLexicalVar : makeType(GlobalLexicalVar, needsVarInjectionChecks);
+            ResolveType resolveType = initializationMode == InitializationMode::ConstInitialization ? GlobalLexicalVar : makeType(GlobalLexicalVar, needsVarInjectionChecks);
             op = ResolveOp(
                 resolveType, depth, 0, 0, entry.watchpointSet(),
                 reinterpret_cast<uintptr_t>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot()));

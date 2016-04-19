@@ -2087,7 +2087,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             RELEASE_ASSERT(type != LocalClosureVar);
             int localScopeDepth = pc[5].u.operand;
 
-            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, type, NotInitialization);
+            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, type, InitializationMode::NotInitialization);
             instructions[i + 4].u.operand = op.type;
             instructions[i + 5].u.operand = op.depth;
             if (op.lexicalEnvironment) {
@@ -2117,14 +2117,14 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             instructions[i + 5].u.pointer = nullptr;
 
             GetPutInfo getPutInfo = GetPutInfo(pc[4].u.operand);
-            ASSERT(getPutInfo.initializationMode() == NotInitialization);
+            ASSERT(!isInitialization(getPutInfo.initializationMode()));
             if (getPutInfo.resolveType() == LocalClosureVar) {
                 instructions[i + 4] = GetPutInfo(getPutInfo.resolveMode(), ClosureVar, getPutInfo.initializationMode()).operand();
                 break;
             }
 
             const Identifier& ident = identifier(pc[3].u.operand);
-            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, getPutInfo.resolveType(), NotInitialization);
+            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, getPutInfo.resolveType(), InitializationMode::NotInitialization);
 
             instructions[i + 4].u.operand = GetPutInfo(getPutInfo.resolveMode(), op.type, getPutInfo.initializationMode()).operand();
             if (op.type == ModuleVar)
@@ -2193,7 +2193,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 ResolveType type = static_cast<ResolveType>(pc[5].u.operand);
                 // Even though type profiling may be profiling either a Get or a Put, we can always claim a Get because
                 // we're abstractly "read"ing from a JSScope.
-                ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, type, NotInitialization);
+                ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, type, InitializationMode::NotInitialization);
 
                 if (op.type == ClosureVar || op.type == ModuleVar)
                     symbolTable = op.lexicalEnvironment->symbolTable();

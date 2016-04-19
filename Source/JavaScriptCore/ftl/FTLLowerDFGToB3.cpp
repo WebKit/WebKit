@@ -966,6 +966,15 @@ private:
         case RecordRegExpCachedResult:
             compileRecordRegExpCachedResult();
             break;
+        case ResolveScope:
+            compileResolveScope();
+            break;
+        case GetDynamicVar:
+            compileGetDynamicVar();
+            break;
+        case PutDynamicVar:
+            compilePutDynamicVar();
+            break;
 
         case PhantomLocal:
         case LoopHint:
@@ -7524,6 +7533,27 @@ private:
         }
         
         DFG_CRASH(m_graph, m_node, "Bad use kinds");
+    }
+
+    void compileResolveScope()
+    {
+        UniquedStringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
+        setJSValue(vmCall(m_out.intPtr, m_out.operation(operationResolveScope),
+            m_callFrame, lowCell(m_node->child1()), m_out.constIntPtr(uid)));
+    }
+
+    void compileGetDynamicVar()
+    {
+        UniquedStringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
+        setJSValue(vmCall(m_out.int64, m_out.operation(operationGetDynamicVar),
+            m_callFrame, lowCell(m_node->child1()), m_out.constIntPtr(uid), m_out.constInt32(m_node->getPutInfo())));
+    }
+
+    void compilePutDynamicVar()
+    {
+        UniquedStringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
+        setJSValue(vmCall(Void, m_out.operation(operationPutDynamicVar),
+            m_callFrame, lowCell(m_node->child1()), lowJSValue(m_node->child2()), m_out.constIntPtr(uid), m_out.constInt32(m_node->getPutInfo())));
     }
     
     void compareEqObjectOrOtherToObject(Edge leftChild, Edge rightChild)

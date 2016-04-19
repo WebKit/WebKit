@@ -367,7 +367,7 @@ const ClosureVarWithVarInjectionChecks = 9
 const ResolveTypeMask = 0x3ff
 const InitializationModeMask = 0xffc00
 const InitializationModeShift = 10
-const Initialization = 0
+const NotInitialization = 2
 
 const MarkedBlockSize = 16 * 1024
 const MarkedBlockMask = ~(MarkedBlockSize - 1)

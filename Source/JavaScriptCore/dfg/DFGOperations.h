@@ -151,6 +151,10 @@ void JIT_OPERATION operationThrowStackOverflowForVarargs(ExecState*) WTF_INTERNA
 int32_t JIT_OPERATION operationSizeOfVarargs(ExecState*, EncodedJSValue arguments, int32_t firstVarArgOffset);
 void JIT_OPERATION operationLoadVarargs(ExecState*, int32_t firstElementDest, EncodedJSValue arguments, int32_t offset, int32_t length, int32_t mandatoryMinimum);
 
+JSCell* JIT_OPERATION operationResolveScope(ExecState*, JSScope*, UniquedStringImpl*);
+EncodedJSValue JIT_OPERATION operationGetDynamicVar(ExecState*, JSObject* scope, UniquedStringImpl*, unsigned);
+void JIT_OPERATION operationPutDynamicVar(ExecState*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned);
+
 int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue);
 int64_t JIT_OPERATION operationConvertDoubleToInt52(double);
 

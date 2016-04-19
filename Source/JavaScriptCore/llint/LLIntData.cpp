@@ -183,7 +183,7 @@ void Data::performAssertions(VM& vm)
     static_assert(GlobalLexicalVarWithVarInjectionChecks == 8, "LLInt assumes GlobalLexicalVarWithVarInjectionChecks ResultType is == 8");
     static_assert(ClosureVarWithVarInjectionChecks == 9, "LLInt assumes ClosureVarWithVarInjectionChecks ResultType is == 9");
 
-    static_assert(InitializationMode::Initialization == 0, "LLInt assumes that InitializationMode::Initialization is 0");
+    static_assert(static_cast<unsigned>(InitializationMode::NotInitialization) == 2, "LLInt assumes that InitializationMode::NotInitialization is 0");
     
     STATIC_ASSERT(GetPutInfo::typeBits == 0x3ff);
     STATIC_ASSERT(GetPutInfo::initializationShift == 10);

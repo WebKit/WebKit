@@ -90,7 +90,7 @@ ParserError BytecodeGenerator::generate()
                     globalScope = newBlockScopeVariable(); 
                     emitMove(globalScope.get(), globalObjectScope.get());
                 }
-                emitPutToScope(globalScope.get(), Variable(metadata->ident()), temp.get(), ThrowIfNotFound, NotInitialization);
+                emitPutToScope(globalScope.get(), Variable(metadata->ident()), temp.get(), ThrowIfNotFound, InitializationMode::NotInitialization);
             } else
                 RELEASE_ASSERT_NOT_REACHED();
         }
@@ -389,7 +389,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                 instructions().append(m_lexicalEnvironmentRegister->index());
                 instructions().append(UINT_MAX);
                 instructions().append(virtualRegisterForArgument(1 + i).offset());
-                instructions().append(GetPutInfo(ThrowIfNotFound, LocalClosureVar, NotInitialization).operand());
+                instructions().append(GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization).operand());
                 instructions().append(symbolTableConstantIndex);
                 instructions().append(offset.offset());
             }
@@ -436,7 +436,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             instructions().append(m_lexicalEnvironmentRegister->index());
             instructions().append(addConstant(ident));
             instructions().append(virtualRegisterForArgument(1 + i).offset());
-            instructions().append(GetPutInfo(ThrowIfNotFound, LocalClosureVar, NotInitialization).operand());
+            instructions().append(GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization).operand());
             instructions().append(symbolTableConstantIndex);
             instructions().append(offset.offset());
         }
@@ -868,7 +868,7 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
         ASSERT(!isSimpleParameterList);
         Variable var = variable(valuesToMoveIntoVars[i].first);
         RegisterID* scope = emitResolveScope(nullptr, var);
-        emitPutToScope(scope, var, valuesToMoveIntoVars[i].second.get(), DoNotThrowIfNotFound, NotInitialization);
+        emitPutToScope(scope, var, valuesToMoveIntoVars[i].second.get(), DoNotThrowIfNotFound, InitializationMode::NotInitialization);
     }
 }
 
@@ -1933,7 +1933,7 @@ void BytecodeGenerator::initializeBlockScopedFunctions(VariableEnvironment& envi
         RELEASE_ASSERT(!entry.isNull());
         emitNewFunctionExpressionCommon(temp.get(), function);
         bool isLexicallyScoped = true;
-        emitPutToScope(scope, variableForLocalEntry(name, entry, symbolTableIndex, isLexicallyScoped), temp.get(), DoNotThrowIfNotFound, Initialization);
+        emitPutToScope(scope, variableForLocalEntry(name, entry, symbolTableIndex, isLexicallyScoped), temp.get(), DoNotThrowIfNotFound, InitializationMode::Initialization);
     }
 }
 
@@ -1957,7 +1957,7 @@ void BytecodeGenerator::hoistSloppyModeFunctionIfNecessary(const Identifier& fun
         SymbolTableEntry entry = varSymbolTable->get(functionName.impl());
         ASSERT(!entry.isNull());
         bool isLexicallyScoped = false;
-        emitPutToScope(varScope.m_scope, variableForLocalEntry(functionName, entry, varScope.m_symbolTableConstantIndex, isLexicallyScoped), currentValue.get(), DoNotThrowIfNotFound, NotInitialization);
+        emitPutToScope(varScope.m_scope, variableForLocalEntry(functionName, entry, varScope.m_symbolTableConstantIndex, isLexicallyScoped), currentValue.get(), DoNotThrowIfNotFound, InitializationMode::NotInitialization);
     }
 }
 
@@ -2073,7 +2073,7 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
             SymbolTableEntry entry = symbolTable->get(locker, identifier.impl());
             RELEASE_ASSERT(!entry.isNull());
             RegisterID* transitionValue = pair.first;
-            emitPutToScope(loopScope, variableForLocalEntry(identifier, entry, loopSymbolTable->index(), true), transitionValue, DoNotThrowIfNotFound, NotInitialization);
+            emitPutToScope(loopScope, variableForLocalEntry(identifier, entry, loopSymbolTable->index(), true), transitionValue, DoNotThrowIfNotFound, InitializationMode::NotInitialization);
             transitionValue->deref();
         }
     }
@@ -2296,7 +2296,7 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
         instructions().append(kill(dst));
         instructions().append(scope->index());
         instructions().append(addConstant(variable.ident()));
-        instructions().append(GetPutInfo(resolveMode, variable.offset().isScope() ? LocalClosureVar : resolveType(), NotInitialization).operand());
+        instructions().append(GetPutInfo(resolveMode, variable.offset().isScope() ? LocalClosureVar : resolveType(), InitializationMode::NotInitialization).operand());
         instructions().append(localScopeDepth());
         instructions().append(variable.offset().isScope() ? variable.offset().scopeOffset().offset() : 0);
         instructions().append(profile);
@@ -2350,7 +2350,7 @@ RegisterID* BytecodeGenerator::initializeVariable(const Variable& variable, Regi
 {
     RELEASE_ASSERT(variable.offset().kind() != VarKind::Invalid);
     RegisterID* scope = emitResolveScope(nullptr, variable);
-    return emitPutToScope(scope, variable, value, ThrowIfNotFound, NotInitialization);
+    return emitPutToScope(scope, variable, value, ThrowIfNotFound, InitializationMode::NotInitialization);
 }
 
 RegisterID* BytecodeGenerator::emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* basePrototype)
@@ -3739,7 +3739,7 @@ void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, Re
     ASSERT_UNUSED(numVars, m_codeBlock->m_numVars == static_cast<int>(numVars + 1)); // Should have only created one new "var" for the function name scope.
     bool shouldTreatAsLexicalVariable = isStrictMode();
     Variable functionVar = variableForLocalEntry(property, m_symbolTableStack.last().m_symbolTable->get(property.impl()), m_symbolTableStack.last().m_symbolTableConstantIndex, shouldTreatAsLexicalVariable);
-    emitPutToScope(m_symbolTableStack.last().m_scope, functionVar, callee, ThrowIfNotFound, NotInitialization);
+    emitPutToScope(m_symbolTableStack.last().m_scope, functionVar, callee, ThrowIfNotFound, InitializationMode::NotInitialization);
 }
 
 void BytecodeGenerator::pushScopedControlFlowContext()
@@ -4229,7 +4229,7 @@ void BytecodeGenerator::emitPutNewTargetToArrowFunctionContextScope()
         ASSERT(m_arrowFunctionContextLexicalEnvironmentRegister);
         
         Variable newTargetVar = variable(propertyNames().newTargetLocalPrivateName);
-        emitPutToScope(m_arrowFunctionContextLexicalEnvironmentRegister, newTargetVar, newTarget(), DoNotThrowIfNotFound, Initialization);
+        emitPutToScope(m_arrowFunctionContextLexicalEnvironmentRegister, newTargetVar, newTarget(), DoNotThrowIfNotFound, InitializationMode::Initialization);
     }
 }
     
@@ -4240,7 +4240,7 @@ void BytecodeGenerator::emitPutDerivedConstructorToArrowFunctionContextScope()
             ASSERT(m_arrowFunctionContextLexicalEnvironmentRegister);
             
             Variable protoScope = variable(propertyNames().derivedConstructorPrivateName);
-            emitPutToScope(m_arrowFunctionContextLexicalEnvironmentRegister, protoScope, &m_calleeRegister, DoNotThrowIfNotFound, Initialization);
+            emitPutToScope(m_arrowFunctionContextLexicalEnvironmentRegister, protoScope, &m_calleeRegister, DoNotThrowIfNotFound, InitializationMode::Initialization);
         }
     }
 }
@@ -4253,7 +4253,7 @@ void BytecodeGenerator::emitPutThisToArrowFunctionContextScope()
         Variable thisVar = variable(propertyNames().thisIdentifier, ThisResolutionType::Scoped);
         RegisterID* scope = isDerivedConstructorContext() ? emitLoadArrowFunctionLexicalEnvironment(propertyNames().thisIdentifier) : m_arrowFunctionContextLexicalEnvironmentRegister;
     
-        emitPutToScope(scope, thisVar, thisRegister(), ThrowIfNotFound, NotInitialization);
+        emitPutToScope(scope, thisVar, thisRegister(), ThrowIfNotFound, InitializationMode::NotInitialization);
     }
 }
 

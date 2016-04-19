@@ -1,3 +1,138 @@
+2016-04-18  Saam barati  <sbarati@apple.com>
+
+        implement dynamic scope accesses in the DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=156567
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds dynamic scope operations to the DFG/FTL.
+        This patch adds three new DFG nodes: ResolveScope, PutDynamicVar and GetDynamicVar.
+        When we encounter a Dynamic/UnresolvedProperty/UnresolvedPropertyWithVarInjectionChecks
+        resolve type, we will compile dynamic scope resolution nodes. When we encounter
+        a resolve type that needs var injection checks and the var injection
+        watchpoint has already been fired, we will compile dynamic scope resolution
+        nodes.
+
+        This patch also adds a new value to the InitializationMode enum: ConstInitialization.
+        There was a subtle bug where we used to never compile the var injection variant of the 
+        resolve type for an eval that injected a var where there was also a global lexical variable with the same name. 
+        For example, the store compiled in this eval("var foo = 20;") wouldn't be compiled 
+        with var injection checks if there was global let/const variable named "foo".
+        So there was the potential for the injected var to store to the GlobalLexicalObject.
+        I found this bug because my initial implementation in the DFG/FTL ran into it.
+        The reason this bug existed is because when we compile a const initialization,
+        we never need a var injections check. The const initialization always
+        knows where to store its value. This same logic leaked into the above eval's 
+        "var foo = 20" store. This new enum value allows us to distinguish const
+        initialization stores from non-const initialization stores.
+
+        (I also changed InitializationMode to be an enum class instead of an enum).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::initializeBlockScopedFunctions):
+        (JSC::BytecodeGenerator::hoistSloppyModeFunctionIfNecessary):
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        (JSC::BytecodeGenerator::emitGetFromScope):
+        (JSC::BytecodeGenerator::initializeVariable):
+        (JSC::BytecodeGenerator::emitInstanceOf):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::pushScopedControlFlowContext):
+        (JSC::BytecodeGenerator::emitPutNewTargetToArrowFunctionContextScope):
+        (JSC::BytecodeGenerator::emitPutDerivedConstructorToArrowFunctionContextScope):
+        (JSC::BytecodeGenerator::emitPutThisToArrowFunctionContextScope):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::initializationModeForAssignmentContext):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::EmptyLetExpression::emitBytecode):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        (JSC::BindingNode::bindValue):
+        (JSC::AssignmentElementNode::bindValue):
+        (JSC::RestParameterNode::emit):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::noticeArgumentsUse):
+        (JSC::DFG::ByteCodeParser::promoteToConstant):
+        (JSC::DFG::ByteCodeParser::needsDynamicLookup):
+        (JSC::DFG::ByteCodeParser::planLoad):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::identifierNumber):
+        (JSC::DFG::Node::hasGetPutInfo):
+        (JSC::DFG::Node::getPutInfo):
+        (JSC::DFG::Node::hasAccessorAttributes):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutGetterSetterById):
+        (JSC::DFG::SpeculativeJIT::compileResolveScope):
+        (JSC::DFG::SpeculativeJIT::compileGetDynamicVar):
+        (JSC::DFG::SpeculativeJIT::compilePutDynamicVar):
+        (JSC::DFG::SpeculativeJIT::compilePutAccessorByVal):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compare):
+        (JSC::FTL::DFG::LowerDFGToB3::compileResolveScope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetDynamicVar):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutDynamicVar):
+        (JSC::FTL::DFG::LowerDFGToB3::compareEqObjectOrOtherToObject):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/GetPutInfo.h:
+        (JSC::resolveModeName):
+        (JSC::initializationModeName):
+        (JSC::isInitialization):
+        (JSC::makeType):
+        (JSC::GetPutInfo::GetPutInfo):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+
 2016-04-18  Filip Pizlo  <fpizlo@apple.com>
 
         Disable AVX.
