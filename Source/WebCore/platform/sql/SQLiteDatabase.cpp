@@ -115,7 +115,6 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
     if (!SQLiteStatement(*this, ASCIILiteral("PRAGMA temp_store = MEMORY;")).executeCommand())
         LOG_ERROR("SQLite database could not set temp_store to memory");
 
-#if !PLATFORM(IOS)
     SQLiteStatement walStatement(*this, ASCIILiteral("PRAGMA journal_mode=WAL;"));
     if (walStatement.prepareAndStep() == SQLITE_ROW) {
 #ifndef NDEBUG
@@ -125,7 +124,6 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
 #endif
     } else
         LOG_ERROR("SQLite database failed to set journal_mode to WAL, error: %s", lastErrorMsg());
-#endif
 
     return isOpen();
 }

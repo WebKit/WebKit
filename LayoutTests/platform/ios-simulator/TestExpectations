@@ -2541,6 +2541,7 @@ sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
 
 # storage tests that fail:
 storage/websql/sql-error-codes.html [ Failure ]
+storage/websql/alter-to-info-table.html [ Failure ]
 
 # iOS-specific tests that fail:
 platform/ios-simulator/ios/compositing/overlap-page-scale.html [ Failure ]

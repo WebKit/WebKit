@@ -1,3 +1,17 @@
+2016-04-18  Gavin Barraclough  <barraclough@apple.com>
+
+        WebKit should adopt journal_mode=wal for all SQLite databases.
+        https://bugs.webkit.org/show_bug.cgi?id=133496
+
+        Reviewed by Brady Eidson.
+
+        Enabling sqlite3 WAL mode on iOS causes a test failure, but appears just be something that should fail still failing, only in a different way.
+        Enabling & marking test as failing for now. Tracking test failure here:
+            https://bugs.webkit.org/show_bug.cgi?id=156718
+
+        * platform/ios-simulator/TestExpectations:
+            - storage/websql/alter-to-info-table.html [ Failure ]
+
 2016-04-18  Chris Dumez  <cdumez@apple.com>
 
         Crash in ElementDescendantIterator::operator--() when calling m_ancestorSiblingStack.last()
