@@ -1,3 +1,21 @@
+2016-04-19  Antti Koivisto  <antti@apple.com>
+
+        Move FontSelectorClient to a file of its own
+        https://bugs.webkit.org/show_bug.cgi?id=156738
+
+        Reviewed by Carlos Garcia Campos.
+
+        So modifying FontSelector does not trigger world rebuild via Document.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontSelector.cpp:
+        * dom/Document.h:
+        * html/canvas/CanvasRenderingContext2D.h:
+        * platform/graphics/FontSelector.h:
+        (WebCore::FontSelectorClient::~FontSelectorClient): Deleted.
+        * platform/graphics/FontSelectorClient.h: Added.
+        (WebCore::FontSelectorClient::~FontSelectorClient):
+
 2016-04-19  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/gtk/entry-and-password.html is failing since r194847

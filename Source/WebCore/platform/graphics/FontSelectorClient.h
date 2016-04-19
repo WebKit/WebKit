@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,38 +20,20 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "FontRanges.h"
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
 
-class FontCascadeDescription;
-class FontDescription;
-class FontSelectorClient;
+class FontSelector;
 
-class FontSelector : public RefCounted<FontSelector> {
+class FontSelectorClient {
 public:
-    virtual ~FontSelector() { }
+    virtual ~FontSelectorClient() { }
 
-    virtual FontRanges fontRangesForFamily(const FontDescription&, const AtomicString&) = 0;
-    virtual RefPtr<Font> fallbackFontAt(const FontDescription&, size_t) = 0;
-
-    virtual size_t fallbackFontCount() = 0;
-
-    virtual void fontCacheInvalidated() { }
-
-    virtual void registerForInvalidationCallbacks(FontSelectorClient&) = 0;
-    virtual void unregisterForInvalidationCallbacks(FontSelectorClient&) = 0;
-
-    virtual unsigned uniqueId() const = 0;
-    virtual unsigned version() const = 0;
+    virtual void fontsNeedUpdate(FontSelector&) = 0;
 };
 
 }

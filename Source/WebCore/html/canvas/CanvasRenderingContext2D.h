@@ -33,6 +33,7 @@
 #include "Color.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
+#include "FontSelectorClient.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
 #include "ImageBuffer.h"

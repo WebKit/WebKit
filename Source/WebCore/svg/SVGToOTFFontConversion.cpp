@@ -28,6 +28,7 @@
 
 #include "CSSStyleDeclaration.h"
 #include "ElementChildIterator.h"
+#include "Glyph.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGGlyphElement.h"

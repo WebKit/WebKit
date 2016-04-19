@@ -46,6 +46,7 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontFaceSet.h"
+#include "FontSelectorClient.h"
 #include "FontVariantBuilder.h"
 #include "Frame.h"
 #include "FrameLoader.h"

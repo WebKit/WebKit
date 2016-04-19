@@ -34,7 +34,7 @@
 #include "DocumentEventQueue.h"
 #include "DocumentTiming.h"
 #include "FocusDirection.h"
-#include "FontSelector.h"
+#include "FontSelectorClient.h"
 #include "MediaProducer.h"
 #include "MutationObserver.h"
 #include "PageVisibilityState.h"

@@ -6567,6 +6567,7 @@
 		E401C27517CE53EC00C41A35 /* ElementIteratorAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E401E0A41C3C0B8300F34D10 /* StyleChange.h in Headers */ = {isa = PBXBuildFile; fileRef = E401E0A31C3C0B8300F34D10 /* StyleChange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E401E0A61C3C0CF700F34D10 /* StyleChange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */; };
+		E419041F1CC6486B00C35F5D /* FontSelectorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E419041E1CC6486B00C35F5D /* FontSelectorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E424A39E1330DF0100CF6DC9 /* LegacyTileGridTile.h in Headers */ = {isa = PBXBuildFile; fileRef = E424A39D1330DF0100CF6DC9 /* LegacyTileGridTile.h */; };
 		E424A3A01330DF1E00CF6DC9 /* LegacyTileGridTile.mm in Sources */ = {isa = PBXBuildFile; fileRef = E424A39F1330DF1E00CF6DC9 /* LegacyTileGridTile.mm */; };
 		E425A49A18292B840020CFCF /* CollectionIndexCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E425A49918292B840020CFCF /* CollectionIndexCache.h */; };
@@ -14616,6 +14617,7 @@
 		E401E0A31C3C0B8300F34D10 /* StyleChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleChange.h; sourceTree = "<group>"; };
 		E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleChange.cpp; sourceTree = "<group>"; };
 		E406F3FB1198307D009D59D6 /* ColorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorData.cpp; sourceTree = "<group>"; };
+		E419041E1CC6486B00C35F5D /* FontSelectorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSelectorClient.h; sourceTree = "<group>"; };
 		E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
 		E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueKeywords.cpp; sourceTree = "<group>"; };
 		E424A39D1330DF0100CF6DC9 /* LegacyTileGridTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyTileGridTile.h; sourceTree = "<group>"; };
@@ -21942,6 +21944,7 @@
 				371F4FFB0D25E7F300ECE0D5 /* FontRanges.cpp */,
 				371F4FFA0D25E7F300ECE0D5 /* FontRanges.h */,
 				B2C3DA5A0D006CD600EF6F26 /* FontSelector.h */,
+				E419041E1CC6486B00C35F5D /* FontSelectorClient.h */,
 				7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */,
 				7CE6CBFA187F370700D46BF5 /* FormatConverter.h */,
 				4FB390AC15EF61F3007AD51F /* GeneratedImage.cpp */,
@@ -26164,6 +26167,7 @@
 				97DCE20210807C750057D394 /* HistoryController.h in Headers */,
 				51741D110B07259A00ED442C /* HistoryItem.h in Headers */,
 				4969B0F313D0B33F00DF3521 /* HitTestingTransformState.h in Headers */,
+				E419041F1CC6486B00C35F5D /* FontSelectorClient.h in Headers */,
 				2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */,
 				930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */,
 				9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */,
