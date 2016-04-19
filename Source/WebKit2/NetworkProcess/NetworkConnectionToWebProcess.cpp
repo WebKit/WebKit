@@ -277,7 +277,7 @@ void NetworkConnectionToWebProcess::preregisterSandboxExtensionsForOptionallyFil
     ASSERT(filePaths.size() == handles.size());
 
     for (size_t i = 0; i < filePaths.size(); ++i)
-        auto result = m_blobDataFileReferences.add(filePaths[i], BlobDataFileReferenceWithSandboxExtension::create(filePaths[i], SandboxExtension::create(handles[i])));
+        m_blobDataFileReferences.add(filePaths[i], BlobDataFileReferenceWithSandboxExtension::create(filePaths[i], SandboxExtension::create(handles[i])));
 }
 
 RefPtr<WebCore::BlobDataFileReference> NetworkConnectionToWebProcess::getBlobDataFileReferenceForPath(const String& path)
