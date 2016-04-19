@@ -1,5 +1,15 @@
 2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Update CSP tests.
+
+        Rebaseline http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-basics.html after r197118 and
+        remove specific expectations of http/tests/security/contentSecurityPolicy/source-list-parsing-10.html.
+
+        * platform/gtk/http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-basics-expected.txt:
+        * platform/gtk/http/tests/security/contentSecurityPolicy/source-list-parsing-10-expected.txt: Removed.
+
+2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline fast/events/updateLayoutForHitTest.html after r195263.
 
         * platform/gtk/fast/events/updateLayoutForHitTest-expected.txt:
