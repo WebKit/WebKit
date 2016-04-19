@@ -307,7 +307,7 @@ namespace JSC {
         void privateCompileExceptionHandlers();
 
         void addSlowCase(Jump);
-        void addSlowCase(JumpList);
+        void addSlowCase(const JumpList&);
         void addSlowCase();
         void addJump(Jump, int);
         void emitJumpSlowToHot(Jump, int);

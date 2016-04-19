@@ -1,3 +1,24 @@
+2016-04-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Fix some overhead affecting small codegen
+        https://bugs.webkit.org/show_bug.cgi?id=156728
+
+        Reviewed by Filip Pizlo.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::AbstractMacroAssembler):
+        (JSC::AbstractMacroAssembler::random):
+        cryptographicallyRandomNumber() is very costly.
+        We only need it in lowering some very particular cases
+        of non-trusted immediates. No inline cache needs that.
+
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::link):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::addSlowCase):
+        Do not copy the JumpList to access its elements.
+
 2016-04-18  Saam barati  <sbarati@apple.com>
 
         implement dynamic scope accesses in the DFG/FTL

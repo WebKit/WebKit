@@ -711,8 +711,6 @@ public:
     // A JumpList is a set of Jump objects.
     // All jumps in the set will be linked to the same destination.
     class JumpList {
-        friend class LinkBuffer;
-
     public:
         typedef Vector<Jump, 2> JumpVector;
         
@@ -1040,16 +1038,21 @@ public:
 
 protected:
     AbstractMacroAssembler()
-        : m_randomSource(cryptographicallyRandomNumber())
+        : m_randomSource(0)
     {
         invalidateAllTempRegisters();
     }
 
     uint32_t random()
     {
+        if (!m_randomSourceIsInitialized) {
+            m_randomSourceIsInitialized = true;
+            m_randomSource.setSeed(cryptographicallyRandomNumber());
+        }
         return m_randomSource.getUint32();
     }
 
+    bool m_randomSourceIsInitialized { false };
     WeakRandom m_randomSource;
 
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)

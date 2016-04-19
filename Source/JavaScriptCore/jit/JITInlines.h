@@ -831,14 +831,12 @@ ALWAYS_INLINE void JIT::addSlowCase(Jump jump)
     m_slowCases.append(SlowCaseEntry(jump, m_bytecodeOffset));
 }
 
-ALWAYS_INLINE void JIT::addSlowCase(JumpList jumpList)
+ALWAYS_INLINE void JIT::addSlowCase(const JumpList& jumpList)
 {
     ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
 
-    const JumpList::JumpVector& jumpVector = jumpList.jumps();
-    size_t size = jumpVector.size();
-    for (size_t i = 0; i < size; ++i)
-        m_slowCases.append(SlowCaseEntry(jumpVector[i], m_bytecodeOffset));
+    for (const Jump& jump : jumpList.jumps())
+        m_slowCases.append(SlowCaseEntry(jump, m_bytecodeOffset));
 }
 
 ALWAYS_INLINE void JIT::addSlowCase()

@@ -144,10 +144,10 @@ public:
         MacroAssembler::linkJump(code(), jump, label);
     }
 
-    void link(JumpList list, CodeLocationLabel label)
+    void link(const JumpList& list, CodeLocationLabel label)
     {
-        for (unsigned i = 0; i < list.m_jumps.size(); ++i)
-            link(list.m_jumps[i], label);
+        for (const Jump& jump : list.jumps())
+            link(jump, label);
     }
 
     void patch(DataLabelPtr label, void* value)
