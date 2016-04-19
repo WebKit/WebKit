@@ -8,13 +8,13 @@ layer at (0,0) size 785x616
           RenderText {#text} at (0,0) size 158x40
             text run at (0,0) width 158: "throughout"
         RenderBlock {DIV} at (0,40) size 130x80
-          RenderText {#text} at (0,0) size 106x80
-            text run at (0,0) width 106: "throug" + hyphen string "\x{2010}"
-            text run at (0,40) width 64: "hout"
+          RenderText {#text} at (0,0) size 124x80
+            text run at (0,0) width 124: "through" + hyphen string "\x{2010}"
+            text run at (0,40) width 46: "out"
         RenderBlock {DIV} at (0,120) size 130x80
-          RenderText {#text} at (0,0) size 106x80
-            text run at (0,0) width 106: "throug" + hyphen string "\x{2010}"
-            text run at (0,40) width 64: "hout"
+          RenderText {#text} at (0,0) size 124x80
+            text run at (0,0) width 124: "through" + hyphen string "\x{2010}"
+            text run at (0,40) width 46: "out"
         RenderBlock {DIV} at (0,200) size 130x40
           RenderText {#text} at (0,0) size 158x40
             text run at (0,0) width 158: "throughout"
@@ -26,17 +26,17 @@ layer at (0,0) size 785x616
           RenderText {#text} at (0,0) size 156x40
             text run at (0,0) width 156: "reciprocity"
         RenderBlock {DIV} at (0,40) size 135x80
-          RenderText {#text} at (0,0) size 114x80
-            text run at (0,0) width 114: "recipro" + hyphen string "\x{2010}"
-            text run at (0,40) width 54: "city"
+          RenderText {#text} at (0,0) size 130x80
+            text run at (0,0) width 130: "reciproc" + hyphen string "\x{2010}"
+            text run at (0,40) width 38: "ity"
         RenderBlock {DIV} at (0,120) size 135x80
+          RenderText {#text} at (0,0) size 130x80
+            text run at (0,0) width 130: "reciproc" + hyphen string "\x{2010}"
+            text run at (0,40) width 38: "ity"
+        RenderBlock {DIV} at (0,200) size 135x80
           RenderText {#text} at (0,0) size 114x80
             text run at (0,0) width 114: "recipro" + hyphen string "\x{2010}"
             text run at (0,40) width 54: "city"
-        RenderBlock {DIV} at (0,200) size 135x80
-          RenderText {#text} at (0,0) size 96x80
-            text run at (0,0) width 96: "recipr" + hyphen string "\x{2010}"
-            text run at (0,40) width 72: "ocity"
         RenderBlock {DIV} at (0,280) size 135x40
           RenderText {#text} at (0,0) size 156x40
             text run at (0,0) width 156: "reciprocity"

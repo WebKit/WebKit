@@ -1,3 +1,15 @@
+2016-04-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Possible off-by-one in hyphenation code
+        https://bugs.webkit.org/show_bug.cgi?id=156661
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests. This is covered by older tests.
+
+        * platform/text/hyphen/HyphenationLibHyphen.cpp:
+        (WebCore::lastHyphenLocation): Fix an off by one error in hyphen location.
+
 2016-04-18  Eric Carlson  <eric.carlson@apple.com>
 
         [OSX] AVKit is not available on all systems

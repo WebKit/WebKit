@@ -1,3 +1,22 @@
+2016-04-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Possible off-by-one in hyphenation code
+        https://bugs.webkit.org/show_bug.cgi?id=156661
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/TestExpectations: Unskip a test that is now passing.
+        * platform/gtk/fast/text/hyphenate-character-expected.png:
+        * platform/gtk/fast/text/hyphenate-character-expected.txt:
+        * platform/gtk/fast/text/hyphenate-first-word-expected.png:
+        * platform/gtk/fast/text/hyphenate-first-word-expected.txt:
+        * platform/gtk/fast/text/hyphenate-limit-before-after-expected.png:
+        * platform/gtk/fast/text/hyphenate-limit-before-after-expected.txt:
+        * platform/gtk/fast/text/hyphenate-limit-lines-expected.png:
+        * platform/gtk/fast/text/hyphenate-limit-lines-expected.txt:
+        * platform/gtk/fast/text/hyphenate-locale-expected.png:
+        * platform/gtk/fast/text/hyphenate-locale-expected.txt:
+
 2016-04-18  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r199696.

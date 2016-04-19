@@ -256,11 +256,11 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomicStr
         free(positions);
         free(removedCharacterCounts);
 
-        for (int i = beforeIndex - leadingSpaceCharacters - 1; i >= 0; i--) {
+        for (int i = beforeIndex - leadingSpaceCharacters - 2; i >= 0; i--) {
             // libhyphen will put an odd number in hyphenArrayData at all
             // hyphenation points. A number & 1 will be true for odd numbers.
             if (hyphenArrayData[i] & 1)
-                return i + leadingSpaceCharacters;
+                return i + 1 + leadingSpaceCharacters;
         }
     }
 
