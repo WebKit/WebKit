@@ -1,3 +1,13 @@
+2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline tests after r199034.
+
+        * platform/gtk/fast/block/float/016-expected.txt:
+        * platform/gtk/fast/css/bidi-override-in-anonymous-block-expected.txt:
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug1055-2-expected.txt:
+
 2016-04-19  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/gtk/entry-and-password.html is failing since r194847
