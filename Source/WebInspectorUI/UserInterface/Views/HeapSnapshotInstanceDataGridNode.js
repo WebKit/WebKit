@@ -111,10 +111,10 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
             let sizeElement = fragment.appendChild(document.createElement("span"));
             sizeElement.classList.add("size");
             sizeElement.textContent = Number.bytesToString(size);
-            let percent = (size / this._tree._heapSnapshot.totalSize) * 100;
+            let fraction = size / this._tree._heapSnapshot.totalSize;
             let percentElement = fragment.appendChild(document.createElement("span"));
             percentElement.classList.add("percentage");
-            percentElement.textContent = Number.percentageString(percent);
+            percentElement.textContent = Number.percentageString(fraction);
             return fragment;
         }
 
