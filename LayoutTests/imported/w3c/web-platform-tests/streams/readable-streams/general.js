@@ -292,7 +292,8 @@ promise_test(() => {
     }
   });
 
-  return delay(1).then(() => {
+  // WEBKIT modification: delay(1) replaced by delay(10) to ensure that pull promise is resolved before calling below thened code.
+  return delay(10).then(() => {
     assert_equals(pullCount, 1, 'pull should be called once start finishes');
 
     const reader = rs.getReader();
