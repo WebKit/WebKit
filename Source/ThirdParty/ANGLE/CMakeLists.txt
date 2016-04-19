@@ -82,7 +82,6 @@ add_library(libANGLE STATIC
     src/compiler/translator/SearchSymbol.cpp
     src/compiler/translator/StructureHLSL.cpp
     src/compiler/translator/TranslatorHLSL.cpp
-    src/compiler/translator/UnfoldShortCircuit.cpp
     src/compiler/translator/UniformHLSL.cpp
     src/compiler/translator/UtilsHLSL.cpp
     src/compiler/translator/ArrayReturnValueToOutParameter.cpp
@@ -127,7 +126,6 @@ add_library(libANGLE STATIC
     src/compiler/translator/ShaderVars.cpp
     src/compiler/translator/SymbolTable.cpp
     src/compiler/translator/Types.cpp
-    src/compiler/translator/UnfoldShortCircuit.cpp
     src/compiler/translator/UnfoldShortCircuitAST.cpp
     src/compiler/translator/UnfoldShortCircuitToIf.cpp
     src/compiler/translator/util.cpp
@@ -179,6 +177,7 @@ add_library(libANGLE STATIC
     src/libANGLE/renderer/d3d/CompilerD3D.cpp
     src/libANGLE/renderer/d3d/EGLImageD3D.cpp
     src/libANGLE/renderer/d3d/copyimage.cpp
+    src/libANGLE/renderer/d3d/loadimage_etc.cpp
     src/libANGLE/renderer/d3d/d3d11/Blit11.cpp
     src/libANGLE/renderer/d3d/d3d11/Buffer11.cpp
     src/libANGLE/renderer/d3d/d3d11/Clear11.cpp
@@ -204,7 +203,6 @@ add_library(libANGLE STATIC
     src/libANGLE/renderer/d3d/d3d11/VertexArray11.cpp
     src/libANGLE/renderer/d3d/d3d11/VertexBuffer11.cpp
     src/libANGLE/renderer/d3d/d3d11/dxgi_support_table.cpp
-    src/libANGLE/renderer/d3d/d3d11/loadimage_etc.cpp
     src/libANGLE/renderer/d3d/d3d11/load_functions_table_autogen.cpp
     src/libANGLE/renderer/d3d/d3d11/texture_format_table_autogen.cpp
     src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow.cpp

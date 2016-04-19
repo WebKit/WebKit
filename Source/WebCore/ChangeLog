@@ -1,3 +1,12 @@
+2016-04-19  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix after r199738
+
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/win/GraphicsContext3DWin.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2016-04-19  Keith Miller  <keith_miller@apple.com>
 
         ObjcInstance::stringValue should not call NSObject's description method
