@@ -1,3 +1,31 @@
+2016-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK] Use Generic WorkQueue instead of WorkQueueGLib
+        https://bugs.webkit.org/show_bug.cgi?id=156721
+
+        Reviewed by Benjamin Poulain.
+
+        WorkQueueGLib includes platform-dependent part only for WorkQueue::dispatchAfter.
+        However, its code is related to RunLoopGLib rather than WorkQueueGLib.
+        In this patch, we move the code from WorkQueueGLib to RunLoopGLib, drop WorkQueueGLib
+        and use WorkQueueGeneric.
+
+        * wtf/PlatformGTK.cmake:
+        * wtf/RunLoop.h:
+        * wtf/WorkQueue.h:
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::DispatchAfterContext::DispatchAfterContext):
+        (WTF::DispatchAfterContext::dispatch):
+        (WTF::RunLoop::dispatchAfter):
+        * wtf/glib/WorkQueueGLib.cpp: Removed.
+        (WTF::WorkQueue::platformInitialize): Deleted.
+        (WTF::WorkQueue::platformInvalidate): Deleted.
+        (WTF::WorkQueue::dispatch): Deleted.
+        (WTF::DispatchAfterContext::DispatchAfterContext): Deleted.
+        (WTF::DispatchAfterContext::~DispatchAfterContext): Deleted.
+        (WTF::DispatchAfterContext::dispatch): Deleted.
+        (WTF::WorkQueue::dispatchAfter): Deleted.
+
 2016-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSCOnly] Implement RunLoop and remove glib dependency

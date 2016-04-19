@@ -121,6 +121,37 @@ void RunLoop::wakeUp()
     g_source_set_ready_time(m_source.get(), g_get_monotonic_time());
 }
 
+class DispatchAfterContext {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    DispatchAfterContext(std::function<void()>&& function)
+        : m_function(WTFMove(function))
+    {
+    }
+
+    void dispatch()
+    {
+        m_function();
+    }
+
+private:
+    std::function<void()> m_function;
+};
+
+void RunLoop::dispatchAfter(std::chrono::nanoseconds duration, std::function<void()> function)
+{
+    GRefPtr<GSource> source = adoptGRef(g_timeout_source_new(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()));
+    g_source_set_name(source.get(), "[WebKit] RunLoop dispatchAfter");
+
+    std::unique_ptr<DispatchAfterContext> context = std::make_unique<DispatchAfterContext>(WTFMove(function));
+    g_source_set_callback(source.get(), [](gpointer userData) -> gboolean {
+        std::unique_ptr<DispatchAfterContext> context(static_cast<DispatchAfterContext*>(userData));
+        context->dispatch();
+        return G_SOURCE_REMOVE;
+    }, context.release(), nullptr);
+    g_source_attach(source.get(), m_mainContext.get());
+}
+
 RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
     : m_runLoop(runLoop)
     , m_source(adoptGRef(g_source_new(&runLoopSourceFunctions, sizeof(GSource))))

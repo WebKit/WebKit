@@ -48,10 +48,6 @@
 #include <wtf/win/WorkItemWin.h>
 #endif
 
-#if USE(GLIB_EVENT_LOOP)
-#include <wtf/glib/GRefPtr.h>
-#endif
-
 #if USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)
 #include <wtf/Condition.h>
 #include <wtf/RunLoop.h>
