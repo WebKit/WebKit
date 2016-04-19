@@ -160,9 +160,10 @@ static WebPreferencesStore::ValueMap& defaults()
 {
     static NeverDestroyed<WebPreferencesStore::ValueMap> defaults;
     if (defaults.get().isEmpty()) {
-#define DEFINE_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) defaults.get().set(WebPreferencesKey::KeyLower##Key(), WebPreferencesStore::Value((Type)DefaultValue));
+#define DEFINE_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) defaults.get().set(WebPreferencesKey::KeyLower##Key(), WebPreferencesStore::Value((Type)DefaultValue));
         FOR_EACH_WEBKIT_PREFERENCE(DEFINE_DEFAULTS)
         FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_DEFAULTS)
+        FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DEFINE_DEFAULTS)
 #undef DEFINE_DEFAULTS
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPreferencesStoreDefaultsAdditions.cpp>

@@ -51,6 +51,7 @@
 #include <WebCore/Settings.h>
 
 namespace API {
+class ExperimentalFeature;
 class FrameHandle;
 class FrameInfo;
 class HitTestResult;

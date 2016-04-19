@@ -32,10 +32,11 @@
 namespace WebKit {
 namespace WebPreferencesKey {
 
-#define DECLARE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) const String& KeyLower##Key();
+#define DECLARE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) const String& KeyLower##Key();
 
 FOR_EACH_WEBKIT_PREFERENCE(DECLARE_KEY_GETTERS)
 FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DECLARE_KEY_GETTERS)
+FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DECLARE_KEY_GETTERS)
 
 #undef DECLARE_KEY_GETTERS
 

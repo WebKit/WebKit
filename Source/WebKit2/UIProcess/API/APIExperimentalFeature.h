@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPreferencesKeys.h"
+#ifndef APIExperimentalFeature_h
+#define APIExperimentalFeature_h
 
-#include <wtf/NeverDestroyed.h>
+#include "APIObject.h"
+#include <wtf/text/WTFString.h>
 
-namespace WebKit {
-namespace WebPreferencesKey {
+namespace API {
 
-#define DEFINE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
-        const String& KeyLower##Key() \
-        { \
-            static NeverDestroyed<String> key(ASCIILiteral(#KeyUpper)); \
-            return key; \
-        }
+class ExperimentalFeature final : public ObjectImpl<Object::Type::ExperimentalFeature> {
+public:
+    static Ref<ExperimentalFeature> create(const WTF::String& name, const WTF::String& key, const WTF::String& details);
+    virtual ~ExperimentalFeature();
 
-FOR_EACH_WEBKIT_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DEFINE_KEY_GETTERS)
+    WTF::String name() const { return m_name; }
+    WTF::String key() const { return m_key; }
+    WTF::String details() const { return m_details; }
 
-#undef DEFINE_KEY_GETTERS
+private:
+    explicit ExperimentalFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details);
 
-} // namespace WebPreferencesKey
-} // namespace WebKit
+    WTF::String m_name;
+    WTF::String m_key;
+    WTF::String m_details;
+};
+
+}
+
+#endif // APIExperimentalFeature_h

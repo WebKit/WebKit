@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPreferencesKeys.h"
+#import "_WKExperimentalFeature.h"
 
-#include <wtf/NeverDestroyed.h>
+#if WK_API_ENABLED
+
+#import "APIExperimentalFeature.h"
+#import "WKObject.h"
 
 namespace WebKit {
-namespace WebPreferencesKey {
 
-#define DEFINE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
-        const String& KeyLower##Key() \
-        { \
-            static NeverDestroyed<String> key(ASCIILiteral(#KeyUpper)); \
-            return key; \
-        }
+inline _WKExperimentalFeature *wrapper(API::ExperimentalFeature& experimentalFeature)
+{
+    ASSERT([experimentalFeature.wrapper() isKindOfClass:[_WKExperimentalFeature class]]);
+    return (_WKExperimentalFeature *)experimentalFeature.wrapper();
+}
 
-FOR_EACH_WEBKIT_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DEFINE_KEY_GETTERS)
+}
 
-#undef DEFINE_KEY_GETTERS
+@interface _WKExperimentalFeature () <WKObject> {
+@package
+    API::ObjectStorage<API::ExperimentalFeature> _experimentalFeature;
+}
+@end
 
-} // namespace WebPreferencesKey
-} // namespace WebKit
+#endif

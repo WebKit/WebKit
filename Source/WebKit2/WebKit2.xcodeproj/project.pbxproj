@@ -712,6 +712,11 @@
 		3131261F148FF82C00BA2A39 /* NotificationPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261A148FF82B00BA2A39 /* NotificationPermissionRequestManager.h */; };
 		31312620148FF82C00BA2A39 /* WebNotificationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3131261B148FF82B00BA2A39 /* WebNotificationManager.cpp */; };
 		31312621148FF82C00BA2A39 /* WebNotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261C148FF82B00BA2A39 /* WebNotificationManager.h */; };
+		317FE7C51C487A6C00A0CA89 /* APIExperimentalFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C21C487A6600A0CA89 /* APIExperimentalFeature.h */; };
+		317FE7C61C487A7100A0CA89 /* APIExperimentalFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317FE7C11C487A6600A0CA89 /* APIExperimentalFeature.cpp */; };
+		317FE7CD1C487DAE00A0CA89 /* _WKExperimentalFeatureInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C91C487D9D00A0CA89 /* _WKExperimentalFeatureInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		317FE7CE1C487DB800A0CA89 /* _WKExperimentalFeature.mm in Sources */ = {isa = PBXBuildFile; fileRef = 317FE7C81C487D9D00A0CA89 /* _WKExperimentalFeature.mm */; };
+		317FE7CF1C487DBD00A0CA89 /* _WKExperimentalFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C71C487D9D00A0CA89 /* _WKExperimentalFeature.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		318BE17114743DB100A8FBB2 /* WKNotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 318BE17014743DB100A8FBB2 /* WKNotificationManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		318BE17514743DD700A8FBB2 /* WKNotificationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 318BE17414743DD600A8FBB2 /* WKNotificationManager.cpp */; };
 		318BE17714743E6000A8FBB2 /* WKNotification.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 318BE17614743E6000A8FBB2 /* WKNotification.cpp */; };
@@ -2717,6 +2722,11 @@
 		3131261C148FF82B00BA2A39 /* WebNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationManager.h; sourceTree = "<group>"; };
 		3131261D148FF82C00BA2A39 /* WebNotificationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebNotificationManager.messages.in; sourceTree = "<group>"; };
 		31607F3819627002009B87DA /* LegacySessionStateCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacySessionStateCoding.h; sourceTree = "<group>"; };
+		317FE7C11C487A6600A0CA89 /* APIExperimentalFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIExperimentalFeature.cpp; sourceTree = "<group>"; };
+		317FE7C21C487A6600A0CA89 /* APIExperimentalFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIExperimentalFeature.h; sourceTree = "<group>"; };
+		317FE7C71C487D9D00A0CA89 /* _WKExperimentalFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKExperimentalFeature.h; sourceTree = "<group>"; };
+		317FE7C81C487D9D00A0CA89 /* _WKExperimentalFeature.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKExperimentalFeature.mm; sourceTree = "<group>"; };
+		317FE7C91C487D9D00A0CA89 /* _WKExperimentalFeatureInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKExperimentalFeatureInternal.h; sourceTree = "<group>"; };
 		318BE17014743DB100A8FBB2 /* WKNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNotificationManager.h; sourceTree = "<group>"; };
 		318BE17414743DD600A8FBB2 /* WKNotificationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNotificationManager.cpp; sourceTree = "<group>"; };
 		318BE17614743E6000A8FBB2 /* WKNotification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNotification.cpp; sourceTree = "<group>"; };
@@ -5034,6 +5044,9 @@
 				379A873B18BBFF0700588AF2 /* _WKElementActionInternal.h */,
 				1AD01BC71905D37E00C9C45F /* _WKErrorRecoveryAttempting.h */,
 				1AD01BC61905D37E00C9C45F /* _WKErrorRecoveryAttempting.mm */,
+				317FE7C71C487D9D00A0CA89 /* _WKExperimentalFeature.h */,
+				317FE7C81C487D9D00A0CA89 /* _WKExperimentalFeature.mm */,
+				317FE7C91C487D9D00A0CA89 /* _WKExperimentalFeatureInternal.h */,
 				005D158E18E4C4EB00734619 /* _WKFindDelegate.h */,
 				2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */,
 				2E7A94491BBD95C600945547 /* _WKFocusedElementInfo.h */,
@@ -6018,6 +6031,8 @@
 				076E884D1A13CADF005E90FC /* APIContextMenuClient.h */,
 				83891B621A68B3420030F386 /* APIDiagnosticLoggingClient.h */,
 				1F7D36C018DA513F00D9D659 /* APIDownloadClient.h */,
+				317FE7C11C487A6600A0CA89 /* APIExperimentalFeature.cpp */,
+				317FE7C21C487A6600A0CA89 /* APIExperimentalFeature.h */,
 				00B9661518E24CBA00CE1F88 /* APIFindClient.h */,
 				2DD67A2D1BD819730053B251 /* APIFindMatchesClient.h */,
 				37E25D6D18FDE5D6005D3A00 /* APIFormClient.h */,
@@ -7614,6 +7629,7 @@
 				2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */,
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
 				514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */,
+				317FE7CD1C487DAE00A0CA89 /* _WKExperimentalFeatureInternal.h in Headers */,
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
 				1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */,
 				1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */,
@@ -7796,6 +7812,7 @@
 				51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */,
 				7C361D731927FA360036A59D /* WebScriptMessageHandler.h in Headers */,
 				D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */,
+				317FE7C51C487A6C00A0CA89 /* APIExperimentalFeature.h in Headers */,
 				1A4832D71A9CDF96008B4DFE /* WebsiteData.h in Headers */,
 				1A4832D11A9BDC2F008B4DFE /* WebsiteDataRecord.h in Headers */,
 				1A53C2AA1A325730004E8C70 /* WebsiteDataStore.h in Headers */,
@@ -8142,6 +8159,7 @@
 				26F9A83B18A3468100AEB88A /* WKWebViewPrivate.h in Headers */,
 				1AD60F5E18E20F4C0020C034 /* WKWindowFeatures.h in Headers */,
 				1AD60F6018E20F740020C034 /* WKWindowFeaturesInternal.h in Headers */,
+				317FE7CF1C487DBD00A0CA89 /* _WKExperimentalFeature.h in Headers */,
 				1A7C0DF71B7D1F1000A9B848 /* WKWindowFeaturesRef.h in Headers */,
 				BCBECDE816B6416800047A1A /* XPCServiceEntryPoint.h in Headers */,
 			);
@@ -9080,6 +9098,7 @@
 				1A002D48196B345D00B9AD44 /* SessionStateCoding.mm in Sources */,
 				1A7284481959F8040007BCE5 /* SessionStateConversion.cpp in Sources */,
 				753E3E0D1887398500188496 /* SessionTracker.cpp in Sources */,
+				317FE7C61C487A7100A0CA89 /* APIExperimentalFeature.cpp in Sources */,
 				1A6420E412DCE2FF00CAAE2C /* ShareableBitmap.cpp in Sources */,
 				C01A260112662F2100C9ED55 /* ShareableBitmapCG.cpp in Sources */,
 				1ACC50F11CBC381D003C7D03 /* WKOpenPanelParameters.mm in Sources */,
@@ -9296,6 +9315,7 @@
 				BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */,
 				1A1E093318861D3800D2DC49 /* WebProgressTrackerClient.cpp in Sources */,
 				512F589C12A8838800629530 /* WebProtectionSpace.cpp in Sources */,
+				317FE7CE1C487DB800A0CA89 /* _WKExperimentalFeature.mm in Sources */,
 				A1C512C8190656E500448914 /* WebQuickLookHandleClient.cpp in Sources */,
 				37948403150C350600E52CE9 /* WebRenderLayer.cpp in Sources */,
 				3760881E150413E900FC82C7 /* WebRenderObject.cpp in Sources */,

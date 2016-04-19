@@ -28,7 +28,11 @@
 
 #if WK_API_ENABLED
 
+#import "APIArray.h"
+#import "WKNSArray.h"
 #import "WebPreferences.h"
+#import "_WKExperimentalFeature.h"
+#import "_WKExperimentalFeatureInternal.h"
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/RetainPtr.h>
 
@@ -417,6 +421,22 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
 - (void)_setFixedPitchFontFamily:(NSString *)fixedPitchFontFamily
 {
     _preferences->setFixedFontFamily(fixedPitchFontFamily);
+}
+
++ (WK_ARRAY(_WKExperimentalFeature *) *)_experimentalFeatures
+{
+    auto features = WebKit::WebPreferences::experimentalFeatures();
+    return [wrapper(API::Array::create(WTFMove(features)).leakRef()) autorelease];
+}
+
+- (BOOL)_isEnabledForFeature:(_WKExperimentalFeature *)feature
+{
+    return _preferences->isEnabledForFeature(*feature->_experimentalFeature);
+}
+
+- (void)_setEnabled:(BOOL)value forFeature:(_WKExperimentalFeature *)feature
+{
+    _preferences->setEnabledForFeature(value, *feature->_experimentalFeature);
 }
 
 @end

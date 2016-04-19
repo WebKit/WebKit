@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +24,24 @@
  */
 
 #include "config.h"
-#include "WebPreferencesKeys.h"
+#include "APIExperimentalFeature.h"
 
-#include <wtf/NeverDestroyed.h>
+namespace API {
 
-namespace WebKit {
-namespace WebPreferencesKey {
+Ref<ExperimentalFeature> ExperimentalFeature::create(const WTF::String& name, const WTF::String& key, const WTF::String& details)
+{
+    return adoptRef(*new ExperimentalFeature(name, key, details));
+}
 
-#define DEFINE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
-        const String& KeyLower##Key() \
-        { \
-            static NeverDestroyed<String> key(ASCIILiteral(#KeyUpper)); \
-            return key; \
-        }
+ExperimentalFeature::ExperimentalFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details)
+    : m_name(name)
+    , m_key(key)
+    , m_details(details)
+{
+}
 
-FOR_EACH_WEBKIT_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DEFINE_KEY_GETTERS)
+ExperimentalFeature::~ExperimentalFeature()
+{
+}
 
-#undef DEFINE_KEY_GETTERS
-
-} // namespace WebPreferencesKey
-} // namespace WebKit
+}

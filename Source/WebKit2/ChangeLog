@@ -1,3 +1,87 @@
+2016-04-18  Dean Jackson  <dino@apple.com>
+
+        New SPI to export a dictionary of runtime features
+        https://bugs.webkit.org/show_bug.cgi?id=156645
+        <rdar://problem/23621666>
+
+        Reviewed by Darin Adler.
+
+        Add a new type of Preference for experimental features so that we
+        can dynamically toggle them from a WebKit2 host. These are special
+        keys that are tied to runtime flags. The host process can ask WebKit
+        for the list of keys, each with a small description, in order to
+        display UI.
+
+        - Add HumanReadableName and HumanReadableDescription parameters to our
+          macros, which are used when building a ExperimentalFeature.
+          These are both empty strings for the existing preferences. At some
+          point we should probably move all this to code generation rather
+          than macros, so that we don't have to carry around unused parameters.
+
+        - I've included two sample experimental features: WebGL2 and ShadowDOM.
+          They are not actually hooked up to the runtime settings yet, but its
+          pretty clear how that will happen. Note that these are new preferences
+          that have an "Experimental" prefix. This is so toggling an experimental
+          feature to off won't cause the feature to not work once it becomes
+          stable enough to enable by default. In other words, when it moves
+          out of the experimental stage, the experimental feature flag will be
+          removed, and you'll no longer check for values with that key.
+
+        - The ExperimentalFeature object is what the host process
+          will read in order to show some UI. It contains the human readable info,
+          as well as the actual key that can be used to query and toggle the
+          experimental feature.
+
+        * Shared/API/APIObject.h: Add the ExperimentalFeature.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Exposes a wrapper around a _WKExperimentalFeature ObjC type.
+
+        * Shared/WebPreferencesDefinitions.h: Change all the existing macros to take the new
+        parameters, and add the initial experimental keys.
+
+        * Shared/WebPreferencesKeys.cpp: Add new parameters to existing macros.
+        * Shared/WebPreferencesKeys.h: Ditto.
+        * Shared/WebPreferencesStore.cpp: Ditto.
+        (WebKit::defaults):
+
+        * UIProcess/API/APIExperimentalFeature.cpp: The API side of the ExperimentalFeature.
+        (API::ExperimentalFeature::create):
+        (API::ExperimentalFeature::ExperimentalFeature):
+        (API::ExperimentalFeature::~ExperimentalFeature):
+        * UIProcess/API/APIExperimentalFeature.h:
+
+        * UIProcess/API/Cocoa/WKPreferences.mm: The actual implementation of the SPI.
+        (+[WKPreferences _experimentalFeatures]): Create and return a list of feature descriptors.
+        (-[WKPreferences _isEnabledForFeature:]): Get the value.
+        (-[WKPreferences _setEnabled:forFeature:]): Set the value.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
+        * UIProcess/API/Cocoa/_WKExperimentalFeature.h: The ObjC version.
+        * UIProcess/API/Cocoa/_WKExperimentalFeature.mm:
+        (-[_WKExperimentalFeature dealloc]):
+        (-[_WKExperimentalFeature description]):
+        (-[_WKExperimentalFeature name]):
+        (-[_WKExperimentalFeature key]):
+        (-[_WKExperimentalFeature details]):
+        (-[_WKExperimentalFeature _apiObject]):
+        * UIProcess/API/Cocoa/_WKExperimentalFeatureInternal.h: Implementation of the wrapper.
+        (WebKit::wrapper):
+
+        * UIProcess/WebPreferences.cpp: The C++ implementation that provides the data for the ObjC API.
+        (WebKit::globalExperimentalFeatures):
+        (WebKit::WebPreferences::ExperimentalFeatures):
+        (WebKit::WebPreferences::isEnabledForFeature):
+        (WebKit::WebPreferences::setEnabledForFeature):
+        * UIProcess/WebPreferences.h:
+
+        * UIProcess/mac/WebPreferencesMac.mm: Update some macros.
+        (WebKit::WebPreferences::platformInitializeStore):
+        * WebProcess/WebPage/WebPage.cpp: Ditto
+        (WebKit::WebPage::updatePreferences):
+
+        * WebKit2.xcodeproj/project.pbxproj: Add the new files.
+
 2016-04-18  Tim Horton  <timothy_horton@apple.com>
 
         Swipe view gesture should be reversed in right-to-left contexts

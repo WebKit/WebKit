@@ -30,6 +30,7 @@
 #import "Test.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/_WKExperimentalFeature.h>
 #import <wtf/RetainPtr.h>
 
 TEST(WebKit2, DefaultWKPreferences)
@@ -39,6 +40,19 @@ TEST(WebKit2, DefaultWKPreferences)
     EXPECT_FALSE([preferences _isStandalone]);
     [preferences _setStandalone:YES];
     EXPECT_TRUE([preferences _isStandalone]);
+}
+
+TEST(WebKit2, ExperimentalFeatures)
+{
+    NSArray<_WKExperimentalFeature *> *features = [WKPreferences _experimentalFeatures];
+    EXPECT_NOT_NULL(features);
+
+    RetainPtr<WKPreferences> preferences = adoptNS([[WKPreferences alloc] init]);
+
+    for (_WKExperimentalFeature *feature in features) {
+        BOOL value = [preferences _isEnabledForFeature:feature];
+        [preferences _setEnabled:value forFeature:feature];
+    }
 }
 
 #endif

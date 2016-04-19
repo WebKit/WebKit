@@ -26,6 +26,7 @@
 #ifndef WebPreferences_h
 #define WebPreferences_h
 
+#include "APIExperimentalFeature.h"
 #include "APIObject.h"
 #include "FontSmoothingLevel.h"
 #include "WebPreferencesDefinitions.h"
@@ -34,7 +35,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-#define DECLARE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
+#define DECLARE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
     void set##KeyUpper(const Type& value); \
     Type KeyLower() const;
 
@@ -59,14 +60,13 @@ public:
 
     const WebPreferencesStore& store() const { return m_store; }
 
-#define DECLARE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
-    void set##KeyUpper(const Type& value); \
-    Type KeyLower() const; \
-
     FOR_EACH_WEBKIT_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
     FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
+    FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
 
-#undef DECLARE_PREFERENCE_GETTER_AND_SETTERS
+    static const Vector<RefPtr<API::Object>>& experimentalFeatures();
+    bool isEnabledForFeature(const API::ExperimentalFeature&) const;
+    void setEnabledForFeature(bool, const API::ExperimentalFeature&);
 
     // Exposed for WebKitTestRunner use only.
     void forceUpdate() { update(); }

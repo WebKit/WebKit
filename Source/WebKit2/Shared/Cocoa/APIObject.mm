@@ -64,6 +64,7 @@
 #import "WKWindowFeaturesInternal.h"
 #import "_WKAutomationSessionInternal.h"
 #import "_WKDownloadInternal.h"
+#import "_WKExperimentalFeatureInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
@@ -148,6 +149,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::Download:
         wrapper = [_WKDownload alloc];
+        break;
+
+    case Type::ExperimentalFeature:
+        wrapper = [_WKExperimentalFeature alloc];
         break;
 
     case Type::Error:

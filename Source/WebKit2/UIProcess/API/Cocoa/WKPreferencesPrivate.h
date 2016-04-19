@@ -46,6 +46,8 @@ typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
     _WKJavaScriptRuntimeFlagsAllEnabled = 0
 } WK_ENUM_AVAILABLE(10_11, 9_0);
 
+@class _WKExperimentalFeature;
+
 @interface WKPreferences (WKPrivate)
 
 // FIXME: This property should not have the verb "is" in it.
@@ -84,6 +86,10 @@ typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
 // FIXME: This property should not have the verb "is" in it.
 @property (nonatomic, setter=_setOfflineApplicationCacheIsEnabled:) BOOL _offlineApplicationCacheIsEnabled;
 @property (nonatomic, setter=_setFullScreenEnabled:) BOOL _fullScreenEnabled WK_AVAILABLE(10_11, 9_0);
+
++ (WK_ARRAY(_WKExperimentalFeature *) *)_experimentalFeatures;
+- (BOOL)_isEnabledForFeature:(_WKExperimentalFeature *)feature;
+- (void)_setEnabled:(BOOL)value forFeature:(_WKExperimentalFeature *)feature;
 
 @end
 

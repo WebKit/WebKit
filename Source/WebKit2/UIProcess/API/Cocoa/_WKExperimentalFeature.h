@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPreferencesKeys.h"
+#import <WebKit/WKFoundation.h>
 
-#include <wtf/NeverDestroyed.h>
+#if WK_API_ENABLED
 
-namespace WebKit {
-namespace WebPreferencesKey {
+#import <Foundation/Foundation.h>
 
-#define DEFINE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
-        const String& KeyLower##Key() \
-        { \
-            static NeverDestroyed<String> key(ASCIILiteral(#KeyUpper)); \
-            return key; \
-        }
+WK_CLASS_AVAILABLE(10_11, 9_0)
+@interface _WKExperimentalFeature : NSObject
 
-FOR_EACH_WEBKIT_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DEFINE_KEY_GETTERS)
+@property (nonatomic, readonly, copy) NSString *key;
+@property (nonatomic, readonly, copy) NSString *name;
+@property (nonatomic, readonly, copy) NSString *details;
 
-#undef DEFINE_KEY_GETTERS
+@end
 
-} // namespace WebPreferencesKey
-} // namespace WebKit
+#endif

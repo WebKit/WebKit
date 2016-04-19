@@ -29,6 +29,7 @@
 #include "WebPageGroup.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcessPool.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WebKit {
@@ -170,7 +171,7 @@ void WebPreferences::updatePrivateBrowsingValue(bool value)
     }
 }
 
-#define DEFINE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
+#define DEFINE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
     void WebPreferences::set##KeyUpper(const Type& value) \
     { \
         if (!m_store.set##TypeName##ValueForKey(WebPreferencesKey::KeyLower##Key(), value)) \
@@ -186,8 +187,57 @@ void WebPreferences::updatePrivateBrowsingValue(bool value)
 
 FOR_EACH_WEBKIT_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
 FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
+FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
 
 #undef DEFINE_PREFERENCE_GETTER_AND_SETTERS
+
+static Vector<RefPtr<API::Object>> createExperimentalFeaturesVector()
+{
+    Vector<RefPtr<API::Object>> features;
+
+#define ADD_EXPERIMENTAL_PREFERENCE_DESCRIPTION(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
+    features.append(API::ExperimentalFeature::create(HumanReadableName, #KeyUpper, HumanReadableDescription)); \
+
+    FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(ADD_EXPERIMENTAL_PREFERENCE_DESCRIPTION)
+
+#undef ADD_EXPERIMENTAL_PREFERENCE_DESCRIPTION
+
+    return features;
+}
+
+const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
+{
+    static NeverDestroyed<Vector<RefPtr<API::Object>>> features = createExperimentalFeaturesVector();
+    return features;
+}
+
+bool WebPreferences::isEnabledForFeature(const API::ExperimentalFeature& feature) const
+{
+    const String& key = feature.key();
+
+#define CALL_EXPERIMENTAL_GETTER(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
+    if (key == #KeyUpper) \
+        return KeyLower(); \
+
+    FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(CALL_EXPERIMENTAL_GETTER)
+
+#undef CALL_EXPERIMENTAL_GETTER
+
+    return false;
+}
+
+void WebPreferences::setEnabledForFeature(bool value, const API::ExperimentalFeature& feature)
+{
+    const String& key = feature.key();
+
+#define CALL_EXPERIMENTAL_SETTER(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
+    if (key == #KeyUpper) \
+        set##KeyUpper(value); \
+
+    FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(CALL_EXPERIMENTAL_SETTER)
+    
+#undef CALL_EXPERIMENTAL_SETTER
+}
 
 bool WebPreferences::anyPagesAreUsingPrivateBrowsing()
 {

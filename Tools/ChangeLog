@@ -1,3 +1,15 @@
+2016-04-18  Dean Jackson  <dino@apple.com>
+
+        New SPI to export a dictionary of runtime features
+        https://bugs.webkit.org/show_bug.cgi?id=156645
+        <rdar://problem/23621666>
+
+        Reviewed by Darin Adler.
+
+        Test the experimental features SPI on WKPreferences.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Preferences.mm:
+
 2016-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSCOnly] Implement RunLoop and remove glib dependency

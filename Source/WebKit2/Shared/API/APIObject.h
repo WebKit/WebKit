@@ -107,6 +107,7 @@ public:
         ColorPickerResultListener,
         CookieManager,
         Download,
+        ExperimentalFeature,
         FormSubmissionListener,
         Frame,
         FrameInfo,

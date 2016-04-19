@@ -144,9 +144,10 @@ static void setDebugUInt32ValueIfInUserDefaults(const String& identifier, const 
 
 void WebPreferences::platformInitializeStore()
 {
-#define INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
+#define INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
     setDebug##TypeName##ValueIfInUserDefaults(m_identifier, m_keyPrefix, m_globalDebugKeyPrefix, WebPreferencesKey::KeyLower##Key(), m_store);
 
+    FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS)
     FOR_EACH_WEBKIT_DEBUG_PREFERENCE(INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS)
 
 #undef INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS
@@ -154,7 +155,7 @@ void WebPreferences::platformInitializeStore()
     if (!m_identifier)
         return;
 
-#define INITIALIZE_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
+#define INITIALIZE_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
     Type user##KeyUpper##Value; \
     if (platformGet##TypeName##UserValueForKey(WebPreferencesKey::KeyLower##Key(), user##KeyUpper##Value)) \
         m_store.set##TypeName##ValueForKey(WebPreferencesKey::KeyLower##Key(), user##KeyUpper##Value);
