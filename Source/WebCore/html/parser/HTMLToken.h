@@ -32,6 +32,8 @@
 namespace WebCore {
 
 struct DoctypeData {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     bool hasPublicIdentifier { false };
     bool hasSystemIdentifier { false };
     Vector<UChar> publicIdentifier;

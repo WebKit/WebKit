@@ -49,7 +49,7 @@ enum AsTextFlag {
 typedef unsigned AsTextFlags;
 
 class DisplayList {
-    WTF_MAKE_NONCOPYABLE(DisplayList);
+    WTF_MAKE_NONCOPYABLE(DisplayList); WTF_MAKE_FAST_ALLOCATED;
     friend class Recorder;
     friend class Replayer;
 public:

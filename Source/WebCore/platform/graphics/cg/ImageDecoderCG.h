@@ -37,6 +37,7 @@ typedef const struct __CFData* CFDataRef;
 namespace WebCore {
 
 class ImageDecoder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ImageDecoder();
     

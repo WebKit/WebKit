@@ -45,6 +45,8 @@ static WorkQueue& decodeQueue()
 }
 
 struct DecodeTask {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     const String urlString;
     const StringView encodedData;
     const bool isBase64;

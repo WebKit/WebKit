@@ -44,6 +44,7 @@ class SubresourcesEntry;
 struct SubresourceInfo;
 
 class SpeculativeLoadManager {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SpeculativeLoadManager(Storage&);
     ~SpeculativeLoadManager();

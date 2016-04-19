@@ -42,6 +42,7 @@ class NetworkLoad;
 class NetworkLoadParameters;
     
 class PendingDownload : public NetworkLoadClient, public IPC::MessageSender {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PendingDownload(const NetworkLoadParameters&, DownloadID);
 

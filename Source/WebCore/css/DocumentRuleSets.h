@@ -52,6 +52,8 @@ public:
     RuleSet* ancestorClassRules(AtomicStringImpl* className) const;
 
     struct AttributeRules {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         Vector<const CSSSelector*> attributeSelectors;
         std::unique_ptr<RuleSet> ruleSet;
     };

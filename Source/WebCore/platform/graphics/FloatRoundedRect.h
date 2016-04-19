@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class FloatRoundedRect {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     class Radii {
     public:

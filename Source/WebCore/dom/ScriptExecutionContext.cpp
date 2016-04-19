@@ -55,8 +55,8 @@ using namespace Inspector;
 
 namespace WebCore {
 
-class ScriptExecutionContext::PendingException {
-    WTF_MAKE_NONCOPYABLE(PendingException);
+struct ScriptExecutionContext::PendingException {
+    WTF_MAKE_NONCOPYABLE(PendingException); WTF_MAKE_FAST_ALLOCATED;
 public:
     PendingException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack)
         : m_errorMessage(errorMessage)

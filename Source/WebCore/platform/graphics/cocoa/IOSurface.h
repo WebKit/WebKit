@@ -37,6 +37,7 @@ namespace WebCore {
 class MachSendRight;
 
 class IOSurface final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Format {
         RGBA,

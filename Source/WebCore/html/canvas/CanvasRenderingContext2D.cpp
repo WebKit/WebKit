@@ -89,6 +89,8 @@ static const char* const defaultFontFamily = "sans-serif";
 static const char* const defaultFont = "10px sans-serif";
 
 struct DisplayListDrawingContext {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     GraphicsContext context;
     DisplayList::Recorder recorder;
     DisplayList::DisplayList displayList;

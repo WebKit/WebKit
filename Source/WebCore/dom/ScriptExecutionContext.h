@@ -224,7 +224,7 @@ private:
     HashMap<int, RefPtr<DOMTimer>> m_timeouts;
 
     bool m_inDispatchErrorEvent;
-    class PendingException;
+    struct PendingException;
     std::unique_ptr<Vector<std::unique_ptr<PendingException>>> m_pendingExceptions;
 
     bool m_activeDOMObjectsAreSuspended;

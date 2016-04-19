@@ -35,6 +35,7 @@ class ContentSecurityPolicy;
 class URL;
 
 class ContentSecurityPolicySource {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ContentSecurityPolicySource(const ContentSecurityPolicy&, const String& scheme, const String& host, int port, const String& path, bool hostHasWildcard, bool portHasWildcard);
 

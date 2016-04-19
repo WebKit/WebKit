@@ -42,7 +42,7 @@ struct TextAutosizingWindowInfo;
 struct TextAutosizingClusterInfo;
 
 class TextAutosizer final {
-    WTF_MAKE_NONCOPYABLE(TextAutosizer);
+    WTF_MAKE_NONCOPYABLE(TextAutosizer); WTF_MAKE_FAST_ALLOCATED;
 
 public:
     explicit TextAutosizer(Document*);

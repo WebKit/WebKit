@@ -39,6 +39,7 @@ enum GraphicsContextCGFlag {
 typedef unsigned GraphicsContextCGFlags;
 
 class GraphicsContextPlatformPrivate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GraphicsContextPlatformPrivate(CGContextRef cgContext, GraphicsContextCGFlags flags = 0)
         : m_cgContext(cgContext)

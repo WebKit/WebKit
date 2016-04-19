@@ -72,6 +72,7 @@ protected:
 
 private:
     class CachedGeneratedImage {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         CachedGeneratedImage(CSSImageGeneratorValue&, FloatSize, PassRefPtr<GeneratedImage>);
         GeneratedImage* image() { return m_image.get(); }

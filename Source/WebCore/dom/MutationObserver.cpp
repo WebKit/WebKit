@@ -157,7 +157,8 @@ static MutationObserverSet& suspendedMutationObservers()
 
 static bool mutationObserverCompoundMicrotaskQueuedFlag;
 
-class MutationObserverMicrotask : public Microtask {
+class MutationObserverMicrotask final : public Microtask {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MutationObserverMicrotask()
     {

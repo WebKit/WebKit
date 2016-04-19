@@ -49,8 +49,9 @@ enum AutoscrollType {
 #endif
 };
 
-// AutscrollController handels autoscroll and pan scroll for EventHandler.
+// AutscrollController handles autoscroll and pan scroll for EventHandler.
 class AutoscrollController {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AutoscrollController();
     RenderBox* autoscrollRenderer() const;

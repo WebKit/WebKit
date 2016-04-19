@@ -73,7 +73,7 @@ class NetworkSession;
 class WebPage;
 
 class Download : public IPC::MessageSender {
-    WTF_MAKE_NONCOPYABLE(Download);
+    WTF_MAKE_NONCOPYABLE(Download); WTF_MAKE_FAST_ALLOCATED;
 public:
 #if USE(NETWORK_SESSION) && PLATFORM(COCOA)
     Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, const String& suggestedFilename = { });

@@ -61,6 +61,8 @@ struct RuleFeatureSet {
     HashMap<AtomicStringImpl*, std::unique_ptr<Vector<RuleFeature>>> ancestorClassRules;
 
     struct AttributeRules {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         using SelectorKey = std::pair<AtomicStringImpl*, std::pair<AtomicStringImpl*, unsigned>>;
         HashMap<SelectorKey, const CSSSelector*> selectors;
         Vector<RuleFeature> features;

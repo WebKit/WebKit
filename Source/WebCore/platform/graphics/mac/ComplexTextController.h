@@ -49,6 +49,7 @@ enum GlyphIterationStyle { IncludePartialGlyphs, ByWholeGlyphs };
 // ComplexTextController is responsible for rendering and measuring glyphs for
 // complex scripts on OS X.
 class ComplexTextController {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ComplexTextController(const FontCascade&, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const Font*>* fallbackFonts = 0, bool forTextEmphasis = false);
 

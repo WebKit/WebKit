@@ -37,6 +37,7 @@ class Document;
 class FormData;
 
 class XSSInfo {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     XSSInfo(const String& originalURL, bool didBlockEntirePage, bool didSendXSSProtectionHeader)
         : m_originalURL(originalURL.isolatedCopy())

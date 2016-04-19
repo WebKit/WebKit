@@ -38,6 +38,7 @@ class Attribute;
 class ShareableElementData;
 
 class DocumentSharedObjectPool {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Ref<ShareableElementData> cachedShareableElementDataWithAttributes(const Vector<Attribute>&);
 

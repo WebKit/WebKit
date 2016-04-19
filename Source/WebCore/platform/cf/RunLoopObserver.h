@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class RunLoopObserver {
-    WTF_MAKE_NONCOPYABLE(RunLoopObserver);
+    WTF_MAKE_NONCOPYABLE(RunLoopObserver); WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef std::function<void ()> RunLoopObserverCallback;
 

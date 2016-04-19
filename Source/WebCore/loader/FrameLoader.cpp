@@ -202,6 +202,7 @@ struct ForbidPromptsScope {
 };
 
 class FrameLoader::FrameProgressTracker {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit FrameProgressTracker(Frame& frame)
         : m_frame(frame)

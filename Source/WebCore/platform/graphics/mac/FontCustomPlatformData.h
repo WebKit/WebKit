@@ -38,7 +38,7 @@ class FontPlatformData;
 class SharedBuffer;
 
 struct FontCustomPlatformData {
-    WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
+    WTF_MAKE_NONCOPYABLE(FontCustomPlatformData); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit FontCustomPlatformData(CTFontDescriptorRef fontDescriptor)
         : m_fontDescriptor(fontDescriptor)

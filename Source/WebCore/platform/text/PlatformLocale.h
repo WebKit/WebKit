@@ -37,7 +37,7 @@ class FontCascade;
 #endif
 
 class Locale {
-    WTF_MAKE_NONCOPYABLE(Locale);
+    WTF_MAKE_NONCOPYABLE(Locale); WTF_MAKE_FAST_ALLOCATED;
 
 public:
     static std::unique_ptr<Locale> create(const AtomicString& localeIdentifier);

@@ -39,6 +39,8 @@ namespace WebKit {
 class RemoteObjectInvocation {
 public:
     struct ReplyInfo {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         ReplyInfo(uint64_t replyID, String&& blockSignature)
             : replyID(replyID)
             , blockSignature(WTFMove(blockSignature))

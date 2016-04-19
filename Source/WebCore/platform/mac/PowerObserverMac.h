@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class PowerObserver {
-    WTF_MAKE_NONCOPYABLE(PowerObserver);
+    WTF_MAKE_NONCOPYABLE(PowerObserver); WTF_MAKE_FAST_ALLOCATED;
 
 public:
     PowerObserver(const std::function<void()>& powerOnHander);

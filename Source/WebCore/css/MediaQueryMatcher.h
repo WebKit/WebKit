@@ -55,6 +55,7 @@ public:
 
 private:
     class Listener {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         Listener(PassRefPtr<MediaQueryListListener>, PassRefPtr<MediaQueryList>);
         ~Listener();

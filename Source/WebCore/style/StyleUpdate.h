@@ -52,6 +52,7 @@ struct ElementUpdate {
 };
 
 class Update {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Update(Document&);
 

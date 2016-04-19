@@ -34,6 +34,7 @@ namespace WebCore {
 class Element;
 
 class CollectionNamedElementCache {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     const Vector<Element*>* findElementsWithId(const AtomicString& id) const;
     const Vector<Element*>* findElementsWithName(const AtomicString& name) const;

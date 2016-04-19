@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class MutationObserverInterestGroup {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MutationObserverInterestGroup(HashMap<MutationObserver*, MutationRecordDeliveryOptions>& observers, MutationRecordDeliveryOptions oldValueFlag);
 

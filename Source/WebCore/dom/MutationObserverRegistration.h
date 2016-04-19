@@ -41,6 +41,7 @@ namespace WebCore {
 class QualifiedName;
 
 class MutationObserverRegistration {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MutationObserverRegistration(PassRefPtr<MutationObserver>, Node*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
     ~MutationObserverRegistration();

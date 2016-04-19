@@ -277,6 +277,7 @@ public:
     };
     
     class CascadedProperties {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         CascadedProperties(TextDirection, WritingMode);
 

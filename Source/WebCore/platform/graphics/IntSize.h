@@ -61,6 +61,7 @@ class FloatSize;
 class TextStream;
 
 class IntSize {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     IntSize() : m_width(0), m_height(0) { }
     IntSize(int width, int height) : m_width(width), m_height(height) { }

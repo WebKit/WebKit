@@ -32,10 +32,11 @@
 
 namespace WebCore {
 
-class ActiveDOMCallbackMicrotask : public Microtask, public ActiveDOMCallback {
+class ActiveDOMCallbackMicrotask final : public Microtask, public ActiveDOMCallback {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT ActiveDOMCallbackMicrotask(MicrotaskQueue&, ScriptExecutionContext&, std::function<void()>&&);
-    virtual ~ActiveDOMCallbackMicrotask();
+    WEBCORE_EXPORT virtual ~ActiveDOMCallbackMicrotask();
 
     Result run() override;
 

@@ -38,6 +38,7 @@ namespace WebCore {
     class XMLHttpRequest;
 
     class XMLHttpRequestUpload final : public XMLHttpRequestEventTarget {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         explicit XMLHttpRequestUpload(XMLHttpRequest*);
 
