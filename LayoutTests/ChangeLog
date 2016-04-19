@@ -1,5 +1,17 @@
 2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline tests after r199659.
+
+        We are now using the theme colors for the menu lists text.
+
+        * platform/gtk/fast/forms/basic-selects-expected.txt:
+        * platform/gtk/fast/forms/disabled-select-change-index-expected.txt:
+        * platform/gtk/fast/forms/menulist-style-color-expected.txt:
+        * platform/gtk/fast/forms/select-baseline-expected.txt:
+        * platform/gtk/fast/forms/select-disabled-appearance-expected.txt:
+
+2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline tests after r199034.
 
         * platform/gtk/fast/block/float/016-expected.txt:
