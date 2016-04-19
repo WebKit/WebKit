@@ -1,3 +1,26 @@
+2016-04-19  Mark Lam  <mark.lam@apple.com>
+
+        Replace $vm.printValue() with $vm.value().
+        https://bugs.webkit.org/show_bug.cgi?id=156767
+
+        Reviewed by Saam Barati.
+
+        When debugging with $vm, this change allows us to do this:
+
+            $vm.print("myObj = " + $vm.value(myObj) + "\n");
+
+        ... instead of having to do this:
+
+            $vm.print("myObj = ");
+            $vm.printValue(myObj);
+            $vm.print("\n");
+
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::printValue):
+        (JSC::functionValue):
+        (JSC::JSDollarVMPrototype::finishCreation):
+        (JSC::functionPrintValue): Deleted.
+
 2016-04-18  Oliver Hunt  <oliver@apple.com>
 
         Enable separated heap by default on ios

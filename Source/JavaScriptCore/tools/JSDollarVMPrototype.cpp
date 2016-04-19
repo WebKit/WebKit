@@ -33,6 +33,7 @@
 #include "JSFunction.h"
 #include "StackVisitor.h"
 #include <wtf/DataLog.h>
+#include <wtf/StringPrintStream.h>
 
 namespace JSC {
 
@@ -388,14 +389,16 @@ void JSDollarVMPrototype::printValue(JSValue value)
     dataLog(value);
 }
 
-static EncodedJSValue JSC_HOST_CALL functionPrintValue(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL functionValue(ExecState* exec)
 {
+    WTF::StringPrintStream stream;
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
         if (i)
-            dataLog(" ");
-        dataLog(exec->uncheckedArgument(i));
+            stream.print(", ");
+        stream.print(exec->uncheckedArgument(i));
     }
-    return JSValue::encode(jsUndefined());
+    
+    return JSValue::encode(jsString(exec, stream.toString()));
 }
 
 void JSDollarVMPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
@@ -420,7 +423,7 @@ void JSDollarVMPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     addFunction(vm, globalObject, "printCallFrame", functionPrintCallFrame, 0);
     addFunction(vm, globalObject, "printStack", functionPrintStack, 0);
 
-    addFunction(vm, globalObject, "printValue", functionPrintValue, 1);
+    addFunction(vm, globalObject, "value", functionValue, 1);
 }
 
 } // namespace JSC
