@@ -28,6 +28,7 @@
 
 #include "DatabaseProcessMessages.h"
 #include "DatabaseProcessProxyMessages.h"
+#include "NetworkProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebsiteData.h"
 #include <WebCore/NotImplemented.h>
@@ -193,6 +194,18 @@ void DatabaseProcessProxy::didDeleteWebsiteDataForOrigins(uint64_t callbackID)
 {
     auto callback = m_pendingDeleteWebsiteDataForOriginsCallbacks.take(callbackID);
     callback();
+}
+
+void DatabaseProcessProxy::getSandboxExtensionsForBlobFiles(uint64_t requestID, const Vector<String>& paths)
+{
+    SandboxExtension::HandleArray extensions;
+    extensions.allocate(paths.size());
+    for (size_t i = 0; i < paths.size(); ++i) {
+        // ReadWrite is required for creating hard links, which is something that might be done with these extensions.
+        SandboxExtension::createHandle(paths[i], SandboxExtension::ReadWrite, extensions[i]);
+    }
+
+    send(Messages::DatabaseProcess::DidGetSandboxExtensionsForBlobFiles(requestID, extensions), 0);
 }
 
 void DatabaseProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)

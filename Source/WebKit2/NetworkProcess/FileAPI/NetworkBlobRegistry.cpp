@@ -27,6 +27,7 @@
 #include "NetworkBlobRegistry.h"
 
 #include "BlobDataFileReferenceWithSandboxExtension.h"
+#include "NetworkConnectionToWebProcess.h"
 #include "SandboxExtension.h"
 #include <WebCore/BlobPart.h>
 #include <WebCore/BlobRegistryImpl.h>
@@ -85,7 +86,10 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
 
 void NetworkBlobRegistry::registerBlobURLOptionallyFileBacked(NetworkConnectionToWebProcess* connection, const URL& url, const URL& srcURL, const String& fileBackedPath)
 {
-    blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, fileBackedPath);
+    auto fileReference = connection->takeBlobDataFileReferenceForPath(fileBackedPath);
+    ASSERT(fileReference);
+
+    blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, WTFMove(fileReference));
 
     ASSERT(!m_blobsForConnection.get(connection).contains(url));
     BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);

@@ -28,6 +28,8 @@ messages -> DatabaseProcessProxy LegacyReceiver {
     DidFetchWebsiteData(uint64_t callbackID, struct WebKit::WebsiteData websiteData)
     DidDeleteWebsiteData(uint64_t callbackID)
     DidDeleteWebsiteDataForOrigins(uint64_t callbackID)
+
+    GetSandboxExtensionsForBlobFiles(uint64_t requestID, Vector<String> paths)
 }
 
 #endif // ENABLE(DATABASE_PROCESS)

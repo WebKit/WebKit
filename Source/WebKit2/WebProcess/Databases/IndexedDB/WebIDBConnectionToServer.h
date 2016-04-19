@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "MessageSender.h"
+#include "SandboxExtension.h"
 #include <WebCore/IDBConnectionToServer.h>
 
 namespace WebKit {
@@ -80,6 +81,7 @@ public:
     void didDeleteIndex(const WebCore::IDBResultData&);
     void didPutOrAdd(const WebCore::IDBResultData&);
     void didGetRecord(const WebCore::IDBResultData&);
+    void didGetRecordWithSandboxExtensions(const WebCore::IDBResultData&, const SandboxExtension::HandleArray&);
     void didGetCount(const WebCore::IDBResultData&);
     void didDeleteRecord(const WebCore::IDBResultData&);
     void didOpenCursor(const WebCore::IDBResultData&);

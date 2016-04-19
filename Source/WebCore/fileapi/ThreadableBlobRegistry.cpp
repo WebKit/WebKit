@@ -160,7 +160,7 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, const URL& 
 void ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath)
 {
     if (isMainThread())
-        blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, fileBackedPath);
+        blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReference::create(fileBackedPath));
     else {
         threadableQueue().append(createCrossThreadTask(ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked, url, srcURL, fileBackedPath));
 

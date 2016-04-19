@@ -57,9 +57,10 @@ void BlobRegistryProxy::registerBlobURL(const URL& url, const URL& srcURL)
     WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLFromURL(url, srcURL), 0);
 }
 
-void BlobRegistryProxy::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath)
+void BlobRegistryProxy::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&& file)
 {
-    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLOptionallyFileBacked(url, srcURL, fileBackedPath), 0);
+    ASSERT(file);
+    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLOptionallyFileBacked(url, srcURL, file->path()), 0);
 }
 
 void BlobRegistryProxy::unregisterBlobURL(const URL& url)

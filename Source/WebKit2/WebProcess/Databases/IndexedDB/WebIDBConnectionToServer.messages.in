@@ -34,6 +34,7 @@ messages -> WebIDBConnectionToServer {
     DidDeleteIndex(WebCore::IDBResultData result)
     DidPutOrAdd(WebCore::IDBResultData result)
     DidGetRecord(WebCore::IDBResultData result)
+    DidGetRecordWithSandboxExtensions(WebCore::IDBResultData result, WebKit::SandboxExtension::HandleArray extensions)
     DidGetCount(WebCore::IDBResultData result)
     DidDeleteRecord(WebCore::IDBResultData result)
     DidOpenCursor(WebCore::IDBResultData result)

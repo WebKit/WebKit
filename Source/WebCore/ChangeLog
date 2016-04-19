@@ -1,3 +1,28 @@
+2016-04-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Blob support): When reading Blobs from the database, grant the Networking process sandbox access to the files.
+        https://bugs.webkit.org/show_bug.cgi?id=156640
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No change in behavior, as blobs in IDB are not yet enabled,
+                      but when they are enabled testing will cover this).
+
+        * Modules/indexeddb/shared/IDBResultData.h: Export some stuff
+        
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked): Account for 
+          BlobRegistry change described below.
+        
+        * platform/network/BlobRegistry.h: Change registerBlobURLOptionallyFileBacked to take a 
+          BlobDataFileReference instead of a raw path, to allow WK2 to include a sandbox extension.
+        
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerBlobURL): Account for BlobRegistry change described above.
+        (WebCore::BlobRegistryImpl::registerBlobURLOptionallyFileBacked): Use the passed in 
+          BlobDataFileHandle, and also register the BlobResourceHandle constructor.
+        * platform/network/BlobRegistryImpl.h:
+
 2016-04-18  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS build after r199701

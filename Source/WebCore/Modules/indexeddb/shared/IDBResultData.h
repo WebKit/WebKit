@@ -82,7 +82,7 @@ public:
     static IDBResultData openCursorSuccess(const IDBResourceIdentifier&, const IDBGetResult&);
     static IDBResultData iterateCursorSuccess(const IDBResourceIdentifier&, const IDBGetResult&);
 
-    IDBResultData(const IDBResultData&);
+    WEBCORE_EXPORT IDBResultData(const IDBResultData&);
 
     IDBResultType type() const { return m_type; }
     IDBResourceIdentifier requestIdentifier() const { return m_requestIdentifier; }
@@ -96,7 +96,7 @@ public:
     const IDBKeyData* resultKey() const { return m_resultKey.get(); }
     uint64_t resultInteger() const { return m_resultInteger; }
 
-    const IDBGetResult& getResult() const;
+    WEBCORE_EXPORT const IDBGetResult& getResult() const;
 
     WEBCORE_EXPORT IDBResultData();
     template<class Encoder> void encode(Encoder&) const;

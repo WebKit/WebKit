@@ -30,6 +30,8 @@
 
 #include "DataReference.h"
 #include "DatabaseToWebProcessConnectionMessages.h"
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
 #include "WebIDBConnectionToClientMessages.h"
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
@@ -232,6 +234,17 @@ void WebIDBConnectionToServer::didPutOrAdd(const IDBResultData& result)
 
 void WebIDBConnectionToServer::didGetRecord(const IDBResultData& result)
 {
+    m_connectionToServer->didGetRecord(result);
+}
+
+void WebIDBConnectionToServer::didGetRecordWithSandboxExtensions(const WebCore::IDBResultData& result, const SandboxExtension::HandleArray& handles)
+{
+    const auto& filePaths = result.getResult().value().blobFilePaths();
+
+    ASSERT(filePaths.size() == handles.size());
+
+    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::PreregisterSandboxExtensionsForOptionallyFileBackedBlob(filePaths, handles), 0);
+
     m_connectionToServer->didGetRecord(result);
 }
 

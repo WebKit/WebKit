@@ -160,12 +160,13 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart> blobPart
 
 void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
 {
-    registerBlobURLOptionallyFileBacked(url, srcURL, { });
+    registerBlobURLOptionallyFileBacked(url, srcURL, nullptr);
 }
 
-void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath)
+void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file)
 {
     ASSERT(isMainThread());
+    registerBlobResourceHandleConstructor();
 
     BlobData* src = getBlobDataFromURL(srcURL);
     if (src) {
@@ -173,11 +174,11 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
         return;
     }
 
-    if (fileBackedPath.isEmpty())
+    if (file == nullptr || file->path().isEmpty())
         return;
 
     RefPtr<BlobData> backingFile = BlobData::create({ });
-    backingFile->appendFile(BlobDataFileReference::create(fileBackedPath));
+    backingFile->appendFile(WTFMove(file));
 
     m_blobs.set(url.string(), backingFile.release());
 }

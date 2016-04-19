@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkConnectionToWebProcess.h"
 
+#include "BlobDataFileReferenceWithSandboxExtension.h"
 #include "NetworkBlobRegistry.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoad.h"
@@ -269,6 +270,23 @@ void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, Vector<BlobP
 void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const URL& srcURL)
 {
     NetworkBlobRegistry::singleton().registerBlobURL(this, url, srcURL);
+}
+
+void NetworkConnectionToWebProcess::preregisterSandboxExtensionsForOptionallyFileBackedBlob(const Vector<String>& filePaths, const SandboxExtension::HandleArray& handles)
+{
+    ASSERT(filePaths.size() == handles.size());
+
+    for (size_t i = 0; i < filePaths.size(); ++i) {
+        auto result = m_blobDataFileReferences.add(filePaths[i], BlobDataFileReferenceWithSandboxExtension::create(filePaths[i], SandboxExtension::create(handles[i])));
+        ASSERT_UNUSED(result, result.isNewEntry);
+    }
+}
+
+RefPtr<WebCore::BlobDataFileReference> NetworkConnectionToWebProcess::takeBlobDataFileReferenceForPath(const String& path)
+{
+    auto fileReference = m_blobDataFileReferences.take(path);
+    ASSERT(fileReference);
+    return fileReference;
 }
 
 void NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath)

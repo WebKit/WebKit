@@ -127,7 +127,16 @@ void WebIDBConnectionToClient::didPutOrAdd(const WebCore::IDBResultData& resultD
 
 void WebIDBConnectionToClient::didGetRecord(const WebCore::IDBResultData& resultData)
 {
-    send(Messages::WebIDBConnectionToServer::DidGetRecord(resultData));
+    auto& blobFilePaths = resultData.getResult().value().blobFilePaths();
+    if (blobFilePaths.isEmpty()) {
+        send(Messages::WebIDBConnectionToServer::DidGetRecord(resultData));
+        return;
+    }
+
+    RefPtr<WebIDBConnectionToClient> protector(this);
+    DatabaseProcess::singleton().getSandboxExtensionsForBlobFiles(blobFilePaths, [protector, this, resultData](const SandboxExtension::HandleArray& handles) {
+        send(Messages::WebIDBConnectionToServer::DidGetRecordWithSandboxExtensions(resultData, handles));
+    });
 }
 
 void WebIDBConnectionToClient::didGetCount(const WebCore::IDBResultData& resultData)

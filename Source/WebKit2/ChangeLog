@@ -1,3 +1,49 @@
+2016-04-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Blob support): When reading Blobs from the database, grant the Networking process sandbox access to the files.
+        https://bugs.webkit.org/show_bug.cgi?id=156640
+
+        Reviewed by Alex Christensen.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::getSandboxExtensionsForBlobFiles): Utility function to ask the UI process for
+          SandboxExtensions for a list of files.
+        (WebKit::DatabaseProcess::didGetSandboxExtensionsForBlobFiles): Take the SandboxExtensions from the UI process
+          and pass them along to the completion handler.
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseProcess.messages.in:
+
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::didGetRecord): If the value returned from the database doesn't have Blob files,
+          pass the result directly on to WebCore. If it does, ask the UI process for SandboxExtensions first.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::registerBlobURLOptionallyFileBacked): Grab the BlobDataFileReference from the 
+          NetworkConnectionToWebProcess to pass along to the BlobRegistry.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::preregisterSandboxExtensionsForOptionallyFileBackedBlob): Add this message
+          so the WebProcess can preflight the creation of some blob URLs by passing along the SandboxExtensions for their files.
+        (WebKit::NetworkConnectionToWebProcess::takeBlobDataFileReferenceForPath):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::getSandboxExtensionsForBlobFiles): Create SandboxExtensions for the passed in files and
+          return them to the DatabaseProcess.
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+        * UIProcess/Databases/DatabaseProcessProxy.messages.in:
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::didGetRecordWithSandboxExtensions): New form of "didGetRecord" that handles passing
+          the SandboxExtensions to the Networking process before they are needed.
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in:
+
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerBlobURLOptionallyFileBacked):
+        * WebProcess/FileAPI/BlobRegistryProxy.h:
+
 2016-04-18  Dean Jackson  <dino@apple.com>
 
         New SPI to export a dictionary of runtime features

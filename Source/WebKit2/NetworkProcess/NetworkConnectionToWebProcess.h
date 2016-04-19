@@ -35,6 +35,7 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+class BlobDataFileReference;
 class ResourceRequest;
 }
 
@@ -53,6 +54,8 @@ public:
     IPC::Connection* connection() const { return m_connection.get(); }
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
+
+    RefPtr<WebCore::BlobDataFileReference> takeBlobDataFileReferenceForPath(const String& path);
 
 private:
     NetworkConnectionToWebProcess(IPC::Connection::Identifier);
@@ -91,6 +94,7 @@ private:
     void registerFileBlobURL(const WebCore::URL&, const String& path, const SandboxExtension::Handle&, const String& contentType);
     void registerBlobURL(const WebCore::URL&, Vector<WebCore::BlobPart>, const String& contentType);
     void registerBlobURLFromURL(const WebCore::URL&, const WebCore::URL& srcURL);
+    void preregisterSandboxExtensionsForOptionallyFileBackedBlob(const Vector<String>& fileBackedPath, const SandboxExtension::HandleArray&);
     void registerBlobURLOptionallyFileBacked(const WebCore::URL&, const WebCore::URL& srcURL, const String& fileBackedPath);
     void registerBlobURLForSlice(const WebCore::URL&, const WebCore::URL& srcURL, int64_t start, int64_t end);
     void blobSize(const WebCore::URL&, uint64_t& resultSize);
@@ -102,6 +106,7 @@ private:
     RefPtr<IPC::Connection> m_connection;
 
     HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>> m_networkResourceLoaders;
+    HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
 };
 
 } // namespace WebKit
