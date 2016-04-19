@@ -1818,7 +1818,8 @@ void PluginView::pluginSnapshotTimerFired()
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     unsigned candidateArea = 0;
-    bool noSnapshotFoundAfterMaxRetries = m_countSnapshotRetries == frame()->settings().maximumPlugInSnapshotAttempts() && !isPlugInOnScreen && !snapshotFound;
+    unsigned maximumSnapshotRetries = frame() ? frame()->settings().maximumPlugInSnapshotAttempts() : 0;
+    bool noSnapshotFoundAfterMaxRetries = m_countSnapshotRetries == maximumSnapshotRetries && !isPlugInOnScreen && !snapshotFound;
     if (m_webPage->plugInIsPrimarySize(plugInImageElement, candidateArea)
         && (noSnapshotFoundAfterMaxRetries || plugInCameOnScreen))
         m_pluginElement->setDisplayState(HTMLPlugInElement::Playing);
