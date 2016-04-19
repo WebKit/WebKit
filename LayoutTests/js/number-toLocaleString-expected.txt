@@ -11,12 +11,12 @@ PASS Number.prototype.toLocaleString.call(0) did not throw exception.
 PASS Number.prototype.toLocaleString.call(NaN) did not throw exception.
 PASS Number.prototype.toLocaleString.call(Infinity) did not throw exception.
 PASS Number.prototype.toLocaleString.call(new Number) did not throw exception.
-PASS Number.prototype.toLocaleString.call() threw exception TypeError: Number.prototype.toLocaleString called on incompatible undefined.
-PASS Number.prototype.toLocaleString.call(undefined) threw exception TypeError: Number.prototype.toLocaleString called on incompatible undefined.
-PASS Number.prototype.toLocaleString.call(null) threw exception TypeError: Number.prototype.toLocaleString called on incompatible object.
-PASS Number.prototype.toLocaleString.call('1') threw exception TypeError: Number.prototype.toLocaleString called on incompatible string.
-PASS Number.prototype.toLocaleString.call([]) threw exception TypeError: Number.prototype.toLocaleString called on incompatible object.
-PASS Number.prototype.toLocaleString.call(Symbol()) threw exception TypeError: Number.prototype.toLocaleString called on incompatible symbol.
+PASS Number.prototype.toLocaleString.call() threw exception TypeError: thisNumberValue called on incompatible undefined.
+PASS Number.prototype.toLocaleString.call(undefined) threw exception TypeError: thisNumberValue called on incompatible undefined.
+PASS Number.prototype.toLocaleString.call(null) threw exception TypeError: thisNumberValue called on incompatible object.
+PASS Number.prototype.toLocaleString.call('1') threw exception TypeError: thisNumberValue called on incompatible string.
+PASS Number.prototype.toLocaleString.call([]) threw exception TypeError: thisNumberValue called on incompatible object.
+PASS Number.prototype.toLocaleString.call(Symbol()) threw exception TypeError: thisNumberValue called on incompatible symbol.
 PASS (0).toLocaleString() is "0"
 PASS new Number(1).toLocaleString() is "1"
 PASS (0).toLocaleString('i') threw exception RangeError: invalid language tag: i.

@@ -45,7 +45,6 @@ namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState*);
-static EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState*);
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState*);
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState*);
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState*);
@@ -528,8 +527,9 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
 {
     double x;
-    if (!toThisNumber(exec->thisValue(), x))
-        return throwVMTypeError(exec);
+    JSValue thisValue = exec->thisValue();
+    if (!toThisNumber(thisValue, x))
+        return throwVMTypeError(exec, WTF::makeString("thisNumberValue called on incompatible ", jsCast<JSString*>(jsTypeStringForValue(exec, thisValue))->value(exec)));
     return JSValue::encode(jsNumber(x));
 }
 

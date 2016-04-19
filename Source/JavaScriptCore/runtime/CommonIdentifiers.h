@@ -405,6 +405,7 @@
     macro(NumberFormat) \
     macro(intlSubstituteValue) \
     macro(thisTimeValue) \
+    macro(thisNumberValue) \
     macro(newTargetLocal) \
     macro(derivedConstructor) \
     macro(isBoundFunction) \

@@ -52,6 +52,8 @@ private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
+EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState*);
+
 } // namespace JSC
 
 #endif // NumberPrototype_h
