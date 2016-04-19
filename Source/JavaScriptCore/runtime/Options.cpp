@@ -341,6 +341,13 @@ static void recomputeDependentOptions()
         Options::useOSREntryToFTL() = false;
     }
 
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+    // Override globally for now. Longer term we'll just make the default
+    // be to have this option enabled, and have platforms that don't support
+    // it just silently use a single mapping.
+    Options::useSeparatedWXHeap() = true;
+#endif
+
     // Compute the maximum value of the reoptimization retry counter. This is simply
     // the largest value at which we don't overflow the execute counter, when using it
     // to left-shift the execution counter by this amount. Currently the value ends

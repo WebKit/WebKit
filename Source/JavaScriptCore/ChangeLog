@@ -1,3 +1,13 @@
+2016-04-18  Oliver Hunt  <oliver@apple.com>
+
+        Enable separated heap by default on ios
+        https://bugs.webkit.org/show_bug.cgi?id=156720
+
+        Reviewed by ggaren.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2016-04-19  Mark Lam  <mark.lam@apple.com>
 
         Re-landing: ES6: Implement String.prototype.split and RegExp.prototype[@@split].
