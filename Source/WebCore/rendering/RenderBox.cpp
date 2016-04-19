@@ -2614,7 +2614,7 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
     return false;
 }
 
-void RenderBox::computeInlineDirectionMargins(RenderBlock& containingBlock, LayoutUnit containerWidth, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const
+void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock, LayoutUnit containerWidth, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const
 {
     const RenderStyle& containingBlockStyle = containingBlock.style();
     Length marginStartLength = style().marginStartUsing(&containingBlockStyle);

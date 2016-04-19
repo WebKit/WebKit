@@ -13,11 +13,12 @@
 }
 
 .container { width: 150px; }
-.borderPadding {
+.borderPaddingMargin {
     border-width: 2px 3px 5px 9px;
     border-color: blue;
     border-style: solid;
     padding: 4px 9px 12px 20px;
+    margin: 7px 10px 12px 14px;
 }
 
 </style>
@@ -34,8 +35,8 @@
 </div>
 
 <div class="container">
-    <div class="grid" data-expected-width="150" data-expected-height="58">
-        <div class="item borderPadding" data-expected-width="140" data-expected-height="48">XXX</div>
+    <div class="grid" data-expected-width="150" data-expected-height="77">
+        <div class="item borderPaddingMargin" data-expected-width="116" data-expected-height="48">XXX</div>
     </div>
 </div>
 
@@ -47,8 +48,8 @@
 </div>
 
 <div class="container">
-    <div class="grid" data-expected-width="150" data-expected-height="33">
-        <div class="item borderPadding" style="min-height: 0px;" data-expected-width="140" data-expected-height="23">XXX</div>
+    <div class="grid" data-expected-width="150" data-expected-height="52">
+        <div class="item borderPaddingMargin" style="min-height: 0px;" data-expected-width="116" data-expected-height="23">XXX</div>
     </div>
 </div>
 
@@ -60,8 +61,8 @@
 </div>
 
 <div class="container">
-    <div class="grid" data-expected-width="150" data-expected-height="33">
-        <div class="item alignSelfStart borderPadding" style="min-height: 0px;" data-expected-width="140" data-expected-height="48">XXX</div>
+    <div class="grid" data-expected-width="150" data-expected-height="52">
+        <div class="item alignSelfStart borderPaddingMargin" style="min-height: 0px;" data-expected-width="116" data-expected-height="48">XXX</div>
     </div>
 </div>
 
@@ -74,7 +75,7 @@
 
 <div class="container">
     <div class="grid" style="height: 15px;" data-expected-width="150" data-expected-height="25">
-        <div class="item borderPadding" style="min-height: 0px;" data-expected-width="140" data-expected-height="23">XXX</div>
+        <div class="item borderPaddingMargin" style="min-height: 0px;" data-expected-width="116" data-expected-height="23">XXX</div>
     </div>
 </div>
 
@@ -87,7 +88,7 @@
 
 <div class="container">
     <div class="grid" style="height: 15px;" data-expected-width="150" data-expected-height="25">
-        <div class="item alignSelfStart borderPadding" style="min-height: 0px;" data-expected-width="140" data-expected-height="48">XXX</div>
+        <div class="item alignSelfStart borderPaddingMargin" style="min-height: 0px;" data-expected-width="116" data-expected-height="48">XXX</div>
     </div>
 </div>
 
@@ -99,8 +100,8 @@
 </div>
 
 <div class="container">
-    <div class="grid" data-expected-width="150" data-expected-height="63">
-        <div class="item borderPadding" style="min-height: 30px;" data-expected-width="140" data-expected-height="53">XXX</div>
+    <div class="grid" data-expected-width="150" data-expected-height="82">
+        <div class="item borderPaddingMargin" style="min-height: 30px;" data-expected-width="116" data-expected-height="53">XXX</div>
     </div>
 </div>
 
@@ -112,8 +113,8 @@
 </div>
 
 <div class="container">
-    <div class="grid" data-expected-width="150" data-expected-height="63">
-        <div class="item alignSelfStart borderPadding" style="min-height: 30px;" data-expected-width="140" data-expected-height="53">XXX</div>
+    <div class="grid" data-expected-width="150" data-expected-height="82">
+        <div class="item alignSelfStart borderPaddingMargin" style="min-height: 30px;" data-expected-width="116" data-expected-height="53">XXX</div>
     </div>
 </div>
 

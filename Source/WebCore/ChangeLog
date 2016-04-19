@@ -1,3 +1,46 @@
+2016-04-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Use the margin box for non-auto minimum sizes
+        https://bugs.webkit.org/show_bug.cgi?id=156711
+
+        Reviewed by Darin Adler.
+
+        When computing the min-size of items with non-auto minimum height/width we are incorrectly
+        returning the size of the border box, and thus incorrectly ignoring the margins of the item.
+
+        This is a follow up patch of r199153 were we added the missing border and paddings for
+        heights. Contrary to that, we were not including margins for both axis.
+
+        This CL requires 3 different interrelated changes:
+        - Add the margins to the min-size returned by minSizeForChild (might require a layout).
+        - Refactor and extract width computations from logicalHeightForChild(); not totally
+        mandatory but pretty logical and helpful.
+        - Use a new update function to isolate the computation of the override width.
+
+        Test: fast/css-grid-layout/min-width-margin-box.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeInlineDirectionMargins): Added const to a parameter.
+        * rendering/RenderBox.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeTrackSizesForDirection): Initialize the sizingOperation.
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths): Ditto.
+        (WebCore::RenderGrid::computeIntrinsicLogicalHeight): Ditto.
+        (WebCore::RenderGrid::logicalHeightForChild): Renamed from logicalContentHeightForChild as
+        it no longer returns the content size but the outer size.
+        (WebCore::RenderGrid::minSizeForChild):
+        (WebCore::RenderGrid::updateOverrideContainingBlockContentLogicalWidthForChild): Extracted
+        from logicalHeightForChild().
+        (WebCore::RenderGrid::minContentForChild): Update override width if needed.
+        (WebCore::RenderGrid::maxContentForChild): Ditto.
+        (WebCore::RenderGrid::computeMarginLogicalSizeForChild): Generalized from
+        computeMarginLogicalHeightForChild(), it can now compute also margins for the inline
+        direction.
+        (WebCore::RenderGrid::availableAlignmentSpaceForChildBeforeStretching):
+        (WebCore::RenderGrid::logicalContentHeightForChild): Deleted.
+        (WebCore::RenderGrid::computeMarginLogicalHeightForChild): Deleted.
+        * rendering/RenderGrid.h:
+
 2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Cairo] GraphicsContext::drawFocusRing methods are not consistent to each other
