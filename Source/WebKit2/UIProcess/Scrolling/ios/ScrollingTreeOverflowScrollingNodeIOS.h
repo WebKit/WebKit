@@ -31,6 +31,7 @@
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/ScrollingTreeOverflowScrollingNode.h>
 
+OBJC_CLASS CALayer;
 OBJC_CLASS WKOverflowScrollViewDelegate;
 
 namespace WebKit {
