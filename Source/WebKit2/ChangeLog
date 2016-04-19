@@ -1,3 +1,19 @@
+2016-04-19  Dean Jackson  <dino@apple.com>
+
+        New SPI to export a dictionary of runtime features
+        https://bugs.webkit.org/show_bug.cgi?id=156645
+        <rdar://problem/23621666>
+
+        Post commit follow-up. Darin gave review comments that
+        I didn't address in my original commit - I was waiting
+        on some advice.
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::isEnabledForFeature): Change the macro
+        to generate a static list of function pointers, rather than
+        a lot of conditional statements.
+        (WebKit::WebPreferences::setEnabledForFeature): Ditto.
+
 2016-04-19  Chris Dumez  <cdumez@apple.com>
 
         Mark more classes as WTF_MAKE_FAST_ALLOCATED

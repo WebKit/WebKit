@@ -213,30 +213,54 @@ const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
 
 bool WebPreferences::isEnabledForFeature(const API::ExperimentalFeature& feature) const
 {
+    struct FeatureGetterMapping {
+        const char* name;
+        bool (WebPreferences::*function) () const;
+    };
+
+#define MAKE_FEATURE_GETTER(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
+    { #KeyUpper, &WebPreferences::KeyLower }, \
+
+    static FeatureGetterMapping getters[] = {
+        FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(MAKE_FEATURE_GETTER)
+    };
+
+#undef MAKE_FEATURE_GETTER
+
     const String& key = feature.key();
 
-#define CALL_EXPERIMENTAL_GETTER(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
-    if (key == #KeyUpper) \
-        return KeyLower(); \
-
-    FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(CALL_EXPERIMENTAL_GETTER)
-
-#undef CALL_EXPERIMENTAL_GETTER
+    for (auto& getter : getters) {
+        if (key == getter.name)
+            return (this->*getter.function)();
+    }
 
     return false;
 }
 
 void WebPreferences::setEnabledForFeature(bool value, const API::ExperimentalFeature& feature)
 {
+    struct FeatureSetterMapping {
+        const char* name;
+        void (WebPreferences::*function) (const bool&);
+    };
+
+#define MAKE_FEATURE_SETTER(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
+    { #KeyUpper, &WebPreferences::set##KeyUpper }, \
+
+    static FeatureSetterMapping setters[] = {
+        FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(MAKE_FEATURE_SETTER)
+    };
+
+#undef MAKE_FEATURE_SETTER
+
     const String& key = feature.key();
-
-#define CALL_EXPERIMENTAL_SETTER(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
-    if (key == #KeyUpper) \
-        set##KeyUpper(value); \
-
-    FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(CALL_EXPERIMENTAL_SETTER)
     
-#undef CALL_EXPERIMENTAL_SETTER
+    for (auto& setter : setters) {
+        if (key == setter.name) {
+            (this->*setter.function)(value);
+            return;
+        }
+    }
 }
 
 bool WebPreferences::anyPagesAreUsingPrivateBrowsing()
