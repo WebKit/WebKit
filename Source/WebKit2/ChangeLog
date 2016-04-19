@@ -19,6 +19,18 @@
         https://bugs.webkit.org/show_bug.cgi?id=156645
         <rdar://problem/23621666>
 
+        Reviewed by Anders Carlsson.
+
+        Mark the new SPI as WK_MAC_TBA, WK_IOS_TBA.
+
+        * UIProcess/API/Cocoa/_WKExperimentalFeature.h:
+
+2016-04-19  Dean Jackson  <dino@apple.com>
+
+        New SPI to export a dictionary of runtime features
+        https://bugs.webkit.org/show_bug.cgi?id=156645
+        <rdar://problem/23621666>
+
         Post commit follow-up. Darin gave review comments that
         I didn't address in my original commit - I was waiting
         on some advice.
