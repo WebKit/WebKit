@@ -262,22 +262,12 @@
     border-bottom: none;
 }
 
-.details-section > .content .data-grid table.data {
-    background-image: none;
-}
-
-.details-section > .content .data-grid tr:nth-child(even) {
-    background-color: white;
-}
-
-.details-section > .content .data-grid tr:nth-child(odd) {
-    background-color: hsl(214, 41%, 96%);
-}
-
 .details-section > .content .data-grid td.value-column {
     height: auto;
     line-height: initial;
     white-space: normal;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 .details-section > .content .data-grid td.value-column > div {

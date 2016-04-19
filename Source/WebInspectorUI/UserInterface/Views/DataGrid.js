@@ -37,6 +37,8 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._sortOrder = WebInspector.DataGrid.SortOrder.Indeterminate;
         this._sortOrderSetting = null;
 
+        this._rows = [];
+
         this.children = [];
         this.selectedNode = null;
         this.expandNodesWhenArrowing = false;
@@ -47,6 +49,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this.selected = false;
         this.dataGrid = this;
         this.indentWidth = 15;
+        this.rowHeight = 20;
         this.resizers = [];
         this._columnWidthsInitialized = false;
 
@@ -66,8 +69,14 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._scrollContainerElement = document.createElement("div");
         this._scrollContainerElement.className = "data-container";
 
-        this._dataTableElement = this._scrollContainerElement.createChild("table");
-        this._dataTableElement.className = "data";
+        this._scrollListener = () => this.needsLayout();
+        this._scrollContainerElement.addEventListener("scroll", this._scrollListener);
+
+        this._topDataTableMarginElement = this._scrollContainerElement.createChild("div");
+
+        this._dataTableElement = this._scrollContainerElement.createChild("table", "data");
+
+        this._bottomDataTableMarginElement = this._scrollContainerElement.createChild("div");
 
         this._dataTableElement.addEventListener("mousedown", this._mouseDownInDataTable.bind(this));
         this._dataTableElement.addEventListener("click", this._clickInDataTable.bind(this));
@@ -79,6 +88,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             this._dataTableElement.addEventListener("dblclick", this._ondblclick.bind(this), false);
             this._editCallback = editCallback;
         }
+
         if (deleteCallback)
             this._deleteCallback = deleteCallback;
 
@@ -87,8 +97,8 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         // This element is used by DataGridNodes to manipulate table rows and cells.
         this.dataTableBodyElement = this._dataTableElement.createChild("tbody");
-        this._fillerRowElement = this.dataTableBodyElement.createChild("tr");
-        this._fillerRowElement.className = "filler";
+
+        this._fillerRowElement = this.dataTableBodyElement.createChild("tr", "filler");
 
         this.element.appendChild(this._headerTableElement);
         this.element.appendChild(this._scrollContainerElement);
@@ -235,6 +245,40 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._sortColumnIdentifierSetting = setting;
         if (this._sortColumnIdentifierSetting.value)
             this.sortColumnIdentifier = this._sortColumnIdentifierSetting.value;
+    }
+
+    get inline() { return this._inline; }
+
+    set inline(x)
+    {
+        if (this._inline === x)
+            return;
+
+        this._inline = x || false;
+
+        this._element.classList.toggle("inline", this._inline);
+
+        if (this._inline || this._variableHeightRows)
+            this._scrollContainerElement.removeEventListener("scroll", this._scrollListener);
+        else
+            this._scrollContainerElement.addEventListener("scroll", this._scrollListener);
+    }
+
+    get variableHeightRows() { return this._variableHeightRows; }
+
+    set variableHeightRows(x)
+    {
+        if (this._variableHeightRows === x)
+            return;
+
+        this._variableHeightRows = x || false;
+
+        this._element.classList.toggle("variable-height-rows", this._variableHeightRows);
+
+        if (this._inline || this._variableHeightRows)
+            this._scrollContainerElement.removeEventListener("scroll", this._scrollListener);
+        else
+            this._scrollContainerElement.addEventListener("scroll", this._scrollListener);
     }
 
     _updateSortedColumn(oldSortColumnIdentifier)
@@ -506,11 +550,9 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         if (column["collapsesGroup"]) {
             console.assert(column["group"] !== column["collapsesGroup"]);
 
-            var dividerElement = headerCellElement.createChild("div");
-            dividerElement.className = "divider";
+            var dividerElement = headerCellElement.createChild("div", "divider");
 
-            var collapseDiv = headerCellElement.createChild("div");
-            collapseDiv.className = "collapser-button";
+            var collapseDiv = headerCellElement.createChild("div", "collapser-button");
             collapseDiv.title = this._collapserButtonCollapseColumnsToolTip();
             listeners.register(collapseDiv, "mouseover", this._mouseoverColumnCollapser);
             listeners.register(collapseDiv, "mouseout", this._mouseoutColumnCollapser);
@@ -638,6 +680,8 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             this._positionResizerElements();
             this._positionHeaderViews();
         }
+
+        this._updateVisibleRows();
     }
 
     columnWidthsMap()
@@ -791,6 +835,81 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         }
     }
 
+    _noteRowsChanged()
+    {
+        this._previousRevealedRowCount = NaN;
+
+        this.needsLayout();
+    }
+
+    _updateVisibleRows()
+    {
+        if (this._inline || this._variableHeightRows) {
+            // Inline DataGrids always show all their rows, so we can't virtualize them.
+            // In general, inline DataGrids usually have a small number of rows.
+
+            // FIXME: This is a slow path for variable height rows that is similar to the old
+            // non-virtualized DataGrid. Ideally we would track row height per-DataGridNode
+            // and then we could virtualize even those cases. Currently variable height row
+            // DataGrids don't usually have many rows, other than IndexedDB.
+
+            let nextElement = this.dataTableBodyElement.lastChild;
+            for (let i = this._rows.length - 1; i >= 0; --i) {
+                let rowElement = this._rows[i].element;
+                if (rowElement.nextSibling !== nextElement)
+                    this.dataTableBodyElement.insertBefore(rowElement, nextElement);
+                nextElement = rowElement;
+            }
+
+            return;
+        }
+
+        let rowHeight = this.rowHeight;
+        let updateOffsetThreshold = rowHeight * 5;
+
+        let revealedRows = this._rows.filter((row) => row.revealed);
+
+        let scrollTop = this._scrollContainerElement.scrollTop;
+        let scrollHeight = this._scrollContainerElement.offsetHeight;
+
+        let currentTopMargin = this._topDataTableMarginElement.offsetHeight;
+        let currentBottomMargin = this._bottomDataTableMarginElement.offsetHeight;
+        let currentTableBottom = currentTopMargin + this._dataTableElement.offsetHeight;
+
+        let belowTopThreshold = !currentTopMargin || scrollTop > currentTopMargin + updateOffsetThreshold;
+        let aboveBottomThreshold = !currentBottomMargin || scrollTop + scrollHeight < currentTableBottom - updateOffsetThreshold;
+
+        if (belowTopThreshold && aboveBottomThreshold && this._previousRevealedRowCount === revealedRows.length)
+            return;
+
+        this._previousRevealedRowCount = revealedRows.length;
+
+        let overflowPadding = updateOffsetThreshold * 3;
+
+        let topHiddenRowCount = Math.max(0, Math.floor((scrollTop - overflowPadding) / rowHeight));
+        let visibleRowCount = Math.ceil((scrollHeight + (overflowPadding * 2)) / rowHeight);
+        let bottomHiddenRowCount = Math.max(0, revealedRows.length - topHiddenRowCount - visibleRowCount);
+
+        let marginTop = topHiddenRowCount * rowHeight;
+        let marginBottom = bottomHiddenRowCount * rowHeight;
+
+        this._topDataTableMarginElement.style.height = marginTop + "px";
+        this._bottomDataTableMarginElement.style.height = marginBottom + "px";
+
+        this._dataTableElement.classList.toggle("odd-first-zebra-stripe", !!(topHiddenRowCount % 2));
+
+        this.dataTableBodyElement.removeChildren();
+
+        for (let i = topHiddenRowCount; i < topHiddenRowCount + visibleRowCount; ++i) {
+            let rowDataGridNode = revealedRows[i];
+            if (!rowDataGridNode)
+                continue;
+            this.dataTableBodyElement.appendChild(rowDataGridNode.element);
+        }
+
+        this.dataTableBodyElement.appendChild(this._fillerRowElement);
+    }
+
     addPlaceholderNode()
     {
         if (this.placeholderNode)
@@ -938,10 +1057,10 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
     _sortNodesCallback(comparator)
     {
-        function comparatorWrapper(aRow, bRow)
+        function comparatorWrapper(aNode, bNode)
         {
-            var aNode = aRow._dataGridNode;
-            var bNode = bRow._dataGridNode;
+            console.assert(!aNode.hasChildren, "This sort method can't be used with parent nodes, children will be displayed out of order.");
+            console.assert(!bNode.hasChildren, "This sort method can't be used with parent nodes, children will be displayed out of order.");
 
             if (aNode.isPlaceholderNode)
                 return 1;
@@ -959,29 +1078,23 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             return;
         }
 
-        var tbody = this.dataTableBodyElement;
-        var childNodes = tbody.childNodes;
-        var fillerRowElement = tbody.lastChild;
+        this._rows.sort(comparatorWrapper.bind(this));
+        this._noteRowsChanged();
 
-        var sortedRowElements = Array.prototype.slice.call(childNodes, 0, childNodes.length - 1);
-        sortedRowElements.sort(comparatorWrapper.bind(this));
-
-        tbody.removeChildren();
-
-        var previousSiblingNode = null;
-        for (var rowElement of sortedRowElements) {
-            var node = rowElement._dataGridNode;
+        let previousSiblingNode = null;
+        for (let node of this._rows) {
             node.previousSibling = previousSiblingNode;
             if (previousSiblingNode)
                 previousSiblingNode.nextSibling = node;
-            tbody.appendChild(rowElement);
             previousSiblingNode = node;
         }
 
         if (previousSiblingNode)
             previousSiblingNode.nextSibling = null;
 
-        tbody.appendChild(fillerRowElement); // We expect to find a filler row when attaching nodes.
+        // A sortable data grid might not be added to a view, so it needs its layout updated here.
+        if (!this.parentView)
+            this.updateLayoutIfNeeded();
     }
 
     _toggledSortOrder()
@@ -1625,16 +1738,12 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         if (!this._element)
             return;
 
-        if (this._hasChildren)
-        {
+        if (this._hasChildren) {
             this._element.classList.add("parent");
             if (this.expanded)
                 this._element.classList.add("expanded");
-        }
-        else
-        {
+        } else
             this._element.classList.remove("parent", "expanded");
-        }
     }
 
     get hasChildren()
@@ -1838,8 +1947,10 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
 
         this.dispatchEventToListeners("collapsed");
 
-        if (this.dataGrid)
+        if (this.dataGrid) {
             this.dataGrid.dispatchEventToListeners(WebInspector.DataGrid.Event.CollapsedNode, {dataGridNode: this});
+            this.dataGrid.needsLayout();
+        }
     }
 
     collapseRecursively()
@@ -1886,8 +1997,10 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
 
         this.dispatchEventToListeners("expanded");
 
-        if (this.dataGrid)
+        if (this.dataGrid) {
             this.dataGrid.dispatchEventToListeners(WebInspector.DataGrid.Event.ExpandedNode, {dataGridNode: this});
+            this.dataGrid.needsLayout();
+        }
     }
 
     expandRecursively()
@@ -2055,27 +2168,28 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
 
         this._attached = true;
 
-        var nextElement = null;
+        let insertionIndex = -1;
 
         if (!this.isPlaceholderNode) {
             var previousGridNode = this.traversePreviousNode(true, true);
-            if (previousGridNode && previousGridNode.element.parentNode)
-                nextElement = previousGridNode.element.nextSibling;
-            else if (!previousGridNode)
-                nextElement = this.dataGrid.dataTableBodyElement.firstChild;
+            insertionIndex = this.dataGrid._rows.indexOf(previousGridNode);
+            if (insertionIndex === -1)
+                insertionIndex = 0;
+            else
+                insertionIndex++;
         }
 
-        // If there is no next grid node, then append before the last child since the last child is the filler row.
-        console.assert(this.dataGrid.dataTableBodyElement.lastChild.classList.contains("filler"));
+        if (insertionIndex === -1)
+            this.dataGrid._rows.push(this);
+        else
+            this.dataGrid._rows.insertAtIndex(this, insertionIndex);
 
-        if (!nextElement)
-            nextElement = this.dataGrid.dataTableBodyElement.lastChild;
+        this.dataGrid._noteRowsChanged();
 
-        this.dataGrid.dataTableBodyElement.insertBefore(this.element, nextElement);
-
-        if (this.expanded)
+        if (this.expanded) {
             for (var i = 0; i < this.children.length; ++i)
                 this.children[i]._attach();
+        }
     }
 
     _detach()
@@ -2085,8 +2199,8 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
 
         this._attached = false;
 
-        if (this._element && this._element.parentNode)
-            this._element.parentNode.removeChild(this._element);
+        this.dataGrid._rows.remove(this, true);
+        this.dataGrid._noteRowsChanged();
 
         for (var i = 0; i < this.children.length; ++i)
             this.children[i]._detach();

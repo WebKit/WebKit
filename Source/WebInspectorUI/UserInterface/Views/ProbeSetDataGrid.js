@@ -40,7 +40,7 @@ WebInspector.ProbeSetDataGrid = class ProbeSetDataGrid extends WebInspector.Data
 
         this.probeSet = probeSet;
 
-        this.element.classList.add("inline");
+        this.inline = true;
 
         this._frameNodes = new Map;
         this._lastUpdatedFrame = null;

@@ -147,6 +147,8 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
             this._containerRegionsDataGrid.appendChild(new WebInspector.DOMTreeDataGridNode(regionNode));
 
         this._containerRegionsFlowSection.element.classList.remove("hidden");
+
+        this._containerRegionsDataGrid.updateLayoutIfNeeded();
     }
 
     cssStyleDeclarationTextEditorShowProperty(property, showSource)

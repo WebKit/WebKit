@@ -31,23 +31,6 @@
     bottom: 0;
 }
 
-.content-view.indexed-database-object-store > .data-grid table.data {
-    background-image: none;
-}
-
-.content-view.indexed-database-object-store > .data-grid table.data tr:nth-child(even) {
-    background-color: white;
-}
-
-.content-view.indexed-database-object-store > .data-grid table.data tr:nth-child(odd) {
-    background-color: hsl(214, 41%, 96%);
-}
-
-.content-view.indexed-database-object-store > .data-grid table.data tr.filler {
- /* FIXME: This should show an alternating stripe, but I couldn't make it work. */
-    background-color: white;
-}
-
 .content-view.indexed-database-object-store > .data-grid tr.selected {
     background-color: hsl(210, 90%, 90%) !important;
 }

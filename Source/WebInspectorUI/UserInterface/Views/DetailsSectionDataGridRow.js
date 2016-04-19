@@ -49,10 +49,13 @@ WebInspector.DetailsSectionDataGridRow = class DetailsSectionDataGridRow extends
         this._dataGrid = dataGrid || null;
 
         if (dataGrid) {
-            dataGrid.element.classList.add("inline");
+            dataGrid.inline = true;
+            dataGrid.variableHeightRows = true;
 
             this.hideEmptyMessage();
             this.element.appendChild(dataGrid.element);
+
+            dataGrid.updateLayoutIfNeeded();
         } else
             this.showEmptyMessage();
     }

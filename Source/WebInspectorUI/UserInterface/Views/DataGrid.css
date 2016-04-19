@@ -109,16 +109,21 @@
 }
 
 .data-grid table.data {
-    position: absolute;
+    position: relative;
     left: 0;
-    top: 0;
     right: 0;
-    bottom: 0;
     height: 100%;
     border-top: 0 none transparent;
-    background-image: linear-gradient(to bottom, white, white 50%, hsl(214, 41%, 96%) 50%, hsl(214, 41%, 96%));
-    background-size: 100% 42px;
     table-layout: fixed;
+}
+
+.data-grid:not(.variable-height-rows) table.data {
+    background-image: linear-gradient(to bottom, var(--even-zebra-stripe-row-background-color), var(--even-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color));
+    background-size: 100% 40px;
+}
+
+.data-grid:not(.variable-height-rows) table.data.odd-first-zebra-stripe {
+    background-image: linear-gradient(to bottom, var(--odd-zebra-stripe-row-background-color), var(--odd-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color));
 }
 
 .data-grid.inline table.data {
@@ -133,10 +138,31 @@
     display: table-row;
 }
 
+.data-grid.variable-height-rows table.data tr:nth-child(odd) {
+    background-color: var(--odd-zebra-stripe-row-background-color);
+}
+
+.data-grid.variable-height-rows table.data tr:nth-child(even) {
+    background-color: var(--even-zebra-stripe-row-background-color);
+}
+
+.data-grid.variable-height-rows.odd-first-zebra-stripe table.data tr:nth-child(odd) {
+    background-color: var(--even-zebra-stripe-row-background-color);
+}
+
+.data-grid.variable-height-rows.odd-first-zebra-stripe table.data tr:nth-child(even) {
+    background-color: var(--odd-zebra-stripe-row-background-color);
+}
+
+.data-grid.variable-height-rows table.data tr.filler {
+ /* FIXME: This should show an alternating stripe, but it needs to know if the last row is even or odd. */
+    background-color: var(--even-zebra-stripe-row-background-color);
+}
+
 .data-grid td {
     vertical-align: top;
-    height: 12px;
-    line-height: 17px;
+    height: 16px;
+    line-height: 16px;
     padding: 2px 6px;
     white-space: nowrap;
     overflow: hidden;

@@ -34,13 +34,3 @@
 .content-view.network-grid > .data-grid th {
     border-top: none;
 }
-
-.content-view.network-grid > .data-grid td {
-    height: 16px;
-    line-height: 16px;
-}
-
-.content-view.network-grid > .data-grid table.data {
-    background-image: linear-gradient(to bottom, white, white 50%, hsl(0, 0%, 95%) 50%, hsl(0, 0%, 95%));
-    background-size: 100% 40px;
-}

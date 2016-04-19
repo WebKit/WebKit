@@ -68,6 +68,7 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
         }
 
         this._dataGrid = new WebInspector.DataGrid(columnInfo);
+        this._dataGrid.variableHeightRows = true;
         this._dataGrid.scrollContainer.addEventListener("scroll", this._dataGridScrolled.bind(this));
         this.addSubview(this._dataGrid);
 

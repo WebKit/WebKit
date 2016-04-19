@@ -1,3 +1,115 @@
+2016-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: DataGrid should be virtualized so it only renders visible rows
+
+        https://bugs.webkit.org/show_bug.cgi?id=156663
+        rdar://problem/25765256
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel.prototype.set containerRegions):
+        Call updateLayoutIfNeeded since we don't use views here.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsTable):
+        Set inline and variableHeightRows to true, remove direct classList add. Call updateLayoutIfNeeded since we don't use views here.
+
+        * UserInterface/Views/DOMTreeDataGrid.js:
+        (WebInspector.DOMTreeDataGrid):
+        Set inline to true, remove direct classList add.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid td):
+        (.data-grid table.data):
+        (.data-grid:not(.variable-height-rows) table.data):
+        (.data-grid:not(.variable-height-rows) table.data.odd-first-zebra-stripe):
+        (.data-grid.variable-height-rows table.data tr:nth-child(odd)):
+        (.data-grid.variable-height-rows table.data tr:nth-child(even)):
+        (.data-grid.variable-height-rows.odd-first-zebra-stripe table.data tr:nth-child(odd)):
+        (.data-grid.variable-height-rows.odd-first-zebra-stripe table.data tr:nth-child(even)):
+        (.data-grid.variable-height-rows table.data tr.filler):
+        Updated styles to support variable height rows directly and flipping the order of the stripes
+        when the virtual table starts at an odd row.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid): Added rowHeight and rows.
+        (WebInspector.DataGrid.prototype.get inline): Added.
+        (WebInspector.DataGrid.prototype.set inline): Added.
+        (WebInspector.DataGrid.prototype.get variableHeightRows): Added.
+        (WebInspector.DataGrid.prototype.set variableHeightRows): Added.
+        (WebInspector.DataGrid.prototype.layout): Call _updateVisibleRows.
+        (WebInspector.DataGrid.prototype._noteRowsChanged): Added.
+        (WebInspector.DataGrid.prototype._updateVisibleRows): Added.
+        (WebInspector.DataGrid.prototype._sortNodesCallback): Update to not use the DOM.
+        (WebInspector.DataGridNode.prototype.set hasChildren): Call needsLayout.
+        (WebInspector.DataGridNode.prototype.collapse): Call needsLayout.
+        (WebInspector.DataGridNode.prototype.expand): Call needsLayout.
+        (WebInspector.DataGridNode.prototype._attach): Call _noteRowsChanged.
+        (WebInspector.DataGridNode.prototype._detach): Call _noteRowsChanged.
+
+        * UserInterface/Views/DatabaseUserQuerySuccessView.js:
+        (WebInspector.DatabaseUserQuerySuccessView):
+        Set inline to true, remove direct classList add. Call updateLayoutIfNeeded since we don't use views here.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .content .data-grid td.value-column):
+        (.details-section > .content .data-grid table.data): Deleted.
+        (.details-section > .content .data-grid tr:nth-child(even)): Deleted.
+        (.details-section > .content .data-grid tr:nth-child(odd)): Deleted.
+        Now handled by DataGrid.css directly.
+
+        * UserInterface/Views/DetailsSectionDataGridRow.js:
+        (WebInspector.DetailsSectionDataGridRow.prototype.set dataGrid):
+        Set inline and variableHeightRows to true, remove direct classList add. Call updateLayoutIfNeeded since we don't use views here.
+
+        * UserInterface/Views/HeapSnapshotInstancesContentView.css:
+        (.heap-snapshot > .data-grid tr:matches(.selected, :hover) td .go-to-arrow):
+        (.heap-snapshot .icon):
+        Remove margin-top to fit inside 20px row instead of 21px.
+
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.css:
+        (.content-view.indexed-database-object-store > .data-grid table.data): Deleted.
+        (.content-view.indexed-database-object-store > .data-grid table.data tr:nth-child(even)): Deleted.
+        (.content-view.indexed-database-object-store > .data-grid table.data tr:nth-child(odd)): Deleted.
+        (.content-view.indexed-database-object-store > .data-grid table.data tr.filler): Deleted.
+        Now handled by DataGrid.css directly.
+
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        (WebInspector.IndexedDatabaseObjectStoreContentView):
+        Set variableHeightRows to true.
+
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._buildDataGridSection):
+        Set inline to true, remove direct classList add. Call updateLayoutIfNeeded since we don't use views here.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-item .data-grid table.data): Deleted.
+        (.console-item .data-grid table.data tr:nth-child(even)): Deleted.
+        Now handled by DataGrid.css directly.
+
+        * UserInterface/Views/NetworkGridContentView.css:
+        (.content-view.network-grid > .data-grid td): Deleted.
+        (.content-view.network-grid > .data-grid table.data): Deleted.
+        Now handled by DataGrid.css directly.
+
+        * UserInterface/Views/ProbeSetDataGrid.js:
+        (WebInspector.ProbeSetDataGrid):
+        Set inline to true, remove direct classList add.
+
+        * UserInterface/Views/ProfileView.css:
+        (.profile > .data-grid td .icon):
+        (.profile > .data-grid tr:matches(.selected, :hover) .go-to-arrow):
+        Remove margin-top to fit inside 20px row instead of 21px.
+
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording > .content-browser > .content-view-container > .timeline-view > .data-grid td): Deleted.
+        (.content-view.timeline-recording > .content-browser > .content-view-container > .timeline-view > .data-grid table.data): Deleted.
+        Now handled by DataGrid.css directly.
+
+        * UserInterface/Views/Variables.css:
+        (:root): Added zebra stripe colors.
+
 2016-04-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION (r199635) Web Inspector: Percentages in Heap Allocations view are too large

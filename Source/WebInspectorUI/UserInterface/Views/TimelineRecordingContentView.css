@@ -61,13 +61,3 @@
 .content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple .arrows {
     color: black;
 }
-
-.content-view.timeline-recording > .content-browser > .content-view-container > .timeline-view > .data-grid td {
-    height: 16px;
-    line-height: 16px;
-}
-
-.content-view.timeline-recording > .content-browser > .content-view-container > .timeline-view > .data-grid table.data {
-    background-image: linear-gradient(to bottom, white, white 50%, hsl(0, 0%, 95%) 50%, hsl(0, 0%, 95%));
-    background-size: 100% 40px;
-}

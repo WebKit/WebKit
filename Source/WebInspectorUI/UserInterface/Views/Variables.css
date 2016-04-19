@@ -70,6 +70,9 @@
     --memory-extra-fill-color: hsl(211, 53%, 70%);
     --memory-extra-stroke-color: hsl(211, 53%, 55%);
 
+    --even-zebra-stripe-row-background-color: white;
+    --odd-zebra-stripe-row-background-color: hsl(0, 0%, 95%);
+
     --toolbar-height: 36px;
     --tab-bar-height: 24px;
 }

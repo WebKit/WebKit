@@ -31,8 +31,11 @@ WebInspector.DatabaseUserQuerySuccessView = class DatabaseUserQuerySuccessView e
 
         this._dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
         if (this._dataGrid) {
-            this._dataGrid.element.classList.add("inline");
+            this._dataGrid.inline = true;
+
             this.resultElement.appendChild(this._dataGrid.element);
+
+            this._dataGrid.updateLayoutIfNeeded();
         } else {
             this.resultElement.classList.add("no-results");
             this.resultElement.textContent = WebInspector.UIString("Query returned no results.");
