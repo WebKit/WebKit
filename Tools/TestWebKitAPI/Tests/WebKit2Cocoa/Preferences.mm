@@ -44,7 +44,7 @@ TEST(WebKit2, DefaultWKPreferences)
 
 TEST(WebKit2, ExperimentalFeatures)
 {
-    NSArray<_WKExperimentalFeature *> *features = [WKPreferences _experimentalFeatures];
+    NSArray *features = [WKPreferences _experimentalFeatures];
     EXPECT_NOT_NULL(features);
 
     RetainPtr<WKPreferences> preferences = adoptNS([[WKPreferences alloc] init]);

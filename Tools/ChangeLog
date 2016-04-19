@@ -1,3 +1,10 @@
+2016-04-18  Dan Bernstein  <mitz@apple.com>
+
+        Fixed building with old Xcode.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Preferences.mm:
+        (TEST):
+
 2016-04-18  Dean Jackson  <dino@apple.com>
 
         New SPI to export a dictionary of runtime features
