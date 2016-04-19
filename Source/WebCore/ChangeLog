@@ -1,3 +1,26 @@
+2016-04-18  Ada Chan  <adachan@apple.com>
+
+        Context menu items related to fullscreen should be specific to standard fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=156723
+        <rdar://problem/25452632>
+
+        Reviewed by Darin Adler.
+
+        Introduce HTMLMediaElement::isStandardFullscreen() that the HitTestResult code can use
+        when handling the validation and selection of fullscreen-related context menu items.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isStandardFullscreen):
+        (WebCore::HTMLMediaElement::toggleStandardFullscreenState):
+        Renamed to make it clear that it's for toggling standard fullscreen. Call the new
+        HTMLMediaElement::isStandardFullscreen().
+        * html/HTMLMediaElement.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::mediaIsInFullscreen):
+        Use HTMLMediaElement::isStandardFullscreen().
+        (WebCore::HitTestResult::toggleMediaFullscreenState):
+        Call the renamed HTMLMediaElement::toggleStandardFullscreenState().
+
 2016-04-19  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: ObjectStore Blob Support.

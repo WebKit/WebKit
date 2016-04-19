@@ -5312,11 +5312,21 @@ bool HTMLMediaElement::isFullscreen() const
     return false;
 }
 
-void HTMLMediaElement::toggleFullscreenState()
+bool HTMLMediaElement::isStandardFullscreen() const
 {
-    LOG(Media, "HTMLMediaElement::toggleFullscreenState(%p) - isFullscreen() is %s", this, boolString(isFullscreen()));
+#if ENABLE(FULLSCREEN_API)
+    if (document().webkitIsFullScreen() && document().webkitCurrentFullScreenElement() == this)
+        return true;
+#endif
+
+    return m_videoFullscreenMode == VideoFullscreenModeStandard;
+}
+
+void HTMLMediaElement::toggleStandardFullscreenState()
+{
+    LOG(Media, "HTMLMediaElement::toggleStandardFullscreenState(%p) - isStandardFullscreen() is %s", this, boolString(isStandardFullscreen()));
     
-    if (isFullscreen())
+    if (isStandardFullscreen())
         exitFullscreen();
     else
         enterFullscreen();

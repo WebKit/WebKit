@@ -358,7 +358,8 @@ public:
     bool hasSingleSecurityOrigin() const { return !m_player || m_player->hasSingleSecurityOrigin(); }
     
     WEBCORE_EXPORT bool isFullscreen() const override;
-    void toggleFullscreenState();
+    bool isStandardFullscreen() const;
+    void toggleStandardFullscreenState();
 
     using MediaPlayerEnums::VideoFullscreenMode;
     VideoFullscreenMode fullscreenMode() const { return m_videoFullscreenMode; }
