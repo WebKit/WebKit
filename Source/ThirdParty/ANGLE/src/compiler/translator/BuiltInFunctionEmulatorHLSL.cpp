@@ -11,10 +11,10 @@
 
 void InitBuiltInFunctionEmulatorForHLSL(BuiltInFunctionEmulator *emu)
 {
-    TType float1(EbtFloat);
-    TType float2(EbtFloat, 2);
-    TType float3(EbtFloat, 3);
-    TType float4(EbtFloat, 4);
+    TType *float1 = new TType(EbtFloat);
+    TType *float2 = new TType(EbtFloat, 2);
+    TType *float3 = new TType(EbtFloat, 3);
+    TType *float4 = new TType(EbtFloat, 4);
 
     emu->addEmulatedFunction(EOpMod, float1, float1,
         "float webgl_mod_emu(float x, float y)\n"
@@ -250,7 +250,7 @@ void InitBuiltInFunctionEmulatorForHLSL(BuiltInFunctionEmulator *emu)
         "    return (y << 16) | x;\n"
         "}\n");
 
-    TType uint1(EbtUInt);
+    TType *uint1 = new TType(EbtUInt);
 
     emu->addEmulatedFunction(EOpUnpackSnorm2x16, uint1,
         "float webgl_fromSnorm(in uint x) {\n"
@@ -327,9 +327,9 @@ void InitBuiltInFunctionEmulatorForHLSL(BuiltInFunctionEmulator *emu)
         "    return mul(float4x1(r), float1x3(c));\n"
         "}\n");
 
-    TType mat2(EbtFloat, 2, 2);
-    TType mat3(EbtFloat, 3, 3);
-    TType mat4(EbtFloat, 4, 4);
+    TType *mat2 = new TType(EbtFloat, 2, 2);
+    TType *mat3 = new TType(EbtFloat, 3, 3);
+    TType *mat4 = new TType(EbtFloat, 4, 4);
 
     // Remember here that the parameter matrix is actually the transpose
     // of the matrix that we're trying to invert, and the resulting matrix
@@ -407,4 +407,35 @@ void InitBuiltInFunctionEmulatorForHLSL(BuiltInFunctionEmulator *emu)
                             " cof02, cof12, cof22, cof32, cof03, cof13, cof23, cof33 };\n"
         "    return cof / determinant(transpose(m));\n"
         "}\n");
+
+    TType *bool1 = new TType(EbtBool);
+    TType *bool2 = new TType(EbtBool, 2);
+    TType *bool3 = new TType(EbtBool, 3);
+    TType *bool4 = new TType(EbtBool, 4);
+
+    // Emulate ESSL3 variant of mix that takes last argument as boolean vector.
+    // genType mix (genType x, genType y, genBType a): Selects which vector each returned component comes from.
+    // For a component of 'a' that is false, the corresponding component of 'x' is returned.For a component of 'a' that is true,
+    // the corresponding component of 'y' is returned.
+    emu->addEmulatedFunction(EOpMix, float1, float1, bool1,
+        "float webgl_mix_emu(float x, float y, bool a)\n"
+        "{\n"
+        "    return a ? y : x;\n"
+        "}\n");
+    emu->addEmulatedFunction(EOpMix, float2, float2, bool2,
+        "float2 webgl_mix_emu(float2 x, float2 y, bool2 a)\n"
+        "{\n"
+        "    return a ? y : x;\n"
+        "}\n");
+    emu->addEmulatedFunction(EOpMix, float3, float3, bool3,
+        "float3 webgl_mix_emu(float3 x, float3 y, bool3 a)\n"
+        "{\n"
+        "    return a ? y : x;\n"
+        "}\n");
+    emu->addEmulatedFunction(EOpMix, float4, float4, bool4,
+        "float4 webgl_mix_emu(float4 x, float4 y, bool4 a)\n"
+        "{\n"
+        "    return a ? y : x;\n"
+        "}\n");
+
 }

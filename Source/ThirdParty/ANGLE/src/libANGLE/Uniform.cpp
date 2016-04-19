@@ -13,55 +13,51 @@
 namespace gl
 {
 
-LinkedUniform::LinkedUniform(GLenum type, GLenum precision, const std::string &name, unsigned int arraySize,
-                             const int blockIndex, const sh::BlockMemberInfo &blockInfo)
-    : type(type),
-      precision(precision),
-      name(name),
-      arraySize(arraySize),
-      blockIndex(blockIndex),
-      blockInfo(blockInfo),
-      data(NULL),
-      dirty(true),
-      psRegisterIndex(GL_INVALID_INDEX),
-      vsRegisterIndex(GL_INVALID_INDEX),
-      registerCount(0),
-      registerElement(0)
+LinkedUniform::LinkedUniform()
+    : blockIndex(-1), blockInfo(sh::BlockMemberInfo::getDefaultBlockInfo())
 {
-    // We use data storage for default block uniforms to cache values that are sent to D3D during rendering
-    // Uniform blocks/buffers are treated separately by the Renderer (ES3 path only)
-    if (isInDefaultBlock())
-    {
-        size_t bytes = dataSize();
-        data = new unsigned char[bytes];
-        memset(data, 0, bytes);
-        registerCount = VariableRowCount(type) * elementCount();
-    }
+}
+
+LinkedUniform::LinkedUniform(GLenum typeIn,
+                             GLenum precisionIn,
+                             const std::string &nameIn,
+                             unsigned int arraySizeIn,
+                             const int blockIndexIn,
+                             const sh::BlockMemberInfo &blockInfoIn)
+    : blockIndex(blockIndexIn), blockInfo(blockInfoIn)
+{
+    type      = typeIn;
+    precision = precisionIn;
+    name      = nameIn;
+    arraySize = arraySizeIn;
+}
+
+LinkedUniform::LinkedUniform(const sh::Uniform &uniform)
+    : sh::Uniform(uniform), blockIndex(-1), blockInfo(sh::BlockMemberInfo::getDefaultBlockInfo())
+{
+}
+
+LinkedUniform::LinkedUniform(const LinkedUniform &uniform)
+    : sh::Uniform(uniform), blockIndex(uniform.blockIndex), blockInfo(uniform.blockInfo)
+{
+    // This function is not intended to be called during runtime.
+    ASSERT(uniform.mLazyData.empty());
+}
+
+LinkedUniform &LinkedUniform::operator=(const LinkedUniform &uniform)
+{
+    // This function is not intended to be called during runtime.
+    ASSERT(uniform.mLazyData.empty());
+
+    sh::Uniform::operator=(uniform);
+    blockIndex           = uniform.blockIndex;
+    blockInfo            = uniform.blockInfo;
+
+    return *this;
 }
 
 LinkedUniform::~LinkedUniform()
 {
-    delete[] data;
-}
-
-bool LinkedUniform::isArray() const
-{
-    return arraySize > 0;
-}
-
-unsigned int LinkedUniform::elementCount() const
-{
-    return arraySize > 0 ? arraySize : 1;
-}
-
-bool LinkedUniform::isReferencedByVertexShader() const
-{
-    return vsRegisterIndex != GL_INVALID_INDEX;
-}
-
-bool LinkedUniform::isReferencedByFragmentShader() const
-{
-    return psRegisterIndex != GL_INVALID_INDEX;
 }
 
 bool LinkedUniform::isInDefaultBlock() const
@@ -72,7 +68,30 @@ bool LinkedUniform::isInDefaultBlock() const
 size_t LinkedUniform::dataSize() const
 {
     ASSERT(type != GL_STRUCT_ANGLEX);
-    return VariableInternalSize(type) * elementCount();
+    if (mLazyData.empty())
+    {
+        mLazyData.resize(VariableExternalSize(type) * elementCount());
+        ASSERT(!mLazyData.empty());
+    }
+
+    return mLazyData.size();
+}
+
+uint8_t *LinkedUniform::data()
+{
+    if (mLazyData.empty())
+    {
+        // dataSize() will init the data store.
+        size_t size = dataSize();
+        memset(mLazyData.data(), 0, size);
+    }
+
+    return mLazyData.data();
+}
+
+const uint8_t *LinkedUniform::data() const
+{
+    return const_cast<LinkedUniform *>(this)->data();
 }
 
 bool LinkedUniform::isSampler() const
@@ -80,33 +99,51 @@ bool LinkedUniform::isSampler() const
     return IsSamplerType(type);
 }
 
-bool LinkedUniform::isBuiltIn() const
+bool LinkedUniform::isField() const
 {
-    return name.compare(0, 3, "gl_") == 0;
+    return name.find('.') != std::string::npos;
 }
 
-UniformBlock::UniformBlock(const std::string &name, unsigned int elementIndex, unsigned int dataSize)
-    : name(name),
-      elementIndex(elementIndex),
-      dataSize(dataSize),
-      psRegisterIndex(GL_INVALID_INDEX),
-      vsRegisterIndex(GL_INVALID_INDEX)
+size_t LinkedUniform::getElementSize() const
+{
+    return VariableExternalSize(type);
+}
+
+uint8_t *LinkedUniform::getDataPtrToElement(size_t elementIndex)
+{
+    ASSERT((!isArray() && elementIndex == 0) || (isArray() && elementIndex < arraySize));
+    return data() + getElementSize() * elementIndex;
+}
+
+const uint8_t *LinkedUniform::getDataPtrToElement(size_t elementIndex) const
+{
+    return const_cast<LinkedUniform *>(this)->getDataPtrToElement(elementIndex);
+}
+
+UniformBlock::UniformBlock()
+    : isArray(false), arrayElement(0), dataSize(0), vertexStaticUse(false), fragmentStaticUse(false)
 {
 }
 
-bool UniformBlock::isArrayElement() const
+UniformBlock::UniformBlock(const std::string &nameIn, bool isArrayIn, unsigned int arrayElementIn)
+    : name(nameIn),
+      isArray(isArrayIn),
+      arrayElement(arrayElementIn),
+      dataSize(0),
+      vertexStaticUse(false),
+      fragmentStaticUse(false)
 {
-    return elementIndex != GL_INVALID_INDEX;
 }
 
-bool UniformBlock::isReferencedByVertexShader() const
+std::string UniformBlock::nameWithArrayIndex() const
 {
-    return vsRegisterIndex != GL_INVALID_INDEX;
-}
+    std::stringstream fullNameStr;
+    fullNameStr << name;
+    if (isArray)
+    {
+        fullNameStr << "[" << arrayElement << "]";
+    }
 
-bool UniformBlock::isReferencedByFragmentShader() const
-{
-    return psRegisterIndex != GL_INVALID_INDEX;
+    return fullNameStr.str();
 }
-
 }

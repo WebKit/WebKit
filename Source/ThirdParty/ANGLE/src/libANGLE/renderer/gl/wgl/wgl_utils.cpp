@@ -8,6 +8,8 @@
 
 #include "libANGLE/renderer/gl/wgl/wgl_utils.h"
 
+#include "libANGLE/renderer/gl/wgl/FunctionsWGL.h"
+
 namespace rx
 {
 
@@ -30,6 +32,54 @@ PIXELFORMATDESCRIPTOR GetDefaultPixelFormatDescriptor()
     return pixelFormatDescriptor;
 }
 
+std::vector<int> GetDefaultPixelFormatAttributes(bool preservedSwap)
+{
+    std::vector<int> attribs;
+    attribs.push_back(WGL_DRAW_TO_WINDOW_ARB);
+    attribs.push_back(TRUE);
+
+    attribs.push_back(WGL_ACCELERATION_ARB);
+    attribs.push_back(WGL_FULL_ACCELERATION_ARB);
+
+    attribs.push_back(WGL_SUPPORT_OPENGL_ARB);
+    attribs.push_back(TRUE);
+
+    attribs.push_back(WGL_DOUBLE_BUFFER_ARB);
+    attribs.push_back(TRUE);
+
+    attribs.push_back(WGL_PIXEL_TYPE_ARB);
+    attribs.push_back(WGL_TYPE_RGBA_ARB);
+
+    attribs.push_back(WGL_COLOR_BITS_ARB);
+    attribs.push_back(24);
+
+    attribs.push_back(WGL_ALPHA_BITS_ARB);
+    attribs.push_back(8);
+
+    attribs.push_back(WGL_DEPTH_BITS_ARB);
+    attribs.push_back(24);
+
+    attribs.push_back(WGL_STENCIL_BITS_ARB);
+    attribs.push_back(8);
+
+    attribs.push_back(WGL_SWAP_METHOD_ARB);
+    attribs.push_back(preservedSwap ? WGL_SWAP_COPY_ARB : WGL_SWAP_UNDEFINED_ARB);
+
+    attribs.push_back(0);
+
+    return attribs;
+}
+
+int QueryWGLFormatAttrib(HDC dc, int format, int attribName, const FunctionsWGL *functions)
+{
+    int result = 0;
+    if (functions->getPixelFormatAttribivARB == nullptr ||
+        !functions->getPixelFormatAttribivARB(dc, format, 0, 1, &attribName, &result))
+    {
+        return 0;
+    }
+    return result;
+}
 }
 
 }

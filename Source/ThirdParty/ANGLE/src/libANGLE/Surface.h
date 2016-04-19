@@ -16,10 +16,12 @@
 #include "common/angleutils.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/FramebufferAttachment.h"
+#include "libANGLE/RefCountObject.h"
 #include "libANGLE/renderer/SurfaceImpl.h"
 
 namespace gl
 {
+class Framebuffer;
 class Texture;
 }
 
@@ -48,6 +50,8 @@ class Surface final : public gl::FramebufferAttachmentObject
     EGLint isPostSubBufferSupported() const;
 
     void setSwapInterval(EGLint interval);
+    void setIsCurrent(bool isCurrent);
+    void onDestroy();
 
     const Config *getConfig() const;
 
@@ -60,31 +64,55 @@ class Surface final : public gl::FramebufferAttachmentObject
     EGLenum getTextureFormat() const;
     EGLenum getTextureTarget() const;
 
-    gl::Texture *getBoundTexture() const { return mTexture; }
+    gl::Texture *getBoundTexture() const { return mTexture.get(); }
+    gl::Framebuffer *getDefaultFramebuffer() { return mDefaultFramebuffer; }
 
     EGLint isFixedSize() const;
 
     // FramebufferAttachmentObject implementation
-    GLsizei getAttachmentWidth(const gl::FramebufferAttachment::Target &/*target*/) const override { return getWidth(); }
-    GLsizei getAttachmentHeight(const gl::FramebufferAttachment::Target &/*target*/) const override { return getHeight(); }
+    gl::Extents getAttachmentSize(const gl::FramebufferAttachment::Target &target) const override;
     GLenum getAttachmentInternalFormat(const gl::FramebufferAttachment::Target &target) const override;
     GLsizei getAttachmentSamples(const gl::FramebufferAttachment::Target &target) const override;
+
+    void onAttach() override {}
+    void onDetach() override {}
+    GLuint getId() const override;
+
+    bool flexibleSurfaceCompatibilityRequested() const
+    {
+        return mFlexibleSurfaceCompatibilityRequested;
+    }
+    EGLint getOrientation() const { return mOrientation; }
+
+    bool directComposition() const { return mDirectComposition; }
 
   private:
     virtual ~Surface();
     rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const override { return mImplementation; }
 
+    gl::Framebuffer *createDefaultFramebuffer();
+
+    // ANGLE-only method, used internally
+    friend class gl::Texture;
+    void releaseTexImageFromTexture();
+
     rx::SurfaceImpl *mImplementation;
+    gl::Framebuffer *mDefaultFramebuffer;
+    int mCurrentCount;
+    bool mDestroyed;
 
     EGLint mType;
 
     const egl::Config *mConfig;
 
     bool mPostSubBufferRequested;
+    bool mFlexibleSurfaceCompatibilityRequested;
 
     bool mFixedSize;
     size_t mFixedWidth;
     size_t mFixedHeight;
+
+    bool mDirectComposition;
 
     EGLenum mTextureFormat;
     EGLenum mTextureTarget;
@@ -93,7 +121,9 @@ class Surface final : public gl::FramebufferAttachmentObject
     EGLenum mRenderBuffer;         // Render buffer
     EGLenum mSwapBehavior;         // Buffer swap behavior
 
-    gl::Texture *mTexture;
+    EGLint mOrientation;
+
+    BindingPointer<gl::Texture> mTexture;
 };
 
 }

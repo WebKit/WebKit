@@ -20,8 +20,12 @@ class Renderer9;
 class SwapChain9 : public SwapChainD3D
 {
   public:
-    SwapChain9(Renderer9 *renderer, NativeWindow nativeWindow, HANDLE shareHandle,
-               GLenum backBufferFormat, GLenum depthBufferFormat);
+    SwapChain9(Renderer9 *renderer,
+               NativeWindow nativeWindow,
+               HANDLE shareHandle,
+               GLenum backBufferFormat,
+               GLenum depthBufferFormat,
+               EGLint orientation);
     virtual ~SwapChain9();
 
     EGLint resize(EGLint backbufferWidth, EGLint backbufferHeight);
@@ -39,12 +43,14 @@ class SwapChain9 : public SwapChainD3D
     EGLint getWidth() const { return mWidth; }
     EGLint getHeight() const { return mHeight; }
 
+    void *getKeyedMutex() override;
+
   private:
     void release();
 
     Renderer9 *mRenderer;
-    EGLint mHeight;
     EGLint mWidth;
+    EGLint mHeight;
     EGLint mSwapInterval;
 
     IDirect3DSwapChain9 *mSwapChain;

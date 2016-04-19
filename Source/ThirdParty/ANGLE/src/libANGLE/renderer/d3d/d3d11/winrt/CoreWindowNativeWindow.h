@@ -24,10 +24,20 @@ class CoreWindowNativeWindow : public InspectableNativeWindow, public std::enabl
   public:
     ~CoreWindowNativeWindow();
 
-    bool initialize(EGLNativeWindowType window, IPropertySet *propertySet);
+    bool initialize(EGLNativeWindowType window, IPropertySet *propertySet) override;
+    HRESULT createSwapChain(ID3D11Device *device,
+                            DXGIFactory *factory,
+                            DXGI_FORMAT format,
+                            unsigned int width,
+                            unsigned int height,
+                            bool containsAlpha,
+                            DXGISwapChain **swapChain) override;
+
+  protected:
+    HRESULT scaleSwapChain(const SIZE &windowSize, const RECT &clientRect) override;
+
     bool registerForSizeChangeEvents();
     void unregisterForSizeChangeEvents();
-    HRESULT createSwapChain(ID3D11Device *device, DXGIFactory *factory, DXGI_FORMAT format, unsigned int width, unsigned int height, DXGISwapChain **swapChain);
 
   private:
     ComPtr<ABI::Windows::UI::Core::ICoreWindow> mCoreWindow;
@@ -72,7 +82,7 @@ class CoreWindowSizeChangedHandler :
     std::weak_ptr<InspectableNativeWindow> mHost;
 };
 
-HRESULT GetCoreWindowSizeInPixels(const ComPtr<ABI::Windows::UI::Core::ICoreWindow>& coreWindow, RECT *windowSize);
+HRESULT GetCoreWindowSizeInPixels(const ComPtr<ABI::Windows::UI::Core::ICoreWindow>& coreWindow, SIZE *windowSize);
 }
 
 #endif // LIBANGLE_RENDERER_D3D_D3D11_WINRT_COREWINDOWNATIVEWINDOW_H_

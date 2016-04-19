@@ -61,14 +61,14 @@ class ImageIndexIterator
 
   private:
 
-    ImageIndexIterator(GLenum type, const rx::Range<GLint> &mipRange,
-                       const rx::Range<GLint> &layerRange, const GLsizei *layerCounts);
+    ImageIndexIterator(GLenum type, const Range<GLint> &mipRange,
+                       const Range<GLint> &layerRange, const GLsizei *layerCounts);
 
     GLint maxLayer() const;
 
     GLenum mType;
-    rx::Range<GLint> mMipRange;
-    rx::Range<GLint> mLayerRange;
+    Range<GLint> mMipRange;
+    Range<GLint> mLayerRange;
     const GLsizei *mLayerCounts;
     GLint mCurrentMip;
     GLint mCurrentLayer;

@@ -106,8 +106,8 @@ static FormatWriteFunctionMap BuildFormatWriteFunctionMap()
     InsertFormatWriteFunctionMapping(&map, GL_ALPHA,              GL_HALF_FLOAT_OES,                 WriteColor<A16F, GLfloat>         );
 
     InsertFormatWriteFunctionMapping(&map, GL_BGRA_EXT,           GL_UNSIGNED_BYTE,                  WriteColor<B8G8R8A8, GLfloat>     );
-    InsertFormatWriteFunctionMapping(&map, GL_BGRA_EXT,           GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT, WriteColor<B4G4R4A4, GLfloat>     );
-    InsertFormatWriteFunctionMapping(&map, GL_BGRA_EXT,           GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT, WriteColor<B5G5R5A1, GLfloat>     );
+    InsertFormatWriteFunctionMapping(&map, GL_BGRA_EXT,           GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT, WriteColor<A4R4G4B4, GLfloat>     );
+    InsertFormatWriteFunctionMapping(&map, GL_BGRA_EXT,           GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT, WriteColor<A1R5G5B5, GLfloat>     );
 
     InsertFormatWriteFunctionMapping(&map, GL_SRGB_EXT,           GL_UNSIGNED_BYTE,                  WriteColor<R8G8B8, GLfloat>       );
     InsertFormatWriteFunctionMapping(&map, GL_SRGB_ALPHA_EXT,     GL_UNSIGNED_BYTE,                  WriteColor<R8G8B8A8, GLfloat>     );

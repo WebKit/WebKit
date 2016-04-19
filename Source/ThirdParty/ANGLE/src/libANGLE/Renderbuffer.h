@@ -13,8 +13,10 @@
 
 #include "angle_gl.h"
 #include "common/angleutils.h"
+#include "libANGLE/Debug.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/FramebufferAttachment.h"
+#include "libANGLE/Image.h"
 #include "libANGLE/renderer/RenderbufferImpl.h"
 
 namespace gl
@@ -24,14 +26,20 @@ namespace gl
 // FramebufferAttachment and Framebuffer for how they are applied to an FBO via an
 // attachment point.
 
-class Renderbuffer : public FramebufferAttachmentObject
+class Renderbuffer final : public egl::ImageSibling,
+                           public gl::FramebufferAttachmentObject,
+                           public LabeledObject
 {
   public:
     Renderbuffer(rx::RenderbufferImpl *impl, GLuint id);
     virtual ~Renderbuffer();
 
+    void setLabel(const std::string &label) override;
+    const std::string &getLabel() const override;
+
     Error setStorage(GLenum internalformat, size_t width, size_t height);
     Error setStorageMultisample(size_t samples, GLenum internalformat, size_t width, size_t height);
+    Error setStorageEGLImageTarget(egl::Image *imageTarget);
 
     rx::RenderbufferImpl *getImplementation();
     const rx::RenderbufferImpl *getImplementation() const;
@@ -48,15 +56,20 @@ class Renderbuffer : public FramebufferAttachmentObject
     GLuint getStencilSize() const;
 
     // FramebufferAttachmentObject Impl
-    GLsizei getAttachmentWidth(const FramebufferAttachment::Target &/*target*/) const override { return getWidth(); }
-    GLsizei getAttachmentHeight(const FramebufferAttachment::Target &/*target*/) const override { return getHeight(); }
+    Extents getAttachmentSize(const FramebufferAttachment::Target &target) const override;
     GLenum getAttachmentInternalFormat(const FramebufferAttachment::Target &/*target*/) const override { return getInternalFormat(); }
     GLsizei getAttachmentSamples(const FramebufferAttachment::Target &/*target*/) const override { return getSamples(); }
+
+    void onAttach() override;
+    void onDetach() override;
+    GLuint getId() const override;
 
   private:
     rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const override { return mRenderbuffer; }
 
     rx::RenderbufferImpl *mRenderbuffer;
+
+    std::string mLabel;
 
     GLsizei mWidth;
     GLsizei mHeight;

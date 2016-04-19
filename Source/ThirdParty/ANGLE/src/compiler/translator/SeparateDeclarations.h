@@ -3,9 +3,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// The SeparateArrayDeclarations function processes declarations that contain array declarators. Each declarator in
-// such declarations gets its own declaration.
-// This is useful as an intermediate step when initialization needs to be separated from declaration.
+// The SeparateDeclarations function processes declarations, so that in the end each declaration
+// contains only one declarator.
+// This is useful as an intermediate step when initialization needs to be separated from declaration,
+// or when things need to be unfolded out of the initializer.
 // Example:
 //     int a[1] = int[1](1), b[1] = int[1](2);
 // gets transformed when run through this class into the AST equivalent of:
@@ -17,6 +18,6 @@
 
 class TIntermNode;
 
-void SeparateArrayDeclarations(TIntermNode *root);
+void SeparateDeclarations(TIntermNode *root);
 
 #endif  // COMPILER_TRANSLATOR_SEPARATEDECLARATIONS_H_

@@ -17,7 +17,7 @@ class TranslatorESSL : public TCompiler
   protected:
     void initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu, int compileOptions) override;
 
-    virtual void translate(TIntermNode *root, int compileOptions) override;
+    void translate(TIntermNode *root, int compileOptions) override;
 
   private:
     void writeExtensionBehavior();

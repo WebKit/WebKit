@@ -57,13 +57,11 @@
 		31012E5018B97B9B0039062F /* OutputGLSLBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DE018B97B9B0039062F /* OutputGLSLBase.h */; };
 		31012E5118B97B9B0039062F /* OutputHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DE118B97B9B0039062F /* OutputHLSL.cpp */; };
 		31012E5218B97B9B0039062F /* OutputHLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DE218B97B9B0039062F /* OutputHLSL.h */; };
-		31012E5318B97B9B0039062F /* parseConst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DE318B97B9B0039062F /* parseConst.cpp */; };
 		31012E5418B97B9B0039062F /* ParseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DE418B97B9B0039062F /* ParseContext.cpp */; };
 		31012E5518B97B9B0039062F /* ParseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DE518B97B9B0039062F /* ParseContext.h */; };
 		31012E5618B97B9B0039062F /* PoolAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DE618B97B9B0039062F /* PoolAlloc.cpp */; };
 		31012E5718B97B9B0039062F /* PoolAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DE718B97B9B0039062F /* PoolAlloc.h */; };
 		31012E5818B97B9B0039062F /* Pragma.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DE818B97B9B0039062F /* Pragma.h */; };
-		31012E5918B97B9B0039062F /* QualifierAlive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DE918B97B9B0039062F /* QualifierAlive.cpp */; };
 		31012E5A18B97B9B0039062F /* QualifierAlive.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DEA18B97B9B0039062F /* QualifierAlive.h */; };
 		31012E5D18B97B9B0039062F /* RenameFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DED18B97B9B0039062F /* RenameFunction.h */; };
 		31012E5E18B97B9B0039062F /* RewriteElseBlocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DEE18B97B9B0039062F /* RewriteElseBlocks.cpp */; };
@@ -84,8 +82,6 @@
 		31012E6E18B97B9B0039062F /* TranslatorHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DFF18B97B9B0039062F /* TranslatorHLSL.cpp */; };
 		31012E6F18B97B9B0039062F /* TranslatorHLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012E0018B97B9B0039062F /* TranslatorHLSL.h */; };
 		31012E7018B97B9B0039062F /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012E0118B97B9B0039062F /* Types.h */; };
-		31012E7118B97B9B0039062F /* UnfoldShortCircuit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012E0218B97B9B0039062F /* UnfoldShortCircuit.cpp */; };
-		31012E7218B97B9B0039062F /* UnfoldShortCircuit.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012E0318B97B9B0039062F /* UnfoldShortCircuit.h */; };
 		31012E7318B97B9B0039062F /* UnfoldShortCircuitAST.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012E0418B97B9B0039062F /* UnfoldShortCircuitAST.cpp */; };
 		31012E7418B97B9B0039062F /* UnfoldShortCircuitAST.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012E0518B97B9B0039062F /* UnfoldShortCircuitAST.h */; };
 		31012E7718B97B9B0039062F /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012E0818B97B9B0039062F /* util.cpp */; };
@@ -142,8 +138,6 @@
 		5C1DBC3F1B04375F00235552 /* SeparateDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC181B04375F00235552 /* SeparateDeclarations.cpp */; };
 		5C1DBC401B04375F00235552 /* SeparateDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC191B04375F00235552 /* SeparateDeclarations.h */; };
 		5C1DBC411B04375F00235552 /* ShaderVars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC1A1B04375F00235552 /* ShaderVars.cpp */; };
-		5C1DBC421B04375F00235552 /* SimplifyArrayAssignment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC1B1B04375F00235552 /* SimplifyArrayAssignment.cpp */; };
-		5C1DBC431B04375F00235552 /* SimplifyArrayAssignment.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC1C1B04375F00235552 /* SimplifyArrayAssignment.h */; };
 		5C1DBC441B04375F00235552 /* Types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC1D1B04375F00235552 /* Types.cpp */; };
 		5C1DBC451B04375F00235552 /* ValidateSwitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC1E1B04375F00235552 /* ValidateSwitch.cpp */; };
 		5C1DBC461B04375F00235552 /* ValidateSwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC1F1B04375F00235552 /* ValidateSwitch.h */; };
@@ -193,7 +187,6 @@
 		5C1DBE021B0438D300235552 /* Query.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC791B0438D200235552 /* Query.h */; };
 		5C1DBE031B0438D300235552 /* queryconversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC7A1B0438D200235552 /* queryconversions.cpp */; };
 		5C1DBE041B0438D300235552 /* queryconversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC7B1B0438D200235552 /* queryconversions.h */; };
-		5C1DBE051B0438D300235552 /* RefCountObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC7C1B0438D200235552 /* RefCountObject.cpp */; };
 		5C1DBE061B0438D300235552 /* RefCountObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC7D1B0438D200235552 /* RefCountObject.h */; };
 		5C1DBE071B0438D300235552 /* Renderbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC7E1B0438D200235552 /* Renderbuffer.cpp */; };
 		5C1DBE081B0438D300235552 /* Renderbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC7F1B0438D200235552 /* Renderbuffer.h */; };
@@ -225,6 +218,28 @@
 		5C1DBF401B0438D300235552 /* VertexArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBDD01B0438D300235552 /* VertexArray.h */; };
 		5C1DBF411B0438D300235552 /* VertexAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBDD11B0438D300235552 /* VertexAttribute.cpp */; };
 		5C1DBF421B0438D300235552 /* VertexAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBDD21B0438D300235552 /* VertexAttribute.h */; };
+		5C315CFE1CC5B6DA00776697 /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CE81CC5B6DA00776697 /* Cache.cpp */; };
+		5C315CFF1CC5B6DA00776697 /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C315CE91CC5B6DA00776697 /* Cache.h */; };
+		5C315D001CC5B6DA00776697 /* DeferGlobalInitializers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CEA1CC5B6DA00776697 /* DeferGlobalInitializers.cpp */; };
+		5C315D011CC5B6DA00776697 /* DeferGlobalInitializers.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C315CEB1CC5B6DA00776697 /* DeferGlobalInitializers.h */; };
+		5C315D021CC5B6DA00776697 /* ExtensionGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CEC1CC5B6DA00776697 /* ExtensionGLSL.cpp */; };
+		5C315D031CC5B6DA00776697 /* ExtensionGLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C315CED1CC5B6DA00776697 /* ExtensionGLSL.h */; };
+		5C315D041CC5B6DA00776697 /* RecordConstantPrecision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CEE1CC5B6DA00776697 /* RecordConstantPrecision.cpp */; };
+		5C315D051CC5B6DA00776697 /* RecordConstantPrecision.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C315CEF1CC5B6DA00776697 /* RecordConstantPrecision.h */; };
+		5C315D061CC5B6DA00776697 /* RemoveDynamicIndexing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CF01CC5B6DA00776697 /* RemoveDynamicIndexing.cpp */; };
+		5C315D071CC5B6DA00776697 /* RemoveDynamicIndexing.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C315CF11CC5B6DA00776697 /* RemoveDynamicIndexing.h */; };
+		5C315D081CC5B6DA00776697 /* RemovePow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CF21CC5B6DA00776697 /* RemovePow.cpp */; };
+		5C315D091CC5B6DA00776697 /* RemovePow.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C315CF31CC5B6DA00776697 /* RemovePow.h */; };
+		5C315D0A1CC5B6DA00776697 /* RewriteDoWhile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CF41CC5B6DA00776697 /* RewriteDoWhile.cpp */; };
+		5C315D0B1CC5B6DA00776697 /* RewriteDoWhile.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C315CF51CC5B6DA00776697 /* RewriteDoWhile.h */; };
+		5C315D0C1CC5B6DA00776697 /* SeparateExpressionsReturningArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CF61CC5B6DA00776697 /* SeparateExpressionsReturningArrays.cpp */; };
+		5C315D0D1CC5B6DA00776697 /* SeparateExpressionsReturningArrays.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C315CF71CC5B6DA00776697 /* SeparateExpressionsReturningArrays.h */; };
+		5C315D0E1CC5B6DA00776697 /* UnfoldShortCircuitToIf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CF81CC5B6DA00776697 /* UnfoldShortCircuitToIf.cpp */; };
+		5C315D0F1CC5B6DA00776697 /* UnfoldShortCircuitToIf.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C315CF91CC5B6DA00776697 /* UnfoldShortCircuitToIf.h */; };
+		5C315D101CC5B6DA00776697 /* ValidateGlobalInitializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CFA1CC5B6DA00776697 /* ValidateGlobalInitializer.cpp */; };
+		5C315D111CC5B6DA00776697 /* ValidateGlobalInitializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C315CFB1CC5B6DA00776697 /* ValidateGlobalInitializer.h */; };
+		5C315D121CC5B6DA00776697 /* ValidateMaxParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CFC1CC5B6DA00776697 /* ValidateMaxParameters.cpp */; };
+		5C315D131CC5B6DA00776697 /* ValidateMaxParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C315CFD1CC5B6DA00776697 /* ValidateMaxParameters.h */; };
 		5C9FFF4E19102A000025B8FA /* FlagStd140Structs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9FFF4C19102A000025B8FA /* FlagStd140Structs.cpp */; };
 		5C9FFF4F19102A000025B8FA /* FlagStd140Structs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9FFF4D19102A000025B8FA /* FlagStd140Structs.h */; };
 		5CC7D452191024E4000B8C1F /* LoopInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC7D44B191024E3000B8C1F /* LoopInfo.cpp */; };
@@ -346,13 +361,11 @@
 		31012DE018B97B9B0039062F /* OutputGLSLBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputGLSLBase.h; sourceTree = "<group>"; };
 		31012DE118B97B9B0039062F /* OutputHLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OutputHLSL.cpp; sourceTree = "<group>"; };
 		31012DE218B97B9B0039062F /* OutputHLSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputHLSL.h; sourceTree = "<group>"; };
-		31012DE318B97B9B0039062F /* parseConst.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parseConst.cpp; sourceTree = "<group>"; };
 		31012DE418B97B9B0039062F /* ParseContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParseContext.cpp; sourceTree = "<group>"; };
 		31012DE518B97B9B0039062F /* ParseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseContext.h; sourceTree = "<group>"; };
 		31012DE618B97B9B0039062F /* PoolAlloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoolAlloc.cpp; sourceTree = "<group>"; };
 		31012DE718B97B9B0039062F /* PoolAlloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoolAlloc.h; sourceTree = "<group>"; };
 		31012DE818B97B9B0039062F /* Pragma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pragma.h; sourceTree = "<group>"; };
-		31012DE918B97B9B0039062F /* QualifierAlive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifierAlive.cpp; sourceTree = "<group>"; };
 		31012DEA18B97B9B0039062F /* QualifierAlive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QualifierAlive.h; sourceTree = "<group>"; };
 		31012DED18B97B9B0039062F /* RenameFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenameFunction.h; sourceTree = "<group>"; };
 		31012DEE18B97B9B0039062F /* RewriteElseBlocks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteElseBlocks.cpp; sourceTree = "<group>"; };
@@ -373,8 +386,6 @@
 		31012DFF18B97B9B0039062F /* TranslatorHLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorHLSL.cpp; sourceTree = "<group>"; };
 		31012E0018B97B9B0039062F /* TranslatorHLSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TranslatorHLSL.h; sourceTree = "<group>"; };
 		31012E0118B97B9B0039062F /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
-		31012E0218B97B9B0039062F /* UnfoldShortCircuit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnfoldShortCircuit.cpp; sourceTree = "<group>"; };
-		31012E0318B97B9B0039062F /* UnfoldShortCircuit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnfoldShortCircuit.h; sourceTree = "<group>"; };
 		31012E0418B97B9B0039062F /* UnfoldShortCircuitAST.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnfoldShortCircuitAST.cpp; sourceTree = "<group>"; };
 		31012E0518B97B9B0039062F /* UnfoldShortCircuitAST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnfoldShortCircuitAST.h; sourceTree = "<group>"; };
 		31012E0818B97B9B0039062F /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
@@ -431,8 +442,6 @@
 		5C1DBC181B04375F00235552 /* SeparateDeclarations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SeparateDeclarations.cpp; sourceTree = "<group>"; };
 		5C1DBC191B04375F00235552 /* SeparateDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeparateDeclarations.h; sourceTree = "<group>"; };
 		5C1DBC1A1B04375F00235552 /* ShaderVars.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderVars.cpp; sourceTree = "<group>"; };
-		5C1DBC1B1B04375F00235552 /* SimplifyArrayAssignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimplifyArrayAssignment.cpp; sourceTree = "<group>"; };
-		5C1DBC1C1B04375F00235552 /* SimplifyArrayAssignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimplifyArrayAssignment.h; sourceTree = "<group>"; };
 		5C1DBC1D1B04375F00235552 /* Types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Types.cpp; sourceTree = "<group>"; };
 		5C1DBC1E1B04375F00235552 /* ValidateSwitch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidateSwitch.cpp; sourceTree = "<group>"; };
 		5C1DBC1F1B04375F00235552 /* ValidateSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidateSwitch.h; sourceTree = "<group>"; };
@@ -483,7 +492,6 @@
 		5C1DBC791B0438D200235552 /* Query.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Query.h; path = src/libANGLE/Query.h; sourceTree = "<group>"; };
 		5C1DBC7A1B0438D200235552 /* queryconversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = queryconversions.cpp; path = src/libANGLE/queryconversions.cpp; sourceTree = "<group>"; };
 		5C1DBC7B1B0438D200235552 /* queryconversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = queryconversions.h; path = src/libANGLE/queryconversions.h; sourceTree = "<group>"; };
-		5C1DBC7C1B0438D200235552 /* RefCountObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RefCountObject.cpp; path = src/libANGLE/RefCountObject.cpp; sourceTree = "<group>"; };
 		5C1DBC7D1B0438D200235552 /* RefCountObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RefCountObject.h; path = src/libANGLE/RefCountObject.h; sourceTree = "<group>"; };
 		5C1DBC7E1B0438D200235552 /* Renderbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Renderbuffer.cpp; path = src/libANGLE/Renderbuffer.cpp; sourceTree = "<group>"; };
 		5C1DBC7F1B0438D200235552 /* Renderbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Renderbuffer.h; path = src/libANGLE/Renderbuffer.h; sourceTree = "<group>"; };
@@ -515,6 +523,28 @@
 		5C1DBDD01B0438D300235552 /* VertexArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VertexArray.h; path = src/libANGLE/VertexArray.h; sourceTree = "<group>"; };
 		5C1DBDD11B0438D300235552 /* VertexAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VertexAttribute.cpp; path = src/libANGLE/VertexAttribute.cpp; sourceTree = "<group>"; };
 		5C1DBDD21B0438D300235552 /* VertexAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VertexAttribute.h; path = src/libANGLE/VertexAttribute.h; sourceTree = "<group>"; };
+		5C315CE81CC5B6DA00776697 /* Cache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cache.cpp; sourceTree = "<group>"; };
+		5C315CE91CC5B6DA00776697 /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cache.h; sourceTree = "<group>"; };
+		5C315CEA1CC5B6DA00776697 /* DeferGlobalInitializers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferGlobalInitializers.cpp; sourceTree = "<group>"; };
+		5C315CEB1CC5B6DA00776697 /* DeferGlobalInitializers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeferGlobalInitializers.h; sourceTree = "<group>"; };
+		5C315CEC1CC5B6DA00776697 /* ExtensionGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionGLSL.cpp; sourceTree = "<group>"; };
+		5C315CED1CC5B6DA00776697 /* ExtensionGLSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionGLSL.h; sourceTree = "<group>"; };
+		5C315CEE1CC5B6DA00776697 /* RecordConstantPrecision.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RecordConstantPrecision.cpp; sourceTree = "<group>"; };
+		5C315CEF1CC5B6DA00776697 /* RecordConstantPrecision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordConstantPrecision.h; sourceTree = "<group>"; };
+		5C315CF01CC5B6DA00776697 /* RemoveDynamicIndexing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveDynamicIndexing.cpp; sourceTree = "<group>"; };
+		5C315CF11CC5B6DA00776697 /* RemoveDynamicIndexing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveDynamicIndexing.h; sourceTree = "<group>"; };
+		5C315CF21CC5B6DA00776697 /* RemovePow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemovePow.cpp; sourceTree = "<group>"; };
+		5C315CF31CC5B6DA00776697 /* RemovePow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemovePow.h; sourceTree = "<group>"; };
+		5C315CF41CC5B6DA00776697 /* RewriteDoWhile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteDoWhile.cpp; sourceTree = "<group>"; };
+		5C315CF51CC5B6DA00776697 /* RewriteDoWhile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteDoWhile.h; sourceTree = "<group>"; };
+		5C315CF61CC5B6DA00776697 /* SeparateExpressionsReturningArrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SeparateExpressionsReturningArrays.cpp; sourceTree = "<group>"; };
+		5C315CF71CC5B6DA00776697 /* SeparateExpressionsReturningArrays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeparateExpressionsReturningArrays.h; sourceTree = "<group>"; };
+		5C315CF81CC5B6DA00776697 /* UnfoldShortCircuitToIf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnfoldShortCircuitToIf.cpp; sourceTree = "<group>"; };
+		5C315CF91CC5B6DA00776697 /* UnfoldShortCircuitToIf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnfoldShortCircuitToIf.h; sourceTree = "<group>"; };
+		5C315CFA1CC5B6DA00776697 /* ValidateGlobalInitializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidateGlobalInitializer.cpp; sourceTree = "<group>"; };
+		5C315CFB1CC5B6DA00776697 /* ValidateGlobalInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidateGlobalInitializer.h; sourceTree = "<group>"; };
+		5C315CFC1CC5B6DA00776697 /* ValidateMaxParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidateMaxParameters.cpp; sourceTree = "<group>"; };
+		5C315CFD1CC5B6DA00776697 /* ValidateMaxParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidateMaxParameters.h; sourceTree = "<group>"; };
 		5C9FFF4C19102A000025B8FA /* FlagStd140Structs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlagStd140Structs.cpp; sourceTree = "<group>"; };
 		5C9FFF4D19102A000025B8FA /* FlagStd140Structs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlagStd140Structs.h; sourceTree = "<group>"; };
 		5CC7D44B191024E3000B8C1F /* LoopInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoopInfo.cpp; sourceTree = "<group>"; };
@@ -580,6 +610,28 @@
 		31012D9F18B97B9B0039062F /* translator */ = {
 			isa = PBXGroup;
 			children = (
+				5C315CE81CC5B6DA00776697 /* Cache.cpp */,
+				5C315CE91CC5B6DA00776697 /* Cache.h */,
+				5C315CEA1CC5B6DA00776697 /* DeferGlobalInitializers.cpp */,
+				5C315CEB1CC5B6DA00776697 /* DeferGlobalInitializers.h */,
+				5C315CEC1CC5B6DA00776697 /* ExtensionGLSL.cpp */,
+				5C315CED1CC5B6DA00776697 /* ExtensionGLSL.h */,
+				5C315CEE1CC5B6DA00776697 /* RecordConstantPrecision.cpp */,
+				5C315CEF1CC5B6DA00776697 /* RecordConstantPrecision.h */,
+				5C315CF01CC5B6DA00776697 /* RemoveDynamicIndexing.cpp */,
+				5C315CF11CC5B6DA00776697 /* RemoveDynamicIndexing.h */,
+				5C315CF21CC5B6DA00776697 /* RemovePow.cpp */,
+				5C315CF31CC5B6DA00776697 /* RemovePow.h */,
+				5C315CF41CC5B6DA00776697 /* RewriteDoWhile.cpp */,
+				5C315CF51CC5B6DA00776697 /* RewriteDoWhile.h */,
+				5C315CF61CC5B6DA00776697 /* SeparateExpressionsReturningArrays.cpp */,
+				5C315CF71CC5B6DA00776697 /* SeparateExpressionsReturningArrays.h */,
+				5C315CF81CC5B6DA00776697 /* UnfoldShortCircuitToIf.cpp */,
+				5C315CF91CC5B6DA00776697 /* UnfoldShortCircuitToIf.h */,
+				5C315CFA1CC5B6DA00776697 /* ValidateGlobalInitializer.cpp */,
+				5C315CFB1CC5B6DA00776697 /* ValidateGlobalInitializer.h */,
+				5C315CFC1CC5B6DA00776697 /* ValidateMaxParameters.cpp */,
+				5C315CFD1CC5B6DA00776697 /* ValidateMaxParameters.h */,
 				5C1DBBF91B04375E00235552 /* ArrayReturnValueToOutParameter.cpp */,
 				5C1DBBFA1B04375E00235552 /* ArrayReturnValueToOutParameter.h */,
 				5C1DBBFB1B04375F00235552 /* ASTMetadataHLSL.cpp */,
@@ -614,8 +666,6 @@
 				5C1DBC181B04375F00235552 /* SeparateDeclarations.cpp */,
 				5C1DBC191B04375F00235552 /* SeparateDeclarations.h */,
 				5C1DBC1A1B04375F00235552 /* ShaderVars.cpp */,
-				5C1DBC1B1B04375F00235552 /* SimplifyArrayAssignment.cpp */,
-				5C1DBC1C1B04375F00235552 /* SimplifyArrayAssignment.h */,
 				5C1DBC1D1B04375F00235552 /* Types.cpp */,
 				5C1DBC1E1B04375F00235552 /* ValidateSwitch.cpp */,
 				5C1DBC1F1B04375F00235552 /* ValidateSwitch.h */,
@@ -670,13 +720,11 @@
 				31012DE018B97B9B0039062F /* OutputGLSLBase.h */,
 				31012DE118B97B9B0039062F /* OutputHLSL.cpp */,
 				31012DE218B97B9B0039062F /* OutputHLSL.h */,
-				31012DE318B97B9B0039062F /* parseConst.cpp */,
 				31012DE418B97B9B0039062F /* ParseContext.cpp */,
 				31012DE518B97B9B0039062F /* ParseContext.h */,
 				31012DE618B97B9B0039062F /* PoolAlloc.cpp */,
 				31012DE718B97B9B0039062F /* PoolAlloc.h */,
 				31012DE818B97B9B0039062F /* Pragma.h */,
-				31012DE918B97B9B0039062F /* QualifierAlive.cpp */,
 				31012DEA18B97B9B0039062F /* QualifierAlive.h */,
 				31012DED18B97B9B0039062F /* RenameFunction.h */,
 				31012DEE18B97B9B0039062F /* RewriteElseBlocks.cpp */,
@@ -693,8 +741,6 @@
 				31012DFF18B97B9B0039062F /* TranslatorHLSL.cpp */,
 				31012E0018B97B9B0039062F /* TranslatorHLSL.h */,
 				31012E0118B97B9B0039062F /* Types.h */,
-				31012E0218B97B9B0039062F /* UnfoldShortCircuit.cpp */,
-				31012E0318B97B9B0039062F /* UnfoldShortCircuit.h */,
 				31012E0418B97B9B0039062F /* UnfoldShortCircuitAST.cpp */,
 				31012E0518B97B9B0039062F /* UnfoldShortCircuitAST.h */,
 				31012E0818B97B9B0039062F /* util.cpp */,
@@ -795,7 +841,6 @@
 				5C1DBC791B0438D200235552 /* Query.h */,
 				5C1DBC7A1B0438D200235552 /* queryconversions.cpp */,
 				5C1DBC7B1B0438D200235552 /* queryconversions.h */,
-				5C1DBC7C1B0438D200235552 /* RefCountObject.cpp */,
 				5C1DBC7D1B0438D200235552 /* RefCountObject.h */,
 				5C1DBC7E1B0438D200235552 /* Renderbuffer.cpp */,
 				5C1DBC7F1B0438D200235552 /* Renderbuffer.h */,
@@ -989,6 +1034,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C315D131CC5B6DA00776697 /* ValidateMaxParameters.h in Headers */,
+				5C315D071CC5B6DA00776697 /* RemoveDynamicIndexing.h in Headers */,
 				31012E3C18B97B9B0039062F /* InitializeParseContext.h in Headers */,
 				A08C3CDD16D6CB61003F0B83 /* ArrayBoundsClamper.h in Headers */,
 				5CC7D46F19102621000B8C1F /* debug.h in Headers */,
@@ -999,10 +1046,10 @@
 				31012E5518B97B9B0039062F /* ParseContext.h in Headers */,
 				5C1DBDEF1B0438D300235552 /* Fence.h in Headers */,
 				31012E2C18B97B9B0039062F /* ForLoopUnroll.h in Headers */,
+				5C315D031CC5B6DA00776697 /* ExtensionGLSL.h in Headers */,
 				31012E6D18B97B9B0039062F /* TranslatorGLSL.h in Headers */,
 				5C1DBC3E1B04375F00235552 /* SeparateArrayInitialization.h in Headers */,
 				31012E4618B97B9B0039062F /* MMap.h in Headers */,
-				5C1DBC431B04375F00235552 /* SimplifyArrayAssignment.h in Headers */,
 				5CC7D47319102621000B8C1F /* mathutil.h in Headers */,
 				31012E6B18B97B9B0039062F /* TranslatorESSL.h in Headers */,
 				5C1DBE001B0438D300235552 /* Program.h in Headers */,
@@ -1011,6 +1058,7 @@
 				31012E2018B97B9B0039062F /* DependencyGraphOutput.h in Headers */,
 				31012E7C18B97B9B0039062F /* VariableInfo.h in Headers */,
 				5C1DBDDB1B0438D300235552 /* Caps.h in Headers */,
+				5C315D091CC5B6DA00776697 /* RemovePow.h in Headers */,
 				5C1DBE021B0438D300235552 /* Query.h in Headers */,
 				31012E6118B97B9B0039062F /* SearchSymbol.h in Headers */,
 				5C1DBF311B0438D300235552 /* Texture.h in Headers */,
@@ -1029,12 +1077,14 @@
 				5CC7D47119102621000B8C1F /* event_tracer.h in Headers */,
 				5C1DBDE71B0438D300235552 /* Device.h in Headers */,
 				5C1DBE061B0438D300235552 /* RefCountObject.h in Headers */,
+				5C315D051CC5B6DA00776697 /* RecordConstantPrecision.h in Headers */,
 				31012E5D18B97B9B0039062F /* RenameFunction.h in Headers */,
 				5C1DBDFA1B0438D300235552 /* histogram_macros.h in Headers */,
 				5C1DBDD71B0438D300235552 /* BinaryStream.h in Headers */,
 				31012E3A18B97B9B0039062F /* InitializeGlobals.h in Headers */,
 				5C1DBC291B04375F00235552 /* BuiltInFunctionEmulatorGLSL.h in Headers */,
 				5C1DBBE61B04075B00235552 /* ShaderVars.h in Headers */,
+				5C315D0B1CC5B6DA00776697 /* RewriteDoWhile.h in Headers */,
 				5C1DBC251B04375F00235552 /* blocklayout.h in Headers */,
 				5C1DBC271B04375F00235552 /* blocklayoutHLSL.h in Headers */,
 				31012E8018B97B9B0039062F /* VersionGLSL.h in Headers */,
@@ -1043,6 +1093,7 @@
 				5C1DBDD91B0438D300235552 /* Buffer.h in Headers */,
 				31012E2718B97B9B0039062F /* Diagnostics.h in Headers */,
 				5C1DBC361B04375F00235552 /* PruneEmptyDeclarations.h in Headers */,
+				5C315D011CC5B6DA00776697 /* DeferGlobalInitializers.h in Headers */,
 				5C1DBDF61B0438D300235552 /* FramebufferAttachment.h in Headers */,
 				5CC7D46B19102620000B8C1F /* angleutils.h in Headers */,
 				31012E3218B97B9B0039062F /* glslang_tab.h in Headers */,
@@ -1055,7 +1106,6 @@
 				5CC7D458191024E4000B8C1F /* ValidateOutputs.h in Headers */,
 				31012E7418B97B9B0039062F /* UnfoldShortCircuitAST.h in Headers */,
 				5C1DBDF41B0438D300235552 /* Framebuffer.h in Headers */,
-				31012E7218B97B9B0039062F /* UnfoldShortCircuit.h in Headers */,
 				A264F8B316974DED006FAA5A /* ExpressionParser.h in Headers */,
 				31012E3518B97B9B0039062F /* InfoSink.h in Headers */,
 				5C1DBF3A1B0438D300235552 /* validationES.h in Headers */,
@@ -1069,6 +1119,7 @@
 				31012E6718B97B9B0039062F /* RestrictFragmentShaderTiming.h in Headers */,
 				5CC7D47B19102621000B8C1F /* version.h in Headers */,
 				5C1DBF281B0438D300235552 /* Sampler.h in Headers */,
+				5C315D111CC5B6DA00776697 /* ValidateGlobalInitializer.h in Headers */,
 				5C1DBF381B0438D300235552 /* validationEGL.h in Headers */,
 				5C1DBF3C1B0438D300235552 /* validationES2.h in Headers */,
 				31012E7818B97B9B0039062F /* util.h in Headers */,
@@ -1079,10 +1130,12 @@
 				A264F8CD169762AA006FAA5A /* khrplatform.h in Headers */,
 				5C1DBBF71B0436EC00235552 /* tls.h in Headers */,
 				5C1DBBF51B0436EC00235552 /* platform.h in Headers */,
+				5C315D0F1CC5B6DA00776697 /* UnfoldShortCircuitToIf.h in Headers */,
 				5CC7D47A19102621000B8C1F /* utilities.h in Headers */,
 				31012E3918B97B9B0039062F /* InitializeDll.h in Headers */,
 				5C1DBBF21B0436EC00235552 /* MemoryBuffer.h in Headers */,
 				A264F8B716974DED006FAA5A /* Lexer.h in Headers */,
+				5C315D0D1CC5B6DA00776697 /* SeparateExpressionsReturningArrays.h in Headers */,
 				A264F8B916974DED006FAA5A /* Macro.h in Headers */,
 				31012E5A18B97B9B0039062F /* QualifierAlive.h in Headers */,
 				31012E5718B97B9B0039062F /* PoolAlloc.h in Headers */,
@@ -1119,6 +1172,7 @@
 				31012E7A18B97B9B0039062F /* ValidateLimitations.h in Headers */,
 				5C1DBC341B04375F00235552 /* Operator.h in Headers */,
 				5C1DBC401B04375F00235552 /* SeparateDeclarations.h in Headers */,
+				5C315CFF1CC5B6DA00776697 /* Cache.h in Headers */,
 				5C1DBDD61B0438D300235552 /* AttributeMap.h in Headers */,
 				31012E3318B97B9B0039062F /* HashNames.h in Headers */,
 				A264F8C216974DED006FAA5A /* Token.h in Headers */,
@@ -1188,14 +1242,17 @@
 				31012E2618B97B9B0039062F /* Diagnostics.cpp in Sources */,
 				31012E3D18B97B9B0039062F /* InitializeVariables.cpp in Sources */,
 				31012E7F18B97B9B0039062F /* VersionGLSL.cpp in Sources */,
+				5C315D0A1CC5B6DA00776697 /* RewriteDoWhile.cpp in Sources */,
 				A08C3CDC16D6CB61003F0B83 /* ArrayBoundsClamper.cpp in Sources */,
 				5C1DBC451B04375F00235552 /* ValidateSwitch.cpp in Sources */,
 				5C1DBDF51B0438D300235552 /* FramebufferAttachment.cpp in Sources */,
 				5C1DBC441B04375F00235552 /* Types.cpp in Sources */,
 				72309A56183C27DE00370B93 /* Tokenizer.cpp in Sources */,
 				31012E6C18B97B9B0039062F /* TranslatorGLSL.cpp in Sources */,
+				5C315D0E1CC5B6DA00776697 /* UnfoldShortCircuitToIf.cpp in Sources */,
 				5C1DBF411B0438D300235552 /* VertexAttribute.cpp in Sources */,
 				A264F8AC16974DED006FAA5A /* DiagnosticsBase.cpp in Sources */,
+				5C315D101CC5B6DA00776697 /* ValidateGlobalInitializer.cpp in Sources */,
 				5C1DBDE41B0438D300235552 /* Data.cpp in Sources */,
 				5C1DBF291B0438D300235552 /* Shader.cpp in Sources */,
 				31012E1518B97B9B0039062F /* CodeGen.cpp in Sources */,
@@ -1204,7 +1261,7 @@
 				5CC7D47219102621000B8C1F /* mathutil.cpp in Sources */,
 				5C1DBE071B0438D300235552 /* Renderbuffer.cpp in Sources */,
 				31012E3B18B97B9B0039062F /* InitializeParseContext.cpp in Sources */,
-				5C1DBE051B0438D300235552 /* RefCountObject.cpp in Sources */,
+				5C315D021CC5B6DA00776697 /* ExtensionGLSL.cpp in Sources */,
 				5CC7D47019102621000B8C1F /* event_tracer.cpp in Sources */,
 				5C1DBF371B0438D300235552 /* validationEGL.cpp in Sources */,
 				31012E3118B97B9B0039062F /* glslang_tab.cpp in Sources */,
@@ -1220,6 +1277,7 @@
 				A264F8AE16974DED006FAA5A /* DirectiveHandlerBase.cpp in Sources */,
 				31012E4D18B97B9B0039062F /* OutputGLSL.cpp in Sources */,
 				31012E3018B97B9B0039062F /* glslang_lex.cpp in Sources */,
+				5C315D001CC5B6DA00776697 /* DeferGlobalInitializers.cpp in Sources */,
 				5C1DBDE61B0438D300235552 /* Device.cpp in Sources */,
 				5C1DBDDF1B0438D300235552 /* Config.cpp in Sources */,
 				5C1DBDEA1B0438D300235552 /* Error.cpp in Sources */,
@@ -1235,11 +1293,10 @@
 				31012E6018B97B9B0039062F /* SearchSymbol.cpp in Sources */,
 				72309A58183C27F300370B93 /* ExpressionParser.cpp in Sources */,
 				31012E2818B97B9B0039062F /* DirectiveHandler.cpp in Sources */,
-				31012E5918B97B9B0039062F /* QualifierAlive.cpp in Sources */,
-				31012E7118B97B9B0039062F /* UnfoldShortCircuit.cpp in Sources */,
 				31012E6418B97B9B0039062F /* SymbolTable.cpp in Sources */,
 				5C1DBF351B0438D300235552 /* Uniform.cpp in Sources */,
 				5C1DBC261B04375F00235552 /* blocklayoutHLSL.cpp in Sources */,
+				5C315D081CC5B6DA00776697 /* RemovePow.cpp in Sources */,
 				A264F8B416974DED006FAA5A /* Input.cpp in Sources */,
 				5C1DBC301B04375F00235552 /* IntermNode.cpp in Sources */,
 				5CC7D47919102621000B8C1F /* utilities.cpp in Sources */,
@@ -1262,7 +1319,6 @@
 				5C1DBC411B04375F00235552 /* ShaderVars.cpp in Sources */,
 				5C1DBF331B0438D300235552 /* TransformFeedback.cpp in Sources */,
 				31012E3418B97B9B0039062F /* InfoSink.cpp in Sources */,
-				31012E5318B97B9B0039062F /* parseConst.cpp in Sources */,
 				5C1DBC201B04375F00235552 /* ArrayReturnValueToOutParameter.cpp in Sources */,
 				31012E5618B97B9B0039062F /* PoolAlloc.cpp in Sources */,
 				31012E6618B97B9B0039062F /* RestrictFragmentShaderTiming.cpp in Sources */,
@@ -1272,12 +1328,15 @@
 				31012E7718B97B9B0039062F /* util.cpp in Sources */,
 				5C1DBDE21B0438D300235552 /* Context.cpp in Sources */,
 				31012E5118B97B9B0039062F /* OutputHLSL.cpp in Sources */,
+				5C315D0C1CC5B6DA00776697 /* SeparateExpressionsReturningArrays.cpp in Sources */,
 				31012E3618B97B9B0039062F /* Initialize.cpp in Sources */,
 				5C1DBE011B0438D300235552 /* Query.cpp in Sources */,
 				5C1DBF391B0438D300235552 /* validationES.cpp in Sources */,
 				5C1DBDFF1B0438D300235552 /* Program.cpp in Sources */,
+				5C315D041CC5B6DA00776697 /* RecordConstantPrecision.cpp in Sources */,
 				31012E7B18B97B9B0039062F /* VariableInfo.cpp in Sources */,
 				5C1DBF2B1B0438D300235552 /* State.cpp in Sources */,
+				5C315D061CC5B6DA00776697 /* RemoveDynamicIndexing.cpp in Sources */,
 				5C1DBBF61B0436EC00235552 /* tls.cpp in Sources */,
 				5CC7D452191024E4000B8C1F /* LoopInfo.cpp in Sources */,
 				5C1DBC3F1B04375F00235552 /* SeparateDeclarations.cpp in Sources */,
@@ -1285,15 +1344,16 @@
 				31012E7D18B97B9B0039062F /* VariablePacker.cpp in Sources */,
 				5C1DBDF31B0438D300235552 /* Framebuffer.cpp in Sources */,
 				31012E1F18B97B9B0039062F /* DependencyGraphOutput.cpp in Sources */,
+				5C315D121CC5B6DA00776697 /* ValidateMaxParameters.cpp in Sources */,
 				5C1DBDD81B0438D300235552 /* Buffer.cpp in Sources */,
 				5C1DBDD31B0438D300235552 /* angletypes.cpp in Sources */,
 				5C1DBF251B0438D300235552 /* ResourceManager.cpp in Sources */,
 				31012E4B18B97B9B0039062F /* OutputESSL.cpp in Sources */,
 				A264F8BE16974DED006FAA5A /* Preprocessor.cpp in Sources */,
+				5C315CFE1CC5B6DA00776697 /* Cache.cpp in Sources */,
 				5C1DBDEE1B0438D300235552 /* Fence.cpp in Sources */,
 				5CC7D457191024E4000B8C1F /* ValidateOutputs.cpp in Sources */,
 				5C1DBBF01B0436EC00235552 /* angleutils.cpp in Sources */,
-				5C1DBC421B04375F00235552 /* SimplifyArrayAssignment.cpp in Sources */,
 				31012E2B18B97B9B0039062F /* ForLoopUnroll.cpp in Sources */,
 				5C1DBC3D1B04375F00235552 /* SeparateArrayInitialization.cpp in Sources */,
 				5C9FFF4E19102A000025B8FA /* FlagStd140Structs.cpp in Sources */,
@@ -1325,6 +1385,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					ANGLE_ENABLE_OPENGL,
+					ANGLE_ENABLE_GLSL,
+				);
 			};
 			name = Production;
 		};
@@ -1347,6 +1411,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					ANGLE_ENABLE_OPENGL,
+					ANGLE_ENABLE_GLSL,
+				);
 			};
 			name = Debug;
 		};
@@ -1354,6 +1422,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C51208C68B001C873E /* ANGLE.xcconfig */;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					ANGLE_ENABLE_OPENGL,
+					ANGLE_ENABLE_GLSL,
+				);
 			};
 			name = Release;
 		};

@@ -33,8 +33,8 @@ class ImageD3D;
 class TextureStorage : angle::NonCopyable
 {
   public:
-    TextureStorage();
-    virtual ~TextureStorage() {};
+    TextureStorage() {}
+    virtual ~TextureStorage() {}
 
     virtual int getTopLevel() const = 0;
     virtual bool isRenderTarget() const = 0;
@@ -49,18 +49,8 @@ class TextureStorage : angle::NonCopyable
     virtual gl::Error setData(const gl::ImageIndex &index, ImageD3D *image, const gl::Box *destBox, GLenum type,
                               const gl::PixelUnpackState &unpack, const uint8_t *pixelData) = 0;
 
-    unsigned int getRenderTargetSerial(const gl::ImageIndex &index) const;
-    unsigned int getTextureSerial() const;
-
     // This is a no-op for most implementations of TextureStorage. Some (e.g. TextureStorage11_2D) might override it.
     virtual gl::Error useLevelZeroWorkaroundTexture(bool useLevelZeroTexture) { return gl::Error(GL_NO_ERROR); }
-
-  protected:
-    void initializeSerials(unsigned int rtSerialsToReserve, unsigned int rtSerialsLayerStride);
-
-  private:
-    unsigned int mFirstRenderTargetSerial;
-    unsigned int mRenderTargetSerialsLayerStride;
 };
 
 }

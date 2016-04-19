@@ -135,7 +135,7 @@ gl::Error Blit9::setShader(ShaderId source, const char *profile,
 {
     IDirect3DDevice9 *device = mRenderer->getDevice();
 
-    D3DShaderType *shader;
+    D3DShaderType *shader = nullptr;
 
     if (mCompiledShaders[source] != NULL)
     {
@@ -251,10 +251,11 @@ gl::Error Blit9::copy2D(const gl::Framebuffer *framebuffer, const RECT &sourceRe
     ASSERT(source);
 
     IDirect3DSurface9 *destSurface = NULL;
-    TextureStorage9_2D *storage9 = GetAs<TextureStorage9_2D>(storage);
-    error = storage9->getSurfaceLevel(level, true, &destSurface);
+    TextureStorage9 *storage9      = GetAs<TextureStorage9>(storage);
+    error = storage9->getSurfaceLevel(GL_TEXTURE_2D, level, true, &destSurface);
     if (error.isError())
     {
+        SafeRelease(source);
         return error;
     }
     ASSERT(destSurface);
@@ -290,10 +291,11 @@ gl::Error Blit9::copyCube(const gl::Framebuffer *framebuffer, const RECT &source
     ASSERT(source);
 
     IDirect3DSurface9 *destSurface = NULL;
-    TextureStorage9_Cube *storage9 = GetAs<TextureStorage9_Cube>(storage);
-    error = storage9->getCubeMapSurface(target, level, true, &destSurface);
+    TextureStorage9 *storage9      = GetAs<TextureStorage9>(storage);
+    error = storage9->getSurfaceLevel(target, level, true, &destSurface);
     if (error.isError())
     {
+        SafeRelease(source);
         return error;
     }
     ASSERT(destSurface);

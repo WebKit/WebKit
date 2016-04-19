@@ -16,6 +16,7 @@
 #include "common/platform.h"
 
 #include <EGL/eglplatform.h>
+#include "libANGLE/Config.h"
 
 // DXGISwapChain and DXGIFactory are typedef'd to specific required
 // types. The HWND NativeWindow implementation requires IDXGISwapChain
@@ -43,14 +44,21 @@ typedef IDXGISwapChain DXGISwapChain;
 typedef IDXGIFactory DXGIFactory;
 #endif
 
+typedef interface IDCompositionDevice IDCompositionDevice;
+typedef interface IDCompositionTarget IDCompositionTarget;
+typedef interface IDCompositionVisual IDCompositionVisual;
+
 namespace rx
 {
 
 class NativeWindow
 {
   public:
-    explicit NativeWindow(EGLNativeWindowType window);
+    explicit NativeWindow(EGLNativeWindowType window,
+                          const egl::Config *config,
+                          bool directComposition);
 
+    ~NativeWindow();
     bool initialize();
     bool getClientRect(LPRECT rect);
     bool isIconic();
@@ -62,9 +70,16 @@ class NativeWindow
 
     inline EGLNativeWindowType getNativeWindow() const { return mWindow; }
 
+    void commitChange();
+
   private:
     EGLNativeWindowType mWindow;
 
+    bool mDirectComposition;
+    IDCompositionDevice *mDevice;
+    IDCompositionTarget *mCompositionTarget;
+    IDCompositionVisual *mVisual;
+    const egl::Config *mConfig;
 #if defined(ANGLE_ENABLE_WINDOWS_STORE)
     std::shared_ptr<InspectableNativeWindow> mImpl;
 #endif

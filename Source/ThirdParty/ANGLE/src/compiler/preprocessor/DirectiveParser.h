@@ -27,7 +27,7 @@ class DirectiveParser : public Lexer
                     Diagnostics *diagnostics,
                     DirectiveHandler *directiveHandler);
 
-    virtual void lex(Token *token);
+    void lex(Token *token) override;
 
   private:
     PP_DISALLOW_COPY_AND_ASSIGN(DirectiveParser);
@@ -70,11 +70,14 @@ class DirectiveParser : public Lexer
         }
     };
     bool mPastFirstStatement;
+    bool mSeenNonPreprocessorToken; // Tracks if a non-preprocessor token has been seen yet.  Some macros, such as
+                                    // #extension must be declared before all shader code.
     std::vector<ConditionalBlock> mConditionalStack;
     Tokenizer *mTokenizer;
     MacroSet *mMacroSet;
     Diagnostics *mDiagnostics;
     DirectiveHandler *mDirectiveHandler;
+    int mShaderVersion;
 };
 
 }  // namespace pp

@@ -32,6 +32,7 @@ class TOutputGLSLBase : public TIntermTraverser
   protected:
     TInfoSinkBase &objSink() { return mObjSink; }
     void writeTriplet(Visit visit, const char *preStr, const char *inStr, const char *postStr);
+    void writeLayoutQualifier(const TType &type);
     void writeVariableType(const TType &type);
     virtual bool writeVariablePrecision(TPrecision precision) = 0;
     void writeFunctionParameters(const TIntermSequence &args);
@@ -39,16 +40,16 @@ class TOutputGLSLBase : public TIntermTraverser
     void writeConstructorTriplet(Visit visit, const TType &type, const char *constructorBaseType);
     TString getTypeName(const TType &type);
 
-    virtual void visitSymbol(TIntermSymbol *node);
-    virtual void visitConstantUnion(TIntermConstantUnion *node);
-    virtual bool visitBinary(Visit visit, TIntermBinary *node);
-    virtual bool visitUnary(Visit visit, TIntermUnary *node);
-    virtual bool visitSelection(Visit visit, TIntermSelection *node);
-    virtual bool visitSwitch(Visit visit, TIntermSwitch *node);
-    virtual bool visitCase(Visit visit, TIntermCase *node);
-    virtual bool visitAggregate(Visit visit, TIntermAggregate *node);
-    virtual bool visitLoop(Visit visit, TIntermLoop *node);
-    virtual bool visitBranch(Visit visit, TIntermBranch *node);
+    void visitSymbol(TIntermSymbol *node) override;
+    void visitConstantUnion(TIntermConstantUnion *node) override;
+    bool visitBinary(Visit visit, TIntermBinary *node) override;
+    bool visitUnary(Visit visit, TIntermUnary *node) override;
+    bool visitSelection(Visit visit, TIntermSelection *node) override;
+    bool visitSwitch(Visit visit, TIntermSwitch *node) override;
+    bool visitCase(Visit visit, TIntermCase *node) override;
+    bool visitAggregate(Visit visit, TIntermAggregate *node) override;
+    bool visitLoop(Visit visit, TIntermLoop *node) override;
+    bool visitBranch(Visit visit, TIntermBranch *node) override;
 
     void visitCodeBlock(TIntermNode *node);
 
@@ -57,14 +58,17 @@ class TOutputGLSLBase : public TIntermTraverser
     TString hashName(const TString &name);
     // Same as hashName(), but without hashing built-in variables.
     TString hashVariableName(const TString &name);
-    // Same as hashName(), but without hashing built-in functions.
-    TString hashFunctionName(const TString &mangled_name);
+    // Same as hashName(), but without hashing built-in functions and with unmangling.
+    TString hashFunctionNameIfNeeded(const TName &mangledName);
     // Used to translate function names for differences between ESSL and GLSL
     virtual TString translateTextureFunction(TString &name) { return name; }
 
   private:
     bool structDeclared(const TStructure *structure) const;
     void declareStruct(const TStructure *structure);
+
+    void declareInterfaceBlockLayout(const TInterfaceBlock *interfaceBlock);
+    void declareInterfaceBlock(const TInterfaceBlock *interfaceBlock);
 
     void writeBuiltInFunctionTriplet(Visit visit, const char *preStr, bool useEmulatedFunction);
 

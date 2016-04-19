@@ -14,7 +14,9 @@
 
 #include <limits>
 #include <algorithm>
+#include <math.h>
 #include <string.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 namespace gl
@@ -67,14 +69,29 @@ inline int clampToInt(unsigned int x)
 template <typename DestT, typename SrcT>
 inline DestT clampCast(SrcT value)
 {
-    // This assumes SrcT can properly represent DestT::min/max
-    // Unfortunately we can't use META_ASSERT without C++11 constexpr support
-    ASSERT(static_cast<DestT>(static_cast<SrcT>(std::numeric_limits<DestT>::min())) == std::numeric_limits<DestT>::min());
-    ASSERT(static_cast<DestT>(static_cast<SrcT>(std::numeric_limits<DestT>::max())) == std::numeric_limits<DestT>::max());
+    static const DestT destLo = std::numeric_limits<DestT>::min();
+    static const DestT destHi = std::numeric_limits<DestT>::max();
+    static const SrcT srcLo = static_cast<SrcT>(destLo);
+    static const SrcT srcHi = static_cast<SrcT>(destHi);
 
-    SrcT lo = static_cast<SrcT>(std::numeric_limits<DestT>::min());
-    SrcT hi = static_cast<SrcT>(std::numeric_limits<DestT>::max());
-    return static_cast<DestT>(value > lo ? (value > hi ? hi : value) : lo);
+    // When value is outside of or equal to the limits for DestT we use the DestT limit directly.
+    // This avoids undefined behaviors due to loss of precision when converting from floats to
+    // integers:
+    //    destHi for ints is 2147483647 but the closest float number is around 2147483648, so when
+    //  doing a conversion from float to int we run into an UB because the float is outside of the
+    //  range representable by the int.
+    if (value <= srcLo)
+    {
+        return destLo;
+    }
+    else if (value >= srcHi)
+    {
+        return destHi;
+    }
+    else
+    {
+        return static_cast<DestT>(value);
+    }
 }
 
 template<typename T, typename MIN, typename MAX>
@@ -149,7 +166,7 @@ destType bitCast(const sourceType &source)
 
 inline unsigned short float32ToFloat16(float fp32)
 {
-    unsigned int fp32i = (unsigned int&)fp32;
+    unsigned int fp32i = bitCast<unsigned int>(fp32);
     unsigned int sign = (fp32i & 0x80000000) >> 16;
     unsigned int abs = fp32i & 0x7FFFFFFF;
 
@@ -476,9 +493,10 @@ inline unsigned int average(unsigned int a, unsigned int b)
     return ((a ^ b) >> 1) + (a & b);
 }
 
-inline signed int average(signed int a, signed int b)
+inline int average(int a, int b)
 {
-    return (signed int)((long long)a + (long long)b) / 2;
+    long long average = (static_cast<long long>(a) + static_cast<long long>(b)) / 2ll;
+    return static_cast<int>(average);
 }
 
 inline float average(float a, float b)
@@ -501,12 +519,6 @@ inline unsigned int averageFloat10(unsigned int a, unsigned int b)
     return float32ToFloat10((float10ToFloat32(static_cast<unsigned short>(a)) + float10ToFloat32(static_cast<unsigned short>(b))) * 0.5f);
 }
 
-}
-
-namespace rx
-{
-
-// Represents intervals of the type [a, b)
 template <typename T>
 struct Range
 {
@@ -529,10 +541,145 @@ struct Range
             return start < other.end;
         }
     }
+
+    void extend(T value)
+    {
+        start = value > start ? value : start;
+        end = value < end ? value : end;
+    }
+
+    bool empty() const
+    {
+        return end <= start;
+    }
 };
 
 typedef Range<int> RangeI;
 typedef Range<unsigned int> RangeUI;
+
+struct IndexRange
+{
+    IndexRange() : IndexRange(0, 0, 0) {}
+    IndexRange(size_t start_, size_t end_, size_t vertexIndexCount_)
+        : start(start_), end(end_), vertexIndexCount(vertexIndexCount_)
+    {
+        ASSERT(start <= end);
+    }
+
+    // Number of vertices in the range.
+    size_t vertexCount() const { return (end - start) + 1; }
+
+    // Inclusive range of indices that are not primitive restart
+    size_t start;
+    size_t end;
+
+    // Number of non-primitive restart indices
+    size_t vertexIndexCount;
+};
+
+// First, both normalized floating-point values are converted into 16-bit integer values.
+// Then, the results are packed into the returned 32-bit unsigned integer.
+// The first float value will be written to the least significant bits of the output;
+// the last float value will be written to the most significant bits.
+// The conversion of each value to fixed point is done as follows :
+// packSnorm2x16 : round(clamp(c, -1, +1) * 32767.0)
+inline uint32_t packSnorm2x16(float f1, float f2)
+{
+    int16_t leastSignificantBits = static_cast<int16_t>(roundf(clamp(f1, -1.0f, 1.0f) * 32767.0f));
+    int16_t mostSignificantBits = static_cast<int16_t>(roundf(clamp(f2, -1.0f, 1.0f) * 32767.0f));
+    return static_cast<uint32_t>(mostSignificantBits) << 16 |
+           (static_cast<uint32_t>(leastSignificantBits) & 0xFFFF);
+}
+
+// First, unpacks a single 32-bit unsigned integer u into a pair of 16-bit unsigned integers. Then, each
+// component is converted to a normalized floating-point value to generate the returned two float values.
+// The first float value will be extracted from the least significant bits of the input;
+// the last float value will be extracted from the most-significant bits.
+// The conversion for unpacked fixed-point value to floating point is done as follows:
+// unpackSnorm2x16 : clamp(f / 32767.0, -1, +1)
+inline void unpackSnorm2x16(uint32_t u, float *f1, float *f2)
+{
+    int16_t leastSignificantBits = static_cast<int16_t>(u & 0xFFFF);
+    int16_t mostSignificantBits = static_cast<int16_t>(u >> 16);
+    *f1 = clamp(static_cast<float>(leastSignificantBits) / 32767.0f, -1.0f, 1.0f);
+    *f2 = clamp(static_cast<float>(mostSignificantBits) / 32767.0f, -1.0f, 1.0f);
+}
+
+// First, both normalized floating-point values are converted into 16-bit integer values.
+// Then, the results are packed into the returned 32-bit unsigned integer.
+// The first float value will be written to the least significant bits of the output;
+// the last float value will be written to the most significant bits.
+// The conversion of each value to fixed point is done as follows:
+// packUnorm2x16 : round(clamp(c, 0, +1) * 65535.0)
+inline uint32_t packUnorm2x16(float f1, float f2)
+{
+    uint16_t leastSignificantBits = static_cast<uint16_t>(roundf(clamp(f1, 0.0f, 1.0f) * 65535.0f));
+    uint16_t mostSignificantBits = static_cast<uint16_t>(roundf(clamp(f2, 0.0f, 1.0f) * 65535.0f));
+    return static_cast<uint32_t>(mostSignificantBits) << 16 | static_cast<uint32_t>(leastSignificantBits);
+}
+
+// First, unpacks a single 32-bit unsigned integer u into a pair of 16-bit unsigned integers. Then, each
+// component is converted to a normalized floating-point value to generate the returned two float values.
+// The first float value will be extracted from the least significant bits of the input;
+// the last float value will be extracted from the most-significant bits.
+// The conversion for unpacked fixed-point value to floating point is done as follows:
+// unpackUnorm2x16 : f / 65535.0
+inline void unpackUnorm2x16(uint32_t u, float *f1, float *f2)
+{
+    uint16_t leastSignificantBits = static_cast<uint16_t>(u & 0xFFFF);
+    uint16_t mostSignificantBits = static_cast<uint16_t>(u >> 16);
+    *f1 = static_cast<float>(leastSignificantBits) / 65535.0f;
+    *f2 = static_cast<float>(mostSignificantBits) / 65535.0f;
+}
+
+// Returns an unsigned integer obtained by converting the two floating-point values to the 16-bit
+// floating-point representation found in the OpenGL ES Specification, and then packing these
+// two 16-bit integers into a 32-bit unsigned integer.
+// f1: The 16 least-significant bits of the result;
+// f2: The 16 most-significant bits.
+inline uint32_t packHalf2x16(float f1, float f2)
+{
+    uint16_t leastSignificantBits = static_cast<uint16_t>(float32ToFloat16(f1));
+    uint16_t mostSignificantBits = static_cast<uint16_t>(float32ToFloat16(f2));
+    return static_cast<uint32_t>(mostSignificantBits) << 16 | static_cast<uint32_t>(leastSignificantBits);
+}
+
+// Returns two floating-point values obtained by unpacking a 32-bit unsigned integer into a pair of 16-bit values,
+// interpreting those values as 16-bit floating-point numbers according to the OpenGL ES Specification,
+// and converting them to 32-bit floating-point values.
+// The first float value is obtained from the 16 least-significant bits of u;
+// the second component is obtained from the 16 most-significant bits of u.
+inline void unpackHalf2x16(uint32_t u, float *f1, float *f2)
+{
+    uint16_t leastSignificantBits = static_cast<uint16_t>(u & 0xFFFF);
+    uint16_t mostSignificantBits = static_cast<uint16_t>(u >> 16);
+
+    *f1 = float16ToFloat32(leastSignificantBits);
+    *f2 = float16ToFloat32(mostSignificantBits);
+}
+
+// Returns whether the argument is Not a Number.
+// IEEE 754 single precision NaN representation: Exponent(8 bits) - 255, Mantissa(23 bits) - non-zero.
+inline bool isNaN(float f)
+{
+    // Exponent mask: ((1u << 8) - 1u) << 23 = 0x7f800000u
+    // Mantissa mask: ((1u << 23) - 1u) = 0x7fffffu
+    return ((bitCast<uint32_t>(f) & 0x7f800000u) == 0x7f800000u) && (bitCast<uint32_t>(f) & 0x7fffffu);
+}
+
+// Returns whether the argument is infinity.
+// IEEE 754 single precision infinity representation: Exponent(8 bits) - 255, Mantissa(23 bits) - zero.
+inline bool isInf(float f)
+{
+    // Exponent mask: ((1u << 8) - 1u) << 23 = 0x7f800000u
+    // Mantissa mask: ((1u << 23) - 1u) = 0x7fffffu
+    return ((bitCast<uint32_t>(f) & 0x7f800000u) == 0x7f800000u) && !(bitCast<uint32_t>(f) & 0x7fffffu);
+}
+
+}
+
+namespace rx
+{
 
 template <typename T>
 T roundUp(const T value, const T alignment)
@@ -569,6 +716,7 @@ inline bool IsIntegerCastSafe(BigIntT bigValue)
 #if defined(_MSC_VER)
 
 #define ANGLE_ROTL(x,y) _rotl(x,y)
+#define ANGLE_ROTR16(x,y) _rotr16(x,y)
 
 #else
 
@@ -577,7 +725,13 @@ inline uint32_t RotL(uint32_t x, int8_t r)
     return (x << r) | (x >> (32 - r));
 }
 
+inline uint16_t RotR16(uint16_t x, int8_t r)
+{
+    return (x >> r) | (x << (16 - r));
+}
+
 #define ANGLE_ROTL(x,y) RotL(x,y)
+#define ANGLE_ROTR16(x,y) RotR16(x,y)
 
 #endif // namespace rx
 

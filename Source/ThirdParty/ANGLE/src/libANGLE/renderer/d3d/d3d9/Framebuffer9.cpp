@@ -22,8 +22,7 @@ namespace rx
 {
 
 Framebuffer9::Framebuffer9(const gl::Framebuffer::Data &data, Renderer9 *renderer)
-    : FramebufferD3D(data, renderer),
-      mRenderer(renderer)
+    : FramebufferD3D(data, renderer), mRenderer(renderer)
 {
     ASSERT(mRenderer != nullptr);
 }
@@ -32,7 +31,28 @@ Framebuffer9::~Framebuffer9()
 {
 }
 
-gl::Error Framebuffer9::clear(const gl::State &state, const ClearParameters &clearParams)
+gl::Error Framebuffer9::discard(size_t, const GLenum *)
+{
+    // Extension not implemented in D3D9 renderer
+    UNREACHABLE();
+    return gl::Error(GL_NO_ERROR);
+}
+
+gl::Error Framebuffer9::invalidate(size_t, const GLenum *)
+{
+    // Shouldn't ever reach here in D3D9
+    UNREACHABLE();
+    return gl::Error(GL_NO_ERROR);
+}
+
+gl::Error Framebuffer9::invalidateSub(size_t, const GLenum *, const gl::Rectangle &)
+{
+    // Shouldn't ever reach here in D3D9
+    UNREACHABLE();
+    return gl::Error(GL_NO_ERROR);
+}
+
+gl::Error Framebuffer9::clear(const gl::Data &data, const ClearParameters &clearParams)
 {
     const gl::FramebufferAttachment *colorAttachment = mData.getColorAttachment(0);
     const gl::FramebufferAttachment *depthStencilAttachment = mData.getDepthOrStencilAttachment();
@@ -43,16 +63,22 @@ gl::Error Framebuffer9::clear(const gl::State &state, const ClearParameters &cle
         return error;
     }
 
-    float nearZ = state.getNearPlane();
-    float farZ = state.getFarPlane();
-    mRenderer->setViewport(state.getViewport(), nearZ, farZ, GL_TRIANGLES, state.getRasterizerState().frontFace, true);
+    float nearZ = data.state->getNearPlane();
+    float farZ = data.state->getFarPlane();
+    mRenderer->setViewport(data.caps, data.state->getViewport(), nearZ, farZ, GL_TRIANGLES,
+                           data.state->getRasterizerState().frontFace, true);
 
-    mRenderer->setScissorRectangle(state.getScissor(), state.isScissorTestEnabled());
+    mRenderer->setScissorRectangle(data.state->getScissor(), data.state->isScissorTestEnabled());
 
     return mRenderer->clear(clearParams, colorAttachment, depthStencilAttachment);
 }
 
-gl::Error Framebuffer9::readPixels(const gl::Rectangle &area, GLenum format, GLenum type, size_t outputPitch, const gl::PixelPackState &pack, uint8_t *pixels) const
+gl::Error Framebuffer9::readPixelsImpl(const gl::Rectangle &area,
+                                       GLenum format,
+                                       GLenum type,
+                                       size_t outputPitch,
+                                       const gl::PixelPackState &pack,
+                                       uint8_t *pixels) const
 {
     ASSERT(pack.pixelBuffer.get() == nullptr);
 

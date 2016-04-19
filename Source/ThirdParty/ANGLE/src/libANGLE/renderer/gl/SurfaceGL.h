@@ -14,10 +14,12 @@
 namespace rx
 {
 
+class RendererGL;
+
 class SurfaceGL : public SurfaceImpl
 {
   public:
-    SurfaceGL();
+    SurfaceGL(RendererGL *renderer);
     ~SurfaceGL() override;
 
     gl::Error getAttachmentRenderTarget(const gl::FramebufferAttachment::Target &target,
@@ -26,7 +28,12 @@ class SurfaceGL : public SurfaceImpl
         return gl::Error(GL_OUT_OF_MEMORY, "Not supported on OpenGL");
     }
 
+    FramebufferImpl *createDefaultFramebuffer(const gl::Framebuffer::Data &data) override;
+
     virtual egl::Error makeCurrent() = 0;
+
+  private:
+    RendererGL *mRenderer;
 };
 
 }

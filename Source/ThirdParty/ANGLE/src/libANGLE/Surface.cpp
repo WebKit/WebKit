@@ -11,16 +11,25 @@
 #include "libANGLE/Surface.h"
 
 #include "libANGLE/Config.h"
+#include "libANGLE/Framebuffer.h"
 #include "libANGLE/Texture.h"
 
 #include <EGL/eglext.h>
 
+#include <iostream>
+
 namespace egl
 {
 
-Surface::Surface(rx::SurfaceImpl *impl, EGLint surfaceType, const egl::Config *config, const AttributeMap &attributes)
-    : FramebufferAttachmentObject(0), // id unused
+Surface::Surface(rx::SurfaceImpl *impl,
+                 EGLint surfaceType,
+                 const egl::Config *config,
+                 const AttributeMap &attributes)
+    : FramebufferAttachmentObject(),
       mImplementation(impl),
+      mDefaultFramebuffer(nullptr),
+      mCurrentCount(0),
+      mDestroyed(false),
       mType(surfaceType),
       mConfig(config),
       mPostSubBufferRequested(false),
@@ -32,40 +41,75 @@ Surface::Surface(rx::SurfaceImpl *impl, EGLint surfaceType, const egl::Config *c
       // FIXME: Determine actual pixel aspect ratio
       mPixelAspectRatio(static_cast<EGLint>(1.0 * EGL_DISPLAY_SCALING)),
       mRenderBuffer(EGL_BACK_BUFFER),
-      mSwapBehavior(EGL_BUFFER_PRESERVED),
-      mTexture(NULL)
+      mSwapBehavior(impl->getSwapBehavior()),
+      mOrientation(0),
+      mTexture()
 {
-    addRef();
-
     mPostSubBufferRequested = (attributes.get(EGL_POST_SUB_BUFFER_SUPPORTED_NV, EGL_FALSE) == EGL_TRUE);
+    mFlexibleSurfaceCompatibilityRequested =
+        (attributes.get(EGL_FLEXIBLE_SURFACE_COMPATIBILITY_SUPPORTED_ANGLE, EGL_FALSE) == EGL_TRUE);
+
+    mDirectComposition = (attributes.get(EGL_DIRECT_COMPOSITION_ANGLE, EGL_FALSE) == EGL_TRUE);
 
     mFixedSize = (attributes.get(EGL_FIXED_SIZE_ANGLE, EGL_FALSE) == EGL_TRUE);
     if (mFixedSize)
     {
-        mFixedWidth = attributes.get(EGL_WIDTH, 0);
-        mFixedHeight = attributes.get(EGL_HEIGHT, 0);
+        mFixedWidth  = static_cast<size_t>(attributes.get(EGL_WIDTH, 0));
+        mFixedHeight = static_cast<size_t>(attributes.get(EGL_HEIGHT, 0));
     }
 
     if (mType != EGL_WINDOW_BIT)
     {
-        mTextureFormat = attributes.get(EGL_TEXTURE_FORMAT, EGL_NO_TEXTURE);
-        mTextureTarget = attributes.get(EGL_TEXTURE_TARGET, EGL_NO_TEXTURE);
+        mTextureFormat = static_cast<EGLenum>(attributes.get(EGL_TEXTURE_FORMAT, EGL_NO_TEXTURE));
+        mTextureTarget = static_cast<EGLenum>(attributes.get(EGL_TEXTURE_TARGET, EGL_NO_TEXTURE));
     }
+
+    mOrientation = static_cast<EGLint>(attributes.get(EGL_SURFACE_ORIENTATION_ANGLE, 0));
+
+    mDefaultFramebuffer = createDefaultFramebuffer();
+    ASSERT(mDefaultFramebuffer != nullptr);
 }
 
 Surface::~Surface()
 {
-    if (mTexture)
+    if (mTexture.get())
     {
         if (mImplementation)
         {
             mImplementation->releaseTexImage(EGL_BACK_BUFFER);
         }
-        mTexture->releaseTexImage();
-        mTexture = NULL;
+        mTexture->releaseTexImageFromSurface();
+        mTexture.set(nullptr);
     }
 
+    SafeDelete(mDefaultFramebuffer);
     SafeDelete(mImplementation);
+}
+
+void Surface::setIsCurrent(bool isCurrent)
+{
+    if (isCurrent)
+    {
+        mCurrentCount++;
+    }
+    else
+    {
+        ASSERT(mCurrentCount > 0);
+        mCurrentCount--;
+        if (mCurrentCount == 0 && mDestroyed)
+        {
+            delete this;
+        }
+    }
+}
+
+void Surface::onDestroy()
+{
+    mDestroyed = true;
+    if (mCurrentCount == 0)
+    {
+        delete this;
+    }
 }
 
 EGLint Surface::getType() const
@@ -145,21 +189,31 @@ EGLint Surface::getHeight() const
 
 Error Surface::bindTexImage(gl::Texture *texture, EGLint buffer)
 {
-    ASSERT(!mTexture);
+    ASSERT(!mTexture.get());
 
-    texture->bindTexImage(this);
-    mTexture = texture;
-    return mImplementation->bindTexImage(buffer);
+    texture->bindTexImageFromSurface(this);
+    mTexture.set(texture);
+    return mImplementation->bindTexImage(texture, buffer);
 }
 
 Error Surface::releaseTexImage(EGLint buffer)
 {
-    ASSERT(mTexture);
-    gl::Texture *boundTexture = mTexture;
-    mTexture = NULL;
+    ASSERT(mTexture.get());
+    mTexture->releaseTexImageFromSurface();
+    mTexture.set(nullptr);
 
-    boundTexture->releaseTexImage();
     return mImplementation->releaseTexImage(buffer);
+}
+
+void Surface::releaseTexImageFromTexture()
+{
+    ASSERT(mTexture.get());
+    mTexture.set(nullptr);
+}
+
+gl::Extents Surface::getAttachmentSize(const gl::FramebufferAttachment::Target & /*target*/) const
+{
+    return gl::Extents(getWidth(), getHeight(), 1);
 }
 
 GLenum Surface::getAttachmentInternalFormat(const gl::FramebufferAttachment::Target &target) const
@@ -173,4 +227,35 @@ GLsizei Surface::getAttachmentSamples(const gl::FramebufferAttachment::Target &t
     return getConfig()->samples;
 }
 
+GLuint Surface::getId() const
+{
+    UNREACHABLE();
+    return 0;
+}
+
+gl::Framebuffer *Surface::createDefaultFramebuffer()
+{
+    gl::Framebuffer *framebuffer = new gl::Framebuffer(mImplementation);
+
+    GLenum drawBufferState = GL_BACK;
+    framebuffer->setDrawBuffers(1, &drawBufferState);
+    framebuffer->setReadBuffer(GL_BACK);
+
+    framebuffer->setAttachment(GL_FRAMEBUFFER_DEFAULT, GL_BACK, gl::ImageIndex::MakeInvalid(),
+                               this);
+
+    if (mConfig->depthSize > 0)
+    {
+        framebuffer->setAttachment(GL_FRAMEBUFFER_DEFAULT, GL_DEPTH, gl::ImageIndex::MakeInvalid(),
+                                   this);
+    }
+
+    if (mConfig->stencilSize > 0)
+    {
+        framebuffer->setAttachment(GL_FRAMEBUFFER_DEFAULT, GL_STENCIL,
+                                   gl::ImageIndex::MakeInvalid(), this);
+    }
+
+    return framebuffer;
+}
 }

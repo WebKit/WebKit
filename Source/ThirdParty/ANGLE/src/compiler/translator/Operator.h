@@ -15,7 +15,6 @@ enum TOperator
     EOpNull,            // if in a node, should only mean a node is still being built
     EOpSequence,        // denotes a list of statements, or parameters, etc.
     EOpFunctionCall,
-    EOpInternalFunctionCall, // Call to an internal helper function
     EOpFunction,        // For function definition
     EOpParameters,      // an aggregate listing the parameters to a function
 
@@ -192,7 +191,13 @@ enum TOperator
     EOpConstructUVec3,
     EOpConstructUVec4,
     EOpConstructMat2,
+    EOpConstructMat2x3,
+    EOpConstructMat2x4,
+    EOpConstructMat3x2,
     EOpConstructMat3,
+    EOpConstructMat3x4,
+    EOpConstructMat4x2,
+    EOpConstructMat4x3,
     EOpConstructMat4,
     EOpConstructStruct,
 

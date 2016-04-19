@@ -34,4 +34,10 @@ inline const char* getBehaviorString(TBehavior b)
 // Mapping between extension name and behavior.
 typedef std::map<std::string, TBehavior> TExtensionBehavior;
 
+inline bool IsExtensionEnabled(const TExtensionBehavior &extBehavior, const char *extension)
+{
+    auto iter = extBehavior.find(extension);
+    return iter != extBehavior.end() && (iter->second == EBhEnable || iter->second == EBhRequire);
+}
+
 #endif // COMPILER_TRANSLATOR_EXTENSIONBEHAVIOR_H_

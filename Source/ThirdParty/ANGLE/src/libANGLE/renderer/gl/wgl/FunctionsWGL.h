@@ -6,6 +6,9 @@
 
 // FunctionsWGL.h: Defines the FuntionsWGL class to contain loaded WGL functions
 
+#ifndef LIBANGLE_RENDERER_GL_WGL_FUNCTIONS_WGL
+#define LIBANGLE_RENDERER_GL_WGL_FUNCTIONS_WGL
+
 #include "common/angleutils.h"
 #include "libANGLE/renderer/gl/wgl/functionswgl_typedefs.h"
 
@@ -19,6 +22,10 @@ class FunctionsWGL : angle::NonCopyable
 
     // Loads all available wgl functions, may be called multiple times
     void initialize(HMODULE glModule, HDC context);
+
+    // Extension information
+    std::vector<std::string> extensions;
+    bool hasExtension(const std::string &ext) const;
 
     // Base WGL functions
     PFNWGLCOPYCONTEXTPROC copyContext;
@@ -42,11 +49,21 @@ class FunctionsWGL : angle::NonCopyable
     PFNWGLSWAPLAYERBUFFERSPROC swapLayerBuffers;
     PFNWGLSWAPMULTIPLEBUFFERSPROC swapMultipleBuffers;
 
-    // Extension functions, may be NULL
-    PFNWGLCREATECONTEXTATTRIBSARBPROC createContextAttribsARB;
-    PFNWGLGETPIXELFORMATATTRIBIVARBPROC getPixelFormatAttribivARB;
+    // WGL_EXT_extensions_string
     PFNWGLGETEXTENSIONSSTRINGEXTPROC getExtensionStringEXT;
+
+    // WGL_ARB_extensions_string
     PFNWGLGETEXTENSIONSSTRINGARBPROC getExtensionStringARB;
+
+    // WGL_ARB_create_context
+    PFNWGLCREATECONTEXTATTRIBSARBPROC createContextAttribsARB;
+
+    // WGL_ARB_pixel_format
+    PFNWGLGETPIXELFORMATATTRIBIVARBPROC getPixelFormatAttribivARB;
+    PFNWGLGETPIXELFORMATATTRIBFVARBPROC getPixelFormatAttribfvARB;
+    PFNWGLCHOOSEPIXELFORMATARBPROC choosePixelFormatARB;
+
+    // WGL_EXT_swap_control
     PFNWGLSWAPINTERVALEXTPROC swapIntervalEXT;
 
     // WGL_ARB_pbuffer
@@ -60,6 +77,18 @@ class FunctionsWGL : angle::NonCopyable
     PFNWGLBINDTEXIMAGEARBPROC bindTexImageARB;
     PFNWGLRELEASETEXIMAGEARBPROC releaseTexImageARB;
     PFNWGLSETPBUFFERATTRIBARBPROC setPbufferAttribARB;
+
+    // WGL_NV_DX_interop
+    PFNWGLDXSETRESOURCESHAREHANDLENVPROC dxSetResourceShareHandleNV;
+    PFNWGLDXOPENDEVICENVPROC dxOpenDeviceNV;
+    PFNWGLDXCLOSEDEVICENVPROC dxCloseDeviceNV;
+    PFNWGLDXREGISTEROBJECTNVPROC dxRegisterObjectNV;
+    PFNWGLDXUNREGISTEROBJECTNVPROC dxUnregisterObjectNV;
+    PFNWGLDXOBJECTACCESSNVPROC dxObjectAccessNV;
+    PFNWGLDXLOCKOBJECTSNVPROC dxLockObjectsNV;
+    PFNWGLDXUNLOCKOBJECTSNVPROC dxUnlockObjectsNV;
 };
 
 }
+
+#endif // LIBANGLE_RENDERER_GL_WGL_FUNCTIONS_WGL

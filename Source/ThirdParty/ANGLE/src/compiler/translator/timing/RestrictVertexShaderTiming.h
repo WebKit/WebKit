@@ -22,7 +22,8 @@ public:
     void enforceRestrictions(TIntermNode* root) { root->traverse(this); }
     int numErrors() { return mNumErrors; }
 
-    virtual void visitSymbol(TIntermSymbol*);
+    void visitSymbol(TIntermSymbol *) override;
+
 private:
     TInfoSinkBase& mSink;
     int mNumErrors;

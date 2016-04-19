@@ -18,14 +18,20 @@ namespace rx
 class DeviceD3D : public DeviceImpl
 {
   public:
-    DeviceD3D(RendererD3D *renderer);
+    DeviceD3D();
+    ~DeviceD3D() override;
 
-    egl::Error getDevice(EGLAttrib *value) override;
+    egl::Error initialize(void *device, EGLint deviceType, EGLBoolean external);
+    egl::Error getDevice(void **outValue) override;
     EGLint getType() override;
     void generateExtensions(egl::DeviceExtensions *outExtensions) const override;
+    bool deviceExternallySourced() override { return mDeviceExternallySourced; }
 
   private:
-    RendererD3D *mRenderer;
+    void *mDevice;
+    EGLint mDeviceType;
+    bool mDeviceExternallySourced;
+    bool mIsInitialized;
 };
 
 }

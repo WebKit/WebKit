@@ -123,7 +123,7 @@ FenceSync11::FenceSync11(Renderer11 *renderer)
       mRenderer(renderer),
       mQuery(NULL)
 {
-    LARGE_INTEGER counterFreqency = { 0 };
+    LARGE_INTEGER counterFreqency = {};
     BOOL success = QueryPerformanceFrequency(&counterFreqency);
     UNUSED_ASSERTION_VARIABLE(success);
     ASSERT(success);
@@ -168,7 +168,7 @@ gl::Error FenceSync11::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *ou
         return gl::Error(GL_NO_ERROR);
     }
 
-    LARGE_INTEGER currentCounter = { 0 };
+    LARGE_INTEGER currentCounter = {};
     BOOL success = QueryPerformanceCounter(&currentCounter);
     UNUSED_ASSERTION_VARIABLE(success);
     ASSERT(success);

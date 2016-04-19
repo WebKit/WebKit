@@ -9,16 +9,22 @@
 #ifndef LIBANGLE_RENDERER_GL_WGL_WGLUTILS_H_
 #define LIBANGLE_RENDERER_GL_WGL_WGLUTILS_H_
 
+#include <vector>
+
 #include "common/platform.h"
 
 namespace rx
 {
 
+class FunctionsWGL;
+
 namespace wgl
 {
 
 PIXELFORMATDESCRIPTOR GetDefaultPixelFormatDescriptor();
+std::vector<int> GetDefaultPixelFormatAttributes(bool preservedSwap);
 
+int QueryWGLFormatAttrib(HDC dc, int format, int attribName, const FunctionsWGL *functions);
 }
 
 }

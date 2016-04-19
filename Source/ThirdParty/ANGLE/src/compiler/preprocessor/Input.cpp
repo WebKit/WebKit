@@ -29,13 +29,75 @@ Input::Input(size_t count, const char *const string[], const int length[]) :
     }
 }
 
-size_t Input::read(char *buf, size_t maxSize)
+const char *Input::skipChar()
+{
+    // This function should only be called when there is a character to skip.
+    assert(mReadLoc.cIndex < mLength[mReadLoc.sIndex]);
+    ++mReadLoc.cIndex;
+    if (mReadLoc.cIndex == mLength[mReadLoc.sIndex])
+    {
+        ++mReadLoc.sIndex;
+        mReadLoc.cIndex = 0;
+    }
+    if (mReadLoc.sIndex >= mCount)
+    {
+        return nullptr;
+    }
+    return mString[mReadLoc.sIndex] + mReadLoc.cIndex;
+}
+
+size_t Input::read(char *buf, size_t maxSize, int *lineNo)
 {
     size_t nRead = 0;
-    while ((nRead < maxSize) && (mReadLoc.sIndex < mCount))
+    // The previous call to read might have stopped copying the string when encountering a line
+    // continuation. Check for this possibility first.
+    if (mReadLoc.sIndex < mCount && maxSize > 0)
+    {
+        const char *c = mString[mReadLoc.sIndex] + mReadLoc.cIndex;
+        if ((*c) == '\\')
+        {
+            c = skipChar();
+            if (c != nullptr && (*c) == '\n')
+            {
+                // Line continuation of backslash + newline.
+                skipChar();
+                ++(*lineNo);
+            }
+            else if (c != nullptr && (*c) == '\r')
+            {
+                // Line continuation. Could be backslash + '\r\n' or just backslash + '\r'.
+                c = skipChar();
+                if (c != nullptr && (*c) == '\n')
+                {
+                    skipChar();
+                }
+                ++(*lineNo);
+            }
+            else
+            {
+                // Not line continuation, so write the skipped backslash to buf.
+                *buf = '\\';
+                ++nRead;
+            }
+        }
+    }
+
+    size_t maxRead = maxSize;
+    while ((nRead < maxRead) && (mReadLoc.sIndex < mCount))
     {
         size_t size = mLength[mReadLoc.sIndex] - mReadLoc.cIndex;
         size = std::min(size, maxSize);
+        for (size_t i = 0; i < size; ++i)
+        {
+            // Stop if a possible line continuation is encountered.
+            // It will be processed on the next call on input, which skips it
+            // and increments line number if necessary.
+            if (*(mString[mReadLoc.sIndex] + mReadLoc.cIndex + i) == '\\')
+            {
+                size = i;
+                maxRead = nRead + size;  // Stop reading right before the backslash.
+            }
+        }
         std::memcpy(buf + nRead, mString[mReadLoc.sIndex] + mReadLoc.cIndex, size);
         nRead += size;
         mReadLoc.cIndex += size;

@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_FENCE_H_
 #define LIBANGLE_FENCE_H_
 
+#include "libANGLE/Debug.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/RefCountObject.h"
 
@@ -47,11 +48,14 @@ class FenceNV final : angle::NonCopyable
     GLenum mCondition;
 };
 
-class FenceSync final : public RefCountObject
+class FenceSync final : public RefCountObject, public LabeledObject
 {
   public:
-    explicit FenceSync(rx::FenceSyncImpl *impl, GLuint id);
+    FenceSync(rx::FenceSyncImpl *impl, GLuint id);
     virtual ~FenceSync();
+
+    void setLabel(const std::string &label) override;
+    const std::string &getLabel() const override;
 
     Error set(GLenum condition, GLbitfield flags);
     Error clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResult);
@@ -63,6 +67,8 @@ class FenceSync final : public RefCountObject
 
   private:
     rx::FenceSyncImpl *mFence;
+
+    std::string mLabel;
 
     GLenum mCondition;
     GLbitfield mFlags;

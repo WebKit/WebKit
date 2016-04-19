@@ -9,11 +9,23 @@
 #include "compiler/translator/InitializeParseContext.h"
 #include "compiler/translator/ParseContext.h"
 
-ValidateOutputs::ValidateOutputs(TInfoSinkBase& sink, int maxDrawBuffers)
-    : mSink(sink),
+namespace
+{
+void error(int *errorCount, TInfoSinkBase &sink, const TIntermSymbol &symbol, const char *reason)
+{
+    sink.prefix(EPrefixError);
+    sink.location(symbol.getLine());
+    sink << "'" << symbol.getSymbol() << "' : " << reason << "\n";
+    (*errorCount)++;
+}
+
+}  // namespace
+
+ValidateOutputs::ValidateOutputs(const TExtensionBehavior &extBehavior, int maxDrawBuffers)
+    : TIntermTraverser(true, false, false),
       mMaxDrawBuffers(maxDrawBuffers),
-      mNumErrors(0),
-      mHasUnspecifiedOutputLocation(false)
+      mAllowUnspecifiedOutputLocationResolution(
+          IsExtensionEnabled(extBehavior, "GL_EXT_blend_func_extended"))
 {
 }
 
@@ -29,50 +41,68 @@ void ValidateOutputs::visitSymbol(TIntermSymbol *symbol)
 
     if (qualifier == EvqFragmentOut)
     {
-        const TType &type = symbol->getType();
-        const int location = type.getLayoutQualifier().location;
-
-        if (mHasUnspecifiedOutputLocation)
+        if (symbol->getType().getLayoutQualifier().location == -1)
         {
-            error(symbol->getLine(), "must explicitly specify all locations when using multiple fragment outputs", name.c_str());
-        }
-        else if (location == -1)
-        {
-            mHasUnspecifiedOutputLocation = true;
+            mUnspecifiedLocationOutputs.push_back(symbol);
         }
         else
         {
-            OutputMap::iterator mapEntry = mOutputMap.find(location);
-            if (mapEntry == mOutputMap.end())
-            {
-                const int elementCount = type.isArray() ? type.getArraySize() : 1;
-                if (location + elementCount > mMaxDrawBuffers)
-                {
-                    error(symbol->getLine(), "output location must be < MAX_DRAW_BUFFERS", name.c_str());
-                }
-
-                for (int elementIndex = 0; elementIndex < elementCount; elementIndex++)
-                {
-                    const int offsetLocation = location + elementIndex;
-                    mOutputMap[offsetLocation] = symbol;
-                }
-            }
-            else
-            {
-                std::stringstream strstr;
-                strstr << "conflicting output locations with previously defined output '"
-                       << mapEntry->second->getSymbol() << "'";
-
-                error(symbol->getLine(), strstr.str().c_str(), name.c_str());
-            }
+            mOutputs.push_back(symbol);
         }
     }
 }
 
-void ValidateOutputs::error(TSourceLoc loc, const char *reason, const char* token)
+int ValidateOutputs::validateAndCountErrors(TInfoSinkBase &sink) const
 {
-    mSink.prefix(EPrefixError);
-    mSink.location(loc);
-    mSink << "'" << token << "' : " << reason << "\n";
-    mNumErrors++;
+    OutputVector validOutputs(mMaxDrawBuffers);
+    int errorCount = 0;
+
+    for (const auto &symbol : mOutputs)
+    {
+        const TType &type         = symbol->getType();
+        const size_t elementCount = static_cast<size_t>(type.isArray() ? type.getArraySize() : 1);
+        const size_t location     = static_cast<size_t>(type.getLayoutQualifier().location);
+
+        ASSERT(type.getLayoutQualifier().location != -1);
+
+        if (location + elementCount <= validOutputs.size())
+        {
+            for (size_t elementIndex = 0; elementIndex < elementCount; elementIndex++)
+            {
+                const size_t offsetLocation = location + elementIndex;
+                if (validOutputs[offsetLocation])
+                {
+                    std::stringstream strstr;
+                    strstr << "conflicting output locations with previously defined output '"
+                           << validOutputs[offsetLocation]->getSymbol() << "'";
+                    error(&errorCount, sink, *symbol, strstr.str().c_str());
+                }
+                else
+                {
+                    validOutputs[offsetLocation] = symbol;
+                }
+            }
+        }
+        else
+        {
+            if (elementCount > 0)
+            {
+                error(&errorCount, sink, *symbol,
+                      elementCount > 1 ? "output array locations would exceed MAX_DRAW_BUFFERS"
+                                       : "output location must be < MAX_DRAW_BUFFERS");
+            }
+        }
+    }
+
+    if (!mAllowUnspecifiedOutputLocationResolution &&
+        ((!mOutputs.empty() && !mUnspecifiedLocationOutputs.empty()) ||
+         mUnspecifiedLocationOutputs.size() > 1))
+    {
+        for (const auto &symbol : mUnspecifiedLocationOutputs)
+        {
+            error(&errorCount, sink, *symbol,
+                  "must explicitly specify all locations when using multiple fragment outputs");
+        }
+    }
+    return errorCount;
 }

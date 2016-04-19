@@ -8,29 +8,34 @@
 
 #include "libANGLE/VertexArray.h"
 #include "libANGLE/Buffer.h"
+#include "libANGLE/renderer/ImplFactory.h"
 #include "libANGLE/renderer/VertexArrayImpl.h"
 
 namespace gl
 {
 
-VertexArray::VertexArray(rx::VertexArrayImpl *impl, GLuint id, size_t maxAttribs)
-    : mId(id),
-      mVertexArray(impl),
-      mVertexAttributes(maxAttribs),
-      mMaxEnabledAttribute(0)
+VertexArray::Data::Data(size_t maxAttribs)
+    : mLabel(), mVertexAttributes(maxAttribs), mMaxEnabledAttribute(0)
 {
-    ASSERT(impl != NULL);
+}
+
+VertexArray::Data::~Data()
+{
+    for (size_t i = 0; i < getMaxAttribs(); i++)
+    {
+        mVertexAttributes[i].buffer.set(nullptr);
+    }
+    mElementArrayBuffer.set(nullptr);
+}
+
+VertexArray::VertexArray(rx::ImplFactory *factory, GLuint id, size_t maxAttribs)
+    : mId(id), mData(maxAttribs), mVertexArray(factory->createVertexArray(mData))
+{
 }
 
 VertexArray::~VertexArray()
 {
     SafeDelete(mVertexArray);
-
-    for (size_t i = 0; i < getMaxAttribs(); i++)
-    {
-        mVertexAttributes[i].buffer.set(NULL);
-    }
-    mElementArrayBuffer.set(NULL);
 }
 
 GLuint VertexArray::id() const
@@ -38,78 +43,96 @@ GLuint VertexArray::id() const
     return mId;
 }
 
+void VertexArray::setLabel(const std::string &label)
+{
+    mData.mLabel = label;
+}
+
+const std::string &VertexArray::getLabel() const
+{
+    return mData.mLabel;
+}
+
 void VertexArray::detachBuffer(GLuint bufferName)
 {
     for (size_t attribute = 0; attribute < getMaxAttribs(); attribute++)
     {
-        if (mVertexAttributes[attribute].buffer.id() == bufferName)
+        if (mData.mVertexAttributes[attribute].buffer.id() == bufferName)
         {
-            mVertexAttributes[attribute].buffer.set(NULL);
+            mData.mVertexAttributes[attribute].buffer.set(nullptr);
         }
     }
 
-    if (mElementArrayBuffer.id() == bufferName)
+    if (mData.mElementArrayBuffer.id() == bufferName)
     {
-        mElementArrayBuffer.set(NULL);
+        mData.mElementArrayBuffer.set(nullptr);
     }
 }
 
-const VertexAttribute& VertexArray::getVertexAttribute(size_t attributeIndex) const
+const VertexAttribute &VertexArray::getVertexAttribute(size_t attributeIndex) const
 {
     ASSERT(attributeIndex < getMaxAttribs());
-    return mVertexAttributes[attributeIndex];
+    return mData.mVertexAttributes[attributeIndex];
 }
 
-const std::vector<VertexAttribute> &VertexArray::getVertexAttributes() const
-{
-    return mVertexAttributes;
-}
-
-void VertexArray::setVertexAttribDivisor(GLuint index, GLuint divisor)
+void VertexArray::setVertexAttribDivisor(size_t index, GLuint divisor)
 {
     ASSERT(index < getMaxAttribs());
-    mVertexAttributes[index].divisor = divisor;
-    mVertexArray->setAttributeDivisor(index, divisor);
+    mData.mVertexAttributes[index].divisor = divisor;
+    mDirtyBits.set(DIRTY_BIT_ATTRIB_0_DIVISOR + index);
 }
 
-void VertexArray::enableAttribute(unsigned int attributeIndex, bool enabledState)
+void VertexArray::enableAttribute(size_t attributeIndex, bool enabledState)
 {
     ASSERT(attributeIndex < getMaxAttribs());
-    mVertexAttributes[attributeIndex].enabled = enabledState;
-    mVertexArray->enableAttribute(attributeIndex, enabledState);
+    mData.mVertexAttributes[attributeIndex].enabled = enabledState;
+    mDirtyBits.set(DIRTY_BIT_ATTRIB_0_ENABLED + attributeIndex);
 
     // Update state cache
     if (enabledState)
     {
-        mMaxEnabledAttribute = std::max(attributeIndex, mMaxEnabledAttribute);
+        mData.mMaxEnabledAttribute = std::max(attributeIndex + 1, mData.mMaxEnabledAttribute);
     }
-    else if (mMaxEnabledAttribute == attributeIndex)
+    else if (mData.mMaxEnabledAttribute == attributeIndex + 1)
     {
-        while (mMaxEnabledAttribute > 0 && !mVertexAttributes[mMaxEnabledAttribute].enabled)
+        while (mData.mMaxEnabledAttribute > 0 &&
+               !mData.mVertexAttributes[mData.mMaxEnabledAttribute - 1].enabled)
         {
-            --mMaxEnabledAttribute;
+            --mData.mMaxEnabledAttribute;
         }
     }
 }
 
-void VertexArray::setAttributeState(unsigned int attributeIndex, gl::Buffer *boundBuffer, GLint size, GLenum type,
+void VertexArray::setAttributeState(size_t attributeIndex, gl::Buffer *boundBuffer, GLint size, GLenum type,
                                     bool normalized, bool pureInteger, GLsizei stride, const void *pointer)
 {
     ASSERT(attributeIndex < getMaxAttribs());
-    mVertexAttributes[attributeIndex].buffer.set(boundBuffer);
-    mVertexAttributes[attributeIndex].size = size;
-    mVertexAttributes[attributeIndex].type = type;
-    mVertexAttributes[attributeIndex].normalized = normalized;
-    mVertexAttributes[attributeIndex].pureInteger = pureInteger;
-    mVertexAttributes[attributeIndex].stride = stride;
-    mVertexAttributes[attributeIndex].pointer = pointer;
-    mVertexArray->setAttribute(attributeIndex, mVertexAttributes[attributeIndex]);
+
+    VertexAttribute *attrib = &mData.mVertexAttributes[attributeIndex];
+
+    attrib->buffer.set(boundBuffer);
+    attrib->size = size;
+    attrib->type = type;
+    attrib->normalized = normalized;
+    attrib->pureInteger = pureInteger;
+    attrib->stride = stride;
+    attrib->pointer = pointer;
+    mDirtyBits.set(DIRTY_BIT_ATTRIB_0_POINTER + attributeIndex);
 }
 
 void VertexArray::setElementArrayBuffer(Buffer *buffer)
 {
-    mElementArrayBuffer.set(buffer);
-    mVertexArray->setElementArrayBuffer(buffer);
+    mData.mElementArrayBuffer.set(buffer);
+    mDirtyBits.set(DIRTY_BIT_ELEMENT_ARRAY_BUFFER);
+}
+
+void VertexArray::syncImplState()
+{
+    if (mDirtyBits.any())
+    {
+        mVertexArray->syncState(mDirtyBits);
+        mDirtyBits.reset();
+    }
 }
 
 }

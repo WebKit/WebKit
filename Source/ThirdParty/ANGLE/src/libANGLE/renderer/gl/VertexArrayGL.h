@@ -20,46 +20,68 @@ class StateManagerGL;
 class VertexArrayGL : public VertexArrayImpl
 {
   public:
-    VertexArrayGL(const FunctionsGL *functions, StateManagerGL *stateManager);
+    VertexArrayGL(const gl::VertexArray::Data &data, const FunctionsGL *functions, StateManagerGL *stateManager);
     ~VertexArrayGL() override;
 
-    void setElementArrayBuffer(const gl::Buffer *buffer) override;
-    void setAttribute(size_t idx, const gl::VertexAttribute &attr) override;
-    void setAttributeDivisor(size_t idx, GLuint divisor) override;
-    void enableAttribute(size_t idx, bool enabledState) override;
-
-    gl::Error syncDrawArraysState(GLint first, GLsizei count) const;
-    gl::Error syncDrawElementsState(GLsizei count, GLenum type, const GLvoid *indices, const GLvoid **outIndices) const;
+    gl::Error syncDrawArraysState(const gl::AttributesMask &activeAttributesMask,
+                                  GLint first,
+                                  GLsizei count,
+                                  GLsizei instanceCount) const;
+    gl::Error syncDrawElementsState(const gl::AttributesMask &activeAttributesMask,
+                                    GLsizei count,
+                                    GLenum type,
+                                    const GLvoid *indices,
+                                    GLsizei instanceCount,
+                                    bool primitiveRestartEnabled,
+                                    const GLvoid **outIndices) const;
 
     GLuint getVertexArrayID() const;
+    GLuint getAppliedElementArrayBufferID() const;
+
+    void syncState(const gl::VertexArray::DirtyBits &dirtyBits) override;
 
   private:
-    gl::Error syncDrawState(GLint first, GLsizei count, GLenum type, const GLvoid *indices, const GLvoid **outIndices) const;
-
-    // Check if any vertex attributes need to be streamed
-    bool doAttributesNeedStreaming() const;
-
-    // Apply attribute state, returns the amount of space needed to stream all attributes that need streaming
-    // and the data size of the largest attribute
-    gl::Error syncAttributeState(bool attributesNeedStreaming, const RangeUI &indexRange, size_t *outStreamingDataSize,
-                                 size_t *outMaxAttributeDataSize) const;
+    gl::Error syncDrawState(const gl::AttributesMask &activeAttributesMask,
+                            GLint first,
+                            GLsizei count,
+                            GLenum type,
+                            const GLvoid *indices,
+                            GLsizei instanceCount,
+                            bool primitiveRestartEnabled,
+                            const GLvoid **outIndices) const;
 
     // Apply index data, only sets outIndexRange if attributesNeedStreaming is true
-    gl::Error syncIndexData(GLsizei count, GLenum type, const GLvoid *indices, bool attributesNeedStreaming,
-                            RangeUI *outIndexRange, const GLvoid **outIndices) const;
+    gl::Error syncIndexData(GLsizei count,
+                            GLenum type,
+                            const GLvoid *indices,
+                            bool primitiveRestartEnabled,
+                            bool attributesNeedStreaming,
+                            gl::IndexRange *outIndexRange,
+                            const GLvoid **outIndices) const;
+
+    // Returns the amount of space needed to stream all attributes that need streaming
+    // and the data size of the largest attribute
+    void computeStreamingAttributeSizes(const gl::AttributesMask &activeAttributesMask,
+                                        GLsizei instanceCount,
+                                        const gl::IndexRange &indexRange,
+                                        size_t *outStreamingDataSize,
+                                        size_t *outMaxAttributeDataSize) const;
 
     // Stream attributes that have client data
-    gl::Error streamAttributes(size_t streamingDataSize, size_t maxAttributeDataSize, const RangeUI &indexRange) const;
+    gl::Error streamAttributes(const gl::AttributesMask &activeAttributesMask,
+                               GLsizei instanceCount,
+                               const gl::IndexRange &indexRange) const;
+
+    void updateNeedsStreaming(size_t attribIndex);
+    void updateAttribEnabled(size_t attribIndex);
+    void updateAttribPointer(size_t attribIndex);
 
     const FunctionsGL *mFunctions;
     StateManagerGL *mStateManager;
 
     GLuint mVertexArrayID;
 
-    BindingPointer<const gl::Buffer> mElementArrayBuffer;
-    std::vector<gl::VertexAttribute> mAttributes;
-
-    mutable GLuint mAppliedElementArrayBuffer;
+    mutable BindingPointer<gl::Buffer> mAppliedElementArrayBuffer;
     mutable std::vector<gl::VertexAttribute> mAppliedAttributes;
 
     mutable size_t mStreamingElementArrayBufferSize;
@@ -67,6 +89,8 @@ class VertexArrayGL : public VertexArrayImpl
 
     mutable size_t mStreamingArrayBufferSize;
     mutable GLuint mStreamingArrayBuffer;
+
+    gl::AttributesMask mAttributesNeedStreaming;
 };
 
 }

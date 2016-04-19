@@ -105,16 +105,16 @@ std::string Diagnostics::message(ID id)
       case PP_VERSION_NOT_FIRST_STATEMENT:
         return "#version directive must occur before anything else, "
                "except for comments and white space";
+      case PP_VERSION_NOT_FIRST_LINE_ESSL3:
+        return "#version directive must occur on the first line of the shader";
       case PP_INVALID_LINE_NUMBER:
         return "invalid line number";
       case PP_INVALID_FILE_NUMBER:
         return "invalid file number";
       case PP_INVALID_LINE_DIRECTIVE:
         return "invalid line directive";
-      case PP_INVALID_PRAGMA:
-        return "invalid pragma";
-      case PP_INVALID_PRAGMA_VALUE:
-        return "invalid pragma value, must be 'on' or 'off'";
+      case PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL3:
+        return "extension directive must occur before any non-preprocessor tokens in ESSL3";
       // Errors end.
       // Warnings begin.
       case PP_EOF_IN_DIRECTIVE:
@@ -123,6 +123,10 @@ std::string Diagnostics::message(ID id)
         return "unexpected token after conditional expression";
       case PP_UNRECOGNIZED_PRAGMA:
         return "unrecognized pragma";
+      case PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1:
+        return "extension directive should occur before any non-preprocessor tokens";
+      case PP_WARNING_MACRO_NAME_RESERVED:
+        return "macro name with a double underscore is reserved - unintented behavior is possible";
       // Warnings end.
       default:
         assert(false);

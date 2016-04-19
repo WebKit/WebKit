@@ -90,4 +90,37 @@ TEST(HandleAllocatorTest, Reallocation)
     EXPECT_EQ(finalResult, 1);
 }
 
+// The following test covers reserving a handle with max uint value.
+// See http://anglebug.com/1052
+TEST(HandleAllocatorTest, ReserveMaxUintHandle)
+{
+    gl::HandleAllocator allocator;
+
+    GLuint maxUintHandle = std::numeric_limits<GLuint>::max();
+    allocator.reserve(maxUintHandle);
+
+    GLuint normalHandle = allocator.allocate();
+    EXPECT_EQ(1u, normalHandle);
+}
+
+// To test if the allocator keep the handle in a sorted order.
+TEST(HandleAllocatorTest, SortedOrderHandle)
+{
+    gl::HandleAllocator allocator;
+
+    allocator.reserve(3);
+
+    GLuint allocatedList[5];
+    for (GLuint count = 0; count < 5; count++)
+    {
+        allocatedList[count] = allocator.allocate();
+    }
+
+    EXPECT_EQ(1u, allocatedList[0]);
+    EXPECT_EQ(2u, allocatedList[1]);
+    EXPECT_EQ(4u, allocatedList[2]);
+    EXPECT_EQ(5u, allocatedList[3]);
+    EXPECT_EQ(6u, allocatedList[4]);
+}
+
 }

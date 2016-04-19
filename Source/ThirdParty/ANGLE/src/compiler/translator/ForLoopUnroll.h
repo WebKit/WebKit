@@ -24,16 +24,18 @@ class ForLoopUnrollMarker : public TIntermTraverser
         kSamplerArrayIndex
     };
 
-    ForLoopUnrollMarker(UnrollCondition condition)
-        : mUnrollCondition(condition),
+    ForLoopUnrollMarker(UnrollCondition condition, bool hasRunLoopValidation)
+        : TIntermTraverser(true, false, false),
+          mUnrollCondition(condition),
           mSamplerArrayIndexIsFloatLoopIndex(false),
-          mVisitSamplerArrayIndexNodeInsideLoop(false)
+          mVisitSamplerArrayIndexNodeInsideLoop(false),
+          mHasRunLoopValidation(hasRunLoopValidation)
     {
     }
 
-    virtual bool visitBinary(Visit, TIntermBinary *node);
-    virtual bool visitLoop(Visit, TIntermLoop *node);
-    virtual void visitSymbol(TIntermSymbol *node);
+    bool visitBinary(Visit, TIntermBinary *node) override;
+    bool visitLoop(Visit, TIntermLoop *node) override;
+    void visitSymbol(TIntermSymbol *node) override;
 
     bool samplerArrayIndexIsFloatLoopIndex() const
     {
@@ -45,6 +47,7 @@ class ForLoopUnrollMarker : public TIntermTraverser
     TLoopStack mLoopStack;
     bool mSamplerArrayIndexIsFloatLoopIndex;
     bool mVisitSamplerArrayIndexNodeInsideLoop;
+    bool mHasRunLoopValidation;
 };
 
 #endif // COMPILER_TRANSLATOR_FORLOOPUNROLL_H_

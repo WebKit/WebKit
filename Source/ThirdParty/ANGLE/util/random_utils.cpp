@@ -3,20 +3,73 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
+// random_utils:
+//   Helper functions for random number generation.
+//
 
 #include "random_utils.h"
-#include <time.h>
+
+#include <chrono>
+
 #include <cstdlib>
 
-float RandomBetween(float min, float max)
+namespace angle
 {
-    static bool randInitialized = false;
-    if (!randInitialized)
-    {
-        srand(static_cast<unsigned int>(time(NULL)));
-        randInitialized = true;
-    }
 
-    const size_t divisor = 10000;
-    return min + ((rand() % divisor) / static_cast<float>(divisor)) * (max - min);
+// Seed from clock
+RNG::RNG()
+{
+    long long timeSeed = std::chrono::system_clock::now().time_since_epoch().count();
+    mGenerator.seed(static_cast<unsigned int>(timeSeed));
 }
+
+// Seed from fixed number.
+RNG::RNG(unsigned int seed) : mGenerator(seed)
+{
+}
+
+RNG::~RNG()
+{
+}
+
+void RNG::reseed(unsigned int newSeed)
+{
+    mGenerator.seed(newSeed);
+}
+
+int RNG::randomInt()
+{
+    std::uniform_int_distribution<int> intDistribution;
+    return intDistribution(mGenerator);
+}
+
+int RNG::randomIntBetween(int min, int max)
+{
+    std::uniform_int_distribution<int> intDistribution(min, max);
+    return intDistribution(mGenerator);
+}
+
+unsigned int RNG::randomUInt()
+{
+    std::uniform_int_distribution<unsigned int> uintDistribution;
+    return uintDistribution(mGenerator);
+}
+
+float RNG::randomFloat()
+{
+    std::uniform_real_distribution<float> floatDistribution;
+    return floatDistribution(mGenerator);
+}
+
+float RNG::randomFloatBetween(float min, float max)
+{
+    std::uniform_real_distribution<float> floatDistribution(min, max);
+    return floatDistribution(mGenerator);
+}
+
+float RNG::randomNegativeOneToOne()
+{
+    return randomFloatBetween(-1.0f, 1.0f);
+}
+
+}  // namespace angle

@@ -182,26 +182,29 @@ TString StructureHLSL::define(const TStructure &structure, bool useHLSLRowMajorP
     string += declareString + "\n"
               "{\n";
 
-    for (unsigned int i = 0; i < fields.size(); i++)
+    for (const TField *field : fields)
     {
-        const TField &field = *fields[i];
-        const TType &fieldType = *field.type();
-        const TStructure *fieldStruct = fieldType.getStruct();
-        const TString &fieldTypeString = fieldStruct ?
-                                         QualifiedStructNameString(*fieldStruct, useHLSLRowMajorPacking,
-                                                                   useStd140Packing) :
-                                         TypeString(fieldType);
-
-        if (padHelper)
+        const TType &fieldType = *field->type();
+        if (!IsSampler(fieldType.getBasicType()))
         {
-            string += padHelper->prePaddingString(fieldType);
-        }
+            const TStructure *fieldStruct = fieldType.getStruct();
+            const TString &fieldTypeString =
+                fieldStruct ? QualifiedStructNameString(*fieldStruct, useHLSLRowMajorPacking,
+                                                        useStd140Packing)
+                            : TypeString(fieldType);
 
-        string += "    " + fieldTypeString + " " + DecorateField(field.name(), structure) + ArrayString(fieldType) + ";\n";
+            if (padHelper)
+            {
+                string += padHelper->prePaddingString(fieldType);
+            }
 
-        if (padHelper)
-        {
-            string += padHelper->postPaddingString(fieldType, useHLSLRowMajorPacking);
+            string += "    " + fieldTypeString + " " + DecorateField(field->name(), structure) +
+                      ArrayString(fieldType) + ";\n";
+
+            if (padHelper)
+            {
+                string += padHelper->postPaddingString(fieldType, useHLSLRowMajorPacking);
+            }
         }
     }
 
@@ -211,16 +214,18 @@ TString StructureHLSL::define(const TStructure &structure, bool useHLSLRowMajorP
     return string;
 }
 
-void StructureHLSL::addConstructor(const TType &type, const TString &name, const TIntermSequence *parameters)
+TString StructureHLSL::addConstructor(const TType &type,
+                                      const TString &name,
+                                      const TIntermSequence *parameters)
 {
     if (name == "")
     {
-        return;   // Nameless structures don't have constructors
+        return TString();  // Nameless structures don't have constructors
     }
 
     if (type.getStruct() && mStructNames.find(name) != mStructNames.end())
     {
-        return;   // Already added
+        return TString(name);  // Already added
     }
 
     TType ctorType = type;
@@ -230,6 +235,8 @@ void StructureHLSL::addConstructor(const TType &type, const TString &name, const
 
     typedef std::vector<TType> ParameterArray;
     ParameterArray ctorParameters;
+
+    TString constructorFunctionName;
 
     const TStructure* structure = type.getStruct();
     if (structure)
@@ -261,17 +268,24 @@ void StructureHLSL::addConstructor(const TType &type, const TString &name, const
         }
 
         const TFieldList &fields = structure->fields();
-        for (unsigned int i = 0; i < fields.size(); i++)
+        for (const TField *field : fields)
         {
-            ctorParameters.push_back(*fields[i]->type());
+            const TType *fieldType = field->type();
+            if (!IsSampler(fieldType->getBasicType()))
+            {
+                ctorParameters.push_back(*fieldType);
+            }
         }
+        constructorFunctionName = TString(name);
     }
     else if (parameters)
     {
-        for (TIntermSequence::const_iterator parameter = parameters->begin(); parameter != parameters->end(); parameter++)
+        for (auto parameter : *parameters)
         {
-            ctorParameters.push_back((*parameter)->getAsTyped()->getType());
+            const TType &paramType = parameter->getAsTyped()->getType();
+            ctorParameters.push_back(paramType);
         }
+        constructorFunctionName = TString(name) + DisambiguateFunctionName(parameters);
     }
     else UNREACHABLE();
 
@@ -283,7 +297,7 @@ void StructureHLSL::addConstructor(const TType &type, const TString &name, const
     }
     else   // Built-in type
     {
-        constructor += TypeString(ctorType) + " " + name + "(";
+        constructor += TypeString(ctorType) + " " + constructorFunctionName + "(";
     }
 
     for (unsigned int parameter = 0; parameter < ctorParameters.size(); parameter++)
@@ -303,7 +317,15 @@ void StructureHLSL::addConstructor(const TType &type, const TString &name, const
 
     if (ctorType.getStruct())
     {
-        constructor += "    " + name + " structure = {";
+        constructor += "    " + name + " structure";
+        if (ctorParameters.empty())
+        {
+            constructor += ";\n";
+        }
+        else
+        {
+            constructor += " = { ";
+        }
     }
     else
     {
@@ -362,7 +384,15 @@ void StructureHLSL::addConstructor(const TType &type, const TString &name, const
     }
     else
     {
-        size_t remainingComponents = ctorType.getObjectSize();
+        size_t remainingComponents = 0;
+        if (ctorType.getStruct())
+        {
+            remainingComponents = ctorParameters.size();
+        }
+        else
+        {
+            remainingComponents = ctorType.getObjectSize();
+        }
         size_t parameterIndex = 0;
 
         while (remainingComponents > 0)
@@ -375,10 +405,9 @@ void StructureHLSL::addConstructor(const TType &type, const TString &name, const
 
             if (ctorType.getStruct())
             {
-                ASSERT(remainingComponents == parameterSize || moreParameters);
-                ASSERT(parameterSize <= remainingComponents);
+                ASSERT(remainingComponents == 1 || moreParameters);
 
-                remainingComponents -= parameterSize;
+                --remainingComponents;
             }
             else if (parameter.isScalar())
             {
@@ -454,9 +483,13 @@ void StructureHLSL::addConstructor(const TType &type, const TString &name, const
 
     if (ctorType.getStruct())
     {
-        constructor += "};\n"
-                        "    return structure;\n"
-                        "}\n";
+        if (!ctorParameters.empty())
+        {
+            constructor += "};\n";
+        }
+        constructor +=
+            "    return structure;\n"
+            "}\n";
     }
     else
     {
@@ -465,6 +498,8 @@ void StructureHLSL::addConstructor(const TType &type, const TString &name, const
     }
 
     mConstructors.insert(constructor);
+
+    return constructorFunctionName;
 }
 
 std::string StructureHLSL::structsHeader() const

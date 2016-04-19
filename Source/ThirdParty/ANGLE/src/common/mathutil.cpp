@@ -52,7 +52,7 @@ unsigned int convertRGBFloatsTo999E5(float red, float green, float blue)
     output.B = static_cast<unsigned int>(floor((blue_c / (pow(2.0f, exp_s - g_sharedexp_bias - g_sharedexp_mantissabits))) + 0.5f));
     output.E = exp_s;
 
-    return *reinterpret_cast<unsigned int*>(&output);
+    return bitCast<unsigned int>(output);
 }
 
 void convert999E5toRGBFloats(unsigned int input, float *red, float *green, float *blue)

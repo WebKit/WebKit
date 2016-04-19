@@ -4,11 +4,17 @@
 // found in the LICENSE file.
 //
 
-#include "compiler/translator/intermediate.h"
+#include "compiler/translator/Intermediate.h"
 #include "compiler/translator/SymbolTable.h"
 
 namespace
 {
+
+void OutputFunction(TInfoSinkBase &out, const char *str, TIntermAggregate *node)
+{
+    const char *internal = node->getNameObj().isInternal() ? " (internal function)" : "";
+    out << str << internal << ": " << node->getNameObj().getString();
+}
 
 //
 // Two purposes:
@@ -27,18 +33,21 @@ class TOutputTraverser : public TIntermTraverser
 {
   public:
     TOutputTraverser(TInfoSinkBase &i)
-        : sink(i) { }
+        : TIntermTraverser(true, false, false),
+          sink(i)
+    {
+    }
     TInfoSinkBase& sink;
 
   protected:
-    void visitSymbol(TIntermSymbol *);
-    void visitConstantUnion(TIntermConstantUnion *);
-    bool visitBinary(Visit visit, TIntermBinary *);
-    bool visitUnary(Visit visit, TIntermUnary *);
-    bool visitSelection(Visit visit, TIntermSelection *);
-    bool visitAggregate(Visit visit, TIntermAggregate *);
-    bool visitLoop(Visit visit, TIntermLoop *);
-    bool visitBranch(Visit visit, TIntermBranch *);
+    void visitSymbol(TIntermSymbol *) override;
+    void visitConstantUnion(TIntermConstantUnion *) override;
+    bool visitBinary(Visit visit, TIntermBinary *) override;
+    bool visitUnary(Visit visit, TIntermUnary *) override;
+    bool visitSelection(Visit visit, TIntermSelection *) override;
+    bool visitAggregate(Visit visit, TIntermAggregate *) override;
+    bool visitLoop(Visit visit, TIntermLoop *) override;
+    bool visitBranch(Visit visit, TIntermBranch *) override;
 };
 
 //
@@ -55,26 +64,6 @@ void OutputTreeText(TInfoSinkBase &sink, TIntermNode *node, const int depth)
 }
 
 }  // namespace anonymous
-
-
-TString TType::getCompleteString() const
-{
-    TStringStream stream;
-
-    if (qualifier != EvqTemporary && qualifier != EvqGlobal)
-        stream << getQualifierString() << " ";
-    if (precision != EbpUndefined)
-        stream << getPrecisionString() << " ";
-    if (array)
-        stream << "array[" << getArraySize() << "] of ";
-    if (isMatrix())
-        stream << getCols() << "X" << getRows() << " matrix of ";
-    else if (isVector())
-        stream << getNominalSize() << "-component vector of ";
-
-    stream << getBasicString();
-    return stream.str();
-}
 
 //
 // The rest of the file are the traversal functions.  The last one
@@ -390,10 +379,10 @@ bool TOutputTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
     {
       case EOpSequence:      out << "Sequence\n"; return true;
       case EOpComma:         out << "Comma\n"; return true;
-      case EOpFunction:      out << "Function Definition: " << node->getName(); break;
-      case EOpFunctionCall:  out << "Function Call: " << node->getName(); break;
+      case EOpFunction:      OutputFunction(out, "Function Definition", node); break;
+      case EOpFunctionCall:  OutputFunction(out, "Function Call", node); break;
       case EOpParameters:    out << "Function Parameters: ";              break;
-      case EOpPrototype:     out << "Function Prototype: " << node->getName(); break;
+      case EOpPrototype:     OutputFunction(out, "Function Prototype", node); break;
 
       case EOpConstructFloat: out << "Construct float"; break;
       case EOpConstructVec2:  out << "Construct vec2";  break;
@@ -412,7 +401,13 @@ bool TOutputTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
       case EOpConstructUVec3: out << "Construct uvec3"; break;
       case EOpConstructUVec4: out << "Construct uvec4"; break;
       case EOpConstructMat2:  out << "Construct mat2";  break;
+      case EOpConstructMat2x3:  out << "Construct mat2x3";  break;
+      case EOpConstructMat2x4:  out << "Construct mat2x4";  break;
+      case EOpConstructMat3x2:  out << "Construct mat3x2";  break;
       case EOpConstructMat3:  out << "Construct mat3";  break;
+      case EOpConstructMat3x4:  out << "Construct mat3x4";  break;
+      case EOpConstructMat4x2:  out << "Construct mat4x2";  break;
+      case EOpConstructMat4x3:  out << "Construct mat4x3";  break;
       case EOpConstructMat4:  out << "Construct mat4";  break;
       case EOpConstructStruct:  out << "Construct structure";  break;
 

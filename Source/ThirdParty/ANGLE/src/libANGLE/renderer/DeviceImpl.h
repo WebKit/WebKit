@@ -26,9 +26,10 @@ class DeviceImpl : angle::NonCopyable
     DeviceImpl();
     virtual ~DeviceImpl();
 
-    virtual egl::Error getDevice(EGLAttrib *value) = 0;
+    virtual egl::Error getDevice(void **outValue) = 0;
     virtual EGLint getType() = 0;
     virtual void generateExtensions(egl::DeviceExtensions *outExtensions) const = 0;
+    virtual bool deviceExternallySourced() = 0;
 };
 
 }

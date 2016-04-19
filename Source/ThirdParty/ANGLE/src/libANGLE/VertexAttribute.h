@@ -40,34 +40,13 @@ bool operator==(const VertexAttribute &a, const VertexAttribute &b);
 bool operator!=(const VertexAttribute &a, const VertexAttribute &b);
 
 template <typename T>
-T QuerySingleVertexAttributeParameter(const VertexAttribute& attrib, GLenum pname)
-{
-  switch (pname)
-  {
-    case GL_VERTEX_ATTRIB_ARRAY_ENABLED:
-      return static_cast<T>(attrib.enabled ? GL_TRUE : GL_FALSE);
-    case GL_VERTEX_ATTRIB_ARRAY_SIZE:
-      return static_cast<T>(attrib.size);
-    case GL_VERTEX_ATTRIB_ARRAY_STRIDE:
-      return static_cast<T>(attrib.stride);
-    case GL_VERTEX_ATTRIB_ARRAY_TYPE:
-      return static_cast<T>(attrib.type);
-    case GL_VERTEX_ATTRIB_ARRAY_NORMALIZED:
-      return static_cast<T>(attrib.normalized ? GL_TRUE : GL_FALSE);
-    case GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING:
-      return static_cast<T>(attrib.buffer.id());
-    case GL_VERTEX_ATTRIB_ARRAY_DIVISOR:
-      return static_cast<T>(attrib.divisor);
-    case GL_VERTEX_ATTRIB_ARRAY_INTEGER:
-      return static_cast<T>(attrib.pureInteger ? GL_TRUE : GL_FALSE);
-    default:
-      UNREACHABLE();
-      return static_cast<T>(0);
-  }
-}
+T QuerySingleVertexAttributeParameter(const VertexAttribute& attrib, GLenum pname);
 
 size_t ComputeVertexAttributeTypeSize(const VertexAttribute& attrib);
 size_t ComputeVertexAttributeStride(const VertexAttribute& attrib);
+size_t ComputeVertexAttributeElementCount(const VertexAttribute &attrib,
+                                          size_t drawCount,
+                                          size_t instanceCount);
 
 struct VertexAttribCurrentValueData
 {
@@ -79,44 +58,18 @@ struct VertexAttribCurrentValueData
     };
     GLenum Type;
 
-    void setFloatValues(const GLfloat floatValues[4])
-    {
-        for (unsigned int valueIndex = 0; valueIndex < 4; valueIndex++)
-        {
-            FloatValues[valueIndex] = floatValues[valueIndex];
-        }
-        Type = GL_FLOAT;
-    }
+    VertexAttribCurrentValueData();
 
-    void setIntValues(const GLint intValues[4])
-    {
-        for (unsigned int valueIndex = 0; valueIndex < 4; valueIndex++)
-        {
-            IntValues[valueIndex] = intValues[valueIndex];
-        }
-        Type = GL_INT;
-    }
-
-    void setUnsignedIntValues(const GLuint unsignedIntValues[4])
-    {
-        for (unsigned int valueIndex = 0; valueIndex < 4; valueIndex++)
-        {
-            UnsignedIntValues[valueIndex] = unsignedIntValues[valueIndex];
-        }
-        Type = GL_UNSIGNED_INT;
-    }
-
-    bool operator==(const VertexAttribCurrentValueData &other)
-    {
-        return (Type == other.Type && memcmp(FloatValues, other.FloatValues, sizeof(float) * 4) == 0);
-    }
-
-    bool operator!=(const VertexAttribCurrentValueData &other)
-    {
-        return !(*this == other);
-    }
+    void setFloatValues(const GLfloat floatValues[4]);
+    void setIntValues(const GLint intValues[4]);
+    void setUnsignedIntValues(const GLuint unsignedIntValues[4]);
 };
 
+bool operator==(const VertexAttribCurrentValueData &a, const VertexAttribCurrentValueData &b);
+bool operator!=(const VertexAttribCurrentValueData &a, const VertexAttribCurrentValueData &b);
+
 }
+
+#include "VertexAttribute.inl"
 
 #endif // LIBANGLE_VERTEXATTRIBUTE_H_

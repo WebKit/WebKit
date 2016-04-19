@@ -15,17 +15,28 @@
 namespace gl
 {
 
-bool operator==(const Rectangle &a, const Rectangle &b)
+PrimitiveType GetPrimitiveType(GLenum drawMode)
 {
-    return a.x == b.x &&
-           a.y == b.y &&
-           a.width == b.width &&
-           a.height == b.height;
-}
-
-bool operator!=(const Rectangle &a, const Rectangle &b)
-{
-    return !(a == b);
+    switch (drawMode)
+    {
+        case GL_POINTS:
+            return PRIMITIVE_POINTS;
+        case GL_LINES:
+            return PRIMITIVE_LINES;
+        case GL_LINE_STRIP:
+            return PRIMITIVE_LINE_STRIP;
+        case GL_LINE_LOOP:
+            return PRIMITIVE_LINE_LOOP;
+        case GL_TRIANGLES:
+            return PRIMITIVE_TRIANGLES;
+        case GL_TRIANGLE_STRIP:
+            return PRIMITIVE_TRIANGLE_STRIP;
+        case GL_TRIANGLE_FAN:
+            return PRIMITIVE_TRIANGLE_FAN;
+        default:
+            UNREACHABLE();
+            return PRIMITIVE_TYPE_MAX;
+    }
 }
 
 SamplerState::SamplerState()
@@ -35,47 +46,31 @@ SamplerState::SamplerState()
       wrapT(GL_REPEAT),
       wrapR(GL_REPEAT),
       maxAnisotropy(1.0f),
-      baseLevel(0),
-      maxLevel(1000),
       minLod(-1000.0f),
       maxLod(1000.0f),
       compareMode(GL_NONE),
-      compareFunc(GL_LEQUAL),
-      swizzleRed(GL_RED),
+      compareFunc(GL_LEQUAL)
+{
+}
+
+TextureState::TextureState()
+    : swizzleRed(GL_RED),
       swizzleGreen(GL_GREEN),
       swizzleBlue(GL_BLUE),
-      swizzleAlpha(GL_ALPHA)
-{}
+      swizzleAlpha(GL_ALPHA),
+      samplerState(),
+      baseLevel(0),
+      maxLevel(1000),
+      immutableFormat(false),
+      immutableLevels(0),
+      usage(GL_NONE)
+{
+}
 
-bool SamplerState::swizzleRequired() const
+bool TextureState::swizzleRequired() const
 {
     return swizzleRed != GL_RED || swizzleGreen != GL_GREEN ||
            swizzleBlue != GL_BLUE || swizzleAlpha != GL_ALPHA;
-}
-
-bool SamplerState::operator==(const SamplerState &other) const
-{
-    return minFilter == other.minFilter &&
-           magFilter == other.magFilter &&
-           wrapS == other.wrapS &&
-           wrapT == other.wrapT &&
-           wrapR == other.wrapR &&
-           maxAnisotropy == other.maxAnisotropy &&
-           baseLevel == other.baseLevel &&
-           maxLevel == other.maxLevel &&
-           minLod == other.minLod &&
-           maxLod == other.maxLod &&
-           compareMode == other.compareMode &&
-           compareFunc == other.compareFunc &&
-           swizzleRed == other.swizzleRed &&
-           swizzleGreen == other.swizzleGreen &&
-           swizzleBlue == other.swizzleBlue &&
-           swizzleAlpha == other.swizzleAlpha;
-}
-
-bool SamplerState::operator!=(const SamplerState &other) const
-{
-    return !(*this == other);
 }
 
 static void MinMax(int a, int b, int *minimum, int *maximum)
@@ -128,110 +123,6 @@ bool ClipRectangle(const Rectangle &source, const Rectangle &clip, Rectangle *in
     }
 }
 
-VertexFormat::VertexFormat()
-    : mType(GL_NONE),
-      mNormalized(GL_FALSE),
-      mComponents(0),
-      mPureInteger(false)
-{}
-
-VertexFormat::VertexFormat(GLenum type, GLboolean normalized, GLuint components, bool pureInteger)
-    : mType(type),
-      mNormalized(normalized),
-      mComponents(components),
-      mPureInteger(pureInteger)
-{
-    // Float data can not be normalized, so ignore the user setting
-    if (mType == GL_FLOAT || mType == GL_HALF_FLOAT || mType == GL_FIXED)
-    {
-        mNormalized = GL_FALSE;
-    }
-}
-
-VertexFormat::VertexFormat(const VertexAttribute &attrib)
-    : mType(attrib.type),
-      mNormalized(attrib.normalized ? GL_TRUE : GL_FALSE),
-      mComponents(attrib.size),
-      mPureInteger(attrib.pureInteger)
-{
-    // Ensure we aren't initializing a vertex format which should be using
-    // the current-value type
-    ASSERT(attrib.enabled);
-
-    // Float data can not be normalized, so ignore the user setting
-    if (mType == GL_FLOAT || mType == GL_HALF_FLOAT || mType == GL_FIXED)
-    {
-        mNormalized = GL_FALSE;
-    }
-}
-
-VertexFormat::VertexFormat(const VertexAttribute &attrib, GLenum currentValueType)
-    : mType(attrib.type),
-      mNormalized(attrib.normalized ? GL_TRUE : GL_FALSE),
-      mComponents(attrib.size),
-      mPureInteger(attrib.pureInteger)
-{
-    if (!attrib.enabled)
-    {
-        mType = currentValueType;
-        mNormalized = GL_FALSE;
-        mComponents = 4;
-        mPureInteger = (currentValueType != GL_FLOAT);
-    }
-
-    // Float data can not be normalized, so ignore the user setting
-    if (mType == GL_FLOAT || mType == GL_HALF_FLOAT || mType == GL_FIXED)
-    {
-        mNormalized = GL_FALSE;
-    }
-}
-
-void VertexFormat::GetInputLayout(VertexFormat *inputLayout,
-                                  Program *program,
-                                  const State &state)
-{
-    const std::vector<VertexAttribute> &vertexAttributes = state.getVertexArray()->getVertexAttributes();
-    for (unsigned int attributeIndex = 0; attributeIndex < vertexAttributes.size(); attributeIndex++)
-    {
-        int semanticIndex = program->getSemanticIndex(attributeIndex);
-
-        if (semanticIndex != -1)
-        {
-            inputLayout[semanticIndex] = VertexFormat(vertexAttributes[attributeIndex], state.getVertexAttribCurrentValue(attributeIndex).Type);
-        }
-    }
-}
-
-bool VertexFormat::operator==(const VertexFormat &other) const
-{
-    return (mType == other.mType                &&
-            mComponents == other.mComponents    &&
-            mNormalized == other.mNormalized    &&
-            mPureInteger == other.mPureInteger  );
-}
-
-bool VertexFormat::operator!=(const VertexFormat &other) const
-{
-    return !(*this == other);
-}
-
-bool VertexFormat::operator<(const VertexFormat& other) const
-{
-    if (mType != other.mType)
-    {
-        return mType < other.mType;
-    }
-    if (mNormalized != other.mNormalized)
-    {
-        return mNormalized < other.mNormalized;
-    }
-    if (mComponents != other.mComponents)
-    {
-        return mComponents < other.mComponents;
-    }
-    return mPureInteger < other.mPureInteger;
-}
-
 bool Box::operator==(const Box &other) const
 {
     return (x == other.x && y == other.y && z == other.z &&
@@ -243,4 +134,13 @@ bool Box::operator!=(const Box &other) const
     return !(*this == other);
 }
 
+bool operator==(const Extents &lhs, const Extents &rhs)
+{
+    return lhs.width == rhs.width && lhs.height == rhs.height && lhs.depth == rhs.depth;
+}
+
+bool operator!=(const Extents &lhs, const Extents &rhs)
+{
+    return !(lhs == rhs);
+}
 }

@@ -13,9 +13,9 @@
 namespace rx
 {
 
-void DebugAnnotator9::beginEvent(const std::wstring &eventName)
+void DebugAnnotator9::beginEvent(const wchar_t *eventName)
 {
-    D3DPERF_BeginEvent(0, eventName.c_str());
+    D3DPERF_BeginEvent(0, eventName);
 }
 
 void DebugAnnotator9::endEvent()
@@ -23,9 +23,9 @@ void DebugAnnotator9::endEvent()
     D3DPERF_EndEvent();
 }
 
-void DebugAnnotator9::setMarker(const std::wstring &markerName)
+void DebugAnnotator9::setMarker(const wchar_t *markerName)
 {
-    D3DPERF_SetMarker(0, markerName.c_str());
+    D3DPERF_SetMarker(0, markerName);
 }
 
 bool DebugAnnotator9::getStatus()

@@ -49,7 +49,11 @@ class StructureHLSL : angle::NonCopyable
   public:
     StructureHLSL();
 
-    void addConstructor(const TType &type, const TString &name, const TIntermSequence *parameters);
+    // Returns the name of the constructor function. "name" parameter is the name of the type being
+    // constructed.
+    TString addConstructor(const TType &type,
+                           const TString &name,
+                           const TIntermSequence *parameters);
     std::string structsHeader() const;
 
     TString defineQualified(const TStructure &structure, bool useHLSLRowMajorPacking, bool useStd140Packing);

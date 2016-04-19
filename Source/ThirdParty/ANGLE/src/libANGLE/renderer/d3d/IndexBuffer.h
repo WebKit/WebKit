@@ -12,7 +12,6 @@
 
 #include "common/angleutils.h"
 #include "libANGLE/Error.h"
-#include "libANGLE/renderer/IndexRangeCache.h"
 
 namespace rx
 {

@@ -57,14 +57,15 @@ Config::Config()
       transparentType(EGL_NONE),
       transparentRedValue(0),
       transparentGreenValue(0),
-      transparentBlueValue(0)
+      transparentBlueValue(0),
+      optimalOrientation(0)
 {
 }
 
 EGLint ConfigSet::add(const Config &config)
 {
     // Set the config's ID to a small number that starts at 1 ([EGL 1.5] section 3.4)
-    EGLint id = static_cast<EGLint>(mConfigs.size() + 1);
+    EGLint id = static_cast<EGLint>(mConfigs.size()) + 1;
 
     Config copyConfig(config);
     copyConfig.configID = id;
@@ -166,8 +167,8 @@ class ConfigSorter
         // components that are 0 or don't-care.
         for (auto attribIter = attributeMap.begin(); attribIter != attributeMap.end(); attribIter++)
         {
-            EGLint attributeKey = attribIter->first;
-            EGLint attributeValue = attribIter->second;
+            EGLAttrib attributeKey   = attribIter->first;
+            EGLAttrib attributeValue = attribIter->second;
             if (attributeKey != 0 && attributeValue != EGL_DONT_CARE)
             {
                 switch (attributeKey)
@@ -214,8 +215,8 @@ std::vector<const Config*> ConfigSet::filter(const AttributeMap &attributeMap) c
 
         for (auto attribIter = attributeMap.begin(); attribIter != attributeMap.end(); attribIter++)
         {
-            EGLint attributeKey = attribIter->first;
-            EGLint attributeValue = attribIter->second;
+            EGLAttrib attributeKey   = attribIter->first;
+            EGLAttrib attributeValue = attribIter->second;
 
             switch (attributeKey)
             {
@@ -251,6 +252,9 @@ std::vector<const Config*> ConfigSet::filter(const AttributeMap &attributeMap) c
               case EGL_MAX_PBUFFER_WIDTH:         match = config.maxPBufferWidth >= attributeValue;                   break;
               case EGL_MAX_PBUFFER_HEIGHT:        match = config.maxPBufferHeight >= attributeValue;                  break;
               case EGL_MAX_PBUFFER_PIXELS:        match = config.maxPBufferPixels >= attributeValue;                  break;
+              case EGL_OPTIMAL_SURFACE_ORIENTATION_ANGLE:
+                  match = config.optimalOrientation == attributeValue;
+                  break;
               default: UNREACHABLE();
             }
 

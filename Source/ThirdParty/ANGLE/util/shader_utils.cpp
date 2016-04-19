@@ -12,7 +12,7 @@
 
 static std::string ReadFileToString(const std::string &source)
 {
-    std::ifstream stream(source);
+    std::ifstream stream(source.c_str());
     if (!stream)
     {
         std::cerr << "Failed to load shader file: " << source;
@@ -46,10 +46,18 @@ GLuint CompileShader(GLenum type, const std::string &source)
         GLint infoLogLength;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-        std::vector<GLchar> infoLog(infoLogLength);
-        glGetShaderInfoLog(shader, infoLog.size(), NULL, &infoLog[0]);
-
-        std::cerr << "shader compilation failed: " << &infoLog[0];
+        // Info log length includes the null terminator, so 1 means that the info log is an empty
+        // string.
+        if (infoLogLength > 1)
+        {
+            std::vector<GLchar> infoLog(infoLogLength);
+            glGetShaderInfoLog(shader, static_cast<GLsizei>(infoLog.size()), NULL, &infoLog[0]);
+            std::cerr << "shader compilation failed: " << &infoLog[0];
+        }
+        else
+        {
+            std::cerr << "shader compilation failed. <Empty log message>";
+        }
 
         glDeleteShader(shader);
         shader = 0;
@@ -69,7 +77,11 @@ GLuint CompileShaderFromFile(GLenum type, const std::string &sourcePath)
     return CompileShader(type, source);
 }
 
-GLuint CompileProgram(const std::string &vsSource, const std::string &fsSource)
+GLuint CompileProgramWithTransformFeedback(
+    const std::string &vsSource,
+    const std::string &fsSource,
+    const std::vector<std::string> &transformFeedbackVaryings,
+    GLenum bufferMode)
 {
     GLuint program = glCreateProgram();
 
@@ -90,6 +102,19 @@ GLuint CompileProgram(const std::string &vsSource, const std::string &fsSource)
     glAttachShader(program, fs);
     glDeleteShader(fs);
 
+    if (transformFeedbackVaryings.size() > 0)
+    {
+        std::vector<const char *> constCharTFVaryings;
+
+        for (const std::string &transformFeedbackVarying : transformFeedbackVaryings)
+        {
+            constCharTFVaryings.push_back(transformFeedbackVarying.c_str());
+        }
+
+        glTransformFeedbackVaryings(program, static_cast<GLsizei>(transformFeedbackVaryings.size()),
+                                    &constCharTFVaryings[0], bufferMode);
+    }
+
     glLinkProgram(program);
 
     GLint linkStatus;
@@ -100,16 +125,31 @@ GLuint CompileProgram(const std::string &vsSource, const std::string &fsSource)
         GLint infoLogLength;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-        std::vector<GLchar> infoLog(infoLogLength);
-        glGetProgramInfoLog(program, infoLog.size(), NULL, &infoLog[0]);
+        // Info log length includes the null terminator, so 1 means that the info log is an empty
+        // string.
+        if (infoLogLength > 1)
+        {
+            std::vector<GLchar> infoLog(infoLogLength);
+            glGetProgramInfoLog(program, static_cast<GLsizei>(infoLog.size()), nullptr, &infoLog[0]);
 
-        std::cerr << "program link failed: " << &infoLog[0];
+            std::cerr << "program link failed: " << &infoLog[0];
+        }
+        else
+        {
+            std::cerr << "program link failed. <Empty log message>";
+        }
 
         glDeleteProgram(program);
         return 0;
     }
 
     return program;
+}
+
+GLuint CompileProgram(const std::string &vsSource, const std::string &fsSource)
+{
+    std::vector<std::string> emptyVector;
+    return CompileProgramWithTransformFeedback(vsSource, fsSource, emptyVector, GL_NONE);
 }
 
 GLuint CompileProgramFromFiles(const std::string &vsPath, const std::string &fsPath)

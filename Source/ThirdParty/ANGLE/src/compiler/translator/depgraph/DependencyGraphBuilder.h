@@ -18,11 +18,11 @@ class TDependencyGraphBuilder : public TIntermTraverser
   public:
     static void build(TIntermNode *node, TDependencyGraph *graph);
 
-    virtual void visitSymbol(TIntermSymbol *);
-    virtual bool visitBinary(Visit visit, TIntermBinary *);
-    virtual bool visitSelection(Visit visit, TIntermSelection *);
-    virtual bool visitAggregate(Visit visit, TIntermAggregate *);
-    virtual bool visitLoop(Visit visit, TIntermLoop *);
+    void visitSymbol(TIntermSymbol *) override;
+    bool visitBinary(Visit visit, TIntermBinary *) override;
+    bool visitSelection(Visit visit, TIntermSelection *) override;
+    bool visitAggregate(Visit visit, TIntermAggregate *) override;
+    bool visitLoop(Visit visit, TIntermLoop *) override;
 
   private:
     typedef std::stack<TGraphSymbol *> TSymbolStack;

@@ -26,8 +26,12 @@ class QueryImpl : angle::NonCopyable
 
     virtual gl::Error begin() = 0;
     virtual gl::Error end() = 0;
+    virtual gl::Error queryCounter() = 0;
+    virtual gl::Error getResult(GLint *params) = 0;
     virtual gl::Error getResult(GLuint *params) = 0;
-    virtual gl::Error isResultAvailable(GLuint *available) = 0;
+    virtual gl::Error getResult(GLint64 *params) = 0;
+    virtual gl::Error getResult(GLuint64 *params) = 0;
+    virtual gl::Error isResultAvailable(bool *available) = 0;
 
     GLenum getType() const { return mType;  }
 

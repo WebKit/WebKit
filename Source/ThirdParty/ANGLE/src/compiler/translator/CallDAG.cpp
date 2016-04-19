@@ -18,9 +18,9 @@ class CallDAG::CallDAGCreator : public TIntermTraverser
   public:
     CallDAGCreator(TInfoSinkBase *info)
         : TIntermTraverser(true, false, true),
+          mCreationInfo(info),
           mCurrentFunction(nullptr),
-          mCurrentIndex(0),
-          mCreationInfo(info)
+          mCurrentIndex(0)
     {
     }
 
@@ -35,6 +35,7 @@ class CallDAG::CallDAGCreator : public TIntermTraverser
                 InitResult result = assignIndicesInternal(&it.second);
                 if (result != INITDAG_SUCCESS)
                 {
+                    *mCreationInfo << "\n";
                     return result;
                 }
             }
@@ -107,7 +108,8 @@ class CallDAG::CallDAGCreator : public TIntermTraverser
             if (visit == PreVisit)
             {
                 // Function declaration, create an empty record.
-                mFunctions[node->getName()];
+                auto& record = mFunctions[node->getName()];
+                record.name = node->getName();
             }
             break;
           case EOpFunction:
@@ -169,7 +171,8 @@ class CallDAG::CallDAGCreator : public TIntermTraverser
 
         if (!function->node)
         {
-            *mCreationInfo << "Undefined function: " << function->name;
+            *mCreationInfo << "Undefined function '" << function->name
+                           << ")' used in the following call chain:";
             return INITDAG_UNDEFINED;
         }
 
@@ -182,7 +185,7 @@ class CallDAG::CallDAGCreator : public TIntermTraverser
         {
             if (mCreationInfo)
             {
-                *mCreationInfo << "Recursive function call in the following call chain: " << function->name;
+                *mCreationInfo << "Recursive function call in the following call chain:" << function->name;
             }
             return INITDAG_RECURSION;
         }
@@ -191,19 +194,15 @@ class CallDAG::CallDAGCreator : public TIntermTraverser
         for (auto &callee : function->callees)
         {
             InitResult result = assignIndicesInternal(callee);
-            if (result == INITDAG_RECURSION)
+            if (result != INITDAG_SUCCESS)
             {
-                // We know that there is a recursive function call chain in the AST,
+                // We know that there is an issue with the call chain in the AST,
                 // print the link of the chain we were processing.
                 if (mCreationInfo)
                 {
-                    *mCreationInfo << " <- " << function->name;
+                    *mCreationInfo << " <- " << function->name << ")";
                 }
-                return INITDAG_RECURSION;
-            }
-            else if (result == INITDAG_UNDEFINED)
-            {
-                return INITDAG_UNDEFINED;
+                return result;
             }
         }
 

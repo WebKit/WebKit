@@ -77,7 +77,7 @@ UniformStorage11::UniformStorage11(Renderer11 *renderer, size_t initialSize)
     if (initialSize > 0)
     {
         D3D11_BUFFER_DESC constantBufferDescription = {0};
-        constantBufferDescription.ByteWidth = initialSize;
+        constantBufferDescription.ByteWidth           = static_cast<unsigned int>(initialSize);
         constantBufferDescription.Usage = D3D11_USAGE_DYNAMIC;
         constantBufferDescription.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
         constantBufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;

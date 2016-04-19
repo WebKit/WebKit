@@ -35,7 +35,8 @@ ImageIndex ImageIndex::Make2D(GLint mipIndex)
 ImageIndex ImageIndex::MakeCube(GLenum target, GLint mipIndex)
 {
     ASSERT(gl::IsCubeMapTextureTarget(target));
-    return ImageIndex(target, mipIndex, static_cast<int>(CubeMapTextureTargetToLayerIndex(target)));
+    return ImageIndex(target, mipIndex,
+                      static_cast<GLint>(CubeMapTextureTargetToLayerIndex(target)));
 }
 
 ImageIndex ImageIndex::Make2DArray(GLint mipIndex, GLint layerIndex)
@@ -50,7 +51,9 @@ ImageIndex ImageIndex::Make3D(GLint mipIndex, GLint layerIndex)
 
 ImageIndex ImageIndex::MakeGeneric(GLenum target, GLint mipIndex)
 {
-    GLint layerIndex = IsCubeMapTextureTarget(target) ? static_cast<GLint>(CubeMapTextureTargetToLayerIndex(target)) : ENTIRE_LEVEL;
+    GLint layerIndex = IsCubeMapTextureTarget(target)
+                           ? static_cast<GLint>(CubeMapTextureTargetToLayerIndex(target))
+                           : ENTIRE_LEVEL;
     return ImageIndex(target, mipIndex, layerIndex);
 }
 
@@ -83,30 +86,30 @@ ImageIndex::ImageIndex(GLenum typeIn, GLint mipIndexIn, GLint layerIndexIn)
 
 ImageIndexIterator ImageIndexIterator::Make2D(GLint minMip, GLint maxMip)
 {
-    return ImageIndexIterator(GL_TEXTURE_2D, rx::Range<GLint>(minMip, maxMip),
-                              rx::Range<GLint>(ImageIndex::ENTIRE_LEVEL, ImageIndex::ENTIRE_LEVEL), NULL);
+    return ImageIndexIterator(GL_TEXTURE_2D, Range<GLint>(minMip, maxMip),
+                              Range<GLint>(ImageIndex::ENTIRE_LEVEL, ImageIndex::ENTIRE_LEVEL), NULL);
 }
 
 ImageIndexIterator ImageIndexIterator::MakeCube(GLint minMip, GLint maxMip)
 {
-    return ImageIndexIterator(GL_TEXTURE_CUBE_MAP, rx::Range<GLint>(minMip, maxMip), rx::Range<GLint>(0, 6), NULL);
+    return ImageIndexIterator(GL_TEXTURE_CUBE_MAP, Range<GLint>(minMip, maxMip), Range<GLint>(0, 6), NULL);
 }
 
 ImageIndexIterator ImageIndexIterator::Make3D(GLint minMip, GLint maxMip,
                                               GLint minLayer, GLint maxLayer)
 {
-    return ImageIndexIterator(GL_TEXTURE_3D, rx::Range<GLint>(minMip, maxMip), rx::Range<GLint>(minLayer, maxLayer), NULL);
+    return ImageIndexIterator(GL_TEXTURE_3D, Range<GLint>(minMip, maxMip), Range<GLint>(minLayer, maxLayer), NULL);
 }
 
 ImageIndexIterator ImageIndexIterator::Make2DArray(GLint minMip, GLint maxMip,
                                                    const GLsizei *layerCounts)
 {
-    return ImageIndexIterator(GL_TEXTURE_2D_ARRAY, rx::Range<GLint>(minMip, maxMip),
-                              rx::Range<GLint>(0, IMPLEMENTATION_MAX_2D_ARRAY_TEXTURE_LAYERS), layerCounts);
+    return ImageIndexIterator(GL_TEXTURE_2D_ARRAY, Range<GLint>(minMip, maxMip),
+                              Range<GLint>(0, IMPLEMENTATION_MAX_2D_ARRAY_TEXTURE_LAYERS), layerCounts);
 }
 
-ImageIndexIterator::ImageIndexIterator(GLenum type, const rx::Range<GLint> &mipRange,
-                                       const rx::Range<GLint> &layerRange, const GLsizei *layerCounts)
+ImageIndexIterator::ImageIndexIterator(GLenum type, const Range<GLint> &mipRange,
+                                       const Range<GLint> &layerRange, const GLsizei *layerCounts)
     : mType(type),
       mMipRange(mipRange),
       mLayerRange(layerRange),

@@ -21,9 +21,9 @@ class TOutputGLSL : public TOutputGLSLBase
                 ShShaderOutput output);
 
   protected:
-    virtual bool writeVariablePrecision(TPrecision);
-    virtual void visitSymbol(TIntermSymbol* node);
-    virtual TString translateTextureFunction(TString& name);
+    bool writeVariablePrecision(TPrecision) override;
+    void visitSymbol(TIntermSymbol *node) override;
+    TString translateTextureFunction(TString &name) override;
 };
 
 #endif  // COMPILER_TRANSLATOR_OUTPUTGLSL_H_

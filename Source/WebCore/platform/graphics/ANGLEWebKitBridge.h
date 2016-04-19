@@ -81,7 +81,7 @@ struct ANGLEShaderSymbol {
 class ANGLEWebKitBridge {
 public:
 
-    ANGLEWebKitBridge(ShShaderOutput = SH_GLSL_OUTPUT, ShShaderSpec = SH_WEBGL_SPEC);
+    ANGLEWebKitBridge(ShShaderOutput = SH_GLSL_COMPATIBILITY_OUTPUT, ShShaderSpec = SH_WEBGL_SPEC);
     ~ANGLEWebKitBridge();
     
     ShBuiltInResources getResources() { return m_resources; }

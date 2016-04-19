@@ -8,9 +8,12 @@
 
 #include "compiler/translator/ArrayReturnValueToOutParameter.h"
 #include "compiler/translator/OutputHLSL.h"
+#include "compiler/translator/RemoveDynamicIndexing.h"
+#include "compiler/translator/RewriteElseBlocks.h"
 #include "compiler/translator/SeparateArrayInitialization.h"
 #include "compiler/translator/SeparateDeclarations.h"
-#include "compiler/translator/SimplifyArrayAssignment.h"
+#include "compiler/translator/SeparateExpressionsReturningArrays.h"
+#include "compiler/translator/UnfoldShortCircuitToIf.h"
 
 TranslatorHLSL::TranslatorHLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
     : TCompiler(type, spec, output)
@@ -22,17 +25,32 @@ void TranslatorHLSL::translate(TIntermNode *root, int compileOptions)
     const ShBuiltInResources &resources = getResources();
     int numRenderTargets = resources.EXT_draw_buffers ? resources.MaxDrawBuffers : 1;
 
-    SeparateArrayDeclarations(root);
+    SeparateDeclarations(root);
+
+    // Note that SeparateDeclarations needs to be run before UnfoldShortCircuitToIf.
+    UnfoldShortCircuitToIf(root, getTemporaryIndex());
+
+    SeparateExpressionsReturningArrays(root, getTemporaryIndex());
 
     // Note that SeparateDeclarations needs to be run before SeparateArrayInitialization.
     SeparateArrayInitialization(root);
 
-    SimplifyArrayAssignment simplify;
-    root->traverse(&simplify);
-
     // HLSL doesn't support arrays as return values, we'll need to make functions that have an array
     // as a return value to use an out parameter to transfer the array data instead.
-    ArrayReturnValueToOutParameter(root);
+    ArrayReturnValueToOutParameter(root, getTemporaryIndex());
+
+    if (!shouldRunLoopAndIndexingValidation(compileOptions))
+    {
+        // HLSL doesn't support dynamic indexing of vectors and matrices.
+        RemoveDynamicIndexing(root, getTemporaryIndex(), getSymbolTable(), getShaderVersion());
+    }
+
+    // Work around D3D9 bug that would manifest in vertex shaders with selection blocks which
+    // use a vertex attribute as a condition, and some related computation in the else block.
+    if (getOutputType() == SH_HLSL_3_0_OUTPUT && getShaderType() == GL_VERTEX_SHADER)
+    {
+        sh::RewriteElseBlocks(root, getTemporaryIndex());
+    }
 
     sh::OutputHLSL outputHLSL(getShaderType(), getShaderVersion(), getExtensionBehavior(),
         getSourcePath(), getOutputType(), numRenderTargets, getUniforms(), compileOptions);
@@ -54,13 +72,7 @@ unsigned int TranslatorHLSL::getInterfaceBlockRegister(const std::string &interf
     return mInterfaceBlockRegisterMap.find(interfaceBlockName)->second;
 }
 
-bool TranslatorHLSL::hasUniform(const std::string &uniformName) const
+const std::map<std::string, unsigned int> *TranslatorHLSL::getUniformRegisterMap() const
 {
-    return (mUniformRegisterMap.count(uniformName) > 0);
-}
-
-unsigned int TranslatorHLSL::getUniformRegister(const std::string &uniformName) const
-{
-    ASSERT(hasUniform(uniformName));
-    return mUniformRegisterMap.find(uniformName)->second;
+    return &mUniformRegisterMap;
 }

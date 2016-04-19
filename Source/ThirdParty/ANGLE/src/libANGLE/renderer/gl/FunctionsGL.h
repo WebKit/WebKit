@@ -10,11 +10,18 @@
 #define LIBANGLE_RENDERER_GL_FUNCTIONSGL_H_
 
 #include "common/debug.h"
+#include "libANGLE/Version.h"
 #include "libANGLE/renderer/gl/functionsgl_enums.h"
 #include "libANGLE/renderer/gl/functionsgl_typedefs.h"
 
 namespace rx
 {
+
+enum StandardGL
+{
+    STANDARD_GL_DESKTOP,
+    STANDARD_GL_ES,
+};
 
 class FunctionsGL
 {
@@ -25,12 +32,17 @@ class FunctionsGL
     void initialize();
 
     // Version information
-    GLuint majorVersion;
-    GLuint minorVersion;
-    bool openGLES;
+    gl::Version version;
+    StandardGL standard;
+    GLint profile;
+    bool isAtLeastGL(const gl::Version &glVersion) const;
+    bool isAtLeastGLES(const gl::Version &glesVersion) const;
 
     // Extensions
     std::vector<std::string> extensions;
+    bool hasExtension(const std::string &ext) const;
+    bool hasGLExtension(const std::string &ext) const;
+    bool hasGLESExtension(const std::string &ext) const;
 
     // Entry Points
     // 1.0
@@ -576,6 +588,7 @@ class FunctionsGL
     PFNGLGETDEBUGMESSAGELOGPROC getDebugMessageLog;
     PFNGLGETFRAMEBUFFERPARAMETERIVPROC getFramebufferParameteriv;
     PFNGLGETINTERNALFORMATI64VPROC getInternalformati64v;
+    PFNGLGETPOINTERVPROC getPointerv;
     PFNGLGETOBJECTLABELPROC getObjectLabel;
     PFNGLGETOBJECTPTRLABELPROC getObjectPtrLabel;
     PFNGLGETPROGRAMINTERFACEIVPROC getProgramInterfaceiv;
@@ -730,7 +743,18 @@ class FunctionsGL
     PFNGLVERTEXARRAYVERTEXBUFFERPROC vertexArrayVertexBuffer;
     PFNGLVERTEXARRAYVERTEXBUFFERSPROC vertexArrayVertexBuffers;
 
+    // ES 3.2
+    PFNGLBLENDBARRIERPROC blendBarrier;
+    PFNGLPRIMITIVEBOUNDINGBOXPROC primitiveBoundingBox;
+
+    // ES extensions
+    PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC eglImageTargetRenderbufferStorageOES;
+    PFNGLEGLIMAGETARGETTEXTURE2DOESPROC eglImageTargetTexture2DOES;
+
   private:
+    void initializeProcsDesktopGL();
+    void initializeProcsGLES();
+
     virtual void *loadProcAddress(const std::string &function) = 0;
 };
 

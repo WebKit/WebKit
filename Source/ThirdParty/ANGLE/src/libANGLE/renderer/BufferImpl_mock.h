@@ -19,7 +19,7 @@ namespace rx
 class MockBufferImpl : public BufferImpl
 {
   public:
-    ~MockBufferImpl() override { destructor(); }
+    ~MockBufferImpl() { destructor(); }
 
     MOCK_METHOD3(setData, gl::Error(const void*, size_t, GLenum));
     MOCK_METHOD3(setSubData, gl::Error(const void*, size_t, size_t));
@@ -28,7 +28,7 @@ class MockBufferImpl : public BufferImpl
     MOCK_METHOD4(mapRange, gl::Error(size_t, size_t, GLbitfield, GLvoid **));
     MOCK_METHOD1(unmap, gl::Error(GLboolean *result));
 
-    MOCK_METHOD1(getData, gl::Error(const uint8_t **));
+    MOCK_METHOD5(getIndexRange, gl::Error(GLenum, size_t, size_t, bool, gl::IndexRange *));
 
     MOCK_METHOD0(destructor, void());
 };

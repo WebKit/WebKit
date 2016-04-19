@@ -21,25 +21,27 @@ class VertexBuffer11 : public VertexBuffer
 {
   public:
     explicit VertexBuffer11(Renderer11 *const renderer);
-    virtual ~VertexBuffer11();
 
-    virtual gl::Error initialize(unsigned int size, bool dynamicUsage);
+    gl::Error initialize(unsigned int size, bool dynamicUsage) override;
 
-    virtual gl::Error storeVertexAttributes(const gl::VertexAttribute &attrib, const gl::VertexAttribCurrentValueData &currentValue,
-                                            GLint start, GLsizei count, GLsizei instances, unsigned int offset);
+    gl::Error storeVertexAttributes(const gl::VertexAttribute &attrib,
+                                    GLenum currentValueType,
+                                    GLint start,
+                                    GLsizei count,
+                                    GLsizei instances,
+                                    unsigned int offset,
+                                    const uint8_t *sourceData) override;
 
-    virtual gl::Error getSpaceRequired(const gl::VertexAttribute &attrib, GLsizei count, GLsizei instances,
-                                       unsigned int *outSpaceRequired) const;
+    unsigned int getBufferSize() const override;
+    gl::Error setBufferSize(unsigned int size) override;
+    gl::Error discard() override;
 
-    virtual unsigned int getBufferSize() const;
-    virtual gl::Error setBufferSize(unsigned int size);
-    virtual gl::Error discard();
-
-    virtual void hintUnmapResource();
+    void hintUnmapResource() override;
 
     ID3D11Buffer *getBuffer() const;
 
   private:
+    ~VertexBuffer11() override;
     gl::Error mapResource();
 
     Renderer11 *const mRenderer;
@@ -51,6 +53,6 @@ class VertexBuffer11 : public VertexBuffer
     uint8_t *mMappedResourceData;
 };
 
-}
+}  // namespace rx
 
 #endif // LIBANGLE_RENDERER_D3D_D3D11_VERTEXBUFFER11_H_

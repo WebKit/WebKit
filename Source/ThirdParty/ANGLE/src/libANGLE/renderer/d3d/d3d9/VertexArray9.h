@@ -19,21 +19,12 @@ class Renderer9;
 class VertexArray9 : public VertexArrayImpl
 {
   public:
-    VertexArray9(Renderer9 *renderer)
-        : VertexArrayImpl(),
-          mRenderer(renderer)
+    VertexArray9(const gl::VertexArray::Data &data)
+        : VertexArrayImpl(data)
     {
     }
 
     virtual ~VertexArray9() { }
-
-    virtual void setElementArrayBuffer(const gl::Buffer *buffer) { }
-    virtual void setAttribute(size_t idx, const gl::VertexAttribute &attr) { }
-    virtual void setAttributeDivisor(size_t idx, GLuint divisor) { }
-    virtual void enableAttribute(size_t idx, bool enabledState) { }
-
-  private:
-    Renderer9 *mRenderer;
 };
 
 }

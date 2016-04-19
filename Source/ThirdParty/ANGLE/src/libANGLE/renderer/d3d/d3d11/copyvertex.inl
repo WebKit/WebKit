@@ -15,33 +15,42 @@ inline void CopyNativeVertexData(const uint8_t *input, size_t stride, size_t cou
     if (attribSize == stride && inputComponentCount == outputComponentCount)
     {
         memcpy(output, input, count * attribSize);
+        return;
     }
-    else
-    {
-        const T defaultAlphaValue = gl::bitCast<T>(alphaDefaultValueBits);
-        const size_t lastNonAlphaOutputComponent = std::min<size_t>(outputComponentCount, 3);
 
+    if (inputComponentCount == outputComponentCount)
+    {
         for (size_t i = 0; i < count; i++)
         {
             const T *offsetInput = reinterpret_cast<const T*>(input + (i * stride));
             T *offsetOutput = reinterpret_cast<T*>(output) + i * outputComponentCount;
 
-            for (size_t j = 0; j < inputComponentCount; j++)
-            {
-                offsetOutput[j] = offsetInput[j];
-            }
+            memcpy(offsetOutput, offsetInput, attribSize);
+        }
+        return;
+    }
 
-            for (size_t j = inputComponentCount; j < lastNonAlphaOutputComponent; j++)
-            {
-                // Set the remaining G/B channels to 0.
-                offsetOutput[j] = 0;
-            }
+    const T defaultAlphaValue = gl::bitCast<T>(alphaDefaultValueBits);
+    const size_t lastNonAlphaOutputComponent = std::min<size_t>(outputComponentCount, 3);
 
-            if (inputComponentCount < outputComponentCount && outputComponentCount == 4)
-            {
-                // Set the remaining alpha channel to the defaultAlphaValue.
-                offsetOutput[3] = defaultAlphaValue;
-            }
+    for (size_t i = 0; i < count; i++)
+    {
+        const T *offsetInput = reinterpret_cast<const T*>(input + (i * stride));
+        T *offsetOutput = reinterpret_cast<T*>(output) + i * outputComponentCount;
+
+        memcpy(offsetOutput, offsetInput, attribSize);
+
+        if (inputComponentCount < lastNonAlphaOutputComponent)
+        {
+            // Set the remaining G/B channels to 0.
+            size_t numComponents = (lastNonAlphaOutputComponent - inputComponentCount);
+            memset(&offsetOutput[inputComponentCount], 0, numComponents * sizeof(T));
+        }
+
+        if (inputComponentCount < outputComponentCount && outputComponentCount == 4)
+        {
+            // Set the remaining alpha channel to the defaultAlphaValue.
+            offsetOutput[3] = defaultAlphaValue;
         }
     }
 }

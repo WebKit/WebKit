@@ -162,10 +162,33 @@ HRESULT CreatePropertyMap(IMap<HSTRING, IInspectable*>** propertyMap)
     return result;
 }
 
+HRESULT CreatePropertyValueStatics(IPropertyValueStatics** propertyStatics)
+{
+    ComPtr<IPropertyValueStatics> propertyValueStatics;
+    HRESULT result = GetActivationFactory(HStringReference(RuntimeClass_Windows_Foundation_PropertyValue).Get(), &propertyValueStatics);
+    EXPECT_HRESULT_SUCCEEDED(result);
+
+    result = propertyValueStatics.CopyTo(propertyStatics);
+    EXPECT_HRESULT_SUCCEEDED(result);
+
+    return result;
+}
+
 HRESULT SetInspectablePropertyValue(const ComPtr<IMap<HSTRING, IInspectable*>>& propertyMap, const wchar_t* propertyName, IInspectable* inspectable)
 {
     boolean propertyReplaced = false;
     return propertyMap->Insert(HStringReference(propertyName).Get(), inspectable, &propertyReplaced);
+}
+
+void expectNativeWindowInitCalls(MockCoreWindow &coreWindow, bool expectBounds)
+{
+    if (expectBounds)
+    {
+        EXPECT_CALL(coreWindow, get_Bounds(testing::_)).Times(1);
+    }
+
+    EXPECT_CALL(coreWindow, add_SizeChanged(testing::_, testing::_)).Times(1);
+    EXPECT_CALL(coreWindow, remove_SizeChanged(testing::_)).Times(1);
 }
 
 TEST(NativeWindowTest, NativeWindowNull)
@@ -191,9 +214,7 @@ TEST(NativeWindowTest, NativeWindowNotInspectable)
 TEST(NativeWindowTest, NativeWindowValidCoreWindow)
 {
     MockCoreWindow mockCoreWindow;
-    EXPECT_CALL(mockCoreWindow, get_Bounds(testing::_)).Times(1);
-    EXPECT_CALL(mockCoreWindow, add_SizeChanged(testing::_, testing::_)).Times(1);
-    EXPECT_CALL(mockCoreWindow, remove_SizeChanged(testing::_)).Times(1);
+    expectNativeWindowInitCalls(mockCoreWindow, true);
     NativeWindow nativeWindow(&mockCoreWindow);
     EXPECT_TRUE(nativeWindow.initialize());
 }
@@ -205,11 +226,12 @@ TEST(NativeWindowTest, NativeWindowValidCoreWindowInPropertySet)
     {
         MockCoreWindow mockCoreWindow;
         ComPtr<IMap<HSTRING, IInspectable*>> propertySet;
-        EXPECT_CALL(mockCoreWindow, get_Bounds(testing::_)).Times(1);
-        EXPECT_CALL(mockCoreWindow, add_SizeChanged(testing::_, testing::_)).Times(1);
-        EXPECT_CALL(mockCoreWindow, remove_SizeChanged(testing::_)).Times(1);
+
+        // Add the CoreWindow to the property set
         EXPECT_HRESULT_SUCCEEDED(CreatePropertyMap(&propertySet));
         EXPECT_HRESULT_SUCCEEDED(SetInspectablePropertyValue(propertySet, EGLNativeWindowTypeProperty, &mockCoreWindow));
+
+        expectNativeWindowInitCalls(mockCoreWindow, true);
         NativeWindow nativeWindow(propertySet.Get());
         EXPECT_TRUE(nativeWindow.initialize());
     }
@@ -223,11 +245,112 @@ TEST(NativeWindowTest, NativeWindowMissingCoreWindowInPropertySet)
     {
         MockCoreWindow mockCoreWindow;
         ComPtr<IMap<HSTRING, IInspectable*>> propertySet;
+
         EXPECT_HRESULT_SUCCEEDED(CreatePropertyMap(&propertySet));
+
         NativeWindow nativeWindow(propertySet.Get());
         EXPECT_FALSE(nativeWindow.initialize());
     }
     CoUninitialize();
 }
+
+// Tests that the scale property works as expected in a property set with a SwapChainPanel
+class CoreWindowScaleTest : public testing::TestWithParam<std::pair<float, bool>>
+{
+};
+
+TEST_P(CoreWindowScaleTest, ValidateScale)
+{
+    float scale = GetParam().first;
+    bool expectedResult = GetParam().second;
+
+    // COM is required to be initialized for creation of the property set
+    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED));
+    {
+        MockCoreWindow mockCoreWindow;
+        ComPtr<IMap<HSTRING, IInspectable*>> propertySet;
+        ComPtr<IPropertyValueStatics> propertyValueStatics;
+        ComPtr<IPropertyValue> singleValue;
+
+        // Create a simple property set
+        EXPECT_HRESULT_SUCCEEDED(CreatePropertyMap(&propertySet));
+        EXPECT_HRESULT_SUCCEEDED(SetInspectablePropertyValue(propertySet, EGLNativeWindowTypeProperty, reinterpret_cast<IInspectable*>(&mockCoreWindow)));
+
+        // Add a valid scale factor to the property set
+        EXPECT_HRESULT_SUCCEEDED(CreatePropertyValueStatics(propertyValueStatics.GetAddressOf()));
+        propertyValueStatics->CreateSingle(scale, reinterpret_cast<IInspectable**>(singleValue.GetAddressOf()));
+        EXPECT_HRESULT_SUCCEEDED(SetInspectablePropertyValue(propertySet, EGLRenderResolutionScaleProperty, reinterpret_cast<IInspectable*>(singleValue.Get())));
+
+        // Check native window init status and calls to the mock swapchainpanel
+        NativeWindow nativeWindow(propertySet.Get());
+        if (expectedResult)
+        {
+            expectNativeWindowInitCalls(mockCoreWindow, true);
+        }
+
+        EXPECT_EQ(nativeWindow.initialize(), expectedResult);
+    }
+    CoUninitialize();
+}
+
+typedef std::pair<float, bool> scaleValidPair;
+static const scaleValidPair scales[] = { scaleValidPair(1.0f,   true),
+                                         scaleValidPair(0.5f,   true),
+                                         scaleValidPair(0.0f,   false),
+                                         scaleValidPair(0.01f,  true),
+                                         scaleValidPair(2.00f,  true) };
+
+INSTANTIATE_TEST_CASE_P(NativeWindowTest,
+                        CoreWindowScaleTest,
+                        testing::ValuesIn(scales));
+
+// Tests that the size property works as expected in a property set with a SwapChainPanel
+class CoreWindowSizeTest : public testing::TestWithParam<std::tuple<float, float, bool>>
+{
+};
+
+TEST_P(CoreWindowSizeTest, ValidateSize)
+{
+    Size renderSize = { std::get<0>(GetParam()), std::get<1>(GetParam()) };
+    bool expectedResult = std::get<2>(GetParam());
+
+    // COM is required to be initialized for creation of the property set
+    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED));
+    {
+        MockCoreWindow mockCoreWindow;
+        ComPtr<IMap<HSTRING, IInspectable*>> propertySet;
+        ComPtr<IPropertyValueStatics> propertyValueStatics;
+        ComPtr<IPropertyValue> sizeValue;
+
+        // Create a simple property set
+        EXPECT_HRESULT_SUCCEEDED(CreatePropertyMap(&propertySet));
+        EXPECT_HRESULT_SUCCEEDED(SetInspectablePropertyValue(propertySet, EGLNativeWindowTypeProperty, reinterpret_cast<IInspectable*>(&mockCoreWindow)));
+
+        // Add a valid size to the property set
+        EXPECT_HRESULT_SUCCEEDED(CreatePropertyValueStatics(propertyValueStatics.GetAddressOf()));
+        propertyValueStatics->CreateSize(renderSize, reinterpret_cast<IInspectable**>(sizeValue.GetAddressOf()));
+        EXPECT_HRESULT_SUCCEEDED(SetInspectablePropertyValue(propertySet, EGLRenderSurfaceSizeProperty, reinterpret_cast<IInspectable*>(sizeValue.Get())));
+
+        // Check native window init status and calls to the mock swapchainpanel
+        NativeWindow nativeWindow(propertySet.Get());
+        if (expectedResult)
+        {
+            expectNativeWindowInitCalls(mockCoreWindow, false);
+        }
+
+        EXPECT_EQ(nativeWindow.initialize(), expectedResult);
+    }
+    CoUninitialize();
+}
+
+typedef std::tuple<float, float, bool> sizeValidPair;
+static const sizeValidPair sizes[] = { sizeValidPair( 800,  480, true),
+                                       sizeValidPair(   0,  480, false),
+                                       sizeValidPair( 800,    0, false),
+                                       sizeValidPair(   0,    0, false) };
+
+INSTANTIATE_TEST_CASE_P(NativeWindowTest,
+                        CoreWindowSizeTest,
+                        testing::ValuesIn(sizes));
 
 } // namespace

@@ -28,10 +28,24 @@ const wchar_t EGLNativeWindowTypeProperty[] = L"EGLNativeWindowTypeProperty";
 // Description: Set this property to specify a preferred size in pixels of the render surface.
 //              The render surface size width and height must be greater than 0.
 //              If this property is set, then the render surface size is fixed.
+//              The render surface will then be scaled to the window dimensions.
 //              If this property is missing, a default behavior will be provided.
 //              The default behavior uses the window size if a CoreWindow is specified or
 //              the size of the SwapChainPanel control if one is specified.
 //
 const wchar_t EGLRenderSurfaceSizeProperty[] = L"EGLRenderSurfaceSizeProperty";
+
+//
+// Property: EGLRenderResolutionScaleProperty
+// Type: Single
+// Description: Use this to specify a preferred scale for the render surface compared to the window.
+//              For example, if the window is 800x480, and:
+//                - scale is set to 0.5f then the surface will be 400x240
+//                - scale is set to 1.2f then the surface will be 960x576
+//              If the window resizes or rotates then the surface will resize accordingly.
+//              EGLRenderResolutionScaleProperty and EGLRenderSurfaceSizeProperty cannot both be set.
+//              The scale factor should be > 0.0f.
+//
+const wchar_t EGLRenderResolutionScaleProperty[] = L"EGLRenderResolutionScaleProperty";
 
 #endif // ANGLE_WINDOWSSTORE_H_

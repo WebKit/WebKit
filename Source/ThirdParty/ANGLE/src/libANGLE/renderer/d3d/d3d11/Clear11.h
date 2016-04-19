@@ -15,6 +15,7 @@
 #include "libANGLE/angletypes.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/Framebuffer.h"
+#include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 
 namespace rx
 {
@@ -41,17 +42,25 @@ class Clear11 : angle::NonCopyable
     ID3D11BlendState *getBlendState(const std::vector<MaskedRenderTarget> &rts);
     ID3D11DepthStencilState *getDepthStencilState(const ClearParameters &clearParams);
 
-    struct ClearShader
+    struct ClearShader final : public angle::NonCopyable
     {
-        ID3D11InputLayout *inputLayout;
-        ID3D11VertexShader *vertexShader;
-        ID3D11PixelShader *pixelShader;
+        ClearShader(DXGI_FORMAT colorType,
+                    const char *inputLayoutName,
+                    const BYTE *vsByteCode,
+                    size_t vsSize,
+                    const char *vsDebugName,
+                    const BYTE *psByteCode,
+                    size_t psSize,
+                    const char *psDebugName);
+        ~ClearShader();
+
+        d3d11::LazyInputLayout *inputLayout;
+        d3d11::LazyShader<ID3D11VertexShader> vertexShader;
+        d3d11::LazyShader<ID3D11PixelShader> pixelShader;
     };
 
     template <unsigned int vsSize, unsigned int psSize>
     static ClearShader CreateClearShader(ID3D11Device *device, DXGI_FORMAT colorType, const BYTE(&vsByteCode)[vsSize], const BYTE(&psByteCode)[psSize]);
-
-    Renderer11 *mRenderer;
 
     struct ClearBlendInfo
     {
@@ -59,11 +68,6 @@ class Clear11 : angle::NonCopyable
     };
     typedef bool(*ClearBlendInfoComparisonFunction)(const ClearBlendInfo&, const ClearBlendInfo &);
     typedef std::map<ClearBlendInfo, ID3D11BlendState*, ClearBlendInfoComparisonFunction> ClearBlendStateMap;
-    ClearBlendStateMap mClearBlendStates;
-
-    ClearShader mFloatClearShader;
-    ClearShader mUintClearShader;
-    ClearShader mIntClearShader;
 
     struct ClearDepthStencilInfo
     {
@@ -71,14 +75,21 @@ class Clear11 : angle::NonCopyable
         bool clearStencil;
         UINT8 stencilWriteMask;
     };
-    typedef bool (*ClearDepthStencilInfoComparisonFunction)(const ClearDepthStencilInfo&, const ClearDepthStencilInfo &);
+    typedef bool(*ClearDepthStencilInfoComparisonFunction)(const ClearDepthStencilInfo&, const ClearDepthStencilInfo &);
     typedef std::map<ClearDepthStencilInfo, ID3D11DepthStencilState*, ClearDepthStencilInfoComparisonFunction> ClearDepthStencilStateMap;
+
+    Renderer11 *mRenderer;
+
+    ClearBlendStateMap mClearBlendStates;
+
+    ClearShader *mFloatClearShader;
+    ClearShader *mUintClearShader;
+    ClearShader *mIntClearShader;
+
     ClearDepthStencilStateMap mClearDepthStencilStates;
 
     ID3D11Buffer *mVertexBuffer;
     ID3D11RasterizerState *mRasterizerState;
-
-    bool mSupportsClearView;
 };
 
 }

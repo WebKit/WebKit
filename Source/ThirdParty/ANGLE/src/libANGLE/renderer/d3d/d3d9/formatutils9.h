@@ -10,12 +10,12 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D9_FORMATUTILS9_H_
 #define LIBANGLE_RENDERER_D3D_D3D9_FORMATUTILS9_H_
 
-#include "libANGLE/renderer/d3d/formatutilsD3D.h"
-#include "libANGLE/angletypes.h"
+#include <map>
 
 #include "common/platform.h"
-
-#include <map>
+#include "libANGLE/angletypes.h"
+#include "libANGLE/formatutils.h"
+#include "libANGLE/renderer/d3d/formatutilsD3D.h"
 
 namespace rx
 {
@@ -64,7 +64,7 @@ struct VertexFormat
     D3DDECLTYPE nativeFormat;
     GLenum componentType;
 };
-const VertexFormat &GetVertexFormatInfo(DWORD supportedDeclTypes, const gl::VertexFormat &vertexFormat);
+const VertexFormat &GetVertexFormatInfo(DWORD supportedDeclTypes, gl::VertexFormatType vertexFormatType);
 
 struct TextureFormat
 {

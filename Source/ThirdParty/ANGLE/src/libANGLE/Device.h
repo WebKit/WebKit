@@ -24,11 +24,10 @@ namespace egl
 class Device final : angle::NonCopyable
 {
   public:
-    Device(Display *display, rx::DeviceImpl *impl);
     virtual ~Device();
 
     Error getDevice(EGLAttrib *value);
-    Display *getDisplay() { return mDisplay; };
+    Display *getOwningDisplay() { return mOwningDisplay; };
     EGLint getType();
 
     const DeviceExtensions &getExtensions() const;
@@ -36,10 +35,18 @@ class Device final : angle::NonCopyable
 
     rx::DeviceImpl *getImplementation() { return mImplementation; }
 
+    static egl::Error CreateDevice(void *devicePointer, EGLint deviceType, Device **outDevice);
+    static egl::Error CreateDevice(Display *owningDisplay,
+                                   rx::DeviceImpl *impl,
+                                   Device **outDevice);
+
+    static bool IsValidDevice(Device *device);
+
   private:
+    Device(Display *owningDisplay, rx::DeviceImpl *impl);
     void initDeviceExtensions();
 
-    Display *mDisplay;
+    Display *mOwningDisplay;
     rx::DeviceImpl *mImplementation;
 
     DeviceExtensions mDeviceExtensions;

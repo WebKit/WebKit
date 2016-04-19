@@ -27,7 +27,10 @@ BlockMemberInfo BlockLayoutEncoder::encodeType(GLenum type, unsigned int arraySi
 
     getBlockLayoutInfo(type, arraySize, isRowMajorMatrix, &arrayStride, &matrixStride);
 
-    const BlockMemberInfo memberInfo(static_cast<int>(mCurrentOffset * BytesPerComponent), arrayStride * BytesPerComponent, matrixStride * BytesPerComponent, isRowMajorMatrix);
+    const BlockMemberInfo memberInfo(static_cast<int>(mCurrentOffset * BytesPerComponent),
+                                     static_cast<int>(arrayStride * BytesPerComponent),
+                                     static_cast<int>(matrixStride * BytesPerComponent),
+                                     isRowMajorMatrix);
 
     advanceOffset(type, arraySize, isRowMajorMatrix, arrayStride, matrixStride);
 

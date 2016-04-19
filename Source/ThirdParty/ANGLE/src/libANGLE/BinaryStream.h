@@ -47,7 +47,7 @@ class BinaryInputStream : angle::NonCopyable
     template <class IntT>
     IntT readInt()
     {
-        int value;
+        int value = 0;
         read(&value);
         return static_cast<IntT>(value);
     }
@@ -60,7 +60,7 @@ class BinaryInputStream : angle::NonCopyable
 
     bool readBool()
     {
-        int value;
+        int value = 0;
         read(&value);
         return (value > 0);
     }
@@ -92,7 +92,7 @@ class BinaryInputStream : angle::NonCopyable
             return;
         }
 
-        if (mOffset + length > mLength)
+        if (!rx::IsUnsignedAdditionSafe(mOffset, length) || mOffset + length > mLength)
         {
             mError = true;
             return;
@@ -104,7 +104,7 @@ class BinaryInputStream : angle::NonCopyable
 
     void skip(size_t length)
     {
-        if (mOffset + length > mLength)
+        if (!rx::IsUnsignedAdditionSafe(mOffset, length) || mOffset + length > mLength)
         {
             mError = true;
             return;
@@ -144,9 +144,15 @@ class BinaryInputStream : angle::NonCopyable
     {
         StaticAssertIsFundamental<T>();
 
+        if (!rx::IsUnsignedMultiplicationSafe(num, sizeof(T)))
+        {
+            mError = true;
+            return;
+        }
+
         size_t length = num * sizeof(T);
 
-        if (mOffset + length > mLength)
+        if (!rx::IsUnsignedAdditionSafe(mOffset, length) || mOffset + length > mLength)
         {
             mError = true;
             return;

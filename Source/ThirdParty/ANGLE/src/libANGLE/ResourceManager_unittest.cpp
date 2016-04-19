@@ -9,7 +9,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "angle_unittests_utils.h"
+#include "tests/angle_unittests_utils.h"
 #include "libANGLE/ResourceManager.h"
 
 using namespace rx;

@@ -10,49 +10,69 @@
 #ifndef LIBANGLE_SAMPLER_H_
 #define LIBANGLE_SAMPLER_H_
 
+#include "libANGLE/angletypes.h"
+#include "libANGLE/Debug.h"
 #include "libANGLE/RefCountObject.h"
+
+namespace rx
+{
+class ImplFactory;
+class SamplerImpl;
+}
 
 namespace gl
 {
-struct SamplerState;
 
-class Sampler : public RefCountObject
+class Sampler final : public RefCountObject, public LabeledObject
 {
   public:
-    Sampler(GLuint id);
+    Sampler(rx::ImplFactory *factory, GLuint id);
+    ~Sampler() override;
 
-    void setMinFilter(GLenum minFilter) { mMinFilter = minFilter; }
-    void setMagFilter(GLenum magFilter) { mMagFilter = magFilter; }
-    void setWrapS(GLenum wrapS) { mWrapS = wrapS; }
-    void setWrapT(GLenum wrapT) { mWrapT = wrapT; }
-    void setWrapR(GLenum wrapR) { mWrapR = wrapR; }
-    void setMinLod(GLfloat minLod) { mMinLod = minLod; }
-    void setMaxLod(GLfloat maxLod) { mMaxLod = maxLod; }
-    void setComparisonMode(GLenum comparisonMode) { mComparisonMode = comparisonMode; }
-    void setComparisonFunc(GLenum comparisonFunc) { mComparisonFunc = comparisonFunc; }
+    void setLabel(const std::string &label) override;
+    const std::string &getLabel() const override;
 
-    GLenum getMinFilter() const { return mMinFilter; }
-    GLenum getMagFilter() const { return mMagFilter; }
-    GLenum getWrapS() const { return mWrapS; }
-    GLenum getWrapT() const { return mWrapT; }
-    GLenum getWrapR() const { return mWrapR; }
-    GLfloat getMinLod() const { return mMinLod; }
-    GLfloat getMaxLod() const { return mMaxLod; }
-    GLenum getComparisonMode() const { return mComparisonMode; }
-    GLenum getComparisonFunc() const { return mComparisonFunc; }
+    void setMinFilter(GLenum minFilter);
+    GLenum getMinFilter() const;
 
-    void getState(SamplerState *samplerState) const;
+    void setMagFilter(GLenum magFilter);
+    GLenum getMagFilter() const;
+
+    void setWrapS(GLenum wrapS);
+    GLenum getWrapS() const;
+
+    void setWrapT(GLenum wrapT);
+    GLenum getWrapT() const;
+
+    void setWrapR(GLenum wrapR);
+    GLenum getWrapR() const;
+
+    void setMaxAnisotropy(float maxAnisotropy);
+    float getMaxAnisotropy() const;
+
+    void setMinLod(GLfloat minLod);
+    GLfloat getMinLod() const;
+
+    void setMaxLod(GLfloat maxLod);
+    GLfloat getMaxLod() const;
+
+    void setCompareMode(GLenum compareMode);
+    GLenum getCompareMode() const;
+
+    void setCompareFunc(GLenum compareFunc);
+    GLenum getCompareFunc() const;
+
+    const SamplerState &getSamplerState() const;
+
+    const rx::SamplerImpl *getImplementation() const;
+    rx::SamplerImpl *getImplementation();
 
   private:
-    GLenum mMinFilter;
-    GLenum mMagFilter;
-    GLenum mWrapS;
-    GLenum mWrapT;
-    GLenum mWrapR;
-    GLfloat mMinLod;
-    GLfloat mMaxLod;
-    GLenum mComparisonMode;
-    GLenum mComparisonFunc;
+    rx::SamplerImpl *mImpl;
+
+    std::string mLabel;
+
+    SamplerState mSamplerState;
 };
 
 }

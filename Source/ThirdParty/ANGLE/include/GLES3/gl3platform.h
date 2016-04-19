@@ -1,7 +1,7 @@
 #ifndef __gl3platform_h_
 #define __gl3platform_h_
 
-/* $Revision: 18437 $ on $Date:: 2012-07-08 23:31:39 -0700 #$ */
+/* $Revision: 23328 $ on $Date:: 2013-10-02 02:28:28 -0700 #$ */
 
 /*
  * This document is licensed under the SGI Free Software B License Version

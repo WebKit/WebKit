@@ -13,41 +13,53 @@
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
+#include "libANGLE/renderer/gl/formatutilsgl.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
 
 namespace rx
 {
-
-RenderbufferGL::RenderbufferGL(const FunctionsGL *functions, StateManagerGL *stateManager, const gl::TextureCapsMap &textureCaps)
+RenderbufferGL::RenderbufferGL(const FunctionsGL *functions,
+                               const WorkaroundsGL &workarounds,
+                               StateManagerGL *stateManager,
+                               const gl::TextureCapsMap &textureCaps)
     : RenderbufferImpl(),
       mFunctions(functions),
+      mWorkarounds(workarounds),
       mStateManager(stateManager),
       mTextureCaps(textureCaps),
       mRenderbufferID(0)
 {
     mFunctions->genRenderbuffers(1, &mRenderbufferID);
+    mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
 }
 
 RenderbufferGL::~RenderbufferGL()
 {
-    if (mRenderbufferID != 0)
-    {
-        mFunctions->deleteRenderbuffers(1, &mRenderbufferID);
-        mRenderbufferID = 0;
-    }
+    mStateManager->deleteRenderbuffer(mRenderbufferID);
+    mRenderbufferID = 0;
 }
 
 gl::Error RenderbufferGL::setStorage(GLenum internalformat, size_t width, size_t height)
 {
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
-    mFunctions->renderbufferStorage(GL_RENDERBUFFER, internalformat, width, height);
+
+    nativegl::RenderbufferFormat renderbufferFormat =
+        nativegl::GetRenderbufferFormat(mFunctions, mWorkarounds, internalformat);
+    mFunctions->renderbufferStorage(GL_RENDERBUFFER, renderbufferFormat.internalFormat,
+                                    static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+
     return gl::Error(GL_NO_ERROR);
 }
 
 gl::Error RenderbufferGL::setStorageMultisample(size_t samples, GLenum internalformat, size_t width, size_t height)
 {
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
-    mFunctions->renderbufferStorageMultisample(GL_RENDERBUFFER, samples, internalformat, width, height);
+
+    nativegl::RenderbufferFormat renderbufferFormat =
+        nativegl::GetRenderbufferFormat(mFunctions, mWorkarounds, internalformat);
+    mFunctions->renderbufferStorageMultisample(
+        GL_RENDERBUFFER, static_cast<GLsizei>(samples), renderbufferFormat.internalFormat,
+        static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 
     const gl::TextureCaps &formatCaps = mTextureCaps.get(internalformat);
     if (samples > formatCaps.getMaxSamples())
@@ -68,6 +80,12 @@ gl::Error RenderbufferGL::setStorageMultisample(size_t samples, GLenum internalf
     }
 
     return gl::Error(GL_NO_ERROR);
+}
+
+gl::Error RenderbufferGL::setStorageEGLImageTarget(egl::Image *image)
+{
+    UNIMPLEMENTED();
+    return gl::Error(GL_INVALID_OPERATION);
 }
 
 GLuint RenderbufferGL::getRenderbufferID() const

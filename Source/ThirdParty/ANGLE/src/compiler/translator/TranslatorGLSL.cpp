@@ -9,52 +9,9 @@
 #include "angle_gl.h"
 #include "compiler/translator/BuiltInFunctionEmulatorGLSL.h"
 #include "compiler/translator/EmulatePrecision.h"
+#include "compiler/translator/ExtensionGLSL.h"
 #include "compiler/translator/OutputGLSL.h"
 #include "compiler/translator/VersionGLSL.h"
-
-namespace
-{
-
-// To search for what output variables are used in a fragment shader.
-// We handle gl_FragColor and gl_FragData at the moment.
-class TFragmentOutSearcher : public TIntermTraverser
-{
-  public:
-    TFragmentOutSearcher()
-        : mUsesGlFragColor(false),
-          mUsesGlFragData(false)
-    {
-    }
-
-    bool usesGlFragColor() const
-    {
-        return mUsesGlFragColor;
-    }
-
-    bool usesGlFragData() const
-    {
-        return mUsesGlFragData;
-    }
-
-  protected:
-    virtual void visitSymbol(TIntermSymbol *node) override
-    {
-        if (node->getSymbol() == "gl_FragColor")
-        {
-            mUsesGlFragColor = true;
-        }
-        else if (node->getSymbol() == "gl_FragData")
-        {
-            mUsesGlFragData = true;
-        }
-    }
-
-  private:
-    bool mUsesGlFragColor;
-    bool mUsesGlFragData;
-};
-
-}  // namespace anonymous
 
 TranslatorGLSL::TranslatorGLSL(sh::GLenum type,
                                ShShaderSpec spec,
@@ -65,10 +22,16 @@ TranslatorGLSL::TranslatorGLSL(sh::GLenum type,
 void TranslatorGLSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu, int compileOptions)
 {
     if (compileOptions & SH_EMULATE_BUILT_IN_FUNCTIONS)
-        InitBuiltInFunctionEmulatorForGLSL(emu, getShaderType());
+    {
+        InitBuiltInFunctionEmulatorForGLSLWorkarounds(emu, getShaderType());
+    }
+
+    int targetGLSLVersion = ShaderOutputTypeToGLSLVersion(getOutputType());
+    InitBuiltInFunctionEmulatorForGLSLMissingFunctions(emu, getShaderType(), targetGLSLVersion);
 }
 
-void TranslatorGLSL::translate(TIntermNode *root, int) {
+void TranslatorGLSL::translate(TIntermNode *root, int compileOptions)
+{
     TInfoSinkBase& sink = getInfoSink().obj;
 
     // Write GLSL version.
@@ -77,13 +40,13 @@ void TranslatorGLSL::translate(TIntermNode *root, int) {
     writePragma();
 
     // Write extension behaviour as needed
-    writeExtensionBehavior();
+    writeExtensionBehavior(root);
 
     bool precisionEmulation = getResources().WEBGL_debug_shader_precision && getPragma().debugShaderPrecision;
 
     if (precisionEmulation)
     {
-        EmulatePrecision emulatePrecision;
+        EmulatePrecision emulatePrecision(getSymbolTable(), getShaderVersion());
         root->traverse(&emulatePrecision);
         emulatePrecision.updateTree();
         emulatePrecision.writeEmulationHelpers(sink, getOutputType());
@@ -103,18 +66,69 @@ void TranslatorGLSL::translate(TIntermNode *root, int) {
 
     // Declare gl_FragColor and glFragData as webgl_FragColor and webgl_FragData
     // if it's core profile shaders and they are used.
-    if (getShaderType() == GL_FRAGMENT_SHADER && IsGLSL130OrNewer(getOutputType()))
+    if (getShaderType() == GL_FRAGMENT_SHADER)
     {
-        TFragmentOutSearcher searcher;
-        root->traverse(&searcher);
-        ASSERT(!(searcher.usesGlFragData() && searcher.usesGlFragColor()));
-        if (searcher.usesGlFragColor())
+        const bool mayHaveESSL1SecondaryOutputs =
+            IsExtensionEnabled(getExtensionBehavior(), "GL_EXT_blend_func_extended") &&
+            getShaderVersion() == 100;
+        const bool declareGLFragmentOutputs = IsGLSL130OrNewer(getOutputType());
+
+        bool hasGLFragColor          = false;
+        bool hasGLFragData           = false;
+        bool hasGLSecondaryFragColor = false;
+        bool hasGLSecondaryFragData  = false;
+
+        for (const auto &outputVar : outputVariables)
+        {
+            if (declareGLFragmentOutputs)
+            {
+                if (outputVar.name == "gl_FragColor")
+                {
+                    ASSERT(!hasGLFragColor);
+                    hasGLFragColor = true;
+                    continue;
+                }
+                else if (outputVar.name == "gl_FragData")
+                {
+                    ASSERT(!hasGLFragData);
+                    hasGLFragData = true;
+                    continue;
+                }
+            }
+            if (mayHaveESSL1SecondaryOutputs)
+            {
+                if (outputVar.name == "gl_SecondaryFragColorEXT")
+                {
+                    ASSERT(!hasGLSecondaryFragColor);
+                    hasGLSecondaryFragColor = true;
+                    continue;
+                }
+                else if (outputVar.name == "gl_SecondaryFragDataEXT")
+                {
+                    ASSERT(!hasGLSecondaryFragData);
+                    hasGLSecondaryFragData = true;
+                    continue;
+                }
+            }
+        }
+        ASSERT(!((hasGLFragColor || hasGLSecondaryFragColor) &&
+                 (hasGLFragData || hasGLSecondaryFragData)));
+        if (hasGLFragColor)
         {
             sink << "out vec4 webgl_FragColor;\n";
         }
-        if (searcher.usesGlFragData())
+        if (hasGLFragData)
         {
             sink << "out vec4 webgl_FragData[gl_MaxDrawBuffers];\n";
+        }
+        if (hasGLSecondaryFragColor)
+        {
+            sink << "out vec4 angle_SecondaryFragColor;\n";
+        }
+        if (hasGLSecondaryFragData)
+        {
+            sink << "out vec4 angle_SecondaryFragData[" << getResources().MaxDualSourceDrawBuffers
+                 << "];\n";
         }
     }
 
@@ -143,19 +157,41 @@ void TranslatorGLSL::writeVersion(TIntermNode *root)
     }
 }
 
-void TranslatorGLSL::writeExtensionBehavior() {
+void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root)
+{
     TInfoSinkBase& sink = getInfoSink().obj;
     const TExtensionBehavior& extBehavior = getExtensionBehavior();
-    for (TExtensionBehavior::const_iterator iter = extBehavior.begin();
-         iter != extBehavior.end(); ++iter) {
-        if (iter->second == EBhUndefined)
+    for (const auto &iter : extBehavior)
+    {
+        if (iter.second == EBhUndefined)
+        {
             continue;
+        }
 
         // For GLSL output, we don't need to emit most extensions explicitly,
         // but some we need to translate.
-        if (iter->first == "GL_EXT_shader_texture_lod") {
-            sink << "#extension GL_ARB_shader_texture_lod : "
-                 << getBehaviorString(iter->second) << "\n";
+        if (iter.first == "GL_EXT_shader_texture_lod")
+        {
+            sink << "#extension GL_ARB_shader_texture_lod : " << getBehaviorString(iter.second)
+                 << "\n";
         }
+    }
+
+    // GLSL ES 3 explicit location qualifiers need to use an extension before GLSL 330
+    if (getShaderVersion() >= 300 && getOutputType() < SH_GLSL_330_CORE_OUTPUT)
+    {
+        sink << "#extension GL_ARB_explicit_attrib_location : require\n";
+    }
+
+    TExtensionGLSL extensionGLSL(getOutputType());
+    root->traverse(&extensionGLSL);
+
+    for (const auto &ext : extensionGLSL.getEnabledExtensions())
+    {
+        sink << "#extension " << ext << " : enable\n";
+    }
+    for (const auto &ext : extensionGLSL.getRequiredExtensions())
+    {
+        sink << "#extension " << ext << " : require\n";
     }
 }

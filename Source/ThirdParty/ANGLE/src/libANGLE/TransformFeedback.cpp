@@ -8,25 +8,34 @@
 
 #include "libANGLE/Buffer.h"
 #include "libANGLE/Caps.h"
+#include "libANGLE/Program.h"
+#include "libANGLE/renderer/ImplFactory.h"
 #include "libANGLE/renderer/TransformFeedbackImpl.h"
 
 namespace gl
 {
 
-TransformFeedback::TransformFeedback(rx::TransformFeedbackImpl* impl, GLuint id, const Caps &caps)
+TransformFeedback::TransformFeedback(rx::ImplFactory *implFactory, GLuint id, const Caps &caps)
     : RefCountObject(id),
-      mImplementation(impl),
+      mImplementation(implFactory->createTransformFeedback()),
+      mLabel(),
       mActive(false),
       mPrimitiveMode(GL_NONE),
       mPaused(false),
+      mProgram(nullptr),
       mGenericBuffer(),
       mIndexedBuffers(caps.maxTransformFeedbackSeparateAttributes)
 {
-    ASSERT(impl != NULL);
+    ASSERT(mImplementation != nullptr);
 }
 
 TransformFeedback::~TransformFeedback()
 {
+    if (mProgram)
+    {
+        mProgram->release();
+        mProgram = nullptr;
+    }
     mGenericBuffer.set(nullptr);
     for (size_t i = 0; i < mIndexedBuffers.size(); i++)
     {
@@ -36,12 +45,23 @@ TransformFeedback::~TransformFeedback()
     SafeDelete(mImplementation);
 }
 
-void TransformFeedback::begin(GLenum primitiveMode)
+void TransformFeedback::setLabel(const std::string &label)
+{
+    mLabel = label;
+}
+
+const std::string &TransformFeedback::getLabel() const
+{
+    return mLabel;
+}
+
+void TransformFeedback::begin(GLenum primitiveMode, Program *program)
 {
     mActive = true;
     mPrimitiveMode = primitiveMode;
     mPaused = false;
     mImplementation->begin(primitiveMode);
+    bindProgram(program);
 }
 
 void TransformFeedback::end()
@@ -50,6 +70,11 @@ void TransformFeedback::end()
     mPrimitiveMode = GL_NONE;
     mPaused = false;
     mImplementation->end();
+    if (mProgram)
+    {
+        mProgram->release();
+        mProgram = nullptr;
+    }
 }
 
 void TransformFeedback::pause()
@@ -79,10 +104,49 @@ GLenum TransformFeedback::getPrimitiveMode() const
     return mPrimitiveMode;
 }
 
+void TransformFeedback::bindProgram(Program *program)
+{
+    if (mProgram != program)
+    {
+        if (mProgram != nullptr)
+        {
+            mProgram->release();
+        }
+        mProgram = program;
+        if (mProgram != nullptr)
+        {
+            mProgram->addRef();
+        }
+    }
+}
+
+bool TransformFeedback::hasBoundProgram(GLuint program) const
+{
+    return mProgram != nullptr && mProgram->id() == program;
+}
+
 void TransformFeedback::bindGenericBuffer(Buffer *buffer)
 {
     mGenericBuffer.set(buffer);
     mImplementation->bindGenericBuffer(mGenericBuffer);
+}
+
+void TransformFeedback::detachBuffer(GLuint bufferName)
+{
+    for (size_t index = 0; index < mIndexedBuffers.size(); index++)
+    {
+        if (mIndexedBuffers[index].id() == bufferName)
+        {
+            mIndexedBuffers[index].set(nullptr);
+            mImplementation->bindIndexedBuffer(index, mIndexedBuffers[index]);
+        }
+    }
+
+    if (mGenericBuffer.id() == bufferName)
+    {
+        mGenericBuffer.set(nullptr);
+        mImplementation->bindGenericBuffer(mGenericBuffer);
+    }
 }
 
 const BindingPointer<Buffer> &TransformFeedback::getGenericBuffer() const

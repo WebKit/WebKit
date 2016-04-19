@@ -42,15 +42,19 @@ struct Optional
         return *this;
     }
 
+    Optional &operator=(T &&value)
+    {
+        mValue = std::move(value);
+        mValid = true;
+        return *this;
+    }
+
     void reset()
     {
         mValid = false;
     }
 
-    static Optional None()
-    {
-        return Optional();
-    }
+    static Optional Invalid() { return Optional(); }
 
     bool valid() const { return mValid; }
     const T &value() const { return mValue; }

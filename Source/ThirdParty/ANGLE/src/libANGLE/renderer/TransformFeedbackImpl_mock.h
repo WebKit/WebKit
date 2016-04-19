@@ -19,7 +19,7 @@ namespace rx
 class MockTransformFeedbackImpl : public TransformFeedbackImpl
 {
   public:
-    ~MockTransformFeedbackImpl() override { destructor(); }
+    ~MockTransformFeedbackImpl() { destructor(); }
 
     MOCK_METHOD1(begin, void(GLenum primitiveMode));
     MOCK_METHOD0(end, void());

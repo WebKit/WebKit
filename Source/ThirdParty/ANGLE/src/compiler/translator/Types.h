@@ -16,6 +16,7 @@
 struct TPublicType;
 class TType;
 class TSymbol;
+class TIntermSymbol;
 
 class TField : angle::NonCopyable
 {
@@ -73,12 +74,6 @@ class TFieldListCollection : angle::NonCopyable
         return *mFields;
     }
 
-    const TString &mangledName() const
-    {
-        if (mMangledName.empty())
-            mMangledName = buildMangledName();
-        return mMangledName;
-    }
     size_t objectSize() const
     {
         if (mObjectSize == 0)
@@ -93,9 +88,8 @@ class TFieldListCollection : angle::NonCopyable
           mObjectSize(0)
     {
     }
-    TString buildMangledName() const;
+    TString buildMangledName(const TString &mangledNamePrefix) const;
     size_t calculateObjectSize() const;
-    virtual TString mangledNamePrefix() const = 0;
 
     const TString *mName;
     TFieldList *mFields;
@@ -124,7 +118,14 @@ class TStructure : public TFieldListCollection
         return mDeepestNesting;
     }
     bool containsArrays() const;
+    bool containsType(TBasicType t) const;
     bool containsSamplers() const;
+
+    void createSamplerSymbols(const TString &structName,
+                              const TString &structAPIName,
+                              const int arrayOfStructsSize,
+                              TVector<TIntermSymbol *> *outputSymbols,
+                              TMap<TIntermSymbol *, TString> *outputSymbolsToAPINames) const;
 
     bool equals(const TStructure &other) const;
 
@@ -149,6 +150,13 @@ class TStructure : public TFieldListCollection
         return mAtGlobalScope;
     }
 
+    const TString &mangledName() const
+    {
+        if (mMangledName.empty())
+            mMangledName = buildMangledName("struct-");
+        return mMangledName;
+    }
+
   private:
     // TODO(zmo): Find a way to get rid of the const_cast in function
     // setName().  At the moment keep this function private so only
@@ -160,10 +168,6 @@ class TStructure : public TFieldListCollection
         *mutableName = name;
     }
 
-    virtual TString mangledNamePrefix() const
-    {
-        return "struct-";
-    }
     int calculateDeepestNesting() const;
 
     mutable int mDeepestNesting;
@@ -209,13 +213,14 @@ class TInterfaceBlock : public TFieldListCollection
     {
         return mMatrixPacking;
     }
-
-  private:
-    virtual TString mangledNamePrefix() const
+    const TString &mangledName() const
     {
-        return "iblock-";
+        if (mMangledName.empty())
+            mMangledName = buildMangledName("iblock-");
+        return mMangledName;
     }
 
+  private:
     const TString *mInstanceName; // for interface block instance names
     int mArraySize; // 0 if not an array
     TLayoutBlockStorage mBlockStorage;
@@ -230,10 +235,14 @@ class TType
   public:
     POOL_ALLOCATOR_NEW_DELETE();
     TType()
+        : type(EbtVoid), precision(EbpUndefined), qualifier(EvqGlobal), invariant(false),
+          layoutQualifier(TLayoutQualifier::create()),
+          primarySize(0), secondarySize(0), array(false), arraySize(0),
+          interfaceBlock(nullptr), structure(nullptr)
     {
     }
     TType(TBasicType t, unsigned char ps = 1, unsigned char ss = 1)
-        : type(t), precision(EbpUndefined), qualifier(EvqGlobal),
+        : type(t), precision(EbpUndefined), qualifier(EvqGlobal), invariant(false),
           layoutQualifier(TLayoutQualifier::create()),
           primarySize(ps), secondarySize(ss), array(false), arraySize(0),
           interfaceBlock(0), structure(0)
@@ -241,7 +250,7 @@ class TType
     }
     TType(TBasicType t, TPrecision p, TQualifier q = EvqTemporary,
           unsigned char ps = 1, unsigned char ss = 1, bool a = false)
-        : type(t), precision(p), qualifier(q),
+        : type(t), precision(p), qualifier(q), invariant(false),
           layoutQualifier(TLayoutQualifier::create()),
           primarySize(ps), secondarySize(ss), array(a), arraySize(0),
           interfaceBlock(0), structure(0)
@@ -249,7 +258,7 @@ class TType
     }
     explicit TType(const TPublicType &p);
     TType(TStructure *userDef, TPrecision p = EbpUndefined)
-        : type(EbtStruct), precision(p), qualifier(EvqTemporary),
+        : type(EbtStruct), precision(p), qualifier(EvqTemporary), invariant(false),
           layoutQualifier(TLayoutQualifier::create()),
           primarySize(1), secondarySize(1), array(false), arraySize(0),
           interfaceBlock(0), structure(userDef)
@@ -258,11 +267,14 @@ class TType
     TType(TInterfaceBlock *interfaceBlockIn, TQualifier qualifierIn,
           TLayoutQualifier layoutQualifierIn, int arraySizeIn)
         : type(EbtInterfaceBlock), precision(EbpUndefined), qualifier(qualifierIn),
-          layoutQualifier(layoutQualifierIn),
+          invariant(false), layoutQualifier(layoutQualifierIn),
           primarySize(1), secondarySize(1), array(arraySizeIn > 0), arraySize(arraySizeIn),
           interfaceBlock(interfaceBlockIn), structure(0)
     {
     }
+
+    TType(const TType &) = default;
+    TType &operator=(const TType &) = default;
 
     TBasicType getBasicType() const
     {
@@ -270,7 +282,11 @@ class TType
     }
     void setBasicType(TBasicType t)
     {
-        type = t;
+        if (type != t)
+        {
+            type = t;
+            invalidateMangledName();
+        }
     }
 
     TPrecision getPrecision() const
@@ -289,6 +305,11 @@ class TType
     void setQualifier(TQualifier q)
     {
         qualifier = q;
+    }
+
+    bool isInvariant() const
+    {
+        return invariant;
     }
 
     TLayoutQualifier getLayoutQualifier() const
@@ -320,11 +341,19 @@ class TType
     }
     void setPrimarySize(unsigned char ps)
     {
-        primarySize = ps;
+        if (primarySize != ps)
+        {
+            primarySize = ps;
+            invalidateMangledName();
+        }
     }
     void setSecondarySize(unsigned char ss)
     {
-        secondarySize = ss;
+        if (secondarySize != ss)
+        {
+            secondarySize = ss;
+            invalidateMangledName();
+        }
     }
 
     // Full size of single instance of type
@@ -352,13 +381,21 @@ class TType
     }
     void setArraySize(int s)
     {
-        array = true;
-        arraySize = s;
+        if (!array || arraySize != s)
+        {
+            array     = true;
+            arraySize = s;
+            invalidateMangledName();
+        }
     }
     void clearArrayness()
     {
-        array = false;
-        arraySize = 0;
+        if (array)
+        {
+            array     = false;
+            arraySize = 0;
+            invalidateMangledName();
+        }
     }
 
     TInterfaceBlock *getInterfaceBlock() const
@@ -367,7 +404,11 @@ class TType
     }
     void setInterfaceBlock(TInterfaceBlock *interfaceBlockIn)
     {
-        interfaceBlock = interfaceBlockIn;
+        if (interfaceBlock != interfaceBlockIn)
+        {
+            interfaceBlock = interfaceBlockIn;
+            invalidateMangledName();
+        }
     }
     bool isInterfaceBlock() const
     {
@@ -393,10 +434,14 @@ class TType
     }
     void setStruct(TStructure *s)
     {
-        structure = s;
+        if (structure != s)
+        {
+            structure = s;
+            invalidateMangledName();
+        }
     }
 
-    const TString &getMangledName()
+    const TString &getMangledName() const
     {
         if (mangled.empty())
         {
@@ -481,19 +526,42 @@ class TType
         return structure ? structure->containsArrays() : false;
     }
 
+    bool isStructureContainingType(TBasicType t) const
+    {
+        return structure ? structure->containsType(t) : false;
+    }
+
     bool isStructureContainingSamplers() const
     {
         return structure ? structure->containsSamplers() : false;
     }
 
-  protected:
+    void createSamplerSymbols(const TString &structName,
+                              const TString &structAPIName,
+                              const int arrayOfStructsSize,
+                              TVector<TIntermSymbol *> *outputSymbols,
+                              TMap<TIntermSymbol *, TString> *outputSymbolsToAPINames) const
+    {
+        ASSERT(structure != nullptr && structure->containsSamplers());
+        structure->createSamplerSymbols(structName, structAPIName, arrayOfStructsSize,
+                                        outputSymbols, outputSymbolsToAPINames);
+    }
+
+    // Initializes all lazily-initialized members.
+    void realize()
+    {
+        getMangledName();
+    }
+
+  private:
+    void invalidateMangledName() { mangled = ""; }
     TString buildMangledName() const;
     size_t getStructSize() const;
-    void computeDeepestStructNesting();
 
     TBasicType type;
     TPrecision precision;
     TQualifier qualifier;
+    bool invariant;
     TLayoutQualifier layoutQualifier;
     unsigned char primarySize; // size of vector or cols matrix
     unsigned char secondarySize; // rows of a matrix
@@ -523,6 +591,7 @@ struct TPublicType
     TBasicType type;
     TLayoutQualifier layoutQualifier;
     TQualifier qualifier;
+    bool invariant;
     TPrecision precision;
     unsigned char primarySize;          // size of vector or cols of matrix
     unsigned char secondarySize;        // rows of matrix
@@ -531,11 +600,15 @@ struct TPublicType
     TType *userDef;
     TSourceLoc line;
 
+    // true if the type was defined by a struct specifier rather than a reference to a type name.
+    bool isStructSpecifier;
+
     void setBasic(TBasicType bt, TQualifier q, const TSourceLoc &ln)
     {
         type = bt;
         layoutQualifier = TLayoutQualifier::create();
         qualifier = q;
+        invariant = false;
         precision = EbpUndefined;
         primarySize = 1;
         secondarySize = 1;
@@ -543,6 +616,7 @@ struct TPublicType
         arraySize = 0;
         userDef = 0;
         line = ln;
+        isStructSpecifier = false;
     }
 
     void setAggregate(unsigned char size)
@@ -580,6 +654,16 @@ struct TPublicType
         }
 
         return userDef->isStructureContainingArrays();
+    }
+
+    bool isStructureContainingType(TBasicType t) const
+    {
+        if (!userDef)
+        {
+            return false;
+        }
+
+        return userDef->isStructureContainingType(t);
     }
 
     bool isMatrix() const

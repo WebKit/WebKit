@@ -9,6 +9,7 @@
 #ifndef LIBANGLE_QUERY_H_
 #define LIBANGLE_QUERY_H_
 
+#include "libANGLE/Debug.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/RefCountObject.h"
 
@@ -24,22 +25,33 @@ class QueryImpl;
 namespace gl
 {
 
-class Query : public RefCountObject
+class Query final : public RefCountObject, public LabeledObject
 {
   public:
     Query(rx::QueryImpl *impl, GLuint id);
     virtual ~Query();
 
+    void setLabel(const std::string &label) override;
+    const std::string &getLabel() const override;
+
     Error begin();
     Error end();
-
+    Error queryCounter();
+    Error getResult(GLint *params);
     Error getResult(GLuint *params);
-    Error isResultAvailable(GLuint *available);
+    Error getResult(GLint64 *params);
+    Error getResult(GLuint64 *params);
+    Error isResultAvailable(bool *available);
 
     GLenum getType() const;
 
+    rx::QueryImpl *getImplementation();
+    const rx::QueryImpl *getImplementation() const;
+
   private:
     rx::QueryImpl *mQuery;
+
+    std::string mLabel;
 };
 
 }

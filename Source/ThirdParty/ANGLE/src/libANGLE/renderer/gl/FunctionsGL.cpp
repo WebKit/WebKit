@@ -10,48 +10,32 @@
 
 #include <algorithm>
 
+#include "common/string_utils.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
 
 namespace rx
 {
 
-static void GetGLVersion(PFNGLGETSTRINGPROC getStringFunction, GLuint *outMajorVersion, GLuint *outMinorVersion,
-                         bool *outIsES)
+static void GetGLVersion(PFNGLGETSTRINGPROC getStringFunction, gl::Version *outVersion, StandardGL *outStandard)
 {
     const std::string version = reinterpret_cast<const char*>(getStringFunction(GL_VERSION));
     if (version.find("OpenGL ES") == std::string::npos)
-    {
-        // ES spec states that the GL_VERSION string will be in the following format:
-        // "OpenGL ES N.M vendor-specific information"
-        *outIsES = false;
-        *outMajorVersion = version[0] - '0';
-        *outMinorVersion = version[2] - '0';
-    }
-    else
     {
         // OpenGL spec states the GL_VERSION string will be in the following format:
         // <version number><space><vendor-specific information>
         // The version number is either of the form major number.minor number or major
         // number.minor number.release number, where the numbers all have one or more
         // digits
-        *outIsES = true;
-        *outMajorVersion = version[10] - '0';
-        *outMinorVersion = version[12] - '0';
+        *outStandard = STANDARD_GL_DESKTOP;
+        *outVersion = gl::Version(version[0] - '0', version[2] - '0');
     }
-}
-
-static std::vector<std::string> GetNonIndexedExtensions(PFNGLGETSTRINGPROC getStringFunction)
-{
-    std::vector<std::string> result;
-
-    std::istringstream stream(reinterpret_cast<const char*>(getStringFunction(GL_EXTENSIONS)));
-    std::string extension;
-    while (std::getline(stream, extension, ' '))
+    else
     {
-        result.push_back(extension);
+        // ES spec states that the GL_VERSION string will be in the following format:
+        // "OpenGL ES N.M vendor-specific information"
+        *outStandard = STANDARD_GL_ES;
+        *outVersion = gl::Version(version[10] - '0', version[12] - '0');
     }
-
-    return result;
 }
 
 static std::vector<std::string> GetIndexedExtensions(PFNGLGETINTEGERVPROC getIntegerFunction, PFNGLGETSTRINGIPROC getStringIFunction)
@@ -78,18 +62,25 @@ static void AssignGLEntryPoint(void *function, T *outFunction)
 }
 
 template <typename T>
-static void AssignGLExtensionEntryPoint(const std::vector<std::string> &extensions, const std::string &extension, void *function, T *outFunction)
+static void AssignGLExtensionEntryPoint(const std::vector<std::string> &extensions, const char *requiredExtensionString,
+                                        void *function, T *outFunction)
 {
-    if (std::find(extensions.begin(), extensions.end(), extension) != extensions.end())
+    std::vector<std::string> requiredExtensions;
+    angle::SplitStringAlongWhitespace(requiredExtensionString, &requiredExtensions);
+    for (const std::string& requiredExtension : requiredExtensions)
     {
-        *outFunction = reinterpret_cast<T>(function);
+        if (std::find(extensions.begin(), extensions.end(), requiredExtension) == extensions.end())
+        {
+            return;
+        }
     }
+
+    *outFunction = reinterpret_cast<T>(function);
 }
 
 FunctionsGL::FunctionsGL()
-    : majorVersion(0),
-      minorVersion(0),
-      openGLES(false),
+    : version(),
+      standard(),
       extensions(),
 
       blendFunc(nullptr),
@@ -618,6 +609,7 @@ FunctionsGL::FunctionsGL()
       getDebugMessageLog(nullptr),
       getFramebufferParameteriv(nullptr),
       getInternalformati64v(nullptr),
+      getPointerv(nullptr),
       getObjectLabel(nullptr),
       getObjectPtrLabel(nullptr),
       getProgramInterfaceiv(nullptr),
@@ -768,7 +760,11 @@ FunctionsGL::FunctionsGL()
       vertexArrayBindingDivisor(nullptr),
       vertexArrayElementBuffer(nullptr),
       vertexArrayVertexBuffer(nullptr),
-      vertexArrayVertexBuffers(nullptr)
+      vertexArrayVertexBuffers(nullptr),
+      blendBarrier(nullptr),
+      primitiveBoundingBox(nullptr),
+      eglImageTargetRenderbufferStorageOES(nullptr),
+      eglImageTargetTexture2DOES(nullptr)
 {
 }
 
@@ -780,22 +776,193 @@ void FunctionsGL::initialize()
 {
     // Grab the version number
     AssignGLEntryPoint(loadProcAddress("glGetString"), &getString);
-    GetGLVersion(getString, &majorVersion, &minorVersion, &openGLES);
+    AssignGLEntryPoint(loadProcAddress("glGetIntegerv"), &getIntegerv);
+    GetGLVersion(getString, &version, &standard);
 
     // Grab the GL extensions
-    if (majorVersion >= 3)
+    if (isAtLeastGL(gl::Version(3, 0)) || isAtLeastGLES(gl::Version(3, 0)))
     {
-        AssignGLEntryPoint(loadProcAddress("glGetIntegerv"), &getIntegerv);
         AssignGLEntryPoint(loadProcAddress("glGetStringi"), &getStringi);
         extensions = GetIndexedExtensions(getIntegerv, getStringi);
     }
     else
     {
-        extensions = GetNonIndexedExtensions(getString);
+        const char *exts = reinterpret_cast<const char*>(getString(GL_EXTENSIONS));
+        angle::SplitStringAlongWhitespace(std::string(exts), &extensions);
     }
 
+    // Load the entry points
+    switch (standard)
+    {
+        case STANDARD_GL_DESKTOP:
+            initializeProcsDesktopGL();
+            break;
+
+        case STANDARD_GL_ES:
+            initializeProcsGLES();
+            break;
+
+        default:
+            UNREACHABLE();
+            break;
+    }
+}
+
+void FunctionsGL::initializeProcsDesktopGL()
+{
+    // Check the context profile
+    profile = 0;
+    if (isAtLeastGL(gl::Version(3, 2)))
+    {
+        getIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
+    }
+
+    // clang-format off
+
+    // Load extensions
+    // Even though extensions are written against specific versions of GL, many drivers expose the extensions
+    // in even older versions.  Always try loading the extensions regardless of GL version.
+
+    // GL_NV_fence
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glDeleteFencesNV"), &deleteFencesNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glGenFencesNV"), &genFencesNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glIsFenceNV"), &isFenceNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glTestFenceNV"), &testFenceNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glGetFenceivNV"), &getFenceivNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glFinishFenceNV"), &finishFenceNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glSetFenceNV"), &setFenceNV);
+
+    // GL_EXT_texture_storage
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_texture_storage", loadProcAddress("glTexStorage1DEXT"), &texStorage1D);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_texture_storage", loadProcAddress("glTexStorage2DEXT"), &texStorage2D);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_texture_storage GL_EXT_texture3D", loadProcAddress("glTexStorage3DEXT"), &texStorage3D);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_texture_storage GL_EXT_direct_state_access", loadProcAddress("glTextureStorage1DEXT"), &textureStorage1D);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_texture_storage GL_EXT_direct_state_access", loadProcAddress("glTextureStorage2DEXT"), &textureStorage2D);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_texture_storage GL_EXT_direct_state_access GL_EXT_texture3D", loadProcAddress("glTextureStorage3DEXT"), &textureStorage3D);
+
+    // GL_ARB_vertex_array_object
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_vertex_array_object", loadProcAddress("glBindVertexArray"), &bindVertexArray);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_vertex_array_object", loadProcAddress("glDeleteVertexArrays"), &deleteVertexArrays);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_vertex_array_object", loadProcAddress("glGenVertexArrays"), &genVertexArrays);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_vertex_array_object", loadProcAddress("glIsVertexArray"), &isVertexArray);
+
+    // GL_ARB_sync
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glClientWaitSync"), &clientWaitSync);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glDeleteSync"), &deleteSync);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glFenceSync"), &fenceSync);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glGetInteger64i_v"), &getInteger64i_v);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glGetInteger64v"), &getInteger64v);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glGetSynciv"), &getSynciv);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glIsSync"), &isSync);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glWaitSync"), &waitSync);
+
+    // GL_EXT_framebuffer_object
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glIsRenderbufferEXT"), &isRenderbuffer);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glBindRenderbufferEXT"), &bindRenderbuffer);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glDeleteRenderbuffersEXT"), &deleteRenderbuffers);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glGenRenderbuffersEXT"), &genRenderbuffers);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glRenderbufferStorageEXT"), &renderbufferStorage);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glGetRenderbufferParameterivEXT"), &getRenderbufferParameteriv);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glIsFramebufferEXT"), &isFramebuffer);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glBindFramebufferEXT"), &bindFramebuffer);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glDeleteFramebuffersEXT"), &deleteFramebuffers);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glGenFramebuffersEXT"), &genFramebuffers);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glCheckFramebufferStatusEXT"), &checkFramebufferStatus);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glFramebufferTexture1DEXT"), &framebufferTexture1D);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glFramebufferTexture2DEXT"), &framebufferTexture2D);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glFramebufferTexture3DEXT"), &framebufferTexture3D);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glFramebufferRenderbufferEXT"), &framebufferRenderbuffer);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glGetFramebufferAttachmentParameterivEXT"), &getFramebufferAttachmentParameteriv);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_object", loadProcAddress("glGenerateMipmapEXT"), &generateMipmap);
+
+    // GL_EXT_framebuffer_blit
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_framebuffer_blit", loadProcAddress("glBlitFramebufferEXT"), &blitFramebuffer);
+
+    // GL_KHR_debug
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glDebugMessageControl"), &debugMessageControl);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glDebugMessageInsert"), &debugMessageInsert);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glDebugMessageCallback"), &debugMessageCallback);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glGetDebugMessageLog"), &getDebugMessageLog);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glGetPointerv"), &getPointerv);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glPushDebugGroup"), &pushDebugGroup);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glPopDebugGroup"), &popDebugGroup);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glObjectLabel"), &objectLabel);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glGetObjectLabel"), &getObjectLabel);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glObjectPtrLabel"), &objectPtrLabel);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glGetObjectPtrLabel"), &getObjectPtrLabel);
+
+    // GL_ARB_internalformat_query
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_internalformat_query", loadProcAddress("glGetInternalformativ"), &getInternalformativ);
+
+    // GL_ARB_ES2_compatibility
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_ES2_compatibility", loadProcAddress("glReleaseShaderCompiler"), &releaseShaderCompiler);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_ES2_compatibility", loadProcAddress("glShaderBinary"), &shaderBinary);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_ES2_compatibility", loadProcAddress("glGetShaderPrecisionFormat"), &getShaderPrecisionFormat);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_ES2_compatibility", loadProcAddress("glDepthRangef"), &depthRangef);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_ES2_compatibility", loadProcAddress("glClearDepthf"), &clearDepthf);
+
+    // GL_ARB_instanced_arrays
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_instanced_arrays", loadProcAddress("glVertexAttribDivisorARB"), &vertexAttribDivisor);
+
+    // GL_EXT_draw_instanced
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_draw_instanced", loadProcAddress("glDrawArraysInstancedEXT"), &drawArraysInstanced);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_draw_instanced", loadProcAddress("glDrawElementsInstancedEXT"), &drawElementsInstanced);
+
+    // GL_ARB_draw_instanced
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_draw_instanced", loadProcAddress("glDrawArraysInstancedARB"), &drawArraysInstanced);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_draw_instanced", loadProcAddress("glDrawElementsInstancedARB"), &drawElementsInstanced);
+
+    // GL_ARB_sampler_objects
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glGenSamplers"), &genSamplers);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glDeleteSamplers"), &deleteSamplers);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glIsSampler"), &isSampler);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glBindSampler"), &bindSampler);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glSamplerParameteri"), &samplerParameteri);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glSamplerParameterf"), &samplerParameterf);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glSamplerParameteriv"), &samplerParameteriv);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glSamplerParameterfv"), &samplerParameterfv);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glSamplerParameterIiv"), &samplerParameterIiv);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glSamplerParameterIuiv"), &samplerParameterIuiv);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glGetSamplerParameteriv"), &getSamplerParameteriv);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glGetSamplerParameterfv"), &getSamplerParameterfv);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glGetSamplerParameterIiv"), &getSamplerParameterIiv);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_sampler_objects", loadProcAddress("glGetSamplerParameterIuiv"), &getSamplerParameterIuiv);
+
+    // GL_ARB_occlusion_query
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_occlusion_query", loadProcAddress("glGenQueriesARB"), &genQueries);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_occlusion_query", loadProcAddress("glDeleteQueriesARB"), &deleteQueries);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_occlusion_query", loadProcAddress("glIsQueryARB"), &isQuery);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_occlusion_query", loadProcAddress("glBeginQueryARB"), &beginQuery);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_occlusion_query", loadProcAddress("glEndQueryARB"), &endQuery);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_occlusion_query", loadProcAddress("glGetQueryivARB"), &getQueryiv);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_occlusion_query", loadProcAddress("glGetQueryObjectivARB"), &getQueryObjectiv);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_occlusion_query", loadProcAddress("glGetQueryObjectuivARB"), &getQueryObjectuiv);
+
+    // EXT_transform_feedback
+    AssignGLExtensionEntryPoint(extensions, "EXT_transform_feedback", loadProcAddress("glBindBufferRangeEXT"), &bindBufferRange);
+    AssignGLExtensionEntryPoint(extensions, "EXT_transform_feedback", loadProcAddress("glBindBufferBaseEXT"), &bindBufferBase);
+    AssignGLExtensionEntryPoint(extensions, "EXT_transform_feedback", loadProcAddress("glBeginTransformFeedbackEXT"), &beginTransformFeedback);
+    AssignGLExtensionEntryPoint(extensions, "EXT_transform_feedback", loadProcAddress("glEndTransformFeedbackEXT"), &endTransformFeedback);
+    AssignGLExtensionEntryPoint(extensions, "EXT_transform_feedback", loadProcAddress("glTransformFeedbackVaryingsEXT"), &transformFeedbackVaryings);
+    AssignGLExtensionEntryPoint(extensions, "EXT_transform_feedback", loadProcAddress("glGetTransformFeedbackVaryingEXT"), &getTransformFeedbackVarying);
+
+    // GL_ARB_transform_feedback2
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_transform_feedback2", loadProcAddress("glBindTransformFeedback"), &bindTransformFeedback);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_transform_feedback2", loadProcAddress("glDeleteTransformFeedbacks"), &deleteTransformFeedbacks);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_transform_feedback2", loadProcAddress("glGenTransformFeedbacks"), &genTransformFeedbacks);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_transform_feedback2", loadProcAddress("glIsTransformFeedback"), &isTransformFeedback);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_transform_feedback2", loadProcAddress("glPauseTransformFeedback"), &pauseTransformFeedback);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_transform_feedback2", loadProcAddress("glResumeTransformFeedback"), &resumeTransformFeedback);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_transform_feedback2", loadProcAddress("glDrawTransformFeedback"), &drawTransformFeedback);
+
+    // GL_ARB_transform_feedback3
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_transform_feedback3", loadProcAddress("glDrawTransformFeedbackStream"), &drawTransformFeedbackStream);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_transform_feedback3", loadProcAddress("glBeginQueryIndexed"), &beginQueryIndexed);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_transform_feedback3", loadProcAddress("glEndQueryIndexed"), &endQueryIndexed);
+    AssignGLExtensionEntryPoint(extensions, "GL_ARB_transform_feedback3", loadProcAddress("glGetQueryIndexediv"), &getQueryIndexediv);
+
     // 1.0
-    if (majorVersion >= 1)
+    if (isAtLeastGL(gl::Version(1, 0)))
     {
         AssignGLEntryPoint(loadProcAddress("glBlendFunc"), &blendFunc);
         AssignGLEntryPoint(loadProcAddress("glClear"), &clear);
@@ -848,7 +1015,7 @@ void FunctionsGL::initialize()
     }
 
     // 1.1
-    if (majorVersion > 1 || (majorVersion == 1 && minorVersion >= 1))
+    if (isAtLeastGL(gl::Version(1, 1)))
     {
         AssignGLEntryPoint(loadProcAddress("glBindTexture"), &bindTexture);
         AssignGLEntryPoint(loadProcAddress("glCopyTexImage1D"), &copyTexImage1D);
@@ -866,7 +1033,7 @@ void FunctionsGL::initialize()
     }
 
     // 1.2
-    if (majorVersion > 1 || (majorVersion == 1 && minorVersion >= 2))
+    if (isAtLeastGL(gl::Version(1, 2)))
     {
         AssignGLEntryPoint(loadProcAddress("glBlendColor"), &blendColor);
         AssignGLEntryPoint(loadProcAddress("glBlendEquation"), &blendEquation);
@@ -874,19 +1041,10 @@ void FunctionsGL::initialize()
         AssignGLEntryPoint(loadProcAddress("glDrawRangeElements"), &drawRangeElements);
         AssignGLEntryPoint(loadProcAddress("glTexImage3D"), &texImage3D);
         AssignGLEntryPoint(loadProcAddress("glTexSubImage3D"), &texSubImage3D);
-
-        // Extensions
-        AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glDeleteFencesNV"), &deleteFencesNV);
-        AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glGenFencesNV"), &genFencesNV);
-        AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glIsFenceNV"), &isFenceNV);
-        AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glTestFenceNV"), &testFenceNV);
-        AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glGetFenceivNV"), &getFenceivNV);
-        AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glFinishFenceNV"), &finishFenceNV);
-        AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glSetFenceNV"), &setFenceNV);
     }
 
     // 1.3
-    if (majorVersion > 1 || (majorVersion == 1 && minorVersion >= 3))
+    if (isAtLeastGL(gl::Version(1, 3)))
     {
         AssignGLEntryPoint(loadProcAddress("glActiveTexture"), &activeTexture);
         AssignGLEntryPoint(loadProcAddress("glCompressedTexImage1D"), &compressedTexImage1D);
@@ -900,7 +1058,7 @@ void FunctionsGL::initialize()
     }
 
     // 1.4
-    if (majorVersion > 1 || (majorVersion == 1 && minorVersion >= 4))
+    if (isAtLeastGL(gl::Version(1, 4)))
     {
         AssignGLEntryPoint(loadProcAddress("glBlendFuncSeparate"), &blendFuncSeparate);
         AssignGLEntryPoint(loadProcAddress("glMultiDrawArrays"), &multiDrawArrays);
@@ -912,7 +1070,7 @@ void FunctionsGL::initialize()
     }
 
     // 1.5
-    if (majorVersion > 1 || (majorVersion == 1 && minorVersion >= 5))
+    if (isAtLeastGL(gl::Version(1, 5)))
     {
         AssignGLEntryPoint(loadProcAddress("glBeginQuery"), &beginQuery);
         AssignGLEntryPoint(loadProcAddress("glBindBuffer"), &bindBuffer);
@@ -936,7 +1094,7 @@ void FunctionsGL::initialize()
     }
 
     // 2.0
-    if (majorVersion >= 2)
+    if (isAtLeastGL(gl::Version(2, 0)))
     {
         AssignGLEntryPoint(loadProcAddress("glAttachShader"), &attachShader);
         AssignGLEntryPoint(loadProcAddress("glBindAttribLocation"), &bindAttribLocation);
@@ -1034,7 +1192,7 @@ void FunctionsGL::initialize()
     }
 
     // 2.1
-    if (majorVersion > 2 || (majorVersion == 2 && minorVersion >= 1))
+    if (isAtLeastGL(gl::Version(2, 1)))
     {
         AssignGLEntryPoint(loadProcAddress("glUniformMatrix2x3fv"), &uniformMatrix2x3fv);
         AssignGLEntryPoint(loadProcAddress("glUniformMatrix2x4fv"), &uniformMatrix2x4fv);
@@ -1045,7 +1203,7 @@ void FunctionsGL::initialize()
     }
 
     // 3.0
-    if (majorVersion >= 3)
+    if (isAtLeastGL(gl::Version(3, 0)))
     {
         AssignGLEntryPoint(loadProcAddress("glBeginConditionalRender"), &beginConditionalRender);
         AssignGLEntryPoint(loadProcAddress("glBeginTransformFeedback"), &beginTransformFeedback);
@@ -1131,13 +1289,10 @@ void FunctionsGL::initialize()
         AssignGLEntryPoint(loadProcAddress("glVertexAttribI4uiv"), &vertexAttribI4uiv);
         AssignGLEntryPoint(loadProcAddress("glVertexAttribI4usv"), &vertexAttribI4usv);
         AssignGLEntryPoint(loadProcAddress("glVertexAttribIPointer"), &vertexAttribIPointer);
-
-        // Extensions
-        AssignGLExtensionEntryPoint(extensions, "GL_ARB_internalformat_query", loadProcAddress("glGetInternalformativ"), &getInternalformativ);
     }
 
     // 3.1
-    if (majorVersion > 3 || (majorVersion == 3 && minorVersion >= 1))
+    if (isAtLeastGL(gl::Version(3, 1)))
     {
         AssignGLEntryPoint(loadProcAddress("glCopyBufferSubData"), &copyBufferSubData);
         AssignGLEntryPoint(loadProcAddress("glDrawArraysInstanced"), &drawArraysInstanced);
@@ -1151,20 +1306,10 @@ void FunctionsGL::initialize()
         AssignGLEntryPoint(loadProcAddress("glPrimitiveRestartIndex"), &primitiveRestartIndex);
         AssignGLEntryPoint(loadProcAddress("glTexBuffer"), &texBuffer);
         AssignGLEntryPoint(loadProcAddress("glUniformBlockBinding"), &uniformBlockBinding);
-
-        // Extensions
-        AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glClientWaitSync"), &clientWaitSync);
-        AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glDeleteSync"), &deleteSync);
-        AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glFenceSync"), &fenceSync);
-        AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glGetInteger64i_v"), &getInteger64i_v);
-        AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glGetInteger64v"), &getInteger64v);
-        AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glGetSynciv"), &getSynciv);
-        AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glIsSync"), &isSync);
-        AssignGLExtensionEntryPoint(extensions, "GL_ARB_sync", loadProcAddress("glWaitSync"), &waitSync);
     }
 
     // 3.2
-    if (majorVersion > 3 || (majorVersion == 3 && minorVersion >= 2))
+    if (isAtLeastGL(gl::Version(3, 2)))
     {
         AssignGLEntryPoint(loadProcAddress("glClientWaitSync"), &clientWaitSync);
         AssignGLEntryPoint(loadProcAddress("glDeleteSync"), &deleteSync);
@@ -1188,7 +1333,7 @@ void FunctionsGL::initialize()
     }
 
     // 3.3
-    if (majorVersion > 3 || (majorVersion == 3 && minorVersion >= 3))
+    if (isAtLeastGL(gl::Version(3, 3)))
     {
         AssignGLEntryPoint(loadProcAddress("glBindFragDataLocationIndexed"), &bindFragDataLocationIndexed);
         AssignGLEntryPoint(loadProcAddress("glBindSampler"), &bindSampler);
@@ -1221,7 +1366,7 @@ void FunctionsGL::initialize()
     }
 
     // 4.0
-    if (majorVersion >= 4)
+    if (isAtLeastGL(gl::Version(4, 0)))
     {
         AssignGLEntryPoint(loadProcAddress("glBeginQueryIndexed"), &beginQueryIndexed);
         AssignGLEntryPoint(loadProcAddress("glBindTransformFeedback"), &bindTransformFeedback);
@@ -1272,7 +1417,7 @@ void FunctionsGL::initialize()
     }
 
     // 4.1
-    if (majorVersion > 4 || (majorVersion == 4 && minorVersion >= 1))
+    if (isAtLeastGL(gl::Version(4, 1)))
     {
         AssignGLEntryPoint(loadProcAddress("glActiveShaderProgram"), &activeShaderProgram);
         AssignGLEntryPoint(loadProcAddress("glBindProgramPipeline"), &bindProgramPipeline);
@@ -1365,7 +1510,7 @@ void FunctionsGL::initialize()
     }
 
     // 4.2
-    if (majorVersion > 4 || (majorVersion == 4 && minorVersion >= 2))
+    if (isAtLeastGL(gl::Version(4, 2)))
     {
         AssignGLEntryPoint(loadProcAddress("glBindImageTexture"), &bindImageTexture);
         AssignGLEntryPoint(loadProcAddress("glDrawArraysInstancedBaseInstance"), &drawArraysInstancedBaseInstance);
@@ -1382,7 +1527,7 @@ void FunctionsGL::initialize()
     }
 
     // 4.3
-    if (majorVersion > 4 || (majorVersion == 4 && minorVersion >= 3))
+    if (isAtLeastGL(gl::Version(4, 3)))
     {
         AssignGLEntryPoint(loadProcAddress("glBindVertexBuffer"), &bindVertexBuffer);
         AssignGLEntryPoint(loadProcAddress("glClearBufferData"), &clearBufferData);
@@ -1397,6 +1542,7 @@ void FunctionsGL::initialize()
         AssignGLEntryPoint(loadProcAddress("glGetDebugMessageLog"), &getDebugMessageLog);
         AssignGLEntryPoint(loadProcAddress("glGetFramebufferParameteriv"), &getFramebufferParameteriv);
         AssignGLEntryPoint(loadProcAddress("glGetInternalformati64v"), &getInternalformati64v);
+        AssignGLEntryPoint(loadProcAddress("glGetPointerv"), &getPointerv);
         AssignGLEntryPoint(loadProcAddress("glGetObjectLabel"), &getObjectLabel);
         AssignGLEntryPoint(loadProcAddress("glGetObjectPtrLabel"), &getObjectPtrLabel);
         AssignGLEntryPoint(loadProcAddress("glGetProgramInterfaceiv"), &getProgramInterfaceiv);
@@ -1430,7 +1576,7 @@ void FunctionsGL::initialize()
     }
 
     // 4.4
-    if (majorVersion > 4 || (majorVersion == 4 && minorVersion >= 4))
+    if (isAtLeastGL(gl::Version(4, 4)))
     {
         AssignGLEntryPoint(loadProcAddress("glBindBuffersBase"), &bindBuffersBase);
         AssignGLEntryPoint(loadProcAddress("glBindBuffersRange"), &bindBuffersRange);
@@ -1444,7 +1590,7 @@ void FunctionsGL::initialize()
     }
 
     // 4.5
-    if (majorVersion > 4 || (majorVersion == 4 && minorVersion >= 5))
+    if (isAtLeastGL(gl::Version(4, 5)))
     {
         AssignGLEntryPoint(loadProcAddress("glBindTextureUnit"), &bindTextureUnit);
         AssignGLEntryPoint(loadProcAddress("glBlitNamedFramebuffer"), &blitNamedFramebuffer);
@@ -1557,6 +1703,498 @@ void FunctionsGL::initialize()
         AssignGLEntryPoint(loadProcAddress("glVertexArrayVertexBuffer"), &vertexArrayVertexBuffer);
         AssignGLEntryPoint(loadProcAddress("glVertexArrayVertexBuffers"), &vertexArrayVertexBuffers);
     }
+
+    // clang-format on
+}
+
+void FunctionsGL::initializeProcsGLES()
+{
+    // No profiles in GLES
+    profile = 0;
+
+    // clang-format off
+
+    // GL_OES_texture_3D
+    AssignGLExtensionEntryPoint(extensions, "GL_OES_texture_3D", loadProcAddress("glTexImage3DOES"), &texImage3D);
+    AssignGLExtensionEntryPoint(extensions, "GL_OES_texture_3D", loadProcAddress("glTexSubImage3DOES"), &texSubImage3D);
+    AssignGLExtensionEntryPoint(extensions, "GL_OES_texture_3D", loadProcAddress("glCopyTexSubImage3DOES"), &copyTexSubImage3D);
+
+    // GL_NV_fence
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glDeleteFencesNV"), &deleteFencesNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glGenFencesNV"), &genFencesNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glIsFenceNV"), &isFenceNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glTestFenceNV"), &testFenceNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glGetFenceivNV"), &getFenceivNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glFinishFenceNV"), &finishFenceNV);
+    AssignGLExtensionEntryPoint(extensions, "GL_NV_fence", loadProcAddress("glSetFenceNV"), &setFenceNV);
+
+    // GL_EXT_texture_storage
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_texture_storage", loadProcAddress("glTexStorage2DEXT"), &texStorage2D);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_texture_storage GL_OES_texture3D", loadProcAddress("glTexStorage3DEXT"), &texStorage3D);
+
+    // GL_OES_vertex_array_object
+    AssignGLExtensionEntryPoint(extensions, "GL_OES_vertex_array_object", loadProcAddress("glBindVertexArray"), &bindVertexArray);
+    AssignGLExtensionEntryPoint(extensions, "GL_OES_vertex_array_object", loadProcAddress("glDeleteVertexArrays"), &deleteVertexArrays);
+    AssignGLExtensionEntryPoint(extensions, "GL_OES_vertex_array_object", loadProcAddress("glGenVertexArrays"), &genVertexArrays);
+    AssignGLExtensionEntryPoint(extensions, "GL_OES_vertex_array_object", loadProcAddress("glIsVertexArray"), &isVertexArray);
+
+    // GL_EXT_map_buffer_range
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_map_buffer_range", loadProcAddress("glMapBufferRangeEXT"), &mapBufferRange);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_map_buffer_range", loadProcAddress("glFlushMappedBufferRangeEXT"), &flushMappedBufferRange);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_map_buffer_range", loadProcAddress("glUnmapBufferOES"), &unmapBuffer);
+
+    // GL_OES_mapbuffer
+    AssignGLExtensionEntryPoint(extensions, "GL_OES_mapbuffer", loadProcAddress("glMapBufferOES"), &mapBuffer);
+    AssignGLExtensionEntryPoint(extensions, "GL_OES_mapbuffer", loadProcAddress("glUnmapBufferOES"), &unmapBuffer);
+
+    // GL_KHR_debug
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glDebugMessageControl"), &debugMessageControl);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glDebugMessageInsert"), &debugMessageInsert);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glDebugMessageCallback"), &debugMessageCallback);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glGetDebugMessageLog"), &getDebugMessageLog);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glGetPointerv"), &getPointerv);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glPushDebugGroup"), &pushDebugGroup);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glPopDebugGroup"), &popDebugGroup);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glObjectLabel"), &objectLabel);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glGetObjectLabel"), &getObjectLabel);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glObjectPtrLabel"), &objectPtrLabel);
+    AssignGLExtensionEntryPoint(extensions, "GL_KHR_debug", loadProcAddress("glGetObjectPtrLabel"), &getObjectPtrLabel);
+
+    // GL_EXT_draw_instanced
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_draw_instanced", loadProcAddress("glVertexAttribDivisorEXT"), &vertexAttribDivisor);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_draw_instanced", loadProcAddress("glDrawArraysInstancedEXT"), &drawArraysInstanced);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_draw_instanced", loadProcAddress("glDrawElementsInstancedEXT"), &drawElementsInstanced);
+
+    // GL_EXT_occlusion_query_boolean
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_occlusion_query_boolean", loadProcAddress("glGenQueriesEXT"), &genQueries);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_occlusion_query_boolean", loadProcAddress("glDeleteQueriesEXT"), &deleteQueries);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_occlusion_query_boolean", loadProcAddress("glIsQueryEXT"), &isQuery);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_occlusion_query_boolean", loadProcAddress("glBeginQueryEXT"), &beginQuery);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_occlusion_query_boolean", loadProcAddress("glEndQueryEXT"), &endQuery);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_occlusion_query_boolean", loadProcAddress("glGetQueryivEXT"), &getQueryiv);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_occlusion_query_boolean", loadProcAddress("glGetQueryObjectuivEXT"), &getQueryObjectuiv);
+
+    // GL_EXT_disjoint_timer_query
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_disjoint_timer_query", loadProcAddress("glGenQueriesEXT"), &genQueries);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_disjoint_timer_query", loadProcAddress("glDeleteQueriesEXT"), &deleteQueries);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_disjoint_timer_query", loadProcAddress("glIsQueryEXT"), &isQuery);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_disjoint_timer_query", loadProcAddress("glBeginQueryEXT"), &beginQuery);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_disjoint_timer_query", loadProcAddress("glEndQueryEXT"), &endQuery);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_disjoint_timer_query", loadProcAddress("glQueryCounterEXT"), &queryCounter);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_disjoint_timer_query", loadProcAddress("glGetQueryivEXT"), &getQueryiv);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_disjoint_timer_query", loadProcAddress("glGetQueryObjectivEXT"), &getQueryObjectiv);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_disjoint_timer_query", loadProcAddress("glGetQueryObjectuivEXT"), &getQueryObjectuiv);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_disjoint_timer_query", loadProcAddress("glGetQueryObjecti64vEXT"), &getQueryObjecti64v);
+    AssignGLExtensionEntryPoint(extensions, "GL_EXT_disjoint_timer_query", loadProcAddress("glGetQueryObjectui64vEXT"), &getQueryObjectui64v);
+
+    // GL_OES_EGL_image
+    AssignGLExtensionEntryPoint(extensions, "GL_OES_EGL_image", loadProcAddress("glEGLImageTargetRenderbufferStorageOES"), &eglImageTargetRenderbufferStorageOES);
+    AssignGLExtensionEntryPoint(extensions, "GL_OES_EGL_image", loadProcAddress("glEGLImageTargetTexture2DOES"), &eglImageTargetTexture2DOES);
+
+    // 2.0
+    if (isAtLeastGLES(gl::Version(2, 0)))
+    {
+        AssignGLEntryPoint(loadProcAddress("glActiveTexture"), &activeTexture);
+        AssignGLEntryPoint(loadProcAddress("glAttachShader"), &attachShader);
+        AssignGLEntryPoint(loadProcAddress("glBindAttribLocation"), &bindAttribLocation);
+        AssignGLEntryPoint(loadProcAddress("glBindBuffer"), &bindBuffer);
+        AssignGLEntryPoint(loadProcAddress("glBindFramebuffer"), &bindFramebuffer);
+        AssignGLEntryPoint(loadProcAddress("glBindRenderbuffer"), &bindRenderbuffer);
+        AssignGLEntryPoint(loadProcAddress("glBindTexture"), &bindTexture);
+        AssignGLEntryPoint(loadProcAddress("glBlendColor"), &blendColor);
+        AssignGLEntryPoint(loadProcAddress("glBlendEquation"), &blendEquation);
+        AssignGLEntryPoint(loadProcAddress("glBlendEquationSeparate"), &blendEquationSeparate);
+        AssignGLEntryPoint(loadProcAddress("glBlendFunc"), &blendFunc);
+        AssignGLEntryPoint(loadProcAddress("glBlendFuncSeparate"), &blendFuncSeparate);
+        AssignGLEntryPoint(loadProcAddress("glBufferData"), &bufferData);
+        AssignGLEntryPoint(loadProcAddress("glBufferSubData"), &bufferSubData);
+        AssignGLEntryPoint(loadProcAddress("glCheckFramebufferStatus"), &checkFramebufferStatus);
+        AssignGLEntryPoint(loadProcAddress("glClear"), &clear);
+        AssignGLEntryPoint(loadProcAddress("glClearColor"), &clearColor);
+        AssignGLEntryPoint(loadProcAddress("glClearDepthf"), &clearDepthf);
+        AssignGLEntryPoint(loadProcAddress("glClearStencil"), &clearStencil);
+        AssignGLEntryPoint(loadProcAddress("glColorMask"), &colorMask);
+        AssignGLEntryPoint(loadProcAddress("glCompileShader"), &compileShader);
+        AssignGLEntryPoint(loadProcAddress("glCompressedTexImage2D"), &compressedTexImage2D);
+        AssignGLEntryPoint(loadProcAddress("glCompressedTexSubImage2D"), &compressedTexSubImage2D);
+        AssignGLEntryPoint(loadProcAddress("glCopyTexImage2D"), &copyTexImage2D);
+        AssignGLEntryPoint(loadProcAddress("glCopyTexSubImage2D"), &copyTexSubImage2D);
+        AssignGLEntryPoint(loadProcAddress("glCreateProgram"), &createProgram);
+        AssignGLEntryPoint(loadProcAddress("glCreateShader"), &createShader);
+        AssignGLEntryPoint(loadProcAddress("glCullFace"), &cullFace);
+        AssignGLEntryPoint(loadProcAddress("glDeleteBuffers"), &deleteBuffers);
+        AssignGLEntryPoint(loadProcAddress("glDeleteFramebuffers"), &deleteFramebuffers);
+        AssignGLEntryPoint(loadProcAddress("glDeleteProgram"), &deleteProgram);
+        AssignGLEntryPoint(loadProcAddress("glDeleteRenderbuffers"), &deleteRenderbuffers);
+        AssignGLEntryPoint(loadProcAddress("glDeleteShader"), &deleteShader);
+        AssignGLEntryPoint(loadProcAddress("glDeleteTextures"), &deleteTextures);
+        AssignGLEntryPoint(loadProcAddress("glDepthFunc"), &depthFunc);
+        AssignGLEntryPoint(loadProcAddress("glDepthMask"), &depthMask);
+        AssignGLEntryPoint(loadProcAddress("glDepthRangef"), &depthRangef);
+        AssignGLEntryPoint(loadProcAddress("glDetachShader"), &detachShader);
+        AssignGLEntryPoint(loadProcAddress("glDisable"), &disable);
+        AssignGLEntryPoint(loadProcAddress("glDisableVertexAttribArray"), &disableVertexAttribArray);
+        AssignGLEntryPoint(loadProcAddress("glDrawArrays"), &drawArrays);
+        AssignGLEntryPoint(loadProcAddress("glDrawElements"), &drawElements);
+        AssignGLEntryPoint(loadProcAddress("glEnable"), &enable);
+        AssignGLEntryPoint(loadProcAddress("glEnableVertexAttribArray"), &enableVertexAttribArray);
+        AssignGLEntryPoint(loadProcAddress("glFinish"), &finish);
+        AssignGLEntryPoint(loadProcAddress("glFlush"), &flush);
+        AssignGLEntryPoint(loadProcAddress("glFramebufferRenderbuffer"), &framebufferRenderbuffer);
+        AssignGLEntryPoint(loadProcAddress("glFramebufferTexture2D"), &framebufferTexture2D);
+        AssignGLEntryPoint(loadProcAddress("glFrontFace"), &frontFace);
+        AssignGLEntryPoint(loadProcAddress("glGenBuffers"), &genBuffers);
+        AssignGLEntryPoint(loadProcAddress("glGenerateMipmap"), &generateMipmap);
+        AssignGLEntryPoint(loadProcAddress("glGenFramebuffers"), &genFramebuffers);
+        AssignGLEntryPoint(loadProcAddress("glGenRenderbuffers"), &genRenderbuffers);
+        AssignGLEntryPoint(loadProcAddress("glGenTextures"), &genTextures);
+        AssignGLEntryPoint(loadProcAddress("glGetActiveAttrib"), &getActiveAttrib);
+        AssignGLEntryPoint(loadProcAddress("glGetActiveUniform"), &getActiveUniform);
+        AssignGLEntryPoint(loadProcAddress("glGetAttachedShaders"), &getAttachedShaders);
+        AssignGLEntryPoint(loadProcAddress("glGetAttribLocation"), &getAttribLocation);
+        AssignGLEntryPoint(loadProcAddress("glGetBooleanv"), &getBooleanv);
+        AssignGLEntryPoint(loadProcAddress("glGetBufferParameteriv"), &getBufferParameteriv);
+        AssignGLEntryPoint(loadProcAddress("glGetError"), &getError);
+        AssignGLEntryPoint(loadProcAddress("glGetFloatv"), &getFloatv);
+        AssignGLEntryPoint(loadProcAddress("glGetFramebufferAttachmentParameteriv"), &getFramebufferAttachmentParameteriv);
+        AssignGLEntryPoint(loadProcAddress("glGetIntegerv"), &getIntegerv);
+        AssignGLEntryPoint(loadProcAddress("glGetProgramiv"), &getProgramiv);
+        AssignGLEntryPoint(loadProcAddress("glGetProgramInfoLog"), &getProgramInfoLog);
+        AssignGLEntryPoint(loadProcAddress("glGetRenderbufferParameteriv"), &getRenderbufferParameteriv);
+        AssignGLEntryPoint(loadProcAddress("glGetShaderiv"), &getShaderiv);
+        AssignGLEntryPoint(loadProcAddress("glGetShaderInfoLog"), &getShaderInfoLog);
+        AssignGLEntryPoint(loadProcAddress("glGetShaderPrecisionFormat"), &getShaderPrecisionFormat);
+        AssignGLEntryPoint(loadProcAddress("glGetShaderSource"), &getShaderSource);
+        AssignGLEntryPoint(loadProcAddress("glGetString"), &getString);
+        AssignGLEntryPoint(loadProcAddress("glGetTexParameterfv"), &getTexParameterfv);
+        AssignGLEntryPoint(loadProcAddress("glGetTexParameteriv"), &getTexParameteriv);
+        AssignGLEntryPoint(loadProcAddress("glGetUniformfv"), &getUniformfv);
+        AssignGLEntryPoint(loadProcAddress("glGetUniformiv"), &getUniformiv);
+        AssignGLEntryPoint(loadProcAddress("glGetUniformLocation"), &getUniformLocation);
+        AssignGLEntryPoint(loadProcAddress("glGetVertexAttribfv"), &getVertexAttribfv);
+        AssignGLEntryPoint(loadProcAddress("glGetVertexAttribiv"), &getVertexAttribiv);
+        AssignGLEntryPoint(loadProcAddress("glGetVertexAttribPointerv"), &getVertexAttribPointerv);
+        AssignGLEntryPoint(loadProcAddress("glHint"), &hint);
+        AssignGLEntryPoint(loadProcAddress("glIsBuffer"), &isBuffer);
+        AssignGLEntryPoint(loadProcAddress("glIsEnabled"), &isEnabled);
+        AssignGLEntryPoint(loadProcAddress("glIsFramebuffer"), &isFramebuffer);
+        AssignGLEntryPoint(loadProcAddress("glIsProgram"), &isProgram);
+        AssignGLEntryPoint(loadProcAddress("glIsRenderbuffer"), &isRenderbuffer);
+        AssignGLEntryPoint(loadProcAddress("glIsShader"), &isShader);
+        AssignGLEntryPoint(loadProcAddress("glIsTexture"), &isTexture);
+        AssignGLEntryPoint(loadProcAddress("glLineWidth"), &lineWidth);
+        AssignGLEntryPoint(loadProcAddress("glLinkProgram"), &linkProgram);
+        AssignGLEntryPoint(loadProcAddress("glPixelStorei"), &pixelStorei);
+        AssignGLEntryPoint(loadProcAddress("glPolygonOffset"), &polygonOffset);
+        AssignGLEntryPoint(loadProcAddress("glReadPixels"), &readPixels);
+        AssignGLEntryPoint(loadProcAddress("glReleaseShaderCompiler"), &releaseShaderCompiler);
+        AssignGLEntryPoint(loadProcAddress("glRenderbufferStorage"), &renderbufferStorage);
+        AssignGLEntryPoint(loadProcAddress("glSampleCoverage"), &sampleCoverage);
+        AssignGLEntryPoint(loadProcAddress("glScissor"), &scissor);
+        AssignGLEntryPoint(loadProcAddress("glShaderBinary"), &shaderBinary);
+        AssignGLEntryPoint(loadProcAddress("glShaderSource"), &shaderSource);
+        AssignGLEntryPoint(loadProcAddress("glStencilFunc"), &stencilFunc);
+        AssignGLEntryPoint(loadProcAddress("glStencilFuncSeparate"), &stencilFuncSeparate);
+        AssignGLEntryPoint(loadProcAddress("glStencilMask"), &stencilMask);
+        AssignGLEntryPoint(loadProcAddress("glStencilMaskSeparate"), &stencilMaskSeparate);
+        AssignGLEntryPoint(loadProcAddress("glStencilOp"), &stencilOp);
+        AssignGLEntryPoint(loadProcAddress("glStencilOpSeparate"), &stencilOpSeparate);
+        AssignGLEntryPoint(loadProcAddress("glTexImage2D"), &texImage2D);
+        AssignGLEntryPoint(loadProcAddress("glTexParameterf"), &texParameterf);
+        AssignGLEntryPoint(loadProcAddress("glTexParameterfv"), &texParameterfv);
+        AssignGLEntryPoint(loadProcAddress("glTexParameteri"), &texParameteri);
+        AssignGLEntryPoint(loadProcAddress("glTexParameteriv"), &texParameteriv);
+        AssignGLEntryPoint(loadProcAddress("glTexSubImage2D"), &texSubImage2D);
+        AssignGLEntryPoint(loadProcAddress("glUniform1f"), &uniform1f);
+        AssignGLEntryPoint(loadProcAddress("glUniform1fv"), &uniform1fv);
+        AssignGLEntryPoint(loadProcAddress("glUniform1i"), &uniform1i);
+        AssignGLEntryPoint(loadProcAddress("glUniform1iv"), &uniform1iv);
+        AssignGLEntryPoint(loadProcAddress("glUniform2f"), &uniform2f);
+        AssignGLEntryPoint(loadProcAddress("glUniform2fv"), &uniform2fv);
+        AssignGLEntryPoint(loadProcAddress("glUniform2i"), &uniform2i);
+        AssignGLEntryPoint(loadProcAddress("glUniform2iv"), &uniform2iv);
+        AssignGLEntryPoint(loadProcAddress("glUniform3f"), &uniform3f);
+        AssignGLEntryPoint(loadProcAddress("glUniform3fv"), &uniform3fv);
+        AssignGLEntryPoint(loadProcAddress("glUniform3i"), &uniform3i);
+        AssignGLEntryPoint(loadProcAddress("glUniform3iv"), &uniform3iv);
+        AssignGLEntryPoint(loadProcAddress("glUniform4f"), &uniform4f);
+        AssignGLEntryPoint(loadProcAddress("glUniform4fv"), &uniform4fv);
+        AssignGLEntryPoint(loadProcAddress("glUniform4i"), &uniform4i);
+        AssignGLEntryPoint(loadProcAddress("glUniform4iv"), &uniform4iv);
+        AssignGLEntryPoint(loadProcAddress("glUniformMatrix2fv"), &uniformMatrix2fv);
+        AssignGLEntryPoint(loadProcAddress("glUniformMatrix3fv"), &uniformMatrix3fv);
+        AssignGLEntryPoint(loadProcAddress("glUniformMatrix4fv"), &uniformMatrix4fv);
+        AssignGLEntryPoint(loadProcAddress("glUseProgram"), &useProgram);
+        AssignGLEntryPoint(loadProcAddress("glValidateProgram"), &validateProgram);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttrib1f"), &vertexAttrib1f);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttrib1fv"), &vertexAttrib1fv);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttrib2f"), &vertexAttrib2f);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttrib2fv"), &vertexAttrib2fv);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttrib3f"), &vertexAttrib3f);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttrib3fv"), &vertexAttrib3fv);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttrib4f"), &vertexAttrib4f);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttrib4fv"), &vertexAttrib4fv);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttribPointer"), &vertexAttribPointer);
+        AssignGLEntryPoint(loadProcAddress("glViewport"), &viewport);
+    }
+
+    // 3.0
+    if (isAtLeastGLES(gl::Version(3, 0)))
+    {
+        AssignGLEntryPoint(loadProcAddress("glReadBuffer"), &readBuffer);
+        AssignGLEntryPoint(loadProcAddress("glDrawRangeElements"), &drawRangeElements);
+        AssignGLEntryPoint(loadProcAddress("glTexImage3D"), &texImage3D);
+        AssignGLEntryPoint(loadProcAddress("glTexSubImage3D"), &texSubImage3D);
+        AssignGLEntryPoint(loadProcAddress("glCopyTexSubImage3D"), &copyTexSubImage3D);
+        AssignGLEntryPoint(loadProcAddress("glCompressedTexImage3D"), &compressedTexImage3D);
+        AssignGLEntryPoint(loadProcAddress("glCompressedTexSubImage3D"), &compressedTexSubImage3D);
+        AssignGLEntryPoint(loadProcAddress("glGenQueries"), &genQueries);
+        AssignGLEntryPoint(loadProcAddress("glDeleteQueries"), &deleteQueries);
+        AssignGLEntryPoint(loadProcAddress("glIsQuery"), &isQuery);
+        AssignGLEntryPoint(loadProcAddress("glBeginQuery"), &beginQuery);
+        AssignGLEntryPoint(loadProcAddress("glEndQuery"), &endQuery);
+        AssignGLEntryPoint(loadProcAddress("glGetQueryiv"), &getQueryiv);
+        AssignGLEntryPoint(loadProcAddress("glGetQueryObjectuiv"), &getQueryObjectuiv);
+        AssignGLEntryPoint(loadProcAddress("glUnmapBuffer"), &unmapBuffer);
+        AssignGLEntryPoint(loadProcAddress("glGetBufferPointerv"), &getBufferPointerv);
+        AssignGLEntryPoint(loadProcAddress("glDrawBuffers"), &drawBuffers);
+        AssignGLEntryPoint(loadProcAddress("glUniformMatrix2x3fv"), &uniformMatrix2x3fv);
+        AssignGLEntryPoint(loadProcAddress("glUniformMatrix3x2fv"), &uniformMatrix3x2fv);
+        AssignGLEntryPoint(loadProcAddress("glUniformMatrix2x4fv"), &uniformMatrix2x4fv);
+        AssignGLEntryPoint(loadProcAddress("glUniformMatrix4x2fv"), &uniformMatrix4x2fv);
+        AssignGLEntryPoint(loadProcAddress("glUniformMatrix3x4fv"), &uniformMatrix3x4fv);
+        AssignGLEntryPoint(loadProcAddress("glUniformMatrix4x3fv"), &uniformMatrix4x3fv);
+        AssignGLEntryPoint(loadProcAddress("glBlitFramebuffer"), &blitFramebuffer);
+        AssignGLEntryPoint(loadProcAddress("glRenderbufferStorageMultisample"), &renderbufferStorageMultisample);
+        AssignGLEntryPoint(loadProcAddress("glFramebufferTextureLayer"), &framebufferTextureLayer);
+        AssignGLEntryPoint(loadProcAddress("glMapBufferRange"), &mapBufferRange);
+        AssignGLEntryPoint(loadProcAddress("glFlushMappedBufferRange"), &flushMappedBufferRange);
+        AssignGLEntryPoint(loadProcAddress("glBindVertexArray"), &bindVertexArray);
+        AssignGLEntryPoint(loadProcAddress("glDeleteVertexArrays"), &deleteVertexArrays);
+        AssignGLEntryPoint(loadProcAddress("glGenVertexArrays"), &genVertexArrays);
+        AssignGLEntryPoint(loadProcAddress("glIsVertexArray"), &isVertexArray);
+        AssignGLEntryPoint(loadProcAddress("glGetIntegeri_v"), &getIntegeri_v);
+        AssignGLEntryPoint(loadProcAddress("glBeginTransformFeedback"), &beginTransformFeedback);
+        AssignGLEntryPoint(loadProcAddress("glEndTransformFeedback"), &endTransformFeedback);
+        AssignGLEntryPoint(loadProcAddress("glBindBufferRange"), &bindBufferRange);
+        AssignGLEntryPoint(loadProcAddress("glBindBufferBase"), &bindBufferBase);
+        AssignGLEntryPoint(loadProcAddress("glTransformFeedbackVaryings"), &transformFeedbackVaryings);
+        AssignGLEntryPoint(loadProcAddress("glGetTransformFeedbackVarying"), &getTransformFeedbackVarying);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttribIPointer"), &vertexAttribIPointer);
+        AssignGLEntryPoint(loadProcAddress("glGetVertexAttribIiv"), &getVertexAttribIiv);
+        AssignGLEntryPoint(loadProcAddress("glGetVertexAttribIuiv"), &getVertexAttribIuiv);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttribI4i"), &vertexAttribI4i);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttribI4ui"), &vertexAttribI4ui);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttribI4iv"), &vertexAttribI4iv);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttribI4uiv"), &vertexAttribI4uiv);
+        AssignGLEntryPoint(loadProcAddress("glGetUniformuiv"), &getUniformuiv);
+        AssignGLEntryPoint(loadProcAddress("glGetFragDataLocation"), &getFragDataLocation);
+        AssignGLEntryPoint(loadProcAddress("glUniform1ui"), &uniform1ui);
+        AssignGLEntryPoint(loadProcAddress("glUniform2ui"), &uniform2ui);
+        AssignGLEntryPoint(loadProcAddress("glUniform3ui"), &uniform3ui);
+        AssignGLEntryPoint(loadProcAddress("glUniform4ui"), &uniform4ui);
+        AssignGLEntryPoint(loadProcAddress("glUniform1uiv"), &uniform1uiv);
+        AssignGLEntryPoint(loadProcAddress("glUniform2uiv"), &uniform2uiv);
+        AssignGLEntryPoint(loadProcAddress("glUniform3uiv"), &uniform3uiv);
+        AssignGLEntryPoint(loadProcAddress("glUniform4uiv"), &uniform4uiv);
+        AssignGLEntryPoint(loadProcAddress("glClearBufferiv"), &clearBufferiv);
+        AssignGLEntryPoint(loadProcAddress("glClearBufferuiv"), &clearBufferuiv);
+        AssignGLEntryPoint(loadProcAddress("glClearBufferfv"), &clearBufferfv);
+        AssignGLEntryPoint(loadProcAddress("glClearBufferfi"), &clearBufferfi);
+        AssignGLEntryPoint(loadProcAddress("glGetStringi"), &getStringi);
+        AssignGLEntryPoint(loadProcAddress("glCopyBufferSubData"), &copyBufferSubData);
+        AssignGLEntryPoint(loadProcAddress("glGetUniformIndices"), &getUniformIndices);
+        AssignGLEntryPoint(loadProcAddress("glGetActiveUniformsiv"), &getActiveUniformsiv);
+        AssignGLEntryPoint(loadProcAddress("glGetUniformBlockIndex"), &getUniformBlockIndex);
+        AssignGLEntryPoint(loadProcAddress("glGetActiveUniformBlockiv"), &getActiveUniformBlockiv);
+        AssignGLEntryPoint(loadProcAddress("glGetActiveUniformBlockName"), &getActiveUniformBlockName);
+        AssignGLEntryPoint(loadProcAddress("glUniformBlockBinding"), &uniformBlockBinding);
+        AssignGLEntryPoint(loadProcAddress("glDrawArraysInstanced"), &drawArraysInstanced);
+        AssignGLEntryPoint(loadProcAddress("glDrawElementsInstanced"), &drawElementsInstanced);
+        AssignGLEntryPoint(loadProcAddress("glFenceSync"), &fenceSync);
+        AssignGLEntryPoint(loadProcAddress("glIsSync"), &isSync);
+        AssignGLEntryPoint(loadProcAddress("glDeleteSync"), &deleteSync);
+        AssignGLEntryPoint(loadProcAddress("glClientWaitSync"), &clientWaitSync);
+        AssignGLEntryPoint(loadProcAddress("glWaitSync"), &waitSync);
+        AssignGLEntryPoint(loadProcAddress("glGetInteger64v"), &getInteger64v);
+        AssignGLEntryPoint(loadProcAddress("glGetSynciv"), &getSynciv);
+        AssignGLEntryPoint(loadProcAddress("glGetInteger64i_v"), &getInteger64i_v);
+        AssignGLEntryPoint(loadProcAddress("glGetBufferParameteri64v"), &getBufferParameteri64v);
+        AssignGLEntryPoint(loadProcAddress("glGenSamplers"), &genSamplers);
+        AssignGLEntryPoint(loadProcAddress("glDeleteSamplers"), &deleteSamplers);
+        AssignGLEntryPoint(loadProcAddress("glIsSampler"), &isSampler);
+        AssignGLEntryPoint(loadProcAddress("glBindSampler"), &bindSampler);
+        AssignGLEntryPoint(loadProcAddress("glSamplerParameteri"), &samplerParameteri);
+        AssignGLEntryPoint(loadProcAddress("glSamplerParameteriv"), &samplerParameteriv);
+        AssignGLEntryPoint(loadProcAddress("glSamplerParameterf"), &samplerParameterf);
+        AssignGLEntryPoint(loadProcAddress("glSamplerParameterfv"), &samplerParameterfv);
+        AssignGLEntryPoint(loadProcAddress("glGetSamplerParameteriv"), &getSamplerParameteriv);
+        AssignGLEntryPoint(loadProcAddress("glGetSamplerParameterfv"), &getSamplerParameterfv);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttribDivisor"), &vertexAttribDivisor);
+        AssignGLEntryPoint(loadProcAddress("glBindTransformFeedback"), &bindTransformFeedback);
+        AssignGLEntryPoint(loadProcAddress("glDeleteTransformFeedbacks"), &deleteTransformFeedbacks);
+        AssignGLEntryPoint(loadProcAddress("glGenTransformFeedbacks"), &genTransformFeedbacks);
+        AssignGLEntryPoint(loadProcAddress("glIsTransformFeedback"), &isTransformFeedback);
+        AssignGLEntryPoint(loadProcAddress("glPauseTransformFeedback"), &pauseTransformFeedback);
+        AssignGLEntryPoint(loadProcAddress("glResumeTransformFeedback"), &resumeTransformFeedback);
+        AssignGLEntryPoint(loadProcAddress("glGetProgramBinary"), &getProgramBinary);
+        AssignGLEntryPoint(loadProcAddress("glProgramBinary"), &programBinary);
+        AssignGLEntryPoint(loadProcAddress("glProgramParameteri"), &programParameteri);
+        AssignGLEntryPoint(loadProcAddress("glInvalidateFramebuffer"), &invalidateFramebuffer);
+        AssignGLEntryPoint(loadProcAddress("glInvalidateSubFramebuffer"), &invalidateSubFramebuffer);
+        AssignGLEntryPoint(loadProcAddress("glTexStorage2D"), &texStorage2D);
+        AssignGLEntryPoint(loadProcAddress("glTexStorage3D"), &texStorage3D);
+        AssignGLEntryPoint(loadProcAddress("glGetInternalformativ"), &getInternalformativ);
+    }
+
+    // 3.1
+    if (isAtLeastGLES(gl::Version(3, 1)))
+    {
+        AssignGLEntryPoint(loadProcAddress("glDispatchCompute"), &dispatchCompute);
+        AssignGLEntryPoint(loadProcAddress("glDispatchComputeIndirect"), &dispatchComputeIndirect);
+        AssignGLEntryPoint(loadProcAddress("glDrawArraysIndirect"), &drawArraysIndirect);
+        AssignGLEntryPoint(loadProcAddress("glDrawElementsIndirect"), &drawElementsIndirect);
+        AssignGLEntryPoint(loadProcAddress("glFramebufferParameteri"), &framebufferParameteri);
+        AssignGLEntryPoint(loadProcAddress("glGetFramebufferParameteriv"), &getFramebufferParameteriv);
+        AssignGLEntryPoint(loadProcAddress("glGetProgramInterfaceiv"), &getProgramInterfaceiv);
+        AssignGLEntryPoint(loadProcAddress("glGetProgramResourceIndex"), &getProgramResourceIndex);
+        AssignGLEntryPoint(loadProcAddress("glGetProgramResourceName"), &getProgramResourceName);
+        AssignGLEntryPoint(loadProcAddress("glGetProgramResourceiv"), &getProgramResourceiv);
+        AssignGLEntryPoint(loadProcAddress("glGetProgramResourceLocation"), &getProgramResourceLocation);
+        AssignGLEntryPoint(loadProcAddress("glUseProgramStages"), &useProgramStages);
+        AssignGLEntryPoint(loadProcAddress("glActiveShaderProgram"), &activeShaderProgram);
+        AssignGLEntryPoint(loadProcAddress("glCreateShaderProgramv"), &createShaderProgramv);
+        AssignGLEntryPoint(loadProcAddress("glBindProgramPipeline"), &bindProgramPipeline);
+        AssignGLEntryPoint(loadProcAddress("glDeleteProgramPipelines"), &deleteProgramPipelines);
+        AssignGLEntryPoint(loadProcAddress("glGenProgramPipelines"), &genProgramPipelines);
+        AssignGLEntryPoint(loadProcAddress("glIsProgramPipeline"), &isProgramPipeline);
+        AssignGLEntryPoint(loadProcAddress("glGetProgramPipelineiv"), &getProgramPipelineiv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform1i"), &programUniform1i);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform2i"), &programUniform2i);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform3i"), &programUniform3i);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform4i"), &programUniform4i);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform1ui"), &programUniform1ui);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform2ui"), &programUniform2ui);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform3ui"), &programUniform3ui);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform4ui"), &programUniform4ui);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform1f"), &programUniform1f);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform2f"), &programUniform2f);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform3f"), &programUniform3f);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform4f"), &programUniform4f);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform1iv"), &programUniform1iv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform2iv"), &programUniform2iv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform3iv"), &programUniform3iv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform4iv"), &programUniform4iv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform1uiv"), &programUniform1uiv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform2uiv"), &programUniform2uiv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform3uiv"), &programUniform3uiv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform4uiv"), &programUniform4uiv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform1fv"), &programUniform1fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform2fv"), &programUniform2fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform3fv"), &programUniform3fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniform4fv"), &programUniform4fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniformMatrix2fv"), &programUniformMatrix2fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniformMatrix3fv"), &programUniformMatrix3fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniformMatrix4fv"), &programUniformMatrix4fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniformMatrix2x3fv"), &programUniformMatrix2x3fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniformMatrix3x2fv"), &programUniformMatrix3x2fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniformMatrix2x4fv"), &programUniformMatrix2x4fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniformMatrix4x2fv"), &programUniformMatrix4x2fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniformMatrix3x4fv"), &programUniformMatrix3x4fv);
+        AssignGLEntryPoint(loadProcAddress("glProgramUniformMatrix4x3fv"), &programUniformMatrix4x3fv);
+        AssignGLEntryPoint(loadProcAddress("glValidateProgramPipeline"), &validateProgramPipeline);
+        AssignGLEntryPoint(loadProcAddress("glGetProgramPipelineInfoLog"), &getProgramPipelineInfoLog);
+        AssignGLEntryPoint(loadProcAddress("glBindImageTexture"), &bindImageTexture);
+        AssignGLEntryPoint(loadProcAddress("glGetBooleani_v"), &getBooleani_v);
+        AssignGLEntryPoint(loadProcAddress("glMemoryBarrier"), &memoryBarrier);
+        AssignGLEntryPoint(loadProcAddress("glMemoryBarrierByRegion"), &memoryBarrierByRegion);
+        AssignGLEntryPoint(loadProcAddress("glTexStorage2DMultisample"), &texStorage2DMultisample);
+        AssignGLEntryPoint(loadProcAddress("glGetMultisamplefv"), &getMultisamplefv);
+        AssignGLEntryPoint(loadProcAddress("glSampleMaski"), &sampleMaski);
+        AssignGLEntryPoint(loadProcAddress("glGetTexLevelParameteriv"), &getTexLevelParameteriv);
+        AssignGLEntryPoint(loadProcAddress("glGetTexLevelParameterfv"), &getTexLevelParameterfv);
+        AssignGLEntryPoint(loadProcAddress("glBindVertexBuffer"), &bindVertexBuffer);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttribFormat"), &vertexAttribFormat);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttribIFormat"), &vertexAttribIFormat);
+        AssignGLEntryPoint(loadProcAddress("glVertexAttribBinding"), &vertexAttribBinding);
+        AssignGLEntryPoint(loadProcAddress("glVertexBindingDivisor"), &vertexBindingDivisor);
+    }
+
+    // 3.2
+    if (isAtLeastGLES(gl::Version(3, 2)))
+    {
+        AssignGLEntryPoint(loadProcAddress("glBlendBarrier"), &blendBarrier);
+        AssignGLEntryPoint(loadProcAddress("glCopyImageSubData"), &copyImageSubData);
+        AssignGLEntryPoint(loadProcAddress("glDebugMessageControl"), &debugMessageControl);
+        AssignGLEntryPoint(loadProcAddress("glDebugMessageInsert"), &debugMessageInsert);
+        AssignGLEntryPoint(loadProcAddress("glDebugMessageCallback"), &debugMessageCallback);
+        AssignGLEntryPoint(loadProcAddress("glGetDebugMessageLog"), &getDebugMessageLog);
+        AssignGLEntryPoint(loadProcAddress("glPushDebugGroup"), &pushDebugGroup);
+        AssignGLEntryPoint(loadProcAddress("glPopDebugGroup"), &popDebugGroup);
+        AssignGLEntryPoint(loadProcAddress("glObjectLabel"), &objectLabel);
+        AssignGLEntryPoint(loadProcAddress("glGetObjectLabel"), &getObjectLabel);
+        AssignGLEntryPoint(loadProcAddress("glObjectPtrLabel"), &objectPtrLabel);
+        AssignGLEntryPoint(loadProcAddress("glGetObjectPtrLabel"), &getObjectPtrLabel);
+        AssignGLEntryPoint(loadProcAddress("glGetPointerv"), &getPointerv);
+        AssignGLEntryPoint(loadProcAddress("glEnablei"), &enablei);
+        AssignGLEntryPoint(loadProcAddress("glDisablei"), &disablei);
+        AssignGLEntryPoint(loadProcAddress("glBlendEquationi"), &blendEquationi);
+        AssignGLEntryPoint(loadProcAddress("glBlendEquationSeparatei"), &blendEquationSeparatei);
+        AssignGLEntryPoint(loadProcAddress("glBlendFunci"), &blendFunci);
+        AssignGLEntryPoint(loadProcAddress("glBlendFuncSeparatei"), &blendFuncSeparatei);
+        AssignGLEntryPoint(loadProcAddress("glColorMaski"), &colorMaski);
+        AssignGLEntryPoint(loadProcAddress("glIsEnabledi"), &isEnabledi);
+        AssignGLEntryPoint(loadProcAddress("glDrawElementsBaseVertex"), &drawElementsBaseVertex);
+        AssignGLEntryPoint(loadProcAddress("glDrawRangeElementsBaseVertex"), &drawRangeElementsBaseVertex);
+        AssignGLEntryPoint(loadProcAddress("glDrawElementsInstancedBaseVertex"), &drawElementsInstancedBaseVertex);
+        AssignGLEntryPoint(loadProcAddress("glFramebufferTexture"), &framebufferTexture);
+        AssignGLEntryPoint(loadProcAddress("glPrimitiveBoundingBox"), &primitiveBoundingBox);
+        AssignGLEntryPoint(loadProcAddress("glGetGraphicsResetStatus"), &getGraphicsResetStatus);
+        AssignGLEntryPoint(loadProcAddress("glReadnPixels"), &readnPixels);
+        AssignGLEntryPoint(loadProcAddress("glGetnUniformfv"), &getnUniformfv);
+        AssignGLEntryPoint(loadProcAddress("glGetnUniformiv"), &getnUniformiv);
+        AssignGLEntryPoint(loadProcAddress("glGetnUniformuiv"), &getnUniformuiv);
+        AssignGLEntryPoint(loadProcAddress("glMinSampleShading"), &minSampleShading);
+        AssignGLEntryPoint(loadProcAddress("glPatchParameteri"), &patchParameteri);
+        AssignGLEntryPoint(loadProcAddress("glTexParameterIiv"), &texParameterIiv);
+        AssignGLEntryPoint(loadProcAddress("glTexParameterIuiv"), &texParameterIuiv);
+        AssignGLEntryPoint(loadProcAddress("glGetTexParameterIiv"), &getTexParameterIiv);
+        AssignGLEntryPoint(loadProcAddress("glGetTexParameterIuiv"), &getTexParameterIuiv);
+        AssignGLEntryPoint(loadProcAddress("glSamplerParameterIiv"), &samplerParameterIiv);
+        AssignGLEntryPoint(loadProcAddress("glSamplerParameterIuiv"), &samplerParameterIuiv);
+        AssignGLEntryPoint(loadProcAddress("glGetSamplerParameterIiv"), &getSamplerParameterIiv);
+        AssignGLEntryPoint(loadProcAddress("glGetSamplerParameterIuiv"), &getSamplerParameterIuiv);
+        AssignGLEntryPoint(loadProcAddress("glTexBuffer"), &texBuffer);
+        AssignGLEntryPoint(loadProcAddress("glTexBufferRange"), &texBufferRange);
+        AssignGLEntryPoint(loadProcAddress("glTexStorage3DMultisample"), &texStorage3DMultisample);
+    }
+
+    // clang-format on
+}
+
+bool FunctionsGL::isAtLeastGL(const gl::Version &glVersion) const
+{
+    return standard == STANDARD_GL_DESKTOP && version >= glVersion;
+}
+
+bool FunctionsGL::isAtLeastGLES(const gl::Version &glesVersion) const
+{
+    return standard == STANDARD_GL_ES && version >= glesVersion;
+}
+
+bool FunctionsGL::hasExtension(const std::string &ext) const
+{
+    return std::find(extensions.begin(), extensions.end(), ext) != extensions.end();
+}
+
+bool FunctionsGL::hasGLExtension(const std::string &ext) const
+{
+    return standard == STANDARD_GL_DESKTOP && hasExtension(ext);
+}
+
+bool FunctionsGL::hasGLESExtension(const std::string &ext) const
+{
+    return standard == STANDARD_GL_ES && hasExtension(ext);
 }
 
 }

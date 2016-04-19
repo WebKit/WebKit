@@ -58,6 +58,6 @@ class HandleAllocator final : angle::NonCopyable
     std::vector<GLuint> mReleasedList;
 };
 
-}
+}  // namespace gl
 
 #endif   // LIBANGLE_HANDLEALLOCATOR_H_

@@ -12,20 +12,21 @@
 
 #include "common/utilities.h"
 #include "libANGLE/FramebufferAttachment.h"
+#include "libANGLE/Image.h"
 #include "libANGLE/Texture.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/d3d/RenderTargetD3D.h"
 
 namespace gl
 {
-
 Renderbuffer::Renderbuffer(rx::RenderbufferImpl *impl, GLuint id)
-  : FramebufferAttachmentObject(id),
-    mRenderbuffer(impl),
-    mWidth(0),
-    mHeight(0),
-    mInternalFormat(GL_RGBA4),
-    mSamples(0)
+    : egl::ImageSibling(id),
+      mRenderbuffer(impl),
+      mLabel(),
+      mWidth(0),
+      mHeight(0),
+      mInternalFormat(GL_RGBA4),
+      mSamples(0)
 {
 }
 
@@ -34,16 +35,28 @@ Renderbuffer::~Renderbuffer()
     SafeDelete(mRenderbuffer);
 }
 
+void Renderbuffer::setLabel(const std::string &label)
+{
+    mLabel = label;
+}
+
+const std::string &Renderbuffer::getLabel() const
+{
+    return mLabel;
+}
+
 Error Renderbuffer::setStorage(GLenum internalformat, size_t width, size_t height)
 {
+    orphanImages();
+
     Error error = mRenderbuffer->setStorage(internalformat, width, height);
     if (error.isError())
     {
         return error;
     }
 
-    mWidth = static_cast<GLsizei>(width);
-    mHeight = static_cast<GLsizei>(height);
+    mWidth          = static_cast<GLsizei>(width);
+    mHeight         = static_cast<GLsizei>(height);
     mInternalFormat = internalformat;
     mSamples = 0;
 
@@ -52,16 +65,38 @@ Error Renderbuffer::setStorage(GLenum internalformat, size_t width, size_t heigh
 
 Error Renderbuffer::setStorageMultisample(size_t samples, GLenum internalformat, size_t width, size_t height)
 {
+    orphanImages();
+
     Error error = mRenderbuffer->setStorageMultisample(samples, internalformat, width, height);
     if (error.isError())
     {
         return error;
     }
 
-    mWidth = static_cast<GLsizei>(width);
-    mHeight = static_cast<GLsizei>(height);
+    mWidth          = static_cast<GLsizei>(width);
+    mHeight         = static_cast<GLsizei>(height);
     mInternalFormat = internalformat;
-    mSamples = static_cast<GLsizei>(samples);
+    mSamples        = static_cast<GLsizei>(samples);
+
+    return Error(GL_NO_ERROR);
+}
+
+Error Renderbuffer::setStorageEGLImageTarget(egl::Image *image)
+{
+    orphanImages();
+
+    Error error = mRenderbuffer->setStorageEGLImageTarget(image);
+    if (error.isError())
+    {
+        return error;
+    }
+
+    setTargetImage(image);
+
+    mWidth          = static_cast<GLsizei>(image->getWidth());
+    mHeight         = static_cast<GLsizei>(image->getHeight());
+    mInternalFormat = image->getInternalFormat();
+    mSamples        = 0;
 
     return Error(GL_NO_ERROR);
 }
@@ -127,4 +162,23 @@ GLuint Renderbuffer::getStencilSize() const
     return GetInternalFormatInfo(mInternalFormat).stencilBits;
 }
 
+void Renderbuffer::onAttach()
+{
+    addRef();
+}
+
+void Renderbuffer::onDetach()
+{
+    release();
+}
+
+GLuint Renderbuffer::getId() const
+{
+    return id();
+}
+
+Extents Renderbuffer::getAttachmentSize(const FramebufferAttachment::Target & /*target*/) const
+{
+    return Extents(mWidth, mHeight, 1);
+}
 }

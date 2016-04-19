@@ -9,6 +9,7 @@
 #ifndef LIBANGLE_RENDERER_GL_BUFFERGL_H_
 #define LIBANGLE_RENDERER_GL_BUFFERGL_H_
 
+#include "common/MemoryBuffer.h"
 #include "libANGLE/renderer/BufferImpl.h"
 
 namespace rx
@@ -30,13 +31,24 @@ class BufferGL : public BufferImpl
     gl::Error mapRange(size_t offset, size_t length, GLbitfield access, GLvoid **mapPtr) override;
     gl::Error unmap(GLboolean *result) override;
 
-    // This method may not have a corresponding GL-backed function. It is necessary
-    // for validation, for certain indexed draw calls.
-    gl::Error getData(const uint8_t **outData) override;
+    gl::Error getIndexRange(GLenum type,
+                            size_t offset,
+                            size_t count,
+                            bool primitiveRestartEnabled,
+                            gl::IndexRange *outRange) override;
 
     GLuint getBufferID() const;
 
   private:
+    bool mIsMapped;
+    size_t mMapOffset;
+    size_t mMapSize;
+
+    bool mShadowBufferData;
+    MemoryBuffer mShadowCopy;
+
+    size_t mBufferSize;
+
     const FunctionsGL *mFunctions;
     StateManagerGL *mStateManager;
 

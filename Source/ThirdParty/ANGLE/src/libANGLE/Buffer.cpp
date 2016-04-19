@@ -18,6 +18,7 @@ namespace gl
 Buffer::Buffer(rx::BufferImpl *impl, GLuint id)
     : RefCountObject(id),
       mBuffer(impl),
+      mLabel(),
       mUsage(GL_STATIC_DRAW),
       mSize(0),
       mAccessFlags(0),
@@ -32,6 +33,16 @@ Buffer::Buffer(rx::BufferImpl *impl, GLuint id)
 Buffer::~Buffer()
 {
     SafeDelete(mBuffer);
+}
+
+void Buffer::setLabel(const std::string &label)
+{
+    mLabel = label;
+}
+
+const std::string &Buffer::getLabel() const
+{
+    return mLabel;
 }
 
 Error Buffer::bufferData(const void *data, GLsizeiptr size, GLenum usage)
@@ -93,8 +104,7 @@ Error Buffer::map(GLenum access)
     mMapLength = mSize;
     mAccess = access;
     mAccessFlags = GL_MAP_WRITE_BIT;
-
-    mIndexRangeCache.invalidateRange(0, static_cast<unsigned int>(mMapLength));
+    mIndexRangeCache.clear();
 
     return error;
 }
@@ -149,6 +159,38 @@ Error Buffer::unmap(GLboolean *result)
     mAccessFlags = 0;
 
     return error;
+}
+
+void Buffer::onTransformFeedback()
+{
+    mIndexRangeCache.clear();
+}
+
+void Buffer::onPixelUnpack()
+{
+    mIndexRangeCache.clear();
+}
+
+Error Buffer::getIndexRange(GLenum type,
+                            size_t offset,
+                            size_t count,
+                            bool primitiveRestartEnabled,
+                            IndexRange *outRange) const
+{
+    if (mIndexRangeCache.findRange(type, offset, count, primitiveRestartEnabled, outRange))
+    {
+        return gl::Error(GL_NO_ERROR);
+    }
+
+    Error error = mBuffer->getIndexRange(type, offset, count, primitiveRestartEnabled, outRange);
+    if (error.isError())
+    {
+        return error;
+    }
+
+    mIndexRangeCache.addRange(type, offset, count, primitiveRestartEnabled, *outRange);
+
+    return Error(GL_NO_ERROR);
 }
 
 }

@@ -59,7 +59,7 @@ static std::vector<egl::Config> GenerateUniqueConfigs(size_t count)
     for (size_t i = 0; i < count; i++)
     {
         egl::Config config = GenerateGenericConfig();
-        config.samples = i;
+        config.samples = static_cast<EGLint>(i);
         configs.push_back(config);
     }
 
@@ -147,7 +147,7 @@ TEST(ConfigSetTest, Filtering_BitSizes)
 
             // Set the tested member of this config to i so it ranges from
             // [1, configsPerType]
-            config.*(testMembers[i].ConfigMember) = j + 1;
+            config.*(testMembers[i].ConfigMember) = static_cast<EGLint>(j) + 1;
 
             set.add(config);
         }
@@ -158,7 +158,7 @@ TEST(ConfigSetTest, Filtering_BitSizes)
     for (size_t i = 0; i < ArraySize(testMembers); i++)
     {
         // Start with a filter of 1 to not grab the other members
-        for (size_t j = 0; j < configsPerType; j++)
+        for (EGLint j = 0; j < static_cast<EGLint>(configsPerType); j++)
         {
             egl::AttributeMap filter;
             filter.insert(testMembers[i].Name, j + 1);

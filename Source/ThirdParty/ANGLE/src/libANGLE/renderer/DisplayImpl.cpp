@@ -21,16 +21,13 @@ DisplayImpl::DisplayImpl()
 
 DisplayImpl::~DisplayImpl()
 {
-    while (!mSurfaceSet.empty())
-    {
-        destroySurface(*mSurfaceSet.begin());
-    }
+    ASSERT(mSurfaceSet.empty());
 }
 
 void DisplayImpl::destroySurface(egl::Surface *surface)
 {
     mSurfaceSet.erase(surface);
-    surface->release();
+    surface->onDestroy();
 }
 
 const egl::DisplayExtensions &DisplayImpl::getExtensions() const

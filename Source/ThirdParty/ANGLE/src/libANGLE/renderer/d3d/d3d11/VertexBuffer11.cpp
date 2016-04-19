@@ -10,6 +10,7 @@
 
 #include "libANGLE/Buffer.h"
 #include "libANGLE/VertexAttribute.h"
+#include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/d3d/d3d11/Buffer11.h"
 #include "libANGLE/renderer/d3d/d3d11/formatutils11.h"
 #include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
@@ -103,16 +104,20 @@ void VertexBuffer11::hintUnmapResource()
     }
 }
 
-gl::Error VertexBuffer11::storeVertexAttributes(const gl::VertexAttribute &attrib, const gl::VertexAttribCurrentValueData &currentValue,
-                                                GLint start, GLsizei count, GLsizei instances, unsigned int offset)
+gl::Error VertexBuffer11::storeVertexAttributes(const gl::VertexAttribute &attrib,
+                                                GLenum currentValueType,
+                                                GLint start,
+                                                GLsizei count,
+                                                GLsizei instances,
+                                                unsigned int offset,
+                                                const uint8_t *sourceData)
 {
     if (!mBuffer)
     {
         return gl::Error(GL_OUT_OF_MEMORY, "Internal vertex buffer is not initialized.");
     }
 
-    gl::Buffer *buffer = attrib.buffer.get();
-    int inputStride = ComputeVertexAttributeStride(attrib);
+    int inputStride = static_cast<int>(ComputeVertexAttributeStride(attrib));
 
     // This will map the resource if it isn't already mapped.
     gl::Error error = mapResource();
@@ -123,84 +128,20 @@ gl::Error VertexBuffer11::storeVertexAttributes(const gl::VertexAttribute &attri
 
     uint8_t *output = mMappedResourceData + offset;
 
-    const uint8_t *input = NULL;
-    if (attrib.enabled)
-    {
-        if (buffer)
-        {
-            BufferD3D *storage = GetImplAs<BufferD3D>(buffer);
-            error = storage->getData(&input);
-            if (error.isError())
-            {
-                return error;
-            }
-            input += static_cast<int>(attrib.offset);
-        }
-        else
-        {
-            input = static_cast<const uint8_t*>(attrib.pointer);
-        }
-    }
-    else
-    {
-        input = reinterpret_cast<const uint8_t*>(currentValue.FloatValues);
-    }
+    const uint8_t *input = sourceData;
 
     if (instances == 0 || attrib.divisor == 0)
     {
         input += inputStride * start;
     }
 
-    gl::VertexFormat vertexFormat(attrib, currentValue.Type);
-    const d3d11::VertexFormat &vertexFormatInfo = d3d11::GetVertexFormatInfo(vertexFormat, mRenderer->getFeatureLevel());
+    gl::VertexFormatType vertexFormatType = gl::GetVertexFormatType(attrib, currentValueType);
+    const D3D_FEATURE_LEVEL featureLevel = mRenderer->getRenderer11DeviceCaps().featureLevel;
+    const d3d11::VertexFormat &vertexFormatInfo = d3d11::GetVertexFormatInfo(vertexFormatType, featureLevel);
     ASSERT(vertexFormatInfo.copyFunction != NULL);
     vertexFormatInfo.copyFunction(input, inputStride, count, output);
 
     return gl::Error(GL_NO_ERROR);
-}
-
-gl::Error VertexBuffer11::getSpaceRequired(const gl::VertexAttribute &attrib, GLsizei count,
-                                           GLsizei instances, unsigned int *outSpaceRequired) const
-{
-    unsigned int elementCount = 0;
-    if (attrib.enabled)
-    {
-        if (instances == 0 || attrib.divisor == 0)
-        {
-            elementCount = count;
-        }
-        else
-        {
-            // Round up to divisor, if possible
-            elementCount = UnsignedCeilDivide(static_cast<unsigned int>(instances), attrib.divisor);
-        }
-
-        gl::VertexFormat vertexFormat(attrib);
-        const d3d11::VertexFormat &vertexFormatInfo = d3d11::GetVertexFormatInfo(vertexFormat, mRenderer->getFeatureLevel());
-        const d3d11::DXGIFormat &dxgiFormatInfo = d3d11::GetDXGIFormatInfo(vertexFormatInfo.nativeFormat);
-        unsigned int elementSize = dxgiFormatInfo.pixelBytes;
-        if (elementSize <= std::numeric_limits<unsigned int>::max() / elementCount)
-        {
-            if (outSpaceRequired)
-            {
-                *outSpaceRequired = elementSize * elementCount;
-            }
-            return gl::Error(GL_NO_ERROR);
-        }
-        else
-        {
-            return gl::Error(GL_OUT_OF_MEMORY, "New vertex buffer size would result in an overflow.");
-        }
-    }
-    else
-    {
-        const unsigned int elementSize = 4;
-        if (outSpaceRequired)
-        {
-            *outSpaceRequired = elementSize * 4;
-        }
-        return gl::Error(GL_NO_ERROR);
-    }
 }
 
 unsigned int VertexBuffer11::getBufferSize() const
@@ -246,4 +187,4 @@ ID3D11Buffer *VertexBuffer11::getBuffer() const
     return mBuffer;
 }
 
-}
+}  // namespace rx

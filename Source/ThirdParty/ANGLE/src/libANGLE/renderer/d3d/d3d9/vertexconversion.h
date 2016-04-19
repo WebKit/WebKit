@@ -149,7 +149,10 @@ struct NormalizedDefaultValues
 // static const std::size_t finalSize: number of bytes per output vertex
 // static void convertArray(const void *in, std::size_t stride, std::size_t n, void *out): convert an array of vertices. Input may be strided, but output will be unstrided.
 
-template <class InT, class WidenRule, class Converter, class DefaultValueRule = SimpleDefaultValues<InT> >
+template <class InT,
+          class WidenRule,
+          class Converter,
+          class DefaultValueRule = SimpleDefaultValues<InT>>
 struct VertexDataConverter
 {
     typedef typename Converter::OutputType OutputType;

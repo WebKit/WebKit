@@ -54,9 +54,8 @@ void TDependencyGraphOutput::outputAllSpanningTrees(TDependencyGraph& graph)
 {
     mSink << "\n";
 
-    for (TGraphNodeVector::const_iterator iter = graph.begin(); iter != graph.end(); ++iter)
+    for (auto symbol : graph.allNodes())
     {
-        TGraphNode* symbol = *iter;
         mSink << "--- Dependency graph spanning tree ---\n";
         clearVisited();
         symbol->traverse(this);

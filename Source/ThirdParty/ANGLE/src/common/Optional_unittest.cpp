@@ -18,7 +18,7 @@ TEST(OptionalTest, BasicInvalid)
 {
     Optional<int> testInvalid;
     ASSERT_FALSE(testInvalid.valid());
-    ASSERT_EQ(Optional<int>::None(), testInvalid);
+    ASSERT_EQ(Optional<int>::Invalid(), testInvalid);
 }
 
 TEST(OptionalTest, BasicValid)
@@ -26,7 +26,7 @@ TEST(OptionalTest, BasicValid)
     Optional<int> testValid(3);
     ASSERT_TRUE(testValid.valid());
     ASSERT_EQ(3, testValid.value());
-    ASSERT_NE(Optional<int>::None(), testValid);
+    ASSERT_NE(Optional<int>::Invalid(), testValid);
 }
 
 TEST(OptionalTest, Copies)

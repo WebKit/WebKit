@@ -9,25 +9,32 @@
 
 #include "libANGLE/renderer/d3d/VertexDataManager.h"
 
+#include "common/BitSetIterator.h"
 #include "libANGLE/Buffer.h"
+#include "libANGLE/formatutils.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/State.h"
 #include "libANGLE/VertexAttribute.h"
 #include "libANGLE/VertexArray.h"
 #include "libANGLE/renderer/d3d/BufferD3D.h"
+#include "libANGLE/renderer/d3d/RendererD3D.h"
 #include "libANGLE/renderer/d3d/VertexBuffer.h"
-
-namespace
-{
-    enum { INITIAL_STREAM_BUFFER_SIZE = 1024*1024 };
-    // This has to be at least 4k or else it fails on ATI cards.
-    enum { CONSTANT_VERTEX_BUFFER_SIZE = 4096 };
-}
 
 namespace rx
 {
+namespace
+{
+enum
+{
+    INITIAL_STREAM_BUFFER_SIZE = 1024 * 1024
+};
+// This has to be at least 4k or else it fails on ATI cards.
+enum
+{
+    CONSTANT_VERTEX_BUFFER_SIZE = 4096
+};
 
-static int ElementsInBuffer(const gl::VertexAttribute &attrib, unsigned int size)
+int ElementsInBuffer(const gl::VertexAttribute &attrib, unsigned int size)
 {
     // Size cannot be larger than a GLsizei
     if (size > static_cast<unsigned int>(std::numeric_limits<int>::max()))
@@ -35,40 +42,163 @@ static int ElementsInBuffer(const gl::VertexAttribute &attrib, unsigned int size
         size = static_cast<unsigned int>(std::numeric_limits<int>::max());
     }
 
-    GLsizei stride = ComputeVertexAttributeStride(attrib);
-    return (size - attrib.offset % stride + (stride - ComputeVertexAttributeTypeSize(attrib))) / stride;
+    GLsizei stride = static_cast<GLsizei>(ComputeVertexAttributeStride(attrib));
+    return (size - attrib.offset % stride +
+            (stride - static_cast<GLsizei>(ComputeVertexAttributeTypeSize(attrib)))) /
+           stride;
 }
 
-static int StreamingBufferElementCount(const gl::VertexAttribute &attrib, int vertexDrawCount, int instanceDrawCount)
+bool DirectStoragePossible(const gl::VertexAttribute &attrib)
 {
-    // For instanced rendering, we draw "instanceDrawCount" sets of "vertexDrawCount" vertices.
-    //
-    // A vertex attribute with a positive divisor loads one instanced vertex for every set of
-    // non-instanced vertices, and the instanced vertex index advances once every "mDivisor" instances.
-    if (instanceDrawCount > 0 && attrib.divisor > 0)
+    // Current value attribs may not use direct storage.
+    if (!attrib.enabled)
     {
-        // When instanceDrawCount is not a multiple attrib.divisor, the division must round up.
-        // For instance, with 5 non-instanced vertices and a divisor equal to 3, we need 2 instanced vertices.
-        return (instanceDrawCount + attrib.divisor - 1) / attrib.divisor;
+        return false;
     }
 
-    return vertexDrawCount;
+    gl::Buffer *buffer = attrib.buffer.get();
+    if (!buffer)
+    {
+        return false;
+    }
+
+    BufferD3D *bufferD3D = GetImplAs<BufferD3D>(buffer);
+    ASSERT(bufferD3D);
+    if (!bufferD3D->supportsDirectBinding())
+    {
+        return false;
+    }
+
+    // Alignment restrictions: In D3D, vertex data must be aligned to the format stride, or to a
+    // 4-byte boundary, whichever is smaller. (Undocumented, and experimentally confirmed)
+    size_t alignment = 4;
+
+    if (attrib.type != GL_FLOAT)
+    {
+        gl::VertexFormatType vertexFormatType = gl::GetVertexFormatType(attrib);
+
+        // TODO(jmadill): add VertexFormatCaps
+        BufferFactoryD3D *factory = bufferD3D->getFactory();
+
+        auto errorOrElementSize = factory->getVertexSpaceRequired(attrib, 1, 0);
+        if (errorOrElementSize.isError())
+        {
+            ERR("Unlogged error in DirectStoragePossible.");
+            return false;
+        }
+
+        alignment = std::min<size_t>(errorOrElementSize.getResult(), 4);
+
+        // CPU-converted vertex data must be converted (naturally).
+        if ((factory->getVertexConversionType(vertexFormatType) & VERTEX_CONVERT_CPU) != 0)
+        {
+            return false;
+        }
+    }
+
+    // Final alignment check - unaligned data must be converted.
+    return (static_cast<size_t>(ComputeVertexAttributeStride(attrib)) % alignment == 0) &&
+           (static_cast<size_t>(attrib.offset) % alignment == 0);
+}
+}  // anonymous namespace
+
+TranslatedAttribute::TranslatedAttribute()
+    : active(false),
+      attribute(nullptr),
+      currentValueType(GL_NONE),
+      baseOffset(0),
+      usesFirstVertexOffset(false),
+      stride(0),
+      vertexBuffer(),
+      storage(nullptr),
+      serial(0),
+      divisor(0)
+{
+}
+
+gl::ErrorOrResult<unsigned int> TranslatedAttribute::computeOffset(GLint startVertex) const
+{
+    unsigned int offset = baseOffset;
+    if (usesFirstVertexOffset)
+    {
+        unsigned int startVertexUnsigned = static_cast<unsigned int>(startVertex);
+
+        if (!IsUnsignedMultiplicationSafe(stride, startVertexUnsigned))
+        {
+            return gl::Error(GL_INVALID_OPERATION,
+                             "Multiplication overflow in TranslatedAttribute::computeOffset");
+        }
+
+        unsigned int strideOffset = stride * startVertexUnsigned;
+        if (!IsUnsignedAdditionSafe(offset, strideOffset))
+        {
+            return gl::Error(GL_INVALID_OPERATION,
+                             "Addition overflow in TranslatedAttribute::computeOffset");
+        }
+
+        offset += strideOffset;
+    }
+    return offset;
+}
+
+VertexStorageType ClassifyAttributeStorage(const gl::VertexAttribute &attrib)
+{
+    // If attribute is disabled, we use the current value.
+    if (!attrib.enabled)
+    {
+        return VertexStorageType::CURRENT_VALUE;
+    }
+
+    // If specified with immediate data, we must use dynamic storage.
+    auto *buffer = attrib.buffer.get();
+    if (!buffer)
+    {
+        return VertexStorageType::DYNAMIC;
+    }
+
+    // Check if the buffer supports direct storage.
+    if (DirectStoragePossible(attrib))
+    {
+        return VertexStorageType::DIRECT;
+    }
+
+    // Otherwise the storage is static or dynamic.
+    BufferD3D *bufferD3D = GetImplAs<BufferD3D>(buffer);
+    ASSERT(bufferD3D);
+    switch (bufferD3D->getUsage())
+    {
+        case D3DBufferUsage::DYNAMIC:
+            return VertexStorageType::DYNAMIC;
+        case D3DBufferUsage::STATIC:
+            return VertexStorageType::STATIC;
+        default:
+            UNREACHABLE();
+            return VertexStorageType::UNKNOWN;
+    }
+}
+
+VertexDataManager::CurrentValueState::CurrentValueState()
+    : buffer(nullptr),
+      offset(0)
+{
+    data.FloatValues[0] = std::numeric_limits<float>::quiet_NaN();
+    data.FloatValues[1] = std::numeric_limits<float>::quiet_NaN();
+    data.FloatValues[2] = std::numeric_limits<float>::quiet_NaN();
+    data.FloatValues[3] = std::numeric_limits<float>::quiet_NaN();
+    data.Type = GL_FLOAT;
+}
+
+VertexDataManager::CurrentValueState::~CurrentValueState()
+{
+    SafeDelete(buffer);
 }
 
 VertexDataManager::VertexDataManager(BufferFactoryD3D *factory)
-    : mFactory(factory)
+    : mFactory(factory),
+      mStreamingBuffer(nullptr),
+      // TODO(jmadill): use context caps
+      mCurrentValueCache(gl::MAX_VERTEX_ATTRIBS)
 {
-    for (int i = 0; i < gl::MAX_VERTEX_ATTRIBS; i++)
-    {
-        mCurrentValue[i].FloatValues[0] = std::numeric_limits<float>::quiet_NaN();
-        mCurrentValue[i].FloatValues[1] = std::numeric_limits<float>::quiet_NaN();
-        mCurrentValue[i].FloatValues[2] = std::numeric_limits<float>::quiet_NaN();
-        mCurrentValue[i].FloatValues[3] = std::numeric_limits<float>::quiet_NaN();
-        mCurrentValue[i].Type = GL_FLOAT;
-        mCurrentValueBuffer[i] = NULL;
-        mCurrentValueOffsets[i] = 0;
-    }
-
     mStreamingBuffer = new StreamingVertexBufferInterface(factory, INITIAL_STREAM_BUFFER_SIZE);
 
     if (!mStreamingBuffer)
@@ -79,318 +209,388 @@ VertexDataManager::VertexDataManager(BufferFactoryD3D *factory)
 
 VertexDataManager::~VertexDataManager()
 {
-    delete mStreamingBuffer;
-
-    for (int i = 0; i < gl::MAX_VERTEX_ATTRIBS; i++)
-    {
-        delete mCurrentValueBuffer[i];
-    }
+    SafeDelete(mStreamingBuffer);
 }
 
-void VertexDataManager::hintUnmapAllResources(const std::vector<gl::VertexAttribute> &vertexAttributes)
+gl::Error VertexDataManager::prepareVertexData(const gl::State &state,
+                                               GLint start,
+                                               GLsizei count,
+                                               std::vector<TranslatedAttribute> *translatedAttribs,
+                                               GLsizei instances)
 {
-    mStreamingBuffer->getVertexBuffer()->hintUnmapResource();
-
-    for (size_t i = 0; i < vertexAttributes.size(); i++)
-    {
-        const gl::VertexAttribute &attrib = vertexAttributes[i];
-        if (attrib.enabled)
-        {
-            gl::Buffer *buffer = attrib.buffer.get();
-            BufferD3D *storage = buffer ? GetImplAs<BufferD3D>(buffer) : NULL;
-            StaticVertexBufferInterface *staticBuffer = storage ? storage->getStaticVertexBuffer() : NULL;
-
-            if (staticBuffer)
-            {
-                staticBuffer->getVertexBuffer()->hintUnmapResource();
-            }
-        }
-    }
-
-    for (int i = 0; i < gl::MAX_VERTEX_ATTRIBS; i++)
-    {
-        if (mCurrentValueBuffer[i] != NULL)
-        {
-            mCurrentValueBuffer[i]->getVertexBuffer()->hintUnmapResource();
-        }
-    }
-}
-
-gl::Error VertexDataManager::prepareVertexData(const gl::State &state, GLint start, GLsizei count,
-                                               TranslatedAttribute *translated, GLsizei instances)
-{
-    if (!mStreamingBuffer)
-    {
-        return gl::Error(GL_OUT_OF_MEMORY, "Internal streaming vertex buffer is unexpectedly NULL.");
-    }
+    ASSERT(mStreamingBuffer);
 
     const gl::VertexArray *vertexArray = state.getVertexArray();
-    const std::vector<gl::VertexAttribute> &vertexAttributes = vertexArray->getVertexAttributes();
+    const auto &vertexAttributes       = vertexArray->getVertexAttributes();
 
-    // Invalidate static buffers that don't contain matching attributes
-    for (int attributeIndex = 0; attributeIndex < gl::MAX_VERTEX_ATTRIBS; attributeIndex++)
+    mDynamicAttribsMaskCache.reset();
+    const gl::Program *program = state.getProgram();
+
+    translatedAttribs->clear();
+
+    for (size_t attribIndex = 0; attribIndex < vertexAttributes.size(); ++attribIndex)
     {
-        translated[attributeIndex].active = (state.getProgram()->getSemanticIndex(attributeIndex) != -1);
-        if (translated[attributeIndex].active && vertexAttributes[attributeIndex].enabled)
+        // Skip attrib locations the program doesn't use.
+        if (!program->isAttribLocationActive(attribIndex))
+            continue;
+
+        const auto &attrib = vertexAttributes[attribIndex];
+
+        // Resize automatically puts in empty attribs
+        translatedAttribs->resize(attribIndex + 1);
+
+        TranslatedAttribute *translated = &(*translatedAttribs)[attribIndex];
+        auto currentValueData =
+            state.getVertexAttribCurrentValue(static_cast<unsigned int>(attribIndex));
+
+        // Record the attribute now
+        translated->active           = true;
+        translated->attribute        = &attrib;
+        translated->currentValueType = currentValueData.Type;
+        translated->divisor          = attrib.divisor;
+
+        switch (ClassifyAttributeStorage(attrib))
         {
-            invalidateMatchingStaticData(vertexAttributes[attributeIndex], state.getVertexAttribCurrentValue(attributeIndex));
+            case VertexStorageType::STATIC:
+            {
+                // Store static attribute.
+                ANGLE_TRY(StoreStaticAttrib(translated, count, instances));
+                break;
+            }
+            case VertexStorageType::DYNAMIC:
+                // Dynamic attributes must be handled together.
+                mDynamicAttribsMaskCache.set(attribIndex);
+                break;
+            case VertexStorageType::DIRECT:
+                // Update translated data for direct attributes.
+                StoreDirectAttrib(translated);
+                break;
+            case VertexStorageType::CURRENT_VALUE:
+            {
+                ANGLE_TRY(storeCurrentValue(currentValueData, translated, attribIndex));
+                break;
+            }
+            default:
+                UNREACHABLE();
+                break;
         }
     }
 
-    // Reserve the required space in the buffers
-    for (int i = 0; i < gl::MAX_VERTEX_ATTRIBS; i++)
+    if (mDynamicAttribsMaskCache.none())
     {
-        if (translated[i].active && vertexAttributes[i].enabled)
-        {
-            gl::Error error = reserveSpaceForAttrib(vertexAttributes[i], state.getVertexAttribCurrentValue(i), count, instances);
-            if (error.isError())
-            {
-                return error;
-            }
-        }
+        return gl::NoError();
     }
 
-    // Perform the vertex data translations
-    for (int i = 0; i < gl::MAX_VERTEX_ATTRIBS; i++)
-    {
-        const gl::VertexAttribute &curAttrib = vertexAttributes[i];
-        if (translated[i].active)
-        {
-            if (curAttrib.enabled)
-            {
-                gl::Error error = storeAttribute(curAttrib, state.getVertexAttribCurrentValue(i),
-                                                 &translated[i], start, count, instances);
+    ANGLE_TRY(
+        storeDynamicAttribs(translatedAttribs, mDynamicAttribsMaskCache, start, count, instances));
 
-                if (error.isError())
-                {
-                    hintUnmapAllResources(vertexAttributes);
-                    return error;
-                }
-            }
-            else
-            {
-                if (!mCurrentValueBuffer[i])
-                {
-                    mCurrentValueBuffer[i] = new StreamingVertexBufferInterface(mFactory, CONSTANT_VERTEX_BUFFER_SIZE);
-                }
+    PromoteDynamicAttribs(*translatedAttribs, mDynamicAttribsMaskCache, count);
 
-                gl::Error error = storeCurrentValue(curAttrib, state.getVertexAttribCurrentValue(i), &translated[i],
-                                                    &mCurrentValue[i], &mCurrentValueOffsets[i],
-                                                    mCurrentValueBuffer[i]);
-                if (error.isError())
-                {
-                    hintUnmapAllResources(vertexAttributes);
-                    return error;
-                }
-            }
-        }
-    }
-
-    // Hint to unmap all the resources
-    hintUnmapAllResources(vertexAttributes);
-
-    for (int i = 0; i < gl::MAX_VERTEX_ATTRIBS; i++)
-    {
-        const gl::VertexAttribute &curAttrib = vertexAttributes[i];
-        if (translated[i].active && curAttrib.enabled)
-        {
-            gl::Buffer *buffer = curAttrib.buffer.get();
-
-            if (buffer)
-            {
-                BufferD3D *bufferImpl = GetImplAs<BufferD3D>(buffer);
-                bufferImpl->promoteStaticUsage(count * ComputeVertexAttributeTypeSize(curAttrib));
-            }
-        }
-    }
-
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
-void VertexDataManager::invalidateMatchingStaticData(const gl::VertexAttribute &attrib,
-                                                     const gl::VertexAttribCurrentValueData &currentValue) const
+// static
+void VertexDataManager::StoreDirectAttrib(TranslatedAttribute *directAttrib)
 {
+    const auto &attrib   = *directAttrib->attribute;
+    gl::Buffer *buffer   = attrib.buffer.get();
+    BufferD3D *bufferD3D = buffer ? GetImplAs<BufferD3D>(buffer) : nullptr;
+
+    ASSERT(DirectStoragePossible(attrib));
+    directAttrib->vertexBuffer.set(nullptr);
+    directAttrib->storage = bufferD3D;
+    directAttrib->serial  = bufferD3D->getSerial();
+    directAttrib->stride = static_cast<unsigned int>(ComputeVertexAttributeStride(attrib));
+    directAttrib->baseOffset = static_cast<unsigned int>(attrib.offset);
+
+    // Instanced vertices do not apply the 'start' offset
+    directAttrib->usesFirstVertexOffset = (attrib.divisor == 0);
+}
+
+// static
+gl::Error VertexDataManager::StoreStaticAttrib(TranslatedAttribute *translated,
+                                               GLsizei count,
+                                               GLsizei instances)
+{
+    const gl::VertexAttribute &attrib = *translated->attribute;
+
     gl::Buffer *buffer = attrib.buffer.get();
+    ASSERT(buffer && attrib.enabled && !DirectStoragePossible(attrib));
+    BufferD3D *bufferD3D = GetImplAs<BufferD3D>(buffer);
 
-    if (buffer)
+    // Compute source data pointer
+    const uint8_t *sourceData = nullptr;
+
+    ANGLE_TRY(bufferD3D->getData(&sourceData));
+    sourceData += static_cast<int>(attrib.offset);
+
+    unsigned int streamOffset = 0;
+
+    translated->storage = nullptr;
+    ANGLE_TRY_RESULT(bufferD3D->getFactory()->getVertexSpaceRequired(attrib, 1, 0),
+                     translated->stride);
+
+    auto *staticBuffer = bufferD3D->getStaticVertexBuffer(attrib);
+    ASSERT(staticBuffer);
+
+    if (staticBuffer->empty())
     {
-        BufferD3D *bufferImpl = GetImplAs<BufferD3D>(buffer);
-        StaticVertexBufferInterface *staticBuffer = bufferImpl->getStaticVertexBuffer();
+        // Convert the entire buffer
+        int totalCount = ElementsInBuffer(attrib, static_cast<unsigned int>(bufferD3D->getSize()));
+        int startIndex = static_cast<int>(attrib.offset) /
+                         static_cast<int>(ComputeVertexAttributeStride(attrib));
 
-        if (staticBuffer &&
-            staticBuffer->getBufferSize() > 0 &&
-            !staticBuffer->lookupAttribute(attrib, NULL) &&
-            !staticBuffer->directStoragePossible(attrib, currentValue))
+        ANGLE_TRY(
+            staticBuffer->storeStaticAttribute(attrib, -startIndex, totalCount, 0, sourceData));
+    }
+
+    unsigned int firstElementOffset =
+        (static_cast<unsigned int>(attrib.offset) /
+         static_cast<unsigned int>(ComputeVertexAttributeStride(attrib))) *
+        translated->stride;
+
+    VertexBuffer *vertexBuffer = staticBuffer->getVertexBuffer();
+
+    if (!IsUnsignedAdditionSafe(streamOffset, firstElementOffset))
+    {
+        return gl::Error(GL_INVALID_OPERATION,
+                         "Integer overflow in VertexDataManager::StoreStaticAttrib");
+    }
+
+    translated->vertexBuffer.set(vertexBuffer);
+    translated->serial = vertexBuffer->getSerial();
+    translated->baseOffset = streamOffset + firstElementOffset;
+
+    // Instanced vertices do not apply the 'start' offset
+    translated->usesFirstVertexOffset = (attrib.divisor == 0);
+
+    return gl::NoError();
+}
+
+gl::Error VertexDataManager::storeDynamicAttribs(
+    std::vector<TranslatedAttribute> *translatedAttribs,
+    const gl::AttributesMask &dynamicAttribsMask,
+    GLint start,
+    GLsizei count,
+    GLsizei instances)
+{
+    // Instantiating this class will ensure the streaming buffer is never left mapped.
+    class StreamingBufferUnmapper final : angle::NonCopyable
+    {
+      public:
+        StreamingBufferUnmapper(StreamingVertexBufferInterface *streamingBuffer)
+            : mStreamingBuffer(streamingBuffer)
         {
-            bufferImpl->invalidateStaticData();
+            ASSERT(mStreamingBuffer);
+        }
+        ~StreamingBufferUnmapper() { mStreamingBuffer->getVertexBuffer()->hintUnmapResource(); }
+
+      private:
+        StreamingVertexBufferInterface *mStreamingBuffer;
+    };
+
+    // Will trigger unmapping on return.
+    StreamingBufferUnmapper localUnmapper(mStreamingBuffer);
+
+    // Reserve the required space for the dynamic buffers.
+    for (auto attribIndex : angle::IterateBitSet(dynamicAttribsMask))
+    {
+        const auto &dynamicAttrib = (*translatedAttribs)[attribIndex];
+        ANGLE_TRY(reserveSpaceForAttrib(dynamicAttrib, count, instances));
+    }
+
+    // Store dynamic attributes
+    for (auto attribIndex : angle::IterateBitSet(dynamicAttribsMask))
+    {
+        auto *dynamicAttrib = &(*translatedAttribs)[attribIndex];
+        ANGLE_TRY(storeDynamicAttrib(dynamicAttrib, start, count, instances));
+    }
+
+    return gl::NoError();
+}
+
+void VertexDataManager::PromoteDynamicAttribs(
+    const std::vector<TranslatedAttribute> &translatedAttribs,
+    const gl::AttributesMask &dynamicAttribsMask,
+    GLsizei count)
+{
+    for (auto attribIndex : angle::IterateBitSet(dynamicAttribsMask))
+    {
+        const auto &dynamicAttrib = translatedAttribs[attribIndex];
+        gl::Buffer *buffer = dynamicAttrib.attribute->buffer.get();
+        if (buffer)
+        {
+            BufferD3D *bufferD3D = GetImplAs<BufferD3D>(buffer);
+            size_t typeSize = ComputeVertexAttributeTypeSize(*dynamicAttrib.attribute);
+            bufferD3D->promoteStaticUsage(count * static_cast<int>(typeSize));
         }
     }
 }
 
-gl::Error VertexDataManager::reserveSpaceForAttrib(const gl::VertexAttribute &attrib,
-                                                   const gl::VertexAttribCurrentValueData &currentValue,
+gl::Error VertexDataManager::reserveSpaceForAttrib(const TranslatedAttribute &translatedAttrib,
                                                    GLsizei count,
                                                    GLsizei instances) const
 {
-    gl::Buffer *buffer = attrib.buffer.get();
-    BufferD3D *bufferImpl = buffer ? GetImplAs<BufferD3D>(buffer) : NULL;
-    StaticVertexBufferInterface *staticBuffer = bufferImpl ? bufferImpl->getStaticVertexBuffer() : NULL;
-    VertexBufferInterface *vertexBuffer = staticBuffer ? staticBuffer : static_cast<VertexBufferInterface*>(mStreamingBuffer);
+    const gl::VertexAttribute &attrib = *translatedAttrib.attribute;
+    ASSERT(!DirectStoragePossible(attrib));
 
-    if (!vertexBuffer->directStoragePossible(attrib, currentValue))
-    {
-        if (staticBuffer)
-        {
-            if (staticBuffer->getBufferSize() == 0)
-            {
-                int totalCount = ElementsInBuffer(attrib, bufferImpl->getSize());
-                gl::Error error = staticBuffer->reserveVertexSpace(attrib, totalCount, 0);
-                if (error.isError())
-                {
-                    return error;
-                }
-            }
-        }
-        else
-        {
-            int totalCount = StreamingBufferElementCount(attrib, count, instances);
-            ASSERT(!bufferImpl || ElementsInBuffer(attrib, bufferImpl->getSize()) >= totalCount);
+    gl::Buffer *buffer   = attrib.buffer.get();
+    BufferD3D *bufferD3D = buffer ? GetImplAs<BufferD3D>(buffer) : nullptr;
+    ASSERT(!bufferD3D || bufferD3D->getStaticVertexBuffer(attrib) == nullptr);
+    UNUSED_ASSERTION_VARIABLE(bufferD3D);
 
-            gl::Error error = mStreamingBuffer->reserveVertexSpace(attrib, totalCount, instances);
-            if (error.isError())
-            {
-                return error;
-            }
-        }
-    }
+    size_t totalCount = ComputeVertexAttributeElementCount(attrib, count, instances);
+    ASSERT(!bufferD3D ||
+           ElementsInBuffer(attrib, static_cast<unsigned int>(bufferD3D->getSize())) >=
+               static_cast<int>(totalCount));
 
-    return gl::Error(GL_NO_ERROR);
+    return mStreamingBuffer->reserveVertexSpace(attrib, static_cast<GLsizei>(totalCount),
+                                                instances);
 }
 
-gl::Error VertexDataManager::storeAttribute(const gl::VertexAttribute &attrib,
-                                            const gl::VertexAttribCurrentValueData &currentValue,
-                                            TranslatedAttribute *translated,
-                                            GLint start,
-                                            GLsizei count,
-                                            GLsizei instances)
+gl::Error VertexDataManager::storeDynamicAttrib(TranslatedAttribute *translated,
+                                                GLint start,
+                                                GLsizei count,
+                                                GLsizei instances)
 {
+    const gl::VertexAttribute &attrib = *translated->attribute;
+
     gl::Buffer *buffer = attrib.buffer.get();
     ASSERT(buffer || attrib.pointer);
+    ASSERT(attrib.enabled);
 
-    BufferD3D *storage = buffer ? GetImplAs<BufferD3D>(buffer) : NULL;
-    StaticVertexBufferInterface *staticBuffer = storage ? storage->getStaticVertexBuffer() : NULL;
-    VertexBufferInterface *vertexBuffer = staticBuffer ? staticBuffer : static_cast<VertexBufferInterface*>(mStreamingBuffer);
-    bool directStorage = vertexBuffer->directStoragePossible(attrib, currentValue);
-
-    unsigned int streamOffset = 0;
-    unsigned int outputElementSize = 0;
+    BufferD3D *storage = buffer ? GetImplAs<BufferD3D>(buffer) : nullptr;
 
     // Instanced vertices do not apply the 'start' offset
-    GLint firstVertexIndex = (instances > 0 && attrib.divisor > 0 ? 0 : start);
+    GLint firstVertexIndex = (attrib.divisor > 0 ? 0 : start);
 
-    if (directStorage)
+    // Compute source data pointer
+    const uint8_t *sourceData = nullptr;
+
+    if (buffer)
     {
-        outputElementSize = ComputeVertexAttributeStride(attrib);
-        streamOffset = static_cast<unsigned int>(attrib.offset + outputElementSize * firstVertexIndex);
-    }
-    else if (staticBuffer)
-    {
-        gl::Error error = staticBuffer->getVertexBuffer()->getSpaceRequired(attrib, 1, 0, &outputElementSize);
-        if (error.isError())
-        {
-            return error;
-        }
-
-        if (!staticBuffer->lookupAttribute(attrib, &streamOffset))
-        {
-            // Convert the entire buffer
-            int totalCount = ElementsInBuffer(attrib, storage->getSize());
-            int startIndex = attrib.offset / ComputeVertexAttributeStride(attrib);
-
-            error = staticBuffer->storeVertexAttributes(attrib, currentValue, -startIndex, totalCount,
-                                                        0, &streamOffset);
-            if (error.isError())
-            {
-                return error;
-            }
-        }
-
-        unsigned int firstElementOffset = (attrib.offset / ComputeVertexAttributeStride(attrib)) * outputElementSize;
-        unsigned int startOffset = (instances == 0 || attrib.divisor == 0) ? firstVertexIndex * outputElementSize : 0;
-        if (streamOffset + firstElementOffset + startOffset < streamOffset)
-        {
-            return gl::Error(GL_OUT_OF_MEMORY);
-        }
-
-        streamOffset += firstElementOffset + startOffset;
+        ANGLE_TRY(storage->getData(&sourceData));
+        sourceData += static_cast<int>(attrib.offset);
     }
     else
     {
-        int totalCount = StreamingBufferElementCount(attrib, count, instances);
-        gl::Error error = mStreamingBuffer->getVertexBuffer()->getSpaceRequired(attrib, 1, 0, &outputElementSize);
-        if (error.isError())
-        {
-            return error;
-        }
-
-        error = mStreamingBuffer->storeVertexAttributes(attrib, currentValue, firstVertexIndex,
-                                                        totalCount, instances, &streamOffset);
-        if (error.isError())
-        {
-            return error;
-        }
+        sourceData = static_cast<const uint8_t*>(attrib.pointer);
     }
 
-    translated->storage = directStorage ? storage : NULL;
-    translated->vertexBuffer = vertexBuffer->getVertexBuffer();
-    translated->serial = directStorage ? storage->getSerial() : vertexBuffer->getSerial();
-    translated->divisor = attrib.divisor;
+    unsigned int streamOffset = 0;
 
-    translated->attribute = &attrib;
-    translated->currentValueType = currentValue.Type;
-    translated->stride = outputElementSize;
-    translated->offset = streamOffset;
+    translated->storage = nullptr;
+    ANGLE_TRY_RESULT(mFactory->getVertexSpaceRequired(attrib, 1, 0), translated->stride);
 
-    return gl::Error(GL_NO_ERROR);
+    size_t totalCount = ComputeVertexAttributeElementCount(attrib, count, instances);
+
+    ANGLE_TRY(mStreamingBuffer->storeDynamicAttribute(
+        attrib, translated->currentValueType, firstVertexIndex, static_cast<GLsizei>(totalCount),
+        instances, &streamOffset, sourceData));
+
+    VertexBuffer *vertexBuffer = mStreamingBuffer->getVertexBuffer();
+
+    translated->vertexBuffer.set(vertexBuffer);
+    translated->serial = vertexBuffer->getSerial();
+    translated->baseOffset            = streamOffset;
+    translated->usesFirstVertexOffset = false;
+
+    return gl::NoError();
 }
 
-gl::Error VertexDataManager::storeCurrentValue(const gl::VertexAttribute &attrib,
-                                               const gl::VertexAttribCurrentValueData &currentValue,
+gl::Error VertexDataManager::storeCurrentValue(const gl::VertexAttribCurrentValueData &currentValue,
                                                TranslatedAttribute *translated,
-                                               gl::VertexAttribCurrentValueData *cachedValue,
-                                               size_t *cachedOffset,
-                                               StreamingVertexBufferInterface *buffer)
+                                               size_t attribIndex)
 {
-    if (*cachedValue != currentValue)
+    CurrentValueState *cachedState = &mCurrentValueCache[attribIndex];
+    auto *&buffer                  = cachedState->buffer;
+
+    if (!buffer)
     {
-        gl::Error error = buffer->reserveVertexSpace(attrib, 1, 0);
-        if (error.isError())
-        {
-            return error;
-        }
-
-        unsigned int streamOffset;
-        error = buffer->storeVertexAttributes(attrib, currentValue, 0, 1, 0, &streamOffset);
-        if (error.isError())
-        {
-            return error;
-        }
-
-        *cachedValue = currentValue;
-        *cachedOffset = streamOffset;
+        buffer = new StreamingVertexBufferInterface(mFactory, CONSTANT_VERTEX_BUFFER_SIZE);
     }
 
-    translated->storage = NULL;
-    translated->vertexBuffer = buffer->getVertexBuffer();
-    translated->serial = buffer->getSerial();
+    if (cachedState->data != currentValue)
+    {
+        const gl::VertexAttribute &attrib = *translated->attribute;
+
+        ANGLE_TRY(buffer->reserveVertexSpace(attrib, 1, 0));
+
+        const uint8_t *sourceData = reinterpret_cast<const uint8_t*>(currentValue.FloatValues);
+        unsigned int streamOffset;
+        ANGLE_TRY(buffer->storeDynamicAttribute(attrib, currentValue.Type, 0, 1, 0, &streamOffset,
+                                                sourceData));
+
+        buffer->getVertexBuffer()->hintUnmapResource();
+
+        cachedState->data = currentValue;
+        cachedState->offset = streamOffset;
+    }
+
+    translated->vertexBuffer.set(buffer->getVertexBuffer());
+
+    translated->storage = nullptr;
+    translated->serial  = buffer->getSerial();
     translated->divisor = 0;
+    translated->stride  = 0;
+    translated->baseOffset            = static_cast<unsigned int>(cachedState->offset);
+    translated->usesFirstVertexOffset = false;
 
-    translated->attribute = &attrib;
-    translated->currentValueType = currentValue.Type;
-    translated->stride = 0;
-    translated->offset = *cachedOffset;
-
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
+// VertexBufferBinding implementation
+VertexBufferBinding::VertexBufferBinding() : mBoundVertexBuffer(nullptr)
+{
 }
+
+VertexBufferBinding::VertexBufferBinding(const VertexBufferBinding &other)
+    : mBoundVertexBuffer(other.mBoundVertexBuffer)
+{
+    if (mBoundVertexBuffer)
+    {
+        mBoundVertexBuffer->addRef();
+    }
+}
+
+VertexBufferBinding::~VertexBufferBinding()
+{
+    if (mBoundVertexBuffer)
+    {
+        mBoundVertexBuffer->release();
+    }
+}
+
+VertexBufferBinding &VertexBufferBinding::operator=(const VertexBufferBinding &other)
+{
+    mBoundVertexBuffer = other.mBoundVertexBuffer;
+    if (mBoundVertexBuffer)
+    {
+        mBoundVertexBuffer->addRef();
+    }
+    return *this;
+}
+
+void VertexBufferBinding::set(VertexBuffer *vertexBuffer)
+{
+    if (mBoundVertexBuffer == vertexBuffer)
+        return;
+
+    if (mBoundVertexBuffer)
+    {
+        mBoundVertexBuffer->release();
+    }
+    if (vertexBuffer)
+    {
+        vertexBuffer->addRef();
+    }
+
+    mBoundVertexBuffer = vertexBuffer;
+}
+
+VertexBuffer *VertexBufferBinding::get() const
+{
+    return mBoundVertexBuffer;
+}
+
+}  // namespace rx

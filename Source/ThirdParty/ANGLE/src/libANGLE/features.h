@@ -32,9 +32,22 @@
 #define ANGLE_PROGRAM_BINARY_LOAD ANGLE_ENABLED
 #endif
 
-// Shader debug info
-#if !defined(ANGLE_SHADER_DEBUG_INFO)
-#define ANGLE_SHADER_DEBUG_INFO ANGLE_DISABLED
+// Append HLSL assembly to shader debug info. Defaults to enabled in Debug and off in Release.
+#if !defined(ANGLE_APPEND_ASSEMBLY_TO_SHADER_DEBUG_INFO)
+#if !defined(NDEBUG)
+#define ANGLE_APPEND_ASSEMBLY_TO_SHADER_DEBUG_INFO ANGLE_ENABLED
+#else
+#define ANGLE_APPEND_ASSEMBLY_TO_SHADER_DEBUG_INFO ANGLE_DISABLED
+#endif  // !defined(NDEBUG)
+#endif  // !defined(ANGLE_APPEND_ASSEMBLY_TO_SHADER_DEBUG_INFO)
+
+// Program link validation of precisions for uniforms. This feature was
+// requested by developers to allow non-conformant shaders to be used which
+// contain mismatched precisions.
+// ENABLED validate that precision for uniforms match between vertex and fragment shaders
+// DISABLED allow precision for uniforms to differ between vertex and fragment shaders
+#if !defined(ANGLE_PROGRAM_LINK_VALIDATE_UNIFORM_PRECISION)
+#define ANGLE_PROGRAM_LINK_VALIDATE_UNIFORM_PRECISION ANGLE_ENABLED
 #endif
 
 #endif // LIBANGLE_FEATURES_H_

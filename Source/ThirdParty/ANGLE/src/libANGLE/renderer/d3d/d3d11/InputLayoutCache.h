@@ -10,14 +10,18 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D11_INPUTLAYOUTCACHE_H_
 #define LIBANGLE_RENDERER_D3D_D3D11_INPUTLAYOUTCACHE_H_
 
-#include "libANGLE/Constants.h"
-#include "libANGLE/Error.h"
-#include "common/angleutils.h"
-
 #include <GLES2/gl2.h>
 
 #include <cstddef>
-#include <unordered_map>
+
+#include <array>
+#include <map>
+
+#include "common/angleutils.h"
+#include "libANGLE/Constants.h"
+#include "libANGLE/Error.h"
+#include "libANGLE/formatutils.h"
+#include "libANGLE/renderer/d3d/RendererD3D.h"
 
 namespace gl
 {
@@ -27,6 +31,9 @@ class Program;
 namespace rx
 {
 struct TranslatedAttribute;
+struct TranslatedIndexData;
+struct SourceIndexData;
+class ProgramD3D;
 
 class InputLayoutCache : angle::NonCopyable
 {
@@ -38,66 +45,76 @@ class InputLayoutCache : angle::NonCopyable
     void clear();
     void markDirty();
 
-    gl::Error applyVertexBuffers(TranslatedAttribute attributes[gl::MAX_VERTEX_ATTRIBS],
-                                 GLenum mode, gl::Program *program);
+    gl::Error applyVertexBuffers(const gl::State &state,
+                                 const std::vector<TranslatedAttribute> &vertexArrayAttribs,
+                                 const std::vector<TranslatedAttribute> &currentValueAttribs,
+                                 GLenum mode,
+                                 GLint start,
+                                 TranslatedIndexData *indexInfo,
+                                 GLsizei numIndicesPerInstance);
+
+    gl::Error updateVertexOffsetsForPointSpritesEmulation(GLint startVertex,
+                                                          GLsizei emulatedInstanceId);
+
+    // Useful for testing
+    void setCacheSize(unsigned int cacheSize) { mCacheSize = cacheSize; }
 
   private:
-    struct InputLayoutElement
+    struct PackedAttributeLayout
     {
-        D3D11_INPUT_ELEMENT_DESC desc;
-        GLenum glslElementType;
-    };
-
-    struct InputLayoutKey
-    {
-        unsigned int elementCount;
-        InputLayoutElement elements[gl::MAX_VERTEX_ATTRIBS];
-
-        const char *begin() const
+        PackedAttributeLayout()
+            : numAttributes(0),
+              flags(0)
         {
-            return reinterpret_cast<const char*>(&elementCount);
         }
 
-        const char *end() const
+        void addAttributeData(GLenum glType,
+                              UINT semanticIndex,
+                              gl::VertexFormatType vertexFormatType,
+                              unsigned int divisor);
+
+        bool operator<(const PackedAttributeLayout &other) const;
+
+        enum Flags
         {
-            return reinterpret_cast<const char*>(&elements[elementCount]);
-        }
+            FLAG_USES_INSTANCED_SPRITES     = 0x1,
+            FLAG_INSTANCED_SPRITES_ACTIVE   = 0x2,
+            FLAG_INSTANCED_RENDERING_ACTIVE = 0x4,
+        };
+
+        size_t numAttributes;
+        unsigned int flags;
+        uint32_t attributeData[gl::MAX_VERTEX_ATTRIBS];
     };
 
-    struct InputLayoutCounterPair
-    {
-        ID3D11InputLayout *inputLayout;
-        unsigned long long lastUsedTime;
-    };
+    gl::Error updateInputLayout(const gl::State &state,
+                                GLenum mode,
+                                const AttribIndexArray &sortedSemanticIndices,
+                                GLsizei numIndicesPerInstance);
+    gl::Error createInputLayout(const AttribIndexArray &sortedSemanticIndices,
+                                GLenum mode,
+                                gl::Program *program,
+                                GLsizei numIndicesPerInstance,
+                                ID3D11InputLayout **inputLayoutOut);
+
+    std::map<PackedAttributeLayout, ID3D11InputLayout *> mLayoutMap;
 
     ID3D11InputLayout *mCurrentIL;
-    ID3D11Buffer *mCurrentBuffers[gl::MAX_VERTEX_ATTRIBS];
-    UINT mCurrentVertexStrides[gl::MAX_VERTEX_ATTRIBS];
-    UINT mCurrentVertexOffsets[gl::MAX_VERTEX_ATTRIBS];
+    std::array<ID3D11Buffer *, gl::MAX_VERTEX_ATTRIBS> mCurrentBuffers;
+    std::array<UINT, gl::MAX_VERTEX_ATTRIBS> mCurrentVertexStrides;
+    std::array<UINT, gl::MAX_VERTEX_ATTRIBS> mCurrentVertexOffsets;
+    std::vector<const TranslatedAttribute *> mCurrentAttributes;
 
     ID3D11Buffer *mPointSpriteVertexBuffer;
     ID3D11Buffer *mPointSpriteIndexBuffer;
 
-    static std::size_t hashInputLayout(const InputLayoutKey &inputLayout);
-    static bool compareInputLayouts(const InputLayoutKey &a, const InputLayoutKey &b);
-
-    typedef std::size_t (*InputLayoutHashFunction)(const InputLayoutKey &);
-    typedef bool (*InputLayoutEqualityFunction)(const InputLayoutKey &, const InputLayoutKey &);
-    typedef std::unordered_map<InputLayoutKey,
-                               InputLayoutCounterPair,
-                               InputLayoutHashFunction,
-                               InputLayoutEqualityFunction> InputLayoutMap;
-    InputLayoutMap mInputLayoutMap;
-
-    static const unsigned int kMaxInputLayouts;
-
-    unsigned long long mCounter;
+    unsigned int mCacheSize;
 
     ID3D11Device *mDevice;
     ID3D11DeviceContext *mDeviceContext;
     D3D_FEATURE_LEVEL mFeatureLevel;
 };
 
-}
+}  // namespace rx
 
 #endif // LIBANGLE_RENDERER_D3D_D3D11_INPUTLAYOUTCACHE_H_

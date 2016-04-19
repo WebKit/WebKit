@@ -19,9 +19,9 @@ class DebugAnnotator11 : public gl::DebugAnnotator
   public:
     DebugAnnotator11();
     ~DebugAnnotator11() override;
-    void beginEvent(const std::wstring &eventName) override;
+    void beginEvent(const wchar_t *eventName) override;
     void endEvent() override;
-    void setMarker(const std::wstring &markerName) override;
+    void setMarker(const wchar_t *markerName) override;
     bool getStatus() override;
 
   private:

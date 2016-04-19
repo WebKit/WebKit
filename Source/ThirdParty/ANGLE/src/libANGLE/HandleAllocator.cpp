@@ -20,13 +20,13 @@ struct HandleAllocator::HandleRangeComparator
 {
     bool operator()(const HandleRange &range, GLuint handle) const
     {
-        return (handle < range.begin);
+        return (range.end < handle);
     }
 };
 
 HandleAllocator::HandleAllocator() : mBaseValue(1), mNextValue(1)
 {
-    mUnallocatedList.push_back(HandleRange(1, std::numeric_limits<GLuint>::max() - 1));
+    mUnallocatedList.push_back(HandleRange(1, std::numeric_limits<GLuint>::max()));
 }
 
 HandleAllocator::HandleAllocator(GLuint maximumHandleValue) : mBaseValue(1), mNextValue(1)
@@ -120,14 +120,15 @@ void HandleAllocator::reserve(GLuint handle)
     // need to split the range
     auto placementIt = mUnallocatedList.erase(boundIt);
 
-    if (begin != handle)
-    {
-        placementIt = mUnallocatedList.insert(placementIt, HandleRange(begin, handle));
-    }
     if (handle + 1 != end)
     {
-        mUnallocatedList.insert(placementIt, HandleRange(handle + 1, end));
+        placementIt = mUnallocatedList.insert(placementIt, HandleRange(handle + 1, end));
+    }
+    if (begin != handle)
+    {
+        ASSERT(begin < handle);
+        mUnallocatedList.insert(placementIt, HandleRange(begin, handle));
     }
 }
 
-}
+}  // namespace gl

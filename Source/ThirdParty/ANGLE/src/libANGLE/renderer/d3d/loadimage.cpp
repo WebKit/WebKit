@@ -348,6 +348,24 @@ void LoadRGBA8ToBGRA8(size_t width, size_t height, size_t depth,
     }
 }
 
+void LoadRGBA4ToARGB4(size_t width, size_t height, size_t depth,
+                      const uint8_t *input, size_t inputRowPitch, size_t inputDepthPitch,
+                      uint8_t *output, size_t outputRowPitch, size_t outputDepthPitch)
+{
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y++)
+        {
+            const uint16_t *source = OffsetDataPointer<uint16_t>(input, y, z, inputRowPitch, inputDepthPitch);
+            uint16_t *dest = OffsetDataPointer<uint16_t>(output, y, z, outputRowPitch, outputDepthPitch);
+            for (size_t x = 0; x < width; x++)
+            {
+                dest[x] = ANGLE_ROTR16(source[x], 4);
+            }
+        }
+    }
+}
+
 void LoadRGBA4ToBGRA8(size_t width, size_t height, size_t depth,
                       const uint8_t *input, size_t inputRowPitch, size_t inputDepthPitch,
                       uint8_t *output, size_t outputRowPitch, size_t outputDepthPitch)
@@ -414,6 +432,24 @@ void LoadBGRA4ToBGRA8(size_t width, size_t height, size_t depth,
     }
 }
 
+void LoadRGB5A1ToA1RGB5(size_t width, size_t height, size_t depth,
+                        const uint8_t *input, size_t inputRowPitch, size_t inputDepthPitch,
+                        uint8_t *output, size_t outputRowPitch, size_t outputDepthPitch)
+{
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y++)
+        {
+            const uint16_t *source = OffsetDataPointer<uint16_t>(input, y, z, inputRowPitch, inputDepthPitch);
+            uint16_t *dest = OffsetDataPointer<uint16_t>(output, y, z, outputRowPitch, outputDepthPitch);
+            for (size_t x = 0; x < width; x++)
+            {
+                dest[x] = ANGLE_ROTR16(source[x], 1);
+            }
+        }
+    }
+}
+
 void LoadRGB5A1ToBGRA8(size_t width, size_t height, size_t depth,
                        const uint8_t *input, size_t inputRowPitch, size_t inputDepthPitch,
                        uint8_t *output, size_t outputRowPitch, size_t outputDepthPitch)
@@ -457,7 +493,6 @@ void LoadRGB5A1ToRGBA8(size_t width, size_t height, size_t depth,
         }
     }
 }
-
 
 void LoadBGR5A1ToBGRA8(size_t width, size_t height, size_t depth,
                        const uint8_t *input, size_t inputRowPitch, size_t inputDepthPitch,

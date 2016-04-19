@@ -9,24 +9,32 @@
 #include "libANGLE/renderer/gl/wgl/PbufferSurfaceWGL.h"
 
 #include "common/debug.h"
+#include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/wgl/FunctionsWGL.h"
 #include "libANGLE/renderer/gl/wgl/wgl_utils.h"
 
 namespace rx
 {
 
-PbufferSurfaceWGL::PbufferSurfaceWGL(EGLint width, EGLint height, EGLenum textureFormat, EGLenum textureTarget,
-                                     bool largest, int pixelFormat, HDC deviceContext, HGLRC wglContext,
+PbufferSurfaceWGL::PbufferSurfaceWGL(RendererGL *renderer,
+                                     EGLint width,
+                                     EGLint height,
+                                     EGLenum textureFormat,
+                                     EGLenum textureTarget,
+                                     bool largest,
+                                     int pixelFormat,
+                                     HDC deviceContext,
+                                     HGLRC wglContext,
                                      const FunctionsWGL *functions)
-    : SurfaceGL(),
+    : SurfaceGL(renderer),
       mWidth(width),
       mHeight(height),
       mLargest(largest),
       mTextureFormat(textureFormat),
       mTextureTarget(textureTarget),
       mPixelFormat(pixelFormat),
-      mParentDeviceContext(deviceContext),
       mShareWGLContext(wglContext),
+      mParentDeviceContext(deviceContext),
       mPbuffer(nullptr),
       mPbufferDeviceContext(nullptr),
       mFunctionsWGL(functions)
@@ -138,7 +146,7 @@ static int GetWGLBufferBindTarget(EGLint buffer)
     }
 }
 
-egl::Error PbufferSurfaceWGL::bindTexImage(EGLint buffer)
+egl::Error PbufferSurfaceWGL::bindTexImage(gl::Texture *texture, EGLint buffer)
 {
     if (!mFunctionsWGL->bindTexImageARB(mPbuffer, GetWGLBufferBindTarget(buffer)))
     {
@@ -177,6 +185,11 @@ EGLint PbufferSurfaceWGL::getHeight() const
 EGLint PbufferSurfaceWGL::isPostSubBufferSupported() const
 {
     return EGL_FALSE;
+}
+
+EGLint PbufferSurfaceWGL::getSwapBehavior() const
+{
+    return EGL_BUFFER_PRESERVED;
 }
 
 }

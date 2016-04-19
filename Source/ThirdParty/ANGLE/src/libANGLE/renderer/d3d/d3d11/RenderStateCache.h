@@ -36,7 +36,10 @@ class RenderStateCache : angle::NonCopyable
 
     gl::Error getBlendState(const gl::Framebuffer *framebuffer, const gl::BlendState &blendState, ID3D11BlendState **outBlendState);
     gl::Error getRasterizerState(const gl::RasterizerState &rasterState, bool scissorEnabled, ID3D11RasterizerState **outRasterizerState);
-    gl::Error getDepthStencilState(const gl::DepthStencilState &dsState, ID3D11DepthStencilState **outDSState);
+    gl::Error getDepthStencilState(const gl::DepthStencilState &dsState,
+                                   bool disableDepth,
+                                   bool disableStencil,
+                                   ID3D11DepthStencilState **outDSState);
     gl::Error getSamplerState(const gl::SamplerState &samplerState, ID3D11SamplerState **outSamplerState);
 
   private:

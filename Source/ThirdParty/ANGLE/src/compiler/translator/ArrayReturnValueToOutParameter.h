@@ -11,6 +11,6 @@
 
 class TIntermNode;
 
-void ArrayReturnValueToOutParameter(TIntermNode *root);
+void ArrayReturnValueToOutParameter(TIntermNode *root, unsigned int *temporaryIndex);
 
 #endif  // COMPILER_TRANSLATOR_ARRAYRETURNVALUETOOUTPARAMETER_H_

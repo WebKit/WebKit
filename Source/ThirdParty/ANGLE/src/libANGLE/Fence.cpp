@@ -76,16 +76,23 @@ Error FenceNV::finish()
 }
 
 FenceSync::FenceSync(rx::FenceSyncImpl *impl, GLuint id)
-    : RefCountObject(id),
-      mFence(impl),
-      mCondition(GL_NONE),
-      mFlags(0)
+    : RefCountObject(id), mFence(impl), mLabel(), mCondition(GL_NONE), mFlags(0)
 {
 }
 
 FenceSync::~FenceSync()
 {
     SafeDelete(mFence);
+}
+
+void FenceSync::setLabel(const std::string &label)
+{
+    mLabel = label;
+}
+
+const std::string &FenceSync::getLabel() const
+{
+    return mLabel;
 }
 
 Error FenceSync::set(GLenum condition, GLbitfield flags)

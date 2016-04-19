@@ -10,14 +10,7 @@
 #define LIBANGLE_RENDERER_COMPILERD3D_H_
 
 #include "libANGLE/renderer/CompilerImpl.h"
-#include "libANGLE/Caps.h"
-
-#include "GLSLANG/ShaderLang.h"
-
-namespace gl
-{
-struct Data;
-}
+#include "libANGLE/renderer/d3d/RendererD3D.h"
 
 namespace rx
 {
@@ -25,20 +18,14 @@ namespace rx
 class CompilerD3D : public CompilerImpl
 {
   public:
-    CompilerD3D(const gl::Data &data, ShShaderOutput outputType);
-    virtual ~CompilerD3D();
+    CompilerD3D(ShShaderOutput translatorOutputType);
+    ~CompilerD3D() override {}
 
-    gl::Error release() override;
-
-    ShHandle getCompilerHandle(GLenum type);
+    gl::Error release() override { return gl::Error(GL_NO_ERROR); }
+    ShShaderOutput getTranslatorOutputType() const override { return mTranslatorOutputType; }
 
   private:
-    ShShaderSpec mSpec;
-    ShShaderOutput mOutputType;
-    ShBuiltInResources mResources;
-
-    ShHandle mFragmentCompiler;
-    ShHandle mVertexCompiler;
+    ShShaderOutput mTranslatorOutputType;
 };
 
 }

@@ -6,10 +6,12 @@
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "libANGLE/Buffer.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/TransformFeedback.h"
 #include "libANGLE/renderer/BufferImpl_mock.h"
 #include "libANGLE/renderer/TransformFeedbackImpl_mock.h"
+#include "tests/angle_unittests_utils.h"
 
 using ::testing::_;
 using ::testing::Return;
@@ -18,44 +20,50 @@ using ::testing::SetArgumentPointee;
 namespace
 {
 
+class MockFactory : public rx::NullFactory
+{
+  public:
+    MOCK_METHOD0(createTransformFeedback, rx::TransformFeedbackImpl *());
+};
+
 class TransformFeedbackTest : public testing::Test
 {
   protected:
-    virtual void SetUp()
+    TransformFeedbackTest() : mImpl(nullptr), mFeedback(nullptr) {}
+
+    void SetUp() override
     {
+        mImpl = new rx::MockTransformFeedbackImpl;
+        EXPECT_CALL(mMockFactory, createTransformFeedback())
+            .WillOnce(Return(mImpl))
+            .RetiresOnSaturation();
+
         // Set a reasonable number of tf attributes
         mCaps.maxTransformFeedbackSeparateAttributes = 8;
 
-        mImpl = new rx::MockTransformFeedbackImpl;
         EXPECT_CALL(*mImpl, destructor());
-        mFeedback = new gl::TransformFeedback(mImpl, 1, mCaps);
+        mFeedback = new gl::TransformFeedback(&mMockFactory, 1, mCaps);
         mFeedback->addRef();
     }
 
-    virtual void TearDown()
+    void TearDown() override
     {
-        mFeedback->release();
+        if (mFeedback)
+        {
+            mFeedback->release();
+        }
+
+        // Only needed because the mock is leaked if bugs are present,
+        // which logs an error, but does not cause the test to fail.
+        // Ordinarily mocks are verified when destroyed.
+        testing::Mock::VerifyAndClear(mImpl);
     }
 
+    MockFactory mMockFactory;
     rx::MockTransformFeedbackImpl* mImpl;
     gl::TransformFeedback* mFeedback;
     gl::Caps mCaps;
 };
-
-TEST_F(TransformFeedbackTest, DestructionDeletesImpl)
-{
-    rx::MockTransformFeedbackImpl* impl = new rx::MockTransformFeedbackImpl;
-    EXPECT_CALL(*impl, destructor()).Times(1).RetiresOnSaturation();
-
-    gl::TransformFeedback* feedback = new gl::TransformFeedback(impl, 1, mCaps);
-    feedback->addRef();
-    feedback->release();
-
-    // Only needed because the mock is leaked if bugs are present,
-    // which logs an error, but does not cause the test to fail.
-    // Ordinarily mocks are verified when destroyed.
-    testing::Mock::VerifyAndClear(impl);
-}
 
 TEST_F(TransformFeedbackTest, SideEffectsOfStartAndStop)
 {
@@ -63,7 +71,7 @@ TEST_F(TransformFeedbackTest, SideEffectsOfStartAndStop)
 
     EXPECT_FALSE(mFeedback->isActive());
     EXPECT_CALL(*mImpl, begin(GL_TRIANGLES));
-    mFeedback->begin(GL_TRIANGLES);
+    mFeedback->begin(GL_TRIANGLES, nullptr);
     EXPECT_TRUE(mFeedback->isActive());
     EXPECT_EQ(static_cast<GLenum>(GL_TRIANGLES), mFeedback->getPrimitiveMode());
     EXPECT_CALL(*mImpl, end());
@@ -77,7 +85,7 @@ TEST_F(TransformFeedbackTest, SideEffectsOfPauseAndResume)
 
     EXPECT_FALSE(mFeedback->isActive());
     EXPECT_CALL(*mImpl, begin(GL_TRIANGLES));
-    mFeedback->begin(GL_TRIANGLES);
+    mFeedback->begin(GL_TRIANGLES, nullptr);
     EXPECT_FALSE(mFeedback->isPaused());
     EXPECT_CALL(*mImpl, pause());
     mFeedback->pause();
@@ -97,35 +105,36 @@ TEST_F(TransformFeedbackTest, BufferBinding)
 
     static const size_t bindIndex = 0;
 
-    rx::MockTransformFeedbackImpl *feedbackImpl = new rx::MockTransformFeedbackImpl;
-    EXPECT_CALL(*feedbackImpl, destructor()).Times(1).RetiresOnSaturation();
+    EXPECT_EQ(mFeedback->getIndexedBufferCount(), mCaps.maxTransformFeedbackSeparateAttributes);
 
-    gl::TransformFeedback *feedback = new gl::TransformFeedback(feedbackImpl, 1, mCaps);
+    EXPECT_CALL(*mImpl, bindGenericBuffer(_));
+    mFeedback->bindGenericBuffer(buffer);
+    EXPECT_EQ(mFeedback->getGenericBuffer().get(), buffer);
 
-    EXPECT_EQ(feedback->getIndexedBufferCount(), mCaps.maxTransformFeedbackSeparateAttributes);
-
-    EXPECT_CALL(*feedbackImpl, bindGenericBuffer(_));
-    feedback->bindGenericBuffer(buffer);
-    EXPECT_EQ(feedback->getGenericBuffer().get(), buffer);
-
-    EXPECT_CALL(*feedbackImpl, bindIndexedBuffer(_, _));
-    feedback->bindIndexedBuffer(bindIndex, buffer, 0, 1);
-    for (size_t i = 0; i < feedback->getIndexedBufferCount(); i++)
+    EXPECT_CALL(*mImpl, bindIndexedBuffer(_, _));
+    mFeedback->bindIndexedBuffer(bindIndex, buffer, 0, 1);
+    for (size_t i = 0; i < mFeedback->getIndexedBufferCount(); i++)
     {
         if (i == bindIndex)
         {
-            EXPECT_EQ(feedback->getIndexedBuffer(i).get(), buffer);
+            EXPECT_EQ(mFeedback->getIndexedBuffer(i).get(), buffer);
         }
         else
         {
-            EXPECT_EQ(feedback->getIndexedBuffer(i).get(), nullptr);
+            EXPECT_EQ(mFeedback->getIndexedBuffer(i).get(), nullptr);
         }
     }
 
-    feedback->addRef();
-    feedback->release();
+    // force-release the feedback object to ensure the buffer is released.
+    const size_t releaseCount = mFeedback->getRefCount();
+    for (size_t count = 0; count < releaseCount; ++count)
+    {
+        mFeedback->release();
+    }
+
+    mFeedback = nullptr;
 
     testing::Mock::VerifyAndClear(bufferImpl);
 }
 
-} // namespace
+}  // anonymous namespace

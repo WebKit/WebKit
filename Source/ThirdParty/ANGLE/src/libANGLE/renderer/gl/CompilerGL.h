@@ -11,33 +11,21 @@
 
 #include "libANGLE/renderer/CompilerImpl.h"
 
-#include "GLSLANG/ShaderLang.h"
-
-namespace gl
-{
-struct Data;
-}
-
 namespace rx
 {
+class FunctionsGL;
 
 class CompilerGL : public CompilerImpl
 {
   public:
-    CompilerGL(const gl::Data &data);
-    ~CompilerGL() override;
+    CompilerGL(const FunctionsGL *functions);
+    ~CompilerGL() override {}
 
-    gl::Error release() override;
-
-    ShHandle getCompilerHandle(GLenum type);
+    gl::Error release() override { return gl::Error(GL_NO_ERROR); }
+    ShShaderOutput getTranslatorOutputType() const override { return mTranslatorOutputType; }
 
   private:
-    ShShaderSpec mSpec;
-    ShShaderOutput mOutputType;
-    ShBuiltInResources mResources;
-
-    ShHandle mFragmentCompiler;
-    ShHandle mVertexCompiler;
+    ShShaderOutput mTranslatorOutputType;
 };
 
 }

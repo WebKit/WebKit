@@ -11,9 +11,20 @@
 
 namespace rx
 {
-NativeWindow::NativeWindow(EGLNativeWindowType window)
+NativeWindow::NativeWindow(EGLNativeWindowType window,
+                           const egl::Config *config,
+                           bool directComposition)
 {
     mWindow = window;
+    mConfig = config;
+}
+
+NativeWindow::~NativeWindow()
+{
+}
+
+void NativeWindow::commitChange()
+{
 }
 
 bool NativeWindow::initialize()
@@ -83,7 +94,9 @@ HRESULT NativeWindow::createSwapChain(ID3D11Device *device, DXGIFactory *factory
 {
     if (mImpl)
     {
-        return mImpl->createSwapChain(device, factory, format, width, height, swapChain);
+        bool containsAlpha = (mConfig->alphaSize > 0);
+        return mImpl->createSwapChain(device, factory, format, width, height, containsAlpha,
+                                      swapChain);
     }
 
     return E_UNEXPECTED;
@@ -197,16 +210,47 @@ bool IsEGLConfiguredPropertySet(EGLNativeWindowType window, ABI::Windows::Founda
 // A Valid EGLNativeWindowType IInspectable can only be:
 //
 // ICoreWindow
+// ISwapChainPanel
 // IPropertySet
-// 
+//
 // Anything else will be rejected as an invalid IInspectable.
 bool IsValidEGLNativeWindowType(EGLNativeWindowType window)
 {
     return IsCoreWindow(window) || IsSwapChainPanel(window) || IsEGLConfiguredPropertySet(window);
 }
 
+// Retrieve an optional property from a property set
+HRESULT GetOptionalPropertyValue(const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable*>> &propertyMap,
+                                 const wchar_t *propertyName,
+                                 boolean *hasKey,
+                                 ComPtr<ABI::Windows::Foundation::IPropertyValue> &propertyValue)
+{
+    if (!propertyMap || !hasKey)
+    {
+        return E_INVALIDARG;
+    }
+
+    // Assume that the value does not exist
+    *hasKey = false;
+
+    HRESULT result = propertyMap->HasKey(HStringReference(propertyName).Get(), hasKey);
+    if (SUCCEEDED(result) && !(*hasKey))
+    {
+        // Value does not exist, so return S_OK and set the exists parameter to false to indicate
+        // that a the optional property does not exist.
+        return S_OK;
+    }
+
+    if (SUCCEEDED(result))
+    {
+        result = propertyMap->Lookup(HStringReference(propertyName).Get(), &propertyValue);
+    }
+
+    return result;
+}
+
 // Attempts to read an optional SIZE property value that is assumed to be in the form of
-// an ABI::Windows::Foundation::Size.  This function validates the Size value before returning 
+// an ABI::Windows::Foundation::Size.  This function validates the Size value before returning
 // it to the caller.
 //
 // Possible return values are:
@@ -217,63 +261,112 @@ bool IsValidEGLNativeWindowType(EGLNativeWindowType window)
 //    * Invalid property value (width/height must be > 0)
 // Additional errors may be returned from IMap or IPropertyValue
 //
-HRESULT GetOptionalSizePropertyValue(const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable*>>& propertyMap, const wchar_t *propertyName, SIZE *value, bool *valueExists)
+HRESULT GetOptionalSizePropertyValue(const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable*>> &propertyMap,
+                                     const wchar_t *propertyName, SIZE *value, bool *valueExists)
 {
-    if (!propertyMap || !propertyName || !value || !valueExists)
+    ComPtr<ABI::Windows::Foundation::IPropertyValue> propertyValue;
+    ABI::Windows::Foundation::PropertyType propertyType = ABI::Windows::Foundation::PropertyType::PropertyType_Empty;
+    Size sizeValue = { 0, 0 };
+    boolean hasKey = false;
+
+    if (!propertyMap || !value || !valueExists)
     {
-        return false;
+        return E_INVALIDARG;
     }
 
     // Assume that the value does not exist
     *valueExists = false;
     *value = { 0, 0 };
 
-    ComPtr<ABI::Windows::Foundation::IPropertyValue> propertyValue;
-    ABI::Windows::Foundation::PropertyType propertyType = ABI::Windows::Foundation::PropertyType::PropertyType_Empty;
-    Size sizeValue = { 0, 0 };
-    boolean hasKey = false;
-
-    HRESULT result = propertyMap->HasKey(HStringReference(propertyName).Get(), &hasKey);
-    if (SUCCEEDED(result) && !hasKey)
-    {
-        // Value does not exist, so return S_OK and set the exists parameter to false to indicate
-        // that a the optional property does not exist.
-        *valueExists = false;
-        return S_OK;
-    }
-
-    if (SUCCEEDED(result))
-    {
-        result = propertyMap->Lookup(HStringReference(propertyName).Get(), &propertyValue);
-    }
-
-    if (SUCCEEDED(result))
+    HRESULT result = GetOptionalPropertyValue(propertyMap, propertyName, &hasKey, propertyValue);
+    if (SUCCEEDED(result) && hasKey)
     {
         result = propertyValue->get_Type(&propertyType);
-    }
 
-    // Check if the expected Size property is of PropertyType_Size type.
-    if (SUCCEEDED(result) && propertyType == ABI::Windows::Foundation::PropertyType::PropertyType_Size)
-    {
-        if (SUCCEEDED(propertyValue->GetSize(&sizeValue)) && (sizeValue.Width > 0 && sizeValue.Height > 0))
+        // Check if the expected Size property is of PropertyType_Size type.
+        if (SUCCEEDED(result) && propertyType == ABI::Windows::Foundation::PropertyType::PropertyType_Size)
         {
-            // A valid property value exists
-            *value = { static_cast<long>(sizeValue.Width), static_cast<long>(sizeValue.Height) };
-            *valueExists = true;
-            result = S_OK;
+            if (SUCCEEDED(propertyValue->GetSize(&sizeValue)) && (sizeValue.Width > 0 && sizeValue.Height > 0))
+            {
+                // A valid property value exists
+                *value = { static_cast<long>(sizeValue.Width), static_cast<long>(sizeValue.Height) };
+                *valueExists = true;
+                result = S_OK;
+            }
+            else
+            {
+                // An invalid Size property was detected. Width/Height values must > 0
+                result = E_INVALIDARG;
+            }
         }
         else
         {
-            // An invalid Size property was detected. Width/Height values must > 0
+            // An invalid property type was detected. Size property must be of PropertyType_Size
             result = E_INVALIDARG;
         }
-    }
-    else
-    {
-        // An invalid property type was detected. Size property must be of PropertyType_Size
-        result = E_INVALIDARG;
     }
 
     return result;
 }
+
+// Attempts to read an optional float property value that is assumed to be in the form of
+// an ABI::Windows::Foundation::Single.  This function validates the Single value before returning
+// it to the caller.
+//
+// Possible return values are:
+// S_OK, valueExists == true - optional Single value was successfully retrieved and validated
+// S_OK, valueExists == false - optional Single value was not found
+// E_INVALIDARG, valueExists = false - optional Single value was malformed in the property set.
+//    * Incorrect property type ( must be PropertyType_Single)
+//    * Invalid property value (must be > 0)
+// Additional errors may be returned from IMap or IPropertyValue
+//
+HRESULT GetOptionalSinglePropertyValue(const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable*>> &propertyMap,
+                                       const wchar_t *propertyName, float *value, bool *valueExists)
+{
+    ComPtr<ABI::Windows::Foundation::IPropertyValue> propertyValue;
+    ABI::Windows::Foundation::PropertyType propertyType = ABI::Windows::Foundation::PropertyType::PropertyType_Empty;
+    float scaleValue = 0.0f;
+    boolean hasKey = false;
+
+    if (!propertyMap || !value || !valueExists)
+    {
+        return E_INVALIDARG;
+    }
+
+    // Assume that the value does not exist
+    *valueExists = false;
+    *value = 0.0f;
+
+    HRESULT result = GetOptionalPropertyValue(propertyMap, propertyName, &hasKey, propertyValue);
+    if (SUCCEEDED(result) && hasKey)
+    {
+        result = propertyValue->get_Type(&propertyType);
+
+        // Check if the expected Scale property is of PropertyType_Single type.
+        if (SUCCEEDED(result) && propertyType == ABI::Windows::Foundation::PropertyType::PropertyType_Single)
+        {
+            if (SUCCEEDED(propertyValue->GetSingle(&scaleValue)) && (scaleValue > 0.0f))
+            {
+                // A valid property value exists
+                *value = scaleValue;
+                *valueExists = true;
+                result = S_OK;
+            }
+            else
+            {
+                // An invalid scale was set
+                result = E_INVALIDARG;
+            }
+        }
+        else
+        {
+            // An invalid property type was detected. Size property must be of PropertyType_Single
+            result = E_INVALIDARG;
+        }
+    }
+
+    return result;
+}
+
 }

@@ -21,7 +21,8 @@ public:
                 bool forceHighp);
 
 protected:
-    virtual bool writeVariablePrecision(TPrecision precision);
+  bool writeVariablePrecision(TPrecision precision) override;
+
 private:
     bool mForceHighp;
 };

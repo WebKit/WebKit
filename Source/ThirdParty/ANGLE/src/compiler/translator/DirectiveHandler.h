@@ -11,41 +11,42 @@
 #include "compiler/translator/ExtensionBehavior.h"
 #include "compiler/translator/Pragma.h"
 #include "compiler/preprocessor/DirectiveHandlerBase.h"
+#include "GLSLANG/ShaderLang.h"
 
 class TDiagnostics;
 
 class TDirectiveHandler : public pp::DirectiveHandler, angle::NonCopyable
 {
   public:
-    TDirectiveHandler(TExtensionBehavior& extBehavior,
-                      TDiagnostics& diagnostics,
-                      int& shaderVersion,
+    TDirectiveHandler(TExtensionBehavior &extBehavior,
+                      TDiagnostics &diagnostics,
+                      int &shaderVersion,
+                      sh::GLenum shaderType,
                       bool debugShaderPrecisionSupported);
-    virtual ~TDirectiveHandler();
+    ~TDirectiveHandler() override;
 
     const TPragma& pragma() const { return mPragma; }
     const TExtensionBehavior& extensionBehavior() const { return mExtensionBehavior; }
 
-    virtual void handleError(const pp::SourceLocation& loc,
-                             const std::string& msg);
+    void handleError(const pp::SourceLocation &loc, const std::string &msg) override;
 
-    virtual void handlePragma(const pp::SourceLocation& loc,
-                              const std::string& name,
-                              const std::string& value,
-                              bool stdgl);
+    void handlePragma(const pp::SourceLocation &loc,
+                      const std::string &name,
+                      const std::string &value,
+                      bool stdgl) override;
 
-    virtual void handleExtension(const pp::SourceLocation& loc,
-                                 const std::string& name,
-                                 const std::string& behavior);
+    void handleExtension(const pp::SourceLocation &loc,
+                         const std::string &name,
+                         const std::string &behavior) override;
 
-    virtual void handleVersion(const pp::SourceLocation& loc,
-                               int version);
+    void handleVersion(const pp::SourceLocation &loc, int version) override;
 
   private:
     TPragma mPragma;
     TExtensionBehavior& mExtensionBehavior;
     TDiagnostics& mDiagnostics;
     int& mShaderVersion;
+    sh::GLenum mShaderType;
     bool mDebugShaderPrecisionSupported;
 };
 

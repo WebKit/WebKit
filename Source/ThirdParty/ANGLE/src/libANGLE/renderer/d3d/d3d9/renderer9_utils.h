@@ -22,7 +22,7 @@ class FramebufferAttachment;
 namespace rx
 {
 class RenderTarget9;
-struct Workarounds;
+struct WorkaroundsD3D;
 
 namespace gl_d3d9
 {
@@ -37,7 +37,8 @@ D3DCULL ConvertCullMode(GLenum cullFace, GLenum frontFace);
 D3DCUBEMAP_FACES ConvertCubeFace(GLenum cubeFace);
 DWORD ConvertColorMask(bool red, bool green, bool blue, bool alpha);
 D3DTEXTUREFILTERTYPE ConvertMagFilter(GLenum magFilter, float maxAnisotropy);
-void ConvertMinFilter(GLenum minFilter, D3DTEXTUREFILTERTYPE *d3dMinFilter, D3DTEXTUREFILTERTYPE *d3dMipFilter, float maxAnisotropy);
+void ConvertMinFilter(GLenum minFilter, D3DTEXTUREFILTERTYPE *d3dMinFilter, D3DTEXTUREFILTERTYPE *d3dMipFilter,
+                      float *d3dLodBias, float maxAnisotropy, size_t baseLevel);
 
 D3DMULTISAMPLE_TYPE GetMultisampleType(GLuint samples);
 
@@ -46,13 +47,22 @@ D3DMULTISAMPLE_TYPE GetMultisampleType(GLuint samples);
 namespace d3d9_gl
 {
 
+unsigned int GetReservedVertexUniformVectors();
+
+unsigned int GetReservedFragmentUniformVectors();
+
 GLsizei GetSamplesCount(D3DMULTISAMPLE_TYPE type);
 
 bool IsFormatChannelEquivalent(D3DFORMAT d3dformat, GLenum format);
 
-void GenerateCaps(IDirect3D9 *d3d9, IDirect3DDevice9 *device, D3DDEVTYPE deviceType, UINT adapter, gl::Caps *caps,
-                  gl::TextureCapsMap *textureCapsMap, gl::Extensions *extensions);
-
+void GenerateCaps(IDirect3D9 *d3d9,
+                  IDirect3DDevice9 *device,
+                  D3DDEVTYPE deviceType,
+                  UINT adapter,
+                  gl::Caps *caps,
+                  gl::TextureCapsMap *textureCapsMap,
+                  gl::Extensions *extensions,
+                  gl::Limitations *limitations);
 }
 
 namespace d3d9
@@ -76,8 +86,7 @@ inline bool isDeviceLostError(HRESULT errorCode)
     }
 }
 
-Workarounds GenerateWorkarounds();
-
+WorkaroundsD3D GenerateWorkarounds();
 }
 
 }

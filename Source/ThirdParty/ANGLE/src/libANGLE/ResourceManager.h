@@ -15,8 +15,6 @@
 #include "libANGLE/angletypes.h"
 #include "libANGLE/HandleAllocator.h"
 
-#include <map>
-
 namespace rx
 {
 class ImplFactory;
@@ -25,13 +23,14 @@ class ImplFactory;
 namespace gl
 {
 class Buffer;
-class Shader;
+struct Data;
+class FenceSync;
+struct Limitations;
 class Program;
-class Texture;
 class Renderbuffer;
 class Sampler;
-class FenceSync;
-struct Data;
+class Shader;
+class Texture;
 
 class ResourceManager : angle::NonCopyable
 {
@@ -43,7 +42,7 @@ class ResourceManager : angle::NonCopyable
     void release();
 
     GLuint createBuffer();
-    GLuint createShader(const gl::Data &data, GLenum type);
+    GLuint createShader(const gl::Limitations &rendererLimitations, GLenum type);
     GLuint createProgram();
     GLuint createTexture();
     GLuint createRenderbuffer();
@@ -68,10 +67,10 @@ class ResourceManager : angle::NonCopyable
 
     void setRenderbuffer(GLuint handle, Renderbuffer *renderbuffer);
 
-    void checkBufferAllocation(GLuint handle);
-    void checkTextureAllocation(GLuint handle, GLenum type);
-    void checkRenderbufferAllocation(GLuint handle);
-    void checkSamplerAllocation(GLuint sampler);
+    Buffer *checkBufferAllocation(GLuint handle);
+    Texture *checkTextureAllocation(GLuint handle, GLenum type);
+    Renderbuffer *checkRenderbufferAllocation(GLuint handle);
+    Sampler *checkSamplerAllocation(GLuint samplerHandle);
 
     bool isSampler(GLuint sampler);
 
@@ -81,34 +80,27 @@ class ResourceManager : angle::NonCopyable
     rx::ImplFactory *mFactory;
     std::size_t mRefCount;
 
-    typedef std::map<GLuint, Buffer*> BufferMap;
-    BufferMap mBufferMap;
+    ResourceMap<Buffer> mBufferMap;
     HandleAllocator mBufferHandleAllocator;
 
-    typedef std::map<GLuint, Shader*> ShaderMap;
-    ShaderMap mShaderMap;
+    ResourceMap<Shader> mShaderMap;
 
-    typedef std::map<GLuint, Program*> ProgramMap;
-    ProgramMap mProgramMap;
+    ResourceMap<Program> mProgramMap;
     HandleAllocator mProgramShaderHandleAllocator;
 
-    typedef std::map<GLuint, Texture*> TextureMap;
-    TextureMap mTextureMap;
+    ResourceMap<Texture> mTextureMap;
     HandleAllocator mTextureHandleAllocator;
 
-    typedef std::map<GLuint, Renderbuffer*> RenderbufferMap;
-    RenderbufferMap mRenderbufferMap;
+    ResourceMap<Renderbuffer> mRenderbufferMap;
     HandleAllocator mRenderbufferHandleAllocator;
 
-    typedef std::map<GLuint, Sampler*> SamplerMap;
-    SamplerMap mSamplerMap;
+    ResourceMap<Sampler> mSamplerMap;
     HandleAllocator mSamplerHandleAllocator;
 
-    typedef std::map<GLuint, FenceSync*> FenceMap;
-    FenceMap mFenceSyncMap;
+    ResourceMap<FenceSync> mFenceSyncMap;
     HandleAllocator mFenceSyncHandleAllocator;
 };
 
-}
+}  // namespace gl
 
 #endif // LIBANGLE_RESOURCEMANAGER_H_

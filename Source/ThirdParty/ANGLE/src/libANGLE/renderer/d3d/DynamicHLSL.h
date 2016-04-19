@@ -9,13 +9,15 @@
 #ifndef LIBANGLE_RENDERER_D3D_DYNAMICHLSL_H_
 #define LIBANGLE_RENDERER_D3D_DYNAMICHLSL_H_
 
-#include "common/angleutils.h"
-#include "libANGLE/Constants.h"
+#include <map>
+#include <vector>
 
 #include "angle_gl.h"
-
-#include <vector>
-#include <map>
+#include "common/angleutils.h"
+#include "libANGLE/Constants.h"
+#include "libANGLE/Program.h"
+#include "libANGLE/formatutils.h"
+#include "libANGLE/renderer/d3d/RendererD3D.h"
 
 namespace sh
 {
@@ -27,19 +29,16 @@ namespace gl
 {
 class InfoLog;
 struct VariableLocation;
-struct LinkedVarying;
 struct VertexAttribute;
-struct VertexFormat;
-struct PackedVarying;
 struct Data;
 }
 
 namespace rx
 {
-class RendererD3D;
+struct PackedVarying;
+class ProgramD3DMetadata;
 class ShaderD3D;
-
-typedef const gl::PackedVarying *VaryingPacking[gl::IMPLEMENTATION_MAX_VARYING_VECTORS][4];
+class VaryingPacking;
 
 struct PixelShaderOutputVariable
 {
@@ -54,47 +53,52 @@ class DynamicHLSL : angle::NonCopyable
   public:
     explicit DynamicHLSL(RendererD3D *const renderer);
 
-    int packVaryings(gl::InfoLog &infoLog, VaryingPacking packing, ShaderD3D *fragmentShader,
-                     ShaderD3D *vertexShader, const std::vector<std::string>& transformFeedbackVaryings);
-    std::string generateVertexShaderForInputLayout(const std::string &sourceShader,
-                                                   const gl::VertexFormat inputLayout[],
-                                                   const std::vector<sh::Attribute> &shaderAttributes) const;
-    std::string generatePixelShaderForOutputSignature(const std::string &sourceShader, const std::vector<PixelShaderOutputVariable> &outputVariables,
-                                                      bool usesFragDepth, const std::vector<GLenum> &outputLayout) const;
-    bool generateShaderLinkHLSL(const gl::Data &data, gl::InfoLog &infoLog, int registers,
-                                const VaryingPacking packing,
-                                std::string &pixelHLSL, std::string &vertexHLSL,
-                                ShaderD3D *fragmentShader, ShaderD3D *vertexShader,
-                                const std::vector<std::string> &transformFeedbackVaryings,
-                                std::vector<gl::LinkedVarying> *linkedVaryings,
-                                std::map<int, gl::VariableLocation> *programOutputVars,
-                                std::vector<PixelShaderOutputVariable> *outPixelShaderKey,
-                                bool *outUsesFragDepth) const;
+    std::string generateVertexShaderForInputLayout(
+        const std::string &sourceShader,
+        const gl::InputLayout &inputLayout,
+        const std::vector<sh::Attribute> &shaderAttributes) const;
+    std::string generatePixelShaderForOutputSignature(
+        const std::string &sourceShader,
+        const std::vector<PixelShaderOutputVariable> &outputVariables,
+        bool usesFragDepth,
+        const std::vector<GLenum> &outputLayout) const;
+    bool generateShaderLinkHLSL(const gl::Data &data,
+                                const gl::Program::Data &programData,
+                                const ProgramD3DMetadata &programMetadata,
+                                const VaryingPacking &varyingPacking,
+                                std::string *pixelHLSL,
+                                std::string *vertexHLSL) const;
 
-    std::string generateGeometryShaderHLSL(int registers, ShaderD3D *fragmentShader, ShaderD3D *vertexShader) const;
-    void getInputLayoutSignature(const gl::VertexFormat inputLayout[], GLenum signature[]) const;
+    std::string generateGeometryShaderPreamble(const VaryingPacking &varyingPacking) const;
+
+    std::string generateGeometryShaderHLSL(gl::PrimitiveType primitiveType,
+                                           const gl::Data &data,
+                                           const gl::Program::Data &programData,
+                                           const bool useViewScale,
+                                           const std::string &preambleString) const;
+
+    void getPixelShaderOutputKey(const gl::Data &data,
+                                 const gl::Program::Data &programData,
+                                 const ProgramD3DMetadata &metadata,
+                                 std::vector<PixelShaderOutputVariable> *outPixelShaderKey);
 
   private:
     RendererD3D *const mRenderer;
 
-    struct SemanticInfo;
-
-    std::string getVaryingSemantic(bool pointSize) const;
-    SemanticInfo getSemanticInfo(int startRegisters, bool position, bool fragCoord, bool pointCoord,
-                                 bool pointSize, bool pixelShader) const;
-    std::string generateVaryingLinkHLSL(const SemanticInfo &info, const std::string &varyingHLSL) const;
-    std::string generateVaryingHLSL(const ShaderD3D *shader) const;
-    void storeUserLinkedVaryings(const ShaderD3D *vertexShader, std::vector<gl::LinkedVarying> *linkedVaryings) const;
-    void storeBuiltinLinkedVaryings(const SemanticInfo &info, std::vector<gl::LinkedVarying> *linkedVaryings) const;
-    void defineOutputVariables(ShaderD3D *fragmentShader, std::map<int, gl::VariableLocation> *programOutputVars) const;
-    std::string generatePointSpriteHLSL(int registers, ShaderD3D *fragmentShader, ShaderD3D *vertexShader) const;
+    void generateVaryingLinkHLSL(ShaderType shaderType,
+                                 const VaryingPacking &varyingPacking,
+                                 std::stringstream &linkStream) const;
+    void generateVaryingHLSL(const VaryingPacking &varyingPacking,
+                             std::stringstream &hlslStream) const;
 
     // Prepend an underscore
     static std::string decorateVariable(const std::string &name);
 
-    std::string generateAttributeConversionHLSL(const gl::VertexFormat &vertexFormat, const sh::ShaderVariable &shaderAttrib) const;
+    std::string generateAttributeConversionHLSL(gl::VertexFormatType vertexFormatType,
+                                                const sh::ShaderVariable &shaderAttrib) const;
 };
 
+std::string GetVaryingSemantic(int majorShaderModel, bool programUsesPointSize);
 }
 
-#endif // LIBANGLE_RENDERER_D3D_DYNAMICHLSL_H_
+#endif  // LIBANGLE_RENDERER_D3D_DYNAMICHLSL_H_

@@ -19,22 +19,42 @@ class Renderer11;
 class VertexArray11 : public VertexArrayImpl
 {
   public:
-    VertexArray11(Renderer11 *renderer)
-        : VertexArrayImpl(),
-          mRenderer(renderer)
-    {
-    }
-    virtual ~VertexArray11() { }
+    VertexArray11(const gl::VertexArray::Data &data);
+    ~VertexArray11() override;
 
-    virtual void setElementArrayBuffer(const gl::Buffer *buffer) { }
-    virtual void setAttribute(size_t idx, const gl::VertexAttribute &attr) { }
-    virtual void setAttributeDivisor(size_t idx, GLuint divisor) { }
-    virtual void enableAttribute(size_t idx, bool enabledState) { }
+    void syncState(const gl::VertexArray::DirtyBits &dirtyBits) override;
+    gl::Error updateDirtyAndDynamicAttribs(VertexDataManager *vertexDataManager,
+                                           const gl::State &state,
+                                           GLint start,
+                                           GLsizei count,
+                                           GLsizei instances);
+    void clearDirtyAndPromoteDynamicAttribs(const gl::State &state, GLsizei count);
+
+    const std::vector<TranslatedAttribute> &getTranslatedAttribs() const;
 
   private:
-    Renderer11 *mRenderer;
+    void updateVertexAttribStorage(size_t attribIndex);
+    void markBufferDataDirty(size_t attribIndex);
+    void unlinkBuffer(size_t attribIndex, VertexStorageType storageType);
+
+    std::vector<VertexStorageType> mAttributeStorageTypes;
+    std::vector<TranslatedAttribute> mTranslatedAttribs;
+
+    // The mask of attributes marked as dynamic.
+    gl::AttributesMask mDynamicAttribsMask;
+
+    // A mask of attributes that need to be re-evaluated.
+    gl::AttributesMask mAttribsToUpdate;
+
+    // A set of attributes we know are dirty, and need to be re-translated.
+    gl::AttributesMask mAttribsToTranslate;
+
+    // We need to keep a safe pointer to the Buffer so we can attach the correct dirty callbacks.
+    std::vector<BindingPointer<gl::Buffer>> mCurrentBuffers;
+
+    std::vector<NotificationCallback> mOnBufferDataDirty;
 };
 
-}
+}  // namespace rx
 
 #endif // LIBANGLE_RENDERER_D3D_D3D11_VERTEXARRAY11_H_

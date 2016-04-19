@@ -15,23 +15,26 @@
 namespace egl
 {
 
-class AttributeMap
+class AttributeMap final
 {
   public:
     AttributeMap();
-    explicit AttributeMap(const EGLint *attributes);
 
-    virtual void insert(EGLint key, EGLint value);
-    virtual bool contains(EGLint key) const;
-    virtual EGLint get(EGLint key, EGLint defaultValue) const;
+    void insert(EGLAttrib key, EGLAttrib value);
+    bool contains(EGLAttrib key) const;
+    EGLAttrib get(EGLAttrib key, EGLAttrib defaultValue) const;
+    bool isEmpty() const;
 
-    typedef std::map<EGLint, EGLint>::const_iterator const_iterator;
+    typedef std::map<EGLAttrib, EGLAttrib>::const_iterator const_iterator;
 
     const_iterator begin() const;
     const_iterator end() const;
 
+    static AttributeMap CreateFromIntArray(const EGLint *attributes);
+    static AttributeMap CreateFromAttribArray(const EGLAttrib *attributes);
+
   private:
-    std::map<EGLint, EGLint> mAttributes;
+    std::map<EGLAttrib, EGLAttrib> mAttributes;
 };
 
 }

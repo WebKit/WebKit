@@ -45,6 +45,14 @@ void TOutputGLSL::visitSymbol(TIntermSymbol *node)
     {
         out << "webgl_FragData";
     }
+    else if (symbol == "gl_SecondaryFragColorEXT")
+    {
+        out << "angle_SecondaryFragColor";
+    }
+    else if (symbol == "gl_SecondaryFragDataEXT")
+    {
+        out << "angle_SecondaryFragData";
+    }
     else
     {
         TOutputGLSLBase::visitSymbol(node);
@@ -67,6 +75,7 @@ TString TOutputGLSL::translateTextureFunction(TString &name)
         "texture2DProj", "textureProj",
         "texture2DLod", "textureLod",
         "texture2DProjLod", "textureProjLod",
+        "texture2DRect", "texture",
         "textureCube", "texture",
         "textureCubeLod", "textureLod",
         // Extensions

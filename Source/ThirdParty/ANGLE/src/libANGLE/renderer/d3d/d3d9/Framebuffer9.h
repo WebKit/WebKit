@@ -21,11 +21,19 @@ class Framebuffer9 : public FramebufferD3D
     Framebuffer9(const gl::Framebuffer::Data &data, Renderer9 *renderer);
     virtual ~Framebuffer9();
 
-  private:
-    gl::Error clear(const gl::State &state, const ClearParameters &clearParams) override;
+    gl::Error discard(size_t count, const GLenum *attachments) override;
+    gl::Error invalidate(size_t count, const GLenum *attachments) override;
+    gl::Error invalidateSub(size_t count, const GLenum *attachments, const gl::Rectangle &area) override;
 
-    gl::Error readPixels(const gl::Rectangle &area, GLenum format, GLenum type, size_t outputPitch,
-                         const gl::PixelPackState &pack, uint8_t *pixels) const override;
+  private:
+    gl::Error clear(const gl::Data &data, const ClearParameters &clearParams) override;
+
+    gl::Error readPixelsImpl(const gl::Rectangle &area,
+                             GLenum format,
+                             GLenum type,
+                             size_t outputPitch,
+                             const gl::PixelPackState &pack,
+                             uint8_t *pixels) const override;
 
     gl::Error blit(const gl::Rectangle &sourceArea, const gl::Rectangle &destArea, const gl::Rectangle *scissor,
                    bool blitRenderTarget, bool blitDepth, bool blitStencil, GLenum filter,

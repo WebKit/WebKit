@@ -31,7 +31,9 @@ class InspectableNativeWindow
   public:
     InspectableNativeWindow() :
         mSupportsSwapChainResize(true),
-        mRequiresSwapChainScaling(false),
+        mSwapChainSizeSpecified(false),
+        mSwapChainScaleSpecified(false),
+        mSwapChainScale(1.0f),
         mClientRectChanged(false),
         mClientRect({0,0,0,0}),
         mNewClientRect({0,0,0,0})
@@ -41,14 +43,17 @@ class InspectableNativeWindow
     virtual ~InspectableNativeWindow(){}
 
     virtual bool initialize(EGLNativeWindowType window, IPropertySet *propertySet) = 0;
-    virtual HRESULT createSwapChain(ID3D11Device *device, DXGIFactory *factory, DXGI_FORMAT format, unsigned int width, unsigned int height, DXGISwapChain **swapChain) = 0;
-    virtual bool registerForSizeChangeEvents() = 0;
-    virtual void unregisterForSizeChangeEvents() = 0;
-    virtual HRESULT scaleSwapChain(const SIZE& newSize) { return S_OK; }
+    virtual HRESULT createSwapChain(ID3D11Device *device,
+                                    DXGIFactory *factory,
+                                    DXGI_FORMAT format,
+                                    unsigned int width,
+                                    unsigned int height,
+                                    bool containsAlpha,
+                                    DXGISwapChain **swapChain) = 0;
 
     bool getClientRect(RECT *rect)
     {
-        if (mClientRectChanged && mSupportsSwapChainResize)
+        if (mClientRectChanged)
         {
             mClientRect = mNewClientRect;
         }
@@ -58,23 +63,44 @@ class InspectableNativeWindow
         return true;
     }
 
-    void setNewClientSize(const SIZE &newSize)
+    // setNewClientSize is used by the WinRT size change handler. It isn't used by the rest of ANGLE.
+    void setNewClientSize(const SIZE &newWindowSize)
     {
-        if (mSupportsSwapChainResize && !mRequiresSwapChainScaling)
-        {
-            mNewClientRect = { 0, 0, newSize.cx, newSize.cy };
-            mClientRectChanged = true;
-        }
+        // If the client doesn't support swapchain resizing then we should have already unregistered from size change handler
+        ASSERT(mSupportsSwapChainResize);
 
-        if (mRequiresSwapChainScaling)
+        if (mSupportsSwapChainResize)
         {
-            scaleSwapChain(newSize);
+            // If the swapchain size was specified then we should ignore this call too
+            if (!mSwapChainSizeSpecified)
+            {
+                // We don't have to check if a swapchain scale was specified here; the default value is 1.0f which will have no effect.
+                mNewClientRect = { 0, 0, static_cast<long>(newWindowSize.cx * mSwapChainScale), static_cast<long>(newWindowSize.cy * mSwapChainScale) };
+                mClientRectChanged = true;
+
+                // If a scale was specified, then now is the time to apply the scale matrix for the new swapchain size and window size
+                if (mSwapChainScaleSpecified)
+                {
+                    scaleSwapChain(newWindowSize, mNewClientRect);
+                }
+            }
+
+            // Even if the swapchain size was fixed, the window might have changed size.
+            // In this case, we should recalculate the scale matrix to account for the new window size
+            if (mSwapChainSizeSpecified)
+            {
+                scaleSwapChain(newWindowSize, mClientRect);
+            }
         }
     }
 
-protected:
-    bool mSupportsSwapChainResize;
-    bool mRequiresSwapChainScaling;
+  protected:
+    virtual HRESULT scaleSwapChain(const SIZE &windowSize, const RECT &clientRect) = 0;
+
+    bool mSupportsSwapChainResize; // Support for IDXGISwapChain::ResizeBuffers method
+    bool mSwapChainSizeSpecified;  // If an EGLRenderSurfaceSizeProperty was specified
+    bool mSwapChainScaleSpecified; // If an EGLRenderResolutionScaleProperty was specified
+    float mSwapChainScale;         // The scale value specified by the EGLRenderResolutionScaleProperty property
     RECT mClientRect;
     RECT mNewClientRect;
     bool mClientRectChanged;
@@ -86,8 +112,17 @@ bool IsValidEGLNativeWindowType(EGLNativeWindowType window);
 bool IsCoreWindow(EGLNativeWindowType window, ComPtr<ABI::Windows::UI::Core::ICoreWindow> *coreWindow = nullptr);
 bool IsSwapChainPanel(EGLNativeWindowType window, ComPtr<ABI::Windows::UI::Xaml::Controls::ISwapChainPanel> *swapChainPanel = nullptr);
 bool IsEGLConfiguredPropertySet(EGLNativeWindowType window, ABI::Windows::Foundation::Collections::IPropertySet **propertySet = nullptr, IInspectable **inspectable = nullptr);
-HRESULT GetOptionalSizePropertyValue(const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable*>>& propertyMap, const wchar_t *propertyName, SIZE *value, bool *valueExists);
 
+HRESULT GetOptionalPropertyValue(const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable*>> &propertyMap,
+                                 const wchar_t *propertyName,
+                                 boolean *hasKey,
+                                 ComPtr<ABI::Windows::Foundation::IPropertyValue> &propertyValue);
+
+HRESULT GetOptionalSizePropertyValue(const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable*>> &propertyMap,
+                                     const wchar_t *propertyName, SIZE *value, bool *valueExists);
+
+HRESULT GetOptionalSinglePropertyValue(const ComPtr<ABI::Windows::Foundation::Collections::IMap<HSTRING, IInspectable*>> &propertyMap,
+                                       const wchar_t *propertyName, float *value, bool *valueExists);
 }
 
 #endif // LIBANGLE_RENDERER_D3D_D3D11_WINRT_INSPECTABLENATIVEWINDOW_H_

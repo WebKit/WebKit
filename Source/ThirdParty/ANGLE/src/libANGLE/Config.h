@@ -64,6 +64,7 @@ struct Config
     EGLint transparentRedValue;     // Transparent red value
     EGLint transparentGreenValue;   // Transparent green value
     EGLint transparentBlueValue;    // Transparent blue value
+    EGLint optimalOrientation;      // Optimal window surface orientation
 };
 
 class ConfigSet

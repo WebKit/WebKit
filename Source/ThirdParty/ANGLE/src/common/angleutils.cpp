@@ -8,7 +8,14 @@
 #include "common/debug.h"
 
 #include <stdio.h>
+
+#include <limits>
 #include <vector>
+
+namespace angle
+{
+const uintptr_t DirtyPointer = std::numeric_limits<uintptr_t>::max();
+}
 
 size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char>& outBuffer)
 {
