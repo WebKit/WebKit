@@ -2522,8 +2522,6 @@ webkit.org/b/152908 pageoverlay/overlay-large-document.html [ Failure ]
 webkit.org/b/152908 pageoverlay/overlay-small-frame-mouse-events.html [ Failure ]
 webkit.org/b/152908 pageoverlay/overlay-small-frame-paints.html [ Failure ]
 
-webkit.org/b/153062 accessibility/gtk/entry-and-password.html [ Failure ]
-
 webkit.org/b/153602 fast/table/003.html [ Failure ]
 webkit.org/b/153602 fast/text/emoji.html [ Failure ]
 webkit.org/b/153602 tables/mozilla_expected_failures/bugs/bug89315.html [ Failure ]

@@ -1,3 +1,18 @@
+2016-04-19  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/gtk/entry-and-password.html is failing since r194847
+        https://bugs.webkit.org/show_bug.cgi?id=153062
+
+        Reviewed by Carlos Garcia Campos.
+
+        The auto-fill-crash.html test has expectations which include the children
+        count for the text input. These expectations were incorrect for ATK where
+        accessible text inputs lack accessible text children.
+
+        * accessibility/auto-fill-crash.html: Modified to take platform into account.
+        * platform/gtk/TestExpectations: Unskipped entry-and-password.html.
+        * platform/gtk/accessibility/auto-fill-crash-expected.txt: Added.
+
 2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline tests after r190840.
