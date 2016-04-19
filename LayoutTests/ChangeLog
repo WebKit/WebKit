@@ -1,5 +1,11 @@
 2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline fast/events/updateLayoutForHitTest.html after r195263.
+
+        * platform/gtk/fast/events/updateLayoutForHitTest-expected.txt:
+
+2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline fast/transforms/bounding-rect-zoom.html after r197450.
 
         * platform/gtk/fast/transforms/bounding-rect-zoom-expected.txt:
