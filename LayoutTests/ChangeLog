@@ -1,3 +1,12 @@
+2016-04-19  Alex Christensen  <achristensen@webkit.org>
+
+        Rebase test after r199738
+
+        * fast/canvas/webgl/fragment-shader-assertion-expected.txt:
+        ANGLE gives us a more descriptive error now.  No big deal.  
+        This test was added to make sure it didn't crash in http://trac.webkit.org/changeset/199340
+        and it still does not crash.
+
 2016-04-19  Keith Miller  <keith_miller@apple.com>
 
         ObjcInstance::stringValue should not call NSObject's description method
