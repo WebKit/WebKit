@@ -1,3 +1,20 @@
+2016-04-19  Keith Miller  <keith_miller@apple.com>
+
+        ObjcInstance::stringValue should not call NSObject's description method
+        https://bugs.webkit.org/show_bug.cgi?id=156758
+
+        Reviewed by Geoffrey Garen.
+
+        Add new methods to ObjCController that expose two Types of WebScriptObjects. The first is
+        an NSObject and the second is an NSArray of NSObjects. These are used to test that we don't
+        call the NSObjects description method without first swizzling it.
+
+        * DumpRenderTree/mac/ObjCController.m:
+        (+[ObjCController isSelectorExcludedFromWebScript:]):
+        (+[ObjCController webScriptNameForSelector:]):
+        (-[ObjCController testArrayOfObjects]):
+        (-[ObjCController testObject]):
+
 2016-04-18  Dan Bernstein  <mitz@apple.com>
 
         Fixed building with old Xcode.

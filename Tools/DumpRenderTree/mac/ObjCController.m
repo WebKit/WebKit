@@ -78,6 +78,8 @@ static void* runJavaScriptThread(void* arg)
             || aSelector == @selector(testValueForKey)
             || aSelector == @selector(testHasWebScriptKey:)
             || aSelector == @selector(testArray)
+            || aSelector == @selector(testArrayOfObjects)
+            || aSelector == @selector(testObject)
             || aSelector == @selector(setSelectElement:selectedIndex:allowingMultiple:)
         )
         return NO;
@@ -110,6 +112,10 @@ static void* runJavaScriptThread(void* arg)
         return @"testHasWebScriptKey";
     if (aSelector == @selector(testArray))
         return @"testArray";
+    if (aSelector == @selector(testArrayOfObjects))
+        return @"testArrayOfObjects";
+    if (aSelector == @selector(testObject))
+        return @"testObject";
     if (aSelector == @selector(setSelectElement:selectedIndex:allowingMultiple:))
         return @"setSelectElementSelectedIndexAllowingMultiple";
 
@@ -267,6 +273,16 @@ static void* runJavaScriptThread(void* arg)
 - (NSArray *)testArray
 {
     return [NSArray array];
+}
+
+- (NSArray *)testArrayOfObjects
+{
+    return @[ [[[NSObject alloc] init] autorelease], [[[NSObject alloc] init] autorelease], [[[NSObject alloc] init] autorelease]];
+}
+
+- (NSObject *)testObject
+{
+    return [[[NSObject alloc] init] autorelease];
 }
 
 - (void)dealloc

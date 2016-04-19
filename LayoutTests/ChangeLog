@@ -1,3 +1,16 @@
+2016-04-19  Keith Miller  <keith_miller@apple.com>
+
+        ObjcInstance::stringValue should not call NSObject's description method
+        https://bugs.webkit.org/show_bug.cgi?id=156758
+
+        Reviewed by Geoffrey Garen.
+
+        Test that we don't use the NSObject's description method when stringifying a WebScriptObject.
+
+        * platform/mac/fast/objc/webScriptObject-does-not-call-description-on-nsobject-expected.txt: Added.
+        * platform/mac/fast/objc/webScriptObject-does-not-call-description-on-nsobject.html: Added.
+        * platform/wk2/TestExpectations:
+
 2016-04-19  Alex Christensen  <achristensen@webkit.org>
 
         Update ANGLE

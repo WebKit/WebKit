@@ -459,9 +459,18 @@ JSC::JSValue ObjcInstance::defaultValue(ExecState* exec, PreferredPrimitiveType 
     return valueOf(exec);
 }
 
+static NSString* swizzleNSObjectDescription(id self, SEL)
+{
+    return [NSString stringWithFormat:@"%@%@%@", @"<", NSStringFromClass([self class]), @">"];
+}
+
 JSC::JSValue ObjcInstance::stringValue(ExecState* exec) const
 {
-    return convertNSStringToString(exec, [getObject() description]);
+    auto method = class_getInstanceMethod([NSObject class], @selector(description));
+    IMP originalNSObjectDescription = method_setImplementation(method, (IMP)swizzleNSObjectDescription);
+    JSC::JSValue result = convertNSStringToString(exec, [getObject() description]);
+    method_setImplementation(method, originalNSObjectDescription);
+    return result;
 }
 
 JSC::JSValue ObjcInstance::numberValue(ExecState*) const

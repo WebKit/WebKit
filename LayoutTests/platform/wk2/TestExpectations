@@ -597,6 +597,7 @@ platform/mac/fast/objc/dom-html-select-activate.html
 platform/mac/fast/objc/dom-html-select-live-pseudo-selectors.html
 platform/mac/fast/objc/longlongTest.html
 platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html
+platform/mac/fast/objc/webScriptObject-does-not-call-description-on-nsobject.html
 platform/mac/plugins/bindings-array-apply-crash.html
 platform/mac/plugins/bindings-objc-long-method-name.html
 platform/mac/plugins/bindings-objc-method-name-conversion.html
