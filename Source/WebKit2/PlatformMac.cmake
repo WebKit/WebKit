@@ -205,6 +205,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/_WKDownload.mm
     UIProcess/API/Cocoa/_WKElementAction.mm
     UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.mm
+    UIProcess/API/Cocoa/_WKExperimentalFeature.mm
     UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm
     UIProcess/API/Cocoa/_WKSessionState.mm
     UIProcess/API/Cocoa/_WKThumbnailView.mm

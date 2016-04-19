@@ -1,3 +1,9 @@
+2016-04-18  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix after r199700
+
+        * PlatformMac.cmake:
+
 2016-04-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Blob support): When reading Blobs from the database, grant the Networking process sandbox access to the files.
