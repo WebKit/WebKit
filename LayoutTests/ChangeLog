@@ -1,3 +1,10 @@
+2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline tests after r190840.
+
+        * platform/gtk/fast/html/details-remove-summary-1-and-click-expected.txt:
+        * platform/gtk/fast/html/details-remove-summary-4-and-click-expected.txt:
+
 2016-04-09  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         calling super() a second time in a constructor should throw
