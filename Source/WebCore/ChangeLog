@@ -1,3 +1,19 @@
+2016-04-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [OSX] AVKit is not available on all systems
+        https://bugs.webkit.org/show_bug.cgi?id=156724
+        <rdar://problem/25501587>
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm: Add _OPTIONAL to all
+          AVKit softlink macros.
+        * platform/ios/WebAVPlayerController.mm: Ditto.
+        * platform/ios/WebPlaybackSessionInterfaceAVKit.mm: Ditto.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm: Ditto.
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm: Ditto.
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm: Ditto.
+
 2016-04-18  Gavin Barraclough  <barraclough@apple.com>
 
         WebKit should adopt journal_mode=wal for all SQLite databases.

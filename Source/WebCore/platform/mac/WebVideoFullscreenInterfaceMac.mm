@@ -39,8 +39,8 @@
 
 #import "CoreMediaSoftLink.h"
 
-SOFT_LINK_FRAMEWORK(AVKit)
-SOFT_LINK_CLASS(AVKit, AVValueTiming)
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebVideoFullscreenInterfaceMacAdditions.mm>

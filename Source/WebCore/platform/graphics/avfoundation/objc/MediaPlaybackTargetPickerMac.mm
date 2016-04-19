@@ -43,8 +43,8 @@ typedef AVOutputDeviceMenuController AVOutputDeviceMenuControllerType;
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
 
-SOFT_LINK_CLASS(AVFoundation, AVOutputContext)
-SOFT_LINK_CLASS(AVKit, AVOutputDeviceMenuController)
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVOutputContext)
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVOutputDeviceMenuController)
 
 using namespace WebCore;
 

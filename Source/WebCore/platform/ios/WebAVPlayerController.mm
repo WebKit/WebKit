@@ -41,8 +41,8 @@
 
 #import "CoreMediaSoftLink.h"
 
-SOFT_LINK_FRAMEWORK(AVKit)
-SOFT_LINK_CLASS(AVKit, AVPlayerController)
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerController)
 
 using namespace WebCore;
 
@@ -50,6 +50,9 @@ using namespace WebCore;
 
 - (instancetype)init
 {
+    if (!getAVPlayerController())
+        return nil;
+
     if (!(self = [super init]))
         return self;
 
