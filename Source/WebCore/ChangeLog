@@ -1,3 +1,20 @@
+2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Cairo] GraphicsContext::drawFocusRing methods are not consistent to each other
+        https://bugs.webkit.org/show_bug.cgi?id=156742
+
+        Reviewed by Martin Robinson.
+
+        We are rendering the focus ring differently depending on whether a path is used or a vector of rectangles. This
+        is causing that some reftests fail because they assume we always render the focus ring the same way. For example
+        fast/images/image-map-outline-in-positioned-container.html, when rendering the test
+        GraphicsContext::drawFocusRing is called with a path, and when rendering the reference it's called with a vector
+        of rectangles, producing different results.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawFocusRing): When receiving a vector of rectangles, build a Path from the given
+        rectangles and call drawFocusRing() with the built path to ensure consistency.
+
 2016-04-19  Antti Koivisto  <antti@apple.com>
 
         Move FontSelectorClient to a file of its own
