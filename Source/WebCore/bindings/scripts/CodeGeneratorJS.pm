@@ -4061,7 +4061,7 @@ my %nativeType = (
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "Date" => "double",
     "Dictionary" => "Dictionary",
-    "any" => "Deprecated::ScriptValue",
+    "any" => "JSC::JSValue",
     "boolean" => "bool",
     "double" => "double",
     "float" => "float",
@@ -4213,8 +4213,7 @@ sub JSValueToNative
     }
 
     if ($type eq "any") {
-        AddToImplIncludes("<bindings/ScriptValue.h>");
-        return "{ state->vm(), $value }";
+        return $value;
     }
 
     if ($type eq "NodeFilter") {
@@ -4351,17 +4350,13 @@ sub NativeToJSValue
 
     if ($type eq "any") {
         my $returnType = $signature->extendedAttributes->{"ImplementationReturnType"};
-        if ($interfaceName eq "Document") {
-            AddToImplIncludes("JSCanvasRenderingContext2D.h", $conditional);
-        } elsif (defined $returnType and $returnType eq "JSValue") {
-            return "$value";
-        } elsif (defined $returnType and $returnType eq "IDBKeyPath") {
+        if (defined $returnType and ($returnType eq "IDBKeyPath" or $returnType eq "IDBKey")) {
             AddToImplIncludes("IDBBindingUtilities.h", $conditional);
             return "toJS(*state, *$globalObject, $value)";
         } else {
-            return "($value.hasNoValue() ? jsNull() : $value.jsValue())";
+            return $value;
         }
-    } elsif ($type eq "SerializedScriptValue" or $type eq "any") {
+    } elsif ($type eq "SerializedScriptValue") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
         return "$value ? $value->deserialize(state, castedThis->globalObject(), 0) : jsNull()";
     } elsif ($codeGenerator->IsTypedArrayType($type)) {

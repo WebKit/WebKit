@@ -61,16 +61,6 @@ IDBKeyRange::~IDBKeyRange()
 {
 }
 
-JSValue IDBKeyRange::lowerValue(ScriptExecutionContext& context) const
-{
-    return idbKeyDataToScriptValue(context, IDBKeyData(m_lower.get()));
-}
-
-JSValue IDBKeyRange::upperValue(ScriptExecutionContext& context) const
-{
-    return idbKeyDataToScriptValue(context, IDBKeyData(m_upper.get()));
-}
-
 RefPtr<IDBKeyRange> IDBKeyRange::only(RefPtr<IDBKey>&& key, ExceptionCode& ec)
 {
     if (!key || !key->isValid()) {
@@ -81,20 +71,19 @@ RefPtr<IDBKeyRange> IDBKeyRange::only(RefPtr<IDBKey>&& key, ExceptionCode& ec)
     return create(WTFMove(key));
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext& context, JSValue keyValue, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::only(ExecState& state, JSValue keyValue, ExceptionCode& ec)
 {
-    auto key = scriptValueToIDBKey(context, keyValue);
-    if (!key || !key->isValid()) {
-        ec = IDBDatabaseException::DataError;
-        return nullptr;
-    }
-
-    return create(WTFMove(key));
+    return only(scriptValueToIDBKey(state, keyValue), ec);
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ScriptExecutionContext& context, JSValue boundValue, bool open, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::only(ScriptExecutionContext& context, JSValue keyValue, ExceptionCode& ec)
 {
-    auto bound = scriptValueToIDBKey(context, boundValue);
+    return only(scriptValueToIDBKey(context, keyValue), ec);
+}
+
+RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ExecState& state, JSValue boundValue, bool open, ExceptionCode& ec)
+{
+    auto bound = scriptValueToIDBKey(state, boundValue);
     if (!bound || !bound->isValid()) {
         ec = IDBDatabaseException::DataError;
         return nullptr;
@@ -103,9 +92,9 @@ RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ScriptExecutionContext& context, JSV
     return create(WTFMove(bound), nullptr, open, true);
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ScriptExecutionContext& context, JSValue boundValue, bool open, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ExecState& state, JSValue boundValue, bool open, ExceptionCode& ec)
 {
-    auto bound = scriptValueToIDBKey(context, boundValue);
+    auto bound = scriptValueToIDBKey(state, boundValue);
     if (!bound || !bound->isValid()) {
         ec = IDBDatabaseException::DataError;
         return nullptr;
@@ -114,10 +103,10 @@ RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ScriptExecutionContext& context, JSV
     return create(nullptr, WTFMove(bound), true, open);
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext& context, JSValue lowerValue, JSValue upperValue, bool lowerOpen, bool upperOpen, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::bound(ExecState& state, JSValue lowerValue, JSValue upperValue, bool lowerOpen, bool upperOpen, ExceptionCode& ec)
 {
-    auto lower = scriptValueToIDBKey(context, lowerValue);
-    auto upper = scriptValueToIDBKey(context, upperValue);
+    auto lower = scriptValueToIDBKey(state, lowerValue);
+    auto upper = scriptValueToIDBKey(state, upperValue);
 
     if (!lower || !lower->isValid() || !upper || !upper->isValid()) {
         ec = IDBDatabaseException::DataError;
@@ -140,24 +129,24 @@ bool IDBKeyRange::isOnlyKey() const
     return m_lower && m_upper && !m_isLowerOpen && !m_isUpperOpen && m_lower->isEqual(m_upper.get());
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ScriptExecutionContext& context, JSValue bound, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ExecState& state, JSValue bound, ExceptionCode& ec)
 {
-    return lowerBound(context, bound, false, ec);
+    return lowerBound(state, bound, false, ec);
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ScriptExecutionContext& context, JSValue bound, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ExecState& state, JSValue bound, ExceptionCode& ec)
 {
-    return upperBound(context, bound, false, ec);
+    return upperBound(state, bound, false, ec);
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext& context, JSValue lower, JSValue upper, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::bound(ExecState& state, JSValue lower, JSValue upper, ExceptionCode& ec)
 {
-    return bound(context, lower, upper, false, false, ec);
+    return bound(state, lower, upper, false, false, ec);
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext& context, JSValue lower, JSValue upper, bool lowerOpen, ExceptionCode& ec)
+RefPtr<IDBKeyRange> IDBKeyRange::bound(ExecState& state, JSValue lower, JSValue upper, bool lowerOpen, ExceptionCode& ec)
 {
-    return bound(context, lower, upper, lowerOpen, false, ec);
+    return bound(state, lower, upper, lowerOpen, false, ec);
 }
 
 } // namespace WebCore

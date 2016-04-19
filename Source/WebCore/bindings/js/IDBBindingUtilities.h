@@ -32,6 +32,7 @@
 
 namespace JSC {
 class ExecState;
+class JSGlobalObject;
 class JSValue;
 }
 
@@ -54,6 +55,7 @@ RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSC::ExecState&, const
 bool canInjectIDBKeyIntoScriptValue(JSC::ExecState&, const JSC::JSValue&, const IDBKeyPath&);
 bool injectIDBKeyIntoScriptValue(JSC::ExecState&, const IDBKeyData&, JSC::JSValue, const IDBKeyPath&);
 
+JSC::JSValue toJS(JSC::ExecState&, JSC::JSGlobalObject&, IDBKey*);
 JSC::JSValue idbKeyDataToScriptValue(ScriptExecutionContext&, const IDBKeyData&);
 void generateIndexKeyForValue(JSC::ExecState&, const IDBIndexInfo&, JSC::JSValue, IndexKey& outKey);
 

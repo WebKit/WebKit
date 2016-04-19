@@ -80,32 +80,29 @@ static bool set(ExecState* exec, JSValue& object, const String& keyPathElement, 
     return true;
 }
 
-static JSValue idbKeyToJSValue(ExecState* exec, JSGlobalObject* globalObject, IDBKey* key)
+JSValue toJS(ExecState& state, JSGlobalObject& globalObject, IDBKey* key)
 {
-    if (!key || !exec) {
-        // This should be undefined, not null.
+    if (!key) {
+        // This must be undefined, not null.
         // Spec: http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html#idl-def-IDBKeyRange
         return jsUndefined();
     }
 
-    Locker<JSLock> locker(exec->vm().apiLock());
+    Locker<JSLock> locker(state.vm().apiLock());
 
     switch (key->type()) {
-    case KeyType::Array:
-        {
-            const Vector<RefPtr<IDBKey>>& inArray = key->array();
-            size_t size = inArray.size();
-            JSArray* outArray = constructEmptyArray(exec, 0, globalObject, size);
-            for (size_t i = 0; i < size; ++i) {
-                IDBKey* arrayKey = inArray.at(i).get();
-                outArray->putDirectIndex(exec, i, idbKeyToJSValue(exec, globalObject, arrayKey));
-            }
-            return JSValue(outArray);
-        }
+    case KeyType::Array: {
+        auto& inArray = key->array();
+        unsigned size = inArray.size();
+        auto& outArray = *constructEmptyArray(&state, 0, &globalObject, size);
+        for (size_t i = 0; i < size; ++i)
+            outArray.putDirectIndex(&state, i, toJS(state, globalObject, inArray.at(i).get()));
+        return &outArray;
+    }
     case KeyType::String:
-        return jsStringWithCache(exec, key->string());
+        return jsStringWithCache(&state, key->string());
     case KeyType::Date:
-        return jsDateOrNull(exec, key->date());
+        return jsDateOrNull(&state, key->date());
     case KeyType::Number:
         return jsNumber(key->number());
     case KeyType::Min:
@@ -261,7 +258,7 @@ bool injectIDBKeyIntoScriptValue(ExecState& exec, const IDBKeyData& keyData, JSV
     if (!key)
         return false;
 
-    if (!set(&exec, parent, keyPathElements.last(), idbKeyToJSValue(&exec, exec.lexicalGlobalObject(), key.get())))
+    if (!set(&exec, parent, keyPathElements.last(), toJS(exec, *exec.lexicalGlobalObject(), key.get())))
         return false;
 
     return true;
@@ -362,7 +359,7 @@ JSC::JSValue idbKeyDataToScriptValue(ScriptExecutionContext& context, const IDBK
     if (!exec)
         return { };
 
-    return idbKeyToJSValue(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get());
+    return toJS(*exec, *exec->lexicalGlobalObject(), key.get());
 }
 
 static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, const IDBIndexInfo& info)

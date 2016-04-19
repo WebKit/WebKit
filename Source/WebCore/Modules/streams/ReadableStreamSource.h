@@ -34,12 +34,7 @@
 
 #include "JSDOMPromise.h"
 #include "ReadableStreamController.h"
-#include <runtime/ArrayBuffer.h>
 #include <wtf/Optional.h>
-
-namespace Deprecated {
-class ScriptValue;
-}
 
 namespace WebCore {
 
@@ -52,7 +47,7 @@ public:
     typedef DOMPromise<std::nullptr_t, ExceptionCode> Promise;
 
     void start(ReadableStreamController&&, Promise&&);
-    void cancel(const Deprecated::ScriptValue&);
+    void cancel(JSC::JSValue);
 
     bool isStarting() const { return !!m_startPromise; }
 
@@ -72,7 +67,6 @@ protected:
 
 private:
     Optional<Promise> m_startPromise;
-
     Optional<ReadableStreamController> m_controller;
 };
 
@@ -92,7 +86,7 @@ inline void ReadableStreamSource::startFinished()
     setInactive();
 }
 
-inline void ReadableStreamSource::cancel(const Deprecated::ScriptValue&)
+inline void ReadableStreamSource::cancel(JSC::JSValue)
 {
     clean();
     doCancel();

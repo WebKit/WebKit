@@ -28,14 +28,13 @@
     ImplementationLacksVTable,
     EnabledAtRuntime=IndexedDB,
 ] interface IDBKeyRange {
-    [ImplementedAs=lowerValue, CallWith=ScriptExecutionContext, ImplementationReturnType=JSValue] readonly attribute any lower;
-    [ImplementedAs=upperValue, CallWith=ScriptExecutionContext, ImplementationReturnType=JSValue] readonly attribute any upper;
+    [ImplementationReturnType=IDBKey] readonly attribute any lower;
+    [ImplementationReturnType=IDBKey] readonly attribute any upper;
     readonly attribute boolean lowerOpen;
     readonly attribute boolean upperOpen;
 
-    [CallWith=ScriptExecutionContext, RaisesException] static IDBKeyRange only(any value);
-    [CallWith=ScriptExecutionContext, RaisesException] static IDBKeyRange lowerBound(any lower, optional boolean open);
-    [CallWith=ScriptExecutionContext, RaisesException] static IDBKeyRange upperBound(any upper, optional boolean open);
-    [CallWith=ScriptExecutionContext, RaisesException] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen, optional boolean upperOpen);
+    [CallWith=ScriptState, RaisesException] static IDBKeyRange only(any value);
+    [CallWith=ScriptState, RaisesException] static IDBKeyRange lowerBound(any lower, optional boolean open);
+    [CallWith=ScriptState, RaisesException] static IDBKeyRange upperBound(any upper, optional boolean open);
+    [CallWith=ScriptState, RaisesException] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen, optional boolean upperOpen);
 };
-

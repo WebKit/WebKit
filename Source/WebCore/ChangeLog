@@ -1,3 +1,48 @@
+2016-04-18  Darin Adler  <darin@apple.com>
+
+        Remove all use of Deprecated::ScriptValue in generated bindings
+        https://bugs.webkit.org/show_bug.cgi?id=156706
+
+        Reviewed by Brady Eidson.
+
+        * Modules/indexeddb/IDBCursor.idl: Removed unneeded [ImplementationReturnType=JSValue].
+        * Modules/indexeddb/IDBCursorWithValue.idl: Ditto.
+
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::lowerValue): Deleted.
+        (WebCore::IDBKeyRange::upperValue): Deleted.
+        (WebCore::IDBKeyRange::only): Changed to take ExecState since the old code just used
+        the ScriptExecutionContext to get back to the (potentially wrong) ExecState. Also kept
+        one overload that takes ScriptExecutionContext because I could not change all callers.
+        (WebCore::IDBKeyRange::lowerBound): Ditto.
+        (WebCore::IDBKeyRange::upperBound): Ditto.
+        (WebCore::IDBKeyRange::bound): Ditto.
+
+        * Modules/indexeddb/IDBKeyRange.h: Updated for above.
+
+        * Modules/indexeddb/IDBKeyRange.idl: Use [ImplementationReturnType=IDBKey].
+        Use ScriptState instead of ScriptExecutionContext.
+
+        * Modules/streams/ReadableStreamSource.h: Take JSValue instead of Deprecated::ScriptValue
+        for the ignored argument to the cancel function.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::toJS): Renamed idbKeyToJSValue to this, the traditional name used in the
+        bindings generator for all these functions. Also changed to take references.
+        (WebCore::injectIDBKeyIntoScriptValue): Updated to call with the new name and types.
+        (WebCore::idbKeyDataToScriptValue): Ditto.
+
+        * bindings/js/IDBBindingUtilities.h: Added declaration of toJS for IDBKey.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Use JSC::JSValue instead of Deprecated::ScriptValue
+        for the "any" type.
+        (JSValueToNative): Just return the value with no transformation when type is "any".
+        (NativeToJSValue): Changed default behavior for "any" to just pass the value as is with
+        no transfomration. Removed unused ImplementationReturnType case for inside Document.
+        Removed JSValue case since it's the default now. Added IDBKey case that matches the
+        IDBKeyPath case (still wondering if we can do those without an attribute). Removed bogus
+        second check for type "any".
+
 2016-04-18  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Possible off-by-one in hyphenation code
