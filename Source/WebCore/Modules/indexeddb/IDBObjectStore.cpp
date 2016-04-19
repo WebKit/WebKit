@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "DOMStringList.h"
+#include "Document.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursor.h"
 #include "IDBDatabase.h"
@@ -41,6 +42,8 @@
 #include "IDBTransaction.h"
 #include "IndexedDB.h"
 #include "Logging.h"
+#include "Page.h"
+#include "ScriptExecutionContext.h"
 #include "ScriptState.h"
 #include "SerializedScriptValue.h"
 #include <wtf/Locker.h>
@@ -250,6 +253,13 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(ExecState& state, JSValue value, Ref
 {
     LOG(IndexedDB, "IDBObjectStore::putOrAdd");
 
+    auto context = scriptExecutionContextFromExecState(&state);
+    if (!context) {
+        ec.code = IDBDatabaseException::UnknownError;
+        ec.message = ASCIILiteral("Unable to store record in object store because it does not have a valid script execution context");
+        return nullptr;
+    }
+
     // The IDB spec for several IDBObjectStore methods states that transaction related exceptions should fire before
     // the exception for an object store being deleted.
     // However, a handful of W3C IDB tests expect the deleted exception even though the transaction inactive exception also applies.
@@ -283,8 +293,14 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(ExecState& state, JSValue value, Ref
         return nullptr;
     }
 
-    if (serializedValue->hasBlobURLs()) {
-        // FIXME: Add Blob/File/FileList support
+    bool privateBrowsingEnabled = false;
+    if (context->isDocument()) {
+        if (auto* page = static_cast<Document*>(context)->page())
+            privateBrowsingEnabled = page->sessionID().isEphemeral();
+    }
+
+    if (serializedValue->hasBlobURLs() && privateBrowsingEnabled) {
+        // https://bugs.webkit.org/show_bug.cgi?id=156347 - Support Blobs in private browsing.
         ec.code = IDBDatabaseException::DataCloneError;
         ec.message = ASCIILiteral("Failed to store record in an IDBObjectStore: BlobURLs are not yet supported.");
         return nullptr;
@@ -332,12 +348,6 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(ExecState& state, JSValue value, Ref
     } else if (!usesKeyGenerator && !key) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to store record in an IDBObjectStore: The object store uses out-of-line keys and has no key generator and the key parameter was not provided.");
-        return nullptr;
-    }
-
-    auto context = scriptExecutionContextFromExecState(&state);
-    if (!context) {
-        ec.code = IDBDatabaseException::UnknownError;
         return nullptr;
     }
 

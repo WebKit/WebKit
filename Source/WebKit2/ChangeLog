@@ -1,3 +1,15 @@
+2016-04-19  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: ObjectStore Blob Support.
+        https://bugs.webkit.org/show_bug.cgi?id=143193
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::preregisterSandboxExtensionsForOptionallyFileBackedBlob): Don't ASSERT that
+          this is the first we've heard of this path - The Connection now remembers all extensions.
+        (WebKit::NetworkConnectionToWebProcess::getBlobDataFileReferenceForPath): Don't take - Just get.
+
 2016-04-19  Antti Koivisto  <antti@apple.com>
 
         Try to fix iOS build.

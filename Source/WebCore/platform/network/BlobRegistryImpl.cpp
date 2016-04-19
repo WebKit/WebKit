@@ -267,6 +267,7 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
         if (!blobData) {
             Vector<String> filePaths;
             completionHandler(filePaths);
+            return;
         }
 
         for (auto& item : blobData->items()) {
@@ -276,7 +277,9 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
                 break;
             case BlobDataItem::Type::File:
                 blobsForWriting.last().filePathsOrDataBuffers.append({ item.file()->path().isolatedCopy(), { } });
-
+                break;
+            default:
+                ASSERT_NOT_REACHED();
             }
         }
     }
@@ -295,7 +298,7 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
             PlatformFileHandle file;
             String tempFilePath = openTemporaryFile(ASCIILiteral("Blob"), file);
 
-            ScopeGuard fileCloser([file, completionHandler]() {
+            ScopeGuard fileCloser([file]() {
                 PlatformFileHandle handle = file;
                 closeFile(handle);
             });
@@ -315,7 +318,7 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
                 } else {
                     ASSERT(!part.first.isEmpty());
                     if (!appendFileContentsToFileHandle(part.first, file)) {
-                        LOG_ERROR("Failed copying File contents to a Blob temporary file for storage in IndexedDB");
+                        LOG_ERROR("Failed copying File contents to a Blob temporary file for storage in IndexedDB (%s to %s)", part.first.utf8().data(), tempFilePath.utf8().data());
                         return;
                     }
                 }

@@ -102,11 +102,14 @@ void SQLiteIDBTransaction::moveBlobFilesIfNecessary()
 
 void SQLiteIDBTransaction::deleteBlobFilesIfNecessary()
 {
+    if (m_blobRemovedFilenames.isEmpty())
+        return;
+
     String databaseDirectory = m_backingStore.fullDatabaseDirectory();
     for (auto& entry : m_blobRemovedFilenames) {
         String fullPath = pathByAppendingComponent(databaseDirectory, entry);
-        m_backingStore.temporaryFileHandler().prepareForAccessToTemporaryFile(entry);
-        m_backingStore.temporaryFileHandler().accessToTemporaryFileComplete(entry);
+        m_backingStore.temporaryFileHandler().prepareForAccessToTemporaryFile(fullPath);
+        m_backingStore.temporaryFileHandler().accessToTemporaryFileComplete(fullPath);
     }
 
     m_blobRemovedFilenames.clear();

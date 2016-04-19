@@ -677,10 +677,10 @@ http/tests/local/formdata/send-form-data.html
 http/tests/local/formdata/send-form-data-with-empty-file-filename.html
 http/tests/local/formdata/upload-events.html
 http/tests/security/clipboard/clipboard-file-access.html
+imported/blink/storage/indexeddb/blob-basics-metadata.html
+imported/blink/storage/indexeddb/empty-blob-file.html
 media/video-with-blob-url-allowed-by-csp-media-src-star.html
 media/video-src-blob.html
-storage/indexeddb/noblobs.html
-storage/indexeddb/noblobs-private.html
 storage/indexeddb/structured-clone.html
 storage/indexeddb/structured-clone-private.html
 

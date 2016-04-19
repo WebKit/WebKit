@@ -85,7 +85,18 @@ bool SQLiteFileSystem::deleteEmptyDatabaseDirectory(const String& path)
 
 bool SQLiteFileSystem::deleteDatabaseFile(const String& fileName)
 {
-    return deleteFile(fileName);
+    String walFileName = makeString(fileName, ASCIILiteral("-wal"));
+    String shmFileName = makeString(fileName, ASCIILiteral("-shm"));
+
+    if (!deleteFile(fileName))
+        return false;
+
+    // Try to delete both the wal and shm files, whether or not they are actually there.
+    deleteFile(walFileName);
+    deleteFile(shmFileName);
+
+    // If either the wal or shm files remain after the delete attempt, the overall delete operation failed.
+    return !fileExists(walFileName) && !fileExists(shmFileName);
 }
 
 #if PLATFORM(IOS)

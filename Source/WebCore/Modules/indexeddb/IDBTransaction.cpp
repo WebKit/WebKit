@@ -879,7 +879,17 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
     RefPtr<IDBTransaction> protector(this);
     RefPtr<IDBClient::TransactionOperation> operationRef(&operation);
     value->writeBlobsToDiskForIndexedDB([protector, this, operationRef, key, value, overwriteMode](const IDBValue& idbValue) {
-        serverConnection().putOrAdd(*operationRef, key.get(), idbValue, overwriteMode);
+        if (idbValue.data().data()) {
+            serverConnection().putOrAdd(*operationRef, key.get(), idbValue, overwriteMode);
+            return;
+        }
+
+        // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
+        // In that case, we cannot successfully store this record, so we callback with an error.
+        auto result = IDBResultData::error(operationRef->identifier(), { IDBDatabaseException::UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
+        callOnMainThread([protector, this, operationRef, result]() {
+            operationRef->completed(result);
+        });
     });
 }
 

@@ -55,7 +55,7 @@ public:
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
 
-    RefPtr<WebCore::BlobDataFileReference> takeBlobDataFileReferenceForPath(const String& path);
+    RefPtr<WebCore::BlobDataFileReference> getBlobDataFileReferenceForPath(const String& path);
 
 private:
     NetworkConnectionToWebProcess(IPC::Connection::Identifier);

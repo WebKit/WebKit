@@ -1,3 +1,46 @@
+2016-04-19  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: ObjectStore Blob Support.
+        https://bugs.webkit.org/show_bug.cgi?id=143193
+
+        Reviewed by Alex Christensen.
+
+        Tests: imported/blink/storage/indexeddb/blob-basics-metadata.html
+               imported/blink/storage/indexeddb/blob-delete-objectstore-db.html
+               imported/blink/storage/indexeddb/blob-valid-after-deletion.html
+               imported/blink/storage/indexeddb/blob-valid-before-commit.html
+               imported/blink/storage/indexeddb/empty-blob-file.html
+               storage/indexeddb/modern/blob-simple.html
+
+        Most of the work has been done already.
+        
+        Besides a handful of tweaks to that work, all this really does is remove the clause
+        that prevents blob URLs from going into the database.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::putOrAdd): Only disallow blobs if private browsing is enabled
+          (Making that work is already covered by another bug)
+          
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::putOrAddOnServer):
+
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteUnusedBlobFileRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteBackingStore):
+
+        * Modules/indexeddb/server/SQLiteIDBTransaction.cpp:
+        (WebCore::IDBServer::SQLiteIDBTransaction::deleteBlobFilesIfNecessary):
+
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::writeBlobsToTemporaryFiles):
+
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::deleteDatabaseFile): Delete all database-related files 
+          now that we use WAL mode.
+
 2016-04-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Use the margin box for non-auto minimum sizes

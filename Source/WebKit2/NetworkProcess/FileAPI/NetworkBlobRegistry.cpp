@@ -86,7 +86,7 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
 
 void NetworkBlobRegistry::registerBlobURLOptionallyFileBacked(NetworkConnectionToWebProcess* connection, const URL& url, const URL& srcURL, const String& fileBackedPath)
 {
-    auto fileReference = connection->takeBlobDataFileReferenceForPath(fileBackedPath);
+    auto fileReference = connection->getBlobDataFileReferenceForPath(fileBackedPath);
     ASSERT(fileReference);
 
     blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, WTFMove(fileReference));

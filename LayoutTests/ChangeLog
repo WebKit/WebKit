@@ -1,3 +1,43 @@
+2016-04-19  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: ObjectStore Blob Support.
+        https://bugs.webkit.org/show_bug.cgi?id=143193
+
+        Reviewed by Alex Christensen.
+
+        Note: The blob-basics-metadata.html test has some failure lines in it because we don't support the 
+        File constructor.
+        
+        Once support is added, that test will start failing with the correct results, at which point we
+        can update expectations.
+
+        * imported/blink/storage/indexeddb/blob-basics-metadata-expected.txt: Added.
+        * imported/blink/storage/indexeddb/blob-basics-metadata.html: Added.
+        * imported/blink/storage/indexeddb/blob-delete-objectstore-db-expected.txt: Added.
+        * imported/blink/storage/indexeddb/blob-delete-objectstore-db.html: Added.
+        * imported/blink/storage/indexeddb/blob-valid-after-deletion-expected.txt: Added.
+        * imported/blink/storage/indexeddb/blob-valid-after-deletion.html: Added.
+        * imported/blink/storage/indexeddb/blob-valid-before-commit-expected.txt: Added.
+        * imported/blink/storage/indexeddb/blob-valid-before-commit.html: Added.
+        * imported/blink/storage/indexeddb/empty-blob-file-expected.txt: Added.
+        * imported/blink/storage/indexeddb/empty-blob-file.html: Added.
+        * imported/blink/storage/indexeddb/resources/empty.txt: Added.
+        * imported/blink/storage/indexeddb/resources/shared.js: Added.
+        * imported/blink/storage/indexeddb/resources/test-data.html: Added.
+        * imported/blink/storage/indexeddb/resources/test-data.txt: Added.
+
+        * platform/wk2/TestExpectations:
+        
+        * storage/indexeddb/modern/blob-simple-expected.txt: Added.
+        * storage/indexeddb/modern/blob-simple.html: Added.
+        * storage/indexeddb/modern/resources/blob-simple.js: Added.
+        
+        * storage/indexeddb/noblobs-expected.txt: Removed.
+        * storage/indexeddb/noblobs-private-expected.txt: Removed.
+        * storage/indexeddb/noblobs-private.html: Removed.
+        * storage/indexeddb/noblobs.html: Removed.
+        * storage/indexeddb/resources/noblobs.js: Removed.
+
 2016-04-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199726.
