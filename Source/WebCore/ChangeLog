@@ -1,5 +1,11 @@
 2016-04-18  Darin Adler  <darin@apple.com>
 
+        Updated binding test result to reflect the change to not use Deprecated::ScriptValue.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp: Regenerated with new script.
+
+2016-04-18  Darin Adler  <darin@apple.com>
+
         Remove all use of Deprecated::ScriptValue in generated bindings
         https://bugs.webkit.org/show_bug.cgi?id=156706
 

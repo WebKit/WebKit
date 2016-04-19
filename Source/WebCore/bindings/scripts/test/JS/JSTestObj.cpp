@@ -59,7 +59,6 @@
 #include "URL.h"
 #include "WebCoreJSClientData.h"
 #include "bool.h"
-#include <bindings/ScriptValue.h>
 #include <inspector/ScriptArguments.h>
 #include <inspector/ScriptCallStackFactory.h>
 #include <runtime/Error.h>
@@ -1767,7 +1766,7 @@ EncodedJSValue jsTestObjCachedAttribute1(ExecState* state, EncodedJSValue thisVa
     if (JSValue cachedValue = castedThis->m_cachedAttribute1.get())
         return JSValue::encode(cachedValue);
     auto& impl = castedThis->wrapped();
-    JSValue result = (impl.cachedAttribute1().hasNoValue() ? jsNull() : impl.cachedAttribute1().jsValue());
+    JSValue result = impl.cachedAttribute1();
     castedThis->m_cachedAttribute1.set(state->vm(), castedThis, result);
     return JSValue::encode(result);
 }
@@ -1785,7 +1784,7 @@ EncodedJSValue jsTestObjCachedAttribute2(ExecState* state, EncodedJSValue thisVa
     if (JSValue cachedValue = castedThis->m_cachedAttribute2.get())
         return JSValue::encode(cachedValue);
     auto& impl = castedThis->wrapped();
-    JSValue result = (impl.cachedAttribute2().hasNoValue() ? jsNull() : impl.cachedAttribute2().jsValue());
+    JSValue result = impl.cachedAttribute2();
     castedThis->m_cachedAttribute2.set(state->vm(), castedThis, result);
     return JSValue::encode(result);
 }
@@ -1801,7 +1800,7 @@ EncodedJSValue jsTestObjAnyAttribute(ExecState* state, EncodedJSValue thisValue,
         return throwGetterTypeError(*state, "TestObj", "anyAttribute");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = (impl.anyAttribute().hasNoValue() ? jsNull() : impl.anyAttribute().jsValue());
+    JSValue result = impl.anyAttribute();
     return JSValue::encode(result);
 }
 
@@ -3027,7 +3026,7 @@ bool setJSTestObjAnyAttribute(ExecState* state, EncodedJSValue thisValue, Encode
         return throwSetterTypeError(*state, "TestObj", "anyAttribute");
     }
     auto& impl = castedThis->wrapped();
-    Deprecated::ScriptValue nativeValue = { state->vm(), value };
+    JSC::JSValue nativeValue = value;
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setAnyAttribute(nativeValue);
