@@ -159,7 +159,6 @@ private:
     Lock m_registeredThreadsMutex;
     Thread* m_registeredThreads;
     WTF::ThreadSpecificKey m_threadSpecificForMachineThreads;
-    WTF::ThreadSpecificKey m_threadSpecificForThread;
 #if !ASSERT_DISABLED
     Heap* m_heap;
 #endif

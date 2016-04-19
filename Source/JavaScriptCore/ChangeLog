@@ -1,3 +1,23 @@
+2016-04-19  Michael Saboff  <msaboff@apple.com>
+
+        iTunes crashing JavaScriptCore.dll
+        https://bugs.webkit.org/show_bug.cgi?id=156647
+
+        Reviewed by Saam Barati.
+
+        Given that there there are only 128 FLS indices compared to over a 1000 for TLS, I
+        eliminated the thread specific m_threadSpecificForThread and instead we look for the
+        current thread in m_registeredThreads list when we need it.  In most cases there
+        will only be one thread.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::MachineThreads::~MachineThreads):
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::machineThreadForCurrentThread):
+        (JSC::MachineThreads::removeThread):
+        * heap/MachineStackMarker.h:
+
 2016-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [INTL] Use @thisNumberValue instead of `instanceof @Number`
