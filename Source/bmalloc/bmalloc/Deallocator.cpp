@@ -59,12 +59,6 @@ void Deallocator::scavenge()
         processObjectLog();
 }
 
-void Deallocator::deallocateXLarge(void* object)
-{
-    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
-    PerProcess<Heap>::getFastCase()->deallocateXLarge(lock, object);
-}
-
 void Deallocator::processObjectLog(std::lock_guard<StaticMutex>& lock)
 {
     Heap* heap = PerProcess<Heap>::getFastCase();
@@ -83,8 +77,6 @@ void Deallocator::processObjectLog()
 
 void Deallocator::deallocateSlowCase(void* object)
 {
-    BASSERT(!deallocateFastCase(object));
-    
     if (!m_isBmallocEnabled) {
         free(object);
         return;
@@ -93,11 +85,15 @@ void Deallocator::deallocateSlowCase(void* object)
     if (!object)
         return;
 
-    if (isXLarge(object))
-        return deallocateXLarge(object);
+    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    if (PerProcess<Heap>::getFastCase()->isLarge(lock, object)) {
+        PerProcess<Heap>::getFastCase()->deallocateLarge(lock, object);
+        return;
+    }
 
-    BASSERT(m_objectLog.size() == m_objectLog.capacity());
-    processObjectLog();
+    if (m_objectLog.size() == m_objectLog.capacity())
+        processObjectLog(lock);
+
     m_objectLog.push(object);
 }
 

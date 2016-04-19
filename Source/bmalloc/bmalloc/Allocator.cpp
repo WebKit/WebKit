@@ -28,7 +28,6 @@
 #include "Chunk.h"
 #include "Deallocator.h"
 #include "Heap.h"
-#include "LargeObject.h"
 #include "PerProcess.h"
 #include "Sizes.h"
 #include <algorithm>
@@ -56,12 +55,12 @@ void* Allocator::tryAllocate(size_t size)
     if (!m_isBmallocEnabled)
         return malloc(size);
 
-    if (size <= largeMax)
+    if (size <= smallMax)
         return allocate(size);
 
-    if (size <= xLargeMax) {
+    if (size <= largeMax) {
         std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-        return PerProcess<Heap>::getFastCase()->tryAllocateXLarge(lock, alignment, size);
+        return PerProcess<Heap>::getFastCase()->tryAllocateLarge(lock, alignment, size);
     }
 
     return nullptr;
@@ -84,20 +83,9 @@ void* Allocator::allocate(size_t alignment, size_t size)
     if (size <= smallMax && alignment <= smallMax)
         return allocate(roundUpToMultipleOf(alignment, size));
 
-    if (size <= largeMax && alignment <= largeMax) {
-        size = std::max(largeMin, roundUpToMultipleOf<largeAlignment>(size));
-        alignment = roundUpToMultipleOf<largeAlignment>(alignment);
-        size_t unalignedSize = largeMin + alignment - largeAlignment + size;
-        if (unalignedSize <= largeMax && alignment <= chunkSize / 2) {
-            std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-            m_deallocator.processObjectLog(lock);
-            return PerProcess<Heap>::getFastCase()->allocateLarge(lock, alignment, size, unalignedSize);
-        }
-    }
-
-    if (size <= xLargeMax && alignment <= xLargeMax) {
+    if (size <= largeMax && alignment <= largeMax / 2) {
         std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-        return PerProcess<Heap>::getFastCase()->allocateXLarge(lock, alignment, size);
+        return PerProcess<Heap>::getFastCase()->allocateLarge(lock, alignment, size);
     }
 
     BCRASH();
@@ -112,35 +100,20 @@ void* Allocator::reallocate(void* object, size_t newSize)
     size_t oldSize = 0;
     switch (objectType(object)) {
     case ObjectType::Small: {
+        BASSERT(objectType(nullptr) == ObjectType::Small);
+        if (!object)
+            break;
+
         size_t sizeClass = Object(object).page()->sizeClass();
         oldSize = objectSize(sizeClass);
         break;
     }
     case ObjectType::Large: {
         std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-
-        LargeObject largeObject(object);
-        oldSize = largeObject.size();
+        oldSize = PerProcess<Heap>::getFastCase()->largeSize(lock, object);
 
         if (newSize < oldSize && newSize > smallMax) {
-            if (oldSize - newSize >= largeMin) {
-                newSize = roundUpToMultipleOf<largeAlignment>(newSize);
-                PerProcess<Heap>::getFastCase()->shrinkLarge(lock, largeObject, newSize);
-                return object;
-            }
-        }
-        break;
-    }
-    case ObjectType::XLarge: {
-        BASSERT(objectType(nullptr) == ObjectType::XLarge);
-        if (!object)
-            break;
-
-        std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
-        oldSize = PerProcess<Heap>::getFastCase()->xLargeSize(lock, object);
-
-        if (newSize < oldSize && newSize > largeMax) {
-            PerProcess<Heap>::getFastCase()->shrinkXLarge(lock, Range(object, oldSize), newSize);
+            PerProcess<Heap>::getFastCase()->shrinkLarge(lock, Range(object, oldSize), newSize);
             return object;
         }
         break;
@@ -192,17 +165,8 @@ INLINE void Allocator::refillAllocator(BumpAllocator& allocator, size_t sizeClas
 
 NO_INLINE void* Allocator::allocateLarge(size_t size)
 {
-    size = roundUpToMultipleOf<largeAlignment>(size);
-
     std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-    m_deallocator.processObjectLog(lock);
-    return PerProcess<Heap>::getFastCase()->allocateLarge(lock, size);
-}
-
-NO_INLINE void* Allocator::allocateXLarge(size_t size)
-{
-    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-    return PerProcess<Heap>::getFastCase()->allocateXLarge(lock, size);
+    return PerProcess<Heap>::getFastCase()->allocateLarge(lock, alignment, size);
 }
 
 NO_INLINE void* Allocator::allocateLogSizeClass(size_t size)
@@ -231,9 +195,6 @@ void* Allocator::allocateSlowCase(size_t size)
 
     if (size <= largeMax)
         return allocateLarge(size);
-
-    if (size <= xLargeMax)
-        return allocateXLarge(size);
 
     BCRASH();
     return nullptr;

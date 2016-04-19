@@ -26,6 +26,8 @@
 #ifndef Object_h
 #define Object_h
 
+#include <cstddef>
+
 namespace bmalloc {
 
 class Chunk;

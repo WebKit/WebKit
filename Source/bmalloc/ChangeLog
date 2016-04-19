@@ -1,3 +1,218 @@
+2016-04-19  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Merge the large and xlarge allocators
+        https://bugs.webkit.org/show_bug.cgi?id=156734
+
+        Reviewed by Andreas Kling.
+
+        This give us better defense against worst case memory usage:
+
+                                              Baseline                Patch                    Δ
+            Peak Memory:
+                nimlang                      198,132kB            181,468kB      ^ 1.09x smaller
+
+        It also eliminates inline metadata for large objects, fixing the
+        regression introduced in r198675, and more:
+
+            run-malloc-benchmarks Baseline:~/OpenSource/WebKitBuildBaseline/Release/ Patch:~/OpenSource/WebKitBuild/Release/
+
+                                                                  Baseline                          Patch                              Δ
+            Memory at End:
+                big                                               10,880kB                        3,328kB                ^ 3.27x smaller
+                facebook                                           3,112kB                        2,868kB                ^ 1.09x smaller
+                fragment --parallel                                1,848kB                          760kB                ^ 2.43x smaller
+                fragment_iterate --parallel                        4,908kB                          776kB                ^ 6.32x smaller
+                big --parallel                                    48,076kB                       11,892kB                ^ 4.04x smaller
+
+        Overall memory use looks OK:
+
+            run-malloc-benchmarks --memory_warning Baseline:~/OpenSource/WebKitBuildBaseline/Release/ Patch:~/OpenSource/WebKitBuild/Release/
+
+                                                        Baseline                               Patch                                   Δ
+            Memory at End:
+                <arithmetic mean>                       13,992kB                            13,987kB                      ^ 1.0x smaller
+
+        Overall throughput looks OK:
+
+            run-malloc-benchmarks Baseline:~/OpenSource/WebKitBuildBaseline/Release/ Patch:~/OpenSource/WebKitBuild/Release/
+
+                                                                  Baseline                          Patch                              Δ
+            Execution Time:
+                <arithmetic mean>                                    103ms                          104ms                 ! 1.01x slower
+
+        We're a bit slower on the "all-out large allocations on all cores"
+        benchmark, but I think that's an OK price to pay:
+
+                                                                  Baseline                          Patch                              Δ
+            Execution Time:
+                big --parallel                                       125ms                          136ms                 ! 1.09x slower
+
+        This patch net removes 1.5k lines of code. It turns out that large
+        allocations are rare, and free memory fragments are also rare, so the
+        combination is super rare, and a simple O(n) algorithm that ensures good
+        memory behavior is the best option.
+
+        Fun fact: In practice, the odds that the old code would save memory
+        were *worse* than the odds that it would contain a bug that wasted
+        memory. :)
+
+        * bmalloc.xcodeproj/project.pbxproj:
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::tryAllocate): largeMax is the new xLargeMax since
+        xLargeMax is gone now.
+
+        (bmalloc::Allocator::allocate): I moved the rounding code into allocateLarge,
+        so we don't have to do it here.
+
+        (bmalloc::Allocator::reallocate):
+        (bmalloc::Allocator::allocateSlowCase):
+        (bmalloc::Allocator::allocateXLarge): Deleted. No more XLarge case.
+
+        * bmalloc/Allocator.h:
+
+        * bmalloc/BeginTag.h: Removed.
+        * bmalloc/BoundaryTag.h: Removed.
+
+        * bmalloc/Chunk.h:
+        (bmalloc::ChunkHash::hash): Added a hash function. The best hash function
+        is a unique and monotonically increasing integer, and that's exactly what
+        we typically get from the high bits of a Chunk, since the OS allocates
+        Chunks at unique and increasing addresses.
+        (bmalloc::Chunk::boundaryTags): Deleted.
+        (bmalloc::Chunk::objectType): Deleted.
+        (bmalloc::Chunk::beginTag): Deleted.
+        (bmalloc::Chunk::endTag): Deleted.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::deallocateSlowCase): We no longer know for sure,
+        by looking at its bit pattern, whether a pointer is small or large.
+        Instead, any pointer with large alignment *might* be large, and when
+        we occasionally encounter such an object, we have to consult a hash
+        table in the Heap to find out for sure. This turns out to be just as
+        cheap in practice.
+
+        We don't deallocate large objects on the fast path anymore. We can't,
+        because large objects have out-of-line metadata now.
+
+        (bmalloc::Deallocator::deallocateXLarge): Deleted.
+
+        * bmalloc/Deallocator.h:
+        (bmalloc::Deallocator::deallocateFastCase): See deallocateSlowCase.
+
+        * bmalloc/EndTag.h: Removed.
+        * bmalloc/FreeList.cpp: Removed.
+        * bmalloc/FreeList.h: Removed.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateSmallPage): Be sure to track each chunk in
+        the object type map, so we can distinguish small vs large objects.
+
+        (bmalloc::Heap::deallocateSmallLine): No need to check object type
+        because we know object type now by virtue of being on the small object
+        path.
+
+        (bmalloc::Heap::splitAndAllocate): Be sure to track each chunk in
+        the object type map, so we can distinguish small vs large objects. Large
+        objects can split across chunks, so we need to add each large object's
+        chunk as it is allocated.
+
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::isLarge):
+        (bmalloc::Heap::largeSize):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge): Merged in existing XLarge logic for
+        large objects.
+
+        (bmalloc::Heap::scavengeXLargeObjects): Deleted.
+        (bmalloc::Heap::allocateXLarge): Deleted.
+        (bmalloc::Heap::tryAllocateXLarge): Deleted.
+        (bmalloc::Heap::xLargeSize): Deleted.
+        (bmalloc::Heap::shrinkXLarge): Deleted.
+        (bmalloc::Heap::deallocateXLarge): Deleted.
+
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::LargeObjectHash::hash):
+
+        * bmalloc/LargeObject.h: Removed.
+
+        * bmalloc/Map.h: Added.
+        (bmalloc::Map::size):
+        (bmalloc::Map::capacity):
+        (bmalloc::Map::get):
+        (bmalloc::Map::set):
+        (bmalloc::Map::remove):
+        (bmalloc::Map::shouldGrow):
+        (bmalloc::Map::shouldShrink):
+        (bmalloc::Map::find):
+        (bmalloc::Hash>::rehash): Simple hash table.
+
+        * bmalloc/Object.h:
+
+        * bmalloc/ObjectType.cpp:
+        (bmalloc::objectType):
+        * bmalloc/ObjectType.h:
+        (bmalloc::mightBeLarge): See deallocateSlowCase.
+        (bmalloc::isXLarge): Deleted.
+
+        * bmalloc/SegregatedFreeList.cpp: Removed.
+        * bmalloc/SegregatedFreeList.h: Removed.
+
+        * bmalloc/Sizes.h: Upped smallMax to 64kB. Upping to 32kB is pretty
+        reasonable, since sizes between 16kB and 32kB share page sizes. I went
+        all the way up to 64kB because the GC uses 64kB blocks, and also just
+        for extra padding to ensure that large allocations are indeed rare.
+
+        * bmalloc/SortedVector.h: Removed.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::tryAllocateLargeChunk):
+        (bmalloc::VMHeap::allocateSmallChunk):
+        (bmalloc::VMHeap::VMHeap): Deleted.
+        (bmalloc::VMHeap::allocateChunk): Deleted.
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::deallocateSmallPage):
+        (bmalloc::VMHeap::allocateLargeObject): Deleted.
+        (bmalloc::VMHeap::deallocateLargeObject): Deleted. Nixed all the boundary
+        tag logic since metadata is out of line now.
+
+        * bmalloc/VMState.h: Removed. Instead of an abstract state, we track
+        the precise amount of committed physical pages at the head of a VM
+        range. This allows us to merge aggressively without triggering an madvise
+        storm most of the time.
+
+        * bmalloc/Vector.h:
+        (bmalloc::Vector<T>::Vector):
+        (bmalloc::Vector<T>::insert):
+        (bmalloc::Vector<T>::remove):
+        (bmalloc::Vector<T>::resize): Filled out some missing helpers.
+
+        * bmalloc/XLargeMap.cpp:
+        (bmalloc::XLargeMap::remove):
+        (bmalloc::XLargeMap::add):
+        (bmalloc::XLargeMap::removePhysical):
+        (bmalloc::XLargeMap::takeFree): Deleted.
+        (bmalloc::XLargeMap::addFree): Deleted.
+        (bmalloc::XLargeMap::addAllocated): Deleted.
+        (bmalloc::XLargeMap::getAllocated): Deleted.
+        (bmalloc::XLargeMap::takeAllocated): Deleted.
+        (bmalloc::XLargeMap::shrinkToFit): Deleted.
+        (bmalloc::XLargeMap::takePhysical): Deleted.
+        (bmalloc::XLargeMap::addVirtual): Deleted.
+        * bmalloc/XLargeMap.h:
+        (bmalloc::XLargeMap::Allocation::operator<): Deleted. We don't track
+        object sizes anymore -- just free space. (The Heap tracks object sizes.)
+        We use plain old linear search for free space. (See intro.)
+
+        * bmalloc/XLargeRange.h:
+        (bmalloc::XLargeRange::physicalSize):
+        (bmalloc::XLargeRange::setPhysicalSize):
+        (bmalloc::merge):
+        (bmalloc::XLargeRange::split):
+        (bmalloc::XLargeRange::vmState): Deleted.
+        (bmalloc::XLargeRange::setVMState): Deleted. See VMState.h.
+
 2016-04-11  Fujii Hironori  <Hironori.Fujii@jp.sony.com>
 
         [CMake] Make FOLDER property INHERITED

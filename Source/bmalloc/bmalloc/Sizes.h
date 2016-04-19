@@ -46,33 +46,25 @@ namespace Sizes {
     static const size_t alignment = 8;
     static const size_t alignmentMask = alignment - 1ul;
 
+    static const size_t chunkSize = 2 * MB;
+    static const size_t chunkMask = ~(chunkSize - 1ul);
+
     static const size_t smallLineSize = 256;
     static const size_t smallPageSize = 4 * kB;
     static const size_t smallPageLineCount = smallPageSize / smallLineSize;
 
     static const size_t maskSizeClassMax = 512;
-    static const size_t smallMax = 16 * kB;
+    static const size_t smallMax = 64 * kB;
 
-    static const size_t pageSizeMax = 32 * kB;
+    static const size_t pageSizeMax = smallMax * 2;
     static const size_t pageClassCount = pageSizeMax / smallPageSize;
 
     static const size_t pageSizeWasteFactor = 8;
     static const size_t logWasteFactor = 8;
 
-    static const size_t chunkSize = 2 * MB;
-    static const size_t chunkMask = ~(chunkSize - 1ul);
-
-    static const size_t largeAlignment = 64;
-    static const size_t largeMin = 1 * kB;
-    static const size_t largeObjectMax = chunkSize;
-    static const size_t largeMax = largeObjectMax / 2;
-
-    static const size_t xLargeAlignment = chunkSize;
-    static const size_t xLargeMask = ~(xLargeAlignment - 1);
-    static const size_t xLargeMax = std::numeric_limits<size_t>::max() - xLargeAlignment; // Make sure that rounding up to xLargeAlignment does not overflow.
-
-    static const size_t freeListSearchDepth = 16;
-    static const size_t freeListGrowFactor = 2;
+    static const size_t largeAlignment = smallMax / pageSizeWasteFactor;
+    static const size_t largeAlignmentMask = largeAlignment - 1;
+    static const size_t largeMax = std::numeric_limits<size_t>::max() - largeAlignment; // Make sure that rounding up to largeAlignment does not overflow.
 
     static const size_t deallocatorLogCapacity = 256;
     static const size_t bumpRangeCacheCapacity = 3;

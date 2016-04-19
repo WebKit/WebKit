@@ -54,7 +54,6 @@ private:
     
     void* allocateLogSizeClass(size_t);
     void* allocateLarge(size_t);
-    void* allocateXLarge(size_t);
     
     void refillAllocator(BumpAllocator&, size_t sizeClass);
     void refillAllocatorSlowCase(BumpAllocator&, size_t sizeClass);

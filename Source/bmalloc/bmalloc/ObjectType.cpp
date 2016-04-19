@@ -26,16 +26,24 @@
 #include "ObjectType.h"
 
 #include "Chunk.h"
+#include "Heap.h"
 #include "Object.h"
+#include "PerProcess.h"
 
 namespace bmalloc {
 
 ObjectType objectType(void* object)
 {
-    if (isXLarge(object))
-        return ObjectType::XLarge;
+    if (mightBeLarge(object)) {
+        if (!object)
+            return ObjectType::Small;
+
+        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+        if (PerProcess<Heap>::getFastCase()->isLarge(lock, object))
+            return ObjectType::Large;
+    }
     
-    return Object(object).chunk()->objectType();
+    return ObjectType::Small;
 }
 
 } // namespace bmalloc

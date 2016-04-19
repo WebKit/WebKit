@@ -9,11 +9,9 @@ set(bmalloc_SOURCES
     bmalloc/Cache.cpp
     bmalloc/Deallocator.cpp
     bmalloc/Environment.cpp
-    bmalloc/FreeList.cpp
     bmalloc/Heap.cpp
     bmalloc/Logging.cpp
     bmalloc/ObjectType.cpp
-    bmalloc/SegregatedFreeList.cpp
     bmalloc/StaticMutex.cpp
     bmalloc/VMHeap.cpp
     bmalloc/XLargeMap.cpp

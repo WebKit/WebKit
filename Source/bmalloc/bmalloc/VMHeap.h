@@ -29,11 +29,9 @@
 #include "AsyncTask.h"
 #include "Chunk.h"
 #include "FixedVector.h"
-#include "LargeObject.h"
-#include "Range.h"
-#include "SegregatedFreeList.h"
-#include "VMState.h"
+#include "Map.h"
 #include "Vector.h"
+#include "XLargeRange.h"
 #if BOS(DARWIN)
 #include "Zone.h"
 #endif
@@ -46,23 +44,16 @@ class Heap;
 
 class VMHeap {
 public:
-    VMHeap();
-    
     SmallPage* allocateSmallPage(std::lock_guard<StaticMutex>&, size_t);
     void deallocateSmallPage(std::unique_lock<StaticMutex>&, size_t, SmallPage*);
 
-    LargeObject allocateLargeObject(std::lock_guard<StaticMutex>&, size_t);
-    LargeObject allocateLargeObject(std::lock_guard<StaticMutex>&, size_t, size_t, size_t);
-
-    void deallocateLargeObject(std::unique_lock<StaticMutex>&, LargeObject);
+    XLargeRange tryAllocateLargeChunk(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
     
 private:
-    LargeObject allocateChunk(std::lock_guard<StaticMutex>&);
     void allocateSmallChunk(std::lock_guard<StaticMutex>&, size_t);
 
     std::array<List<SmallPage>, pageClassCount> m_smallPages;
-    SegregatedFreeList m_largeObjects;
-
+    
 #if BOS(DARWIN)
     Zone m_zone;
 #endif
@@ -85,46 +76,6 @@ inline void VMHeap::deallocateSmallPage(std::unique_lock<StaticMutex>& lock, siz
     lock.lock();
     
     m_smallPages[pageClass].push(page);
-}
-
-inline LargeObject VMHeap::allocateLargeObject(std::lock_guard<StaticMutex>& lock, size_t size)
-{
-    if (LargeObject largeObject = m_largeObjects.take(size))
-        return largeObject;
-
-    BASSERT(size <= largeMax);
-    return allocateChunk(lock);
-}
-
-inline LargeObject VMHeap::allocateLargeObject(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size, size_t unalignedSize)
-{
-    if (LargeObject largeObject = m_largeObjects.take(alignment, size, unalignedSize))
-        return largeObject;
-
-    BASSERT(unalignedSize <= largeMax);
-    return allocateChunk(lock);
-}
-
-inline void VMHeap::deallocateLargeObject(std::unique_lock<StaticMutex>& lock, LargeObject largeObject)
-{
-    // Multiple threads might scavenge concurrently, meaning that new merging opportunities
-    // become visible after we reacquire the lock. Therefore we loop.
-    do {
-        largeObject = largeObject.merge();
-
-        // Temporarily mark this object as allocated to prevent clients from merging
-        // with it or allocating it while we're messing with its physical pages.
-        largeObject.setFree(false);
-
-        lock.unlock();
-        vmDeallocatePhysicalPagesSloppy(largeObject.begin(), largeObject.size());
-        lock.lock();
-
-        largeObject.setFree(true);
-    } while (largeObject.prevCanMerge() || largeObject.nextCanMerge());
-
-    largeObject.setVMState(VMState::Virtual);
-    m_largeObjects.insert(largeObject);
 }
 
 } // namespace bmalloc
