@@ -1,3 +1,19 @@
+2016-04-20  Dave Hyatt  <hyatt@apple.com>
+
+        Hangable punctuation measurement using the wrong indices.
+        https://bugs.webkit.org/show_bug.cgi?id=155899
+
+        Reviewed by Simon Fraser.
+
+        New tests in fast/text.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::hangablePunctuationStartWidth):
+        (WebCore::RenderText::hangablePunctuationEndWidth):
+        (WebCore::RenderText::isHangableStopOrComma):
+
 2016-04-20  Chris Dumez  <cdumez@apple.com>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from several Canvas interfaces

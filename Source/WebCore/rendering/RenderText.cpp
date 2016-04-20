@@ -514,9 +514,10 @@ inline bool isHangablePunctuationAtLineEnd(UChar c)
 
 float RenderText::hangablePunctuationStartWidth(unsigned index) const
 {
-    if (!textLength())
+    unsigned len = textLength();
+    if (!len || index >= len)
         return 0;
-    
+
     ASSERT(m_text);
     StringImpl& text = *m_text.impl();
     
@@ -526,12 +527,13 @@ float RenderText::hangablePunctuationStartWidth(unsigned index) const
     const RenderStyle& style = this->style();
     const FontCascade& font = style.fontCascade();
         
-    return widthFromCache(font, 0, 1, 0, 0, 0, style);
+    return widthFromCache(font, index, 1, 0, 0, 0, style);
 }
 
 float RenderText::hangablePunctuationEndWidth(unsigned index) const
 {
-    if (!textLength())
+    unsigned len = textLength();
+    if (!len || index >= len)
         return 0;
     
     ASSERT(m_text);
@@ -543,7 +545,7 @@ float RenderText::hangablePunctuationEndWidth(unsigned index) const
     const RenderStyle& style = this->style();
     const FontCascade& font = style.fontCascade();
     
-    return widthFromCache(font, 0, 1, 0, 0, 0, style);
+    return widthFromCache(font, index, 1, 0, 0, 0, style);
 }
 
 bool RenderText::isHangableStopOrComma(UChar c) const

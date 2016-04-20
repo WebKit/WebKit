@@ -4114,7 +4114,6 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
             float childMax = 0;
 
             if (!child->isText()) {
-                lastText = nullptr;
                 if (child->isLineBreakOpportunity()) {
                     minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
                     inlineMin = 0;
@@ -4134,6 +4133,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     child->setPreferredLogicalWidthsDirty(false);
                 } else {
                     // Inline replaced elts add in their margins to their min/max values.
+                    if (!child->isFloating())
+                        lastText = nullptr;
                     LayoutUnit margins = 0;
                     Length startMargin = childStyle.marginStart();
                     Length endMargin = childStyle.marginEnd();
