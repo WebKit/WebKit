@@ -85,9 +85,13 @@ list(APPEND WebCore_SOURCES
     platform/geoclue/GeolocationProviderGeoclue1.cpp
     platform/geoclue/GeolocationProviderGeoclue2.cpp
 
+    platform/glib/EventLoopGlib.cpp
+    platform/glib/FileSystemGlib.cpp
+    platform/glib/GamepadsGlib.cpp
     platform/glib/KeyedDecoderGlib.cpp
     platform/glib/KeyedEncoderGlib.cpp
     platform/glib/MainThreadSharedTimerGLib.cpp
+    platform/glib/SharedBufferGlib.cpp
 
     platform/graphics/GLContext.cpp
     platform/graphics/GraphicsContext3DPrivate.cpp
@@ -137,14 +141,10 @@ list(APPEND WebCore_SOURCES
     platform/graphics/x11/XUniqueResource.cpp
 
     platform/gtk/ErrorsGtk.cpp
-    platform/gtk/EventLoopGtk.cpp
-    platform/gtk/FileSystemGtk.cpp
-    platform/gtk/GamepadsGtk.cpp
     platform/gtk/LanguageGtk.cpp
     platform/gtk/LoggingGtk.cpp
     platform/gtk/MIMETypeRegistryGtk.cpp
     platform/gtk/ScrollAnimatorGtk.cpp
-    platform/gtk/SharedBufferGtk.cpp
     platform/gtk/TemporaryLinkStubs.cpp
     platform/gtk/UserAgentGtk.cpp
 

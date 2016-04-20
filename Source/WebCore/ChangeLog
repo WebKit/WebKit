@@ -1,3 +1,63 @@
+2016-04-20  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Move GTK+-independent platform code to platform/glib
+        https://bugs.webkit.org/show_bug.cgi?id=156787
+
+        Reviewed by Carlos Garcia Campos.
+
+        There is plenty of code in platform/gtk that is independent from the GTK+ library.
+        Move those files to platform/glib so that they can be reused by other GLib-based ports.
+
+        Also clean some style warnings in those files.
+
+        * PlatformGTK.cmake: Move the files.
+        * platform/glib/EventLoopGlib.cpp: Renamed from Source/WebCore/platform/gtk/EventLoopGtk.cpp.
+        (WebCore::EventLoop::cycle):
+        * platform/glib/FileSystemGlib.cpp: Renamed from Source/WebCore/platform/gtk/FileSystemGtk.cpp.
+        (WebCore::filenameToString):
+        (WebCore::unescapedFilename):
+        (WebCore::fileSystemRepresentation):
+        (WebCore::filenameForDisplay):
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::getFileStat):
+        (WebCore::getFileSize):
+        (WebCore::getFileCreationTime):
+        (WebCore::getFileModificationTime):
+        (WebCore::getFileMetadata):
+        (WebCore::pathByAppendingComponent):
+        (WebCore::makeAllDirectories):
+        (WebCore::homeDirectoryPath):
+        (WebCore::pathGetFileName):
+        (WebCore::applicationDirectoryPath):
+        (WebCore::sharedResourcesPath):
+        (WebCore::getVolumeFreeSizeForPath):
+        (WebCore::directoryName):
+        (WebCore::listDirectory):
+        (WebCore::openTemporaryFile):
+        (WebCore::openFile):
+        (WebCore::closeFile):
+        (WebCore::seekFile):
+        (WebCore::writeToFile):
+        (WebCore::readFromFile):
+        (WebCore::unloadModule):
+        (WebCore::hardLinkOrCopyFile):
+        * platform/glib/GamepadsGlib.cpp: Renamed from Source/WebCore/platform/gtk/GamepadsGtk.cpp.
+        (WebCore::GamepadDeviceGlib::GamepadDeviceGlib):
+        (WebCore::GamepadDeviceGlib::~GamepadDeviceGlib):
+        (WebCore::GamepadDeviceGlib::readCallback):
+        (WebCore::GamepadsGlib::GamepadsGlib):
+        (WebCore::GamepadsGlib::~GamepadsGlib):
+        (WebCore::GamepadsGlib::registerDevice):
+        (WebCore::GamepadsGlib::unregisterDevice):
+        (WebCore::GamepadsGlib::updateGamepadList):
+        (WebCore::GamepadsGlib::onUEventCallback):
+        (WebCore::GamepadsGlib::isGamepadDevice):
+        (WebCore::sampleGamepads):
+        * platform/glib/SharedBufferGlib.cpp: Renamed from Source/WebCore/platform/gtk/SharedBufferGtk.cpp.
+        (WebCore::SharedBuffer::createFromReadingFile):
+
 2016-04-20  Frederic Wang  <fwang@igalia.com>
 
         Refactor RenderMathMLSpace to avoid using flexbox

@@ -41,10 +41,10 @@
 
 namespace WebCore {
 
-class GamepadDeviceGtk : public GamepadDeviceLinux {
+class GamepadDeviceGlib : public GamepadDeviceLinux {
 public:
-    explicit GamepadDeviceGtk(String deviceFile);
-    ~GamepadDeviceGtk();
+    explicit GamepadDeviceGlib(String deviceFile);
+    ~GamepadDeviceGlib();
 
 private:
     static gboolean readCallback(GObject* pollableStream, gpointer data);
@@ -52,7 +52,7 @@ private:
     GRefPtr<GSource> m_source;
 };
 
-GamepadDeviceGtk::GamepadDeviceGtk(String deviceFile)
+GamepadDeviceGlib::GamepadDeviceGlib(String deviceFile)
     : GamepadDeviceLinux(deviceFile)
 {
     if (m_fileDescriptor == -1)
@@ -64,20 +64,20 @@ GamepadDeviceGtk::GamepadDeviceGtk(String deviceFile)
     g_source_attach(m_source.get(), 0);
 }
 
-GamepadDeviceGtk::~GamepadDeviceGtk()
+GamepadDeviceGlib::~GamepadDeviceGlib()
 {
     if (m_source)
         g_source_destroy(m_source.get());
 }
 
-gboolean GamepadDeviceGtk::readCallback(GObject* pollableStream, gpointer data)
+gboolean GamepadDeviceGlib::readCallback(GObject* pollableStream, gpointer data)
 {
-    GamepadDeviceGtk* gamepadDevice = reinterpret_cast<GamepadDeviceGtk*>(data);
+    GamepadDeviceGlib* gamepadDevice = reinterpret_cast<GamepadDeviceGlib*>(data);
     GUniqueOutPtr<GError> error;
     struct js_event event;
 
     gssize len = g_pollable_input_stream_read_nonblocking(G_POLLABLE_INPUT_STREAM(pollableStream),
-                                                          &event, sizeof(event), 0, &error.outPtr());
+        &event, sizeof(event), 0, &error.outPtr());
 
     // FIXME: Properly log the error.
     // In the case of G_IO_ERROR_WOULD_BLOCK error return TRUE to wait until
@@ -90,9 +90,9 @@ gboolean GamepadDeviceGtk::readCallback(GObject* pollableStream, gpointer data)
     return TRUE;
 }
 
-class GamepadsGtk {
+class GamepadsGlib {
 public:
-    explicit GamepadsGtk(unsigned length);
+    explicit GamepadsGlib(unsigned length);
 
     void registerDevice(String deviceFile);
     void unregisterDevice(String deviceFile);
@@ -100,17 +100,17 @@ public:
     void updateGamepadList(GamepadList*);
 
 private:
-    ~GamepadsGtk();
+    ~GamepadsGlib();
     static void onUEventCallback(GUdevClient*, gchar* action, GUdevDevice*, gpointer data);
     static gboolean isGamepadDevice(GUdevDevice*);
 
-    Vector<std::unique_ptr<GamepadDeviceGtk> > m_slots;
-    HashMap<String, GamepadDeviceGtk*> m_deviceMap;
+    Vector<std::unique_ptr<GamepadDeviceGlib> > m_slots;
+    HashMap<String, GamepadDeviceGlib*> m_deviceMap;
 
     GRefPtr<GUdevClient> m_gudevClient;
 };
 
-GamepadsGtk::GamepadsGtk(unsigned length)
+GamepadsGlib::GamepadsGlib(unsigned length)
     : m_slots(length)
 {
     static const char* subsystems[] = { "input", 0 };
@@ -127,44 +127,44 @@ GamepadsGtk::GamepadsGtk(unsigned length)
     }
 }
 
-GamepadsGtk::~GamepadsGtk()
+GamepadsGlib::~GamepadsGlib()
 {
     g_signal_handlers_disconnect_matched(m_gudevClient.get(), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
 }
 
-void GamepadsGtk::registerDevice(String deviceFile)
+void GamepadsGlib::registerDevice(String deviceFile)
 {
-    LOG(Gamepad, "GamepadsGtk::registerDevice %s", deviceFile.ascii().data());
+    LOG(Gamepad, "GamepadsGlib::registerDevice %s", deviceFile.ascii().data());
     ASSERT(!m_deviceMap.contains(deviceFile));
 
     for (unsigned index = 0; index < m_slots.size(); index++) {
         if (!m_slots[index]) {
-            m_slots[index] = std::make_unique<GamepadDeviceGtk>(deviceFile);
+            m_slots[index] = std::make_unique<GamepadDeviceGlib>(deviceFile);
             m_deviceMap.add(deviceFile, m_slots[index].get());
             break;
         }
     }
 }
 
-void GamepadsGtk::unregisterDevice(String deviceFile)
+void GamepadsGlib::unregisterDevice(String deviceFile)
 {
-    LOG(Gamepad, "GamepadsGtk::unregisterDevice %s", deviceFile.ascii().data());
+    LOG(Gamepad, "GamepadsGlib::unregisterDevice %s", deviceFile.ascii().data());
     ASSERT(m_deviceMap.contains(deviceFile));
 
-    GamepadDeviceGtk* gamepadDevice = m_deviceMap.take(deviceFile);
+    GamepadDeviceGlib* gamepadDevice = m_deviceMap.take(deviceFile);
     size_t index = m_slots.find(gamepadDevice);
     ASSERT(index != notFound);
 
     m_slots[index] = nullptr;
 }
 
-void GamepadsGtk::updateGamepadList(GamepadList* into)
+void GamepadsGlib::updateGamepadList(GamepadList* into)
 {
     ASSERT(m_slots.size() == into->length());
 
     for (unsigned i = 0; i < m_slots.size(); i++) {
         if (m_slots[i].get() && m_slots[i]->connected()) {
-            GamepadDeviceGtk* gamepadDevice = m_slots[i].get();
+            GamepadDeviceGlib* gamepadDevice = m_slots[i].get();
             RefPtr<Gamepad> gamepad = into->item(i);
             if (!gamepad)
                 gamepad = Gamepad::create();
@@ -181,21 +181,21 @@ void GamepadsGtk::updateGamepadList(GamepadList* into)
     }
 }
 
-void GamepadsGtk::onUEventCallback(GUdevClient*, gchar* action, GUdevDevice* device, gpointer data)
+void GamepadsGlib::onUEventCallback(GUdevClient*, gchar* action, GUdevDevice* device, gpointer data)
 {
     if (!isGamepadDevice(device))
         return;
 
-    GamepadsGtk* gamepadsGtk = reinterpret_cast<GamepadsGtk*>(data);
+    GamepadsGlib* gamepadsGlib = reinterpret_cast<GamepadsGlib*>(data);
     String deviceFile = String::fromUTF8(g_udev_device_get_device_file(device));
 
     if (!g_strcmp0(action, "add"))
-        gamepadsGtk->registerDevice(deviceFile);
+        gamepadsGlib->registerDevice(deviceFile);
     else if (!g_strcmp0(action, "remove"))
-        gamepadsGtk->unregisterDevice(deviceFile);
+        gamepadsGlib->unregisterDevice(deviceFile);
 }
 
-gboolean GamepadsGtk::isGamepadDevice(GUdevDevice* device)
+gboolean GamepadsGlib::isGamepadDevice(GUdevDevice* device)
 {
     const gchar* deviceFile = g_udev_device_get_device_file(device);
     const gchar* sysfsPath = g_udev_device_get_sysfs_path(device);
@@ -210,8 +210,8 @@ gboolean GamepadsGtk::isGamepadDevice(GUdevDevice* device)
 
 void sampleGamepads(GamepadList* into)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(GamepadsGtk, gamepadsGtk, (into->length()));
-    gamepadsGtk.updateGamepadList(into);
+    DEPRECATED_DEFINE_STATIC_LOCAL(GamepadsGlib, gamepadsGlib, (into->length()));
+    gamepadsGlib.updateGamepadList(into);
 }
 
 } // namespace WebCore

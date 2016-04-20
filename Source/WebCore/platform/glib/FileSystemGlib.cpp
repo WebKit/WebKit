@@ -331,8 +331,10 @@ long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin o
     }
 
     if (!g_seekable_seek(G_SEEKABLE(g_io_stream_get_input_stream(G_IO_STREAM(handle))),
-                         offset, seekType, 0, 0))
+        offset, seekType, 0, 0))
+    {
         return -1;
+    }
     return g_seekable_tell(G_SEEKABLE(g_io_stream_get_input_stream(G_IO_STREAM(handle))));
 }
 
@@ -340,7 +342,7 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
     gsize bytesWritten;
     g_output_stream_write_all(g_io_stream_get_output_stream(G_IO_STREAM(handle)),
-                              data, length, &bytesWritten, 0, 0);
+        data, length, &bytesWritten, 0, 0);
     return bytesWritten;
 }
 
@@ -349,7 +351,7 @@ int readFromFile(PlatformFileHandle handle, char* data, int length)
     GUniqueOutPtr<GError> error;
     do {
         gssize bytesRead = g_input_stream_read(g_io_stream_get_input_stream(G_IO_STREAM(handle)),
-                                               data, length, 0, &error.outPtr());
+            data, length, 0, &error.outPtr());
         if (bytesRead >= 0)
             return bytesRead;
     } while (error && error->code == G_FILE_ERROR_INTR);
