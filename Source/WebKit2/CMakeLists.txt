@@ -894,7 +894,7 @@ if (ENABLE_DATABASE_PROCESS AND NOT "${PORT}" STREQUAL "Mac")
 endif ()
 
 if ("${PORT}" STREQUAL "Mac")
-    set(_web_xpc_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.WebContent.Development.xpc/Contents)
+    set(_web_xpc_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/XPCServices/com.apple.WebKit.WebContent.Development.xpc/Contents)
     make_directory(${_web_xpc_dir}/MacOS)
     make_directory(${_web_xpc_dir}/Resources)
     make_directory(${_web_xpc_dir}/_CodeSignature)
@@ -911,7 +911,7 @@ if ("${PORT}" STREQUAL "Mac")
     set_target_properties(WebProcess PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${_web_xpc_dir}/MacOS")
 
 
-    set(_net_xpc_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.Networking.Development.xpc/Contents)
+    set(_net_xpc_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/XPCServices/com.apple.WebKit.Networking.Development.xpc/Contents)
     make_directory(${_net_xpc_dir}/MacOS)
     make_directory(${_net_xpc_dir}/_CodeSignature)
 

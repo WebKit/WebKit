@@ -73,7 +73,6 @@ list(APPEND WebKit2_SOURCES
     Shared/API/Cocoa/WKRemoteObject.mm
     Shared/API/Cocoa/WKRemoteObjectCoder.mm
     Shared/API/Cocoa/WebKit.m
-    Shared/API/Cocoa/_WKExperimentalFeature.mm
     Shared/API/Cocoa/_WKFrameHandle.mm
     Shared/API/Cocoa/_WKHitTestResult.mm
     Shared/API/Cocoa/_WKNSFileManagerExtras.mm
