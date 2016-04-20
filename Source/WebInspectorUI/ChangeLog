@@ -1,3 +1,15 @@
+2016-04-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Picking Snapshot from navigation bar popup does to switch views
+        https://bugs.webkit.org/show_bug.cgi?id=156762
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineDataGridNodePathComponent.js:
+        (WebInspector.TimelineDataGridNodePathComponent.prototype.get previousSibling):
+        (WebInspector.TimelineDataGridNodePathComponent.prototype.get nextSibling):
+        Wrong represented object provided by TimelineDataGridNodePathComponent.
+
 2016-04-18  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: DataGrid should be virtualized so it only renders visible rows

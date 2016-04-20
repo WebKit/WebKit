@@ -48,7 +48,7 @@ WebInspector.TimelineDataGridNodePathComponent = class TimelineDataGridNodePathC
         if (!previousSibling)
             return null;
 
-        return new WebInspector.TimelineDataGridNodePathComponent(previousSibling, this.representedObject);
+        return new WebInspector.TimelineDataGridNodePathComponent(previousSibling);
     }
 
     get nextSibling()
@@ -60,6 +60,6 @@ WebInspector.TimelineDataGridNodePathComponent = class TimelineDataGridNodePathC
         if (!nextSibling)
             return null;
 
-        return new WebInspector.TimelineDataGridNodePathComponent(nextSibling, this.representedObject);
+        return new WebInspector.TimelineDataGridNodePathComponent(nextSibling);
     }
 };
