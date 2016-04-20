@@ -1,3 +1,16 @@
+2016-04-20  Frederic Wang  <fwang@igalia.com>
+
+        Use OpenType MATH fonts by default
+        https://bugs.webkit.org/show_bug.cgi?id=133603
+
+        Reviewed by Alejandro G. Castro.
+
+        No new tests. This is already tested by pixel tests like roots.xhtml.
+        However, new math fonts are not used during test execution.
+
+        * css/mathml.css:
+        (math): We use only a list of known OpenType fonts with a MATH table but keep some pre-installed fallback fonts for OS X and iOS.
+
 2016-04-20  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Move GTK+-independent platform code to platform/glib

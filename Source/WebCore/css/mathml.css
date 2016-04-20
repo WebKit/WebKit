@@ -12,14 +12,32 @@ mtext {
     line-height: 1.0;
 }
 
-/* Keep font-family and other defaults here consistent with http://mxr.mozilla.org/mozilla-central/source/layout/mathml/mathml.css and feedback from www-math. */
+/* Fonts with appropriate Unicode coverage and OpenType features are required for good math rendering.
+   Consequently the default font-family on the <math> tag is not inherited but set to a list of known math fonts.
+   See http://trac.webkit.org/wiki/MathML/Fonts.
+   FIXME: OS X and iOS do not have such fonts pre-installed (bugs 17021145, 16841023 and 16843041 from Apple bug tracker).
+   Hence we also append some system fonts to provide minimal Unicode coverage and limited operator stretching.
+*/
 math {
+    font-family: "Latin Modern Math",
+                 "XITS Math",
+                 "STIX Math",
+                 "Libertinus Math",
+                 "TeX Gyre Bonum Math",
+                 "TeX Gyre Pagella Math",
+                 "TeX Gyre Schola",
+                 "TeX Gyre Termes Math",
+                 "Cambria Math",
+                 "Asana Math",
+                 "Lucida Bright Math",
+                 "Minion Math",
+                 STIXGeneral,
+                 STIXSizeOneSym,
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
-    /* We explicitly include the font Symbol as it's the iOS equivalent of font STIXGeneral. */
-    font-family: STIXGeneral, Symbol, "Times New Roman", sans-serif;
-#else
-    font-family: "Latin Modern Math", MathJax_Main, STIXGeneral, STIXSizeOneSym, "DejaVu Sans", "DejaVu Serif", Cambria, "Cambria Math", "Lucida Sans Unicode", "Arial Unicode MS", "Lucida Grande", OpenSymbol, "Standard Symbols L", Times, serif;
+                 Symbol,
+                 "Times New Roman",
 #endif
+                 serif;
 }
 
 math {
