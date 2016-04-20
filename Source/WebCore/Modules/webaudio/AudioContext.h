@@ -204,8 +204,8 @@ public:
     // Returns true if this thread owns the context's lock.
     bool isGraphOwner() const;
 
-    // Returns the maximum numuber of channels we can support.
-    static unsigned maxNumberOfChannels() { return MaxNumberOfChannels;}
+    // Returns the maximum number of channels we can support.
+    static unsigned maxNumberOfChannels() { return MaxNumberOfChannels; }
 
     class AutoLocker {
     public:

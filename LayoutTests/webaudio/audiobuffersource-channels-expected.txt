@@ -2,7 +2,8 @@ Tests that AudioBufferSourceNode validates AudioBuffer in .buffer attribute sett
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS source.buffer = 57 threw exception TypeError: Value is not of type AudioBuffer.
+PASS source.buffer is null
+PASS source.buffer = 57 threw exception TypeError: The AudioBufferSourceNode.buffer attribute must be an instance of AudioBuffer.
 PASS Mono buffer can be set.
 PASS Stereo buffer can be set.
 PASS 3 channels buffer can be set.
@@ -12,6 +13,10 @@ PASS 6 channels buffer can be set.
 PASS 7 channels buffer can be set.
 PASS 8 channels buffer can be set.
 PASS 9 channels buffer can be set.
+PASS context.createBuffer(64, 1024, context.sampleRate) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS source.buffer is not null
+PASS source.buffer = null did not throw exception.
+PASS source.buffer is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -27,6 +27,8 @@ function runTest() {
     context = new webkitAudioContext();
     source = context.createBufferSource();
 
+    shouldBeNull("source.buffer");
+
     // Make sure we can't set to something which isn't an AudioBuffer.
     shouldThrow("source.buffer = 57");
 
@@ -60,6 +62,12 @@ function runTest() {
             testFailed(message);
         }
     }
+
+    shouldThrow("context.createBuffer(64, 1024, context.sampleRate)");
+
+    shouldNotBe("source.buffer", "null");
+    shouldNotThrow("source.buffer = null");
+    shouldBeNull("source.buffer");
         
     finishJSTest();
 }

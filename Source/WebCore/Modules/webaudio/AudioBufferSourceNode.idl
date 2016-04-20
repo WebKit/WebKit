@@ -27,7 +27,7 @@
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
 ] interface AudioBufferSourceNode : AudioNode {
-    [CustomSetter, SetterRaisesException] attribute AudioBuffer buffer;
+    [StrictTypeChecking] attribute AudioBuffer? buffer;
 
     const unsigned short UNSCHEDULED_STATE = 0;
     const unsigned short SCHEDULED_STATE = 1;

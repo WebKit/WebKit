@@ -1,3 +1,41 @@
+2016-04-19  Chris Dumez  <cdumez@apple.com>
+
+        AudioBufferSourceNode.buffer should be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=156769
+
+        Reviewed by Darin Adler.
+
+        AudioBufferSourceNode.buffer should be nullable as per the
+        specification:
+        https://webaudio.github.io/web-audio-api/#AudioBufferSourceNode
+
+        Our implementation was initially returning null when getting
+        AudioBufferSourceNode.buffer, which is correct. However, it would
+        throw a TypeError when trying to set the attribute to null. Our
+        implementation setter actually supported setting the buffer to
+        null but the custom bindings for the setter would not.
+
+        This patch does the following:
+        - Get rid of the custom bindings for the AudioBufferSourceNode.buffer
+          setter. We can have the bindings generator generate the same code
+          by using [StrictTypeChecking]. The custom bindinds were also throwing
+          a TypeError if the input AudioBuffer had too many channels but this
+          does not seem to be possible.
+        - Mark AudioBufferSourceNode.buffer as nullable in the IDL so that
+          we no longer throw when the JS tries to assign null, but instead
+          calls AudioBufferSourceNode::setBuffer(nullptr)
+
+        No new test, updated webaudio/audiobuffersource-channels.html
+
+        * CMakeLists.txt:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAudioBufferSourceNodeCustom.cpp: Removed.
+
 2016-04-19  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Lots of IDB bindings cleanup (including making IDBVersionChangeEvent constructible).

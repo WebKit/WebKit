@@ -1,3 +1,18 @@
+2016-04-19  Chris Dumez  <cdumez@apple.com>
+
+        AudioBufferSourceNode.buffer should be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=156769
+
+        Reviewed by Darin Adler.
+
+        Update existing layout test to check that:
+        - AudioBufferSourceNode.buffer is initially null
+        - AudioBufferSourceNode.buffer can be set to null
+        - We cannot create an AudioBuffer that has too many channels
+
+        * webaudio/audiobuffersource-channels-expected.txt:
+        * webaudio/audiobuffersource-channels.html:
+
 2016-04-19  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Lots of IDB bindings cleanup (including making IDBVersionChangeEvent constructible).

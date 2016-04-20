@@ -408,7 +408,7 @@ void AudioBufferSourceNode::reset()
     m_lastGain = gain()->value();
 }
 
-bool AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
+void AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 {
     ASSERT(isMainThread());
     
@@ -421,9 +421,7 @@ bool AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
     if (buffer) {
         // Do any necesssary re-configuration to the buffer's number of channels.
         unsigned numberOfChannels = buffer->numberOfChannels();
-
-        if (numberOfChannels > AudioContext::maxNumberOfChannels())
-            return false;
+        ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels());
 
         output(0)->setNumberOfChannels(numberOfChannels);
 
@@ -435,9 +433,7 @@ bool AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
     }
 
     m_virtualReadIndex = 0;
-    m_buffer = buffer;
-    
-    return true;
+    m_buffer = WTFMove(buffer);
 }
 
 unsigned AudioBufferSourceNode::numberOfChannels()

@@ -1084,7 +1084,6 @@ set(WebCore_SOURCES
     bindings/js/IDBBindingUtilities.cpp
     bindings/js/JSAnimationTimelineCustom.cpp
     bindings/js/JSAttrCustom.cpp
-    bindings/js/JSAudioBufferSourceNodeCustom.cpp
     bindings/js/JSAudioContextCustom.cpp
     bindings/js/JSAudioTrackCustom.cpp
     bindings/js/JSAudioTrackListCustom.cpp
