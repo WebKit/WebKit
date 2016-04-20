@@ -33,8 +33,15 @@ XLargeRange VMHeap::tryAllocateLargeChunk(std::lock_guard<StaticMutex>& lock, si
 {
     // We allocate VM in aligned multiples to increase the chances that
     // the OS will provide contiguous ranges that we can merge.
-    alignment = roundUpToMultipleOf<chunkSize>(alignment);
-    size = roundUpToMultipleOf<chunkSize>(size);
+    size_t roundedAlignment = roundUpToMultipleOf<chunkSize>(alignment);
+    if (roundedAlignment < alignment) // Check for overflow
+        return XLargeRange();
+    alignment = roundedAlignment;
+
+    size_t roundedSize = roundUpToMultipleOf<chunkSize>(size);
+    if (roundedSize < size) // Check for overflow
+        return XLargeRange();
+    size = roundedSize;
 
     void* memory = tryVMAllocate(alignment, size);
     if (!memory)

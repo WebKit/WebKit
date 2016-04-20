@@ -64,7 +64,6 @@ namespace Sizes {
 
     static const size_t largeAlignment = smallMax / pageSizeWasteFactor;
     static const size_t largeAlignmentMask = largeAlignment - 1;
-    static const size_t largeMax = std::numeric_limits<size_t>::max() - largeAlignment; // Make sure that rounding up to largeAlignment does not overflow.
 
     static const size_t deallocatorLogCapacity = 256;
     static const size_t bumpRangeCacheCapacity = 3;
