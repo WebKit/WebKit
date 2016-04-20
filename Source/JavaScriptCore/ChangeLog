@@ -1,3 +1,30 @@
+2016-04-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add register reuse for ArithAdd of an Int32 and constant in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=155164
+
+        Reviewed by Mark Lam.
+
+        Every "inc" in loop was looking like this:
+            move rX, rY
+            inc rY
+            jo 0x230f4a200580
+
+        This patch add register Reuse to that case to remove
+        the extra "move".
+
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::SpeculationRecovery::SpeculationRecovery):
+        (JSC::DFG::SpeculationRecovery::immediate):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithAdd):
+        * tests/stress/arith-add-with-constant-overflow.js: Added.
+        (opaqueAdd):
+
 2016-04-20  Saam barati  <sbarati@apple.com>
 
         We don't need a manual stack for an RAII object when the machine's stack will do just fine

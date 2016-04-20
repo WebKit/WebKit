@@ -1694,16 +1694,20 @@ public:
 
     Jump branchAdd32(ResultCondition cond, RegisterID src, Imm32 imm, RegisterID dest)
     {
-        if (src == dest)
-            ASSERT(haveScratchRegisterForBlinding());
-
         if (shouldBlind(imm)) {
-            if (src == dest) {
-                move(src, scratchRegisterForBlinding());
-                src = scratchRegisterForBlinding();
+            if (src != dest || haveScratchRegisterForBlinding()) {
+                if (src == dest) {
+                    move(src, scratchRegisterForBlinding());
+                    src = scratchRegisterForBlinding();
+                }
+                loadXorBlindedConstant(xorBlindConstant(imm), dest);
+                return branchAdd32(cond, src, dest);
             }
-            loadXorBlindedConstant(xorBlindConstant(imm), dest);
-            return branchAdd32(cond, src, dest);  
+            // If we don't have a scratch register available for use, we'll just
+            // place a random number of nops.
+            uint32_t nopCount = random() & 3;
+            while (nopCount--)
+                nop();
         }
         return branchAdd32(cond, src, imm.asTrustedImm32(), dest);            
     }
