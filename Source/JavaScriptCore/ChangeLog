@@ -1,3 +1,27 @@
+2016-04-19  Benjamin Poulain  <bpoulain@webkit.org>
+
+        [JSC] Small cleanup of RegisterAtOffsetList
+        https://bugs.webkit.org/show_bug.cgi?id=156779
+
+        Reviewed by Mark Lam.
+
+        I was wondering why RegisterAtOffsetList always cache-miss.
+        It looks like it is doing more than it needs to.
+
+        We do not need to sort the values. The total order of
+        RegisterAtOffset is:
+        1) Order of Reg.
+        2) Order of offsets.
+        We already generate the list in order.
+
+        Also allocate the right array size ahead of filling the array.
+
+        * jit/RegisterAtOffsetList.cpp:
+        (JSC::RegisterAtOffsetList::RegisterAtOffsetList):
+        (JSC::RegisterAtOffsetList::sort): Deleted.
+        * jit/RegisterAtOffsetList.h:
+        (JSC::RegisterAtOffsetList::append): Deleted.
+
 2016-04-19  Saam barati  <sbarati@apple.com>
 
         Add a couple UNLIKELY macros in parseMemberExpression
