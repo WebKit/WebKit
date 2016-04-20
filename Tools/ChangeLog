@@ -1,3 +1,13 @@
+2016-04-20  Dustin Falgout  <dustin@falgout.us>
+
+        [GTK] Expose AllowUniversalAccessFromFileURLs preference now that calling localStorage.getItem() results in SecurityError: DOM Exception 18
+        https://bugs.webkit.org/show_bug.cgi?id=156651
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2016-04-20  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Enable INDEXED_DATABASE_IN_WORKERS compile time flag, but disabled in RuntimeEnabledFeatures.

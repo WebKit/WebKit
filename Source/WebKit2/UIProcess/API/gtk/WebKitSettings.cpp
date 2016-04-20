@@ -144,7 +144,8 @@ enum {
     PROP_ENABLE_MEDIA_STREAM,
     PROP_ENABLE_SPATIAL_NAVIGATION,
     PROP_ENABLE_MEDIASOURCE,
-    PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS
+    PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS,
+    PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS
 };
 
 static void webKitSettingsConstructed(GObject* object)
@@ -313,6 +314,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS:
         webkit_settings_set_allow_file_access_from_file_urls(settings, g_value_get_boolean(value));
         break;
+    case PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS:
+        webkit_settings_set_allow_universal_access_from_file_urls(settings, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -470,6 +474,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS:
         g_value_set_boolean(value, webkit_settings_get_allow_file_access_from_file_urls(settings));
+        break;
+    case PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS:
+        g_value_set_boolean(value, webkit_settings_get_allow_universal_access_from_file_urls(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1240,6 +1247,26 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         g_param_spec_boolean("allow-file-access-from-file-urls",
             _("Allow file access from file URLs"),
             _("Whether file access is allowed from file URLs."),
+            FALSE,
+            readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:allow-universal-access-from-file-urls:
+     *
+     * Whether or not JavaScript running in the context of a file scheme URL
+     * should be allowed to access content from any origin.  By default, when
+     * something is loaded in a #WebKitWebView using a file scheme URL,
+     * access to the local file system and arbitrary local storage is not
+     * allowed. This setting allows you to change that behaviour, so that
+     * it would be possible to use local storage, for example.
+     *
+     * Since: 2.14
+     */
+    g_object_class_install_property(gObjectClass,
+        PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS,
+        g_param_spec_boolean("allow-universal-access-from-file-urls",
+            _("Allow universal access from the context of file scheme URLs"),
+            _("Whether or not universal access is allowed from the context of file scheme URLs"),
             FALSE,
             readWriteConstructParamFlags));
 }
@@ -3061,4 +3088,42 @@ void webkit_settings_set_allow_file_access_from_file_urls(WebKitSettings* settin
 
     priv->preferences->setAllowFileAccessFromFileURLs(allowed);
     g_object_notify(G_OBJECT(settings), "allow-file-access-from-file-urls");
+}
+
+/**
+ * webkit_settings_get_allow_universal_access_from_file_urls:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:allow-universal-access-from-file-urls property.
+ *
+ * Returns: %TRUE If universal access from file URLs is allowed or %FALSE otherwise.
+ *
+ * Since: 2.14
+ */
+gboolean webkit_settings_get_allow_universal_access_from_file_urls(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->preferences->allowUniversalAccessFromFileURLs();
+}
+
+/**
+ * webkit_settings_set_allow_universal_access_from_file_urls:
+ * @settings: a #WebKitSettings
+ * @allowed: Value to be set
+ *
+ * Set the #WebKitSettings:allow-universal-access-from-file-urls property.
+ *
+ * Since: 2.14
+ */
+void webkit_settings_set_allow_universal_access_from_file_urls(WebKitSettings* settings, gboolean allowed)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    if (priv->preferences->allowUniversalAccessFromFileURLs() == allowed)
+        return;
+
+    priv->preferences->setAllowUniversalAccessFromFileURLs(allowed);
+    g_object_notify(G_OBJECT(settings), "allow-universal-access-from-file-urls");
 }

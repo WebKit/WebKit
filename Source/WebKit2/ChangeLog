@@ -1,3 +1,27 @@
+2016-04-20  Dustin Falgout  <dustin@falgout.us>
+
+        [GTK] Expose AllowUniversalAccessFromFileURLs preference now that calling localStorage.getItem() results in SecurityError: DOM Exception 18
+        
+        Reviewed by Michael Catanzaro.
+                
+        As of r197858 JavaScript loaded in the context of a file scheme url cannot access local storage. That is a major 
+        breaking change as many applications that serve files locally rely on having access to local storage. The point  
+        of that security fix is to avoid cases of downloaded HTML content (such as e-mail attachments or JS injected
+        into local contexts) from having access to your local file system and arbitrary local storage. If you are serving 
+        local files in your applications, you can use the WebKitAllowUniversalAccessFromFileURLs preference key to tell 
+        Webkit that you are approve of these kinds of interactions.
+                                              
+        https://bugs.webkit.org/show_bug.cgi?id=156651
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_allow_universal_access_from_file_urls):
+        (webkit_settings_set_allow_universal_access_from_file_urls):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+
 2016-04-20  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Enable INDEXED_DATABASE_IN_WORKERS compile time flag, but disabled in RuntimeEnabledFeatures.
