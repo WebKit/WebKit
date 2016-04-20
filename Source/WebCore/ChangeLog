@@ -1,3 +1,20 @@
+2016-04-20  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLSpace to avoid using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=155168
+
+        Reviewed by Martin Robinson.
+
+        No new tests, already covered by existing tests. The behavior of mspace-prefered-width-expected is not specified by the MathML recommendation, we update that test to match our new behavior.
+
+        * rendering/mathml/RenderMathMLSpace.cpp: Implement layout functions without passing by flebox.
+        (WebCore::RenderMathMLSpace::computePreferredLogicalWidths): Implement this function.
+        (WebCore::RenderMathMLSpace::layoutBlock): Implement this function.
+        (WebCore::RenderMathMLSpace::computeIntrinsicLogicalWidths): Deleted.
+        (WebCore::RenderMathMLSpace::updateLogicalWidth): Deleted.
+        (WebCore::RenderMathMLSpace::updateLogicalHeight): Deleted.
+        * rendering/mathml/RenderMathMLSpace.h: Update function declarations.
+
 2016-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Cairo] Crash in GraphicsContext::drawFocusRing when painting is disabled

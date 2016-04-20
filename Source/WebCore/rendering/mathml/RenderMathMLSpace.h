@@ -39,15 +39,14 @@ public:
     MathMLTextElement& element() { return static_cast<MathMLTextElement&>(nodeForNonAnonymous()); }
 
 private:
-    const char* renderName() const override { return isAnonymous() ? "RenderMathMLSpace (anonymous)" : "RenderMathMLSpace"; }
-    bool isRenderMathMLSpace() const override { return true; }
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override { return false; }
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
-    void updateFromElement() override;
-    Optional<int> firstLineBaseline() const override;
-    void updateLogicalWidth() override;
-    void updateLogicalHeight() override;
+    const char* renderName() const final { return isAnonymous() ? "RenderMathMLSpace (anonymous)" : "RenderMathMLSpace"; }
+    bool isRenderMathMLSpace() const final { return true; }
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return false; }
+    void updateFromElement() final;
+    void computePreferredLogicalWidths() final;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
+    Optional<int> firstLineBaseline() const final;
 
     LayoutUnit m_width;
     LayoutUnit m_height;

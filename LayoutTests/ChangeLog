@@ -1,3 +1,12 @@
+2016-04-20  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLSpace to avoid using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=155168
+
+        Reviewed by Martin Robinson.
+
+        * mathml/presentation/mspace-prefered-width-expected.html: Update the expectation so that the logical width and preferred width are both equal to the one specified by the width attribute.
+
 2016-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Mark HLS tests release expectations as release only.
