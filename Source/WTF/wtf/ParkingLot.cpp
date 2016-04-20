@@ -530,10 +530,10 @@ bool dequeue(
 
 } // anonymous namespace
 
-NEVER_INLINE bool ParkingLot::parkConditionally(
+NEVER_INLINE bool ParkingLot::parkConditionallyImpl(
     const void* address,
-    std::function<bool()> validation,
-    std::function<void()> beforeSleep,
+    const ScopedLambda<bool()>& validation,
+    const ScopedLambda<void()>& beforeSleep,
     Clock::time_point timeout)
 {
     if (verbose)
@@ -591,14 +591,11 @@ NEVER_INLINE bool ParkingLot::parkConditionally(
     // probably worthwhile to detect when this happens, and return true in that case, to ensure
     // that when we return false it really means that no unpark could have been responsible for us
     // waking up, and that if an unpark call did happen, it woke someone else up.
-    bool didFind = false;
     dequeue(
         address, BucketMode::IgnoreEmpty,
         [&] (ThreadData* element) {
-            if (element == me) {
-                didFind = true;
+            if (element == me)
                 return DequeueResult::RemoveAndStop;
-            }
             return DequeueResult::Ignore;
         },
         [] (bool) { });
@@ -612,29 +609,35 @@ NEVER_INLINE bool ParkingLot::parkConditionally(
     }
 
     // If we were not found in the search above, then we know that someone unparked us.
-    return !didFind;
+    return false;
 }
 
-NEVER_INLINE bool ParkingLot::unparkOne(const void* address)
+NEVER_INLINE ParkingLot::UnparkResult ParkingLot::unparkOne(const void* address)
 {
     if (verbose)
         dataLog(toString(currentThread(), ": unparking one.\n"));
+    
+    UnparkResult result;
 
     ThreadData* threadData = nullptr;
-    bool result = dequeue(
+    result.mayHaveMoreThreads = dequeue(
         address,
-        BucketMode::IgnoreEmpty,
+        BucketMode::EnsureNonEmpty,
         [&] (ThreadData* element) {
             if (element->address != address)
                 return DequeueResult::Ignore;
             threadData = element;
+            result.didUnparkThread = true;
             return DequeueResult::RemoveAndStop;
         },
         [] (bool) { });
 
-    if (!threadData)
-        return false;
-
+    if (!threadData) {
+        ASSERT(!result.didUnparkThread);
+        result.mayHaveMoreThreads = false;
+        return result;
+    }
+    
     ASSERT(threadData->address);
     
     {
@@ -646,9 +649,9 @@ NEVER_INLINE bool ParkingLot::unparkOne(const void* address)
     return result;
 }
 
-NEVER_INLINE void ParkingLot::unparkOne(
+NEVER_INLINE void ParkingLot::unparkOneImpl(
     const void* address,
-    std::function<void(bool didUnparkThread, bool mayHaveMoreThreads)> callback)
+    const ScopedLambda<void(ParkingLot::UnparkResult)>& callback)
 {
     if (verbose)
         dataLog(toString(currentThread(), ": unparking one the hard way.\n"));
@@ -664,7 +667,10 @@ NEVER_INLINE void ParkingLot::unparkOne(
             return DequeueResult::RemoveAndStop;
         },
         [&] (bool mayHaveMoreThreads) {
-            callback(!!threadData, threadData && mayHaveMoreThreads);
+            UnparkResult result;
+            result.didUnparkThread = !!threadData;
+            result.mayHaveMoreThreads = result.didUnparkThread && mayHaveMoreThreads;
+            callback(result);
         });
 
     if (!threadData)
@@ -713,7 +719,7 @@ NEVER_INLINE void ParkingLot::unparkAll(const void* address)
         dataLog(toString(currentThread(), ": done unparking.\n"));
 }
 
-NEVER_INLINE void ParkingLot::forEach(std::function<void(ThreadIdentifier, const void*)> callback)
+NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(ThreadIdentifier, const void*)>& callback)
 {
     Vector<Bucket*> bucketsToUnlock = lockHashtable();
 

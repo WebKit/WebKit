@@ -180,8 +180,8 @@ struct ConditionBase {
         
         ParkingLot::unparkOne(
             &m_hasWaiters,
-            [this] (bool, bool mayHaveMoreThreads) {
-                if (!mayHaveMoreThreads)
+            [this] (ParkingLot::UnparkResult result) {
+                if (!result.mayHaveMoreThreads)
                     m_hasWaiters.store(false);
             });
     }

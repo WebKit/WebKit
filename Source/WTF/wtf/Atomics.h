@@ -76,6 +76,25 @@ struct Atomic {
         T expectedOrActual = expected;
         return value.compare_exchange_strong(expectedOrActual, desired, order);
     }
+    
+    template<typename U>
+    T exchangeAndAdd(U addend, std::memory_order order = std::memory_order_seq_cst)
+    {
+#if OS(WINDOWS)
+        // See above.
+        order = std::memory_order_seq_cst;
+#endif
+        return value.fetch_add(addend, order);
+    }
+    
+    T exchange(T newValue, std::memory_order order = std::memory_order_seq_cst)
+    {
+#if OS(WINDOWS)
+        // See above.
+        order = std::memory_order_seq_cst;
+#endif
+        return value.exchange(newValue, order);
+    }
 
     std::atomic<T> value;
 };

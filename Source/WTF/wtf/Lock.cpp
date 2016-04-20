@@ -94,12 +94,12 @@ NEVER_INLINE void LockBase::unlockSlow()
         ASSERT(oldByteValue == (isHeldBit | hasParkedBit));
         ParkingLot::unparkOne(
             &m_byte,
-            [this] (bool, bool mayHaveMoreThreads) {
+            [this] (ParkingLot::UnparkResult result) {
                 // We are the only ones that can clear either the isHeldBit or the hasParkedBit,
                 // so we should still see both bits set right now.
                 ASSERT(m_byte.load() == (isHeldBit | hasParkedBit));
 
-                if (mayHaveMoreThreads)
+                if (result.mayHaveMoreThreads)
                     m_byte.store(hasParkedBit);
                 else
                     m_byte.store(0);

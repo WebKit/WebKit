@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include <chrono>
 #include <functional>
 #include <wtf/Atomics.h>
+#include <wtf/ScopedLambda.h>
 #include <wtf/Threading.h>
 
 namespace WTF {
@@ -51,11 +52,19 @@ public:
     // you don't recursively call parkConditionally(). You can call unparkOne()/unparkAll() though.
     // It's useful to use beforeSleep() to unlock some mutex in the implementation of
     // Condition::wait().
-    WTF_EXPORT_PRIVATE static bool parkConditionally(
+    template<typename ValidationFunctor, typename BeforeSleepFunctor>
+    static bool parkConditionally(
         const void* address,
-        std::function<bool()> validation,
-        std::function<void()> beforeSleep,
-        Clock::time_point timeout);
+        ValidationFunctor&& validation,
+        BeforeSleepFunctor&& beforeSleep,
+        Clock::time_point timeout)
+    {
+        return parkConditionallyImpl(
+            address,
+            scopedLambda<bool()>(std::forward<ValidationFunctor>(validation)),
+            scopedLambda<void()>(std::forward<BeforeSleepFunctor>(beforeSleep)),
+            timeout);
+    }
 
     // Simple version of parkConditionally() that covers the most common case: you want to park
     // indefinitely so long as the value at the given address hasn't changed.
@@ -75,7 +84,11 @@ public:
     // Unparks one thread from the queue associated with the given address, which cannot be null.
     // Returns true if there may still be other threads on that queue, or false if there definitely
     // are no more threads on the queue.
-    WTF_EXPORT_PRIVATE static bool unparkOne(const void* address);
+    struct UnparkResult {
+        bool didUnparkThread { false };
+        bool mayHaveMoreThreads { false };
+    };
+    WTF_EXPORT_PRIVATE static UnparkResult unparkOne(const void* address);
 
     // Unparks one thread from the queue associated with the given address, and calls the given
     // functor while the address is locked. Reports to the callback whether any thread got unparked
@@ -88,9 +101,11 @@ public:
     // that race - see Rusty Russel's well-known usersem library - but it's not pretty. This form
     // allows that race to be completely avoided, since there is no way that a thread can be parked
     // while the callback is running.
-    WTF_EXPORT_PRIVATE static void unparkOne(
-        const void* address,
-        std::function<void(bool didUnparkThread, bool mayHaveMoreThreads)> callback);
+    template<typename CallbackFunctor>
+    static void unparkOne(const void* address, CallbackFunctor&& callback)
+    {
+        unparkOneImpl(address, scopedLambda<void(UnparkResult)>(std::forward<CallbackFunctor>(callback)));
+    }
 
     // Unparks every thread from the queue associated with the given address, which cannot be null.
     WTF_EXPORT_PRIVATE static void unparkAll(const void* address);
@@ -108,7 +123,23 @@ public:
     // As well as many other possible interleavings that all have T1 before T2 and T3 before T4 but are
     // otherwise unconstrained. This method is useful primarily for debugging. It's also used by unit
     // tests.
-    WTF_EXPORT_PRIVATE static void forEach(std::function<void(ThreadIdentifier, const void*)>);
+    template<typename CallbackFunctor>
+    static void forEach(CallbackFunctor&& callback)
+    {
+        forEachImpl(scopedLambda<void(ThreadIdentifier, const void*)>(std::forward<CallbackFunctor>(callback)));
+    }
+
+private:
+    WTF_EXPORT_PRIVATE static bool parkConditionallyImpl(
+        const void* address,
+        const ScopedLambda<bool()>& validation,
+        const ScopedLambda<void()>& beforeSleep,
+        Clock::time_point timeout);
+    
+    WTF_EXPORT_PRIVATE static void unparkOneImpl(
+        const void* address, const ScopedLambda<void(UnparkResult)>& callback);
+
+    WTF_EXPORT_PRIVATE static void forEachImpl(const ScopedLambda<void(ThreadIdentifier, const void*)>&);
 };
 
 } // namespace WTF

@@ -1,3 +1,30 @@
+2016-04-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Clean up the ParkingLot uparking API a bit
+        https://bugs.webkit.org/show_bug.cgi?id=156746
+
+        Reviewed by Saam Barati and Geoffrey Garen.
+        
+        Previously, unparkOne() would either return a boolean to tell you if there are any more threads on
+        the queue or it would pass your callback a pair of booleans - one to tell if a thread was unparked
+        and another to tell if there are any more threads. This was an annoying inconsistency. What if you
+        wanted to know if unparkOne() unparked a thread but you don't care to use callbacks?
+
+        This fixes unparkOne() to use a struct called UnparkResult for both of its variants. This makes the
+        code a bit cleaner.
+
+        * wtf/Atomics.h: Add some more atomic ops.
+        (WTF::Atomic::exchangeAndAdd):
+        (WTF::Atomic::exchange):
+        * wtf/Condition.h: Change calls to unparkOne().
+        (WTF::ConditionBase::notifyOne):
+        * wtf/Lock.cpp: Change calls to unparkOne().
+        (WTF::LockBase::unlockSlow):
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::parkConditionally):
+        (WTF::ParkingLot::unparkOne):
+        * wtf/ParkingLot.h: Switch to using ScopedLambda and introduce UnparkResult.
+
 2016-04-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199726.
