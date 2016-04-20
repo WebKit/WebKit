@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -217,7 +217,13 @@ bool SandboxExtension::createHandle(const String& path, Type type, Handle& handl
     ASSERT(!handle.m_sandboxExtension);
 
     // FIXME: Do we need both resolveSymlinksInPath() and -stringByStandardizingPath?
-    CString standardizedPath = resolveSymlinksInPath(fileSystemRepresentation([(NSString *)path stringByStandardizingPath]));
+    CString fileSystemPath = fileSystemRepresentation([(NSString *)path stringByStandardizingPath]);
+    if (fileSystemPath.isNull()) {
+        LOG_ERROR("Could not create a valid file system representation for the string '%s' of length %lu", fileSystemPath.data(), fileSystemPath.length());
+        return false;
+    }
+
+    CString standardizedPath = resolveSymlinksInPath(fileSystemPath);
     handle.m_sandboxExtension = WKSandboxExtensionCreate(standardizedPath.data(), wkSandboxExtensionType(type));
     if (!handle.m_sandboxExtension) {
         LOG_ERROR("Could not create a sandbox extension for '%s'", path.utf8().data());

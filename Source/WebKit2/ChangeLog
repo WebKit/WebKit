@@ -1,3 +1,20 @@
+2016-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][Mac][iOS] WebContent crash when using special file:// URI scheme @ WebKit::resolveSymlinksInPath(WTF::CString const&) + 159
+        https://bugs.webkit.org/show_bug.cgi?id=156747
+        <rdar://problem/24648176>
+
+        Reviewed by Alexey Proskuryakov.
+
+        FileSystemCF::fileSystemRepresentation return a null string when presented with a file URL that contains embedded nulls. When
+        this happens, SandboxExtension::createHandle attempts to pass a null string to 'resolveSymlinksInPath', which attemps to call
+        'strrchr' on the null pointer, causing a crash.
+
+        Test: fast/url/file-uri-with-embedded-null-no-crash.html
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::createHandle): If 'fileSystemRepresentation' is null, return early with an error.
+
 2016-04-19  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.

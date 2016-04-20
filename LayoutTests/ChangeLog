@@ -1,3 +1,14 @@
+2016-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][Mac][iOS] WebContent crash when using special file:// URI scheme @ WebKit::resolveSymlinksInPath(WTF::CString const&) + 159
+        https://bugs.webkit.org/show_bug.cgi?id=156747
+        <rdar://problem/24648176>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/url/file-uri-with-embedded-null-no-crash-expected.txt: Added.
+        * fast/url/file-uri-with-embedded-null-no-crash.html: Added.
+
 2016-04-20  Dave Hyatt  <hyatt@apple.com>
 
         Hangable punctuation measurement using the wrong indices.
