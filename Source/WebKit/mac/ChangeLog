@@ -1,3 +1,12 @@
+2016-04-20  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Workers): Enable INDEXED_DATABASE_IN_WORKERS compile time flag, but disabled in RuntimeEnabledFeatures.
+        https://bugs.webkit.org/show_bug.cgi?id=156782
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-04-18  Anders Carlsson  <andersca@apple.com>
 
         Fix build with newer versions of clang.

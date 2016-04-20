@@ -1,0 +1,13 @@
+[Worker] Check to make sure we can enable IndexedDB in workers via a runtime setting
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/workers-enable.js
+PASS [Worker] self.indexedDB is defined.
+FAIL [Worker] self.indexedDB should be non-null. Was null
+FAIL [Worker] self.indexedDB instanceof IDBFactory should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

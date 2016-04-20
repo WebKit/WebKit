@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016 Apple Inc. All Rights Reserved.
  * Copyright (C) 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,8 +25,7 @@
  *
  */
 
-#ifndef ScriptExecutionContext_h
-#define ScriptExecutionContext_h
+#pragma once
 
 #include "ActiveDOMObject.h"
 #include "DOMTimer.h"
@@ -56,7 +55,7 @@ class PublicURLManager;
 class SecurityOrigin;
 class URL;
 
-class ScriptExecutionContext : public SecurityContext, public Supplementable<ScriptExecutionContext> {
+class ScriptExecutionContext : public SecurityContext {
 public:
     ScriptExecutionContext();
     virtual ~ScriptExecutionContext();
@@ -247,5 +246,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ScriptExecutionContext_h

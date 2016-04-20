@@ -103,6 +103,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #endif
     , m_allowsInlineMediaPlayback(settings.allowsInlineMediaPlayback())
     , m_inlineMediaPlaybackRequiresPlaysInlineAttribute(settings.inlineMediaPlaybackRequiresPlaysInlineAttribute())
+    , m_indexedDBWorkersEnabled(RuntimeEnabledFeatures::sharedFeatures().indexedDBWorkersEnabled())
 {
 }
 
@@ -170,6 +171,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setAllowsInlineMediaPlayback(m_allowsInlineMediaPlayback);
     settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(m_inlineMediaPlaybackRequiresPlaysInlineAttribute);
     RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(m_pluginReplacementEnabled);
+    RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
 }
 
 class InternalSettingsWrapper : public Supplement<Page> {
@@ -539,6 +541,14 @@ void InternalSettings::setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool r
     InternalSettingsGuardForSettings();
     settings()->setInlineMediaPlaybackRequiresPlaysInlineAttribute(requires);
 }
+
+void InternalSettings::setIndexedDBWorkersEnabled(bool enabled, ExceptionCode&)
+{
+#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
+    RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(enabled);
+#endif
+}
+
 
 // If you add to this list, make sure that you update the Backup class for test reproducability!
 

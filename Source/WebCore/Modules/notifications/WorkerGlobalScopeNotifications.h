@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013, 2014, 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef WorkerGlobalScopeNotifications_h
-#define WorkerGlobalScopeNotifications_h
+#pragma once
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
@@ -37,13 +36,13 @@ class NotificationCenter;
 class ScriptExecutionContext;
 class WorkerGlobalScope;
 
-class WorkerGlobalScopeNotifications : public Supplement<ScriptExecutionContext> {
+class WorkerGlobalScopeNotifications : public Supplement<WorkerGlobalScope> {
 public:
-    explicit WorkerGlobalScopeNotifications(WorkerGlobalScope*);
+    explicit WorkerGlobalScopeNotifications(WorkerGlobalScope&);
     virtual ~WorkerGlobalScopeNotifications();
 
     static NotificationCenter* webkitNotifications(WorkerGlobalScope&);
-    static WorkerGlobalScopeNotifications* from(WorkerGlobalScope*);
+    static WorkerGlobalScopeNotifications* from(WorkerGlobalScope&);
 
 private:
     NotificationCenter* webkitNotifications();
@@ -56,5 +55,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-
-#endif // WorkerGlobalScopeNotifications_h

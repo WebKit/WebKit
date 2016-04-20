@@ -1,3 +1,50 @@
+2016-04-20  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Workers): Enable INDEXED_DATABASE_IN_WORKERS compile time flag, but disabled in RuntimeEnabledFeatures.
+        https://bugs.webkit.org/show_bug.cgi?id=156782
+
+        Reviewed by Alex Christensen.
+
+        Test: storage/indexeddb/modern/workers-disabled.html
+              storage/indexeddb/modern/workers-enable.html
+
+        * Configurations/FeatureDefines.xcconfig:
+
+        ScriptExecutionContext shouldn't really be supplementable:
+        * dom/ScriptExecutionContext.h:
+
+        WorkerGlobalScope should be supplementable.
+        Also modernize this archaic header (pragma once, and re-indent):
+        * workers/WorkerGlobalScope.h:
+        
+        Update for WorkerGlobalScope now being directly supplementable:
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp:
+        (WebCore::WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase):
+        (WebCore::WorkerGlobalScopeIndexedDatabase::from):
+        (WebCore::WorkerGlobalScopeIndexedDatabase::indexedDB):
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.h:
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl:
+        * Modules/notifications/WorkerGlobalScopeNotifications.cpp:
+        (WebCore::WorkerGlobalScopeNotifications::WorkerGlobalScopeNotifications):
+        (WebCore::WorkerGlobalScopeNotifications::from):
+        (WebCore::WorkerGlobalScopeNotifications::webkitNotifications):
+        * Modules/notifications/WorkerGlobalScopeNotifications.h:
+        
+        Expose IndexedDBWorkers to RuntimeEnabledFeatures:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setIndexedDBWorkersEnabled):
+        (WebCore::RuntimeEnabledFeatures::indexedDBWorkersEnabled):
+
+        Expose IndexedDBWorkers to InternalSettings:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setIndexedDBWorkersEnabled):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2016-04-20  Dave Hyatt  <hyatt@apple.com>
 
         Hangable punctuation measurement using the wrong indices.

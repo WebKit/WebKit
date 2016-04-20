@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013, 2014, 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,8 +24,7 @@
  *
  */
 
-#ifndef WorkerGlobalScopeIndexedDatabase_h
-#define WorkerGlobalScopeIndexedDatabase_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
 
@@ -35,15 +34,15 @@
 namespace WebCore {
 
 class IDBFactory;
-class ScriptExecutionContext;
+class WorkerGlobalScope;
 
-class WorkerGlobalScopeIndexedDatabase : public Supplement<ScriptExecutionContext> {
+class WorkerGlobalScopeIndexedDatabase : public Supplement<WorkerGlobalScope> {
 public:
-    explicit WorkerGlobalScopeIndexedDatabase();
+    explicit WorkerGlobalScopeIndexedDatabase(WorkerGlobalScope&);
     virtual ~WorkerGlobalScopeIndexedDatabase();
-    static WorkerGlobalScopeIndexedDatabase* from(ScriptExecutionContext*);
 
-    static IDBFactory* indexedDB(ScriptExecutionContext*);
+    static WorkerGlobalScopeIndexedDatabase* from(WorkerGlobalScope&);
+    static IDBFactory* indexedDB(WorkerGlobalScope&);
 
 private:
     IDBFactory* indexedDB();
@@ -54,6 +53,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
-
-#endif // WorkerGlobalScopeIndexedDatabase_h
+#endif // ENABLE(INDEXED_DATABASE_IN_WORKERS)

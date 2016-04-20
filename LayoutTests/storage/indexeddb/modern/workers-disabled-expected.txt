@@ -1,0 +1,11 @@
+[Worker] Check to make sure IndexedDB in workers can be disabled at runtime
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/workers-disabled.js
+PASS [Worker] self.indexedDB is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

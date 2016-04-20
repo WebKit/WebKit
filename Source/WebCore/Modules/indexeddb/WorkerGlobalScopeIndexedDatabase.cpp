@@ -34,10 +34,11 @@
 #include "IDBFactory.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
-WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase()
+WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase(WorkerGlobalScope&)
 {
 }
 
@@ -50,20 +51,20 @@ const char* WorkerGlobalScopeIndexedDatabase::supplementName()
     return "WorkerGlobalScopeIndexedDatabase";
 }
 
-WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(ScriptExecutionContext* context)
+WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(WorkerGlobalScope& scope)
 {
-    WorkerGlobalScopeIndexedDatabase* supplement = static_cast<WorkerGlobalScopeIndexedDatabase*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
+    WorkerGlobalScopeIndexedDatabase* supplement = static_cast<WorkerGlobalScopeIndexedDatabase*>(Supplement<WorkerGlobalScope>::from(&scope, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<WorkerGlobalScopeIndexedDatabase>();
+        auto newSupplement = std::make_unique<WorkerGlobalScopeIndexedDatabase>(scope);
         supplement = newSupplement.get();
-        provideTo(context, supplementName(), WTFMove(newSupplement));
+        provideTo(&scope, supplementName(), WTFMove(newSupplement));
     }
     return supplement;
 }
 
-IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB(ScriptExecutionContext* context)
+IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB(WorkerGlobalScope& scope)
 {
-    return from(context)->indexedDB();
+    return from(scope)->indexedDB();
 }
 
 IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB()
@@ -73,4 +74,4 @@ IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB()
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE_IN_WORKERS)

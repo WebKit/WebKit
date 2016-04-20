@@ -1,3 +1,20 @@
+2016-04-20  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Workers): Enable INDEXED_DATABASE_IN_WORKERS compile time flag, but disabled in RuntimeEnabledFeatures.
+        https://bugs.webkit.org/show_bug.cgi?id=156782
+
+        Reviewed by Alex Christensen.
+
+        Note: One test has some "FAIL" lines in the expected results, which is intentional.
+        As work on this progresses, those FAILs will become PASSes and the expectations will be updated.
+        
+        * storage/indexeddb/modern/resources/workers-disabled.js: Added.
+        * storage/indexeddb/modern/resources/workers-enable.js: Added.
+        * storage/indexeddb/modern/workers-disabled-expected.txt: Added.
+        * storage/indexeddb/modern/workers-disabled.html: Added.
+        * storage/indexeddb/modern/workers-enable-expected.txt: Added.
+        * storage/indexeddb/modern/workers-enable.html: Added.
+
 2016-04-20  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][Mac][iOS] WebContent crash when using special file:// URI scheme @ WebKit::resolveSymlinksInPath(WTF::CString const&) + 159

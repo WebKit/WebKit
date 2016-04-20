@@ -46,7 +46,6 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
     , m_isApplicationCacheEnabled(true)
     , m_isDataTransferItemsEnabled(true)
     , m_isGeolocationEnabled(true)
-    , m_isIndexedDBEnabled(false)
     , m_isTouchEnabled(true)
     , m_isDeviceMotionEnabled(true)
     , m_isDeviceOrientationEnabled(true)
@@ -59,6 +58,12 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
     , m_isPluginReplacementEnabled(true)
 #else
     , m_isPluginReplacementEnabled(false)
+#endif
+#if ENABLE(INDEXED_DATABASE)
+    , m_isIndexedDBEnabled(false)
+#endif
+#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
+    , m_isIndexedDBWorkersEnabled(false)
 #endif
 #if ENABLE(MEDIA_STREAM)
     , m_isMediaStreamEnabled(true)

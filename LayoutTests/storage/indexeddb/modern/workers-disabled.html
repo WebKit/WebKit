@@ -1,0 +1,17 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
+<script>
+
+/*
+IndexedDB for workers is currently disabled by default.
+Once that changes, we'll need the following code to keep this test passing.
+if (window.internals)
+    window.internals.settings.setIndexedDBWorkersEnabled(false);
+*/
+worker = startWorker('resources/workers-disabled.js');</script>
+</body>
+</html>
