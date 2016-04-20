@@ -421,19 +421,9 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         }
     }
 
-    _dispatchCurrentRepresentedObjectsDidChangeEventSoon()
-    {
-        if (this._currentRepresentedObjectsDidChangeTimeout)
-            return;
-        this._currentRepresentedObjectsDidChangeTimeout = setTimeout(this._dispatchCurrentRepresentedObjectsDidChangeEvent.bind(this), 0);
-    }
-
     _dispatchCurrentRepresentedObjectsDidChangeEvent()
     {
-        if (this._currentRepresentedObjectsDidChangeTimeout) {
-            clearTimeout(this._currentRepresentedObjectsDidChangeTimeout);
-            delete this._currentRepresentedObjectsDidChangeTimeout;
-        }
+        this._dispatchCurrentRepresentedObjectsDidChangeEvent.cancelDebounce();
 
         this.dispatchEventToListeners(WebInspector.ContentBrowser.Event.CurrentRepresentedObjectsDidChange);
     }
@@ -450,7 +440,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
         this._navigationBar.needsLayout();
 
-        this._dispatchCurrentRepresentedObjectsDidChangeEventSoon();
+        this.soon._dispatchCurrentRepresentedObjectsDidChangeEvent();
     }
 
     _contentViewSupplementalRepresentedObjectsDidChange(event)
@@ -458,7 +448,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         if (event.target !== this.currentContentView)
             return;
 
-        this._dispatchCurrentRepresentedObjectsDidChangeEventSoon();
+        this.soon._dispatchCurrentRepresentedObjectsDidChangeEvent();
     }
 
     _currentContentViewDidChange(event)

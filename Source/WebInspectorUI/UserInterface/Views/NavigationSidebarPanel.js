@@ -33,7 +33,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
         this._visibleContentTreeOutlines = new Set;
 
-        this.contentView.element.addEventListener("scroll", this._updateContentOverflowShadowVisibilitySoon.bind(this));
+        this.contentView.element.addEventListener("scroll", this.soon._updateContentOverflowShadowVisibility);
 
         this._contentTreeOutline = this.createContentTreeOutline(true);
         this._selectedContentTreeOutline = null;
@@ -53,7 +53,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             this.element.appendChild(this._topOverflowShadowElement);
         }
 
-        this._boundUpdateContentOverflowShadowVisibility = this._updateContentOverflowShadowVisibilitySoon.bind(this);
+        this._boundUpdateContentOverflowShadowVisibility = this.soon._updateContentOverflowShadowVisibility;
         window.addEventListener("resize", this._boundUpdateContentOverflowShadowVisibility);
 
         this._filtersSetting = new WebInspector.Setting(identifier + "-navigation-sidebar-filters", {});
@@ -486,18 +486,10 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
     }
 
     // Private
-    
-    _updateContentOverflowShadowVisibilitySoon()
-    {
-        if (this._updateContentOverflowShadowVisibilityIdentifier)
-            return;
-
-        this._updateContentOverflowShadowVisibilityIdentifier = setTimeout(this._updateContentOverflowShadowVisibility.bind(this), 0);
-    }
 
     _updateContentOverflowShadowVisibility()
     {
-        this._updateContentOverflowShadowVisibilityIdentifier = undefined;
+        this._updateContentOverflowShadowVisibility.cancelDebounce();
 
         let scrollHeight = this.contentView.element.scrollHeight;
         let offsetHeight = this.contentView.element.offsetHeight;
@@ -636,7 +628,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         }
 
         this._checkForEmptyFilterResults();
-        this._updateContentOverflowShadowVisibilitySoon();
+        this.soon._updateContentOverflowShadowVisibility();
 
         if (this.selected)
             this._checkElementsForPendingViewStateCookie([treeElement]);
@@ -646,7 +638,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
     _treeElementDisclosureDidChange(event)
     {
-        this._updateContentOverflowShadowVisibilitySoon();
+        this.soon._updateContentOverflowShadowVisibility();
     }
 
     _treeSelectionDidChange(event)

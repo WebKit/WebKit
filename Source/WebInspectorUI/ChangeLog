@@ -1,5 +1,32 @@
 2016-04-19  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Use debounce proxies in a couple more places
+
+        https://bugs.webkit.org/show_bug.cgi?id=156759
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype._dispatchCurrentRepresentedObjectsDidChangeEvent):
+        (WebInspector.ContentBrowser.prototype._contentViewSelectionPathComponentDidChange):
+        (WebInspector.ContentBrowser.prototype._contentViewSupplementalRepresentedObjectsDidChange):
+        (WebInspector.ContentBrowser.prototype._dispatchCurrentRepresentedObjectsDidChangeEventSoon): Deleted.
+        * UserInterface/Views/DOMTreeUpdater.js:
+        (WebInspector.DOMTreeUpdater.prototype._attributesUpdated):
+        (WebInspector.DOMTreeUpdater.prototype._characterDataModified):
+        (WebInspector.DOMTreeUpdater.prototype._nodeInserted):
+        (WebInspector.DOMTreeUpdater.prototype._nodeRemoved):
+        (WebInspector.DOMTreeUpdater.prototype._updateModifiedNodes):
+        (WebInspector.DOMTreeUpdater.prototype._updateModifiedNodesSoon): Deleted.
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel):
+        (WebInspector.NavigationSidebarPanel.prototype._updateContentOverflowShadowVisibility):
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementDisclosureDidChange):
+        (WebInspector.NavigationSidebarPanel.prototype._updateContentOverflowShadowVisibilitySoon): Deleted.
+
+2016-04-19  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Make debounce use an ES6 Proxy
 
         https://bugs.webkit.org/show_bug.cgi?id=156756

@@ -57,28 +57,28 @@ WebInspector.DOMTreeUpdater.prototype = {
     {
         this._recentlyModifiedNodes.push({node: event.data.node, updated: true, attribute: event.data.name});
         if (this._treeOutline._visible)
-            this._updateModifiedNodesSoon();
+            this.soon._updateModifiedNodes();
     },
 
     _characterDataModified: function(event)
     {
         this._recentlyModifiedNodes.push({node: event.data.node, updated: true});
         if (this._treeOutline._visible)
-            this._updateModifiedNodesSoon();
+            this.soon._updateModifiedNodes();
     },
 
     _nodeInserted: function(event)
     {
         this._recentlyModifiedNodes.push({node: event.data.node, parent: event.data.parent, inserted: true});
         if (this._treeOutline._visible)
-            this._updateModifiedNodesSoon();
+            this.soon._updateModifiedNodes();
     },
 
     _nodeRemoved: function(event)
     {
         this._recentlyModifiedNodes.push({node: event.data.node, parent: event.data.parent, removed: true});
         if (this._treeOutline._visible)
-            this._updateModifiedNodesSoon();
+            this.soon._updateModifiedNodes();
     },
 
     _childNodeCountUpdated: function(event)
@@ -88,19 +88,9 @@ WebInspector.DOMTreeUpdater.prototype = {
             treeElement.hasChildren = event.data.hasChildNodes();
     },
 
-    _updateModifiedNodesSoon: function()
-    {
-        if (this._updateModifiedNodesTimeout)
-            return;
-        this._updateModifiedNodesTimeout = setTimeout(this._updateModifiedNodes.bind(this), 0);
-    },
-
     _updateModifiedNodes: function()
     {
-        if (this._updateModifiedNodesTimeout) {
-            clearTimeout(this._updateModifiedNodesTimeout);
-            this._updateModifiedNodesTimeout = null;
-        }
+        this._updateModifiedNodes.cancelDebounce();
 
         let updatedParentTreeElements = [];
         for (let recentlyModifiedNode of this._recentlyModifiedNodes) {
