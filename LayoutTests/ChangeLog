@@ -1,3 +1,14 @@
+2016-04-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline tests for iOS simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/css2.1/t0905-c5525-flthw-00-c-g-expected.txt:
+        * platform/ios-simulator-wk2/css2.1/t0905-c5526-flthw-00-c-g-expected.txt:
+        * platform/ios-simulator/fast/canvas/set-colors-expected.txt: Added.
+        * platform/ios-simulator/fast/text/emoji-expected.txt:
+
 2016-04-20  Yoav Weiss  <yoav@yoav.ws>
 
         Speculative unflake of dynamic_remove_preload_href layout test

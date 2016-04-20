@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x260
-  RenderBlock {HTML} at (0,0) size 800x260
-    RenderBody {BODY} at (8,16) size 784x236
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 513x19
-          text run at (0,0) width 513: "There should be a complete unbroken drawing of a yin-yang (\x{262F}) symbol below."
-      RenderBlock {DIV} at (0,36) size 784x200
+layer at (0,0) size 800x267
+  RenderBlock {HTML} at (0,0) size 800x267
+    RenderBody {BODY} at (8,16) size 784x243
+      RenderBlock {P} at (0,0) size 784x27
+        RenderText {#text} at (0,5) size 520x19
+          text run at (0,5) width 520: "There should be a complete unbroken drawing of a yin-yang (\x{262F}) symbol below."
+      RenderBlock {DIV} at (0,43) size 784x200
         RenderBlock (floating) {DIV} at (0,0) size 100x100
         RenderBlock (floating) {DIV} at (0,100) size 100x100
         RenderBlock {DIV} at (100,0) size 684x200
