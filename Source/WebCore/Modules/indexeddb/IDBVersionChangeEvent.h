@@ -35,7 +35,7 @@ namespace WebCore {
 
 struct IDBVersionChangeEventInit : public EventInit {
     uint64_t oldVersion { 0 };
-    Optional<uint64_t> newVersion { Nullopt };
+    Optional<uint64_t> newVersion;
 };
 
 class IDBVersionChangeEvent final : public Event {

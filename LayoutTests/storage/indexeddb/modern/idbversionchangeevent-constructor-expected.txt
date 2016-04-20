@@ -10,6 +10,9 @@ PASS event.newVersion is null
 event = new IDBVersionChangeEvent('bar', { oldVersion: 6, newVersion: null });
 PASS event.oldVersion is 6
 PASS event.newVersion is null
+event = new IDBVersionChangeEvent('bar', { oldVersion: 4, newVersion: undefined });
+PASS event.oldVersion is 4
+PASS event.newVersion is null
 event = new IDBVersionChangeEvent('bar', { oldVersion: 0, newVersion: 17 });
 PASS event.oldVersion is 0
 PASS event.newVersion is 17

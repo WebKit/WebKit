@@ -23,6 +23,10 @@ evalAndLog("event = new IDBVersionChangeEvent('bar', { oldVersion: 6, newVersion
 shouldBeEqualToNumber("event.oldVersion", 6);
 shouldBeNull("event.newVersion");
 
+evalAndLog("event = new IDBVersionChangeEvent('bar', { oldVersion: 4, newVersion: undefined });");
+shouldBeEqualToNumber("event.oldVersion", 4);
+shouldBeNull("event.newVersion");
+
 evalAndLog("event = new IDBVersionChangeEvent('bar', { oldVersion: 0, newVersion: 17 });");
 shouldBeEqualToNumber("event.oldVersion", 0);
 shouldBeEqualToNumber("event.newVersion", 17);

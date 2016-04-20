@@ -1,3 +1,12 @@
+2016-04-20  Brady Eidson  <beidson@apple.com>
+
+        Addressing additional review feedback for:
+        Modern IDB: Lots of IDB bindings cleanup (including making IDBVersionChangeEvent constructible).
+        https://bugs.webkit.org/show_bug.cgi?id=156760
+
+        * storage/indexeddb/modern/idbversionchangeevent-constructor-expected.txt:
+        * storage/indexeddb/modern/idbversionchangeevent-constructor.html:
+
 2016-04-20  Frederic Wang  <fwang@igalia.com>
 
         Refactor RenderMathMLSpace to avoid using flexbox
