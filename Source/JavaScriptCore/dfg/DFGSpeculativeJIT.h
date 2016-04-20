@@ -738,6 +738,7 @@ public:
     void compileIsJSArray(Node*);
     void compileIsArrayConstructor(Node*);
     void compileIsArrayObject(Node*);
+    void compileIsRegExpObject(Node*);
     
     void emitCall(Node*);
     

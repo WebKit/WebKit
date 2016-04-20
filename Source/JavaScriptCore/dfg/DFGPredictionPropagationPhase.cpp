@@ -437,7 +437,8 @@ private:
         case IsString:
         case IsObject:
         case IsObjectOrNull:
-        case IsFunction: {
+        case IsFunction:
+        case IsRegExpObject: {
             changed |= setPrediction(SpecBoolean);
             break;
         }

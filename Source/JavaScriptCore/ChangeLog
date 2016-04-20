@@ -1,5 +1,88 @@
 2016-04-19  Mark Lam  <mark.lam@apple.com>
 
+        Re-landing: ES6: Implement RegExp.prototype[@@search].
+        https://bugs.webkit.org/show_bug.cgi?id=156331
+
+        Reviewed by Keith Miller.
+
+        What changed?
+        1. Implemented search builtin in RegExpPrototype.js.
+           The native path is now used as a fast path.
+        2. Added DFG support for an IsRegExpObjectIntrinsic (modelled after the
+           IsJSArrayIntrinsic).
+        3. Renamed @isRegExp to @isRegExpObject to match the new IsRegExpObjectIntrinsic.
+        4. Change the esSpecIsRegExpObject() implementation to check if the object's
+           JSType is RegExpObjectType instead of walking the classinfo chain.
+
+        * builtins/RegExpPrototype.js:
+        (search):
+        * builtins/StringPrototype.js:
+        (search):
+        - fixed some indentation.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIsArrayConstructor):
+        (JSC::DFG::SpeculativeJIT::compileIsRegExpObject):
+        (JSC::DFG::SpeculativeJIT::compileCallObjectConstructor):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsRegExpObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::isExoticForTypeof):
+        (JSC::FTL::DFG::LowerDFGToB3::isRegExpObject):
+        (JSC::FTL::DFG::LowerDFGToB3::isType):
+        * runtime/Intrinsic.h:
+        - Added IsRegExpObjectIntrinsic.
+
+        * runtime/CommonIdentifiers.h:
+
+        * runtime/ECMAScriptSpecInternalFunctions.cpp:
+        (JSC::esSpecIsConstructor):
+        - Changed to use uncheckedArgument since this is only called from internal code.
+        (JSC::esSpecIsRegExpObject):
+        (JSC::esSpecIsRegExp): Deleted.
+        * runtime/ECMAScriptSpecInternalFunctions.h:
+        - Changed to check the object for a JSType of RegExpObjectType.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        - Added split fast path.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        (JSC::regExpProtoFuncSearchFast):
+        (JSC::regExpProtoFuncSearch): Deleted.
+        * runtime/RegExpPrototype.h:
+
+        * tests/es6.yaml:
+        * tests/stress/regexp-search.js:
+        - Rebased test.
+
+2016-04-19  Mark Lam  <mark.lam@apple.com>
+
         Replace $vm.printValue() with $vm.value().
         https://bugs.webkit.org/show_bug.cgi?id=156767
 

@@ -57,8 +57,8 @@ function search(regexp)
     }
 
     if (regexp != null) {
-         var searcher = regexp[@symbolSearch];
-         if (searcher != @undefined)
+        var searcher = regexp[@symbolSearch];
+        if (searcher != @undefined)
             return searcher.@call(regexp, this);
     }
 

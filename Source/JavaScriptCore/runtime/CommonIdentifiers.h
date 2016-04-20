@@ -415,7 +415,7 @@
     macro(isJSArray) \
     macro(isArrayConstructor) \
     macro(isConstructor) \
-    macro(isRegExp) \
+    macro(isRegExpObject) \
     macro(concatMemcpy) \
     macro(appendMemcpy) \
     macro(predictFinalLengthFromArgumunts) \
@@ -434,6 +434,7 @@
     macro(regExpProtoSourceGetter) \
     macro(regExpProtoStickyGetter) \
     macro(regExpProtoUnicodeGetter) \
+    macro(regExpSearchFast) \
     macro(regExpSplitFast) \
     macro(stringIncludesInternal) \
     macro(stringSplitFast) \

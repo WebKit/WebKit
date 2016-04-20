@@ -1,3 +1,32 @@
+2016-04-19  Mark Lam  <mark.lam@apple.com>
+
+        Re-landing: ES6: Implement RegExp.prototype[@@search].
+        https://bugs.webkit.org/show_bug.cgi?id=156331
+
+        Reviewed by Keith Miller.
+
+        * js/regress/regexp-prototype-search-observable-side-effects-expected.txt: Added.
+        * js/regress/regexp-prototype-search-observable-side-effects.html: Added.
+        * js/regress/regexp-prototype-search-observable-side-effects2-expected.txt: Added.
+        * js/regress/regexp-prototype-search-observable-side-effects2.html: Added.
+
+        * js/regress/script-tests/regexp-prototype-search-observable-side-effects.js: Added.
+        * js/regress/script-tests/regexp-prototype-search-observable-side-effects2.js: Added.
+
+        * js/regress/script-tests/string-prototype-search-observable-side-effects.js: Added.
+        * js/regress/script-tests/string-prototype-search-observable-side-effects2.js: Added.
+        * js/regress/script-tests/string-prototype-search-observable-side-effects3.js: Added.
+        * js/regress/script-tests/string-prototype-search-observable-side-effects4.js: Added.
+
+        * js/regress/string-prototype-search-observable-side-effects-expected.txt: Added.
+        * js/regress/string-prototype-search-observable-side-effects.html: Added.
+        * js/regress/string-prototype-search-observable-side-effects2-expected.txt: Added.
+        * js/regress/string-prototype-search-observable-side-effects2.html: Added.
+        * js/regress/string-prototype-search-observable-side-effects3-expected.txt: Added.
+        * js/regress/string-prototype-search-observable-side-effects3.html: Added.
+        * js/regress/string-prototype-search-observable-side-effects4-expected.txt: Added.
+        * js/regress/string-prototype-search-observable-side-effects4.html: Added.
+
 2016-04-19  Alex Christensen  <achristensen@webkit.org>
 
         Rebase test after r199738
