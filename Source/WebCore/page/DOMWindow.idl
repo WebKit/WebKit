@@ -193,14 +193,6 @@
 
     attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
     attribute MutationObserverConstructor WebKitMutationObserver; // FIXME: Add metrics to determine when we can remove this.
-    [Conditional=INDEXED_DATABASE, EnabledAtRuntime=IndexedDB] attribute IDBCursorConstructor webkitIDBCursor;
-    [Conditional=INDEXED_DATABASE, EnabledAtRuntime=IndexedDB] attribute IDBDatabaseConstructor webkitIDBDatabase;
-    [Conditional=INDEXED_DATABASE, EnabledAtRuntime=IndexedDB] attribute IDBFactoryConstructor webkitIDBFactory;
-    [Conditional=INDEXED_DATABASE, EnabledAtRuntime=IndexedDB] attribute IDBIndexConstructor webkitIDBIndex;
-    [Conditional=INDEXED_DATABASE, EnabledAtRuntime=IndexedDB] attribute IDBKeyRangeConstructor webkitIDBKeyRange;
-    [Conditional=INDEXED_DATABASE, EnabledAtRuntime=IndexedDB] attribute IDBObjectStoreConstructor webkitIDBObjectStore;
-    [Conditional=INDEXED_DATABASE, EnabledAtRuntime=IndexedDB] attribute IDBRequestConstructor webkitIDBRequest;
-    [Conditional=INDEXED_DATABASE, EnabledAtRuntime=IndexedDB] attribute IDBTransactionConstructor webkitIDBTransaction;
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
 

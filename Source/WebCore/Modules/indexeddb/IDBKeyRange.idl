@@ -27,6 +27,7 @@
     Conditional=INDEXED_DATABASE,
     ImplementationLacksVTable,
     EnabledAtRuntime=IndexedDB,
+    Exposed=(Window,Worker),
 ] interface IDBKeyRange {
     [ImplementationReturnType=IDBKey] readonly attribute any lower;
     [ImplementationReturnType=IDBKey] readonly attribute any upper;

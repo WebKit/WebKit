@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,11 @@
 
 namespace WebCore {
 
+struct IDBVersionChangeEventInit : public EventInit {
+    uint64_t oldVersion { 0 };
+    Optional<uint64_t> newVersion { Nullopt };
+};
+
 class IDBVersionChangeEvent final : public Event {
 public:
     static Ref<IDBVersionChangeEvent> create(uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType)
@@ -45,21 +50,27 @@ public:
         return adoptRef(*new IDBVersionChangeEvent(requestIdentifier, oldVersion, newVersion, eventType));
     }
 
+    static Ref<IDBVersionChangeEvent> createForBindings(const AtomicString& type, const IDBVersionChangeEventInit& initializer)
+    {
+        return adoptRef(*new IDBVersionChangeEvent(type, initializer));
+    }
+
     const IDBResourceIdentifier& requestIdentifier() const { return m_requestIdentifier; }
 
     bool isVersionChangeEvent() const final { return true; }
 
     uint64_t oldVersion() const { return m_oldVersion; }
-    Optional<uint64_t> newVersion() const;
+    Optional<uint64_t> newVersion() const { return m_newVersion; }
 
 private:
     IDBVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType);
+    IDBVersionChangeEvent(const AtomicString&, const IDBVersionChangeEventInit&);
 
     EventInterface eventInterface() const;
 
     IDBResourceIdentifier m_requestIdentifier;
     uint64_t m_oldVersion;
-    uint64_t m_newVersion;
+    Optional<uint64_t> m_newVersion;
 };
 
 } // namespace WebCore

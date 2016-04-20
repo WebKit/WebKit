@@ -1,0 +1,22 @@
+PASS IDBVersionChangeEvent.length is 1
+event = new IDBVersionChangeEvent('foo');
+PASS event instanceof IDBVersionChangeEvent is true
+PASS event.toString() is "[object IDBVersionChangeEvent]"
+PASS event.oldVersion is 0
+PASS event.newVersion is null
+event = new IDBVersionChangeEvent('bar', { oldVersion: 2 });
+PASS event.oldVersion is 2
+PASS event.newVersion is null
+event = new IDBVersionChangeEvent('bar', { oldVersion: 6, newVersion: null });
+PASS event.oldVersion is 6
+PASS event.newVersion is null
+event = new IDBVersionChangeEvent('bar', { oldVersion: 0, newVersion: 17 });
+PASS event.oldVersion is 0
+PASS event.newVersion is 17
+event = new IDBVersionChangeEvent('bar', { oldVersion: 43876528735628, newVersion: 0 });
+PASS event.oldVersion is 43876528735628
+PASS event.newVersion is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

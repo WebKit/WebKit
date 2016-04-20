@@ -33,6 +33,7 @@
 #include <runtime/JSCInlines.h>
 #include <runtime/Uint8Array.h>
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 
 namespace Deprecated {
 class ScriptValue;
@@ -101,6 +102,19 @@ private:
     GetPropertyResult tryGetPropertyAndResult(const char* propertyName, T* context, void (*setter)(T* context, const Result&)) const;
     GetPropertyResult tryGetProperty(const char* propertyName, JSC::JSValue&) const;
 
+    template <typename T>
+    static void convertValue(JSC::ExecState* execState, JSC::JSValue value, Optional<T>& result)
+    {
+        if (value.isUndefinedOrNull()) {
+            result = Nullopt;
+            return;
+        }
+
+        T actualResult;
+        convertValue(execState, value, actualResult);
+        result = actualResult;
+    }
+    
     static void convertValue(JSC::ExecState*, JSC::JSValue, bool& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, int& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned& result);

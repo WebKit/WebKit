@@ -29,6 +29,7 @@
     SkipVTableValidation,
     JSCustomMarkFunction,
     GenerateIsReachable=Impl,
+    Exposed=(Window,Worker),
 ] interface IDBIndex {
     readonly attribute DOMString name;
     readonly attribute IDBObjectStore objectStore;

@@ -1,3 +1,14 @@
+2016-04-19  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Lots of IDB bindings cleanup (including making IDBVersionChangeEvent constructible).
+        https://bugs.webkit.org/show_bug.cgi?id=156760
+
+        Reviewed by Darin Adler (and looked over by Chris Dumez and Alex Christensen).
+
+        * js/dom/global-constructors-attributes-idb-expected.txt: Updated for removed attributes.
+        * storage/indexeddb/modern/idbversionchangeevent-constructor-expected.txt: Added.
+        * storage/indexeddb/modern/idbversionchangeevent-constructor.html: Added.
+
 2016-04-19  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unskip media tests since r199649

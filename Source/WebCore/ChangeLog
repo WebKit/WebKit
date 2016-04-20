@@ -1,3 +1,44 @@
+2016-04-19  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Lots of IDB bindings cleanup (including making IDBVersionChangeEvent constructible).
+        https://bugs.webkit.org/show_bug.cgi?id=156760
+
+        Reviewed by Darin Adler (and looked over by Chris Dumez and Alex Christensen).
+
+        Test: storage/indexeddb/modern/idbversionchangeevent-constructor.html
+
+        Add WorkerGlobalScopeConstructors to the xcodeproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Remove the completely irrelevant webkit* prefixed constructors from DOMWindow:
+        * page/DOMWindow.idl:
+
+        Remove the poor way most objects were exposed on the WorkerGlobalScope:
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl:
+
+        Expose most of the objects on the WorkerGlobalScope the correct way:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBCursorWithValue.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBOpenDBRequest.idl:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+
+        Make IDBVersionChangeEvent constructible:        
+        * Modules/indexeddb/IDBVersionChangeEvent.cpp:
+        (WebCore::IDBVersionChangeEvent::IDBVersionChangeEvent):
+        (WebCore::IDBVersionChangeEvent::newVersion): Deleted.
+        * Modules/indexeddb/IDBVersionChangeEvent.h:
+        * Modules/indexeddb/IDBVersionChangeEvent.idl:
+
+        * bindings/js/JSDictionary.h:
+        (WebCore::JSDictionary::convertValue): Add a templated form of convertValue that
+          handles Optional<>s.
+
 2016-04-19  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r199738

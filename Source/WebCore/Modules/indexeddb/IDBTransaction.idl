@@ -29,6 +29,7 @@
     ActiveDOMObject,
     EnabledAtRuntime=IndexedDB,
     SkipVTableValidation,
+    Exposed=(Window,Worker),
 ] interface IDBTransaction : EventTarget {
     readonly attribute DOMString mode;
     readonly attribute IDBDatabase db;

@@ -2794,10 +2794,10 @@
 		7E474E1E12494DC900235364 /* SQLiteDatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E474E1B12494DC900235364 /* SQLiteDatabaseTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E474E1F12494DC900235364 /* SQLiteDatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E474E1C12494DC900235364 /* SQLiteDatabaseTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E474E2012494DC900235364 /* SQLiteDatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E474E1D12494DC900235364 /* SQLiteDatabaseTracker.cpp */; };
-		7E4C96DC1AD4483500365A51 /* JSReadableStreamSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E4C96D81AD4483500365A51 /* JSReadableStreamSource.cpp */; };
-		7E4C96DD1AD4483500365A51 /* JSReadableStreamSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4C96D91AD4483500365A51 /* JSReadableStreamSource.h */; };
 		7E4C96DC1AD4483500365A50 /* JSFetchRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E4C96D81AD4483500365A50 /* JSFetchRequest.cpp */; };
+		7E4C96DC1AD4483500365A51 /* JSReadableStreamSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E4C96D81AD4483500365A51 /* JSReadableStreamSource.cpp */; };
 		7E4C96DD1AD4483500365A50 /* JSFetchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4C96D91AD4483500365A50 /* JSFetchRequest.h */; };
+		7E4C96DD1AD4483500365A51 /* JSReadableStreamSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4C96D91AD4483500365A51 /* JSReadableStreamSource.h */; };
 		7E4DE10D198B10B60051CB02 /* DiskCacheMonitorCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E4DE10C198B10B60051CB02 /* DiskCacheMonitorCocoa.mm */; };
 		7E5D7A76161D3F8F00896C34 /* OESElementIndexUint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D7A73161D3F8F00896C34 /* OESElementIndexUint.cpp */; };
 		7E5D7A77161D3F8F00896C34 /* OESElementIndexUint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E5D7A74161D3F8F00896C34 /* OESElementIndexUint.h */; };
@@ -8997,8 +8997,8 @@
 		4129DF841BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamPrivateConstructors.h; sourceTree = "<group>"; };
 		413015D51C7B570400091C6E /* FetchResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchResponse.cpp; sourceTree = "<group>"; };
 		413015D51C7B570400091C6F /* FetchResponseSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchResponseSource.cpp; sourceTree = "<group>"; };
-		413015D61C7B570400091C6F /* FetchResponseSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchResponseSource.h; sourceTree = "<group>"; };
 		413015D61C7B570400091C6E /* FetchResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchResponse.h; sourceTree = "<group>"; };
+		413015D61C7B570400091C6F /* FetchResponseSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchResponseSource.h; sourceTree = "<group>"; };
 		413015D71C7B570400091C6E /* FetchResponse.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchResponse.idl; sourceTree = "<group>"; };
 		413015D81C7B570400091C6E /* FetchResponse.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FetchResponse.js; sourceTree = "<group>"; };
 		4138D3331244054800323D33 /* EventContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventContext.h; sourceTree = "<group>"; };
@@ -9659,6 +9659,7 @@
 		51741D0B0B07259A00ED442C /* BackForwardClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardClient.h; sourceTree = "<group>"; };
 		51741D0D0B07259A00ED442C /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
 		51741D0E0B07259A00ED442C /* HistoryItem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryItem.cpp; sourceTree = "<group>"; };
+		51748FA21CC6EEEB00728D84 /* WorkerGlobalScopeConstructors.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = WorkerGlobalScopeConstructors.idl; sourceTree = "<group>"; };
 		5174E20810A1F44F00F95E6F /* PopStateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopStateEvent.h; sourceTree = "<group>"; };
 		5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PopStateEvent.idl; sourceTree = "<group>"; };
 		51771DFC1BDB475600CAE8E4 /* MemoryObjectStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryObjectStore.cpp; sourceTree = "<group>"; };
@@ -10447,10 +10448,10 @@
 		7E474E1B12494DC900235364 /* SQLiteDatabaseTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteDatabaseTrackerClient.h; sourceTree = "<group>"; };
 		7E474E1C12494DC900235364 /* SQLiteDatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteDatabaseTracker.h; sourceTree = "<group>"; };
 		7E474E1D12494DC900235364 /* SQLiteDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteDatabaseTracker.cpp; sourceTree = "<group>"; };
-		7E4C96D81AD4483500365A51 /* JSReadableStreamSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamSource.cpp; sourceTree = "<group>"; };
-		7E4C96D91AD4483500365A51 /* JSReadableStreamSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamSource.h; sourceTree = "<group>"; };
 		7E4C96D81AD4483500365A50 /* JSFetchRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchRequest.cpp; sourceTree = "<group>"; };
+		7E4C96D81AD4483500365A51 /* JSReadableStreamSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamSource.cpp; sourceTree = "<group>"; };
 		7E4C96D91AD4483500365A50 /* JSFetchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFetchRequest.h; sourceTree = "<group>"; };
+		7E4C96D91AD4483500365A51 /* JSReadableStreamSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamSource.h; sourceTree = "<group>"; };
 		7E4DE10C198B10B60051CB02 /* DiskCacheMonitorCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DiskCacheMonitorCocoa.mm; sourceTree = "<group>"; };
 		7E5D7A73161D3F8F00896C34 /* OESElementIndexUint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OESElementIndexUint.cpp; sourceTree = "<group>"; };
 		7E5D7A74161D3F8F00896C34 /* OESElementIndexUint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESElementIndexUint.h; sourceTree = "<group>"; };
@@ -17694,6 +17695,7 @@
 				1A1414B413A0F0500019996C /* WebKitFontFamilyNames.h */,
 				99CC0B6818BEA1FF006CEBCC /* WebReplayInputs.cpp */,
 				99CC0B6918BEA1FF006CEBCC /* WebReplayInputs.h */,
+				51748FA21CC6EEEB00728D84 /* WorkerGlobalScopeConstructors.idl */,
 				9908B0F91BCAD07D00ED0F75 /* WritableStreamBuiltins.cpp */,
 				9B03D8061BB3110D00B764E8 /* WritableStreamBuiltins.h */,
 				9908B0FD1BCAD07D00ED0F75 /* WritableStreamInternalsBuiltins.cpp */,

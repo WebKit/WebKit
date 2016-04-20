@@ -30,6 +30,7 @@
     ActiveDOMObject,
     SkipVTableValidation,
     JSCustomMarkFunction,
+    Exposed=(Window,Worker),
 ] interface IDBCursor {
     [CustomGetter] readonly attribute any source;
     readonly attribute DOMString direction;

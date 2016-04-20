@@ -29,6 +29,7 @@
     JSGenerateToNativeObject,
     EnabledAtRuntime=IndexedDB,
     SkipVTableValidation,
+    Exposed=(Window,Worker),
 ] interface IDBOpenDBRequest : IDBRequest {
     attribute EventHandler onblocked;
     attribute EventHandler onupgradeneeded;

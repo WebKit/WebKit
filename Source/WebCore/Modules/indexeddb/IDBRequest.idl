@@ -33,6 +33,7 @@
     EnabledAtRuntime=IndexedDB,
     GenerateIsReachable=Impl,
     SkipVTableValidation,
+    Exposed=(Window,Worker),
 ] interface IDBRequest : EventTarget {
     [CustomGetter] readonly attribute any result;
     [GetterRaisesExceptionWithMessage] readonly attribute DOMError error;

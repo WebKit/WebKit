@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,15 +34,18 @@ IDBVersionChangeEvent::IDBVersionChangeEvent(const IDBResourceIdentifier& reques
     : Event(name, false /*canBubble*/, false /*cancelable*/)
     , m_requestIdentifier(requestIdentifier)
     , m_oldVersion(oldVersion)
-    , m_newVersion(newVersion)
 {
+    if (newVersion)
+        m_newVersion = newVersion;
+    else
+        m_newVersion = Nullopt;
 }
 
-Optional<uint64_t> IDBVersionChangeEvent::newVersion() const
+IDBVersionChangeEvent::IDBVersionChangeEvent(const AtomicString& name, const IDBVersionChangeEventInit& init)
+    : Event(name, false /*canBubble*/, false /*cancelable*/)
+    , m_oldVersion(init.oldVersion)
+    , m_newVersion(init.newVersion)
 {
-    if (!m_newVersion)
-        return Nullopt;
-    return m_newVersion;
 }
 
 EventInterface IDBVersionChangeEvent::eventInterface() const
