@@ -1,5 +1,25 @@
 2016-04-20  Chris Dumez  <cdumez@apple.com>
 
+        Use Optional<size_t> for OrderIterator::m_orderIndex instead of int
+        https://bugs.webkit.org/show_bug.cgi?id=156796
+
+        Reviewed by Anders Carlsson.
+
+        Use Optional<size_t> for OrderIterator::m_orderIndex instead of int
+        (with invalid value of -1). m_orderIndex a vector index and therefore
+        is in the range of an unsigned (type used internally by Vector, even
+        though the index is exposed as size_t). Therefore, assigning it to an
+        int is unsafe as it may overflow.
+
+        This may fix <rdar://problem/23410338> which is a top crasher.
+
+        * rendering/OrderIterator.cpp:
+        (WebCore::OrderIterator::next):
+        (WebCore::OrderIterator::reset):
+        * rendering/OrderIterator.h:
+
+2016-04-20  Chris Dumez  <cdumez@apple.com>
+
         Crash under needsAppleMailPaginationQuirk()
         https://bugs.webkit.org/show_bug.cgi?id=156806
         <rdar://problem/23323479>

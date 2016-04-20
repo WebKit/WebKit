@@ -36,8 +36,6 @@
 
 namespace WebCore {
 
-static const int cInvalidIndex = -1;
-
 OrderIterator::OrderIterator(RenderBox& containerBox)
     : m_containerBox(containerBox)
 {
@@ -52,23 +50,22 @@ RenderBox* OrderIterator::first()
 
 RenderBox* OrderIterator::next()
 {
-    int endIndex = m_orderValues.size();
     do {
         if (m_currentChild) {
             m_currentChild = m_currentChild->nextSiblingBox();
             continue;
         }
 
-        if (m_orderIndex != cInvalidIndex)
-            ++m_orderIndex;
+        if (m_orderIndex)
+            ++m_orderIndex.value();
         else
             m_orderIndex = 0;
 
-        if (m_orderIndex == endIndex)
+        if (m_orderIndex.value() >= m_orderValues.size())
             return nullptr;
 
         m_currentChild = m_containerBox.firstChildBox();
-    } while (!m_currentChild || m_currentChild->style().order() != m_orderValues[m_orderIndex]);
+    } while (!m_currentChild || m_currentChild->style().order() != m_orderValues[m_orderIndex.value()]);
 
     return m_currentChild;
 }
@@ -76,7 +73,7 @@ RenderBox* OrderIterator::next()
 void OrderIterator::reset()
 {
     m_currentChild = nullptr;
-    m_orderIndex = cInvalidIndex;
+    m_orderIndex = Nullopt;
 }
 
 OrderIteratorPopulator::OrderIteratorPopulator(OrderIterator& iterator)

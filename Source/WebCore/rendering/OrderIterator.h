@@ -33,6 +33,7 @@
 #define OrderIterator_h
 
 #include <wtf/Noncopyable.h>
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -56,7 +57,7 @@ private:
     RenderBox* m_currentChild;
 
     Vector<int, 1> m_orderValues;
-    int m_orderIndex;
+    Optional<size_t> m_orderIndex;
 };
 
 class OrderIteratorPopulator {
