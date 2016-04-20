@@ -1,3 +1,60 @@
+2016-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from WebAudio
+        https://bugs.webkit.org/show_bug.cgi?id=156777
+
+        Reviewed by Darin Adler.
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from WebAudio and
+        modernize the interface a bit.
+
+        There is no major Web-exposed behavioral change except for
+        the exception type thrown when passing null (now always TypeError).
+        Tests were updated to add coverage for this.
+
+        * Modules/webaudio/AsyncAudioDecoder.cpp:
+        (WebCore::AsyncAudioDecoder::decodeAsync):
+        (WebCore::AsyncAudioDecoder::DecodingTask::DecodingTask):
+        (WebCore::AsyncAudioDecoder::DecodingTask::decode): Deleted.
+        * Modules/webaudio/AsyncAudioDecoder.h:
+        (WebCore::AsyncAudioDecoder::DecodingTask::audioData):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::lazyInitialize):
+        (WebCore::AudioContext::createBuffer):
+        (WebCore::AudioContext::decodeAudioData):
+        (WebCore::AudioContext::createBufferSource):
+        (WebCore::AudioContext::createMediaElementSource):
+        (WebCore::AudioContext::createMediaStreamSource):
+        (WebCore::AudioContext::createMediaStreamDestination):
+        (WebCore::AudioContext::createScriptProcessor):
+        (WebCore::AudioContext::createBiquadFilter):
+        (WebCore::AudioContext::createWaveShaper):
+        (WebCore::AudioContext::createPanner):
+        (WebCore::AudioContext::createConvolver):
+        (WebCore::AudioContext::createDynamicsCompressor):
+        (WebCore::AudioContext::createAnalyser):
+        (WebCore::AudioContext::createGain):
+        (WebCore::AudioContext::createDelay):
+        (WebCore::AudioContext::createChannelSplitter):
+        (WebCore::AudioContext::createChannelMerger):
+        (WebCore::AudioContext::createOscillator):
+        (WebCore::AudioContext::createPeriodicWave):
+        (WebCore::AudioContext::derefFinishedSourceNodes):
+        (WebCore::AudioContext::refNode):
+        (WebCore::AudioContext::derefNode):
+        (WebCore::AudioContext::notifyNodeFinishedProcessing): Deleted.
+        (WebCore::AudioContext::derefUnfinishedSourceNodes): Deleted.
+        (WebCore::AudioContext::lock): Deleted.
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::create):
+        (WebCore::MediaElementAudioSourceNode::MediaElementAudioSourceNode):
+        (WebCore::MediaElementAudioSourceNode::process):
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        (WebCore::MediaElementAudioSourceNode::mediaElement):
+        * Modules/webaudio/OscillatorNode.idl:
+
 2016-04-20  Brady Eidson  <beidson@apple.com>
 
         Addressing additional review feedback for:

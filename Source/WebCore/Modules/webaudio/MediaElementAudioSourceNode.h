@@ -41,11 +41,11 @@ class AudioContext;
     
 class MediaElementAudioSourceNode : public AudioNode, public AudioSourceProviderClient {
 public:
-    static Ref<MediaElementAudioSourceNode> create(AudioContext&, HTMLMediaElement*);
+    static Ref<MediaElementAudioSourceNode> create(AudioContext&, HTMLMediaElement&);
 
     virtual ~MediaElementAudioSourceNode();
 
-    HTMLMediaElement* mediaElement() { return m_mediaElement.get(); }                                        
+    HTMLMediaElement& mediaElement() { return m_mediaElement; }
 
     // AudioNode
     void process(size_t framesToProcess) override;
@@ -58,7 +58,7 @@ public:
     void unlock();
 
 private:
-    MediaElementAudioSourceNode(AudioContext&, HTMLMediaElement*);
+    MediaElementAudioSourceNode(AudioContext&, HTMLMediaElement&);
 
     double tailTime() const override { return 0; }
     double latencyTime() const override { return 0; }
@@ -66,7 +66,7 @@ private:
     // As an audio source, we will never propagate silence.
     bool propagatesSilence() const override { return false; }
 
-    RefPtr<HTMLMediaElement> m_mediaElement;
+    Ref<HTMLMediaElement> m_mediaElement;
     Lock m_processMutex;
 
     unsigned m_sourceNumberOfChannels;

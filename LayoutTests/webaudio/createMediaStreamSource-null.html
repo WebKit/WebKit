@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="resources/audio-testing.js"></script>
+</head>
+<body>
+<script>
+description("Tests that passing null to context.createMediaStreamSource() throws a TypeError.");
+
+var context = new webkitAudioContext();
+shouldThrow("context.createMediaStreamSource(null)", "'TypeError: Type error'");
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

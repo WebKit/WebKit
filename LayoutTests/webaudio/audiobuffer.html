@@ -49,6 +49,8 @@ try {
     testPassed("Exception has been thrown correctly when index is not less than numberOfChannels.");
 }
 
+shouldThrow("context.createBuffer(null, false)", "'TypeError: Type error'");
+
 </script>
 
 <script src="../resources/js-test-post.js"></script>

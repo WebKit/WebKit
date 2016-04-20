@@ -17,12 +17,8 @@ window.jsTestIsAsync = true;
 
 var context = new webkitAudioContext();
 
-try {
-    context.decodeAudioData(null, function(){}, function(){});
-    testFailed("decodeAudioData should raise exception when arraybuffer parameter is null.");
-} catch(e) {
-    testPassed("decodeAudioData raises exception correctly when arraybuffer parameter is null.");
-}
+// decodeAudioData should raise exception when arraybuffer parameter is null.
+shouldThrow("context.decodeAudioData(null, function(){}, function(){});", "'TypeError: Type error'");
 
 var decodeCaseArray = [{url: "resources/media/24bit-44khz.wav", result: true},
                        {url: "resources/media/invalid-audio-file.txt", result: false}];

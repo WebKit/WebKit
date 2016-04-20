@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +39,6 @@
 #include <atomic>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -101,11 +101,11 @@ public:
     void incrementActiveSourceCount();
     void decrementActiveSourceCount();
     
-    PassRefPtr<AudioBuffer> createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode&);
-    PassRefPtr<AudioBuffer> createBuffer(ArrayBuffer*, bool mixToMono, ExceptionCode&);
+    RefPtr<AudioBuffer> createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode&);
+    RefPtr<AudioBuffer> createBuffer(ArrayBuffer&, bool mixToMono, ExceptionCode&);
 
     // Asynchronous audio file data decoding.
-    void decodeAudioData(ArrayBuffer*, PassRefPtr<AudioBufferCallback>, PassRefPtr<AudioBufferCallback>, ExceptionCode& ec);
+    void decodeAudioData(Ref<ArrayBuffer>&&, RefPtr<AudioBufferCallback>&&, RefPtr<AudioBufferCallback>&&);
 
     AudioListener* listener() { return m_listener.get(); }
 
@@ -121,32 +121,32 @@ public:
     const AtomicString& state() const;
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
-    PassRefPtr<AudioBufferSourceNode> createBufferSource();
+    Ref<AudioBufferSourceNode> createBufferSource();
 #if ENABLE(VIDEO)
-    PassRefPtr<MediaElementAudioSourceNode> createMediaElementSource(HTMLMediaElement*, ExceptionCode&);
+    RefPtr<MediaElementAudioSourceNode> createMediaElementSource(HTMLMediaElement&, ExceptionCode&);
 #endif
 #if ENABLE(MEDIA_STREAM)
-    PassRefPtr<MediaStreamAudioSourceNode> createMediaStreamSource(MediaStream*, ExceptionCode&);
-    PassRefPtr<MediaStreamAudioDestinationNode> createMediaStreamDestination();
+    RefPtr<MediaStreamAudioSourceNode> createMediaStreamSource(MediaStream&, ExceptionCode&);
+    Ref<MediaStreamAudioDestinationNode> createMediaStreamDestination();
 #endif
-    PassRefPtr<GainNode> createGain();
-    PassRefPtr<BiquadFilterNode> createBiquadFilter();
-    PassRefPtr<WaveShaperNode> createWaveShaper();
-    PassRefPtr<DelayNode> createDelay(ExceptionCode&);
-    PassRefPtr<DelayNode> createDelay(double maxDelayTime, ExceptionCode&);
-    PassRefPtr<PannerNode> createPanner();
-    PassRefPtr<ConvolverNode> createConvolver();
-    PassRefPtr<DynamicsCompressorNode> createDynamicsCompressor();    
-    PassRefPtr<AnalyserNode> createAnalyser();
-    PassRefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, ExceptionCode&);
-    PassRefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode&);
-    PassRefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode&);
-    PassRefPtr<ChannelSplitterNode> createChannelSplitter(ExceptionCode&);
-    PassRefPtr<ChannelSplitterNode> createChannelSplitter(size_t numberOfOutputs, ExceptionCode&);
-    PassRefPtr<ChannelMergerNode> createChannelMerger(ExceptionCode&);
-    PassRefPtr<ChannelMergerNode> createChannelMerger(size_t numberOfInputs, ExceptionCode&);
-    PassRefPtr<OscillatorNode> createOscillator();
-    PassRefPtr<PeriodicWave> createPeriodicWave(Float32Array* real, Float32Array* imag, ExceptionCode&);
+    Ref<GainNode> createGain();
+    Ref<BiquadFilterNode> createBiquadFilter();
+    Ref<WaveShaperNode> createWaveShaper();
+    RefPtr<DelayNode> createDelay(ExceptionCode&);
+    RefPtr<DelayNode> createDelay(double maxDelayTime, ExceptionCode&);
+    Ref<PannerNode> createPanner();
+    Ref<ConvolverNode> createConvolver();
+    Ref<DynamicsCompressorNode> createDynamicsCompressor();
+    Ref<AnalyserNode> createAnalyser();
+    RefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, ExceptionCode&);
+    RefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode&);
+    RefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode&);
+    RefPtr<ChannelSplitterNode> createChannelSplitter(ExceptionCode&);
+    RefPtr<ChannelSplitterNode> createChannelSplitter(size_t numberOfOutputs, ExceptionCode&);
+    RefPtr<ChannelMergerNode> createChannelMerger(ExceptionCode&);
+    RefPtr<ChannelMergerNode> createChannelMerger(size_t numberOfInputs, ExceptionCode&);
+    Ref<OscillatorNode> createOscillator();
+    RefPtr<PeriodicWave> createPeriodicWave(Float32Array* real, Float32Array* imag, ExceptionCode&);
 
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
     void notifyNodeFinishedProcessing(AudioNode*);
@@ -303,8 +303,8 @@ private:
     // In turn, these nodes reference all nodes they're connected to.  All nodes are ultimately connected to the AudioDestinationNode.
     // When the context dereferences a source node, it will be deactivated from the rendering graph along with all other nodes it is
     // uniquely connected to.  See the AudioNode::ref() and AudioNode::deref() methods for more details.
-    void refNode(AudioNode*);
-    void derefNode(AudioNode*);
+    void refNode(AudioNode&);
+    void derefNode(AudioNode&);
 
     // ActiveDOMObject API.
     void stop() override;

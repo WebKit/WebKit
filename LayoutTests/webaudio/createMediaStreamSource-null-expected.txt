@@ -1,0 +1,10 @@
+Tests that passing null to context.createMediaStreamSource() throws a TypeError.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS context.createMediaStreamSource(null) threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

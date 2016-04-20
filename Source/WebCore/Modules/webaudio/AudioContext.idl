@@ -31,13 +31,12 @@ enum AudioContextState {
 };
 
 [
-    EnabledBySetting=WebAudio,
-    Conditional=WEB_AUDIO,
     ActiveDOMObject,
+    Conditional=WEB_AUDIO,
     CustomConstructor,
-    UsePointersEvenForNonNullableObjectArguments,
-    InterfaceName=webkitAudioContext,
+    EnabledBySetting=WebAudio,
     ExportMacro=WEBCORE_EXPORT,
+    InterfaceName=webkitAudioContext,
 ] interface AudioContext : EventTarget {
     // All rendered audio ultimately connects to destination, which represents the audio hardware.
     readonly attribute AudioDestinationNode destination;
@@ -62,22 +61,19 @@ enum AudioContextState {
     readonly attribute unsigned long activeSourceCount;
     
     [RaisesException] AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
-    [RaisesException] AudioBuffer createBuffer(ArrayBuffer? buffer, boolean mixToMono);
+    [RaisesException] AudioBuffer createBuffer(ArrayBuffer buffer, boolean mixToMono);
 
     // Asynchronous audio file data decoding.
-    [RaisesException] void decodeAudioData(ArrayBuffer audioData, AudioBufferCallback successCallback, optional AudioBufferCallback errorCallback);
+    // FIXME: successCallback should be optional and the callbacks should not be nullable. This should also return a Promise.
+    void decodeAudioData(ArrayBuffer audioData, AudioBufferCallback? successCallback, optional AudioBufferCallback? errorCallback);
 
     // Sources
     AudioBufferSourceNode createBufferSource();
 
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    [RaisesException] MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
-#endif
+    [Conditional=VIDEO, RaisesException] MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
 
-#if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
-    [RaisesException] MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream);
-    MediaStreamAudioDestinationNode createMediaStreamDestination();
-#endif
+    [Conditional=MEDIA_STREAM, RaisesException] MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream);
+    [Conditional=MEDIA_STREAM] MediaStreamAudioDestinationNode createMediaStreamDestination();
 
     // Processing nodes
     GainNode createGain();

@@ -1,3 +1,22 @@
+2016-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from WebAudio
+        https://bugs.webkit.org/show_bug.cgi?id=156777
+
+        Reviewed by Darin Adler.
+
+        Added test coverage for the type of the exception being thrown when
+        pasing null to various WebAudio API.
+
+        * webaudio/audiobuffer-expected.txt:
+        * webaudio/audiobuffer.html:
+        * webaudio/createMediaStreamSource-null-expected.txt: Added.
+        * webaudio/createMediaStreamSource-null.html: Added.
+        * webaudio/decode-audio-data-basic-expected.txt:
+        * webaudio/decode-audio-data-basic.html:
+        * webaudio/mediaelementaudiosourcenode-expected.txt:
+        * webaudio/mediaelementaudiosourcenode.html:
+
 2016-04-20  Brady Eidson  <beidson@apple.com>
 
         Addressing additional review feedback for:

@@ -12,6 +12,7 @@ PASS getChannelData(1) returns a Float32Array object.
 PASS getChannelData(2) returns a Float32Array object.
 PASS getChannelData(3) returns a Float32Array object.
 PASS Exception has been thrown correctly when index is not less than numberOfChannels.
+PASS context.createBuffer(null, false) threw exception TypeError: Type error.
 PASS successfullyParsed is true
 
 TEST COMPLETE

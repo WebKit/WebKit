@@ -25,7 +25,6 @@
 // OscillatorNode is an audio generator of periodic waveforms.
 [
     Conditional=WEB_AUDIO,
-    UsePointersEvenForNonNullableObjectArguments,
     JSGenerateToJSObject,
 ] interface OscillatorNode : AudioNode {
 
@@ -55,7 +54,7 @@
     [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOn(unrestricted double when);
     [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOff(unrestricted double when);
 
-    void setPeriodicWave(PeriodicWave wave);
+    void setPeriodicWave(PeriodicWave? wave); // FIXME: The parameter should not be nullable.
 
     attribute EventHandler onended;
 };
