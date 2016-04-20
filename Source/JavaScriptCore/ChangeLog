@@ -1,3 +1,32 @@
+2016-04-19  Saam barati  <sbarati@apple.com>
+
+        allow jsc shell to dump sampling profiler data
+        https://bugs.webkit.org/show_bug.cgi?id=156725
+
+        Reviewed by Benjamin Poulain.
+
+        This patch adds a '--reportSamplingProfilerData' option to the
+        JSC shell which will enable the sampling profiler and dump
+        its data at the end of execution. The dump will include the
+        40 hottest functions and the 80 hottest bytecode locations.
+        If you're using this option to debug, it's easy to just hack
+        on the code to make it dump more or less information.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        (jscmain):
+        * runtime/Options.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::stackTracesAsJSON):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::StackFrame::hasExpressionInfo):
+        (JSC::SamplingProfiler::StackFrame::hasBytecodeIndex):
+        (JSC::SamplingProfiler::StackFrame::hasCodeBlockHash):
+        (JSC::SamplingProfiler::setStopWatch):
+
 2016-04-19  Mark Lam  <mark.lam@apple.com>
 
         Re-landing: ES6: Implement RegExp.prototype[@@search].

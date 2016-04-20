@@ -660,6 +660,7 @@ public:
     Vector<String> m_arguments;
     bool m_profile { false };
     String m_profilerOutput;
+    bool m_dumpSamplingProfilerData { false };
 
     void parseArguments(int, char**);
 };
@@ -2166,6 +2167,12 @@ void CommandLine::parseArguments(int argc, char** argv)
             needToDumpOptions = true;
             continue;
         }
+        if (!strcmp(arg, "--reportSamplingProfilerData")) {
+            JSC::Options::useSamplingProfiler() = true;
+            JSC::Options::collectSamplingProfilerDataForJSCShell() = true;
+            m_dumpSamplingProfilerData = true;
+            continue;
+        }
 
         // See if the -- option is a JSC VM option.
         if (strstr(arg, "--") == arg) {
@@ -2264,6 +2271,11 @@ int jscmain(int argc, char** argv)
         // We need to hold the API lock to do a GC.
         JSLockHolder locker(vm);
         vm->heap.collectAllGarbage();
+    }
+
+    if (options.m_dumpSamplingProfilerData) {
+        vm->samplingProfiler()->reportTopFunctions();
+        vm->samplingProfiler()->reportTopBytecodes();
     }
 
     printSuperSamplerState();

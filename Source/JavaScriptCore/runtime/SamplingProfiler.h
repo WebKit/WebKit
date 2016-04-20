@@ -29,6 +29,7 @@
 #if ENABLE(SAMPLING_PROFILER)
 
 #include "CallFrame.h"
+#include "CodeBlockHash.h"
 #include "MachineStackMarker.h"
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -83,11 +84,23 @@ public:
         // These attempt to be expression-level line and column number.
         unsigned lineNumber { std::numeric_limits<unsigned>::max() };
         unsigned columnNumber { std::numeric_limits<unsigned>::max() };
+        unsigned bytecodeIndex { std::numeric_limits<unsigned>::max() };
+        CodeBlockHash codeBlockHash;
 
         bool hasExpressionInfo() const
         {
             return lineNumber != std::numeric_limits<unsigned>::max()
                 && columnNumber != std::numeric_limits<unsigned>::max();
+        }
+
+        bool hasBytecodeIndex() const
+        {
+            return bytecodeIndex != std::numeric_limits<unsigned>::max();
+        }
+
+        bool hasCodeBlockHash() const
+        {
+            return codeBlockHash.isSet();
         }
 
         // These are function-level data.
@@ -136,6 +149,10 @@ public:
     void processUnverifiedStackTraces(); // You should call this only after acquiring the lock.
     void setStopWatch(const LockHolder&, Ref<Stopwatch>&& stopwatch) { m_stopwatch = WTFMove(stopwatch); }
     void pause(const LockHolder&);
+
+    // Used for debugging in the JSC shell.
+    JS_EXPORT_PRIVATE void reportTopFunctions();
+    JS_EXPORT_PRIVATE void reportTopBytecodes();
 
 private:
     void clearData(const LockHolder&);
