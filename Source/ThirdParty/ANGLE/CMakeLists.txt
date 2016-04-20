@@ -170,7 +170,6 @@ add_library(libANGLE STATIC
     src/libANGLE/Program.cpp
     src/libANGLE/Query.cpp
     src/libANGLE/queryconversions.cpp
-    src/libANGLE/RefCountObject.cpp
     src/libANGLE/Renderbuffer.cpp
     src/libANGLE/Stream.cpp
     src/libANGLE/renderer/d3d/BufferD3D.cpp

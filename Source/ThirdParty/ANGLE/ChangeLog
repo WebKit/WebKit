@@ -6,6 +6,12 @@
 
 2016-04-19  Alex Christensen  <achristensen@webkit.org>
 
+        Build fix after r199738
+
+        * CMakeLists.txt:
+
+2016-04-19  Alex Christensen  <achristensen@webkit.org>
+
         Build fix.
 
         * src/compiler/translator/Intermediate.h: Added.
