@@ -1,6 +1,7 @@
 CONSOLE MESSAGE: line 3: 
 CONSOLE MESSAGE: line 3: apple,orange,banana
 CONSOLE MESSAGE: line 3: [object Object]
+CONSOLE MESSAGE: line 3: [object Object]
 CONSOLE MESSAGE: line 3: John,Smith,Jane,Doe,Emily,Jones
 CONSOLE MESSAGE: line 3: [object Object],[object Object],[object Object]
 CONSOLE MESSAGE: line 3: [object Object],[object Object],[object Object]
@@ -131,6 +132,59 @@ STEP: console.table({firstName: 'John', lastName: 'Smith'})
             "_name": "lastName",
             "_type": "string",
             "_value": "Smith"
+          }
+        ],
+        "_entries": null
+      }
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.table({f: function(){}, x: 10})
+{
+  "_listeners": null,
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "[object Object]",
+  "_type": "table",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_listeners": null,
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
+          {
+            "_listeners": null,
+            "_name": "f",
+            "_type": "function",
+            "_valuePreview": {
+              "_listeners": null,
+              "_type": "function",
+              "_description": "function (){}",
+              "_lossless": true,
+              "_overflow": false,
+              "_properties": null,
+              "_entries": null
+            }
+          },
+          {
+            "_listeners": null,
+            "_name": "x",
+            "_type": "number",
+            "_value": "10"
           }
         ],
         "_entries": null

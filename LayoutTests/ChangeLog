@@ -1,3 +1,14 @@
+2016-04-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.table(navigator) throws exception about `rowPreview.propertyPreviews.length`
+        https://bugs.webkit.org/show_bug.cgi?id=156698
+        <rdar://problem/25778244>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/console/console-table-expected.txt:
+        * inspector/console/console-table.html:
+
 2016-04-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove flaky expectation for imported/mozilla/svg/image/image-filter-01.svg on ios-simulator-wk2

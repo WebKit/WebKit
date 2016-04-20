@@ -1,3 +1,15 @@
+2016-04-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.table(navigator) throws exception about `rowPreview.propertyPreviews.length`
+        https://bugs.webkit.org/show_bug.cgi?id=156698
+        <rdar://problem/25778244>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsTable):
+        Handle a row with a value preview but no sub-property previews (a function).
+
 2016-04-19  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Use debounce proxies in a couple more places

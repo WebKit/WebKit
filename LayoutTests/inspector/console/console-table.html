@@ -20,6 +20,7 @@ function test()
         "console.table([])", // Empty.
         "console.table(['apple', 'orange', 'banana'])", // Index (array index), Value
         "console.table({firstName: 'John', lastName: 'Smith'})", // Index (property name), Value (property value)
+        "console.table({f: function(){}, x: 10})", // Index (property name), Value (property value)
         "console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])", // Index, 0, 1
         "console.table([john, jane, emily])", // Index, firstName, lastName
         "console.table([john, jane, emily], ['firstName'])", // Index, firstName (at least).
