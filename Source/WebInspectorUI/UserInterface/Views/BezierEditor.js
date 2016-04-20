@@ -92,7 +92,7 @@ WebInspector.BezierEditor = class BezierEditor extends WebInspector.Object
         {
             let key = "_bezier" + id + "Input";
             this[key] = this._numberInputContainer.createChild("input", className);
-            this[key].addEventListener("input", this._handleNumberInputInput.debounce(250, this));
+            this[key].addEventListener("input", this.debounce(250)._handleNumberInputInput);
             this[key].addEventListener("keydown", this._handleNumberInputKeydown.bind(this));
         }
 

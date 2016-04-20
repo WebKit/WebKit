@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debouce");
+
+    suite.addTestCase({
+        name: "Basic Debounce",
+        test: function(resolve, reject) {
+            let callCount = 0;
+            let startTime = performance.now();
+
+            let object = {
+                test(foo, bar) {
+                    if (++callCount === 1)
+                        InspectorTest.pass("Debounced successfully.");
+                    else
+                        InspectorTest.fail("Debounced function called multiple times.");
+
+                    InspectorTest.expectThat(performance.now() - startTime >= 100, "Call delayed at least 100ms.");
+
+                    InspectorTest.expectThat(this === object, "`this` is the right object.");
+                    InspectorTest.expectThat(arguments.length === 2, "Arguments length is 2.");
+                    InspectorTest.expectThat(foo === 4, "First argument is 4.");
+                    InspectorTest.expectThat(bar === "abc", "Second argument is 'abc'.");
+
+                    resolve();
+                }
+            };
+
+            let debounceProxy = object.debounce(100);
+            debounceProxy.test(1, 'xyz');
+            debounceProxy.test(2, 'fgh');
+            debounceProxy.test(3, 'ert');
+            debounceProxy.test(4, 'abc');
+
+            if (!callCount)
+                return;
+
+            InspectorTest.fail("Debounced function called immediately.");
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Multiple Debounce Delays",
+        test: function(resolve, reject) {
+            let callCount = 0;
+            let startTime = performance.now();
+
+            let object = {
+                test(foo, bar) {
+                    if (++callCount === 1)
+                        InspectorTest.pass("Debounced successfully.");
+                    else
+                        InspectorTest.fail("Debounced function called multiple times.");
+
+                    InspectorTest.expectThat(performance.now() - startTime >= 400, "Call delayed at least 400ms.");
+
+                    InspectorTest.expectThat(this === object, "`this` is the right object.");
+                    InspectorTest.expectThat(arguments.length === 2, "Arguments length is 2.");
+                    InspectorTest.expectThat(foo === 4, "First argument is 4.");
+                    InspectorTest.expectThat(bar === "abc", "Second argument is 'abc'.");
+
+                    resolve();
+                }
+            };
+
+            object.debounce(100).test(1, 'xyz');
+            object.debounce(200).test(2, 'fgh');
+            object.debounce(300).test(3, 'ert');
+            object.debounce(400).test(4, 'abc');
+
+            if (!callCount)
+                return;
+
+            InspectorTest.fail("Debounced function called immediately.");
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Soon Debounce",
+        test: function(resolve, reject) {
+            let callCount = 0;
+
+            let object = {
+                test(foo, bar) {
+                    if (++callCount === 1)
+                        InspectorTest.pass("Debounced successfully.");
+                    else
+                        InspectorTest.fail("Debounced function called multiple times.");
+
+                    InspectorTest.expectThat(this === object, "`this` is the right object.");
+                    InspectorTest.expectThat(arguments.length === 2, "Arguments length is 2.");
+                    InspectorTest.expectThat(foo === 4, "First argument is 4.");
+                    InspectorTest.expectThat(bar === "abc", "Second argument is 'abc'.");
+
+                    resolve();
+                }
+            };
+
+            object.soon.test(1, 'xyz');
+            object.soon.test(2, 'fgh');
+            object.soon.test(3, 'ert');
+            object.soon.test(4, 'abc');
+
+            if (!callCount)
+                return;
+
+            InspectorTest.fail("Debounced function called immediately.");
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Cancel Debounce",
+        test: function(resolve, reject) {
+            let callCount = 0;
+            let startTime = performance.now();
+
+            let object = {
+                test(foo, bar) {
+                    InspectorTest.fail("Debounced function call should have been canceled.");
+                    resolve();
+                }
+            };
+
+            object.debounce(100).test(1, 'xyz');
+            object.test.cancelDebounce();
+
+            setTimeout(() => { InspectorTest.pass("Debounced function canceled."); resolve(); }, 200);
+
+            if (!callCount)
+                return;
+
+            InspectorTest.fail("Debounced function called immediately.");
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing debounce proxy support.</p>
+</body>
+</html>

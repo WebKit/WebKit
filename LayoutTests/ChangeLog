@@ -1,3 +1,15 @@
+2016-04-19  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Make debounce use an ES6 Proxy
+
+        https://bugs.webkit.org/show_bug.cgi?id=156756
+        rdar://problem/25809771
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/unit-tests/debounce-expected.txt: Added.
+        * inspector/unit-tests/debounce.html: Added.
+
 2016-04-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline tests for iOS simulator.

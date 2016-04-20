@@ -1194,25 +1194,62 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
 });
 
 (function() {
-    // The `debounce` function lets you call a function with a delay and
-    // if the function keeps getting called, the delay gets reset.
-    // Note: The last call's arguments end being the ones that get used.
-    // Use: foo.bar.debounce(200, foo)("Argument 1", "Argument 2")
+    // The `debounce` function lets you call any function on an object with a delay
+    // and if the function keeps getting called, the delay gets reset. Since `debounce`
+    // returns a Proxy, you can cache it and call multiple functions with the same delay.
 
-    const debounceSymbol = Symbol("function-debounce-timeout");
+    // Use: object.debounce(200).foo("Argument 1", "Argument 2")
+    // Note: The last call's arguments get used for the delayed call.
 
-    Object.defineProperty(Function.prototype, "debounce",
+    const debounceTimeoutSymbol = Symbol("debounce-timeout");
+    const debounceSoonProxySymbol = Symbol("debounce-soon-proxy");
+
+    Object.defineProperty(Object.prototype, "soon",
     {
-        value: function(delay, thisObject)
+        get: function()
         {
-            return () => {
-                clearTimeout(this[debounceSymbol]);
+            if (!this[debounceSoonProxySymbol])
+                this[debounceSoonProxySymbol] = this.debounce(0);
+            return this[debounceSoonProxySymbol];
+        }
+    });
 
-                let args = arguments;
-                this[debounceSymbol] = setTimeout(() => {
-                    this.apply(thisObject, args);
-                }, delay);
-            };
+    Object.defineProperty(Object.prototype, "debounce",
+    {
+        value: function(delay)
+        {
+            console.assert(delay >= 0);
+
+            return new Proxy(this, {
+                get(target, property, receiver) {
+                    return (...args) => {
+                        let original = target[property];
+                        console.assert(typeof original === "function");
+
+                        if (original[debounceTimeoutSymbol])
+                            clearTimeout(original[debounceTimeoutSymbol]);
+
+                        let performWork = () => {
+                            original[debounceTimeoutSymbol] = undefined;
+                            original.apply(target, args);
+                        };
+
+                        original[debounceTimeoutSymbol] = setTimeout(performWork, delay);
+                    };
+                }
+            });
+        }
+    });
+
+    Object.defineProperty(Function.prototype, "cancelDebounce",
+    {
+        value: function()
+        {
+            if (!this[debounceTimeoutSymbol])
+                return;
+
+            clearTimeout(this[debounceTimeoutSymbol]);
+            this[debounceTimeoutSymbol] = undefined;
         }
     });
 })();

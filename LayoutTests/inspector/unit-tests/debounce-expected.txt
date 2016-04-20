@@ -1,0 +1,30 @@
+Testing debounce proxy support.
+
+
+== Running test suite: Debouce
+-- Running test case: Basic Debounce
+PASS: Debounced successfully.
+PASS: Call delayed at least 100ms.
+PASS: `this` is the right object.
+PASS: Arguments length is 2.
+PASS: First argument is 4.
+PASS: Second argument is 'abc'.
+
+-- Running test case: Multiple Debounce Delays
+PASS: Debounced successfully.
+PASS: Call delayed at least 400ms.
+PASS: `this` is the right object.
+PASS: Arguments length is 2.
+PASS: First argument is 4.
+PASS: Second argument is 'abc'.
+
+-- Running test case: Soon Debounce
+PASS: Debounced successfully.
+PASS: `this` is the right object.
+PASS: Arguments length is 2.
+PASS: First argument is 4.
+PASS: Second argument is 'abc'.
+
+-- Running test case: Cancel Debounce
+PASS: Debounced function canceled.
+

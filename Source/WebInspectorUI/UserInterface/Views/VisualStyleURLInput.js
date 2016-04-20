@@ -32,7 +32,7 @@ WebInspector.VisualStyleURLInput = class VisualStyleURLInput extends WebInspecto
         this._urlInputElement = document.createElement("input");
         this._urlInputElement.type = "url";
         this._urlInputElement.placeholder = WebInspector.UIString("Enter a URL");
-        this._urlInputElement.addEventListener("keyup", this._valueDidChange.debounce(250, this));
+        this._urlInputElement.addEventListener("keyup", this.debounce(250)._valueDidChange);
         this.contentElement.appendChild(this._urlInputElement);
     }
 
