@@ -1,3 +1,19 @@
+2016-04-20  Mark Lam  <mark.lam@apple.com>
+
+        Unindent an unnecessary block in stringProtoFuncSplitFast().
+        https://bugs.webkit.org/show_bug.cgi?id=156802
+
+        Reviewed by Filip Pizlo.
+
+        In webkit.org/b/156013, I refactored stringProtoFuncSplit into
+        stringProtoFuncSplitFast.  In that patch, I left an unnecessary block of code in
+        its original block (with FIXMEs) to keep the diff for that patch minimal.  Now
+        that the patch for webkit.org/b/156013 has landed, I will unindent that block and
+        remove the FIXMEs.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncSplitFast):
+
 2016-04-20  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Enable INDEXED_DATABASE_IN_WORKERS compile time flag, but disabled in RuntimeEnabledFeatures.
