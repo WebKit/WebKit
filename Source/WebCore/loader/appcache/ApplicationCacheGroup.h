@@ -63,7 +63,8 @@ public:
     
     static void selectCache(Frame*, const URL& manifestURL);
     static void selectCacheWithoutManifestURL(Frame*);
-    
+
+    ApplicationCacheStorage& storage() { return m_storage; }
     const URL& manifestURL() const { return m_manifestURL; }
     const SecurityOrigin* origin() const { return m_origin.get(); }
     UpdateStatus updateStatus() const { return m_updateStatus; }

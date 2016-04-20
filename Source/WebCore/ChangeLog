@@ -1,3 +1,18 @@
+2016-04-20  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of a couple of uses of ApplicationCacheStorage::singleton()
+        https://bugs.webkit.org/show_bug.cgi?id=156818
+
+        Reviewed by Geoffrey Garen.
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::addResource):
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::storage):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setApplicationCacheOriginQuota):
+
 2016-04-20  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Introduce "IDBConnectionProxy" for future threading abstraction, and adopt it in IDBFactory.

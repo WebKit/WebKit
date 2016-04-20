@@ -398,7 +398,7 @@ void Internals::resetToConsistentState(Page& page)
     if (page.mainFrame().editor().isOverwriteModeEnabled())
         page.mainFrame().editor().toggleOverwriteModeEnabled();
     page.mainFrame().loader().clearTestingOverrides();
-    ApplicationCacheStorage::singleton().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
+    page.applicationCacheStorage().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
 #if ENABLE(VIDEO)
     PlatformMediaSessionManager::sharedManager().resetRestrictions();
     PlatformMediaSessionManager::sharedManager().setWillIgnoreSystemInterruptions(true);
@@ -2276,7 +2276,7 @@ void Internals::setApplicationCacheOriginQuota(unsigned long long quota)
     Document* document = contextDocument();
     if (!document)
         return;
-    ApplicationCacheStorage::singleton().storeUpdatedQuotaForOrigin(document->securityOrigin(), quota);
+    document->page()->applicationCacheStorage().storeUpdatedQuotaForOrigin(document->securityOrigin(), quota);
 }
 
 void Internals::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme)

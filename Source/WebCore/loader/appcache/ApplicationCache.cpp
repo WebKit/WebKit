@@ -91,7 +91,7 @@ void ApplicationCache::addResource(PassRefPtr<ApplicationCacheResource> resource
         ASSERT(resource->type() & ApplicationCacheResource::Master);
         
         // Add the resource to the storage.
-        ApplicationCacheStorage::singleton().store(resource.get(), this);
+        m_group->storage().store(resource.get(), this);
     }
 
     m_estimatedSizeInStorage += resource->estimatedSizeInStorage();
