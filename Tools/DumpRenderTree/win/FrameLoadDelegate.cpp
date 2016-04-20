@@ -184,9 +184,8 @@ HRESULT FrameLoadDelegate::didReceiveTitle(_In_opt_ IWebView*, _In_ BSTR title, 
 
 HRESULT FrameLoadDelegate::didChangeIcons(_In_opt_ IWebView*, _In_opt_ IWebFrame* frame)
 {
-    if (!done && gTestRunner->dumpIconChanges())
-        printf("%s - didChangeIcons\n", descriptionSuitableForTestResult(frame).c_str());
-
+    // This feature is no longer supported. The stub is here to keep backwards compatibility
+    // with the COM interface.
     return S_OK;
 }
 
