@@ -71,28 +71,18 @@ void ImageSource::clear(bool destroyAllFrames, size_t clearBeforeFrame, SharedBu
         setData(data, allDataReceived);
 }
 
-void ImageSource::ensureDecoderIsCreated(const SharedBuffer& data)
-{
-    if (initialized())
-        return;
-    
-    m_decoder = ImageDecoder::create(data, m_alphaOption, m_gammaAndColorProfileOption);
-}
-
 void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 {
     if (!data)
         return;
-    
-    ensureDecoderIsCreated(*data);
-    
+
     if (!initialized()) {
-        ASSERT_NOT_REACHED();
-        return;
+        m_decoder = ImageDecoder::create(*data, m_alphaOption, m_gammaAndColorProfileOption);
+        if (!m_decoder)
+            return;
     }
 
-    if (m_decoder)
-        m_decoder->setData(*data, allDataReceived);
+    m_decoder->setData(*data, allDataReceived);
 }
 
 SubsamplingLevel ImageSource::calculateMaximumSubsamplingLevel() const

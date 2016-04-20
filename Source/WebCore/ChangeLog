@@ -1,3 +1,20 @@
+2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r198782): SHOULD NEVER BE REACHED failure in ImageSource::setData since r198782
+        https://bugs.webkit.org/show_bug.cgi?id=156690
+
+        Reviewed by Michael Catanzaro.
+
+        The assertion is wrong, because it assumes that ImageDecoder::create() always returns a valid pointer, which is
+        only true for the CG implementation. The non CG implementation can return nullptr if there isn't enough data to
+        figure out the image format or if the image format is not supported. This is causing several crashes in the
+        debug bots.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::setData): Remove the invalid ASSERT and return early if we fail to create the decoder.
+        (WebCore::ImageSource::ensureDecoderIsCreated): Deleted.
+        * platform/graphics/ImageSource.h:
+
 2016-04-19  Brent Fulgham  <bfulgham@apple.com>
 
         Remove remaining bits of dynamic <link> rel='icon' loading

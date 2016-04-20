@@ -144,7 +144,6 @@ public:
     
 private:
     void clearFrameBufferCache(size_t);
-    void ensureDecoderIsCreated(const SharedBuffer&);
     SubsamplingLevel calculateMaximumSubsamplingLevel() const;
     void dump(TextStream&) const;
     
