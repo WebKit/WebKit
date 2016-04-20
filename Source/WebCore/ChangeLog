@@ -1,3 +1,17 @@
+2016-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Cairo] Crash in GraphicsContext::drawFocusRing when painting is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=156785
+
+        Reviewed by Žan Doberšek.
+
+        This happens for example when view state changes to focus and paint is called from
+        FrameView::updateControlTints() with a graphics context that doesn't have a platform context. Layout test
+        fast/images/image-map-outline-with-scale-transform.html sometimes crashes because of this.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawFocusRing): Return early if painting is disabled.
+
 2016-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r198782): SHOULD NEVER BE REACHED failure in ImageSource::setData since r198782

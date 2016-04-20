@@ -591,6 +591,9 @@ static inline StrokeStyle focusRingStrokeStyle()
 
 void GraphicsContext::drawFocusRing(const Path& path, float width, float /* offset */, const Color& color)
 {
+    if (paintingDisabled())
+        return;
+
     // FIXME: We should draw paths that describe a rectangle with rounded corners
     // so as to be consistent with how we draw rectangular focus rings.
     Color ringColor = color;
