@@ -1,3 +1,19 @@
+2016-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Crash under needsAppleMailPaginationQuirk()
+        https://bugs.webkit.org/show_bug.cgi?id=156806
+        <rdar://problem/23323479>
+
+        Reviewed by Simon Fraser.
+
+        Add check for element()->hasID() before calling element()->idForStyleResolution()
+        so that we don't dereference a potentially null element()->elementData().
+        Also stop repeatedly atomizing "messageContentContainer" and leverage
+        the operator==(const AtomicString&, const char*) instead for performance.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::needsAppleMailPaginationQuirk):
+
 2016-04-20  Brady Eidson  <beidson@apple.com>
 
         Attempt to fix non-INDEXED_DATABASE_IN_WORKERS builds after r199779
