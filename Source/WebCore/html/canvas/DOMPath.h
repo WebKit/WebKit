@@ -42,7 +42,7 @@ public:
 
     static Ref<DOMPath> create() { return adoptRef(*new DOMPath); }
     static Ref<DOMPath> create(const Path& path) { return adoptRef(*new DOMPath(path)); }
-    static Ref<DOMPath> create(const DOMPath* path) { return create(path->path()); }
+    static Ref<DOMPath> create(const DOMPath& path) { return create(path.path()); }
 
     static Ref<DOMPath> create(const String& pathData)
     {

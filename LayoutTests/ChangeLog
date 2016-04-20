@@ -1,5 +1,17 @@
 2016-04-20  Chris Dumez  <cdumez@apple.com>
 
+        Drop [UsePointersEvenForNonNullableObjectArguments] from several Canvas interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=156781
+
+        Reviewed by Darin Adler.
+
+        Update outdated test which expected a legacy TYPE_MISMATCH_ERR exception
+        to be thrown when passing null instead of the newer TypeError.
+
+        * canvas/philip/tests/2d.drawImage.null.html:
+
+2016-04-20  Chris Dumez  <cdumez@apple.com>
+
         Drop [UsePointersEvenForNonNullableObjectArguments] from WebAudio
         https://bugs.webkit.org/show_bug.cgi?id=156777
 

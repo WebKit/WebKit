@@ -26,9 +26,7 @@
 enum ImageSmoothingQuality { "low", "medium", "high" };
 enum CanvasWindingRule { "nonzero", "evenodd" };
 
-[
-    UsePointersEvenForNonNullableObjectArguments,
-] interface CanvasRenderingContext2D : CanvasRenderingContext {
+interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     void save();
     void restore();
@@ -136,23 +134,21 @@ enum CanvasWindingRule { "nonzero", "evenodd" };
 
     void strokeRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
 
-    [RaisesException] void drawImage(HTMLImageElement? image, unrestricted float x, unrestricted float y);
-    [RaisesException] void drawImage(HTMLImageElement? image, unrestricted float x, unrestricted float y, 
+    [RaisesException] void drawImage(HTMLImageElement image, unrestricted float x, unrestricted float y);
+    [RaisesException] void drawImage(HTMLImageElement image, unrestricted float x, unrestricted float y,
         unrestricted float width, unrestricted float height);
-    [RaisesException] void drawImage(HTMLImageElement? image, unrestricted float sx, unrestricted float sy, unrestricted float sw, 
+    [RaisesException] void drawImage(HTMLImageElement image, unrestricted float sx, unrestricted float sy, unrestricted float sw,
         unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
-    [RaisesException] void drawImage(HTMLCanvasElement? canvas, unrestricted float x, unrestricted float y);
-    [RaisesException] void drawImage(HTMLCanvasElement? canvas, unrestricted float x, unrestricted float y, 
+    [RaisesException] void drawImage(HTMLCanvasElement canvas, unrestricted float x, unrestricted float y);
+    [RaisesException] void drawImage(HTMLCanvasElement canvas, unrestricted float x, unrestricted float y,
         unrestricted float width, unrestricted float height);
-    [RaisesException] void drawImage(HTMLCanvasElement? canvas, unrestricted float sx, unrestricted float sy, unrestricted float sw, 
+    [RaisesException] void drawImage(HTMLCanvasElement canvas, unrestricted float sx, unrestricted float sy, unrestricted float sw,
         unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    [RaisesException] void drawImage(HTMLVideoElement? video, unrestricted float x, unrestricted float y);
-    [RaisesException] void drawImage(HTMLVideoElement? video, unrestricted float x, unrestricted float y, 
+    [Conditional=VIDEO, RaisesException] void drawImage(HTMLVideoElement video, unrestricted float x, unrestricted float y);
+    [Conditional=VIDEO, RaisesException] void drawImage(HTMLVideoElement video, unrestricted float x, unrestricted float y,
         unrestricted float width, unrestricted float height);
-    [RaisesException] void drawImage(HTMLVideoElement? video, unrestricted float sx, unrestricted float sy, unrestricted float sw, 
+    [Conditional=VIDEO, RaisesException] void drawImage(HTMLVideoElement video, unrestricted float sx, unrestricted float sy, unrestricted float sw,
         unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
-#endif
 
     void drawImageFromRect(HTMLImageElement image,
         optional unrestricted float sx, optional unrestricted float sy, optional unrestricted float sw, optional unrestricted float sh,
@@ -188,8 +184,8 @@ enum CanvasWindingRule { "nonzero", "evenodd" };
     [RaisesException] ImageData webkitGetImageDataHD(float sx, float sy, float sw, float sh);
     
     // Focus rings
-    void drawFocusIfNeeded(Element element);
-    void drawFocusIfNeeded(DOMPath path, Element element);
+    void drawFocusIfNeeded(Element? element); // FIXME: The element parameter should not be nullable.
+    void drawFocusIfNeeded(DOMPath path, Element? element); // FIXME: The element parameter should not be nullable.
 
     readonly attribute float webkitBackingStorePixelRatio;
 

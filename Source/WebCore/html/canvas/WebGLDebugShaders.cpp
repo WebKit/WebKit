@@ -49,9 +49,8 @@ WebGLExtension::ExtensionName WebGLDebugShaders::getName() const
     return WebGLDebugShadersName;
 }
 
-String WebGLDebugShaders::getTranslatedShaderSource(WebGLShader* shader, ExceptionCode& ec)
+String WebGLDebugShaders::getTranslatedShaderSource(WebGLShader* shader)
 {
-    UNUSED_PARAM(ec);
     if (m_context->isContextLost())
         return String();
     if (!m_context->validateWebGLObject("getTranslatedShaderSource", shader))

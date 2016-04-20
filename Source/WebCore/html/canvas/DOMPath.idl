@@ -30,14 +30,11 @@
     Constructor,
     Constructor(DOMPath path),
     Constructor(DOMString text),
-    UsePointersEvenForNonNullableObjectArguments,
-    InterfaceName=Path2D,
     ExportMacro=WEBCORE_EXPORT,
+    InterfaceName=Path2D,
 ] interface DOMPath {
-
-#if defined(ENABLE_CANVAS_PATH) && ENABLE_CANVAS_PATH
-    void addPath(DOMPath? path, optional SVGMatrix? transform);
-#endif
+    // FIXME: The parameters should not be nullable.
+    [Conditional=CANVAS_PATH] void addPath(DOMPath? path, optional SVGMatrix? transform);
 
     // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.
     void closePath();

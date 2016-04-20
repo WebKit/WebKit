@@ -1,5 +1,31 @@
 2016-04-20  Chris Dumez  <cdumez@apple.com>
 
+        Drop [UsePointersEvenForNonNullableObjectArguments] from several Canvas interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=156781
+
+        Reviewed by Darin Adler.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::clip):
+        (WebCore::CanvasRenderingContext2D::isPointInPath):
+        (WebCore::CanvasRenderingContext2D::isPointInStroke):
+        (WebCore::size):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeeded):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/DOMPath.h:
+        * html/canvas/DOMPath.idl:
+        * html/canvas/WebGLDebugShaders.cpp:
+        (WebCore::WebGLDebugShaders::getTranslatedShaderSource):
+        * html/canvas/WebGLDebugShaders.h:
+        * html/canvas/WebGLDebugShaders.idl:
+
+2016-04-20  Chris Dumez  <cdumez@apple.com>
+
         Drop [UsePointersEvenForNonNullableObjectArguments] from WebAudio
         https://bugs.webkit.org/show_bug.cgi?id=156777
 
