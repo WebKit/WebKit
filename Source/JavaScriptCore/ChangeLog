@@ -1,5 +1,20 @@
 2016-04-19  Saam barati  <sbarati@apple.com>
 
+        Add a couple UNLIKELY macros in parseMemberExpression
+        https://bugs.webkit.org/show_bug.cgi?id=156775
+
+        Reviewed by Filip Pizlo.
+
+        These UNLIKELY macros have to do with the base of the
+        member expression being 'super'. I think it's safe to
+        argue that this is truly UNLIKELY. I am seeing speedups
+        sometimes on Octane codeload. Usually around 0.5%. Sometimes 1%.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+
+2016-04-19  Saam barati  <sbarati@apple.com>
+
         allow jsc shell to dump sampling profiler data
         https://bugs.webkit.org/show_bug.cgi?id=156725
 

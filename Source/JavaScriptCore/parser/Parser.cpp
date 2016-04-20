@@ -3922,7 +3922,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             failIfFalse(property, "Cannot parse subscript expression");
             base = context.createBracketAccess(location, base, property, initialAssignments != m_parserState.assignmentCount, expressionStart, expressionEnd, tokenEndPosition());
             
-            if (baseIsSuper && currentScope()->isArrowFunction())
+            if (UNLIKELY(baseIsSuper && currentScope()->isArrowFunction()))
                 currentFunctionScope()->setInnerArrowFunctionUsesSuperProperty();
             
             handleProductionOrFail(CLOSEBRACKET, "]", "end", "subscript expression");
@@ -3958,7 +3958,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             nextExpectIdentifier(LexerFlagsIgnoreReservedWords | TreeBuilder::DontBuildKeywords);
             matchOrFail(IDENT, "Expected a property name after '.'");
             base = context.createDotAccess(location, base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEndPosition());
-            if (baseIsSuper && currentScope()->isArrowFunction())
+            if (UNLIKELY(baseIsSuper && currentScope()->isArrowFunction()))
                 currentFunctionScope()->setInnerArrowFunctionUsesSuperProperty();
             next();
             break;
