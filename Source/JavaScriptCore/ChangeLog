@@ -1,3 +1,30 @@
+2016-04-20  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r190289): Spin trying to view/sign in to hbogo.com
+        https://bugs.webkit.org/show_bug.cgi?id=156765
+
+        Reviewed by Saam Barati.
+
+        In the op_get_by_val case, we were holding the lock on a profiled CodeBlock
+        when we call into handleGetById(). Changed to drop the lock before calling
+        handleGetById().
+
+        The bug here was that the call to handleGetById() may end up calling in to
+        getPredictionWithoutOSRExit() for a tail call opcode. As part of that
+        processing, we walk back up the stack to find the effective caller and when
+        found, we lock the corresponding CodeBlock to get the predicition.
+        That CodeBLock may be the same one locked above. There is no need anyway
+        to hold the CodeBlock lock when calling handleGetById().
+
+        Added a new stress test.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * tests/stress/regress-156765.js: Added.
+        (realValue):
+        (object.get hello):
+        (ok):
+
 2016-04-20  Mark Lam  <mark.lam@apple.com>
 
         Unindent an unnecessary block in stringProtoFuncSplitFast().

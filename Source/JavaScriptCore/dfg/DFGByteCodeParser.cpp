@@ -3888,6 +3888,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
             Node* property = get(VirtualRegister(currentInstruction[3].u.operand));
             bool compiledAsGetById = false;
+            GetByIdStatus getByIdStatus;
+            unsigned identifierNumber = 0;
             {
                 ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
                 ByValInfo* byValInfo = m_inlineStackTop->m_byValInfos.get(CodeOrigin(currentCodeOrigin().bytecodeIndex));
@@ -3895,20 +3897,20 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 // At that time, there is no information.
                 if (byValInfo && byValInfo->stubInfo && !byValInfo->tookSlowPath && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)) {
                     compiledAsGetById = true;
-                    unsigned identifierNumber = m_graph.identifiers().ensure(byValInfo->cachedId.impl());
+                    identifierNumber = m_graph.identifiers().ensure(byValInfo->cachedId.impl());
                     UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
 
                     addToGraph(CheckIdent, OpInfo(uid), property);
 
-                    GetByIdStatus getByIdStatus = GetByIdStatus::computeForStubInfo(
+                    getByIdStatus = GetByIdStatus::computeForStubInfo(
                         locker, m_inlineStackTop->m_profiledBlock,
                         byValInfo->stubInfo, currentCodeOrigin(), uid);
-
-                    handleGetById(currentInstruction[1].u.operand, prediction, base, identifierNumber, getByIdStatus, AccessType::Get);
                 }
             }
 
-            if (!compiledAsGetById) {
+            if (compiledAsGetById)
+                handleGetById(currentInstruction[1].u.operand, prediction, base, identifierNumber, getByIdStatus, AccessType::Get);
+            else {
                 ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Read);
                 Node* getByVal = addToGraph(GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction), base, property);
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
