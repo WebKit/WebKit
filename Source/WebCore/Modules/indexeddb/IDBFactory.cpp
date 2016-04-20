@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "IDBBindingUtilities.h"
+#include "IDBConnectionProxy.h"
 #include "IDBConnectionToServer.h"
 #include "IDBDatabaseIdentifier.h"
 #include "IDBKey.h"
@@ -62,13 +63,12 @@ static bool shouldThrowSecurityException(ScriptExecutionContext& context)
     return false;
 }
 
-Ref<IDBFactory> IDBFactory::create(IDBClient::IDBConnectionToServer& connection)
+Ref<IDBFactory> IDBFactory::create()
 {
-    return adoptRef(*new IDBFactory(connection));
+    return adoptRef(*new IDBFactory);
 }
 
-IDBFactory::IDBFactory(IDBClient::IDBConnectionToServer& connection)
-    : m_connectionToServer(connection)
+IDBFactory::IDBFactory()
 {
 }
 
@@ -76,34 +76,37 @@ IDBFactory::~IDBFactory()
 {
 }
 
-RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, ExceptionCode& ec)
+RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBFactory::open");
     
     return openInternal(context, name, 0, ec);
 }
 
-RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, unsigned long long version, ExceptionCode& ec)
+RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, unsigned long long version, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBFactory::open");
     
     if (!version) {
-        ec = TypeError;
+        ec.code = TypeError;
+        ec.message = ASCIILiteral("IDBFactory.open() called with a version of 0");
         return nullptr;
     }
 
     return openInternal(context, name, version, ec);
 }
 
-RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext& context, const String& name, unsigned long long version, ExceptionCode& ec)
+RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext& context, const String& name, unsigned long long version, ExceptionCodeWithMessage& ec)
 {
     if (name.isNull()) {
-        ec = TypeError;
+        ec.code = TypeError;
+        ec.message = ASCIILiteral("IDBFactory.open() called without a database name");
         return nullptr;
     }
 
     if (shouldThrowSecurityException(context)) {
-        ec = SECURITY_ERR;
+        ec.code = SECURITY_ERR;
+        ec.message = ASCIILiteral("IDBFactory.open() called in an invalid security context");
         return nullptr;
     }
 
@@ -111,27 +114,33 @@ RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext& contex
     ASSERT(context.topOrigin());
     IDBDatabaseIdentifier databaseIdentifier(name, *context.securityOrigin(), *context.topOrigin());
     if (!databaseIdentifier.isValid()) {
-        ec = TypeError;
+        ec.code = TypeError;
+        ec.message = ASCIILiteral("IDBFactory.open() called with an invalid security origin");
         return nullptr;
     }
 
-    auto request = IDBOpenDBRequest::createOpenRequest(m_connectionToServer.get(), context, databaseIdentifier, version);
-    m_connectionToServer->openDatabase(request.get());
+    auto* connectionProxy = context.idbConnectionProxy();
+    if (!connectionProxy) {
+        ec.code = SECURITY_ERR;
+        ec.message = ASCIILiteral("IDBFactory.open() called at an invalid time");
+        return nullptr;
+    }
 
-    return adoptRef(&request.leakRef());
+    return connectionProxy->openDatabase(context, databaseIdentifier, version);
 }
 
-RefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext& context, const String& name, ExceptionCode& ec)
+RefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext& context, const String& name, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBFactory::deleteDatabase - %s", name.utf8().data());
 
     if (name.isNull()) {
-        ec = TypeError;
-        return nullptr;
+        ec.code = TypeError;
+        ec.message = ASCIILiteral("IDBFactory.deleteDatabase() called without a database name");
     }
     
     if (shouldThrowSecurityException(context)) {
-        ec = SECURITY_ERR;
+        ec.code = SECURITY_ERR;
+        ec.message = ASCIILiteral("IDBFactory.deleteDatabase() called in an invalid security context");
         return nullptr;
     }
 
@@ -139,14 +148,19 @@ RefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext& cont
     ASSERT(context.topOrigin());
     IDBDatabaseIdentifier databaseIdentifier(name, *context.securityOrigin(), *context.topOrigin());
     if (!databaseIdentifier.isValid()) {
-        ec = TypeError;
+        ec.code = TypeError;
+        ec.message = ASCIILiteral("IDBFactory.deleteDatabase() called with an invalid security origin");
         return nullptr;
     }
 
-    auto request = IDBOpenDBRequest::createDeleteRequest(m_connectionToServer.get(), context, databaseIdentifier);
-    m_connectionToServer->deleteDatabase(request.get());
+    auto* connectionProxy = context.idbConnectionProxy();
+    if (!connectionProxy) {
+        ec.code = SECURITY_ERR;
+        ec.message = ASCIILiteral("IDBFactory.deleteDatabase() called at an invalid time");
+        return nullptr;
+    }
 
-    return adoptRef(&request.leakRef());
+    return connectionProxy->deleteDatabase(context, databaseIdentifier);
 }
 
 short IDBFactory::cmp(ScriptExecutionContext& context, JSValue firstValue, JSValue secondValue, ExceptionCodeWithMessage& ec)

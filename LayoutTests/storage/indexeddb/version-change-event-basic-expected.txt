@@ -1,4 +1,4 @@
-0 version: TypeError: Type error
+0 version: TypeError: IDBFactory.open() called with a version of 0
 Negative version: TypeError: Value -1 is outside the range [0, 9007199254740991]
 String version: TypeError: Value NaN is outside the range [0, 9007199254740991]
 First request: 0 1

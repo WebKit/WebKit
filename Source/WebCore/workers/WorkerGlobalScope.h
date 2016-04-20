@@ -70,6 +70,10 @@ public:
 
     void disableEval(const String& errorMessage) override;
 
+#if ENABLE(INDEXED_DATABASE)
+    IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
+#endif
+
     bool shouldBypassMainWorldContentSecurityPolicy() const final { return m_shouldBypassMainWorldContentSecurityPolicy; }
 
     WorkerScriptController* script() { return m_script.get(); }

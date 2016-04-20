@@ -855,6 +855,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
 
+    Modules/indexeddb/client/IDBConnectionProxy.cpp
     Modules/indexeddb/client/IDBConnectionToServer.cpp
     Modules/indexeddb/client/TransactionOperation.cpp
 

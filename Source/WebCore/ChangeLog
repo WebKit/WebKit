@@ -1,3 +1,56 @@
+2016-04-20  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Workers): Introduce "IDBConnectionProxy" for future threading abstraction, and adopt it in IDBFactory.
+        https://bugs.webkit.org/show_bug.cgi?id=156810
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by changes to existing tests).
+
+        Add the IDBConnectionProxy object, including the ability to replicate IDBFactory functionality:
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp: Added.
+        (WebCore::IDBClient::IDBConnectionProxy::IDBConnectionProxy):
+        (WebCore::IDBClient::IDBConnectionProxy::openDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteDatabase):
+        * Modules/indexeddb/client/IDBConnectionProxy.h: 
+        
+        Add pure virtual IDBConnectionProxy accessor:
+        * dom/ScriptExecutionContext.h: 
+
+        Implement it:
+        * dom/Document.cpp:
+        (WebCore::Document::idbConnectionProxy):
+        * dom/Document.h:
+        
+        Implement it:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::idbConnectionProxy):
+        * workers/WorkerGlobalScope.h:
+        
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        (WebCore::DOMWindowIndexedDatabase::indexedDB):
+
+
+        Don't keep a reference to IDBConnectionToServer, but rather get at the context's IDBConnectionProxy:
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::create):
+        (WebCore::IDBFactory::IDBFactory):
+        (WebCore::IDBFactory::open):
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/IDBFactory.idl:
+
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp:
+        (WebCore::WorkerGlobalScopeIndexedDatabase::indexedDB):
+
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+
+        * inspector/InspectorIndexedDBAgent.cpp:
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-04-20  Chris Dumez  <cdumez@apple.com>
 
         Use Optional<size_t> for OrderIterator::m_orderIndex instead of int

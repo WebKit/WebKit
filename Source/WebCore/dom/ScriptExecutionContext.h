@@ -55,6 +55,10 @@ class PublicURLManager;
 class SecurityOrigin;
 class URL;
 
+namespace IDBClient {
+class IDBConnectionProxy;
+}
+
 class ScriptExecutionContext : public SecurityContext {
 public:
     ScriptExecutionContext();
@@ -72,6 +76,10 @@ public:
     virtual String userAgent(const URL&) const = 0;
 
     virtual void disableEval(const String& errorMessage) = 0;
+
+#if ENABLE(INDEXED_DATABASE)
+    virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
+#endif
 
     bool sanitizeScriptError(String& errorMessage, int& lineNumber, int& columnNumber, String& sourceURL, CachedScript* = nullptr);
     void reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, RefPtr<Inspector::ScriptCallStack>&&, CachedScript* = nullptr);

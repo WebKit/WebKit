@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,44 +27,28 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include <wtf/Forward.h>
-#include <wtf/Ref.h>
-#include <wtf/ThreadSafeRefCounted.h>
-
-namespace JSC {
-class JSValue;
-}
+#include "IDBConnectionToServer.h"
 
 namespace WebCore {
 
+class IDBDatabaseIdentifier;
 class IDBOpenDBRequest;
 class ScriptExecutionContext;
 
-struct ExceptionCodeWithMessage;
-
 namespace IDBClient {
-class IDBConnectionToServer;
-}
 
-typedef int ExceptionCode;
-
-class IDBFactory : public ThreadSafeRefCounted<IDBFactory> {
+class IDBConnectionProxy {
 public:
-    static Ref<IDBFactory> create();
-    ~IDBFactory();
+    IDBConnectionProxy(IDBConnectionToServer&);
 
-    RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, ExceptionCodeWithMessage&);
-    RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, unsigned long long version, ExceptionCodeWithMessage&);
-    RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const String& name, ExceptionCodeWithMessage&);
-
-    short cmp(ScriptExecutionContext&, JSC::JSValue first, JSC::JSValue second, ExceptionCodeWithMessage&);
+    RefPtr<IDBOpenDBRequest> openDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
+    RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&);
 
 private:
-    explicit IDBFactory();
-
-    RefPtr<IDBOpenDBRequest> openInternal(ScriptExecutionContext&, const String& name, unsigned long long version, ExceptionCodeWithMessage&);
+    Ref<IDBConnectionToServer> m_connectionToServer;
 };
 
+} // namespace IDBClient
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

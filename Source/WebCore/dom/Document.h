@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2010, 2012-2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2010, 2012-2013, 2015, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -25,8 +25,7 @@
  *
  */
 
-#ifndef Document_h
-#define Document_h
+#pragma once
 
 #include "CollectionType.h"
 #include "Color.h"
@@ -660,6 +659,10 @@ public:
     String userAgent(const URL&) const final;
 
     void disableEval(const String& errorMessage) final;
+
+#if ENABLE(INDEXED_DATABASE)
+    IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
+#endif
 
     bool canNavigate(Frame* targetFrame);
     Frame* findUnsafeParentScrollPropagationBoundary();
@@ -1776,6 +1779,10 @@ private:
 #if ENABLE(MEDIA_STREAM)
     bool m_hasHadActiveMediaStreamTrack { false };
 #endif
+
+#if ENABLE(INDEXED_DATABASE)
+    std::unique_ptr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
+#endif
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()
@@ -1818,5 +1825,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Document)
     static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isDocument(); }
     static bool isType(const WebCore::Node& node) { return node.isDocumentNode(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // Document_h

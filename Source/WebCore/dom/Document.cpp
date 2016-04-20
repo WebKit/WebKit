@@ -201,6 +201,11 @@
 #include "RenderFullScreen.h"
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+#include "IDBConnectionProxy.h"
+#include "IDBOpenDBRequest.h"
+#endif
+
 #if PLATFORM(IOS)
 #include "CSSFontSelector.h"
 #include "DeviceMotionClientIOS.h"
@@ -3102,6 +3107,21 @@ void Document::disableEval(const String& errorMessage)
 
     frame()->script().disableEval(errorMessage);
 }
+
+#if ENABLE(INDEXED_DATABASE)
+IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
+{
+    if (!m_idbConnectionProxy) {
+        Page* currentPage = page();
+        if (!currentPage)
+            return nullptr;
+
+        m_idbConnectionProxy = std::make_unique<IDBClient::IDBConnectionProxy>(currentPage->idbConnection());
+    }
+
+    return m_idbConnectionProxy.get();
+}
+#endif // ENABLE(INDEXED_DATABASE)
 
 bool Document::canNavigate(Frame* targetFrame)
 {

@@ -1,3 +1,20 @@
+2016-04-20  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Workers): Introduce "IDBConnectionProxy" for future threading abstraction, and adopt it in IDBFactory.
+        https://bugs.webkit.org/show_bug.cgi?id=156810
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/intversion-bad-parameters-expected.txt:
+        * storage/indexeddb/intversion-bad-parameters-private-expected.txt:
+        * storage/indexeddb/modern/opendatabase-request-event-expected.txt:
+        * storage/indexeddb/modern/opendatabase-request-event-private-expected.txt:
+        * storage/indexeddb/modern/opendatabase-request-expected.txt:
+        * storage/indexeddb/modern/opendatabase-request-private-expected.txt:
+        * storage/indexeddb/modern/workers-enable-expected.txt:
+        * storage/indexeddb/version-change-event-basic-expected.txt:
+        * storage/indexeddb/version-change-event-basic-private-expected.txt:
+
 2016-04-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking compositing/webgl/webgl-reflection.html as failing on ios-simulator

@@ -112,6 +112,15 @@ void WorkerGlobalScope::disableEval(const String& errorMessage)
     m_script->disableEval(errorMessage);
 }
 
+#if ENABLE(INDEXED_DATABASE)
+IDBClient::IDBConnectionProxy* WorkerGlobalScope::idbConnectionProxy()
+{
+    // FIXME: Implement
+
+    return nullptr;
+}
+#endif // ENABLE(INDEXED_DATABASE)
+
 WorkerLocation* WorkerGlobalScope::location() const
 {
     if (!m_location)

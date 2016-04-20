@@ -206,7 +206,7 @@ private:
 void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, const String& databaseName)
 {
     Ref<OpenDatabaseCallback> callback = OpenDatabaseCallback::create(this);
-    ExceptionCode ec = 0;
+    ExceptionCodeWithMessage ec;
 
     if (!context()) {
         requestCallback().sendFailure("Could not open database.");
@@ -214,7 +214,7 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
     }
 
     RefPtr<IDBOpenDBRequest> idbOpenDBRequest = idbFactory->open(*context(), databaseName, ec);
-    if (ec) {
+    if (ec.code) {
         requestCallback().sendFailure("Could not open database.");
         return;
     }
