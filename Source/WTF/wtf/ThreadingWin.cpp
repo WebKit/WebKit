@@ -102,10 +102,6 @@
 #include <wtf/RandomNumberSeed.h>
 #include <wtf/WTFThreadData.h>
 
-#if !USE(PTHREADS) && OS(WINDOWS)
-#include "ThreadSpecific.h"
-#endif
-
 #if HAVE(ERRNO_H)
 #include <errno.h>
 #endif
@@ -198,11 +194,6 @@ static unsigned __stdcall wtfThreadEntryPoint(void* param)
 {
     std::unique_ptr<ThreadFunctionInvocation> invocation(static_cast<ThreadFunctionInvocation*>(param));
     invocation->function(invocation->data);
-
-#if !USE(PTHREADS) && OS(WINDOWS)
-    // Do the TLS cleanup.
-    ThreadSpecificThreadExit();
-#endif
 
     return 0;
 }

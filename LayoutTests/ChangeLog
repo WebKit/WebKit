@@ -1,3 +1,17 @@
+2016-04-19  Michael Saboff  <msaboff@apple.com>
+
+        iTunes crashing JavaScriptCore.dll
+        https://bugs.webkit.org/show_bug.cgi?id=156647
+
+        Reviewed by Filip Pizlo.
+
+        Disabled fast/workers/dedicated-worker-lifecycle.html as it creates
+        more workers that we have ThreadSpecific keys.  We need at least one
+        key per JSC VM we create.  I didn't want to weaken the test for other
+        platforms.
+
+        * platform/win/TestExpectations:
+
 2016-04-19  Brent Fulgham  <bfulgham@apple.com>
 
         Remove remaining bits of dynamic <link> rel='icon' loading

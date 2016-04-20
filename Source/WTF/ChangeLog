@@ -1,3 +1,64 @@
+2016-04-19  Michael Saboff  <msaboff@apple.com>
+
+        iTunes crashing JavaScriptCore.dll
+        https://bugs.webkit.org/show_bug.cgi?id=156647
+
+        Reviewed by Filip Pizlo.
+
+        If a thread was created without using the WTF thread apis and that thread uses
+        a JavaScript VM and that thread exits with the VM still around, JSC won't know
+        that the thread has exited.  Currently, we use ThreadSpecificThreadExit() to
+        clean up any thread specific keys.  Cleaning up these keys is how JSC is
+        notified of a thread exit.  We only call ThreadSpecificThreadExit() from
+        wtfThreadEntryPoint() when the thread entry point function returns.
+        This mechanism was put in place for Windows because we layer the WTF::ThreadSpecific
+        functionality on top of TLS (Thread Local Storage), but TLS doesn't have
+        a thread exiting callback the way that pthread_create_key does.
+
+        The fix is to change from using TLS to using FLS (Fiber Local Storage).  Although
+        Windows allows multiple fibers per thread, WebKit is not designed to work with a
+        multiple fibers per thread.  When there is only one fiber per thread, FLS works just
+        like TLS, but it has the destroy callback.
+
+        I restructured the Windows version of WTF::ThreadSpecific to be almost the same
+        as the pthread version.  Added THREAD_SPECIFIC_CALL to set the correct
+        calling convenction for Windows 32 bit.
+
+        * wtf/ThreadSpecific.h:
+        (WTF::threadSpecificKeyCreate):
+        (WTF::threadSpecificKeyDelete):
+        (WTF::threadSpecificSet):
+        (WTF::threadSpecificGet):
+        (WTF::ThreadSpecific<T>::ThreadSpecific):
+        (WTF::ThreadSpecific<T>::~ThreadSpecific):
+        (WTF::ThreadSpecific<T>::get):
+        (WTF::ThreadSpecific<T>::set):
+        (WTF::ThreadSpecific<T>::destroy):
+        Restructured to use FLS.  Renamed TLS* to FLS*.
+
+        * wtf/ThreadSpecificWin.cpp:
+        (WTF::flsKeyCount):
+        (WTF::flsKeys):
+        Renamed from tlsKey*() to flsKey*().
+
+        (WTF::destructorsList): Deleted.
+        (WTF::destructorsMutex): Deleted.
+        (WTF::PlatformThreadSpecificKey::PlatformThreadSpecificKey): Deleted.
+        (WTF::PlatformThreadSpecificKey::~PlatformThreadSpecificKey): Deleted.
+        (WTF::PlatformThreadSpecificKey::setValue): Deleted.
+        (WTF::PlatformThreadSpecificKey::value): Deleted.
+        (WTF::PlatformThreadSpecificKey::callDestructor): Deleted.
+        (WTF::tlsKeyCount): Deleted.
+        (WTF::tlsKeys): Deleted.
+        (WTF::threadSpecificKeyCreate): Deleted.
+        (WTF::threadSpecificKeyDelete): Deleted.
+        (WTF::threadSpecificSet): Deleted.
+        (WTF::threadSpecificGet): Deleted.
+        (WTF::ThreadSpecificThreadExit): Deleted.
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::wtfThreadEntryPoint): Eliminated call to ThreadSpecificThreadExit.
+
 2016-04-19  Filip Pizlo  <fpizlo@apple.com>
 
         Add more locking algorithms to the LockSpeedTest.

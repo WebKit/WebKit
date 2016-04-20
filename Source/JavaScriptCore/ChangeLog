@@ -1,3 +1,27 @@
+2016-04-19  Michael Saboff  <msaboff@apple.com>
+
+        iTunes crashing JavaScriptCore.dll
+        https://bugs.webkit.org/show_bug.cgi?id=156647
+
+        Reviewed by Filip Pizlo.
+
+        Given that there there are only 128 FLS indices compared to over a 1000 for TLS,
+        I eliminated the thread specific m_threadSpecificForThread and instead we look
+        for the current thread in m_registeredThreads list when we need it.
+        In most cases there will only be one thread.
+
+        Added THREAD_SPECIFIC_CALL to signature of ThreadSpecific remove callbacks
+        to set the calling convention correctly for Windows 32 bit.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::ActiveMachineThreadsManager::remove):
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::MachineThreads::~MachineThreads):
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::machineThreadForCurrentThread):
+        (JSC::MachineThreads::removeThread):
+        * heap/MachineStackMarker.h:
+
 2016-04-19  Benjamin Poulain  <bpoulain@webkit.org>
 
         [JSC] Small cleanup of RegisterAtOffsetList
