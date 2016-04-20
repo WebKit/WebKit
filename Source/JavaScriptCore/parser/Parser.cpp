@@ -297,10 +297,8 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
 
     IdentifierSet capturedVariables;
     UniquedStringImplPtrSet sloppyModeHoistedFunctions;
-    bool modifiedParameter = false;
-    bool modifiedArguments = false;
     scope->getSloppyModeHoistedFunctions(sloppyModeHoistedFunctions);
-    scope->getCapturedVars(capturedVariables,  modifiedParameter, modifiedArguments);
+    scope->getCapturedVars(capturedVariables);
 
     VariableEnvironment& varDeclarations = scope->declaredVariables();
     for (auto& entry : capturedVariables)
@@ -316,10 +314,6 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
         features |= StrictModeFeature;
     if (scope->shadowsArguments())
         features |= ShadowsArgumentsFeature;
-    if (modifiedParameter)
-        features |= ModifiedParameterFeature;
-    if (modifiedArguments)
-        features |= ModifiedArgumentsFeature;
 
 #ifndef NDEBUG
     if (m_parsingBuiltin && isProgramParseMode(parseMode)) {
@@ -3122,7 +3116,6 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         if (strictMode() && m_parserState.lastIdentifier && context.isResolve(lhs)) {
             failIfTrueIfStrict(m_vm->propertyNames->eval == *m_parserState.lastIdentifier, "Cannot modify 'eval' in strict mode");
             failIfTrueIfStrict(m_vm->propertyNames->arguments == *m_parserState.lastIdentifier, "Cannot modify 'arguments' in strict mode");
-            declareWrite(m_parserState.lastIdentifier);
             m_parserState.lastIdentifier = 0;
         }
         lhs = parseAssignmentExpression(context);

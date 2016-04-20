@@ -213,7 +213,6 @@ public:
         , m_lexicalVariables(WTFMove(other.m_lexicalVariables))
         , m_usedVariables(WTFMove(other.m_usedVariables))
         , m_closedVariableCandidates(WTFMove(other.m_closedVariableCandidates))
-        , m_writtenVariables(WTFMove(other.m_writtenVariables))
         , m_moduleScopeData(WTFMove(other.m_moduleScopeData))
         , m_functionDeclarations(WTFMove(other.m_functionDeclarations))
     {
@@ -465,12 +464,6 @@ public:
         return m_declaredParameters.contains(ident.get()) || hasDeclaredVariable(ident);
     }
     
-    void declareWrite(const Identifier* ident)
-    {
-        ASSERT(m_strictMode);
-        m_writtenVariables.add(ident->impl());
-    }
-
     void preventAllVariableDeclarations()
     {
         m_allowsVarDeclarations = false; 
@@ -598,14 +591,6 @@ public:
             IdentifierSet::iterator begin = nestedScope->m_closedVariableCandidates.begin();
             m_closedVariableCandidates.add(begin, end);
         }
-
-        if (nestedScope->m_writtenVariables.size()) {
-            for (UniquedStringImpl* impl : nestedScope->m_writtenVariables) {
-                if (nestedScope->m_declaredVariables.contains(impl) || nestedScope->m_lexicalVariables.contains(impl))
-                    continue;
-                m_writtenVariables.add(impl);
-            }
-        }
     }
     
     void mergeInnerArrowFunctionFeatures(InnerArrowFunctionCodeFeatures arrowFunctionCodeFeatures)
@@ -632,10 +617,9 @@ public:
         }
     }
 
-    void getCapturedVars(IdentifierSet& capturedVariables, bool& modifiedParameter, bool& modifiedArguments)
+    void getCapturedVars(IdentifierSet& capturedVariables)
     {
         if (m_needsFullActivation || m_usesEval) {
-            modifiedParameter = true;
             for (auto& entry : m_declaredVariables)
                 capturedVariables.add(entry.key);
             return;
@@ -645,19 +629,6 @@ public:
             if (!m_declaredVariables.contains(*ptr)) 
                 continue;
             capturedVariables.add(*ptr);
-        }
-        modifiedParameter = false;
-        if (shadowsArguments())
-            modifiedArguments = true;
-        if (m_declaredParameters.size()) {
-            for (UniquedStringImpl* impl : m_writtenVariables) {
-                if (impl == m_vm->propertyNames->arguments.impl())
-                    modifiedArguments = true;
-                if (!m_declaredParameters.contains(impl))
-                    continue;
-                modifiedParameter = true;
-                break;
-            }
         }
     }
     void setStrictMode() { m_strictMode = true; }
@@ -681,7 +652,6 @@ public:
         parameters.strictMode = m_strictMode;
         parameters.needsFullActivation = m_needsFullActivation;
         parameters.innerArrowFunctionFeatures = m_innerArrowFunctionFeatures;
-        copyCapturedVariablesToVector(m_writtenVariables, parameters.writtenVariables);
         for (const UniquedStringImplPtrSet& set : m_usedVariables)
             copyCapturedVariablesToVector(set, parameters.usedVariables);
     }
@@ -696,8 +666,6 @@ public:
         UniquedStringImplPtrSet& destSet = m_usedVariables.last();
         for (unsigned i = 0; i < info->usedVariablesCount; ++i)
             destSet.add(info->usedVariables()[i]);
-        for (unsigned i = 0; i < info->writtenVariablesCount; ++i)
-            m_writtenVariables.add(info->writtenVariables()[i]);
     }
 
 private:
@@ -773,7 +741,6 @@ private:
     Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
     UniquedStringImplPtrSet m_sloppyModeHoistableFunctionCandidates;
     IdentifierSet m_closedVariableCandidates;
-    UniquedStringImplPtrSet m_writtenVariables;
     RefPtr<ModuleScopeData> m_moduleScopeData;
     DeclarationStacks::FunctionStack m_functionDeclarations;
 };
@@ -1175,12 +1142,6 @@ private:
         return m_scopeStack[i].hasDeclaredParameter(ident);
     }
     
-    void declareWrite(const Identifier* ident)
-    {
-        if (!m_syntaxAlreadyValidated || strictMode())
-            m_scopeStack.last().declareWrite(ident);
-    }
-
     bool exportName(const Identifier& ident)
     {
         ASSERT(currentScope().index() == 0);
