@@ -1,3 +1,9 @@
+2016-04-20  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL gardening. Follow up gardening for media test.
+
+        * platform/efl/TestExpectations: Unskip 3 media tests.
+
 2016-04-19  Michael Saboff  <msaboff@apple.com>
 
         iTunes crashing JavaScriptCore.dll
