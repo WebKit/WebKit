@@ -1,3 +1,11 @@
+2016-04-19  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unskip media tests since r199649
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations: r199649 fixed media test crash as well.
+
 2016-04-19  Mark Lam  <mark.lam@apple.com>
 
         Re-landing: ES6: Implement RegExp.prototype[@@search].
