@@ -2274,8 +2274,12 @@ int jscmain(int argc, char** argv)
     }
 
     if (options.m_dumpSamplingProfilerData) {
+#if ENABLE(SAMPLING_PROFILER)
         vm->samplingProfiler()->reportTopFunctions();
         vm->samplingProfiler()->reportTopBytecodes();
+#else
+        dataLog("Sampling profiler is not enabled on this platform\n");
+#endif
     }
 
     printSuperSamplerState();

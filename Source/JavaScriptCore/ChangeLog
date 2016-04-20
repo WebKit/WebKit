@@ -1,3 +1,10 @@
+2016-04-19  Saam barati  <sbarati@apple.com>
+
+        Unreviewed, fix cloop build after r199754.
+
+        * jsc.cpp:
+        (jscmain):
+
 2016-04-19  Michael Saboff  <msaboff@apple.com>
 
         iTunes crashing JavaScriptCore.dll
