@@ -1,3 +1,25 @@
+2016-04-20  Saam barati  <sbarati@apple.com>
+
+        We don't need a manual stack for an RAII object when the machine's stack will do just fine
+        https://bugs.webkit.org/show_bug.cgi?id=156807
+
+        Reviewed by Mark Lam.
+
+        We kept around a vector for an RAII object to maintain
+        the recursive nature of having these RAII objects on
+        the stack as the parser recursed. Instead, the RAII object
+        can just have a field with the value it wants to restore
+        and use the machine's stack.
+
+        This is a 1% octane code-load progression.
+
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::BinaryExprContext::BinaryExprContext):
+        (JSC::SyntaxChecker::BinaryExprContext::~BinaryExprContext):
+        (JSC::SyntaxChecker::UnaryExprContext::UnaryExprContext):
+        (JSC::SyntaxChecker::UnaryExprContext::~UnaryExprContext):
+        (JSC::SyntaxChecker::operatorStackPop):
+
 2016-04-20  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r190289): Spin trying to view/sign in to hbogo.com
