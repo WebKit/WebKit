@@ -99,7 +99,9 @@ public:
 #endif
         bool m_allowsInlineMediaPlayback;
         bool m_inlineMediaPlaybackRequiresPlaysInlineAttribute;
+#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
         bool m_indexedDBWorkersEnabled;
+#endif
     };
 
     static Ref<InternalSettings> create(Page* page)

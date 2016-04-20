@@ -1,3 +1,13 @@
+2016-04-20  Brady Eidson  <beidson@apple.com>
+
+        Attempt to fix non-INDEXED_DATABASE_IN_WORKERS builds after r199779
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setIndexedDBWorkersEnabled):
+        * testing/InternalSettings.h:
+
 2016-04-20  Chris Dumez  <cdumez@apple.com>
 
         Potential overflow in RenderLayer::hitTestList()
