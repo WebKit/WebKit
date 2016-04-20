@@ -16,11 +16,8 @@
     link.href = "";
     window.addEventListener("load", function() {
         shouldBeFalse("internals.isPreloaded('../resources/dummy.js');");
+        if (window.internals)
+            window.internals.setLinkPreloadSupport(false);
     });
-</script>
-<script src="../resources/slow-script.pl?delay=200"></script>
-<script>
-    if (window.internals)
-        window.internals.setLinkPreloadSupport(false);
 </script>
 </body>

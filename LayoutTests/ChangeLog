@@ -1,3 +1,12 @@
+2016-04-20  Yoav Weiss  <yoav@yoav.ws>
+
+        Speculative unflake of dynamic_remove_preload_href layout test
+        https://bugs.webkit.org/show_bug.cgi?id=156773
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/preload/dynamic_remove_preload_href.html: Avoid using a blocking script based timeout.
+
 2016-04-20  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Enable INDEXED_DATABASE_IN_WORKERS compile time flag, but disabled in RuntimeEnabledFeatures.
