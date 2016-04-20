@@ -1,3 +1,19 @@
+2016-04-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove remaining bits of dynamic <link> rel='icon' loading
+        https://bugs.webkit.org/show_bug.cgi?id=156727
+
+        Reviewed by Darin Adler.
+
+        Remove unused test infrastructure. This code never existed in WebKit2
+        testing since was only used on Windows.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (dumpIconChangesCallback): Deleted.
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::dumpIconChanges): Deleted.
+        (TestRunner::setDumpIconChanges): Deleted.
+
 2016-04-19  Keith Miller  <keith_miller@apple.com>
 
         ObjcInstance::stringValue should not call NSObject's description method

@@ -137,12 +137,6 @@ static void preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL& hre
 
 bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href, const String& as, const String& crossOrigin, Document& document)
 {
-    // We'll record this URL per document, even if we later only use it in top level frames
-    if (relAttribute.iconType != InvalidIcon && href.isValid() && !href.isEmpty()) {
-        if (!m_client.shouldLoadLink())
-            return false;
-    }
-
     if (relAttribute.isDNSPrefetch) {
         Settings* settings = document.settings();
         // FIXME: The href attribute of the link element can be in "//hostname" form, and we shouldn't attempt

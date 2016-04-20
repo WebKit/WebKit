@@ -1,3 +1,22 @@
+2016-04-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove remaining bits of dynamic <link> rel='icon' loading
+        https://bugs.webkit.org/show_bug.cgi?id=156727
+
+        Reviewed by Darin Adler.
+
+        Don't call 'shouldLoadLink' for 'icon' link types. It performs no
+        useful checks for 'icon' types, and emits the non-standard
+        'onbeforeload' event.
+
+        This work finishes up https://webkit.org/b/153151, where we removed
+        FrameLoaderClient::dispatchDidChangeIcons() and related code.
+
+        Test: webarchive/test-link-rel-subresource-beforeload.html
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLink): Remove unneeded call to 'shouldLoadLink'.
+
 2016-04-19  Chris Dumez  <cdumez@apple.com>
 
         AudioBufferSourceNode.buffer should be nullable

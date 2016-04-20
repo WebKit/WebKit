@@ -45,10 +45,6 @@
 webkit.org/b/156612 http/tests/security/contentSecurityPolicy/embed-redirect-blocked3.html [ Failure ]
 webkit.org/b/156612 http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html [ Failure ]
 
-# WebKitTestRunner needs to implement testRunner.dumpIconChanges().
-webkit.org/b/44046 http/tests/security/contentSecurityPolicy/icon-allowed.html
-webkit.org/b/44046 http/tests/security/contentSecurityPolicy/icon-blocked.html
-
 # AX tests that require hit testing do not work in WK2.
 webkit.org/b/71298 accessibility/loading-iframe-updates-axtree.html
 webkit.org/b/71298 accessibility/mac/html-slider-indicator.html
@@ -71,9 +67,6 @@ webkit.org/b/60648 fast/frames/flattening/frameset-flattening-subframesets.html 
 # (zero-font-size.html passes because overridePreference does not work)
 webkit.org/b/42197 fast/harness/override-preferences-2.html [ Failure ]
 webkit.org/b/42197 fast/text/zero-font-size.html [ Pass ]
-
-# setIconDatabaseEnabled not implemented in WebKitTestRunner.
-webkit.org/b/115809 webarchive/test-link-rel-icon-beforeload.html [ Skip ]
 
 webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding.html [ Skip ]
 webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-shift-jis.html [ Skip ]

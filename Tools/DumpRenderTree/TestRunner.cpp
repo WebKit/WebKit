@@ -81,7 +81,6 @@ TestRunner::TestRunner(const std::string& testURL, const std::string& expectedPi
     , m_dumpSourceAsWebArchive(false)
     , m_dumpStatusCallbacks(false)
     , m_dumpTitleChanges(false)
-    , m_dumpIconChanges(false)
     , m_dumpVisitedLinksCallback(false)
     , m_dumpWillCacheResponse(false)
     , m_generatePixelResults(true)
@@ -260,13 +259,6 @@ static JSValueRef dumpTitleChangesCallback(JSContextRef context, JSObjectRef fun
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpTitleChanges(true);
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef dumpIconChangesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setDumpIconChanges(true);
     return JSValueMakeUndefined(context);
 }
 
@@ -2064,7 +2056,6 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "dumpSourceAsWebArchive", dumpSourceAsWebArchiveCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpStatusCallbacks", dumpStatusCallbacksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpTitleChanges", dumpTitleChangesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "dumpIconChanges", dumpIconChangesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpWillCacheResponse", dumpWillCacheResponseCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "encodeHostName", encodeHostNameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "evaluateInWebInspector", evaluateInWebInspectorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

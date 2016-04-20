@@ -4,7 +4,6 @@
 function runTest()
 {
     if (window.testRunner) {
-        testRunner.setIconDatabaseEnabled(true);
         testRunner.dumpDOMAsWebArchive();
         testRunner.queueReload();
     }
@@ -25,6 +24,6 @@ function print(message, color)
 }
 </script>
 <p>This test should have a green 'PASS' just above this line.  If it doesn't, you failed.
-<link rel="icon" onbeforeload="print('PASS','green');return false" href="resources/favicon.ico" type="image/x-icon">
+<link rel="subresource" onbeforeload="print('PASS','green');return false" href="resources/favicon.ico" type="image/x-icon">
 </body>
 </html>

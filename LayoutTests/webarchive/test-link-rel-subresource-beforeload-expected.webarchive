@@ -10,7 +10,6 @@
 function runTest()
 {
     if (window.testRunner) {
-        testRunner.setIconDatabaseEnabled(true);
         testRunner.dumpDOMAsWebArchive();
         testRunner.queueReload();
     }
@@ -31,7 +30,7 @@ function print(message, color)
 }
 &lt;/script&gt;
 &lt;p&gt;This test should have a green 'PASS' just above this line.  If it doesn't, you failed.
-&lt;link rel="icon" onbeforeload="print('PASS','green');return false" href="resources/favicon.ico" type="image/x-icon"&gt;
+&lt;link rel="subresource" onbeforeload="print('PASS','green');return false" href="resources/favicon.ico" type="image/x-icon"&gt;
 
 
 &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -42,7 +41,7 @@ function print(message, color)
 		<key>WebResourceTextEncodingName</key>
 		<string>UTF-8</string>
 		<key>WebResourceURL</key>
-		<string>file:///LayoutTests/webarchive/test-link-rel-icon-beforeload.html</string>
+		<string>file:///LayoutTests/webarchive/test-link-rel-subresource-beforeload.html</string>
 	</dict>
 </dict>
 </plist>
