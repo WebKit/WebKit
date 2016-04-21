@@ -45,8 +45,7 @@ struct SourceProviderCacheItemCreationParameters {
     bool usesEval;
     bool strictMode;
     InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures;
-    Vector<RefPtr<UniquedStringImpl>> usedVariables;
-    Vector<RefPtr<UniquedStringImpl>> writtenVariables;
+    Vector<UniquedStringImpl*, 8> usedVariables;
     bool isBodyArrowExpression { false };
     JSTokenType tokenType { CLOSEBRACE };
 };
@@ -93,10 +92,8 @@ public:
 
     unsigned lastTockenLineStartOffset;
     unsigned usedVariablesCount;
-    unsigned writtenVariablesCount;
 
     UniquedStringImpl** usedVariables() const { return const_cast<UniquedStringImpl**>(m_variables); }
-    UniquedStringImpl** writtenVariables() const { return const_cast<UniquedStringImpl**>(&m_variables[usedVariablesCount]); }
     bool isBodyArrowExpression;
     JSTokenType tokenType;
 
@@ -108,13 +105,13 @@ private:
 
 inline SourceProviderCacheItem::~SourceProviderCacheItem()
 {
-    for (unsigned i = 0; i < usedVariablesCount + writtenVariablesCount; ++i)
+    for (unsigned i = 0; i < usedVariablesCount; ++i)
         m_variables[i]->deref();
 }
 
 inline std::unique_ptr<SourceProviderCacheItem> SourceProviderCacheItem::create(const SourceProviderCacheItemCreationParameters& parameters)
 {
-    size_t variableCount = parameters.writtenVariables.size() + parameters.usedVariables.size();
+    size_t variableCount = parameters.usedVariables.size();
     size_t objectSize = sizeof(SourceProviderCacheItem) + sizeof(UniquedStringImpl*) * variableCount;
     void* slot = fastMalloc(objectSize);
     return std::unique_ptr<SourceProviderCacheItem>(new (slot) SourceProviderCacheItem(parameters));
@@ -133,18 +130,12 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , innerArrowFunctionFeatures(parameters.innerArrowFunctionFeatures)
     , lastTockenLineStartOffset(parameters.lastTockenLineStartOffset)
     , usedVariablesCount(parameters.usedVariables.size())
-    , writtenVariablesCount(parameters.writtenVariables.size())
     , isBodyArrowExpression(parameters.isBodyArrowExpression)
     , tokenType(parameters.tokenType)
 {
-    unsigned j = 0;
-    for (unsigned i = 0; i < usedVariablesCount; ++i, ++j) {
-        m_variables[j] = parameters.usedVariables[i].get();
-        m_variables[j]->ref();
-    }
-    for (unsigned i = 0; i < writtenVariablesCount; ++i, ++j) {
-        m_variables[j] = parameters.writtenVariables[i].get();
-        m_variables[j]->ref();
+    for (unsigned i = 0; i < usedVariablesCount; ++i) {
+        m_variables[i] = parameters.usedVariables[i];
+        m_variables[i]->ref();
     }
 }
 

@@ -1,3 +1,38 @@
+2016-04-21  Saam barati  <sbarati@apple.com>
+
+        Remove some unnecessary RefPtrs in the parser
+        https://bugs.webkit.org/show_bug.cgi?id=156865
+
+        Reviewed by Filip Pizlo.
+
+        The IdentifierArena or the SourceProviderCacheItem will own these UniquedStringImpls
+        while we are using them. There is no need for us to reference count them.
+
+        This might be a 0.5% speedup on octane code-load.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        * parser/Parser.h:
+        (JSC::Scope::setIsLexicalScope):
+        (JSC::Scope::isLexicalScope):
+        (JSC::Scope::closedVariableCandidates):
+        (JSC::Scope::declaredVariables):
+        (JSC::Scope::lexicalVariables):
+        (JSC::Scope::finalizeLexicalEnvironment):
+        (JSC::Scope::computeLexicallyCapturedVariablesAndPurgeCandidates):
+        (JSC::Scope::collectFreeVariables):
+        (JSC::Scope::getCapturedVars):
+        (JSC::Scope::setStrictMode):
+        (JSC::Scope::isValidStrictMode):
+        (JSC::Scope::shadowsArguments):
+        (JSC::Scope::copyCapturedVariablesToVector):
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::usedVariables):
+        (JSC::SourceProviderCacheItem::~SourceProviderCacheItem):
+        (JSC::SourceProviderCacheItem::create):
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+        (JSC::SourceProviderCacheItem::writtenVariables): Deleted.
+
 2016-04-21  Filip Pizlo  <fpizlo@apple.com>
 
         PolymorphicAccess adds sizeof(CallerFrameAndPC) rather than subtracting it when calculating stack height

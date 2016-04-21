@@ -297,7 +297,7 @@ public:
     }
     bool isLexicalScope() { return m_isLexicalScope; }
 
-    const IdentifierSet& closedVariableCandidates() const { return m_closedVariableCandidates; }
+    const HashSet<UniquedStringImpl*>& closedVariableCandidates() const { return m_closedVariableCandidates; }
     VariableEnvironment& declaredVariables() { return m_declaredVariables; }
     VariableEnvironment& lexicalVariables() { return m_lexicalVariables; }
     VariableEnvironment& finalizeLexicalEnvironment() 
@@ -323,16 +323,15 @@ public:
         // lexical scope off the stack, we should find which variables are truly captured, and which
         // variable still may be captured in a parent scope.
         if (m_lexicalVariables.size() && m_closedVariableCandidates.size()) {
-            auto end = m_closedVariableCandidates.end();
-            for (auto iter = m_closedVariableCandidates.begin(); iter != end; ++iter)
-                m_lexicalVariables.markVariableAsCapturedIfDefined(iter->get());
+            for (UniquedStringImpl* impl : m_closedVariableCandidates)
+                m_lexicalVariables.markVariableAsCapturedIfDefined(impl);
         }
 
         // We can now purge values from the captured candidates because they're captured in this scope.
         {
             for (auto entry : m_lexicalVariables) {
                 if (entry.value.isCaptured())
-                    m_closedVariableCandidates.remove(entry.key);
+                    m_closedVariableCandidates.remove(entry.key.get());
             }
         }
     }
@@ -587,8 +586,8 @@ public:
         // Propagate closed variable candidates downwards within the same function.
         // Cross function captures will be realized via m_usedVariables propagation.
         if (shouldTrackClosedVariables && !nestedScope->m_isFunctionBoundary && nestedScope->m_closedVariableCandidates.size()) {
-            IdentifierSet::iterator end = nestedScope->m_closedVariableCandidates.end();
-            IdentifierSet::iterator begin = nestedScope->m_closedVariableCandidates.begin();
+            auto end = nestedScope->m_closedVariableCandidates.end();
+            auto begin = nestedScope->m_closedVariableCandidates.begin();
             m_closedVariableCandidates.add(begin, end);
         }
     }
@@ -624,11 +623,11 @@ public:
                 capturedVariables.add(entry.key);
             return;
         }
-        for (IdentifierSet::iterator ptr = m_closedVariableCandidates.begin(); ptr != m_closedVariableCandidates.end(); ++ptr) {
+        for (UniquedStringImpl* impl : m_closedVariableCandidates) {
             // We refer to m_declaredVariables here directly instead of a hasDeclaredVariable because we want to mark the callee as captured.
-            if (!m_declaredVariables.contains(*ptr)) 
+            if (!m_declaredVariables.contains(impl)) 
                 continue;
-            capturedVariables.add(*ptr);
+            capturedVariables.add(impl);
         }
     }
     void setStrictMode() { m_strictMode = true; }
@@ -636,9 +635,9 @@ public:
     bool isValidStrictMode() const { return m_isValidStrictMode; }
     bool shadowsArguments() const { return m_shadowsArguments; }
 
-    void copyCapturedVariablesToVector(const UniquedStringImplPtrSet& capturedVariables, Vector<RefPtr<UniquedStringImpl>>& vector)
+    void copyCapturedVariablesToVector(const UniquedStringImplPtrSet& usedVariables, Vector<UniquedStringImpl*, 8>& vector)
     {
-        for (UniquedStringImpl* impl : capturedVariables) {
+        for (UniquedStringImpl* impl : usedVariables) {
             if (m_declaredVariables.contains(impl) || m_lexicalVariables.contains(impl))
                 continue;
             vector.append(impl);
@@ -740,7 +739,7 @@ private:
     VariableEnvironment m_lexicalVariables;
     Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
     UniquedStringImplPtrSet m_sloppyModeHoistableFunctionCandidates;
-    IdentifierSet m_closedVariableCandidates;
+    HashSet<UniquedStringImpl*> m_closedVariableCandidates;
     RefPtr<ModuleScopeData> m_moduleScopeData;
     DeclarationStacks::FunctionStack m_functionDeclarations;
 };

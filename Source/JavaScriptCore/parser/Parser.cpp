@@ -318,10 +318,10 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
 #ifndef NDEBUG
     if (m_parsingBuiltin && isProgramParseMode(parseMode)) {
         VariableEnvironment& lexicalVariables = scope->lexicalVariables();
-        const IdentifierSet& closedVariableCandidates = scope->closedVariableCandidates();
+        const HashSet<UniquedStringImpl*>& closedVariableCandidates = scope->closedVariableCandidates();
         const BuiltinNames& builtinNames = m_vm->propertyNames->builtinNames();
-        for (const RefPtr<UniquedStringImpl>& candidate : closedVariableCandidates) {
-            if (!lexicalVariables.contains(candidate) && !varDeclarations.contains(candidate) && !builtinNames.isPrivateName(*candidate.get())) {
+        for (UniquedStringImpl* candidate : closedVariableCandidates) {
+            if (!lexicalVariables.contains(candidate) && !varDeclarations.contains(candidate) && !builtinNames.isPrivateName(*candidate)) {
                 dataLog("Bad global capture in builtin: '", candidate, "'\n");
                 dataLog(m_source->view());
                 CRASH();
