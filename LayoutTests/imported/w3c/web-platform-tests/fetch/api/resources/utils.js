@@ -74,3 +74,11 @@ function validateStreamFromString(reader, expectedValue, retrievedArrayBuffer) {
     validateBufferFromString(retrievedArrayBuffer, expectedValue, "Retrieve and verify stream");
   });
 }
+
+// From streams tests
+function delay(milliseconds)
+{
+    return new Promise(function(resolve) {
+        step_timeout(resolve, milliseconds);
+    });
+}

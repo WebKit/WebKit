@@ -15,30 +15,34 @@
 promise_test(function() {
     return fetch("../resources/data.json").then(function(response) {
         response.blob();
-        assert_equals(response.body, null);
+        assert_not_equals(response.body, null);
+        assert_throws(new TypeError(), function() { response.body.getReader(); });
     });
-}, "Getting a null body after consuming as blob");
+}, "Getting a body reader after consuming as blob");
 
 promise_test(function() {
     return fetch("../resources/data.json").then(function(response) {
         response.text();
-        assert_equals(response.body, null);
+        assert_not_equals(response.body, null);
+        assert_throws(new TypeError(), function() { response.body.getReader(); });
     });
-}, "Getting a null body after consuming as text");
+}, "Getting a body reader after consuming as text");
 
 promise_test(function() {
     return fetch("../resources/data.json").then(function(response) {
         response.json();
-        assert_equals(response.body, null);
+        assert_not_equals(response.body, null);
+        assert_throws(new TypeError(), function() { response.body.getReader(); });
     });
-}, "Getting a null body after consuming as json");
+}, "Getting a body reader after consuming as json");
 
 promise_test(function() {
     return fetch("../resources/data.json").then(function(response) {
         response.arrayBuffer();
-        assert_equals(response.body, null);
+        assert_not_equals(response.body, null);
+        assert_throws(new TypeError(), function() { response.body.getReader(); });
     });
-}, "Getting a null body after consuming as arrayBuffer");
+}, "Getting a body reader after consuming as arrayBuffer");
 
     </script>
   </body>

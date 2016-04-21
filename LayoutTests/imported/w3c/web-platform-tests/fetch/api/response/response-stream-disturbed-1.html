@@ -20,13 +20,6 @@ function createResponseWithReadableStream(callback) {
     });
 }
 
-function createResponseWithCancelledReadableStream(callback) {
-    return fetch("../resources/data.json").then(function(response) {
-        response.body.cancel();
-        return callback(response);
-    });
-}
-
 promise_test(function() {
     return createResponseWithReadableStream(function(response) {
         return response.blob().then(function(blob) {

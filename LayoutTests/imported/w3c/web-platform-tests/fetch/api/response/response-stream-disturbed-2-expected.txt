@@ -1,6 +1,6 @@
 
-FAIL Getting blob after getting a locked Response body Can't find variable: createResponseWithReadableStream
-FAIL Getting text after getting a locked Response body Can't find variable: createResponseWithReadableStream
-FAIL Getting json after getting a locked Response body Can't find variable: createResponseWithReadableStream
-FAIL Getting arraybuffer after getting a locked Response body Can't find variable: createResponseWithReadableStream
+PASS Getting blob after getting a locked Response body 
+PASS Getting text after getting a locked Response body 
+PASS Getting json after getting a locked Response body 
+PASS Getting arrayBuffer after getting a locked Response body 
 

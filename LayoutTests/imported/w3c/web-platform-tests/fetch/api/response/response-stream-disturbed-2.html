@@ -19,44 +19,29 @@ function createResponseWithLockedReadableStream(callback) {
     });
 }
 
-function createResponseWithCancelledReadableStream(callback) {
-    return fetch("../resources/data.json").then(function(response) {
-        response.body.cancel();
-        return callback(response);
-    });
-}
-
-promise_test(function() {
-    return createResponseWithReadableStream(function(response) {
-        return response.blob().then(function(blob) {
-            assert_true(blob instanceof Blob);
-        });
+promise_test(function(test) {
+    return createResponseWithLockedReadableStream(function(response) {
+        return promise_rejects(test, new TypeError(), response.blob());
     });
 }, "Getting blob after getting a locked Response body");
 
-promise_test(function() {
-    return createResponseWithReadableStream(function(response) {
-        return response.text().then(function(text) {
-            assert_true(text.length > 0);
-        });
+promise_test(function(test) {
+    return createResponseWithLockedReadableStream(function(response) {
+        return promise_rejects(test, new TypeError(), response.text());
     });
 }, "Getting text after getting a locked Response body");
 
-promise_test(function() {
-    return createResponseWithReadableStream(function(response) {
-        return response.json().then(function(json) {
-            assert_true(typeof json === "object");
-        });
+promise_test(function(test) {
+    return createResponseWithLockedReadableStream(function(response) {
+        return promise_rejects(test, new TypeError(), response.json());
     });
 }, "Getting json after getting a locked Response body");
 
-promise_test(function() {
-    return createResponseWithReadableStream(function(response) {
-        return response.arrayBuffer().then(function(arrayBuffer) {
-            assert_true(arrayBuffer.byteLength > 0);
-        });
+promise_test(function(test) {
+    return createResponseWithLockedReadableStream(function(response) {
+        return promise_rejects(test, new TypeError(), response.arrayBuffer());
     });
-}, "Getting arraybuffer after getting a locked Response body");
+}, "Getting arrayBuffer after getting a locked Response body");
 
     </script>
   </body>

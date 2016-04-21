@@ -1,6 +1,6 @@
 
-PASS Getting a null body after consuming as blob 
-PASS Getting a null body after consuming as text 
-PASS Getting a null body after consuming as json 
-PASS Getting a null body after consuming as arrayBuffer 
+FAIL Getting a body reader after consuming as blob assert_not_equals: got disallowed value null
+FAIL Getting a body reader after consuming as text assert_not_equals: got disallowed value null
+FAIL Getting a body reader after consuming as json assert_not_equals: got disallowed value null
+FAIL Getting a body reader after consuming as arrayBuffer assert_not_equals: got disallowed value null
 

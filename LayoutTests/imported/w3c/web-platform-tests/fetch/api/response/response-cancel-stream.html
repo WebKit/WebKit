@@ -27,17 +27,12 @@ promise_test(function(test) {
 promise_test(function(test) {
     var response = new Response(new Blob(["T"], { "type" : "text/plain" }));
     var reader = response.body.getReader();
-    var resolve;
-    var promise = new Promise(function(_resolve, _reject) {
-        resolve = _resolve;
-    });
-    promise.then(function() {
+
+    return delay(100).then(function() {
         return reader.read().then(function(value) {
-        return reader.cancel();
+            return reader.cancel();
         });
     });
-    setTimeout(resolve, 100);
-    return promise;
 }, "Cancelling a closed blob Response stream");
 
 promise_test(function(test) {
