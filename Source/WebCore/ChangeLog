@@ -1,3 +1,16 @@
+2016-04-21  Dave Hyatt  <hyatt@apple.com>
+
+        Don't hyphenate the last word in a paragraph of text.
+        https://bugs.webkit.org/show_bug.cgi?id=156803
+
+        Reviewed by Simon Fraser.
+
+        Added fast/text/hyphenate-avoid-orphaned-word.html
+
+        * rendering/RenderText.h:
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+
 2016-04-21  Chris Dumez  <cdumez@apple.com>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from Range

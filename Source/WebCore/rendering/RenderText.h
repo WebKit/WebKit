@@ -170,6 +170,8 @@ public:
     StringView stringView(int start = 0, int stop = -1) const;
 
     LayoutUnit topOfFirstText() const;
+    
+    bool containsOnlyWhitespace(unsigned from, unsigned len) const;
 
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
@@ -194,7 +196,6 @@ private:
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { ASSERT_NOT_REACHED(); return false; }
 
-    bool containsOnlyWhitespace(unsigned from, unsigned len) const;
     float widthFromCache(const FontCascade&, int start, int len, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow*, const RenderStyle&) const;
     bool isAllASCII() const { return m_isAllASCII; }
     bool computeUseBackslashAsYenSymbol() const;

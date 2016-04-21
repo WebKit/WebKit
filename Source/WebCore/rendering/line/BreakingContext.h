@@ -794,6 +794,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     bool keepAllWords = m_currentStyle->wordBreak() == KeepAllWordBreak;
     float hyphenWidth = 0;
     bool isLooseCJKMode = false;
+    bool isLineEmpty = m_lineInfo.isEmpty();
 
     if (isSVGText) {
         breakWords = false;
@@ -937,7 +938,10 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     }
                 }
                 if ((lineWasTooWide || !m_width.fitsOnLine()) && !m_hangsAtEnd) {
-                    if (canHyphenate && !m_width.fitsOnLine()) {
+                    // Don't try to hyphenate at the final break of a block, since this means there is
+                    // no more content, and a hyphenated single word would end up on a line by itself. This looks
+                    // bad so just don't allow it.
+                    if (canHyphenate && !m_width.fitsOnLine() && (m_nextObject || !renderText.containsOnlyWhitespace(m_current.offset(), renderText.textLength() - m_current.offset()) || isLineEmpty)) {
                         m_lineBreakHistory.push([&](InlineIterator& modifyMe) {
                             tryHyphenating(renderText, font, style.locale(), consecutiveHyphenatedLines, m_blockStyle.hyphenationLimitLines(), style.hyphenationLimitBefore(), style.hyphenationLimitAfter(), lastSpace, m_current.offset(), m_width.currentWidth() - additionalTempWidth, m_width.availableWidth(), isFixedPitch, m_collapseWhiteSpace, lastSpaceWordSpacing, modifyMe, m_current.nextBreakablePosition(), m_lineBreaker.m_hyphenated);
                         });
@@ -1045,6 +1049,8 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     m_trailingObjects.updateWhitespaceCollapsingTransitionsForTrailingBoxes(m_lineWhitespaceCollapsingState, InlineIterator(), TrailingObjects::DoNotCollapseFirstSpace);
                 }
             }
+            
+            isLineEmpty = m_lineInfo.isEmpty();
         } else {
             if (m_ignoringSpaces) {
                 // Stop ignoring spaces and begin at this new point.
@@ -1120,7 +1126,10 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     m_includeEndWidth = false;
 
     if (!fitsOnLineOrHangsAtEnd()) {
-        if (canHyphenate) {
+        // Don't try to hyphenate at the final break of a block, since this means there is
+        // no more content, and a hyphenated single word would end up on a line by itself. This looks
+        // bad so just don't allow it.
+        if (canHyphenate && (m_nextObject || isLineEmpty)) {
             m_lineBreakHistory.push([&](InlineIterator& modifyMe) {
                 tryHyphenating(renderText, font, style.locale(), consecutiveHyphenatedLines, m_blockStyle.hyphenationLimitLines(), style.hyphenationLimitBefore(), style.hyphenationLimitAfter(), lastSpace, m_current.offset(), m_width.currentWidth() - additionalTempWidth, m_width.availableWidth(), isFixedPitch, m_collapseWhiteSpace, lastSpaceWordSpacing, modifyMe, m_current.nextBreakablePosition(), m_lineBreaker.m_hyphenated);
             });

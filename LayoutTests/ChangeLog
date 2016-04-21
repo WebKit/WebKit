@@ -1,3 +1,14 @@
+2016-04-21  Dave Hyatt  <hyatt@apple.com>
+
+        Don't hyphenate the last word in a paragraph of text.
+        https://bugs.webkit.org/show_bug.cgi?id=156803
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/hyphenate-avoid-orphaned-word.html: Added.
+        * platform/mac/fast/text/hyphenate-avoid-orphaned-word-expected.txt: Added.
+        * platform/mac/fast/text/hyphenate-limit-before-after-expected.txt:
+
 2016-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations for some editing tests that are slow on Debug.
