@@ -256,7 +256,6 @@ private:
 
     void platformSetCacheModel(CacheModel);
     void platformClearResourceCaches(ResourceCachesToClear);
-    void clearApplicationCache();
 
     void setEnhancedAccessibility(bool);
     

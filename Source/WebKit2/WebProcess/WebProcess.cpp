@@ -742,12 +742,6 @@ void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear
     CrossOriginPreflightResultCache::singleton().empty();
 }
 
-void WebProcess::clearApplicationCache()
-{
-    // Empty the application cache.
-    ApplicationCacheStorage::singleton().empty();
-}
-
 static inline void addCaseFoldedCharacters(StringHasher& hasher, const String& string)
 {
     if (string.isEmpty())

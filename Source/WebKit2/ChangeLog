@@ -1,3 +1,16 @@
+2016-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Remove two uses of ApplicationCacheStorage::singleton() from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=156873
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::reachedApplicationCacheOriginQuota):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::clearApplicationCache): Deleted.
+        * WebProcess/WebProcess.h:
+
 2016-04-21  Beth Dakin  <bdakin@apple.com>
 
         showCandidates() should take a range and the string should be the whole 
