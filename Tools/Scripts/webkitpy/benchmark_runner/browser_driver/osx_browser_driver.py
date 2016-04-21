@@ -22,7 +22,7 @@ class OSXBrowserDriver(BrowserDriver):
         pass
 
     def close_browsers(self):
-        self._terminiate_processes(self.process_name)
+        self._terminate_processes(self.process_name)
 
     @classmethod
     def _launch_process(cls, build_dir, app_name, url, args):
@@ -37,8 +37,8 @@ class OSXBrowserDriver(BrowserDriver):
         cls._launch_process_with_caffinate(args)
 
     @classmethod
-    def _terminiate_processes(cls, process_name):
-        _log.info('Closing all terminating all processes with name %s' % process_name)
+    def _terminate_processes(cls, process_name):
+        _log.info('Closing all processes with name %s' % process_name)
         subprocess.call(['/usr/bin/killall', process_name])
 
     @classmethod

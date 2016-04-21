@@ -30,6 +30,8 @@ class BenchmarkRunner(object):
             with open(plan_file, 'r') as fp:
                 self._plan_name = os.path.split(os.path.splitext(plan_file)[0])[1]
                 self._plan = json.load(fp)
+                if not 'options' in self._plan:
+                    self._plan['options'] = {}
                 if local_copy:
                     self._plan['local_copy'] = local_copy
                 if count_override:
@@ -59,26 +61,53 @@ class BenchmarkRunner(object):
                 return absPath
         return plan_file
 
+    def _get_result(self, test_url):
+        result = self._browser_driver.add_additional_results(test_url, self._http_server_driver.fetch_result())
+        assert(not self._http_server_driver.get_return_code())
+        return result
+
+    def _run_one_test(self, web_root, test_file):
+        result = None
+        try:
+            self._http_server_driver.serve(web_root)
+            url = urlparse.urljoin(self._http_server_driver.base_url(), self._plan_name + '/' + test_file)
+            self._browser_driver.launch_url(url, self._plan['options'], self._build_dir)
+            with timeout(self._plan['timeout']):
+                result = self._get_result(url)
+        finally:
+            self._browser_driver.close_browsers()
+            self._http_server_driver.kill_server()
+
+        return result
+
     def _run_benchmark(self, count, web_root):
         results = []
         for iteration in xrange(1, count + 1):
             _log.info('Start the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
             try:
-                result = None
-                self._http_server_driver.serve(web_root)
                 self._browser_driver.prepare_env(self._device_id)
-                url = urlparse.urljoin(self._http_server_driver.base_url(), self._plan_name + '/' + self._plan['entry_point'])
-                self._browser_driver.launch_url(url, self._build_dir)
-                with timeout(self._plan['timeout']):
-                    result = self._http_server_driver.fetch_result()
-                    assert(not self._http_server_driver.get_return_code())
+
+                if 'entry_point' in self._plan:
+                    result = self._run_one_test(web_root, self._plan['entry_point'])
                     assert(result)
                     results.append(json.loads(result))
+                elif 'test_files' in self._plan:
+                    run_result = {}
+                    for test in self._plan['test_files']:
+                        result = self._run_one_test(web_root, test)
+                        assert(result)
+                        run_result = self._merge(run_result, json.loads(result))
+
+                    results.append(run_result)
+                else:
+                    raise Exception('Plan does not contain entry_point or test_files')
+
             finally:
                 self._browser_driver.restore_env()
                 self._browser_driver.close_browsers()
-                self._http_server_driver.kill_server()
+
             _log.info('End the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
+
         results = self._wrap(results)
         self._dump(results, self._output_file if self._output_file else self._plan['output_file'])
         self.show_results(results, self._scale_unit)
@@ -89,7 +118,7 @@ class BenchmarkRunner(object):
 
     @classmethod
     def _dump(cls, results, output_file):
-        _log.info('Dumping the results to file')
+        _log.info('Dumping the results to file {output_file}'.format(output_file=output_file))
         try:
             with open(output_file, 'w') as fp:
                 json.dump(results, fp)

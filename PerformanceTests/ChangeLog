@@ -1,3 +1,25 @@
+2016-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Add content animation tests to benchmark_runner, and allow the runner to collect device data as part of the results
+        https://bugs.webkit.org/show_bug.cgi?id=156827
+
+        Reviewed by Stephanie Lewis.
+
+        Two new files for the content-animation suite.
+
+        After patching for use in the benchmark, these tests are a little different to other benchmarks.
+        The test content itself does not collect performance data; the tests spit out a boilerplate JSON
+        result with a placeholder for framerate, which is collected in native code.
+
+        When run as a benchmark, test completion involves a couple of bounces between the test and MobileSafari.
+        Test completion is initiated by a setTimeout() in the test, at which point location.hash is set to "#done".
+        MobileSafari detects that, and asynchronously dumps performance data. Once this is complete, MobileSafari
+        changes the URL has to "#submit", which triggers the XHR to the test relay that indicates the test is
+        complete.
+
+        * Animation/css-animation.html: Added.
+        * Animation/raf-animation.html: Added.
+
 2016-04-15  Jon Lee  <jonlee@apple.com>
 
         Animometer test could report a NaN

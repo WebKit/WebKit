@@ -25,7 +25,7 @@ class OSXSafariDriver(OSXBrowserDriver):
         self._maximize_window()
         self._safari_preferences = ["-HomePage", "about:blank", "-WarnAboutFraudulentWebsites", "0", "-ExtensionsEnabled", "0", "-ShowStatusBar", "0", "-NewWindowBehavior", "1", "-NewTabBehavior", "1"]
 
-    def launch_url(self, url, browser_build_path):
+    def launch_url(self, url, options, browser_build_path):
         args = ['/Applications/Safari.app/Contents/MacOS/Safari']
         env = {}
         if browser_build_path:

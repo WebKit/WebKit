@@ -1,0 +1,13 @@
+{
+    "timeout": 120,
+    "count": 5,
+    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/Animometer/@r<TBD>",
+    "test_files": [
+    	"css-animation.html",
+    	"raf-animation.html"
+    ],
+    "output_file": "css-animation.result",
+    "options": {
+        "animation_command": "ContentAnimation"
+    } 
+}

@@ -39,7 +39,7 @@ class GTKMiniBrowserDriver(GTKBrowserDriver):
         self._minibrowser_process = None
         super(GTKMiniBrowserDriver, self).prepare_env(device_id)
 
-    def launch_url(self, url, browser_build_path):
+    def launch_url(self, url, options, browser_build_path):
         args = ['Tools/Scripts/run-minibrowser', '--gtk']
         args.append("--geometry=%sx%s" % (self._screen_size().width, self._screen_size().height))
         args.append(url)

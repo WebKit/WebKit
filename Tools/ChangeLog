@@ -1,3 +1,55 @@
+2016-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Add content animation tests to benchmark_runner, and allow the runner to collect device data as part of the results
+        https://bugs.webkit.org/show_bug.cgi?id=156827
+        rdar://problem/24358135
+
+        Reviewed by Stephanie Lewis.
+
+        Enhance benchmark_runner so that a benchmark can load a set of tests sequentially,
+        and collate results across them. Also add the ability for the browser_driver to supply
+        additional results, allowing for tests that collect results data in native code, rather
+        than generating it in the web page.
+
+        Add a set of "content animation" tests that use this new functionality, which test
+        CSS animation and requestAnimationFrame performance.
+
+        'plan' files have two new optional keys:
+            'test_files': a list of files to run as a suite
+            'options': optional parameters. Currently supports one new option,
+                'animation_command', which affects the way that iOS tests are run,
+                and is passed to MobileSafari as a parameter on launch.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__): If options is not specified in the plan file, set it to an empty dictionary.
+        (BenchmarkRunner._get_result): Allow the browser_driver to modify the test results.
+        (BenchmarkRunner):
+        (BenchmarkRunner._run_one_test): Factored out of _run_benchmark, this contains logic for
+        running a single test. It starts and stops the http_server_driver.
+        (BenchmarkRunner._run_benchmark): Run a test in the traditional way if the plan has an 'entry_point'
+        key, otherwise look for the new 'test_files' and load each in a loop.
+        (BenchmarkRunner._dump):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py:
+        (BrowserDriver.launch_url): Pass options.
+        (BrowserDriver.add_additional_results): Allow a driver to supply additional results.
+        (BrowserDriver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/gtk_minibrowser_driver.py:
+        (GTKMiniBrowserDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver.close_browsers):
+        (OSXBrowserDriver._terminate_processes): Fix spelling mistake.
+        (OSXBrowserDriver._terminiate_processes): Deleted.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        (OSXChromeDriver.launch_url):
+        (OSXChromeCanaryDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py:
+        (OSXFirefoxDriver.launch_url):
+        (OSXFirefoxNightlyDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/data/patches/ContentAnimation.patch: Added.
+        * Scripts/webkitpy/benchmark_runner/data/plans/content-animation.plan: Added.
+
 2016-04-20  Dustin Falgout  <dustin@falgout.us>
 
         [GTK] Expose AllowUniversalAccessFromFileURLs preference now that calling localStorage.getItem() results in SecurityError: DOM Exception 18
