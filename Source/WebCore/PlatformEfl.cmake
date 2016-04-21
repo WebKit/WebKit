@@ -99,9 +99,7 @@ list(APPEND WebCore_SOURCES
     platform/efl/EventLoopEfl.cpp
     platform/efl/FileSystemEfl.cpp
     platform/efl/GamepadsEfl.cpp
-    platform/efl/LanguageEfl.cpp
     platform/efl/LocalizedStringsEfl.cpp
-    platform/efl/LoggingEfl.cpp
     platform/efl/MIMETypeRegistryEfl.cpp
     platform/efl/MainThreadSharedTimerEfl.cpp
     platform/efl/PasteboardEfl.cpp
@@ -219,6 +217,9 @@ list(APPEND WebCore_SOURCES
     platform/text/enchant/TextCheckerEnchant.cpp
 
     platform/text/hyphen/HyphenationLibHyphen.cpp
+
+    platform/unix/LanguageUnix.cpp
+    platform/unix/LoggingUnix.cpp
 
     rendering/RenderThemeEfl.cpp
 )

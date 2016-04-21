@@ -141,8 +141,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/x11/XUniqueResource.cpp
 
     platform/gtk/ErrorsGtk.cpp
-    platform/gtk/LanguageGtk.cpp
-    platform/gtk/LoggingGtk.cpp
     platform/gtk/MIMETypeRegistryGtk.cpp
     platform/gtk/ScrollAnimatorGtk.cpp
     platform/gtk/TemporaryLinkStubs.cpp
@@ -184,6 +182,9 @@ list(APPEND WebCore_SOURCES
     platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
 
     platform/text/hyphen/HyphenationLibHyphen.cpp
+
+    platform/unix/LanguageUnix.cpp
+    platform/unix/LoggingUnix.cpp
 )
 
 list(APPEND WebCorePlatformGTK_SOURCES

@@ -1,8 +1,6 @@
 /*
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
- * Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
- * Copyright (C) 2009-2010 ProFUSION embedded systems
- * Copyright (C) 2009-2010 Samsung Electronics
+ * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
  * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -26,7 +24,7 @@
 
 #if !LOG_DISABLED
 
-#include <Eina.h>
+#include <string.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -37,16 +35,15 @@ String logLevelString()
     if (!logEnv)
         return emptyString();
 
+    // We set up the logs anyway because some of our logging, such as Soup's is available in release builds.
 #if defined(NDEBUG)
-    EINA_LOG_WARN("WEBKIT_DEBUG is not empty, but this is a release build. Notice that many log messages will only appear in a debug build.");
+    WTFLogAlways("WEBKIT_DEBUG is not empty, but this is a release build. Notice that many log messages will only appear in a debug build.");
 #endif
 
     // To disable logging notImplemented set the DISABLE_NI_WARNING environment variable to 1.
-    String logLevel = "NotYetImplemented,";
-    logLevel.append(logEnv);
-    return logLevel;
+    return String("NotYetImplemented,") + logEnv;
 }
 
-}
+} // namespace WebCore
 
 #endif // !LOG_DISABLED

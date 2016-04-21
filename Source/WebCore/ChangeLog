@@ -1,3 +1,24 @@
+2016-04-21  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][EFL] Move non-glib/gtk platform implementations out of platform/gtk
+        https://bugs.webkit.org/show_bug.cgi?id=156847
+
+        Reviewed by Carlos Garcia Campos.
+
+        The Language and Logging implementation don't really need glib, so
+        rework them and move them to a new platform/unix directory so that
+        they can be shared among Unix ports.
+
+        * PlatformEfl.cmake: Use the unix version.
+        * PlatformGTK.cmake: Same.
+        * platform/efl/LanguageEfl.cpp: Removed.
+        * platform/efl/LoggingEfl.cpp: Removed.
+        * platform/unix/LanguageUnix.cpp: Renamed from Source/WebCore/platform/gtk/LanguageGtk.cpp.
+        (WebCore::platformLanguage):
+        (WebCore::platformUserPreferredLanguages):
+        * platform/unix/LoggingUnix.cpp: Renamed from Source/WebCore/platform/gtk/LoggingGtk.cpp.
+        (WebCore::logLevelString):
+
 2016-04-21  Nan Wang  <n_wang@apple.com>
 
         AX: stringForTextMarkerRange returning empty string for document range

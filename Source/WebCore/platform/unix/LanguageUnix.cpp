@@ -20,13 +20,9 @@
 #include "config.h"
 #include "Language.h"
 
-#include <wtf/Vector.h>
-#include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
-
-#include <glib.h>
 #include <locale.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -35,30 +31,19 @@ namespace WebCore {
 // always the same value.
 static String platformLanguage()
 {
-    char* localeDefault = setlocale(LC_CTYPE, NULL);
-
-    if (!localeDefault)
+    String localeDefault(setlocale(LC_CTYPE, nullptr));
+    if (localeDefault.isEmpty())
         return String("c");
 
-    GUniquePtr<gchar> normalizedDefault(g_ascii_strdown(localeDefault, -1));
-    char* ptr = strchr(normalizedDefault.get(), '_');
-
-    if (ptr)
-        *ptr = '-';
-
-    ptr = strchr(normalizedDefault.get(), '.');
-
-    if (ptr)
-        *ptr = '\0';
-
-    return String(normalizedDefault.get());
+    String normalizedDefault = localeDefault.convertToASCIILowercase();
+    normalizedDefault.replace('_', '-');
+    normalizedDefault.truncate(normalizedDefault.find('.'));
+    return normalizedDefault;
 }
 
 Vector<String> platformUserPreferredLanguages()
 {
-    Vector<String> userPreferredLanguages;
-    userPreferredLanguages.append(platformLanguage());
-    return userPreferredLanguages;
+    return { platformLanguage() };
 }
-    
+
 }
