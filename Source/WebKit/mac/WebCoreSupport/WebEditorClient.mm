@@ -1153,12 +1153,12 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
 
     int lengthToSelectionStart = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
     int lengthToSelectionEnd = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get());
-    NSRange rangeForCandidates = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
-    String fullPlainTextStringOfParagraph = plainText(makeRange(paragraphStart, paragraphEnd).get());
+    NSRange m_rangeForCandidates = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
+    m_paragraphContextForCandidateRequest = plainText(makeRange(paragraphStart, paragraphEnd).get());
 
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
     auto weakEditor = m_weakPtrFactory.createWeakPtr();
-    [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:rangeForCandidates inString:fullPlainTextStringOfParagraph types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakEditor](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
+    [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:m_rangeForCandidates inString:m_paragraphContextForCandidateRequest.get() types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakEditor](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakEditor)
                 return;
@@ -1189,7 +1189,7 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
         rectForSelectionCandidates = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
     auto weakEditor = m_weakPtrFactory.createWeakPtr();
-    [m_webView showCandidates:candidates forString:frame->editor().stringForCandidateRequest() inRect:rectForSelectionCandidates view:m_webView completionHandler:[weakEditor](NSTextCheckingResult *acceptedCandidate) {
+    [m_webView showCandidates:candidates forString:m_paragraphContextForCandidateRequest.get() inRect:rectForSelectionCandidates forSelectedRange:m_rangeForCandidates view:m_webView completionHandler:[weakEditor](NSTextCheckingResult *acceptedCandidate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakEditor)
                 return;

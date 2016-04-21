@@ -472,7 +472,7 @@ public:
     void rightMouseUp(NSEvent *);
 
     void updateWebViewImplAdditions();
-    void showCandidates(NSArray *candidates, NSString *, NSRect rectOfTypedString, NSView *, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate));
+    void showCandidates(NSArray *candidates, NSString *, NSRect rectOfTypedString, NSRange selectedRange, NSView *, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate));
     void webViewImplAdditionsWillDestroyView();
 
     bool windowIsFrontWindowUnderMouse(NSEvent *);

@@ -91,6 +91,10 @@
 #import <WebKitSystemInterface.h>
 #import <sys/stat.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplIncludes.h>
+#endif
+
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 
 @interface NSApplication ()
@@ -435,7 +439,7 @@ void WebViewImpl::updateWebViewImplAdditions()
 {
 }
 
-void WebViewImpl::showCandidates(NSArray *candidates, NSString *string, NSRect rectOfTypedString, NSView *view, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate))
+void WebViewImpl::showCandidates(NSArray *candidates, NSString *string, NSRect rectOfTypedString, NSRange selectedRange, NSView *view, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate))
 {
 }
 
@@ -2154,10 +2158,10 @@ void WebViewImpl::requestCandidatesForSelectionIfNeeded()
     m_lastStringForCandidateRequest = postLayoutData.stringForCandidateRequest;
 
 #if HAVE(ADVANCED_SPELL_CHECKING)
-    NSRange rangeForCandidates = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
+    NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
     auto weakThis = createWeakPtr();
-    [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:rangeForCandidates inString:postLayoutData.paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
+    [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakThis)
                 return;
@@ -2182,8 +2186,9 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
     if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
         return;
 
+    NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
     auto weakThis = createWeakPtr();
-    showCandidates(candidates, postLayoutData.stringForCandidateRequest, postLayoutData.selectionClipRect, m_view, [weakThis](NSTextCheckingResult *acceptedCandidate) {
+    showCandidates(candidates, postLayoutData.paragraphContextForCandidateRequest, postLayoutData.selectionClipRect, selectedRange, m_view, [weakThis](NSTextCheckingResult *acceptedCandidate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakThis)
                 return;

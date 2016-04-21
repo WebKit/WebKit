@@ -1,3 +1,20 @@
+2016-04-21  Beth Dakin  <bdakin@apple.com>
+
+        showCandidates() should take a range and the string should be the whole 
+        paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=156813
+        -and corresponding-
+        rdar://problem/25760533
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateWebViewImplAdditions):
+        (WebKit::WebViewImpl::showCandidates):
+        (WebKit::WebViewImpl::requestCandidatesForSelectionIfNeeded):
+        (WebKit::WebViewImpl::handleRequestedCandidates):
+
 2016-04-21  Chelsea Pugh  <cpugh@apple.com>
 
         [iOS] Allow clients to hide the accessory view on a form input session
