@@ -1,5 +1,12 @@
 2016-04-21  Anders Carlsson  <andersca@apple.com>
 
+        Add a missing space, as noticed by Darin.
+
+        * WebApplicationCache.cpp:
+        (applicationCachePath):
+
+2016-04-21  Anders Carlsson  <andersca@apple.com>
+
         Stop using ApplicationCacheStorage::singleton() on Windows
         https://bugs.webkit.org/show_bug.cgi?id=156861
 

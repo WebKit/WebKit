@@ -63,7 +63,7 @@ static String applicationCachePath()
     String path = localUserSpecificStorageDirectory();
 
 #if USE(CF)
-    autocacheDirectoryPreference = adoptCF(CFPreferencesCopyAppValue(WebKitLocalCacheDefaultsKey, kCFPreferencesCurrentApplication));
+    auto cacheDirectoryPreference = adoptCF(CFPreferencesCopyAppValue(WebKitLocalCacheDefaultsKey, kCFPreferencesCurrentApplication));
     if (cacheDirectoryPreference && CFStringGetTypeID() == CFGetTypeID(cacheDirectoryPreference.get()))
         path = static_cast<CFStringRef>(cacheDirectoryPreference.get());
 #endif
