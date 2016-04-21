@@ -1,3 +1,11 @@
+2016-04-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Adding ios-simulator-wk1 specific baselines for compositing and css3 LayoutTests due to contentsOpaque difference
+
+        Unreviewed test gardening.
+
+        * Truncating changelog due to large number of added files
+
 2016-04-20  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Introduce "IDBConnectionProxy" for future threading abstraction, and adopt it in IDBFactory.

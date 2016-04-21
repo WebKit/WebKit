@@ -1,0 +1,29 @@
+Test CSS clip with composited layers. Left and right sides should look the same. This test should not ASSERT in debug builds.
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (position 20.00 20.00)
+          (bounds 100.00 100.00)
+          (children 1
+            (GraphicsLayer
+              (bounds 100.00 100.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 200.00 200.00)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

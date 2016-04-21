@@ -1,0 +1,31 @@
+Content
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (visible rect 0.00, 0.00 800.00 x 600.00)
+  (coverage rect 0.00, 0.00 800.00 x 600.00)
+  (intersects coverage rect 1)
+  (contentsScale 2.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (visible rect 0.00, 0.00 800.00 x 600.00)
+      (coverage rect 0.00, 0.00 800.00 x 600.00)
+      (intersects coverage rect 1)
+      (contentsScale 2.00)
+      (children 1
+        (GraphicsLayer
+          (position 28.00 20.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 100.00 x 100.00)
+          (coverage rect -28.00, -20.00 800.00 x 600.00)
+          (intersects coverage rect 1)
+          (contentsScale 2.00)
+        )
+      )
+    )
+  )
+)
+
