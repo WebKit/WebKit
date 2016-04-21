@@ -253,6 +253,11 @@ void PageClientImpl::selectionDidChange()
         webkitWebViewSelectionDidChange(WEBKIT_WEB_VIEW(m_viewWidget));
 }
 
+void PageClientImpl::didChangeContentSize(const IntSize& size)
+{
+    webkitWebViewBaseSetContentsSize(WEBKIT_WEB_VIEW_BASE(m_viewWidget), size);
+}
+
 #if ENABLE(DRAG_SUPPORT)
 void PageClientImpl::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
 {

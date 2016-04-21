@@ -1,5 +1,24 @@
 2016-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WebKitWebView should claim the contents size as its natural size
+        https://bugs.webkit.org/show_bug.cgi?id=156835
+
+        Reviewed by Žan Doberšek.
+
+        And keep claiming 0 as its minimum size since it's scrollable.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didChangeContentSize): Call webkitWebViewBaseSetContentsSize().
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseGetPreferredWidth): Return the contents width as natural width.
+        (webkitWebViewBaseGetPreferredHeight): Return the contents height as natural height.
+        (webkit_web_view_base_class_init): Add implementations of get_preferred_width/height.
+        (webkitWebViewBaseSetContentsSize): Save the contents size.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+
+2016-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] WebKitWebView should propagate wheel events not handled by the web process
         https://bugs.webkit.org/show_bug.cgi?id=156834
 

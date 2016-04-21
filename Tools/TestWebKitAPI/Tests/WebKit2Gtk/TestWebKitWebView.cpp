@@ -853,6 +853,19 @@ static void testWebViewBackgroundColor(WebViewTest* test, gconstpointer)
     // MiniBrowser --bg-color="<color-value>" for manually testing this API.
 }
 
+static void testWebViewPreferredSize(WebViewTest* test, gconstpointer)
+{
+    test->loadHtml("<html style='width: 325px; height: 615px'></html>", nullptr);
+    test->waitUntilLoadFinished();
+    test->showInWindowAndWaitUntilMapped();
+    GtkRequisition minimunSize, naturalSize;
+    gtk_widget_get_preferred_size(GTK_WIDGET(test->m_webView), &minimunSize, &naturalSize);
+    g_assert_cmpint(minimunSize.width, ==, 0);
+    g_assert_cmpint(minimunSize.height, ==, 0);
+    g_assert_cmpint(naturalSize.width, ==, 325);
+    g_assert_cmpint(naturalSize.height, ==, 615);
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -887,6 +900,7 @@ void beforeAll()
     NotificationWebViewTest::add("WebKitWebView", "notification", testWebViewNotification);
     IsPlayingAudioWebViewTest::add("WebKitWebView", "is-playing-audio", testWebViewIsPlayingAudio);
     WebViewTest::add("WebKitWebView", "background-color", testWebViewBackgroundColor);
+    WebViewTest::add("WebKitWebView", "preferred-size", testWebViewPreferredSize);
 }
 
 void afterAll()

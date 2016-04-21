@@ -55,6 +55,7 @@ WebKit::WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKi
 GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
 void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase*, bool enabled);
 void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase*);
+void webkitWebViewBaseSetContentsSize(WebKitWebViewBase*, const WebCore::IntSize&);
 
 void webkitWebViewBaseSetFocus(WebKitWebViewBase*, bool focused);
 bool webkitWebViewBaseIsInWindowActive(WebKitWebViewBase*);

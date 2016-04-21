@@ -95,7 +95,7 @@ private:
     void willEnterAcceleratedCompositingMode() override;
 
     void handleDownloadRequest(DownloadProxy*) override;
-    void didChangeContentSize(const WebCore::IntSize&) override { }
+    void didChangeContentSize(const WebCore::IntSize&) override;
     void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
     void didFailLoadForMainFrame() override { }
 
