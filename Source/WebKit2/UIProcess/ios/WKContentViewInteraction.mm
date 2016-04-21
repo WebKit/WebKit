@@ -263,6 +263,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     RetainPtr<WKFocusedElementInfo> _focusedElementInfo;
     RetainPtr<UIView> _customInputView;
     RetainPtr<NSArray<UITextSuggestion *>> _suggestions;
+    BOOL _accessoryViewShouldNotShow;
 }
 
 - (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo userObject:(NSObject <NSSecureCoding> *)userObject
@@ -305,6 +306,20 @@ const CGFloat minimumTapHighlightRadius = 2.0;
         [[_contentView formAccessoryView] hideAutoFillButton];
     if (UICurrentUserInterfaceIdiomIsPad())
         [_contentView reloadInputViews];
+}
+
+- (BOOL)accessoryViewShouldNotShow
+{
+    return _accessoryViewShouldNotShow;
+}
+
+- (void)setAccessoryViewShouldNotShow:(BOOL)accessoryViewShouldNotShow
+{
+    if (_accessoryViewShouldNotShow == accessoryViewShouldNotShow)
+        return;
+
+    _accessoryViewShouldNotShow = accessoryViewShouldNotShow;
+    [_contentView reloadInputViews];
 }
 
 - (UIView *)customInputView
@@ -1550,6 +1565,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (BOOL)requiresAccessoryView
 {
+    if ([_formInputSession accessoryViewShouldNotShow])
+        return NO;
+
     switch (_assistedNodeInformation.elementType) {
     case InputType::None:
         return NO;

@@ -42,6 +42,7 @@
 @property (nonatomic, copy) NSString *accessoryViewCustomButtonTitle;
 @property (nonatomic, strong) UIView *customInputView WK_AVAILABLE(NA, WK_IOS_TBA);
 @property (nonatomic, copy) NSArray<UITextSuggestion *> *suggestions WK_AVAILABLE(NA, WK_IOS_TBA);
+@property (nonatomic) BOOL accessoryViewShouldNotShow WK_AVAILABLE(NA, WK_IOS_TBA);
 #endif
 
 @end
