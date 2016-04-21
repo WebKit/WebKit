@@ -42,38 +42,15 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 using namespace WebCore;
 
-@interface WebAVMediaSelectionOptionMac : NSObject {
-    RetainPtr<NSString> _localizedDisplayName;
-}
-@property (retain) NSString *localizedDisplayName;
-@end
-
-@implementation WebAVMediaSelectionOptionMac
-
-- (NSString *)localizedDisplayName
-{
-    return _localizedDisplayName.get();
-}
-
-- (void)setLocalizedDisplayName:(NSString *)name
-{
-    _localizedDisplayName = name;
-}
-
-@end
-
-@interface WebPlaybackControlsManager : NSObject {
+#if USE(APPLE_INTERNAL_SDK) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+#import <WebKitAdditions/WebPlaybackControlsControllerAdditions.mm>
+#else
+@interface WebPlaybackControlsManager : NSObject<AVFunctionBarPlaybackControlsControlling> {
     NSTimeInterval _contentDuration;
     RetainPtr<AVValueTiming> _timing;
-    NSTimeInterval _seekToTime;
     RetainPtr<NSArray> _seekableTimeRanges;
     BOOL _hasEnabledAudio;
     BOOL _hasEnabledVideo;
-    RetainPtr<NSArray<AVMediaSelectionOption *>> _audioMediaSelectionOptions;
-    RetainPtr<AVMediaSelectionOption> _currentAudioMediaSelectionOption;
-    RetainPtr<NSArray<AVMediaSelectionOption *>> _legibleMediaSelectionOptions;
-    RetainPtr<AVMediaSelectionOption> _currentLegibleMediaSelectionOption;
-
     float _rate;
 
 @private
@@ -82,29 +59,18 @@ using namespace WebCore;
 
 @property (readwrite) NSTimeInterval contentDuration;
 @property (nonatomic, retain, readwrite) AVValueTiming *timing;
-@property NSTimeInterval seekToTime;
 @property (nonatomic, retain, readwrite) NSArray *seekableTimeRanges;
 @property (readwrite) BOOL hasEnabledAudio;
 @property (readwrite) BOOL hasEnabledVideo;
-@property (nonatomic, retain, readwrite) NSArray<AVMediaSelectionOption *> *audioMediaSelectionOptions;
-@property (nonatomic, retain, readwrite) AVMediaSelectionOption *currentAudioMediaSelectionOption;
-@property (nonatomic, retain, readwrite) NSArray<AVMediaSelectionOption *> *legibleMediaSelectionOptions;
-@property (nonatomic, retain, readwrite) AVMediaSelectionOption *currentLegibleMediaSelectionOption;
-
 @property (nonatomic) float rate;
 
 - (instancetype)initWithWebPlaybackSessionInterfaceMac:(WebCore::WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac;
 
 @end
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebPlaybackControlsControllerAdditions.mm>
-#endif
-
 @implementation WebPlaybackControlsManager
 
 @synthesize contentDuration=_contentDuration;
-@synthesize seekToTime=_seekToTime;
 @synthesize hasEnabledAudio=_hasEnabledAudio;
 @synthesize hasEnabledVideo=_hasEnabledVideo;
 @synthesize rate=_rate;
@@ -139,87 +105,21 @@ using namespace WebCore;
     _seekableTimeRanges = timeRanges;
 }
 
-- (BOOL)isSeeking
+- (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex
 {
-    return NO;
+    UNUSED_PARAM(options);
+    UNUSED_PARAM(selectedIndex);
 }
 
-- (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)toleranceBefore toleranceAfter:(NSTimeInterval)toleranceAfter
+- (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex
 {
-    UNUSED_PARAM(toleranceBefore);
-    UNUSED_PARAM(toleranceAfter);
-    _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->seekToTime(time);
+    UNUSED_PARAM(options);
+    UNUSED_PARAM(selectedIndex);
 }
-
-- (NSArray<AVMediaSelectionOption *> *)audioMediaSelectionOptions
-{
-    return _audioMediaSelectionOptions.get();
-}
-
-- (void)setAudioMediaSelectionOptions:(NSArray<AVMediaSelectionOption *> *)audioOptions
-{
-    _audioMediaSelectionOptions = audioOptions;
-}
-
-- (AVMediaSelectionOption *)currentAudioMediaSelectionOption
-{
-    return _currentAudioMediaSelectionOption.get();
-}
-
-- (void)setCurrentAudioMediaSelectionOption:(AVMediaSelectionOption *)audioMediaSelectionOption
-{
-    if (audioMediaSelectionOption == _currentAudioMediaSelectionOption)
-        return;
-
-    _currentAudioMediaSelectionOption = audioMediaSelectionOption;
-
-    NSInteger index = NSNotFound;
-
-    if (audioMediaSelectionOption && self.audioMediaSelectionOptions)
-        index = [self.audioMediaSelectionOptions indexOfObject:audioMediaSelectionOption];
-
-    _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
-}
-
-- (NSArray<AVMediaSelectionOption *> *)legibleMediaSelectionOptions
-{
-    return _legibleMediaSelectionOptions.get();
-}
-
-- (void)setLegibleMediaSelectionOptions:(NSArray<AVMediaSelectionOption *> *)legibleOptions
-{
-    _legibleMediaSelectionOptions = legibleOptions;
-}
-
-- (AVMediaSelectionOption *)currentLegibleMediaSelectionOption
-{
-    return _currentLegibleMediaSelectionOption.get();
-}
-
-- (void)setCurrentLegibleMediaSelectionOption:(AVMediaSelectionOption *)legibleMediaSelectionOption
-{
-    if (legibleMediaSelectionOption == _currentLegibleMediaSelectionOption)
-        return;
-
-    _currentLegibleMediaSelectionOption = legibleMediaSelectionOption;
-
-    NSInteger index = NSNotFound;
-
-    if (legibleMediaSelectionOption && self.legibleMediaSelectionOptions)
-        index = [self.legibleMediaSelectionOptions indexOfObject:legibleMediaSelectionOption];
-
-    _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
-}
-
-- (void)cancelThumbnailAndAudioAmplitudeSampleGeneration
-{
-}
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebPlaybackControlsControllerThumbnailAdditions.mm>
-#endif
 
 @end
+
+#endif
 
 namespace WebCore {
 
@@ -276,35 +176,16 @@ void WebPlaybackSessionInterfaceMac::setSeekableRanges(const TimeRanges& timeRan
     [controlsManager setSeekableTimeRanges:seekableRanges.get()];
 }
 
-static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& options)
-{
-    RetainPtr<NSMutableArray> webOptions = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
-    for (auto& name : options) {
-        RetainPtr<WebAVMediaSelectionOptionMac> webOption = adoptNS([[WebAVMediaSelectionOptionMac alloc] init]);
-        [webOption setLocalizedDisplayName:name];
-        [webOptions addObject:webOption.get()];
-    }
-    return webOptions;
-}
-
 void WebPlaybackSessionInterfaceMac::setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
 {
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
-
-    RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
-    [controlsManager setAudioMediaSelectionOptions:webOptions.get()];
-    if (selectedIndex < [webOptions count])
-        [controlsManager setCurrentAudioMediaSelectionOption:[webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)]];
+    [controlsManager setAudioMediaSelectionOptions:options withSelectedIndex:selectedIndex];
 }
 
 void WebPlaybackSessionInterfaceMac::setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
 {
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
-
-    RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
-    [controlsManager setLegibleMediaSelectionOptions:webOptions.get()];
-    if (selectedIndex < [webOptions count])
-        [controlsManager setCurrentLegibleMediaSelectionOption:[webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)]];
+    [controlsManager setLegibleMediaSelectionOptions:options withSelectedIndex:selectedIndex];
 }
 
 void WebPlaybackSessionInterfaceMac::invalidate()

@@ -1,3 +1,37 @@
+2016-04-21  Beth Dakin  <bdakin@apple.com>
+
+        Remove reliance on WebAVMediaSelectionOptionMac for the 
+        WebPlaybackControlsManager
+        https://bugs.webkit.org/show_bug.cgi?id=156811
+        -and corresponding-
+        rdar://problem/25760523
+
+        Reviewed by Jer Noble.
+
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (-[WebPlaybackControlsManager setSeekableTimeRanges:]):
+        (-[WebPlaybackControlsManager setAudioMediaSelectionOptions:withSelectedIndex:]):
+        (-[WebPlaybackControlsManager setLegibleMediaSelectionOptions:withSelectedIndex:]):
+        (WebCore::WebPlaybackSessionInterfaceMac::~WebPlaybackSessionInterfaceMac):
+        (WebCore::WebPlaybackSessionInterfaceMac::setSeekableRanges):
+        (WebCore::WebPlaybackSessionInterfaceMac::setAudioMediaSelectionOptions):
+        (WebCore::WebPlaybackSessionInterfaceMac::setLegibleMediaSelectionOptions):
+        (WebCore::WebPlaybackSessionInterfaceMac::invalidate):
+        (-[WebAVMediaSelectionOptionMac localizedDisplayName]): Deleted.
+        (-[WebAVMediaSelectionOptionMac setLocalizedDisplayName:]): Deleted.
+        (-[WebPlaybackControlsManager isSeeking]): Deleted.
+        (-[WebPlaybackControlsManager seekToTime:toleranceBefore:toleranceAfter:]): Deleted.
+        (-[WebPlaybackControlsManager audioMediaSelectionOptions]): Deleted.
+        (-[WebPlaybackControlsManager setAudioMediaSelectionOptions:]): Deleted.
+        (-[WebPlaybackControlsManager currentAudioMediaSelectionOption]): Deleted.
+        (-[WebPlaybackControlsManager setCurrentAudioMediaSelectionOption:]): Deleted.
+        (-[WebPlaybackControlsManager legibleMediaSelectionOptions]): Deleted.
+        (-[WebPlaybackControlsManager setLegibleMediaSelectionOptions:]): Deleted.
+        (-[WebPlaybackControlsManager currentLegibleMediaSelectionOption]): Deleted.
+        (-[WebPlaybackControlsManager setCurrentLegibleMediaSelectionOption:]): Deleted.
+        (-[WebPlaybackControlsManager cancelThumbnailAndAudioAmplitudeSampleGeneration]): Deleted.
+        (WebCore::mediaSelectionOptions): Deleted.
+
 2016-04-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(198782): ImageSource::subsamplingLevelForScale() does not cache the MaximumSubsamplingLevel for this ImageSource
