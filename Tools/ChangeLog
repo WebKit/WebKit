@@ -2,6 +2,15 @@
 
         Add content animation tests to benchmark_runner, and allow the runner to collect device data as part of the results
         https://bugs.webkit.org/show_bug.cgi?id=156827
+        
+        Update the .plan file now that the files are present in SVN.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/content-animation.plan:
+
+2016-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Add content animation tests to benchmark_runner, and allow the runner to collect device data as part of the results
+        https://bugs.webkit.org/show_bug.cgi?id=156827
         rdar://problem/24358135
 
         Reviewed by Stephanie Lewis.
