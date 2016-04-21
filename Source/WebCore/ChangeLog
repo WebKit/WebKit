@@ -1,3 +1,15 @@
+2016-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from DOMURL
+        https://bugs.webkit.org/show_bug.cgi?id=156797
+
+        Reviewed by Youenn Fablet.
+
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::create):
+        * html/DOMURL.h:
+        * html/DOMURL.idl:
+
 2016-04-21  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][EFL] Move non-glib/gtk platform implementations out of platform/gtk

@@ -44,7 +44,7 @@ class DOMURL : public RefCounted<DOMURL>, public URLUtils<DOMURL> {
 
 public:
     static Ref<DOMURL> create(const String& url, const String& base, ExceptionCode&);
-    static Ref<DOMURL> create(const String& url, const DOMURL* base, ExceptionCode&);
+    static Ref<DOMURL> create(const String& url, const DOMURL& base, ExceptionCode&);
     static Ref<DOMURL> create(const String& url, ExceptionCode&);
 
     URL href() const { return m_url; }
