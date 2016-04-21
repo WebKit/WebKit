@@ -110,7 +110,7 @@ public:
 
     void setData(SharedBuffer* data, bool allDataReceived);
 
-    SubsamplingLevel subsamplingLevelForScale(float) const;
+    SubsamplingLevel subsamplingLevelForScale(float);
     void setAllowSubsampling(bool allowSubsampling) { m_allowSubsampling = allowSubsampling; }
     static size_t bytesDecodedToDetermineProperties();
     
@@ -119,7 +119,7 @@ public:
     IntSize size() const;
     IntSize sizeRespectingOrientation() const;
 
-    size_t frameCount() const;
+    size_t frameCount();
     int repetitionCount();
     String filenameExtension() const;
     Optional<IntPoint> hotSpot() const;
@@ -145,9 +145,13 @@ public:
 private:
     void clearFrameBufferCache(size_t);
     SubsamplingLevel calculateMaximumSubsamplingLevel() const;
+    void cacheMetadata();
     void dump(TextStream&) const;
     
     std::unique_ptr<ImageDecoder> m_decoder;
+    
+    size_t m_frameCount { 0 };
+    SubsamplingLevel m_maximumSubsamplingLevel { 0 };
 
     // The default value of m_allowSubsampling should be the same as defaultImageSubsamplingEnabled in Settings.cpp
 #if PLATFORM(IOS)

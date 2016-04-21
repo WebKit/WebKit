@@ -104,18 +104,27 @@ SubsamplingLevel ImageSource::calculateMaximumSubsamplingLevel() const
     return maxSubsamplingLevel;
 }
 
-SubsamplingLevel ImageSource::subsamplingLevelForScale(float scale) const
+void ImageSource::cacheMetadata()
+{
+    if (m_frameCount || !isSizeAvailable())
+        return;
+    
+    m_frameCount = m_decoder->frameCount();
+    m_maximumSubsamplingLevel = calculateMaximumSubsamplingLevel();
+}
+    
+SubsamplingLevel ImageSource::subsamplingLevelForScale(float scale)
 {
     if (!(scale > 0 && scale <= 1))
         return 0;
     
-    SubsamplingLevel maximumSubsamplingLevel = calculateMaximumSubsamplingLevel();
-    if (!maximumSubsamplingLevel)
+    cacheMetadata();
+    if (!m_maximumSubsamplingLevel)
         return 0;
 
     // There are four subsampling levels: 0 = 1x, 1 = 0.5x, 2 = 0.25x, 3 = 0.125x.
     SubsamplingLevel result = std::ceil(std::log2(1 / scale));
-    return std::min(result, maximumSubsamplingLevel);
+    return std::min(result, m_maximumSubsamplingLevel);
 }
 
 size_t ImageSource::bytesDecodedToDetermineProperties()
@@ -138,9 +147,10 @@ IntSize ImageSource::sizeRespectingOrientation() const
     return frameSizeAtIndex(0, 0, RespectImageOrientation);
 }
 
-size_t ImageSource::frameCount() const
+size_t ImageSource::frameCount()
 {
-    return initialized() ? m_decoder->frameCount() : 0;
+    cacheMetadata();
+    return m_frameCount;
 }
 
 int ImageSource::repetitionCount()

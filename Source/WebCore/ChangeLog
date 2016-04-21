@@ -1,3 +1,25 @@
+2016-04-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(198782): ImageSource::subsamplingLevelForScale() does not cache the MaximumSubsamplingLevel for this ImageSource
+        https://bugs.webkit.org/show_bug.cgi?id=156766
+
+        Reviewed by Darin Adler.
+
+        Ensure the MaximumSubsamplingLevel for the ImageSource is calculated
+        only once and is cached for subsequent uses. 
+        
+        The image subsampling is on by default only for iOS. So the and this
+        patch currently affects the iOS port.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::cacheMetadata): Cache m_maximumSubsamplingLevel.
+        Use m_frameCount as a flag for having_the_cache_done.
+        (WebCore::ImageSource::subsamplingLevelForScale): Call cacheMetadata()
+        before using m_maximumSubsamplingLevel.
+        (WebCore::ImageSource::frameCount): Call cacheMetadata() before returning
+        m_frameCount.
+        * platform/graphics/ImageSource.h:
+
 2016-04-21  Antoine Quint  <graouts@apple.com>
 
         Creating a large number of WebGL contexts should recycle older contexts
