@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html><head>
-<title>Ping</title>
+<html>
+<head>
 <script src="resources/utilities.js"></script>
 <script>
 if (window.testRunner) {
@@ -11,8 +11,7 @@ if (window.testRunner) {
 
 function test()
 {
-    setCookie();
-    clickElement(document.getElementById("a"));
+    clickElement(document.querySelector("img"));
 }
 
 window.onload = function ()
@@ -22,6 +21,9 @@ window.onload = function ()
 </script>
 </head>
 <body>
-<img src="non-existent-image.jpg">
-<a id="a" href="../resources/check-ping.php" ping="../resources/save-Ping.php">Navigate and send ping</a>
-</body></html>
+    <img src="non-existent-image.jpg" width="128" height="128" usemap="#imagemap">
+    <map name="imagemap">
+        <area shape="rect" coords="0,0,128,128" href="../resources/check-ping.php" ping="../resources/save-Ping.php">
+    </map>
+</body>
+</html>

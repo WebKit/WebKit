@@ -1,3 +1,29 @@
+2016-04-21  Daniel Bates  <dabates@apple.com>
+
+        Add tests for <area ping>
+        https://bugs.webkit.org/show_bug.cgi?id=79438
+        <rdar://problem/22586699>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/navigation/ping-attribute/anchor-cookie.html: Extracted out code into functions setCookie(),
+        clearLastPingResultAndRunTest() and clickElement() (defined in utilities.js) so that they can be
+        used by this test and others. Also added HTML5 doctype declaration since it is unnecessary to run
+        this test in quirks mode.
+        * http/tests/navigation/ping-attribute/area-cookie-expected.txt: Added.
+        * http/tests/navigation/ping-attribute/area-cookie.html: Added.
+        * http/tests/navigation/ping-attribute/area-cross-origin-expected.txt: Added.
+        * http/tests/navigation/ping-attribute/area-cross-origin-from-https-expected.txt: Added.
+        * http/tests/navigation/ping-attribute/area-cross-origin-from-https.html: Added.
+        * http/tests/navigation/ping-attribute/area-cross-origin.html: Added.
+        * http/tests/navigation/ping-attribute/area-same-origin-expected.txt: Added.
+        * http/tests/navigation/ping-attribute/area-same-origin.html: Added.
+        * http/tests/navigation/ping-attribute/resources/utilities.js: Added.
+        (setCookie):
+        (clearLastPingResultAndRunTest.done):
+        (clearLastPingResultAndRunTest):
+        (clickElement):
+
 2016-04-21  Antoine Quint  <graouts@apple.com>
 
         Creating a large number of WebGL contexts should recycle older contexts

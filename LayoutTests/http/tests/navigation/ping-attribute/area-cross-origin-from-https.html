@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/utilities.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference("WebKitHyperlinkAuditingEnabled", 1);
+    testRunner.waitUntilDone();
+}
+
+if (location.protocol != "https:")
+    location = "https://127.0.0.1:8443/navigation/ping-attribute/area-cross-origin-from-https.html"
+
+function test()
+{
+    clickElement(document.querySelector("img"));
+}
+
+window.onload = function ()
+{
+    clearLastPingResultAndRunTest(test);
+}
+</script>
+</head>
+<body>
+    <img src="non-existent-image.jpg" width="128" height="128" usemap="#imagemap">
+    <map name="imagemap">
+        <area shape="rect" coords="0,0,128,128" href="../resources/check-ping.php" ping="http://localhost:8000/navigation/resources/save-Ping.php?test=/navigation/ping-attribute/area-cross-origin-from-https.html">
+    </map>
+</body>
+</html>
