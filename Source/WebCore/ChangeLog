@@ -1,3 +1,27 @@
+2016-04-21  Keith Miller  <keith_miller@apple.com>
+
+        WebScriptObject description swizzler should work in a multi-threaded world
+        https://bugs.webkit.org/show_bug.cgi?id=156808
+
+        Reviewed by Geoffrey Garen.
+
+        A WebKit legacy API user might be running Objective-C code on another thread.
+        Since we don't want to corrupt other thread's NSObject description method
+        we use TLS to record if we are in the stringValue function. As an attempt to
+        preserve any user swizzling we update the non-stringValue NSObject description
+        method on each call to stringValue if it has changed. Additionally, the TLS
+        needs to be a int because the user might call into stringValue, back into JS,
+        then back into stringValue. If the TLS was a boolean then it would be unset
+        at that point so when we return into the first stringValue call we would call
+        the original NSObject description method rather than our override.
+
+        Test added to API tests: WebKit1.WebScriptObjectDescription
+
+        * bridge/objc/objc_instance.mm:
+        (-[NSObject _web_description]):
+        (ObjcInstance::stringValue):
+        (swizzleNSObjectDescription): Deleted.
+
 2016-04-21  Beth Dakin  <bdakin@apple.com>
 
         Build fix.

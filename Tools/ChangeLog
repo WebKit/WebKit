@@ -1,3 +1,22 @@
+2016-04-21  Keith Miller  <keith_miller@apple.com>
+
+        WebScriptObject description swizzler should work in a multi-threaded world
+        https://bugs.webkit.org/show_bug.cgi?id=156808
+
+        Add a test for our NSObject swizzling TLS implementation. The test runs on
+        two threads. One in JS and another in Objective-C. We expect the JS thread
+        to use our NSObject description override and the Objective-C thread to act
+        as though it was using the original NSObject description method.
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/WebScriptObjectDescription.html: Added.
+        * TestWebKitAPI/Tests/mac/WebScriptObjectDescription.mm: Added.
+        (nsObjectDescriptionTest):
+        (-[WebScriptDescriptionTest webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+
 2016-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebView should claim the contents size as its natural size

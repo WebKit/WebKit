@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2008, 2009, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,9 @@
 #import <runtime/ObjectPrototype.h>
 #import <wtf/Assertions.h>
 #import <wtf/HashMap.h>
+#import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/ThreadSpecific.h>
 
 #ifdef NDEBUG
 #define OBJC_LOG(formatAndArgs...) ((void)0)
@@ -459,17 +461,42 @@ JSC::JSValue ObjcInstance::defaultValue(ExecState* exec, PreferredPrimitiveType 
     return valueOf(exec);
 }
 
-static NSString* swizzleNSObjectDescription(id self, SEL)
+static WTF::ThreadSpecific<uint32_t>* s_descriptionDepth;
+
+@interface NSObject (WebDescriptionCategory)
+- (NSString *)_web_description;
+@end
+
+@implementation NSObject (WebDescriptionCategory)
+
+- (NSString *)_web_description
 {
-    return [NSString stringWithFormat:@"%@%@%@", @"<", NSStringFromClass([self class]), @">"];
+    ASSERT(s_descriptionDepth);
+    if (s_descriptionDepth->isSet() && **s_descriptionDepth)
+        return [NSString stringWithFormat:@"<%@>", NSStringFromClass([self class])];
+    // We call _web_description here since this method should only be called
+    // once we have already swizzled this method with the one on NSObject.
+    // Thus, _web_description is actually the original description method.
+    return [self _web_description];
 }
+
+@end
 
 JSC::JSValue ObjcInstance::stringValue(ExecState* exec) const
 {
-    auto method = class_getInstanceMethod([NSObject class], @selector(description));
-    IMP originalNSObjectDescription = method_setImplementation(method, (IMP)swizzleNSObjectDescription);
+    static std::once_flag initializeDescriptionDepthOnceFlag;
+    std::call_once(initializeDescriptionDepthOnceFlag, [] {
+        s_descriptionDepth = new WTF::ThreadSpecific<uint32_t>();
+        **s_descriptionDepth = 0;
+
+        auto descriptionMethod = class_getInstanceMethod([NSObject class], @selector(description));
+        auto webDescriptionMethod = class_getInstanceMethod([NSObject class], @selector(_web_description));
+        method_exchangeImplementations(descriptionMethod, webDescriptionMethod);
+    });
+
+    (**s_descriptionDepth)++;
     JSC::JSValue result = convertNSStringToString(exec, [getObject() description]);
-    method_setImplementation(method, originalNSObjectDescription);
+    (**s_descriptionDepth)--;
     return result;
 }
 
