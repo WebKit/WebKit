@@ -3,6 +3,16 @@
         Add content animation tests to benchmark_runner, and allow the runner to collect device data as part of the results
         https://bugs.webkit.org/show_bug.cgi?id=156827
 
+        Add two files missing from the previous commit.
+
+        * Animation/css-animation.html: Added.
+        * Animation/raf-animation.html: Added.
+
+2016-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Add content animation tests to benchmark_runner, and allow the runner to collect device data as part of the results
+        https://bugs.webkit.org/show_bug.cgi?id=156827
+
         Reviewed by Stephanie Lewis.
 
         Two new files for the content-animation suite.
