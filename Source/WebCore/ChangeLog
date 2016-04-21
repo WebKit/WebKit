@@ -1,3 +1,15 @@
+2016-04-20  John Wilander  <wilander@apple.com>
+
+        Add Subresource Integrity as "Under consideration".
+        https://bugs.webkit.org/show_bug.cgi?id=156800
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests needed.
+
+        * features.json:
+            Added an entry for Subresource Integrity.
+
 2016-04-20  Anders Carlsson  <andersca@apple.com>
 
         Get rid of a couple of uses of ApplicationCacheStorage::singleton()

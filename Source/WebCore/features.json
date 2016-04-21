@@ -659,6 +659,19 @@
         }
     },
     {
+        "name": "Subresource Integrity",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://w3c.github.io/webappsec-subresource-integrity/",
+        "description": "Extends script and link elements with an integrity attribute that contains a cryptographic hash of the representation of the resource the author expects to load.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
+        }
+    },
+    {
         "name": "Template Element",
         "status": {
             "status": "Done",
