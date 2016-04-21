@@ -992,7 +992,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             unsigned numberOfRegsForCall = JSStack::CallFrameHeaderSize + numberOfParameters;
 
             unsigned numberOfBytesForCall =
-                numberOfRegsForCall * sizeof(Register) + sizeof(CallerFrameAndPC);
+                numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
 
             unsigned alignedNumberOfBytesForCall =
                 WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
