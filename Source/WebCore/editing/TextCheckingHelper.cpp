@@ -174,8 +174,13 @@ PassRefPtr<Range> TextCheckingParagraph::subrange(int characterOffset, int chara
 int TextCheckingParagraph::offsetTo(const Position& position, ExceptionCode& ec) const
 {
     ASSERT(m_checkingRange);
+    if (!position.containerNode()) {
+        ec = TypeError;
+        return 0;
+    }
+
     Ref<Range> range = offsetAsRange()->cloneRange();
-    range->setEnd(position.containerNode(), position.computeOffsetInContainerNode(), ec);
+    range->setEnd(*position.containerNode(), position.computeOffsetInContainerNode(), ec);
     if (ec)
         return 0;
     return TextIterator::rangeLength(range.ptr());

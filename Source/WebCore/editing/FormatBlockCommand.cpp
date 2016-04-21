@@ -73,7 +73,7 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
     if (!root || !refNode)
         return;
     if (isElementForFormatBlock(refNode->tagQName()) && start == startOfBlock(start)
-        && (end == endOfBlock(end) || isNodeVisiblyContainedWithin(refNode, range.get()))
+        && (end == endOfBlock(end) || isNodeVisiblyContainedWithin(*refNode, range.get()))
         && refNode != root && !root->isDescendantOf(refNode)) {
         // Already in a block element that only contains the current paragraph
         if (refNode->hasTagName(tagName()))

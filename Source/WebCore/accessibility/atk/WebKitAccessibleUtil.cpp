@@ -161,7 +161,7 @@ bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection&
     // node is actually inside the region, at least partially.
     Node* node = coreObject->node();
     Node* lastDescendant = node->lastDescendant();
-    return (range->intersectsNode(node, IGNORE_EXCEPTION)
+    return (range->intersectsNode(*node, IGNORE_EXCEPTION)
         && (&range->endContainer() != node || range->endOffset())
         && (&range->startContainer() != lastDescendant || range->startOffset() != lastOffsetInNode(lastDescendant)));
 }

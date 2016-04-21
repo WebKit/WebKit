@@ -117,7 +117,7 @@ bool isTableStructureNode(const Node*);
 bool isListElement(Node*);
 bool isListItem(const Node*);
 bool isNodeRendered(const Node*);
-bool isNodeVisiblyContainedWithin(Node*, const Range*);
+bool isNodeVisiblyContainedWithin(Node&, const Range*);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);
 bool areIdenticalElements(const Node*, const Node*);
 bool isNonTableCellHTMLBlockElement(const Node*);
@@ -198,7 +198,7 @@ int comparePositions(const VisiblePosition&, const VisiblePosition&);
 int indexForVisiblePosition(const VisiblePosition&, RefPtr<ContainerNode>& scope);
 int indexForVisiblePosition(Node*, const VisiblePosition&, bool forSelectionPreservation);
 VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope);
-VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node*, int index); // FIXME: Why do we need this version?
+VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node&, int index); // FIXME: Why do we need this version?
 
 // -------------------------------------------------------------------------
 // HTMLElement

@@ -113,8 +113,10 @@ using WebCore::VisiblePosition;
     ExceptionCode ignored;
     Position start = frameSelection.selection().start().parentAnchoredEquivalent();
     Position end = frameSelection.selection().end().parentAnchoredEquivalent();
-    range->setStart(start.containerNode(), start.offsetInContainerNode(), ignored);
-    range->setEnd(end.containerNode(), end.offsetInContainerNode(), ignored);
+    if (start.containerNode())
+        range->setStart(*start.containerNode(), start.offsetInContainerNode(), ignored);
+    if (end.containerNode())
+        range->setEnd(*end.containerNode(), end.offsetInContainerNode(), ignored);
 }
 
 - (void)extend:(UInt32)amount inDirection:(WebTextAdjustmentDirection)direction
@@ -129,8 +131,10 @@ using WebCore::VisiblePosition;
     ExceptionCode ignored;
     Position start = frameSelection.selection().start().parentAnchoredEquivalent();
     Position end = frameSelection.selection().end().parentAnchoredEquivalent();
-    range->setStart(start.containerNode(), start.offsetInContainerNode(), ignored);
-    range->setEnd(end.containerNode(), end.offsetInContainerNode(), ignored);
+    if (start.containerNode())
+        range->setStart(*start.containerNode(), start.offsetInContainerNode(), ignored);
+    if (end.containerNode())
+        range->setEnd(*end.containerNode(), end.offsetInContainerNode(), ignored);
 }
 
 - (DOMNode *)firstNode

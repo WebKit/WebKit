@@ -632,14 +632,14 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
         RefPtr<Range> selectedRange = frameWithSelection->selection().selection().firstRange();
         if (options & Backwards) {
             for (size_t i = matchRanges.size(); i > 0; --i) {
-                if (selectedRange->compareBoundaryPoints(Range::END_TO_START, matchRanges[i - 1].get(), IGNORE_EXCEPTION) > 0) {
+                if (selectedRange->compareBoundaryPoints(Range::END_TO_START, *matchRanges[i - 1], IGNORE_EXCEPTION) > 0) {
                     indexForSelection = i - 1;
                     break;
                 }
             }
         } else {
             for (size_t i = 0, size = matchRanges.size(); i < size; ++i) {
-                if (selectedRange->compareBoundaryPoints(Range::START_TO_END, matchRanges[i].get(), IGNORE_EXCEPTION) < 0) {
+                if (selectedRange->compareBoundaryPoints(Range::START_TO_END, *matchRanges[i], IGNORE_EXCEPTION) < 0) {
                     indexForSelection = i;
                     break;
                 }

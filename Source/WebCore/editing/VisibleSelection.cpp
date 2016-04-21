@@ -213,8 +213,8 @@ static RefPtr<Range> makeSearchRange(const Position& pos)
     ExceptionCode ec = 0;
 
     Position start(pos.parentAnchoredEquivalent());
-    searchRange->selectNodeContents(boundary, ec);
-    searchRange->setStart(start.containerNode(), start.offsetInContainerNode(), ec);
+    searchRange->selectNodeContents(*boundary, ec);
+    searchRange->setStart(*start.containerNode(), start.offsetInContainerNode(), ec);
 
     ASSERT(!ec);
     if (ec)

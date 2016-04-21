@@ -712,7 +712,7 @@ static Image* getImage(Element& element)
 static void selectElement(Element& element)
 {
     RefPtr<Range> range = element.document().createRange();
-    range->selectNode(&element);
+    range->selectNode(element);
     element.document().frame()->selection().setSelection(VisibleSelection(*range, DOWNSTREAM));
 }
 

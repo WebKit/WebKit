@@ -22,7 +22,6 @@
 [
     Constructor,
     ConstructorCallWith=Document,
-    UsePointersEvenForNonNullableObjectArguments,
     ImplementationLacksVTable,
     ExportMacro=WEBCORE_EXPORT,
 ] interface Range {

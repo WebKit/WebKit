@@ -1,3 +1,18 @@
+2016-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from Range
+        https://bugs.webkit.org/show_bug.cgi?id=156805
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange setStart:offset:]):
+        (-[WKDOMRange setEnd:offset:]):
+        (-[WKDOMRange selectNode:]):
+        (-[WKDOMRange selectNodeContents:]):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::contentsAsString):
+
 2016-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebView should claim the contents size as its natural size

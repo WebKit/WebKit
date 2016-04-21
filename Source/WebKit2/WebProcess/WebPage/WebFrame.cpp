@@ -330,7 +330,7 @@ String WebFrame::contentsAsString() const
     RefPtr<Range> range = document->createRange();
 
     ExceptionCode ec = 0;
-    range->selectNode(documentElement.get(), ec);
+    range->selectNode(*documentElement, ec);
     if (ec)
         return String();
 

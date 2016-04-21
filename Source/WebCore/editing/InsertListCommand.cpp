@@ -220,7 +220,7 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
             return;
 
         // If the entire list is selected, then convert the whole list.
-        if (switchListType && isNodeVisiblyContainedWithin(listNode.get(), currentSelection)) {
+        if (switchListType && isNodeVisiblyContainedWithin(*listNode, currentSelection)) {
             bool rangeStartIsInList = visiblePositionBeforeNode(listNode.get()) == currentSelection->startPosition();
             bool rangeEndIsInList = visiblePositionAfterNode(listNode.get()) == currentSelection->endPosition();
 
@@ -243,9 +243,9 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
             // Restore the start and the end of current selection if they started inside listNode
             // because moveParagraphWithClones could have removed them.
             if (rangeStartIsInList && newList)
-                currentSelection->setStart(newList, 0, IGNORE_EXCEPTION);
+                currentSelection->setStart(*newList, 0, IGNORE_EXCEPTION);
             if (rangeEndIsInList && newList)
-                currentSelection->setEnd(newList, lastOffsetInNode(newList.get()), IGNORE_EXCEPTION);
+                currentSelection->setEnd(*newList, lastOffsetInNode(newList.get()), IGNORE_EXCEPTION);
 
             setEndingSelection(VisiblePosition(firstPositionInNode(newList.get())));
 

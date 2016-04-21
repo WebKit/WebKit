@@ -1,5 +1,132 @@
 2016-04-21  Chris Dumez  <cdumez@apple.com>
 
+        Drop [UsePointersEvenForNonNullableObjectArguments] from Range
+        https://bugs.webkit.org/show_bug.cgi?id=156805
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no web-exposed behavior change.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::rangeForNodeContents):
+        (WebCore::characterOffsetsInOrder):
+        (WebCore::setRangeStartOrEndWithCharacterOffset):
+        (WebCore::AXObjectCache::startOrEndCharacterOffsetForRange):
+        (WebCore::AXObjectCache::previousBoundary):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::selectText):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::documentBasedSelectedTextRange):
+        * dom/Node.cpp:
+        (WebCore::Node::textRects):
+        * dom/Range.cpp:
+        (WebCore::Range::Range):
+        (WebCore::Range::setDocument):
+        (WebCore::Range::setStart):
+        (WebCore::Range::setEnd):
+        (WebCore::Range::isPointInRange):
+        (WebCore::Range::comparePoint):
+        (WebCore::Range::compareNode):
+        (WebCore::Range::compareBoundaryPoints):
+        (WebCore::Range::compareBoundaryPointsForBindings):
+        (WebCore::Range::intersectsNode):
+        (WebCore::Range::processContents):
+        (WebCore::Range::insertNode):
+        (WebCore::Range::checkNodeWOffset):
+        (WebCore::Range::setStartAfter):
+        (WebCore::Range::setEndBefore):
+        (WebCore::Range::setEndAfter):
+        (WebCore::Range::selectNode):
+        (WebCore::Range::selectNodeContents):
+        (WebCore::Range::surroundContents):
+        (WebCore::Range::setStartBefore):
+        (WebCore::Range::contains):
+        (WebCore::rangesOverlap):
+        (WebCore::rangeOfContents):
+        (WebCore::boundaryNodeChildrenWillBeRemoved):
+        (WebCore::boundaryTextNodesMerged):
+        (WebCore::boundaryTextNodesSplit):
+        (WebCore::Range::expand):
+        (WebCore::checkForDifferentRootContainer): Deleted.
+        (WebCore::highestAncestorUnderCommonRoot): Deleted.
+        (WebCore::childOfCommonRootBeforeOffset): Deleted.
+        (WebCore::deleteCharacterData): Deleted.
+        (WebCore::Range::toString): Deleted.
+        (WebCore::Range::toHTML): Deleted.
+        (WebCore::Range::text): Deleted.
+        (WebCore::Range::cloneRange): Deleted.
+        (WebCore::Range::absoluteTextRects): Deleted.
+        (WebCore::Range::absoluteTextQuads): Deleted.
+        (WebCore::boundaryNodeChildrenChanged): Deleted.
+        (WebCore::boundaryNodeWillBeRemoved): Deleted.
+        (WebCore::Range::nodeWillBeRemoved): Deleted.
+        (WebCore::boundaryTextRemoved): Deleted.
+        (WebCore::Range::getBoundingClientRect): Deleted.
+        (WebCore::Range::getBorderAndTextQuads): Deleted.
+        * dom/Range.h:
+        * dom/Range.idl:
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::set):
+        (WebCore::RangeBoundaryPoint::setToStartOfNode):
+        (WebCore::RangeBoundaryPoint::setToEndOfNode):
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::fixRangeAndApplyInlineStyle):
+        * editing/Editor.cpp:
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::rangeOfString):
+        (WebCore::isFrameInRange):
+        (WebCore::Editor::countMatchesForText):
+        * editing/EditorCommand.cpp:
+        (WebCore::unionDOMRanges):
+        (WebCore::executeDeleteToMark):
+        (WebCore::executeSelectToMark):
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::formatRange):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::respondToNodeModification):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApplyForSingleParagraph):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingParagraph::offsetTo):
+        * editing/TextIterator.cpp:
+        (WebCore::CharacterIterator::range):
+        (WebCore::BackwardsCharacterIterator::range):
+        (WebCore::TextIterator::rangeFromLocationAndLength):
+        (WebCore::TextIterator::getLocationAndLengthFromRange):
+        (WebCore::findPlainText):
+        * editing/VisiblePosition.cpp:
+        (WebCore::setStart):
+        (WebCore::setEnd):
+        * editing/VisibleSelection.cpp:
+        (WebCore::makeSearchRange):
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        * editing/htmlediting.cpp:
+        (WebCore::visiblePositionForIndexUsingCharacterIterator):
+        (WebCore::isNodeVisiblyContainedWithin):
+        * editing/htmlediting.h:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::adjustedSelectionRange):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::addRange):
+        * page/DragController.cpp:
+        (WebCore::selectElement):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent):
+        * page/Page.cpp:
+        (WebCore::Page::findStringMatchingRanges):
+        * page/TextIndicator.cpp:
+        (WebCore::hasNonInlineOrReplacedElements):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::getRanges):
+
+2016-04-21  Chris Dumez  <cdumez@apple.com>
+
         Drop [UsePointersEvenForNonNullableObjectArguments] from DOMURL
         https://bugs.webkit.org/show_bug.cgi?id=156797
 

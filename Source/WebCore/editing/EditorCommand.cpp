@@ -228,12 +228,11 @@ static unsigned verticalScrollDistance(Frame& frame)
     return static_cast<unsigned>(Scrollbar::pageStep(height));
 }
 
-static RefPtr<Range> unionDOMRanges(Range* a, Range* b)
+static RefPtr<Range> unionDOMRanges(Range& a, Range& b)
 {
-    Range* start = a->compareBoundaryPoints(Range::START_TO_START, b, ASSERT_NO_EXCEPTION) <= 0 ? a : b;
-    Range* end = a->compareBoundaryPoints(Range::END_TO_END, b, ASSERT_NO_EXCEPTION) <= 0 ? b : a;
-
-    return Range::create(a->ownerDocument(), &start->startContainer(), start->startOffset(), &end->endContainer(), end->endOffset());
+    Range& start = a.compareBoundaryPoints(Range::START_TO_START, b, ASSERT_NO_EXCEPTION) <= 0 ? a : b;
+    Range& end = a.compareBoundaryPoints(Range::END_TO_END, b, ASSERT_NO_EXCEPTION) <= 0 ? b : a;
+    return Range::create(a.ownerDocument(), &start.startContainer(), start.startOffset(), &end.endContainer(), end.endOffset());
 }
 
 // Execute command functions
@@ -356,8 +355,8 @@ static bool executeDeleteToMark(Frame& frame, Event*, EditorCommandSource, const
 {
     RefPtr<Range> mark = frame.editor().mark().toNormalizedRange();
     FrameSelection& selection = frame.selection();
-    if (mark) {
-        bool selected = selection.setSelectedRange(unionDOMRanges(mark.get(), frame.editor().selectedRange().get()).get(), DOWNSTREAM, true);
+    if (mark && frame.editor().selectedRange()) {
+        bool selected = selection.setSelectedRange(unionDOMRanges(*mark, *frame.editor().selectedRange()).get(), DOWNSTREAM, true);
         ASSERT(selected);
         if (!selected)
             return false;
@@ -1010,7 +1009,7 @@ static bool executeSelectToMark(Frame& frame, Event*, EditorCommandSource, const
         systemBeep();
         return false;
     }
-    frame.selection().setSelectedRange(unionDOMRanges(mark.get(), selection.get()).get(), DOWNSTREAM, true);
+    frame.selection().setSelectedRange(unionDOMRanges(*mark, *selection).get(), DOWNSTREAM, true);
     return true;
 }
 

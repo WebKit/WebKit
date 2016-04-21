@@ -413,7 +413,8 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         if (!selectedRange || selectedRange->collapsed()) {
             Document& document = m_context.hitTestResult().innerNonSharedNode()->document();
             selectedRange = document.createRange();
-            selectedRange->selectNode(document.documentElement(), IGNORE_EXCEPTION);
+            if (document.documentElement())
+                selectedRange->selectNode(*document.documentElement(), IGNORE_EXCEPTION);
         }
         m_client.speak(plainText(selectedRange.get()));
         break;

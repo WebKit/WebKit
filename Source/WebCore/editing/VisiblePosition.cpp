@@ -730,24 +730,32 @@ VisiblePosition endVisiblePosition(const Range *r, EAffinity affinity)
     return VisiblePosition(r->endPosition(), affinity);
 }
 
-bool setStart(Range *r, const VisiblePosition &visiblePosition)
+bool setStart(Range* range, const VisiblePosition& visiblePosition)
 {
-    if (!r)
+    if (!range)
         return false;
+
     Position p = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
-    int code = 0;
-    r->setStart(p.containerNode(), p.offsetInContainerNode(), code);
-    return code == 0;
+    if (!p.containerNode())
+        return false;
+
+    int ec = 0;
+    range->setStart(*p.containerNode(), p.offsetInContainerNode(), ec);
+    return !ec;
 }
 
-bool setEnd(Range *r, const VisiblePosition &visiblePosition)
+bool setEnd(Range* range, const VisiblePosition& visiblePosition)
 {
-    if (!r)
+    if (!range)
         return false;
+
     Position p = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
-    int code = 0;
-    r->setEnd(p.containerNode(), p.offsetInContainerNode(), code);
-    return code == 0;
+    if (!p.containerNode())
+        return false;
+
+    int ec = 0;
+    range->setEnd(*p.containerNode(), p.offsetInContainerNode(), ec);
+    return !ec;
 }
 
 // FIXME: Maybe this should be deprecated too, like the underlying function?

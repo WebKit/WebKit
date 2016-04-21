@@ -1164,13 +1164,12 @@ VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope)
     return VisiblePosition(range->startPosition());
 }
 
-VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node* node, int index)
+VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int index)
 {
-    ASSERT(node);
     if (index <= 0)
-        return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
+        return VisiblePosition(firstPositionInOrBeforeNode(&node), DOWNSTREAM);
 
-    RefPtr<Range> range = Range::create(node->document());
+    RefPtr<Range> range = Range::create(node.document());
     range->selectNodeContents(node, IGNORE_EXCEPTION);
     CharacterIterator it(*range);
     it.advance(index - 1);
@@ -1186,20 +1185,19 @@ bool isVisiblyAdjacent(const Position& first, const Position& second)
 
 // Determines whether a node is inside a range or visibly starts and ends at the boundaries of the range.
 // Call this function to determine whether a node is visibly fit inside selectedRange
-bool isNodeVisiblyContainedWithin(Node* node, const Range* selectedRange)
+bool isNodeVisiblyContainedWithin(Node& node, const Range* selectedRange)
 {
-    ASSERT(node);
     ASSERT(selectedRange);
     // If the node is inside the range, then it surely is contained within
     if (selectedRange->compareNode(node, IGNORE_EXCEPTION) == Range::NODE_INSIDE)
         return true;
 
-    bool startIsVisuallySame = visiblePositionBeforeNode(node) == selectedRange->startPosition();
-    if (startIsVisuallySame && comparePositions(positionInParentAfterNode(node), selectedRange->endPosition()) < 0)
+    bool startIsVisuallySame = visiblePositionBeforeNode(&node) == selectedRange->startPosition();
+    if (startIsVisuallySame && comparePositions(positionInParentAfterNode(&node), selectedRange->endPosition()) < 0)
         return true;
 
-    bool endIsVisuallySame = visiblePositionAfterNode(node) == selectedRange->endPosition();
-    if (endIsVisuallySame && comparePositions(selectedRange->startPosition(), positionInParentBeforeNode(node)) < 0)
+    bool endIsVisuallySame = visiblePositionAfterNode(&node) == selectedRange->endPosition();
+    if (endIsVisuallySame && comparePositions(selectedRange->startPosition(), positionInParentBeforeNode(&node)) < 0)
         return true;
 
     return startIsVisuallySame && endIsVisuallySame;

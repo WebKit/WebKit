@@ -569,7 +569,11 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     Document& boundaryDocument = boundary->document();
     Position start = createLegacyEditingPosition(boundary, 0).parentAnchoredEquivalent();
     Position end = pos.parentAnchoredEquivalent();
-    RefPtr<Range> searchRange = Range::create(boundaryDocument);
+
+    if (start.isNull() || end.isNull())
+        return VisiblePosition();
+
+    Ref<Range> searchRange = Range::create(boundaryDocument);
     
     Vector<UChar, 1024> string;
     unsigned suffixLength = 0;
@@ -577,19 +581,19 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     ExceptionCode ec = 0;
     if (requiresContextForWordBoundary(c.characterBefore())) {
         RefPtr<Range> forwardsScanRange(boundaryDocument.createRange());
-        forwardsScanRange->setEndAfter(boundary, ec);
-        forwardsScanRange->setStart(end.deprecatedNode(), end.deprecatedEditingOffset(), ec);
+        forwardsScanRange->setEndAfter(*boundary, ec);
+        forwardsScanRange->setStart(*end.deprecatedNode(), end.deprecatedEditingOffset(), ec);
         suffixLength = suffixLengthForRange(forwardsScanRange, string);
     }
 
-    searchRange->setStart(start.deprecatedNode(), start.deprecatedEditingOffset(), ec);
-    searchRange->setEnd(end.deprecatedNode(), end.deprecatedEditingOffset(), ec);
+    searchRange->setStart(*start.deprecatedNode(), start.deprecatedEditingOffset(), ec);
+    searchRange->setEnd(*end.deprecatedNode(), end.deprecatedEditingOffset(), ec);
 
     ASSERT(!ec);
     if (ec)
         return VisiblePosition();
 
-    SimplifiedBackwardsTextIterator it(*searchRange);
+    SimplifiedBackwardsTextIterator it(searchRange);
     unsigned next = backwardSearchForBoundaryWithTextIterator(it, string, suffixLength, searchFunction);
 
     if (!next)
@@ -602,7 +606,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     }
 
     // Use the character iterator to translate the next value into a DOM position.
-    BackwardsCharacterIterator charIt(*searchRange);
+    BackwardsCharacterIterator charIt(searchRange);
     charIt.advance(string.size() - suffixLength - next);
     // FIXME: charIt can get out of shadow host.
     return VisiblePosition(charIt.range()->endPosition(), DOWNSTREAM);
@@ -616,7 +620,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
         return VisiblePosition();
 
     Document& boundaryDocument = boundary->document();
-    RefPtr<Range> searchRange(boundaryDocument.createRange());
+    Ref<Range> searchRange = boundaryDocument.createRange();
     Position start(pos.parentAnchoredEquivalent());
 
     Vector<UChar, 1024> string;
@@ -624,20 +628,22 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
 
     if (requiresContextForWordBoundary(c.characterAfter())) {
         RefPtr<Range> backwardsScanRange(boundaryDocument.createRange());
-        backwardsScanRange->setEnd(start.deprecatedNode(), start.deprecatedEditingOffset(), IGNORE_EXCEPTION);
+        if (start.deprecatedNode())
+            backwardsScanRange->setEnd(*start.deprecatedNode(), start.deprecatedEditingOffset(), IGNORE_EXCEPTION);
         prefixLength = prefixLengthForRange(backwardsScanRange, string);
     }
 
-    searchRange->selectNodeContents(boundary, IGNORE_EXCEPTION);
-    searchRange->setStart(start.deprecatedNode(), start.deprecatedEditingOffset(), IGNORE_EXCEPTION);
-    TextIterator it(searchRange.get(), TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    searchRange->selectNodeContents(*boundary, IGNORE_EXCEPTION);
+    if (start.deprecatedNode())
+        searchRange->setStart(*start.deprecatedNode(), start.deprecatedEditingOffset(), IGNORE_EXCEPTION);
+    TextIterator it(searchRange.ptr(), TextIteratorEmitsCharactersBetweenAllVisiblePositions);
     unsigned next = forwardSearchForBoundaryWithTextIterator(it, string, prefixLength, searchFunction);
     
     if (it.atEnd() && next == string.size())
         pos = searchRange->endPosition();
     else if (next > prefixLength) {
         // Use the character iterator to translate the next value into a DOM position.
-        CharacterIterator charIt(*searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+        CharacterIterator charIt(searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
         charIt.advance(next - prefixLength - 1);
         RefPtr<Range> characterRange = charIt.range();
         pos = characterRange->endPosition();

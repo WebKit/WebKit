@@ -1434,7 +1434,7 @@ PlainTextRange AccessibilityRenderObject::documentBasedSelectedTextRange() const
     
     VisibleSelection visibleSelection = selection();
     RefPtr<Range> currentSelectionRange = visibleSelection.toNormalizedRange();
-    if (!currentSelectionRange || !currentSelectionRange->intersectsNode(node, IGNORE_EXCEPTION))
+    if (!currentSelectionRange || !currentSelectionRange->intersectsNode(*node, IGNORE_EXCEPTION))
         return PlainTextRange();
     
     int start = indexForVisiblePosition(visibleSelection.start());
@@ -1513,8 +1513,9 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
         HTMLTextFormControlElement& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
         textControl.setSelectionRange(range.start, range.start + range.length);
     } else {
-        VisiblePosition start = visiblePositionForIndexUsingCharacterIterator(node(), range.start);
-        VisiblePosition end = visiblePositionForIndexUsingCharacterIterator(node(), range.start + range.length);
+        ASSERT(node());
+        VisiblePosition start = visiblePositionForIndexUsingCharacterIterator(*node(), range.start);
+        VisiblePosition end = visiblePositionForIndexUsingCharacterIterator(*node(), range.start + range.length);
         m_renderer->frame().selection().setSelection(VisibleSelection(start, end), FrameSelection::defaultSetSelectionOptions(UserTriggered));
     }
     
@@ -1876,7 +1877,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
     if (!node)
         return VisiblePosition();
 
-    return visiblePositionForIndexUsingCharacterIterator(node, index);
+    return visiblePositionForIndexUsingCharacterIterator(*node, index);
 }
     
 int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& pos) const

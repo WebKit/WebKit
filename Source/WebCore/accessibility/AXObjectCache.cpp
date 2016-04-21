@@ -1606,7 +1606,7 @@ RefPtr<Range> AXObjectCache::rangeForNodeContents(Node* node)
         return nullptr;
     RefPtr<Range> range = Range::create(*document);
     ExceptionCode ec = 0;
-    range->selectNodeContents(node, ec);
+    range->selectNodeContents(*node, ec);
     return ec ? nullptr : range;
 }
     
@@ -1635,7 +1635,8 @@ static bool characterOffsetsInOrder(const CharacterOffset& characterOffset1, con
     
     RefPtr<Range> range1 = AXObjectCache::rangeForNodeContents(node1);
     RefPtr<Range> range2 = AXObjectCache::rangeForNodeContents(node2);
-    return range1->compareBoundaryPoints(Range::START_TO_START, range2.get(), IGNORE_EXCEPTION) <= 0;
+
+    return !range2 || range1->compareBoundaryPoints(Range::START_TO_START, *range2, IGNORE_EXCEPTION) <= 0;
 }
 
 static Node* resetNodeAndOffsetForReplacedNode(Node* replacedNode, int& offset, int characterCount)
@@ -1663,6 +1664,7 @@ static void setRangeStartOrEndWithCharacterOffset(RefPtr<Range> range, const Cha
     
     int offset = characterOffset.startIndex + characterOffset.offset;
     Node* node = characterOffset.node;
+    ASSERT(node);
     
     bool replacedNodeOrBR = isReplacedNodeOrBR(node);
     // For the non text node that has no children, we should create the range with its parent, otherwise the range would be collapsed.
@@ -1673,10 +1675,15 @@ static void setRangeStartOrEndWithCharacterOffset(RefPtr<Range> range, const Cha
     if (replacedNodeOrBR || noChildren)
         node = resetNodeAndOffsetForReplacedNode(node, offset, characterCount);
     
+    if (!node) {
+        ec = TypeError;
+        return;
+    }
+
     if (isStart)
-        range->setStart(node, offset, ec);
+        range->setStart(*node, offset, ec);
     else
-        range->setEnd(node, offset, ec);
+        range->setEnd(*node, offset, ec);
 }
 
 RefPtr<Range> AXObjectCache::rangeForUnorderedCharacterOffsets(const CharacterOffset& characterOffset1, const CharacterOffset& characterOffset2)
@@ -1743,18 +1750,18 @@ CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(RefPtr<Range> r
     // If it's end text marker, we want to go to the end of the range, and stay within the range.
     bool stayWithinRange = !isStart;
     
-    RefPtr<Range> copyRange = range;
+    Ref<Range> copyRange = *range;
     // Change the start of the range, so the character offset starts from node beginning.
     int offset = 0;
-    Node* node = &copyRange->startContainer();
-    if (node->offsetInCharacters()) {
+    Node& node = copyRange->startContainer();
+    if (node.offsetInCharacters()) {
         copyRange = Range::create(range->ownerDocument(), &range->startContainer(), range->startOffset(), &range->endContainer(), range->endOffset());
-        CharacterOffset nodeStartOffset = traverseToOffsetInRange(rangeForNodeContents(node), 0);
+        CharacterOffset nodeStartOffset = traverseToOffsetInRange(rangeForNodeContents(&node), 0);
         offset = std::max(copyRange->startOffset() - nodeStartOffset.startIndex, 0);
         copyRange->setStart(node, nodeStartOffset.startIndex);
     }
     
-    return traverseToOffsetInRange(copyRange, offset, isStart ? TraverseOptionDefault : TraverseOptionToNodeEnd, stayWithinRange);
+    return traverseToOffsetInRange(WTFMove(copyRange), offset, isStart ? TraverseOptionDefault : TraverseOptionToNodeEnd, stayWithinRange);
 }
 
 void AXObjectCache::startOrEndTextMarkerDataForRange(TextMarkerData& textMarkerData, RefPtr<Range> range, bool isStart)
@@ -2213,7 +2220,7 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
     ExceptionCode ec = 0;
     if (requiresContextForWordBoundary(characterBefore(characterOffset))) {
         RefPtr<Range> forwardsScanRange(boundary->document().createRange());
-        forwardsScanRange->setEndAfter(boundary, ec);
+        forwardsScanRange->setEndAfter(*boundary, ec);
         setRangeStartOrEndWithCharacterOffset(forwardsScanRange, characterOffset, true, ec);
         suffixLength = suffixLengthForRange(forwardsScanRange, string);
     }

@@ -80,6 +80,7 @@ Ref<Range> Range::create(Document& ownerDocument)
     return adoptRef(*new Range(ownerDocument));
 }
 
+// FIXME: startContainer and endContainer should probably be Ref<Node>&&.
 inline Range::Range(Document& ownerDocument, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset)
     : m_ownerDocument(ownerDocument)
     , m_start(&ownerDocument)
@@ -93,8 +94,10 @@ inline Range::Range(Document& ownerDocument, PassRefPtr<Node> startContainer, in
 
     // Simply setting the containers and offsets directly would not do any of the checking
     // that setStart and setEnd do, so we call those functions.
-    setStart(startContainer, startOffset);
-    setEnd(endContainer, endOffset);
+    if (startContainer)
+        setStart(*startContainer, startOffset);
+    if (endContainer)
+        setEnd(*endContainer, endOffset);
 }
 
 Ref<Range> Range::create(Document& ownerDocument, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset)
@@ -129,8 +132,8 @@ void Range::setDocument(Document& document)
     ASSERT(m_ownerDocument.ptr() != &document);
     m_ownerDocument->detachRange(this);
     m_ownerDocument = document;
-    m_start.setToStartOfNode(&document);
-    m_end.setToStartOfNode(&document);
+    m_start.setToStartOfNode(document);
+    m_end.setToStartOfNode(document);
     m_ownerDocument->attachRange(this);
 }
 
@@ -157,13 +160,8 @@ static inline bool checkForDifferentRootContainer(const RangeBoundaryPoint& star
     return startRootContainer != endRootContainer || (Range::compareBoundaryPoints(start, end, ASSERT_NO_EXCEPTION) > 0);
 }
 
-void Range::setStart(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
+void Range::setStart(Ref<Node>&& refNode, int offset, ExceptionCode& ec)
 {
-    if (!refNode) {
-        ec = TypeError;
-        return;
-    }
-
     bool didMoveDocument = false;
     if (&refNode->document() != &ownerDocument()) {
         setDocument(refNode->document());
@@ -171,23 +169,18 @@ void Range::setStart(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
     }
 
     ec = 0;
-    Node* childNode = checkNodeWOffset(refNode.get(), offset, ec);
+    Node* childNode = checkNodeWOffset(refNode, offset, ec);
     if (ec)
         return;
 
-    m_start.set(refNode, offset, childNode);
+    m_start.set(WTFMove(refNode), offset, childNode);
 
     if (didMoveDocument || checkForDifferentRootContainer(m_start, m_end))
         collapse(true);
 }
 
-void Range::setEnd(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
+void Range::setEnd(Ref<Node>&& refNode, int offset, ExceptionCode& ec)
 {
-    if (!refNode) {
-        ec = TypeError;
-        return;
-    }
-
     bool didMoveDocument = false;
     if (&refNode->document() != &ownerDocument()) {
         setDocument(refNode->document());
@@ -195,11 +188,11 @@ void Range::setEnd(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
     }
 
     ec = 0;
-    Node* childNode = checkNodeWOffset(refNode.get(), offset, ec);
+    Node* childNode = checkNodeWOffset(refNode, offset, ec);
     if (ec)
         return;
 
-    m_end.set(refNode, offset, childNode);
+    m_end.set(WTFMove(refNode), offset, childNode);
 
     if (didMoveDocument || checkForDifferentRootContainer(m_start, m_end))
         collapse(false);
@@ -208,13 +201,21 @@ void Range::setEnd(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
 void Range::setStart(const Position& start, ExceptionCode& ec)
 {
     Position parentAnchored = start.parentAnchoredEquivalent();
-    setStart(parentAnchored.containerNode(), parentAnchored.offsetInContainerNode(), ec);
+    if (!parentAnchored.containerNode()) {
+        ec = TypeError;
+        return;
+    }
+    setStart(*parentAnchored.containerNode(), parentAnchored.offsetInContainerNode(), ec);
 }
 
 void Range::setEnd(const Position& end, ExceptionCode& ec)
 {
     Position parentAnchored = end.parentAnchoredEquivalent();
-    setEnd(parentAnchored.containerNode(), parentAnchored.offsetInContainerNode(), ec);
+    if (!parentAnchored.containerNode()) {
+        ec = TypeError;
+        return;
+    }
+    setEnd(*parentAnchored.containerNode(), parentAnchored.offsetInContainerNode(), ec);
 }
 
 void Range::collapse(bool toStart)
@@ -225,14 +226,9 @@ void Range::collapse(bool toStart)
         m_start = m_end;
 }
 
-bool Range::isPointInRange(Node* refNode, int offset, ExceptionCode& ec)
+bool Range::isPointInRange(Node& refNode, int offset, ExceptionCode& ec)
 {
-    if (!refNode) {
-        ec = TypeError;
-        return false;
-    }
-
-    if (&refNode->document() != &ownerDocument()) {
+    if (&refNode.document() != &ownerDocument()) {
         return false;
     }
 
@@ -241,30 +237,24 @@ bool Range::isPointInRange(Node* refNode, int offset, ExceptionCode& ec)
     if (ec) {
         // DOM4 spec requires us to check whether refNode and start container have the same root first
         // but we do it in the reverse order to avoid O(n) operation here in common case.
-        if (!commonAncestorContainer(refNode, &startContainer()))
+        if (!commonAncestorContainer(&refNode, &startContainer()))
             ec = 0;
         return false;
     }
 
-    bool result = compareBoundaryPoints(refNode, offset, &startContainer(), m_start.offset(), ec) >= 0 && !ec
-        && compareBoundaryPoints(refNode, offset, &endContainer(), m_end.offset(), ec) <= 0 && !ec;
+    bool result = compareBoundaryPoints(&refNode, offset, &startContainer(), m_start.offset(), ec) >= 0 && !ec
+        && compareBoundaryPoints(&refNode, offset, &endContainer(), m_end.offset(), ec) <= 0 && !ec;
     ASSERT(!ec || ec == WRONG_DOCUMENT_ERR);
     ec = 0;
     return result;
 }
 
-short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec) const
+short Range::comparePoint(Node& refNode, int offset, ExceptionCode& ec) const
 {
     // http://developer.mozilla.org/en/docs/DOM:range.comparePoint
     // This method returns -1, 0 or 1 depending on if the point described by the 
     // refNode node and an offset within the node is before, same as, or after the range respectively.
-
-    if (!refNode) {
-        ec = TypeError;
-        return 0;
-    }
-
-    if (&refNode->document() != &ownerDocument()) {
+    if (&refNode.document() != &ownerDocument()) {
         ec = WRONG_DOCUMENT_ERR;
         return 0;
     }
@@ -274,49 +264,44 @@ short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec) const
     if (ec) {
         // DOM4 spec requires us to check whether refNode and start container have the same root first
         // but we do it in the reverse order to avoid O(n) operation here in common case.
-        if (!refNode->inDocument() && !commonAncestorContainer(refNode, &startContainer()))
+        if (!refNode.inDocument() && !commonAncestorContainer(&refNode, &startContainer()))
             ec = WRONG_DOCUMENT_ERR;
         return 0;
     }
 
     // compare to start, and point comes before
-    if (compareBoundaryPoints(refNode, offset, &startContainer(), m_start.offset(), ec) < 0)
+    if (compareBoundaryPoints(&refNode, offset, &startContainer(), m_start.offset(), ec) < 0)
         return -1;
 
     if (ec)
         return 0;
 
     // compare to end, and point comes after
-    if (compareBoundaryPoints(refNode, offset, &endContainer(), m_end.offset(), ec) > 0 && !ec)
+    if (compareBoundaryPoints(&refNode, offset, &endContainer(), m_end.offset(), ec) > 0 && !ec)
         return 1;
 
     // point is in the middle of this range, or on the boundary points
     return 0;
 }
 
-Range::CompareResults Range::compareNode(Node* refNode, ExceptionCode& ec) const
+Range::CompareResults Range::compareNode(Node& refNode, ExceptionCode& ec) const
 {
     // http://developer.mozilla.org/en/docs/DOM:range.compareNode
     // This method returns 0, 1, 2, or 3 based on if the node is before, after,
     // before and after(surrounds), or inside the range, respectively
 
-    if (!refNode) {
-        ec = TypeError;
-        return NODE_BEFORE;
-    }
-
-    if (!refNode->inDocument()) {
+    if (!refNode.inDocument()) {
         // Firefox doesn't throw an exception for this case; it returns 0.
         return NODE_BEFORE;
     }
 
-    if (&refNode->document() != &ownerDocument()) {
+    if (&refNode.document() != &ownerDocument()) {
         // Firefox doesn't throw an exception for this case; it returns 0.
         return NODE_BEFORE;
     }
 
-    ContainerNode* parentNode = refNode->parentNode();
-    unsigned nodeIndex = refNode->computeNodeIndex();
+    ContainerNode* parentNode = refNode.parentNode();
+    unsigned nodeIndex = refNode.computeNodeIndex();
     
     if (!parentNode) {
         // if the node is the top document we should return NODE_BEFORE_AND_AFTER
@@ -325,26 +310,22 @@ Range::CompareResults Range::compareNode(Node* refNode, ExceptionCode& ec) const
         return NODE_BEFORE;
     }
 
-    if (comparePoint(parentNode, nodeIndex, ec) < 0) { // starts before
-        if (comparePoint(parentNode, nodeIndex + 1, ec) > 0) // ends after the range
+    // starts before
+    if (comparePoint(*parentNode, nodeIndex, ec) < 0) {
+        if (comparePoint(*parentNode, nodeIndex + 1, ec) > 0) // ends after the range
             return NODE_BEFORE_AND_AFTER;
         return NODE_BEFORE; // ends before or in the range
-    } else { // starts at or after the range start
-        if (comparePoint(parentNode, nodeIndex + 1, ec) > 0) // ends after the range
-            return NODE_AFTER;
-        return NODE_INSIDE; // ends inside the range
     }
+    // starts at or after the range start
+    if (comparePoint(*parentNode, nodeIndex + 1, ec) > 0) // ends after the range
+        return NODE_AFTER;
+    return NODE_INSIDE; // ends inside the range
 }
 
-short Range::compareBoundaryPoints(CompareHow how, const Range* sourceRange, ExceptionCode& ec) const
+short Range::compareBoundaryPoints(CompareHow how, const Range& sourceRange, ExceptionCode& ec) const
 {
-    if (!sourceRange) {
-        ec = TypeError;
-        return 0;
-    }
-
     Node* thisCont = commonAncestorContainer();
-    Node* sourceCont = sourceRange->commonAncestorContainer();
+    Node* sourceCont = sourceRange.commonAncestorContainer();
 
     if (&thisCont->document() != &sourceCont->document()) {
         ec = WRONG_DOCUMENT_ERR;
@@ -364,20 +345,20 @@ short Range::compareBoundaryPoints(CompareHow how, const Range* sourceRange, Exc
 
     switch (how) {
         case START_TO_START:
-            return compareBoundaryPoints(m_start, sourceRange->m_start, ec);
+            return compareBoundaryPoints(m_start, sourceRange.m_start, ec);
         case START_TO_END:
-            return compareBoundaryPoints(m_end, sourceRange->m_start, ec);
+            return compareBoundaryPoints(m_end, sourceRange.m_start, ec);
         case END_TO_END:
-            return compareBoundaryPoints(m_end, sourceRange->m_end, ec);
+            return compareBoundaryPoints(m_end, sourceRange.m_end, ec);
         case END_TO_START:
-            return compareBoundaryPoints(m_start, sourceRange->m_end, ec);
+            return compareBoundaryPoints(m_start, sourceRange.m_end, ec);
     }
 
     ec = SYNTAX_ERR;
     return 0;
 }
 
-short Range::compareBoundaryPointsForBindings(unsigned short compareHow, const Range* sourceRange, ExceptionCode& ec) const
+short Range::compareBoundaryPointsForBindings(unsigned short compareHow, const Range& sourceRange, ExceptionCode& ec) const
 {
     if (compareHow > END_TO_START) {
         ec = NOT_SUPPORTED_ERR;
@@ -495,26 +476,21 @@ void Range::deleteContents(ExceptionCode& ec)
     processContents(Delete, ec);
 }
 
-bool Range::intersectsNode(Node* refNode, ExceptionCode& ec) const
+bool Range::intersectsNode(Node& refNode, ExceptionCode& ec) const
 {
-    if (!refNode) {
-        ec = TypeError;
-        return false;
-    }
-
-    if (!refNode->inDocument() || &refNode->document() != &ownerDocument())
+    if (!refNode.inDocument() || &refNode.document() != &ownerDocument())
         return false;
 
-    ContainerNode* parentNode = refNode->parentNode();
+    ContainerNode* parentNode = refNode.parentNode();
     if (!parentNode)
         return true;
 
-    unsigned nodeIndex = refNode->computeNodeIndex();
+    unsigned nodeIndex = refNode.computeNodeIndex();
 
     // If (parent, offset) is before end and (parent, offset + 1) is after start, return true.
     // Otherwise, return false.
-    short compareFirst = comparePoint(parentNode, nodeIndex, ec);
-    short compareSecond = comparePoint(parentNode, nodeIndex + 1, ec);
+    short compareFirst = comparePoint(*parentNode, nodeIndex, ec);
+    short compareSecond = comparePoint(*parentNode, nodeIndex + 1, ec);
 
     bool isFirstBeforeEnd = m_start == m_end ? compareFirst < 0 : compareFirst <= 0;
     bool isSecondAfterStart = m_start == m_end ? compareSecond > 0 : compareSecond >= 0;
@@ -645,9 +621,9 @@ RefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode
     ec = 0;
     if (action == Extract || action == Delete) {
         if (partialStart && commonRoot->contains(partialStart.get()))
-            setStart(partialStart->parentNode(), partialStart->computeNodeIndex() + 1, ec);
+            setStart(*partialStart->parentNode(), partialStart->computeNodeIndex() + 1, ec);
         else if (partialEnd && commonRoot->contains(partialEnd.get()))
-            setStart(partialEnd->parentNode(), partialEnd->computeNodeIndex(), ec);
+            setStart(*partialEnd->parentNode(), partialEnd->computeNodeIndex(), ec);
         if (ec)
             return nullptr;
         m_end = m_start;
@@ -836,13 +812,8 @@ RefPtr<DocumentFragment> Range::cloneContents(ExceptionCode& ec)
     return processContents(Clone, ec);
 }
 
-void Range::insertNode(RefPtr<Node>&& node, ExceptionCode& ec)
+void Range::insertNode(Ref<Node>&& node, ExceptionCode& ec)
 {
-    if (!node) {
-        ec = TypeError;
-        return;
-    }
-
     bool startIsCharacterData = is<CharacterData>(startContainer());
     if (startIsCharacterData && !startContainer().parentNode()) {
         ec = HIERARCHY_REQUEST_ERR;
@@ -859,7 +830,7 @@ void Range::insertNode(RefPtr<Node>&& node, ExceptionCode& ec)
     Ref<ContainerNode> parent = downcast<ContainerNode>(*parentNode);
 
     ec = 0;
-    if (!parent->ensurePreInsertionValidity(*node, referenceNode.get(), ec))
+    if (!parent->ensurePreInsertionValidity(node, referenceNode.get(), ec))
         return;
 
     EventQueueScope scope;
@@ -869,7 +840,7 @@ void Range::insertNode(RefPtr<Node>&& node, ExceptionCode& ec)
             return;
     }
 
-    if (referenceNode == node)
+    if (referenceNode == node.ptr())
         referenceNode = referenceNode->nextSibling();
 
     node->remove(ec);
@@ -877,17 +848,17 @@ void Range::insertNode(RefPtr<Node>&& node, ExceptionCode& ec)
         return;
 
     unsigned newOffset = referenceNode ? referenceNode->computeNodeIndex() : parent->countChildNodes();
-    if (is<DocumentFragment>(*node))
-        newOffset += downcast<DocumentFragment>(*node).countChildNodes();
+    if (is<DocumentFragment>(node.get()))
+        newOffset += downcast<DocumentFragment>(node.get()).countChildNodes();
     else
         ++newOffset;
 
-    parent->insertBefore(node.releaseNonNull(), referenceNode.get(), ec);
+    parent->insertBefore(WTFMove(node), referenceNode.get(), ec);
     if (ec)
         return;
 
     if (collapsed())
-        setEnd(parent.ptr(), newOffset, ec);
+        setEnd(WTFMove(parent), newOffset, ec);
 }
 
 String Range::toString() const
@@ -950,9 +921,9 @@ void Range::detach()
     // This is now a no-op as per the DOM specification.
 }
 
-Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
+Node* Range::checkNodeWOffset(Node& node, int offset, ExceptionCode& ec) const
 {
-    switch (n->nodeType()) {
+    switch (node.nodeType()) {
         case Node::DOCUMENT_TYPE_NODE:
             ec = INVALID_NODE_TYPE_ERR;
             return nullptr;
@@ -960,7 +931,7 @@ Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
         case Node::COMMENT_NODE:
         case Node::TEXT_NODE:
         case Node::PROCESSING_INSTRUCTION_NODE:
-            if (static_cast<unsigned>(offset) > downcast<CharacterData>(*n).length())
+            if (static_cast<unsigned>(offset) > downcast<CharacterData>(node).length())
                 ec = INDEX_SIZE_ERR;
             return nullptr;
         case Node::ATTRIBUTE_NODE:
@@ -969,7 +940,7 @@ Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
         case Node::ELEMENT_NODE: {
             if (!offset)
                 return nullptr;
-            Node* childBefore = n->traverseToChildAt(offset - 1);
+            Node* childBefore = node.traverseToChildAt(offset - 1);
             if (!childBefore)
                 ec = INDEX_SIZE_ERR;
             return childBefore;
@@ -984,101 +955,71 @@ Ref<Range> Range::cloneRange() const
     return Range::create(ownerDocument(), &startContainer(), m_start.offset(), &endContainer(), m_end.offset());
 }
 
-void Range::setStartAfter(Node* refNode, ExceptionCode& ec)
+void Range::setStartAfter(Node& refNode, ExceptionCode& ec)
 {
-    if (!refNode) {
-        ec = TypeError;
-        return;
-    }
-
-    if (!refNode->parentNode()) {
+    if (!refNode.parentNode()) {
         ec = INVALID_NODE_TYPE_ERR;
         return;
     }
 
-    setStart(refNode->parentNode(), refNode->computeNodeIndex() + 1, ec);
+    setStart(*refNode.parentNode(), refNode.computeNodeIndex() + 1, ec);
 }
 
-void Range::setEndBefore(Node* refNode, ExceptionCode& ec)
+void Range::setEndBefore(Node& refNode, ExceptionCode& ec)
 {
-    if (!refNode) {
-        ec = TypeError;
-        return;
-    }
-
-    if (!refNode->parentNode()) {
+    if (!refNode.parentNode()) {
         ec = INVALID_NODE_TYPE_ERR;
         return;
     }
 
-    setEnd(refNode->parentNode(), refNode->computeNodeIndex(), ec);
+    setEnd(*refNode.parentNode(), refNode.computeNodeIndex(), ec);
 }
 
-void Range::setEndAfter(Node* refNode, ExceptionCode& ec)
+void Range::setEndAfter(Node& refNode, ExceptionCode& ec)
 {
-    if (!refNode) {
-        ec = TypeError;
-        return;
-    }
-
-    if (!refNode->parentNode()) {
+    if (!refNode.parentNode()) {
         ec = INVALID_NODE_TYPE_ERR;
         return;
     }
 
-    setEnd(refNode->parentNode(), refNode->computeNodeIndex() + 1, ec);
+    setEnd(*refNode.parentNode(), refNode.computeNodeIndex() + 1, ec);
 }
 
-void Range::selectNode(Node* refNode, ExceptionCode& ec)
+void Range::selectNode(Node& refNode, ExceptionCode& ec)
 {
-    if (!refNode) {
-        ec = TypeError;
-        return;
-    }
-
-    if (!refNode->parentNode()) {
+    if (!refNode.parentNode()) {
         ec = INVALID_NODE_TYPE_ERR;
         return;
     }
 
-    if (&ownerDocument() != &refNode->document())
-        setDocument(refNode->document());
+    if (&ownerDocument() != &refNode.document())
+        setDocument(refNode.document());
 
-    unsigned index = refNode->computeNodeIndex();
+    unsigned index = refNode.computeNodeIndex();
     ec = 0;
-    setStart(refNode->parentNode(), index, ec);
+    setStart(*refNode.parentNode(), index, ec);
     if (ec)
         return;
-    setEnd(refNode->parentNode(), index + 1, ec);
+    setEnd(*refNode.parentNode(), index + 1, ec);
 }
 
-void Range::selectNodeContents(Node* refNode, ExceptionCode& ec)
+void Range::selectNodeContents(Node& refNode, ExceptionCode& ec)
 {
-    if (!refNode) {
-        ec = TypeError;
-        return;
-    }
-
-    if (refNode->isDocumentTypeNode()) {
+    if (refNode.isDocumentTypeNode()) {
         ec = INVALID_NODE_TYPE_ERR;
         return;
     }
 
-    if (&ownerDocument() != &refNode->document())
-        setDocument(refNode->document());
+    if (&ownerDocument() != &refNode.document())
+        setDocument(refNode.document());
 
     m_start.setToStartOfNode(refNode);
     m_end.setToEndOfNode(refNode);
 }
 
-void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
+void Range::surroundContents(Node& passNewParent, ExceptionCode& ec)
 {
-    RefPtr<Node> newParent = passNewParent;
-
-    if (!newParent) {
-        ec = TypeError;
-        return;
-    }
+    Ref<Node> newParent = passNewParent;
 
     // INVALID_STATE_ERR: Raised if the Range partially selects a non-Text node.
     // https://dom.spec.whatwg.org/#dom-range-surroundcontents (step 1).
@@ -1133,7 +1074,7 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
 
     ec = 0;
     while (Node* n = newParent->firstChild()) {
-        downcast<ContainerNode>(*newParent).removeChild(*n, ec);
+        downcast<ContainerNode>(newParent.get()).removeChild(*n, ec);
         if (ec)
             return;
     }
@@ -1146,22 +1087,17 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
     newParent->appendChild(fragment.release(), ec);
     if (ec)
         return;
-    selectNode(newParent.get(), ec);
+    selectNode(newParent, ec);
 }
 
-void Range::setStartBefore(Node* refNode, ExceptionCode& ec)
+void Range::setStartBefore(Node& refNode, ExceptionCode& ec)
 {
-    if (!refNode) {
-        ec = TypeError;
-        return;
-    }
-
-    if (!refNode->parentNode()) {
+    if (!refNode.parentNode()) {
         ec = INVALID_NODE_TYPE_ERR;
         return;
     }
 
-    setStart(refNode->parentNode(), refNode->computeNodeIndex(), ec);
+    setStart(*refNode.parentNode(), refNode.computeNodeIndex(), ec);
 }
 
 Node* Range::firstNode() const
@@ -1539,11 +1475,11 @@ bool Range::contains(const Range& other) const
     if (commonAncestorContainer()->ownerDocument() != other.commonAncestorContainer()->ownerDocument())
         return false;
 
-    short startToStart = compareBoundaryPoints(Range::START_TO_START, &other, ASSERT_NO_EXCEPTION);
+    short startToStart = compareBoundaryPoints(Range::START_TO_START, other, ASSERT_NO_EXCEPTION);
     if (startToStart > 0)
         return false;
 
-    short endToEnd = compareBoundaryPoints(Range::END_TO_END, &other, ASSERT_NO_EXCEPTION);
+    short endToEnd = compareBoundaryPoints(Range::END_TO_END, other, ASSERT_NO_EXCEPTION);
     return endToEnd >= 0;
 }
 
@@ -1575,19 +1511,19 @@ bool rangesOverlap(const Range* a, const Range* b)
     if (a->commonAncestorContainer()->ownerDocument() != b->commonAncestorContainer()->ownerDocument())
         return false;
 
-    short startToStart = a->compareBoundaryPoints(Range::START_TO_START, b, ASSERT_NO_EXCEPTION);
-    short endToEnd = a->compareBoundaryPoints(Range::END_TO_END, b, ASSERT_NO_EXCEPTION);
+    short startToStart = a->compareBoundaryPoints(Range::START_TO_START, *b, ASSERT_NO_EXCEPTION);
+    short endToEnd = a->compareBoundaryPoints(Range::END_TO_END, *b, ASSERT_NO_EXCEPTION);
 
     // First range contains the second range.
     if (startToStart <= 0 && endToEnd >= 0)
         return true;
 
     // End of first range is inside second range.
-    if (a->compareBoundaryPoints(Range::START_TO_END, b, ASSERT_NO_EXCEPTION) >= 0 && endToEnd <= 0)
+    if (a->compareBoundaryPoints(Range::START_TO_END, *b, ASSERT_NO_EXCEPTION) >= 0 && endToEnd <= 0)
         return true;
 
     // Start of first range is inside second range.
-    if (startToStart >= 0 && a->compareBoundaryPoints(Range::END_TO_START, b, ASSERT_NO_EXCEPTION) <= 0)
+    if (startToStart >= 0 && a->compareBoundaryPoints(Range::END_TO_START, *b, ASSERT_NO_EXCEPTION) <= 0)
         return true;
 
     return false;
@@ -1597,7 +1533,7 @@ Ref<Range> rangeOfContents(Node& node)
 {
     Ref<Range> range = Range::create(node.document());
     int exception = 0;
-    range->selectNodeContents(&node, exception);
+    range->selectNodeContents(node, exception);
     return range;
 }
 
@@ -1621,13 +1557,13 @@ static inline void boundaryNodeChildrenWillBeRemoved(RangeBoundaryPoint& boundar
 {
     for (Node* nodeToBeRemoved = container.firstChild(); nodeToBeRemoved; nodeToBeRemoved = nodeToBeRemoved->nextSibling()) {
         if (boundary.childBefore() == nodeToBeRemoved) {
-            boundary.setToStartOfNode(&container);
+            boundary.setToStartOfNode(container);
             return;
         }
 
         for (Node* n = boundary.container(); n; n = n->parentNode()) {
             if (n == nodeToBeRemoved) {
-                boundary.setToStartOfNode(&container);
+                boundary.setToStartOfNode(container);
                 return;
             }
         }
@@ -1707,9 +1643,9 @@ void Range::textRemoved(Node* text, unsigned offset, unsigned length)
 static inline void boundaryTextNodesMerged(RangeBoundaryPoint& boundary, NodeWithIndex& oldNode, unsigned offset)
 {
     if (boundary.container() == oldNode.node())
-        boundary.set(oldNode.node()->previousSibling(), boundary.offset() + offset, 0);
+        boundary.set(*oldNode.node()->previousSibling(), boundary.offset() + offset, 0);
     else if (boundary.container() == oldNode.node()->parentNode() && boundary.offset() == oldNode.index())
-        boundary.set(oldNode.node()->previousSibling(), offset, 0);
+        boundary.set(*oldNode.node()->previousSibling(), offset, 0);
 }
 
 void Range::textNodesMerged(NodeWithIndex& oldNode, unsigned offset)
@@ -1730,7 +1666,7 @@ static inline void boundaryTextNodesSplit(RangeBoundaryPoint& boundary, Text* ol
         unsigned splitOffset = oldNode->length();
         unsigned boundaryOffset = boundary.offset();
         if (boundaryOffset > splitOffset)
-            boundary.set(oldNode->nextSibling(), boundaryOffset - splitOffset, 0);
+            boundary.set(*oldNode->nextSibling(), boundaryOffset - splitOffset, 0);
         return;
     }
     auto* parent = oldNode->parentNode();
@@ -1771,8 +1707,17 @@ void Range::expand(const String& unit, ExceptionCode& ec)
         end = endOfDocument(end);
     } else
         return;
-    setStart(start.deepEquivalent().containerNode(), start.deepEquivalent().computeOffsetInContainerNode(), ec);
-    setEnd(end.deepEquivalent().containerNode(), end.deepEquivalent().computeOffsetInContainerNode(), ec);
+
+    if (!start.deepEquivalent().containerNode()) {
+        ec = TypeError;
+        return;
+    }
+    setStart(*start.deepEquivalent().containerNode(), start.deepEquivalent().computeOffsetInContainerNode(), ec);
+    if (!end.deepEquivalent().containerNode()) {
+        ec = TypeError;
+        return;
+    }
+    setEnd(*end.deepEquivalent().containerNode(), end.deepEquivalent().computeOffsetInContainerNode(), ec);
 }
 
 Ref<ClientRectList> Range::getClientRects() const

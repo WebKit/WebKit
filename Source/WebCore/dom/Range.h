@@ -66,24 +66,24 @@ public:
 
     Node* commonAncestorContainer() const { return commonAncestorContainer(&startContainer(), &endContainer()); }
     WEBCORE_EXPORT static Node* commonAncestorContainer(Node* containerA, Node* containerB);
-    WEBCORE_EXPORT void setStart(PassRefPtr<Node> container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    WEBCORE_EXPORT void setEnd(PassRefPtr<Node> container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void setStart(Ref<Node>&& container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void setEnd(Ref<Node>&& container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
     WEBCORE_EXPORT void collapse(bool toStart);
-    WEBCORE_EXPORT bool isPointInRange(Node* refNode, int offset, ExceptionCode&);
-    short comparePoint(Node* refNode, int offset, ExceptionCode&) const;
+    WEBCORE_EXPORT bool isPointInRange(Node& refNode, int offset, ExceptionCode&);
+    short comparePoint(Node& refNode, int offset, ExceptionCode&) const;
     enum CompareResults { NODE_BEFORE, NODE_AFTER, NODE_BEFORE_AND_AFTER, NODE_INSIDE };
-    CompareResults compareNode(Node* refNode, ExceptionCode&) const;
+    CompareResults compareNode(Node& refNode, ExceptionCode&) const;
     enum CompareHow { START_TO_START, START_TO_END, END_TO_END, END_TO_START };
-    WEBCORE_EXPORT short compareBoundaryPoints(CompareHow, const Range* sourceRange, ExceptionCode&) const;
-    short compareBoundaryPointsForBindings(unsigned short compareHow, const Range* sourceRange, ExceptionCode&) const;
+    WEBCORE_EXPORT short compareBoundaryPoints(CompareHow, const Range& sourceRange, ExceptionCode&) const;
+    short compareBoundaryPointsForBindings(unsigned short compareHow, const Range& sourceRange, ExceptionCode&) const;
     static short compareBoundaryPoints(Node* containerA, int offsetA, Node* containerB, int offsetB, ExceptionCode&);
     static short compareBoundaryPoints(const RangeBoundaryPoint& boundaryA, const RangeBoundaryPoint& boundaryB, ExceptionCode&);
     WEBCORE_EXPORT bool boundaryPointsValid() const;
-    bool intersectsNode(Node* refNode, ExceptionCode&) const;
+    bool intersectsNode(Node& refNode, ExceptionCode&) const;
     void deleteContents(ExceptionCode&);
     RefPtr<DocumentFragment> extractContents(ExceptionCode&);
     RefPtr<DocumentFragment> cloneContents(ExceptionCode&);
-    void insertNode(RefPtr<Node>&&, ExceptionCode&);
+    void insertNode(Ref<Node>&&, ExceptionCode&);
     String toString() const;
 
     String toHTML() const;
@@ -94,13 +94,13 @@ public:
     void detach();
     WEBCORE_EXPORT Ref<Range> cloneRange() const;
 
-    WEBCORE_EXPORT void setStartAfter(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    WEBCORE_EXPORT void setEndBefore(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    WEBCORE_EXPORT void setEndAfter(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    WEBCORE_EXPORT void selectNode(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    WEBCORE_EXPORT void selectNodeContents(Node*, ExceptionCode&);
-    void surroundContents(PassRefPtr<Node>, ExceptionCode&);
-    WEBCORE_EXPORT void setStartBefore(Node*, ExceptionCode&);
+    WEBCORE_EXPORT void setStartAfter(Node&, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void setEndBefore(Node&, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void setEndAfter(Node&, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void selectNode(Node&, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void selectNodeContents(Node&, ExceptionCode&);
+    void surroundContents(Node&, ExceptionCode&);
+    WEBCORE_EXPORT void setStartBefore(Node&, ExceptionCode&);
 
     const Position startPosition() const { return m_start.toPosition(); }
     const Position endPosition() const { return m_end.toPosition(); }
@@ -159,7 +159,7 @@ private:
 
     void setDocument(Document&);
 
-    Node* checkNodeWOffset(Node*, int offset, ExceptionCode&) const;
+    Node* checkNodeWOffset(Node&, int offset, ExceptionCode&) const;
 
     enum ActionType { Delete, Extract, Clone };
     RefPtr<DocumentFragment> processContents(ActionType, ExceptionCode&);

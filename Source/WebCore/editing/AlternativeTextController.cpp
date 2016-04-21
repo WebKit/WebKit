@@ -258,7 +258,9 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range* range, 
 
     Position startPositionOfRangeWithAlternative = range->startPosition();
     ExceptionCode ec = 0;
-    correctionStartOffsetInParagraphAsRange->setEnd(startPositionOfRangeWithAlternative.containerNode(), startPositionOfRangeWithAlternative.computeOffsetInContainerNode(), ec);
+    if (!startPositionOfRangeWithAlternative.containerNode())
+        return;
+    correctionStartOffsetInParagraphAsRange->setEnd(*startPositionOfRangeWithAlternative.containerNode(), startPositionOfRangeWithAlternative.computeOffsetInContainerNode(), ec);
     if (ec)
         return;
 
