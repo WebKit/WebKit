@@ -68,7 +68,8 @@ struct WebProcessCreationParameters {
 
     UserData initializationUserData;
 
-    String applicationCacheDirectory;    
+    String applicationCacheDirectory;
+    String applicationCacheFlatFileSubdirectoryName;
     SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
     String webSQLDatabaseDirectory;
     SandboxExtension::Handle webSQLDatabaseDirectoryExtensionHandle;

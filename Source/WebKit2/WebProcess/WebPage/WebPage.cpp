@@ -106,6 +106,7 @@
 #include "WebUserContentController.h"
 #include "WebUserMediaClient.h"
 #include <JavaScriptCore/APICast.h>
+#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenuController.h>
@@ -402,6 +403,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(*this);
     pageConfiguration.diagnosticLoggingClient = new WebDiagnosticLoggingClient(*this);
 
+    pageConfiguration.applicationCacheStorage = &WebProcess::singleton().applicationCacheStorage();
     pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroup->pageGroupID());
     pageConfiguration.storageNamespaceProvider = WebStorageNamespaceProvider::getOrCreate(m_pageGroup->pageGroupID());
     pageConfiguration.userContentProvider = m_userContentController.ptr();

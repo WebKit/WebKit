@@ -60,6 +60,7 @@ public:
     struct Configuration {
         String networkCacheDirectory;
         String applicationCacheDirectory;
+        String applicationCacheFlatFileSubdirectoryName;
 
         String mediaCacheDirectory;
         String webSQLDatabaseDirectory;
@@ -118,6 +119,7 @@ private:
 
     const String m_networkCacheDirectory;
     const String m_applicationCacheDirectory;
+    const String m_applicationCacheFlatFileSubdirectoryName;
     const String m_mediaCacheDirectory;
 
     const String m_webSQLDatabaseDirectory;

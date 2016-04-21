@@ -45,6 +45,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
     configuration->m_cacheModel = WebKit::CacheModelDocumentViewer;
 
     configuration->m_applicationCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory();
+    configuration->m_applicationCacheFlatFileSubdirectoryName = "ApplicationCache";
     configuration->m_diskCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory();
     configuration->m_mediaCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory();
     configuration->m_indexedDBDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory();
@@ -57,6 +58,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
 
 ProcessPoolConfiguration::ProcessPoolConfiguration()
     : m_applicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory())
+    , m_applicationCacheFlatFileSubdirectoryName("Files")
     , m_diskCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory())
     , m_mediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory())
     , m_indexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory())
@@ -80,6 +82,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_diskCacheSpeculativeValidationEnabled = this->m_diskCacheSpeculativeValidationEnabled;
     copy->m_diskCacheSizeOverride = this->m_diskCacheSizeOverride;
     copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;
+    copy->m_applicationCacheFlatFileSubdirectoryName = this->m_applicationCacheFlatFileSubdirectoryName;
     copy->m_diskCacheDirectory = this->m_diskCacheDirectory;
     copy->m_mediaCacheDirectory = this->m_mediaCacheDirectory;
     copy->m_indexedDBDatabaseDirectory = this->m_indexedDBDatabaseDirectory;

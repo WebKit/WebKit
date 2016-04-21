@@ -1,5 +1,62 @@
 2016-04-21  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of the last uses of ApplicationCacheStorage::singleton() from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=156876
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        Add and encode and decode a applicationCacheFlatFileSubdirectoryName.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        Set m_applicationCacheFlatFileSubdirectoryName to "ApplicationCache".
+
+        (API::ProcessPoolConfiguration::ProcessPoolConfiguration):
+        Set m_applicationCacheFlatFileSubdirectoryName to "Files".
+
+        (API::ProcessPoolConfiguration::copy):
+        Copy m_applicationCacheFlatFileSubdirectoryName.
+
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        Add getter for applicationCacheFlatFileSubdirectoryName.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::legacyWebsiteDataStoreConfiguration):
+        Initialize applicationCacheFlatFileSubdirectoryName from the process pool configuration.
+
+        (WebKit::WebProcessPool::createNewWebProcess):
+        Initialize parameters.applicationCacheFlatFileSubdirectoryName. Remove a call to 
+        ApplicationCacheStorage::singleton().setDefaultOriginQuota since it had no effect (it was called in the UI process).
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        Initialize m_applicationCacheFlatFileSubdirectoryName.
+
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::removeData):
+        Pass m_applicationCacheFlatFileSubdirectoryName when creating the application cache storage.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Add new members.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Set the application cache storage.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        Initialize the application cache storage.
+
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::applicationCacheStorage):
+        Add new getter.
+
+2016-04-21  Anders Carlsson  <andersca@apple.com>
+
         Remove two uses of ApplicationCacheStorage::singleton() from WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=156873
 

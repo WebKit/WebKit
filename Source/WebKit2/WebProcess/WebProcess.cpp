@@ -291,8 +291,11 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     m_iconDatabaseProxy.setEnabled(parameters.iconDatabaseEnabled);
 #endif
 
-    if (!parameters.applicationCacheDirectory.isEmpty())
-        ApplicationCacheStorage::singleton().setCacheDirectory(parameters.applicationCacheDirectory);
+    // FIXME: This should be constructed per data store, not per process.
+    m_applicationCacheStorage = ApplicationCacheStorage::create(parameters.applicationCacheDirectory, parameters.applicationCacheFlatFileSubdirectoryName);
+#if PLATFORM(IOS)
+    m_applicationCacheStorage->setDefaultOriginQuota(25ULL * 1024 * 1024);
+#endif
 
     if (!parameters.mediaCacheDirectory.isEmpty())
         WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);

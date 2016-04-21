@@ -61,6 +61,7 @@ class Object;
 }
 
 namespace WebCore {
+class ApplicationCacheStorage;
 class CertificateInfo;
 class PageGroup;
 class ResourceRequest;
@@ -206,6 +207,8 @@ public:
     bool hasSelectionServices() const { return m_hasSelectionServices; }
     bool hasRichContentServices() const { return m_hasRichContentServices; }
 #endif
+
+    WebCore::ApplicationCacheStorage& applicationCacheStorage() { return *m_applicationCacheStorage; }
 
     void prefetchDNS(const String&);
 
@@ -384,6 +387,8 @@ private:
     HashSet<uint64_t> m_pagesInWindows;
     WebCore::Timer m_nonVisibleProcessCleanupTimer;
     WebCore::Timer m_statisticsChangedTimer;
+
+    RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
 
 #if PLATFORM(IOS)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
