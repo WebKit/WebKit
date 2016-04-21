@@ -1,3 +1,19 @@
+2016-04-21  Nan Wang  <n_wang@apple.com>
+
+        AX: stringForTextMarkerRange returning empty string for document range
+        https://bugs.webkit.org/show_bug.cgi?id=156819
+
+        Reviewed by Chris Fleizach.
+
+        Set text marker data with CharacterOffset when VisiblePosition is having PositionIsAfterAnchor
+        or PositionIsAfterChildren anchor type, so that the character offset corresponds to the anchored
+        node.
+
+        Test: accessibility/mac/text-marker-string-for-document-range.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+
 2016-04-20  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebCore::TextIterator::subrange()

@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table>
+<tbody>
+<tr>
+<td>
+<table><tbody><tr><td>text</td></tr></tbody></table>
+<table><tbody><tr><td><p id="description"></p><div id="console"></div></td></tr></tbody></table>
+</td>
+</tr>
+</tbody>
+</table>
+
+<script>
+
+    description("This tests that we are getting the correct string for document range if the end visible position has after anchor type.");
+
+    if (window.accessibilityController) {
+
+          var body = accessibilityController.rootElement.childAtIndex(0);
+          var startMarker = body.startTextMarker;
+          var endMarker = body.endTextMarker;
+          var textMarkerRange = body.textMarkerRangeForMarkers(startMarker, endMarker);
+          debug("String: \n" + body.stringForTextMarkerRange(textMarkerRange));
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

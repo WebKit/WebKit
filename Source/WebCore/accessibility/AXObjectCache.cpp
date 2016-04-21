@@ -1971,6 +1971,14 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
     if (is<HTMLInputElement>(*domNode) && downcast<HTMLInputElement>(*domNode).isPasswordField())
         return;
     
+    // If the visible position has an anchor type referring to a node other than the anchored node, we should
+    // set the text marker data with CharacterOffset so that the offset will correspond to the node.
+    CharacterOffset characterOffset = characterOffsetFromVisiblePosition(visiblePos);
+    if (deepPos.anchorType() == Position::PositionIsAfterAnchor || deepPos.anchorType() == Position::PositionIsAfterChildren) {
+        textMarkerDataForCharacterOffset(textMarkerData, characterOffset);
+        return;
+    }
+    
     // find or create an accessibility object for this node
     AXObjectCache* cache = domNode->document().axObjectCache();
     RefPtr<AccessibilityObject> obj = cache->getOrCreate(domNode);
@@ -1980,8 +1988,6 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
     textMarkerData.offset = deepPos.deprecatedEditingOffset();
     textMarkerData.affinity = visiblePos.affinity();
     
-    // convert to character offset
-    CharacterOffset characterOffset = characterOffsetFromVisiblePosition(visiblePos);
     textMarkerData.characterOffset = characterOffset.offset;
     textMarkerData.characterStartIndex = characterOffset.startIndex;
     
