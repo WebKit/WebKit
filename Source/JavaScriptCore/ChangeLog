@@ -1,3 +1,15 @@
+2016-04-21  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r199734): WebKit crashes loading numerous websites in iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=156842
+
+        Reviewed by Daniel Bates.
+
+        Disable separated heap on iOS Simulator.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2016-04-21  Michael Saboff  <msaboff@apple.com>
 
         Align RegExp[@@match] with other @@ methods

@@ -341,7 +341,7 @@ static void recomputeDependentOptions()
         Options::useOSREntryToFTL() = false;
     }
 
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     // Override globally for now. Longer term we'll just make the default
     // be to have this option enabled, and have platforms that don't support
     // it just silently use a single mapping.
