@@ -1,3 +1,25 @@
+2016-04-21  Jer Noble  <jer.noble@apple.com>
+
+        [WK1] Add WebPlaybackSession support to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=156854
+
+        Reviewed by Beth Dakin.
+
+        Add support for WebPlaybackSession and the ChromeClient methods setUpPlaybackControlsManager() and
+        clearPlaybackControlsManager() to WebKit.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setUpPlaybackControlsManager):
+        (WebChromeClient::clearPlaybackControlsManager):
+        * WebView/WebView.mm:
+        (-[WebView _hasActiveVideoForControlsInterface]):
+        (-[WebView _setUpPlaybackControlsManagerForMediaElement:]):
+        (-[WebView _clearPlaybackControlsManagerForMediaElement:]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        * WebView/WebViewInternal.h:
+
 2016-04-21  Anders Carlsson  <andersca@apple.com>
 
         Stop using ApplicationCacheStorage::singleton() in WebKitLegacy

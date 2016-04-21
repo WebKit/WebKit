@@ -50,6 +50,7 @@ namespace WebCore {
 class Element;
 class Event;
 class Frame;
+class HTMLMediaElement;
 class HTMLVideoElement;
 class HistoryItem;
 class KeyboardEvent;
@@ -251,6 +252,11 @@ OBJC_CLASS NSTextAlternatives;
 #if ENABLE(VIDEO) && defined(__cplusplus)
 - (void)_enterVideoFullscreenForVideoElement:(WebCore::HTMLVideoElement*)videoElement mode:(WebCore::HTMLMediaElementEnums::VideoFullscreenMode)mode;
 - (void)_exitVideoFullscreen;
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+- (BOOL)_hasActiveVideoForControlsInterface;
+- (void)_setUpPlaybackControlsManagerForMediaElement:(WebCore::HTMLMediaElement&)mediaElement;
+- (void)_clearPlaybackControlsManagerForMediaElement:(WebCore::HTMLMediaElement&)mediaElement;
+#endif
 #endif
 
 #if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS) && defined(__cplusplus)

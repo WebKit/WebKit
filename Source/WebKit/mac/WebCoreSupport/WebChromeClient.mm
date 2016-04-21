@@ -909,7 +909,6 @@ void WebChromeClient::scheduleCompositingLayerFlush()
 }
 
 #if ENABLE(VIDEO)
-
 bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode)
 {
 #if PLATFORM(IOS)
@@ -934,7 +933,18 @@ void WebChromeClient::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoEleme
     END_BLOCK_OBJC_EXCEPTIONS;    
 }
 
-#endif
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+void WebChromeClient::setUpPlaybackControlsManager(HTMLMediaElement& element)
+{
+    [m_webView _setUpPlaybackControlsManagerForMediaElement:element];
+}
+
+void WebChromeClient::clearPlaybackControlsManager(HTMLMediaElement& element)
+{
+    [m_webView _clearPlaybackControlsManagerForMediaElement:element];
+}
+#endif // PLATFORM(MAC)
+#endif // ENABLE(VIDEO)
 
 #if ENABLE(FULLSCREEN_API)
 

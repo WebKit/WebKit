@@ -48,6 +48,10 @@ class AlternativeTextUIController;
 class HistoryItem;
 class Page;
 class TextIndicatorWindow;
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+class WebPlaybackSessionInterfaceMac;
+class WebPlaybackSessionModelMediaElement;
+#endif
 }
 
 @class WebImmediateActionController;
@@ -287,6 +291,11 @@ private:
 
 #if ENABLE(VIDEO)
     WebVideoFullscreenController *fullscreenController;
+#endif
+
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    RefPtr<WebCore::WebPlaybackSessionModelMediaElement> playbackSessionModel;
+    RefPtr<WebCore::WebPlaybackSessionInterfaceMac> playbackSessionInterface;
 #endif
     
 #if ENABLE(FULLSCREEN_API)

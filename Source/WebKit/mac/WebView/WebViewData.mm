@@ -49,6 +49,11 @@
 #import "WebMediaPlaybackTargetPicker.h"
 #endif
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#import <WebCore/WebPlaybackSessionInterfaceMac.h>
+#import <WebCore/WebPlaybackSessionModelMediaElement.h>
+#endif
+
 BOOL applicationIsTerminating = NO;
 int pluginDatabaseClientCount = 0;
 

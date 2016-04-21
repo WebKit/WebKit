@@ -301,6 +301,11 @@
 #import <WebKitAdditions/WebViewIncludes.h>
 #endif
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#import <WebCore/WebPlaybackSessionInterfaceMac.h>
+#import <WebCore/WebPlaybackSessionModelMediaElement.h>
+#endif
+
 #if PLATFORM(MAC)
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 #endif
@@ -8517,6 +8522,50 @@ bool LayerFlushController::flushLayers()
     _private->fullscreenController = nil;
 }
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+- (BOOL)_hasActiveVideoForControlsInterface
+{
+    if (!_private->playbackSessionModel)
+        return false;
+
+    HTMLMediaElement* mediaElement = _private->playbackSessionModel->mediaElement();
+    if (!mediaElement)
+        return false;
+
+    return mediaElement->hasAudio() || mediaElement->hasVideo();
+}
+
+- (void)_setUpPlaybackControlsManagerForMediaElement:(WebCore::HTMLMediaElement&)mediaElement
+{
+    if (_private->playbackSessionModel && _private->playbackSessionModel->mediaElement() == &mediaElement)
+        return;
+
+    if (!_private->playbackSessionModel)
+        _private->playbackSessionModel = WebPlaybackSessionModelMediaElement::create();
+    _private->playbackSessionModel->setMediaElement(&mediaElement);
+
+    if (!_private->playbackSessionInterface)
+        _private->playbackSessionInterface = WebPlaybackSessionInterfaceMac::create();
+
+    _private->playbackSessionInterface->setWebPlaybackSessionModel(_private->playbackSessionModel.get());
+    _private->playbackSessionModel->setWebPlaybackSessionInterface(_private->playbackSessionInterface.get());
+    [self updateWebViewAdditions];
+}
+
+- (void)_clearPlaybackControlsManagerForMediaElement:(WebCore::HTMLMediaElement&)mediaElement
+{
+    if (!_private->playbackSessionModel || _private->playbackSessionModel->mediaElement() != &mediaElement)
+        return;
+
+    _private->playbackSessionModel->setMediaElement(nullptr);
+    _private->playbackSessionModel->setWebPlaybackSessionInterface(nullptr);
+    _private->playbackSessionInterface->setWebPlaybackSessionModel(nullptr);
+
+    _private->playbackSessionModel = nullptr;
+    _private->playbackSessionInterface = nullptr;
+    [self updateWebViewAdditions];
+}
+#endif // PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)

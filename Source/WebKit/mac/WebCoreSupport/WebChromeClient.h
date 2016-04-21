@@ -175,6 +175,11 @@ public:
     }
 
 #if ENABLE(VIDEO)
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&) override;
+    void clearPlaybackControlsManager(WebCore::HTMLMediaElement&) override;
+#endif
+
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) override;
