@@ -177,6 +177,7 @@ struct _WebKitWebViewBasePrivate {
     std::unique_ptr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> pageProxy;
     bool shouldForwardNextKeyEvent;
+    bool shouldForwardNextWheelEvent;
     ClickCounter clickCounter;
     CString tooltipText;
     IntRect tooltipArea;
@@ -853,8 +854,11 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
+    if (std::exchange(priv->shouldForwardNextWheelEvent, false))
+        return FALSE;
+
     if (priv->authenticationDialog)
-        return TRUE;
+        return FALSE;
 
     priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(reinterpret_cast<GdkEvent*>(event)));
 
@@ -1281,6 +1285,11 @@ DragAndDropHandler& webkitWebViewBaseDragAndDropHandler(WebKitWebViewBase* webVi
 void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase* webkitWebViewBase)
 {
     webkitWebViewBase->priv->shouldForwardNextKeyEvent = TRUE;
+}
+
+void webkitWebViewBaseForwardNextWheelEvent(WebKitWebViewBase* webkitWebViewBase)
+{
+    webkitWebViewBase->priv->shouldForwardNextWheelEvent = true;
 }
 
 #if ENABLE(FULLSCREEN_API)

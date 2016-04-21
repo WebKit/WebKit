@@ -4646,9 +4646,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         if (!handled) {
             if (m_uiClient->implementsDidNotHandleWheelEvent())
                 m_uiClient->didNotHandleWheelEvent(this, oldestCoalescedEvent->last());
-#if PLATFORM(COCOA)
             m_pageClient.wheelEventWasNotHandledByWebCore(oldestCoalescedEvent->last());
-#endif
         }
 
         if (!m_wheelEventQueue.isEmpty())

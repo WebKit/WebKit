@@ -1,3 +1,30 @@
+2016-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebView should propagate wheel events not handled by the web process
+        https://bugs.webkit.org/show_bug.cgi?id=156834
+
+        Reviewed by Žan Doberšek.
+
+        We are currently swallowing all wheel events unconditionally, not allowing applications to handle wheel events
+        when not handled by us. Since the GTK+ event propagation system is synchronous, and our events are handled
+        asynchronously, we need to do something similar to what we do for key events, not propagate the event the first
+        time and if not handled by the web process, re-inject it in the event loop and then just propagate it.
+
+        * Shared/NativeWebWheelEvent.h:
+        (WebKit::NativeWebWheelEvent::nativeEvent): Remove useless const.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore): Tell the web view to propagate the next wheel event,
+        and re-inject the event not handled by the web process in the event loop.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseScrollEvent): Propagate the event if shouldForwardNextWheelEvent is true.
+        (webkitWebViewBaseForwardNextWheelEvent): Set shouldForwardNextWheelEvent to true.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent): Remove ifdef.
+        * UIProcess/efl/WebView.h:
+
 2016-04-20  Dustin Falgout  <dustin@falgout.us>
 
         [GTK] Expose AllowUniversalAccessFromFileURLs preference now that calling localStorage.getItem() results in SecurityError: DOM Exception 18

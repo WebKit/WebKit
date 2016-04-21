@@ -131,6 +131,8 @@ private:
     void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;
 #endif
 
+    void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
+
     void didChangeBackgroundColor() override;
 
     void refView() override;
