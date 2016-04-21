@@ -42,28 +42,18 @@
 
 namespace WebCore {
 
-RefPtr<IDBOpenDBRequest> IDBOpenDBRequest::maybeCreateDeleteRequest(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier)
+Ref<IDBOpenDBRequest> IDBOpenDBRequest::createDeleteRequest(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, const IDBDatabaseIdentifier& databaseIdentifier)
 {
-    ASSERT(databaseIdentifier.isValid());
-    auto* proxy = context.idbConnectionProxy();
-    if (!proxy)
-        return nullptr;
-
-    return adoptRef(new IDBOpenDBRequest(context, proxy->serverConnectionIdentifier(), databaseIdentifier, 0, IndexedDB::RequestType::Delete));
+    return adoptRef(*new IDBOpenDBRequest(context, connectionProxy, databaseIdentifier, 0, IndexedDB::RequestType::Delete));
 }
 
-RefPtr<IDBOpenDBRequest> IDBOpenDBRequest::maybeCreateOpenRequest(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
+Ref<IDBOpenDBRequest> IDBOpenDBRequest::createOpenRequest(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
 {
-    ASSERT(databaseIdentifier.isValid());
-    auto* proxy = context.idbConnectionProxy();
-    if (!proxy)
-        return nullptr;
-
-    return adoptRef(new IDBOpenDBRequest(context, proxy->serverConnectionIdentifier(), databaseIdentifier, version, IndexedDB::RequestType::Open));
+    return adoptRef(*new IDBOpenDBRequest(context, connectionProxy, databaseIdentifier, version, IndexedDB::RequestType::Open));
 }
     
-IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext& context, uint64_t serverConnectionIdentifier, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version, IndexedDB::RequestType requestType)
-    : IDBRequest(context, serverConnectionIdentifier)
+IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version, IndexedDB::RequestType requestType)
+    : IDBRequest(context, connectionProxy)
     , m_databaseIdentifier(databaseIdentifier)
     , m_version(version)
 {
@@ -128,11 +118,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::onSuccess()");
 
-    auto* connection = connectionToServer();
-    if (!connection)
-        return;
-
-    setResult(IDBDatabase::create(*scriptExecutionContext(), *connection, resultData));
+    setResult(IDBDatabase::create(*scriptExecutionContext(), connectionProxy(), resultData));
     m_isDone = true;
 
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().successEvent, false, false, *this));
@@ -140,11 +126,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 
 void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 {
-    auto* connection = connectionToServer();
-    if (!connection)
-        return;
-
-    Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), *connection, resultData);
+    Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), connectionProxy(), resultData);
     Ref<IDBTransaction> transaction = database->startVersionChangeTransaction(resultData.transactionInfo(), *this);
 
     ASSERT(transaction->info().mode() == IndexedDB::TransactionMode::VersionChange);
@@ -179,20 +161,16 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::requestCompleted");
 
-    auto* connection = connectionToServer();
-    if (!connection)
-        return;
-
     // If an Open request was completed after the page has navigated, leaving this request
     // with a stopped script execution context, we need to message back to the server so it
     // doesn't hang waiting on a database connection or transaction that will never exist.
     if (m_contextStopped) {
         switch (data.type()) {
         case IDBResultType::OpenDatabaseSuccess:
-            connection->abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), IDBResourceIdentifier::emptyValue());
+            connectionProxy().connectionToServer().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), IDBResourceIdentifier::emptyValue());
             break;
         case IDBResultType::OpenDatabaseUpgradeNeeded:
-            connection->abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), data.transactionInfo().identifier());
+            connectionProxy().connectionToServer().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), data.transactionInfo().identifier());
             break;
         default:
             break;

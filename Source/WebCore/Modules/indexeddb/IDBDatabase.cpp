@@ -30,6 +30,7 @@
 
 #include "DOMStringList.h"
 #include "EventQueue.h"
+#include "IDBConnectionProxy.h"
 #include "IDBConnectionToServer.h"
 #include "IDBDatabaseException.h"
 #include "IDBObjectStore.h"
@@ -42,26 +43,26 @@
 
 namespace WebCore {
 
-Ref<IDBDatabase> IDBDatabase::create(ScriptExecutionContext& context, IDBClient::IDBConnectionToServer& connection, const IDBResultData& resultData)
+Ref<IDBDatabase> IDBDatabase::create(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, const IDBResultData& resultData)
 {
-    return adoptRef(*new IDBDatabase(context, connection, resultData));
+    return adoptRef(*new IDBDatabase(context, connectionProxy, resultData));
 }
 
-IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBClient::IDBConnectionToServer& connection, const IDBResultData& resultData)
+IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, const IDBResultData& resultData)
     : WebCore::ActiveDOMObject(&context)
-    , m_serverConnection(connection)
+    , m_connectionProxy(connectionProxy)
     , m_info(resultData.databaseInfo())
     , m_databaseConnectionIdentifier(resultData.databaseConnectionIdentifier())
 {
     LOG(IndexedDB, "IDBDatabase::IDBDatabase - Creating database %s with version %" PRIu64 " connection %" PRIu64, m_info.name().utf8().data(), m_info.version(), m_databaseConnectionIdentifier);
     suspendIfNeeded();
     relaxAdoptionRequirement();
-    m_serverConnection->registerDatabaseConnection(*this);
+    m_connectionProxy->connectionToServer().registerDatabaseConnection(*this);
 }
 
 IDBDatabase::~IDBDatabase()
 {
-    m_serverConnection->unregisterDatabaseConnection(*this);
+    m_connectionProxy->connectionToServer().unregisterDatabaseConnection(*this);
 }
 
 bool IDBDatabase::hasPendingActivity() const
@@ -180,7 +181,7 @@ RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*
         return nullptr;
     }
 
-    auto info = IDBTransactionInfo::clientTransaction(m_serverConnection.get(), objectStores, mode);
+    auto info = IDBTransactionInfo::clientTransaction(m_connectionProxy->connectionToServer(), objectStores, mode);
     auto transaction = IDBTransaction::create(*this, info);
 
     LOG(IndexedDB, "IDBDatabase::transaction - Added active transaction %s", info.identifier().loggingString().utf8().data());
@@ -244,7 +245,7 @@ void IDBDatabase::maybeCloseInServer()
         return;
 
     m_closedInServer = true;
-    m_serverConnection->databaseConnectionClosed(*this);
+    m_connectionProxy->connectionToServer().databaseConnectionClosed(*this);
 }
 
 const char* IDBDatabase::activeDOMObjectName() const

@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "IDBError.h"
+#include "IDBOpenDBRequest.h"
 #include "IDBTransactionInfo.h"
 #include "IndexedDB.h"
 #include "Timer.h"
@@ -48,7 +49,6 @@ class IDBKey;
 class IDBKeyData;
 class IDBObjectStore;
 class IDBObjectStoreInfo;
-class IDBOpenDBRequest;
 class IDBResultData;
 class SerializedScriptValue;
 

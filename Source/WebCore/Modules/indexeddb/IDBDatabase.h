@@ -30,6 +30,7 @@
 #include "Dictionary.h"
 #include "EventTarget.h"
 #include "ExceptionCode.h"
+#include "IDBConnectionProxy.h"
 #include "IDBConnectionToServer.h"
 #include "IDBDatabaseInfo.h"
 
@@ -44,7 +45,7 @@ class IDBTransactionInfo;
 
 class IDBDatabase : public RefCounted<IDBDatabase>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static Ref<IDBDatabase> create(ScriptExecutionContext&, IDBClient::IDBConnectionToServer&, const IDBResultData&);
+    static Ref<IDBDatabase> create(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, const IDBResultData&);
 
     virtual ~IDBDatabase();
 
@@ -86,7 +87,10 @@ public:
 
     void fireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
 
-    IDBClient::IDBConnectionToServer& serverConnection() { return m_serverConnection.get(); }
+    IDBClient::IDBConnectionProxy& connectionProxy() { return m_connectionProxy.get(); }
+
+    // FIXME: Remove the need for this accessor.
+    IDBClient::IDBConnectionToServer& serverConnection() { return m_connectionProxy->connectionToServer(); }
 
     void didCreateIndexInfo(const IDBIndexInfo&);
     void didDeleteIndexInfo(const IDBIndexInfo&);
@@ -98,13 +102,13 @@ public:
     bool hasPendingActivity() const final;
 
 private:
-    IDBDatabase(ScriptExecutionContext&, IDBClient::IDBConnectionToServer&, const IDBResultData&);
+    IDBDatabase(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, const IDBResultData&);
 
     void didCommitOrAbortTransaction(IDBTransaction&);
 
     void maybeCloseInServer();
 
-    Ref<IDBClient::IDBConnectionToServer> m_serverConnection;
+    Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
     IDBDatabaseInfo m_info;
     uint64_t m_databaseConnectionIdentifier { 0 };
 

@@ -57,32 +57,24 @@ IDBConnectionToServer& IDBConnectionProxy::connectionToServer()
 
 RefPtr<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
 {
-    // FIXME: Get rid of the need for IDB objects to hold a reference to the IDBConnectionToServer,
-    // which will enable them to operate on Worker threads.
+    // FIXME: Handle Workers
     if (!isMainThread())
         return nullptr;
 
-    auto request = IDBOpenDBRequest::maybeCreateOpenRequest(context, databaseIdentifier, version);
-    if (!request)
-        return nullptr;
-
-    m_connectionToServer->openDatabase(*request);
-    return request;
+    auto request = IDBOpenDBRequest::createOpenRequest(context, *this, databaseIdentifier, version);
+    m_connectionToServer->openDatabase(request.get());
+    return WTFMove(request);
 }
 
 RefPtr<IDBOpenDBRequest> IDBConnectionProxy::deleteDatabase(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier)
 {
-    // FIXME: Get rid of the need for IDB objects to hold a reference to the IDBConnectionToServer,
-    // which will enable them to operate on Worker threads.
+    // FIXME: Handle Workers
     if (!isMainThread())
         return nullptr;
 
-    auto request = IDBOpenDBRequest::maybeCreateDeleteRequest(context, databaseIdentifier);
-    if (!request)
-        return nullptr;
-
-    m_connectionToServer->deleteDatabase(*request);
-    return request;
+    auto request = IDBOpenDBRequest::createDeleteRequest(context, *this, databaseIdentifier);
+    m_connectionToServer->deleteDatabase(request.get());
+    return WTFMove(request);
 }
 
 } // namesapce IDBClient

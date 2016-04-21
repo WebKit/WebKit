@@ -1,3 +1,45 @@
+2016-04-21  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Workers): Move IDBConnectionProxy into IDBRequest and IDBDatabase.
+        https://bugs.webkit.org/show_bug.cgi?id=156868
+
+        Reviewed by Tim Horton.
+
+        No new tests (No behavior change).
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::create):
+        (WebCore::IDBDatabase::IDBDatabase):
+        (WebCore::IDBDatabase::~IDBDatabase):
+        (WebCore::IDBDatabase::transaction):
+        (WebCore::IDBDatabase::maybeCloseInServer):
+        * Modules/indexeddb/IDBDatabase.h:
+        (WebCore::IDBDatabase::connectionProxy):
+        (WebCore::IDBDatabase::serverConnection):
+
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::createDeleteRequest):
+        (WebCore::IDBOpenDBRequest::createOpenRequest):
+        (WebCore::IDBOpenDBRequest::IDBOpenDBRequest):
+        (WebCore::IDBOpenDBRequest::onSuccess):
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):
+        (WebCore::IDBOpenDBRequest::requestCompleted):
+        (WebCore::IDBOpenDBRequest::maybeCreateDeleteRequest): Deleted.
+        (WebCore::IDBOpenDBRequest::maybeCreateOpenRequest): Deleted.
+        * Modules/indexeddb/IDBOpenDBRequest.h:
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::connectionToServer): Deleted.
+        * Modules/indexeddb/IDBRequest.h:
+        (WebCore::IDBRequest::connectionProxy):
+
+        * Modules/indexeddb/IDBTransaction.h:
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::openDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteDatabase):
+
 2016-04-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [iOS] DumpRenderTree crashed in com.apple.WebCore: WebCore::ResourceLoadNotifier::didFailToLoad

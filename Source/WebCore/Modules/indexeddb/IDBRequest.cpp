@@ -69,9 +69,10 @@ Ref<IDBRequest> IDBRequest::createGet(ScriptExecutionContext& context, IDBIndex&
     return adoptRef(*new IDBRequest(context, index, requestedRecordType, transaction));
 }
 
-IDBRequest::IDBRequest(ScriptExecutionContext& context, uint64_t connectionIdentifier)
+IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy)
     : ActiveDOMObject(&context)
-    , m_resourceIdentifier(connectionIdentifier)
+    , m_resourceIdentifier(connectionProxy.serverConnectionIdentifier())
+    , m_connectionProxy(connectionProxy)
 {
     suspendIfNeeded();
 }
@@ -81,6 +82,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
     , m_transaction(&transaction)
     , m_resourceIdentifier(transaction.serverConnection())
     , m_objectStoreSource(&objectStore)
+    , m_connectionProxy(transaction.database().connectionProxy())
 {
     suspendIfNeeded();
 }
@@ -92,6 +94,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
     , m_objectStoreSource(cursor.objectStore())
     , m_indexSource(cursor.index())
     , m_pendingCursor(&cursor)
+    , m_connectionProxy(transaction.database().connectionProxy())
 {
     suspendIfNeeded();
 
@@ -103,6 +106,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTran
     , m_transaction(&transaction)
     , m_resourceIdentifier(transaction.serverConnection())
     , m_indexSource(&index)
+    , m_connectionProxy(transaction.database().connectionProxy())
 {
     suspendIfNeeded();
 }
@@ -405,17 +409,6 @@ void IDBRequest::setResult(Ref<IDBDatabase>&& database)
 {
     clearResult();
     m_databaseResult = WTFMove(database);
-}
-
-// FIXME: Temporarily required during bringup of IDB-in-Workers.
-// Once all IDB object reliance on the IDBConnectionToServer has been shifted to reliance on
-// IDBConnectionProxy, remove this.
-IDBClient::IDBConnectionToServer* IDBRequest::connectionToServer()
-{
-    ASSERT(isMainThread());
-    auto* context = scriptExecutionContext();
-    auto* proxy = context ? context->idbConnectionProxy() : nullptr;
-    return proxy ? &proxy->connectionToServer() : nullptr;
 }
 
 } // namespace WebCore
