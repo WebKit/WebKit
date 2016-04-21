@@ -1,3 +1,9 @@
+2016-04-21  Beth Dakin  <bdakin@apple.com>
+
+        32 bit build fix.
+
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+
 2016-04-21  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixed compilation with !ENABLE(SVG_FONTS).

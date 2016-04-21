@@ -45,7 +45,7 @@ using namespace WebCore;
 #if USE(APPLE_INTERNAL_SDK) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 #import <WebKitAdditions/WebPlaybackControlsControllerAdditions.mm>
 #else
-@interface WebPlaybackControlsManager : NSObject<AVFunctionBarPlaybackControlsControlling> {
+@interface WebPlaybackControlsManager : NSObject {
     NSTimeInterval _contentDuration;
     RetainPtr<AVValueTiming> _timing;
     RetainPtr<NSArray> _seekableTimeRanges;
