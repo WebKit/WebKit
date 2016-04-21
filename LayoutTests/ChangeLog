@@ -1,5 +1,13 @@
 2016-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Update expectations for some editing tests that are slow on Debug.
+
+        All these pass for me locally when run with --no-timeout.
+
+        * platform/gtk/TestExpectations:
+
+2016-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline tests after r180867.
 
         * platform/gtk/editing/execCommand/5142012-1-expected.txt:
