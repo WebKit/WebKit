@@ -1,3 +1,44 @@
+2016-04-20  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Workers): Remove IDBRequest/IDBOpenDBRequest's requirement to get an IDBServerConnection around.
+        https://bugs.webkit.org/show_bug.cgi?id=156826
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change, existing tests pass).
+
+        This doesn't appear to do much but make things a little more complicated, but it's the first of a few 
+        small pushes in the right direction.
+        
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::maybeCreateDeleteRequest):
+        (WebCore::IDBOpenDBRequest::maybeCreateOpenRequest):
+        (WebCore::IDBOpenDBRequest::IDBOpenDBRequest):
+        (WebCore::IDBOpenDBRequest::onSuccess):
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):
+        (WebCore::IDBOpenDBRequest::requestCompleted):
+        (WebCore::IDBOpenDBRequest::createDeleteRequest): Deleted.
+        (WebCore::IDBOpenDBRequest::createOpenRequest): Deleted.
+        * Modules/indexeddb/IDBOpenDBRequest.h:
+        
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::connectionToServer):
+        * Modules/indexeddb/IDBRequest.h:
+        (WebCore::IDBRequest::connection): Deleted.
+        
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::IDBConnectionProxy):
+        (WebCore::IDBClient::IDBConnectionProxy::connectionToServer):
+        (WebCore::IDBClient::IDBConnectionProxy::openDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteDatabase):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        (WebCore::IDBClient::IDBConnectionProxy::serverConnectionIdentifier):
+        
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp:
+        (WebCore::IDBResourceIdentifier::IDBResourceIdentifier):
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+
 2016-04-20  John Wilander  <wilander@apple.com>
 
         Add Subresource Integrity as "Under consideration".

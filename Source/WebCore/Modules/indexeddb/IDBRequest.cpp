@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "Event.h"
 #include "EventQueue.h"
 #include "IDBBindingUtilities.h"
+#include "IDBConnectionProxy.h"
 #include "IDBCursor.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
@@ -68,10 +69,9 @@ Ref<IDBRequest> IDBRequest::createGet(ScriptExecutionContext& context, IDBIndex&
     return adoptRef(*new IDBRequest(context, index, requestedRecordType, transaction));
 }
 
-IDBRequest::IDBRequest(IDBClient::IDBConnectionToServer& connection, ScriptExecutionContext& context)
+IDBRequest::IDBRequest(ScriptExecutionContext& context, uint64_t connectionIdentifier)
     : ActiveDOMObject(&context)
-    , m_connection(connection)
-    , m_resourceIdentifier(connection)
+    , m_resourceIdentifier(connectionIdentifier)
 {
     suspendIfNeeded();
 }
@@ -79,7 +79,6 @@ IDBRequest::IDBRequest(IDBClient::IDBConnectionToServer& connection, ScriptExecu
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectStore, IDBTransaction& transaction)
     : ActiveDOMObject(&context)
     , m_transaction(&transaction)
-    , m_connection(transaction.serverConnection())
     , m_resourceIdentifier(transaction.serverConnection())
     , m_objectStoreSource(&objectStore)
 {
@@ -89,7 +88,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTransaction& transaction)
     : ActiveDOMObject(&context)
     , m_transaction(&transaction)
-    , m_connection(transaction.serverConnection())
     , m_resourceIdentifier(transaction.serverConnection())
     , m_objectStoreSource(cursor.objectStore())
     , m_indexSource(cursor.index())
@@ -103,7 +101,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTransaction& transaction)
     : ActiveDOMObject(&context)
     , m_transaction(&transaction)
-    , m_connection(transaction.serverConnection())
     , m_resourceIdentifier(transaction.serverConnection())
     , m_indexSource(&index)
 {
@@ -408,6 +405,17 @@ void IDBRequest::setResult(Ref<IDBDatabase>&& database)
 {
     clearResult();
     m_databaseResult = WTFMove(database);
+}
+
+// FIXME: Temporarily required during bringup of IDB-in-Workers.
+// Once all IDB object reliance on the IDBConnectionToServer has been shifted to reliance on
+// IDBConnectionProxy, remove this.
+IDBClient::IDBConnectionToServer* IDBRequest::connectionToServer()
+{
+    ASSERT(isMainThread());
+    auto* context = scriptExecutionContext();
+    auto* proxy = context ? context->idbConnectionProxy() : nullptr;
+    return proxy ? &proxy->connectionToServer() : nullptr;
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,8 @@ class IDBResultData;
 
 class IDBOpenDBRequest final : public IDBRequest {
 public:
-    static Ref<IDBOpenDBRequest> createDeleteRequest(IDBClient::IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&);
-    static Ref<IDBOpenDBRequest> createOpenRequest(IDBClient::IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
+    static RefPtr<IDBOpenDBRequest> maybeCreateDeleteRequest(ScriptExecutionContext&, const IDBDatabaseIdentifier&);
+    static RefPtr<IDBOpenDBRequest> maybeCreateOpenRequest(ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
 
     virtual ~IDBOpenDBRequest();
     
@@ -52,7 +52,7 @@ public:
     void fireErrorAfterVersionChangeCompletion();
 
 private:
-    IDBOpenDBRequest(IDBClient::IDBConnectionToServer&, ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version, IndexedDB::RequestType);
+    IDBOpenDBRequest(ScriptExecutionContext&, uint64_t serverConnectionIdentifier, const IDBDatabaseIdentifier&, uint64_t version, IndexedDB::RequestType);
 
     bool dispatchEvent(Event&) final;
 

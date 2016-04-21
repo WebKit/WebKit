@@ -36,7 +36,18 @@ namespace IDBClient {
 
 IDBConnectionProxy::IDBConnectionProxy(IDBConnectionToServer& connection)
     : m_connectionToServer(connection)
+    , m_serverConnectionIdentifier(connection.identifier())
 {
+    ASSERT(isMainThread());
+}
+
+// FIXME: Temporarily required during bringup of IDB-in-Workers.
+// Once all IDB object reliance on the IDBConnectionToServer has been shifted to reliance on
+// IDBConnectionProxy, remove this.
+IDBConnectionToServer& IDBConnectionProxy::connectionToServer()
+{
+    ASSERT(isMainThread());
+    return m_connectionToServer.get();
 }
 
 RefPtr<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
@@ -46,10 +57,12 @@ RefPtr<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext
     if (!isMainThread())
         return nullptr;
 
-    auto request = IDBOpenDBRequest::createOpenRequest(m_connectionToServer.get(), context, databaseIdentifier, version);
-    m_connectionToServer->openDatabase(request.get());
+    auto request = IDBOpenDBRequest::maybeCreateOpenRequest(context, databaseIdentifier, version);
+    if (!request)
+        return nullptr;
 
-    return adoptRef(&request.leakRef());
+    m_connectionToServer->openDatabase(*request);
+    return request;
 }
 
 RefPtr<IDBOpenDBRequest> IDBConnectionProxy::deleteDatabase(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier)
@@ -59,10 +72,12 @@ RefPtr<IDBOpenDBRequest> IDBConnectionProxy::deleteDatabase(ScriptExecutionConte
     if (!isMainThread())
         return nullptr;
 
-    auto request = IDBOpenDBRequest::createDeleteRequest(m_connectionToServer.get(), context, databaseIdentifier);
-    m_connectionToServer->deleteDatabase(request.get());
+    auto request = IDBOpenDBRequest::maybeCreateDeleteRequest(context, databaseIdentifier);
+    if (!request)
+        return nullptr;
 
-    return adoptRef(&request.leakRef());
+    m_connectionToServer->deleteDatabase(*request);
+    return request;
 }
 
 } // namesapce IDBClient

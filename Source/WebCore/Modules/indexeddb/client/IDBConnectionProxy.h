@@ -38,14 +38,23 @@ class ScriptExecutionContext;
 namespace IDBClient {
 
 class IDBConnectionProxy {
+    WTF_MAKE_NONCOPYABLE(IDBConnectionProxy);
 public:
     IDBConnectionProxy(IDBConnectionToServer&);
 
     RefPtr<IDBOpenDBRequest> openDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
     RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&);
 
+    uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
+
+    // FIXME: Temporarily required during bringup of IDB-in-Workers.
+    // Once all IDB object reliance on the IDBConnectionToServer has been shifted to reliance on
+    // IDBConnectionProxy, remove this.
+    IDBConnectionToServer& connectionToServer();
+
 private:
     Ref<IDBConnectionToServer> m_connectionToServer;
+    uint64_t m_serverConnectionIdentifier;
 };
 
 } // namespace IDBClient

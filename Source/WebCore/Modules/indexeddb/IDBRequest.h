@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,14 +104,17 @@ public:
     bool hasPendingActivity() const final;
 
 protected:
-    IDBRequest(IDBClient::IDBConnectionToServer&, ScriptExecutionContext&);
+    IDBRequest(ScriptExecutionContext&, uint64_t connectionIdentifier);
 
     void enqueueEvent(Ref<Event>&&);
     bool dispatchEvent(Event&) override;
 
-    IDBClient::IDBConnectionToServer& connection() { return m_connection; }
-
     void setResult(Ref<IDBDatabase>&&);
+
+    // FIXME: Temporarily required during bringup of IDB-in-Workers.
+    // Once all IDB object reliance on the IDBConnectionToServer has been shifted to reliance on
+    // IDBConnectionProxy, remove this.
+    IDBClient::IDBConnectionToServer* connectionToServer();
 
     // FIXME: Protected data members aren't great for maintainability.
     // Consider adding protected helper functions and making these private.
@@ -154,7 +157,6 @@ private:
     RefPtr<IDBDatabase> m_databaseResult;
 
     IDBError m_idbError;
-    IDBClient::IDBConnectionToServer& m_connection;
     IDBResourceIdentifier m_resourceIdentifier;
 
     // Could consider storing these three in a union or union-like class instead.
