@@ -276,6 +276,8 @@ webkit.org/b/155233 fast/events/max-tabindex-focus.html [ Skip ]
 # The file-wrapper part of <attachment> is not yet working on iOS
 fast/attachment/attachment-type-attribute.html [ Skip ]
 
+webkit.org/b/156857 http/tests/navigation/ping-attribute [ Skip ]
+
 ###
 # Known failures
 ##
