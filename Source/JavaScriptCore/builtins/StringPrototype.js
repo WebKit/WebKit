@@ -46,27 +46,6 @@ function match(regexp)
     return createdRegExp[@symbolMatch](thisString);
 }
 
-function search(regexp)
-{
-    "use strict";
-
-    if (this == null) {
-        if (this === null)
-            throw new @TypeError("String.prototype.search requires that |this| not be null");
-        throw new @TypeError("String.prototype.search requires that |this| not be undefined");
-    }
-
-    if (regexp != null) {
-        var searcher = regexp[@symbolSearch];
-        if (searcher != @undefined)
-            return searcher.@call(regexp, this);
-    }
-
-    var thisString = @toString(this);
-    var createdRegExp = @regExpCreate(regexp, @undefined);
-    return createdRegExp[@symbolSearch](thisString);
-}
-
 function repeatSlowPath(string, count)
 {
     "use strict";
@@ -124,6 +103,27 @@ function repeat(count)
     }
 
     return @repeatSlowPath(string, count);
+}
+
+function search(regexp)
+{
+    "use strict";
+
+    if (this == null) {
+        if (this === null)
+            throw new @TypeError("String.prototype.search requires that |this| not be null");
+        throw new @TypeError("String.prototype.search requires that |this| not be undefined");
+    }
+
+    if (regexp != null) {
+        var searcher = regexp[@symbolSearch];
+        if (searcher != @undefined)
+            return searcher.@call(regexp, this);
+    }
+
+    var thisString = @toString(this);
+    var createdRegExp = @regExpCreate(regexp, @undefined);
+    return createdRegExp[@symbolSearch](thisString);
 }
 
 function split(separator, limit)

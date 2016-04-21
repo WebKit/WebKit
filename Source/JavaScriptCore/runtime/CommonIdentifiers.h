@@ -427,6 +427,8 @@
     macro(setIteratorNext) \
     macro(MapIterator) \
     macro(mapIteratorNext) \
+    macro(regExpBuiltinExec) \
+    macro(regExpMatchFast) \
     macro(regExpProtoFlagsGetter) \
     macro(regExpProtoGlobalGetter) \
     macro(regExpProtoIgnoreCaseGetter) \

@@ -46,7 +46,6 @@ namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState*);
-static EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchPrivate(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState*);
@@ -69,6 +68,7 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->compile, regExpProtoFuncCompile, DontEnum, 2);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->exec, regExpProtoFuncExec, DontEnum, 1, RegExpExecIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->test, regExpProtoFuncTest, DontEnum, 1, RegExpTestIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, regExpProtoFuncToString, DontEnum, 0);
     JSC_NATIVE_GETTER(vm.propertyNames->global, regExpProtoGetterGlobal, DontEnum | Accessor);
@@ -78,14 +78,9 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_GETTER(vm.propertyNames->unicode, regExpProtoGetterUnicode, DontEnum | Accessor);
     JSC_NATIVE_GETTER(vm.propertyNames->source, regExpProtoGetterSource, DontEnum | Accessor);
     JSC_NATIVE_GETTER(vm.propertyNames->flags, regExpProtoGetterFlags, DontEnum | Accessor);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().matchPrivateName(), regExpProtoFuncMatchPrivate, DontEnum | DontDelete | ReadOnly, 1);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->matchSymbol, regExpPrototypeMatchCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->searchSymbol, regExpPrototypeSearchCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->splitSymbol, regExpPrototypeSplitCodeGenerator, DontEnum);
-
-    JSFunction* execFunction = JSFunction::create(vm, globalObject, 1, vm.propertyNames->exec.string(), regExpProtoFuncExec, RegExpExecIntrinsic);
-    putDirectWithoutTransition(vm, vm.propertyNames->execPrivateName, execFunction, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->exec, execFunction, DontEnum);
 
     m_emptyRegExp.set(vm, this, RegExp::create(vm, "", NoFlags));
 }
@@ -123,7 +118,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
     return JSValue::encode(asRegExpObject(thisValue)->exec(exec, exec->lexicalGlobalObject(), string));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchPrivate(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchFast(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(RegExpObject::info()))
@@ -131,6 +126,8 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchPrivate(ExecState* exec)
     JSString* string = exec->argument(0).toStringOrNull(exec);
     if (!string)
         return JSValue::encode(jsUndefined());
+    if (!asRegExpObject(thisValue)->regExp()->global())
+        return JSValue::encode(asRegExpObject(thisValue)->exec(exec, exec->lexicalGlobalObject(), string));
     return JSValue::encode(asRegExpObject(thisValue)->matchGlobal(exec, exec->lexicalGlobalObject(), string));
 }
 

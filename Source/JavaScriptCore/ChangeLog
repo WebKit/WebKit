@@ -1,3 +1,57 @@
+2016-04-21  Michael Saboff  <msaboff@apple.com>
+
+        Align RegExp[@@match] with other @@ methods
+        https://bugs.webkit.org/show_bug.cgi?id=156832
+
+        Reviewed by Mark Lam.
+
+        Various changes to align the RegExp[@@match] with [@@search] and [@@split].
+
+        Made RegExp.prototype.@exec a hidden property on the global object and
+        called it @regExpBuiltinExec to match the name it has in the standard.
+        Changed all places that used the old name to use the new one.
+
+        Made the match fast path function, which used to be call @match, to be called
+        @regExpMatchFast and put it on the global object.  Changed it to also handle
+        expressions both with and without the global flag.  Refactored the builtin
+        @match accordingly.
+
+        Added the builtin function @hasObservableSideEffectsForRegExpMatch() that
+        checks to see if we can use the fast path of if we need the explicit version.
+
+        Put the main RegExp functions @match, @search and @split in alphabetical
+        order in RegExpPrototype.js.  Did the same for @match, @repeat, @search and 
+        @split in StringPrototype.js.
+        
+        * builtins/RegExpPrototype.js:
+        (regExpExec):
+        (hasObservableSideEffectsForRegExpMatch): New.
+        (match):
+        (search):
+        (hasObservableSideEffectsForRegExpSplit):
+        Reordered in the file and updated to use @regExpBuiltinExec.
+
+        * builtins/StringPrototype.js:
+        (match):
+        (repeatSlowPath):
+        (repeat):
+        (search):
+        (split):
+        Reordered functions in the file.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::setGlobalThis):
+        (JSC::getById):
+        (JSC::getGetterById):
+        (JSC::JSGlobalObject::init):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncMatchFast):
+        (JSC::regExpProtoFuncMatchPrivate): Deleted.
+        * runtime/RegExpPrototype.h:
+
 2016-04-20  Geoffrey Garen  <ggaren@apple.com>
 
         JavaScriptCore garbage collection is missing an autorelease pool
