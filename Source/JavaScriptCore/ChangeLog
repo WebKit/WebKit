@@ -1,3 +1,32 @@
+2016-04-20  Saam barati  <sbarati@apple.com>
+
+        Improve sampling profiler CLI JSC tool
+        https://bugs.webkit.org/show_bug.cgi?id=156824
+
+        Reviewed by Mark Lam.
+
+        This patch enhances the Sampling Profiler CLI tool from the JSC shell
+        to display the JITType of a particular CodeBlock. Because this happens
+        once we process a log of stack frames, the data for a particular frame
+        being in LLInt vs. Baseline could be wrong. For example, we may have taken 
+        a stack trace of a CodeBlock while it was executing in the LLInt, then 
+        it tiers up to the baseline, then we process the log. We will show such CodeBlocks
+        as being in the baseline JIT. We could be smarter about this in the future if
+        it turns out to truly be a problem.
+
+        This patch also adds a 'samplingProfilerTimingInterval' JSC option to allow
+        CLI users to control the sleep time between stack traces.
+
+        * jsc.cpp:
+        (jscmain):
+        * runtime/Options.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::SamplingProfiler):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::StackFrame::hasExpressionInfo):
+
 2016-04-20  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] DFG should not generate two jumps when the target of DoubleBranch is the next block  

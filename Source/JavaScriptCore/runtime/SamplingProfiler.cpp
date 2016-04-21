@@ -185,7 +185,7 @@ private:
 SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     : m_vm(vm)
     , m_stopwatch(WTFMove(stopwatch))
-    , m_timingInterval(std::chrono::microseconds(1000))
+    , m_timingInterval(std::chrono::microseconds(Options::samplingProfilerTimingInterval()))
     , m_threadIdentifier(0)
     , m_jscExecutionThread(nullptr)
     , m_isPaused(false)
@@ -368,8 +368,10 @@ void SamplingProfiler::processUnverifiedStackTraces()
                     stackTrace.frames.last().lineNumber, stackTrace.frames.last().columnNumber);
                 stackTrace.frames.last().bytecodeIndex = bytecodeIndex;
             }
-            if (Options::collectSamplingProfilerDataForJSCShell())
+            if (Options::collectSamplingProfilerDataForJSCShell()) {
                 stackTrace.frames.last().codeBlockHash = codeBlock->hash();
+                stackTrace.frames.last().jitType = codeBlock->jitType();
+            }
         };
 
         auto appendEmptyFrame = [&] {
@@ -832,7 +834,7 @@ void SamplingProfiler::reportTopBytecodes()
         } else
             codeBlockHash = "<nil>";
 
-        String frameDescription = makeString(frame.displayName(m_vm), "#", codeBlockHash, ":", bytecodeIndex);
+        String frameDescription = makeString(frame.displayName(m_vm), "#", codeBlockHash, ":", JITCode::typeName(frame.jitType), ":", bytecodeIndex);
         bytecodeCounts.add(frameDescription, 0).iterator->value++;
     }
 
@@ -851,7 +853,7 @@ void SamplingProfiler::reportTopBytecodes()
     };
 
     dataLog("\n\nSampling rate: ", m_timingInterval.count(), " microseconds\n");
-    dataLog("Hottest bytecodes as <numSamples   'functionName#hash:bytecodeIndex'>\n");
+    dataLog("Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>\n");
     for (size_t i = 0; i < 80; i++) {
         auto pair = takeMax();
         if (pair.first.isEmpty())

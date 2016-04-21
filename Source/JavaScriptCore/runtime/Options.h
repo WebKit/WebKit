@@ -318,6 +318,7 @@ typedef const char* optionString;
     v(bool, useTypeProfiler, false, nullptr) \
     v(bool, useControlFlowProfiler, false, nullptr) \
     v(bool, useSamplingProfiler, false, nullptr) \
+    v(unsigned, samplingProfilerTimingInterval, 1000, "Time between stack traces in microseconds.") \
     v(bool, collectSamplingProfilerDataForJSCShell, false, "This corresponds to the JSC shell's --reportSamplingProfilerData option.") \
     v(bool, alwaysGeneratePCToCodeOriginMap, false, "This will make sure we always generate a PCToCodeOriginMap for JITed code.") \
     \

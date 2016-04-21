@@ -2275,6 +2275,7 @@ int jscmain(int argc, char** argv)
 
     if (options.m_dumpSamplingProfilerData) {
 #if ENABLE(SAMPLING_PROFILER)
+        JSLockHolder locker(vm);
         vm->samplingProfiler()->reportTopFunctions();
         vm->samplingProfiler()->reportTopBytecodes();
 #else

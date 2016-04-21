@@ -30,6 +30,7 @@
 
 #include "CallFrame.h"
 #include "CodeBlockHash.h"
+#include "JITCode.h"
 #include "MachineStackMarker.h"
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -86,6 +87,7 @@ public:
         unsigned columnNumber { std::numeric_limits<unsigned>::max() };
         unsigned bytecodeIndex { std::numeric_limits<unsigned>::max() };
         CodeBlockHash codeBlockHash;
+        JITCode::JITType jitType { JITCode::None };
 
         bool hasExpressionInfo() const
         {
