@@ -37,10 +37,9 @@ class ScriptExecutionContext;
 
 namespace IDBClient {
 
-class IDBConnectionProxy {
-    WTF_MAKE_NONCOPYABLE(IDBConnectionProxy);
+class IDBConnectionProxy : public ThreadSafeRefCounted<IDBConnectionProxy> {
 public:
-    IDBConnectionProxy(IDBConnectionToServer&);
+    static Ref<IDBConnectionProxy> create(IDBConnectionToServer&);
 
     RefPtr<IDBOpenDBRequest> openDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
     RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&);
@@ -53,6 +52,8 @@ public:
     IDBConnectionToServer& connectionToServer();
 
 private:
+    IDBConnectionProxy(IDBConnectionToServer&);
+
     Ref<IDBConnectionToServer> m_connectionToServer;
     uint64_t m_serverConnectionIdentifier;
 };

@@ -1781,7 +1781,7 @@ private:
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    std::unique_ptr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
+    RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
 #endif
 };
 

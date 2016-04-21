@@ -43,14 +43,14 @@ class ScriptExecutionContext;
 struct ExceptionCodeWithMessage;
 
 namespace IDBClient {
-class IDBConnectionToServer;
+class IDBConnectionProxy;
 }
 
 typedef int ExceptionCode;
 
 class IDBFactory : public ThreadSafeRefCounted<IDBFactory> {
 public:
-    static Ref<IDBFactory> create();
+    static Ref<IDBFactory> create(IDBClient::IDBConnectionProxy&);
     ~IDBFactory();
 
     RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, ExceptionCodeWithMessage&);
@@ -60,9 +60,11 @@ public:
     short cmp(ScriptExecutionContext&, JSC::JSValue first, JSC::JSValue second, ExceptionCodeWithMessage&);
 
 private:
-    explicit IDBFactory();
+    explicit IDBFactory(IDBClient::IDBConnectionProxy&);
 
     RefPtr<IDBOpenDBRequest> openInternal(ScriptExecutionContext&, const String& name, unsigned long long version, ExceptionCodeWithMessage&);
+
+    Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
 };
 
 } // namespace WebCore

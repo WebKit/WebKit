@@ -111,8 +111,13 @@ IDBFactory* DOMWindowIndexedDatabase::indexedDB()
     if (!m_window->isCurrentlyDisplayedInFrame())
         return nullptr;
 
-    if (!m_idbFactory)
-        m_idbFactory = IDBFactory::create();
+    if (!m_idbFactory) {
+        auto* connectionProxy = document->idbConnectionProxy();
+        if (!connectionProxy)
+            return nullptr;
+
+        m_idbFactory = IDBFactory::create(*connectionProxy);
+    }
 
     return m_idbFactory.get();
 }

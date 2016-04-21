@@ -3116,7 +3116,7 @@ IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
         if (!currentPage)
             return nullptr;
 
-        m_idbConnectionProxy = std::make_unique<IDBClient::IDBConnectionProxy>(currentPage->idbConnection());
+        m_idbConnectionProxy = IDBClient::IDBConnectionProxy::create(currentPage->idbConnection());
     }
 
     return m_idbConnectionProxy.get();

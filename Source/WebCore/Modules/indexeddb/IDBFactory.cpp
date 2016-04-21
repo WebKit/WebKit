@@ -63,12 +63,13 @@ static bool shouldThrowSecurityException(ScriptExecutionContext& context)
     return false;
 }
 
-Ref<IDBFactory> IDBFactory::create()
+Ref<IDBFactory> IDBFactory::create(IDBClient::IDBConnectionProxy& connectionProxy)
 {
-    return adoptRef(*new IDBFactory);
+    return adoptRef(*new IDBFactory(connectionProxy));
 }
 
-IDBFactory::IDBFactory()
+IDBFactory::IDBFactory(IDBClient::IDBConnectionProxy& connectionProxy)
+    : m_connectionProxy(connectionProxy)
 {
 }
 
@@ -119,14 +120,7 @@ RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext& contex
         return nullptr;
     }
 
-    auto* connectionProxy = context.idbConnectionProxy();
-    if (!connectionProxy) {
-        ec.code = SECURITY_ERR;
-        ec.message = ASCIILiteral("IDBFactory.open() called at an invalid time");
-        return nullptr;
-    }
-
-    return connectionProxy->openDatabase(context, databaseIdentifier, version);
+    return m_connectionProxy->openDatabase(context, databaseIdentifier, version);
 }
 
 RefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext& context, const String& name, ExceptionCodeWithMessage& ec)
@@ -153,14 +147,7 @@ RefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext& cont
         return nullptr;
     }
 
-    auto* connectionProxy = context.idbConnectionProxy();
-    if (!connectionProxy) {
-        ec.code = SECURITY_ERR;
-        ec.message = ASCIILiteral("IDBFactory.deleteDatabase() called at an invalid time");
-        return nullptr;
-    }
-
-    return connectionProxy->deleteDatabase(context, databaseIdentifier);
+    return m_connectionProxy->deleteDatabase(context, databaseIdentifier);
 }
 
 short IDBFactory::cmp(ScriptExecutionContext& context, JSValue firstValue, JSValue secondValue, ExceptionCodeWithMessage& ec)

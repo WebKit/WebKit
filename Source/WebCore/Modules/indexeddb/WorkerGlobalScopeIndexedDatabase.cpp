@@ -31,14 +31,17 @@
 
 #include "WorkerGlobalScopeIndexedDatabase.h"
 
+#include "IDBConnectionProxy.h"
 #include "IDBFactory.h"
+#include "IDBOpenDBRequest.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
-WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase(WorkerGlobalScope&)
+WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase(WorkerGlobalScope&, IDBClient::IDBConnectionProxy& connectionProxy)
+    : m_connectionProxy(connectionProxy)
 {
 }
 
@@ -55,7 +58,11 @@ WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(WorkerG
 {
     WorkerGlobalScopeIndexedDatabase* supplement = static_cast<WorkerGlobalScopeIndexedDatabase*>(Supplement<WorkerGlobalScope>::from(&scope, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<WorkerGlobalScopeIndexedDatabase>(scope);
+        auto* connectionProxy = scope.idbConnectionProxy();
+        if (!connectionProxy)
+            return nullptr;
+
+        auto newSupplement = std::make_unique<WorkerGlobalScopeIndexedDatabase>(scope, *connectionProxy);
         supplement = newSupplement.get();
         provideTo(&scope, supplementName(), WTFMove(newSupplement));
     }
@@ -64,13 +71,14 @@ WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(WorkerG
 
 IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB(WorkerGlobalScope& scope)
 {
-    return from(scope)->indexedDB();
+    auto* scopeIDB = from(scope);
+    return scopeIDB ? scopeIDB->indexedDB() : nullptr;
 }
 
 IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB()
 {
     if (!m_idbFactory)
-        m_idbFactory = IDBFactory::create();
+        m_idbFactory = IDBFactory::create(m_connectionProxy.get());
 
     return m_idbFactory.get();
 }

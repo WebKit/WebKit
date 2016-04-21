@@ -36,19 +36,25 @@ namespace WebCore {
 class IDBFactory;
 class WorkerGlobalScope;
 
+namespace IDBClient {
+class IDBConnectionProxy;
+}
+
 class WorkerGlobalScopeIndexedDatabase : public Supplement<WorkerGlobalScope> {
 public:
-    explicit WorkerGlobalScopeIndexedDatabase(WorkerGlobalScope&);
+    explicit WorkerGlobalScopeIndexedDatabase(WorkerGlobalScope&, IDBClient::IDBConnectionProxy&);
     virtual ~WorkerGlobalScopeIndexedDatabase();
 
-    static WorkerGlobalScopeIndexedDatabase* from(WorkerGlobalScope&);
     static IDBFactory* indexedDB(WorkerGlobalScope&);
 
 private:
     IDBFactory* indexedDB();
+
     static const char* supplementName();
+    static WorkerGlobalScopeIndexedDatabase* from(WorkerGlobalScope&);
 
     RefPtr<IDBFactory> m_idbFactory;
+    Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
 };
 
 } // namespace WebCore

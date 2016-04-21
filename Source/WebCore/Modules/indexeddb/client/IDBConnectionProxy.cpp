@@ -34,6 +34,11 @@
 namespace WebCore {
 namespace IDBClient {
 
+Ref<IDBConnectionProxy> IDBConnectionProxy::create(IDBConnectionToServer& connection)
+{
+    return adoptRef(*new IDBConnectionProxy(connection));
+}
+
 IDBConnectionProxy::IDBConnectionProxy(IDBConnectionToServer& connection)
     : m_connectionToServer(connection)
     , m_serverConnectionIdentifier(connection.identifier())
