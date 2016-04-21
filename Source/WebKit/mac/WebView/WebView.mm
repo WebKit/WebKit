@@ -730,29 +730,6 @@ static String webKitBundleVersionString()
     reportException(execState, toJS(execState, exception));
 }
 
-static void WebKitInitializeApplicationCachePathIfNecessary()
-{
-    static BOOL initialized = NO;
-    if (initialized)
-        return;
-
-    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
-    if (!appName)
-        appName = [[NSProcessInfo processInfo] processName];
-#if PLATFORM(IOS)
-    if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebApp())
-        appName = @"com.apple.WebAppCache";
-#endif
-
-    ASSERT(appName);
-
-    NSString* cacheDir = [NSString _webkit_localCacheDirectoryWithBundleIdentifier:appName];
-
-    webApplicationCacheStorage().setCacheDirectory(cacheDir);
-    
-    initialized = YES;
-}
-
 static void WebKitInitializeApplicationStatisticsStoragePathIfNecessary()
 {
     static BOOL initialized = NO;
@@ -962,7 +939,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         if ([standardPreferences storageTrackerEnabled])
 #endif
         WebKitInitializeStorageIfNecessary();
-        WebKitInitializeApplicationCachePathIfNecessary();
         WebKitInitializeApplicationStatisticsStoragePathIfNecessary();
 #if ENABLE(GAMEPAD)
         WebKitInitializeGamepadProviderIfNecessary();
@@ -1002,6 +978,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.alternativeTextClient = new WebAlternativeTextClient(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
+    pageConfiguration.applicationCacheStorage = &webApplicationCacheStorage();
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();
     pageConfiguration.userContentProvider = &_private->group->userContentController();
@@ -1245,6 +1222,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
+    pageConfiguration.applicationCacheStorage = &webApplicationCacheStorage();
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();
     pageConfiguration.userContentProvider = &_private->group->userContentController();

@@ -1,3 +1,30 @@
+2016-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Stop using ApplicationCacheStorage::singleton() in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=156859
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebApplicationCache.mm:
+        (+[WebApplicationCache initializeWithBundleIdentifier:]):
+        Change this to just store the bundle identifier.
+
+        (applicationCacheBundleIdentifier):
+        Helper function that returns the bundle identifier for the app cache.
+
+        (applicationCachePath):
+        Return the application cache path.
+
+        (webApplicationCacheStorage):
+        Create a new ApplicationCacheStorage object.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        Set pageConfiguration.applicationCacheStorage to webApplicationCacheStorage().
+
+        (WebKitInitializeApplicationCachePathIfNecessary): Deleted.
+
 2016-04-21  Beth Dakin  <bdakin@apple.com>
 
         showCandidates() should take a range and the string should be the whole 

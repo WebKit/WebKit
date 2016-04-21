@@ -25,6 +25,7 @@
 
 #import "WebApplicationCacheInternal.h"
 
+#import "WebKitNSStringExtras.h"
 #import "WebSecurityOriginInternal.h"
 #import <WebCore/ApplicationCache.h>
 #import <WebCore/ApplicationCacheStorage.h>
@@ -32,8 +33,8 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
-#import "WebKitNSStringExtras.h"
 #import "WebSQLiteDatabaseTrackerClient.h"
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
 #endif
 
@@ -42,6 +43,8 @@ using namespace WebCore;
 @implementation WebApplicationCache
 
 #if PLATFORM(IOS)
+static NSString *overrideBundleIdentifier;
+
 // FIXME: This will be removed when WebKitInitializeApplicationCachePathIfNecessary()
 // is moved from WebView.mm to WebKitInitializeApplicationCacheIfNecessary() in this file.
 // https://bugs.webkit.org/show_bug.cgi?id=57567 
@@ -50,14 +53,37 @@ using namespace WebCore;
     static BOOL initialized = NO;
     if (initialized)
         return;
-    
+
     SQLiteDatabaseTracker::setClient(WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
 
-    webApplicationCacheStorage().setCacheDirectory([NSString _webkit_localCacheDirectoryWithBundleIdentifier:bundleIdentifier]);
-    
+    ASSERT(!overrideBundleIdentifier);
+    overrideBundleIdentifier = [bundleIdentifier copy];
+
     initialized = YES;
 }
 #endif
+
+static NSString *applicationCacheBundleIdentifier()
+{
+#if PLATFORM(IOS)
+    if (overrideBundleIdentifier)
+        return overrideBundleIdentifier;
+    if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebApp())
+        return @"com.apple.WebAppCache";
+#endif
+
+    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
+    if (!appName)
+        appName = [[NSProcessInfo processInfo] processName];
+
+    ASSERT(appName);
+    return appName;
+}
+
+static NSString *applicationCachePath()
+{
+    return [NSString _webkit_localCacheDirectoryWithBundleIdentifier:applicationCacheBundleIdentifier()];
+}
 
 + (long long)maximumSize
 {
@@ -115,5 +141,7 @@ using namespace WebCore;
 
 WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 {
-    return ApplicationCacheStorage::singleton();
+    static ApplicationCacheStorage& storage = ApplicationCacheStorage::create(applicationCachePath(), "ApplicationCache").leakRef();
+
+    return storage;
 }
