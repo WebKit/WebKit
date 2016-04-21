@@ -1,3 +1,33 @@
+2016-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Element::idForStyleResolution() is a foot-gun
+        https://bugs.webkit.org/show_bug.cgi?id=156852
+
+        Reviewed by Darin Adler.
+
+        Element::idForStyleResolution() is a foot-gun. It requires the caller to check
+        Element::hasID() first or it may end up crashing when dereferencing elementData()
+        (e.g. see Bug 156806).
+
+        This patch updates Element::idForStyleResolution() to return nullAtom is the
+        Element does not have an ID. I did not see a performance impact on Speedometer,
+        Dromaeo DOM Core, Dromaeo CSS Selectors and our local performanceTests/.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorFilter.cpp:
+        (WebCore::collectElementIdentifierHashes):
+        * dom/Element.h:
+        (WebCore::Element::idForStyleResolution):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::needsAppleMailPaginationQuirk):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderRegionList):
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::canShareStyleWithElement):
+
 2016-04-21  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Move IDBConnectionProxy into IDBRequest and IDBDatabase.

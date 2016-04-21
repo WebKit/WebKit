@@ -153,8 +153,9 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
 
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
     // then sort the buffer.
-    if (m_element.hasID())
-        collectMatchingRulesForList(matchRequest.ruleSet->idRules(m_element.idForStyleResolution().impl()), matchRequest, ruleRange);
+    auto& id = m_element.idForStyleResolution();
+    if (!id.isNull())
+        collectMatchingRulesForList(matchRequest.ruleSet->idRules(*id.impl()), matchRequest, ruleRange);
     if (m_element.hasClass()) {
         for (size_t i = 0; i < m_element.classNames().size(); ++i)
             collectMatchingRulesForList(matchRequest.ruleSet->classRules(m_element.classNames()[i].impl()), matchRequest, ruleRange);

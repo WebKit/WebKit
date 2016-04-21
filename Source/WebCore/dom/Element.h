@@ -664,8 +664,7 @@ inline bool Element::hasAttributesWithoutUpdate() const
 
 inline const AtomicString& Element::idForStyleResolution() const
 {
-    ASSERT(hasID());
-    return elementData()->idForStyleResolution();
+    return hasID() ? elementData()->idForStyleResolution() : nullAtom;
 }
 
 inline const AtomicString& Element::getIdAttribute() const

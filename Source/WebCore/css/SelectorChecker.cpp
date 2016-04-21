@@ -652,8 +652,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
     if (selector.match() == CSSSelector::Class)
         return element.hasClass() && element.classNames().contains(selector.value());
 
-    if (selector.match() == CSSSelector::Id)
-        return element.hasID() && element.idForStyleResolution() == selector.value();
+    if (selector.match() == CSSSelector::Id) {
+        ASSERT(!selector.value().isNull());
+        return element.idForStyleResolution() == selector.value();
+    }
 
     if (selector.isAttributeSelector()) {
         if (!element.hasAttributes())

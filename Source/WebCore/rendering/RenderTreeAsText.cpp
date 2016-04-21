@@ -690,8 +690,9 @@ static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, 
 
             ts << " {" << tagName.toString() << "}";
 
-            if (generatingElement->hasID())
-                ts << " #" << generatingElement->idForStyleResolution();
+            auto& generatingElementId = generatingElement->idForStyleResolution();
+            if (!generatingElementId.isNull())
+                ts << " #" << generatingElementId;
 
             if (isRenderNamedFlowFragment)
                 ts << ")";

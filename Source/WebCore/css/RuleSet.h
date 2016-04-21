@@ -174,7 +174,7 @@ public:
 
     const RuleFeatureSet& features() const { return m_features; }
 
-    const RuleDataVector* idRules(AtomicStringImpl* key) const { return m_idRules.get(key); }
+    const RuleDataVector* idRules(AtomicStringImpl& key) const { return m_idRules.get(&key); }
     const RuleDataVector* classRules(AtomicStringImpl* key) const { return m_classRules.get(key); }
     const RuleDataVector* tagRules(AtomicStringImpl* key, bool isHTMLName) const;
     const RuleDataVector* shadowPseudoElementRules(AtomicStringImpl* key) const { return m_shadowPseudoElementRules.get(key); }
