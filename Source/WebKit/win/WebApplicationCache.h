@@ -36,7 +36,7 @@ class DECLSPEC_UUID("1119E970-4B13-4B9A-A049-41096104B689") WebApplicationCache 
 public:
     static WebApplicationCache* createInstance();
 
-    WebCore::ApplicationCacheStorage& storage();
+    static WebCore::ApplicationCacheStorage& storage();
 
 protected:
     WebApplicationCache();

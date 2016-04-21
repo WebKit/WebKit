@@ -58,9 +58,24 @@ WebApplicationCache* WebApplicationCache::createInstance()
     return instance;
 }
 
+static String applicationCachePath()
+{
+    String path = localUserSpecificStorageDirectory();
+
+#if USE(CF)
+    autocacheDirectoryPreference = adoptCF(CFPreferencesCopyAppValue(WebKitLocalCacheDefaultsKey, kCFPreferencesCurrentApplication));
+    if (cacheDirectoryPreference && CFStringGetTypeID() == CFGetTypeID(cacheDirectoryPreference.get()))
+        path = static_cast<CFStringRef>(cacheDirectoryPreference.get());
+#endif
+
+    return path;
+}
+
 WebCore::ApplicationCacheStorage& WebApplicationCache::storage()
 {
-    return WebCore::ApplicationCacheStorage::singleton();
+    static ApplicationCacheStorage& storage = ApplicationCacheStorage::create(applicationCachePath(), "ApplicationCache").leakRef();
+
+    return storage;
 }
 
 // IUnknown -------------------------------------------------------------------

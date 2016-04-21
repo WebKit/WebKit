@@ -1,3 +1,20 @@
+2016-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Stop using ApplicationCacheStorage::singleton() on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=156861
+
+        Reviewed by Darin Adler.
+
+        * WebApplicationCache.cpp:
+        (applicationCachePath):
+        (WebApplicationCache::storage):
+        * WebApplicationCache.h:
+        * WebCache.cpp:
+        (WebCache::empty):
+        * WebView.cpp:
+        (WebView::initWithFrame):
+        (WebKitSetApplicationCachePathIfNecessary): Deleted.
+
 2016-04-15  Brent Fulgham  <bfulgham@apple.com>
 
         CSP: Make dynamically-added favicons (via link rel="icon") obey Content-Security-Policy

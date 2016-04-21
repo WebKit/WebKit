@@ -37,6 +37,7 @@
 #include "SoftLinking.h"
 #include "SubframeLoader.h"
 #include "TextIterator.h"
+#include "WebApplicationCache.h"
 #include "WebBackForwardList.h"
 #include "WebChromeClient.h"
 #include "WebContextMenuClient.h"
@@ -2828,26 +2829,6 @@ HRESULT WebView::URLTitleFromPasteboard(_In_opt_ IDataObject* /*pasteboard*/, _D
     return E_NOTIMPL;
 }
 
-static void WebKitSetApplicationCachePathIfNecessary()
-{
-    static bool initialized = false;
-    if (initialized)
-        return;
-
-    String path = localUserSpecificStorageDirectory();
-
-#if USE(CF)
-    RetainPtr<CFPropertyListRef> cacheDirectoryPreference = adoptCF(CFPreferencesCopyAppValue(WebKitLocalCacheDefaultsKey, kCFPreferencesCurrentApplication));
-    if (cacheDirectoryPreference && (CFStringGetTypeID() == CFGetTypeID(cacheDirectoryPreference.get())))
-        path = static_cast<CFStringRef>(cacheDirectoryPreference.get());
-#endif
-
-    if (!path.isNull())
-        ApplicationCacheStorage::singleton().setCacheDirectory(path);
-
-    initialized = true;
-}
-
 bool WebView::shouldInitializeTrackPointHack()
 {
     static bool shouldCreateScrollbars;
@@ -2916,7 +2897,6 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         WebPlatformStrategies::initialize();
 
         WebKitInitializeWebDatabasesIfNecessary();
-        WebKitSetApplicationCachePathIfNecessary();
 
         MemoryPressureHandler::singleton().install();
 
@@ -2936,6 +2916,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
     configuration.dragClient = new WebDragClient(this);
     configuration.inspectorClient = m_inspectorClient;
     configuration.loaderClientForMainFrame = new WebFrameLoaderClient;
+    configuration.applicationCacheStorage = &WebApplicationCache::storage();
     configuration.databaseProvider = &WebDatabaseProvider::singleton();
     configuration.storageNamespaceProvider = &m_webViewGroup->storageNamespaceProvider();
     configuration.progressTrackerClient = static_cast<WebFrameLoaderClient*>(configuration.loaderClientForMainFrame);

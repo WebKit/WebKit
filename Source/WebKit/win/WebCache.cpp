@@ -27,6 +27,7 @@
 #include "WebCache.h"
 
 #include "CFDictionaryPropertyBag.h"
+#include "WebApplicationCache.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/BString.h>
 #include <WebCore/MemoryCache.h>
@@ -214,7 +215,7 @@ HRESULT WebCache::empty()
     memoryCache.setDisabled(false);
 
     // Empty the application cache.
-    WebCore::ApplicationCacheStorage::singleton().empty();
+    WebApplicationCache::storage().empty();
 
     // Empty the Cross-Origin Preflight cache
     WebCore::CrossOriginPreflightResultCache::singleton().empty();
