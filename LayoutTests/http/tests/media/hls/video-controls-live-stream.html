@@ -8,8 +8,8 @@
 
             function start() {
                 video = document.getElementById('video');
-                waitForEvent('canplaythrough', function() { video.play(); });
-                waitForEvent('play', playing);
+                waitForEventOnce('canplaythrough', function() { video.play(); });
+                waitForEventOnce('play', playing);
                 waitForEventAndFail('stalled');
                 video.src = "../resources/hls/test-live.php";
             }

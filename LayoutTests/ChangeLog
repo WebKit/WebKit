@@ -1,3 +1,14 @@
+2016-04-21  Eric Carlson  <eric.carlson@apple.com>
+
+        LayoutTest http/tests/media/hls/video-controls-live-stream.html is sometimes flaky
+        https://bugs.webkit.org/show_bug.cgi?id=156851
+        <rdar://problem/25792102>
+
+        Reviewed by Daniel Bates.
+
+        * http/tests/media/hls/video-controls-live-stream.html: Only listen for events once because
+          we don't care if they fire more often.
+
 2016-04-21  Daniel Bates  <dabates@apple.com>
 
         Add tests for <area ping>
