@@ -1,3 +1,56 @@
+2016-04-21  Antoine Quint  <graouts@apple.com>
+
+        Creating a large number of WebGL contexts should recycle older contexts
+        https://bugs.webkit.org/show_bug.cgi?id=156689
+        <rdar://problem/19535330>
+
+        Reviewed by Dean Jackson.
+
+        We used to stop creating WebGL contexts once a maximum of 64 WebGL contexts had been
+        created on a page. Other browsers have a limit of 16 concurrent active WebGL contexts
+        and they lose older contexts when the developer creates a new context, logging a warning
+        to the console. We now follow the same approach.
+
+        Tests: webgl/max-active-contexts-console-warning.html
+               webgl/max-active-contexts-gc.html
+               webgl/max-active-contexts-oldest-context-lost.html
+               webgl/max-active-contexts-webglcontextlost-prevent-default.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::recycleContext):
+
+        Prints a warning message to the console indicating that an older WebGL context
+        will be lost to accomodate for the active contexts limit being reached and loses
+        the provided context in a way that it may not be recovered by calling `event.preventDefault()`
+        in the `webglcontextlost` event handler. Finally, we destroy the associated GraphicsContext3D
+        since it will no longer be useful and it may hold large Open GL resources.
+
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/GraphicsContext3D.h:
+
+        Changed GraphicsContext3D::create to return RefPtr instead of PassRefPtr.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::create):
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::create):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::activeContexts):
+        (WebCore::GraphicsContext3D::create):
+
+        Check if we are at the active contexts limit (16) and recycle the oldest context
+        in our active contexts list. Calling recycleContext() on a context will call the
+        GraphicsContext3D destructor and remove it from the active contexts list there.
+
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+
+        Remove the deconstructed context from the active contexts list.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::recycleContext):
+        * platform/graphics/win/GraphicsContext3DWin.cpp:
+        (WebCore::GraphicsContext3D::create):
+
 2016-04-21  Dave Hyatt  <hyatt@apple.com>
 
         Don't hyphenate the last word in a paragraph of text.

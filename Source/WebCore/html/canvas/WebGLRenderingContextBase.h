@@ -336,6 +336,7 @@ public:
         SyntheticLostContext
     };
     void forceLostContext(LostContextMode);
+    void recycleContext();
     void forceRestoreContext();
     void loseContextImpl(LostContextMode);
 

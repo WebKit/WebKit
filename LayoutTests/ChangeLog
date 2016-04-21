@@ -1,3 +1,44 @@
+2016-04-21  Antoine Quint  <graouts@apple.com>
+
+        Creating a large number of WebGL contexts should recycle older contexts
+        https://bugs.webkit.org/show_bug.cgi?id=156689
+        <rdar://problem/19535330>
+
+        Reviewed by Dean Jackson.
+
+        * webgl/many-contexts-expected.txt:
+        * webgl/many-contexts.html:
+
+        New output for this existing test since a lot of warnings are now logged to
+        indicate that we've reached the active contexts limit. We also removed the
+        check that the last context created was null since it no longer is due to this
+        source change (older contexts are lost instead).
+
+        * webgl/max-active-contexts-console-warning-expected.txt: Added.
+        * webgl/max-active-contexts-console-warning.html: Added.
+
+        This new test checks that we log a warning when we've created one context more
+        than the active contexts limit.
+
+        * webgl/max-active-contexts-gc-expected.txt: Added.
+        * webgl/max-active-contexts-gc.html: Added.
+
+        This new test checks that contexts that are garbage collected do not count
+        agaist the active contexts limit.
+
+        * webgl/max-active-contexts-oldest-context-lost-expected.txt: Added.
+        * webgl/max-active-contexts-oldest-context-lost.html: Added.
+
+        This new test checks that older contexts are lost when we reach the active
+        contexts limit and we create a new context.
+
+        * webgl/max-active-contexts-webglcontextlost-prevent-default-expected.txt: Added.
+        * webgl/max-active-contexts-webglcontextlost-prevent-default.html: Added.
+
+        This new test checks that calling `event.preventDefault()` in a `webglcontextlost`
+        event handler does not prevent a context from being lost when the active contexts
+        limit is reached.
+
 2016-04-21  Dave Hyatt  <hyatt@apple.com>
 
         Don't hyphenate the last word in a paragraph of text.

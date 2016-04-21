@@ -3773,6 +3773,15 @@ void WebGLRenderingContextBase::forceLostContext(WebGLRenderingContextBase::Lost
     m_contextGroup->loseContextGroup(mode);
 }
 
+void WebGLRenderingContextBase::recycleContext()
+{
+    printWarningToConsole("There are too many active WebGL contexts on this page, the oldest context will be lost.");
+    // Using SyntheticLostContext means the developer won't be able to force the restoration
+    // of the context by calling preventDefault() in a "webglcontextlost" event handler.
+    forceLostContext(SyntheticLostContext);
+    destroyGraphicsContext3D();
+}
+
 void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostContextMode mode)
 {
     if (isContextLost())

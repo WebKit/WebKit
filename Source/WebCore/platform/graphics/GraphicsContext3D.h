@@ -768,7 +768,7 @@ public:
     void setContextLostCallback(std::unique_ptr<ContextLostCallback>);
     void setErrorMessageCallback(std::unique_ptr<ErrorMessageCallback>);
 
-    static PassRefPtr<GraphicsContext3D> create(Attributes, HostWindow*, RenderStyle = RenderOffscreen);
+    static RefPtr<GraphicsContext3D> create(Attributes, HostWindow*, RenderStyle = RenderOffscreen);
     static PassRefPtr<GraphicsContext3D> createForCurrentGLContext();
     ~GraphicsContext3D();
 
@@ -1138,6 +1138,7 @@ public:
     void markLayerComposited();
     bool layerComposited() const;
     void forceContextLost();
+    void recycleContext();
 
     void paintRenderingResultsToCanvas(ImageBuffer*);
     PassRefPtr<ImageData> paintRenderingResultsToImageData();
@@ -1265,7 +1266,6 @@ public:
 
 private:
     GraphicsContext3D(Attributes, HostWindow*, RenderStyle = RenderOffscreen);
-    static int numActiveContexts;
     static int GPUCheckCounter;
 
     // Helper for packImageData/extractImageData/extractTextureData which implement packing of pixel

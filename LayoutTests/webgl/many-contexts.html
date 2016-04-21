@@ -1,4 +1,4 @@
-<div id="result">PASS if this test did not crash and 1000th context was null.</div>
+<div id="result">PASS if this test did not crash.</div>
 <script>
 if (window.testRunner) {
     testRunner.waitUntilDone();
@@ -11,8 +11,6 @@ if (window.testRunner) {
         canvii[i].height = 1;
         var context = canvii[i].getContext("webgl", null);
     }
-    if (canvii[1000] != null)
-        document.getElementById("result").innerHTML = "FAIL";
     testRunner.notifyDone();
 }
 </script>

@@ -64,8 +64,13 @@
 
 namespace WebCore {
 
-const int maxActiveContexts = 64;
-int GraphicsContext3D::numActiveContexts = 0;
+static Vector<GraphicsContext3D*>& activeContexts()
+{
+    static NeverDestroyed<Vector<GraphicsContext3D*>> s_activeContexts;
+    return s_activeContexts;
+}
+
+const int MaxActiveContexts = 16;
 const int GPUStatusCheckThreshold = 5;
 int GraphicsContext3D::GPUCheckCounter = 0;
 
@@ -113,13 +118,20 @@ static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBi
 }
 #endif // !PLATFORM(IOS)
 
-PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
+RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
 {
     // This implementation doesn't currently support rendering directly to the HostWindow.
     if (renderStyle == RenderDirectlyToHostWindow)
         return nullptr;
 
-    if (numActiveContexts >= maxActiveContexts)
+    Vector<GraphicsContext3D*>& contexts = activeContexts();
+    
+    if (contexts.size() >= MaxActiveContexts)
+        contexts.at(0)->recycleContext();
+    
+    // Calling recycleContext() above should have lead to the graphics context being
+    // destroyed and thus removed from the active contexts list.
+    if (contexts.size() >= MaxActiveContexts)
         return nullptr;
 
     RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(attrs, hostWindow, renderStyle));
@@ -127,9 +139,9 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     if (!context->m_contextObj)
         return nullptr;
 
-    numActiveContexts++;
+    contexts.append(context.get());
 
-    return context.release();
+    return context;
 }
 
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
@@ -335,8 +347,10 @@ GraphicsContext3D::~GraphicsContext3D()
         CGLDestroyContext(m_contextObj);
 #endif
         [m_webGLLayer setContext:nullptr];
-        numActiveContexts--;
     }
+
+    ASSERT(activeContexts().contains(this));
+    activeContexts().removeFirst(this);
 }
 
 #if PLATFORM(IOS)

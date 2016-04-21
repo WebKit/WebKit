@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 9: There are too many active WebGL contexts on this page, the oldest context will be lost.
+
