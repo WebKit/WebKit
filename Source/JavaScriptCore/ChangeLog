@@ -1,3 +1,17 @@
+2016-04-20  Geoffrey Garen  <ggaren@apple.com>
+
+        JavaScriptCore garbage collection is missing an autorelease pool
+        https://bugs.webkit.org/show_bug.cgi?id=156751
+        <rdar://problem/25787802>
+
+        Reviewed by Mark Lam.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::releaseDelayedReleasedObjects): Add an autorelease pool to
+        catch autoreleases when we call out to arbitrary ObjC code.
+
+        We use the C interface here because this is not an ObjC compilation unit.
+
 2016-04-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG del_by_id support forgets to set()

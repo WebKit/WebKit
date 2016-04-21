@@ -236,8 +236,8 @@ public:
 
     CodeBlockSet& codeBlockSet() { return m_codeBlocks; }
 
-#if USE(CF)
-        template<typename T> void releaseSoon(RetainPtr<T>&&);
+#if USE(FOUNDATION)
+    template<typename T> void releaseSoon(RetainPtr<T>&&);
 #endif
 
     static bool isZombified(JSCell* cell) { return *(void**)cell == zombifiedBits; }
@@ -435,7 +435,8 @@ private:
     Vector<DFG::Worklist*> m_suspendedCompilerWorklists;
 
     std::unique_ptr<HeapVerifier> m_verifier;
-#if USE(CF)
+
+#if USE(FOUNDATION)
     Vector<RetainPtr<CFTypeRef>> m_delayedReleaseObjects;
     unsigned m_delayedReleaseRecursionCount;
 #endif

@@ -58,6 +58,13 @@
 #include <wtf/ProcessID.h>
 #include <wtf/RAMSize.h>
 
+#if __has_include(<objc/objc-internal.h>)
+#include <objc/objc-internal.h>
+#else
+extern "C" void* objc_autoreleasePoolPush(void);
+extern "C" void objc_autoreleasePoolPop(void *context);
+#endif
+
 using namespace std;
 
 namespace JSC {
@@ -355,7 +362,7 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_sweeper(std::make_unique<IncrementalSweeper>(this))
 #endif
     , m_deferralDepth(0)
-#if USE(CF)
+#if USE(FOUNDATION)
     , m_delayedReleaseRecursionCount(0)
 #endif
     , m_helperClient(&heapHelperPool())
@@ -393,7 +400,7 @@ void Heap::lastChanceToFinalize()
 
 void Heap::releaseDelayedReleasedObjects()
 {
-#if USE(CF)
+#if USE(FOUNDATION)
     // We need to guard against the case that releasing an object can create more objects due to the
     // release calling into JS. When those JS call(s) exit and all locks are being dropped we end up
     // back here and could try to recursively release objects. We guard that with a recursive entry
@@ -411,7 +418,9 @@ void Heap::releaseDelayedReleasedObjects()
                 // We need to drop locks before calling out to arbitrary code.
                 JSLock::DropAllLocks dropAllLocks(m_vm);
 
+                void* context = objc_autoreleasePoolPush();
                 objectsToRelease.clear();
+                objc_autoreleasePoolPop(context);
             }
         }
     }
