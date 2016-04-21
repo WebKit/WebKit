@@ -1,3 +1,21 @@
+2016-04-21  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fixed compilation with !ENABLE(SVG_FONTS).
+        https://bugs.webkit.org/show_bug.cgi?id=156850
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests needed.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+        Added missing ENABLE(SVG_FONTS) guards.
+        * css/CSSFontFaceSource.h: Ditto.
+        * platform/graphics/FontCascade.cpp: Ditto.
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::FontCascade::drawGlyphBuffer): Deleted extraneous
+        !ENABLE(SVG_FONTS) guard.
+
 2016-04-21  Beth Dakin  <bdakin@apple.com>
 
         Remove reliance on WebAVMediaSelectionOptionMac for the 

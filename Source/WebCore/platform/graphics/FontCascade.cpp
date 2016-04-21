@@ -1276,10 +1276,6 @@ void FontCascade::drawEmphasisMarksForSimpleText(GraphicsContext& context, const
 
 void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& glyphBuffer, FloatPoint& point) const
 {
-#if !ENABLE(SVG_FONTS)
-    UNUSED_PARAM(run);
-#endif
-
     // Draw each contiguous run of glyphs that use the same font data.
     const Font* fontData = glyphBuffer.fontAt(0);
     FloatSize offset = glyphBuffer.offsetAt(0);

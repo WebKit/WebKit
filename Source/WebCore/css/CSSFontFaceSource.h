@@ -81,7 +81,9 @@ private:
 
     RefPtr<SharedBuffer> m_generatedOTFBuffer;
 
+#if ENABLE(SVG_FONTS)
     RefPtr<SVGFontFaceElement> m_svgFontFaceElement;
+#endif
     std::unique_ptr<FontCustomPlatformData> m_inDocumentCustomPlatformData;
 
     Status m_status { Status::Pending };
