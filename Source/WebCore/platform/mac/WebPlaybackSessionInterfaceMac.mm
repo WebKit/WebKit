@@ -179,13 +179,13 @@ void WebPlaybackSessionInterfaceMac::setSeekableRanges(const TimeRanges& timeRan
 void WebPlaybackSessionInterfaceMac::setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
 {
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
-    [controlsManager setAudioMediaSelectionOptions:options withSelectedIndex:selectedIndex];
+    [controlsManager setAudioMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];
 }
 
 void WebPlaybackSessionInterfaceMac::setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
 {
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
-    [controlsManager setLegibleMediaSelectionOptions:options withSelectedIndex:selectedIndex];
+    [controlsManager setLegibleMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];
 }
 
 void WebPlaybackSessionInterfaceMac::invalidate()
