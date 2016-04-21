@@ -9,6 +9,7 @@ layer at (0,0) size 800x600
           text run at (449,0) width 317: "There shouldn't be any links *inside the selection*"
           text run at (0,17) width 43: "below."
       RenderBlock {DIV} at (0,50) size 784x34
+        RenderBlock (anonymous) at (0,0) size 784x0
         RenderBlock {DIV} at (0,0) size 784x17
           RenderInline {A} at (0,0) size 23x17 [color=#0000EE]
             RenderText {#text} at (0,0) size 23x17
@@ -16,7 +17,6 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 12x17
             RenderText {#text} at (23,0) size 12x17
               text run at (23,0) width 12: "lo"
-        RenderBlock (anonymous) at (0,17) size 784x0
         RenderBlock {DIV} at (0,17) size 784x17
           RenderInline {SPAN} at (0,0) size 15x17
             RenderText {#text} at (0,0) size 15x17

@@ -12,4 +12,6 @@ layer at (0,0) size 800x600
         text run at (629,103) width 153: "You should see several"
         text run at (782,103) width 2: " "
         text run at (0,120) width 307: "pictures above all in the same line/paragraph."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
 caret: position 164 of child 4 {#text} of body

@@ -1,3 +1,11 @@
+2016-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline tests after r180867.
+
+        * platform/gtk/editing/execCommand/5142012-1-expected.txt:
+        * platform/gtk/editing/inserting/insert-at-end-02-expected.txt:
+        * platform/gtk/editing/pasteboard/4989774-expected.txt:
+
 2016-04-21  Nan Wang  <n_wang@apple.com>
 
         AX: stringForTextMarkerRange returning empty string for document range
