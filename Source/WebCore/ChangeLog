@@ -1,3 +1,20 @@
+2016-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCore::TextIterator::subrange()
+        https://bugs.webkit.org/show_bug.cgi?id=156809
+        <rdar://problem/21102730>
+
+        Reviewed by Ryosuke Niwa.
+
+        TextIterator::rangeFromLocationAndLength() may return null. However, we
+        failed to do a null check before calling TextIterator::subrange() with
+        that range.
+
+        No new tests, do not know how to reproduce.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+
 2016-04-20  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Remove IDBRequest/IDBOpenDBRequest's requirement to get an IDBServerConnection around.
