@@ -1,3 +1,15 @@
+2016-04-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [iOS] DumpRenderTree crashed in com.apple.WebCore: WebCore::ResourceLoadNotifier::didFailToLoad
+        https://bugs.webkit.org/show_bug.cgi?id=156829
+        <rdar://problem/23348217>
+
+        Reviewed by Daniel Bates.
+
+        Unmark imported/blink/http/tests/css/remove-placeholder-styles.html as flaky because of bug fix.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2016-04-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Debugger statement gets a space after it when pretty printed

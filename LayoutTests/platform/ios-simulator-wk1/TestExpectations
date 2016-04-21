@@ -1338,7 +1338,6 @@ imported/blink/fast/text-autosizing/print-autosizing.html [ ImageOnlyFailure Pas
 imported/blink/fast/text-autosizing/subtree-relayout-input.html [ ImageOnlyFailure Pass ]
 imported/blink/fast/text-autosizing/subtree-relayout.html [ ImageOnlyFailure Pass ]
 imported/blink/fast/text/international/repaint-glyph-bounds.html [ ImageOnlyFailure Pass ]
-imported/blink/http/tests/css/remove-placeholder-styles.html [ Crash Pass ]
 imported/blink/fast/masking/mask-serializing.html [ Crash Pass ]
 imported/blink/fast/multicol/newmulticol/multicol-becomes-regular-block.html [ Crash Pass ]
 imported/blink/editing/undo/crash-redo-with-iframes.html [ Failure Pass ]

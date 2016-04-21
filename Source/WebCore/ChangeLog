@@ -1,3 +1,23 @@
+2016-04-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [iOS] DumpRenderTree crashed in com.apple.WebCore: WebCore::ResourceLoadNotifier::didFailToLoad
+        https://bugs.webkit.org/show_bug.cgi?id=156829
+        <rdar://problem/23348217>
+
+        Reviewed by Daniel Bates.
+
+        Ensure that the frame associated with the ResourceLoadNotifier is kept alive when notifying the Web Inspector.
+
+        Covered by existing tests.
+
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didFailToLoad):
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveResponse):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveData):
+        (WebCore::ResourceLoadNotifier::dispatchDidFinishLoading):
+        (WebCore::ResourceLoadNotifier::dispatchDidFailLoading):
+
 2016-04-21  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): More IDBConnectionProxy refactoring.
