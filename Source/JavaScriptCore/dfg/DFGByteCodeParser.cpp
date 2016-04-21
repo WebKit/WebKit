@@ -4044,7 +4044,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_del_by_id: {
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
-            addToGraph(DeleteById, OpInfo(identifierNumber), base);
+            set(VirtualRegister(currentInstruction[1].u.operand),
+                addToGraph(DeleteById, OpInfo(identifierNumber), base));
             NEXT_OPCODE(op_del_by_id);
         }
 

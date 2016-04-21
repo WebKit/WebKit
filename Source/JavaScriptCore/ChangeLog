@@ -1,3 +1,14 @@
+2016-04-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG del_by_id support forgets to set()
+        https://bugs.webkit.org/show_bug.cgi?id=156830
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * tests/stress/dfg-del-by-id.js: Added.
+
 2016-04-20  Saam barati  <sbarati@apple.com>
 
         Improve sampling profiler CLI JSC tool
