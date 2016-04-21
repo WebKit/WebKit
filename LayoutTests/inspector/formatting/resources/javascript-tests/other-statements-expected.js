@@ -7,3 +7,6 @@ throw new x;
 throw {
     a: 1
 };
+
+debugger
+debugger;

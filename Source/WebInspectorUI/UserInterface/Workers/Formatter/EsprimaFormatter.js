@@ -785,7 +785,8 @@ EsprimaFormatter = class EsprimaFormatter
             || nodeType === "MetaProperty"
             || nodeType === "RestElement"
             || nodeType === "TemplateElement"
-            || nodeType === "TemplateLiteral") {
+            || nodeType === "TemplateLiteral"
+            || nodeType === "DebuggerStatement") {
             builder.appendToken(tokenValue, tokenOffset);
             return;
         }

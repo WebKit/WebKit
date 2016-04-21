@@ -1,3 +1,16 @@
+2016-04-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Debugger statement gets a space after it when pretty printed
+        https://bugs.webkit.org/show_bug.cgi?id=156867
+        <rdar://problem/25862308>
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/formatting/formatting-javascript-expected.txt:
+        * inspector/formatting/formatting-javascript.html:
+        * inspector/formatting/resources/javascript-tests/other-statements-expected.js: Renamed from LayoutTests/inspector/formatting/resources/javascript-tests/throw-statement-expected.js.
+        * inspector/formatting/resources/javascript-tests/other-statements.js: Renamed from LayoutTests/inspector/formatting/resources/javascript-tests/throw-statement.js.
+
 2016-04-21  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): More IDBConnectionProxy refactoring.
