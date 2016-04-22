@@ -1,3 +1,11 @@
+2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaselining inspector/model/stack-trace.html after r199897
+
+        Unreviewed test gardening.
+
+        * inspector/model/stack-trace-expected.txt:
+
 2016-04-22  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION (r189567): The top of Facebook's messenger.com looks visually broken
