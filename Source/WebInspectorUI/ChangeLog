@@ -1,5 +1,17 @@
 2016-04-22  Timothy Hatcher  <timothy@apple.com>
 
+        Change an assert to a warn based on post review feedback.
+
+        https://bugs.webkit.org/show_bug.cgi?id=156919
+        rdar://problem/25857118
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+
+2016-04-22  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Debugger statement in console does not provide any call frames and debugger UI is confused
 
         https://bugs.webkit.org/show_bug.cgi?id=156919

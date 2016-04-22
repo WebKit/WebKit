@@ -546,7 +546,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         this._activeCallFrame = this._callFrames[0];
 
         if (!this._activeCallFrame) {
-            console.assert("We should always have one call frame. This could indicate we are hitting an exception or debugger statement in an internal injected script.");
+            console.warn("We should always have one call frame. This could indicate we are hitting an exception or debugger statement in an internal injected script.");
             this._didResumeInternal();
             return;
         }
