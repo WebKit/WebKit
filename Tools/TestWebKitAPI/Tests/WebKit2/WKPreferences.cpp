@@ -74,7 +74,7 @@ TEST(WebKit2, WKPreferencesDefaults)
 
     EXPECT_TRUE(WKPreferencesGetJavaScriptEnabled(preference));
     EXPECT_TRUE(WKPreferencesGetLoadsImagesAutomatically(preference));
-    EXPECT_FALSE(WKPreferencesGetOfflineWebApplicationCacheEnabled(preference));
+    EXPECT_TRUE(WKPreferencesGetOfflineWebApplicationCacheEnabled(preference));
     EXPECT_TRUE(WKPreferencesGetLocalStorageEnabled(preference));
     EXPECT_TRUE(WKPreferencesGetXSSAuditorEnabled(preference));
     EXPECT_FALSE(WKPreferencesGetFrameFlatteningEnabled(preference));
