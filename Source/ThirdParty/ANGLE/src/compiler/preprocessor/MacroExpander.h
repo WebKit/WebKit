@@ -83,7 +83,7 @@ class MacroExpander : public Lexer
     Diagnostics *mDiagnostics;
     bool mParseDefined;
 
-    std::auto_ptr<Token> mReserveToken;
+    std::unique_ptr<Token> mReserveToken;
     std::vector<MacroContext *> mContextStack;
 };
 
