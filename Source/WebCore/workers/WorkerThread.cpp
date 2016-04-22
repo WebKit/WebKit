@@ -30,6 +30,7 @@
 
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "DedicatedWorkerGlobalScope.h"
+#include "IDBConnectionProxy.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "ThreadGlobalData.h"
@@ -92,13 +93,16 @@ WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const Str
 {
 }
 
-WorkerThread::WorkerThread(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin)
+WorkerThread::WorkerThread(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin, IDBClient::IDBConnectionProxy* connectionProxy)
     : m_threadID(0)
     , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerReportingProxy(workerReportingProxy)
     , m_startupData(std::make_unique<WorkerThreadStartupData>(scriptURL, userAgent, sourceCode, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin))
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     , m_notificationClient(0)
+#endif
+#if ENABLE(INDEXED_DATABASE)
+    , m_idbConnectionProxy(connectionProxy)
 #endif
 {
     std::lock_guard<StaticLock> lock(threadSetMutex);
@@ -231,6 +235,15 @@ void WorkerThread::releaseFastMallocFreeMemoryInAllThreads()
             WTF::releaseFastMallocFreeMemory();
         });
     }
+}
+
+IDBClient::IDBConnectionProxy* WorkerThread::idbConnectionProxy()
+{
+#if ENABLE(INDEXED_DATABASE)
+    return m_idbConnectionProxy.get();
+#else
+    return nullptr;
+#endif
 }
 
 } // namespace WebCore

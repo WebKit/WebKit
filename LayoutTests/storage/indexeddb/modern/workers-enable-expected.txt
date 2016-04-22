@@ -5,8 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Starting worker: resources/workers-enable.js
 PASS [Worker] self.indexedDB is defined.
-FAIL [Worker] self.indexedDB should be non-null. Was null
-FAIL [Worker] self.indexedDB instanceof IDBFactory should be true. Was false.
+PASS [Worker] self.indexedDB is non-null.
+PASS [Worker] self.indexedDB instanceof IDBFactory is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

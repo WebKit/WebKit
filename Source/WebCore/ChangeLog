@@ -1,3 +1,50 @@
+2016-04-21  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Workers): Get the IDBConnectionProxy from the Document to the WorkerGlobalScope.
+        https://bugs.webkit.org/show_bug.cgi?id=156877
+
+        Reviewed by Tim Horton.
+
+        No new tests (Covered by changes to existing tests).
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope): This is the point on the main thread
+          where we can get the IDBConnectionProxy from the Document and pass it down through Worker
+          machinery so it can end up at the WorkerGlobalScope.
+        
+        Everything else is this patch is just passing it along as needed.
+
+        And cleaning up header style for neglected headers.
+
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        * workers/DedicatedWorkerGlobalScope.h:
+
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+        (WebCore::DedicatedWorkerThread::create):
+        (WebCore::DedicatedWorkerThread::workerObjectProxy):
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::idbConnectionProxy):
+        * workers/WorkerGlobalScope.h:
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::idbConnectionProxy):
+        * workers/WorkerThread.h:
+        (WebCore::WorkerThread::threadID):
+        (WebCore::WorkerThread::runLoop):
+        (WebCore::WorkerThread::workerLoaderProxy):
+        (WebCore::WorkerThread::workerReportingProxy):
+        (WebCore::WorkerThread::getNotificationClient):
+        (WebCore::WorkerThread::setNotificationClient):
+        (WebCore::WorkerThread::workerGlobalScope):
+
 2016-04-21  Anders Carlsson  <andersca@apple.com>
 
         Fix crashes when loading SVG images.

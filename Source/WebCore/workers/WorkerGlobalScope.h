@@ -53,6 +53,10 @@ class WorkerLocation;
 class WorkerNavigator;
 class WorkerThread;
 
+namespace IDBClient {
+class IDBConnectionProxy;
+}
+
 class WorkerGlobalScope : public RefCounted<WorkerGlobalScope>, public Supplementable<WorkerGlobalScope>, public ScriptExecutionContext, public EventTargetWithInlineData {
 public:
     virtual ~WorkerGlobalScope();
@@ -140,7 +144,7 @@ public:
 #endif
 
 protected:
-    WorkerGlobalScope(const URL&, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin);
+    WorkerGlobalScope(const URL&, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin, IDBClient::IDBConnectionProxy*);
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
     void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) override;
@@ -177,6 +181,10 @@ private:
     mutable WorkerEventQueue m_eventQueue;
 
     RefPtr<SecurityOrigin> m_topOrigin;
+
+#if ENABLE(INDEXED_DATABASE)
+    RefPtr<IDBClient::IDBConnectionProxy> m_connectionProxy;
+#endif
 };
 
 } // namespace WebCore
