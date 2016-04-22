@@ -228,7 +228,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 #endif
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_forbidPromptsDepth(0)
-    , m_applicationCacheStorage(pageConfiguration.applicationCacheStorage ? *WTFMove(pageConfiguration.applicationCacheStorage) : ApplicationCacheStorage::singleton())
+    , m_applicationCacheStorage(*WTFMove(pageConfiguration.applicationCacheStorage))
     , m_databaseProvider(*WTFMove(pageConfiguration.databaseProvider))
     , m_storageNamespaceProvider(*WTFMove(pageConfiguration.storageNamespaceProvider))
     , m_userContentProvider(*WTFMove(pageConfiguration.userContentProvider))

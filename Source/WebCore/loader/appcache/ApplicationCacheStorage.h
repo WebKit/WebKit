@@ -52,12 +52,8 @@ public:
         DiskOrOperationFailure
     };
 
-    // FIXME: Migrate off of this singleton and towards a world where each page has a storage.
-    WEBCORE_EXPORT static ApplicationCacheStorage& singleton();
-
     WEBCORE_EXPORT static Ref<ApplicationCacheStorage> create(const String& cacheDirectory, const String& flatFileSubdirectoryName);
 
-    WEBCORE_EXPORT void setCacheDirectory(const String&);
     const String& cacheDirectory() const;
     
     WEBCORE_EXPORT void setMaximumSize(int64_t size);
@@ -142,9 +138,9 @@ private:
     void checkForDeletedResources();
     long long flatFileAreaSize();
 
-    String m_cacheDirectory;
-    String m_cacheFile;
+    const String m_cacheDirectory;
     const String m_flatFileSubdirectoryName;
+    String m_cacheFile;
 
     int64_t m_maximumSize;
     bool m_isMaximumSizeReached;

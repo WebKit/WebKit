@@ -364,14 +364,6 @@ void ApplicationCacheStorage::cacheGroupMadeObsolete(ApplicationCacheGroup* grou
     m_cacheHostSet.remove(urlHostHash(group->manifestURL()));
 }
 
-void ApplicationCacheStorage::setCacheDirectory(const String& cacheDirectory)
-{
-    ASSERT(m_cacheDirectory.isNull());
-    ASSERT(!cacheDirectory.isNull());
-    
-    m_cacheDirectory = cacheDirectory;
-}
-
 const String& ApplicationCacheStorage::cacheDirectory() const
 {
     return m_cacheDirectory;
@@ -1589,10 +1581,4 @@ Ref<ApplicationCacheStorage> ApplicationCacheStorage::create(const String& cache
     return adoptRef(*new ApplicationCacheStorage(cacheDirectory, flatFileSubdirectoryName));
 }
 
-ApplicationCacheStorage& ApplicationCacheStorage::singleton()
-{
-    static ApplicationCacheStorage& storage = create(String(), "ApplicationCache").leakRef();
-    return storage;
 }
-
-} // namespace WebCore
