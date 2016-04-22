@@ -1,3 +1,19 @@
+2016-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCore::DataDetection::detectContentInRange()
+        https://bugs.webkit.org/show_bug.cgi?id=156880
+        <rdar://problem/25622631>
+
+        Reviewed by Darin Adler.
+
+        We would sometimes crash under WebCore::DataDetection::detectContentInRange()
+        when dereferencing a null parentNode pointer. This patch adds a null check
+        for parentNode in the for() loop. It also does some clean up and optimization
+        since I was passing by.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+
 2016-04-22  Keith Miller  <keith_miller@apple.com>
 
         buildObjectForEventListener should not call into JSC with a null ExecState
