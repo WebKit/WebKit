@@ -1,3 +1,16 @@
+2016-04-22  Anders Carlsson  <andersca@apple.com>
+
+        WKWebView WebSQL is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=156928
+        rdar://problem/19029603
+
+        Reviewed by Beth Dakin.
+
+        Give databases a default quota of 50 MB, matching what we have in UIWebView.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::exceededDatabaseQuota):
+
 2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fix builds that do not support AVKit

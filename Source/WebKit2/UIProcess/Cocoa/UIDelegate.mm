@@ -239,7 +239,11 @@ void UIDelegate::UIClient::runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF:
 void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin* securityOrigin, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, std::function<void (unsigned long long)> completionHandler)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler) {
-        completionHandler(currentQuota);
+
+        // Use 50 MB as the default database quota.
+        unsigned long long defaultPerOriginDatabaseQuota = 50 * 1024 * 1024;
+
+        completionHandler(defaultPerOriginDatabaseQuota);
         return;
     }
 
