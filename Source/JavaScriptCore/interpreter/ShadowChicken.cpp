@@ -114,7 +114,7 @@ void ShadowChicken::update(VM&, ExecState* exec)
     if (verbose)
         dataLog("    Highest point since last time: ", RawPointer(highestPointSinceLastTime), "\n");
     
-    while (!m_stack.isEmpty() && m_stack.last().frame < highestPointSinceLastTime)
+    while (!m_stack.isEmpty() && (m_stack.last().frame < highestPointSinceLastTime || m_stack.last().isTailDeleted))
         m_stack.removeLast();
     
     if (verbose)
