@@ -701,7 +701,9 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
 
     if (!existingResource->canReuse(request))
         return Reload;
-    if (existingResource->encoding() != TextEncoding(cachedResourceRequest.charset()))
+
+    auto* textDecoder = existingResource->textResourceDecoder();
+    if (textDecoder && !textDecoder->hasEqualEncodingForCharset(cachedResourceRequest.charset()))
         return Reload;
 
     // Conditional requests should have failed canReuse check.
