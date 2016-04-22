@@ -58,7 +58,7 @@ inline int clz32(uint32_t number)
 inline Optional<double> safeReciprocalForDivByConst(double constant)
 {
     // No "weird" numbers (NaN, Denormal, etc).
-    if (!constant || !isnormal(constant))
+    if (!constant || !std::isnormal(constant))
         return Nullopt;
 
     int exponent;
@@ -75,7 +75,7 @@ inline Optional<double> safeReciprocalForDivByConst(double constant)
         return Nullopt;
 
     double reciprocal = ldexp(1, -exponent);
-    ASSERT(isnormal(reciprocal));
+    ASSERT(std::isnormal(reciprocal));
     ASSERT(1. / constant == reciprocal);
     ASSERT(constant == 1. / reciprocal);
     ASSERT(1. == constant * reciprocal);

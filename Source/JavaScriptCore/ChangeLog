@@ -1,3 +1,10 @@
+2016-04-21  Joonghun Park  <jh718.park@samsung.com>
+
+        [JSC] Fix build break since r199866. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=156892
+
+        * runtime/MathCommon.h: Add namespace std to isnormal invoking.
+
 2016-04-21  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add primitive String support to compare operators
