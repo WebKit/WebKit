@@ -1,5 +1,14 @@
 2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Fixing a typo in my last commit.
+
+        Unreviewed build fix.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in:
+        * WebProcess/cocoa/WebVideoFullscreenManager.messages.in:
+
+2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
+
         Missed some macros to fix builds that do not support AVKit.
 
         Unreviewed build fix.
