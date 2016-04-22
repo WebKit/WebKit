@@ -1,3 +1,15 @@
+2016-04-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        NetworkCacheIOChannelSoup: detach the newly-created IOChannel::readSync thread
+        https://bugs.webkit.org/show_bug.cgi?id=156907
+
+        Reviewed by Carlos Garcia Campos.
+
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::IOChannel::readSyncInThread): Detach the new thread,
+        ensuring the resources are released after the thread exits. Next step is
+        to set up a thread pool and use that, avoiding thread re-creation.
+
 2016-04-21  Dean Jackson  <dino@apple.com>
 
         Backdrop Filter should not be visible if element has visibility:hidden
