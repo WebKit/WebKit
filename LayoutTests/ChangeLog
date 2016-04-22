@@ -1,3 +1,17 @@
+2016-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Support disabling at runtime IndexedDB constructors exposed to workers
+        https://bugs.webkit.org/show_bug.cgi?id=156883
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * storage/indexeddb/modern/resources/workers-disabled.js:
+        * storage/indexeddb/modern/resources/workers-enable.js:
+        * storage/indexeddb/modern/workers-disabled-expected.txt:
+        * storage/indexeddb/modern/workers-enable-expected.txt:
+
 2016-04-22  Dave Hyatt  <hyatt@apple.com>
 
         -webkit-image-set doesn't work inside CSS variables

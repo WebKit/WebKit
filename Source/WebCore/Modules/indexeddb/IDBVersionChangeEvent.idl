@@ -27,7 +27,6 @@
     Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
     ConstructorTemplate=Event,
-    Exposed=(Window,Worker),
 ] interface IDBVersionChangeEvent : Event {
     [InitializedByEventConstructor] readonly attribute unsigned long long oldVersion;
     [InitializedByEventConstructor] readonly attribute unsigned long long? newVersion;
