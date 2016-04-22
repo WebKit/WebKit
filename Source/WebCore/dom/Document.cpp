@@ -3068,7 +3068,7 @@ IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
         if (!currentPage)
             return nullptr;
 
-        m_idbConnectionProxy = IDBClient::IDBConnectionProxy::create(currentPage->idbConnection());
+        m_idbConnectionProxy = &currentPage->idbConnection().proxy();
     }
 
     return m_idbConnectionProxy.get();

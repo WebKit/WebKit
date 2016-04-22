@@ -34,16 +34,21 @@
 namespace WebCore {
 namespace IDBClient {
 
-Ref<IDBConnectionProxy> IDBConnectionProxy::create(IDBConnectionToServer& connection)
-{
-    return adoptRef(*new IDBConnectionProxy(connection));
-}
-
 IDBConnectionProxy::IDBConnectionProxy(IDBConnectionToServer& connection)
     : m_connectionToServer(connection)
     , m_serverConnectionIdentifier(connection.identifier())
 {
     ASSERT(isMainThread());
+}
+
+void IDBConnectionProxy::ref()
+{
+    m_connectionToServer.ref();
+}
+
+void IDBConnectionProxy::deref()
+{
+    m_connectionToServer.deref();
 }
 
 // FIXME: Temporarily required during bringup of IDB-in-Workers.
@@ -52,7 +57,7 @@ IDBConnectionProxy::IDBConnectionProxy(IDBConnectionToServer& connection)
 IDBConnectionToServer& IDBConnectionProxy::connectionToServer()
 {
     ASSERT(isMainThread());
-    return m_connectionToServer.get();
+    return m_connectionToServer;
 }
 
 RefPtr<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
@@ -62,7 +67,7 @@ RefPtr<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext
         return nullptr;
 
     auto request = IDBOpenDBRequest::createOpenRequest(context, *this, databaseIdentifier, version);
-    m_connectionToServer->openDatabase(request.get());
+    m_connectionToServer.openDatabase(request.get());
     return WTFMove(request);
 }
 
@@ -73,7 +78,7 @@ RefPtr<IDBOpenDBRequest> IDBConnectionProxy::deleteDatabase(ScriptExecutionConte
         return nullptr;
 
     auto request = IDBOpenDBRequest::createDeleteRequest(context, *this, databaseIdentifier);
-    m_connectionToServer->deleteDatabase(request.get());
+    m_connectionToServer.deleteDatabase(request.get());
     return WTFMove(request);
 }
 

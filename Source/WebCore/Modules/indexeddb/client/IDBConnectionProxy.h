@@ -28,6 +28,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBConnectionToServer.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -37,9 +38,11 @@ class ScriptExecutionContext;
 
 namespace IDBClient {
 
-class IDBConnectionProxy : public ThreadSafeRefCounted<IDBConnectionProxy> {
+class IDBConnectionToServer;
+
+class IDBConnectionProxy {
 public:
-    static Ref<IDBConnectionProxy> create(IDBConnectionToServer&);
+    IDBConnectionProxy(IDBConnectionToServer&);
 
     RefPtr<IDBOpenDBRequest> openDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
     RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&);
@@ -51,10 +54,11 @@ public:
     // IDBConnectionProxy, remove this.
     IDBConnectionToServer& connectionToServer();
 
-private:
-    IDBConnectionProxy(IDBConnectionToServer&);
+    void ref();
+    void deref();
 
-    Ref<IDBConnectionToServer> m_connectionToServer;
+private:
+    IDBConnectionToServer& m_connectionToServer;
     uint64_t m_serverConnectionIdentifier;
 };
 

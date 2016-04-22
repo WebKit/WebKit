@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBConnectionProxy.h"
 #include "IDBConnectionToServerDelegate.h"
 #include "IDBResourceIdentifier.h"
 #include "TransactionOperation.h"
@@ -55,6 +56,8 @@ public:
     WEBCORE_EXPORT static Ref<IDBConnectionToServer> create(IDBConnectionToServerDelegate&);
 
     uint64_t identifier() const;
+
+    IDBConnectionProxy& proxy();
 
     void deleteDatabase(IDBOpenDBRequest&);
     WEBCORE_EXPORT void didDeleteDatabase(const IDBResultData&);
@@ -136,6 +139,8 @@ private:
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations;
+
+    std::unique_ptr<IDBConnectionProxy> m_proxy;
 };
 
 } // namespace IDBClient

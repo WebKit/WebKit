@@ -1,3 +1,33 @@
+2016-04-22  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Rework the ownership/RefCounting model of IDBConnectionToServer and IDBConnectionProxy.
+        https://bugs.webkit.org/show_bug.cgi?id=156916
+
+        Reviewed by Tim Horton.
+
+        No new tests (No behavior change).
+
+        * Modules/indexeddb/IDBFactory.cpp: Remove unneeded include.
+        
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::ref): Ref the ConnectionToServer.
+        (WebCore::IDBClient::IDBConnectionProxy::deref): Deref it.
+        (WebCore::IDBClient::IDBConnectionProxy::connectionToServer):
+        (WebCore::IDBClient::IDBConnectionProxy::openDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::create): Deleted.
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::IDBConnectionToServer): Create a proxy owned by this.
+        (WebCore::IDBClient::IDBConnectionToServer::proxy): Expose it.
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        
+        * dom/Document.cpp:
+        (WebCore::Document::idbConnectionProxy):
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-04-22  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r194898): Multi download of external SVG defs file by <use> xlinks:href (caching)

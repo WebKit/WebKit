@@ -32,7 +32,6 @@
 #include "ExceptionCode.h"
 #include "IDBBindingUtilities.h"
 #include "IDBConnectionProxy.h"
-#include "IDBConnectionToServer.h"
 #include "IDBDatabaseIdentifier.h"
 #include "IDBKey.h"
 #include "IDBOpenDBRequest.h"
