@@ -1,3 +1,17 @@
+2016-04-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r199738): The ANGLE update broke accelerated compositing in GTK+ port
+        https://bugs.webkit.org/show_bug.cgi?id=156789
+
+        Reviewed by Carlos Garcia Campos.
+
+        After the update, the ANGLE library has to be built with
+        ANGLE_ENABLE_ESSL and ANGLE_ENABLE_GLSL definitions in order
+        to compile in the support for the two translators that Linux-based
+        ports using OpenGL ES or OpenGL require. Missing files are also added.
+
+        * CMakeLists.txt:
+
 2016-04-21  Chris Dumez  <cdumez@apple.com>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from Document
