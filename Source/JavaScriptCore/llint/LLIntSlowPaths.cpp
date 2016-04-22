@@ -67,11 +67,11 @@ namespace JSC { namespace LLInt {
 #ifndef NDEBUG
 #define LLINT_SET_PC_FOR_STUBS() do { \
         exec->codeBlock()->bytecodeOffset(pc); \
-        exec->setCurrentVPC(pc + 1); \
+        exec->setCurrentVPC(pc); \
     } while (false)
 #else
 #define LLINT_SET_PC_FOR_STUBS() do { \
-        exec->setCurrentVPC(pc + 1); \
+        exec->setCurrentVPC(pc); \
     } while (false)
 #endif
 
