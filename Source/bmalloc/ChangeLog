@@ -1,5 +1,26 @@
 2016-04-22  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: vm allocations should plant guard pages
+        https://bugs.webkit.org/show_bug.cgi?id=156937
+
+        Reviewed by Michael Saboff.
+
+        * bmalloc/Object.h:
+        (bmalloc::Object::operator-): Added a - helper.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmRevokePermissions): Added a helper to revoke permissions on
+        a VM region. We use this for guard pages.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::allocateSmallChunk): Add guard pages to the start and
+        end of the chunk.
+
+        Note that we don't guard large chunks becuase we need to be able to merge
+        them. Otherwise, we will run out of virtual addresses.
+
+2016-04-22  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: Constify introspect function pointer table
         https://bugs.webkit.org/show_bug.cgi?id=156936
 
