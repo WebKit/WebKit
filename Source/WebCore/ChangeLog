@@ -1,3 +1,45 @@
+2016-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from Document
+        https://bugs.webkit.org/show_bug.cgi?id=156881
+
+        Reviewed by Darin Adler.
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from Document. There
+        is no major Web-exposed behavior change but the type of the exception
+        being thrown when passing null or not enough parameters has changed for
+        some of the API (It is now always a TypeError as per the Web IDL
+        specification).
+
+        Tests: fast/dom/Document/adoptNode-null.html
+               fast/dom/Document/importNode-null.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        (WebCore::ContainerNode::parserInsertBefore):
+        (WebCore::ContainerNode::parserAppendChild):
+        * dom/Document.cpp:
+        (WebCore::Document::importNode):
+        (WebCore::Document::adoptNode):
+        (WebCore::Document::createNodeIterator):
+        (WebCore::Document::createTreeWalker):
+        (WebCore::Document::setBodyOrFrameset):
+        (WebCore::Document::hasValidNamespaceForElements): Deleted.
+        (WebCore::Document::scheduleForcedStyleRecalc): Deleted.
+        (WebCore::Document::scheduleStyleRecalc): Deleted.
+        (WebCore::Document::unscheduleStyleRecalc): Deleted.
+        (WebCore::Document::hasPendingStyleRecalc): Deleted.
+        (WebCore::Document::hasPendingForcedStyleRecalc): Deleted.
+        (WebCore::Document::recalcStyle): Deleted.
+        (WebCore::Document::explicitClose): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::importNode):
+        * dom/Document.idl:
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::NodeIterator):
+        * dom/NodeIterator.h:
+        (WebCore::NodeIterator::create):
+
 2016-04-21  Frederic Wang  <fwang@igalia.com>
 
         More improvements and explanations regarding resetting CSS properties on the <math> element

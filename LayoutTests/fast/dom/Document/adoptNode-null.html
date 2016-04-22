@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that document.adoptNode(null) throws a TypeError");
+
+shouldThrow("document.adoptNode(null)", "'TypeError: Type error'");
+shouldThrow("document.adoptNode()", "'TypeError: Not enough arguments'");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

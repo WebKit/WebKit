@@ -167,13 +167,9 @@ FAIL Document interface: calling createProcessingInstruction(DOMString,DOMString
             fn.apply(obj, args);
         }" did not throw
 PASS Document interface: iframe.contentDocument must inherit property "importNode" with the proper type (20) 
-FAIL Document interface: calling importNode(Node,boolean) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling importNode(Node,boolean) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "adoptNode" with the proper type (21) 
-FAIL Document interface: calling adoptNode(Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling adoptNode(Node) on iframe.contentDocument with too few arguments must throw TypeError 
 PASS Document interface: iframe.contentDocument must inherit property "createAttribute" with the proper type (22) 
 FAIL Document interface: calling createAttribute(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
@@ -482,13 +478,9 @@ FAIL Document interface: calling createProcessingInstruction(DOMString,DOMString
             fn.apply(obj, args);
         }" did not throw
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "importNode" with the proper type (20) 
-FAIL Document interface: calling importNode(Node,boolean) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling importNode(Node,boolean) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "adoptNode" with the proper type (21) 
-FAIL Document interface: calling adoptNode(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling adoptNode(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createAttribute" with the proper type (22) 
 FAIL Document interface: calling createAttribute(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);

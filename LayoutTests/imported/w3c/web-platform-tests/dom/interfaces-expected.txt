@@ -262,8 +262,8 @@ PASS Document interface: operation createDocumentFragment()
 FAIL Document interface: operation createTextNode(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Document interface: operation createComment(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Document interface: operation createProcessingInstruction(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Document interface: operation importNode(Node,boolean) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Document interface: operation adoptNode(Node) assert_equals: property has wrong .length expected 1 but got 0
+PASS Document interface: operation importNode(Node,boolean) 
+PASS Document interface: operation adoptNode(Node) 
 FAIL Document interface: operation createAttribute(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Document interface: operation createAttributeNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
 FAIL Document interface: operation createEvent(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -331,13 +331,9 @@ FAIL Document interface: calling createProcessingInstruction(DOMString,DOMString
             fn.apply(obj, args);
         }" did not throw
 PASS Document interface: xmlDoc must inherit property "importNode" with the proper type (20) 
-FAIL Document interface: calling importNode(Node,boolean) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling importNode(Node,boolean) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "adoptNode" with the proper type (21) 
-FAIL Document interface: calling adoptNode(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: calling adoptNode(Node) on xmlDoc with too few arguments must throw TypeError 
 PASS Document interface: xmlDoc must inherit property "createAttribute" with the proper type (22) 
 FAIL Document interface: calling createAttribute(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);

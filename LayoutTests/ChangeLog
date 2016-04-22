@@ -1,3 +1,20 @@
+2016-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from Document
+        https://bugs.webkit.org/show_bug.cgi?id=156881
+
+        Reviewed by Darin Adler.
+
+        Add test cases for cases where the type of the exception being thrown
+        has changed.
+
+        * fast/dom/Document/adoptNode-null-expected.txt: Added.
+        * fast/dom/Document/adoptNode-null.html: Added.
+        * fast/dom/Document/importNode-null-expected.txt: Added.
+        * fast/dom/Document/importNode-null.html: Added.
+        * fast/dom/importNode-null-expected.txt: Removed.
+        * fast/dom/importNode-null.html: Removed.
+
 2016-04-21  Dean Jackson  <dino@apple.com>
 
         Backdrop Filter should not be visible if element has visibility:hidden

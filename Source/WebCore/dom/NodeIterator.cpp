@@ -76,8 +76,8 @@ bool NodeIterator::NodePointer::moveToPrevious(Node* root)
     return node;
 }
 
-NodeIterator::NodeIterator(Node* rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
-    : NodeIteratorBase(*rootNode, whatToShow, WTFMove(filter))
+NodeIterator::NodeIterator(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
+    : NodeIteratorBase(rootNode, whatToShow, WTFMove(filter))
     , m_referenceNode(root(), true)
 {
     root()->document().attachNodeIterator(this);

@@ -388,8 +388,8 @@ public:
     RefPtr<Attr> createAttribute(const String& name, ExceptionCode&);
     RefPtr<Attr> createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&, bool shouldIgnoreNamespaceChecks = false);
     RefPtr<EntityReference> createEntityReference(const String& name, ExceptionCode&);
-    RefPtr<Node> importNode(Node* importedNode, ExceptionCode& ec) { return importNode(importedNode, false, ec); }
-    RefPtr<Node> importNode(Node* importedNode, bool deep, ExceptionCode&);
+    RefPtr<Node> importNode(Node& nodeToImport, ExceptionCode& ec) { return importNode(nodeToImport, false, ec); }
+    RefPtr<Node> importNode(Node& nodeToImport, bool deep, ExceptionCode&);
     WEBCORE_EXPORT RefPtr<Element> createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&);
     WEBCORE_EXPORT Ref<Element> createElement(const QualifiedName&, bool createdByParser);
 
@@ -458,7 +458,7 @@ public:
     void setTimerThrottlingEnabled(bool);
     bool isTimerThrottlingEnabled() const { return m_isTimerThrottlingEnabled; }
 
-    RefPtr<Node> adoptNode(Node* source, ExceptionCode&);
+    RefPtr<Node> adoptNode(Node& source, ExceptionCode&);
 
     Ref<HTMLCollection> images();
     Ref<HTMLCollection> embeds();
@@ -548,15 +548,11 @@ public:
 
     WEBCORE_EXPORT Ref<Range> createRange();
 
-    RefPtr<NodeIterator> createNodeIterator(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&&, bool, ExceptionCode&); // For ObjC bindings.
-    RefPtr<NodeIterator> createNodeIterator(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&&, ExceptionCode&);
-    RefPtr<NodeIterator> createNodeIterator(Node* root, unsigned long whatToShow, ExceptionCode&);
-    RefPtr<NodeIterator> createNodeIterator(Node* root, ExceptionCode&);
+    // The last bool parameter is for ObjC bindings.
+    Ref<NodeIterator> createNodeIterator(Node& root, unsigned long whatToShow = 0xFFFFFFFF, RefPtr<NodeFilter>&& = nullptr, bool = false);
 
-    RefPtr<TreeWalker> createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&&, bool, ExceptionCode&); // For ObjC bindings.
-    RefPtr<TreeWalker> createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&&, ExceptionCode&);
-    RefPtr<TreeWalker> createTreeWalker(Node* root, unsigned long whatToShow, ExceptionCode&);
-    RefPtr<TreeWalker> createTreeWalker(Node* root, ExceptionCode&);
+    // The last bool parameter is for ObjC bindings.
+    Ref<TreeWalker> createTreeWalker(Node& root, unsigned long whatToShow = 0xFFFFFFFF, RefPtr<NodeFilter>&& = nullptr, bool = false);
 
     // Special support for editing
     Ref<CSSStyleDeclaration> createCSSStyleDeclaration();
