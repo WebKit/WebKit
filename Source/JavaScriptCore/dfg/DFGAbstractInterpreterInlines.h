@@ -1562,7 +1562,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (node->shouldSpeculateInt32())
                 forNode(node).setType(SpecInt32);
             else if (enableInt52() && node->shouldSpeculateMachineInt())
-                forNode(node).setType(SpecInt52);
+                forNode(node).setType(SpecMachineInt);
             else
                 forNode(node).setType(SpecInt52AsDouble);
             break;

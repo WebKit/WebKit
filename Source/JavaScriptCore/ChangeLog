@@ -1,3 +1,22 @@
+2016-04-22  Mark Lam  <mark.lam@apple.com>
+
+        javascript jit bug affecting Google Maps.
+        https://bugs.webkit.org/show_bug.cgi?id=153431
+
+        Reviewed by Filip Pizlo.
+
+        The issue was due to the abstract interpreter wrongly marking the type of the
+        value read from the Uint3Array as SpecInt52, which precludes it from being an
+        Int32.  This proves to be false, and the generated code failed to handle the case
+        where the read value is actually an Int32.
+
+        The fix is to have the abstract interpreter use SpecMachineInt instead of
+        SpecInt52.
+
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2016-04-22  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] PredictionPropagation should not be in the top 5 heaviest phases

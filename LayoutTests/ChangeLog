@@ -1,3 +1,14 @@
+2016-04-22  Mark Lam  <mark.lam@apple.com>
+
+        javascript jit bug affecting Google Maps.
+        https://bugs.webkit.org/show_bug.cgi?id=153431
+
+        Reviewed by Filip Pizlo.
+
+        * js/regress/bug-153431-expected.txt: Added.
+        * js/regress/bug-153431.html: Added.
+        * js/regress/script-tests/bug-153431.js: Added.
+
 2016-04-22  Geoffrey Garen  <ggaren@apple.com>
 
         super should be available in object literals
