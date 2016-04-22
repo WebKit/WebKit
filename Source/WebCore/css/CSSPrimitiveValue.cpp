@@ -1329,13 +1329,13 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSS_VW:
     case CSS_VH:
     case CSS_VMIN:
-    case CSS_DIMENSION:
     case CSS_FR:
         return m_value.num == other.m_value.num;
     case CSS_PROPERTY_ID:
         return propertyName(m_value.propertyID) == propertyName(other.m_value.propertyID);
     case CSS_VALUE_ID:
         return valueName(m_value.valueID) == valueName(other.m_value.valueID);
+    case CSS_DIMENSION:
     case CSS_STRING:
     case CSS_URI:
     case CSS_ATTR:
@@ -1414,7 +1414,6 @@ bool CSSPrimitiveValue::buildParserValue(CSSParserValue* result) const
     case CSS_VW:
     case CSS_VH:
     case CSS_VMIN:
-    case CSS_DIMENSION:
     case CSS_FR:
         result->fValue = m_value.num;
         result->unit = m_primitiveUnitType;
@@ -1428,6 +1427,7 @@ bool CSSPrimitiveValue::buildParserValue(CSSParserValue* result) const
         result->iValue = m_value.parserOperator;
         result->unit = CSSParserValue::Operator;
         break;
+    case CSS_DIMENSION:
     case CSS_STRING:
     case CSS_URI:
     case CSS_ATTR:
