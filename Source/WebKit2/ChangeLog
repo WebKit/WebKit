@@ -1,3 +1,17 @@
+2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Fix builds that do not support AVKit
+
+        Unreviewed build fix.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::viewDidLeaveWindow):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+
 2016-04-22  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Rework the ownership/RefCounting model of IDBConnectionToServer and IDBConnectionProxy.

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebVideoFullscreenManagerProxy.h"
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if PLATFORM(IOS) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #import "WebPageProxy.h"
 #import "WebPlaybackSessionManagerProxy.h"

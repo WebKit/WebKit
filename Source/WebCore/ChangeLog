@@ -1,3 +1,12 @@
+2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Fix builds that do not support AVKit
+
+        Unreviewed build fix.
+
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+
 2016-04-22  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION (r189567): The top of Facebook's messenger.com looks visually broken

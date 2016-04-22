@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebPageProxy.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && HAVE(AVKIT)
 
 #import "APIUIClient.h"
 #import "DataReference.h"
