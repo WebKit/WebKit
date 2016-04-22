@@ -37,6 +37,15 @@ template <typename T> class Locker {
 public:
     explicit Locker(T& lockable) : m_lockable(&lockable) { lock(); }
     explicit Locker(T* lockable) : m_lockable(lockable) { lock(); }
+
+    enum NoLockingNecessaryTag { NoLockingNecessary };
+    // You should be wary of using this constructor. It's only applicable
+    // in places where there is a locking protocol for a particular object
+    // but it's not necessary to engage in that protocol yet. For example,
+    // this often happens when an object is newly allocated and it can not
+    // be accessed concurrently.
+    explicit Locker(NoLockingNecessaryTag) : m_lockable(nullptr) { }
+
     ~Locker()
     {
         if (m_lockable)

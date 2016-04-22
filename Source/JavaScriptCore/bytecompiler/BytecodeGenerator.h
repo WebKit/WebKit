@@ -289,7 +289,13 @@ namespace JSC {
         ConstructorKind constructorKind() const { return m_codeBlock->constructorKind(); }
         SuperBinding superBinding() const { return m_codeBlock->superBinding(); }
 
-        ParserError generate();
+        template<typename... Args>
+        static ParserError generate(VM& vm, Args&& ...args)
+        {
+            DeferGC deferGC(vm.heap);
+            auto bytecodeGenerator = std::make_unique<BytecodeGenerator>(vm, std::forward<Args>(args)...);
+            return bytecodeGenerator->generate(); 
+        }
 
         bool isArgumentNumber(const Identifier&, int);
 
@@ -737,6 +743,7 @@ namespace JSC {
         int labelScopeDepth() const;
 
     private:
+        ParserError generate();
         void reclaimFreeRegisters();
         Variable variableForLocalEntry(const Identifier&, const SymbolTableEntry&, int symbolTableConstantIndex, bool isLexicallyScoped);
 
@@ -862,7 +869,7 @@ namespace JSC {
         bool m_shouldEmitProfileHooks;
 
         struct SymbolTableStackEntry {
-            Strong<SymbolTable> m_symbolTable;
+            SymbolTable* m_symbolTable;
             RegisterID* m_scope;
             bool m_isWithScope;
             int m_symbolTableConstantIndex;

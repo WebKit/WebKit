@@ -29,6 +29,7 @@
 #include "DeferGC.h"
 #include <wtf/Lock.h>
 #include <wtf/NoLock.h>
+#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -49,6 +50,12 @@ public:
     }
     explicit ConcurrentJITLockerBase(ConcurrentJITLock* lockable)
         : m_locker(lockable)
+    {
+    }
+
+    enum NoLockingNecessaryTag { NoLockingNecessary };
+    explicit ConcurrentJITLockerBase(NoLockingNecessaryTag)
+        : m_locker(ConcurrentJITLockerImpl::NoLockingNecessary)
     {
     }
 
@@ -104,17 +111,31 @@ class ConcurrentJITLocker : public ConcurrentJITLockerBase {
 public:
     ConcurrentJITLocker(ConcurrentJITLock& lockable)
         : ConcurrentJITLockerBase(lockable)
+#if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
+        , m_disallowGC(InPlace)
+#endif
     {
     }
 
     ConcurrentJITLocker(ConcurrentJITLock* lockable)
         : ConcurrentJITLockerBase(lockable)
+#if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
+        , m_disallowGC(InPlace)
+#endif
+    {
+    }
+
+    ConcurrentJITLocker(ConcurrentJITLockerBase::NoLockingNecessaryTag)
+        : ConcurrentJITLockerBase(ConcurrentJITLockerBase::NoLockingNecessary)
+#if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
+        , m_disallowGC(Nullopt)
+#endif
     {
     }
 
 #if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
 private:
-    DisallowGC m_disallowGC;
+    Optional<DisallowGC> m_disallowGC;
 #endif
 };
 

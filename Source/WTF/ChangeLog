@@ -1,3 +1,25 @@
+2016-04-21  Saam barati  <sbarati@apple.com>
+
+        Lets do less locking of symbol tables in the BytecodeGenerator where we don't have race conditions
+        https://bugs.webkit.org/show_bug.cgi?id=156821
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces a new constructor for Locker which implies no
+        locking is necessary. You instantiate such a locker like so:
+        `Locker<Lock> locker(Locker<Lock>::NoLockingNecessary);`
+
+        This is useful to for very specific places when it is not yet
+        required to engage in a specified locking protocol. As an example,
+        we use this in JSC when we allocate a particular object that
+        engages in a locking protocol with the concurrent compiler thread,
+        but before a concurrent compiler thread that could have access
+        to the object exists.
+
+        * wtf/Locker.h:
+        (WTF::Locker::Locker):
+        (WTF::Locker::~Locker):
+
 2016-04-19  Michael Saboff  <msaboff@apple.com>
 
         iTunes crashing JavaScriptCore.dll
