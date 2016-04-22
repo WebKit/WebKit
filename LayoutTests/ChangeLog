@@ -1,3 +1,18 @@
+2016-04-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r199877.
+        https://bugs.webkit.org/show_bug.cgi?id=156918
+
+        The LayoutTest added with this change is failing on all
+        platforms. (Requested by ryanhaddad on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION (r189567): The top of Facebook's messenger.com
+        looks visually broken"
+        https://bugs.webkit.org/show_bug.cgi?id=156869
+        http://trac.webkit.org/changeset/199877
+
 2016-04-22  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r194898): Multi download of external SVG defs file by <use> xlinks:href (caching)
