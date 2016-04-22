@@ -1,3 +1,44 @@
+2016-04-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] PredictionPropagation should not be in the top 5 heaviest phases
+        https://bugs.webkit.org/show_bug.cgi?id=156891
+
+        Reviewed by Mark Lam.
+
+        In DFG, PredictionPropagation is often way too high in profiles.
+        It is a simple phase, it should not be that hot.
+
+        Most of the time is spent accessing memory. This patch attempts
+        to reduce that.
+
+        First, propagate() is split in processInvariants() and propagates().
+        The step processInvariants() sets all the types for nodes for which
+        the type does not depends on other nodes.
+
+        Adding processInvariants() lowers two hotspot inside PredictionPropagation:
+        speculationFromValue() and setPrediction().
+
+        Next, to avoid touching all the nodes at every operation, we keep
+        track of the nodes that actually need propagate().
+        The vector m_dependentNodes keeps the list of those nodes and propagate()
+        only need to process them at each phase.
+
+        This is a smaller gain because growing m_dependentNodes negates
+        some of the gains.
+
+        On 3d-cube, this moves PredictionPropagation from fifth position
+        to ninth. A lot of the remaining overhead is caused by double-voting
+        and cannot be fixed by moving stuff around.
+
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagateToFixpoint): Deleted.
+        (JSC::DFG::PredictionPropagationPhase::propagate): Deleted.
+        (JSC::DFG::PredictionPropagationPhase::propagateForward): Deleted.
+        (JSC::DFG::PredictionPropagationPhase::propagateBackward): Deleted.
+        (JSC::DFG::PredictionPropagationPhase::doDoubleVoting): Deleted.
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting): Deleted.
+        (JSC::DFG::PredictionPropagationPhase::propagateThroughArgumentPositions): Deleted.
+
 2016-04-22  Geoffrey Garen  <ggaren@apple.com>
 
         super should be available in object literals
