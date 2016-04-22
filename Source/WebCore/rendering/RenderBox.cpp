@@ -2889,8 +2889,11 @@ Optional<LayoutUnit> RenderBox::computeLogicalHeightUsing(SizeType heightType, c
 
 Optional<LayoutUnit> RenderBox::computeContentLogicalHeight(SizeType heightType, const Length& height, Optional<LayoutUnit> intrinsicContentHeight) const
 {
-    if (Optional<LayoutUnit> heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(heightType, height, intrinsicContentHeight))
+    if (Optional<LayoutUnit> heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(heightType, height, intrinsicContentHeight)) {
+        if (height.isIntrinsic())
+            return std::max<LayoutUnit>(0, heightIncludingScrollbar.value() - scrollbarLogicalHeight());
         return std::max<LayoutUnit>(0, adjustContentBoxLogicalHeightForBoxSizing(heightIncludingScrollbar) - scrollbarLogicalHeight());
+    }
     return Nullopt;
 }
 
