@@ -1,3 +1,13 @@
+2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Take 2 for fixing builds that do not support AVKit
+
+        Unreviewed build fix.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+
 2016-04-22  Anders Carlsson  <andersca@apple.com>
 
         WKWebView WebSQL is not enabled

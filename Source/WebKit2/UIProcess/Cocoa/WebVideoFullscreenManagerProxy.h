@@ -26,7 +26,7 @@
 #ifndef WebVideoFullscreenManagerProxy_h
 #define WebVideoFullscreenManagerProxy_h
 
-#if PLATFORM(IOS) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "MessageReceiver.h"
 #include <WebCore/GraphicsLayer.h>

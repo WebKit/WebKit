@@ -5082,7 +5082,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     m_visibleScrollerThumbRect = IntRect();
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (m_playbackSessionManager) {
         m_playbackSessionManager->invalidate();
         m_playbackSessionManager = nullptr;
