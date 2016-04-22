@@ -1,3 +1,50 @@
+2016-04-22  Antti Koivisto  <antti@apple.com>
+
+        TextAutoSizingKey should use normal refcounting
+        https://bugs.webkit.org/show_bug.cgi?id=156893
+
+        Reviewed by Andreas Kling.
+
+        Get rid of special refcounting of style in favor of RefPtr. It also becomes a move-only type
+        to support future switch to non-refcounted RenderStyle.
+
+        Also general cleanups and modernization.
+
+        * dom/Document.cpp:
+        (WebCore::TextAutoSizingTraits::constructDeletedValue):
+        (WebCore::TextAutoSizingTraits::isDeletedValue):
+        (WebCore::Document::addAutoSizingNode):
+        (WebCore::Document::validateAutoSizingNodes):
+        (WebCore::Document::resetAutoSizingNodes):
+
+            Adopt to being move-only.
+
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::cloneRenderStyleWithState):
+        (WebCore::TextAutoSizingKey::TextAutoSizingKey):
+
+            Clone the style for safety against mutations. Cloning is cheap.
+
+        (WebCore::TextAutoSizingValue::numNodes):
+        (WebCore::TextAutoSizingValue::adjustNodeSizes):
+        (WebCore::TextAutoSizingValue::reset):
+        (WebCore::TextAutoSizingKey::~TextAutoSizingKey): Deleted.
+        (WebCore::TextAutoSizingKey::operator=): Deleted.
+        (WebCore::TextAutoSizingKey::ref): Deleted.
+        (WebCore::TextAutoSizingKey::deref): Deleted.
+        * rendering/TextAutoSizing.h:
+        (WebCore::TextAutoSizingKey::TextAutoSizingKey):
+        (WebCore::TextAutoSizingKey::style):
+        (WebCore::TextAutoSizingKey::isDeleted):
+        (WebCore::operator==):
+        (WebCore::TextAutoSizingKey::doc): Deleted.
+        (WebCore::TextAutoSizingKey::isValidDoc): Deleted.
+        (WebCore::TextAutoSizingKey::isValidStyle): Deleted.
+        (WebCore::TextAutoSizingKey::deletedKeyDoc): Deleted.
+        (WebCore::TextAutoSizingKey::deletedKeyStyle): Deleted.
+
+            m_doc member is not used for anything except deleted value comparisons. Replace it with a bit.
+
 2016-04-22  Chris Dumez  <cdumez@apple.com>
 
         Crash under FontCache::purgeInactiveFontData()

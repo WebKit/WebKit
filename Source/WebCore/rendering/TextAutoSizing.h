@@ -40,29 +40,29 @@ class Node;
 
 class TextAutoSizingKey {
 public:
-    TextAutoSizingKey();
-    TextAutoSizingKey(RenderStyle*, Document*);
-    ~TextAutoSizingKey();
-    TextAutoSizingKey(const TextAutoSizingKey&);
-    TextAutoSizingKey& operator=(const TextAutoSizingKey&);
-    Document* doc() const { return m_doc; }
-    RenderStyle* style() const { return m_style; }
-    inline bool isValidDoc() const { return m_doc && m_doc != deletedKeyDoc(); }
-    inline bool isValidStyle() const { return m_style && m_style != deletedKeyStyle(); }
-    static Document* deletedKeyDoc() { return reinterpret_cast<Document*>(-1); }
-    static RenderStyle* deletedKeyStyle() { return reinterpret_cast<RenderStyle*>(-1); }
+    TextAutoSizingKey() = default;
+    enum DeletedTag { Deleted };
+    explicit TextAutoSizingKey(DeletedTag);
+    explicit TextAutoSizingKey(RenderStyle*);
+    TextAutoSizingKey(TextAutoSizingKey&&) = default;
+
+    TextAutoSizingKey& operator=(TextAutoSizingKey&&) = default;
+
+    RenderStyle* style() const { return m_style.get(); }
+    inline bool isDeleted() const { return m_isDeleted; }
+
 private:
-    void ref() const;
-    void deref() const;
-    RenderStyle* m_style;
-    Document* m_doc;
+    RefPtr<RenderStyle> m_style;
+    bool m_isDeleted { false };
 };
 
 inline bool operator==(const TextAutoSizingKey& a, const TextAutoSizingKey& b)
 {
-    if (a.isValidStyle() && b.isValidStyle())
-        return a.style()->equalForTextAutosizing(b.style());
-    return a.style() == b.style();
+    if (a.isDeleted() || b.isDeleted())
+        return false;
+    if (!a.style() || !b.style())
+        return a.style() == b.style();
+    return a.style()->equalForTextAutosizing(b.style());
 }
 
 struct TextAutoSizingHash {
