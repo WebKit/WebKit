@@ -1,3 +1,22 @@
+2016-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Anchor element 'ping' property should only apply to http/https destinations
+        https://bugs.webkit.org/show_bug.cgi?id=156801
+        <rdar://problem/25834419>
+
+        Reviewed by Chris Dumez.
+
+        Take advantage of the hyperlink auditing language "UAs may either ignore the
+        ping attribute altogether, or selectively ignore URLs in the list (e.g. ignoring
+        any third-party URLs)" to restrict pings to http/https targets. For details, see
+        <https://html.spec.whatwg.org/multipage/semantics.html#hyperlink-auditing>.
+
+        Tested by http/tests/navigation/ping-attribute tests.
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendPing): Ignore requests to ping anything outside the
+        family of HTTP protocols (http/https).
+
 2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fix builds that do not support AVKit

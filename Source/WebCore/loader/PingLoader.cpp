@@ -92,6 +92,9 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing
 void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinationURL)
 {
+    if (!pingURL.protocolIsInHTTPFamily())
+        return;
+
     ResourceRequest request(pingURL);
     
 #if ENABLE(CONTENT_EXTENSIONS)
