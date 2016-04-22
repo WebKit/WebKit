@@ -1342,6 +1342,58 @@ int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(ExecState* exec, s
     return exec->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(string->value(exec).impl(), std::numeric_limits<int32_t>::min());
 }
 
+uintptr_t JIT_OPERATION operationCompareStringImplLess(StringImpl* a, StringImpl* b)
+{
+    return codePointCompare(a, b) < 0;
+}
+
+uintptr_t JIT_OPERATION operationCompareStringImplLessEq(StringImpl* a, StringImpl* b)
+{
+    return codePointCompare(a, b) <= 0;
+}
+
+uintptr_t JIT_OPERATION operationCompareStringImplGreater(StringImpl* a, StringImpl* b)
+{
+    return codePointCompare(a, b) > 0;
+}
+
+uintptr_t JIT_OPERATION operationCompareStringImplGreaterEq(StringImpl* a, StringImpl* b)
+{
+    return codePointCompare(a, b) >= 0;
+}
+
+uintptr_t JIT_OPERATION operationCompareStringLess(ExecState* exec, JSString* a, JSString* b)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return codePointCompareLessThan(asString(a)->value(exec), asString(b)->value(exec));
+}
+
+uintptr_t JIT_OPERATION operationCompareStringLessEq(ExecState* exec, JSString* a, JSString* b)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return !codePointCompareLessThan(asString(b)->value(exec), asString(a)->value(exec));
+}
+
+uintptr_t JIT_OPERATION operationCompareStringGreater(ExecState* exec, JSString* a, JSString* b)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return codePointCompareLessThan(asString(b)->value(exec), asString(a)->value(exec));
+}
+
+uintptr_t JIT_OPERATION operationCompareStringGreaterEq(ExecState* exec, JSString* a, JSString* b)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return !codePointCompareLessThan(asString(a)->value(exec), asString(b)->value(exec));
+}
+
 void JIT_OPERATION operationNotifyWrite(ExecState* exec, WatchpointSet* set)
 {
     VM& vm = exec->vm();

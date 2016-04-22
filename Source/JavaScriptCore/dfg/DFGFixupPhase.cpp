@@ -468,14 +468,6 @@ private:
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
-            if (node->op() != CompareEq)
-                break;
-            if (Node::shouldSpeculateSymbol(node->child1().node(), node->child2().node())) {
-                fixEdge<SymbolUse>(node->child1());
-                fixEdge<SymbolUse>(node->child2());
-                node->clearFlags(NodeMustGenerate);
-                break;
-            }
             if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
                 fixEdge<StringIdentUse>(node->child1());
                 fixEdge<StringIdentUse>(node->child2());
@@ -485,6 +477,15 @@ private:
             if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && GPRInfo::numberOfRegisters >= 7) {
                 fixEdge<StringUse>(node->child1());
                 fixEdge<StringUse>(node->child2());
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+
+            if (node->op() != CompareEq)
+                break;
+            if (Node::shouldSpeculateSymbol(node->child1().node(), node->child2().node())) {
+                fixEdge<SymbolUse>(node->child1());
+                fixEdge<SymbolUse>(node->child2());
                 node->clearFlags(NodeMustGenerate);
                 break;
             }

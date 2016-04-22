@@ -146,6 +146,14 @@ JSCell* JIT_OPERATION operationStrCat3(ExecState*, EncodedJSValue, EncodedJSValu
 char* JIT_OPERATION operationFindSwitchImmTargetForDouble(ExecState*, EncodedJSValue, size_t tableIndex);
 char* JIT_OPERATION operationSwitchString(ExecState*, size_t tableIndex, JSString*);
 int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(ExecState*, size_t tableIndex, JSString*);
+uintptr_t JIT_OPERATION operationCompareStringImplLess(StringImpl*, StringImpl*);
+uintptr_t JIT_OPERATION operationCompareStringImplLessEq(StringImpl*, StringImpl*);
+uintptr_t JIT_OPERATION operationCompareStringImplGreater(StringImpl*, StringImpl*);
+uintptr_t JIT_OPERATION operationCompareStringImplGreaterEq(StringImpl*, StringImpl*);
+uintptr_t JIT_OPERATION operationCompareStringLess(ExecState*, JSString*, JSString*);
+uintptr_t JIT_OPERATION operationCompareStringLessEq(ExecState*, JSString*, JSString*);
+uintptr_t JIT_OPERATION operationCompareStringGreater(ExecState*, JSString*, JSString*);
+uintptr_t JIT_OPERATION operationCompareStringGreaterEq(ExecState*, JSString*, JSString*);
 void JIT_OPERATION operationNotifyWrite(ExecState*, WatchpointSet*);
 void JIT_OPERATION operationThrowStackOverflowForVarargs(ExecState*) WTF_INTERNAL;
 int32_t JIT_OPERATION operationSizeOfVarargs(ExecState*, EncodedJSValue arguments, int32_t firstVarArgOffset);

@@ -416,6 +416,10 @@ inline CapabilityLevel canCompile(Node* node)
             break;
         if (node->isBinaryUseKind(DoubleRepUse))
             break;
+        if (node->isBinaryUseKind(StringIdentUse))
+            break;
+        if (node->isBinaryUseKind(StringUse))
+            break;
         if (node->isBinaryUseKind(UntypedUse))
             break;
         return CannotCompile;

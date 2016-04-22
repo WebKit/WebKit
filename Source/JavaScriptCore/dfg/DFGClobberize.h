@@ -1145,6 +1145,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CompareLessEq:
     case CompareGreater:
     case CompareGreaterEq:
+        if (node->isBinaryUseKind(StringUse)) {
+            read(HeapObjectCount);
+            write(HeapObjectCount);
+            return;
+        }
         if (!node->isBinaryUseKind(UntypedUse)) {
             def(PureValue(node));
             return;

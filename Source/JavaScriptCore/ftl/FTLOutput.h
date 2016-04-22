@@ -383,6 +383,14 @@ public:
     template<typename... Args>
     LValue call(LType type, LValue function, LValue arg1, Args... args) { return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), function, arg1, args...); }
 
+    template<typename Function, typename... Args>
+    LValue callWithoutSideEffects(B3::Type type, Function function, LValue arg1, Args... args)
+    {
+        return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), B3::Effects::none(),
+            m_block->appendNew<B3::ConstPtrValue>(m_proc, origin(), bitwise_cast<void*>(function)),
+            arg1, args...);
+    }
+
     template<typename FunctionType>
     LValue operation(FunctionType function) { return constIntPtr(bitwise_cast<void*>(function)); }
 
@@ -470,15 +478,6 @@ public:
 
 private:
     OrderMaker<LBasicBlock> m_blockOrder;
-    
-    template<typename Function, typename... Args>
-    LValue callWithoutSideEffects(B3::Type type, Function function, LValue arg1, Args... args)
-    {
-        return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), B3::Effects::none(),
-            m_block->appendNew<B3::ConstPtrValue>(m_proc, origin(), bitwise_cast<void*>(function)),
-            arg1, args...);
-    }
-
 };
 
 template<typename... Params>

@@ -176,6 +176,8 @@ typedef JSCell* JIT_OPERATION (*C_JITOperation_EJJJ)(ExecState*, EncodedJSValue,
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJscZ)(ExecState*, JSScope*, int32_t);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJssSt)(ExecState*, JSString*, Structure*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJssJss)(ExecState*, JSString*, JSString*);
+typedef uintptr_t JIT_OPERATION (*C_JITOperation_B_EJssJss)(ExecState*, JSString*, JSString*);
+typedef uintptr_t JIT_OPERATION (*C_JITOperation_TT)(StringImpl*, StringImpl*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJssJssJss)(ExecState*, JSString*, JSString*, JSString*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EL)(ExecState*, JSLexicalEnvironment*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EO)(ExecState*, JSObject*);

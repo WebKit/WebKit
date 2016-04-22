@@ -4794,6 +4794,8 @@ private:
             [&] (LValue left, LValue right) {
                 return m_out.doubleLessThan(left, right);
             },
+            operationCompareStringImplLess,
+            operationCompareStringLess,
             operationCompareLess);
     }
     
@@ -4806,6 +4808,8 @@ private:
             [&] (LValue left, LValue right) {
                 return m_out.doubleLessThanOrEqual(left, right);
             },
+            operationCompareStringImplLessEq,
+            operationCompareStringLessEq,
             operationCompareLessEq);
     }
     
@@ -4818,6 +4822,8 @@ private:
             [&] (LValue left, LValue right) {
                 return m_out.doubleGreaterThan(left, right);
             },
+            operationCompareStringImplGreater,
+            operationCompareStringGreater,
             operationCompareGreater);
     }
     
@@ -4830,6 +4836,8 @@ private:
             [&] (LValue left, LValue right) {
                 return m_out.doubleGreaterThanOrEqual(left, right);
             },
+            operationCompareStringImplGreaterEq,
+            operationCompareStringGreaterEq,
             operationCompareGreaterEq);
     }
     
@@ -7531,7 +7539,9 @@ private:
     template<typename IntFunctor, typename DoubleFunctor>
     void compare(
         const IntFunctor& intFunctor, const DoubleFunctor& doubleFunctor,
-        S_JITOperation_EJJ helperFunction)
+        C_JITOperation_TT stringIdentFunction,
+        C_JITOperation_B_EJssJss stringFunction,
+        S_JITOperation_EJJ fallbackFunction)
     {
         if (m_node->isBinaryUseKind(Int32Use)) {
             LValue left = lowInt32(m_node->child1());
@@ -7554,9 +7564,29 @@ private:
             setBoolean(doubleFunctor(left, right));
             return;
         }
-        
+
+        if (m_node->isBinaryUseKind(StringIdentUse)) {
+            LValue left = lowStringIdent(m_node->child1());
+            LValue right = lowStringIdent(m_node->child2());
+            setBoolean(m_out.callWithoutSideEffects(m_out.boolean, stringIdentFunction, left, right));
+            return;
+        }
+
+        if (m_node->isBinaryUseKind(StringUse)) {
+            LValue left = lowCell(m_node->child1());
+            LValue right = lowCell(m_node->child2());
+            speculateString(m_node->child1(), left);
+            speculateString(m_node->child2(), right);
+
+            LValue result = vmCall(
+                m_out.boolean, m_out.operation(stringFunction),
+                m_callFrame, left, right);
+            setBoolean(result);
+            return;
+        }
+
         if (m_node->isBinaryUseKind(UntypedUse)) {
-            nonSpeculativeCompare(intFunctor, helperFunction);
+            nonSpeculativeCompare(intFunctor, fallbackFunction);
             return;
         }
         

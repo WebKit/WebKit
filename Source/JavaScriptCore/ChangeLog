@@ -1,3 +1,51 @@
+2016-04-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add primitive String support to compare operators
+        https://bugs.webkit.org/show_bug.cgi?id=156783
+
+        Reviewed by Geoffrey Garen.
+
+        Just the basics.
+        We should eventually inline some of the simplest cases.
+
+        This is a 2% improvement on Longspider. It is unfortunately neutral
+        for Sunspider on my machine because most of the comparison are from
+        baseline.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStringCompare):
+        (JSC::DFG::SpeculativeJIT::compileStringIdentCompare):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareLess):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareLessEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareGreater):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareGreaterEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compare):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::callWithoutSideEffects):
+        * jit/JITOperations.h:
+        * tests/stress/string-compare.js: Added.
+        (makeRope):
+        (makeString):
+        (let.operator.of.operators.eval.compareStringIdent):
+        (let.operator.of.operators.compareStringString):
+        (let.operator.of.operators.compareStringIdentString):
+        (let.operator.of.operators.compareStringStringIdent):
+        (let.operator.of.operators.let.left.of.typeCases.let.right.of.typeCases.eval):
+
 2016-04-21  Benjamin Poulain  <bpoulain@webkit.org>
 
         [JSC] Commute FDiv-by-constant into FMul-by-reciprocal when it is safe

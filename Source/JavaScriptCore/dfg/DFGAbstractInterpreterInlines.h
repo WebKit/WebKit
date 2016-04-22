@@ -1314,11 +1314,24 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
             
-            if (node->op() == CompareEq && leftConst.isString() && rightConst.isString()) {
+            if (leftConst.isString() && rightConst.isString()) {
                 const StringImpl* a = asString(leftConst)->tryGetValueImpl();
                 const StringImpl* b = asString(rightConst)->tryGetValueImpl();
                 if (a && b) {
-                    setConstant(node, jsBoolean(WTF::equal(a, b)));
+                    bool result;
+                    if (node->op() == CompareEq)
+                        result = WTF::equal(a, b);
+                    else if (node->op() == CompareLess)
+                        result = codePointCompare(a, b) < 0;
+                    else if (node->op() == CompareLessEq)
+                        result = codePointCompare(a, b) <= 0;
+                    else if (node->op() == CompareGreater)
+                        result = codePointCompare(a, b) > 0;
+                    else if (node->op() == CompareGreaterEq)
+                        result = codePointCompare(a, b) >= 0;
+                    else
+                        RELEASE_ASSERT_NOT_REACHED();
+                    setConstant(node, jsBoolean(result));
                     break;
                 }
             }

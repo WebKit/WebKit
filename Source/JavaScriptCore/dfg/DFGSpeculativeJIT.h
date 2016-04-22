@@ -1076,6 +1076,16 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(C_JITOperation_B_EJssJss operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(C_JITOperation_TT operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArguments(arg1, arg2);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(C_JITOperation_EJssJssJss operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
@@ -2402,6 +2412,8 @@ public:
     void compileInt52Compare(Node*, MacroAssembler::RelationalCondition);
     void compileBooleanCompare(Node*, MacroAssembler::RelationalCondition);
     void compileDoubleCompare(Node*, MacroAssembler::DoubleCondition);
+    void compileStringCompare(Node*, MacroAssembler::RelationalCondition);
+    void compileStringIdentCompare(Node*, MacroAssembler::RelationalCondition);
     
     bool compileStrictEq(Node*);
     
