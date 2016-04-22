@@ -280,12 +280,6 @@ webkit.org/b/99065 media/media-source/media-source-video-playback-quality.html [
 webkit.org/b/99024 media/encrypted-media [ Skip ]
 webkit.org/b/99024 fast/events/constructors/media-key-event-constructor.html [ Timeout ]
 
-# Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
-webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-nodownload.html [ Pass ]
-webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
-webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
-webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Timeout Pass ]
-
 # CSS Filters is disabled
 webkit.org/b/99026 css3/filters [ Skip ]
 webkit.org/b/99026 fast/filter-image/filter-image.html [ Skip ]

@@ -1,3 +1,14 @@
+2016-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Enable the download attribute support
+        https://bugs.webkit.org/show_bug.cgi?id=99025
+
+        Reviewed by Žan Doberšek.
+
+        Unskip tests that should pass now.
+
+        * platform/gtk/TestExpectations:
+
 2016-04-22  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix bug with positioned items in vertical writing mode
