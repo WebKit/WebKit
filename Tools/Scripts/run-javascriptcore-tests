@@ -332,8 +332,7 @@ sub runJSCStressTests
 
     if (defined($jsonFileName)) {
         my %jsonData = (
-            "numJSCStressFailures" => $numJSCStressFailures,
-            "jscStressFailList" => \@jscStressFailList,
+            "failures" => \@jscStressFailList,
         );
 
         open(my $fileHandler, ">", $jsonFileName) or die;

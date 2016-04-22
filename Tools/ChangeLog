@@ -1,3 +1,17 @@
+2016-04-22  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Add JSC test results in json format to a buildbot log
+        https://bugs.webkit.org/show_bug.cgi?id=156920
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests):
+        Add runtime flag to output json into buildbot
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        Change key names and remove redundant count key
+
 2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update expected result for WKPreferencesGetOfflineWebApplicationCacheEnabled after r199854
