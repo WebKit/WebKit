@@ -1131,7 +1131,7 @@ void GraphicsLayerCA::flushCompositingStateForThisLayerOnly(bool viewportIsStabl
 
 static inline bool accumulatesTransform(const GraphicsLayerCA& layer)
 {
-    return layer.preserves3D() || (layer.parent() && layer.parent()->preserves3D());
+    return !layer.masksToBounds() && (layer.preserves3D() || (layer.parent() && layer.parent()->preserves3D()));
 }
 
 bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformState& state) const

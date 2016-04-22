@@ -975,6 +975,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     // FIXME: when dropping the -webkit prefix on transform-style, we should also have opacity < 1 cause flattening.
     if (style.preserves3D() && (style.overflowX() != OVISIBLE
         || style.overflowY() != OVISIBLE
+        || style.hasClip()
+        || style.clipPath()
         || style.hasFilter()
 #if ENABLE(FILTERS_LEVEL_2)
         || style.hasBackdropFilter()

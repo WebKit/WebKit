@@ -1,3 +1,15 @@
+2016-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        ASSERTION FAILED: accumulation == TransformState::FlattenTransform in WebCore::GraphicsLayerCA::computeVisibleAndCoverageRect
+        https://bugs.webkit.org/show_bug.cgi?id=155362
+
+        Reviewed by Zalan Bujtas.
+
+        Test cases that should not assert in debug builds.
+
+        * compositing/clipping/preserve3d-flatten-assertion-nested.html: Added.
+        * compositing/clipping/preserve3d-flatten-assertion.html: Added.
+
 2016-04-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [iOS] DumpRenderTree crashed in com.apple.WebCore: WebCore::ResourceLoadNotifier::didFailToLoad

@@ -1,3 +1,28 @@
+2016-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        ASSERTION FAILED: accumulation == TransformState::FlattenTransform in WebCore::GraphicsLayerCA::computeVisibleAndCoverageRect
+        https://bugs.webkit.org/show_bug.cgi?id=155362
+
+        Reviewed by Zalan Bujtas.
+
+        A particular configuration of composited RenderLayers with preserve-3d and clipping
+        caused assertions because an ancestor clipping layer had masksToBounds() set, but
+        a preserves3D() parent, triggering an assertion in GraphicsLayerCA::computeVisibleAndCoverageRect().
+        Make two changes to address this:
+
+        First, CSS clip: and clip-path: should force flattening and override preserve-3d in
+        the RenderStyle.
+
+        Second, don't accumulate transforms in GraphicsLayerCA through layers with masksToBounds().
+
+        Tests: compositing/clipping/preserve3d-flatten-assertion-nested.html
+               compositing/clipping/preserve3d-flatten-assertion.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::accumulatesTransform):
+
 2016-04-21  Chris Dumez  <cdumez@apple.com>
 
         Element::idForStyleResolution() is a foot-gun
