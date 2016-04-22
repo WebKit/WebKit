@@ -1,5 +1,13 @@
 2016-04-21  Anders Carlsson  <andersca@apple.com>
 
+        Fix crashes when loading SVG images.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients):
+        Give the SVG page its own application cache storage.
+
+2016-04-21  Anders Carlsson  <andersca@apple.com>
+
         Get rid of ApplicationCacheStorage::singleton
         https://bugs.webkit.org/show_bug.cgi?id=156882
 
