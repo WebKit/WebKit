@@ -1,3 +1,16 @@
+2016-04-22  Dave Hyatt  <hyatt@apple.com>
+
+        REGRESSION (r189567): The top of Facebook's messenger.com looks visually broken
+        https://bugs.webkit.org/show_bug.cgi?id=156869
+        <rdar://problem/23204668>
+
+        Reviewed by Zalan Bujtas.
+
+        Added fast/block/min-content-with-box-sizing.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeIntrinsicLogicalContentHeightUsing):
+
 2016-04-22  Antti Koivisto  <antti@apple.com>
 
         TextAutoSizingKey should use normal refcounting
