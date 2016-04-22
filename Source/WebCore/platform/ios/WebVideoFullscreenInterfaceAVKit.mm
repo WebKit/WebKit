@@ -458,6 +458,7 @@ static void WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerV
     [pipPlayerLayer setVideoGravity:playerLayer.videoGravity];
     [pipPlayerLayer setModelVideoLayerFrame:playerLayer.modelVideoLayerFrame];
     [pipPlayerLayer setPlayerController:playerLayer.playerController];
+    [pipPlayerLayer setFullscreenInterface:playerLayer.fullscreenInterface];
     [pipView addSubview:playerLayerView.videoView];
 }
 

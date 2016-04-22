@@ -1,3 +1,16 @@
+2016-04-22  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Crash at -[WebAVPlayerLayer resolveBounds]
+        https://bugs.webkit.org/show_bug.cgi?id=156931
+        <rdar://problem/25865315> 
+
+        Reviewed by Eric Carlson.
+
+        When cloning the WebAVPlayerLayer, we must copy over the fullscreenInterface to the cloned layer.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerView):
+
 2016-04-22  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebCore::DataDetection::detectContentInRange()
