@@ -1,3 +1,10 @@
+2016-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::isHidden):
+
 2016-04-22  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Crash at -[WebAVPlayerLayer resolveBounds]
