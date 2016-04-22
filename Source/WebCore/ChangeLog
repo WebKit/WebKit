@@ -1,3 +1,10 @@
+2016-04-22  Dean Jackson  <dino@apple.com>
+
+        Attempting to fix Windows build. Add isHidden implementation.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::isHidden):
+
 2016-04-22  Brady Eidson  <beidson@apple.com>
 
         Attempt at a Windows build fix.
