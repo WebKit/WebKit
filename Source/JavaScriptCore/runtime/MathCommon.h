@@ -27,6 +27,7 @@
 #define MathCommon_h
 
 #include "JITOperations.h"
+#include <cmath>
 #include <wtf/Optional.h>
 
 #ifndef JIT_OPERATION

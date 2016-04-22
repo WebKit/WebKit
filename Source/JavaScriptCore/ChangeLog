@@ -1,3 +1,9 @@
+2016-04-22  Benjamin Poulain  <benjamin@webkit.org>
+
+        Attempt to fix the CLoop after r199866
+
+        * runtime/MathCommon.h:
+
 2016-04-22  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Integer Multiply of a number by itself does not need negative zero support
