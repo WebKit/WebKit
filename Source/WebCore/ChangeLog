@@ -1,3 +1,10 @@
+2016-04-22  Brady Eidson  <beidson@apple.com>
+
+        Attempt at a Windows build fix.
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+
 2016-04-22  Dave Hyatt  <hyatt@apple.com>
 
          -webkit-image-set doesn't work inside CSS variables

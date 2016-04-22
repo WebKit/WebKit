@@ -78,7 +78,12 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
     ASSERT(m_scriptExecutionContext);
     Document& document = downcast<Document>(*m_scriptExecutionContext);
 
+#if ENABLE(INDEXED_DATABASE)
     RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, document.topOrigin(), document.idbConnectionProxy());
+#else
+    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, document.topOrigin(), nullptr);
+#endif
+
     workerThreadCreated(thread);
     thread->start();
 }
