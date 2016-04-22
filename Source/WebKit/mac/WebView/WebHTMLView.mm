@@ -6702,6 +6702,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 #endif
 }
 
+#if PLATFORM(MAC)
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
 {
     if (_private) {
@@ -6714,6 +6715,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if (_private)
         _private->drawingIntoLayer = NO;
 }
+#endif
 
 - (BOOL)_web_isDrawingIntoLayer
 {

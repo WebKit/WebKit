@@ -1,3 +1,16 @@
+2016-04-21  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the iOS build: WAKView may not respond to drawLayer:inContext:
+        https://bugs.webkit.org/show_bug.cgi?id=156879
+        <rdar://problem/25772661>
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebHTMLView.mm:
+        WebHTMLView on iOS never uses drawLayer:inContext:, and WAKView
+        doesn't implement it, so this would have thrown an exception
+        if called, anyway. Fix the build with stricter CA protocols.
+
 2016-04-21  Jer Noble  <jer.noble@apple.com>
 
         [WK1] Add WebPlaybackSession support to WebKit
