@@ -216,6 +216,9 @@ private:
 #if PLATFORM(WIN)
     void platformDataInit(HFONT, float size, HDC, WCHAR* faceName);
 #endif
+#if USE(CG)
+    void setFallbackCGFont();
+#endif
 
 public:
     bool m_syntheticBold { false };

@@ -273,7 +273,7 @@ HarfBuzzFace* FontPlatformData::harfBuzzFace() const
     return m_harfBuzzFace.get();
 }
 
-bool FontPlatformData::isFixedPitch()
+bool FontPlatformData::isFixedPitch() const
 {
     return m_fixedWidth;
 }

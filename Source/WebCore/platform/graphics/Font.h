@@ -229,7 +229,7 @@ private:
     float m_maxCharWidth;
     float m_avgCharWidth;
 
-    FontPlatformData m_platformData;
+    const FontPlatformData m_platformData;
 
     mutable RefPtr<GlyphPage> m_glyphPageZero;
     mutable HashMap<unsigned, RefPtr<GlyphPage>> m_glyphPages;

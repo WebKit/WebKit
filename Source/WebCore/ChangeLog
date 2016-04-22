@@ -1,5 +1,43 @@
 2016-04-22  Chris Dumez  <cdumez@apple.com>
 
+        Crash under FontCache::purgeInactiveFontData()
+        https://bugs.webkit.org/show_bug.cgi?id=156822
+        <rdar://problem/25373970>
+
+        Reviewed by Darin Adler.
+
+        In some rare cases, the Font constructor would mutate the FontPlatformData
+        that is being passed in. This is an issue because because our FontCache
+        uses the FontPlatformData as key for the cached fonts. This could lead to
+        crashes because the WTFMove() in FontCache::purgeInactiveFontData() would
+        nullify values in our HashMap but we would then fail to remove them from
+        the HashMap (because the key did not match). We would then reference the
+        null font when looping again when doing font->hasOneRef().
+
+        This patch marks Font::m_platformData member as const to avoid such issues
+        in the future and moves the code altering the FontPlatformData from the
+        Font constructor into the FontPlatformData constructor. The purpose of
+        that code was to initialize FontPlatformData::m_cgFont in case the CGFont
+        passed in the constructor was null.
+
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::fontForPlatformData):
+        (WebCore::FontCache::purgeInactiveFontData):
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::webFallbackFontFamily): Deleted.
+        (WebCore::Font::platformInit): Deleted.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::webFallbackFontFamily):
+        (WebCore::FontPlatformData::setFallbackCGFont):
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::setFallbackCGFont):
+
+2016-04-22  Chris Dumez  <cdumez@apple.com>
+
         Support disabling at runtime IndexedDB constructors exposed to workers
         https://bugs.webkit.org/show_bug.cgi?id=156883
 

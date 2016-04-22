@@ -86,7 +86,6 @@ void Font::platformInit()
         int faceLength = GetTextFace(dc, 0, 0);
         Vector<WCHAR> faceName(faceLength);
         GetTextFace(dc, faceLength, faceName.data());
-        m_platformData.setIsSystemFont(!wcscmp(faceName.data(), L"Lucida Grande"));
         SelectObject(dc, oldFont);
 
         fAscent = ascentConsideringMacAscentHack(faceName.data(), fAscent, fDescent);

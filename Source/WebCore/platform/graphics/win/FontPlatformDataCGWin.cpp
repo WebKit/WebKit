@@ -113,6 +113,8 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
     LOGFONT logfont;
     GetObject(font, sizeof(logfont), &logfont);
     m_cgFont = adoptCF(CGFontCreateWithPlatformFont(&logfont));
+    if (!m_useGDI)
+        m_isSystemFont = !wcscmp(faceName, L"Lucida Grande");
 }
 
 FontPlatformData::FontPlatformData(GDIObject<HFONT> hfont, CGFontRef font, float size, bool bold, bool oblique, bool useGDI)
@@ -153,6 +155,10 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     return m_font == other.m_font
         && m_cgFont == other.m_cgFont
         && m_useGDI == other.m_useGDI;
+}
+
+void FontPlatformData::setFallbackCGFont()
+{
 }
 
 }

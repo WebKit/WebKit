@@ -72,7 +72,7 @@ public:
 
     HarfBuzzFace* harfBuzzFace() const;
 
-    bool isFixedPitch();
+    bool isFixedPitch() const;
     float size() const { return m_size; }
     void setSize(float size) { m_size = size; }
     bool syntheticBold() const { return m_syntheticBold; }

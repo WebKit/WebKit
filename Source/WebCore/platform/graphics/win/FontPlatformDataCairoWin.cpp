@@ -54,6 +54,9 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
 
     m_scaledFont = cairo_scaled_font_create(fontFace, &sizeMatrix, &ctm, fontOptions);
     cairo_font_face_destroy(fontFace);
+
+    if (!m_useGDI && m_size)
+        m_isSystemFont = !wcscmp(faceName, L"Lucida Grande");
 }
 
 FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fontFace, float size, bool bold, bool oblique)

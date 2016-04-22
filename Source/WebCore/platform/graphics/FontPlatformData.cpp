@@ -58,6 +58,8 @@ FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticB
     : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode)
 {
     m_cgFont = cgFont;
+    if (!m_cgFont)
+        setFallbackCGFont();
 }
 #endif
 

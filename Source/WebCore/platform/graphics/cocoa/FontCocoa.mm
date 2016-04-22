@@ -79,13 +79,7 @@ static bool fontHasVerticalGlyphs(CTFontRef ctFont)
     return false;
 }
 
-#if USE(APPKIT)
-static NSString *webFallbackFontFamily(void)
-{
-    static NSString *webFallbackFontFamily = [[[NSFont systemFontOfSize:16.0f] familyName] retain];
-    return webFallbackFontFamily;
-}
-#else
+#if !USE(APPKIT)
 bool fontFamilyShouldNotBeUsedForArabic(CFStringRef fontFamilyName)
 {
     if (!fontFamilyName)
@@ -103,59 +97,6 @@ void Font::platformInit()
     // FIXME: Unify these two codepaths
 #if USE(APPKIT)
     m_syntheticBoldOffset = m_platformData.m_syntheticBold ? 1.0f : 0.f;
-
-    bool failedSetup = false;
-    if (!platformData().cgFont()) {
-        // Ack! Something very bad happened, like a corrupt font.
-        // Try looking for an alternate 'base' font for this renderer.
-
-        // Special case hack to use "Times New Roman" in place of "Times".
-        // "Times RO" is a common font whose family name is "Times".
-        // It overrides the normal "Times" family font.
-        // It also appears to have a corrupt regular variant.
-        NSString *fallbackFontFamily;
-        if ([[m_platformData.nsFont() familyName] isEqual:@"Times"])
-            fallbackFontFamily = @"Times New Roman";
-        else
-            fallbackFontFamily = webFallbackFontFamily();
-        
-        // Try setting up the alternate font.
-        // This is a last ditch effort to use a substitute font when something has gone wrong.
-#if !ERROR_DISABLED
-        RetainPtr<NSFont> initialFont = m_platformData.nsFont();
-#endif
-        if (m_platformData.font())
-            m_platformData.setNSFont([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toFamily:fallbackFontFamily]);
-        else
-            m_platformData.setNSFont([NSFont fontWithName:fallbackFontFamily size:m_platformData.size()]);
-        if (!platformData().cgFont()) {
-            if ([fallbackFontFamily isEqual:@"Times New Roman"]) {
-                // OK, couldn't setup Times New Roman as an alternate to Times, fallback
-                // on the system font.  If this fails we have no alternative left.
-                m_platformData.setNSFont([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toFamily:webFallbackFontFamily()]);
-                if (!platformData().cgFont()) {
-                    // We tried, Times, Times New Roman, and the system font. No joy. We have to give up.
-                    LOG_ERROR("unable to initialize with font %@", initialFont.get());
-                    failedSetup = true;
-                }
-            } else {
-                // We tried the requested font and the system font. No joy. We have to give up.
-                LOG_ERROR("unable to initialize with font %@", initialFont.get());
-                failedSetup = true;
-            }
-        }
-
-        // Report the problem.
-        LOG_ERROR("Corrupt font detected, using %@ in place of %@.",
-            [m_platformData.nsFont() familyName], [initialFont.get() familyName]);
-    }
-
-    // If all else fails, try to set up using the system font.
-    // This is probably because Times and Times New Roman are both unavailable.
-    if (failedSetup) {
-        m_platformData.setNSFont([NSFont systemFontOfSize:[m_platformData.nsFont() pointSize]]);
-        LOG_ERROR("failed to set up font, using system font %s", m_platformData.font());
-    }
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
     // Work around <rdar://problem/19433490>

@@ -396,6 +396,8 @@ Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
     if (addResult.isNewEntry)
         addResult.iterator->value = Font::create(platformData);
 
+    ASSERT(addResult.iterator->value->platformData() == platformData);
+
     return *addResult.iterator->value;
 }
 
@@ -435,8 +437,10 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
         // Fonts may ref other fonts so we loop until there are no changes.
         if (fontsToDelete.isEmpty())
             break;
-        for (auto& font : fontsToDelete)
-            cachedFonts().remove(font->platformData());
+        for (auto& font : fontsToDelete) {
+            bool success = cachedFonts().remove(font->platformData());
+            ASSERT_UNUSED(success, success);
+        }
     };
 
     Vector<FontPlatformDataCacheKey> keysToRemove;

@@ -58,6 +58,77 @@ FontPlatformData::~FontPlatformData()
 {
 }
 
+#if USE(APPKIT)
+
+static NSString *webFallbackFontFamily(void)
+{
+    static NSString *webFallbackFontFamily = [[[NSFont systemFontOfSize:16.0f] familyName] retain];
+    return webFallbackFontFamily;
+}
+
+void FontPlatformData::setFallbackCGFont()
+{
+    if (cgFont())
+        return;
+
+    // Ack! Something very bad happened, like a corrupt font.
+    // Try looking for an alternate 'base' font for this renderer.
+
+    // Special case hack to use "Times New Roman" in place of "Times".
+    // "Times RO" is a common font whose family name is "Times".
+    // It overrides the normal "Times" family font.
+    // It also appears to have a corrupt regular variant.
+    NSString *fallbackFontFamily;
+    if ([[nsFont() familyName] isEqual:@"Times"])
+        fallbackFontFamily = @"Times New Roman";
+    else
+        fallbackFontFamily = webFallbackFontFamily();
+
+    // Try setting up the alternate font.
+    // This is a last ditch effort to use a substitute font when something has gone wrong.
+#if !ERROR_DISABLED
+    RetainPtr<NSFont> initialFont = nsFont();
+#endif
+    if (font())
+        setNSFont([[NSFontManager sharedFontManager] convertFont:nsFont() toFamily:fallbackFontFamily]);
+    else
+        setNSFont([NSFont fontWithName:fallbackFontFamily size:size()]);
+
+    if (cgFont())
+        return;
+
+    if ([fallbackFontFamily isEqual:@"Times New Roman"]) {
+        // OK, couldn't setup Times New Roman as an alternate to Times, fallback
+        // on the system font. If this fails we have no alternative left.
+        setNSFont([[NSFontManager sharedFontManager] convertFont:nsFont() toFamily:webFallbackFontFamily()]);
+        if (cgFont())
+            return;
+
+        // We tried, Times, Times New Roman, and the system font. No joy. We have to give up.
+        LOG_ERROR("unable to initialize with font %@", initialFont.get());
+    } else {
+        // We tried the requested font and the system font. No joy. We have to give up.
+        LOG_ERROR("unable to initialize with font %@", initialFont.get());
+    }
+
+    // Report the problem.
+    LOG_ERROR("Corrupt font detected, using %@ in place of %@.", [nsFont() familyName], [initialFont.get() familyName]);
+
+    // If all else fails, try to set up using the system font.
+    // This is probably because Times and Times New Roman are both unavailable.
+    ASSERT(!cgFont());
+    setNSFont([NSFont systemFontOfSize:[nsFont() pointSize]]);
+    LOG_ERROR("failed to set up font, using system font %s", font());
+}
+
+#else
+
+void FontPlatformData::setFallbackCGFont()
+{
+}
+
+#endif
+
 void FontPlatformData::platformDataInit(const FontPlatformData& f)
 {
     m_font = f.m_font;
