@@ -52,6 +52,7 @@ private:
 
     virtual void setEncoding(const String&) override;
     virtual String encoding() const override;
+    const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.get(); }
     virtual void finishLoading(SharedBuffer*) override;
 
     virtual void destroyDecodedData() override;

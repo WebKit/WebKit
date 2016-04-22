@@ -359,6 +359,11 @@ void TextResourceDecoder::setEncoding(const TextEncoding& encoding, EncodingSour
     m_source = source;
 }
 
+bool TextResourceDecoder::hasEqualEncodingForCharset(const String& charset) const
+{
+    return defaultEncoding(m_contentType, charset) == m_encoding;
+}
+
 // Returns the position of the encoding string.
 static int findXMLEncoding(const char* str, int len, int& encodingLength)
 {

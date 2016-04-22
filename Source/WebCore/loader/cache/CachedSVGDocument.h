@@ -41,6 +41,7 @@ private:
     virtual bool mayTryReplaceEncodedData() const override { return true; }
     virtual void setEncoding(const String&) override;
     virtual String encoding() const override;
+    const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.get(); }
     virtual void finishLoading(SharedBuffer*) override;
 
     RefPtr<SVGDocument> m_document;
