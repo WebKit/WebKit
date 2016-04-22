@@ -64,23 +64,22 @@ bool MutationObserverInterestGroup::isOldValueRequested()
     return false;
 }
 
-void MutationObserverInterestGroup::enqueueMutationRecord(PassRefPtr<MutationRecord> prpMutation)
+void MutationObserverInterestGroup::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
 {
-    RefPtr<MutationRecord> mutation = prpMutation;
     RefPtr<MutationRecord> mutationWithNullOldValue;
     for (auto& observerOptionsPair : m_observers) {
         MutationObserver* observer = observerOptionsPair.key;
         if (hasOldValue(observerOptionsPair.value)) {
-            observer->enqueueMutationRecord(mutation);
+            observer->enqueueMutationRecord(mutation.copyRef());
             continue;
         }
         if (!mutationWithNullOldValue) {
             if (mutation->oldValue().isNull())
-                mutationWithNullOldValue = mutation;
+                mutationWithNullOldValue = mutation.ptr();
             else
-                mutationWithNullOldValue = MutationRecord::createWithNullOldValue(*mutation).ptr();
+                mutationWithNullOldValue = MutationRecord::createWithNullOldValue(mutation).ptr();
         }
-        observer->enqueueMutationRecord(mutationWithNullOldValue);
+        observer->enqueueMutationRecord(*mutationWithNullOldValue);
     }
 }
 

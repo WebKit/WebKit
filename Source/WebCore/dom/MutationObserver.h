@@ -73,16 +73,16 @@ public:
         CharacterDataOldValue = 1 << 6,
     };
 
-    static Ref<MutationObserver> create(PassRefPtr<MutationCallback>);
+    static Ref<MutationObserver> create(Ref<MutationCallback>&&);
 
     ~MutationObserver();
 
-    void observe(Node*, const Dictionary&, ExceptionCode&);
-    Vector<RefPtr<MutationRecord>> takeRecords();
+    void observe(Node&, const Dictionary&, ExceptionCode&);
+    Vector<Ref<MutationRecord>> takeRecords();
     void disconnect();
     void observationStarted(MutationObserverRegistration*);
     void observationEnded(MutationObserverRegistration*);
-    void enqueueMutationRecord(PassRefPtr<MutationRecord>);
+    void enqueueMutationRecord(Ref<MutationRecord>&&);
     void setHasTransientRegistration();
     bool canDeliver();
 
@@ -91,14 +91,14 @@ public:
 private:
     struct ObserverLessThan;
 
-    explicit MutationObserver(PassRefPtr<MutationCallback>);
+    explicit MutationObserver(Ref<MutationCallback>&&);
     void deliver();
 
     static void deliverAllMutations();
     static bool validateOptions(MutationObserverOptions);
 
-    RefPtr<MutationCallback> m_callback;
-    Vector<RefPtr<MutationRecord>> m_records;
+    Ref<MutationCallback> m_callback;
+    Vector<Ref<MutationRecord>> m_records;
     HashSet<MutationObserverRegistration*> m_registrations;
     unsigned m_priority;
 };

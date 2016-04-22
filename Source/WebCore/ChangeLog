@@ -1,3 +1,44 @@
+2016-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from MutationObserver
+        https://bugs.webkit.org/show_bug.cgi?id=156890
+
+        Reviewed by Darin Adler.
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from MutationObserver
+        and clean up / modernize the code a bit. There is not significant Web-
+        exposed behavior change except that MutationObserver.observe() now throws
+        a different kind of exception (a TypeError as per Web IDL) when passed in
+        a null Node.
+
+        No new tests, rebaselined existing test.
+
+        * bindings/js/JSMutationCallback.cpp:
+        (WebCore::JSMutationCallback::call):
+        * bindings/js/JSMutationCallback.h:
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::constructJSMutationObserver):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::ChildListMutationAccumulator::enqueueMutationRecord):
+        * dom/MutationCallback.h:
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::create):
+        (WebCore::MutationObserver::MutationObserver):
+        (WebCore::MutationObserver::observe):
+        (WebCore::MutationObserver::takeRecords):
+        (WebCore::MutationObserver::enqueueMutationRecord):
+        (WebCore::MutationObserver::deliver):
+        (WebCore::MutationObserver::disconnect): Deleted.
+        * dom/MutationObserver.h:
+        * dom/MutationObserver.idl:
+        * dom/MutationObserverInterestGroup.cpp:
+        (WebCore::MutationObserverInterestGroup::enqueueMutationRecord):
+        * dom/MutationObserverInterestGroup.h:
+        * dom/MutationRecord.cpp:
+        (WebCore::MutationRecord::createChildList):
+        * dom/MutationRecord.h:
+
 2016-04-22  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION (r189567): The top of Facebook's messenger.com looks visually broken

@@ -54,8 +54,8 @@ EncodedJSValue JSC_HOST_CALL constructJSMutationObserver(ExecState* exec)
         return throwVMError(exec, createTypeError(exec, "Callback argument must be a function"));
 
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
-    RefPtr<JSMutationCallback> callback = JSMutationCallback::create(object, jsConstructor->globalObject());
-    JSObject* jsObserver = asObject(toJS(exec, jsConstructor->globalObject(), MutationObserver::create(callback.release())));
+    auto callback = JSMutationCallback::create(object, jsConstructor->globalObject());
+    JSObject* jsObserver = asObject(toJS(exec, jsConstructor->globalObject(), MutationObserver::create(WTFMove(callback))));
     PrivateName propertyName;
     jsObserver->putDirect(jsConstructor->globalObject()->vm(), propertyName, object);
     return JSValue::encode(jsObserver);

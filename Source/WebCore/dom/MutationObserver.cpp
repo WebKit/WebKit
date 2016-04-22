@@ -46,14 +46,14 @@ namespace WebCore {
 
 static unsigned s_observerPriority = 0;
 
-Ref<MutationObserver> MutationObserver::create(PassRefPtr<MutationCallback> callback)
+Ref<MutationObserver> MutationObserver::create(Ref<MutationCallback>&& callback)
 {
     ASSERT(isMainThread());
-    return adoptRef(*new MutationObserver(callback));
+    return adoptRef(*new MutationObserver(WTFMove(callback)));
 }
 
-MutationObserver::MutationObserver(PassRefPtr<MutationCallback> callback)
-    : m_callback(callback)
+MutationObserver::MutationObserver(Ref<MutationCallback>&& callback)
+    : m_callback(WTFMove(callback))
     , m_priority(s_observerPriority++)
 {
 }
@@ -71,13 +71,8 @@ bool MutationObserver::validateOptions(MutationObserverOptions options)
         && ((options & CharacterData) || !(options & CharacterDataOldValue));
 }
 
-void MutationObserver::observe(Node* node, const Dictionary& optionsDictionary, ExceptionCode& ec)
+void MutationObserver::observe(Node& node, const Dictionary& optionsDictionary, ExceptionCode& ec)
 {
-    if (!node) {
-        ec = NOT_FOUND_ERR;
-        return;
-    }
-
     static const struct {
         const char* name;
         MutationObserverOptions value;
@@ -107,16 +102,16 @@ void MutationObserver::observe(Node* node, const Dictionary& optionsDictionary, 
         options |= CharacterData;
 
     if (!validateOptions(options)) {
-        ec = SYNTAX_ERR;
+        ec = TypeError;
         return;
     }
 
-    node->registerMutationObserver(this, options, attributeFilter);
+    node.registerMutationObserver(this, options, attributeFilter);
 }
 
-Vector<RefPtr<MutationRecord>> MutationObserver::takeRecords()
+Vector<Ref<MutationRecord>> MutationObserver::takeRecords()
 {
-    Vector<RefPtr<MutationRecord>> records;
+    Vector<Ref<MutationRecord>> records;
     records.swap(m_records);
     return records;
 }
@@ -189,10 +184,10 @@ static void queueMutationObserverCompoundMicrotask()
     MicrotaskQueue::mainThreadQueue().append(WTFMove(microtask));
 }
 
-void MutationObserver::enqueueMutationRecord(PassRefPtr<MutationRecord> mutation)
+void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
 {
     ASSERT(isMainThread());
-    m_records.append(mutation);
+    m_records.append(WTFMove(mutation));
     activeMutationObservers().add(this);
 
     queueMutationObserverCompoundMicrotask();
@@ -236,7 +231,7 @@ void MutationObserver::deliver()
     if (m_records.isEmpty())
         return;
 
-    Vector<RefPtr<MutationRecord>> records;
+    Vector<Ref<MutationRecord>> records;
     records.swap(m_records);
 
     m_callback->call(records, this);

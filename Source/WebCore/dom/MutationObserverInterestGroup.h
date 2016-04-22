@@ -70,7 +70,7 @@ public:
     }
 
     bool isOldValueRequested();
-    void enqueueMutationRecord(PassRefPtr<MutationRecord>);
+    void enqueueMutationRecord(Ref<MutationRecord>&&);
 
 private:
     static std::unique_ptr<MutationObserverInterestGroup> createIfNeeded(Node& target, MutationObserver::MutationType, MutationRecordDeliveryOptions oldValueFlag, const QualifiedName* attributeName = nullptr);

@@ -77,7 +77,7 @@ public:
             return;
 
         if (m_mutation && s_shouldDeliver)
-            m_mutationRecipients->enqueueMutationRecord(m_mutation);
+            m_mutationRecipients->enqueueMutationRecord(m_mutation.releaseNonNull());
 
         s_shouldDeliver = false;
         if (!s_shouldNotifyInspector) {

@@ -51,7 +51,7 @@ JSMutationCallback::~JSMutationCallback()
 {
 }
 
-void JSMutationCallback::call(const Vector<RefPtr<MutationRecord>>& mutations, MutationObserver* observer)
+void JSMutationCallback::call(const Vector<Ref<MutationRecord>>& mutations, MutationObserver* observer)
 {
     if (!canInvokeCallback())
         return;

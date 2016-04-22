@@ -1,3 +1,15 @@
+2016-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from MutationObserver
+        https://bugs.webkit.org/show_bug.cgi?id=156890
+
+        Reviewed by Darin Adler.
+
+        Rebaseline now that MutationObserver.observe() throws a TypeError instead
+        of a NOT_FOUND_ERR when passed a null Node.
+
+        * fast/dom/MutationObserver/observe-exceptions-expected.txt:
+
 2016-04-22  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION (r189567): The top of Facebook's messenger.com looks visually broken

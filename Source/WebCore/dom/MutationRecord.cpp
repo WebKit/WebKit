@@ -42,12 +42,12 @@ namespace {
 
 class ChildListRecord : public MutationRecord {
 public:
-    ChildListRecord(ContainerNode& target, PassRefPtr<NodeList> added, PassRefPtr<NodeList> removed, PassRefPtr<Node> previousSibling, PassRefPtr<Node> nextSibling)
+    ChildListRecord(ContainerNode& target, Ref<NodeList>&& added, Ref<NodeList>&& removed, RefPtr<Node>&& previousSibling, RefPtr<Node>&& nextSibling)
         : m_target(target)
-        , m_addedNodes(added)
-        , m_removedNodes(removed)
-        , m_previousSibling(previousSibling)
-        , m_nextSibling(nextSibling)
+        , m_addedNodes(WTFMove(added))
+        , m_removedNodes(WTFMove(removed))
+        , m_previousSibling(WTFMove(previousSibling))
+        , m_nextSibling(WTFMove(nextSibling))
     {
     }
 
@@ -164,9 +164,9 @@ const AtomicString& CharacterDataRecord::type()
 
 } // namespace
 
-Ref<MutationRecord> MutationRecord::createChildList(ContainerNode& target, PassRefPtr<NodeList> added, PassRefPtr<NodeList> removed, PassRefPtr<Node> previousSibling, PassRefPtr<Node> nextSibling)
+Ref<MutationRecord> MutationRecord::createChildList(ContainerNode& target, Ref<NodeList>&& added, Ref<NodeList>&& removed, RefPtr<Node>&& previousSibling, RefPtr<Node>&& nextSibling)
 {
-    return adoptRef(static_cast<MutationRecord&>(*new ChildListRecord(target, added, removed, previousSibling, nextSibling)));
+    return adoptRef(static_cast<MutationRecord&>(*new ChildListRecord(target, WTFMove(added), WTFMove(removed), WTFMove(previousSibling), WTFMove(nextSibling))));
 }
 
 Ref<MutationRecord> MutationRecord::createAttributes(Element& target, const QualifiedName& name, const AtomicString& oldValue)
