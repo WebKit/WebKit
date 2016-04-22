@@ -79,6 +79,7 @@ public:
     TransformationMatrix sublayerTransform() const override;
     void setSublayerTransform(const TransformationMatrix&) override;
 
+    bool isHidden() const override;
     void setHidden(bool) override;
 
     void setBackingStoreAttached(bool) override;
