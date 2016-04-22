@@ -1,3 +1,10 @@
+2016-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after 4199841.
+
+        * WebApplicationCache.cpp:
+        (WebApplicationCache::WebApplicationCache): Provide missing preference key definition.
+
 2016-04-21  Anders Carlsson  <andersca@apple.com>
 
         Add a missing space, as noticed by Darin.

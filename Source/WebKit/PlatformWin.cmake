@@ -83,6 +83,7 @@ list(APPEND WebKit_INCLUDES
     win/MemoryStream.h
     win/ProgIDMacros.h
     win/WebActionPropertyBag.h
+    win/WebApplicationCache.h
     win/WebArchive.h
     win/WebBackForwardList.h
     win/WebCache.h
@@ -154,6 +155,7 @@ list(APPEND WebKit_SOURCES_Classes
     win/MarshallingHelpers.cpp
     win/MemoryStream.cpp
     win/WebActionPropertyBag.cpp
+    win/WebApplicationCache.cpp
     win/WebArchive.cpp
     win/WebBackForwardList.cpp
     win/WebCache.cpp

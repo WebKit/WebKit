@@ -33,8 +33,13 @@
 #include <WebCore/ApplicationCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/COMPtr.h>
+#include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOrigin.h>
 #include <comutil.h>
+
+using namespace WebCore;
+
+static CFStringRef WebKitLocalCacheDefaultsKey = CFSTR("WebKitLocalCache");
 
 // WebApplicationCache ---------------------------------------------------------------------------
 
