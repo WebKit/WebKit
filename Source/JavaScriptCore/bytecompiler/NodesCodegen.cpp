@@ -498,10 +498,11 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             }
 
             RefPtr<RegisterID> value = generator.emitNode(node->m_assign);
-            bool isClassProperty = node->needsSuperBinding();
-            if (isClassProperty)
+            bool needsSuperBinding = node->needsSuperBinding();
+            if (needsSuperBinding)
                 emitPutHomeObject(generator, value.get(), dst);
-            unsigned attribute = isClassProperty ? (Accessor | DontEnum) : Accessor;
+
+            unsigned attributes = node->isClassProperty() ? (Accessor | DontEnum) : Accessor;
 
             ASSERT(node->m_type & (PropertyNode::Getter | PropertyNode::Setter));
 
@@ -512,16 +513,16 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                     RefPtr<RegisterID> propertyName = generator.emitNode(node->m_expression);
                     generator.emitSetFunctionNameIfNeeded(node->m_assign, value.get(), propertyName.get());
                     if (node->m_type & PropertyNode::Getter)
-                        generator.emitPutGetterByVal(dst, propertyName.get(), attribute, value.get());
+                        generator.emitPutGetterByVal(dst, propertyName.get(), attributes, value.get());
                     else
-                        generator.emitPutSetterByVal(dst, propertyName.get(), attribute, value.get());
+                        generator.emitPutSetterByVal(dst, propertyName.get(), attributes, value.get());
                     continue;
                 }
 
                 if (node->m_type & PropertyNode::Getter)
-                    generator.emitPutGetterById(dst, *node->name(), attribute, value.get());
+                    generator.emitPutGetterById(dst, *node->name(), attributes, value.get());
                 else
-                    generator.emitPutSetterById(dst, *node->name(), attribute, value.get());
+                    generator.emitPutSetterById(dst, *node->name(), attributes, value.get());
                 continue;
             }
 
@@ -562,11 +563,11 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 }
             }
 
-            ASSERT(!pair.second || isClassProperty == pair.second->needsSuperBinding());
-            if (isClassProperty && pair.second)
+            ASSERT(!pair.second || needsSuperBinding == pair.second->needsSuperBinding());
+            if (needsSuperBinding && pair.second)
                 emitPutHomeObject(generator, secondReg, dst);
 
-            generator.emitPutGetterSetter(dst, *node->name(), attribute, getterReg.get(), setterReg.get());
+            generator.emitPutGetterSetter(dst, *node->name(), attributes, getterReg.get(), setterReg.get());
         }
     }
 
@@ -585,8 +586,12 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
         else
             propertyNameRegister = generator.emitNode(node.m_expression);
 
+        unsigned attributes = BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable;
+        if (!node.isClassProperty())
+            attributes |= BytecodeGenerator::PropertyEnumerable;
+        generator.emitSetFunctionNameIfNeeded(node.m_assign, value.get(), propertyNameRegister.get());
         generator.emitCallDefineProperty(newObj, propertyNameRegister.get(),
-            value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable, m_position);
+            value.get(), nullptr, nullptr, attributes, m_position);
         return;
     }
     if (const auto* identifier = node.name()) {

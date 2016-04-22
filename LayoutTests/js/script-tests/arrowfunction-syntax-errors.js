@@ -48,22 +48,22 @@ shouldThrow('var arr2 = {a, b} => a + b;');
 shouldThrow('var arr3 = {c:a,d:b} => a + b;');
 shouldThrow('var arr3 = {c:b,d:a} => a + b;');
 
-shouldThrow('var arr4 = () => { super(); };', '"SyntaxError: Cannot call super() outside of a class constructor."');
-shouldThrow('var arr4 = () => { super; };', '"SyntaxError: Cannot reference super."');
-shouldThrow('var arr5 = () => { super.getValue(); };', '"SyntaxError: super can only be used in a method of a derived class."');
+shouldThrow('var arr4 = () => { super(); };', '"SyntaxError: super is not valid in this context."');
+shouldThrow('var arr4 = () => { super; };', '"SyntaxError: super is not valid in this context."');
+shouldThrow('var arr5 = () => { super.getValue(); };', '"SyntaxError: super is not valid in this context."');
 
-shouldThrow('var arr6 = () =>  super();', '"SyntaxError: Cannot call super() outside of a class constructor."');
-shouldThrow('var arr7 = () =>  super;', '"SyntaxError: Cannot reference super."');
-shouldThrow('var arr8 = () =>  super.getValue();', '"SyntaxError: super can only be used in a method of a derived class."');
+shouldThrow('var arr6 = () =>  super();', '"SyntaxError: super is not valid in this context."');
+shouldThrow('var arr7 = () =>  super;', '"SyntaxError: super is not valid in this context."');
+shouldThrow('var arr8 = () =>  super.getValue();', '"SyntaxError: super is not valid in this context."');
 
-shouldThrow('class A { constructor() { function a () { return () => { super(); };}}', '"SyntaxError: Cannot call super() outside of a class constructor."');
-shouldThrow('class B { constructor() { function b () { return () => { super; }; }; }}', '"SyntaxError: Cannot reference super."');
-shouldThrow('class C { constructor() { function c () { return () => { super.getValue(); };}}', '"SyntaxError: super can only be used in a method of a derived class."');
+shouldThrow('class A { constructor() { function a () { return () => { super(); };}}', '"SyntaxError: super is not valid in this context."');
+shouldThrow('class B { constructor() { function b () { return () => { super; }; }; }}', '"SyntaxError: super is not valid in this context."');
+shouldThrow('class C { constructor() { function c () { return () => { super.getValue(); };}}', '"SyntaxError: super is not valid in this context."');
 
-shouldThrow('class D { constructor() { function a () { return () => super(); }}', '"SyntaxError: Cannot call super() outside of a class constructor."');
-shouldThrow('class E { constructor() { function b () { return () => super; }; }}', '"SyntaxError: Cannot reference super."');
-shouldThrow('class F { constructor() { function c () { return () => super.getValue(); }}', '"SyntaxError: super can only be used in a method of a derived class."');
-shouldThrow('class G {}; class G2 extends G { getValue() { function c () { return () => super.getValue(); }}', '"SyntaxError: super can only be used in a method of a derived class."');
-shouldThrow('class H {}; class H2 extends H { method() { function *gen() { let arr = () => super.getValue(); arr(); } } }', '"SyntaxError: super can only be used in a method of a derived class."');
+shouldThrow('class D { constructor() { function a () { return () => super(); }}', '"SyntaxError: super is not valid in this context."');
+shouldThrow('class E { constructor() { function b () { return () => super; }; }}', '"SyntaxError: super is not valid in this context."');
+shouldThrow('class F { constructor() { function c () { return () => super.getValue(); }}', '"SyntaxError: super is not valid in this context."');
+shouldThrow('class G {}; class G2 extends G { getValue() { function c () { return () => super.getValue(); }}', '"SyntaxError: super is not valid in this context."');
+shouldThrow('class H {}; class H2 extends H { method() { function *gen() { let arr = () => super.getValue(); arr(); } } }', '"SyntaxError: super is not valid in this context."');
 
 var successfullyParsed = true;

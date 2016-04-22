@@ -82,3 +82,12 @@ shouldThrow("({ foo(a, b) { if }, bar(){} })");
 shouldBeTrue("({__proto__: function(){}}) instanceof Function");
 shouldBeFalse("({__proto__(){}}) instanceof Function");
 shouldBeTrue("({__proto__(){}}).__proto__ instanceof Function");
+
+shouldThrow("{ f() { return super.f(); } }.f()");
+shouldThrow("new ({ f() { return super(); }.f)");
+shouldThrow("o = { f() { } }; new ({ __proto__: o, f() { return super(); } }).f");
+shouldThrow("({ f() { return (() => super.f())(); } }).f()");
+shouldBeTrue("o = { f() { return true; } }; ({ __proto__: o, f() { return super.f(); } }).f()");
+shouldBeTrue("o = { get p() { return true; } }; ({ __proto__: o, get p() { return super.p; } }).p");
+shouldBeTrue("o = { set p(p2) { } }; ({ __proto__: o, set p(p2) { super.p = p2; } }).p = true");
+shouldBeTrue("o = { f() { return true; } }; ({ __proto__: o, f() { return (() => super.f())(); } }).f()");

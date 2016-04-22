@@ -1,3 +1,19 @@
+2016-04-22  Geoffrey Garen  <ggaren@apple.com>
+
+        super should be available in object literals
+        https://bugs.webkit.org/show_bug.cgi?id=156933
+
+        Reviewed by Saam Barati.
+
+        Updated expected results and added a few new tests.
+
+        * js/arrowfunction-syntax-errors-expected.txt:
+        * js/class-syntax-super-expected.txt:
+        * js/object-literal-methods-expected.txt:
+        * js/script-tests/arrowfunction-syntax-errors.js:
+        * js/script-tests/class-syntax-super.js:
+        * js/script-tests/object-literal-methods.js:
+
 2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaselining inspector/model/stack-trace.html after r199897

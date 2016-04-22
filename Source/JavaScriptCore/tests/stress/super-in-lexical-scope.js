@@ -18,33 +18,33 @@ function testSyntaxError(script, message) {
         throw new Error("Expected syntax error not thrown");
 
     if (String(error) !== message)
-        throw new Error("Bad error: " + String(error));
+        throw new Error("Bad error: " + String(error) + "(Expected: " + message + ")");
 }
 
-testSyntaxError(`super()`, `SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.`);
-testSyntaxError(`super.hello()`, `SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.`);
+testSyntaxError(`super()`, `SyntaxError: super is not valid in this context.`);
+testSyntaxError(`super.hello()`, `SyntaxError: super is not valid in this context.`);
 testSyntaxError(`
 {
     super();
 }
-`, `SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.`);
+`, `SyntaxError: super is not valid in this context.`);
 testSyntaxError(`
 {
     super.hello();
 }
-`, `SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.`);
+`, `SyntaxError: super is not valid in this context.`);
 testSyntaxError(`
 function test()
 {
     super();
 }
-`, `SyntaxError: Cannot call super() outside of a class constructor.`);
+`, `SyntaxError: super is not valid in this context.`);
 testSyntaxError(`
 function test()
 {
     super.hello();
 }
-`, `SyntaxError: super can only be used in a method of a derived class.`);
+`, `SyntaxError: super is not valid in this context.`);
 testSyntaxError(`
 function test()
 {
@@ -52,7 +52,7 @@ function test()
         super();
     }
 }
-`, `SyntaxError: Cannot call super() outside of a class constructor.`);
+`, `SyntaxError: super is not valid in this context.`);
 testSyntaxError(`
 function test()
 {
@@ -60,4 +60,4 @@ function test()
         super.hello();
     }
 }
-`, `SyntaxError: super can only be used in a method of a derived class.`);
+`, `SyntaxError: super is not valid in this context.`);

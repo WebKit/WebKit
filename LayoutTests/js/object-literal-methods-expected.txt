@@ -68,6 +68,14 @@ PASS ({ foo(a, b) { if }, bar(){} }) threw exception SyntaxError: Unexpected tok
 PASS ({__proto__: function(){}}) instanceof Function is true
 PASS ({__proto__(){}}) instanceof Function is false
 PASS ({__proto__(){}}).__proto__ instanceof Function is true
+PASS { f() { return super.f(); } }.f() threw exception SyntaxError: Unexpected token '{'.
+PASS new ({ f() { return super(); }.f) threw exception SyntaxError: super is not valid in this context..
+PASS o = { f() { } }; new ({ __proto__: o, f() { return super(); } }).f threw exception SyntaxError: super is not valid in this context..
+PASS ({ f() { return (() => super.f())(); } }).f() threw exception TypeError: super.f is not a function. (In 'super.f()', 'super.f' is undefined).
+PASS o = { f() { return true; } }; ({ __proto__: o, f() { return super.f(); } }).f() is true
+PASS o = { get p() { return true; } }; ({ __proto__: o, get p() { return super.p; } }).p is true
+PASS o = { set p(p2) { } }; ({ __proto__: o, set p(p2) { super.p = p2; } }).p = true is true
+PASS o = { f() { return true; } }; ({ __proto__: o, f() { return (() => super.f())(); } }).f() is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

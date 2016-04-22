@@ -220,22 +220,24 @@ namespace JSC {
     {
     }
 
-    inline PropertyNode::PropertyNode(const Identifier& name, ExpressionNode* assign, Type type, PutType putType, SuperBinding superBinding = SuperBinding::NotNeeded)
+    inline PropertyNode::PropertyNode(const Identifier& name, ExpressionNode* assign, Type type, PutType putType, SuperBinding superBinding, bool isClassProperty)
         : m_name(&name)
         , m_assign(assign)
         , m_type(type)
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_putType(putType)
+        , m_isClassProperty(isClassProperty)
     {
     }
 
-    inline PropertyNode::PropertyNode(ExpressionNode* name, ExpressionNode* assign, Type type, PutType putType, SuperBinding superBinding = SuperBinding::NotNeeded)
+    inline PropertyNode::PropertyNode(ExpressionNode* name, ExpressionNode* assign, Type type, PutType putType, SuperBinding superBinding, bool isClassProperty)
         : m_name(0)
         , m_expression(name)
         , m_assign(assign)
         , m_type(type)
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_putType(putType)
+        , m_isClassProperty(isClassProperty)
     {
     }
 

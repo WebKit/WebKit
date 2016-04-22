@@ -16,8 +16,8 @@ PASS (new Derived).baseMethodInGetterSetter = 1; valueInSetter:::(new Base).base
 PASS Derived.staticMethod():::"base3"
 PASS (new SecondDerived).chainMethod().toString():::["base", "derived", "secondDerived"].toString()
 PASS x = class extends Base { constructor() { super(); } super() {} }
-PASS x = class extends Base { constructor() { super(); } method() { super() } }:::SyntaxError: Cannot call super() outside of a class constructor.
-PASS x = class extends Base { constructor() { super(); } method() { super } }:::SyntaxError: Cannot reference super.
+PASS x = class extends Base { constructor() { super(); } method() { super() } }:::SyntaxError: super is not valid in this context.
+PASS x = class extends Base { constructor() { super(); } method() { super } }:::SyntaxError: super is not valid in this context.
 PASS x = class extends Base { constructor() { super(); } method() { return new super } }:::SyntaxError: Cannot use new with super.
 PASS x = class extends Base { constructor() { super(); } method1() { delete (super.foo) } method2() { delete super["foo"] } }
 PASS (new x).method1():::ReferenceError: Cannot delete a super property
@@ -37,18 +37,18 @@ PASS x instanceof Object
 PASS new (class extends null { constructor() { } }):::ReferenceError: Cannot access uninitialized variable.
 PASS new (class extends null { constructor() { return 1; } }):::TypeError: Cannot return a non-object type in the constructor of a derived class.
 PASS new (class extends null { constructor() { super() } }):::TypeError: function is not a constructor (evaluating 'super()')
-PASS new (class { constructor() { super() } }):::SyntaxError: Cannot call super() in a base class constructor.
-PASS function x() { super(); }:::SyntaxError: Cannot call super() outside of a class constructor.
-PASS new (class extends Object { constructor() { function x() { super() } } }):::SyntaxError: Cannot call super() outside of a class constructor.
-PASS new (class extends Object { constructor() { function x() { super.method } } }):::SyntaxError: super can only be used in a method of a derived class.
-PASS function x() { super.method(); }:::SyntaxError: super can only be used in a method of a derived class.
-PASS function x() { super(); }:::SyntaxError: Cannot call super() outside of a class constructor.
-PASS eval("super.method()"):::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
-PASS eval("super()"):::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
-PASS (function () { eval("super.method()");})():::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
-PASS (function () { eval("super()");})():::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
-PASS new (class { constructor() { (function () { eval("super()");})(); } }):::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
-PASS (new (class { method() { (function () { eval("super.method()");})(); }})).method():::SyntaxError: 'super' is only valid inside a function or an 'eval' inside a function.
+PASS new (class { constructor() { super() } }):::SyntaxError: super is not valid in this context.
+PASS function x() { super(); }:::SyntaxError: super is not valid in this context.
+PASS new (class extends Object { constructor() { function x() { super() } } }):::SyntaxError: super is not valid in this context.
+PASS new (class extends Object { constructor() { function x() { super.method } } }):::SyntaxError: super is not valid in this context.
+PASS function x() { super.method(); }:::SyntaxError: super is not valid in this context.
+PASS function x() { super(); }:::SyntaxError: super is not valid in this context.
+PASS eval("super.method()"):::SyntaxError: super is not valid in this context.
+PASS eval("super()"):::SyntaxError: super is not valid in this context.
+PASS (function () { eval("super.method()");})():::SyntaxError: super is not valid in this context.
+PASS (function () { eval("super()");})():::SyntaxError: super is not valid in this context.
+PASS new (class { constructor() { (function () { eval("super()");})(); } }):::SyntaxError: super is not valid in this context.
+PASS (new (class { method() { (function () { eval("super.method()");})(); }})).method():::SyntaxError: super is not valid in this context.
 PASS successfullyParsed
 
 TEST COMPLETE

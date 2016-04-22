@@ -410,7 +410,7 @@ public:
     }
 
     NEVER_INLINE PropertyNode* createGetterOrSetterProperty(const JSTokenLocation& location, PropertyNode::Type type, bool,
-        const Identifier* name, const ParserFunctionInfo<ASTBuilder>& functionInfo, SuperBinding superBinding)
+        const Identifier* name, const ParserFunctionInfo<ASTBuilder>& functionInfo, bool isClassProperty)
     {
         ASSERT(name);
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
@@ -418,27 +418,27 @@ public:
         functionInfo.body->setInferredName(*name);
         SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn);
         MethodDefinitionNode* methodDef = new (m_parserArena) MethodDefinitionNode(location, m_vm->propertyNames->nullIdentifier, functionInfo.body, source);
-        return new (m_parserArena) PropertyNode(*name, methodDef, type, PropertyNode::Unknown, superBinding);
+        return new (m_parserArena) PropertyNode(*name, methodDef, type, PropertyNode::Unknown, SuperBinding::Needed, isClassProperty);
     }
 
     NEVER_INLINE PropertyNode* createGetterOrSetterProperty(const JSTokenLocation& location, PropertyNode::Type type, bool,
-        ExpressionNode* name, const ParserFunctionInfo<ASTBuilder>& functionInfo, SuperBinding superBinding)
+        ExpressionNode* name, const ParserFunctionInfo<ASTBuilder>& functionInfo, bool isClassProperty)
     {
         ASSERT(name);
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn);
         MethodDefinitionNode* methodDef = new (m_parserArena) MethodDefinitionNode(location, m_vm->propertyNames->nullIdentifier, functionInfo.body, source);
-        return new (m_parserArena) PropertyNode(name, methodDef, type, PropertyNode::Unknown, superBinding);
+        return new (m_parserArena) PropertyNode(name, methodDef, type, PropertyNode::Unknown, SuperBinding::Needed, isClassProperty);
     }
 
     NEVER_INLINE PropertyNode* createGetterOrSetterProperty(VM* vm, ParserArena& parserArena, const JSTokenLocation& location, PropertyNode::Type type, bool,
-        double name, const ParserFunctionInfo<ASTBuilder>& functionInfo, SuperBinding superBinding)
+        double name, const ParserFunctionInfo<ASTBuilder>& functionInfo, bool isClassProperty)
     {
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         const Identifier& ident = parserArena.identifierArena().makeNumericIdentifier(vm, name);
         SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn);
         MethodDefinitionNode* methodDef = new (m_parserArena) MethodDefinitionNode(location, vm->propertyNames->nullIdentifier, functionInfo.body, source);
-        return new (m_parserArena) PropertyNode(ident, methodDef, type, PropertyNode::Unknown, superBinding);
+        return new (m_parserArena) PropertyNode(ident, methodDef, type, PropertyNode::Unknown, SuperBinding::Needed, isClassProperty);
     }
 
     ArgumentsNode* createArguments() { return new (m_parserArena) ArgumentsNode(); }
@@ -446,7 +446,7 @@ public:
     ArgumentListNode* createArgumentsList(const JSTokenLocation& location, ExpressionNode* arg) { return new (m_parserArena) ArgumentListNode(location, arg); }
     ArgumentListNode* createArgumentsList(const JSTokenLocation& location, ArgumentListNode* args, ExpressionNode* arg) { return new (m_parserArena) ArgumentListNode(location, args, arg); }
 
-    PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool, SuperBinding superBinding = SuperBinding::NotNeeded)
+    PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool, SuperBinding superBinding, bool isClassProperty)
     {
         if (node->isFuncExprNode()) {
             auto metadata = static_cast<FuncExprNode*>(node)->metadata();
@@ -454,13 +454,13 @@ public:
             metadata->setInferredName(*propertyName);
         } else if (node->isClassExprNode())
             static_cast<ClassExprNode*>(node)->setEcmaName(*propertyName);
-        return new (m_parserArena) PropertyNode(*propertyName, node, type, putType, superBinding);
+        return new (m_parserArena) PropertyNode(*propertyName, node, type, putType, superBinding, isClassProperty);
     }
-    PropertyNode* createProperty(VM* vm, ParserArena& parserArena, double propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool)
+    PropertyNode* createProperty(VM* vm, ParserArena& parserArena, double propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool, SuperBinding superBinding, bool isClassProperty)
     {
-        return new (m_parserArena) PropertyNode(parserArena.identifierArena().makeNumericIdentifier(vm, propertyName), node, type, putType);
+        return new (m_parserArena) PropertyNode(parserArena.identifierArena().makeNumericIdentifier(vm, propertyName), node, type, putType, superBinding, isClassProperty);
     }
-    PropertyNode* createProperty(ExpressionNode* propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool, SuperBinding superBinding = SuperBinding::NotNeeded) { return new (m_parserArena) PropertyNode(propertyName, node, type, putType, superBinding); }
+    PropertyNode* createProperty(ExpressionNode* propertyName, ExpressionNode* node, PropertyNode::Type type, PropertyNode::PutType putType, bool, SuperBinding superBinding, bool isClassProperty) { return new (m_parserArena) PropertyNode(propertyName, node, type, putType, superBinding, isClassProperty); }
     PropertyListNode* createPropertyList(const JSTokenLocation& location, PropertyNode* property) { return new (m_parserArena) PropertyListNode(location, property); }
     PropertyListNode* createPropertyList(const JSTokenLocation& location, PropertyNode* property, PropertyListNode* tail) { return new (m_parserArena) PropertyListNode(location, property, tail); }
 

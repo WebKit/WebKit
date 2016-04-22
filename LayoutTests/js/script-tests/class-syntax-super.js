@@ -99,8 +99,8 @@ shouldBe('Derived.staticMethod()', '"base3"');
 shouldBe('(new SecondDerived).chainMethod().toString()', '["base", "derived", "secondDerived"].toString()');
 shouldNotThrow('x = class extends Base { constructor() { super(); } super() {} }');
 shouldThrow('x = class extends Base { constructor() { super(); } method() { super() } }',
-    '"SyntaxError: Cannot call super() outside of a class constructor."');
-shouldThrow('x = class extends Base { constructor() { super(); } method() { super } }', '"SyntaxError: Cannot reference super."');
+    '"SyntaxError: super is not valid in this context."');
+shouldThrow('x = class extends Base { constructor() { super(); } method() { super } }', '"SyntaxError: super is not valid in this context."');
 shouldThrow('x = class extends Base { constructor() { super(); } method() { return new super } }', '"SyntaxError: Cannot use new with super."');
 shouldNotThrow('x = class extends Base { constructor() { super(); } method1() { delete (super.foo) } method2() { delete super["foo"] } }');
 shouldThrow('(new x).method1()', '"ReferenceError: Cannot delete a super property"');
@@ -120,19 +120,19 @@ shouldBeTrue('x instanceof Object');
 shouldThrow('new (class extends null { constructor() { } })', '"ReferenceError: Cannot access uninitialized variable."');
 shouldThrow('new (class extends null { constructor() { return 1; } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
 shouldThrow('new (class extends null { constructor() { super() } })', '"TypeError: function is not a constructor (evaluating \'super()\')"');
-shouldThrow('new (class { constructor() { super() } })', '"SyntaxError: Cannot call super() in a base class constructor."');
-shouldThrow('function x() { super(); }', '"SyntaxError: Cannot call super() outside of a class constructor."');
-shouldThrow('new (class extends Object { constructor() { function x() { super() } } })', '"SyntaxError: Cannot call super() outside of a class constructor."');
-shouldThrow('new (class extends Object { constructor() { function x() { super.method } } })', '"SyntaxError: super can only be used in a method of a derived class."');
-shouldThrow('function x() { super.method(); }', '"SyntaxError: super can only be used in a method of a derived class."');
-shouldThrow('function x() { super(); }', '"SyntaxError: Cannot call super() outside of a class constructor."');
-shouldThrow('eval("super.method()")', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
-shouldThrow('eval("super()")', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
+shouldThrow('new (class { constructor() { super() } })', '"SyntaxError: super is not valid in this context."');
+shouldThrow('function x() { super(); }', '"SyntaxError: super is not valid in this context."');
+shouldThrow('new (class extends Object { constructor() { function x() { super() } } })', '"SyntaxError: super is not valid in this context."');
+shouldThrow('new (class extends Object { constructor() { function x() { super.method } } })', '"SyntaxError: super is not valid in this context."');
+shouldThrow('function x() { super.method(); }', '"SyntaxError: super is not valid in this context."');
+shouldThrow('function x() { super(); }', '"SyntaxError: super is not valid in this context."');
+shouldThrow('eval("super.method()")', '"SyntaxError: super is not valid in this context."');
+shouldThrow('eval("super()")', '"SyntaxError: super is not valid in this context."');
 
-shouldThrow('(function () { eval("super.method()");})()', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
-shouldThrow('(function () { eval("super()");})()', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
+shouldThrow('(function () { eval("super.method()");})()', '"SyntaxError: super is not valid in this context."');
+shouldThrow('(function () { eval("super()");})()', '"SyntaxError: super is not valid in this context."');
 
-shouldThrow('new (class { constructor() { (function () { eval("super()");})(); } })', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
-shouldThrow('(new (class { method() { (function () { eval("super.method()");})(); }})).method()', '"SyntaxError: \'super\' is only valid inside a function or an \'eval\' inside a function."');
+shouldThrow('new (class { constructor() { (function () { eval("super()");})(); } })', '"SyntaxError: super is not valid in this context."');
+shouldThrow('(new (class { method() { (function () { eval("super.method()");})(); }})).method()', '"SyntaxError: super is not valid in this context."');
 
 var successfullyParsed = true;
