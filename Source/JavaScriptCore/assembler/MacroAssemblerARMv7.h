@@ -322,6 +322,11 @@ public:
         m_assembler.smull(dest, dataTempRegister, dest, src);
     }
 
+    void mul32(RegisterID left, RegisterID right, RegisterID dest)
+    {
+        m_assembler.smull(dest, dataTempRegister, left, right);
+    }
+
     void mul32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         move(imm, dataTempRegister);

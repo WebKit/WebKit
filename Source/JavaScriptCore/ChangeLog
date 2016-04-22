@@ -1,3 +1,21 @@
+2016-04-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Integer Multiply of a number by itself does not need negative zero support
+        https://bugs.webkit.org/show_bug.cgi?id=156895
+
+        Reviewed by Saam Barati.
+
+        You cannot produce negative zero by squaring an integer.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        Minor codegen fixes:
+        -Use the right form of multiply for ARM.
+        -Use a sign-extended 32bit immediates, that's the one with fast forms
+         in the MacroAssembler.
+
 2016-04-21  Darin Adler  <darin@apple.com>
 
         Follow-on to the build fix.

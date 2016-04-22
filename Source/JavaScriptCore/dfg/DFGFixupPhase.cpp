@@ -248,7 +248,8 @@ private:
                 fixIntOrBooleanEdge(rightChild);
                 if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                     node->setArithMode(Arith::Unchecked);
-                else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())
+                    || leftChild.node() == rightChild.node())
                     node->setArithMode(Arith::CheckOverflow);
                 else
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
@@ -257,7 +258,8 @@ private:
             if (m_graph.binaryArithShouldSpeculateMachineInt(node, FixupPass)) {
                 fixEdge<Int52RepUse>(leftChild);
                 fixEdge<Int52RepUse>(rightChild);
-                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())
+                    || leftChild.node() == rightChild.node())
                     node->setArithMode(Arith::CheckOverflow);
                 else
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);

@@ -3964,10 +3964,9 @@ void SpeculativeJIT::compileArithMul(Node* node)
         // We can perform truncated multiplications if we get to this point, because if the
         // fixup phase could not prove that it would be safe, it would have turned us into
         // a double multiplication.
-        if (!shouldCheckOverflow(node->arithMode())) {
-            m_jit.move(reg1, result.gpr());
-            m_jit.mul32(reg2, result.gpr());
-        } else {
+        if (!shouldCheckOverflow(node->arithMode()))
+            m_jit.mul32(reg1, reg2, result.gpr());
+        else {
             speculationCheck(
                 Overflow, JSValueRegs(), 0,
                 m_jit.branchMul32(MacroAssembler::Overflow, reg1, reg2, result.gpr()));
@@ -4031,10 +4030,10 @@ void SpeculativeJIT::compileArithMul(Node* node)
                 MacroAssembler::NonZero, resultGPR);
             speculationCheck(
                 NegativeZero, JSValueRegs(), 0,
-                m_jit.branch64(MacroAssembler::LessThan, op1GPR, TrustedImm64(0)));
+                m_jit.branch64(MacroAssembler::LessThan, op1GPR, TrustedImm32(0)));
             speculationCheck(
                 NegativeZero, JSValueRegs(), 0,
-                m_jit.branch64(MacroAssembler::LessThan, op2GPR, TrustedImm64(0)));
+                m_jit.branch64(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
             resultNonZero.link(&m_jit);
         }
         
