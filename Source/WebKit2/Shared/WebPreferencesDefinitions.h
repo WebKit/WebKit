@@ -108,7 +108,7 @@
     macro(PluginsEnabled, pluginsEnabled, Bool, bool, false, "", "") \
     macro(JavaEnabled, javaEnabled, Bool, bool, false, "", "") \
     macro(JavaEnabledForLocalFiles, javaEnabledForLocalFiles, Bool, bool, false, "", "") \
-    macro(OfflineWebApplicationCacheEnabled, offlineWebApplicationCacheEnabled, Bool, bool, false, "", "") \
+    macro(OfflineWebApplicationCacheEnabled, offlineWebApplicationCacheEnabled, Bool, bool, true, "", "") \
     macro(LocalStorageEnabled, localStorageEnabled, Bool, bool, true, "", "") \
     macro(DatabasesEnabled, databasesEnabled, Bool, bool, true, "", "") \
     macro(XSSAuditorEnabled, xssAuditorEnabled, Bool, bool, true, "", "") \

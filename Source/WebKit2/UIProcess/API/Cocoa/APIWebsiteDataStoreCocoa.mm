@@ -175,6 +175,7 @@ WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfig
     WebKit::WebsiteDataStore::Configuration configuration;
 
     configuration.applicationCacheDirectory = defaultApplicationCacheDirectory();
+    configuration.applicationCacheFlatFileSubdirectoryName = "Files";
     configuration.networkCacheDirectory = defaultNetworkCacheDirectory();
     configuration.mediaCacheDirectory = defaultMediaCacheDirectory();
 
