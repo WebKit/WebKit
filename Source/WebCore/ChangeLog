@@ -1,3 +1,18 @@
+2016-04-22  Keith Miller  <keith_miller@apple.com>
+
+        buildObjectForEventListener should not call into JSC with a null ExecState
+        https://bugs.webkit.org/show_bug.cgi?id=156923
+
+        Reviewed by Joseph Pecoraro.
+
+        If a user had disabled JavaScript on their page then the inspector tried to
+        add an event listener we would fail to create an ExecState. Since we didn't
+        check this ExecState was valid we would then attempt to stringify the value,
+        which would cause JSC to crash.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+
 2016-04-22  Dean Jackson  <dino@apple.com>
 
         Yet another attempt at fixing Windows.
