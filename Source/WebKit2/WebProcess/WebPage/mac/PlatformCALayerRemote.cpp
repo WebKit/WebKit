@@ -496,6 +496,11 @@ void PlatformCALayerRemote::setSublayerTransform(const TransformationMatrix& val
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::SublayerTransformChanged);
 }
 
+bool PlatformCALayerRemote::isHidden() const
+{
+    return m_properties.hidden;
+}
+
 void PlatformCALayerRemote::setHidden(bool value)
 {
     m_properties.hidden = value;

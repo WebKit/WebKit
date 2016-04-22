@@ -1,3 +1,21 @@
+2016-04-21  Dean Jackson  <dino@apple.com>
+
+        Backdrop Filter should not be visible if element has visibility:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=149318
+        <rdar://problem/22749780>
+
+        Reviewed by Simon Fraser.
+
+        Three tests that check if a backdrop filter should be visible when
+        its owning element is visibility hidden.
+
+        * css3/filters/backdrop/backdrop-with-visibility-hidden-changing-expected.txt: Added.
+        * css3/filters/backdrop/backdrop-with-visibility-hidden-changing.html: Added.
+        * css3/filters/backdrop/backdrop-with-visibility-hidden-expected.txt: Added.
+        * css3/filters/backdrop/backdrop-with-visibility-hidden.html: Added.
+        * css3/filters/backdrop/backdrop-with-visibility-hidden-2.html: Added.
+        * css3/filters/backdrop/backdrop-with-visibility-hidden-2-expected.html: Added.
+
 2016-04-21  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Get the IDBConnectionProxy from the Document to the WorkerGlobalScope.

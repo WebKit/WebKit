@@ -1,3 +1,29 @@
+2016-04-21  Dean Jackson  <dino@apple.com>
+
+        Backdrop Filter should not be visible if element has visibility:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=149318
+        <rdar://problem/22749780>
+
+        Reviewed by Simon Fraser.
+
+        Make sure that backdrop filter layers take note of when
+        the contents are visible or not.
+
+        Tests: css3/filters/backdrop/backdrop-with-visibility-hidden-changing.html
+               css3/filters/backdrop/backdrop-with-visibility-hidden.html
+               css3/filters/backdrop/backdrop-with-visibility-hidden-2.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateContentsVisibility): Tell the backdrop layer about the
+        change if there is one.
+        (WebCore::GraphicsLayerCA::updateBackdropFilters): When we update filters, make
+        sure to check the contents visibility.
+        (WebCore::dumpInnerLayer): Output "hidden" if the layer is set as such.
+        * platform/graphics/ca/PlatformCALayer.h: Add an isHidden method.
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::isHidden): Call into CALayer isHidden.
+
 2016-04-21  Zalan Bujtas  <zalan@apple.com>
 
         RenderVideo should always update the intrinsic size before layout.

@@ -1863,6 +1863,9 @@ void GraphicsLayerCA::updateContentsVisibility()
     if (m_contentsVisible) {
         if (m_drawsContent)
             m_layer->setNeedsDisplay();
+
+        if (m_backdropLayer)
+            m_backdropLayer->setHidden(false);
     } else {
         m_layer->setContents(nullptr);
 
@@ -1870,6 +1873,9 @@ void GraphicsLayerCA::updateContentsVisibility()
             for (auto& layer : layerCloneMap->values())
                 layer->setContents(nullptr);
         }
+
+        if (m_backdropLayer)
+            m_backdropLayer->setHidden(true);
     }
 }
 
@@ -1939,6 +1945,8 @@ void GraphicsLayerCA::updateBackdropFilters()
         m_backdropLayer->setAnchorPoint(FloatPoint3D());
         m_backdropLayer->setMasksToBounds(true);
     }
+
+    m_backdropLayer->setHidden(!m_contentsVisible);
     m_backdropLayer->setFilters(m_backdropFilters);
 }
 
@@ -3353,7 +3361,10 @@ static void dumpInnerLayer(TextStream& textStream, String label, PlatformCALayer
     if (behavior & LayerTreeAsTextDebug)
         textStream << "id=" << layer->layerID() << " ";
     textStream << layer->position().x() << ", " << layer->position().y()
-        << " " << layer->bounds().width() << " x " << layer->bounds().height() << ")\n";
+        << " " << layer->bounds().width() << " x " << layer->bounds().height();
+    if (layer->isHidden())
+        textStream << " hidden";
+    textStream << ")\n";
 }
 
 void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int indent, LayerTreeAsTextBehavior behavior) const

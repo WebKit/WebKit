@@ -1,3 +1,17 @@
+2016-04-21  Dean Jackson  <dino@apple.com>
+
+        Backdrop Filter should not be visible if element has visibility:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=149318
+        <rdar://problem/22749780>
+
+        Reviewed by Simon Fraser.
+
+        Add the isHidden method to PlatformCALayerRemote.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::isHidden):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
 2016-04-21  Anders Carlsson  <andersca@apple.com>
 
         WKWebView HTML5 AppCache not working
