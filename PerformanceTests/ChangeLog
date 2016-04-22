@@ -1,3 +1,12 @@
+2016-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Skip two content animation tests which are only meant for iOS testing.
+
+        * Animation/css-animation.html: Added.
+        * Animation/raf-animation.html: Added.
+
+        * Skipped:
+
 2016-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Add content animation tests to benchmark_runner, and allow the runner to collect device data as part of the results
