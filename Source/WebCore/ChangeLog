@@ -1,3 +1,11 @@
+2016-04-22  Dean Jackson  <dino@apple.com>
+
+        Yet another attempt at fixing Windows.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::isHidden):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+
 2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Attempt to fix Windows build after r199862
