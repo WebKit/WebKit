@@ -45,6 +45,11 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         if (sourceMapURL)
             WebInspector.sourceMapManager.downloadSourceMap(sourceMapURL, this._url, this);
 
+        if (isWebInspectorConsoleEvaluationScript(this._sourceURL)) {
+            // Assign a unique number to the script object so it will stay the same.
+            this._uniqueDisplayNameNumber = this.constructor._nextUniqueConsoleDisplayNameNumber++;
+        }
+
         this._scriptSyntaxTree = null;
     }
 
@@ -53,6 +58,7 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
     static resetUniqueDisplayNameNumbers()
     {
         WebInspector.Script._nextUniqueDisplayNameNumber = 1;
+        WebInspector.Script._nextUniqueConsoleDisplayNameNumber = 1;
     }
 
     // Public
@@ -93,6 +99,11 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
     {
         if (this._url)
             return WebInspector.displayNameForURL(this._url, this.urlComponents);
+
+        if (isWebInspectorConsoleEvaluationScript(this._sourceURL)) {
+            console.assert(this._uniqueDisplayNameNumber);
+            return WebInspector.UIString("Console Evaluation %d").format(this._uniqueDisplayNameNumber);
+        }
 
         if (this._sourceURL) {
             if (!this._sourceURLComponents)
@@ -247,3 +258,4 @@ WebInspector.Script.URLCookieKey = "script-url";
 WebInspector.Script.DisplayNameCookieKey = "script-display-name";
 
 WebInspector.Script._nextUniqueDisplayNameNumber = 1;
+WebInspector.Script._nextUniqueConsoleDisplayNameNumber = 1;

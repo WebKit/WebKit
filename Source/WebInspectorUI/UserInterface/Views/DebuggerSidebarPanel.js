@@ -208,7 +208,27 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (representedObject instanceof WebInspector.Frame)
             representedObject = representedObject.mainResource;
 
-        return this.contentTreeOutline.getCachedTreeElement(representedObject);
+        let treeElement = this.contentTreeOutline.findTreeElement(representedObject);
+        if (treeElement)
+            return treeElement;
+
+        // Only special case Script objects.
+        if (!(representedObject instanceof WebInspector.Script)) {
+            console.error("Didn't find a TreeElement for representedObject", representedObject);
+            return null;
+        }
+
+        // If the Script has a URL we should have found it earlier.
+        if (representedObject.url) {
+            console.error("Didn't find a ScriptTreeElement for a Script with a URL.");
+            return null;
+        }
+
+        // Since the Script does not have a URL we consider it an 'anonymous' script. These scripts happen from calls to
+        // window.eval() or browser features like Auto Fill and Reader. They are not normally added to the sidebar, but since
+        // we have a ScriptContentView asking for the tree element we will make a ScriptTreeElement on demand and add it.
+
+        return this._addScript(representedObject);
     }
 
     // Protected
@@ -429,12 +449,12 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
     {
         // COMPATIBILITY(iOS 9): Backends could send the frontend built-in code, filter out JSC internals.
         if (!script.url && !script.sourceURL)
-            return;
+            return null;
 
         // Don't add breakpoints if the script is represented by a Resource. They were
         // already added by _resourceAdded.
         if (script.resource)
-            return;
+            return null;
 
         let treeElement = this._addTreeElementForSourceCodeToContentTreeOutline(script);
         this._addBreakpointsForSourceCode(script);
@@ -442,6 +462,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         if (!this.contentBrowser.currentContentView)
             this.showDefaultContentViewForTreeElement(treeElement);
+
+        return treeElement;
     }
 
     _scriptRemoved(event)

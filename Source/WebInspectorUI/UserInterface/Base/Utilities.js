@@ -1256,7 +1256,16 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
 
 function appendWebInspectorSourceURL(string)
 {
+    if (string.includes("//# sourceURL"))
+        return string;
     return "\n//# sourceURL=__WebInspectorInternal__\n" + string;
+}
+
+function appendWebInspectorConsoleEvaluationSourceURL(string)
+{
+    if (string.includes("//# sourceURL"))
+        return string;
+    return "\n//# sourceURL=__WebInspectorConsoleEvaluation__\n" + string;
 }
 
 function isWebInspectorInternalScript(url)
@@ -1264,8 +1273,15 @@ function isWebInspectorInternalScript(url)
     return url === "__WebInspectorInternal__";
 }
 
+function isWebInspectorConsoleEvaluationScript(url)
+{
+    return url === "__WebInspectorConsoleEvaluation__";
+}
+
 function isWebKitInternalScript(url)
 {
+    if (isWebInspectorConsoleEvaluationScript(url))
+        return false;
     return url && url.startsWith("__Web") && url.endsWith("__");
 }
 

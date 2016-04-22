@@ -1,3 +1,45 @@
+2016-04-22  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Debugger statement in console does not provide any call frames and debugger UI is confused
+
+        https://bugs.webkit.org/show_bug.cgi?id=156919
+        rdar://problem/25857118
+
+        This makes console expressions show up in the Debugger tab sidebar if a ScriptContentView is shown for them.
+        We now also show call frames that originate from a console expression, so the call frames in the sidebar is not empty.
+        Also fix a bug where when there are no call frames we auto resume the debugger and don't leave it in a broken state.
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+
+        * UserInterface/Base/Utilities.js:
+        (appendWebInspectorSourceURL): Don't append if another sourceURL is already added.
+        (appendWebInspectorConsoleEvaluationSourceURL): Added.
+        (isWebInspectorConsoleEvaluationScript): Added.
+        (isWebKitInternalScript): Return false for isWebInspectorConsoleEvaluationScript().
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause): Resume if call frames is empty. This is not as common now
+        since console expression call frames are not skipped.
+        (WebInspector.DebuggerManager.prototype.scriptDidParse): Change an early return for isWebInspectorInternalScript() that
+        was skipping adding internal scripts to the known script lists, but it should only do that when the debug UI is disabled.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptTextCommitted):
+        Call appendWebInspectorConsoleEvaluationSourceURL so the console expressions are tagged before evaluateInInspectedWindow
+        added the internal sourceURL name.
+
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script): Assign unique identifiers to console scripts so they are named correctly.
+        (WebInspector.Script.resetUniqueDisplayNameNumbers): Reset _nextUniqueConsoleDisplayNameNumber.
+        (WebInspector.Script.prototype.get displayName): Special case console expressions with a better name.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.treeElementForRepresentedObject): Add a script tree element on demand
+        like the ResourceSidebarPanel does for anonymous scripts.
+        (WebInspector.DebuggerSidebarPanel.prototype._addScript): Return treeElement so treeElementForRepresentedObject can use it.
+
 2016-04-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: sourceMappingURL not loaded in generated script

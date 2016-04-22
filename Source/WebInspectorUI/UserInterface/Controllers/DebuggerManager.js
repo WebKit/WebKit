@@ -545,6 +545,12 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         this._activeCallFrame = this._callFrames[0];
 
+        if (!this._activeCallFrame) {
+            console.assert("We should always have one call frame. This could indicate we are hitting an exception or debugger statement in an internal injected script.");
+            this._didResumeInternal();
+            return;
+        }
+
         if (!wasStillPaused)
             this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.Paused);
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.CallFramesDidChange);
@@ -578,7 +584,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             return;
         }
 
-        if (isWebInspectorInternalScript(sourceURL))
+        if (!WebInspector.isDebugUIEnabled() && isWebKitInternalScript(sourceURL))
             return;
 
         let script = new WebInspector.Script(scriptIdentifier, new WebInspector.TextRange(startLine, startColumn, endLine, endColumn), url, isContentScript, sourceURL, sourceMapURL);
@@ -599,6 +605,10 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             if (!WebInspector.isDebugUIEnabled())
                 return;
         }
+
+        // Console expressions are not added to the UI by default.
+        if (isWebInspectorConsoleEvaluationScript(script.sourceURL))
+            return;
 
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ScriptAdded, {script});
     }
