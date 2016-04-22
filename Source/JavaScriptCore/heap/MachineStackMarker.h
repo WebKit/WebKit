@@ -54,14 +54,14 @@ namespace JSC {
         void tryCopyOtherThreadStack(Thread*, void*, size_t capacity, size_t*);
         bool tryCopyOtherThreadStacks(MutexLocker&, void*, size_t capacity, size_t*);
 
-        static void removeThread(void*);
+        static void THREAD_SPECIFIC_CALL removeThread(void*);
 
         template<typename PlatformThread>
         void removeThreadIfFound(PlatformThread);
 
         Mutex m_registeredThreadsMutex;
         Thread* m_registeredThreads;
-        WTF::ThreadSpecificKey m_threadSpecific;
+        WTF::ThreadSpecificKey m_threadSpecificForMachineThreads;
 #if !ASSERT_DISABLED
         Heap* m_heap;
 #endif

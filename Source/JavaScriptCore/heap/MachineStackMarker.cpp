@@ -112,7 +112,7 @@ public:
         m_set.add(machineThreads);
     }
 
-    void remove(MachineThreads* machineThreads)
+    void THREAD_SPECIFIC_CALL remove(MachineThreads* machineThreads)
     {
         MutexLocker managerLock(m_lock);
         auto recordedMachineThreads = m_set.take(machineThreads);
@@ -248,20 +248,20 @@ public:
 
 MachineThreads::MachineThreads(Heap* heap)
     : m_registeredThreads(0)
-    , m_threadSpecific(0)
+    , m_threadSpecificForMachineThreads(0)
 #if !ASSERT_DISABLED
     , m_heap(heap)
 #endif
 {
     UNUSED_PARAM(heap);
-    threadSpecificKeyCreate(&m_threadSpecific, removeThread);
+    threadSpecificKeyCreate(&m_threadSpecificForMachineThreads, removeThread);
     activeMachineThreadsManager().add(this);
 }
 
 MachineThreads::~MachineThreads()
 {
     activeMachineThreadsManager().remove(this);
-    threadSpecificKeyDelete(m_threadSpecific);
+    threadSpecificKeyDelete(m_threadSpecificForMachineThreads);
 
     MutexLocker registeredThreadsLock(m_registeredThreadsMutex);
     for (Thread* t = m_registeredThreads; t;) {
@@ -286,12 +286,15 @@ void MachineThreads::addCurrentThread()
 {
     ASSERT(!m_heap->vm()->hasExclusiveThread() || m_heap->vm()->exclusiveThread() == std::this_thread::get_id());
 
-    if (threadSpecificGet(m_threadSpecific)) {
-        ASSERT(threadSpecificGet(m_threadSpecific) == this);
+    if (threadSpecificGet(m_threadSpecificForMachineThreads)) {
+#ifndef NDEBUG
+        MutexLocker lock(m_registeredThreadsMutex);
+        ASSERT(threadSpecificGet(m_threadSpecificForMachineThreads) == this);
+#endif
         return;
     }
 
-    threadSpecificSet(m_threadSpecific, this);
+    threadSpecificSet(m_threadSpecificForMachineThreads, this);
     Thread* thread = Thread::createForCurrentThread();
 
     MutexLocker lock(m_registeredThreadsMutex);
@@ -300,7 +303,7 @@ void MachineThreads::addCurrentThread()
     m_registeredThreads = thread;
 }
 
-void MachineThreads::removeThread(void* p)
+void THREAD_SPECIFIC_CALL MachineThreads::removeThread(void* p)
 {
     auto& manager = activeMachineThreadsManager();
     ActiveMachineThreadsManager::Locker lock(manager);
