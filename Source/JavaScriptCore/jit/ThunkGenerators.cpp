@@ -189,12 +189,7 @@ MacroAssemblerCodeRef virtualThunkFor(VM* vm, CallLinkInfo& callLinkInfo)
             CCallHelpers::NotEqual, GPRInfo::regT1,
             CCallHelpers::TrustedImm32(JSValue::CellTag)));
 #endif
-    jit.emitLoadStructure(GPRInfo::regT0, GPRInfo::regT4, GPRInfo::regT1);
-    slowCase.append(
-        jit.branchPtr(
-            CCallHelpers::NotEqual,
-            CCallHelpers::Address(GPRInfo::regT4, Structure::classInfoOffset()),
-            CCallHelpers::TrustedImmPtr(JSFunction::info())));
+    slowCase.append(jit.branchIfNotType(GPRInfo::regT0, JSFunctionType));
     
     // Now we know we have a JSFunction.
     

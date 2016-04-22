@@ -1,3 +1,18 @@
+2016-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC virtual call thunk shouldn't do a structure->classInfo lookup
+        https://bugs.webkit.org/show_bug.cgi?id=156874
+
+        Reviewed by Keith Miller.
+        
+        This lookup was unnecessary because we can just test the inlined type field.
+
+        But also, this meant that we were exempting JSBoundFunction from the virtual call optimization.
+        That's pretty bad.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+
 2016-04-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: sourceMappingURL not loaded in generated script
