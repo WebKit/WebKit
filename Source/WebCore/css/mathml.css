@@ -1,43 +1,100 @@
 @namespace "http://www.w3.org/1998/Math/MathML";
 
 math {
+    /*
+    We use the exact bounding boxes of glyphs to avoid excessive gaps in mathematical formulas.
+    FIXME: Should we replace this with a more general handling of ink/logical ascent/descent?
+    See http://webkit.org/b/130326, http://webkit.org/b/156841 and
+    http://www.mathml-association.org/MathMLinHTML5/S3.html#SS1.SSS1
+    */
     -webkit-line-box-contain: glyphs replaced;
+
+    /*
+    Inheriting the following properties can cause excessive spacing of mathematical formulas so we
+    just reset them to their default values.
+    */
     text-indent: 0;
     line-height: normal;
     word-spacing: normal;
     letter-spacing: normal;
+
+    /*
+    In some countries and languages, text is written from right-to-left while mathematical formulas
+    are written from left-to-write. Hence it is wrong to inherit the direction and we reset that
+    property to left-to-write. Per the MathML specification, authors should explicitly use the "dir"
+    attribute on the <math> element if they want to force the overall direction of the mathematical
+    formulas.
+    */
     direction: ltr;
+
+    /* Fonts with appropriate Unicode coverage and OpenType features are required for good math
+    rendering. These requirements as well as the up-to-date list of known math fonts to fulfill
+    these requirements are listed on http://trac.webkit.org/wiki/MathML/Fonts.
+    Inheriting the font-family is likely to make MathML use text fonts that are not designed for
+    math layout and thus would cause very poor mathematical rendering. Consequently, the default
+    font-family on the <math> tag is set to a list of recommended math fonts.
+    For best rendering, authors and readers are encouraged to use text and math fonts with consistent
+    style (appearance, size...), see http://trac.webkit.org/wiki/MathML/Fonts#CustomizingMathFont
+    FIXME: Should we make math font properties configurable (http://webkit.org/b/156843)?
+    */
+    font-family:
+       /*
+       This font has Computer Modern style and is provided with most TeX & Linux distributions.
+       We put it as the default because its style is familiar to TeX, Wikipedia and math people.
+       */
+       "Latin Modern Math",
+
+       /*
+       The following fonts have Times style and are provided with most TeX & Linux distributions.
+       We put XITS & STIX as a second option because they have very good unicode coverage.
+       XITS is a fork of STIX with bug fixes and more Arabic/RTL features so we put it first.
+       */
+       "XITS Math",
+       "STIX Math",
+       "Libertinus Math",
+       "TeX Gyre Termes Math",
+
+       /*
+       These fonts respectively have style compatible with Bookman Old and Century Schoolbook.
+       They are provided with most TeX & Linux distributions.
+       */
+       "TeX Gyre Bonum Math",
+       "TeX Gyre Schola",
+
+       /*
+       The following fonts have Palatino style and are provided with most TeX & Linux distributions.
+       Asana Math has some rendering issues (e.g. missing italic correction) so we put it after.
+       */
+       "TeX Gyre Pagella Math",
+       "Asana Math",
+
+       /*
+       The following fonts are proprietary and have not much been tested so we put them at the end.
+       Cambria Math it is pre-installed on Windows 7 and higher.
+       */
+       "Cambria Math",
+       "Lucida Bright Math",
+       "Minion Math",
+
+       /*
+       The following fonts do not satisfy the requirements for good mathematical rendering.
+       These are pre-installed on Mac and iOS so we list them to provide minimal unicode-based
+       mathematical rendering. For more explanation of fallback mechanisms and missing features see
+       http://trac.webkit.org/wiki/MathML/Fonts#ObsoleteFontsandFallbackMechanisms.
+       STIX fonts have best unicode coverage so we put them first. */
+       STIXGeneral,
+       STIXSizeOneSym,
+       Symbol,
+       "Times New Roman",
+
+       /* Mathematical fonts generally use "serif" style. Hence we append the generic "serif" family
+       as a fallback in order to increase our chance to find a mathematical font. */
+       serif;
+
+    /* FIXME: Should we reset more CSS properties (http://webkit.org/b/156839)? */
 }
 mtext {
     line-height: 1.0;
-}
-
-/* Fonts with appropriate Unicode coverage and OpenType features are required for good math rendering.
-   Consequently the default font-family on the <math> tag is not inherited but set to a list of known math fonts.
-   See http://trac.webkit.org/wiki/MathML/Fonts.
-   FIXME: OS X and iOS do not have such fonts pre-installed (bugs 17021145, 16841023 and 16843041 from Apple bug tracker).
-   Hence we also append some system fonts to provide minimal Unicode coverage and limited operator stretching.
-*/
-math {
-    font-family: "Latin Modern Math",
-                 "XITS Math",
-                 "STIX Math",
-                 "Libertinus Math",
-                 "TeX Gyre Bonum Math",
-                 "TeX Gyre Pagella Math",
-                 "TeX Gyre Schola",
-                 "TeX Gyre Termes Math",
-                 "Cambria Math",
-                 "Asana Math",
-                 "Lucida Bright Math",
-                 "Minion Math",
-                 STIXGeneral,
-                 STIXSizeOneSym,
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
-                 Symbol,
-                 "Times New Roman",
-#endif
-                 serif;
 }
 
 math {

@@ -1,3 +1,37 @@
+2016-04-21  Frederic Wang  <fwang@igalia.com>
+
+        More improvements and explanations regarding resetting CSS properties on the <math> element
+        https://bugs.webkit.org/show_bug.cgi?id=156840
+
+        Reviewed by Darin Adler.
+
+        We some follow-up improvements regarding CSS rules on the <math> element, after bug 133603:
+        - We fix indenting to use 4 spaces.
+        - We explain why we set -webkit-line-box-contain and add references to related bugs.
+        - We explain why we reset some CSS spacing rules.
+        - We explain why the direction is set to ltr.
+        - We explain why font-family is set to a list of known math fonts and add reference
+          to the wiki.
+        - We mention the need to customize math fonts to get consistent style and add references to
+          a bug report and to the wiki.
+        - We described each of the math font listed and add some justification about their orders.
+        - We better explain the section about fonts that do not satisfy the requirements for good
+          mathematical rendering, reformulate why we still need them for iOS/Mac and we add some
+          references to a bug report and to the wiki. Some fonts that not pre-installed were removed
+          in r199773.
+        - We add a FIXME comments for potential changes of CSS properties on the <math> tag.
+
+        We make the following changes to the lists of font-family:
+        - We move "TeX Gyre Termes Math" into the Times group.
+        - We move "Asana Math" into the Palatino group.
+        - We remove iOS conditionals on "Symbol" and "Times New Roman".
+
+        No new tests, only order of math fonts that are not used by test framework is changed.
+
+        * css/mathml.css:
+        (math): We merge the two math selectors, reorder some font-families, remove iOS ifdef and
+        add more description.
+
 2016-04-21  Dean Jackson  <dino@apple.com>
 
         Backdrop Filter should not be visible if element has visibility:hidden
