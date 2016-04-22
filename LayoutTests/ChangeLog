@@ -1,3 +1,16 @@
+2016-04-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix bug with positioned items in vertical writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=156870
+
+        Reviewed by Darin Adler.
+
+        Add new test to check positioned items in different writing modes
+        and direction combinations.
+
+        * fast/css-grid-layout/grid-positioned-children-writing-modes-expected.html: Added.
+        * fast/css-grid-layout/grid-positioned-children-writing-modes.html: Added.
+
 2016-04-21  Chris Dumez  <cdumez@apple.com>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from Document
