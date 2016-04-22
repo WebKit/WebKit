@@ -1,3 +1,18 @@
+2016-04-22  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Constify introspect function pointer table
+        https://bugs.webkit.org/show_bug.cgi?id=156936
+
+        Reviewed by Michael Saboff.
+
+        * bmalloc/Zone.cpp:
+        (bmalloc::Zone::Zone): Declaring this function pointer table const puts
+        it in the read-only section of the binary, providing a little hardening
+        against overwriting the function pointers at runtime. (We have to
+        const_cast when assigning because the API declares a pointer to non-const,
+        but we happen to know it will never try to write through that pointer.
+        This is not my favorite API.)
+
 2016-04-19  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: fix up overflow checks
