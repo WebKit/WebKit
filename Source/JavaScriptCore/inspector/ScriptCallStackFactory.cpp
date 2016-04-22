@@ -74,7 +74,7 @@ public:
             unsigned line;
             unsigned column;
             visitor->computeLineAndColumn(line, column);
-            m_frames.append(ScriptCallFrame(visitor->functionName(), visitor->sourceURL(), line, column));
+            m_frames.append(ScriptCallFrame(visitor->functionName(), visitor->sourceURL(), static_cast<SourceID>(visitor->sourceID()), line, column));
 
             m_remainingCapacityForFrameCapture--;
             return StackVisitor::Continue;
@@ -143,7 +143,7 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
         unsigned column;
         stackTrace[i].computeLineAndColumn(line, column);
         String functionName = stackTrace[i].friendlyFunctionName(exec);
-        frames.append(ScriptCallFrame(functionName, stackTrace[i].friendlySourceURL(), line, column));
+        frames.append(ScriptCallFrame(functionName, stackTrace[i].friendlySourceURL(), static_cast<SourceID>(stackTrace[i].sourceID), line, column));
     }
 
     // Fallback to getting at least the line and sourceURL from the exception object if it has values and the exceptionStack doesn't.
@@ -155,12 +155,12 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
         String exceptionSourceURL;
         if (!frames.size()) {
             extractSourceInformationFromException(exec, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL);
-            frames.append(ScriptCallFrame(String(), exceptionSourceURL, lineNumber, columnNumber));
+            frames.append(ScriptCallFrame(String(), exceptionSourceURL, noSourceID, lineNumber, columnNumber));
         } else {
             if (stackTrace[0].sourceURL.isEmpty()) {
                 const ScriptCallFrame& firstCallFrame = frames.first();
                 extractSourceInformationFromException(exec, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL);
-                frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, lineNumber, columnNumber);
+                frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, stackTrace[0].sourceID, lineNumber, columnNumber);
             }
         }
     }

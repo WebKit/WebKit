@@ -561,11 +561,12 @@ public:
                     codeBlock->firstLineColumnOffset(),
                     codeBlock->sourceOffset(),
                     visitor->bytecodeOffset(),
-                    visitor->sourceURL()
+                    visitor->sourceURL(),
+                    visitor->sourceID(),
                 };
                 m_results.append(s);
             } else {
-                StackFrame s = { Strong<JSObject>(vm, visitor->callee()), StackFrameNativeCode, Strong<ScriptExecutable>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, 0, String()};
+                StackFrame s = { Strong<JSObject>(vm, visitor->callee()), StackFrameNativeCode, Strong<ScriptExecutable>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, 0, String(), noSourceID};
                 m_results.append(s);
             }
     

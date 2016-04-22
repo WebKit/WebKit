@@ -1,3 +1,38 @@
+2016-04-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: sourceMappingURL not loaded in generated script
+        https://bugs.webkit.org/show_bug.cgi?id=156022
+        <rdar://problem/25438595>
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::appendAPIBacktrace):
+        Synthetic CallFrames for native code will not have script identifiers.
+
+        * inspector/ScriptCallFrame.cpp:
+        (Inspector::ScriptCallFrame::ScriptCallFrame):
+        (Inspector::ScriptCallFrame::isEqual):
+        (Inspector::ScriptCallFrame::buildInspectorObject):
+        * inspector/ScriptCallFrame.h:
+        * inspector/protocol/Console.json:
+        Include the script identifier in ScriptCallFrame so we can correlate this
+        to the exactly script, even if there isn't a URL. The Script may have a
+        sourceURL, so the Web Inspector frontend may decide to show / link to it.
+
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::CreateScriptCallStackFunctor::operator()):
+        (Inspector::createScriptCallStackFromException):
+        Include SourceID when we have it.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::GetStackTraceFunctor::operator()):
+        * interpreter/Interpreter.h:
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::sourceID):
+        * interpreter/StackVisitor.h:
+        Access the SourceID when we have it.
+
 2016-04-21  Saam barati  <sbarati@apple.com>
 
         Lets do less locking of symbol tables in the BytecodeGenerator where we don't have race conditions

@@ -27,6 +27,7 @@
 #include "StackVisitor.h"
 
 #include "ClonedArguments.h"
+#include "DebuggerPrimitives.h"
 #include "Executable.h"
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
@@ -275,6 +276,13 @@ String StackVisitor::Frame::toString()
         }
     }
     return traceBuild.toString().impl();
+}
+
+intptr_t StackVisitor::Frame::sourceID()
+{
+    if (CodeBlock* codeBlock = this->codeBlock())
+        return codeBlock->ownerScriptExecutable()->sourceID();
+    return noSourceID;
 }
 
 ClonedArguments* StackVisitor::Frame::createArguments()

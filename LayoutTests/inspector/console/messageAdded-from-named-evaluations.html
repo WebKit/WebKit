@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+TestPage.allowUncaughtExceptions = true;
+
+function triggerMessageFromNamedEvaluation() {
+    eval("//# sourceURL=named-eval.js\nconsole.log('inside named-eval.js')");
+}
+
+function triggerExceptionFromNamedFunctionConstructorEvaluation() {
+    Function("//# sourceURL=named-function-constructor.js\n({}).x.x")();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Console.messageAdded.messageFromNamedEvaluations");
+
+    suite.addTestCase({
+        name: "TriggerMessageFromNameEvaluation",
+        description: "Message from named evaluation should have a source location.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("triggerMessageFromNamedEvaluation()");
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+                let message = event.data.message;
+                let topCallFrame = message.stackTrace.callFrames[0];
+                InspectorTest.expectThat(topCallFrame.sourceCodeLocation.sourceCode.displayName === "named-eval.js", "Log ConsoleMessage top call frame should have sourceURL name.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "TriggerExceptionFromNameFunctionConstructorEvaluation",
+        description: "Exception message from named Function constructor evaluation should have a source location.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("setTimeout(triggerExceptionFromNamedFunctionConstructorEvaluation)");
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+                let message = event.data.message;
+                let topCallFrame = message.stackTrace.callFrames[0];
+                InspectorTest.expectThat(topCallFrame.sourceCodeLocation.sourceCode.displayName === "named-function-constructor.js", "Exception ConsoleMessage top call frame should have sourceURL name.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Console messages in named evaluations should have call frames with the correct name.</p>
+</body>
+</html>

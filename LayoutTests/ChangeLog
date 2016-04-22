@@ -1,3 +1,16 @@
+2016-04-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: sourceMappingURL not loaded in generated script
+        https://bugs.webkit.org/show_bug.cgi?id=156022
+        <rdar://problem/25438595>
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/console/messageAdded-from-named-evaluations-expected.txt: Added.
+        * inspector/console/messageAdded-from-named-evaluations.html: Added.
+        * inspector/debugger/js-stacktrace-expected.txt:
+        * inspector/model/stack-trace-expected.txt:
+
 2016-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         ASSERTION FAILED: accumulation == TransformState::FlattenTransform in WebCore::GraphicsLayerCA::computeVisibleAndCoverageRect

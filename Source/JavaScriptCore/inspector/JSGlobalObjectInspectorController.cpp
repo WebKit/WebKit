@@ -207,9 +207,9 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack* call
         if (mangledName)
             cxaDemangled = abi::__cxa_demangle(mangledName, nullptr, nullptr, nullptr);
         if (mangledName || cxaDemangled)
-            callStack->append(ScriptCallFrame(cxaDemangled ? cxaDemangled : mangledName, ASCIILiteral("[native code]"), 0, 0));
+            callStack->append(ScriptCallFrame(cxaDemangled ? cxaDemangled : mangledName, ASCIILiteral("[native code]"), noSourceID, 0, 0));
         else
-            callStack->append(ScriptCallFrame(ASCIILiteral("?"), ASCIILiteral("[native code]"), 0, 0));
+            callStack->append(ScriptCallFrame(ASCIILiteral("?"), ASCIILiteral("[native code]"), noSourceID, 0, 0));
         free(cxaDemangled);
     }
 #else

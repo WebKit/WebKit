@@ -128,11 +128,28 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
 
     get firstNonNativeCallFrame()
     {
-        for (var frame of this._callFrames) {
+        for (let frame of this._callFrames) {
             if (!frame.nativeCode)
                 return frame;
         }
 
         return null;
     }
+
+    get firstNonNativeNonAnonymousCallFrame()
+    {
+        for (let frame of this._callFrames) {
+            if (frame.nativeCode)
+                continue;
+            if (frame.sourceCodeLocation) {
+                let sourceCode = frame.sourceCodeLocation.sourceCode;
+                if (sourceCode instanceof WebInspector.Script && sourceCode.anonymous)
+                    continue;
+            }
+            return frame;
+        }
+
+        return null;
+    }
+    
 };

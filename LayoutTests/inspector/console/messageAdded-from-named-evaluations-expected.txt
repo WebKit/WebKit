@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 2: inside named-eval.js
+CONSOLE MESSAGE: line 3: TypeError: undefined is not an object (evaluating '({}).x.x')
+Console messages in named evaluations should have call frames with the correct name.
+
+
+== Running test suite: Console.messageAdded.messageFromNamedEvaluations
+-- Running test case: TriggerMessageFromNameEvaluation
+PASS: Log ConsoleMessage top call frame should have sourceURL name.
+
+-- Running test case: TriggerExceptionFromNameFunctionConstructorEvaluation
+Uncaught exception in test page: TypeError: undefined is not an object (evaluating '({}).x.x') [undefined:3]
+PASS: Exception ConsoleMessage top call frame should have sourceURL name.
+

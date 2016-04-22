@@ -27,6 +27,7 @@
             "properties": [
                 { "name": "functionName", "type": "string", "description": "JavaScript function name." },
                 { "name": "url", "type": "string", "description": "JavaScript script name or url." },
+                { "name": "scriptId", "$ref": "Debugger.ScriptId", "description": "Script identifier." },
                 { "name": "lineNumber", "type": "integer", "description": "JavaScript script line number." },
                 { "name": "columnNumber", "type": "integer", "description": "JavaScript script column number." }
             ]

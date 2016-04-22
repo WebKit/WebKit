@@ -17,10 +17,10 @@ console.trace():
         "programCode": false
     },
     {
-        "lineNumber": null,
-        "columnNumber": null,
+        "lineNumber": 0,
+        "columnNumber": 14,
         "functionName": "Eval Code",
-        "nativeCode": true,
+        "nativeCode": false,
         "programCode": true
     }
 ]
@@ -71,10 +71,10 @@ console.trace():
         "programCode": false
     },
     {
-        "lineNumber": null,
-        "columnNumber": null,
+        "lineNumber": 0,
+        "columnNumber": 28,
         "functionName": "Eval Code",
-        "nativeCode": true,
+        "nativeCode": false,
         "programCode": true
     }
 ]

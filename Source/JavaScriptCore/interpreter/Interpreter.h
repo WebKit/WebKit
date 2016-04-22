@@ -94,6 +94,7 @@ namespace JSC {
         unsigned characterOffset;
         unsigned bytecodeOffset;
         String sourceURL;
+        intptr_t sourceID;
         JS_EXPORT_PRIVATE String toString(CallFrame*);
         String friendlySourceURL() const;
         String friendlyFunctionName(CallFrame*) const;

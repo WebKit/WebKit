@@ -107,9 +107,26 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         return WebInspector.UIString("Anonymous Script %d").format(this._uniqueDisplayNameNumber);
     }
 
+    get displayURL()
+    {
+        const isMultiLine = true;
+        const dataURIMaxSize = 64;
+
+        if (this._url)
+            return WebInspector.truncateURL(this._url, isMultiLine, dataURIMaxSize);
+        if (this._sourceURL)
+            return WebInspector.truncateURL(this._sourceURL, isMultiLine, dataURIMaxSize);
+        return null;
+    }
+
     get injected()
     {
         return this._injected;
+    }
+
+    get anonymous()
+    {
+        return !this._resource && !this._url && !this._sourceURL;
     }
 
     get resource()

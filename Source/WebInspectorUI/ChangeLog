@@ -1,5 +1,46 @@
 2016-04-21  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: sourceMappingURL not loaded in generated script
+        https://bugs.webkit.org/show_bug.cgi?id=156022
+        <rdar://problem/25438595>
+
+        Reviewed by Geoffrey Garen.
+
+        * UserInterface/Controllers/SourceMapManager.js:
+        (WebInspector.SourceMapManager.prototype.downloadSourceMap):
+        If the sourceMapURL is a dataURL at this point, we can just pass it on,
+        otherwise we would have returned and skipped it.
+        
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame.fromPayload):
+        Add handling for "scriptId" if it is available in the Console.CallFrame.
+        Don't automatically mark CallFrames that didn't have a "url" as native,
+        instead try to get a SourceCode.
+
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script.prototype.get displayURL):
+        Used by SourceCodeLocation formatting, so behave more like Resources
+        when we have only have a sourceURL name. This produces output like:
+        "foo.js:#:#" instead of "foo.js (line #:#)"
+
+        (WebInspector.Script.prototype.get anonymous):
+        Easy accessor to see if this would be treated as anonymous or not.
+
+        * UserInterface/Models/SourceMap.js:
+        (WebInspector.SourceMap.prototype.get sourceMappingBasePathURLComponents):
+        Gracefully handle no path.
+
+        * UserInterface/Models/StackTrace.js:
+        (WebInspector.StackTrace.prototype.get firstNonNativeCallFrame):
+        (WebInspector.StackTrace.prototype.get firstNonNativeNonAnonymousCallFrame):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendLocationLink):
+        Now that "Eval Code" with a sourceURL is no longer native, we still don't
+        want to show it in the Web Inspector if it is anonymous. So include a stricter
+        version that skips native and anonymous call frames.
+
+2016-04-21  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Debugger statement gets a space after it when pretty printed
         https://bugs.webkit.org/show_bug.cgi?id=156867
         <rdar://problem/25862308>

@@ -78,6 +78,8 @@ public:
         JS_EXPORT_PRIVATE String sourceURL();
         JS_EXPORT_PRIVATE String toString();
 
+        intptr_t sourceID();
+
         CodeType codeType() const;
         JS_EXPORT_PRIVATE void computeLineAndColumn(unsigned& line, unsigned& column);
 
