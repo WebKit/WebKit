@@ -62,7 +62,7 @@ inline Optional<double> safeReciprocalForDivByConst(double constant)
         return Nullopt;
 
     int exponent;
-    if (frexp(constant, &exponent) != 0.5)
+    if (std::frexp(constant, &exponent) != 0.5)
         return Nullopt;
 
     // Note that frexp() returns the value divided by two
@@ -74,7 +74,7 @@ inline Optional<double> safeReciprocalForDivByConst(double constant)
     if (exponent == 1023)
         return Nullopt;
 
-    double reciprocal = ldexp(1, -exponent);
+    double reciprocal = std::ldexp(1, -exponent);
     ASSERT(std::isnormal(reciprocal));
     ASSERT(1. / constant == reciprocal);
     ASSERT(constant == 1. / reciprocal);

@@ -1,3 +1,10 @@
+2016-04-21  Darin Adler  <darin@apple.com>
+
+        Follow-on to the build fix.
+
+        * runtime/MathCommon.h: Use the C++ std namespace version of the
+        frexp function too.
+
 2016-04-21  Joonghun Park  <jh718.park@samsung.com>
 
         [JSC] Fix build break since r199866. Unreviewed.
