@@ -53,6 +53,7 @@ private:
 
     void setEncoding(const String&) override;
     String encoding() const override;
+    const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.get(); }
     void finishLoading(SharedBuffer*) override;
 
     void destroyDecodedData() override;

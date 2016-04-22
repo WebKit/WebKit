@@ -1,3 +1,15 @@
+2016-04-22  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r194898): Multi download of external SVG defs file by <use> xlinks:href (caching)
+        https://bugs.webkit.org/show_bug.cgi?id=156368
+        <rdar://problem/25611746>
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/svg/resources/symbol-defs.svg: Added.
+        * http/tests/svg/svg-use-external-expected.txt: Added.
+        * http/tests/svg/svg-use-external.html: Added.
+
 2016-04-22  Chris Dumez  <cdumez@apple.com>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from MutationObserver

@@ -1,3 +1,39 @@
+2016-04-22  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r194898): Multi download of external SVG defs file by <use> xlinks:href (caching)
+        https://bugs.webkit.org/show_bug.cgi?id=156368
+        <rdar://problem/25611746>
+
+        Reviewed by Simon Fraser.
+
+        We would load svg resources with fragment identifier again because the encoding never matched.
+
+        Test: http/tests/svg/svg-use-external.html
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::setEncoding):
+        (WebCore::TextResourceDecoder::hasEqualEncodingForCharset):
+
+            Encoding can depend on mime type. Add a comparison function that takes this into account.
+
+        (WebCore::findXMLEncoding):
+        * loader/TextResourceDecoder.h:
+        (WebCore::TextResourceDecoder::encoding):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::textResourceDecoder):
+
+            Add a way to get the TextResourceDecoder from a cached resource.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+
+            Use the new comparison function.
+
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedScript.h:
+        * loader/cache/CachedXSLStyleSheet.h:
+
 2016-04-22  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from InspectorFrontendHost
