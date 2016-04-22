@@ -31,9 +31,8 @@
  */
 
 [
+    ImplementationLacksVTable,
     NoInterfaceObject,
-    UsePointersEvenForNonNullableObjectArguments,
-    ImplementationLacksVTable
 ] interface InspectorFrontendHost {
     void loaded();
     void closeWindow();
@@ -67,7 +66,7 @@
     DOMString port();
 
     [Custom] void showContextMenu(MouseEvent event, any items);
-    void dispatchEventAsContextMenuEvent(Event event);
+    void dispatchEventAsContextMenuEvent(Event? event);
     void sendMessageToBackend(DOMString message);
     void unbufferedLog(DOMString message);
 
