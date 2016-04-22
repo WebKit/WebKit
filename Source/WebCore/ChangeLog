@@ -1,3 +1,21 @@
+2016-04-21  Zalan Bujtas  <zalan@apple.com>
+
+        RenderVideo should always update the intrinsic size before layout.
+        https://bugs.webkit.org/show_bug.cgi?id=156878
+
+        Reviewed by Simon Fraser.
+
+        In order to layout video element properly we need to know the correct intrinsic size.
+        This patch also asserts if we end up updating the intrinsic size right after finishing video renderer layout.
+
+        This issues was discovered as part of webkit.org/b/156245. (hence covered by existing tests)
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updateIntrinsicSize):
+        (WebCore::RenderVideo::layout):
+        (WebCore::RenderVideo::updatePlayer):
+        * rendering/RenderVideo.h:
+
 2016-04-21  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Get the IDBConnectionProxy from the Document to the WorkerGlobalScope.
