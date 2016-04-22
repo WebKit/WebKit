@@ -230,6 +230,8 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
         out.print(" (NeverInline)");
     if (ownerScriptExecutable()->neverOptimize())
         out.print(" (NeverOptimize)");
+    else if (ownerScriptExecutable()->neverFTLOptimize())
+        out.print(" (NeverFTLOptimize)");
     if (ownerScriptExecutable()->didTryToEnterInLoop())
         out.print(" (DidTryToEnterInLoop)");
     if (ownerScriptExecutable()->isStrictMode())

@@ -5983,10 +5983,16 @@ private:
                 patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
                 patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
+                RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
+
                 State* state = &m_ftlState;
                 patchpoint->setGenerator(
                     [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                        // This is the direct exit target for operation calls. We don't need a JS exceptionHandle because we don't
+                        // cache Proxy objects.
+                        Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
 
                         GPRReg baseGPR = params[1].gpr();
                         GPRReg resultGPR = params[0].gpr();
@@ -6011,7 +6017,7 @@ private:
                                 CCallHelpers::Label slowPathBegin = jit.label();
                                 CCallHelpers::Call slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit,
-                                    node->origin.semantic, nullptr, operationInOptimize,
+                                    node->origin.semantic, exceptions.get(), operationInOptimize,
                                     resultGPR, CCallHelpers::TrustedImmPtr(stubInfo), baseGPR,
                                     CCallHelpers::TrustedImmPtr(str)).call();
                                 jit.jump().linkTo(done, &jit);

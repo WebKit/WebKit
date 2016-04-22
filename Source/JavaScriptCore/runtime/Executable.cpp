@@ -117,6 +117,7 @@ ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCod
     , m_hasCapturedVariables(false)
     , m_neverInline(false)
     , m_neverOptimize(false)
+    , m_neverFTLOptimize(false)
     , m_isArrowFunctionContext(isInArrowFunctionContext)
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
     , m_evalContextType(static_cast<unsigned>(evalContextType))

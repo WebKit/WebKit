@@ -78,11 +78,11 @@ public:
     // Schedules the creation of an OSR exit jump destination. You don't know when this will be
     // created, but it will happen before linking. You can link jumps to it during link time. That's
     // why this returns an ExceptionTarget. That will contain the jump destination (target->label())
-    // at link time.
+    // at link time. This function should be used for exceptions from C calls.
     RefPtr<ExceptionTarget> scheduleExitCreation(const B3::StackmapGenerationParams&);
 
     // Schedules the creation of an OSR exit jump destination, and ensures that it gets associated
-    // with the handler for some callsite index.
+    // with the handler for some callsite index. This function should be used for exceptions from JS.
     void scheduleExitCreationForUnwind(const B3::StackmapGenerationParams&, CallSiteIndex);
 
 private:

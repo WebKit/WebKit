@@ -1,3 +1,35 @@
+2016-04-21  Keith Miller  <keith_miller@apple.com>
+
+        FTL should handle exceptions in operationInOptimize
+        https://bugs.webkit.org/show_bug.cgi?id=156885
+
+        Reviewed by Michael Saboff.
+
+        For some reasone we didn't handle any exceptions in "in" when we called
+        operationInOptimize in the FTL.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpAssumingJITType):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileIn):
+        * ftl/FTLPatchpointExceptionHandle.h: Add comments explaining which
+        function to use for different exception types.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionNoFTL):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::setNeverFTLOptimize):
+        (JSC::ScriptExecutable::neverFTLOptimize):
+        * tests/stress/in-ftl-exception-check.js: Added.
+        (foo):
+        (bar):
+        (catch):
+
 2016-04-21  Filip Pizlo  <fpizlo@apple.com>
 
         JSC virtual call thunk shouldn't do a structure->classInfo lookup
