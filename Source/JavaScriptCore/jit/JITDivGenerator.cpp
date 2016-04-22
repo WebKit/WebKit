@@ -29,12 +29,17 @@
 #if ENABLE(JIT)
 
 #include "JSCJSValueInlines.h"
+#include "MathCommon.h"
 
 namespace JSC {
 
 void JITDivGenerator::loadOperand(CCallHelpers& jit, SnippetOperand& opr, JSValueRegs oprRegs, FPRReg destFPR)
 {
     if (opr.isConstInt32()) {
+        // FIXME: this does not looks right.
+        //     -On x86_64, CVTSI2SD has partial register stall on its FPR.
+        //      A move or load might be a tiny bit larger but safer.
+        //     -On ARM64 we also have FMOV that can load small immediates.
         jit.move(CCallHelpers::Imm32(opr.asConstInt32()), m_scratchGPR);
         jit.convertInt32ToDouble(m_scratchGPR, destFPR);
 #if USE(JSVALUE64)
@@ -74,9 +79,26 @@ void JITDivGenerator::generateFastPath(CCallHelpers& jit)
     ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
     m_didEmitFastPath = true;
     loadOperand(jit, m_leftOperand, m_left, m_leftFPR);
-    loadOperand(jit, m_rightOperand, m_right, m_rightFPR);
 
-    jit.divDouble(m_rightFPR, m_leftFPR);
+#if USE(JSVALUE64)
+    Optional<double> safeReciprocal;
+    if (m_rightOperand.isConst()) {
+        double constant = m_rightOperand.asConstNumber();
+        safeReciprocal = safeReciprocalForDivByConst(constant);
+    }
+
+    if (safeReciprocal) {
+        jit.move(CCallHelpers::Imm64(bitwise_cast<int64_t>(*safeReciprocal)), m_scratchGPR);
+        jit.move64ToDouble(m_scratchGPR, m_rightFPR);
+
+        jit.mulDouble(m_rightFPR, m_leftFPR);
+    } else
+#endif
+    {
+        loadOperand(jit, m_rightOperand, m_right, m_rightFPR);
+
+        jit.divDouble(m_rightFPR, m_leftFPR);
+    }
 
     // Is the result actually an integer? The DFG JIT would really like to know. If it's
     // not an integer, we increment a count. If this together with the slow case counter

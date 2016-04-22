@@ -36,6 +36,7 @@
 #include "DFGPredictionPropagationPhase.h"
 #include "DFGVariableAccessDataDump.h"
 #include "JSCInlines.h"
+#include "MathCommon.h"
 #include "RegExpConstructor.h"
 #include "StringPrototype.h"
 #include <cstdlib>
@@ -189,6 +190,25 @@ private:
                 && m_node->child1()->child2()->isInt32Constant()
                 && std::abs(m_node->child1()->child2()->asInt32()) <= std::abs(m_node->child2()->asInt32())) {
                     convertToIdentityOverChild1();
+            }
+            break;
+
+        case ArithDiv:
+            // Transform
+            //    ArithDiv(x, constant)
+            // Into
+            //    ArithMul(x, 1 / constant)
+            // if the operation has the same result.
+            if (m_node->isBinaryUseKind(DoubleRepUse)
+                && m_node->child2()->isNumberConstant()) {
+
+                if (Optional<double> reciprocal = safeReciprocalForDivByConst(m_node->child2()->asNumber())) {
+                    Node* reciprocalNode = m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, jsDoubleNumber(*reciprocal), DoubleConstant);
+                    m_node->setOp(ArithMul);
+                    m_node->child2() = Edge(reciprocalNode, DoubleRepUse);
+                    m_changed = true;
+                    break;
+                }
             }
             break;
 

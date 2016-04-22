@@ -1,3 +1,41 @@
+2016-04-21  Benjamin Poulain  <bpoulain@webkit.org>
+
+        [JSC] Commute FDiv-by-constant into FMul-by-reciprocal when it is safe
+        https://bugs.webkit.org/show_bug.cgi?id=156871
+
+        Reviewed by Filip Pizlo.
+
+        FMul is significantly faster than FDiv.
+        For example, on Haswell, FMul has a latency of 5, a throughput of 1
+        while FDiv has latency 10-24, throughput 8-18.
+
+        Fortunately for us, Sunspider and Kraken have plenty of division
+        by a simple power of 2 constant. Those are just exponent operations
+        and can be easily reversed to use FMul instead of FDiv.
+
+        LLVM does something similar in InstCombine.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * jit/JITDivGenerator.cpp:
+        (JSC::JITDivGenerator::loadOperand):
+        (JSC::JITDivGenerator::generateFastPath):
+        * jit/SnippetOperand.h:
+        (JSC::SnippetOperand::asConstNumber):
+        * runtime/MathCommon.h:
+        (JSC::safeReciprocalForDivByConst):
+        * tests/stress/floating-point-div-to-mul.js: Added.
+        (opaqueDivBy2):
+        (opaqueDivBy3):
+        (opaqueDivBy4):
+        (opaqueDivBySafeMaxMinusOne):
+        (opaqueDivBySafeMax):
+        (opaqueDivBySafeMaxPlusOne):
+        (opaqueDivBySafeMin):
+        (opaqueDivBySafeMinMinusOne):
+        (i.catch):
+        (i.result.opaqueDivBySafeMin.valueOf):
+
 2016-04-21  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Improve the absThunkGenerator() for 64bit
