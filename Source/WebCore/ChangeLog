@@ -1,3 +1,14 @@
+2016-04-23  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/25894586> A project has failed to build because WTF_MAKE_FAST_ALLOCATED was not defined
+
+        Rubber-stamped by Chris Dumez.
+
+        Reverted the IntSize part of r199735, to let IntSize.h keep being used in another project.
+
+        * platform/graphics/IntSize.h:
+        (WebCore::IntSize::IntSize):
+
 2016-04-23  Chris Dumez  <cdumez@apple.com>
 
         Tie the DiagnosticLoggingClient's lifetime to the Page
