@@ -37,6 +37,7 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
             name: {
                 title: WebInspector.UIString("Name"),
                 width: "150px",
+                icon: true,
             },
             timestamp: {
                 title: WebInspector.UIString("Time"),

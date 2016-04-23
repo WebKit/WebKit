@@ -1,3 +1,20 @@
+2016-04-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: HeapAllocationsTimeline grid should use built-in grid column icons
+        https://bugs.webkit.org/show_bug.cgi?id=156934
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/HeapAllocationsTimelineDataGridNode.js:
+        (WebInspector.HeapAllocationsTimelineDataGridNode):
+        Use existing base class helper function to create main title text.
+        (WebInspector.HeapAllocationsTimelineDataGridNode.prototype.createCellContent):
+        Add icon class names to cell, remove icon element.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView):
+        Turn on icons for the column.
+
 2016-04-22  Timothy Hatcher  <timothy@apple.com>
 
         Change an assert to a warn based on post review feedback.

@@ -33,7 +33,7 @@ WebInspector.HeapAllocationsTimelineDataGridNode = class HeapAllocationsTimeline
         this._heapAllocationsView = heapAllocationsView;
 
         this._data = {
-            name: WebInspector.TimelineTabContentView.displayNameForRecord(heapAllocationsTimelineRecord),
+            name: this.displayName(),
             timestamp: this._record.timestamp - zeroTime,
             size: this._record.heapSnapshot.totalSize,
         };
@@ -48,9 +48,9 @@ WebInspector.HeapAllocationsTimelineDataGridNode = class HeapAllocationsTimeline
     {
         switch (columnIdentifier) {
         case "name":
+            cell.classList.add(...this.iconClassNames());
+
             let fragment = document.createDocumentFragment();
-            let iconElement = fragment.appendChild(document.createElement("img"));
-            iconElement.classList.add("icon", "heap-snapshot");
             let titleElement = fragment.appendChild(document.createElement("span"));
             titleElement.textContent = this._data.name;
             let goToButton = fragment.appendChild(WebInspector.createGoToArrowButton());
