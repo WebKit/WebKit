@@ -27,7 +27,6 @@
  */
 
 [
-    NoInterfaceObject,
     ImplementationLacksVTable
 ] interface SQLError {
     readonly attribute unsigned long code;

@@ -27,7 +27,6 @@
  */
 
 [
-    NoInterfaceObject,
     SkipVTableValidation,
 ] interface SQLTransaction {
     [Custom] void executeSql(DOMString sqlStatement,

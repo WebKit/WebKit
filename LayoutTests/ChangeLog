@@ -1,3 +1,21 @@
+2016-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Cannot access the SQLTransaction.constructor.prototype
+        https://bugs.webkit.org/show_bug.cgi?id=156613
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing test now that more SQL constructors are exposed on the
+        global Window object. Also add a test to confirm that it is possible to
+        access SQLTransaction.constructor.prototype and that it seems correct.
+
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * storage/websql/transaction-prototype-expected.txt: Added.
+        * storage/websql/transaction-prototype.html: Added.
+
 2016-04-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Source directives lost when using Function constructor repeatedly

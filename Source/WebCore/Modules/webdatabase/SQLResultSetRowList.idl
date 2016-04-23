@@ -27,7 +27,6 @@
  */
 
 [
-    NoInterfaceObject,
     ImplementationLacksVTable,
 ] interface SQLResultSetRowList {
     readonly attribute unsigned long length;

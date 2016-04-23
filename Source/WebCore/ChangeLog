@@ -1,3 +1,27 @@
+2016-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Cannot access the SQLTransaction.constructor.prototype
+        https://bugs.webkit.org/show_bug.cgi?id=156613
+
+        Reviewed by Darin Adler.
+
+        Drop [NoInterfaceObject] from the following SQL interfaces:
+        Database, SQLError, SQLResultSet, SQLResultSetRowList and SQLTransaction.
+
+        This matches the specification:
+        https://dev.w3.org/html5/webdatabase/
+
+        This was causing the 'constructor' property to be wrong for these
+        interfaces as it would be a generic Object.
+
+        Test: storage/websql/transaction-prototype.html
+
+        * Modules/webdatabase/Database.idl:
+        * Modules/webdatabase/SQLError.idl:
+        * Modules/webdatabase/SQLResultSet.idl:
+        * Modules/webdatabase/SQLResultSetRowList.idl:
+        * Modules/webdatabase/SQLTransaction.idl:
+
 2016-04-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include columnNumber in event listener locations

@@ -1,0 +1,12 @@
+Tests that it is possible to access SQLTransaction.constructor.prototype and that it is correct
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS transaction.__proto__ is SQLTransaction.prototype
+PASS transaction.constructor is SQLTransaction
+PASS transaction.constructor.prototype is SQLTransaction.prototype
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
