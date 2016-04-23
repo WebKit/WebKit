@@ -61,6 +61,7 @@ enum JS_EXPORT_PRIVATE Intrinsic {
     IsArrayConstructorIntrinsic,
     IsJSArrayIntrinsic,
     IsRegExpObjectIntrinsic,
+    BoundThisNoArgsFunctionCallIntrinsic,
 
     // Getter intrinsics.
     TypedArrayLengthIntrinsic,

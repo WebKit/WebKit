@@ -1,3 +1,17 @@
+2016-04-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Speed up bound functions a bit
+        https://bugs.webkit.org/show_bug.cgi?id=156889
+
+        Reviewed by Saam Barati.
+
+        This microbenchmark speeds up by >4x with this change.
+
+        * js/regress/bound-function-call-expected.txt: Added.
+        * js/regress/bound-function-call.html: Added.
+        * js/regress/script-tests/bound-function-call.js: Added.
+        (foo):
+
 2016-04-22  Chris Dumez  <cdumez@apple.com>
 
         Cannot access the SQLTransaction.constructor.prototype

@@ -84,15 +84,7 @@ JSFunction* JSFunction::create(VM& vm, WebAssemblyExecutable* executable, JSScop
 
 NativeExecutable* JSFunction::lookUpOrCreateNativeExecutable(VM& vm, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor, const String& name)
 {
-#if !ENABLE(JIT)
-    UNUSED_PARAM(intrinsic);
-#else
-    if (intrinsic != NoIntrinsic && vm.canUseJIT()) {
-        ASSERT(nativeConstructor == callHostFunctionAsConstructor);
-        return vm.getHostFunction(nativeFunction, intrinsic, name);
-    }
-#endif
-    return vm.getHostFunction(nativeFunction, nativeConstructor, name);
+    return vm.getHostFunction(nativeFunction, intrinsic, nativeConstructor, name);
 }
 
 JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)

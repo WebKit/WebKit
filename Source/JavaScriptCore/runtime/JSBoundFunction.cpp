@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,16 +34,37 @@ namespace JSC {
 
 const ClassInfo JSBoundFunction::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(JSBoundFunction) };
 
+EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(ExecState* exec)
+{
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->callee());
+
+    MarkedArgumentBuffer args;
+    for (unsigned i = 0; i < exec->argumentCount(); ++i)
+        args.append(exec->uncheckedArgument(i));
+
+    JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->targetFunction());
+    ExecutableBase* executable = targetFunction->executable();
+    if (executable->hasJITCodeForCall()) {
+        // Force the executable to cache its arity entrypoint.
+        executable->entrypointFor(CodeForCall, MustCheckArity);
+    }
+    CallData callData;
+    CallType callType = getCallData(targetFunction, callData);
+    ASSERT(callType != CallType::None);
+    return JSValue::encode(call(exec, targetFunction, callType, callData, boundFunction->boundThis(), args));
+}
+
 EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
 {
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->callee());
 
-    ASSERT(isJSArray(boundFunction->boundArgs())); // Currently this is true!
-    JSArray* boundArgs = asArray(boundFunction->boundArgs());
+    JSArray* boundArgs = boundFunction->boundArgs();
 
     MarkedArgumentBuffer args;
-    for (unsigned i = 0; i < boundArgs->length(); ++i)
-        args.append(boundArgs->getIndexQuickly(i));
+    if (boundArgs) {
+        for (unsigned i = 0; i < boundArgs->length(); ++i)
+            args.append(boundArgs->getIndexQuickly(i));
+    }
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
         args.append(exec->uncheckedArgument(i));
 
@@ -54,16 +75,32 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
     return JSValue::encode(call(exec, targetFunction, callType, callData, boundFunction->boundThis(), args));
 }
 
+EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(ExecState* exec)
+{
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->callee());
+
+    MarkedArgumentBuffer args;
+    for (unsigned i = 0; i < exec->argumentCount(); ++i)
+        args.append(exec->uncheckedArgument(i));
+
+    JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->targetFunction());
+    ConstructData constructData;
+    ConstructType constructType = getConstructData(targetFunction, constructData);
+    ASSERT(constructType != ConstructType::None);
+    return JSValue::encode(construct(exec, targetFunction, constructType, constructData, args));
+}
+
 EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
 {
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->callee());
 
-    ASSERT(isJSArray(boundFunction->boundArgs())); // Currently this is true!
-    JSArray* boundArgs = asArray(boundFunction->boundArgs());
+    JSArray* boundArgs = boundFunction->boundArgs();
 
     MarkedArgumentBuffer args;
-    for (unsigned i = 0; i < boundArgs->length(); ++i)
-        args.append(boundArgs->getIndexQuickly(i));
+    if (boundArgs) {
+        for (unsigned i = 0; i < boundArgs->length(); ++i)
+            args.append(boundArgs->getIndexQuickly(i));
+    }
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
         args.append(exec->uncheckedArgument(i));
 
@@ -119,12 +156,19 @@ inline Structure* getBoundFunctionStructure(VM& vm, ExecState* exec, JSGlobalObj
     return result;
 }
 
-JSBoundFunction* JSBoundFunction::create(VM& vm, ExecState* exec, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int length, const String& name)
+JSBoundFunction* JSBoundFunction::create(VM& vm, ExecState* exec, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, JSArray* boundArgs, int length, const String& name)
 {
     ConstructData constructData;
     ConstructType constructType = JSC::getConstructData(targetFunction, constructData);
     bool canConstruct = constructType != ConstructType::None;
-    NativeExecutable* executable = vm.getHostFunction(boundFunctionCall, canConstruct ? boundFunctionConstruct : callHostFunctionAsConstructor, name);
+    
+    bool slowCase = boundArgs || !getJSFunction(targetFunction);
+    
+    NativeExecutable* executable = vm.getHostFunction(
+        slowCase ? boundFunctionCall : boundThisNoArgsFunctionCall,
+        slowCase ? NoIntrinsic : BoundThisNoArgsFunctionCallIntrinsic,
+        canConstruct ? (slowCase ? boundFunctionConstruct : boundThisNoArgsFunctionConstruct) : callHostFunctionAsConstructor,
+        name);
     Structure* structure = getBoundFunctionStructure(vm, exec, globalObject, targetFunction);
     if (UNLIKELY(vm.exception()))
         return nullptr;
@@ -139,11 +183,11 @@ bool JSBoundFunction::customHasInstance(JSObject* object, ExecState* exec, JSVal
     return jsCast<JSBoundFunction*>(object)->m_targetFunction->hasInstance(exec, value);
 }
 
-JSBoundFunction::JSBoundFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs)
+JSBoundFunction::JSBoundFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, JSArray* boundArgs)
     : Base(vm, globalObject, structure)
     , m_targetFunction(vm, this, targetFunction)
     , m_boundThis(vm, this, boundThis)
-    , m_boundArgs(vm, this, boundArgs)
+    , m_boundArgs(vm, this, boundArgs, WriteBarrier<JSArray>::MayBeNull)
 {
 }
 

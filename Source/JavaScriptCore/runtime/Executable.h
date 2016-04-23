@@ -258,13 +258,7 @@ public:
     typedef ExecutableBase Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static NativeExecutable* create(VM& vm, PassRefPtr<JITCode> callThunk, NativeFunction function, PassRefPtr<JITCode> constructThunk, NativeFunction constructor, Intrinsic intrinsic, const String& name)
-    {
-        NativeExecutable* executable;
-        executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor, intrinsic);
-        executable->finishCreation(vm, callThunk, constructThunk, name);
-        return executable;
-    }
+    static NativeExecutable* create(VM& vm, PassRefPtr<JITCode> callThunk, NativeFunction function, PassRefPtr<JITCode> constructThunk, NativeFunction constructor, Intrinsic intrinsic, const String& name);
 
     static void destroy(JSCell*);
 
@@ -289,7 +283,7 @@ public:
         return OBJECT_OFFSETOF(NativeExecutable, m_constructor);
     }
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(CellType, StructureFlags), info()); }
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue proto);
         
     DECLARE_INFO;
 
@@ -298,23 +292,12 @@ public:
     const String& name() const { return m_name; }
 
 protected:
-    void finishCreation(VM& vm, PassRefPtr<JITCode> callThunk, PassRefPtr<JITCode> constructThunk, const String& name)
-    {
-        Base::finishCreation(vm);
-        m_jitCodeForCall = callThunk;
-        m_jitCodeForConstruct = constructThunk;
-        m_name = name;
-    }
+    void finishCreation(VM&, PassRefPtr<JITCode> callThunk, PassRefPtr<JITCode> constructThunk, const String& name);
 
 private:
     friend class ExecutableBase;
 
-    NativeExecutable(VM& vm, NativeFunction function, NativeFunction constructor, Intrinsic intrinsic)
-        : ExecutableBase(vm, vm.nativeExecutableStructure.get(), NUM_PARAMETERS_IS_HOST, intrinsic)
-        , m_function(function)
-        , m_constructor(constructor)
-    {
-    }
+    NativeExecutable(VM&, NativeFunction function, NativeFunction constructor, Intrinsic);
 
     NativeFunction m_function;
     NativeFunction m_constructor;

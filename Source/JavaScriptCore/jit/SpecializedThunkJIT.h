@@ -193,31 +193,6 @@ namespace JSC {
         }
 
     private:
-        void emitSaveThenMaterializeTagRegisters()
-        {
-#if USE(JSVALUE64)
-#if CPU(ARM64)
-            pushPair(tagTypeNumberRegister, tagMaskRegister);
-#else
-            push(tagTypeNumberRegister);
-            push(tagMaskRegister);
-#endif
-            emitMaterializeTagCheckRegisters();
-#endif
-        }
-
-        void emitRestoreSavedTagRegisters()
-        {
-#if USE(JSVALUE64)
-#if CPU(ARM64)
-            popPair(tagTypeNumberRegister, tagMaskRegister);
-#else
-            pop(tagMaskRegister);
-            pop(tagTypeNumberRegister);
-#endif
-#endif
-        }
-        
         void tagReturnAsInt32()
         {
 #if USE(JSVALUE64)

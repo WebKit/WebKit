@@ -85,6 +85,15 @@ public:
 #endif
     }
     
+    void loadCell(Address address, GPRReg gpr)
+    {
+#if USE(JSVALUE64)
+        load64(address, gpr);
+#else
+        load32(address.withOffset(PayloadOffset), gpr);
+#endif
+    }
+    
     void storeValue(JSValueRegs regs, Address address)
     {
 #if USE(JSVALUE64)
@@ -274,9 +283,34 @@ public:
         emitSaveCalleeSavesFor(codeBlock());
     }
 
+    void emitSaveThenMaterializeTagRegisters()
+    {
+#if USE(JSVALUE64)
+#if CPU(ARM64)
+        pushPair(GPRInfo::tagTypeNumberRegister, GPRInfo::tagMaskRegister);
+#else
+        push(GPRInfo::tagTypeNumberRegister);
+        push(GPRInfo::tagMaskRegister);
+#endif
+        emitMaterializeTagCheckRegisters();
+#endif
+    }
+    
     void emitRestoreCalleeSaves()
     {
         emitRestoreCalleeSavesFor(codeBlock());
+    }
+
+    void emitRestoreSavedTagRegisters()
+    {
+#if USE(JSVALUE64)
+#if CPU(ARM64)
+        popPair(GPRInfo::tagTypeNumberRegister, GPRInfo::tagMaskRegister);
+#else
+        pop(GPRInfo::tagMaskRegister);
+        pop(GPRInfo::tagTypeNumberRegister);
+#endif
+#endif
     }
 
     void copyCalleeSavesToVMCalleeSavesBuffer(const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })

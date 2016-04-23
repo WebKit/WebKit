@@ -1,3 +1,125 @@
+2016-04-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Speed up bound functions a bit
+        https://bugs.webkit.org/show_bug.cgi?id=156889
+
+        Reviewed by Saam Barati.
+        
+        Bound functions are hard to optimize because JSC doesn't have a good notion of non-JS code
+        that does JS-ey things like make JS calls. What I mean by "non-JS code" is code that did not
+        originate from JS source. A bound function does a highly polymorphic call to the target
+        stored in the JSBoundFunction. Prior to this change, we represented it as native code that
+        used the generic native->JS call API. That's not cheap.
+        
+        We could model bound functions using a builtin, but it's not clear that this would be easy
+        to grok, since so much of the code would have to access special parts of the JSBoundFunction
+        type. Doing it that way might solve the performance problems but it would mean extra work to
+        arrange for the builtin to have speedy access to the call target, the bound this, and the
+        bound arguments. Also, optimizing bound functions that way would mean that bound function
+        performance would be gated on the performance of a bunch of other things in our system. For
+        example, we'd want this polymorphic call to be handled like the funnel that it is: if we're
+        compiling the bound function's outgoing call with no context then we should compile it as
+        fully polymorphic but we can let it assume basic sanity like that the callee is a real
+        function; but if we're compiling the call with any amount of calling context then we want to
+        use normal call IC's.
+        
+        Since the builtin path wouldn't lead to a simpler patch and since I think that the VM will
+        benefit in the long run from using custom handling for bound functions, I kept the native
+        code and just added Intrinsic/thunk support.
+        
+        This just adds an Intrinsic for bound function calls where the JSBoundFunction targets a
+        JSFunction instance and has no bound arguments (only bound this). This intrinsic is
+        currently only implemented as a thunk and not yet recognized by the DFG bytecode parser.
+
+        I needed to loosen some restrictions to do this. For one, I was really tired of our bad use
+        of ENABLE(JIT) conditionals, which made it so that any serious client of Intrinsics would
+        have to have #ifdefs. Really what should happen is that if the JIT is not enabled then we
+        just ignore intrinsics. Also, the code was previously assuming that having a native
+        constructor and knowing the Intrinsic for your native call were mutually exclusive. This
+        change makes it possible to have a native executable that has a custom function, custom
+        constructor, and an Intrinsic.
+        
+        This is a >4x speed-up on bound function calls with no bound arguments.
+
+        In the future, we should teach the DFG Intrinsic handling to deal with bound functions and
+        we should teach the inliner (and ByteCodeParser::handleCall() in general) how to deal with
+        the function call inside the bound function. That would be super awesome.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::timesPtr):
+        (JSC::AbstractMacroAssembler::Address::withOffset):
+        (JSC::AbstractMacroAssembler::BaseIndex::BaseIndex):
+        (JSC::MacroAssemblerType>::Address::indexedBy):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::storeCell):
+        (JSC::AssemblyHelpers::loadCell):
+        (JSC::AssemblyHelpers::storeValue):
+        (JSC::AssemblyHelpers::emitSaveCalleeSaves):
+        (JSC::AssemblyHelpers::emitSaveThenMaterializeTagRegisters):
+        (JSC::AssemblyHelpers::emitRestoreCalleeSaves):
+        (JSC::AssemblyHelpers::emitRestoreSavedTagRegisters):
+        (JSC::AssemblyHelpers::copyCalleeSavesToVMCalleeSavesBuffer):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiNativeTailCall):
+        (JSC::JITThunks::ctiNativeTailCallWithoutSavedTags):
+        (JSC::JITThunks::ctiStub):
+        (JSC::JITThunks::hostFunctionStub):
+        (JSC::JITThunks::clearHostFunctionStubs):
+        * jit/JITThunks.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::callDoubleToDoublePreservingReturn):
+        (JSC::SpecializedThunkJIT::tagReturnAsInt32):
+        (JSC::SpecializedThunkJIT::emitSaveThenMaterializeTagRegisters): Deleted.
+        (JSC::SpecializedThunkJIT::emitRestoreSavedTagRegisters): Deleted.
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::nativeCallGenerator):
+        (JSC::nativeTailCallGenerator):
+        (JSC::nativeTailCallWithoutSavedTagsGenerator):
+        (JSC::nativeConstructGenerator):
+        (JSC::randomThunkGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/Executable.cpp:
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::destroy):
+        (JSC::NativeExecutable::createStructure):
+        (JSC::NativeExecutable::finishCreation):
+        (JSC::NativeExecutable::NativeExecutable):
+        (JSC::ScriptExecutable::ScriptExecutable):
+        * runtime/Executable.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncBind):
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototypeGetterCompare):
+        * runtime/Intrinsic.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundThisNoArgsFunctionCall):
+        (JSC::boundFunctionCall):
+        (JSC::boundThisNoArgsFunctionConstruct):
+        (JSC::boundFunctionConstruct):
+        (JSC::getBoundFunctionStructure):
+        (JSC::JSBoundFunction::create):
+        (JSC::JSBoundFunction::customHasInstance):
+        (JSC::JSBoundFunction::JSBoundFunction):
+        * runtime/JSBoundFunction.h:
+        (JSC::JSBoundFunction::targetFunction):
+        (JSC::JSBoundFunction::boundThis):
+        (JSC::JSBoundFunction::boundArgs):
+        (JSC::JSBoundFunction::createStructure):
+        (JSC::JSBoundFunction::offsetOfTargetFunction):
+        (JSC::JSBoundFunction::offsetOfBoundThis):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::lookUpOrCreateNativeExecutable):
+        (JSC::JSFunction::create):
+        * runtime/VM.cpp:
+        (JSC::thunkGeneratorForIntrinsic):
+        (JSC::VM::getHostFunction):
+        * runtime/VM.h:
+        (JSC::VM::getCTIStub):
+        (JSC::VM::exceptionOffset):
+
 2016-04-22  Joonghun Park  <jh718.park@samsung.com>
 
         [JSC] Fix build break since r199866
