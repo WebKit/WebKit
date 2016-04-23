@@ -1,3 +1,32 @@
+2016-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize number parsing and string parsing in LiteralParser
+        https://bugs.webkit.org/show_bug.cgi?id=156896
+
+        Reviewed by Mark Lam.
+
+        This patch aim to improve JSON.parse performance. Major 2 optimizations are included.
+
+        1. Change `double result` to `int32_t result` in integer parsing case.
+        We already have the optimized path for integer parsing, when it's digits are less than 10.
+        At that case, the maximum number is 999999999, and the minimum number is -99999999.
+        The both are in range of Int32. So We can use int32_t for accumulation instead of double.
+
+        2. Add the string parsing fast / slow cases.
+        We add the fast case for string parsing, which does not include any escape sequences.
+
+        Both optimizations improve Kraken json-parse-financial, roughly 3.5 - 4.5%.
+
+        json-parse-financial        49.128+-1.589             46.979+-0.912           might be 1.0457x faster
+
+        * runtime/LiteralParser.cpp:
+        (JSC::isJSONWhiteSpace):
+        (JSC::isSafeStringCharacter):
+        (JSC::LiteralParser<CharType>::Lexer::lexString):
+        (JSC::LiteralParser<CharType>::Lexer::lexStringSlow):
+        (JSC::LiteralParser<CharType>::Lexer::lexNumber):
+        * runtime/LiteralParser.h:
+
 2016-04-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Source directives lost when using Function constructor repeatedly

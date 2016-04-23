@@ -43,7 +43,7 @@
 namespace JSC {
 
 template <typename CharType>
-static inline bool isJSONWhiteSpace(const CharType& c)
+static ALWAYS_INLINE bool isJSONWhiteSpace(const CharType& c)
 {
     // The JSON RFC 4627 defines a list of allowed characters to be considered
     // insignificant white space: http://www.ietf.org/rfc/rfc4627.txt (2. JSON Grammar).
@@ -336,12 +336,12 @@ ALWAYS_INLINE void setParserTokenString<UChar>(LiteralParserToken<UChar>& token,
     token.stringToken16 = string;
 }
 
-template <ParserMode mode, typename CharType, LChar terminator> static inline bool isSafeStringCharacter(LChar c)
+template <ParserMode mode, typename CharType, LChar terminator> static ALWAYS_INLINE bool isSafeStringCharacter(LChar c)
 {
     return (c >= ' ' && c != '\\' && c != terminator) || (c == '\t' && mode != StrictJSON);
 }
 
-template <ParserMode mode, typename CharType, UChar terminator> static inline bool isSafeStringCharacter(UChar c)
+template <ParserMode mode, typename CharType, UChar terminator> static ALWAYS_INLINE bool isSafeStringCharacter(UChar c)
 {
     return (c >= ' ' && (mode == StrictJSON || c <= 0xff) && c != '\\' && c != terminator) || (c == '\t' && mode != StrictJSON);
 }
@@ -351,13 +351,32 @@ template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType LiteralParse
 {
     ++m_ptr;
     const CharType* runStart = m_ptr;
+    while (m_ptr < m_end && isSafeStringCharacter<mode, CharType, terminator>(*m_ptr))
+        ++m_ptr;
+    if (LIKELY(m_ptr < m_end && *m_ptr == terminator)) {
+        token.stringBuffer = String();
+        setParserTokenString<CharType>(token, runStart);
+        token.stringLength = m_ptr - runStart;
+        token.type = TokString;
+        token.end = ++m_ptr;
+        return TokString;
+    }
+    return lexStringSlow<mode, terminator>(token, runStart);
+}
+
+template <typename CharType>
+template <ParserMode mode, char terminator> TokenType LiteralParser<CharType>::Lexer::lexStringSlow(LiteralParserToken<CharType>& token, const CharType* runStart)
+{
     StringBuilder builder;
+    goto slowPathBegin;
     do {
         runStart = m_ptr;
         while (m_ptr < m_end && isSafeStringCharacter<mode, CharType, terminator>(*m_ptr))
             ++m_ptr;
-        if (builder.length())
+        if (!builder.isEmpty())
             builder.append(runStart, m_ptr - runStart);
+
+slowPathBegin:
         if ((mode != NonStrictJSON) && m_ptr < m_end && *m_ptr == '\\') {
             if (builder.isEmpty() && runStart < m_ptr)
                 builder.append(runStart, m_ptr - runStart);
@@ -486,6 +505,7 @@ TokenType LiteralParser<CharType>::Lexer::lexNumber(LiteralParserToken<CharType>
     }
 
     // ('.' [0-9]+)?
+    const int NumberOfDigitsForSafeInt32 = 9;  // The numbers from -99999999 to 999999999 are always in range of Int32.
     if (m_ptr < m_end && *m_ptr == '.') {
         ++m_ptr;
         // [0-9]+
@@ -497,21 +517,29 @@ TokenType LiteralParser<CharType>::Lexer::lexNumber(LiteralParserToken<CharType>
         ++m_ptr;
         while (m_ptr < m_end && isASCIIDigit(*m_ptr))
             ++m_ptr;
-    } else if (m_ptr < m_end && (*m_ptr != 'e' && *m_ptr != 'E') && (m_ptr - token.start) < 10) {
-        double result = 0;
+    } else if (m_ptr < m_end && (*m_ptr != 'e' && *m_ptr != 'E') && (m_ptr - token.start) <= NumberOfDigitsForSafeInt32) {
+        int32_t result = 0;
         token.type = TokNumber;
         token.end = m_ptr;
         const CharType* digit = token.start;
-        int negative = 1;
+        bool negative = false;
         if (*digit == '-') {
-            negative = -1;
+            negative = true;
             digit++;
         }
         
+        ASSERT((m_ptr - digit) <= NumberOfDigitsForSafeInt32);
         while (digit < m_ptr)
             result = result * 10 + (*digit++) - '0';
-        result *= negative;
-        token.numberToken = result;
+
+        if (!negative)
+            token.numberToken = result;
+        else {
+            if (!result)
+                token.numberToken = -0.0;
+            else
+                token.numberToken = -result;
+        }
         return TokNumber;
     }
 
