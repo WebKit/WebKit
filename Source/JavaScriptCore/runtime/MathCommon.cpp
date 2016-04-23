@@ -26,7 +26,6 @@
 #include "config.h"
 #include "MathCommon.h"
 
-#include <cmath>
 #include "PureNaN.h"
 
 namespace JSC {

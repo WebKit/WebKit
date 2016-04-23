@@ -1,3 +1,12 @@
+2016-04-22  Joonghun Park  <jh718.park@samsung.com>
+
+        [JSC] Fix build break since r199866
+        https://bugs.webkit.org/show_bug.cgi?id=156892
+
+        Reviewed by Darin Adler.
+
+        * runtime/MathCommon.cpp: Follow up to r199913. Remove 'include cmath' in cpp file.
+
 2016-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Optimize number parsing and string parsing in LiteralParser
