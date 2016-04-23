@@ -75,12 +75,6 @@ void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageC
     Object begin(chunk, metadataSize);
     Object end(chunk, chunkSize);
 
-    vmRevokePermissions(begin.begin(), pageSize);
-    vmRevokePermissions(end.begin() - pageSize, pageSize);
-
-    begin = begin + pageSize;
-    end = end - pageSize;
-
     for (Object it = begin; it + pageSize <= end; it = it + pageSize) {
         SmallPage* page = it.page();
         new (page) SmallPage;

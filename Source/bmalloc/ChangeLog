@@ -1,3 +1,20 @@
+2016-04-23  Gavin Barraclough  <barraclough@apple.com>
+
+        bmalloc: vm allocations should plant guard pages
+        https://bugs.webkit.org/show_bug.cgi?id=156937
+
+        Rolling out - looks like this is memory regression.
+
+        * bmalloc/Object.h:
+        (bmalloc::Object::operator+):
+        (bmalloc::Object::operator<=):
+        (bmalloc::Object::operator-): Deleted.
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmDeallocate):
+        (bmalloc::vmRevokePermissions): Deleted.
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::allocateSmallChunk):
+
 2016-04-22  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: vm allocations should plant guard pages

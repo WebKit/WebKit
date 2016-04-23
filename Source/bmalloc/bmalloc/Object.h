@@ -52,7 +52,6 @@ public:
     SmallPage* page();
     
     Object operator+(size_t);
-    Object operator-(size_t);
     bool operator<=(const Object&);
 
 private:
@@ -63,11 +62,6 @@ private:
 inline Object Object::operator+(size_t offset)
 {
     return Object(m_chunk, m_offset + offset);
-}
-
-inline Object Object::operator-(size_t offset)
-{
-    return Object(m_chunk, m_offset - offset);
 }
 
 inline bool Object::operator<=(const Object& other)

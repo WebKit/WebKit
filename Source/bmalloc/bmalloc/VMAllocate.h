@@ -137,12 +137,6 @@ inline void vmDeallocate(void* p, size_t vmSize)
     munmap(p, vmSize);
 }
 
-inline void vmRevokePermissions(void* p, size_t vmSize)
-{
-    vmValidate(p, vmSize);
-    mprotect(p, vmSize, PROT_NONE);
-}
-
 // Allocates vmSize bytes at a specified power-of-two alignment.
 // Use this function to create maskable memory regions.
 
