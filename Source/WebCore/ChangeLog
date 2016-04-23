@@ -1,3 +1,15 @@
+2016-04-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include columnNumber in event listener locations
+        https://bugs.webkit.org/show_bug.cgi?id=156927
+        <rdar://problem/25884584>
+
+        Reviewed by Brian Burg.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        Include the column number in the location as well.
+
 2016-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.
