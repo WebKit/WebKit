@@ -1309,7 +1309,7 @@ private:
 
     RefPtr<WebInspector> m_inspector;
     RefPtr<WebInspectorUI> m_inspectorUI;
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RefPtr<WebPlaybackSessionManager> m_playbackSessionManager;
     RefPtr<WebVideoFullscreenManager> m_videoFullscreenManager;
 #endif

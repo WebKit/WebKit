@@ -1,3 +1,29 @@
+2016-04-23  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/25893246> WebKit2 has failed to build: error: use of undeclared identifier 'm_playbackSessionManager'
+
+        Fixed the non-AVKit build.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isShowingVideoPictureInPicture]):
+        (-[WKWebView _mayAutomaticallyShowVideoPictureInPicture]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::fullScreenManager):
+        (WebKit::WebPageProxy::playbackSessionManager):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidBecomeActive):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createScrollingCoordinator):
+        (WebKit::WebChromeClient::supportsVideoFullscreen):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::inspectorUI):
+        (WebKit::WebPage::playbackSessionManager):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+
 2016-04-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fixing a typo in my last commit.

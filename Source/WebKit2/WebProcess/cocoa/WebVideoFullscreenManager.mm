@@ -25,7 +25,7 @@
 #import "config.h"
 #import "WebVideoFullscreenManager.h"
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #import "Attachment.h"
 #import "WebCoreArgumentCoders.h"

@@ -4044,7 +4044,7 @@ WebFullScreenManagerProxy* WebPageProxy::fullScreenManager()
 }
 #endif
     
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 WebPlaybackSessionManagerProxy* WebPageProxy::playbackSessionManager()
 {
     return m_playbackSessionManager.get();

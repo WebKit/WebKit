@@ -3195,7 +3195,7 @@ WebInspectorUI* WebPage::inspectorUI()
     return m_inspectorUI.get();
 }
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 WebPlaybackSessionManager& WebPage::playbackSessionManager()
 {
     if (!m_playbackSessionManager)

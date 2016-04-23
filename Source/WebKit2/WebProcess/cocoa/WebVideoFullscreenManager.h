@@ -25,7 +25,7 @@
 #ifndef WebVideoFullscreenManager_h
 #define WebVideoFullscreenManager_h
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "MessageReceiver.h"
 #include <WebCore/EventListener.h>

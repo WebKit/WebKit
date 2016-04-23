@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebPageProxy.h"
 
-#if PLATFORM(IOS) && HAVE(AVKIT)
+#if PLATFORM(IOS)
 
 #import "APIUIClient.h"
 #import "DataReference.h"
@@ -652,8 +652,10 @@ void WebPageProxy::applicationWillResignActive()
 
 void WebPageProxy::applicationDidBecomeActive()
 {
+#if HAVE(AVKIT)
     if (m_videoFullscreenManager)
         m_videoFullscreenManager->applicationDidBecomeActive();
+#endif
     m_process->send(Messages::WebPage::ApplicationDidBecomeActive(), m_pageID);
 }
 
