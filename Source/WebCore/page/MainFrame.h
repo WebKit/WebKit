@@ -36,7 +36,6 @@
 
 namespace WebCore {
 
-class DiagnosticLoggingClient;
 class PageConfiguration;
 class PageOverlayController;
 class ScrollLatchingState;
@@ -67,8 +66,6 @@ public:
     void removeLatchingStateForTarget(Element&);
 #endif // PLATFORM(MAC)
 
-    WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
-
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/MainFrameMembers.h>
 #endif
@@ -89,7 +86,6 @@ private:
 
     std::unique_ptr<WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
     std::unique_ptr<PageOverlayController> m_pageOverlayController;
-    DiagnosticLoggingClient* m_diagnosticLoggingClient;
 };
 
 inline bool Frame::isMainFrame() const

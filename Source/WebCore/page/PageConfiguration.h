@@ -75,7 +75,7 @@ public:
     RefPtr<BackForwardClient> backForwardClient;
     ValidationMessageClient* validationMessageClient { nullptr };
     FrameLoaderClient* loaderClientForMainFrame { nullptr };
-    DiagnosticLoggingClient* diagnosticLoggingClient { nullptr };
+    std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient { nullptr };
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/PageConfigurationMembers.h>

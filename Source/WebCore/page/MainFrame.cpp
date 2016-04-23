@@ -55,7 +55,6 @@ inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
 #endif
     , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
     , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
-    , m_diagnosticLoggingClient(configuration.diagnosticLoggingClient)
 {
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/MainFrameInitialization.cpp>
@@ -64,9 +63,6 @@ inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
 
 MainFrame::~MainFrame()
 {
-    if (m_diagnosticLoggingClient)
-        m_diagnosticLoggingClient->mainFrameDestroyed();
-
     m_recentWheelEventDeltaFilter = nullptr;
     m_eventHandler = nullptr;
 
@@ -96,15 +92,6 @@ void MainFrame::selfOnlyDeref()
         dropChildren();
 
     deref();
-}
-
-DiagnosticLoggingClient& MainFrame::diagnosticLoggingClient() const
-{
-    static NeverDestroyed<EmptyDiagnosticLoggingClient> dummyClient;
-    if (!settings().diagnosticLoggingEnabled() || !m_diagnosticLoggingClient)
-        return dummyClient;
-
-    return *m_diagnosticLoggingClient;
 }
 
 void MainFrame::dropChildren()

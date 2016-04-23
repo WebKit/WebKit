@@ -84,6 +84,7 @@ class Color;
 class ContextMenuClient;
 class ContextMenuController;
 class DatabaseProvider;
+class DiagnosticLoggingClient;
 class DragCaretController;
 class DragClient;
 class DragController;
@@ -327,6 +328,8 @@ public:
     WEBCORE_EXPORT void setPaginationLineGridEnabled(bool flag);
 
     WEBCORE_EXPORT unsigned pageCount() const;
+
+    WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
 
     // Notifications when the Page starts and stops being presented via a native window.
     WEBCORE_EXPORT void setViewState(ViewState::Flags);
@@ -584,6 +587,7 @@ private:
     EditorClient& m_editorClient;
     PlugInClient* m_plugInClient;
     ValidationMessageClient* m_validationMessageClient;
+    std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
 
     int m_subframeCount;
     String m_groupName;

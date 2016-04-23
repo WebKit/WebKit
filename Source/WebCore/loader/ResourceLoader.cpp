@@ -403,7 +403,7 @@ void ResourceLoader::didSendData(unsigned long long, unsigned long long)
 
 static void logResourceResponseSource(Frame* frame, ResourceResponse::Source source)
 {
-    if (!frame)
+    if (!frame || !frame->page())
         return;
 
     String sourceKey;
@@ -423,7 +423,7 @@ static void logResourceResponseSource(Frame* frame, ResourceResponse::Source sou
         return;
     }
 
-    frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceResponseKey(), DiagnosticLoggingKeys::sourceKey(), sourceKey, ShouldSample::Yes);
+    frame->page()->diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceResponseKey(), DiagnosticLoggingKeys::sourceKey(), sourceKey, ShouldSample::Yes);
 }
 
 void ResourceLoader::didReceiveResponse(const ResourceResponse& r)

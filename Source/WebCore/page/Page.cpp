@@ -31,11 +31,13 @@
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
 #include "DatabaseProvider.h"
+#include "DiagnosticLoggingClient.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DragController.h"
 #include "Editor.h"
 #include "EditorClient.h"
+#include "EmptyClients.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -181,6 +183,7 @@ Page::Page(PageConfiguration& pageConfiguration)
     , m_editorClient(*pageConfiguration.editorClient)
     , m_plugInClient(pageConfiguration.plugInClient)
     , m_validationMessageClient(pageConfiguration.validationMessageClient)
+    , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
     , m_subframeCount(0)
     , m_openedByDOM(false)
     , m_tabKeyCyclesThroughElements(true)
@@ -267,6 +270,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 
 Page::~Page()
 {
+    m_diagnosticLoggingClient = nullptr;
     m_mainFrame->setView(nullptr);
     setGroupName(String());
     allPages->remove(this);
@@ -758,6 +762,15 @@ bool Page::inLowQualityImageInterpolationMode() const
 void Page::setInLowQualityImageInterpolationMode(bool mode)
 {
     m_inLowQualityInterpolationMode = mode;
+}
+
+DiagnosticLoggingClient& Page::diagnosticLoggingClient() const
+{
+    static NeverDestroyed<EmptyDiagnosticLoggingClient> dummyClient;
+    if (!settings().diagnosticLoggingEnabled() || !m_diagnosticLoggingClient)
+        return dummyClient;
+
+    return *m_diagnosticLoggingClient;
 }
 
 void Page::setMediaVolume(float volume)

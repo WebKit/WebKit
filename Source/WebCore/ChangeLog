@@ -1,3 +1,58 @@
+2016-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Tie the DiagnosticLoggingClient's lifetime to the Page
+        https://bugs.webkit.org/show_bug.cgi?id=156938
+        <rdar://problem/25851499>
+
+        Reviewed by Antti Koivisto.
+
+        Tie the DiagnosticLoggingClient's lifetime to the Page rather than to the
+        MainFrame. The diagnostic logging client in WebKit2 requires the WebPage
+        to be alive in order to send IPC to the UIProcess. The WebPage owns the
+        Page and Page is not refCounted so the lifetime of the
+        DiagnosticLoggingClient should now be tied to the one of the WebPage as
+        well.
+
+        Previously, the DiagnosticLoggingClient would stay alive as long as the
+        MainFrame and could apparently in rare cases outlive the WebPage, thus
+        crashing when trying to send the IPC.
+
+        * history/PageCache.cpp:
+        (WebCore::logPageCacheFailureDiagnosticMessage):
+        (WebCore::canCachePage):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::logMediaLoadRequest):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::mediaPlayerEngineFailedToLoad):
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::logNavigation):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        * loader/ResourceLoader.cpp:
+        (WebCore::logResourceResponseSource):
+        * loader/SubframeLoader.cpp:
+        (WebCore::logPluginRequest):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::logResourceLoaded):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::logMemoryCacheResourceRequest):
+        (WebCore::logResourceRevalidationDecision):
+        * page/DiagnosticLoggingClient.h:
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::MainFrame): Deleted.
+        (WebCore::MainFrame::~MainFrame): Deleted.
+        (WebCore::MainFrame::diagnosticLoggingClient): Deleted.
+        * page/MainFrame.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        (WebCore::Page::diagnosticLoggingClient):
+        * page/Page.h:
+
 2016-04-22  Chris Dumez  <cdumez@apple.com>
 
         Cannot access the SQLTransaction.constructor.prototype

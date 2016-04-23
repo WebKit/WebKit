@@ -640,8 +640,6 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
     void logDiagnosticMessage(const String&, const String&, ShouldSample) override { }
     void logDiagnosticMessageWithResult(const String&, const String&, DiagnosticLoggingResultType, ShouldSample) override { }
     void logDiagnosticMessageWithValue(const String&, const String&, const String&, ShouldSample) override { }
-
-    void mainFrameDestroyed() override { }
 };
 
 void fillWithEmptyClients(PageConfiguration&);

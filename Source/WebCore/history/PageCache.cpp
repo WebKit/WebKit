@@ -74,7 +74,7 @@ static inline void logPageCacheFailureDiagnosticMessage(Page* page, const String
     if (!page)
         return;
 
-    logPageCacheFailureDiagnosticMessage(page->mainFrame().diagnosticLoggingClient(), reason);
+    logPageCacheFailureDiagnosticMessage(page->diagnosticLoggingClient(), reason);
 }
 
 static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggingClient, unsigned indentLevel)
@@ -190,10 +190,9 @@ static bool canCachePage(Page& page)
 {
     unsigned indentLevel = 0;
     PCLOG("--------\n Determining if page can be cached:");
-    
-    MainFrame& mainFrame = page.mainFrame();
-    DiagnosticLoggingClient& diagnosticLoggingClient = mainFrame.diagnosticLoggingClient();
-    bool isCacheable = canCacheFrame(mainFrame, diagnosticLoggingClient, indentLevel + 1);
+
+    DiagnosticLoggingClient& diagnosticLoggingClient = page.diagnosticLoggingClient();
+    bool isCacheable = canCacheFrame(page.mainFrame(), diagnosticLoggingClient, indentLevel + 1);
     
     if (!page.settings().usesPageCache() || page.isResourceCachingDisabled()) {
         PCLOG("   -Page settings says b/f cache disabled");

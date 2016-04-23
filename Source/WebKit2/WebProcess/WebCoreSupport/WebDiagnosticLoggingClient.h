@@ -43,8 +43,6 @@ private:
     void logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample) override;
     void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value, WebCore::ShouldSample) override;
 
-    void mainFrameDestroyed() override;
-
     WebPage& m_page;
 };
 

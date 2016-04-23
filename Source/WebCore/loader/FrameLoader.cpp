@@ -1365,6 +1365,9 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
 
 static void logNavigation(MainFrame& frame, FrameLoadType type)
 {
+    if (!frame.page())
+        return;
+
     String navigationDescription;
     switch (type) {
     case FrameLoadType::Standard:
@@ -1393,7 +1396,7 @@ static void logNavigation(MainFrame& frame, FrameLoadType type)
         // Not logging those for now.
         return;
     }
-    frame.diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::navigationKey(), navigationDescription, ShouldSample::No);
+    frame.page()->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::navigationKey(), navigationDescription, ShouldSample::No);
 }
 
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, PassRefPtr<FormState> prpFormState, AllowNavigationToInvalidURL allowNavigationToInvalidURL)
@@ -2325,7 +2328,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             // Don't assume 'page' is still available to use.
             if (m_frame.isMainFrame() && m_frame.page()) {
                 ASSERT(&m_frame.page()->mainFrame() == &m_frame);
-                m_frame.page()->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingResultPass : DiagnosticLoggingResultFail, ShouldSample::Yes);
+                m_frame.page()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingResultPass : DiagnosticLoggingResultFail, ShouldSample::Yes);
             }
 
             return;
@@ -3049,7 +3052,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     setPolicyDocumentLoader(nullptr);
 
     if (isBackForwardLoadType(type)) {
-        auto& diagnosticLoggingClient = m_frame.mainFrame().diagnosticLoggingClient();
+        auto& diagnosticLoggingClient = m_frame.page()->diagnosticLoggingClient();
         if (history().provisionalItem()->isInPageCache()) {
             diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::retrievalKey(), DiagnosticLoggingResultPass, ShouldSample::Yes);
             loadProvisionalItemFromCachedPage();

@@ -1,3 +1,18 @@
+2016-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Tie the DiagnosticLoggingClient's lifetime to the Page
+        https://bugs.webkit.org/show_bug.cgi?id=156938
+        <rdar://problem/25851499>
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp:
+        (WebKit::WebDiagnosticLoggingClient::pageDestroyed):
+        (WebKit::WebDiagnosticLoggingClient::mainFrameDestroyed): Deleted.
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::willStartUserTriggeredZooming):
+
 2016-04-23  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/25893246> WebKit2 has failed to build: error: use of undeclared identifier 'm_playbackSessionManager'
