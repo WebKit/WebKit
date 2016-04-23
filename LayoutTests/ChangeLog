@@ -1,3 +1,14 @@
+2016-04-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Source directives lost when using Function constructor repeatedly
+        https://bugs.webkit.org/show_bug.cgi?id=156863
+        <rdar://problem/25861064>
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/debugger/sourceURL-repeated-identical-executions-expected.txt: Added.
+        * inspector/debugger/sourceURL-repeated-identical-executions.html: Added.
+
 2016-04-22  Mark Lam  <mark.lam@apple.com>
 
         javascript jit bug affecting Google Maps.

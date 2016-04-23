@@ -1,0 +1,13 @@
+Tests for the Debugger.scriptParsed messages for identical content should have source directives each time.
+
+
+== Running test suite: Debugger.scriptParsed.sourceURLRepeatedIdenticalExecutions
+-- Running test case: CheckFunctionConstructorMultipleTimes
+PASS: Should see 3 Scripts with sourceURL
+
+-- Running test case: CheckProgramMultipleTimes
+PASS: Should see 3 Scripts with sourceURL
+
+-- Running test case: CheckEvalMultipleTimes
+PASS: Should see 3 Scripts with sourceURL
+

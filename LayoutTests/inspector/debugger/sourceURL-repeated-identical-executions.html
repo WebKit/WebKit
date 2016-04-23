@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerFunctionConstructorMultipleTimes() {
+    let sum = 0;
+    sum += Function("\n//# sourceURL=test-Function-constructor.js\nreturn 1+1")();
+    sum += Function("\n//# sourceURL=test-Function-constructor.js\nreturn 1+1")();
+    sum += Function("\n//# sourceURL=test-Function-constructor.js\nreturn 1+1")();
+    return sum;
+}
+
+function triggerProgramMultipleTimes() {
+    for (let i = 0; i < 3; ++i) {
+        let script = document.createElement("script");
+        script.text = "\n//# sourceURL=test-program.js\n1+1";
+        document.head.appendChild(script);
+    }
+}
+
+function triggerEvalMultipleTimes() {
+    let sum = 0;
+    sum += eval("\n//# sourceURL=test-eval.js\n1+1");
+    sum += eval("\n//# sourceURL=test-eval.js\n1+1");
+    sum += eval("\n//# sourceURL=test-eval.js\n1+1");
+    return sum;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.scriptParsed.sourceURLRepeatedIdenticalExecutions");
+
+    // Disable breakpoints to ensure we do not avoid the CodeCache.
+    DebuggerAgent.setBreakpointsActive(false);
+
+    suite.addTestCase({
+        name: "CheckFunctionConstructorMultipleTimes",
+        description: "Trigger multiple Function constructor calls with the same source and expect multiple Scripts added with sourceURLs.",
+        test: (resolve, reject) => {
+            let seen = 0;
+            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+                if (event.data.script.sourceURL === "test-Function-constructor.js")
+                    seen++;
+            });
+            InspectorTest.evaluateInPage("triggerFunctionConstructorMultipleTimes()", () => {
+                InspectorTest.expectThat(seen === 3, "Should see 3 Scripts with sourceURL");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CheckProgramMultipleTimes",
+        description: "Trigger multiple program executions with the same source and expect multiple Scripts added with sourceURLs.",
+        test: (resolve, reject) => {
+            let seen = 0;
+            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+                if (event.data.script.sourceURL === "test-program.js")
+                    seen++;
+            });
+            InspectorTest.evaluateInPage("triggerProgramMultipleTimes()", () => {
+                InspectorTest.expectThat(seen === 3, "Should see 3 Scripts with sourceURL");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CheckEvalMultipleTimes",
+        description: "Trigger eval with the same source and expect multiple Scripts added with sourceURLs.",
+        test: (resolve, reject) => {
+            let seen = 0;
+            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+                if (event.data.script.sourceURL === "test-eval.js")
+                    seen++;
+            });
+            InspectorTest.evaluateInPage("triggerEvalMultipleTimes()", () => {
+                InspectorTest.expectThat(seen === 3, "Should see 3 Scripts with sourceURL");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the Debugger.scriptParsed messages for identical content should have source directives each time.</p>
+</body>
+</html>

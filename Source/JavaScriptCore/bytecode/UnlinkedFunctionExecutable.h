@@ -136,7 +136,12 @@ public:
     bool isArrowFunction() const { return parseMode() == SourceParseMode::ArrowFunctionMode; }
 
     JSC::DerivedContextType derivedContextType() const {return static_cast<JSC::DerivedContextType>(m_derivedContextType); }
-    
+
+    const String& sourceURLDirective() const { return m_sourceURLDirective; }
+    const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
+    void setSourceURLDirective(const String& sourceURL) { m_sourceURLDirective = sourceURL; }
+    void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL; }
+
 private:
     UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, VariableEnvironment&,  JSC::DerivedContextType);
 
@@ -170,6 +175,9 @@ private:
     Identifier m_inferredName;
     RefPtr<SourceProvider> m_sourceOverride;
     SourceCode m_classSource;
+
+    String m_sourceURLDirective;
+    String m_sourceMappingURLDirective;
 
     VariableEnvironment m_parentScopeTDZVariables;
 

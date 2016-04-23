@@ -339,6 +339,11 @@ public:
         m_endColumn = endColumn;
     }
 
+    const String& sourceURLDirective() const { return m_sourceURLDirective; }
+    const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
+    void setSourceURLDirective(const String& sourceURL) { m_sourceURLDirective = sourceURL; }
+    void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL; }
+
     CodeFeatures codeFeatures() const { return m_features; }
     bool hasCapturedVariables() const { return m_hasCapturedVariables; }
     unsigned firstLine() const { return m_firstLine; }
@@ -389,6 +394,9 @@ private:
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
     VirtualRegister m_globalObjectRegister;
+
+    String m_sourceURLDirective;
+    String m_sourceMappingURLDirective;
 
     unsigned m_usesEval : 1;
     unsigned m_isStrictMode : 1;

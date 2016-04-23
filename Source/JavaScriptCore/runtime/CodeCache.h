@@ -26,7 +26,6 @@
 #ifndef CodeCache_h
 #define CodeCache_h
 
-#include "CodeSpecializationKind.h"
 #include "ExecutableInfo.h"
 #include "ParserModes.h"
 #include "SourceCode.h"
@@ -34,28 +33,22 @@
 #include "Strong.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Forward.h>
-#include <wtf/RandomNumber.h>
-#include <wtf/WeakRandom.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
 
 class EvalExecutable;
-class FunctionMetadataNode;
 class Identifier;
-class JSScope;
+class ModuleProgramExecutable;
 class ParserError;
 class ProgramExecutable;
-class ModuleProgramExecutable;
+class SourceCode;
 class UnlinkedCodeBlock;
 class UnlinkedEvalCodeBlock;
-class UnlinkedModuleProgramCodeBlock;
-class UnlinkedFunctionCodeBlock;
 class UnlinkedFunctionExecutable;
+class UnlinkedModuleProgramCodeBlock;
 class UnlinkedProgramCodeBlock;
 class VM;
-class SourceCode;
-class SourceProvider;
 class VariableEnvironment;
 
 struct SourceCodeValue {

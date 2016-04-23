@@ -65,12 +65,10 @@ namespace JSC {
         bool isValid() const { return m_validated; }
         void setValid() { m_validated = true; }
 
-    private:
-        template <typename T> friend class Parser;
-
         void setSourceURLDirective(const String& sourceURL) { m_sourceURLDirective = sourceURL; }
         void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL; }
 
+    private:
         JS_EXPORT_PRIVATE void getID();
 
         String m_url;

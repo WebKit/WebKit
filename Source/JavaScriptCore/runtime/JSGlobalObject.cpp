@@ -154,6 +154,7 @@
 #include "WeakMapPrototype.h"
 #include "WeakSetConstructor.h"
 #include "WeakSetPrototype.h"
+#include <wtf/RandomNumber.h>
 
 #if ENABLE(INTL)
 #include "IntlObject.h"

@@ -24,12 +24,9 @@
  */
 
 #include "config.h"
-
 #include "CodeCache.h"
 
 #include "BytecodeGenerator.h"
-#include "CodeSpecializationKind.h"
-#include "ExecutableInfo.h"
 #include "JSCInlines.h"
 #include "Parser.h"
 #include "StrongInlines.h"
@@ -99,6 +96,8 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
         bool endColumnIsOnStartLine = !lineCount;
         unsigned endColumn = unlinkedCodeBlock->endColumn() + (endColumnIsOnStartLine ? startColumn : 1);
         executable->recordParse(unlinkedCodeBlock->codeFeatures(), unlinkedCodeBlock->hasCapturedVariables(), firstLine, firstLine + lineCount, startColumn, endColumn);
+        source.provider()->setSourceURLDirective(unlinkedCodeBlock->sourceURLDirective());
+        source.provider()->setSourceMappingURLDirective(unlinkedCodeBlock->sourceMappingURLDirective());
         return unlinkedCodeBlock;
     }
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
@@ -118,6 +117,8 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
 
     UnlinkedCodeBlockType* unlinkedCodeBlock = UnlinkedCodeBlockType::create(&vm, executable->executableInfo());
     unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), rootNode->firstLine() - source.firstLine(), lineCount, unlinkedEndColumn);
+    unlinkedCodeBlock->setSourceURLDirective(source.provider()->sourceURL());
+    unlinkedCodeBlock->setSourceMappingURLDirective(source.provider()->sourceMappingURL());
 
     error = BytecodeGenerator::generate(vm, rootNode.get(), unlinkedCodeBlock, debuggerMode, profilerMode, variablesUnderTDZ);
 
@@ -156,8 +157,12 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
         JSParserBuiltinMode::NotBuiltin, 
         JSParserStrictMode::NotStrict);
     SourceCodeValue* cache = m_sourceCode.findCacheAndUpdateAge(key);
-    if (cache)
-        return jsCast<UnlinkedFunctionExecutable*>(cache->cell.get());
+    if (cache) {
+        UnlinkedFunctionExecutable* executable = jsCast<UnlinkedFunctionExecutable*>(cache->cell.get());
+        source.provider()->setSourceURLDirective(executable->sourceURLDirective());
+        source.provider()->setSourceMappingURLDirective(executable->sourceMappingURLDirective());
+        return executable;
+    }
 
     JSTextPosition positionBeforeLastNewline;
     std::unique_ptr<ProgramNode> program = parse<ProgramNode>(
@@ -192,6 +197,9 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
     // The Function constructor only has access to global variables, so no variables will be under TDZ.
     VariableEnvironment emptyTDZVariables;
     UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, UnlinkedNormalFunction, ConstructAbility::CanConstruct, emptyTDZVariables, DerivedContextType::None);
+
+    functionExecutable->setSourceURLDirective(source.provider()->sourceURL());
+    functionExecutable->setSourceMappingURLDirective(source.provider()->sourceMappingURL());
 
     m_sourceCode.addCache(key, SourceCodeValue(vm, functionExecutable, m_sourceCode.age()));
     return functionExecutable;

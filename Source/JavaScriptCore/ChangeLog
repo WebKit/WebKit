@@ -1,3 +1,36 @@
+2016-04-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Source directives lost when using Function constructor repeatedly
+        https://bugs.webkit.org/show_bug.cgi?id=156863
+        <rdar://problem/25861064>
+
+        Reviewed by Geoffrey Garen.
+
+        Source directives (sourceURL and sourceMappingURL) are normally accessed through
+        the SourceProvider and normally set when the script is parsed. However, when a
+        CodeCache lookup skips parsing, the new SourceProvider never gets the directives
+        (sourceURL/sourceMappingURL). This patch stores the directives on the UnlinkedCodeBlock
+        and UnlinkedFunctionExecutable when entering the cache, and copies to the new providers
+        when the cache is used.
+
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::sourceURLDirective):
+        (JSC::UnlinkedCodeBlock::sourceMappingURLDirective):
+        (JSC::UnlinkedCodeBlock::setSourceURLDirective):
+        (JSC::UnlinkedCodeBlock::setSourceMappingURLDirective):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * parser/SourceProvider.h:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        Store directives on the unlinked code block / executable when adding
+        to the cache, so they can be used to update new providers when the
+        cache gets used.
+
+        * runtime/JSGlobalObject.cpp:
+        Add needed header after CodeCache header cleanup.
+
 2016-04-22  Mark Lam  <mark.lam@apple.com>
 
         javascript jit bug affecting Google Maps.
