@@ -502,7 +502,7 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
     }
 }
 
-#endif // !ENABLE(JIT)
+#endif // ENABLE(JIT)
 
 NativeExecutable* VM::getHostFunction(NativeFunction function, NativeFunction constructor, const String& name)
 {
@@ -511,12 +511,16 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, NativeFunction co
 
 NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrinsic, NativeFunction constructor, const String& name)
 {
+#if ENABLE(JIT)
     if (canUseJIT()) {
         return jitStubs->hostFunctionStub(
             this, function, constructor,
             intrinsic != NoIntrinsic ? thunkGeneratorForIntrinsic(intrinsic) : 0,
             intrinsic, name);
     }
+#else // ENABLE(JIT)
+    UNUSED_PARAM(intrinsic);
+#endif // ENABLE(JIT)
     return NativeExecutable::create(*this,
         adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_call_trampoline), JITCode::HostCallThunk)), function,
         adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_construct_trampoline), JITCode::HostCallThunk)), constructor,
