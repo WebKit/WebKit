@@ -1,3 +1,33 @@
+2016-04-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize JSON.parse string fast path
+        https://bugs.webkit.org/show_bug.cgi?id=156953
+
+        Reviewed by Mark Lam.
+
+        This patch further optimizes the string parsing fast path.
+        Previously, we generated the WTF::String to hold the ownership of the token's string.
+        And always copied the token in LiteralParser side.
+        Instead, we hold the ownership of the token String by the StringBuilder in LiteralParser::Lexer,
+        and remove the processing in the string parsing fast path.
+        This patch gives us stable 1 - 2.5% improvement in Kraken json-parse-financial.
+
+                                       Baseline                  Modified
+
+        json-parse-financial        41.383+-0.248      ^      40.894+-0.189         ^ definitely 1.0120x faster
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::tryJSONPParse):
+        (JSC::LiteralParser<CharType>::Lexer::lex):
+        (JSC::LiteralParser<CharType>::Lexer::lexStringSlow):
+        (JSC::LiteralParser<CharType>::parse):
+        (JSC::LiteralParser<CharType>::Lexer::lexString): Deleted.
+        * runtime/LiteralParser.h:
+        (JSC::LiteralParser::tryLiteralParse):
+        (JSC::LiteralParser::Lexer::currentToken):
+        (JSC::LiteralParser::Lexer::LiteralParserTokenPtr::LiteralParserTokenPtr):
+        (JSC::LiteralParser::Lexer::LiteralParserTokenPtr::operator->):
+
 2016-04-24  Filip Pizlo <fpizlo@apple.com> and Andy VanWagoner <thetalecrafter@gmail.com>
 
         [INTL] Implement String.prototype.localeCompare in ECMA-402

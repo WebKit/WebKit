@@ -30,6 +30,7 @@
 #include "JSCJSValue.h"
 #include "JSGlobalObjectFunctions.h"
 #include <array>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -65,10 +66,15 @@ struct JSONPData {
 
 template <typename CharType>
 struct LiteralParserToken {
+private:
+WTF_MAKE_NONCOPYABLE(LiteralParserToken<CharType>);
+
+public:
+    LiteralParserToken() = default;
+
     TokenType type;
     const CharType* start;
     const CharType* end;
-    String stringBuffer;
     union {
         double numberToken;
         struct {
@@ -108,9 +114,9 @@ public:
     {
         m_lexer.next();
         JSValue result = parse(m_mode == StrictJSON ? StartParseExpression : StartParseStatement);
-        if (m_lexer.currentToken().type == TokSemi)
+        if (m_lexer.currentToken()->type == TokSemi)
             m_lexer.next();
-        if (m_lexer.currentToken().type != TokEnd)
+        if (m_lexer.currentToken()->type != TokEnd)
             return JSValue();
         return result;
     }
@@ -129,10 +135,40 @@ private:
         
         TokenType next();
         
-        const LiteralParserToken<CharType>& currentToken()
+#if ASSERT_DISABLED
+        typedef const LiteralParserToken<CharType>* LiteralParserTokenPtr;
+
+        LiteralParserTokenPtr currentToken()
         {
-            return m_currentToken;
+            return &m_currentToken;
         }
+#else
+        class LiteralParserTokenPtr;
+        friend class LiteralParserTokenPtr;
+        class LiteralParserTokenPtr {
+        public:
+            LiteralParserTokenPtr(Lexer& lexer)
+                : m_lexer(lexer)
+                , m_tokenID(lexer.m_currentTokenID)
+            {
+            }
+
+            ALWAYS_INLINE const LiteralParserToken<CharType>* operator->() const
+            {
+                ASSERT(m_tokenID == m_lexer.m_currentTokenID);
+                return &m_lexer.m_currentToken;
+            }
+
+        private:
+            Lexer& m_lexer;
+            unsigned m_tokenID;
+        };
+
+        LiteralParserTokenPtr currentToken()
+        {
+            return LiteralParserTokenPtr(*this);
+        }
+#endif
         
         String getErrorMessage() { return m_lexErrorMessage; }
         
@@ -147,6 +183,10 @@ private:
         ParserMode m_mode;
         const CharType* m_ptr;
         const CharType* m_end;
+        StringBuilder m_builder;
+#if !ASSERT_DISABLED
+        unsigned m_currentTokenID { 0 };
+#endif
     };
     
     class StackGuard;
@@ -161,7 +201,7 @@ private:
     std::array<Identifier, MaximumCachableCharacter> m_recentIdentifiers;
     ALWAYS_INLINE const Identifier makeIdentifier(const LChar* characters, size_t length);
     ALWAYS_INLINE const Identifier makeIdentifier(const UChar* characters, size_t length);
-    };
+};
 
 }
 
