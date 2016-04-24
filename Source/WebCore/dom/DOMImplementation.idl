@@ -25,12 +25,13 @@
 
     // DOM Level 1
 
-    [ObjCLegacyUnnamedParameters] boolean hasFeature([Default=Undefined] optional DOMString feature,
-        [TreatNullAs=EmptyString, Default=Undefined] optional DOMString version);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [ObjCLegacyUnnamedParameters] boolean hasFeature(optional DOMString feature = "undefined",
+        [TreatNullAs=EmptyString] optional DOMString version = "undefined");
 
     // DOM Level 2
 
-    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] DocumentType createDocumentType([Default=Undefined] optional DOMString? qualifiedName, [Default=Undefined] optional DOMString? publicId, [Default=Undefined] optional DOMString? systemId);
+    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] DocumentType createDocumentType(optional DOMString? qualifiedName = null, optional DOMString? publicId = null, optional DOMString? systemId = null);
 
     [NewObject, ObjCLegacyUnnamedParameters, RaisesException]
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
@@ -38,14 +39,16 @@
 #else
         XMLDocument
 #endif
-        createDocument([Default=Undefined] optional DOMString? namespaceURI, [TreatNullAs=EmptyString, Default=Undefined] optional DOMString qualifiedName, [Default=Undefined] optional DocumentType? doctype);
+        // FIXME: Using "undefined" as default parameter value is wrong.
+        createDocument(optional DOMString? namespaceURI = null, [TreatNullAs=EmptyString] optional DOMString qualifiedName = "undefined", optional DocumentType? doctype = null);
 
     // DOMImplementationCSS interface from DOM Level 2 CSS
 
-    [ObjCLegacyUnnamedParameters, RaisesException] CSSStyleSheet createCSSStyleSheet([Default=Undefined] optional DOMString title, [Default=Undefined] optional DOMString media);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [ObjCLegacyUnnamedParameters, RaisesException] CSSStyleSheet createCSSStyleSheet(optional DOMString title = "undefined", optional DOMString media = "undefined");
 
     // HTMLDOMImplementation interface from DOM Level 2 HTML
 
-    [NewObject] HTMLDocument createHTMLDocument([Default=NullString] optional DOMString title);
+    [NewObject] HTMLDocument createHTMLDocument(optional DOMString title = null);
 
 };

@@ -29,5 +29,6 @@
 ] interface CustomEvent : Event {
     [InitializedByEventConstructor, CustomGetter] readonly attribute any detail;
 
-    [CallWith=ScriptState] void initCustomEvent([Default=Undefined] optional DOMString typeArg, [Default=Undefined] optional boolean canBubbleArg, [Default=Undefined] optional boolean cancelableArg, [Default=Undefined] optional any detailArg);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [CallWith=ScriptState] void initCustomEvent(optional DOMString typeArg = "undefined", optional boolean canBubbleArg = false, optional boolean cancelableArg = false, optional any detailArg);
 };

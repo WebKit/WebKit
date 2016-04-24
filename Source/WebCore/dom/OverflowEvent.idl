@@ -35,9 +35,9 @@
     [InitializedByEventConstructor] readonly attribute boolean verticalOverflow;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    void initOverflowEvent([Default=Undefined] optional unsigned short orient,
-                           [Default=Undefined] optional boolean horizontalOverflow,
-                           [Default=Undefined] optional boolean verticalOverflow);
+    void initOverflowEvent(optional unsigned short orient,
+                           optional boolean horizontalOverflow,
+                           optional boolean verticalOverflow);
 #endif
 };
 

@@ -27,6 +27,6 @@
     [Reflect] attribute DOMString vAlign;
     readonly attribute HTMLCollection rows;
     [RaisesException] HTMLElement insertRow(optional long index = -1);
-    [RaisesException] void deleteRow([Default=Undefined] optional long index);
+    [RaisesException] void deleteRow(optional long index = 0);
 };
 

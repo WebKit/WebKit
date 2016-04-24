@@ -175,7 +175,7 @@ interface TestRunner {
 
     // Geolocation
     void setGeolocationPermission(boolean value);
-    void setMockGeolocationPosition(double latitude, double longitude, double accuracy, [Default=Undefined] optional object altitude, optional object altitudeAccuracy, optional object heading, optional object speed);
+    void setMockGeolocationPosition(double latitude, double longitude, double accuracy, optional object altitude, optional object altitudeAccuracy, optional object heading, optional object speed);
     void setMockGeolocationPositionUnavailableError(DOMString errorMessage);
     boolean isGeolocationProviderActive();
 

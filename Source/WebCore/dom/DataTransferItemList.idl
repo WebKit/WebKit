@@ -35,11 +35,12 @@
     ImplementationLacksVTable,
 ] interface DataTransferItemList {
     readonly attribute long length;
-    getter DataTransferItem item([Default=Undefined] optional unsigned long index);
+    getter DataTransferItem item(optional unsigned long index = 0);
 
     void clear();
     void add(File? file);
-    [RaisesException] void add([Default=Undefined] optional DOMString data, 
-             [Default=Undefined] optional DOMString type);
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [RaisesException] void add(optional DOMString data = "undefined", optional DOMString type = "undefined");
 };
 

@@ -200,7 +200,7 @@ EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(Ex
         return throwThisTypeError(*state, "TestOverrideBuiltins", "namedItem");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestOverrideBuiltins::info());
     auto& impl = castedThis->wrapped();
-    String name = state->argument(0).toString(state)->value(state);
+    String name = state->argument(0).isUndefined() ? ASCIILiteral("test") : state->uncheckedArgument(0).toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.namedItem(name)));

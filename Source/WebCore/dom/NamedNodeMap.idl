@@ -23,15 +23,17 @@
     ImplementationLacksVTable,
 ] interface NamedNodeMap {
 
-    getter Node getNamedItem([Default=Undefined] optional DOMString name);
-    [RaisesException] Node setNamedItem([Default=Undefined] optional Node node);
-    [RaisesException] Node removeNamedItem([Default=Undefined] optional DOMString name);
-    getter Node item([Default=Undefined] optional unsigned long index);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    getter Node getNamedItem(optional DOMString name = "undefined");
+    [RaisesException] Node setNamedItem(Node node);
+    [RaisesException] Node removeNamedItem(optional DOMString name = "undefined");
+    getter Node item(optional unsigned long index = 0);
     readonly attribute unsigned long length;
 
     // Introduced in DOM Level 2:
 
-    [ObjCLegacyUnnamedParameters] Node getNamedItemNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
-    [RaisesException] Node setNamedItemNS([Default=Undefined] optional Node node);
-    [ObjCLegacyUnnamedParameters, RaisesException] Node removeNamedItemNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [ObjCLegacyUnnamedParameters] Node getNamedItemNS(optional DOMString? namespaceURI = null, optional DOMString localName = "undefined");
+    [RaisesException] Node setNamedItemNS(Node node);
+    [ObjCLegacyUnnamedParameters, RaisesException] Node removeNamedItemNS(optional DOMString? namespaceURI = null, optional DOMString localName = "undefined");
 };

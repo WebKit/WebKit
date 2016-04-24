@@ -82,8 +82,8 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
         unrestricted float radius);
     void rect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
     [RaisesException] void arc(unrestricted float x, unrestricted float y, unrestricted float radius, unrestricted float startAngle,
-        unrestricted float endAngle, [Default=Undefined] optional boolean anticlockwise);
-    [RaisesException] void ellipse(unrestricted float x, unrestricted float y, unrestricted float radiusX, unrestricted float radiusY, unrestricted float rotation, unrestricted float startAngle, unrestricted float endAngle, [Default=Undefined] optional boolean anticlockwise);
+        unrestricted float endAngle, optional boolean anticlockwise = false);
+    [RaisesException] void ellipse(unrestricted float x, unrestricted float y, unrestricted float radiusX, unrestricted float radiusY, unrestricted float rotation, unrestricted float startAngle, unrestricted float endAngle, optional boolean anticlockwise = false);
 
     void fill(DOMPath path, optional CanvasWindingRule winding = "nonzero");
     void stroke(DOMPath path);
@@ -109,13 +109,18 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     // other
 
-    void setAlpha([Default=Undefined] optional unrestricted float alpha);
-    void setCompositeOperation([Default=Undefined] optional DOMString compositeOperation);
+    void setAlpha(optional unrestricted float alpha = NaN);
 
-    void setLineWidth([Default=Undefined] optional unrestricted float width);
-    void setLineCap([Default=Undefined] optional DOMString cap);
-    void setLineJoin([Default=Undefined] optional DOMString join);
-    void setMiterLimit([Default=Undefined] optional unrestricted float limit);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    void setCompositeOperation(optional DOMString compositeOperation = "undefined");
+
+    void setLineWidth(optional unrestricted float width = NaN);
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    void setLineCap(optional DOMString cap = "undefined");
+    void setLineJoin(optional DOMString join = "undefined");
+
+    void setMiterLimit(optional unrestricted float limit = NaN);
 
     void clearShadow();
 

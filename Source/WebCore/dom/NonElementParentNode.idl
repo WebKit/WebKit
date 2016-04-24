@@ -28,5 +28,6 @@
 [
     NoInterfaceObject,
 ] interface NonElementParentNode {
-    Element getElementById([Default=Undefined,ObjCExplicitAtomicString,RequiresExistingAtomicString] optional DOMString elementId);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    Element getElementById([ObjCExplicitAtomicString,RequiresExistingAtomicString] optional DOMString elementId = "undefined");
 };

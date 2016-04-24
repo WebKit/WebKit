@@ -34,7 +34,7 @@ namespace WebCore {
     public:
         static Ref<XMLSerializer> create() { return adoptRef(*new XMLSerializer); }
         
-        String serializeToString(Node*, ExceptionCode&);
+        String serializeToString(Node&);
         
     private:
         XMLSerializer()  { }        

@@ -3419,8 +3419,7 @@ sub GenerateParametersCheck
         # Optional arguments with [Optional=...] should not generate the early call.
         # Optional Dictionary arguments always considered to have default of empty dictionary.
         my $optional = $parameter->isOptional;
-        my $defaultAttribute = $parameter->extendedAttributes->{"Default"};
-        if ($optional && !$defaultAttribute && $argType ne "Dictionary" && !$codeGenerator->IsCallbackInterface($argType)) {
+        if ($optional && !defined($parameter->default) && $argType ne "Dictionary" && !$codeGenerator->IsCallbackInterface($argType)) {
             # Generate early call if there are enough parameters.
             if (!$hasOptionalArguments) {
                 push(@$outputArray, "\n    size_t argsCount = state->argumentCount();\n");
@@ -3537,7 +3536,7 @@ sub GenerateParametersCheck
             };
 
             my $argValue = "state->argument($argsIndex)";
-            if ($parameter->isOptional && $parameter->default) {
+            if ($parameter->isOptional && defined($parameter->default)) {
                 push(@$outputArray, "    String $name;\n");
                 push(@$outputArray, "    if (${argValue}.isUndefined())\n");
                 push(@$outputArray, "        $name = ASCIILiteral(" . $parameter->default . ");\n");
@@ -3577,11 +3576,26 @@ sub GenerateParametersCheck
             } else {
                 my $outer;
                 my $inner;
-                if ($optional && $defaultAttribute && $defaultAttribute eq "NullString") {
-                    $outer = "state->argument($argsIndex).isUndefined() ? String() : ";
-                    $inner = "state->uncheckedArgument($argsIndex)";
-                } elsif ($optional && $parameter->default) {
-                    $outer = "state->argument($argsIndex).isUndefined() ? " . $parameter->default  . " : ";
+                if ($optional && defined($parameter->default)) {
+                    my $defaultValue = $parameter->default;
+
+                    # String-related optimizations.
+                    if ($parameter->type eq "DOMString") {
+                        my $useAtomicString = $parameter->extendedAttributes->{"AtomicString"};
+                        if ($defaultValue eq "null") {
+                            $defaultValue = $useAtomicString ? "nullAtom" : "String()";
+                        } elsif ($defaultValue eq "\"\"") {
+                            $defaultValue = $useAtomicString ? "emptyAtom" : "emptyString()";
+                        } else {
+                            $defaultValue = $useAtomicString ? "AtomicString($defaultValue, AtomicString::ConstructFromLiteral)" : "ASCIILiteral($defaultValue)";
+                        }
+                    } else {
+                        $defaultValue = "nullptr" if $defaultValue eq "null";
+                        $defaultValue = "PNaN" if $defaultValue eq "NaN";
+                        $defaultValue = GetNativeTypeFromSignature($parameter) . "()" if $defaultValue eq "[]";
+                    }
+
+                    $outer = "state->argument($argsIndex).isUndefined() ? $defaultValue : ";
                     $inner = "state->uncheckedArgument($argsIndex)";
                 } else {
                     $outer = "";

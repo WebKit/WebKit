@@ -30,12 +30,13 @@
     [Custom] readonly attribute Acceleration accelerationIncludingGravity;
     [Custom] readonly attribute RotationRate rotationRate;
     [Custom] readonly attribute unrestricted double interval;
-    [Custom] void initDeviceMotionEvent([Default=Undefined] optional DOMString type, 
-                                        [Default=Undefined] optional boolean bubbles, 
-                                        [Default=Undefined] optional boolean cancelable, 
-                                        [Default=Undefined] optional Acceleration acceleration, 
-                                        [Default=Undefined] optional Acceleration accelerationIncludingGravity, 
-                                        [Default=Undefined] optional RotationRate rotationRate, 
-                                        [Default=Undefined] optional unrestricted double interval);
+
+    [Custom] void initDeviceMotionEvent(optional DOMString type,
+                                        optional boolean bubbles,
+                                        optional boolean cancelable,
+                                        optional Acceleration acceleration,
+                                        optional Acceleration accelerationIncludingGravity,
+                                        optional RotationRate rotationRate,
+                                        optional unrestricted double interval);
 };
 

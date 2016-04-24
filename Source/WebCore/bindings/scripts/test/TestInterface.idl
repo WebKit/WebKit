@@ -33,7 +33,7 @@
     CustomNamedSetter,
     Conditional=Condition1|Condition2,
     ConstructorCallWith=ScriptExecutionContext,
-    Constructor(DOMString str1, [Default=Undefined] optional DOMString str2),
+    Constructor(DOMString str1, optional DOMString str2 = "defaultString"),
     ConstructorRaisesException,
     ConstructorConditional=TEST_INTERFACE,
     ExportMacro=WEBCORE_EXPORT,

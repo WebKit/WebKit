@@ -33,9 +33,11 @@
     [SetterRaisesException] attribute DOMString? mediaText;
     readonly attribute unsigned long length;
 
-    getter DOMString? item([Default=Undefined] optional unsigned long index);
-    [RaisesException] void deleteMedium([Default=Undefined] optional DOMString oldMedium);
-    [RaisesException] void appendMedium([Default=Undefined] optional DOMString newMedium);
+    getter DOMString? item(optional unsigned long index = 0);
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [RaisesException] void deleteMedium(optional DOMString oldMedium = "undefined");
+    [RaisesException] void appendMedium(optional DOMString newMedium = "undefined");
 
 };
 

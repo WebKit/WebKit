@@ -32,7 +32,7 @@
 [
     ActiveDOMObject,
     Conditional=WEB_SOCKETS,
-    Constructor(DOMString url, [Default=Undefined] optional sequence<DOMString>? protocols),
+    Constructor(DOMString url, optional sequence<DOMString> protocols = []),
     Constructor(DOMString url, DOMString protocol),
     ConstructorRaisesException,
     ConstructorCallWith=ScriptExecutionContext,

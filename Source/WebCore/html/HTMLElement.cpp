@@ -660,15 +660,9 @@ Node* HTMLElement::insertAdjacent(const String& where, Ref<Node>&& newChild, Exc
     return nullptr;
 }
 
-Element* HTMLElement::insertAdjacentElement(const String& where, Element* newChild, ExceptionCode& ec)
+Element* HTMLElement::insertAdjacentElement(const String& where, Element& newChild, ExceptionCode& ec)
 {
-    if (!newChild) {
-        // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative.
-        ec = TYPE_MISMATCH_ERR;
-        return nullptr;
-    }
-
-    Node* returnValue = insertAdjacent(where, *newChild, ec);
+    Node* returnValue = insertAdjacent(where, newChild, ec);
     ASSERT_WITH_SECURITY_IMPLICATION(!returnValue || is<Element>(*returnValue));
     return downcast<Element>(returnValue); 
 }

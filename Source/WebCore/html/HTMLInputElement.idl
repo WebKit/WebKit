@@ -92,13 +92,13 @@
     [RaisesException] void setRangeText(DOMString replacement,
                         unsigned long start,
                         unsigned long end,
-                        [Default=NullString] optional DOMString selectionMode);
+                        optional DOMString selectionMode = null);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [Custom] void setSelectionRange(long start, long end);
 #else
-    [Custom] void setSelectionRange([Default=Undefined] optional long start, 
-                                    [Default=Undefined] optional long end, 
+    [Custom] void setSelectionRange(optional long start,
+                                    optional long end,
                                     optional DOMString direction);
 #endif
 

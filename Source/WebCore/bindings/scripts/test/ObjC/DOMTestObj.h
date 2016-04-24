@@ -175,9 +175,15 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)methodWithNonOptionalArgAndOptionalArg:(int)nonOpt opt:(int)opt;
 - (void)methodWithNonOptionalArgAndTwoOptionalArgs:(int)nonOpt opt1:(int)opt1 opt2:(int)opt2;
 - (void)methodWithOptionalString:(NSString *)str;
+- (void)methodWithOptionalAtomicString:(NSString *)str;
 - (void)methodWithOptionalStringAndDefaultValue:(NSString *)str;
-- (void)methodWithOptionalStringIsUndefined:(NSString *)str;
-- (void)methodWithOptionalStringIsNullString:(NSString *)str;
+- (void)methodWithOptionalAtomicStringAndDefaultValue:(NSString *)str;
+- (void)methodWithOptionalStringIsNull:(NSString *)str;
+- (void)methodWithOptionalAtomicStringIsNull:(NSString *)str;
+- (void)methodWithOptionalStringIsEmptyString:(NSString *)str;
+- (void)methodWithOptionalAtomicStringIsEmptyString:(NSString *)str;
+- (void)methodWithOptionalDoubleIsNaN:(double)number;
+- (void)methodWithOptionalFloatIsNaN:(float)number;
 - (void)classMethod;
 - (int)classMethodWithOptional:(int)arg;
 - (void)classMethod2:(int)arg;

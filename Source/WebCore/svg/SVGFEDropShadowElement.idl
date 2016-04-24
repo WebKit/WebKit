@@ -24,8 +24,8 @@ interface SVGFEDropShadowElement : SVGElement {
     readonly attribute SVGAnimatedNumber stdDeviationX;
     readonly attribute SVGAnimatedNumber stdDeviationY;
 
-    void setStdDeviation([Default=Undefined] optional unrestricted float stdDeviationX, 
-                         [Default=Undefined] optional unrestricted float stdDeviationY);
+    void setStdDeviation(optional unrestricted float stdDeviationX = NaN,
+                         optional unrestricted float stdDeviationY = NaN);
 };
 
 SVGFEDropShadowElement implements SVGFilterPrimitiveStandardAttributes;

@@ -36,7 +36,7 @@
     readonly attribute DOMString kind;
     readonly attribute DOMString type;
 
-    void getAsString([Default=Undefined] optional StringCallback callback);
+    void getAsString(optional StringCallback callback);
     Blob getAsFile();
 };
 

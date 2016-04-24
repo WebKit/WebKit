@@ -24,11 +24,12 @@
     [InitializedByEventConstructor] readonly attribute DOMWindow view;
     [InitializedByEventConstructor] readonly attribute long detail;
     
-    [ObjCLegacyUnnamedParameters] void initUIEvent([Default=Undefined] optional DOMString type, 
-                                    [Default=Undefined] optional boolean canBubble, 
-                                    [Default=Undefined] optional boolean cancelable, 
-                                    [Default=Undefined] optional DOMWindow view, 
-                                    [Default=Undefined] optional long detail);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [ObjCLegacyUnnamedParameters] void initUIEvent(optional DOMString type = "undefined",
+                                    optional boolean canBubble = false,
+                                    optional boolean cancelable = false,
+                                    optional DOMWindow? view = null,
+                                    optional long detail = 0);
 
     // extensions
     readonly attribute long                 keyCode;

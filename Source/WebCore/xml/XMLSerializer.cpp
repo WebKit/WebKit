@@ -27,13 +27,9 @@
 
 namespace WebCore {
 
-String XMLSerializer::serializeToString(Node* node, ExceptionCode& ec)
+String XMLSerializer::serializeToString(Node& node)
 {
-    if (!node) {
-        ec = TypeError;
-        return String();
-    }
-    return createMarkup(*node, IncludeNode, 0, DoNotResolveURLs, 0, XMLFragmentSerialization);
+    return createMarkup(node, IncludeNode, 0, DoNotResolveURLs, 0, XMLFragmentSerialization);
 }
 
 } // namespace WebCore

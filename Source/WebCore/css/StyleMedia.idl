@@ -29,5 +29,7 @@
     GenerateIsReachable=ImplFrame,
 ] interface StyleMedia {
     readonly attribute DOMString type;
-    boolean matchMedium([Default=Undefined] optional DOMString mediaquery);
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    boolean matchMedium(optional DOMString mediaquery = "undefined");
 };

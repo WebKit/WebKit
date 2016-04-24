@@ -27,18 +27,19 @@
     [CustomSetter, SetterRaisesException] attribute unsigned long length;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
-    getter Node namedItem([Default=Undefined] optional DOMString name);
+    getter Node namedItem(optional DOMString name);
 #else
-    getter HTMLOptionElement namedItem([Default=Undefined] optional DOMString name);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    getter HTMLOptionElement namedItem(optional DOMString name = "undefined");
 #endif
 
 #if (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C) && (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT)
-    [RaisesException] void add(HTMLElement element, [Default=Undefined] optional HTMLElement? before);
-    [RaisesException] void add(HTMLElement element, [Default=Undefined] optional long index);
+    [RaisesException] void add(HTMLElement element, optional HTMLElement? before = null);
+    [RaisesException] void add(HTMLElement element, optional long index = 0);
 #else
     [RaisesException] void add(HTMLOptionElement option, unsigned long index);
 #endif
-    [Custom] void remove([Default=Undefined] optional unsigned long index);
+    [Custom] void remove(optional unsigned long index);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     Node item(unsigned long index);

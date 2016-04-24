@@ -58,8 +58,8 @@ public:
     RefPtr<Node> getNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
     RefPtr<Node> removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode&);
 
-    RefPtr<Node> setNamedItem(Node*, ExceptionCode&);
-    RefPtr<Node> setNamedItemNS(Node*, ExceptionCode&);
+    RefPtr<Node> setNamedItem(Node&, ExceptionCode&);
+    RefPtr<Node> setNamedItemNS(Node&, ExceptionCode&);
 
     RefPtr<Node> item(unsigned index) const;
     unsigned length() const;

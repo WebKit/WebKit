@@ -55,11 +55,13 @@
     
     readonly attribute unsigned short primitiveType;
 
-    [ObjCLegacyUnnamedParameters, RaisesException] void setFloatValue([Default=Undefined] optional unsigned short unitType,
-                                      [Default=Undefined] optional unrestricted float floatValue);
-    [RaisesException] unrestricted float getFloatValue([Default=Undefined] optional unsigned short unitType);
-    [ObjCLegacyUnnamedParameters, RaisesException] void setStringValue([Default=Undefined] optional unsigned short stringType, 
-                                       [Default=Undefined] optional DOMString stringValue);
+    [ObjCLegacyUnnamedParameters, RaisesException] void setFloatValue(optional unsigned short unitType = 0,
+                                      optional unrestricted float floatValue = NaN);
+    [RaisesException] unrestricted float getFloatValue(optional unsigned short unitType = 0);
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [ObjCLegacyUnnamedParameters, RaisesException] void setStringValue(optional unsigned short stringType = 0,
+                                       optional DOMString stringValue = "undefined");
     [RaisesException] DOMString getStringValue();
     [RaisesException] Counter getCounterValue();
     [RaisesException] Rect getRectValue();

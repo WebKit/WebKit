@@ -41,19 +41,19 @@
     readonly attribute boolean isCollapsed;
     readonly attribute long rangeCount;
 
-    [RaisesException] void collapse([Default=Undefined] optional Node node, [Default=Undefined] optional long index);
+    [RaisesException] void collapse(optional Node? node = null, optional long index = 0);
     [RaisesException] void collapseToEnd();
     [RaisesException] void collapseToStart();
 
     void deleteFromDocument();
-    boolean containsNode([Default=Undefined] optional Node node, [Default=Undefined] optional boolean allowPartial);
-    [RaisesException] void selectAllChildren([Default=Undefined] optional Node node);
+    boolean containsNode(optional Node? node = null, optional boolean allowPartial = false);
+    [RaisesException] void selectAllChildren(optional Node? node = null);
 
-    [RaisesException] void extend([Default=Undefined] optional Node node, [Default=Undefined] optional long offset);
+    [RaisesException] void extend(optional Node node = null, optional long offset = 0);
 
-    [RaisesException] Range getRangeAt([Default=Undefined] optional long index);
+    [RaisesException] Range getRangeAt(optional long index = 0);
     void removeAllRanges();
-    void addRange([Default=Undefined] optional Range range);
+    void addRange(optional Range? range = null);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [NotEnumerable] DOMString toString();
@@ -69,9 +69,10 @@
     // IE's type accessor returns "none", "text" and "control"
     readonly attribute DOMString type;
 
-    void modify([Default=Undefined] optional DOMString alter, [Default=Undefined] optional DOMString direction, [Default=Undefined] optional DOMString granularity);
-    [RaisesException] void setBaseAndExtent([Default=Undefined] optional Node baseNode, [Default=Undefined] optional long baseOffset, [Default=Undefined] optional Node extentNode, [Default=Undefined] optional long extentOffset);
-    [RaisesException] void setPosition([Default=Undefined] optional Node node, [Default=Undefined] optional long offset);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    void modify(optional DOMString alter = "undefined", optional DOMString direction = "undefined", optional DOMString granularity = "undefined");
+    [RaisesException] void setBaseAndExtent(optional Node? baseNode = null, optional long baseOffset = 0, optional Node? extentNode = null, optional long extentOffset = 0);
+    [RaisesException] void setPosition(optional Node? node = null, optional long offset = 0);
 
     // IE extension
     // http://msdn.microsoft.com/en-us/library/ms535869(VS.85).aspx

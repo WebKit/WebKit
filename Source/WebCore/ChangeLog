@@ -1,3 +1,179 @@
+2016-04-23  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Drop [Default] WebKit-IDL extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=156955
+
+        Reviewed by Darin Adler.
+
+        Drop [Default] WebKit-IDL extended attribute in favor of the standard
+        WebIDL syntax for parameters' default value.
+
+        Here is what it looks like:
+        [Default=NullString] optional DOMString a -> optional DOMString a = null
+        [Default=NullString] optional DOMString? a -> optional DOMString? a = null
+        [Default=Undefined] optional DOMString a -> optional DOMString a = "undefined"
+        [Default=Undefined] optional DOMString? a -> optional DOMString? a = null
+        [Default=Undefined] optional long a -> optional long a = 0
+        [Default=Undefined] optional bool a -> optional bool a = false
+        [Default=Undefined] optional unrestricted double a -> optional unrestricted double a = NaN
+        [Default=Undefined] optional unrestricted float a -> optional unrestricted float a = NaN
+        [Default=Undefined] optional sequence<DOMString> a -> optional sequence<DOMString> a = []
+
+        These do not cause any Web-Exposed behavior change. However, when getting
+        rid of [Default] started passing more parameters by derefence instead of
+        pointer (as is expected for parameters not marked as nullable). As a result,
+        I had to mark a few parameters as nullable in the IDL to maintain the
+        previous behavior. In some cases, the implementation was already throwing
+        when passing null. In such cases, I have not marked the type as nullable
+        so that the generated bindings now throw the exception instead of our
+        implementation code. In some cases, the exception being thrown is now
+        different. This is why some of the layout tests had to be rebaselined.
+
+        No new tests, existing tests have been rebaselined. No significant Web
+        exposed behavior change is expected from this patch, beside exceptions
+        type sometimes being different.
+
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/gamepad/deprecated/GamepadList.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/mediastream/RTCStatsResponse.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/speech/SpeechSynthesisUtterance.idl:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/IDLParser.pm:
+        (parseDefault):
+        (parseDefaultValue):
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestNamedConstructor.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestOverrideBuiltins.idl:
+        * css/CSSKeyframesRule.idl:
+        * css/CSSMediaRule.idl:
+        * css/CSSPrimitiveValue.idl:
+        * css/CSSRuleList.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleSheet.idl:
+        * css/CSSSupportsRule.idl:
+        * css/CSSValueList.idl:
+        * css/MediaList.idl:
+        * css/MediaQueryList.idl:
+        * css/MediaQueryListListener.idl:
+        * css/StyleMedia.idl:
+        * css/StyleSheetList.idl:
+        * css/WebKitCSSFilterValue.idl:
+        * css/WebKitCSSMatrix.idl:
+        * css/WebKitCSSTransformValue.idl:
+        * dom/ClientRectList.idl:
+        * dom/Comment.idl:
+        * dom/CompositionEvent.idl:
+        * dom/CustomEvent.h:
+        * dom/CustomEvent.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DOMStringList.idl:
+        * dom/DataTransferItem.idl:
+        * dom/DataTransferItemList.idl:
+        * dom/DeviceMotionEvent.idl:
+        * dom/DeviceOrientationEvent.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode):
+        * dom/Document.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::setAttributeNodeNS):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::Element::parseAttributeName): Deleted.
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/Event.idl:
+        * dom/HashChangeEvent.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MessageEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setNamedItem):
+        (WebCore::NamedNodeMap::setNamedItemNS):
+        (WebCore::NamedNodeMap::item): Deleted.
+        * dom/NamedNodeMap.h:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/NodeFilter.idl:
+        * dom/NonElementParentNode.idl:
+        * dom/OverflowEvent.idl:
+        * dom/Range.idl:
+        * dom/Text.idl:
+        * dom/TextEvent.idl:
+        * dom/TouchEvent.idl:
+        * dom/UIEvent.idl:
+        * dom/WheelEvent.idl:
+        * html/DOMFormData.idl:
+        * html/HTMLAllCollection.idl:
+        * html/HTMLAudioElement.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLCollection.idl:
+        * html/HTMLDocument.idl:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::insertAdjacentElement):
+        (WebCore::contextElementForInsertion): Deleted.
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+        * html/HTMLFormControlsCollection.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/ImageData.idl:
+        * html/canvas/CanvasGradient.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/DOMPath.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::extend):
+        (WebCore::DOMSelection::getRangeAt): Deleted.
+        * page/DOMSelection.h:
+        * page/DOMSelection.idl:
+        * page/DOMWindow.idl:
+        * page/History.idl:
+        * page/Performance.idl:
+        * page/WindowTimers.idl:
+        * plugins/DOMMimeTypeArray.idl:
+        * plugins/DOMPlugin.idl:
+        * plugins/DOMPluginArray.idl:
+        * storage/StorageEvent.idl:
+        * svg/SVGAnimationElement.idl:
+        * svg/SVGDocument.idl:
+        * svg/SVGElement.idl:
+        * svg/SVGFEDropShadowElement.idl:
+        * svg/SVGFEGaussianBlurElement.idl:
+        * svg/SVGFEMorphologyElement.idl:
+        * svg/SVGFilterElement.idl:
+        * svg/SVGGraphicsElement.idl:
+        * svg/SVGMarkerElement.idl:
+        * svg/SVGPathElement.idl:
+        * svg/SVGSVGElement.idl:
+        * svg/SVGTests.idl:
+        * svg/SVGTextContentElement.idl:
+        * xml/DOMParser.idl:
+        * xml/XMLSerializer.cpp:
+        (WebCore::XMLSerializer::serializeToString):
+        * xml/XMLSerializer.h:
+        * xml/XMLSerializer.idl:
+        * xml/XPathEvaluator.idl:
+        * xml/XPathExpression.idl:
+        * xml/XPathNSResolver.idl:
+        * xml/XPathResult.idl:
+        * xml/XSLTProcessor.idl:
+
 2016-04-24  Antti Koivisto  <antti@apple.com>
 
         RenderStyle should not be reference counted

@@ -50,7 +50,6 @@ CustomPutFunction
 CustomReturn
 CustomSetter
 CustomToJSObject
-Default=NullString|Undefined
 Deletable
 DoNotCheckConstants
 DoNotCheckSecurity

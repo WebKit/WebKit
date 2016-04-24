@@ -1,3 +1,18 @@
+2016-04-23  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Drop [Default] WebKit-IDL extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=156955
+
+        Reviewed by Darin Adler.
+
+        Rebaseline some tests now that a different exception type is thrown
+        for some of our APIs when passing null.
+
+        * editing/selection/extend-expected.txt:
+        * fast/dom/Element/attr-param-typechecking-expected.txt:
+        * fast/dom/NamedNodeMap-setNamedItem-crash-expected.txt:
+        * fast/dynamic/insertAdjacentElement-expected.txt:
+
 2016-04-24  Filip Pizlo <fpizlo@apple.com> and Andy VanWagoner <thetalecrafter@gmail.com>
 
         [INTL] Implement String.prototype.localeCompare in ECMA-402

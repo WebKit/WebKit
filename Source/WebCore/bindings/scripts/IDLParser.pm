@@ -689,6 +689,7 @@ sub parseDefault
         $self->assertTokenValue($self->getToken(), "=", __LINE__);
         return $self->parseDefaultValue();
     }
+    return undef;
 }
 
 sub parseDefaultValue
@@ -700,6 +701,11 @@ sub parseDefaultValue
     }
     if ($next->type() == StringToken) {
         return $self->getToken()->value();
+    }
+    if ($next->value() eq "[") {
+        $self->assertTokenValue($self->getToken(), "[", __LINE__);
+        $self->assertTokenValue($self->getToken(), "]", __LINE__);
+        return "[]";
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }

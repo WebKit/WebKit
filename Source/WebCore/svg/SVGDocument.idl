@@ -24,6 +24,7 @@ interface SVGDocument : XMLDocument {
     readonly attribute SVGSVGElement        rootElement;
 
     // Overwrite the one in events::DocumentEvent
-    [RaisesException] Event createEvent([Default=Undefined] optional DOMString eventType);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [RaisesException] Event createEvent(optional DOMString eventType = "undefined");
 };
 

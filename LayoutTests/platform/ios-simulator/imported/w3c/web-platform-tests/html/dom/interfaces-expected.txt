@@ -1084,17 +1084,11 @@ FAIL Element interface: calling getAttributeNodeNS(DOMString,DOMString) on docum
             fn.apply(obj, args);
         }" did not throw
 PASS Element interface: document.createElement("noscript") must inherit property "setAttributeNode" with the proper type (19) 
-FAIL Element interface: calling setAttributeNode(Attr) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "Error: TypeMismatchError: DOM Exception 17" ("TypeMismatchError") expected object "TypeError" ("TypeError")
+PASS Element interface: calling setAttributeNode(Attr) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "setAttributeNodeNS" with the proper type (20) 
-FAIL Element interface: calling setAttributeNodeNS(Attr) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "Error: TypeMismatchError: DOM Exception 17" ("TypeMismatchError") expected object "TypeError" ("TypeError")
+PASS Element interface: calling setAttributeNodeNS(Attr) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "removeAttributeNode" with the proper type (21) 
-FAIL Element interface: calling removeAttributeNode(Attr) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "Error: TypeMismatchError: DOM Exception 17" ("TypeMismatchError") expected object "TypeError" ("TypeError")
+PASS Element interface: calling removeAttributeNode(Attr) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "closest" with the proper type (22) 
 PASS Element interface: calling closest(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
 PASS Element interface: document.createElement("noscript") must inherit property "matches" with the proper type (23) 

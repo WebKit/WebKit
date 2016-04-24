@@ -36,8 +36,8 @@
     readonly attribute SVGAnimatedNumber      radiusX;
     readonly attribute SVGAnimatedNumber      radiusY;
 
-    void setRadius([Default=Undefined] optional unrestricted float radiusX, 
-                   [Default=Undefined] optional unrestricted float radiusY);
+    void setRadius(optional unrestricted float radiusX = NaN,
+                   optional unrestricted float radiusY = NaN);
 };
 
 SVGFEMorphologyElement implements SVGFilterPrimitiveStandardAttributes;

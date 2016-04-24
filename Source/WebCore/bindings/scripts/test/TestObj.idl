@@ -179,9 +179,16 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     void    methodWithNonOptionalArgAndOptionalArg(long nonOpt, optional long opt);
     void    methodWithNonOptionalArgAndTwoOptionalArgs(long nonOpt, optional long opt1, optional long opt2);
     void    methodWithOptionalString(optional DOMString str);
+    void    methodWithOptionalAtomicString([AtomicString] optional DOMString str);
     void    methodWithOptionalStringAndDefaultValue(optional DOMString str = "foo");
-    void    methodWithOptionalStringIsUndefined([Default=Undefined] optional DOMString str);
-    void    methodWithOptionalStringIsNullString([Default=NullString] optional DOMString str);
+    void    methodWithOptionalAtomicStringAndDefaultValue([AtomicString] optional DOMString str = "foo");
+    void    methodWithOptionalStringIsNull(optional DOMString str = null);
+    void    methodWithOptionalAtomicStringIsNull([AtomicString] optional DOMString str = null);
+    void    methodWithOptionalStringIsEmptyString(optional DOMString str = "");
+    void    methodWithOptionalAtomicStringIsEmptyString([AtomicString] optional DOMString str = "");
+    void    methodWithOptionalDoubleIsNaN(optional unrestricted double number = NaN);
+    void    methodWithOptionalFloatIsNaN(optional unrestricted float number = NaN);
+    void    methodWithOptionalSequence(optional sequence<DOMString> sequence = []);
 
 #if defined(TESTING_JS)
     // Callback interface parameters.

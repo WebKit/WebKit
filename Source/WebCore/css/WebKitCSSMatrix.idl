@@ -25,7 +25,7 @@
 
 // Introduced in DOM Level ?:
 [
-    Constructor([Default=NullString] optional DOMString cssValue),
+    Constructor(optional DOMString cssValue = null),
     ConstructorRaisesException,
     ImplementationLacksVTable,
 ] interface WebKitCSSMatrix {
@@ -56,49 +56,50 @@
     attribute unrestricted double m43;
     attribute unrestricted double m44;
 
-    [RaisesException] void setMatrixValue([Default=Undefined] optional DOMString string);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [RaisesException] void setMatrixValue(optional DOMString string = "undefined");
     
     // Multiply this matrix by secondMatrix, on the right (result = this * secondMatrix)
-    [Immutable] WebKitCSSMatrix multiply([Default=Undefined] optional WebKitCSSMatrix secondMatrix);
+    [Immutable] WebKitCSSMatrix multiply(optional WebKitCSSMatrix? secondMatrix = null);
     
     // Return the inverse of this matrix. Throw an exception if the matrix is not invertible
     [Immutable, RaisesException] WebKitCSSMatrix inverse();
     
     // Return this matrix translated by the passed values.
-    // Passing a NaN will use a value of 0. This allows the 3D form to used for 2D operations    
-    [Immutable] WebKitCSSMatrix translate([Default=Undefined] optional unrestricted double x, 
-                                          [Default=Undefined] optional unrestricted double y, 
-                                          [Default=Undefined] optional unrestricted double z);
+    // Passing a NaN will use a value of 0. This allows the 3D form to used for 2D operations
+    [Immutable] WebKitCSSMatrix translate(optional unrestricted double x = NaN,
+                                          optional unrestricted double y = NaN,
+                                          optional unrestricted double z = NaN);
     
     // Returns this matrix scaled by the passed values.
     // Passing scaleX or scaleZ as NaN uses a value of 1, but passing scaleY of NaN 
     // makes it the same as scaleX. This allows the 3D form to used for 2D operations
-    [Immutable] WebKitCSSMatrix scale([Default=Undefined] optional unrestricted double scaleX, 
-                                      [Default=Undefined] optional unrestricted double scaleY, 
-                                      [Default=Undefined] optional unrestricted double scaleZ);
+    [Immutable] WebKitCSSMatrix scale(optional unrestricted double scaleX = NaN,
+                                      optional unrestricted double scaleY = NaN,
+                                      optional unrestricted double scaleZ = NaN);
     
     // Returns this matrix rotated by the passed values.
     // If rotY and rotZ are NaN, rotate about Z (rotX=0, rotateY=0, rotateZ=rotX).
     // Otherwise use a rotation value of 0 for any passed NaN.    
-    [Immutable] WebKitCSSMatrix rotate([Default=Undefined] optional unrestricted double rotX, 
-                                       [Default=Undefined] optional unrestricted double rotY, 
-                                       [Default=Undefined] optional unrestricted double rotZ);
+    [Immutable] WebKitCSSMatrix rotate(optional unrestricted double rotX = NaN,
+                                       optional unrestricted double rotY = NaN,
+                                       optional unrestricted double rotZ = NaN);
     
     // Returns this matrix rotated about the passed axis by the passed angle.
     // Passing a NaN will use a value of 0. If the axis is (0,0,0) use a value
     // of (0,0,1).
-    [Immutable] WebKitCSSMatrix rotateAxisAngle([Default=Undefined] optional unrestricted double x, 
-                                                [Default=Undefined] optional unrestricted double y, 
-                                                [Default=Undefined] optional unrestricted double z, 
-                                                [Default=Undefined] optional unrestricted double angle);
+    [Immutable] WebKitCSSMatrix rotateAxisAngle(optional unrestricted double x = NaN,
+                                                optional unrestricted double y = NaN,
+                                                optional unrestricted double z = NaN,
+                                                optional unrestricted double angle = NaN);
 
     // Returns this matrix skewed along the X axis by the passed values.
     // Passing a NaN will use a value of 0.
-    [Immutable] WebKitCSSMatrix skewX([Default=Undefined] optional unrestricted double angle);
+    [Immutable] WebKitCSSMatrix skewX(optional unrestricted double angle = NaN);
 
     // Returns this matrix skewed along the Y axis by the passed values.
     // Passing a NaN will use a value of 0.
-    [Immutable] WebKitCSSMatrix skewY([Default=Undefined] optional unrestricted double angle);
+    [Immutable] WebKitCSSMatrix skewY(optional unrestricted double angle = NaN);
 
     [NotEnumerable] DOMString toString();
 };

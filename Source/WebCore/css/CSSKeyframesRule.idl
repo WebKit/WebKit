@@ -30,10 +30,11 @@ interface CSSKeyframesRule : CSSRule {
     attribute DOMString? name;
     readonly attribute CSSRuleList cssRules;
     
-    void insertRule([Default=Undefined] optional DOMString rule);
-    void appendRule([Default=Undefined] optional DOMString rule);
-    void deleteRule([Default=Undefined] optional DOMString key);
-    CSSKeyframeRule findRule([Default=Undefined] optional DOMString key);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    void insertRule(optional DOMString rule = "undefined");
+    void appendRule(optional DOMString rule = "undefined");
+    void deleteRule(optional DOMString key = "undefined");
+    CSSKeyframeRule findRule(optional DOMString key = "undefined");
 
     getter CSSKeyframeRule (unsigned long index);
 };

@@ -38,35 +38,35 @@
 
     // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.
     void closePath();
-    void moveTo([Default=Undefined] optional float x,
-                [Default=Undefined] optional float y);
-    void lineTo([Default=Undefined] optional float x,
-                [Default=Undefined] optional float y);
-    void quadraticCurveTo([Default=Undefined] optional float cpx,
-                          [Default=Undefined] optional float cpy,
-                          [Default=Undefined] optional float x,
-                          [Default=Undefined] optional float y);
-    void bezierCurveTo([Default=Undefined] optional float cp1x,
-                       [Default=Undefined] optional float cp1y,
-                       [Default=Undefined] optional float cp2x,
-                       [Default=Undefined] optional float cp2y,
-                       [Default=Undefined] optional float x,
-                       [Default=Undefined] optional float y);
-    [RaisesException] void arcTo([Default=Undefined] optional float x1,
-               [Default=Undefined] optional float y1,
-               [Default=Undefined] optional float x2,
-               [Default=Undefined] optional float y2,
-               [Default=Undefined] optional float radius);
-    void rect([Default=Undefined] optional float x,
-              [Default=Undefined] optional float y,
-              [Default=Undefined] optional float width,
-              [Default=Undefined] optional float height);
-    [RaisesException] void arc([Default=Undefined] optional float x,
-                               [Default=Undefined] optional float y,
-                               [Default=Undefined] optional float radius,
-                               [Default=Undefined] optional float startAngle,
-                               [Default=Undefined] optional float endAngle,
-                               [Default=Undefined] optional boolean anticlockwise);
-    [RaisesException] void ellipse(unrestricted float x, unrestricted float y, unrestricted float radiusX, unrestricted float radiusY, unrestricted float rotation, unrestricted float startAngle, unrestricted float endAngle, [Default=Undefined] optional boolean anticlockwise);
+    void moveTo(optional float x = NaN,
+                optional float y = NaN);
+    void lineTo(optional float x = NaN,
+                optional float y = NaN);
+    void quadraticCurveTo(optional float cpx = NaN,
+                          optional float cpy = NaN,
+                          optional float x = NaN,
+                          optional float y = NaN);
+    void bezierCurveTo(optional float cp1x = NaN,
+                       optional float cp1y = NaN,
+                       optional float cp2x = NaN,
+                       optional float cp2y = NaN,
+                       optional float x = NaN,
+                       optional float y = NaN);
+    [RaisesException] void arcTo(optional float x1 = NaN,
+               optional float y1 = NaN,
+               optional float x2 = NaN,
+               optional float y2 = NaN,
+               optional float radius = NaN);
+    void rect(optional float x = NaN,
+              optional float y = NaN,
+              optional float width = NaN,
+              optional float height = NaN);
+    [RaisesException] void arc(optional float x = NaN,
+                               optional float y = NaN,
+                               optional float radius = NaN,
+                               optional float startAngle = NaN,
+                               optional float endAngle = NaN,
+                               optional boolean anticlockwise = false);
+    [RaisesException] void ellipse(unrestricted float x, unrestricted float y, unrestricted float radiusX, unrestricted float radiusY, unrestricted float rotation, unrestricted float startAngle, unrestricted float endAngle, optional boolean anticlockwise = false);
 
 };

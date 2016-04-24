@@ -38,7 +38,8 @@
 
     attribute long tabIndex;
 
-    CSSValue getPresentationAttribute([Default=Undefined] optional DOMString name);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    CSSValue getPresentationAttribute(optional DOMString name = "undefined");
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     void focus();

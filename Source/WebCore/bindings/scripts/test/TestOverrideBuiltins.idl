@@ -2,5 +2,5 @@
     OverrideBuiltins
 ] interface TestOverrideBuiltins
 {
-    getter Node namedItem([Default=Undefined] optional DOMString name);
+    getter Node namedItem(optional DOMString name = "test");
 };

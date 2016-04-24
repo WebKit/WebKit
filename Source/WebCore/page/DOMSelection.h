@@ -79,7 +79,7 @@ namespace WebCore {
         void collapse(Node*, int offset, ExceptionCode&);
         void collapseToEnd(ExceptionCode&);
         void collapseToStart(ExceptionCode&);
-        void extend(Node*, int offset, ExceptionCode&);
+        void extend(Node&, int offset, ExceptionCode&);
         PassRefPtr<Range> getRangeAt(int, ExceptionCode&);
         void removeAllRanges();
         void addRange(Range*);

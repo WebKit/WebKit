@@ -1932,20 +1932,15 @@ const Vector<RefPtr<Attr>>& Element::attrNodeList()
     return *attrNodeListForElement(*this);
 }
 
-RefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
+RefPtr<Attr> Element::setAttributeNode(Attr& attrNode, ExceptionCode& ec)
 {
-    if (!attrNode) {
-        ec = TYPE_MISMATCH_ERR;
-        return nullptr;
-    }
-
-    RefPtr<Attr> oldAttrNode = attrIfExists(attrNode->qualifiedName().localName(), shouldIgnoreAttributeCase(*this));
-    if (oldAttrNode.get() == attrNode)
-        return attrNode; // This Attr is already attached to the element.
+    RefPtr<Attr> oldAttrNode = attrIfExists(attrNode.qualifiedName().localName(), shouldIgnoreAttributeCase(*this));
+    if (oldAttrNode.get() == &attrNode)
+        return &attrNode; // This Attr is already attached to the element.
 
     // INUSE_ATTRIBUTE_ERR: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
-    if (attrNode->ownerElement() && attrNode->ownerElement() != this) {
+    if (attrNode.ownerElement() && attrNode.ownerElement() != this) {
         ec = INUSE_ATTRIBUTE_ERR;
         return nullptr;
     }
@@ -1953,83 +1948,74 @@ RefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
     synchronizeAllAttributes();
     UniqueElementData& elementData = ensureUniqueElementData();
 
-    unsigned existingAttributeIndex = elementData.findAttributeIndexByName(attrNode->qualifiedName().localName(), shouldIgnoreAttributeCase(*this));
+    unsigned existingAttributeIndex = elementData.findAttributeIndexByName(attrNode.qualifiedName().localName(), shouldIgnoreAttributeCase(*this));
     if (existingAttributeIndex != ElementData::attributeNotFound) {
         const Attribute& attribute = attributeAt(existingAttributeIndex);
         if (oldAttrNode)
             detachAttrNodeFromElementWithValue(oldAttrNode.get(), attribute.value());
         else
-            oldAttrNode = Attr::create(document(), attrNode->qualifiedName(), attribute.value());
+            oldAttrNode = Attr::create(document(), attrNode.qualifiedName(), attribute.value());
 
-        if (attribute.name().matches(attrNode->qualifiedName()))
-            setAttributeInternal(existingAttributeIndex, attrNode->qualifiedName(), attrNode->value(), NotInSynchronizationOfLazyAttribute);
+        if (attribute.name().matches(attrNode.qualifiedName()))
+            setAttributeInternal(existingAttributeIndex, attrNode.qualifiedName(), attrNode.value(), NotInSynchronizationOfLazyAttribute);
         else {
             removeAttributeInternal(existingAttributeIndex, NotInSynchronizationOfLazyAttribute);
-            unsigned existingAttributeIndexForFullQualifiedName = elementData.findAttributeIndexByName(attrNode->qualifiedName());
-            setAttributeInternal(existingAttributeIndexForFullQualifiedName, attrNode->qualifiedName(), attrNode->value(), NotInSynchronizationOfLazyAttribute);
+            unsigned existingAttributeIndexForFullQualifiedName = elementData.findAttributeIndexByName(attrNode.qualifiedName());
+            setAttributeInternal(existingAttributeIndexForFullQualifiedName, attrNode.qualifiedName(), attrNode.value(), NotInSynchronizationOfLazyAttribute);
         }
     } else {
-        unsigned existingAttributeIndexForFullQualifiedName = elementData.findAttributeIndexByName(attrNode->qualifiedName());
-        setAttributeInternal(existingAttributeIndexForFullQualifiedName, attrNode->qualifiedName(), attrNode->value(), NotInSynchronizationOfLazyAttribute);
+        unsigned existingAttributeIndexForFullQualifiedName = elementData.findAttributeIndexByName(attrNode.qualifiedName());
+        setAttributeInternal(existingAttributeIndexForFullQualifiedName, attrNode.qualifiedName(), attrNode.value(), NotInSynchronizationOfLazyAttribute);
     }
-    if (attrNode->ownerElement() != this) {
-        attrNode->attachToElement(this);
-        treeScope().adoptIfNeeded(attrNode);
-        ensureAttrNodeListForElement(*this).append(attrNode);
+    if (attrNode.ownerElement() != this) {
+        attrNode.attachToElement(this);
+        treeScope().adoptIfNeeded(&attrNode);
+        ensureAttrNodeListForElement(*this).append(&attrNode);
     }
     return oldAttrNode;
 }
 
-RefPtr<Attr> Element::setAttributeNodeNS(Attr* attrNode, ExceptionCode& ec)
+RefPtr<Attr> Element::setAttributeNodeNS(Attr& attrNode, ExceptionCode& ec)
 {
-    if (!attrNode) {
-        ec = TYPE_MISMATCH_ERR;
-        return 0;
-    }
-
-    RefPtr<Attr> oldAttrNode = attrIfExists(attrNode->qualifiedName());
-    if (oldAttrNode.get() == attrNode)
-        return attrNode; // This Attr is already attached to the element.
+    RefPtr<Attr> oldAttrNode = attrIfExists(attrNode.qualifiedName());
+    if (oldAttrNode.get() == &attrNode)
+        return &attrNode; // This Attr is already attached to the element.
 
     // INUSE_ATTRIBUTE_ERR: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
-    if (attrNode->ownerElement() && attrNode->ownerElement() != this) {
+    if (attrNode.ownerElement() && attrNode.ownerElement() != this) {
         ec = INUSE_ATTRIBUTE_ERR;
-        return 0;
+        return nullptr;
     }
 
     synchronizeAllAttributes();
     UniqueElementData& elementData = ensureUniqueElementData();
 
-    unsigned index = elementData.findAttributeIndexByName(attrNode->qualifiedName());
+    unsigned index = elementData.findAttributeIndexByName(attrNode.qualifiedName());
     if (index != ElementData::attributeNotFound) {
         if (oldAttrNode)
             detachAttrNodeFromElementWithValue(oldAttrNode.get(), elementData.attributeAt(index).value());
         else
-            oldAttrNode = Attr::create(document(), attrNode->qualifiedName(), elementData.attributeAt(index).value());
+            oldAttrNode = Attr::create(document(), attrNode.qualifiedName(), elementData.attributeAt(index).value());
     }
 
-    setAttributeInternal(index, attrNode->qualifiedName(), attrNode->value(), NotInSynchronizationOfLazyAttribute);
+    setAttributeInternal(index, attrNode.qualifiedName(), attrNode.value(), NotInSynchronizationOfLazyAttribute);
 
-    attrNode->attachToElement(this);
-    treeScope().adoptIfNeeded(attrNode);
-    ensureAttrNodeListForElement(*this).append(attrNode);
+    attrNode.attachToElement(this);
+    treeScope().adoptIfNeeded(&attrNode);
+    ensureAttrNodeListForElement(*this).append(&attrNode);
 
     return oldAttrNode.release();
 }
 
-RefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
+RefPtr<Attr> Element::removeAttributeNode(Attr& attr, ExceptionCode& ec)
 {
-    if (!attr) {
-        ec = TYPE_MISMATCH_ERR;
-        return nullptr;
-    }
-    if (attr->ownerElement() != this) {
+    if (attr.ownerElement() != this) {
         ec = NOT_FOUND_ERR;
         return nullptr;
     }
 
-    ASSERT(&document() == &attr->document());
+    ASSERT(&document() == &attr.document());
 
     synchronizeAllAttributes();
 
@@ -2038,15 +2024,15 @@ RefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
         return nullptr;
     }
 
-    unsigned existingAttributeIndex = m_elementData->findAttributeIndexByName(attr->qualifiedName());
+    unsigned existingAttributeIndex = m_elementData->findAttributeIndexByName(attr.qualifiedName());
 
     if (existingAttributeIndex == ElementData::attributeNotFound) {
         ec = NOT_FOUND_ERR;
         return nullptr;
     }
 
-    RefPtr<Attr> attrNode = attr;
-    detachAttrNodeFromElementWithValue(attr, m_elementData->attributeAt(existingAttributeIndex).value());
+    RefPtr<Attr> attrNode = &attr;
+    detachAttrNodeFromElementWithValue(&attr, m_elementData->attributeAt(existingAttributeIndex).value());
     removeAttributeInternal(existingAttributeIndex, NotInSynchronizationOfLazyAttribute);
     return attrNode;
 }

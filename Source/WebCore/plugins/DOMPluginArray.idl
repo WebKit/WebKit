@@ -23,8 +23,11 @@
     InterfaceName=PluginArray,
 ] interface DOMPluginArray {
     readonly attribute unsigned long length;
-    getter DOMPlugin item([Default=Undefined] optional unsigned long index);
-    getter DOMPlugin namedItem([Default=Undefined] optional DOMString name);
-    void refresh([Default=Undefined] optional boolean reload);
+    getter DOMPlugin item(optional unsigned long index = 0);
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    getter DOMPlugin namedItem(optional DOMString name = "undefined");
+
+    void refresh(optional boolean reload = false);
 };
 

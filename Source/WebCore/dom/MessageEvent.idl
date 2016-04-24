@@ -32,27 +32,28 @@
     [InitializedByEventConstructor] readonly attribute DOMString origin;
     [InitializedByEventConstructor] readonly attribute DOMString lastEventId;
     [InitializedByEventConstructor] readonly attribute EventTarget source; // May be a DOMWindow or a MessagePort.
+
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute any data;
     [InitializedByEventConstructor] readonly attribute MessagePort[] ports;
 
-    [Custom] void initMessageEvent([Default=Undefined] optional DOMString typeArg, 
-                                   [Default=Undefined] optional boolean canBubbleArg, 
-                                   [Default=Undefined] optional boolean cancelableArg, 
-                                   [Default=Undefined] optional any dataArg, 
-                                   [Default=Undefined] optional DOMString originArg, 
-                                   [Default=Undefined] optional DOMString lastEventIdArg, 
-                                   [Default=Undefined] optional DOMWindow sourceArg, 
-                                   [Default=Undefined] optional Array messagePorts);
+    [Custom] void initMessageEvent(optional DOMString typeArg,
+                                   optional boolean canBubbleArg,
+                                   optional boolean cancelableArg,
+                                   optional any dataArg,
+                                   optional DOMString originArg,
+                                   optional DOMString lastEventIdArg,
+                                   optional DOMWindow sourceArg,
+                                   optional Array messagePorts);
 
-    [Custom] void webkitInitMessageEvent([Default=Undefined] optional DOMString typeArg,
-                                         [Default=Undefined] optional boolean canBubbleArg,
-                                         [Default=Undefined] optional boolean cancelableArg,
-                                         [Default=Undefined] optional any dataArg,
-                                         [Default=Undefined] optional DOMString originArg,
-                                         [Default=Undefined] optional DOMString lastEventIdArg,
-                                         [Default=Undefined] optional DOMWindow sourceArg,
-                                         [Default=Undefined] optional Array transferables);
+    [Custom] void webkitInitMessageEvent(optional DOMString typeArg,
+                                         optional boolean canBubbleArg,
+                                         optional boolean cancelableArg,
+                                         optional any dataArg,
+                                         optional DOMString originArg,
+                                         optional DOMString lastEventIdArg,
+                                         optional DOMWindow sourceArg,
+                                         optional Array transferables);
 #else
     // Code generator for ObjC bindings does not support custom bindings, thus there is no good way to
     // return a variant value. As workaround, expose the data attribute as SerializedScriptValue.
@@ -61,14 +62,14 @@
     // There's no good way to expose an array via the ObjC bindings, so for now just expose a single port.
     readonly attribute MessagePort messagePort;
 
-    void initMessageEvent([Default=Undefined] optional DOMString typeArg, 
-                          [Default=Undefined] optional boolean canBubbleArg, 
-                          [Default=Undefined] optional boolean cancelableArg, 
-                          [Default=Undefined] optional SerializedScriptValue dataArg, 
-                          [Default=Undefined] optional DOMString originArg, 
-                          [Default=Undefined] optional DOMString lastEventIdArg, 
-                          [Default=Undefined] optional DOMWindow sourceArg, 
-                          [Default=Undefined] optional MessagePort messagePort);
+    void initMessageEvent(optional DOMString typeArg,
+                          optional boolean canBubbleArg,
+                          optional boolean cancelableArg,
+                          optional SerializedScriptValue? dataArg,
+                          optional DOMString originArg,
+                          optional DOMString lastEventIdArg,
+                          optional DOMWindow? sourceArg,
+                          optional MessagePort? messagePort);
 #endif
 
 };

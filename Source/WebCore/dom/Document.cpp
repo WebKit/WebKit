@@ -1031,7 +1031,7 @@ RefPtr<Node> Document::adoptNode(Node& source, ExceptionCode& ec)
     case ATTRIBUTE_NODE: {                   
         auto& attr = downcast<Attr>(source);
         if (attr.ownerElement())
-            attr.ownerElement()->removeAttributeNode(&attr, ec);
+            attr.ownerElement()->removeAttributeNode(attr, ec);
         break;
     }       
     default:

@@ -31,22 +31,26 @@
 ] interface CSSStyleDeclaration {
     [SetterRaisesException] attribute DOMString? cssText;
 
-    DOMString getPropertyValue([Default=Undefined] DOMString propertyName);
-    [Custom] CSSValue           getPropertyCSSValue([Default=Undefined] optional DOMString propertyName);
-    [RaisesException] DOMString          removeProperty([Default=Undefined] optional DOMString propertyName);
-    DOMString?          getPropertyPriority([Default=Undefined] optional DOMString propertyName);
+    DOMString getPropertyValue(DOMString propertyName);
+    [Custom] CSSValue getPropertyCSSValue(optional DOMString propertyName);
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [RaisesException] DOMString removeProperty(optional DOMString propertyName = "undefined");
+    DOMString? getPropertyPriority(optional DOMString propertyName = "undefined");
 
     // FIXME: 'priority' should use [TreatNullAs=EmptyString].
-    [ObjCLegacyUnnamedParameters, RaisesException] void setProperty([Default=Undefined] optional DOMString propertyName, 
-                                    [TreatNullAs=EmptyString, Default=Undefined] optional DOMString value,
-                                    [Default=Undefined] optional DOMString priority);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [ObjCLegacyUnnamedParameters, RaisesException] void setProperty(optional DOMString propertyName = "undefined",
+                                    [TreatNullAs=EmptyString] optional DOMString value = "undefined",
+                                    optional DOMString priority = "undefined");
 
     readonly attribute unsigned long    length;
-    getter DOMString          item([Default=Undefined] optional unsigned long index);
+    getter DOMString item(optional unsigned long index = 0);
     readonly attribute CSSRule          parentRule;
 
     // Extensions
-    DOMString?          getPropertyShorthand([Default=Undefined] optional DOMString propertyName);
-    boolean            isPropertyImplicit([Default=Undefined] optional DOMString propertyName);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    DOMString?          getPropertyShorthand(optional DOMString propertyName = "undefined");
+    boolean            isPropertyImplicit(optional DOMString propertyName = "undefined");
 };
 

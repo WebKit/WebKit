@@ -519,6 +519,16 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_string(WebKitDOMTestObj* self, const gchar* str);
 
 /**
+ * webkit_dom_test_obj_method_with_optional_atomic_string:
+ * @self: A #WebKitDOMTestObj
+ * @str: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_atomic_string(WebKitDOMTestObj* self, const gchar* str);
+
+/**
  * webkit_dom_test_obj_method_with_optional_string_and_default_value:
  * @self: A #WebKitDOMTestObj
  * @str: A #gchar
@@ -529,24 +539,74 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_string_and_default_value(WebKitDOMTestObj* self, const gchar* str);
 
 /**
- * webkit_dom_test_obj_method_with_optional_string_is_undefined:
+ * webkit_dom_test_obj_method_with_optional_atomic_string_and_default_value:
  * @self: A #WebKitDOMTestObj
  * @str: A #gchar
  *
  * Stability: Unstable
 **/
 WEBKIT_API void
-webkit_dom_test_obj_method_with_optional_string_is_undefined(WebKitDOMTestObj* self, const gchar* str);
+webkit_dom_test_obj_method_with_optional_atomic_string_and_default_value(WebKitDOMTestObj* self, const gchar* str);
 
 /**
- * webkit_dom_test_obj_method_with_optional_string_is_null_string:
+ * webkit_dom_test_obj_method_with_optional_string_is_null:
  * @self: A #WebKitDOMTestObj
  * @str: A #gchar
  *
  * Stability: Unstable
 **/
 WEBKIT_API void
-webkit_dom_test_obj_method_with_optional_string_is_null_string(WebKitDOMTestObj* self, const gchar* str);
+webkit_dom_test_obj_method_with_optional_string_is_null(WebKitDOMTestObj* self, const gchar* str);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_atomic_string_is_null:
+ * @self: A #WebKitDOMTestObj
+ * @str: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_atomic_string_is_null(WebKitDOMTestObj* self, const gchar* str);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_string_is_empty_string:
+ * @self: A #WebKitDOMTestObj
+ * @str: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_string_is_empty_string(WebKitDOMTestObj* self, const gchar* str);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_atomic_string_is_empty_string:
+ * @self: A #WebKitDOMTestObj
+ * @str: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_atomic_string_is_empty_string(WebKitDOMTestObj* self, const gchar* str);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_double_is_na_n:
+ * @self: A #WebKitDOMTestObj
+ * @number: A #gdouble
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_double_is_na_n(WebKitDOMTestObj* self, gdouble number);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_float_is_na_n:
+ * @self: A #WebKitDOMTestObj
+ * @number: A #gfloat
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_float_is_na_n(WebKitDOMTestObj* self, gfloat number);
 
 /**
  * webkit_dom_test_obj_conditional_method1:

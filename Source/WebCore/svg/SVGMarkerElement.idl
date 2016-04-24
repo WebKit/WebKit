@@ -43,7 +43,7 @@ interface SVGMarkerElement : SVGElement {
     readonly attribute SVGAnimatedAngle       orientAngle;
 
     void setOrientToAuto();
-    void setOrientToAngle([Default=Undefined] optional SVGAngle angle);
+    void setOrientToAngle(optional SVGAngle angle = null);
 };
 
 SVGMarkerElement implements SVGExternalResourcesRequired;

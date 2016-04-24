@@ -34,21 +34,24 @@
 
     [NewObject, RaisesException, ImplementedAs=createElementForBindings] Element createElement(DOMString tagName);
     [NewObject] DocumentFragment   createDocumentFragment();
-    [NewObject] Text createTextNode([Default=Undefined] optional DOMString data);
-    [NewObject] Comment createComment([Default=Undefined] optional DOMString data);
-    [NewObject, RaisesException] CDATASection createCDATASection([Default=Undefined] optional DOMString data);
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] ProcessingInstruction createProcessingInstruction([Default=Undefined] optional DOMString target,
-                                                                                 [Default=Undefined] optional DOMString data);
-    [NewObject, RaisesException] Attr createAttribute([Default=Undefined] optional DOMString name);
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [NewObject] Text createTextNode(optional DOMString data = "undefined");
+    [NewObject] Comment createComment(optional DOMString data = "undefined");
+    [NewObject, RaisesException] CDATASection createCDATASection(optional DOMString data = "undefined");
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] ProcessingInstruction createProcessingInstruction(optional DOMString target = "undefined",
+                                                                                 optional DOMString data = "undefined");
+    [NewObject, RaisesException] Attr createAttribute(optional DOMString name = "undefined");
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [RaisesException] EntityReference createEntityReference([Default=Undefined] optional DOMString name);
+    [RaisesException] EntityReference createEntityReference(optional DOMString name);
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ImplementedAs=getElementsByTagNameForObjC] NodeList getElementsByTagName([Default=Undefined] optional DOMString tagname);
+    [ImplementedAs=getElementsByTagNameForObjC] NodeList getElementsByTagName(optional DOMString tagname);
 #else
-    HTMLCollection getElementsByTagName([Default=Undefined] optional DOMString tagname);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    HTMLCollection getElementsByTagName(optional DOMString tagname = "undefined");
 #endif
 
     // Introduced in DOM Level 2:
@@ -56,17 +59,20 @@
     [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Node importNode(Node importedNode, optional boolean deep);
 
     // FIXME: 'qualifiedName' should not have [TreatNullAs=EmptyString].
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS([Default=Undefined] optional DOMString? namespaceURI,
-        [TreatNullAs=EmptyString, Default=Undefined] optional DOMString qualifiedName);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS(optional DOMString? namespaceURI = null,
+        [TreatNullAs=EmptyString] optional DOMString qualifiedName = "undefined");
 
     // FIXME: 'qualifiedName' should not have [TreatNullAs=EmptyString].
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS([Default=Undefined] optional DOMString? namespaceURI,
-        [TreatNullAs=EmptyString, Default=Undefined] optional DOMString qualifiedName);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS(optional DOMString? namespaceURI = null,
+        [TreatNullAs=EmptyString] optional DOMString qualifiedName = "undefined");
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [ObjCLegacyUnnamedParameters, ImplementedAs=getElementsByTagNameNSForObjC] NodeList getElementsByTagNameNS(optional DOMString namespaceURI, optional DOMString localName);
 #else
-    HTMLCollection getElementsByTagNameNS([Default=Undefined] optional DOMString? namespaceURI, [Default=Undefined] optional DOMString localName);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    HTMLCollection getElementsByTagNameNS(optional DOMString? namespaceURI = null, optional DOMString localName = "undefined");
 #endif
 
     // DOM Level 3 Core
@@ -91,7 +97,8 @@
 
     // DOM Level 2 Events (DocumentEvents interface)
 
-    [RaisesException, NewObject] Event              createEvent([Default=Undefined] optional DOMString eventType);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [RaisesException, NewObject] Event createEvent(optional DOMString eventType = "undefined");
 
     // DOM Level 2 Tranversal and Range (DocumentRange interface)
 
@@ -127,25 +134,29 @@
 
     // DOM Level 2 Style (DocumentCSS interface)
 
-    [ObjCLegacyUnnamedParameters] CSSStyleDeclaration getOverrideStyle([Default=Undefined] optional Element? element,
-                                                        [Default=Undefined] optional DOMString pseudoElement);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [ObjCLegacyUnnamedParameters] CSSStyleDeclaration getOverrideStyle(optional Element? element = null, optional DOMString pseudoElement = "undefined");
 
     readonly attribute DOMString contentType;
 
     // DOM Level 3 XPath (XPathEvaluator interface)
-    [ObjCLegacyUnnamedParameters, RaisesException] XPathExpression createExpression([Default=Undefined] optional DOMString expression,
-                                                    [Default=Undefined] optional XPathNSResolver? resolver);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [ObjCLegacyUnnamedParameters, RaisesException] XPathExpression createExpression(optional DOMString expression = "undefined",
+                                                    optional XPathNSResolver? resolver = null);
     XPathNSResolver    createNSResolver(Node? nodeResolver);
-    [ObjCLegacyUnnamedParameters, RaisesException] XPathResult evaluate([Default=Undefined] optional DOMString expression,
-                                                  [Default=Undefined] optional Node? contextNode,
-                                                  [Default=Undefined] optional XPathNSResolver? resolver,
-                                                  [Default=Undefined] optional unsigned short type,
-                                                  [Default=Undefined] optional XPathResult? inResult);
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [ObjCLegacyUnnamedParameters, RaisesException] XPathResult evaluate(optional DOMString expression = "undefined",
+                                                  optional Node? contextNode = null,
+                                                  optional XPathNSResolver? resolver = null,
+                                                  optional unsigned short type = 0,
+                                                  optional XPathResult? inResult = null);
 
     // Common extensions
-    boolean            execCommand([Default=Undefined] optional DOMString command,
-                                   [Default=Undefined] optional boolean userInterface,
-                                   optional DOMString? value);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    boolean execCommand(optional DOMString command = "undefined",
+                        optional boolean userInterface = false,
+                        optional DOMString? value);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     // FIXME: remove the these two versions once optional is implemented for Objective-C.
@@ -154,11 +165,12 @@
     boolean            execCommand(DOMString command);
 #endif
 
-    boolean            queryCommandEnabled([Default=Undefined] optional DOMString command);
-    boolean            queryCommandIndeterm([Default=Undefined] optional DOMString command);
-    boolean            queryCommandState([Default=Undefined] optional DOMString command);
-    boolean            queryCommandSupported([Default=Undefined] optional DOMString command);
-    DOMString          queryCommandValue([Default=Undefined] optional DOMString command);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    boolean            queryCommandEnabled(optional DOMString command = "undefined");
+    boolean            queryCommandIndeterm(optional DOMString command = "undefined");
+    boolean            queryCommandState(optional DOMString command = "undefined");
+    boolean            queryCommandSupported(optional DOMString command = "undefined");
+    DOMString          queryCommandValue(optional DOMString command = "undefined");
 
     // Moved down from HTMLDocument
 
@@ -187,7 +199,8 @@
     readonly attribute HTMLCollection anchors;
     readonly attribute DOMString lastModified;
 
-    NodeList getElementsByName([Default=Undefined,AtomicString] optional DOMString elementName);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    NodeList getElementsByName([AtomicString] optional DOMString elementName = "undefined");
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [PutForwards=href, Unforgeable] readonly attribute Location? location;
@@ -203,10 +216,8 @@
     readonly attribute DOMString defaultCharset;
     readonly attribute DOMString readyState;
 
-    Element            elementFromPoint([Default=Undefined] optional long x, 
-                                        [Default=Undefined] optional long y);
-    Range              caretRangeFromPoint([Default=Undefined] optional long x, 
-                                           [Default=Undefined] optional long y);
+    Element            elementFromPoint(optional long x = 0, optional long y = 0);
+    Range              caretRangeFromPoint(optional long x = 0, optional long y = 0);
 
     // Mozilla extensions
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
@@ -244,9 +255,10 @@
 
     // HTML 5
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    [ImplementedAs=getElementsByClassNameForObjC] NodeList getElementsByClassName([Default=Undefined] optional DOMString classNames);
+    [ImplementedAs=getElementsByClassNameForObjC] NodeList getElementsByClassName(optional DOMString classNames);
 #else
-    HTMLCollection getElementsByClassName([Default=Undefined] optional DOMString classNames);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    HTMLCollection getElementsByClassName(optional DOMString classNames = "undefined");
 #endif
 
     readonly attribute Element? activeElement;
@@ -279,17 +291,17 @@
 #if defined(ENABLE_IOS_TOUCH_EVENTS) && ENABLE_IOS_TOUCH_EVENTS
 #include <WebKitAdditions/DocumentIOS.idl>
 #elif defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-    [NewObject, RaisesException] Touch createTouch([Default=Undefined] optional DOMWindow? window,
-                                                     [Default=Undefined] optional EventTarget? target,
-                                                     [Default=Undefined] optional long identifier,
-                                                     [Default=Undefined] optional long pageX,
-                                                     [Default=Undefined] optional long pageY,
-                                                     [Default=Undefined] optional long screenX,
-                                                     [Default=Undefined] optional long screenY,
-                                                     [Default=Undefined] optional long webkitRadiusX,
-                                                     [Default=Undefined] optional long webkitRadiusY,
-                                                     [Default=Undefined] optional unrestricted float webkitRotationAngle,
-                                                     [Default=Undefined] optional unrestricted float webkitForce);
+    [NewObject, RaisesException] Touch createTouch(optional DOMWindow? window = null,
+                                                   optional EventTarget? target = null,
+                                                   optional long identifier = 0,
+                                                   optional long pageX = 0,
+                                                   optional long pageY = 0,
+                                                   optional long screenX = 0,
+                                                   optional long screenY = 0,
+                                                   optional long webkitRadiusX = 0,
+                                                   optional long webkitRadiusY = 0,
+                                                   optional unrestricted float webkitRotationAngle = NaN,
+                                                   optional unrestricted float webkitForce = NaN);
     [NewObject, Custom, RaisesException] TouchList createTouchList();
 #endif
 

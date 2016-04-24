@@ -33,6 +33,7 @@
     readonly attribute SVGStringList requiredExtensions;
     readonly attribute SVGStringList systemLanguage;
 
-    boolean hasExtension([Default=Undefined] optional DOMString extension);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    boolean hasExtension(optional DOMString extension = "undefined");
 };
 

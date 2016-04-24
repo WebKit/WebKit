@@ -21,11 +21,12 @@
 [
     ConstructorTemplate=Event,
 ] interface HashChangeEvent : Event {
-    void initHashChangeEvent([Default=Undefined] optional DOMString type, 
-                             [Default=Undefined] optional boolean canBubble, 
-                             [Default=Undefined] optional boolean cancelable, 
-                             [Default=Undefined] optional DOMString oldURL, 
-                             [Default=Undefined] optional DOMString newURL); 
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    void initHashChangeEvent(optional DOMString type = "undefined",
+                             optional boolean canBubble = false,
+                             optional boolean cancelable = false,
+                             optional DOMString oldURL = "undefined",
+                             optional DOMString newURL = "undefined");
     [InitializedByEventConstructor] readonly attribute DOMString oldURL;
     [InitializedByEventConstructor] readonly attribute DOMString newURL;
 };

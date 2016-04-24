@@ -43,10 +43,12 @@
 
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString innerText;
     [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString outerText;
-             
-    [RaisesException] Element insertAdjacentElement([Default=Undefined] optional DOMString where, [Default=Undefined] optional Element element);
-    [RaisesException] void insertAdjacentHTML([Default=Undefined] optional DOMString where, [Default=Undefined] optional DOMString html);
-    [RaisesException] void insertAdjacentText([Default=Undefined] optional DOMString where, [Default=Undefined] optional DOMString text);
+
+    [RaisesException] Element insertAdjacentElement(DOMString where, Element element);
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [RaisesException] void insertAdjacentHTML(optional DOMString where = "undefined", optional DOMString html = "undefined");
+    [RaisesException] void insertAdjacentText(optional DOMString where = "undefined", optional DOMString text = "undefined");
 
     [SetterRaisesException] attribute DOMString contentEditable;
     readonly attribute boolean isContentEditable;

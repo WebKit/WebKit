@@ -894,7 +894,6 @@ sub ShouldPassWrapperByReference
 
     return 0 if $parameter->isVariadic;
     return 0 if $parameter->isNullable;
-    return 0 if $parameter->isOptional and $parameter->extendedAttributes->{"Default"} and $parameter->extendedAttributes->{"Default"} eq "Undefined";
     return 0 if !$object->IsWrapperType($parameter->type) && !$object->IsTypedArrayType($parameter->type);
     return 0 if $object->IsSVGTypeNeedingTearOff($parameter->type);
     return 0 if $interface->extendedAttributes->{"UsePointersEvenForNonNullableObjectArguments"};

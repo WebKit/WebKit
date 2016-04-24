@@ -50,7 +50,7 @@ public:
         return adoptRef(*new CustomEvent(type, initializer));
     }
 
-    void initCustomEvent(JSC::ExecState&, const AtomicString& type, bool canBubble, bool cancelable, JSC::JSValue detail);
+    void initCustomEvent(JSC::ExecState&, const AtomicString& type, bool canBubble, bool cancelable, JSC::JSValue detail = JSC::JSValue::JSUndefined);
 
     EventInterface eventInterface() const override;
 

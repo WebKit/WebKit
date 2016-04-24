@@ -60,13 +60,13 @@ interface HTMLTextAreaElement : HTMLElement {
     [RaisesException] void setRangeText(DOMString replacement,
                         unsigned long start,
                         unsigned long end,
-                        [Default=NullString] optional DOMString selectionMode);
+                        optional DOMString selectionMode = null);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     void setSelectionRange(long start, long end);
 #else
-    void setSelectionRange([Default=Undefined] optional long start,
-                           [Default=Undefined] optional long end,
+    void setSelectionRange(optional long start = 0,
+                           optional long end = 0,
                            optional DOMString direction);
 #endif
 

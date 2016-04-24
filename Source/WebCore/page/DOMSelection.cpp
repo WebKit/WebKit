@@ -327,26 +327,21 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
     m_frame->selection().modify(alter, direction, granularity);
 }
 
-void DOMSelection::extend(Node* node, int offset, ExceptionCode& ec)
+void DOMSelection::extend(Node& node, int offset, ExceptionCode& ec)
 {
     if (!m_frame)
         return;
 
-    if (!node) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
-
-    if (offset < 0 || offset > (node->offsetInCharacters() ? caretMaxOffset(node) : static_cast<int>(node->countChildNodes()))) {
+    if (offset < 0 || offset > (node.offsetInCharacters() ? caretMaxOffset(&node) : static_cast<int>(node.countChildNodes()))) {
         ec = INDEX_SIZE_ERR;
         return;
     }
 
-    if (!isValidForPosition(node))
+    if (!isValidForPosition(&node))
         return;
 
     // FIXME: Eliminate legacy editing positions
-    m_frame->selection().setExtent(createLegacyEditingPosition(node, offset), DOWNSTREAM);
+    m_frame->selection().setExtent(createLegacyEditingPosition(&node, offset), DOWNSTREAM);
 }
 
 PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)

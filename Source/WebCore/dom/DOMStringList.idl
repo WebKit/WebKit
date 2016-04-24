@@ -28,7 +28,9 @@
     ImplementationLacksVTable,
 ] interface DOMStringList {
     readonly attribute unsigned long length;
-    getter DOMString? item([Default=Undefined] optional unsigned long index);
-    boolean contains([Default=Undefined] optional DOMString string);
+    getter DOMString? item(optional unsigned long index = 0);
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    boolean contains(optional DOMString string = "undefined");
 };
 

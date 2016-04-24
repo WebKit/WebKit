@@ -74,7 +74,7 @@
     boolean            hasChildNodes();
 
     [NewObject, RaisesException, ImplementedAs=cloneNodeForBindings, InvokesCustomElementLifecycleCallbacks]
-    Node cloneNode([Default=Undefined] optional boolean deep);
+    Node cloneNode(optional boolean deep = false);
 
     void               normalize();
 
@@ -101,11 +101,12 @@
     // FIXME: the spec says this can also raise on retrieval.
     [SetterRaisesException] attribute DOMString? textContent;
 
-    boolean            isSameNode([Default=Undefined] optional Node other);
-    boolean            isEqualNode([Default=Undefined] optional Node other);
-    DOMString?         lookupPrefix([Default=Undefined] optional DOMString? namespaceURI);
-    boolean            isDefaultNamespace([Default=Undefined] optional DOMString? namespaceURI);
-    DOMString?         lookupNamespaceURI([Default=Undefined] optional DOMString? prefix);
+    boolean            isSameNode(optional Node other = null);
+    boolean            isEqualNode(optional Node other = null);
+
+    DOMString?         lookupPrefix(optional DOMString? namespaceURI = null);
+    boolean            isDefaultNamespace(optional DOMString? namespaceURI = null);
+    DOMString?         lookupNamespaceURI(optional DOMString? prefix = null);
 
     // DocumentPosition
     const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
@@ -115,10 +116,10 @@
     const unsigned short      DOCUMENT_POSITION_CONTAINED_BY = 0x10;
     const unsigned short      DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
 
-    unsigned short     compareDocumentPosition([Default=Undefined] optional Node other);
+    unsigned short     compareDocumentPosition(optional Node other = null);
 
     // Introduced in DOM4
-    boolean contains([Default=Undefined] optional Node other);
+    boolean contains(optional Node other = null);
 
     // IE extensions
     readonly attribute Element          parentElement;

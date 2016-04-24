@@ -1262,22 +1262,58 @@
     IMPL->methodWithOptionalString(str);
 }
 
+- (void)methodWithOptionalAtomicString:(NSString *)str
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalAtomicString(str);
+}
+
 - (void)methodWithOptionalStringAndDefaultValue:(NSString *)str
 {
     WebCore::JSMainThreadNullState state;
     IMPL->methodWithOptionalStringAndDefaultValue(str);
 }
 
-- (void)methodWithOptionalStringIsUndefined:(NSString *)str
+- (void)methodWithOptionalAtomicStringAndDefaultValue:(NSString *)str
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->methodWithOptionalStringIsUndefined(str);
+    IMPL->methodWithOptionalAtomicStringAndDefaultValue(str);
 }
 
-- (void)methodWithOptionalStringIsNullString:(NSString *)str
+- (void)methodWithOptionalStringIsNull:(NSString *)str
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->methodWithOptionalStringIsNullString(str);
+    IMPL->methodWithOptionalStringIsNull(str);
+}
+
+- (void)methodWithOptionalAtomicStringIsNull:(NSString *)str
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalAtomicStringIsNull(str);
+}
+
+- (void)methodWithOptionalStringIsEmptyString:(NSString *)str
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalStringIsEmptyString(str);
+}
+
+- (void)methodWithOptionalAtomicStringIsEmptyString:(NSString *)str
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalAtomicStringIsEmptyString(str);
+}
+
+- (void)methodWithOptionalDoubleIsNaN:(double)number
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalDoubleIsNaN(number);
+}
+
+- (void)methodWithOptionalFloatIsNaN:(float)number
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalFloatIsNaN(number);
 }
 
 

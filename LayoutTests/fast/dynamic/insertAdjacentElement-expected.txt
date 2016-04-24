@@ -1,5 +1,5 @@
 Caught expected exception: Error: NotSupportedError: DOM Exception 9
-Caught expected exception: Error: TypeMismatchError: DOM Exception 17
+Caught expected exception: TypeError: Type error
 1 (black) 2 (green) 3 (green) 4 (black) 
 
 PASS

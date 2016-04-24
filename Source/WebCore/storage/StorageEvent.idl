@@ -32,16 +32,17 @@
     [InitializedByEventConstructor] readonly attribute DOMString url;
     [InitializedByEventConstructor] readonly attribute Storage storageArea;
 
-    void initStorageEvent([Default=Undefined] optional DOMString typeArg, 
-                          [Default=Undefined] optional boolean canBubbleArg, 
-                          [Default=Undefined] optional boolean cancelableArg, 
-                          [Default=Undefined] optional DOMString keyArg, 
-                          [Default=Undefined] optional DOMString? oldValueArg,
-                          [Default=Undefined] optional DOMString? newValueArg,
-                          [Default=Undefined] optional DOMString urlArg, 
-                          [Default=Undefined] optional Storage storageAreaArg);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    void initStorageEvent(optional DOMString typeArg = "undefined",
+                          optional boolean canBubbleArg = false,
+                          optional boolean cancelableArg = false,
+                          optional DOMString keyArg = "undefined",
+                          optional DOMString? oldValueArg = null,
+                          optional DOMString? newValueArg = null,
+                          optional DOMString urlArg = "undefined",
+                          optional Storage? storageAreaArg = null);
 
     // Needed once we support init<blank>EventNS
-    // void initStorageEventNS(DOMString namespaceURI, DOMString typeArg, boolean canBubbleArg, boolean cancelableArg, DOMString keyArg, DOMString oldValueArg, DOMString newValueArg, DOMString urlArg, Storage storageAreaArg);
+    // void initStorageEventNS(DOMString namespaceURI, DOMString typeArg, boolean canBubbleArg, boolean cancelableArg, DOMString keyArg, DOMString oldValueArg, DOMString newValueArg, DOMString urlArg, Storage? storageAreaArg);
 };
 
