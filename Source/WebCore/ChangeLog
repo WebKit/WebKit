@@ -1,5 +1,18 @@
 2016-04-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Drop [UsePointersEvenForNonNullableObjectArguments] from WebGLRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=156909
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+
+        Marking a lot of method parameters as nullable.
+
+        * html/canvas/WebGLRenderingContextBase.idl:
+
+2016-04-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Drop [UsePointersEvenForNonNullableObjectArguments] from WebSocket
         https://bugs.webkit.org/show_bug.cgi?id=156897
 
