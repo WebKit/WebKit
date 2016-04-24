@@ -30,19 +30,18 @@ enum DeviceType {
 };
 
 [
-    NoInterfaceObject,
     Conditional=MEDIA_CONTROLS_SCRIPT,
-    UsePointersEvenForNonNullableObjectArguments,
     ImplementationLacksVTable,
+    NoInterfaceObject,
 ] interface MediaControlsHost {
-    TextTrack[] sortedTrackListForMenu(TextTrackList trackList);
-    AudioTrack[] sortedTrackListForMenu(AudioTrackList trackList);
-    DOMString displayNameForTrack(TextTrack track);
-    DOMString displayNameForTrack(AudioTrack track);
+    TextTrack[] sortedTrackListForMenu(TextTrackList? trackList);
+    AudioTrack[] sortedTrackListForMenu(AudioTrackList? trackList);
+    DOMString displayNameForTrack(TextTrack? track);
+    DOMString displayNameForTrack(AudioTrack? track);
     readonly attribute TextTrack captionMenuOffItem;
     readonly attribute TextTrack captionMenuAutomaticItem;
     readonly attribute DOMString captionDisplayMode;
-    void setSelectedTextTrack(TextTrack track);
+    void setSelectedTextTrack(TextTrack? track);
     readonly attribute HTMLElement textTrackContainer;
     readonly attribute boolean allowsInlineMediaPlayback;
     readonly attribute boolean supportsFullscreen;
