@@ -515,6 +515,7 @@ private:
                 case PhantomNewGeneratorFunction:
                 case PhantomCreateActivation:
                 case GetMyArgumentByVal:
+                case GetMyArgumentByValOutOfBounds:
                 case PutHint:
                 case CheckStructureImmediate:
                 case MaterializeCreateActivation:
@@ -662,6 +663,7 @@ private:
                 case TailCallForwardVarargsInlinedCaller:
                 case ConstructForwardVarargs:
                 case GetMyArgumentByVal:
+                case GetMyArgumentByValOutOfBounds:
                     break;
 
                 case Check:

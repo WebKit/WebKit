@@ -5160,6 +5160,7 @@ void SpeculativeJIT::compile(Node* node)
     case PhantomNewGeneratorFunction:
     case PhantomCreateActivation:
     case GetMyArgumentByVal:
+    case GetMyArgumentByValOutOfBounds:
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeCreateActivation:

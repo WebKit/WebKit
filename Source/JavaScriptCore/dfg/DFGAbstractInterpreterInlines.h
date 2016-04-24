@@ -1622,14 +1622,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).makeHeapTop();
         break;
         
-    case GetMyArgumentByVal: {
+    case GetMyArgumentByVal:
+    case GetMyArgumentByValOutOfBounds: {
         JSValue index = forNode(node->child2()).m_value;
         InlineCallFrame* inlineCallFrame = node->child1()->origin.semantic.inlineCallFrame;
 
         if (index && index.isInt32()) {
             // This pretends to return TOP for accesses that are actually proven out-of-bounds because
             // that's the conservative thing to do. Otherwise we'd need to write more code to mark such
-            // paths as unreachable, and it's almost certainly not worth the effort.
+            // paths as unreachable, or to return undefined. We could implement that eventually.
             
             if (inlineCallFrame) {
                 if (index.asUInt32() < inlineCallFrame->arguments.size() - 1) {
@@ -1657,8 +1658,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         virtualRegisterForArgument(i) + inlineCallFrame->stackOffset));
             }
             
+            if (node->op() == GetMyArgumentByValOutOfBounds)
+                result.merge(SpecOther);
+            
             if (result.value())
                 m_state.setFoundConstants(true);
+            
             forNode(node) = result;
             break;
         }

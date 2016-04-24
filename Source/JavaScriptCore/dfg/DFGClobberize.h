@@ -661,7 +661,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
         
-    case GetMyArgumentByVal: {
+    case GetMyArgumentByVal:
+    case GetMyArgumentByValOutOfBounds: {
         read(Stack);
         // FIXME: It would be trivial to have a def here.
         // https://bugs.webkit.org/show_bug.cgi?id=143077

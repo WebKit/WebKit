@@ -1,3 +1,79 @@
+2016-04-24  Filip Pizlo <fpizlo@apple.com> and Andy VanWagoner <thetalecrafter@gmail.com>
+
+        [INTL] Implement String.prototype.localeCompare in ECMA-402
+        https://bugs.webkit.org/show_bug.cgi?id=147607
+
+        Reviewed by Darin Adler.
+        
+        Part of this change is just rolling 194394 back in.
+        
+        The other part is making that not a regression on CDjs. Other than the fact that it uses
+        bound functions, the problem with this new localeCompare implementation is that it uses
+        the arguments object. It uses it in a way that *seems* like ArgumentsEliminationPhase
+        ought to handle, but to my surprise it didn't:
+        
+        - If we have a ForceExit GetByVal on the arguments object, we would previously assume that
+          it escaped. That's false since we just exit at ForceExit. On the other hand we probably
+          should be pruning unreachable paths before we get here, but that's a separate issue. I
+          don't want to play with phase order right now.
+        
+        - If we have a OutOfBounds GetByVal on the arguments object, then the best that would
+          previously happen is that we'd compile it into an in-bounds arguments access. That's quite
+          bad, as Andy's localeCompare illustrates: it uses out-of-bounds access on the arguments
+          object to detect if an argument was passed. This change introduces an OutOfBounds version
+          of GetMyArgumentByVal for this purpose.
+        
+        This change required registering sane chain watchpoints. In the process, I noticed that the
+        old way of doing it had a race condition: we might register watchpoints for the structure
+        that had become insane. This change introduces a double-checking idiom that I believe works
+        because once the structure becomes insane it can't go back to sane and watchpoints
+        registration already involves executing the hardest possible fences.
+
+        * builtins/StringPrototype.js:
+        (repeat):
+        (localeCompare):
+        (search):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        * ftl/FTLTypedPointer.h:
+        (JSC::FTL::TypedPointer::TypedPointer):
+        (JSC::FTL::TypedPointer::operator bool):
+        (JSC::FTL::TypedPointer::heap):
+        (JSC::FTL::TypedPointer::operator!): Deleted.
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+
 2016-04-23  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, unbreak cloop.

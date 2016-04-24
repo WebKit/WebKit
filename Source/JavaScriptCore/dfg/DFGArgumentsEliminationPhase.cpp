@@ -134,11 +134,29 @@ private:
                     escape(edge, source);
                 break;
             
-            case Array::Int32:
-            case Array::Double:
-            case Array::Contiguous:
-                if (edge->op() != CreateClonedArguments)
+            case Array::Contiguous: {
+                if (edge->op() != CreateClonedArguments) {
                     escape(edge, source);
+                    return;
+                }
+            
+                // Everything is fine if we're doing an in-bounds access.
+                if (mode.isInBounds())
+                    break;
+                
+                // If we're out-of-bounds then we proceed only if the object prototype is
+                // sane (i.e. doesn't have indexed properties).
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(edge->origin.semantic);
+                if (globalObject->objectPrototypeIsSane()) {
+                    m_graph.watchpoints().addLazily(globalObject->objectPrototype()->structure()->transitionWatchpointSet());
+                    if (globalObject->objectPrototypeIsSane())
+                        break;
+                }
+                escape(edge, source);
+                break;
+            }
+            
+            case Array::ForceExit:
                 break;
             
             default:
@@ -490,8 +508,13 @@ private:
                     }
                     
                     if (!result) {
+                        NodeType op;
+                        if (node->arrayMode().isInBounds())
+                            op = GetMyArgumentByVal;
+                        else
+                            op = GetMyArgumentByValOutOfBounds;
                         result = insertionSet.insertNode(
-                            nodeIndex, node->prediction(), GetMyArgumentByVal, node->origin,
+                            nodeIndex, node->prediction(), op, node->origin,
                             node->child1(), node->child2());
                     }
                     

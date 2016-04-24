@@ -645,6 +645,7 @@ private:
             compileGetByVal();
             break;
         case GetMyArgumentByVal:
+        case GetMyArgumentByValOutOfBounds:
             compileGetMyArgumentByVal();
             break;
         case PutByVal:
@@ -2907,26 +2908,45 @@ private:
             limit = m_out.sub(m_out.load32(payloadFor(argumentCountRegister)), m_out.int32One);
         }
         
-        speculate(ExoticObjectMode, noValue(), 0, m_out.aboveOrEqual(index, limit));
+        LValue isOutOfBounds = m_out.aboveOrEqual(index, limit);
+        LBasicBlock continuation = nullptr;
+        LBasicBlock lastNext = nullptr;
+        ValueFromBlock slowResult;
+        if (m_node->op() == GetMyArgumentByValOutOfBounds) {
+            LBasicBlock normalCase = m_out.newBlock();
+            continuation = m_out.newBlock();
+            
+            slowResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined())));
+            m_out.branch(isOutOfBounds, unsure(continuation), unsure(normalCase));
+            
+            lastNext = m_out.appendTo(normalCase, continuation);
+        } else
+            speculate(ExoticObjectMode, noValue(), 0, isOutOfBounds);
         
         TypedPointer base;
         if (inlineCallFrame) {
-            if (inlineCallFrame->arguments.size() <= 1) {
-                // We should have already exited due to the bounds check, above. Just tell the
-                // compiler that anything dominated by this instruction is not reachable, so
-                // that we don't waste time generating such code. This will also plant some
-                // kind of crashing instruction so that if by some fluke the bounds check didn't
-                // work, we'll crash in an easy-to-see way.
-                didAlreadyTerminate();
-                return;
-            }
-            base = addressFor(inlineCallFrame->arguments[1].virtualRegister());
+            if (inlineCallFrame->arguments.size() > 1)
+                base = addressFor(inlineCallFrame->arguments[1].virtualRegister());
         } else
             base = addressFor(virtualRegisterForArgument(1));
         
-        LValue pointer = m_out.baseIndex(
-            base.value(), m_out.zeroExt(index, m_out.intPtr), ScaleEight);
-        setJSValue(m_out.load64(TypedPointer(m_heaps.variables.atAnyIndex(), pointer)));
+        LValue result;
+        if (base) {
+            LValue pointer = m_out.baseIndex(
+                base.value(), m_out.zeroExt(index, m_out.intPtr), ScaleEight);
+            result = m_out.load64(TypedPointer(m_heaps.variables.atAnyIndex(), pointer));
+        } else
+            result = m_out.constInt64(JSValue::encode(jsUndefined()));
+        
+        if (m_node->op() == GetMyArgumentByValOutOfBounds) {
+            ValueFromBlock normalResult = m_out.anchor(result);
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            result = m_out.phi(Int64, slowResult, normalResult);
+        }
+        
+        setJSValue(result);
     }
     
     void compilePutByVal()
@@ -4201,7 +4221,8 @@ private:
             results.append(m_out.anchor(m_out.intPtrZero));
         } else {
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-                
+            
+            bool prototypeChainIsSane = false;
             if (globalObject->stringPrototypeChainIsSane()) {
                 // FIXME: This could be captured using a Speculation mode that means
                 // "out-of-bounds loads return a trivial value", something like
@@ -4211,6 +4232,9 @@ private:
                 m_graph.watchpoints().addLazily(globalObject->stringPrototype()->structure()->transitionWatchpointSet());
                 m_graph.watchpoints().addLazily(globalObject->objectPrototype()->structure()->transitionWatchpointSet());
                 
+                prototypeChainIsSane = globalObject->stringPrototypeChainIsSane();
+            }
+            if (prototypeChainIsSane) {
                 LBasicBlock negativeIndex = m_out.newBlock();
                     
                 results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined()))));

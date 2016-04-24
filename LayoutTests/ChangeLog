@@ -1,3 +1,19 @@
+2016-04-24  Filip Pizlo <fpizlo@apple.com> and Andy VanWagoner <thetalecrafter@gmail.com>
+
+        [INTL] Implement String.prototype.localeCompare in ECMA-402
+        https://bugs.webkit.org/show_bug.cgi?id=147607
+
+        Reviewed by Darin Adler.
+
+        * js/dom/script-tests/string-prototype-properties.js:
+        * js/dom/string-prototype-properties-expected.txt:
+        * js/regress/locale-compare.html: Added.
+        * js/regress/locale-compare-expected.txt: Added.
+        * js/regress/scripts-tests/locale-compare.js: Added.
+        * js/script-tests/string-localeCompare.js:
+        * js/string-localeCompare-expected.txt:
+        * js/string-localeCompare.html:
+
 2016-04-22  Filip Pizlo  <fpizlo@apple.com>
 
         Speed up bound functions a bit

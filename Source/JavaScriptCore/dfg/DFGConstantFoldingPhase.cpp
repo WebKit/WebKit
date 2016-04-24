@@ -288,7 +288,8 @@ private:
                 break;
             }
                 
-            case GetMyArgumentByVal: {
+            case GetMyArgumentByVal:
+            case GetMyArgumentByValOutOfBounds: {
                 JSValue index = m_state.forNode(node->child2()).value();
                 if (!index || !index.isInt32())
                     break;
@@ -337,6 +338,9 @@ private:
                     eliminated = true;
                     break;
                 }
+                
+                if (node->op() == GetMyArgumentByValOutOfBounds)
+                    break;
                 
                 Node* length = emitCodeToGetArgumentsArrayLength(
                     m_insertionSet, arguments, indexInBlock, node->origin);

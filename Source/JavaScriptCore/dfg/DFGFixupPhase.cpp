@@ -713,7 +713,8 @@ private:
                                 globalObject->arrayPrototype()->structure()->transitionWatchpointSet());
                             m_graph.watchpoints().addLazily(
                                 globalObject->objectPrototype()->structure()->transitionWatchpointSet());
-                            node->setArrayMode(arrayMode.withSpeculation(Array::SaneChain));
+                            if (globalObject->arrayPrototypeChainIsSane())
+                                node->setArrayMode(arrayMode.withSpeculation(Array::SaneChain));
                         }
                     }
                 }
@@ -1323,6 +1324,7 @@ private:
         case PhantomClonedArguments:
         case ForwardVarargs:
         case GetMyArgumentByVal:
+        case GetMyArgumentByValOutOfBounds:
         case PutHint:
         case CheckStructureImmediate:
         case MaterializeNewObject:

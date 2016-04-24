@@ -217,6 +217,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PhantomDirectArguments:
     case PhantomClonedArguments:
     case GetMyArgumentByVal:
+    case GetMyArgumentByValOutOfBounds:
     case ForwardVarargs:
     case Switch:
     case TypeOf:

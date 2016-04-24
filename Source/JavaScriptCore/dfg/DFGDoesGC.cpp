@@ -231,6 +231,7 @@ bool doesGC(Graph& graph, Node* node)
     case PhantomDirectArguments:
     case PhantomClonedArguments:
     case GetMyArgumentByVal:
+    case GetMyArgumentByValOutOfBounds:
     case ForwardVarargs:
     case PutHint:
     case CheckStructureImmediate:
