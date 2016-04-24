@@ -1,3 +1,16 @@
+2016-04-23  Andy Estes  <aestes@apple.com>
+
+        check-webkit-style: fix false-positive warnings about @synchronized
+        https://bugs.webkit.org/show_bug.cgi?id=156957
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing_for_function_call): Ignore @synchronized lines.
+        (check_braces): Ditto.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_brace_at_begin_of_line): Added a test case.
+
 2016-04-22  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         Add JSC test results in json format to a buildbot log
