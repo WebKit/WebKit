@@ -30,7 +30,7 @@
 @class WKContentView;
 
 @interface WKFormInputControl : NSObject<WKFormPeripheral>
-+ (WKFormInputControl *)createPeripheralWithView:(WKContentView *)view;
+- (instancetype)initWithView:(WKContentView *)view;
 @end
 
 #endif // PLATFORM(IOS)

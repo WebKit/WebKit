@@ -457,7 +457,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 @synthesize error=_error;
 @synthesize taskDescription=_taskDescription;
 @synthesize priority=_priority;
-@dynamic response;
+
 - (NSURLResponse *)response
 {
     return _response.get();
@@ -495,6 +495,15 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
         [strongSelf _restart];
         strongSelf.get().state = NSURLSessionTaskStateRunning;
     });
+}
+
+- (void)dealloc
+{
+    [_originalRequest release];
+    [_currentRequest release];
+    [_error release];
+    [_taskDescription release];
+    [super dealloc];
 }
 
 #pragma mark - NSURLSession SPI

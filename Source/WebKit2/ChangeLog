@@ -1,3 +1,38 @@
+2016-04-23  Andy Estes  <aestes@apple.com>
+
+        Fix issues found by the clang static analyzer
+        https://bugs.webkit.org/show_bug.cgi?id=156956
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/Cocoa/WKPreviewActionItem.mm:
+        (-[WKPreviewAction dealloc]): Added to release _identifier.
+        * UIProcess/_WKWebViewPrintFormatter.mm:
+        (-[_WKWebViewPrintFormatter dealloc]): Released _frameToPrint.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView inputView]): -createPeripheralWithView: returned a retained object, but the method name did not
+        match Cocoa conventions. Called -initWithView: instead.
+        (-[WKContentView _showAttachmentSheet]): Stored the _WKActivatedElementInfo in a RetainPtr.
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]): Ditto.
+        (+[WKAutocorrectionContext autocorrectionContextWithData:markedText:selectedText:afterText:selectedRangeInMarkedText:]):
+        The properties contextBeforeSelection, selectedText, markedText, and contextAfterSelection have the 'copy'
+        annotation in UIWKAutocorrectionContext, so the additional copy made here would be leaked. Removed the extra copy.
+        (-[WKAutocorrectionContext dealloc]): Deleted.
+        * UIProcess/ios/forms/WKFormInputControl.h: Removed -createPeripheralWithView: and declared -initWithView:.
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        (-[WKFormInputControl initWithView:]): Changed to return instancetype.
+        (+[WKFormInputControl createPeripheralWithView:]): Deleted.
+        * UIProcess/ios/forms/WKFormSelectControl.h: Removed -createPeripheralWithView: and declared -initWithView:.
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (+[WKFormSelectControl createPeripheralWithView:]): Deleted.
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::decodeLegacySessionState): If dynamic_cf_cast returned nullptr, the result of
+        CFPropertyListCreateWithData would leak. Stored the CFPropertyListRef in a RetainPtr before calling dynamic_cf_cast.
+        * UIProcess/mac/ServicesController.mm:
+        (WebKit::ServicesController::refreshExistingServices): Used a RetainPtr for attachment and cell.
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu): Used a RetainPtr for groupEntry.
+
 2016-04-23  Chris Dumez  <cdumez@apple.com>
 
         Tie the DiagnosticLoggingClient's lifetime to the Page

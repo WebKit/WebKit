@@ -45,6 +45,12 @@
     return action;
 }
 
+- (void)dealloc
+{
+    [_identifier release];
+    [super dealloc];
+}
+
 @end
 
 #endif // WK_API_ENABLED && TARGET_OS_IPHONE

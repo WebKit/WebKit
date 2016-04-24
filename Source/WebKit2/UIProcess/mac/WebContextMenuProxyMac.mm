@@ -231,9 +231,9 @@ void WebContextMenuProxyMac::setupServicesMenu()
         else
             m_menu = adoptNS([[NSMenu alloc] init]);
         int itemPosition = 0;
-        NSMenuItem *groupEntry = [[NSMenuItem alloc] initWithTitle:menuItemTitleForTelephoneNumberGroup() action:nil keyEquivalent:@""];
+        auto groupEntry = adoptNS([[NSMenuItem alloc] initWithTitle:menuItemTitleForTelephoneNumberGroup() action:nil keyEquivalent:@""]);
         [groupEntry setEnabled:NO];
-        [m_menu insertItem:groupEntry atIndex:itemPosition++];
+        [m_menu insertItem:groupEntry.get() atIndex:itemPosition++];
         for (auto& menuItem : telephoneNumberMenuItems)
             [m_menu insertItem:menuItem.get() atIndex:itemPosition++];
     }

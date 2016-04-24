@@ -550,7 +550,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
         allResultRanges.append(WTFMove(fragmentRanges));
     }
     
-    CFTimeZoneRef tz = CFTimeZoneCopyDefault();
+    auto tz = adoptCF(CFTimeZoneCopyDefault());
     NSDate *referenceDate = [NSDate date];
     Text* lastTextNodeToUpdate = nullptr;
     String lastNodeContent;
@@ -582,7 +582,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
             rangeBoundaries.uncheckedAppend({ range->startPosition(), range->endPosition() });
 
         NSString *identifier = dataDetectorStringForPath(indexPaths[resultIndex].get());
-        NSString *correspondingURL = constructURLStringForResult(coreResult, identifier, referenceDate, (NSTimeZone *)tz, types);
+        NSString *correspondingURL = constructURLStringForResult(coreResult, identifier, referenceDate, (NSTimeZone *)tz.get(), types);
         bool didModifyDOM = false;
 
         if (!correspondingURL || searchForLinkRemovingExistingDDLinks(resultRanges.first()->startContainer(), resultRanges.last()->endContainer(), didModifyDOM))

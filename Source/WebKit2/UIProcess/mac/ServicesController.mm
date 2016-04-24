@@ -87,10 +87,10 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
 
         static NSAttributedString *attributedStringWithRichContent;
         if (!attributedStringWithRichContent) {
-            NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
-            NSTextAttachmentCell *cell = [[NSTextAttachmentCell alloc] initImageCell:image.get()];
-            [attachment setAttachmentCell:cell];
-            NSMutableAttributedString *richString = (NSMutableAttributedString *)[NSMutableAttributedString attributedStringWithAttachment:attachment];
+            auto attachment = adoptNS([[NSTextAttachment alloc] init]);
+            auto cell = adoptNS([[NSTextAttachmentCell alloc] initImageCell:image.get()]);
+            [attachment setAttachmentCell:cell.get()];
+            NSMutableAttributedString *richString = (NSMutableAttributedString *)[NSMutableAttributedString attributedStringWithAttachment:attachment.get()];
             [richString appendAttributedString: attributedString];
             attributedStringWithRichContent = [richString retain];
         }

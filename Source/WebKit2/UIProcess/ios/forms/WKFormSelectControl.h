@@ -36,7 +36,7 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *, CGFloat initialFontSize, c
 @class WKContentView;
 
 @interface WKFormSelectControl : NSObject<WKFormPeripheral>
-+ (WKFormSelectControl *)createPeripheralWithView:(WKContentView *)view;
+- (instancetype)initWithView:(WKContentView *)view;
 @end
 
 @interface WKSelectPopover : WKFormRotatingAccessoryPopover<WKFormControl>

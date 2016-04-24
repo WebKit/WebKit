@@ -95,8 +95,8 @@ using namespace WebCore;
 
 - (void)dealloc
 {
-    [super dealloc];
     [m_internal release];
+    [super dealloc];
 }
 
 - (void)setOrientation:(WebDeviceOrientation*)orientation

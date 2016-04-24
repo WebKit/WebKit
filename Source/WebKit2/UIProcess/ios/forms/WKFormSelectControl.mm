@@ -84,11 +84,6 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
     return self;
 }
 
-+ (WKFormSelectControl *)createPeripheralWithView:(WKContentView *)view
-{
-    return [[WKFormSelectControl alloc] initWithView:view];
-}
-
 - (UIView *)assistantView
 {
     return [_control controlView];

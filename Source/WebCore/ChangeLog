@@ -1,3 +1,26 @@
+2016-04-23  Andy Estes  <aestes@apple.com>
+
+        Fix issues found by the clang static analyzer
+        https://bugs.webkit.org/show_bug.cgi?id=156956
+
+        Reviewed by Alexey Proskuryakov.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange): Stored tz in a RetainPtr.
+        * platform/cf/KeyedDecoderCF.cpp:
+        (WebCore::KeyedDecoderCF::KeyedDecoderCF): If dynamic_cf_cast returned nullptr, the result of
+        CFPropertyListCreateWithData would leak. Stored the CFPropertyListRef in a RetainPtr, then leaked/adopted it
+        into m_rootDictionary (to avoid retain count churn) if it is a CFDictionary.
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController dealloc]): Released _externalPlaybackAirPlayDeviceLocalizedName.
+        (-[WebAVMediaSelectionOption dealloc]): Added to release _localizedDisplayName.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer dealloc]): Released _pixelBufferAttributes.
+        * platform/network/cocoa/WebCoreNSURLSession.h: Removed the readwrite attributes from properties, since
+        properties are readwrite by default.
+        * platform/network/cocoa/WebCoreNSURLSession.mm: Removed @dynamic, which isn't necessary just for defining a custom getter.
+        (-[WebCoreNSURLSessionDataTask dealloc]): Added to release copied ivars.
+
 2016-04-23  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/25894586> A project has failed to build because WTF_MAKE_FAST_ALLOCATED was not defined

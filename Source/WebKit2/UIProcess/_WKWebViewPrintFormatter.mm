@@ -49,6 +49,7 @@
 - (void)dealloc
 {
     [self.webView _endPrinting];
+    [_frameToPrint release];
     [super dealloc];
 }
 

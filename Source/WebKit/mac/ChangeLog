@@ -1,3 +1,13 @@
+2016-04-23  Andy Estes  <aestes@apple.com>
+
+        Fix issues found by the clang static analyzer
+        https://bugs.webkit.org/show_bug.cgi?id=156956
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebView/WebDeviceOrientationProviderMock.mm:
+        (-[WebDeviceOrientationProviderMock dealloc]): [super dealloc] should be called last.
+
 2016-04-21  Tim Horton  <timothy_horton@apple.com>
 
         Fix the iOS build: WAKView may not respond to drawLayer:inContext:

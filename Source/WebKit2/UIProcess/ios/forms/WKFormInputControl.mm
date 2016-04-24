@@ -225,7 +225,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     RetainPtr<id<WKFormControl>> _control;
 }
 
-- (id)initWithView:(WKContentView *)view
+- (instancetype)initWithView:(WKContentView *)view
 {
     if (!(self = [super init]))
         return nil;
@@ -261,11 +261,6 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
     return self;
 
-}
-
-+ (WKFormInputControl *)createPeripheralWithView:(WKContentView *)view
-{
-    return [[WKFormInputControl alloc] initWithView:view];
 }
 
 - (void)beginEditing
