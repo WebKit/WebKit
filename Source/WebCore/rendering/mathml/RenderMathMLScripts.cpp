@@ -43,7 +43,7 @@ static bool isPrescriptDelimiter(const RenderObject& renderObject)
     return renderObject.node() && renderObject.node()->hasTagName(MathMLNames::mprescriptsTag);
 }
 
-RenderMathMLScripts::RenderMathMLScripts(Element& element, Ref<RenderStyle>&& style)
+RenderMathMLScripts::RenderMathMLScripts(Element& element, std::unique_ptr<RenderStyle> style)
     : RenderMathMLBlock(element, WTFMove(style))
 {
     // Determine what kind of sub/sup expression we have by element name

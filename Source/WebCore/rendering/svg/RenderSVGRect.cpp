@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-RenderSVGRect::RenderSVGRect(SVGRectElement& element, Ref<RenderStyle>&& style)
+RenderSVGRect::RenderSVGRect(SVGRectElement& element, std::unique_ptr<RenderStyle> style)
     : RenderSVGShape(element, WTFMove(style))
     , m_usePathFallback(false)
 {

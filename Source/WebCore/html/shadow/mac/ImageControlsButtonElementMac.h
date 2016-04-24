@@ -42,7 +42,7 @@ private:
     ImageControlsButtonElementMac(Document&);
 
     void defaultEventHandler(Event*) override;
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 
     bool isImageControlsButtonElement() const override { return true; }
 };

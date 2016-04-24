@@ -51,7 +51,7 @@ private:
     void didAttachRenderers() override;
     InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 
     const AtomicString& imageSourceURL() const override;
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;

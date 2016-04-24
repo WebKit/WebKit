@@ -114,7 +114,7 @@ private:
     void finishParsingChildren() final;
     void didAddUserAgentShadowRoot(ShadowRoot*) final;
 
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;
     bool willRecalcStyle(Style::Change) final;
     void didAttachRenderers() final;

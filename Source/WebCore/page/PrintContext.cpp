@@ -267,7 +267,7 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     PrintContext printContext(frame);
     printContext.begin(800); // Any width is OK here.
     document->updateLayout();
-    RefPtr<RenderStyle> style = document->ensureStyleResolver().styleForPage(pageNumber);
+    std::unique_ptr<RenderStyle> style = document->ensureStyleResolver().styleForPage(pageNumber);
 
     // Implement formatters for properties we care about.
     if (!strcmp(propertyName, "margin-left")) {

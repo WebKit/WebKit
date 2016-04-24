@@ -45,7 +45,7 @@ private:
 
     const AtomicString& formControlType() const override;
 
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 
     // HTMLFormControlElement always creates one, but buttons don't need it.
     bool alwaysCreateUserAgentShadowRoot() const override { return false; }

@@ -99,7 +99,7 @@ public:
     // Called when a descendant box's layout is finished and it has been positioned within its container.
     virtual void flowThreadDescendantBoxLaidOut(RenderBox*) { }
 
-    static Ref<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);
+    static std::unique_ptr<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
@@ -240,7 +240,7 @@ private:
     bool requiresLayer() const final { return true; }
 
 protected:
-    RenderFlowThread(Document&, Ref<RenderStyle>&&);
+    RenderFlowThread(Document&, std::unique_ptr<RenderStyle>);
 
     RenderFlowThread* locateFlowThreadContainingBlock() const override { return const_cast<RenderFlowThread*>(this); }
 

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class RenderSVGRect final : public RenderSVGShape {
 public:
-    RenderSVGRect(SVGRectElement&, Ref<RenderStyle>&&);
+    RenderSVGRect(SVGRectElement&, std::unique_ptr<RenderStyle>);
     virtual ~RenderSVGRect();
 
     SVGRectElement& rectElement() const;

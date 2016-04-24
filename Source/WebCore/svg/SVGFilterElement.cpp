@@ -183,7 +183,7 @@ void SVGFilterElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout();
 }
 
-RenderPtr<RenderElement> SVGFilterElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGFilterElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGResourceFilter>(*this, WTFMove(style));
 }

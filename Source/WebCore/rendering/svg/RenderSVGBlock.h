@@ -35,7 +35,7 @@ public:
     SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(nodeForNonAnonymous()); }
 
 protected:
-    RenderSVGBlock(SVGGraphicsElement&, Ref<RenderStyle>&&);
+    RenderSVGBlock(SVGGraphicsElement&, std::unique_ptr<RenderStyle>);
     void willBeDestroyed() override;
 
 private:

@@ -416,18 +416,18 @@ void AnimationControllerPrivate::receivedStartTimeResponse(double time)
     startTimeResponse(time);
 }
 
-PassRefPtr<RenderStyle> AnimationControllerPrivate::getAnimatedStyleForRenderer(RenderElement& renderer)
+std::unique_ptr<RenderStyle> AnimationControllerPrivate::getAnimatedStyleForRenderer(RenderElement& renderer)
 {
     AnimationPrivateUpdateBlock animationUpdateBlock(*this);
 
     ASSERT(renderer.isCSSAnimating());
     ASSERT(m_compositeAnimations.contains(&renderer));
     const CompositeAnimation& rendererAnimations = *m_compositeAnimations.get(&renderer);
-    RefPtr<RenderStyle> animatingStyle = rendererAnimations.getAnimatedStyle();
+    std::unique_ptr<RenderStyle> animatingStyle = rendererAnimations.getAnimatedStyle();
     if (!animatingStyle)
-        animatingStyle = &renderer.style();
+        animatingStyle = RenderStyle::clone(&renderer.style());
     
-    return animatingStyle.release();
+    return animatingStyle;
 }
 
 bool AnimationControllerPrivate::computeExtentOfAnimation(RenderElement& renderer, LayoutRect& bounds) const
@@ -593,7 +593,7 @@ void AnimationController::cancelAnimations(RenderElement& renderer)
         element->setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
-bool AnimationController::updateAnimations(RenderElement& renderer, RenderStyle& newStyle, Ref<RenderStyle>& animatedStyle)
+bool AnimationController::updateAnimations(RenderElement& renderer, RenderStyle& newStyle, std::unique_ptr<RenderStyle>& animatedStyle)
 {
     RenderStyle* oldStyle = renderer.hasInitializedStyle() ? &renderer.style() : nullptr;
     if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle.animations() && !newStyle.transitions()))
@@ -624,20 +624,20 @@ bool AnimationController::updateAnimations(RenderElement& renderer, RenderStyle&
 #endif
     }
 
-    if (animatedStyle.ptr() != &newStyle) {
+    if (animatedStyle) {
         // If the animations/transitions change opacity or transform, we need to update
         // the style to impose the stacking rules. Note that this is also
         // done in StyleResolver::adjustRenderStyle().
-        if (animatedStyle.get().hasAutoZIndex() && (animatedStyle.get().opacity() < 1.0f || animatedStyle.get().hasTransform()))
-            animatedStyle.get().setZIndex(0);
+        if (animatedStyle->hasAutoZIndex() && (animatedStyle->opacity() < 1.0f || animatedStyle->hasTransform()))
+            animatedStyle->setZIndex(0);
     }
     return animationStateChanged;
 }
 
-PassRefPtr<RenderStyle> AnimationController::getAnimatedStyleForRenderer(RenderElement& renderer)
+std::unique_ptr<RenderStyle> AnimationController::getAnimatedStyleForRenderer(RenderElement& renderer)
 {
     if (!renderer.isCSSAnimating())
-        return &renderer.style();
+        return RenderStyle::clone(&renderer.style());
     return m_data->getAnimatedStyleForRenderer(renderer);
 }
 

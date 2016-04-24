@@ -54,7 +54,7 @@ private:
     JSC::JSObject* scriptObject() final { return m_scriptObject; }
 
     bool willCreateRenderer() final { return m_mediaElement; }
-    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, std::unique_ptr<RenderStyle>, const RenderTreePosition&) final;
 
     bool ensureReplacementScriptInjected();
     DOMWrapperWorld& isolatedWorld();

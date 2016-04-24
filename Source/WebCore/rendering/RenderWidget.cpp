@@ -80,7 +80,7 @@ static void moveWidgetToParentSoon(Widget* child, FrameView* parent)
     WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(child, parent);
 }
 
-RenderWidget::RenderWidget(HTMLFrameOwnerElement& element, Ref<RenderStyle>&& style)
+RenderWidget::RenderWidget(HTMLFrameOwnerElement& element, std::unique_ptr<RenderStyle> style)
     : RenderReplaced(element, WTFMove(style))
     , m_weakPtrFactory(this)
 {

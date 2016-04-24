@@ -78,7 +78,7 @@ inline static bool hasVerticalAppearance(HTMLInputElement& input)
 
 // --------------------------------
 
-RenderSliderThumb::RenderSliderThumb(SliderThumbElement& element, Ref<RenderStyle>&& style)
+RenderSliderThumb::RenderSliderThumb(SliderThumbElement& element, std::unique_ptr<RenderStyle> style)
     : RenderBlockFlow(element, WTFMove(style))
 {
 }
@@ -112,7 +112,7 @@ bool RenderSliderThumb::isSliderThumb() const
 // http://webkit.org/b/62535
 class RenderSliderContainer final : public RenderFlexibleBox {
 public:
-    RenderSliderContainer(SliderContainerElement& element, Ref<RenderStyle>&& style)
+    RenderSliderContainer(SliderContainerElement& element, std::unique_ptr<RenderStyle> style)
         : RenderFlexibleBox(element, WTFMove(style))
     {
     }
@@ -219,7 +219,7 @@ void SliderThumbElement::setPositionFromValue()
         renderer()->setNeedsLayout();
 }
 
-RenderPtr<RenderElement> SliderThumbElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SliderThumbElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderSliderThumb>(*this, WTFMove(style));
 }
@@ -623,7 +623,7 @@ Ref<SliderContainerElement> SliderContainerElement::create(Document& document)
     return adoptRef(*new SliderContainerElement(document));
 }
 
-RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderSliderContainer>(*this, WTFMove(style));
 }

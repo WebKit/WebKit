@@ -44,7 +44,7 @@ namespace WebCore {
 
 class RenderImageControlsButton final : public RenderBlockFlow {
 public:
-    RenderImageControlsButton(HTMLElement&, Ref<RenderStyle>&&);
+    RenderImageControlsButton(HTMLElement&, std::unique_ptr<RenderStyle>);
     virtual ~RenderImageControlsButton();
 
 private:
@@ -55,7 +55,7 @@ private:
     bool requiresForcedStyleRecalcPropagation() const override { return true; }
 };
 
-RenderImageControlsButton::RenderImageControlsButton(HTMLElement& element, Ref<RenderStyle>&& style)
+RenderImageControlsButton::RenderImageControlsButton(HTMLElement& element, std::unique_ptr<RenderStyle> style)
     : RenderBlockFlow(element, WTFMove(style))
 {
 }
@@ -125,7 +125,7 @@ void ImageControlsButtonElementMac::defaultEventHandler(Event* event)
     HTMLDivElement::defaultEventHandler(event);
 }
 
-RenderPtr<RenderElement> ImageControlsButtonElementMac::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> ImageControlsButtonElementMac::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderImageControlsButton>(*this, WTFMove(style));
 }

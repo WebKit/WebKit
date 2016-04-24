@@ -54,7 +54,7 @@ struct SameSizeAsRenderTableCell : public RenderBlockFlow {
 COMPILE_ASSERT(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), RenderTableCell_should_stay_small);
 COMPILE_ASSERT(sizeof(CollapsedBorderValue) == 12, CollapsedBorderValue_should_stay_small);
 
-RenderTableCell::RenderTableCell(Element& element, Ref<RenderStyle>&& style)
+RenderTableCell::RenderTableCell(Element& element, std::unique_ptr<RenderStyle> style)
     : RenderBlockFlow(element, WTFMove(style))
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
@@ -70,7 +70,7 @@ RenderTableCell::RenderTableCell(Element& element, Ref<RenderStyle>&& style)
     updateColAndRowSpanFlags();
 }
 
-RenderTableCell::RenderTableCell(Document& document, Ref<RenderStyle>&& style)
+RenderTableCell::RenderTableCell(Document& document, std::unique_ptr<RenderStyle> style)
     : RenderBlockFlow(document, WTFMove(style))
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)

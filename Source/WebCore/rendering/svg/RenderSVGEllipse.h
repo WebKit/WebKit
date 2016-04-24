@@ -33,7 +33,7 @@ namespace WebCore {
 
 class RenderSVGEllipse final : public RenderSVGShape {
 public:
-    RenderSVGEllipse(SVGGraphicsElement&, Ref<RenderStyle>&&);
+    RenderSVGEllipse(SVGGraphicsElement&, std::unique_ptr<RenderStyle>);
     virtual ~RenderSVGEllipse();
 
 private:

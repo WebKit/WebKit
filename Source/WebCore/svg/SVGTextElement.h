@@ -34,7 +34,7 @@ public:
 private:
     SVGTextElement(const QualifiedName&, Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;
 };
 

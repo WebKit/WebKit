@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLMenclose::RenderMathMLMenclose(Element& element, Ref<RenderStyle>&& style)
+RenderMathMLMenclose::RenderMathMLMenclose(Element& element, std::unique_ptr<RenderStyle> style)
     : RenderMathMLRow(element, WTFMove(style))
 {
 }

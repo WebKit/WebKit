@@ -983,7 +983,7 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
     if (renderer().style().isRunningAcceleratedAnimation()) {
         TransformationMatrix currTransform;
         FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(box->borderBoxRect(), box->document().deviceScaleFactor());
-        RefPtr<RenderStyle> style = renderer().animation().getAnimatedStyleForRenderer(renderer());
+        std::unique_ptr<RenderStyle> style = renderer().animation().getAnimatedStyleForRenderer(renderer());
         style->applyTransform(currTransform, pixelSnappedBorderRect, applyOrigin);
         makeMatrixRenderable(currTransform, canRender3DTransforms());
         return currTransform;
@@ -6789,7 +6789,7 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
 void RenderLayer::updateScrollCornerStyle()
 {
     RenderElement* actualRenderer = rendererForScrollbar(renderer());
-    RefPtr<RenderStyle> corner = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(SCROLLBAR_CORNER), &actualRenderer->style()) : nullptr;
+    auto corner = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(SCROLLBAR_CORNER), &actualRenderer->style()) : nullptr;
 
     if (!corner) {
         m_scrollCorner = nullptr;
@@ -6797,17 +6797,17 @@ void RenderLayer::updateScrollCornerStyle()
     }
 
     if (!m_scrollCorner) {
-        m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer().document(), corner.releaseNonNull());
+        m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer().document(), WTFMove(corner));
         m_scrollCorner->setParent(&renderer());
         m_scrollCorner->initializeStyle();
     } else
-        m_scrollCorner->setStyle(corner.releaseNonNull());
+        m_scrollCorner->setStyle(WTFMove(corner));
 }
 
 void RenderLayer::updateResizerStyle()
 {
     RenderElement* actualRenderer = rendererForScrollbar(renderer());
-    RefPtr<RenderStyle> resizer = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(RESIZER), &actualRenderer->style()) : nullptr;
+    auto resizer = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(RESIZER), &actualRenderer->style()) : nullptr;
 
     if (!resizer) {
         m_resizer = nullptr;
@@ -6815,11 +6815,11 @@ void RenderLayer::updateResizerStyle()
     }
 
     if (!m_resizer) {
-        m_resizer = createRenderer<RenderScrollbarPart>(renderer().document(), resizer.releaseNonNull());
+        m_resizer = createRenderer<RenderScrollbarPart>(renderer().document(), WTFMove(resizer));
         m_resizer->setParent(&renderer());
         m_resizer->initializeStyle();
     } else
-        m_resizer->setStyle(resizer.releaseNonNull());
+        m_resizer->setStyle(WTFMove(resizer));
 }
 
 RenderLayer* RenderLayer::reflectionLayer() const
@@ -6844,10 +6844,10 @@ void RenderLayer::removeReflection()
     m_reflection = nullptr;
 }
 
-Ref<RenderStyle> RenderLayer::createReflectionStyle()
+std::unique_ptr<RenderStyle> RenderLayer::createReflectionStyle()
 {
     auto newStyle = RenderStyle::create();
-    newStyle.get().inheritFrom(&renderer().style());
+    newStyle->inheritFrom(&renderer().style());
     
     // Map in our transform.
     TransformOperations transform;
@@ -6873,10 +6873,10 @@ Ref<RenderStyle> RenderLayer::createReflectionStyle()
             transform.operations().append(TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, Fixed), TransformOperation::TRANSLATE));
             break;
     }
-    newStyle.get().setTransform(transform);
+    newStyle->setTransform(transform);
 
     // Map in our mask.
-    newStyle.get().setMaskBoxImage(renderer().style().boxReflect()->mask());
+    newStyle->setMaskBoxImage(renderer().style().boxReflect()->mask());
 
     return newStyle;
 }

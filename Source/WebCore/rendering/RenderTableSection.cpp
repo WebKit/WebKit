@@ -82,13 +82,13 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
     }
 }
 
-RenderTableSection::RenderTableSection(Element& element, Ref<RenderStyle>&& style)
+RenderTableSection::RenderTableSection(Element& element, std::unique_ptr<RenderStyle> style)
     : RenderBox(element, WTFMove(style), 0)
 {
     setInline(false);
 }
 
-RenderTableSection::RenderTableSection(Document& document, Ref<RenderStyle>&& style)
+RenderTableSection::RenderTableSection(Document& document, std::unique_ptr<RenderStyle> style)
     : RenderBox(document, WTFMove(style), 0)
 {
     setInline(false);

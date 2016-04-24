@@ -36,7 +36,7 @@ namespace WebCore {
 // Render a base with scripts.
 class RenderMathMLScripts final : public RenderMathMLBlock {
 public:
-    RenderMathMLScripts(Element&, Ref<RenderStyle>&&);
+    RenderMathMLScripts(Element&, std::unique_ptr<RenderStyle>);
     RenderMathMLOperator* unembellishedOperator() final;
     Optional<int> firstLineBaseline() const final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;

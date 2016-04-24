@@ -61,7 +61,7 @@ public:
 private:
     SliderThumbElement(Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
     bool isDisabledFormControl() const override;
@@ -119,7 +119,7 @@ inline Ref<SliderThumbElement> SliderThumbElement::create(Document& document)
 
 class RenderSliderThumb final : public RenderBlockFlow {
 public:
-    RenderSliderThumb(SliderThumbElement&, Ref<RenderStyle>&&);
+    RenderSliderThumb(SliderThumbElement&, std::unique_ptr<RenderStyle>);
     void updateAppearance(RenderStyle* parentStyle);
 
 private:
@@ -134,7 +134,7 @@ public:
 
 private:
     SliderContainerElement(Document&);
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
     Optional<ElementStyle> resolveCustomStyle(RenderStyle&, RenderStyle*) override;
     const AtomicString& shadowPseudoId() const override;
 

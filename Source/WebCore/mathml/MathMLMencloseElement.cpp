@@ -50,7 +50,7 @@ Ref<MathMLMencloseElement> MathMLMencloseElement::create(const QualifiedName& ta
     return adoptRef(*new MathMLMencloseElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {    
     return createRenderer<RenderMathMLMenclose>(*this, WTFMove(style));
 }

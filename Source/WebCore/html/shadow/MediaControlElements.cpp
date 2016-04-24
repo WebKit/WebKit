@@ -307,7 +307,7 @@ void MediaControlTimelineContainerElement::setTimeDisplaysHidden(bool hidden)
     }
 }
 
-RenderPtr<RenderElement> MediaControlTimelineContainerElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MediaControlTimelineContainerElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderMediaControlTimelineContainer>(*this, WTFMove(style));
 }
@@ -327,7 +327,7 @@ Ref<MediaControlVolumeSliderContainerElement> MediaControlVolumeSliderContainerE
     return element;
 }
 
-RenderPtr<RenderElement> MediaControlVolumeSliderContainerElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MediaControlVolumeSliderContainerElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderMediaVolumeSliderContainer>(*this, WTFMove(style));
 }
@@ -1082,7 +1082,7 @@ Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement
     return element;
 }
 
-RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextTrackContainerElement>(*this, WTFMove(style));
 }

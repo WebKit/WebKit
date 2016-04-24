@@ -54,8 +54,8 @@ public:
     void pauseAnimation(double timeOffset) override;
     void endAnimation() override;
 
-    bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) override;
-    void getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle) override;
+    bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, std::unique_ptr<RenderStyle>& animatedStyle) override;
+    void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle) override;
     virtual void reset(RenderStyle* to);
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const override;
@@ -91,8 +91,8 @@ private:
     virtual ~ImplicitAnimation();
 
     // The two styles that we are blending.
-    RefPtr<RenderStyle> m_fromStyle;
-    RefPtr<RenderStyle> m_toStyle;
+    std::unique_ptr<RenderStyle> m_fromStyle;
+    std::unique_ptr<RenderStyle> m_toStyle;
 
     CSSPropertyID m_transitionProperty; // Transition property as specified in the RenderStyle.
     CSSPropertyID m_animatingProperty; // Specific property for this ImplicitAnimation

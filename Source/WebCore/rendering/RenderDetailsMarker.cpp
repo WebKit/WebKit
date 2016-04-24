@@ -33,7 +33,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderDetailsMarker::RenderDetailsMarker(DetailsMarkerControl& element, Ref<RenderStyle>&& style)
+RenderDetailsMarker::RenderDetailsMarker(DetailsMarkerControl& element, std::unique_ptr<RenderStyle> style)
     : RenderBlockFlow(element, WTFMove(style))
 {
 }

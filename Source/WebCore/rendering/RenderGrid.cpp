@@ -245,7 +245,7 @@ void RenderGrid::GridSizingData::setFreeSpaceForDirection(GridTrackSizingDirecti
         freeSpaceForRows = freeSpace;
 }
 
-RenderGrid::RenderGrid(Element& element, Ref<RenderStyle>&& style)
+RenderGrid::RenderGrid(Element& element, std::unique_ptr<RenderStyle> style)
     : RenderBlock(element, WTFMove(style), 0)
     , m_orderIterator(*this)
 {

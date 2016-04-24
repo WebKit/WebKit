@@ -51,7 +51,7 @@ public:
 
     // "base class" methods for all the elements which render as paths
     virtual void toClipPath(Path&);
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 
 protected:
     SVGGraphicsElement(const QualifiedName&, Document&);

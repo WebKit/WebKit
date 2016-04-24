@@ -44,7 +44,7 @@ public:
 #endif
 
 protected:
-    RenderTextControl(HTMLTextFormControlElement&, Ref<RenderStyle>&&);
+    RenderTextControl(HTMLTextFormControlElement&, std::unique_ptr<RenderStyle>);
 
     // This convenience function should not be made public because innerTextElement may outlive the render tree.
     TextControlInnerTextElement* innerTextElement() const;
@@ -91,7 +91,7 @@ private:
 // anymore.
 class RenderTextControlInnerContainer final : public RenderFlexibleBox {
 public:
-    explicit RenderTextControlInnerContainer(Element& element, Ref<RenderStyle>&& style)
+    explicit RenderTextControlInnerContainer(Element& element, std::unique_ptr<RenderStyle> style)
         : RenderFlexibleBox(element, WTFMove(style))
     { }
     virtual ~RenderTextControlInnerContainer() { }

@@ -150,7 +150,7 @@ private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 
     bool canContainRangeEndPoint() const override;
     bool canStartSelection() const override;

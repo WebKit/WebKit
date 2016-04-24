@@ -53,7 +53,7 @@ private:
 
     bool isEnumeratable() const override { return true; }
     bool supportsFocus() const override;
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
     const AtomicString& formControlType() const override;
     bool computeWillValidate() const override { return false; }
     void disabledAttributeChanged() override;

@@ -46,21 +46,21 @@ namespace WebCore {
 const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
 
-RenderReplaced::RenderReplaced(Element& element, Ref<RenderStyle>&& style)
+RenderReplaced::RenderReplaced(Element& element, std::unique_ptr<RenderStyle> style)
     : RenderBox(element, WTFMove(style), RenderReplacedFlag)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
     setReplaced(true);
 }
 
-RenderReplaced::RenderReplaced(Element& element, Ref<RenderStyle>&& style, const LayoutSize& intrinsicSize)
+RenderReplaced::RenderReplaced(Element& element, std::unique_ptr<RenderStyle> style, const LayoutSize& intrinsicSize)
     : RenderBox(element, WTFMove(style), RenderReplacedFlag)
     , m_intrinsicSize(intrinsicSize)
 {
     setReplaced(true);
 }
 
-RenderReplaced::RenderReplaced(Document& document, Ref<RenderStyle>&& style, const LayoutSize& intrinsicSize)
+RenderReplaced::RenderReplaced(Document& document, std::unique_ptr<RenderStyle> style, const LayoutSize& intrinsicSize)
     : RenderBox(document, WTFMove(style), RenderReplacedFlag)
     , m_intrinsicSize(intrinsicSize)
 {

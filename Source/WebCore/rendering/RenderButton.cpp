@@ -37,7 +37,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderButton::RenderButton(HTMLFormControlElement& element, Ref<RenderStyle>&& style)
+RenderButton::RenderButton(HTMLFormControlElement& element, std::unique_ptr<RenderStyle> style)
     : RenderFlexibleBox(element, WTFMove(style))
     , m_buttonText(0)
     , m_inner(0)
@@ -114,11 +114,6 @@ void RenderButton::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
 void RenderButton::setupInnerStyle(RenderStyle* innerStyle) 
 {
-    ASSERT(style().hasPseudoStyle(FIRST_LETTER) || innerStyle->refCount() == 1);
-    // RenderBlock::createAnonymousBlock creates a new RenderStyle, so this is
-    // safe to modify.
-    // FIXME: I don't see how the comment above is accurate when this is called
-    // from the RenderButton::styleDidChange function.
     innerStyle->setFlexGrow(1.0f);
     // Use margin:auto instead of align-items:center to get safe centering, i.e.
     // when the content overflows, treat it the same as align-items: flex-start.

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread& flowThread, Ref<RenderStyle>&& style)
+RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread& flowThread, std::unique_ptr<RenderStyle> style)
     : RenderRegionSet(flowThread.document(), WTFMove(style), flowThread)
     , m_computedColumnCount(1)
     , m_computedColumnWidth(0)

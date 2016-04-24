@@ -35,7 +35,7 @@ class RenderTextFragment;
 // to date as the button changes.
 class RenderButton final : public RenderFlexibleBox {
 public:
-    RenderButton(HTMLFormControlElement&, Ref<RenderStyle>&&);
+    RenderButton(HTMLFormControlElement&, std::unique_ptr<RenderStyle>);
     virtual ~RenderButton();
 
     HTMLFormControlElement& formControlElement() const;

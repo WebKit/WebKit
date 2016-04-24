@@ -32,7 +32,7 @@ namespace WebCore {
 
 class RenderSVGPath final : public RenderSVGShape {
 public:
-    RenderSVGPath(SVGGraphicsElement&, Ref<RenderStyle>&&);
+    RenderSVGPath(SVGGraphicsElement&, std::unique_ptr<RenderStyle>);
     virtual ~RenderSVGPath();
 
 private:

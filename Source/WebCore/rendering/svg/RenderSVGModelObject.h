@@ -67,7 +67,7 @@ public:
     SVGElement& element() const { return downcast<SVGElement>(nodeForNonAnonymous()); }
 
 protected:
-    RenderSVGModelObject(SVGElement&, Ref<RenderStyle>&&);
+    RenderSVGModelObject(SVGElement&, std::unique_ptr<RenderStyle>);
 
     void willBeDestroyed() override;
 

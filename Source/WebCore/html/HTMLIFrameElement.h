@@ -48,7 +48,7 @@ private:
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
     bool rendererIsNeeded(const RenderStyle&) override;
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 
     std::unique_ptr<DOMTokenList> m_sandbox;
 };

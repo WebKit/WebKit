@@ -1117,7 +1117,7 @@ String listMarkerText(EListStyleType type, int value)
     return builder.toString();
 }
 
-RenderListMarker::RenderListMarker(RenderListItem& listItem, Ref<RenderStyle>&& style)
+RenderListMarker::RenderListMarker(RenderListItem& listItem, std::unique_ptr<RenderStyle> style)
     : RenderBox(listItem.document(), WTFMove(style), 0)
     , m_listItem(listItem)
 {

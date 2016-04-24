@@ -131,7 +131,7 @@ private:
     bool isPresentationAttribute(const QualifiedName&) const final;
 
     bool childShouldCreateRenderer(const Node&) const final;
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) final;
     bool appendFormData(FormDataList&, bool) final;
 
     void reset() final;

@@ -924,7 +924,7 @@ private:
     void createReflection();
     void removeReflection();
 
-    Ref<RenderStyle> createReflectionStyle();
+    std::unique_ptr<RenderStyle> createReflectionStyle();
     bool paintingInsideReflection() const { return m_paintingInsideReflection; }
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
 

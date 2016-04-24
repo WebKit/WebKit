@@ -30,7 +30,7 @@
 
 namespace WebCore {
     
-RenderSVGInline::RenderSVGInline(SVGGraphicsElement& element, Ref<RenderStyle>&& style)
+RenderSVGInline::RenderSVGInline(SVGGraphicsElement& element, std::unique_ptr<RenderStyle> style)
     : RenderInline(element, WTFMove(style))
 {
     setAlwaysCreateLineBoxes();

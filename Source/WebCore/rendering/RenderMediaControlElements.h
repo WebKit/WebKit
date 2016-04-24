@@ -38,7 +38,7 @@ namespace WebCore {
 
 class RenderMediaVolumeSliderContainer final : public RenderBlockFlow {
 public:
-    RenderMediaVolumeSliderContainer(Element&, Ref<RenderStyle>&&);
+    RenderMediaVolumeSliderContainer(Element&, std::unique_ptr<RenderStyle>);
 
 private:
     void layout() override;
@@ -48,7 +48,7 @@ private:
 
 class RenderMediaControlTimelineContainer final : public RenderFlexibleBox {
 public:
-    RenderMediaControlTimelineContainer(Element&, Ref<RenderStyle>&&);
+    RenderMediaControlTimelineContainer(Element&, std::unique_ptr<RenderStyle>);
 
 private:
     void layout() override;
@@ -61,7 +61,7 @@ private:
 
 class RenderTextTrackContainerElement final : public RenderBlockFlow {
 public:
-    RenderTextTrackContainerElement(Element&, Ref<RenderStyle>&&);
+    RenderTextTrackContainerElement(Element&, std::unique_ptr<RenderStyle>);
 
 private:
     void layout() override;

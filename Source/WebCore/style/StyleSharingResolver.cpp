@@ -70,7 +70,7 @@ static inline bool elementHasDirectionAuto(const Element& element)
     return is<HTMLElement>(element) && downcast<HTMLElement>(element).hasDirectionAuto();
 }
 
-RefPtr<RenderStyle> SharingResolver::resolve(const Element& searchElement, const Update& update)
+std::unique_ptr<RenderStyle> SharingResolver::resolve(const Element& searchElement, const Update& update)
 {
     if (!is<StyledElement>(searchElement))
         return nullptr;

@@ -53,7 +53,7 @@ namespace WebCore {
 // <ruby> when used as 'display:inline'
 class RenderRubyAsInline final : public RenderInline {
 public:
-    RenderRubyAsInline(Element&, Ref<RenderStyle>&&);
+    RenderRubyAsInline(Element&, std::unique_ptr<RenderStyle>);
     virtual ~RenderRubyAsInline();
 
     void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
@@ -71,7 +71,7 @@ private:
 // <ruby> when used as 'display:block' or 'display:inline-block'
 class RenderRubyAsBlock final : public RenderBlockFlow {
 public:
-    RenderRubyAsBlock(Element&, Ref<RenderStyle>&&);
+    RenderRubyAsBlock(Element&, std::unique_ptr<RenderStyle>);
     virtual ~RenderRubyAsBlock();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }

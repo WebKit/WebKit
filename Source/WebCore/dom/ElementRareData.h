@@ -90,7 +90,7 @@ public:
     void setAttributeMap(std::unique_ptr<NamedNodeMap> attributeMap) { m_attributeMap = WTFMove(attributeMap); }
 
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
-    void setComputedStyle(Ref<RenderStyle>&& computedStyle) { m_computedStyle = WTFMove(computedStyle); }
+    void setComputedStyle(std::unique_ptr<RenderStyle> computedStyle) { m_computedStyle = WTFMove(computedStyle); }
 
     DOMTokenList* classList() const { return m_classList.get(); }
     void setClassList(std::unique_ptr<DOMTokenList> classList) { m_classList = WTFMove(classList); }
@@ -135,7 +135,7 @@ private:
 
     LayoutSize m_minimumSizeForResizing;
     IntPoint m_savedLayerScrollPosition;
-    RefPtr<RenderStyle> m_computedStyle;
+    std::unique_ptr<RenderStyle> m_computedStyle;
 
     std::unique_ptr<DatasetDOMStringMap> m_dataset;
     std::unique_ptr<DOMTokenList> m_classList;

@@ -232,7 +232,7 @@ public:
     // Miscellaneous functions.
 
     virtual bool rendererIsNeeded();
-    virtual RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&);
+    virtual RenderPtr<RenderElement> createInputRenderer(std::unique_ptr<RenderStyle>);
     virtual void addSearchResult();
     virtual void attach();
     virtual void detach();

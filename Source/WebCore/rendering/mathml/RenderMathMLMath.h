@@ -34,7 +34,7 @@ namespace WebCore {
     
 class RenderMathMLMath final : public RenderMathMLRow {
 public:
-    RenderMathMLMath(Element&, Ref<RenderStyle>&&);
+    RenderMathMLMath(Element&, std::unique_ptr<RenderStyle>);
 
 private:
     bool isRenderMathMLMath() const override { return true; }

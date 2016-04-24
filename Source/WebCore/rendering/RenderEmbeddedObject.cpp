@@ -96,7 +96,7 @@ static const Color& unavailablePluginBorderColor()
     return standard;
 }
 
-RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, Ref<RenderStyle>&& style)
+RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, std::unique_ptr<RenderStyle> style)
     : RenderWidget(element, WTFMove(style))
     , m_isPluginUnavailable(false)
     , m_unavailablePluginIndicatorIsPressed(false)
@@ -111,7 +111,7 @@ RenderEmbeddedObject::~RenderEmbeddedObject()
     view().frameView().removeEmbeddedObjectToUpdate(*this);
 }
 
-RenderPtr<RenderEmbeddedObject> RenderEmbeddedObject::createForApplet(HTMLAppletElement& applet, Ref<RenderStyle>&& style)
+RenderPtr<RenderEmbeddedObject> RenderEmbeddedObject::createForApplet(HTMLAppletElement& applet, std::unique_ptr<RenderStyle> style)
 {
     auto renderer = createRenderer<RenderEmbeddedObject>(applet, WTFMove(style));
     renderer->setInline(true);

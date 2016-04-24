@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static Ref<RenderStyle> cloneRenderStyleWithState(const RenderStyle& currentStyle)
+static std::unique_ptr<RenderStyle> cloneRenderStyleWithState(const RenderStyle& currentStyle)
 {
     auto newStyle = RenderStyle::clone(&currentStyle);
     if (currentStyle.lastChildState())

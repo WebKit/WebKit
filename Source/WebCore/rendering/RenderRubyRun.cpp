@@ -44,7 +44,7 @@ namespace WebCore {
 
 using namespace std;
 
-RenderRubyRun::RenderRubyRun(Document& document, Ref<RenderStyle>&& style)
+RenderRubyRun::RenderRubyRun(Document& document, std::unique_ptr<RenderStyle> style)
     : RenderBlockFlow(document, WTFMove(style))
     , m_lastCharacter(0)
     , m_secondToLastCharacter(0)
@@ -204,7 +204,7 @@ void RenderRubyRun::removeChild(RenderObject& child)
 RenderRubyBase* RenderRubyRun::createRubyBase() const
 {
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), BLOCK);
-    newStyle.get().setTextAlign(CENTER); // FIXME: use WEBKIT_CENTER?
+    newStyle->setTextAlign(CENTER); // FIXME: use WEBKIT_CENTER?
     auto renderer = new RenderRubyBase(document(), WTFMove(newStyle));
     renderer->initializeStyle();
     return renderer;

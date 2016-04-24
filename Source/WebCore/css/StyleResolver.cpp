@@ -190,6 +190,7 @@ inline void StyleResolver::State::clear()
 {
     m_element = nullptr;
     m_parentStyle = nullptr;
+    m_ownedParentStyle = nullptr;
     m_regionForStyling = nullptr;
     m_pendingImageProperties.clear();
     m_filtersWithPendingSVGDocuments.clear();
@@ -361,11 +362,18 @@ inline void StyleResolver::State::updateConversionData()
     m_cssToLengthConversionData = CSSToLengthConversionData(m_style.get(), m_rootElementStyle, m_element ? document().renderView() : nullptr);
 }
 
-inline void StyleResolver::State::setStyle(Ref<RenderStyle>&& style)
+inline void StyleResolver::State::setStyle(std::unique_ptr<RenderStyle> style)
 {
     m_style = WTFMove(style);
     updateConversionData();
 }
+
+void StyleResolver::State::setParentStyle(std::unique_ptr<RenderStyle> parentStyle)
+{
+    m_ownedParentStyle = WTFMove(parentStyle);
+    m_parentStyle = m_ownedParentStyle.get();
+}
+
 static inline bool isAtShadowBoundary(const Element& element)
 {
     auto* parentNode = element.parentNode();
@@ -376,7 +384,7 @@ ElementStyle StyleResolver::styleForElement(const Element& element, RenderStyle*
 {
     RELEASE_ASSERT(!m_inLoadPendingImages);
 
-    m_state = State(element, parentStyle, m_overrideDocumentElementStyle.get(), regionForStyling, selectorFilter);
+    m_state = State(element, parentStyle, m_overrideDocumentElementStyle, regionForStyling, selectorFilter);
     State& state = m_state;
 
     if (state.parentStyle()) {
@@ -433,7 +441,7 @@ ElementStyle StyleResolver::styleForElement(const Element& element, RenderStyle*
     return { state.takeStyle(), WTFMove(elementStyleRelations) };
 }
 
-Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleKeyframe* keyframe, KeyframeValue& keyframeValue)
+std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleKeyframe* keyframe, KeyframeValue& keyframeValue)
 {
     RELEASE_ASSERT(!m_inLoadPendingImages);
 
@@ -515,13 +523,12 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
 
         const StyleKeyframe* keyframe = keyframes[i].get();
 
-        KeyframeValue keyframeValue(0, nullptr);
-        keyframeValue.setStyle(styleForKeyframe(elementStyle, keyframe, keyframeValue));
-
         // Add this keyframe style to all the indicated key times
-        for (auto& key: keyframe->keys()) {
+        for (auto& key : keyframe->keys()) {
+            KeyframeValue keyframeValue(0, nullptr);
+            keyframeValue.setStyle(styleForKeyframe(elementStyle, keyframe, keyframeValue));
             keyframeValue.setKey(key);
-            list.insert(keyframeValue);
+            list.insert(WTFMove(keyframeValue));
         }
     }
 
@@ -535,7 +542,7 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
         }
         KeyframeValue keyframeValue(0, nullptr);
         keyframeValue.setStyle(styleForKeyframe(elementStyle, zeroPercentKeyframe, keyframeValue));
-        list.insert(keyframeValue);
+        list.insert(WTFMove(keyframeValue));
     }
 
     // If the 100% keyframe is missing, create it (but only if there is at least one other keyframe)
@@ -547,11 +554,11 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
         }
         KeyframeValue keyframeValue(1, nullptr);
         keyframeValue.setStyle(styleForKeyframe(elementStyle, hundredPercentKeyframe, keyframeValue));
-        list.insert(keyframeValue);
+        list.insert(WTFMove(keyframeValue));
     }
 }
 
-PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element& element, const PseudoStyleRequest& pseudoStyleRequest, RenderStyle& parentStyle)
+std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element& element, const PseudoStyleRequest& pseudoStyleRequest, RenderStyle& parentStyle)
 {
     m_state = State(element, &parentStyle);
 
@@ -601,7 +608,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element& elem
     return state.takeStyle();
 }
 
-Ref<RenderStyle> StyleResolver::styleForPage(int pageIndex)
+std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 {
     RELEASE_ASSERT(!m_inLoadPendingImages);
 
@@ -645,7 +652,7 @@ Ref<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     return m_state.takeStyle();
 }
 
-Ref<RenderStyle> StyleResolver::defaultStyleForElement()
+std::unique_ptr<RenderStyle> StyleResolver::defaultStyleForElement()
 {
     m_state.setStyle(RenderStyle::create());
     // Make sure our fonts are initialized if we don't inherit them from our parent style.
@@ -1383,11 +1390,11 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     addToMatchedPropertiesCache(state.style(), state.parentStyle(), cacheHash, matchResult);
 }
 
-void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, RenderStyle* style)
+void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, std::unique_ptr<RenderStyle> style)
 {
     m_state = State();
-    m_state.setParentStyle(*style);
-    m_state.setStyle(*style);
+    m_state.setParentStyle(RenderStyle::clone(style.get()));
+    m_state.setStyle(WTFMove(style));
     applyPropertyToCurrentStyle(id, value);
 }
 

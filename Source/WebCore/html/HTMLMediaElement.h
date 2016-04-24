@@ -482,7 +482,7 @@ protected:
     void endIgnoringTrackDisplayUpdateRequests();
 #endif
 
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     bool mediaControlsDependOnPageScaleFactor() const { return m_mediaControlsDependOnPageScaleFactor; }

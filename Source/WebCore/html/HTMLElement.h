@@ -77,7 +77,7 @@ public:
     bool ieForbidsInsertHTML() const;
 
     bool rendererIsNeeded(const RenderStyle&) override;
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 
     HTMLFormElement* form() const { return virtualForm(); }
 

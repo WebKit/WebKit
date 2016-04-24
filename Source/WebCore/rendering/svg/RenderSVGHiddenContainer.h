@@ -30,7 +30,7 @@ class SVGElement;
 // <defs>, <linearGradient>, <radialGradient> are all good examples
 class RenderSVGHiddenContainer : public RenderSVGContainer {
 public:
-    RenderSVGHiddenContainer(SVGElement&, Ref<RenderStyle>&&);
+    RenderSVGHiddenContainer(SVGElement&, std::unique_ptr<RenderStyle>);
 
 protected:
     void layout() override;

@@ -74,7 +74,7 @@ static ContainerNode* findRenderingRoot(ContainerNode& node)
     return &node.document();
 }
 
-static ListHashSet<ContainerNode*> findRenderingRoots(const Style::Update& update)
+static ListHashSet<ContainerNode*> findRenderingRoots(Style::Update& update)
 {
     ListHashSet<ContainerNode*> renderingRoots;
     for (auto* root : update.roots()) {
@@ -86,7 +86,7 @@ static ListHashSet<ContainerNode*> findRenderingRoots(const Style::Update& updat
     return renderingRoots;
 }
 
-void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
+void RenderTreeUpdater::commit(std::unique_ptr<Style::Update> styleUpdate)
 {
     ASSERT(&m_document == &styleUpdate->document());
 
@@ -214,7 +214,7 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
         return false;
 
     for (auto& cache : *pseudoStyleCache) {
-        RefPtr<RenderStyle> newPseudoStyle;
+        std::unique_ptr<RenderStyle> newPseudoStyle;
         PseudoId pseudoId = cache->styleType();
         if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED)
             newPseudoStyle = renderer->uncachedFirstLineStyle(newStyle);
@@ -225,7 +225,7 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
         if (*newPseudoStyle != *cache) {
             if (pseudoId < FIRST_INTERNAL_PSEUDOID)
                 newStyle->setHasPseudoStyle(pseudoId);
-            newStyle->addCachedPseudoStyle(newPseudoStyle);
+            newStyle->addCachedPseudoStyle(WTFMove(newPseudoStyle));
             if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED) {
                 // FIXME: We should do an actual diff to determine whether a repaint vs. layout
                 // is needed, but for now just assume a layout will be required. The diff code
@@ -238,7 +238,7 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
     return false;
 }
 
-void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& update)
+void RenderTreeUpdater::updateElementRenderer(Element& element, Style::ElementUpdate& update)
 {
     bool shouldTearDownRenderers = update.change == Style::Detach && (element.renderer() || element.isNamedFlowContentNode());
     if (shouldTearDownRenderers)
@@ -251,7 +251,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();
-        createRenderer(element, *update.style);
+        createRenderer(element, WTFMove(update.style));
         invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(element);
         return;
     }
@@ -261,19 +261,19 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     auto& renderer = *element.renderer();
 
     if (update.isSynthetic) {
-        renderer.setStyle(*update.style, StyleDifferenceRecompositeLayer);
+        renderer.setStyle(WTFMove(update.style), StyleDifferenceRecompositeLayer);
         return;
     }
 
     if (update.change == Style::NoChange) {
         if (pseudoStyleCacheIsInvalid(&renderer, update.style.get()) || (parent().styleChange == Style::Force && renderer.requiresForcedStyleRecalcPropagation())) {
-            renderer.setStyle(*update.style, StyleDifferenceEqual);
+            renderer.setStyle(WTFMove(update.style), StyleDifferenceEqual);
             return;
         }
         return;
     }
 
-    renderer.setStyle(*update.style, StyleDifferenceEqual);
+    renderer.setStyle(WTFMove(update.style), StyleDifferenceEqual);
 }
 
 #if ENABLE(CSS_REGIONS)
@@ -289,17 +289,17 @@ static RenderNamedFlowThread* moveToFlowThreadIfNeeded(Element& element, const R
 }
 #endif
 
-void RenderTreeUpdater::createRenderer(Element& element, RenderStyle& style)
+void RenderTreeUpdater::createRenderer(Element& element, std::unique_ptr<RenderStyle> style)
 {
     if (!shouldCreateRenderer(element, renderTreePosition().parent()))
         return;
 
     RenderNamedFlowThread* parentFlowRenderer = nullptr;
 #if ENABLE(CSS_REGIONS)
-    parentFlowRenderer = moveToFlowThreadIfNeeded(element, style);
+    parentFlowRenderer = moveToFlowThreadIfNeeded(element, *style);
 #endif
 
-    if (!element.rendererIsNeeded(style))
+    if (!element.rendererIsNeeded(*style))
         return;
 
     renderTreePosition().computeNextSibling(element);
@@ -308,7 +308,7 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle& style)
         ? RenderTreePosition(*parentFlowRenderer, parentFlowRenderer->nextRendererForElement(element))
         : renderTreePosition();
 
-    RenderElement* newRenderer = element.createElementRenderer(style, insertionPosition).leakPtr();
+    RenderElement* newRenderer = element.createElementRenderer(WTFMove(style), insertionPosition).leakPtr();
     if (!newRenderer)
         return;
     if (!insertionPosition.canInsert(*newRenderer)) {
@@ -322,9 +322,11 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle& style)
 
     element.setRenderer(newRenderer);
 
-    Ref<RenderStyle> animatedStyle = newRenderer->style();
-    newRenderer->animation().updateAnimations(*newRenderer, animatedStyle, animatedStyle);
-    newRenderer->setStyleInternal(WTFMove(animatedStyle));
+    auto& initialStyle = newRenderer->style();
+    std::unique_ptr<RenderStyle> animatedStyle;
+    newRenderer->animation().updateAnimations(*newRenderer, initialStyle, animatedStyle);
+    if (animatedStyle)
+        newRenderer->setStyleInternal(WTFMove(animatedStyle));
 
     newRenderer->initializeStyle();
 
@@ -480,13 +482,14 @@ void RenderTreeUpdater::updateBeforeOrAfterPseudoElement(Element& current, Pseud
 
     Style::ElementUpdate elementUpdate;
 
-    Ref<RenderStyle> newStyle = *current.renderer()->getCachedPseudoStyle(pseudoId, &current.renderer()->style());
+    auto newStyle = RenderStyle::clone(current.renderer()->getCachedPseudoStyle(pseudoId, &current.renderer()->style()));
 
-    if (renderer && m_document.frame()->animation().updateAnimations(*renderer, newStyle, newStyle))
+    std::unique_ptr<RenderStyle> animatedStyle;
+    if (renderer && m_document.frame()->animation().updateAnimations(*renderer, *newStyle, animatedStyle))
         elementUpdate.isSynthetic = true;
 
-    elementUpdate.change = renderer ? Style::determineChange(renderer->style(), newStyle) : Style::Detach;
-    elementUpdate.style = WTFMove(newStyle);
+    elementUpdate.change = renderer ? Style::determineChange(renderer->style(), *newStyle) : Style::Detach;
+    elementUpdate.style = animatedStyle ? WTFMove(animatedStyle) : WTFMove(newStyle);
 
     if (elementUpdate.change == Style::NoChange)
         return;

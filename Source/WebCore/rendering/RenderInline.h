@@ -34,8 +34,8 @@ class RenderRegion;
 
 class RenderInline : public RenderBoxModelObject {
 public:
-    RenderInline(Element&, Ref<RenderStyle>&&);
-    RenderInline(Document&, Ref<RenderStyle>&&);
+    RenderInline(Element&, std::unique_ptr<RenderStyle>);
+    RenderInline(Document&, std::unique_ptr<RenderStyle>);
 
     void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
 

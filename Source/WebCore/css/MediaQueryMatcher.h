@@ -32,6 +32,7 @@ class MediaQueryList;
 class MediaQueryListListener;
 class MediaQueryEvaluator;
 class MediaQuerySet;
+class RenderStyle;
 
 // MediaQueryMatcher class is responsible for keeping a vector of pairs
 // MediaQueryList x MediaQueryListListener. It is responsible for evaluating the queries
@@ -71,7 +72,7 @@ private:
     };
 
     MediaQueryMatcher(Document*);
-    std::unique_ptr<MediaQueryEvaluator> prepareEvaluator() const;
+    std::unique_ptr<RenderStyle> documentElementUserAgentStyle() const;
     String mediaType() const;
 
     Document* m_document;

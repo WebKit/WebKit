@@ -62,7 +62,7 @@ class GraphicsContext;
 
 class RenderSVGResourceFilter final : public RenderSVGResourceContainer {
 public:
-    RenderSVGResourceFilter(SVGFilterElement&, Ref<RenderStyle>&&);
+    RenderSVGResourceFilter(SVGFilterElement&, std::unique_ptr<RenderStyle>);
     virtual ~RenderSVGResourceFilter();
 
     SVGFilterElement& filterElement() const { return downcast<SVGFilterElement>(RenderSVGResourceContainer::element()); }

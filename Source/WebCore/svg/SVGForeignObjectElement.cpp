@@ -122,7 +122,7 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
 
-RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGForeignObject>(*this, WTFMove(style));
 }

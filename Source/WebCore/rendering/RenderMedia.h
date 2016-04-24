@@ -35,8 +35,8 @@ namespace WebCore {
 
 class RenderMedia : public RenderImage {
 public:
-    RenderMedia(HTMLMediaElement&, Ref<RenderStyle>&&);
-    RenderMedia(HTMLMediaElement&, Ref<RenderStyle>&&, const IntSize& intrinsicSize);
+    RenderMedia(HTMLMediaElement&, std::unique_ptr<RenderStyle>);
+    RenderMedia(HTMLMediaElement&, std::unique_ptr<RenderStyle>, const IntSize& intrinsicSize);
     virtual ~RenderMedia();
 
     HTMLMediaElement& mediaElement() const { return downcast<HTMLMediaElement>(nodeForNonAnonymous()); }

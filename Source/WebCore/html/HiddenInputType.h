@@ -44,7 +44,7 @@ private:
     FormControlState saveFormControlState() const override;
     void restoreFormControlState(const FormControlState&) override;
     bool supportsValidation() const override;
-    RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
+    RenderPtr<RenderElement> createInputRenderer(std::unique_ptr<RenderStyle>) override;
     void accessKeyAction(bool sendMouseEvents) override;
     bool rendererIsNeeded() override;
     bool storesValueSeparateFromAttribute() override;

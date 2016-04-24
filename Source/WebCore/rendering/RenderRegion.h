@@ -127,8 +127,8 @@ public:
     virtual void absoluteQuadsForBoxInRegion(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) { }
 
 protected:
-    RenderRegion(Element&, Ref<RenderStyle>&&, RenderFlowThread*);
-    RenderRegion(Document&, Ref<RenderStyle>&&, RenderFlowThread*);
+    RenderRegion(Element&, std::unique_ptr<RenderStyle>, RenderFlowThread*);
+    RenderRegion(Document&, std::unique_ptr<RenderStyle>, RenderFlowThread*);
 
     void ensureOverflowForBox(const RenderBox*, RefPtr<RenderOverflow>&, bool);
 

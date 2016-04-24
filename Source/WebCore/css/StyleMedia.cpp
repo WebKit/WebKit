@@ -67,7 +67,7 @@ bool StyleMedia::matchMedium(const String& query) const
     if (!media->parse(query))
         return false;
 
-    MediaQueryEvaluator screenEval(type(), m_frame, rootStyle.ptr());
+    MediaQueryEvaluator screenEval(type(), m_frame, rootStyle.get());
     return screenEval.eval(media.get());
 }
 

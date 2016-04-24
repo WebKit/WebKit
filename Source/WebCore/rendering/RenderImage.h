@@ -40,8 +40,8 @@ enum ImageSizeChangeType {
 
 class RenderImage : public RenderReplaced {
 public:
-    RenderImage(Element&, Ref<RenderStyle>&&, StyleImage* = nullptr, const float = 1.0f);
-    RenderImage(Document&, Ref<RenderStyle>&&, StyleImage* = nullptr);
+    RenderImage(Element&, std::unique_ptr<RenderStyle>, StyleImage* = nullptr, const float = 1.0f);
+    RenderImage(Document&, std::unique_ptr<RenderStyle>, StyleImage* = nullptr);
     virtual ~RenderImage();
 
     RenderImageResource& imageResource() { return *m_imageResource; }

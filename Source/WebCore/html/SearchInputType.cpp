@@ -76,7 +76,7 @@ void SearchInputType::maxResultsAttributeChanged()
         updateResultButtonPseudoType(*m_resultsButton, element().maxResults());
 }
 
-RenderPtr<RenderElement> SearchInputType::createInputRenderer(Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> SearchInputType::createInputRenderer(std::unique_ptr<RenderStyle> style)
 {
     return createRenderer<RenderSearchField>(element(), WTFMove(style));
 }

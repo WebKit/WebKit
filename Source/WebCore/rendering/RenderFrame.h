@@ -32,7 +32,7 @@ class HTMLFrameElement;
 
 class RenderFrame final : public RenderFrameBase {
 public:
-    RenderFrame(HTMLFrameElement&, Ref<RenderStyle>&&);
+    RenderFrame(HTMLFrameElement&, std::unique_ptr<RenderStyle>);
 
     HTMLFrameElement& frameElement() const;
     FrameEdgeInfo edgeInfo() const;

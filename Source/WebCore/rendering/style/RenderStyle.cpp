@@ -68,7 +68,7 @@ struct SameSizeAsBorderValue {
 
 COMPILE_ASSERT(sizeof(BorderValue) == sizeof(SameSizeAsBorderValue), BorderValue_should_not_grow);
 
-struct SameSizeAsRenderStyle : public RefCounted<SameSizeAsRenderStyle> {
+struct SameSizeAsRenderStyle {
     void* dataRefs[7];
     void* ownPtrs[1];
     void* dataRefSvgStyle;
@@ -79,46 +79,49 @@ struct SameSizeAsRenderStyle : public RefCounted<SameSizeAsRenderStyle> {
     struct NonInheritedFlags {
         uint64_t m_flags;
     } noninherited_flags;
+#if !ASSERT_DISABLED
+    bool deletionCheck;
+#endif
 };
 
 COMPILE_ASSERT(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), RenderStyle_should_stay_small);
 
 inline RenderStyle& defaultStyle()
 {
-    static RenderStyle& style = RenderStyle::createDefaultStyle().leakRef();
+    static RenderStyle& style = *RenderStyle::createDefaultStyle().release();
     return style;
 }
 
-Ref<RenderStyle> RenderStyle::create()
+std::unique_ptr<RenderStyle> RenderStyle::create()
 {
-    return adoptRef(*new RenderStyle(defaultStyle()));
+    return clone(&defaultStyle());
 }
 
-Ref<RenderStyle> RenderStyle::createDefaultStyle()
+std::unique_ptr<RenderStyle> RenderStyle::createDefaultStyle()
 {
-    return adoptRef(*new RenderStyle(true));
+    return std::unique_ptr<RenderStyle>(new RenderStyle(true));
 }
 
-Ref<RenderStyle> RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay display)
+std::unique_ptr<RenderStyle> RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay display)
 {
     auto newStyle = RenderStyle::create();
-    newStyle.get().inheritFrom(parentStyle);
-    newStyle.get().inheritUnicodeBidiFrom(parentStyle);
-    newStyle.get().setDisplay(display);
+    newStyle->inheritFrom(parentStyle);
+    newStyle->inheritUnicodeBidiFrom(parentStyle);
+    newStyle->setDisplay(display);
     return newStyle;
 }
 
-Ref<RenderStyle> RenderStyle::clone(const RenderStyle* other)
+std::unique_ptr<RenderStyle> RenderStyle::clone(const RenderStyle* other)
 {
-    return adoptRef(*new RenderStyle(*other));
+    return std::unique_ptr<RenderStyle>(new RenderStyle(*other));
 }
 
-Ref<RenderStyle> RenderStyle::createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle)
+std::unique_ptr<RenderStyle> RenderStyle::createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle)
 {
     ASSERT(pseudoStyle.styleType() == BEFORE || pseudoStyle.styleType() == AFTER);
 
     auto style = RenderStyle::create();
-    style.get().inheritFrom(&pseudoStyle);
+    style->inheritFrom(&pseudoStyle);
     return style;
 }
 
@@ -160,8 +163,7 @@ ALWAYS_INLINE RenderStyle::RenderStyle(bool)
 }
 
 ALWAYS_INLINE RenderStyle::RenderStyle(const RenderStyle& o)
-    : RefCounted<RenderStyle>()
-    , m_box(o.m_box)
+    : m_box(o.m_box)
     , visual(o.visual)
     , m_background(o.m_background)
     , surround(o.surround)
@@ -172,6 +174,14 @@ ALWAYS_INLINE RenderStyle::RenderStyle(const RenderStyle& o)
     , inherited_flags(o.inherited_flags)
     , noninherited_flags(o.noninherited_flags)
 {
+}
+
+RenderStyle::~RenderStyle()
+{
+#if !ASSERT_DISABLED
+    ASSERT(!m_deletionHasBegun);
+    m_deletionHasBegun = true;
+#endif
 }
 
 static inline StyleSelfAlignmentData resolveAlignmentData(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer)
@@ -287,11 +297,6 @@ bool RenderStyle::operator==(const RenderStyle& o) const
             ;
 }
 
-bool RenderStyle::isStyleAvailable() const
-{
-    return !Style::isPlaceholderStyle(*this);
-}
-
 bool RenderStyle::hasUniquePseudoStyle() const
 {
     if (!m_cachedPseudoStyles || styleType() != NOPSEUDO)
@@ -323,7 +328,7 @@ RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
     return nullptr;
 }
 
-RenderStyle* RenderStyle::addCachedPseudoStyle(PassRefPtr<RenderStyle> pseudo)
+RenderStyle* RenderStyle::addCachedPseudoStyle(std::unique_ptr<RenderStyle> pseudo)
 {
     if (!pseudo)
         return nullptr;
@@ -335,7 +340,7 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(PassRefPtr<RenderStyle> pseudo)
     if (!m_cachedPseudoStyles)
         m_cachedPseudoStyles = std::make_unique<PseudoStyleCache>();
 
-    m_cachedPseudoStyles->append(pseudo);
+    m_cachedPseudoStyles->append(WTFMove(pseudo));
 
     return result;
 }

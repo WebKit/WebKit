@@ -100,7 +100,7 @@ bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
     return isURLAllowed() && style.display() != NONE;
 }
 
-RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderIFrame>(*this, WTFMove(style));
 }

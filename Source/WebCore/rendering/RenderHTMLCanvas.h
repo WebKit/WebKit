@@ -34,7 +34,7 @@ class HTMLCanvasElement;
 
 class RenderHTMLCanvas final : public RenderReplaced {
 public:
-    RenderHTMLCanvas(HTMLCanvasElement&, Ref<RenderStyle>&&);
+    RenderHTMLCanvas(HTMLCanvasElement&, std::unique_ptr<RenderStyle>);
 
     HTMLCanvasElement& canvasElement() const;
 

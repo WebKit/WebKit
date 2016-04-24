@@ -55,7 +55,7 @@ private:
 
 class RenderFrameSet final : public RenderBox {
 public:
-    RenderFrameSet(HTMLFrameSetElement&, Ref<RenderStyle>&&);
+    RenderFrameSet(HTMLFrameSetElement&, std::unique_ptr<RenderStyle>);
     virtual ~RenderFrameSet();
 
     HTMLFrameSetElement& frameSetElement() const;

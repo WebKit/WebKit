@@ -93,7 +93,7 @@ public:
     bool pauseTransitionAtTime(RenderElement*, const String& property, double t);
     unsigned numberOfActiveAnimations(Document*) const;
 
-    PassRefPtr<RenderStyle> getAnimatedStyleForRenderer(RenderElement&);
+    std::unique_ptr<RenderStyle> getAnimatedStyleForRenderer(RenderElement&);
 
     bool computeExtentOfAnimation(RenderElement&, LayoutRect&) const;
 

@@ -45,7 +45,7 @@ public:
     void removeClientRenderLayer(RenderLayer*);
 
 protected:
-    RenderSVGResourceContainer(SVGElement&, Ref<RenderStyle>&&);
+    RenderSVGResourceContainer(SVGElement&, std::unique_ptr<RenderStyle>);
 
     enum InvalidationMode {
         LayoutAndBoundariesInvalidation,

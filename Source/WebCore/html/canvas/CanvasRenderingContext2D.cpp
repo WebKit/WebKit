@@ -2216,7 +2216,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
 
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
-    Ref<RenderStyle> newStyle = RenderStyle::create();
+    auto newStyle = RenderStyle::create();
 
     Document& document = canvas()->document();
     document.updateStyleIfNeeded();
@@ -2236,7 +2236,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
 
     // Now map the font property longhands into the style.
     StyleResolver& styleResolver = canvas()->styleResolver();
-    styleResolver.applyPropertyToStyle(CSSPropertyFontFamily, parsedStyle->getPropertyCSSValue(CSSPropertyFontFamily).get(), &newStyle.get());
+    styleResolver.applyPropertyToStyle(CSSPropertyFontFamily, parsedStyle->getPropertyCSSValue(CSSPropertyFontFamily).get(), WTFMove(newStyle));
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontStyle, parsedStyle->getPropertyCSSValue(CSSPropertyFontStyle).get());
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontVariantCaps, parsedStyle->getPropertyCSSValue(CSSPropertyFontVariantCaps).get());
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontWeight, parsedStyle->getPropertyCSSValue(CSSPropertyFontWeight).get());
@@ -2249,7 +2249,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     styleResolver.updateFont();
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyLineHeight, parsedStyle->getPropertyCSSValue(CSSPropertyLineHeight).get());
 
-    modifiableState().font.initialize(document.fontSelector(), newStyle);
+    modifiableState().font.initialize(document.fontSelector(), *styleResolver.style());
 }
 
 String CanvasRenderingContext2D::textAlign() const

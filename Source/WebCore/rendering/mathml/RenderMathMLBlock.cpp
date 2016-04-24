@@ -43,12 +43,12 @@ namespace WebCore {
     
 using namespace MathMLNames;
     
-RenderMathMLBlock::RenderMathMLBlock(Element& container, Ref<RenderStyle>&& style)
+RenderMathMLBlock::RenderMathMLBlock(Element& container, std::unique_ptr<RenderStyle> style)
     : RenderFlexibleBox(container, WTFMove(style))
 {
 }
 
-RenderMathMLBlock::RenderMathMLBlock(Document& document, Ref<RenderStyle>&& style)
+RenderMathMLBlock::RenderMathMLBlock(Document& document, std::unique_ptr<RenderStyle> style)
     : RenderFlexibleBox(document, WTFMove(style))
 {
 }

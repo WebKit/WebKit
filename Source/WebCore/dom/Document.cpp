@@ -1876,10 +1876,10 @@ void Document::recalcStyle(Style::Change change)
             // font selector, so set a font selector if needed.
             if (Settings* settings = this->settings()) {
                 if (settings->fontFallbackPrefersPictographs())
-                    documentStyle.get().fontCascade().update(&fontSelector());
+                    documentStyle->fontCascade().update(&fontSelector());
             }
 
-            auto documentChange = Style::determineChange(documentStyle.get(), m_renderView->style());
+            auto documentChange = Style::determineChange(*documentStyle, m_renderView->style());
             if (documentChange != Style::NoChange)
                 renderView()->setStyle(WTFMove(documentStyle));
         }
@@ -2008,7 +2008,7 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
     m_ignorePendingStylesheets = oldIgnore;
 }
 
-Ref<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element& element, RenderStyle* parentStyle)
+std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element& element, RenderStyle* parentStyle)
 {
     ASSERT(&element.document() == this);
 
@@ -2128,13 +2128,13 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
 
 bool Document::isPageBoxVisible(int pageIndex)
 {
-    Ref<RenderStyle> pageStyle(ensureStyleResolver().styleForPage(pageIndex));
+    std::unique_ptr<RenderStyle> pageStyle(ensureStyleResolver().styleForPage(pageIndex));
     return pageStyle->visibility() != HIDDEN; // display property doesn't apply to @page.
 }
 
 void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
-    RefPtr<RenderStyle> style = ensureStyleResolver().styleForPage(pageIndex);
+    std::unique_ptr<RenderStyle> style = ensureStyleResolver().styleForPage(pageIndex);
 
     int width = pageSize.width();
     int height = pageSize.height();
@@ -5912,7 +5912,7 @@ void Document::setFullScreenRenderer(RenderFullScreen* renderer)
         return;
 
     if (renderer && m_savedPlaceholderRenderStyle) 
-        renderer->createPlaceholder(m_savedPlaceholderRenderStyle.releaseNonNull(), m_savedPlaceholderFrameRect);
+        renderer->createPlaceholder(WTFMove(m_savedPlaceholderRenderStyle), m_savedPlaceholderFrameRect);
     else if (renderer && m_fullScreenRenderer && m_fullScreenRenderer->placeholder()) {
         RenderBlock* placeholder = m_fullScreenRenderer->placeholder();
         renderer->createPlaceholder(RenderStyle::clone(&placeholder->style()), placeholder->frameRect());

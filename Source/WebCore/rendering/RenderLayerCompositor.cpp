@@ -516,7 +516,7 @@ static bool scrollbarHasDisplayNone(Scrollbar* scrollbar)
     if (!scrollbar || !scrollbar->isCustomScrollbar())
         return false;
 
-    RefPtr<RenderStyle> scrollbarStyle = static_cast<RenderScrollbar*>(scrollbar)->getScrollbarPseudoStyle(ScrollbarBGPart, SCROLLBAR);
+    std::unique_ptr<RenderStyle> scrollbarStyle = static_cast<RenderScrollbar*>(scrollbar)->getScrollbarPseudoStyle(ScrollbarBGPart, SCROLLBAR);
     return scrollbarStyle && scrollbarStyle->display() == NONE;
 }
 

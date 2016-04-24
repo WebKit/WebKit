@@ -56,7 +56,7 @@ private:
 
     void willAttachRenderers() override;
     bool rendererIsNeeded(const RenderStyle&) override;
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
     
     void defaultEventHandler(Event*) override;
 

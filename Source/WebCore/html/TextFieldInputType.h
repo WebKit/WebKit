@@ -82,7 +82,7 @@ private:
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) final;
     void forwardEvent(Event*) final;
     bool shouldSubmitImplicitly(Event*) final;
-    RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
+    RenderPtr<RenderElement> createInputRenderer(std::unique_ptr<RenderStyle>) override;
     bool shouldUseInputMethod() const override;
     bool shouldRespectListAttribute() override;
     HTMLElement* placeholderElement() const final;

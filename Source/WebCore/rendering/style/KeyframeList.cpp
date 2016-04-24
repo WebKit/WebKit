@@ -72,43 +72,44 @@ bool KeyframeList::operator==(const KeyframeList& o) const
     return true;
 }
 
-void KeyframeList::insert(const KeyframeValue& keyframe)
+void KeyframeList::insert(KeyframeValue&& keyframe)
 {
     if (keyframe.key() < 0 || keyframe.key() > 1)
         return;
 
     bool inserted = false;
     bool replaced = false;
-    for (size_t i = 0; i < m_keyframes.size(); ++i) {
+    size_t i = 0;
+    for (; i < m_keyframes.size(); ++i) {
         if (m_keyframes[i].key() == keyframe.key()) {
-            m_keyframes[i] = keyframe;
+            m_keyframes[i] = WTFMove(keyframe);
             replaced = true;
             break;
         }
 
         if (m_keyframes[i].key() > keyframe.key()) {
             // insert before
-            m_keyframes.insert(i, keyframe);
+            m_keyframes.insert(i, WTFMove(keyframe));
             inserted = true;
             break;
         }
     }
     
     if (!replaced && !inserted)
-        m_keyframes.append(keyframe);
+        m_keyframes.append(WTFMove(keyframe));
 
     if (replaced) {
         // We have to rebuild the properties list from scratch.
         m_properties.clear();
-        for (Vector<KeyframeValue>::const_iterator it = m_keyframes.begin(); it != m_keyframes.end(); ++it) {
-            const KeyframeValue& currKeyframe = *it;
-            for (HashSet<CSSPropertyID>::const_iterator it = currKeyframe.properties().begin(); it != currKeyframe.properties().end(); ++it)
-                m_properties.add(*it);
+        for (auto& keyframeValue : m_keyframes) {
+            for (auto& property : keyframeValue.properties())
+                m_properties.add(property);
         }
-    } else {
-        for (HashSet<CSSPropertyID>::const_iterator it = keyframe.properties().begin(); it != keyframe.properties().end(); ++it)
-            m_properties.add(*it);
+        return;
     }
+
+    for (auto& property : m_keyframes[i].properties())
+        m_properties.add(property);
 }
 
 } // namespace WebCore

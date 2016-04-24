@@ -41,7 +41,7 @@ public:
 
 class RenderSVGResourcePattern final : public RenderSVGResourceContainer {
 public:
-    RenderSVGResourcePattern(SVGPatternElement&, Ref<RenderStyle>&&);
+    RenderSVGResourcePattern(SVGPatternElement&, std::unique_ptr<RenderStyle>);
     SVGPatternElement& patternElement() const;
 
     void removeAllClientsFromCache(bool markForInvalidation = true) override;

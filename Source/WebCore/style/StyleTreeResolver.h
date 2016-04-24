@@ -58,10 +58,10 @@ public:
     TreeResolver(Document&);
     ~TreeResolver();
 
-    std::unique_ptr<const Update> resolve(Change);
+    std::unique_ptr<Update> resolve(Change);
 
 private:
-    Ref<RenderStyle> styleForElement(Element&, RenderStyle& inheritedStyle);
+    std::unique_ptr<RenderStyle> styleForElement(Element&, RenderStyle& inheritedStyle);
 
     void resolveComposedTree();
     ElementUpdate resolveElement(Element&);
@@ -79,13 +79,13 @@ private:
 
     struct Parent {
         Element* element;
-        Ref<RenderStyle> style;
+        RenderStyle& style;
         Change change;
         bool didPushScope { false };
         bool elementNeedingStyleRecalcAffectsNextSiblingElementStyle { false };
 
         Parent(Document&, Change);
-        Parent(Element&, ElementUpdate&);
+        Parent(Element&, RenderStyle&, Change);
     };
 
     Scope& scope() { return m_scopeStack.last(); }
@@ -95,12 +95,12 @@ private:
     void pushEnclosingScope();
     void popScope();
 
-    void pushParent(Element&, ElementUpdate&);
+    void pushParent(Element&, RenderStyle&, Change);
     void popParent();
     void popParentsToDepth(unsigned depth);
 
     Document& m_document;
-    RefPtr<RenderStyle> m_documentElementStyle;
+    std::unique_ptr<RenderStyle> m_documentElementStyle;
 
     Vector<Ref<Scope>, 4> m_scopeStack;
     Vector<Parent, 32> m_parentStack;

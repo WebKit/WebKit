@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-RenderReplica::RenderReplica(Document& document, Ref<RenderStyle>&& style)
+RenderReplica::RenderReplica(Document& document, std::unique_ptr<RenderStyle> style)
     : RenderBox(document, WTFMove(style), 0)
 {
     // This is a hack. Replicas are synthetic, and don't pick up the attributes of the

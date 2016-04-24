@@ -42,7 +42,7 @@ public:
 private:
     MathMLTextElement(const QualifiedName& tagName, Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;
 
     void childrenChanged(const ChildChange&) override;

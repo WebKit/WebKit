@@ -45,8 +45,8 @@ public:
         return adoptRef(*new KeyframeAnimation(animation, renderer, index, compositeAnimation, unanimatedStyle));
     }
 
-    bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) override;
-    void getAnimatedStyle(RefPtr<RenderStyle>&) override;
+    bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, std::unique_ptr<RenderStyle>& animatedStyle) override;
+    void getAnimatedStyle(std::unique_ptr<RenderStyle>&) override;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const override;
 
@@ -58,7 +58,7 @@ public:
 
     bool hasAnimationForProperty(CSSPropertyID) const;
     
-    void setUnanimatedStyle(PassRefPtr<RenderStyle> style) { m_unanimatedStyle = style; }
+    void setUnanimatedStyle(std::unique_ptr<RenderStyle> style) { m_unanimatedStyle = WTFMove(style); }
     RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
 
     double timeToNextService() override;
@@ -97,7 +97,7 @@ private:
     void fetchIntervalEndpointsForProperty(CSSPropertyID, const RenderStyle*& fromStyle, const RenderStyle*& toStyle, double& progress) const;
 
     KeyframeList m_keyframes;
-    RefPtr<RenderStyle> m_unanimatedStyle; // The style just before we started animation
+    std::unique_ptr<RenderStyle> m_unanimatedStyle; // The style just before we started animation
 
     int m_index; // The order in which this animation appears in the animation-name style.
     bool m_startEventDispatched { false };

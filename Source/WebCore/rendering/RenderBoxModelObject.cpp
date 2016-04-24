@@ -161,12 +161,12 @@ void RenderBoxModelObject::suspendAnimations(double time)
     layer()->backing()->suspendAnimations(time);
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Element& element, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
+RenderBoxModelObject::RenderBoxModelObject(Element& element, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
     : RenderLayerModelObject(element, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Document& document, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
+RenderBoxModelObject::RenderBoxModelObject(Document& document, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
     : RenderLayerModelObject(document, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
 }

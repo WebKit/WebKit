@@ -52,7 +52,7 @@
 
 namespace WebCore {
 
-RenderFlowThread::RenderFlowThread(Document& document, Ref<RenderStyle>&& style)
+RenderFlowThread::RenderFlowThread(Document& document, std::unique_ptr<RenderStyle> style)
     : RenderBlockFlow(document, WTFMove(style))
     , m_previousRegionCount(0)
     , m_autoLogicalHeightRegionsCount(0)
@@ -69,18 +69,18 @@ RenderFlowThread::RenderFlowThread(Document& document, Ref<RenderStyle>&& style)
     setFlowThreadState(InsideOutOfFlowThread);
 }
 
-Ref<RenderStyle> RenderFlowThread::createFlowThreadStyle(RenderStyle* parentStyle)
+std::unique_ptr<RenderStyle> RenderFlowThread::createFlowThreadStyle(RenderStyle* parentStyle)
 {
     auto newStyle = RenderStyle::create();
-    newStyle.get().inheritFrom(parentStyle);
-    newStyle.get().setDisplay(BLOCK);
-    newStyle.get().setPosition(AbsolutePosition);
-    newStyle.get().setZIndex(0);
-    newStyle.get().setLeft(Length(0, Fixed));
-    newStyle.get().setTop(Length(0, Fixed));
-    newStyle.get().setWidth(Length(100, Percent));
-    newStyle.get().setHeight(Length(100, Percent));
-    newStyle.get().fontCascade().update(nullptr);
+    newStyle->inheritFrom(parentStyle);
+    newStyle->setDisplay(BLOCK);
+    newStyle->setPosition(AbsolutePosition);
+    newStyle->setZIndex(0);
+    newStyle->setLeft(Length(0, Fixed));
+    newStyle->setTop(Length(0, Fixed));
+    newStyle->setWidth(Length(100, Percent));
+    newStyle->setHeight(Length(100, Percent));
+    newStyle->fontCascade().update(nullptr);
     return newStyle;
 }
 

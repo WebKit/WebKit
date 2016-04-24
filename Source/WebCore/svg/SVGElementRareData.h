@@ -83,7 +83,7 @@ private:
     bool m_useOverrideComputedStyle : 1;
     bool m_needsOverrideComputedStyleUpdate : 1;
     RefPtr<MutableStyleProperties> m_animatedSMILStyleProperties;
-    RefPtr<RenderStyle> m_overrideComputedStyle;
+    std::unique_ptr<RenderStyle> m_overrideComputedStyle;
 };
 
 }

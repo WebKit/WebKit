@@ -50,7 +50,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTable::RenderTable(Element& element, Ref<RenderStyle>&& style)
+RenderTable::RenderTable(Element& element, std::unique_ptr<RenderStyle> style)
     : RenderBlock(element, WTFMove(style), 0)
     , m_head(nullptr)
     , m_foot(nullptr)
@@ -72,7 +72,7 @@ RenderTable::RenderTable(Element& element, Ref<RenderStyle>&& style)
     m_columnPos.fill(0, 1);
 }
 
-RenderTable::RenderTable(Document& document, Ref<RenderStyle>&& style)
+RenderTable::RenderTable(Document& document, std::unique_ptr<RenderStyle> style)
     : RenderBlock(document, WTFMove(style), 0)
     , m_head(nullptr)
     , m_foot(nullptr)

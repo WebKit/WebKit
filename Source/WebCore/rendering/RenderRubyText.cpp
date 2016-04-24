@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-RenderRubyText::RenderRubyText(Element& element, Ref<RenderStyle>&& style)
+RenderRubyText::RenderRubyText(Element& element, std::unique_ptr<RenderStyle> style)
     : RenderBlockFlow(element, WTFMove(style))
 {
 }

@@ -66,7 +66,7 @@ struct RenderFlexibleBox::Violation {
 };
 
 
-RenderFlexibleBox::RenderFlexibleBox(Element& element, Ref<RenderStyle>&& style)
+RenderFlexibleBox::RenderFlexibleBox(Element& element, std::unique_ptr<RenderStyle> style)
     : RenderBlock(element, WTFMove(style), 0)
     , m_orderIterator(*this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
@@ -74,7 +74,7 @@ RenderFlexibleBox::RenderFlexibleBox(Element& element, Ref<RenderStyle>&& style)
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderFlexibleBox::RenderFlexibleBox(Document& document, Ref<RenderStyle>&& style)
+RenderFlexibleBox::RenderFlexibleBox(Document& document, std::unique_ptr<RenderStyle> style)
     : RenderBlock(document, WTFMove(style), 0)
     , m_orderIterator(*this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)

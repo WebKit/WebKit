@@ -572,7 +572,7 @@ public:
     };
     WEBCORE_EXPORT void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasks::Asynchronously);
 
-    Ref<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, RenderStyle* parentStyle);
+    std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, RenderStyle* parentStyle);
 
     // Returns true if page box (margin boxes and page borders) is visible.
     WEBCORE_EXPORT bool isPageBoxVisible(int pageIndex);
@@ -1630,7 +1630,7 @@ private:
     Deque<RefPtr<Node>> m_fullScreenErrorEventTargetQueue;
     bool m_isAnimatingFullScreen;
     LayoutRect m_savedPlaceholderFrameRect;
-    RefPtr<RenderStyle> m_savedPlaceholderRenderStyle;
+    std::unique_ptr<RenderStyle> m_savedPlaceholderRenderStyle;
 #endif
 
     HashSet<HTMLPictureElement*> m_viewportDependentPictures;

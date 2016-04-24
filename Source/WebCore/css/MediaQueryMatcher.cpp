@@ -76,7 +76,7 @@ String MediaQueryMatcher::mediaType() const
     return m_document->frame()->view()->mediaType();
 }
 
-std::unique_ptr<MediaQueryEvaluator> MediaQueryMatcher::prepareEvaluator() const
+std::unique_ptr<RenderStyle> MediaQueryMatcher::documentElementUserAgentStyle() const
 {
     if (!m_document || !m_document->frame())
         return nullptr;
@@ -85,9 +85,7 @@ std::unique_ptr<MediaQueryEvaluator> MediaQueryMatcher::prepareEvaluator() const
     if (!documentElement)
         return nullptr;
 
-    auto rootStyle = m_document->ensureStyleResolver().styleForElement(*documentElement, m_document->renderStyle(), MatchOnlyUserAgentRules).renderStyle;
-
-    return std::make_unique<MediaQueryEvaluator>(mediaType(), m_document->frame(), rootStyle.ptr());
+    return m_document->ensureStyleResolver().styleForElement(*documentElement, m_document->renderStyle(), MatchOnlyUserAgentRules).renderStyle;
 }
 
 bool MediaQueryMatcher::evaluate(const MediaQuerySet* media)
@@ -95,8 +93,11 @@ bool MediaQueryMatcher::evaluate(const MediaQuerySet* media)
     if (!media)
         return false;
 
-    std::unique_ptr<MediaQueryEvaluator> evaluator = prepareEvaluator();
-    return evaluator && evaluator->eval(media);
+    auto style = documentElementUserAgentStyle();
+    if (!style)
+        return false;
+    MediaQueryEvaluator evaluator(mediaType(), m_document->frame(), style.get());
+    return evaluator.eval(media);
 }
 
 RefPtr<MediaQueryList> MediaQueryMatcher::matchMedia(const String& query)
@@ -140,12 +141,13 @@ void MediaQueryMatcher::styleResolverChanged()
     ASSERT(m_document);
 
     ++m_evaluationRound;
-    std::unique_ptr<MediaQueryEvaluator> evaluator = prepareEvaluator();
-    if (!evaluator)
-        return;
 
+    auto style = documentElementUserAgentStyle();
+    if (!style)
+        return;
+    MediaQueryEvaluator evaluator(mediaType(), m_document->frame(), style.get());
     for (size_t i = 0; i < m_listeners.size(); ++i)
-        m_listeners[i]->evaluate(evaluator.get());
+        m_listeners[i]->evaluate(&evaluator);
 }
 
 } // namespace WebCore

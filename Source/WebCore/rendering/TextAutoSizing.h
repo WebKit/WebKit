@@ -52,7 +52,7 @@ public:
     inline bool isDeleted() const { return m_isDeleted; }
 
 private:
-    RefPtr<RenderStyle> m_style;
+    std::unique_ptr<RenderStyle> m_style;
     bool m_isDeleted { false };
 };
 

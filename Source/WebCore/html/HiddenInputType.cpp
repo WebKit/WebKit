@@ -67,7 +67,7 @@ bool HiddenInputType::supportsValidation() const
     return false;
 }
 
-RenderPtr<RenderElement> HiddenInputType::createInputRenderer(Ref<RenderStyle>&&)
+RenderPtr<RenderElement> HiddenInputType::createInputRenderer(std::unique_ptr<RenderStyle>)
 {
     ASSERT_NOT_REACHED();
     return nullptr;

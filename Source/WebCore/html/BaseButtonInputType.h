@@ -43,7 +43,7 @@ protected:
 private:
     bool shouldSaveAndRestoreFormControlState() const override;
     bool appendFormData(FormDataList&, bool) const override;
-    RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
+    RenderPtr<RenderElement> createInputRenderer(std::unique_ptr<RenderStyle>) override;
     bool storesValueSeparateFromAttribute() override;
     void setValue(const String&, bool, TextFieldEventBehavior) override;
 };

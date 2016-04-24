@@ -49,10 +49,10 @@ class RenderStyle;
 
 class RenderNamedFlowFragment final : public RenderRegion {
 public:
-    RenderNamedFlowFragment(Document&, Ref<RenderStyle>&&);
+    RenderNamedFlowFragment(Document&, std::unique_ptr<RenderStyle>);
     virtual ~RenderNamedFlowFragment();
 
-    static Ref<RenderStyle> createStyle(const RenderStyle& parentStyle);
+    static std::unique_ptr<RenderStyle> createStyle(const RenderStyle& parentStyle);
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
@@ -123,9 +123,9 @@ private:
     bool isRenderNamedFlowFragment() const override { return true; }
     const char* renderName() const override { return "RenderNamedFlowFragment"; }
 
-    PassRefPtr<RenderStyle> computeStyleInRegion(RenderElement&, RenderStyle& parentStyle) const;
+    std::unique_ptr<RenderStyle> computeStyleInRegion(RenderElement&, RenderStyle& parentStyle) const;
     void computeChildrenStyleInRegion(RenderElement&);
-    void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
+    void setObjectStyleInRegion(RenderObject*, std::unique_ptr<RenderStyle>, bool objectRegionStyleCached);
 
     void checkRegionStyle();
     void setHasCustomRegionStyle(bool hasCustomRegionStyle) { m_hasCustomRegionStyle = hasCustomRegionStyle; }
@@ -148,7 +148,7 @@ private:
         // Also used to store computed style of the object in region between
         // region paintings, so that the style in region is computed only
         // when necessary.
-        RefPtr<RenderStyle> style;
+        std::unique_ptr<RenderStyle> style;
         // True if the computed style in region is cached.
         bool cached;
     };

@@ -1,3 +1,332 @@
+2016-04-24  Antti Koivisto  <antti@apple.com>
+
+        RenderStyle should not be reference counted
+        https://bugs.webkit.org/show_bug.cgi?id=156846
+
+        Reviewed by Andreas Kling.
+
+        RenderStyle reference counts its substructures. We no longer share RenderStyle objects between normal renderers
+        so there is no reason to refcount the RenderStyles themselves too. Making it a non-refcounted type clarifies
+        ownership relations, reduces branchiness and saves some memory.
+
+        This patches switches mostly mechanically from Ref/RefPtr<RenderStyle> to std::unique_ptr<RenderStyle>. In
+        the future RenderStyle can be given regular value semantics.
+
+        * Modules/plugins/PluginReplacement.h:
+        (WebCore::PluginReplacement::scriptObject):
+        (WebCore::PluginReplacement::willCreateRenderer):
+        * Modules/plugins/QuickTimePluginReplacement.h:
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::~QuickTimePluginReplacement):
+        (WebCore::QuickTimePluginReplacement::createElementRenderer):
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::YouTubePluginReplacement):
+        (WebCore::YouTubePluginReplacement::createElementRenderer):
+        * Modules/plugins/YouTubePluginReplacement.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::getFontSizeCSSValuePreferringKeyword):
+        (WebCore::ComputedStyleExtractor::useFixedFontDefaultSize):
+        (WebCore::updateStyleIfNeededForNode):
+        (WebCore::computeRenderStyleForProperty):
+        (WebCore::ComputedStyleExtractor::customPropertyValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::MediaQueryEvaluator):
+        (WebCore::MediaQueryEvaluator::eval):
+        * css/MediaQueryEvaluator.h:
+
+            Clarify in code that MediaQueryEvaluator does not own the style.
+
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::mediaType):
+        (WebCore::MediaQueryMatcher::documentElementUserAgentStyle):
+        (WebCore::MediaQueryMatcher::evaluate):
+        (WebCore::MediaQueryMatcher::matchMedia):
+        (WebCore::MediaQueryMatcher::styleResolverChanged):
+        (WebCore::MediaQueryMatcher::prepareEvaluator): Deleted.
+        * css/MediaQueryMatcher.h:
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear):
+        (WebCore::StyleResolver::State::updateConversionData):
+        (WebCore::StyleResolver::State::setStyle):
+        (WebCore::StyleResolver::State::setParentStyle):
+
+            State owns the style explicitly set by setParentStyle but not the one given via constructor.
+
+        (WebCore::isAtShadowBoundary):
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::keyframeStylesForAnimation):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::defaultStyleForElement):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::applyPropertyToStyle):
+        * css/StyleResolver.h:
+        (WebCore::ElementStyle::ElementStyle):
+        (WebCore::StyleResolver::style):
+        (WebCore::StyleResolver::parentStyle):
+        (WebCore::StyleResolver::setOverrideDocumentElementStyle):
+        (WebCore::StyleResolver::State::document):
+        (WebCore::StyleResolver::State::element):
+        (WebCore::StyleResolver::State::style):
+        (WebCore::StyleResolver::State::takeStyle):
+        (WebCore::StyleResolver::State::parentStyle):
+        (WebCore::StyleResolver::State::rootElementStyle):
+        (WebCore::StyleResolver::State::regionForStyling):
+        (WebCore::StyleResolver::State::setParentStyle): Deleted.
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        (WebCore::Document::isPageBoxVisible):
+        (WebCore::Document::pageSizeAndMarginsInPixels):
+        (WebCore::Document::addAutoSizingNode):
+        (WebCore::Document::validateAutoSizingNodes):
+        (WebCore::Document::resetAutoSizingNodes):
+        (WebCore::Document::setFullScreenRenderer):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::rendererIsNeeded):
+        (WebCore::Element::createElementRenderer):
+        (WebCore::Element::resolveComputedStyle):
+        * dom/Element.h:
+        (WebCore::Element::copyNonAttributePropertiesFromElement):
+        * dom/ElementRareData.h:
+
+        ...
+
+        * page/animation/AnimationBase.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::receivedStartTimeResponse):
+        (WebCore::AnimationControllerPrivate::getAnimatedStyleForRenderer):
+        (WebCore::AnimationControllerPrivate::computeExtentOfAnimation):
+        (WebCore::AnimationController::cancelAnimations):
+        (WebCore::AnimationController::updateAnimations):
+
+            std::unique_ptr<RenderStyle& animatedStyle argument is now expected no be initially null and
+            is only set if a new style is created.
+
+        (WebCore::AnimationController::getAnimatedStyleForRenderer):
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::animate):
+        (WebCore::CompositeAnimation::getAnimatedStyle):
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::ImplicitAnimation):
+        (WebCore::ImplicitAnimation::shouldSendEventForListener):
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::ImplicitAnimation::getAnimatedStyle):
+        (WebCore::ImplicitAnimation::onAnimationEnd):
+        (WebCore::ImplicitAnimation::reset):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty):
+        (WebCore::KeyframeAnimation::animate):
+        (WebCore::KeyframeAnimation::getAnimatedStyle):
+        * page/animation/KeyframeAnimation.h:
+        * rendering/RenderAttachment.cpp:
+        (WebCore::RenderAttachment::RenderAttachment):
+        * rendering/RenderAttachment.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::clone):
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+        (WebCore::RenderBlock::createFirstLetterRenderer):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::MarginInfo::MarginInfo):
+        (WebCore::RenderBlockFlow::RenderBlockFlow):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::skipBodyBackground):
+        (WebCore::RenderBox::RenderBox):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::suspendAnimations):
+        (WebCore::RenderBoxModelObject::RenderBoxModelObject):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::RenderButton):
+        (WebCore::RenderButton::setupInnerStyle):
+        * rendering/RenderButton.h:
+        * rendering/RenderCombineText.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox):
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::RenderDetailsMarker):
+        * rendering/RenderDetailsMarker.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::controlStatesRendererMap):
+        (WebCore::RenderElement::RenderElement):
+        (WebCore::RenderElement::~RenderElement):
+        (WebCore::RenderElement::createFor):
+        (WebCore::firstLineStyleForCachedUncachedType):
+        (WebCore::RenderElement::uncachedFirstLineStyle):
+        (WebCore::RenderElement::cachedFirstLineStyle):
+        (WebCore::RenderElement::initializeStyle):
+        (WebCore::RenderElement::setStyle):
+        (WebCore::RenderElement::propagateStyleToAnonymousChildren):
+        (WebCore::RenderElement::styleDidChange):
+        (WebCore::RenderElement::getCachedPseudoStyle):
+
+            Return plain pointer as the cache owns the style.
+
+        (WebCore::RenderElement::getUncachedPseudoStyle):
+
+            return std::unique_ptr<RenderStyle>
+
+        (WebCore::RenderElement::selectionColor):
+        (WebCore::RenderElement::selectionPseudoStyle):
+        (WebCore::RenderElement::selectionBackgroundColor):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::hasInitializedStyle):
+        (WebCore::RenderElement::style):
+        (WebCore::RenderElement::element):
+        (WebCore::RenderElement::setStyleInternal):
+        * rendering/RenderEmbeddedObject.cpp:
+
+        ...
+
+        (WebCore::RenderImage::imageResource):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        (WebCore::updateStyleOfAnonymousBlockContinuations):
+        (WebCore::RenderInline::styleDidChange):
+
+            Continuations now get their own RenderStyles.
+
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::clone):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+
+        ...
+
+        * rendering/style/KeyframeList.cpp:
+        (WebCore::KeyframeList::operator==):
+        (WebCore::KeyframeList::insert):
+
+            KeyframeValue is now movable but not copyable type. Adjust accordingly.
+
+        * rendering/style/KeyframeList.h:
+        (WebCore::KeyframeValue::KeyframeValue):
+        (WebCore::KeyframeValue::setKey):
+        (WebCore::KeyframeValue::style):
+        (WebCore::KeyframeValue::setStyle):
+        (WebCore::KeyframeList::animationName):
+        (WebCore::KeyframeList::addProperty):
+        (WebCore::KeyframeList::containsProperty):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::defaultStyle):
+        (WebCore::RenderStyle::create):
+        (WebCore::RenderStyle::createDefaultStyle):
+        (WebCore::RenderStyle::createAnonymousStyleWithDisplay):
+        (WebCore::RenderStyle::clone):
+        (WebCore::RenderStyle::createStyleInheritingFromPseudoStyle):
+
+            Return std::unique_ptr<RenderStyle> instead of Ref<RenderStyle>.
+
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::~RenderStyle):
+        (WebCore::resolveAlignmentData):
+        (WebCore::RenderStyle::operator==):
+        (WebCore::RenderStyle::hasUniquePseudoStyle):
+        (WebCore::RenderStyle::getCachedPseudoStyle):
+        (WebCore::RenderStyle::addCachedPseudoStyle):
+        (WebCore::RenderStyle::isStyleAvailable): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setStyleType):
+        (WebCore::RenderStyle::cachedPseudoStyles):
+        (WebCore::RenderStyle::initialIsolation):
+        (WebCore::RenderStyle::isPlaceholderStyle):
+        (WebCore::RenderStyle::setIsPlaceholderStyle):
+
+            Add placeholder style bit to rareNonInheritedData. We no longer rely on RenderStyle identity for this test.
+
+        (WebCore::RenderStyle::noninheritedFlagsMemoryOffset):
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::defaultSVGStyle):
+        (WebCore::SVGRenderStyle::createDefaultStyle):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::StyleRareNonInheritedData::contentDataEquivalent):
+        * rendering/style/StyleRareNonInheritedData.h:
+
+        ...
+
+        (WebCore::findRenderingRoot):
+        (WebCore::findRenderingRoots):
+        (WebCore::RenderTreeUpdater::commit):
+
+            Style::Update is no longer const as we move the styles from it to the render tree.
+
+        (WebCore::pseudoStyleCacheIsInvalid):
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        (WebCore::moveToFlowThreadIfNeeded):
+        (WebCore::RenderTreeUpdater::createRenderer):
+        (WebCore::RenderTreeUpdater::updateBeforeOrAfterPseudoElement):
+        * style/RenderTreeUpdater.h:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * style/StyleResolveForDocument.h:
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::elementHasDirectionAuto):
+        (WebCore::Style::SharingResolver::resolve):
+        * style/StyleSharingResolver.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::ensurePlaceholderStyle):
+
+            Set the placeholder.
+
+        (WebCore::Style::TreeResolver::Parent::Parent):
+        (WebCore::Style::TreeResolver::pushScope):
+        (WebCore::Style::TreeResolver::pushEnclosingScope):
+        (WebCore::Style::TreeResolver::popScope):
+
+            Set and clear StyleResolver overrideDocumentElementStyle as needed. It is owned by the TreeResolver.
+
+        (WebCore::Style::TreeResolver::styleForElement):
+
+            Clone the placeholder style.
+
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::pushParent):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+        (WebCore::Style::TreeResolver::resolve):
+
+            Adopt to the std::unique_ptr and ElementStyle move semantics.
+
+        * style/StyleTreeResolver.h:
+        (WebCore::Style::TreeResolver::scope):
+        * style/StyleUpdate.cpp:
+        (WebCore::Style::Update::elementUpdate):
+        (WebCore::Style::Update::textUpdate):
+        (WebCore::Style::Update::elementStyle):
+        (WebCore::Style::Update::addElement):
+        (WebCore::Style::Update::addText):
+        * style/StyleUpdate.h:
+        (WebCore::Style::Update::roots):
+        (WebCore::Style::Update::document):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::svgAttributeChanged):
+        (WebCore::SVGAElement::createElementRenderer):
+
+        ...
+
 2016-04-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from MediaControlsHost

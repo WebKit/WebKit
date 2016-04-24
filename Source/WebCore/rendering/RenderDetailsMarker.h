@@ -29,7 +29,7 @@ namespace WebCore {
 
 class RenderDetailsMarker final : public RenderBlockFlow {
 public:
-    RenderDetailsMarker(DetailsMarkerControl&, Ref<RenderStyle>&&);
+    RenderDetailsMarker(DetailsMarkerControl&, std::unique_ptr<RenderStyle>);
     DetailsMarkerControl& element() const { return static_cast<DetailsMarkerControl&>(nodeForNonAnonymous()); }
 
     enum Orientation { Up, Down, Left, Right };

@@ -43,7 +43,7 @@ using namespace MathMLNames;
 static const char* gOpeningBraceChar = "(";
 static const char* gClosingBraceChar = ")";
 
-RenderMathMLFenced::RenderMathMLFenced(MathMLInlineContainerElement& element, Ref<RenderStyle>&& style)
+RenderMathMLFenced::RenderMathMLFenced(MathMLInlineContainerElement& element, std::unique_ptr<RenderStyle> style)
     : RenderMathMLRow(element, WTFMove(style))
     , m_closeFenceRenderer(nullptr)
 {

@@ -58,7 +58,7 @@ private:
     bool valueMissing(const String&) const override;
     String valueMissingText() const override;
     void handleDOMActivateEvent(Event*) override;
-    RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
+    RenderPtr<RenderElement> createInputRenderer(std::unique_ptr<RenderStyle>) override;
     bool canSetStringValue() const override;
     bool canChangeFromAnotherType() const override;
     FileList* files() override;

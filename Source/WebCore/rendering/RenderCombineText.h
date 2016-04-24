@@ -51,7 +51,7 @@ private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     void setRenderedText(const String&) override;
 
-    RefPtr<RenderStyle> m_combineFontStyle;
+    std::unique_ptr<RenderStyle> m_combineFontStyle;
     float m_combinedTextWidth { 0 };
     float m_combinedTextAscent { 0 };
     float m_combinedTextDescent { 0 };

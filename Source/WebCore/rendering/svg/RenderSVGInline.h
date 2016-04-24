@@ -28,7 +28,7 @@ namespace WebCore {
 
 class RenderSVGInline : public RenderInline {
 public:
-    RenderSVGInline(SVGGraphicsElement&, Ref<RenderStyle>&&);
+    RenderSVGInline(SVGGraphicsElement&, std::unique_ptr<RenderStyle>);
 
     SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(nodeForNonAnonymous()); }
 

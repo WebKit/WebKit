@@ -40,7 +40,7 @@ namespace WebCore {
 static const SVGRenderStyle& defaultSVGStyle()
 {
     static NeverDestroyed<DataRef<SVGRenderStyle>> style(SVGRenderStyle::createDefaultStyle());
-    return *style.get().get();
+    return *style.get();
 }
 
 Ref<SVGRenderStyle> SVGRenderStyle::createDefaultStyle()

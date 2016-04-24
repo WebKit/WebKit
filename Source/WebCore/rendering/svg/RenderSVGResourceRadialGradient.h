@@ -31,7 +31,7 @@ class SVGRadialGradientElement;
 
 class RenderSVGResourceRadialGradient final : public RenderSVGResourceGradient {
 public:
-    RenderSVGResourceRadialGradient(SVGRadialGradientElement&, Ref<RenderStyle>&&);
+    RenderSVGResourceRadialGradient(SVGRadialGradientElement&, std::unique_ptr<RenderStyle>);
     virtual ~RenderSVGResourceRadialGradient();
 
     SVGRadialGradientElement& radialGradientElement() const { return downcast<SVGRadialGradientElement>(RenderSVGResourceGradient::gradientElement()); }

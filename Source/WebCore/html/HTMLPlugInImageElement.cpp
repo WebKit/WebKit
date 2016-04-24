@@ -194,7 +194,7 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
     return false;
 }
 
-RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition& insertionPosition)
 {
     ASSERT(!document().inPageCache());
 

@@ -110,7 +110,7 @@ public:
 private:
     explicit MediaControlTimelineContainerElement(Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 };
 
 // ----------------------------
@@ -128,7 +128,7 @@ private:
 
     void defaultEventHandler(Event*) override;
 
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 };
 
 // ----------------------------
@@ -456,7 +456,7 @@ private:
 
     explicit MediaControlTextTrackContainerElement(Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 
     RefPtr<Image> createTextTrackRepresentationImage() override;
     void textTrackRepresentationBoundsChanged(const IntRect&) override;

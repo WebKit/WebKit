@@ -52,13 +52,13 @@
 
 namespace WebCore {
 
-RenderInline::RenderInline(Element& element, Ref<RenderStyle>&& style)
+RenderInline::RenderInline(Element& element, std::unique_ptr<RenderStyle> style)
     : RenderBoxModelObject(element, WTFMove(style), RenderInlineFlag)
 {
     setChildrenInline(true);
 }
 
-RenderInline::RenderInline(Document& document, Ref<RenderStyle>&& style)
+RenderInline::RenderInline(Document& document, std::unique_ptr<RenderStyle> style)
     : RenderBoxModelObject(document, WTFMove(style), RenderInlineFlag)
 {
     setChildrenInline(true);
@@ -159,7 +159,7 @@ static void updateStyleOfAnonymousBlockContinuations(const RenderBlock& block, c
         if (oldStyle->hasInFlowPosition() && inFlowPositionedInlineAncestor(continuation))
             continue;
         auto blockStyle = RenderStyle::createAnonymousStyleWithDisplay(&block.style(), BLOCK);
-        blockStyle.get().setPosition(newStyle->position());
+        blockStyle->setPosition(newStyle->position());
         block.setStyle(WTFMove(blockStyle));
     }
 }
@@ -193,7 +193,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         for (RenderInline* currCont = continuation; currCont; currCont = currCont->inlineElementContinuation()) {
             RenderBoxModelObject* nextCont = currCont->continuation();
             currCont->setContinuation(nullptr);
-            currCont->setStyle(newStyle);
+            currCont->setStyle(RenderStyle::clone(&newStyle));
             currCont->setContinuation(nextCont);
         }
         // If an inline's in-flow positioning has changed and it is part of an active continuation as a descendant of an anonymous containing block,
@@ -336,7 +336,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         // If inside an inline affected by in-flow positioning the block needs to be affected by it too.
         // Giving the block a layer like this allows it to collect the x/y offsets from inline parents later.
         if (auto positionedAncestor = inFlowPositionedInlineAncestor(this))
-            newStyle.get().setPosition(positionedAncestor->style().position());
+            newStyle->setPosition(positionedAncestor->style().position());
 
         RenderBlock* newBox = new RenderBlockFlow(document(), WTFMove(newStyle));
         newBox->initializeStyle();
@@ -413,7 +413,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
 
 RenderPtr<RenderInline> RenderInline::clone() const
 {
-    RenderPtr<RenderInline> cloneInline = createRenderer<RenderInline>(*element(), style());
+    RenderPtr<RenderInline> cloneInline = createRenderer<RenderInline>(*element(), RenderStyle::clone(&style()));
     cloneInline->initializeStyle();
     cloneInline->setFlowThreadState(flowThreadState());
     cloneInline->setHasOutlineAutoAncestor(hasOutlineAutoAncestor());

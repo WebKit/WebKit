@@ -56,8 +56,8 @@ public:
     
     void clearRenderer();
 
-    bool animate(RenderElement&, RenderStyle* currentStyle, RenderStyle& targetStyle, Ref<RenderStyle>& blendedStyle);
-    PassRefPtr<RenderStyle> getAnimatedStyle() const;
+    bool animate(RenderElement&, RenderStyle* currentStyle, RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& blendedStyle);
+    std::unique_ptr<RenderStyle> getAnimatedStyle() const;
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
 
     double timeToNextService() const;

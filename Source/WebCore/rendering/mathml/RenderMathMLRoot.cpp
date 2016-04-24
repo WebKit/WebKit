@@ -55,12 +55,12 @@ namespace WebCore {
 // In order to accept invalid markup and to handle <mroot> and <msqrt> consistently, we will allow any number of children in the BaseWrapper of <mroot> too.
 // We will allow the IndexWrapper to be empty and it will always contain the last child of the <mroot> if there are at least 2 elements.
 
-RenderMathMLRoot::RenderMathMLRoot(Element& element, Ref<RenderStyle>&& style)
+RenderMathMLRoot::RenderMathMLRoot(Element& element, std::unique_ptr<RenderStyle> style)
     : RenderMathMLBlock(element, WTFMove(style))
 {
 }
 
-RenderMathMLRoot::RenderMathMLRoot(Document& document, Ref<RenderStyle>&& style)
+RenderMathMLRoot::RenderMathMLRoot(Document& document, std::unique_ptr<RenderStyle> style)
     : RenderMathMLBlock(document, WTFMove(style))
 {
 }
@@ -226,14 +226,14 @@ void RenderMathMLRoot::updateStyle()
 
     auto radical = radicalWrapper();
     auto radicalStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
-    radicalStyle.get().setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
+    radicalStyle->setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
     radical->setStyle(WTFMove(radicalStyle));
     radical->setNeedsLayoutAndPrefWidthsRecalc();
 
     auto base = baseWrapper();
     auto baseStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
-    baseStyle.get().setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
-    baseStyle.get().setAlignItemsPosition(ItemPositionBaseline);
+    baseStyle->setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
+    baseStyle->setAlignItemsPosition(ItemPositionBaseline);
     base->setStyle(WTFMove(baseStyle));
     base->setNeedsLayoutAndPrefWidthsRecalc();
 
@@ -241,10 +241,10 @@ void RenderMathMLRoot::updateStyle()
         // For mroot, we also set the style of the index wrapper.
         auto index = indexWrapper();
         auto indexStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
-        indexStyle.get().setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
-        indexStyle.get().setMarginStart(Length(kernBeforeDegree, Fixed));
-        indexStyle.get().setMarginEnd(Length(kernAfterDegree, Fixed));
-        indexStyle.get().setAlignItemsPosition(ItemPositionBaseline);
+        indexStyle->setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
+        indexStyle->setMarginStart(Length(kernBeforeDegree, Fixed));
+        indexStyle->setMarginEnd(Length(kernAfterDegree, Fixed));
+        indexStyle->setAlignItemsPosition(ItemPositionBaseline);
         index->setStyle(WTFMove(indexStyle));
         index->setNeedsLayoutAndPrefWidthsRecalc();
     }

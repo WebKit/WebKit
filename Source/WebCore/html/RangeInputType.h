@@ -54,7 +54,7 @@ private:
     void handleMouseDownEvent(MouseEvent*) override;
 #endif
     void handleKeydownEvent(KeyboardEvent*) override;
-    RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
+    RenderPtr<RenderElement> createInputRenderer(std::unique_ptr<RenderStyle>) override;
     void createShadowSubtree() override;
     Decimal parseToNumber(const String&, const Decimal&) const override;
     String serialize(const Decimal&) const override;

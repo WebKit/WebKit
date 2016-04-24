@@ -98,8 +98,8 @@ public:
 
 private:
     String m_mediaType;
-    Frame* m_frame; // not owned
-    RefPtr<RenderStyle> m_style;
+    Frame* m_frame { nullptr }; // not owned
+    RenderStyle* m_style { nullptr };
     bool m_expResult;
 };
 

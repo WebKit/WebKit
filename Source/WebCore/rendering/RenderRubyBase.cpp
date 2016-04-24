@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-RenderRubyBase::RenderRubyBase(Document& document, Ref<RenderStyle>&& style)
+RenderRubyBase::RenderRubyBase(Document& document, std::unique_ptr<RenderStyle> style)
     : RenderBlockFlow(document, WTFMove(style))
     , m_initialOffset(0)
     , m_isAfterExpansion(true)

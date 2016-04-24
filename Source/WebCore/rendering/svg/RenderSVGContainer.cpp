@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-RenderSVGContainer::RenderSVGContainer(SVGElement& element, Ref<RenderStyle>&& style)
+RenderSVGContainer::RenderSVGContainer(SVGElement& element, std::unique_ptr<RenderStyle> style)
     : RenderSVGModelObject(element, WTFMove(style))
     , m_objectBoundingBoxValid(false)
     , m_needsBoundariesUpdate(true)

@@ -49,7 +49,7 @@ public:
     virtual JSC::JSObject* scriptObject() { return nullptr; }
 
     virtual bool willCreateRenderer() { return false; }
-    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&, const RenderTreePosition&) = 0;
+    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, std::unique_ptr<RenderStyle>, const RenderTreePosition&) = 0;
 };
 
 typedef Ref<PluginReplacement> (*CreatePluginReplacement)(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);

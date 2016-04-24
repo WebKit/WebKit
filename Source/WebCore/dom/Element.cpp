@@ -1493,7 +1493,7 @@ bool Element::rendererIsNeeded(const RenderStyle& style)
     return style.display() != NONE && style.display() != CONTENTS;
 }
 
-RenderPtr<RenderElement> Element::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> Element::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return RenderElement::createFor(*this, WTFMove(style));
 }
@@ -2507,7 +2507,7 @@ RenderStyle& Element::resolveComputedStyle()
     // Resolve and cache styles starting from the most distant ancestor.
     for (auto* element : elementsRequiringComputedStyle) {
         auto style = document().styleForElementIgnoringPendingStylesheets(*element, computedStyle);
-        computedStyle = style.ptr();
+        computedStyle = style.get();
         ElementRareData& rareData = element->ensureElementRareData();
         rareData.setComputedStyle(WTFMove(style));
     }

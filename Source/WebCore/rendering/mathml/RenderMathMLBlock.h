@@ -41,8 +41,8 @@ class RenderMathMLOperator;
 
 class RenderMathMLBlock : public RenderFlexibleBox {
 public:
-    RenderMathMLBlock(Element&, Ref<RenderStyle>&&);
-    RenderMathMLBlock(Document&, Ref<RenderStyle>&&);
+    RenderMathMLBlock(Element&, std::unique_ptr<RenderStyle>);
+    RenderMathMLBlock(Document&, std::unique_ptr<RenderStyle>);
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     
@@ -80,7 +80,7 @@ private:
 
 class RenderMathMLTable final : public RenderTable {
 public:
-    explicit RenderMathMLTable(Element& element, Ref<RenderStyle>&& style)
+    explicit RenderMathMLTable(Element& element, std::unique_ptr<RenderStyle> style)
         : RenderTable(element, WTFMove(style))
     {
     }

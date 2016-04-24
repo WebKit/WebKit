@@ -58,7 +58,7 @@ const int defaultWidthNumChars = 38;
 #endif
 const int buttonShadowHeight = 2;
 
-RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, Ref<RenderStyle>&& style)
+RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, std::unique_ptr<RenderStyle> style)
     : RenderBlockFlow(input, WTFMove(style))
     , m_canReceiveDroppedFiles(input.canReceiveDroppedFiles())
 {

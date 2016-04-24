@@ -36,7 +36,7 @@ class HTMLVideoElement;
 
 class RenderVideo final : public RenderMedia {
 public:
-    RenderVideo(HTMLVideoElement&, Ref<RenderStyle>&&);
+    RenderVideo(HTMLVideoElement&, std::unique_ptr<RenderStyle>);
     virtual ~RenderVideo();
 
     HTMLVideoElement& videoElement() const;

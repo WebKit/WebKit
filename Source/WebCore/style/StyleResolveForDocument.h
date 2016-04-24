@@ -35,7 +35,7 @@ class RenderStyle;
 
 namespace Style {
 
-Ref<RenderStyle> resolveForDocument(const Document&);
+std::unique_ptr<RenderStyle> resolveForDocument(const Document&);
 
 }
 }

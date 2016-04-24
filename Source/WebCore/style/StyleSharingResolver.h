@@ -48,7 +48,7 @@ class SharingResolver {
 public:
     SharingResolver(const Document&, const DocumentRuleSets&, const SelectorFilter&);
 
-    RefPtr<RenderStyle> resolve(const Element&, const Update&);
+    std::unique_ptr<RenderStyle> resolve(const Element&, const Update&);
 
 private:
     struct Context;

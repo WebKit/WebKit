@@ -56,8 +56,9 @@ static void ensurePlaceholderStyle(Document& document)
 {
     if (placeholderStyle)
         return;
-    placeholderStyle = &RenderStyle::create().leakRef();
+    placeholderStyle = RenderStyle::create().release();
     placeholderStyle->setDisplay(NONE);
+    placeholderStyle->setIsPlaceholderStyle();
     placeholderStyle->fontCascade().update(&document.fontSelector());
 }
 
@@ -92,37 +93,38 @@ TreeResolver::Parent::Parent(Document& document, Change change)
 {
 }
 
-TreeResolver::Parent::Parent(Element& element, ElementUpdate& update)
+TreeResolver::Parent::Parent(Element& element, RenderStyle& style, Change change)
     : element(&element)
-    , style(*update.style)
-    , change(update.change)
+    , style(style)
+    , change(change)
 {
 }
 
 void TreeResolver::pushScope(ShadowRoot& shadowRoot)
 {
     m_scopeStack.append(adoptRef(*new Scope(shadowRoot, scope())));
+    scope().styleResolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 }
 
 void TreeResolver::pushEnclosingScope()
 {
     ASSERT(scope().enclosingScope);
     m_scopeStack.append(*scope().enclosingScope);
+    scope().styleResolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 }
 
 void TreeResolver::popScope()
 {
+    scope().styleResolver.setOverrideDocumentElementStyle(nullptr);
     return m_scopeStack.removeLast();
 }
 
-Ref<RenderStyle> TreeResolver::styleForElement(Element& element, RenderStyle& inheritedStyle)
+std::unique_ptr<RenderStyle> TreeResolver::styleForElement(Element& element, RenderStyle& inheritedStyle)
 {
     if (!m_document.haveStylesheetsLoaded() && !element.renderer()) {
         m_document.setHasNodesWithPlaceholderStyle();
-        return *placeholderStyle;
+        return RenderStyle::clone(placeholderStyle);
     }
-
-    scope().styleResolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 
     if (element.hasCustomStyleResolveCallbacks()) {
         RenderStyle* shadowHostStyle = scope().shadowRoot ? m_update->elementStyle(*scope().shadowRoot->host()) : nullptr;
@@ -135,7 +137,7 @@ Ref<RenderStyle> TreeResolver::styleForElement(Element& element, RenderStyle& in
     }
 
     if (auto style = scope().sharingResolver.resolve(element, *m_update))
-        return *style;
+        return style;
 
     auto elementStyle = scope().styleResolver.styleForElement(element, &inheritedStyle, MatchAllRules, nullptr, &scope().selectorFilter);
 
@@ -185,23 +187,26 @@ ElementUpdate TreeResolver::resolveElement(Element& element)
 
     auto* renderer = element.renderer();
 
-    if (!affectsRenderedSubtree(element, newStyle.get()))
+    if (!affectsRenderedSubtree(element, *newStyle))
         return { };
 
     ElementUpdate update;
 
     bool needsNewRenderer = !renderer || element.styleChangeType() == ReconstructRenderTree || parent().change == Detach;
-    if (!needsNewRenderer && m_document.frame()->animation().updateAnimations(*renderer, newStyle, newStyle))
+
+    std::unique_ptr<RenderStyle> animatedStyle;
+    if (!needsNewRenderer && m_document.frame()->animation().updateAnimations(*renderer, *newStyle, animatedStyle))
         update.isSynthetic = true;
 
-    update.change = needsNewRenderer ? Detach : determineChange(renderer->style(), newStyle);
-    update.style = WTFMove(newStyle);
+    update.change = needsNewRenderer ? Detach : determineChange(renderer->style(), *newStyle);
+    update.style = animatedStyle ? WTFMove(animatedStyle) : WTFMove(newStyle);
 
     if (element.styleChangeType() == SyntheticStyleChange)
         update.isSynthetic = true;
 
     if (&element == m_document.documentElement()) {
-        m_documentElementStyle = update.style;
+        m_documentElementStyle = RenderStyle::clone(update.style.get());
+        scope().styleResolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 
         // If "rem" units are used anywhere in the document, and if the document element's font size changes, then force font updating
         // all the way down the tree. This is simpler than having to maintain a cache of objects (and such font size changes should be rare anyway).
@@ -277,11 +282,11 @@ private:
 };
 #endif // PLATFORM(IOS)
 
-void TreeResolver::pushParent(Element& element, ElementUpdate& update)
+void TreeResolver::pushParent(Element& element, RenderStyle& style, Change change)
 {
     scope().selectorFilter.pushParent(&element);
 
-    Parent parent(element, update);
+    Parent parent(element, style, change);
 
     if (auto* shadowRoot = element.shadowRoot()) {
         pushScope(*shadowRoot);
@@ -370,8 +375,8 @@ void TreeResolver::resolveComposedTree()
 
         bool shouldResolveForPseudoElement = shouldResolvePseudoElement(element.beforePseudoElement()) || shouldResolvePseudoElement(element.afterPseudoElement());
 
-        ElementUpdate update;
-        update.style = element.renderStyle();
+        RenderStyle* style;
+        Change change;
 
         bool shouldResolve = parent.change >= Inherit || element.needsStyleRecalc() || shouldResolveForPseudoElement || affectedByPreviousSibling || element.hasDisplayContents();
         if (shouldResolve) {
@@ -387,32 +392,38 @@ void TreeResolver::resolveComposedTree()
                 }
             }
 
-            update = resolveElement(element);
+            auto elementUpdate = resolveElement(element);
 
             if (element.hasCustomStyleResolveCallbacks())
-                element.didRecalcStyle(update.change);
+                element.didRecalcStyle(elementUpdate.change);
 
-            if (affectedByPreviousSibling && update.change != Detach)
-                update.change = Force;
+            style = elementUpdate.style.get();
+            change = elementUpdate.change;
 
-            if (update.style)
-                m_update->addElement(element, parent.element, update);
+            if (affectedByPreviousSibling && change != Detach)
+                change = Force;
+
+            if (elementUpdate.style)
+                m_update->addElement(element, parent.element, WTFMove(elementUpdate));
 
             element.clearNeedsStyleRecalc();
+        } else {
+            style = element.renderStyle();
+            change = NoChange;
         }
 
-        if (!update.style) {
+        if (!style) {
             resetStyleForNonRenderedDescendants(element);
             element.clearChildNeedsStyleRecalc();
         }
 
-        bool shouldIterateChildren = update.style && (element.childNeedsStyleRecalc() || update.change != NoChange);
+        bool shouldIterateChildren = style && (element.childNeedsStyleRecalc() || change != NoChange);
         if (!shouldIterateChildren) {
             it.traverseNextSkippingChildren();
             continue;
         }
 
-        pushParent(element, update);
+        pushParent(element, *style, change);
 
         it.traverseNext();
     }
@@ -420,7 +431,7 @@ void TreeResolver::resolveComposedTree()
     popParentsToDepth(1);
 }
 
-std::unique_ptr<const Update> TreeResolver::resolve(Change change)
+std::unique_ptr<Update> TreeResolver::resolve(Change change)
 {
     auto& renderView = *m_document.renderView();
 
@@ -443,8 +454,10 @@ std::unique_ptr<const Update> TreeResolver::resolve(Change change)
     renderView.setUsesFirstLineRules(scope().styleResolver.usesFirstLineRules());
     renderView.setUsesFirstLetterRules(scope().styleResolver.usesFirstLetterRules());
 
+    ASSERT(m_scopeStack.size() == 1);
+    ASSERT(m_parentStack.size() == 1);
     m_parentStack.clear();
-    m_scopeStack.clear();
+    popScope();
 
     if (m_update->roots().isEmpty())
         return { };

@@ -59,7 +59,7 @@ Ref<TextControlInnerContainer> TextControlInnerContainer::create(Document& docum
     return adoptRef(*new TextControlInnerContainer(document));
 }
     
-RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlInnerContainer>(*this, WTFMove(style));
 }
@@ -78,16 +78,16 @@ Ref<TextControlInnerElement> TextControlInnerElement::create(Document& document)
 Optional<ElementStyle> TextControlInnerElement::resolveCustomStyle(RenderStyle&, RenderStyle* shadowHostStyle)
 {
     auto innerContainerStyle = RenderStyle::create();
-    innerContainerStyle.get().inheritFrom(shadowHostStyle);
+    innerContainerStyle->inheritFrom(shadowHostStyle);
 
-    innerContainerStyle.get().setFlexGrow(1);
+    innerContainerStyle->setFlexGrow(1);
     // min-width: 0; is needed for correct shrinking.
-    innerContainerStyle.get().setMinWidth(Length(0, Fixed));
-    innerContainerStyle.get().setDisplay(BLOCK);
-    innerContainerStyle.get().setDirection(LTR);
+    innerContainerStyle->setMinWidth(Length(0, Fixed));
+    innerContainerStyle->setDisplay(BLOCK);
+    innerContainerStyle->setDirection(LTR);
 
     // We don't want the shadow dom to be editable, so we set this block to read-only in case the input itself is editable.
-    innerContainerStyle.get().setUserModify(READ_ONLY);
+    innerContainerStyle->setUserModify(READ_ONLY);
 
     return ElementStyle(WTFMove(innerContainerStyle));
 }
@@ -124,7 +124,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event* event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
-RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlInnerBlock>(*this, WTFMove(style));
 }

@@ -150,7 +150,7 @@ const AtomicString& HTMLFieldSetElement::formControlType() const
     return fieldset;
 }
 
-RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     return createRenderer<RenderFieldset>(*this, WTFMove(style));
 }

@@ -75,7 +75,7 @@ bool HTMLAppletElement::rendererIsNeeded(const RenderStyle& style)
     return HTMLPlugInImageElement::rendererIsNeeded(style);
 }
 
-RenderPtr<RenderElement> HTMLAppletElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLAppletElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
 {
     if (!canEmbedJava())
         return RenderElement::createFor(*this, WTFMove(style));

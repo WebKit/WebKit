@@ -82,7 +82,7 @@ static HashMap<const RenderObject*, ControlStates*>& controlStatesRendererMap()
     return map;
 }
 
-inline RenderElement::RenderElement(ContainerNode& elementOrDocument, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
+inline RenderElement::RenderElement(ContainerNode& elementOrDocument, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
     : RenderObject(elementOrDocument)
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
@@ -104,12 +104,12 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, Ref<Render
 {
 }
 
-RenderElement::RenderElement(Element& element, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
+RenderElement::RenderElement(Element& element, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
     : RenderElement(static_cast<ContainerNode&>(element), WTFMove(style), baseTypeFlags)
 {
 }
 
-RenderElement::RenderElement(Document& document, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
+RenderElement::RenderElement(Document& document, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
     : RenderElement(static_cast<ContainerNode&>(document), WTFMove(style), baseTypeFlags)
 {
 }
@@ -146,12 +146,12 @@ RenderElement::~RenderElement()
         view().unregisterForVisibleInViewportCallback(*this);
 }
 
-RenderPtr<RenderElement> RenderElement::createFor(Element& element, Ref<RenderStyle>&& style)
+RenderPtr<RenderElement> RenderElement::createFor(Element& element, std::unique_ptr<RenderStyle> style)
 {
     // Minimal support for content properties replacing an entire element.
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
-    const ContentData* contentData = style.get().contentData();
+    const ContentData* contentData = style->contentData();
     if (contentData && !contentData->next() && is<ImageContentData>(*contentData) && !element.isPseudoElement()) {
         auto& styleImage = downcast<ImageContentData>(*contentData).image();
         auto image = createRenderer<RenderImage>(element, WTFMove(style), const_cast<StyleImage*>(&styleImage));
@@ -159,7 +159,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, Ref<RenderSt
         return WTFMove(image);
     }
 
-    switch (style.get().display()) {
+    switch (style->display()) {
     case NONE:
     case CONTENTS:
         return nullptr;
@@ -210,14 +210,14 @@ enum StyleCacheState {
     Uncached
 };
 
-static PassRefPtr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheState type, const RenderElement& renderer, RenderStyle* style)
+static std::unique_ptr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheState type, const RenderElement& renderer, RenderStyle* style)
 {
     RenderElement& rendererForFirstLineStyle = renderer.isBeforeOrAfterContent() ? *renderer.parent() : const_cast<RenderElement&>(renderer);
 
     if (rendererForFirstLineStyle.isRenderBlockFlow() || rendererForFirstLineStyle.isRenderButton()) {
         if (RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock()) {
             if (type == Cached)
-                return firstLineBlock->getCachedPseudoStyle(FIRST_LINE, style);
+                return RenderStyle::clone(firstLineBlock->getCachedPseudoStyle(FIRST_LINE, style));
             return firstLineBlock->getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE), style, firstLineBlock == &renderer ? style : nullptr);
         }
     } else if (!rendererForFirstLineStyle.isAnonymous() && rendererForFirstLineStyle.isRenderInline()) {
@@ -226,7 +226,7 @@ static PassRefPtr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheSta
             if (type == Cached) {
                 // A first-line style is in effect. Cache a first-line style for ourselves.
                 rendererForFirstLineStyle.style().setHasPseudoStyle(FIRST_LINE_INHERITED);
-                return rendererForFirstLineStyle.getCachedPseudoStyle(FIRST_LINE_INHERITED, &parentStyle);
+                return RenderStyle::clone(rendererForFirstLineStyle.getCachedPseudoStyle(FIRST_LINE_INHERITED, &parentStyle));
             }
             return rendererForFirstLineStyle.getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE_INHERITED), &parentStyle, style);
         }
@@ -234,7 +234,7 @@ static PassRefPtr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheSta
     return nullptr;
 }
 
-PassRefPtr<RenderStyle> RenderElement::uncachedFirstLineStyle(RenderStyle* style) const
+std::unique_ptr<RenderStyle> RenderElement::uncachedFirstLineStyle(RenderStyle* style) const
 {
     if (!view().usesFirstLineRules())
         return nullptr;
@@ -247,7 +247,7 @@ RenderStyle* RenderElement::cachedFirstLineStyle() const
     ASSERT(view().usesFirstLineRules());
 
     RenderStyle& style = this->style();
-    if (RefPtr<RenderStyle> firstLineStyle = firstLineStyleForCachedUncachedType(Cached, *this, &style))
+    if (std::unique_ptr<RenderStyle> firstLineStyle = firstLineStyleForCachedUncachedType(Cached, *this, &style))
         return firstLineStyle.get();
 
     return &style;
@@ -398,53 +398,44 @@ void RenderElement::initializeStyle()
     // have their parent set before getting a call to initializeStyle() :|
 }
 
-void RenderElement::setStyle(Ref<RenderStyle>&& style, StyleDifference minimalStyleDifference)
+void RenderElement::setStyle(std::unique_ptr<RenderStyle> style, StyleDifference minimalStyleDifference)
 {
     // FIXME: Should change RenderView so it can use initializeStyle too.
     // If we do that, we can assert m_hasInitializedStyle unconditionally,
     // and remove the check of m_hasInitializedStyle below too.
     ASSERT(m_hasInitializedStyle || isRenderView());
 
-    if (m_style.ptr() == style.ptr() && minimalStyleDifference != StyleDifferenceEqual) {
-        // FIXME: Can we change things so we never hit this code path?
-        // We need to run through adjustStyleDifference() for iframes, plugins, and canvas so
-        // style sharing is disabled for them. That should ensure that we never hit this code path.
-        ASSERT(!isRenderIFrame());
-        ASSERT(!isEmbeddedObject());
-        ASSERT(!isCanvas());
-        return;
-    }
-
     StyleDifference diff = StyleDifferenceEqual;
     unsigned contextSensitiveProperties = ContextSensitivePropertyNone;
     if (m_hasInitializedStyle)
-        diff = m_style->diff(style.get(), contextSensitiveProperties);
+        diff = m_style->diff(*style, contextSensitiveProperties);
 
     diff = std::max(diff, minimalStyleDifference);
 
     diff = adjustStyleDifference(diff, contextSensitiveProperties);
 
-    styleWillChange(diff, style.get());
+    styleWillChange(diff, *style);
 
-    Ref<RenderStyle> oldStyle(m_style.replace(WTFMove(style)));
+    auto oldStyle = WTFMove(m_style);
+    m_style = WTFMove(style);
 
-    updateFillImages(oldStyle.get().backgroundLayers(), m_style->backgroundLayers());
-    updateFillImages(oldStyle.get().maskLayers(), m_style->maskLayers());
+    updateFillImages(oldStyle->backgroundLayers(), m_style->backgroundLayers());
+    updateFillImages(oldStyle->maskLayers(), m_style->maskLayers());
 
-    updateImage(oldStyle.get().borderImage().image(), m_style->borderImage().image());
-    updateImage(oldStyle.get().maskBoxImage().image(), m_style->maskBoxImage().image());
+    updateImage(oldStyle->borderImage().image(), m_style->borderImage().image());
+    updateImage(oldStyle->maskBoxImage().image(), m_style->maskBoxImage().image());
 
 #if ENABLE(CSS_SHAPES)
-    updateShapeImage(oldStyle.get().shapeOutside(), m_style->shapeOutside());
+    updateShapeImage(oldStyle->shapeOutside(), m_style->shapeOutside());
 #endif
 
     bool doesNotNeedLayout = !parent();
 
-    styleDidChange(diff, oldStyle.ptr());
+    styleDidChange(diff, oldStyle.get());
 
     // Text renderers use their parent style. Notify them about the change.
     for (auto& child : childrenOfType<RenderText>(*this))
-        child.styleDidChange(diff, oldStyle.ptr());
+        child.styleDidChange(diff, oldStyle.get());
 
     // FIXME: |this| might be destroyed here. This can currently happen for a RenderTextFragment when
     // its first-letter block gets an update in RenderTextFragment::styleDidChange. For RenderTextFragment(s),
@@ -461,9 +452,9 @@ void RenderElement::setStyle(Ref<RenderStyle>&& style, StyleDifference minimalSt
         if (updatedDiff == StyleDifferenceLayout)
             setNeedsLayoutAndPrefWidthsRecalc();
         else if (updatedDiff == StyleDifferenceLayoutPositionedMovementOnly)
-            setNeedsPositionedMovementLayout(oldStyle.ptr());
+            setNeedsPositionedMovementLayout(oldStyle.get());
         else if (updatedDiff == StyleDifferenceSimplifiedLayoutAndPositionedMovement) {
-            setNeedsPositionedMovementLayout(oldStyle.ptr());
+            setNeedsPositionedMovementLayout(oldStyle.get());
             setNeedsSimplifiedNormalFlowLayout();
         } else if (updatedDiff == StyleDifferenceSimplifiedLayout)
             setNeedsSimplifiedNormalFlowLayout();
@@ -798,15 +789,15 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), elementChild.style().display());
         if (style().specifiesColumns()) {
             if (elementChild.style().specifiesColumns())
-                newStyle.get().inheritColumnPropertiesFrom(&style());
+                newStyle->inheritColumnPropertiesFrom(&style());
             if (elementChild.style().columnSpan())
-                newStyle.get().setColumnSpan(ColumnSpanAll);
+                newStyle->setColumnSpan(ColumnSpanAll);
         }
 
         // Preserve the position style of anonymous block continuations as they can have relative or sticky position when
         // they contain block descendants of relative or sticky positioned inlines.
         if (elementChild.isInFlowPositioned() && downcast<RenderBlock>(elementChild).isAnonymousBlockContinuation())
-            newStyle.get().setPosition(elementChild.style().position());
+            newStyle->setPosition(elementChild.style().position());
 
         elementChild.setStyle(WTFMove(newStyle));
     }
@@ -993,7 +984,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         return;
     
     if (diff == StyleDifferenceLayout || diff == StyleDifferenceSimplifiedLayout) {
-        RenderCounter::rendererStyleChanged(*this, oldStyle, m_style.ptr());
+        RenderCounter::rendererStyleChanged(*this, oldStyle, m_style.get());
 
         // If the object already needs layout, then setNeedsLayout won't do
         // any work. But if the containing block has changed, then we may need
@@ -1556,13 +1547,13 @@ RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* p
     if (cachedStyle)
         return cachedStyle;
 
-    RefPtr<RenderStyle> result = getUncachedPseudoStyle(PseudoStyleRequest(pseudo), parentStyle);
+    std::unique_ptr<RenderStyle> result = getUncachedPseudoStyle(PseudoStyleRequest(pseudo), parentStyle);
     if (result)
-        return style().addCachedPseudoStyle(result.release());
+        return style().addCachedPseudoStyle(WTFMove(result));
     return nullptr;
 }
 
-PassRefPtr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleRequest& pseudoStyleRequest, RenderStyle* parentStyle, RenderStyle* ownStyle) const
+std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleRequest& pseudoStyleRequest, RenderStyle* parentStyle, RenderStyle* ownStyle) const
 {
     if (pseudoStyleRequest.pseudoId < FIRST_INTERNAL_PSEUDOID && !ownStyle && !style().hasPseudoStyle(pseudoStyleRequest.pseudoId))
         return nullptr;
@@ -1580,7 +1571,7 @@ PassRefPtr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleR
     if (pseudoStyleRequest.pseudoId == FIRST_LINE_INHERITED) {
         auto result = styleResolver.styleForElement(*element(), parentStyle).renderStyle;
         result->setStyleType(FIRST_LINE_INHERITED);
-        return WTFMove(result);
+        return result;
     }
 
     return styleResolver.pseudoStyleForElement(*element(), pseudoStyleRequest, *parentStyle);
@@ -1594,7 +1585,7 @@ Color RenderElement::selectionColor(int colorProperty) const
         || (view().frameView().paintBehavior() & (PaintBehaviorSelectionOnly | PaintBehaviorSelectionAndBackgroundsOnly)))
         return Color();
 
-    if (RefPtr<RenderStyle> pseudoStyle = selectionPseudoStyle()) {
+    if (std::unique_ptr<RenderStyle> pseudoStyle = selectionPseudoStyle()) {
         Color color = pseudoStyle->visitedDependentColor(colorProperty);
         if (!color.isValid())
             color = pseudoStyle->visitedDependentColor(CSSPropertyColor);
@@ -1606,7 +1597,7 @@ Color RenderElement::selectionColor(int colorProperty) const
     return theme().inactiveSelectionForegroundColor();
 }
 
-PassRefPtr<RenderStyle> RenderElement::selectionPseudoStyle() const
+std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
 {
     if (isAnonymous())
         return nullptr;
@@ -1639,7 +1630,7 @@ Color RenderElement::selectionBackgroundColor() const
     if (frame().selection().shouldShowBlockCursor() && frame().selection().isCaret())
         return style().visitedDependentColor(CSSPropertyColor).blendWithWhite();
 
-    RefPtr<RenderStyle> pseudoStyle = selectionPseudoStyle();
+    std::unique_ptr<RenderStyle> pseudoStyle = selectionPseudoStyle();
     if (pseudoStyle && pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).isValid())
         return pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).blendWithWhite();
 

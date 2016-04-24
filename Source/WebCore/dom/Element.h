@@ -243,7 +243,7 @@ public:
 
     virtual void copyNonAttributePropertiesFromElement(const Element&) { }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&);
+    virtual RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&);
     virtual bool rendererIsNeeded(const RenderStyle&);
 
     WEBCORE_EXPORT ShadowRoot* shadowRoot() const;

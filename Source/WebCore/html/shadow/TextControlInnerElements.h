@@ -39,7 +39,7 @@ public:
     static Ref<TextControlInnerContainer> create(Document&);
 protected:
     TextControlInnerContainer(Document&);
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
 };
 
 class TextControlInnerElement final : public HTMLDivElement {
@@ -64,7 +64,7 @@ public:
 
 private:
     TextControlInnerTextElement(Document&);
-    RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
     Optional<ElementStyle> resolveCustomStyle(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
     bool isMouseFocusable() const override { return false; }
     bool isTextControlInnerTextElement() const override { return true; }

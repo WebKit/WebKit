@@ -1571,7 +1571,7 @@ RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferringK
 
     m_node->document().updateLayoutIgnorePendingStylesheets();
 
-    RefPtr<RenderStyle> style = m_node->computedStyle(m_pseudoElementSpecifier);
+    auto* style = m_node->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return nullptr;
 
@@ -1586,7 +1586,7 @@ bool ComputedStyleExtractor::useFixedFontDefaultSize() const
     if (!m_node)
         return false;
 
-    RefPtr<RenderStyle> style = m_node->computedStyle(m_pseudoElementSpecifier);
+    auto* style = m_node->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return false;
 
@@ -2265,17 +2265,17 @@ static inline bool updateStyleIfNeededForNode(const Node& node)
     return true;
 }
 
-static inline RefPtr<RenderStyle> computeRenderStyleForProperty(Node* styledNode, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID)
+static inline RenderStyle* computeRenderStyleForProperty(Node* styledNode, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle)
 {
     RenderObject* renderer = styledNode->renderer();
 
     if (renderer && renderer->isComposited() && AnimationController::supportsAcceleratedAnimationOfProperty(propertyID)) {
-        RefPtr<RenderStyle> style = renderer->animation().getAnimatedStyleForRenderer(downcast<RenderElement>(*renderer));
+        ownedStyle = renderer->animation().getAnimatedStyleForRenderer(downcast<RenderElement>(*renderer));
         if (pseudoElementSpecifier && !styledNode->isPseudoElement()) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
-            return style->getCachedPseudoStyle(pseudoElementSpecifier);
+            return ownedStyle->getCachedPseudoStyle(pseudoElementSpecifier);
         }
-        return style;
+        return ownedStyle.get();
     }
 
     return styledNode->computedStyle(styledNode->isPseudoElement() ? NOPSEUDO : pseudoElementSpecifier);
@@ -2350,7 +2350,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& prope
         styledNode = this->styledNode();
     }
 
-    RefPtr<RenderStyle> style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, CSSPropertyCustom);
+    std::unique_ptr<RenderStyle> ownedStyle;
+    auto* style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, CSSPropertyCustom, ownedStyle);
     if (!style || !style->hasCustomProperty(propertyName))
         return nullptr;
 
@@ -2369,7 +2370,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (!styledNode)
         return nullptr;
 
-    RefPtr<RenderStyle> style;
+    std::unique_ptr<RenderStyle> ownedStyle;
+    RenderStyle* style = nullptr;
     RenderObject* renderer = nullptr;
     bool forceFullLayout = false;
     if (updateLayout) {
@@ -2386,10 +2388,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         if (propertyID == CSSPropertyDisplay && !renderer && is<SVGElement>(*styledNode) && !downcast<SVGElement>(*styledNode).isValid())
             return nullptr;
 
-        style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID);
+        style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID, ownedStyle);
 
         // FIXME: Some of these cases could be narrowed down or optimized better.
-        forceFullLayout = isLayoutDependent(propertyID, style.get(), renderer)
+        forceFullLayout = isLayoutDependent(propertyID, style, renderer)
             || styledNode->isInShadowTree()
             || (document.styleResolverIfExists() && document.styleResolverIfExists()->hasViewportDependentMediaQueries() && document.ownerElement());
 
@@ -2400,7 +2402,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     }
 
     if (!updateLayout || forceFullLayout) {
-        style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID);
+        style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID, ownedStyle);
         renderer = styledNode->renderer();
     }
 
@@ -2576,13 +2578,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
                 return style->borderImageSource()->cssValue();
             return cssValuePool.createIdentifierValue(CSSValueNone);
         case CSSPropertyBorderTopColor:
-            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyBorderTopColor).rgb()) : currentColorOrValidColor(style.get(), style->borderTopColor());
+            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyBorderTopColor).rgb()) : currentColorOrValidColor(style, style->borderTopColor());
         case CSSPropertyBorderRightColor:
-            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyBorderRightColor).rgb()) : currentColorOrValidColor(style.get(), style->borderRightColor());
+            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyBorderRightColor).rgb()) : currentColorOrValidColor(style, style->borderRightColor());
         case CSSPropertyBorderBottomColor:
-            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyBorderBottomColor).rgb()) : currentColorOrValidColor(style.get(), style->borderBottomColor());
+            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyBorderBottomColor).rgb()) : currentColorOrValidColor(style, style->borderBottomColor());
         case CSSPropertyBorderLeftColor:
-            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyBorderLeftColor).rgb()) : currentColorOrValidColor(style.get(), style->borderLeftColor());
+            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyBorderLeftColor).rgb()) : currentColorOrValidColor(style, style->borderLeftColor());
         case CSSPropertyBorderTopStyle:
             return cssValuePool.createValue(style->borderTopStyle());
         case CSSPropertyBorderRightStyle:
@@ -2651,7 +2653,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyColumnProgression:
             return cssValuePool.createValue(style->columnProgression());
         case CSSPropertyColumnRuleColor:
-            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style.get(), style->columnRuleColor());
+            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style, style->columnRuleColor());
         case CSSPropertyColumnRuleStyle:
             return cssValuePool.createValue(style->columnRuleStyle());
         case CSSPropertyColumnRuleWidth:
@@ -2744,19 +2746,19 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return cssValuePool.createValue(style->floating());
         case CSSPropertyFont: {
             RefPtr<CSSFontValue> computedFont = CSSFontValue::create();
-            computedFont->style = fontStyleFromStyle(style.get());
+            computedFont->style = fontStyleFromStyle(style);
             if (style->fontDescription().variantCaps() == FontVariantCaps::Small)
                 computedFont->variant = CSSValuePool::singleton().createIdentifierValue(CSSValueSmallCaps);
             else
                 computedFont->variant = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
-            computedFont->weight = fontWeightFromStyle(style.get());
+            computedFont->weight = fontWeightFromStyle(style);
             computedFont->size = fontSizeFromStyle(*style);
             computedFont->lineHeight = lineHeightFromStyle(*style);
-            computedFont->family = fontFamilyFromStyle(style.get());
+            computedFont->family = fontFamilyFromStyle(style);
             return computedFont;
         }
         case CSSPropertyFontFamily: {
-            RefPtr<CSSValueList> fontFamilyList = fontFamilyFromStyle(style.get());
+            RefPtr<CSSValueList> fontFamilyList = fontFamilyFromStyle(style);
             // If there's only a single family, return that as a CSSPrimitiveValue.
             // NOTE: Gecko always returns this as a comma-separated CSSPrimitiveValue string.
             if (fontFamilyList->length() == 1)
@@ -2766,11 +2768,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyFontSize:
             return fontSizeFromStyle(*style);
         case CSSPropertyFontStyle:
-            return fontStyleFromStyle(style.get());
+            return fontStyleFromStyle(style);
         case CSSPropertyFontVariant:
-            return fontVariantFromStyle(style.get());
+            return fontVariantFromStyle(style);
         case CSSPropertyFontWeight:
-            return fontWeightFromStyle(style.get());
+            return fontWeightFromStyle(style);
         case CSSPropertyFontSynthesis:
             return fontSynthesisFromStyle(*style);
         case CSSPropertyFontFeatureSettings: {
@@ -2983,7 +2985,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
             return cssValuePool.createValue(style->orphans(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyOutlineColor:
-            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style.get(), style->outlineColor());
+            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style, style->outlineColor());
         case CSSPropertyOutlineOffset:
             return zoomAdjustedPixelValue(style->outlineOffset(), *style);
         case CSSPropertyOutlineStyle:
@@ -3047,7 +3049,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyWebkitTextDecorationStyle:
             return renderTextDecorationStyleFlagsToCSSValue(style->textDecorationStyle());
         case CSSPropertyWebkitTextDecorationColor:
-            return currentColorOrValidColor(style.get(), style->textDecorationColor());
+            return currentColorOrValidColor(style, style->textDecorationColor());
         case CSSPropertyWebkitTextDecorationSkip:
             return renderTextDecorationSkipFlagsToCSSValue(style->textDecorationSkip());
         case CSSPropertyWebkitTextUnderlinePosition:
@@ -3055,9 +3057,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyWebkitTextDecorationsInEffect:
             return renderTextDecorationFlagsToCSSValue(style->textDecorationsInEffect());
         case CSSPropertyWebkitTextFillColor:
-            return currentColorOrValidColor(style.get(), style->textFillColor());
+            return currentColorOrValidColor(style, style->textFillColor());
         case CSSPropertyWebkitTextEmphasisColor:
-            return currentColorOrValidColor(style.get(), style->textEmphasisColor());
+            return currentColorOrValidColor(style, style->textEmphasisColor());
         case CSSPropertyWebkitTextEmphasisPosition:
             return renderEmphasisPositionFlagsToCSSValue(style->textEmphasisPosition());
         case CSSPropertyWebkitTextEmphasisStyle:
@@ -3120,7 +3122,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return CSSPrimitiveValue::create(style->textSizeAdjust().percentage(), CSSPrimitiveValue::CSS_PERCENTAGE);
 #endif
         case CSSPropertyWebkitTextStrokeColor:
-            return currentColorOrValidColor(style.get(), style->textStrokeColor());
+            return currentColorOrValidColor(style, style->textStrokeColor());
         case CSSPropertyWebkitTextStrokeWidth:
             return zoomAdjustedPixelValue(style->textStrokeWidth(), *style);
         case CSSPropertyTextTransform:
@@ -3431,7 +3433,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return cssValuePool.createIdentifierValue(style->rtlOrdering() ? CSSValueVisual : CSSValueLogical);
 #if ENABLE(TOUCH_EVENTS)
         case CSSPropertyWebkitTapHighlightColor:
-            return currentColorOrValidColor(style.get(), style->tapHighlightColor());
+            return currentColorOrValidColor(style, style->tapHighlightColor());
         case CSSPropertyTouchAction:
             return cssValuePool.createValue(style->touchAction());
 #endif
@@ -3543,13 +3545,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyWebkitLineBoxContain:
             return createLineBoxContainValue(style->lineBoxContain());
         case CSSPropertyAlt:
-            return altTextToCSSValue(style.get());
+            return altTextToCSSValue(style);
         case CSSPropertyContent:
-            return contentToCSSValue(style.get());
+            return contentToCSSValue(style);
         case CSSPropertyCounterIncrement:
-            return counterToCSSValue(style.get(), propertyID);
+            return counterToCSSValue(style, propertyID);
         case CSSPropertyCounterReset:
-            return counterToCSSValue(style.get(), propertyID);
+            return counterToCSSValue(style, propertyID);
         case CSSPropertyWebkitClipPath: {
             ClipPathOperation* operation = style->clipPath();
             if (!operation)

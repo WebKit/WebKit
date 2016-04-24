@@ -36,8 +36,8 @@ namespace WebCore {
     
 class RenderMathMLToken : public RenderMathMLBlock {
 public:
-    RenderMathMLToken(Element&, Ref<RenderStyle>&&);
-    RenderMathMLToken(Document&, Ref<RenderStyle>&&);
+    RenderMathMLToken(Element&, std::unique_ptr<RenderStyle>);
+    RenderMathMLToken(Document&, std::unique_ptr<RenderStyle>);
 
     MathMLTextElement& element() { return static_cast<MathMLTextElement&>(nodeForNonAnonymous()); }
 

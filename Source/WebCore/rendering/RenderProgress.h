@@ -29,7 +29,7 @@ class HTMLProgressElement;
 
 class RenderProgress final : public RenderBlockFlow {
 public:
-    RenderProgress(HTMLElement&, Ref<RenderStyle>&&);
+    RenderProgress(HTMLElement&, std::unique_ptr<RenderStyle>);
     virtual ~RenderProgress();
 
     double position() const { return m_position; }
