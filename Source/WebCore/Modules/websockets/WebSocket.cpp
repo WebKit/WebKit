@@ -322,22 +322,21 @@ void WebSocket::send(const String& message, ExceptionCode& ec)
     }
 }
 
-void WebSocket::send(ArrayBuffer* binaryData, ExceptionCode& ec)
+void WebSocket::send(ArrayBuffer& binaryData, ExceptionCode& ec)
 {
-    LOG(Network, "WebSocket %p send() Sending ArrayBuffer %p", this, binaryData);
-    ASSERT(binaryData);
+    LOG(Network, "WebSocket %p send() Sending ArrayBuffer %p", this, &binaryData);
     if (m_state == CONNECTING) {
         ec = INVALID_STATE_ERR;
         return;
     }
     if (m_state == CLOSING || m_state == CLOSED) {
-        unsigned payloadSize = binaryData->byteLength();
+        unsigned payloadSize = binaryData.byteLength();
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return;
     }
     ASSERT(m_channel);
-    m_channel->send(*binaryData, 0, binaryData->byteLength());
+    m_channel->send(binaryData, 0, binaryData.byteLength());
 }
 
 void WebSocket::send(ArrayBufferView* arrayBufferView, ExceptionCode& ec)
@@ -359,21 +358,21 @@ void WebSocket::send(ArrayBufferView* arrayBufferView, ExceptionCode& ec)
     m_channel->send(*arrayBuffer, arrayBufferView->byteOffset(), arrayBufferView->byteLength());
 }
 
-void WebSocket::send(Blob* binaryData, ExceptionCode& ec)
+void WebSocket::send(Blob& binaryData, ExceptionCode& ec)
 {
-    LOG(Network, "WebSocket %p send() Sending Blob '%s'", this, binaryData->url().stringCenterEllipsizedToLength().utf8().data());
+    LOG(Network, "WebSocket %p send() Sending Blob '%s'", this, binaryData.url().stringCenterEllipsizedToLength().utf8().data());
     if (m_state == CONNECTING) {
         ec = INVALID_STATE_ERR;
         return;
     }
     if (m_state == CLOSING || m_state == CLOSED) {
-        unsigned long payloadSize = static_cast<unsigned long>(binaryData->size());
+        unsigned long payloadSize = static_cast<unsigned long>(binaryData.size());
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return;
     }
     ASSERT(m_channel);
-    m_channel->send(*binaryData);
+    m_channel->send(binaryData);
 }
 
 void WebSocket::close(int code, const String& reason, ExceptionCode& ec)

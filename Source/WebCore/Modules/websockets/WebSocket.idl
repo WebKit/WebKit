@@ -30,15 +30,14 @@
  */
 
 [
-    Exposed=(Window,Worker),
-    EnabledAtRuntime,
-    Conditional=WEB_SOCKETS,
     ActiveDOMObject,
+    Conditional=WEB_SOCKETS,
     Constructor(DOMString url, [Default=Undefined] optional sequence<DOMString>? protocols),
     Constructor(DOMString url, DOMString protocol),
     ConstructorRaisesException,
     ConstructorCallWith=ScriptExecutionContext,
-    UsePointersEvenForNonNullableObjectArguments,
+    EnabledAtRuntime,
+    Exposed=(Window,Worker),
 ] interface WebSocket : EventTarget {
     readonly attribute DOMString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
     readonly attribute DOMString url;
