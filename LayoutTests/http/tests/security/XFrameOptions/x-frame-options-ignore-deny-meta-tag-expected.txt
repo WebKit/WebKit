@@ -1,0 +1,13 @@
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag.html - didFinishLoading
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html, http status code 200>
+CONSOLE MESSAGE: line 3: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+CONSOLE MESSAGE: line 15: PASS: Could read contentWindow.location.href
+There should be content in the iframe below
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS: This should be displayed.

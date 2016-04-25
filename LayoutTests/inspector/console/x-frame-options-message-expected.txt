@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 41: Refused to display 'x-frame-options-message.html' in a frame because it set 'X-Frame-Options' to 'deny'.
+CONSOLE MESSAGE: line 41: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
 
 
 == Running test suite: Console.XFrameOptionsMessages

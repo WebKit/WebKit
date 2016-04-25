@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 4: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+
