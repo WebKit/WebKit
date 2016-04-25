@@ -560,7 +560,7 @@ double AnimationBase::timeToNextService()
 {
     // Returns the time at which next service is required. -1 means no service is required. 0 means 
     // service is required now, and > 0 means service is required that many seconds in the future.
-    if (paused() || isNew() || m_animationState == AnimationState::FillingForwards)
+    if (paused() || isNew() || postActive() || fillingForwards())
         return -1;
     
     if (m_animationState == AnimationState::StartWaitTimer) {

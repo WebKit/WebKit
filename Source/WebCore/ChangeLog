@@ -1,3 +1,33 @@
+2016-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Toggling animation-play-state can re-start a finished animation
+        https://bugs.webkit.org/show_bug.cgi?id=156731
+
+        Reviewed by Dean Jackson.
+
+        After an animation completed, CompositeAnimation::updateKeyframeAnimations() cleared
+        all state that the animation had run on the element, so changing the value of some
+        animation property triggered the animation to run again. This is wrong, since animation-name
+        still applied to the element.
+
+        Fix by keeping state for keyframe animations in the Done state in the m_keyframeAnimations
+        map. This allows for the removal of the index property on KeyframeAnimation.
+
+        Tests: animations/change-completed-animation-transform.html
+               animations/change-completed-animation.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::timeToNextService):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::isAnimatingProperty):
+        * page/animation/CompositeAnimation.cpp: Add animations that should stick around to AnimationNameMap,
+        and swap with m_keyframeAnimations at the end.
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::getAnimatedStyle):
+        * page/animation/KeyframeAnimation.h:
+
 2016-04-25  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Crashes if DISPLAY is unset

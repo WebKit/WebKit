@@ -181,7 +181,7 @@ public:
         if ((runningState & Paused) && inPausedState())
             return true;
 
-        if ((runningState & Running) && !inPausedState() && (m_animationState >= AnimationState::StartWaitStyleAvailable && m_animationState <= AnimationState::Done))
+        if ((runningState & Running) && !inPausedState() && (m_animationState >= AnimationState::StartWaitStyleAvailable && m_animationState < AnimationState::Done))
             return true;
 
         return false;

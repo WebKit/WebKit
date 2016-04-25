@@ -203,99 +203,85 @@ void CompositeAnimation::updateKeyframeAnimations(RenderElement* renderer, Rende
 
     m_keyframeAnimations.checkConsistency();
     
-    if (currentStyle && currentStyle->hasAnimations() && targetStyle->hasAnimations() && *(currentStyle->animations()) == *(targetStyle->animations())) {
-        // The current and target animations are the same so we just need to toss any 
-        // animation which is finished (postActive).
-        for (auto& animation : m_keyframeAnimations.values()) {
-            if (animation->postActive())
-                animation->setIndex(-1);
-        }
-    } else {
-        // Mark all existing animations as no longer active.
-        for (auto& animation : m_keyframeAnimations.values())
-            animation->setIndex(-1);
+    if (currentStyle && currentStyle->hasAnimations() && targetStyle->hasAnimations() && *(currentStyle->animations()) == *(targetStyle->animations()))
+        return;
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-        m_hasScrollTriggeredAnimation = false;
+    m_hasScrollTriggeredAnimation = false;
 #endif
 
-        // Toss the animation order map.
-        m_keyframeAnimationOrderMap.clear();
+    AnimationNameMap newAnimations;
 
-        static NeverDestroyed<const AtomicString> none("none", AtomicString::ConstructFromLiteral);
-        
-        // Now mark any still active animations as active and add any new animations.
-        if (targetStyle->animations()) {
-            int numAnims = targetStyle->animations()->size();
-            for (int i = 0; i < numAnims; ++i) {
-                Animation& animation = targetStyle->animations()->animation(i);
-                AtomicString animationName(animation.name());
+    // Toss the animation order map.
+    m_keyframeAnimationOrderMap.clear();
 
-                if (!animation.isValidAnimation())
+    static NeverDestroyed<const AtomicString> none("none", AtomicString::ConstructFromLiteral);
+    
+    // Now mark any still active animations as active and add any new animations.
+    if (targetStyle->animations()) {
+        int numAnims = targetStyle->animations()->size();
+        for (int i = 0; i < numAnims; ++i) {
+            Animation& animation = targetStyle->animations()->animation(i);
+            AtomicString animationName(animation.name());
+
+            if (!animation.isValidAnimation())
+                continue;
+            
+            // See if there is a current animation for this name.
+            RefPtr<KeyframeAnimation> keyframeAnim = m_keyframeAnimations.get(animationName.impl());
+            if (keyframeAnim) {
+                newAnimations.add(keyframeAnim->name().impl(), keyframeAnim);
+
+                if (keyframeAnim->postActive())
                     continue;
-                
-                // See if there is a current animation for this name.
-                RefPtr<KeyframeAnimation> keyframeAnim = m_keyframeAnimations.get(animationName.impl());
-                
-                if (keyframeAnim) {
-                    // If this animation is postActive, skip it so it gets removed at the end of this function.
-                    if (keyframeAnim->postActive())
-                        continue;
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-                    if (animation.trigger()->isScrollAnimationTrigger())
-                        m_hasScrollTriggeredAnimation = true;
+                if (animation.trigger()->isScrollAnimationTrigger())
+                    m_hasScrollTriggeredAnimation = true;
 #endif
 
-                    // This one is still active.
+                // Animations match, but play states may differ. Update if needed.
+                keyframeAnim->updatePlayState(animation.playState());
 
-                    // Animations match, but play states may differ. Update if needed.
-                    keyframeAnim->updatePlayState(animation.playState());
-                                
-                    // Set the saved animation to this new one, just in case the play state has changed.
-                    keyframeAnim->setAnimation(animation);
-                    keyframeAnim->setIndex(i);
-                } else if ((animation.duration() || animation.delay()) && animation.iterationCount() && animationName != none) {
-                    keyframeAnim = KeyframeAnimation::create(animation, renderer, i, this, targetStyle);
-                    LOG(Animations, "Creating KeyframeAnimation %p on renderer %p with keyframes %s, duration %.2f, delay %.2f, iterations %.2f", keyframeAnim.get(), renderer, animation.name().utf8().data(), animation.duration(), animation.delay(), animation.iterationCount());
-                    if (m_suspended) {
-                        keyframeAnim->updatePlayState(AnimPlayStatePaused);
-                        LOG(Animations, "  (created in suspended/paused state)");
-                    }
-#if !LOG_DISABLED
-                    for (auto propertyID : keyframeAnim->keyframes().properties())
-                        LOG(Animations, "  property %s", getPropertyName(propertyID));
-#endif
+                // Set the saved animation to this new one, just in case the play state has changed.
+                keyframeAnim->setAnimation(animation);
+            } else if ((animation.duration() || animation.delay()) && animation.iterationCount() && animationName != none) {
+                keyframeAnim = KeyframeAnimation::create(animation, renderer, this, targetStyle);
+                LOG(Animations, "Creating KeyframeAnimation %p on renderer %p with keyframes %s, duration %.2f, delay %.2f, iterations %.2f", keyframeAnim.get(), renderer, animation.name().utf8().data(), animation.duration(), animation.delay(), animation.iterationCount());
 
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-                    if (animation.trigger()->isScrollAnimationTrigger())
-                        m_hasScrollTriggeredAnimation = true;
-#endif
-
-                    m_keyframeAnimations.set(keyframeAnim->name().impl(), keyframeAnim);
+                if (m_suspended) {
+                    keyframeAnim->updatePlayState(AnimPlayStatePaused);
+                    LOG(Animations, "  (created in suspended/paused state)");
                 }
-                
-                // Add this to the animation order map.
-                if (keyframeAnim)
-                    m_keyframeAnimationOrderMap.append(keyframeAnim->name().impl());
+#if !LOG_DISABLED
+                for (auto propertyID : keyframeAnim->keyframes().properties())
+                    LOG(Animations, "  property %s", getPropertyName(propertyID));
+#endif
+
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+                if (animation.trigger()->isScrollAnimationTrigger())
+                    m_hasScrollTriggeredAnimation = true;
+#endif
+
+                newAnimations.set(keyframeAnim->name().impl(), keyframeAnim);
             }
+            
+            // Add this to the animation order map.
+            if (keyframeAnim)
+                m_keyframeAnimationOrderMap.append(keyframeAnim->name().impl());
         }
     }
     
     // Make a list of animations to be removed.
-    Vector<AtomicStringImpl*> animsToBeRemoved;
     for (auto& animation : m_keyframeAnimations.values()) {
-        if (animation->index() < 0) {
-            animsToBeRemoved.append(animation->name().impl());
+        if (!newAnimations.contains(animation->name().impl())) {
             animationController().animationWillBeRemoved(animation.get());
             animation->clear();
             LOG(Animations, "Removing KeyframeAnimation %p from renderer %p", animation.get(), renderer);
         }
     }
     
-    // Now remove the animations from the list.
-    for (auto* nameForRemoval : animsToBeRemoved)
-        m_keyframeAnimations.remove(nameForRemoval);
+    std::swap(newAnimations, m_keyframeAnimations);
 }
 
 bool CompositeAnimation::animate(RenderElement& renderer, RenderStyle* currentStyle, RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& blendedStyle)

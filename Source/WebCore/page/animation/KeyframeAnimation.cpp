@@ -41,11 +41,10 @@
 
 namespace WebCore {
 
-KeyframeAnimation::KeyframeAnimation(Animation& animation, RenderElement* renderer, int index, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
+KeyframeAnimation::KeyframeAnimation(Animation& animation, RenderElement* renderer, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
     : AnimationBase(animation, renderer, compositeAnimation)
     , m_keyframes(animation.name())
     , m_unanimatedStyle(RenderStyle::clonePtr(*unanimatedStyle))
-    , m_index(index)
 {
     // Get the keyframe RenderStyles
     if (m_object && m_object->element())
@@ -190,9 +189,8 @@ bool KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
 
 void KeyframeAnimation::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
 {
-    // If we're in the delay phase and we're not backwards filling, tell the caller
-    // to use the current style.
-    if (waitingToStart() && m_animation->delay() > 0 && !m_animation->fillsBackwards())
+    // If we're done, or in the delay phase and we're not backwards filling, tell the caller to use the current style.
+    if (postActive() || (waitingToStart() && m_animation->delay() > 0 && !m_animation->fillsBackwards()))
         return;
 
     if (!m_keyframes.size())
