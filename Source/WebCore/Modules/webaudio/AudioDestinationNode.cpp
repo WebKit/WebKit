@@ -68,6 +68,13 @@ void AudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t nu
         return;
     }
 
+    ASSERT(numberOfFrames);
+    if (!numberOfFrames) {
+        destinationBus->zero();
+        setIsSilent(true);
+        return;
+    }
+
     // Let the context take care of any business at the start of each render quantum.
     context().handlePreRenderTasks();
 
