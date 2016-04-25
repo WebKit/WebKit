@@ -1,3 +1,17 @@
+2016-04-25  Beth Dakin  <bdakin@apple.com>
+
+        WebEditorClient should properly write to m_rangeForCandidates
+        https://bugs.webkit.org/show_bug.cgi?id=157003
+        -and corresponding-
+        rdar://problem/25910418
+
+        Reviewed by Tim Horton.
+
+        Actually write to m_rangeForCandidates instead of declaring a local variable 
+        of the same name. :-/
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::requestCandidatesForSelection):
+
 2016-04-23  Andy Estes  <aestes@apple.com>
 
         Fix issues found by the clang static analyzer
