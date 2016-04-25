@@ -1,3 +1,27 @@
+2016-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Negative animation-delay is treated as 0s
+        https://bugs.webkit.org/show_bug.cgi?id=141008
+
+        Reviewed by Daniel Bates.
+        
+        Fix keyframe animations which start in the paused state.
+        
+        Explicitly move such animations from the new to the paused state, and
+        set m_pauseTime to 0, rather than leaving it at -1. Fix getElapsedTime()
+        to compute a correct time elapsed time for such animations, which takes
+        negative delay into account correctly.
+        
+        Fix assertions which need to account for the new transition of New -> PlayStatePaused.
+
+        Test: animations/play-state-start-paused.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::getElapsedTime):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+
 2016-04-25  Antti Koivisto  <antti@apple.com>
 
         Inline RenderStyle into RenderElement
