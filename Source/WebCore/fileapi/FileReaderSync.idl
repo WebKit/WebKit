@@ -30,7 +30,6 @@
 
 [
     Constructor,
-    UsePointersEvenForNonNullableObjectArguments,
     Exposed=Worker,
 ] interface FileReaderSync {
     [CallWith=ScriptExecutionContext, RaisesException] ArrayBuffer readAsArrayBuffer(Blob blob);

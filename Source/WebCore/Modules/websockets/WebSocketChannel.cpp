@@ -750,9 +750,10 @@ void WebSocketChannel::processOutgoingFrameQueue()
             case BlobLoaderNotStarted:
                 ref(); // Will be derefed after didFinishLoading() or didFail().
                 ASSERT(!m_blobLoader);
+                ASSERT(frame->blobData);
                 m_blobLoader = std::make_unique<FileReaderLoader>(FileReaderLoader::ReadAsArrayBuffer, this);
                 m_blobLoaderStatus = BlobLoaderStarted;
-                m_blobLoader->start(m_document, frame->blobData.get());
+                m_blobLoader->start(m_document, *frame->blobData);
                 m_outgoingFrameQueue.prepend(frame.release());
                 return;
 

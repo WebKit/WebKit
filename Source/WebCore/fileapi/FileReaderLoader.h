@@ -64,7 +64,7 @@ public:
     FileReaderLoader(ReadType, FileReaderLoaderClient*);
     ~FileReaderLoader();
 
-    void start(ScriptExecutionContext*, Blob*);
+    void start(ScriptExecutionContext*, Blob&);
     void cancel();
 
     // ThreadableLoaderClient

@@ -105,7 +105,7 @@ private:
     void derefEventTarget() override { deref(); }
 
     void terminate();
-    void readInternal(Blob*, FileReaderLoader::ReadType, ExceptionCode&);
+    void readInternal(Blob&, FileReaderLoader::ReadType, ExceptionCode&);
     void fireErrorEvent(int httpStatusCode);
     void fireEvent(const AtomicString& type);
 

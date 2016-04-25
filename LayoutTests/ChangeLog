@@ -1,3 +1,21 @@
+2016-04-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from File API interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=156898
+
+        Reviewed by Chris Dumez.
+
+        Checking FileReaderSync send method in case of null or undefined blob parameter.
+        worker-read-blob-sync.html and worker-read-file-sync check the case of badly typed parameters.
+        In all cases, TypeError is thrown.
+
+        * fast/files/workers/resources/worker-file-reader-sync-bad-parameter.js: Added.
+        (test):
+        * fast/files/workers/worker-file-reader-sync-bad-parameter-expected.txt: Added.
+        * fast/files/workers/worker-file-reader-sync-bad-parameter.html: Added.
+        * fast/files/workers/worker-read-blob-sync-expected.txt: Rebasing expectation.
+        * fast/files/workers/worker-read-file-sync-expected.txt: Ditto.
+
 2016-04-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix grid-template-columns|rows computed style with content alignment

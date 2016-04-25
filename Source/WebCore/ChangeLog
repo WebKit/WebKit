@@ -1,3 +1,38 @@
+2016-04-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from File API interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=156898
+
+        Reviewed by Chris Dumez.
+
+        Making FileReaderSync API API throwing a TypeError in case of null parameters, in lieu of a NOT_FOUND_ERR.
+        Making FileReader API taking nullable parameters as a temporary fix.
+
+        Test: fast/files/workers/worker-file-reader-sync-bad-parameter.html
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::processOutgoingFrameQueue): Updated to cope with FileReaderLoader::start taking a Blob&.
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::readAsArrayBuffer): Updated to cope with readInternal taking a Blob&.
+        (WebCore::FileReader::readAsBinaryString): Ditto.
+        (WebCore::FileReader::readAsText): Ditto.
+        (WebCore::FileReader::readAsDataURL): Ditto.
+        (WebCore::FileReader::readInternal):  Updated to cope with FileReaderLoader::start taking a Blob&.
+        * fileapi/FileReader.h:
+        * fileapi/FileReader.idl: Marking the readXX methods as taking a nullable blob parameter to keep compatibility, at least temporarily.
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::start): It now takes a Blob& as input.
+        * fileapi/FileReaderLoader.h:
+        * fileapi/FileReaderSync.cpp:
+        (WebCore::FileReaderSync::readAsArrayBuffer): Taking a Blob& as input.
+        (WebCore::FileReaderSync::readAsBinaryString): Ditto.
+        (WebCore::FileReaderSync::readAsText): Ditto.
+        (WebCore::FileReaderSync::readAsDataURL): Ditto.
+        (WebCore::FileReaderSync::startLoading) Ditto.
+        * fileapi/FileReaderSync.h:
+        (WebCore::FileReaderSync::readAsText): Ditto.
+        * fileapi/FileReaderSync.idl:
+
 2016-04-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix grid-template-columns|rows computed style with content alignment
