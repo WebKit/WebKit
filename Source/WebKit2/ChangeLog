@@ -1,3 +1,14 @@
+2016-04-24  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Update the ewk_settings_offline_web_application_cache_enabled_get() expected value after r199854.
+        https://bugs.webkit.org/show_bug.cgi?id=156968
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/C/WKPreferencesRef.h: Update the comment.
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp: 
+        (TEST_F):
+
 2016-04-23  Andy Estes  <aestes@apple.com>
 
         Fix issues found by the clang static analyzer
