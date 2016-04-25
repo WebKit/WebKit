@@ -1,3 +1,18 @@
+2016-04-25  Michael Saboff  <msaboff@apple.com>
+
+        Crash using @tryGetById in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=156992
+
+        Reviewed by Filip Pizlo.
+
+        We need to spill live registers when compiling TryGetById in DFG.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileTryGetById):
+        * tests/stress/regress-156992.js: New test.
+        (tryMultipleGetByIds):
+        (test):
+
 2016-04-25  Saam barati  <sbarati@apple.com>
 
         We don't have to parse a function's parameters every time if the function is in the source provider cache
