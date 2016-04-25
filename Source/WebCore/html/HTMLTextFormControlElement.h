@@ -80,7 +80,7 @@ public:
     virtual String value() const = 0;
 
     virtual TextControlInnerTextElement* innerTextElement() const = 0;
-    virtual std::unique_ptr<RenderStyle> createInnerTextStyle(const RenderStyle&) const = 0;
+    virtual RenderStyle createInnerTextStyle(const RenderStyle&) const = 0;
 
     void selectionChanged(bool shouldFireSelectEvent);
     WEBCORE_EXPORT bool lastChangeWasUserEdit() const;

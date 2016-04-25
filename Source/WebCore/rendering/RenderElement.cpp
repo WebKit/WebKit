@@ -82,7 +82,7 @@ static HashMap<const RenderObject*, ControlStates*>& controlStatesRendererMap()
     return map;
 }
 
-inline RenderElement::RenderElement(ContainerNode& elementOrDocument, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
+inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderObject(elementOrDocument)
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
@@ -104,12 +104,12 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, std::uniqu
 {
 }
 
-RenderElement::RenderElement(Element& element, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
+RenderElement::RenderElement(Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderElement(static_cast<ContainerNode&>(element), WTFMove(style), baseTypeFlags)
 {
 }
 
-RenderElement::RenderElement(Document& document, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
+RenderElement::RenderElement(Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderElement(static_cast<ContainerNode&>(document), WTFMove(style), baseTypeFlags)
 {
 }
@@ -117,24 +117,24 @@ RenderElement::RenderElement(Document& document, std::unique_ptr<RenderStyle> st
 RenderElement::~RenderElement()
 {
     if (hasInitializedStyle()) {
-        for (const FillLayer* bgLayer = m_style->backgroundLayers(); bgLayer; bgLayer = bgLayer->next()) {
+        for (const FillLayer* bgLayer = m_style.backgroundLayers(); bgLayer; bgLayer = bgLayer->next()) {
             if (StyleImage* backgroundImage = bgLayer->image())
                 backgroundImage->removeClient(this);
         }
 
-        for (const FillLayer* maskLayer = m_style->maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
+        for (const FillLayer* maskLayer = m_style.maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
             if (StyleImage* maskImage = maskLayer->image())
                 maskImage->removeClient(this);
         }
 
-        if (StyleImage* borderImage = m_style->borderImage().image())
+        if (StyleImage* borderImage = m_style.borderImage().image())
             borderImage->removeClient(this);
 
-        if (StyleImage* maskBoxImage = m_style->maskBoxImage().image())
+        if (StyleImage* maskBoxImage = m_style.maskBoxImage().image())
             maskBoxImage->removeClient(this);
 
 #if ENABLE(CSS_SHAPES)
-        if (auto shapeValue = m_style->shapeOutside()) {
+        if (auto shapeValue = m_style.shapeOutside()) {
             if (auto shapeImage = shapeValue->image())
                 shapeImage->removeClient(this);
         }
@@ -146,12 +146,12 @@ RenderElement::~RenderElement()
         view().unregisterForVisibleInViewportCallback(*this);
 }
 
-RenderPtr<RenderElement> RenderElement::createFor(Element& element, std::unique_ptr<RenderStyle> style)
+RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&& style)
 {
     // Minimal support for content properties replacing an entire element.
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
-    const ContentData* contentData = style->contentData();
+    const ContentData* contentData = style.contentData();
     if (contentData && !contentData->next() && is<ImageContentData>(*contentData) && !element.isPseudoElement()) {
         auto& styleImage = downcast<ImageContentData>(*contentData).image();
         auto image = createRenderer<RenderImage>(element, WTFMove(style), const_cast<StyleImage*>(&styleImage));
@@ -159,7 +159,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, std::unique_
         return WTFMove(image);
     }
 
-    switch (style->display()) {
+    switch (style.display()) {
     case NONE:
     case CONTENTS:
         return nullptr;
@@ -375,14 +375,14 @@ void RenderElement::initializeStyle()
 
     m_hasInitializedStyle = true;
 
-    updateFillImages(nullptr, m_style->backgroundLayers());
-    updateFillImages(nullptr, m_style->maskLayers());
+    updateFillImages(nullptr, m_style.backgroundLayers());
+    updateFillImages(nullptr, m_style.maskLayers());
 
-    updateImage(nullptr, m_style->borderImage().image());
-    updateImage(nullptr, m_style->maskBoxImage().image());
+    updateImage(nullptr, m_style.borderImage().image());
+    updateImage(nullptr, m_style.maskBoxImage().image());
 
 #if ENABLE(CSS_SHAPES)
-    updateShapeImage(nullptr, m_style->shapeOutside());
+    updateShapeImage(nullptr, m_style.shapeOutside());
 #endif
 
     styleDidChange(StyleDifferenceNewStyle, nullptr);
@@ -394,7 +394,7 @@ void RenderElement::initializeStyle()
     // have their parent set before getting a call to initializeStyle() :|
 }
 
-void RenderElement::setStyle(std::unique_ptr<RenderStyle> style, StyleDifference minimalStyleDifference)
+void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDifference)
 {
     // FIXME: Should change RenderView so it can use initializeStyle too.
     // If we do that, we can assert m_hasInitializedStyle unconditionally,
@@ -404,34 +404,34 @@ void RenderElement::setStyle(std::unique_ptr<RenderStyle> style, StyleDifference
     StyleDifference diff = StyleDifferenceEqual;
     unsigned contextSensitiveProperties = ContextSensitivePropertyNone;
     if (m_hasInitializedStyle)
-        diff = m_style->diff(*style, contextSensitiveProperties);
+        diff = m_style.diff(style, contextSensitiveProperties);
 
     diff = std::max(diff, minimalStyleDifference);
 
     diff = adjustStyleDifference(diff, contextSensitiveProperties);
 
-    styleWillChange(diff, *style);
+    styleWillChange(diff, style);
 
     auto oldStyle = WTFMove(m_style);
     m_style = WTFMove(style);
 
-    updateFillImages(oldStyle->backgroundLayers(), m_style->backgroundLayers());
-    updateFillImages(oldStyle->maskLayers(), m_style->maskLayers());
+    updateFillImages(oldStyle.backgroundLayers(), m_style.backgroundLayers());
+    updateFillImages(oldStyle.maskLayers(), m_style.maskLayers());
 
-    updateImage(oldStyle->borderImage().image(), m_style->borderImage().image());
-    updateImage(oldStyle->maskBoxImage().image(), m_style->maskBoxImage().image());
+    updateImage(oldStyle.borderImage().image(), m_style.borderImage().image());
+    updateImage(oldStyle.maskBoxImage().image(), m_style.maskBoxImage().image());
 
 #if ENABLE(CSS_SHAPES)
-    updateShapeImage(oldStyle->shapeOutside(), m_style->shapeOutside());
+    updateShapeImage(oldStyle.shapeOutside(), m_style.shapeOutside());
 #endif
 
     bool doesNotNeedLayout = !parent();
 
-    styleDidChange(diff, oldStyle.get());
+    styleDidChange(diff, &oldStyle);
 
     // Text renderers use their parent style. Notify them about the change.
     for (auto& child : childrenOfType<RenderText>(*this))
-        child.styleDidChange(diff, oldStyle.get());
+        child.styleDidChange(diff, &oldStyle);
 
     // FIXME: |this| might be destroyed here. This can currently happen for a RenderTextFragment when
     // its first-letter block gets an update in RenderTextFragment::styleDidChange. For RenderTextFragment(s),
@@ -448,9 +448,9 @@ void RenderElement::setStyle(std::unique_ptr<RenderStyle> style, StyleDifference
         if (updatedDiff == StyleDifferenceLayout)
             setNeedsLayoutAndPrefWidthsRecalc();
         else if (updatedDiff == StyleDifferenceLayoutPositionedMovementOnly)
-            setNeedsPositionedMovementLayout(oldStyle.get());
+            setNeedsPositionedMovementLayout(&oldStyle);
         else if (updatedDiff == StyleDifferenceSimplifiedLayoutAndPositionedMovement) {
-            setNeedsPositionedMovementLayout(oldStyle.get());
+            setNeedsPositionedMovementLayout(&oldStyle);
             setNeedsSimplifiedNormalFlowLayout();
         } else if (updatedDiff == StyleDifferenceSimplifiedLayout)
             setNeedsSimplifiedNormalFlowLayout();
@@ -782,18 +782,18 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (is<RenderFlowThread>(elementChild))
             continue;
 
-        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), elementChild.style().display());
+        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), elementChild.style().display());
         if (style().specifiesColumns()) {
             if (elementChild.style().specifiesColumns())
-                newStyle->inheritColumnPropertiesFrom(&style());
+                newStyle.inheritColumnPropertiesFrom(&style());
             if (elementChild.style().columnSpan())
-                newStyle->setColumnSpan(ColumnSpanAll);
+                newStyle.setColumnSpan(ColumnSpanAll);
         }
 
         // Preserve the position style of anonymous block continuations as they can have relative or sticky position when
         // they contain block descendants of relative or sticky positioned inlines.
         if (elementChild.isInFlowPositioned() && downcast<RenderBlock>(elementChild).isAnonymousBlockContinuation())
-            newStyle->setPosition(elementChild.style().position());
+            newStyle.setPosition(elementChild.style().position());
 
         elementChild.setStyle(WTFMove(newStyle));
     }
@@ -810,9 +810,9 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
     if (oldStyle) {
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
-        bool visibilityChanged = m_style->visibility() != newStyle.visibility()
-            || m_style->zIndex() != newStyle.zIndex()
-            || m_style->hasAutoZIndex() != newStyle.hasAutoZIndex();
+        bool visibilityChanged = m_style.visibility() != newStyle.visibility()
+            || m_style.zIndex() != newStyle.zIndex()
+            || m_style.hasAutoZIndex() != newStyle.hasAutoZIndex();
 #if ENABLE(DASHBOARD_SUPPORT)
         if (visibilityChanged)
             document().setAnnotatedRegionsDirty(true);
@@ -827,7 +827,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         }
 
         // Keep layer hierarchy visibility bits up to date if visibility changes.
-        if (m_style->visibility() != newStyle.visibility()) {
+        if (m_style.visibility() != newStyle.visibility()) {
             if (RenderLayer* layer = enclosingLayer()) {
                 if (newStyle.visibility() == VISIBLE)
                     layer->setHasVisibleContent();
@@ -839,16 +839,17 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             }
         }
 
-        if (m_parent && (newStyle.outlineSize() < m_style->outlineSize() || shouldRepaintForStyleDifference(diff)))
+        if (m_parent && (newStyle.outlineSize() < m_style.outlineSize() || shouldRepaintForStyleDifference(diff)))
             repaint();
-        if (isFloating() && (m_style->floating() != newStyle.floating()))
+        if (isFloating() && m_style.floating() != newStyle.floating()) {
             // For changes in float styles, we need to conceivably remove ourselves
             // from the floating objects list.
             downcast<RenderBox>(*this).removeFloatingOrPositionedChildFromBlockLists();
-        else if (isOutOfFlowPositioned() && (m_style->position() != newStyle.position()))
+        } else if (isOutOfFlowPositioned() && m_style.position() != newStyle.position()) {
             // For changes in positioning styles, we need to conceivably remove ourselves
             // from the positioned objects list.
             downcast<RenderBox>(*this).removeFloatingOrPositionedChildFromBlockLists();
+        }
 
         s_affectsParentBlock = isFloatingOrOutOfFlowPositioned()
             && (!newStyle.isFloating() && !newStyle.hasOutOfFlowPosition())
@@ -873,7 +874,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
     }
 
     bool newStyleUsesFixedBackgrounds = newStyle.hasFixedBackgroundImage();
-    bool oldStyleUsesFixedBackgrounds = m_style->hasFixedBackgroundImage();
+    bool oldStyleUsesFixedBackgrounds = m_style.hasFixedBackgroundImage();
     if (newStyleUsesFixedBackgrounds || oldStyleUsesFixedBackgrounds) {
         bool repaintFixedBackgroundsOnScroll = !frame().settings().fixedBackgroundsPaintRelativeToDocument();
 
@@ -885,7 +886,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
                 if (newStyleSlowScroll && newStyle.hasEntirelyFixedBackground())
                     newStyleSlowScroll = false;
 
-                if (oldStyleSlowScroll && m_style->hasEntirelyFixedBackground())
+                if (oldStyleSlowScroll && m_style.hasEntirelyFixedBackground())
                     oldStyleSlowScroll = false;
             }
         }
@@ -980,14 +981,14 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         return;
     
     if (diff == StyleDifferenceLayout || diff == StyleDifferenceSimplifiedLayout) {
-        RenderCounter::rendererStyleChanged(*this, oldStyle, m_style.get());
+        RenderCounter::rendererStyleChanged(*this, oldStyle, &m_style);
 
         // If the object already needs layout, then setNeedsLayout won't do
         // any work. But if the containing block has changed, then we may need
         // to mark the new containing blocks for layout. The change that can
         // directly affect the containing block of this object is a change to
         // the position style.
-        if (needsLayout() && oldStyle->position() != m_style->position())
+        if (needsLayout() && oldStyle->position() != m_style.position())
             markContainingBlocksForLayout();
 
         if (diff == StyleDifferenceLayout)
@@ -1055,7 +1056,7 @@ void RenderElement::willBeRemovedFromTree()
         removeLayers(layer);
     }
 
-    if (m_style->hasFixedBackgroundImage() && !frame().settings().fixedBackgroundsPaintRelativeToDocument())
+    if (m_style.hasFixedBackgroundImage() && !frame().settings().fixedBackgroundsPaintRelativeToDocument())
         view().frameView().removeSlowRepaintObject(this);
 
     if (isOutOfFlowPositioned() && parent()->childrenInline())

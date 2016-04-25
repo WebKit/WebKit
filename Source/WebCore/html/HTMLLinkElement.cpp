@@ -237,11 +237,11 @@ void HTMLLinkElement::process()
 
         bool mediaQueryMatches = true;
         if (!m_media.isEmpty()) {
-            std::unique_ptr<RenderStyle> documentStyle;
+            Optional<RenderStyle> documentStyle;
             if (document().hasLivingRenderTree())
                 documentStyle = Style::resolveForDocument(document());
             RefPtr<MediaQuerySet> media = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
-            MediaQueryEvaluator evaluator(document().frame()->view()->mediaType(), document().frame(), documentStyle.get());
+            MediaQueryEvaluator evaluator(document().frame()->view()->mediaType(), document().frame(), documentStyle ? &*documentStyle : nullptr);
             mediaQueryMatches = evaluator.eval(media.get());
         }
 

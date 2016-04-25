@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, std::unique_ptr<RenderStyle> style)
+RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderSVGShape(element, WTFMove(style))
 {
 }

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class RenderFullScreen final : public RenderFlexibleBox {
 public:
-    RenderFullScreen(Document&, std::unique_ptr<RenderStyle>);
+    RenderFullScreen(Document&, RenderStyle&&);
 
     const char* renderName() const override { return "RenderFullScreen"; }
 

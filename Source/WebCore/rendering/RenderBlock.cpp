@@ -181,12 +181,12 @@ private:
     bool m_hadVerticalLayoutOverflow;
 };
 
-RenderBlock::RenderBlock(Element& element, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
+RenderBlock::RenderBlock(Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderBox(element, WTFMove(style), baseTypeFlags | RenderBlockFlag)
 {
 }
 
-RenderBlock::RenderBlock(Document& document, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
+RenderBlock::RenderBlock(Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderBox(document, WTFMove(style), baseTypeFlags | RenderBlockFlag)
 {
 }
@@ -306,7 +306,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         for (RenderBlock* currCont = blockElementContinuation(); currCont; currCont = currCont->blockElementContinuation()) {
             RenderBoxModelObject* nextCont = currCont->continuation();
             currCont->setContinuation(0);
-            currCont->setStyle(RenderStyle::clone(&newStyle));
+            currCont->setStyle(RenderStyle::clone(newStyle));
             currCont->setContinuation(nextCont);
         }
     }
@@ -391,7 +391,7 @@ RenderPtr<RenderBlock> RenderBlock::clone() const
         cloneBlock->setChildrenInline(childrenInline());
     } else {
         RenderTreePosition insertionPosition(*parent());
-        cloneBlock = static_pointer_cast<RenderBlock>(element()->createElementRenderer(RenderStyle::clone(&style()), insertionPosition));
+        cloneBlock = static_pointer_cast<RenderBlock>(element()->createElementRenderer(RenderStyle::clone(style()), insertionPosition));
         cloneBlock->initializeStyle();
 
         // This takes care of setting the right value of childrenInline in case
@@ -717,7 +717,7 @@ void RenderBlock::removeChild(RenderObject& oldChild)
             ASSERT(!inlineChildrenBlock.continuation());
             // Cache this value as it might get changed in setStyle() call.
             bool inlineChildrenBlockHasLayer = inlineChildrenBlock.hasLayer();
-            inlineChildrenBlock.setStyle(RenderStyle::createAnonymousStyleWithDisplay(&style(), BLOCK));
+            inlineChildrenBlock.setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
             removeChildInternal(inlineChildrenBlock, inlineChildrenBlockHasLayer ? NotifyChildren : DontNotifyChildren);
             
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
@@ -3068,9 +3068,9 @@ void RenderBlock::updateFirstLetterStyle(RenderElement* firstLetterBlock, Render
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
         RenderBoxModelObject* newFirstLetter;
         if (pseudoStyle.display() == INLINE)
-            newFirstLetter = new RenderInline(document(), RenderStyle::clone(&pseudoStyle));
+            newFirstLetter = new RenderInline(document(), RenderStyle::clone(pseudoStyle));
         else
-            newFirstLetter = new RenderBlockFlow(document(), RenderStyle::clone(&pseudoStyle));
+            newFirstLetter = new RenderBlockFlow(document(), RenderStyle::clone(pseudoStyle));
         newFirstLetter->initializeStyle();
 
         // Move the first letter into the new renderer.
@@ -3096,7 +3096,7 @@ void RenderBlock::updateFirstLetterStyle(RenderElement* firstLetterBlock, Render
         firstLetter = newFirstLetter;
         firstLetterContainer->addChild(firstLetter, nextSibling);
     } else
-        firstLetter->setStyle(RenderStyle::clone(&pseudoStyle));
+        firstLetter->setStyle(RenderStyle::clone(pseudoStyle));
 }
 
 void RenderBlock::createFirstLetterRenderer(RenderElement* firstLetterBlock, RenderText* currentTextChild)
@@ -3105,9 +3105,9 @@ void RenderBlock::createFirstLetterRenderer(RenderElement* firstLetterBlock, Ren
     RenderStyle& pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     RenderBoxModelObject* firstLetter = nullptr;
     if (pseudoStyle.display() == INLINE)
-        firstLetter = new RenderInline(document(), RenderStyle::clone(&pseudoStyle));
+        firstLetter = new RenderInline(document(), RenderStyle::clone(pseudoStyle));
     else
-        firstLetter = new RenderBlockFlow(document(), RenderStyle::clone(&pseudoStyle));
+        firstLetter = new RenderBlockFlow(document(), RenderStyle::clone(pseudoStyle));
     firstLetter->initializeStyle();
     firstLetterContainer->addChild(firstLetter, currentTextChild);
 
@@ -3743,9 +3743,9 @@ RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const Rend
     // FIXME: Do we need to convert all our inline displays to block-type in the anonymous logic ?
     RenderBlock* newBox;
     if (display == FLEX || display == INLINE_FLEX)
-        newBox = new RenderFlexibleBox(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(&parent->style(), FLEX));
+        newBox = new RenderFlexibleBox(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), FLEX));
     else
-        newBox = new RenderBlockFlow(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(&parent->style(), BLOCK));
+        newBox = new RenderBlockFlow(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK));
 
     newBox->initializeStyle();
     return newBox;

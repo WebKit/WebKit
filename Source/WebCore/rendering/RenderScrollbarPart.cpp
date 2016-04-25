@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-RenderScrollbarPart::RenderScrollbarPart(Document& document, std::unique_ptr<RenderStyle> style, RenderScrollbar* scrollbar, ScrollbarPart part)
+RenderScrollbarPart::RenderScrollbarPart(Document& document, RenderStyle&& style, RenderScrollbar* scrollbar, ScrollbarPart part)
     : RenderBlock(document, WTFMove(style), 0)
     , m_scrollbar(scrollbar)
     , m_part(part)

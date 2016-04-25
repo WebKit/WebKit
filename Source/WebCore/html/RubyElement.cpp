@@ -43,11 +43,11 @@ Ref<RubyElement> RubyElement::create(const QualifiedName& tagName, Document& doc
     return adoptRef(*new RubyElement(tagName, document));
 }
 
-RenderPtr<RenderElement> RubyElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> RubyElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
-    if (style->display() == INLINE)
+    if (style.display() == INLINE)
         return createRenderer<RenderRubyAsInline>(*this, WTFMove(style));
-    if (style->display() == BLOCK || style->display() == INLINE_BLOCK)
+    if (style.display() == BLOCK || style.display() == INLINE_BLOCK)
         return createRenderer<RenderRubyAsBlock>(*this, WTFMove(style));
     return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 }

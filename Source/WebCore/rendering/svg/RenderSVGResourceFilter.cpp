@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement& element, std::unique_ptr<RenderStyle> style)
+RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement& element, RenderStyle&& style)
     : RenderSVGResourceContainer(element, WTFMove(style))
 {
 }

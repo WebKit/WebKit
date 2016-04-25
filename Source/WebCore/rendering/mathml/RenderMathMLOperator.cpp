@@ -72,7 +72,7 @@ static const StretchyCharacter stretchyCharacters[14] = {
     { 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
 };
 
-RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, std::unique_ptr<RenderStyle> style)
+RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, RenderStyle&& style)
     : RenderMathMLToken(element, WTFMove(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
@@ -82,7 +82,7 @@ RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, std::unique_p
     updateTokenContent();
 }
 
-RenderMathMLOperator::RenderMathMLOperator(Document& document, std::unique_ptr<RenderStyle> style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
+RenderMathMLOperator::RenderMathMLOperator(Document& document, RenderStyle&& style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
     : RenderMathMLToken(document, WTFMove(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
@@ -631,9 +631,9 @@ void RenderMathMLOperator::updateStyle()
     // FIXME: The spacing should be added to the whole embellished operator (https://bugs.webkit.org/show_bug.cgi?id=124831).
     // FIXME: The spacing should only be added inside (perhaps inferred) mrow (http://www.w3.org/TR/MathML/chapter3.html#presm.opspacing).
     const auto& wrapper = downcast<RenderElement>(firstChild());
-    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
-    newStyle->setMarginStart(Length(m_leadingSpace, Fixed));
-    newStyle->setMarginEnd(Length(m_trailingSpace, Fixed));
+    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
+    newStyle.setMarginStart(Length(m_leadingSpace, Fixed));
+    newStyle.setMarginEnd(Length(m_trailingSpace, Fixed));
     wrapper->setStyle(WTFMove(newStyle));
     wrapper->setNeedsLayoutAndPrefWidthsRecalc();
 

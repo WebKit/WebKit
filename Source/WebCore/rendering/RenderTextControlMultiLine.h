@@ -30,7 +30,7 @@ class HTMLTextAreaElement;
 
 class RenderTextControlMultiLine final : public RenderTextControl {
 public:
-    RenderTextControlMultiLine(HTMLTextAreaElement&, std::unique_ptr<RenderStyle>);
+    RenderTextControlMultiLine(HTMLTextAreaElement&, RenderStyle&&);
     virtual ~RenderTextControlMultiLine();
 
     HTMLTextAreaElement& textAreaElement() const;

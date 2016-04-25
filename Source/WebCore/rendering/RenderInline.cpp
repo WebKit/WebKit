@@ -52,13 +52,13 @@
 
 namespace WebCore {
 
-RenderInline::RenderInline(Element& element, std::unique_ptr<RenderStyle> style)
+RenderInline::RenderInline(Element& element, RenderStyle&& style)
     : RenderBoxModelObject(element, WTFMove(style), RenderInlineFlag)
 {
     setChildrenInline(true);
 }
 
-RenderInline::RenderInline(Document& document, std::unique_ptr<RenderStyle> style)
+RenderInline::RenderInline(Document& document, RenderStyle&& style)
     : RenderBoxModelObject(document, WTFMove(style), RenderInlineFlag)
 {
     setChildrenInline(true);
@@ -158,8 +158,8 @@ static void updateStyleOfAnonymousBlockContinuations(const RenderBlock& block, c
         RenderInline* continuation = block.inlineElementContinuation();
         if (oldStyle->hasInFlowPosition() && inFlowPositionedInlineAncestor(continuation))
             continue;
-        auto blockStyle = RenderStyle::createAnonymousStyleWithDisplay(&block.style(), BLOCK);
-        blockStyle->setPosition(newStyle->position());
+        auto blockStyle = RenderStyle::createAnonymousStyleWithDisplay(block.style(), BLOCK);
+        blockStyle.setPosition(newStyle->position());
         block.setStyle(WTFMove(blockStyle));
     }
 }
@@ -193,7 +193,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         for (RenderInline* currCont = continuation; currCont; currCont = currCont->inlineElementContinuation()) {
             RenderBoxModelObject* nextCont = currCont->continuation();
             currCont->setContinuation(nullptr);
-            currCont->setStyle(RenderStyle::clone(&newStyle));
+            currCont->setStyle(RenderStyle::clone(newStyle));
             currCont->setContinuation(nextCont);
         }
         // If an inline's in-flow positioning has changed and it is part of an active continuation as a descendant of an anonymous containing block,
@@ -331,12 +331,12 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         // inline into continuations.  This involves creating an anonymous block box to hold
         // |newChild|.  We then make that block box a continuation of this inline.  We take all of
         // the children after |beforeChild| and put them in a clone of this object.
-        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), BLOCK);
+        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
         
         // If inside an inline affected by in-flow positioning the block needs to be affected by it too.
         // Giving the block a layer like this allows it to collect the x/y offsets from inline parents later.
         if (auto positionedAncestor = inFlowPositionedInlineAncestor(this))
-            newStyle->setPosition(positionedAncestor->style().position());
+            newStyle.setPosition(positionedAncestor->style().position());
 
         RenderBlock* newBox = new RenderBlockFlow(document(), WTFMove(newStyle));
         newBox->initializeStyle();
@@ -397,7 +397,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
  
         if (!newChild->isFloatingOrOutOfFlowPositioned()) {
             // There was no suitable existing anonymous inline-block. Create a new one.
-            RenderBlockFlow* anonymousInlineBlock = new RenderBlockFlow(document(), RenderStyle::createAnonymousStyleWithDisplay(&style(), INLINE_BLOCK));
+            RenderBlockFlow* anonymousInlineBlock = new RenderBlockFlow(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), INLINE_BLOCK));
             anonymousInlineBlock->initializeStyle();
     
             RenderBoxModelObject::addChild(anonymousInlineBlock, beforeChild);
@@ -413,7 +413,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
 
 RenderPtr<RenderInline> RenderInline::clone() const
 {
-    RenderPtr<RenderInline> cloneInline = createRenderer<RenderInline>(*element(), RenderStyle::clone(&style()));
+    RenderPtr<RenderInline> cloneInline = createRenderer<RenderInline>(*element(), RenderStyle::clone(style()));
     cloneInline->initializeStyle();
     cloneInline->setFlowThreadState(flowThreadState());
     cloneInline->setHasOutlineAutoAncestor(hasOutlineAutoAncestor());

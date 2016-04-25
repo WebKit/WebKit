@@ -33,7 +33,7 @@ class HTMLInputElement;
 
 class RenderSearchField final : public RenderTextControlSingleLine, private PopupMenuClient {
 public:
-    RenderSearchField(HTMLInputElement&, std::unique_ptr<RenderStyle>);
+    RenderSearchField(HTMLInputElement&, RenderStyle&&);
     virtual ~RenderSearchField();
 
     void updateCancelButtonVisibility() const;

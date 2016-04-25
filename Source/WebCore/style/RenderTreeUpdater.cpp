@@ -251,7 +251,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, Style::ElementUp
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();
-        createRenderer(element, WTFMove(update.style));
+        createRenderer(element, WTFMove(*update.style));
         invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(element);
         return;
     }
@@ -261,19 +261,19 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, Style::ElementUp
     auto& renderer = *element.renderer();
 
     if (update.isSynthetic) {
-        renderer.setStyle(WTFMove(update.style), StyleDifferenceRecompositeLayer);
+        renderer.setStyle(WTFMove(*update.style), StyleDifferenceRecompositeLayer);
         return;
     }
 
     if (update.change == Style::NoChange) {
         if (pseudoStyleCacheIsInvalid(&renderer, update.style.get()) || (parent().styleChange == Style::Force && renderer.requiresForcedStyleRecalcPropagation())) {
-            renderer.setStyle(WTFMove(update.style), StyleDifferenceEqual);
+            renderer.setStyle(WTFMove(*update.style), StyleDifferenceEqual);
             return;
         }
         return;
     }
 
-    renderer.setStyle(WTFMove(update.style), StyleDifferenceEqual);
+    renderer.setStyle(WTFMove(*update.style), StyleDifferenceEqual);
 }
 
 #if ENABLE(CSS_REGIONS)
@@ -289,17 +289,17 @@ static RenderNamedFlowThread* moveToFlowThreadIfNeeded(Element& element, const R
 }
 #endif
 
-void RenderTreeUpdater::createRenderer(Element& element, std::unique_ptr<RenderStyle> style)
+void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
 {
     if (!shouldCreateRenderer(element, renderTreePosition().parent()))
         return;
 
     RenderNamedFlowThread* parentFlowRenderer = nullptr;
 #if ENABLE(CSS_REGIONS)
-    parentFlowRenderer = moveToFlowThreadIfNeeded(element, *style);
+    parentFlowRenderer = moveToFlowThreadIfNeeded(element, style);
 #endif
 
-    if (!element.rendererIsNeeded(*style))
+    if (!element.rendererIsNeeded(style))
         return;
 
     renderTreePosition().computeNextSibling(element);
@@ -326,7 +326,7 @@ void RenderTreeUpdater::createRenderer(Element& element, std::unique_ptr<RenderS
     std::unique_ptr<RenderStyle> animatedStyle;
     newRenderer->animation().updateAnimations(*newRenderer, initialStyle, animatedStyle);
     if (animatedStyle)
-        newRenderer->setStyleInternal(WTFMove(animatedStyle));
+        newRenderer->setStyleInternal(WTFMove(*animatedStyle));
 
     newRenderer->initializeStyle();
 
@@ -482,7 +482,7 @@ void RenderTreeUpdater::updateBeforeOrAfterPseudoElement(Element& current, Pseud
 
     Style::ElementUpdate elementUpdate;
 
-    auto newStyle = RenderStyle::clone(current.renderer()->getCachedPseudoStyle(pseudoId, &current.renderer()->style()));
+    auto newStyle = RenderStyle::clonePtr(*current.renderer()->getCachedPseudoStyle(pseudoId, &current.renderer()->style()));
 
     std::unique_ptr<RenderStyle> animatedStyle;
     if (renderer && m_document.frame()->animation().updateAnimations(*renderer, *newStyle, animatedStyle))

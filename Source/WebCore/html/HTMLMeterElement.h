@@ -70,7 +70,7 @@ private:
 
     bool supportLabels() const override { return true; }
 
-    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 

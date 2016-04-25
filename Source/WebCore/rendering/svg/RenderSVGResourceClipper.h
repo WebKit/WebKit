@@ -35,7 +35,7 @@ typedef std::unique_ptr<ImageBuffer> ClipperMaskImage;
 
 class RenderSVGResourceClipper final : public RenderSVGResourceContainer {
 public:
-    RenderSVGResourceClipper(SVGClipPathElement&, std::unique_ptr<RenderStyle>);
+    RenderSVGResourceClipper(SVGClipPathElement&, RenderStyle&&);
     virtual ~RenderSVGResourceClipper();
 
     SVGClipPathElement& clipPathElement() const { return downcast<SVGClipPathElement>(nodeForNonAnonymous()); }

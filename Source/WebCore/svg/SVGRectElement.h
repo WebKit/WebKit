@@ -44,7 +44,7 @@ private:
 
     bool selfHasRelativeLengths() const override { return true; }
 
-    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGRectElement)
         DECLARE_ANIMATED_LENGTH(X, x)

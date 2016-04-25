@@ -43,7 +43,7 @@ private:
 
     bool selfHasRelativeLengths() const override { return true; };
 
-    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGEllipseElement)
         DECLARE_ANIMATED_LENGTH(Cx, cx)

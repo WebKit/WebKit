@@ -28,7 +28,7 @@ class RenderTable;
 
 class RenderTableCaption final : public RenderBlockFlow {
 public:
-    RenderTableCaption(Element&, std::unique_ptr<RenderStyle>);
+    RenderTableCaption(Element&, RenderStyle&&);
     virtual ~RenderTableCaption();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }

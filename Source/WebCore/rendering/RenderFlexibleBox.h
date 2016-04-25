@@ -38,8 +38,8 @@ namespace WebCore {
 
 class RenderFlexibleBox : public RenderBlock {
 public:
-    RenderFlexibleBox(Element&, std::unique_ptr<RenderStyle>);
-    RenderFlexibleBox(Document&, std::unique_ptr<RenderStyle>);
+    RenderFlexibleBox(Element&, RenderStyle&&);
+    RenderFlexibleBox(Document&, RenderStyle&&);
     virtual ~RenderFlexibleBox();
 
     const char* renderName() const override;

@@ -44,7 +44,7 @@ HTMLWBRElement::HTMLWBRElement(const QualifiedName& tagName, Document& document)
     ASSERT(hasTagName(wbrTag));
 }
 
-RenderPtr<RenderElement> HTMLWBRElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLWBRElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderLineBreak>(*this, WTFMove(style));
 }

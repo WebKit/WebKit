@@ -39,9 +39,9 @@ public:
     bool hasReplacedLogicalHeight() const;
 
 protected:
-    RenderReplaced(Element&, std::unique_ptr<RenderStyle>);
-    RenderReplaced(Element&, std::unique_ptr<RenderStyle>, const LayoutSize& intrinsicSize);
-    RenderReplaced(Document&, std::unique_ptr<RenderStyle>, const LayoutSize& intrinsicSize);
+    RenderReplaced(Element&, RenderStyle&&);
+    RenderReplaced(Element&, RenderStyle&&, const LayoutSize& intrinsicSize);
+    RenderReplaced(Document&, RenderStyle&&, const LayoutSize& intrinsicSize);
 
     void layout() override;
 

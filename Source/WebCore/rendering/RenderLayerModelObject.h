@@ -52,8 +52,8 @@ public:
     virtual bool isScrollableOrRubberbandableBox() const { return false; }
 
 protected:
-    RenderLayerModelObject(Element&, std::unique_ptr<RenderStyle>, BaseTypeFlags);
-    RenderLayerModelObject(Document&, std::unique_ptr<RenderStyle>, BaseTypeFlags);
+    RenderLayerModelObject(Element&, RenderStyle&&, BaseTypeFlags);
+    RenderLayerModelObject(Document&, RenderStyle&&, BaseTypeFlags);
 
     void createLayer();
 

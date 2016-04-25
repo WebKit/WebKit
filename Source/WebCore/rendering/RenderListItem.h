@@ -33,7 +33,7 @@ class RenderListMarker;
 
 class RenderListItem final : public RenderBlockFlow {
 public:
-    RenderListItem(Element&, std::unique_ptr<RenderStyle>);
+    RenderListItem(Element&, RenderStyle&&);
     virtual ~RenderListItem();
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 

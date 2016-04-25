@@ -339,7 +339,7 @@ bool HTMLSelectElement::canSelectAll() const
     return !usesMenuList();
 }
 
-RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
 #if !PLATFORM(IOS)
     if (usesMenuList())

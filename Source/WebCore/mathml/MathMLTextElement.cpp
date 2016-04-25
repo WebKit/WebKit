@@ -75,7 +75,7 @@ void MathMLTextElement::parseAttribute(const QualifiedName& name, const AtomicSt
     MathMLElement::parseAttribute(name, value);
 }
 
-RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     if (hasTagName(MathMLNames::moTag))
         return createRenderer<RenderMathMLOperator>(*this, WTFMove(style));
@@ -88,7 +88,7 @@ RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(std::unique_pt
 
     // FIXME: why do we have to set the alignment here ? It seems needed to make the
     // style-changed.htmt test to pass, since mathml renders expect Stretch as default.
-    style->setAlignItemsPosition(ItemPositionStretch);
+    style.setAlignItemsPosition(ItemPositionStretch);
 
     return createRenderer<RenderMathMLToken>(*this, WTFMove(style));
 }

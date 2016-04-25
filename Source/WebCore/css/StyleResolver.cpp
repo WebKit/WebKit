@@ -388,11 +388,11 @@ ElementStyle StyleResolver::styleForElement(const Element& element, RenderStyle*
     State& state = m_state;
 
     if (state.parentStyle()) {
-        state.setStyle(RenderStyle::create());
+        state.setStyle(RenderStyle::createPtr());
         state.style()->inheritFrom(state.parentStyle(), isAtShadowBoundary(element) ? RenderStyle::AtShadowBoundary : RenderStyle::NotAtShadowBoundary);
     } else {
         state.setStyle(defaultStyleForElement());
-        state.setParentStyle(RenderStyle::clone(state.style()));
+        state.setParentStyle(RenderStyle::clonePtr(*state.style()));
     }
 
     auto& style = *state.style();
@@ -453,8 +453,8 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
     State& state = m_state;
 
     // Create the style
-    state.setStyle(RenderStyle::clone(elementStyle));
-    state.setParentStyle(RenderStyle::clone(elementStyle));
+    state.setStyle(RenderStyle::clonePtr(*elementStyle));
+    state.setParentStyle(RenderStyle::clonePtr(*elementStyle));
 
     TextDirection direction;
     WritingMode writingMode;
@@ -565,11 +565,11 @@ std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element&
     State& state = m_state;
 
     if (m_state.parentStyle()) {
-        state.setStyle(RenderStyle::create());
+        state.setStyle(RenderStyle::createPtr());
         state.style()->inheritFrom(m_state.parentStyle());
     } else {
         state.setStyle(defaultStyleForElement());
-        state.setParentStyle(RenderStyle::clone(state.style()));
+        state.setParentStyle(RenderStyle::clonePtr(*state.style()));
     }
 
     // Since we don't use pseudo-elements in any of our quirk/print user agent rules, don't waste time walking
@@ -614,11 +614,11 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 
     auto* documentElement = m_document.documentElement();
     if (!documentElement)
-        return RenderStyle::create();
+        return RenderStyle::createPtr();
 
     m_state = State(*documentElement, m_document.renderStyle());
 
-    m_state.setStyle(RenderStyle::create());
+    m_state.setStyle(RenderStyle::createPtr());
     m_state.style()->inheritFrom(m_state.rootElementStyle());
 
     PageRuleCollector collector(m_state, m_ruleSets);
@@ -654,7 +654,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 
 std::unique_ptr<RenderStyle> StyleResolver::defaultStyleForElement()
 {
-    m_state.setStyle(RenderStyle::create());
+    m_state.setStyle(RenderStyle::createPtr());
     // Make sure our fonts are initialized if we don't inherit them from our parent style.
     initializeFontStyle(documentSettings());
     if (documentSettings())
@@ -1213,8 +1213,8 @@ void StyleResolver::addToMatchedPropertiesCache(const RenderStyle* style, const 
     cacheItem.ranges = matchResult.ranges;
     // Note that we don't cache the original RenderStyle instance. It may be further modified.
     // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.
-    cacheItem.renderStyle = RenderStyle::clone(style);
-    cacheItem.parentRenderStyle = RenderStyle::clone(parentStyle);
+    cacheItem.renderStyle = RenderStyle::clonePtr(*style);
+    cacheItem.parentRenderStyle = RenderStyle::clonePtr(*parentStyle);
     m_matchedPropertiesCache.add(hash, WTFMove(cacheItem));
 }
 
@@ -1393,7 +1393,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, std::unique_ptr<RenderStyle> style)
 {
     m_state = State();
-    m_state.setParentStyle(RenderStyle::clone(style.get()));
+    m_state.setParentStyle(RenderStyle::clonePtr(*style));
     m_state.setStyle(WTFMove(style));
     applyPropertyToCurrentStyle(id, value);
 }

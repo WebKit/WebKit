@@ -294,7 +294,7 @@ NPObject* HTMLPlugInElement::getNPObject()
 
 #endif /* ENABLE(NETSCAPE_PLUGIN_API) */
 
-RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     if (m_pluginReplacement && m_pluginReplacement->willCreateRenderer())
         return m_pluginReplacement->createElementRenderer(*this, WTFMove(style), insertionPosition);

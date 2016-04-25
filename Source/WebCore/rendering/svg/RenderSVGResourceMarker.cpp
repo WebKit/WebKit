@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement& element, std::unique_ptr<RenderStyle> style)
+RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement& element, RenderStyle&& style)
     : RenderSVGResourceContainer(element, WTFMove(style))
 {
 }

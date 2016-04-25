@@ -94,7 +94,7 @@ RenderBlockFlow::MarginInfo::MarginInfo(const RenderBlockFlow& block, LayoutUnit
     m_negativeMargin = (m_canCollapseMarginBeforeWithChildren && !block.mustDiscardMarginBefore()) ? block.maxNegativeMarginBefore() : LayoutUnit();
 }
 
-RenderBlockFlow::RenderBlockFlow(Element& element, std::unique_ptr<RenderStyle> style)
+RenderBlockFlow::RenderBlockFlow(Element& element, RenderStyle&& style)
     : RenderBlock(element, WTFMove(style), RenderBlockFlowFlag)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
@@ -104,7 +104,7 @@ RenderBlockFlow::RenderBlockFlow(Element& element, std::unique_ptr<RenderStyle> 
     setChildrenInline(true);
 }
 
-RenderBlockFlow::RenderBlockFlow(Document& document, std::unique_ptr<RenderStyle> style)
+RenderBlockFlow::RenderBlockFlow(Document& document, RenderStyle&& style)
     : RenderBlock(document, WTFMove(style), RenderBlockFlowFlag)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
@@ -120,7 +120,7 @@ RenderBlockFlow::~RenderBlockFlow()
 
 void RenderBlockFlow::createMultiColumnFlowThread()
 {
-    RenderMultiColumnFlowThread* flowThread = new RenderMultiColumnFlowThread(document(), RenderStyle::createAnonymousStyleWithDisplay(&style(), BLOCK));
+    RenderMultiColumnFlowThread* flowThread = new RenderMultiColumnFlowThread(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
     flowThread->initializeStyle();
     setChildrenInline(false); // Do this to avoid wrapping inline children that are just going to move into the flow thread.
     deleteLines();
@@ -2037,7 +2037,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
 void RenderBlockFlow::updateStylesForColumnChildren()
 {
     for (auto* child = firstChildBox(); child && (child->isInFlowRenderFlowThread() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox())
-        child->setStyle(RenderStyle::createAnonymousStyleWithDisplay(&style(), BLOCK));
+        child->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
 }
 
 void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)

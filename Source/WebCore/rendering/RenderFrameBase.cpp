@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-RenderFrameBase::RenderFrameBase(HTMLFrameElementBase& element, std::unique_ptr<RenderStyle> style)
+RenderFrameBase::RenderFrameBase(HTMLFrameElementBase& element, RenderStyle&& style)
     : RenderWidget(element, WTFMove(style))
 {
 }

@@ -48,7 +48,7 @@ public:
 private:
     void addSearchResult() override;
     void maxResultsAttributeChanged() override;
-    RenderPtr<RenderElement> createInputRenderer(std::unique_ptr<RenderStyle>) override;
+    RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) override;
     const AtomicString& formControlType() const override;
     bool isSearchField() const override;
     bool needsContainer() const override;

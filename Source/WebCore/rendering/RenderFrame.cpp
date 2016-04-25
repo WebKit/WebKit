@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-RenderFrame::RenderFrame(HTMLFrameElement& frame, std::unique_ptr<RenderStyle> style)
+RenderFrame::RenderFrame(HTMLFrameElement& frame, RenderStyle&& style)
     : RenderFrameBase(frame, WTFMove(style))
 {
 }

@@ -37,8 +37,8 @@ class RenderMathMLRoot;
 
 class RenderMathMLRow : public RenderMathMLBlock {
 public:
-    RenderMathMLRow(Element&, std::unique_ptr<RenderStyle>);
-    RenderMathMLRow(Document&, std::unique_ptr<RenderStyle>);
+    RenderMathMLRow(Element&, RenderStyle&&);
+    RenderMathMLRow(Document&, RenderStyle&&);
 
     void updateOperatorProperties();
 

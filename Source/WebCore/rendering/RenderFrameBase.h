@@ -37,7 +37,7 @@ class RenderView;
 // Base class for RenderFrame and RenderIFrame
 class RenderFrameBase : public RenderWidget {
 protected:
-    RenderFrameBase(HTMLFrameElementBase&, std::unique_ptr<RenderStyle>);
+    RenderFrameBase(HTMLFrameElementBase&, RenderStyle&&);
 
 public:
     FrameView* childView() const { return downcast<FrameView>(RenderWidget::widget()); }

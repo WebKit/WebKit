@@ -43,7 +43,7 @@ class RenderText;
 class RenderMenuList final : public RenderFlexibleBox, private PopupMenuClient {
 
 public:
-    RenderMenuList(HTMLSelectElement&, std::unique_ptr<RenderStyle>);
+    RenderMenuList(HTMLSelectElement&, RenderStyle&&);
     virtual ~RenderMenuList();
 
     HTMLSelectElement& selectElement() const;

@@ -36,12 +36,12 @@ bool RenderLayerModelObject::s_hadLayer = false;
 bool RenderLayerModelObject::s_hadTransform = false;
 bool RenderLayerModelObject::s_layerWasSelfPainting = false;
 
-RenderLayerModelObject::RenderLayerModelObject(Element& element, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
+RenderLayerModelObject::RenderLayerModelObject(Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderElement(element, WTFMove(style), baseTypeFlags | RenderLayerModelObjectFlag)
 {
 }
 
-RenderLayerModelObject::RenderLayerModelObject(Document& document, std::unique_ptr<RenderStyle> style, BaseTypeFlags baseTypeFlags)
+RenderLayerModelObject::RenderLayerModelObject(Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderElement(document, WTFMove(style), baseTypeFlags | RenderLayerModelObjectFlag)
 {
 }

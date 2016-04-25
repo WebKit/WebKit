@@ -32,7 +32,7 @@ class SVGGradientElement;
 // This class exists mostly so we can hear about gradient stop style changes
 class RenderSVGGradientStop final : public RenderElement {
 public:
-    RenderSVGGradientStop(SVGStopElement&, std::unique_ptr<RenderStyle>);
+    RenderSVGGradientStop(SVGStopElement&, RenderStyle&&);
     virtual ~RenderSVGGradientStop();
 
     SVGStopElement& element() const { return downcast<SVGStopElement>(RenderObject::nodeForNonAnonymous()); }

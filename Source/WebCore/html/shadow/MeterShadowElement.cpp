@@ -73,7 +73,7 @@ bool MeterInnerElement::rendererIsNeeded(const RenderStyle& style)
     return render && !render->theme().supportsMeter(render->style().appearance()) && HTMLDivElement::rendererIsNeeded(style);
 }
 
-RenderPtr<RenderElement> MeterInnerElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> MeterInnerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderMeter>(*this, WTFMove(style));
 }

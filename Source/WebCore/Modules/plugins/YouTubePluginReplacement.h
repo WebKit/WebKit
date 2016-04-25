@@ -50,7 +50,7 @@ private:
     String youTubeURL(const String& rawURL);
 
     bool willCreateRenderer() final { return m_embedShadowElement; }
-    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, std::unique_ptr<RenderStyle>, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, RenderStyle&&, const RenderTreePosition&) final;
 
     HTMLPlugInElement* m_parentElement;
     RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;

@@ -34,7 +34,7 @@ static inline SVGDocumentExtensions& svgExtensionsFromElement(SVGElement& elemen
     return element.document().accessSVGExtensions();
 }
 
-RenderSVGResourceContainer::RenderSVGResourceContainer(SVGElement& element, std::unique_ptr<RenderStyle> style)
+RenderSVGResourceContainer::RenderSVGResourceContainer(SVGElement& element, RenderStyle&& style)
     : RenderSVGHiddenContainer(element, WTFMove(style))
     , m_id(element.getIdAttribute())
     , m_registered(false)

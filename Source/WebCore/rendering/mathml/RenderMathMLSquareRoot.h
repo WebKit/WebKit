@@ -38,8 +38,7 @@ class RenderMathMLMenclose;
 // Render sqrt(base), using radical notation.
 class RenderMathMLSquareRoot final : public RenderMathMLRoot {
 public:
-    RenderMathMLSquareRoot(Element&, std::unique_ptr<RenderStyle>);
-    static RenderPtr<RenderMathMLSquareRoot> createAnonymousWithParentRenderer(RenderMathMLMenclose&);
+    RenderMathMLSquareRoot(Element&, RenderStyle&&);
     
 private:
     bool isRenderMathMLSquareRoot() const override { return true; }

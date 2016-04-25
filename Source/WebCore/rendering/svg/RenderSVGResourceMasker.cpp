@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, std::unique_ptr<RenderStyle> style)
+RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, RenderStyle&& style)
     : RenderSVGResourceContainer(element, WTFMove(style))
 {
 }

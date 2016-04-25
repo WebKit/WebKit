@@ -245,9 +245,9 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType)
     }
 
     if (auto& partRendererSlot = m_parts.add(partType, nullptr).iterator->value)
-        partRendererSlot->setStyle(WTFMove(partStyle));
+        partRendererSlot->setStyle(WTFMove(*partStyle));
     else {
-        partRendererSlot = createRenderer<RenderScrollbarPart>(owningRenderer()->document(), WTFMove(partStyle), this, partType);
+        partRendererSlot = createRenderer<RenderScrollbarPart>(owningRenderer()->document(), WTFMove(*partStyle), this, partType);
         partRendererSlot->initializeStyle();
     }
 }

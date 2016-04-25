@@ -47,7 +47,7 @@ namespace WebCore {
 
 namespace Style {
 
-std::unique_ptr<RenderStyle> resolveForDocument(const Document& document)
+RenderStyle resolveForDocument(const Document& document)
 {
     ASSERT(document.hasLivingRenderTree());
 
@@ -55,19 +55,19 @@ std::unique_ptr<RenderStyle> resolveForDocument(const Document& document)
 
     auto documentStyle = RenderStyle::create();
 
-    documentStyle->setDisplay(BLOCK);
-    documentStyle->setRTLOrdering(document.visuallyOrdered() ? VisualOrder : LogicalOrder);
-    documentStyle->setZoom(!document.printing() ? renderView.frame().pageZoomFactor() : 1);
-    documentStyle->setPageScaleTransform(renderView.frame().frameScaleFactor());
-    FontCascadeDescription documentFontDescription = documentStyle->fontDescription();
+    documentStyle.setDisplay(BLOCK);
+    documentStyle.setRTLOrdering(document.visuallyOrdered() ? VisualOrder : LogicalOrder);
+    documentStyle.setZoom(!document.printing() ? renderView.frame().pageZoomFactor() : 1);
+    documentStyle.setPageScaleTransform(renderView.frame().frameScaleFactor());
+    FontCascadeDescription documentFontDescription = documentStyle.fontDescription();
     documentFontDescription.setLocale(document.contentLanguage());
-    documentStyle->setFontDescription(WTFMove(documentFontDescription));
+    documentStyle.setFontDescription(WTFMove(documentFontDescription));
 
     // This overrides any -webkit-user-modify inherited from the parent iframe.
-    documentStyle->setUserModify(document.inDesignMode() ? READ_WRITE : READ_ONLY);
+    documentStyle.setUserModify(document.inDesignMode() ? READ_WRITE : READ_ONLY);
 #if PLATFORM(IOS)
     if (document.inDesignMode())
-        documentStyle->setTextSizeAdjust(TextSizeAdjustment(NoTextSizeAdjustment));
+        documentStyle.setTextSizeAdjust(TextSizeAdjustment(NoTextSizeAdjustment));
 #endif
 
     Element* docElement = document.documentElement();
@@ -79,24 +79,24 @@ std::unique_ptr<RenderStyle> resolveForDocument(const Document& document)
         auto* body = document.bodyOrFrameset();
         RenderObject* bodyRenderer = body ? body->renderer() : nullptr;
         if (bodyRenderer && !docElementRenderer->style().hasExplicitlySetWritingMode())
-            documentStyle->setWritingMode(bodyRenderer->style().writingMode());
+            documentStyle.setWritingMode(bodyRenderer->style().writingMode());
         else
-            documentStyle->setWritingMode(docElementRenderer->style().writingMode());
+            documentStyle.setWritingMode(docElementRenderer->style().writingMode());
         if (bodyRenderer && !docElementRenderer->style().hasExplicitlySetDirection())
-            documentStyle->setDirection(bodyRenderer->style().direction());
+            documentStyle.setDirection(bodyRenderer->style().direction());
         else
-            documentStyle->setDirection(docElementRenderer->style().direction());
+            documentStyle.setDirection(docElementRenderer->style().direction());
     }
 
     const Pagination& pagination = renderView.frameView().pagination();
     if (pagination.mode != Pagination::Unpaginated) {
-        documentStyle->setColumnStylesFromPaginationMode(pagination.mode);
-        documentStyle->setColumnGap(pagination.gap);
+        documentStyle.setColumnStylesFromPaginationMode(pagination.mode);
+        documentStyle.setColumnGap(pagination.gap);
         if (renderView.multiColumnFlowThread())
-            renderView.updateColumnProgressionFromStyle(*documentStyle);
+            renderView.updateColumnProgressionFromStyle(documentStyle);
         if (renderView.frame().page()->paginationLineGridEnabled()) {
-            documentStyle->setLineGrid("-webkit-default-pagination-grid");
-            documentStyle->setLineSnap(LineSnapContain);
+            documentStyle.setLineGrid("-webkit-default-pagination-grid");
+            documentStyle.setLineSnap(LineSnapContain);
         }
     }
 
@@ -111,17 +111,17 @@ std::unique_ptr<RenderStyle> resolveForDocument(const Document& document)
     int size = fontSizeForKeyword(CSSValueMedium, false, document);
     fontDescription.setSpecifiedSize(size);
     bool useSVGZoomRules = document.isSVGDocument();
-    fontDescription.setComputedSize(computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, documentStyle.get(), document));
+    fontDescription.setComputedSize(computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, &documentStyle, document));
 
     FontOrientation fontOrientation;
     NonCJKGlyphOrientation glyphOrientation;
-    std::tie(fontOrientation, glyphOrientation) = documentStyle->fontAndGlyphOrientation();
+    std::tie(fontOrientation, glyphOrientation) = documentStyle.fontAndGlyphOrientation();
     fontDescription.setOrientation(fontOrientation);
     fontDescription.setNonCJKGlyphOrientation(glyphOrientation);
 
-    documentStyle->setFontDescription(fontDescription);
+    documentStyle.setFontDescription(fontDescription);
 
-    documentStyle->fontCascade().update(&const_cast<Document&>(document).fontSelector());
+    documentStyle.fontCascade().update(&const_cast<Document&>(document).fontSelector());
 
     return documentStyle;
 }

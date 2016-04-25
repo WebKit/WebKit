@@ -34,7 +34,7 @@
 
 namespace WebCore {
     
-RenderMathMLSquareRoot::RenderMathMLSquareRoot(Element& element, std::unique_ptr<RenderStyle> style)
+RenderMathMLSquareRoot::RenderMathMLSquareRoot(Element& element, RenderStyle&& style)
     : RenderMathMLRoot(element, WTFMove(style))
 {
 }

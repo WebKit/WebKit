@@ -3799,10 +3799,10 @@ void FrameView::updateScrollCorner()
         m_scrollCorner = nullptr;
     else {
         if (!m_scrollCorner) {
-            m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer->document(), WTFMove(cornerStyle));
+            m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer->document(), WTFMove(*cornerStyle));
             m_scrollCorner->initializeStyle();
         } else
-            m_scrollCorner->setStyle(WTFMove(cornerStyle));
+            m_scrollCorner->setStyle(WTFMove(*cornerStyle));
         invalidateScrollCorner(cornerRect);
     }
 

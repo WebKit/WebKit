@@ -36,7 +36,7 @@ class SVGImageElement;
 
 class RenderSVGImage final : public RenderSVGModelObject {
 public:
-    RenderSVGImage(SVGImageElement&, std::unique_ptr<RenderStyle>);
+    RenderSVGImage(SVGImageElement&, RenderStyle&&);
     virtual ~RenderSVGImage();
 
     SVGImageElement& imageElement() const;

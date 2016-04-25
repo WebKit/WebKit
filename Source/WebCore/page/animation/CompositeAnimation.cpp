@@ -148,7 +148,7 @@ void CompositeAnimation::updateTransitions(RenderElement* renderer, RenderStyle*
                         // of the property, so that restarted transitions use the correct starting point.
                         if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(prop) && implAnim->isAccelerated()) {
                             if (!modifiedCurrentStyle)
-                                modifiedCurrentStyle = RenderStyle::clone(currentStyle);
+                                modifiedCurrentStyle = RenderStyle::clonePtr(*currentStyle);
 
                             implAnim->blendPropertyValueInStyle(prop, modifiedCurrentStyle.get());
                         }

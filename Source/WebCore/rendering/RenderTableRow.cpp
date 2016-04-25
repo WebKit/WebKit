@@ -38,14 +38,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTableRow::RenderTableRow(Element& element, std::unique_ptr<RenderStyle> style)
+RenderTableRow::RenderTableRow(Element& element, RenderStyle&& style)
     : RenderBox(element, WTFMove(style), 0)
     , m_rowIndex(unsetRowIndex)
 {
     setInline(false);
 }
 
-RenderTableRow::RenderTableRow(Document& document, std::unique_ptr<RenderStyle> style)
+RenderTableRow::RenderTableRow(Document& document, RenderStyle&& style)
     : RenderBox(document, WTFMove(style), 0)
     , m_rowIndex(unsetRowIndex)
 {
@@ -262,7 +262,7 @@ void RenderTableRow::imageChanged(WrappedImagePtr, const IntRect*)
 
 RenderTableRow* RenderTableRow::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    auto newRow = new RenderTableRow(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(&parent->style(), TABLE_ROW));
+    auto newRow = new RenderTableRow(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW));
     newRow->initializeStyle();
     return newRow;
 }

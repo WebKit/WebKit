@@ -33,7 +33,7 @@ class RenderSlider final : public RenderFlexibleBox {
 public:
     static const int defaultTrackLength;
 
-    RenderSlider(HTMLInputElement&, std::unique_ptr<RenderStyle>);
+    RenderSlider(HTMLInputElement&, RenderStyle&&);
     virtual ~RenderSlider();
 
     HTMLInputElement& element() const;

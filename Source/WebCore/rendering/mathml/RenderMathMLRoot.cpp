@@ -55,7 +55,7 @@ namespace WebCore {
 // In order to accept invalid markup and to handle <mroot> and <msqrt> consistently, we will allow any number of children in the BaseWrapper of <mroot> too.
 // We will allow the IndexWrapper to be empty and it will always contain the last child of the <mroot> if there are at least 2 elements.
 
-RenderMathMLRoot::RenderMathMLRoot(Element& element, std::unique_ptr<RenderStyle> style)
+RenderMathMLRoot::RenderMathMLRoot(Element& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))
 {
 }
@@ -104,7 +104,7 @@ void RenderMathMLRoot::restructureWrappers()
 
     if (radical->isEmpty()) {
         // We create the radical operator.
-        RenderPtr<RenderMathMLRadicalOperator> radicalOperator = createRenderer<RenderMathMLRadicalOperator>(document(), RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX));
+        RenderPtr<RenderMathMLRadicalOperator> radicalOperator = createRenderer<RenderMathMLRadicalOperator>(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX));
         radicalOperator->initializeStyle();
         radical->addChild(radicalOperator.leakPtr());
     }
@@ -220,26 +220,26 @@ void RenderMathMLRoot::updateStyle()
     // We set the style of the anonymous wrappers.
 
     auto radical = radicalWrapper();
-    auto radicalStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
-    radicalStyle->setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
+    auto radicalStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
+    radicalStyle.setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
     radical->setStyle(WTFMove(radicalStyle));
     radical->setNeedsLayoutAndPrefWidthsRecalc();
 
     auto base = baseWrapper();
-    auto baseStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
-    baseStyle->setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
-    baseStyle->setAlignItemsPosition(ItemPositionBaseline);
+    auto baseStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
+    baseStyle.setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
+    baseStyle.setAlignItemsPosition(ItemPositionBaseline);
     base->setStyle(WTFMove(baseStyle));
     base->setNeedsLayoutAndPrefWidthsRecalc();
 
     if (!isRenderMathMLSquareRoot()) {
         // For mroot, we also set the style of the index wrapper.
         auto index = indexWrapper();
-        auto indexStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
-        indexStyle->setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
-        indexStyle->setMarginStart(Length(kernBeforeDegree, Fixed));
-        indexStyle->setMarginEnd(Length(kernAfterDegree, Fixed));
-        indexStyle->setAlignItemsPosition(ItemPositionBaseline);
+        auto indexStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
+        indexStyle.setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
+        indexStyle.setMarginStart(Length(kernBeforeDegree, Fixed));
+        indexStyle.setMarginEnd(Length(kernAfterDegree, Fixed));
+        indexStyle.setAlignItemsPosition(ItemPositionBaseline);
         index->setStyle(WTFMove(indexStyle));
         index->setNeedsLayoutAndPrefWidthsRecalc();
     }
@@ -337,7 +337,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 
 RenderPtr<RenderMathMLRootWrapper> RenderMathMLRootWrapper::createAnonymousWrapper(RenderMathMLRoot* renderObject)
 {
-    RenderPtr<RenderMathMLRootWrapper> newBlock = createRenderer<RenderMathMLRootWrapper>(renderObject->document(), RenderStyle::createAnonymousStyleWithDisplay(&renderObject->style(), FLEX));
+    RenderPtr<RenderMathMLRootWrapper> newBlock = createRenderer<RenderMathMLRootWrapper>(renderObject->document(), RenderStyle::createAnonymousStyleWithDisplay(renderObject->style(), FLEX));
     newBlock->initializeStyle();
     return newBlock;
 }

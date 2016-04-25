@@ -39,7 +39,7 @@ class RenderRubyRun;
 
 class RenderRubyBase final : public RenderBlockFlow {
 public:
-    RenderRubyBase(Document&, std::unique_ptr<RenderStyle>);
+    RenderRubyBase(Document&, RenderStyle&&);
     virtual ~RenderRubyBase();
     
     const char* renderName() const override { return "RenderRubyBase (anonymous)"; }

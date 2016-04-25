@@ -56,7 +56,7 @@ static void ensurePlaceholderStyle(Document& document)
 {
     if (placeholderStyle)
         return;
-    placeholderStyle = RenderStyle::create().release();
+    placeholderStyle = RenderStyle::createPtr().release();
     placeholderStyle->setDisplay(NONE);
     placeholderStyle->setIsPlaceholderStyle();
     placeholderStyle->fontCascade().update(&document.fontSelector());
@@ -123,7 +123,7 @@ std::unique_ptr<RenderStyle> TreeResolver::styleForElement(Element& element, Ren
 {
     if (!m_document.haveStylesheetsLoaded() && !element.renderer()) {
         m_document.setHasNodesWithPlaceholderStyle();
-        return RenderStyle::clone(placeholderStyle);
+        return RenderStyle::clonePtr(*placeholderStyle);
     }
 
     if (element.hasCustomStyleResolveCallbacks()) {
@@ -205,7 +205,7 @@ ElementUpdate TreeResolver::resolveElement(Element& element)
         update.isSynthetic = true;
 
     if (&element == m_document.documentElement()) {
-        m_documentElementStyle = RenderStyle::clone(update.style.get());
+        m_documentElementStyle = RenderStyle::clonePtr(*update.style);
         scope().styleResolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 
         // If "rem" units are used anywhere in the document, and if the document element's font size changes, then force font updating

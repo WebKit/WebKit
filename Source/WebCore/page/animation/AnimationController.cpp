@@ -425,7 +425,7 @@ std::unique_ptr<RenderStyle> AnimationControllerPrivate::getAnimatedStyleForRend
     const CompositeAnimation& rendererAnimations = *m_compositeAnimations.get(&renderer);
     std::unique_ptr<RenderStyle> animatingStyle = rendererAnimations.getAnimatedStyle();
     if (!animatingStyle)
-        animatingStyle = RenderStyle::clone(&renderer.style());
+        animatingStyle = RenderStyle::clonePtr(renderer.style());
     
     return animatingStyle;
 }
@@ -637,7 +637,7 @@ bool AnimationController::updateAnimations(RenderElement& renderer, RenderStyle&
 std::unique_ptr<RenderStyle> AnimationController::getAnimatedStyleForRenderer(RenderElement& renderer)
 {
     if (!renderer.isCSSAnimating())
-        return RenderStyle::clone(&renderer.style());
+        return RenderStyle::clonePtr(renderer.style());
     return m_data->getAnimatedStyleForRenderer(renderer);
 }
 

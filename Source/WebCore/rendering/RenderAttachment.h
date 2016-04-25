@@ -36,7 +36,7 @@ class HTMLAttachmentElement;
 
 class RenderAttachment final : public RenderReplaced {
 public:
-    RenderAttachment(HTMLAttachmentElement&, std::unique_ptr<RenderStyle>);
+    RenderAttachment(HTMLAttachmentElement&, RenderStyle&&);
 
     HTMLAttachmentElement& attachmentElement() const;
 

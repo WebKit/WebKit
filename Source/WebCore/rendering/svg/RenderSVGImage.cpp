@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-RenderSVGImage::RenderSVGImage(SVGImageElement& element, std::unique_ptr<RenderStyle> style)
+RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
     : RenderSVGModelObject(element, WTFMove(style))
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)

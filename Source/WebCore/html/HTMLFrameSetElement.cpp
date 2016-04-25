@@ -157,9 +157,9 @@ bool HTMLFrameSetElement::rendererIsNeeded(const RenderStyle& style)
     return !style.isPlaceholderStyle();
 }
 
-RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    if (style->hasContent())
+    if (style.hasContent())
         return RenderElement::createFor(*this, WTFMove(style));
     
     return createRenderer<RenderFrameSet>(*this, WTFMove(style));

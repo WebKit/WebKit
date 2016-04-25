@@ -115,7 +115,7 @@ private:
     Vector<RenderMultiColumnSpannerPlaceholder*> m_spannerStack;
 };
 
-RenderView::RenderView(Document& document, std::unique_ptr<RenderStyle> style)
+RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(document, WTFMove(style))
     , m_frameView(*document.view())
     , m_selectionUnsplitStart(nullptr)

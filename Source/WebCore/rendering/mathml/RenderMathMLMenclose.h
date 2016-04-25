@@ -35,7 +35,7 @@ namespace WebCore {
     
 class RenderMathMLMenclose final: public RenderMathMLRow {
 public:
-    RenderMathMLMenclose(Element&, std::unique_ptr<RenderStyle>);
+    RenderMathMLMenclose(Element&, RenderStyle&&);
 
 private:
     const char* renderName() const final { return "RenderMathMLMenclose"; }

@@ -54,7 +54,7 @@ public:
     bool isValidValue(const String&) const;
     
     TextControlInnerTextElement* innerTextElement() const override;
-    std::unique_ptr<RenderStyle> createInnerTextStyle(const RenderStyle&) const override;
+    RenderStyle createInnerTextStyle(const RenderStyle&) const override;
 
     void rendererWillBeDestroyed();
 
@@ -105,7 +105,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     bool isPresentationAttribute(const QualifiedName&) const override;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
-    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool appendFormData(FormDataList&, bool) override;
     void reset() override;
     bool hasCustomFocusLogic() const override;

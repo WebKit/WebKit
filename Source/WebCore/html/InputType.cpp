@@ -479,7 +479,7 @@ PassRefPtr<HTMLFormElement> InputType::formForSubmission() const
     return element().form();
 }
 
-RenderPtr<RenderElement> InputType::createInputRenderer(std::unique_ptr<RenderStyle> style)
+RenderPtr<RenderElement> InputType::createInputRenderer(RenderStyle&& style)
 {
     return RenderPtr<RenderElement>(RenderElement::createFor(element(), WTFMove(style)));
 }

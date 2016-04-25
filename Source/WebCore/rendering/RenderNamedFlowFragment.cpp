@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-RenderNamedFlowFragment::RenderNamedFlowFragment(Document& document, std::unique_ptr<RenderStyle> style)
+RenderNamedFlowFragment::RenderNamedFlowFragment(Document& document, RenderStyle&& style)
     : RenderRegion(document, WTFMove(style), nullptr)
     , m_hasCustomRegionStyle(false)
     , m_hasAutoLogicalHeight(false)
@@ -57,13 +57,13 @@ RenderNamedFlowFragment::~RenderNamedFlowFragment()
 {
 }
 
-std::unique_ptr<RenderStyle> RenderNamedFlowFragment::createStyle(const RenderStyle& parentStyle)
+RenderStyle RenderNamedFlowFragment::createStyle(const RenderStyle& parentStyle)
 {
-    auto style = RenderStyle::createAnonymousStyleWithDisplay(&parentStyle, BLOCK);
+    auto style = RenderStyle::createAnonymousStyleWithDisplay(parentStyle, BLOCK);
 
-    style->setFlowThread(parentStyle.flowThread());
-    style->setRegionThread(parentStyle.regionThread());
-    style->setRegionFragment(parentStyle.regionFragment());
+    style.setFlowThread(parentStyle.flowThread());
+    style.setRegionThread(parentStyle.regionThread());
+    style.setRegionFragment(parentStyle.regionFragment());
 
     return style;
 }
@@ -366,13 +366,13 @@ void RenderNamedFlowFragment::computeChildrenStyleInRegion(RenderElement& render
         std::unique_ptr<RenderStyle> childStyleInRegion;
         bool objectRegionStyleCached = false;
         if (it != m_renderObjectRegionStyle.end()) {
-            childStyleInRegion = RenderStyle::clone(it->value.style.get());
+            childStyleInRegion = RenderStyle::clonePtr(*it->value.style);
             objectRegionStyleCached = true;
         } else {
             if (child.isAnonymous() || child.isInFlowRenderFlowThread())
-                childStyleInRegion = RenderStyle::createAnonymousStyleWithDisplay(&renderer.style(), child.style().display());
+                childStyleInRegion =  std::make_unique<RenderStyle>(RenderStyle::createAnonymousStyleWithDisplay(renderer.style(), child.style().display()));
             else if (is<RenderText>(child))
-                childStyleInRegion = RenderStyle::clone(&renderer.style());
+                childStyleInRegion = RenderStyle::clonePtr(renderer.style());
             else
                 childStyleInRegion = computeStyleInRegion(downcast<RenderElement>(child), renderer.style());
         }
@@ -388,9 +388,9 @@ void RenderNamedFlowFragment::setObjectStyleInRegion(RenderObject* object, std::
 {
     ASSERT(object->flowThreadContainingBlock());
 
-    std::unique_ptr<RenderStyle> objectOriginalStyle = RenderStyle::clone(&object->style());
+    std::unique_ptr<RenderStyle> objectOriginalStyle = RenderStyle::clonePtr(object->style());
     if (is<RenderElement>(*object))
-        downcast<RenderElement>(*object).setStyleInternal(WTFMove(styleInRegion));
+        downcast<RenderElement>(*object).setStyleInternal(WTFMove(*styleInRegion));
 
     if (is<RenderBoxModelObject>(*object) && !object->hasBoxDecorations()) {
         bool hasBoxDecorations = is<RenderTableCell>(*object)
@@ -443,7 +443,7 @@ void RenderNamedFlowFragment::setRegionObjectsRegionStyle()
         std::unique_ptr<RenderStyle> objectStyleInRegion;
         bool objectRegionStyleCached = false;
         if (it != m_renderObjectRegionStyle.end()) {
-            objectStyleInRegion = RenderStyle::clone(it->value.style.get());
+            objectStyleInRegion = RenderStyle::clonePtr(*it->value.style);
             ASSERT(it->value.cached);
             objectRegionStyleCached = true;
         } else
@@ -463,8 +463,8 @@ void RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle()
     RenderObjectRegionStyleMap temp;
     for (auto& objectPair : m_renderObjectRegionStyle) {
         RenderObject* object = const_cast<RenderObject*>(objectPair.key);
-        std::unique_ptr<RenderStyle> objectRegionStyle = RenderStyle::clone(&object->style());
-        std::unique_ptr<RenderStyle> objectOriginalStyle = RenderStyle::clone(objectPair.value.style.get());
+        std::unique_ptr<RenderStyle> objectRegionStyle = RenderStyle::clonePtr(object->style());
+        std::unique_ptr<RenderStyle> objectOriginalStyle = RenderStyle::clonePtr(*objectPair.value.style);
 
         bool shouldCacheRegionStyle = objectPair.value.cached;
         if (!shouldCacheRegionStyle) {
@@ -481,7 +481,7 @@ void RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle()
             temp.set(object, WTFMove(styleInfo));
         }
         if (is<RenderElement>(*object))
-            downcast<RenderElement>(*object).setStyleInternal(WTFMove(objectOriginalStyle));
+            downcast<RenderElement>(*object).setStyleInternal(WTFMove(*objectOriginalStyle));
     }
 
     m_renderObjectRegionStyle.swap(temp);

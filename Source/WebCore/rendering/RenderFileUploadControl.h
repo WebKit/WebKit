@@ -33,7 +33,7 @@ class HTMLInputElement;
 
 class RenderFileUploadControl final : public RenderBlockFlow {
 public:
-    RenderFileUploadControl(HTMLInputElement&, std::unique_ptr<RenderStyle>);
+    RenderFileUploadControl(HTMLInputElement&, RenderStyle&&);
     virtual ~RenderFileUploadControl();
 
     String buttonValue();

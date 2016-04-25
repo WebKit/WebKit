@@ -42,7 +42,7 @@ using namespace MathMLNames;
 // For now, we use a Bezier curve and this somewhat arbitrary value.
 const unsigned short longDivLeftSpace = 10;
 
-RenderMathMLMenclose::RenderMathMLMenclose(Element& element, std::unique_ptr<RenderStyle> style)
+RenderMathMLMenclose::RenderMathMLMenclose(Element& element, RenderStyle&& style)
     : RenderMathMLRow(element, WTFMove(style))
     , m_ascent(0)
 {

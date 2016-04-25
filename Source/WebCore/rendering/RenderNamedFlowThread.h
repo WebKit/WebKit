@@ -46,7 +46,7 @@ typedef ListHashSet<Element*> NamedFlowContentElements;
 
 class RenderNamedFlowThread final : public RenderFlowThread, public SelectionSubtreeRoot {
 public:
-    RenderNamedFlowThread(Document&, std::unique_ptr<RenderStyle>, Ref<WebKitNamedFlow>&&);
+    RenderNamedFlowThread(Document&, RenderStyle&&, Ref<WebKitNamedFlow>&&);
     virtual ~RenderNamedFlowThread();
 
     const AtomicString& flowThreadName() const;

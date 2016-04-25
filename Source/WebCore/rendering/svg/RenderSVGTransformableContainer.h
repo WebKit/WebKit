@@ -29,7 +29,7 @@ namespace WebCore {
 class SVGGraphicsElement;
 class RenderSVGTransformableContainer final : public RenderSVGContainer {
 public:
-    RenderSVGTransformableContainer(SVGGraphicsElement&, std::unique_ptr<RenderStyle>);
+    RenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);
     SVGGraphicsElement& graphicsElement() { return downcast<SVGGraphicsElement>(RenderSVGContainer::element()); }
 
     bool isSVGTransformableContainer() const override { return true; }

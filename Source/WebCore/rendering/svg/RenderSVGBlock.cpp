@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-RenderSVGBlock::RenderSVGBlock(SVGGraphicsElement& element, std::unique_ptr<RenderStyle> style)
+RenderSVGBlock::RenderSVGBlock(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderBlockFlow(element, WTFMove(style))
 {
 }

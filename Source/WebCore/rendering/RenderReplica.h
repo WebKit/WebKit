@@ -35,7 +35,7 @@ namespace WebCore {
 
 class RenderReplica final : public RenderBox {
 public:
-    RenderReplica(Document&, std::unique_ptr<RenderStyle>);
+    RenderReplica(Document&, RenderStyle&&);
     virtual ~RenderReplica();
 
     const char* renderName() const override { return "RenderReplica"; }

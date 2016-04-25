@@ -58,7 +58,7 @@ public:
 
 private:
     MathMLMencloseElement(const QualifiedName&, Document&);
-    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void clearNotations() { m_notationFlags = 0; }
     void addNotation(MencloseNotationFlag notationFlag) { m_notationFlags |= notationFlag; }
     unsigned short m_notationFlags;

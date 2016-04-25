@@ -208,7 +208,7 @@ void HTMLTextAreaElement::maxLengthAttributeChanged(const AtomicString& newValue
     updateValidity();
 }
 
-RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlMultiLine>(*this, WTFMove(style));
 }
@@ -523,17 +523,17 @@ bool HTMLTextAreaElement::willRespondToMouseClickEvents()
     return !isDisabledFormControl();
 }
 
-std::unique_ptr<RenderStyle> HTMLTextAreaElement::createInnerTextStyle(const RenderStyle& style) const
+RenderStyle HTMLTextAreaElement::createInnerTextStyle(const RenderStyle& style) const
 {
     auto textBlockStyle = RenderStyle::create();
-    textBlockStyle->inheritFrom(&style);
-    adjustInnerTextStyle(style, *textBlockStyle);
-    textBlockStyle->setDisplay(BLOCK);
+    textBlockStyle.inheritFrom(&style);
+    adjustInnerTextStyle(style, textBlockStyle);
+    textBlockStyle.setDisplay(BLOCK);
 
 #if PLATFORM(IOS)
     // We're adding three extra pixels of padding to line textareas up with text fields.  
-    textBlockStyle->setPaddingLeft(Length(3, Fixed));
-    textBlockStyle->setPaddingRight(Length(3, Fixed));
+    textBlockStyle.setPaddingLeft(Length(3, Fixed));
+    textBlockStyle.setPaddingRight(Length(3, Fixed));
 #endif
 
     return textBlockStyle;

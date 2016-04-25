@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
     
-RenderIFrame::RenderIFrame(HTMLIFrameElement& element, std::unique_ptr<RenderStyle> style)
+RenderIFrame::RenderIFrame(HTMLIFrameElement& element, RenderStyle&& style)
     : RenderFrameBase(element, WTFMove(style))
 {
 }

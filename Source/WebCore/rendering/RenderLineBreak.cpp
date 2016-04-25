@@ -55,7 +55,7 @@ static void ensureLineBoxes(const RenderLineBreak& renderer)
     downcast<RenderBlockFlow>(*renderer.parent()).ensureLineBoxes();
 }
 
-RenderLineBreak::RenderLineBreak(HTMLElement& element, std::unique_ptr<RenderStyle> style)
+RenderLineBreak::RenderLineBreak(HTMLElement& element, RenderStyle&& style)
     : RenderBoxModelObject(element, WTFMove(style), 0)
     , m_inlineBoxWrapper(nullptr)
     , m_cachedLineHeight(invalidLineHeight)

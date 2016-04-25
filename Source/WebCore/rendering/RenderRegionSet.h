@@ -50,7 +50,7 @@ public:
     void expandToEncompassFlowThreadContentsIfNeeded();
 
 protected:
-    RenderRegionSet(Document&, std::unique_ptr<RenderStyle>, RenderFlowThread&);
+    RenderRegionSet(Document&, RenderStyle&&, RenderFlowThread&);
 
 private:
     void installFlowThread() final;

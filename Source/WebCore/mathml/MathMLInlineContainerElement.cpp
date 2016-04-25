@@ -74,7 +74,7 @@ void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)
     MathMLElement::childrenChanged(change);
 }
 
-RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (hasTagName(annotation_xmlTag))
         return createRenderer<RenderMathMLRow>(*this, WTFMove(style));

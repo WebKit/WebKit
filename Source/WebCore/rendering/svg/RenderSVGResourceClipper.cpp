@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement& element, std::unique_ptr<RenderStyle> style)
+RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement& element, RenderStyle&& style)
     : RenderSVGResourceContainer(element, WTFMove(style))
 {
 }

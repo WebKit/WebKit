@@ -6797,11 +6797,11 @@ void RenderLayer::updateScrollCornerStyle()
     }
 
     if (!m_scrollCorner) {
-        m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer().document(), WTFMove(corner));
+        m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer().document(), WTFMove(*corner));
         m_scrollCorner->setParent(&renderer());
         m_scrollCorner->initializeStyle();
     } else
-        m_scrollCorner->setStyle(WTFMove(corner));
+        m_scrollCorner->setStyle(WTFMove(*corner));
 }
 
 void RenderLayer::updateResizerStyle()
@@ -6815,11 +6815,11 @@ void RenderLayer::updateResizerStyle()
     }
 
     if (!m_resizer) {
-        m_resizer = createRenderer<RenderScrollbarPart>(renderer().document(), WTFMove(resizer));
+        m_resizer = createRenderer<RenderScrollbarPart>(renderer().document(), WTFMove(*resizer));
         m_resizer->setParent(&renderer());
         m_resizer->initializeStyle();
     } else
-        m_resizer->setStyle(WTFMove(resizer));
+        m_resizer->setStyle(WTFMove(*resizer));
 }
 
 RenderLayer* RenderLayer::reflectionLayer() const
@@ -6844,10 +6844,10 @@ void RenderLayer::removeReflection()
     m_reflection = nullptr;
 }
 
-std::unique_ptr<RenderStyle> RenderLayer::createReflectionStyle()
+RenderStyle RenderLayer::createReflectionStyle()
 {
     auto newStyle = RenderStyle::create();
-    newStyle->inheritFrom(&renderer().style());
+    newStyle.inheritFrom(&renderer().style());
     
     // Map in our transform.
     TransformOperations transform;
@@ -6873,10 +6873,10 @@ std::unique_ptr<RenderStyle> RenderLayer::createReflectionStyle()
             transform.operations().append(TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, Fixed), TransformOperation::TRANSLATE));
             break;
     }
-    newStyle->setTransform(transform);
+    newStyle.setTransform(transform);
 
     // Map in our mask.
-    newStyle->setMaskBoxImage(renderer().style().boxReflect()->mask());
+    newStyle.setMaskBoxImage(renderer().style().boxReflect()->mask());
 
     return newStyle;
 }

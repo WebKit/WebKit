@@ -53,7 +53,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTextControlSingleLine::RenderTextControlSingleLine(HTMLInputElement& element, std::unique_ptr<RenderStyle> style)
+RenderTextControlSingleLine::RenderTextControlSingleLine(HTMLInputElement& element, RenderStyle&& style)
     : RenderTextControl(element, WTFMove(style))
 {
 }

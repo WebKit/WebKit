@@ -32,7 +32,7 @@ class HTMLInputElement;
 
 class RenderTextControlSingleLine : public RenderTextControl {
 public:
-    RenderTextControlSingleLine(HTMLInputElement&, std::unique_ptr<RenderStyle>);
+    RenderTextControlSingleLine(HTMLInputElement&, RenderStyle&&);
     virtual ~RenderTextControlSingleLine();
 
 protected:
@@ -90,7 +90,7 @@ inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
 
 class RenderTextControlInnerBlock final : public RenderBlockFlow {
 public:
-    RenderTextControlInnerBlock(Element& element, std::unique_ptr<RenderStyle> style)
+    RenderTextControlInnerBlock(Element& element, RenderStyle&& style)
         : RenderBlockFlow(element, WTFMove(style))
     {
     }

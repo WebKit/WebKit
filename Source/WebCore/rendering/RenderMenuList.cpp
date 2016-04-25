@@ -70,7 +70,7 @@ static size_t selectedOptionCount(const RenderMenuList& renderMenuList)
 }
 #endif
 
-RenderMenuList::RenderMenuList(HTMLSelectElement& element, std::unique_ptr<RenderStyle> style)
+RenderMenuList::RenderMenuList(HTMLSelectElement& element, RenderStyle&& style)
     : RenderFlexibleBox(element, WTFMove(style))
     , m_buttonText(nullptr)
     , m_innerBlock(nullptr)
@@ -266,7 +266,7 @@ void RenderMenuList::setTextFromOption(int optionIndex)
         if (is<HTMLOptionElement>(*element)) {
             text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
             auto* style = element->computedStyle();
-            m_optionStyle = style ? RenderStyle::clone(style) : nullptr;
+            m_optionStyle = style ? RenderStyle::clonePtr(*style) : nullptr;
         }
     }
 

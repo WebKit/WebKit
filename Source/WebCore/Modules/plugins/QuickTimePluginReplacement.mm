@@ -130,7 +130,7 @@ QuickTimePluginReplacement::~QuickTimePluginReplacement()
     m_mediaElement = nullptr;
 }
 
-RenderPtr<RenderElement> QuickTimePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, std::unique_ptr<RenderStyle> style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> QuickTimePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     ASSERT_UNUSED(plugin, m_parentElement == &plugin);
 

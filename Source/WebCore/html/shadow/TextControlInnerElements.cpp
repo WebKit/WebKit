@@ -59,7 +59,7 @@ Ref<TextControlInnerContainer> TextControlInnerContainer::create(Document& docum
     return adoptRef(*new TextControlInnerContainer(document));
 }
     
-RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlInnerContainer>(*this, WTFMove(style));
 }
@@ -77,7 +77,7 @@ Ref<TextControlInnerElement> TextControlInnerElement::create(Document& document)
 
 Optional<ElementStyle> TextControlInnerElement::resolveCustomStyle(RenderStyle&, RenderStyle* shadowHostStyle)
 {
-    auto innerContainerStyle = RenderStyle::create();
+    auto innerContainerStyle = RenderStyle::createPtr();
     innerContainerStyle->inheritFrom(shadowHostStyle);
 
     innerContainerStyle->setFlexGrow(1);
@@ -124,7 +124,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event* event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
-RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlInnerBlock>(*this, WTFMove(style));
 }
@@ -136,7 +136,8 @@ RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const
 
 Optional<ElementStyle> TextControlInnerTextElement::resolveCustomStyle(RenderStyle&, RenderStyle* shadowHostStyle)
 {
-    return ElementStyle(downcast<HTMLTextFormControlElement>(*shadowHost()).createInnerTextStyle(*shadowHostStyle));
+    auto style = downcast<HTMLTextFormControlElement>(*shadowHost()).createInnerTextStyle(*shadowHostStyle);
+    return ElementStyle(std::make_unique<RenderStyle>(WTFMove(style)));
 }
 
 // ----------------------------

@@ -56,7 +56,7 @@ const float gRadicalLineThicknessEms = 0.02f;
 // Radical thick line thickness (em)
 const float gRadicalThickLineThicknessEms = 0.1f;
 
-RenderMathMLRadicalOperator::RenderMathMLRadicalOperator(Document& document, std::unique_ptr<RenderStyle> style)
+RenderMathMLRadicalOperator::RenderMathMLRadicalOperator(Document& document, RenderStyle&& style)
     : RenderMathMLOperator(document, WTFMove(style), String(&gRadicalCharacter, 1), MathMLOperatorDictionary::Prefix)
 {
 }

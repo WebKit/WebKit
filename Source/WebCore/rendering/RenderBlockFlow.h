@@ -55,8 +55,8 @@ enum LineCount {
 
 class RenderBlockFlow : public RenderBlock {
 public:
-    RenderBlockFlow(Element&, std::unique_ptr<RenderStyle>);
-    RenderBlockFlow(Document&, std::unique_ptr<RenderStyle>);
+    RenderBlockFlow(Element&, RenderStyle&&);
+    RenderBlockFlow(Document&, RenderStyle&&);
     virtual ~RenderBlockFlow();
         
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;

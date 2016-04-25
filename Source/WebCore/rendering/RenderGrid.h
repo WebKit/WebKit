@@ -46,7 +46,7 @@ enum GridAxisPosition {GridAxisStart, GridAxisEnd, GridAxisCenter};
 
 class RenderGrid final : public RenderBlock {
 public:
-    RenderGrid(Element&, std::unique_ptr<RenderStyle>);
+    RenderGrid(Element&, RenderStyle&&);
     virtual ~RenderGrid();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }

@@ -43,7 +43,7 @@ using namespace MathMLNames;
 static const char* gOpeningBraceChar = "(";
 static const char* gClosingBraceChar = ")";
 
-RenderMathMLFenced::RenderMathMLFenced(MathMLInlineContainerElement& element, std::unique_ptr<RenderStyle> style)
+RenderMathMLFenced::RenderMathMLFenced(MathMLInlineContainerElement& element, RenderStyle&& style)
     : RenderMathMLRow(element, WTFMove(style))
     , m_closeFenceRenderer(nullptr)
 {
@@ -85,7 +85,7 @@ void RenderMathMLFenced::updateFromElement()
 
 RenderPtr<RenderMathMLOperator> RenderMathMLFenced::createMathMLOperator(const String& operatorString, MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
 {
-    RenderPtr<RenderMathMLOperator> newOperator = createRenderer<RenderMathMLOperator>(document(), RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX), operatorString, form, flag);
+    RenderPtr<RenderMathMLOperator> newOperator = createRenderer<RenderMathMLOperator>(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX), operatorString, form, flag);
     newOperator->initializeStyle();
     return newOperator;
 }

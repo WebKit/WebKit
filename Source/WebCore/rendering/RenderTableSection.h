@@ -55,8 +55,8 @@ public:
 
 class RenderTableSection final : public RenderBox {
 public:
-    RenderTableSection(Element&, std::unique_ptr<RenderStyle>);
-    RenderTableSection(Document&, std::unique_ptr<RenderStyle>);
+    RenderTableSection(Element&, RenderStyle&&);
+    RenderTableSection(Document&, RenderStyle&&);
     virtual ~RenderTableSection();
 
     RenderTableRow* firstRow() const;

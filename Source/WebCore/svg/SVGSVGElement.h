@@ -134,7 +134,7 @@ private:
     void didMoveToNewDocument(Document* oldDocument) override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     bool rendererIsNeeded(const RenderStyle&) override;
-    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     InsertionNotificationRequest insertedInto(ContainerNode&) override;
     void removedFrom(ContainerNode&) override;
     void svgAttributeChanged(const QualifiedName&) override;

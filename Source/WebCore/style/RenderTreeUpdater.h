@@ -58,7 +58,7 @@ private:
     void updateRenderTree(ContainerNode& root);
     void updateTextRenderer(Text&);
     void updateElementRenderer(Element&, Style::ElementUpdate&);
-    void createRenderer(Element&, std::unique_ptr<RenderStyle>);
+    void createRenderer(Element&, RenderStyle&&);
     void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node&);
     void updateBeforeOrAfterPseudoElement(Element&, PseudoId);
 

@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-RenderNamedFlowThread::RenderNamedFlowThread(Document& document, std::unique_ptr<RenderStyle> style, Ref<WebKitNamedFlow>&& namedFlow)
+RenderNamedFlowThread::RenderNamedFlowThread(Document& document, RenderStyle&& style, Ref<WebKitNamedFlow>&& namedFlow)
     : RenderFlowThread(document, WTFMove(style))
     , m_hasRegionsWithStyling(false)
     , m_dispatchRegionOversetChangeEvent(false)
@@ -92,8 +92,8 @@ void RenderNamedFlowThread::updateWritingMode()
         return;
 
     // The first region defines the principal writing mode for the entire flow.
-    auto newStyle = RenderStyle::clone(&style());
-    newStyle->setWritingMode(firstFragment->style().writingMode());
+    auto newStyle = RenderStyle::clone(style());
+    newStyle.setWritingMode(firstFragment->style().writingMode());
     setStyle(WTFMove(newStyle));
 }
 

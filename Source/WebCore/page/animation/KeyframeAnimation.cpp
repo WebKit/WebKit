@@ -44,7 +44,7 @@ namespace WebCore {
 KeyframeAnimation::KeyframeAnimation(Animation& animation, RenderElement* renderer, int index, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
     : AnimationBase(animation, renderer, compositeAnimation)
     , m_keyframes(animation.name())
-    , m_unanimatedStyle(RenderStyle::clone(unanimatedStyle))
+    , m_unanimatedStyle(RenderStyle::clonePtr(*unanimatedStyle))
     , m_index(index)
 {
     // Get the keyframe RenderStyles
@@ -138,7 +138,7 @@ bool KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
     // If so, we need to send back the targetStyle.
     if (postActive()) {
         if (!animatedStyle)
-            animatedStyle = RenderStyle::clone(targetStyle);
+            animatedStyle = RenderStyle::clonePtr(*targetStyle);
         return false;
     }
 
@@ -161,7 +161,7 @@ bool KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
     // Run a cycle of animation.
     // We know we will need a new render style, so make one if needed.
     if (!animatedStyle)
-        animatedStyle = RenderStyle::clone(targetStyle);
+        animatedStyle = RenderStyle::clonePtr(*targetStyle);
 
     // FIXME: we need to be more efficient about determining which keyframes we are animating between.
     // We should cache the last pair or something.
@@ -195,7 +195,7 @@ void KeyframeAnimation::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedS
         return;
 
     if (!animatedStyle)
-        animatedStyle = RenderStyle::clone(&m_object->style());
+        animatedStyle = RenderStyle::clonePtr(m_object->style());
 
     for (auto propertyID : m_keyframes.properties()) {
         // Get the from/to styles and progress between

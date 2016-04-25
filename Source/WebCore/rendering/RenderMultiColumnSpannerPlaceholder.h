@@ -44,7 +44,7 @@ public:
     RenderMultiColumnFlowThread* flowThread() const { return m_flowThread; }
 
 private:
-    RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlowThread*, RenderBox* spanner, std::unique_ptr<RenderStyle>);
+    RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlowThread*, RenderBox* spanner, RenderStyle&&);
     bool isRenderMultiColumnSpannerPlaceholder() const override { return true; }
 
     bool canHaveChildren() const override { return false; }

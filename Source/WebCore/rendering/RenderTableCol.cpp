@@ -37,7 +37,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTableCol::RenderTableCol(Element& element, std::unique_ptr<RenderStyle> style)
+RenderTableCol::RenderTableCol(Element& element, RenderStyle&& style)
     : RenderBox(element, WTFMove(style), 0)
 {
     // init RenderObject attributes

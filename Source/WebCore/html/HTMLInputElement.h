@@ -142,7 +142,7 @@ public:
     HTMLElement* containerElement() const;
     
     TextControlInnerTextElement* innerTextElement() const final;
-    std::unique_ptr<RenderStyle> createInnerTextStyle(const RenderStyle&) const override;
+    RenderStyle createInnerTextStyle(const RenderStyle&) const override;
 
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
@@ -201,7 +201,7 @@ public:
     bool canHaveSelection() const;
 
     bool rendererIsNeeded(const RenderStyle&) final;
-    RenderPtr<RenderElement> createElementRenderer(std::unique_ptr<RenderStyle>, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void willAttachRenderers() final;
     void didAttachRenderers() final;
     void didDetachRenderers() final;

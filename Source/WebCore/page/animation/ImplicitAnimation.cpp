@@ -41,7 +41,7 @@ namespace WebCore {
 
 ImplicitAnimation::ImplicitAnimation(Animation& transition, CSSPropertyID animatingProperty, RenderElement* renderer, CompositeAnimation* compAnim, RenderStyle* fromStyle)
     : AnimationBase(transition, renderer, compAnim)
-    , m_fromStyle(RenderStyle::clone(fromStyle))
+    , m_fromStyle(RenderStyle::clonePtr(*fromStyle))
     , m_transitionProperty(transition.property())
     , m_animatingProperty(animatingProperty)
 {
@@ -76,7 +76,7 @@ bool ImplicitAnimation::animate(CompositeAnimation*, RenderElement*, const Rende
     // Run a cycle of animation.
     // We know we will need a new render style, so make one if needed
     if (!animatedStyle)
-        animatedStyle = RenderStyle::clone(targetStyle);
+        animatedStyle = RenderStyle::clonePtr(*targetStyle);
 
     bool needsAnim = CSSPropertyAnimation::blendProperties(this, m_animatingProperty, animatedStyle.get(), m_fromStyle.get(), m_toStyle.get(), progress());
     // FIXME: we also need to detect cases where we have to software animate for other reasons,
@@ -98,7 +98,7 @@ bool ImplicitAnimation::animate(CompositeAnimation*, RenderElement*, const Rende
 void ImplicitAnimation::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
 {
     if (!animatedStyle)
-        animatedStyle = RenderStyle::clone(m_toStyle.get());
+        animatedStyle = RenderStyle::clonePtr(*m_toStyle);
 
     CSSPropertyAnimation::blendProperties(this, m_animatingProperty, animatedStyle.get(), m_fromStyle.get(), m_toStyle.get(), progress());
 }
@@ -170,7 +170,7 @@ void ImplicitAnimation::onAnimationEnd(double elapsedTime)
     // (comparing the old unanimated style with the new final style of the transition).
     RefPtr<KeyframeAnimation> keyframeAnim = m_compositeAnimation->getAnimationForProperty(m_animatingProperty);
     if (keyframeAnim)
-        keyframeAnim->setUnanimatedStyle(RenderStyle::clone(m_toStyle.get()));
+        keyframeAnim->setUnanimatedStyle(RenderStyle::clonePtr(*m_toStyle));
     
     sendTransitionEvent(eventNames().transitionendEvent, elapsedTime);
     endAnimation();
@@ -210,7 +210,7 @@ void ImplicitAnimation::reset(RenderStyle* to)
     ASSERT(to);
     ASSERT(m_fromStyle);
 
-    m_toStyle = RenderStyle::clone(to);
+    m_toStyle = RenderStyle::clonePtr(*to);
 
     // Restart the transition
     if (m_fromStyle && m_toStyle)

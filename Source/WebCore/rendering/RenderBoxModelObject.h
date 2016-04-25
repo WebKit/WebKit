@@ -238,8 +238,8 @@ public:
     RenderBoxModelObject* continuation() const;
 
 protected:
-    RenderBoxModelObject(Element&, std::unique_ptr<RenderStyle>, BaseTypeFlags);
-    RenderBoxModelObject(Document&, std::unique_ptr<RenderStyle>, BaseTypeFlags);
+    RenderBoxModelObject(Element&, RenderStyle&&, BaseTypeFlags);
+    RenderBoxModelObject(Document&, RenderStyle&&, BaseTypeFlags);
 
     void willBeDestroyed() override;
 

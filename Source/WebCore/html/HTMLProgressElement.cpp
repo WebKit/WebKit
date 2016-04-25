@@ -56,9 +56,9 @@ Ref<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tagNam
     return progress;
 }
 
-RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    if (!style->hasAppearance())
+    if (!style.hasAppearance())
         return RenderElement::createFor(*this, WTFMove(style));
 
     return createRenderer<RenderProgress>(*this, WTFMove(style));

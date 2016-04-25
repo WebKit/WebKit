@@ -50,7 +50,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTable::RenderTable(Element& element, std::unique_ptr<RenderStyle> style)
+RenderTable::RenderTable(Element& element, RenderStyle&& style)
     : RenderBlock(element, WTFMove(style), 0)
     , m_head(nullptr)
     , m_foot(nullptr)
@@ -72,7 +72,7 @@ RenderTable::RenderTable(Element& element, std::unique_ptr<RenderStyle> style)
     m_columnPos.fill(0, 1);
 }
 
-RenderTable::RenderTable(Document& document, std::unique_ptr<RenderStyle> style)
+RenderTable::RenderTable(Document& document, RenderStyle&& style)
     : RenderBlock(document, WTFMove(style), 0)
     , m_head(nullptr)
     , m_foot(nullptr)
@@ -1549,7 +1549,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
 RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    auto table = new RenderTable(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(&parent->style(), parent->style().display() == INLINE ? INLINE_TABLE : TABLE));
+    auto table = new RenderTable(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), parent->style().display() == INLINE ? INLINE_TABLE : TABLE));
     table->initializeStyle();
     return table;
 }

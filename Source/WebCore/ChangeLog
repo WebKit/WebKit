@@ -1,3 +1,61 @@
+2016-04-25  Antti Koivisto  <antti@apple.com>
+
+        Inline RenderStyle into RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=156981
+
+        Reviewed by Andreas Kling.
+
+        We can save memory and reduce indirection of style access by inlining RenderStyle to RenderElement.
+
+        This patch also makes RenderStyle moveable and switches from std::unique_ptr<RenderStyle> to RenderStyle&&
+        in many places where ownership is passed.
+
+        * Modules/plugins/PluginReplacement.h:
+        (WebCore::PluginReplacement::scriptObject):
+        (WebCore::PluginReplacement::willCreateRenderer):
+        * Modules/plugins/QuickTimePluginReplacement.h:
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::~QuickTimePluginReplacement):
+        (WebCore::QuickTimePluginReplacement::createElementRenderer):
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::YouTubePluginReplacement):
+        (WebCore::YouTubePluginReplacement::createElementRenderer):
+        * Modules/plugins/YouTubePluginReplacement.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::defaultStyleForElement):
+        (WebCore::StyleResolver::addToMatchedPropertiesCache):
+        (WebCore::StyleResolver::applyPropertyToStyle):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        (WebCore::Document::setFullScreenRenderer):
+        * dom/Element.cpp:
+        (WebCore::Element::rendererIsNeeded):
+        (WebCore::Element::createElementRenderer):
+        * dom/Element.h:
+        (WebCore::Element::copyNonAttributePropertiesFromElement):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::resolveCustomStyle):
+        (WebCore::PseudoElement::didAttachRenderers):
+        (WebCore::PseudoElement::didRecalcStyle):
+        * html/BaseButtonInputType.cpp:
+        (WebCore::BaseButtonInputType::appendFormData):
+        (WebCore::BaseButtonInputType::createInputRenderer):
+        * html/BaseButtonInputType.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::handleDOMActivateEvent):
+        (WebCore::FileInputType::createInputRenderer):
+        * html/FileInputType.h:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::rendererIsNeeded):
+        (WebCore::HTMLAppletElement::createElementRenderer):
+
+        ...
+
 2016-04-25  Eric Carlson  <eric.carlson@apple.com>
 
         Stop listening for "media can start" notifications when media player is cleared
@@ -79,6 +137,8 @@
         (WebCore::File::lastModifiedDate): Deleted.
         * fileapi/File.h:
         * fileapi/File.idl:
+
+
 
 2016-04-25  Antti Koivisto  <antti@apple.com>
 

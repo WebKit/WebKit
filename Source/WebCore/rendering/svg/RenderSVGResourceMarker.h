@@ -32,7 +32,7 @@ class RenderObject;
 
 class RenderSVGResourceMarker final : public RenderSVGResourceContainer {
 public:
-    RenderSVGResourceMarker(SVGMarkerElement&, std::unique_ptr<RenderStyle>);
+    RenderSVGResourceMarker(SVGMarkerElement&, RenderStyle&&);
     virtual ~RenderSVGResourceMarker();
 
     SVGMarkerElement& markerElement() const { return downcast<SVGMarkerElement>(RenderSVGResourceContainer::element()); }

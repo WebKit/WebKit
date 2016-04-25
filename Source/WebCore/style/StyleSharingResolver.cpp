@@ -136,7 +136,7 @@ std::unique_ptr<RenderStyle> SharingResolver::resolve(const Element& searchEleme
 
     m_elementsSharingStyle.add(&element, shareElement);
 
-    return RenderStyle::clone(update.elementStyle(*shareElement));
+    return RenderStyle::clonePtr(*update.elementStyle(*shareElement));
 }
 
 StyledElement* SharingResolver::findSibling(const Context& context, Node* node, unsigned& count) const

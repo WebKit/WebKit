@@ -102,7 +102,7 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
     event->setDefaultHandled();
 }
 
-RenderPtr<RenderElement> ImageInputType::createInputRenderer(std::unique_ptr<RenderStyle> style)
+RenderPtr<RenderElement> ImageInputType::createInputRenderer(RenderStyle&& style)
 {
     return createRenderer<RenderImage>(element(), WTFMove(style));
 }

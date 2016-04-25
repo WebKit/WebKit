@@ -32,7 +32,7 @@ class Position;
 
 class RenderLineBreak final : public RenderBoxModelObject {
 public:
-    RenderLineBreak(HTMLElement&, std::unique_ptr<RenderStyle>);
+    RenderLineBreak(HTMLElement&, RenderStyle&&);
     virtual ~RenderLineBreak();
 
     // FIXME: The lies here keep render tree dump based test results unchanged.

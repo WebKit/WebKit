@@ -40,7 +40,7 @@ class VTTCueBox;
 
 class RenderVTTCue final : public RenderBlockFlow {
 public:
-    RenderVTTCue(VTTCueBox&, std::unique_ptr<RenderStyle>);
+    RenderVTTCue(VTTCueBox&, RenderStyle&&);
 
 private:
     void layout() override;

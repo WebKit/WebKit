@@ -2216,7 +2216,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
 
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
-    auto newStyle = RenderStyle::create();
+    auto newStyle = RenderStyle::createPtr();
 
     Document& document = canvas()->document();
     document.updateStyleIfNeeded();

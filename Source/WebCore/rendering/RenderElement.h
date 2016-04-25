@@ -36,11 +36,11 @@ class RenderElement : public RenderObject {
 public:
     virtual ~RenderElement();
 
-    static RenderPtr<RenderElement> createFor(Element&, std::unique_ptr<RenderStyle>);
+    static RenderPtr<RenderElement> createFor(Element&, RenderStyle&&);
 
     bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 
-    RenderStyle& style() const { return const_cast<RenderStyle&>(*m_style); }
+    RenderStyle& style() const { return const_cast<RenderStyle&>(m_style); }
     RenderStyle& firstLineStyle() const;
 
     void initializeStyle();
@@ -48,7 +48,7 @@ public:
     // Calling with minimalStyleDifference > StyleDifferenceEqual indicates that
     // out-of-band state (e.g. animations) requires that styleDidChange processing
     // continue even if the style isn't different from the current style.
-    void setStyle(std::unique_ptr<RenderStyle>, StyleDifference minimalStyleDifference = StyleDifferenceEqual);
+    void setStyle(RenderStyle&&, StyleDifference minimalStyleDifference = StyleDifferenceEqual);
 
     // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
     // any pseudo classes (and therefore has no concept of changing state).
@@ -136,7 +136,7 @@ public:
 
     // Updates only the local style ptr of the object. Does not update the state of the object,
     // and so only should be called when the style is known not to have changed (or from setStyle).
-    void setStyleInternal(std::unique_ptr<RenderStyle> style) { m_style = WTFMove(style); }
+    void setStyleInternal(RenderStyle&& style) { m_style = WTFMove(style); }
 
     // Repaint only if our old bounds and new bounds are different. The caller may pass in newBounds and newOutlineBox if they are known.
     bool repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = nullptr, const LayoutRect* newOutlineBoxPtr = nullptr);
@@ -223,8 +223,8 @@ protected:
     
     typedef unsigned BaseTypeFlags;
 
-    RenderElement(Element&, std::unique_ptr<RenderStyle>, BaseTypeFlags);
-    RenderElement(Document&, std::unique_ptr<RenderStyle>, BaseTypeFlags);
+    RenderElement(Element&, RenderStyle&&, BaseTypeFlags);
+    RenderElement(Document&, RenderStyle&&, BaseTypeFlags);
 
     bool layerCreationAllowedForSubtree() const;
 
@@ -272,7 +272,7 @@ protected:
     void updateOutlineAutoAncestor(bool hasOutlineAuto) const;
 
 private:
-    RenderElement(ContainerNode&, std::unique_ptr<RenderStyle>, BaseTypeFlags);
+    RenderElement(ContainerNode&, RenderStyle&&, BaseTypeFlags);
     void node() const = delete;
     void nonPseudoNode() const = delete;
     void generatingNode() const = delete;
@@ -332,7 +332,7 @@ private:
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;
 
-    std::unique_ptr<RenderStyle> m_style;
+    RenderStyle m_style;
 
     // FIXME: Get rid of this hack.
     // Store state between styleWillChange and styleDidChange

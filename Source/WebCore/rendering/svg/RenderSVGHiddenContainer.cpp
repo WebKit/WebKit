@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-RenderSVGHiddenContainer::RenderSVGHiddenContainer(SVGElement& element, std::unique_ptr<RenderStyle> style)
+RenderSVGHiddenContainer::RenderSVGHiddenContainer(SVGElement& element, RenderStyle&& style)
     : RenderSVGContainer(element, WTFMove(style))
 {
 }

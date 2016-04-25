@@ -43,7 +43,7 @@ void RenderCombineText::styleDidChange(StyleDifference diff, const RenderStyle* 
     // clobbering width variants and shrink-to-fit changes, since we won't recombine when
     // the font doesn't change.
     if (!oldStyle || oldStyle->fontCascade() != style().fontCascade())
-        m_combineFontStyle = RenderStyle::clone(&style());
+        m_combineFontStyle = RenderStyle::clonePtr(style());
 
     RenderText::styleDidChange(diff, oldStyle);
 

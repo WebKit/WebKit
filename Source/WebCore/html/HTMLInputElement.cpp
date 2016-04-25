@@ -760,7 +760,7 @@ bool HTMLInputElement::rendererIsNeeded(const RenderStyle& style)
     return m_inputType->rendererIsNeeded() && HTMLTextFormControlElement::rendererIsNeeded(style);
 }
 
-RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return m_inputType->createInputRenderer(WTFMove(style));
 }
@@ -1875,23 +1875,23 @@ bool HTMLInputElement::shouldTruncateText(const RenderStyle& style) const
     return document().focusedElement() != this && style.textOverflow() == TextOverflowEllipsis;
 }
 
-std::unique_ptr<RenderStyle> HTMLInputElement::createInnerTextStyle(const RenderStyle& style) const
+RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style) const
 {
     auto textBlockStyle = RenderStyle::create();
-    textBlockStyle->inheritFrom(&style);
-    adjustInnerTextStyle(style, *textBlockStyle);
+    textBlockStyle.inheritFrom(&style);
+    adjustInnerTextStyle(style, textBlockStyle);
 
-    textBlockStyle->setWhiteSpace(PRE);
-    textBlockStyle->setOverflowWrap(NormalOverflowWrap);
-    textBlockStyle->setOverflowX(OHIDDEN);
-    textBlockStyle->setOverflowY(OHIDDEN);
-    textBlockStyle->setTextOverflow(shouldTruncateText(style) ? TextOverflowEllipsis : TextOverflowClip);
+    textBlockStyle.setWhiteSpace(PRE);
+    textBlockStyle.setOverflowWrap(NormalOverflowWrap);
+    textBlockStyle.setOverflowX(OHIDDEN);
+    textBlockStyle.setOverflowY(OHIDDEN);
+    textBlockStyle.setTextOverflow(shouldTruncateText(style) ? TextOverflowEllipsis : TextOverflowClip);
 
     // Do not allow line-height to be smaller than our default.
-    if (textBlockStyle->fontMetrics().lineSpacing() > style.computedLineHeight())
-        textBlockStyle->setLineHeight(RenderStyle::initialLineHeight());
+    if (textBlockStyle.fontMetrics().lineSpacing() > style.computedLineHeight())
+        textBlockStyle.setLineHeight(RenderStyle::initialLineHeight());
 
-    textBlockStyle->setDisplay(BLOCK);
+    textBlockStyle.setDisplay(BLOCK);
 
     return textBlockStyle;
 }

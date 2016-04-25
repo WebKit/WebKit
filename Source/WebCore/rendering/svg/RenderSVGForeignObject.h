@@ -32,7 +32,7 @@ class SVGForeignObjectElement;
 
 class RenderSVGForeignObject final : public RenderSVGBlock {
 public:
-    RenderSVGForeignObject(SVGForeignObjectElement&, std::unique_ptr<RenderStyle>);
+    RenderSVGForeignObject(SVGForeignObjectElement&, RenderStyle&&);
     virtual ~RenderSVGForeignObject();
 
     SVGForeignObjectElement& foreignObjectElement() const;

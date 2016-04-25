@@ -231,7 +231,7 @@ bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
         || InputType::shouldSubmitImplicitly(event);
 }
 
-RenderPtr<RenderElement> TextFieldInputType::createInputRenderer(std::unique_ptr<RenderStyle> style)
+RenderPtr<RenderElement> TextFieldInputType::createInputRenderer(RenderStyle&& style)
 {
     return createRenderer<RenderTextControlSingleLine>(element(), WTFMove(style));
 }

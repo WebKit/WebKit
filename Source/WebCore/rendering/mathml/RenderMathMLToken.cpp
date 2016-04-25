@@ -36,13 +36,13 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLToken::RenderMathMLToken(Element& element, std::unique_ptr<RenderStyle> style)
+RenderMathMLToken::RenderMathMLToken(Element& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))
     , m_containsElement(false)
 {
 }
 
-RenderMathMLToken::RenderMathMLToken(Document& document, std::unique_ptr<RenderStyle> style)
+RenderMathMLToken::RenderMathMLToken(Document& document, RenderStyle&& style)
     : RenderMathMLBlock(document, WTFMove(style))
     , m_containsElement(false)
 {
@@ -82,17 +82,17 @@ void RenderMathMLToken::updateStyle()
     const auto& tokenElement = element();
 
     const auto& wrapper = downcast<RenderElement>(firstChild());
-    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
+    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
 
     if (tokenElement.hasTagName(MathMLNames::miTag)) {
         // This tries to emulate the default mathvariant value on <mi> using the CSS font-style property.
         // FIXME: This should be revised when mathvariant is implemented (http://wkbug/85735) and when fonts with Mathematical Alphanumeric Symbols characters are more popular.
-        auto fontDescription = newStyle->fontDescription();
-        FontSelector* fontSelector = newStyle->fontCascade().fontSelector();
+        auto fontDescription = newStyle.fontDescription();
+        FontSelector* fontSelector = newStyle.fontCascade().fontSelector();
         if (!m_containsElement && element().textContent().stripWhiteSpace().simplifyWhiteSpace().length() == 1 && !tokenElement.hasAttribute(mathvariantAttr))
             fontDescription.setItalic(FontItalicOn);
-        if (newStyle->setFontDescription(fontDescription))
-            newStyle->fontCascade().update(fontSelector);
+        if (newStyle.setFontDescription(fontDescription))
+            newStyle.fontCascade().update(fontSelector);
     }
 
     wrapper->setStyle(WTFMove(newStyle));

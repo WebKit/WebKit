@@ -51,7 +51,7 @@ bool SVGDefsElement::isValid() const
     return SVGTests::isValid();
 }
 
-RenderPtr<RenderElement> SVGDefsElement::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGDefsElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
 }

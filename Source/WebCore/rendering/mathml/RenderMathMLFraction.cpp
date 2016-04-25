@@ -49,7 +49,7 @@ static const float gFractionBarWidth = 0.05f;
 static const float gNumeratorGap = 0.2f;
 static const float gDenominatorGap = 0.2f;
 
-RenderMathMLFraction::RenderMathMLFraction(MathMLInlineContainerElement& element, std::unique_ptr<RenderStyle> style)
+RenderMathMLFraction::RenderMathMLFraction(MathMLInlineContainerElement& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))
     , m_defaultLineThickness(1)
     , m_lineThickness(0)

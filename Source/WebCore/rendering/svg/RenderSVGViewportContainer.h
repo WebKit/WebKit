@@ -31,7 +31,7 @@ namespace WebCore {
 // thus we inherit from RenderSVGContainer instead of RenderSVGTransformableContainer
 class RenderSVGViewportContainer final : public RenderSVGContainer {
 public:
-    RenderSVGViewportContainer(SVGSVGElement&, std::unique_ptr<RenderStyle>);
+    RenderSVGViewportContainer(SVGSVGElement&, RenderStyle&&);
 
     SVGSVGElement& svgSVGElement() const;
 

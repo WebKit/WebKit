@@ -34,7 +34,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderFieldset::RenderFieldset(HTMLFieldSetElement& element, std::unique_ptr<RenderStyle> style)
+RenderFieldset::RenderFieldset(HTMLFieldSetElement& element, RenderStyle&& style)
     : RenderBlockFlow(element, WTFMove(style))
 {
 }

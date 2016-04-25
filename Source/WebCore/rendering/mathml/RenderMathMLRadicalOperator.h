@@ -35,7 +35,7 @@ namespace WebCore {
 
 class RenderMathMLRadicalOperator final : public RenderMathMLOperator {
 public:
-    RenderMathMLRadicalOperator(Document&, std::unique_ptr<RenderStyle>);
+    RenderMathMLRadicalOperator(Document&, RenderStyle&&);
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline) override;
     void computePreferredLogicalWidths() override;
     void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;

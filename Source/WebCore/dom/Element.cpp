@@ -1493,7 +1493,7 @@ bool Element::rendererIsNeeded(const RenderStyle& style)
     return style.display() != NONE && style.display() != CONTENTS;
 }
 
-RenderPtr<RenderElement> Element::createElementRenderer(std::unique_ptr<RenderStyle> style, const RenderTreePosition&)
+RenderPtr<RenderElement> Element::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return RenderElement::createFor(*this, WTFMove(style));
 }
