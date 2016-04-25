@@ -117,17 +117,13 @@ public:
     void transform(float m11, float m12, float m21, float m22, float dx, float dy);
     void setTransform(float m11, float m12, float m21, float m22, float dx, float dy);
 
-    void setStrokeColor(const String& color);
-    void setStrokeColor(float grayLevel);
-    void setStrokeColor(const String& color, float alpha);
-    void setStrokeColor(float grayLevel, float alpha);
+    void setStrokeColor(const String& color, Optional<float> alpha = Nullopt);
+    void setStrokeColor(float grayLevel, float alpha = 1.0);
     void setStrokeColor(float r, float g, float b, float a);
     void setStrokeColor(float c, float m, float y, float k, float a);
 
-    void setFillColor(const String& color);
-    void setFillColor(float grayLevel);
-    void setFillColor(const String& color, float alpha);
-    void setFillColor(float grayLevel, float alpha);
+    void setFillColor(const String& color, Optional<float> alpha = Nullopt);
+    void setFillColor(float grayLevel, float alpha = 1.0f);
     void setFillColor(float r, float g, float b, float a);
     void setFillColor(float c, float m, float y, float k, float a);
 
@@ -152,10 +148,9 @@ public:
     void strokeRect(float x, float y, float width, float height);
 
     void setShadow(float width, float height, float blur);
-    void setShadow(float width, float height, float blur, const String& color);
     void setShadow(float width, float height, float blur, float grayLevel);
-    void setShadow(float width, float height, float blur, const String& color, float alpha);
-    void setShadow(float width, float height, float blur, float grayLevel, float alpha);
+    void setShadow(float width, float height, float blur, const String& color, Optional<float> alpha = Nullopt);
+    void setShadow(float width, float height, float blur, float grayLevel, float alpha = 1.0);
     void setShadow(float width, float height, float blur, float r, float g, float b, float a);
     void setShadow(float width, float height, float blur, float c, float m, float y, float k, float a);
 
@@ -217,10 +212,8 @@ public:
     String direction() const;
     void setDirection(const String&);
 
-    void fillText(const String& text, float x, float y);
-    void fillText(const String& text, float x, float y, float maxWidth);
-    void strokeText(const String& text, float x, float y);
-    void strokeText(const String& text, float x, float y, float maxWidth);
+    void fillText(const String& text, float x, float y, Optional<float> maxWidth = Nullopt);
+    void strokeText(const String& text, float x, float y, Optional<float> maxWidth = Nullopt);
     Ref<TextMetrics> measureText(const String& text);
 
     LineCap getLineCap() const { return state().lineCap; }
@@ -345,7 +338,7 @@ private:
     void applyStrokePattern();
     void applyFillPattern();
 
-    void drawTextInternal(const String& text, float x, float y, bool fill, float maxWidth = 0, bool useMaxWidth = false);
+    void drawTextInternal(const String& text, float x, float y, bool fill, Optional<float> maxWidth = Nullopt);
 
     // The relationship between FontCascade and CanvasRenderingContext2D::FontProxy must hold certain invariants.
     // Therefore, all font operations must pass through the State.

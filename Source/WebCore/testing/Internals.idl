@@ -271,7 +271,7 @@ enum AutoFillButtonType {
     [RaisesException] void setInspectorIsUnderTest(boolean isUnderTest);
 
     DOMString counterValue(Element element);
-    long pageNumber(Element element, optional unrestricted float pageWidth, optional unrestricted float pageHeight);
+    long pageNumber(Element element, optional unrestricted float pageWidth = 800, optional unrestricted float pageHeight = 600);
     DOMString[] shortcutIconURLs();
     long numberOfPages(optional unrestricted double pageWidthInPixels, optional unrestricted double pageHeightInPixels);
     [RaisesException] DOMString pageProperty(DOMString propertyName, long pageNumber);

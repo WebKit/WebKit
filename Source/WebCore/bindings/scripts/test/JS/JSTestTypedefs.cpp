@@ -499,12 +499,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
     String color = state->argument(3).toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (argsCount <= 4) {
-        impl.setShadow(width, height, blur, color);
-        return JSValue::encode(jsUndefined());
-    }
-
-    float alpha = state->argument(4).toFloat(state);
+    Optional<float> alpha = state->argument(4).isUndefined() ? Optional<float>() : state->uncheckedArgument(4).toFloat(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.setShadow(width, height, blur, color, alpha);

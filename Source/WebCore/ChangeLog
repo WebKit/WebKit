@@ -1,3 +1,32 @@
+2016-04-25  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Specify default values for optional parameters of type 'float' / 'unrestricted float'
+        https://bugs.webkit.org/show_bug.cgi?id=156995
+
+        Reviewed by Darin Adler.
+
+        Specify default values for optional parameters of type 'float' / 'unrestricted float'
+        and let the bindings generator use WTF::Optional<> for the ones that do not have a
+        default value.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (CanUseWTFOptionalForParameter): Deleted.
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsPrototypeFunctionSetShadow):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeColor):
+        (WebCore::CanvasRenderingContext2D::setFillColor):
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::fillText):
+        (WebCore::CanvasRenderingContext2D::strokeText):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        (WebCore::CanvasRenderingContext2D::clearShadow): Deleted.
+        (WebCore::normalizeSpaces): Deleted.
+        (WebCore::CanvasRenderingContext2D::measureText): Deleted.
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * testing/Internals.idl:
+
 2016-04-25  Brent Fulgham  <bfulgham@apple.com>
 
         Add port 4190 (managesieve) to port blacklist
