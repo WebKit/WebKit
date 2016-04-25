@@ -1,3 +1,9 @@
+2016-04-25  Brady Eidson  <beidson@apple.com>
+
+        Tweaking IndexedDB watchlist and adding myself to it.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2016-04-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r199916.

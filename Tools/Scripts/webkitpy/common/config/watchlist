@@ -277,7 +277,10 @@
                         r"|Source/WebCore/bindings/.*IDB.*\.(h|cpp)"
                         r"|Source/WebCore/bindings/.*SerializedScriptValue.*\.(h|cpp)"
                         r"|LayoutTests/storage/indexeddb"
-                        r"|LayoutTests/platform/.*/storage/indexeddb",
+                        r"|LayoutTests/platform/.*/storage/indexeddb"
+                        r"|LayoutTests/imported/w3c/web-platform-tests/IndexedDB"
+                        r"|LayoutTests/imported/w3c/indexeddb"
+                        r"|LayoutTests/imported/blink/storage/indexeddb"
         },
         "JavaScriptCore": {
             "filename": r"Source/JavaScriptCore/(?!inspector)"
@@ -376,7 +379,7 @@
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org", "berto@igalia.com", "mcatanzaro@igalia.com" ],
         "HTML": [ "esprehn+autocc@chromium.org", "gyuyoung.kim@webkit.org", "cdumez@apple.com" ],
         "History": [ "cdumez@apple.com" ],
-        "IndexedDB": [ "alecflett@chromium.org", "jsbell@chromium.org" ],
+        "IndexedDB": [ "beidson@apple.com", "alecflett@chromium.org", "jsbell@chromium.org" ],
         "Loader": [ "japhet@chromium.org", "cdumez@apple.com" ],
         "JavaScriptCore": [ "keith_miller@apple.com", "sbarati@apple.com", "mark.lam@apple.com", "msaboff@apple.com" ],
         "MacAndIOSTextLayoutAndRendering": [ "mmaxfield@apple.com" ],
