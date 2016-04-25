@@ -46,6 +46,10 @@ root:not([mynotattr]) target {
     color: rgb(10, 0, 0);
 }
 
+[myattr=value11] target {
+    color: rgb(11, 0, 0);
+}
+
 </style>
 </head>
 <body>
@@ -250,6 +254,10 @@ checkStyle(10);
 setAttribute('mynotattr', 'value');
 testStyleInvalidation("InlineStyleChange");
 checkStyle(1);
+
+setAttribute('myattr', 'value11');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(11);
 
 </script>
 <script src="../../resources/js-test-post.js"></script>
