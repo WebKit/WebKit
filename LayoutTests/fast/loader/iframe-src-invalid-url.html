@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
+    }
+</script>
+</head>
+<body>
+    <p>Test passes if the first child frame prints about:blank.</p>
+    <iframe src="data:text/html,
+    <iframe id='iframe' src='<p>FAILURE</p>'></iframe>
+    <script>document.write(document.getElementById('iframe').contentWindow.location.href);</script>"></iframe>
+</body>
+</html>
