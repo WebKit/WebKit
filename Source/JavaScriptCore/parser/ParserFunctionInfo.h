@@ -31,14 +31,13 @@ namespace JSC {
 template <class TreeBuilder>
 struct ParserFunctionInfo {
     const Identifier* name = 0;
-    typename TreeBuilder::FormalParameterList parameters = 0;
     typename TreeBuilder::FunctionBody body = 0;
     unsigned parameterCount = 0;
     unsigned startOffset = 0;
     unsigned endOffset = 0;
     int startLine = 0;
     int endLine = 0;
-    unsigned bodyStartColumn = 0;
+    unsigned parametersStartColumn = 0;
 };
 
 template <class TreeBuilder>

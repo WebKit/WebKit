@@ -73,7 +73,7 @@ public:
         return JSTextPosition(m_lineNumber, currentOffset(), currentLineStartOffset());
     }
     JSTextPosition positionBeforeLastNewline() const { return m_positionBeforeLastNewline; }
-    JSTokenLocation lastTokenLocation() const { return m_lastTockenLocation; }
+    JSTokenLocation lastTokenLocation() const { return m_lastTokenLocation; }
     void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
     int lastLineNumber() const { return m_lastLineNumber; }
     bool prevTerminator() const { return m_terminator; }
@@ -202,7 +202,7 @@ private:
     const T* m_codeStartPlusOffset;
     const T* m_lineStart;
     JSTextPosition m_positionBeforeLastNewline;
-    JSTokenLocation m_lastTockenLocation;
+    JSTokenLocation m_lastTokenLocation;
     bool m_isReparsingFunction;
     bool m_atLineStart;
     bool m_error;

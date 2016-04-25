@@ -375,7 +375,7 @@ public:
     ExpressionNode* createFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)
     {
         FuncExprNode* result = new (m_parserArena) FuncExprNode(location, *functionInfo.name, functionInfo.body,
-            m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn));
+            m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn));
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         return result;
     }
@@ -383,7 +383,7 @@ public:
     ExpressionNode* createMethodDefinition(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)
     {
         MethodDefinitionNode* result = new (m_parserArena) MethodDefinitionNode(location, *functionInfo.name, functionInfo.body,
-            m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn));
+            m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn));
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         return result;
     }
@@ -403,7 +403,7 @@ public:
     ExpressionNode* createArrowFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)
     {
         usesArrowFunction();
-        SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.body->isArrowFunctionBodyExpression() ? functionInfo.endOffset - 1 : functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn);
+        SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.body->isArrowFunctionBodyExpression() ? functionInfo.endOffset - 1 : functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn);
         ArrowFuncExprNode* result = new (m_parserArena) ArrowFuncExprNode(location, *functionInfo.name, functionInfo.body, source);
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         return result;
@@ -416,7 +416,7 @@ public:
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         functionInfo.body->setEcmaName(*name);
         functionInfo.body->setInferredName(*name);
-        SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn);
+        SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn);
         MethodDefinitionNode* methodDef = new (m_parserArena) MethodDefinitionNode(location, m_vm->propertyNames->nullIdentifier, functionInfo.body, source);
         return new (m_parserArena) PropertyNode(*name, methodDef, type, PropertyNode::Unknown, SuperBinding::Needed, isClassProperty);
     }
@@ -426,7 +426,7 @@ public:
     {
         ASSERT(name);
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
-        SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn);
+        SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn);
         MethodDefinitionNode* methodDef = new (m_parserArena) MethodDefinitionNode(location, m_vm->propertyNames->nullIdentifier, functionInfo.body, source);
         return new (m_parserArena) PropertyNode(name, methodDef, type, PropertyNode::Unknown, SuperBinding::Needed, isClassProperty);
     }
@@ -436,7 +436,7 @@ public:
     {
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
         const Identifier& ident = parserArena.identifierArena().makeNumericIdentifier(vm, name);
-        SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn);
+        SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn);
         MethodDefinitionNode* methodDef = new (m_parserArena) MethodDefinitionNode(location, vm->propertyNames->nullIdentifier, functionInfo.body, source);
         return new (m_parserArena) PropertyNode(ident, methodDef, type, PropertyNode::Unknown, SuperBinding::Needed, isClassProperty);
     }
@@ -491,7 +491,7 @@ public:
     StatementNode* createFuncDeclStatement(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)
     {
         FuncDeclNode* decl = new (m_parserArena) FuncDeclNode(location, *functionInfo.name, functionInfo.body,
-            m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn));
+            m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.endOffset, functionInfo.startLine, functionInfo.parametersStartColumn));
         if (*functionInfo.name == m_vm->propertyNames->arguments)
             usesArguments();
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);

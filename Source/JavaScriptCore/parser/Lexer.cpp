@@ -1770,7 +1770,7 @@ JSTokenType Lexer<T>::lex(JSToken* tokenRecord, unsigned lexerFlags, bool strict
 {
     JSTokenData* tokenData = &tokenRecord->m_data;
     JSTokenLocation* tokenLocation = &tokenRecord->m_location;
-    m_lastTockenLocation = JSTokenLocation(tokenRecord->m_location);
+    m_lastTokenLocation = JSTokenLocation(tokenRecord->m_location);
     
     ASSERT(!m_error);
     ASSERT(m_buffer8.isEmpty());
@@ -2002,6 +2002,9 @@ start:
         break;
     case CharacterOpenParen:
         token = OPENPAREN;
+        tokenData->line = lineNumber();
+        tokenData->offset = currentOffset();
+        tokenData->lineStartOffset = currentLineStartOffset();
         shift();
         break;
     case CharacterCloseParen:

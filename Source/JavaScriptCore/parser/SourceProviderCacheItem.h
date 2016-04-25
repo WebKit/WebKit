@@ -35,10 +35,10 @@ namespace JSC {
 
 struct SourceProviderCacheItemCreationParameters {
     unsigned functionNameStart;
-    unsigned lastTockenLine;
-    unsigned lastTockenStartOffset;
-    unsigned lastTockenEndOffset;
-    unsigned lastTockenLineStartOffset;
+    unsigned lastTokenLine;
+    unsigned lastTokenStartOffset;
+    unsigned lastTokenEndOffset;
+    unsigned lastTokenLineStartOffset;
     unsigned endFunctionOffset;
     unsigned parameterCount;
     bool needsFullActivation;
@@ -48,6 +48,8 @@ struct SourceProviderCacheItemCreationParameters {
     Vector<UniquedStringImpl*, 8> usedVariables;
     bool isBodyArrowExpression { false };
     JSTokenType tokenType { CLOSEBRACE };
+    ConstructorKind constructorKind;
+    SuperBinding expectedSuperBinding;
 };
 
 #if COMPILER(MSVC)
@@ -65,11 +67,11 @@ public:
     {
         JSToken token;
         token.m_type = isBodyArrowExpression ? tokenType : CLOSEBRACE;
-        token.m_data.offset = lastTockenStartOffset;
-        token.m_location.startOffset = lastTockenStartOffset;
-        token.m_location.endOffset = lastTockenEndOffset;
-        token.m_location.line = lastTockenLine;
-        token.m_location.lineStartOffset = lastTockenLineStartOffset;
+        token.m_data.offset = lastTokenStartOffset;
+        token.m_location.startOffset = lastTokenStartOffset;
+        token.m_location.endOffset = lastTokenEndOffset;
+        token.m_location.line = lastTokenLine;
+        token.m_location.lineStartOffset = lastTokenLineStartOffset;
         // token.m_location.sourceOffset is initialized once by the client. So,
         // we do not need to set it here.
         return token;
@@ -77,25 +79,22 @@ public:
 
     unsigned functionNameStart : 31;
     bool needsFullActivation : 1;
-
     unsigned endFunctionOffset : 31;
-    unsigned lastTockenLine : 31;
-    unsigned lastTockenStartOffset : 31;
-    unsigned lastTockenEndOffset: 31;
-    unsigned parameterCount;
-    
     bool usesEval : 1;
-
+    unsigned lastTokenLine : 31;
     bool strictMode : 1;
-    
-    InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures;
-
-    unsigned lastTockenLineStartOffset;
+    unsigned lastTokenStartOffset : 31;
+    unsigned lastTokenEndOffset: 31;
+    unsigned constructorKind : 2; // ConstructorKind
+    unsigned parameterCount : 31;
+    unsigned expectedSuperBinding : 1; // SuperBinding
+    unsigned lastTokenLineStartOffset;
     unsigned usedVariablesCount;
-
-    UniquedStringImpl** usedVariables() const { return const_cast<UniquedStringImpl**>(m_variables); }
+    InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures;
     bool isBodyArrowExpression;
     JSTokenType tokenType;
+
+    UniquedStringImpl** usedVariables() const { return const_cast<UniquedStringImpl**>(m_variables); }
 
 private:
     SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters&);
@@ -121,15 +120,17 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     : functionNameStart(parameters.functionNameStart)
     , needsFullActivation(parameters.needsFullActivation)
     , endFunctionOffset(parameters.endFunctionOffset)
-    , lastTockenLine(parameters.lastTockenLine)
-    , lastTockenStartOffset(parameters.lastTockenStartOffset)
-    , lastTockenEndOffset(parameters.lastTockenEndOffset)
-    , parameterCount(parameters.parameterCount)
     , usesEval(parameters.usesEval)
+    , lastTokenLine(parameters.lastTokenLine)
     , strictMode(parameters.strictMode)
-    , innerArrowFunctionFeatures(parameters.innerArrowFunctionFeatures)
-    , lastTockenLineStartOffset(parameters.lastTockenLineStartOffset)
+    , lastTokenStartOffset(parameters.lastTokenStartOffset)
+    , lastTokenEndOffset(parameters.lastTokenEndOffset)
+    , constructorKind(static_cast<unsigned>(parameters.constructorKind))
+    , parameterCount(parameters.parameterCount)
+    , expectedSuperBinding(static_cast<unsigned>(parameters.expectedSuperBinding))
+    , lastTokenLineStartOffset(parameters.lastTokenLineStartOffset)
     , usedVariablesCount(parameters.usedVariables.size())
+    , innerArrowFunctionFeatures(parameters.innerArrowFunctionFeatures)
     , isBodyArrowExpression(parameters.isBodyArrowExpression)
     , tokenType(parameters.tokenType)
 {

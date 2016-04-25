@@ -1,3 +1,74 @@
+2016-04-25  Saam barati  <sbarati@apple.com>
+
+        We don't have to parse a function's parameters every time if the function is in the source provider cache
+        https://bugs.webkit.org/show_bug.cgi?id=156943
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes a few changes to make parsing inner functions
+        faster.
+
+        First, we were always parsing an inner function's parameter
+        list using the templatized TreeBuiler. This means if our parent scope
+        was building an AST, we ended up building AST nodes for the inner
+        function's parameter list even though these nodes would go unused.
+        This patch fixes that to *always* build an inner function's parameter
+        list using the SyntaxChecker. (Note that this is consistent now with
+        always building an inner function's body with a SyntaxChecker.)
+
+        Second, we were always parsing an inner function's parameter list
+        even if we had that function saved in the source provider cache.
+        I've fixed that bug and made it so that we skip over the parsing 
+        of a function's parameter list when it's in the source provider
+        cache. We could probably enhance this in the future to skip
+        over the entirety of a function starting at the "function"
+        keyword or any other start of the function (depending on
+        the function type: arrow function, method, etc).
+
+        This patch also renames a few fields. First, I fixed a typo
+        from "tocken" => "token" for a few field names. Secondly,
+        I renamed a field that was called 'bodyStartColumn' to 
+        'parametersStartColumn' because the field really held the
+        parameter list's start column.
+
+        I'm benchmarking this as a 1.5-2% octane/jquery speedup
+        on a 15" MBP.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionExpr):
+        (JSC::ASTBuilder::createMethodDefinition):
+        (JSC::ASTBuilder::createArrowFunctionExpr):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lex):
+        * parser/Lexer.h:
+        (JSC::Lexer::currentPosition):
+        (JSC::Lexer::positionBeforeLastNewline):
+        (JSC::Lexer::lastTokenLocation):
+        (JSC::Lexer::setLastLineNumber):
+        (JSC::Lexer::lastLineNumber):
+        (JSC::Lexer::prevTerminator):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseGeneratorFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::stringForFunctionMode):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Scope::usedVariablesContains):
+        (JSC::Scope::forEachUsedVariable):
+        (JSC::Scope::useVariable):
+        (JSC::Scope::copyCapturedVariablesToVector):
+        (JSC::Scope::fillParametersForSourceProviderCache):
+        (JSC::Scope::restoreFromSourceProviderCache):
+        * parser/ParserFunctionInfo.h:
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::endFunctionToken):
+        (JSC::SourceProviderCacheItem::usedVariables):
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+
 2016-04-25  Mark Lam  <mark.lam@apple.com>
 
         Renaming SpecInt32, SpecInt52, MachineInt to SpecInt32Only, SpecInt52Only, AnyInt.

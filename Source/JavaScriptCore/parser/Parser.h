@@ -50,6 +50,7 @@ class Identifier;
 class VM;
 class ProgramNode;
 class SourceCode;
+class SyntaxChecker;
 
 // Macros to make the more common TreeBuilder types a little less verbose
 #define TreeStatement typename TreeBuilder::Statement
@@ -501,6 +502,14 @@ public:
         }
         return false;
     }
+    template <typename Func>
+    void forEachUsedVariable(const Func& func)
+    {
+        for (const UniquedStringImplPtrSet& set : m_usedVariables) {
+            for (UniquedStringImpl* impl : set)
+                func(impl);
+        }
+    }
     void useVariable(const Identifier* ident, bool isEval)
     {
         useVariable(ident->impl(), isEval);
@@ -644,7 +653,7 @@ public:
         }
     }
 
-    void fillParametersForSourceProviderCache(SourceProviderCacheItemCreationParameters& parameters)
+    void fillParametersForSourceProviderCache(SourceProviderCacheItemCreationParameters& parameters, const UniquedStringImplPtrSet& capturesFromParameterExpressions)
     {
         ASSERT(m_isFunction);
         parameters.usesEval = m_usesEval;
@@ -653,6 +662,18 @@ public:
         parameters.innerArrowFunctionFeatures = m_innerArrowFunctionFeatures;
         for (const UniquedStringImplPtrSet& set : m_usedVariables)
             copyCapturedVariablesToVector(set, parameters.usedVariables);
+
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=156962
+        // We add these unconditionally because we currently don't keep a separate
+        // declaration scope for a function's parameters and its var/let/const declarations.
+        // This is somewhat unfortunate and we should refactor to do this at some point
+        // because parameters logically form a parent scope to var/let/const variables.
+        // But because we don't do this, we must grab capture candidates from a parameter
+        // list before we parse the body of a function because the body's declarations
+        // might make us believe something isn't actually a capture candidate when it really
+        // is.
+        for (UniquedStringImpl* impl : capturesFromParameterExpressions)
+            parameters.usedVariables.append(impl);
     }
 
     void restoreFromSourceProviderCache(const SourceProviderCacheItem* info)
@@ -1389,7 +1410,7 @@ private:
     template <class TreeBuilder> TreeProperty parseProperty(TreeBuilder&, bool strict);
     template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, const Identifier* methodName, bool isGenerator);
     template <class TreeBuilder> TreeProperty parseGetterSetter(TreeBuilder&, bool strict, PropertyNode::Type, unsigned getterOrSetterStartOffset, ConstructorKind, bool isClassProperty);
-    template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, const JSTokenLocation&, int, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, SuperBinding, FunctionBodyType, unsigned, SourceParseMode);
+    template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, SyntaxChecker&, const JSTokenLocation&, int, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, SuperBinding, FunctionBodyType, unsigned, SourceParseMode);
     template <class TreeBuilder> ALWAYS_INLINE bool parseFormalParameters(TreeBuilder&, TreeFormalParameterList, unsigned&);
     enum VarDeclarationListContext { ForLoopContext, VarDeclarationContext };
     template <class TreeBuilder> TreeExpression parseVariableDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext, DeclarationType, ExportType, bool& forLoopConstDoesNotHaveInitializer);
@@ -1415,7 +1436,7 @@ private:
     
     ALWAYS_INLINE bool isArrowFunctionParameters();
     
-    template <class TreeBuilder> NEVER_INLINE int parseFunctionParameters(TreeBuilder&, SourceParseMode, ParserFunctionInfo<TreeBuilder>&);
+    template <class TreeBuilder, class FunctionInfoType> NEVER_INLINE typename TreeBuilder::FormalParameterList parseFunctionParameters(TreeBuilder&, SourceParseMode, FunctionInfoType&);
     template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::FormalParameterList createGeneratorParameters(TreeBuilder&);
 
     template <class TreeBuilder> NEVER_INLINE TreeClassExpression parseClass(TreeBuilder&, FunctionRequirements, ParserClassInfo<TreeBuilder>&);
