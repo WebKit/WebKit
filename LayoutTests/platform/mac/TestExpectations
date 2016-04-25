@@ -1331,3 +1331,5 @@ webkit.org/b/156112 [ ElCapitan ] media/controls-strict.html [ Pass Failure ]
 webkit.org/b/156112 [ ElCapitan ] media/controls-without-preload.html [ Pass Failure ]
 
 webkit.org/b/156351 storage/indexeddb/modern/autoincrement-abort-private.html [ Pass Timeout ]
+
+webkit.org/b/156983 media/video-fullscreen-restriction-removed.html [ Pass Failure ]

@@ -1,3 +1,12 @@
+2016-04-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking media/video-fullscreen-restriction-removed.html as flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=156983
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-04-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from File API interfaces
