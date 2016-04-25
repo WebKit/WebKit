@@ -40,10 +40,10 @@ namespace IDBServer {
 class MemoryObjectStore;
 
 class MemoryIDBBackingStore : public IDBBackingStore {
-    friend std::unique_ptr<MemoryIDBBackingStore> std::make_unique<MemoryIDBBackingStore>(const WebCore::IDBDatabaseIdentifier&);
 public:
     static std::unique_ptr<MemoryIDBBackingStore> create(const IDBDatabaseIdentifier&);
     
+    MemoryIDBBackingStore(const IDBDatabaseIdentifier&);
     ~MemoryIDBBackingStore() final;
 
     IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) final;
@@ -79,8 +79,6 @@ public:
     void restoreObjectStoreForVersionChangeAbort(Ref<MemoryObjectStore>&&);
 
 private:
-    MemoryIDBBackingStore(const IDBDatabaseIdentifier&);
-
     RefPtr<MemoryObjectStore> takeObjectStoreByIdentifier(uint64_t identifier);
 
     IDBDatabaseIdentifier m_identifier;

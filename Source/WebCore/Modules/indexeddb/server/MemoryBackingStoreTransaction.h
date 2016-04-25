@@ -46,10 +46,10 @@ class MemoryObjectStore;
 typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHashTraits> KeyValueMap;
 
 class MemoryBackingStoreTransaction {
-    friend std::unique_ptr<MemoryBackingStoreTransaction> std::make_unique<MemoryBackingStoreTransaction>(WebCore::IDBServer::MemoryIDBBackingStore&, const WebCore::IDBTransactionInfo&);
 public:
     static std::unique_ptr<MemoryBackingStoreTransaction> create(MemoryIDBBackingStore&, const IDBTransactionInfo&);
 
+    MemoryBackingStoreTransaction(MemoryIDBBackingStore&, const IDBTransactionInfo&);
     ~MemoryBackingStoreTransaction();
 
     bool isVersionChange() const { return m_info.mode() == IndexedDB::TransactionMode::VersionChange; }
@@ -74,8 +74,6 @@ public:
     void commit();
 
 private:
-    MemoryBackingStoreTransaction(MemoryIDBBackingStore&, const IDBTransactionInfo&);
-
     void finish();
 
     MemoryIDBBackingStore& m_backingStore;

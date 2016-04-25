@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "DOMError.h"
+#include "DOMWindow.h"
 #include "Event.h"
 #include "EventQueue.h"
 #include "IDBCursorWithValue.h"

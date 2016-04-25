@@ -1,3 +1,20 @@
+2016-04-25  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win][IndexedDB] Fix build errors.
+        https://bugs.webkit.org/show_bug.cgi?id=156713
+
+        Reviewed by Alex Christensen.
+
+        Fix compile and link errors when building with IndexedDB enabled.
+
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.h:
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * PlatformWin.cmake:
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::hardLinkOrCopyFile):
+
 2016-04-25  Brady Eidson  <beidson@apple.com>
 
         Implement latest File object spec (including its constructor).

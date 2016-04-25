@@ -217,6 +217,8 @@ list(APPEND WebKit_SOURCES_Classes
     win/plugins/PluginView.cpp
     win/plugins/PluginViewWin.cpp
     win/plugins/npapi.cpp
+
+    win/storage/WebDatabaseProvider.cpp
 )
 
 list(APPEND WebKit_SOURCES_WebCoreSupport
