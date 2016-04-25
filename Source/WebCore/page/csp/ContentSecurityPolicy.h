@@ -149,6 +149,7 @@ public:
 
 private:
     void logToConsole(const String& message, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = nullptr) const;
+    void updateSourceSelf(const SecurityOrigin&);
     void applyPolicyToScriptExecutionContext();
 
     void didReceiveHeader(const String&, ContentSecurityPolicyHeaderType, ContentSecurityPolicy::PolicyFrom);

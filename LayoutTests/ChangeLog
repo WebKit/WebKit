@@ -1,3 +1,18 @@
+2016-04-25  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r196012): Subresource may be blocked by Content Security Policy if it only matches 'self'
+        https://bugs.webkit.org/show_bug.cgi?id=156935
+        <rdar://problem/25351286>
+
+        Reviewed by Darin Adler.
+
+        Add tests to ensure that we match 'self' correctly in an iframe with an about:blank document.
+
+        * http/tests/security/contentSecurityPolicy/iframe-blank-url-programmatically-add-external-script-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-blank-url-programmatically-add-external-script.html: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-srcdoc-external-script-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/iframe-srcdoc-external-script.html: Added.
+
 2016-04-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/video-fullscreen-restriction-removed.html as flaky on Mac

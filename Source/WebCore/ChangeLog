@@ -1,3 +1,35 @@
+2016-04-25  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r196012): Subresource may be blocked by Content Security Policy if it only matches 'self'
+        https://bugs.webkit.org/show_bug.cgi?id=156935
+        <rdar://problem/25351286>
+
+        Reviewed by Darin Adler.
+
+        Fixes an issue where subresource load may be blocked by the Content Security Policy (CSP) if its URL only
+        matched 'self'. In particular, the load would be blocked if initiated from a document that inherited the
+        origin of its owner document (e.g. the document contained in <iframe src="about:blank"></iframe>).
+
+        Following r196012 we compute and cache 'self' and its protocol on instantiation of a ContentSecurityPolicy
+        object for use when matching a URL against it. These cached values become out-of-date if the document
+        subsequently inherits the origin of its owner document. Therefore matches against 'self' will fail and
+        CSP will block a load if its not otherwise allowed by the policy. Previously we would compute 'self' when
+        parsing the definition of a source list and compute the protocol for 'self' each time we tried to match a
+        URL against 'self'. So, 'self' would always be up-to-date with respect to the origin of the document.
+
+        Tests: http/tests/security/contentSecurityPolicy/iframe-blank-url-programmatically-add-external-script.html
+               http/tests/security/contentSecurityPolicy/iframe-srcdoc-external-script.html
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::ContentSecurityPolicy): Extract out logic for computing and caching
+        'self' and its protocol into ContentSecurityPolicy::updateSourceSelf() and make use of this function.
+        (WebCore::ContentSecurityPolicy::updateSourceSelf): Computes and caches 'self' and its protocol with
+        respect to the specified SecurityOrigin.
+        (WebCore::ContentSecurityPolicy::applyPolicyToScriptExecutionContext): Call ContentSecurityPolicy::updateSourceSelf()
+        to ensure that we have an up-to-date representation for 'self' and the protocol of 'self' which can
+        become out-of-date if the document inherited the origin of its owner document.
+        * page/csp/ContentSecurityPolicy.h:
+
 2016-04-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from TextTrack
