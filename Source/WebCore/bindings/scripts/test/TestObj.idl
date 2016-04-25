@@ -146,8 +146,8 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     // Private extended attribute
     [Private] DOMString privateMethod(DOMString argument);
 
-    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
-    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);
     attribute EventHandler onfoo;
     [ImplementedAs=onfoo] attribute EventHandler onwebkitfoo;
 
@@ -195,6 +195,8 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     void    methodWithOptionalUnsignedLongLongIsZero(optional unsigned long long number = 0);
     void    methodWithOptionalArray(optional DOMString[] array);
     void    methodWithOptionalArrayIsEmpty(optional DOMString[] array = []);
+    void    methodWithOptionalBoolean(optional boolean b);
+    void    methodWithOptionalBooleanIsFalse(optional boolean b = false);
 
 #if defined(TESTING_JS)
     // Callback interface parameters.

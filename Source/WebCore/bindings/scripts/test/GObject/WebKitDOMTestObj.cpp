@@ -1700,6 +1700,22 @@ void webkit_dom_test_obj_method_with_optional_array_is_empty(WebKitDOMTestObj* s
     item->methodWithOptionalArrayIsEmpty(convertedArray);
 }
 
+void webkit_dom_test_obj_method_with_optional_boolean(WebKitDOMTestObj* self, gboolean b)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->methodWithOptionalBoolean(b);
+}
+
+void webkit_dom_test_obj_method_with_optional_boolean_is_false(WebKitDOMTestObj* self, gboolean b)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->methodWithOptionalBooleanIsFalse(b);
+}
+
 gchar* webkit_dom_test_obj_conditional_method1(WebKitDOMTestObj* self)
 {
 #if ENABLE(Condition1)

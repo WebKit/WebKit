@@ -129,26 +129,6 @@ bool IDBKeyRange::isOnlyKey() const
     return m_lower && m_upper && !m_isLowerOpen && !m_isUpperOpen && m_lower->isEqual(m_upper.get());
 }
 
-RefPtr<IDBKeyRange> IDBKeyRange::lowerBound(ExecState& state, JSValue bound, ExceptionCode& ec)
-{
-    return lowerBound(state, bound, false, ec);
-}
-
-RefPtr<IDBKeyRange> IDBKeyRange::upperBound(ExecState& state, JSValue bound, ExceptionCode& ec)
-{
-    return upperBound(state, bound, false, ec);
-}
-
-RefPtr<IDBKeyRange> IDBKeyRange::bound(ExecState& state, JSValue lower, JSValue upper, ExceptionCode& ec)
-{
-    return bound(state, lower, upper, false, false, ec);
-}
-
-RefPtr<IDBKeyRange> IDBKeyRange::bound(ExecState& state, JSValue lower, JSValue upper, bool lowerOpen, ExceptionCode& ec)
-{
-    return bound(state, lower, upper, lowerOpen, false, ec);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

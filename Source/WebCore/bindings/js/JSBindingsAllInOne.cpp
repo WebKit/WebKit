@@ -59,7 +59,6 @@
 #include "JSDOMPromise.cpp"
 #include "JSDOMStringListCustom.cpp"
 #include "JSDOMStringMapCustom.cpp"
-#include "JSDOMTokenListCustom.cpp"
 #include "JSDOMWindowBase.cpp"
 #include "JSDOMWindowCustom.cpp"
 #include "JSDOMWindowShell.cpp"

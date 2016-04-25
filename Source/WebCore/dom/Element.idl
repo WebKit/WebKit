@@ -123,11 +123,11 @@
     void blur();
 #endif
 
-    void scrollIntoView(optional boolean alignWithTop);
+    void scrollIntoView(optional boolean alignWithTop = true);
 
     // WebKit extensions
 
-    void scrollIntoViewIfNeeded(optional boolean centerIfNeeded);
+    void scrollIntoViewIfNeeded(optional boolean centerIfNeeded = true);
     void scrollByLines(optional long lines = 0);
     void scrollByPages(optional long pages = 0);
 

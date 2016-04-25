@@ -669,6 +669,26 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_array_is_empty(WebKitDOMTestObj* self, const gchar* array);
 
 /**
+ * webkit_dom_test_obj_method_with_optional_boolean:
+ * @self: A #WebKitDOMTestObj
+ * @b: A #gboolean
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_boolean(WebKitDOMTestObj* self, gboolean b);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_boolean_is_false:
+ * @self: A #WebKitDOMTestObj
+ * @b: A #gboolean
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_boolean_is_false(WebKitDOMTestObj* self, gboolean b);
+
+/**
  * webkit_dom_test_obj_conditional_method1:
  * @self: A #WebKitDOMTestObj
  *

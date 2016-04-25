@@ -56,7 +56,7 @@
 
     // Introduced in DOM Level 2:
 
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Node importNode(Node importedNode, optional boolean deep);
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Node importNode(Node importedNode, optional boolean deep = false);
 
     // FIXME: 'qualifiedName' should not have [TreatNullAs=EmptyString].
     // FIXME: Using "undefined" as default parameter value is wrong.

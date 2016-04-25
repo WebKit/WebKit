@@ -1340,6 +1340,18 @@
     IMPL->methodWithOptionalUnsignedLongLongIsZero(number);
 }
 
+- (void)methodWithOptionalBoolean:(BOOL)b
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalBoolean(b);
+}
+
+- (void)methodWithOptionalBooleanIsFalse:(BOOL)b
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalBooleanIsFalse(b);
+}
+
 
 #if ENABLE(Condition1)
 - (NSString *)conditionalMethod1

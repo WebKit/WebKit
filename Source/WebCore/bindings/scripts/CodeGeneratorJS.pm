@@ -3382,7 +3382,6 @@ sub CanUseWTFOptionalForParameterType
     return 0 if $type eq "DOMString";
     return 0 if $type eq "Dictionary";
     return 0 if $type eq "any";
-    return 0 if $type eq "boolean";
     return 0 if $type eq "float";
     return 0 if $type eq "long";
     return 0 if $type eq "unrestricted float";

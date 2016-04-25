@@ -188,6 +188,8 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)methodWithOptionalLongLongIsZero:(long long)number;
 - (void)methodWithOptionalUnsignedLongLong:(unsigned long long)number;
 - (void)methodWithOptionalUnsignedLongLongIsZero:(unsigned long long)number;
+- (void)methodWithOptionalBoolean:(BOOL)b;
+- (void)methodWithOptionalBooleanIsFalse:(BOOL)b;
 - (void)classMethod;
 - (int)classMethodWithOptional:(int)arg;
 - (void)classMethod2:(int)arg;

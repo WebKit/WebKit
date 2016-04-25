@@ -57,14 +57,9 @@ public:
     static RefPtr<IDBKeyRange> only(RefPtr<IDBKey>&& value, ExceptionCode&);
     static RefPtr<IDBKeyRange> only(JSC::ExecState&, JSC::JSValue key, ExceptionCode&);
 
-    static RefPtr<IDBKeyRange> lowerBound(JSC::ExecState&, JSC::JSValue bound, ExceptionCode&);
     static RefPtr<IDBKeyRange> lowerBound(JSC::ExecState&, JSC::JSValue bound, bool open, ExceptionCode&);
-
-    static RefPtr<IDBKeyRange> upperBound(JSC::ExecState&, JSC::JSValue bound, ExceptionCode&);
     static RefPtr<IDBKeyRange> upperBound(JSC::ExecState&, JSC::JSValue bound, bool open, ExceptionCode&);
 
-    static RefPtr<IDBKeyRange> bound(JSC::ExecState&, JSC::JSValue lower, JSC::JSValue upper, ExceptionCode&);
-    static RefPtr<IDBKeyRange> bound(JSC::ExecState&, JSC::JSValue lower, JSC::JSValue upper, bool lowerOpen, ExceptionCode&);
     static RefPtr<IDBKeyRange> bound(JSC::ExecState&, JSC::JSValue lower, JSC::JSValue upper, bool lowerOpen, bool upperOpen, ExceptionCode&);
 
     // FIXME: Eventually should probably change all callers to call the ExecState version.

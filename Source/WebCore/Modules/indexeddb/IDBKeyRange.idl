@@ -34,7 +34,7 @@
     readonly attribute boolean upperOpen;
 
     [CallWith=ScriptState, RaisesException] static IDBKeyRange only(any value);
-    [CallWith=ScriptState, RaisesException] static IDBKeyRange lowerBound(any lower, optional boolean open);
-    [CallWith=ScriptState, RaisesException] static IDBKeyRange upperBound(any upper, optional boolean open);
-    [CallWith=ScriptState, RaisesException] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen, optional boolean upperOpen);
+    [CallWith=ScriptState, RaisesException] static IDBKeyRange lowerBound(any lower, optional boolean open = false);
+    [CallWith=ScriptState, RaisesException] static IDBKeyRange upperBound(any upper, optional boolean open = false);
+    [CallWith=ScriptState, RaisesException] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen = false, optional boolean upperOpen = false);
 };
