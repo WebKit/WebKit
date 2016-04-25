@@ -74,6 +74,7 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
         this._dataGrid = new WebInspector.ScriptTimelineDataGrid(columns);
         this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+        this._dataGrid.sortDelegate = this;
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("script-timeline-view-sort", "startTime");
         this._dataGrid.sortOrderSetting = new WebInspector.Setting("script-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
 
@@ -143,6 +144,21 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
         this._dataGrid.reset();
 
         this._pendingRecords = [];
+    }
+
+    // TimelineDataGrid sort delegate
+
+    dataGridSortComparator(sortColumnIdentifier, sortDirection, node1, node2)
+    {
+        if (sortColumnIdentifier !== "name")
+            return null;
+
+        let displayName1 = node1.displayName();
+        let displayName2 = node2.displayName();
+        if (displayName1 !== displayName2)
+            return displayName1.localeCompare(displayName2) * sortDirection;
+
+        return node1.subtitle.localeCompare(node2.subtitle) * sortDirection;
     }
 
     // Protected

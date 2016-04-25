@@ -1,5 +1,45 @@
 2016-04-24  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Can't sort by name/source code location columns in Timeline data grids
+        https://bugs.webkit.org/show_bug.cgi?id=156965
+        <rdar://problem/25898716>
+
+        Reviewed by Timothy Hatcher.
+
+        Add support for sorting SourceCodeLocation objects to TimelineDataGrid,
+        and include a grid delegate so that views can extend sorting logic for
+        other document fragment columns.
+
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        (WebInspector.NetworkTimelineView.prototype.dataGridSortComparator):
+        Sort "name" column by display name first, then resource URL.
+
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WebInspector.ScriptDetailsTimelineView):
+        (WebInspector.ScriptDetailsTimelineView.prototype.dataGridSortComparator):
+        Sort "name" column by display name first, then subtitle.
+
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.get subtitle):
+        Make subtitle accessible externally for sorting.
+        (WebInspector.ScriptTimelineDataGridNode.prototype._createNameCellDocumentFragment):
+        (WebInspector.ScriptTimelineDataGridNode):
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid):
+        (WebInspector.TimelineDataGrid.prototype.get sortDelegate):
+        (WebInspector.TimelineDataGrid.prototype.set sortDelegate):
+        Fire a SortChanged event if the delegate changed and the grid is sorted.
+        (WebInspector.TimelineDataGrid.prototype._sort):
+        If a sort delegate exists, and it returns a numeric value, skip the
+        default compare.
+
+        (WebInspector.TimelineDataGrid.prototype._sortComparator):
+        Add support for sorting SourceCodeLocation columns.
+
+2016-04-24  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Error when selecting a bar in the Frames timeline
         https://bugs.webkit.org/show_bug.cgi?id=156960
         <rdar://problem/25897955>

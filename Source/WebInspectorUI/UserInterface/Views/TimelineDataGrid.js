@@ -35,6 +35,7 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         this.element.classList.add("timeline");
 
         this._filterableColumns = [];
+        this._sortDelegate = null;
 
         // Check if any of the cells can be filtered.
         for (var [identifier, column] of this.columns) {
@@ -78,6 +79,23 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
     }
 
     // Public
+
+    get sortDelegate()
+    {
+        return this._sortDelegate;
+    }
+
+    set sortDelegate(delegate)
+    {
+        delegate = delegate || null;
+        if (this._sortDelegate === delegate)
+            return;
+
+        this._sortDelegate = delegate;
+
+        if (this.sortOrder !== WebInspector.DataGrid.SortOrder.Indeterminate)
+            this.dispatchEventToListeners(WebInspector.DataGrid.Event.SortChanged);
+    }
 
     reset()
     {
@@ -282,6 +300,9 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
 
     _sort()
     {
+        if (!this.children.length)
+            return;
+
         let sortColumnIdentifier = this.sortColumnIdentifier;
         if (!sortColumnIdentifier)
             return;
@@ -357,6 +378,12 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
 
         var sortDirection = this.sortOrder === WebInspector.DataGrid.SortOrder.Ascending ? 1 : -1;
 
+        if (this._sortDelegate && typeof this._sortDelegate.dataGridSortComparator === "function") {
+            let result = this._sortDelegate.dataGridSortComparator(sortColumnIdentifier, sortDirection, node1, node2);
+            if (typeof result === "number")
+                return result;
+        }
+
         var value1 = node1.data[sortColumnIdentifier];
         var value2 = node2.data[sortColumnIdentifier];
 
@@ -382,6 +409,11 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         if (value1 instanceof WebInspector.SourceCode || value2 instanceof WebInspector.SourceCode) {
             value1 = value1 ? value1.displayName || "" : "";
             value2 = value2 ? value2.displayName || "" : "";
+        }
+
+        if (value1 instanceof WebInspector.SourceCodeLocation || value2 instanceof WebInspector.SourceCodeLocation) {
+            value1 = value1 ? value1.displayLocationString() || "" : "";
+            value2 = value2 ? value2.displayLocationString() || "" : "";
         }
 
         // For everything else (mostly booleans).
