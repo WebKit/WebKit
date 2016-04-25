@@ -342,12 +342,17 @@ XLargeRange Heap::splitAndAllocate(XLargeRange& range, size_t alignment, size_t 
 
 void* Heap::tryAllocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size)
 {
-    BASSERT(size <= largeMax);
-    BASSERT(alignment <= largeMax / 2);
     BASSERT(isPowerOfTwo(alignment));
 
-    size = size ? roundUpToMultipleOf(largeAlignment, size) : largeAlignment;
-    alignment = roundUpToMultipleOf<largeAlignment>(alignment);
+    size_t roundedSize = size ? roundUpToMultipleOf(largeAlignment, size) : largeAlignment;
+    if (roundedSize < size) // Check for overflow
+        return nullptr;
+    size = roundedSize;
+
+    size_t roundedAlignment = roundUpToMultipleOf<largeAlignment>(alignment);
+    if (roundedAlignment < alignment) // Check for overflow
+        return nullptr;
+    alignment = roundedAlignment;
 
     XLargeRange range = m_largeFree.remove(alignment, size);
     if (!range) {

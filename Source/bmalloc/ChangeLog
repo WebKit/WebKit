@@ -1,5 +1,39 @@
 2016-04-19  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: fix up overflow checks
+        https://bugs.webkit.org/show_bug.cgi?id=156780
+
+        Reviewed by Mark Lam.
+
+        We used to try to avoid overflow in large object math by setting a very
+        high limit on the largest large object. But that's a bit error-prone
+        since the check is far away from the math that might overflow -- and
+        we were missing some cases.
+
+        This patch removes the limit and instead checks at each math site.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::tryAllocate):
+        (bmalloc::Allocator::allocate):
+        (bmalloc::Allocator::reallocate):
+        (bmalloc::Allocator::allocateSlowCase): Remove the limit. tryAllocateLarge
+        will check for overflow for us.
+
+        * bmalloc/Chunk.h: This ASSERT was just totally wrong.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::tryAllocateLarge): Check for overflow when adding.
+
+        * bmalloc/Sizes.h:
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::tryVMAllocate): Check for overflow when adding.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::tryAllocateLargeChunk): Check for overflow when adding.
+
+2016-04-19  Geoffrey Garen  <ggaren@apple.com>
+
         Unreviewed, try to fix an ASSERT seen on the bots.
 
         * bmalloc/Heap.cpp:

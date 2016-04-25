@@ -145,7 +145,10 @@ inline void* tryVMAllocate(size_t vmAlignment, size_t vmSize)
     vmValidate(vmSize);
     vmValidate(vmAlignment);
 
-    size_t mappedSize = vmAlignment - vmPageSize() + vmSize;
+    size_t mappedSize = vmAlignment + vmSize;
+    if (mappedSize < vmAlignment || mappedSize < vmSize) // Check for overflow
+        return nullptr;
+
     char* mapped = static_cast<char*>(tryVMAllocate(mappedSize));
     if (!mapped)
         return nullptr;

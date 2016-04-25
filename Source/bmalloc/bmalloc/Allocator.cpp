@@ -58,12 +58,8 @@ void* Allocator::tryAllocate(size_t size)
     if (size <= smallMax)
         return allocate(size);
 
-    if (size <= largeMax) {
-        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-        return PerProcess<Heap>::getFastCase()->tryAllocateLarge(lock, alignment, size);
-    }
-
-    return nullptr;
+    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    return PerProcess<Heap>::getFastCase()->tryAllocateLarge(lock, alignment, size);
 }
 
 void* Allocator::allocate(size_t alignment, size_t size)
@@ -83,13 +79,8 @@ void* Allocator::allocate(size_t alignment, size_t size)
     if (size <= smallMax && alignment <= smallMax)
         return allocate(roundUpToMultipleOf(alignment, size));
 
-    if (size <= largeMax && alignment <= largeMax / 2) {
-        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-        return PerProcess<Heap>::getFastCase()->allocateLarge(lock, alignment, size);
-    }
-
-    BCRASH();
-    return nullptr;
+    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    return PerProcess<Heap>::getFastCase()->allocateLarge(lock, alignment, size);
 }
 
 void* Allocator::reallocate(void* object, size_t newSize)
@@ -193,11 +184,7 @@ void* Allocator::allocateSlowCase(size_t size)
     if (size <= smallMax)
         return allocateLogSizeClass(size);
 
-    if (size <= largeMax)
-        return allocateLarge(size);
-
-    BCRASH();
-    return nullptr;
+    return allocateLarge(size);
 }
 
 } // namespace bmalloc

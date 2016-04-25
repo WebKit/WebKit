@@ -56,8 +56,6 @@ private:
     std::array<SmallPage, chunkSize / smallPageSize> m_pages;
 };
 
-static_assert(sizeof(Chunk) + largeMax <= chunkSize, "largeMax is too big");
-
 struct ChunkHash {
     static unsigned hash(Chunk* key)
     {
