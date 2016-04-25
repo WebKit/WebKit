@@ -1,5 +1,28 @@
 2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Pending API Request URL is wrong after reloading
+        https://bugs.webkit.org/show_bug.cgi?id=139342
+
+        Reviewed by Darin Adler.
+
+        It happens when reloading a web view loaded with anything but a
+        URL, because the bf list is not updated for those cases and
+        WebPageProxy::reload() is setting the current bf list item URL as
+        pending API request URL. This also causes that progress is
+        reported wrongly, because
+        WebPageProxy::decidePolicyForNavigationAction() resets the pending
+        API request URL when it's different than the requested URL. The
+        page load transaction causes the progress to be changed, reporting
+        1.0 (the previous one), but later something < 1.0 is reported
+        again by the progress tracker.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reload): Use the current active URL as
+        pending API request URL, falling back to the current bf list item
+        URL when empty.
+
+2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Pending API request URL no set when loading Data, Alternate HTML or plain text
         https://bugs.webkit.org/show_bug.cgi?id=136916
 
