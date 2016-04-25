@@ -92,7 +92,6 @@ public:
     unsigned overflowWrap : 1; // EOverflowWrap
     unsigned nbspMode : 1; // ENBSPMode
     unsigned lineBreak : 3; // LineBreak
-    unsigned resize : 2; // EResize
     unsigned userSelect : 2; // EUserSelect
     unsigned colorSpace : 1; // ColorSpace
     unsigned speak : 3; // ESpeak
