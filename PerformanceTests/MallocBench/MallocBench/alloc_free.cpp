@@ -30,15 +30,10 @@
 
 void benchmark_alloc_free(CommandLine&)
 {
-    size_t loops = 1000000;
+    size_t loops = 40000;
 
-    size_t allocSize = 1030;
+    size_t allocSize = 128 * 1024;
     
-    char* dummy1 = (char*)mbmalloc(allocSize);
-    char* dummy2 = (char*)mbmalloc(allocSize);
-    dummy2[0] = 'a';
-    mbfree(dummy1, allocSize);
-
     while (--loops) {
         char* object = (char*)mbmalloc(allocSize);
 

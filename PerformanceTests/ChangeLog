@@ -1,3 +1,45 @@
+2016-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Misc improvements to MallocBench
+        https://bugs.webkit.org/show_bug.cgi?id=157004
+
+        Reviewed by Darin Adler.
+
+        * MallocBench/run-malloc-benchmarks: Added --memory and --memory_warning
+        modes for focused memory testing.
+
+        * MallocBench/MallocBench/Benchmark.cpp:
+        (Benchmark::printReport): Clarified output.
+
+        (Benchmark::currentMemoryBytes): Added compressed memory because top
+        does the same. (It always happens to zero in the benchmarks we run. But
+        this is good for sanity.)
+
+        * MallocBench/MallocBench/CommandLine.cpp: Moved up to 8 runs to reduce
+        variance.
+
+        * MallocBench/MallocBench/alloc_free.cpp:
+        (benchmark_alloc_free): Cycle a single allocation in order to stress
+        the effect of merging on calls to madvise.
+
+        * MallocBench/MallocBench/big.cpp:
+        (benchmark_big): Graduated to 8kB-128kB because medium tests up to 8 and
+        our large allocator doesn't kick in until 64kB.
+
+        * MallocBench/MallocBench/medium.cpp:
+        (benchmark_medium): Test all the way down to 1kB because our large
+        allocator used to service 1kB allocations and 1kB is an interesting
+        middle size where memory is unusually large but allocation throughput
+        still matters.
+
+        * MallocBench/MallocBench/stress.cpp:
+        (benchmark_stress): Reduced the churn count to match stress_aligned
+        because this test was taking too long to complete.
+
+        * MallocBench/MallocBench/stress_aligned.cpp:
+        (benchmark_stress_aligned): Our new large allocator can handle even
+        more absurdly large values.
+
 2016-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         Add a content animation test that uses SVG animation.

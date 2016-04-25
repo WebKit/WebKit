@@ -6,7 +6,7 @@ require 'pathname'
 $binDir = "#{File.expand_path(File.dirname(__FILE__))}"
 $productDir = `perl -e 'use lib \"#{$binDir}/../../Tools/Scripts\"; use webkitdirs; print productDir()'`
 
-$benchmarks = [
+$benchmarks_all = [
     # Single-threaded benchmarks.
     "churn",
     "list_allocate",
@@ -54,6 +54,21 @@ $benchmarks = [
     # "balloon"
 ]
 
+$benchmarks_memory = [
+    "facebook",
+    "reddit",
+    "flickr",
+    "theverge",
+    "nimlang"
+]
+
+$benchmarks_memory_warning = [
+    "reddit_memory_warning --runs 0",
+    "flickr_memory_warning --runs 0",
+    "theverge_memory_warning --runs 0",
+]
+
+$benchmarks = $benchmarks_all
 $heap = 0
 
 def usage
@@ -198,6 +213,8 @@ end
 def parseOptions
     GetoptLong.new(
         ['--benchmark', GetoptLong::REQUIRED_ARGUMENT],
+        ['--memory', GetoptLong::NO_ARGUMENT],
+        ['--memory_warning', GetoptLong::NO_ARGUMENT],
         ['--heap', GetoptLong::REQUIRED_ARGUMENT],
         ['--help', GetoptLong::NO_ARGUMENT],
     ).each {
@@ -205,6 +222,10 @@ def parseOptions
         case opt
         when '--benchmark'
             $benchmarks = [ arg ]
+        when '--memory'
+            $benchmarks = $benchmarks_memory
+        when '--memory_warning'
+            $benchmarks = $benchmarks_memory_warning
         when '--heap'
             $heap = arg
         when '--help'
@@ -274,8 +295,8 @@ def runBenchmarks(dylibs)
             splitOutput = output.split("\n")
 
             executionTime[-1].push(TimeStat.new(benchmark, splitOutput[1]))
-            peakMemory[-1].push(PeakMemoryStat.new(benchmark, splitOutput.length > 3 ? splitOutput[3] : "0"))
-            memoryAtEnd[-1].push(MemoryStat.new(benchmark, splitOutput.length > 2 ? splitOutput[2] : "0"))
+            peakMemory[-1].push(PeakMemoryStat.new(benchmark, splitOutput.length > 3 ? splitOutput[2] : "0"))
+            memoryAtEnd[-1].push(MemoryStat.new(benchmark, splitOutput.length > 2 ? splitOutput[3] : "0"))
         }
     }
     $stderr.print "\r                                                                                \n"

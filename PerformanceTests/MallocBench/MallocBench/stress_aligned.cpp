@@ -145,7 +145,7 @@ void benchmark_stress_aligned(CommandLine&)
     
     srandom(1); // For consistency between runs.
 
-    size_t limit = 0x000007fffffffffful;
+    size_t limit = 0x00001ffffffffffful;
     
     for (size_t size = 0; size < limit; size = std::max(size, sizeof(void*)) * 2) {
         for (size_t alignment = sizeof(void*); alignment < limit; alignment *= 2) {
@@ -155,7 +155,7 @@ void benchmark_stress_aligned(CommandLine&)
             mbfree(object, size);
         }
 
-        for (size_t alignment = sizeof(void*); alignment < limit / 4; alignment *= 2) {
+        for (size_t alignment = sizeof(void*); alignment < limit; alignment *= 2) {
             void* object = mbmemalign(alignment, size + 128);
             if (reinterpret_cast<uintptr_t>(object) & (alignment - 1))
                 abort();

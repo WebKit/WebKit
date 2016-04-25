@@ -47,7 +47,7 @@ CommandLine::CommandLine(int argc, char** argv)
     , m_useThreadID(false)
     , m_warmUp(true)
     , m_heapSize(0)
-    , m_runs(4)
+    , m_runs(8)
 {
     int optionIndex = 0;
     int ch;

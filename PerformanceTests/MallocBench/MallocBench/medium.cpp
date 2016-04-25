@@ -44,7 +44,7 @@ void benchmark_medium(CommandLine& commandLine)
     size_t times = 1;
 
     size_t vmSize = 1ul * 1024 * 1024 * 1024;
-    size_t objectSizeMin = 2 * 1024;
+    size_t objectSizeMin = 1 * 1024;
     size_t objectSizeMax = 8 * 1024;
     if (commandLine.isParallel())
         vmSize /= cpuCount();

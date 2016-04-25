@@ -201,8 +201,8 @@ void Benchmark::printReport()
     size_t kB = 1024;
 
     cout << "Time:       \t" << m_elapsedTime << "ms" << endl;
-    cout << "Memory:     \t" << m_memory.resident / kB << "kB" << endl;
     cout << "Peak Memory:\t" << m_memory.residentMax / kB << "kB" << endl;
+    cout << "Memory at End:     \t" << m_memory.resident / kB << "kB" << endl;
 }
 
 double Benchmark::currentTimeMS()
@@ -223,7 +223,7 @@ Benchmark::Memory Benchmark::currentMemoryBytes()
         exit(1);
     }
 
-    memory.resident = vm_info.internal - vm_info.purgeable_volatile_pmap;
+    memory.resident = vm_info.internal + vm_info.compressed - vm_info.purgeable_volatile_pmap;
     memory.residentMax = vm_info.resident_size_peak;
     return memory;
 }
