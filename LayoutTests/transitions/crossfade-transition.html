@@ -1,0 +1,36 @@
+<script>
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+    window.testRunner.dumpAsText();
+}
+
+window.addEventListener("load", function () {
+    setTimeout(function () {
+        document.body.className = "foo";
+        if (window.testRunner) {
+            setTimeout(function () {
+                window.testRunner.notifyDone();
+            }, 50);
+        }
+    }, 0);
+}, false);
+</script>
+<style>
+.a > li,
+.a > li p {
+  transition: all 0.1s ease;
+}
+
+.a > li.b {
+  list-style-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1" fill="blue"/></svg>');
+}
+.foo .a > li.b {
+  list-style-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1" fill="red"/></svg>');
+}
+
+</style>
+<ul class="a">
+  <li class="b">
+    <p>Test passes if there is no crash</p>
+  </li>
+</ul>
