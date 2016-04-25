@@ -1,3 +1,12 @@
+2016-04-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline editing tests for ios-simulator-wk1
+
+        Unreviewed test gardening
+
+        * platform/ios-simulator-wk1/editing/deleting/delete-at-paragraph-boundaries-002-expected.txt:
+        * +71 more
+
 2016-04-25  Nan Wang  <n_wang@apple.com>
 
         AX: Crash at -[WebAccessibilityObjectWrapper accessibilityAttributeValue:] + 4391
