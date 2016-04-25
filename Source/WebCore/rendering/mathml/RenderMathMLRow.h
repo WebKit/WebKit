@@ -42,17 +42,18 @@ public:
 
     void updateOperatorProperties();
 
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
-    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) final;
-    Optional<int> firstLineBaseline() const final;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
+    void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
+    Optional<int> firstLineBaseline() const override;
+
+protected:
+    void layoutRowItems(LayoutUnit& ascent, LayoutUnit& descent);
+    void computeLineVerticalStretch(LayoutUnit& ascent, LayoutUnit& descent);
+    void computePreferredLogicalWidths() override;
 
 private:
     bool isRenderMathMLRow() const final { return true; }
     const char* renderName() const override { return isAnonymous() ? "RenderMathMLRow (anonymous)" : "RenderMathMLRow"; }
-
-    void layoutRowItems(int stretchHeightAboveBaseline, int stretchDepthBelowBaseline);
-    void computeLineVerticalStretch(int& stretchHeightAboveBaseline, int& stretchDepthBelowBaseline);
-    void computePreferredLogicalWidths() override;
 };
 
 } // namespace WebCore

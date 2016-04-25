@@ -1,3 +1,38 @@
+2016-04-25  Frederic Wang  <fwang@igalia.com>
+
+        Refactor RenderMathMLMenclose.
+        https://bugs.webkit.org/show_bug.cgi?id=155019
+
+        Reviewed by Sergio Villar Senin.
+
+        * mathml/presentation/menclose-notation-attribute-set1.html: Removed.
+        This is replaced with menclose-notation-values.
+        * mathml/presentation/menclose-notation-attribute-set1-expected.txt: Removed.
+        This is replaced with menclose-notation-values.
+        * mathml/presentation/menclose-notation-attribute-set2-expected-mismatch.html: Removed.
+        This is replaced with menclose-notation-values.
+        * mathml/presentation/menclose-notation-attribute-set2.html: Removed.
+        This is replaced with menclose-notation-values.
+        * mathml/presentation/menclose-notation-values.html: Added.
+        This test verifies the rendering of various menclose notations.
+        * mathml/presentation/menclose-notation-equivalence.html: Added.
+        This test verifies some equivalence for the notation attribute value.
+        * mathml/presentation/menclose-notation-equivalence-expected.html: Added.
+        * mathml/presentation/menclose-notation-radical.html: Update the test now that support for
+        the radical notation is removed.
+        * mathml/presentation/menclose-notation-radical-expected.html: ditto.
+        * platform/gtk/mathml/presentation/menclose-notation-default-longdiv-expected.png: Update
+        reference due to small changes in longdiv implementation.
+        * platform/gtk/mathml/presentation/menclose-notation-default-longdiv-expected.txt: ditto.
+        * platform/mac/mathml/presentation/menclose-notation-default-longdiv-expected.png: ditto.
+        * platform/mac/mathml/presentation/menclose-notation-default-longdiv-expected.txt: ditto.
+        * platform/ios-simulator/mathml/presentation/menclose-notation-default-longdiv-expected.txt: ditto
+        * platform/gtk/mathml/presentation/menclose-notation-values-expected.png: Added.
+        * platform/gtk/mathml/presentation/menclose-notation-values-expected.txt: Added.
+        * platform/mac/mathml/presentation/menclose-notation-values-expected.png: Added.
+        * platform/mac/mathml/presentation/menclose-notation-values-expected.txt: Added.
+        * platform/ios-simulator/mathml/presentation/menclose-notation-values-expected.txt: Added.
+
 2016-04-24  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Some media tests have been failed after bumping gstreamer ver.

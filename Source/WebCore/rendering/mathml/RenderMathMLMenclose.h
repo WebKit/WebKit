@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Gurpreet Kaur (k.gurpreet@samsung.com). All rights reserved.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 #define RenderMathMLMenclose_h
 
 #if ENABLE(MATHML)
+#include "MathMLMencloseElement.h"
 #include "RenderMathMLRow.h"
 
 namespace WebCore {
@@ -36,13 +38,19 @@ public:
     RenderMathMLMenclose(Element&, std::unique_ptr<RenderStyle>);
 
 private:
-    bool isRenderMathMLMenclose() const final { return true; }
     const char* renderName() const final { return "RenderMathMLMenclose"; }
-    void paint(PaintInfo&, const LayoutPoint&) final;
-    void updateLogicalHeight() override;
-    void addChild(RenderObject* newChild, RenderObject* beforeChild = nullptr) override;
     void computePreferredLogicalWidths() final;
-    bool checkNotationalValuesValidity(const Vector<String>&) const;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
+    Optional<int> firstLineBaseline() const final;
+    void paint(PaintInfo&, const LayoutPoint&) final;
+
+    LayoutUnit ruleThickness() const;
+    bool hasNotation(MathMLMencloseElement::MencloseNotationFlag notationFlag) const { return downcast<MathMLMencloseElement>(element())->hasNotation(notationFlag); }
+
+    void getSpaceAroundContent(LayoutUnit contentWidth, LayoutUnit contentHeight, LayoutUnit& leftSpace, LayoutUnit& rightSpace, LayoutUnit& topSpace, LayoutUnit& bottomSpace) const;
+
+    LayoutUnit m_ascent;
+    LayoutRect m_contentRect;
 };
     
 }

@@ -43,7 +43,6 @@ friend class RenderMathMLRootWrapper;
 
 public:
     RenderMathMLRoot(Element&, std::unique_ptr<RenderStyle>);
-    RenderMathMLRoot(Document&, std::unique_ptr<RenderStyle>);
 
     void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;

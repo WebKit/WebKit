@@ -60,11 +60,6 @@ RenderMathMLRoot::RenderMathMLRoot(Element& element, std::unique_ptr<RenderStyle
 {
 }
 
-RenderMathMLRoot::RenderMathMLRoot(Document& document, std::unique_ptr<RenderStyle> style)
-    : RenderMathMLBlock(document, WTFMove(style))
-{
-}
-
 RenderMathMLRootWrapper* RenderMathMLRoot::baseWrapper() const
 {
     ASSERT(!isEmpty());

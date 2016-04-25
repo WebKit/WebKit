@@ -39,7 +39,6 @@ class RenderMathMLMenclose;
 class RenderMathMLSquareRoot final : public RenderMathMLRoot {
 public:
     RenderMathMLSquareRoot(Element&, std::unique_ptr<RenderStyle>);
-    RenderMathMLSquareRoot(Document&, std::unique_ptr<RenderStyle>);
     static RenderPtr<RenderMathMLSquareRoot> createAnonymousWithParentRenderer(RenderMathMLMenclose&);
     
 private:

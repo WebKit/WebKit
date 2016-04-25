@@ -39,17 +39,5 @@ RenderMathMLSquareRoot::RenderMathMLSquareRoot(Element& element, std::unique_ptr
 {
 }
 
-RenderMathMLSquareRoot::RenderMathMLSquareRoot(Document& document, std::unique_ptr<RenderStyle> style)
-    : RenderMathMLRoot(document, WTFMove(style))
-{
-}
-
-RenderPtr<RenderMathMLSquareRoot> RenderMathMLSquareRoot::createAnonymousWithParentRenderer(RenderMathMLMenclose& parent)
-{
-    RenderPtr<RenderMathMLSquareRoot> squareRoot = createRenderer<RenderMathMLSquareRoot>(parent.document(), RenderStyle::createAnonymousStyleWithDisplay(&parent.style(), FLEX));
-    squareRoot->initializeStyle();
-    return squareRoot;
-}
-
 }
 #endif // ENABLE(MATHML)

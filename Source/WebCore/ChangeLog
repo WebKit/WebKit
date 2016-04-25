@@ -1,5 +1,83 @@
 2016-04-25  Frederic Wang  <fwang@igalia.com>
 
+        Refactor RenderMathMLMenclose.
+        https://bugs.webkit.org/show_bug.cgi?id=155019
+
+        Reviewed by Sergio Villar Senin.
+
+        Tests: mathml/presentation/menclose-notation-equivalence.html
+               mathml/presentation/menclose-notation-values.html
+
+        We rewrite RenderMathMLMenclose so that layout functions correctly override the
+        behavior of RenderMathMLRow. We try and rely on the draft  of the MathML in HTML5
+        implementation note, to make easier to get consistency with other rendering engines
+        in the future. All notations are now drawn with GraphicContext functions instead of
+        mixing them with CSS style. To save memory space, the list of known notations are
+        now saved on a short integer using bit masks instead of a vector of string names.
+        Finally, we remove support for the radical notation so that we no longer need to
+        create an anonymous RenderMathMLRoot.
+
+        * mathml/MathMLMencloseElement.cpp: Remove code for some special notations and just
+        reimplement parsing of the notation attribute.
+        (WebCore::MathMLMencloseElement::MathMLMencloseElement): By default, the notation is longdiv.
+        (WebCore::MathMLMencloseElement::parseAttribute): By default, the list of notation is empty.
+        If there is no notation attribute, the default value longdiv is used.
+        Otherwise, we parse the notation attribute and add each notation, using some equivalences
+        for box, actuarial and madruwb.
+        (WebCore::MathMLMencloseElement::isPresentationAttribute): Deleted. No need to define
+        specific style for some notation.
+        (WebCore::MathMLMencloseElement::finishParsingChildren): Deleted. No need to add an
+        anonymous square root.
+        (WebCore::MathMLMencloseElement::collectStyleForPresentationAttribute): Deleted. No need to
+        define specific style for some notation.
+        (WebCore::MathMLMencloseElement::longDivLeftPadding): Deleted. RenderMathMLMenclose uses an
+        arbitrary size instead of measure a glyph.
+        * mathml/MathMLMencloseElement.h: Define simple bit mask for each notation, add a short
+        integer to store the list of notations together with helper functions. Remove old code.
+        * rendering/mathml/RenderMathMLMenclose.cpp: Rewrite RenderMathMLMenclose so that layout
+        functions correctly override the behavior of RenderMathMLRow.
+        (WebCore::RenderMathMLMenclose::RenderMathMLMenclose): Init m_ascent to 0.
+        (WebCore::RenderMathMLMenclose::ruleThickness): For now, we use the fallback value used by
+        for other bars. We may refine that in the future.
+        (WebCore::RenderMathMLMenclose::getSpaceAroundContent): Helper function to retrieve the
+        space to add around the content, depending on the notations specified. Note that for
+        notation circle, this spacing depends on the content size.
+        (WebCore::RenderMathMLMenclose::computePreferredLogicalWidths): Reimplement this function.
+        This is just adding left/right spacing around the content.
+        (WebCore::RenderMathMLMenclose::layoutBlock): Reimplement this function. We do the normal
+        RenderMathMLRow layout, adjust spacing and child position and
+        calculate m_ascent and m_contentRect.
+        (WebCore::RenderMathMLMenclose::firstLineBaseline): Implement this function.
+        We just return m_ascent.
+        (WebCore::drawLine): Helper function to draw a line using strokePath.
+        (WebCore::RenderMathMLMenclose::paint): We reimplement this function to draw
+        all notations using GraphicContext.
+        (WebCore::RenderMathMLMenclose::addChild): Deleted. No need to manage anonymous renderers.
+        (WebCore::RenderMathMLMenclose::updateLogicalHeight): Deleted. Height is now calculated
+        in layoutBlock.
+        (WebCore::RenderMathMLMenclose::checkNotationalValuesValidity): Deleted.
+        * rendering/mathml/RenderMathMLMenclose.h: Update member definitions.
+        * rendering/mathml/RenderMathMLRoot.cpp: We no longer need anonymous roots.
+        (WebCore::RenderMathMLRoot::RenderMathMLRoot): Deleted.
+        * rendering/mathml/RenderMathMLRoot.h: We no longer need anonymous roots.
+        * rendering/mathml/RenderMathMLRow.cpp: Allow to get the exact metrics of the chid row,
+        for use in RenderMathMLRoot.
+        (WebCore::RenderMathMLRow::computeLineVerticalStretch): rename parameters.
+        (WebCore::RenderMathMLRow::layoutRowItems): Set parameters to the final ascent, descent and
+        logical width of the chid row. Set the temporary logical width for RenderMathMenclose before
+        laying the children out.
+        (WebCore::RenderMathMLRow::layoutBlock): Rename parameters ; add a dummy logicalWidth
+        parameter.
+        * rendering/mathml/RenderMathMLRow.h: Make some functions accessible or overridable by
+        RenderMathMLRoot. Make layoutRowItems return the final ascent, descent and logical width
+        after the chid row is laid out.
+        * rendering/mathml/RenderMathMLSquareRoot.cpp: We no longer need anonymous roots.
+        (WebCore::RenderMathMLSquareRoot::RenderMathMLSquareRoot): Deleted.
+        (WebCore::RenderMathMLSquareRoot::createAnonymousWithParentRenderer): Deleted.
+        * rendering/mathml/RenderMathMLSquareRoot.h: We no longer need anonymous roots.
+
+2016-04-25  Frederic Wang  <fwang@igalia.com>
+
         Minor refactoring in RenderMathMLOperator
         https://bugs.webkit.org/show_bug.cgi?id=156906
 

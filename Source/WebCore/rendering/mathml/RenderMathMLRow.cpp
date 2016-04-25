@@ -70,7 +70,7 @@ Optional<int> RenderMathMLRow::firstLineBaseline() const
     return Optional<int>(static_cast<int>(lroundf(ascentForChild(*baselineChild) + baselineChild->logicalTop())));
 }
 
-void RenderMathMLRow::computeLineVerticalStretch(int& stretchHeightAboveBaseline, int& stretchDepthBelowBaseline)
+void RenderMathMLRow::computeLineVerticalStretch(LayoutUnit& ascent, LayoutUnit& descent)
 {
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (is<RenderMathMLBlock>(child)) {
@@ -84,14 +84,14 @@ void RenderMathMLRow::computeLineVerticalStretch(int& stretchHeightAboveBaseline
         LayoutUnit childHeightAboveBaseline = ascentForChild(*child);
         LayoutUnit childDepthBelowBaseline = child->logicalHeight() - childHeightAboveBaseline;
 
-        stretchHeightAboveBaseline = std::max<LayoutUnit>(stretchHeightAboveBaseline, childHeightAboveBaseline);
-        stretchDepthBelowBaseline = std::max<LayoutUnit>(stretchDepthBelowBaseline, childDepthBelowBaseline);
+        ascent = std::max<LayoutUnit>(ascent, childHeightAboveBaseline);
+        descent = std::max<LayoutUnit>(descent, childDepthBelowBaseline);
     }
 
     // We ensure a minimal stretch size.
-    if (stretchHeightAboveBaseline + stretchDepthBelowBaseline <= 0) {
-        stretchHeightAboveBaseline = style().fontSize();
-        stretchDepthBelowBaseline = 0;
+    if (ascent + descent <= 0) {
+        ascent = style().fontSize();
+        descent = 0;
     }
 }
 
@@ -110,7 +110,7 @@ void RenderMathMLRow::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderMathMLRow::layoutRowItems(int stretchHeightAboveBaseline, int stretchDepthBelowBaseline)
+void RenderMathMLRow::layoutRowItems(LayoutUnit& ascent, LayoutUnit& descent)
 {
     // We first stretch the vertical operators.
     // For inline formulas, we can then calculate the logical width.
@@ -122,7 +122,7 @@ void RenderMathMLRow::layoutRowItems(int stretchHeightAboveBaseline, int stretch
         if (is<RenderMathMLBlock>(child)) {
             auto renderOperator = downcast<RenderMathMLBlock>(child)->unembellishedOperator();
             if (renderOperator && renderOperator->hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && renderOperator->isVertical())
-                renderOperator->stretchTo(stretchHeightAboveBaseline, stretchDepthBelowBaseline);
+                renderOperator->stretchTo(ascent, descent);
         }
 
         child->layoutIfNeeded();
@@ -131,9 +131,9 @@ void RenderMathMLRow::layoutRowItems(int stretchHeightAboveBaseline, int stretch
     }
 
     width += borderEnd() + paddingEnd();
-    // FIXME: RenderMathMLRoot and RenderMathMLEnclose classes should also recalculate the exact logical width instead of using the preferred width.
-    // See https://bugs.webkit.org/show_bug.cgi?id=130326
-    if ((!isRenderMathMLMath() || style().display() == INLINE) && !isRenderMathMLRoot() && !isRenderMathMLMenclose())
+    // FIXME: RenderMathMLRoot classes should also recalculate the exact logical width instead of using the preferred width.
+    // See http://webkit.org/b/153987
+    if ((!isRenderMathMLMath() || style().display() == INLINE) && !isRenderMathMLRoot())
         setLogicalWidth(width);
 
     LayoutUnit verticalOffset = borderTop() + paddingTop();
@@ -175,6 +175,9 @@ void RenderMathMLRow::layoutRowItems(int stretchHeightAboveBaseline, int stretch
         LayoutUnit startOffset = maxAscent - ascent;
         child->setLocation(child->location() + LayoutPoint(centerBlockOffset, startOffset));
     }
+
+    ascent = maxAscent;
+    descent = maxDescent;
 }
 
 void RenderMathMLRow::layoutBlock(bool relayoutChildren, LayoutUnit)
@@ -184,15 +187,15 @@ void RenderMathMLRow::layoutBlock(bool relayoutChildren, LayoutUnit)
     if (!relayoutChildren && simplifiedLayout())
         return;
 
-    int stretchHeightAboveBaseline = 0;
-    int stretchDepthBelowBaseline = 0;
-    computeLineVerticalStretch(stretchHeightAboveBaseline, stretchDepthBelowBaseline);
+    LayoutUnit ascent = 0;
+    LayoutUnit descent = 0;
+    computeLineVerticalStretch(ascent, descent);
 
     recomputeLogicalWidth();
 
     setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
 
-    layoutRowItems(stretchHeightAboveBaseline, stretchDepthBelowBaseline);
+    layoutRowItems(ascent, descent);
 
     updateLogicalHeight();
 
