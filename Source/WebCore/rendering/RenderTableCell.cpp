@@ -423,7 +423,7 @@ void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* ol
     // If border was changed, notify table.
     RenderTable* table = this->table();
     if (table && oldStyle && oldStyle->border() != style().border())
-        table->invalidateCollapsedBorders();
+        table->invalidateCollapsedBorders(this);
 }
 
 // The following rules apply for resolving conflicts and figuring out which border
