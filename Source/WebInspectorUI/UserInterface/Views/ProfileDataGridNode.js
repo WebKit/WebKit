@@ -32,7 +32,6 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
         this._node = cctNode;
         this._tree = tree;
 
-        this._populated = false;
         this._childrenToChargeToSelf = new Set;
         this._extraSelfTimeFromChargedChildren = 0;
 
@@ -136,7 +135,7 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
         let isBottomUp = this._tree.callingContextTree.type === WebInspector.CallingContextTree.Type.BottomUp;
         if (!this._tree.hasModifiers() || isBottomUp) {
             // Add back child data grid nodes that were previously charged to us.
-            if (this._populated && this._childrenToChargeToSelf.size) {
+            if (!this.shouldRefreshChildren && this._childrenToChargeToSelf.size) {
                 for (let child of this._childrenToChargeToSelf) {
                     console.assert(child.hasStackTraceInTimeRange(this._tree.startTime, this._tree.endTime));
                     this.appendChild(new WebInspector.ProfileDataGridNode(child, this._tree));
@@ -173,7 +172,7 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
         this.hasChildren = hasNonChargedChild;
 
         // Remove child data grid nodes that have been charged to us.
-        if (this._populated && this._childrenToChargeToSelf.size) {
+        if (!this.shouldRefreshChildren && this._childrenToChargeToSelf.size) {
             for (let childDataGridNode of this.children) {
                 if (this._childrenToChargeToSelf.has(childDataGridNode.node))
                     this.removeChild(childDataGridNode);
@@ -238,7 +237,8 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
 
     _populate()
     {
-        this._populated = true;
+        if (!this.shouldRefreshChildren)
+            return;
 
         this._node.forEachChild((child) => {
             if (!this._childrenToChargeToSelf.has(child)) {

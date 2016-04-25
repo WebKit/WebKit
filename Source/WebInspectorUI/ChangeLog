@@ -1,3 +1,26 @@
+2016-04-24  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Events in JavaScript & Events timeline have no profile children
+        https://bugs.webkit.org/show_bug.cgi?id=156627
+        <rdar://problem/25749740>
+
+        Reviewed by Timothy Hatcher.
+
+        ProfileNodeDataGridNode should handle `populate` events when expanded.
+        This was previously done by ProfileNodeTreeElement, which is no longer
+        used in the Timelines tab.
+
+        * UserInterface/Views/ProfileDataGridNode.js:
+        (WebInspector.ProfileDataGridNode.prototype._updateChildrenForModifiers):
+        (WebInspector.ProfileDataGridNode.prototype._populate):
+        (WebInspector.ProfileDataGridNode):
+        DataGridNode sets `shouldRefreshChildren` to false after populating
+        child nodes. No need to track with a separate flag.
+
+        * UserInterface/Views/ProfileNodeDataGridNode.js:
+        (WebInspector.ProfileNodeDataGridNode):
+        (WebInspector.ProfileNodeDataGridNode.prototype._populate):
+
 2016-04-22  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: HeapAllocationsTimeline grid should use built-in grid column icons

@@ -37,6 +37,8 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
         this._rangeEndTime = typeof rangeEndTime === "number" ? rangeEndTime : Infinity;
 
         this._cachedData = null;
+
+        this.addEventListener("populate", this._populate, this);
     }
 
     // Public
@@ -171,5 +173,20 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
             className = WebInspector.CallFrameView.EventListenerIconStyleClassName;
 
         return [className];
+    }
+
+    // Private
+
+    _populate()
+    {
+        if (!this.shouldRefreshChildren)
+            return;
+
+        this.removeChildren();
+
+        for (let node of this._profileNode.childNodes)
+            this.appendChild(new WebInspector.ProfileNodeDataGridNode(node, this.baseStartTime, this.rangeStartTime, this.rangeEndTime));
+
+        this.removeEventListener("populate", this._populate, this);
     }
 };
