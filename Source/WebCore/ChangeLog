@@ -1,3 +1,20 @@
+2016-04-25  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r156846): Crashes with guard malloc
+        https://bugs.webkit.org/show_bug.cgi?id=156984
+
+        Reviewed by Andreas Kling.
+
+        RenderElement::cachedFirstLineStyle() returns pointer to local std::unique_ptr.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::uncachedFirstLineStyle):
+        (WebCore::RenderElement::cachedFirstLineStyle):
+        (WebCore::RenderElement::firstLineStyle):
+        (WebCore::firstLineStyleForCachedUncachedType): Deleted.
+
+            Don't try to use a single function for the cached and uncached cases. Separate the cases into the calling functions.
+
 2016-04-25  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r196012): Subresource may be blocked by Content Security Policy if it only matches 'self'

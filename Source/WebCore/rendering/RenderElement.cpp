@@ -210,47 +210,43 @@ enum StyleCacheState {
     Uncached
 };
 
-static std::unique_ptr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheState type, const RenderElement& renderer, RenderStyle* style)
-{
-    RenderElement& rendererForFirstLineStyle = renderer.isBeforeOrAfterContent() ? *renderer.parent() : const_cast<RenderElement&>(renderer);
-
-    if (rendererForFirstLineStyle.isRenderBlockFlow() || rendererForFirstLineStyle.isRenderButton()) {
-        if (RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock()) {
-            if (type == Cached)
-                return RenderStyle::clone(firstLineBlock->getCachedPseudoStyle(FIRST_LINE, style));
-            return firstLineBlock->getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE), style, firstLineBlock == &renderer ? style : nullptr);
-        }
-    } else if (!rendererForFirstLineStyle.isAnonymous() && rendererForFirstLineStyle.isRenderInline()) {
-        RenderStyle& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
-        if (&parentStyle != &rendererForFirstLineStyle.parent()->style()) {
-            if (type == Cached) {
-                // A first-line style is in effect. Cache a first-line style for ourselves.
-                rendererForFirstLineStyle.style().setHasPseudoStyle(FIRST_LINE_INHERITED);
-                return RenderStyle::clone(rendererForFirstLineStyle.getCachedPseudoStyle(FIRST_LINE_INHERITED, &parentStyle));
-            }
-            return rendererForFirstLineStyle.getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE_INHERITED), &parentStyle, style);
-        }
-    }
-    return nullptr;
-}
-
 std::unique_ptr<RenderStyle> RenderElement::uncachedFirstLineStyle(RenderStyle* style) const
 {
     if (!view().usesFirstLineRules())
         return nullptr;
 
-    return firstLineStyleForCachedUncachedType(Uncached, *this, style);
+    RenderElement& rendererForFirstLineStyle = isBeforeOrAfterContent() ? *parent() : const_cast<RenderElement&>(*this);
+
+    if (rendererForFirstLineStyle.isRenderBlockFlow() || rendererForFirstLineStyle.isRenderButton()) {
+        if (RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock())
+            return firstLineBlock->getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE), style, firstLineBlock == this ? style : nullptr);
+    } else if (!rendererForFirstLineStyle.isAnonymous() && rendererForFirstLineStyle.isRenderInline()) {
+        RenderStyle& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
+        if (&parentStyle != &rendererForFirstLineStyle.parent()->style())
+            return rendererForFirstLineStyle.getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE_INHERITED), &parentStyle, style);
+    }
+    return nullptr;
 }
 
 RenderStyle* RenderElement::cachedFirstLineStyle() const
 {
     ASSERT(view().usesFirstLineRules());
 
-    RenderStyle& style = this->style();
-    if (std::unique_ptr<RenderStyle> firstLineStyle = firstLineStyleForCachedUncachedType(Cached, *this, &style))
-        return firstLineStyle.get();
+    RenderElement& rendererForFirstLineStyle = isBeforeOrAfterContent() ? *parent() : const_cast<RenderElement&>(*this);
 
-    return &style;
+    if (rendererForFirstLineStyle.isRenderBlockFlow() || rendererForFirstLineStyle.isRenderButton()) {
+        if (RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock())
+            return firstLineBlock->getCachedPseudoStyle(FIRST_LINE, &style());
+    } else if (!rendererForFirstLineStyle.isAnonymous() && rendererForFirstLineStyle.isRenderInline()) {
+        RenderStyle& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
+        if (&parentStyle != &rendererForFirstLineStyle.parent()->style()) {
+            // A first-line style is in effect. Cache a first-line style for ourselves.
+            rendererForFirstLineStyle.style().setHasPseudoStyle(FIRST_LINE_INHERITED);
+            return rendererForFirstLineStyle.getCachedPseudoStyle(FIRST_LINE_INHERITED, &parentStyle);
+        }
+    }
+
+    return &style();
 }
 
 RenderStyle& RenderElement::firstLineStyle() const
