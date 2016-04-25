@@ -343,7 +343,7 @@ XLargeRange Heap::splitAndAllocate(XLargeRange& range, size_t alignment, size_t 
 void* Heap::tryAllocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size)
 {
     BASSERT(size <= largeMax);
-    BASSERT(size <= largeMax / 2);
+    BASSERT(alignment <= largeMax / 2);
     BASSERT(isPowerOfTwo(alignment));
 
     size = size ? roundUpToMultipleOf(largeAlignment, size) : largeAlignment;

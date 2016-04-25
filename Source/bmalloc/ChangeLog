@@ -1,5 +1,13 @@
 2016-04-19  Geoffrey Garen  <ggaren@apple.com>
 
+        Unreviewed, try to fix an ASSERT seen on the bots.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::tryAllocateLarge): This ASSERT is supposed to be about
+        alignment, not size. Oops.
+
+2016-04-19  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: Merge the large and xlarge allocators
         https://bugs.webkit.org/show_bug.cgi?id=156734
 
