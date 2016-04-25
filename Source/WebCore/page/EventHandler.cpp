@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2012 Digia Plc. and/or its subsidiary(-ies)
  *
@@ -452,9 +452,7 @@ void EventHandler::clear()
     m_mousePressed = false;
     m_capturesDragging = false;
     m_capturingMouseEventsElement = nullptr;
-#if PLATFORM(MAC)
-    m_frame.mainFrame().resetLatchingState();
-#endif
+    clearLatchedState();
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     m_originatingTouchPointTargets.clear();
     m_originatingTouchPointDocument = nullptr;
@@ -2669,7 +2667,8 @@ void EventHandler::clearLatchedState()
 #if PLATFORM(MAC)
     m_frame.mainFrame().resetLatchingState();
 #endif
-    m_frame.mainFrame().wheelEventDeltaFilter()->endFilteringDeltas();
+    if (auto filter = m_frame.mainFrame().wheelEventDeltaFilter())
+        filter->endFilteringDeltas();
 }
 
 void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEvent)

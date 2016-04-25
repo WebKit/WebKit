@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,8 @@
 #endif
 
 #include "FloatSize.h"
+#include "Logging.h"
+#include "TextStream.h"
 
 namespace WebCore {
     
@@ -58,6 +60,7 @@ bool WheelEventDeltaFilter::isFilteringDeltas() const
 
 FloatSize WheelEventDeltaFilter::filteredDelta() const
 {
+    LOG_WITH_STREAM(Scrolling, stream << "BasicWheelEventDeltaFilter::filteredDelta returning " << m_currentFilteredDelta);
     return m_currentFilteredDelta;
 }
 

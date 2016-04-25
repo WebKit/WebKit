@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "Element.h"
 #include "EmptyClients.h"
+#include "EventHandler.h"
 #include "PageConfiguration.h"
 #include "PageOverlayController.h"
 #include "ScrollLatchingState.h"
@@ -66,6 +67,11 @@ MainFrame::~MainFrame()
 {
     if (m_diagnosticLoggingClient)
         m_diagnosticLoggingClient->mainFrameDestroyed();
+
+    m_recentWheelEventDeltaFilter = nullptr;
+    m_eventHandler = nullptr;
+
+    setMainFrameWasDestroyed();
 }
 
 Ref<MainFrame> MainFrame::create(Page& page, PageConfiguration& configuration)
