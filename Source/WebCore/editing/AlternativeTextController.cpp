@@ -273,6 +273,8 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range* range, 
     applyCommand(SpellingCorrectionCommand::create(rangeWithAlternative.ptr(), alternative));
     // Recalculate pragraphRangeContainingCorrection, since SpellingCorrectionCommand modified the DOM, such that the original paragraphRangeContainingCorrection is no longer valid. Radar: 10305315 Bugzilla: 89526
     paragraphRangeContainingCorrection = TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex, correctionStartOffsetInParagraph + alternative.length());
+    if (!paragraphRangeContainingCorrection)
+        return;
     
     setEnd(paragraphRangeContainingCorrection.get(), m_frame.selection().selection().start());
     RefPtr<Range> replacementRange = TextIterator::subrange(paragraphRangeContainingCorrection.get(), correctionStartOffsetInParagraph, alternative.length());
