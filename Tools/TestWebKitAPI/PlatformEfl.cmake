@@ -93,6 +93,7 @@ set(test_webkit2_api_BINARIES
     PageLoadBasic
     PageLoadDidChangeLocationWithinPageForFrame
     ParentFrame
+    PendingAPIRequestURL
     PreventEmptyUserAgent
     PrivateBrowsingPushStateNoHistoryCallback
     ResponsivenessTimerDoesntFireEarly
