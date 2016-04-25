@@ -1,3 +1,12 @@
+2016-04-25  Dan Bernstein  <mitz@apple.com>
+
+        Fix a couple of mistakes from r199700.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h: Added availability attributes to new properties.
+        * WebKit2.xcodeproj/project.pbxproj: Demoted _WKExperimentalFeatureInternal.h from Private to Project.
+
 2016-04-24  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Update the ewk_settings_offline_web_application_cache_enabled_get() expected value after r199854.

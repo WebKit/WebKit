@@ -714,7 +714,7 @@
 		31312621148FF82C00BA2A39 /* WebNotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261C148FF82B00BA2A39 /* WebNotificationManager.h */; };
 		317FE7C51C487A6C00A0CA89 /* APIExperimentalFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C21C487A6600A0CA89 /* APIExperimentalFeature.h */; };
 		317FE7C61C487A7100A0CA89 /* APIExperimentalFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317FE7C11C487A6600A0CA89 /* APIExperimentalFeature.cpp */; };
-		317FE7CD1C487DAE00A0CA89 /* _WKExperimentalFeatureInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C91C487D9D00A0CA89 /* _WKExperimentalFeatureInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		317FE7CD1C487DAE00A0CA89 /* _WKExperimentalFeatureInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C91C487D9D00A0CA89 /* _WKExperimentalFeatureInternal.h */; };
 		317FE7CE1C487DB800A0CA89 /* _WKExperimentalFeature.mm in Sources */ = {isa = PBXBuildFile; fileRef = 317FE7C81C487D9D00A0CA89 /* _WKExperimentalFeature.mm */; };
 		317FE7CF1C487DBD00A0CA89 /* _WKExperimentalFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C71C487D9D00A0CA89 /* _WKExperimentalFeature.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		318BE17114743DB100A8FBB2 /* WKNotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 318BE17014743DB100A8FBB2 /* WKNotificationManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7527,6 +7527,7 @@
 				1A2D843A127F65D5001EB962 /* NPObjectMessageReceiverMessages.h in Headers */,
 				1A2D82A7127F4EAB001EB962 /* NPObjectProxy.h in Headers */,
 				1A2D82A9127F4EAB001EB962 /* NPRemoteObjectMap.h in Headers */,
+				317FE7CD1C487DAE00A0CA89 /* _WKExperimentalFeatureInternal.h in Headers */,
 				1C0A19471C8FF1A800FE0EBB /* WebAutomationSessionProxy.h in Headers */,
 				1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */,
 				1A2162B111F38971008AD0F5 /* NPRuntimeUtilities.h in Headers */,
@@ -7629,7 +7630,6 @@
 				2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */,
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
 				514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */,
-				317FE7CD1C487DAE00A0CA89 /* _WKExperimentalFeatureInternal.h in Headers */,
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
 				1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */,
 				1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */,
