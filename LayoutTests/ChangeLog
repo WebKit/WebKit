@@ -1,5 +1,20 @@
 2016-04-25  Simon Fraser  <simon.fraser@apple.com>
 
+        play-state not parsed as part of animation shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=156959
+
+        Reviewed by Darin Adler.
+
+        * animations/animation-shorthand-expected.txt:
+        * animations/animation-shorthand.html:
+        * animations/play-state-in-shorthand-expected.txt: Added.
+        * animations/play-state-in-shorthand.html: Added.
+        * animations/resources/animation-test-helpers.js:
+        (getPropertyValue):
+        (comparePropertyValue):
+
+2016-04-25  Simon Fraser  <simon.fraser@apple.com>
+
         Negative animation-delay is treated as 0s
         https://bugs.webkit.org/show_bug.cgi?id=141008
 

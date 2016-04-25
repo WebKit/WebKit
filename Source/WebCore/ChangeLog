@@ -1,5 +1,27 @@
 2016-04-25  Simon Fraser  <simon.fraser@apple.com>
 
+        play-state not parsed as part of animation shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=156959
+
+        Reviewed by Darin Adler.
+
+        We failed to parse animation-play-state as part of the animation shorthand, contrary
+        to the spec and other browsers.
+
+        Fix for both the prefixed and unprefixed properties. There is some compat risk here,
+        but only changing unprefixed behavior will probably lead to more author confusion.
+
+        Test: animations/play-state-in-shorthand.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseAnimationShorthand):
+        * css/CSSPropertyNames.in:
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::animationShorthandForParsing): Remove the long comment which is no longer relevant
+        now that the behavior has been written into the spec.
+
+2016-04-25  Simon Fraser  <simon.fraser@apple.com>
+
         Negative animation-delay is treated as 0s
         https://bugs.webkit.org/show_bug.cgi?id=141008
 
