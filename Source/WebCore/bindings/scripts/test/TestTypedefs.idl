@@ -40,7 +40,7 @@
     
     static readonly attribute T TestSubObj;
 
-    [StrictTypeChecking] void func(optional ARRAY_OF_LONGS x);
+    [StrictTypeChecking] void func(optional ARRAY_OF_LONGS x = []);
 
     void setShadow(DOUBLE width, DOUBLE height, unrestricted float blur, [StrictTypeChecking] optional STRING color, optional DOUBLE alpha);
 

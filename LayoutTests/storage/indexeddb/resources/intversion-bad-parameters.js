@@ -26,7 +26,7 @@ function deleteSuccess(evt) {
     evalAndExpectExceptionClass("indexedDB.open(dbname, -1)", "TypeError");
     evalAndExpectExceptionClass("indexedDB.open(dbname, 0x20000000000000)", "TypeError");
     evalAndExpectExceptionClass("indexedDB.open(dbname, null)", "TypeError");
-    evalAndExpectExceptionClass("indexedDB.open(dbname, undefined)", "TypeError");
+    shouldNotThrow("indexedDB.open(dbname, undefined)");
     finishJSTest();
 }
 

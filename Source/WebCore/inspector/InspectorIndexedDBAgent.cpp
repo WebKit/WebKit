@@ -213,7 +213,7 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
         return;
     }
 
-    RefPtr<IDBOpenDBRequest> idbOpenDBRequest = idbFactory->open(*context(), databaseName, ec);
+    RefPtr<IDBOpenDBRequest> idbOpenDBRequest = idbFactory->open(*context(), databaseName, Nullopt, ec);
     if (ec.code) {
         requestCallback().sendFailure("Could not open database.");
         return;

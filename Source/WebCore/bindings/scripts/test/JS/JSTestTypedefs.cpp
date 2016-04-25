@@ -463,14 +463,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* stat
         return throwThisTypeError(*state, "TestTypedefs", "func");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     auto& impl = castedThis->wrapped();
-
-    size_t argsCount = state->argumentCount();
-    if (argsCount <= 0) {
-        impl.func();
-        return JSValue::encode(jsUndefined());
-    }
-
-    Vector<int> x = toNativeArray<int>(state, state->argument(0));
+    Vector<int> x = state->argument(0).isUndefined() ? Vector<int>() : toNativeArray<int>(state, state->uncheckedArgument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.func(x);
@@ -569,13 +562,6 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
 
     if (!std::isnan(arg1NativeValue))
         arg1 = clampTo<unsigned long long>(arg1NativeValue);
-
-
-    size_t argsCount = state->argumentCount();
-    if (argsCount <= 1) {
-        impl.funcWithClamp(arg1);
-        return JSValue::encode(jsUndefined());
-    }
 
     unsigned long long arg2 = 0;
     double arg2NativeValue = state->argument(1).toNumber(state);

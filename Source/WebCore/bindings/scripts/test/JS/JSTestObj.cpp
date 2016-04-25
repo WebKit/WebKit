@@ -148,6 +148,12 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAt
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaN(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaN(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSequence(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalLongLong(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZero(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLong(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZero(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArray(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArrayIsEmpty(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg(JSC::ExecState*);
@@ -707,6 +713,12 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithOptionalDoubleIsNaN", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaN), (intptr_t) (0) } },
     { "methodWithOptionalFloatIsNaN", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaN), (intptr_t) (0) } },
     { "methodWithOptionalSequence", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalSequence), (intptr_t) (0) } },
+    { "methodWithOptionalLongLong", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalLongLong), (intptr_t) (0) } },
+    { "methodWithOptionalLongLongIsZero", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZero), (intptr_t) (0) } },
+    { "methodWithOptionalUnsignedLongLong", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLong), (intptr_t) (0) } },
+    { "methodWithOptionalUnsignedLongLongIsZero", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZero), (intptr_t) (0) } },
+    { "methodWithOptionalArray", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalArray), (intptr_t) (0) } },
+    { "methodWithOptionalArrayIsEmpty", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalArrayIsEmpty), (intptr_t) (0) } },
     { "methodWithCallbackArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackArg), (intptr_t) (1) } },
     { "methodWithNonCallbackArgAndCallbackArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg), (intptr_t) (2) } },
     { "methodWithCallbackAndOptionalArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg), (intptr_t) (0) } },
@@ -4238,6 +4250,96 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSequenc
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalSequence(sequence);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalLongLong(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "methodWithOptionalLongLong");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    Optional<long long> number = state->argument(0).isUndefined() ? Optional<long long>() : toInt64(state, state->uncheckedArgument(0), NormalConversion);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithOptionalLongLong(number);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZero(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "methodWithOptionalLongLongIsZero");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    long long number = state->argument(0).isUndefined() ? 0 : toInt64(state, state->uncheckedArgument(0), NormalConversion);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithOptionalLongLongIsZero(number);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLong(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "methodWithOptionalUnsignedLongLong");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    Optional<unsigned long long> number = state->argument(0).isUndefined() ? Optional<unsigned long long>() : toUInt64(state, state->uncheckedArgument(0), NormalConversion);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithOptionalUnsignedLongLong(number);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZero(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "methodWithOptionalUnsignedLongLongIsZero");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    unsigned long long number = state->argument(0).isUndefined() ? 0 : toUInt64(state, state->uncheckedArgument(0), NormalConversion);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithOptionalUnsignedLongLongIsZero(number);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArray(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "methodWithOptionalArray");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    Optional<Vector<String>> array = state->argument(0).isUndefined() ? Optional<Vector<String>>() : toNativeArray<String>(state, state->uncheckedArgument(0));
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithOptionalArray(array);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArrayIsEmpty(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "methodWithOptionalArrayIsEmpty");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    Vector<String> array = state->argument(0).isUndefined() ? Vector<String>() : toNativeArray<String>(state, state->uncheckedArgument(0));
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithOptionalArrayIsEmpty(array);
     return JSValue::encode(jsUndefined());
 }
 

@@ -76,24 +76,17 @@ IDBFactory::~IDBFactory()
 {
 }
 
-RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, ExceptionCodeWithMessage& ec)
+RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, Optional<unsigned long long> version, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBFactory::open");
     
-    return openInternal(context, name, 0, ec);
-}
-
-RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, unsigned long long version, ExceptionCodeWithMessage& ec)
-{
-    LOG(IndexedDB, "IDBFactory::open");
-    
-    if (!version) {
+    if (version && !version.value()) {
         ec.code = TypeError;
         ec.message = ASCIILiteral("IDBFactory.open() called with a version of 0");
         return nullptr;
     }
 
-    return openInternal(context, name, version, ec);
+    return openInternal(context, name, version.valueOr(0), ec);
 }
 
 RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext& context, const String& name, unsigned long long version, ExceptionCodeWithMessage& ec)

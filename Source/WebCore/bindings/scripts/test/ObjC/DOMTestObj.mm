@@ -1316,6 +1316,30 @@
     IMPL->methodWithOptionalFloatIsNaN(number);
 }
 
+- (void)methodWithOptionalLongLong:(long long)number
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalLongLong(number);
+}
+
+- (void)methodWithOptionalLongLongIsZero:(long long)number
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalLongLongIsZero(number);
+}
+
+- (void)methodWithOptionalUnsignedLongLong:(unsigned long long)number
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalUnsignedLongLong(number);
+}
+
+- (void)methodWithOptionalUnsignedLongLongIsZero:(unsigned long long)number
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalUnsignedLongLongIsZero(number);
+}
+
 
 #if ENABLE(Condition1)
 - (NSString *)conditionalMethod1

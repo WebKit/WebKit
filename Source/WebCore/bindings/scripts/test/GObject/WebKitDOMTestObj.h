@@ -609,6 +609,66 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_float_is_na_n(WebKitDOMTestObj* self, gfloat number);
 
 /**
+ * webkit_dom_test_obj_method_with_optional_long_long:
+ * @self: A #WebKitDOMTestObj
+ * @number: A #gint64
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_long_long(WebKitDOMTestObj* self, gint64 number);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_long_long_is_zero:
+ * @self: A #WebKitDOMTestObj
+ * @number: A #gint64
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_long_long_is_zero(WebKitDOMTestObj* self, gint64 number);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_unsigned_long_long:
+ * @self: A #WebKitDOMTestObj
+ * @number: A #guint64
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_unsigned_long_long(WebKitDOMTestObj* self, guint64 number);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_unsigned_long_long_is_zero:
+ * @self: A #WebKitDOMTestObj
+ * @number: A #guint64
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_unsigned_long_long_is_zero(WebKitDOMTestObj* self, guint64 number);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_array:
+ * @self: A #WebKitDOMTestObj
+ * @array: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_array(WebKitDOMTestObj* self, const gchar* array);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_array_is_empty:
+ * @self: A #WebKitDOMTestObj
+ * @array: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_array_is_empty(WebKitDOMTestObj* self, const gchar* array);
+
+/**
  * webkit_dom_test_obj_conditional_method1:
  * @self: A #WebKitDOMTestObj
  *

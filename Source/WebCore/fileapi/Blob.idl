@@ -39,7 +39,7 @@
     readonly attribute DOMString type;
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
-    Blob slice(optional long long start, optional long long end, optional DOMString? contentType);
+    Blob slice(optional long long start = 0, optional long long end = 0x7FFFFFFFFFFFFFFF, optional DOMString? contentType = null);
 #endif
 };
 

@@ -184,6 +184,10 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)methodWithOptionalAtomicStringIsEmptyString:(NSString *)str;
 - (void)methodWithOptionalDoubleIsNaN:(double)number;
 - (void)methodWithOptionalFloatIsNaN:(float)number;
+- (void)methodWithOptionalLongLong:(long long)number;
+- (void)methodWithOptionalLongLongIsZero:(long long)number;
+- (void)methodWithOptionalUnsignedLongLong:(unsigned long long)number;
+- (void)methodWithOptionalUnsignedLongLongIsZero:(unsigned long long)number;
 - (void)classMethod;
 - (int)classMethodWithOptional:(int)arg;
 - (void)classMethod2:(int)arg;

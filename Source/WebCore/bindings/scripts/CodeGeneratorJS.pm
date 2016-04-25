@@ -3370,6 +3370,29 @@ sub GenerateArgumentsCountCheck
     }
 }
 
+sub CanUseWTFOptionalForParameterType
+{
+    my $type  = shift;
+
+    # FIXME: We should progressively stop blacklisting each type below
+    # and eventually get rid of this function entirely.
+    return 0 if $codeGenerator->IsEnumType($type);
+    return 0 if $codeGenerator->IsTypedArrayType($type);
+    return 0 if $codeGenerator->IsWrapperType($type);
+    return 0 if $type eq "DOMString";
+    return 0 if $type eq "Dictionary";
+    return 0 if $type eq "any";
+    return 0 if $type eq "boolean";
+    return 0 if $type eq "float";
+    return 0 if $type eq "long";
+    return 0 if $type eq "unrestricted float";
+    return 0 if $type eq "unrestricted double";
+    return 0 if $type eq "unsigned long";
+    return 0 if $type eq "unsigned short";
+
+    return 1;
+}
+
 sub GenerateParametersCheck
 {
     my $outputArray = shift;
@@ -3419,7 +3442,7 @@ sub GenerateParametersCheck
         # Optional arguments with [Optional=...] should not generate the early call.
         # Optional Dictionary arguments always considered to have default of empty dictionary.
         my $optional = $parameter->isOptional;
-        if ($optional && !defined($parameter->default) && $argType ne "Dictionary" && !$codeGenerator->IsCallbackInterface($argType)) {
+        if ($optional && !defined($parameter->default) && !CanUseWTFOptionalForParameterType($parameter->type) && $argType ne "Dictionary" && !$codeGenerator->IsCallbackInterface($argType)) {
             # Generate early call if there are enough parameters.
             if (!$hasOptionalArguments) {
                 push(@$outputArray, "\n    size_t argsCount = state->argumentCount();\n");
@@ -3576,6 +3599,8 @@ sub GenerateParametersCheck
             } else {
                 my $outer;
                 my $inner;
+                my $nativeType = GetNativeTypeFromSignature($parameter);
+
                 if ($optional && defined($parameter->default)) {
                     my $defaultValue = $parameter->default;
 
@@ -3592,16 +3617,23 @@ sub GenerateParametersCheck
                     } else {
                         $defaultValue = "nullptr" if $defaultValue eq "null";
                         $defaultValue = "PNaN" if $defaultValue eq "NaN";
-                        $defaultValue = GetNativeTypeFromSignature($parameter) . "()" if $defaultValue eq "[]";
+                        $defaultValue = "$nativeType()" if $defaultValue eq "[]";
                     }
 
+                    $outer = "state->argument($argsIndex).isUndefined() ? $defaultValue : ";
+                    $inner = "state->uncheckedArgument($argsIndex)";
+                } elsif ($optional && !defined($parameter->default) && CanUseWTFOptionalForParameterType($parameter->type)) {
+                    # Use WTF::Optional<>() for optional parameters that are missing or undefined and that do not have
+                    # a default value in the IDL.
+                    my $defaultValue = "Optional<$nativeType>()";
+                    $nativeType = "Optional<$nativeType>";
                     $outer = "state->argument($argsIndex).isUndefined() ? $defaultValue : ";
                     $inner = "state->uncheckedArgument($argsIndex)";
                 } else {
                     $outer = "";
                     $inner = "state->argument($argsIndex)";
                 }
-                push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name = $outer" . JSValueToNative($parameter, $inner, $function->signature->extendedAttributes->{"Conditional"}) . ";\n");
+                push(@$outputArray, "    $nativeType $name = $outer" . JSValueToNative($parameter, $inner, $function->signature->extendedAttributes->{"Conditional"}) . ";\n");
             }
 
             # Check if the type conversion succeeded.

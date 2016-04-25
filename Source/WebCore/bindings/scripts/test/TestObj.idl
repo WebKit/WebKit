@@ -189,6 +189,12 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     void    methodWithOptionalDoubleIsNaN(optional unrestricted double number = NaN);
     void    methodWithOptionalFloatIsNaN(optional unrestricted float number = NaN);
     void    methodWithOptionalSequence(optional sequence<DOMString> sequence = []);
+    void    methodWithOptionalLongLong(optional long long number);
+    void    methodWithOptionalLongLongIsZero(optional long long number = 0);
+    void    methodWithOptionalUnsignedLongLong(optional unsigned long long number);
+    void    methodWithOptionalUnsignedLongLongIsZero(optional unsigned long long number = 0);
+    void    methodWithOptionalArray(optional DOMString[] array);
+    void    methodWithOptionalArrayIsEmpty(optional DOMString[] array = []);
 
 #if defined(TESTING_JS)
     // Callback interface parameters.
