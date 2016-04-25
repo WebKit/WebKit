@@ -61,6 +61,7 @@ public:
     const Vector<LayoutUnit>& rowPositions() const { return m_rowPositions; }
 
     LayoutUnit guttersSize(GridTrackSizingDirection, size_t span) const;
+    LayoutUnit offsetBetweenTracks(GridTrackSizingDirection) const;
 
 private:
     const char* renderName() const override;

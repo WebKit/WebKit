@@ -428,6 +428,11 @@ LayoutUnit RenderGrid::guttersSize(GridTrackSizingDirection direction, size_t sp
     return valueForLength(trackGap, 0) * (span - 1);
 }
 
+LayoutUnit RenderGrid::offsetBetweenTracks(GridTrackSizingDirection direction) const
+{
+    return direction == ForColumns ? m_offsetBetweenColumns : m_offsetBetweenRows;
+}
+
 void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     bool wasPopulated = gridWasPopulated();
@@ -1646,8 +1651,6 @@ void RenderGrid::populateGridPositions(GridSizingData& sizingData)
     // Since we add alignment offsets and track gutters, grid lines are not always adjacent. Hence we will have to
     // assume from now on that we just store positions of the initial grid lines of each track,
     // except the last one, which is the only one considered as a final grid line of a track.
-    // FIXME: This will affect the computed style value of grid tracks size, since we are
-    // using these positions to compute them.
 
     // The grid container's frame elements (border, padding and <content-position> offset) are sensible to the
     // inline-axis flow direction. However, column lines positions are 'direction' unaware. This simplification

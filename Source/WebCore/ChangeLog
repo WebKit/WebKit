@@ -1,3 +1,24 @@
+2016-04-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix grid-template-columns|rows computed style with content alignment
+        https://bugs.webkit.org/show_bug.cgi?id=156793
+
+        Reviewed by Darin Adler.
+
+        Computed style of grid-template-columns and grid-template-rows properties
+        was including the distribution offset because of content alignment.
+        We should subtract that offset, like we do for the case of gaps,
+        when we're calculating the computed style.
+
+        Test: fast/css-grid-layout/grid-template-columns-rows-computed-style-gaps-content-alignment.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackList):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::offsetBetweenTracks):
+        (WebCore::RenderGrid::populateGridPositions): Deleted FIXME.
+        * rendering/RenderGrid.h:
+
 2016-04-25  Frederic Wang  <fwang@igalia.com>
 
         Refactor RenderMathMLMenclose.

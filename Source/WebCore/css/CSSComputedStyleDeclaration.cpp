@@ -1070,18 +1070,20 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     auto list = CSSValueList::createSpaceSeparated();
     unsigned insertionIndex;
     if (isRenderGrid) {
-        const Vector<LayoutUnit>& trackPositions = direction == ForColumns ? downcast<RenderGrid>(*renderer).columnPositions() : downcast<RenderGrid>(*renderer).rowPositions();
+        auto& grid = downcast<RenderGrid>(*renderer);
+        const auto& trackPositions = direction == ForColumns ? grid.columnPositions() : grid.rowPositions();
         // There are at least #tracks + 1 grid lines (trackPositions). Apart from that, the grid container can generate implicit grid tracks,
         // so we'll have more trackPositions than trackSizes as the latter only contain the explicit grid.
         ASSERT(trackPositions.size() - 1 >= trackSizes.size());
 
         unsigned i = 0;
-        LayoutUnit gutterSize = downcast<RenderGrid>(*renderer).guttersSize(direction, 2);
+        LayoutUnit gutterSize = grid.guttersSize(direction, 2);
+        LayoutUnit offsetBetweenTracks = grid.offsetBetweenTracks(direction);
         for (; i < trackPositions.size() - 2; ++i) {
             addValuesForNamedGridLinesAtIndex(orderedNamedGridLines, i, list.get());
-            list.get().append(zoomAdjustedPixelValue(trackPositions[i + 1] - trackPositions[i] - gutterSize, style));
+            list.get().append(zoomAdjustedPixelValue(trackPositions[i + 1] - trackPositions[i] - gutterSize - offsetBetweenTracks, style));
         }
-        // Last track line does not have any gutter.
+        // Last track line does not have any gutter or distribution offset.
         addValuesForNamedGridLinesAtIndex(orderedNamedGridLines, i, list.get());
         list.get().append(zoomAdjustedPixelValue(trackPositions[i + 1] - trackPositions[i], style));
         insertionIndex = trackPositions.size() - 1;
