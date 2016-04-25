@@ -406,57 +406,73 @@ bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::Ass
     if (nonExtenderCount > 3)
         return false; // This is not supported: there are too many pieces.
 
-    // We now browse the list of pieces.
-    // 1 = look for a left/bottom glyph
-    // 2 = look for an extender between left/bottom and mid
-    // 4 = look for a middle glyph
-    // 5 = look for an extender between middle and right/top
-    // 5 = look for a right/top glyph
-    // 6 = no more piece expected
-    unsigned state = 1;
-
+    // We now browse the list of pieces from left to right for horizontal operators and from bottom to top for vertical operators.
+    enum PartType {
+        Start,
+        ExtenderBetweenStartAndMiddle,
+        Middle,
+        ExtenderBetweenMiddleAndEnd,
+        End,
+        None
+    };
+    PartType expectedPartType = Start;
     extension.glyph = 0;
     middle.glyph = 0;
     for (auto& part : assemblyParts) {
-        if ((state == 2 || state == 3) && nonExtenderCount < 3) {
-            // We do not try to find a middle glyph.
-            state += 2;
+        if (nonExtenderCount < 3) {
+            // If we only have at most two non-extenders then we skip the middle glyph.
+            if (expectedPartType == ExtenderBetweenStartAndMiddle)
+                expectedPartType = ExtenderBetweenMiddleAndEnd;
+            else if (expectedPartType == Middle)
+                expectedPartType = End;
         }
         if (part.isExtender) {
             if (!extension.glyph)
-                extension.glyph = part.glyph;
+                extension.glyph = part.glyph; // We copy the extender part.
             else if (extension.glyph != part.glyph)
                 return false; // This is not supported: the assembly has different extenders.
 
-            if (state == 1) {
-                // We ignore left/bottom piece and multiple successive extenders.
-                state = 2;
-            } else if (state == 3) {
-                // We ignore middle piece and multiple successive extenders.
-                state = 4;
-            } else if (state >= 5)
-                return false; // This is not supported: we got an unexpected extender.
-            continue;
+            switch (expectedPartType) {
+            case Start:
+                // We ignore the left/bottom part.
+                expectedPartType = ExtenderBetweenStartAndMiddle;
+                continue;
+            case Middle:
+                // We ignore the middle part.
+                expectedPartType = ExtenderBetweenMiddleAndEnd;
+                continue;
+            case End:
+            case None:
+                // This is not supported: we got an unexpected extender.
+                return false;
+            case ExtenderBetweenStartAndMiddle:
+            case ExtenderBetweenMiddleAndEnd:
+                // We ignore multiple consecutive extenders.
+                continue;
+            }
         }
 
-        if (state == 1) {
+        switch (expectedPartType) {
+        case Start:
             // We copy the left/bottom part.
             bottom.glyph = part.glyph;
-            state = 2;
+            expectedPartType = ExtenderBetweenStartAndMiddle;
             continue;
-        }
-
-        if (state == 2 || state == 3) {
+        case ExtenderBetweenStartAndMiddle:
+        case Middle:
             // We copy the middle part.
             middle.glyph = part.glyph;
-            state = 4;
+            expectedPartType = ExtenderBetweenMiddleAndEnd;
             continue;
-        }
-
-        if (state == 4 || state == 5) {
+        case ExtenderBetweenMiddleAndEnd:
+        case End:
             // We copy the right/top part.
             top.glyph = part.glyph;
-            state = 6;
+            expectedPartType = None;
+            continue;
+        case None:
+            // This is not supported: we got an unexpected non-extender part.
+            return false;
         }
     }
 
@@ -708,7 +724,7 @@ LayoutRect RenderMathMLOperator::paintGlyph(PaintInfo& info, const GlyphData& da
 
     // In order to have glyphs fit snugly with one another we snap the connecting edges to pixel boundaries
     // and trim off one pixel. The pixel trim is to account for fonts that have edge pixels that have less
-    // than full coverage. These edge pixels can introduce small seams between connected glyphs
+    // than full coverage. These edge pixels can introduce small seams between connected glyphs.
     FloatRect clipBounds = info.rect;
     switch (trim) {
     case TrimTop:
@@ -719,13 +735,11 @@ LayoutRect RenderMathMLOperator::paintGlyph(PaintInfo& info, const GlyphData& da
         glyphPaintRect.shiftMaxYEdgeTo(glyphPaintRect.maxY().floor() - 1);
         clipBounds.shiftMaxYEdgeTo(glyphPaintRect.maxY());
         break;
-    case TrimTopAndBottom: {
-        LayoutUnit temp = glyphPaintRect.y() + 1;
-        glyphPaintRect.shiftYEdgeTo(temp.ceil());
+    case TrimTopAndBottom:
+        glyphPaintRect.shiftYEdgeTo(glyphPaintRect.y().ceil() + 1);
         glyphPaintRect.shiftMaxYEdgeTo(glyphPaintRect.maxY().floor() - 1);
         clipBounds.shiftYEdgeTo(glyphPaintRect.y());
         clipBounds.shiftMaxYEdgeTo(glyphPaintRect.maxY());
-    }
         break;
     case TrimLeft:
         glyphPaintRect.shiftXEdgeTo(glyphPaintRect.x().ceil() + 1);
@@ -735,13 +749,11 @@ LayoutRect RenderMathMLOperator::paintGlyph(PaintInfo& info, const GlyphData& da
         glyphPaintRect.shiftMaxXEdgeTo(glyphPaintRect.maxX().floor() - 1);
         clipBounds.shiftMaxXEdgeTo(glyphPaintRect.maxX());
         break;
-    case TrimLeftAndRight: {
-        LayoutUnit temp = glyphPaintRect.x() + 1;
-        glyphPaintRect.shiftXEdgeTo(temp.ceil());
+    case TrimLeftAndRight:
+        glyphPaintRect.shiftXEdgeTo(glyphPaintRect.x().ceil() + 1);
         glyphPaintRect.shiftMaxXEdgeTo(glyphPaintRect.maxX().floor() - 1);
         clipBounds.shiftXEdgeTo(glyphPaintRect.x());
         clipBounds.shiftMaxXEdgeTo(glyphPaintRect.maxX());
-    }
     }
 
     // Clipping the enclosing IntRect avoids any potential issues at joined edges.

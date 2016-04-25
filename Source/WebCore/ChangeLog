@@ -1,3 +1,18 @@
+2016-04-25  Frederic Wang  <fwang@igalia.com>
+
+        Minor refactoring in RenderMathMLOperator
+        https://bugs.webkit.org/show_bug.cgi?id=156906
+
+        Reviewed by Martin Robinson.
+
+        No new tests, this is only minor refactoring that does not change the behavior.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::getGlyphAssemblyFallBack):
+        We rename the "state" integer to an "expected" enum indicating the next expected part.
+        (WebCore::RenderMathMLOperator::paintGlyph): We add a missing dot at the end of a sequence.
+        We also replace ceil(x+1) with ceil(x)+1 to get rid of the temporary variable.
+
 2016-04-24  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Specify default values for boolean parameters
