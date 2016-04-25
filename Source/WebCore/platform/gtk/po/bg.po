@@ -1,15 +1,15 @@
 # Bulgarian translation for webkit.
-# Copyright (C) 2010 Free Software Foundation, Inc.
+# Copyright (C) 2010, 2016 Free Software Foundation, Inc.
 # This file is distributed under the same license as the webkit package.
 # Ivaylo Valkov <ivaylo@e-valkov.org>, 2010.
-# Zahari Yurukov <zahari.yurukov@gmail.com>, 2015.
+# Zahari Yurukov <zahari.yurukov@gmail.com>, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: webkit trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-12 07:00+0200\n"
-"PO-Revision-Date: 2015-03-12 07:00+0200\n"
+"POT-Creation-Date: 2016-04-15 22:57+0300\n"
+"PO-Revision-Date: 2016-04-16 06:42+0300\n"
 "Last-Translator: Zahari Yurukov <zahari.yurukov@gmail.com>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
 "Language: bg\n"
@@ -17,21 +17,25 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.8.6\n"
 
-#: ../ErrorsGtk.cpp:33
+#: ../ErrorsGtk.cpp:32
 msgid "Load request cancelled"
 msgstr "Заявката за зареждане е отменена"
 
-#: ../ErrorsGtk.cpp:39
+#: ../ErrorsGtk.cpp:37
 msgid "Not allowed to use restricted network port"
 msgstr "Не е разрешено използването на ограничен мрежов порт"
 
-#: ../ErrorsGtk.cpp:45
+#: ../ErrorsGtk.cpp:42
+msgid "Blocked by content blocker"
+msgstr "Спряно от блокера на съдържание"
+
+#: ../ErrorsGtk.cpp:47
 msgid "URL cannot be shown"
 msgstr "Адресът не може да бъде показан"
 
-#: ../ErrorsGtk.cpp:51
+#: ../ErrorsGtk.cpp:52
 msgid "Frame load was interrupted"
 msgstr "Зареждането на рамката беше прекъснато"
 
@@ -39,23 +43,23 @@ msgstr "Зареждането на рамката беше прекъснато
 msgid "Content with the specified MIME type cannot be shown"
 msgstr "Съдържанието с указания вид по MIME не може да бъде показано"
 
-#: ../ErrorsGtk.cpp:63
+#: ../ErrorsGtk.cpp:62
 msgid "File does not exist"
 msgstr "Файлът не съществува"
 
-#: ../ErrorsGtk.cpp:69
+#: ../ErrorsGtk.cpp:67
 msgid "Plugin will handle load"
 msgstr "Приставка ще обработи зареждането"
 
-#: ../ErrorsGtk.cpp:81
+#: ../ErrorsGtk.cpp:77
 msgid "User cancelled the download"
 msgstr "Потребителят отмени изтеглянето"
 
-#: ../ErrorsGtk.cpp:97
+#: ../ErrorsGtk.cpp:92
 msgid "Printer not found"
 msgstr "Принтерът не е намерен"
 
-#: ../ErrorsGtk.cpp:102
+#: ../ErrorsGtk.cpp:97
 msgid "Invalid page range"
 msgstr "Неправилен обхват на страниците"
 
@@ -73,7 +77,7 @@ msgstr "Детайли"
 
 #: ../LocalizedStringsGtk.cpp:75
 msgid "This is a searchable index. Enter search keywords: "
-msgstr "В този индекс може да се търси. Въведете ключови думи за търсене:"
+msgstr "В този индекс може да се търси. Въведете ключови думи за търсене: "
 
 #: ../LocalizedStringsGtk.cpp:80
 msgid "Choose File"
@@ -328,294 +332,297 @@ msgid "cancel"
 msgstr "отказ"
 
 #: ../LocalizedStringsGtk.cpp:461
+msgid "password auto fill"
+msgstr "автоматично попълване на пароли"
+
+#: ../LocalizedStringsGtk.cpp:466
+msgid "contact info auto fill"
+msgstr "автоматично попълване на личните данни"
+
+#: ../LocalizedStringsGtk.cpp:471
 msgid "press"
 msgstr "натискане"
 
-#: ../LocalizedStringsGtk.cpp:466
+#: ../LocalizedStringsGtk.cpp:476
 msgid "select"
 msgstr "избиране"
 
-#: ../LocalizedStringsGtk.cpp:471
+#: ../LocalizedStringsGtk.cpp:481
 msgid "activate"
 msgstr "включване"
 
-#: ../LocalizedStringsGtk.cpp:476
+#: ../LocalizedStringsGtk.cpp:486
 msgid "uncheck"
 msgstr "премахване на отметката"
 
-#: ../LocalizedStringsGtk.cpp:481
+#: ../LocalizedStringsGtk.cpp:491
 msgid "check"
 msgstr "отмятане"
 
-#: ../LocalizedStringsGtk.cpp:486
+#: ../LocalizedStringsGtk.cpp:496
 msgid "jump"
 msgstr "посещаване на връзката"
 
-#: ../LocalizedStringsGtk.cpp:506
+#: ../LocalizedStringsGtk.cpp:516
 msgid "Missing Plug-in"
 msgstr "Липсваща приставка"
 
-#: ../LocalizedStringsGtk.cpp:512
+#: ../LocalizedStringsGtk.cpp:522
 msgid "Plug-in Failure"
 msgstr "Проблем в приставка"
 
 #. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
-#: ../LocalizedStringsGtk.cpp:536
+#: ../LocalizedStringsGtk.cpp:540
 msgid " files"
 msgstr "файлове"
 
-#: ../LocalizedStringsGtk.cpp:541
+#: ../LocalizedStringsGtk.cpp:545
 msgid "Unknown"
 msgstr "Неизвестен"
 
-#: ../LocalizedStringsGtk.cpp:546
+#: ../LocalizedStringsGtk.cpp:550
 #, c-format
 msgctxt "Title string for images"
 msgid "%s  (%dx%d pixels)"
 msgstr "%s  (%d × %d пиксела)"
 
-#: ../LocalizedStringsGtk.cpp:557
+#: ../LocalizedStringsGtk.cpp:561
 msgid "Loading..."
 msgstr "Зареждане…"
 
-#: ../LocalizedStringsGtk.cpp:562
+#: ../LocalizedStringsGtk.cpp:566
 msgid "Live Broadcast"
 msgstr "Живо предаване"
 
-#: ../LocalizedStringsGtk.cpp:568
+#: ../LocalizedStringsGtk.cpp:572
 msgid "audio playback"
 msgstr "изпълнение на аудио"
 
-#: ../LocalizedStringsGtk.cpp:570
+#: ../LocalizedStringsGtk.cpp:574
 msgid "video playback"
 msgstr "изпълнение на видео"
 
-#: ../LocalizedStringsGtk.cpp:572
+#: ../LocalizedStringsGtk.cpp:576
 msgid "mute"
 msgstr "заглушаване"
 
-#: ../LocalizedStringsGtk.cpp:574
+#: ../LocalizedStringsGtk.cpp:578
 msgid "unmute"
 msgstr "премахване на заглушаването"
 
-#: ../LocalizedStringsGtk.cpp:576
+#: ../LocalizedStringsGtk.cpp:580
 msgid "play"
 msgstr "изпълнение"
 
-#: ../LocalizedStringsGtk.cpp:578
+#: ../LocalizedStringsGtk.cpp:582
 msgid "pause"
 msgstr "пауза"
 
-#: ../LocalizedStringsGtk.cpp:580
+#: ../LocalizedStringsGtk.cpp:584
 msgid "movie time"
 msgstr "време на филма"
 
-#: ../LocalizedStringsGtk.cpp:582
+#: ../LocalizedStringsGtk.cpp:586
 msgid "timeline slider thumb"
 msgstr "показалец на плъзгача за времевата скала"
 
-#: ../LocalizedStringsGtk.cpp:584
+#: ../LocalizedStringsGtk.cpp:588
 msgid "back 30 seconds"
 msgstr "30 секунди назад"
 
-#: ../LocalizedStringsGtk.cpp:586
+#: ../LocalizedStringsGtk.cpp:590
 msgid "return to realtime"
 msgstr "връщане към реално време"
 
-#: ../LocalizedStringsGtk.cpp:588
+#: ../LocalizedStringsGtk.cpp:592
 msgid "elapsed time"
 msgstr "изминало време"
 
-#: ../LocalizedStringsGtk.cpp:590
+#: ../LocalizedStringsGtk.cpp:594
 msgid "remaining time"
 msgstr "оставащо време"
 
-#: ../LocalizedStringsGtk.cpp:592
+#: ../LocalizedStringsGtk.cpp:596
 msgid "status"
 msgstr "състояние"
 
-#: ../LocalizedStringsGtk.cpp:594
+#: ../LocalizedStringsGtk.cpp:598
 msgid "enter fullscreen"
 msgstr "на цял екран"
 
-#: ../LocalizedStringsGtk.cpp:596
+#: ../LocalizedStringsGtk.cpp:600
 msgid "exit fullscreen"
 msgstr "изход от цял екран"
 
-#: ../LocalizedStringsGtk.cpp:598
+#: ../LocalizedStringsGtk.cpp:602
 msgid "fast forward"
 msgstr "бързо напред"
 
-#: ../LocalizedStringsGtk.cpp:600
+#: ../LocalizedStringsGtk.cpp:604
 msgid "fast reverse"
 msgstr "бързо назад"
 
-#: ../LocalizedStringsGtk.cpp:602
+#: ../LocalizedStringsGtk.cpp:606
 msgid "show closed captions"
 msgstr "показване на субтитри"
 
-#: ../LocalizedStringsGtk.cpp:604
+#: ../LocalizedStringsGtk.cpp:608
 msgid "hide closed captions"
 msgstr "скриване на субтитри"
 
-#: ../LocalizedStringsGtk.cpp:606
+#: ../LocalizedStringsGtk.cpp:610
 msgid "media controls"
 msgstr "контроли за медия"
 
-#: ../LocalizedStringsGtk.cpp:615
+#: ../LocalizedStringsGtk.cpp:619
 msgid "audio element playback controls and status display"
 msgstr "бутони за управление на звука и показване на състоянието"
 
-#: ../LocalizedStringsGtk.cpp:617
+#: ../LocalizedStringsGtk.cpp:621
 msgid "video element playback controls and status display"
 msgstr "бутони за управление на картината и показване на състоянието"
 
-#: ../LocalizedStringsGtk.cpp:619
+#: ../LocalizedStringsGtk.cpp:623
 msgid "mute audio tracks"
 msgstr "заглушаване на пистите със звука"
 
-#: ../LocalizedStringsGtk.cpp:621
+#: ../LocalizedStringsGtk.cpp:625
 msgid "unmute audio tracks"
 msgstr "премахване на заглушаването на пистите със звука"
 
-#: ../LocalizedStringsGtk.cpp:623
+#: ../LocalizedStringsGtk.cpp:627
 msgid "begin playback"
 msgstr "стартиране на изпълнението"
 
-#: ../LocalizedStringsGtk.cpp:625
+#: ../LocalizedStringsGtk.cpp:629
 msgid "pause playback"
 msgstr "пауза на изпълнението"
 
-#: ../LocalizedStringsGtk.cpp:627
+#: ../LocalizedStringsGtk.cpp:631
 msgid "movie time scrubber"
 msgstr "плъзгач за времевата скала на филма"
 
-#: ../LocalizedStringsGtk.cpp:629
+#: ../LocalizedStringsGtk.cpp:633
 msgid "movie time scrubber thumb"
 msgstr "показалец на плъзгача за времевата скала на филма"
 
-#: ../LocalizedStringsGtk.cpp:631
+#: ../LocalizedStringsGtk.cpp:635
 msgid "seek movie back 30 seconds"
 msgstr "търсене 30 секунди назад във филма"
 
-#: ../LocalizedStringsGtk.cpp:633
+#: ../LocalizedStringsGtk.cpp:637
 msgid "return streaming movie to real time"
 msgstr "връщане на филмовия поток към реално време"
 
-#: ../LocalizedStringsGtk.cpp:635
+#: ../LocalizedStringsGtk.cpp:639
 msgid "current movie time in seconds"
 msgstr "текущо време на филма в секунди"
 
-#: ../LocalizedStringsGtk.cpp:637
+#: ../LocalizedStringsGtk.cpp:641
 msgid "number of seconds of movie remaining"
 msgstr "оставащите секунди от филма"
 
-#: ../LocalizedStringsGtk.cpp:639
+#: ../LocalizedStringsGtk.cpp:643
 msgid "current movie status"
 msgstr "текущо състояние на филма"
 
-#: ../LocalizedStringsGtk.cpp:641
+#: ../LocalizedStringsGtk.cpp:645
 msgid "seek quickly back"
 msgstr "бързо търсене назад"
 
-#: ../LocalizedStringsGtk.cpp:643
+#: ../LocalizedStringsGtk.cpp:647
 msgid "seek quickly forward"
 msgstr "бързо търсене напред"
 
-#: ../LocalizedStringsGtk.cpp:645
+#: ../LocalizedStringsGtk.cpp:649
 msgid "Play movie in fullscreen mode"
 msgstr "Изпълнение на филма на цял екран"
 
-#: ../LocalizedStringsGtk.cpp:647
+#: ../LocalizedStringsGtk.cpp:651
 msgid "Exit fullscreen mode"
 msgstr "Изход от режима на цял екран"
 
-#: ../LocalizedStringsGtk.cpp:649
+#: ../LocalizedStringsGtk.cpp:653
 msgid "start displaying closed captions"
 msgstr "показване на субтитри"
 
-#: ../LocalizedStringsGtk.cpp:651
+#: ../LocalizedStringsGtk.cpp:655
 msgid "stop displaying closed captions"
 msgstr "без субтитри"
 
-#: ../LocalizedStringsGtk.cpp:660
+#: ../LocalizedStringsGtk.cpp:664
 msgid "indefinite time"
 msgstr "неопределено време"
 
-#: ../LocalizedStringsGtk.cpp:690
+#: ../LocalizedStringsGtk.cpp:694
 msgid "value missing"
 msgstr "стойността липсва"
 
-#: ../LocalizedStringsGtk.cpp:726
+#: ../LocalizedStringsGtk.cpp:730
 msgid "type mismatch"
 msgstr "несъответствие на вида"
 
-#: ../LocalizedStringsGtk.cpp:749
+#: ../LocalizedStringsGtk.cpp:753
 msgid "pattern mismatch"
 msgstr "несъответствие на шаблона"
 
-#: ../LocalizedStringsGtk.cpp:754
+#: ../LocalizedStringsGtk.cpp:758
 msgid "too long"
 msgstr "текстът е прекалено дълъг"
 
-#: ../LocalizedStringsGtk.cpp:759
+#: ../LocalizedStringsGtk.cpp:763
 msgid "range underflow"
 msgstr "отрицателно препълване на обхвата"
 
-#: ../LocalizedStringsGtk.cpp:764
+#: ../LocalizedStringsGtk.cpp:768
 msgid "range overflow"
 msgstr "препълване на обхвата"
 
-#: ../LocalizedStringsGtk.cpp:769
+#: ../LocalizedStringsGtk.cpp:773
 msgid "step mismatch"
 msgstr "несъответствие на стъпката"
 
-#: ../LocalizedStringsGtk.cpp:774
+#: ../LocalizedStringsGtk.cpp:778
 msgid "Unacceptable TLS certificate"
 msgstr "Неприемлив сертификат TLS"
 
-#: ../LocalizedStringsGtk.cpp:791
-msgctxt "Closed Captions"
-msgid "Menu section heading for closed captions"
-msgstr "Заглавие на секция от меню за субтитри"
-
-#: ../LocalizedStringsGtk.cpp:796
+#: ../LocalizedStringsGtk.cpp:795
 msgctxt "Menu section heading for subtitles"
 msgid "Subtitles"
 msgstr "Субтитри"
 
-#: ../LocalizedStringsGtk.cpp:801
+#: ../LocalizedStringsGtk.cpp:800
 msgctxt ""
 "Menu item label for the track that represents disabling closed captions"
 msgid "Off"
 msgstr "Изключени"
 
-#: ../LocalizedStringsGtk.cpp:806
+#: ../LocalizedStringsGtk.cpp:805
 msgctxt "Menu item label for the automatically chosen track"
 msgid "Auto"
 msgstr "Автоматично"
 
-#: ../LocalizedStringsGtk.cpp:811
+#: ../LocalizedStringsGtk.cpp:810
 msgctxt "Menu item label for a closed captions track that has no other name"
 msgid "No label"
 msgstr "Без етикет"
 
-#: ../LocalizedStringsGtk.cpp:816
+#: ../LocalizedStringsGtk.cpp:815
 msgctxt "Menu item label for an audio track that has no other name"
 msgid "No label"
 msgstr "Без етикет"
 
-#: ../LocalizedStringsGtk.cpp:822
+#: ../LocalizedStringsGtk.cpp:821
 msgctxt "Snapshotted Plug-In"
 msgid "Title of the label to show on a snapshotted plug-in"
 msgstr "Заглавието на етикет, който да се показва за снимка на приставка"
 
-#: ../LocalizedStringsGtk.cpp:827
+#: ../LocalizedStringsGtk.cpp:826
 msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr "Подзаглавието на етикет, който да се показва за снимка на приставка"
 
-#: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:99
+#: ../../../../WebKit2/NetworkProcess/Downloads/soup/DownloadSoup.cpp:100
 #, c-format
 msgid ""
 "Cannot determine destination URI for download with suggested filename %s"
@@ -839,7 +846,7 @@ msgstr "Вид на навигацията"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:131
 msgid "The type of navigation triggering this decision"
-msgstr "Видът навигация , задействащ това решение"
+msgstr "Видът навигация, задействащ това решение"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:150
 msgid "Mouse button"
@@ -883,7 +890,7 @@ msgstr "Уеб изглед"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:147
 msgid "The web view that will be printed"
-msgstr "Уеб изгледа, който ще се печата"
+msgstr "Уеб изгледът, който ще се печата"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:159
 msgid "Print Settings"
@@ -917,110 +924,110 @@ msgstr "Отговор на заявка"
 msgid "The URI response that is associated with this policy decision"
 msgstr "Отговорът на заявката, асоциирана с това решение"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:491
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:497
 msgid "Enable JavaScript"
 msgstr "Включване на JavaScript"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:492
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:498
 msgid "Enable JavaScript."
 msgstr "Включване на JavaScript."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:506
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:512
 msgid "Auto load images"
 msgstr "Автоматично зареждане на изображения"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:507
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:513
 msgid "Load images automatically."
 msgstr "Изображенията да се зареждат автоматично."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:520
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:526
 msgid "Load icons ignoring image load setting"
 msgstr ""
 "Зареждане на икони, пренебрегвайки настройката за зареждане на изображения"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:521
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:527
 msgid "Whether to load site icons ignoring image load setting."
 msgstr ""
 "Дали да се зареждат иконите на сайта, пренебрегвайки настройката за "
 "зареждане на изображения."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:538
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:544
 msgid "Enable offline web application cache"
 msgstr "Използване на временни файлове за уеб приложения в режим „Без връзка“"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:539
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:545
 msgid "Whether to enable offline web application cache."
 msgstr "Дали да бъдат включени временните файлове за разглеждане без връзка"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:555
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:561
 msgid "Enable HTML5 local storage"
 msgstr "Включване на местното хранилище на HTML5"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:556
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:562
 msgid "Whether to enable HTML5 Local Storage support."
 msgstr "Дали да бъде включена поддръжката за местно хранилище на HTML5."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:573
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:579
 msgid "Enable HTML5 database"
 msgstr "Включване на базата от данни на HTML5"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:574
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:580
 msgid "Whether to enable HTML5 database support."
 msgstr "Дали да бъде включена поддръжката за база от данни на HTML5."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:587
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:593
 msgid "Enable XSS auditor"
 msgstr "Включване на проверката за XSS"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:588
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:594
 msgid "Whether to enable the XSS auditor."
 msgstr "Дали да бъде включена проверката за атаки чрез XSS"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:603
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:609
 msgid "Enable frame flattening"
 msgstr "Включване на изравняването на кадрите"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:604
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:610
 msgid "Whether to enable frame flattening."
 msgstr "Дали да бъде включено изравняването на кадрите"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:616
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:622
 msgid "Enable plugins"
 msgstr "Включване на приставките"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:617
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:623
 msgid "Enable embedded plugin objects."
 msgstr "Включване на вградените обекти, които се обработват от приставки."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:629
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:635
 msgid "Enable Java"
 msgstr "Включване на Java"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:630
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:636
 msgid "Whether Java support should be enabled."
 msgstr "Дали да бъде включена поддръжката на Java."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:643
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:649
 msgid "JavaScript can open windows automatically"
 msgstr "Автоматично отваряне на прозорци чрез JavaScript"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:644
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:650
 msgid "Whether JavaScript can open windows automatically."
 msgstr "Дали прозорци могат да се отварят автоматично чрез JavaScript."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:659
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:665
 msgid "Enable hyperlink auditing"
 msgstr "Включване на проверката на хипервръзки"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:660
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:666
 msgid "Whether <a ping> should be able to send pings."
 msgstr "Дали <ping> ще има възможност да изпраща заявки."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:672
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:678
 msgid "Default font family"
 msgstr "Стандартно семейство от шрифтове"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:673
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:679
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
@@ -1028,92 +1035,92 @@ msgstr ""
 "Фамилията от шрифтове, която да се използва като стандартна за съдържание, "
 "което не е посочило шрифт."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:686
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:692
 msgid "Monospace font family"
 msgstr "Равноширок шрифт"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:687
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:693
 msgid "The font family used as the default for content using monospace font."
 msgstr ""
 "Семейството от шрифтове, което се използва за извеждане на равноширок текст."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:699
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:705
 msgid "Serif font family"
 msgstr "Серифен шрифт"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:700
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:706
 msgid "The font family used as the default for content using serif font."
 msgstr ""
 "Семейството от шрифтове, което се използва за извеждане на серифен текст."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:712
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:718
 msgid "Sans-serif font family"
 msgstr "Безсерифен шрифт"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:713
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:719
 msgid "The font family used as the default for content using sans-serif font."
 msgstr ""
 "Семейството от шрифтове, което се използва за извеждане на безсерифен текст."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:725
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:731
 msgid "Cursive font family"
 msgstr "Курсивен шрифт"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:726
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:732
 msgid "The font family used as the default for content using cursive font."
 msgstr ""
 "Семейството от шрифтове, което се използва за извеждане на курсивен текст."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:738
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:744
 msgid "Fantasy font family"
 msgstr "Приказен шрифт"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:739
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:745
 msgid "The font family used as the default for content using fantasy font."
 msgstr ""
 "Семейството от шрифтове, което се използва за извеждане на приказен текст."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:751
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:757
 msgid "Pictograph font family"
 msgstr "Пиктограмен шрифт"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:752
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:758
 msgid "The font family used as the default for content using pictograph font."
 msgstr ""
 "Семейството от шрифтове, което се използва за извеждане на пиктограмен текст."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:765
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:771
 msgid "Default font size"
 msgstr "Стандартен размер на шрифт"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:766
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:772
 msgid "The default font size used to display text."
 msgstr ""
 "Стандартният размер на шрифта, който се използва за извеждане на текст."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:779
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:785
 msgid "Default monospace font size"
 msgstr "Стандартен размер на равноширок шрифт"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:780
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:786
 msgid "The default font size used to display monospace text."
 msgstr ""
 "Стандартният размер на шрифт, който се използва за извеждане на равноширок "
 "текст."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:794
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:800
 msgid "Minimum font size"
 msgstr "Минимален размер на шрифт"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:795
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:801
 msgid "The minimum font size used to display text."
 msgstr "Най-малкият размер на шрифт, който се използва за извеждане на текст."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:807
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:813
 msgid "Default charset"
 msgstr "Стандартно кодиране"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:808
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:814
 msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
@@ -1121,217 +1128,225 @@ msgstr ""
 "Стандартно кодиране на текста, което да се използва при извеждане на "
 "съдържание с неизвестно кодиране."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:821
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:827
 msgid "Enable private browsing"
 msgstr "Включване на „Поверително сърфиране“"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:822
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:828
 msgid "Whether to enable private browsing"
 msgstr "Дали да бъде включено поверителното сърфиране"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:834
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:840
 msgid "Enable developer extras"
 msgstr "Включване на разширенията за разработчици"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:835
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:841
 msgid "Whether to enable developer extras"
 msgstr "Дали да се включат разширенията за разработчици"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:847
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:853
 msgid "Enable resizable text areas"
 msgstr "Включване на възможността за промяна на размера на текстовите полета"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:848
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:854
 msgid "Whether to enable resizable text areas"
 msgstr "Дали размерите на текстовите полета да могат да се променят"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:863
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:869
 msgid "Enable tabs to links"
 msgstr "Включване на фокуса върху връзките"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:864
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:870
 msgid "Whether to enable tabs to links"
 msgstr "Дали връзките да бъдат фокусируеми."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:877
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:883
 msgid "Enable DNS prefetching"
 msgstr "Включване на предварителното извличане на DNS"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:878
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:884
 msgid "Whether to enable DNS prefetching"
 msgstr "Дали да бъде включено предварителното извличане на DNS"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:890
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:896
 msgid "Enable Caret Browsing"
 msgstr "Навигация с курсор"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:891
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:897
 msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "Дали да бъде включена навигация чрез клавиатура с повишена достъпност"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:906
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:912
 msgid "Enable Fullscreen"
 msgstr "Включване на цял екран"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:907
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:913
 msgid "Whether to enable the Javascript Fullscreen API"
 msgstr "Дали да бъде включено API за цял екран на Javascript."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:919
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:925
 msgid "Print Backgrounds"
 msgstr "Печат на фонове"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:920
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:926
 msgid "Whether background images should be drawn during printing"
 msgstr "Дали да се отпечатват фоновите изображения"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:938
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:944
 msgid "Enable WebAudio"
 msgstr "Включване на уеб аудио"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:939
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:945
 msgid "Whether WebAudio content should be handled"
 msgstr "Дали да се обработва аудио съдържанието в страниците"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:953
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:959
 msgid "Enable WebGL"
 msgstr "Включване на WebGL"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:954
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:960
 msgid "Whether WebGL content should be rendered"
 msgstr "Дали да се изобразява съдържанието по WebGL"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:971
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:977
 msgid "Allow modal dialogs"
 msgstr "Позволяване на модални диалогови прозорци"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:972
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:978
 msgid "Whether it is possible to create modal dialogs"
 msgstr "Дали да е позволено създаването на модални диалогови прозорци"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:987
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:993
 msgid "Zoom Text Only"
 msgstr "Увеличаване само на текста"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:988
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:994
 msgid "Whether zoom level of web view changes only the text size"
 msgstr ""
 "Дали мащабирането на уеб съдържанието да променя само размера на текста"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1002
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1008
 msgid "JavaScript can access clipboard"
 msgstr "JavaScript да има достъп до буфера за обмен"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1003
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1009
 msgid "Whether JavaScript can access Clipboard"
 msgstr "Дали JavaScript да има достъп до буфера за обмен"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1019
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1025
 msgid "Media playback requires user gesture"
 msgstr "Изпълнението на медия изисква потребителско действие"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1020
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1026
 msgid "Whether media playback requires user gesture"
 msgstr "Дали изпълнението на медия да изисква потребителско действие"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1034
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1040
 msgid "Media playback allows inline"
 msgstr "Изпълняването на вградена медия"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1035
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1041
 msgid "Whether media playback allows inline"
 msgstr ""
 "Дали медията да може да се изпълнява както е вградена в страницата или само "
 "на цял екран"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1049
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1055
 msgid "Draw compositing indicators"
 msgstr "Изчертаване на съставни индикатори"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1050
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1056
 msgid "Whether to draw compositing borders and repaint counters"
 msgstr "Дали да се изчертават съставни граници и да се опреснява платното"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1069
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1075
 msgid "Enable Site Specific Quirks"
 msgstr "Включване на съвместимост за определени страници"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1070
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1076
 msgid "Enables the site-specific compatibility workarounds"
 msgstr "Включва временните решения за съвместимост на определени страници"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1090
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1096
 msgid "Enable page cache"
 msgstr "Включване на временни файлове за страниците"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1091
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1097
 msgid "Whether the page cache should be used"
 msgstr "Дали да се запазват и използват временни файлове за страниците"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1110
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1116
 msgid "User agent string"
 msgstr "Потребителски агент"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1111
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1117
 msgid "The user agent string"
 msgstr "Низът за потребителския агент"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1123
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1129
 msgid "Enable smooth scrolling"
 msgstr "Включване на плавно придвижване"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1124
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1130
 msgid "Whether to enable smooth scrolling"
 msgstr "Дали да бъде включено плавното придвижване"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1141
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1147
 msgid "Enable accelerated 2D canvas"
 msgstr "Включване на ускореното двуизмерно платно"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1142
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1148
 msgid "Whether to enable accelerated 2D canvas"
 msgstr "Дали да бъде включено ускореното двуизмерно платно"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1157
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1163
 msgid "Write console messages on stdout"
 msgstr "Извеждане на съобщенията от конзолата на стандартния изход"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1158
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1164
 msgid "Whether to write console messages on stdout"
 msgstr "Дали съобщенията от конзолата да се извеждат на стандартния изход"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1176
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1182
 msgid "Enable MediaStream"
 msgstr "Включване на MediaStream"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1177
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1183
 msgid "Whether MediaStream content should be handled"
 msgstr "Дали съдържанието по MediaStream да се обработва"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1196
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1202
 msgid "Enable Spatial Navigation"
 msgstr "Включване на навигация с клавиши"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1197
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1203
 msgid "Whether to enable Spatial Navigation support."
 msgstr "Дали да бъде включена пространствената навигация"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1216
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1222
 msgid "Enable MediaSource"
 msgstr "Включване на MediaSource"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1217
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1223
 msgid "Whether MediaSource should be enabled."
 msgstr "Дали да се разреши MediaSource."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1241
+msgid "Allow file access from file URLs"
+msgstr "Позволяване на достъп до файлове от локални адреси"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1242
+msgid "Whether file access is allowed from file URLs."
+msgstr "Дали да се позволи достъп до файлове от локални адреси."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:105
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:909
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:917
 msgid "URI"
 msgstr "Адрес"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:97
 msgid "The URI to which the request will be made."
 msgstr "Адресът, към който ще бъде направена заявката."
 
@@ -1413,29 +1428,49 @@ msgstr "Текущият активен адрес на ресурса"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:124
 msgid "The response of the resource"
-msgstr "Отговора на ресурса"
+msgstr "Отговорът на ресурса"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:556
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1302
+msgid "Website running in fullscreen mode"
+msgstr "Уеб страницата е на цял екран"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:362
+msgid "Are you sure you want to leave this page?"
+msgstr "Сигурни ли сте, че искате да напуснете тази страница?"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:363
+msgid "Stay on Page"
+msgstr "Оставане на страницата"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:363
+msgid "Leave Page"
+msgstr "Напускане на страницата"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:558
 msgid "Select Files"
 msgstr "Избор на файлове"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:556
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:558
 msgid "Select File"
 msgstr "Избор на файл"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:799
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:620
+msgid "Acknowledge"
+msgstr "Потвърждение"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:807
 msgid "Web Context"
 msgstr "Уеб контекст"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:800
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:808
 msgid "The web context for the view"
-msgstr "Уеб контекста за изгледа"
+msgstr "Уеб контекстът за изгледа"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:817
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:825
 msgid "Related WebView"
 msgstr "Свързани уеб изглед"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:818
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:826
 msgid ""
 "The related WebKitWebView used when creating the view to share the same web "
 "process"
@@ -1443,83 +1478,83 @@ msgstr ""
 "Свързаният WebKitWebView, използван при създаване на изгледа за споделяне от "
 "същия процес"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:834
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:842
 msgid "WebView settings"
 msgstr "Настройки на уеб изгледа"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:835
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:843
 msgid "The WebKitSettings of the view"
 msgstr "WebKitSettings на изгледа"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:851
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:859
 msgid "WebView user content manager"
 msgstr "Мениджър на потребителско съдържание на WebView"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:852
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:860
 msgid "The WebKitUserContentManager of the view"
 msgstr "WebKitUserContentManager на изгледа"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:865
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:873
 msgid "Title"
 msgstr "Заглавие"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:866
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:874
 msgid "Main frame document title"
 msgstr "Заглавието на основния разглеждан документ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:884
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:892
 msgid "Estimated Load Progress"
 msgstr "Изминал напредък на зареждане"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:885
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:893
 msgid "An estimate of the percent completion for a document load"
 msgstr "Процентно зареденото съдържание до момента"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:897
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:905
 msgid "Favicon"
 msgstr "Икона"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:898
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:906
 msgid "The favicon associated to the view, if any"
 msgstr "Иконата, асоциирана с изгледа, ако има такава"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:910
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:918
 msgid "The current active URI of the view"
 msgstr "Текущо активен адрес на изгледа"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:925
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:933
 msgid "Zoom level"
 msgstr "Мащабиране"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:926
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:934
 msgid "The zoom level of the view content"
 msgstr "Нивото на мащабиране на съдържанието"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:945
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:953
 msgid "Is Loading"
-msgstr "Зареждане…"
+msgstr "Зареждане"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:946
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:954
 msgid "Whether the view is loading a page"
 msgstr "Дали изгледът зарежда страница"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:966
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:974
 msgid "Whether the view is playing audio"
 msgstr "Дали изгледът изпълнява аудио"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:983
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:991
 msgid "Editable"
 msgstr "Редактируемо"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:984
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:992
 msgid "Whether the content can be modified by the user."
 msgstr "Дали съдържанието може да се променя от потребителя."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2982
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2955
 msgid "An exception was raised in JavaScript"
 msgstr "Изключение от JavaScript"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3439
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3415
 msgid "There was an error creating the snapshot"
 msgstr "При създаване на снимката възникна грешка"
 
@@ -1587,8 +1622,8 @@ msgstr "На цял екран"
 msgid "Whether window will be displayed fullscreen."
 msgstr "Дали прозорецът ще се изобразява на цял екран."
 
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:144
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:149
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:152
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:178
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:183
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:186
 msgid "Web Inspector"
 msgstr "Уеб инспектор"
