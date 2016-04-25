@@ -1,3 +1,20 @@
+2016-04-07  Antti Koivisto  <antti@apple.com>
+
+        FrameView::qualifiesAsVisuallyNonEmpty() returns false when loading a Google search results page before search results are loaded, even though the header is visible
+        https://bugs.webkit.org/show_bug.cgi?id=156339
+        <rdar://problem/24491381>
+
+        Reviewed by Andreas Kling.
+
+        Patch by Jeff Miller.
+
+        Jeff's testing indicates lowering the document height threshold improves things visually during page loading.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::qualifiesAsVisuallyNonEmpty):
+
+            Lower document height threshold to from 200 to 48 pixels.
+
 2016-04-06  Jer Noble  <jer.noble@apple.com>
 
         CRASH in AudioDestinationNode::render()
