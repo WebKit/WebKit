@@ -1,3 +1,15 @@
+2016-04-25  Jer Noble  <jer.noble@apple.com>
+
+        WebKitPlaybackSessionModelMediaElement should initialize the interface added by setWebPlaybackSessionInterface() with initial data
+        https://bugs.webkit.org/show_bug.cgi?id=156996
+
+        Reviewed by Beth Dakin.
+
+        Notify the interface of the current values in the media element when the model is given an interface.
+
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebPlaybackSessionModelMediaElement::setWebPlaybackSessionInterface):
+
 2016-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         Toggling animation-play-state can re-start a finished animation

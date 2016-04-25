@@ -65,11 +65,21 @@ void WebPlaybackSessionModelMediaElement::setWebPlaybackSessionInterface(WebPlay
 
     m_playbackSessionInterface = interface;
 
-    if (m_playbackSessionInterface) {
-        m_playbackSessionInterface->resetMediaState();
-        if (m_mediaElement)
-            m_playbackSessionInterface->setWirelessVideoPlaybackDisabled(m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled(*m_mediaElement));
-    }
+    if (!m_playbackSessionInterface)
+        return;
+
+    m_playbackSessionInterface->resetMediaState();
+    if (!m_mediaElement)
+        return;
+
+    m_playbackSessionInterface->setDuration(m_mediaElement->duration());
+    m_playbackSessionInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
+    m_playbackSessionInterface->setBufferedTime(m_mediaElement->maxBufferedTime());
+    m_playbackSessionInterface->setRate(!m_mediaElement->paused(), m_mediaElement->playbackRate());
+    m_playbackSessionInterface->setSeekableRanges(*m_mediaElement->seekable());
+    m_playbackSessionInterface->setCanPlayFastReverse(m_mediaElement->minFastReverseRate() < 0.0);
+    m_playbackSessionInterface->setWirelessVideoPlaybackDisabled(m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled(*m_mediaElement));
+    updateLegibleOptions();
 }
 
 void WebPlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaElement)
