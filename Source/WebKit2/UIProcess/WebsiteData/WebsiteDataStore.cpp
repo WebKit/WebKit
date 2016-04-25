@@ -321,7 +321,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
         callbackAggregator->addPendingCallback();
 
         m_queue->dispatch([applicationCacheDirectory, callbackAggregator] {
-            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "Files");
+            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "ApplicationCache");
 
             HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
             storage->getOriginsWithCache(origins);
@@ -579,9 +579,9 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         callbackAggregator->addPendingCallback();
 
         m_queue->dispatch([applicationCacheDirectory, callbackAggregator] {
-            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "Files");
+            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "ApplicationCache");
 
-            storage->deleteAllEntries();
+            storage->deleteAllCaches();
 
             WTF::RunLoop::main().dispatch([callbackAggregator] {
                 callbackAggregator->removePendingCallback();
@@ -818,7 +818,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
 
         callbackAggregator->addPendingCallback();
         m_queue->dispatch([origins, applicationCacheDirectory, callbackAggregator] {
-            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "Files");
+            auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory.string(), "ApplicationCache");
 
             for (const auto& origin : origins)
                 storage->deleteCacheForOrigin(*origin);
