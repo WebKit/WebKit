@@ -263,7 +263,7 @@ public:
         return addSpeculationMode(add, pass) != DontSpeculateInt32;
     }
     
-    bool addShouldSpeculateMachineInt(Node* add)
+    bool addShouldSpeculateAnyInt(Node* add)
     {
         if (!enableInt52())
             return false;
@@ -271,7 +271,7 @@ public:
         Node* left = add->child1().node();
         Node* right = add->child2().node();
 
-        bool speculation = Node::shouldSpeculateMachineInt(left, right);
+        bool speculation = Node::shouldSpeculateAnyInt(left, right);
         return speculation && !hasExitSite(add, Int52Overflow);
     }
     
@@ -284,7 +284,7 @@ public:
             && node->canSpeculateInt32(node->sourceFor(pass));
     }
     
-    bool binaryArithShouldSpeculateMachineInt(Node* node, PredictionPass pass)
+    bool binaryArithShouldSpeculateAnyInt(Node* node, PredictionPass pass)
     {
         if (!enableInt52())
             return false;
@@ -292,7 +292,7 @@ public:
         Node* left = node->child1().node();
         Node* right = node->child2().node();
 
-        return Node::shouldSpeculateMachineInt(left, right)
+        return Node::shouldSpeculateAnyInt(left, right)
             && node->canSpeculateInt52(pass)
             && !hasExitSite(node, Int52Overflow);
     }
@@ -303,11 +303,11 @@ public:
             && node->canSpeculateInt32(pass);
     }
     
-    bool unaryArithShouldSpeculateMachineInt(Node* node, PredictionPass pass)
+    bool unaryArithShouldSpeculateAnyInt(Node* node, PredictionPass pass)
     {
         if (!enableInt52())
             return false;
-        return node->child1()->shouldSpeculateMachineInt()
+        return node->child1()->shouldSpeculateAnyInt()
             && node->canSpeculateInt52(pass)
             && !hasExitSite(node, Int52Overflow);
     }

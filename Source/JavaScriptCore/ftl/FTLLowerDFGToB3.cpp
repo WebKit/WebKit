@@ -1082,7 +1082,7 @@ private:
     
     void compileInt52Constant()
     {
-        int64_t value = m_node->asMachineInt();
+        int64_t value = m_node->asAnyInt();
         
         setInt52(m_out.constInt64(value << JSValue::int52ShiftAmount));
         setStrictInt52(m_out.constInt64(value));
@@ -1261,13 +1261,13 @@ private:
             setStrictInt52(m_out.signExt32To64(lowInt32(m_node->child1())));
             return;
             
-        case MachineIntUse:
+        case AnyIntUse:
             setStrictInt52(
                 jsValueToStrictInt52(
                     m_node->child1(), lowJSValue(m_node->child1(), ManualOperandSpeculation)));
             return;
             
-        case DoubleRepMachineIntUse:
+        case DoubleRepAnyIntUse:
             setStrictInt52(
                 doubleToStrictInt52(
                     m_node->child1(), lowDouble(m_node->child1())));
@@ -1538,8 +1538,8 @@ private:
         }
             
         case Int52RepUse: {
-            if (!abstractValue(m_node->child1()).couldBeType(SpecInt52)
-                && !abstractValue(m_node->child2()).couldBeType(SpecInt52)) {
+            if (!abstractValue(m_node->child1()).couldBeType(SpecInt52Only)
+                && !abstractValue(m_node->child2()).couldBeType(SpecInt52Only)) {
                 Int52Kind kind;
                 LValue left = lowWhicheverInt52(m_node->child1(), kind);
                 LValue right = lowInt52(m_node->child2(), kind);
@@ -2085,7 +2085,7 @@ private:
         }
             
         case Int52RepUse: {
-            if (!abstractValue(m_node->child1()).couldBeType(SpecInt52)) {
+            if (!abstractValue(m_node->child1()).couldBeType(SpecInt52Only)) {
                 Int52Kind kind;
                 LValue value = lowWhicheverInt52(m_node->child1(), kind);
                 LValue result = m_out.neg(value);
@@ -2858,7 +2858,7 @@ private:
                         return;
                     }
                     
-                    if (m_node->shouldSpeculateMachineInt()) {
+                    if (m_node->shouldSpeculateAnyInt()) {
                         setStrictInt52(m_out.zeroExt(result, m_out.int64));
                         return;
                     }
@@ -2999,7 +2999,7 @@ private:
                 LValue value = lowJSValue(child3, ManualOperandSpeculation);
                 
                 if (m_node->arrayMode().type() == Array::Int32)
-                    FTL_TYPE_CHECK(jsValueValue(value), child3, SpecInt32, isNotInt32(value));
+                    FTL_TYPE_CHECK(jsValueValue(value), child3, SpecInt32Only, isNotInt32(value));
                 
                 TypedPointer elementPointer = m_out.baseIndex(
                     m_node->arrayMode().type() == Array::Int32 ?
@@ -3249,7 +3249,7 @@ private:
                 value = lowJSValue(m_node->child2(), ManualOperandSpeculation);
                 if (m_node->arrayMode().type() == Array::Int32) {
                     FTL_TYPE_CHECK(
-                        jsValueValue(value), m_node->child2(), SpecInt32, isNotInt32(value));
+                        jsValueValue(value), m_node->child2(), SpecInt32Only, isNotInt32(value));
                 }
                 storeType = Output::Store64;
             } else {
@@ -9313,13 +9313,13 @@ private:
         if (isValid(value)) {
             LValue boxedResult = value.value();
             FTL_TYPE_CHECK(
-                jsValueValue(boxedResult), edge, SpecInt32, isNotInt32(boxedResult));
+                jsValueValue(boxedResult), edge, SpecInt32Only, isNotInt32(boxedResult));
             LValue result = unboxInt32(boxedResult);
             setInt32(edge.node(), result);
             return result;
         }
 
-        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecInt32));
+        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecInt32Only));
         terminate(Uncountable);
         return m_out.int32Zero;
     }
@@ -9568,7 +9568,7 @@ private:
     {
         LValue result = m_out.castToInt32(value);
         FTL_TYPE_CHECK(
-            noValue(), edge, SpecInt32,
+            noValue(), edge, SpecInt32Only,
             m_out.notEqual(m_out.signExt32To64(result), value));
         setInt32(edge.node(), result);
         return result;
@@ -9618,13 +9618,13 @@ private:
     
     LValue isInt32(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
-        if (LValue proven = isProvenValue(type, SpecInt32))
+        if (LValue proven = isProvenValue(type, SpecInt32Only))
             return proven;
         return m_out.aboveOrEqual(jsValue, m_tagTypeNumber);
     }
     LValue isNotInt32(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
-        if (LValue proven = isProvenValue(type, ~SpecInt32))
+        if (LValue proven = isProvenValue(type, ~SpecInt32Only))
             return proven;
         return m_out.below(jsValue, m_tagTypeNumber);
     }
@@ -9666,9 +9666,9 @@ private:
         LBasicBlock continuation = m_out.newBlock();
             
         LValue isNotInt32;
-        if (!m_interpreter.needsTypeCheck(edge, SpecInt32))
+        if (!m_interpreter.needsTypeCheck(edge, SpecInt32Only))
             isNotInt32 = m_out.booleanFalse;
-        else if (!m_interpreter.needsTypeCheck(edge, ~SpecInt32))
+        else if (!m_interpreter.needsTypeCheck(edge, ~SpecInt32Only))
             isNotInt32 = m_out.booleanTrue;
         else
             isNotInt32 = this->isNotInt32(boxedValue);
@@ -9685,7 +9685,7 @@ private:
         LValue possibleResult = m_out.call(
             m_out.int64, m_out.operation(operationConvertBoxedDoubleToInt52), boxedValue);
         FTL_TYPE_CHECK(
-            jsValueValue(boxedValue), edge, SpecInt32 | SpecInt52AsDouble,
+            jsValueValue(boxedValue), edge, SpecInt32Only | SpecAnyIntAsDouble,
             m_out.equal(possibleResult, m_out.constInt64(JSValue::notInt52)));
             
         ValueFromBlock doubleToInt52 = m_out.anchor(possibleResult);
@@ -9701,7 +9701,7 @@ private:
         LValue possibleResult = m_out.call(
             m_out.int64, m_out.operation(operationConvertDoubleToInt52), value);
         FTL_TYPE_CHECK_WITH_EXIT_KIND(Int52Overflow,
-            doubleValue(value), edge, SpecInt52AsDouble,
+            doubleValue(value), edge, SpecAnyIntAsDouble,
             m_out.equal(possibleResult, m_out.constInt64(JSValue::notInt52)));
         
         return possibleResult;
@@ -9848,8 +9848,8 @@ private:
         case KnownCellUse:
             ASSERT(!m_interpreter.needsTypeCheck(edge));
             break;
-        case MachineIntUse:
-            speculateMachineInt(edge);
+        case AnyIntUse:
+            speculateAnyInt(edge);
             break;
         case ObjectUse:
             speculateObject(edge);
@@ -9893,8 +9893,8 @@ private:
         case DoubleRepRealUse:
             speculateDoubleRepReal(edge);
             break;
-        case DoubleRepMachineIntUse:
-            speculateDoubleRepMachineInt(edge);
+        case DoubleRepAnyIntUse:
+            speculateDoubleRepAnyInt(edge);
             break;
         case BooleanUse:
             speculateBoolean(edge);
@@ -9947,7 +9947,7 @@ private:
         m_out.appendTo(continuation, lastNext);
     }
     
-    void speculateMachineInt(Edge edge)
+    void speculateAnyInt(Edge edge)
     {
         if (!m_interpreter.needsTypeCheck(edge))
             return;
@@ -10345,7 +10345,7 @@ private:
             m_out.doubleNotEqualOrUnordered(value, value));
     }
     
-    void speculateDoubleRepMachineInt(Edge edge)
+    void speculateDoubleRepAnyInt(Edge edge)
     {
         if (!m_interpreter.needsTypeCheck(edge))
             return;

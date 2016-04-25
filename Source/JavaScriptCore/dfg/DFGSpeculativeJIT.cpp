@@ -609,10 +609,10 @@ void SpeculativeJIT::silentFill(const SilentRegisterSavePlan& plan, GPRReg canTr
         break;
 #if USE(JSVALUE64)
     case SetInt52Constant:
-        m_jit.move(Imm64(plan.node()->asMachineInt() << JSValue::int52ShiftAmount), plan.gpr());
+        m_jit.move(Imm64(plan.node()->asAnyInt() << JSValue::int52ShiftAmount), plan.gpr());
         break;
     case SetStrictInt52Constant:
-        m_jit.move(Imm64(plan.node()->asMachineInt()), plan.gpr());
+        m_jit.move(Imm64(plan.node()->asAnyInt()), plan.gpr());
         break;
 #endif // USE(JSVALUE64)
     case SetBooleanConstant:
@@ -2636,7 +2636,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
     }
     
 #if USE(JSVALUE64)
-    if (node->shouldSpeculateMachineInt()) {
+    if (node->shouldSpeculateAnyInt()) {
         m_jit.zeroExtend32ToPtr(resultReg, resultReg);
         strictInt52Result(resultReg, node);
         return;
@@ -3561,8 +3561,8 @@ void SpeculativeJIT::compileArithAdd(Node* node)
 
         // Will we need an overflow check? If we can prove that neither input can be
         // Int52 then the overflow check will not be necessary.
-        if (!m_state.forNode(node->child1()).couldBeType(SpecInt52)
-            && !m_state.forNode(node->child2()).couldBeType(SpecInt52)) {
+        if (!m_state.forNode(node->child1()).couldBeType(SpecInt52Only)
+            && !m_state.forNode(node->child2()).couldBeType(SpecInt52Only)) {
             SpeculateWhicheverInt52Operand op1(this, node->child1());
             SpeculateWhicheverInt52Operand op2(this, node->child2(), op1);
             GPRTemporary result(this, Reuse, op1);
@@ -3753,8 +3753,8 @@ void SpeculativeJIT::compileArithSub(Node* node)
 
         // Will we need an overflow check? If we can prove that neither input can be
         // Int52 then the overflow check will not be necessary.
-        if (!m_state.forNode(node->child1()).couldBeType(SpecInt52)
-            && !m_state.forNode(node->child2()).couldBeType(SpecInt52)) {
+        if (!m_state.forNode(node->child1()).couldBeType(SpecInt52Only)
+            && !m_state.forNode(node->child2()).couldBeType(SpecInt52Only)) {
             SpeculateWhicheverInt52Operand op1(this, node->child1());
             SpeculateWhicheverInt52Operand op2(this, node->child2(), op1);
             GPRTemporary result(this, Reuse, op1);
@@ -3875,7 +3875,7 @@ void SpeculativeJIT::compileArithNegate(Node* node)
     case Int52RepUse: {
         ASSERT(shouldCheckOverflow(node->arithMode()));
         
-        if (!m_state.forNode(node->child1()).couldBeType(SpecInt52)) {
+        if (!m_state.forNode(node->child1()).couldBeType(SpecInt52Only)) {
             SpeculateWhicheverInt52Operand op1(this, node->child1());
             GPRTemporary result(this);
             GPRReg op1GPR = op1.gpr();
@@ -6900,7 +6900,7 @@ void SpeculativeJIT::speculateCellType(
 
 void SpeculativeJIT::speculateInt32(Edge edge)
 {
-    if (!needsTypeCheck(edge, SpecInt32))
+    if (!needsTypeCheck(edge, SpecInt32Only))
         return;
     
     (SpeculateInt32Operand(this, edge)).gpr();
@@ -6920,7 +6920,7 @@ void SpeculativeJIT::speculateNumber(Edge edge)
 #else
     GPRReg tagGPR = value.tagGPR();
     DFG_TYPE_CHECK(
-        value.jsValueRegs(), edge, ~SpecInt32,
+        value.jsValueRegs(), edge, ~SpecInt32Only,
         m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag)));
     DFG_TYPE_CHECK(
         value.jsValueRegs(), edge, SpecBytecodeNumber,
@@ -7248,7 +7248,7 @@ void SpeculativeJIT::speculateMisc(Edge edge, JSValueRegs regs)
         m_jit.branch64(MacroAssembler::Above, regs.gpr(), MacroAssembler::TrustedImm64(TagBitTypeOther | TagBitBool | TagBitUndefined)));
 #else
     DFG_TYPE_CHECK(
-        regs, edge, ~SpecInt32,
+        regs, edge, ~SpecInt32Only,
         m_jit.branch32(MacroAssembler::Equal, regs.tagGPR(), MacroAssembler::TrustedImm32(JSValue::Int32Tag)));
     DFG_TYPE_CHECK(
         regs, edge, SpecMisc,
@@ -7271,13 +7271,13 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
     case UntypedUse:
         break;
     case KnownInt32Use:
-        ASSERT(!needsTypeCheck(edge, SpecInt32));
+        ASSERT(!needsTypeCheck(edge, SpecInt32Only));
         break;
     case DoubleRepUse:
         ASSERT(!needsTypeCheck(edge, SpecFullDouble));
         break;
     case Int52RepUse:
-        ASSERT(!needsTypeCheck(edge, SpecMachineInt));
+        ASSERT(!needsTypeCheck(edge, SpecAnyInt));
         break;
     case KnownCellUse:
         ASSERT(!needsTypeCheck(edge, SpecCell));
@@ -7301,11 +7301,11 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         speculateDoubleRepReal(edge);
         break;
 #if USE(JSVALUE64)
-    case MachineIntUse:
-        speculateMachineInt(edge);
+    case AnyIntUse:
+        speculateAnyInt(edge);
         break;
-    case DoubleRepMachineIntUse:
-        speculateDoubleRepMachineInt(edge);
+    case DoubleRepAnyIntUse:
+        speculateDoubleRepAnyInt(edge);
         break;
 #endif
     case BooleanUse:

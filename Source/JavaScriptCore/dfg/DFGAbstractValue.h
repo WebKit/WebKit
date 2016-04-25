@@ -376,7 +376,7 @@ struct AbstractValue {
     // abstract value that consists of the union of the set of all non-cell values
     // and the set of cell values that have the given structure. This abstract
     // value is then the intersection of the m_structure and the set of values
-    // whose type is m_type. So, for example if m_type is SpecFinal|SpecInt32 and
+    // whose type is m_type. So, for example if m_type is SpecFinal|SpecInt32Only and
     // m_structure is [0x12345] then this abstract value corresponds to the set of
     // all integers unified with the set of all objects with structure 0x12345.
     SpeculatedType m_type;
@@ -419,12 +419,12 @@ private:
         if (isHeapTop())
             return true;
         
-        // Constant folding always represents Int52's in a double (i.e. Int52AsDouble).
-        // So speculationFromValue(value) for an Int52 value will return Int52AsDouble,
+        // Constant folding always represents Int52's in a double (i.e. AnyIntAsDouble).
+        // So speculationFromValue(value) for an Int52 value will return AnyIntAsDouble,
         // and that's fine - the type validates just fine.
         SpeculatedType type = m_type;
-        if (type & SpecInt52)
-            type |= SpecInt52AsDouble;
+        if (type & SpecInt52Only)
+            type |= SpecAnyIntAsDouble;
         
         if (mergeSpeculations(type, speculationFromValue(value)) != type)
             return false;

@@ -1,3 +1,191 @@
+2016-04-25  Mark Lam  <mark.lam@apple.com>
+
+        Renaming SpecInt32, SpecInt52, MachineInt to SpecInt32Only, SpecInt52Only, AnyInt.
+        https://bugs.webkit.org/show_bug.cgi?id=156941
+
+        Reviewed by Filip Pizlo.
+
+        While looking at https://bugs.webkit.org/show_bug.cgi?id=153431, it was decided
+        that SpecInt32Only, SpecInt52Only, and AnyInt would be better names for
+        SpecInt32, SpecInt52, and MachineInt.  Let's do a bulk rename.
+
+        This is only a renaming patch, and deletion of a piece of unused code.  There are
+        no semantic changes.
+
+        * bindings/ScriptValue.cpp:
+        (Inspector::jsToInspectorValue):
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::speculationFromValue):
+        (JSC::leastUpperBoundOfStrictlyEquivalentSpeculations):
+        (JSC::typeOfDoubleNegation):
+        (JSC::typeOfDoubleRounding):
+        * bytecode/SpeculatedType.h:
+        (JSC::isInt32Speculation):
+        (JSC::isInt32OrBooleanSpeculation):
+        (JSC::isInt32SpeculationForArithmetic):
+        (JSC::isInt32OrBooleanSpeculationForArithmetic):
+        (JSC::isInt32OrBooleanSpeculationExpectingDefined):
+        (JSC::isInt52Speculation):
+        (JSC::isAnyIntSpeculation):
+        (JSC::isAnyIntAsDoubleSpeculation):
+        (JSC::isDoubleRealSpeculation):
+        (JSC::isMachineIntSpeculation): Deleted.
+        (JSC::isInt52AsDoubleSpeculation): Deleted.
+        (JSC::isIntegerSpeculation): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::fixTypeForRepresentation):
+        (JSC::DFG::AbstractValue::checkConsistency):
+        (JSC::DFG::AbstractValue::resultType):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::validateType):
+        * dfg/DFGArgumentsUtilities.cpp:
+        (JSC::DFG::emitCodeToGetArgumentsArrayLength):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToThis):
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        (JSC::DFG::FixupPhase::fixIntConvertingEdge):
+        (JSC::DFG::FixupPhase::fixIntOrBooleanEdge):
+        (JSC::DFG::FixupPhase::fixDoubleOrBooleanEdge):
+        (JSC::DFG::FixupPhase::truncateConstantToInt32):
+        (JSC::DFG::FixupPhase::attemptToMakeIntegerAdd):
+        (JSC::DFG::FixupPhase::prependGetArrayLength):
+        (JSC::DFG::FixupPhase::fixupChecksInBlock):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addShouldSpeculateInt32):
+        (JSC::DFG::Graph::addShouldSpeculateAnyInt):
+        (JSC::DFG::Graph::binaryArithShouldSpeculateInt32):
+        (JSC::DFG::Graph::binaryArithShouldSpeculateAnyInt):
+        (JSC::DFG::Graph::unaryArithShouldSpeculateInt32):
+        (JSC::DFG::Graph::unaryArithShouldSpeculateAnyInt):
+        (JSC::DFG::Graph::addShouldSpeculateMachineInt): Deleted.
+        (JSC::DFG::Graph::binaryArithShouldSpeculateMachineInt): Deleted.
+        (JSC::DFG::Graph::unaryArithShouldSpeculateMachineInt): Deleted.
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToIdentityOn):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::asNumber):
+        (JSC::DFG::Node::isAnyIntConstant):
+        (JSC::DFG::Node::asAnyInt):
+        (JSC::DFG::Node::isBooleanConstant):
+        (JSC::DFG::Node::shouldSpeculateInt32OrBooleanExpectingDefined):
+        (JSC::DFG::Node::shouldSpeculateAnyInt):
+        (JSC::DFG::Node::shouldSpeculateDouble):
+        (JSC::DFG::Node::shouldSpeculateNumber):
+        (JSC::DFG::Node::isMachineIntConstant): Deleted.
+        (JSC::DFG::Node::asMachineInt): Deleted.
+        (JSC::DFG::Node::shouldSpeculateMachineInt): Deleted.
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::OSREntryData::dumpInContext):
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::handleNode):
+        (JSC::DFG::SSALoweringPhase::lowerBoundsCheck):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileArithAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        (JSC::DFG::SpeculativeJIT::speculateInt32):
+        (JSC::DFG::SpeculativeJIT::speculateNumber):
+        (JSC::DFG::SpeculativeJIT::speculateMisc):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::spill):
+        (JSC::DFG::SpeculativeJIT::isKnownInteger):
+        (JSC::DFG::SpeculativeJIT::isKnownCell):
+        (JSC::DFG::SpeculativeJIT::isKnownNotInteger):
+        (JSC::DFG::SpeculativeJIT::isKnownNotNumber):
+        (JSC::DFG::SpeculativeJIT::isKnownNotCell):
+        (JSC::DFG::SpeculativeJIT::isKnownNotOther):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::blessBoolean):
+        (JSC::DFG::SpeculativeJIT::convertAnyInt):
+        (JSC::DFG::SpeculativeJIT::speculateAnyInt):
+        (JSC::DFG::SpeculativeJIT::speculateDoubleRepAnyInt):
+        (JSC::DFG::SpeculativeJIT::convertMachineInt): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateMachineInt): Deleted.
+        (JSC::DFG::SpeculativeJIT::speculateDoubleRepMachineInt): Deleted.
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isNumerical):
+        (JSC::DFG::isDouble):
+        * dfg/DFGValidate.cpp:
+        * dfg/DFGVariableAccessData.cpp:
+        (JSC::DFG::VariableAccessData::makePredictionForDoubleFormat):
+        (JSC::DFG::VariableAccessData::couldRepresentInt52Impl):
+        (JSC::DFG::VariableAccessData::flushFormat):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileInt52Constant):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInt52Rep):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithNegate):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPush):
+        (JSC::FTL::DFG::LowerDFGToB3::lowInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::strictInt52ToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::jsValueToStrictInt52):
+        (JSC::FTL::DFG::LowerDFGToB3::doubleToStrictInt52):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateCellOrOther):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateAnyInt):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateDoubleRepReal):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateDoubleRepAnyInt):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateMachineInt): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::speculateDoubleRepMachineInt): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_profile_type):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::isInt52):
+        (JSC::JSValue::isAnyInt):
+        (JSC::JSValue::asAnyInt):
+        (JSC::JSValue::isMachineInt): Deleted.
+        (JSC::JSValue::asMachineInt): Deleted.
+        * runtime/RuntimeType.cpp:
+        (JSC::runtimeTypeForValue):
+        (JSC::runtimeTypeAsString):
+        * runtime/RuntimeType.h:
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::dumpTypes):
+        (JSC::TypeSet::displayName):
+        (JSC::TypeSet::inspectorTypeSet):
+        (JSC::TypeSet::toJSONString):
+
 2016-04-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Optimize JSON.parse string fast path

@@ -1744,7 +1744,7 @@ bool ByteCodeParser::handleInlining(
                     // This is pretty lame, but it will force the count to be flushed as an int. This doesn't
                     // matter very much, since our use of a SetArgument and Flushes for this local slot is
                     // mostly just a formality.
-                    countVariable->predict(SpecInt32);
+                    countVariable->predict(SpecInt32Only);
                     countVariable->mergeIsProfitableToUnbox(true);
                     Node* setArgumentCount = addToGraph(SetArgument, OpInfo(countVariable));
                     m_currentBlock->variablesAtTail.setOperand(countVariable->local(), setArgumentCount);
@@ -2346,7 +2346,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         for (int i = 1; i < argumentCountIncludingThis; ++i) {
             Node* node = get(virtualRegisterForArgument(i, registerOffset));
             if (node->hasHeapPrediction())
-                node->setHeapPrediction(SpecInt32);
+                node->setHeapPrediction(SpecInt32Only);
         }
         set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantUndefined)));
         return true;

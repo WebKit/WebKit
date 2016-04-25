@@ -694,7 +694,7 @@ private:
         if (m_graph.m_planStage < PlanStage::AfterFixup)
             return;
         
-        VALIDATE((node, edge), edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse || edge.useKind() == DoubleRepMachineIntUse);
+        VALIDATE((node, edge), edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse || edge.useKind() == DoubleRepAnyIntUse);
     }
 
     void checkOperand(

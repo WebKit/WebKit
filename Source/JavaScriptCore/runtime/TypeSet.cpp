@@ -100,8 +100,8 @@ String TypeSet::dumpTypes() const
         seen.appendLiteral("Null ");
     if (m_seenTypes & TypeBoolean)
         seen.appendLiteral("Boolean ");
-    if (m_seenTypes & TypeMachineInt)
-        seen.appendLiteral("MachineInt ");
+    if (m_seenTypes & TypeAnyInt)
+        seen.appendLiteral("AnyInt ");
     if (m_seenTypes & TypeNumber)
         seen.appendLiteral("Number ");
     if (m_seenTypes & TypeString)
@@ -179,9 +179,9 @@ String TypeSet::displayName() const
         return ASCIILiteral("Null");
     if (doesTypeConformTo(TypeBoolean))
         return ASCIILiteral("Boolean");
-    if (doesTypeConformTo(TypeMachineInt))
+    if (doesTypeConformTo(TypeAnyInt))
         return ASCIILiteral("Integer");
-    if (doesTypeConformTo(TypeNumber | TypeMachineInt))
+    if (doesTypeConformTo(TypeNumber | TypeAnyInt))
         return ASCIILiteral("Number");
     if (doesTypeConformTo(TypeString))
         return ASCIILiteral("String");
@@ -195,9 +195,9 @@ String TypeSet::displayName() const
         return ASCIILiteral("Function?");
     if (doesTypeConformTo(TypeBoolean | TypeNull | TypeUndefined))
         return ASCIILiteral("Boolean?");
-    if (doesTypeConformTo(TypeMachineInt | TypeNull | TypeUndefined))
+    if (doesTypeConformTo(TypeAnyInt | TypeNull | TypeUndefined))
         return ASCIILiteral("Integer?");
-    if (doesTypeConformTo(TypeNumber | TypeMachineInt | TypeNull | TypeUndefined))
+    if (doesTypeConformTo(TypeNumber | TypeAnyInt | TypeNull | TypeUndefined))
         return ASCIILiteral("Number?");
     if (doesTypeConformTo(TypeString | TypeNull | TypeUndefined))
         return ASCIILiteral("String?");
@@ -234,7 +234,7 @@ Ref<Inspector::Protocol::Runtime::TypeSet> TypeSet::inspectorTypeSet() const
         .setIsUndefined((m_seenTypes & TypeUndefined) != TypeNothing)
         .setIsNull((m_seenTypes & TypeNull) != TypeNothing)
         .setIsBoolean((m_seenTypes & TypeBoolean) != TypeNothing)
-        .setIsInteger((m_seenTypes & TypeMachineInt) != TypeNothing)
+        .setIsInteger((m_seenTypes & TypeAnyInt) != TypeNothing)
         .setIsNumber((m_seenTypes & TypeNumber) != TypeNothing)
         .setIsString((m_seenTypes & TypeString) != TypeNothing)
         .setIsObject((m_seenTypes & TypeObject) != TypeNothing)
@@ -277,7 +277,7 @@ String TypeSet::toJSONString() const
         hasAnItem = true;
         json.appendLiteral("\"Boolean\"");
     }
-    if (m_seenTypes & TypeMachineInt) {
+    if (m_seenTypes & TypeAnyInt) {
         if (hasAnItem)
             json.append(',');
         hasAnItem = true;

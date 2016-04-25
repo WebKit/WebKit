@@ -542,7 +542,7 @@ void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label bloc
                 entry->m_localsForcedDouble.set(local);
                 break;
             case FlushedInt52:
-                entry->m_localsForcedMachineInt.set(local);
+                entry->m_localsForcedAnyInt.set(local);
                 break;
             default:
                 break;

@@ -66,29 +66,28 @@ static const SpeculatedType SpecCellOther          = 1u << 20; // It's definitel
 static const SpeculatedType SpecCell               = SpecObject | SpecString | SpecSymbol | SpecCellOther; // It's definitely a JSCell.
 static const SpeculatedType SpecBoolInt32          = 1u << 21; // It's definitely an Int32 with value 0 or 1.
 static const SpeculatedType SpecNonBoolInt32       = 1u << 22; // It's definitely an Int32 with value other than 0 or 1.
-static const SpeculatedType SpecInt32              = SpecBoolInt32 | SpecNonBoolInt32; // It's definitely an Int32.
-static const SpeculatedType SpecInt52              = 1u << 23; // It's definitely an Int52 and we intend it to unbox it. It's also definitely not an Int32.
-static const SpeculatedType SpecMachineInt         = SpecInt32 | SpecInt52; // It's something that we can do machine int arithmetic on.
-static const SpeculatedType SpecInt52AsDouble      = 1u << 24; // It's definitely an Int52 and it's inside a double.
-static const SpeculatedType SpecInteger            = SpecMachineInt | SpecInt52AsDouble; // It's definitely some kind of integer.
+static const SpeculatedType SpecInt32Only          = SpecBoolInt32 | SpecNonBoolInt32; // It's definitely an Int32.
+static const SpeculatedType SpecInt52Only          = 1u << 23; // It's definitely an Int52 and we intend it to unbox it. It's also definitely not an Int32.
+static const SpeculatedType SpecAnyInt             = SpecInt32Only | SpecInt52Only; // It's something that we can do machine int arithmetic on.
+static const SpeculatedType SpecAnyIntAsDouble     = 1u << 24; // It's definitely an Int52 and it's inside a double.
 static const SpeculatedType SpecNonIntAsDouble     = 1u << 25; // It's definitely not an Int52 but it's a real number and it's a double.
-static const SpeculatedType SpecDoubleReal         = SpecNonIntAsDouble | SpecInt52AsDouble; // It's definitely a non-NaN double.
+static const SpeculatedType SpecDoubleReal         = SpecNonIntAsDouble | SpecAnyIntAsDouble; // It's definitely a non-NaN double.
 static const SpeculatedType SpecDoublePureNaN      = 1u << 26; // It's definitely a NaN that is sae to tag (i.e. pure).
 static const SpeculatedType SpecDoubleImpureNaN    = 1u << 27; // It's definitely a NaN that is unsafe to tag (i.e. impure).
 static const SpeculatedType SpecDoubleNaN          = SpecDoublePureNaN | SpecDoubleImpureNaN; // It's definitely some kind of NaN.
 static const SpeculatedType SpecBytecodeDouble     = SpecDoubleReal | SpecDoublePureNaN; // It's either a non-NaN or a NaN double, but it's definitely not impure NaN.
 static const SpeculatedType SpecFullDouble         = SpecDoubleReal | SpecDoubleNaN; // It's either a non-NaN or a NaN double.
-static const SpeculatedType SpecBytecodeRealNumber = SpecInt32 | SpecDoubleReal; // It's either an Int32 or a DoubleReal.
-static const SpeculatedType SpecFullRealNumber     = SpecMachineInt | SpecDoubleReal; // It's either an Int32 or a DoubleReal, or a Int52.
-static const SpeculatedType SpecBytecodeNumber     = SpecInt32 | SpecBytecodeDouble; // It's either an Int32 or a Double, and the Double cannot be an impure NaN.
-static const SpeculatedType SpecFullNumber         = SpecMachineInt | SpecFullDouble; // It's either an Int32, Int52, or a Double, and the Double can be impure NaN.
+static const SpeculatedType SpecBytecodeRealNumber = SpecInt32Only | SpecDoubleReal; // It's either an Int32 or a DoubleReal.
+static const SpeculatedType SpecFullRealNumber     = SpecAnyInt | SpecDoubleReal; // It's either an Int32 or a DoubleReal, or a Int52.
+static const SpeculatedType SpecBytecodeNumber     = SpecInt32Only | SpecBytecodeDouble; // It's either an Int32 or a Double, and the Double cannot be an impure NaN.
+static const SpeculatedType SpecFullNumber         = SpecAnyInt | SpecFullDouble; // It's either an Int32, Int52, or a Double, and the Double can be impure NaN.
 static const SpeculatedType SpecBoolean            = 1u << 28; // It's definitely a Boolean.
 static const SpeculatedType SpecOther              = 1u << 29; // It's definitely either Null or Undefined.
 static const SpeculatedType SpecMisc               = SpecBoolean | SpecOther; // It's definitely either a boolean, Null, or Undefined.
-static const SpeculatedType SpecHeapTop            = SpecCell | SpecBytecodeNumber | SpecMisc; // It can be any of the above, except for SpecInt52 and SpecDoubleImpureNaN.
+static const SpeculatedType SpecHeapTop            = SpecCell | SpecBytecodeNumber | SpecMisc; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN.
 static const SpeculatedType SpecPrimitive          = SpecString | SpecSymbol | SpecBytecodeNumber | SpecMisc; // It's any non-Object JSValue.
 static const SpeculatedType SpecEmpty              = 1u << 30; // It's definitely an empty value marker.
-static const SpeculatedType SpecBytecodeTop        = SpecHeapTop | SpecEmpty; // It can be any of the above, except for SpecInt52 and SpecDoubleImpureNaN. Corresponds to what could be found in a bytecode local.
+static const SpeculatedType SpecBytecodeTop        = SpecHeapTop | SpecEmpty; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN. Corresponds to what could be found in a bytecode local.
 static const SpeculatedType SpecFullTop            = SpecBytecodeTop | SpecFullNumber; // It can be anything that bytecode could see plus exotic encodings of numbers.
 
 typedef bool (*SpeculatedTypeChecker)(SpeculatedType);
@@ -288,22 +287,22 @@ inline bool isBoolInt32Speculation(SpeculatedType value)
 
 inline bool isInt32Speculation(SpeculatedType value)
 {
-    return value && !(value & ~SpecInt32);
+    return value && !(value & ~SpecInt32Only);
 }
 
 inline bool isInt32OrBooleanSpeculation(SpeculatedType value)
 {
-    return value && !(value & ~(SpecBoolean | SpecInt32));
+    return value && !(value & ~(SpecBoolean | SpecInt32Only));
 }
 
 inline bool isInt32SpeculationForArithmetic(SpeculatedType value)
 {
-    return !(value & (SpecFullDouble | SpecInt52));
+    return !(value & (SpecFullDouble | SpecInt52Only));
 }
 
 inline bool isInt32OrBooleanSpeculationForArithmetic(SpeculatedType value)
 {
-    return !(value & (SpecFullDouble | SpecInt52));
+    return !(value & (SpecFullDouble | SpecInt52Only));
 }
 
 inline bool isInt32OrBooleanSpeculationExpectingDefined(SpeculatedType value)
@@ -313,22 +312,17 @@ inline bool isInt32OrBooleanSpeculationExpectingDefined(SpeculatedType value)
 
 inline bool isInt52Speculation(SpeculatedType value)
 {
-    return value == SpecInt52;
+    return value == SpecInt52Only;
 }
 
-inline bool isMachineIntSpeculation(SpeculatedType value)
+inline bool isAnyIntSpeculation(SpeculatedType value)
 {
-    return !!value && (value & SpecMachineInt) == value;
+    return !!value && (value & SpecAnyInt) == value;
 }
 
-inline bool isInt52AsDoubleSpeculation(SpeculatedType value)
+inline bool isAnyIntAsDoubleSpeculation(SpeculatedType value)
 {
-    return value == SpecInt52AsDouble;
-}
-
-inline bool isIntegerSpeculation(SpeculatedType value)
-{
-    return !!value && (value & SpecInteger) == value;
+    return value == SpecAnyIntAsDouble;
 }
 
 inline bool isDoubleRealSpeculation(SpeculatedType value)

@@ -57,7 +57,7 @@ struct OSREntryData {
     Operands<AbstractValue> m_expectedValues;
     // Use bitvectors here because they tend to only require one word.
     BitVector m_localsForcedDouble;
-    BitVector m_localsForcedMachineInt;
+    BitVector m_localsForcedAnyInt;
     Vector<OSREntryReshuffling> m_reshufflings;
     BitVector m_machineStackUsed;
     

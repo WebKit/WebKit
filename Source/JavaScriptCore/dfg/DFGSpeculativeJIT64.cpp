@@ -901,9 +901,9 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
 {
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
-    ASSERT(edge.useKind() != KnownInt32Use || !(value.m_type & ~SpecInt32));
+    ASSERT(edge.useKind() != KnownInt32Use || !(value.m_type & ~SpecInt32Only));
 
-    m_interpreter.filter(value, SpecInt32);
+    m_interpreter.filter(value, SpecInt32Only);
     if (value.isClear()) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         returnFormat = DataFormatInt32;
@@ -958,11 +958,11 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     }
 
     case DataFormatJS: {
-        DFG_ASSERT(m_jit.graph(), m_currentNode, !(type & SpecInt52));
+        DFG_ASSERT(m_jit.graph(), m_currentNode, !(type & SpecInt52Only));
         // Check the value is an integer.
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
-        if (type & ~SpecInt32)
+        if (type & ~SpecInt32Only)
             speculationCheck(BadType, JSValueRegs(gpr), edge, m_jit.branch64(MacroAssembler::Below, gpr, GPRInfo::tagTypeNumberRegister));
         info.fillJSValue(*m_stream, gpr, DataFormatJSInt32);
         // If !strict we're done, return.
@@ -1045,7 +1045,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
     ASSERT(desiredFormat == DataFormatInt52 || desiredFormat == DataFormatStrictInt52);
     AbstractValue& value = m_state.forNode(edge);
 
-    m_interpreter.filter(value, SpecMachineInt);
+    m_interpreter.filter(value, SpecAnyInt);
     if (value.isClear()) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         return allocate();
@@ -1060,9 +1060,9 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
 
         if (edge->hasConstant()) {
             JSValue jsValue = edge->asJSValue();
-            ASSERT(jsValue.isMachineInt());
+            ASSERT(jsValue.isAnyInt());
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            int64_t value = jsValue.asMachineInt();
+            int64_t value = jsValue.asAnyInt();
             if (desiredFormat == DataFormatInt52)
                 value = value << JSValue::int52ShiftAmount;
             m_jit.move(MacroAssembler::Imm64(value), gpr);
@@ -1131,7 +1131,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
 
 FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
 {
-    ASSERT(edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse || edge.useKind() == DoubleRepMachineIntUse);
+    ASSERT(edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse || edge.useKind() == DoubleRepAnyIntUse);
     ASSERT(edge->hasDoubleResult());
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
@@ -1932,7 +1932,7 @@ void SpeculativeJIT::emitBranch(Node* node)
             GPRTemporary result(this);
             GPRReg resultGPR = result.gpr();
             
-            if (node->child1()->prediction() & SpecInt32) {
+            if (node->child1()->prediction() & SpecInt32Only) {
                 branch64(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImm64(JSValue::encode(jsNumber(0))), notTaken);
                 branch64(MacroAssembler::AboveOrEqual, valueGPR, GPRInfo::tagTypeNumberRegister, taken);
             }
@@ -1987,7 +1987,7 @@ void SpeculativeJIT::compile(Node* node)
         switch (node->child1().useKind()) {
         case DoubleRepUse:
         case DoubleRepRealUse:
-        case DoubleRepMachineIntUse: {
+        case DoubleRepAnyIntUse: {
             SpeculateDoubleOperand op(this, node->child1());
             FPRTemporary scratch(this, op);
             m_jit.moveDouble(op.fpr(), scratch.fpr());
@@ -2222,17 +2222,17 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
             
-        case MachineIntUse: {
+        case AnyIntUse: {
             GPRTemporary result(this);
             GPRReg resultGPR = result.gpr();
             
-            convertMachineInt(node->child1(), resultGPR);
+            convertAnyInt(node->child1(), resultGPR);
             
             strictInt52Result(resultGPR, node);
             break;
         }
             
-        case DoubleRepMachineIntUse: {
+        case DoubleRepAnyIntUse: {
             SpeculateDoubleOperand value(this, node->child1());
             FPRReg valueFPR = value.fpr();
             
@@ -2244,7 +2244,7 @@ void SpeculativeJIT::compile(Node* node)
             callOperation(operationConvertDoubleToInt52, resultGPR, valueFPR);
             
             DFG_TYPE_CHECK_WITH_EXIT_KIND(Int52Overflow,
-                JSValueRegs(), node->child1(), SpecInt52AsDouble,
+                JSValueRegs(), node->child1(), SpecAnyIntAsDouble,
                 m_jit.branch64(
                     JITCompiler::Equal, resultGPR,
                     JITCompiler::TrustedImm64(JSValue::notInt52)));
@@ -2827,7 +2827,7 @@ void SpeculativeJIT::compile(Node* node)
             
             if (arrayMode.type() == Array::Int32) {
                 DFG_TYPE_CHECK(
-                    JSValueRegs(valueReg), child3, SpecInt32,
+                    JSValueRegs(valueReg), child3, SpecInt32Only,
                     m_jit.branch64(
                         MacroAssembler::Below, valueReg, GPRInfo::tagTypeNumberRegister));
             }
@@ -3219,7 +3219,7 @@ void SpeculativeJIT::compile(Node* node)
 
             if (node->arrayMode().type() == Array::Int32) {
                 DFG_TYPE_CHECK(
-                    JSValueRegs(valueGPR), node->child2(), SpecInt32,
+                    JSValueRegs(valueGPR), node->child2(), SpecInt32Only,
                     m_jit.branch64(
                         MacroAssembler::Below, valueGPR, GPRInfo::tagTypeNumberRegister));
             }
@@ -3599,7 +3599,7 @@ void SpeculativeJIT::compile(Node* node)
                     GPRReg opGPR = operand.gpr();
                     if (hasInt32(node->indexingType())) {
                         DFG_TYPE_CHECK(
-                            JSValueRegs(opGPR), use, SpecInt32,
+                            JSValueRegs(opGPR), use, SpecInt32Only,
                             m_jit.branch64(
                                 MacroAssembler::Below, opGPR, GPRInfo::tagTypeNumberRegister));
                     }
@@ -3665,7 +3665,7 @@ void SpeculativeJIT::compile(Node* node)
                 GPRReg opGPR = operand.gpr();
                 if (hasInt32(node->indexingType())) {
                     DFG_TYPE_CHECK(
-                        JSValueRegs(opGPR), use, SpecInt32,
+                        JSValueRegs(opGPR), use, SpecInt32Only,
                         m_jit.branch64(
                             MacroAssembler::Below, opGPR, GPRInfo::tagTypeNumberRegister));
                 }
@@ -4998,7 +4998,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.move(valueGPR, scratch2GPR);
             m_jit.and64(TrustedImm32(~1), scratch2GPR);
             jumpToEnd.append(m_jit.branch64(MacroAssembler::Equal, scratch2GPR, MacroAssembler::TrustedImm64(ValueFalse)));
-        } else if (cachedTypeLocation->m_lastSeenType == TypeMachineInt)
+        } else if (cachedTypeLocation->m_lastSeenType == TypeAnyInt)
             jumpToEnd.append(m_jit.branch64(MacroAssembler::AboveOrEqual, valueGPR, GPRInfo::tagTypeNumberRegister));
         else if (cachedTypeLocation->m_lastSeenType == TypeNumber)
             jumpToEnd.append(m_jit.branchTest64(MacroAssembler::NonZero, valueGPR, GPRInfo::tagTypeNumberRegister));
@@ -5207,7 +5207,7 @@ void SpeculativeJIT::blessBoolean(GPRReg gpr)
     m_jit.or32(TrustedImm32(ValueFalse), gpr);
 }
 
-void SpeculativeJIT::convertMachineInt(Edge valueEdge, GPRReg resultGPR)
+void SpeculativeJIT::convertAnyInt(Edge valueEdge, GPRReg resultGPR)
 {
     JSValueOperand value(this, valueEdge, ManualOperandSpeculation);
     GPRReg valueGPR = value.gpr();
@@ -5224,25 +5224,25 @@ void SpeculativeJIT::convertMachineInt(Edge valueEdge, GPRReg resultGPR)
     silentFillAllRegisters(resultGPR);
 
     DFG_TYPE_CHECK(
-        JSValueRegs(valueGPR), valueEdge, SpecInt32 | SpecInt52AsDouble,
+        JSValueRegs(valueGPR), valueEdge, SpecInt32Only | SpecAnyIntAsDouble,
         m_jit.branch64(
             JITCompiler::Equal, resultGPR,
             JITCompiler::TrustedImm64(JSValue::notInt52)));
     done.link(&m_jit);
 }
 
-void SpeculativeJIT::speculateMachineInt(Edge edge)
+void SpeculativeJIT::speculateAnyInt(Edge edge)
 {
-    if (!needsTypeCheck(edge, SpecInt32 | SpecInt52AsDouble))
+    if (!needsTypeCheck(edge, SpecInt32Only | SpecAnyIntAsDouble))
         return;
     
     GPRTemporary temp(this);
-    convertMachineInt(edge, temp.gpr());
+    convertAnyInt(edge, temp.gpr());
 }
 
-void SpeculativeJIT::speculateDoubleRepMachineInt(Edge edge)
+void SpeculativeJIT::speculateDoubleRepAnyInt(Edge edge)
 {
-    if (!needsTypeCheck(edge, SpecInt52AsDouble))
+    if (!needsTypeCheck(edge, SpecAnyIntAsDouble))
         return;
     
     SpeculateDoubleOperand value(this, edge);
@@ -5256,7 +5256,7 @@ void SpeculativeJIT::speculateDoubleRepMachineInt(Edge edge)
     callOperation(operationConvertDoubleToInt52, resultGPR, valueFPR);
     
     DFG_TYPE_CHECK(
-        JSValueRegs(), edge, SpecInt52AsDouble,
+        JSValueRegs(), edge, SpecAnyIntAsDouble,
         m_jit.branch64(
             JITCompiler::Equal, resultGPR,
             JITCompiler::TrustedImm64(JSValue::notInt52)));

@@ -1298,7 +1298,7 @@ void JIT::emit_op_profile_type(Instruction* currentInstruction)
         jumpToEnd.append(branch32(Equal, regT3, TrustedImm32(JSValue::NullTag)));
     else if (cachedTypeLocation->m_lastSeenType == TypeBoolean)
         jumpToEnd.append(branch32(Equal, regT3, TrustedImm32(JSValue::BooleanTag)));
-    else if (cachedTypeLocation->m_lastSeenType == TypeMachineInt)
+    else if (cachedTypeLocation->m_lastSeenType == TypeAnyInt)
         jumpToEnd.append(branch32(Equal, regT3, TrustedImm32(JSValue::Int32Tag)));
     else if (cachedTypeLocation->m_lastSeenType == TypeNumber) {
         jumpToEnd.append(branch32(Below, regT3, TrustedImm32(JSValue::LowestTag)));

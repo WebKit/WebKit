@@ -130,7 +130,7 @@ void AbstractValue::set(Graph& graph, const InferredType::Descriptor& descriptor
         setType(SpecOther);
         return;
     case InferredType::Int32:
-        setType(SpecInt32);
+        setType(SpecInt32Only);
         return;
     case InferredType::Number:
         setType(SpecBytecodeNumber);
@@ -178,23 +178,23 @@ void AbstractValue::fixTypeForRepresentation(Graph& graph, NodeFlags representat
             if (m_value.isInt32())
                 m_value = jsDoubleNumber(m_value.asNumber());
         }
-        if (m_type & SpecMachineInt) {
-            m_type &= ~SpecMachineInt;
-            m_type |= SpecInt52AsDouble;
+        if (m_type & SpecAnyInt) {
+            m_type &= ~SpecAnyInt;
+            m_type |= SpecAnyIntAsDouble;
         }
         if (m_type & ~SpecFullDouble)
             DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for double node has type outside SpecFullDouble.\n").data());
     } else if (representation == NodeResultInt52) {
-        if (m_type & SpecInt52AsDouble) {
-            m_type &= ~SpecInt52AsDouble;
-            m_type |= SpecInt52;
+        if (m_type & SpecAnyIntAsDouble) {
+            m_type &= ~SpecAnyIntAsDouble;
+            m_type |= SpecInt52Only;
         }
-        if (m_type & ~SpecMachineInt)
-            DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for int52 node has type outside SpecMachineInt.\n").data());
+        if (m_type & ~SpecAnyInt)
+            DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for int52 node has type outside SpecAnyInt.\n").data());
     } else {
-        if (m_type & SpecInt52) {
-            m_type &= ~SpecInt52;
-            m_type |= SpecInt52AsDouble;
+        if (m_type & SpecInt52Only) {
+            m_type &= ~SpecInt52Only;
+            m_type |= SpecAnyIntAsDouble;
         }
         if (m_type & ~SpecBytecodeTop)
             DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for value node has type outside SpecBytecodeTop.\n").data());
@@ -480,8 +480,8 @@ void AbstractValue::checkConsistency() const
         SpeculatedType type = m_type;
         // This relaxes the assertion below a bit, since we don't know the representation of the
         // node.
-        if (type & SpecInt52)
-            type |= SpecInt52AsDouble;
+        if (type & SpecInt52Only)
+            type |= SpecAnyIntAsDouble;
         ASSERT(mergeSpeculations(type, speculationFromValue(m_value)) == type);
     }
     
@@ -502,7 +502,7 @@ ResultType AbstractValue::resultType() const
     ASSERT(isType(SpecBytecodeTop));
     if (isType(SpecBoolean))
         return ResultType::booleanType();
-    if (isType(SpecInt32))
+    if (isType(SpecInt32Only))
         return ResultType::numberTypeIsInt32();
     if (isType(SpecBytecodeNumber))
         return ResultType::numberType();

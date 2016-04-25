@@ -118,7 +118,7 @@ void InPlaceAbstractState::initialize()
         
         switch (format) {
         case FlushedInt32:
-            root->valuesAtHead.argument(i).setType(SpecInt32);
+            root->valuesAtHead.argument(i).setType(SpecInt32Only);
             break;
         case FlushedBoolean:
             root->valuesAtHead.argument(i).setType(SpecBoolean);

@@ -49,8 +49,8 @@ void printInternal(PrintStream& out, UseKind useKind)
     case Int52RepUse:
         out.print("Int52Rep");
         return;
-    case MachineIntUse:
-        out.print("MachineInt");
+    case AnyIntUse:
+        out.print("AnyInt");
         return;
     case NumberUse:
         out.print("Number");
@@ -64,8 +64,8 @@ void printInternal(PrintStream& out, UseKind useKind)
     case DoubleRepRealUse:
         out.print("DoubleRepReal");
         return;
-    case DoubleRepMachineIntUse:
-        out.print("DoubleRepMachineInt");
+    case DoubleRepAnyIntUse:
+        out.print("DoubleRepAnyInt");
         return;
     case BooleanUse:
         out.print("Boolean");

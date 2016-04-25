@@ -69,12 +69,12 @@ public:
         case NotCellUse:
         case OtherUse:
         case MiscUse:
-        case MachineIntUse:
-        case DoubleRepMachineIntUse:
+        case AnyIntUse:
+        case DoubleRepAnyIntUse:
             return;
             
         case KnownInt32Use:
-            if (m_state.forNode(edge).m_type & ~SpecInt32)
+            if (m_state.forNode(edge).m_type & ~SpecInt32Only)
                 m_result = false;
             return;
 

@@ -132,10 +132,10 @@ void Node::convertToIdentityOn(Node* child)
         setOpAndDefaultFlags(Int52Rep);
         switch (input) {
         case NodeResultDouble:
-            child1().setUseKind(DoubleRepMachineIntUse);
+            child1().setUseKind(DoubleRepAnyIntUse);
             return;
         case NodeResultJS:
-            child1().setUseKind(MachineIntUse);
+            child1().setUseKind(AnyIntUse);
             return;
         default:
             RELEASE_ASSERT_NOT_REACHED();

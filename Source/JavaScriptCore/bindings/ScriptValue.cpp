@@ -58,8 +58,8 @@ static RefPtr<InspectorValue> jsToInspectorValue(ExecState& scriptState, JSValue
         return InspectorValue::create(value.asBoolean());
     if (value.isNumber() && value.isDouble())
         return InspectorValue::create(value.asNumber());
-    if (value.isNumber() && value.isMachineInt())
-        return InspectorValue::create(static_cast<int>(value.asMachineInt()));
+    if (value.isNumber() && value.isAnyInt())
+        return InspectorValue::create(static_cast<int>(value.asAnyInt()));
     if (value.isString())
         return InspectorValue::create(value.getString(&scriptState));
 

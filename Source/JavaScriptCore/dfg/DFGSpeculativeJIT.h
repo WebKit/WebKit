@@ -564,10 +564,10 @@ public:
         }
     }
     
-    bool isKnownInteger(Node* node) { return m_state.forNode(node).isType(SpecInt32); }
+    bool isKnownInteger(Node* node) { return m_state.forNode(node).isType(SpecInt32Only); }
     bool isKnownCell(Node* node) { return m_state.forNode(node).isType(SpecCell); }
     
-    bool isKnownNotInteger(Node* node) { return !(m_state.forNode(node).m_type & SpecInt32); }
+    bool isKnownNotInteger(Node* node) { return !(m_state.forNode(node).m_type & SpecInt32Only); }
     bool isKnownNotNumber(Node* node) { return !(m_state.forNode(node).m_type & SpecFullNumber); }
     bool isKnownNotCell(Node* node) { return !(m_state.forNode(node).m_type & SpecCell); }
     bool isKnownNotOther(Node* node) { return !(m_state.forNode(node).m_type & SpecOther); }
@@ -2674,9 +2674,9 @@ public:
     
     void speculateInt32(Edge);
 #if USE(JSVALUE64)
-    void convertMachineInt(Edge, GPRReg resultGPR);
-    void speculateMachineInt(Edge);
-    void speculateDoubleRepMachineInt(Edge);
+    void convertAnyInt(Edge, GPRReg resultGPR);
+    void speculateAnyInt(Edge);
+    void speculateDoubleRepAnyInt(Edge);
 #endif // USE(JSVALUE64)
     void speculateNumber(Edge);
     void speculateRealNumber(Edge);

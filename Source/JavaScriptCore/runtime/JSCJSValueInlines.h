@@ -530,7 +530,7 @@ inline bool isInt52(double number)
     return tryConvertToInt52(number) != JSValue::notInt52;
 }
 
-inline bool JSValue::isMachineInt() const
+inline bool JSValue::isAnyInt() const
 {
     if (isInt32())
         return true;
@@ -539,9 +539,9 @@ inline bool JSValue::isMachineInt() const
     return isInt52(asDouble());
 }
 
-inline int64_t JSValue::asMachineInt() const
+inline int64_t JSValue::asAnyInt() const
 {
-    ASSERT(isMachineInt());
+    ASSERT(isAnyInt());
     if (isInt32())
         return asInt32();
     return static_cast<int64_t>(asDouble());
