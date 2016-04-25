@@ -2604,7 +2604,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return GroupRole;
     
     if (isStyleFormatGroup())
-        return GroupRole;
+        return is<RenderInline>(*m_renderer) ? InlineRole : GroupRole;
     
 #if ENABLE(MATHML)
     if (node && node->hasTagName(MathMLNames::mathTag))

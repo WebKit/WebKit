@@ -44,13 +44,13 @@ canvas
       AXRole: 
       
 cite
-      AXRole: 
+      AXRole: AXStatic
       
 code
-      AXRole: 
+      AXRole: AXStatic
       
 del:not([datetime])
-      AXRole: 
+      AXRole: AXStatic
       
 del[datetime]
       AXRole: AXStatic
@@ -203,7 +203,7 @@ input[type='week']
       AXRole: AXTextField
       
 ins:not([datetime])
-      AXRole: 
+      AXRole: AXStatic
       
 ins[datetime]
       AXRole: AXStatic
@@ -347,7 +347,7 @@ s
       AXRole: 
       
 samp
-      AXRole: 
+      AXRole: AXStatic
       
 section
       AXRole: AXGroup
@@ -440,7 +440,7 @@ li
       AXRole: AXListItem
       
 var
-      AXRole: 
+      AXRole: AXStatic
       
 wbr
       AXRole: 
