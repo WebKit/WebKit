@@ -3,7 +3,7 @@ description("Test File.lastModifiedDate returns null if the information is not a
 var tempFileContent = "1234567890";
 var tempFileName = "file-last-modified-after-delete.tmp";
 var testStartTime = new Date();
-var lastModifiedDate;
+var lastModified;
 
 function onFileDrop(file)
 {
