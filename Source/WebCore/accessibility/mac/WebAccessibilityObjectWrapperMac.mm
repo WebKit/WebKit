@@ -2561,6 +2561,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (![self updateObjectBackingStore])
         return nil;
     
+    if (m_object->isDetachedFromParent())
+        return nil;
+    
     if ([attributeName isEqualToString: NSAccessibilityRoleAttribute])
         return [self role];
     
