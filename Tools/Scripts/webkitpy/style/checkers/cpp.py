@@ -1240,6 +1240,7 @@ class _EnumState(object):
     def __init__(self):
         self.in_enum_decl = False
         self.is_webidl_enum = False
+        self.enum_decl_name = None
 
     def process_clean_line(self, line):
         # FIXME: The regular expressions for expr_all_uppercase and expr_enum_end only accept integers
@@ -1248,27 +1249,29 @@ class _EnumState(object):
         expr_all_uppercase = r'\s*[A-Z0-9_]+\s*(?:=\s*[a-zA-Z0-9]+\s*)?,?\s*$'
         expr_starts_lowercase = r'\s*[a-jl-z]'
         expr_enum_end = r'}\s*(?:[a-zA-Z0-9]+\s*(?:=\s*[a-zA-Z0-9]+)?)?\s*;\s*'
-        expr_enum_start = r'\s*(?:enum(?:\s+class)?(?:\s+[a-zA-Z0-9]+)?)\s*\{?\s*'
+        expr_enum_start = r'\s*(?:enum(?:\s+class)?(?:\s+(?P<identifier>[a-zA-Z0-9]+))?)\s*\{?\s*'
         if self.in_enum_decl:
             if match(r'\s*' + expr_enum_end + r'$', line):
                 self.in_enum_decl = False
                 self.is_webidl_enum = False
                 return True
             elif match(expr_all_uppercase, line):
-                return self.is_webidl_enum
+                return self.is_webidl_enum or self.enum_decl_name in _ALLOW_ALL_UPPERCASE_ENUM
             elif match(expr_starts_lowercase, line):
                 return False
         matched = match(expr_enum_start + r'$', line)
         if matched:
             self.in_enum_decl = True
+            self.enum_decl_name = matched.group('identifier')
         else:
             matched = match(expr_enum_start + r'(?P<members>.*)' + expr_enum_end + r'$', line)
             if matched:
                 members = matched.group('members').split(',')
+                allow_all_uppercase = matched.group('identifier') in _ALLOW_ALL_UPPERCASE_ENUM
                 found_invalid_member = False
                 for member in members:
                     if match(expr_all_uppercase, member):
-                        found_invalid_member = not self.is_webidl_enum
+                        found_invalid_member = not self.is_webidl_enum and not allow_all_uppercase
                     if match(expr_starts_lowercase, member):
                         found_invalid_member = True
                     if found_invalid_member:
@@ -2138,6 +2141,9 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
         if current_indentation_level < 0:
             break;
 
+
+# Enum declaration whitelist
+_ALLOW_ALL_UPPERCASE_ENUM = ['JSTokenType']
 
 def check_enum_casing(clean_lines, line_number, enum_state, error):
     """Looks for incorrectly named enum values.

@@ -1,3 +1,19 @@
+2016-04-25  Caitlin Potter  <caitp@igalia.com>
+
+        [Tools] whitelist all-uppercase JSTokenType enum in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=156976
+
+        Reviewed by Darin Adler.
+
+        Mitigate style-checker spam on bugs which introduce new JavaScript
+        token types.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_EnumState.__init__):
+        (_EnumState.process_clean_line):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (NoNonVirtualDestructorsTest.test_enum_casing):
+
 2016-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         Fix issues with content-animation performance tests

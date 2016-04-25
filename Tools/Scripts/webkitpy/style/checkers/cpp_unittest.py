@@ -3585,6 +3585,22 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                 };''',
             ['enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]'] * 5)
 
+        # Allow all-caps enum for JSTokenType
+        self.assert_multi_line_lint(
+            '''\
+                enum JSTokenType {
+                    NULLTOKEN = KeywordTokenFlag,
+                    TRUETOKEN,
+                    FALSETOKEN,
+                    // ...
+                };''',
+            '')
+
+        self.assert_multi_line_lint(
+            '''\
+                enum JSTokenType { NULLTOKEN = KeywordTokenFlag, TRUETOKEN, FALSETOKEN };''',
+            '')
+
         self.assert_multi_line_lint(
             '''\
                 enum Foo {
