@@ -197,6 +197,66 @@ private:
 };
 
 template<typename T>
+constexpr bool operator==(const Optional<T>& lhs, const Optional<T>& rhs)
+{
+    return static_cast<bool>(lhs) == static_cast<bool>(rhs) && (!static_cast<bool>(lhs) || lhs.value() == rhs.value());
+}
+
+template<typename T>
+constexpr bool operator!=(const Optional<T>& lhs, const Optional<T>& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template<typename T>
+constexpr bool operator==(const Optional<T>& opt, NulloptTag)
+{
+    return !opt;
+}
+
+template<typename T>
+constexpr bool operator!=(const Optional<T>& opt, NulloptTag)
+{
+    return static_cast<bool>(opt);
+}
+
+template<typename T>
+constexpr bool operator==(NulloptTag, const Optional<T>& opt)
+{
+    return !opt;
+}
+
+template<typename T>
+constexpr bool operator!=(NulloptTag, const Optional<T>& opt)
+{
+    return static_cast<bool>(opt);
+}
+
+template<typename T>
+constexpr bool operator==(const Optional<T>& opt, const T& value)
+{
+    return opt && opt.value() == value;
+}
+
+template<typename T>
+constexpr bool operator!=(const Optional<T>& opt, const T& value)
+{
+    return !(opt == value);
+}
+
+template<typename T>
+constexpr bool operator==(const T& value, const Optional<T>& opt)
+{
+    return opt && opt.value() == value;
+}
+
+template<typename T>
+constexpr bool operator!=(const T& value, const Optional<T>& opt)
+{
+    return !(value == opt);
+}
+
+template<typename T>
 Optional<typename std::decay<T>::type>
 makeOptional(T&& value)
 {
