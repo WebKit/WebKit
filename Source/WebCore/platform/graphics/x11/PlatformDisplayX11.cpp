@@ -37,8 +37,8 @@ namespace WebCore {
 
 PlatformDisplayX11::PlatformDisplayX11()
     : m_display(XOpenDisplay(nullptr))
-    , m_ownedDisplay(true)
 {
+    m_ownedDisplay = m_display != nullptr;
 }
 
 PlatformDisplayX11::PlatformDisplayX11(Display* display)
