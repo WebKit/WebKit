@@ -1,3 +1,25 @@
+2016-04-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Localization files with empty Language: block build with gettext 0.19
+        https://bugs.webkit.org/show_bug.cgi?id=133611
+
+        Reviewed by Darin Adler.
+
+        Fix the language tags. Note that the build error is not actually important here as it only
+        occurs with an older version of gettext, but presumably it's bad for the language tags to be
+        wrong.
+
+        * as.po:
+        * en_CA.po:
+        * gu.po: Also correct the translation team to Gujarati.
+        * hu.po:
+        * id.po:
+        * ko.po:
+        * lv.po:
+        * pa.po:
+        * ru.po:
+        * sl.po:
+
 2016-04-16  Muhammet Kara  <muhammetk@gmail.com>
 
         [GTK] [l10n] Updated Turkish translation of WebKitGTK+
