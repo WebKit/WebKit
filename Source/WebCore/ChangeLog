@@ -1,3 +1,16 @@
+2016-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Add port 4190 (managesieve) to port blacklist
+        https://bugs.webkit.org/show_bug.cgi?id=156986
+        <rdar://problem/9119470>
+
+        Reviewed by Daniel Bates.
+
+        Tested by security/block-test.html.
+
+        * platform/URL.cpp:
+        (WebCore::portAllowed): Add 4190 to the port blacklist.
+
 2016-04-25  Nan Wang  <n_wang@apple.com>
 
         AX: Crash at -[WebAccessibilityObjectWrapper accessibilityAttributeValue:] + 4391
