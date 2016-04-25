@@ -1,3 +1,24 @@
+2016-04-25  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Specify default values for parameters of type 'unsigned short'
+        https://bugs.webkit.org/show_bug.cgi?id=156967
+
+        Reviewed by Darin Adler.
+
+        Specify default values for parameters of type 'unsigned short' and let
+        the bindings generator use WTF::Optional<> for the ones without a
+        default value.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (CanUseWTFOptionalForParameter):
+        (GenerateParametersCheck):
+        * testing/Internals.cpp:
+        (WebCore::Internals::layerTreeAsText): Deleted.
+        (WebCore::Internals::displayListForElement): Deleted.
+        (WebCore::Internals::replayDisplayListForElement): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-04-25  Per Arne Vollan  <peavo@outlook.com>
 
         [Win][IndexedDB] Fix build errors.

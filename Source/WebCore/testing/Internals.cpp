@@ -1826,12 +1826,7 @@ bool Internals::isPageBoxVisible(int pageNumber, ExceptionCode& ec)
 // contextDocument(), with the exception of a few tests that pass a
 // different document, and could just make the call through another Internals
 // instance instead.
-String Internals::layerTreeAsText(Document& document, ExceptionCode& ec) const
-{
-    return layerTreeAsText(document, 0, ec);
-}
-
-String Internals::layerTreeAsText(Document& document, unsigned flags, ExceptionCode& ec) const
+String Internals::layerTreeAsText(Document& document, unsigned short flags, ExceptionCode& ec) const
 {
     if (!document.frame()) {
         ec = INVALID_ACCESS_ERR;
@@ -1973,12 +1968,7 @@ void Internals::setElementTracksDisplayListReplay(Element& element, bool isTrack
     layer->backing()->setIsTrackingDisplayListReplay(isTrackingReplay);
 }
 
-String Internals::displayListForElement(Element& element, ExceptionCode& ec)
-{
-    return displayListForElement(element, 0, ec);
-}
-
-String Internals::displayListForElement(Element& element, unsigned flags, ExceptionCode& ec)
+String Internals::displayListForElement(Element& element, unsigned short flags, ExceptionCode& ec)
 {
     Document* document = contextDocument();
     if (!document || !document->renderView()) {
@@ -2012,12 +2002,7 @@ String Internals::displayListForElement(Element& element, unsigned flags, Except
     return layer->backing()->displayListAsText(displayListFlags);
 }
 
-String Internals::replayDisplayListForElement(Element& element, ExceptionCode& ec)
-{
-    return replayDisplayListForElement(element, 0, ec);
-}
-
-String Internals::replayDisplayListForElement(Element& element, unsigned flags, ExceptionCode& ec)
+String Internals::replayDisplayListForElement(Element& element, unsigned short flags, ExceptionCode& ec)
 {
     Document* document = contextDocument();
     if (!document || !document->renderView()) {

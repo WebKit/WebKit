@@ -3370,12 +3370,16 @@ sub GenerateArgumentsCountCheck
     }
 }
 
-sub CanUseWTFOptionalForParameterType
+sub CanUseWTFOptionalForParameter
 {
-    my $type  = shift;
+    my $parameter = shift;
+    my $type = $parameter->type;
 
     # FIXME: We should progressively stop blacklisting each type below
     # and eventually get rid of this function entirely.
+    return 0 if $parameter->extendedAttributes->{"Clamp"};
+    return 0 if $parameter->isVariadic;
+    return 0 if $codeGenerator->IsCallbackInterface($type);
     return 0 if $codeGenerator->IsEnumType($type);
     return 0 if $codeGenerator->IsTypedArrayType($type);
     return 0 if $codeGenerator->IsWrapperType($type);
@@ -3387,7 +3391,6 @@ sub CanUseWTFOptionalForParameterType
     return 0 if $type eq "unrestricted float";
     return 0 if $type eq "unrestricted double";
     return 0 if $type eq "unsigned long";
-    return 0 if $type eq "unsigned short";
 
     return 1;
 }
@@ -3441,7 +3444,7 @@ sub GenerateParametersCheck
         # Optional arguments with [Optional=...] should not generate the early call.
         # Optional Dictionary arguments always considered to have default of empty dictionary.
         my $optional = $parameter->isOptional;
-        if ($optional && !defined($parameter->default) && !CanUseWTFOptionalForParameterType($parameter->type) && $argType ne "Dictionary" && !$codeGenerator->IsCallbackInterface($argType)) {
+        if ($optional && !defined($parameter->default) && !CanUseWTFOptionalForParameter($parameter) && $argType ne "Dictionary" && !$codeGenerator->IsCallbackInterface($argType)) {
             # Generate early call if there are enough parameters.
             if (!$hasOptionalArguments) {
                 push(@$outputArray, "\n    size_t argsCount = state->argumentCount();\n");
@@ -3621,7 +3624,7 @@ sub GenerateParametersCheck
 
                     $outer = "state->argument($argsIndex).isUndefined() ? $defaultValue : ";
                     $inner = "state->uncheckedArgument($argsIndex)";
-                } elsif ($optional && !defined($parameter->default) && CanUseWTFOptionalForParameterType($parameter->type)) {
+                } elsif ($optional && !defined($parameter->default) && CanUseWTFOptionalForParameter($parameter)) {
                     # Use WTF::Optional<>() for optional parameters that are missing or undefined and that do not have
                     # a default value in the IDL.
                     my $defaultValue = "Optional<$nativeType>()";

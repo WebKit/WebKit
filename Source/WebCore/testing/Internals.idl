@@ -226,7 +226,7 @@ enum AutoFillButtonType {
     const unsigned short LAYER_TREE_INCLUDES_REPAINT_RECTS = 4;
     const unsigned short LAYER_TREE_INCLUDES_PAINTING_PHASES = 8;
     const unsigned short LAYER_TREE_INCLUDES_CONTENT_LAYERS = 16;
-    [RaisesException] DOMString layerTreeAsText(Document document, optional unsigned short flags);
+    [RaisesException] DOMString layerTreeAsText(Document document, optional unsigned short flags = 0);
 
     [RaisesException] DOMString scrollingStateTreeAsText();
     [RaisesException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
@@ -241,9 +241,9 @@ enum AutoFillButtonType {
     // Flags for displayListForElement.
     const unsigned short DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS = 1;
     // Returns the recorded display list.
-    [RaisesException] DOMString displayListForElement(Element element, optional unsigned short flags);
+    [RaisesException] DOMString displayListForElement(Element element, optional unsigned short flags = 0);
     // Returns the display list that was actually painted.
-    [RaisesException] DOMString replayDisplayListForElement(Element element, optional unsigned short flags);
+    [RaisesException] DOMString replayDisplayListForElement(Element element, optional unsigned short flags = 0);
 
     [RaisesException] void garbageCollectDocumentResources();
 
