@@ -1,5 +1,17 @@
 2016-04-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Drop [UsePointersEvenForNonNullableObjectArguments] from TextTrack
+        https://bugs.webkit.org/show_bug.cgi?id=156899
+
+        Reviewed by Chris Dumez.
+
+        No behavior changes.
+
+        * html/track/TextTrack.idl: Marking cue and region parameter as nullable.
+        Also marking cues and activeCues as nullable attributes.
+
+2016-04-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Drop [UsePointersEvenForNonNullableObjectArguments] from File API interfaces
         https://bugs.webkit.org/show_bug.cgi?id=156898
 

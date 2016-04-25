@@ -28,7 +28,6 @@ enum TextTrackKind { "subtitles",  "captions",  "descriptions",  "chapters", "me
 
 [
     Conditional=VIDEO_TRACK,
-    UsePointersEvenForNonNullableObjectArguments,
     GenerateIsReachable=ImplElementRoot,
     JSCustomMarkFunction,
     SkipVTableValidation,
@@ -41,17 +40,19 @@ enum TextTrackKind { "subtitles",  "captions",  "descriptions",  "chapters", "me
 
     attribute TextTrackMode mode;
 
-    readonly attribute TextTrackCueList cues;
-    readonly attribute TextTrackCueList activeCues;
+    readonly attribute TextTrackCueList? cues;
+    readonly attribute TextTrackCueList? activeCues;
 
-    [RaisesException] void addCue(TextTrackCue cue);
-    [RaisesException] void removeCue(TextTrackCue cue);
+    // FIXME: cue parameter should not be nullable in addCue and removeCue.
+    [RaisesException] void addCue(TextTrackCue? cue);
+    [RaisesException] void removeCue(TextTrackCue? cue);
 
     attribute EventHandler oncuechange;
 
 #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT // Work around shortcomings in the gobject binding generator handling of conditional features by turning these off for gobject.
     readonly attribute VTTRegionList regions;
-    void addRegion(VTTRegion region);
-    [RaisesException] void removeRegion(VTTRegion region);
+    // FIXME: region parameter should not be nullable in addRegion and removeRegion.
+    void addRegion(VTTRegion? region);
+    [RaisesException] void removeRegion(VTTRegion? region);
 #endif
 };
