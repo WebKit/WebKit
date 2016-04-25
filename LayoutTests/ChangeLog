@@ -1,3 +1,23 @@
+2016-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !floatingObject->originatingLine() in WebCore::RenderBlockFlow::linkToEndLineIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=153001
+
+        Reviewed by Dan Bernstein.
+
+        1. Float boxes are always attached to the line where we see them first.
+        2. Float box can only be attached to one line.
+        3. RenderBlockFlow can perform partial layout on dirty lines only.
+
+        In certain cases, the last dirty line can "pull up" float boxes from the first clean line.
+        It simply means that due to some layout changes on previous lines now we see those floats on this last dirty line first.
+        If after placing the float we still find it on the same position, the line below is still considered clean.
+
+        Remove the float box from its original line if the line above already placed it.
+
+        * fast/block/float/float-moves-between-lines-expected.txt: Added.
+        * fast/block/float/float-moves-between-lines.html: Added.
+
 2016-04-06  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r196629): Messages text size only changes for sending text, conversation text size does not change
