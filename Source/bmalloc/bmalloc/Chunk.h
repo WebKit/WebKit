@@ -26,10 +26,7 @@
 #ifndef Chunk_h
 #define Chunk_h
 
-#include "BeginTag.h"
-#include "EndTag.h"
 #include "Object.h"
-#include "ObjectType.h"
 #include "Sizes.h"
 #include "SmallLine.h"
 #include "SmallPage.h"
@@ -39,30 +36,10 @@
 namespace bmalloc {
 
 class Chunk {
-    // Our metadata layout includes a left and right edge sentinel.
-    // Metadata takes up enough space to leave at least the first two
-    // boundary tag slots unused.
-    //
-    //      So, boundary tag space looks like this:
-    //
-    //          [OOXXXXX...]
-    //
-    //      And BoundaryTag::get subtracts one, producing:
-    //
-    //          [OXXXXX...O].
-    //
-    // We use the X's for boundary tags and the O's for edge sentinels.
-
-    static const size_t boundaryTagCount = chunkSize / largeMin;
-    static_assert(boundaryTagCount > 2, "Chunk must have space for two sentinel boundary tags");
-
 public:
     static Chunk* get(void*);
 
-    static BeginTag* beginTag(void*);
-    static EndTag* endTag(void*, size_t);
-
-    Chunk(std::lock_guard<StaticMutex>&, ObjectType);
+    Chunk(std::lock_guard<StaticMutex>&);
 
     size_t offset(void*);
 
@@ -73,59 +50,29 @@ public:
     char* bytes() { return reinterpret_cast<char*>(this); }
     SmallLine* lines() { return m_lines.begin(); }
     SmallPage* pages() { return m_pages.begin(); }
-    std::array<BoundaryTag, boundaryTagCount>& boundaryTags() { return m_boundaryTags; }
-
-    ObjectType objectType() { return m_objectType; }
 
 private:
-    union {
-        // The first few bytes of metadata cover the metadata region, so they're
-        // not used. We can steal them to store m_objectType.
-        ObjectType m_objectType;
-        std::array<SmallLine, chunkSize / smallLineSize> m_lines;
-    };
-
-    union {
-        // A chunk is either small or large for its lifetime, so we can union
-        // small and large metadata, and then use one or the other at runtime.
-        std::array<SmallPage, chunkSize / smallPageSize> m_pages;
-        std::array<BoundaryTag, boundaryTagCount> m_boundaryTags;
-    };
+    std::array<SmallLine, chunkSize / smallLineSize> m_lines;
+    std::array<SmallPage, chunkSize / smallPageSize> m_pages;
 };
 
 static_assert(sizeof(Chunk) + largeMax <= chunkSize, "largeMax is too big");
 
-static_assert(sizeof(Chunk) / smallLineSize > sizeof(ObjectType),
-    "Chunk::m_objectType overlaps with metadata");
+struct ChunkHash {
+    static unsigned hash(Chunk* key)
+    {
+        return static_cast<unsigned>(
+            reinterpret_cast<uintptr_t>(key) / chunkSize);
+    }
+};
 
-inline Chunk::Chunk(std::lock_guard<StaticMutex>&, ObjectType objectType)
-    : m_objectType(objectType)
+inline Chunk::Chunk(std::lock_guard<StaticMutex>&)
 {
 }
 
 inline Chunk* Chunk::get(void* object)
 {
     return static_cast<Chunk*>(mask(object, chunkMask));
-}
-
-inline BeginTag* Chunk::beginTag(void* object)
-{
-    Chunk* chunk = get(object);
-    size_t boundaryTagNumber = (static_cast<char*>(object) - reinterpret_cast<char*>(chunk)) / largeMin - 1; // - 1 to offset from the right sentinel.
-    return static_cast<BeginTag*>(&chunk->m_boundaryTags[boundaryTagNumber]);
-}
-
-inline EndTag* Chunk::endTag(void* object, size_t size)
-{
-    Chunk* chunk = get(object);
-    char* end = static_cast<char*>(object) + size;
-
-    // We subtract largeMin before computing the end pointer's boundary tag. An
-    // object's size need not be an even multiple of largeMin. Subtracting
-    // largeMin rounds down to the last boundary tag prior to our neighbor.
-
-    size_t boundaryTagNumber = (end - largeMin - reinterpret_cast<char*>(chunk)) / largeMin - 1; // - 1 to offset from the right sentinel.
-    return static_cast<EndTag*>(&chunk->m_boundaryTags[boundaryTagNumber]);
 }
 
 inline size_t Chunk::offset(void* object)

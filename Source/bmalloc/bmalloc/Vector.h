@@ -43,10 +43,8 @@ public:
     typedef T* iterator;
     typedef const T* const_iterator;
 
-    Vector(const Vector&) = delete;
-    Vector& operator=(const Vector&) = delete;
-
     Vector();
+    Vector(Vector&&);
     ~Vector();
 
     iterator begin() { return m_buffer; }
@@ -65,9 +63,11 @@ public:
     T pop(const_iterator it) { return pop(it - begin()); }
     
     void insert(iterator, const T&);
+    T remove(iterator);
 
     void grow(size_t);
     void shrink(size_t);
+    void resize(size_t);
 
     void shrinkToFit();
 
@@ -87,10 +87,21 @@ private:
 
 template<typename T>
 inline Vector<T>::Vector()
-    : m_buffer(0)
+    : m_buffer(nullptr)
     , m_size(0)
     , m_capacity(0)
 {
+}
+
+template<typename T>
+inline Vector<T>::Vector(Vector&& other)
+    : m_buffer(other.m_buffer)
+    , m_size(other.m_size)
+    , m_capacity(other.m_capacity)
+{
+    other.m_buffer = nullptr;
+    other.m_size = 0;
+    other.m_capacity = 0;
 }
 
 template<typename T>
@@ -138,12 +149,24 @@ void Vector<T>::insert(iterator it, const T& value)
     size_t index = it - begin();
     size_t moveCount = end() - it;
 
-    if (m_size == m_capacity)
-        growCapacity();
-
+    grow(m_size + 1);
     std::memmove(&m_buffer[index + 1], &m_buffer[index], moveCount * sizeof(T));
+
     m_buffer[index] = value;
-    m_size++;
+}
+
+template<typename T>
+T Vector<T>::remove(iterator it)
+{
+    size_t index = it - begin();
+    size_t moveCount = end() - it - 1;
+
+    T result = *it;
+
+    std::memmove(&m_buffer[index], &m_buffer[index + 1], moveCount * sizeof(T));
+    shrink(m_size - 1);
+    
+    return result;
 }
 
 template<typename T>
@@ -161,6 +184,15 @@ inline void Vector<T>::shrink(size_t size)
     m_size = size;
     if (m_size < m_capacity / shrinkFactor && m_capacity > initialCapacity())
         shrinkCapacity();
+}
+
+template<typename T>
+inline void Vector<T>::resize(size_t size)
+{
+    if (size <= m_size)
+        shrink(size);
+    else
+        grow(size);
 }
 
 template<typename T>

@@ -26,31 +26,38 @@
 #ifndef XLargeRange_h
 #define XLargeRange_h
 
-#include "VMState.h"
-
 namespace bmalloc {
 
 class XLargeRange : public Range {
 public:
     XLargeRange()
         : Range()
-        , m_vmState(VMState::Virtual)
+        , m_physicalSize(0)
     {
     }
 
-    XLargeRange(void* begin, size_t size, VMState vmState)
-        : Range(begin, size)
-        , m_vmState(vmState)
+    XLargeRange(const Range& other, size_t physicalSize)
+        : Range(other)
+        , m_physicalSize(physicalSize)
     {
     }
-    
-    VMState vmState() const { return m_vmState; }
-    void setVMState(VMState vmState) { m_vmState = vmState; }
+
+    XLargeRange(void* begin, size_t size, size_t physicalSize)
+        : Range(begin, size)
+        , m_physicalSize(physicalSize)
+    {
+    }
+
+    size_t physicalSize() const { return m_physicalSize; }
+    void setPhysicalSize(size_t physicalSize) { m_physicalSize = physicalSize; }
 
     std::pair<XLargeRange, XLargeRange> split(size_t) const;
 
+    bool operator<(const void* other) const { return begin() < other; }
+    bool operator<(const XLargeRange& other) const { return begin() < other.begin(); }
+
 private:
-    VMState m_vmState;
+    size_t m_physicalSize;
 };
 
 inline bool canMerge(const XLargeRange& a, const XLargeRange& b)
@@ -66,18 +73,32 @@ inline bool canMerge(const XLargeRange& a, const XLargeRange& b)
 
 inline XLargeRange merge(const XLargeRange& a, const XLargeRange& b)
 {
+    const XLargeRange& left = std::min(a, b);
+    if (left.size() == left.physicalSize()) {
+        return XLargeRange(
+            left.begin(),
+            a.size() + b.size(),
+            a.physicalSize() + b.physicalSize());
+    }
+
     return XLargeRange(
-        std::min(a.begin(), b.begin()),
+        left.begin(),
         a.size() + b.size(),
-        merge(a.vmState(), b.vmState()));
+        left.physicalSize());
 }
 
 inline std::pair<XLargeRange, XLargeRange> XLargeRange::split(size_t size) const
 {
     BASSERT(size <= this->size());
+    
+    if (size <= physicalSize()) {
+        XLargeRange left(begin(), size, size);
+        XLargeRange right(left.end(), this->size() - size, physicalSize() - size);
+        return std::make_pair(left, right);
+    }
 
-    XLargeRange left(begin(), size, vmState());
-    XLargeRange right(left.end(), this->size() - size, vmState());
+    XLargeRange left(begin(), size, physicalSize());
+    XLargeRange right(left.end(), this->size() - size, 0);
     return std::make_pair(left, right);
 }
 

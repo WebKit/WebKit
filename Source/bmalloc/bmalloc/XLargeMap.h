@@ -26,7 +26,6 @@
 #ifndef XLargeMap_h
 #define XLargeMap_h
 
-#include "SortedVector.h"
 #include "Vector.h"
 #include "XLargeRange.h"
 #include <algorithm>
@@ -35,29 +34,12 @@ namespace bmalloc {
 
 class XLargeMap {
 public:
-    void addFree(const XLargeRange&);
-    XLargeRange takeFree(size_t alignment, size_t);
-
-    void addAllocated(const XLargeRange& prev, const std::pair<XLargeRange, XLargeRange>&, const XLargeRange& next);
-    XLargeRange getAllocated(void*);
-    XLargeRange takeAllocated(void*);
-
-    XLargeRange takePhysical();
-    void addVirtual(const XLargeRange&);
-    
-    void shrinkToFit();
+    void add(const XLargeRange&);
+    XLargeRange remove(size_t alignment, size_t);
+    XLargeRange removePhysical();
 
 private:
-    struct Allocation {
-        bool operator<(const Allocation& other) const { return object < other.object; }
-        bool operator<(void* ptr) const { return object.begin() < ptr; }
-
-        XLargeRange object;
-        XLargeRange unused;
-    };
-
     Vector<XLargeRange> m_free;
-    SortedVector<Allocation> m_allocated;
 };
 
 } // namespace bmalloc
