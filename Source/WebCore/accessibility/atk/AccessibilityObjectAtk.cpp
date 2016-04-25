@@ -24,6 +24,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "RenderText.h"
+#include "TextControlInnerElements.h"
 #include <glib-object.h>
 
 #if HAVE(ACCESSIBILITY)
@@ -94,6 +95,13 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // atk_component_grab_focus() to set the focus to it.
     Node* node = renderObject->node();
     if (node && node->hasTagName(HTMLNames::spanTag) && !canSetFocusAttribute() && !hasAttributesRequiredForInclusion())
+        return IgnoreObject;
+
+    // If we include TextControlInnerTextElement children, changes to those children
+    // will result in focus and text notifications that suggest the user is no longer
+    // in the control. This can be especially problematic for screen reader users with
+    // key echo enabled when typing in a password input.
+    if (is<TextControlInnerTextElement>(node))
         return IgnoreObject;
 
     // Given a paragraph or div containing a non-nested anonymous block, WebCore
