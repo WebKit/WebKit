@@ -1006,7 +1006,7 @@ inline BidiRun* RenderBlockFlow::handleTrailingSpaces(BidiRunList<BidiRun>& bidi
 
 void RenderBlockFlow::appendFloatingObjectToLastLine(FloatingObject* floatingObject)
 {
-    ASSERT(!floatingObject->originatingLine());
+    ASSERT_WITH_SECURITY_IMPLICATION(!floatingObject->originatingLine());
     floatingObject->setOriginatingLine(lastRootBox());
     lastRootBox()->appendFloat(floatingObject->renderer());
 }
@@ -1477,11 +1477,11 @@ void RenderBlockFlow::reattachCleanLineFloats(RootInlineBox& cleanLine, LayoutUn
         auto* floatingObject = insertFloatingObject(*floatingBox);
         if (isFirstCleanLine && floatingObject->originatingLine()) {
             // Float box does not belong to this line anymore.
-            ASSERT(cleanLine.prevRootBox() == floatingObject->originatingLine());
+            ASSERT_WITH_SECURITY_IMPLICATION(cleanLine.prevRootBox() == floatingObject->originatingLine());
             cleanLine.removeFloat(*floatingBox);
             continue;
         }
-        ASSERT(!floatingObject->originatingLine());
+        ASSERT_WITH_SECURITY_IMPLICATION(!floatingObject->originatingLine());
         floatingObject->setOriginatingLine(&cleanLine);
         setLogicalHeight(logicalTopForChild(*floatingBox) - marginBeforeForChild(*floatingBox) + delta);
         positionNewFloats();
@@ -1805,7 +1805,7 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
                 for (auto it = cleanLineFloats->begin(), end = cleanLineFloats->end(); it != end; ++it) {
                     RenderBox* floatingBox = *it;
                     FloatingObject* floatingObject = insertFloatingObject(*floatingBox);
-                    ASSERT(!floatingObject->originatingLine());
+                    ASSERT_WITH_SECURITY_IMPLICATION(!floatingObject->originatingLine());
                     floatingObject->setOriginatingLine(line);
                     setLogicalHeight(logicalTopForChild(*floatingBox) - marginBeforeForChild(*floatingBox));
                     positionNewFloats();
