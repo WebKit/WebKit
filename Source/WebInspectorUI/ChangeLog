@@ -1,5 +1,29 @@
 2016-04-24  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Error when selecting a bar in the Frames timeline
+        https://bugs.webkit.org/show_bug.cgi?id=156960
+        <rdar://problem/25897955>
+
+        Reviewed by Timothy Hatcher.
+
+        Fixes timeline grid node selection when record selected in the overview.
+        Adds general purpose `findNode` method to DataGrid.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.findNode):
+        Basic find function for locating a grid node in linear time.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._recordSelected):
+        Remove tree outline references, call generic select method.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.selectRecord):
+        If a data grid was set, deselect current selection and select the node
+        associated with the timeline record.
+
+2016-04-24  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Events in JavaScript & Events timeline have no profile children
         https://bugs.webkit.org/show_bug.cgi?id=156627
         <rdar://problem/25749740>

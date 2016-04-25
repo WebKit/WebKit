@@ -142,6 +142,30 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
         // Implemented by sub-classes if needed.
     }
 
+    selectRecord(record)
+    {
+        if (!this._timelineDataGrid)
+            return;
+
+        let selectedDataGridNode = this._timelineDataGrid.selectedNode;
+        if (!record) {
+            if (selectedDataGridNode)
+                selectedDataGridNode.deselect();
+            return;
+        }
+
+        let dataGridNode = this._timelineDataGrid.findNode((node) => node.record === record);
+        console.assert(dataGridNode, "Timeline view has no grid node for record selected in timeline overview.", this, record);
+        if (!dataGridNode || dataGridNode.selected)
+            return;
+
+        // Don't select the record's grid node if one of it's children is already selected.
+        if (selectedDataGridNode && selectedDataGridNode.hasAncestor(dataGridNode))
+            return;
+
+        dataGridNode.revealAndSelect();
+    }
+
     matchTreeElementAgainstCustomFilters(treeElement)
     {
         // Implemented by sub-classes if needed.

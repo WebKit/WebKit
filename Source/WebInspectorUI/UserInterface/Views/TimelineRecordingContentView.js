@@ -715,28 +715,12 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _recordSelected(event)
     {
-        var timelineView = this._timelineViewMap.get(event.data.timeline);
+        let timelineView = this._timelineViewMap.get(event.data.timeline);
         console.assert(timelineView === this.currentTimelineView, timelineView);
         if (timelineView !== this.currentTimelineView)
             return;
 
-        var selectedTreeElement = this.currentTimelineView.navigationSidebarTreeOutline.selectedTreeElement;
-        if (!event.data.record) {
-            if (selectedTreeElement)
-                selectedTreeElement.deselect();
-            return;
-        }
-
-        var treeElement = this.currentTimelineView.navigationSidebarTreeOutline.findTreeElement(event.data.record);
-        console.assert(treeElement, "Timeline view has no tree element for record selected in timeline overview.", timelineView, event.data.record);
-        if (!treeElement || treeElement.selected)
-            return;
-
-        // Don't select the record's tree element if one of it's children is already selected.
-        if (selectedTreeElement && selectedTreeElement.hasAncestor(treeElement))
-            return;
-
-        treeElement.revealAndSelect(false, false, false, true);
+        timelineView.selectRecord(event.data.record);
     }
 
     _timelineSelected()

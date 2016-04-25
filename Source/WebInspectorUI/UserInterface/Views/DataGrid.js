@@ -1042,6 +1042,23 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this.children = [];
     }
 
+    findNode(comparator, skipHidden, stayWithin, dontPopulate)
+    {
+        console.assert(typeof comparator === "function");
+
+        let currentNode = this._rows[0];
+        while (currentNode && !currentNode.root) {
+            if (!currentNode.isPlaceholderNode && !(skipHidden && currentNode.hidden)) {
+                if (comparator(currentNode))
+                    return currentNode;
+            }
+
+            currentNode = currentNode.traverseNextNode(skipHidden, stayWithin, dontPopulate);
+        }
+
+        return null;
+    }
+
     sortNodes(comparator)
     {
         if (this._sortNodesRequestId)
