@@ -1,3 +1,21 @@
+2016-04-25  Chris Dumez  <cdumez@apple.com>
+
+        Crash under -[WKWebView _mayAutomaticallyShowVideoPictureInPicture] + 32 (WKWebView.mm:309)
+        https://bugs.webkit.org/show_bug.cgi?id=156990
+        <rdar://problem/25904376>
+
+        Reviewed by Jer Noble.
+
+        In case of WebProcess crash, WebPageProxy::processDidCrash() will call resetState() which
+        will nullify WebPageProxy::m_videoFullscreenManager. In WebPageProxy::reattachToWebProcess(),
+        we then call updateViewState() before re-initializing m_videoFullscreenManager, and
+        updateViewState() ends up calling [WKWebView _mayAutomaticallyShowVideoPictureInPicture]
+        which dereferences WebPageProxy::m_videoFullscreenManager without null check. This patch
+        adds a null check for m_videoFullscreenManager in _mayAutomaticallyShowVideoPictureInPicture.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mayAutomaticallyShowVideoPictureInPicture]):
+
 2016-04-25  Dan Bernstein  <mitz@apple.com>
 
         Fix a couple of mistakes from r199700.
