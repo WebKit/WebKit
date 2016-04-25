@@ -1,3 +1,11 @@
+2016-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a content animation test that uses SVG animation.
+        https://bugs.webkit.org/show_bug.cgi?id=156827
+
+        * Animation/svg-animation.html: Added.
+        * Skipped:
+
 2016-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         Skip two content animation tests which are only meant for iOS testing.

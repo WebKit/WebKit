@@ -99,3 +99,4 @@ Animometer
 # Used for iOS testing
 Animation/css-animation.html
 Animation/raf-animation.html
+Animation/svg-animation.html
