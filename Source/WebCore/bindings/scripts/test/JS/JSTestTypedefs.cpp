@@ -563,6 +563,13 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
     if (!std::isnan(arg1NativeValue))
         arg1 = clampTo<unsigned long long>(arg1NativeValue);
 
+
+    size_t argsCount = state->argumentCount();
+    if (argsCount <= 1) {
+        impl.funcWithClamp(arg1);
+        return JSValue::encode(jsUndefined());
+    }
+
     unsigned long long arg2 = 0;
     double arg2NativeValue = state->argument(1).toNumber(state);
     if (UNLIKELY(state->hadException()))

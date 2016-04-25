@@ -1,3 +1,12 @@
+2016-04-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update JS bindings test results after r200037
+
+        Unreviewed test gardening.
+
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsPrototypeFunctionFuncWithClamp):
+
 2016-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         play-state not parsed as part of animation shorthand
