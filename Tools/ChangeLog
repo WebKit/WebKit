@@ -1,3 +1,18 @@
+2016-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix issues with content-animation performance tests
+        https://bugs.webkit.org/show_bug.cgi?id=157001
+
+        Reviewed by Sam Weinig.
+
+        Add patch content for svg-animation.html, and fix the paths in the patch so
+        it applies correctly.
+
+        Add the patch file to the .plan file.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/ContentAnimation.patch:
+        * Scripts/webkitpy/benchmark_runner/data/plans/content-animation.plan:
+
 2016-04-25  Brady Eidson  <beidson@apple.com>
 
         Tweaking IndexedDB watchlist and adding myself to it.
