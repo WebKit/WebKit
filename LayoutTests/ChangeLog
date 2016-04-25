@@ -1,3 +1,21 @@
+2016-04-25  Brady Eidson  <beidson@apple.com>
+
+        Implement latest File object spec (including its constructor).
+        https://bugs.webkit.org/show_bug.cgi?id=156511
+
+        Reviewed by Darin Adler.
+
+        * fast/files/file-constructor-expected.txt: Added.
+        * fast/files/file-constructor.html: Added.
+        
+        * http/tests/local/fileapi/file-last-modified-after-delete-expected.txt:
+        * http/tests/local/fileapi/script-tests/file-last-modified-after-delete.js:
+
+        * http/tests/local/fileapi/file-last-modified-expected.txt:
+        * http/tests/local/fileapi/script-tests/file-last-modified.js:
+
+        * imported/blink/storage/indexeddb/blob-basics-metadata-expected.txt:
+
 2016-04-25  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r196012): Subresource may be blocked by Content Security Policy if it only matches 'self'

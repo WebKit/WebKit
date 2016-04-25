@@ -39,18 +39,16 @@ PASS event.target.result.name == fileInput.files[0].name is true
 
 testNewFile():
 newFile = new File([test_content], 'filename', {type:'text/plain'})
-FAIL newFile = new File([test_content], 'filename', {type:'text/plain'}) threw exception TypeError: function is not a constructor (evaluating 'new File([test_content], 'filename', {type:'text/plain'})')
 
 validateResult(newFile):
-FAIL newFile.name == newFile.name should be true. Threw exception ReferenceError: Can't find variable: newFile
+PASS newFile.name == newFile.name is true
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(newFile, 'newFilekey')
-FAIL store.put(newFile, 'newFilekey') threw exception ReferenceError: Can't find variable: newFile
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 request = store.get('newFilekey')
-FAIL event.target.result.name == newFile.name should be true. Threw exception TypeError: undefined is not an object (evaluating 'event.target.result.name')
+PASS event.target.result.name == newFile.name is true
 
 testFileList():
 filelist = fileInput.files
@@ -77,10 +75,10 @@ PASS cursor.value[1].name == fileInput.files[1].name is true
 cursor.continue();
 PASS cursor.value == 'value' is true
 cursor.continue();
-FAIL cursor.value.name == newFile.name should be true. Threw exception TypeError: null is not an object (evaluating 'cursor.value')
+PASS cursor.value.name == newFile.name is true
 cursor.continue();
-FAIL Unexpected error: TypeError: null is not an object (evaluating 'cursor.continue')
-FAIL successfullyParsed should be true. Was false.
+PASS cursor is null
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

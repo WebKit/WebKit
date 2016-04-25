@@ -98,6 +98,11 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, int& result)
     result = value.toInt32(exec);
 }
 
+void JSDictionary::convertValue(ExecState* exec, JSValue value, long int& result)
+{
+    result = value.toInt32(exec);
+}
+
 void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned& result)
 {
     result = value.toUInt32(exec);
@@ -117,6 +122,12 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned long lo
 {
     double d = value.toNumber(exec);
     doubleToInteger(d, result);
+}
+
+void JSDictionary::convertValue(ExecState* exec, JSValue value, long long& result)
+{
+    double d = value.toNumber(exec);
+    result = llrint(d);
 }
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, double& result)

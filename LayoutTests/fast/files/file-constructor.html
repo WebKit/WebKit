@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Test the File constructor.");
+
+// Test the different ways you can construct a File.
+shouldBeTrue("(new File([], 'world.html')) instanceof window.File");
+shouldBeTrue("(new File(['hello'], 'world.html')) instanceof window.File");
+shouldBeTrue("(new File(['hello'], 'world.html', {})) instanceof window.File");
+shouldBeTrue("(new File(['hello'], 'world.html', {type:'text/html'})) instanceof window.File");
+shouldBeTrue("(new File(['hello'], 'world.html', {type:'text/html', endings:'native'})) instanceof window.File");
+shouldBeTrue("(new File(['hello'], 'world.html', {type:'text/html', endings:'transparent'})) instanceof window.File");
+
+// Test that File inherits from File.
+shouldBeTrue("(new File([], 'world.html')) instanceof window.File")
+
+// Verify that the file name argument is required.
+shouldThrow("(new File())", '"TypeError: First argument to File constructor must be a valid sequence, was undefined or null"');
+shouldThrow("(new File([]))", '"TypeError: Second argument to File constructor must be a valid string, was undefined"');
+
+// Test valid file names.
+shouldBeTrue("(new File([], null)) instanceof window.File");
+shouldBeTrue("(new File([], 1)) instanceof window.File");
+shouldBeTrue("(new File([], '')) instanceof window.File");
+shouldBeTrue("(new File([], document)) instanceof window.File");
+
+// Test invalid file parts.
+shouldThrow("new File('hello', 'world.html')", '"TypeError: Value is not a sequence"');
+shouldThrow("new File(0, 'world.html')", '"TypeError: Value is not a sequence"');
+shouldThrow("new File(null, 'world.html')", '"TypeError: First argument to File constructor must be a valid sequence, was undefined or null"');
+
+// Test valid file parts.
+shouldBeTrue("(new File([], 'world.html')) instanceof window.File");
+shouldBeTrue("(new File(['stringPrimitive'], 'world.html')) instanceof window.File");
+shouldBeTrue("(new File([String('stringObject')], 'world.html')) instanceof window.File");
+shouldBeTrue("(new File([new Blob], 'world.html')) instanceof window.File");
+shouldBeTrue("(new File([new Blob([new Blob])], 'world.html')) instanceof window.File");
+
+// Test File instances used as blob parts.
+shouldBeTrue("(new Blob([new File([], 'world.txt')])) instanceof window.Blob");
+shouldBeTrue("(new Blob([new Blob([new File([new Blob], 'world.txt')])])) instanceof window.Blob");
+shouldBeTrue("(new File([new File([], 'world.txt')], 'world.html')) instanceof window.File");
+shouldBeTrue("(new File([new Blob([new File([new Blob], 'world.txt')])], 'world.html')) instanceof window.File");
+
+// Test some conversions to string in the parts array.
+shouldBe("(new File([12], 'world.html')).size", "2");
+shouldBe("(new File([[]], 'world.html')).size", "0");         // [].toString() is the empty string
+shouldBe("(new File([{}], 'world.html')).size", "15");;       // {}.toString() is the string "[object Object]"
+shouldBe("(new File([document], 'world.html')).size", "21");  // document.toString() is the string "[object HTMLDocument]"
+
+var toStringingObj = { toString: function() { return "A string"; } };
+shouldBe("(new File([toStringingObj], 'world.html')).size", "8");
+
+var throwingObj = { toString: function() { throw "Error"; } };
+shouldThrow("new File([throwingObj], 'world.html')", "'Error'");
+
+// Test some conversions to string in the file name.
+shouldBe("(new File([], null)).name", "'null'");
+shouldBe("(new File([], 12)).name", "'12'");
+shouldBe("(new File([], '')).name", "''");
+shouldBe("(new File([], {})).name", "'[object Object]'");
+shouldBe("(new File([], document)).name", "'[object HTMLDocument]'");
+shouldBe("(new File([], toStringingObj)).name", "'A string'");
+shouldThrow("(new File([], throwingObj)).name", "'Error'");
+
+// Test some invalid property bags.
+shouldBeTrue("(new File([], 'world.html', {unknownKey:'value'})) instanceof window.File");
+shouldThrow("new File([], 'world.html', {type:throwingObj})", "'Error'");
+
+// Type with non-ascii characters should become the empty string.
+shouldBeTrue("(new File([], 'world.html', {type:'hello\u00EE'})) instanceof window.File");
+shouldBe("(new File([], 'world.html', {type:'hello\u00EE'})).type", "''");
+
+// FilePropertyBag  substeps: Type with non-ascii characters should prevent lastModified from being extracted.
+shouldBe("(new File([], 'world.html', {lastModified: 555, type:'goodbye'})).lastModified", "555"); 
+shouldNotBe("(new File([], 'world.html', {lastModified: 555, type:'goodbye\u00EE'})).lastModified", "555"); 
+
+// Test various non-object literals being used as property bags.
+shouldBeTrue("(new File([], 'world.html', null)) instanceof window.File");
+shouldBeTrue("(new File([], 'world.html', undefined)) instanceof window.File");
+shouldThrow("(new File([], 'world.html', 123)) instanceof window.File", "'TypeError: Third argument of the constructor is not of type Object'");
+shouldThrow("(new File([], 'world.html', 123.4)) instanceof window.File", "'TypeError: Third argument of the constructor is not of type Object'");
+shouldThrow("(new File([], 'world.html', true)) instanceof window.File", "'TypeError: Third argument of the constructor is not of type Object'");
+shouldThrow("(new File([], 'world.html', 'abc')) instanceof window.File", "'TypeError: Third argument of the constructor is not of type Object'");
+shouldBeTrue("(new File([], 'world.html', [])) instanceof window.File");
+shouldBeTrue("(new File([], 'world.html', /abc/)) instanceof window.File");
+shouldBeTrue("(new File([], 'world.html', function () {})) instanceof window.File");
+
+// Test that the name/type/size are correctly added to the File.
+shouldBe("(new File([], 'world.html')).name", "'world.html'");
+shouldBe("(new File([], 'w/orld/ht/m.l')).name", "'w:orld:ht:m.l'");
+shouldBe("(new File([], 'world.html', {type:'text/html'})).name", "'world.html'");
+shouldBe("(new File([], 'world.html', {type:'text/html'})).type", "'text/html'");
+shouldBe("(new File([], 'world.html', {type:'text/html'})).size", "0");
+shouldBe("(new File([], 'world.html', {type:'text/plain;charset=UTF-8'})).type", "'text/plain;charset=utf-8'");
+
+// Test that the lastModified is correctly added to the File.
+var aDate = new Date(441532800000);
+shouldBe("(new File([], 'world.html', {lastModified: 441532800000})).lastModified", "441532800000");
+// Unless specified, lastModified should default to now.
+shouldBeNow("(new File([], 'world.html')).lastModified", 20000);
+shouldBeNow("(new File([], 'world.html', {})).lastModified", 20000);
+shouldBeNow("(new File([], 'world.html', {type: 'text/plain'})).lastModified", 20000);
+// Test that Date instances are implicitly converted to numbers.
+shouldBe("(new File([], 'world.html', {lastModified: new Date(441532800000)})).lastModified", "441532800000");
+
+// Test the number of expected arguments in the File constructor.
+shouldBe("window.File.length", "2");
+
+// Test ArrayBufferView parameters.
+shouldBe("new File([new DataView(new ArrayBuffer(100))], 'world.html').size", "100");
+shouldBe("new File([new Uint8Array(100)], 'world.html').size", "100");
+shouldBe("new File([new Uint8ClampedArray(100)], 'world.html').size", "100");
+shouldBe("new File([new Uint16Array(100)], 'world.html').size", "200");
+shouldBe("new File([new Uint32Array(100)], 'world.html').size", "400");
+shouldBe("new File([new Int8Array(100)], 'world.html').size", "100");
+shouldBe("new File([new Int16Array(100)], 'world.html').size", "200");
+shouldBe("new File([new Int32Array(100)], 'world.html').size", "400");
+shouldBe("new File([new Float32Array(100)], 'world.html').size", "400");
+shouldBe("new File([new Float64Array(100)], 'world.html').size", "800");
+shouldBe("new File([new Float64Array(100), new Int32Array(100), new Uint8Array(100), new DataView(new ArrayBuffer(100))], 'world.html').size", "1400");
+shouldBe("new File([new Blob([new Int32Array(100)]), new Uint8Array(100), new Float32Array(100), new DataView(new ArrayBuffer(100))], 'world.html').size", "1000");
+shouldBe("new File([new Blob([new Int32Array(100)]), new File([new Uint16Array(100)], 'world.txt'), new Uint8Array(100), new Float32Array(100), new DataView(new ArrayBuffer(100))], 'world.html').size", "1200");
+
+// Test ArrayBuffer parameters.
+shouldBe("new File([(new DataView(new ArrayBuffer(100))).buffer], 'world.html').size", "100");
+shouldBe("new File([(new Uint8Array(100)).buffer], 'world.html').size", "100");
+shouldBe("new File([(new Uint8ClampedArray(100)).buffer], 'world.html').size", "100");
+shouldBe("new File([(new Uint16Array(100)).buffer], 'world.html').size", "200");
+shouldBe("new File([(new Uint32Array(100)).buffer], 'world.html').size", "400");
+shouldBe("new File([(new Int8Array(100)).buffer], 'world.html').size", "100");
+shouldBe("new File([(new Int16Array(100)).buffer], 'world.html').size", "200");
+shouldBe("new File([(new Int32Array(100)).buffer], 'world.html').size", "400");
+shouldBe("new File([(new Float32Array(100)).buffer], 'world.html').size", "400");
+shouldBe("new File([(new Float64Array(100)).buffer], 'world.html').size", "800");
+shouldBe("new File([(new Float64Array(100)).buffer, (new Int32Array(100)).buffer, (new Uint8Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer], 'world.html').size", "1400");
+shouldBe("new File([new Blob([(new Int32Array(100)).buffer]), (new Uint8Array(100)).buffer, (new Float32Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer], 'world.html').size", "1000");
+shouldBe("new File([new Blob([(new Int32Array(100)).buffer]), new File([new Uint16Array(100).buffer], 'world.txt'), (new Uint8Array(100)).buffer, (new Float32Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer], 'world.html').size", "1200");
+
+// Test building Blobs with ArrayBuffer / ArrayBufferView parts enclosed in files.
+shouldBe("new Blob([new Blob([new Int32Array(100)]), new File([new Uint16Array(100)], 'world.txt'), new Uint8Array(100), new Float32Array(100), new DataView(new ArrayBuffer(100))]).size", "1200");
+shouldBe("new Blob([new Blob([(new Int32Array(100)).buffer]), new File([new Uint16Array(100).buffer], 'world.txt'), (new Uint8Array(100)).buffer, (new Float32Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer]).size", "1200");
+
+// Test passing blob parts in objects with indexed properties.
+// (This depends on the bindings code handling of sequence<T>)
+shouldBe("new File({length: 0}, 'world.txt').size", "0");
+shouldBe("new File({length: 1, 0: 'string'}, 'world.txt').size", "6");
+</script>

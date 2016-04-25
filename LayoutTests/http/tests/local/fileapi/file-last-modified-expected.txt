@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS event.dataTransfer contains a File object on drop.
-PASS file.lastModifiedDate verified
+PASS file.lastModified verified
 PASS successfullyParsed is true
 
 TEST COMPLETE

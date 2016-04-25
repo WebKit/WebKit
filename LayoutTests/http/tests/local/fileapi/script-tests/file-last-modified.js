@@ -6,11 +6,11 @@ function onFileDrop(file, filePath)
     xhr.open("GET", "http://127.0.0.1:8000/resources/file-last-modified.php?path=../local/fileapi/" + filePath, false);
     xhr.send();
     var expectedDate = new Date(parseInt(xhr.responseText) * 1000);
-    var actualDate = file.lastModifiedDate;
-    if (expectedDate.toString() == actualDate.toString())
-        testPassed("file.lastModifiedDate verified");
+    var actualDate = file.lastModified;
+    if (expectedDate.getTime() == actualDate)
+        testPassed("file.lastModified verified");
     else
-        testFailed("file.lastModifiedDate incorrect");
+        testFailed("file.lastModified incorrect");
 }
 
 function runTest()

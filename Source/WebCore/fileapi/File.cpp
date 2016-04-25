@@ -64,8 +64,21 @@ File::File(DeserializationContructor, const String& path, const URL& url, const 
 {
 }
 
-double File::lastModifiedDate() const
+File::File(Vector<BlobPart>&& blobParts, const String& filename, const String& contentType, int64_t lastModified)
+    : Blob(WTFMove(blobParts), contentType)
+    , m_name(filename)
+    , m_overrideLastModifiedDate(lastModified)
 {
+}
+
+double File::lastModified() const
+{
+    if (m_overrideLastModifiedDate)
+        return m_overrideLastModifiedDate.value();
+
+    // FIXME: This does sync-i/o on the main thread and also recalculates every time the method is called.
+    // The i/o should be performed on a background thread,
+    // and the result should be cached along with an asynchronous monitor for changes to the file.
     time_t modificationTime;
     if (getFileModificationTime(m_path, modificationTime) && isValidFileTime(modificationTime))
         return modificationTime * msPerSecond;

@@ -117,10 +117,12 @@ private:
     
     static void convertValue(JSC::ExecState*, JSC::JSValue, bool& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, int& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, long int& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned short& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned long& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned long long& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, long long& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, double& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, Dictionary& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, String& result);

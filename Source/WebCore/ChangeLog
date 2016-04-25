@@ -1,3 +1,29 @@
+2016-04-25  Brady Eidson  <beidson@apple.com>
+
+        Implement latest File object spec (including its constructor).
+        https://bugs.webkit.org/show_bug.cgi?id=156511
+
+        Reviewed by Darin Adler.
+
+        Test: fast/files/file-constructor.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDictionary.h:
+
+        * bindings/js/JSFileCustom.cpp: Added.
+        (WebCore::constructJSFile):
+
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        (WebCore::File::lastModified):
+        (WebCore::File::lastModifiedDate): Deleted.
+        * fileapi/File.h:
+        * fileapi/File.idl:
+
 2016-04-25  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r156846): Crashes with guard malloc

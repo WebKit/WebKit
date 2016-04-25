@@ -2058,6 +2058,7 @@
 		516D7D701BB5F0BD00AF7C77 /* IDBConnectionToServerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5185FCBD1BB5CB770012898F /* IDBConnectionToServerDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		516D7D711BB5F0BD00AF7C77 /* IDBConnectionToClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516D7D6D1BB5F06500AF7C77 /* IDBConnectionToClient.cpp */; };
 		516D7D721BB5F0BD00AF7C77 /* IDBConnectionToClientDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 516D7D6E1BB5F06500AF7C77 /* IDBConnectionToClientDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		516E54FA1CCB2EA80040D954 /* JSFileCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516E54F91CCB27FF0040D954 /* JSFileCustom.cpp */; };
 		516F7F6D1C31E39A00F111DC /* ServerOpenDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 516F7F6C1C31C79D00F111DC /* ServerOpenDBRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		516F7F6E1C31E39C00F111DC /* ServerOpenDBRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516F7F6B1C31C79D00F111DC /* ServerOpenDBRequest.cpp */; };
 		517138EF1BED1D1A000D5F01 /* IndexKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517138ED1BED1D17000D5F01 /* IndexKey.cpp */; };
@@ -9644,6 +9645,7 @@
 		516C62241950E2B900337E75 /* JSGamepadEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGamepadEvent.h; sourceTree = "<group>"; };
 		516D7D6D1BB5F06500AF7C77 /* IDBConnectionToClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBConnectionToClient.cpp; sourceTree = "<group>"; };
 		516D7D6E1BB5F06500AF7C77 /* IDBConnectionToClientDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBConnectionToClientDelegate.h; sourceTree = "<group>"; };
+		516E54F91CCB27FF0040D954 /* JSFileCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileCustom.cpp; sourceTree = "<group>"; };
 		516F7F6B1C31C79D00F111DC /* ServerOpenDBRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerOpenDBRequest.cpp; sourceTree = "<group>"; };
 		516F7F6C1C31C79D00F111DC /* ServerOpenDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerOpenDBRequest.h; sourceTree = "<group>"; };
 		517138ED1BED1D17000D5F01 /* IndexKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexKey.cpp; sourceTree = "<group>"; };
@@ -22447,6 +22449,7 @@
 				BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */,
 				ADEC78F718EE5308001315C2 /* JSElementCustom.h */,
 				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
+				516E54F91CCB27FF0040D954 /* JSFileCustom.cpp */,
 				2E7582ED12764F260062628B /* JSFileReaderCustom.cpp */,
 				C28083411C6DC96A001451B6 /* JSFontFaceCustom.cpp */,
 				1C24EEAA1C72AA0A0080F8FC /* JSFontFaceSetCustom.cpp */,
@@ -30243,6 +30246,7 @@
 				2E0888E6114884E200AF4265 /* JSDOMFormDataCustom.cpp in Sources */,
 				E1C36CBD0EB08062007410BC /* JSDOMGlobalObject.cpp in Sources */,
 				7C2BDD3D17C7F98C0038FF15 /* JSDOMGlobalObjectTask.cpp in Sources */,
+				516E54FA1CCB2EA80040D954 /* JSFileCustom.cpp in Sources */,
 				65DF31F709D1CC60000BE325 /* JSDOMImplementation.cpp in Sources */,
 				A9D248060D757E7D00FDF959 /* JSDOMMimeType.cpp in Sources */,
 				A9D248080D757E7D00FDF959 /* JSDOMMimeTypeArray.cpp in Sources */,

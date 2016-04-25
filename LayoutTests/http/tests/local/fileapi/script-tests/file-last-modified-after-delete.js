@@ -10,13 +10,13 @@ function onFileDrop(file)
     // Remove the temp file.
     removeTempFile(tempFileName);
 
-    // This synchronosly queries the file's lastModifiedDate (which should fail) until/unless we start capturing the file metadata at File construction time.
-    lastModifiedDate = file.lastModifiedDate;
+    // This synchronosly queries the file's lastModified (which should fail) until/unless we start capturing the file metadata at File construction time.
+    lastModified = file.lastModified;
 
     // The returned value should be equal to the current date/time since the file's modified date/time is not available.
-    shouldNotBe('lastModifiedDate', 'null');
-    shouldBeGreaterThanOrEqual('lastModifiedDate', 'testStartTime');
-    shouldBeGreaterThanOrEqual('(new Date()).getTime()', 'lastModifiedDate');
+    shouldNotBe('lastModified', 'null');
+    shouldBeGreaterThanOrEqual('lastModified', 'testStartTime.getTime()');
+    shouldBeGreaterThanOrEqual('(new Date()).getTime()', 'lastModified');
 }
 
 function runTest()

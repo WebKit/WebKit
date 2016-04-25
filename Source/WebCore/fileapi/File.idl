@@ -24,13 +24,13 @@
  */
 
 [
+    Exposed=(Window),
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     ExportMacro=WEBCORE_EXPORT,
+    CustomConstructor(sequence<any> fileBits, DOMString fileName, optional FilePropertyBag options),
 ] interface File : Blob {
     readonly attribute DOMString name;
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
-    readonly attribute Date lastModifiedDate;
-#endif
+    readonly attribute long long lastModified;
 };
 
