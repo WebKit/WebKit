@@ -1,3 +1,21 @@
+2016-04-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Stop listening for "media can start" notifications when media player is cleared
+        https://bugs.webkit.org/show_bug.cgi?id=156985
+        <rdar://problem/23158505>
+
+        Reviewed by Jer Noble.
+
+        No new tests, I have not been able to create a test that reliably reproduces this.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadInternal): Add logging.
+        (WebCore::HTMLMediaElement::selectMediaResource): Assert and return early if there is
+          no media player.
+        (WebCore::HTMLMediaElement::clearMediaPlayer): Stop listening for can start notifications.
+        (WebCore::HTMLMediaElement::visibilityStateChanged): Add logging.
+        (WebCore::HTMLMediaElement::mediaCanStart): Ditto.
+
 2016-04-25  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Specify default values for parameters of type 'unsigned short'
