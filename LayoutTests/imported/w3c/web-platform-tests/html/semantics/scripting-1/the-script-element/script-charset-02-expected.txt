@@ -1,0 +1,4 @@
+
+FAIL Script @type: unknown parameters assert_not_equals: got disallowed value 5
+FAIL Script @type: unknown parameters 1 assert_equals: expected 5 but got 10
+

@@ -1,5 +1,101 @@
 2016-04-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Update tests in web-platform-tests/html/semantics/scripting-1/
+        https://bugs.webkit.org/show_bug.cgi?id=157026
+
+        Reviewed by Darin Adler.
+
+        Reimported tests under web-platform-tests/html/semantics/scripting-1/ as of d5a4c5bdf8a1837b4fcf50bbd2efd4150ddafa99.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_001-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_001.htm: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_002-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_002.htm: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_003-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_003.htm: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_004-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_004.htm: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_005-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_005.htm: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_006-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_006.htm: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_007-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_007.htm: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_008-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_008.htm: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_009-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_009.htm: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_010-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_010.htm: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_011-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/async_011.htm: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/external-script-utf8.js: Added.
+        (window.getSomeString):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/external-script-windows1250.js: Added.
+        (window.getSomeString):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/alpha: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/alpha/base-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/alpha/base.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/alpha/test.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/alpha/w3c-import.log: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/beta: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/beta/test.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/beta/w3c-import.log: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/empty-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/empty-with-base-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/empty-with-base.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/empty.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/failure-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/failure.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/unreachable.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/w3c-import.log: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-charset-01-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-charset-01.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-charset-02-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-charset-02.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-found-not-executed-2.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-found-not-executed-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-found-not-executed.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-found-not-executed.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/serve-with-content-type.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-parsing-xhtml-documents/node-document-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-parsing-xhtml-documents/node-document.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-parsing-xhtml-documents/template-child-nodes.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-parsing-xhtml-documents/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-serializing-xhtml-documents/outerhtml.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-serializing-xhtml-documents/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-css-user-agent-style-sheet/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-steps-to-clone-a-node/template-clone-children.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-steps-to-clone-a-node/templates-copy-document-owner.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-steps-to-clone-a-node/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/definitions/template-contents-owner-document-type.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/definitions/template-contents-owner-test-001.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/definitions/template-contents-owner-test-002.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/definitions/template-contents.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/definitions/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/innerhtml-on-templates/innerhtml.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/innerhtml-on-templates/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/serializing-html-templates/outerhtml.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/serializing-html-templates/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/content-attribute.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/node-document-changes.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-as-a-descendant-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-as-a-descendant.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-content-node-document.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-content.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-body.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-frameset.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-head.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/w3c-import.log:
+
+2016-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         ASSERTION FAILED: m_templateInsertionModes.isEmpty() in WebCore::HTMLTreeBuilder::finished
         https://bugs.webkit.org/show_bug.cgi?id=143519
 

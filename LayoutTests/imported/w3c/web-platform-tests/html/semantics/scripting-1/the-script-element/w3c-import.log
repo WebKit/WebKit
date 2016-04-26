@@ -1,12 +1,12 @@
 The tests in this directory were imported from the W3C repository.
-Do NOT modify these tests directly in Webkit.
+Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the W3C CSS or WPT github:
 	https://github.com/w3c/csswg-test
 	https://github.com/w3c/web-platform-tests
 
-Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
-Do NOT modify or remove this file
+Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
@@ -15,15 +15,34 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_001.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_002.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_003.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_004.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_005.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_006.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_007.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_008.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_009.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_010.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_011.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/external-script-utf8.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/external-script-windows1250.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/log.py
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-before-after-events.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-charset-01.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-charset-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-for-event-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-for-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-language-type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-languages-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-languages-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-noembed-noframes-iframe.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-found-not-executed-2.py
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-found-not-executed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-found-not-executed.py
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-onload-string.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-text-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-text.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/serve-with-content-type.py
