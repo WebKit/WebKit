@@ -2386,10 +2386,8 @@ void Element::setInnerHTML(const String& html, ExceptionCode& ec)
     if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(*this, html, AllowScriptingContent, ec)) {
         ContainerNode* container = this;
 
-#if ENABLE(TEMPLATE_ELEMENT)
         if (is<HTMLTemplateElement>(*this))
             container = downcast<HTMLTemplateElement>(*this).content();
-#endif
 
         replaceChildrenWithFragment(*container, fragment.releaseNonNull(), ec);
     }

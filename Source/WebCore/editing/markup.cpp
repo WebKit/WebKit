@@ -881,10 +881,8 @@ String urlToMarkup(const URL& url, const String& title)
 RefPtr<DocumentFragment> createFragmentForInnerOuterHTML(Element& contextElement, const String& markup, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
 {
     Document* document = &contextElement.document();
-#if ENABLE(TEMPLATE_ELEMENT)
     if (contextElement.hasTagName(templateTag))
         document = &document->ensureTemplateDocument();
-#endif
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(*document);
 
     if (document->isHTMLDocument()) {

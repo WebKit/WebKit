@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(TEMPLATE_ELEMENT)
-
 #include "JSHTMLTemplateElement.h"
 
 #include "HTMLTemplateElement.h"
@@ -60,5 +58,3 @@ JSValue JSHTMLTemplateElement::content(ExecState& state) const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(TEMPLATE_ELEMENT)

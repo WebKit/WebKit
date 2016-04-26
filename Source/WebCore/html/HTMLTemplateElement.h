@@ -31,8 +31,6 @@
 #ifndef HTMLTemplateElement_h
 #define HTMLTemplateElement_h
 
-#if ENABLE(TEMPLATE_ELEMENT)
-
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -57,7 +55,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(TEMPLATE_ELEMENT)
 
 #endif // HTMLTemplateElement_h

@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(TEMPLATE_ELEMENT)
-
 #include "HTMLTemplateElement.h"
 
 #include "DOMImplementation.h"
@@ -95,5 +93,3 @@ void HTMLTemplateElement::didMoveToNewDocument(Document* oldDocument)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(TEMPLATE_ELEMENT)

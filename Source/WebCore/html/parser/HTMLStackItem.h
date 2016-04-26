@@ -276,9 +276,7 @@ inline bool isSpecialNode(const HTMLStackItem& item)
             || tagName == HTMLNames::tableTag
             || tagName == HTMLNames::tbodyTag
             || tagName == HTMLNames::tdTag
-#if ENABLE(TEMPLATE_ELEMENT)
             || tagName == HTMLNames::templateTag
-#endif
             || tagName == HTMLNames::textareaTag
             || tagName == HTMLNames::tfootTag
             || tagName == HTMLNames::thTag

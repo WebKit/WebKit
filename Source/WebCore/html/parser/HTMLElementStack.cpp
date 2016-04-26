@@ -62,9 +62,7 @@ inline bool isScopeMarker(HTMLStackItem& item)
         || item.hasTagName(SVGNames::foreignObjectTag)
         || item.hasTagName(SVGNames::descTag)
         || item.hasTagName(SVGNames::titleTag)
-#if ENABLE(TEMPLATE_ELEMENT)
         || item.hasTagName(templateTag)
-#endif
         || isRootNode(item);
 }
 
@@ -78,9 +76,7 @@ inline bool isListItemScopeMarker(HTMLStackItem& item)
 inline bool isTableScopeMarker(HTMLStackItem& item)
 {
     return is<HTMLTableElement>(item.node())
-#if ENABLE(TEMPLATE_ELEMENT)
         || item.hasTagName(templateTag)
-#endif
         || isRootNode(item);
 }
 
@@ -89,18 +85,14 @@ inline bool isTableBodyScopeMarker(HTMLStackItem& item)
     return item.hasTagName(tbodyTag)
         || item.hasTagName(tfootTag)
         || item.hasTagName(theadTag)
-#if ENABLE(TEMPLATE_ELEMENT)
         || item.hasTagName(templateTag)
-#endif
         || isRootNode(item);
 }
 
 inline bool isTableRowScopeMarker(HTMLStackItem& item)
 {
     return item.hasTagName(trTag)
-#if ENABLE(TEMPLATE_ELEMENT)
         || item.hasTagName(templateTag)
-#endif
         || isRootNode(item);
 }
 
@@ -525,12 +517,10 @@ bool HTMLElementStack::inSelectScope(const QualifiedName& tagName) const
     return inSelectScope(tagName.localName());
 }
 
-#if ENABLE(TEMPLATE_ELEMENT)
 bool HTMLElementStack::hasTemplateInHTMLScope() const
 {
     return inScopeCommon<isRootNode>(m_top.get(), templateTag.localName());
 }
-#endif
 
 Element& HTMLElementStack::htmlElement() const
 {

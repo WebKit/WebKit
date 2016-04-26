@@ -288,9 +288,7 @@
 #include "JSHTMLTableHeaderCellElement.cpp"
 #include "JSHTMLTableRowElement.cpp"
 #include "JSHTMLTableSectionElement.cpp"
-#if ENABLE(TEMPLATE_ELEMENT)
 #include "JSHTMLTemplateElement.cpp"
-#endif
 #include "JSHTMLTextAreaElement.cpp"
 #include "JSHTMLTimeElement.cpp"
 #include "JSHTMLTitleElement.cpp"

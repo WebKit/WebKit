@@ -79,9 +79,7 @@ private:
     
     Vector<bool> m_pictureSourceState;
 
-#if ENABLE(TEMPLATE_ELEMENT)
     unsigned m_templateCount { 0 };
-#endif
 };
 
 class HTMLPreloadScanner {

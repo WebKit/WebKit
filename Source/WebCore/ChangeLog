@@ -1,3 +1,99 @@
+2016-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the build flag for template elements
+        https://bugs.webkit.org/show_bug.cgi?id=157022
+
+        Reviewed by Daniel Bates.
+
+        Removed the build flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * bindings/js/JSHTMLTemplateElementCustom.cpp:
+        (WebCore::JSHTMLTemplateElement::content):
+        * css/html.css:
+        (summary::-webkit-details-marker):
+        (template):
+        (bdi, output):
+        * dom/ContainerNode.cpp:
+        (WebCore::isInTemplateContent):
+        (WebCore::containsConsideringHostElements):
+        (WebCore::ContainerNode::parserInsertBefore):
+        (WebCore::ContainerNode::parserAppendChild):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::getCachedLocale):
+        (WebCore::Document::ensureTemplateDocument):
+        (WebCore::Document::fonts):
+        * dom/Document.h:
+        (WebCore::Document::setTemplateDocumentHost):
+        (WebCore::Document::templateDocumentHost):
+        (WebCore::Document::hasDisabledFieldsetElement):
+        (WebCore::Document::textEncoding):
+        (WebCore::Document::templateDocument):
+        * dom/Element.cpp:
+        (WebCore::Element::setInnerHTML):
+        * dom/Node.cpp:
+        (WebCore::Node::containsIncludingHostElements):
+        (WebCore::Node::pseudoAwarePreviousSibling):
+        * dom/TemplateContentDocumentFragment.h:
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::serializeNodesWithNamespaces):
+        * editing/markup.cpp:
+        (WebCore::createFragmentForInnerOuterHTML):
+        * html/HTMLTagNames.in:
+        * html/HTMLTemplateElement.cpp:
+        (WebCore::HTMLTemplateElement::didMoveToNewDocument):
+        * html/HTMLTemplateElement.h:
+        * html/HTMLTemplateElement.idl:
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::insert):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::ownerDocumentForCurrentNode):
+        (WebCore::HTMLConstructionSite::findFosterSite):
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isScopeMarker):
+        (WebCore::HTMLNames::isTableScopeMarker):
+        (WebCore::HTMLNames::isTableBodyScopeMarker):
+        (WebCore::HTMLNames::isTableRowScopeMarker):
+        (WebCore::HTMLElementStack::inSelectScope):
+        (WebCore::HTMLElementStack::hasTemplateInHTMLScope):
+        (WebCore::HTMLElementStack::htmlElement):
+        * html/parser/HTMLElementStack.h:
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::scan):
+        * html/parser/HTMLPreloadScanner.h:
+        * html/parser/HTMLStackItem.h:
+        (WebCore::isSpecialNode):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::isParsingTemplateContents):
+        (WebCore::HTMLTreeBuilder::isParsingFragmentOrTemplateContents):
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::didCreateCustomOrCallbackElement):
+        (WebCore::HTMLTreeBuilder::processTemplateStartTag):
+        (WebCore::HTMLTreeBuilder::processEndOfFileForInTemplateContents):
+        (WebCore::HTMLTreeBuilder::processColgroupEndTagForInColumnGroup):
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processHtmlStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead):
+        (WebCore::HTMLTreeBuilder::finished):
+        * html/parser/HTMLTreeBuilder.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForDocument):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+
 2016-04-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         [iOS] ftp links crash @ WebCore::FTPDirectoryDocumentParser::appendEntry

@@ -1359,10 +1359,8 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
             value->setShadowRoots(WTFMove(shadowRoots));
         }
 
-#if ENABLE(TEMPLATE_ELEMENT)
         if (is<HTMLTemplateElement>(element))
             value->setTemplateContent(buildObjectForNode(downcast<HTMLTemplateElement>(element).content(), 0, nodesMap));
-#endif
 
         if (is<HTMLStyleElement>(element) || (is<HTMLScriptElement>(element) && !element.fastHasAttribute(HTMLNames::srcAttr)))
             value->setContentSecurityPolicyHash(computeContentSecurityPolicySHA256Hash(element));

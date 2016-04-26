@@ -544,9 +544,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 #ifndef NDEBUG
     , m_didDispatchViewportPropertiesChanged(false)
 #endif
-#if ENABLE(TEMPLATE_ELEMENT)
     , m_templateDocumentHost(nullptr)
-#endif
 #if ENABLE(WEB_REPLAY)
     , m_inputCursor(EmptyInputCursor::create())
 #endif
@@ -620,11 +618,9 @@ Document::~Document()
     m_deviceMotionClient->deviceMotionControllerDestroyed();
     m_deviceOrientationClient->deviceOrientationControllerDestroyed();
 #endif
-    
-#if ENABLE(TEMPLATE_ELEMENT)
+
     if (m_templateDocument)
         m_templateDocument->setTemplateDocumentHost(nullptr); // balanced in templateDocument().
-#endif
 
     // FIXME: Should we reset m_domWindow when we detach from the Frame?
     if (m_domWindow)
@@ -6677,7 +6673,6 @@ Locale& Document::getCachedLocale(const AtomicString& locale)
     return *(result.iterator->value);
 }
 
-#if ENABLE(TEMPLATE_ELEMENT)
 Document& Document::ensureTemplateDocument()
 {
     if (const Document* document = templateDocument())
@@ -6692,7 +6687,6 @@ Document& Document::ensureTemplateDocument()
 
     return *m_templateDocument;
 }
-#endif
 
 Ref<FontFaceSet> Document::fonts()
 {

@@ -1,3 +1,17 @@
+2016-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the build flag for template elements
+        https://bugs.webkit.org/show_bug.cgi?id=157022
+
+        Reviewed by Daniel Bates.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
 2016-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Enable the download attribute support

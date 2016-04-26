@@ -87,9 +87,7 @@ private:
         InHead,
         InHeadNoscript,
         AfterHead,
-#if ENABLE(TEMPLATE_ELEMENT)
         TemplateContents,
-#endif
         InBody,
         Text,
         InTable,
@@ -184,11 +182,9 @@ private:
 
     void insertGenericHTMLElement(AtomicHTMLToken&);
 
-#if ENABLE(TEMPLATE_ELEMENT)
     void processTemplateStartTag(AtomicHTMLToken&);
     bool processTemplateEndTag(AtomicHTMLToken&);
     bool processEndOfFileForInTemplateContents(AtomicHTMLToken&);
-#endif
 
     class FragmentParsingContext {
     public:
@@ -213,9 +209,7 @@ private:
     // https://html.spec.whatwg.org/multipage/syntax.html#the-insertion-mode
     InsertionMode m_insertionMode { InsertionMode::Initial };
     InsertionMode m_originalInsertionMode { InsertionMode::Initial };
-#if ENABLE(TEMPLATE_ELEMENT)
     Vector<InsertionMode, 1> m_templateInsertionModes;
-#endif
 
     // https://html.spec.whatwg.org/multipage/syntax.html#concept-pending-table-char-tokens
     StringBuilder m_pendingTableCharacters;

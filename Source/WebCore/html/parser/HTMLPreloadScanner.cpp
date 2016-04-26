@@ -340,13 +340,11 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
 
     case HTMLToken::EndTag: {
         TagId tagId = tagIdFor(token.name());
-#if ENABLE(TEMPLATE_ELEMENT)
         if (tagId == TagId::Template) {
             if (m_templateCount)
                 --m_templateCount;
             return;
         }
-#endif
         if (tagId == TagId::Style) {
             if (m_inStyle)
                 m_cssScanner.reset();
@@ -358,17 +356,13 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
     }
 
     case HTMLToken::StartTag: {
-#if ENABLE(TEMPLATE_ELEMENT)
         if (m_templateCount)
             return;
-#endif
         TagId tagId = tagIdFor(token.name());
-#if ENABLE(TEMPLATE_ELEMENT)
         if (tagId == TagId::Template) {
             ++m_templateCount;
             return;
         }
-#endif
         if (tagId == TagId::Style) {
             m_inStyle = true;
             return;
