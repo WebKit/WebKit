@@ -1370,7 +1370,7 @@ StyleResolver& Element::styleResolver()
     return document().ensureStyleResolver();
 }
 
-ElementStyle Element::resolveStyle(RenderStyle* parentStyle)
+ElementStyle Element::resolveStyle(const RenderStyle* parentStyle)
 {
     return styleResolver().styleForElement(*this, parentStyle);
 }
@@ -1758,7 +1758,7 @@ bool Element::childTypeAllowed(NodeType type) const
 static void checkForEmptyStyleChange(Element& element)
 {
     if (element.styleAffectedByEmpty()) {
-        RenderStyle* style = element.renderStyle();
+        auto* style = element.renderStyle();
         if (!style || (!style->emptyState() || element.hasChildNodes()))
             element.setNeedsStyleRecalc();
     }
@@ -1784,14 +1784,14 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
 
         // This is the insert/append case.
         if (newFirstElement != elementAfterChange) {
-            RenderStyle* style = elementAfterChange->renderStyle();
+            auto* style = elementAfterChange->renderStyle();
             if (!style || style->firstChildState())
                 elementAfterChange->setNeedsStyleRecalc();
         }
 
         // We also have to handle node removal.
         if (checkType == SiblingElementRemoved && newFirstElement == elementAfterChange && newFirstElement) {
-            RenderStyle* style = newFirstElement->renderStyle();
+            auto* style = newFirstElement->renderStyle();
             if (!style || !style->firstChildState())
                 newFirstElement->setNeedsStyleRecalc();
         }
@@ -1804,7 +1804,7 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
         Element* newLastElement = ElementTraversal::lastChild(parent);
 
         if (newLastElement != elementBeforeChange) {
-            RenderStyle* style = elementBeforeChange->renderStyle();
+            auto* style = elementBeforeChange->renderStyle();
             if (!style || style->lastChildState())
                 elementBeforeChange->setNeedsStyleRecalc();
         }
@@ -1812,7 +1812,7 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
         // We also have to handle node removal.  The parser callback case is similar to node removal as well in that we need to change the last child
         // to match now.
         if ((checkType == SiblingElementRemoved || checkType == FinishedParsingChildren) && newLastElement == elementBeforeChange && newLastElement) {
-            RenderStyle* style = newLastElement->renderStyle();
+            auto* style = newLastElement->renderStyle();
             if (!style || !style->lastChildState())
                 newLastElement->setNeedsStyleRecalc();
         }
@@ -2459,7 +2459,7 @@ static PseudoElement* beforeOrAfterPseudoElement(Element& host, PseudoId pseudoE
     }
 }
 
-RenderStyle* Element::existingComputedStyle()
+const RenderStyle* Element::existingComputedStyle()
 {
     if (auto* renderTreeStyle = renderStyle())
         return renderTreeStyle;
@@ -2470,13 +2470,13 @@ RenderStyle* Element::existingComputedStyle()
     return nullptr;
 }
 
-RenderStyle& Element::resolveComputedStyle()
+const RenderStyle& Element::resolveComputedStyle()
 {
     ASSERT(inDocument());
     ASSERT(!existingComputedStyle());
 
     Deque<Element*, 32> elementsRequiringComputedStyle({ this });
-    RenderStyle* computedStyle = nullptr;
+    const RenderStyle* computedStyle = nullptr;
 
     // Collect ancestors until we find one that has style.
     auto composedAncestors = composedTreeAncestors(*this);
@@ -2499,7 +2499,7 @@ RenderStyle& Element::resolveComputedStyle()
     return *computedStyle;
 }
 
-RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
+const RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
 {
     if (PseudoElement* pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementSpecifier))
         return pseudoElement->computedStyle();
@@ -3293,7 +3293,7 @@ void Element::didDetachRenderers()
     ASSERT(hasCustomStyleResolveCallbacks());
 }
 
-Optional<ElementStyle> Element::resolveCustomStyle(RenderStyle&, RenderStyle*)
+Optional<ElementStyle> Element::resolveCustomStyle(const RenderStyle&, const RenderStyle*)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
     return Nullopt;

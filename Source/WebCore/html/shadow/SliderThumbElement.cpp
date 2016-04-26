@@ -83,21 +83,21 @@ RenderSliderThumb::RenderSliderThumb(SliderThumbElement& element, RenderStyle&& 
 {
 }
 
-void RenderSliderThumb::updateAppearance(RenderStyle* parentStyle)
+void RenderSliderThumb::updateAppearance(const RenderStyle* parentStyle)
 {
     if (parentStyle->appearance() == SliderVerticalPart)
-        style().setAppearance(SliderThumbVerticalPart);
+        mutableStyle().setAppearance(SliderThumbVerticalPart);
     else if (parentStyle->appearance() == SliderHorizontalPart)
-        style().setAppearance(SliderThumbHorizontalPart);
+        mutableStyle().setAppearance(SliderThumbHorizontalPart);
     else if (parentStyle->appearance() == MediaSliderPart)
-        style().setAppearance(MediaSliderThumbPart);
+        mutableStyle().setAppearance(MediaSliderThumbPart);
     else if (parentStyle->appearance() == MediaVolumeSliderPart)
-        style().setAppearance(MediaVolumeSliderThumbPart);
+        mutableStyle().setAppearance(MediaVolumeSliderThumbPart);
     else if (parentStyle->appearance() == MediaFullScreenVolumeSliderPart)
-        style().setAppearance(MediaFullScreenVolumeSliderThumbPart);
+        mutableStyle().setAppearance(MediaFullScreenVolumeSliderThumbPart);
     if (style().hasAppearance()) {
         ASSERT(element());
-        theme().adjustSliderThumbSize(style(), element());
+        theme().adjustSliderThumbSize(mutableStyle(), element());
     }
 }
 
@@ -159,13 +159,13 @@ void RenderSliderContainer::layout()
     ASSERT(element()->shadowHost());
     auto& input = downcast<HTMLInputElement>(*element()->shadowHost());
     bool isVertical = hasVerticalAppearance(input);
-    style().setFlexDirection(isVertical ? FlowColumn : FlowRow);
+    mutableStyle().setFlexDirection(isVertical ? FlowColumn : FlowRow);
     TextDirection oldTextDirection = style().direction();
     if (isVertical) {
         // FIXME: Work around rounding issues in RTL vertical sliders. We want them to
         // render identically to LTR vertical sliders. We can remove this work around when
         // subpixel rendering is enabled on all ports.
-        style().setDirection(LTR);
+        mutableStyle().setDirection(LTR);
     }
 
     RenderBox* thumb = input.sliderThumbElement() ? input.sliderThumbElement()->renderBox() : nullptr;
@@ -177,7 +177,7 @@ void RenderSliderContainer::layout()
 
     RenderFlexibleBox::layout();
 
-    style().setDirection(oldTextDirection);
+    mutableStyle().setDirection(oldTextDirection);
     // These should always exist, unless someone mutates the shadow DOM (e.g., in the inspector).
     if (!thumb || !track)
         return;
@@ -574,7 +574,7 @@ HTMLInputElement* SliderThumbElement::hostInput() const
     return downcast<HTMLInputElement>(shadowHost());
 }
 
-Optional<ElementStyle> SliderThumbElement::resolveCustomStyle(RenderStyle&, RenderStyle* hostStyle)
+Optional<ElementStyle> SliderThumbElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* hostStyle)
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 
@@ -628,7 +628,7 @@ RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(RenderSty
     return createRenderer<RenderSliderContainer>(*this, WTFMove(style));
 }
 
-Optional<ElementStyle> SliderContainerElement::resolveCustomStyle(RenderStyle&, RenderStyle* hostStyle)
+Optional<ElementStyle> SliderContainerElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* hostStyle)
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 

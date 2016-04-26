@@ -1328,7 +1328,7 @@ void InlineFlowBox::constrainToLineTopAndBottomIfNeeded(LayoutRect& rect) const
 static LayoutRect clipRectForNinePieceImageStrip(InlineFlowBox* box, const NinePieceImage& image, const LayoutRect& paintRect)
 {
     LayoutRect clipRect(paintRect);
-    RenderStyle& style = box->renderer().style();
+    auto& style = box->renderer().style();
     LayoutBoxExtent outsets = style.imageOutsets(image);
     if (box->isHorizontal()) {
         clipRect.setY(paintRect.y() - outsets.top());

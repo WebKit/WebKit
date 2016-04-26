@@ -824,7 +824,7 @@ static FloatQuad innerFrameQuad(const Frame& frame, const Node& assistedNode)
     if (!renderer)
         return FloatQuad();
 
-    RenderStyle& style = renderer->style();
+    auto& style = renderer->style();
     IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
 
     boundingBox.move(style.borderLeftWidth(), style.borderTopWidth());

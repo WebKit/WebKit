@@ -51,7 +51,7 @@ TextAutoSizingKey::TextAutoSizingKey(DeletedTag)
 {
 }
 
-TextAutoSizingKey::TextAutoSizingKey(RenderStyle* style)
+TextAutoSizingKey::TextAutoSizingKey(const RenderStyle* style)
     : m_style(style ? RenderStyle::clonePtr(*style) : nullptr)
 {
 }

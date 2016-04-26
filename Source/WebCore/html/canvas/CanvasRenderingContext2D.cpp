@@ -320,7 +320,7 @@ void CanvasRenderingContext2D::FontProxy::fontsNeedUpdate(FontSelector& selector
     update(selector);
 }
 
-inline void CanvasRenderingContext2D::FontProxy::initialize(FontSelector& fontSelector, RenderStyle& newStyle)
+inline void CanvasRenderingContext2D::FontProxy::initialize(FontSelector& fontSelector, const RenderStyle& newStyle)
 {
     // Beware! m_font.fontSelector() might not point to document.fontSelector()!
     ASSERT(newStyle.fontCascade().fontSelector() == &fontSelector);
@@ -2196,7 +2196,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     Document& document = canvas()->document();
     document.updateStyleIfNeeded();
 
-    if (RenderStyle* computedStyle = canvas()->computedStyle())
+    if (auto* computedStyle = canvas()->computedStyle())
         newStyle->setFontDescription(computedStyle->fontDescription());
     else {
         FontCascadeDescription defaultFontDescription;
@@ -2259,9 +2259,9 @@ void CanvasRenderingContext2D::setTextBaseline(const String& s)
     modifiableState().textBaseline = baseline;
 }
 
-inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction direction, RenderStyle** computedStyle) const
+inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction direction, const RenderStyle** computedStyle) const
 {
-    RenderStyle* style = (computedStyle || direction == Direction::Inherit) ? canvas()->computedStyle() : nullptr;
+    auto* style = (computedStyle || direction == Direction::Inherit) ? canvas()->computedStyle() : nullptr;
     if (computedStyle)
         *computedStyle = style;
     switch (direction) {
@@ -2384,7 +2384,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
     // FIXME: Need to turn off font smoothing.
 
-    RenderStyle* computedStyle;
+    const RenderStyle* computedStyle;
     TextDirection direction = toTextDirection(state().direction, &computedStyle);
     bool isRTL = direction == RTL;
     bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;

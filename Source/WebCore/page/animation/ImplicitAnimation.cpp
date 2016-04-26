@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-ImplicitAnimation::ImplicitAnimation(Animation& transition, CSSPropertyID animatingProperty, RenderElement* renderer, CompositeAnimation* compAnim, RenderStyle* fromStyle)
+ImplicitAnimation::ImplicitAnimation(const Animation& transition, CSSPropertyID animatingProperty, RenderElement* renderer, CompositeAnimation* compAnim, const RenderStyle* fromStyle)
     : AnimationBase(transition, renderer, compAnim)
     , m_fromStyle(RenderStyle::clonePtr(*fromStyle))
     , m_transitionProperty(transition.property())
@@ -60,7 +60,7 @@ bool ImplicitAnimation::shouldSendEventForListener(Document::ListenerType inList
     return m_object->document().hasListenerType(inListenerType);
 }
 
-bool ImplicitAnimation::animate(CompositeAnimation*, RenderElement*, const RenderStyle*, RenderStyle* targetStyle, std::unique_ptr<RenderStyle>& animatedStyle)
+bool ImplicitAnimation::animate(CompositeAnimation*, RenderElement*, const RenderStyle*, const RenderStyle* targetStyle, std::unique_ptr<RenderStyle>& animatedStyle)
 {
     // If we get this far and the animation is done, it means we are cleaning up a just finished animation.
     // So just return. Everything is already all cleaned up.
@@ -205,7 +205,7 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
     return false; // Didn't dispatch an event
 }
 
-void ImplicitAnimation::reset(RenderStyle* to)
+void ImplicitAnimation::reset(const RenderStyle* to)
 {
     ASSERT(to);
     ASSERT(m_fromStyle);

@@ -1615,7 +1615,7 @@ LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopA
     return result;
 }
 
-static inline LayoutUnit calculateMinimumPageHeight(RenderStyle& renderStyle, RootInlineBox& lastLine, LayoutUnit lineTop, LayoutUnit lineBottom)
+static inline LayoutUnit calculateMinimumPageHeight(const RenderStyle& renderStyle, RootInlineBox& lastLine, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     // We may require a certain minimum number of lines per page in order to satisfy
     // orphans and widows, and that may affect the minimum page height.
@@ -3723,7 +3723,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
     for (RenderObject* descendent = traverseNext(this, isNonBlocksOrNonFixedHeightListItems); descendent; descendent = descendent->traverseNext(this, isNonBlocksOrNonFixedHeightListItems)) {
         if (isVisibleRenderText(descendent) && resizeTextPermitted(descendent)) {
             RenderText& text = downcast<RenderText>(*descendent);
-            RenderStyle& oldStyle = text.style();
+            auto& oldStyle = text.style();
             auto fontDescription = oldStyle.fontDescription();
             float specifiedSize = fontDescription.specifiedSize();
             float scaledSize = roundf(specifiedSize * scale);

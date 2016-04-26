@@ -4111,7 +4111,7 @@ bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInf
         rootRelativeBoundsComputed = true;
     }
 
-    RenderStyle& style = renderer().style();
+    auto& style = renderer().style();
     ASSERT(style.clipPath());
     if (is<ShapeClipPathOperation>(*style.clipPath()) || (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer()))) {
         WindRule windRule;

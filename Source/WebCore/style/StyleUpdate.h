@@ -63,7 +63,8 @@ public:
 
     bool textUpdate(const Text&) const;
 
-    RenderStyle* elementStyle(const Element&) const;
+    const RenderStyle* elementStyle(const Element&) const;
+    RenderStyle* elementStyle(const Element&);
 
     const Document& document() const { return m_document; }
 

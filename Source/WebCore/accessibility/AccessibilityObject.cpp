@@ -1134,7 +1134,7 @@ static VisiblePosition startOfStyleRange(const VisiblePosition& visiblePos)
 {
     RenderObject* renderer = visiblePos.deepEquivalent().deprecatedNode()->renderer();
     RenderObject* startRenderer = renderer;
-    RenderStyle* style = &renderer->style();
+    auto* style = &renderer->style();
 
     // traverse backward by renderer to look for style change
     for (RenderObject* r = renderer->previousInPreOrder(); r; r = r->previousInPreOrder()) {

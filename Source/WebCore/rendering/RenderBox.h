@@ -563,10 +563,10 @@ public:
             applyTopLeftLocationOffsetWithFlipping(point);
     }
 
-    LayoutRect logicalVisualOverflowRectForPropagation(RenderStyle*) const;
-    LayoutRect visualOverflowRectForPropagation(RenderStyle*) const;
-    LayoutRect logicalLayoutOverflowRectForPropagation(RenderStyle*) const;
-    LayoutRect layoutOverflowRectForPropagation(RenderStyle*) const;
+    LayoutRect logicalVisualOverflowRectForPropagation(const RenderStyle*) const;
+    LayoutRect visualOverflowRectForPropagation(const RenderStyle*) const;
+    LayoutRect logicalLayoutOverflowRectForPropagation(const RenderStyle*) const;
+    LayoutRect layoutOverflowRectForPropagation(const RenderStyle*) const;
 
     bool hasRenderOverflow() const { return m_overflow; }    
     bool hasVisualOverflow() const { return m_overflow && !borderBoxRect().contains(m_overflow->visualOverflowRect()); }

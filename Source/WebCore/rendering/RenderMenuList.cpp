@@ -109,7 +109,7 @@ void RenderMenuList::createInnerBlock()
 
 void RenderMenuList::adjustInnerStyle()
 {
-    RenderStyle& innerStyle = m_innerBlock->style();
+    auto& innerStyle = m_innerBlock->mutableStyle();
     innerStyle.setFlexGrow(1);
     innerStyle.setFlexShrink(1);
     // min-width: 0; is needed for correct shrinking.
@@ -215,7 +215,7 @@ void RenderMenuList::updateOptionsWidth()
         if (theme().popupOptionSupportsTextIndent()) {
             // Add in the option's text indent.  We can't calculate percentage values for now.
             float optionWidth = 0;
-            if (RenderStyle* optionStyle = element->computedStyle())
+            if (auto* optionStyle = element->computedStyle())
                 optionWidth += minimumValueForLength(optionStyle->textIndent(), 0);
             if (!text.isEmpty()) {
                 const FontCascade& font = style().fontCascade();
@@ -519,7 +519,7 @@ PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
     bool itemHasCustomBackgroundColor;
     getItemBackgroundColor(listIndex, itemBackgroundColor, itemHasCustomBackgroundColor);
 
-    RenderStyle& style = *element->computedStyle();
+    auto& style = *element->computedStyle();
     return PopupMenuStyle(style.visitedDependentColor(CSSPropertyColor), itemBackgroundColor, style.fontCascade(), style.visibility() == VISIBLE,
         style.display() == NONE, true, style.textIndent(), style.direction(), isOverride(style.unicodeBidi()),
         itemHasCustomBackgroundColor ? PopupMenuStyle::CustomBackgroundColor : PopupMenuStyle::DefaultBackgroundColor);

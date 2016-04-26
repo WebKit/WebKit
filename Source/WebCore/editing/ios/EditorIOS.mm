@@ -181,7 +181,7 @@ const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
 
     if (!m_frame.selection().isRange()) {
         Node* nodeToRemove;
-        RenderStyle* style = styleForSelectionStart(&m_frame, nodeToRemove); // sets nodeToRemove
+        auto* style = styleForSelectionStart(&m_frame, nodeToRemove); // sets nodeToRemove
 
         const Font* result = nullptr;
         if (style) {
@@ -220,7 +220,7 @@ const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
 NSDictionary* Editor::fontAttributesForSelectionStart() const
 {
     Node* nodeToRemove;
-    RenderStyle* style = styleForSelectionStart(&m_frame, nodeToRemove);
+    auto* style = styleForSelectionStart(&m_frame, nodeToRemove);
     if (!style)
         return nil;
 

@@ -110,7 +110,7 @@ int RenderMarquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge
 {
     RenderBox* box = m_layer->renderBox();
     ASSERT(box);
-    RenderStyle& boxStyle = box->style();
+    auto& boxStyle = box->style();
     if (isHorizontal()) {
         bool ltr = boxStyle.isLeftToRightDirection();
         LayoutUnit clientWidth = box->clientWidth();
@@ -197,7 +197,7 @@ void RenderMarquee::updateMarqueePosition()
 
 void RenderMarquee::updateMarqueeStyle()
 {
-    RenderStyle& style = m_layer->renderer().style();
+    auto& style = m_layer->renderer().mutableStyle();
     
     if (m_direction != style.marqueeDirection() || (m_totalLoops != style.marqueeLoopCount() && m_currentLoop >= m_totalLoops))
         m_currentLoop = 0; // When direction changes or our loopCount is a smaller number than our current loop, reset our loop.

@@ -1990,7 +1990,7 @@ static void AXAttributeStringSetNumber(NSMutableAttributedString* attrString, NS
 
 static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
 {
-    RenderStyle& style = renderer->style();
+    auto& style = renderer->style();
     
     // set basic font info
     AXAttributeStringSetFont(attrString, style.fontCascade().primaryFont().getCTFont(), range);

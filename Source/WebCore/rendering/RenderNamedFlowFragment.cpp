@@ -347,7 +347,7 @@ void RenderNamedFlowFragment::checkRegionStyle()
     downcast<RenderNamedFlowThread>(*m_flowThread).checkRegionsWithStyling();
 }
 
-std::unique_ptr<RenderStyle> RenderNamedFlowFragment::computeStyleInRegion(RenderElement& renderer, RenderStyle& parentStyle) const
+std::unique_ptr<RenderStyle> RenderNamedFlowFragment::computeStyleInRegion(RenderElement& renderer, const RenderStyle& parentStyle) const
 {
     ASSERT(!renderer.isAnonymous());
 

@@ -48,7 +48,7 @@ public:
 
 protected:
     TextControlInnerElement(Document&);
-    Optional<ElementStyle> resolveCustomStyle(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
+    Optional<ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
 
 private:
     bool isMouseFocusable() const override { return false; }
@@ -65,7 +65,7 @@ public:
 private:
     TextControlInnerTextElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    Optional<ElementStyle> resolveCustomStyle(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
+    Optional<ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
     bool isMouseFocusable() const override { return false; }
     bool isTextControlInnerTextElement() const override { return true; }
 };
@@ -77,7 +77,7 @@ public:
 private:
     TextControlPlaceholderElement(Document&);
     
-    Optional<ElementStyle> resolveCustomStyle(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
+    Optional<ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
 };
 
 class SearchFieldResultsButtonElement final : public HTMLDivElement {

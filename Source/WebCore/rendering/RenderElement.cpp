@@ -205,11 +205,6 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     return nullptr;
 }
 
-enum StyleCacheState {
-    Cached,
-    Uncached
-};
-
 std::unique_ptr<RenderStyle> RenderElement::uncachedFirstLineStyle(RenderStyle* style) const
 {
     if (!view().usesFirstLineRules())
@@ -221,14 +216,14 @@ std::unique_ptr<RenderStyle> RenderElement::uncachedFirstLineStyle(RenderStyle* 
         if (RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock())
             return firstLineBlock->getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE), style, firstLineBlock == this ? style : nullptr);
     } else if (!rendererForFirstLineStyle.isAnonymous() && rendererForFirstLineStyle.isRenderInline()) {
-        RenderStyle& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
+        auto& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
         if (&parentStyle != &rendererForFirstLineStyle.parent()->style())
             return rendererForFirstLineStyle.getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE_INHERITED), &parentStyle, style);
     }
     return nullptr;
 }
 
-RenderStyle* RenderElement::cachedFirstLineStyle() const
+const RenderStyle* RenderElement::cachedFirstLineStyle() const
 {
     ASSERT(view().usesFirstLineRules());
 
@@ -238,10 +233,10 @@ RenderStyle* RenderElement::cachedFirstLineStyle() const
         if (RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock())
             return firstLineBlock->getCachedPseudoStyle(FIRST_LINE, &style());
     } else if (!rendererForFirstLineStyle.isAnonymous() && rendererForFirstLineStyle.isRenderInline()) {
-        RenderStyle& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
+        auto& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
         if (&parentStyle != &rendererForFirstLineStyle.parent()->style()) {
             // A first-line style is in effect. Cache a first-line style for ourselves.
-            rendererForFirstLineStyle.style().setHasPseudoStyle(FIRST_LINE_INHERITED);
+            rendererForFirstLineStyle.m_style.setHasPseudoStyle(FIRST_LINE_INHERITED);
             return rendererForFirstLineStyle.getCachedPseudoStyle(FIRST_LINE_INHERITED, &parentStyle);
         }
     }
@@ -249,7 +244,7 @@ RenderStyle* RenderElement::cachedFirstLineStyle() const
     return &style();
 }
 
-RenderStyle& RenderElement::firstLineStyle() const
+const RenderStyle& RenderElement::firstLineStyle() const
 {
     return view().usesFirstLineRules() ? *cachedFirstLineStyle() : style();
 }
@@ -806,7 +801,7 @@ static inline bool rendererHasBackground(const RenderElement* renderer)
 
 void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
-    RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+    auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
     if (oldStyle) {
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
@@ -1535,7 +1530,7 @@ void RenderElement::addControlStatesForRenderer(const RenderObject* o, ControlSt
     controlStatesRendererMap().add(o, states);
 }
 
-RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle) const
+const RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, const RenderStyle* parentStyle) const
 {
     if (pseudo < FIRST_INTERNAL_PSEUDOID && !style().hasPseudoStyle(pseudo))
         return nullptr;
@@ -1546,11 +1541,26 @@ RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* p
 
     std::unique_ptr<RenderStyle> result = getUncachedPseudoStyle(PseudoStyleRequest(pseudo), parentStyle);
     if (result)
-        return style().addCachedPseudoStyle(WTFMove(result));
+        return const_cast<RenderStyle&>(m_style).addCachedPseudoStyle(WTFMove(result));
     return nullptr;
 }
 
-std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleRequest& pseudoStyleRequest, RenderStyle* parentStyle, RenderStyle* ownStyle) const
+RenderStyle* RenderElement::getMutableCachedPseudoStyle(PseudoId pseudo, const RenderStyle* parentStyle)
+{
+    if (pseudo < FIRST_INTERNAL_PSEUDOID && !style().hasPseudoStyle(pseudo))
+        return nullptr;
+
+    RenderStyle* cachedStyle = style().getCachedPseudoStyle(pseudo);
+    if (cachedStyle)
+        return cachedStyle;
+
+    std::unique_ptr<RenderStyle> result = getUncachedPseudoStyle(PseudoStyleRequest(pseudo), parentStyle);
+    if (result)
+        return m_style.addCachedPseudoStyle(WTFMove(result));
+    return nullptr;
+}
+
+std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleRequest& pseudoStyleRequest, const RenderStyle* parentStyle, const RenderStyle* ownStyle) const
 {
     if (pseudoStyleRequest.pseudoId < FIRST_INTERNAL_PSEUDOID && !ownStyle && !style().hasPseudoStyle(pseudoStyleRequest.pseudoId))
         return nullptr;
@@ -2066,7 +2076,7 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
     if (!hasOutline())
         return;
 
-    RenderStyle& styleToUse = style();
+    auto& styleToUse = style();
     float outlineWidth = floorToDevicePixel(styleToUse.outlineWidth(), document().deviceScaleFactor());
     float outlineOffset = floorToDevicePixel(styleToUse.outlineOffset(), document().deviceScaleFactor());
 

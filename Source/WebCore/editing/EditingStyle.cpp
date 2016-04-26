@@ -461,7 +461,7 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
     }
 
     if (node && node->computedStyle()) {
-        RenderStyle* renderStyle = node->computedStyle();
+        auto* renderStyle = node->computedStyle();
         removeTextFillAndStrokeColorsIfNeeded(renderStyle);
         if (renderStyle->fontDescription().keywordSize())
             m_mutableStyle->setProperty(CSSPropertyFontSize, computedStyleAtPosition.getFontSizeCSSValuePreferringKeyword()->cssText());
@@ -471,7 +471,7 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
     extractFontSizeDelta();
 }
 
-void EditingStyle::removeTextFillAndStrokeColorsIfNeeded(RenderStyle* renderStyle)
+void EditingStyle::removeTextFillAndStrokeColorsIfNeeded(const RenderStyle* renderStyle)
 {
     // If a node's text fill color is invalid, then its children use 
     // their font-color as their text fill color (they don't

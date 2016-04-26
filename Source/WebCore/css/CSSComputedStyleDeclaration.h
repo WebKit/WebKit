@@ -70,10 +70,10 @@ private:
     Node* styledNode() const;
 
     RefPtr<CSSValue> svgPropertyValue(CSSPropertyID, EUpdateLayout) const;
-    RefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, RenderStyle*) const;
+    RefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, const RenderStyle*) const;
 
     static Ref<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
-    RefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;
+    RefPtr<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle*, const Color&) const;
 
     RefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&) const;
     RefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand&) const;

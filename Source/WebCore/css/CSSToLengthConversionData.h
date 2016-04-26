@@ -41,7 +41,7 @@ class RenderView;
 
 class CSSToLengthConversionData {
 public:
-    CSSToLengthConversionData(RenderStyle* style, const RenderStyle* rootStyle, const RenderView* renderView, float zoom, bool computingFontSize = false)
+    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderView* renderView, float zoom, bool computingFontSize = false)
         : m_style(style)
         , m_rootStyle(rootStyle)
         , m_renderView(renderView)
@@ -52,7 +52,7 @@ public:
         ASSERT(zoom > 0);
     }
 
-    CSSToLengthConversionData(RenderStyle* style, const RenderStyle* rootStyle, const RenderView* renderView, bool computingFontSize = false)
+    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderView* renderView, bool computingFontSize = false)
         : m_style(style)
         , m_rootStyle(rootStyle)
         , m_renderView(renderView)
@@ -67,7 +67,7 @@ public:
     {
     }
 
-    RenderStyle* style() const { return m_style; }
+    const RenderStyle* style() const { return m_style; }
     const RenderStyle* rootStyle() const { return m_rootStyle; }
     float zoom() const;
     bool computingFontSize() const { return m_computingFontSize; }
@@ -83,7 +83,7 @@ public:
     }
 
 private:
-    RenderStyle* m_style;
+    const RenderStyle* m_style;
     const RenderStyle* m_rootStyle;
     const RenderView* m_renderView;
     float m_zoom;

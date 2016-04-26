@@ -45,7 +45,7 @@ static void updatePathFromCircleElement(SVGElement* element, Path& path)
     RenderElement* renderer = element->renderer();
     if (!renderer)
         return;
-    RenderStyle& style = renderer->style();
+    auto& style = renderer->style();
     float r = lengthContext.valueForLength(style.svgStyle().r());
     if (r > 0) {
         float cx = lengthContext.valueForLength(style.svgStyle().cx(), LengthModeWidth);
@@ -59,7 +59,7 @@ static void updatePathFromEllipseElement(SVGElement* element, Path& path)
     RenderElement* renderer = element->renderer();
     if (!renderer)
         return;
-    RenderStyle& style = renderer->style();
+    auto& style = renderer->style();
     SVGLengthContext lengthContext(element);
     float rx = lengthContext.valueForLength(style.svgStyle().rx(), LengthModeWidth);
     if (rx <= 0)
@@ -120,7 +120,7 @@ static void updatePathFromRectElement(SVGElement* element, Path& path)
     if (!renderer)
         return;
 
-    RenderStyle& style = renderer->style();
+    auto& style = renderer->style();
     SVGLengthContext lengthContext(element);
     float width = lengthContext.valueForLength(style.width(), LengthModeWidth);
     if (width <= 0)

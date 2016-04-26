@@ -84,7 +84,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
         return 0;
 
     RenderObject* renderer = object->renderer();
-    RenderStyle* style = &renderer->style();
+    auto* style = &renderer->style();
 
     AtkAttributeSet* result = nullptr;
     GUniquePtr<gchar> buffer(g_strdup_printf("%i", style->fontSize()));

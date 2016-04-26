@@ -99,7 +99,7 @@ public:
     // Called when a descendant box's layout is finished and it has been positioned within its container.
     virtual void flowThreadDescendantBoxLaidOut(RenderBox*) { }
 
-    static RenderStyle createFlowThreadStyle(RenderStyle* parentStyle);
+    static RenderStyle createFlowThreadStyle(const RenderStyle* parentStyle);
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 

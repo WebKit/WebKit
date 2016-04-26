@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-inline RenderStyle* Node::renderStyle() const
+inline const RenderStyle* Node::renderStyle() const
 {
     auto* renderer = this->renderer();
     if (!renderer)

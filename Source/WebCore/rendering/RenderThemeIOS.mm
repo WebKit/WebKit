@@ -336,7 +336,7 @@ FloatRect RenderThemeIOS::addRoundedBorderClip(const RenderObject& box, Graphics
 {
     // To fix inner border bleeding issues <rdar://problem/9812507>, we clip to the outer border and assert that
     // the border is opaque or transparent, unless we're checked because checked radio/checkboxes show no bleeding.
-    RenderStyle& style = box.style();
+    auto& style = box.style();
     RoundedRect border = isChecked(box) ? style.getRoundedInnerBorderFor(rect) : style.getRoundedBorderFor(rect);
 
     if (border.isRounded())
@@ -499,7 +499,7 @@ bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintI
 
 bool RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    RenderStyle& style = box.style();
+    auto& style = box.style();
     FloatPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());
@@ -630,7 +630,7 @@ void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& styl
 
 bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    RenderStyle& style = box.style();
+    auto& style = box.style();
     float borderTopWidth = style.borderTopWidth();
     FloatRect clip(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth(), rect.width() - style.borderLeftWidth() - style.borderRightWidth(), rect.height() - style.borderTopWidth() - style.borderBottomWidth());
     CGContextRef cgContext = paintInfo.context().platformContext();
@@ -734,7 +734,7 @@ void RenderThemeIOS::adjustSliderTrackStyle(StyleResolver& selector, RenderStyle
 bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     IntRect trackClip = rect;
-    RenderStyle& style = box.style();
+    auto& style = box.style();
 
     bool isHorizontal = true;
     switch (style.appearance()) {

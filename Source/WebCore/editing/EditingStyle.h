@@ -178,7 +178,7 @@ private:
     EditingStyle(CSSPropertyID, const String& value);
     EditingStyle(CSSPropertyID, CSSValueID);
     void init(Node*, PropertiesToInclude);
-    void removeTextFillAndStrokeColorsIfNeeded(RenderStyle*);
+    void removeTextFillAndStrokeColorsIfNeeded(const RenderStyle*);
     void setProperty(CSSPropertyID, const String& value, bool important = false);
     void extractFontSizeDelta();
     template<typename T> TriState triStateOfStyle(T& styleToCompare, ShouldIgnoreTextOnlyProperties) const;

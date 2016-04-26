@@ -88,7 +88,7 @@ bool SVGStopElement::rendererIsNeeded(const RenderStyle&)
 
 Color SVGStopElement::stopColorIncludingOpacity() const
 {
-    RenderStyle* style = renderer() ? &renderer()->style() : nullptr;
+    auto* style = renderer() ? &renderer()->style() : nullptr;
     // FIXME: This check for null style exists to address Bug WK 90814, a rare crash condition in
     // which the renderer or style is null. This entire class is scheduled for removal (Bug WK 86941)
     // and we will tolerate this null check until then.

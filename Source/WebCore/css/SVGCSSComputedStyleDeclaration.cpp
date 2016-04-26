@@ -93,7 +93,7 @@ static RefPtr<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLength>& d
     return list;
 }
 
-RefPtr<SVGPaint> ComputedStyleExtractor::adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint> newPaint, RenderStyle* style) const
+RefPtr<SVGPaint> ComputedStyleExtractor::adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint> newPaint, const RenderStyle* style) const
 {
     RefPtr<SVGPaint> paint = newPaint;
     if (paint->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR || paint->paintType() == SVGPaint::SVG_PAINTTYPE_URI_CURRENTCOLOR)
@@ -111,7 +111,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
     if (updateLayout)
         node->document().updateLayout();
 
-    RenderStyle* style = node->computedStyle();
+    auto* style = node->computedStyle();
     if (!style)
         return nullptr;
 

@@ -659,7 +659,7 @@ static Node::Editability computeEditabilityFromComputedStyle(const Node& startNo
     // would fire in the middle of Document::setFocusedElement().
 
     for (const Node* node = &startNode; node; node = node->parentNode()) {
-        RenderStyle* style = node->isDocumentNode() ? node->renderStyle() : const_cast<Node*>(node)->computedStyle();
+        auto* style = node->isDocumentNode() ? node->renderStyle() : const_cast<Node*>(node)->computedStyle();
         if (!style)
             continue;
         if (style->display() == NONE)
@@ -1006,7 +1006,7 @@ Node* Node::pseudoAwareLastChild() const
     return lastChild();
 }
 
-RenderStyle* Node::computedStyle(PseudoId pseudoElementSpecifier)
+const RenderStyle* Node::computedStyle(PseudoId pseudoElementSpecifier)
 {
     auto* composedParent = composedTreeAncestors(*this).first();
     if (!composedParent)

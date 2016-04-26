@@ -41,7 +41,7 @@ class RenderElement;
 // for a single RenderElement.
 class ImplicitAnimation : public AnimationBase {
 public:
-    static Ref<ImplicitAnimation> create(Animation& animation, CSSPropertyID animatingProperty, RenderElement* renderer, CompositeAnimation* compositeAnimation, RenderStyle* fromStyle)
+    static Ref<ImplicitAnimation> create(const Animation& animation, CSSPropertyID animatingProperty, RenderElement* renderer, CompositeAnimation* compositeAnimation, const RenderStyle* fromStyle)
     {
         return adoptRef(*new ImplicitAnimation(animation, animatingProperty, renderer, compositeAnimation, fromStyle));
     };
@@ -54,9 +54,9 @@ public:
     void pauseAnimation(double timeOffset) override;
     void endAnimation() override;
 
-    bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, std::unique_ptr<RenderStyle>& animatedStyle) override;
+    bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, const RenderStyle* targetStyle, std::unique_ptr<RenderStyle>& animatedStyle) override;
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle) override;
-    virtual void reset(RenderStyle* to);
+    void reset(const RenderStyle* to);
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const override;
 
@@ -87,7 +87,7 @@ protected:
 #endif
 
 private:
-    ImplicitAnimation(Animation&, CSSPropertyID, RenderElement*, CompositeAnimation*, RenderStyle*);
+    ImplicitAnimation(const Animation&, CSSPropertyID, RenderElement*, CompositeAnimation*, const RenderStyle*);
     virtual ~ImplicitAnimation();
 
     // The two styles that we are blending.

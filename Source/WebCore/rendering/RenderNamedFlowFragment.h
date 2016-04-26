@@ -123,7 +123,7 @@ private:
     bool isRenderNamedFlowFragment() const override { return true; }
     const char* renderName() const override { return "RenderNamedFlowFragment"; }
 
-    std::unique_ptr<RenderStyle> computeStyleInRegion(RenderElement&, RenderStyle& parentStyle) const;
+    std::unique_ptr<RenderStyle> computeStyleInRegion(RenderElement&, const RenderStyle& parentStyle) const;
     void computeChildrenStyleInRegion(RenderElement&);
     void setObjectStyleInRegion(RenderObject*, std::unique_ptr<RenderStyle>, bool objectRegionStyleCached);
 

@@ -443,9 +443,9 @@ public:
     RenderBoxModelObject* renderBoxModelObject() const;
     
     // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).
-    RenderStyle* renderStyle() const;
+    const RenderStyle* renderStyle() const;
 
-    virtual RenderStyle* computedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO);
+    virtual const RenderStyle* computedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO);
 
     // -----------------------------------------------------------------------------
     // Notification of document structure changes (see ContainerNode.h for more notification methods)

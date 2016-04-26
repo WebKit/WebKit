@@ -499,7 +499,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     if (!renderer)
         return emptyQuad();
 
-    RenderStyle& style = renderer->style();
+    auto& style = renderer->style();
     IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
 
     boundingBox.move(style.borderLeftWidth(), style.borderTopWidth());
@@ -513,7 +513,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 - (float)computedFontSize
 {
     WebCore::Node *node = core(self);
-    RenderStyle *style = node->renderStyle();
+    auto *style = node->renderStyle();
     if (!style)
         return 0.0f;
     return style->fontDescription().computedSize();

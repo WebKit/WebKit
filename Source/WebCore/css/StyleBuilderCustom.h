@@ -575,7 +575,7 @@ public:
     }
 
 private:
-    static const NinePieceImage& getValue(RenderStyle* style)
+    static const NinePieceImage& getValue(const RenderStyle* style)
     {
         return type == BorderImage ? style->borderImage() : style->maskBoxImage();
     }
@@ -664,7 +664,7 @@ inline void StyleBuilderCustom::applyInitialClip(StyleResolver& styleResolver)
 
 inline void StyleBuilderCustom::applyInheritClip(StyleResolver& styleResolver)
 {
-    RenderStyle* parentStyle = styleResolver.parentStyle();
+    auto* parentStyle = styleResolver.parentStyle();
     if (!parentStyle->hasClip())
         return applyInitialClip(styleResolver);
     styleResolver.style()->setClip(parentStyle->clipTop(), parentStyle->clipRight(), parentStyle->clipBottom(), parentStyle->clipLeft());
@@ -1052,7 +1052,7 @@ template <StyleBuilderCustom::CounterBehavior counterBehavior>
 inline void StyleBuilderCustom::applyInheritCounter(StyleResolver& styleResolver)
 {
     CounterDirectiveMap& map = styleResolver.style()->accessCounterDirectives();
-    for (auto& keyValue : styleResolver.parentStyle()->accessCounterDirectives()) {
+    for (auto& keyValue : const_cast<RenderStyle*>(styleResolver.parentStyle())->accessCounterDirectives()) {
         CounterDirectives& directives = map.add(keyValue.key, CounterDirectives()).iterator->value;
         if (counterBehavior == Reset)
             directives.inheritReset(keyValue.value);
@@ -1337,7 +1337,7 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
             if (styleResolver.style()->styleType() == NOPSEUDO)
                 styleResolver.style()->setUnique();
             else
-                styleResolver.parentStyle()->setUnique();
+                const_cast<RenderStyle*>(styleResolver.parentStyle())->setUnique();
             QualifiedName attr(nullAtom, contentValue.getStringValue().impl(), nullAtom);
             const AtomicString& value = styleResolver.element()->getAttribute(attr);
             styleResolver.style()->setContent(value.isNull() ? emptyAtom : value.impl(), didSet);
@@ -1706,7 +1706,7 @@ void StyleBuilderCustom::applyValueAlt(StyleResolver& styleResolver, CSSValue& v
         if (styleResolver.style()->styleType() == NOPSEUDO)
             styleResolver.style()->setUnique();
         else
-            styleResolver.parentStyle()->setUnique();
+            const_cast<RenderStyle*>(styleResolver.parentStyle())->setUnique();
 
         QualifiedName attr(nullAtom, primitiveValue.getStringValue(), nullAtom);
         const AtomicString& value = styleResolver.element()->getAttribute(attr);

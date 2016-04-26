@@ -141,18 +141,18 @@ public:
     StyleResolver(Document&);
     ~StyleResolver();
 
-    ElementStyle styleForElement(const Element&, RenderStyle* parentStyle, RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
+    ElementStyle styleForElement(const Element&, const RenderStyle* parentStyle, RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
 
     void keyframeStylesForAnimation(const Element&, const RenderStyle*, KeyframeList&);
 
-    std::unique_ptr<RenderStyle> pseudoStyleForElement(const Element&, const PseudoStyleRequest&, RenderStyle& parentStyle);
+    std::unique_ptr<RenderStyle> pseudoStyleForElement(const Element&, const PseudoStyleRequest&, const RenderStyle& parentStyle);
 
     std::unique_ptr<RenderStyle> styleForPage(int pageIndex);
     std::unique_ptr<RenderStyle> defaultStyleForElement();
 
     RenderStyle* style() const { return m_state.style(); }
-    RenderStyle* parentStyle() const { return m_state.parentStyle(); }
-    RenderStyle* rootElementStyle() const { return m_state.rootElementStyle(); }
+    const RenderStyle* parentStyle() const { return m_state.parentStyle(); }
+    const RenderStyle* rootElementStyle() const { return m_state.rootElementStyle(); }
     const Element* element() { return m_state.element(); }
     Document& document() { return m_document; }
     Settings* documentSettings() { return m_document.settings(); }
@@ -317,8 +317,8 @@ public:
 
 private:
     // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
-    void checkForGenericFamilyChange(RenderStyle*, RenderStyle* parentStyle);
-    void checkForZoomChange(RenderStyle*, RenderStyle* parentStyle);
+    void checkForGenericFamilyChange(RenderStyle*, const RenderStyle* parentStyle);
+    void checkForZoomChange(RenderStyle*, const RenderStyle* parentStyle);
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     void checkForTextSizeAdjust(RenderStyle*);
 #endif
@@ -361,7 +361,7 @@ public:
     class State {
     public:
         State() { }
-        State(const Element&, RenderStyle* parentStyle, RenderStyle* documentElementStyle = nullptr, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
+        State(const Element&, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle = nullptr, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
 
     public:
         void clear();
@@ -374,8 +374,8 @@ public:
         std::unique_ptr<RenderStyle> takeStyle() { return WTFMove(m_style); }
 
         void setParentStyle(std::unique_ptr<RenderStyle>);
-        RenderStyle* parentStyle() const { return m_parentStyle; }
-        RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
+        const RenderStyle* parentStyle() const { return m_parentStyle; }
+        const RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
 
         const RenderRegion* regionForStyling() const { return m_regionForStyling; }
         EInsideLink elementLinkState() const { return m_elementLinkState; }
@@ -427,9 +427,9 @@ public:
 
         const Element* m_element { nullptr };
         std::unique_ptr<RenderStyle> m_style;
-        RenderStyle* m_parentStyle { nullptr };
+        const RenderStyle* m_parentStyle { nullptr };
         std::unique_ptr<RenderStyle> m_ownedParentStyle;
-        RenderStyle* m_rootElementStyle { nullptr };
+        const RenderStyle* m_rootElementStyle { nullptr };
 
         const RenderRegion* m_regionForStyling { nullptr };
         

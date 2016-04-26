@@ -301,10 +301,10 @@ void RenderMathMLRoot::layout()
                 baseTopMargin -= indexTopMargin;
                 indexTopMargin = 0;
             }
-            index->style().setMarginTop(Length(indexTopMargin, Fixed));
+            index->mutableStyle().setMarginTop(Length(indexTopMargin, Fixed));
         }
-        radical->style().setMarginTop(Length(radicalTopMargin, Fixed));
-        base->style().setMarginTop(Length(baseTopMargin, Fixed));
+        radical->mutableStyle().setMarginTop(Length(radicalTopMargin, Fixed));
+        base->mutableStyle().setMarginTop(Length(baseTopMargin, Fixed));
     }
 
     RenderMathMLBlock::layout();

@@ -287,7 +287,7 @@ static bool borderOrPaddingLogicalWidthChanged(const RenderStyle* oldStyle, cons
 
 void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderStyle& newStyle = style();
+    auto& newStyle = style();
 
     bool hadTransform = hasTransform();
     bool flowThreadContainingBlockInvalidated = false;
@@ -2837,7 +2837,7 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
         return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 
     if (firstLine && view().usesFirstLineRules()) {
-        RenderStyle& s = firstLine ? firstLineStyle() : style();
+        auto& s = firstLine ? firstLineStyle() : style();
         if (&s != &style())
             return s.computedLineHeight();
     }
@@ -2976,9 +2976,9 @@ RenderBlock* RenderBlock::firstLineBlock() const
     return firstLineBlock;
 }
 
-static RenderStyle& styleForFirstLetter(RenderElement* firstLetterBlock, RenderObject* firstLetterContainer)
+static const RenderStyle& styleForFirstLetter(RenderElement* firstLetterBlock, RenderObject* firstLetterContainer)
 {
-    RenderStyle* pseudoStyle = firstLetterBlock->getCachedPseudoStyle(FIRST_LETTER, &firstLetterContainer->firstLineStyle());
+    auto* pseudoStyle = firstLetterBlock->getMutableCachedPseudoStyle(FIRST_LETTER, &firstLetterContainer->firstLineStyle());
     
     // If we have an initial letter drop that is >= 1, then we need to force floating to be on.
     if (pseudoStyle->initialLetterDrop() >= 1 && !pseudoStyle->isFloating())
@@ -3061,7 +3061,7 @@ void RenderBlock::updateFirstLetterStyle(RenderElement* firstLetterBlock, Render
 {
     RenderElement* firstLetter = currentChild->parent();
     RenderElement* firstLetterContainer = firstLetter->parent();
-    RenderStyle& pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
+    auto& pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     ASSERT(firstLetter->isFloating() || firstLetter->isInline());
 
     if (Style::determineChange(firstLetter->style(), pseudoStyle) == Style::Detach) {
@@ -3102,7 +3102,7 @@ void RenderBlock::updateFirstLetterStyle(RenderElement* firstLetterBlock, Render
 void RenderBlock::createFirstLetterRenderer(RenderElement* firstLetterBlock, RenderText* currentTextChild)
 {
     RenderElement* firstLetterContainer = currentTextChild->parent();
-    RenderStyle& pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
+    auto& pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     RenderBoxModelObject* firstLetter = nullptr;
     if (pseudoStyle.display() == INLINE)
         firstLetter = new RenderInline(document(), RenderStyle::clone(pseudoStyle));

@@ -78,7 +78,7 @@ private:
 #endif
     void willDetachRenderers() override;
 
-    Optional<ElementStyle> resolveCustomStyle(RenderStyle&, RenderStyle*) override;
+    Optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) override;
     const AtomicString& shadowPseudoId() const override;
 
     void startDragging();
@@ -120,7 +120,7 @@ inline Ref<SliderThumbElement> SliderThumbElement::create(Document& document)
 class RenderSliderThumb final : public RenderBlockFlow {
 public:
     RenderSliderThumb(SliderThumbElement&, RenderStyle&&);
-    void updateAppearance(RenderStyle* parentStyle);
+    void updateAppearance(const RenderStyle* parentStyle);
 
 private:
     bool isSliderThumb() const override;
@@ -135,7 +135,7 @@ public:
 private:
     SliderContainerElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    Optional<ElementStyle> resolveCustomStyle(RenderStyle&, RenderStyle*) override;
+    Optional<ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) override;
     const AtomicString& shadowPseudoId() const override;
 
     AtomicString m_shadowPseudoId;

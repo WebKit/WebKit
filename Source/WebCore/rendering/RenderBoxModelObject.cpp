@@ -581,7 +581,7 @@ RoundedRect RenderBoxModelObject::backgroundRoundedRectAdjustedForBleedAvoidance
     return getBackgroundRoundedRect(borderRect, box, boxSize.width(), boxSize.height(), includeLogicalLeftEdge, includeLogicalRightEdge);
 }
 
-static void applyBoxShadowForBackground(GraphicsContext& context, RenderStyle* style)
+static void applyBoxShadowForBackground(GraphicsContext& context, const RenderStyle* style)
 {
     const ShadowData* boxShadow = style->boxShadow();
     while (boxShadow->style() != Normal)

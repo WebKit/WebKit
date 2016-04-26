@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static bool match(std::unique_ptr<MediaQueryExp>&& expression, RenderStyle& style, Frame* frame)
+static bool match(std::unique_ptr<MediaQueryExp>&& expression, const RenderStyle& style, Frame* frame)
 {
     if (expression->mediaFeature().isEmpty())
         return true;
@@ -47,12 +47,12 @@ static bool match(std::unique_ptr<MediaQueryExp>&& expression, RenderStyle& styl
     return mediaQueryEvaluator.eval(mediaQuerySet.get());
 }
 
-static float defaultLength(RenderStyle& style, RenderView* view)
+static float defaultLength(const RenderStyle& style, RenderView* view)
 {
     return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble(CSSToLengthConversionData(&style, &style, view), CSSPrimitiveValue::CSS_VW, 100.0));
 }
 
-static float computeLength(CSSValue* value, RenderStyle& style, RenderView* view)
+static float computeLength(CSSValue* value, const RenderStyle& style, RenderView* view)
 {
     CSSToLengthConversionData conversionData(&style, &style, view);
     if (is<CSSPrimitiveValue>(value)) {
@@ -70,7 +70,7 @@ float parseSizesAttribute(StringView sizesAttribute, RenderView* view, Frame* fr
 {
     if (!view)
         return 0;
-    RenderStyle& style = view->style();
+    auto& style = view->style();
     for (auto& sourceSize : CSSParser(CSSStrictMode).parseSizesAttribute(sizesAttribute)) {
         if (match(WTFMove(sourceSize.expression), style, frame))
             return computeLength(sourceSize.length.get(), style, view);

@@ -48,7 +48,7 @@ protected:
 private:
     void doApply() override;
     virtual void formatRange(const Position& start, const Position& end, const Position& endOfSelection, RefPtr<Element>&) = 0;
-    RenderStyle* renderStyleOfEnclosingTextNode(const Position&);
+    const RenderStyle* renderStyleOfEnclosingTextNode(const Position&);
     void rangeForParagraphSplittingTextNodesIfNeeded(const VisiblePosition&, Position&, Position&);
     VisiblePosition endOfNextParagraphSplittingTextNodesIfNeeded(VisiblePosition&, Position&, Position&);
 

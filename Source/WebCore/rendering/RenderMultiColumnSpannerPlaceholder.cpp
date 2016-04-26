@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-RenderMultiColumnSpannerPlaceholder* RenderMultiColumnSpannerPlaceholder::createAnonymous(RenderMultiColumnFlowThread* flowThread, RenderBox* spanner, RenderStyle* parentStyle)
+RenderMultiColumnSpannerPlaceholder* RenderMultiColumnSpannerPlaceholder::createAnonymous(RenderMultiColumnFlowThread* flowThread, RenderBox* spanner, const RenderStyle* parentStyle)
 {
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(*parentStyle, BLOCK);
     newStyle.setClear(CBOTH); // We don't want floats in the row preceding the spanner to continue on the other side.

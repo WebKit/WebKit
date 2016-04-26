@@ -255,7 +255,7 @@ private:
         FontProxy& operator=(const FontProxy&);
 
         bool realized() const { return m_font.fontSelector(); }
-        void initialize(FontSelector&, RenderStyle&);
+        void initialize(FontSelector&, const RenderStyle&);
         FontMetrics fontMetrics() const;
         const FontCascadeDescription& fontDescription() const;
         float width(const TextRun&) const;
@@ -382,7 +382,7 @@ private:
     bool isAccelerated() const override;
 
     bool hasInvertibleTransform() const override { return state().hasInvertibleTransform; }
-    TextDirection toTextDirection(Direction, RenderStyle** computedStyle = nullptr) const;
+    TextDirection toTextDirection(Direction, const RenderStyle** computedStyle = nullptr) const;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
     PlatformLayer* platformLayer() const override;

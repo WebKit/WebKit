@@ -45,7 +45,7 @@ Ref<SVGTextElement> SVGTextElement::create(const QualifiedName& tagName, Documen
 AffineTransform SVGTextElement::animatedLocalTransform() const
 {
     AffineTransform matrix;
-    RenderStyle* style = renderer() ? &renderer()->style() : nullptr;
+    auto* style = renderer() ? &renderer()->style() : nullptr;
 
     // if CSS property was set, use that, otherwise fallback to attribute (if set)
     if (style && style->hasTransform()) {

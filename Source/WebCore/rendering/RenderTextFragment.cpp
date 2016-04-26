@@ -68,7 +68,7 @@ void RenderTextFragment::styleDidChange(StyleDifference diff, const RenderStyle*
     RenderText::styleDidChange(diff, oldStyle);
 
     if (RenderBlock* block = blockForAccompanyingFirstLetter()) {
-        block->style().removeCachedPseudoStyle(FIRST_LETTER);
+        block->mutableStyle().removeCachedPseudoStyle(FIRST_LETTER);
         block->updateFirstLetter();
     }
 }

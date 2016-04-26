@@ -70,10 +70,10 @@ static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t
     return floor(numSteps * t) / numSteps;
 }
 
-AnimationBase::AnimationBase(Animation& animation, RenderElement* renderer, CompositeAnimation* compositeAnimation)
+AnimationBase::AnimationBase(const Animation& animation, RenderElement* renderer, CompositeAnimation* compositeAnimation)
     : m_object(renderer)
     , m_compositeAnimation(compositeAnimation)
-    , m_animation(animation)
+    , m_animation(const_cast<Animation&>(animation))
 {
     // Compute the total duration
     if (m_animation->iterationCount() > 0)

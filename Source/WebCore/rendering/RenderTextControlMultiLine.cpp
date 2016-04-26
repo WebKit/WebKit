@@ -92,7 +92,7 @@ RenderObject* RenderTextControlMultiLine::layoutSpecialExcludedChild(bool relayo
     RenderObject* placeholderRenderer = RenderTextControl::layoutSpecialExcludedChild(relayoutChildren);
     if (is<RenderBox>(placeholderRenderer)) {
         auto& placeholderBox = downcast<RenderBox>(*placeholderRenderer);
-        placeholderBox.style().setLogicalWidth(Length(contentLogicalWidth() - placeholderBox.borderAndPaddingLogicalWidth(), Fixed));
+        placeholderBox.mutableStyle().setLogicalWidth(Length(contentLogicalWidth() - placeholderBox.borderAndPaddingLogicalWidth(), Fixed));
         placeholderBox.layoutIfNeeded();
         placeholderBox.setX(borderLeft() + paddingLeft());
         placeholderBox.setY(borderTop() + paddingTop());

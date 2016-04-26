@@ -222,7 +222,7 @@ float SVGLengthContext::convertValueFromPercentageToUserUnits(float value, SVGLe
     return 0;
 }
 
-static inline RenderStyle* renderStyleForLengthResolving(const SVGElement* context)
+static inline const RenderStyle* renderStyleForLengthResolving(const SVGElement* context)
 {
     if (!context)
         return nullptr;
@@ -236,12 +236,12 @@ static inline RenderStyle* renderStyleForLengthResolving(const SVGElement* conte
 
     // There must be at least a RenderSVGRoot renderer, carrying a style.
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 float SVGLengthContext::convertValueFromUserUnitsToEMS(float value, ExceptionCode& ec) const
 {
-    RenderStyle* style = renderStyleForLengthResolving(m_context);
+    auto* style = renderStyleForLengthResolving(m_context);
     if (!style) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
@@ -258,7 +258,7 @@ float SVGLengthContext::convertValueFromUserUnitsToEMS(float value, ExceptionCod
 
 float SVGLengthContext::convertValueFromEMSToUserUnits(float value, ExceptionCode& ec) const
 {
-    RenderStyle* style = renderStyleForLengthResolving(m_context);
+    auto* style = renderStyleForLengthResolving(m_context);
     if (!style) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
@@ -269,7 +269,7 @@ float SVGLengthContext::convertValueFromEMSToUserUnits(float value, ExceptionCod
 
 float SVGLengthContext::convertValueFromUserUnitsToEXS(float value, ExceptionCode& ec) const
 {
-    RenderStyle* style = renderStyleForLengthResolving(m_context);
+    auto* style = renderStyleForLengthResolving(m_context);
     if (!style) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
@@ -288,7 +288,7 @@ float SVGLengthContext::convertValueFromUserUnitsToEXS(float value, ExceptionCod
 
 float SVGLengthContext::convertValueFromEXSToUserUnits(float value, ExceptionCode& ec) const
 {
-    RenderStyle* style = renderStyleForLengthResolving(m_context);
+    auto* style = renderStyleForLengthResolving(m_context);
     if (!style) {
         ec = NOT_SUPPORTED_ERR;
         return 0;

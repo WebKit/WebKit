@@ -69,7 +69,7 @@ RenderFlowThread::RenderFlowThread(Document& document, RenderStyle&& style)
     setFlowThreadState(InsideOutOfFlowThread);
 }
 
-RenderStyle RenderFlowThread::createFlowThreadStyle(RenderStyle* parentStyle)
+RenderStyle RenderFlowThread::createFlowThreadStyle(const RenderStyle* parentStyle)
 {
     auto newStyle = RenderStyle::create();
     newStyle.inheritFrom(parentStyle);

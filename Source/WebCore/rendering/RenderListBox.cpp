@@ -354,7 +354,7 @@ void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const LayoutPoint& pain
     m_vBar->paint(paintInfo.context(), snappedIntRect(paintInfo.rect));
 }
 
-static LayoutSize itemOffsetForAlignment(TextRun textRun, RenderStyle* itemStyle, FontCascade itemFont, LayoutRect itemBoudingBox)
+static LayoutSize itemOffsetForAlignment(TextRun textRun, const RenderStyle* itemStyle, FontCascade itemFont, LayoutRect itemBoudingBox)
 {
     ETextAlign actualAlignment = itemStyle->textAlign();
     // FIXME: Firefox doesn't respect JUSTIFY. Should we?
@@ -379,7 +379,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     const Vector<HTMLElement*>& listItems = selectElement().listItems();
     HTMLElement* listItemElement = listItems[listIndex];
 
-    RenderStyle& itemStyle = *listItemElement->computedStyle();
+    auto& itemStyle = *listItemElement->computedStyle();
 
     if (itemStyle.visibility() == HIDDEN)
         return;
@@ -423,7 +423,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
 {
     const Vector<HTMLElement*>& listItems = selectElement().listItems();
     HTMLElement* listItemElement = listItems[listIndex];
-    RenderStyle& itemStyle = *listItemElement->computedStyle();
+    auto& itemStyle = *listItemElement->computedStyle();
 
     Color backColor;
     if (is<HTMLOptionElement>(*listItemElement) && downcast<HTMLOptionElement>(*listItemElement).selected()) {

@@ -746,7 +746,7 @@ void SVGElement::synchronizeSystemLanguage(SVGElement* contextElement)
     contextElement->synchronizeSystemLanguage();
 }
 
-Optional<ElementStyle> SVGElement::resolveCustomStyle(RenderStyle& parentStyle, RenderStyle*)
+Optional<ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
 {
     // If the element is in a <use> tree we get the style from the definition tree.
     if (auto* styleElement = this->correspondingElement())
@@ -773,12 +773,12 @@ void SVGElement::setUseOverrideComputedStyle(bool value)
         m_svgRareData->setUseOverrideComputedStyle(value);
 }
 
-RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
+const RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
 {
     if (!m_svgRareData || !m_svgRareData->useOverrideComputedStyle())
         return Element::computedStyle(pseudoElementSpecifier);
 
-    RenderStyle* parentStyle = nullptr;
+    const RenderStyle* parentStyle = nullptr;
     if (Element* parent = parentOrShadowHostElement()) {
         if (auto renderer = parent->renderer())
             parentStyle = &renderer->style();

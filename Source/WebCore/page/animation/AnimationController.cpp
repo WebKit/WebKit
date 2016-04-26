@@ -593,9 +593,9 @@ void AnimationController::cancelAnimations(RenderElement& renderer)
         element->setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
-bool AnimationController::updateAnimations(RenderElement& renderer, RenderStyle& newStyle, std::unique_ptr<RenderStyle>& animatedStyle)
+bool AnimationController::updateAnimations(RenderElement& renderer, const RenderStyle& newStyle, std::unique_ptr<RenderStyle>& animatedStyle)
 {
-    RenderStyle* oldStyle = renderer.hasInitializedStyle() ? &renderer.style() : nullptr;
+    auto* oldStyle = renderer.hasInitializedStyle() ? &renderer.style() : nullptr;
     if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle.animations() && !newStyle.transitions()))
         return false;
 

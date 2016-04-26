@@ -252,7 +252,7 @@ private:
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
     // very specific circumstances (in order to match common WinIE renderings).
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.)
-    RenderStyle& m_blockStyle;
+    const RenderStyle& m_blockStyle;
 
     LineInfo& m_lineInfo;
 

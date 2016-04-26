@@ -336,7 +336,7 @@ void StyleResolver::sweepMatchedPropertiesCache()
     m_matchedPropertiesCacheAdditionsSinceLastSweep = 0;
 }
 
-StyleResolver::State::State(const Element& element, RenderStyle* parentStyle, RenderStyle* documentElementStyle, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
+StyleResolver::State::State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
     : m_element(&element)
     , m_parentStyle(parentStyle)
     , m_regionForStyling(regionForStyling)
@@ -380,7 +380,7 @@ static inline bool isAtShadowBoundary(const Element& element)
     return parentNode && parentNode->isShadowRoot();
 }
 
-ElementStyle StyleResolver::styleForElement(const Element& element, RenderStyle* parentStyle, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
+ElementStyle StyleResolver::styleForElement(const Element& element, const RenderStyle* parentStyle, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
 {
     RELEASE_ASSERT(!m_inLoadPendingImages);
 
@@ -558,7 +558,7 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
     }
 }
 
-std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element& element, const PseudoStyleRequest& pseudoStyleRequest, RenderStyle& parentStyle)
+std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element& element, const PseudoStyleRequest& pseudoStyleRequest, const RenderStyle& parentStyle)
 {
     m_state = State(element, &parentStyle);
 
@@ -1631,7 +1631,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
     }
 
     if (isInherit && !state.parentStyle()->hasExplicitlyInheritedProperties() && !CSSProperty::isInheritedProperty(id))
-        state.parentStyle()->setHasExplicitlyInheritedProperties();
+        const_cast<RenderStyle*>(state.parentStyle())->setHasExplicitlyInheritedProperties();
     
     if (id == CSSPropertyCustom) {
         CSSCustomPropertyValue* customProperty = &downcast<CSSCustomPropertyValue>(*valueToApply);
@@ -1734,7 +1734,7 @@ void StyleResolver::checkForTextSizeAdjust(RenderStyle* style)
 }
 #endif
 
-void StyleResolver::checkForZoomChange(RenderStyle* style, RenderStyle* parentStyle)
+void StyleResolver::checkForZoomChange(RenderStyle* style, const RenderStyle* parentStyle)
 {
     if (!parentStyle)
         return;
@@ -1748,7 +1748,7 @@ void StyleResolver::checkForZoomChange(RenderStyle* style, RenderStyle* parentSt
     style->setFontDescription(newFontDescription);
 }
 
-void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, RenderStyle* parentStyle)
+void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, const RenderStyle* parentStyle)
 {
     const auto& childFont = style->fontDescription();
 

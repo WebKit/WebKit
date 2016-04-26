@@ -179,18 +179,18 @@ static bool isNewLineAtPosition(const Position& position)
     return textAtPosition[0] == '\n';
 }
 
-RenderStyle* ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(const Position& position)
+const RenderStyle* ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(const Position& position)
 {
     if (position.anchorType() != Position::PositionIsOffsetInAnchor
         || !position.containerNode()
         || !position.containerNode()->isTextNode())
-        return 0;
+        return nullptr;
 
     document().updateStyleIfNeeded();
 
     RenderObject* renderer = position.containerNode()->renderer();
     if (!renderer)
-        return 0;
+        return nullptr;
 
     return &renderer->style();
 }
@@ -201,7 +201,7 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
     end = endOfCurrentParagraph.deepEquivalent();
 
     bool isStartAndEndOnSameNode = false;
-    if (RenderStyle* startStyle = renderStyleOfEnclosingTextNode(start)) {
+    if (auto* startStyle = renderStyleOfEnclosingTextNode(start)) {
         isStartAndEndOnSameNode = renderStyleOfEnclosingTextNode(end) && start.containerNode() == end.containerNode();
         bool isStartAndEndOfLastParagraphOnSameNode = renderStyleOfEnclosingTextNode(m_endOfLastParagraph) && start.containerNode() == m_endOfLastParagraph.containerNode();
 
@@ -226,7 +226,7 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
         }
     }
 
-    if (RenderStyle* endStyle = renderStyleOfEnclosingTextNode(end)) {
+    if (auto* endStyle = renderStyleOfEnclosingTextNode(end)) {
         bool isEndAndEndOfLastParagraphOnSameNode = renderStyleOfEnclosingTextNode(m_endOfLastParagraph) && end.deprecatedNode() == m_endOfLastParagraph.deprecatedNode();
         // Include \n at the end of line if we're at an empty paragraph
         if (endStyle->preserveNewline() && start == end && end.offsetInContainerNode() < end.containerNode()->maxCharacterOffset()) {
@@ -258,7 +258,7 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIf
 {
     VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
     Position position = endOfNextParagraph.deepEquivalent();
-    RenderStyle* style = renderStyleOfEnclosingTextNode(position);
+    auto* style = renderStyleOfEnclosingTextNode(position);
     if (!style)
         return endOfNextParagraph;
 

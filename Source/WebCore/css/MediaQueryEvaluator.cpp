@@ -85,10 +85,10 @@ MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, bool m
 {
 }
 
-MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, Frame* frame, RenderStyle* style)
+MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, Frame* frame, const RenderStyle* style)
     : m_mediaType(acceptedMediaType)
     , m_frame(frame)
-    , m_style(WTFMove(style))
+    , m_style(style)
     , m_expResult(false) // doesn't matter when we have m_frame and m_style
 {
 }

@@ -700,7 +700,7 @@ static Ref<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, co
     return positionList;
 }
 
-static RefPtr<CSSValue> positionOffsetValue(RenderStyle& style, CSSPropertyID propertyID)
+static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropertyID propertyID)
 {
     Length length;
     switch (propertyID) {
@@ -737,7 +737,7 @@ static RefPtr<CSSValue> positionOffsetValue(RenderStyle& style, CSSPropertyID pr
     return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
 }
 
-RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(RenderStyle* style, const Color& color) const
+RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle* style, const Color& color) const
 {
     // This function does NOT look at visited information, so that computed style doesn't expose that.
     if (!color.isValid())
@@ -1143,7 +1143,7 @@ static Ref<CSSValueList> getTransitionPropertyValue(const AnimationList* animLis
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-static Ref<CSSValueList> scrollSnapDestination(RenderStyle& style, const LengthSize& destination)
+static Ref<CSSValueList> scrollSnapDestination(const RenderStyle& style, const LengthSize& destination)
 {
     auto list = CSSValueList::createSpaceSeparated();
     list.get().append(zoomAdjustedPixelValueForLength(destination.width(), style));
@@ -1151,7 +1151,7 @@ static Ref<CSSValueList> scrollSnapDestination(RenderStyle& style, const LengthS
     return list;
 }
 
-static Ref<CSSValue> scrollSnapPoints(RenderStyle& style, const ScrollSnapPoints* points)
+static Ref<CSSValue> scrollSnapPoints(const RenderStyle& style, const ScrollSnapPoints* points)
 {
     if (!points)
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
@@ -1166,7 +1166,7 @@ static Ref<CSSValue> scrollSnapPoints(RenderStyle& style, const ScrollSnapPoints
     return WTFMove(list);
 }
 
-static Ref<CSSValue> scrollSnapCoordinates(RenderStyle& style, const Vector<LengthSize>& coordinates)
+static Ref<CSSValue> scrollSnapCoordinates(const RenderStyle& style, const Vector<LengthSize>& coordinates)
 {
     if (coordinates.isEmpty())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
@@ -1807,7 +1807,7 @@ static void logUnimplementedPropertyID(CSSPropertyID propertyID)
     LOG_ERROR("WebKit does not yet implement getComputedStyle for '%s'.", getPropertyName(propertyID));
 }
 
-static Ref<CSSValueList> fontFamilyFromStyle(RenderStyle* style)
+static Ref<CSSValueList> fontFamilyFromStyle(const RenderStyle* style)
 {
     auto list = CSSValueList::createCommaSeparated();
     for (unsigned i = 0; i < style->fontCascade().familyCount(); ++i)
@@ -1815,7 +1815,7 @@ static Ref<CSSValueList> fontFamilyFromStyle(RenderStyle* style)
     return list;
 }
 
-static Ref<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle& style)
+static Ref<CSSPrimitiveValue> lineHeightFromStyle(const RenderStyle& style)
 {
     Length length = style.lineHeight();
     if (length.isNegative()) // If true, line-height not set; use the font's line spacing.
@@ -1830,19 +1830,19 @@ static Ref<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle& style)
     return zoomAdjustedPixelValue(floatValueForLength(length, 0), style);
 }
 
-static Ref<CSSPrimitiveValue> fontSizeFromStyle(RenderStyle& style)
+static Ref<CSSPrimitiveValue> fontSizeFromStyle(const RenderStyle& style)
 {
     return zoomAdjustedPixelValue(style.fontDescription().computedSize(), style);
 }
 
-static Ref<CSSPrimitiveValue> fontStyleFromStyle(RenderStyle* style)
+static Ref<CSSPrimitiveValue> fontStyleFromStyle(const RenderStyle* style)
 {
     if (style->fontDescription().italic())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueItalic);
     return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
 }
 
-static Ref<CSSValue> fontVariantFromStyle(RenderStyle* style)
+static Ref<CSSValue> fontVariantFromStyle(const RenderStyle* style)
 {
     if (style->fontDescription().variantSettings().isAllNormal())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
@@ -2029,7 +2029,7 @@ static Ref<CSSValue> fontVariantFromStyle(RenderStyle* style)
     return WTFMove(list);
 }
 
-static Ref<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style)
+static Ref<CSSPrimitiveValue> fontWeightFromStyle(const RenderStyle* style)
 {
     switch (style->fontDescription().weight()) {
     case FontWeight100:
@@ -2055,7 +2055,7 @@ static Ref<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style)
     return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
 }
 
-static Ref<CSSValue> fontSynthesisFromStyle(RenderStyle& style)
+static Ref<CSSValue> fontSynthesisFromStyle(const RenderStyle& style)
 {
     if (style.fontDescription().fontSynthesis() == FontSynthesisNone)
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
@@ -2072,7 +2072,7 @@ typedef const Length& (RenderStyle::*RenderStyleLengthGetter)() const;
 typedef LayoutUnit (RenderBoxModelObject::*RenderBoxComputedCSSValueGetter)() const;
 
 template<RenderStyleLengthGetter lengthGetter, RenderBoxComputedCSSValueGetter computedCSSValueGetter>
-inline RefPtr<CSSValue> zoomAdjustedPaddingOrMarginPixelValue(RenderStyle& style, RenderObject* renderer)
+inline RefPtr<CSSValue> zoomAdjustedPaddingOrMarginPixelValue(const RenderStyle& style, RenderObject* renderer)
 {
     Length unzoomzedLength = (style.*lengthGetter)();
     if (!is<RenderBox>(renderer) || unzoomzedLength.isFixed())
@@ -2081,7 +2081,7 @@ inline RefPtr<CSSValue> zoomAdjustedPaddingOrMarginPixelValue(RenderStyle& style
 }
 
 template<RenderStyleLengthGetter lengthGetter>
-inline bool paddingOrMarginIsRendererDependent(RenderStyle* style, RenderObject* renderer)
+inline bool paddingOrMarginIsRendererDependent(const RenderStyle* style, RenderObject* renderer)
 {
     if (!renderer || !renderer->isBox())
         return false;
@@ -2139,7 +2139,7 @@ static CSSValueID convertToRegionBreak(BreakInside value)
 }
 #endif
     
-static bool isLayoutDependent(CSSPropertyID propertyID, RenderStyle* style, RenderObject* renderer)
+static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style, RenderObject* renderer)
 {
     switch (propertyID) {
     case CSSPropertyWidth:
@@ -2267,7 +2267,7 @@ static inline bool updateStyleIfNeededForNode(const Node& node)
     return true;
 }
 
-static inline RenderStyle* computeRenderStyleForProperty(Node* styledNode, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle)
+static inline const RenderStyle* computeRenderStyleForProperty(Node* styledNode, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle)
 {
     RenderObject* renderer = styledNode->renderer();
 
@@ -2373,7 +2373,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         return nullptr;
 
     std::unique_ptr<RenderStyle> ownedStyle;
-    RenderStyle* style = nullptr;
+    const RenderStyle* style = nullptr;
     RenderObject* renderer = nullptr;
     bool forceFullLayout = false;
     if (updateLayout) {
@@ -3861,7 +3861,7 @@ unsigned CSSComputedStyleDeclaration::length() const
     if (!node)
         return 0;
 
-    RenderStyle* style = node->computedStyle(m_pseudoElementSpecifier);
+    auto* style = node->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return 0;
 
@@ -3880,7 +3880,7 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     if (!node)
         return emptyString();
 
-    RenderStyle* style = node->computedStyle(m_pseudoElementSpecifier);
+    auto* style = node->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return emptyString();
     
@@ -3899,7 +3899,7 @@ bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSS
 {
     if (propertyID == CSSPropertyFontSize && is<CSSPrimitiveValue>(*value) && m_node) {
         m_node->document().updateLayoutIgnorePendingStylesheets();
-        if (RenderStyle* style = m_node->computedStyle(m_pseudoElementSpecifier)) {
+        if (auto* style = m_node->computedStyle(m_pseudoElementSpecifier)) {
             if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier()) {
                 auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
                 if (primitiveValue.isValueID() && primitiveValue.getValueID() == sizeIdentifier)

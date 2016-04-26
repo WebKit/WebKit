@@ -69,7 +69,7 @@ void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
         // Create an anonymous block.
         ASSERT(!firstChild());
         m_inner = createAnonymousBlock(style().display());
-        setupInnerStyle(&m_inner->style());
+        setupInnerStyle(&m_inner->mutableStyle());
         RenderFlexibleBox::addChild(m_inner);
     }
     
@@ -97,9 +97,9 @@ void RenderButton::styleWillChange(StyleDifference diff, const RenderStyle& newS
         // it right below. Here we change it back to 0 to avoid getting a spurious layout hint
         // because of the difference. Same goes for the other properties.
         // FIXME: Make this hack unnecessary.
-        m_inner->style().setFlexGrow(newStyle.initialFlexGrow());
-        m_inner->style().setMarginTop(newStyle.initialMargin());
-        m_inner->style().setMarginBottom(newStyle.initialMargin());
+        m_inner->mutableStyle().setFlexGrow(newStyle.initialFlexGrow());
+        m_inner->mutableStyle().setMarginTop(newStyle.initialMargin());
+        m_inner->mutableStyle().setMarginBottom(newStyle.initialMargin());
     }
     RenderBlock::styleWillChange(diff, newStyle);
 }
@@ -109,7 +109,7 @@ void RenderButton::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     RenderBlock::styleDidChange(diff, oldStyle);
 
     if (m_inner) // RenderBlock handled updating the anonymous block's style.
-        setupInnerStyle(&m_inner->style());
+        setupInnerStyle(&m_inner->mutableStyle());
 }
 
 void RenderButton::setupInnerStyle(RenderStyle* innerStyle) 
@@ -174,7 +174,7 @@ void RenderButton::layout()
     RenderFlexibleBox::layout();
 
     // FIXME: We should not be adjusting styles during layout. See <rdar://problem/7675493>.
-    RenderThemeIOS::adjustRoundBorderRadius(style(), *this);
+    RenderThemeIOS::adjustRoundBorderRadius(mutableStyle(), *this);
 }
 #endif
 

@@ -48,9 +48,9 @@ public:
 
     virtual bool isTextFragment() const;
 
-    RenderStyle& style() const;
-    RenderStyle& firstLineStyle() const;
-    RenderStyle* getCachedPseudoStyle(PseudoId, RenderStyle* parentStyle = nullptr) const;
+    const RenderStyle& style() const;
+    const RenderStyle& firstLineStyle() const;
+    const RenderStyle* getCachedPseudoStyle(PseudoId, const RenderStyle* parentStyle = nullptr) const;
 
     Color selectionBackgroundColor() const;
     Color selectionForegroundColor() const;
@@ -251,17 +251,17 @@ inline UChar RenderText::characterAt(unsigned i) const
     return uncheckedCharacterAt(i);
 }
 
-inline RenderStyle& RenderText::style() const
+inline const RenderStyle& RenderText::style() const
 {
     return parent()->style();
 }
 
-inline RenderStyle& RenderText::firstLineStyle() const
+inline const RenderStyle& RenderText::firstLineStyle() const
 {
     return parent()->firstLineStyle();
 }
 
-inline RenderStyle* RenderText::getCachedPseudoStyle(PseudoId pseudoId, RenderStyle* parentStyle) const
+inline const RenderStyle* RenderText::getCachedPseudoStyle(PseudoId pseudoId, const RenderStyle* parentStyle) const
 {
     return parent()->getCachedPseudoStyle(pseudoId, parentStyle);
 }

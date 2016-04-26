@@ -59,10 +59,10 @@ public:
         return *m_animatedSMILStyleProperties;
     }
 
-    RenderStyle* overrideComputedStyle(Element& element, RenderStyle* parentStyle)
+    const RenderStyle* overrideComputedStyle(Element& element, const RenderStyle* parentStyle)
     {
         if (!m_useOverrideComputedStyle)
-            return 0;
+            return nullptr;
         if (!m_overrideComputedStyle || m_needsOverrideComputedStyleUpdate) {
             // The style computed here contains no CSS Animations/Transitions or SMIL induced rules - this is needed to compute the "base value" for the SMIL animation sandwhich model.
             m_overrideComputedStyle = element.styleResolver().styleForElement(element, parentStyle, MatchAllRulesExcludingSMIL).renderStyle;

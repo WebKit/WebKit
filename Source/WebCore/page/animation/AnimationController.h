@@ -50,7 +50,7 @@ public:
     ~AnimationController();
 
     void cancelAnimations(RenderElement&);
-    bool updateAnimations(RenderElement&, RenderStyle& newStyle, std::unique_ptr<RenderStyle>& animatedStyle);
+    bool updateAnimations(RenderElement&, const RenderStyle& newStyle, std::unique_ptr<RenderStyle>& animatedStyle);
     std::unique_ptr<RenderStyle> getAnimatedStyleForRenderer(RenderElement&);
 
     // If possible, compute the visual extent of any transform animation on the given renderer

@@ -287,7 +287,7 @@ static Node* ancestorRespondingToScrollWheelEvents(const HitTestResult& hitTestR
             continue;
         }
 
-        RenderStyle& style = renderer->style();
+        auto& style = renderer->style();
 
         if (renderer->hasOverflowClip() &&
             (style.overflowY() == OAUTO || style.overflowY() == OSCROLL || style.overflowY() == OOVERLAY ||

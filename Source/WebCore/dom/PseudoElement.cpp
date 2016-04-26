@@ -77,7 +77,7 @@ void PseudoElement::clearHostElement()
     m_hostElement = nullptr;
 }
 
-Optional<ElementStyle> PseudoElement::resolveCustomStyle(RenderStyle& parentStyle, RenderStyle*)
+Optional<ElementStyle> PseudoElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
 {
     auto* style = m_hostElement->renderer()->getCachedPseudoStyle(m_pseudoId, &parentStyle);
     if (!style)

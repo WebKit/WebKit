@@ -61,11 +61,24 @@ bool Update::textUpdate(const Text& text) const
     return m_texts.contains(&text);
 }
 
-RenderStyle* Update::elementStyle(const Element& element) const
+const RenderStyle* Update::elementStyle(const Element& element) const
 {
     if (auto* update = elementUpdate(element))
         return update->style.get();
-    return element.renderStyle();
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return nullptr;
+    return &renderer->style();
+}
+
+RenderStyle* Update::elementStyle(const Element& element)
+{
+    if (auto* update = elementUpdate(element))
+        return update->style.get();
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return nullptr;
+    return &renderer->mutableStyle();
 }
 
 void Update::addElement(Element& element, Element* parent, ElementUpdate&& elementUpdate)

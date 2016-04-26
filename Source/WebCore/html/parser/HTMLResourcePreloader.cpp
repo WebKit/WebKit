@@ -58,7 +58,7 @@ void HTMLResourcePreloader::preload(PreloadRequestStream requests)
         preload(WTFMove(request));
 }
 
-static bool mediaAttributeMatches(Frame* frame, RenderStyle* renderStyle, const String& attributeValue)
+static bool mediaAttributeMatches(Frame* frame, const RenderStyle* renderStyle, const String& attributeValue)
 {
     RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
     MediaQueryEvaluator mediaQueryEvaluator("screen", frame, renderStyle);

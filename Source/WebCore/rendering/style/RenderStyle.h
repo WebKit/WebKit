@@ -1606,7 +1606,7 @@ public:
     void setColumnRuleWidth(unsigned short w) { SET_NESTED_VAR(rareNonInheritedData, m_multiCol, m_rule.m_width, w); }
     void resetColumnRule() { SET_NESTED_VAR(rareNonInheritedData, m_multiCol, m_rule, BorderValue()); }
     void setColumnSpan(ColumnSpan columnSpan) { SET_NESTED_VAR(rareNonInheritedData, m_multiCol, m_columnSpan, columnSpan); }
-    void inheritColumnPropertiesFrom(RenderStyle* parent) { rareNonInheritedData.access()->m_multiCol = parent->rareNonInheritedData->m_multiCol; }
+    void inheritColumnPropertiesFrom(const RenderStyle* parent) { rareNonInheritedData.access()->m_multiCol = parent->rareNonInheritedData->m_multiCol; }
     void setTransform(const TransformOperations& ops) { SET_NESTED_VAR(rareNonInheritedData, m_transform, m_operations, ops); }
     void setTransformOriginX(Length length) { SET_NESTED_VAR(rareNonInheritedData, m_transform, m_x, WTFMove(length)); }
     void setTransformOriginY(Length length) { SET_NESTED_VAR(rareNonInheritedData, m_transform, m_y, WTFMove(length)); }

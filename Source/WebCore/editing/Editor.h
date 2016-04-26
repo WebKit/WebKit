@@ -430,8 +430,8 @@ public:
     RefPtr<DocumentFragment> webContentFromPasteboard(Pasteboard&, Range& context, bool allowPlainText, bool& chosePlainText);
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT static RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
-    void getTextDecorationAttributesRespectingTypingStyle(RenderStyle&, NSMutableDictionary*) const;
+    WEBCORE_EXPORT static const RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
+    void getTextDecorationAttributesRespectingTypingStyle(const RenderStyle&, NSMutableDictionary*) const;
     WEBCORE_EXPORT const Font* fontForSelection(bool&) const;
     WEBCORE_EXPORT NSDictionary *fontAttributesForSelectionStart() const;
     WEBCORE_EXPORT String stringSelectionForPasteboard();

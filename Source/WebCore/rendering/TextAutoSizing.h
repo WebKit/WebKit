@@ -43,12 +43,12 @@ public:
     TextAutoSizingKey() = default;
     enum DeletedTag { Deleted };
     explicit TextAutoSizingKey(DeletedTag);
-    explicit TextAutoSizingKey(RenderStyle*);
+    explicit TextAutoSizingKey(const RenderStyle*);
     TextAutoSizingKey(TextAutoSizingKey&&) = default;
 
     TextAutoSizingKey& operator=(TextAutoSizingKey&&) = default;
 
-    RenderStyle* style() const { return m_style.get(); }
+    const RenderStyle* style() const { return m_style.get(); }
     inline bool isDeleted() const { return m_isDeleted; }
 
 private:

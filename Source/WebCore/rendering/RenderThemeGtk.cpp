@@ -2015,7 +2015,7 @@ bool RenderThemeGtk::paintMediaToggleClosedCaptionsButton(const RenderObject& re
 }
 #endif
 
-static FloatRoundedRect::Radii borderRadiiFromStyle(RenderStyle& style)
+static FloatRoundedRect::Radii borderRadiiFromStyle(const RenderStyle& style)
 {
     return FloatRoundedRect::Radii(
         IntSize(style.borderTopLeftRadius().width().intValue(), style.borderTopLeftRadius().height().intValue()),
@@ -2036,7 +2036,7 @@ bool RenderThemeGtk::paintMediaSliderTrack(const RenderObject& o, const PaintInf
 
     float mediaDuration = mediaElement->duration();
     float totalTrackWidth = r.width();
-    RenderStyle& style = o.style();
+    auto& style = o.style();
     RefPtr<TimeRanges> timeRanges = mediaElement->buffered();
     for (unsigned index = 0; index < timeRanges->length(); ++index) {
         float start = timeRanges->start(index, IGNORE_EXCEPTION);
@@ -2059,7 +2059,7 @@ bool RenderThemeGtk::paintMediaSliderTrack(const RenderObject& o, const PaintInf
 
 bool RenderThemeGtk::paintMediaSliderThumb(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    RenderStyle& style = o.style();
+    auto& style = o.style();
     paintInfo.context().fillRoundedRect(FloatRoundedRect(r, borderRadiiFromStyle(style)), style.visitedDependentColor(CSSPropertyColor));
     return false;
 }
@@ -2080,7 +2080,7 @@ bool RenderThemeGtk::paintMediaVolumeSliderTrack(const RenderObject& renderObjec
 
     int rectHeight = rect.height();
     float trackHeight = rectHeight * volume;
-    RenderStyle& style = renderObject.style();
+    auto& style = renderObject.style();
     IntRect volumeRect(rect);
     volumeRect.move(0, rectHeight - trackHeight);
     volumeRect.setHeight(ceil(trackHeight));

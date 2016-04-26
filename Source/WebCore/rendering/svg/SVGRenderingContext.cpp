@@ -90,7 +90,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
         m_renderingFlags |= RestoreGraphicsContext;
     }
 
-    RenderStyle& style = m_renderer->style();
+    auto& style = m_renderer->style();
 
     const SVGRenderStyle& svgStyle = style.svgStyle();
 

@@ -112,7 +112,7 @@ public:
     void synchronizeAnimatedSVGAttribute(const QualifiedName&) const;
     static void synchronizeAllAnimatedSVGAttribute(SVGElement*);
  
-    Optional<ElementStyle> resolveCustomStyle(RenderStyle& parentStyle, RenderStyle* shadowHostStyle) override;
+    Optional<ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
 
     static void synchronizeRequiredFeatures(SVGElement* contextElement);
     static void synchronizeRequiredExtensions(SVGElement* contextElement);
@@ -181,7 +181,7 @@ protected:
     class InstanceInvalidationGuard;
 
 private:
-    RenderStyle* computedStyle(PseudoId = NOPSEUDO) final;
+    const RenderStyle* computedStyle(PseudoId = NOPSEUDO) final;
 
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
 

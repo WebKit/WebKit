@@ -41,7 +41,7 @@
 namespace WebCore {
 
 // FIXME: This figures out the current style by inserting a <span>!
-RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
+const RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
 {
     nodeToRemove = nullptr;
     
@@ -76,7 +76,7 @@ RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
     return styleElement->renderer() ? &styleElement->renderer()->style() : nullptr;
 }
 
-void Editor::getTextDecorationAttributesRespectingTypingStyle(RenderStyle& style, NSMutableDictionary* result) const
+void Editor::getTextDecorationAttributesRespectingTypingStyle(const RenderStyle& style, NSMutableDictionary* result) const
 {
     RefPtr<EditingStyle> typingStyle = m_frame.selection().typingStyle();
     if (typingStyle && typingStyle->style()) {

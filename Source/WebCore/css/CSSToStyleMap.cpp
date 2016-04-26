@@ -56,7 +56,7 @@ RenderStyle* CSSToStyleMap::style() const
     return m_resolver->style();
 }
 
-RenderStyle* CSSToStyleMap::rootElementStyle() const
+const RenderStyle* CSSToStyleMap::rootElementStyle() const
 {
     return m_resolver->rootElementStyle();
 }

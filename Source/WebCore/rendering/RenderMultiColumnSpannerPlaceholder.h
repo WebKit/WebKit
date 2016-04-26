@@ -38,7 +38,7 @@ class RenderMultiColumnFlowThread;
 
 class RenderMultiColumnSpannerPlaceholder final : public RenderBox {
 public:
-    static RenderMultiColumnSpannerPlaceholder* createAnonymous(RenderMultiColumnFlowThread*, RenderBox* spanner, RenderStyle* parentStyle);
+    static RenderMultiColumnSpannerPlaceholder* createAnonymous(RenderMultiColumnFlowThread*, RenderBox* spanner, const RenderStyle* parentStyle);
 
     RenderBox* spanner() const { return m_spanner; }
     RenderMultiColumnFlowThread* flowThread() const { return m_flowThread; }

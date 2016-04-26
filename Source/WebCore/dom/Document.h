@@ -571,7 +571,7 @@ public:
     };
     WEBCORE_EXPORT void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasks::Asynchronously);
 
-    std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, RenderStyle* parentStyle);
+    std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle);
 
     // Returns true if page box (margin boxes and page borders) is visible.
     WEBCORE_EXPORT bool isPageBoxVisible(int pageIndex);

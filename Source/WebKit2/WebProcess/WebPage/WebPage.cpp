@@ -823,7 +823,7 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
         auto& postLayoutData = result.postLayoutData();
         if (!selection.isNone()) {
             Node* nodeToRemove;
-            if (RenderStyle* style = Editor::styleForSelectionStart(&frame, nodeToRemove)) {
+            if (auto* style = Editor::styleForSelectionStart(&frame, nodeToRemove)) {
                 if (style->fontCascade().weight() >= FontWeightBold)
                     postLayoutData.typingAttributes |= AttributeBold;
                 if (style->fontCascade().italic() == FontItalicOn)

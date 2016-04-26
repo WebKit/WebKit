@@ -187,7 +187,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     // e.g., <font>foo <h4>goo</h4> moo</font>.  The <font> inlines before
     // and after the block share the same style, but the block doesn't
     // need to pass its style on to anyone else.
-    RenderStyle& newStyle = style();
+    auto& newStyle = style();
     RenderInline* continuation = inlineElementContinuation();
     if (continuation) {
         for (RenderInline* currCont = continuation; currCont; currCont = currCont->inlineElementContinuation()) {
@@ -220,7 +220,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
     if (alwaysCreateLineBoxes())
         return;
 
-    RenderStyle* parentStyle = &parent()->style();
+    auto* parentStyle = &parent()->style();
     RenderInline* parentRenderInline = is<RenderInline>(*parent()) ? downcast<RenderInline>(parent()) : nullptr;
     bool checkFonts = document().inNoQuirksMode();
     RenderFlowThread* flowThread = flowThreadContainingBlock();
@@ -235,7 +235,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
     if (!alwaysCreateLineBoxes && checkFonts && view().usesFirstLineRules()) {
         // Have to check the first line style as well.
         parentStyle = &parent()->firstLineStyle();
-        RenderStyle& childStyle = firstLineStyle();
+        auto& childStyle = firstLineStyle();
         alwaysCreateLineBoxes = !parentStyle->fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
             || childStyle.verticalAlign() != BASELINE
             || parentStyle->lineHeight() != childStyle.lineHeight();
@@ -1601,7 +1601,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (!hasOutline())
         return;
 
-    RenderStyle& styleToUse = style();
+    auto& styleToUse = style();
     // Only paint the focus ring by hand if the theme isn't able to draw it.
     if (styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(styleToUse)) {
         Vector<LayoutRect> focusRingRects;

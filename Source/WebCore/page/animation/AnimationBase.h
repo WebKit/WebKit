@@ -52,7 +52,7 @@ class AnimationBase : public RefCounted<AnimationBase> {
     friend class CSSPropertyAnimation;
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AnimationBase(Animation& transition, RenderElement*, CompositeAnimation*);
+    AnimationBase(const Animation& transition, RenderElement*, CompositeAnimation*);
     virtual ~AnimationBase() { }
 
     RenderElement* renderer() const { return m_object; }
@@ -138,7 +138,7 @@ public:
     double progress(double scale = 1, double offset = 0, const TimingFunction* = nullptr) const;
 
     // Returns true if the animation state changed.
-    virtual bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* /*currentStyle*/, RenderStyle* /*targetStyle*/, std::unique_ptr<RenderStyle>& /*animatedStyle*/) = 0;
+    virtual bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* /*currentStyle*/, const RenderStyle* /*targetStyle*/, std::unique_ptr<RenderStyle>& /*animatedStyle*/) = 0;
     virtual void getAnimatedStyle(std::unique_ptr<RenderStyle>& /*animatedStyle*/) = 0;
 
     virtual bool computeExtentOfTransformAnimation(LayoutRect&) const = 0;
@@ -150,7 +150,7 @@ public:
     bool animationsMatch(const Animation&) const;
 
     const Animation& animation() const { return m_animation; }
-    void setAnimation(Animation& animation) { m_animation = animation; }
+    void setAnimation(const Animation& animation) { m_animation = const_cast<Animation&>(animation); }
 
     // Return true if this animation is overridden. This will only be the case for
     // ImplicitAnimations and is used to determine whether or not we should force

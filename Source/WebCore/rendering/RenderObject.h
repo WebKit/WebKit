@@ -697,8 +697,8 @@ public:
     virtual LayoutUnit minPreferredLogicalWidth() const { return 0; }
     virtual LayoutUnit maxPreferredLogicalWidth() const { return 0; }
 
-    RenderStyle& style() const;
-    RenderStyle& firstLineStyle() const;
+    const RenderStyle& style() const;
+    const RenderStyle& firstLineStyle() const;
 
     // Anonymous blocks that are part of of a continuation chain will return their inline continuation's outline style instead.
     // This is typically only relevant when repainting.
