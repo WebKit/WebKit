@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerAddScriptElement() {
+    let script = document.createElement("script");
+    script.text = "console.log('dynamically added script element');";
+    document.body.appendChild(script);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebInspector.Frame.extraScripts");
+
+    suite.addTestCase({
+        name: "FrameHasNoExtraScriptsYet",
+        description: "No extra scripts yet.",
+        test: (resolve, reject) => {
+            let mainFrame = WebInspector.frameResourceManager.mainFrame;
+            InspectorTest.expectThat(mainFrame.extraScripts.length === 0, "Main frame should have no dynamic scripts.");
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "AddExtraScript",
+        description: "Add extra script.",
+        test: (resolve, reject) => {            
+            WebInspector.frameResourceManager.mainFrame.singleFireEventListener(WebInspector.Frame.Event.ExtraScriptAdded, (event) => {
+                InspectorTest.pass("ExtraScriptAdded event fired.");
+                InspectorTest.expectThat(event.data.script.dynamicallyAddedScriptElement, "Script should identify as dynamic.");
+            });
+
+            InspectorTest.evaluateInPage("triggerAddScriptElement()", () => {
+                let mainFrame = WebInspector.frameResourceManager.mainFrame;
+                InspectorTest.expectThat(mainFrame.extraScripts.length === 1, "Main frame should have 1 dynamic script.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>WebInspector.Frame.extraScripts.</p>
+</body>
+</html>

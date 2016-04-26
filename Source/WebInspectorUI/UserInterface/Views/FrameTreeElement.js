@@ -38,6 +38,7 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
         frame.addEventListener(WebInspector.Frame.Event.ResourceWasRemoved, this._resourceWasRemoved, this);
+        frame.addEventListener(WebInspector.Frame.Event.ExtraScriptAdded, this._extraScriptAdded, this);
         frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasAdded, this._childFrameWasAdded, this);
         frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
 
@@ -52,15 +53,21 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         this.folderSettingsKey = this._frame.url.hash;
 
         this.registerFolderizeSettings("frames", WebInspector.UIString("Frames"),
-            function(representedObject) { return representedObject instanceof WebInspector.Frame; },
-            function() { return this.frame.childFrames.length; }.bind(this),
+            (representedObject) => representedObject instanceof WebInspector.Frame,
+            () => this.frame.childFrames.length,
             WebInspector.FrameTreeElement
         );
 
         this.registerFolderizeSettings("flows", WebInspector.UIString("Flows"),
-            function(representedObject) { return representedObject instanceof WebInspector.ContentFlow; },
-            function() { return this.frame.domTree.flowsCount; }.bind(this),
+            (representedObject) => representedObject instanceof WebInspector.ContentFlow,
+            () => this.frame.domTree.flowsCount,
             WebInspector.ContentFlowTreeElement
+        );
+
+        this.registerFolderizeSettings("extra-scripts", WebInspector.UIString("Extra Scripts"),
+            (representedObject) => representedObject instanceof WebInspector.Script && representedObject.dynamicallyAddedScriptElement,
+            () => this.frame.extraScripts.length,
+            WebInspector.ScriptTreeElement
         );
 
         function makeValidateCallback(resourceType) {
@@ -189,6 +196,10 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         for (var flowKey in flowMap)
             this.addChildForRepresentedObject(flowMap[flowKey]);
 
+        for (let extraScript of this._frame.extraScripts) {
+            if (extraScript.sourceURL || extraScript.sourceMappingURL)
+                this.addChildForRepresentedObject(extraScript);
+        }
     }
 
     onexpand()
@@ -238,6 +249,13 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
     _resourceWasRemoved(event)
     {
         this.removeChildForRepresentedObject(event.data.resource);
+    }
+
+    _extraScriptAdded(event)
+    {
+        let extraScript = event.data.script;
+        if (extraScript.sourceURL || extraScript.sourceMappingURL)
+            this.addRepresentedObjectToNewChildQueue(extraScript);
     }
 
     _childFrameWasAdded(event)

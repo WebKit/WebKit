@@ -12,7 +12,7 @@ StackTrace: 11
   1: foo (Anonymous Script 1 (line 1)) - nativeCode (false) programCode (false)
   2: Eval Code (Anonymous Script 1 (line 1)) - nativeCode (false) programCode (true)
   3: eval - nativeCode (true) programCode (false)
-  4: Global Code (stack-trace.html:2) - nativeCode (false) programCode (true)
+  4: Global Code (inline-script.js:2) - nativeCode (false) programCode (true)
   5: appendChild - nativeCode (true) programCode (false)
   6: triggerConsoleMessage (stack-trace.html:9) - nativeCode (false) programCode (false)
   7: Eval Code (Anonymous Script 2 (line 1)) - nativeCode (false) programCode (true)

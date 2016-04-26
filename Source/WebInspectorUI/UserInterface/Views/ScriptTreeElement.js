@@ -33,7 +33,7 @@ WebInspector.ScriptTreeElement = class ScriptTreeElement extends WebInspector.So
 
         this.mainTitle = script.displayName;
 
-        if (script.url) {
+        if (script.url && !script.dynamicallyAddedScriptElement) {
             // Show the host as the subtitle if it is different from the main title.
             var subtitle = WebInspector.displayNameForHost(script.urlComponents.host);
             this.subtitle = this.mainTitle !== subtitle ? subtitle : null;

@@ -36,21 +36,33 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         this._range = range || null;
         this._url = url || null;
         this._sourceURL = sourceURL || null;
+        this._sourceMappingURL = sourceMapURL || null;
         this._injected = injected || false;
+        this._dynamicallyAddedScriptElement = false;
+        this._scriptSyntaxTree = null;
 
         this._resource = this._resolveResource();
-        if (this._resource)
-            this._resource.associateWithScript(this);
 
-        if (sourceMapURL)
-            WebInspector.sourceMapManager.downloadSourceMap(sourceMapURL, this._url, this);
+        // If this Script was a dynamically added <script> to a Document,
+        // do not associate with the Document resource, instead associate
+        // with the frame as a dynamic script.
+        if (this._resource && this._resource.type === WebInspector.Resource.Type.Document && !this._range.startLine && !this._range.startColumn) {
+            console.assert(this._resource.isMainResource());
+            let documentResource = this._resource;
+            this._resource = null;
+            this._dynamicallyAddedScriptElement = true;
+            documentResource.parentFrame.addExtraScript(this);
+            this._dynamicallyAddedScriptElementNumber = documentResource.parentFrame.extraScripts.length;
+        } else if (this._resource)
+            this._resource.associateWithScript(this);
 
         if (isWebInspectorConsoleEvaluationScript(this._sourceURL)) {
             // Assign a unique number to the script object so it will stay the same.
             this._uniqueDisplayNameNumber = this.constructor._nextUniqueConsoleDisplayNameNumber++;
         }
 
-        this._scriptSyntaxTree = null;
+        if (this._sourceMappingURL)
+            WebInspector.sourceMapManager.downloadSourceMap(this._sourceMappingURL, this._url, this);
     }
 
     // Static
@@ -83,6 +95,11 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         return this._sourceURL;
     }
 
+    get sourceMappingURL()
+    {
+        return this._sourceMappingURL;
+    }
+
     get urlComponents()
     {
         if (!this._urlComponents)
@@ -97,7 +114,7 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
 
     get displayName()
     {
-        if (this._url)
+        if (this._url && !this._dynamicallyAddedScriptElement)
             return WebInspector.displayNameForURL(this._url, this.urlComponents);
 
         if (isWebInspectorConsoleEvaluationScript(this._sourceURL)) {
@@ -110,6 +127,9 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
                 this._sourceURLComponents = parseURL(this._sourceURL);
             return WebInspector.displayNameForURL(this._sourceURL, this._sourceURLComponents);
         }
+
+        if (this._dynamicallyAddedScriptElement)
+            return WebInspector.UIString("Script Element %d").format(this._dynamicallyAddedScriptElementNumber);
 
         // Assign a unique number to the script object so it will stay the same.
         if (!this._uniqueDisplayNameNumber)
@@ -133,6 +153,11 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
     get injected()
     {
         return this._injected;
+    }
+
+    get dynamicallyAddedScriptElement()
+    {
+        return this._dynamicallyAddedScriptElement;
     }
 
     get anonymous()

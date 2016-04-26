@@ -1,3 +1,23 @@
+2016-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: React.js JSXTransformer produces bogus error locations
+        https://bugs.webkit.org/show_bug.cgi?id=150010
+        <rdar://problem/23062233>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/frame-extra-scripts-expected.txt: Added.
+        * inspector/model/frame-extra-scripts.html: Added.
+        Add a test for a WebInspector.Frame's extraScripts list.
+
+        * inspector/model/stack-trace-expected.txt:
+        Update output that we correctly get the sourceURL of the inner script.
+
+        * inspector/model/script-resource-relationship-expected.txt
+        * inspector/model/script-resource-relationship.html
+        Add a test for a dynamicallyAddedScriptElement.
+        Remove debug logging.
+
 2016-04-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip fast/layers/no-clipping-overflow-hidden-added-after-transform.html on mac-wk1 debug

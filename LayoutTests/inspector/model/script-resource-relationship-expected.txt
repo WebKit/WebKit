@@ -25,6 +25,11 @@ PASS: Script was added.
 PASS: Script should not be associated with a Resource.
 PASS: Script should have a sourceURL.
 
+-- Running test case: DynamicallyAddedScriptElementNoResource
+PASS: Script was added.
+PASS: Script should identify as a dynamically added script element.
+PASS: Script should not be associated when a resource.
+
 -- Running test case: DocumentWithInlineScripts
 PASS: Main Resource should have 4 scripts.
 PASS: Inline script 1 does not have a sourceURL.

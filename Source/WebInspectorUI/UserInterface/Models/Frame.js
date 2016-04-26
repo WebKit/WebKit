@@ -38,6 +38,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
 
         this._resourceCollection = new WebInspector.ResourceCollection;
         this._provisionalResourceCollection = new WebInspector.ResourceCollection;
+        this._extraScripts = [];
 
         this._childFrames = [];
         this._childFrameIdentifierMap = {};
@@ -127,6 +128,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
 
         this._resourceCollection = this._provisionalResourceCollection;
         this._provisionalResourceCollection = new WebInspector.ResourceCollection;
+        this._extraScripts = [];
 
         this.clearExecutionContexts(true);
         this.clearProvisionalLoad(true);
@@ -437,6 +439,18 @@ WebInspector.Frame = class Frame extends WebInspector.Object
         this.dispatchEventToListeners(WebInspector.Frame.Event.AllResourcesRemoved);
     }
 
+    get extraScripts()
+    {
+        return this._extraScripts;
+    }
+
+    addExtraScript(script)
+    {
+        this._extraScripts.push(script);
+
+        this.dispatchEventToListeners(WebInspector.Frame.Event.ExtraScriptAdded, {script});
+    }
+
     saveIdentityToCookie(cookie)
     {
         cookie[WebInspector.Frame.MainResourceURLCookieKey] = this.mainResource.url.hash;
@@ -495,6 +509,7 @@ WebInspector.Frame.Event = {
     ResourceWasAdded: "frame-resource-was-added",
     ResourceWasRemoved: "frame-resource-was-removed",
     AllResourcesRemoved: "frame-all-resources-removed",
+    ExtraScriptAdded: "frame-extra-script-added",
     ChildFrameWasAdded: "frame-child-frame-was-added",
     ChildFrameWasRemoved: "frame-child-frame-was-removed",
     AllChildFramesRemoved: "frame-all-child-frames-removed",

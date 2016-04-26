@@ -26,12 +26,15 @@ function triggerScriptWithoutResource() {
     eval("//# sourceURL=script-only.js\n1+1");
 }
 
+function triggerScriptElement() {
+    let script = document.createElement("script");
+    script.text = "//# sourceURL=dynamically-added-script-element.js\n1+1";
+    document.body.appendChild(script);
+}
+
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("WebInspector.Script and WebInspector.Resource relationship");
-
-    InspectorTest.dumpActivityToSystemConsole = true;
-    InspectorBackend.dumpInspectorProtocolMessages = true;
 
     function validateNormalRelationship(resource, script) {
         InspectorTest.expectThat(resource.url === script.url, "Resource and Script have the same URL.");
@@ -129,6 +132,29 @@ function test()
             }
 
             InspectorTest.evaluateInPage("triggerScriptWithoutResource()");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DynamicallyAddedScriptElementNoResource",
+        description: "A dynamically added script element has no resource.",
+        test: (resolve, reject) => {
+            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
+
+            function scriptListener(event) {
+                if (event.data.script.sourceURL !== "dynamically-added-script-element.js")
+                    return;
+                InspectorTest.pass("Script was added.");
+                let script = event.data.script;
+
+                InspectorTest.expectThat(script.dynamicallyAddedScriptElement, "Script should identify as a dynamically added script element.");
+                InspectorTest.expectThat(script.resource === null, "Script should not be associated when a resource.");
+
+                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener, null);
+                resolve();
+            }
+
+            InspectorTest.evaluateInPage("triggerScriptElement()");
         }
     });
 

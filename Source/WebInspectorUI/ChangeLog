@@ -1,5 +1,48 @@
 2016-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: React.js JSXTransformer produces bogus error locations
+        https://bugs.webkit.org/show_bug.cgi?id=150010
+        <rdar://problem/23062233>
+
+        Reviewed by Timothy Hatcher.
+
+        Show dynamically added <script> elements added to a frame as resources.
+        For cases where the scripts had source map resources or error messages
+        we have a root from which to associate them to.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        "Script Element %d" tree element title.
+
+        * UserInterface/Models/Frame.js:
+        (WebInspector.Frame.prototype.commitProvisionalLoad):
+        (WebInspector.Frame.prototype.get extraScripts):
+        (WebInspector.Frame.prototype.addExtraScript):
+        Have a frame keep a list of its extra scripts.
+
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script):
+        (WebInspector.Script.prototype.get displayName):
+        (WebInspector.Script.prototype.get dynamicallyAddedScriptElement):
+        Identify dynamically added script elements and associate them
+        with the frame, instead of the frame's main resource.
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement.prototype.onpopulate):
+        (WebInspector.FrameTreeElement.prototype._extraScriptAdded):
+        Show named / source mapped dynamic script elements under a frame.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+        Dynamically added script element Scripts will be added by the frame that
+        owns them.
+
+        * UserInterface/Views/ScriptTreeElement.js:
+        (WebInspector.ScriptTreeElement):
+        Don't include a subtitle for dynamicallyAddedScriptElement, details match
+        the frame that owns them.
+
+2016-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Line error widget showed in the wrong resource
         https://bugs.webkit.org/show_bug.cgi?id=150009
         <rdar://problem/23062199>
