@@ -1,3 +1,35 @@
+2016-04-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Constant folding of UInt32ToNumber is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=157011
+        rdar://problem/25769641
+
+        Reviewed by Geoffrey Garen.
+
+        UInt32ToNumber should return the unsigned 32bit value of
+        its child. The abstract interpreter fails to do that when handling
+        Int52.
+
+        None of the tests caught that because the bytecode generator already
+        fold the operation if given a constant. If the constant is not visible
+        from the bytecode generator (for example because it comes from an inlined call),
+        then the abstract interpreter folding was producing invalid results.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * tests/stress/uint32-to-number-constant-folding.js: Added.
+        (uint32ToNumberMinusOne):
+        (uint32ToNumberMinusOnePlusInteger):
+        (inlineMinusOne):
+        (uint32ToNumberOnHiddenMinusOne):
+        (uint32ToNumberOnHiddenMinusOnePlusInteger):
+        (inlineLargeNegativeNumber1):
+        (inlineLargeNegativeNumber2):
+        (inlineLargeNegativeNumber3):
+        (uint32ToNumberOnHiddenLargeNegativeNumber1):
+        (uint32ToNumberOnHiddenLargeNegativeNumber2):
+        (uint32ToNumberOnHiddenLargeNegativeNumber3):
+
 2016-04-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Heap corruption is detected when destructing JSGlobalObject

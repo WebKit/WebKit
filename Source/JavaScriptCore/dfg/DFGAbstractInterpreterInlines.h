@@ -302,7 +302,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (doesOverflow(node->arithMode())) {
             if (enableInt52()) {
                 if (child && child.isAnyInt()) {
-                    setConstant(node, jsNumber(child.asAnyInt()));
+                    int64_t machineInt = child.asAnyInt();
+                    setConstant(node, jsNumber(static_cast<uint32_t>(machineInt)));
                     break;
                 }
                 forNode(node).setType(SpecAnyInt);
