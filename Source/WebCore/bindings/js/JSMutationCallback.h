@@ -37,7 +37,7 @@ namespace WebCore {
 
 class JSDOMGlobalObject;
 
-class JSMutationCallback : public MutationCallback, public ActiveDOMCallback {
+class JSMutationCallback final : public MutationCallback, public ActiveDOMCallback {
 public:
     static Ref<JSMutationCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
@@ -47,8 +47,7 @@ public:
     virtual ~JSMutationCallback();
 
     void call(const Vector<Ref<MutationRecord>>&, MutationObserver*) override;
-
-    ScriptExecutionContext* scriptExecutionContext() const override { return ContextDestructionObserver::scriptExecutionContext(); }
+    bool canInvokeCallback() const override { return ActiveDOMCallback::canInvokeCallback(); }
 
 private:
     JSMutationCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
