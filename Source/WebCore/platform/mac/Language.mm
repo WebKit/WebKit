@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2005, 2006, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2005, 2006, 2010, 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #import "CFBundleSPI.h"
 #import "WebCoreNSStringExtras.h"
 #import <mutex>
+#import <unicode/uloc.h>
 #import <wtf/Assertions.h>
 #import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
@@ -69,7 +70,7 @@ static Vector<String>& preferredLanguages()
 
 namespace WebCore {
 
-static String httpStyleLanguageCode(NSString *language)
+static String httpStyleLanguageCode(NSString *language, NSString *country)
 {
     SInt32 languageCode;
     SInt32 regionCode; 
@@ -87,15 +88,37 @@ static String httpStyleLanguageCode(NSString *language)
 
     // Make the string lowercase.
     NSString *lowercaseLanguageCode = [language lowercaseString];
-
-    // Turn a '_' into a '-' if it appears after a 2-letter language code.
+    NSString *lowercaseCountryCode = [country lowercaseString];
+    
+    // If we see a "_" after a 2-letter language code:
+    // If the country is valid, replace the "_" and whatever comes after it with "-" followed by the
+    // country code.
+    // Otherwise, replace the "_" with a "-" and use whatever country
+    // CFBundleCopyLocalizationForLocalizationInfo() returned.
     if ([lowercaseLanguageCode length] >= 3 && [lowercaseLanguageCode characterAtIndex:2] == '_') {
+        if (country)
+            return [NSString stringWithFormat:@"%@-%@", [lowercaseLanguageCode substringWithRange:NSMakeRange(0, 2)], lowercaseCountryCode];
+        
+        // Fall back to older behavior, which used the original language-based code but just changed
+        // the "_" to a "-".
         RetainPtr<NSMutableString> mutableLanguageCode = adoptNS([lowercaseLanguageCode mutableCopy]);
         [mutableLanguageCode.get() replaceCharactersInRange:NSMakeRange(2, 1) withString:@"-"];
         return mutableLanguageCode.get();
     }
 
     return lowercaseLanguageCode;
+}
+
+static bool isValidICUCountryCode(NSString* countryCode)
+{
+    const char* const* countries = uloc_getISOCountries();
+    const char* countryUTF8 = [countryCode UTF8String];
+    for (unsigned i = 0; countries[i]; ++i) {
+        const char* possibleCountry = countries[i];
+        if (!strcmp(countryUTF8, possibleCountry))
+            return true;
+    }
+    return false;
 }
 
 Vector<String> platformUserPreferredLanguages()
@@ -113,13 +136,19 @@ Vector<String> platformUserPreferredLanguages()
     Vector<String>& userPreferredLanguages = preferredLanguages();
 
     if (userPreferredLanguages.isEmpty()) {
+        RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCopyCurrent());
+        NSString *countryCode = (NSString *)CFLocaleGetValue(locale.get(), kCFLocaleCountryCode);
+        
+        if (!isValidICUCountryCode(countryCode))
+            countryCode = nil;
+        
         RetainPtr<CFArrayRef> languages = adoptCF(CFLocaleCopyPreferredLanguages());
         CFIndex languageCount = CFArrayGetCount(languages.get());
         if (!languageCount)
             userPreferredLanguages.append("en");
         else {
             for (CFIndex i = 0; i < languageCount; i++)
-                userPreferredLanguages.append(httpStyleLanguageCode((NSString *)CFArrayGetValueAtIndex(languages.get(), i)));
+                userPreferredLanguages.append(httpStyleLanguageCode((NSString *)CFArrayGetValueAtIndex(languages.get(), i), countryCode));
         }
     }
 

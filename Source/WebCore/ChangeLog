@@ -1,3 +1,26 @@
+2016-04-25  Filip Pizlo  <fpizlo@apple.com>
+
+        WebCore on Mac ignores the user's preferred region (country) while getting the language
+        https://bugs.webkit.org/show_bug.cgi?id=156993
+
+        Reviewed by Geoffrey Garen.
+
+        I don't know how to test this since this depends on user settings.
+        
+        WebCore was previously getting the list of preferred languages, and for each one, deducing
+        the default region. That's wrong, since for example it doesn't respect the user's choice (in
+        System Preferences) to display dates/calenders/etc according to a different region (like how
+        I have my machine set to en-pl right now).
+        
+        It might be possible for the country code we get via kCFLocaleCountryCode to be something
+        that our ICU doesn't handle. To defend against this, we search for the resulting country
+        code in ICU's ISO countries list. If it doesn't appear in that list, we fall back on old
+        behavior.
+
+        * platform/mac/Language.mm:
+        (WebCore::httpStyleLanguageCode):
+        (WebCore::platformUserPreferredLanguages):
+
 2016-04-26  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Specify default values for optional parameters of TypedArray types
