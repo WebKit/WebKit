@@ -139,18 +139,16 @@ rx::DisplayImpl *CreateDisplayFromAttribs(const AttributeMap &attribMap)
     switch (displayType)
     {
       case EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE:
-#if defined(ANGLE_ENABLE_OPENGL)
 #if defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
         // Default to D3D displays
         impl = new rx::DisplayD3D();
-#elif defined(ANGLE_USE_X11)
+#elif defined(ANGLE_USE_X11) && defined(ANGLE_ENABLE_OPENGL)
         impl = new rx::DisplayGLX();
-#elif defined(ANGLE_PLATFORM_APPLE)
+#elif defined(ANGLE_PLATFORM_APPLE) && defined(ANGLE_ENABLE_OPENGL)
         impl = new rx::DisplayCGL();
 #else
         // No display available
         UNREACHABLE();
-#endif
 #endif
         break;
 

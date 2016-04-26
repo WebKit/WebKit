@@ -1,5 +1,18 @@
 2016-04-26  Per Arne Vollan  <peavo@outlook.com>
 
+        [WinCairo][ANGLE] Display object is not created.
+        https://bugs.webkit.org/show_bug.cgi?id=157042
+
+        Reviewed by Alex Christensen.
+
+        The CreateDisplayFromAttribs function will not create a DisplayD3D object when the requested
+        type is EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE, because ANGLE_ENABLE_OPENGL is not defined.
+        We should be able to create a DisplayD3D object without defining ANGLE_ENABLE_OPENGL.
+
+        * src/libANGLE/Display.cpp:
+
+2016-04-26  Per Arne Vollan  <peavo@outlook.com>
+
         [WinCairo][WebGL] Enable ESSL and GLSL translators.
         https://bugs.webkit.org/show_bug.cgi?id=157002
 
