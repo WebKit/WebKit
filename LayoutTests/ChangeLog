@@ -1,3 +1,16 @@
+2016-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Cloning a textarea does not clone the textarea's value
+        https://bugs.webkit.org/show_bug.cgi?id=156637
+
+        Reviewed by Chris Dumez.
+
+        https://dom.spec.whatwg.org/#concept-node-clone describes that the value
+        of a node shouldn't be copied when cloning the node.
+
+        * fast/forms/checkValidity-cloneNode-crash-expected.txt:
+        * fast/forms/checkValidity-cloneNode-crash.html:
+
 2016-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: React.js JSXTransformer produces bogus error locations

@@ -44,8 +44,8 @@ function checkTextArea() {
     element.value = "a";
     shouldBeTrue("element.checkValidity()");
     element2 = element.cloneNode();
-    // https://bugs.webkit.org/show_bug.cgi?id=156637 will fix this bug.
-    // shouldBeTrue("element2.checkValidity()");
+    shouldBeEqualToString("element2.value", "");
+    shouldBeFalse("element2.checkValidity()");
     element2.value = element.value;
     shouldBeTrue("element2.checkValidity()");
 }

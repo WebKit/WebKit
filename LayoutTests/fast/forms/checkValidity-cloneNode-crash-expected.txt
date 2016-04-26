@@ -10,6 +10,8 @@ PASS element2.checkValidity() is true
 PASS element.checkValidity() is true
 PASS element2.checkValidity() is false
 PASS element.checkValidity() is true
+PASS element2.value is ""
+PASS element2.checkValidity() is false
 PASS element2.checkValidity() is true
 PASS successfullyParsed is true
 
