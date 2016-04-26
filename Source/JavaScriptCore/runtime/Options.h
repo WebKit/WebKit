@@ -315,11 +315,14 @@ typedef const char* optionString;
     v(unsigned, forceRAMSize, 0, nullptr) \
     v(bool, recordGCPauseTimes, false, nullptr) \
     v(bool, logHeapStatisticsAtExit, false, nullptr) \
+    \
     v(bool, useTypeProfiler, false, nullptr) \
     v(bool, useControlFlowProfiler, false, nullptr) \
+    \
     v(bool, useSamplingProfiler, false, nullptr) \
-    v(unsigned, samplingProfilerTimingInterval, 1000, "Time between stack traces in microseconds.") \
-    v(bool, collectSamplingProfilerDataForJSCShell, false, "This corresponds to the JSC shell's --reportSamplingProfilerData option.") \
+    v(unsigned, sampleInterval, 1000, "Time between stack traces in microseconds.") \
+    v(bool, collectSamplingProfilerDataForJSCShell, false, "This corresponds to the JSC shell's --sample option.") \
+    \
     v(bool, alwaysGeneratePCToCodeOriginMap, false, "This will make sure we always generate a PCToCodeOriginMap for JITed code.") \
     \
     v(bool, verifyHeap, false, nullptr) \

@@ -185,7 +185,7 @@ private:
 SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     : m_vm(vm)
     , m_stopwatch(WTFMove(stopwatch))
-    , m_timingInterval(std::chrono::microseconds(Options::samplingProfilerTimingInterval()))
+    , m_timingInterval(std::chrono::microseconds(Options::sampleInterval()))
     , m_threadIdentifier(0)
     , m_jscExecutionThread(nullptr)
     , m_isPaused(false)

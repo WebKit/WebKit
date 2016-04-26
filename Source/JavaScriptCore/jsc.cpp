@@ -2100,8 +2100,9 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  -p <file>  Outputs profiling data to a file\n");
     fprintf(stderr, "  -x         Output exit code before terminating\n");
     fprintf(stderr, "\n");
+    fprintf(stderr, "  --sample                   Collects and outputs sampling profiler data\n");
     fprintf(stderr, "  --options                  Dumps all JSC VM options and exits\n");
-    fprintf(stderr, "  --dumpOptions              Dumps all JSC VM options before continuing\n");
+    fprintf(stderr, "  --dumpOptions              Dumps all non-default JSC VM options before continuing\n");
     fprintf(stderr, "  --<jsc VM option>=<value>  Sets the specified JSC VM option\n");
     fprintf(stderr, "\n");
 
@@ -2113,7 +2114,7 @@ void CommandLine::parseArguments(int argc, char** argv)
     Options::initialize();
     
     int i = 1;
-    bool needToDumpOptions = false;
+    JSC::Options::DumpLevel dumpOptionsLevel = JSC::Options::DumpLevel::None;
     bool needToExit = false;
 
     bool hasBadJSCOptions = false;
@@ -2171,15 +2172,15 @@ void CommandLine::parseArguments(int argc, char** argv)
             printUsageStatement(true);
 
         if (!strcmp(arg, "--options")) {
-            needToDumpOptions = true;
+            dumpOptionsLevel = JSC::Options::DumpLevel::Verbose;
             needToExit = true;
             continue;
         }
         if (!strcmp(arg, "--dumpOptions")) {
-            needToDumpOptions = true;
+            dumpOptionsLevel = JSC::Options::DumpLevel::Overridden;
             continue;
         }
-        if (!strcmp(arg, "--reportSamplingProfilerData")) {
+        if (!strcmp(arg, "--sample")) {
             JSC::Options::useSamplingProfiler() = true;
             JSC::Options::collectSamplingProfilerDataForJSCShell() = true;
             m_dumpSamplingProfilerData = true;
@@ -2209,8 +2210,8 @@ void CommandLine::parseArguments(int argc, char** argv)
     for (; i < argc; ++i)
         m_arguments.append(argv[i]);
 
-    if (needToDumpOptions)
-        JSC::Options::dumpAllOptions(stderr, JSC::Options::DumpLevel::Overridden, "All JSC runtime options:");
+    if (dumpOptionsLevel != JSC::Options::DumpLevel::None)
+        JSC::Options::dumpAllOptions(stderr, dumpOptionsLevel, "All JSC runtime options:");
     JSC::Options::ensureOptionsAreCoherent();
     if (needToExit)
         jscExit(EXIT_SUCCESS);
