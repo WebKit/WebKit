@@ -103,6 +103,7 @@ public:
     void revalidationFailed(CachedResource& revalidatingResource);
 
     void forEachResource(const std::function<void(CachedResource&)>&);
+    void forEachSessionResource(SessionID, const std::function<void(CachedResource&)>&);
     void destroyDecodedDataForAllImages();
     
     // Sets the cache's memory capacities, in bytes. These will hold only approximately, 

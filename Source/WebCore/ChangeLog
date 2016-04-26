@@ -1,5 +1,29 @@
 2016-04-25  Chris Dumez  <cdumez@apple.com>
 
+        Crash under MemoryCache::remove()
+        https://bugs.webkit.org/show_bug.cgi?id=157000
+        <rdar://problem/23344660>
+
+        Reviewed by Andreas Kling.
+
+        MemoryCache::evictResources() was caching the number of resources ('size')
+        in the cache for a particular sessionID, and then proceed to call
+        MemoryCache::remove() 'size' times using the first item in the HashMap
+        each time. This was unsafe because resources may be ref'ing each other
+        and therefore removing one may cause other resources to get removed as
+        well. In such case, we would call remove() too many times and crash because
+        we dereferenced resources.begin()->value (with the HashMap being empty).
+
+        This patch avoids the issue by copying the resources to a Vector and
+        ref'ing them first, before going on to remove each one from the cache.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::forEachSessionResource):
+        (WebCore::MemoryCache::evictResources):
+        * loader/cache/MemoryCache.h:
+
+2016-04-25  Chris Dumez  <cdumez@apple.com>
+
         Crash under WebCore::MutationObserver::deliverAllMutations()
         https://bugs.webkit.org/show_bug.cgi?id=156997
         <rdar://problem/16542323>

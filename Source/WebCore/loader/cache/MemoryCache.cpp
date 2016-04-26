@@ -281,6 +281,19 @@ void MemoryCache::forEachResource(const std::function<void(CachedResource&)>& fu
     }
 }
 
+void MemoryCache::forEachSessionResource(SessionID sessionID, const std::function<void (CachedResource&)>& function)
+{
+    auto it = m_sessionResources.find(sessionID);
+    if (it == m_sessionResources.end())
+        return;
+
+    Vector<CachedResourceHandle<CachedResource>> resourcesForSession;
+    copyValuesToVector(*it->value, resourcesForSession);
+
+    for (auto& resource : resourcesForSession)
+        function(*resource);
+}
+
 void MemoryCache::destroyDecodedDataForAllImages()
 {
     MemoryCache::singleton().forEachResource([](CachedResource& resource) {
@@ -727,13 +740,7 @@ void MemoryCache::evictResources(SessionID sessionID)
     if (disabled())
         return;
 
-    auto it = m_sessionResources.find(sessionID);
-    if (it == m_sessionResources.end())
-        return;
-    auto& resources = *it->value;
-
-    for (int i = 0, size = resources.size(); i < size; ++i)
-        remove(*resources.begin()->value);
+    forEachSessionResource(sessionID, [this] (CachedResource& resource) { remove(resource); });
 
     ASSERT(!m_sessionResources.contains(sessionID));
 }
