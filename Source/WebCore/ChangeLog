@@ -1,3 +1,11 @@
+2016-04-25  Brady Eidson  <beidson@apple.com>
+
+        Fix a flaky test after r200032
+
+        * fileapi/File.cpp:
+        (WebCore::File::lastModified): This used to return a date object which did a WTF::timeClip on the double,
+          but now that we're returning a raw double we need to WTF::timeClip it ourselves.
+
 2016-04-25  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Specify default values for optional parameters of type 'float' / 'unrestricted float'
