@@ -119,9 +119,7 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
         console.assert(!this.managesOwnIssues);
 
         var issue = event.data.issue;
-
-        // FIXME: Check more than just the issue URL (the document could have multiple resources with the same URL).
-        if (issue.url !== this.resource.url)
+        if (!WebInspector.IssueManager.issueMatchSourceCode(issue, this.resource))
             return;
 
         this.addIssue(issue);

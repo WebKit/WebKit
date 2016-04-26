@@ -35,6 +35,17 @@ WebInspector.IssueManager = class IssueManager extends WebInspector.Object
         this.initialize();
     }
 
+    static issueMatchSourceCode(issue, sourceCode)
+    {
+        if (sourceCode instanceof WebInspector.SourceMapResource)
+            return issue.sourceCodeLocation && issue.sourceCodeLocation.displaySourceCode === sourceCode;
+        if (sourceCode instanceof WebInspector.Resource)
+            return issue.url === sourceCode.url && (!issue.sourceCodeLocation || issue.sourceCodeLocation.sourceCode === sourceCode);
+        if (sourceCode instanceof WebInspector.Script)
+            return (issue.sourceCodeLocation && issue.sourceCodeLocation.sourceCode === sourceCode) || (!issue.sourceCodeLocation && issue.url === sourceCode.url);
+        return false;
+    }
+
     // Public
 
     initialize()
@@ -44,15 +55,10 @@ WebInspector.IssueManager = class IssueManager extends WebInspector.Object
         this.dispatchEventToListeners(WebInspector.IssueManager.Event.Cleared);
     }
 
-    issueWasAdded(source, level, text, url, lineNumber, columnNumber, parameters)
+    issueWasAdded(consoleMessage)
     {
-        var modifiedLineNumber;
-        if (lineNumber) {
-            console.assert(typeof lineNumber === "number");
-            modifiedLineNumber = lineNumber - 1;
-        }
+        let issue = new WebInspector.IssueMessage(consoleMessage);
 
-        var issue = new WebInspector.IssueMessage(source, level, text, url, modifiedLineNumber, columnNumber, parameters);
         this._issues.push(issue);
 
         this.dispatchEventToListeners(WebInspector.IssueManager.Event.IssueWasAdded, {issue});
@@ -63,9 +69,8 @@ WebInspector.IssueManager = class IssueManager extends WebInspector.Object
         var issues = [];
 
         for (var i = 0; i < this._issues.length; ++i) {
-            // FIXME: Support issues based on Script identifiers too.
             var issue = this._issues[i];
-            if (issue.url === sourceCode.url)
+            if (WebInspector.IssueManager.issueMatchSourceCode(issue, sourceCode))
                 issues.push(issue);
         }
 

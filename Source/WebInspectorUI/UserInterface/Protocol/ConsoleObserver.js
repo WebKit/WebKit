@@ -29,16 +29,11 @@ WebInspector.ConsoleObserver = class ConsoleObserver
 
     messageAdded(message)
     {
-        if (message.type === "assert" && !message.text)
-            message.text = WebInspector.UIString("Assertion");
-
-        if (message.level === "warning" || message.level === "error") {
-            // FIXME: <https://webkit.org/b/142553> Web Inspector: Merge IssueMessage/ConsoleMessage - both attempt to modify the Console Messages parameter independently
-            WebInspector.issueManager.issueWasAdded(message.source, message.level, message.text, message.url, message.line, message.column || 0);
-        }
-
         if (message.source === "console-api" && message.type === "clear")
             return;
+
+        if (message.type === "assert" && !message.text)
+            message.text = WebInspector.UIString("Assertion");
 
         WebInspector.logManager.messageWasAdded(message.source, message.level, message.text, message.type, message.url, message.line, message.column || 0, message.repeatCount, message.parameters, message.stackTrace, message.networkRequestId);
     }

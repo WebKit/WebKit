@@ -1,3 +1,84 @@
+2016-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Line error widget showed in the wrong resource
+        https://bugs.webkit.org/show_bug.cgi?id=150009
+        <rdar://problem/23062199>
+
+        Reviewed by Timothy Hatcher.
+
+        This addresses a few long standing issues:
+
+            - IssueMessage and ConsoleMessage should not fight eachother
+            - Displayed issue messages now correctly have format string formatting, e.g. console.error("Foo %s", str)
+            - IssueMessage wraps a ConsoleMessage, so we don't duplicate everything
+            - Gives ConsoleMessage a sourceCodeLocation (lazy)
+                - Since a sourceCodeLocation can have the exact SourceCode, if it was a Script
+                  without a Resource, we can only show the error in the Script's editor.            
+
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame.fromPayload):
+        Prefer the script identifier lookup first. And from the Script go
+        to a resource if possible. This allows us to distinguish a location
+        that should be in a Script that doesn't have a Resource when there
+        exists a Resource with the same URL. This will soon be the case
+        for dyanamic <script> elements append to a document.
+
+        * UserInterface/Controllers/IssueManager.js:
+        (WebInspector.IssueManager.issueMatchSourceCode):
+        Consolidate all the different checks to this one function.
+
+        (WebInspector.IssueManager.prototype.issueWasAdded):
+        Create IssueMessages with ConsoleMessages.
+
+        (WebInspector.IssueManager.prototype.issuesForSourceCode):
+        Simplify now that we have the better check.
+
+        * UserInterface/Controllers/LogManager.js:
+        (WebInspector.LogManager.prototype.messageWasAdded):
+        Once a ConsoleMessage has been created (and modified `parameters` for us)
+        create the IssueMessage if it was an issue.
+
+        * UserInterface/Models/ConsoleMessage.js:
+        (WebInspector.ConsoleMessage.prototype.get sourceCodeLocation):
+        Lazily create a source code from the best possible location. This can
+        be the top call frame or the url/line/column combination.
+
+        * UserInterface/Models/IssueMessage.js:
+        (WebInspector.IssueMessage):
+        Creation and most properties just call through to a ConsoleMessage.
+        The `type` and `text` are Issue specific. Anything that uses location
+        data should use the sourceCodeLocation.
+        
+        (WebInspector.IssueMessage.prototype.saveIdentityToCookie):
+        Fix implementation that didn't account for a null sourceCodeLocation.
+
+        (WebInspector.IssueMessage.prototype._formatTextIfNecessary):
+        Basic text format message formatting.
+
+        * UserInterface/Protocol/ConsoleObserver.js:
+        (WebInspector.ConsoleObserver.prototype.messageAdded):
+        No longer call IssueMessage from the observer. Let LogManager trigger issues.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        (WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject):
+        (WebInspector.ContentView.isViewable):
+        An IssueMessage represented object for an IssueMessageTreeElement should be
+        restorable by just going to the sourceCodeLocation it references. This is
+        identical to a Breakpoint.
+
+        * UserInterface/Views/IssueTreeElement.js:
+        (WebInspector.IssueTreeElement.prototype._updateTitles):
+        (WebInspector.IssueTreeElement):
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView.prototype._issueWasAdded):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._issueWasAdded):
+        (WebInspector.SourceCodeTextEditor.prototype._addIssue):
+        (WebInspector.SourceCodeTextEditor.prototype._reinsertAllIssues):
+        (WebInspector.SourceCodeTextEditor.prototype._matchesIssue): Deleted.
+        Update to use Issue's sourceCodeLocation or IssueManager's new APIs.
+
 2016-04-24  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Can't sort by name/source code location columns in Timeline data grids

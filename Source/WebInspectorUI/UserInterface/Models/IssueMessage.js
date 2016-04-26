@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,17 @@
 
 WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
 {
-    constructor(source, level, text, url, lineNumber, columnNumber, parameters)
+    constructor(consoleMessage)
     {
         super();
 
-        this._level = level;
-        this._text = text;
-        this._source = source;
+        console.assert(consoleMessage instanceof WebInspector.ConsoleMessage);
 
-        // FIXME <http://webkit.org/b/76404>: Remove the string equality checks for undefined
-        // once we don't get that value anymore from WebCore.
+        this._consoleMessage = consoleMessage;
 
-        // FIXME: If the URL is undefined, get the URL from the stacktrace.
-        if (url && url !== "undefined")
-            this._url = url;
+        this._text = this._issueText();
 
-        if (typeof lineNumber === "number" && lineNumber >= 0 && this._url)
-            this._sourceCodeLocation = new WebInspector.SourceCodeLocation(WebInspector.frameResourceManager.resourceForURL(url), lineNumber, columnNumber);
-
-        // FIXME: <https://webkit.org/b/142553> Web Inspector: Merge IssueMessage/ConsoleMessage - both attempt to modify the Console Messages parameter independently
-
-        if (parameters && parameters !== "undefined") {
-            this._parameters = [];
-            for (var i = 0; i < parameters.length; ++i) {
-                if (parameters[i] instanceof WebInspector.RemoteObject) {
-                    this._parameters.push(parameters[i]);
-                    continue;
-                }
-
-                if (typeof parameters[i] === "object")
-                    this._parameters.push(WebInspector.RemoteObject.fromPayload(parameters[i]));
-                else
-                    this._parameters.push(WebInspector.RemoteObject.fromPrimitiveValue(parameters[i]));
-            }
-        }
-
-        this._formatTextIfNecessary();
-
-        switch (source) {
+        switch (this._consoleMessage.source) {
         case "javascript":
             // FIXME: It would be nice if we had this information (the specific type of JavaScript error)
             // as part of the data passed from WebCore, instead of having to determine it ourselves.
@@ -101,6 +74,7 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
             this._type = WebInspector.IssueMessage.Type.OtherIssue;
         }
 
+        this._sourceCodeLocation = consoleMessage.sourceCodeLocation;
         if (this._sourceCodeLocation)
             this._sourceCodeLocation.addEventListener(WebInspector.SourceCodeLocation.Event.DisplayLocationChanged, this._sourceCodeLocationDisplayLocationChanged, this);
     }
@@ -134,83 +108,39 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
 
     // Public
 
-    get type()
-    {
-        return this._type;
-    }
+    get text() { return this._text; }
+    get type() { return this._type; }
+    get level() { return this._consoleMessage.level; }
+    get source() { return this._consoleMessage.source; }
+    get url() { return this._consoleMessage.url; }
+    get sourceCodeLocation() { return this._sourceCodeLocation; }
 
-    get level()
-    {
-        return this._level;
-    }
-
-    get text()
-    {
-        return this._text;
-    }
-
-    get source()
-    {
-        return this._source;
-    }
-
-    get url()
-    {
-        return this._url;
-    }
-
-    get lineNumber()
-    {
-        if (this._sourceCodeLocation)
-            return this._sourceCodeLocation.lineNumber;
-    }
-
-    get columnNumber()
-    {
-        if (this._sourceCodeLocation)
-            return this._sourceCodeLocation.columnNumber;
-    }
-
-    get displayLineNumber()
-    {
-        if (this._sourceCodeLocation)
-            return this._sourceCodeLocation.displayLineNumber;
-    }
-
-    get displayColumnNumber()
-    {
-        if (this._sourceCodeLocation)
-            return this._sourceCodeLocation.displayColumnNumber;
-    }
-
-    get sourceCodeLocation()
-    {
-        return this._sourceCodeLocation;
-    }
+    // Protected
 
     saveIdentityToCookie(cookie)
     {
         cookie[WebInspector.IssueMessage.URLCookieKey] = this.url;
-        cookie[WebInspector.IssueMessage.LineNumberCookieKey] = this.sourceCodeLocation.lineNumber;
-        cookie[WebInspector.IssueMessage.ColumnNumberCookieKey] = this.sourceCodeLocation.columnNumber;
+        cookie[WebInspector.IssueMessage.LineNumberCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.lineNumber : 0;
+        cookie[WebInspector.IssueMessage.ColumnNumberCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.columnNumber : 0;
     }
 
     // Private
 
-    _formatTextIfNecessary()
+    _issueText()
     {
-        if (!this._parameters)
-            return;
+        let parameters = this._consoleMessage.parameters;
+        if (!parameters)
+            return this._consoleMessage.messageText;
 
-        if (WebInspector.RemoteObject.type(this._parameters[0]) !== "string")
-            return;
+        if (WebInspector.RemoteObject.type(parameters[0]) !== "string")
+            return this._consoleMessage.messageText;
 
         function valueFormatter(obj)
         {
             return obj.description;
         }
 
-        var formatters = {};
+        let formatters = {};
         formatters.o = valueFormatter;
         formatters.s = valueFormatter;
         formatters.f = valueFormatter;
@@ -223,13 +153,13 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
             return a;
         }
 
-        var result = String.format(this._parameters[0].description, this._parameters.slice(1), formatters, "", append);
-        var resultText = result.formattedResult;
+        let result = String.format(parameters[0].description, parameters.slice(1), formatters, "", append);
+        let resultText = result.formattedResult;
 
-        for (var i = 0; i < result.unusedSubstitutions.length; ++i)
+        for (let i = 0; i < result.unusedSubstitutions.length; ++i)
             resultText += " " + result.unusedSubstitutions[i].description;
 
-        this._text = resultText;
+        return resultText;
     }
 
     _sourceCodeLocationDisplayLocationChanged(event)

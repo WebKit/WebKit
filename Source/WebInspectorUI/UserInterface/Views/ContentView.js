@@ -78,7 +78,7 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
                 return new WebInspector.HeapAllocationsTimelineView(representedObject, extraArguments);
         }
 
-        if (representedObject instanceof WebInspector.Breakpoint) {
+        if (representedObject instanceof WebInspector.Breakpoint || representedObject instanceof WebInspector.IssueMessage) {
             if (representedObject.sourceCodeLocation)
                 return WebInspector.ContentView.createFromRepresentedObject(representedObject.sourceCodeLocation.displaySourceCode, extraArguments);
         }
@@ -188,7 +188,7 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         if (representedObject instanceof WebInspector.Frame)
             return representedObject.mainResource;
 
-        if (representedObject instanceof WebInspector.Breakpoint) {
+        if (representedObject instanceof WebInspector.Breakpoint || representedObject instanceof WebInspector.IssueMessage) {
             if (representedObject.sourceCodeLocation)
                 return representedObject.sourceCodeLocation.displaySourceCode;
         }
@@ -214,7 +214,7 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
             return true;
         if (representedObject instanceof WebInspector.Timeline)
             return true;
-        if (representedObject instanceof WebInspector.Breakpoint)
+        if (representedObject instanceof WebInspector.Breakpoint || representedObject instanceof WebInspector.IssueMessage)
             return representedObject.sourceCodeLocation;
         if (representedObject instanceof WebInspector.DOMStorageObject)
             return true;

@@ -56,8 +56,8 @@ WebInspector.IssueTreeElement = class IssueTreeElement extends WebInspector.Debu
 
     _updateTitles()
     {
-        var displayLineNumber = this._issueMessage.displayLineNumber;
-        var displayColumnNumber = this._issueMessage.displayColumnNumber;
+        var displayLineNumber = this._issueMessage.sourceCodeLocation.displayLineNumber;
+        var displayColumnNumber = this._issueMessage.sourceCodeLocation.displayColumnNumber;
         var title;
         if (displayColumnNumber > 0)
             title = WebInspector.UIString("Line %d:%d").format(displayLineNumber + 1, displayColumnNumber + 1); // The user visible line and column numbers are 1-based.

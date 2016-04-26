@@ -790,20 +790,10 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         return false;
     }
 
-    _matchesIssue(issue)
-    {
-        if (this._sourceCode instanceof WebInspector.Resource)
-            return issue.url === this._sourceCode.url;
-        // FIXME: Support issues for Scripts based on id, not only by URL.
-        if (this._sourceCode instanceof WebInspector.Script)
-            return issue.url === this._sourceCode.url;
-        return false;
-    }
-
     _issueWasAdded(event)
     {
         var issue = event.data.issue;
-        if (!this._matchesIssue(issue))
+        if (!WebInspector.IssueManager.issueMatchSourceCode(issue, this._sourceCode))
             return;
 
         this._addIssue(issue);
@@ -811,8 +801,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
     _addIssue(issue)
     {
-        // FIXME: Issue should have a SourceCodeLocation.
-        var sourceCodeLocation = this._sourceCode.createSourceCodeLocation(issue.lineNumber, issue.columnNumber);
+        var sourceCodeLocation = issue.sourceCodeLocation;
         var lineNumber = sourceCodeLocation.formattedLineNumber;
 
         var lineNumberIssues = this._issuesLineNumberMap.get(lineNumber);
@@ -823,7 +812,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
         // Avoid displaying duplicate issues on the same line.
         for (var existingIssue of lineNumberIssues) {
-            if (existingIssue.columnNumber === issue.columnNumber && existingIssue.text === issue.text)
+            if (existingIssue.sourceCodeLocation.columnNumber === sourceCodeLocation.columnNumber && existingIssue.text === issue.text)
                 return;
         }
 
@@ -1208,10 +1197,8 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         this._clearWidgets();
 
         var issues = WebInspector.issueManager.issuesForSourceCode(this._sourceCode);
-        for (var issue of issues) {
-            console.assert(this._matchesIssue(issue));
+        for (var issue of issues)
             this._addIssue(issue);
-        }
     }
 
     _debuggerDidPause(event)

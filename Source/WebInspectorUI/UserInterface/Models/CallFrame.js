@@ -150,11 +150,16 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
             nativeCode = true;
             url = null;
         } else if (url || scriptId) {
-            let sourceCode = WebInspector.frameResourceManager.resourceForURL(url);
+            let sourceCode = null;
+            if (scriptId) {
+                sourceCode = WebInspector.debuggerManager.scriptForIdentifier(scriptId);
+                if (sourceCode && sourceCode.resource)
+                    sourceCode = sourceCode.resource;
+            }
+            if (!sourceCode)
+                sourceCode = WebInspector.frameResourceManager.resourceForURL(url);
             if (!sourceCode)
                 sourceCode = WebInspector.debuggerManager.scriptsForURL(url)[0];
-            if (!sourceCode && scriptId)
-                sourceCode = WebInspector.debuggerManager.scriptForIdentifier(scriptId);
 
             if (sourceCode) {
                 // The lineNumber is 1-based, but we expect 0-based.
