@@ -1271,7 +1271,7 @@ webkit.org/b/150956 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/140217 http/tests/navigation/forward-and-cancel.html [ Pass Failure ]
 
-webkit.org/b/151469 imported/w3c/html-templates/parsing-html-templates/creating-an-element-for-the-token/template-owner-document.html [ Pass Crash ]
+webkit.org/b/151469 imported/w3c/web-platform-tests/html/syntax/parsing/template/creating-an-element-for-the-token/template-owner-document.html [ Pass Crash ]
 
 webkit.org/b/152009 [ Debug ElCapitan ] fast/canvas/canvas-too-large-to-draw.html [ Skip ]
 
