@@ -1,3 +1,23 @@
+2016-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chart status should always be computed against prior values
+        https://bugs.webkit.org/show_bug.cgi?id=157014
+
+        Reviewed by Darin Adler.
+
+        Compare the current value against the last baseline or target value that appear before the current value in time
+        so that the comparison stay the same even when new baseline and target values are reported. Also include the compared
+        baseline or target value in the label for clarity.
+
+        * public/v3/components/chart-status-view.js:
+        (ChartStatusView.prototype._computeChartStatus):
+        (ChartStatusView.prototype._computeChartStatus.labelForDiff):
+        (ChartStatusView.prototype._findLastPointPriorToTime): Extracted from _relativeDifferenceToLaterPointInTimeSeries.
+        Now finds the last point before the current point's time if there is any, or the last point in baseline / target.
+        (ChartStatusView.prototype._relativeDifferenceToLaterPointInTimeSeries): Deleted.
+        * public/v3/models/metric.js:
+        (Metric.prototype.makeFormatter): Don't use SI units for unit-less metrics.
+
 2016-04-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r199444): Perf dashboard always fetches all measurement sets

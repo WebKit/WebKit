@@ -112,33 +112,38 @@ class ChartStatusView extends ComponentBase {
         if (!currentPoint)
             currentPoint = currentTimeSeriesData[currentTimeSeriesData.length - 1];
 
-        var diffFromBaseline = this._relativeDifferenceToLaterPointInTimeSeries(currentPoint, baselineTimeSeriesData);
-        var diffFromTarget = this._relativeDifferenceToLaterPointInTimeSeries(currentPoint, targetTimeSeriesData);
+        var baselinePoint = this._findLastPointPriorToTime(currentPoint, baselineTimeSeriesData);
+        var diffFromBaseline = baselinePoint !== undefined ? (currentPoint.value - baselinePoint.value) / baselinePoint.value : undefined;
+
+        var targetPoint = this._findLastPointPriorToTime(currentPoint, targetTimeSeriesData);
+        var diffFromTarget = targetPoint !== undefined ? (currentPoint.value - targetPoint.value) / targetPoint.value : undefined;
 
         var label = '';
         var className = '';
 
-        function labelForDiff(diff, name, comparison)
+        function labelForDiff(diff, referencePoint, name, comparison)
         {
-            return Math.abs(diff * 100).toFixed(1) + '% ' + comparison + ' ' + name;
+            var relativeDiff = Math.abs(diff * 100).toFixed(1);
+            var referenceValue = referencePoint ? ` (${formatter(referencePoint.value)})` : '';
+            return `${relativeDiff}% ${comparison} ${name}${referenceValue}`;
         }
 
         var smallerIsBetter = metric.isSmallerBetter();
         if (diffFromBaseline !== undefined && diffFromTarget !== undefined) {
             if (diffFromBaseline > 0 == smallerIsBetter) {
-                label = labelForDiff(diffFromBaseline, 'baseline', 'worse than');
+                label = labelForDiff(diffFromBaseline, baselinePoint, 'baseline', 'worse than');
                 className = 'worse';
             } else if (diffFromTarget < 0 == smallerIsBetter) {
-                label = labelForDiff(diffFromBaseline, 'target', 'better than');
+                label = labelForDiff(diffFromTarget, targetPoint, 'target', 'better than');
                 className = 'better';
             } else
-                label = labelForDiff(diffFromTarget, 'target', 'until');
+                label = labelForDiff(diffFromTarget, targetPoint, 'target', 'until');
         } else if (diffFromBaseline !== undefined) {
             className = diffFromBaseline > 0 == smallerIsBetter ? 'worse' : 'better';
-            label = labelForDiff(diffFromBaseline, 'baseline', className + ' than');
+            label = labelForDiff(diffFromBaseline, baselinePoint, 'baseline', className + ' than');
         } else if (diffFromTarget !== undefined) {
             className = diffFromTarget < 0 == smallerIsBetter ? 'better' : 'worse';
-            label = labelForDiff(diffFromTarget, 'target', className + ' than');
+            label = labelForDiff(diffFromTarget, targetPoint, 'target', className + ' than');
         }
 
         var valueDelta = null;
@@ -157,19 +162,16 @@ class ChartStatusView extends ComponentBase {
         };
     }
 
-    _relativeDifferenceToLaterPointInTimeSeries(currentPoint, timeSeriesData)
+    _findLastPointPriorToTime(currentPoint, timeSeriesData)
     {
         if (!currentPoint || !timeSeriesData || !timeSeriesData.length)
             return undefined;
 
-        // FIXME: We shouldn't be using the first data point to access the time series object.
-        var referencePoint = timeSeriesData[0].series.findPointAfterTime(currentPoint.time);
-        if (!referencePoint)
-            return undefined;
-
-        return (currentPoint.value - referencePoint.value) / referencePoint.value;
+        var i = 0;
+        while (i < timeSeriesData.length - 1 && timeSeriesData[i + 1].time < currentPoint.time)
+            i++;
+        return timeSeriesData[i];
     }
-
 
     static htmlTemplate()
     {
