@@ -1,3 +1,37 @@
+2016-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Guarantee FontPlatformData's m_cgFont is never nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=156929
+
+        Reviewed by Darin Adler.
+
+        After some investigation, it turns out that there is no place where it is meaningful
+        to pass us a null CoreText font. Therefore, the CoreGraphics font is also never null.
+
+        We should simply check for these null values at the ingestion site in order to
+        make the guarantee internally of having non-null values.
+
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Because the pointer is never null, we
+        can delete the code which handles that case.
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm: Ditto.
+        (WebCore::webFallbackFontFamily): Deleted.
+        (WebCore::FontPlatformData::setFallbackCGFont): Deleted.
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters): Asking the
+        CTRun for its kCTFontAttributeName will always return non-null.
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Once we have a font descriptor,
+        CTFontCreateWithFontDescriptor() will always return non-null. We check if the font
+        descriptor is null elsewhere.
+        * platform/mac/DragImageMac.mm: The fonts in this file are gotten by asking for the
+        system font, which will always return non-null.
+        (WebCore::fontFromNSFont):
+        (WebCore::widthWithFont):
+        (WebCore::drawAtPoint):
+        (WebCore::createDragImageForLink):
+
 2016-04-25  Chris Dumez  <cdumez@apple.com>
 
         Crash under MemoryCache::remove()

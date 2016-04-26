@@ -109,7 +109,6 @@ public:
 #elif PLATFORM(COCOA)
     CTFontRef font() const { return m_font.get(); }
     WEBCORE_EXPORT CTFontRef registeredFont() const; // Returns nullptr iff the font is not registered, such as web fonts (otherwise returns font()).
-    void setFont(CTFontRef);
 
     CTFontRef ctFont() const;
     static RetainPtr<CFTypeRef> objectForEqualityCheck(CTFontRef);
@@ -120,7 +119,6 @@ public:
 #if USE(APPKIT)
     // FIXME: Remove this when all NSFont usage is removed.
     NSFont *nsFont() const { return (NSFont *)m_font.get(); }
-    void setNSFont(NSFont *font) { setFont(reinterpret_cast<CTFontRef>(font)); }
 #endif
 #endif
 
@@ -215,9 +213,6 @@ private:
 #endif
 #if PLATFORM(WIN)
     void platformDataInit(HFONT, float size, HDC, WCHAR* faceName);
-#endif
-#if USE(CG)
-    void setFallbackCGFont();
 #endif
 
 public:

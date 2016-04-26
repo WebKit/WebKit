@@ -157,8 +157,4 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
         && m_useGDI == other.m_useGDI;
 }
 
-void FontPlatformData::setFallbackCGFont()
-{
-}
-
 }

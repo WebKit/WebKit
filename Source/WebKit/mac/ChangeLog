@@ -1,3 +1,20 @@
+2016-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Guarantee FontPlatformData's m_cgFont is never nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=156929
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:allowingFontSmoothing:]): Drawing
+        a string with a null font shouldn't do anything.
+        * Misc/WebStringTruncator.mm: We can't truncate a string if we don't have a font
+        to use.
+        (+[WebStringTruncator centerTruncateString:toWidth:]):
+        (+[WebStringTruncator centerTruncateString:toWidth:withFont:]):
+        (+[WebStringTruncator rightTruncateString:toWidth:withFont:]):
+        (+[WebStringTruncator widthOfString:font:]):
+
 2016-04-25  Beth Dakin  <bdakin@apple.com>
 
         WebEditorClient should properly write to m_rangeForCandidates

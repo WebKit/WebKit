@@ -1,3 +1,13 @@
+2016-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Guarantee FontPlatformData's m_cgFont is never nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=156929
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/mac/StringTruncator.mm:
+        (TestWebKitAPI::TEST):
+
 2016-04-25  Caitlin Potter  <caitp@igalia.com>
 
         [Tools] whitelist all-uppercase JSTokenType enum in JavaScriptCore

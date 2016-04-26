@@ -71,6 +71,9 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
 - (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor allowingFontSmoothing:(BOOL)fontSmoothingIsAllowed
 {
+    if (!font)
+        return;
+
     unsigned length = [self length];
     Vector<UniChar, 2048> buffer(length);
 
