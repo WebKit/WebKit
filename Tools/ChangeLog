@@ -1,3 +1,17 @@
+2016-04-26  Filip Pizlo  <fpizlo@apple.com>
+
+        WebCore on Mac ignores the user's preferred region (country) while getting the language
+        https://bugs.webkit.org/show_bug.cgi?id=156993
+
+        Reviewed by Geoffrey Garen.
+
+        Change the test expectations for this test. If the variant is not explicitly specified in
+        the AppleLanguage, then we use the locale's country code, which this test assumes is US.
+
+        * TestWebKitAPI/Tests/mac/NavigatorLanguage.mm:
+        (TestWebKitAPI::languageForSystemLanguage):
+        (TestWebKitAPI::TEST):
+
 2016-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the build flag for template elements

@@ -68,17 +68,21 @@ static NSString *languageForSystemLanguage(WebView* webView, NSString *systemLan
     return [webView stringByEvaluatingJavaScriptFromString:@"navigator.language"];
 }
 
-// These tests document current behavior. Some of the current results may not be right.
+// These tests document current behavior. Some of the current results may not be right. Note that
+// this oddly assumes that the user has set their language to something possibly-foreign but still
+// left their region as US. Hence the "-us" variants.
+// FIXME: These tests should also set the region to see how WebKit will handle that.
+// https://bugs.webkit.org/show_bug.cgi?id=157039
 NSArray *tests = @[
-    @[@"ru", @"ru-ru"], // This does not match other browsers or CFNetwork's Accept-Language, which all use "ru".
+    @[@"ru", @"ru-us"], // This does not match other browsers or CFNetwork's Accept-Language, which all use "ru".
     @[@"en", @"en-us"],
     @[@"en-GB", @"en-gb"],
     @[@"en-US", @"en-us"],
-    @[@"ja", @"ja-jp"],
-    @[@"hi", @"hi-in"],
+    @[@"ja", @"ja-us"],
+    @[@"hi", @"hi-us"],
     @[@"zh-TW", @"zh-tw"], // This should not map to the generic zh-hant, see rdar://problem/21395180.
     @[@"zh-HK", @"zh-tw"],
-    @[@"es", @"es-es"],
+    @[@"es", @"es-us"],
     @[@"es-MX", @"es-xl"],
     @[@"es-ES", @"es-es"],
     @[@"es-419", @"es-xl"],
@@ -86,7 +90,7 @@ NSArray *tests = @[
     @[@"zh-Hant", @"zh-tw"],
     @[@"pt-BR", @"pt-br"],
     @[@"pt-PT", @"pt-pt"],
-    @[@"fr", @"fr-fr"],
+    @[@"fr", @"fr-us"],
     @[@"fr-CA", @"fr-ca"],
 ];
 
