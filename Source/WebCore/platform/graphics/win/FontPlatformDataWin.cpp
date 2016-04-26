@@ -74,7 +74,7 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold,
     RestoreDC(hdc, -1);
 }
 
-PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
+RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
     HWndDC hdc(0);
     HGDIOBJ oldFont = SelectObject(hdc, hfont());

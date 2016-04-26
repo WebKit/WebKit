@@ -44,12 +44,12 @@ FontPlatformData::FontPlatformData()
 }
 
 FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode)
-    : m_syntheticBold(syntheticBold)
-    , m_syntheticOblique(syntheticOblique)
+    : m_size(size)
     , m_orientation(orientation)
-    , m_size(size)
     , m_widthVariant(widthVariant)
     , m_textRenderingMode(textRenderingMode)
+    , m_syntheticBold(syntheticBold)
+    , m_syntheticOblique(syntheticOblique)
 {
 }
 
@@ -69,6 +69,27 @@ FontPlatformData::FontPlatformData(const FontPlatformData& source)
     m_isColorBitmapFont = source.m_isColorBitmapFont;
     m_isSystemFont = source.m_isSystemFont;
     platformDataInit(source);
+}
+
+FontPlatformData FontPlatformData::cloneWithOrientation(const FontPlatformData& source, FontOrientation orientation)
+{
+    FontPlatformData copy(source);
+    copy.m_orientation = orientation;
+    return copy;
+}
+
+FontPlatformData FontPlatformData::cloneWithSyntheticOblique(const FontPlatformData& source, bool syntheticOblique)
+{
+    FontPlatformData copy(source);
+    copy.m_syntheticOblique = syntheticOblique;
+    return copy;
+}
+
+FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source, float size)
+{
+    FontPlatformData copy(source);
+    copy.m_size = size;
+    return copy;
 }
 
 const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)

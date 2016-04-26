@@ -265,6 +265,27 @@ FontPlatformData::~FontPlatformData()
         cairo_scaled_font_destroy(m_scaledFont);
 }
 
+FontPlatformData FontPlatformData::cloneWithOrientation(const FontPlatformData& source, FontOrientation orientation)
+{
+    FontPlatformData copy(source);
+    copy.m_orientation = orientation;
+    return copy;
+}
+
+FontPlatformData FontPlatformData::cloneWithSyntheticOblique(const FontPlatformData& source, bool syntheticOblique)
+{
+    FontPlatformData copy(source);
+    copy.m_syntheticOblique = syntheticOblique;
+    return copy;
+}
+
+FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source, float size)
+{
+    FontPlatformData copy(source);
+    copy.m_size = size;
+    return copy;
+}
+
 HarfBuzzFace* FontPlatformData::harfBuzzFace() const
 {
     if (!m_harfBuzzFace)

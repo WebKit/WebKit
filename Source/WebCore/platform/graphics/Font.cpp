@@ -253,8 +253,7 @@ const Font& Font::verticalRightOrientationFont() const
     if (!m_derivedFontData)
         m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->verticalRightOrientation) {
-        FontPlatformData verticalRightPlatformData(m_platformData);
-        verticalRightPlatformData.setOrientation(Horizontal);
+        auto verticalRightPlatformData = FontPlatformData::cloneWithOrientation(m_platformData, Horizontal);
         m_derivedFontData->verticalRightOrientation = create(verticalRightPlatformData, isCustomFont(), false, true);
     }
     ASSERT(m_derivedFontData->verticalRightOrientation != this);
@@ -320,9 +319,10 @@ const Font& Font::nonSyntheticItalicFont() const
     if (!m_derivedFontData)
         m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->nonSyntheticItalic) {
-        FontPlatformData nonSyntheticItalicFontPlatformData(m_platformData);
 #if PLATFORM(COCOA) || USE(CAIRO)
-        nonSyntheticItalicFontPlatformData.setSyntheticOblique(false);
+        FontPlatformData nonSyntheticItalicFontPlatformData = FontPlatformData::cloneWithSyntheticOblique(m_platformData, false);
+#else
+        FontPlatformData nonSyntheticItalicFontPlatformData(m_platformData);
 #endif
         m_derivedFontData->nonSyntheticItalic = create(nonSyntheticItalicFontPlatformData, isCustomFont());
     }

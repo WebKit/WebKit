@@ -96,7 +96,7 @@ void Font::platformInit()
 {
     // FIXME: Unify these two codepaths
 #if USE(APPKIT)
-    m_syntheticBoldOffset = m_platformData.m_syntheticBold ? 1.0f : 0.f;
+    m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
     // Work around <rdar://problem/19433490>
@@ -109,7 +109,7 @@ void Font::platformInit()
 
     // Some fonts erroneously specify a positive descender value. We follow Core Text in assuming that
     // such fonts meant the same distance, but in the reverse direction.
-    float pointSize = m_platformData.m_size;
+    float pointSize = m_platformData.size();
     float ascent = scaleEmToUnits(CGFontGetAscent(m_platformData.cgFont()), unitsPerEm) * pointSize;
     float descent = -scaleEmToUnits(-abs(CGFontGetDescent(m_platformData.cgFont())), unitsPerEm) * pointSize;
     float capHeight = scaleEmToUnits(CGFontGetCapHeight(m_platformData.cgFont()), unitsPerEm) * pointSize;
@@ -174,7 +174,7 @@ void Font::platformInit()
 
 #else
 
-    m_syntheticBoldOffset = m_platformData.m_syntheticBold ? ceilf(m_platformData.size()  / 24.0f) : 0.f;
+    m_syntheticBoldOffset = m_platformData.syntheticBold() ? ceilf(m_platformData.size()  / 24.0f) : 0.f;
 
     CTFontRef ctFont = m_platformData.font();
     FontServicesIOS fontService(ctFont);
@@ -202,7 +202,7 @@ void Font::platformCharWidthInit()
     if (os2Table && CFDataGetLength(os2Table.get()) >= 4) {
         const UInt8* os2 = CFDataGetBytePtr(os2Table.get());
         SInt16 os2AvgCharWidth = os2[2] * 256 + os2[3];
-        m_avgCharWidth = scaleEmToUnits(os2AvgCharWidth, m_fontMetrics.unitsPerEm()) * m_platformData.m_size;
+        m_avgCharWidth = scaleEmToUnits(os2AvgCharWidth, m_fontMetrics.unitsPerEm()) * m_platformData.size();
     }
 
     RetainPtr<CFDataRef> headTable = adoptCF(CGFontCopyTableForTag(m_platformData.cgFont(), 'head'));
@@ -213,7 +213,7 @@ void Font::platformCharWidthInit()
         SInt16 xMin = static_cast<SInt16>(uxMin);
         SInt16 xMax = static_cast<SInt16>(uxMax);
         float diff = static_cast<float>(xMax - xMin);
-        m_maxCharWidth = scaleEmToUnits(diff, m_fontMetrics.unitsPerEm()) * m_platformData.m_size;
+        m_maxCharWidth = scaleEmToUnits(diff, m_fontMetrics.unitsPerEm()) * m_platformData.size();
     }
 #endif
 
@@ -363,16 +363,16 @@ static RefPtr<Font> createDerivativeFont(CTFontRef font, float size, FontOrienta
     if (!font)
         return nullptr;
 
-    FontPlatformData scaledFontData(font, size, false, false, orientation);
-
     if (syntheticBold)
         fontTraits |= kCTFontBoldTrait;
     if (syntheticItalic)
         fontTraits |= kCTFontItalicTrait;
 
-    CTFontSymbolicTraits scaledFontTraits = CTFontGetSymbolicTraits(scaledFontData.font());
-    scaledFontData.m_syntheticBold = (fontTraits & kCTFontBoldTrait) && !(scaledFontTraits & kCTFontTraitBold);
-    scaledFontData.m_syntheticOblique = (fontTraits & kCTFontItalicTrait) && !(scaledFontTraits & kCTFontTraitItalic);
+    CTFontSymbolicTraits scaledFontTraits = CTFontGetSymbolicTraits(font);
+
+    bool usedSyntheticBold = (fontTraits & kCTFontBoldTrait) && !(scaledFontTraits & kCTFontTraitBold);
+    bool usedSyntheticOblique = (fontTraits & kCTFontItalicTrait) && !(scaledFontTraits & kCTFontTraitItalic);
+    FontPlatformData scaledFontData(font, size, usedSyntheticBold, usedSyntheticOblique, orientation);
 
     return Font::create(scaledFontData);
 }
@@ -512,7 +512,7 @@ RefPtr<Font> Font::createFontWithoutSynthesizableFeatures() const
     float size = m_platformData.size();
     CTFontSymbolicTraits fontTraits = CTFontGetSymbolicTraits(m_platformData.font());
     RetainPtr<CTFontRef> ctFont = createCTFontWithoutSynthesizableFeatures(m_platformData.font());
-    return createDerivativeFont(ctFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.m_syntheticBold, m_platformData.m_syntheticOblique);
+    return createDerivativeFont(ctFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.syntheticBold(), m_platformData.syntheticOblique());
 }
 
 RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleFactor) const
@@ -522,7 +522,7 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleF
     RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontCopyFontDescriptor(m_platformData.font()));
     RetainPtr<CTFontRef> scaledFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
 
-    return createDerivativeFont(scaledFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.m_syntheticBold, m_platformData.m_syntheticOblique);
+    return createDerivativeFont(scaledFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.syntheticBold(), m_platformData.syntheticOblique());
 }
 
 void Font::determinePitch()
@@ -628,14 +628,14 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     bool horizontal = platformData().orientation() == Horizontal;
     bool populatedAdvance = false;
     if ((horizontal || m_isBrokenIdeographFallback) && canUseFastGlyphAdvanceGetter(this->platformData(), glyph, advance, populatedAdvance)) {
-        float pointSize = platformData().m_size;
+        float pointSize = platformData().size();
         CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
         if (!CGFontGetGlyphAdvancesForStyle(platformData().cgFont(), &m, renderingStyle(platformData()), &glyph, 1, &advance)) {
             RetainPtr<CFStringRef> fullName = adoptCF(CGFontCopyFullName(platformData().cgFont()));
             LOG_ERROR("Unable to cache glyph widths for %@ %f", fullName.get(), pointSize);
             advance.width = 0;
         }
-    } else if (!populatedAdvance && platformData().m_size)
+    } else if (!populatedAdvance && platformData().size())
         CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), horizontal ? kCTFontOrientationHorizontal : kCTFontOrientationVertical, &glyph, &advance, 1);
 
     return advance.width + m_syntheticBoldOffset;

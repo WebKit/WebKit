@@ -791,7 +791,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     bool syntheticBold, syntheticOblique;
     std::tie(syntheticBold, syntheticOblique) = computeNecessarySynthesis(substituteFont, description, isPlatformFont).boldObliquePair();
 
-    FontPlatformData alternateFont(substituteFont, platformData.size(), syntheticBold, syntheticOblique, platformData.m_orientation, platformData.m_widthVariant, platformData.m_textRenderingMode);
+    FontPlatformData alternateFont(substituteFont, platformData.size(), syntheticBold, syntheticOblique, platformData.orientation(), platformData.widthVariant(), platformData.textRenderingMode());
 
     return fontForPlatformData(alternateFont);
 }

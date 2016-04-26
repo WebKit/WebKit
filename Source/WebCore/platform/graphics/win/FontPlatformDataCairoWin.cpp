@@ -46,7 +46,7 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
     cairo_matrix_init_identity(&ctm);
     cairo_matrix_init_scale(&sizeMatrix, size, size);
 
-    static cairo_font_options_t* fontOptions = 0;
+    static cairo_font_options_t* fontOptions = nullptr;
     if (!fontOptions) {
        fontOptions = cairo_font_options_create();
        cairo_font_options_set_antialias(fontOptions, CAIRO_ANTIALIAS_SUBPIXEL);
@@ -101,7 +101,7 @@ void FontPlatformData::platformDataInit(const FontPlatformData& source)
 {
     m_font = source.m_font;
     m_useGDI = source.m_useGDI;
-    m_scaledFont = 0;
+    m_scaledFont = nullptr;
 
     if (source.m_scaledFont)
         m_scaledFont = cairo_scaled_font_reference(source.m_scaledFont);

@@ -1,3 +1,43 @@
+2016-04-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make FontPlatformData immutable
+        https://bugs.webkit.org/show_bug.cgi?id=157024
+
+        Reviewed by Darin Adler.
+
+        This patch deletes all functions which modify a FontPlatformData once
+        it has been created. This makes for a cleaner design.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::verticalRightOrientationFont):
+        (WebCore::Font::nonSyntheticItalicFont):
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::cloneWithOrientation):
+        (WebCore::FontPlatformData::cloneWithSyntheticOblique):
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::setIsSystemFont): Deleted.
+        (WebCore::FontPlatformData::setSize): Deleted.
+        (WebCore::FontPlatformData::setOrientation): Deleted.
+        (WebCore::FontPlatformData::setSyntheticOblique): Deleted.
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformInit):
+        (WebCore::Font::platformCharWidthInit):
+        (WebCore::createDerivativeFont):
+        (WebCore::Font::createFontWithoutSynthesizableFeatures):
+        (WebCore::Font::platformCreateScaledFont):
+        (WebCore::Font::platformWidthForGlyph):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::openTypeTable):
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::platformDataInit):
+
 2016-04-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r200089.

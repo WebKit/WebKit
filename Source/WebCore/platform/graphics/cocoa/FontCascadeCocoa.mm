@@ -280,7 +280,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         matrix = CTFontGetMatrix(platformData.font());
     matrix.b = -matrix.b;
     matrix.d = -matrix.d;
-    if (platformData.m_syntheticOblique) {
+    if (platformData.syntheticOblique()) {
         static float obliqueSkew = tanf(SYNTHETIC_OBLIQUE_ANGLE * piFloat / 180);
         if (platformData.orientation() == Vertical)
             matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, obliqueSkew, 0, 1, 0, 0));

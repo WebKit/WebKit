@@ -68,6 +68,10 @@ public:
     FontPlatformData(const FontPlatformData&);
     FontPlatformData(const FontPlatformData&, float size);
 
+    static FontPlatformData cloneWithOrientation(const FontPlatformData&, FontOrientation);
+    static FontPlatformData cloneWithSyntheticOblique(const FontPlatformData&, bool);
+    static FontPlatformData cloneWithSize(const FontPlatformData&, float);
+
     ~FontPlatformData();
 
     HarfBuzzFace* harfBuzzFace() const;
