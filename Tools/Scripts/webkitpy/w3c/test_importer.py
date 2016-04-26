@@ -487,12 +487,12 @@ class TestImporter(object):
 
         import_log = []
         import_log.append('The tests in this directory were imported from the W3C repository.\n')
-        import_log.append('Do NOT modify these tests directly in Webkit.\n')
+        import_log.append('Do NOT modify these tests directly in WebKit.\n')
         import_log.append('Instead, create a pull request on the W3C CSS or WPT github:\n')
         import_log.append('\thttps://github.com/w3c/csswg-test\n')
         import_log.append('\thttps://github.com/w3c/web-platform-tests\n\n')
         import_log.append('Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport\n\n')
-        import_log.append('Do NOT modify or remove this file\n\n')
+        import_log.append('Do NOT modify or remove this file.\n\n')
         import_log.append('------------------------------------------------------------------------\n')
         import_log.append('Properties requiring vendor prefixes:\n')
         if prop_list:
