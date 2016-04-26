@@ -1,3 +1,16 @@
+2016-04-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Update expectation result in ewk_context_preferred_languages API test
+        https://bugs.webkit.org/show_bug.cgi?id=157027
+
+        Reviewed by Carlos Garcia Campos.
+
+        platformLanguage() has been returning lower case value since r199815. Thus existing expected result
+        needs to be updated together.
+
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp: Change en-US with en-us.
+        (TEST_F):
+
 2016-04-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Mark two methods in the CoordinatedGraphicsScene and the
