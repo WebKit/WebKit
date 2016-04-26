@@ -1,3 +1,17 @@
+2016-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ASSERTION FAILED: m_templateInsertionModes.isEmpty() in WebCore::HTMLTreeBuilder::finished
+        https://bugs.webkit.org/show_bug.cgi?id=143519
+
+        Reviewed by Darin Adler.
+
+        Rebaselined the html5lib tests (now passes all the test cases!) and added a regression test for an assertion.
+
+        * fast/dom/HTMLTemplateElement/parsing-template-with-frameset-expected.txt: Added.
+        * fast/dom/HTMLTemplateElement/parsing-template-with-frameset.html: Added.
+        * html5lib/generated/run-template-data-expected.txt:
+        * html5lib/generated/run-template-write-expected.txt:
+
 2016-04-26  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         calling super() a second time in a constructor should throw

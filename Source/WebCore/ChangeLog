@@ -1,3 +1,32 @@
+2016-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ASSERTION FAILED: m_templateInsertionModes.isEmpty() in WebCore::HTMLTreeBuilder::finished
+        https://bugs.webkit.org/show_bug.cgi?id=143519
+
+        Reviewed by Darin Adler.
+
+        The assertion failure was caused by our parser inconsistently following the spec. Fixed it by making our HTML parser
+        match the latest HTML5 specification. See inline comments below.
+
+        Tests: fast/dom/HTMLTemplateElement/parsing-template-with-frameset.html
+               html5lib/generated/run-template-data.html
+               html5lib/generated/run-template-write.html
+               imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-as-a-descendant.html
+               imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-frameset.html
+               imported/w3c/web-platform-tests/html/syntax/parsing/template/additions-to-the-in-frameset-insertion-mode/end-tag-frameset.html
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): When parsing a template element for 'in body' insertion mode,
+        we process the token using the rules for 'in head' insertion mode, which sets the frameset-ok flag to "not ok".
+        In addition, 'in template' insertion mode should not special case a start tag whose tag name is "frame". Instead,
+        fallback to using 'in body' insertion mode.
+        https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-inbody
+        (WebCore::HTMLTreeBuilder::processStartTag): 'in frameset' insertion mode should not special case a start tag whose
+        tag name is "template": https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-inframeset
+        (WebCore::HTMLTreeBuilder::processEndTag): Ditto for an end tag whose name is "template".
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead): When parsing a template element in 'in head' inserting mode,
+        we set the frameset-ok flag to "not ok": https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-inhead
+
 2016-04-26  Filip Pizlo  <fpizlo@apple.com>
 
         WebCore on Mac ignores the user's preferred region (country) while getting the language

@@ -1,7 +1,5 @@
 
-FAIL Template element as a descendant of the frameset element. Test loading from a file assert_equals: Template element should not be a descendant of the frameset element expected null but got Element node <template>
-        <div>Hello, template</div>
-    </templ...
-FAIL Template element as a descendant of the frameset element. Test template element is assigned to frameset's innerHTML) assert_equals: Template element should not be a descendant of the frameset element expected null but got Element node <template>some text</template>
-FAIL Template element as a descendant of the frameset element. Test template element appended to frameset by appendChild() assert_equals: Template element should be a descendant of the frameset element expected 1 but got 2
+PASS Template element as a descendant of the frameset element. Test loading from a file 
+PASS Template element as a descendant of the frameset element. Test template element is assigned to frameset's innerHTML) 
+PASS Template element as a descendant of the frameset element. Test template element appended to frameset by appendChild() 
 

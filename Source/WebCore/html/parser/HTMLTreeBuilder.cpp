@@ -896,6 +896,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == templateTag) {
+        m_framesetOk = false;
         processTemplateStartTag(token);
         return;
     }
@@ -1288,10 +1289,6 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
             processStartTagForInHead(token);
             return;
         }
-        if (token.name() == templateTag) {
-            processTemplateStartTag(token);
-            return;
-        }
         parseError(token);
         break;
     case InsertionMode::AfterFrameset:
@@ -1393,9 +1390,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         }
 
         InsertionMode insertionMode = InsertionMode::TemplateContents;
-        if (token.name() == frameTag)
-            insertionMode = InsertionMode::InFrameset;
-        else if (token.name() == colTag)
+        if (token.name() == colTag)
             insertionMode = InsertionMode::InColumnGroup;
         else if (isCaptionColOrColgroupTag(token.name()) || isTableBodyContextTag(token.name()))
             insertionMode = InsertionMode::InTable;
@@ -2137,10 +2132,6 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
                 m_insertionMode = InsertionMode::AfterFrameset;
             return;
         }
-        if (token.name() == templateTag) {
-            processTemplateEndTag(token);
-            return;
-        }
         break;
     case InsertionMode::AfterFrameset:
         if (token.name() == htmlTag) {
@@ -2679,6 +2670,7 @@ bool HTMLTreeBuilder::processStartTagForInHead(AtomicHTMLToken& token)
         return true;
     }
     if (token.name() == templateTag) {
+        m_framesetOk = false;
         processTemplateStartTag(token);
         return true;
     }
