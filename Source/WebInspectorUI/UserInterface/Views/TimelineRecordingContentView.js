@@ -53,6 +53,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         this._filterBarNavigationItem = new WebInspector.FilterBarNavigationItem;
         this._filterBarNavigationItem.filterBar.placeholder = WebInspector.UIString("Filter Records");
+        this._filterBarNavigationItem.filterBar.addEventListener(WebInspector.FilterBar.Event.FilterDidChange, this._filterDidChange, this);
         this._timelineContentBrowser.navigationBar.addNavigationItem(this._filterBarNavigationItem);
         this.addSubview(this._timelineContentBrowser);
 
@@ -84,6 +85,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
         WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
+
+        WebInspector.TimelineView.addEventListener(WebInspector.TimelineView.Event.RecordWasFiltered, this._recordWasFiltered, this);
 
         for (let instrument of this._recording.instruments)
             this._instrumentAdded(instrument);
@@ -213,94 +216,6 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
     goForward()
     {
         this._timelineContentBrowser.goForward();
-    }
-
-    filterDidChange()
-    {
-        if (!this.currentTimelineView)
-            return;
-
-        this.currentTimelineView.filterDidChange();
-    }
-
-    recordWasFiltered(record, filtered)
-    {
-        if (!this.currentTimelineView)
-            return;
-
-        this._timelineOverview.recordWasFiltered(this.currentTimelineView.representedObject, record, filtered);
-    }
-
-    matchTreeElementAgainstCustomFilters(treeElement)
-    {
-        if (this.currentTimelineView && !this.currentTimelineView.matchTreeElementAgainstCustomFilters(treeElement))
-            return false;
-
-        let startTime = this._timelineOverview.selectionStartTime;
-        let endTime = startTime + this._timelineOverview.selectionDuration;
-        let currentTime = this._currentTime || this._recording.startTime;
-
-        if (this._timelineOverview.viewMode === WebInspector.TimelineOverview.ViewMode.RenderingFrames) {
-            console.assert(this._renderingFrameTimeline);
-
-            if (this._renderingFrameTimeline && this._renderingFrameTimeline.records.length) {
-                let records = this._renderingFrameTimeline.records;
-                let startIndex = this._timelineOverview.timelineRuler.snapInterval ? startTime : Math.floor(startTime);
-                if (startIndex >= records.length)
-                    return false;
-
-                let endIndex = this._timelineOverview.timelineRuler.snapInterval ? endTime - 1: Math.floor(endTime);
-                endIndex = Math.min(endIndex, records.length - 1);
-                console.assert(startIndex <= endIndex, startIndex);
-
-                startTime = records[startIndex].startTime;
-                endTime = records[endIndex].endTime;
-            }
-        }
-
-        function checkTimeBounds(itemStartTime, itemEndTime)
-        {
-            itemStartTime = itemStartTime || currentTime;
-            itemEndTime = itemEndTime || currentTime;
-
-            return startTime <= itemEndTime && itemStartTime <= endTime;
-        }
-
-        if (treeElement instanceof WebInspector.ResourceTreeElement) {
-            var resource = treeElement.resource;
-            return checkTimeBounds(resource.requestSentTimestamp, resource.finishedOrFailedTimestamp);
-        }
-
-        if (treeElement instanceof WebInspector.SourceCodeTimelineTreeElement) {
-            var sourceCodeTimeline = treeElement.sourceCodeTimeline;
-
-            // Do a quick check of the timeline bounds before we check each record.
-            if (!checkTimeBounds(sourceCodeTimeline.startTime, sourceCodeTimeline.endTime))
-                return false;
-
-            for (var record of sourceCodeTimeline.records) {
-                if (checkTimeBounds(record.startTime, record.endTime))
-                    return true;
-            }
-
-            return false;
-        }
-
-        if (treeElement instanceof WebInspector.ProfileNodeTreeElement) {
-            var profileNode = treeElement.profileNode;
-            if (checkTimeBounds(profileNode.startTime, profileNode.endTime))
-                return true;
-
-            return false;
-        }
-
-        if (treeElement instanceof WebInspector.TimelineRecordTreeElement) {
-            var record = treeElement.record;
-            return checkTimeBounds(record.startTime, record.endTime);
-        }
-
-        console.error("Unknown TreeElement, can't filter by time.");
-        return true;
     }
 
     // ContentBrowser delegate
@@ -469,9 +384,6 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         if (this._timelineOverview.timelineRuler.entireRangeSelected)
             this._updateTimelineViewSelection(this._overviewTimelineView);
-
-        // Filter records on new recording times.
-        // FIXME: <https://webkit.org/b/154924> Web Inspector: hook up grid row filtering in the new Timelines UI
 
         // Force a layout now since we are already in an animation frame and don't need to delay it until the next.
         this._timelineOverview.updateLayoutIfNeeded();
@@ -699,18 +611,6 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
             this._selectedTimeRangePathComponent = selectedPathComponent;
             this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
         }
-
-        // Delay until the next frame to stay in sync with the current timeline view's time-based layout changes.
-        requestAnimationFrame(function() {
-            var selectedTreeElement = this.currentTimelineView && this.currentTimelineView.navigationSidebarTreeOutline ? this.currentTimelineView.navigationSidebarTreeOutline.selectedTreeElement : null;
-            var selectionWasHidden = selectedTreeElement && selectedTreeElement.hidden;
-
-            // Filter records on new timeline selection.
-            // FIXME: <https://webkit.org/b/154924> Web Inspector: hook up grid row filtering in the new Timelines UI
-
-            if (selectedTreeElement && selectedTreeElement.hidden !== selectionWasHidden)
-                this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
-        }.bind(this));
     }
 
     _recordSelected(event)
@@ -795,5 +695,23 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this.element.classList.toggle(WebInspector.TimelineOverview.EditInstrumentsStyleClassName, editingInstruments);
 
         this._updateTimelineOverviewHeight();
+    }
+
+    _filterDidChange()
+    {
+        if (!this.currentTimelineView)
+            return;
+
+        this.currentTimelineView.updateFilter(this._filterBarNavigationItem.filterBar.filters);
+    }
+
+    _recordWasFiltered(event)
+    {
+        if (event.target !== this.currentTimelineView)
+            return;
+
+        let record = event.data.record;
+        let filtered = event.data.filtered;
+        this._timelineOverview.recordWasFiltered(this.currentTimelineView.representedObject, record, filtered);
     }
 };

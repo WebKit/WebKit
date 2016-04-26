@@ -31,7 +31,7 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         console.assert(timeline.type === WebInspector.TimelineRecord.Type.Layout, timeline);
 
-        let columns = {name: {}, location: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
+        let columns = {type: {}, name: {}, location: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
 
         columns.name.title = WebInspector.UIString("Type");
         columns.name.width = "15%";
@@ -42,11 +42,13 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
             typeToLabelMap.set(value, WebInspector.LayoutTimelineRecord.displayNameForEventType(value));
         }
 
-        columns.name.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("layout", typeToLabelMap);
+        columns.type.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("layout", typeToLabelMap);
+        columns.type.hidden = true;
+
         columns.name.disclosure = true;
         columns.name.icon = true;
 
-        this._scopeBar = columns.name.scopeBar;
+        this._scopeBar = columns.type.scopeBar;
 
         columns.location.title = WebInspector.UIString("Initiator");
         columns.location.width = "25%";
@@ -69,8 +71,9 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
             columns[column].sortable = true;
 
         this._dataGrid = new WebInspector.LayoutTimelineDataGrid(columns);
-        this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridSelectedNodeChanged, this);
+
+        this.setupDataGrid(this._dataGrid);
 
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("layout-timeline-view-sort", "startTime");
         this._dataGrid.sortOrderSetting = new WebInspector.Setting("layout-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
@@ -141,18 +144,6 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         this._dataGrid.closed();
     }
 
-    filterDidChange()
-    {
-        super.filterDidChange();
-
-        this._updateHighlight();
-    }
-
-    matchTreeElementAgainstCustomFilters(treeElement)
-    {
-        return this._dataGrid.treeElementMatchesActiveScopeFilters(treeElement);
-    }
-
     reset()
     {
         super.reset();
@@ -174,9 +165,9 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         dataGridNode.revealAndSelect();
     }
 
-    treeElementDeselected(treeElement)
+    filterDidChange()
     {
-        super.treeElementDeselected(treeElement);
+        super.filterDidChange();
 
         this._updateHighlight();
     }
@@ -244,16 +235,6 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         this._pendingRecords.push(layoutTimelineRecord);
 
         this.needsLayout();
-    }
-
-    _dataGridFiltersDidChange(event)
-    {
-        // FIXME: <https://webkit.org/b/154924> Web Inspector: hook up grid row filtering in the new Timelines UI
-    }
-
-    _dataGridNodeSelected(event)
-    {
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
     _updateHighlight()
@@ -325,6 +306,11 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
     _mouseLeaveDataGrid(event)
     {
         this._hoveredDataGridNode = null;
+        this._updateHighlight();
+    }
+
+    _dataGridSelectedNodeChanged(event)
+    {
         this._updateHighlight();
     }
 };

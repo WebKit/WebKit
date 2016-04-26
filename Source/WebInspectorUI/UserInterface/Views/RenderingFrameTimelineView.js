@@ -77,9 +77,10 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
             columns[column].sortable = true;
 
         this._dataGrid = new WebInspector.TimelineDataGrid(columns);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("rendering-frame-timeline-view-sort", "startTime");
         this._dataGrid.sortOrderSetting = new WebInspector.Setting("rendering-frame-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
+
+        this.setupDataGrid(this._dataGrid);
 
         this.element.classList.add("rendering-frame");
         this.addSubview(this._dataGrid);
@@ -151,22 +152,24 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         return pathComponents;
     }
 
-    matchTreeElementAgainstCustomFilters(treeElement)
+    get filterStartTime()
     {
-        console.assert(this._scopeBar.selectedItems.length === 1);
-        var selectedScopeBarItem = this._scopeBar.selectedItems[0];
-        if (!selectedScopeBarItem || selectedScopeBarItem.id === WebInspector.RenderingFrameTimelineView.DurationFilter.All)
-            return true;
+        let records = this.representedObject.records;
+        let startIndex = this.startTime;
+        if (startIndex >= records.length)
+            return Infinity;
 
-        while (treeElement && !(treeElement.record instanceof WebInspector.RenderingFrameTimelineRecord))
-            treeElement = treeElement.parent;
+        return records[startIndex].startTime;
+    }
 
-        console.assert(treeElement, "Cannot apply duration filter: no RenderingFrameTimelineRecord found.");
-        if (!treeElement)
-            return false;
+    get filterEndTime()
+    {
+        let records = this.representedObject.records;
+        let endIndex = this.endTime - 1;
+        if (endIndex >= records.length)
+            return Infinity;
 
-        var minimumDuration = selectedScopeBarItem.id === WebInspector.RenderingFrameTimelineView.DurationFilter.OverOneMillisecond ? 0.001 : 0.015;
-        return treeElement.record.duration > minimumDuration;
+        return records[endIndex].endTime;
     }
 
     reset()
@@ -193,6 +196,28 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         if (treeElement instanceof WebInspector.ProfileNodeTreeElement)
             return new WebInspector.ProfileNodeDataGridNode(treeElement.profileNode, this.zeroTime, this.startTime, this.endTime);
         return null;
+    }
+
+    matchDataGridNodeAgainstCustomFilters(node)
+    {
+        if (!super.matchDataGridNodeAgainstCustomFilters(node))
+            return false;
+
+        console.assert(node instanceof WebInspector.TimelineDataGridNode);
+        console.assert(this._scopeBar.selectedItems.length === 1);
+        let selectedScopeBarItem = this._scopeBar.selectedItems[0];
+        if (!selectedScopeBarItem || selectedScopeBarItem.id === WebInspector.RenderingFrameTimelineView.DurationFilter.All)
+            return true;
+
+        while (node && !(node.record instanceof WebInspector.RenderingFrameTimelineRecord))
+            node = node.parent;
+
+        console.assert(node, "Cannot apply duration filter: no RenderingFrameTimelineRecord found.");
+        if (!node)
+            return false;
+
+        let minimumDuration = selectedScopeBarItem.id === WebInspector.RenderingFrameTimelineView.DurationFilter.OverOneMillisecond ? 0.001 : 0.015;
+        return node.record.duration > minimumDuration;
     }
 
     layout()
@@ -264,14 +289,9 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         this.needsLayout();
     }
 
-    _dataGridNodeSelected(event)
+    _scopeBarSelectionDidChange()
     {
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
-    }
-
-    _scopeBarSelectionDidChange(event)
-    {
-        // FIXME: <https://webkit.org/b/154924> Web Inspector: hook up grid row filtering in the new Timelines UI
+        this.filterDidChange();
     }
 };
 

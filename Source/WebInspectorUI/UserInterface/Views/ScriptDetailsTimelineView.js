@@ -72,11 +72,11 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
             columns[column].sortable = true;
 
         this._dataGrid = new WebInspector.ScriptTimelineDataGrid(columns);
-        this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.sortDelegate = this;
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("script-timeline-view-sort", "startTime");
         this._dataGrid.sortOrderSetting = new WebInspector.Setting("script-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
+
+        this.setupDataGrid(this._dataGrid);
 
         this.element.classList.add("script");
         this.addSubview(this._dataGrid);
@@ -235,15 +235,5 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
     _scriptTimelineRecordRefreshed(event)
     {
         this.needsLayout();
-    }
-
-    _dataGridFiltersDidChange(event)
-    {
-        // FIXME: <https://webkit.org/b/154924> Web Inspector: hook up grid row filtering in the new Timelines UI
-    }
-
-    _dataGridNodeSelected(event)
-    {
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     }
 };

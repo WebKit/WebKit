@@ -156,6 +156,16 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
         return super.createCellContent(columnIdentifier, cell);
     }
 
+    // Protected
+
+    filterableDataForColumn(columnIdentifier)
+    {
+        if (columnIdentifier === "name")
+            return [this.displayName(), this.subtitle];
+
+        return super.filterableDataForColumn(columnIdentifier);
+    }
+
     // Private
 
     _createNameCellDocumentFragment(cellElement)

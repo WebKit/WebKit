@@ -364,4 +364,16 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
 
         return true;
     }
+
+    filterableDataForColumn(columnIdentifier)
+    {
+        let value = this.data[columnIdentifier];
+        if (value instanceof WebInspector.SourceCodeLocation)
+            return value.displayLocationString();
+
+        if (value instanceof WebInspector.CallFrame)
+            return [value.functionName, value.sourceCodeLocation.displayLocationString()];
+
+        return super.filterableDataForColumn(columnIdentifier);
+    }
 };

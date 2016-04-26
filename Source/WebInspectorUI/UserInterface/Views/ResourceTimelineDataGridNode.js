@@ -146,6 +146,15 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         return [WebInspector.ResourceTreeElement.ResourceIconStyleClassName, this.resource.type];
     }
 
+    // Protected
+
+    filterableDataForColumn(columnIdentifier)
+    {
+        if (columnIdentifier === "name")
+            return this._resource.url;
+        return super.filterableDataForColumn(columnIdentifier);
+    }
+
     // Private
 
     _createNameCellDocumentFragment()

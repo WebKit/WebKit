@@ -71,8 +71,9 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
     set currentTime(x) { this._contentViewContainer.currentContentView.currentTime = x; }
     get navigationSidebarTreeOutline() { return this._contentViewContainer.currentContentView.navigationSidebarTreeOutline; }
     reset() { return this._contentViewContainer.currentContentView.reset(); }
+    updateFilter(filters) { return this._contentViewContainer.currentContentView.updateFilter(filters); }
     filterDidChange() { return this._contentViewContainer.currentContentView.filterDidChange(); }
-    matchTreeElementAgainstCustomFilters(treeElement) { return this._contentViewContainer.currentContentView.matchTreeElementAgainstCustomFilters(treeElement); }
+    matchDataGridNodeAgainstCustomFilters(node) { return this._contentViewContainer.currentContentView.matchDataGridNodeAgainstCustomFilters(node); }
 
     // Public
 
@@ -196,8 +197,6 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         currentContentView.startTime = previousContentView.startTime;
         currentContentView.endTime = previousContentView.endTime;
         currentContentView.currentTime = previousContentView.currentTime;
-
-        // FIXME: <https://webkit.org/b/154924> Web Inspector: hook up grid row filtering in the new Timelines UI
     }
 };
 

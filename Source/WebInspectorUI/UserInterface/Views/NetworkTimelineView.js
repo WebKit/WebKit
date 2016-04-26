@@ -88,11 +88,11 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
             columns[column].sortable = true;
 
         this._dataGrid = new WebInspector.TimelineDataGrid(columns);
-        this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.sortDelegate = this;
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("network-timeline-view-sort", "requestSent");
         this._dataGrid.sortOrderSetting = new WebInspector.Setting("network-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
+
+        this.setupDataGrid(this._dataGrid);
 
         this.element.classList.add("network");
         this.addSubview(this._dataGrid);
@@ -137,11 +137,6 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         this.representedObject.removeEventListener(null, null, this);
 
         this._dataGrid.closed();
-    }
-
-    matchTreeElementAgainstCustomFilters(treeElement)
-    {
-        return this._dataGrid.treeElementMatchesActiveScopeFilters(treeElement);
     }
 
     reset()
@@ -234,15 +229,5 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         this._pendingRecords.push(resourceTimelineRecord);
 
         this.needsLayout();
-    }
-
-    _dataGridFiltersDidChange(event)
-    {
-        // FIXME: <https://webkit.org/b/154924> Web Inspector: hook up grid row filtering in the new Timelines UI
-    }
-
-    _dataGridNodeSelected(event)
-    {
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     }
 };

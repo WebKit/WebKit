@@ -53,6 +53,9 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this.resizers = [];
         this._columnWidthsInitialized = false;
 
+        this._filterText = "";
+        this._filterDelegate = null;
+
         this.element.className = "data-grid";
         this.element.tabIndex = 0;
         this.element.addEventListener("keydown", this._keyDown.bind(this), false);
@@ -281,6 +284,112 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
             this._scrollContainerElement.addEventListener("scroll", this._scrollListener);
     }
 
+    set filterText(x)
+    {
+        if (this._filterText === x)
+            return;
+
+        this._filterText = x;
+        this.filterDidChange();
+    }
+
+    get filterDelegate() { return this._filterDelegate; }
+
+    set filterDelegate(delegate)
+    {
+        this._filterDelegate = delegate;
+        this.filterDidChange();
+    }
+
+    filterDidChange()
+    {
+        if (this._scheduledFilterUpdateIdentifier)
+            return;
+
+        this._scheduledFilterUpdateIdentifier = requestAnimationFrame(this._updateFilter.bind(this));
+    }
+
+    hasCustomFilters()
+    {
+        return this._hasFilterDelegate();
+    }
+
+    matchNodeAgainstCustomFilters(node)
+    {
+        if (!this._hasFilterDelegate())
+            return true;
+        return this._filterDelegate.dataGridMatchNodeAgainstCustomFilters(node);
+    }
+
+    _applyFiltersToNode(node)
+    {
+        if (!this._textFilterRegex && !this.hasCustomFilters()) {
+            // No filters, so make everything visible.
+            node.hidden = false;
+
+            // If the node was expanded during filtering, collapse it again.
+            if (node.expanded && node[WebInspector.DataGrid.WasExpandedDuringFilteringSymbol]) {
+                node[WebInspector.DataGrid.WasExpandedDuringFilteringSymbol] = false;
+                node.collapse();
+            }
+
+            return;
+        }
+
+        let filterableData = node.filterableData || [];
+        let flags = {expandNode: false};
+        let filterRegex = this._textFilterRegex;
+
+        function matchTextFilter()
+        {
+            if (!filterableData.length || !filterRegex)
+                return true;
+
+            if (filterableData.some((value) => filterRegex.test(value))) {
+                flags.expandNode = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        function makeVisible()
+        {
+            // Make this element visible.
+            node.hidden = false;
+
+            // Make the ancestors visible and expand them.
+            let currentAncestor = node.parent;
+            while (currentAncestor && !currentAncestor.root) {
+                currentAncestor.hidden = false;
+
+                // Only expand if the built-in filters matched, not custom filters.
+                if (flags.expandNode && !currentAncestor.expanded) {
+                    currentAncestor[WebInspector.DataGrid.WasExpandedDuringFilteringSymbol] = true;
+                    currentAncestor.expand();
+                }
+
+                currentAncestor = currentAncestor.parent;
+            }
+        }
+
+        if (matchTextFilter() && this.matchNodeAgainstCustomFilters(node)) {
+            // Make the node visible since it matches.
+            makeVisible();
+
+            // If the node didn't match a built-in filter and was expanded earlier during filtering, collapse it again.
+            if (!flags.expandNode && node.expanded && node[WebInspector.DataGrid.WasExpandedDuringFilteringSymbol]) {
+                node[WebInspector.DataGrid.WasExpandedDuringFilteringSymbol] = false;
+                node.collapse();
+            }
+
+            return;
+        }
+
+        // Make the node invisible since it does not match.
+        node.hidden = true;
+    }
+
     _updateSortedColumn(oldSortColumnIdentifier)
     {
         if (this._sortColumnIdentifierSetting)
@@ -299,6 +408,11 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         }
 
         this.dispatchEventToListeners(WebInspector.DataGrid.Event.SortChanged);
+    }
+
+    _hasFilterDelegate()
+    {
+        return this._filterDelegate && typeof this._filterDelegate.dataGridMatchNodeAgainstCustomFilters === "function";
     }
 
     _ondblclick(event)
@@ -867,7 +981,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         let rowHeight = this.rowHeight;
         let updateOffsetThreshold = rowHeight * 5;
 
-        let revealedRows = this._rows.filter((row) => row.revealed);
+        let revealedRows = this._rows.filter((row) => row.revealed && !row.hidden);
 
         let scrollTop = this._scrollContainerElement.scrollTop;
         let scrollHeight = this._scrollContainerElement.offsetHeight;
@@ -1569,13 +1683,51 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         this._currentResizer = null;
     }
+
+    _updateFilter()
+    {
+        if (this._scheduledFilterUpdateIdentifier) {
+            cancelAnimationFrame(this._scheduledFilterUpdateIdentifier);
+            this._scheduledFilterUpdateIdentifier = undefined;
+        }
+
+        if (!this._rows.length)
+            return;
+
+        this._textFilterRegex = simpleGlobStringToRegExp(this._filterText, "i");
+
+        // Don't populate if we don't have any active filters.
+        // We only need to populate when a filter needs to reveal.
+        let dontPopulate = !this._textFilterRegex && !this.hasCustomFilters();
+
+        let filterDidModifyNode = false;
+        let currentNode = this._rows[0];
+        while (currentNode && !currentNode.root) {
+            const currentNodeWasHidden = currentNode.hidden;
+            this._applyFiltersToNode(currentNode);
+            if (currentNodeWasHidden !== currentNode.hidden) {
+                this.dispatchEventToListeners(WebInspector.DataGrid.Event.NodeWasFiltered, {node: currentNode});
+                filterDidModifyNode = true;
+            }
+
+            currentNode = currentNode.traverseNextNode(false, null, dontPopulate);
+        }
+
+        if (!filterDidModifyNode)
+            return;
+
+        this._updateVisibleRows();
+        this.dispatchEventToListeners(WebInspector.DataGrid.Event.FilterDidChange);
+    }
 };
 
 WebInspector.DataGrid.Event = {
     SortChanged: "datagrid-sort-changed",
     SelectedNodeChanged: "datagrid-selected-node-changed",
     ExpandedNode: "datagrid-expanded-node",
-    CollapsedNode: "datagrid-collapsed-node"
+    CollapsedNode: "datagrid-collapsed-node",
+    FilterDidChange: "datagrid-filter-did-change",
+    NodeWasFiltered: "datagrid-node-was-filtered"
 };
 
 WebInspector.DataGrid.ResizeMethod = {
@@ -1592,6 +1744,7 @@ WebInspector.DataGrid.SortOrder = {
 
 WebInspector.DataGrid.PreviousColumnOrdinalSymbol = Symbol("previous-column-ordinal");
 WebInspector.DataGrid.NextColumnOrdinalSymbol = Symbol("next-column-ordinal");
+WebInspector.DataGrid.WasExpandedDuringFilteringSymbol = Symbol("was-expanded-during-filtering");
 
 WebInspector.DataGrid.ColumnResizePadding = 10;
 WebInspector.DataGrid.CenterResizerOverBorderAdjustment = 3;
@@ -1726,6 +1879,30 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         this.needsRefresh();
     }
 
+    get filterableData()
+    {
+        if (this._cachedFilterableData)
+            return this._cachedFilterableData;
+
+        this._cachedFilterableData = [];
+
+        for (let column of this.dataGrid.columns.values()) {
+            let value = this.filterableDataForColumn(column.columnIdentifier);
+            if (!value)
+                continue;
+
+            if (!(value instanceof Array))
+                value = [value];
+
+            if (!value.length)
+                continue;
+
+            this._cachedFilterableData = this._cachedFilterableData.concat(value);
+        }
+
+        return this._cachedFilterableData;
+    }
+
     get revealed()
     {
         if ("_revealed" in this)
@@ -1856,6 +2033,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
             this._scheduledRefreshIdentifier = undefined;
         }
 
+        this._cachedFilterableData = null;
         this._needsRefresh = false;
 
         this._element.removeChildren();
@@ -2253,6 +2431,14 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
     {
         // Subclasses may override
         return null;
+    }
+
+    // Protected
+
+    filterableDataForColumn(columnIdentifier)
+    {
+        let value = this.data[columnIdentifier];
+        return typeof value === "string" ? value : null;
     }
 };
 

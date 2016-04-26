@@ -45,7 +45,8 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
         columns.graph.headerView = this._timelineRuler;
 
         this._dataGrid = new WebInspector.DataGrid(columns);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+
+        this.setupDataGrid(this._dataGrid);
 
         this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
         this._timelineRuler.addMarker(this._currentTimeMarker);
@@ -292,11 +293,6 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
     _markerAdded(event)
     {
         this._timelineRuler.addMarker(event.data.marker);
-    }
-
-    _dataGridNodeSelected(event)
-    {
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
     _recordingReset(event)

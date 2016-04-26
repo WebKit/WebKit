@@ -1,3 +1,198 @@
+2016-04-25  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: hook up grid row filtering in the new Timelines UI
+        https://bugs.webkit.org/show_bug.cgi?id=154924
+        <rdar://problem/24934607>
+
+        Reviewed by Timothy Hatcher.
+
+        Re-implement timeline data grid filtering that previously existed in the
+        navigation sidebar. This patch adds support for filter text, scope bars,
+        and filtering based on ruler selection.
+
+        Multi-column filter support is now part of DataGrid. The grid checks compares
+        filter text against cell data of type string. DataGridNode subclasses may
+        provide custom string data for columns that format complex objects (such
+        as SourceCodeLocations). Cells containing data of type number are not
+        considered for filtering at this time.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.set filterText):
+        (WebInspector.DataGrid.prototype.get filterDelegate):
+        (WebInspector.DataGrid.prototype.set filterDelegate):
+        (WebInspector.DataGrid.prototype.filterDidChange):
+        Called internally by the grid whenever the filter text or delegate changes.
+        Also called by clients that implement a filter delegate, to inform the
+        grid that a custom filter has changed.
+
+        (WebInspector.DataGrid.prototype.hasCustomFilters):
+        (WebInspector.DataGrid.prototype.matchNodeAgainstCustomFilters):
+        Calls the filter delegate, if it exists, and provides a hook for
+        subclasses to provide custom filtering.
+
+        (WebInspector.DataGrid.prototype._applyFiltersToNode.matchTextFilter):
+        (WebInspector.DataGrid.prototype._applyFiltersToNode.makeVisible):
+        (WebInspector.DataGrid.prototype._applyFiltersToNode):
+        Filters data grid nodes and fires filter events as needed.
+        (WebInspector.DataGrid.prototype._hasFilterDelegate):
+        Helper function.
+        (WebInspector.DataGrid.prototype._updateVisibleRows):
+        Exclude hidden nodes from revealed rows.
+        (WebInspector.DataGrid.prototype._updateFilter):
+        Filtering entry point, called on an animation frame. Updates visible
+        rows if any node was filtered/unfiltered.
+
+        (WebInspector.DataGridNode):
+        (WebInspector.DataGridNode.prototype.get filterableData):
+        Gets an array of filterable strings for the node.
+        (WebInspector.DataGridNode.prototype.refresh):
+        Resets cached filterable strings.
+        (WebInspector.DataGridNode.prototype.filterableDataForColumn):
+        Can be overridden by subclasses to provide filterable text for complex
+        cell data, like as objects formatted as document fragments.
+
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        (WebInspector.LayoutTimelineDataGridNode.prototype.get data):
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+        Register grid and remove logic that has been moved to the base class.
+        (WebInspector.LayoutTimelineView.prototype.filterDidChange):
+        Update highlight after grid filter change.
+        (WebInspector.LayoutTimelineView.prototype._dataGridSelectedNodeChanged):
+        Update highlight when selection changes.
+        (WebInspector.LayoutTimelineView.prototype.matchTreeElementAgainstCustomFilters): Deleted.
+        (WebInspector.LayoutTimelineView.prototype.treeElementDeselected): Deleted.
+        (WebInspector.LayoutTimelineView.prototype._dataGridFiltersDidChange): Deleted.
+        (WebInspector.LayoutTimelineView.prototype._dataGridNodeSelected): Deleted.
+        No longer needed.
+
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        Register grid and remove logic that has been moved to the base class.
+        (WebInspector.NetworkTimelineView.prototype.matchTreeElementAgainstCustomFilters): Deleted.
+        (WebInspector.NetworkTimelineView.prototype._dataGridFiltersDidChange): Deleted.
+        (WebInspector.NetworkTimelineView.prototype._dataGridNodeSelected): Deleted.
+        No longer needed.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView):
+        Register grid and remove logic that has been moved to the base class.
+        (WebInspector.OverviewTimelineView.prototype._dataGridNodeSelected): Deleted.
+        No longer needed.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        Register grid and remove logic that has been moved to the base class.
+        (WebInspector.RenderingFrameTimelineView.prototype.get filterStartTime):
+        (WebInspector.RenderingFrameTimelineView.prototype.get filterEndTime):
+        Convert selection indices into filter start and end times.
+        (WebInspector.RenderingFrameTimelineView.prototype.matchDataGridNodeAgainstCustomFilters):
+        Perform custom filtering on rendering frame duration.
+        (WebInspector.RenderingFrameTimelineView.prototype._scopeBarSelectionDidChange):
+        Inform grid of custom filter change.
+        (WebInspector.RenderingFrameTimelineView.prototype.matchTreeElementAgainstCustomFilters): Deleted.
+        (WebInspector.RenderingFrameTimelineView.prototype._dataGridNodeSelected): Deleted.
+        No longer needed.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.filterableDataForColumn):
+        Use URL string for filtering "name" column.
+
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WebInspector.ScriptClusterTimelineView.prototype.updateFilter):
+        Forwarding for TimelineView API.
+        (WebInspector.ScriptClusterTimelineView.prototype.matchDataGridNodeAgainstCustomFilters):
+        (WebInspector.ScriptClusterTimelineView.prototype.matchTreeElementAgainstCustomFilters): Deleted.
+        Renamed to matchDataGridNodeAgainstCustomFilters.
+        (WebInspector.ScriptClusterTimelineView.prototype._scriptClusterViewCurrentContentViewDidChange): Deleted.
+        Removed FIXME comment. Updating TimelineView times is sufficient to trigger filtering.
+
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WebInspector.ScriptDetailsTimelineView):
+        Register grid and remove logic that has been moved to the base class.
+        (WebInspector.ScriptDetailsTimelineView.prototype._dataGridFiltersDidChange): Deleted.
+        (WebInspector.ScriptDetailsTimelineView.prototype._dataGridNodeSelected): Deleted.
+        No longer needed.
+
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.filterableDataForColumn):
+        Use main title and subtitle strings for filtering "name" column.
+        (WebInspector.ScriptTimelineDataGridNode.prototype._createNameCellDocumentFragment):
+        (WebInspector.ScriptTimelineDataGridNode.prototype._subtitle):
+        Break out for use in filterableDataForColumn.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid):
+        Cleanup variable names.
+        (WebInspector.TimelineDataGrid.prototype.hasCustomFilters):
+        Always true because filtering on ruler selection always occurs.
+        (WebInspector.TimelineDataGrid.prototype.matchNodeAgainstCustomFilters):
+        Match nodes against scope bar filters.
+        (WebInspector.TimelineDataGrid.prototype._scopeBarSelectedItemsDidChange):
+        Inform grid of custom filter change.
+        (WebInspector.TimelineDataGrid.prototype.treeElementMatchesActiveScopeFilters): Deleted.
+        Re-implemented as _nodeMatchesActiveScopeFilters.
+        (WebInspector.TimelineDataGrid.prototype._updateScopeBarForcedVisibility): Deleted.
+        Old UI. No longer needed.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.filterableDataForColumn):
+        Filter strings for SourceCodeLocation and CallFrame objects.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        Listen for FilterBar changes and TimelineView record filtering.
+        (WebInspector.TimelineRecordingContentView.prototype._filterDidChange):
+        Update grid filters when filter bar changes.
+        (WebInspector.TimelineRecordingContentView.prototype._recordWasFiltered):
+        Update overview when records are filtered/unfiltered.
+        (WebInspector.TimelineRecordingContentView.prototype.filterDidChange): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype.recordWasFiltered): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype.matchTreeElementAgainstCustomFilters.checkTimeBounds): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype.matchTreeElementAgainstCustomFilters): Deleted.
+        Re-implemented in DataGrid.
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes): Deleted.
+        FIXME comment removed. Filtering occurs when TimelineView times are updated.
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged): Deleted.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView):
+        (WebInspector.TimelineView.prototype.get navigationItems):
+        Used by TimelineRecordingContentView to add scope bar items to the
+        lower content browser's navigation bar.
+
+        (WebInspector.TimelineView.prototype.set startTime):
+        (WebInspector.TimelineView.prototype.set endTime):
+        (WebInspector.TimelineView.prototype.set currentTime):
+        Update grid filter when recording times change.
+        (WebInspector.TimelineView.prototype.get filterStartTime):
+        (WebInspector.TimelineView.prototype.get filterEndTime):
+        Let subclasses (RenderingFrameTimelineView) provide filter start/end times.
+        (WebInspector.TimelineView.prototype.setupDataGrid):
+        Register the grid used by the TimelineView subclass, allowing the base
+        class to hook into common event listeners and provide boilerplate functionality.
+
+        (WebInspector.TimelineView.prototype.updateFilter):
+        For data grid views, updates grid filters and sets new filter text.
+        (WebInspector.TimelineView.prototype.matchDataGridNodeAgainstCustomFilters):
+        (WebInspector.TimelineView.prototype.dataGridMatchNodeAgainstCustomFilters.checkTimeBounds):
+        (WebInspector.TimelineView.prototype.dataGridMatchNodeAgainstCustomFilters):
+        DataGrid filter delegate. Lets subclasses apply custom filters first,
+        then filters based on ruler selection if needed.
+
+        (WebInspector.TimelineView.prototype.filterDidChange):
+        Hook for subclasses to respond to filter changes.
+        (WebInspector.TimelineView.prototype._filterTimesDidChange.delayedWork):
+        (WebInspector.TimelineView.prototype._filterTimesDidChange):
+        Helper function for coalescing ruler selection updates into a single
+        filter update.
+
+        (WebInspector.TimelineView.prototype.matchTreeElementAgainstCustomFilters): Deleted.
+        (WebInspector.TimelineView.prototype.filterUpdated): Deleted.
+        No longer needed.
+
 2016-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: React.js JSXTransformer produces bogus error locations

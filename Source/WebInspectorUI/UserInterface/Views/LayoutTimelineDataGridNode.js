@@ -44,6 +44,7 @@ WebInspector.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode exten
     {
         if (!this._cachedData) {
             this._cachedData = {
+                type: this._record.eventType,
                 name: this.displayName(),
                 width: this._record.width,
                 height: this._record.height,
