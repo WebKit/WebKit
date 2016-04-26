@@ -2554,11 +2554,11 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg indexGPR = index.gpr();
             GPRReg resultGPR = result.gpr();
 
-            use(node->child1());
-            index.use();
-
             speculationCheck(OutOfBounds, JSValueRegs(), node,
                 m_jit.branch32(MacroAssembler::LessThan, indexGPR, MacroAssembler::TrustedImm32(0)));
+
+            use(node->child1());
+            index.use();
 
             m_jit.move(MacroAssembler::TrustedImm64(ValueUndefined), resultGPR);
             jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);

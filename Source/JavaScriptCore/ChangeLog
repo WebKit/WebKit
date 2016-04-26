@@ -1,3 +1,25 @@
+2016-04-26  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] GetByVal on Undecided use its children before its OSR Exit
+        https://bugs.webkit.org/show_bug.cgi?id=157046
+
+        Reviewed by Mark Lam.
+
+        Very silly bug: GetByVal on Undecided uses its children before
+        the speculationCheck(). If we fail the speculation, we have already
+        lost how to recover the values.
+
+        The existing tests did not catch this because we tier up to B3
+        before such Exits happen. B3 has explicit liveness and did not suffer
+        from this bug.
+        The new test has a smaller warmup to exercise the OSR Exit in DFG
+        instead of FTL.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * tests/stress/get-by-val-on-undecided-out-of-bounds.js: Added.
+        (string_appeared_here.opaqueGetByValKnownArray):
+
 2016-04-26  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         calling super() a second time in a constructor should throw
