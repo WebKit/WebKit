@@ -155,7 +155,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CompareStrictEq:
     case IsJSArray:
     case IsArrayConstructor:
-    case IsEmpty:
     case IsUndefined:
     case IsBoolean:
     case IsNumber:

@@ -49,7 +49,6 @@ PASS (function () { eval("super.method()");})():::SyntaxError: super is not vali
 PASS (function () { eval("super()");})():::SyntaxError: super is not valid in this context.
 PASS new (class { constructor() { (function () { eval("super()");})(); } }):::SyntaxError: super is not valid in this context.
 PASS (new (class { method() { (function () { eval("super.method()");})(); }})).method():::SyntaxError: super is not valid in this context.
-PASS new (class extends Base { constructor() { super(); super();}}):::ReferenceError: 'super()' can't be called more than once in a constructor.
 PASS successfullyParsed
 
 TEST COMPLETE
