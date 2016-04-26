@@ -51,7 +51,7 @@ public:
     bool speaking() const;
     bool paused() const;
     
-    void speak(SpeechSynthesisUtterance*);
+    void speak(SpeechSynthesisUtterance&);
     void cancel();
     void pause();
     void resume();
@@ -73,9 +73,9 @@ private:
     void speakingErrorOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance>) override;
     void boundaryEventOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance>, SpeechBoundary, unsigned charIndex) override;
 
-    void startSpeakingImmediately(SpeechSynthesisUtterance*);
-    void handleSpeakingCompleted(SpeechSynthesisUtterance*, bool errorOccurred);
-    void fireEvent(const AtomicString& type, SpeechSynthesisUtterance*, unsigned long charIndex, const String& name);
+    void startSpeakingImmediately(SpeechSynthesisUtterance&);
+    void handleSpeakingCompleted(SpeechSynthesisUtterance&, bool errorOccurred);
+    void fireEvent(const AtomicString& type, SpeechSynthesisUtterance&, unsigned long charIndex, const String& name);
     
 #if PLATFORM(IOS)
     // Restrictions to change default behaviors.
@@ -91,7 +91,7 @@ private:
     std::unique_ptr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
     Vector<RefPtr<SpeechSynthesisVoice>> m_voiceList;
     SpeechSynthesisUtterance* m_currentSpeechUtterance;
-    Deque<RefPtr<SpeechSynthesisUtterance>> m_utteranceQueue;
+    Deque<Ref<SpeechSynthesisUtterance>> m_utteranceQueue;
     bool m_isPaused;
 #if PLATFORM(IOS)
     BehaviorRestrictions m_restrictions;

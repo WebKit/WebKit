@@ -1,5 +1,32 @@
 2016-04-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Drop [UsePointersEvenForNonNullableObjectArguments] from SpeechSynthesis
+        https://bugs.webkit.org/show_bug.cgi?id=156901
+
+        Reviewed by Darin Adler.
+
+        SpeechSynthesis.speak will now throw in case of bad parameters instead of silently failing.
+        Started refactoring to use more references where possible.
+
+        Covered by updated test.
+
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::startSpeakingImmediately): Refactored to get a reference.
+        (WebCore::SpeechSynthesis::speak):
+        (WebCore::SpeechSynthesis::fireEvent):
+        (WebCore::SpeechSynthesis::handleSpeakingCompleted): Removing first item in utteranceQueue unconditionally,
+        since that would crash in Debug mode otherwise.
+        (WebCore::SpeechSynthesis::boundaryEventOccurred):
+        (WebCore::SpeechSynthesis::didStartSpeaking):
+        (WebCore::SpeechSynthesis::didPauseSpeaking):
+        (WebCore::SpeechSynthesis::didResumeSpeaking):
+        (WebCore::SpeechSynthesis::didFinishSpeaking):
+        (WebCore::SpeechSynthesis::speakingErrorOccurred):
+        * Modules/speech/SpeechSynthesis.h:
+        * Modules/speech/SpeechSynthesis.idl:
+
+2016-04-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Drop [UsePointersEvenForNonNullableObjectArguments] from WebKitNamedFlow
         https://bugs.webkit.org/show_bug.cgi?id=156979
 

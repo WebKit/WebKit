@@ -12,7 +12,7 @@
     description("This tests that passing in the wrong type of data won't crash speech synthesis code");
 
      // Don't crash. Speak is supposed to take an utterance, not a string.
-     speechSynthesis.speak('Hello World');
+     shouldThrow("speechSynthesis.speak('Hello World')");
 
      // Don't crash. An utterance voice is supposed to take a voice object, not a string.
      var x = new SpeechSynthesisUtterance('Hello World');
