@@ -1,3 +1,14 @@
+2016-04-26  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][WebGL] Enable ESSL and GLSL translators.
+        https://bugs.webkit.org/show_bug.cgi?id=157002
+
+        Reviewed by Darin Adler.
+
+        Enable support for ESSL and GLSL translators, and add missing files.
+
+        * CMakeLists.txt:
+
 2016-04-22  Joonghun Park  <jh718.park@samsung.com>
 
         [ANGLE] Remove deprecated auto_ptr warning. Unreviewed.

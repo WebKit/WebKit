@@ -68,9 +68,11 @@ add_library(libANGLE STATIC
     src/compiler/preprocessor/Token.cpp
     src/compiler/preprocessor/Tokenizer.cpp
     src/compiler/translator/BuiltInFunctionEmulatorGLSL.cpp
+    src/compiler/translator/ExtensionGLSL.cpp
     src/compiler/translator/OutputESSL.cpp
     src/compiler/translator/OutputGLSL.cpp
     src/compiler/translator/OutputGLSLBase.cpp
+    src/compiler/translator/RecordConstantPrecision.cpp
     src/compiler/translator/SearchSymbol.cpp
     src/compiler/translator/TranslatorESSL.cpp
     src/compiler/translator/TranslatorGLSL.cpp
@@ -273,6 +275,8 @@ set_property(TARGET libANGLE PROPERTY COMPILE_DEFINITIONS
     ANGLE_DEFAULT_D3D11=1
     ANGLE_ENABLE_D3D9
     ANGLE_ENABLE_D3D11
+    ANGLE_ENABLE_ESSL
+    ANGLE_ENABLE_GLSL
     ANGLE_ENABLE_HLSL
     ANGLE_SKIP_DXGI_1_2_CHECK=1
     ANGLE_WEBKIT_WIN
