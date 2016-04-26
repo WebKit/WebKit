@@ -1,3 +1,60 @@
+2016-04-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG backends shouldn't emit type checks at KnownBlah edges
+        https://bugs.webkit.org/show_bug.cgi?id=157025
+
+        Reviewed by Michael Saboff.
+        
+        This fixes a crash I found when browsing Bing maps with forceEagerCompilation. I include a
+        100% repro test case.
+        
+        The issue is that our code still doesn't fully appreciate the devious implications of
+        KnownBlah use kinds. Consider KnownCell for example. It means: "trust me, I know that this
+        value will be a cell". You aren't required to provide a proof when you use KnownCell. Often,
+        we use it as a result of a path-sensitive proof. The abstract interpreter is not
+        path-sensitive, so AI will be absolutely sure that the KnownCell use might see a non-cell.
+        This can lead to debug assertions (which this change removes) and it can lead to the backends
+        emitting a type check. That type check can be pure evil if the node that has this edge does
+        not have an exit origin. Such a node would have passed validation because the validater would
+        have thought that the node cannot exit (after all, according to the IR semantics, there is no
+        speculation at KnownCell).
+
+        This comprehensively fixes the issue by recognizing that Foo(KnownCell:@x) means: I have
+        already proved that by the time you start executing Foo, @x will already be a cell. I cannot
+        tell you how I proved this but you can rely on it anyway. AI now takes advantage of this
+        meaning and will always do filtering of KnownBlah edges regardless of whether the backend
+        actually emits any type checks for those edges. Since the filtering runs before the backend,
+        the backend will not emit any checks because it will know that the edge was already checked
+        (by whatever mechanism we used when we made the edge KnownBlah).
+        
+        Note that it's good that we found this bug now. The DFG currently does very few
+        sparse-conditional or path-sensitive optimizations, but it will probably do more in the
+        future. The bug happens because GetByOffset and friends can achieve path-sensitive proofs via
+        watchpoints on the inferred type. Normally, AI can follow along with this proof. But in the
+        example program, and on Bing maps, we would GCSE one GetByOffset with another that had a
+        weaker proven type. That turned out to be completely sound - between the two GetByOffset's
+        there was a Branch to null check it. The inferred type of the second GetByOffset ended up
+        knowing that it cannot be null because null only occurred in some structures but not others.
+        If we added more sparse-conditional stuff to Branch, then AI would know how to follow along
+        with the proof but it would also create more situations where we'd have a path-sensitive
+        proof. So, it's good that we're now getting this right.
+
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::filterEdgeByUse):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEdges):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeKnownEdgeTypes):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::verifyEdge):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * tests/stress/path-sensitive-known-cell-crash.js: Added.
+        (bar):
+        (foo):
+
 2016-04-26  Gavin Barraclough  <barraclough@apple.com>
 
         Enable separated heap by default on ios

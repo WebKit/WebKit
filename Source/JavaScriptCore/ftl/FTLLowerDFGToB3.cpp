@@ -432,6 +432,7 @@ private:
         m_availableRecoveries.resize(0);
         
         m_interpreter.startExecuting();
+        m_interpreter.executeKnownEdgeTypes(m_node);
         
         switch (m_node->op()) {
         case DFG::Upsilon:

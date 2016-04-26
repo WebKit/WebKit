@@ -87,7 +87,7 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
 {
     switch (useKind) {
     case UntypedUse:
-        return SpecFullTop;
+        return SpecBytecodeTop;
     case Int32Use:
     case KnownInt32Use:
         return SpecInt32Only;

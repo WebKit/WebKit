@@ -1611,6 +1611,7 @@ void SpeculativeJIT::compileCurrentBlock()
         }
 
         m_interpreter.startExecuting();
+        m_interpreter.executeKnownEdgeTypes(m_currentNode);
         m_jit.setForNode(m_currentNode);
         m_origin = m_currentNode->origin;
         if (validationEnabled())
