@@ -1,3 +1,18 @@
+2016-04-26  Oliver Hunt  <oliver@apple.com>
+
+        Enable separated heap by default on ios
+        https://bugs.webkit.org/show_bug.cgi?id=156720
+
+        Unreviewed roll-in of this change. There is only one
+        additional allocation involved in this logic, and that
+        is a duplicate mapping.
+
+        Either our tools are not report real memory usage
+        or this revision is not responsible for the regression.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2016-04-26  Filip Pizlo  <fpizlo@apple.com>
 
         DFG backends shouldn't emit type checks at KnownBlah edges
