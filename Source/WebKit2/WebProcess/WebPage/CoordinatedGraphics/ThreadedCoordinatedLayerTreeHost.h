@@ -97,7 +97,7 @@ public:
     void scheduleAnimation() override;
 #endif
 
-    void setViewOverlayRootLayer(WebCore::GraphicsLayer*);
+    void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
     static RefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
 protected:

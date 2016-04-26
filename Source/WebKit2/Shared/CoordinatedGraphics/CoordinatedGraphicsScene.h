@@ -77,7 +77,7 @@ public:
 
     WebCore::TextureMapperLayer* findScrollableContentsLayerAt(const WebCore::FloatPoint&);
 
-    virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
+    void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override;
 
     // The painting thread must lock the main thread to use below two methods, because two methods access members that the main thread manages. See m_client.
     // Currently, QQuickWebPage::updatePaintNode() locks the main thread before calling both methods.

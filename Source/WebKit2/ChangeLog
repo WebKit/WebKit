@@ -1,3 +1,14 @@
+2016-04-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Mark two methods in the CoordinatedGraphicsScene and the
+        ThreadedCoordinatedLayerTreeHost classes as overrides, fixing
+        the compiler warnings.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+
 2016-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the build flag for template elements
