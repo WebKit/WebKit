@@ -1,3 +1,13 @@
+2016-04-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from EventTarget
+        https://bugs.webkit.org/show_bug.cgi?id=156977
+
+        Reviewed by Chris Dumez.
+
+        * fast/events/dispatchEvent-crash-expected.txt:
+        * fast/events/dispatchEvent-crash.html: Ensuring exceptions are logged.
+
 2016-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update template element tests

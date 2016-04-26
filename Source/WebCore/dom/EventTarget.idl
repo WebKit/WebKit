@@ -21,12 +21,12 @@
 // Introduced in DOM Level 2:
 [
     CustomToJSObject,
-    UsePointersEvenForNonNullableObjectArguments,
-    JSCustomToNativeObject,
     JSCustomHeader,
+    JSCustomToNativeObject,
     ObjCProtocol,
 ] interface EventTarget {
-    [ObjCLegacyUnnamedParameters] void addEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);
-    [ObjCLegacyUnnamedParameters] void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);
-    [ImplementedAs=dispatchEventForBindings, RaisesException] boolean dispatchEvent(Event event);
+    [ObjCLegacyUnnamedParameters] void addEventListener(DOMString type, EventListener? listener, optional boolean useCapture = false);
+    [ObjCLegacyUnnamedParameters] void removeEventListener(DOMString type, EventListener? listener, optional boolean useCapture = false);
+    // FIXME: event should not be nullable.
+    [ImplementedAs=dispatchEventForBindings, RaisesException] boolean dispatchEvent(Event? event);
 };
