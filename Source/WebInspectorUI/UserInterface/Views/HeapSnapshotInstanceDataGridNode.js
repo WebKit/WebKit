@@ -25,7 +25,7 @@
 
 WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode extends WebInspector.DataGridNode
 {
-    constructor(node, tree, edge)
+    constructor(node, tree, edge, base)
     {
         // Don't treat strings as having child nodes, even if they have a Structure.
         let hasChildren = node.hasChildren && node.className !== "string";
@@ -34,10 +34,12 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
 
         console.assert(node instanceof WebInspector.HeapSnapshotNodeProxy);
         console.assert(!edge || edge instanceof WebInspector.HeapSnapshotEdgeProxy);
+        console.assert(!base || base instanceof WebInspector.HeapSnapshotInstanceDataGridNode);
 
         this._node = node;
         this._tree = tree;
         this._edge = edge || null;
+        this._base = base || null;
 
         // FIXME: Make instance grid nodes copyable.
         this.copyable = false;
@@ -94,6 +96,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
     // Protected
 
     get data() { return this._node; }
+    get node() { return this._node; }
     get selectable() { return false; }
 
     createCells()
@@ -106,6 +109,14 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
     createCellContent(columnIdentifier)
     {
         if (columnIdentifier === "retainedSize") {
+            let subRetainedSize = false;            
+            if (this._base) {
+                if (this._isDominatedByNonBaseParent())
+                    subRetainedSize = true;
+                else if (!this._isDominatedByBase())
+                    return emDash;
+            }
+
             let size = this._node.retainedSize;
             let fragment = document.createDocumentFragment();
             let sizeElement = fragment.appendChild(document.createElement("span"));
@@ -115,6 +126,12 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
             let percentElement = fragment.appendChild(document.createElement("span"));
             percentElement.classList.add("percentage");
             percentElement.textContent = Number.percentageString(fraction);
+
+            if (subRetainedSize) {
+                sizeElement.classList.add("sub-retained");
+                percentElement.classList.add("sub-retained");
+            }
+
             return fragment;
         }
 
@@ -208,6 +225,23 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
 
     // Private
 
+    _isDominatedByBase()
+    {
+        return this._node.dominatorNodeIdentifier === this._base.node.id;
+    }
+
+    _isDominatedByNonBaseParent()
+    {
+        for (let p = this.parent; p; p = p.parent) {
+            if (p === this._base)
+                return false;
+            if (this._node.dominatorNodeIdentifier === this.parent.node.id)
+                return true;
+        }
+
+        return false;
+    }
+
     _populate()
     {
         this.removeEventListener("populate", this._populate, this);
@@ -226,7 +260,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
             // FIXME: This should gracefully handle a node that references many objects.
 
             for (let instance of instances)
-                this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this._tree, instance.__edge));
+                this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this._tree, instance.__edge, this._base || this));
         });        
     }
 

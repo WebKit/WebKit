@@ -331,6 +331,10 @@ HeapSnapshot = class HeapSnapshot
         let edgeIndex = this._nodeOrdinalToFirstOutgoingEdge[nodeOrdinal];
         let hasChildren = this._edges[edgeIndex + edgeFromIdOffset] === nodeIdentifier;
 
+        let dominatorNodeOrdinal = this._nodeOrdinalToDominatorNodeOrdinal[nodeOrdinal];
+        let dominatorNodeIndex = dominatorNodeOrdinal * nodeFieldCount;
+        let dominatorNodeIdentifier = this._nodes[dominatorNodeIndex + nodeIdOffset];
+
         return {
             id: nodeIdentifier,
             className: this._nodeClassNamesTable[this._nodes[nodeIndex + nodeClassNameOffset]],
@@ -338,6 +342,7 @@ HeapSnapshot = class HeapSnapshot
             retainedSize: this._nodeOrdinalToRetainedSizes[nodeOrdinal],
             internal: this._nodes[nodeIndex + nodeInternalOffset] ? true : false,
             gcRoot: this._nodeOrdinalIsGCRoot[nodeOrdinal] ? true : false,
+            dominatorNodeIdentifier,
             hasChildren,
         };
     }

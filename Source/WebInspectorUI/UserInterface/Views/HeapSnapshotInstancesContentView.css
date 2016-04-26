@@ -31,6 +31,10 @@
     bottom: 0;
 }
 
+.heap-snapshot > .data-grid td .sub-retained {
+    color: hsl(0, 0%, 60%);
+}
+
 .heap-snapshot > .data-grid td .percentage {
     width: 45px;
     margin-left: 4px;

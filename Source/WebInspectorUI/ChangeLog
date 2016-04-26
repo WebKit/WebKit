@@ -1,3 +1,32 @@
+2016-04-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Clarify Heap Snapshot instance Retained Size by hiding retained size of non-dominated children
+        https://bugs.webkit.org/show_bug.cgi?id=157018
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Proxies/HeapSnapshotNodeProxy.js:
+        (WebInspector.HeapSnapshotNodeProxy):
+        (WebInspector.HeapSnapshotNodeProxy.deserialize):
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshot.js:
+        (HeapSnapshot.prototype.serializeNode):
+        Include dominatorNodeIdentifier in the default proxy properties.
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.get node):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.createCellContent):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._isDominatedByBase):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._isDominatedByNonBaseParent):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populate):
+        * UserInterface/Views/HeapSnapshotInstancesContentView.css:
+        (.heap-snapshot > .data-grid td .sub-retained):
+        Save the base HeapSnapshotInstanceDataGridNode so that it can be referenced by
+        children. When expanding an instance, hide the retained size for children
+        that are not dominated by the base object. Show the retained size for children
+        for children that are dominated. If dominated directly, show the size in the
+        normal black. If dominated transitively, show the size in a dimmed gray.
+
 2016-04-25  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: hook up grid row filtering in the new Timelines UI
