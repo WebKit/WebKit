@@ -234,10 +234,8 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void webkitGenerateKeyRequest(const String& keySystem, PassRefPtr<Uint8Array> initData, ExceptionCode&);
-    void webkitGenerateKeyRequest(const String& keySystem, ExceptionCode&);
+    void webkitGenerateKeyRequest(const String& keySystem, RefPtr<Uint8Array>&& initData, ExceptionCode&);
     void webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, PassRefPtr<Uint8Array> initData, const String& sessionId, ExceptionCode&);
-    void webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, ExceptionCode&);
     void webkitCancelKeyRequest(const String& keySystem, const String& sessionId, ExceptionCode&);
 #endif
 

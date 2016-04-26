@@ -1,5 +1,25 @@
 2016-04-26  Chris Dumez  <cdumez@apple.com>
 
+        [Web IDL] Specify default values for optional parameters of TypedArray types
+        https://bugs.webkit.org/show_bug.cgi?id=157017
+
+        Reviewed by Darin Adler.
+
+        Specify default values for optional parameters of TypedArray types and let
+        the bindings generator use WTF::Optional<> for the ones that do not have a
+        default value.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (CanUseWTFOptionalForParameter): Deleted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::webkitGenerateKeyRequest):
+        (WebCore::HTMLMediaElement::webkitAddKey):
+        (WebCore::HTMLMediaElement::webkitCancelKeyRequest): Deleted.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
+2016-04-26  Chris Dumez  <cdumez@apple.com>
+
         [Web IDL] Specify default values for optional parameters of type 'long' / 'unrestricted double'
         https://bugs.webkit.org/show_bug.cgi?id=157012
 

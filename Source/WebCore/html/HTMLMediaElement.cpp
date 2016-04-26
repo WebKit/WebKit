@@ -3114,7 +3114,7 @@ void HTMLMediaElement::closeMediaSource()
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-void HTMLMediaElement::webkitGenerateKeyRequest(const String& keySystem, PassRefPtr<Uint8Array> initData, ExceptionCode& ec)
+void HTMLMediaElement::webkitGenerateKeyRequest(const String& keySystem, RefPtr<Uint8Array>&& initData, ExceptionCode& ec)
 {
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     static bool firstTime = true;
@@ -3134,7 +3134,7 @@ void HTMLMediaElement::webkitGenerateKeyRequest(const String& keySystem, PassRef
         return;
     }
 
-    const unsigned char* initDataPointer = 0;
+    const unsigned char* initDataPointer = nullptr;
     unsigned initDataLength = 0;
     if (initData) {
         initDataPointer = initData->data();
@@ -3143,11 +3143,6 @@ void HTMLMediaElement::webkitGenerateKeyRequest(const String& keySystem, PassRef
 
     MediaPlayer::MediaKeyException result = m_player->generateKeyRequest(keySystem, initDataPointer, initDataLength);
     ec = exceptionCodeForMediaKeyException(result);
-}
-
-void HTMLMediaElement::webkitGenerateKeyRequest(const String& keySystem, ExceptionCode& ec)
-{
-    webkitGenerateKeyRequest(keySystem, Uint8Array::create(0), ec);
 }
 
 void HTMLMediaElement::webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, PassRefPtr<Uint8Array> initData, const String& sessionId, ExceptionCode& ec)
@@ -3180,7 +3175,7 @@ void HTMLMediaElement::webkitAddKey(const String& keySystem, PassRefPtr<Uint8Arr
         return;
     }
 
-    const unsigned char* initDataPointer = 0;
+    const unsigned char* initDataPointer = nullptr;
     unsigned initDataLength = 0;
     if (initData) {
         initDataPointer = initData->data();
@@ -3189,11 +3184,6 @@ void HTMLMediaElement::webkitAddKey(const String& keySystem, PassRefPtr<Uint8Arr
 
     MediaPlayer::MediaKeyException result = m_player->addKey(keySystem, key->data(), key->length(), initDataPointer, initDataLength, sessionId);
     ec = exceptionCodeForMediaKeyException(result);
-}
-
-void HTMLMediaElement::webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, ExceptionCode& ec)
-{
-    webkitAddKey(keySystem, key, Uint8Array::create(0), String(), ec);
 }
 
 void HTMLMediaElement::webkitCancelKeyRequest(const String& keySystem, const String& sessionId, ExceptionCode& ec)
