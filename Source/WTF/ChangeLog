@@ -1,3 +1,29 @@
+2016-04-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Heap corruption is detected when destructing JSGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=156831
+
+        Reviewed by Mark Lam.
+
+        WebKit uses CRT static library on Windows.  Each copy of the CRT
+        library has its own heap manager, allocating memory in one CRT
+        library and passing the pointer across a DLL boundary to be freed
+        by a different copy of the CRT library is a potential cause for
+        heap corruption.
+
+          Potential Errors Passing CRT Objects Across DLL Boundaries
+          <https://msdn.microsoft.com/en-us/library/ms235460(v=vs.140).aspx>
+
+        JSGlobalObject::createRareDataIfNeeded is inlined but
+        JSGlobalObject::~JSGlobalObject is not.  Then, the heap of
+        allocating JSGlobalObjectRareData is WebKit.dll, but deallocating
+        JavaScriptCore.dll.  Adding WTF_MAKE_FAST_ALLOCATED to
+        JSGlobalObjectRareData ensures heap consistency of it.  WTF::Lock
+        also needs WTF_MAKE_FAST_ALLOCATED because it is allocated from
+        the inlined constructor of JSGlobalObjectRareData.
+
+        * wtf/Lock.h: Add WTF_MAKE_FAST_ALLOCATED.
+
 2016-04-21  Saam barati  <sbarati@apple.com>
 
         Lets do less locking of symbol tables in the BytecodeGenerator where we don't have race conditions
