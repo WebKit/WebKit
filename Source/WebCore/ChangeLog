@@ -1,3 +1,40 @@
+2016-04-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Use auto-generated operators in FontPlatformData
+        https://bugs.webkit.org/show_bug.cgi?id=157037
+
+        Reviewed by Geoffrey Garen.
+
+        The only reason why they weren't used before is because Cairo was
+        using a raw pointer. However, RefPtr supports Cairo types, so this
+        patch migrates that pointer to a RefPtr. Therefore, we can remove
+        our custom operators (because they work the same way as auto-
+        generated ones do).
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Deleted.
+        (WebCore::FontPlatformData::operator=): Deleted.
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::scaledFont):
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::~FontPlatformData): Deleted.
+        (WebCore::FontPlatformData::platformDataInit): Deleted.
+        (WebCore::FontPlatformData::platformDataAssign): Deleted.
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::~FontPlatformData): Deleted.
+        (WebCore::FontPlatformData::platformDataInit): Deleted.
+        (WebCore::FontPlatformData::platformDataAssign): Deleted.
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData): Deleted.
+        (WebCore::FontPlatformData::platformDataAssign): Deleted.
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Deleted.
+
 2016-04-26  Zalan Bujtas  <zalan@apple.com>
 
         Add renderer address and needslayout state to inlineboxtree dump.

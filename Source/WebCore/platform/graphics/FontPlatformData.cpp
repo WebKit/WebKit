@@ -62,15 +62,6 @@ FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticB
 }
 #endif
 
-FontPlatformData::FontPlatformData(const FontPlatformData& source)
-    : FontPlatformData(source.m_size, source.m_syntheticBold, source.m_syntheticOblique, source.m_orientation, source.m_widthVariant, source.m_textRenderingMode)
-{
-    m_isHashTableDeletedValue = source.m_isHashTableDeletedValue;
-    m_isColorBitmapFont = source.m_isColorBitmapFont;
-    m_isSystemFont = source.m_isSystemFont;
-    platformDataInit(source);
-}
-
 FontPlatformData FontPlatformData::cloneWithOrientation(const FontPlatformData& source, FontOrientation orientation)
 {
     FontPlatformData copy(source);
@@ -90,25 +81,6 @@ FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source,
     FontPlatformData copy(source);
     copy.m_size = size;
     return copy;
-}
-
-const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
-{
-    // Check for self-assignment.
-    if (this == &other)
-        return *this;
-
-    m_isHashTableDeletedValue = other.m_isHashTableDeletedValue;
-    m_syntheticBold = other.m_syntheticBold;
-    m_syntheticOblique = other.m_syntheticOblique;
-    m_orientation = other.m_orientation;
-    m_size = other.m_size;
-    m_widthVariant = other.m_widthVariant;
-    m_isColorBitmapFont = other.m_isColorBitmapFont;
-    m_textRenderingMode = other.m_textRenderingMode;
-    m_isSystemFont = other.m_isSystemFont;
-
-    return platformDataAssign(other);
 }
 
 }

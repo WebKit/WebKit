@@ -42,11 +42,6 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold,
     , m_size(size)
     , m_orientation(Horizontal)
     , m_widthVariant(RegularWidth)
-#if USE(CG)
-    , m_cgFont(0)
-#elif USE(CAIRO)
-    , m_scaledFont(0)
-#endif
     , m_isColorBitmapFont(false)
     , m_syntheticBold(bold)
     , m_syntheticOblique(oblique)

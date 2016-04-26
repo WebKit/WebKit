@@ -130,26 +130,6 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> hfont, CGFontRef font, float
 {
 }
 
-FontPlatformData::~FontPlatformData()
-{
-}
-
-void FontPlatformData::platformDataInit(const FontPlatformData& source)
-{
-    m_font = source.m_font;
-    m_cgFont = source.m_cgFont;
-    m_useGDI = source.m_useGDI;
-}
-
-const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformData& other)
-{
-    m_font = other.m_font;
-    m_cgFont = other.m_cgFont;
-    m_useGDI = other.m_useGDI;
-
-    return *this;
-}
-
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 {
     return m_font == other.m_font

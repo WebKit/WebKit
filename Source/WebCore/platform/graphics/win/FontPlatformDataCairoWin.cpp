@@ -52,7 +52,7 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
        cairo_font_options_set_antialias(fontOptions, CAIRO_ANTIALIAS_SUBPIXEL);
     }
 
-    m_scaledFont = cairo_scaled_font_create(fontFace, &sizeMatrix, &ctm, fontOptions);
+    m_scaledFont = adoptRef(cairo_scaled_font_create(fontFace, &sizeMatrix, &ctm, fontOptions));
     cairo_font_face_destroy(fontFace);
 
     if (!m_useGDI && m_size)
@@ -64,22 +64,21 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fon
     , m_size(size)
     , m_orientation(Horizontal)
     , m_widthVariant(RegularWidth)
-    , m_scaledFont(0)
     , m_isColorBitmapFont(false)
     , m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
     , m_useGDI(false)
 {
-   cairo_matrix_t fontMatrix;
-   cairo_matrix_init_scale(&fontMatrix, size, size);
-   cairo_matrix_t ctm;
-   cairo_matrix_init_identity(&ctm);
-   cairo_font_options_t* options = cairo_font_options_create();
+    cairo_matrix_t fontMatrix;
+    cairo_matrix_init_scale(&fontMatrix, size, size);
+    cairo_matrix_t ctm;
+    cairo_matrix_init_identity(&ctm);
+    cairo_font_options_t* options = cairo_font_options_create();
 
-   // We force antialiasing and disable hinting to provide consistent
-   // typographic qualities for custom fonts on all platforms.
-   cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
-   cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_BEST);
+    // We force antialiasing and disable hinting to provide consistent
+    // typographic qualities for custom fonts on all platforms.
+    cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
+    cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_BEST);
 
     if (syntheticOblique()) {
         static const float syntheticObliqueSkew = -tanf(14 * acosf(0) / 90);
@@ -87,37 +86,8 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fon
         cairo_matrix_multiply(&fontMatrix, &skew, &fontMatrix);
     }
 
-   m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options);
-   cairo_font_options_destroy(options);
-}
-
-FontPlatformData::~FontPlatformData()
-{
-    if (m_scaledFont)
-        cairo_scaled_font_destroy(m_scaledFont);
-}
-
-void FontPlatformData::platformDataInit(const FontPlatformData& source)
-{
-    m_font = source.m_font;
-    m_useGDI = source.m_useGDI;
-    m_scaledFont = nullptr;
-
-    if (source.m_scaledFont)
-        m_scaledFont = cairo_scaled_font_reference(source.m_scaledFont);
-}
-
-const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformData& other)
-{
-    m_font = other.m_font;
-    m_useGDI = other.m_useGDI;
-
-    if (m_scaledFont)
-        cairo_scaled_font_destroy(m_scaledFont);
-
-    m_scaledFont = cairo_scaled_font_reference(other.m_scaledFont);
-
-    return *this;
+    m_scaledFont = adoptRef(cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options));
+    cairo_font_options_destroy(options);
 }
 
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
