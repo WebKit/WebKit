@@ -1,3 +1,22 @@
+2016-04-26  Chris Dumez  <cdumez@apple.com>
+
+        Drop Dictionary from CanUseWTFOptionalForParameter()
+        https://bugs.webkit.org/show_bug.cgi?id=157023
+
+        Reviewed by Darin Adler.
+
+        As per Web IDL, optional dictionary parameters are always considered to have
+        a default value of an empty dictionary, unless otherwise specified. There is
+        therefore never any need to use Optional<> for it. Just implement this
+        behavior in the bindings generator and drop blacklisting of Dictionary from
+        CanUseWTFOptionalForParameter().
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        (CanUseWTFOptionalForParameter): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOptionsObject):
+
 2016-04-26  Antti Koivisto  <antti@apple.com>
 
         RenderElement::style() should return const RenderStyle

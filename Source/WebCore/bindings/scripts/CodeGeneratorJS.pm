@@ -3383,11 +3383,46 @@ sub CanUseWTFOptionalForParameter
     return 0 if $codeGenerator->IsEnumType($type);
     return 0 if $codeGenerator->IsWrapperType($type);
     return 0 if $type eq "DOMString";
-    return 0 if $type eq "Dictionary";
     return 0 if $type eq "any";
     return 0 if $type eq "unsigned long";
 
     return 1;
+}
+
+sub WillConvertUndefinedToDefaultParameterValue
+{
+    my $parameterType = shift;
+    my $defaultValue = shift;
+
+    if ($defaultValue eq "[]") {
+        # Dictionary(state, undefined) will construct an empty Dictionary.
+        return 1 if $parameterType eq "Dictionary";
+
+        # toRefPtrNativeArray() will convert undefined to an empty Vector.
+        return 1 if $codeGenerator->GetArrayType($parameterType) or $codeGenerator->GetSequenceType($parameterType);
+    }
+
+    # toString() will convert undefined to the string "undefined";
+    return 1 if $parameterType eq "DOMString" and $defaultValue eq "undefined";
+
+    # JSValue::toBoolean() will convert undefined to false.
+    return 1 if $parameterType eq "boolean" and $defaultValue eq "false";
+
+    # JSValue::toInt*() / JSValue::toUint*() will convert undefined to 0.
+    if ($defaultValue eq "0") {
+        return 1 if $parameterType eq "byte" or $parameterType eq "octet";
+        return 1 if $parameterType eq "short" or $parameterType eq "unsigned short";
+        return 1 if $parameterType eq "long" or $parameterType eq "unsigned long";
+        return 1 if $parameterType eq "long long" or $parameterType eq "unsigned long long";
+    }
+
+    if ($defaultValue eq "NaN") {
+        # toNumber() / toFloat() convert undefined to NaN.
+        return 1 if $parameterType eq "double" or $parameterType eq "unrestricted double";
+        return 1 if $parameterType eq "float" or $parameterType eq "unrestricted float";
+    }
+
+    return 0;
 }
 
 sub GenerateParametersCheck
@@ -3434,12 +3469,13 @@ sub GenerateParametersCheck
     $implIncludes{"JSDOMBinding.h"} = 1;
     foreach my $parameter (@{$function->parameters}) {
         my $argType = $parameter->type;
-
-        # Optional arguments with [Optional] should generate an early call with fewer arguments.
-        # Optional arguments with [Optional=...] should not generate the early call.
-        # Optional Dictionary arguments always considered to have default of empty dictionary.
         my $optional = $parameter->isOptional;
-        if ($optional && !defined($parameter->default) && !CanUseWTFOptionalForParameter($parameter) && $argType ne "Dictionary" && !$codeGenerator->IsCallbackInterface($argType)) {
+
+        # As per Web IDL, optional dictionary parameters are always considered to have a default value of an empty dictionary, unless otherwise specified.
+        $parameter->default("[]") if ($optional && !defined($parameter->default) && $argType eq "Dictionary");
+
+        # FIXME: We should eventually stop generating any early calls, and instead use either default parameter values or WTF::Optional<>.
+        if ($optional && !defined($parameter->default) && !CanUseWTFOptionalForParameter($parameter) && !$codeGenerator->IsCallbackInterface($argType)) {
             # Generate early call if there are enough parameters.
             if (!$hasOptionalArguments) {
                 push(@$outputArray, "\n    size_t argsCount = state->argumentCount();\n");
@@ -3598,7 +3634,7 @@ sub GenerateParametersCheck
                 my $inner;
                 my $nativeType = GetNativeTypeFromSignature($parameter);
 
-                if ($optional && defined($parameter->default)) {
+                if ($optional && defined($parameter->default) && !WillConvertUndefinedToDefaultParameterValue($parameter->type, $parameter->default)) {
                     my $defaultValue = $parameter->default;
 
                     # String-related optimizations.

@@ -4194,7 +4194,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalDoubleI
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalDoubleIsNaN");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    double number = state->argument(0).isUndefined() ? PNaN : state->uncheckedArgument(0).toNumber(state);
+    double number = state->argument(0).toNumber(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalDoubleIsNaN(number);
@@ -4209,7 +4209,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalFloatIs
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalFloatIsNaN");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    float number = state->argument(0).isUndefined() ? PNaN : state->uncheckedArgument(0).toFloat(state);
+    float number = state->argument(0).toFloat(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalFloatIsNaN(number);
@@ -4224,7 +4224,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSequenc
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalSequence");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    Vector<String> sequence = state->argument(0).isUndefined() ? Vector<String>() : toNativeArray<String>(state, state->uncheckedArgument(0));
+    Vector<String> sequence = toNativeArray<String>(state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalSequence(sequence);
@@ -4254,7 +4254,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalLongLon
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalLongLongIsZero");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    long long number = state->argument(0).isUndefined() ? 0 : toInt64(state, state->uncheckedArgument(0), NormalConversion);
+    long long number = toInt64(state, state->argument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalLongLongIsZero(number);
@@ -4284,7 +4284,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUnsigne
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalUnsignedLongLongIsZero");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    unsigned long long number = state->argument(0).isUndefined() ? 0 : toUInt64(state, state->uncheckedArgument(0), NormalConversion);
+    unsigned long long number = toUInt64(state, state->argument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalUnsignedLongLongIsZero(number);
@@ -4314,7 +4314,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArrayIs
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalArrayIsEmpty");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    Vector<String> array = state->argument(0).isUndefined() ? Vector<String>() : toNativeArray<String>(state, state->uncheckedArgument(0));
+    Vector<String> array = toNativeArray<String>(state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalArrayIsEmpty(array);
@@ -4344,7 +4344,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalBoolean
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalBooleanIsFalse");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    bool b = state->argument(0).isUndefined() ? false : state->uncheckedArgument(0).toBoolean(state);
+    bool b = state->argument(0).toBoolean(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalBooleanIsFalse(b);
