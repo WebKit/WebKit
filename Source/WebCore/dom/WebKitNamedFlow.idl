@@ -28,15 +28,15 @@
  */
 
 [
-    UsePointersEvenForNonNullableObjectArguments,
-    NoInterfaceObject,
     GenerateIsReachable=ImplOwnerNodeRoot,
+    NoInterfaceObject,
 ] interface WebKitNamedFlow : EventTarget
 {
     readonly attribute DOMString name;
     readonly attribute boolean overset;
     readonly attribute long firstEmptyRegionIndex;
-    NodeList getRegionsByContent(Node contentNode);
+    // FIXME: contentNode should not be nullable.
+    NodeList getRegionsByContent(Node? contentNode);
     NodeList getRegions();
     NodeList getContent();
 };

@@ -1,5 +1,16 @@
 2016-04-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Drop [UsePointersEvenForNonNullableObjectArguments] from WebKitNamedFlow
+        https://bugs.webkit.org/show_bug.cgi?id=156979
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+
+        * dom/WebKitNamedFlow.idl: Marking contentNode parameter as nullable.
+
+2016-04-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Drop [UsePointersEvenForNonNullableObjectArguments] from EventTarget
         https://bugs.webkit.org/show_bug.cgi?id=156977
 
