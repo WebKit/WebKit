@@ -104,27 +104,27 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
     RefPtr<Element> rowElement = m_tableElement->insertRow(-1, IGNORE_EXCEPTION);
     rowElement->setAttribute(HTMLNames::classAttr, "ftpDirectoryEntryRow");
 
-    Ref<Element> element = document()->createElement(tdTag, false);
-    element->appendChild(Text::create(*document(), String(&noBreakSpace, 1)), IGNORE_EXCEPTION);
+    Ref<Element> typeElement = document()->createElement(tdTag, false);
+    typeElement->appendChild(Text::create(*document(), String(&noBreakSpace, 1)), IGNORE_EXCEPTION);
     if (isDirectory)
-        element->setAttribute(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeDirectory");
+        typeElement->setAttribute(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeDirectory");
     else
-        element->setAttribute(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeFile");
-    rowElement->appendChild(WTFMove(element), IGNORE_EXCEPTION);
+        typeElement->setAttribute(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeFile");
+    rowElement->appendChild(WTFMove(typeElement), IGNORE_EXCEPTION);
 
-    element = createTDForFilename(filename);
-    element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileName");
-    rowElement->appendChild(WTFMove(element), IGNORE_EXCEPTION);
+    Ref<Element> nameElement = createTDForFilename(filename);
+    nameElement->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileName");
+    rowElement->appendChild(WTFMove(nameElement), IGNORE_EXCEPTION);
 
-    element = document()->createElement(tdTag, false);
-    element->appendChild(Text::create(*document(), date), IGNORE_EXCEPTION);
-    element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileDate");
-    rowElement->appendChild(WTFMove(element), IGNORE_EXCEPTION);
+    Ref<Element> dateElement = document()->createElement(tdTag, false);
+    dateElement->appendChild(Text::create(*document(), date), IGNORE_EXCEPTION);
+    dateElement->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileDate");
+    rowElement->appendChild(WTFMove(dateElement), IGNORE_EXCEPTION);
 
-    element = document()->createElement(tdTag, false);
-    element->appendChild(Text::create(*document(), size), IGNORE_EXCEPTION);
-    element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileSize");
-    rowElement->appendChild(WTFMove(element), IGNORE_EXCEPTION);
+    Ref<Element> sizeElement = document()->createElement(tdTag, false);
+    sizeElement->appendChild(Text::create(*document(), size), IGNORE_EXCEPTION);
+    sizeElement->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileSize");
+    rowElement->appendChild(WTFMove(sizeElement), IGNORE_EXCEPTION);
 }
 
 Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)

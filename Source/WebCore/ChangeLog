@@ -1,3 +1,17 @@
+2016-04-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [iOS] ftp links crash @ WebCore::FTPDirectoryDocumentParser::appendEntry
+        https://bugs.webkit.org/show_bug.cgi?id=157019
+        <rdar://problem/24292650>
+
+        Reviewed by Chris Dumez.
+
+        Create separate Ref<Element> object for every row element instead of reusing
+        one because Ref<>'s operator=() does not allow assignment after a WTFMove().
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::appendEntry):
+
 2016-04-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Guarantee FontPlatformData's m_cgFont is never nullptr
