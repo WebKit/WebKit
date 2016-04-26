@@ -1,3 +1,13 @@
+2016-04-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Enable separated heap by default on ios
+        https://bugs.webkit.org/show_bug.cgi?id=156720
+
+        Unreviewed rollout - caused memory regression.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2016-04-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Improve jsc --help and making sampling options
@@ -1710,16 +1720,6 @@
         (JSC::functionValue):
         (JSC::JSDollarVMPrototype::finishCreation):
         (JSC::functionPrintValue): Deleted.
-
-2016-04-18  Oliver Hunt  <oliver@apple.com>
-
-        Enable separated heap by default on ios
-        https://bugs.webkit.org/show_bug.cgi?id=156720
-
-        Reviewed by ggaren.
-
-        * runtime/Options.cpp:
-        (JSC::recomputeDependentOptions):
 
 2016-04-19  Mark Lam  <mark.lam@apple.com>
 
