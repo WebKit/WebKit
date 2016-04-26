@@ -1073,7 +1073,7 @@ const char* InlineTextBox::boxName() const
 
 void InlineTextBox::showLineBox(bool mark, int depth) const
 {
-    fprintf(stderr, "------- --");
+    fprintf(stderr, "-------- %c-", isDirty() ? 'D' : '-');
 
     int printedCharacters = 0;
     if (mark) {
@@ -1087,7 +1087,7 @@ void InlineTextBox::showLineBox(bool mark, int depth) const
     value = value.substring(start(), len());
     value.replaceWithLiteral('\\', "\\\\");
     value.replaceWithLiteral('\n', "\\n");
-    fprintf(stderr, "%s  (%.2f, %.2f) (%.2f, %.2f) (%p) run(%d, %d) \"%s\"\n", boxName(), x(), y(), width(), height(), this, start(), start() + len(), value.utf8().data());
+    fprintf(stderr, "%s  (%.2f, %.2f) (%.2f, %.2f) (%p) renderer->(%p) run(%d, %d) \"%s\"\n", boxName(), x(), y(), width(), height(), this, &renderer(), start(), start() + len(), value.utf8().data());
 }
 
 #endif

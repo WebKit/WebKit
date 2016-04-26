@@ -217,7 +217,7 @@ Vector<FloatQuad> collectAbsoluteQuads(const RenderObject& renderer, const Layou
 #if ENABLE(TREE_DEBUGGING)
 static void printPrefix(int& printedCharacters, int depth)
 {
-    fprintf(stderr, "------- --");
+    fprintf(stderr, "-------- --");
     printedCharacters = 0;
     while (++printedCharacters <= depth * 2)
         fputc(' ', stderr);

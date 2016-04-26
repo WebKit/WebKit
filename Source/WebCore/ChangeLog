@@ -1,3 +1,17 @@
+2016-04-26  Zalan Bujtas  <zalan@apple.com>
+
+        Add renderer address and needslayout state to inlineboxtree dump.
+        https://bugs.webkit.org/show_bug.cgi?id=157035
+
+        Reviewed by Simon Fraser.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::showLineBox):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::showLineBox):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::printPrefix):
+
 2016-04-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl] Requests interrupted when using https via proxy
