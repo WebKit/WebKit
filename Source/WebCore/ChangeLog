@@ -1,3 +1,23 @@
+2016-04-26  Brent Fulgham  <bfulgham@apple.com>
+
+        GuardMalloc crash in WebCore::HTMLFrameElementBase::marginHeight() 
+        https://bugs.webkit.org/show_bug.cgi?id=157020
+        <rdar://problem/25148315>
+
+        Reviewed by Darin Adler.
+
+        Calls to setIntegralAttribute triggers event handling code, which can cause
+        the underlying m_frameOwnerElement member to be deleted. We could clone this
+        object, but since we only want the width and height we should just read them
+        while we know the object is in a good state, then execute the potentially
+        mutating methods.
+
+        Tested by imported/blink/fast/dom/HTMLBodyElement/body-inserting-iframe-crash.html.
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::insertedInto): Read margin width and height before
+        calling setIntegralAttribute.
+
 2016-04-25  Filip Pizlo  <fpizlo@apple.com>
 
         WebCore on Mac ignores the user's preferred region (country) while getting the language
