@@ -841,6 +841,9 @@ private:
         case InvalidationPoint:
             compileInvalidationPoint();
             break;
+        case IsEmpty:
+            compileIsEmpty();
+            break;
         case IsUndefined:
             compileIsUndefined();
             break;
@@ -5757,6 +5760,11 @@ private:
 
         // When this abruptly terminates, it could read any heap location.
         patchpoint->effects.reads = HeapRange::top();
+    }
+
+    void compileIsEmpty()
+    {
+        setBoolean(m_out.isZero64(lowJSValue(m_node->child1())));
     }
     
     void compileIsUndefined()

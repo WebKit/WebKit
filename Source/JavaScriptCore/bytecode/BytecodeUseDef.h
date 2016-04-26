@@ -147,6 +147,7 @@ void computeUsesForBytecodeOffset(
     case op_get_by_id:
     case op_get_array_length:
     case op_typeof:
+    case op_is_empty:
     case op_is_undefined:
     case op_is_boolean:
     case op_is_number:
@@ -376,6 +377,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_instanceof_custom:
     case op_get_by_val:
     case op_typeof:
+    case op_is_empty:
     case op_is_undefined:
     case op_is_boolean:
     case op_is_number:

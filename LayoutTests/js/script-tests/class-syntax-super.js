@@ -135,4 +135,5 @@ shouldThrow('(function () { eval("super()");})()', '"SyntaxError: super is not v
 shouldThrow('new (class { constructor() { (function () { eval("super()");})(); } })', '"SyntaxError: super is not valid in this context."');
 shouldThrow('(new (class { method() { (function () { eval("super.method()");})(); }})).method()', '"SyntaxError: super is not valid in this context."');
 
+shouldThrow('new (class extends Base { constructor() { super(); super();}})', '"ReferenceError: \'super()\' can\'t be called more than once in a constructor."');
 var successfullyParsed = true;

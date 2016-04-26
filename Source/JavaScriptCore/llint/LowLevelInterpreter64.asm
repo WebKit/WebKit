@@ -1098,6 +1098,18 @@ _llint_op_instanceof_custom:
     callSlowPath(_llint_slow_path_instanceof_custom)
     dispatch(5)
 
+
+_llint_op_is_empty:
+    traceExecution()
+    loadisFromInstruction(2, t1)
+    loadisFromInstruction(1, t2)
+    loadConstantOrVariable(t1, t0)
+    cqeq t0, ValueEmpty, t3
+    orq ValueFalse, t3
+    storeq t3, [cfr, t2, 8]
+    dispatch(3)
+
+
 _llint_op_is_undefined:
     traceExecution()
     loadisFromInstruction(2, t1)
