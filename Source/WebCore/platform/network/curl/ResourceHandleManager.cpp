@@ -482,6 +482,10 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
         long httpCode = 0;
         curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE, &httpCode);
 
+        if (!httpCode) {
+            // Comes here when receiving 200 Connection Established. Just return.
+            return totalSize;
+        }
         if (isHttpInfo(httpCode)) {
             // Just return when receiving http info, e.g. HTTP/1.1 100 Continue.
             // If not, the request might be cancelled, because the MIME type will be empty for this response.

@@ -1,3 +1,20 @@
+2016-04-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] Requests interrupted when using https via proxy
+        https://bugs.webkit.org/show_bug.cgi?id=157028
+
+        Reviewed by Alex Christensen.
+
+        A proxy responds "200 Connection Established" to a CONNECT
+        method.  This response doesn't have Content-Type, then the
+        request is canceled due to a unsupported MIME type. This is not
+        a real response from the recipient server. It should not be
+        processed normally. Just ignore the response.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback):
+        Do nothing if httpCode is 0. This is the case of "200 Connection Established".
+
 2016-04-26  Chris Dumez  <cdumez@apple.com>
 
         Drop Dictionary from CanUseWTFOptionalForParameter()
