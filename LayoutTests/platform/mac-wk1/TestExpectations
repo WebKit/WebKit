@@ -211,3 +211,5 @@ webkit.org/b/156069 http/tests/security/anchor-download-allow-sameorigin.html [ 
 webkit.org/b/156069 http/tests/security/anchor-download-block-crossorigin.html [ Skip ]
 
 webkit.org/b/156629 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html [ Pass Failure ]
+
+webkit.org/b/157007 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
