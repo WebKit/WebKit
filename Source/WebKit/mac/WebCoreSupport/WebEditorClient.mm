@@ -1139,6 +1139,9 @@ void WebEditorClient::setInputMethodState(bool)
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& selection)
 {
+    if (![m_webView shouldRequestCandidates])
+        return;
+
     RefPtr<Range> selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
         return;
@@ -1158,7 +1161,7 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
 
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
     auto weakEditor = m_weakPtrFactory.createWeakPtr();
-    [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:m_rangeForCandidates inString:m_paragraphContextForCandidateRequest.get() types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakEditor](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
+    m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:m_rangeForCandidates inString:m_paragraphContextForCandidateRequest.get() types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakEditor](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakEditor)
                 return;
@@ -1170,6 +1173,12 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
 
 void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates)
 {
+    if (![m_webView shouldRequestCandidates])
+        return;
+
+    if (m_lastCandidateRequestSequenceNumber != sequenceNumber)
+        return;
+
     Frame* frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;

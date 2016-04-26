@@ -190,6 +190,7 @@ private:
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     RetainPtr<NSString> m_paragraphContextForCandidateRequest;
     NSRange m_rangeForCandidates;
+    NSInteger m_lastCandidateRequestSequenceNumber;
 #endif
 
     WeakPtrFactory<WebEditorClient> m_weakPtrFactory;

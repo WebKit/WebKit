@@ -439,6 +439,11 @@ void WebViewImpl::updateWebViewImplAdditions()
 {
 }
 
+bool WebViewImpl::shouldRequestCandidates() const
+{
+    return false;
+}
+
 void WebViewImpl::showCandidates(NSArray *candidates, NSString *string, NSRect rectOfTypedString, NSRange selectedRange, NSView *view, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate))
 {
 }
@@ -2147,6 +2152,9 @@ void WebViewImpl::capitalizeWord()
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 void WebViewImpl::requestCandidatesForSelectionIfNeeded()
 {
+    if (!shouldRequestCandidates())
+        return;
+
     const EditorState& editorState = m_page->editorState();
     if (!editorState.isContentEditable)
         return;
@@ -2161,7 +2169,7 @@ void WebViewImpl::requestCandidatesForSelectionIfNeeded()
     NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
     auto weakThis = createWeakPtr();
-    [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
+    m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakThis)
                 return;
@@ -2173,6 +2181,12 @@ void WebViewImpl::requestCandidatesForSelectionIfNeeded()
 
 void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates)
 {
+    if (!shouldRequestCandidates())
+        return;
+
+    if (m_lastCandidateRequestSequenceNumber != sequenceNumber)
+        return;
+
     const EditorState& editorState = m_page->editorState();
     if (!editorState.isContentEditable)
         return;

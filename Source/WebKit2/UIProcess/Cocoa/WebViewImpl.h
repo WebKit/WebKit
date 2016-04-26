@@ -472,6 +472,7 @@ public:
     void rightMouseUp(NSEvent *);
 
     void updateWebViewImplAdditions();
+    bool shouldRequestCandidates() const;
     void showCandidates(NSArray *candidates, NSString *, NSRect rectOfTypedString, NSRange selectedRange, NSView *, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate));
     void webViewImplAdditionsWillDestroyView();
 
@@ -628,6 +629,7 @@ private:
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     String m_lastStringForCandidateRequest;
+    NSInteger m_lastCandidateRequestSequenceNumber;
 #endif
     NSRange m_softSpaceRange { NSNotFound, 0 };
     bool m_isHandlingAcceptedCandidate { false };

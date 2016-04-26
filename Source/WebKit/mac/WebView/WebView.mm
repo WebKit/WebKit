@@ -6679,6 +6679,11 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 {
 }
 
+- (BOOL)shouldRequestCandidates
+{
+    return NO;
+}
+
 @end
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
 

@@ -1,3 +1,26 @@
+2016-04-26  Beth Dakin  <bdakin@apple.com>
+
+        Check to make sure shouldRequestCandidates() before requesting candidates
+        https://bugs.webkit.org/show_bug.cgi?id=157038
+        -and corresponding-
+        rdar://problem/25910418
+
+        Reviewed by Tim Horton.
+
+        This patch limits requesting and showing candidates to cases where 
+        shouldRequestCandidates() is true. This patch also caches the sequence number 
+        returned by [NSSpellChecker requestCandidatesForSelectedRange:] to make sure 
+        it is equal to the sequence number sent to the callback handler so that we do 
+        not show candidates for old requests.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateWebViewImplAdditions):
+        (WebKit::WebViewImpl::shouldRequestCandidates):
+        (WebKit::WebViewImpl::showCandidates):
+        (WebKit::WebViewImpl::requestCandidatesForSelectionIfNeeded):
+        (WebKit::WebViewImpl::handleRequestedCandidates):
+
 2016-04-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Update expectation result in ewk_context_preferred_languages API test
