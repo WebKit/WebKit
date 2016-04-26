@@ -84,13 +84,13 @@ enum AudioContextState {
     ConvolverNode createConvolver();
     DynamicsCompressorNode createDynamicsCompressor();
     AnalyserNode createAnalyser();
-    [RaisesException] ScriptProcessorNode createScriptProcessor(unsigned long bufferSize, optional unsigned long numberOfInputChannels, optional unsigned long numberOfOutputChannels);
+    [RaisesException] ScriptProcessorNode createScriptProcessor(unsigned long bufferSize, optional unsigned long numberOfInputChannels = 2, optional unsigned long numberOfOutputChannels = 2);
     OscillatorNode createOscillator();
     [RaisesException] PeriodicWave createPeriodicWave(Float32Array real, Float32Array imag);
 
     // Channel splitting and merging
-    [RaisesException] ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs);
-    [RaisesException] ChannelMergerNode createChannelMerger(optional unsigned long numberOfInputs);
+    [RaisesException] ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs = 6);
+    [RaisesException] ChannelMergerNode createChannelMerger(optional unsigned long numberOfInputs = 6);
 
     // Offline rendering
     // void prepareOfflineBufferRendering(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
@@ -100,6 +100,6 @@ enum AudioContextState {
     [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createGain] GainNode createGainNode();
     [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createDelay, RaisesException] DelayNode createDelayNode(optional unrestricted double maxDelayTime = 1);
 
-    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createScriptProcessor, RaisesException] ScriptProcessorNode createJavaScriptNode(unsigned long bufferSize, optional unsigned long numberOfInputChannels, optional unsigned long numberOfOutputChannels);
+    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createScriptProcessor, RaisesException] ScriptProcessorNode createJavaScriptNode(unsigned long bufferSize, optional unsigned long numberOfInputChannels = 2, optional unsigned long numberOfOutputChannels = 2);
 
 };

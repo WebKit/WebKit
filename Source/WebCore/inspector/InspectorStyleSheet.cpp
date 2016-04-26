@@ -708,7 +708,7 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
     StringBuilder styleSheetText;
     styleSheetText.append(text);
 
-    m_pageStyleSheet->addRule(selector, "", ec);
+    m_pageStyleSheet->addRule(selector, emptyString(), Nullopt, ec);
     if (ec)
         return nullptr;
     ASSERT(m_pageStyleSheet->length());

@@ -1,3 +1,28 @@
+2016-04-26  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Specify default values for optional parameters of type 'unsigned long'
+        https://bugs.webkit.org/show_bug.cgi?id=157043
+
+        Reviewed by Alex Christensen.
+
+        Specify default values for optional parameters of type 'unsigned long' and let
+        the bindings generator use WTF::Optional<> for the parameters that do not have
+        such default value.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createScriptProcessor): Deleted.
+        (WebCore::AudioContext::createChannelSplitter): Deleted.
+        (WebCore::AudioContext::createChannelMerger): Deleted.
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioContext.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (CanUseWTFOptionalForParameter): Deleted.
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addRule):
+        * css/CSSStyleSheet.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::addRule):
+
 2016-04-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         ASSERTION FAILED: m_templateInsertionModes.isEmpty() in WebCore::HTMLTreeBuilder::finished

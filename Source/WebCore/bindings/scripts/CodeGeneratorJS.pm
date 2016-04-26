@@ -3384,7 +3384,6 @@ sub CanUseWTFOptionalForParameter
     return 0 if $codeGenerator->IsWrapperType($type);
     return 0 if $type eq "DOMString";
     return 0 if $type eq "any";
-    return 0 if $type eq "unsigned long";
 
     return 1;
 }

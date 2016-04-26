@@ -70,8 +70,7 @@ public:
     
     // IE Extensions
     RefPtr<CSSRuleList> rules();
-    int addRule(const String& selector, const String& style, int index, ExceptionCode&);
-    int addRule(const String& selector, const String& style, ExceptionCode&);
+    int addRule(const String& selector, const String& style, Optional<unsigned> index, ExceptionCode&);
     void removeRule(unsigned index, ExceptionCode& ec) { deleteRule(index, ec); }
     
     // For CSSRuleList.

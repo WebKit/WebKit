@@ -137,12 +137,8 @@ public:
     Ref<ConvolverNode> createConvolver();
     Ref<DynamicsCompressorNode> createDynamicsCompressor();
     Ref<AnalyserNode> createAnalyser();
-    RefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, ExceptionCode&);
-    RefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode&);
     RefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode&);
-    RefPtr<ChannelSplitterNode> createChannelSplitter(ExceptionCode&);
     RefPtr<ChannelSplitterNode> createChannelSplitter(size_t numberOfOutputs, ExceptionCode&);
-    RefPtr<ChannelMergerNode> createChannelMerger(ExceptionCode&);
     RefPtr<ChannelMergerNode> createChannelMerger(size_t numberOfInputs, ExceptionCode&);
     Ref<OscillatorNode> createOscillator();
     RefPtr<PeriodicWave> createPeriodicWave(Float32Array* real, Float32Array* imag, ExceptionCode&);
