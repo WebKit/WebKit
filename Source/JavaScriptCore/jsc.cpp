@@ -2210,8 +2210,12 @@ void CommandLine::parseArguments(int argc, char** argv)
     for (; i < argc; ++i)
         m_arguments.append(argv[i]);
 
-    if (dumpOptionsLevel != JSC::Options::DumpLevel::None)
-        JSC::Options::dumpAllOptions(stderr, dumpOptionsLevel, "All JSC runtime options:");
+    if (dumpOptionsLevel != JSC::Options::DumpLevel::None) {
+        const char* optionsTitle = (dumpOptionsLevel == JSC::Options::DumpLevel::Overridden)
+            ? "Modified JSC runtime options:"
+            : "All JSC runtime options:";
+        JSC::Options::dumpAllOptions(stderr, dumpOptionsLevel, optionsTitle);
+    }
     JSC::Options::ensureOptionsAreCoherent();
     if (needToExit)
         jscExit(EXIT_SUCCESS);

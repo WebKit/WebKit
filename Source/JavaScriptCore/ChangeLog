@@ -1,3 +1,17 @@
+2016-04-26  Mark Lam  <mark.lam@apple.com>
+
+        Changed jsc options title to be more descriptive.
+        https://bugs.webkit.org/show_bug.cgi?id=157036
+
+        Reviewed by Joseph Pecoraro.
+
+        Let the title for --dumpOptions be "Modified JSC runtime options:" since it only
+        dumps overridden options.  The title for --options will remain "All JSC runtime
+        options:" since it dumps all all options with verbose detail.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+
 2016-04-26  Oliver Hunt  <oliver@apple.com>
 
         Enable separated heap by default on ios
