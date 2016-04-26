@@ -58,8 +58,6 @@ public:
     AudioScheduledSourceNode(AudioContext&, float sampleRate);
 
     // Scheduling.
-    void start(ExceptionCode&);
-    void stop(ExceptionCode&);
     void start(double when, ExceptionCode&);
     void stop(double when, ExceptionCode&);
 

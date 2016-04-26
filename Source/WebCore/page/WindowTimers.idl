@@ -28,9 +28,9 @@
 [
     NoInterfaceObject,
 ] interface WindowTimers {
-    [Custom] long setTimeout(any handler, optional long timeout);
+    [Custom] long setTimeout(any handler, optional long timeout = 0);
     void clearTimeout(optional long handle = 0);
-    [Custom] long setInterval(any handler, optional long timeout);
+    [Custom] long setInterval(any handler, optional long timeout = 0);
     void clearInterval(optional long handle = 0);
 };
 

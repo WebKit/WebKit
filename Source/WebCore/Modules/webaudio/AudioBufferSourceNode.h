@@ -63,10 +63,7 @@ public:
     unsigned numberOfChannels();
 
     // Play-state
-    void start(ExceptionCode&);
-    void start(double when, ExceptionCode&);
-    void start(double when, double grainOffset, ExceptionCode&);
-    void start(double when, double grainOffset, double grainDuration, ExceptionCode&);
+    void start(double when, double grainOffset, Optional<double> grainDuration, ExceptionCode&);
 
 #if ENABLE(LEGACY_WEB_AUDIO)
     void noteGrainOn(double when, double grainOffset, double grainDuration, ExceptionCode&);

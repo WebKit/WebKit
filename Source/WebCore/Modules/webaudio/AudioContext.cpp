@@ -557,12 +557,6 @@ Ref<GainNode> AudioContext::createGain()
     return GainNode::create(*this, m_destinationNode->sampleRate());
 }
 
-RefPtr<DelayNode> AudioContext::createDelay(ExceptionCode& ec)
-{
-    const double defaultMaxDelayTime = 1;
-    return createDelay(defaultMaxDelayTime, ec);
-}
-
 RefPtr<DelayNode> AudioContext::createDelay(double maxDelayTime, ExceptionCode& ec)
 {
     ASSERT(isMainThread());

@@ -441,23 +441,14 @@ unsigned AudioBufferSourceNode::numberOfChannels()
     return output(0)->numberOfChannels();
 }
 
-void AudioBufferSourceNode::start(ExceptionCode& ec)
+void AudioBufferSourceNode::start(double when, double grainOffset, Optional<double> optionalGrainDuration, ExceptionCode& ec)
 {
-    startPlaying(Entire, 0, 0, buffer() ? buffer()->duration() : 0, ec);
-}
+    double grainDuration = 0;
+    if (optionalGrainDuration)
+        grainDuration = optionalGrainDuration.value();
+    else if (buffer())
+        grainDuration = buffer()->duration() - grainOffset;
 
-void AudioBufferSourceNode::start(double when, ExceptionCode& ec)
-{
-    startPlaying(Entire, when, 0, buffer() ? buffer()->duration() : 0, ec);
-}
-
-void AudioBufferSourceNode::start(double when, double grainOffset, ExceptionCode& ec)
-{
-    startPlaying(Partial, when, grainOffset, buffer() ? buffer()->duration() - grainOffset : 0, ec);
-}
-
-void AudioBufferSourceNode::start(double when, double grainOffset, double grainDuration, ExceptionCode& ec)
-{
     startPlaying(Partial, when, grainOffset, grainDuration, ec);
 }
 

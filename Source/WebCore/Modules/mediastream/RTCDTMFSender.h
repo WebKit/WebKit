@@ -52,9 +52,7 @@ public:
     long duration() const { return m_duration; }
     long interToneGap() const { return m_interToneGap; }
 
-    void insertDTMF(const String& tones, ExceptionCode&);
-    void insertDTMF(const String& tones, long duration, ExceptionCode&);
-    void insertDTMF(const String& tones, long duration, long interToneGap, ExceptionCode&);
+    void insertDTMF(const String& tones, Optional<int> duration, Optional<int> interToneGap, ExceptionCode&);
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return RTCDTMFSenderEventTargetInterfaceType; }

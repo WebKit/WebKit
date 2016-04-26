@@ -77,7 +77,7 @@ enum AudioContextState {
 
     // Processing nodes
     GainNode createGain();
-    [RaisesException] DelayNode createDelay(optional unrestricted double maxDelayTime);
+    [RaisesException] DelayNode createDelay(optional unrestricted double maxDelayTime = 1);
     BiquadFilterNode createBiquadFilter();
     WaveShaperNode createWaveShaper();
     PannerNode createPanner();
@@ -98,7 +98,7 @@ enum AudioContextState {
     void startRendering();
 
     [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createGain] GainNode createGainNode();
-    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createDelay, RaisesException] DelayNode createDelayNode(optional unrestricted double maxDelayTime);
+    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createDelay, RaisesException] DelayNode createDelayNode(optional unrestricted double maxDelayTime = 1);
 
     [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createScriptProcessor, RaisesException] ScriptProcessorNode createJavaScriptNode(unsigned long bufferSize, optional unsigned long numberOfInputChannels, optional unsigned long numberOfOutputChannels);
 

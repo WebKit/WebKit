@@ -161,7 +161,6 @@ public:
     void setScrollViewPosition(int x, int y, ExceptionCode&);
     void setViewBaseBackgroundColor(const String& colorValue, ExceptionCode&);
 
-    void setPagination(const String& mode, int gap, ExceptionCode& ec) { setPagination(mode, gap, 0, ec); }
     void setPagination(const String& mode, int gap, int pageLength, ExceptionCode&);
     void setPaginationLineGridEnabled(bool, ExceptionCode&);
     String configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode&);

@@ -132,7 +132,6 @@ public:
     Ref<GainNode> createGain();
     Ref<BiquadFilterNode> createBiquadFilter();
     Ref<WaveShaperNode> createWaveShaper();
-    RefPtr<DelayNode> createDelay(ExceptionCode&);
     RefPtr<DelayNode> createDelay(double maxDelayTime, ExceptionCode&);
     Ref<PannerNode> createPanner();
     Ref<ConvolverNode> createConvolver();

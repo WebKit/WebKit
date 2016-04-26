@@ -3987,14 +3987,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(Exe
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-
-    size_t argsCount = state->argumentCount();
-    if (argsCount <= 0) {
-        impl.methodWithOptionalArg();
-        return JSValue::encode(jsUndefined());
-    }
-
-    int opt = toInt32(state, state->argument(0), NormalConversion);
+    Optional<int> opt = state->argument(0).isUndefined() ? Optional<int>() : toInt32(state, state->uncheckedArgument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalArg(opt);
@@ -4029,14 +4022,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     int nonOpt = toInt32(state, state->argument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-
-    size_t argsCount = state->argumentCount();
-    if (argsCount <= 1) {
-        impl.methodWithNonOptionalArgAndOptionalArg(nonOpt);
-        return JSValue::encode(jsUndefined());
-    }
-
-    int opt = toInt32(state, state->argument(1), NormalConversion);
+    Optional<int> opt = state->argument(1).isUndefined() ? Optional<int>() : toInt32(state, state->uncheckedArgument(1), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithNonOptionalArgAndOptionalArg(nonOpt, opt);
@@ -4056,22 +4042,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     int nonOpt = toInt32(state, state->argument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-
-    size_t argsCount = state->argumentCount();
-    if (argsCount <= 1) {
-        impl.methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt);
-        return JSValue::encode(jsUndefined());
-    }
-
-    int opt1 = toInt32(state, state->argument(1), NormalConversion);
+    Optional<int> opt1 = state->argument(1).isUndefined() ? Optional<int>() : toInt32(state, state->uncheckedArgument(1), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (argsCount <= 2) {
-        impl.methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1);
-        return JSValue::encode(jsUndefined());
-    }
-
-    int opt2 = toInt32(state, state->argument(2), NormalConversion);
+    Optional<int> opt2 = state->argument(2).isUndefined() ? Optional<int>() : toInt32(state, state->uncheckedArgument(2), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
@@ -4588,14 +4562,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod2(ExecSta
     TestObj* objArg = JSTestObj::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-
-    size_t argsCount = state->argumentCount();
-    if (argsCount <= 1) {
-        impl.overloadedMethod(objArg);
-        return JSValue::encode(jsUndefined());
-    }
-
-    int longArg = toInt32(state, state->argument(1), NormalConversion);
+    Optional<int> longArg = state->argument(1).isUndefined() ? Optional<int>() : toInt32(state, state->uncheckedArgument(1), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.overloadedMethod(objArg, longArg);
@@ -4849,14 +4816,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptio
     TestObj* objArg = JSTestObj::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-
-    size_t argsCount = state->argumentCount();
-    if (argsCount <= 1) {
-        impl.overloadedMethodWithOptionalParameter(objArg);
-        return JSValue::encode(jsUndefined());
-    }
-
-    int longArg = toInt32(state, state->argument(1), NormalConversion);
+    Optional<int> longArg = state->argument(1).isUndefined() ? Optional<int>() : toInt32(state, state->uncheckedArgument(1), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.overloadedMethodWithOptionalParameter(objArg, longArg);
@@ -4885,14 +4845,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(ExecState* 
 
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional(ExecState* state)
 {
-
-    size_t argsCount = state->argumentCount();
-    if (argsCount <= 0) {
-        JSValue result = jsNumber(TestObj::classMethodWithOptional());
-        return JSValue::encode(result);
-    }
-
-    int arg = toInt32(state, state->argument(0), NormalConversion);
+    Optional<int> arg = state->argument(0).isUndefined() ? Optional<int>() : toInt32(state, state->uncheckedArgument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsNumber(TestObj::classMethodWithOptional(arg));
@@ -5445,14 +5398,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOp
         return throwThisTypeError(*state, "TestObj", "testPromiseFunctionWithOptionalIntArgument");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-
-    size_t argsCount = state->argumentCount();
-    if (argsCount <= 0) {
-        impl.testPromiseFunctionWithOptionalIntArgument(DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
-        return JSValue::encode(jsUndefined());
-    }
-
-    int a = toInt32(state, state->argument(0), NormalConversion);
+    Optional<int> a = state->argument(0).isUndefined() ? Optional<int>() : toInt32(state, state->uncheckedArgument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.testPromiseFunctionWithOptionalIntArgument(a, DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));

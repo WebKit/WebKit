@@ -1,3 +1,53 @@
+2016-04-26  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Specify default values for optional parameters of type 'long' / 'unrestricted double'
+        https://bugs.webkit.org/show_bug.cgi?id=157012
+
+        Reviewed by Darin Adler.
+
+        Specify default values for optional parameters of type 'long' / 'unrestricted double'
+        and let the bindings generator use WTF::Optional<> for the ones that do not have a
+        default value.
+
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::insertDTMF):
+        (WebCore::RTCDTMFSender::didPlayTone): Deleted.
+        * Modules/mediastream/RTCDTMFSender.h:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::start):
+        (WebCore::AudioBufferSourceNode::startPlaying): Deleted.
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createDelay): Deleted.
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::start): Deleted.
+        (WebCore::AudioScheduledSourceNode::stop): Deleted.
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/OscillatorNode.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (CanUseWTFOptionalForParameter): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2):
+        (WebCore::jsTestObjConstructorFunctionClassMethodWithOptional):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValue): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalString): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4): Deleted.
+        (WebCore::jsTestObjConstructorFunctionClassMethod2): Deleted.
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod1): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Promise): Deleted.
+        * html/HTMLInputElement.idl:
+        * page/WindowTimers.idl:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-04-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from SpeechSynthesis

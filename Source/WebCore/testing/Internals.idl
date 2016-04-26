@@ -144,7 +144,7 @@ enum AutoFillButtonType {
 
     [RaisesException] void setViewBaseBackgroundColor(DOMString colorValue);
 
-    [RaisesException] void setPagination(DOMString mode, long gap, optional long pageLength);
+    [RaisesException] void setPagination(DOMString mode, long gap, optional long pageLength = 0);
     [RaisesException] void setPaginationLineGridEnabled(boolean enabled);
 
     [RaisesException] DOMString configurationForViewport(unrestricted float devicePixelRatio,
@@ -273,7 +273,7 @@ enum AutoFillButtonType {
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional unrestricted float pageWidth = 800, optional unrestricted float pageHeight = 600);
     DOMString[] shortcutIconURLs();
-    long numberOfPages(optional unrestricted double pageWidthInPixels, optional unrestricted double pageHeightInPixels);
+    long numberOfPages(optional unrestricted double pageWidthInPixels = 800, optional unrestricted double pageHeightInPixels = 600);
     [RaisesException] DOMString pageProperty(DOMString propertyName, long pageNumber);
     [RaisesException] DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
 
