@@ -4413,6 +4413,14 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case IsEmpty: {        
+        JSValueOperand value(this, node->child1());
+        GPRTemporary result(this, Reuse, value, TagWord);
+        m_jit.comparePtr(JITCompiler::Equal, value.tagGPR(), TrustedImm32(JSValue::EmptyValueTag), result.gpr());
+        booleanResult(result.gpr(), node);
+        break;
+    }
+
     case IsUndefined: {
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this);

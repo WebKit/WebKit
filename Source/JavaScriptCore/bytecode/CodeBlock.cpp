@@ -1066,6 +1066,10 @@ void CodeBlock::dumpBytecode(
             printUnaryOp(out, exec, location, it, "typeof");
             break;
         }
+        case op_is_empty: {
+            printUnaryOp(out, exec, location, it, "is_empty");
+            break;
+        }
         case op_is_undefined: {
             printUnaryOp(out, exec, location, it, "is_undefined");
             break;
