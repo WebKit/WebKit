@@ -276,7 +276,8 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    mutable HashMap<unsigned, RetainPtr<CFDictionaryRef>> m_CFStringAttributes;
+    mutable RetainPtr<CFDictionaryRef> m_nonKernedCFStringAttributes;
+    mutable RetainPtr<CFDictionaryRef> m_kernedCFStringAttributes;
     mutable Optional<BitVector> m_glyphsSupportedBySmallCaps;
     mutable Optional<BitVector> m_glyphsSupportedByAllSmallCaps;
     mutable Optional<BitVector> m_glyphsSupportedByPetiteCaps;

@@ -37,10 +37,8 @@ namespace WebCore {
 
 CFDictionaryRef Font::getCFStringAttributes(bool enableKerning, FontOrientation orientation) const
 {
-    unsigned key = static_cast<unsigned>(enableKerning) + 1;
-    HashMap<unsigned, RetainPtr<CFDictionaryRef>>::AddResult addResult = m_CFStringAttributes.add(key, RetainPtr<CFDictionaryRef>());
-    RetainPtr<CFDictionaryRef>& attributesDictionary = addResult.iterator->value;
-    if (!addResult.isNewEntry)
+    auto& attributesDictionary = enableKerning ? m_kernedCFStringAttributes : m_nonKernedCFStringAttributes;
+    if (attributesDictionary)
         return attributesDictionary.get();
 
     attributesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));

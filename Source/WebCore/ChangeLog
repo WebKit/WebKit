@@ -1,5 +1,20 @@
 2016-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Remove unnecessary HashMap from Font
+        https://bugs.webkit.org/show_bug.cgi?id=157090
+
+        Reviewed by Darin Adler.
+
+        There were only ever a maximum of 2 keys in the hashmap.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/Font.h:
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::Font::getCFStringAttributes):
+
+2016-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Rename DerivedFontData to DerivedFonts
         https://bugs.webkit.org/show_bug.cgi?id=157092
 
