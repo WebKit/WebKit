@@ -84,6 +84,8 @@ enum {
     PROP_BYTE_ATTR,
     PROP_OCTET_ATTR,
     PROP_SHORT_ATTR,
+    PROP_CLAMPED_SHORT_ATTR,
+    PROP_ENFORCE_RANGE_SHORT_ATTR,
     PROP_UNSIGNED_SHORT_ATTR,
     PROP_LONG_ATTR,
     PROP_LONG_LONG_ATTR,
@@ -169,6 +171,12 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
         break;
     case PROP_SHORT_ATTR:
         webkit_dom_test_obj_set_short_attr(self, g_value_get_int(value));
+        break;
+    case PROP_CLAMPED_SHORT_ATTR:
+        webkit_dom_test_obj_set_clamped_short_attr(self, g_value_get_int(value));
+        break;
+    case PROP_ENFORCE_RANGE_SHORT_ATTR:
+        webkit_dom_test_obj_set_enforce_range_short_attr(self, g_value_get_int(value));
         break;
     case PROP_UNSIGNED_SHORT_ATTR:
         webkit_dom_test_obj_set_unsigned_short_attr(self, g_value_get_uint(value));
@@ -294,6 +302,12 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_SHORT_ATTR:
         g_value_set_int(value, webkit_dom_test_obj_get_short_attr(self));
+        break;
+    case PROP_CLAMPED_SHORT_ATTR:
+        g_value_set_int(value, webkit_dom_test_obj_get_clamped_short_attr(self));
+        break;
+    case PROP_ENFORCE_RANGE_SHORT_ATTR:
+        g_value_set_int(value, webkit_dom_test_obj_get_enforce_range_short_attr(self));
         break;
     case PROP_UNSIGNED_SHORT_ATTR:
         g_value_set_uint(value, webkit_dom_test_obj_get_unsigned_short_attr(self));
@@ -558,6 +572,26 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "short-attr",
             "TestObj:short-attr",
             "read-write gshort TestObj:short-attr",
+            G_MININT, G_MAXINT, 0,
+            WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_CLAMPED_SHORT_ATTR,
+        g_param_spec_int(
+            "clamped-short-attr",
+            "TestObj:clamped-short-attr",
+            "read-write gshort TestObj:clamped-short-attr",
+            G_MININT, G_MAXINT, 0,
+            WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_ENFORCE_RANGE_SHORT_ATTR,
+        g_param_spec_int(
+            "enforce-range-short-attr",
+            "TestObj:enforce-range-short-attr",
+            "read-write gshort TestObj:enforce-range-short-attr",
             G_MININT, G_MAXINT, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -1763,6 +1797,14 @@ void webkit_dom_test_obj_conditional_method3(WebKitDOMTestObj* self)
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 }
 
+void webkit_dom_test_obj_class_method_with_enforce_range(WebKitDOMTestObj* self, gushort objArgsShort, gulong objArgsLong)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->classMethodWithEnforceRange(objArgsShort, objArgsLong);
+}
+
 void webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMTestNode* value)
 {
     WebCore::JSMainThreadNullState state;
@@ -1981,6 +2023,40 @@ void webkit_dom_test_obj_set_short_attr(WebKitDOMTestObj* self, gshort value)
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
     WebCore::TestObj* item = WebKit::core(self);
     item->setShortAttr(value);
+}
+
+gshort webkit_dom_test_obj_get_clamped_short_attr(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    gshort result = item->clampedShortAttr();
+    return result;
+}
+
+void webkit_dom_test_obj_set_clamped_short_attr(WebKitDOMTestObj* self, gshort value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->setClampedShortAttr(value);
+}
+
+gshort webkit_dom_test_obj_get_enforce_range_short_attr(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    gshort result = item->enforceRangeShortAttr();
+    return result;
+}
+
+void webkit_dom_test_obj_set_enforce_range_short_attr(WebKitDOMTestObj* self, gshort value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->setEnforceRangeShortAttr(value);
 }
 
 gushort webkit_dom_test_obj_get_unsigned_short_attr(WebKitDOMTestObj* self)

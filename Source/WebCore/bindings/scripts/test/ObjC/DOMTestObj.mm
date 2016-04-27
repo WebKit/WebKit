@@ -151,6 +151,30 @@
     IMPL->setShortAttr(newShortAttr);
 }
 
+- (short)clampedShortAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->clampedShortAttr();
+}
+
+- (void)setClampedShortAttr:(short)newClampedShortAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setClampedShortAttr(newClampedShortAttr);
+}
+
+- (short)enforceRangeShortAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->enforceRangeShortAttr();
+}
+
+- (void)setEnforceRangeShortAttr:(short)newEnforceRangeShortAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setEnforceRangeShortAttr(newEnforceRangeShortAttr);
+}
+
 - (unsigned short)unsignedShortAttr
 {
     WebCore::JSMainThreadNullState state;
@@ -1419,6 +1443,12 @@
 }
 
 #endif
+
+- (void)classMethodWithEnforceRange:(unsigned short)objArgsShort objArgsLong:(unsigned)objArgsLong
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->classMethodWithEnforceRange(objArgsShort, objArgsLong);
+}
 
 - (DOMSVGDocument *)getSVGDocument
 {

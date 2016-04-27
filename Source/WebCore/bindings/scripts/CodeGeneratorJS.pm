@@ -3535,14 +3535,6 @@ sub GenerateParametersCheck
                 }
             }
             $value = "WTFMove($name)";
-        } elsif ($parameter->extendedAttributes->{"Clamp"}) {
-            my $nativeValue = "${name}NativeValue";
-            push(@$outputArray, "    $argType $name = 0;\n");
-            push(@$outputArray, "    double $nativeValue = state->argument($argsIndex).toNumber(state);\n");
-            push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
-            push(@$outputArray, "        return JSValue::encode(jsUndefined());\n\n");
-            push(@$outputArray, "    if (!std::isnan($nativeValue))\n");
-            push(@$outputArray, "        $name = clampTo<$argType>($nativeValue);\n\n");
         } elsif ($parameter->isVariadic) {
             my $nativeElementType;
             if ($argType eq "DOMString") {
@@ -4267,7 +4259,9 @@ sub JSValueToNative
     return "$value.toNumber(state)" if $type eq "double" or $type eq "unrestricted double" ;
     return "$value.toFloat(state)" if $type eq "float" or $type eq "unrestricted float" ;
 
-    my $intConversion = $signature->extendedAttributes->{"EnforceRange"} ? "EnforceRange" : "NormalConversion";
+    my $intConversion = "NormalConversion";
+    $intConversion = "EnforceRange" if $signature->extendedAttributes->{"EnforceRange"};
+    $intConversion = "Clamp" if $signature->extendedAttributes->{"Clamp"};
     return "toInt8(state, $value, $intConversion)" if $type eq "byte";
     return "toUInt8(state, $value, $intConversion)" if $type eq "octet";
     return "toInt16(state, $value, $intConversion)" if $type eq "short";

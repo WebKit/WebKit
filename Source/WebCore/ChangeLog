@@ -1,3 +1,69 @@
+2016-04-27  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Clean up support for [Clamp] IDL extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=157060
+
+        Reviewed by Darin Adler.
+
+        Clean up support for [Clamp] IDL extended attribute:
+        1.  Move [Clamp] handling in the bindings generator from the parameter
+            conversion to JSValueToNative(). This has the benefit of
+            simplifying the parameter conversion code, adding support for [Clamp]
+            on non-readonly attributes, and improving consistency by handling
+            this in the same place as [EnforceRange].
+        2.  Add 'Clamp' to the IntegerConversionConfiguration enumeration in
+            JSDOMbindings.h and add support for it to the various toInt*() /
+            toUInt*() functions, similary to [EnforceRange]. Call these from
+            the generated bindings.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::toSmallerInt):
+        (WebCore::toSmallerUInt):
+        (WebCore::toInt32EnforceRange):
+        (WebCore::toInt32Clamp):
+        (WebCore::toUInt32Clamp):
+        (WebCore::toUInt32EnforceRange):
+        (WebCore::toInt64):
+        (WebCore::toUInt64):
+        (WebCore::toUInt8): Deleted.
+        (WebCore::toUInt16): Deleted.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toInt32):
+        (WebCore::toUInt32):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (JSValueToNative):
+        (GenerateParametersCheck): Deleted.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        (webkit_dom_test_obj_class_method_with_enforce_range):
+        (webkit_dom_test_obj_get_clamped_short_attr):
+        (webkit_dom_test_obj_set_clamped_short_attr):
+        (webkit_dom_test_obj_get_enforce_range_short_attr):
+        (webkit_dom_test_obj_set_enforce_range_short_attr):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjClampedShortAttr):
+        (WebCore::jsTestObjEnforceRangeShortAttr):
+        (WebCore::setJSTestObjClampedShortAttr):
+        (WebCore::setJSTestObjEnforceRangeShortAttr):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithClamp):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithEnforceRange):
+        (WebCore::jsTestObjConstructorFunctionClassMethodWithOptional): Deleted.
+        (WebCore::jsTestObjConstructorFunctionClassMethod2): Deleted.
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsPrototypeFunctionFuncWithClamp):
+        (WebCore::jsTestTypedefsPrototypeFunctionImmutablePointFunction): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj clampedShortAttr]):
+        (-[DOMTestObj setClampedShortAttr:]):
+        (-[DOMTestObj enforceRangeShortAttr]):
+        (-[DOMTestObj setEnforceRangeShortAttr:]):
+        (-[DOMTestObj classMethodWithEnforceRange:objArgsLong:]):
+        * bindings/scripts/test/TestObj.idl:
+
 2016-04-27  Daniel Bates  <dabates@apple.com>
 
         CSP: Add app-specific workaround for Ecobee and Quora

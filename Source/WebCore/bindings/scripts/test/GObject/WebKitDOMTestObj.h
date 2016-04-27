@@ -718,6 +718,17 @@ WEBKIT_API void
 webkit_dom_test_obj_conditional_method3(WebKitDOMTestObj* self);
 
 /**
+ * webkit_dom_test_obj_class_method_with_enforce_range:
+ * @self: A #WebKitDOMTestObj
+ * @objArgsShort: A #gushort
+ * @objArgsLong: A #gulong
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_class_method_with_enforce_range(WebKitDOMTestObj* self, gushort objArgsShort, gulong objArgsLong);
+
+/**
  * webkit_dom_test_obj_convert1:
  * @self: A #WebKitDOMTestObj
  * @value: A #WebKitDOMTestNode
@@ -956,6 +967,48 @@ webkit_dom_test_obj_get_short_attr(WebKitDOMTestObj* self);
 **/
 WEBKIT_API void
 webkit_dom_test_obj_set_short_attr(WebKitDOMTestObj* self, gshort value);
+
+/**
+ * webkit_dom_test_obj_get_clamped_short_attr:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: A #gshort
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gshort
+webkit_dom_test_obj_get_clamped_short_attr(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_clamped_short_attr:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #gshort
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_clamped_short_attr(WebKitDOMTestObj* self, gshort value);
+
+/**
+ * webkit_dom_test_obj_get_enforce_range_short_attr:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: A #gshort
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gshort
+webkit_dom_test_obj_get_enforce_range_short_attr(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_enforce_range_short_attr:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #gshort
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_enforce_range_short_attr(WebKitDOMTestObj* self, gshort value);
 
 /**
  * webkit_dom_test_obj_get_unsigned_short_attr:

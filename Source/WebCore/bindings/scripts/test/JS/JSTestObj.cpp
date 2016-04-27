@@ -182,6 +182,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod2(JSC::
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(JSC::ExecState*);
 #endif
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithEnforceRange(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(JSC::ExecState*);
@@ -235,6 +236,10 @@ JSC::EncodedJSValue jsTestObjOctetAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC
 bool setJSTestObjOctetAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestObjClampedShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestObjClampedShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestObjEnforceRangeShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestObjEnforceRangeShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjUnsignedShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjUnsignedShortAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjLongAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -556,6 +561,8 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "byteAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjByteAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjByteAttr) } },
     { "octetAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjOctetAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjOctetAttr) } },
     { "shortAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjShortAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjShortAttr) } },
+    { "clampedShortAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjClampedShortAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjClampedShortAttr) } },
+    { "enforceRangeShortAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjEnforceRangeShortAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjEnforceRangeShortAttr) } },
     { "unsignedShortAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjUnsignedShortAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjUnsignedShortAttr) } },
     { "longAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjLongAttr) } },
     { "longLongAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjLongLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjLongLongAttr) } },
@@ -747,6 +754,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "overloadedMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethod), (intptr_t) (2) } },
     { "overloadedMethodWithOptionalParameter", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter), (intptr_t) (1) } },
     { "classMethodWithClamp", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithClamp), (intptr_t) (2) } },
+    { "classMethodWithEnforceRange", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithEnforceRange), (intptr_t) (2) } },
     { "methodWithUnsignedLongSequence", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence), (intptr_t) (1) } },
     { "stringArrayFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionStringArrayFunction), (intptr_t) (1) } },
     { "domStringListFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionDomStringListFunction), (intptr_t) (1) } },
@@ -1020,6 +1028,36 @@ EncodedJSValue jsTestObjShortAttr(ExecState* state, EncodedJSValue thisValue, Pr
     }
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.shortAttr());
+    return JSValue::encode(result);
+}
+
+
+EncodedJSValue jsTestObjClampedShortAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(thisValue);
+    JSValue decodedThisValue = JSValue::decode(thisValue);
+    auto* castedThis = jsDynamicCast<JSTestObj*>(decodedThisValue);
+    if (UNLIKELY(!castedThis)) {
+        return throwGetterTypeError(*state, "TestObj", "clampedShortAttr");
+    }
+    auto& impl = castedThis->wrapped();
+    JSValue result = jsNumber(impl.clampedShortAttr());
+    return JSValue::encode(result);
+}
+
+
+EncodedJSValue jsTestObjEnforceRangeShortAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(thisValue);
+    JSValue decodedThisValue = JSValue::decode(thisValue);
+    auto* castedThis = jsDynamicCast<JSTestObj*>(decodedThisValue);
+    if (UNLIKELY(!castedThis)) {
+        return throwGetterTypeError(*state, "TestObj", "enforceRangeShortAttr");
+    }
+    auto& impl = castedThis->wrapped();
+    JSValue result = jsNumber(impl.enforceRangeShortAttr());
     return JSValue::encode(result);
 }
 
@@ -2246,6 +2284,40 @@ bool setJSTestObjShortAttr(ExecState* state, EncodedJSValue thisValue, EncodedJS
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setShortAttr(nativeValue);
+    return true;
+}
+
+
+bool setJSTestObjClampedShortAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        return throwSetterTypeError(*state, "TestObj", "clampedShortAttr");
+    }
+    auto& impl = castedThis->wrapped();
+    int16_t nativeValue = toInt16(state, value, Clamp);
+    if (UNLIKELY(state->hadException()))
+        return false;
+    impl.setClampedShortAttr(nativeValue);
+    return true;
+}
+
+
+bool setJSTestObjEnforceRangeShortAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        return throwSetterTypeError(*state, "TestObj", "enforceRangeShortAttr");
+    }
+    auto& impl = castedThis->wrapped();
+    int16_t nativeValue = toInt16(state, value, EnforceRange);
+    if (UNLIKELY(state->hadException()))
+        return false;
+    impl.setEnforceRangeShortAttr(nativeValue);
     return true;
 }
 
@@ -4916,23 +4988,33 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(Exec
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    unsigned short objArgsShort = 0;
-    double objArgsShortNativeValue = state->argument(0).toNumber(state);
+    uint16_t objArgsShort = toUInt16(state, state->argument(0), Clamp);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-
-    if (!std::isnan(objArgsShortNativeValue))
-        objArgsShort = clampTo<unsigned short>(objArgsShortNativeValue);
-
-    unsigned long objArgsLong = 0;
-    double objArgsLongNativeValue = state->argument(1).toNumber(state);
+    unsigned objArgsLong = toUInt32(state, state->argument(1), Clamp);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-
-    if (!std::isnan(objArgsLongNativeValue))
-        objArgsLong = clampTo<unsigned long>(objArgsLongNativeValue);
-
     impl.classMethodWithClamp(objArgsShort, objArgsLong);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithEnforceRange(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "classMethodWithEnforceRange");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 2))
+        return throwVMError(state, createNotEnoughArgumentsError(state));
+    uint16_t objArgsShort = toUInt16(state, state->argument(0), EnforceRange);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    unsigned objArgsLong = toUInt32(state, state->argument(1), EnforceRange);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.classMethodWithEnforceRange(objArgsShort, objArgsLong);
     return JSValue::encode(jsUndefined());
 }
 

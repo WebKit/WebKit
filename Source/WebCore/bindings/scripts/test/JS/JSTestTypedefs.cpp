@@ -550,14 +550,9 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    unsigned long long arg1 = 0;
-    double arg1NativeValue = state->argument(0).toNumber(state);
+    unsigned long long arg1 = toUInt64(state, state->argument(0), Clamp);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-
-    if (!std::isnan(arg1NativeValue))
-        arg1 = clampTo<unsigned long long>(arg1NativeValue);
-
 
     size_t argsCount = state->argumentCount();
     if (argsCount <= 1) {
@@ -565,14 +560,9 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
         return JSValue::encode(jsUndefined());
     }
 
-    unsigned long long arg2 = 0;
-    double arg2NativeValue = state->argument(1).toNumber(state);
+    unsigned long long arg2 = toUInt64(state, state->argument(1), Clamp);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-
-    if (!std::isnan(arg2NativeValue))
-        arg2 = clampTo<unsigned long long>(arg2NativeValue);
-
     impl.funcWithClamp(arg1, arg2);
     return JSValue::encode(jsUndefined());
 }

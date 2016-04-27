@@ -51,6 +51,8 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     attribute byte                     byteAttr;
     attribute octet                    octetAttr;
     attribute short                    shortAttr;
+    [Clamp] attribute short            clampedShortAttr;
+    [EnforceRange] attribute short     enforceRangeShortAttr;
     attribute unsigned short           unsignedShortAttr;
     attribute long                     longAttr;
     attribute long long                longLongAttr;
@@ -268,6 +270,7 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [Conditional=Condition1] static void overloadedMethod1([StrictTypeChecking] DOMString type);
 
     void classMethodWithClamp([Clamp] unsigned short objArgsShort, [Clamp] unsigned long objArgsLong);
+    void classMethodWithEnforceRange([EnforceRange] unsigned short objArgsShort, [EnforceRange] unsigned long objArgsLong);
 
 #if defined(TESTING_JS)
     void methodWithUnsignedLongSequence(sequence<unsigned long> unsignedLongSequence);

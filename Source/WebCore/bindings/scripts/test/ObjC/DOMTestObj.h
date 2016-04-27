@@ -67,6 +67,8 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property char byteAttr;
 @property unsigned char octetAttr;
 @property short shortAttr;
+@property short clampedShortAttr;
+@property short enforceRangeShortAttr;
 @property unsigned short unsignedShortAttr;
 @property int longAttr;
 @property long long longLongAttr;
@@ -193,6 +195,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)classMethod;
 - (int)classMethodWithOptional:(int)arg;
 - (void)classMethod2:(int)arg;
+- (void)classMethodWithEnforceRange:(unsigned short)objArgsShort objArgsLong:(unsigned)objArgsLong;
 - (DOMSVGDocument *)getSVGDocument;
 - (void)convert1:(DOMTestNode *)value;
 - (void)convert2:(DOMTestNode *)value;

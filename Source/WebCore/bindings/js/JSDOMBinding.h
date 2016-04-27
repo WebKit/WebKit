@@ -337,11 +337,14 @@ inline int32_t finiteInt32Value(JSC::JSValue value, JSC::ExecState* exec, bool& 
 enum IntegerConversionConfiguration {
     NormalConversion,
     EnforceRange,
-    // FIXME: Implement Clamp
+    Clamp
 };
 
 WEBCORE_EXPORT int32_t toInt32EnforceRange(JSC::ExecState*, JSC::JSValue);
 WEBCORE_EXPORT uint32_t toUInt32EnforceRange(JSC::ExecState*, JSC::JSValue);
+
+WEBCORE_EXPORT int32_t toInt32Clamp(JSC::ExecState*, JSC::JSValue);
+WEBCORE_EXPORT uint32_t toUInt32Clamp(JSC::ExecState*, JSC::JSValue);
 
 WEBCORE_EXPORT int8_t toInt8(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
 WEBCORE_EXPORT uint8_t toUInt8(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
@@ -357,15 +360,27 @@ WEBCORE_EXPORT uint16_t toUInt16(JSC::ExecState*, JSC::JSValue, IntegerConversio
 */
 inline int32_t toInt32(JSC::ExecState* exec, JSC::JSValue value, IntegerConversionConfiguration configuration)
 {
-    if (configuration == EnforceRange)
+    switch (configuration) {
+    case NormalConversion:
+        break;
+    case EnforceRange:
         return toInt32EnforceRange(exec, value);
+    case Clamp:
+        return toInt32Clamp(exec, value);
+    }
     return value.toInt32(exec);
 }
 
 inline uint32_t toUInt32(JSC::ExecState* exec, JSC::JSValue value, IntegerConversionConfiguration configuration)
 {
-    if (configuration == EnforceRange)
+    switch (configuration) {
+    case NormalConversion:
+        break;
+    case EnforceRange:
         return toUInt32EnforceRange(exec, value);
+    case Clamp:
+        return toUInt32Clamp(exec, value);
+    }
     return value.toUInt32(exec);
 }
 
