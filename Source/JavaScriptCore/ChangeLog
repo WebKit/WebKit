@@ -1,3 +1,14 @@
+2016-04-26  Mark Lam  <mark.lam@apple.com>
+
+        Update the compatibility version check for the ObjC API's InitConstructorSupport to use dyld_get_program_sdk_version().
+        https://bugs.webkit.org/show_bug.cgi?id=157048
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSWrapperMap.mm:
+        (supportsInitMethodConstructors):
+        (getJSExportProtocol):
+
 2016-04-26  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] GetByVal on Undecided use its children before its OSR Exit
