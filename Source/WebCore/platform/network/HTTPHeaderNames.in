@@ -108,3 +108,10 @@ Icy-Metadata
 Icy-Name
 Icy-Title
 Icy-URL
+
+// These are specific to legacy WebSockets implementations
+// https://bugs.webkit.org/show_bug.cgi?id=157057
+Sec-WebSocket-Location
+Sec-WebSocket-Origin
+WebSocket-Location
+WebSocket-Origin

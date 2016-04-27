@@ -1,3 +1,16 @@
+2016-04-26  John Wilander  <wilander@apple.com>
+
+        Support legacy HTTP headers in WebSockets
+        https://bugs.webkit.org/show_bug.cgi?id=157057
+
+        Reviewed by Brent Fulgham.
+
+        No new tests since these headers are not officially supported and should not be used.
+
+        * platform/network/HTTPHeaderNames.in:
+            Added four legacy headers needed to support older WebSockets servers.
+            Two of them are in the draft from August 2010: https://whatwg.org/specs/web-socket-protocol/
+
 2016-04-26  Dean Jackson  <dino@apple.com>
 
         RTL native <select> buttons should have arrows on left
