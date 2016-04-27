@@ -28,6 +28,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -209,6 +210,23 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             }
         }
     }
+#endif
+}
+
+bool RenderLayerModelObject::shouldPlaceBlockDirectionScrollbarOnLeft() const
+{
+// RTL Scrollbars require some system support, and this system support does not exist on certain versions of OS X. iOS uses a separate mechanism.
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
+    return false;
+#else
+    switch (frame().settings().userInterfaceDirectionPolicy()) {
+    case UserInterfaceDirectionPolicy::Content:
+        return style().shouldPlaceBlockDirectionScrollbarOnLeft();
+    case UserInterfaceDirectionPolicy::System:
+        return frame().settings().systemLayoutDirection() == RTL;
+    }
+    ASSERT_NOT_REACHED();
+    return style().shouldPlaceBlockDirectionScrollbarOnLeft();
 #endif
 }
 

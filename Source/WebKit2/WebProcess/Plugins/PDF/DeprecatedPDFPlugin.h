@@ -111,6 +111,8 @@ public:
 
     CGFloat scaleFactor() const;
 
+    bool shouldPlaceBlockDirectionScrollbarOnLeft() const override { return false; }
+
 private:
     explicit PDFPlugin(WebFrame*);
 

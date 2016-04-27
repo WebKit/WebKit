@@ -4968,5 +4968,10 @@ IntSize FrameView::viewportSizeForCSSViewportUnits() const
     // property on the root element.
     return visibleContentRectIncludingScrollbars().size();
 }
+
+bool FrameView::shouldPlaceBlockDirectionScrollbarOnLeft() const
+{
+    return renderView() && renderView()->shouldPlaceBlockDirectionScrollbarOnLeft();
+}
     
 } // namespace WebCore

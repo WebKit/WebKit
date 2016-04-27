@@ -34,6 +34,8 @@
 #include "IntSize.h"
 #include "InternalSettingsGenerated.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
+#include "WritingMode.h"
 
 namespace WebCore {
 
@@ -102,6 +104,8 @@ public:
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
         bool m_indexedDBWorkersEnabled;
 #endif
+        UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
+        TextDirection m_systemLayoutDirection;
     };
 
     static Ref<InternalSettings> create(Page* page)
@@ -150,6 +154,10 @@ public:
     void setAllowsInlineMediaPlayback(bool, ExceptionCode&);
     void setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool, ExceptionCode&);
     void setIndexedDBWorkersEnabled(bool, ExceptionCode&);
+    String userInterfaceDirectionPolicy(ExceptionCode&);
+    void setUserInterfaceDirectionPolicy(const String& policy, ExceptionCode&);
+    String systemLayoutDirection(ExceptionCode&);
+    void setSystemLayoutDirection(const String& direction, ExceptionCode&);
 
 private:
     explicit InternalSettings(Page*);

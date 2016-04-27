@@ -158,7 +158,7 @@ void ScrollbarThemeMac::didCreateScrollerImp(Scrollbar& scrollbar)
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     NSScrollerImp *scrollerImp = painterForScrollbar(scrollbar);
     ASSERT(scrollerImp);
-    scrollerImp.userInterfaceLayoutDirection = scrollbar.scrollableArea().verticalScrollbarIsOnLeft() ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight;
+    scrollerImp.userInterfaceLayoutDirection = scrollbar.scrollableArea().shouldPlaceBlockDirectionScrollbarOnLeft() ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight;
 #else
     UNUSED_PARAM(scrollbar);
 #endif

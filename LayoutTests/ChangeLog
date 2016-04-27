@@ -1,3 +1,77 @@
+2016-04-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WK2] [OS X] Create API for switching RTL scrollbar policy
+        https://bugs.webkit.org/show_bug.cgi?id=156948
+        <rdar://problem/25707757>
+
+        Reviewed by Darin Adler.
+
+        Update tests to use new RTL scrollbar mechanism.
+
+        * fast/scrolling/rtl-scrollbars-animation-property.html:
+        * fast/scrolling/rtl-scrollbars-elementFromPoint-static.html:
+        * fast/scrolling/rtl-scrollbars-elementFromPoint.html:
+        * fast/scrolling/rtl-scrollbars-expected.html:
+        * fast/scrolling/rtl-scrollbars-iframe-offset-expected.html:
+        * fast/scrolling/rtl-scrollbars-iframe-offset.html:
+        * fast/scrolling/rtl-scrollbars-iframe-position-absolute.html:
+        * fast/scrolling/rtl-scrollbars-iframe-scrolled-expected.html:
+        * fast/scrolling/rtl-scrollbars-iframe-scrolled.html:
+        * fast/scrolling/rtl-scrollbars-iframe.html:
+        * fast/scrolling/rtl-scrollbars-listbox-expected.html:
+        * fast/scrolling/rtl-scrollbars-listbox-scroll-expected.html:
+        * fast/scrolling/rtl-scrollbars-listbox-scroll.html:
+        * fast/scrolling/rtl-scrollbars-listbox-select-left-expected.html:
+        * fast/scrolling/rtl-scrollbars-listbox-select-left.html:
+        * fast/scrolling/rtl-scrollbars-listbox-select-right-expected.html:
+        * fast/scrolling/rtl-scrollbars-listbox-select-right.html:
+        * fast/scrolling/rtl-scrollbars-listbox-simple-expected-mismatch.html:
+        * fast/scrolling/rtl-scrollbars-listbox-simple.html:
+        * fast/scrolling/rtl-scrollbars-listbox.html:
+        * fast/scrolling/rtl-scrollbars-overflow-contents-expected.html:
+        * fast/scrolling/rtl-scrollbars-overflow-contents.html:
+        * fast/scrolling/rtl-scrollbars-overflow-dir-rtl-expected.html:
+        * fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html:
+        * fast/scrolling/rtl-scrollbars-overflow-elementFromPoint.html:
+        * fast/scrolling/rtl-scrollbars-overflow-expected.html:
+        * fast/scrolling/rtl-scrollbars-overflow-padding-expected.html:
+        * fast/scrolling/rtl-scrollbars-overflow-padding.html:
+        * fast/scrolling/rtl-scrollbars-overflow-position-absolute-expected.html:
+        * fast/scrolling/rtl-scrollbars-overflow-position-absolute.html:
+        * fast/scrolling/rtl-scrollbars-overflow-simple-expected-mismatch.html:
+        * fast/scrolling/rtl-scrollbars-overflow-simple.html:
+        * fast/scrolling/rtl-scrollbars-overflow-text-selection-scrolled-expected.html:
+        * fast/scrolling/rtl-scrollbars-overflow-text-selection-scrolled.html:
+        * fast/scrolling/rtl-scrollbars-overflow.html:
+        * fast/scrolling/rtl-scrollbars-overlay-no-push-contents-expected.html:
+        * fast/scrolling/rtl-scrollbars-overlay-no-push-contents.html:
+        * fast/scrolling/rtl-scrollbars-position-absolute-expected.html:
+        * fast/scrolling/rtl-scrollbars-position-absolute.html:
+        * fast/scrolling/rtl-scrollbars-position-fixed-expected.html:
+        * fast/scrolling/rtl-scrollbars-position-fixed.html:
+        * fast/scrolling/rtl-scrollbars-positioning-expected.html:
+        * fast/scrolling/rtl-scrollbars-positioning.html:
+        * fast/scrolling/rtl-scrollbars-simple-expected-mismatch.html:
+        * fast/scrolling/rtl-scrollbars-simple.html:
+        * fast/scrolling/rtl-scrollbars-sticky-document-2-expected.html:
+        * fast/scrolling/rtl-scrollbars-sticky-document-2.html:
+        * fast/scrolling/rtl-scrollbars-sticky-document-expected.html:
+        * fast/scrolling/rtl-scrollbars-sticky-document.html:
+        * fast/scrolling/rtl-scrollbars-sticky-iframe-2-expected.html:
+        * fast/scrolling/rtl-scrollbars-sticky-iframe-2.html:
+        * fast/scrolling/rtl-scrollbars-sticky-iframe-expected.html:
+        * fast/scrolling/rtl-scrollbars-sticky-iframe.html:
+        * fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2-expected.html:
+        * fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2.html:
+        * fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-expected.html:
+        * fast/scrolling/rtl-scrollbars-sticky-overflow-scroll.html:
+        * fast/scrolling/rtl-scrollbars-text-selection-expected.html:
+        * fast/scrolling/rtl-scrollbars-text-selection-scrolled-expected.html:
+        * fast/scrolling/rtl-scrollbars-text-selection-scrolled.html:
+        * fast/scrolling/rtl-scrollbars-text-selection.html:
+        * fast/scrolling/rtl-scrollbars.html:
+        * platform/mac/fast/scrolling/rtl-scrollbars-animation-property-expected.png: Added.
+
 2016-04-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         ASSERTION FAILED: m_templateInsertionModes.isEmpty() in WebCore::HTMLTreeBuilder::finished

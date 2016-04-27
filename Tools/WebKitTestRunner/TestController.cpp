@@ -953,8 +953,6 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.useFlexibleViewport = parseBooleanTestHeaderValue(value);
         if (key == "useDataDetection")
             testOptions.useDataDetection = parseBooleanTestHeaderValue(value);
-        if (key == "rtlScrollbars")
-            testOptions.useRTLScrollbars = parseBooleanTestHeaderValue(value);
         if (key == "useMockScrollbars")
             testOptions.useMockScrollbars = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
@@ -1480,13 +1478,6 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
 
 WKRetainPtr<WKTypeRef> TestController::getInjectedBundleInitializationUserData()
 {
-    if (m_currentInvocation->options().useRTLScrollbars) {
-        WKRetainPtr<WKStringRef> key = adoptWK(WKStringCreateWithUTF8CString("UseRTLScrollbars"));
-        WKRetainPtr<WKBooleanRef> value = adoptWK(WKBooleanCreate(true));
-        const WKStringRef keyArray[] = { key.get() };
-        const WKTypeRef valueArray[] = { value.get() };
-        return adoptWK(WKDictionaryCreate(keyArray, valueArray, WTF_ARRAY_LENGTH(keyArray)));
-    }
     return nullptr;
 }
 

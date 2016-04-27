@@ -1,6 +1,12 @@
-<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<!DOCTYPE html>
 <html>
 <head>
+<script>
+if (window.internals) {
+    internals.settings.setUserInterfaceDirectionPolicy("View");
+    internals.settings.setSystemLayoutDirection("RTL");
+}
+</script>
 </head>
 <body>
 <div id="text" style='position: absolute; left: 0px; top: 0px;'>ABCD</div>

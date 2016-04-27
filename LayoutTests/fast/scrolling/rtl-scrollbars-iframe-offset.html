@@ -1,6 +1,12 @@
-<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<!DOCTYPE html>
 <html>
 <head>
+<script>
+if (window.internals) {
+    internals.settings.setUserInterfaceDirectionPolicy("View");
+    internals.settings.setSystemLayoutDirection("RTL");
+}
+</script>
 </head>
 <body>
 <iframe id="iframe" style="position: absolute; width: 100px; height: 100px; left: -15px; top: 0px; margin: 0px; border: solid black 0px; padding: 0px;"

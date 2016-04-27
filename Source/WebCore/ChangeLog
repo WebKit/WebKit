@@ -1,3 +1,135 @@
+2016-04-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WK2] [OS X] Create API for switching RTL scrollbar policy
+        https://bugs.webkit.org/show_bug.cgi?id=156948
+        <rdar://problem/25707757>
+
+        Reviewed by Darin Adler.
+
+        There are two schools of thought for where to put scrollbars in RTL environments.
+        The first is that we should obey the content's "dir" attribute, specified on each
+        element. The second is that we should be consistent with the platform (AppKit's)
+        behavior.
+
+        There are some situations where the placement should be done according to the
+        content. For example, this policy would be used in web browsers.
+
+        However, there are also places where web content is designed to fit seamlessly
+        amongst native content. In this situation, the placement of the scrollbars should
+        be done according to the view.
+
+        Because WebKit doesn't know which of these situations it is operating within, this
+        patch adds a new API property, userInterfaceDirectionPolicy, to
+        WKWebViewConfigurationPolicy. This allows clients to instruct us which policy to
+        abide by. It is plumbed to the web process inside the WebPreferencesStore and is
+        ultimately held inside the Page's Settings object.
+
+        This Setting is consulted by RenderLayerModelObject, which serves as a good
+        centralized place for this policy implementation. This is the class which decides
+        if we should be consulting its RenderStyle or the platform itself when we decide
+        where to put the scrollbars.
+
+        Putting this decision inside the renderer is important because ScrollableArea
+        often needs to know if scrollbars should be put on the left, but ScrollableArea
+        doesn't know anything about RenderStyles. Therefore, the renderer must be the
+        intermediary between ScrollableArea and the RenderStyle. (ScrollableArea also
+        doesn't directly know anything about renderers either; however, each of the
+        subclasses knows about an appropriate renderer.) Therefore, ScrollableArea gets
+        a new virtual method which is implemented by the RenderLayerModelObject.
+
+        Tests: fast/scrolling/rtl-scrollbars*.html
+
+        * WebCore.xcodeproj/project.pbxproj: ScrollableAreaMac.mm is no longer necessary.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::shouldPlaceBlockDirectionScrollbarOnLeft): Overridden
+        ScrollableArea function.
+        * page/FrameView.h:
+        * page/Settings.h:
+        * page/Settings.in:
+        * platform/ScrollView.cpp: Adding two new settings: One to know if we should
+        consult with the RenderStyle or the platform, and the other is whether or not
+        the platform considers itself to be RTL.
+        (WebCore::ScrollView::documentScrollPositionRelativeToViewOrigin): Update to
+        use new mechanism.
+        (WebCore::ScrollView::updateScrollbars): Ditto.
+        (WebCore::ScrollView::scrollCornerRect): Ditto.
+        (WebCore::ScrollView::locationOfContents): Ditto.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::verticalScrollbarIsOnLeft): Deleted. This was the old
+        mechanism.
+        (WebCore::ScrollableArea::systemLanguageIsRTL): Deleted. Ditto.
+        * platform/ScrollableArea.h:
+        * platform/mac/ScrollableAreaMac.mm: Removed.
+        (WebCore::ScrollableArea::verticalScrollbarIsOnLeft): Deleted.
+        (WebCore::ScrollableArea::systemLanguageIsRTL): Deleted.
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::didCreateScrollerImp): Update to use new
+        mechanism.
+        * platform/text/WritingMode.h: These enums should match what's in WebKit2.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftOffsetForContent): Update to use new mechanism.
+        (WebCore::RenderBlock::logicalRightOffsetForContent): Ditto.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::determineLogicalLeftPositionForChild): Ditto.
+        * rendering/RenderBox.cpp: Ditto.
+        (WebCore::RenderBox::contentBoxRect):
+        (WebCore::RenderBox::overflowClipRect):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBoxModelObject.cpp: Ditto.
+        (WebCore::RenderBoxModelObject::constrainingRectForStickyPosition):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize): Ditto.
+        (WebCore::cornerStart): Migrate to use references.
+        (WebCore::cornerRect): Ditto.
+        (WebCore::RenderLayer::scrollCornerRect): Ditto.
+        (WebCore::resizerCornerRect): Ditto.
+        (WebCore::RenderLayer::scrollCornerAndResizerRect): Ditto.
+        (WebCore::RenderLayer::verticalScrollbarStart): Update to use new mechanism.
+        (WebCore::RenderLayer::horizontalScrollbarStart): Ditto.
+        (WebCore::RenderLayer::offsetFromResizeCorner): Ditto.
+        (WebCore::RenderLayer::positionOverflowControls): Migrate to use references.
+        (WebCore::RenderLayer::computeScrollDimensions): Ditto.
+        (WebCore::RenderLayer::overflowControlsIntersectRect): Ditto.
+        (WebCore::RenderLayer::drawPlatformResizerImage): Update to use new mechanism.
+        (WebCore::RenderLayer::paintResizer): Migrate to use references.
+        (WebCore::RenderLayer::isPointInResizeControl): Ditto.
+        (WebCore::RenderLayer::hitTestOverflowControls): Ditto.
+        (WebCore::RenderLayer::hitTestResizerInFragments): Ditto.
+        * rendering/RenderLayer.h: ScrollableArea override
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::positionForClipLayer): Update to use new
+        mechanism.
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::shouldPlaceBlockDirectionScrollbarOnLeft):
+        This is the meat of this patch. This is where we decide if we should be
+        interrogating the RenderStyle or the underlying platform.
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderListBox.cpp: Update to use new mechanism.
+        (WebCore::RenderListBox::itemBoundingBoxRect):
+        (WebCore::RenderListBox::paintScrollbar):
+        (WebCore::RenderListBox::isPointInOverflowControl):
+        (WebCore::RenderListBox::listIndexAtOffset):
+        (WebCore::RenderListBox::controlClipRect):
+        (WebCore::RenderListBox::invalidateScrollbarRect):
+        (WebCore::RenderListBox::convertFromScrollbarToContainingView):
+        (WebCore::RenderListBox::convertFromContainingViewToScrollbar):
+        * rendering/RenderListBox.h:
+        * rendering/RenderView.cpp: Ditto.
+        (WebCore::RenderView::repaintViewRectangle):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::shouldPlaceBlockDirectionScrollbarOnLeft): This
+        function is now much dumber. It just inspects its own style.
+        * testing/InternalSettings.cpp: Allow mocking.
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::verticalScrollbarLocationPolicy):
+        (WebCore::InternalSettings::setVerticalScrollbarLocationPolicy):
+        (WebCore::InternalSettings::systemLayoutDirection):
+        (WebCore::InternalSettings::setSystemLayoutDirection):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2016-04-26  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Specify default values for optional parameters of type 'unsigned long'

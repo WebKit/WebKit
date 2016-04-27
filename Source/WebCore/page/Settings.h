@@ -35,6 +35,7 @@
 #include "TextFlags.h"
 #include "Timer.h"
 #include "URL.h"
+#include "WritingMode.h"
 #include <chrono>
 #include <runtime/RuntimeFlags.h>
 #include <unicode/uscript.h>
@@ -69,6 +70,11 @@ enum TextDirectionSubmenuInclusionBehavior {
 enum DebugOverlayRegionFlags {
     NonFastScrollableRegion = 1 << 0,
     WheelEventHandlerRegion = 1 << 1,
+};
+
+enum class UserInterfaceDirectionPolicy {
+    Content,
+    System
 };
 
 typedef unsigned DebugOverlayRegions;

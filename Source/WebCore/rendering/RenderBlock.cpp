@@ -2280,7 +2280,7 @@ LayoutUnit RenderBlock::textIndentOffset() const
 LayoutUnit RenderBlock::logicalLeftOffsetForContent(RenderRegion* region) const
 {
     LayoutUnit logicalLeftOffset = style().isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop();
-    if (style().shouldPlaceBlockDirectionScrollbarOnLeft())
+    if (shouldPlaceBlockDirectionScrollbarOnLeft())
         logicalLeftOffset += verticalScrollbarWidth();
     if (!region)
         return logicalLeftOffset;
@@ -2291,7 +2291,7 @@ LayoutUnit RenderBlock::logicalLeftOffsetForContent(RenderRegion* region) const
 LayoutUnit RenderBlock::logicalRightOffsetForContent(RenderRegion* region) const
 {
     LayoutUnit logicalRightOffset = style().isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop();
-    if (style().shouldPlaceBlockDirectionScrollbarOnLeft())
+    if (shouldPlaceBlockDirectionScrollbarOnLeft())
         logicalRightOffset += verticalScrollbarWidth();
     logicalRightOffset += availableLogicalWidth();
     if (!region)

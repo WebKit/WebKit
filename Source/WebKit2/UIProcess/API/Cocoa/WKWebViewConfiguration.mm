@@ -140,6 +140,7 @@ private:
     _mediaDataLoadsAutomatically = NO;
 #else
     _mediaDataLoadsAutomatically = YES;
+    _userInterfaceDirectionPolicy = WKUserInterfaceDirectionPolicyContent;
 #endif
     _requiresUserActionForVideoPlayback = NO;
     _requiresUserActionForAudioPlayback = NO;
@@ -198,6 +199,7 @@ private:
     [coder encodeObject:self.applicationNameForUserAgent forKey:@"applicationNameForUserAgent"];
     [coder encodeBool:self.allowsAirPlayForMediaPlayback forKey:@"allowsAirPlayForMediaPlayback"];
     [coder encodeInteger:self.dataDetectorTypes forKey:@"dataDetectorTypes"];
+    [coder encodeInteger:self.userInterfaceDirectionPolicy forKey:@"userInterfaceDirectionPolicy"];
 
 #if PLATFORM(IOS)
     [coder encodeBool:self.allowsInlineMediaPlayback forKey:@"allowsInlineMediaPlayback"];
@@ -221,6 +223,9 @@ private:
     self.applicationNameForUserAgent = [coder decodeObjectForKey:@"applicationNameForUserAgent"];
     self.allowsAirPlayForMediaPlayback = [coder decodeBoolForKey:@"allowsAirPlayForMediaPlayback"];
     self.dataDetectorTypes = [coder decodeIntegerForKey:@"dataDetectorTypes"];
+    auto userInterfaceDirectionPolicyCandidate = static_cast<WKUserInterfaceDirectionPolicy>([coder decodeIntegerForKey:@"userInterfaceDirectionPolicy"]);
+    if (userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicyContent || userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicySystem)
+        self.userInterfaceDirectionPolicy = userInterfaceDirectionPolicyCandidate;
 
 #if PLATFORM(IOS)
     self.allowsInlineMediaPlayback = [coder decodeBoolForKey:@"allowsInlineMediaPlayback"];
@@ -265,6 +270,8 @@ private:
     configuration->_requiresUserActionForVideoPlayback = self->_requiresUserActionForVideoPlayback;
     configuration->_requiresUserActionForAudioPlayback = self->_requiresUserActionForAudioPlayback;
     configuration->_mainContentUserGestureOverrideEnabled = self->_mainContentUserGestureOverrideEnabled;
+
+    configuration->_userInterfaceDirectionPolicy = self->_userInterfaceDirectionPolicy;
 
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;

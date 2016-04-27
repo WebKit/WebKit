@@ -2077,13 +2077,7 @@ float RenderStyle::outlineOffset() const
 
 bool RenderStyle::shouldPlaceBlockDirectionScrollbarOnLeft() const
 {
-#if PLATFORM(MAC)
-    return ScrollableArea::systemLanguageIsRTL();
-#elif USE(RTL_SCROLLBAR)
     return !isLeftToRightDirection() && isHorizontalWritingMode();
-#else
-    return false;
-#endif
 }
 
 } // namespace WebCore

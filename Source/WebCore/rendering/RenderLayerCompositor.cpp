@@ -1763,7 +1763,7 @@ FloatPoint RenderLayerCompositor::positionForClipLayer() const
     FrameView& frameView = m_renderView.frameView();
 
     return FloatPoint(
-        frameView.verticalScrollbarIsOnLeft() ? frameView.horizontalScrollbarIntrusion() : 0,
+        frameView.shouldPlaceBlockDirectionScrollbarOnLeft() ? frameView.horizontalScrollbarIntrusion() : 0,
         FrameView::yPositionForInsetClipLayer(frameView.scrollPosition(), frameView.topContentInset()));
 }
 

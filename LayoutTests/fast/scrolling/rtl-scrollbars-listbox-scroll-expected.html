@@ -1,6 +1,12 @@
-<!DOCTYPE html><!-- webkit-test-runner [ rtlScrollbars=true ] -->
+<!DOCTYPE html>
 <html>
 <head>
+<script>
+if (window.internals) {
+    internals.settings.setUserInterfaceDirectionPolicy("View");
+    internals.settings.setSystemLayoutDirection("RTL");
+}
+</script>
 </head>
 <body style="margin: 0px;">
 <div style="position: absolute; left: 8px; top: 200px;">This test makes sure that list boxes obey RTL scrollbars.</div>

@@ -100,6 +100,7 @@
 #include "WebPopupItem.h"
 #include "WebPopupMenuProxy.h"
 #include "WebPreferences.h"
+#include "WebPreferencesKeys.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"

@@ -79,5 +79,10 @@
     [RaisesException] void setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
 
     [RaisesException] void setIndexedDBWorkersEnabled(boolean requires);
+
+    [RaisesException] DOMString userInterfaceDirectionPolicy();
+    [RaisesException] void setUserInterfaceDirectionPolicy(DOMString policy);
+    [RaisesException] DOMString systemLayoutDirection();
+    [RaisesException] void setSystemLayoutDirection(DOMString direction);
 };
 

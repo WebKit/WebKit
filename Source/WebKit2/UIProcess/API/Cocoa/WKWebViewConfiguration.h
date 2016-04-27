@@ -73,6 +73,20 @@ typedef NS_OPTIONS(NSUInteger, WKDataDetectorTypes) {
     WKDataDetectorTypeAll = NSUIntegerMax
 } WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
+
+/*! @enum WKUserInterfaceDirectionPolicy
+ @abstract The mechanism by which vertical scrollbars obey an RTL environment
+ @constant WKUserInterfaceDirectionPolicyContent Scrollbar placement obeys CSS / HTML / XHTML specifications.
+ @constant WKUserInterfaceDirectionPolicySystem Scrollbar placement obeys system platform specifications.
+ @discussion When WKUserInterfaceDirectionPolicyContent is specified, the placement of vertical scrollbars is
+ affected by the "dir" element or the "direction" CSS property. When WKUserInterfaceDirectionPolicySystem is
+ specified, the placement of vertical scrollbars is affected by the direction of the view.
+*/
+typedef NS_ENUM(NSInteger, WKUserInterfaceDirectionPolicy) {
+    WKUserInterfaceDirectionPolicyContent = 0,
+    WKUserInterfaceDirectionPolicySystem = 1,
+} WK_ENUM_AVAILABLE(WK_MAC_TBA, NA);
+
 /*! A WKWebViewConfiguration object is a collection of properties with
  which to initialize a web view.
  @helps Contains properties used to configure a @link WKWebView @/link.
@@ -123,6 +137,12 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
  */
 @property (nonatomic) WKDataDetectorTypes dataDetectorTypes WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+/*! @abstract The placement behavior of vertical scrollbars.
+ @discussion Possible values are described in WKUserInterfaceDirectionPolicy.
+ The default value is WKUserInterfaceDirectionPolicyContent.
+ */
+@property (nonatomic) WKUserInterfaceDirectionPolicy userInterfaceDirectionPolicy WK_AVAILABLE(WK_MAC_TBA, NA);
 
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline

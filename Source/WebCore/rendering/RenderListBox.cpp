@@ -266,7 +266,7 @@ int RenderListBox::baselinePosition(FontBaseline baselineType, bool firstLine, L
 LayoutRect RenderListBox::itemBoundingBoxRect(const LayoutPoint& additionalOffset, int index)
 {
     LayoutUnit x = additionalOffset.x() + borderLeft() + paddingLeft();
-    if (verticalScrollbarIsOnLeft() && m_vBar)
+    if (shouldPlaceBlockDirectionScrollbarOnLeft() && m_vBar)
         x += m_vBar->occupiedWidth();
     LayoutUnit y = additionalOffset.y() + borderTop() + paddingTop() + itemHeight() * (index - m_indexOffset);
     return LayoutRect(x, y, contentWidth(), itemHeight());
@@ -345,7 +345,7 @@ void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const LayoutPoint& pain
     if (!m_vBar)
         return;
 
-    LayoutUnit left = paintOffset.x() + (verticalScrollbarIsOnLeft() ? borderLeft() : width() - borderRight() - m_vBar->width());
+    LayoutUnit left = paintOffset.x() + (shouldPlaceBlockDirectionScrollbarOnLeft() ? borderLeft() : width() - borderRight() - m_vBar->width());
     LayoutUnit top = paintOffset.y() + borderTop();
     LayoutUnit width = m_vBar->width();
     LayoutUnit height = this->height() - (borderTop() + borderBottom());
@@ -448,7 +448,7 @@ bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const Layout
     if (!m_vBar || !m_vBar->shouldParticipateInHitTesting())
         return false;
 
-    LayoutUnit x = accumulatedOffset.x() + (verticalScrollbarIsOnLeft() ? borderLeft() : width() - borderRight() - m_vBar->width());
+    LayoutUnit x = accumulatedOffset.x() + (shouldPlaceBlockDirectionScrollbarOnLeft() ? borderLeft() : width() - borderRight() - m_vBar->width());
     LayoutUnit y = accumulatedOffset.y() + borderTop();
     LayoutUnit width = m_vBar->width();
     LayoutUnit height = this->height() - borderTop() - borderBottom();
@@ -470,9 +470,9 @@ int RenderListBox::listIndexAtOffset(const LayoutSize& offset)
         return -1;
 
     int scrollbarWidth = m_vBar ? m_vBar->width() : 0;
-    if (verticalScrollbarIsOnLeft() && (offset.width() < borderLeft() + paddingLeft() + scrollbarWidth || offset.width() > width() - borderRight() - paddingRight()))
+    if (shouldPlaceBlockDirectionScrollbarOnLeft() && (offset.width() < borderLeft() + paddingLeft() + scrollbarWidth || offset.width() > width() - borderRight() - paddingRight()))
         return -1;
-    if (!verticalScrollbarIsOnLeft() && (offset.width() < borderLeft() + paddingLeft() || offset.width() > width() - borderRight() - paddingRight() - scrollbarWidth))
+    if (!shouldPlaceBlockDirectionScrollbarOnLeft() && (offset.width() < borderLeft() + paddingLeft() || offset.width() > width() - borderRight() - paddingRight() - scrollbarWidth))
         return -1;
 
     int newOffset = (offset.height() - borderTop() - paddingTop()) / itemHeight() + m_indexOffset;
@@ -729,7 +729,7 @@ LayoutRect RenderListBox::controlClipRect(const LayoutPoint& additionalOffset) c
     // Clip against the padding box, to give <option>s and overlay scrollbar some extra space
     // to get painted.
     LayoutRect clipRect = paddingBoxRect();
-    if (verticalScrollbarIsOnLeft() && (!layer() || !layer()->verticalScrollbarIsOnLeft()))
+    if (shouldPlaceBlockDirectionScrollbarOnLeft())
         clipRect.move(m_vBar->occupiedWidth(), 0);
     clipRect.moveBy(additionalOffset);
     return clipRect;
@@ -744,14 +744,14 @@ bool RenderListBox::isActive() const
 void RenderListBox::invalidateScrollbarRect(Scrollbar& scrollbar, const IntRect& rect)
 {
     IntRect scrollRect = rect;
-    scrollRect.move(verticalScrollbarIsOnLeft() ? borderLeft() : width() - borderRight() - scrollbar.width(), borderTop());
+    scrollRect.move(shouldPlaceBlockDirectionScrollbarOnLeft() ? borderLeft() : width() - borderRight() - scrollbar.width(), borderTop());
     repaintRectangle(scrollRect);
 }
 
 IntRect RenderListBox::convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntRect& scrollbarRect) const
 {
     IntRect rect = scrollbarRect;
-    int scrollbarLeft = verticalScrollbarIsOnLeft() ? borderLeft() : width() - borderRight() - scrollbar.width();
+    int scrollbarLeft = shouldPlaceBlockDirectionScrollbarOnLeft() ? borderLeft() : width() - borderRight() - scrollbar.width();
     int scrollbarTop = borderTop();
     rect.move(scrollbarLeft, scrollbarTop);
     return view().frameView().convertFromRendererToContainingView(this, rect);
@@ -760,7 +760,7 @@ IntRect RenderListBox::convertFromScrollbarToContainingView(const Scrollbar& scr
 IntRect RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntRect& parentRect) const
 {
     IntRect rect = view().frameView().convertFromContainingViewToRenderer(this, parentRect);
-    int scrollbarLeft = verticalScrollbarIsOnLeft() ? borderLeft() : width() - borderRight() - scrollbar.width();
+    int scrollbarLeft = shouldPlaceBlockDirectionScrollbarOnLeft() ? borderLeft() : width() - borderRight() - scrollbar.width();
     int scrollbarTop = borderTop();
     rect.move(-scrollbarLeft, -scrollbarTop);
     return rect;
@@ -769,7 +769,7 @@ IntRect RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar& scr
 IntPoint RenderListBox::convertFromScrollbarToContainingView(const Scrollbar& scrollbar, const IntPoint& scrollbarPoint) const
 {
     IntPoint point = scrollbarPoint;
-    int scrollbarLeft = verticalScrollbarIsOnLeft() ? borderLeft() : width() - borderRight() - scrollbar.width();
+    int scrollbarLeft = shouldPlaceBlockDirectionScrollbarOnLeft() ? borderLeft() : width() - borderRight() - scrollbar.width();
     int scrollbarTop = borderTop();
     point.move(scrollbarLeft, scrollbarTop);
     return view().frameView().convertFromRendererToContainingView(this, point);
@@ -778,7 +778,7 @@ IntPoint RenderListBox::convertFromScrollbarToContainingView(const Scrollbar& sc
 IntPoint RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar& scrollbar, const IntPoint& parentPoint) const
 {
     IntPoint point = view().frameView().convertFromContainingViewToRenderer(this, parentPoint);
-    int scrollbarLeft = verticalScrollbarIsOnLeft() ? borderLeft() : width() - borderRight() - scrollbar.width();
+    int scrollbarLeft = shouldPlaceBlockDirectionScrollbarOnLeft() ? borderLeft() : width() - borderRight() - scrollbar.width();
     int scrollbarTop = borderTop();
     point.move(-scrollbarLeft, -scrollbarTop);
     return point;

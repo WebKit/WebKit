@@ -315,8 +315,7 @@ public:
     virtual bool usesMockScrollAnimator() const { return false; }
     virtual void logMockScrollAnimatorMessage(const String&) const { };
 
-    bool verticalScrollbarIsOnLeft() const;
-    static bool systemLanguageIsRTL();
+    virtual bool shouldPlaceBlockDirectionScrollbarOnLeft() const = 0;
 
 protected:
     WEBCORE_EXPORT ScrollableArea();

@@ -87,6 +87,8 @@
 #import <WebCore/NSTextFinderSPI.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/Settings.h>
+#import <WebCore/WritingMode.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
@@ -359,6 +361,30 @@ static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
 }
 #endif
 
+static uint32_t convertUserInterfaceDirectionPolicy(WKUserInterfaceDirectionPolicy policy)
+{
+    switch (policy) {
+    case WKUserInterfaceDirectionPolicyContent:
+        return static_cast<uint32_t>(WebCore::UserInterfaceDirectionPolicy::Content);
+    case WKUserInterfaceDirectionPolicySystem:
+        return static_cast<uint32_t>(WebCore::UserInterfaceDirectionPolicy::System);
+    }
+    return static_cast<uint32_t>(WebCore::UserInterfaceDirectionPolicy::Content);
+}
+
+#if PLATFORM(MAC)
+static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection direction)
+{
+    switch (direction) {
+    case NSUserInterfaceLayoutDirectionLeftToRight:
+        return static_cast<uint32_t>(WebCore::LTR);
+    case NSUserInterfaceLayoutDirectionRightToLeft:
+        return static_cast<uint32_t>(WebCore::RTL);
+    }
+    return static_cast<uint32_t>(WebCore::LTR);
+}
+#endif
+
 - (void)_initializeWithConfiguration:(WKWebViewConfiguration *)configuration
 {
     if (!configuration)
@@ -408,11 +434,17 @@ static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::shouldConvertPositionStyleOnCopyKey(), WebKit::WebPreferencesStore::Value(!![_configuration _convertsPositionStyleOnCopy]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::httpEquivEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _allowsMetaRefresh]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::allowUniversalAccessFromFileURLsKey(), WebKit::WebPreferencesStore::Value(!![_configuration _allowUniversalAccessFromFileURLs]));
+
+    pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::userInterfaceDirectionKey(), WebKit::WebPreferencesStore::Value(convertUserInterfaceDirectionPolicy([_configuration userInterfaceDirectionPolicy])));
     
 #if PLATFORM(MAC)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::showsURLsInToolTipsEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _showsURLsInToolTips]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::serviceControlsEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _serviceControlsEnabled]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::imageControlsEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _imageControlsEnabled]));
+    // We are in the View's initialization routine, so our client hasn't had time to set our user interface direction.
+    // Therefore, according to the docs[1], "this property contains the value reported by the app’s userInterfaceLayoutDirection property."
+    // [1] http://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSView_Class/index.html#//apple_ref/doc/uid/20000014-SW222
+    pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::systemLayoutDirectionKey(), WebKit::WebPreferencesStore::Value(convertSystemLayoutDirection(self.userInterfaceLayoutDirection)));
 #endif
 
 #if PLATFORM(IOS)
@@ -422,6 +454,7 @@ static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::inlineMediaPlaybackRequiresPlaysInlineAttributeKey(), WebKit::WebPreferencesStore::Value(!![_configuration _inlineMediaPlaybackRequiresPlaysInlineAttribute]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::allowsPictureInPictureMediaPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration allowsPictureInPictureMediaPlayback] && shouldAllowPictureInPictureMediaPlayback()));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::requiresUserGestureForMediaPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration requiresUserActionForMediaPlayback]));
+    pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::systemLayoutDirectionKey(), WebKit::WebPreferencesStore::Value(static_cast<uint32_t>(WebCore::LTR)));
 #endif
 
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::requiresUserGestureForVideoPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration _requiresUserActionForVideoPlayback]));

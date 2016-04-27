@@ -828,7 +828,7 @@ LayoutUnit RenderBlockFlow::marginOffsetForSelfCollapsingBlock()
 void RenderBlockFlow::determineLogicalLeftPositionForChild(RenderBox& child, ApplyLayoutDeltaMode applyDelta)
 {
     LayoutUnit startPosition = borderStart() + paddingStart();
-    if (style().shouldPlaceBlockDirectionScrollbarOnLeft())
+    if (shouldPlaceBlockDirectionScrollbarOnLeft())
         startPosition += (style().isLeftToRightDirection() ? 1 : -1) * verticalScrollbarWidth();
     LayoutUnit totalAvailableLogicalWidth = borderAndPaddingLogicalWidth() + availableLogicalWidth();
 

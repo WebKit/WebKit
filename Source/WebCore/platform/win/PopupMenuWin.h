@@ -108,6 +108,7 @@ private:
     IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
     bool updatesScrollLayerPositionOnMainThread() const override { return true; }
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override { return false; }
+    bool shouldPlaceBlockDirectionScrollbarOnLeft() const final { return false; }
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int offset);

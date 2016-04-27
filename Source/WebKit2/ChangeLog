@@ -1,3 +1,27 @@
+2016-04-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WK2] [OS X] Create API for switching RTL scrollbar policy
+        https://bugs.webkit.org/show_bug.cgi?id=156948
+        <rdar://problem/25707757>
+
+        Reviewed by Darin Adler.
+
+        Add the new API.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-04-26  Beth Dakin  <bdakin@apple.com>
 
         Check to make sure shouldRequestCandidates() before requesting candidates
