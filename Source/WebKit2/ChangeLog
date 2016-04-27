@@ -1,3 +1,35 @@
+2016-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] When determining tile size, check whether ancestor UIScrollViews are actually scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=157107
+        rdar://problem/25943577
+
+        Reviewed by Tim Horton.
+        
+        We should only fall back to 512x512 tiles if the WKWebView has a UIScrollView ancestor,
+        and that UIScrollView actually scrolls. This avoids falling back to small tiles in
+        MobileSafari.
+
+        Rename "enclosedInScrollView" to "enclosedInScrollableAncestorView" everywhere.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::enclosedInScrollableAncestorView):
+        (WebKit::operator==):
+        (WebKit::VisibleContentRectUpdateInfo::enclosedInScrollView): Deleted.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (scrollViewCanScroll):
+        (-[WKWebView _updateContentRectsWithState:]):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollView:]): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2016-04-26  Ada Chan  <adachan@apple.com>
 
         Set WebVideoFullscreenInterfaceMac up as a client of WebPlaybackSessionInterfaceMac to listen for playback state changes

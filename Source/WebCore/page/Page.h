@@ -299,8 +299,8 @@ public:
     FloatSize obscuredInset() const { return m_obscuredInset; }
     void setObscuredInset(FloatSize inset) { m_obscuredInset = inset; }
     
-    bool enclosedInScrollView() const { return m_enclosedInScrollView; }
-    void setEnclosedInScrollView(bool f) { m_enclosedInScrollView = f; }
+    bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
+    void setEnclosedInScrollableAncestorView(bool f) { m_enclosedInScrollableAncestorView = f; }
 #endif
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
@@ -612,7 +612,7 @@ private:
 #if PLATFORM(IOS)
     // This is only used for history scroll position restoration.
     FloatSize m_obscuredInset;
-    bool m_enclosedInScrollView { false };
+    bool m_enclosedInScrollableAncestorView { false };
 #endif
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)

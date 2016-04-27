@@ -1,3 +1,21 @@
+2016-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] When determining tile size, check whether ancestor UIScrollViews are actually scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=157107
+        rdar://problem/25943577
+
+        Reviewed by Tim Horton.
+
+        Rename "enclosedInScrollView" to "enclosedInScrollableAncestorView" everywhere.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustTiledBackingScrollability):
+        * page/Page.h:
+        (WebCore::Page::enclosedInScrollableAncestorView):
+        (WebCore::Page::setEnclosedInScrollableAncestorView):
+        (WebCore::Page::enclosedInScrollView): Deleted.
+        (WebCore::Page::setEnclosedInScrollView): Deleted.
+
 2016-04-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Implement PlatformCookieJar::addCookie

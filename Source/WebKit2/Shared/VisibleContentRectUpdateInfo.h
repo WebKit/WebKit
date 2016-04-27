@@ -41,7 +41,7 @@ public:
 
     VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect,
         const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect,
-        const WebCore::FloatSize& obscuredInset, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, bool enclosedInScrollView,
+        const WebCore::FloatSize& obscuredInset, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, bool enclosedInScrollableAncestorView,
         double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate, uint64_t lastLayerTreeTransactionId)
         : m_exposedContentRect(exposedContentRect)
         , m_unobscuredContentRect(unobscuredContentRect)
@@ -57,7 +57,7 @@ public:
         , m_inStableState(inStableState)
         , m_isChangingObscuredInsetsInteractively(isChangingObscuredInsetsInteractively)
         , m_allowShrinkToFit(allowShrinkToFit)
-        , m_enclosedInScrollView(enclosedInScrollView)
+        , m_enclosedInScrollableAncestorView(enclosedInScrollableAncestorView)
     {
     }
 
@@ -71,7 +71,7 @@ public:
     bool inStableState() const { return m_inStableState; }
     bool isChangingObscuredInsetsInteractively() const { return m_isChangingObscuredInsetsInteractively; }
     bool allowShrinkToFit() const { return m_allowShrinkToFit; }
-    bool enclosedInScrollView() const { return m_enclosedInScrollView; }
+    bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
 
     double timestamp() const { return m_timestamp; }
     double horizontalVelocity() const { return m_horizontalVelocity; }
@@ -98,7 +98,7 @@ private:
     bool m_inStableState { false };
     bool m_isChangingObscuredInsetsInteractively { false };
     bool m_allowShrinkToFit { false };
-    bool m_enclosedInScrollView { false };
+    bool m_enclosedInScrollableAncestorView { false };
 };
 
 inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleContentRectUpdateInfo& b)
@@ -114,7 +114,7 @@ inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleConte
         && a.scaleChangeRate() == b.scaleChangeRate()
         && a.inStableState() == b.inStableState()
         && a.allowShrinkToFit() == b.allowShrinkToFit()
-        && a.enclosedInScrollView() == b.enclosedInScrollView();
+        && a.enclosedInScrollableAncestorView() == b.enclosedInScrollableAncestorView();
 }
 
 } // namespace WebKit

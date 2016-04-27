@@ -2487,7 +2487,7 @@ void FrameView::adjustTiledBackingScrollability()
 
 #if PLATFORM(IOS)
     if (Page* page = frame().page())
-        clippedByAncestorView |= page->enclosedInScrollView();
+        clippedByAncestorView |= page->enclosedInScrollableAncestorView();
 #endif
 
     if (delegatesScrolling()) {

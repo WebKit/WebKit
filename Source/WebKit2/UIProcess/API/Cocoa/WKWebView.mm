@@ -1986,6 +1986,19 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _updateContentRectsWithState:isStableState];
 }
 
+static bool scrollViewCanScroll(UIScrollView *scrollView)
+{
+    if (!scrollView)
+        return NO;
+
+    UIEdgeInsets contentInset = scrollView.contentInset;
+    CGSize contentSize = scrollView.contentSize;
+    CGSize boundsSize = scrollView.bounds.size;
+
+    return (contentSize.width + contentInset.left + contentInset.right) > boundsSize.width
+        || (contentSize.height + contentInset.top + contentInset.bottom) > boundsSize.height;
+}
+
 - (void)_updateContentRectsWithState:(BOOL)inStableState
 {
     if (![self usesStandardContentView]) {
@@ -2042,7 +2055,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         scale:scaleFactor minimumScale:[_scrollView minimumZoomScale]
         inStableState:inStableState
         isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively
-        enclosedInScrollView:[self _scroller] != nil];
+        enclosedInScrollableAncestorView:scrollViewCanScroll([self _scroller])];
 }
 
 - (void)_didFinishLoadForMainFrame

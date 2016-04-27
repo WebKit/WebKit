@@ -72,7 +72,7 @@ class WebProcessPool;
     scale:(CGFloat)scale minimumScale:(CGFloat)minimumScale
     inStableState:(BOOL)isStableState
     isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
-    enclosedInScrollView:(BOOL)enclosedInScrollView;
+    enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView;
 
 - (void)didFinishScrolling;
 - (void)didInterruptScrolling;

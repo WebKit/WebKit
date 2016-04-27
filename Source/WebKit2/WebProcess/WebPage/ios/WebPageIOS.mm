@@ -2967,7 +2967,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
     frameView.setUnobscuredContentSize(visibleContentRectUpdateInfo.unobscuredContentRect().size());
     m_page->setObscuredInset(visibleContentRectUpdateInfo.obscuredInset());
-    m_page->setEnclosedInScrollView(visibleContentRectUpdateInfo.enclosedInScrollView());
+    m_page->setEnclosedInScrollableAncestorView(visibleContentRectUpdateInfo.enclosedInScrollableAncestorView());
 
     double horizontalVelocity = visibleContentRectUpdateInfo.horizontalVelocity();
     double verticalVelocity = visibleContentRectUpdateInfo.verticalVelocity();

@@ -356,7 +356,7 @@ private:
 }
 
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
-    obscuredInset:(CGSize)obscuredInset scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively enclosedInScrollView:(BOOL)enclosedInScrollView
+    obscuredInset:(CGSize)obscuredInset scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView
 {
     auto drawingArea = _page->drawingArea();
     if (!drawingArea)
@@ -381,7 +381,7 @@ private:
         isStableState,
         isChangingObscuredInsetsInteractively,
         _webView._allowsViewportShrinkToFit,
-        enclosedInScrollView,
+        enclosedInScrollableAncestorView,
         timestamp,
         velocityData.horizontalVelocity,
         velocityData.verticalVelocity,
