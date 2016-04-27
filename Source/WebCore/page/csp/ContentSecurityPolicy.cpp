@@ -50,6 +50,7 @@
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicyViolationEvent.h"
+#include "Settings.h"
 #include "TextEncoding.h"
 #include <inspector/InspectorValues.h>
 #include <inspector/ScriptCallStack.h>
@@ -202,6 +203,13 @@ void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)
 bool ContentSecurityPolicy::urlMatchesSelf(const URL& url) const
 {
     return m_selfSource->matches(url);
+}
+
+bool ContentSecurityPolicy::allowContentSecurityPolicySourceStarToMatchAnyProtocol() const
+{
+    if (Settings* settings = is<Document>(m_scriptExecutionContext) ? downcast<Document>(*m_scriptExecutionContext).settings() : nullptr)
+        return settings->allowContentSecurityPolicySourceStarToMatchAnyProtocol();
+    return false;
 }
 
 bool ContentSecurityPolicy::protocolMatchesSelf(const URL& url) const

@@ -865,6 +865,16 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 #endif
 }
 
+static bool shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol()
+{
+#if PLATFORM(IOS)
+    static bool shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol = (IOSApplication::isEcobee() || IOSApplication::isQuora()) && !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CONTENT_SECURITY_POLICY_SOURCE_STAR_PROTOCOL_RESTRICTION);
+    return shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol;
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(GAMEPAD)
 static void WebKitInitializeGamepadProviderIfNecessary()
 {
@@ -2510,6 +2520,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(ATTACHMENT_ELEMENT)
     settings.setAttachmentElementEnabled([preferences attachmentElementEnabled]);
 #endif
+
+    settings.setAllowContentSecurityPolicySourceStarToMatchAnyProtocol(shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol());
 }
 
 static inline IMP getMethod(id o, SEL s)

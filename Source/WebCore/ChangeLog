@@ -1,3 +1,23 @@
+2016-04-27  Daniel Bates  <dabates@apple.com>
+
+        CSP: Add app-specific workaround for Ecobee and Quora
+        https://bugs.webkit.org/show_bug.cgi?id=157005
+        <rdar://problem/25560776>
+
+        Reviewed by Brent Fulgham.
+
+        * page/Settings.in: Add setting allowContentSecurityPolicySourceStarToMatchAnyProtocol (disabled by default).
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowContentSecurityPolicySourceStarToMatchAnyProtocol): Added.
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::isProtocolAllowedByStar): Modified to return true
+        if ContentSecurityPolicy::allowContentSecurityPolicySourceStarToMatchAnyProtocol() evaluates to true.
+        * platform/RuntimeApplicationChecks.h:
+        * platform/RuntimeApplicationChecks.mm:
+        (WebCore::IOSApplication::isEcobee): Added.
+        (WebCore::IOSApplication::isQuora): Added.
+
 2016-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r200094): [FreeType] Vertical text is broken after r200094

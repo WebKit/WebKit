@@ -118,6 +118,9 @@ void ContentSecurityPolicySourceList::parse(const String& value)
 
 bool ContentSecurityPolicySourceList::isProtocolAllowedByStar(const URL& url) const
 {
+    if (m_policy.allowContentSecurityPolicySourceStarToMatchAnyProtocol())
+        return true;
+
     // Although not allowed by the Content Security Policy Level 3 spec., we allow a data URL to match
     // "img-src *" and either a data URL or blob URL to match "media-src *" for web compatibility.
     bool isAllowed = url.protocolIsInHTTPFamily();

@@ -254,3 +254,5 @@ contentDispositionAttachmentSandboxEnabled initial=false
 
 userInterfaceDirectionPolicy type=UserInterfaceDirectionPolicy, initial=UserInterfaceDirectionPolicy::Content
 systemLayoutDirection type=TextDirection, initial=LTR
+
+allowContentSecurityPolicySourceStarToMatchAnyProtocol initial=false
