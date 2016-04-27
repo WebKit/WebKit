@@ -634,6 +634,7 @@ static EncodedJSValue JSC_HOST_CALL functionClearSamplingFlags(ExecState*);
 #endif
 
 static EncodedJSValue JSC_HOST_CALL functionShadowChickenFunctionsOnStack(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionSetGlobalConstRedeclarationShouldNotThrow(ExecState*);
 
 struct Script {
     bool isFile;
@@ -778,6 +779,7 @@ protected:
         addFunction(vm, "clearSamplingFlags", functionClearSamplingFlags, 1);
 #endif
         addFunction(vm, "shadowChickenFunctionsOnStack", functionShadowChickenFunctionsOnStack, 0);
+        addFunction(vm, "setGlobalConstRedeclarationShouldNotThrow", functionSetGlobalConstRedeclarationShouldNotThrow, 0);
         addConstructableFunction(vm, "Root", functionCreateRoot, 0);
         addConstructableFunction(vm, "Element", functionCreateElement, 1);
         addFunction(vm, "getElement", functionGetElement, 1);
@@ -1492,6 +1494,12 @@ EncodedJSValue JSC_HOST_CALL functionClearSamplingFlags(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionShadowChickenFunctionsOnStack(ExecState* exec)
 {
     return JSValue::encode(exec->vm().shadowChicken().functionsOnStack(exec));
+}
+
+EncodedJSValue JSC_HOST_CALL functionSetGlobalConstRedeclarationShouldNotThrow(ExecState* exec)
+{
+    exec->vm().setGlobalConstRedeclarationShouldThrow(false);
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionReadline(ExecState* exec)

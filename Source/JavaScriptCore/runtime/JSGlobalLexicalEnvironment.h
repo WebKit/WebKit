@@ -50,6 +50,7 @@ public:
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     bool isEmpty() const { return !symbolTable()->size(); }
+    bool isConstVariable(UniquedStringImpl*);
     
     DECLARE_INFO;
 

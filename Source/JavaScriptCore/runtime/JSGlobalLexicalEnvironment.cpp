@@ -49,4 +49,11 @@ bool JSGlobalLexicalEnvironment::put(JSCell* cell, ExecState* exec, PropertyName
     return putResult;
 }
 
+bool JSGlobalLexicalEnvironment::isConstVariable(UniquedStringImpl* impl)
+{
+    SymbolTableEntry entry = symbolTable()->get(impl);
+    ASSERT(!entry.isNull());
+    return entry.isReadOnly();
+}
+
 } // namespace JSC

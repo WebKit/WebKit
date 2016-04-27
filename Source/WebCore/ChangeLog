@@ -1,3 +1,20 @@
+2016-04-27  Saam barati  <sbarati@apple.com>
+
+        JSC should have an option to allow global const redeclarations
+        https://bugs.webkit.org/show_bug.cgi?id=157006
+
+        Reviewed by Geoffrey Garen.
+
+        This patch makes the JS VM not throw global const redeclaration
+        errors when the application is iBooks.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+        * page/Settings.h:
+        (WebCore::Settings::shouldUseHighResolutionTimers):
+        (WebCore::Settings::globalConstRedeclarationShouldThrow):
+        (WebCore::Settings::backgroundShouldExtendBeyondPage):
+
 2016-04-26  John Wilander  <wilander@apple.com>
 
         Support legacy HTTP headers in WebSockets

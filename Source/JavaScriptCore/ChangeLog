@@ -1,3 +1,50 @@
+2016-04-27  Saam barati  <sbarati@apple.com>
+
+        JSC should have an option to allow global const redeclarations
+        https://bugs.webkit.org/show_bug.cgi?id=157006
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements an option that dictates whether
+        const redeclarations at the program level will throw.
+        This option defaults to true but allows users of JSC
+        to set it to false. This option is per VM. This is needed
+        for backwards compatibility with our old const implementation.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionShadowChickenFunctionsOnStack):
+        (functionSetGlobalConstRedeclarationShouldNotThrow):
+        (functionReadline):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/JSGlobalLexicalEnvironment.cpp:
+        (JSC::JSGlobalLexicalEnvironment::put):
+        (JSC::JSGlobalLexicalEnvironment::isConstVariable):
+        * runtime/JSGlobalLexicalEnvironment.h:
+        (JSC::JSGlobalLexicalEnvironment::isEmpty):
+        * runtime/VM.h:
+        (JSC::VM::setGlobalConstRedeclarationShouldThrow):
+        (JSC::VM::globalConstRedeclarationShouldThrow):
+        * tests/stress/global-const-redeclaration-setting: Added.
+        * tests/stress/global-const-redeclaration-setting-2.js: Added.
+        (assert):
+        * tests/stress/global-const-redeclaration-setting-3.js: Added.
+        (assert):
+        (catch):
+        * tests/stress/global-const-redeclaration-setting-4.js: Added.
+        (assert):
+        (catch):
+        * tests/stress/global-const-redeclaration-setting-5.js: Added.
+        (assert):
+        (catch):
+        * tests/stress/global-const-redeclaration-setting.js: Added.
+        (assert):
+        * tests/stress/global-const-redeclaration-setting/first.js: Added.
+        * tests/stress/global-const-redeclaration-setting/let.js: Added.
+        * tests/stress/global-const-redeclaration-setting/second.js: Added.
+        * tests/stress/global-const-redeclaration-setting/strict.js: Added.
+
 2016-04-26  Michael Saboff  <msaboff@apple.com>
 
         [ES] Implement RegExp.prototype.@@replace and use it for String.prototype.replace
