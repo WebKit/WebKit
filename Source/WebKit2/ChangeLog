@@ -1,5 +1,19 @@
 2016-04-27  Alex Christensen  <achristensen@webkit.org>
 
+        Remove download message receiver when NetworkProcess crashes
+        https://bugs.webkit.org/show_bug.cgi?id=157102
+        <rdar://problem/25550106>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::processDidClose):
+        When the NetworkProcess crashes during a download, we want to remove the message receiver from the map
+        so we don't get an assertion in ~MessageReceiver in the UIProcess so we do not have a freed
+        message receiver in the map.
+
+2016-04-27  Alex Christensen  <achristensen@webkit.org>
+
         Fix client certificate authentication with NSURLSession on iOS
         https://bugs.webkit.org/show_bug.cgi?id=157094
         <rdar://problem/25946859>
