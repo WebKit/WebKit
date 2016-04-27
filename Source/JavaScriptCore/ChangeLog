@@ -1,3 +1,16 @@
+2016-04-27  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r200117): Crash in lowerDFGToB3::compileStringReplace()
+        https://bugs.webkit.org/show_bug.cgi?id=157099
+
+        Reviewed by Saam Barati.
+
+        Given that the DFGFixupPhase could mark the edge of child2 as StringUse,
+        we need to lower that edge appropriately.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringReplace):
+
 2016-04-27  Mark Lam  <mark.lam@apple.com>
 
         Address feedback from https://bugs.webkit.org/show_bug.cgi?id=157048#c5.

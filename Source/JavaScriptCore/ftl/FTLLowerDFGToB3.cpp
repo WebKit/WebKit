@@ -6938,10 +6938,16 @@ private:
             setJSValue(result);
             return;
         }
-        
+
+        LValue search;
+        if (m_node->child2().useKind() == StringUse)
+            search = lowString(m_node->child2());
+        else
+            search = lowJSValue(m_node->child2());
+
         LValue result = vmCall(
             Int64, m_out.operation(operationStringProtoFuncReplaceGeneric), m_callFrame,
-            lowJSValue(m_node->child1()), lowJSValue(m_node->child2()),
+            lowJSValue(m_node->child1()), search,
             lowJSValue(m_node->child3()));
 
         setJSValue(result);
