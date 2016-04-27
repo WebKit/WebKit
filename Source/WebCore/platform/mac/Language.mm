@@ -113,6 +113,8 @@ static String httpStyleLanguageCode(NSString *language, NSString *country)
 
 static bool isValidICUCountryCode(NSString* countryCode)
 {
+    if (!countryCode)
+        return false;
     const char* const* countries = uloc_getISOCountries();
     const char* countryUTF8 = [countryCode UTF8String];
     for (unsigned i = 0; countries[i]; ++i) {
