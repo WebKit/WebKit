@@ -34,6 +34,8 @@ compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
 compositing/reflections/nested-reflection-on-overflow.html [ Failure ]
 compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
 
+webkit.org/b/157105 compositing/contents-scale/incremental-change.html [ Pass ImageOnlyFailure ]
+
 # Compositing test that time out:
 compositing/animation/animation-compositing.html
 compositing/backing/backface-visibility-flip.html
