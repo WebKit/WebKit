@@ -16,7 +16,7 @@
                 run('internals.settings.setAllowsInlineMediaPlayback(false)');
                 run('internals.setMediaElementRestrictions(video, "RequireUserGestureForFullscreen")');
 
-                waitForEvent('loadedmetadata', loadedmetadata)
+                waitForEvent('canplaythrough', canplaythrough)
                 waitForEvent('webkitfullscreenchange', fullscreenChanged, false, true, document)
                 waitForEvent('click', clickHandler, false, true, document.getElementById('button'))
 
@@ -25,7 +25,7 @@
                 consoleWrite('');
             }
 
-            function loadedmetadata()
+            function canplaythrough()
             {
                 consoleWrite('');
                 if (window.eventSender) {

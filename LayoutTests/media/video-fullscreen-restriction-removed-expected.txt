@@ -5,7 +5,7 @@ RUN(internals.settings.setAllowsInlineMediaPlayback(false))
 RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForFullscreen"))
 * set video.src
 
-EVENT(loadedmetadata)
+EVENT(canplaythrough)
 
 * video.play() should fail 
 RUN(video.play())
