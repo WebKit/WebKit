@@ -105,6 +105,49 @@ function repeat(count)
     return @repeatSlowPath(string, count);
 }
 
+function hasObservableSideEffectsForStringReplace(regexp, replacer) {
+    if (replacer !== @regExpPrototypeSymbolReplace)
+        return true;
+    
+    let regexpExec = @tryGetById(regexp, "exec");
+    if (regexpExec !== @regExpBuiltinExec)
+        return true;
+
+    let regexpGlobal = @tryGetById(regexp, "global");
+    if (regexpGlobal !== @regExpProtoGlobalGetter)
+        return true;
+
+    let regexpUnicode = @tryGetById(regexp, "unicode");
+    if (regexpUnicode !== @regExpProtoUnicodeGetter)
+        return true;
+
+    return !@isRegExpObject(regexp);
+}
+
+[intrinsic=StringPrototypeReplaceIntrinsic] function replace(search, replace)
+{
+    "use strict";
+
+    if (this == null) {
+        if (this === null)
+            throw new @TypeError("String.prototype.replace requires that |this| not be null");
+        throw new @TypeError("String.prototype.replace requires that |this| not be undefined");
+    }
+
+    if (search != null) {
+        let replacer = search[@symbolReplace];
+        if (replacer !== @undefined) {
+            if (!@hasObservableSideEffectsForStringReplace(search, replacer))
+                return @toString(this).@replaceUsingRegExp(search, replace);
+            return replacer.@call(search, this, replace);
+        }
+    }
+
+    let thisString = @toString(this);
+    let searchString = @toString(search);
+    return thisString.@replaceUsingStringSearch(searchString, replace);
+}
+    
 function localeCompare(that/*, locales, options */)
 {
     "use strict";

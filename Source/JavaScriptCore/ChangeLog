@@ -1,3 +1,119 @@
+2016-04-26  Michael Saboff  <msaboff@apple.com>
+
+        [ES] Implement RegExp.prototype.@@replace and use it for String.prototype.replace
+        https://bugs.webkit.org/show_bug.cgi?id=156562
+
+        Reviewed by Filip Pizlo.
+
+        Added builtins for String.prototype.replace as well as RegExp.prototype[Symbol.replace].
+
+        The String.prototype.replace also has an intrinsic, StringPrototypeReplaceIntrinsic.
+        This original intrinsic was copied to make StringPrototypeReplaceRegExpIntrinsic.
+        The difference between the two intrinsics is that StringPrototypeReplaceIntrinsic has
+        the same checks found in the new builtin hasObservableSideEffectsForStringReplace.
+        We implement these primordial checks for StringPrototypeReplaceIntrinsic in two places.
+        First, we do a trial check during ByteCode parsing time to see if the current
+        RegExp.prototype properties have changed from the original.  If they have, we don't
+        inline the intrinsic.  Later, in the fixup phase, we add nodes to the IR to emit the
+        checks at runtime.
+
+        The new intrinsic StringPrototypeReplaceRegExpIntrinsic is only available via the
+        private @replaceUsingRegExp, which is called in the String.prototype.replace builtin.
+        It is only called after hasObservableSideEffectsForStringReplace has been called
+
+        Both of these intrinsics are needed, because the JS code containing String.replace() calls
+        runs initially in the LLint and then the baseline JIT.  Even after the function tiers up
+        to the DFG JIT, the inlining budget may not allow StringPrototypeReplaceIntrinsic to be inlined.
+        Having StringPrototypeReplaceRegExpIntrinsic allows for the String.prototype.replace builtin to
+        get reasonable performance before the other intrinsic is inlined or when it can't.
+
+        * builtins/RegExpPrototype.js:
+        (match):
+        (getSubstitution):
+        (replace):
+        (search):
+        (split):
+        * builtins/StringPrototype.js:
+        (repeat):
+        (hasObservableSideEffectsForStringReplace):
+        (intrinsic.StringPrototypeReplaceIntrinsic.replace):
+        (localeCompare):
+        New builtins for String.prototype.replace and RegExp.prototype[Symbol.replace].
+
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupGetAndSetLocalsInBlock):
+        (JSC::DFG::FixupPhase::tryAddStringReplacePrimordialChecks):
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::getRegExpPrototypeProperty):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::getRegExpPrototypeProperty):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Intrinsic.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::replace):
+        (JSC::stringProtoFuncReplaceUsingRegExp):
+        (JSC::stringProtoFuncReplaceUsingStringSearch):
+        (JSC::operationStringProtoFuncReplaceGeneric):
+        (JSC::stringProtoFuncReplace): Deleted.
+        Added StringReplaceRegExp intrinsic.  Added checks for RegExp profiled arguments to StringReplace
+        that mirror what is in hasObservableSideEffectsForStringReplace().  If we aren't able to add the
+        checks, we OSR exit.  Add Graph::getPrimordialRegExpPrototypeProperty() as a helper to get the
+        primordial values from RegExp.prototype.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Added @regExpPrototypeSymbolReplace and
+        @hasObservableSideEffectsForStringReplace here instead og String.prototype so that we reduce the
+        number of objects we have to traverse.
+
+        * tests/es6.yaml: Changed expectations for the various replace related tests to passing.
+
+        * tests/stress/regexp-replace-proxy.js:
+        (assert):
+        (let.getProxyNullExec.new.Proxy):
+        (let.getSetProxyNullExec.new.Proxy):
+        (get resetTracking):
+        (let.getSetProxyMatches_comma.new.Proxy):
+        (set get getSetProxyNullExec):
+        (let.getSetProxyReplace_phoneNumber.new.Proxy):
+        (set get getSetProxyMatches_comma):
+        (let.getSetProxyReplaceUnicode_digit_nonGreedy.new.Proxy):
+        (set get resetTracking):
+        * tests/stress/string-replace-proxy.js:
+        (assert):
+        (let.getSetProxyReplace.new.Proxy.replace):
+        New tests.
+
 2016-04-26  Mark Lam  <mark.lam@apple.com>
 
         Gardening: speculative build fix.

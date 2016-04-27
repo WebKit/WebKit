@@ -66,6 +66,11 @@ function probeAndRecurse(depth, reuseEvalString)
     return 1;
 }
 
+// Because this test intentionlly exhausts the stack, we call testPassed() to ensure
+// everything we need in that path has been compiled and is available.  Otherwise we
+// might properly handle an out of stack, but run out of stack calling testPassed().
+testPassed("Initial setup");
+
 var depth = probeAndRecurse(0, false);
 
 // Tier up the eval'ed code.

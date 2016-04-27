@@ -314,6 +314,8 @@ public:
 
     bool canOptimizeStringObjectAccess(const CodeOrigin&);
 
+    bool getRegExpPrototypeProperty(JSObject* regExpPrototype, Structure* regExpPrototypeStructure, UniquedStringImpl* uid, JSValue& returnJSValue);
+
     bool roundShouldSpeculateInt32(Node* arithRound, PredictionPass pass)
     {
         ASSERT(arithRound->op() == ArithRound || arithRound->op() == ArithFloor || arithRound->op() == ArithCeil || arithRound->op() == ArithTrunc);

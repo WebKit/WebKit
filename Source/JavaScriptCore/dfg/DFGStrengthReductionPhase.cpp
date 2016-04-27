@@ -618,7 +618,8 @@ private:
             break;
         }
 
-        case StringReplace: {
+        case StringReplace:
+        case StringReplaceRegExp: {
             Node* stringNode = m_node->child1().node();
             String string = stringNode->tryGetString(m_graph);
             if (!string)

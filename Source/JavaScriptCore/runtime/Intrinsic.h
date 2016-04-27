@@ -53,6 +53,7 @@ enum JS_EXPORT_PRIVATE Intrinsic {
     RegExpTestIntrinsic,
     StringPrototypeValueOfIntrinsic,
     StringPrototypeReplaceIntrinsic,
+    StringPrototypeReplaceRegExpIntrinsic,
     IMulIntrinsic,
     RandomIntrinsic,
     FRoundIntrinsic,

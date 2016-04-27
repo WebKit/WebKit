@@ -1,3 +1,30 @@
+2016-04-26  Michael Saboff  <msaboff@apple.com>
+
+        [ES] Implement RegExp.prototype.@@replace and use it for String.prototype.replace
+        https://bugs.webkit.org/show_bug.cgi?id=156562
+
+        Reviewed by Filip Pizlo.
+
+        Updated tests.  Needed to update js/regress-141098.js test, because builtins are
+        only compilied when called.  This test checks behavior at or near running out of
+        stack space.  It turns out that String.replace is used by the -pre.js test harness
+        and I was running out of stack space when compiling the String.prototype.replace
+        builting.  Therefore, I added a call to testPassed() to precompile String.replace.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/regress-141098-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/regress-141098.js:
+        (probeAndRecurse):
+        * fast/profiler/nested-start-and-stop-profiler-expected.txt:
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/dom/string-prototype-properties-expected.txt:
+        * js/regress-141098-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/regress-141098.js:
+        (probeAndRecurse):
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.11_String.prototype.replace/S15.5.4.11_A1_T3-expected.txt:
+
 2016-04-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WK2] [OS X] Create API for switching RTL scrollbar policy

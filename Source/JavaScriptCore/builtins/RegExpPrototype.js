@@ -120,6 +120,171 @@ function match(strArg)
     }
 }
 
+function replace(strArg, replace)
+{
+    "use strict";
+
+    function getSubstitution(matched, str, position, captures, replacement)
+    {
+        "use strict";
+
+        let matchLength = matched.length;
+        let stringLength = str.length;
+        let tailPos = position + matchLength;
+        let m = captures.length;
+        let replacementLength = replacement.length;
+        let result = "";
+        let lastStart = 0;
+
+        for (let start = 0; start = replacement.indexOf("$", lastStart), start !== -1; lastStart = start) {
+            if (start - lastStart > 0)
+                result = result + replacement.substring(lastStart, start);
+            start++;
+            let ch = replacement.charAt(start);
+            if (ch === "")
+                result = result + "$";
+            else {
+                switch (ch)
+                {
+                case "$":
+                    result = result + "$";
+                    start++;
+                    break;
+                case "&":
+                    result = result + matched;
+                    start++;
+                    break;
+                case "`":
+                    if (position > 0)
+                        result = result + str.substring(0, position);
+                    start++;
+                    break;
+                case "'":
+                    if (tailPos < stringLength)
+                        result = result + str.substring(tailPos);
+                    start++;
+                    break;
+                default:
+                    let chCode = ch.charCodeAt(0);
+                    if (chCode >= 0x30 && chCode <= 0x39) {
+                        start++;
+                        let n = chCode - 0x30;
+                        if (n > m)
+                            break;
+                        if (start < replacementLength) {
+                            let nextChCode = replacement.charCodeAt(start);
+                            if (nextChCode >= 0x30 && nextChCode <= 0x39) {
+                                let nn = 10 * n + nextChCode - 0x30;
+                                if (nn <= m) {
+                                    n = nn;
+                                    start++;
+                                }
+                            }
+                        }
+
+                        if (n == 0)
+                            break;
+
+                        if (captures[n] != @undefined)
+                            result = result + captures[n];
+                    } else
+                        result = result + "$";
+                    break;
+                }
+            }
+        }
+
+        return result + replacement.substring(lastStart);
+    }
+
+    if (!(this instanceof @Object))
+        throw new @TypeError("RegExp.prototype.@@replace requires that |this| be an Object");
+
+    let regexp = this;
+
+    let str = @toString(strArg);
+    let stringLength = str.length;
+    let functionalReplace = typeof replace === 'function';
+
+    if (!functionalReplace)
+        replace = @toString(replace);
+
+    let global = regexp.global;
+    let unicode = false;
+
+    if (global) {
+        unicode = regexp.unicode;
+        regexp.lastIndex = 0;
+    }
+
+    let resultList = [];
+    let result;
+    let done = false;
+    while (!done) {
+        result = @regExpExec(regexp, str);
+
+        if (result === null)
+            done = true;
+        else {
+            resultList.@push(result);
+            if (!global)
+                done = true;
+            else {
+                let matchStr = @toString(result[0]);
+
+                if (!matchStr.length)
+                    regexp.lastIndex = @advanceStringIndex(str, regexp.lastIndex, unicode);
+            }
+        }
+    }
+
+    let accumulatedResult = "";
+    let nextSourcePosition = 0;
+    let lastPosition = 0;
+
+    for (result of resultList) {
+        let nCaptures = result.length - 1;
+        if (nCaptures < 0)
+            nCaptures = 0;
+        let matched = @toString(result[0]);
+        let matchLength = matched.length;
+        let position = result.index;
+        position = (position > stringLength) ? stringLength : position;
+        position = (position < 0) ? 0 : position;
+
+        let captures = [];
+        for (let n = 1; n <= nCaptures; n++) {
+            let capN = result[n];
+            if (capN !== @undefined)
+                capN = @toString(capN);
+            captures[n] = capN;
+        }
+
+        let replacement;
+
+        if (functionalReplace) {
+            let replacerArgs = [ matched ].concat(captures.slice(1));
+            replacerArgs.@push(position);
+            replacerArgs.@push(str);
+
+            let replValue = replace.@apply(@undefined, replacerArgs);
+            replacement = @toString(replValue);
+        } else
+            replacement = getSubstitution(matched, str, position, captures, replace);
+
+        if (position >= nextSourcePosition && position >= lastPosition) {
+            accumulatedResult = accumulatedResult + str.substring(nextSourcePosition, position) + replacement;
+            nextSourcePosition = position + matchLength;
+            lastPosition = position;
+        }
+    }
+
+    if (nextSourcePosition >= stringLength)
+        return  accumulatedResult;
+
+    return accumulatedResult + str.substring(nextSourcePosition);
+}
+
 // 21.2.5.9 RegExp.prototype[@@search] (string)
 function search(strArg)
 {
@@ -322,4 +487,3 @@ function split(string, limit)
     // 22. Return A.
     return result;
 }
-

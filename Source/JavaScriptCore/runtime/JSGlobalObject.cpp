@@ -559,12 +559,18 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 
     JSObject* regExpProtoFlagsGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->flags);
     JSObject* regExpProtoGlobalGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->global);
+    m_regExpProtoGlobalGetter.set(vm, this, regExpProtoGlobalGetterObject);
     JSObject* regExpProtoIgnoreCaseGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->ignoreCase);
     JSObject* regExpProtoMultilineGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->multiline);
     JSObject* regExpProtoSourceGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->source);
     JSObject* regExpProtoStickyGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->sticky);
     JSObject* regExpProtoUnicodeGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->unicode);
-    
+    m_regExpProtoUnicodeGetter.set(vm, this, regExpProtoUnicodeGetterObject);
+    JSObject* builtinRegExpExec = asObject(m_regExpPrototype->getDirect(vm, vm.propertyNames->exec).asCell());
+    m_regExpProtoExec.set(vm, this, builtinRegExpExec);
+    JSObject* regExpSymbolReplace = asObject(m_regExpPrototype->getDirect(vm, vm.propertyNames->replaceSymbol).asCell());
+    m_regExpProtoSymbolReplace.set(vm, this, regExpSymbolReplace);
+
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(vm.propertyNames->NaN, jsNaN(), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->Infinity, jsNumber(std::numeric_limits<double>::infinity()), DontEnum | DontDelete | ReadOnly),
@@ -646,7 +652,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->regExpProtoUnicodeGetterPrivateName, regExpProtoUnicodeGetterObject, DontEnum | DontDelete | ReadOnly),
 
         // RegExp.prototype helpers.
-        GlobalPropertyInfo(vm.propertyNames->regExpBuiltinExecPrivateName, m_regExpPrototype->getDirect(vm, vm.propertyNames->exec), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->regExpBuiltinExecPrivateName, builtinRegExpExec, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->regExpCreatePrivateName, JSFunction::create(vm, this, 2, String(), esSpecRegExpCreate, NoIntrinsic), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().hasObservableSideEffectsForRegExpMatchPrivateName(), JSFunction::createBuiltinFunction(vm, regExpPrototypeHasObservableSideEffectsForRegExpMatchCodeGenerator(vm), this), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().hasObservableSideEffectsForRegExpSplitPrivateName(), JSFunction::createBuiltinFunction(vm, regExpPrototypeHasObservableSideEffectsForRegExpSplitCodeGenerator(vm), this), DontEnum | DontDelete | ReadOnly),
@@ -655,8 +661,10 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->regExpMatchFastPrivateName, JSFunction::create(vm, this, 2, String(), regExpProtoFuncMatchFast), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->regExpSearchFastPrivateName, JSFunction::create(vm, this, 2, String(), regExpProtoFuncSearchFast), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->regExpSplitFastPrivateName, JSFunction::create(vm, this, 2, String(), regExpProtoFuncSplitFast), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->regExpPrototypeSymbolReplacePrivateName, m_regExpPrototype->getDirect(vm, vm.propertyNames->replaceSymbol), DontEnum | DontDelete | ReadOnly),
 
         // String.prototype helpers.
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().hasObservableSideEffectsForStringReplacePrivateName(), JSFunction::createBuiltinFunction(vm, stringPrototypeHasObservableSideEffectsForStringReplaceCodeGenerator(vm), this), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->stringIncludesInternalPrivateName, JSFunction::create(vm, this, 1, String(), builtinStringIncludesInternal), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->stringSplitFastPrivateName, JSFunction::create(vm, this, 2, String(), stringProtoFuncSplitFast), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->stringSubstrInternalPrivateName, JSFunction::create(vm, this, 2, String(), builtinStringSubstrInternal), DontEnum | DontDelete | ReadOnly),

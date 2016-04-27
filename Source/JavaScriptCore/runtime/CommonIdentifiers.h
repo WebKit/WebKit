@@ -315,6 +315,7 @@
     macro(isConcatSpreadable) \
     macro(iterator) \
     macro(match) \
+    macro(replace) \
     macro(search) \
     macro(species) \
     macro(split) \
@@ -425,6 +426,8 @@
     macro(regExpCreate) \
     macro(SetIterator) \
     macro(setIteratorNext) \
+    macro(replaceUsingRegExp) \
+    macro(replaceUsingStringSearch) \
     macro(MapIterator) \
     macro(mapIteratorNext) \
     macro(regExpBuiltinExec) \
@@ -436,8 +439,10 @@
     macro(regExpProtoSourceGetter) \
     macro(regExpProtoStickyGetter) \
     macro(regExpProtoUnicodeGetter) \
+    macro(regExpReplaceFast) \
     macro(regExpSearchFast) \
     macro(regExpSplitFast) \
+    macro(regExpPrototypeSymbolReplace) \
     macro(stringIncludesInternal) \
     macro(stringSplitFast) \
     macro(stringSubstrInternal) \

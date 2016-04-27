@@ -60,6 +60,7 @@ class Identifier;
     macro(symbolIsConcatSpreadable) \
     macro(symbolIterator) \
     macro(symbolMatch) \
+    macro(symbolReplace) \
     macro(symbolSearch) \
     macro(symbolSpecies) \
     macro(symbolSplit) \

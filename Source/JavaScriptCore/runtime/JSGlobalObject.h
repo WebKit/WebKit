@@ -229,6 +229,10 @@ protected:
     WriteBarrier<JSFunction> m_initializePromiseFunction;
     WriteBarrier<JSFunction> m_newPromiseCapabilityFunction;
     WriteBarrier<JSFunction> m_functionProtoHasInstanceSymbolFunction;
+    WriteBarrier<JSObject> m_regExpProtoExec;
+    WriteBarrier<JSObject> m_regExpProtoSymbolReplace;
+    WriteBarrier<JSObject> m_regExpProtoGlobalGetter;
+    WriteBarrier<JSObject> m_regExpProtoUnicodeGetter;
     WriteBarrier<GetterSetter> m_throwTypeErrorGetterSetter;
 
     WriteBarrier<ModuleLoaderObject> m_moduleLoader;
@@ -452,6 +456,10 @@ public:
     JSFunction* initializePromiseFunction() const { return m_initializePromiseFunction.get(); }
     JSFunction* newPromiseCapabilityFunction() const { return m_newPromiseCapabilityFunction.get(); }
     JSFunction* functionProtoHasInstanceSymbolFunction() const { return m_functionProtoHasInstanceSymbolFunction.get(); }
+    JSObject* regExpProtoExecFunction() const { return m_regExpProtoExec.get(); }
+    JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
+    JSObject* regExpProtoGlobalGetter() const { return m_regExpProtoGlobalGetter.get(); }
+    JSObject* regExpProtoUnicodeGetter() const { return m_regExpProtoUnicodeGetter.get(); }
     GetterSetter* throwTypeErrorGetterSetter(VM& vm)
     {
         if (!m_throwTypeErrorGetterSetter)

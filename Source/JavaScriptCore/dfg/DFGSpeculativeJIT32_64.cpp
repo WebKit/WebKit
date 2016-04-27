@@ -2981,7 +2981,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case StringReplace: {
+    case StringReplace:
+    case StringReplaceRegExp: {
         if (node->child1().useKind() == StringUse
             && node->child2().useKind() == RegExpObjectUse
             && node->child3().useKind() == StringUse) {
@@ -3026,14 +3027,19 @@ void SpeculativeJIT::compile(Node* node)
             cellResult(resultPayload.gpr(), node);
             break;
         }
+
+        // If we fixed up the edge of child2, we inserted a Check(@child2, String).
+        OperandSpeculationMode child2SpeculationMode = AutomaticOperandSpeculation;
+        if (node->child2().useKind() == StringUse)
+            child2SpeculationMode = ManualOperandSpeculation;
         
         JSValueOperand string(this, node->child1());
-        JSValueOperand regExp(this, node->child2());
+        JSValueOperand search(this, node->child2(), child2SpeculationMode);
         JSValueOperand replace(this, node->child3());
         GPRReg stringTagGPR = string.tagGPR();
         GPRReg stringPayloadGPR = string.payloadGPR();
-        GPRReg regExpTagGPR = regExp.tagGPR();
-        GPRReg regExpPayloadGPR = regExp.payloadGPR();
+        GPRReg searchTagGPR = search.tagGPR();
+        GPRReg searchPayloadGPR = search.payloadGPR();
         GPRReg replaceTagGPR = replace.tagGPR();
         GPRReg replacePayloadGPR = replace.payloadGPR();
         
@@ -3042,7 +3048,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRFlushedCallResult resultPayload(this);
         callOperation(
             operationStringProtoFuncReplaceGeneric, resultTag.gpr(), resultPayload.gpr(),
-            stringTagGPR, stringPayloadGPR, regExpTagGPR, regExpPayloadGPR, replaceTagGPR,
+            stringTagGPR, stringPayloadGPR, searchTagGPR, searchPayloadGPR, replaceTagGPR,
             replacePayloadGPR);
         m_jit.exceptionCheck();
         cellResult(resultPayload.gpr(), node);

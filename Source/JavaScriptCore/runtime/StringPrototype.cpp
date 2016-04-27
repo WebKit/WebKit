@@ -68,7 +68,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncPadEnd(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncPadStart(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingRegExp(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingStringSearch(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState*);
@@ -111,6 +112,7 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, &st
 @begin stringPrototypeTable
     match     JSBuiltin    DontEnum|Function 1
     repeat    JSBuiltin    DontEnum|Function 1
+    replace   JSBuiltin    DontEnum|Function 2
     search    JSBuiltin    DontEnum|Function 1
     split     JSBuiltin    DontEnum|Function 1
 @end
@@ -137,7 +139,8 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf", stringProtoFuncLastIndexOf, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("padEnd", stringProtoFuncPadEnd, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("padStart", stringProtoFuncPadStart, DontEnum, 1);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replace", stringProtoFuncReplace, DontEnum, 2, StringPrototypeReplaceIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->replaceUsingRegExpPrivateName, stringProtoFuncReplaceUsingRegExp, DontEnum, 2, StringPrototypeReplaceRegExpIntrinsic);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->replaceUsingStringSearchPrivateName, stringProtoFuncReplaceUsingStringSearch, DontEnum, 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("slice", stringProtoFuncSlice, DontEnum, 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substr", stringProtoFuncSubstr, DontEnum, 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substring", stringProtoFuncSubstring, DontEnum, 2);
@@ -909,9 +912,26 @@ ALWAYS_INLINE EncodedJSValue replace(
     return replace(vm, exec, string, searchValue, replaceValue);
 }
 
-EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingRegExp(ExecState* exec)
 {
-    return replace(exec->vm(), exec, exec->thisValue(), exec->argument(0), exec->argument(1));
+    JSString* string = exec->thisValue().toString(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    JSValue searchValue = exec->argument(0);
+    if (!searchValue.inherits(RegExpObject::info()))
+        return JSValue::encode(jsUndefined());
+
+    return replaceUsingRegExpSearch(exec->vm(), exec, string, searchValue, exec->argument(1));
+}
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingStringSearch(ExecState* exec)
+{
+    JSString* string = exec->thisValue().toString(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    return replaceUsingStringSearch(exec->vm(), exec, string, exec->argument(0), exec->argument(1));
 }
 
 EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceGeneric(

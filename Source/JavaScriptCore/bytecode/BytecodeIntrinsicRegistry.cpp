@@ -58,6 +58,7 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_symbolIsConcatSpreadable.set(m_vm, Symbol::create(m_vm, static_cast<SymbolImpl&>(*m_vm.propertyNames->isConcatSpreadableSymbol.impl())));
     m_symbolIterator.set(m_vm, Symbol::create(m_vm, static_cast<SymbolImpl&>(*m_vm.propertyNames->iteratorSymbol.impl())));
     m_symbolMatch.set(m_vm, Symbol::create(m_vm, static_cast<SymbolImpl&>(*m_vm.propertyNames->matchSymbol.impl())));
+    m_symbolReplace.set(m_vm, Symbol::create(m_vm, static_cast<SymbolImpl&>(*m_vm.propertyNames->replaceSymbol.impl())));
     m_symbolSearch.set(m_vm, Symbol::create(m_vm, static_cast<SymbolImpl&>(*m_vm.propertyNames->searchSymbol.impl())));
     m_symbolSpecies.set(m_vm, Symbol::create(m_vm, static_cast<SymbolImpl&>(*m_vm.propertyNames->speciesSymbol.impl())));
     m_symbolSplit.set(m_vm, Symbol::create(m_vm, static_cast<SymbolImpl&>(*m_vm.propertyNames->splitSymbol.impl())));

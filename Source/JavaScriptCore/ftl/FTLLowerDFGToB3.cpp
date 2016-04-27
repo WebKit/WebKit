@@ -957,6 +957,7 @@ private:
             compileSetFunctionName();
             break;
         case StringReplace:
+        case StringReplaceRegExp:
             compileStringReplace();
             break;
         case GetRegExpObjectLastIndex:

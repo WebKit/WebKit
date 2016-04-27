@@ -233,6 +233,7 @@ inline CapabilityLevel canCompile(Node* node)
     case RegExpTest:
     case NewRegexp:
     case StringReplace:
+    case StringReplaceRegExp: 
     case GetRegExpObjectLastIndex:
     case SetRegExpObjectLastIndex:
     case RecordRegExpCachedResult:

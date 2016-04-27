@@ -280,6 +280,7 @@ bool doesGC(Graph& graph, Node* node)
     case SetFunctionName:
     case StrCat:
     case StringReplace:
+    case StringReplaceRegExp:
         return true;
         
     case MultiPutByOffset:

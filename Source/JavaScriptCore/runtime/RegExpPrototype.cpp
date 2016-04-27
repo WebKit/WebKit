@@ -79,6 +79,7 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_GETTER(vm.propertyNames->source, regExpProtoGetterSource, DontEnum | Accessor);
     JSC_NATIVE_GETTER(vm.propertyNames->flags, regExpProtoGetterFlags, DontEnum | Accessor);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->matchSymbol, regExpPrototypeMatchCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->replaceSymbol, regExpPrototypeReplaceCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->searchSymbol, regExpPrototypeSearchCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->splitSymbol, regExpPrototypeSplitCodeGenerator, DontEnum);
 

@@ -44,6 +44,7 @@
 #include "DFGVariableAccessDataDump.h"
 #include "FullBytecodeLiveness.h"
 #include "FunctionExecutableDump.h"
+#include "GetterSetter.h"
 #include "JIT.h"
 #include "JSLexicalEnvironment.h"
 #include "MaxFrameExtentForSlowPathCall.h"
@@ -1508,6 +1509,34 @@ bool Graph::isStringPrototypeMethodSane(JSObject* stringPrototype, Structure* st
     if (function->executable()->intrinsicFor(CodeForCall) != StringPrototypeValueOfIntrinsic)
         return false;
     
+    return true;
+}
+
+bool Graph::getRegExpPrototypeProperty(JSObject* regExpPrototype, Structure* regExpPrototypeStructure, UniquedStringImpl* uid, JSValue& returnJSValue)
+{
+    unsigned attributesUnused;
+    PropertyOffset offset = regExpPrototypeStructure->getConcurrently(uid, attributesUnused);
+    if (!isValidOffset(offset))
+        return false;
+
+    JSValue value = tryGetConstantProperty(regExpPrototype, regExpPrototypeStructure, offset);
+    if (!value)
+        return false;
+
+    // We only care about functions and getters at this point. If you want to access other properties
+    // you'll have to add code for those types.
+    JSFunction* function = jsDynamicCast<JSFunction*>(value);
+    if (!function) {
+        GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(value);
+
+        if (!getterSetter)
+            return false;
+
+        returnJSValue = JSValue(getterSetter);
+        return true;
+    }
+
+    returnJSValue = value;
     return true;
 }
 

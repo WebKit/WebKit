@@ -674,6 +674,7 @@ private:
         case RegExpExec:
         case RegExpTest:
         case StringReplace:
+        case StringReplaceRegExp:
         case GetById:
         case GetByIdFlush:
         case GetByOffset:
