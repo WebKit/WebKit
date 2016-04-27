@@ -253,9 +253,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case OverridesHasInstance:
     case InstanceOf:
     case InstanceOfCustom:
-    case IsArrayObject:
-    case IsJSArray:
-    case IsArrayConstructor:
     case IsEmpty:
     case IsUndefined:
     case IsBoolean:
@@ -267,7 +264,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case IsRegExpObject:
     case TypeOf:
     case LogicalNot:
-    case CallObjectConstructor:
     case ToPrimitive:
     case ToString:
     case SetFunctionName:

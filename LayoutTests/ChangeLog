@@ -1,3 +1,11 @@
+2016-04-27  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, Revert r199397 due to PLT regressions
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/dom/array-prototype-properties-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2016-04-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove failure expectation for tests that now pass on ios-simulator.

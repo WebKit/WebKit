@@ -1,3 +1,97 @@
+2016-04-27  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, Revert r199397 due to PLT regressions
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ArrayPrototype.js:
+        (concatSlowPath): Deleted.
+        (concat): Deleted.
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry): Deleted.
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall): Deleted.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC): Deleted.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute): Deleted.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::compileIsJSArray): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileIsArrayObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileIsArrayConstructor): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileCallObjectConstructor): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallObjectConstructor): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsArrayObject): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsJSArray): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsArrayConstructor): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::isArray): Deleted.
+        * jit/JITOperations.h:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionDataLogValue): Deleted.
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        (JSC::arrayConstructorPrivateFuncIsArrayConstructor):
+        * runtime/ArrayConstructor.h:
+        (JSC::isArrayConstructor): Deleted.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoPrivateFuncIsJSArray): Deleted.
+        (JSC::moveElements): Deleted.
+        (JSC::arrayProtoPrivateFuncConcatMemcpy): Deleted.
+        (JSC::arrayProtoPrivateFuncAppendMemcpy): Deleted.
+        * runtime/ArrayPrototype.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/Intrinsic.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::fastConcatWith):
+        (JSC::JSArray::appendMemcpy): Deleted.
+        * runtime/JSArray.h:
+        (JSC::JSArray::fastConcatType):
+        (JSC::JSArray::createStructure):
+        (JSC::isJSArray):
+        * runtime/JSArrayInlines.h: Removed.
+        (JSC::JSArray::memCopyWithIndexingType): Deleted.
+        (JSC::JSArray::canFastCopy): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSType.h:
+        * runtime/ObjectConstructor.h:
+        (JSC::constructObject): Deleted.
+        * tests/es6.yaml:
+        * tests/stress/array-concat-spread-object.js: Removed.
+        (arrayEq): Deleted.
+        * tests/stress/array-concat-spread-proxy-exception-check.js: Removed.
+        (arrayEq): Deleted.
+        * tests/stress/array-concat-spread-proxy.js: Removed.
+        (arrayEq): Deleted.
+        * tests/stress/array-concat-with-slow-indexingtypes.js: Removed.
+        (arrayEq): Deleted.
+        * tests/stress/array-species-config-array-constructor.js:
+
 2016-04-27  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r200117): Crash in lowerDFGToB3::compileStringReplace()

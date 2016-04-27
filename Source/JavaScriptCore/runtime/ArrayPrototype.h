@@ -65,9 +65,6 @@ private:
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncValues(ExecState*);
-EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncIsJSArray(ExecState*);
-EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState*);
-EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncAppendMemcpy(ExecState*);
 
 } // namespace JSC
 

@@ -34,7 +34,6 @@
 #include "Error.h"
 #include "Interpreter.h"
 #include "JIT.h"
-#include "JSArrayInlines.h"
 #include "JSArrayIterator.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
@@ -51,6 +50,7 @@
 namespace JSC {
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState*);
@@ -93,7 +93,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, arrayProtoFuncToString, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toLocaleString, arrayProtoFuncToLocaleString, DontEnum, 0);
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("concat", arrayPrototypeConcatCodeGenerator, DontEnum);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("concat", arrayProtoFuncConcat, DontEnum, 1);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("fill", arrayPrototypeFillCodeGenerator, DontEnum);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->join, arrayProtoFuncJoin, DontEnum, 1);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("pop", arrayProtoFuncPop, DontEnum, 0, ArrayPopIntrinsic);
@@ -590,6 +590,87 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
     return JSValue::encode(join(*exec, thisObject, separator->view(exec).get()));
 }
 
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
+    unsigned argCount = exec->argumentCount();
+    JSValue curArg = thisValue.toObject(exec);
+    if (!curArg)
+        return JSValue::encode(JSValue());
+    Checked<unsigned, RecordOverflow> finalArraySize = 0;
+
+    // We need to do species construction before geting the rest of the elements.
+    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, curArg.getObject(), 0);
+    if (speciesResult.first == SpeciesConstructResult::Exception)
+        return JSValue::encode(jsUndefined());
+
+    JSArray* currentArray = nullptr;
+    JSArray* previousArray = nullptr;
+    for (unsigned i = 0; ; ++i) {
+        previousArray = currentArray;
+        currentArray = jsDynamicCast<JSArray*>(curArg);
+        if (currentArray) {
+            // Can't use JSArray::length here because this might be a RuntimeArray!
+            finalArraySize += getLength(exec, currentArray);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+        } else
+            ++finalArraySize;
+        if (i == argCount)
+            break;
+        curArg = exec->uncheckedArgument(i);
+    }
+
+    if (finalArraySize.hasOverflowed())
+        return JSValue::encode(throwOutOfMemoryError(exec));
+
+    if (speciesResult.first == SpeciesConstructResult::FastPath && argCount == 1 && previousArray && currentArray && finalArraySize.unsafeGet() < MIN_SPARSE_ARRAY_INDEX) {
+        IndexingType type = JSArray::fastConcatType(exec->vm(), *previousArray, *currentArray);
+        if (type != NonArray)
+            return previousArray->fastConcatWith(*exec, *currentArray);
+    }
+
+    ASSERT(speciesResult.first != SpeciesConstructResult::Exception);
+
+    JSObject* result;
+    if (speciesResult.first == SpeciesConstructResult::CreatedObject)
+        result = speciesResult.second;
+    else {
+        // We add the newTarget because the compiler gets confused between 0 being a number and a pointer.
+        result = constructEmptyArray(exec, nullptr, 0, JSValue());
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+    }
+
+    curArg = thisValue.toObject(exec);
+    ASSERT(!exec->hadException());
+    unsigned n = 0;
+    for (unsigned i = 0; ; ++i) {
+        if (JSArray* currentArray = jsDynamicCast<JSArray*>(curArg)) {
+            // Can't use JSArray::length here because this might be a RuntimeArray!
+            unsigned length = getLength(exec, currentArray);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+            for (unsigned k = 0; k < length; ++k) {
+                JSValue v = getProperty(exec, currentArray, k);
+                if (exec->hadException())
+                    return JSValue::encode(jsUndefined());
+                if (v)
+                    result->putDirectIndex(exec, n, v);
+                n++;
+            }
+        } else {
+            result->putDirectIndex(exec, n, curArg);
+            n++;
+        }
+        if (i == argCount)
+            break;
+        curArg = exec->uncheckedArgument(i);
+    }
+    setLength(exec, result, n);
+    return JSValue::encode(result);
+}
+
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
@@ -1013,92 +1094,6 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncKeys(ExecState* exec)
         return JSValue::encode(JSValue());
     return JSValue::encode(JSArrayIterator::create(exec, exec->callee()->globalObject()->arrayIteratorStructure(), ArrayIterateKey, thisObj));
 }
-
-EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncIsJSArray(ExecState* exec)
-{
-    JSValue value = exec->uncheckedArgument(0);
-    if (value.isObject())
-        return JSValue::encode(jsBoolean(value.getObject()->type() == ArrayType));
-    return JSValue::encode(jsBoolean(false));
-}
-
-inline bool moveElements(ExecState* exec, VM& vm, JSArray* target, unsigned targetOffset, JSArray* source, unsigned sourceLength)
-{
-    ASSERT(!hasAnyArrayStorage(source->indexingType()));
-    for (unsigned i = 0; i < sourceLength; ++i) {
-        JSValue value = getProperty(exec, source, i);
-        if (vm.exception())
-            return false;
-        if (value) {
-            target->putDirectIndex(exec, targetOffset + i, value);
-            if (vm.exception())
-                return false;
-        }
-    }
-    return true;
-}
-
-EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
-{
-    ASSERT(exec->argumentCount() == 2);
-    VM& vm = exec->vm();
-
-    JSArray* firstArray = jsCast<JSArray*>(exec->uncheckedArgument(0));
-    JSArray* secondArray = jsCast<JSArray*>(exec->uncheckedArgument(1));
-
-    if (!firstArray->canFastCopy(vm, secondArray))
-        return JSValue::encode(jsNull());
-
-    Butterfly* firstButterfly = firstArray->butterfly();
-    Butterfly* secondButterfly = secondArray->butterfly();
-
-    unsigned firstArraySize = firstButterfly->publicLength();
-    unsigned secondArraySize = secondButterfly->publicLength();
-
-    IndexingType type = firstArray->memCopyWithIndexingType(secondArray->indexingType());
-    if (type == NonArray || firstArraySize + secondArraySize >= MIN_SPARSE_ARRAY_INDEX) {
-        JSArray* result = constructEmptyArray(exec, nullptr, firstArraySize + secondArraySize);
-        if (vm.exception())
-            return JSValue::encode(JSValue());
-
-        if (!moveElements(exec, vm, result, 0, firstArray, firstArraySize)
-            || !moveElements(exec, vm, result, firstArraySize, secondArray, secondArraySize)) {
-            ASSERT(vm.exception());
-            return JSValue::encode(JSValue());
-        }
-
-        return JSValue::encode(result);
-    }
-
-    Structure* resultStructure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(type);
-    JSArray* result = JSArray::tryCreateUninitialized(vm, resultStructure, firstArraySize + secondArraySize);
-    if (!result)
-        return JSValue::encode(throwOutOfMemoryError(exec));
-
-    if (type == ArrayWithDouble) {
-        double* buffer = result->butterfly()->contiguousDouble().data();
-        memcpy(buffer, firstButterfly->contiguousDouble().data(), sizeof(JSValue) * firstArraySize);
-        memcpy(buffer + firstArraySize, secondButterfly->contiguousDouble().data(), sizeof(JSValue) * secondArraySize);
-    } else if (type != ArrayWithUndecided) {
-        WriteBarrier<Unknown>* buffer = result->butterfly()->contiguous().data();
-        memcpy(buffer, firstButterfly->contiguous().data(), sizeof(JSValue) * firstArraySize);
-        memcpy(buffer + firstArraySize, secondButterfly->contiguous().data(), sizeof(JSValue) * secondArraySize);
-    }
-
-    result->butterfly()->setPublicLength(firstArraySize + secondArraySize);
-    return JSValue::encode(result);
-}
-
-EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncAppendMemcpy(ExecState* exec)
-{
-    ASSERT(exec->argumentCount() == 2);
-
-    JSArray* resultArray = jsCast<JSArray*>(exec->uncheckedArgument(0));
-    JSArray* otherArray = jsCast<JSArray*>(exec->uncheckedArgument(1));
-
-    return JSValue::encode(jsBoolean(resultArray->appendMemcpy(exec, exec->vm(), otherArray)));
-}
-
 
 // -------------------- ArrayPrototype.constructor Watchpoint ------------------
 
