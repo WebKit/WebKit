@@ -49,7 +49,8 @@
 #endif
 extern "C" uint32_t dyld_get_program_sdk_version();
 
-#if PLATFORM(IOS)
+#if PLATFORM(APPLETV)
+#elif PLATFORM(IOS)
 static const uint32_t webkitFirstSDKVersionWithInitConstructorSupport = 0x80000; // iOS 8.0.0
 #elif PLATFORM(MAC)
 static const uint32_t webkitFirstSDKVersionWithInitConstructorSupport = 0xA0A00; // OSX 10.10.0

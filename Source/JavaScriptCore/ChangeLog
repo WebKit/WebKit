@@ -1,5 +1,13 @@
 2016-04-26  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: speculative build fix.
+
+        Not reviewed.
+
+        * API/JSWrapperMap.mm:
+
+2016-04-26  Mark Lam  <mark.lam@apple.com>
+
         Update the compatibility version check for the ObjC API's InitConstructorSupport to use dyld_get_program_sdk_version().
         https://bugs.webkit.org/show_bug.cgi?id=157048
 
