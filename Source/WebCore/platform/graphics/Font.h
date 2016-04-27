@@ -248,16 +248,16 @@ private:
 
     Glyph m_zeroWidthSpaceGlyph { 0 };
 
-    struct DerivedFontData {
+    struct DerivedFonts {
 #if !COMPILER(MSVC)
         WTF_MAKE_FAST_ALLOCATED;
 #endif
     public:
-        explicit DerivedFontData(bool custom)
+        explicit DerivedFonts(bool custom)
             : forCustomFont(custom)
         {
         }
-        ~DerivedFontData();
+        ~DerivedFonts();
 
         bool forCustomFont;
         RefPtr<Font> smallCaps;
@@ -269,7 +269,7 @@ private:
         RefPtr<Font> nonSyntheticItalic;
     };
 
-    mutable std::unique_ptr<DerivedFontData> m_derivedFontData;
+    mutable std::unique_ptr<DerivedFonts> m_derivedFontData;
 
 #if USE(CG) || USE(CAIRO)
     float m_syntheticBoldOffset;

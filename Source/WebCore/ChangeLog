@@ -1,3 +1,29 @@
+2016-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename DerivedFontData to DerivedFonts
+        https://bugs.webkit.org/show_bug.cgi?id=157092
+
+        Reviewed by Darin Adler.
+
+        This is a follow-up to r178510 where we named SimpleFontData to Font.
+        This patch didn't include renaming DerivedFontData to DerivedFonts.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::verticalRightOrientationFont):
+        (WebCore::Font::uprightOrientationFont):
+        (WebCore::Font::smallCapsFont):
+        (WebCore::Font::noSynthesizableFeaturesFont):
+        (WebCore::Font::emphasisMarkFont):
+        (WebCore::Font::brokenIdeographFont):
+        (WebCore::Font::nonSyntheticItalicFont):
+        (WebCore::Font::DerivedFonts::~DerivedFonts):
+        (WebCore::Font::DerivedFontData::~DerivedFontData): Deleted.
+        * platform/graphics/Font.h:
+        (WebCore::Font::DerivedFonts::DerivedFonts):
+        (WebCore::Font::DerivedFontData::DerivedFontData): Deleted.
+
 2016-04-27  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Clean up support for [Clamp] IDL extended attribute
