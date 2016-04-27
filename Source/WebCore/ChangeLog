@@ -1,3 +1,20 @@
+2016-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Let the bindings generator use WTF::Optional for optional parameters using [Clamp]
+        https://bugs.webkit.org/show_bug.cgi?id=157077
+
+        Reviewed by Darin Adler.
+
+        Let the bindings generator use WTF::Optional for optional parameters using [Clamp],
+        if they do not have a default value.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::close):
+        * Modules/websockets/WebSocket.h:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (CanUseWTFOptionalForParameter): Deleted.
+
 2016-04-26  Ada Chan  <adachan@apple.com>
 
         Set WebVideoFullscreenInterfaceMac up as a client of WebPlaybackSessionInterfaceMac to listen for playback state changes

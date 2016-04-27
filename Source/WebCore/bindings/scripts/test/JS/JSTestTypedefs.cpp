@@ -553,14 +553,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
     unsigned long long arg1 = toUInt64(state, state->argument(0), Clamp);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-
-    size_t argsCount = state->argumentCount();
-    if (argsCount <= 1) {
-        impl.funcWithClamp(arg1);
-        return JSValue::encode(jsUndefined());
-    }
-
-    unsigned long long arg2 = toUInt64(state, state->argument(1), Clamp);
+    Optional<unsigned long long> arg2 = state->argument(1).isUndefined() ? Optional<unsigned long long>() : toUInt64(state, state->uncheckedArgument(1), Clamp);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.funcWithClamp(arg1, arg2);

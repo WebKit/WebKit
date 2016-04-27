@@ -76,9 +76,7 @@ public:
     void send(JSC::ArrayBufferView*, ExceptionCode&);
     void send(Blob&, ExceptionCode&);
 
-    void close(int code, const String& reason, ExceptionCode&);
-    void close(ExceptionCode& ec) { close(WebSocketChannel::CloseEventCodeNotSpecified, String(), ec); }
-    void close(int code, ExceptionCode& ec) { close(code, String(), ec); }
+    void close(Optional<unsigned short> code, const String& reason, ExceptionCode&);
 
     const URL& url() const;
     State readyState() const;

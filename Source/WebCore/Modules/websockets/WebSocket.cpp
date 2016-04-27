@@ -375,8 +375,9 @@ void WebSocket::send(Blob& binaryData, ExceptionCode& ec)
     m_channel->send(binaryData);
 }
 
-void WebSocket::close(int code, const String& reason, ExceptionCode& ec)
+void WebSocket::close(Optional<unsigned short> optionalCode, const String& reason, ExceptionCode& ec)
 {
+    int code = optionalCode ? optionalCode.value() : static_cast<int>(WebSocketChannel::CloseEventCodeNotSpecified);
     if (code == WebSocketChannel::CloseEventCodeNotSpecified)
         LOG(Network, "WebSocket %p close() without code and reason", this);
     else {

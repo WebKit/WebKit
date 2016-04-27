@@ -3377,7 +3377,6 @@ sub CanUseWTFOptionalForParameter
 
     # FIXME: We should progressively stop blacklisting each type below
     # and eventually get rid of this function entirely.
-    return 0 if $parameter->extendedAttributes->{"Clamp"};
     return 0 if $parameter->isVariadic;
     return 0 if $codeGenerator->IsCallbackInterface($type);
     return 0 if $codeGenerator->IsEnumType($type);
