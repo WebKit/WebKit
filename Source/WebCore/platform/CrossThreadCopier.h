@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CrossThreadCopier_h
-#define CrossThreadCopier_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
@@ -39,245 +38,245 @@
 
 namespace WebCore {
 
-    class IntRect;
-    class IntSize;
-    class URL;
-    class ResourceError;
-    class ResourceRequest;
-    class ResourceResponse;
-    class SessionID;
-    class ThreadSafeDataBuffer;
-    struct CrossThreadResourceResponseData;
-    struct CrossThreadResourceRequestData;
-    struct ThreadableLoaderOptions;
+class IntRect;
+class IntSize;
+class URL;
+class ResourceError;
+class ResourceRequest;
+class ResourceResponse;
+class SessionID;
+class ThreadSafeDataBuffer;
+struct CrossThreadResourceResponseData;
+struct CrossThreadResourceRequestData;
+struct ThreadableLoaderOptions;
 
-    struct CrossThreadCopierBaseHelper {
-        template<typename T> struct RemovePointer {
-            typedef T Type;
-        };
-        template<typename T> struct RemovePointer<T*> {
-            typedef T Type;
-        };
-
-        template<typename T> struct RemovePointer<RefPtr<T>> {
-            typedef T Type;
-        };
-
-        template<typename T> struct RemovePointer<PassRefPtr<T>> {
-            typedef T Type;
-        };
-
-        template<typename T> struct IsEnumOrConvertibleToInteger {
-            static const bool value = std::is_integral<T>::value || std::is_enum<T>::value || std::is_convertible<T, long double>::value;
-        };
-
-        template<typename T> struct IsThreadSafeRefCountedPointer {
-            static const bool value = std::is_convertible<typename RemovePointer<T>::Type*, ThreadSafeRefCounted<typename RemovePointer<T>::Type>*>::value;
-        };
-    };
-
-    template<typename T> struct CrossThreadCopierPassThrough {
+struct CrossThreadCopierBaseHelper {
+    template<typename T> struct RemovePointer {
         typedef T Type;
-        static Type copy(const T& parameter)
-        {
-            return parameter;
-        }
+    };
+    template<typename T> struct RemovePointer<T*> {
+        typedef T Type;
     };
 
-    template<bool isEnumOrConvertibleToInteger, bool isThreadSafeRefCounted, typename T> struct CrossThreadCopierBase;
-
-    // Integers get passed through without any changes.
-    template<typename T> struct CrossThreadCopierBase<true, false, T> : public CrossThreadCopierPassThrough<T> {
+    template<typename T> struct RemovePointer<RefPtr<T>> {
+        typedef T Type;
     };
 
-    // To allow a type to be passed across threads using its copy constructor, add a forward declaration of the type and
-    // a CopyThreadCopierBase<false, false, TypeName> : public CrossThreadCopierPassThrough<TypeName> { }; to this file.
-    template<> struct CrossThreadCopierBase<false, false, IntRect> : public CrossThreadCopierPassThrough<IntRect> {
+    template<typename T> struct RemovePointer<PassRefPtr<T>> {
+        typedef T Type;
     };
 
-    template<> struct CrossThreadCopierBase<false, false, IntSize> : public CrossThreadCopierPassThrough<IntSize> {
+    template<typename T> struct IsEnumOrConvertibleToInteger {
+        static const bool value = std::is_integral<T>::value || std::is_enum<T>::value || std::is_convertible<T, long double>::value;
     };
 
-    // Custom copy methods.
-    template<typename T> struct CrossThreadCopierBase<false, true, T> {
-        typedef typename CrossThreadCopierBaseHelper::RemovePointer<T>::Type RefCountedType;
-        static_assert(std::is_convertible<RefCountedType*, ThreadSafeRefCounted<RefCountedType>*>::value, "T is not convertible to ThreadSafeRefCounted!");
-
-        typedef PassRefPtr<RefCountedType> Type;
-        WEBCORE_EXPORT static Type copy(const T& refPtr)
-        {
-            return refPtr;
-        }
+    template<typename T> struct IsThreadSafeRefCountedPointer {
+        static const bool value = std::is_convertible<typename RemovePointer<T>::Type*, ThreadSafeRefCounted<typename RemovePointer<T>::Type>*>::value;
     };
+};
 
-    template<> struct CrossThreadCopierBase<false, false, URL> {
-        typedef URL Type;
-        static Type copy(const URL&);
-    };
+template<typename T> struct CrossThreadCopierPassThrough {
+    typedef T Type;
+    static Type copy(const T& parameter)
+    {
+        return parameter;
+    }
+};
 
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, String> {
-        typedef String Type;
-        static Type copy(const String&);
-    };
+template<bool isEnumOrConvertibleToInteger, bool isThreadSafeRefCounted, typename T> struct CrossThreadCopierBase;
 
-    template<> struct CrossThreadCopierBase<false, false, ResourceError> {
-        typedef ResourceError Type;
-        static Type copy(const ResourceError&);
-    };
+// Integers get passed through without any changes.
+template<typename T> struct CrossThreadCopierBase<true, false, T> : public CrossThreadCopierPassThrough<T> {
+};
 
-    template<> struct CrossThreadCopierBase<false, false, ResourceRequest> {
-        typedef std::unique_ptr<CrossThreadResourceRequestData> Type;
-        static Type copy(const ResourceRequest&);
-    };
+// To allow a type to be passed across threads using its copy constructor, add a forward declaration of the type and
+// a CopyThreadCopierBase<false, false, TypeName> : public CrossThreadCopierPassThrough<TypeName> { }; to this file.
+template<> struct CrossThreadCopierBase<false, false, IntRect> : public CrossThreadCopierPassThrough<IntRect> {
+};
 
-    template<> struct CrossThreadCopierBase<false, false, ResourceResponse> {
-        typedef std::unique_ptr<CrossThreadResourceResponseData> Type;
-        static Type copy(const ResourceResponse&);
-    };
+template<> struct CrossThreadCopierBase<false, false, IntSize> : public CrossThreadCopierPassThrough<IntSize> {
+};
 
-    template<> struct CrossThreadCopierBase<false, false, SessionID> {
-        typedef SessionID Type;
-        static Type copy(const SessionID&);
-    };
+// Custom copy methods.
+template<typename T> struct CrossThreadCopierBase<false, true, T> {
+    typedef typename CrossThreadCopierBaseHelper::RemovePointer<T>::Type RefCountedType;
+    static_assert(std::is_convertible<RefCountedType*, ThreadSafeRefCounted<RefCountedType>*>::value, "T is not convertible to ThreadSafeRefCounted!");
 
-    template<> struct CrossThreadCopierBase<false, false, ThreadSafeDataBuffer> {
-        typedef ThreadSafeDataBuffer Type;
-        static Type copy(const ThreadSafeDataBuffer&);
-    };
+    typedef PassRefPtr<RefCountedType> Type;
+    WEBCORE_EXPORT static Type copy(const T& refPtr)
+    {
+        return refPtr;
+    }
+};
+
+template<> struct CrossThreadCopierBase<false, false, URL> {
+    typedef URL Type;
+    static Type copy(const URL&);
+};
+
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, String> {
+    typedef String Type;
+    static Type copy(const String&);
+};
+
+template<> struct CrossThreadCopierBase<false, false, ResourceError> {
+    typedef ResourceError Type;
+    static Type copy(const ResourceError&);
+};
+
+template<> struct CrossThreadCopierBase<false, false, ResourceRequest> {
+    typedef std::unique_ptr<CrossThreadResourceRequestData> Type;
+    static Type copy(const ResourceRequest&);
+};
+
+template<> struct CrossThreadCopierBase<false, false, ResourceResponse> {
+    typedef std::unique_ptr<CrossThreadResourceResponseData> Type;
+    static Type copy(const ResourceResponse&);
+};
+
+template<> struct CrossThreadCopierBase<false, false, SessionID> {
+    typedef SessionID Type;
+    static Type copy(const SessionID&);
+};
+
+template<> struct CrossThreadCopierBase<false, false, ThreadSafeDataBuffer> {
+    typedef ThreadSafeDataBuffer Type;
+    static Type copy(const ThreadSafeDataBuffer&);
+};
 
 #if ENABLE(INDEXED_DATABASE)
-    namespace IndexedDB {
-        enum class TransactionMode;
-        enum class CursorDirection;
-        enum class CursorType;
-    }
-    template<> struct CrossThreadCopierBase<false, false, IndexedDB::TransactionMode> {
-        WEBCORE_EXPORT static IndexedDB::TransactionMode copy(const IndexedDB::TransactionMode&);
-    };
-    template<> struct CrossThreadCopierBase<false, false, IndexedDB::CursorDirection> {
-        WEBCORE_EXPORT static IndexedDB::CursorDirection copy(const IndexedDB::CursorDirection&);
-    };
-    template<> struct CrossThreadCopierBase<false, false, IndexedDB::CursorType> {
-        WEBCORE_EXPORT static IndexedDB::CursorType copy(const IndexedDB::CursorType&);
-    };
+namespace IndexedDB {
+enum class TransactionMode;
+enum class CursorDirection;
+enum class CursorType;
+}
+template<> struct CrossThreadCopierBase<false, false, IndexedDB::TransactionMode> {
+    WEBCORE_EXPORT static IndexedDB::TransactionMode copy(const IndexedDB::TransactionMode&);
+};
+template<> struct CrossThreadCopierBase<false, false, IndexedDB::CursorDirection> {
+    WEBCORE_EXPORT static IndexedDB::CursorDirection copy(const IndexedDB::CursorDirection&);
+};
+template<> struct CrossThreadCopierBase<false, false, IndexedDB::CursorType> {
+    WEBCORE_EXPORT static IndexedDB::CursorType copy(const IndexedDB::CursorType&);
+};
 
-    class IDBGetResult;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBGetResult> {
-        typedef IDBGetResult Type;
-        static Type copy(const IDBGetResult&);
-    };
+class IDBGetResult;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBGetResult> {
+    typedef IDBGetResult Type;
+    static Type copy(const IDBGetResult&);
+};
 
-    class IDBKeyData;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBKeyData> {
-        typedef IDBKeyData Type;
-        static Type copy(const IDBKeyData&);
-    };
+class IDBKeyData;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBKeyData> {
+    typedef IDBKeyData Type;
+    static Type copy(const IDBKeyData&);
+};
 
-    struct IDBKeyRangeData;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBKeyRangeData> {
-        typedef IDBKeyRangeData Type;
-        static Type copy(const IDBKeyRangeData&);
-    };
+struct IDBKeyRangeData;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBKeyRangeData> {
+    typedef IDBKeyRangeData Type;
+    static Type copy(const IDBKeyRangeData&);
+};
 
-    class IDBDatabaseInfo;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBDatabaseInfo> {
-        typedef IDBDatabaseInfo Type;
-        static Type copy(const IDBDatabaseInfo&);
-    };
+class IDBDatabaseInfo;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBDatabaseInfo> {
+    typedef IDBDatabaseInfo Type;
+    static Type copy(const IDBDatabaseInfo&);
+};
 
-    class IDBDatabaseIdentifier;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBDatabaseIdentifier> {
-        typedef IDBDatabaseIdentifier Type;
-        static Type copy(const IDBDatabaseIdentifier&);
-    };
+class IDBDatabaseIdentifier;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBDatabaseIdentifier> {
+    typedef IDBDatabaseIdentifier Type;
+    static Type copy(const IDBDatabaseIdentifier&);
+};
 
-    class IDBError;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBError> {
-        typedef IDBError Type;
-        static Type copy(const IDBError&);
-    };
+class IDBError;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBError> {
+    typedef IDBError Type;
+    static Type copy(const IDBError&);
+};
 
-    class IDBResourceIdentifier;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBResourceIdentifier> {
-        typedef IDBResourceIdentifier Type;
-        static Type copy(const IDBResourceIdentifier&);
-    };
+class IDBResourceIdentifier;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBResourceIdentifier> {
+    typedef IDBResourceIdentifier Type;
+    static Type copy(const IDBResourceIdentifier&);
+};
 
-    class IDBTransactionInfo;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBTransactionInfo> {
-        typedef IDBTransactionInfo Type;
-        static Type copy(const IDBTransactionInfo&);
-    };
+class IDBTransactionInfo;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBTransactionInfo> {
+    typedef IDBTransactionInfo Type;
+    static Type copy(const IDBTransactionInfo&);
+};
 
-    class IDBObjectStoreInfo;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBObjectStoreInfo> {
-        typedef IDBObjectStoreInfo Type;
-        static Type copy(const IDBObjectStoreInfo&);
-    };
+class IDBObjectStoreInfo;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBObjectStoreInfo> {
+    typedef IDBObjectStoreInfo Type;
+    static Type copy(const IDBObjectStoreInfo&);
+};
 
-    class IDBIndexInfo;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBIndexInfo> {
-        typedef IDBIndexInfo Type;
-        static Type copy(const IDBIndexInfo&);
-    };
+class IDBIndexInfo;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBIndexInfo> {
+    typedef IDBIndexInfo Type;
+    static Type copy(const IDBIndexInfo&);
+};
 
-    class IDBCursorInfo;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBCursorInfo> {
-        typedef IDBCursorInfo Type;
-        static Type copy(const IDBCursorInfo&);
-    };
+class IDBCursorInfo;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBCursorInfo> {
+    typedef IDBCursorInfo Type;
+    static Type copy(const IDBCursorInfo&);
+};
 
-    class IDBValue;
-    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBValue> {
-        typedef IDBValue Type;
-        static Type copy(const IDBValue&);
-    };
+class IDBValue;
+template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBValue> {
+    typedef IDBValue Type;
+    static Type copy(const IDBValue&);
+};
 
 #endif
 
-    template<typename T>
-    struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHelper::IsEnumOrConvertibleToInteger<T>::value, CrossThreadCopierBaseHelper::IsThreadSafeRefCountedPointer<T>::value, T> {
-    };
+template<typename T>
+struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHelper::IsEnumOrConvertibleToInteger<T>::value, CrossThreadCopierBaseHelper::IsThreadSafeRefCountedPointer<T>::value, T> {
+};
 
-    template<typename T> struct AllowCrossThreadAccessWrapper {
-    public:
-        explicit AllowCrossThreadAccessWrapper(T* value) : m_value(value) { }
-        T* value() const { return m_value; }
-    private:
-        T* m_value;
-    };
+template<typename T> struct AllowCrossThreadAccessWrapper {
+public:
+    explicit AllowCrossThreadAccessWrapper(T* value)
+        : m_value(value) { }
+    T* value() const { return m_value; }
+private:
+    T* m_value;
+};
 
-    template<typename T> struct CrossThreadCopierBase<false, false, AllowCrossThreadAccessWrapper<T>> {
-        typedef T* Type;
-        static Type copy(const AllowCrossThreadAccessWrapper<T>& wrapper) { return wrapper.value(); }
-    };
+template<typename T> struct CrossThreadCopierBase<false, false, AllowCrossThreadAccessWrapper<T>> {
+    typedef T* Type;
+    static Type copy(const AllowCrossThreadAccessWrapper<T>& wrapper) { return wrapper.value(); }
+};
 
-    template<typename T> AllowCrossThreadAccessWrapper<T> AllowCrossThreadAccess(T* value) 
-    {
-        return AllowCrossThreadAccessWrapper<T>(value);
-    }
+template<typename T> AllowCrossThreadAccessWrapper<T> AllowCrossThreadAccess(T* value) 
+{
+    return AllowCrossThreadAccessWrapper<T>(value);
+}
 
-    // FIXME: Move to a different header file. AllowAccessLater is for cross-thread access
-    // that is not cross-thread (tasks posted to a queue guaranteed to run on the same thread).
-    template<typename T> struct AllowAccessLaterWrapper {
-    public:
-        explicit AllowAccessLaterWrapper(T* value) : m_value(value) { }
-        T* value() const { return m_value; }
-    private:
-        T* m_value;
-    };
+// FIXME: Move to a different header file. AllowAccessLater is for cross-thread access
+// that is not cross-thread (tasks posted to a queue guaranteed to run on the same thread).
+template<typename T> struct AllowAccessLaterWrapper {
+public:
+    explicit AllowAccessLaterWrapper(T* value)
+        : m_value(value) { }
+    T* value() const { return m_value; }
+private:
+    T* m_value;
+};
 
-    template<typename T> struct CrossThreadCopierBase<false, false, AllowAccessLaterWrapper<T>> {
-        typedef T* Type;
-        static Type copy(const AllowAccessLaterWrapper<T>& wrapper) { return wrapper.value(); }
-    };
+template<typename T> struct CrossThreadCopierBase<false, false, AllowAccessLaterWrapper<T>> {
+    typedef T* Type;
+    static Type copy(const AllowAccessLaterWrapper<T>& wrapper) { return wrapper.value(); }
+};
 
-    template<typename T> AllowAccessLaterWrapper<T> AllowAccessLater(T* value)
-    {
-        return AllowAccessLaterWrapper<T>(value);
-    }
+template<typename T> AllowAccessLaterWrapper<T> AllowAccessLater(T* value)
+{
+    return AllowAccessLaterWrapper<T>(value);
+}
 
 
 } // namespace WebCore
-
-#endif // CrossThreadCopier_h
