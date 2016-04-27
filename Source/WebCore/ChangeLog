@@ -1,3 +1,14 @@
+2016-04-27  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Remove FetchResponse::redirect overload
+        https://bugs.webkit.org/show_bug.cgi?id=157034
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+
+        * Modules/fetch/FetchResponse.h:
+
 2016-04-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Unreviewed speculative buildfix after r200116, just for fun.
