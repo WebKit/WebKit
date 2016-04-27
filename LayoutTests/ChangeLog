@@ -1,3 +1,11 @@
+2016-04-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add ios-simulator baseline for LayoutTest fast/text/hyphenate-avoid-orphaned-word.html
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/text/hyphenate-avoid-orphaned-word-expected.txt: Added.
+
 2016-04-27  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL][GTK] Volume slider only changes volume when thumb is released, not while dragging
