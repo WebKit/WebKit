@@ -387,6 +387,9 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     [preferences setPlugInsEnabled:NO];
     [preferences setTabsToLinks:NO];
     [preferences setUserStyleSheetEnabled:NO];
+    [preferences setAllowFileAccessFromFileURLs:YES];
+    [preferences setAllowUniversalAccessFromFileURLs:YES];
+    [preferences setStorageBlockingPolicy:WebAllowAllStorage];
 
     _frontendWebView = [[WebView alloc] init];
     [_frontendWebView setPreferences:preferences];

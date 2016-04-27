@@ -373,6 +373,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 #endif
     preferences._allowFileAccessFromFileURLs = YES;
     [configuration _setAllowUniversalAccessFromFileURLs:YES];
+    preferences._storageBlockingPolicy = _WKStorageBlockingPolicyAllowAll;
     preferences._javaScriptRuntimeFlags = 0;
     if (isUnderTest()) {
         preferences._hiddenPageDOMTimerThrottlingEnabled = NO;

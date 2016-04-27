@@ -1,3 +1,16 @@
+2016-04-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Uncaught Exception: SecurityError: DOM Exception 18: An attempt was made to break through the security policy of the user agent.
+        https://bugs.webkit.org/show_bug.cgi?id=156991
+        <rdar://problem/25913475>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        Explicitly always allow access to storage for Web Inspector content just
+        in case, as we already allow universal file access.
+
 2016-04-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WK2] [OS X] Create API for switching RTL scrollbar policy

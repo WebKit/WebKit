@@ -1,3 +1,18 @@
+2016-04-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Uncaught Exception: SecurityError: DOM Exception 18: An attempt was made to break through the security policy of the user agent.
+        https://bugs.webkit.org/show_bug.cgi?id=156991
+        <rdar://problem/25913475>
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController init]):
+        Apply the same universal file access to WebKit1 Web Inspector views that
+        we apply to WebKit2 views. Explicitly always allow access to storage
+        for Web Inspector content just in case as we already allow universal
+        file access.
+
 2016-04-26  Beth Dakin  <bdakin@apple.com>
 
         Check to make sure shouldRequestCandidates() before requesting candidates
