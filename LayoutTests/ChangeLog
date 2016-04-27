@@ -1,3 +1,13 @@
+2016-04-27  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: RTCIceCandidate don't need a custom bindings
+        https://bugs.webkit.org/show_bug.cgi?id=157074
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCIceCandidate-expected.txt:
+        Updated with error messages from generated constructor binding.
+
 2016-04-27  Eric Carlson  <eric.carlson@apple.com>
 
         media/video-fullscreen-restriction-removed.html is flaky on Mac

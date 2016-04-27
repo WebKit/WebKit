@@ -31,11 +31,11 @@
 
 [
     Conditional=WEB_RTC,
-    CustomConstructor(optional Dictionary dictionary),
+    Constructor(optional Dictionary dictionary),
     ConstructorRaisesException
 ] interface RTCIceCandidate {
     attribute DOMString candidate;
-    [CustomGetter] attribute DOMString sdpMid;
-    [CustomGetter] attribute unsigned short sdpMLineIndex;
+    attribute DOMString? sdpMid;
+    attribute unsigned short? sdpMLineIndex;
 };
 

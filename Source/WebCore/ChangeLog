@@ -1,3 +1,23 @@
+2016-04-27  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: RTCIceCandidate don't need a custom bindings
+        https://bugs.webkit.org/show_bug.cgi?id=157074
+
+        Reviewed by Eric Carlson.
+
+        Removed custom constructor and replaced custom attribute getters with
+        nullable types. Removed custom binding from builds.
+
+        Testing: Updated existing test.
+
+        * CMakeLists.txt:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSRTCIceCandidateCustom.cpp: Removed.
+        (WebCore::constructJSRTCIceCandidate): Deleted.
+        (WebCore::JSRTCIceCandidate::sdpMid): Deleted.
+        (WebCore::JSRTCIceCandidate::sdpMLineIndex): Deleted.
+
 2016-04-27  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r199383.
