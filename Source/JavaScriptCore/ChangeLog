@@ -1,5 +1,19 @@
 2016-04-27  Mark Lam  <mark.lam@apple.com>
 
+        Address feedback from https://bugs.webkit.org/show_bug.cgi?id=157048#c5.
+        https://bugs.webkit.org/show_bug.cgi?id=157096
+
+        Reviewed by Geoffrey Garen.
+
+        1. Check for USE(APPLE_INTERNAL_SDK) instead of __has_include(<mach-o/dyld_priv.h>).
+        2. Rename webkitFirstSDKVersionWithInitConstructorSupport to
+           firstSDKVersionWithInitConstructorSupport.
+
+        * API/JSWrapperMap.mm:
+        (supportsInitMethodConstructors):
+
+2016-04-27  Mark Lam  <mark.lam@apple.com>
+
         Restrict the availability of some JSC options to local debug builds only.
         https://bugs.webkit.org/show_bug.cgi?id=157058
 

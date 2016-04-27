@@ -44,16 +44,16 @@
 
 #include <mach-o/dyld.h>
 
-#if __has_include(<mach-o/dyld_priv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <mach-o/dyld_priv.h>
 #endif
 extern "C" uint32_t dyld_get_program_sdk_version();
 
 #if PLATFORM(APPLETV)
 #elif PLATFORM(IOS)
-static const uint32_t webkitFirstSDKVersionWithInitConstructorSupport = 0x80000; // iOS 8.0.0
+static const uint32_t firstSDKVersionWithInitConstructorSupport = 0x80000; // iOS 8.0.0
 #elif PLATFORM(MAC)
-static const uint32_t webkitFirstSDKVersionWithInitConstructorSupport = 0xA0A00; // OSX 10.10.0
+static const uint32_t firstSDKVersionWithInitConstructorSupport = 0xA0A00; // OSX 10.10.0
 #endif
 
 @class JSObjCClassInfo;
@@ -664,7 +664,7 @@ bool supportsInitMethodConstructors()
     static uint32_t programSDKVersion = 0;
     if (!programSDKVersion)
         programSDKVersion = dyld_get_program_sdk_version();
-    return programSDKVersion >= webkitFirstSDKVersionWithInitConstructorSupport;
+    return programSDKVersion >= firstSDKVersionWithInitConstructorSupport;
 #endif
 }
 
