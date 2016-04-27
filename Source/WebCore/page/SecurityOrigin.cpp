@@ -375,7 +375,9 @@ bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin, ShouldAll
     if (m_storageBlockingPolicy == BlockAllStorage)
         return false;
 
-    if (isLocal() && !m_universalAccess && shouldAllowFromThirdParty != AlwaysAllowFromThirdParty)
+    // We allow access to local storage from file URLs also when allowFileAccessFromFileURLs setting is enabled,
+    // for backwards compatibility only in WebKitGTK+ 2.12 branch, this should not be backported to any other branch, nor trunk.
+    if (isLocal() && !m_universalAccess && m_enforceFilePathSeparation && shouldAllowFromThirdParty != AlwaysAllowFromThirdParty)
         return false;
 
     // FIXME: This check should be replaced with an ASSERT once we can guarantee that topOrigin is not null.

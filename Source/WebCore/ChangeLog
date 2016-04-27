@@ -1,3 +1,10 @@
+2016-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix compatibility issue with 2.12.1 regarding local storage access from file URLs.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canAccessStorage):
+
 2016-04-25  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Crashes if DISPLAY is unset
