@@ -1,3 +1,39 @@
+2016-04-27  Mark Lam  <mark.lam@apple.com>
+
+        Restrict the availability of some JSC options to local debug builds only.
+        https://bugs.webkit.org/show_bug.cgi?id=157058
+
+        Reviewed by Geoffrey Garen.
+
+        1. Each option will be given an availability flag.
+        2. The functionOverrides and useDollarVM (along with its alias, enableDollarVM)
+           will have "Restricted" availability.
+        3. All other options will have “Normal” availability.
+        4. Any options with "Restricted" availability will only be accessible if function
+           allowRestrictedOptions() returns true.
+        5. For now, allowRestrictedOptions() always returns false for release builds, and
+           true for debug builds.
+
+        If an option is "Restricted" and restricted options are not allowed, the VM will
+        behave semantically as if that option does not exist at all:
+        1. Option dumps will not show the option.
+        2. Attempts to set the option will fail as if the option does not exist.
+
+        Behind the scene, the option does exist, and is set to its default value
+        (whatever that may be) once and only once on options initialization.
+
+        * runtime/Options.cpp:
+        (JSC::allowRestrictedOptions):
+        (JSC::parse):
+        (JSC::overrideOptionWithHeuristic):
+        (JSC::Options::initialize):
+        (JSC::Options::setOptionWithoutAlias):
+        (JSC::Options::dumpOption):
+        * runtime/Options.h:
+        (JSC::Option::type):
+        (JSC::Option::availability):
+        (JSC::Option::isOverridden):
+
 2016-04-27  Gavin Barraclough  <barraclough@apple.com>
 
         Enable separated heap by default on ios

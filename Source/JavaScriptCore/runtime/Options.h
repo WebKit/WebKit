@@ -102,265 +102,265 @@ typedef OptionRange optionRange;
 typedef const char* optionString;
 
 #define JSC_OPTIONS(v) \
-    v(bool, validateOptions, false, "crashes if mis-typed JSC options were passed to the VM") \
-    v(unsigned, dumpOptions, 0, "dumps JSC options (0 = None, 1 = Overridden only, 2 = All, 3 = Verbose)") \
+    v(bool, validateOptions, false, Normal, "crashes if mis-typed JSC options were passed to the VM") \
+    v(unsigned, dumpOptions, 0, Normal, "dumps JSC options (0 = None, 1 = Overridden only, 2 = All, 3 = Verbose)") \
     \
-    v(bool, useLLInt,  true, "allows the LLINT to be used if true") \
-    v(bool, useJIT,    true, "allows the baseline JIT to be used if true") \
-    v(bool, useDFGJIT, true, "allows the DFG JIT to be used if true") \
-    v(bool, useRegExpJIT, true, "allows the RegExp JIT to be used if true") \
+    v(bool, useLLInt,  true, Normal, "allows the LLINT to be used if true") \
+    v(bool, useJIT,    true, Normal, "allows the baseline JIT to be used if true") \
+    v(bool, useDFGJIT, true, Normal, "allows the DFG JIT to be used if true") \
+    v(bool, useRegExpJIT, true, Normal, "allows the RegExp JIT to be used if true") \
     \
-    v(bool, reportMustSucceedExecutableAllocations, false, nullptr) \
+    v(bool, reportMustSucceedExecutableAllocations, false, Normal, nullptr) \
     \
-    v(unsigned, maxPerThreadStackUsage, 4 * MB, nullptr) \
-    v(unsigned, reservedZoneSize, 128 * KB, nullptr) \
-    v(unsigned, errorModeReservedZoneSize, 64 * KB, nullptr) \
+    v(unsigned, maxPerThreadStackUsage, 4 * MB, Normal, nullptr) \
+    v(unsigned, reservedZoneSize, 128 * KB, Normal, nullptr) \
+    v(unsigned, errorModeReservedZoneSize, 64 * KB, Normal, nullptr) \
     \
-    v(bool, crashIfCantAllocateJITMemory, false, nullptr) \
-    v(unsigned, jitMemoryReservationSize, 0, "Set this number to change the executable allocation size in ExecutableAllocatorFixedVMPool. (In bytes.)") \
-    v(bool, useSeparatedWXHeap, false, nullptr) \
+    v(bool, crashIfCantAllocateJITMemory, false, Normal, nullptr) \
+    v(unsigned, jitMemoryReservationSize, 0, Normal, "Set this number to change the executable allocation size in ExecutableAllocatorFixedVMPool. (In bytes.)") \
+    v(bool, useSeparatedWXHeap, false, Normal, nullptr) \
     \
-    v(bool, forceCodeBlockLiveness, false, nullptr) \
-    v(bool, forceICFailure, false, nullptr) \
+    v(bool, forceCodeBlockLiveness, false, Normal, nullptr) \
+    v(bool, forceICFailure, false, Normal, nullptr) \
     \
-    v(unsigned, repatchCountForCoolDown, 10, nullptr) \
-    v(unsigned, initialCoolDownCount, 20, nullptr) \
-    v(unsigned, repatchBufferingCountdown, 10, nullptr) \
+    v(unsigned, repatchCountForCoolDown, 10, Normal, nullptr) \
+    v(unsigned, initialCoolDownCount, 20, Normal, nullptr) \
+    v(unsigned, repatchBufferingCountdown, 10, Normal, nullptr) \
     \
-    v(bool, dumpGeneratedBytecodes, false, nullptr) \
-    v(bool, dumpBytecodeLivenessResults, false, nullptr) \
-    v(bool, validateBytecode, false, nullptr) \
-    v(bool, forceDebuggerBytecodeGeneration, false, nullptr) \
-    v(bool, forceProfilerBytecodeGeneration, false, nullptr) \
+    v(bool, dumpGeneratedBytecodes, false, Normal, nullptr) \
+    v(bool, dumpBytecodeLivenessResults, false, Normal, nullptr) \
+    v(bool, validateBytecode, false, Normal, nullptr) \
+    v(bool, forceDebuggerBytecodeGeneration, false, Normal, nullptr) \
+    v(bool, forceProfilerBytecodeGeneration, false, Normal, nullptr) \
     \
-    v(bool, useFunctionDotArguments, true, nullptr) \
-    v(bool, useTailCalls, true, nullptr) \
-    v(bool, alwaysUseShadowChicken, false, nullptr) \
-    v(unsigned, shadowChickenLogSize, 1000, nullptr) \
-    v(unsigned, shadowChickenStackSizeLimit, 100000, nullptr) \
+    v(bool, useFunctionDotArguments, true, Normal, nullptr) \
+    v(bool, useTailCalls, true, Normal, nullptr) \
+    v(bool, alwaysUseShadowChicken, false, Normal, nullptr) \
+    v(unsigned, shadowChickenLogSize, 1000, Normal, nullptr) \
+    v(unsigned, shadowChickenStackSizeLimit, 100000, Normal, nullptr) \
     \
     /* dumpDisassembly implies dumpDFGDisassembly. */ \
-    v(bool, dumpDisassembly, false, "dumps disassembly of all JIT compiled code upon compilation") \
-    v(bool, asyncDisassembly, false, nullptr) \
-    v(bool, dumpDFGDisassembly, false, "dumps disassembly of DFG function upon compilation") \
-    v(bool, dumpFTLDisassembly, false, "dumps disassembly of FTL function upon compilation") \
-    v(bool, dumpAllDFGNodes, false, nullptr) \
-    v(optionRange, bytecodeRangeToDFGCompile, 0, "bytecode size range to allow DFG compilation on, e.g. 1:100") \
-    v(optionRange, bytecodeRangeToFTLCompile, 0, "bytecode size range to allow FTL compilation on, e.g. 1:100") \
-    v(optionString, dfgWhitelist, nullptr, "file with list of function signatures to allow DFG compilation on") \
-    v(bool, dumpSourceAtDFGTime, false, "dumps source code of JS function being DFG compiled") \
-    v(bool, dumpBytecodeAtDFGTime, false, "dumps bytecode of JS function being DFG compiled") \
-    v(bool, dumpGraphAfterParsing, false, nullptr) \
-    v(bool, dumpGraphAtEachPhase, false, nullptr) \
-    v(bool, dumpDFGGraphAtEachPhase, false, "dumps the DFG graph at each phase DFG of complitaion (note this excludes DFG graphs during FTL compilation)") \
-    v(bool, dumpDFGFTLGraphAtEachPhase, false, "dumps the DFG graph at each phase DFG of complitaion when compiling FTL code") \
-    v(bool, dumpB3GraphAtEachPhase, false, "dumps the B3 graph at each phase of compilation") \
-    v(bool, dumpAirGraphAtEachPhase, false, "dumps the Air graph at each phase of compilation") \
-    v(bool, verboseDFGByteCodeParsing, false, nullptr) \
-    v(bool, verboseCompilation, false, nullptr) \
-    v(bool, verboseFTLCompilation, false, nullptr) \
-    v(bool, logCompilationChanges, false, nullptr) \
-    v(bool, printEachOSRExit, false, nullptr) \
-    v(bool, validateGraph, false, nullptr) \
-    v(bool, validateGraphAtEachPhase, false, nullptr) \
-    v(bool, verboseValidationFailure, false, nullptr) \
-    v(bool, verboseOSR, false, nullptr) \
-    v(bool, verboseFTLOSRExit, false, nullptr) \
-    v(bool, verboseCallLink, false, nullptr) \
-    v(bool, verboseCompilationQueue, false, nullptr) \
-    v(bool, reportCompileTimes, false, "dumps JS function signature and the time it took to compile") \
-    v(bool, reportFTLCompileTimes, false, "dumps JS function signature and the time it took to FTL compile") \
-    v(bool, reportTotalCompileTimes, false, nullptr) \
-    v(bool, verboseCFA, false, nullptr) \
-    v(bool, verboseFTLToJSThunk, false, nullptr) \
-    v(bool, verboseFTLFailure, false, nullptr) \
-    v(bool, alwaysComputeHash, false, nullptr) \
-    v(bool, testTheFTL, false, nullptr) \
-    v(bool, verboseSanitizeStack, false, nullptr) \
-    v(bool, useGenerationalGC, true, nullptr) \
-    v(bool, eagerlyUpdateTopCallFrame, false, nullptr) \
+    v(bool, dumpDisassembly, false, Normal, "dumps disassembly of all JIT compiled code upon compilation") \
+    v(bool, asyncDisassembly, false, Normal, nullptr) \
+    v(bool, dumpDFGDisassembly, false, Normal, "dumps disassembly of DFG function upon compilation") \
+    v(bool, dumpFTLDisassembly, false, Normal, "dumps disassembly of FTL function upon compilation") \
+    v(bool, dumpAllDFGNodes, false, Normal, nullptr) \
+    v(optionRange, bytecodeRangeToDFGCompile, 0, Normal, "bytecode size range to allow DFG compilation on, e.g. 1:100") \
+    v(optionRange, bytecodeRangeToFTLCompile, 0, Normal, "bytecode size range to allow FTL compilation on, e.g. 1:100") \
+    v(optionString, dfgWhitelist, nullptr, Normal, "file with list of function signatures to allow DFG compilation on") \
+    v(bool, dumpSourceAtDFGTime, false, Normal, "dumps source code of JS function being DFG compiled") \
+    v(bool, dumpBytecodeAtDFGTime, false, Normal, "dumps bytecode of JS function being DFG compiled") \
+    v(bool, dumpGraphAfterParsing, false, Normal, nullptr) \
+    v(bool, dumpGraphAtEachPhase, false, Normal, nullptr) \
+    v(bool, dumpDFGGraphAtEachPhase, false, Normal, "dumps the DFG graph at each phase DFG of complitaion (note this excludes DFG graphs during FTL compilation)") \
+    v(bool, dumpDFGFTLGraphAtEachPhase, false, Normal, "dumps the DFG graph at each phase DFG of complitaion when compiling FTL code") \
+    v(bool, dumpB3GraphAtEachPhase, false, Normal, "dumps the B3 graph at each phase of compilation") \
+    v(bool, dumpAirGraphAtEachPhase, false, Normal, "dumps the Air graph at each phase of compilation") \
+    v(bool, verboseDFGByteCodeParsing, false, Normal, nullptr) \
+    v(bool, verboseCompilation, false, Normal, nullptr) \
+    v(bool, verboseFTLCompilation, false, Normal, nullptr) \
+    v(bool, logCompilationChanges, false, Normal, nullptr) \
+    v(bool, printEachOSRExit, false, Normal, nullptr) \
+    v(bool, validateGraph, false, Normal, nullptr) \
+    v(bool, validateGraphAtEachPhase, false, Normal, nullptr) \
+    v(bool, verboseValidationFailure, false, Normal, nullptr) \
+    v(bool, verboseOSR, false, Normal, nullptr) \
+    v(bool, verboseFTLOSRExit, false, Normal, nullptr) \
+    v(bool, verboseCallLink, false, Normal, nullptr) \
+    v(bool, verboseCompilationQueue, false, Normal, nullptr) \
+    v(bool, reportCompileTimes, false, Normal, "dumps JS function signature and the time it took to compile") \
+    v(bool, reportFTLCompileTimes, false, Normal, "dumps JS function signature and the time it took to FTL compile") \
+    v(bool, reportTotalCompileTimes, false, Normal, nullptr) \
+    v(bool, verboseCFA, false, Normal, nullptr) \
+    v(bool, verboseFTLToJSThunk, false, Normal, nullptr) \
+    v(bool, verboseFTLFailure, false, Normal, nullptr) \
+    v(bool, alwaysComputeHash, false, Normal, nullptr) \
+    v(bool, testTheFTL, false, Normal, nullptr) \
+    v(bool, verboseSanitizeStack, false, Normal, nullptr) \
+    v(bool, useGenerationalGC, true, Normal, nullptr) \
+    v(bool, eagerlyUpdateTopCallFrame, false, Normal, nullptr) \
     \
-    v(bool, useOSREntryToDFG, true, nullptr) \
-    v(bool, useOSREntryToFTL, true, nullptr) \
+    v(bool, useOSREntryToDFG, true, Normal, nullptr) \
+    v(bool, useOSREntryToFTL, true, Normal, nullptr) \
     \
-    v(bool, useFTLJIT, true, "allows the FTL JIT to be used if true") \
-    v(bool, useFTLTBAA, true, nullptr) \
-    v(bool, validateFTLOSRExitLiveness, false, nullptr) \
-    v(bool, b3AlwaysFailsBeforeCompile, false, nullptr) \
-    v(bool, b3AlwaysFailsBeforeLink, false, nullptr) \
-    v(bool, ftlCrashes, false, nullptr) /* fool-proof way of checking that you ended up in the FTL. ;-) */\
-    v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED, nullptr) \
-    v(bool, useAccessInlining, true, nullptr) \
-    v(unsigned, maxAccessVariantListSize, 13, nullptr) \
-    v(unsigned, megamorphicLoadCost, 999, nullptr) /* This used to be 10, but we're temporarily testing what happens when the feature is disabled. */\
-    v(bool, usePolyvariantDevirtualization, true, nullptr) \
-    v(bool, usePolymorphicAccessInlining, true, nullptr) \
-    v(bool, usePolymorphicCallInlining, true, nullptr) \
-    v(bool, usePolymorphicCallInliningForNonStubStatus, false, nullptr) \
-    v(unsigned, maxPolymorphicCallVariantListSize, 15, nullptr) \
-    v(unsigned, maxPolymorphicCallVariantListSizeForTopTier, 5, nullptr) \
-    v(unsigned, maxPolymorphicCallVariantsForInlining, 5, nullptr) \
-    v(unsigned, frequentCallThreshold, 2, nullptr) \
-    v(double, minimumCallToKnownRate, 0.51, nullptr) \
-    v(bool, createPreHeaders, true, nullptr) \
-    v(bool, useMovHintRemoval, true, nullptr) \
-    v(bool, usePutStackSinking, true, nullptr) \
-    v(bool, useObjectAllocationSinking, true, nullptr) \
+    v(bool, useFTLJIT, true, Normal, "allows the FTL JIT to be used if true") \
+    v(bool, useFTLTBAA, true, Normal, nullptr) \
+    v(bool, validateFTLOSRExitLiveness, false, Normal, nullptr) \
+    v(bool, b3AlwaysFailsBeforeCompile, false, Normal, nullptr) \
+    v(bool, b3AlwaysFailsBeforeLink, false, Normal, nullptr) \
+    v(bool, ftlCrashes, false, Normal, nullptr) /* fool-proof way of checking that you ended up in the FTL. ;-) */\
+    v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED, Normal, nullptr) \
+    v(bool, useAccessInlining, true, Normal, nullptr) \
+    v(unsigned, maxAccessVariantListSize, 13, Normal, nullptr) \
+    v(unsigned, megamorphicLoadCost, 999, Normal, nullptr) /* This used to be 10, but we're temporarily testing what happens when the feature is disabled. */\
+    v(bool, usePolyvariantDevirtualization, true, Normal, nullptr) \
+    v(bool, usePolymorphicAccessInlining, true, Normal, nullptr) \
+    v(bool, usePolymorphicCallInlining, true, Normal, nullptr) \
+    v(bool, usePolymorphicCallInliningForNonStubStatus, false, Normal, nullptr) \
+    v(unsigned, maxPolymorphicCallVariantListSize, 15, Normal, nullptr) \
+    v(unsigned, maxPolymorphicCallVariantListSizeForTopTier, 5, Normal, nullptr) \
+    v(unsigned, maxPolymorphicCallVariantsForInlining, 5, Normal, nullptr) \
+    v(unsigned, frequentCallThreshold, 2, Normal, nullptr) \
+    v(double, minimumCallToKnownRate, 0.51, Normal, nullptr) \
+    v(bool, createPreHeaders, true, Normal, nullptr) \
+    v(bool, useMovHintRemoval, true, Normal, nullptr) \
+    v(bool, usePutStackSinking, true, Normal, nullptr) \
+    v(bool, useObjectAllocationSinking, true, Normal, nullptr) \
     \
-    v(bool, useConcurrentJIT, true, "allows the DFG / FTL compilation in threads other than the executing JS thread") \
-    v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2, 2) - 1, nullptr) \
-    v(unsigned, numberOfFTLCompilerThreads, computeNumberOfWorkerThreads(8, 2) - 1, nullptr) \
-    v(int32, priorityDeltaOfDFGCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), nullptr) \
-    v(int32, priorityDeltaOfFTLCompilerThreads, computePriorityDeltaOfWorkerThreads(-2, 0), nullptr) \
+    v(bool, useConcurrentJIT, true, Normal, "allows the DFG / FTL compilation in threads other than the executing JS thread") \
+    v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2, 2) - 1, Normal, nullptr) \
+    v(unsigned, numberOfFTLCompilerThreads, computeNumberOfWorkerThreads(8, 2) - 1, Normal, nullptr) \
+    v(int32, priorityDeltaOfDFGCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
+    v(int32, priorityDeltaOfFTLCompilerThreads, computePriorityDeltaOfWorkerThreads(-2, 0), Normal, nullptr) \
     \
-    v(bool, useProfiler, false, nullptr) \
-    v(bool, disassembleBaselineForProfiler, true, nullptr) \
+    v(bool, useProfiler, false, Normal, nullptr) \
+    v(bool, disassembleBaselineForProfiler, true, Normal, nullptr) \
     \
-    v(bool, useArchitectureSpecificOptimizations, true, nullptr) \
+    v(bool, useArchitectureSpecificOptimizations, true, Normal, nullptr) \
     \
-    v(bool, breakOnThrow, false, nullptr) \
+    v(bool, breakOnThrow, false, Normal, nullptr) \
     \
-    v(unsigned, maximumOptimizationCandidateInstructionCount, 100000, nullptr) \
+    v(unsigned, maximumOptimizationCandidateInstructionCount, 100000, Normal, nullptr) \
     \
-    v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 180, nullptr) \
-    v(unsigned, maximumFunctionForClosureCallInlineCandidateInstructionCount, 100, nullptr) \
-    v(unsigned, maximumFunctionForConstructInlineCandidateInstructionCount, 100, nullptr) \
+    v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 180, Normal, nullptr) \
+    v(unsigned, maximumFunctionForClosureCallInlineCandidateInstructionCount, 100, Normal, nullptr) \
+    v(unsigned, maximumFunctionForConstructInlineCandidateInstructionCount, 100, Normal, nullptr) \
     \
-    v(unsigned, maximumFTLCandidateInstructionCount, 20000, nullptr) \
+    v(unsigned, maximumFTLCandidateInstructionCount, 20000, Normal, nullptr) \
     \
     /* Depth of inline stack, so 1 = no inlining, 2 = one level, etc. */ \
-    v(unsigned, maximumInliningDepth, 5, "maximum allowed inlining depth.  Depth of 1 means no inlining") \
-    v(unsigned, maximumInliningRecursion, 2, nullptr) \
+    v(unsigned, maximumInliningDepth, 5, Normal, "maximum allowed inlining depth.  Depth of 1 means no inlining") \
+    v(unsigned, maximumInliningRecursion, 2, Normal, nullptr) \
     \
     /* Maximum size of a caller for enabling inlining. This is purely to protect us */\
     /* from super long compiles that take a lot of memory. */\
-    v(unsigned, maximumInliningCallerSize, 10000, nullptr) \
+    v(unsigned, maximumInliningCallerSize, 10000, Normal, nullptr) \
     \
-    v(unsigned, maximumVarargsForInlining, 100, nullptr) \
+    v(unsigned, maximumVarargsForInlining, 100, Normal, nullptr) \
     \
-    v(bool, usePolyvariantCallInlining, true, nullptr) \
-    v(bool, usePolyvariantByIdInlining, true, nullptr) \
+    v(bool, usePolyvariantCallInlining, true, Normal, nullptr) \
+    v(bool, usePolyvariantByIdInlining, true, Normal, nullptr) \
     \
-    v(bool, useMaximalFlushInsertionPhase, false, "Setting to true allows the DFG's MaximalFlushInsertionPhase to run.") \
+    v(bool, useMaximalFlushInsertionPhase, false, Normal, "Setting to true allows the DFG's MaximalFlushInsertionPhase to run.") \
     \
-    v(unsigned, maximumBinaryStringSwitchCaseLength, 50, nullptr) \
-    v(unsigned, maximumBinaryStringSwitchTotalLength, 2000, nullptr) \
+    v(unsigned, maximumBinaryStringSwitchCaseLength, 50, Normal, nullptr) \
+    v(unsigned, maximumBinaryStringSwitchTotalLength, 2000, Normal, nullptr) \
     \
-    v(double, jitPolicyScale, 1.0, "scale JIT thresholds to this specified ratio between 0.0 (compile ASAP) and 1.0 (compile like normal).") \
-    v(bool, forceEagerCompilation, false, nullptr) \
-    v(int32, thresholdForJITAfterWarmUp, 500, nullptr) \
-    v(int32, thresholdForJITSoon, 100, nullptr) \
+    v(double, jitPolicyScale, 1.0, Normal, "scale JIT thresholds to this specified ratio between 0.0 (compile ASAP) and 1.0 (compile like normal).") \
+    v(bool, forceEagerCompilation, false, Normal, nullptr) \
+    v(int32, thresholdForJITAfterWarmUp, 500, Normal, nullptr) \
+    v(int32, thresholdForJITSoon, 100, Normal, nullptr) \
     \
-    v(int32, thresholdForOptimizeAfterWarmUp, 1000, nullptr) \
-    v(int32, thresholdForOptimizeAfterLongWarmUp, 1000, nullptr) \
-    v(int32, thresholdForOptimizeSoon, 1000, nullptr) \
-    v(int32, executionCounterIncrementForLoop, 1, nullptr) \
-    v(int32, executionCounterIncrementForEntry, 15, nullptr) \
+    v(int32, thresholdForOptimizeAfterWarmUp, 1000, Normal, nullptr) \
+    v(int32, thresholdForOptimizeAfterLongWarmUp, 1000, Normal, nullptr) \
+    v(int32, thresholdForOptimizeSoon, 1000, Normal, nullptr) \
+    v(int32, executionCounterIncrementForLoop, 1, Normal, nullptr) \
+    v(int32, executionCounterIncrementForEntry, 15, Normal, nullptr) \
     \
-    v(int32, thresholdForFTLOptimizeAfterWarmUp, 100000, nullptr) \
-    v(int32, thresholdForFTLOptimizeSoon, 1000, nullptr) \
-    v(int32, ftlTierUpCounterIncrementForLoop, 1, nullptr) \
-    v(int32, ftlTierUpCounterIncrementForReturn, 15, nullptr) \
-    v(unsigned, ftlOSREntryFailureCountForReoptimization, 15, nullptr) \
-    v(unsigned, ftlOSREntryRetryThreshold, 100, nullptr) \
+    v(int32, thresholdForFTLOptimizeAfterWarmUp, 100000, Normal, nullptr) \
+    v(int32, thresholdForFTLOptimizeSoon, 1000, Normal, nullptr) \
+    v(int32, ftlTierUpCounterIncrementForLoop, 1, Normal, nullptr) \
+    v(int32, ftlTierUpCounterIncrementForReturn, 15, Normal, nullptr) \
+    v(unsigned, ftlOSREntryFailureCountForReoptimization, 15, Normal, nullptr) \
+    v(unsigned, ftlOSREntryRetryThreshold, 100, Normal, nullptr) \
     \
-    v(int32, evalThresholdMultiplier, 10, nullptr) \
-    v(unsigned, maximumEvalCacheableSourceLength, 256, nullptr) \
+    v(int32, evalThresholdMultiplier, 10, Normal, nullptr) \
+    v(unsigned, maximumEvalCacheableSourceLength, 256, Normal, nullptr) \
     \
-    v(bool, randomizeExecutionCountsBetweenCheckpoints, false, nullptr) \
-    v(int32, maximumExecutionCountsBetweenCheckpointsForBaseline, 1000, nullptr) \
-    v(int32, maximumExecutionCountsBetweenCheckpointsForUpperTiers, 50000, nullptr) \
+    v(bool, randomizeExecutionCountsBetweenCheckpoints, false, Normal, nullptr) \
+    v(int32, maximumExecutionCountsBetweenCheckpointsForBaseline, 1000, Normal, nullptr) \
+    v(int32, maximumExecutionCountsBetweenCheckpointsForUpperTiers, 50000, Normal, nullptr) \
     \
-    v(unsigned, likelyToTakeSlowCaseMinimumCount, 20, nullptr) \
-    v(unsigned, couldTakeSlowCaseMinimumCount, 10, nullptr) \
+    v(unsigned, likelyToTakeSlowCaseMinimumCount, 20, Normal, nullptr) \
+    v(unsigned, couldTakeSlowCaseMinimumCount, 10, Normal, nullptr) \
     \
-    v(unsigned, osrExitCountForReoptimization, 100, nullptr) \
-    v(unsigned, osrExitCountForReoptimizationFromLoop, 5, nullptr) \
+    v(unsigned, osrExitCountForReoptimization, 100, Normal, nullptr) \
+    v(unsigned, osrExitCountForReoptimizationFromLoop, 5, Normal, nullptr) \
     \
-    v(unsigned, reoptimizationRetryCounterMax, 0, nullptr)  \
+    v(unsigned, reoptimizationRetryCounterMax, 0, Normal, nullptr)  \
     \
-    v(unsigned, minimumOptimizationDelay, 1, nullptr) \
-    v(unsigned, maximumOptimizationDelay, 5, nullptr) \
-    v(double, desiredProfileLivenessRate, 0.75, nullptr) \
-    v(double, desiredProfileFullnessRate, 0.35, nullptr) \
+    v(unsigned, minimumOptimizationDelay, 1, Normal, nullptr) \
+    v(unsigned, maximumOptimizationDelay, 5, Normal, nullptr) \
+    v(double, desiredProfileLivenessRate, 0.75, Normal, nullptr) \
+    v(double, desiredProfileFullnessRate, 0.35, Normal, nullptr) \
     \
-    v(double, doubleVoteRatioForDoubleFormat, 2, nullptr) \
-    v(double, structureCheckVoteRatioForHoisting, 1, nullptr) \
-    v(double, checkArrayVoteRatioForHoisting, 1, nullptr) \
+    v(double, doubleVoteRatioForDoubleFormat, 2, Normal, nullptr) \
+    v(double, structureCheckVoteRatioForHoisting, 1, Normal, nullptr) \
+    v(double, checkArrayVoteRatioForHoisting, 1, Normal, nullptr) \
     \
-    v(unsigned, minimumNumberOfScansBetweenRebalance, 100, nullptr) \
-    v(unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(7), nullptr) \
-    v(unsigned, opaqueRootMergeThreshold, 1000, nullptr) \
-    v(double, minHeapUtilization, 0.8, nullptr) \
-    v(double, minCopiedBlockUtilization, 0.9, nullptr) \
-    v(double, minMarkedBlockUtilization, 0.9, nullptr) \
-    v(unsigned, slowPathAllocsBetweenGCs, 0, "force a GC on every Nth slow path alloc, where N is specified by this option") \
+    v(unsigned, minimumNumberOfScansBetweenRebalance, 100, Normal, nullptr) \
+    v(unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(7), Normal, nullptr) \
+    v(unsigned, opaqueRootMergeThreshold, 1000, Normal, nullptr) \
+    v(double, minHeapUtilization, 0.8, Normal, nullptr) \
+    v(double, minCopiedBlockUtilization, 0.9, Normal, nullptr) \
+    v(double, minMarkedBlockUtilization, 0.9, Normal, nullptr) \
+    v(unsigned, slowPathAllocsBetweenGCs, 0, Normal, "force a GC on every Nth slow path alloc, where N is specified by this option") \
     \
-    v(double, percentCPUPerMBForFullTimer, 0.0003125, nullptr) \
-    v(double, percentCPUPerMBForEdenTimer, 0.0025, nullptr) \
-    v(double, collectionTimerMaxPercentCPU, 0.05, nullptr) \
+    v(double, percentCPUPerMBForFullTimer, 0.0003125, Normal, nullptr) \
+    v(double, percentCPUPerMBForEdenTimer, 0.0025, Normal, nullptr) \
+    v(double, collectionTimerMaxPercentCPU, 0.05, Normal, nullptr) \
     \
-    v(bool, forceWeakRandomSeed, false, nullptr) \
-    v(unsigned, forcedWeakRandomSeed, 0, nullptr) \
+    v(bool, forceWeakRandomSeed, false, Normal, nullptr) \
+    v(unsigned, forcedWeakRandomSeed, 0, Normal, nullptr) \
     \
-    v(bool, useZombieMode, false, "debugging option to scribble over dead objects with 0xdeadbeef") \
-    v(bool, useImmortalObjects, false, "debugging option to keep all objects alive forever") \
-    v(bool, dumpObjectStatistics, false, nullptr) \
+    v(bool, useZombieMode, false, Normal, "debugging option to scribble over dead objects with 0xdeadbeef") \
+    v(bool, useImmortalObjects, false, Normal, "debugging option to keep all objects alive forever") \
+    v(bool, dumpObjectStatistics, false, Normal, nullptr) \
     \
-    v(gcLogLevel, logGC, GCLogging::None, "debugging option to log GC activity (0 = None, 1 = Basic, 2 = Verbose)") \
-    v(bool, useGC, true, nullptr) \
-    v(bool, gcAtEnd, false, "If true, the jsc CLI will do a GC before exiting") \
-    v(bool, forceGCSlowPaths, false, "If true, we will force all JIT fast allocations down their slow paths.")\
-    v(unsigned, gcMaxHeapSize, 0, nullptr) \
-    v(unsigned, forceRAMSize, 0, nullptr) \
-    v(bool, recordGCPauseTimes, false, nullptr) \
-    v(bool, logHeapStatisticsAtExit, false, nullptr) \
+    v(gcLogLevel, logGC, GCLogging::None, Normal, "debugging option to log GC activity (0 = None, 1 = Basic, 2 = Verbose)") \
+    v(bool, useGC, true, Normal, nullptr) \
+    v(bool, gcAtEnd, false, Normal, "If true, the jsc CLI will do a GC before exiting") \
+    v(bool, forceGCSlowPaths, false, Normal, "If true, we will force all JIT fast allocations down their slow paths.")\
+    v(unsigned, gcMaxHeapSize, 0, Normal, nullptr) \
+    v(unsigned, forceRAMSize, 0, Normal, nullptr) \
+    v(bool, recordGCPauseTimes, false, Normal, nullptr) \
+    v(bool, logHeapStatisticsAtExit, false, Normal, nullptr) \
     \
-    v(bool, useTypeProfiler, false, nullptr) \
-    v(bool, useControlFlowProfiler, false, nullptr) \
+    v(bool, useTypeProfiler, false, Normal, nullptr) \
+    v(bool, useControlFlowProfiler, false, Normal, nullptr) \
     \
-    v(bool, useSamplingProfiler, false, nullptr) \
-    v(unsigned, sampleInterval, 1000, "Time between stack traces in microseconds.") \
-    v(bool, collectSamplingProfilerDataForJSCShell, false, "This corresponds to the JSC shell's --sample option.") \
+    v(bool, useSamplingProfiler, false, Normal, nullptr) \
+    v(unsigned, sampleInterval, 1000, Normal, "Time between stack traces in microseconds.") \
+    v(bool, collectSamplingProfilerDataForJSCShell, false, Normal, "This corresponds to the JSC shell's --sample option.") \
     \
-    v(bool, alwaysGeneratePCToCodeOriginMap, false, "This will make sure we always generate a PCToCodeOriginMap for JITed code.") \
+    v(bool, alwaysGeneratePCToCodeOriginMap, false, Normal, "This will make sure we always generate a PCToCodeOriginMap for JITed code.") \
     \
-    v(bool, verifyHeap, false, nullptr) \
-    v(unsigned, numberOfGCCyclesToRecordForVerification, 3, nullptr) \
+    v(bool, verifyHeap, false, Normal, nullptr) \
+    v(unsigned, numberOfGCCyclesToRecordForVerification, 3, Normal, nullptr) \
     \
-    v(bool, useExceptionFuzz, false, nullptr) \
-    v(unsigned, fireExceptionFuzzAt, 0, nullptr) \
-    v(bool, validateDFGExceptionHandling, false, "Causes the DFG to emit code validating exception handling for each node that can exit") /* This is true by default on Debug builds */\
+    v(bool, useExceptionFuzz, false, Normal, nullptr) \
+    v(unsigned, fireExceptionFuzzAt, 0, Normal, nullptr) \
+    v(bool, validateDFGExceptionHandling, false, Normal, "Causes the DFG to emit code validating exception handling for each node that can exit") /* This is true by default on Debug builds */\
     \
-    v(bool, useExecutableAllocationFuzz, false, nullptr) \
-    v(unsigned, fireExecutableAllocationFuzzAt, 0, nullptr) \
-    v(unsigned, fireExecutableAllocationFuzzAtOrAfter, 0, nullptr) \
-    v(bool, verboseExecutableAllocationFuzz, false, nullptr) \
+    v(bool, useExecutableAllocationFuzz, false, Normal, nullptr) \
+    v(unsigned, fireExecutableAllocationFuzzAt, 0, Normal, nullptr) \
+    v(unsigned, fireExecutableAllocationFuzzAtOrAfter, 0, Normal, nullptr) \
+    v(bool, verboseExecutableAllocationFuzz, false, Normal, nullptr) \
     \
-    v(bool, useOSRExitFuzz, false, nullptr) \
-    v(unsigned, fireOSRExitFuzzAtStatic, 0, nullptr) \
-    v(unsigned, fireOSRExitFuzzAt, 0, nullptr) \
-    v(unsigned, fireOSRExitFuzzAtOrAfter, 0, nullptr) \
+    v(bool, useOSRExitFuzz, false, Normal, nullptr) \
+    v(unsigned, fireOSRExitFuzzAtStatic, 0, Normal, nullptr) \
+    v(unsigned, fireOSRExitFuzzAt, 0, Normal, nullptr) \
+    v(unsigned, fireOSRExitFuzzAtOrAfter, 0, Normal, nullptr) \
     \
-    v(bool, logB3PhaseTimes, false, nullptr) \
-    v(double, rareBlockPenalty, 0.001, nullptr) \
-    v(bool, airSpillsEverything, false, nullptr) \
-    v(bool, logAirRegisterPressure, false, nullptr) \
-    v(unsigned, maxB3TailDupBlockSize, 3, nullptr) \
-    v(unsigned, maxB3TailDupBlockSuccessors, 3, nullptr) \
+    v(bool, logB3PhaseTimes, false, Normal, nullptr) \
+    v(double, rareBlockPenalty, 0.001, Normal, nullptr) \
+    v(bool, airSpillsEverything, false, Normal, nullptr) \
+    v(bool, logAirRegisterPressure, false, Normal, nullptr) \
+    v(unsigned, maxB3TailDupBlockSize, 3, Normal, nullptr) \
+    v(unsigned, maxB3TailDupBlockSuccessors, 3, Normal, nullptr) \
     \
-    v(bool, useDollarVM, false, "installs the $vm debugging tool in global objects") \
-    v(optionString, functionOverrides, nullptr, "file with debugging overrides for function bodies") \
+    v(bool, useDollarVM, false, Restricted, "installs the $vm debugging tool in global objects") \
+    v(optionString, functionOverrides, nullptr, Restricted, "file with debugging overrides for function bodies") \
     \
-    v(unsigned, watchdog, 0, "watchdog timeout (0 = Disabled, N = a timeout period of N milliseconds)") \
+    v(unsigned, watchdog, 0, Normal, "watchdog timeout (0 = Disabled, N = a timeout period of N milliseconds)") \
     \
-    v(bool, useICStats, false, nullptr) \
+    v(bool, useICStats, false, Normal, nullptr) \
     \
-    v(bool, dumpModuleRecord, false, nullptr) \
-    v(bool, dumpModuleLoadingState, false, nullptr) \
-    v(bool, exposeInternalModuleLoader, false, "expose the internal module loader object to the global space for debugging") \
+    v(bool, dumpModuleRecord, false, Normal, nullptr) \
+    v(bool, dumpModuleLoadingState, false, Normal, nullptr) \
+    v(bool, exposeInternalModuleLoader, false, Normal, "expose the internal module loader object to the global space for debugging") \
     \
-    v(bool, useSuperSampler, false, nullptr)
+    v(bool, useSuperSampler, false, Normal, nullptr)
 
 enum OptionEquivalence {
     SameOption,
@@ -407,14 +407,19 @@ public:
         All,
         Verbose
     };
-    
+
+    enum class Availability {
+        Normal = 0,
+        Restricted
+    };
+
     // This typedef is to allow us to eliminate the '_' in the field name in
     // union inside Entry. This is needed to keep the style checker happy.
     typedef int32_t int32;
 
     // Declare the option IDs:
     enum OptionID {
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, description_) \
+#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
         name_##ID,
         JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
@@ -447,7 +452,7 @@ public:
     JS_EXPORT_PRIVATE static void ensureOptionsAreCoherent();
 
     // Declare accessors for each option:
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, description_) \
+#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
     ALWAYS_INLINE static type_& name_() { return s_options[name_##ID].type_##Val; } \
     ALWAYS_INLINE static type_& name_##Default() { return s_defaultOptions[name_##ID].type_##Val; }
 
@@ -471,6 +476,7 @@ private:
         const char* name;
         const char* description;
         Type type;
+        Availability availability;
     };
 
     Options();
@@ -513,6 +519,7 @@ public:
     const char* name() const;
     const char* description() const;
     Options::Type type() const;
+    Options::Availability availability() const;
     bool isOverridden() const;
     const Option defaultOption() const;
     
@@ -549,6 +556,11 @@ inline const char* Option::description() const
 inline Options::Type Option::type() const
 {
     return Options::s_optionsInfo[m_id].type;
+}
+
+inline Options::Availability Option::availability() const
+{
+    return Options::s_optionsInfo[m_id].availability;
 }
 
 inline bool Option::isOverridden() const
