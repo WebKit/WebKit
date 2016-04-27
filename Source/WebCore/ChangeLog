@@ -1,3 +1,9 @@
+2016-04-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Mac][cmake] Unreviewed speculative buildfix after r200116, just for fun.
+
+        * PlatformMac.cmake:
+
 2016-04-27  Saam barati  <sbarati@apple.com>
 
         JSC should have an option to allow global const redeclarations
