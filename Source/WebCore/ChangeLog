@@ -1,3 +1,15 @@
+2016-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r199383.
+
+        Seems to have caused a 0.5% PLT regression on iOS
+
+        Reverted changeset:
+
+        "[iOS] do not exit AirPlay when the screen locks"
+        https://bugs.webkit.org/show_bug.cgi?id=156502
+        http://trac.webkit.org/changeset/199383
+
 2016-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove unnecessary HashMap from Font
