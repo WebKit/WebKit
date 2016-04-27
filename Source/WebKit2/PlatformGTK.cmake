@@ -46,9 +46,9 @@ list(APPEND WebKit2_SOURCES
     Platform/IPC/unix/AttachmentUnix.cpp
     Platform/IPC/unix/ConnectionUnix.cpp
 
-    Platform/gtk/LoggingGtk.cpp
-    Platform/gtk/ModuleGtk.cpp
+    Platform/glib/ModuleGlib.cpp
 
+    Platform/unix/LoggingUnix.cpp
     Platform/unix/SharedMemoryUnix.cpp
 
     PluginProcess/unix/PluginControllerProxyUnix.cpp
@@ -728,9 +728,9 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
         Platform/IPC/unix/AttachmentUnix.cpp
         Platform/IPC/unix/ConnectionUnix.cpp
 
-        Platform/gtk/LoggingGtk.cpp
-        Platform/gtk/ModuleGtk.cpp
+        Platform/glib/ModuleGlib.cpp
 
+        Platform/unix/LoggingUnix.cpp
         Platform/unix/SharedMemoryUnix.cpp
 
         PluginProcess/PluginControllerProxy.cpp

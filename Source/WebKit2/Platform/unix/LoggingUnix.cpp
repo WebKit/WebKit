@@ -27,15 +27,13 @@
 #include "config.h"
 #include "Logging.h"
 
-#include <glib.h>
-
 namespace WebKit {
 
 #if !LOG_DISABLED
 
 String logLevelString()
 {
-    return g_getenv("WEBKIT_DEBUG");
+    return getenv("WEBKIT_DEBUG");
 }
 
 #endif // !LOG_DISABLED

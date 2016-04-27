@@ -16,9 +16,9 @@ list(APPEND WebKit2_SOURCES
     Platform/IPC/unix/AttachmentUnix.cpp
     Platform/IPC/unix/ConnectionUnix.cpp
 
-    Platform/efl/LoggingEfl.cpp
     Platform/efl/ModuleEfl.cpp
 
+    Platform/unix/LoggingUnix.cpp
     Platform/unix/SharedMemoryUnix.cpp
 
     PluginProcess/unix/PluginControllerProxyUnix.cpp

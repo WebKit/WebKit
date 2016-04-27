@@ -1,3 +1,30 @@
+2016-04-27  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][EFL] Move WK2 platform code to a common place
+        https://bugs.webkit.org/show_bug.cgi?id=157069
+
+        Reviewed by Carlos Garcia Campos.
+
+        Logging implementation can be shared between EFL and GTK, so move it to unix.
+        The GTK Module implementation doesn't depend on GTK anyhow so move it to glib.
+
+        * Platform/efl/LoggingEfl.cpp: Removed.
+        (WebKit::logLevelString): Deleted.
+        * Platform/glib/ModuleGlib.cpp: Renamed from Source/WebKit2/Platform/gtk/ModuleGtk.cpp.
+        (WebKit::Module::load):
+        (WebKit::Module::unload):
+        (WebKit::Module::platformFunctionPointer):
+        * Platform/gtk/LoggingGtk.cpp:
+        (WebKit::logLevelString): Deleted.
+        * Platform/gtk/ModuleGtk.cpp:
+        (WebKit::Module::load): Deleted.
+        (WebKit::Module::unload): Deleted.
+        (WebKit::Module::platformFunctionPointer): Deleted.
+        * Platform/unix/LoggingUnix.cpp: Renamed from Source/WebKit2/Platform/gtk/LoggingGtk.cpp.
+        (WebKit::logLevelString):
+        * PlatformEfl.cmake: Update.
+        * PlatformGTK.cmake: Update
+
 2016-04-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix assertion when downloading with NSURLSession after r198955
