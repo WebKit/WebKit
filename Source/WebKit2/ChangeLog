@@ -1,3 +1,16 @@
+2016-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r200094): [FreeType] Vertical text is broken after r200094
+        https://bugs.webkit.org/show_bug.cgi?id=157066
+
+        Reviewed by Martin Robinson.
+
+        Add Source/WebCore/platform/graphics/freetype to the list of include dirs, because now FontPlatformData.h
+        includes FcUniquePtr.h.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+
 2016-04-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Uncaught Exception: SecurityError: DOM Exception 18: An attempt was made to break through the security policy of the user agent.

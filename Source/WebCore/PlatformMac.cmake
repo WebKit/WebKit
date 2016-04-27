@@ -348,7 +348,6 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/DisplayRefreshMonitor.cpp
     platform/graphics/DisplayRefreshMonitorManager.cpp
-    platform/graphics/FontPlatformData.cpp
 
     platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm
     platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm

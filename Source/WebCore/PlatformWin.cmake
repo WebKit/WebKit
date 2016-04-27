@@ -74,7 +74,6 @@ list(APPEND WebCore_SOURCES
 
     platform/crypto/win/CryptoDigestWin.cpp
 
-    platform/graphics/FontPlatformData.cpp
     platform/graphics/GraphicsContext3DPrivate.cpp
 
     platform/graphics/egl/GLContextEGL.cpp

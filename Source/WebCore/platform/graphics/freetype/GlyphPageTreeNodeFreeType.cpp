@@ -31,6 +31,7 @@
 #include "config.h"
 #include "GlyphPage.h"
 
+#include "CairoUtilities.h"
 #include "Font.h"
 #include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>
@@ -45,7 +46,8 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     cairo_scaled_font_t* scaledFont = font.platformData().scaledFont();
     ASSERT(scaledFont);
 
-    FT_Face face = cairo_ft_scaled_font_lock_face(scaledFont);
+    CairoFtFaceLocker cairoFtFaceLocker(scaledFont);
+    FT_Face face = cairoFtFaceLocker.ftFace();
     if (!face)
         return false;
 
@@ -65,7 +67,6 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
         }
     }
 
-    cairo_ft_scaled_font_unlock_face(scaledFont);
     return haveGlyphs;
 }
 

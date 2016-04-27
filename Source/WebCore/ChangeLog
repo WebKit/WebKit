@@ -1,3 +1,57 @@
+2016-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r200094): [FreeType] Vertical text is broken after r200094
+        https://bugs.webkit.org/show_bug.cgi?id=157066
+
+        Reviewed by Martin Robinson.
+
+        The problem is that Freetype implementation needs to call buildScaledFont() when orientation, SyntheticOblique
+        or size change, but the new static clone methods don't do that. I think it's the time to stop using our own
+        header for FontPlatformData for the FreeType implementation to make cross-platform changes easier and prevent
+        regressions like this in the future.
+
+        * CMakeLists.txt: Compile FontPlatformData.cpp for all ports.
+        * PlatformMac.cmake: Remove FontPlatformData.cpp.
+        * PlatformWin.cmake: Ditto.
+        * platform/graphics/FontPlatformData.cpp: We need our own clone methods in the FreeType backend.
+        * platform/graphics/FontPlatformData.h: Move FreeType specific methods and members from the old header file.
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::CairoFtFaceLocker::CairoFtFaceLocker): Move CairoFtFaceLocker implementation here from
+        HarfBuzzFaceCairo.cpp to make it available to other classes, and make it handle the case of
+        cairo_ft_scaled_font_lock_face() returning nullptr.
+        (WebCore::CairoFtFaceLocker::~CairoFtFaceLocker):
+        * platform/graphics/cairo/CairoUtilities.h:
+        (WebCore::CairoFtFaceLocker::ftFace):
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::findBestFontGivenFallbacks): Move the fallbacks implementation to FontPlatformData where it belongs
+        and here simply use FontPlatformData::fallbacks().
+        * platform/graphics/freetype/FontPlatformData.h: Removed.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Remove members already initialized in the header.
+        (WebCore::FontPlatformData::operator=): Add missing members to be copied.
+        (WebCore::FontPlatformData::~FontPlatformData): Do not free m_scaledFont manually since we are now using a smart pointer.
+        (WebCore::FontPlatformData::cloneWithOrientation): Call buildScaledFont() like setOrientation() did.
+        (WebCore::FontPlatformData::cloneWithSyntheticOblique): Call buildScaledFont() like setSyntheticOblique() did.
+        (WebCore::FontPlatformData::cloneWithSize): Call buildScaledFont().
+        (WebCore::FontPlatformData::fallbacks): Lazily initialize fallbacks if needed and return it.
+        (WebCore::FontPlatformData::platformIsEqual): Only compare FreeType specific members.
+        (WebCore::FontPlatformData::buildScaledFont): Use RefPtr for m_scaledFont.
+        (WebCore::FontPlatformData::hasCompatibleCharmap): Use CairoFtFaceLocker.
+        (WebCore::FontPlatformData::openTypeTable): Update to return RefPtr instead of PassRefPtr and use CairoFtFaceLocker.
+        (WebCore::FontPlatformData::operator==): Deleted.
+        (WebCore::FontPlatformData::setOrientation): Deleted.
+        (WebCore::FontPlatformData::setSyntheticOblique): Deleted.
+        * platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp:
+        (WebCore::GlyphPage::fill): Use CairoFtFaceLocker.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::platformInit): Ditto.
+        (WebCore::Font::canRenderCombiningCharacterSequence): Ditto.
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp:
+        (WebCore::harfBuzzCairoGetTable): Ditto.
+        (WebCore::CairoFtFaceLocker::CairoFtFaceLocker): Deleted.
+        (WebCore::CairoFtFaceLocker::lock): Deleted.
+        (WebCore::CairoFtFaceLocker::~CairoFtFaceLocker): Deleted.
+
 2016-04-27  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL][GTK] Volume slider only changes volume when thumb is released, not while dragging

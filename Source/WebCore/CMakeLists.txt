@@ -2203,6 +2203,7 @@ set(WebCore_SOURCES
     platform/graphics/FontDescription.cpp
     platform/graphics/FontFeatureSettings.cpp
     platform/graphics/FontGenericFamilies.cpp
+    platform/graphics/FontPlatformData.cpp
     platform/graphics/FontRanges.cpp
     platform/graphics/GeneratedImage.cpp
     platform/graphics/GeometryUtilities.cpp

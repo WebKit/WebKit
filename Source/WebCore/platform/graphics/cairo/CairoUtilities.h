@@ -36,6 +36,10 @@
 // This function was added pretty much simultaneous to when 1.13 was branched.
 #define HAVE_CAIRO_SURFACE_SET_DEVICE_SCALE CAIRO_VERSION_MAJOR > 1 || (CAIRO_VERSION_MAJOR == 1 && CAIRO_VERSION_MINOR >= 13)
 
+#if USE(FREETYPE)
+#include <cairo-ft.h>
+#endif
+
 namespace WebCore {
 class AffineTransform;
 class Color;
@@ -45,6 +49,29 @@ class IntSize;
 class IntRect;
 class Path;
 class Region;
+
+#if USE(FREETYPE)
+class CairoFtFaceLocker {
+public:
+    CairoFtFaceLocker(cairo_scaled_font_t* scaledFont)
+        : m_scaledFont(scaledFont)
+        , m_ftFace(cairo_ft_scaled_font_lock_face(scaledFont))
+    {
+    }
+
+    ~CairoFtFaceLocker()
+    {
+        if (m_ftFace)
+            cairo_ft_scaled_font_unlock_face(m_scaledFont);
+    }
+
+    FT_Face ftFace() const { return m_ftFace; }
+
+private:
+    cairo_scaled_font_t* m_scaledFont { nullptr };
+    FT_Face m_ftFace { nullptr };
+};
+#endif
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr);
 void setSourceRGBAFromColor(cairo_t*, const Color&);

@@ -62,6 +62,7 @@ FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticB
 }
 #endif
 
+#if !USE(FREETYPE)
 FontPlatformData FontPlatformData::cloneWithOrientation(const FontPlatformData& source, FontOrientation orientation)
 {
     FontPlatformData copy(source);
@@ -82,5 +83,6 @@ FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source,
     copy.m_size = size;
     return copy;
 }
+#endif
 
 }

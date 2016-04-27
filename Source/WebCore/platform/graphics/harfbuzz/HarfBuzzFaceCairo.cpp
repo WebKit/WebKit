@@ -32,6 +32,7 @@
 #include "config.h"
 #include "HarfBuzzFace.h"
 
+#include "CairoUtilities.h"
 #include "Font.h"
 #include "FontPlatformData.h"
 #include "GlyphBuffer.h"
@@ -55,21 +56,6 @@ struct HarfBuzzFontData {
     { }
     WTF::HashMap<uint32_t, uint16_t>* m_glyphCacheForFaceCacheEntry;
     cairo_scaled_font_t* m_cairoScaledFont;
-};
-
-class CairoFtFaceLocker {
-public:
-    CairoFtFaceLocker(cairo_scaled_font_t* cairoScaledFont) : m_scaledFont(cairoScaledFont) { };
-    FT_Face lock()
-    {
-        return cairo_ft_scaled_font_lock_face(m_scaledFont);
-    };
-    ~CairoFtFaceLocker()
-    {
-        cairo_ft_scaled_font_unlock_face(m_scaledFont);
-    }
-private:
-    cairo_scaled_font_t* m_scaledFont;
 };
 
 static hb_position_t floatToHarfBuzzPosition(float value)
@@ -178,9 +164,9 @@ static hb_blob_t* harfBuzzCairoGetTable(hb_face_t*, hb_tag_t tag, void* userData
         return 0;
 
     CairoFtFaceLocker cairoFtFaceLocker(scaledFont);
-    FT_Face ftFont = cairoFtFaceLocker.lock();
+    FT_Face ftFont = cairoFtFaceLocker.ftFace();
     if (!ftFont)
-        return 0;
+        return nullptr;
 
     FT_ULong tableSize = 0;
     FT_Error error = FT_Load_Sfnt_Table(ftFont, tag, 0, 0, &tableSize);

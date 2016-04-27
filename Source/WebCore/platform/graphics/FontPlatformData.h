@@ -22,11 +22,6 @@
  *
  */
 
-// FIXME: This is temporary until all ports switch to using this file.
-#if PLATFORM(EFL) || PLATFORM(GTK)
-#include "freetype/FontPlatformData.h"
-#else
-
 #ifndef FontPlatformData_h
 #define FontPlatformData_h
 
@@ -40,6 +35,12 @@
 #include "RefPtrCairo.h"
 #include <wtf/HashFunctions.h>
 #include <cairo.h>
+#endif
+
+#if USE(FREETYPE)
+#include "FcUniquePtr.h"
+#include "HarfBuzzFace.h"
+#include "OpenTypeVerticalData.h"
 #endif
 
 #if PLATFORM(COCOA)
@@ -81,7 +82,9 @@ class FontPlatformData {
 public:
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();
+#if !USE(FREETYPE)
     FontPlatformData(const FontPlatformData&) = default;
+#endif
     FontPlatformData(FontPlatformData&&) = default;
     FontPlatformData(const FontDescription&, const AtomicString& family);
     FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, TextRenderingMode = AutoTextRendering);
@@ -106,6 +109,13 @@ public:
 #elif USE(CAIRO)
     FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic);
 #endif
+#endif
+
+#if USE(FREETYPE)
+    FontPlatformData(FcPattern*, const FontDescription&);
+    FontPlatformData(cairo_font_face_t*, const FontDescription&, bool syntheticBold, bool syntheticOblique);
+    FontPlatformData(const FontPlatformData&);
+    ~FontPlatformData();
 #endif
 
 #if PLATFORM(WIN)
@@ -149,6 +159,13 @@ public:
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont.get(); }
 #endif
 
+#if USE(FREETYPE)
+    HarfBuzzFace* harfBuzzFace() const;
+    bool hasCompatibleCharmap() const;
+    PassRefPtr<OpenTypeVerticalData> verticalData() const;
+    FcFontSet* fallbacks() const;
+#endif
+
     unsigned hash() const
     {
 #if PLATFORM(WIN) && !USE(CAIRO)
@@ -167,7 +184,11 @@ public:
 #endif
     }
 
+#if USE(FREETYPE)
+    FontPlatformData& operator=(const FontPlatformData&);
+#else
     FontPlatformData& operator=(const FontPlatformData&) = default;
+#endif
 
     bool operator==(const FontPlatformData& other) const
     {
@@ -196,7 +217,7 @@ public:
 #endif
     }
 
-#if PLATFORM(COCOA) || PLATFORM(WIN)
+#if PLATFORM(COCOA) || PLATFORM(WIN) || USE(FREETYPE)
     RefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
 #endif
 
@@ -212,6 +233,9 @@ private:
 #if PLATFORM(WIN)
     void platformDataInit(HFONT, float size, HDC, WCHAR* faceName);
 #endif
+#if USE(FREETYPE)
+    void buildScaledFont(cairo_font_face_t*);
+#endif
 
 #if PLATFORM(COCOA)
     // FIXME: Get rid of one of these. These two fonts are subtly different, and it is not obvious which one to use where.
@@ -226,6 +250,11 @@ private:
 #endif
 #if USE(CAIRO)
     RefPtr<cairo_scaled_font_t> m_scaledFont;
+#endif
+#if USE(FREETYPE)
+    RefPtr<FcPattern> m_pattern;
+    mutable FcUniquePtr<FcFontSet> m_fallbacks;
+    mutable RefPtr<HarfBuzzFace> m_harfBuzzFace;
 #endif
 
     // The values below are common to all ports
@@ -249,6 +278,9 @@ private:
 #if PLATFORM(WIN)
     bool m_useGDI { false };
 #endif
+#if USE(FREETYPE)
+    bool m_fixedWidth { false };
+#endif
 };
 
 #if USE(APPKIT)
@@ -267,5 +299,3 @@ inline NSFont *toNSFont(CTFontRef font)
 } // namespace WebCore
 
 #endif // FontPlatformData_h
-
-#endif
