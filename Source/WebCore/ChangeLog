@@ -1,3 +1,22 @@
+2016-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Clean up Font::removeFromSystemFallbackCache()
+        https://bugs.webkit.org/show_bug.cgi?id=157093
+
+        Reviewed by Darin Adler.
+
+        Fonts have a bit which represents whether or not the system fallback cache references them.
+        This bit gets set to 1 when they are inserted into the system fallback cache, but was not
+        being reset back to 0 when it was removed.
+
+        This is benign, since the old codepath has no effect. However, we can speed up the function
+        by properly updating this bit.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::removeFromSystemFallbackCache):
+
 2016-04-27  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: RTCIceCandidate don't need a custom bindings
