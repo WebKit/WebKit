@@ -908,6 +908,9 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-user-modify": [
         "read-only", "read-write", "read-write-plaintext-only"
     ],
+    "-webkit-user-select": [
+        "auto", "none", "text", "all"
+    ],
     "-webkit-text-stroke-width": [
         "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
