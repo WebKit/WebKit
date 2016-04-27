@@ -394,6 +394,7 @@ public:
     void updateStylesForColumnChildren();
 
     bool needsLayoutAfterRegionRangeChange() const override;
+    WEBCORE_EXPORT RenderText* findClosestTextAtAbsolutePoint(const FloatPoint&);
 
 protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;

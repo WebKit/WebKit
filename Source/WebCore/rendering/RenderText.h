@@ -44,7 +44,7 @@ public:
 
     const char* renderName() const override;
 
-    Text* textNode() const;
+    WEBCORE_EXPORT Text* textNode() const;
 
     virtual bool isTextFragment() const;
 
