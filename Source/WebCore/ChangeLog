@@ -1,3 +1,24 @@
+2016-04-26  Dean Jackson  <dino@apple.com>
+
+        RTL native <select> buttons should have arrows on left
+        https://bugs.webkit.org/show_bug.cgi?id=157055
+        <rdar://problem/25894428>
+
+        Reviewed by Myles Maxfield.
+
+        If the text direction is right-to-left, the select popup
+        buttons should have the arrows on the left side.
+
+        Test: fast/forms/select-writing-direction-natural.html
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::popupButtonPadding): Takes a direction parameter.
+        (WebCore::RenderThemeMac::popupInternalPaddingBox): Checks the direction for the padding.
+        (WebCore::RenderThemeMac::setPopupButtonCellState): Tell the button to put the
+        arrows on the correct side.
+        (WebCore::RenderThemeMac::popupButton): Deleted an unnecessary comment.
+
 2016-04-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WK2] [OS X] Create API for switching RTL scrollbar policy

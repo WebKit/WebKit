@@ -896,15 +896,21 @@ const IntSize* RenderThemeMac::popupButtonSizes() const
     return sizes;
 }
 
-const int* RenderThemeMac::popupButtonPadding(NSControlSize size) const
+const int* RenderThemeMac::popupButtonPadding(NSControlSize size, bool isRTL) const
 {
-    static const int padding[3][4] =
+    static const int paddingLTR[3][4] =
     {
         { 2, 26, 3, 8 },
         { 2, 23, 3, 8 },
         { 2, 22, 3, 10 }
     };
-    return padding[size];
+    static const int paddingRTL[3][4] =
+    {
+        { 2, 8, 3, 26 },
+        { 2, 8, 3, 23 },
+        { 2, 8, 3, 22 }
+    };
+    return isRTL ? paddingRTL[size] : paddingLTR[size];
 }
 
 bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
@@ -1368,10 +1374,11 @@ void RenderThemeMac::adjustMenuListStyle(StyleResolver& styleResolver, RenderSty
 LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) const
 {
     if (style.appearance() == MenulistPart) {
-        return { static_cast<int>(popupButtonPadding(controlSizeForFont(style))[topPadding] * style.effectiveZoom()),
-            static_cast<int>(popupButtonPadding(controlSizeForFont(style))[rightPadding] * style.effectiveZoom()),
-            static_cast<int>(popupButtonPadding(controlSizeForFont(style))[bottomPadding] * style.effectiveZoom()),
-            static_cast<int>(popupButtonPadding(controlSizeForFont(style))[leftPadding] * style.effectiveZoom()) };
+        const int* padding = popupButtonPadding(controlSizeForFont(style), style.direction() == RTL);
+        return { static_cast<int>(padding[topPadding] * style.effectiveZoom()),
+            static_cast<int>(padding[rightPadding] * style.effectiveZoom()),
+            static_cast<int>(padding[bottomPadding] * style.effectiveZoom()),
+            static_cast<int>(padding[leftPadding] * style.effectiveZoom()) };
     }
 
     if (style.appearance() == MenulistButtonPart) {
@@ -1422,6 +1429,8 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject& o, const IntSiz
 
     // Set the control size based off the rectangle we're painting into.
     setControlSize(popupButton, popupButtonSizes(), buttonSize, o.style().effectiveZoom());
+
+    popupButton.userInterfaceLayoutDirection = o.style().direction() == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft;
 
     // Update the various states we respond to.
     updateCheckedState(popupButton, o);
@@ -1957,10 +1966,6 @@ NSPopUpButtonCell* RenderThemeMac::popupButton() const
         m_popupButton = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
         [m_popupButton.get() setUsesItemFromMenu:NO];
         [m_popupButton.get() setFocusRingType:NSFocusRingTypeExterior];
-        // We don't want the app's UI layout direction to affect the appearance of popup buttons in
-        // web content, which has its own layout direction.
-        // FIXME: Make this depend on the directionality of the select element, once the rest of the
-        // rendering code can account for the popup arrows appearing on the other side.
         [m_popupButton setUserInterfaceLayoutDirection:NSUserInterfaceLayoutDirectionLeftToRight];
     }
 

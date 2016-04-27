@@ -192,7 +192,7 @@ private:
     void setPopupButtonCellState(const RenderObject&, const IntSize&);
     const IntSize* popupButtonSizes() const;
     const int* popupButtonMargins() const;
-    const int* popupButtonPadding(NSControlSize) const;
+    const int* popupButtonPadding(NSControlSize, bool isRTL) const;
     void paintMenuListButtonGradients(const RenderObject&, const PaintInfo&, const IntRect&);
     const IntSize* menuListSizes() const;
 
