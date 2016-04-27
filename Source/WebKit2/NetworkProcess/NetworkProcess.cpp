@@ -523,7 +523,10 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
     
 void NetworkProcess::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite)
 {
-    downloadManager().continueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle, allowOverwrite);
+    if (destination.isEmpty())
+        downloadManager().cancelDownload(downloadID);
+    else
+        downloadManager().continueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle, allowOverwrite);
 }
 #endif
 

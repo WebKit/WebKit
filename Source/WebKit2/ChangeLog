@@ -1,3 +1,13 @@
+2016-04-27  Alex Christensen  <achristensen@webkit.org>
+
+        Fix assertion when downloading with NSURLSession after r198955
+        https://bugs.webkit.org/show_bug.cgi?id=157051
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::continueDecidePendingDownloadDestination):
+
 2016-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r200094): [FreeType] Vertical text is broken after r200094
