@@ -1,3 +1,13 @@
+2016-04-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        Follow up for r200113 on 32bit
+
+        I forgot to do the 32bit counterpart of r200113.
+        The test fails on the bots.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2016-04-27  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Fails to build randomly when generating LLIntDesiredOffsets.h
