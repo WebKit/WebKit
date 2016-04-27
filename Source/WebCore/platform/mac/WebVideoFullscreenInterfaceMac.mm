@@ -51,16 +51,18 @@ namespace WebCore {
 WebVideoFullscreenInterfaceMac::WebVideoFullscreenInterfaceMac(WebPlaybackSessionInterfaceMac& playbackSessionInterface)
     : m_playbackSessionInterface(playbackSessionInterface)
 {
+    m_playbackSessionInterface->setClient(this);
 }
 
 WebVideoFullscreenInterfaceMac::~WebVideoFullscreenInterfaceMac()
 {
+    if (m_playbackSessionInterface->client() == this)
+        m_playbackSessionInterface->setClient(nullptr);
 }
 
 void WebVideoFullscreenInterfaceMac::setWebVideoFullscreenModel(WebVideoFullscreenModel* model)
 {
     m_videoFullscreenModel = model;
-    m_playbackSessionInterface->setWebPlaybackSessionModel(model);
 }
 
 void WebVideoFullscreenInterfaceMac::setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver* observer)
@@ -103,9 +105,12 @@ void WebVideoFullscreenInterfaceMac::setCurrentTime(double currentTime, double a
 void WebVideoFullscreenInterfaceMac::setRate(bool isPlaying, float playbackRate)
 {
     m_playbackSessionInterface->setRate(isPlaying, playbackRate);
+}
 
+void WebVideoFullscreenInterfaceMac::rateChanged(bool isPlaying, float playbackRate)
+{
 #if USE(APPLE_INTERNAL_SDK)
-    [videoFullscreenInterfaceObjC() setRate:isPlaying ? playbackRate : 0.];
+    [videoFullscreenInterfaceObjC() updateIsPlaying:isPlaying newPlaybackRate:playbackRate];
 #endif
 }
 

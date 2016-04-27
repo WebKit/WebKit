@@ -29,6 +29,7 @@
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #include "HTMLMediaElementEnums.h"
+#include "WebPlaybackSessionInterfaceMac.h"
 #include "WebVideoFullscreenInterface.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
@@ -48,6 +49,7 @@ class WebVideoFullscreenModel;
 
 class WEBCORE_EXPORT WebVideoFullscreenInterfaceMac
     : public WebVideoFullscreenInterface
+    , private WebPlaybackSessionInterfaceMacClient
     , public RefCounted<WebVideoFullscreenInterfaceMac> {
 
 public:
@@ -92,6 +94,8 @@ public:
 
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const { return false; }
     void applicationDidBecomeActive() { }
+
+    void rateChanged(bool isPlaying, float playbackRate) override;
 
 #if USE(APPLE_INTERNAL_SDK)
     WEBCORE_EXPORT WebVideoFullscreenInterfaceMacObjC *videoFullscreenInterfaceObjC();

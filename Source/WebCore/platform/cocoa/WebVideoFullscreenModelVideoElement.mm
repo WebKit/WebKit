@@ -67,7 +67,6 @@ void WebVideoFullscreenModelVideoElement::setWebVideoFullscreenInterface(WebVide
         return;
 
     m_videoFullscreenInterface = interface;
-    m_playbackSessionModel->setWebPlaybackSessionInterface(interface);
 
     if (m_videoFullscreenInterface && m_videoElement)
         m_videoFullscreenInterface->setVideoDimensions(true, m_videoElement->videoWidth(), m_videoElement->videoHeight());
@@ -75,7 +74,6 @@ void WebVideoFullscreenModelVideoElement::setWebVideoFullscreenInterface(WebVide
 
 void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
 {
-    m_playbackSessionModel->setMediaElement(videoElement);
     if (m_videoElement == videoElement)
         return;
 

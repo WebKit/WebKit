@@ -132,6 +132,16 @@ void WebPlaybackSessionInterfaceMac::setWebPlaybackSessionModel(WebPlaybackSessi
     m_playbackSessionModel = model;
 }
 
+void WebPlaybackSessionInterfaceMac::setClient(WebPlaybackSessionInterfaceMacClient* client)
+{
+    m_client = client;
+
+    if (m_client) {
+        float rate = [playBackControlsManager() rate];
+        m_client->rateChanged(!!rate, rate);
+    }
+}
+
 void WebPlaybackSessionInterfaceMac::setDuration(double duration)
 {
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
@@ -157,8 +167,10 @@ void WebPlaybackSessionInterfaceMac::setCurrentTime(double currentTime, double a
 void WebPlaybackSessionInterfaceMac::setRate(bool isPlaying, float playbackRate)
 {
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
-
     [controlsManager setRate:isPlaying ? playbackRate : 0.];
+
+    if (m_client)
+        m_client->rateChanged(isPlaying, playbackRate);
 }
 
 void WebPlaybackSessionInterfaceMac::setSeekableRanges(const TimeRanges& timeRanges)

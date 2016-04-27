@@ -179,6 +179,7 @@ WebVideoFullscreenManager::ModelInterfaceTuple WebVideoFullscreenManager::create
     RefPtr<WebVideoFullscreenModelVideoElement> model = WebVideoFullscreenModelVideoElement::create(playbackSessionModel);
     auto& playbackSessionInterface = m_playbackSessionManager->ensureInterface(contextId);
     RefPtr<WebVideoFullscreenInterfaceContext> interface = WebVideoFullscreenInterfaceContext::create(*this, playbackSessionInterface, contextId);
+    m_playbackSessionManager->addClientForContext(contextId);
 
     interface->setLayerHostingContext(LayerHostingContext::createForExternalHostingProcess());
     model->setWebVideoFullscreenInterface(interface.get());
@@ -209,6 +210,8 @@ void WebVideoFullscreenManager::removeContext(uint64_t contextId)
     RefPtr<WebVideoFullscreenModelVideoElement> model;
     RefPtr<WebVideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
+
+    m_playbackSessionManager->removeClientForContext(contextId);
 
     RefPtr<HTMLVideoElement> videoElement = model->videoElement();
     model->setVideoElement(nullptr);

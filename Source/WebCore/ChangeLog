@@ -1,3 +1,50 @@
+2016-04-26  Ada Chan  <adachan@apple.com>
+
+        Set WebVideoFullscreenInterfaceMac up as a client of WebPlaybackSessionInterfaceMac to listen for playback state changes
+        https://bugs.webkit.org/show_bug.cgi?id=157008
+
+        Reviewed by Jer Noble.
+
+        For WebVideoFullscreenInterfaceMac to be notified when the playback rate changes in
+        WebPlaybackSessionInterfaceMac, add a new WebPlaybackSessionInterfaceMacClient base
+        class that WebVideoFullscreenInterfaceMac implements, similar to the WebPlaybackSessionInterfaceAVKitClient
+        on iOS. WebVideoFullscreenInterfaceMac sets itself as a client of WebPlaybackSessionInterfaceMac
+        so WebPlaybackSessionInterfaceMac can notify WebVideoFullscreenInterfaceMac whenever the
+        playback rate changes.
+
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::setWebVideoFullscreenInterface):
+        We should not change the WebPlaybackSessionModelMediaElement's interface here since WebPlaybackSessionManager
+        has already set that up when creating the context for this media element.
+        (WebVideoFullscreenModelVideoElement::setVideoElement):
+        We should not change the WebPlaybackSessionModelMediaElement's media element here because
+        this will be called with NULL when the fullscreen context is cleaned up, but the
+        WebPlaybackSessionModelMediaElement might still need to stay around. We'll make sure the
+        WebPlaybackSessionModelMediaElement's media element is set when setting up the fullscreen
+        context in WebVideoFullscreenManager::enterVideoFullscreenForVideoElement().
+
+        * platform/mac/WebPlaybackSessionInterfaceMac.h:
+        (WebCore::WebPlaybackSessionInterfaceMacClient::~WebPlaybackSessionInterfaceMacClient):
+
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::setClient):
+        Set the client. Notify the client about the current playback state.
+        (WebCore::WebPlaybackSessionInterfaceMac::setRate):
+        If a client is set, let that client know about the change in playback rate.
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (WebCore::WebVideoFullscreenInterfaceMac::WebVideoFullscreenInterfaceMac):
+        Set itself as a client of WebPlaybackSessionInterfaceMac.
+        (WebCore::WebVideoFullscreenInterfaceMac::~WebVideoFullscreenInterfaceMac):
+        Make sure WebPlaybackSessionInterfaceMac won't hold onto a stale pointer to itself.
+        (WebCore::WebVideoFullscreenInterfaceMac::setRate):
+        We don't have to update the WebVideoFullscreenInterfaceMac's rate here anymore. The change
+        in playback rate in WebPlaybackSessionInterfaceMac should trigger
+        WebVideoFullscreenInterfaceMac::rateChanged() to be called.
+        (WebCore::WebVideoFullscreenInterfaceMac::rateChanged):
+        Pass in both the isPlaying state and the playback rate to WebVideoFullscreenInterfaceMacObjC.
+
 2016-04-27  Brady Eidson  <beidson@apple.com>
 
         Modernize platform/CrossThreadCopier.h style.

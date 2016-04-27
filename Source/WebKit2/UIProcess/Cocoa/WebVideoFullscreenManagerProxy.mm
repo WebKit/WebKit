@@ -318,6 +318,7 @@ WebVideoFullscreenManagerProxy::ModelInterfaceTuple WebVideoFullscreenManagerPro
     Ref<WebVideoFullscreenModelContext> model = WebVideoFullscreenModelContext::create(*this, playbackSessionModel, contextId);
     auto& playbackSessionInterface = m_playbackSessionManagerProxy->ensureInterface(contextId);
     Ref<PlatformWebVideoFullscreenInterface> interface = PlatformWebVideoFullscreenInterface::create(playbackSessionInterface);
+    m_playbackSessionManagerProxy->addClientForContext(contextId);
 
     interface->setWebVideoFullscreenModel(&model.get());
     interface->setWebVideoFullscreenChangeObserver(&model.get());
@@ -359,6 +360,7 @@ void WebVideoFullscreenManagerProxy::removeClientForContext(uint64_t contextId)
     clientCount--;
 
     if (clientCount <= 0) {
+        m_playbackSessionManagerProxy->removeClientForContext(contextId);
         m_clientCounts.remove(contextId);
         m_contextMap.remove(contextId);
         return;

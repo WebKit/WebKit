@@ -1,3 +1,38 @@
+2016-04-26  Ada Chan  <adachan@apple.com>
+
+        Set WebVideoFullscreenInterfaceMac up as a client of WebPlaybackSessionInterfaceMac to listen for playback state changes
+        https://bugs.webkit.org/show_bug.cgi?id=157008
+
+        Reviewed by Jer Noble.
+
+        Since WebVideoFullscreenInterfaceMac holds onto WebPlaybackSessionInterfaceMac, we can't let
+        WebPlaybackSessionManagerProxy unregister the context for that media element while
+        WebVideoFullscreenInterfaceMac is still using it. WebVideoFullscreenInterfaceMac should add
+        to the client count for that WebPlaybackSession context.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::createModelAndInterface):
+        When the context for the media element is created with the WebVideoFullscreenManagerProxy, it should
+        add one to the client count for the media element context in WebPlaybackSessionManagerProxy.
+        (WebKit::WebVideoFullscreenManagerProxy::removeClientForContext):
+        When WebVideoFullscreenManagerProxy unregisters the context for this media element, it should
+        subtract one from the client count for the media element context in WebPlaybackSessionManagerProxy.
+
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionManager::clearPlaybackControlsManager):
+        Bail early if m_controlsManagerContextId is zero. Otherwise, we'd end up sending a
+        ClearPlaybackControlsManager message to the UI process inadvertently.
+        (WebKit::WebPlaybackSessionManager::contextIdForMediaElement):
+        Make sure the model element for the context ID is set to the media element.
+
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::createModelAndInterface):
+        When the context for the media element is created with the WebVideoFullscreenManager, it should
+        add one to the client count for the media element context in WebPlaybackSessionManager.
+        (WebKit::WebVideoFullscreenManager::removeContext):
+        When WebVideoFullscreenManager unregisters the context for this media element, it should
+        subtract one from the client count for the media element context in WebPlaybackSessionManager.
+
 2016-04-27  Alex Christensen  <achristensen@webkit.org>
 
         Remove download message receiver when NetworkProcess crashes

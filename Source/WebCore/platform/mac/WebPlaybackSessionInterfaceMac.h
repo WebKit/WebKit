@@ -40,6 +40,13 @@ namespace WebCore {
 class IntRect;
 class WebPlaybackSessionModel;
 
+class WebPlaybackSessionInterfaceMacClient {
+public:
+    virtual ~WebPlaybackSessionInterfaceMacClient() { }
+
+    virtual void rateChanged(bool isPlaying, float playbackRate) = 0;
+};
+
 class WEBCORE_EXPORT WebPlaybackSessionInterfaceMac final
     : public WebPlaybackSessionInterface
     , public RefCounted<WebPlaybackSessionInterfaceMac> {
@@ -51,6 +58,8 @@ public:
     virtual ~WebPlaybackSessionInterfaceMac();
     WebPlaybackSessionModel* webPlaybackSessionModel() const { return m_playbackSessionModel; }
     WEBCORE_EXPORT void setWebPlaybackSessionModel(WebPlaybackSessionModel*);
+    WebPlaybackSessionInterfaceMacClient* client() const { return m_client; }
+    void setClient(WebPlaybackSessionInterfaceMacClient*);
 
     WEBCORE_EXPORT void resetMediaState() final { }
     WEBCORE_EXPORT void setDuration(double) final;
@@ -70,6 +79,7 @@ public:
 private:
     WebPlaybackSessionModel* m_playbackSessionModel { nullptr };
     RetainPtr<WebPlaybackControlsManager> m_playbackControlsManager;
+    WebPlaybackSessionInterfaceMacClient* m_client { nullptr };
 };
 
 }

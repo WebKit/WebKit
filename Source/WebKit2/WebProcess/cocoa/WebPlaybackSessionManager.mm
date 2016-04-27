@@ -261,7 +261,7 @@ void WebPlaybackSessionManager::clearPlaybackControlsManager(WebCore::HTMLMediaE
     if (foundIterator == m_mediaElements.end())
         return;
 
-    if (m_controlsManagerContextId != foundIterator->value)
+    if (!m_controlsManagerContextId || m_controlsManagerContextId != foundIterator->value)
         return;
 
     removeClientForContext(m_controlsManagerContextId);
@@ -273,7 +273,9 @@ void WebPlaybackSessionManager::clearPlaybackControlsManager(WebCore::HTMLMediaE
 uint64_t WebPlaybackSessionManager::contextIdForMediaElement(WebCore::HTMLMediaElement& mediaElement)
 {
     auto addResult = m_mediaElements.ensure(&mediaElement, [&] { return nextContextId(); });
-    return addResult.iterator->value;
+    uint64_t contextId = addResult.iterator->value;
+    ensureModel(contextId).setMediaElement(&mediaElement);
+    return contextId;
 }
 
 #pragma mark Interface to WebPlaybackSessionInterfaceContext:
