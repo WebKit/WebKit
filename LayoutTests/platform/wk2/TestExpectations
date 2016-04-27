@@ -619,6 +619,7 @@ platform/mac/fast/events/objc-event-api.html
 editing/pasteboard/file-drag-to-editable.html
 editing/pasteboard/file-input-files-access.html
 fast/dom/HTMLImageElement/image-with-blob-url-blocked-by-csp-img-src-star.html
+fast/dom/HTMLImageElement/image-with-blob-url-allowed-by-csp-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html
 fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
 fast/events/data-transfer-files-attribute-identity.html

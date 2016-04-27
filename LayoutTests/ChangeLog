@@ -1,3 +1,37 @@
+2016-04-27  Daniel Bates  <dabates@apple.com>
+
+        CSP: Add tests for setting allowContentSecurityPolicySourceStarToMatchAnyProtocol
+        https://bugs.webkit.org/show_bug.cgi?id=157100
+
+        Reviewed by Brent Fulgham.
+
+        Add tests to ensure that we do not regress the behavior of setting allowContentSecurityPolicySourceStarToMatchAnyProtocol.
+        For completeness, this setting was added in r200130 (https://bugs.webkit.org/show_bug.cgi?id=157005) to enable or disable
+        whether source * can match any protocol as part of a workaround for the iOS apps Ecobee and Quora.
+
+        * fast/dom/HTMLImageElement/image-with-blob-url-allowed-by-csp-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Added.
+        * fast/dom/HTMLImageElement/image-with-blob-url-allowed-by-csp-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Added.
+        * fast/dom/HTMLImageElement/image-with-file-url-allowed-by-csp-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Added.
+        * fast/dom/HTMLImageElement/image-with-file-url-allowed-by-csp-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Added.
+        * fast/dom/HTMLLinkElement/link-with-blob-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Added.
+        * fast/dom/HTMLLinkElement/link-with-blob-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Added.
+        * fast/dom/HTMLLinkElement/link-with-data-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Added.
+        * fast/dom/HTMLLinkElement/link-with-data-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Added.
+        * fast/dom/HTMLLinkElement/link-with-file-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Added.
+        * fast/dom/HTMLLinkElement/link-with-file-url-allowed-by-csp-style-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Added.
+        * fast/dom/HTMLLinkElement/resources/green-background-color.css: Added.
+        (#test):
+        * media/video-with-file-url-allowed-by-csp-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled-expected.html: Copied from LayoutTests/media/video-with-file-url-blocked-by-csp-media-src-star.html.
+        * media/video-with-file-url-allowed-by-csp-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html: Copied from LayoutTests/media/video-with-file-url-blocked-by-csp-media-src-star.html.
+        * media/video-with-file-url-blocked-by-csp-media-src-star-expected.html: Substitute "blocked" for "allowed" since the purpose of the corresponding
+        test is to ensure that we block loading a file URL video.
+        * media/video-with-file-url-blocked-by-csp-media-src-star.html: Substitute "blocked" for "allowed" since the purpose of this test is to ensure
+        that we block loading a file URL video. Additionally, register an oncanplaythrough handler instead of an onloadedmetadata handler and call testFinished()
+        to signal test completion on a zero timer as a means to help ensure that the first frame of the video is drawn should we regress the blocking of a video file URL.
+        * platform/wk2/TestExpectations: Skip test LayoutTests/fast/dom/HTMLImageElement/image-with-blob-url-allowed-by-csp-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html
+        when using WebKitTestRunner because WebKitTestRunner does not support eventSender.beginDragWithFiles(). See need to fix
+        <https://bugs.webkit.org/show_bug.cgi?id=64285>.
+
 2016-04-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking compositing/contents-scale/incremental-change.html as a flaky failure on ios-simulator-wk2
