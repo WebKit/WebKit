@@ -1,3 +1,17 @@
+2016-04-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove failure expectation for tests that now pass on ios-simulator.
+
+        Unreviewed test gardening.
+
+		I evaluated all of the unexpected passes from ios-simulator-wk2 and removed failure
+		expectations where appropriate. Some of the tests only pass on wk2, so some expectations
+		were moved to the ios-simulator-wk1 file.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-04-27  John Wilander  <wilander@apple.com>
 
         Add layout tests for legacy HTTP headers in WebSockets
