@@ -1,3 +1,15 @@
+2016-04-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Implement PlatformCookieJar::addCookie
+        https://bugs.webkit.org/show_bug.cgi?id=156295
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::msToSoupDate):
+        (WebCore::toSoupCookie):
+        (WebCore::addCookie):
+
 2016-04-27  Chris Dumez  <cdumez@apple.com>
 
         Let the bindings generator use WTF::Optional for optional parameters using [Clamp]

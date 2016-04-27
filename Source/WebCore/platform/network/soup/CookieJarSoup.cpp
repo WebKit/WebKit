@@ -28,9 +28,9 @@
 #include "GUniquePtrSoup.h"
 #include "URL.h"
 #include "NetworkingContext.h"
-#include "NotImplemented.h"
 #include "PlatformCookieJar.h"
 #include "SoupNetworkSession.h"
+#include <wtf/DateMath.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -192,10 +192,31 @@ void deleteCookie(const NetworkStorageSession& session, const URL& url, const St
     }
 }
 
-void addCookie(const NetworkStorageSession&, const URL&, const Cookie&)
+static SoupDate* msToSoupDate(double ms)
 {
-    // FIXME: implement this command. <https://webkit.org/b/156295>
-    notImplemented();
+    int year = msToYear(ms);
+    int dayOfYear = dayInYear(ms, year);
+    bool leapYear = isLeapYear(year);
+    return soup_date_new(year, monthFromDayInYear(dayOfYear, leapYear), dayInMonthFromDayInYear(dayOfYear, leapYear), msToHours(ms), msToMinutes(ms), static_cast<int>(ms / 1000) % 60);
+}
+
+static SoupCookie* toSoupCookie(const Cookie& cookie)
+{
+    SoupCookie* soupCookie = soup_cookie_new(cookie.name.utf8().data(), cookie.value.utf8().data(),
+        cookie.domain.utf8().data(), cookie.path.utf8().data(), -1);
+    soup_cookie_set_http_only(soupCookie, cookie.httpOnly);
+    soup_cookie_set_secure(soupCookie, cookie.secure);
+    if (!cookie.session) {
+        SoupDate* date = msToSoupDate(cookie.expires);
+        soup_cookie_set_expires(soupCookie, date);
+        soup_date_free(date);
+    }
+    return soupCookie;
+}
+
+void addCookie(const NetworkStorageSession& session, const URL&, const Cookie& cookie)
+{
+    soup_cookie_jar_add_cookie(cookieJarForSession(session), toSoupCookie(cookie));
 }
 
 void getHostnamesWithCookies(const NetworkStorageSession& session, HashSet<String>& hostnames)
