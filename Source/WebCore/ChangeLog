@@ -1,3 +1,21 @@
+2016-04-27  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL][GTK] Volume slider only changes volume when thumb is released, not while dragging
+        https://bugs.webkit.org/show_bug.cgi?id=156970
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Volume slider have to change the volume while dragging the thumb. 
+
+        Test: media/video-volume-slider-drag.html 
+
+        * Modules/mediacontrols/mediaControlsBase.js:
+        (Controller.prototype.createControls): Use the 'input' event instead of the 'change' to
+        check the changed value correctly.
+        (Controller.prototype.handleMaxButtonClicked):
+        (Controller.prototype.handleVolumeSliderInput): Renamed from handleVolumeSliderChange.
+        (Controller.prototype.handleVolumeSliderChange): Deleted. 
+
 2016-04-27  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Remove FetchResponse::redirect overload

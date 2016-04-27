@@ -1,3 +1,15 @@
+2016-04-27  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL][GTK] Volume slider only changes volume when thumb is released, not while dragging
+        https://bugs.webkit.org/show_bug.cgi?id=156970
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Removed the passed test.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2016-04-26  Dean Jackson  <dino@apple.com>
 
         RTL native <select> buttons should have arrows on left

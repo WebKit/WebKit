@@ -2324,7 +2324,6 @@ webkit.org/b/136673 fast/text/empty-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
 
 webkit.org/b/137695 media/video-controls-audiotracks-trackmenu.html [ Failure ]
-webkit.org/b/138074 media/video-volume-slider-drag.html [ Failure ]
 
 # Font is clipped incorrectly
 webkit.org/b/138077 editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
