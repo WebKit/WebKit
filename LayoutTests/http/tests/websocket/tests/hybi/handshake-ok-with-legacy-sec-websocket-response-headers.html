@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Test whether WebSocket handshake is OK with legacy response headers 'Sec-WebSocket-Location' and 'Sec-WebSocket-Origin'.");
+
+    window.jsTestIsAsync = true;
+
+    var url = "ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers";
+    var ws = new WebSocket(url);
+    var closeEvent;
+
+    ws.onopen = function() {
+        ws.close();
+    };
+
+    ws.onclose = function(event) {
+        closeEvent = event;
+        shouldBeTrue("closeEvent.isTrusted");
+        finishJSTest();
+    };
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

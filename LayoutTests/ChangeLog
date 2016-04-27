@@ -1,3 +1,23 @@
+2016-04-27  John Wilander  <wilander@apple.com>
+
+        Add layout tests for legacy HTTP headers in WebSockets
+        https://bugs.webkit.org/show_bug.cgi?id=157095
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+            Test for legacy response headers 'Sec-WebSocket-Location' and 'Sec-WebSocket-Origin'.
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html: Added.
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+            Test for legacy response headers 'WebSocket-Location' and 'WebSocket-Origin'.
+
 2016-04-27  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: RTCIceCandidate don't need a custom bindings
