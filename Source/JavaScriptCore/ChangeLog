@@ -1,3 +1,20 @@
+2016-04-27  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Fails to build randomly when generating LLIntDesiredOffsets.h
+        https://bugs.webkit.org/show_bug.cgi?id=155427
+
+        Reviewed by Carlos Garcia Campos.
+
+        If the build directory contains the -I string, the script that
+        generates LLIntDesiredOffsets.h will confuse it with an option to
+        declare an include directory.
+
+        In order to avoid that we should only use the arguments that start
+        with -I when extracting the list of include directories, instead
+        of using the ones that simply contain that string.
+
+        * offlineasm/parser.rb:
+
 2016-04-27  Saam barati  <sbarati@apple.com>
 
         JSC should have an option to allow global const redeclarations
