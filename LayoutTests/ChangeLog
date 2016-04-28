@@ -1,3 +1,13 @@
+2016-04-28  Daniel Bates  <dabates@apple.com>
+
+        Skip test LayoutTests/media/video-with-file-url-allowed-by-csp-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html
+        as it is flaky on the WebKit1 bots.
+
+        For completeness, the test video-with-file-url-allowed-by-csp-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html
+        was added in r200155 (<https://bugs.webkit.org/show_bug.cgi?id=157100>). We will look to fix this test in <https://bugs.webkit.org/show_bug.cgi?id=155196>.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-04-27  Dean Jackson  <dino@apple.com>
 
         RTL non-native <select> buttons should have arrows on the left
