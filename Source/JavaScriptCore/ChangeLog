@@ -1,3 +1,41 @@
+2016-04-27  Mark Lam  <mark.lam@apple.com>
+
+        The GetterSetter structure needs a globalObject.
+        https://bugs.webkit.org/show_bug.cgi?id=157120
+
+        Reviewed by Filip Pizlo.
+
+        In r199170: <http://trac.webkit.org/r199170>, GetterSetter was promoted from
+        being a JSCell to a JSObject.  JSObject methods expect their structure to have a
+        globalObject.  For example, see JSObject::calculatedClassName().  GetterSetter
+        was previously using a singleton getterSetterStructure owned by the VM.  That
+        singleton getterSetterStructure is not associated with any globalObjects.  As a
+        result, JSObject::calculatedClassName() will run into a null globalObject when it
+        is called on a GetterSetter object.
+
+        This patch removes the VM singleton getterSetterStructure, and instead, creates
+        a getterSetterStructure for each JSGlobalObject.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+        * runtime/GetterSetter.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::functionStructure):
+        (JSC::JSGlobalObject::boundFunctionStructure):
+        (JSC::JSGlobalObject::boundSlotBaseFunctionStructure):
+        (JSC::JSGlobalObject::getterSetterStructure):
+        (JSC::JSGlobalObject::nativeStdFunctionStructure):
+        (JSC::JSGlobalObject::namedFunctionStructure):
+        (JSC::JSGlobalObject::functionNameOffset):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2016-04-27  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, Revert r199397 due to PLT regressions

@@ -46,7 +46,7 @@ class GetterSetter final : public JSNonFinalObject {
     typedef JSNonFinalObject Base;
 private:
     GetterSetter(VM& vm, JSGlobalObject* globalObject)
-        : Base(vm, vm.getterSetterStructure.get())
+        : Base(vm, globalObject->getterSetterStructure())
     {
         m_getter.set(vm, this, globalObject->nullGetterFunction());
         m_setter.set(vm, this, globalObject->nullSetterFunction());
