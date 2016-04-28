@@ -136,4 +136,12 @@ shouldThrow('new (class { constructor() { (function () { eval("super()");})(); }
 shouldThrow('(new (class { method() { (function () { eval("super.method()");})(); }})).method()', '"SyntaxError: super is not valid in this context."');
 
 shouldThrow('new (class extends Base { constructor() { super(); super();}})', '"ReferenceError: \'super()\' can\'t be called more than once in a constructor."');
+shouldThrow('(new class D extends class { m() {}} { constructor() { eval(\'super["m"]()\') } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('new class extends class { m() {}} { constructor() { super["m"](super()) } }', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class D extends class { m() {}} { constructor(f) { super[f()]() } }(()=>"m"))', '"ReferenceError: Cannot access uninitialized variable."');
+
+shouldNotThrow('(new class D extends class { m() {}} { constructor() { super(); eval(\'super["m"]()\') } })');
+shouldThrow('new class extends class { m() {}} { constructor() { super(); super["m"](super()) } }', '"ReferenceError: \'super()\' can\'t be called more than once in a constructor."');
+shouldNotThrow('(new class D extends class { m() {}} { constructor(f) { super(); super[f()]() } }(()=>"m"))');
+
 var successfullyParsed = true;

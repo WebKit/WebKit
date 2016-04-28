@@ -50,6 +50,12 @@ PASS (function () { eval("super()");})():::SyntaxError: super is not valid in th
 PASS new (class { constructor() { (function () { eval("super()");})(); } }):::SyntaxError: super is not valid in this context.
 PASS (new (class { method() { (function () { eval("super.method()");})(); }})).method():::SyntaxError: super is not valid in this context.
 PASS new (class extends Base { constructor() { super(); super();}}):::ReferenceError: 'super()' can't be called more than once in a constructor.
+PASS (new class D extends class { m() {}} { constructor() { eval('super["m"]()') } }):::ReferenceError: Cannot access uninitialized variable.
+PASS new class extends class { m() {}} { constructor() { super["m"](super()) } }:::ReferenceError: Cannot access uninitialized variable.
+PASS (new class D extends class { m() {}} { constructor(f) { super[f()]() } }(()=>"m")):::ReferenceError: Cannot access uninitialized variable.
+PASS (new class D extends class { m() {}} { constructor() { super(); eval('super["m"]()') } })
+PASS new class extends class { m() {}} { constructor() { super(); super["m"](super()) } }:::ReferenceError: 'super()' can't be called more than once in a constructor.
+PASS (new class D extends class { m() {}} { constructor(f) { super(); super[f()]() } }(()=>"m"))
 PASS successfullyParsed
 
 TEST COMPLETE

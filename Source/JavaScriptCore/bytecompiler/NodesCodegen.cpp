@@ -933,9 +933,10 @@ RegisterID* FunctionCallBracketNode::emitBytecode(BytecodeGenerator& generator, 
 
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, function.get());
     CallArguments callArguments(generator, m_args);
-    if (baseIsSuper)
+    if (baseIsSuper) {
+        generator.emitTDZCheck(generator.thisRegister());
         generator.emitMove(callArguments.thisRegister(), generator.thisRegister());
-    else
+    } else
         generator.emitMove(callArguments.thisRegister(), base.get());
     RegisterID* ret = generator.emitCallInTailPosition(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
     generator.emitProfileType(returnValue.get(), divotStart(), divotEnd());
