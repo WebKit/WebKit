@@ -141,9 +141,10 @@ private:
 
     bool shouldAllowStretching() const;
 
+    bool getBaseGlyph(const RenderStyle&, GlyphData&) const;
     bool getGlyphAssemblyFallBack(Vector<OpenTypeMathData::AssemblyPart>, StretchyData&) const;
-    StretchyData getDisplayStyleLargeOperator(UChar) const;
-    StretchyData findStretchyData(UChar, float* maximumGlyphWidth);
+    StretchyData getDisplayStyleLargeOperator() const;
+    StretchyData findStretchyData(float* maximumGlyphWidth);
 
     enum GlyphPaintTrimming {
         TrimTop,
