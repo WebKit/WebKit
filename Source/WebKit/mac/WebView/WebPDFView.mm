@@ -65,8 +65,6 @@
 #import <wtf/Assertions.h>
 #import <wtf/CurrentTime.h>
 
-#import <PDFKit/PDFKit.h>
-
 #if USE(APPLE_INTERNAL_SDK)
 #import <ApplicationServices/ApplicationServicesPriv.h>
 #endif

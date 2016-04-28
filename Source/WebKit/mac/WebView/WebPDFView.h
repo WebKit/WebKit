@@ -28,13 +28,17 @@
 
 #if !PLATFORM(IOS)
 
+#import <PDFKit/PDFKit.h>
 #import <WebKitLegacy/WebDocumentInternal.h>
 
-@class PDFDocument;
-@class PDFView;
 @class WebDataSource;
 
-@interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentIncrementalSearching, WebMultipleTextMatches, WebDocumentSelection, WebDocumentElement, WebDocumentPDF, _WebDocumentViewState, _WebDocumentZooming>
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101200
+@protocol PDFViewDelegate <NSObject>
+@end
+#endif
+
+@interface WebPDFView : NSView <PDFViewDelegate, WebDocumentView, WebDocumentSearching, WebDocumentIncrementalSearching, WebMultipleTextMatches, WebDocumentSelection, WebDocumentElement, WebDocumentPDF, _WebDocumentViewState, _WebDocumentZooming>
 {
     NSView *previewView;
     PDFView *PDFSubview;

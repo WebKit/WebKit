@@ -1,3 +1,12 @@
+2016-04-28  Daniel Bates  <dabates@apple.com>
+
+        Fix the Apple Internal OS X build
+
+        * WebView/WebPDFView.h: Import PDFKit for definition of protocol PDFViewDelegate.
+        Forward declare protocol PDFViewDelegate as appropriate. Mark WebPDFView as implementing
+        protocol PDFViewDelegate.
+        * WebView/WebPDFView.mm: Move import of PDFKit from here to the header.
+
 2016-04-27  Daniel Bates  <dabates@apple.com>
 
         CSP: Add app-specific workaround for Ecobee and Quora

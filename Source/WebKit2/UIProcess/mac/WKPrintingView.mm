@@ -449,7 +449,10 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
     CGContextTranslateCTM(context, point.x, point.y);
     CGContextScaleCTM(context, _totalScaleFactorForPrinting, -_totalScaleFactorForPrinting);
     CGContextTranslateCTM(context, 0, -[pdfPage boundsForBox:kPDFDisplayBoxMediaBox].size.height);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [pdfPage drawWithBox:kPDFDisplayBoxMediaBox];
+#pragma clang diagnostic pop
 
     CGAffineTransform transform = CGContextGetCTM(context);
 

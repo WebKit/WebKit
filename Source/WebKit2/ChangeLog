@@ -1,3 +1,12 @@
+2016-04-28  Daniel Bates  <dabates@apple.com>
+
+        Fix the Apple Internal OS X build
+
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _drawPDFDocument:page:atPoint:]): Ignore deprecation warning for -[PDFPage drawWithBox:].
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::drawPDFPage): Ditto.
+
 2016-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Fix mistake in custom elements runtime flag
