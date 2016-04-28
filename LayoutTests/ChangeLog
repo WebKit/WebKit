@@ -1,3 +1,20 @@
+2016-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix alignment with content distribution
+        https://bugs.webkit.org/show_bug.cgi?id=156623
+
+        Reviewed by Sergio Villar Senin.
+
+        Created new test and renamed the old one as it was only testing
+        items spanning several cells.
+
+        * fast/css-grid-layout/grid-content-alignment-and-self-alignment-expected.txt:
+        * fast/css-grid-layout/grid-content-alignment-and-self-alignment-spanning-expected.txt:
+        Renamed from fast/css-grid-layout/grid-content-alignment-and-self-alignment-expected.txt.
+        * fast/css-grid-layout/grid-content-alignment-and-self-alignment-spanning.html:
+        Renamed from fast/css-grid-layout/grid-content-alignment-and-self-alignment.html.
+        * fast/css-grid-layout/grid-content-alignment-and-self-alignment.html:
+
 2016-04-28  Daniel Bates  <dabates@apple.com>
 
         Skip test LayoutTests/media/video-with-file-url-allowed-by-csp-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html

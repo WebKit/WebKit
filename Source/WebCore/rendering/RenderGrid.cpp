@@ -1936,14 +1936,12 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
     case GridAxisCenter: {
         unsigned childEndLine = rowsSpan.endLine();
         LayoutUnit endOfRow = m_rowPositions[childEndLine];
-        // m_rowPositions include gutters so we need to substract them to get the actual end position for a given
-        // row (this does not have to be done for the last track as there are no more m_rowPositions after it)
+        // m_rowPositions include distribution offset (because of content alignment) and gutters
+        // so we need to subtract them to get the actual end position for a given row
+        // (this does not have to be done for the last track as there are no more m_rowPositions after it).
         if (childEndLine < m_rowPositions.size() - 1)
-            endOfRow -= guttersSize(ForRows, 2);
+            endOfRow -= guttersSize(ForRows, 2) + m_offsetBetweenRows;
         LayoutUnit childBreadth = child.logicalHeight() + child.marginLogicalHeight();
-        // In order to properly adjust the Self Alignment values we need to consider the offset between tracks.
-        if (childEndLine - childStartLine > 1 && childEndLine < m_rowPositions.size() - 1)
-            endOfRow -= m_offsetBetweenRows;
         LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(RenderStyle::resolveAlignmentOverflow(style(), child.style()), endOfRow - startOfRow, childBreadth);
         return startPosition + (axisPosition == GridAxisEnd ? offsetFromStartPosition : offsetFromStartPosition / 2);
     }
@@ -1970,14 +1968,12 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
     case GridAxisCenter: {
         unsigned childEndLine = columnsSpan.endLine();
         LayoutUnit endOfColumn = m_columnPositions[childEndLine];
-        // m_columnPositions include gutters so we need to substract them to get the actual end position for a given
-        // column (this does not have to be done for the last track as there are no more m_columnPositions after it)
+        // m_columnPositions include distribution offset (because of content alignment) and gutters
+        // so we need to subtract them to get the actual end position for a given column
+        // (this does not have to be done for the last track as there are no more m_columnPositions after it).
         if (childEndLine < m_columnPositions.size() - 1)
-            endOfColumn -= guttersSize(ForColumns, 2);
+            endOfColumn -= guttersSize(ForColumns, 2) + m_offsetBetweenColumns;
         LayoutUnit childBreadth = child.logicalWidth() + child.marginLogicalWidth();
-        // In order to properly adjust the Self Alignment values we need to consider the offset between tracks.
-        if (childEndLine - childStartLine > 1 && childEndLine < m_columnPositions.size() - 1)
-            endOfColumn -= m_offsetBetweenColumns;
         LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(RenderStyle::resolveJustificationOverflow(style(), child.style()), endOfColumn - startOfColumn, childBreadth);
         return startPosition + (axisPosition == GridAxisEnd ? offsetFromStartPosition : offsetFromStartPosition / 2);
     }

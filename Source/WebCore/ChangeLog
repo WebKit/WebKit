@@ -1,3 +1,22 @@
+2016-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix alignment with content distribution
+        https://bugs.webkit.org/show_bug.cgi?id=156623
+
+        Reviewed by Sergio Villar Senin.
+
+        We were only subtracting the distribution offset for items spanning
+        several tracks, but not for items in a single cell.
+        We should actually subtract the offset in that situation too,
+        the same that we do for the grid gaps.
+
+        Test: fast/css-grid-layout/grid-content-alignment-and-self-alignment-spanning.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::columnAxisOffsetForChild): Subtract distribution
+        offset like we do for gaps.
+        (WebCore::RenderGrid::rowAxisOffsetForChild): Ditto.
+
 2016-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Overlay scrollbars with steppers enabled render incorrectly

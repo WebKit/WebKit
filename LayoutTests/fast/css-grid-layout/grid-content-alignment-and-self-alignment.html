@@ -1,215 +1,459 @@
 <!DOCTYPE html>
-<html>
-<head>
 <link href="resources/grid.css" rel="stylesheet">
 <link href="resources/grid-alignment.css" rel="stylesheet">
-<script src="../../resources/check-layout.js"></script>
 <style>
-body {
-    margin: 0px;
-}
 
 .grid {
-    -webkit-grid-auto-columns: 20px;
-    -webkit-grid-auto-rows: 40px;
-    -webkit-grid-template-areas: "a a b"
-                                 "c d b";
+    -webkit-grid-template-columns: 200px 100px;
+    -webkit-grid-template-rows: 100px 50px;
+    width: 500px;
+    height: 350px;
     position: relative;
-    width: 300px;
-    height: 200px;
-}
-.a {
-    -webkit-grid-area: a;
-    background-color: blue;
-}
-.b {
-    -webkit-grid-area: b;
-    background-color: lime;
-}
-.c {
-    -webkit-grid-area: c;
-    background-color: purple;
-}
-.d {
-    -webkit-grid-area: d;
-    background-color: orange;
-}
-.stretchedGrid {
-    -webkit-grid-auto-columns: minmax(20px, auto);
-    -webkit-grid-auto-rows: minmax(40px, auto);
+    font: 10px/1 Ahem;
 }
 
-
-.cell {
-    width: 20px;
-    height: 40px;
+.gridGaps {
+    -webkit-grid-gap: 10px 20px;
 }
+
 </style>
-</head>
+<script src="../../resources/check-layout.js"></script>
 <body onload="checkLayout('.grid')">
 
-<p>This test checks that Content Distribution alignment works fine in combination with Self Alignmet and items span more than one track.</p>
+<p>This test checks that Content Distribution alignment works fine in combination with Self Alignmet and items in just one cell.</p>
 
-<div style="position: relative">
-    <p>direction: LTR | distribution: 'space-between' | self-alignment: center</p>
-    <div class="grid contentSpaceBetween" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfCenter" data-offset-x="70" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfCenter" data-offset-x="280" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="0" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+<p>direction: LTR | distribution: 'space-between' | self-alignment: center</p>
+<div class="grid contentSpaceBetween itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="95" data-offset-y="45" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="445" data-offset-y="45" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="95" data-offset-y="320" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="445" data-offset-y="320" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: LTR | distribution: 'space-between' | self-alignment: end</p>
-    <div class="grid contentSpaceBetween" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfEnd" data-offset-x="280" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="0" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+<p>direction: LTR | distribution: 'space-between' | self-alignment: end</p>
+<div class="grid contentSpaceBetween itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="190" data-offset-y="90" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="490" data-offset-y="90" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="190" data-offset-y="340" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="490" data-offset-y="340" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: LTR | distribution: 'space-around' | self-alignment: center</p>
-    <div class="grid contentSpaceAround" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfCenter" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfCenter" data-offset-x="240" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="40" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+<p>direction: LTR | distribution: 'space-around' | self-alignment: center</p>
+<div class="grid contentSpaceAround itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="145" data-offset-y="95" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="395" data-offset-y="95" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="145" data-offset-y="270" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="395" data-offset-y="270" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: LTR | distribution: 'space-around' | self-alignment: end</p>
-    <div class="grid contentSpaceAround" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfEnd" data-offset-x="240" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="40" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+<p>direction: LTR | distribution: 'space-around' | self-alignment: end</p>
+<div class="grid contentSpaceAround itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="240" data-offset-y="140" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="440" data-offset-y="140" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="240" data-offset-y="290" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="440" data-offset-y="290" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: LTR | distribution: 'space-evenly' | self-alignment: center</p>
-    <div class="grid contentSpaceEvenly" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfCenter" data-offset-x="100" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfCenter" data-offset-x="220" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="60" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+<p>direction: LTR | distribution: 'space-evenly' | self-alignment: center</p>
+<div class="grid contentSpaceEvenly itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="162" data-offset-y="112" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="378" data-offset-y="112" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="162" data-offset-y="253" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="378" data-offset-y="253" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: LTR | distribution: 'space-evenly' | self-alignment: end</p>
-    <div class="grid contentSpaceEvenly" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfEnd" data-offset-x="220" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="60" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+<p>direction: LTR | distribution: 'space-evenly' | self-alignment: end</p>
+<div class="grid contentSpaceEvenly itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="257" data-offset-y="157" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="423" data-offset-y="157" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="257" data-offset-y="273" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="423" data-offset-y="273" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: LTR | distribution: 'stretch' | self-alignment: center</p>
-    <div class="grid stretchedGrid contentStretch" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfCenter alignSelfCenter" data-offset-x="90" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell justifySelfCenter alignSelfCenter" data-offset-x="240" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="0" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
-        <div class="d" data-offset-x="100" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
-    </div>
+<p>direction: LTR | grid-gap: 10px 20px | distribution: 'space-between' | self-alignment: center</p>
+<div class="grid gridGaps contentSpaceBetween itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="95" data-offset-y="45" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="445" data-offset-y="45" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="95" data-offset-y="320" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="445" data-offset-y="320" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: LTR | distribution: 'stretch' | self-alignment: end</p>
-    <div class="grid stretchedGrid contentStretch" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfEnd alignSelfEnd" data-offset-x="180" data-offset-y="60" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell justifySelfEnd alignSelfEnd" data-offset-x="280" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="0" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
-        <div class="d" data-offset-x="100" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
-    </div>
+<p>direction: LTR | grid-gap: 10px 20px | distribution: 'space-between' | self-alignment: end</p>
+<div class="grid gridGaps contentSpaceBetween itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="190" data-offset-y="90" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="490" data-offset-y="90" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="190" data-offset-y="340" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="490" data-offset-y="340" data-expected-width="10" data-expected-height="10">X</div>
+</div>
+
+<p>direction: LTR | grid-gap: 10px 20px | distribution: 'space-around' | self-alignment: center</p>
+<div class="grid gridGaps contentSpaceAround itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="140" data-offset-y="93" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="400" data-offset-y="93" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="140" data-offset-y="273" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="400" data-offset-y="273" data-expected-width="10" data-expected-height="10">X</div>
+</div>
+
+<p>direction: LTR | grid-gap: 10px 20px | distribution: 'space-around' | self-alignment: end</p>
+<div class="grid gridGaps contentSpaceAround itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="235" data-offset-y="138" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="445" data-offset-y="138" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="235" data-offset-y="293" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="445" data-offset-y="293" data-expected-width="10" data-expected-height="10">X</div>
+</div>
+
+<p>direction: LTR | grid-gap: 10px 20px | distribution: 'space-evenly' | self-alignment: center</p>
+<div class="grid gridGaps contentSpaceEvenly itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="155" data-offset-y="108" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="385" data-offset-y="108" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="155" data-offset-y="257" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="385" data-offset-y="257" data-expected-width="10" data-expected-height="10">X</div>
+</div>
+
+<p>direction: LTR | grid-gap: 10px 20px | distribution: 'space-evenly' | self-alignment: end</p>
+<div class="grid gridGaps contentSpaceEvenly itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="250" data-offset-y="153" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="430" data-offset-y="153" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="250" data-offset-y="277" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="430" data-offset-y="277" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
 <!-- RTL direction. -->
-<div style="position: relative">
-    <p>direction: RTL | distribution: 'space-between' | self-alignment: center</p>
-    <div class="grid contentSpaceBetween directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfCenter" data-offset-x="210" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfCenter" data-offset-x="0" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="280" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+
+<p>direction: RTL | distribution: 'space-between' | self-alignment: center</p>
+<div class="grid directionRTL contentSpaceBetween itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="395" data-offset-y="45" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="45" data-offset-y="45" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="395" data-offset-y="320" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="45" data-offset-y="320" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: RTL | distribution: 'space-between' | self-alignment: end</p>
-    <div class="grid contentSpaceBetween directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="0" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfEnd" data-offset-x="0" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="280" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+<p>direction: RTL | distribution: 'space-between' | self-alignment: end</p>
+<div class="grid directionRTL contentSpaceBetween itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="300" data-offset-y="90" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="0" data-offset-y="90" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="300" data-offset-y="340" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="0" data-offset-y="340" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: RTL | distribution: 'space-around' | self-alignment: center</p>
-    <div class="grid contentSpaceAround directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfCenter" data-offset-x="190" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfCenter" data-offset-x="40" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="240" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+<p>direction: RTL | distribution: 'space-around' | self-alignment: center</p>
+<div class="grid directionRTL contentSpaceAround itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="345" data-offset-y="95" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="95" data-offset-y="95" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="345" data-offset-y="270" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="95" data-offset-y="270" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: RTL | distribution: 'space-around' | self-alignment: end</p>
-    <div class="grid contentSpaceAround directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfEnd" data-offset-x="40" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="240" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="130" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+<p>direction: RTL | distribution: 'space-around' | self-alignment: end</p>
+<div class="grid directionRTL contentSpaceAround itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="250" data-offset-y="140" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="50" data-offset-y="140" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="250" data-offset-y="290" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="50" data-offset-y="290" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: RTL | distribution: 'space-evenly' | self-alignment: center</p>
-    <div class="grid contentSpaceEvenly directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfCenter" data-offset-x="180" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfCenter" data-offset-x="60" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="220" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+<p>direction: RTL | distribution: 'space-evenly' | self-alignment: center</p>
+<div class="grid directionRTL contentSpaceEvenly itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="328" data-offset-y="112" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="112" data-offset-y="112" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="328" data-offset-y="253" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="112" data-offset-y="253" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: RTL | distribution: 'space-evenly' | self-alignment: end</p>
-    <div class="grid contentSpaceEvenly directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfEnd" data-offset-x="140" data-offset-y="40" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell alignSelfEnd" data-offset-x="60" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="220" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
-        <div class="d" data-offset-x="140" data-offset-y="120" data-expected-width="20" data-expected-height="40"></div>
-    </div>
+<p>direction: RTL | distribution: 'space-evenly' | self-alignment: end</p>
+<div class="grid directionRTL contentSpaceEvenly itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="233" data-offset-y="157" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="67" data-offset-y="157" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="233" data-offset-y="273" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="67" data-offset-y="273" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: RTL | distribution: 'stretch' | self-alignment: center</p>
-    <div class="grid stretchedGrid contentStretch directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfCenter alignSelfCenter" data-offset-x="190" data-offset-y="30" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell justifySelfCenter alignSelfCenter" data-offset-x="40" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="200" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
-        <div class="d" data-offset-x="100" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
-    </div>
+<p>direction: RTL | grid-gap: 10px 20px | distribution: 'space-between' | self-alignment: center</p>
+<div class="grid directionRTL gridGaps contentSpaceBetween itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="395" data-offset-y="45" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="45" data-offset-y="45" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="395" data-offset-y="320" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="45" data-offset-y="320" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
-<div style="position: relative">
-    <p>direction: RTL | distribution: 'stretch' | self-alignment: end</p>
-    <div class="grid stretchedGrid contentStretch directionRTL" data-expected-width="300" data-expected-height="200">
-        <div class="a cell justifySelfEnd alignSelfEnd" data-offset-x="100" data-offset-y="60" data-expected-width="20" data-expected-height="40"></div>
-        <div class="b cell justifySelfEnd alignSelfEnd" data-offset-x="0" data-offset-y="160" data-expected-width="20" data-expected-height="40"></div>
-        <div class="c" data-offset-x="200" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
-        <div class="d" data-offset-x="100" data-offset-y="100" data-expected-width="100" data-expected-height="100"></div>
-    </div>
+<p>direction: RTL | grid-gap: 10px 20px | distribution: 'space-between' | self-alignment: end</p>
+<div class="grid directionRTL gridGaps contentSpaceBetween itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="300" data-offset-y="90" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="0" data-offset-y="90" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="300" data-offset-y="340" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="0" data-offset-y="340" data-expected-width="10" data-expected-height="10">X</div>
+</div>
+
+<p>direction: RTL | grid-gap: 10px 20px | distribution: 'space-around' | self-alignment: center</p>
+<div class="grid directionRTL gridGaps contentSpaceAround itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="350" data-offset-y="93" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="90" data-offset-y="93" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="350" data-offset-y="273" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="90" data-offset-y="273" data-expected-width="10" data-expected-height="10">X</div>
+</div>
+
+<p>direction: RTL | grid-gap: 10px 20px | distribution: 'space-around' | self-alignment: end</p>
+<div class="grid directionRTL gridGaps contentSpaceAround itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="255" data-offset-y="138" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="45" data-offset-y="138" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="255" data-offset-y="293" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="45" data-offset-y="293" data-expected-width="10" data-expected-height="10">X</div>
+</div>
+
+<p>direction: RTL | grid-gap: 10px 20px | distribution: 'space-evenly' | self-alignment: center</p>
+<div class="grid directionRTL gridGaps contentSpaceEvenly itemsCenter">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="335" data-offset-y="108" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="105" data-offset-y="108" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="335" data-offset-y="257" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="105" data-offset-y="257" data-expected-width="10" data-expected-height="10">X</div>
+</div>
+
+<p>direction: RTL | grid-gap: 10px 20px | distribution: 'space-evenly' | self-alignment: end</p>
+<div class="grid directionRTL gridGaps contentSpaceEvenly itemsEnd">
+    <!-- Dummy DIVs to help checking the result visually. -->
+    <div class="firstRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="firstRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowFirstColumn justifySelfStretch alignSelfStretch"></div>
+    <div class="secondRowSecondColumn justifySelfStretch alignSelfStretch"></div>
+
+    <div class="firstRowFirstColumn"
+        data-offset-x="240" data-offset-y="153" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="firstRowSecondColumn"
+        data-offset-x="60" data-offset-y="153" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowFirstColumn"
+        data-offset-x="240" data-offset-y="277" data-expected-width="10" data-expected-height="10">X</div>
+    <div class="secondRowSecondColumn"
+        data-offset-x="60" data-offset-y="277" data-expected-width="10" data-expected-height="10">X</div>
 </div>
 
 </body>
-</html>
