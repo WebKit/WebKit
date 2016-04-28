@@ -1,5 +1,14 @@
 2016-04-28  Daniel Bates  <dabates@apple.com>
 
+        Another fix for the Apple Internal OS X build
+        <rdar://problem/25989808>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebPDFView.h:
+
+2016-04-28  Daniel Bates  <dabates@apple.com>
+
         Fix the Apple Internal OS X build
 
         * WebView/WebPDFView.h: Import PDFKit for definition of protocol PDFViewDelegate.

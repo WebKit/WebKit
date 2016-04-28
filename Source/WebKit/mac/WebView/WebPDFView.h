@@ -33,7 +33,8 @@
 
 @class WebDataSource;
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101200
+// FIXME: Remove the __has_include() below. See <rdar://problem/25989808>.
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101200 || !__has_include(<CalendarUI/NSAppearance+CalUIAdditions.h>)
 @protocol PDFViewDelegate <NSObject>
 @end
 #endif
