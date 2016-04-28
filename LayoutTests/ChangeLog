@@ -1,3 +1,12 @@
+2016-04-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add ios-simulator baseline for fast/forms/select-non-native-rendering-direction.html
+        https://bugs.webkit.org/show_bug.cgi?id=157112
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/forms/select-non-native-rendering-direction-expected.txt: Added.
+
 2016-04-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         imported/w3c/web-platform-tests/fetch/nosniff/stylesheet.html is failing on some bots
