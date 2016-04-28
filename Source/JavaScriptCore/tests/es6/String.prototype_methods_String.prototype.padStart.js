@@ -77,8 +77,15 @@ function shouldThrow(func, errorType) {
 (function TestFillerToString() {
     shouldBe("         .", ".".padStart(10));
     shouldBe("         .", ".".padStart(10, undefined));
-    shouldBe("         .", ".".padStart(10, { toString() { return ""; } }));
+    shouldBe("XXXXXXXXX.", ".".padStart(10, { toString() { return "X"; } }));
+    shouldBe("111111111.", ".".padStart(10, { toString: undefined, valueOf() { return 1; } }));
     shouldBe("nullnulln.", ".".padStart(10, null));
+})();
+
+(function TestFillerEmptyString() {
+    shouldBe(".", ".".padStart(10000, ""));
+    shouldBe(".", ".".padStart(10000, { toString() { return ""; } }));
+    shouldBe(".", ".".padStart(10000, { toString: undefined, valueOf() { return ""; } }));
 })();
 
 (function TestSingleCharacterFiller() {

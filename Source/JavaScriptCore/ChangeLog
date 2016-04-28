@@ -1,3 +1,28 @@
+2016-04-28  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] implement spec changes for String#padStart and String#padEnd
+        https://bugs.webkit.org/show_bug.cgi?id=157139
+
+        Reviewed by Keith Miller.
+
+        Previously, if the fill string was the empty string, it was treated as a
+        single U+0020 SPACE character. Now, if this occurs, the original string
+        is returned instead.
+
+        Change was discussed at TC39 in March [1], and is reflected in new
+        test262 tests for the feature.
+
+        [1] https://github.com/tc39/tc39-notes/blob/master/es7/2016-03/march-29.md#stringprototypepadstartpadend
+
+        * runtime/StringPrototype.cpp:
+        (JSC::padString):
+        * tests/es6/String.prototype_methods_String.prototype.padEnd.js:
+        (TestFillerToString):
+        (TestFillerEmptyString):
+        * tests/es6/String.prototype_methods_String.prototype.padStart.js:
+        (TestFillerToString):
+        (TestFillerEmptyString):
+
 2016-04-28  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         Crash for non-static super property call in derived class constructor

@@ -851,6 +851,8 @@ static EncodedJSValue padString(ExecState& exec, StringPaddingLocation paddingLo
         filler = fillString.toString(&exec);
         if (!filler)
             return JSValue::encode(jsUndefined());
+        if (!filler->length())
+            return JSValue::encode(thisString);
     }
 
     unsigned fillLength = static_cast<unsigned>(maxLength) - thisString->length();
@@ -861,7 +863,7 @@ static EncodedJSValue padString(ExecState& exec, StringPaddingLocation paddingLo
             return JSValue::encode(throwOutOfMemoryError(&exec));
     }
 
-    if (!filler || filler->length() <= 1) {
+    if (!filler || filler->length() == 1) {
         UChar character = filler && filler->length() ? filler->view(&exec)[0] : ' ';
         if (!(character & ~0xff))
             filler = repeatCharacter(exec, static_cast<LChar>(character), fillLength);
