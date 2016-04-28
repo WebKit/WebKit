@@ -1,3 +1,24 @@
+2016-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] We need to be smarter about flattening and the accessible text implementation
+        https://bugs.webkit.org/show_bug.cgi?id=144639
+
+        Reviewed by Chris Fleizach.
+
+        Defer to WebCore Accessibility more regarding when to include anonymous blocks in the
+        accessibility tree. Explicitly flatten menu items, headings, list items, and paragraphs
+        in order to preserve the expected platform behavior for backwards compatibility. Also
+        map anonymous table parts to DivRole rather than GroupRole for GTK and EFL because ATK
+        has separate roles for generic text block elements and other generic containers.
+
+        Tests: accessibility/gtk/nested-block-element-children.html
+               accessibility/gtk/spans-paragraphs-and-divs-tree.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+
 2016-04-28  Frederic Wang  <fred.wang@free.fr>
 
         RenderMathMLOperator refactoring: introduce getBaseGlyph and remove parameter from getDisplayStyleLargeOperator

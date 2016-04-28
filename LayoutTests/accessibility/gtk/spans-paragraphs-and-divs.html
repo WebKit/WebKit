@@ -83,12 +83,8 @@ if (window.accessibilityController) {
     shouldBe("element.childrenCount", "0");
 
     element = webArea.childAtIndex(4);
-    shouldBe("element.role", "'AXRole: AXSection'");
-    shouldBe("element.childrenCount", "1");
-
-    link = element.childAtIndex(0);
-    shouldBe("link.role", "'AXRole: AXLink'");
-    shouldBe("link.childrenCount", "0");
+    shouldBe("element.role", "'AXRole: AXLink'");
+    shouldBe("element.childrenCount", "0");
 
     element = webArea.childAtIndex(5);
     shouldBe("element.role", "'AXRole: AXSection'");

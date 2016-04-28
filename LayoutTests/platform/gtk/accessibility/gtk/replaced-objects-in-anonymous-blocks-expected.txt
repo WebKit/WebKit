@@ -20,7 +20,8 @@ AXRole: AXWebArea
                 AXRole: AXWebArea 
     AXRole: AXSection AXValue: <obj>
         AXRole: AXTextField AXValue: text area
-    AXRole: AXSection AXValue: Div<\n><obj>
+    AXRole: AXSection AXValue: Div
+    AXRole: AXSection AXValue: <obj>
         AXRole: AXButton 
     AXRole: AXHeading AXValue: Heading<\n><obj><\n><obj>
         AXRole: AXButton 

@@ -34,10 +34,8 @@ PASS link.role is 'AXRole: AXLink'
 PASS link.childrenCount is 0
 PASS element.role is 'AXRole: AXParagraph'
 PASS element.childrenCount is 0
-PASS element.role is 'AXRole: AXSection'
-PASS element.childrenCount is 1
-PASS link.role is 'AXRole: AXLink'
-PASS link.childrenCount is 0
+PASS element.role is 'AXRole: AXLink'
+PASS element.childrenCount is 0
 PASS element.role is 'AXRole: AXSection'
 PASS element.childrenCount is 0
 PASS element.role is 'AXRole: AXSection'

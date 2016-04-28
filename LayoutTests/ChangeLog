@@ -1,3 +1,23 @@
+2016-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] We need to be smarter about flattening and the accessible text implementation
+        https://bugs.webkit.org/show_bug.cgi?id=144639
+
+        Reviewed by Chris Fleizach.
+
+        Added two new tests and updated three existing tests to reflect the new behavior
+        regarding inclusion of elements in the accessibility tree and the text value of
+        included elements.
+
+        * accessibility/gtk/nested-block-element-children-expected.txt: Added.
+        * accessibility/gtk/nested-block-element-children.html: Added.
+        * accessibility/gtk/spans-paragraphs-and-divs-expected.txt: Updated for new behavior.
+        * accessibility/gtk/spans-paragraphs-and-divs-tree-expected.txt: Added.
+        * accessibility/gtk/spans-paragraphs-and-divs-tree.html: Added.
+        * accessibility/gtk/spans-paragraphs-and-divs.html: Updated for new behavior.
+        * platform/gtk/accessibility/generated-content-with-display-table-crash-expected.txt: Updated for new behavior.
+        * platform/gtk/accessibility/gtk/replaced-objects-in-anonymous-blocks-expected.txt: Updated for new behavior.
+
 2016-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix alignment with content distribution

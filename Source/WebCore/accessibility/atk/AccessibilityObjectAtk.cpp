@@ -21,8 +21,11 @@
 #include "config.h"
 #include "AccessibilityObject.h"
 
-#include "HTMLElement.h"
-#include "HTMLNames.h"
+#include "HTMLSpanElement.h"
+#include "RenderBlock.h"
+#include "RenderInline.h"
+#include "RenderIterator.h"
+#include "RenderTableCell.h"
 #include "RenderText.h"
 #include "TextControlInnerElements.h"
 #include <glib-object.h>
@@ -85,16 +88,57 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (!renderObject)
         return DefaultBehavior;
 
-    // The text displayed by an ARIA menu item is exposed through the accessible name.
-    if (renderObject->isAnonymousBlock() && parent->isMenuItem())
-        return IgnoreObject;
+    // We always want to include paragraphs that have rendered content.
+    // WebCore Accessibility does so unless there is a RenderBlock child.
+    if (role == ParagraphRole) {
+        auto child = childrenOfType<RenderBlock>(downcast<RenderElement>(*renderObject)).first();
+        return child ? IncludeObject : DefaultBehavior;
+    }
+
+    // We always want to include table cells (layout and CSS) that have rendered text content.
+    if (is<RenderTableCell>(renderObject)) {
+        for (const auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(*renderObject))) {
+            if (is<RenderInline>(child) || is<RenderText>(child) || is<HTMLSpanElement>(child.node()))
+                return IncludeObject;
+        }
+        return DefaultBehavior;
+    }
+
+    if (renderObject->isAnonymousBlock()) {
+        // The text displayed by an ARIA menu item is exposed through the accessible name.
+        if (parent->isMenuItem())
+            return IgnoreObject;
+
+        // The text displayed in headings is typically exposed in the heading itself.
+        if (parent->isHeading())
+            return IgnoreObject;
+
+        // The text displayed in list items is typically exposed in the list item itself.
+        if (parent->isListItem())
+            return IgnoreObject;
+
+        // The text displayed in links is typically exposed in the link itself.
+        if (parent->isLink())
+            return IgnoreObject;
+
+        // FIXME: This next one needs some further consideration. But paragraphs are not
+        // typically huge (like divs). And ignoring anonymous block children of paragraphs
+        // will preserve existing behavior.
+        if (parent->roleValue() == ParagraphRole)
+            return IgnoreObject;
+
+        return DefaultBehavior;
+    }
+
+    Node* node = renderObject->node();
+    if (!node)
+        return DefaultBehavior;
 
     // We don't want <span> elements to show up in the accessibility hierarchy unless
     // we have good reasons for that (e.g. focusable or visible because of containing
     // a meaningful accessible name, maybe set through ARIA), so we can use
     // atk_component_grab_focus() to set the focus to it.
-    Node* node = renderObject->node();
-    if (node && node->hasTagName(HTMLNames::spanTag) && !canSetFocusAttribute() && !hasAttributesRequiredForInclusion())
+    if (is<HTMLSpanElement>(node) && !canSetFocusAttribute() && !hasAttributesRequiredForInclusion())
         return IgnoreObject;
 
     // If we include TextControlInnerTextElement children, changes to those children
@@ -102,41 +146,6 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // in the control. This can be especially problematic for screen reader users with
     // key echo enabled when typing in a password input.
     if (is<TextControlInnerTextElement>(node))
-        return IgnoreObject;
-
-    // Given a paragraph or div containing a non-nested anonymous block, WebCore
-    // ignores the paragraph or div and includes the block. We want the opposite:
-    // ATs are expecting accessible objects associated with textual elements. They
-    // usually have no need for the anonymous block. And when the wrong objects
-    // get included or ignored, needed accessibility signals do not get emitted.
-    if (role == ParagraphRole || role == DivRole) {
-        // Don't call textUnderElement() here, because it's slow and it can
-        // crash when called while we're in the middle of a subtree being deleted.
-        if (!renderObject->firstChildSlow())
-            return DefaultBehavior;
-
-        if (!parent->renderer() || parent->renderer()->isAnonymousBlock())
-            return DefaultBehavior;
-
-        for (RenderObject* r = renderObject->firstChildSlow(); r; r = r->nextSibling()) {
-            if (r->isAnonymousBlock())
-                return IncludeObject;
-        }
-    }
-
-    // Block spans result in objects of ATK_ROLE_PANEL which are almost always unwanted.
-    // However, if we ignore block spans whose parent is the body, the child controls
-    // will become immediate children of the ATK_ROLE_DOCUMENT_FRAME and any text will
-    // become text within the document frame itself. This ultimately may be what we want
-    // and would largely be consistent with what we see from Gecko. However, ignoring
-    // spans whose parent is the body changes the current behavior we see from WebCore.
-    // Until we have sufficient time to properly analyze these cases, we will defer to
-    // WebCore. We only check that the parent is not aria because we do not expect
-    // anonymous blocks which are aria-related to themselves have an aria role, nor
-    // have we encountered instances where the parent of an anonymous block also lacked
-    // an aria role but the grandparent had one.
-    if (renderObject && renderObject->isAnonymousBlock() && !parent->renderer()->isBody()
-        && parent->ariaRoleAttribute() == UnknownRole)
         return IgnoreObject;
 
     return DefaultBehavior;

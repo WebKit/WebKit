@@ -86,6 +86,7 @@
 #include "RenderMenuList.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
+#include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTextControlSingleLine.h"
@@ -2648,7 +2649,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     // the cell should not be treated as a cell (e.g. because it is a layout table.
     // In ATK, there is a distinction between generic text block elements and other
     // generic containers; AX API does not make this distinction.
-    if (node && (node->hasTagName(tdTag) || node->hasTagName(thTag)))
+    if (is<RenderTableCell>(m_renderer))
 #if PLATFORM(GTK) || PLATFORM(EFL)
         return DivRole;
 #else
