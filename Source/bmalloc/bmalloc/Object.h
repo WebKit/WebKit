@@ -46,7 +46,7 @@ public:
     
     Chunk* chunk() { return m_chunk; }
     size_t offset() { return m_offset; }
-    char* begin();
+    char* address();
 
     SmallLine* line();
     SmallPage* page();

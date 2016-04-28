@@ -1,3 +1,32 @@
+2016-04-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Assertion failure in bmalloc::vmRevokePermissions(void*, unsigned long).
+        https://bugs.webkit.org/show_bug.cgi?id=157047
+
+        Reviewed by Darin Adler.
+
+        * bmalloc/Chunk.h:
+        (bmalloc::Chunk::Chunk):
+        (bmalloc::Chunk::get):
+        (bmalloc::Chunk::offset):
+        (bmalloc::Chunk::address):
+        (bmalloc::Object::Object):
+        (bmalloc::Object::address):
+        (bmalloc::Object::line):
+        (bmalloc::Chunk::object): Deleted.
+        (bmalloc::Object::begin): Deleted.
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateSmallBumpRangesByObject):
+        * bmalloc/Object.h:
+        (bmalloc::Object::chunk):
+        (bmalloc::Object::offset): Renamed begin() to address() because this is
+        not an iterator.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::allocateSmallChunk): Round up pageSize to a vmPageSize
+        multiple because pageSize might be smaller than vmPageSize, but we
+        think the VM system requires vmPageSize-aligned values.
+
 2016-04-25  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: vm allocations should plant guard pages

@@ -73,11 +73,13 @@ void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageC
 
     // Establish guard pages before writing to Chunk memory to work around
     // an edge case in the Darwin VM system (<rdar://problem/25910098>).
-    vmRevokePermissions(begin.begin(), pageSize);
-    vmRevokePermissions(end.begin() - pageSize, pageSize);
+    size_t guardSize = roundUpToMultipleOf(vmPageSize(), pageSize);
+    BASSERT(chunkSize >= 2 * guardSize + pageSize);
+    vmRevokePermissions(begin.address(), guardSize);
+    vmRevokePermissions(end.address() - guardSize, guardSize);
 
-    begin = begin + pageSize;
-    end = end - pageSize;
+    begin = begin + guardSize;
+    end = end - guardSize;
 
     new (chunk) Chunk(lock);
 

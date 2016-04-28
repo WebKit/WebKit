@@ -43,7 +43,7 @@ public:
 
     size_t offset(void*);
 
-    char* object(size_t offset);
+    char* address(size_t offset);
     SmallPage* page(size_t offset);
     SmallLine* line(size_t offset);
 
@@ -68,19 +68,19 @@ inline Chunk::Chunk(std::lock_guard<StaticMutex>&)
 {
 }
 
-inline Chunk* Chunk::get(void* object)
+inline Chunk* Chunk::get(void* address)
 {
-    return static_cast<Chunk*>(mask(object, chunkMask));
+    return static_cast<Chunk*>(mask(address, chunkMask));
 }
 
-inline size_t Chunk::offset(void* object)
+inline size_t Chunk::offset(void* address)
 {
-    BASSERT(object >= this);
-    BASSERT(object < bytes() + chunkSize);
-    return static_cast<char*>(object) - bytes();
+    BASSERT(address >= this);
+    BASSERT(address < bytes() + chunkSize);
+    return static_cast<char*>(address) - bytes();
 }
 
-inline char* Chunk::object(size_t offset)
+inline char* Chunk::address(size_t offset)
 {
     return bytes() + offset;
 }
@@ -133,9 +133,9 @@ inline Object::Object(Chunk* chunk, void* object)
     BASSERT(chunk == Chunk::get(object));
 }
 
-inline char* Object::begin()
+inline char* Object::address()
 {
-    return m_chunk->object(m_offset);
+    return m_chunk->address(m_offset);
 }
 
 inline SmallLine* Object::line()

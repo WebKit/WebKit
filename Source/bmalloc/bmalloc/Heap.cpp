@@ -265,7 +265,7 @@ void Heap::allocateSmallBumpRangesByObject(
     };
 
     auto allocateSmallBumpRange = [&](Object& it, Object& end) -> BumpRange {
-        char* begin = it.begin();
+        char* begin = it.address();
         unsigned short objectCount = 0;
         for ( ; it + size <= end; it = it + size) {
             if (it.line()->refCount(lock))
