@@ -1,3 +1,28 @@
+2016-04-28  Frederic Wang  <fred.wang@free.fr>
+
+        RenderMathMLOperator refactoring: introduce getBaseGlyph and remove parameter from getDisplayStyleLargeOperator
+        https://bugs.webkit.org/show_bug.cgi?id=156910
+
+        Reviewed by Alejandro G. Castro.
+
+        No new tests, the behavior is not changed.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::italicCorrection): We do not need to pass m_textContent
+        to getDisplayStyleLargeOperator.
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths): We use getBaseGlyph and do
+        not pass m_textContent to getDisplayStyleLargeOperator or findStretchyData.
+        (WebCore::RenderMathMLOperator::getBaseGlyph): Introduce a helper function to retrieve the
+        base glyph and do some validity checks.
+        (WebCore::RenderMathMLOperator::getDisplayStyleLargeOperator): We remove the character
+        parameter as it is always m_textContent.
+        We use getBaseGlyph and replace primaryFont with baseGlyph.font.
+        (WebCore::RenderMathMLOperator::findStretchyData): Ditto.
+        (WebCore::RenderMathMLOperator::updateStyle): We do not pass m_textContent to
+        getDisplayStyleLargeOperator or findStretchyData.
+        * rendering/mathml/RenderMathMLOperator.h: Declare getBaseGlyph and remove the parameter
+        from getDisplayStyleLargeOperator and findStretchyData.
+
 2016-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r199659): Web Process crash when RenderTheme::adjustMenuListStyle is called with a null element
