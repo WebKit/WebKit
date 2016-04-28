@@ -345,6 +345,7 @@ imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode-worker.html [ S
 imported/w3c/web-platform-tests/fetch/nosniff/worker.html [ Skip ]
 
 webkit.org/b/157068 imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Skip ]
+webkit.org/b/157145 imported/w3c/web-platform-tests/fetch/nosniff/stylesheet.html [ Failure Pass ]
 
 # New W3C ref tests that are failing.
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
