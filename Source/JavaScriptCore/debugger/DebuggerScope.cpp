@@ -60,7 +60,8 @@ void DebuggerScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 String DebuggerScope::className(const JSObject* object)
 {
     const DebuggerScope* scope = jsCast<const DebuggerScope*>(object);
-    ASSERT(scope->isValid());
+    // We cannot assert that scope->isValid() because the TypeProfiler may encounter an invalidated
+    // DebuggerScope in its log entries. We just need to handle it appropriately as below.
     if (!scope->isValid())
         return String();
     JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());

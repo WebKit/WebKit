@@ -1,3 +1,21 @@
+2016-04-28  Mark Lam  <mark.lam@apple.com>
+
+        DebuggerScope::className() should not assert scope->isValid().
+        https://bugs.webkit.org/show_bug.cgi?id=157143
+
+        Reviewed by Keith Miller.
+
+        DebuggerScope::className() should not assert scope->isValid() because the
+        TypeProfiler logs objects it encounters, and may indirectly call
+        JSObject::calculatedClassName() on those objects later, thereby calling
+        DebuggerScope::className() on an invalidated DebuggerScope.
+
+        The existing handling in DebuggerScope::className() for an invalidated scope
+        (that returns a null string) is sufficient.
+
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::className):
+
 2016-04-28  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] implement spec changes for String#padStart and String#padEnd
