@@ -1,3 +1,14 @@
+2016-04-28  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/25986324> WebKit build broken with error: undeclared selector 'childViewControllerForWhitePointAdaptivityStyle'
+
+        Fixed the build by removing use of API that no longer does anything.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen): Revert to using a plain UIViewController.
+        (createFullScreenVideoRootViewControllerClass): Deleted.
+        (allocWebFullScreenVideoRootViewControllerInstance): Deleted.
+
 2016-04-28  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Reimplement Web Inspector code that was tied to Legacy IDB.
