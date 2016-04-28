@@ -2,7 +2,7 @@ code
 kbd
 sample
 pre
-var insert delete cite
+var insert delete cite sub sup
 This test makes sure that formatting style groups.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -16,6 +16,8 @@ var: AXSubrole: AXVariableStyleGroup
 ins: AXSubrole: AXInsertStyleGroup
 del: AXSubrole: AXDeleteStyleGroup
 cite: AXSubrole: AXCiteStyleGroup
+sub: AXSubrole: AXSubscriptStyleGroup
+sup: AXSubrole: AXSuperscriptStyleGroup
 PASS successfullyParsed is true
 
 TEST COMPLETE

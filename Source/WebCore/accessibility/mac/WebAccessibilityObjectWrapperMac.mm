@@ -2413,6 +2413,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 return @"AXInsertStyleGroup";
             if (node->hasTagName(delTag))
                 return @"AXDeleteStyleGroup";
+            if (node->hasTagName(supTag))
+                return @"AXSuperscriptStyleGroup";
+            if (node->hasTagName(subTag))
+                return @"AXSubscriptStyleGroup";
         }
     }
     

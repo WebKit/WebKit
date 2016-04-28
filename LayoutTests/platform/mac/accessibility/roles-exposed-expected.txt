@@ -635,14 +635,14 @@ strong
       AXRoleDescription: 
       
 sub
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXSubscriptStyleGroup
+      AXRoleDescription: group
       
 sup
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXSuperscriptStyleGroup
+      AXRoleDescription: group
       
 svg
       AXRole: 

@@ -3024,7 +3024,8 @@ bool AccessibilityObject::isStyleFormatGroup() const
     return node->hasTagName(kbdTag) || node->hasTagName(codeTag)
     || node->hasTagName(preTag) || node->hasTagName(sampTag)
     || node->hasTagName(varTag) || node->hasTagName(citeTag)
-    || node->hasTagName(insTag) || node->hasTagName(delTag);
+    || node->hasTagName(insTag) || node->hasTagName(delTag)
+    || node->hasTagName(supTag) || node->hasTagName(subTag);
 }
     
 bool AccessibilityObject::isContainedByPasswordField() const
