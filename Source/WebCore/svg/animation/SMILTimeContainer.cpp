@@ -98,7 +98,7 @@ void SMILTimeContainer::notifyIntervalsChanged()
 {
     // Schedule updateAnimations() to be called asynchronously so multiple intervals
     // can change with updateAnimations() only called once at the end.
-    startTimer(0);
+    startTimer(elapsed(), 0);
 }
 
 SMILTime SMILTimeContainer::elapsed() const
@@ -159,7 +159,7 @@ void SMILTimeContainer::resume()
 
     m_resumeTime = monotonicallyIncreasingTime();
     m_pauseTime = 0;
-    startTimer(0);
+    startTimer(elapsed(), 0);
 }
 
 void SMILTimeContainer::setElapsed(SMILTime time)
@@ -196,7 +196,7 @@ void SMILTimeContainer::setElapsed(SMILTime time)
     updateAnimations(time, true);
 }
 
-void SMILTimeContainer::startTimer(SMILTime fireTime, SMILTime minimumDelay)
+void SMILTimeContainer::startTimer(SMILTime elapsed, SMILTime fireTime, SMILTime minimumDelay)
 {
     if (!m_beginTime || isPaused())
         return;
@@ -204,7 +204,7 @@ void SMILTimeContainer::startTimer(SMILTime fireTime, SMILTime minimumDelay)
     if (!fireTime.isFinite())
         return;
 
-    SMILTime delay = std::max(fireTime - elapsed(), minimumDelay);
+    SMILTime delay = std::max(fireTime - elapsed, minimumDelay);
     m_timer.startOneShot(delay.value());
 }
 
@@ -307,7 +307,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
 #ifndef NDEBUG
         m_preventScheduledAnimationsChanges = false;
 #endif
-        startTimer(earliestFireTime, SMILAnimationFrameDelay);
+        startTimer(elapsed, earliestFireTime, SMILAnimationFrameDelay);
         return;
     }
 
@@ -319,7 +319,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
     m_preventScheduledAnimationsChanges = false;
 #endif
 
-    startTimer(earliestFireTime, SMILAnimationFrameDelay);
+    startTimer(elapsed, earliestFireTime, SMILAnimationFrameDelay);
 }
 
 }

@@ -1,3 +1,31 @@
+2016-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        SVG SMIL animations run at less than 60fps
+        https://bugs.webkit.org/show_bug.cgi?id=157119
+        rdar://problem/25971304
+
+        Reviewed by Tim Horton.
+        
+        If you re-fetch current time while doing animation computations you're gonna have
+        a bad time.
+        
+        More specifically, SMILTimeContainer::startTimer() re-fetched elapsedTime() when
+        computing the delay for the next timer fire, then clamped to 16.667ms, so the timer
+        would actually be scheduled at intervals greater than desired, causing a ~54fps framerate.
+        
+        Fix by using the elapsedTime fetched at the start of animation processing.
+
+        Tested by iOS content-animation performance tests.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement): Just cleanup.
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::notifyIntervalsChanged):
+        (WebCore::SMILTimeContainer::resume):
+        (WebCore::SMILTimeContainer::startTimer):
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * svg/animation/SMILTimeContainer.h:
+
 2016-04-27  Brady Eidson  <beidson@apple.com>
 
         Build fix followup to r200163
