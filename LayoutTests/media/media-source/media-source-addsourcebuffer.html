@@ -16,7 +16,6 @@
 
         source = new MediaSource();
         testDOMException('source.addSourceBuffer("invalid")', 'DOMException.NOT_SUPPORTED_ERR');
-        testDOMException('source.addSourceBuffer("")', 'DOMException.INVALID_ACCESS_ERR');
         testExpected('MediaSource.isTypeSupported("invalid")', false);
         testExpected('MediaSource.isTypeSupported("video/mock; codecs=mock")', true);
 

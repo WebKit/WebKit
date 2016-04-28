@@ -1,5 +1,35 @@
 2016-04-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Drop [UsePointersEvenForNonNullableObjectArguments] from MediaSource interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=156904
+
+        Reviewed by Darin Adler.
+
+        MediaSource::addSourceBuffer will now throw a TypeError if a null parameter is passed.
+        MediaSource::removeSourceBuffer will now throw a TypeError if a null parameter is passed.
+        SourceBuffer::appendBuffer will now throw a TypeError if a null parameter is passed.
+
+        Did some refactoring to use more references.
+
+        Covered by updated test.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::endOfStream):
+        (WebCore::MediaSource::addSourceBuffer):
+        (WebCore::MediaSource::removeSourceBuffer):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBuffer):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::add):
+        (WebCore::SourceBufferList::remove):
+        * Modules/mediasource/SourceBufferList.h:
+
+2016-04-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Drop [UsePointersEvenForNonNullableObjectArguments] from Node
         https://bugs.webkit.org/show_bug.cgi?id=156978
 

@@ -245,6 +245,18 @@
               });
           }, "Test appending an empty ArrayBuffer.");
 
+          mediasource_test(function(test, mediaElement, mediaSource)
+          {
+              assert_throws(new TypeError(), function() { mediaSource.addSourceBuffer(MediaSourceUtil.VIDEO_ONLY_TYPE).appendBufer(null); });
+              assert_throws(new TypeError(), function() { mediaSource.addSourceBuffer(MediaSourceUtil.VIDEO_ONLY_TYPE).appendBufer(undefined); });
+              assert_throws(new TypeError(), function() { mediaSource.removeSourceBuffer(null); });
+              assert_throws(new TypeError(), function() { mediaSource.removeSourceBuffer(undefined); });
+              assert_throws(new TypeError(), function() { mediaSource.addSourceBuffer(null); });
+              assert_throws(new TypeError(), function() { mediaSource.addSourceBuffer(undefined); });
+
+              test.done();
+          }, "Test passing null or undefined to some MediaSource and SourceBuffer API methods.");
+
         </script>
     </body>
 </html>

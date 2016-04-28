@@ -96,7 +96,7 @@ public:
     SourceBufferList* sourceBuffers() { return m_sourceBuffers.get(); }
     SourceBufferList* activeSourceBuffers() { return m_activeSourceBuffers.get(); }
     SourceBuffer* addSourceBuffer(const String& type, ExceptionCode&);
-    void removeSourceBuffer(SourceBuffer*, ExceptionCode&);
+    void removeSourceBuffer(SourceBuffer&, ExceptionCode&);
     static bool isTypeSupported(const String& type);
 
     // EventTarget interface

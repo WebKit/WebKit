@@ -34,12 +34,11 @@ enum EndOfStreamError {
 };
 
 [
-    Conditional=MEDIA_SOURCE,
     ActiveDOMObject,
-    EnabledBySetting=MediaSource,
+    Conditional=MEDIA_SOURCE,
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
-    UsePointersEvenForNonNullableObjectArguments,
+    EnabledBySetting=MediaSource,
 ] interface MediaSource : EventTarget {
     // All the source buffers created by this object.
     readonly attribute SourceBufferList sourceBuffers;
@@ -49,7 +48,8 @@ enum EndOfStreamError {
 
     [SetterRaisesException] attribute unrestricted double duration;
 
-    [RaisesException] SourceBuffer addSourceBuffer(DOMString type);
+    // FIXME: type should not be nullable.
+    [RaisesException] SourceBuffer addSourceBuffer(DOMString? type);
     [RaisesException] void removeSourceBuffer(SourceBuffer buffer);
 
     readonly attribute DOMString readyState;

@@ -414,11 +414,6 @@ void MediaSource::setReadyState(const AtomicString& state)
     onReadyStateChange(oldState, state);
 }
 
-static bool SourceBufferIsUpdating(RefPtr<SourceBuffer>& sourceBuffer)
-{
-    return sourceBuffer->updating();
-}
-
 void MediaSource::endOfStream(ExceptionCode& ec)
 {
     endOfStream(emptyAtom, ec);
@@ -436,7 +431,7 @@ void MediaSource::endOfStream(const AtomicString& error, ExceptionCode& ec)
 
     // 2. If the updating attribute equals true on any SourceBuffer in sourceBuffers, then throw an
     // INVALID_STATE_ERR exception and abort these steps.
-    if (std::any_of(m_sourceBuffers->begin(), m_sourceBuffers->end(), SourceBufferIsUpdating)) {
+    if (std::any_of(m_sourceBuffers->begin(), m_sourceBuffers->end(), [](RefPtr<SourceBuffer>& sourceBuffer) { return sourceBuffer->updating(); })) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -519,10 +514,9 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
     // 2.2 http://www.w3.org/TR/media-source/#widl-MediaSource-addSourceBuffer-SourceBuffer-DOMString-type
     // When this method is invoked, the user agent must run the following steps:
 
-    // 1. If type is null or an empty then throw an INVALID_ACCESS_ERR exception and
-    // abort these steps.
-    if (type.isNull() || type.isEmpty()) {
-        ec = INVALID_ACCESS_ERR;
+    // 1. If type is an empty string then throw a TypeError exception and abort these steps.
+    if (type.isEmpty()) {
+        ec = TypeError;
         return nullptr;
     }
 
@@ -551,7 +545,7 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
         return nullptr;
     }
 
-    RefPtr<SourceBuffer> buffer = SourceBuffer::create(sourceBufferPrivate.releaseNonNull(), this);
+    Ref<SourceBuffer> buffer = SourceBuffer::create(sourceBufferPrivate.releaseNonNull(), this);
 
     // 6. Set the generate timestamps flag on the new object to the value in the "Generate Timestamps Flag"
     // column of the byte stream format registry [MSE-REGISTRY] entry that is associated with type.
@@ -566,26 +560,20 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
     // ↳ Set the mode attribute on the new object to "segments".
     buffer->setMode(shouldGenerateTimestamps ? SourceBuffer::sequenceKeyword() : SourceBuffer::segmentsKeyword(), IGNORE_EXCEPTION);
 
+    SourceBuffer* result = buffer.ptr();
+
     // 8. Add the new object to sourceBuffers and fire a addsourcebuffer on that object.
-    m_sourceBuffers->add(buffer);
+    m_sourceBuffers->add(WTFMove(buffer));
     regenerateActiveSourceBuffers();
 
     // 9. Return the new object to the caller.
-    return buffer.get();
+    return result;
 }
 
-void MediaSource::removeSourceBuffer(SourceBuffer* buffer, ExceptionCode& ec)
+void MediaSource::removeSourceBuffer(SourceBuffer& buffer, ExceptionCode& ec)
 {
     LOG(MediaSource, "MediaSource::removeSourceBuffer() %p", this);
-    RefPtr<SourceBuffer> protect(buffer);
-
-    // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-MediaSource-removeSourceBuffer-void-SourceBuffer-sourceBuffer
-    // 1. If sourceBuffer is null then throw an INVALID_ACCESS_ERR exception and
-    // abort these steps.
-    if (!buffer) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
+    Ref<SourceBuffer> protect(buffer);
 
     // 2. If sourceBuffer specifies an object that is not in sourceBuffers then
     // throw a NOT_FOUND_ERR exception and abort these steps.
@@ -595,10 +583,10 @@ void MediaSource::removeSourceBuffer(SourceBuffer* buffer, ExceptionCode& ec)
     }
 
     // 3. If the sourceBuffer.updating attribute equals true, then run the following steps: ...
-    buffer->abortIfUpdating();
+    buffer.abortIfUpdating();
 
     // 4. Let SourceBuffer audioTracks list equal the AudioTrackList object returned by sourceBuffer.audioTracks.
-    RefPtr<AudioTrackList> audioTracks = buffer->audioTracks();
+    RefPtr<AudioTrackList> audioTracks = buffer.audioTracks();
 
     // 5. If the SourceBuffer audioTracks list is not empty, then run the following steps:
     if (audioTracks->length()) {
@@ -638,7 +626,7 @@ void MediaSource::removeSourceBuffer(SourceBuffer* buffer, ExceptionCode& ec)
     }
 
     // 6. Let SourceBuffer videoTracks list equal the VideoTrackList object returned by sourceBuffer.videoTracks.
-    RefPtr<VideoTrackList> videoTracks = buffer->videoTracks();
+    RefPtr<VideoTrackList> videoTracks = buffer.videoTracks();
 
     // 7. If the SourceBuffer videoTracks list is not empty, then run the following steps:
     if (videoTracks->length()) {
@@ -678,7 +666,7 @@ void MediaSource::removeSourceBuffer(SourceBuffer* buffer, ExceptionCode& ec)
     }
 
     // 8. Let SourceBuffer textTracks list equal the TextTrackList object returned by sourceBuffer.textTracks.
-    RefPtr<TextTrackList> textTracks = buffer->textTracks();
+    RefPtr<TextTrackList> textTracks = buffer.textTracks();
 
     // 9. If the SourceBuffer textTracks list is not empty, then run the following steps:
     if (textTracks->length()) {
@@ -726,7 +714,7 @@ void MediaSource::removeSourceBuffer(SourceBuffer* buffer, ExceptionCode& ec)
     m_sourceBuffers->remove(buffer);
     
     // 12. Destroy all resources for sourceBuffer.
-    buffer->removedFromMediaSource();
+    buffer.removedFromMediaSource();
 }
 
 bool MediaSource::isTypeSupported(const String& type)

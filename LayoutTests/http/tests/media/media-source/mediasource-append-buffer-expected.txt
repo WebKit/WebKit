@@ -9,4 +9,5 @@ PASS Test MediaSource.endOfStream() during a pending appendBuffer() for one of i
 PASS Test set SourceBuffer.timestampOffset during a pending appendBuffer(). 
 PASS Test appending an empty ArrayBufferView. 
 PASS Test appending an empty ArrayBuffer. 
+PASS Test passing null or undefined to some MediaSource and SourceBuffer API methods. 
 

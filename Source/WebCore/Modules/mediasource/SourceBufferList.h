@@ -52,11 +52,11 @@ public:
     virtual ~SourceBufferList();
 
     unsigned long length() const { return m_list.size(); }
-    SourceBuffer* item(unsigned long index) const { return (index < m_list.size()) ? m_list[index].get() : 0; }
+    SourceBuffer* item(unsigned long index) const { return (index < m_list.size()) ? m_list[index].get() : nullptr; }
 
-    void add(PassRefPtr<SourceBuffer>);
-    void remove(SourceBuffer*);
-    bool contains(SourceBuffer* buffer) { return m_list.find(buffer) != notFound; }
+    void add(Ref<SourceBuffer>&&);
+    void remove(SourceBuffer&);
+    bool contains(SourceBuffer& buffer) { return m_list.find(&buffer) != notFound; }
     void clear();
     void swap(Vector<RefPtr<SourceBuffer>>&);
 

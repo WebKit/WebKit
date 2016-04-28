@@ -34,11 +34,10 @@
 };
 
 [
-    Conditional=MEDIA_SOURCE,
-    NoInterfaceObject,
     ActiveDOMObject,
-    UsePointersEvenForNonNullableObjectArguments,
+    Conditional=MEDIA_SOURCE,
     ExportMacro=WEBCORE_EXPORT,
+    NoInterfaceObject,
 ] interface SourceBuffer : EventTarget {
 
     [SetterRaisesException] attribute AppendMode mode;

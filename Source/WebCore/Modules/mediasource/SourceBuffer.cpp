@@ -271,26 +271,15 @@ void SourceBuffer::setAppendWindowEnd(double newValue, ExceptionCode& ec)
 }
 
 
-void SourceBuffer::appendBuffer(PassRefPtr<ArrayBuffer> data, ExceptionCode& ec)
+void SourceBuffer::appendBuffer(ArrayBuffer& data, ExceptionCode& ec)
 {
-    // Section 3.2 appendBuffer()
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-SourceBuffer-appendBuffer-void-ArrayBufferView-data
-    // 1. If data is null then throw an INVALID_ACCESS_ERR exception and abort these steps.
-    if (!data) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-    appendBufferInternal(static_cast<unsigned char*>(data->data()), data->byteLength(), ec);
+    appendBufferInternal(static_cast<unsigned char*>(data.data()), data.byteLength(), ec);
 }
 
-void SourceBuffer::appendBuffer(PassRefPtr<ArrayBufferView> data, ExceptionCode& ec)
+void SourceBuffer::appendBuffer(ArrayBufferView* data, ExceptionCode& ec)
 {
-    // Section 3.2 appendBuffer()
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-SourceBuffer-appendBuffer-void-ArrayBufferView-data
-    // 1. If data is null then throw an INVALID_ACCESS_ERR exception and abort these steps.
     if (!data) {
-        ec = INVALID_ACCESS_ERR;
+        ec = TypeError;
         return;
     }
 

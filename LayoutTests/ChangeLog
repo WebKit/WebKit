@@ -1,3 +1,18 @@
+2016-04-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from MediaSource interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=156904
+
+        Reviewed by Darin Adler.
+
+        * http/tests/media/media-source/mediasource-addsourcebuffer.html: Changing expected exception to TypeError.
+        * http/tests/media/media-source/mediasource-append-buffer-expected.txt:
+        * http/tests/media/media-source/mediasource-append-buffer.html: Checking passing null or undefined to
+        appendBuffer, addSourceBuffer and removeSourceBuffer.
+        * media/media-source/media-source-addsourcebuffer-expected.txt:
+        * media/media-source/media-source-addsourcebuffer.html: Removing redundant test.
+
+
 2016-04-27  Ada Chan  <adachan@apple.com>
 
         Set overflow: hidden on ::-webkit-media-controls in mediaControlsApple.css
