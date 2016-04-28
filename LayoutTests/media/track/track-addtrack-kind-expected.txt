@@ -3,7 +3,7 @@ Tests that the addTextTrack() only accepts known 'kind' values.
 
 ++ Test invalid 'kind'.
 EXPECTED (video.textTracks.length == '0') OK
-TEST(video.addTextTrack('kaptions')) THROWS(DOMException.SYNTAX_ERR) OK
+TEST(video.addTextTrack('kaptions')) THROWS('TypeError: Type error') OK
 EXPECTED (video.textTracks.length == '0') OK
 
 ++ Test all valid 'kind' keywords.

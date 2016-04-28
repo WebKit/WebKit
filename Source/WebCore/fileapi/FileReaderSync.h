@@ -58,10 +58,6 @@ public:
 
     RefPtr<JSC::ArrayBuffer> readAsArrayBuffer(ScriptExecutionContext&, Blob&, ExceptionCode&);
     String readAsBinaryString(ScriptExecutionContext&, Blob&, ExceptionCode&);
-    String readAsText(ScriptExecutionContext& scriptExecutionContext, Blob& blob, ExceptionCode& ec)
-    {
-        return readAsText(scriptExecutionContext, blob, emptyString(), ec);
-    }
     String readAsText(ScriptExecutionContext&, Blob&, const String& encoding, ExceptionCode&);
     String readAsDataURL(ScriptExecutionContext&, Blob&, ExceptionCode&);
 

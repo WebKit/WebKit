@@ -26,7 +26,7 @@
 [
     Conditional=SPEECH_SYNTHESIS,
     ConstructorCallWith=ScriptExecutionContext,
-    Constructor(optional DOMString text = null)
+    Constructor(optional DOMString text)
 ] interface SpeechSynthesisUtterance : EventTarget {
     attribute DOMString text;
     attribute DOMString lang;

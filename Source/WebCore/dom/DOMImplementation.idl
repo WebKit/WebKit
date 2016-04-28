@@ -49,6 +49,6 @@
 
     // HTMLDOMImplementation interface from DOM Level 2 HTML
 
-    [NewObject] HTMLDocument createHTMLDocument(optional DOMString title = null);
+    [NewObject] HTMLDocument createHTMLDocument(optional DOMString title);
 
 };

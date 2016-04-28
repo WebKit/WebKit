@@ -156,7 +156,7 @@
     // FIXME: Using "undefined" as default parameter value is wrong.
     boolean execCommand(optional DOMString command = "undefined",
                         optional boolean userInterface = false,
-                        optional DOMString? value);
+                        optional DOMString? value = null);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     // FIXME: remove the these two versions once optional is implemented for Objective-C.

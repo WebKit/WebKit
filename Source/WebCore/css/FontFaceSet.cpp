@@ -247,14 +247,4 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
     m_pendingPromises.remove(iterator);
 }
 
-void FontFaceSet::load(JSC::ExecState& state, const String& font, DeferredWrapper&& promise, ExceptionCode& ec)
-{
-    load(state, font, ASCIILiteral(" "), WTFMove(promise), ec);
-}
-
-bool FontFaceSet::check(const String& font, ExceptionCode& ec)
-{
-    return check(font, ASCIILiteral(" "), ec);
-}
-
 }

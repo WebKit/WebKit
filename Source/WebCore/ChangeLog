@@ -1,3 +1,81 @@
+2016-04-28  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Specify default values for optional parameters of type 'DOMString'
+        https://bugs.webkit.org/show_bug.cgi?id=157116
+
+        Reviewed by Darin Adler.
+
+        Specify default values for optional parameters of type 'DOMString' so
+        that this default value is used if the parameter is either omitted or
+        undefined. For parameters of type DOMString and that are not nullable,
+        the bindings generator now uses the null string as implicit default
+        value (unless explicitely specified otherwise in the IDL). This
+        simplifies the IDL a little and makes it a bit less confusing (it is
+        a bit weird to see something like "optional DOMString param = null",
+        considering the parameter is not nullable). I also think it makes
+        more sense to use the null String() rather than Optional<String> in
+        this case.
+
+        No new tests, existing tests were rebaselined.
+
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::openCursor): Deleted.
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/speech/SpeechSynthesisUtterance.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        (CanUseWTFOptionalForParameter): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomicString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValue): Deleted.
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsPrototypeFunctionSetShadow):
+        * bindings/scripts/test/TestNamedConstructor.idl:
+        * css/FontFaceSet.cpp:
+        * css/FontFaceSet.h:
+        * css/FontFaceSet.idl:
+        * css/WebKitCSSMatrix.idl:
+        * dom/Comment.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::clearData):
+        (WebCore::DataTransfer::getData): Deleted.
+        * dom/DataTransfer.h:
+        * dom/Document.idl:
+        * dom/Text.idl:
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::readAsDataURL): Deleted.
+        * fileapi/FileReader.h:
+        * fileapi/FileReaderSync.h:
+        * fileapi/FileReaderSync.idl:
+        * html/HTMLAudioElement.idl:
+        * html/HTMLInputElement.idl:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addTextTrack):
+        Throw a TypeError if the 'kind' parameter is not a valid string in the
+        TextTrackKind enum:
+        https://html.spec.whatwg.org/multipage/embedded-content.html#htmlmediaelement
+
+        We previously threw a SYNTAX_ERR instead of a TypeError in such case,
+        which was not correct as per Web IDL specification.
+
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * page/Performance.idl:
+
 2016-04-28  Antonio Gomes  <tonikitoo@webkit.org>
 
         Factor out the "paint item" logic in RenderListBox into a helper

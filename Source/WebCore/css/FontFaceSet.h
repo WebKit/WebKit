@@ -47,9 +47,7 @@ public:
     bool remove(FontFace&);
     void clear();
 
-    void load(JSC::ExecState&, const String& font, DeferredWrapper&& promise, ExceptionCode&);
     void load(JSC::ExecState&, const String& font, const String& text, DeferredWrapper&& promise, ExceptionCode&);
-    bool check(const String& font, ExceptionCode&);
     bool check(const String& font, const String& text, ExceptionCode&);
 
     String status() const;

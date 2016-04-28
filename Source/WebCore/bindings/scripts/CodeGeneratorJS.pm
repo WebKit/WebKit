@@ -3381,7 +3381,6 @@ sub CanUseWTFOptionalForParameter
     return 0 if $codeGenerator->IsCallbackInterface($type);
     return 0 if $codeGenerator->IsEnumType($type);
     return 0 if $codeGenerator->IsWrapperType($type);
-    return 0 if $type eq "DOMString";
     return 0 if $type eq "any";
 
     return 1;
@@ -3471,6 +3470,9 @@ sub GenerateParametersCheck
 
         # As per Web IDL, optional dictionary parameters are always considered to have a default value of an empty dictionary, unless otherwise specified.
         $parameter->default("[]") if ($optional && !defined($parameter->default) && $argType eq "Dictionary");
+
+        # We use the null string as default value for non-nullable parameters of type DOMString unless specified otherwise.
+        $parameter->default("null") if ($optional && !defined($parameter->default) && $argType eq "DOMString" && !$parameter->isNullable);
 
         # FIXME: We should eventually stop generating any early calls, and instead use either default parameter values or WTF::Optional<>.
         if ($optional && !defined($parameter->default) && !CanUseWTFOptionalForParameter($parameter) && !$codeGenerator->IsCallbackInterface($argType)) {

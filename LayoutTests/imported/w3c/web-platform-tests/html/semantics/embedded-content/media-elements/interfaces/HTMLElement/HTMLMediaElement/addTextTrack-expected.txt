@@ -1,16 +1,12 @@
 
-FAIL HTMLMediaElement.addTextTrack bogus first arg assert_throws: function "function (){
-        video.addTextTrack('foo');
-    }" threw object "Error: SyntaxError: DOM Exception 12" ("SyntaxError") expected object "TypeError" ("TypeError")
-FAIL HTMLMediaElement.addTextTrack uppercase first arg assert_throws: function "function (){
-        video.addTextTrack('SUBTITLES');
-    }" threw object "Error: SyntaxError: DOM Exception 12" ("SyntaxError") expected object "TypeError" ("TypeError")
+PASS HTMLMediaElement.addTextTrack bogus first arg 
+PASS HTMLMediaElement.addTextTrack uppercase first arg 
 PASS HTMLMediaElement.addTextTrack subtitles first arg 
 PASS HTMLMediaElement.addTextTrack captions first arg 
 PASS HTMLMediaElement.addTextTrack descriptions first arg 
 PASS HTMLMediaElement.addTextTrack chapters first arg 
 PASS HTMLMediaElement.addTextTrack metadata first arg 
-FAIL HTMLMediaElement.addTextTrack undefined second and third arg assert_equals: expected "" but got "undefined"
+PASS HTMLMediaElement.addTextTrack undefined second and third arg 
 PASS HTMLMediaElement.addTextTrack null second and third arg 
 PASS HTMLMediaElement.addTextTrack foo and bar second and third arg 
 PASS HTMLMediaElement.addTextTrack foo second arg, third arg omitted 

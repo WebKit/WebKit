@@ -112,11 +112,6 @@ void FileReader::readAsText(Blob* blob, const String& encoding, ExceptionCode& e
     readInternal(*blob, FileReaderLoader::ReadAsText, ec);
 }
 
-void FileReader::readAsText(Blob* blob, ExceptionCode& ec)
-{
-    readAsText(blob, String(), ec);
-}
-
 void FileReader::readAsDataURL(Blob* blob, ExceptionCode& ec)
 {
     if (!blob)

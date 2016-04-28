@@ -39,7 +39,7 @@
 #if defined(ENABLE_PERFORMANCE_TIMELINE) && ENABLE_PERFORMANCE_TIMELINE
     PerformanceEntryList webkitGetEntries();
     PerformanceEntryList webkitGetEntriesByType(DOMString entryType);
-    PerformanceEntryList webkitGetEntriesByName(DOMString name, optional DOMString entryType = null);
+    PerformanceEntryList webkitGetEntriesByName(DOMString name, optional DOMString entryType);
 #endif
 
 #if defined(ENABLE_RESOURCE_TIMING) && ENABLE_RESOURCE_TIMING
@@ -52,10 +52,10 @@
     // See http://www.w3.org/TR/2012/CR-user-timing-20120726/
 #if defined(ENABLE_USER_TIMING) && ENABLE_USER_TIMING
     [RaisesException] void webkitMark(DOMString markName);
-    void webkitClearMarks(optional  DOMString markName = null);
+    void webkitClearMarks(optional  DOMString markName);
 
-    [RaisesException] void webkitMeasure(DOMString measureName, optional DOMString startMark = null, optional DOMString endMark = null);
-    void webkitClearMeasures(optional DOMString measureName = null);
+    [RaisesException] void webkitMeasure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
+    void webkitClearMeasures(optional DOMString measureName);
 #endif
 
     // See http://www.w3.org/TR/hr-time/ for details.

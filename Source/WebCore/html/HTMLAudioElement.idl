@@ -26,6 +26,6 @@
 [
     EnabledAtRuntime,
     Conditional=VIDEO,
-    NamedConstructor=Audio(optional DOMString src = null)
+    NamedConstructor=Audio(optional DOMString src)
 ] interface HTMLAudioElement : HTMLMediaElement {
 };

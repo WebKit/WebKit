@@ -67,5 +67,5 @@
     [RaisesException] void send(Blob data);
     [RaisesException] void send(DOMString data);
 
-    [RaisesException] void close([Clamp] optional unsigned short code, optional DOMString reason = null);
+    [RaisesException] void close([Clamp] optional unsigned short code, optional DOMString reason);
 };

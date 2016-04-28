@@ -67,7 +67,6 @@ public:
     void readAsArrayBuffer(Blob*, ExceptionCode&);
     void readAsBinaryString(Blob*, ExceptionCode&);
     void readAsText(Blob*, const String& encoding, ExceptionCode&);
-    void readAsText(Blob*, ExceptionCode&);
     void readAsDataURL(Blob*, ExceptionCode&);
     void abort();
 

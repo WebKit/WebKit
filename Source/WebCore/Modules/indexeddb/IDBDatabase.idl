@@ -36,8 +36,8 @@
 
     [Custom, RaisesExceptionWithMessage] IDBObjectStore createObjectStore(DOMString name, optional Dictionary options);
     [RaisesExceptionWithMessage] void deleteObjectStore(DOMString name);
-    [Custom, CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBTransaction transaction(DOMString storeName, optional DOMString mode = null);
-    [Custom, CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBTransaction transaction(sequence<DOMString> storeNames, optional DOMString mode = null);
+    [Custom, CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBTransaction transaction(DOMString storeName, optional DOMString mode);
+    [Custom, CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBTransaction transaction(sequence<DOMString> storeNames, optional DOMString mode);
     void close();
 
     attribute EventHandler onabort;

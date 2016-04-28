@@ -58,8 +58,7 @@ namespace WebCore {
 
         FileList& files() const;
 
-        void clearData(const String& type);
-        void clearData();
+        void clearData(const String& type = String());
 
         String getData(const String& type) const;
 

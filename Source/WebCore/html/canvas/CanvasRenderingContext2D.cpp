@@ -1254,15 +1254,10 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
     }
 }
 
-void CanvasRenderingContext2D::setShadow(float width, float height, float blur)
-{
-    setShadow(FloatSize(width, height), blur, Color::transparent);
-}
-
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur, const String& color, Optional<float> alpha)
 {
-    RGBA32 rgba;
-    if (!parseColorOrCurrentColor(rgba, color, canvas()))
+    RGBA32 rgba = Color::transparent;
+    if (!color.isNull() && !parseColorOrCurrentColor(rgba, color, canvas()))
         return;
     setShadow(FloatSize(width, height), blur, colorWithOverrideAlpha(rgba, alpha));
 }

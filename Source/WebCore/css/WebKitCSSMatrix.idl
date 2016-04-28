@@ -25,7 +25,7 @@
 
 // Introduced in DOM Level ?:
 [
-    Constructor(optional DOMString cssValue = null),
+    Constructor(optional DOMString cssValue),
     ConstructorRaisesException,
     ImplementationLacksVTable,
 ] interface WebKitCSSMatrix {
