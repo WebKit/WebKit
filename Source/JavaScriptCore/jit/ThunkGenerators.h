@@ -61,7 +61,6 @@ MacroAssemblerCodeRef floorThunkGenerator(VM*);
 MacroAssemblerCodeRef logThunkGenerator(VM*);
 MacroAssemblerCodeRef roundThunkGenerator(VM*);
 MacroAssemblerCodeRef sqrtThunkGenerator(VM*);
-MacroAssemblerCodeRef powThunkGenerator(VM*);
 MacroAssemblerCodeRef imulThunkGenerator(VM*);
 MacroAssemblerCodeRef randomThunkGenerator(VM*);
 MacroAssemblerCodeRef truncThunkGenerator(VM*);

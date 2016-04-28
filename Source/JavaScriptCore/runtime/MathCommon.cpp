@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -414,21 +414,40 @@ double JIT_OPERATION operationMathPow(double x, double y)
 {
     if (std::isnan(y))
         return PNaN;
-    if (std::isinf(y) && fabs(x) == 1)
+    double absoluteBase = fabs(x);
+    if (absoluteBase == 1 && std::isinf(y))
         return PNaN;
-    int32_t yAsInt = y;
-    if (static_cast<double>(yAsInt) != y || yAsInt < 0)
-        return mathPowInternal(x, y);
 
-    // If the exponent is a positive int32 integer, we do a fast exponentiation
-    double result = 1;
-    while (yAsInt) {
-        if (yAsInt & 1)
-            result *= x;
-        x *= x;
-        yAsInt >>= 1;
+    if (y == 0.5) {
+        if (!absoluteBase)
+            return 0;
+        if (absoluteBase == std::numeric_limits<double>::infinity())
+            return std::numeric_limits<double>::infinity();
+        return sqrt(x);
     }
-    return result;
+
+    if (y == -0.5) {
+        if (!absoluteBase)
+            return std::numeric_limits<double>::infinity();
+        if (absoluteBase == std::numeric_limits<double>::infinity())
+            return 0.;
+        return 1. / sqrt(x);
+    }
+
+    int32_t yAsInt = y;
+    if (static_cast<double>(yAsInt) == y && yAsInt > 0 && yAsInt <= maxExponentForIntegerMathPow) {
+        // If the exponent is a small positive int32 integer, we do a fast exponentiation
+        double result = 1;
+        while (yAsInt) {
+            if (yAsInt & 1)
+                result *= x;
+            x *= x;
+            yAsInt >>= 1;
+        }
+        return result;
+
+    }
+    return mathPowInternal(x, y);
 }
 
 extern "C" {

@@ -153,7 +153,7 @@ namespace JSC { namespace DFG {
     macro(ArithMin, NodeResultNumber) \
     macro(ArithMax, NodeResultNumber) \
     macro(ArithFRound, NodeResultNumber) \
-    macro(ArithPow, NodeResultNumber) \
+    macro(ArithPow, NodeResultDouble) \
     macro(ArithRandom, NodeResultDouble | NodeMustGenerate) \
     macro(ArithRound, NodeResultNumber) \
     macro(ArithFloor, NodeResultNumber) \

@@ -782,8 +782,6 @@ defineUnaryDoubleOpWrapper(floor);
 defineUnaryDoubleOpWrapper(ceil);
 defineUnaryDoubleOpWrapper(trunc);
 
-static const double oneConstant = 1.0;
-static const double negativeHalfConstant = -0.5;
 static const double halfConstant = 0.5;
     
 MacroAssemblerCodeRef floorThunkGenerator(VM* vm)
@@ -990,58 +988,6 @@ MacroAssemblerCodeRef absThunkGenerator(VM* vm)
     jit.returnDouble(SpecializedThunkJIT::fpRegT1);
 #endif
     return jit.finalize(vm->jitStubs->ctiNativeTailCall(vm), "abs");
-}
-
-MacroAssemblerCodeRef powThunkGenerator(VM* vm)
-{
-    SpecializedThunkJIT jit(vm, 2);
-    if (!jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
-
-    jit.loadDouble(MacroAssembler::TrustedImmPtr(&oneConstant), SpecializedThunkJIT::fpRegT1);
-    jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    MacroAssembler::Jump nonIntExponent;
-    jit.loadInt32Argument(1, SpecializedThunkJIT::regT0, nonIntExponent);
-    jit.appendFailure(jit.branch32(MacroAssembler::LessThan, SpecializedThunkJIT::regT0, MacroAssembler::TrustedImm32(0)));
-    
-    MacroAssembler::Jump exponentIsZero = jit.branchTest32(MacroAssembler::Zero, SpecializedThunkJIT::regT0);
-    MacroAssembler::Label startLoop(jit.label());
-
-    MacroAssembler::Jump exponentIsEven = jit.branchTest32(MacroAssembler::Zero, SpecializedThunkJIT::regT0, MacroAssembler::TrustedImm32(1));
-    jit.mulDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
-    exponentIsEven.link(&jit);
-    jit.mulDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
-    jit.rshift32(MacroAssembler::TrustedImm32(1), SpecializedThunkJIT::regT0);
-    jit.branchTest32(MacroAssembler::NonZero, SpecializedThunkJIT::regT0).linkTo(startLoop, &jit);
-
-    exponentIsZero.link(&jit);
-
-    {
-        SpecializedThunkJIT::JumpList doubleResult;
-        jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT1, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT0);
-        jit.returnInt32(SpecializedThunkJIT::regT0);
-        doubleResult.link(&jit);
-        jit.returnDouble(SpecializedThunkJIT::fpRegT1);
-    }
-
-    if (jit.supportsFloatingPointSqrt()) {
-        nonIntExponent.link(&jit);
-        jit.loadDouble(MacroAssembler::TrustedImmPtr(&negativeHalfConstant), SpecializedThunkJIT::fpRegT3);
-        jit.loadDoubleArgument(1, SpecializedThunkJIT::fpRegT2, SpecializedThunkJIT::regT0);
-        jit.appendFailure(jit.branchDouble(MacroAssembler::DoubleLessThanOrEqual, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1));
-        jit.appendFailure(jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, SpecializedThunkJIT::fpRegT2, SpecializedThunkJIT::fpRegT3));
-        jit.sqrtDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
-        jit.divDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
-
-        SpecializedThunkJIT::JumpList doubleResult;
-        jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT1, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT0);
-        jit.returnInt32(SpecializedThunkJIT::regT0);
-        doubleResult.link(&jit);
-        jit.returnDouble(SpecializedThunkJIT::fpRegT1);
-    } else
-        jit.appendFailure(nonIntExponent);
-
-    return jit.finalize(vm->jitStubs->ctiNativeTailCall(vm), "pow");
 }
 
 MacroAssemblerCodeRef imulThunkGenerator(VM* vm)

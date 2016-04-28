@@ -35,6 +35,8 @@
 #endif
 
 namespace JSC {
+
+const int32_t maxExponentForIntegerMathPow = 1000;
 double JIT_OPERATION operationMathPow(double x, double y) WTF_INTERNAL;
 
 inline int clz32(uint32_t number)

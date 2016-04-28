@@ -474,8 +474,6 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return fromCharCodeThunkGenerator;
     case SqrtIntrinsic:
         return sqrtThunkGenerator;
-    case PowIntrinsic:
-        return powThunkGenerator;
     case AbsIntrinsic:
         return absThunkGenerator;
     case FloorIntrinsic:

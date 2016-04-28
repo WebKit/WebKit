@@ -1,3 +1,82 @@
+2016-04-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Unify Math.pow() accross all tiers
+        https://bugs.webkit.org/show_bug.cgi?id=157121
+
+        Reviewed by Geoffrey Garen.
+
+        My previous optimizations of DFG compile time have slowly
+        regressed Sunspider's math-partial-sums.
+
+        What is happenning is baseline used a thunk for Math.pow()
+        that has a special case for an exponent of -0.5, while
+        DFG/FTL have other special cases for other exponents.
+        The faster we get to DFG, the less time we spend in that fast
+        case for -0.5.
+
+        While looking into this, I discovered some correctness issues. Baseline
+        optimizes y=-0.5 by turning it into 1/sqrt(). DFG/FTL optimize constant
+        y=0.5 by turning it into sqrt(). The problem is sqrt() behaves differently
+        for -0 and -Infinity. With sqrt(), negative numbers are undefined,
+        and the result is NaN. With pow(), they have a result.
+
+        Something else that has bothered me for a while is that Math.pow()
+        with the same arguments give you different results in LLINT, Baseline,
+        and DFG/FTL. This seems a bit dangerous for numerical stability.
+
+        With this patch, I unify the behaviors for all tiers while keeping
+        the "special cases".
+
+        We have pow() that is super slow, but most callers don't need the
+        full power. We have:
+        -pow() with an exponent between 0 and 1000 is a fast path implemented
+         by multiplication only.
+        -pow(x, 0.5) is sqrt with special checks for negative values.
+        -pow(x, -0.5) is sqrt with special checks for negative values.
+
+        The C++ implementation handles all those optimizations too. This ensure
+        you get the same results from LLINT to FTL.
+
+        The thunk is eliminated, it was producing incorrect results and only
+        optimized Sunspider's partial-sums.
+
+        DFG gets the optimized integer, 0.5 and -0.5 cases since those are important
+        for somewhat-hot code. DFG falls back to the C++ code for any non-obvious case.
+
+        FTL gets the full C++ implementation inlined in B3. B3 knows how to eliminate
+        all the dead cases so you get the best if your code is hot enough to reach FTL.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToArithSqrt): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::compileArithPowIntegerFastPath):
+        (JSC::DFG::SpeculativeJIT::compileArithPow):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithPow):
+        * jit/ThunkGenerators.cpp:
+        (JSC::powThunkGenerator): Deleted.
+        * jit/ThunkGenerators.h:
+        * runtime/MathCommon.cpp:
+        (JSC::operationMathPow):
+        * runtime/MathCommon.h:
+        * runtime/VM.cpp:
+        (JSC::thunkGeneratorForIntrinsic): Deleted.
+        * tests/stress/math-pow-stable-results.js: Added.
+        Getting consistent results when tiering up is new.
+        This test verify that results always remains the same as LLINT.
+
+        * tests/stress/math-pow-with-constants.js:
+        (testPowUsedAsSqrt):
+        (powUsedAsOneOverSqrt):
+        (testPowUsedAsOneOverSqrt):
+        (powUsedAsSquare):
+        (testPowUsedAsSquare):
+
 2016-04-28  Mark Lam  <mark.lam@apple.com>
 
         DebuggerScope::className() should not assert scope->isValid().

@@ -349,7 +349,6 @@ private:
         }
 
         case ArithPow: {
-            node->setResult(NodeResultDouble);
             if (node->child2()->shouldSpeculateInt32OrBooleanForArithmetic()) {
                 fixDoubleOrBooleanEdge(node->child1());
                 fixIntOrBooleanEdge(node->child2());

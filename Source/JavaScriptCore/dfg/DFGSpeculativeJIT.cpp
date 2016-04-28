@@ -4722,7 +4722,7 @@ void SpeculativeJIT::compileArithSqrt(Node* node)
 static MacroAssembler::Jump compileArithPowIntegerFastPath(JITCompiler& assembler, FPRReg xOperand, GPRReg yOperand, FPRReg result)
 {
     MacroAssembler::JumpList skipFastPath;
-    skipFastPath.append(assembler.branch32(MacroAssembler::Above, yOperand, MacroAssembler::TrustedImm32(1000)));
+    skipFastPath.append(assembler.branch32(MacroAssembler::Above, yOperand, MacroAssembler::TrustedImm32(maxExponentForIntegerMathPow)));
 
     static const double oneConstant = 1.0;
     assembler.loadDouble(MacroAssembler::TrustedImmPtr(&oneConstant), result);
@@ -4770,6 +4770,69 @@ void SpeculativeJIT::compileArithPow(Node* node)
         skipFallback.link(&m_jit);
         doubleResult(resultFpr, node);
         return;
+    }
+
+    if (node->child2()->isDoubleConstant()) {
+        double exponent = node->child2()->asNumber();
+        static const double infinityConstant = std::numeric_limits<double>::infinity();
+        static const double minusInfinityConstant = -std::numeric_limits<double>::infinity();
+        if (exponent == 0.5) {
+            SpeculateDoubleOperand xOperand(this, node->child1());
+            FPRTemporary result(this);
+            FPRReg xOperandFpr = xOperand.fpr();
+            FPRReg resultFpr = result.fpr();
+
+            m_jit.moveZeroToDouble(resultFpr);
+            MacroAssembler::Jump xIsZeroOrNegativeZero = m_jit.branchDouble(MacroAssembler::DoubleEqual, xOperandFpr, resultFpr);
+
+            m_jit.loadDouble(TrustedImmPtr(&minusInfinityConstant), resultFpr);
+            MacroAssembler::Jump xIsMinusInfinity = m_jit.branchDouble(MacroAssembler::DoubleEqual, xOperandFpr, resultFpr);
+            m_jit.sqrtDouble(xOperandFpr, resultFpr);
+            MacroAssembler::Jump doneWithSqrt = m_jit.jump();
+
+            xIsMinusInfinity.link(&m_jit);
+            if (isX86())
+                m_jit.loadDouble(TrustedImmPtr(&infinityConstant), resultFpr);
+            else
+                m_jit.absDouble(resultFpr, resultFpr);
+
+            xIsZeroOrNegativeZero.link(&m_jit);
+            doneWithSqrt.link(&m_jit);
+            doubleResult(resultFpr, node);
+            return;
+        }
+        if (exponent == -0.5) {
+            SpeculateDoubleOperand xOperand(this, node->child1());
+            FPRTemporary scratch(this);
+            FPRTemporary result(this);
+            FPRReg xOperandFpr = xOperand.fpr();
+            FPRReg scratchFPR = scratch.fpr();
+            FPRReg resultFpr = result.fpr();
+
+            m_jit.moveZeroToDouble(resultFpr);
+            MacroAssembler::Jump xIsZeroOrNegativeZero = m_jit.branchDouble(MacroAssembler::DoubleEqual, xOperandFpr, resultFpr);
+
+            m_jit.loadDouble(TrustedImmPtr(&minusInfinityConstant), resultFpr);
+            MacroAssembler::Jump xIsMinusInfinity = m_jit.branchDouble(MacroAssembler::DoubleEqual, xOperandFpr, resultFpr);
+
+            static const double oneConstant = 1.;
+            m_jit.loadDouble(TrustedImmPtr(&oneConstant), resultFpr);
+            m_jit.sqrtDouble(xOperandFpr, scratchFPR);
+            m_jit.divDouble(resultFpr, scratchFPR, resultFpr);
+            MacroAssembler::Jump doneWithSqrt = m_jit.jump();
+
+            xIsZeroOrNegativeZero.link(&m_jit);
+            m_jit.loadDouble(TrustedImmPtr(&infinityConstant), resultFpr);
+            MacroAssembler::Jump doneWithBaseZero = m_jit.jump();
+
+            xIsMinusInfinity.link(&m_jit);
+            m_jit.moveZeroToDouble(resultFpr);
+
+            doneWithBaseZero.link(&m_jit);
+            doneWithSqrt.link(&m_jit);
+            doubleResult(resultFpr, node);
+            return;
+        }
     }
 
     SpeculateDoubleOperand xOperand(this, node->child1());

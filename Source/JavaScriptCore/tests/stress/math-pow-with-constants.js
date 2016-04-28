@@ -44,20 +44,90 @@ function powUsedAsSqrt(x) {
 noInline(powUsedAsSqrt);
 
 function testPowUsedAsSqrt() {
-    for (var i = 0; i < 10000; ++i) {
-        var result = powUsedAsSqrt(4);
+    for (let i = 0; i < 1e4; ++i) {
+        let result = powUsedAsSqrt(4);
         if (result !== Math.sqrt(4))
             throw "Error: powUsedAsSqrt(4) should be 2, was = " + result;
-    }
-    for (var i = 0; i < 10000; ++i) {
-        var result = powUsedAsSqrt(4.4);
+        result = powUsedAsSqrt(4.4);
         if (result !== Math.sqrt(4.4))
             throw "Error: powUsedAsSqrt(4) should be " + Math.sqrt(4.4) + ", was = " + result;
+        if (powUsedAsSqrt(Infinity) !== Infinity)
+            throw "Failed powUsedAsSqrt(Infinity)";
+        if (powUsedAsSqrt(-Infinity) !== Infinity)
+            throw "Failed powUsedAsSqrt(-Infinity)";
+        let nanResult = powUsedAsSqrt(NaN)
+        if (nanResult === nanResult)
+            throw "Failed powUsedAsSqrt(NaN)";
+        let zeroResult = powUsedAsSqrt(0.)
+        if (zeroResult || (1 / zeroResult) !== Infinity)
+            throw "Failed powUsedAsSqrt(0.)";
+        let negativeZeroResult = powUsedAsSqrt(-0)
+        if (negativeZeroResult || (1 / negativeZeroResult) !== Infinity)
+            throw "Failed powUsedAsSqrt(-0)";
     }
-
 }
 testPowUsedAsSqrt();
 
+function powUsedAsOneOverSqrt(x) {
+    return Math.pow(x, -0.5);
+}
+noInline(powUsedAsOneOverSqrt);
+
+function testPowUsedAsOneOverSqrt() {
+    for (let i = 0; i < 1e4; ++i) {
+        let result = powUsedAsOneOverSqrt(4);
+        if (result !== 0.5)
+            throw "Error: powUsedAsOneOverSqrt(4) should be 0.5, was = " + result;
+        result = powUsedAsOneOverSqrt(4.4);
+        if (result !== 1/Math.sqrt(4.4))
+            throw "Error: powUsedAsOneOverSqrt(4) should be " + 1/Math.sqrt(4.4) + ", was = " + result;
+        if (powUsedAsOneOverSqrt(Infinity) !== 0)
+            throw "Failed powUsedAsOneOverSqrt(Infinity)";
+        if (powUsedAsOneOverSqrt(-Infinity) !== 0)
+            throw "Failed powUsedAsOneOverSqrt(-Infinity)";
+        let nanResult = powUsedAsOneOverSqrt(NaN)
+        if (nanResult === nanResult)
+            throw "Failed powUsedAsOneOverSqrt(NaN)";
+        if (powUsedAsOneOverSqrt(0) !== Infinity)
+            throw "Failed powUsedAsOneOverSqrt(0)";
+        if (powUsedAsOneOverSqrt(-0.) !== Infinity)
+            throw "Failed powUsedAsOneOverSqrt(-0.)";
+    }
+}
+testPowUsedAsOneOverSqrt();
+
+function powUsedAsSquare(x) {
+    return Math.pow(x, 2);
+}
+noInline(powUsedAsSquare);
+
+function testPowUsedAsSquare() {
+    for (let i = 0; i < 1e4; ++i) {
+        let result = powUsedAsSquare(2);
+        if (result !== 4)
+            throw "Error: powUsedAsSquare(4) should be 2, was = " + result;
+        result = powUsedAsSquare(4.4);
+        if (result !== 19.360000000000003)
+            throw "Error: powUsedAsSquare(4) should be " + 19.360000000000003 + ", was = " + result;
+        result = powUsedAsSquare(Math.PI);
+        if (result !== 9.869604401089358)
+            throw "Error: powUsedAsSquare(4) should be " + 9.869604401089358 + ", was = " + result;
+        if (powUsedAsSquare(Infinity) !== Infinity)
+            throw "Failed powUsedAsSquare(Infinity)";
+        if (powUsedAsSquare(-Infinity) !== Infinity)
+            throw "Failed powUsedAsSquare(-Infinity)";
+        let nanResult = powUsedAsSquare(NaN)
+        if (nanResult === nanResult)
+            throw "Failed powUsedAsSquare(NaN)";
+        let zeroResult = powUsedAsSquare(0.)
+        if (zeroResult || (1 / zeroResult) !== Infinity)
+            throw "Failed powUsedAsSquare(0.)";
+        let negativeZeroResult = powUsedAsSquare(-0)
+        if (negativeZeroResult || (1 / negativeZeroResult) !== Infinity)
+            throw "Failed powUsedAsSquare(-0)";
+    }
+}
+testPowUsedAsSquare();
 
 function intIntConstantsSmallNumbers() {
     return Math.pow(42, 3);
