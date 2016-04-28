@@ -1,3 +1,27 @@
+2016-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        CSS and SVG animations should run at 60fps
+        https://bugs.webkit.org/show_bug.cgi?id=157113
+        rdar://problem/24337280
+        rdar://problem/24337328
+
+        Reviewed by Dean Jackson.
+
+        For both CSS and SVG animations we used a 0.025s frame interval, which translates to
+        40fps. That caused these animations to look extra janky compared with accelerated
+        animations.
+
+        So use a 16.667ms frame interval for both.
+
+        Tested by content-animation benchmark tests.
+
+        * page/animation/AnimationController.cpp:
+        * svg/animation/SMILTime.h:
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::calculateNextProgressTime):
+
 2016-04-27  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Implement native IDBFactory.getAllDatabaseNames for WebInspector.

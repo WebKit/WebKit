@@ -1042,7 +1042,7 @@ SMILTime SVGSMILElement::calculateNextProgressTime(SMILTime elapsed) const
                 return repeatingDurationEnd;
             return m_intervalEnd;
         } 
-        return elapsed + 0.025;
+        return elapsed + SMILAnimationFrameDelay;
     }
     return m_intervalBegin >= elapsed ? m_intervalBegin : SMILTime::unresolved();
 }
