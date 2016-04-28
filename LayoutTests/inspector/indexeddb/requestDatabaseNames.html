@@ -35,6 +35,7 @@ function test()
                 IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
                     InspectorTest.expectNoError(error);
                     InspectorTest.expectThat(names.length === 0, "No IndexedDB databases should exist initially");
+                    InspectorTest.log(JSON.stringify(names));
                     InspectorTest.evaluateInPage("createDatabase('Database1')");
                 });
             }
@@ -72,9 +73,6 @@ function test()
         {
             action: function() {
                 IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
-                    for (n in names)
-                        alert(names.n);
-
                     InspectorTest.expectNoError(error);
                     InspectorTest.expectThat(names.length === 4, "Four IndexedDB databases should exist");
                     InspectorTest.log(JSON.stringify(names));

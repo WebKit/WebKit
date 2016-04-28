@@ -4,6 +4,7 @@ CONSOLE MESSAGE: line 10: Created Database 'ቍ'
 CONSOLE MESSAGE: line 10: Created Database '𐍆'
 
 PASS: No IndexedDB databases should exist initially
+[]
 Created Database 'Database1'
 PASS: A single IndexedDB database should exist
 ["Database1"]

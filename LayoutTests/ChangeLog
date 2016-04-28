@@ -1,3 +1,15 @@
+2016-04-28  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION(r200163): inspector/indexeddb/requestDatabaseNames.html is flaky on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=157141
+
+        Unreviewed.
+
+        Add one more chunk of logging here to add even more supporting evidence to our theory.
+        
+        * inspector/indexeddb/requestDatabaseNames-expected.txt:
+        * inspector/indexeddb/requestDatabaseNames.html:
+
 2016-04-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping media/video-with-file-url-allowed-by-csp-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html
