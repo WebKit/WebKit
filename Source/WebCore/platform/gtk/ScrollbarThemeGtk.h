@@ -37,7 +37,7 @@ class ScrollbarThemeGtk final : public ScrollbarThemeComposite {
 public:
     virtual ~ScrollbarThemeGtk();
 
-    bool hasButtons(Scrollbar&) override { return true; }
+    bool hasButtons(Scrollbar&) override;
     bool hasThumb(Scrollbar&) override;
     IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool) override;
     IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool) override;

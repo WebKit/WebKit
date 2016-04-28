@@ -129,6 +129,11 @@ void ScrollbarThemeGtk::updateThemeProperties()
 }
 #endif // GTK_CHECK_VERSION(3, 20, 0)
 
+bool ScrollbarThemeGtk::hasButtons(Scrollbar& scrollbar)
+{
+    return scrollbar.enabled() && (m_hasBackButtonStartPart || m_hasForwardButtonEndPart || m_hasBackButtonEndPart || m_hasForwardButtonStartPart);
+}
+
 #if GTK_CHECK_VERSION(3, 20, 0)
 static GtkStateFlags scrollbarPartStateFlags(Scrollbar& scrollbar, ScrollbarPart part, bool painting = false)
 {
@@ -185,7 +190,7 @@ static std::unique_ptr<RenderThemeGadget> scrollbarGadgetForLayout(Scrollbar& sc
     return RenderThemeGadget::create(info);
 }
 
-static std::unique_ptr<RenderThemeBoxGadget> contentsGadgetForLayout(Scrollbar& scrollbar, RenderThemeGadget* parent, IntRect& contentsRect, Vector<int, 4> steppersPosition)
+static std::unique_ptr<RenderThemeBoxGadget> contentsGadgetForLayout(Scrollbar& scrollbar, RenderThemeGadget* parent, IntRect& contentsRect, Vector<int, 4>& steppersPosition)
 {
     Vector<RenderThemeGadget::Info> children;
     auto steppers = static_cast<RenderThemeScrollbarGadget*>(parent)->steppers();
@@ -207,7 +212,8 @@ static std::unique_ptr<RenderThemeBoxGadget> contentsGadgetForLayout(Scrollbar& 
         children.append({ RenderThemeGadget::Type::Generic, "button", scrollbarPartStateFlags(scrollbar, ForwardButtonEndPart), { "down" } });
     }
     RenderThemeGadget::Info info = { RenderThemeGadget::Type::Generic, "contents", GTK_STATE_FLAG_NORMAL, { } };
-    auto contentsGadget = std::make_unique<RenderThemeBoxGadget>(info, children, parent);
+    auto contentsGadget = std::make_unique<RenderThemeBoxGadget>(info, scrollbar.orientation() == VerticalScrollbar ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL,
+        children, parent);
 
     GtkBorder scrollbarContentsBox = parent->contentsBox();
     GtkBorder contentsContentsBox = contentsGadget->contentsBox();
@@ -230,16 +236,24 @@ IntRect ScrollbarThemeGtk::trackRect(Scrollbar& scrollbar, bool /*painting*/)
     auto contentsGadget = contentsGadgetForLayout(scrollbar, scrollbarGadget.get(), rect, steppersPosition);
 
     if (steppersPosition[0] != -1) {
-        if (scrollbar.orientation() == VerticalScrollbar)
-            rect.move(0, contentsGadget->child(steppersPosition[0])->preferredSize().height());
-        else
-            rect.move(contentsGadget->child(steppersPosition[0])->preferredSize().width(), 0);
+        IntSize stepperSize = contentsGadget->child(steppersPosition[0])->preferredSize();
+        if (scrollbar.orientation() == VerticalScrollbar) {
+            rect.move(0, stepperSize.height());
+            rect.contract(0, stepperSize.height());
+        } else {
+            rect.move(stepperSize.width(), 0);
+            rect.contract(stepperSize.width(), 0);
+        }
     }
     if (steppersPosition[1] != -1) {
-        if (scrollbar.orientation() == VerticalScrollbar)
-            rect.move(0, contentsGadget->child(steppersPosition[1])->preferredSize().height());
-        else
-            rect.move(contentsGadget->child(steppersPosition[1])->preferredSize().width(), 0);
+        IntSize stepperSize = contentsGadget->child(steppersPosition[1])->preferredSize();
+        if (scrollbar.orientation() == VerticalScrollbar) {
+            rect.move(0, stepperSize.height());
+            rect.contract(0, stepperSize.height());
+        } else {
+            rect.move(stepperSize.width(), 0);
+            rect.contract(stepperSize.width(), 0);
+        }
     }
     if (steppersPosition[2] != -1) {
         if (scrollbar.orientation() == VerticalScrollbar)
@@ -327,17 +341,15 @@ IntRect ScrollbarThemeGtk::backButtonRect(Scrollbar& scrollbar, ScrollbarPart pa
 
     // Secondary back.
     if (steppersPosition[1] != -1) {
-        if (scrollbar.orientation() == VerticalScrollbar)
-            rect.move(0, contentsGadget->child(steppersPosition[1])->preferredSize().height());
-        else
-            rect.move(contentsGadget->child(steppersPosition[1])->preferredSize().width(), 0);
+        IntSize preferredSize = contentsGadget->child(steppersPosition[1])->preferredSize();
+        if (scrollbar.orientation() == VerticalScrollbar) {
+            rect.move(0, preferredSize.height());
+            rect.contract(0, preferredSize.height());
+        } else {
+            rect.move(preferredSize.width(), 0);
+            rect.contract(0, preferredSize.width());
+        }
     }
-
-    IntSize preferredSize = contentsGadget->child(steppersPosition[2])->preferredSize();
-    if (scrollbar.orientation() == VerticalScrollbar)
-        rect.contract(0, preferredSize.height());
-    else
-        rect.contract(preferredSize.width(), 0);
 
     if (steppersPosition[3] != -1) {
         if (scrollbar.orientation() == VerticalScrollbar)
@@ -346,10 +358,11 @@ IntRect ScrollbarThemeGtk::backButtonRect(Scrollbar& scrollbar, ScrollbarPart pa
             rect.contract(contentsGadget->child(steppersPosition[3])->preferredSize().width(), 0);
     }
 
+    IntSize preferredSize = contentsGadget->child(steppersPosition[2])->preferredSize();
     if (scrollbar.orientation() == VerticalScrollbar)
-        rect.move(0, rect.height());
+        rect.move(0, rect.height() - preferredSize.height());
     else
-        rect.move(rect.width(), 0);
+        rect.move(rect.width() - preferredSize.width(), 0);
 
     return IntRect(rect.location(), preferredSize);
 }
@@ -366,14 +379,29 @@ IntRect ScrollbarThemeGtk::forwardButtonRect(Scrollbar& scrollbar, ScrollbarPart
     auto contentsGadget = contentsGadgetForLayout(scrollbar, scrollbarGadget.get(), rect, steppersPosition);
 
     if (steppersPosition[0] != -1) {
-        if (scrollbar.orientation() == VerticalScrollbar)
-            rect.move(0, contentsGadget->child(steppersPosition[0])->preferredSize().height());
-        else
-            rect.move(contentsGadget->child(steppersPosition[0])->preferredSize().width(), 0);
+        IntSize preferredSize = contentsGadget->child(steppersPosition[0])->preferredSize();
+        if (scrollbar.orientation() == VerticalScrollbar) {
+            rect.move(0, preferredSize.height());
+            rect.contract(0, preferredSize.height());
+        } else {
+            rect.move(preferredSize.width(), 0);
+            rect.contract(preferredSize.width(), 0);
+        }
     }
 
-    if (part == ForwardButtonStartPart)
-        return IntRect(rect.location(), contentsGadget->child(1)->preferredSize());
+    if (steppersPosition[1] != -1) {
+        IntSize preferredSize = contentsGadget->child(steppersPosition[1])->preferredSize();
+        if (part == ForwardButtonStartPart)
+            return IntRect(rect.location(), preferredSize);
+
+        if (scrollbar.orientation() == VerticalScrollbar) {
+            rect.move(0, preferredSize.height());
+            rect.contract(0, preferredSize.height());
+        } else {
+            rect.move(preferredSize.width(), 0);
+            rect.contract(preferredSize.width(), 0);
+        }
+    }
 
     // Forward button.
     IntSize preferredSize = contentsGadget->child(steppersPosition[3])->preferredSize();
@@ -442,6 +470,9 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
     if (graphicsContext.paintingDisabled())
         return false;
 
+    if (!scrollbar.enabled())
+        return true;
+
     double opacity = scrollbar.hoveredPart() == NoPart ? scrollbar.opacity() : 1;
     if (!opacity)
         return true;
@@ -495,7 +526,8 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
         steppersPosition[3] = children.size();
         children.append({ RenderThemeGadget::Type::Generic, "button", scrollbarPartStateFlags(scrollbar, ForwardButtonEndPart), { "down" } });
     }
-    auto contentsGadget = std::make_unique<RenderThemeBoxGadget>(info, children, scrollbarGadget.get());
+    auto contentsGadget = std::make_unique<RenderThemeBoxGadget>(info, scrollbar.orientation() == VerticalScrollbar ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL,
+        children, scrollbarGadget.get());
     RenderThemeGadget* troughGadget = contentsGadget->child(troughPosition);
 
     if (opacity != 1) {
@@ -507,52 +539,79 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
     FloatRect contentsRect;
     scrollbarGadget->render(graphicsContext.platformContext()->cr(), rect, &contentsRect);
     contentsGadget->render(graphicsContext.platformContext()->cr(), contentsRect, &contentsRect);
-    troughGadget->render(graphicsContext.platformContext()->cr(), contentsRect, &contentsRect);
-    FloatRect buttonRect = contentsRect;
+
     if (steppers.contains(RenderThemeScrollbarGadget::Steppers::Backward)) {
         RenderThemeGadget* buttonGadget = contentsGadget->child(steppersPosition[0]);
+        FloatRect buttonRect = contentsRect;
         if (scrollbar.orientation() == VerticalScrollbar)
             buttonRect.setHeight(buttonGadget->preferredSize().height());
         else
             buttonRect.setWidth(buttonGadget->preferredSize().width());
-        buttonGadget->render(graphicsContext.platformContext()->cr(), buttonRect);
-        if (scrollbar.orientation() == VerticalScrollbar)
-            buttonRect.move(0, buttonRect.height());
-        else
-            buttonRect.move(buttonRect.width(), 0);
+        static_cast<RenderThemeScrollbarGadget*>(scrollbarGadget.get())->renderStepper(graphicsContext.platformContext()->cr(), buttonRect, buttonGadget,
+            scrollbar.orientation() == VerticalScrollbar ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, RenderThemeScrollbarGadget::Steppers::Backward);
+        if (scrollbar.orientation() == VerticalScrollbar) {
+            contentsRect.move(0, buttonRect.height());
+            contentsRect.contract(0, buttonRect.height());
+        } else {
+            contentsRect.move(buttonRect.width(), 0);
+            contentsRect.contract(buttonRect.width(), 0);
+        }
     }
     if (steppers.contains(RenderThemeScrollbarGadget::Steppers::SecondaryForward)) {
         RenderThemeGadget* buttonGadget = contentsGadget->child(steppersPosition[1]);
+        FloatRect buttonRect = contentsRect;
         if (scrollbar.orientation() == VerticalScrollbar)
             buttonRect.setHeight(buttonGadget->preferredSize().height());
         else
             buttonRect.setWidth(buttonGadget->preferredSize().width());
-        buttonGadget->render(graphicsContext.platformContext()->cr(), buttonRect);
+        static_cast<RenderThemeScrollbarGadget*>(scrollbarGadget.get())->renderStepper(graphicsContext.platformContext()->cr(), buttonRect, buttonGadget,
+            scrollbar.orientation() == VerticalScrollbar ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, RenderThemeScrollbarGadget::Steppers::SecondaryForward);
+        if (scrollbar.orientation() == VerticalScrollbar) {
+            contentsRect.move(0, buttonRect.height());
+            contentsRect.contract(0, buttonRect.height());
+        } else {
+            contentsRect.move(buttonRect.width(), 0);
+            contentsRect.contract(buttonRect.width(), 0);
+        }
+    }
+
+    if (steppers.contains(RenderThemeScrollbarGadget::Steppers::Forward)) {
+        RenderThemeGadget* buttonGadget = contentsGadget->child(steppersPosition[3]);
+        FloatRect buttonRect = contentsRect;
+        if (scrollbar.orientation() == VerticalScrollbar) {
+            buttonRect.setHeight(buttonGadget->preferredSize().height());
+            buttonRect.move(0, contentsRect.height() - buttonRect.height());
+        } else {
+            buttonRect.setWidth(buttonGadget->preferredSize().width());
+            buttonRect.move(contentsRect.width() - buttonRect.width(), 0);
+        }
+        static_cast<RenderThemeScrollbarGadget*>(scrollbarGadget.get())->renderStepper(graphicsContext.platformContext()->cr(), buttonRect, buttonGadget,
+            scrollbar.orientation() == VerticalScrollbar ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, RenderThemeScrollbarGadget::Steppers::Forward);
         if (scrollbar.orientation() == VerticalScrollbar)
-            buttonRect.move(0, contentsRect.height());
+            contentsRect.contract(0, buttonRect.height());
         else
-            buttonRect.move(contentsRect.width(), 0);
+            contentsRect.contract(buttonRect.width(), 0);
     }
     if (steppers.contains(RenderThemeScrollbarGadget::Steppers::SecondaryBackward)) {
         RenderThemeGadget* buttonGadget = contentsGadget->child(steppersPosition[2]);
-        if (scrollbar.orientation() == VerticalScrollbar)
+        FloatRect buttonRect = contentsRect;
+        if (scrollbar.orientation() == VerticalScrollbar) {
             buttonRect.setHeight(buttonGadget->preferredSize().height());
-        else
+            buttonRect.move(0, contentsRect.height() - buttonRect.height());
+        } else {
             buttonRect.setWidth(buttonGadget->preferredSize().width());
-        buttonGadget->render(graphicsContext.platformContext()->cr(), buttonRect);
+            buttonRect.move(contentsRect.width() - buttonRect.width(), 0);
+        }
+        static_cast<RenderThemeScrollbarGadget*>(scrollbarGadget.get())->renderStepper(graphicsContext.platformContext()->cr(), buttonRect, buttonGadget,
+            scrollbar.orientation() == VerticalScrollbar ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, RenderThemeScrollbarGadget::Steppers::SecondaryBackward);
         if (scrollbar.orientation() == VerticalScrollbar)
-            buttonRect.move(0, buttonRect.height());
+            contentsRect.contract(0, buttonRect.height());
         else
-            buttonRect.move(buttonRect.width(), 0);
+            contentsRect.contract(buttonRect.width(), 0);
     }
-    if (steppers.contains(RenderThemeScrollbarGadget::Steppers::Forward)) {
-        RenderThemeGadget* buttonGadget = contentsGadget->child(steppersPosition[3]);
-        if (scrollbar.orientation() == VerticalScrollbar)
-            buttonRect.setHeight(buttonGadget->preferredSize().height());
-        else
-            buttonRect.setWidth(buttonGadget->preferredSize().width());
-        buttonGadget->render(graphicsContext.platformContext()->cr(), buttonRect);
-    }
+
+    troughGadget->render(graphicsContext.platformContext()->cr(), contentsRect, &contentsRect);
+
     if (int thumbSize = thumbLength(scrollbar)) {
         info.name = "slider";
         info.state = scrollbarPartStateFlags(scrollbar, ThumbPart);
@@ -758,6 +817,11 @@ ScrollbarButtonPressAction ScrollbarThemeGtk::handleMousePressEvent(Scrollbar&, 
         if (event.button() != RightButton)
             return ScrollbarButtonPressAction::StartDrag;
         break;
+    case BackButtonStartPart:
+    case ForwardButtonStartPart:
+    case BackButtonEndPart:
+    case ForwardButtonEndPart:
+        return ScrollbarButtonPressAction::Scroll;
     default:
         break;
     }
@@ -788,12 +852,13 @@ int ScrollbarThemeGtk::scrollbarThickness(ScrollbarControlSize)
         children.append({ RenderThemeGadget::Type::Generic, "button", GTK_STATE_FLAG_NORMAL, { "up" } });
     if (steppers.contains(RenderThemeScrollbarGadget::Steppers::Forward))
         children.append({ RenderThemeGadget::Type::Generic, "button", GTK_STATE_FLAG_NORMAL, { "down" } });
-    auto contentsGadget = std::make_unique<RenderThemeBoxGadget>(info, children, scrollbarGadget.get());
+    auto contentsGadget = std::make_unique<RenderThemeBoxGadget>(info, GTK_ORIENTATION_VERTICAL, children, scrollbarGadget.get());
     info.name = "slider";
     auto sliderGadget = RenderThemeGadget::create(info, contentsGadget->child(troughPositon));
     IntSize preferredSize = scrollbarGadget->preferredSize();
-    preferredSize += contentsGadget->preferredSize();
-    preferredSize += sliderGadget->preferredSize();
+    IntSize contentsPreferredSize = contentsGadget->preferredSize();
+    contentsPreferredSize = contentsPreferredSize.expandedTo(sliderGadget->preferredSize());
+    preferredSize += contentsPreferredSize;
 
     return preferredSize.width();
 }
@@ -818,7 +883,7 @@ int ScrollbarThemeGtk::minimumThumbLength(Scrollbar& scrollbar)
     info.state = GTK_STATE_FLAG_NORMAL;
     info.classList.clear();
     Vector<RenderThemeGadget::Info> children = {{ RenderThemeGadget::Type::Generic, "trough", GTK_STATE_FLAG_PRELIGHT, { } } };
-    auto contentsGadget = std::make_unique<RenderThemeBoxGadget>(info, children, scrollbarGadget.get());
+    auto contentsGadget = std::make_unique<RenderThemeBoxGadget>(info, GTK_ORIENTATION_VERTICAL, children, scrollbarGadget.get());
     info.name = "slider";
     IntSize minSize = RenderThemeGadget::create(info, contentsGadget->child(0))->minimumSize();
     return scrollbar.orientation() == VerticalScrollbar ? minSize.height() : minSize.width();
@@ -851,6 +916,11 @@ IntRect ScrollbarThemeGtk::forwardButtonRect(Scrollbar&, ScrollbarPart, bool)
 IntRect ScrollbarThemeGtk::trackRect(Scrollbar&, bool)
 {
     return IntRect();
+}
+
+bool ScrollbarThemeGtk::hasButtons(Scrollbar&)
+{
+    return false;
 }
 #endif // GTK_API_VERSION_2
 

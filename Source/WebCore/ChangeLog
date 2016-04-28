@@ -1,3 +1,39 @@
+2016-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Overlay scrollbars with steppers enabled render incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=156988
+
+        Reviewed by Michael Catanzaro.
+
+        Fix rendering of scrollbars when using GTK+ themes having stepper buttons.
+
+        * platform/gtk/RenderThemeGadget.cpp:
+        (WebCore::RenderThemeBoxGadget::RenderThemeBoxGadget): Receive the box orientation as constructor parameter.
+        (WebCore::RenderThemeBoxGadget::preferredSize): Fix the preferred size calculation taking into account the box orientation.
+        (WebCore::RenderThemeScrollbarGadget::renderStepper): New method to render scrollbar steppers.
+        * platform/gtk/RenderThemeGadget.h:
+        (WebCore::RenderThemeGadget::context): Make this public instead of protected.
+        * platform/gtk/ScrollAnimatorGtk.cpp:
+        (WebCore::ScrollAnimatorGtk::updateOverlayScrollbarsOpacity): Invalidate the whole scrollbars instead of just
+        the thumb when opacity changes, because themes can actually render the trough or even stepper buttons when in
+        indicator mode too.
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::hasButtons): Properly implement this method instead of returning true unconditionally.
+        (WebCore::contentsGadgetForLayout): Pass orientation to RenderThemeBoxGadget constructor.
+        (WebCore::ScrollbarThemeGtk::trackRect): Fix the calculation of the track rect taking stepper buttons into account.
+        (WebCore::ScrollbarThemeGtk::backButtonRect): Fix the calculation of the stepper button rectangle.
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect): Ditto.
+        (WebCore::ScrollbarThemeGtk::paint): Use RenderThemeScrollbarGadget::renderStepper() to render the stepper
+        buttons, and fix the calculation of the steppers button rectangle.
+        (WebCore::ScrollbarThemeGtk::handleMousePressEvent): Handle clicks on stepper buttons.
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness): Fix the calculation of the scrollbar thickness.
+        (WebCore::ScrollbarThemeGtk::minimumThumbLength): Pass orientation to RenderThemeBoxGadget constructor.
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::menuListColor): Ditto.
+        (WebCore::RenderThemeGtk::popupInternalPaddingBox): Ditto.
+        (WebCore::RenderThemeGtk::paintMenuList): Ditto.
+
 2016-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         SVG SMIL animations run at less than 60fps

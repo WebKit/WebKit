@@ -153,13 +153,13 @@ void ScrollAnimatorGtk::updateOverlayScrollbarsOpacity()
     if (m_verticalOverlayScrollbar && m_overlayScrollbarAnimationCurrent != m_verticalOverlayScrollbar->opacity()) {
         m_verticalOverlayScrollbar->setOpacity(m_overlayScrollbarAnimationCurrent);
         if (m_verticalOverlayScrollbar->hoveredPart() == NoPart)
-            ScrollbarTheme::theme().invalidatePart(*m_verticalOverlayScrollbar, ThumbPart);
+            m_verticalOverlayScrollbar->invalidate();
     }
 
     if (m_horizontalOverlayScrollbar && m_overlayScrollbarAnimationCurrent != m_horizontalOverlayScrollbar->opacity()) {
         m_horizontalOverlayScrollbar->setOpacity(m_overlayScrollbarAnimationCurrent);
         if (m_horizontalOverlayScrollbar->hoveredPart() == NoPart)
-            ScrollbarTheme::theme().invalidatePart(*m_horizontalOverlayScrollbar, ThumbPart);
+            m_horizontalOverlayScrollbar->invalidate();
     }
 }
 
