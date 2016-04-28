@@ -160,6 +160,8 @@ String decodeFromFilename(const String& inputString)
                 return { };
 
             result.append(character | value);
+            i += 2;
+
             continue;
         }
 
@@ -185,6 +187,7 @@ String decodeFromFilename(const String& inputString)
             return { };
 
         result.append(character | value);
+        i += 5;
     }
 
     return result.toString();

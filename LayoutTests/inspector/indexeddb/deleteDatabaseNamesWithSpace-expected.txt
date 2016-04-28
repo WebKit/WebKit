@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 11: Created Database 'Database With Space'
+
+PASS: No IndexedDB databases should exist initially
+[]
+Created Database 'Database With Space'
+PASS: A single IndexedDB database should exist
+["Database With Space"]
+PASS: No IndexedDB databases should exist at the end because we just deleted them
+[]
+

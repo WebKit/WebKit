@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function createDatabase(name)
+{
+    let request = window.indexedDB.open(name, 1);
+    request.addEventListener('success', function(event) {
+        event.target.result.close();
+        console.log(`Created Database '${name}'`);
+    });
+}
+
+function deleteDatabaseNames(names)
+{
+    for (let name of names)
+        var request = window.indexedDB.deleteDatabase(name);
+}
+
+function test()
+{
+    var steps = [
+        {
+            action: function() {
+                // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
+                // <https://webkit.org/b/148006> Each test should run with its own clean data store
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
+                    InspectorTest.evaluateInPage("deleteDatabaseNames(" + JSON.stringify(names) + ")");
+                    next();
+                });
+            }
+        },
+        {
+            action: function() {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 0, "No IndexedDB databases should exist initially");
+                    InspectorTest.log(JSON.stringify(names));
+                    InspectorTest.evaluateInPage("createDatabase('Database With Space')");
+                });
+            }
+        },
+        {
+            action: function() {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 1, "A single IndexedDB database should exist");
+                    InspectorTest.log(JSON.stringify(names));
+                    InspectorTest.evaluateInPage("deleteDatabaseNames(['Database With Space'])");
+                    next();
+                });
+            }
+        },
+        {
+            action: function() {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 0, "No IndexedDB databases should exist at the end because we just deleted them");
+                    InspectorTest.log(JSON.stringify(names));
+                    next();
+                });
+            }
+        },
+    ];
+
+    function next() {
+        let step = steps.shift();
+        if (!step) {
+            InspectorTest.completeTest();
+            return;
+        }
+        step.action();
+    }
+
+    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
+        InspectorTest.log(event.data.message.messageText);
+        next();
+    });
+
+    InspectorTest.log("");
+    next();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

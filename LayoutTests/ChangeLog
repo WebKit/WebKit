@@ -1,3 +1,13 @@
+2016-04-28  Brady Eidson  <beidson@apple.com>
+
+        inspector/indexeddb/requestDatabaseNames.html is flaky on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=157141
+
+        Reviewed by Alex Christensen.
+
+        * inspector/indexeddb/deleteDatabaseNamesWithSpace-expected.txt: Added.
+        * inspector/indexeddb/deleteDatabaseNamesWithSpace.html: Added.
+
 2016-04-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add ios-simulator baseline for fast/forms/select-non-native-rendering-direction.html
