@@ -1,3 +1,9 @@
+2016-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.12.2 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2016-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Menu list button doesn't use the text color from the theme

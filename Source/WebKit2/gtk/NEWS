@@ -1,4 +1,21 @@
 ==================
+WebKitGTK+  2.12.2
+==================
+
+What's new in WebKitGTK+ 2.12.2?
+
+  - Fix rendering of scrollbars with GTK themes using stepper buttons.
+  - Fix compatibility issue with 2.12.1 regarding local storage access from file URLs.
+  - Make menu list buttons use the text color from the theme.
+  - Do not show resize grip in non-resizable text fields.
+  - Fix accessibility events causing Orca to echo key presses instead of speaking the
+    inserted characters in password fields.
+  - Fix an off by one error in hyphenation.
+  - Fix several crashes and rendering issues.
+  - Fix the build with libjpeg v9.
+  - Translation updates: Bulgarian, Finnish, Greek, Italian, Turkish.
+
+==================
 WebKitGTK+  2.12.1
 ==================
 
