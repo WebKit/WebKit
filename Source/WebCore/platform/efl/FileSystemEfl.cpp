@@ -63,6 +63,12 @@ CString fileSystemRepresentation(const String& path)
 #endif
 }
 
+String stringFromFileSystemRepresentation(const char* fileSystemRepresentation)
+{
+    // FIXME: This needs to do the opposite of fileSystemRepresentation.
+    return String::fromUTF8(fileSystemRepresentation);
+}
+
 bool unloadModule(PlatformModule module)
 {
     // caution, closing handle will make memory vanish and any remaining
