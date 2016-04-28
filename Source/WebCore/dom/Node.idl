@@ -19,14 +19,13 @@
  */
 
 [
+    CustomIsReachable,
+    CustomToJSObject,
+    ExportMacro=WEBCORE_EXPORT,
     JSCustomHeader,
     JSCustomMarkFunction,
     JSCustomPushEventHandlerScope,
-    CustomIsReachable,
-    CustomToJSObject,
-    UsePointersEvenForNonNullableObjectArguments,
     ObjCPolymorphic,
-    ExportMacro=WEBCORE_EXPORT,
 ] interface Node
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     : Object, EventTarget
@@ -64,12 +63,16 @@
 
     readonly attribute Node rootNode;
 
-    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node insertBefore([CustomReturn] Node newChild,
-                                                            Node refChild);
-    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node replaceChild(Node newChild,
-                                                            [CustomReturn] Node oldChild);
-    [Custom, RaisesException] Node removeChild([CustomReturn] Node oldChild);
-    [Custom, RaisesException] Node appendChild([CustomReturn] Node newChild);
+    // FIXME: newChild should not be nullable.
+    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node insertBefore([CustomReturn] Node? newChild,
+                                                            Node? refChild);
+    // FIXME: newChild and oldChild should not be nullable.
+    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node replaceChild(Node? newChild,
+                                                            [CustomReturn] Node? oldChild);
+    // FIXME: oldChild should not be nullable.
+    [Custom, RaisesException] Node removeChild([CustomReturn] Node? oldChild);
+    // FIXME: newChild should not be nullable.
+    [Custom, RaisesException] Node appendChild([CustomReturn] Node? newChild);
 
     boolean            hasChildNodes();
 
@@ -101,8 +104,10 @@
     // FIXME: the spec says this can also raise on retrieval.
     [SetterRaisesException] attribute DOMString? textContent;
 
-    boolean            isSameNode(optional Node other = null);
-    boolean            isEqualNode(optional Node other = null);
+    // FIXME: other should not be optional.
+    boolean            isSameNode(optional Node? other = null);
+    // FIXME: other should not be optional.
+    boolean            isEqualNode(optional Node? other = null);
 
     DOMString?         lookupPrefix(optional DOMString? namespaceURI = null);
     boolean            isDefaultNamespace(optional DOMString? namespaceURI = null);
@@ -116,10 +121,12 @@
     const unsigned short      DOCUMENT_POSITION_CONTAINED_BY = 0x10;
     const unsigned short      DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
 
-    unsigned short     compareDocumentPosition(optional Node other = null);
+    // FIXME: other should be neither optional nor nullable.
+    unsigned short     compareDocumentPosition(optional Node? other = null);
 
     // Introduced in DOM4
-    boolean contains(optional Node other = null);
+    // FIXME: other should not be optional.
+    boolean contains(optional Node? other = null);
 
     // IE extensions
     readonly attribute Element          parentElement;
