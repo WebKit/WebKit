@@ -591,24 +591,27 @@ int RenderMenuList::clientInsetRight() const
     return 0;
 }
 
+const int endOfLinePadding = 2;
+
 LayoutUnit RenderMenuList::clientPaddingLeft() const
 {
-    return paddingLeft() + m_innerBlock->paddingLeft();
-}
-
-const int endOfLinePadding = 2;
-LayoutUnit RenderMenuList::clientPaddingRight() const
-{
-    if (style().appearance() == MenulistPart || style().appearance() == MenulistButtonPart) {
+    if ((style().appearance() == MenulistPart || style().appearance() == MenulistButtonPart) && style().direction() == RTL) {
         // For these appearance values, the theme applies padding to leave room for the
         // drop-down button. But leaving room for the button inside the popup menu itself
         // looks strange, so we return a small default padding to avoid having a large empty
         // space appear on the side of the popup menu.
         return endOfLinePadding;
     }
-
     // If the appearance isn't MenulistPart, then the select is styled (non-native), so
     // we want to return the user specified padding.
+    return paddingLeft() + m_innerBlock->paddingLeft();
+}
+
+LayoutUnit RenderMenuList::clientPaddingRight() const
+{
+    if ((style().appearance() == MenulistPart || style().appearance() == MenulistButtonPart) && style().direction() == LTR)
+        return endOfLinePadding;
+
     return paddingRight() + m_innerBlock->paddingRight();
 }
 

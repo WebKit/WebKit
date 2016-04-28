@@ -1161,8 +1161,8 @@ const float baseFontSize = 11.0f;
 const float baseArrowHeight = 4.0f;
 const float baseArrowWidth = 5.0f;
 const float baseSpaceBetweenArrows = 2.0f;
-const int arrowPaddingLeft = 6;
-const int arrowPaddingRight = 6;
+const int arrowPaddingBefore = 6;
+const int arrowPaddingAfter = 6;
 const int paddingBeforeSeparator = 4;
 const int baseBorderRadius = 5;
 const int styledPopupPaddingLeft = 8;
@@ -1278,6 +1278,7 @@ void RenderThemeMac::paintMenuListButtonGradients(const RenderObject& o, const P
 
 bool RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+    bool isRTL = renderer.style().direction() == RTL;
     IntRect bounds = IntRect(rect.x() + renderer.style().borderLeftWidth(),
         rect.y() + renderer.style().borderTopWidth(),
         rect.width() - renderer.style().borderLeftWidth() - renderer.style().borderRightWidth(),
@@ -1290,10 +1291,14 @@ bool RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, c
     float centerY = bounds.y() + bounds.height() / 2.0f;
     float arrowHeight = baseArrowHeight * fontScale;
     float arrowWidth = baseArrowWidth * fontScale;
-    float leftEdge = bounds.maxX() - arrowPaddingRight * renderer.style().effectiveZoom() - arrowWidth;
+    float leftEdge;
+    if (isRTL)
+        leftEdge = bounds.x() + arrowPaddingAfter * renderer.style().effectiveZoom();
+    else
+        leftEdge = bounds.maxX() - arrowPaddingAfter * renderer.style().effectiveZoom() - arrowWidth;
     float spaceBetweenArrows = baseSpaceBetweenArrows * fontScale;
 
-    if (bounds.width() < arrowWidth + arrowPaddingLeft * renderer.style().effectiveZoom())
+    if (bounds.width() < arrowWidth + arrowPaddingBefore * renderer.style().effectiveZoom())
         return false;
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());
@@ -1322,18 +1327,22 @@ bool RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, c
 
     // FIXME: Should the separator thickness and space be scaled up by fontScale?
     int separatorSpace = 2; // Deliberately ignores zoom since it looks nicer if it stays thin.
-    int leftEdgeOfSeparator = static_cast<int>(leftEdge - arrowPaddingLeft * renderer.style().effectiveZoom()); // FIXME: Round?
+    int leftEdgeOfSeparator;
+    if (isRTL)
+        leftEdgeOfSeparator = static_cast<int>(roundf(leftEdge + arrowWidth + arrowPaddingBefore * renderer.style().effectiveZoom()));
+    else
+        leftEdgeOfSeparator = static_cast<int>(roundf(leftEdge - arrowPaddingBefore * renderer.style().effectiveZoom()));
 
     // Draw the separator to the left of the arrows
     paintInfo.context().setStrokeThickness(1); // Deliberately ignores zoom since it looks nicer if it stays thin.
     paintInfo.context().setStrokeStyle(SolidStroke);
     paintInfo.context().setStrokeColor(leftSeparatorColor);
     paintInfo.context().drawLine(IntPoint(leftEdgeOfSeparator, bounds.y()),
-                                IntPoint(leftEdgeOfSeparator, bounds.maxY()));
+        IntPoint(leftEdgeOfSeparator, bounds.maxY()));
 
     paintInfo.context().setStrokeColor(rightSeparatorColor);
     paintInfo.context().drawLine(IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.y()),
-                                IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.maxY()));
+        IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.maxY()));
     return false;
 }
 
@@ -1383,9 +1392,14 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) cons
 
     if (style.appearance() == MenulistButtonPart) {
         float arrowWidth = baseArrowWidth * (style.fontSize() / baseFontSize);
+        float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.effectiveZoom());
+        float leftPadding = styledPopupPaddingLeft * style.effectiveZoom();
+        if (style.direction() == RTL)
+            std::swap(rightPadding, leftPadding);
         return { static_cast<int>(styledPopupPaddingTop * style.effectiveZoom()),
-            static_cast<int>(ceilf(arrowWidth + (arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator) * style.effectiveZoom())),
-            static_cast<int>(styledPopupPaddingBottom * style.effectiveZoom()), static_cast<int>(styledPopupPaddingLeft * style.effectiveZoom()) };
+            static_cast<int>(rightPadding),
+            static_cast<int>(styledPopupPaddingBottom * style.effectiveZoom()),
+            static_cast<int>(leftPadding) };
     }
 
     return { 0, 0, 0, 0 };
