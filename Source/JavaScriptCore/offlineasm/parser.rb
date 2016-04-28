@@ -95,7 +95,7 @@ class IncludeFile
     end
 
     def self.processIncludeOptions()
-        while ARGV[0][/-I/]
+        while ARGV[0][/^-I/]
             path = ARGV.shift[2..-1]
             if not path
                 path = ARGV.shift
