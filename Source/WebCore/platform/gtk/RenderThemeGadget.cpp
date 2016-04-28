@@ -199,8 +199,9 @@ void RenderThemeGadget::renderFocus(cairo_t* cr, const FloatRect& focusRect)
     gtk_render_focus(m_context.get(), cr, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
-RenderThemeBoxGadget::RenderThemeBoxGadget(const RenderThemeGadget::Info& info, const Vector<RenderThemeGadget::Info> children, RenderThemeGadget* parent)
+RenderThemeBoxGadget::RenderThemeBoxGadget(const RenderThemeGadget::Info& info, GtkOrientation orientation, const Vector<RenderThemeGadget::Info> children, RenderThemeGadget* parent)
     : RenderThemeGadget(info, parent, Vector<RenderThemeGadget::Info>(), 0)
+    , m_orientation(orientation)
 {
     m_children.reserveCapacity(children.size());
     unsigned index = 0;
@@ -210,10 +211,21 @@ RenderThemeBoxGadget::RenderThemeBoxGadget(const RenderThemeGadget::Info& info, 
 
 IntSize RenderThemeBoxGadget::preferredSize() const
 {
-    IntSize minSize = RenderThemeGadget::preferredSize();
-    for (const auto& child : m_children)
-        minSize += child->preferredSize();
-    return minSize;
+    IntSize childrenSize;
+    for (const auto& child : m_children) {
+        IntSize childSize = child->preferredSize();
+        switch (m_orientation) {
+        case GTK_ORIENTATION_HORIZONTAL:
+            childrenSize.setWidth(childrenSize.width() + childSize.width());
+            childrenSize.setHeight(std::max(childrenSize.height(), childSize.height()));
+            break;
+        case GTK_ORIENTATION_VERTICAL:
+            childrenSize.setWidth(std::max(childrenSize.width(), childSize.width()));
+            childrenSize.setHeight(childrenSize.height() + childSize.height());
+            break;
+        }
+    }
+    return RenderThemeGadget::preferredSize().expandedTo(childrenSize);
 }
 
 RenderThemeTextFieldGadget::RenderThemeTextFieldGadget(const RenderThemeGadget::Info& info, RenderThemeGadget* parent, const Vector<RenderThemeGadget::Info> siblings, unsigned position)
@@ -346,6 +358,27 @@ RenderThemeScrollbarGadget::RenderThemeScrollbarGadget(const RenderThemeGadget::
         m_steppers |= Steppers::SecondaryBackward;
     if (hasSecondaryForward)
         m_steppers |= Steppers::SecondaryForward;
+}
+
+void RenderThemeScrollbarGadget::renderStepper(cairo_t* cr, const FloatRect& paintRect, RenderThemeGadget* stepperGadget, GtkOrientation orientation, Steppers stepper)
+{
+    FloatRect contentsRect;
+    stepperGadget->render(cr, paintRect, &contentsRect);
+    double angle;
+    switch (stepper) {
+    case Steppers::Backward:
+    case Steppers::SecondaryBackward:
+        angle = orientation == GTK_ORIENTATION_VERTICAL ? 0 : 3 * (G_PI / 2);
+        break;
+    case Steppers::Forward:
+    case Steppers::SecondaryForward:
+        angle = orientation == GTK_ORIENTATION_VERTICAL ? G_PI / 2 : G_PI;
+        break;
+    }
+
+    int stepperSize = std::max(contentsRect.width(), contentsRect.height());
+    gtk_render_arrow(stepperGadget->context(), cr, angle, contentsRect.x() + (contentsRect.width() - stepperSize) / 2,
+        contentsRect.y() + (contentsRect.height() - stepperSize) / 2, stepperSize);
 }
 
 } // namespace WebCore
