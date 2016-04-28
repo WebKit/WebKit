@@ -32,6 +32,7 @@
 #include "CSSContentDistributionValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFunctionValue.h"
+#include "CSSGridAutoRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSImageGeneratorValue.h"
@@ -156,7 +157,8 @@ private:
 #if ENABLE(CSS_GRID_LAYOUT)
     static GridLength createGridTrackBreadth(CSSPrimitiveValue&, StyleResolver&);
     static GridTrackSize createGridTrackSize(CSSValue&, StyleResolver&);
-    static bool createGridTrackList(CSSValue&, Vector<GridTrackSize>& trackSizes, NamedGridLinesMap&, OrderedNamedGridLinesMap&, StyleResolver&);
+    struct TracksData;
+    static bool createGridTrackList(CSSValue&, TracksData&, StyleResolver&);
     static bool createGridPosition(CSSValue&, GridPosition&);
     static void createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap&, NamedGridLinesMap&, GridTrackSizingDirection);
 #endif // ENABLE(CSS_GRID_LAYOUT)
@@ -852,7 +854,35 @@ inline GridTrackSize StyleBuilderConverter::createGridTrackSize(CSSValue& value,
     return GridTrackSize(minTrackBreadth, maxTrackBreadth);
 }
 
-inline bool StyleBuilderConverter::createGridTrackList(CSSValue& value, Vector<GridTrackSize>& trackSizes, NamedGridLinesMap& namedGridLines, OrderedNamedGridLinesMap& orderedNamedGridLines, StyleResolver& styleResolver)
+static void createGridLineNamesList(const CSSValue& value, unsigned currentNamedGridLine, NamedGridLinesMap& namedGridLines, OrderedNamedGridLinesMap& orderedNamedGridLines)
+{
+    ASSERT(value.isGridLineNamesValue());
+
+    for (auto& namedGridLineValue : downcast<CSSGridLineNamesValue>(value)) {
+        String namedGridLine = downcast<CSSPrimitiveValue>(namedGridLineValue.get()).getStringValue();
+        auto result = namedGridLines.add(namedGridLine, Vector<unsigned>());
+        result.iterator->value.append(currentNamedGridLine);
+        auto orderedResult = orderedNamedGridLines.add(currentNamedGridLine, Vector<String>());
+        orderedResult.iterator->value.append(namedGridLine);
+    }
+}
+
+struct StyleBuilderConverter::TracksData {
+    WTF_MAKE_NONCOPYABLE(TracksData); WTF_MAKE_FAST_ALLOCATED;
+public:
+    TracksData() = default;
+
+    Vector<GridTrackSize> m_trackSizes;
+    NamedGridLinesMap m_namedGridLines;
+    OrderedNamedGridLinesMap m_orderedNamedGridLines;
+    Vector<GridTrackSize> m_autoRepeatTrackSizes;
+    NamedGridLinesMap m_autoRepeatNamedGridLines;
+    OrderedNamedGridLinesMap m_autoRepeatOrderedNamedGridLines;
+    unsigned m_autoRepeatInsertionPoint { RenderStyle::initialGridAutoRepeatInsertionPoint() };
+    AutoRepeatType m_autoRepeatType { RenderStyle::initialGridAutoRepeatType() };
+};
+
+inline bool StyleBuilderConverter::createGridTrackList(CSSValue& value, TracksData& tracksData, StyleResolver& styleResolver)
 {
     // Handle 'none'.
     if (is<CSSPrimitiveValue>(value))
@@ -864,23 +894,35 @@ inline bool StyleBuilderConverter::createGridTrackList(CSSValue& value, Vector<G
     unsigned currentNamedGridLine = 0;
     for (auto& currentValue : downcast<CSSValueList>(value)) {
         if (is<CSSGridLineNamesValue>(currentValue.get())) {
-            for (auto& currentGridLineName : downcast<CSSGridLineNamesValue>(currentValue.get())) {
-                String namedGridLine = downcast<CSSPrimitiveValue>(currentGridLineName.get()).getStringValue();
-                NamedGridLinesMap::AddResult result = namedGridLines.add(namedGridLine, Vector<unsigned>());
-                result.iterator->value.append(currentNamedGridLine);
-                OrderedNamedGridLinesMap::AddResult orderedResult = orderedNamedGridLines.add(currentNamedGridLine, Vector<String>());
-                orderedResult.iterator->value.append(namedGridLine);
+            createGridLineNamesList(currentValue.get(), currentNamedGridLine, tracksData.m_namedGridLines, tracksData.m_orderedNamedGridLines);
+            continue;
+        }
+
+        if (is<CSSGridAutoRepeatValue>(currentValue)) {
+            ASSERT(tracksData.m_autoRepeatTrackSizes.isEmpty());
+            unsigned autoRepeatIndex = 0;
+            CSSValueID autoRepeatID = downcast<CSSGridAutoRepeatValue>(currentValue.get()).autoRepeatID();
+            ASSERT(autoRepeatID == CSSValueAutoFill || autoRepeatID == CSSValueAutoFit);
+            tracksData.m_autoRepeatType = autoRepeatID == CSSValueAutoFill ? AutoFill : AutoFit;
+            for (auto& autoRepeatValue : downcast<CSSValueList>(currentValue.get())) {
+                if (is<CSSGridLineNamesValue>(autoRepeatValue.get())) {
+                    createGridLineNamesList(autoRepeatValue.get(), autoRepeatIndex, tracksData.m_autoRepeatNamedGridLines, tracksData.m_autoRepeatOrderedNamedGridLines);
+                    continue;
+                }
+                ++autoRepeatIndex;
+                tracksData.m_autoRepeatTrackSizes.append(createGridTrackSize(autoRepeatValue.get(), styleResolver));
             }
+            tracksData.m_autoRepeatInsertionPoint = currentNamedGridLine++;
             continue;
         }
 
         ++currentNamedGridLine;
-        trackSizes.append(createGridTrackSize(currentValue, styleResolver));
+        tracksData.m_trackSizes.append(createGridTrackSize(currentValue, styleResolver));
     }
 
     // The parser should have rejected any <track-list> without any <track-size> as
     // this is not conformant to the syntax.
-    ASSERT(!trackSizes.isEmpty());
+    ASSERT(!tracksData.m_trackSizes.isEmpty() || !tracksData.m_autoRepeatTrackSizes.isEmpty());
     return true;
 }
 

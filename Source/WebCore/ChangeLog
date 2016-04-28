@@ -1,3 +1,36 @@
+2016-04-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Store auto-repeat information in style
+        https://bugs.webkit.org/show_bug.cgi?id=157097
+
+        Reviewed by Darin Adler.
+
+        This is the second step to implement auto-repeat. This patch provides the necessary
+        machinery to store the auto-repeat data extracted by the parser in the RenderStyle class. We
+        are not doing anything with that information yet, it will be used later to compute the
+        number of auto-repeat tracks in a follow up patch.
+
+        No new tests required as there is no change in behavior yet (we're just storing the info we
+        already get from the parser).
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackList): Check also that the auto-repeat list of tracks is empty.
+        * css/StyleBuilderConverter.h:
+        (WebCore::createGridLineNamesList): Refactored from createGridTrackList.
+        (WebCore::StyleBuilderConverter::createGridTrackList): Extract auto-repeat data from the
+        parser. Also gathered all the out arguments in a single new struct called TracksData.
+        * css/StyleBuilderCustom.h: Added new macro SET_TRACKS_DATA which properly sets the info
+        from TracksData struct into style.
+        (WebCore::StyleBuilderCustom::applyValueWebkitGridTemplateColumns): Store auto-repeat data
+        in RenderStyle.
+        (WebCore::StyleBuilderCustom::applyValueWebkitGridTemplateRows): Ditto.
+        * rendering/style/RenderStyle.h: Add methods and attributes for auto-repeat data.
+        * rendering/style/RenderStyleConstants.h: New AutoRepeatType enumerated type.
+        * rendering/style/StyleGridData.cpp:
+        (WebCore::StyleGridData::StyleGridData): Add auto-repeat data.
+        * rendering/style/StyleGridData.h:
+        (WebCore::StyleGridData::operator==): Check also auto-repeat data.
+
 2016-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix alignment with content distribution

@@ -653,6 +653,12 @@ enum GridAutoFlow {
     AutoFlowRowDense = InternalAutoFlowAlgorithmDense | InternalAutoFlowDirectionRow,
     AutoFlowColumnDense = InternalAutoFlowAlgorithmDense | InternalAutoFlowDirectionColumn
 };
+
+enum AutoRepeatType {
+    NoAutoRepeat,
+    AutoFill,
+    AutoFit
+};
 #endif
 
 // Reasonable maximum to prevent insane font sizes from causing crashes on some platforms (such as Windows).

@@ -1649,20 +1649,26 @@ inline void StyleBuilderCustom::applyInheritWebkitGridTemplateColumns(StyleResol
     styleResolver.style()->setOrderedNamedGridColumnLines(styleResolver.parentStyle()->orderedNamedGridColumnLines());
 }
 
+#define SET_TRACKS_DATA(tracksData, style, TrackType) \
+    style->setGrid##TrackType##s(tracksData.m_trackSizes); \
+    style->setNamedGrid##TrackType##Lines(tracksData.m_namedGridLines); \
+    style->setOrderedNamedGrid##TrackType##Lines(tracksData.m_orderedNamedGridLines); \
+    style->setGridAutoRepeat##TrackType##s(tracksData.m_autoRepeatTrackSizes); \
+    style->setGridAutoRepeat##TrackType##sInsertionPoint(tracksData.m_autoRepeatInsertionPoint); \
+    style->setAutoRepeatNamedGrid##TrackType##Lines(tracksData.m_autoRepeatNamedGridLines); \
+    style->setAutoRepeatOrderedNamedGrid##TrackType##Lines(tracksData.m_autoRepeatOrderedNamedGridLines); \
+    style->setGridAutoRepeat##TrackType##sType(tracksData.m_autoRepeatType);
+
 inline void StyleBuilderCustom::applyValueWebkitGridTemplateColumns(StyleResolver& styleResolver, CSSValue& value)
 {
-    Vector<GridTrackSize> trackSizes;
-    NamedGridLinesMap namedGridLines;
-    OrderedNamedGridLinesMap orderedNamedGridLines;
-    if (!StyleBuilderConverter::createGridTrackList(value, trackSizes, namedGridLines, orderedNamedGridLines, styleResolver))
+    StyleBuilderConverter::TracksData tracksData;
+    if (!StyleBuilderConverter::createGridTrackList(value, tracksData, styleResolver))
         return;
     const NamedGridAreaMap& namedGridAreas = styleResolver.style()->namedGridArea();
     if (!namedGridAreas.isEmpty())
-        StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(namedGridAreas, namedGridLines, ForColumns);
+        StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(namedGridAreas, tracksData.m_namedGridLines, ForColumns);
 
-    styleResolver.style()->setGridColumns(trackSizes);
-    styleResolver.style()->setNamedGridColumnLines(namedGridLines);
-    styleResolver.style()->setOrderedNamedGridColumnLines(orderedNamedGridLines);
+    SET_TRACKS_DATA(tracksData, styleResolver.style(), Column);
 }
 
 inline void StyleBuilderCustom::applyInitialWebkitGridTemplateRows(StyleResolver& styleResolver)
@@ -1681,18 +1687,14 @@ inline void StyleBuilderCustom::applyInheritWebkitGridTemplateRows(StyleResolver
 
 inline void StyleBuilderCustom::applyValueWebkitGridTemplateRows(StyleResolver& styleResolver, CSSValue& value)
 {
-    Vector<GridTrackSize> trackSizes;
-    NamedGridLinesMap namedGridLines;
-    OrderedNamedGridLinesMap orderedNamedGridLines;
-    if (!StyleBuilderConverter::createGridTrackList(value, trackSizes, namedGridLines, orderedNamedGridLines, styleResolver))
+    StyleBuilderConverter::TracksData tracksData;
+    if (!StyleBuilderConverter::createGridTrackList(value, tracksData, styleResolver))
         return;
     const NamedGridAreaMap& namedGridAreas = styleResolver.style()->namedGridArea();
     if (!namedGridAreas.isEmpty())
-        StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(namedGridAreas, namedGridLines, ForRows);
+        StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(namedGridAreas, tracksData.m_namedGridLines, ForRows);
 
-    styleResolver.style()->setGridRows(trackSizes);
-    styleResolver.style()->setNamedGridRowLines(namedGridLines);
-    styleResolver.style()->setOrderedNamedGridRowLines(orderedNamedGridLines);
+    SET_TRACKS_DATA(tracksData, styleResolver.style(), Row);
 }
 #endif // ENABLE(CSS_GRID_LAYOUT)
 
