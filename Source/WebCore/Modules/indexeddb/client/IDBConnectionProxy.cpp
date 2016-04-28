@@ -82,6 +82,15 @@ RefPtr<IDBOpenDBRequest> IDBConnectionProxy::deleteDatabase(ScriptExecutionConte
     return WTFMove(request);
 }
 
+void IDBConnectionProxy::getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)> callback)
+{
+    // This method is only meant to be called by the web inspector on the main thread.
+    RELEASE_ASSERT(isMainThread());
+
+    m_connectionToServer.getAllDatabaseNames(mainFrameOrigin, openingOrigin, callback);
+}
+
+
 } // namesapce IDBClient
 } // namespace WebCore
 

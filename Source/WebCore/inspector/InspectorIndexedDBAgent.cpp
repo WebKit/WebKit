@@ -90,62 +90,6 @@ namespace WebCore {
 
 namespace {
 
-#if 0 // IDBFactory::getDatabaseNames isn't implemented any more. Disable this for now.
-
-class GetDatabaseNamesCallback : public EventListener {
-    WTF_MAKE_NONCOPYABLE(GetDatabaseNamesCallback);
-public:
-    static Ref<GetDatabaseNamesCallback> create(Ref<RequestDatabaseNamesCallback>&& requestCallback, const String& securityOrigin)
-    {
-        return adoptRef(*new GetDatabaseNamesCallback(WTFMove(requestCallback), securityOrigin));
-    }
-
-    virtual ~GetDatabaseNamesCallback() { }
-
-    bool operator==(const EventListener& other) override
-    {
-        return this == &other;
-    }
-
-    void handleEvent(ScriptExecutionContext*, Event* event) override
-    {
-        if (!m_requestCallback->isActive())
-            return;
-        if (event->type() != eventNames().successEvent) {
-            m_requestCallback->sendFailure("Unexpected event type.");
-            return;
-        }
-
-        IDBRequest* idbRequest = static_cast<IDBRequest*>(event->target());
-        ExceptionCodeWithMessage ec;
-        RefPtr<IDBAny> requestResult = idbRequest->result(ec);
-        if (ec.code) {
-            m_requestCallback->sendFailure("Could not get result in callback.");
-            return;
-        }
-        if (requestResult->type() != IDBAny::Type::DOMStringList) {
-            m_requestCallback->sendFailure("Unexpected result type.");
-            return;
-        }
-
-        RefPtr<DOMStringList> databaseNamesList = requestResult->domStringList();
-        Ref<Inspector::Protocol::Array<String>> databaseNames = Inspector::Protocol::Array<String>::create();
-        for (size_t i = 0; i < databaseNamesList->length(); ++i)
-            databaseNames->addItem(databaseNamesList->item(i));
-        m_requestCallback->sendSuccess(WTFMove(databaseNames));
-    }
-
-private:
-    GetDatabaseNamesCallback(Ref<RequestDatabaseNamesCallback>&& requestCallback, const String& securityOrigin)
-        : EventListener(EventListener::CPPEventListenerType)
-        , m_requestCallback(WTFMove(requestCallback))
-        , m_securityOrigin(securityOrigin) { }
-    Ref<RequestDatabaseNamesCallback> m_requestCallback;
-    String m_securityOrigin;
-};
-
-#endif
-
 class ExecutableWithDatabase : public RefCounted<ExecutableWithDatabase> {
 public:
     ExecutableWithDatabase(ScriptExecutionContext* context)
@@ -512,29 +456,34 @@ static IDBFactory* assertIDBFactory(ErrorString& errorString, Document* document
 
 void InspectorIndexedDBAgent::requestDatabaseNames(ErrorString& errorString, const String& securityOrigin, Ref<RequestDatabaseNamesCallback>&& requestCallback)
 {
-    UNUSED_PARAM(errorString);
-    UNUSED_PARAM(securityOrigin);
-    requestCallback->sendFailure("Could not obtain database names.");
-
-#if 0 // IDBFactory::getDatabaseNames isn't implemented any more. Disable this for now.
     Frame* frame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
     Document* document = assertDocument(errorString, frame);
     if (!document)
+        return;
+
+    auto* openingOrigin = document->securityOrigin();
+    if (!openingOrigin)
+        return;
+
+    auto* topOrigin = document->topOrigin();
+    if (!topOrigin)
         return;
 
     IDBFactory* idbFactory = assertIDBFactory(errorString, document);
     if (!idbFactory)
         return;
 
-    ExceptionCode ec = 0;
-    RefPtr<IDBRequest> idbRequest = idbFactory->getDatabaseNames(*document, ec);
-    if (!idbRequest || ec) {
-        requestCallback->sendFailure("Could not obtain database names.");
-        return;
-    }
+    RefPtr<RequestDatabaseNamesCallback> callback = WTFMove(requestCallback);
+    idbFactory->getAllDatabaseNames(*topOrigin, *openingOrigin, [callback](const Vector<String>& databaseNames) {
+        if (!callback->isActive())
+            return;
 
-    idbRequest->addEventListener(eventNames().successEvent, GetDatabaseNamesCallback::create(WTFMove(requestCallback), document->securityOrigin()->toRawString()), false);
-#endif
+        Ref<Inspector::Protocol::Array<String>> databaseNameArray = Inspector::Protocol::Array<String>::create();
+        for (auto& databaseName : databaseNames)
+            databaseNameArray->addItem(databaseName);
+
+        callback->sendSuccess(WTFMove(databaseNameArray));
+    });
 }
 
 void InspectorIndexedDBAgent::requestDatabase(ErrorString& errorString, const String& securityOrigin, const String& databaseName, Ref<RequestDatabaseCallback>&& requestCallback)

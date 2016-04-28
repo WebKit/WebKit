@@ -29,6 +29,7 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#include <CoreFoundation/CFString.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -52,6 +53,11 @@ CString fileSystemRepresentation(const String& path)
     }
 
     return CString(buffer.data(), strlen(buffer.data()));
+}
+
+String stringFromFileSystemRepresentation(const char* fileSystemRepresentation)
+{
+    return adoptCF(CFStringCreateWithFileSystemRepresentation(kCFAllocatorDefault, fileSystemRepresentation)).get();
 }
 
 RetainPtr<CFURLRef> pathAsURL(const String& path)

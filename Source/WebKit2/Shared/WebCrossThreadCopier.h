@@ -52,10 +52,6 @@ template<> struct CrossThreadCopierBase<false, false, WebKit::LegacyUniqueIDBDat
     }
 };
 
-template<> struct CrossThreadCopierBase<false, false, WebCore::SecurityOriginData> {
-    static WebCore::SecurityOriginData copy(const WebCore::SecurityOriginData& type);
-};
-
 template<> struct CrossThreadCopierBase<false, false, Vector<char>> {
     static Vector<char> copy(const Vector<char>&);
 };

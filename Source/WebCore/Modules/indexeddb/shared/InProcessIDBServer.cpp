@@ -401,6 +401,22 @@ void InProcessIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionId
     });
 }
 
+void InProcessIDBServer::getAllDatabaseNames(const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID)
+{
+    RefPtr<InProcessIDBServer> protector(this);
+    RunLoop::current().dispatch([this, protector, mainFrameOrigin, openingOrigin, callbackID] {
+        m_server->getAllDatabaseNames(m_connectionToServer->identifier(), mainFrameOrigin, openingOrigin, callbackID);
+    });
+}
+
+void InProcessIDBServer::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
+{
+    RefPtr<InProcessIDBServer> protector(this);
+    RunLoop::current().dispatch([this, protector, callbackID, databaseNames] {
+        m_connectionToServer->didGetAllDatabaseNames(callbackID, databaseNames);
+    });
+}
+
 void InProcessIDBServer::accessToTemporaryFileComplete(const String& path)
 {
     deleteFile(path);

@@ -1,3 +1,28 @@
+2016-04-27  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Implement native IDBFactory.getAllDatabaseNames for WebInspector.
+        https://bugs.webkit.org/show_bug.cgi?id=157072
+
+        Reviewed by Alex Christensen.
+
+        Handle the process hop for the new getAllDatabaseNames call.
+        
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::didGetAllDatabaseNames):
+        (WebKit::WebIDBConnectionToClient::getAllDatabaseNames):
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.messages.in:
+
+        * Shared/WebCrossThreadCopier.cpp:
+        (WebCore::SecurityOriginData>::copy): Deleted, as its in WebCore now.
+        * Shared/WebCrossThreadCopier.h:
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::getAllDatabaseNames):
+        (WebKit::WebIDBConnectionToServer::didGetAllDatabaseNames):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in:
+
 2016-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] When determining tile size, check whether ancestor UIScrollViews are actually scrollable

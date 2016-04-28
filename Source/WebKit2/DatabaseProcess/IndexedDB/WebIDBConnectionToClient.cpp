@@ -174,6 +174,11 @@ void WebIDBConnectionToClient::notifyOpenDBRequestBlocked(const WebCore::IDBReso
     send(Messages::WebIDBConnectionToServer::NotifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion));
 }
 
+void WebIDBConnectionToClient::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
+{
+    send(Messages::WebIDBConnectionToServer::DidGetAllDatabaseNames(callbackID, databaseNames));
+}
+
 void WebIDBConnectionToClient::deleteDatabase(const IDBRequestData& request)
 {
     DatabaseProcess::singleton().idbServer().deleteDatabase(request);
@@ -282,6 +287,11 @@ void WebIDBConnectionToClient::abortOpenAndUpgradeNeeded(uint64_t databaseConnec
 void WebIDBConnectionToClient::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
     DatabaseProcess::singleton().idbServer().didFireVersionChangeEvent(databaseConnectionIdentifier, transactionIdentifier);
+}
+
+void WebIDBConnectionToClient::getAllDatabaseNames(uint64_t serverConnectionIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
+{
+    DatabaseProcess::singleton().idbServer().getAllDatabaseNames(serverConnectionIdentifier, topOrigin, openingOrigin, callbackID);
 }
 
 } // namespace WebKit

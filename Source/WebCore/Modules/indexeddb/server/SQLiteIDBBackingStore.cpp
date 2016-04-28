@@ -659,6 +659,17 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     return databaseInfo;
 }
 
+String SQLiteIDBBackingStore::databaseNameFromEncodedFilename(const String& encodedName)
+{
+    if (equal(encodedName, ASCIILiteral("%00")))
+        return { };
+
+    String partiallyDecoded = encodedName;
+    partiallyDecoded.replace(ASCIILiteral("%2E"), ASCIILiteral("."));
+
+    return decodeFromFilename(partiallyDecoded);
+}
+
 String SQLiteIDBBackingStore::filenameForDatabaseName() const
 {
     ASSERT(!m_identifier.databaseName().isNull());

@@ -82,6 +82,8 @@ public:
     WEBCORE_EXPORT void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     WEBCORE_EXPORT void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier);
 
+    WEBCORE_EXPORT void getAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
+
     void postDatabaseTask(std::unique_ptr<CrossThreadTask>&&);
     void postDatabaseTaskReply(std::unique_ptr<CrossThreadTask>&&);
 
@@ -99,6 +101,9 @@ private:
     IDBServer(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler&);
 
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
+
+    void performGetAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
+    void didGetAllDatabaseNames(uint64_t serverConnectionIdentifier, uint64_t callbackID, const Vector<String>& databaseNames);
 
     static void databaseThreadEntry(void*);
     void databaseRunLoop();

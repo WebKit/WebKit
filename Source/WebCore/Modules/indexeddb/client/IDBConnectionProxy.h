@@ -28,13 +28,17 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBConnectionToServer.h"
+#include <functional>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class IDBDatabaseIdentifier;
 class IDBOpenDBRequest;
 class ScriptExecutionContext;
+class SecurityOrigin;
 
 namespace IDBClient {
 
@@ -56,6 +60,8 @@ public:
 
     void ref();
     void deref();
+
+    void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)>);
 
 private:
     IDBConnectionToServer& m_connectionToServer;

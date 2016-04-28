@@ -130,6 +130,87 @@ String encodeForFileName(const String& inputString)
     return result.toString();
 }
 
+String decodeFromFilename(const String& inputString)
+{
+    unsigned length = inputString.length();
+    if (!length)
+        return inputString;
+
+    StringBuilder result;
+    result.reserveCapacity(length);
+
+    for (unsigned i = 0; i < length; ++i) {
+        if (inputString[i] != '%') {
+            result.append(inputString[i]);
+            continue;
+        }
+
+        // If the input string is a valid encoded filename, it must be at least 2 characters longer
+        // than the current index to account for this percent encoded value.
+        if (i + 2 >= length)
+            return { };
+
+        if (inputString[i+1] != '+') {
+            char value;
+            if (!hexDigitValue(inputString[i + 1], value))
+                return { };
+            LChar character = value << 4;
+
+            if (!hexDigitValue(inputString[i + 2], value))
+                return { };
+
+            result.append(character | value);
+            continue;
+        }
+
+        // If the input string is a valid encoded filename, it must be at least 5 characters longer
+        // than the current index to account for this percent encoded value.
+        if (i + 5 >= length)
+            return { };
+
+        char value;
+        if (!hexDigitValue(inputString[i + 2], value))
+            return { };
+        UChar character = value << 12;
+
+        if (!hexDigitValue(inputString[i + 3], value))
+            return { };
+        character = character | (value << 8);
+
+        if (!hexDigitValue(inputString[i + 4], value))
+            return { };
+        character = character | (value << 4);
+
+        if (!hexDigitValue(inputString[i + 5], value))
+            return { };
+
+        result.append(character | value);
+    }
+
+    return result.toString();
+}
+
+String lastComponentOfPathIgnoringTrailingSlash(const String& path)
+{
+#if PLATFORM(WIN)
+    char pathSeperator = '\\';
+#else
+    char pathSeperator = '/';
+#endif
+
+    auto position = path.reverseFind(pathSeperator);
+    if (position == notFound)
+        return path;
+
+    size_t endOfSubstring = path.length() - 1;
+    if (position == endOfSubstring) {
+        --endOfSubstring;
+        position = path.reverseFind(pathSeperator, endOfSubstring);
+    }
+
+    return path.substring(position + 1, endOfSubstring - position);
+}
+
 bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& target)
 {
     auto source = openFile(path, OpenForRead);

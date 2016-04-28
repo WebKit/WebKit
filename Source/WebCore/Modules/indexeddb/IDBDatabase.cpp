@@ -97,7 +97,7 @@ RefPtr<WebCore::IDBObjectStore> IDBDatabase::createObjectStore(const String&, co
 
 RefPtr<WebCore::IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, ExceptionCodeWithMessage& ec)
 {
-    LOG(IndexedDB, "IDBDatabase::createObjectStore");
+    LOG(IndexedDB, "IDBDatabase::createObjectStore - (%s %s)", m_info.name().utf8().data(), name.utf8().data());
 
     ASSERT(!m_versionChangeTransaction || m_versionChangeTransaction->isVersionChange());
 

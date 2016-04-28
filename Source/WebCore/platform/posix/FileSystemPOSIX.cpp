@@ -301,8 +301,8 @@ String directoryName(const String& path)
 Vector<String> listDirectory(const String& path, const String& filter)
 {
     Vector<String> entries;
-    CString cpath = path.utf8();
-    CString cfilter = filter.utf8();
+    CString cpath = fileSystemRepresentation(path);
+    CString cfilter = fileSystemRepresentation(filter);
     DIR* dir = opendir(cpath.data());
     if (dir) {
         struct dirent* dp;
@@ -312,10 +312,16 @@ Vector<String> listDirectory(const String& path, const String& filter)
                 continue;
             if (fnmatch(cfilter.data(), name, 0))
                 continue;
-            char filePath[1024];
+            char filePath[PATH_MAX];
             if (static_cast<int>(sizeof(filePath) - 1) < snprintf(filePath, sizeof(filePath), "%s/%s", cpath.data(), name))
                 continue; // buffer overflow
-            entries.append(filePath);
+
+            auto string = stringFromFileSystemRepresentation(filePath);
+
+            // Some file system representations cannot be represented as a UTF-16 string,
+            // so this string might be null.
+            if (!string.isNull())
+                entries.append(WTFMove(string));
         }
         closedir(dir);
     }

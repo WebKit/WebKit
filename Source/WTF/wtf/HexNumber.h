@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef HexNumber_h
-#define HexNumber_h
+#pragma once
 
 #include <wtf/text/StringConcatenate.h>
 
@@ -111,6 +111,54 @@ inline void appendUnsignedAsHexFixedSize(unsigned number, T& destination, unsign
     destination.append(result.data(), result.size());
 }
 
+
+inline bool isHexDigit(char c)
+{
+    return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
+}
+
+inline char uncheckedHexDigit(int i)
+{
+    if (i < 0 || i > 16)
+        return '0';
+
+    return (i >= 10) ? i - 10 + 'A' : i + '0';
+}
+
+inline bool hexDigitValue(char c, char& result)
+{
+    if (c >= '0' && c <= '9') {
+        result = c - '0';
+        return true;
+    }
+
+    if (c >= 'A' && c <= 'F') {
+        result = c - 'A' + 10;
+        return true;
+    }
+
+    if (c >= 'a' && c <= 'f') {
+        result = c - 'a' + 10;
+        return true;
+    }
+
+    return false;
+}
+
+inline int uncheckedHexDigitValue(char c)
+{
+    if (c >= '0' && c <= '9')
+        return c - '0';
+
+    if (c >= 'A' && c <= 'F')
+        return c - 'A' + 10;
+
+    if (c >= 'a' && c <= 'f')
+        return c - 'a' + 10;
+
+    return 0;
+}
+
 } // namespace WTF
 
 using WTF::appendByteAsHex;
@@ -119,5 +167,7 @@ using WTF::appendUnsignedAsHexFixedSize;
 using WTF::placeByteAsHex;
 using WTF::placeByteAsHexCompressIfPossible;
 using WTF::Lowercase;
-
-#endif // HexNumber_h
+using WTF::isHexDigit;
+using WTF::uncheckedHexDigit;
+using WTF::hexDigitValue;
+using WTF::uncheckedHexDigitValue;

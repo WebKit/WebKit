@@ -28,7 +28,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include <WebCore/IDBKeyData.h>
-#include <WebCore/SecurityOriginData.h>
 
 using namespace WebKit;
 
@@ -66,11 +65,6 @@ Vector<Vector<IDBKeyData>> CrossThreadCopierBase<false, false, Vector<Vector<IDB
     }
 
     return result;
-}
-
-SecurityOriginData CrossThreadCopierBase<false, false, SecurityOriginData>::copy(const SecurityOriginData& securityOriginData)
-{
-    return securityOriginData.isolatedCopy();
 }
 
 ASCIILiteral CrossThreadCopierBase<false, false, ASCIILiteral>::copy(const ASCIILiteral& literal)

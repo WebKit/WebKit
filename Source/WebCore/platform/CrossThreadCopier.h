@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2014, 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,6 +36,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -48,6 +50,7 @@ class SessionID;
 class ThreadSafeDataBuffer;
 struct CrossThreadResourceResponseData;
 struct CrossThreadResourceRequestData;
+struct SecurityOriginData;
 struct ThreadableLoaderOptions;
 
 struct CrossThreadCopierBaseHelper {
@@ -134,6 +137,11 @@ template<> struct CrossThreadCopierBase<false, false, ResourceResponse> {
     static Type copy(const ResourceResponse&);
 };
 
+template<> struct CrossThreadCopierBase<false, false, SecurityOriginData> {
+    typedef SecurityOriginData Type;
+    static Type copy(const SecurityOriginData&);
+};
+
 template<> struct CrossThreadCopierBase<false, false, SessionID> {
     typedef SessionID Type;
     static Type copy(const SessionID&);
@@ -142,6 +150,11 @@ template<> struct CrossThreadCopierBase<false, false, SessionID> {
 template<> struct CrossThreadCopierBase<false, false, ThreadSafeDataBuffer> {
     typedef ThreadSafeDataBuffer Type;
     static Type copy(const ThreadSafeDataBuffer&);
+};
+
+template<> struct CrossThreadCopierBase<false, false, Vector<String>> {
+    typedef Vector<String> Type;
+    static Type copy(const Vector<String>&);
 };
 
 #if ENABLE(INDEXED_DATABASE)

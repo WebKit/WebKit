@@ -87,6 +87,8 @@ public:
 
     IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
 
+    static String databaseNameFromEncodedFilename(const String&);
+
 private:
     String filenameForDatabaseName() const;
     String fullDatabasePath() const;

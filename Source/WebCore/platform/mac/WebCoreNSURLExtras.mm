@@ -32,6 +32,7 @@
 #import "WebCoreNSURLExtras.h"
 #import "WebCoreSystemInterface.h"
 #import <functional>
+#import <wtf/HexNumber.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -718,34 +719,6 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     return [mutableCopy autorelease];
 }
 
-static BOOL isHexDigit(char c)
-{
-    return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
-}
-
-static char hexDigit(int i)
-{
-    if (i < 0 || i > 16)
-        return '0';
-
-    return (i >= 10) ? i - 10 + 'A' : i += '0'; 
-}
-
-static int hexDigitValue(char c)
-{
-    if (c >= '0' && c <= '9')
-        return c - '0';
-
-    if (c >= 'A' && c <= 'F')
-        return c - 'A' + 10;
-
-    if (c >= 'a' && c <= 'f')
-        return c - 'a' + 10;
-
-    LOG_ERROR("illegal hex digit");
-    return 0;
-}
-
 static NSString *stringByTrimmingWhitespace(NSString *string)
 {
     NSMutableString *trimmed = [[string mutableCopy] autorelease];
@@ -831,8 +804,8 @@ static NSData *dataWithUserTypedString(NSString *string)
         UInt8 c = inBytes[i];
         if (c <= 0x20 || c >= 0x7f) {
             *p++ = '%';
-            *p++ = hexDigit(c >> 4);
-            *p++ = hexDigit(c & 0xf);
+            *p++ = uncheckedHexDigit(c >> 4);
+            *p++ = uncheckedHexDigit(c & 0xf);
             outLength += 3;
         } else {
             *p++ = c;
@@ -926,8 +899,8 @@ NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
         if (c <= 0x20 || c >= 0x7f) {
             char escaped[3];
             escaped[0] = '%';
-            escaped[1] = hexDigit(c >> 4);
-            escaped[2] = hexDigit(c & 0xf);
+            escaped[1] = uncheckedHexDigit(c >> 4);
+            escaped[2] = uncheckedHexDigit(c & 0xf);
             [resultData appendBytes:escaped length:3];    
         } else {
             char b[1];
@@ -1038,8 +1011,8 @@ static CFStringRef createStringWithEscapedUnsafeCharacters(CFStringRef string)
             
             for (CFIndex j = 0; j < offset; ++j) {
                 outBuffer.append('%');
-                outBuffer.append(hexDigit(utf8Buffer[j] >> 4));
-                outBuffer.append(hexDigit(utf8Buffer[j] & 0xf));
+                outBuffer.append(uncheckedHexDigit(utf8Buffer[j] >> 4));
+                outBuffer.append(uncheckedHexDigit(utf8Buffer[j] & 0xf));
             }
         } else {
             UChar utf16Buffer[2];
@@ -1071,7 +1044,7 @@ NSString *userVisibleString(NSURL *URL)
         unsigned char c = p[i];
         // unescape escape sequences that indicate bytes greater than 0x7f
         if (c == '%' && (i + 1 < length && isHexDigit(p[i + 1])) && i + 2 < length && isHexDigit(p[i + 2])) {
-            unsigned char u = (hexDigitValue(p[i + 1]) << 4) | hexDigitValue(p[i + 2]);
+            unsigned char u = (uncheckedHexDigitValue(p[i + 1]) << 4) | uncheckedHexDigitValue(p[i + 2]);
             if (u > 0x7f) {
                 // unescape
                 *q++ = u;
@@ -1108,8 +1081,8 @@ NSString *userVisibleString(NSURL *URL)
             unsigned char c = *p;
             if (c > 0x7f) {
                 *q++ = '%';
-                *q++ = hexDigit(c >> 4);
-                *q++ = hexDigit(c & 0xf);
+                *q++ = uncheckedHexDigit(c >> 4);
+                *q++ = uncheckedHexDigit(c & 0xf);
             } else
                 *q++ = *p;
             p++;
@@ -1152,7 +1125,7 @@ BOOL isUserVisibleURL(NSString *string)
             valid = NO;
             break;
         } else if (c == '%' && (i + 1 < length && isHexDigit(p[i + 1])) && i + 2 < length && isHexDigit(p[i + 2])) {
-            unsigned char u = (hexDigitValue(p[i + 1]) << 4) | hexDigitValue(p[i + 2]);
+            unsigned char u = (uncheckedHexDigitValue(p[i + 1]) << 4) | uncheckedHexDigitValue(p[i + 2]);
             if (u > 0x7f) {
                 valid = NO;
                 break;

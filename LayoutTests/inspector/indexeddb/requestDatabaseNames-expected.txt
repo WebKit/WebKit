@@ -1,5 +1,7 @@
 CONSOLE MESSAGE: line 10: Created Database 'Database1'
 CONSOLE MESSAGE: line 10: Created Database 'Database2'
+CONSOLE MESSAGE: line 10: Created Database 'ቍ'
+CONSOLE MESSAGE: line 10: Created Database '𐍆'
 
 PASS: No IndexedDB databases should exist initially
 Created Database 'Database1'
@@ -8,4 +10,10 @@ PASS: A single IndexedDB database should exist
 Created Database 'Database2'
 PASS: Two IndexedDB databases should exist
 ["Database1","Database2"]
+Created Database 'ቍ'
+PASS: Two IndexedDB databases should exist
+["Database1","Database2","ቍ"]
+Created Database '𐍆'
+PASS: Four IndexedDB databases should exist
+["Database1","Database2","ቍ","𐍆"]
 

@@ -69,6 +69,8 @@ public:
 
     void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
 
+    void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames);
+
 private:
     IDBConnectionToClient(IDBConnectionToClientDelegate&);
     

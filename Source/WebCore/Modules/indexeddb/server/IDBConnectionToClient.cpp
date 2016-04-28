@@ -138,6 +138,11 @@ void IDBConnectionToClient::notifyOpenDBRequestBlocked(const IDBResourceIdentifi
     m_delegate->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
 }
 
+void IDBConnectionToClient::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
+{
+    m_delegate->didGetAllDatabaseNames(callbackID, databaseNames);
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

@@ -123,6 +123,9 @@ public:
     void registerDatabaseConnection(IDBDatabase&);
     void unregisterDatabaseConnection(IDBDatabase&);
 
+    void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)>);
+    WEBCORE_EXPORT void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames);
+
 private:
     IDBConnectionToServer(IDBConnectionToServerDelegate&);
 
@@ -139,6 +142,8 @@ private:
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations;
+
+    HashMap<uint64_t, std::function<void (const Vector<String>&)>> m_getAllDatabaseNamesCallbacks;
 
     std::unique_ptr<IDBConnectionProxy> m_proxy;
 };

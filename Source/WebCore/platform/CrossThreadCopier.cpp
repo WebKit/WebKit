@@ -36,6 +36,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityOriginData.h"
 #include "SerializedScriptValue.h"
 #include "SessionID.h"
 #include "ThreadSafeDataBuffer.h"
@@ -84,6 +85,11 @@ CrossThreadCopierBase<false, false, ResourceResponse>::Type CrossThreadCopierBas
     return response.copyData();
 }
 
+CrossThreadCopierBase<false, false, SecurityOriginData>::Type CrossThreadCopierBase<false, false, SecurityOriginData>::copy(const SecurityOriginData& originData)
+{
+    return originData.isolatedCopy();
+}
+
 CrossThreadCopierBase<false, false, SessionID>::Type CrossThreadCopierBase<false, false, SessionID>::copy(const SessionID& sessionID)
 {
     return sessionID;
@@ -92,6 +98,16 @@ CrossThreadCopierBase<false, false, SessionID>::Type CrossThreadCopierBase<false
 CrossThreadCopierBase<false, false, ThreadSafeDataBuffer>::Type CrossThreadCopierBase<false, false, ThreadSafeDataBuffer>::copy(const ThreadSafeDataBuffer& buffer)
 {
     return ThreadSafeDataBuffer(buffer);
+}
+
+CrossThreadCopierBase<false, false, Vector<String>>::Type CrossThreadCopierBase<false, false, Vector<String>>::copy(const Vector<String>& strings)
+{
+    Vector<String> result;
+    result.reserveInitialCapacity(strings.size());
+    for (auto& string : strings)
+        result.uncheckedAppend(string.isolatedCopy());
+
+    return result;
 }
 
 #if ENABLE(INDEXED_DATABASE)

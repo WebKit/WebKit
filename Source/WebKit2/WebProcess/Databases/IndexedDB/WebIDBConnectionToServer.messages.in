@@ -44,6 +44,7 @@ messages -> WebIDBConnectionToServer {
     DidStartTransaction(WebCore::IDBResourceIdentifier transactionIdentifier, WebCore::IDBError error)
     NotifyOpenDBRequestBlocked(WebCore::IDBResourceIdentifier requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 
+    DidGetAllDatabaseNames(uint64_t callbackID, Vector<String> databaseNames)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

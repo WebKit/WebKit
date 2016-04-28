@@ -93,6 +93,7 @@ public:
     const String& databaseName() const { return m_databaseName; }
 
     String databaseDirectoryRelativeToRoot(const String& rootDirectory) const;
+    static String databaseDirectoryRelativeToRoot(const SecurityOriginData& topLevelOrigin, const SecurityOriginData& openingOrigin, const String& rootDirectory);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, IDBDatabaseIdentifier&);

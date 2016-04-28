@@ -54,6 +54,11 @@ String filenameToString(const char* filename)
 #endif
 }
 
+String stringFromFileSystemRepresentation(const char* fileSystemRepresentation)
+{
+    return filenameToString(fileSystemRepresentation);
+}
+
 static GUniquePtr<char> unescapedFilename(const String& path)
 {
     if (path.isEmpty())

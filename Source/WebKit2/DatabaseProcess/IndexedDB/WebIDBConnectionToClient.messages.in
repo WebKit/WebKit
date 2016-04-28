@@ -44,6 +44,7 @@ messages -> WebIDBConnectionToClient {
     DatabaseConnectionClosed(uint64_t databaseConnectionIdentifier);
     AbortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier);
     DidFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier);
-}
 
+    GetAllDatabaseNames(uint64_t serverConnectionIdentifier, struct WebCore::SecurityOriginData topOrigin, struct WebCore::SecurityOriginData openingOrigin, uint64_t callbackID);
+}
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

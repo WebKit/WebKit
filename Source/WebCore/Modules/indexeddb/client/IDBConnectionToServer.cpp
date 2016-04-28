@@ -411,6 +411,23 @@ bool IDBConnectionToServer::hasRecordOfTransaction(const IDBTransaction& transac
     return m_pendingTransactions.contains(identifier) || m_committingTransactions.contains(identifier) || m_abortingTransactions.contains(identifier);
 }
 
+void IDBConnectionToServer::getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)> callback)
+{
+    static uint64_t callbackID = 0;
+
+    m_getAllDatabaseNamesCallbacks.add(++callbackID, WTFMove(callback));
+
+    m_delegate->getAllDatabaseNames(SecurityOriginData::fromSecurityOrigin(mainFrameOrigin), SecurityOriginData::fromSecurityOrigin(openingOrigin), callbackID);
+}
+
+void IDBConnectionToServer::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
+{
+    auto callback = m_getAllDatabaseNamesCallbacks.take(callbackID);
+    ASSERT(callback);
+
+    callback(databaseNames);
+}
+
 } // namespace IDBClient
 } // namespace WebCore
 

@@ -55,6 +55,29 @@ function test()
                     InspectorTest.expectNoError(error);
                     InspectorTest.expectThat(names.length === 2, "Two IndexedDB databases should exist");
                     InspectorTest.log(JSON.stringify(names));
+                    InspectorTest.evaluateInPage("createDatabase('\u124d')");
+                });
+            }
+        },
+        {
+            action: function() {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 3, "Two IndexedDB databases should exist");
+                    InspectorTest.log(JSON.stringify(names));
+                    InspectorTest.evaluateInPage("createDatabase('\ud800\udf46')");
+                });
+            }
+        },
+        {
+            action: function() {
+                IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, function(error, names) {
+                    for (n in names)
+                        alert(names.n);
+
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 4, "Four IndexedDB databases should exist");
+                    InspectorTest.log(JSON.stringify(names));
                     next();
                 });
             }

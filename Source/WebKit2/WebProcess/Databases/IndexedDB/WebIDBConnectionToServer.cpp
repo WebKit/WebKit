@@ -182,6 +182,11 @@ void WebIDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnec
     send(Messages::WebIDBConnectionToClient::DidFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier));
 }
 
+void WebIDBConnectionToServer::getAllDatabaseNames(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
+{
+    send(Messages::WebIDBConnectionToClient::GetAllDatabaseNames(m_identifier, topOrigin, openingOrigin, callbackID));
+}
+
 void WebIDBConnectionToServer::didDeleteDatabase(const IDBResultData& result)
 {
     m_connectionToServer->didDeleteDatabase(result);
@@ -281,6 +286,11 @@ void WebIDBConnectionToServer::didStartTransaction(const IDBResourceIdentifier& 
 void WebIDBConnectionToServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 {
     m_connectionToServer->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
+}
+
+void WebIDBConnectionToServer::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
+{
+    m_connectionToServer->didGetAllDatabaseNames(callbackID, databaseNames);
 }
 
 } // namespace WebKit
