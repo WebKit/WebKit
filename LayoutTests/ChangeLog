@@ -1,3 +1,24 @@
+2016-04-27  Ada Chan  <adachan@apple.com>
+
+        Set overflow: hidden on ::-webkit-media-controls in mediaControlsApple.css
+        https://bugs.webkit.org/show_bug.cgi?id=157110
+
+        Reviewed by Eric Carlson.
+
+        The style change caused an image only failure for fast/regions/inline-block-inside-anonymous-overflow.html.
+        Mark that test as image-failure-only and add a new test that's basically a copy of inline-block-inside-anonymous-overflow.html
+        with the default controls covered so we can still catch layout regressions related to flowing content from region to region.
+
+        * fast/regions/inline-block-inside-anonymous-overflow-with-covered-controls-expected.html: Added.
+        * fast/regions/inline-block-inside-anonymous-overflow-with-covered-controls.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        fast/regions/inline-block-inside-anonymous-overflow.html is already marked as image-failure-only
+        so this new test needs to be marked too.
+        * platform/mac/TestExpectations:
+        * platform/mac/media/media-document-audio-repaint-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+        Rebaseline test due to style change in mediaControlsApple.css.
+
 2016-04-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Import remaining fetch tests
