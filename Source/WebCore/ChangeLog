@@ -1,3 +1,21 @@
+2016-04-28  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Factor out the "paint item" logic in RenderListBox into a helper
+        https://bugs.webkit.org/show_bug.cgi?id=157117
+
+        Reviewed by Daniel Bates.
+
+        Patch factors out the duplicated painting logic in RenderListBox::paintObject()
+        into a member function named paintItem.
+
+        This is in preparation for bug 156590.
+        No new tests, since there is no behavior change.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItem):
+        (WebCore::RenderListBox::paintObject):
+        * rendering/RenderListBox.h:
+
 2016-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] We need to be smarter about flattening and the accessible text implementation

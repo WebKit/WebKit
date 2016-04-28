@@ -271,20 +271,24 @@ LayoutRect RenderListBox::itemBoundingBoxRect(const LayoutPoint& additionalOffse
     LayoutUnit y = additionalOffset.y() + borderTop() + paddingTop() + itemHeight() * (index - m_indexOffset);
     return LayoutRect(x, y, contentWidth(), itemHeight());
 }
-    
+
+void RenderListBox::paintItem(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintFunction paintFunction)
+{
+    int listItemsSize = numItems();
+    int endIndex = m_indexOffset + numVisibleItems();
+    for (int i = m_indexOffset; i < listItemsSize && i <= endIndex; ++i)
+        paintFunction(paintInfo, paintOffset, i);
+}
+
 void RenderListBox::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (style().visibility() != VISIBLE)
         return;
     
-    int listItemsSize = numItems();
-
     if (paintInfo.phase == PaintPhaseForeground) {
-        int index = m_indexOffset;
-        while (index < listItemsSize && index <= m_indexOffset + numVisibleItems()) {
-            paintItemForeground(paintInfo, paintOffset, index);
-            index++;
-        }
+        paintItem(paintInfo, paintOffset, [this](PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listItemIndex) {
+            paintItemForeground(paintInfo, paintOffset, listItemIndex);
+        });
     }
 
     // Paint the children.
@@ -303,11 +307,9 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
         break;
     case PaintPhaseChildBlockBackground:
     case PaintPhaseChildBlockBackgrounds: {
-        int index = m_indexOffset;
-        while (index < listItemsSize && index <= m_indexOffset + numVisibleItems()) {
-            paintItemBackground(paintInfo, paintOffset, index);
-            index++;
-        }
+        paintItem(paintInfo, paintOffset, [this](PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listItemIndex) {
+            paintItemBackground(paintInfo, paintOffset, listItemIndex);
+        });
         break;
     }
     default:
