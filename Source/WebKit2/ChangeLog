@@ -1,3 +1,13 @@
+2016-04-27  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/25915253> REGRESSION (r199628): Netflix playback fails in Safari Technology Preview with error code S7363-1260-FFFF58D8
+
+        Rubber-stamped by Tim Horton.
+
+        Reverted r199628.
+
+        * Configurations/WebContentService.xcconfig:
+
 2016-04-27  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Implement native IDBFactory.getAllDatabaseNames for WebInspector.
