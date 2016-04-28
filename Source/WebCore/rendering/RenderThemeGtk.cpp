@@ -803,7 +803,8 @@ void RenderThemeGtk::adjustMenuListStyle(StyleResolver&, RenderStyle& style, con
     // We cannot give a proper rendering when border radius is active, unfortunately.
     style.resetBorderRadius();
 
-    style.setColor(menuListColor(element));
+    if (element)
+        style.setColor(menuListColor(element));
 }
 
 void RenderThemeGtk::adjustMenuListButtonStyle(StyleResolver& styleResolver, RenderStyle& style, const Element* e) const

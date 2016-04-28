@@ -1,3 +1,16 @@
+2016-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r199659): Web Process crash when RenderTheme::adjustMenuListStyle is called with a null element
+        https://bugs.webkit.org/show_bug.cgi?id=157127
+
+        Reviewed by Sergio Villar Senin.
+
+        This happens for example with tests fast/css/appearance-with-pseudo-elements-in-quirks-mode.html and
+        fast/css/appearance-with-pseudo-elements.html.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustMenuListStyle): Do not change the style color if the given element is nullptr.
+
 2016-04-28  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Store auto-repeat information in style
