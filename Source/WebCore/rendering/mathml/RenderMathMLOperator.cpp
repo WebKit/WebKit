@@ -207,7 +207,7 @@ LayoutUnit RenderMathMLOperator::italicCorrection() const
     if (isLargeOperatorInDisplayStyle()) {
         const auto& primaryFont = style().fontCascade().primaryFont();
         if (auto* mathData = primaryFont.mathData()) {
-            StretchyData largeOperator = getDisplayStyleLargeOperator();
+            StretchyData largeOperator = getDisplayStyleLargeOperator(m_textContent);
             return mathData->getItalicCorrection(primaryFont, largeOperator.variant().glyph);
         }
     }
@@ -306,8 +306,8 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
         return;
     }
 
-    GlyphData baseGlyph;
-    float maximumGlyphWidth = getBaseGlyph(style(), baseGlyph) ? advanceWidthForGlyph(baseGlyph) : 0;
+    GlyphData data = style().fontCascade().glyphDataForCharacter(m_textContent, !style().isLeftToRightDirection());
+    float maximumGlyphWidth = advanceWidthForGlyph(data);
     if (!m_isVertical) {
         if (maximumGlyphWidth < stretchSize())
             maximumGlyphWidth = stretchSize();
@@ -317,12 +317,12 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
     }
     if (isLargeOperatorInDisplayStyle()) {
         // Large operators in STIX Word have incorrect advance width, causing misplacement of superscript, so we use the glyph bound instead (http://sourceforge.net/p/stixfonts/tracking/49/).
-        StretchyData largeOperator = getDisplayStyleLargeOperator();
+        StretchyData largeOperator = getDisplayStyleLargeOperator(m_textContent);
         if (largeOperator.mode() == DrawSizeVariant)
             maximumGlyphWidth = boundsForGlyph(largeOperator.variant()).width();
     } else {
         // FIXME: some glyphs (e.g. the one for "FRACTION SLASH" in the STIX Math font or large operators) have a width that depends on the height, resulting in large gaps (https://bugs.webkit.org/show_bug.cgi?id=130326).
-        findStretchyData(&maximumGlyphWidth);
+        findStretchyData(m_textContent, &maximumGlyphWidth);
     }
     m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_leadingSpace + maximumGlyphWidth + m_trailingSpace;
 }
@@ -384,12 +384,6 @@ void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyl
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     updateOperatorProperties();
-}
-
-bool RenderMathMLOperator::getBaseGlyph(const RenderStyle& style, GlyphData& baseGlyph) const
-{
-    baseGlyph = style.fontCascade().glyphDataForCharacter(m_textContent, !style.isLeftToRightDirection());
-    return baseGlyph.isValid() && baseGlyph.font == &style.fontCascade().primaryFont();
 }
 
 bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::AssemblyPart> assemblyParts, StretchyData& stretchyData) const
@@ -502,29 +496,30 @@ bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::Ass
     return true;
 }
 
-RenderMathMLOperator::StretchyData RenderMathMLOperator::getDisplayStyleLargeOperator() const
+RenderMathMLOperator::StretchyData RenderMathMLOperator::getDisplayStyleLargeOperator(UChar character) const
 {
     StretchyData data;
 
     ASSERT(m_isVertical && isLargeOperatorInDisplayStyle());
 
-    GlyphData baseGlyph;
-    if (!getBaseGlyph(style(), baseGlyph) || !baseGlyph.font->mathData())
+    const auto& primaryFont = style().fontCascade().primaryFont();
+    GlyphData baseGlyph = style().fontCascade().glyphDataForCharacter(character, !style().isLeftToRightDirection());
+    if (!primaryFont.mathData() || baseGlyph.font != &primaryFont || !baseGlyph.font || !baseGlyph.glyph)
         return data;
 
     Vector<Glyph> sizeVariants;
     Vector<OpenTypeMathData::AssemblyPart> assemblyParts;
 
     // The value of displayOperatorMinHeight is sometimes too small, so we ensure that it is at least \sqrt{2} times the size of the base glyph.
-    float displayOperatorMinHeight = std::max(baseGlyph.font->boundsForGlyph(baseGlyph.glyph).height() * sqrtOfTwoFloat, baseGlyph.font->mathData()->getMathConstant(*baseGlyph.font, OpenTypeMathData::DisplayOperatorMinHeight));
+    float displayOperatorMinHeight = std::max(baseGlyph.font->boundsForGlyph(baseGlyph.glyph).height() * sqrtOfTwoFloat, primaryFont.mathData()->getMathConstant(primaryFont, OpenTypeMathData::DisplayOperatorMinHeight));
 
-    baseGlyph.font->mathData()->getMathVariants(baseGlyph.glyph, true, sizeVariants, assemblyParts);
+    primaryFont.mathData()->getMathVariants(baseGlyph.glyph, true, sizeVariants, assemblyParts);
 
     // We choose the first size variant that is larger than the expected displayOperatorMinHeight and otherwise fallback to the largest variant.
     for (auto& variant : sizeVariants) {
         GlyphData sizeVariant;
         sizeVariant.glyph = variant;
-        sizeVariant.font = baseGlyph.font;
+        sizeVariant.font = &primaryFont;
         data.setSizeVariantMode(sizeVariant);
         if (boundsForGlyph(sizeVariant).height() >= displayOperatorMinHeight)
             return data;
@@ -532,26 +527,25 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::getDisplayStyleLargeOpe
     return data;
 }
 
-RenderMathMLOperator::StretchyData RenderMathMLOperator::findStretchyData(float* maximumGlyphWidth)
+RenderMathMLOperator::StretchyData RenderMathMLOperator::findStretchyData(UChar character, float* maximumGlyphWidth)
 {
     ASSERT(!maximumGlyphWidth || m_isVertical);
 
     StretchyData data;
     StretchyData assemblyData;
 
-    GlyphData baseGlyph;
-    if (!getBaseGlyph(style(), baseGlyph))
-        return data;
+    const auto& primaryFont = style().fontCascade().primaryFont();
+    GlyphData baseGlyph = style().fontCascade().glyphDataForCharacter(character, !style().isLeftToRightDirection());
     
-    if (baseGlyph.font->mathData()) {
+    if (primaryFont.mathData() && baseGlyph.font == &primaryFont) {
         Vector<Glyph> sizeVariants;
         Vector<OpenTypeMathData::AssemblyPart> assemblyParts;
-        baseGlyph.font->mathData()->getMathVariants(baseGlyph.glyph, m_isVertical, sizeVariants, assemblyParts);
+        primaryFont.mathData()->getMathVariants(baseGlyph.glyph, m_isVertical, sizeVariants, assemblyParts);
         // We verify the size variants.
         for (auto& variant : sizeVariants) {
             GlyphData sizeVariant;
             sizeVariant.glyph = variant;
-            sizeVariant.font = baseGlyph.font;
+            sizeVariant.font = &primaryFont;
             if (maximumGlyphWidth)
                 *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(sizeVariant));
             else {
@@ -573,7 +567,7 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::findStretchyData(float*
         const StretchyCharacter* stretchyCharacter = nullptr;
         const unsigned maxIndex = WTF_ARRAY_LENGTH(stretchyCharacters);
         for (unsigned index = 0; index < maxIndex; ++index) {
-            if (stretchyCharacters[index].character == m_textContent) {
+            if (stretchyCharacters[index].character == character) {
                 stretchyCharacter = &stretchyCharacters[index];
                 if (!style().isLeftToRightDirection() && index < leftRightPairsCount * 2) {
                     // If we are in right-to-left direction we select the mirrored form by adding -1 or +1 according to the parity of index.
@@ -647,14 +641,14 @@ void RenderMathMLOperator::updateStyle()
         return;
 
     if (m_isVertical && isLargeOperatorInDisplayStyle())
-        m_stretchyData = getDisplayStyleLargeOperator();
+        m_stretchyData = getDisplayStyleLargeOperator(m_textContent);
     else {
         // We do not stretch if the base glyph is large enough.
         GlyphData baseGlyph = style().fontCascade().glyphDataForCharacter(m_textContent, !style().isLeftToRightDirection());
         float baseSize = m_isVertical ? heightForGlyph(baseGlyph) : advanceWidthForGlyph(baseGlyph);
         if (stretchSize() <= baseSize)
             return;
-        m_stretchyData = findStretchyData(nullptr);
+        m_stretchyData = findStretchyData(m_textContent, nullptr);
     }
 
     if (m_isVertical && m_stretchyData.mode() == DrawSizeVariant) {
