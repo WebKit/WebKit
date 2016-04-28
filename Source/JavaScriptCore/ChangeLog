@@ -1,3 +1,23 @@
+2016-04-28  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] re-implement String#padStart and String#padEnd in JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=157146
+
+        Reviewed by Saam Barati.
+
+        * builtins/StringPrototype.js:
+        (repeatCharactersSlowPath):
+        (padStart):
+        (padEnd):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation): Deleted.
+        (JSC::repeatStringPattern): Deleted.
+        (JSC::padString): Deleted.
+        (JSC::stringProtoFuncPadEnd): Deleted.
+        (JSC::stringProtoFuncPadStart): Deleted.
+
 2016-04-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Tweak auto attach initialization on some platforms

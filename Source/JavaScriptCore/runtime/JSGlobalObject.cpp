@@ -599,6 +599,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 
         GlobalPropertyInfo(vm.propertyNames->repeatCharacterPrivateName, JSFunction::create(vm, this, 2, String(), stringProtoFuncRepeatCharacter), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().repeatSlowPathPrivateName(), JSFunction::createBuiltinFunction(vm, stringPrototypeRepeatSlowPathCodeGenerator(vm), this), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().repeatCharactersSlowPathPrivateName(), JSFunction::createBuiltinFunction(vm, stringPrototypeRepeatCharactersSlowPathCodeGenerator(vm), this), DontEnum | DontDelete | ReadOnly),
 
         GlobalPropertyInfo(vm.propertyNames->isSetPrivateName, JSFunction::create(vm, this, 1, String(), privateFuncIsSet), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->SetIteratorPrivateName, JSFunction::create(vm, this, 1, String(), privateFuncSetIterator), DontEnum | DontDelete | ReadOnly),
