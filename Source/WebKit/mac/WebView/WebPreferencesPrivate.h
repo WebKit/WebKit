@@ -490,6 +490,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setDownloadAttributeEnabled:(BOOL)flag;
 - (BOOL)downloadAttributeEnabled;
 
+- (void)setCSSGridLayoutEnabled:(BOOL)flag;
+- (BOOL)isCSSGridLayoutEnabled;
+
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
 @property (nonatomic) BOOL mediaDataLoadsAutomatically;
 @property (nonatomic) BOOL attachmentElementEnabled;

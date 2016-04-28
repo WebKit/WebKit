@@ -469,6 +469,10 @@ public:
     void setViewportForceAlwaysUserScalable(bool);
     void setLinkPreloadSupport(bool);
 
+#if ENABLE(CSS_GRID_LAYOUT)
+    void setCSSGridLayoutEnabled(bool);
+#endif
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

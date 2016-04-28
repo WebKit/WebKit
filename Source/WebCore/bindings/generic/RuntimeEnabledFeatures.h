@@ -241,6 +241,11 @@ public:
     bool downloadAttributeEnabled() const { return m_isDownloadAttributeEnabled; }
 #endif
 
+#if ENABLE(CSS_GRID_LAYOUT)
+    void setCSSGridLayoutEnabled(bool isEnabled) { m_cssGridLayoutEnabled = isEnabled; }
+    bool isCSSGridLayoutEnabled() const { return m_cssGridLayoutEnabled; }
+#endif
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -352,6 +357,10 @@ private:
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     bool m_isDownloadAttributeEnabled { false };
+#endif
+
+#if ENABLE(CSS_GRID_LAYOUT)
+    bool m_cssGridLayoutEnabled;
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

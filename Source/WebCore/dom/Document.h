@@ -394,6 +394,9 @@ public:
 
     bool cssRegionsEnabled() const;
     bool cssCompositingEnabled() const;
+#if ENABLE(CSS_GRID_LAYOUT)
+    bool isCSSGridLayoutEnabled() const;
+#endif
 #if ENABLE(CSS_REGIONS)
     RefPtr<DOMNamedFlowCollection> webkitGetNamedFlows();
 #endif

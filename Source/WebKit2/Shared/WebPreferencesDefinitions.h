@@ -281,6 +281,7 @@
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
     macro(ExperimentalShadowDOMEnabled, experimentalShadowDOMEnabled, Bool, bool, false, "Shadow DOM", "Support for the Shadow DOM feature") \
     macro(ExperimentalWebGL2Enabled, experimentalWebGL2Enabled, Bool, bool, false, "WebGL 2.0", "Prototype WebGL 2 Support") \
+    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, true, "", "") \
     \
 
 #if PLATFORM(COCOA)

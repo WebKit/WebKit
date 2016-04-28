@@ -217,7 +217,12 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     if (preference == "WebKitDownloadAttributeEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setDownloadAttributeEnabled(enabled);
 #endif
-    
+
+#if ENABLE(CSS_GRID_LAYOUT)
+    if (preference == "WebKitCSSGridLayoutEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(enabled);
+#endif
+
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
 #define FOR_EACH_OVERRIDE_BOOL_PREFERENCE(macro) \
     macro(WebKitAcceleratedCompositingEnabled, AcceleratedCompositingEnabled, acceleratedCompositingEnabled) \

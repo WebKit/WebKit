@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script>
+if (window.internals)
+    window.internals.setCSSGridLayoutEnabled(false);
+</script>
+
+<div id="grid" style="display: -webkit-grid"></div>
+<div id="inlinegrid" style="display: -webkit-inline-grid"></div>
+
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Verifies that CSS Grid Layout does not work if runtime feature is disabled.");
+
+shouldBe("document.getElementById('grid').style.display", "''");
+shouldBe("document.getElementById('inlinegrid').style.display", "''");
+</script>
+<script src="../../resources/js-test-post.js"></script>
