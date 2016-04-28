@@ -1,3 +1,15 @@
+2016-04-28  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Reimplement Web Inspector code that was tied to Legacy IDB.
+        https://bugs.webkit.org/show_bug.cgi?id=154686
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Inspector folks will have to write them if they're possible).
+
+        * inspector/InspectorIndexedDBAgent.cpp: Reimplement missing functionality mostly with code that was 
+          removed in http://trac.webkit.org/changeset/197131/trunk/Source/WebCore/inspector/InspectorIndexedDBAgent.cpp
+
 2016-04-28  Daniel Bates  <dabates@apple.com>
 
         Fix the Apple Internal OS X build
