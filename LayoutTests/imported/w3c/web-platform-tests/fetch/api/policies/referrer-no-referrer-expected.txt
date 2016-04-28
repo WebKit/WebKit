@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'referrer'.
+
+
+PASS Request's referrer is empty 
+

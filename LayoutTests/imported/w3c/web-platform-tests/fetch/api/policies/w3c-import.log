@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in Webkit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
+
+Do NOT modify or remove this file
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/csp-blocked-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/csp-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/csp-blocked.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/csp-blocked.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/csp-blocked.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url.js.headers

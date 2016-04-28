@@ -319,6 +319,33 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ Skip ]
 
+# Fetch Worker tests skipped until bug 156737 is resolved
+imported/w3c/web-platform-tests/fetch/api/cors/cors-basic-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-multiple-origins-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-origin-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-referrer-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-credentials-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/credentials/authentication-basic-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/credentials/cookies-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/policies/csp-blocked-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode-worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/nosniff/worker.html [ Skip ]
+
+webkit.org/b/157068 imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Skip ]
+
 # New W3C ref tests that are failing.
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 

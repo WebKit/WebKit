@@ -1,3 +1,17 @@
+2016-04-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Import remaining fetch tests
+        https://bugs.webkit.org/show_bug.cgi?id=156914
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: Skipping new fetch worker tests as they are
+        causing other tests to crash (see bug 156737 and bug 157068).
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/nosniff/stylesheet-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/credentials/authentication-basic-expected.txt: Added.
+
 2016-04-28  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Specify default values for optional parameters of type 'DOMString'

@@ -1,0 +1,3 @@
+
+FAIL Fetch is blocked by CSP, got a TypeError assert_unreached: Should have rejected. Reached unreachable code
+

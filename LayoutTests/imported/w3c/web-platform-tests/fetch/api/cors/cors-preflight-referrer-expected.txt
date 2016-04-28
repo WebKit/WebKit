@@ -1,0 +1,7 @@
+
+PASS Referrer policy: no-referrer 
+PASS Referrer policy: "" 
+PASS Referrer policy: origin-only 
+PASS Referrer policy: origin-when-cross-origin 
+PASS Referrer policy: unsafe-url 
+

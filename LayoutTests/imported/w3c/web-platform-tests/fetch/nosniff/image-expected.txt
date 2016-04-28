@@ -1,0 +1,10 @@
+
+
+FAIL URL query:  assert_unreached: Unexpected load event Reached unreachable code
+FAIL URL query: ?type= assert_unreached: Unexpected load event Reached unreachable code
+FAIL URL query: ?type=x assert_unreached: Unexpected load event Reached unreachable code
+FAIL URL query: ?type=x/x assert_unreached: Unexpected load event Reached unreachable code
+PASS URL query: ?type=image/gif 
+PASS URL query: ?type=image/png 
+PASS URL query: ?type=image/png;blah 
+
