@@ -30,7 +30,6 @@
 #include "ClipboardAccessPolicy.h"
 #include "EditingBehaviorTypes.h"
 #include "IntSize.h"
-#include "RuntimeApplicationChecks.h"
 #include "SecurityOrigin.h"
 #include "SettingsMacros.h"
 #include "TextFlags.h"
@@ -190,16 +189,7 @@ public:
     static bool shouldUseHighResolutionTimers() { return gShouldUseHighResolutionTimers; }
 #endif
 
-    static bool globalConstRedeclarationShouldThrow()
-    { 
-#if PLATFORM(MAC)
-        return !MacApplication::isIBooks();
-#elif PLATFORM(IOS)
-        return !IOSApplication::isIBooks();
-#else
-        return true;
-#endif
-    }
+    static bool globalConstRedeclarationShouldThrow();
 
     WEBCORE_EXPORT void setBackgroundShouldExtendBeyondPage(bool);
     bool backgroundShouldExtendBeyondPage() const { return m_backgroundShouldExtendBeyondPage; }

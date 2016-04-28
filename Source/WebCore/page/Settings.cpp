@@ -43,6 +43,7 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageCache.h"
+#include "RuntimeApplicationChecks.h"
 #include "StorageMap.h"
 #include "TextAutosizer.h"
 #include <limits>
@@ -756,5 +757,16 @@ const String& Settings::networkInterfaceName()
     return sharedNetworkInterfaceNameGlobal();
 }
 #endif
+
+bool Settings::globalConstRedeclarationShouldThrow()
+{
+#if PLATFORM(MAC)
+    return !MacApplication::isIBooks();
+#elif PLATFORM(IOS)
+    return !IOSApplication::isIBooks();
+#else
+    return true;
+#endif
+}
 
 } // namespace WebCore

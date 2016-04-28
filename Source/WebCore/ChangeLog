@@ -1,3 +1,18 @@
+2016-04-27  Saam barati  <sbarati@apple.com>
+
+        Move the implementation of Settings::globalConstRedeclarationShouldThrow into the cpp file
+        https://bugs.webkit.org/show_bug.cgi?id=157109
+
+        Rubber-stamped by Geoffrey Garen.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::networkInterfaceName):
+        (WebCore::Settings::globalConstRedeclarationShouldThrow):
+        * page/Settings.h:
+        (WebCore::Settings::shouldUseHighResolutionTimers):
+        (WebCore::Settings::backgroundShouldExtendBeyondPage):
+        (WebCore::Settings::globalConstRedeclarationShouldThrow): Deleted.
+
 2016-04-27  Dean Jackson  <dino@apple.com>
 
         RTL non-native <select> buttons should have arrows on the left
