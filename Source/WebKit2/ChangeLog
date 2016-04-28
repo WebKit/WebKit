@@ -1,3 +1,19 @@
+2016-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Fix mistake in custom elements runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=157130
+
+        Reviewed by Chris Dumez.
+
+        The methods for the custom elements runtime flag were using
+        the Shadow DOM flag instead.
+        These methods were introduced in r197921,
+        it seems it was just a copy&paste mistake.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCustomElementsEnabled):
+        (WKPreferencesGetCustomElementsEnabled):
+
 2016-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Add missing files to the compilation of GTK+ inspector.

@@ -1513,12 +1513,12 @@ bool WKPreferencesGetShadowDOMEnabled(WKPreferencesRef preferencesRef)
 
 void WKPreferencesSetCustomElementsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
-    toImpl(preferencesRef)->setShadowDOMEnabled(flag);
+    toImpl(preferencesRef)->setCustomElementsEnabled(flag);
 }
 
 bool WKPreferencesGetCustomElementsEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->shadowDOMEnabled();
+    return toImpl(preferencesRef)->customElementsEnabled();
 }
 
 void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef preferencesRef, bool flag)
