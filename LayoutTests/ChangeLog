@@ -1,3 +1,20 @@
+2016-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix typo in CSS class for layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=157129
+
+        Reviewed by Sergio Villar Senin.
+
+        CSS class "secondRowFourthColumn" was not actually setting
+        the second row due to a typo.
+
+        The change doesn't affect any test just by chance,
+        as the auto-placement algorithm is already positioning
+        those items on the second row.
+
+        * fast/css-grid-layout/resources/grid.css:
+        (.secondRowFourthColumn):
+
 2016-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] We need to be smarter about flattening and the accessible text implementation

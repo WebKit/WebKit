@@ -83,7 +83,7 @@
 .secondRowFourthColumn {
     background-color: pink;
     -webkit-grid-column: 4;
-    -webkitgrid-row: 2;
+    -webkit-grid-row: 2;
 }
 
 .thirdRowFirstColumn {
