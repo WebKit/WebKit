@@ -1,3 +1,20 @@
+2016-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Make sure we don't mishandle HTMLFrameOwnerElement lifecycle
+        https://bugs.webkit.org/show_bug.cgi?id=157040
+
+        Reviewed by Chris Dumez.
+
+        Protect a couple of sites where event handling could result in the owning frame
+        being destroyed during execution.
+
+        Tested by fast/dom/HTMLAnchorElement/anchor-in-noscroll-iframe-crash.html.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::didCommitLoad):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2016-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Add CSS Grid Layout runtime flag

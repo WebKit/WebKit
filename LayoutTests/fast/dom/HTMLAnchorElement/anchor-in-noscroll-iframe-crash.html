@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests whether clicking on an anchor in an iframe with scrolling="no" will scroll to anchor. If clicking on the link below triggers a scroll, the test passes.<p>
+<iframe id="target" src="resources/iframe-with-anchor-crash.html" width="100%" height="2000" scrolling="no" onload="setupTopLevel();"></iframe>
+<script>
+    var iframeTarget = document.getElementById('target');
+
+    function finish() {
+        var result = "PASS";
+        window.top.document.body.appendChild(document.createTextNode(result));
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    function setupTopLevel() {
+        var scrollTarget = window.frames['target'].document.getElementById('might_scroll');
+
+        window.frames['target'].window.registerAction(function () {
+            iframeTarget.remove();
+            setTimeout(finish, 0);
+        });
+
+        window.frames['target'].window.run();
+    }
+</script>    
+</body>
+</html>

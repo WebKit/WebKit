@@ -79,6 +79,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Logging.h"
+#include "NoEventDispatchAssertion.h"
 #include "OverflowEvent.h"
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
@@ -2519,6 +2520,9 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                 frameElementBase = downcast<HTMLFrameElementBase>(ownerElement);
 
             if (frameElementAndViewPermitScroll(frameElementBase, frameView)) {
+                // If this assertion fires we need to protect the ownerElement from being destroyed.
+                NoEventDispatchAssertion assertNoEventDispatch;
+
                 LayoutRect viewRect = frameView.visibleContentRect(LegacyIOSDocumentVisibleRect);
                 LayoutRect exposeRect = getRectToExpose(viewRect, viewRect, rect, alignX, alignY);
 

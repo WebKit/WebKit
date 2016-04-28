@@ -1869,7 +1869,7 @@ void InspectorDOMAgent::mainFrameDOMContentLoaded()
 
 void InspectorDOMAgent::didCommitLoad(Document* document)
 {
-    Element* frameOwner = document->ownerElement();
+    RefPtr<Element> frameOwner = document->ownerElement();
     if (!frameOwner)
         return;
 
@@ -1878,12 +1878,12 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
         return;
 
     // Re-add frame owner element together with its new children.
-    int parentId = m_documentNodeToIdMap.get(innerParentNode(frameOwner));
+    int parentId = m_documentNodeToIdMap.get(innerParentNode(frameOwner.get()));
     m_frontendDispatcher->childNodeRemoved(parentId, frameOwnerId);
-    unbind(frameOwner, &m_documentNodeToIdMap);
+    unbind(frameOwner.get(), &m_documentNodeToIdMap);
 
-    Ref<Inspector::Protocol::DOM::Node> value = buildObjectForNode(frameOwner, 0, &m_documentNodeToIdMap);
-    Node* previousSibling = innerPreviousSibling(frameOwner);
+    Ref<Inspector::Protocol::DOM::Node> value = buildObjectForNode(frameOwner.get(), 0, &m_documentNodeToIdMap);
+    Node* previousSibling = innerPreviousSibling(frameOwner.get());
     int prevId = previousSibling ? m_documentNodeToIdMap.get(previousSibling) : 0;
     m_frontendDispatcher->childNodeInserted(parentId, prevId, WTFMove(value));
 }
