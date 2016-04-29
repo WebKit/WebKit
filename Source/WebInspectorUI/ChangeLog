@@ -1,3 +1,36 @@
+2016-04-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: FormatterWorker fails to find "External/Esprima.js" in Production builds
+        https://bugs.webkit.org/show_bug.cgi?id=157162
+        <rdar://problem/25996556>
+
+        Reviewed by Timothy Hatcher.
+
+        Workers have relative include paths. FormatterWorker has an includes
+        that looks like:
+
+            importScripts(...[
+                "../../External/Esprima/esprima.js",
+                ...
+            ]);
+
+        In optimized builds (Production) the esprima resources are combined
+        and moved out of an External directory to "Esprima.js". We need to
+        update the path of this include in optimized builds.
+
+        This adds a script to do some basic rewrites of paths. It will also
+        produce a build error if there are any other External paths that
+        may have been unhandled.
+
+        * Scripts/copy-user-interface-resources.pl:
+        Run a new script to fix up the Worker imports for new pathes.
+
+        * Scripts/fix-worker-imports-for-optimized-builds.pl: Added.
+        (fixWorkerImportsInFile):
+        (fixWorkerImportsInDirectory):
+        Replace "/External/Esprima/esprima.js" with "/Esprima.js" in imports.
+        Fatal error for any unhandled "/External" lines that were not replaced.
+
 2016-04-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Missing CSS autocompletion suggestions for -webkit-user-select

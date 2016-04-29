@@ -245,6 +245,9 @@ if ($shouldCombineMain) {
 
     # Remove console.assert calls from the Worker js files.
     system(File::Spec->catfile($scriptsRoot, 'remove-console-asserts.pl'), '--input-directory', $workersDir);
+
+    # Fix import references in Workers directories. This rewrites "../../External/script.js" import paths to their new locations.
+    system(File::Spec->catfile($scriptsRoot, 'fix-worker-imports-for-optimized-builds.pl'), '--input-directory', $workersDir) and die "Failed to update Worker imports for optimized builds.";
 } else {
     # Keep the files separate for engineering builds.
     ditto($uiRoot, $targetResourcePath);
