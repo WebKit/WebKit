@@ -1,3 +1,13 @@
+2016-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose subscript and superscript format style groups using ATK_ROLE_SUBSCRIPT and ATK_ROLE_SUPERSCRIPT
+        https://bugs.webkit.org/show_bug.cgi?id=157158
+
+        Reviewed by Chris Fleizach.
+
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt: Updated for new behavior.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated for new behavior.
+
 2016-04-28  Zalan Bujtas  <zalan@apple.com>
 
         Content disappears on mouse over.

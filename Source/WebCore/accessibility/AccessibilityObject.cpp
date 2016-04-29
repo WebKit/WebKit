@@ -3027,6 +3027,18 @@ bool AccessibilityObject::isStyleFormatGroup() const
     || node->hasTagName(insTag) || node->hasTagName(delTag)
     || node->hasTagName(supTag) || node->hasTagName(subTag);
 }
+
+bool AccessibilityObject::isSubscriptStyleGroup() const
+{
+    Node* node = this->node();
+    return node && node->hasTagName(subTag);
+}
+
+bool AccessibilityObject::isSuperscriptStyleGroup() const
+{
+    Node* node = this->node();
+    return node && node->hasTagName(supTag);
+}
     
 bool AccessibilityObject::isContainedByPasswordField() const
 {

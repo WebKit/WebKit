@@ -555,6 +555,8 @@ public:
     bool isSplitter() const { return roleValue() == SplitterRole; }
     bool isToolbar() const { return roleValue() == ToolbarRole; }
     bool isStyleFormatGroup() const;
+    bool isSubscriptStyleGroup() const;
+    bool isSuperscriptStyleGroup() const;
     
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }

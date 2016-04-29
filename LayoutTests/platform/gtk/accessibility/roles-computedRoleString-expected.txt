@@ -61,6 +61,8 @@ PASS: option -> option.
 PASS: optgroup -> option. 
 PASS: option -> option. 
 PASS: option -> option. 
+PASS: sub -> . 
+PASS: sup -> . 
 PASS: table -> table. 
 PASS: caption -> . 
 PASS: tr -> row. 

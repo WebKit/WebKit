@@ -383,10 +383,10 @@ strong
       AXRole: 
       
 sub
-      AXRole: 
+      AXRole: AXSubscript
       
 sup
-      AXRole: 
+      AXRole: AXSuperscript
       
 svg
       AXRole: 
