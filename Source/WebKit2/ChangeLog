@@ -1,3 +1,27 @@
+2016-04-28  Ada Chan  <adachan@apple.com>
+
+        Indicate we are processing user gesture when handling messages from WebPlaybackSessionManagerProxy to WebPlaybackSessionManager
+        https://bugs.webkit.org/show_bug.cgi?id=157151
+
+        Reviewed by Jer Noble.
+
+        Messages from WebPlaybackSessionManagerProxy to WebPlaybackSessionManager are triggered by
+        user actions, so add a UserGestureIndicator in the methods that handle those messages.
+
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionManager::play):
+        (WebKit::WebPlaybackSessionManager::pause):
+        (WebKit::WebPlaybackSessionManager::togglePlayState):
+        (WebKit::WebPlaybackSessionManager::beginScrubbing):
+        (WebKit::WebPlaybackSessionManager::endScrubbing):
+        (WebKit::WebPlaybackSessionManager::seekToTime):
+        (WebKit::WebPlaybackSessionManager::fastSeek):
+        (WebKit::WebPlaybackSessionManager::beginScanningForward):
+        (WebKit::WebPlaybackSessionManager::beginScanningBackward):
+        (WebKit::WebPlaybackSessionManager::endScanning):
+        (WebKit::WebPlaybackSessionManager::selectAudioMediaOption):
+        (WebKit::WebPlaybackSessionManager::selectLegibleMediaOption):
+
 2016-04-29  Brady Eidson  <beidson@apple.com>
 
         Add a default ".isolatedCopy()" specialization to CrossThreadCopier, and other small cleanup.

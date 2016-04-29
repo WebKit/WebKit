@@ -41,6 +41,7 @@
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TimeRanges.h>
+#import <WebCore/UserGestureIndicator.h>
 #import <mach/mach_port.h>
 
 using namespace WebCore;
@@ -348,61 +349,73 @@ void WebPlaybackSessionManager::setWirelessVideoPlaybackDisabled(uint64_t contex
 
 void WebPlaybackSessionManager::play(uint64_t contextId)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).play();
 }
 
 void WebPlaybackSessionManager::pause(uint64_t contextId)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).pause();
 }
 
 void WebPlaybackSessionManager::togglePlayState(uint64_t contextId)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).togglePlayState();
 }
 
 void WebPlaybackSessionManager::beginScrubbing(uint64_t contextId)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).beginScrubbing();
 }
 
 void WebPlaybackSessionManager::endScrubbing(uint64_t contextId)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).endScrubbing();
 }
 
 void WebPlaybackSessionManager::seekToTime(uint64_t contextId, double time)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).seekToTime(time);
 }
 
 void WebPlaybackSessionManager::fastSeek(uint64_t contextId, double time)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).fastSeek(time);
 }
 
 void WebPlaybackSessionManager::beginScanningForward(uint64_t contextId)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).beginScanningForward();
 }
 
 void WebPlaybackSessionManager::beginScanningBackward(uint64_t contextId)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).beginScanningBackward();
 }
 
 void WebPlaybackSessionManager::endScanning(uint64_t contextId)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).endScanning();
 }
 
 void WebPlaybackSessionManager::selectAudioMediaOption(uint64_t contextId, uint64_t index)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).selectAudioMediaOption(index);
 }
 
 void WebPlaybackSessionManager::selectLegibleMediaOption(uint64_t contextId, uint64_t index)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     ensureModel(contextId).selectLegibleMediaOption(index);
 }
 
