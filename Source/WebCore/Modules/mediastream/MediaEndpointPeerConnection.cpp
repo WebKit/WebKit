@@ -139,12 +139,12 @@ void MediaEndpointPeerConnection::createOfferTask(RTCOfferOptions&, SessionDescr
     // Add media descriptions for senders.
     for (auto& sender : senders) {
         RefPtr<PeerMediaDescription> mediaDescription = PeerMediaDescription::create();
-        MediaStreamTrack* track = sender->track();
+        MediaStreamTrack& track = sender->track();
 
         mediaDescription->setMediaStreamId(sender->mediaStreamIds()[0]);
-        mediaDescription->setMediaStreamTrackId(track->id());
-        mediaDescription->setType(track->kind());
-        mediaDescription->setPayloads(track->kind() == "audio" ? m_defaultAudioPayloads : m_defaultVideoPayloads);
+        mediaDescription->setMediaStreamTrackId(track.id());
+        mediaDescription->setType(track.kind());
+        mediaDescription->setPayloads(track.kind() == "audio" ? m_defaultAudioPayloads : m_defaultVideoPayloads);
         mediaDescription->setDtlsFingerprintHashFunction(m_dtlsFingerprintFunction);
         mediaDescription->setDtlsFingerprint(m_dtlsFingerprint);
         mediaDescription->setCname(m_cname);

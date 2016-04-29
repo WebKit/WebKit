@@ -67,25 +67,25 @@ public:
     Vector<RefPtr<RTCRtpSender>> getSenders() const override { return m_senderSet; }
     Vector<RefPtr<RTCRtpReceiver>> getReceivers() const { return m_receiverSet; }
 
-    RefPtr<RTCRtpSender> addTrack(RefPtr<MediaStreamTrack>&&, Vector<MediaStream*>, ExceptionCode&);
-    void removeTrack(RTCRtpSender*, ExceptionCode&);
+    RefPtr<RTCRtpSender> addTrack(Ref<MediaStreamTrack>&&, Vector<MediaStream*>, ExceptionCode&);
+    void removeTrack(RTCRtpSender&, ExceptionCode&);
 
     void queuedCreateOffer(const Dictionary& offerOptions, PeerConnection::SessionDescriptionPromise&&);
     void queuedCreateAnswer(const Dictionary& answerOptions, PeerConnection::SessionDescriptionPromise&&);
 
-    void queuedSetLocalDescription(RTCSessionDescription*, PeerConnection::VoidPromise&&);
+    void queuedSetLocalDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&);
     RefPtr<RTCSessionDescription> localDescription() const;
     RefPtr<RTCSessionDescription> currentLocalDescription() const;
     RefPtr<RTCSessionDescription> pendingLocalDescription() const;
 
-    void queuedSetRemoteDescription(RTCSessionDescription*, PeerConnection::VoidPromise&&);
+    void queuedSetRemoteDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&);
     RefPtr<RTCSessionDescription> remoteDescription() const;
     RefPtr<RTCSessionDescription> currentRemoteDescription() const;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
     String signalingState() const;
 
-    void queuedAddIceCandidate(RTCIceCandidate*, PeerConnection::VoidPromise&&);
+    void queuedAddIceCandidate(RTCIceCandidate&, PeerConnection::VoidPromise&&);
 
     String iceGatheringState() const;
     String iceConnectionState() const;
@@ -93,7 +93,7 @@ public:
     RTCConfiguration* getConfiguration() const;
     void setConfiguration(const Dictionary& configuration, ExceptionCode&);
 
-    void privateGetStats(MediaStreamTrack*, PeerConnection::StatsPromise&&);
+    void privateGetStats(MediaStreamTrack&, PeerConnection::StatsPromise&&);
     void privateGetStats(PeerConnection::StatsPromise&&);
 
     RefPtr<RTCDataChannel> createDataChannel(String label, const Dictionary& dataChannelDict, ExceptionCode&);

@@ -66,6 +66,9 @@
 
                 dc.onmessage = dc_onmessage_string;
                 shouldNotThrow("dc.send('xyzzy');");
+
+                shouldThrow("dc.send(null);");
+                shouldThrow("dc.send(undefined);");
             }
 
             function pc_ondatachannel(e) {

@@ -39,13 +39,13 @@ namespace WebCore {
 
 class RTCRtpReceiver : public RTCRtpSenderReceiverBase {
 public:
-    static Ref<RTCRtpReceiver> create(RefPtr<MediaStreamTrack>&& track)
+    static Ref<RTCRtpReceiver> create(Ref<MediaStreamTrack>&& track)
     {
         return adoptRef(*new RTCRtpReceiver(WTFMove(track)));
     }
 
 private:
-    explicit RTCRtpReceiver(RefPtr<MediaStreamTrack>&&);
+    explicit RTCRtpReceiver(Ref<MediaStreamTrack>&&);
 };
 
 } // namespace WebCore

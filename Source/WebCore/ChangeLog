@@ -1,3 +1,63 @@
+2016-04-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from MediaStream interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=156905
+
+        Reviewed by Darin Adler.
+
+        Removing UsePointersEvenForNonNullableObjectArguments from MediaStream, RTCPeerConnection and RTCRtpSender.
+        Updating methods to take references and making some related refactoring.
+
+        Test: fast/mediastream/MediaStream-add-remove-null-undefined-tracks.html
+        Changes also covered by updated tests.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::createOfferTask):
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::create):
+        (WebCore::MediaStream::addTrack):
+        (WebCore::MediaStream::removeTrack):
+        (WebCore::MediaStream::didAddTrack):
+        (WebCore::MediaStream::didRemoveTrack):
+        (WebCore::MediaStream::internalAddTrack):
+        (WebCore::MediaStream::internalRemoveTrack):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::send):
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTrack):
+        (WebCore::RTCPeerConnection::removeTrack):
+        (WebCore::RTCPeerConnection::queuedSetLocalDescription):
+        (WebCore::RTCPeerConnection::queuedSetRemoteDescription):
+        (WebCore::RTCPeerConnection::queuedAddIceCandidate):
+        (WebCore::RTCPeerConnection::privateGetStats):
+        (WebCore::RTCPeerConnection::queuedCreateOffer): Deleted.
+        (WebCore::RTCPeerConnection::localDescription): Deleted.
+        (WebCore::RTCPeerConnection::currentLocalDescription): Deleted.
+        (WebCore::RTCPeerConnection::remoteDescription): Deleted.
+        (WebCore::RTCPeerConnection::currentRemoteDescription): Deleted.
+        (WebCore::RTCPeerConnection::signalingState): Deleted.
+        (WebCore::RTCPeerConnection::createDataChannel): Deleted.
+        (WebCore::RTCPeerConnection::close): Deleted.
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        (WebCore::RTCRtpReceiver::RTCRtpReceiver):
+        * Modules/mediastream/RTCRtpReceiver.h:
+        (WebCore::RTCRtpReceiver::create):
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::RTCRtpSender):
+        (WebCore::RTCRtpSender::replaceTrack):
+        * Modules/mediastream/RTCRtpSender.h:
+        (WebCore::RTCRtpSender::create):
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpSenderReceiverBase.h:
+        (WebCore::RTCRtpSenderReceiverBase::track):
+        (WebCore::RTCRtpSenderReceiverBase::RTCRtpSenderReceiverBase):
+
 2016-04-28  Daniel Bates  <dabates@apple.com>
 
         Remove extraneous space characters from parameter list for RenderListBox::paintItem()

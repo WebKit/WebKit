@@ -1,3 +1,17 @@
+2016-04-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Drop [UsePointersEvenForNonNullableObjectArguments] from MediaStream interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=156905
+
+        Reviewed by Darin Adler.
+
+        * fast/mediastream/MediaStream-add-remove-null-undefined-tracks-expected.txt: Added.
+        * fast/mediastream/MediaStream-add-remove-null-undefined-tracks.html: Added.
+        * fast/mediastream/RTCPeerConnection-add-removeTrack-expected.txt: Rebasing.
+        * fast/mediastream/RTCPeerConnection-add-removeTrack.html: Adding null/undefined tests for addTrack/removeTrack.
+        * fast/mediastream/RTCPeerConnection-datachannel.html: Adding test for send() method.
+        Test expectation is not rebased as test is timing out and marked as skip.
+
 2016-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Expose subscript and superscript format style groups using ATK_ROLE_SUBSCRIPT and ATK_ROLE_SUPERSCRIPT

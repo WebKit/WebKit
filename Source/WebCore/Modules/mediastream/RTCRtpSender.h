@@ -48,7 +48,7 @@ public:
 
 class RTCRtpSender : public RTCRtpSenderReceiverBase {
 public:
-    static Ref<RTCRtpSender> create(RefPtr<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
+    static Ref<RTCRtpSender> create(Ref<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
     {
         return adoptRef(*new RTCRtpSender(WTFMove(track), WTFMove(mediaStreamIds), client));
     }
@@ -58,10 +58,10 @@ public:
 
     void stop() { m_client = nullptr; }
 
-    void replaceTrack(MediaStreamTrack*, PeerConnection::VoidPromise&&, ExceptionCode&);
+    void replaceTrack(MediaStreamTrack&, PeerConnection::VoidPromise&&, ExceptionCode&);
 
 private:
-    RTCRtpSender(RefPtr<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
+    RTCRtpSender(Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);
 
     String m_trackId;
     Vector<String> m_mediaStreamIds;

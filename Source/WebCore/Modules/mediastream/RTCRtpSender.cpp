@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-RTCRtpSender::RTCRtpSender(RefPtr<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
+RTCRtpSender::RTCRtpSender(Ref<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, RTCRtpSenderClient& client)
     : RTCRtpSenderReceiverBase(WTFMove(track))
     , m_mediaStreamIds(WTFMove(mediaStreamIds))
     , m_client(&client)
@@ -48,24 +48,19 @@ RTCRtpSender::RTCRtpSender(RefPtr<MediaStreamTrack>&& track, Vector<String>&& me
     m_trackId = m_track->id();
 }
 
-void RTCRtpSender::replaceTrack(MediaStreamTrack* withTrack, PeerConnection::VoidPromise&& promise, ExceptionCode& ec)
+void RTCRtpSender::replaceTrack(MediaStreamTrack& withTrack, PeerConnection::VoidPromise&& promise, ExceptionCode& ec)
 {
-    if (!withTrack) {
-        ec = TypeError;
-        return;
-    }
-
     if (!m_client) {
         promise.reject(DOMError::create("InvalidStateError"));
         return;
     }
 
-    if (m_track->kind() != withTrack->kind()) {
+    if (m_track->kind() != withTrack.kind()) {
         ec = TypeError;
         return;
     }
 
-    m_client->replaceTrack(*this, *withTrack, WTFMove(promise));
+    m_client->replaceTrack(*this, withTrack, WTFMove(promise));
 }
 
 } // namespace WebCore

@@ -1,0 +1,17 @@
+Test adding and removing null and undefined tracks.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Calling addTrack with null and undefined parameters
+PASS stream.addTrack(null); threw exception TypeError: Type error.
+PASS stream.addTrack(undefined); threw exception TypeError: Type error.
+
+Calling removeTrack with null and undefined parameters
+PASS stream.removeTrack(null); threw exception TypeError: Type error.
+PASS stream.removeTrack(undefined); threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

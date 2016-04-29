@@ -31,13 +31,12 @@
  */
 
 [
-    Conditional=WEB_RTC,
     ActiveDOMObject,
-    CustomConstructor(Dictionary rtcConfiguration),
+    Conditional=WEB_RTC,
     ConstructorCallWith=ScriptExecutionContext,
     ConstructorRaisesException,
+    CustomConstructor(Dictionary rtcConfiguration),
     InterfaceName=webkitRTCPeerConnection,
-    UsePointersEvenForNonNullableObjectArguments,
 ] interface RTCPeerConnection : EventTarget {
 
     // Private functions called by runQueuedOperation() (RTCPeerConnectionInternals.js)

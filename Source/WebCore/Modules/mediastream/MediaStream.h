@@ -56,15 +56,15 @@ public:
     };
 
     static Ref<MediaStream> create(ScriptExecutionContext&);
-    static Ref<MediaStream> create(ScriptExecutionContext&, MediaStream*);
+    static Ref<MediaStream> create(ScriptExecutionContext&, MediaStream&);
     static Ref<MediaStream> create(ScriptExecutionContext&, const MediaStreamTrackVector&);
     static Ref<MediaStream> create(ScriptExecutionContext&, RefPtr<MediaStreamPrivate>&&);
     virtual ~MediaStream();
 
     String id() const { return m_private->id(); }
 
-    void addTrack(RefPtr<MediaStreamTrack>&&);
-    void removeTrack(MediaStreamTrack*);
+    void addTrack(MediaStreamTrack&);
+    void removeTrack(MediaStreamTrack&);
     MediaStreamTrack* getTrackById(String);
 
     MediaStreamTrackVector getAudioTracks() const;
@@ -118,8 +118,8 @@ private:
     void pageMutedStateDidChange() final;
     MediaProducer::MediaStateFlags mediaState() const final;
 
-    bool internalAddTrack(RefPtr<MediaStreamTrack>&&, StreamModifier);
-    bool internalRemoveTrack(RefPtr<MediaStreamTrack>&&, StreamModifier);
+    bool internalAddTrack(Ref<MediaStreamTrack>&&, StreamModifier);
+    bool internalRemoveTrack(const String&, StreamModifier);
 
     void scheduleActiveStateChange();
     void activityEventTimerFired();
