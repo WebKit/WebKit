@@ -1,3 +1,14 @@
+2016-04-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] AirPlay fails if target is set before AVPlayer has been created
+        https://bugs.webkit.org/show_bug.cgi?id=157147
+        <rdar://problem/24197592>
+
+        Unreviewed, update test so the results are consistent on different machines.
+
+        * media/media-source/media-source-airplay-expected.txt:
+        * media/media-source/media-source-airplay.html:
+
 2016-04-29  Antonio Gomes  <tonikitoo@webkit.org>
 
         <select multiple> padding should react when scrolling

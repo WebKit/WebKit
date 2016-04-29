@@ -3,7 +3,6 @@
 RUN(source = new MediaSource())
 RUN(source.addEventListener('sourceopen', startLoad))
 RUN(video.src = URL.createObjectURL(source))
-EVENT( webkitplaybacktargetavailabilitychanged ) : event.availability = 'not-available'
 
 ** create a source buffer, add an init segment with 1 video track
 RUN(sourceBuffer = source.addSourceBuffer('video/mock; codecs="mock"'))
@@ -13,10 +12,10 @@ RUN(sourceBuffer.appendBuffer(init))
 EVENT(canplaythrough)
 
 ** simulate choosing a device from the menu
-EVENT( webkitplaybacktargetavailabilitychanged ) : event.availability = 'available'
 
 ** change video.src to one that supports AirPlay
 EXPECTED (video.webkitCurrentPlaybackTargetIsWireless == 'true') OK
+EXPECTED (wirelessPlaybackTargetAvailability == 'available') OK
 
 END OF TEST
 

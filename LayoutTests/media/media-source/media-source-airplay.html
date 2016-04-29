@@ -11,7 +11,7 @@
     var requestLength = 200000;
     var nextRequest = 0;
     var totalLength = 100;
-    var previousAvailable = '';
+    var wirelessPlaybackTargetAvailability = '';
 
     if (window.internals) {
         internals.initializeMockMediaSource();
@@ -69,7 +69,8 @@
     function currentTargetChanged()
     {
         if (video.src.indexOf("/test.") > 0) {
-            testExpected("video.webkitCurrentPlaybackTargetIsWireless", true);
+            testExpected('video.webkitCurrentPlaybackTargetIsWireless', true);
+            testExpected('wirelessPlaybackTargetAvailability', 'available');
             consoleWrite('');
             endTest();
             return;
@@ -81,11 +82,7 @@
 
     function targetAvailabilityChanged(event)
     {
-        if (previousAvailable == event.availability)
-            return;
-
-        consoleWrite(`EVENT( ${event.type} ) : event.availability = '${event.availability}'`);
-        previousAvailable = event.availability;
+        wirelessPlaybackTargetAvailability = event.availability;
     }
     
     </script>
