@@ -1,3 +1,57 @@
+2016-04-29  Yoav Weiss  <yoav@yoav.ws>
+
+        Move ResourceTiming behind a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=157133
+
+        Reviewed by Alex Christensen.
+
+        Move the ResourceTiming API from being behind a build time flag to be behind an
+        off-by-default runtime flag, that can be turned on using internals.
+
+        Tests: fast/dom/Window/window-properties-performance-resource-timing.html
+               http/tests/performance/performance-resource-timing-entries.html
+
+        * DerivedSources.make: Added idl files for PerformanceEntry, PerformanceEntryList and PerformanceResourceTiming.
+        * WebCore.xcodeproj/project.pbxproj: Added the various Performance* files to the project.
+        * bindings/generic/RuntimeEnabledFeatures.cpp: Added ResourceTiming as a runtime flag.
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/generic/RuntimeEnabledFeatures.h: Added ResourceTiming as a runtime flag.
+        (WebCore::RuntimeEnabledFeatures::setResourceTimingEnabled):
+        (WebCore::RuntimeEnabledFeatures::resourceTimingEnabled):
+        * bindings/js/JSPerformanceEntryCustom.cpp: Removed #if for ResourceTiming. Added build flag around UserTiming related h files.
+        (WebCore::toJS): Deleted.
+        * dom/EventNames.h: Renamed webkitresourcetimingbufferfull to resourcetimingbufferfull.
+        * loader/DocumentThreadableLoader.cpp: Replace #if for ResourceTiming with runtime flag.
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/ResourceLoadNotifier.cpp: Replace #if for ResourceTiming with runtime flag.
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        * loader/cache/CachedResourceLoader.cpp: Replace #if for ResourceTiming with runtime flag.
+        (WebCore::CachedResourceLoader::revalidateResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        (WebCore::CachedResourceLoader::storeResourceTimingInitiatorInformation):
+        (WebCore::CachedResourceLoader::loadDone):
+        * loader/cache/CachedResourceLoader.h: Remove #if for ResourceTiming.
+        * page/Performance.cpp: Remove #if for ResourceTiming.
+        (WebCore::Performance::Performance): Removed #if for ResourceTiming related initialization.
+        (WebCore::Performance::webkitGetEntries): Renamed to getEntries.
+        (WebCore::Performance::webkitGetEntriesByType): Renamed to getEntriesByType.
+        (WebCore::Performance::webkitGetEntriesByName): Renamed to getEntriesByName.
+        * page/Performance.h: Remove #if for ResourceTiming.
+        * page/Performance.idl: Replace #if for ResourceTiming with runtime flag.
+        * page/PerformanceEntry.cpp: Remove the PERFORMANCE_TIMELINE build flag.
+        * page/PerformanceEntry.h: Remove the PERFORMANCE_TIMELINE build flag.
+        * page/PerformanceEntry.idl: Replace the PERFORMANCE_TIMELINE build flag with runtime flag.
+        * page/PerformanceEntryList.cpp: Remove the PERFORMANCE_TIMELINE build flag.
+        * page/PerformanceEntryList.h: Remove the PERFORMANCE_TIMELINE build flag.
+        * page/PerformanceEntryList.idl: Replace the PERFORMANCE_TIMELINE build flag with runtime flag.
+        * page/PerformanceResourceTiming.cpp: Remove the RESOURCE_TIMING build flag.
+        * page/PerformanceResourceTiming.h: Remove the RESOURCE_TIMING build flag.
+        * page/PerformanceResourceTiming.idl: Replace the RESOURCE_TIMING build flag with runtime flag.
+        * testing/Internals.cpp: Add a method that enables ResourceTiming.
+        (WebCore::Internals::setResourceTimingSupport):
+        * testing/Internals.h: Add a method that enables ResourceTiming.
+        * testing/Internals.idl: Add a method that enables ResourceTiming.
+
 2016-04-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from MediaStream interfaces

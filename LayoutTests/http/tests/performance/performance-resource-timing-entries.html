@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals)
+    internals.setResourceTimingSupport(true);
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<span id="e"></span>
+<span id="f"></span>
+<script>
+window.addEventListener("load", function() {
+    shouldBe("performance.getEntriesByType('resource').length", "2");
+    if (window.internals)
+        window.internals.setResourceTimingSupport(false);
+});
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -71,6 +71,9 @@
     macro(Number) \
     macro(NumberFormat) \
     macro(Object) \
+    macro(PerformanceEntry) \
+    macro(PerformanceEntryList) \
+    macro(PerformanceResourceTiming) \
     macro(Promise) \
     macro(Proxy) \
     macro(RangeError) \

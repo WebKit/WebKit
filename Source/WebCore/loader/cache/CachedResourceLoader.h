@@ -144,9 +144,7 @@ private:
     CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&);
     CachedResourceHandle<CachedResource> revalidateResource(const CachedResourceRequest&, CachedResource*);
     CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&);
-#if ENABLE(RESOURCE_TIMING)
     void storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>&, const CachedResourceRequest&);
-#endif
     void requestPreload(CachedResource::Type, CachedResourceRequest&, const String& charset);
 
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
@@ -179,13 +177,11 @@ private:
 
     Timer m_garbageCollectDocumentResourcesTimer;
 
-#if ENABLE(RESOURCE_TIMING)
     struct InitiatorInfo {
         AtomicString name;
         double startTime;
     };
     HashMap<CachedResource*, InitiatorInfo> m_initiatorMap;
-#endif
 
     // 29 bits left
     bool m_autoLoadImages : 1;

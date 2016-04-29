@@ -31,7 +31,7 @@
 #include "config.h"
 #include "PerformanceEntry.h"
 
-#if ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
+#if ENABLE(WEB_TIMING)
 
 namespace WebCore {
 
@@ -69,4 +69,4 @@ double PerformanceEntry::duration() const
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
+#endif // ENABLE(WEB_TIMING)

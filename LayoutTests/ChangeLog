@@ -1,3 +1,19 @@
+2016-04-29  Yoav Weiss  <yoav@yoav.ws>
+
+        Move ResourceTiming behind a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=157133
+
+        Reviewed by Alex Christensen.
+
+        Added tests that make sure ResourceTiming APIs are exposed and that resources
+        show up as entries in the performance timeline.
+
+        * fast/dom/Window/window-properties-performance-resource-timing-expected.txt: Added.
+        * fast/dom/Window/window-properties-performance-resource-timing.html: Added.
+        * fast/dom/Window/window-properties-performance.html: Removed "//;".
+        * http/tests/performance/performance-resource-timing-entries-expected.txt: Added.
+        * http/tests/performance/performance-resource-timing-entries.html: Added.
+
 2016-04-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Drop [UsePointersEvenForNonNullableObjectArguments] from MediaStream interfaces

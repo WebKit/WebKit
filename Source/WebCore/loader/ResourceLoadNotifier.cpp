@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceLoader.h"
+#include "RuntimeEnabledFeatures.h"
 
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"
@@ -146,9 +147,8 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
     if (loader && !request.isNull() && request.url() == loader->url())
         request.setReportLoadTiming(true);
 
-#if ENABLE(RESOURCE_TIMING)
-    request.setReportLoadTiming(true);
-#endif
+    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
+        request.setReportLoadTiming(true);
 }
 
 void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r, ResourceLoader* resourceLoader)
