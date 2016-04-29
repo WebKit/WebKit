@@ -1,3 +1,15 @@
+2016-04-29  Dean Jackson  <dino@apple.com>
+
+        RTL <select> popup menu is in the wrong location
+        https://bugs.webkit.org/show_bug.cgi?id=157159
+        <rdar://problem/25894451>
+
+        Reapply http://trac.webkit.org/changeset/200217
+        but with changes that will allow it to build on Yosemite.
+
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+
 2016-04-28  Ada Chan  <adachan@apple.com>
 
         Indicate we are processing user gesture when handling messages from WebPlaybackSessionManagerProxy to WebPlaybackSessionManager

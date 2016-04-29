@@ -118,6 +118,9 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     [m_popup setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
     NSMenu *menu = [m_popup menu];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    [menu setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+#endif
 
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -10;
@@ -131,8 +134,9 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
         NSRect titleFrame = [m_popup  titleRectForBounds:rect];
         if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
             titleFrame = rect;
-        float vertOffset = roundf((NSMaxY(rect) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
-        location = NSMakePoint(NSMinX(rect) + popOverHorizontalAdjust, NSMaxY(rect) - vertOffset);
+        float verticalOffset = roundf((NSMaxY(rect) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
+        float horizontalOffset = textDirection == LTR ? popOverHorizontalAdjust : 0;
+        location = NSMakePoint(NSMinX(rect) + horizontalOffset, NSMaxY(rect) - verticalOffset);
     } else
         location = NSMakePoint(NSMinX(rect) + popUnderHorizontalAdjust, NSMaxY(rect) + popUnderVerticalAdjust);  
 
