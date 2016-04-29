@@ -559,6 +559,16 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_string_is_null(WebKitDOMTestObj* self, const gchar* str);
 
 /**
+ * webkit_dom_test_obj_method_with_optional_string_is_undefined:
+ * @self: A #WebKitDOMTestObj
+ * @str: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_string_is_undefined(WebKitDOMTestObj* self, const gchar* str);
+
+/**
  * webkit_dom_test_obj_method_with_optional_atomic_string_is_null:
  * @self: A #WebKitDOMTestObj
  * @str: A #gchar
@@ -687,6 +697,16 @@ webkit_dom_test_obj_method_with_optional_boolean(WebKitDOMTestObj* self, gboolea
 **/
 WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_boolean_is_false(WebKitDOMTestObj* self, gboolean b);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_any:
+ * @self: A #WebKitDOMTestObj
+ * @a: A #WebKitDOMany
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_any(WebKitDOMTestObj* self, WebKitDOMany* a);
 
 /**
  * webkit_dom_test_obj_conditional_method1:

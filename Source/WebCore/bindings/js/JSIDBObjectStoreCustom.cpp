@@ -66,19 +66,7 @@ static JSValue putOrAdd(JSC::ExecState& state, bool overwrite)
 
     ExceptionCodeWithMessage ec;
     auto value = state.uncheckedArgument(0);
-
-    if (argsCount == 1) {
-        JSValue result;
-        if (overwrite)
-            result = toJS(&state, castedThis->globalObject(), wrapped.put(state, value, ec).get());
-        else
-            result = toJS(&state, castedThis->globalObject(), wrapped.add(state, value, ec).get());
-
-        setDOMException(&state, ec);
-        return result;
-    }
-
-    auto key = state.uncheckedArgument(1);
+    auto key = state.argument(1);
     JSValue result;
     if (overwrite)
         result = toJS(&state, castedThis->globalObject(), wrapped.put(state, value, key, ec).get());

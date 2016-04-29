@@ -255,11 +255,6 @@ void IDBCursor::advance(unsigned count, ExceptionCodeWithMessage& ec)
     uncheckedIterateCursor(IDBKeyData(), count);
 }
 
-void IDBCursor::continueFunction(ScriptExecutionContext&, ExceptionCodeWithMessage& ec)
-{
-    continueFunction(IDBKeyData(), ec);
-}
-
 void IDBCursor::continueFunction(ScriptExecutionContext& context, JSValue keyValue, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKey> key;

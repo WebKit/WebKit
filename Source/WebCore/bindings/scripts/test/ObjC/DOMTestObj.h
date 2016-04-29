@@ -181,6 +181,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)methodWithOptionalStringAndDefaultValue:(NSString *)str;
 - (void)methodWithOptionalAtomicStringAndDefaultValue:(NSString *)str;
 - (void)methodWithOptionalStringIsNull:(NSString *)str;
+- (void)methodWithOptionalStringIsUndefined:(NSString *)str;
 - (void)methodWithOptionalAtomicStringIsNull:(NSString *)str;
 - (void)methodWithOptionalStringIsEmptyString:(NSString *)str;
 - (void)methodWithOptionalAtomicStringIsEmptyString:(NSString *)str;
@@ -192,6 +193,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)methodWithOptionalUnsignedLongLongIsZero:(unsigned long long)number;
 - (void)methodWithOptionalBoolean:(BOOL)b;
 - (void)methodWithOptionalBooleanIsFalse:(BOOL)b;
+- (void)methodWithOptionalAny:(DOMany *)a;
 - (void)classMethod;
 - (int)classMethodWithOptional:(int)arg;
 - (void)classMethod2:(int)arg;

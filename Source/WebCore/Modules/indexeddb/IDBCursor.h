@@ -64,7 +64,6 @@ public:
 
     RefPtr<IDBRequest> update(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&);
     void advance(unsigned, ExceptionCodeWithMessage&);
-    void continueFunction(ScriptExecutionContext&, ExceptionCodeWithMessage&);
     void continueFunction(ScriptExecutionContext&, JSC::JSValue key, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext&, ExceptionCodeWithMessage&);
 
