@@ -1,3 +1,11 @@
+2016-04-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Change ios-simulator expectation for tests added with r200265 from ImageOnlyFailure to Failure
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-04-29  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] AirPlay fails if target is set before AVPlayer has been created
