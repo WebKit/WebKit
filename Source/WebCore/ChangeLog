@@ -1,3 +1,10 @@
+2016-04-28  Daniel Bates  <dabates@apple.com>
+
+        Remove extraneous space characters from parameter list for RenderListBox::paintItem()
+        that were added in r200190 (https://bugs.webkit.org/show_bug.cgi?id=157117).
+
+        * rendering/RenderListBox.h:
+
 2016-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Expose subscript and superscript format style groups using ATK_ROLE_SUBSCRIPT and ATK_ROLE_SUPERSCRIPT

@@ -143,7 +143,7 @@ private:
     void scrollTo(int newOffset);
 
     using PaintFunction = std::function<void(PaintInfo&, const LayoutPoint&, int listItemIndex)>;
-    void paintItem(PaintInfo& , const LayoutPoint& , PaintFunction);
+    void paintItem(PaintInfo&, const LayoutPoint&, PaintFunction);
 
     void setHasVerticalScrollbar(bool hasScrollbar);
     PassRefPtr<Scrollbar> createScrollbar();
