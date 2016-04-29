@@ -32,9 +32,10 @@
 [
     NoInterfaceObject,
     Conditional=WEB_TIMING,
-    EnabledAtRuntime=ResourceTiming,
+    Conditional=PERFORMANCE_TIMELINE,
     ImplementationLacksVTable,
 ] interface PerformanceEntryList {
     readonly attribute unsigned long length;
     getter PerformanceEntry item(unsigned long index);
 };
+

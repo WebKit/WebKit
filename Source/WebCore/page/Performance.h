@@ -40,6 +40,7 @@
 #include "PerformanceNavigation.h"
 #include "PerformanceTiming.h"
 #include "ScriptWrappable.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -63,14 +64,18 @@ public:
     PerformanceTiming* timing() const;
     double now() const;
 
-    RefPtr<PerformanceEntryList> getEntries() const;
-    RefPtr<PerformanceEntryList> getEntriesByType(const String& entryType);
-    RefPtr<PerformanceEntryList> getEntriesByName(const String& name, const String& entryType);
+#if ENABLE(PERFORMANCE_TIMELINE)
+    PassRefPtr<PerformanceEntryList> webkitGetEntries() const;
+    PassRefPtr<PerformanceEntryList> webkitGetEntriesByType(const String& entryType);
+    PassRefPtr<PerformanceEntryList> webkitGetEntriesByName(const String& name, const String& entryType);
+#endif
 
-    void clearResourceTimings();
-    void setResourceTimingBufferSize(unsigned);
+#if ENABLE(RESOURCE_TIMING)
+    void webkitClearResourceTimings();
+    void webkitSetResourceTimingBufferSize(unsigned int);
 
     void addResourceTiming(const String& initiatorName, Document*, const ResourceRequest&, const ResourceResponse&, double initiationTime, double finishTime);
+#endif
 
     using RefCounted<Performance>::ref;
     using RefCounted<Performance>::deref;
@@ -92,9 +97,11 @@ private:
 
     mutable RefPtr<PerformanceNavigation> m_navigation;
     mutable RefPtr<PerformanceTiming> m_timing;
-
+    
+#if ENABLE(RESOURCE_TIMING)
     Vector<RefPtr<PerformanceEntry>> m_resourceTimingBuffer;
     unsigned m_resourceTimingBufferSize;
+#endif
 
     double m_referenceTime;
 

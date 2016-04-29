@@ -518,10 +518,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/page/Location.idl \
     $(WebCore)/page/Navigator.idl \
     $(WebCore)/page/Performance.idl \
-    $(WebCore)/page/PerformanceEntry.idl \
-    $(WebCore)/page/PerformanceEntryList.idl \
     $(WebCore)/page/PerformanceNavigation.idl \
-    $(WebCore)/page/PerformanceResourceTiming.idl \
     $(WebCore)/page/PerformanceTiming.idl \
     $(WebCore)/page/Screen.idl \
     $(WebCore)/page/WebKitPoint.idl \

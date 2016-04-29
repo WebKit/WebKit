@@ -47,11 +47,15 @@
 
 namespace WebCore {
 
+#if ENABLE(RESOURCE_TIMING)
 static const size_t defaultResourceTimingBufferSize = 150;
+#endif
 
 Performance::Performance(Frame& frame)
     : DOMWindowProperty(&frame)
+#if ENABLE(RESOURCE_TIMING)
     , m_resourceTimingBufferSize(defaultResourceTimingBufferSize)
+#endif // ENABLE(RESOURCE_TIMING)
     , m_referenceTime(frame.document()->loader() ? frame.document()->loader()->timing().referenceMonotonicTime() : monotonicallyIncreasingTime())
 #if ENABLE(USER_TIMING)
     , m_userTiming(nullptr)
@@ -87,11 +91,14 @@ PerformanceTiming* Performance::timing() const
     return m_timing.get();
 }
 
-RefPtr<PerformanceEntryList> Performance::getEntries() const
+#if ENABLE(PERFORMANCE_TIMELINE)
+PassRefPtr<PerformanceEntryList> Performance::webkitGetEntries() const
 {
     RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
 
+#if ENABLE(RESOURCE_TIMING)
     entries->appendAll(m_resourceTimingBuffer);
+#endif // ENABLE(RESOURCE_TIMING)
 
 #if ENABLE(USER_TIMING)
     if (m_userTiming) {
@@ -104,14 +111,16 @@ RefPtr<PerformanceEntryList> Performance::getEntries() const
     return entries;
 }
 
-RefPtr<PerformanceEntryList> Performance::getEntriesByType(const String& entryType)
+PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByType(const String& entryType)
 {
     RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
 
+#if ENABLE(RESOURCE_TIMING)
     if (equalLettersIgnoringASCIICase(entryType, "resource")) {
         for (auto& resource : m_resourceTimingBuffer)
             entries->append(resource);
     }
+#endif
 
 #if ENABLE(USER_TIMING)
     if (m_userTiming) {
@@ -126,16 +135,18 @@ RefPtr<PerformanceEntryList> Performance::getEntriesByType(const String& entryTy
     return entries;
 }
 
-RefPtr<PerformanceEntryList> Performance::getEntriesByName(const String& name, const String& entryType)
+PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByName(const String& name, const String& entryType)
 {
     RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
 
+#if ENABLE(RESOURCE_TIMING)
     if (entryType.isNull() || equalLettersIgnoringASCIICase(entryType, "resource")) {
         for (auto& resource : m_resourceTimingBuffer) {
             if (resource->name() == name)
                 entries->append(resource);
         }
     }
+#endif
 
 #if ENABLE(USER_TIMING)
     if (m_userTiming) {
@@ -150,16 +161,20 @@ RefPtr<PerformanceEntryList> Performance::getEntriesByName(const String& name, c
     return entries;
 }
 
-void Performance::clearResourceTimings()
+#endif // ENABLE(PERFORMANCE_TIMELINE)
+
+#if ENABLE(RESOURCE_TIMING)
+
+void Performance::webkitClearResourceTimings()
 {
     m_resourceTimingBuffer.clear();
 }
 
-void Performance::setResourceTimingBufferSize(unsigned size)
+void Performance::webkitSetResourceTimingBufferSize(unsigned size)
 {
     m_resourceTimingBufferSize = size;
     if (isResourceTimingBufferFull())
-        dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, false, false));
+        dispatchEvent(Event::create(eventNames().webkitresourcetimingbufferfullEvent, false, false));
 }
 
 void Performance::addResourceTiming(const String& initiatorName, Document* initiatorDocument, const ResourceRequest& request, const ResourceResponse& response, double initiationTime, double finishTime)
@@ -172,13 +187,15 @@ void Performance::addResourceTiming(const String& initiatorName, Document* initi
     m_resourceTimingBuffer.append(entry);
 
     if (isResourceTimingBufferFull())
-        dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, false, false));
+        dispatchEvent(Event::create(eventNames().webkitresourcetimingbufferfullEvent, false, false));
 }
 
 bool Performance::isResourceTimingBufferFull()
 {
     return m_resourceTimingBuffer.size() >= m_resourceTimingBufferSize;
 }
+
+#endif // ENABLE(RESOURCE_TIMING)
 
 #if ENABLE(USER_TIMING)
 void Performance::webkitMark(const String& markName, ExceptionCode& ec)

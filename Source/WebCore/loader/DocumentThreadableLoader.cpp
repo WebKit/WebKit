@@ -45,7 +45,6 @@
 #include "ProgressTracker.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SubresourceLoader.h"
@@ -386,8 +385,9 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         }
 
         CachedResourceRequest newRequest(request, options);
-        if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-            newRequest.setInitiator(m_options.initiator);
+#if ENABLE(RESOURCE_TIMING)
+        newRequest.setInitiator(m_options.initiator);
+#endif
         ASSERT(!m_resource);
         m_resource = m_document.cachedResourceLoader().requestRawResource(newRequest);
         if (m_resource)

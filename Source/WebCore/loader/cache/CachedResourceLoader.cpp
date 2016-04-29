@@ -57,12 +57,10 @@
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
-#include "Performance.h"
 #include "PingLoader.h"
 #include "PlatformStrategies.h"
 #include "RenderElement.h"
 #include "ResourceLoadInfo.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "SessionID.h"
@@ -75,6 +73,10 @@
 
 #if ENABLE(VIDEO_TRACK)
 #include "CachedTextTrack.h"
+#endif
+
+#if ENABLE(RESOURCE_TIMING)
+#include "Performance.h"
 #endif
 
 #define PRELOAD_DEBUG 0
@@ -669,8 +671,11 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(co
     
     memoryCache.remove(*resource);
     memoryCache.add(*newResource);
-    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        storeResourceTimingInitiatorInformation(resource, request);
+#if ENABLE(RESOURCE_TIMING)
+    storeResourceTimingInitiatorInformation(resource, request);
+#else
+    UNUSED_PARAM(request);
+#endif
     return newResource;
 }
 
@@ -685,14 +690,15 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
 
     if (request.allowsCaching() && !memoryCache.add(*resource))
         resource->setOwningCachedResourceLoader(this);
-    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        storeResourceTimingInitiatorInformation(resource, request);
+#if ENABLE(RESOURCE_TIMING)
+    storeResourceTimingInitiatorInformation(resource, request);
+#endif
     return resource;
 }
 
+#if ENABLE(RESOURCE_TIMING)
 void CachedResourceLoader::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const CachedResourceRequest& request)
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled());
     if (resource->type() == CachedResource::MainResource) {
         // <iframe>s should report the initial navigation requested by the parent document, but not subsequent navigations.
         if (frame()->ownerElement() && m_documentLoader->frameLoader()->stateMachine().committingFirstRealLoad()) {
@@ -704,6 +710,7 @@ void CachedResourceLoader::storeResourceTimingInitiatorInformation(const CachedR
         m_initiatorMap.add(resource.get(), info);
     }
 }
+#endif // ENABLE(RESOURCE_TIMING)
 
 static void logRevalidation(const String& reason, DiagnosticLoggingClient& logClient)
 {
@@ -969,9 +976,8 @@ void CachedResourceLoader::loadDone(CachedResource* resource, bool shouldPerform
     RefPtr<DocumentLoader> protectDocumentLoader(m_documentLoader);
     RefPtr<Document> protectDocument(m_document);
 
-    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()
-        && resource && resource->response().isHTTP()
-        && ((!resource->errorOccurred() && !resource->wasCanceled()) || resource->response().httpStatusCode() == 304)) {
+#if ENABLE(RESOURCE_TIMING)
+    if (resource && resource->response().isHTTP() && ((!resource->errorOccurred() && !resource->wasCanceled()) || resource->response().httpStatusCode() == 304)) {
         HashMap<CachedResource*, InitiatorInfo>::iterator initiatorIt = m_initiatorMap.find(resource);
         if (initiatorIt != m_initiatorMap.end()) {
             ASSERT(document());
@@ -984,6 +990,9 @@ void CachedResourceLoader::loadDone(CachedResource* resource, bool shouldPerform
             m_initiatorMap.remove(initiatorIt);
         }
     }
+#else
+    UNUSED_PARAM(resource);
+#endif // ENABLE(RESOURCE_TIMING)
 
     if (frame())
         frame()->loader().loadDone();

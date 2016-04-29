@@ -36,15 +36,18 @@
     readonly attribute PerformanceNavigation navigation;
     readonly attribute PerformanceTiming timing;
 
-    [EnabledAtRuntime=ResourceTiming] PerformanceEntryList getEntries();
-    [EnabledAtRuntime=ResourceTiming] PerformanceEntryList getEntriesByType(DOMString entryType);
-    [EnabledAtRuntime=ResourceTiming] PerformanceEntryList getEntriesByName(DOMString name, optional DOMString entryType);
+#if defined(ENABLE_PERFORMANCE_TIMELINE) && ENABLE_PERFORMANCE_TIMELINE
+    PerformanceEntryList webkitGetEntries();
+    PerformanceEntryList webkitGetEntriesByType(DOMString entryType);
+    PerformanceEntryList webkitGetEntriesByName(DOMString name, optional DOMString entryType);
+#endif
 
+#if defined(ENABLE_RESOURCE_TIMING) && ENABLE_RESOURCE_TIMING
+    void webkitClearResourceTimings();
+    void webkitSetResourceTimingBufferSize(unsigned long maxSize);
 
-    [EnabledAtRuntime=ResourceTiming] void clearResourceTimings();
-    [EnabledAtRuntime=ResourceTiming] void setResourceTimingBufferSize(unsigned long maxSize);
-
-    [EnabledAtRuntime=ResourceTiming] attribute EventHandler onresourcetimingbufferfull;
+    attribute EventHandler onwebkitresourcetimingbufferfull;
+#endif
 
     // See http://www.w3.org/TR/2012/CR-user-timing-20120726/
 #if defined(ENABLE_USER_TIMING) && ENABLE_USER_TIMING

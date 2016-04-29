@@ -30,7 +30,7 @@ function tryEval(string)
 
 function typeOfNullAware(value)
 {
-    if (typeof value == "object" && value == null)
+    if (typeof value == "object" && value == null) //;
         return "null";
     return typeof value;
 }
@@ -61,7 +61,7 @@ function logValue(valueName)
         return;
 
     // Avoid infinite recursion
-    if (valueType == "object" && value.__visitedByLogValue__) {
+    if (valueType == "object" && value.__visitedByLogValue__) { //;
         log(valueName + " [printed above as " + value.__nameWhenVisitedByLogValue__ + "]\n");
         return;
     }

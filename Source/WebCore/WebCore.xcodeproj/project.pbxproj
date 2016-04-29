@@ -5991,14 +5991,6 @@
 		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */; };
 		CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */; };
-		CB38FD4B1CCCF36600592A3F /* PerformanceEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB38FD4A1CCCF2DD00592A3F /* PerformanceEntry.cpp */; };
-		CB38FD511CCF938900592A3F /* JSPerformanceEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB38FD4D1CCF937E00592A3F /* JSPerformanceEntry.cpp */; };
-		CB38FD521CCF939400592A3F /* JSPerformanceEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = CB38FD4E1CCF937E00592A3F /* JSPerformanceEntry.h */; };
-		CB38FD531CCF939B00592A3F /* JSPerformanceEntryList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB38FD4F1CCF937E00592A3F /* JSPerformanceEntryList.cpp */; };
-		CB38FD541CCF939E00592A3F /* JSPerformanceEntryList.h in Headers */ = {isa = PBXBuildFile; fileRef = CB38FD501CCF937E00592A3F /* JSPerformanceEntryList.h */; };
-		CB38FD571CD21E2A00592A3F /* JSPerformanceEntryCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */; };
-		CB38FD5A1CD2325800592A3F /* JSPerformanceResourceTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB38FD581CD2314500592A3F /* JSPerformanceResourceTiming.cpp */; };
-		CB38FD5B1CD2325B00592A3F /* JSPerformanceResourceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */; };
 		CB8CF0181A9358D4000D510B /* Microtasks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB8CF0151A934B43000D510B /* Microtasks.cpp */; };
 		CCC2B51415F613060048CDD6 /* DeviceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC2B51015F613060048CDD6 /* DeviceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CCC2B51515F613060048CDD6 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC2B51115F613060048CDD6 /* DeviceController.cpp */; };
@@ -13964,14 +13956,6 @@
 		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
 		CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAspectRatioValue.cpp; sourceTree = "<group>"; };
 		CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSAspectRatioValue.h; sourceTree = "<group>"; };
-		CB38FD4A1CCCF2DD00592A3F /* PerformanceEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceEntry.cpp; sourceTree = "<group>"; };
-		CB38FD4D1CCF937E00592A3F /* JSPerformanceEntry.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = JSPerformanceEntry.cpp; sourceTree = "<group>"; };
-		CB38FD4E1CCF937E00592A3F /* JSPerformanceEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformanceEntry.h; sourceTree = "<group>"; };
-		CB38FD4F1CCF937E00592A3F /* JSPerformanceEntryList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceEntryList.cpp; sourceTree = "<group>"; };
-		CB38FD501CCF937E00592A3F /* JSPerformanceEntryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JSPerformanceEntryList.h; sourceTree = "<group>"; };
-		CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceEntryCustom.cpp; sourceTree = "<group>"; };
-		CB38FD581CD2314500592A3F /* JSPerformanceResourceTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceResourceTiming.cpp; sourceTree = "<group>"; };
-		CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformanceResourceTiming.h; sourceTree = "<group>"; };
 		CB8CF0151A934B43000D510B /* Microtasks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Microtasks.cpp; sourceTree = "<group>"; };
 		CCC2B51015F613060048CDD6 /* DeviceClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceClient.h; sourceTree = "<group>"; };
 		CCC2B51115F613060048CDD6 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
@@ -18074,7 +18058,6 @@
 				8A844D0211D3C18E0014065C /* Performance.h */,
 				8A844D0311D3C18E0014065C /* Performance.idl */,
 				86BE33FB15058CB200CE0FD8 /* PerformanceEntry.h */,
-				CB38FD4A1CCCF2DD00592A3F /* PerformanceEntry.cpp */,
 				86BE33FC15058CB200CE0FD8 /* PerformanceEntry.idl */,
 				86BE33FD15058CB200CE0FD8 /* PerformanceEntryList.cpp */,
 				86BE33FE15058CB200CE0FD8 /* PerformanceEntryList.h */,
@@ -22330,7 +22313,6 @@
 				83F1206A1B8C103600D75F63 /* JSNodeFilterCustom.cpp */,
 				7C91A38D1B498ABE003F9EFA /* JSNodeOrString.cpp */,
 				7C91A38E1B498ABE003F9EFA /* JSNodeOrString.h */,
-				CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */,
 				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
 				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
 				4129DF831BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.cpp */,
@@ -22667,14 +22649,8 @@
 				A9D247F60D757E3300FDF959 /* JSNavigator.h */,
 				E51A81DE17298D7700BFCA61 /* JSPerformance.cpp */,
 				8A9A587311E84C81008ACFD1 /* JSPerformance.h */,
-				CB38FD4D1CCF937E00592A3F /* JSPerformanceEntry.cpp */,
-				CB38FD4E1CCF937E00592A3F /* JSPerformanceEntry.h */,
-				CB38FD4F1CCF937E00592A3F /* JSPerformanceEntryList.cpp */,
-				CB38FD501CCF937E00592A3F /* JSPerformanceEntryList.h */,
 				8A9A586E11E84C35008ACFD1 /* JSPerformanceNavigation.cpp */,
 				8A9A586F11E84C36008ACFD1 /* JSPerformanceNavigation.h */,
-				CB38FD581CD2314500592A3F /* JSPerformanceResourceTiming.cpp */,
-				CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */,
 				0F43C85E189E15A600019AE2 /* JSPerformanceTiming.cpp */,
 				8A9A587711E84C98008ACFD1 /* JSPerformanceTiming.h */,
 				BCEC01C00C274DDD009F4EC9 /* JSScreen.cpp */,
@@ -25580,7 +25556,6 @@
 				2D29ECCA192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h in Headers */,
 				2DE70023192FE82A00B0975C /* DisplayRefreshMonitorMac.h in Headers */,
 				2D29ECC8192ECC8300984B78 /* DisplayRefreshMonitorManager.h in Headers */,
-				CB38FD521CCF939400592A3F /* JSPerformanceEntry.h in Headers */,
 				CD52481B18E200ED0008A07D /* DisplaySleepDisabler.h in Headers */,
 				5D8C4DC01428222C0026CE72 /* DisplaySleepDisablerCocoa.h in Headers */,
 				FD31609112B026F700C1A359 /* Distance.h in Headers */,
@@ -27716,7 +27691,6 @@
 				BCEA4868097D93020094C9E4 /* RenderView.h in Headers */,
 				BE20507E18A458C20080647E /* RenderVTTCue.h in Headers */,
 				A871DFE40A15376B00B12A68 /* RenderWidget.h in Headers */,
-				CB38FD5B1CD2325B00592A3F /* JSPerformanceResourceTiming.h in Headers */,
 				A89CCC530F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.h in Headers */,
 				93309E0A099E64920056E581 /* ReplaceSelectionCommand.h in Headers */,
 				99CC0B5418BE9849006CEBCC /* ReplayController.h in Headers */,
@@ -28046,7 +28020,6 @@
 				A8EA800A0A19516E00A8EF5F /* StyleSheetList.h in Headers */,
 				BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */,
 				BC5EB8100E81F2CE00B25965 /* StyleTransformData.h in Headers */,
-				CB38FD541CCF939E00592A3F /* JSPerformanceEntryList.h in Headers */,
 				E4DEAA1817A93DC3000E0430 /* StyleTreeResolver.h in Headers */,
 				BC5EB69A0E81DA6300B25965 /* StyleVisualData.h in Headers */,
 				D000ED2811C1B9CD00C47726 /* SubframeLoader.h in Headers */,
@@ -29229,7 +29202,6 @@
 				B27535770B053814002CE64F /* ColorMac.mm in Sources */,
 				43EDD67E1B485DBF00640E75 /* CombinedFiltersAlphabet.cpp in Sources */,
 				26E944D81AC4B2DD007B85B5 /* CombinedURLFilters.cpp in Sources */,
-				CB38FD4B1CCCF36600592A3F /* PerformanceEntry.cpp in Sources */,
 				A584FE341864D5AF00843B10 /* CommandLineAPIHost.cpp in Sources */,
 				A584FE2B1863870F00843B10 /* CommandLineAPIModule.cpp in Sources */,
 				6550B6A1099DF0270090D781 /* Comment.cpp in Sources */,
@@ -31248,7 +31220,6 @@
 				BC96DB460F3A882200573CB3 /* RenderBoxModelObject.cpp in Sources */,
 				BCEA4865097D93020094C9E4 /* RenderButton.cpp in Sources */,
 				BCE4413312F748E2009B84B8 /* RenderCombineText.cpp in Sources */,
-				CB38FD5A1CD2325800592A3F /* JSPerformanceResourceTiming.cpp in Sources */,
 				9392F1440AD185FE00691BD4 /* RenderCounter.cpp in Sources */,
 				BCEA486D097D93020094C9E4 /* RenderDeprecatedFlexibleBox.cpp in Sources */,
 				D302754912A5FE84004BD828 /* RenderDetailsMarker.cpp in Sources */,
@@ -32025,7 +31996,6 @@
 				444D4E230F708B2E003158E0 /* WebCoreURLResponseIOS.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				A5E616731894581F009ADF50 /* WebDebuggerAgent.cpp in Sources */,
-				CB38FD571CD21E2A00592A3F /* JSPerformanceEntryCustom.cpp in Sources */,
 				FE0D84EB1048436E001A179E /* WebEvent.mm in Sources */,
 				225A16B60D5C11E900090295 /* WebEventRegion.mm in Sources */,
 				D3F3D36D1A69B7DC0059FC2B /* WebGL2RenderingContext.cpp in Sources */,
@@ -32105,7 +32075,6 @@
 				B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */,
 				CD8203111395ACE700F956C6 /* WebWindowAnimation.mm in Sources */,
 				F55B3DDF1251F12D003EF269 /* WeekInputType.cpp in Sources */,
-				CB38FD511CCF938900592A3F /* JSPerformanceEntry.cpp in Sources */,
 				85031B500A44EFC700F992E0 /* WheelEvent.cpp in Sources */,
 				2E19516B1B6598D200DF6EEF /* WheelEventDeltaFilter.cpp in Sources */,
 				2EEEE55C1B66A047008E2CBC /* WheelEventDeltaFilterMac.mm in Sources */,
@@ -32143,7 +32112,6 @@
 				00B9318913BA8DBC0035A948 /* XMLDocumentParserLibxml2.cpp in Sources */,
 				00B9318B13BA8DC90035A948 /* XMLDocumentParserScope.cpp in Sources */,
 				59C28045138DC2410079B7E2 /* XMLErrors.cpp in Sources */,
-				CB38FD531CCF939B00592A3F /* JSPerformanceEntryList.cpp in Sources */,
 				BC772C460C4EB2C60083285F /* XMLHttpRequest.cpp in Sources */,
 				A136A00C1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp in Sources */,
 				BCDFD48F0E305290009D10AD /* XMLHttpRequestUpload.cpp in Sources */,

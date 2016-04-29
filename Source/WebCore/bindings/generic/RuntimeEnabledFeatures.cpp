@@ -59,7 +59,6 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 #else
     , m_isPluginReplacementEnabled(false)
 #endif
-    , m_isResourceTimingEnabled(false)
 #if ENABLE(INDEXED_DATABASE)
     , m_isIndexedDBEnabled(false)
 #endif
