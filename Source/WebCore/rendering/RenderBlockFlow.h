@@ -604,6 +604,8 @@ private:
 #endif
     void setSelectionState(SelectionState) final;
 
+    void removeInlineBox(BidiRun&, const RootInlineBox&) const;
+
 public:
     // FIXME-BLOCKFLOW: These can be made protected again once all callers have been moved here.
     void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset, bool& overflowsRegion, RenderFlowThread*); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.

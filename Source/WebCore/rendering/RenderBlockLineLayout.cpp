@@ -293,7 +293,7 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
             continue;
 
         InlineBox* box = createInlineBoxForRenderer(&r->renderer(), false, isOnlyRun);
-        r->setBox(*box);
+        r->setBox(box);
 
         if (!rootHasSelectedChildren && box->renderer().selectionState() != RenderObject::SelectionNone)
             rootHasSelectedChildren = true;
@@ -950,36 +950,68 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
     return run;
 }
 
+void RenderBlockFlow::removeInlineBox(BidiRun& run, const RootInlineBox& rootLineBox) const
+{
+    auto* inlineBox = run.box();
+#if !ASSERT_DISABLED
+    auto* inlineParent = inlineBox->parent();
+    while (inlineParent && inlineParent != &rootLineBox) {
+        ASSERT(!inlineParent->isDirty());
+        inlineParent = inlineParent->parent();
+    }
+    ASSERT(!rootLineBox.isDirty());
+#endif
+    auto* parent = inlineBox->parent();
+    inlineBox->removeFromParent();
+
+    auto& renderer = run.renderer();
+    if (is<RenderText>(renderer))
+        downcast<RenderText>(renderer).removeTextBox(downcast<InlineTextBox>(*inlineBox));
+    delete inlineBox;
+    run.setBox(nullptr);
+    // removeFromParent() unnecessarily dirties the ancestor subtree.
+    auto* ancestor = parent;
+    while (ancestor) {
+        ancestor->markDirty(false);
+        if (ancestor == &rootLineBox)
+            break;
+        ancestor = ancestor->parent();
+    }
+}
+
 void RenderBlockFlow::computeBlockDirectionPositionsForLine(RootInlineBox* lineBox, BidiRun* firstRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap,
                                                         VerticalPositionCache& verticalPositionCache)
 {
     setLogicalHeight(lineBox->alignBoxesInBlockDirection(logicalHeight(), textBoxDataMap, verticalPositionCache));
 
     // Now make sure we place replaced render objects correctly.
-    for (BidiRun* run = firstRun; run; run = run->next()) {
+    for (auto* run = firstRun; run; run = run->next()) {
         ASSERT(run->box());
         if (!run->box())
             continue; // Skip runs with no line boxes.
 
-        InlineBox& box = *run->box();
-
         // Align positioned boxes with the top of the line box.  This is
         // a reasonable approximation of an appropriate y position.
-        if (run->renderer().isOutOfFlowPositioned())
-            box.setLogicalTop(logicalHeight());
+        auto& renderer = run->renderer();
+        if (renderer.isOutOfFlowPositioned())
+            run->box()->setLogicalTop(logicalHeight());
 
         // Position is used to properly position both replaced elements and
         // to update the static normal flow x/y of positioned elements.
-        if (is<RenderText>(run->renderer()))
-            downcast<RenderText>(run->renderer()).positionLineBox(downcast<InlineTextBox>(box));
-        else if (is<RenderBox>(run->renderer()))
-            downcast<RenderBox>(run->renderer()).positionLineBox(downcast<InlineElementBox>(box));
-        else if (is<RenderLineBreak>(run->renderer()))
-            downcast<RenderLineBreak>(run->renderer()).replaceInlineBoxWrapper(downcast<InlineElementBox>(box));
+        bool inlineBoxIsRedundant = false;
+        if (is<RenderText>(renderer)) {
+            auto& inlineTextBox = downcast<InlineTextBox>(*run->box());
+            downcast<RenderText>(renderer).positionLineBox(inlineTextBox);
+            inlineBoxIsRedundant = !inlineTextBox.len();
+        } else if (is<RenderBox>(renderer)) {
+            downcast<RenderBox>(renderer).positionLineBox(downcast<InlineElementBox>(*run->box()));
+            inlineBoxIsRedundant = renderer.isOutOfFlowPositioned();
+        } else if (is<RenderLineBreak>(renderer))
+            downcast<RenderLineBreak>(renderer).replaceInlineBoxWrapper(downcast<InlineElementBox>(*run->box()));
+        // Check if we need to keep this box on the line at all.
+        if (inlineBoxIsRedundant)
+            removeInlineBox(*run, *lineBox);
     }
-    // Positioned objects and zero-length text nodes destroy their boxes in
-    // position(), which unnecessarily dirties the line.
-    lineBox->markDirty(false);
 }
 
 static inline bool isCollapsibleSpace(UChar character, const RenderText& renderer)

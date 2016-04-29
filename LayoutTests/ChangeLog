@@ -1,3 +1,19 @@
+2016-04-28  Zalan Bujtas  <zalan@apple.com>
+
+        Content disappears on mouse over.
+        https://bugs.webkit.org/show_bug.cgi?id=157073
+        <rdar://problem/24389168>
+
+        Reviewed by Simon Fraser.
+
+        When a redundant inlinebox is found after constructing the line, we remove it from the tree.
+        The remove operation marks the ancestor tree dirty (and this newly constructed line is supposed to be clean).
+        This patch resets this dirty flag on the boxes all the way up to the rootlinebox.
+        Previously we only cleared the rootinlinebox and we ended up with dirty inlineflowboxes.
+
+        * fast/text/text-node-remains-dirty-after-calling-surroundContents-expected.html: Added.
+        * fast/text/text-node-remains-dirty-after-calling-surroundContents.html: Added.
+
 2016-04-27  Brent Fulgham  <bfulgham@apple.com>
 
         Make sure we don't mishandle HTMLFrameOwnerElement lifecycle

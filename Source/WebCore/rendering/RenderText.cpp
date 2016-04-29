@@ -1268,15 +1268,8 @@ std::unique_ptr<InlineTextBox> RenderText::createTextBox()
 
 void RenderText::positionLineBox(InlineTextBox& textBox)
 {
-    // FIXME: should not be needed!!!
-    if (!textBox.len()) {
-        // We want the box to be destroyed.
-        textBox.removeFromParent();
-        m_lineBoxes.remove(textBox);
-        delete &textBox;
+    if (!textBox.len())
         return;
-    }
-
     m_containsReversedText |= !textBox.isLeftToRightDirection();
 }
 

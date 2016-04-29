@@ -41,7 +41,7 @@ struct BidiRun : BidiCharacterRun {
     std::unique_ptr<BidiRun> takeNext();
     RenderObject& renderer() { return m_renderer; }
     InlineBox* box() { return m_box; }
-    void setBox(InlineBox& box) { m_box = &box; }
+    void setBox(InlineBox* box) { m_box = box; }
 
 private:
     RenderObject& m_renderer;
