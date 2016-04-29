@@ -74,7 +74,6 @@ public:
     RefPtr<IDBIndex> createIndex(ScriptExecutionContext&, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCodeWithMessage&);
     RefPtr<IDBIndex> index(const String& name, ExceptionCodeWithMessage&);
     void deleteIndex(const String& name, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> count(ScriptExecutionContext&, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> count(ScriptExecutionContext&, IDBKeyRange*, ExceptionCodeWithMessage&);
     RefPtr<IDBRequest> count(ScriptExecutionContext&, JSC::JSValue key, ExceptionCodeWithMessage&);
 

@@ -49,7 +49,7 @@
     boolean containsNode(optional Node? node = null, optional boolean allowPartial = false);
     [RaisesException] void selectAllChildren(optional Node? node = null);
 
-    [RaisesException] void extend(optional Node node = null, optional long offset = 0);
+    [RaisesException] void extend(Node node, optional long offset = 0);
 
     [RaisesException] Range getRangeAt(optional long index = 0);
     void removeAllRanges();

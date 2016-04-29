@@ -49,6 +49,6 @@
     [CallWith=ScriptExecutionContext, Custom, RaisesExceptionWithMessage] IDBIndex createIndex(DOMString name, DOMString keyPath, optional Dictionary options);
     [RaisesExceptionWithMessage] IDBIndex index(DOMString name);
     [RaisesExceptionWithMessage] void deleteIndex(DOMString name);
-    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest count(optional IDBKeyRange? range);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest count(optional IDBKeyRange? range = null);
     [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest count(any key);
 };

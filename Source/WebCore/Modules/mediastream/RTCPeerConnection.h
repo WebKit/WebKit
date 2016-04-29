@@ -93,8 +93,7 @@ public:
     RTCConfiguration* getConfiguration() const;
     void setConfiguration(const Dictionary& configuration, ExceptionCode&);
 
-    void privateGetStats(MediaStreamTrack&, PeerConnection::StatsPromise&&);
-    void privateGetStats(PeerConnection::StatsPromise&&);
+    void privateGetStats(MediaStreamTrack*, PeerConnection::StatsPromise&&);
 
     RefPtr<RTCDataChannel> createDataChannel(String label, const Dictionary& dataChannelDict, ExceptionCode&);
 

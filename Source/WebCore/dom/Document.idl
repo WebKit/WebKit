@@ -118,10 +118,10 @@
 #else
     [NewObject] NodeIterator createNodeIterator(Node root,
         optional unsigned long whatToShow = 0xFFFFFFFF,
-        optional NodeFilter? filter);
+        optional NodeFilter? filter = null);
     [NewObject] TreeWalker createTreeWalker(Node root,
         optional unsigned long whatToShow = 0xFFFFFFFF,
-        optional NodeFilter? filter);
+        optional NodeFilter? filter = null);
 #endif
 
     // DOM Level 2 Abstract Views (DocumentView interface)

@@ -2384,11 +2384,6 @@ unsigned Internals::compositingUpdateCount(ExceptionCode& ec)
     return document->renderView()->compositor().compositingUpdateCount();
 }
 
-void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(ExceptionCode& ec)
-{
-    updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(nullptr, ec);
-}
-
 void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node* node, ExceptionCode& ec)
 {
     Document* document;

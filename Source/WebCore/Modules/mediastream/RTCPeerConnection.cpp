@@ -328,14 +328,9 @@ void RTCPeerConnection::setConfiguration(const Dictionary& configuration, Except
     m_backend->setConfiguration(*m_configuration);
 }
 
-void RTCPeerConnection::privateGetStats(MediaStreamTrack& selector, PeerConnection::StatsPromise&& promise)
+void RTCPeerConnection::privateGetStats(MediaStreamTrack* selector, PeerConnection::StatsPromise&& promise)
 {
-    m_backend->getStats(&selector, WTFMove(promise));
-}
-
-void RTCPeerConnection::privateGetStats(PeerConnection::StatsPromise&& promise)
-{
-    m_backend->getStats(nullptr, WTFMove(promise));
+    m_backend->getStats(selector, WTFMove(promise));
 }
 
 RefPtr<RTCDataChannel> RTCPeerConnection::createDataChannel(String, const Dictionary&, ExceptionCode& ec)

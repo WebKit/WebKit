@@ -1,3 +1,15 @@
+2016-04-29  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Specify default values for optional parameters of wrapper types
+        https://bugs.webkit.org/show_bug.cgi?id=157161
+
+        Reviewed by Darin Adler.
+
+        Rebaseline as a different exception message is now given when calling
+        Selection.extend() without enough parameters.
+
+        * editing/selection/extend-expected.txt:
+
 2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Expose the value of aria-roledescription via an AtkObject attribute

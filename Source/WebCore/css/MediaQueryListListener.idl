@@ -21,5 +21,5 @@
     CallbackNeedsOperatorEqual,
     Callback=FunctionOnly,
 ] callback interface MediaQueryListListener {
-    boolean queryChanged(optional MediaQueryList list = null);
+    boolean queryChanged(optional MediaQueryList? list = null);
 };

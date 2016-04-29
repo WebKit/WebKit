@@ -23,7 +23,7 @@
 ] interface XPathEvaluator {
     // FIXME: Using "undefined" as default parameter value is wrong.
     [RaisesException] XPathExpression createExpression(optional DOMString expression = "undefined",
-                                     optional XPathNSResolver resolver = null);
+                                     optional XPathNSResolver? resolver = null);
 
     XPathNSResolver createNSResolver(optional Node? nodeResolver = null);
 

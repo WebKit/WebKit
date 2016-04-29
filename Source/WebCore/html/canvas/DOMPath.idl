@@ -33,8 +33,10 @@
     ExportMacro=WEBCORE_EXPORT,
     InterfaceName=Path2D,
 ] interface DOMPath {
-    // FIXME: The parameters should not be nullable.
-    [Conditional=CANVAS_PATH] void addPath(DOMPath? path, optional SVGMatrix? transform);
+    // FIXME: This should be:
+    // [Conditional=CANVAS_PATH] void addPath(DOMPath path, optional SVGMatrix transform);
+    [Conditional=CANVAS_PATH] void addPath(DOMPath? path);
+    [Conditional=CANVAS_PATH] void addPath(DOMPath? path, SVGMatrix transform);
 
     // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.
     void closePath();

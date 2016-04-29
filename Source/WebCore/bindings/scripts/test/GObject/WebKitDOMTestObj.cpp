@@ -1770,6 +1770,26 @@ void webkit_dom_test_obj_method_with_optional_any(WebKitDOMTestObj* self, WebKit
     item->methodWithOptionalAny(convertedA);
 }
 
+void webkit_dom_test_obj_method_with_optional_nullable_wrapper(WebKitDOMTestObj* self, WebKitDOMTestObj* obj)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(obj));
+    WebCore::TestObj* item = WebKit::core(self);
+    WebCore::TestObj* convertedObj = WebKit::core(obj);
+    item->methodWithOptionalNullableWrapper(convertedObj);
+}
+
+void webkit_dom_test_obj_method_with_optional_nullable_wrapper_is_null(WebKitDOMTestObj* self, WebKitDOMTestObj* obj)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(obj));
+    WebCore::TestObj* item = WebKit::core(self);
+    WebCore::TestObj* convertedObj = WebKit::core(obj);
+    item->methodWithOptionalNullableWrapperIsNull(convertedObj);
+}
+
 gchar* webkit_dom_test_obj_conditional_method1(WebKitDOMTestObj* self)
 {
 #if ENABLE(Condition1)

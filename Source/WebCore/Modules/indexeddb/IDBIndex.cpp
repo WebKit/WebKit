@@ -137,13 +137,6 @@ RefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext& context, JSValue
     return openCursor(context, keyRange.get(), direction, ec);
 }
 
-RefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
-{
-    LOG(IndexedDB, "IDBIndex::count");
-
-    return doCount(context, IDBKeyRangeData::allKeys(), ec);
-}
-
 RefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext& context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBIndex::count");

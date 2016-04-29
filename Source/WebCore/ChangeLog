@@ -1,3 +1,88 @@
+2016-04-29  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Specify default values for optional parameters of wrapper types
+        https://bugs.webkit.org/show_bug.cgi?id=157161
+
+        Reviewed by Darin Adler.
+
+        Specify default values for optional parameters of wrapper types.
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::count): Deleted.
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::count): Deleted.
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::createDataChannel): Deleted.
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (WillConvertUndefinedToDefaultParameterValue):
+        Optimization to avoid generating a ternary if the default
+        value of a wrapper type parameter is null, since undefined
+        will already convert to null for those.
+
+        (GenerateParametersCheck):
+        Use null as implicit default value for nullable parameters, given that Web IDL
+        converts undefined to null for such parameters:
+        http://heycam.github.io/webidl/#es-nullable-type
+
+        (CanUseWTFOptionalForParameter):
+        Drop the check for wrapper types.
+
+        * bindings/scripts/test/*:
+        Improve bindings tests coverage / rebaseline.
+
+        * css/MediaQueryList.idl:
+        * css/MediaQueryListListener.idl:
+        * dom/Document.idl:
+
+        * html/canvas/DOMPath.idl:
+        The previous syntax was working because the bindings was generating an early
+        return if addPath() was called with only one parameter, calling the
+        implementation method with only 1 parameter. However, since we no longer
+        generate early returns for optional parameters, we now have to use a slightly
+        different syntax to maintain the previous behavior. This is only temporary,
+        I just did not want to deal with SVG tear off types in this patch since they
+        are very special in the bindings generator.
+
+        * page/DOMSelection.idl:
+        The node parameter to extend() was confusingly marked as optional. However,
+        when omitted, it would get translated into null, which would throw an
+        exception since the type is not nullable. Since the specification says 'node'
+        should not be optional, and since there is no behavior change, I dropped
+        the 'optional'. The only web-exposed difference is the message provided with
+        the TypeError that is thrown when called without enough parameters. The new
+        message is more accurate (see rebaselined layout test).
+
+        * svg/SVGMarkerElement.idl:
+        The parameter for setOrientToAngle() was confusingly marked as optional and
+        having a default value of null. However, the bindings would throw a TypeError
+        if called with no parameters or when calling it with null. This is because
+        this is an SVG Tear off type and the bindings always throw when passing null
+        for an SVG Tear off type. I therefore updated the IDL to reflect the actual
+        behavior (no actual behavior change). The new IDL also now matches the spec:
+        http://www.w3.org/TR/SVG2/painting.html#InterfaceSVGMarkerElement
+
+        * svg/SVGSVGElement.idl:
+        Same comments as for SVGMarkerElement. The new IDL matches the actual
+        behavior and is closer to the specification. I added FIXME comments for when
+        it does not match the specification:
+        http://www.w3.org/TR/SVG2/struct.html#InterfaceSVGSVGElement
+        I did not change web-exposed behavior in this patch.
+
+        * svg/SVGTextContentElement.idl:
+        Same as above. No actual behavior change.
+
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * xml/XPathEvaluator.idl:
+
 2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Expose the value of aria-roledescription via an AtkObject attribute

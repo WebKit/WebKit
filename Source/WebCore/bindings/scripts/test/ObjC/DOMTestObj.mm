@@ -1388,6 +1388,18 @@
     IMPL->methodWithOptionalAny(core(a));
 }
 
+- (void)methodWithOptionalNullableWrapper:(DOMTestObj *)obj
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalNullableWrapper(core(obj));
+}
+
+- (void)methodWithOptionalNullableWrapperIsNull:(DOMTestObj *)obj
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalNullableWrapperIsNull(core(obj));
+}
+
 
 #if ENABLE(Condition1)
 - (NSString *)conditionalMethod1

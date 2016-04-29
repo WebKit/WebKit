@@ -562,13 +562,6 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCodeWithMessage& e
     m_transaction->deleteIndex(m_info.identifier(), name);
 }
 
-RefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
-{
-    LOG(IndexedDB, "IDBObjectStore::count");
-
-    return doCount(context, IDBKeyRangeData::allKeys(), ec);
-}
-
 RefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext& context, JSValue key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::count");

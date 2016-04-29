@@ -3380,7 +3380,6 @@ sub CanUseWTFOptionalForParameter
     return 0 if $parameter->isVariadic;
     return 0 if $codeGenerator->IsCallbackInterface($type);
     return 0 if $codeGenerator->IsEnumType($type);
-    return 0 if $codeGenerator->IsWrapperType($type);
 
     return 1;
 }
@@ -3419,6 +3418,8 @@ sub WillConvertUndefinedToDefaultParameterValue
         return 1 if $parameterType eq "double" or $parameterType eq "unrestricted double";
         return 1 if $parameterType eq "float" or $parameterType eq "unrestricted float";
     }
+
+    return 1 if $codeGenerator->IsWrapperType($parameterType) and $defaultValue eq "null";
 
     return 0;
 }
@@ -3469,14 +3470,22 @@ sub GenerateParametersCheck
         my $argType = $parameter->type;
         my $optional = $parameter->isOptional;
 
-        # As per Web IDL, optional dictionary parameters are always considered to have a default value of an empty dictionary, unless otherwise specified.
-        $parameter->default("[]") if ($optional && !defined($parameter->default) && $argType eq "Dictionary");
+        die "Optional parameters of non-nullable wrapper types are not supported" if $optional && !$parameter->isNullable && $codeGenerator->IsWrapperType($argType) && !$codeGenerator->IsCallbackInterface($argType);
 
-        # We use the null string as default value for non-nullable parameters of type DOMString unless specified otherwise.
-        $parameter->default("null") if ($optional && !defined($parameter->default) && $argType eq "DOMString" && !$parameter->isNullable);
+        if ($optional && !defined($parameter->default)) {
+            # As per Web IDL, optional dictionary parameters are always considered to have a default value of an empty dictionary, unless otherwise specified.
+            $parameter->default("[]") if $argType eq "Dictionary";
+            
+            # We use undefined as default value for optional parameters of type 'any' unless specified otherwise.
+            $parameter->default("undefined") if $argType eq "any";
 
-        # We use undefined as default value for optional parameters of type 'any' unless specified otherwise.
-        $parameter->default("undefined") if ($optional && !defined($parameter->default) && $argType eq "any");
+            # We use the null string as default value for parameters of type DOMString unless specified otherwise.
+            $parameter->default("null") if $argType eq "DOMString";
+
+            # As per Web IDL, passing undefined for a nullable parameter is treated as null. Therefore, use null as
+            # default value for nullable parameters unless otherwise specified.
+            $parameter->default("null") if $parameter->isNullable;
+        }
 
         # FIXME: We should eventually stop generating any early calls, and instead use either default parameter values or WTF::Optional<>.
         if ($optional && !defined($parameter->default) && !CanUseWTFOptionalForParameter($parameter) && !$codeGenerator->IsCallbackInterface($argType)) {

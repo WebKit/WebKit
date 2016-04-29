@@ -326,7 +326,6 @@ public:
     void startTrackingCompositingUpdates(ExceptionCode&);
     unsigned compositingUpdateCount(ExceptionCode&);
 
-    void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(ExceptionCode&);
     void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node*, ExceptionCode&);
     unsigned layoutCount() const;
 

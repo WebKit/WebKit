@@ -40,7 +40,7 @@ interface SVGTextContentElement : SVGGraphicsElement {
     [RaisesException] SVGPoint getEndPositionOfChar(optional unsigned long offset = 0);
     [RaisesException] SVGRect getExtentOfChar(optional unsigned long offset = 0);
     [RaisesException] unrestricted float getRotationOfChar(optional unsigned long offset = 0);
-    long getCharNumAtPosition(optional SVGPoint point = null);
+    long getCharNumAtPosition(SVGPoint point);
     [RaisesException] void selectSubString(optional unsigned long offset = 0, optional unsigned long length = 0);
 };
 

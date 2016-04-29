@@ -46,7 +46,7 @@
     [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest get(any key);
     [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest getKey(IDBKeyRange? key);
     [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest getKey(any key);
-    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest count(optional IDBKeyRange? range);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest count(optional IDBKeyRange? range = null);
     [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest count(any key);
 };
 

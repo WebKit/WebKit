@@ -50,10 +50,16 @@ interface SVGSVGElement : SVGGraphicsElement {
     boolean animationsPaused();
     unrestricted float getCurrentTime();
     void setCurrentTime(optional unrestricted float seconds = NaN);
-    NodeList getIntersectionList(optional SVGRect rect = null, optional SVGElement? referenceElement = null);
-    NodeList getEnclosureList(optional SVGRect rect = null, optional SVGElement? referenceElement = null);
-    boolean checkIntersection(optional SVGElement? element = null, optional SVGRect rect = null);
-    boolean checkEnclosure(optional SVGElement? element = null, optional SVGRect rect = null);
+
+    // FIXME: referenceElement should not be optional.
+    NodeList getIntersectionList(SVGRect rect, optional SVGElement? referenceElement = null);
+
+    // FIXME: referenceElement should not be optional.
+    NodeList getEnclosureList(SVGRect rect, optional SVGElement? referenceElement = null);
+
+    boolean checkIntersection(SVGElement? element, SVGRect rect); // element should not be nullable.
+    boolean checkEnclosure(SVGElement? element, SVGRect rect); // element should not be nullable.
+
     void deselectAll();
 
     SVGNumber createSVGNumber();
@@ -63,7 +69,7 @@ interface SVGSVGElement : SVGGraphicsElement {
     SVGMatrix createSVGMatrix();
     SVGRect createSVGRect();
     SVGTransform createSVGTransform();
-    SVGTransform createSVGTransformFromMatrix(optional SVGMatrix matrix = null);
+    SVGTransform createSVGTransformFromMatrix(SVGMatrix matrix);
 
     // FIXME: Using "undefined" as default parameter value is wrong.
     Element getElementById([RequiresExistingAtomicString] optional DOMString elementId = "undefined");

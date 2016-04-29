@@ -22,6 +22,8 @@
 ] interface MediaQueryList {
     readonly attribute DOMString media;
     readonly attribute boolean matches;
-    void addListener(optional MediaQueryListListener listener);
-    void removeListener(optional MediaQueryListListener listener);
+
+    // FIXME: The listener parameter should not be optional.
+    void addListener(optional MediaQueryListListener? listener = null);
+    void removeListener(optional MediaQueryListListener? listener = null);
 };

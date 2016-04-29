@@ -709,6 +709,26 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_any(WebKitDOMTestObj* self, WebKitDOMany* a);
 
 /**
+ * webkit_dom_test_obj_method_with_optional_nullable_wrapper:
+ * @self: A #WebKitDOMTestObj
+ * @obj: A #WebKitDOMTestObj
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_nullable_wrapper(WebKitDOMTestObj* self, WebKitDOMTestObj* obj);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_nullable_wrapper_is_null:
+ * @self: A #WebKitDOMTestObj
+ * @obj: A #WebKitDOMTestObj
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_nullable_wrapper_is_null(WebKitDOMTestObj* self, WebKitDOMTestObj* obj);
+
+/**
  * webkit_dom_test_obj_conditional_method1:
  * @self: A #WebKitDOMTestObj
  *

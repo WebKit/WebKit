@@ -194,6 +194,8 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)methodWithOptionalBoolean:(BOOL)b;
 - (void)methodWithOptionalBooleanIsFalse:(BOOL)b;
 - (void)methodWithOptionalAny:(DOMany *)a;
+- (void)methodWithOptionalNullableWrapper:(DOMTestObj *)obj;
+- (void)methodWithOptionalNullableWrapperIsNull:(DOMTestObj *)obj;
 - (void)classMethod;
 - (int)classMethodWithOptional:(int)arg;
 - (void)classMethod2:(int)arg;
