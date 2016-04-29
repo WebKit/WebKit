@@ -1000,13 +1000,13 @@ void RenderBlock::addOverflowFromChildren()
     }
 }
 
+// Overflow is always relative to the border-box of the element in question.
+// Therefore, if the element has a vertical scrollbar placed on the left, an overflow rect at x=2px would conceptually intersect the scrollbar.
 void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool)
 {
     clearOverflow();
-    // Add overflow from children.
     addOverflowFromChildren();
 
-    // Add in the overflow from positioned objects.
     addOverflowFromPositionedObjects();
 
     if (hasOverflowClip()) {

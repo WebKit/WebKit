@@ -1,3 +1,29 @@
+2016-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [RTL Scrollbars] REGRESSION(r200116): Positioned contents can overlap RTL scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=157164
+        <rdar://problem/25993610>
+
+        Reviewed by Darin Adler.
+
+        There was some code left over from the old implementation of RTL_SCROLLBARS
+        which had some faulty assumptions about the interaction between direction
+        and scrollbar placement. In particular, once we began obeying the "dir"
+        attribute in r200116, these assumptions were no longer valid.
+
+        Test: fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html
+              scrollbars/rtl/div-absolute.html
+              scrollbars/rtl/div-horizontal.html
+
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::layoutOverflowRect):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow): Deleted.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::computeScrollDimensions):
+
 2016-04-29  Nan Wang  <n_wang@apple.com>
 
         AX: CharacterOffset not working correctly with composed characters and collapsed white spaces

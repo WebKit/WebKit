@@ -1,3 +1,15 @@
+2016-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [RTL Scrollbars] REGRESSION(r200116): Positioned contents can overlap RTL scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=157164
+        <rdar://problem/25993610>
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+        * fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html: Added.
+
 2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] r65681 broke a couple GTK+ a11y tests
