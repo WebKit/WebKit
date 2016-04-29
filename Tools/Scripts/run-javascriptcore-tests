@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2013-2015 Apple Inc.  All rights reserved.
+# Copyright (C) 2005, 2013-2016 Apple Inc.  All rights reserved.
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -332,8 +332,7 @@ sub runJSCStressTests
 
     if (defined($jsonFileName)) {
         my %jsonData = (
-            "numJSCStressFailures" => $numJSCStressFailures,
-            "jscStressFailList" => \@jscStressFailList,
+            "failures" => \@jscStressFailList,
         );
 
         open(my $fileHandler, ">", $jsonFileName) or die;

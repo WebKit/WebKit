@@ -1,3 +1,20 @@
+2016-04-29  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Add JSC test results in JSON format to a Buildbot log.
+        https://bugs.webkit.org/show_bug.cgi?id=156920
+
+        Reviewed by Daniel Bates.
+
+        Generate JSON results for JSC tests and upload them to the master
+        using Buildbot's logfiles machinery.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests): Use --json-output option when invoking the
+        run-javascriptcore-tests Perl script, and expose this JSON output as a 
+        Buildbot log.
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Change key names and remove redundant count key.
+
 2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Expose the value of aria-roledescription via an AtkObject attribute
