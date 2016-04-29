@@ -293,7 +293,9 @@ void FetchResponse::consumeBodyAsStream()
 ReadableStreamSource* FetchResponse::createReadableStreamSource()
 {
     ASSERT(!m_readableStreamSource);
-    if (body().isEmpty() || isDisturbed())
+    ASSERT(!isDisturbed());
+
+    if (body().isEmpty())
         return nullptr;
 
     m_readableStreamSource = adoptRef(*new FetchResponseSource(*this));

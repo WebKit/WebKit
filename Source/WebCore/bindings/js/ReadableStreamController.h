@@ -67,6 +67,7 @@ private:
 };
 
 JSC::JSValue createReadableStream(JSC::ExecState&, JSDOMGlobalObject*, ReadableStreamSource*);
+JSC::JSValue getReadableStreamReader(JSC::ExecState&, JSC::JSValue);
 
 inline JSDOMGlobalObject* ReadableStreamController::globalObject() const
 {

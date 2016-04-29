@@ -1,3 +1,21 @@
+2016-04-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        FetchResponse should return a ReadableStream even if disturbed
+        https://bugs.webkit.org/show_bug.cgi?id=156911
+
+        Reviewed by Darin Adler.
+
+        Covered by rebased test.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::createReadableStreamSource): Asserting in case response is disturbed.
+        * bindings/js/JSFetchResponseCustom.cpp:
+        (WebCore::JSFetchResponse::body): Creating a locked empty readable stream if response is disturbed.
+        * bindings/js/ReadableStreamController.cpp:
+        (WebCore::createReadableStream): Constructing a readable stream even if source is null.
+        (WebCore::getReadableStreamReader): Retrieving the reader from a readable stream. Stream must not be locked.
+        * bindings/js/ReadableStreamController.h:
+
 2016-04-29  Yoav Weiss  <yoav@yoav.ws>
 
         Move ResourceTiming behind a runtime flag

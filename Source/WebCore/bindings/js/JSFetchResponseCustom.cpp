@@ -38,8 +38,18 @@ namespace WebCore {
 JSC::JSValue JSFetchResponse::body(JSC::ExecState& state) const
 {
 #if ENABLE(STREAMS_API)
-    if (!m_body)
-        m_body.set(state.vm(), this, createReadableStream(state, globalObject(), wrapped().createReadableStreamSource()));
+    if (!m_body) {
+        JSC::JSValue readableStream;
+        if (wrapped().isDisturbed()) {
+            readableStream = createReadableStream(state, globalObject(), nullptr);
+            // Let's get the reader to lock it.
+            getReadableStreamReader(state, readableStream);
+        } else {
+            ReadableStreamSource* source = wrapped().createReadableStreamSource();
+            readableStream = source ? createReadableStream(state, globalObject(), source) : JSC::jsNull();
+        }
+        m_body.set(state.vm(), this, readableStream);
+    }
     return m_body.get();
 #else
     UNUSED_PARAM(state);
