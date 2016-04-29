@@ -1,3 +1,21 @@
+2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] r65681 broke a couple GTK+ a11y tests
+        https://bugs.webkit.org/show_bug.cgi?id=44316
+
+        Reviewed by Martin Robinson.
+
+        The original regression has apparently been fixed, possibly quite some time
+        ago. Updating both tests and associated expectations to reflect what has
+        changed over the years. Leaving title-and-alt.html as skipped, but marked
+        as failing due to a different bug (157187).
+
+        * accessibility/gtk/object-attributes-expected.txt:
+        * accessibility/gtk/object-attributes.html:
+        * accessibility/gtk/title-and-alt-expected.txt:
+        * accessibility/gtk/title-and-alt.html:
+        * platform/gtk/TestExpectations:
+
 2016-04-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a typo in r200255.

@@ -4,9 +4,12 @@
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body id="body">
-<img src="image.jpg" alt="Image alt attr" title="Image title attr">
+<img src="image.jpg" alt="Image alt attr" title="Image title attr" id="image">
 <form>
-<a href="" title="Link title attr">Functional label</a>:<input title="Entry title attr" type="text" /><input value="Clear" type="reset" /><input value="Submit" title="Submit button title attr" type="submit" />
+<a href="" title="Link title attr" id="link">Functional label</a>:
+<input title="Entry title attr" type="text" id="entry" />
+<input value="Clear" type="reset" />
+<input value="Submit" title="Submit button title attr" type="submit" id="button" />
 </form>
 <p id="description"></p>
 <div id="console"></div>
@@ -14,22 +17,20 @@
     description("This tests the exposure of alt and title information.");
     if (window.accessibilityController) {
         testRunner.dumpAsText();
-        document.getElementById("body").focus();
-        var webArea = accessibilityController.focusedElement;
 
-        var image = webArea.childAtIndex(0);
+        var image = accessibilityController.accessibleElementById("image");
         shouldBe("image.title", "'AXTitle: Image alt attr'");
         shouldBe("image.description", "'AXDescription: Image title attr'");
 
-        var link = webArea.childAtIndex(1);
-        shouldBe("link.title", "'AXTitle: '");
+        var link = accessibilityController.accessibleElementById("link");
+        shouldBe("link.title", "'AXTitle: Functional label.'");
         shouldBe("link.description", "'AXDescription: Link title attr'");
 
-        var entry = webArea.childAtIndex(2);
+        var entry = accessibilityController.accessibleElementById("entry");
         shouldBe("entry.title", "'AXTitle: '");
         shouldBe("entry.description", "'AXDescription: Entry title attr'");
 
-        var button = webArea.childAtIndex(4);
+        var button = accessibilityController.accessibleElementById("button");
         shouldBe("button.title", "'AXTitle: Submit'");
         shouldBe("button.description", "'AXDescription: Submit button title attr'");
         }

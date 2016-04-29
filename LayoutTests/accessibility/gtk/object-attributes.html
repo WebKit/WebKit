@@ -27,34 +27,7 @@
     if (window.accessibilityController) {
         testRunner.dumpAsText();
         document.getElementById("body").focus();
-        var webArea = accessibilityController.focusedElement;
-        var child = webArea.childAtIndex(0);
-        shouldBe("child.role", "'AXRole: heading'");
-        shouldBe("child.allAttributes()", "'level:1, toolkit:WebKitGtk'");
-        child = webArea.childAtIndex(1);
-        shouldBe("child.role", "'AXRole: heading'");
-        shouldBe("child.allAttributes()", "'level:2, toolkit:WebKitGtk'");
-        child = webArea.childAtIndex(2);
-        shouldBe("child.role", "'AXRole: heading'");
-        shouldBe("child.allAttributes()", "'level:3, toolkit:WebKitGtk'");
-        child = webArea.childAtIndex(3);
-        shouldBe("child.role", "'AXRole: heading'");
-        shouldBe("child.allAttributes()", "'level:4, toolkit:WebKitGtk'");
-        child = webArea.childAtIndex(4);
-        shouldBe("child.role", "'AXRole: heading'");
-        shouldBe("child.allAttributes()", "'level:5, toolkit:WebKitGtk'");
-        child = webArea.childAtIndex(5);
-        shouldBe("child.role", "'AXRole: heading'");
-        shouldBe("child.allAttributes()", "'level:6, toolkit:WebKitGtk'");
-        child = webArea.childAtIndex(6);
-        shouldBe("child.role", "'AXRole: link'");
-        shouldBe("child.allAttributes()", "'toolkit:WebKitGtk'");
-        child = webArea.childAtIndex(7);
-        shouldBe("child.role", "'AXRole: table'");
-        shouldBe("child.allAttributes()", "'toolkit:WebKitGtk'");
-        child = webArea.childAtIndex(8);
-        shouldBe("child.role", "'AXRole: table'");
-        shouldBe("child.allAttributes()", "'toolkit:WebKitGtk'");
+        debug(accessibilityController.focusedElement.attributesOfChildren());
     }
 </script>
 <script src="../../resources/js-test-post.js"></script>
