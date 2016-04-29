@@ -110,7 +110,8 @@ Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue ne
 
             // Note, Reflect.construct might cause the profile to churn but we don't care.
             JSObject* prototype = jsDynamicCast<JSObject*>(newTarget.get(exec, exec->propertyNames().prototype));
-            ASSERT(!exec->hadException());
+            if (exec->hadException())
+                return nullptr;
             if (prototype)
                 return targetFunction->rareData(vm)->createInternalFunctionAllocationStructureFromBase(vm, prototype, baseClass);
         } else {
