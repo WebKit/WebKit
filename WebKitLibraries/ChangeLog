@@ -1,3 +1,13 @@
+2016-04-28  Dean Jackson  <dino@apple.com>
+
+        Update WebKitSystemInterface to internal version 82799.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceElCapitan.a:
+        * libWebKitSystemInterfaceIOSDevice9.2.a:
+        * libWebKitSystemInterfaceIOSSimulator9.2.a:
+        * libWebKitSystemInterfaceYosemite.a:
+
 2016-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: make at the root should not create a WebKitLibraries/--lvm directory

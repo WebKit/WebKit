@@ -120,6 +120,7 @@ void WKCFURLCacheDeleteHostNamesInPersistentStore(CFArrayRef hostArray);
 typedef enum {
     WKSandboxExtensionTypeReadOnly,
     WKSandboxExtensionTypeReadWrite,
+    WKSandboxExtensionTypeGeneric,
 } WKSandboxExtensionType;
 typedef struct __WKSandboxExtension *WKSandboxExtensionRef;
 
