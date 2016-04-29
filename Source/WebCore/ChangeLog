@@ -1,3 +1,37 @@
+2016-04-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] AirPlay fails if target is set before AVPlayer has been created
+        https://bugs.webkit.org/show_bug.cgi?id=157147
+        <rdar://problem/24197592>
+
+        Reviewed by Jer Noble.
+
+        Test: media/media-source/media-source-airplay.html
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Clear flag before calling
+          setShouldPlayToPlaybackTarget so it does the necessary setup.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isAvailable): Return false if the mock
+          MSE source has been registered.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType): Return 'not supported' if
+          isAvailable is false.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::load): Fail if isAvailable is false.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless): Cleanup.
+
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::registered): Global accessor.
+        (WebCore::MockMediaPlayerMediaSource::isRegistered): 
+        (WebCore::MockMediaPlayerMediaSource::registerMediaEngine): Set registered to true.
+        (WebCore::MockMediaPlayerMediaSource::setWirelessPlaybackTarget): New, remember the target.
+        (WebCore::MockMediaPlayerMediaSource::setShouldPlayToPlaybackTarget): New, remember the setting.
+        (WebCore::MockMediaPlayerMediaSource::isCurrentPlaybackTargetWireless):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::initializeMockMediaSource): Don't disable AVFoundation.
+
 2016-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [RTL Scrollbars] REGRESSION(r200116): Positioned contents can overlap RTL scrollbars
