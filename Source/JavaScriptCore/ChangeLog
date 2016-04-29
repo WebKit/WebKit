@@ -1,3 +1,26 @@
+2016-04-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unused bool parameter in CodeCache::getGlobalCodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=157156
+
+        Reviewed by Mark Lam.
+
+        The bool parameter appears to be isArrowFunctionContext, but the method's
+        contents just get that property from the Executable, so the parameter is
+        unnecessary and unused.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        (JSC::CodeCache::getModuleProgramCodeBlock):
+        * runtime/CodeCache.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::create):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+        * runtime/JSGlobalObject.h:
+
 2016-04-28  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] re-implement String#padStart and String#padEnd in JavaScript

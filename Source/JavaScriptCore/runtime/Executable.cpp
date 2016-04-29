@@ -437,7 +437,7 @@ EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source
     EvalExecutable* executable = new (NotNull, allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext, derivedContextType, isArrowFunctionContext, evalContextType);
     executable->finishCreation(exec->vm());
 
-    UnlinkedEvalCodeBlock* unlinkedEvalCode = globalObject->createEvalCodeBlock(exec, executable, thisTDZMode, isArrowFunctionContext, variablesUnderTDZ);
+    UnlinkedEvalCodeBlock* unlinkedEvalCode = globalObject->createEvalCodeBlock(exec, executable, thisTDZMode, variablesUnderTDZ);
     if (!unlinkedEvalCode)
         return 0;
 
