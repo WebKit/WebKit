@@ -162,7 +162,6 @@ public:
 #if USE(FREETYPE)
     HarfBuzzFace* harfBuzzFace() const;
     bool hasCompatibleCharmap() const;
-    PassRefPtr<OpenTypeVerticalData> verticalData() const;
     FcFontSet* fallbacks() const;
 #endif
 

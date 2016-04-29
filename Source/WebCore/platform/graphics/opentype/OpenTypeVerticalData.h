@@ -65,9 +65,6 @@ private:
     Vector<int16_t> m_topSideBearings;
     int16_t m_defaultVertOriginY;
     HashMap<Glyph, int16_t> m_vertOriginY;
-
-    friend class FontCache;
-    bool m_inFontCache; // for mark & sweep in FontCache::purgeInactiveFontData()
 };
 
 } // namespace WebCore

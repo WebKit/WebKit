@@ -1,3 +1,31 @@
+2016-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [FreeType] ASSERTION FAILED: !lookupForWriting(Extractor::extract(entry)).second in FontCache::getVerticalData()
+        https://bugs.webkit.org/show_bug.cgi?id=157132
+
+        Reviewed by Darin Adler.
+
+        I've noticed that some tests fail randomly in the GTK+ debug bot due to an assertion in HashMap when getting
+        vertical data from the FontCache. I don't know exactly what's wrong, but looks like a problem with the
+        FontVerticalDataCache hash traits implementation. Looking at the code, I've realized that we could simplify
+        everything by reusing the FontDataCache hash and traits, since we are actually using the
+        FontPlatformData::hash() in the end in both cases. Also, I don't see why we need to get the vertical data from
+        the FontPlatformData while it's actually cached by the font cache. We could just use the FontCache directly
+        passing only the FontPlatformData. These changes seem to fix the crashes and make the code a lot simpler.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font): Use FontCache::verticalData().
+        * platform/graphics/FontCache.cpp:
+        (WebCore::fontVerticalDataCache):
+        (WebCore::FontCache::verticalData):
+        (WebCore::FontCache::purgeInactiveFontData): Also remove the cached vertical data when removing a font.
+        (WebCore::FontCache::invalidate): Clear also the vertical data.
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::openTypeTable): Deleted.
+        * platform/graphics/opentype/OpenTypeVerticalData.h: Remove the m_inFontCache member that is now unused.
+
 2016-04-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove UsePointersEvenForNonNullableObjectArguments keyword

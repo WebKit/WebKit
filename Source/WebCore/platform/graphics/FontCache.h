@@ -209,8 +209,7 @@ public:
 #endif
 
 #if ENABLE(OPENTYPE_VERTICAL)
-    typedef AtomicString FontFileKey;
-    PassRefPtr<OpenTypeVerticalData> getVerticalData(const FontFileKey&, const FontPlatformData&);
+    RefPtr<OpenTypeVerticalData> verticalData(const FontPlatformData&);
 #endif
 
 private:

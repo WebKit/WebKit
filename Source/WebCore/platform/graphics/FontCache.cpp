@@ -267,62 +267,6 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
     return it->value.get();
 }
 
-#if ENABLE(OPENTYPE_VERTICAL)
-struct FontVerticalDataCacheKeyHash {
-    static unsigned hash(const FontCache::FontFileKey& fontFileKey)
-    {
-        return PtrHash<const FontCache::FontFileKey*>::hash(&fontFileKey);
-    }
-
-    static bool equal(const FontCache::FontFileKey& a, const FontCache::FontFileKey& b)
-    {
-        return a == b;
-    }
-
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-struct FontVerticalDataCacheKeyTraits : WTF::GenericHashTraits<FontCache::FontFileKey> {
-    static const bool emptyValueIsZero = true;
-    static const bool needsDestruction = true;
-    static const FontCache::FontFileKey& emptyValue()
-    {
-        static NeverDestroyed<FontCache::FontFileKey> key = nullAtom;
-        return key;
-    }
-    static void constructDeletedValue(FontCache::FontFileKey& slot)
-    {
-        new (NotNull, &slot) FontCache::FontFileKey(HashTableDeletedValue);
-    }
-    static bool isDeletedValue(const FontCache::FontFileKey& value)
-    {
-        return value.isHashTableDeletedValue();
-    }
-};
-
-typedef HashMap<FontCache::FontFileKey, RefPtr<OpenTypeVerticalData>, FontVerticalDataCacheKeyHash, FontVerticalDataCacheKeyTraits> FontVerticalDataCache;
-
-FontVerticalDataCache& fontVerticalDataCacheInstance()
-{
-    static NeverDestroyed<FontVerticalDataCache> fontVerticalDataCache;
-    return fontVerticalDataCache;
-}
-
-PassRefPtr<OpenTypeVerticalData> FontCache::getVerticalData(const FontFileKey& key, const FontPlatformData& platformData)
-{
-    FontVerticalDataCache& fontVerticalDataCache = fontVerticalDataCacheInstance();
-    FontVerticalDataCache::iterator result = fontVerticalDataCache.find(key);
-    if (result != fontVerticalDataCache.end())
-        return result.get()->value;
-
-    RefPtr<OpenTypeVerticalData> verticalData = OpenTypeVerticalData::create(platformData);
-    if (!verticalData->isOpenType())
-        verticalData = nullptr;
-    fontVerticalDataCache.set(key, verticalData);
-    return verticalData;
-}
-#endif
-
 struct FontDataCacheKeyHash {
     static unsigned hash(const FontPlatformData& platformData)
     {
@@ -362,6 +306,25 @@ static FontDataCache& cachedFonts()
     return cache;
 }
 
+#if ENABLE(OPENTYPE_VERTICAL)
+typedef HashMap<FontPlatformData, RefPtr<OpenTypeVerticalData>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontVerticalDataCache;
+
+FontVerticalDataCache& fontVerticalDataCache()
+{
+    static NeverDestroyed<FontVerticalDataCache> fontVerticalDataCache;
+    return fontVerticalDataCache;
+}
+
+RefPtr<OpenTypeVerticalData> FontCache::verticalData(const FontPlatformData& platformData)
+{
+    auto addResult = fontVerticalDataCache().add(platformData, nullptr);
+    if (addResult.isNewEntry) {
+        RefPtr<OpenTypeVerticalData> data = OpenTypeVerticalData::create(platformData);
+        addResult.iterator->value = data->isOpenType() ? WTFMove(data) : nullptr;
+    }
+    return addResult.iterator->value;
+}
+#endif
 
 #if PLATFORM(IOS)
 const unsigned cMaxInactiveFontData = 120;
@@ -440,6 +403,9 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
         for (auto& font : fontsToDelete) {
             bool success = cachedFonts().remove(font->platformData());
             ASSERT_UNUSED(success, success);
+#if ENABLE(OPENTYPE_VERTICAL)
+            fontVerticalDataCache().remove(font->platformData());
+#endif
         }
     };
 
@@ -451,30 +417,6 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
     }
     for (auto& key : keysToRemove)
         fontPlatformDataCache().remove(key);
-
-#if ENABLE(OPENTYPE_VERTICAL)
-    FontVerticalDataCache& fontVerticalDataCache = fontVerticalDataCacheInstance();
-    if (!fontVerticalDataCache.isEmpty()) {
-        // Mark & sweep unused verticalData
-        for (auto& verticalData : fontVerticalDataCache.values()) {
-            if (verticalData)
-                verticalData->m_inFontCache = false;
-        }
-        for (auto& font : cachedFonts().values()) {
-            auto* verticalData = const_cast<OpenTypeVerticalData*>(font->verticalData());
-            if (verticalData)
-                verticalData->m_inFontCache = true;
-        }
-        Vector<FontFileKey> keysToRemove;
-        keysToRemove.reserveInitialCapacity(fontVerticalDataCache.size());
-        for (auto& it : fontVerticalDataCache) {
-            if (!it.value || !it.value->m_inFontCache)
-                keysToRemove.append(it.key);
-        }
-        for (auto& key : keysToRemove)
-            fontVerticalDataCache.remove(key);
-    }
-#endif
 
     platformPurgeInactiveFontData();
 }
@@ -531,6 +473,9 @@ void FontCache::invalidate()
     }
 
     fontPlatformDataCache().clear();
+#if ENABLE(OPENTYPE_VERTICAL)
+    fontVerticalDataCache().clear();
+#endif
     invalidateFontCascadeCache();
 
     gGeneration++;

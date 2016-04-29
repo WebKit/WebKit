@@ -356,12 +356,6 @@ bool FontPlatformData::hasCompatibleCharmap() const
         && FT_Select_Charmap(freeTypeFace, ft_encoding_apple_roman));
 }
 
-PassRefPtr<OpenTypeVerticalData> FontPlatformData::verticalData() const
-{
-    ASSERT(hash());
-    return FontCache::singleton().getVerticalData(String::number(hash()), *this);
-}
-
 RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
     CairoFtFaceLocker cairoFtFaceLocker(m_scaledFont.get());
