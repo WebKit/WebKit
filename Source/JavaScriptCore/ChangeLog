@@ -1,3 +1,22 @@
+2016-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] RegExp.prototype.@@replace should use @isObject instead of `instanceof` for object guard
+        https://bugs.webkit.org/show_bug.cgi?id=157124
+
+        Reviewed by Keith Miller.
+
+        Use @isObject instead of `instanceof @Object`.
+        The `instanceof` check is not enough to check Object Type.
+        This fix itself is the same to r199647, and this patch is for RegExp.prototype.@@replace.
+
+        * builtins/RegExpPrototype.js:
+        (replace):
+        * tests/stress/regexp-replace-in-other-realm-should-work.js: Added.
+        (shouldBe):
+        * tests/stress/regexp-replace-should-work-with-objects-not-inheriting-object-prototype.js: Added.
+        (shouldBe):
+        (regexp.exec):
+
 2016-04-29  Yoav Weiss  <yoav@yoav.ws>
 
         Move ResourceTiming behind a runtime flag

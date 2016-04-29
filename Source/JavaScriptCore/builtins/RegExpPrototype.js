@@ -197,7 +197,7 @@ function replace(strArg, replace)
         return result + replacement.substring(lastStart);
     }
 
-    if (!(this instanceof @Object))
+    if (!@isObject(this))
         throw new @TypeError("RegExp.prototype.@@replace requires that |this| be an Object");
 
     let regexp = this;
