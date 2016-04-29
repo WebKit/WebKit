@@ -1,3 +1,14 @@
+2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose elements with ARIA's "text" role
+        https://bugs.webkit.org/show_bug.cgi?id=157160
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-text-role.html: Modified to do platform-specific role checks.
+        * platform/gtk/TestExpectations: Unskipped three previously-failing tests.
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt: Updated for new behavior.
+
 2016-04-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import W3C CSS WG tests for shadow DOM

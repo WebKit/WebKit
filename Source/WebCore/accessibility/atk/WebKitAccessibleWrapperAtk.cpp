@@ -532,7 +532,11 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case SearchFieldRole:
         return ATK_ROLE_ENTRY;
     case StaticTextRole:
+#if ATK_CHECK_VERSION(2, 15, 2)
+        return ATK_ROLE_STATIC;
+#else
         return ATK_ROLE_TEXT;
+#endif
     case OutlineRole:
     case TreeRole:
         return ATK_ROLE_TREE;

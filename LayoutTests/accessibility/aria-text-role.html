@@ -22,7 +22,10 @@
 
         document.getElementById("textrole").focus();
         var textrole = accessibilityController.focusedElement;
-        shouldBe("textrole.role", "'AXRole: AXStaticText'");
+        if (accessibilityController.platformName == "atk")
+            shouldBe("textrole.role", "'AXRole: AXStatic'");
+        else
+            shouldBe("textrole.role", "'AXRole: AXStaticText'");
         shouldBe("textrole.stringValue", "'AXValue: all at once'");
 
         // now check the hit-testing

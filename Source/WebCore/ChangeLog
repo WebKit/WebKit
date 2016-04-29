@@ -1,3 +1,24 @@
+2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose elements with ARIA's "text" role
+        https://bugs.webkit.org/show_bug.cgi?id=157160
+
+        Reviewed by Chris Fleizach.
+
+        WebCore Accessibility's StaticTextRole is used for exposed RenderText
+        objects and for the ARIA "text" role. The former should be folded into
+        the parent element; the latter should not be, but was. Now we check to
+        see which type we have when building the accessibility tree. Also map
+        the "text" role to ATK_ROLE_STATIC.
+
+        We already have sufficient test coverage. Three previously-failing tests
+        are now passing.
+
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
 2016-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] ASSERTION FAILED: !lookupForWriting(Extractor::extract(entry)).second in FontCache::getVerticalData()

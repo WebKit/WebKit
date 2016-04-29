@@ -64,8 +64,9 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
         return IncludeObject;
 
     // The object containing the text should implement AtkText itself.
+    // However, WebCore also maps ARIA's "text" role to the StaticTextRole.
     if (role == StaticTextRole)
-        return IgnoreObject;
+        return ariaRoleAttribute() != UnknownRole ? DefaultBehavior : IgnoreObject;
 
     // Include all list items, regardless they have or not inline children
     if (role == ListItemRole)
