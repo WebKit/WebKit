@@ -34,6 +34,8 @@
 #include "RenderBlockFlow.h"
 #include "ScrollableArea.h"
 
+#include <wtf/Optional.h>
+
 namespace WebCore {
 
 class HTMLSelectElement;
@@ -149,9 +151,18 @@ private:
     PassRefPtr<Scrollbar> createScrollbar();
     void destroyScrollbar();
     
+    int maximumNumberOfItemsThatFitInPaddingBottomArea() const;
+
+    int numberOfVisibleItemsInPaddingTop() const;
+    int numberOfVisibleItemsInPaddingBottom() const;
+
+    void computeFirstIndexesVisibleInPaddingTopBottomAreas();
+
     LayoutUnit itemHeight() const;
     void valueChanged(unsigned listIndex);
-    int numVisibleItems() const;
+
+    enum class ConsiderPadding { Yes, No };
+    int numVisibleItems(ConsiderPadding = ConsiderPadding::No) const;
     int numItems() const;
     LayoutUnit listHeight() const;
     void paintScrollbar(PaintInfo&, const LayoutPoint&);
@@ -166,6 +177,9 @@ private:
     bool m_inAutoscroll;
     int m_optionsWidth;
     int m_indexOffset;
+
+    Optional<int> m_indexOfFirstVisibleItemInsidePaddingTopArea;
+    Optional<int> m_indexOfFirstVisibleItemInsidePaddingBottomArea;
 
     RefPtr<Scrollbar> m_vBar;
 };

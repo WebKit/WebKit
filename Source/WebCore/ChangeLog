@@ -1,3 +1,49 @@
+2016-04-29  Antonio Gomes  <tonikitoo@webkit.org>
+
+        <select multiple> padding should react when scrolling
+
+        https://bugs.webkit.org/show_bug.cgi?id=156590
+        https://bugs.webkit.org/show_bug.cgi?id=156591
+
+        Reviewed by Reviewed by Darin Adler.
+
+        Tests: fast/forms/listbox-respects-padding-bottom.html
+               fast/forms/listbox-top-padding-do-not-clip-items.html
+
+        Non-dropdown listboxes have support to padding-{top,bottom} implemented similarly
+        to the border model: the padding area does not move when the listbox' content gets scrolled,
+        but instead it clips out its content.
+        This is not consistent with other browsers and is not consistent with the CSS box model.
+
+        This in practice, if a <select> has padding-top set, the padding-top area will clip out listbox'
+        content as one scrolls upwards.
+        It also means that if padding-bottom is set, when one scrolls all the way to the bottom
+        of the listbox content, padding-bottom is not respected.
+
+        In order to fix these two problems, and make WebKit match Blink with respect to the the way
+        padding-{top,bottom} are handled, patch adds two class member variables that control the number
+        of list items (i.e. <option>s) that can be painted over the current listbox' padding area.
+
+        In short, depending on the scroll position and the amount of space available in the padding top/bottom
+        areas, items are painted or not on top of it, mimic'ing the CSS box model behavior of other browsers.
+
+        Note that this is specific solution is worth it to pursue on the short/mid term, but a long-term solution
+        to this problem and many other listbox discrepancies on WebKit's implementation, would be to reimplement
+        RenderListBox class in terms of RenderLayer. This will be a follow up work.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::numVisibleItems):
+        (WebCore::RenderListBox::paintObject):
+        (WebCore::RenderListBox::scrollToRevealElementAtListIndex):
+        (WebCore::RenderListBox::listIndexIsVisible):
+        (WebCore::RenderListBox::maximumNumberOfItemsThatFitInPaddingBottomArea):
+        (WebCore::RenderListBox::numberOfVisibleItemsInPaddingTop):
+        (WebCore::RenderListBox::numberOfVisibleItemsInPaddingBottom):
+        (WebCore::RenderListBox::computeFirstIndexesVisibleInPaddingTopBottomAreas):
+        (WebCore::RenderListBox::scrollTo):
+        * rendering/RenderListBox.h:
+
 2016-04-29  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] AirPlay fails if target is set before AVPlayer has been created

@@ -1,3 +1,16 @@
+2016-04-29  Antonio Gomes  <tonikitoo@webkit.org>
+
+        <select multiple> padding should react when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=156590
+        https://bugs.webkit.org/show_bug.cgi?id=156591
+
+        Reviewed by Reviewed by Darin Adler.
+
+        * fast/forms/listbox-respects-padding-bottom-expected.txt: Added.
+        * fast/forms/listbox-respects-padding-bottom.html: Added.
+        * fast/forms/listbox-top-padding-do-not-clip-items-expected.txt: Added.
+        * fast/forms/listbox-top-padding-do-not-clip-items.html: Added.
+
 2016-04-29  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] AirPlay fails if target is set before AVPlayer has been created
