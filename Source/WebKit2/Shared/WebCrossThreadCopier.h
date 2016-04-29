@@ -64,10 +64,6 @@ template<> struct CrossThreadCopierBase<false, false, Vector<uint8_t>> {
     static Vector<uint8_t> copy(const Vector<uint8_t>&);
 };
 
-template<> struct CrossThreadCopierBase<false, false, Vector<Vector<IDBKeyData>>> {
-    static Vector<Vector<IDBKeyData>> copy(const Vector<Vector<IDBKeyData>>&);
-};
-
 template<> struct CrossThreadCopierBase<false, false, WTF::ASCIILiteral> {
     static WTF::ASCIILiteral copy(const WTF::ASCIILiteral&);
 };

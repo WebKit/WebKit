@@ -1,3 +1,37 @@
+2016-04-29  Brady Eidson  <beidson@apple.com>
+
+        Add a default ".isolatedCopy()" specialization to CrossThreadCopier, and other small cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=157185
+
+        Reviewed by Anders Carlsson.
+
+        No new tests (Code cleanup, no change in behavior).
+
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::IndexedDB::TransactionMode>::copy): Deleted.
+        (WebCore::IndexedDB::CursorDirection>::copy): Deleted.
+        (WebCore::IndexedDB::CursorType>::copy): Deleted.
+        (WebCore::IDBGetResult>::copy): Deleted.
+        (WebCore::IDBKeyData>::copy): Deleted.
+        (WebCore::IDBKeyRangeData>::copy): Deleted.
+        (WebCore::IDBDatabaseInfo>::copy): Deleted.
+        (WebCore::IDBDatabaseIdentifier>::copy): Deleted.
+        (WebCore::IDBTransactionInfo>::copy): Deleted.
+        (WebCore::IDBResourceIdentifier>::copy): Deleted.
+        (WebCore::IDBError>::copy): Deleted.
+        (WebCore::IDBObjectStoreInfo>::copy): Deleted.
+        (WebCore::IDBIndexInfo>::copy): Deleted.
+        (WebCore::IDBCursorInfo>::copy): Deleted.
+        (WebCore::IDBValue>::copy): Deleted.
+
+        * platform/CrossThreadCopier.h:
+        (WebCore::AllowCrossThreadAccessWrapper::AllowCrossThreadAccessWrapper): Deleted dead code.
+        (WebCore::AllowCrossThreadAccessWrapper::value): Deleted dead code.
+        (WebCore::AllowCrossThreadAccess): Deleted dead code.
+        (WebCore::AllowAccessLaterWrapper::AllowAccessLaterWrapper): Deleted dead code.
+        (WebCore::AllowAccessLaterWrapper::value): Deleted dead code.
+        (WebCore::AllowAccessLater): Deleted dead code.
+
 2016-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Wheel Event Not Fired For `body,html { height:100% }`

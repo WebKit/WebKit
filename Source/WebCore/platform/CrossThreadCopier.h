@@ -100,6 +100,14 @@ template<> struct CrossThreadCopierBase<false, false, IntRect> : public CrossThr
 template<> struct CrossThreadCopierBase<false, false, IntSize> : public CrossThreadCopierPassThrough<IntSize> {
 };
 
+// Classes that have an isolatedCopy() method get a default specialization.
+template<class T> struct CrossThreadCopierBase<false, false, T> {
+    static T copy(const T& value)
+    {
+        return value.isolatedCopy();
+    }
+};
+
 // Custom copy methods.
 template<typename T> struct CrossThreadCopierBase<false, true, T> {
     typedef typename CrossThreadCopierBaseHelper::RemovePointer<T>::Type RefCountedType;
@@ -157,139 +165,8 @@ template<> struct CrossThreadCopierBase<false, false, Vector<String>> {
     static Type copy(const Vector<String>&);
 };
 
-#if ENABLE(INDEXED_DATABASE)
-namespace IndexedDB {
-enum class TransactionMode;
-enum class CursorDirection;
-enum class CursorType;
-}
-template<> struct CrossThreadCopierBase<false, false, IndexedDB::TransactionMode> {
-    WEBCORE_EXPORT static IndexedDB::TransactionMode copy(const IndexedDB::TransactionMode&);
-};
-template<> struct CrossThreadCopierBase<false, false, IndexedDB::CursorDirection> {
-    WEBCORE_EXPORT static IndexedDB::CursorDirection copy(const IndexedDB::CursorDirection&);
-};
-template<> struct CrossThreadCopierBase<false, false, IndexedDB::CursorType> {
-    WEBCORE_EXPORT static IndexedDB::CursorType copy(const IndexedDB::CursorType&);
-};
-
-class IDBGetResult;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBGetResult> {
-    typedef IDBGetResult Type;
-    static Type copy(const IDBGetResult&);
-};
-
-class IDBKeyData;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBKeyData> {
-    typedef IDBKeyData Type;
-    static Type copy(const IDBKeyData&);
-};
-
-struct IDBKeyRangeData;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBKeyRangeData> {
-    typedef IDBKeyRangeData Type;
-    static Type copy(const IDBKeyRangeData&);
-};
-
-class IDBDatabaseInfo;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBDatabaseInfo> {
-    typedef IDBDatabaseInfo Type;
-    static Type copy(const IDBDatabaseInfo&);
-};
-
-class IDBDatabaseIdentifier;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBDatabaseIdentifier> {
-    typedef IDBDatabaseIdentifier Type;
-    static Type copy(const IDBDatabaseIdentifier&);
-};
-
-class IDBError;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBError> {
-    typedef IDBError Type;
-    static Type copy(const IDBError&);
-};
-
-class IDBResourceIdentifier;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBResourceIdentifier> {
-    typedef IDBResourceIdentifier Type;
-    static Type copy(const IDBResourceIdentifier&);
-};
-
-class IDBTransactionInfo;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBTransactionInfo> {
-    typedef IDBTransactionInfo Type;
-    static Type copy(const IDBTransactionInfo&);
-};
-
-class IDBObjectStoreInfo;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBObjectStoreInfo> {
-    typedef IDBObjectStoreInfo Type;
-    static Type copy(const IDBObjectStoreInfo&);
-};
-
-class IDBIndexInfo;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBIndexInfo> {
-    typedef IDBIndexInfo Type;
-    static Type copy(const IDBIndexInfo&);
-};
-
-class IDBCursorInfo;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBCursorInfo> {
-    typedef IDBCursorInfo Type;
-    static Type copy(const IDBCursorInfo&);
-};
-
-class IDBValue;
-template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBValue> {
-    typedef IDBValue Type;
-    static Type copy(const IDBValue&);
-};
-
-#endif
-
 template<typename T>
 struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHelper::IsEnumOrConvertibleToInteger<T>::value, CrossThreadCopierBaseHelper::IsThreadSafeRefCountedPointer<T>::value, T> {
 };
-
-template<typename T> struct AllowCrossThreadAccessWrapper {
-public:
-    explicit AllowCrossThreadAccessWrapper(T* value)
-        : m_value(value) { }
-    T* value() const { return m_value; }
-private:
-    T* m_value;
-};
-
-template<typename T> struct CrossThreadCopierBase<false, false, AllowCrossThreadAccessWrapper<T>> {
-    typedef T* Type;
-    static Type copy(const AllowCrossThreadAccessWrapper<T>& wrapper) { return wrapper.value(); }
-};
-
-template<typename T> AllowCrossThreadAccessWrapper<T> AllowCrossThreadAccess(T* value) 
-{
-    return AllowCrossThreadAccessWrapper<T>(value);
-}
-
-// FIXME: Move to a different header file. AllowAccessLater is for cross-thread access
-// that is not cross-thread (tasks posted to a queue guaranteed to run on the same thread).
-template<typename T> struct AllowAccessLaterWrapper {
-public:
-    explicit AllowAccessLaterWrapper(T* value)
-        : m_value(value) { }
-    T* value() const { return m_value; }
-private:
-    T* m_value;
-};
-
-template<typename T> struct CrossThreadCopierBase<false, false, AllowAccessLaterWrapper<T>> {
-    typedef T* Type;
-    static Type copy(const AllowAccessLaterWrapper<T>& wrapper) { return wrapper.value(); }
-};
-
-template<typename T> AllowAccessLaterWrapper<T> AllowAccessLater(T* value)
-{
-    return AllowAccessLaterWrapper<T>(value);
-}
-
 
 } // namespace WebCore

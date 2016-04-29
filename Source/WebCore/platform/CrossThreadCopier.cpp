@@ -43,21 +43,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(INDEXED_DATABASE)
-#include "IDBCursorInfo.h"
-#include "IDBDatabaseIdentifier.h"
-#include "IDBDatabaseInfo.h"
-#include "IDBError.h"
-#include "IDBGetResult.h"
-#include "IDBIndexInfo.h"
-#include "IDBKeyData.h"
-#include "IDBKeyRangeData.h"
-#include "IDBObjectStoreInfo.h"
-#include "IDBResourceIdentifier.h"
-#include "IDBTransactionInfo.h"
-#include "IDBValue.h"
-#endif
-
 namespace WebCore {
 
 CrossThreadCopierBase<false, false, URL>::Type CrossThreadCopierBase<false, false, URL>::copy(const URL& url)
@@ -110,85 +95,6 @@ CrossThreadCopierBase<false, false, Vector<String>>::Type CrossThreadCopierBase<
     return result;
 }
 
-#if ENABLE(INDEXED_DATABASE)
-
-IndexedDB::TransactionMode CrossThreadCopierBase<false, false, IndexedDB::TransactionMode>::copy(const IndexedDB::TransactionMode& mode)
-{
-    return mode;
-}
-
-IndexedDB::CursorDirection CrossThreadCopierBase<false, false, IndexedDB::CursorDirection>::copy(const IndexedDB::CursorDirection& direction)
-{
-    return direction;
-}
-
-IndexedDB::CursorType CrossThreadCopierBase<false, false, IndexedDB::CursorType>::copy(const IndexedDB::CursorType& type)
-{
-    return type;
-}
-
-CrossThreadCopierBase<false, false, IDBGetResult>::Type CrossThreadCopierBase<false, false, IDBGetResult>::copy(const IDBGetResult& result)
-{
-    return result.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, IDBKeyData>::Type CrossThreadCopierBase<false, false, IDBKeyData>::copy(const IDBKeyData& keyData)
-{
-    return keyData.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, IDBKeyRangeData>::Type CrossThreadCopierBase<false, false, IDBKeyRangeData>::copy(const IDBKeyRangeData& keyRangeData)
-{
-    return keyRangeData.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, IDBDatabaseInfo>::Type CrossThreadCopierBase<false, false, IDBDatabaseInfo>::copy(const IDBDatabaseInfo& info)
-{
-    return info.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, IDBDatabaseIdentifier>::Type CrossThreadCopierBase<false, false, IDBDatabaseIdentifier>::copy(const IDBDatabaseIdentifier& identifier)
-{
-    return identifier.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, IDBTransactionInfo>::Type CrossThreadCopierBase<false, false, IDBTransactionInfo>::copy(const IDBTransactionInfo& info)
-{
-    return info.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, IDBResourceIdentifier>::Type CrossThreadCopierBase<false, false, IDBResourceIdentifier>::copy(const IDBResourceIdentifier& identifier)
-{
-    return identifier.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, IDBError>::Type CrossThreadCopierBase<false, false, IDBError>::copy(const IDBError& error)
-{
-    return error.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, IDBObjectStoreInfo>::Type CrossThreadCopierBase<false, false, IDBObjectStoreInfo>::copy(const IDBObjectStoreInfo& info)
-{
-    return info.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, IDBIndexInfo>::Type CrossThreadCopierBase<false, false, IDBIndexInfo>::copy(const IDBIndexInfo& info)
-{
-    return info.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, IDBCursorInfo>::Type CrossThreadCopierBase<false, false, IDBCursorInfo>::copy(const IDBCursorInfo& info)
-{
-    return info.isolatedCopy();
-}
-
-CrossThreadCopierBase<false, false, IDBValue>::Type CrossThreadCopierBase<false, false, IDBValue>::copy(const IDBValue& value)
-{
-    return value.isolatedCopy();
-}
-
-#endif // ENABLE(INDEXED_DATABASE)
-
 // Test CrossThreadCopier using COMPILE_ASSERT.
 
 // Verify that ThreadSafeRefCounted objects get handled correctly.
@@ -211,32 +117,25 @@ COMPILE_ASSERT((std::is_same<
                   >::value),
                RawPointerTest);
 
-
-// Add a generic specialization which will let's us verify that no other template matches.
-template<typename T> struct CrossThreadCopierBase<false, false, T> {
+// Add specializations for RefCounted types which will let us verify that no other template matches.
+template<typename T> struct CrossThreadCopierBase<false, false, RefPtr<T>> {
     typedef int Type;
 };
 
-// Verify that RefCounted objects only match our generic template which exposes Type as int.
+template<typename T> struct CrossThreadCopierBase<false, false, PassRefPtr<T>> {
+    typedef int Type;
+};
+
+template<typename T> struct CrossThreadCopierBase<false, false, T*> {
+    typedef int Type;
+};
+
+// Verify that RefCounted objects only match the above templates which expose Type as int.
 class CopierRefCountedTest : public RefCounted<CopierRefCountedTest> {
 };
 
-COMPILE_ASSERT((std::is_same<
-                  int,
-                  CrossThreadCopier<PassRefPtr<CopierRefCountedTest>>::Type
-                  >::value),
-               PassRefPtrRefCountedTest);
-
-COMPILE_ASSERT((std::is_same<
-                  int,
-                  CrossThreadCopier<RefPtr<CopierRefCountedTest>>::Type
-                  >::value),
-               RefPtrRefCountedTest);
-
-COMPILE_ASSERT((std::is_same<
-                  int,
-                  CrossThreadCopier<CopierRefCountedTest*>::Type
-                  >::value),
-               RawPointerRefCountedTest);
+static_assert((std::is_same<int, CrossThreadCopier<PassRefPtr<CopierRefCountedTest>>::Type>::value), "CrossThreadCopier specialization improperly applied to PassRefPtr<> of a RefCounted (but not ThreadSafeRefCounted) type");
+static_assert((std::is_same<int, CrossThreadCopier<RefPtr<CopierRefCountedTest>>::Type>::value), "CrossThreadCopier specialization improperly applied to RefPtr<> of a RefCounted (but not ThreadSafeRefCounted) type");
+static_assert((std::is_same<int, CrossThreadCopier<CopierRefCountedTest*>::Type>::value), "CrossThreadCopier specialization improperly applied to raw pointer of a RefCounted (but not ThreadSafeRefCounted) type");
 
 } // namespace WebCore
