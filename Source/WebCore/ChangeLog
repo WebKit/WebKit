@@ -1,3 +1,12 @@
+2016-04-29  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
+
+        [GTK] Fix build failure introduced by r199738
+        https://bugs.webkit.org/show_bug.cgi?id=157182
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+
 2016-04-29  Brady Eidson  <beidson@apple.com>
 
         Add a default ".isolatedCopy()" specialization to CrossThreadCopier, and other small cleanup.
