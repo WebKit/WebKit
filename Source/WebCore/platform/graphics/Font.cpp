@@ -477,11 +477,10 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
 
 void Font::removeFromSystemFallbackCache()
 {
+    systemFallbackCache().remove(this);
+
     if (!m_isUsedInSystemFallbackCache)
         return;
-
-    m_isUsedInSystemFallbackCache = false;
-    systemFallbackCache().remove(this);
 
     for (auto& characterMap : systemFallbackCache().values()) {
         Vector<CharacterFallbackMapKey, 512> toRemove;
