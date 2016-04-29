@@ -1,5 +1,18 @@
 2016-04-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Remove UsePointersEvenForNonNullableObjectArguments keyword
+        https://bugs.webkit.org/show_bug.cgi?id=156844
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ShouldPassWrapperByReference): Removed UsePointersEvenForNonNullableObjectArguments support.
+        * bindings/scripts/IDLAttributes.txt: Removed UsePointersEvenForNonNullableObjectArguments.
+
+2016-04-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         FetchResponse should return a ReadableStream even if disturbed
         https://bugs.webkit.org/show_bug.cgi?id=156911
 

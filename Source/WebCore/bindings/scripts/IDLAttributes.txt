@@ -125,5 +125,4 @@ TreatReturnedNaNDateAs=Null|NaN
 TypedArray=*
 URL
 Unforgeable
-UsePointersEvenForNonNullableObjectArguments
 WindowEventHandler
