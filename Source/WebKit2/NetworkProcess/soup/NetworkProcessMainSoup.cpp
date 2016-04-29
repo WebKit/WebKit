@@ -25,10 +25,10 @@
  */
 
 #include "config.h"
-#include "NetworkProcessMainUnix.h"
+#include "NetworkProcess.h"
 
 #include "ChildProcessMain.h"
-#include "NetworkProcess.h"
+#include "NetworkProcessMainUnix.h"
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 

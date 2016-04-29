@@ -1,3 +1,26 @@
+2016-04-29  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Move WK2 shareable code out from gtk directories
+        https://bugs.webkit.org/show_bug.cgi?id=157135
+
+        Reviewed by Darin Adler.
+
+        Both NetworkProcessMain and InjectedBundle can go out from their respective gtk directories.
+
+        * NetworkProcess/gtk/NetworkProcessMainGtk.cpp:
+        (WebKit::NetworkProcessMainUnix): Deleted.
+        * NetworkProcess/soup/NetworkProcessMainSoup.cpp: Renamed from Source/WebKit2/NetworkProcess/gtk/NetworkProcessMainGtk.cpp.
+        (WebKit::NetworkProcessMainUnix):
+        * PlatformGTK.cmake: Update.
+        * WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp: Renamed from Source/WebKit2/WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp.
+        (WebKit::InjectedBundle::initialize):
+        (WebKit::InjectedBundle::setBundleParameter):
+        (WebKit::InjectedBundle::setBundleParameters):
+        * WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp:
+        (WebKit::InjectedBundle::initialize): Deleted.
+        (WebKit::InjectedBundle::setBundleParameter): Deleted.
+        (WebKit::InjectedBundle::setBundleParameters): Deleted.
+
 2016-04-28  Dean Jackson  <dino@apple.com>
 
         RTL <select> popup menu is in the wrong location
