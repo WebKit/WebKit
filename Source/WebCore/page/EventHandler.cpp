@@ -2653,7 +2653,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     m_isHandlingWheelEvent = true;
     setFrameWasScrolledByUser();
 
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowShadowContent);
+    HitTestRequest request;
     HitTestResult result(view->windowToContents(event.position()));
     renderView->hitTest(request, result);
 
