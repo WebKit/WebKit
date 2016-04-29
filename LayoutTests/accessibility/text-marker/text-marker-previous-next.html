@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
+<meta charset="UTF-16">
 </head>
 <style>
 .userselect { user-select: none; -webkit-user-select: none; }
@@ -25,6 +26,10 @@ abc
 de
 f
 </div>
+
+<p id="text5">😃😏<p>
+
+<p id="text6">a     b</p>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -71,8 +76,8 @@ f
         markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker);
         shouldBe("text.stringForTextMarkerRange(markerRange)", "newline");
         
-        // Traverse backwards two more character, it will land at the last character of "text".
-        result = backwards(2, previousMarker, currentMarker, text);
+        // Traverse backwards one more character, it will land at the last character of "text".
+        result = backwards(1, previousMarker, currentMarker, text);
         previousMarker = result.previous;
         currentMarker = result.current;
         markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker);
@@ -93,8 +98,8 @@ f
         markerRange = text2.textMarkerRangeForMarkers(previousMarker, currentMarker);
         shouldBe("text2.stringForTextMarkerRange(markerRange)", "'d'");
         
-        // Traverse backwards 8 characters, it will land at the last character of "text1".
-        result = backwards(8, previousMarker, currentMarker, text2);
+        // Traverse backwards 6 characters, it will land at the last character of "text1".
+        result = backwards(6, previousMarker, currentMarker, text2);
         previousMarker = result.previous;
         currentMarker = result.current;
         markerRange = text2.textMarkerRangeForMarkers(previousMarker, currentMarker);
@@ -162,6 +167,33 @@ f
         }
         markerRange = text.textMarkerRangeForMarkers(startMarker, currentMarker)
         shouldBe("text.stringForTextMarkerRange(markerRange)", "'a'");
+        
+        // Test case with emoji.
+        text = accessibilityController.accessibleElementById("text5");
+        var emojiTextMarkerRange = text.textMarkerRangeForElement(text);
+        shouldBe("text.textMarkerRangeLength(emojiTextMarkerRange)", "4");
+        // Make sure navigating next/previous text marker is by emoji.
+        startMarker = text.startTextMarkerForTextMarkerRange(emojiTextMarkerRange);
+        result = forward(2, previousMarker, startMarker, text);
+        shouldBe("text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current))", "'😏'");
+        result = backwards(1, result.previous, result.current, text);
+        shouldBe("text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current))", "'😃'");
+        
+        // Test case with collapsed whitespace.
+        text = accessibilityController.accessibleElementById("text6");
+        var collapsedWhitespaceMarkerRange = text.textMarkerRangeForElement(text);
+        shouldBe("text.textMarkerRangeLength(collapsedWhitespaceMarkerRange)", "3");
+        startMarker = text.startTextMarkerForTextMarkerRange(collapsedWhitespaceMarkerRange);
+        result = forward(1, previousMarker, startMarker, text);
+        shouldBe("text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current))", "'a'");
+        result = forward(1, result.previous, result.current, text);
+        shouldBe("text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current))", "' '");
+        result = forward(1, result.previous, result.current, text);
+        shouldBe("text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current))", "'b'");
+        result = backwards(1, result.previous, result.current, text);
+        shouldBe("text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current))", "' '");
+        result = backwards(1, result.previous, result.current, text);
+        shouldBe("text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current))", "'a'");
         
         function forward(count, previousMarker, currentMarker, obj) {
             for (var i = 0; i < count; i++) {

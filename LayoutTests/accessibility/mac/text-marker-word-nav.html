@@ -67,7 +67,7 @@ text
         
         // Check the case with span
         // At "T" in "Thisis", should return the word as "Thisislongword".
-        currentMarker = advanceAndVerify(currentMarker, 2, text);
+        currentMarker = advanceAndVerify(currentMarker, 1, text);
         // At " " before "I", the word should be "I'll".
         currentMarker = advanceAndVerify(currentMarker, 14, text);
         // At " " before "try", the word should excludes "."

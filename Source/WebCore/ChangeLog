@@ -1,3 +1,27 @@
+2016-04-29  Nan Wang  <n_wang@apple.com>
+
+        AX: CharacterOffset not working correctly with composed characters and collapsed white spaces
+        https://bugs.webkit.org/show_bug.cgi?id=157190
+
+        Reviewed by Chris Fleizach.
+
+        When navigating emoji, next/previous text marker call is only moving by one character. Fixed it by
+        using the helper function in Position to get the real character count for the composed character sequence.
+        Also there's another issue with collapsed white spaces, TextIterator emits only one space. So we have to 
+        use the actual space length to create the CharacterOffset in order to generate valid Range object from it.
+
+        New test cases in accessibility/text-marker/text-marker-previous-next.html.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::traverseToOffsetInRange):
+        (WebCore::AXObjectCache::textMarkerDataForNextCharacterOffset):
+        (WebCore::AXObjectCache::textMarkerDataForPreviousCharacterOffset):
+        (WebCore::AXObjectCache::nextNode):
+        (WebCore::AXObjectCache::characterOffsetFromVisiblePosition):
+        (WebCore::AXObjectCache::nextCharacterOffset):
+        (WebCore::AXObjectCache::previousCharacterOffset):
+        (WebCore::AXObjectCache::startCharacterOffsetOfWord):
+
 2016-04-28  Jer Noble  <jer.noble@apple.com>
 
         WebPlaybackControlsManager should not be owned by the WebPlaybackSessionInterfaceMac.

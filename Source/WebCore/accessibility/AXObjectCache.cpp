@@ -1479,7 +1479,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
     bool toNodeEnd = option & TraverseOptionToNodeEnd;
     
     int offsetInCharacter = 0;
-    int offsetSoFar = 0;
+    int cumulativeOffset = 0;
     int remaining = 0;
     int lastLength = 0;
     Node* currentNode = nullptr;
@@ -1494,8 +1494,8 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
         lastStartOffset = range->startOffset();
         if (offset > 0 || toNodeEnd) {
             if (AccessibilityObject::replacedNodeNeedsCharacter(currentNode) || (currentNode->renderer() && currentNode->renderer()->isBR()))
-                offsetSoFar++;
-            lastLength = offsetSoFar;
+                cumulativeOffset++;
+            lastLength = cumulativeOffset;
             
             // When going backwards, stayWithinRange is false.
             // Here when we don't have any character to move and we are going backwards, we traverse to the previous node.
@@ -1510,19 +1510,27 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
     // Sometimes text contents in a node are splitted into several iterations, so that iterator.range()->startOffset()
     // might not be the correct character count. Here we use a previousNode object to keep track of that.
     Node* previousNode = nullptr;
+    // When text node has collapsed whitespaces, we need to treat it differently since text iterator
+    // will omit the collapsed spaces and make the offset inaccurate.
+    Node* collapsedWhitespaceNode = nullptr;
     for (; !iterator.atEnd(); iterator.advance()) {
         int currentLength = iterator.text().length();
         bool hasReplacedNodeOrBR = false;
         
         Node& node = iterator.range()->startContainer();
         currentNode = &node;
+        
+        // The offset of node with collapsed whitespaces has been calcualted in the first iteration.
+        if (currentNode == collapsedWhitespaceNode)
+            continue;
+        
         // When currentLength == 0, we check if there's any replaced node.
         // If not, we skip the node with no length.
         if (!currentLength) {
             int subOffset = iterator.range()->startOffset();
             Node* childNode = node.traverseToChildAt(subOffset);
             if (AccessibilityObject::replacedNodeNeedsCharacter(childNode)) {
-                offsetSoFar++;
+                cumulativeOffset++;
                 currentLength++;
                 currentNode = childNode;
                 hasReplacedNodeOrBR = true;
@@ -1545,8 +1553,30 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
                         continue;
                     }
                 }
+            } else if (currentNode->isTextNode() && currentNode->renderer()) {
+                // When there's collapsed whitespace, the text iterator will only count those spaces as one single space.
+                // Here we use the RenderText to get the actual length.
+                RenderText* renderedText = downcast<RenderText>(currentNode->renderer());
+                int currentStartOffset = iterator.range()->startOffset();
+                if (renderedText->style().isCollapsibleWhiteSpace(iterator.text()[currentLength - 1])  && currentLength + currentStartOffset != renderedText->caretMaxOffset()) {
+                    int appendLength = (&range->endContainer() == currentNode ? range->endOffset() : (int)renderedText->text()->length()) - currentStartOffset;
+                    lastStartOffset = currentStartOffset;
+                    cumulativeOffset += appendLength;
+                    lastLength = appendLength;
+                    
+                    // Break early if we have advanced enough characters.
+                    if (!toNodeEnd && cumulativeOffset >= offset) {
+                        offsetInCharacter = offset - (cumulativeOffset - lastLength);
+                        finished = true;
+                        break;
+                    }
+                    
+                    collapsedWhitespaceNode = currentNode;
+                    continue;
+                }
+                
             }
-            offsetSoFar += currentLength;
+            cumulativeOffset += currentLength;
         }
 
         if (currentNode == previousNode)
@@ -1557,8 +1587,8 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
         }
         
         // Break early if we have advanced enough characters.
-        if (!toNodeEnd && offsetSoFar >= offset) {
-            offsetInCharacter = offset - (offsetSoFar - lastLength);
+        if (!toNodeEnd && cumulativeOffset >= offset) {
+            offsetInCharacter = offset - (cumulativeOffset - lastLength);
             finished = true;
             break;
         }
@@ -1568,7 +1598,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
     if (!finished) {
         offsetInCharacter = lastLength;
         if (!toNodeEnd)
-            remaining = offset - offsetSoFar;
+            remaining = offset - cumulativeOffset;
     }
     
     return CharacterOffset(currentNode, lastStartOffset, offsetInCharacter, remaining);
@@ -1850,22 +1880,36 @@ void AXObjectCache::textMarkerDataForNextCharacterOffset(TextMarkerData& textMar
 {
     CharacterOffset next = characterOffset;
     CharacterOffset previous = characterOffset;
+    bool shouldContinue;
     do {
+        shouldContinue = false;
         next = nextCharacterOffset(next, false);
         if (shouldSkipBoundary(previous, next))
             next = nextCharacterOffset(next, false);
         textMarkerDataForCharacterOffset(textMarkerData, next);
+        
+        // We should skip next CharactetOffset if it's visually the same.
+        if (!lengthForRange(rangeForUnorderedCharacterOffsets(previous, next).get()))
+            shouldContinue = true;
         previous = next;
-    } while (textMarkerData.ignored);
+    } while (textMarkerData.ignored || shouldContinue);
 }
 
 void AXObjectCache::textMarkerDataForPreviousCharacterOffset(TextMarkerData& textMarkerData, const CharacterOffset& characterOffset)
 {
     CharacterOffset previous = characterOffset;
+    CharacterOffset next = characterOffset;
+    bool shouldContinue;
     do {
+        shouldContinue = false;
         previous = previousCharacterOffset(previous, false);
         textMarkerDataForCharacterOffset(textMarkerData, previous);
-    } while (textMarkerData.ignored);
+        
+        // We should skip previous CharactetOffset if it's visually the same.
+        if (!lengthForRange(rangeForUnorderedCharacterOffsets(previous, next).get()))
+            shouldContinue = true;
+        next = previous;
+    } while (textMarkerData.ignored || shouldContinue);
 }
 
 Node* AXObjectCache::nextNode(Node* node) const
@@ -1924,27 +1968,32 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
         return CharacterOffset();
     
     // Use nextVisiblePosition to calculate how many characters we need to traverse to the current position.
-    VisiblePositionRange vpRange = obj->visiblePositionRange();
-    VisiblePosition vp = vpRange.start;
+    VisiblePositionRange visiblePositionRange = obj->visiblePositionRange();
+    VisiblePosition visiblePosition = visiblePositionRange.start;
     int characterOffset = 0;
-    Position vpDeepPos = vp.deepEquivalent();
+    Position currentPosition = visiblePosition.deepEquivalent();
     
     VisiblePosition previousVisiblePos;
-    while (!vpDeepPos.isNull() && !deepPos.equals(vpDeepPos)) {
-        previousVisiblePos = vp;
-        vp = obj->nextVisiblePosition(vp);
-        vpDeepPos = vp.deepEquivalent();
+    while (!currentPosition.isNull() && !deepPos.equals(currentPosition)) {
+        previousVisiblePos = visiblePosition;
+        visiblePosition = obj->nextVisiblePosition(visiblePosition);
+        currentPosition = visiblePosition.deepEquivalent();
+        Position previousPosition = previousVisiblePos.deepEquivalent();
         // Sometimes nextVisiblePosition will give the same VisiblePostion,
         // we break here to avoid infinite loop.
-        if (vpDeepPos.equals(previousVisiblePos.deepEquivalent()))
+        if (currentPosition.equals(previousPosition))
             break;
         characterOffset++;
         
         // When VisiblePostion moves to next node, it will count the leading line break as
         // 1 offset, which we shouldn't include in CharacterOffset.
-        if (vpDeepPos.deprecatedNode() != previousVisiblePos.deepEquivalent().deprecatedNode()) {
-            if (vp.characterBefore() == '\n')
+        if (currentPosition.deprecatedNode() != previousPosition.deprecatedNode()) {
+            if (visiblePosition.characterBefore() == '\n')
                 characterOffset--;
+        } else {
+            // Sometimes VisiblePosition will move multiple characters, like emoji.
+            if (currentPosition.deprecatedNode()->offsetInCharacters())
+                characterOffset += currentPosition.offsetInContainerNode() - previousPosition.offsetInContainerNode() - 1;
         }
     }
     
@@ -2006,7 +2055,9 @@ CharacterOffset AXObjectCache::nextCharacterOffset(const CharacterOffset& charac
     if (characterOffset.isNull())
         return CharacterOffset();
     
-    CharacterOffset next = characterOffsetForNodeAndOffset(*characterOffset.node, characterOffset.offset + 1);
+    // We don't always move one 'character' at a time since there might be composed characters.
+    int nextOffset = Position::uncheckedNextOffset(characterOffset.node, characterOffset.offset);
+    CharacterOffset next = characterOffsetForNodeAndOffset(*characterOffset.node, nextOffset);
     
     // To be consistent with VisiblePosition, we should consider the case that current node end to next node start counts 1 offset.
     bool isReplacedOrBR = isReplacedNodeOrBR(characterOffset.node) || isReplacedNodeOrBR(next.node);
@@ -2025,7 +2076,9 @@ CharacterOffset AXObjectCache::previousCharacterOffset(const CharacterOffset& ch
     if (!ignorePreviousNodeEnd && !characterOffset.offset)
         return characterOffsetForNodeAndOffset(*characterOffset.node, 0);
     
-    return characterOffsetForNodeAndOffset(*characterOffset.node, characterOffset.offset - 1, TraverseOptionIncludeStart);
+    // We don't always move one 'character' a time since there might be composed characters.
+    int previousOffset = Position::uncheckedPreviousOffset(characterOffset.node, characterOffset.offset);
+    return characterOffsetForNodeAndOffset(*characterOffset.node, previousOffset, TraverseOptionIncludeStart);
 }
 
 CharacterOffset AXObjectCache::startCharacterOffsetOfWord(const CharacterOffset& characterOffset, EWordSide side)

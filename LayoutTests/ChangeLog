@@ -1,3 +1,14 @@
+2016-04-29  Nan Wang  <n_wang@apple.com>
+
+        AX: CharacterOffset not working correctly with composed characters and collapsed white spaces
+        https://bugs.webkit.org/show_bug.cgi?id=157190
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/text-marker-word-nav.html:
+        * accessibility/text-marker/text-marker-previous-next-expected.txt:
+        * accessibility/text-marker/text-marker-previous-next.html:
+
 2016-04-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/ruby/ruby-expansion-cjk.html and fast/ruby/ruby-expansion-cjk-4.html as flaky on Mac

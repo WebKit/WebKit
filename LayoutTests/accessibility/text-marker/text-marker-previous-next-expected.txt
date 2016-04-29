@@ -5,6 +5,10 @@ c  d
 
 can't select
 abc de f
+😃😏
+
+a b
+
 This tests the next/previous text marker functions are implemented correctly.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -28,6 +32,15 @@ PASS text2.accessibilityElementForTextMarker(currentMarker).isEqual(text3) is tr
 PASS text2.accessibilityElementForTextMarker(currentMarker).isEqual(text2.childAtIndex(2)) is true
 PASS text.stringForTextMarkerRange(markerRange) is 'f'
 PASS text.stringForTextMarkerRange(markerRange) is 'a'
+PASS text.textMarkerRangeLength(emojiTextMarkerRange) is 4
+PASS text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current)) is '😏'
+PASS text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current)) is '😃'
+PASS text.textMarkerRangeLength(collapsedWhitespaceMarkerRange) is 3
+PASS text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current)) is 'a'
+PASS text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current)) is ' '
+PASS text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current)) is 'b'
+PASS text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current)) is ' '
+PASS text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current)) is 'a'
 PASS successfullyParsed is true
 
 TEST COMPLETE
