@@ -1,3 +1,21 @@
+2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] accessibility/aria-current-global-attribute.html has been failed since r198303
+        https://bugs.webkit.org/show_bug.cgi?id=155935
+
+        Reviewed by Chris Fleizach.
+
+        In ATK, the text of span elements is typically exposed through the parent
+        element, unless the span has some attribute requiring inclusion in the
+        accessibility tree. We were not checking for the presence of global ARIA
+        attributes (including aria-current), other than describedby and role.
+        The fix is to also check AccessibilityObject::supportsARIAAttributes().
+
+        No new tests. This issue was caught as a result of a failing test.
+
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+
 2016-04-29  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Drop 'any' type handling from CanUseWTFOptionalForParameter()

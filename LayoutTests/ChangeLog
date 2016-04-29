@@ -1,5 +1,14 @@
 2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        [ATK] accessibility/aria-current-global-attribute.html has been failed since r198303
+        https://bugs.webkit.org/show_bug.cgi?id=155935
+
+        Reviewed by Chris Fleizach.
+
+        * platform/efl/TestExpectations: Unskipped the failing test.
+
+2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [ATK] accessibility/double-nested-inline-element-missing-from-tree.html has been failed since r198219
         https://bugs.webkit.org/show_bug.cgi?id=155939
 

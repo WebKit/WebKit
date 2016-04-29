@@ -139,7 +139,7 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // we have good reasons for that (e.g. focusable or visible because of containing
     // a meaningful accessible name, maybe set through ARIA), so we can use
     // atk_component_grab_focus() to set the focus to it.
-    if (is<HTMLSpanElement>(node) && !canSetFocusAttribute() && !hasAttributesRequiredForInclusion())
+    if (is<HTMLSpanElement>(node) && !canSetFocusAttribute() && !hasAttributesRequiredForInclusion() && !supportsARIAAttributes())
         return IgnoreObject;
 
     // If we include TextControlInnerTextElement children, changes to those children
