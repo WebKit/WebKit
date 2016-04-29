@@ -488,6 +488,10 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
         attributeSet = addToAtkAttributeSet(attributeSet, "computed-role", roleString.utf8().data());
     }
 
+    String roleDescription = coreObject->roleDescription();
+    if (!roleDescription.isEmpty())
+        attributeSet = addToAtkAttributeSet(attributeSet, "roledescription", roleDescription.utf8().data());
+
     return attributeSet;
 }
 

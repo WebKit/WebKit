@@ -1064,8 +1064,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
 {
-    // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    String roleDescription = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "roledescription");
+    GUniquePtr<gchar> axRoleDescription(g_strdup_printf("AXRoleDescription: %s", roleDescription.utf8().data()));
+
+    return JSStringCreateWithUTF8CString(axRoleDescription.get());
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()

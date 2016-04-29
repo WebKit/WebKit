@@ -1,5 +1,20 @@
 2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        [ATK] Expose the value of aria-roledescription via an AtkObject attribute
+        https://bugs.webkit.org/show_bug.cgi?id=146719
+
+        Reviewed by Chris Fleizach.
+
+        Platform-specific expectations are needed because falling back on the default
+        role description is done by assistive technologies. That this fall back is needed
+        is identified by the lack of an author-provided value. Thus we do not wish to
+        expose the default role description in our implementation.
+
+        * platform/gtk/TestExpectations: Unskipped the failing test.
+        * platform/gtk/accessibility/aria-roledescription-expected.txt: Added.
+
+2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [ATK] accessibility/aria-current-global-attribute.html has been failed since r198303
         https://bugs.webkit.org/show_bug.cgi?id=155935
 

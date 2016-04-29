@@ -1,5 +1,24 @@
 2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        [ATK] Expose the value of aria-roledescription via an AtkObject attribute
+        https://bugs.webkit.org/show_bug.cgi?id=146719
+
+        Reviewed by Chris Fleizach.
+
+        The author-provided value is now exposed via an AtkObject attribute.
+
+        Implementation is already covered by aria-roledescription.html. The ATK
+        expectations are slightly different than those for AX API because falling
+        back on the default role description is done by assistive technologies.
+        That this fall back is needed is identified by the lack of an author-
+        provided value. Thus we do not wish to expose the default role description
+        in our implementation.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+
+2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [ATK] accessibility/aria-current-global-attribute.html has been failed since r198303
         https://bugs.webkit.org/show_bug.cgi?id=155935
 
