@@ -394,7 +394,9 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         if (this._autoFormat) {
             console.assert(!this.formatted);
             this._autoFormat = false;
+            this.deferReveal = true;
             this.string = content;
+            this.deferReveal = false;
             this.updateFormattedState(true).then(() => {
                 this._proceedPopulateWithContent(this.string);
             });

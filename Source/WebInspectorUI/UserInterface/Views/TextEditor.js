@@ -66,6 +66,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         this._formatted = false;
         this._formattingPromise = null;
         this._formatterSourceMap = null;
+        this._deferReveal = false;
 
         this._delegate = delegate || null;
     }
@@ -254,6 +255,11 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         }
     }
 
+    set deferReveal(defer)
+    {
+        this._deferReveal = defer;
+    }
+
     performSearch(query)
     {
         if (this._searchQuery === query)
@@ -423,7 +429,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
             return;
 
         var lineHandle = this._codeMirror.getLineHandle(position.lineNumber);
-        if (!lineHandle || !this._visible || this._initialStringNotSet) {
+        if (!lineHandle || !this._visible || this._initialStringNotSet || this._deferReveal) {
             // If we can't get a line handle or are not visible then we wait to do the reveal.
             this._positionToReveal = position;
             this._textRangeToSelect = textRangeToSelect;
