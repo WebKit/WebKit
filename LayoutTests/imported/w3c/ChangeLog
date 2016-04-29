@@ -1,3 +1,50 @@
+2016-04-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import W3C CSS WG tests for shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=157063
+
+        Reviewed by Antti Koivisto.
+
+        Imported CSS WG's Scoping Level 1 tests from https://github.com/w3c/csswg-test
+        as of b2daa426addd5ccb8e9ce1c5d800f9d82603f1ec. Most of these tests are actually ours
+        except shadow-cascade-order-001.html.
+
+        * csswg-test: Added.
+        * csswg-test/css-scoping-1: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-assigned-node-with-before-after-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-assigned-node-with-before-after.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-assigned-node-with-rules-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-assigned-node-with-rules.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-host-functional-rule-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-host-functional-rule.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-host-rule-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-host-rule.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-host-with-before-after-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-host-with-before-after.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-invisible-slot-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-invisible-slot.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-root-hides-children-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-root-hides-children.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-slot-display-override-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-slot-display-override.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-slot-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-slot-fallback-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-slot-fallback.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-slot.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-slotted-nested-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-slotted-nested.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-slotted-rule-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-slotted-rule.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-with-outside-rules-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-with-outside-rules.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-with-rules-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-with-rules-no-style-leak-expected.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-with-rules-no-style-leak.html: Added.
+        * csswg-test/css-scoping-1/css-scoping-shadow-with-rules.html: Added.
+        * csswg-test/css-scoping-1/shadow-cascade-order-001-expected.txt: Added.
+        * csswg-test/css-scoping-1/shadow-cascade-order-001.html: Added.
+        * csswg-test/css-scoping-1/w3c-import.log: Added.
+
 2016-04-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Import remaining fetch tests

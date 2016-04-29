@@ -1,3 +1,43 @@
+2016-04-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import W3C CSS WG tests for shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=157063
+
+        Reviewed by Antti Koivisto.
+
+        Remove tests that have been upstreamed and imported under imported/w3c/csswg-test/css-scoping-1.
+
+        * fast/shadow-dom/css-scoping-shadow-assigned-node-with-before-after-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-assigned-node-with-before-after.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-assigned-node-with-rules-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-assigned-node-with-rules.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-host-functional-rule-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-host-functional-rule.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-host-rule-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-host-rule.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-host-with-before-after-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-host-with-before-after.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-invisible-slot-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-invisible-slot.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-root-hides-children-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-root-hides-children.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-slot-display-override-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-slot-display-override.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-slot-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-slot-fallback-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-slot-fallback.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-slot.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-slotted-nested-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-slotted-nested.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-slotted-rule-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-slotted-rule.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-with-outside-rules-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-with-outside-rules.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-with-rules-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-with-rules-no-style-leak-expected.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-with-rules-no-style-leak.html: Removed.
+        * fast/shadow-dom/css-scoping-shadow-with-rules.html: Removed.
+
 2016-04-29  Yoav Weiss  <yoav@yoav.ws>
 
         Move ResourceTiming behind a runtime flag
