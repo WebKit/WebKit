@@ -1,3 +1,22 @@
+2016-04-28  Dean Jackson  <dino@apple.com>
+
+        RTL <select> popup menu is in the wrong location
+        https://bugs.webkit.org/show_bug.cgi?id=157159
+        <rdar://problem/25894451>
+
+        Reviewed by Simon Fraser.
+
+        Make sure both the NSPopupMenuCell and the NSPopupMenu take
+        the text direction into account, and offset the position
+        of the menu slightly if we're in RTL mode.
+
+        Unfortunately our test infrastructure is unable to exercise
+        this because it runs without a window, and the popup menu
+        is not captured in the screenshot.
+
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::show):
+
 2016-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Add CSS Grid Layout runtime flag

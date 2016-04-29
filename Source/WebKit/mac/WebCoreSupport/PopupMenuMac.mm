@@ -148,11 +148,15 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
 
     NSView* view = v->documentView();
 
+    TextDirection textDirection = m_client->menuStyle().textDirection();
+
     [m_popup attachPopUpWithFrame:r inView:view];
     [m_popup selectItemAtIndex:index];
+    [m_popup setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
     NSMenu* menu = [m_popup menu];
-    
+    [menu setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+
     NSPoint location;
     NSFont* font = m_client->menuStyle().font().primaryFont().getNSFont();
 
@@ -169,8 +173,9 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
         NSFont* defaultFont = [NSFont systemFontOfSize:[font pointSize]];
         vertOffset += [font descender] - [defaultFont descender];
         vertOffset = fminf(NSHeight(r), vertOffset);
-    
-        location = NSMakePoint(NSMinX(r) + popOverHorizontalAdjust, NSMaxY(r) - vertOffset);
+
+        float horizontalOffset = textDirection == LTR ? popOverHorizontalAdjust : 0;
+        location = NSMakePoint(NSMinX(r) + horizontalOffset, NSMaxY(r) - vertOffset);
     } else
         location = NSMakePoint(NSMinX(r) + popUnderHorizontalAdjust, NSMaxY(r) + popUnderVerticalAdjust);    
 
