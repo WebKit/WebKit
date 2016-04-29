@@ -529,8 +529,9 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
 
         HTTPHeaderName headerName;
         if (!findHTTPHeaderName(name, headerName)) {
-            m_failureReason = makeString("Unknown header name ", name, " in HTTP response");
-            return nullptr;
+            // Evidence in the wild shows that services make use of custom headers in the handshake
+            m_serverHandshakeResponse.addHTTPHeaderField(name.toString(), value);
+            continue;
         }
 
         // https://tools.ietf.org/html/rfc7230#section-3.2.4

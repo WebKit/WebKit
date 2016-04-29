@@ -1,3 +1,20 @@
+2016-04-28  John Wilander  <wilander@apple.com>
+
+        Allow non-standard HTTP headers in WebSocket handshake
+        https://bugs.webkit.org/show_bug.cgi?id=157157
+
+        Reviewed by Brent Fulgham.
+
+        No new tests since https://bugs.webkit.org/show_bug.cgi?id=157095
+        tests that non-standard headers are allowed.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+            Changed from fail to allow for unrecognized headers.
+            This was the behavior before https://bugs.webkit.org/show_bug.cgi?id=155602.
+        * platform/network/HTTPHeaderNames.in:
+            Removed whitelisted legacy headers since we now allow all non-standard headers.
+
 2016-04-27  Brent Fulgham  <bfulgham@apple.com>
 
         Make sure we don't mishandle HTMLFrameOwnerElement lifecycle
