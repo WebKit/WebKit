@@ -1,3 +1,10 @@
+2016-04-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a typo in r200255.
+
+        * resources/testharnessreport.js:
+        (self.testRunner.add_completion_callback):
+
 2016-04-29  Nan Wang  <n_wang@apple.com>
 
         AX: CharacterOffset not working correctly with composed characters and collapsed white spaces

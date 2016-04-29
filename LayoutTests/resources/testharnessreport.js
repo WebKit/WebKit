@@ -64,7 +64,7 @@ if (self.testRunner) {
                 if (stackIndex > 0)
                     message = message.substr(0, stackIndex);
             }
-            resultStr += convertResult(tests[i].status) + " " +  (tests[i].name != null ? tests[i].name || "") + " " + message + "\n";
+            resultStr += convertResult(tests[i].status) + " " +  (tests[i].name != null ? tests[i].name : "") + " " + message + "\n";
         }
 
         results.innerText = resultStr;
