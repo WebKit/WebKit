@@ -702,6 +702,9 @@ webkit.org/b/156148 svg/text/text-text-04-t.svg [ Failure ]
 webkit.org/b/156148 svg/text/text-text-06-t.svg [ Failure ]
 webkit.org/b/156148 svg/text/text-vkern.svg [ Failure ]
 
+# Some shadow-dom tests that are not under fast/shadow-dom that are passing for mac
+webkit.org/b/148695 imported/w3c/csswg-test/css-scoping-1 [ Timeout Failure ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

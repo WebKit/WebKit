@@ -1,3 +1,12 @@
+2016-04-29  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Unreviewed gardening: update expectations after r200234
+        https://bugs.webkit.org/show_bug.cgi?id=157181
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2016-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Wheel Event Not Fired For `body,html { height:100% }`
