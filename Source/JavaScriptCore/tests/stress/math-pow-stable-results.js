@@ -71,7 +71,7 @@ for (let tierUpLoopCounter = 0; tierUpLoopCounter < 1e3; ++tierUpLoopCounter) {
             let expectedResult = expectedResults[i][j];
             let result = opaquePow(base, exponent);
             if (!isIdentical(result, expectedResult))
-                throw "Failed opaquePow with base = " + base + " exponent = " + exponent;
+                throw "Failed opaquePow with base = " + base + " exponent = " + exponent + " expected (" + expectedResult + ") got (" + result + ")";
 
             result = constantBaseFunctions[i](exponent);
             if (!isIdentical(result, expectedResult))

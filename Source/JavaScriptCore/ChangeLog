@@ -1,3 +1,9 @@
+2016-04-29  Benjamin Poulain  <benjamin@webkit.org>
+
+        Extend math-pow-stable-results.js to get more information about the failure
+
+        * tests/stress/math-pow-stable-results.js:
+
 2016-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Assertion failure for exception in "prototype" property getter and Reflect.construct
