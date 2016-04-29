@@ -1335,3 +1335,6 @@ webkit.org/b/156983 media/video-fullscreen-restriction-removed.html [ Pass Failu
 webkit.org/b/156320 fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
 
 webkit.org/b/155196 media/video-with-file-url-allowed-by-csp-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Skip ]
+
+webkit.org/b/157197 fast/ruby/ruby-expansion-cjk.html [ Pass ImageOnlyFailure ]
+webkit.org/b/157197 fast/ruby/ruby-expansion-cjk-4.html [ Pass ImageOnlyFailure ]
