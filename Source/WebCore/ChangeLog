@@ -1,3 +1,34 @@
+2016-04-28  Jer Noble  <jer.noble@apple.com>
+
+        WebPlaybackControlsManager should not be owned by the WebPlaybackSessionInterfaceMac.
+        https://bugs.webkit.org/show_bug.cgi?id=157155
+        <rdar://problem/25991724>
+
+        Reviewed by Beth Dakin.
+
+        Move the WebPlaybackControlsManager class into its own header and implementation files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/WebPlaybackControlsManager.h: Added.
+        * platform/mac/WebPlaybackControlsManager.mm: Added.
+        (-[WebPlaybackControlsManager timing]): Moved from WebPlaybackSessionInterfaceMac.
+        (-[WebPlaybackControlsManager setTiming:]): Ditto.
+        (-[WebPlaybackControlsManager seekableTimeRanges]): Ditto.
+        (-[WebPlaybackControlsManager setSeekableTimeRanges:]): Ditto.
+        (-[WebPlaybackControlsManager setAudioMediaSelectionOptions:withSelectedIndex:]): Ditto.
+        (-[WebPlaybackControlsManager setLegibleMediaSelectionOptions:withSelectedIndex:]): Ditto.
+        * platform/mac/WebPlaybackSessionInterfaceMac.h:
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::setPlayBackControlsManager):
+        (-[WebPlaybackControlsManager initWithWebPlaybackSessionInterfaceMac:]): Deleted.
+        (-[WebPlaybackControlsManager timing]): Deleted.
+        (-[WebPlaybackControlsManager setTiming:]): Deleted.
+        (-[WebPlaybackControlsManager seekableTimeRanges]): Deleted.
+        (-[WebPlaybackControlsManager setSeekableTimeRanges:]): Deleted.
+        (-[WebPlaybackControlsManager setAudioMediaSelectionOptions:withSelectedIndex:]): Deleted.
+        (-[WebPlaybackControlsManager setLegibleMediaSelectionOptions:withSelectedIndex:]): Deleted.
+        (WebCore::WebPlaybackSessionInterfaceMac::playBackControlsManager): Deleted.
+
 2016-04-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r200232.

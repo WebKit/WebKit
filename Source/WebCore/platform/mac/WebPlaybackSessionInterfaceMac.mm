@@ -32,6 +32,7 @@
 #import "IntRect.h"
 #import "MediaTimeAVFoundation.h"
 #import "TimeRanges.h"
+#import "WebPlaybackControlsManager.h"
 #import "WebPlaybackSessionModel.h"
 #import <AVFoundation/AVFoundation.h>
 
@@ -41,85 +42,6 @@ SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 using namespace WebCore;
-
-#if USE(APPLE_INTERNAL_SDK) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-#import <WebKitAdditions/WebPlaybackControlsControllerAdditions.mm>
-#else
-@interface WebPlaybackControlsManager : NSObject {
-    NSTimeInterval _contentDuration;
-    RetainPtr<AVValueTiming> _timing;
-    RetainPtr<NSArray> _seekableTimeRanges;
-    BOOL _hasEnabledAudio;
-    BOOL _hasEnabledVideo;
-    float _rate;
-
-@private
-    WebCore::WebPlaybackSessionInterfaceMac* _webPlaybackSessionInterfaceMac;
-}
-
-@property (readwrite) NSTimeInterval contentDuration;
-@property (nonatomic, retain, readwrite) AVValueTiming *timing;
-@property (nonatomic, retain, readwrite) NSArray *seekableTimeRanges;
-@property (readwrite) BOOL hasEnabledAudio;
-@property (readwrite) BOOL hasEnabledVideo;
-@property (nonatomic) float rate;
-
-- (instancetype)initWithWebPlaybackSessionInterfaceMac:(WebCore::WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac;
-
-@end
-
-@implementation WebPlaybackControlsManager
-
-@synthesize contentDuration=_contentDuration;
-@synthesize hasEnabledAudio=_hasEnabledAudio;
-@synthesize hasEnabledVideo=_hasEnabledVideo;
-@synthesize rate=_rate;
-
-- (instancetype)initWithWebPlaybackSessionInterfaceMac:(WebCore::WebPlaybackSessionInterfaceMac*)webPlaybackSessionInterfaceMac
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _webPlaybackSessionInterfaceMac = webPlaybackSessionInterfaceMac;
-
-    return self;
-}
-
-- (AVValueTiming *)timing
-{
-    return _timing.get();
-}
-
-- (void)setTiming:(AVValueTiming *)timing
-{
-    _timing = timing;
-}
-
-- (NSArray *)seekableTimeRanges
-{
-    return _seekableTimeRanges.get();
-}
-
-- (void)setSeekableTimeRanges:(NSArray *)timeRanges
-{
-    _seekableTimeRanges = timeRanges;
-}
-
-- (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex
-{
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(selectedIndex);
-}
-
-- (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex
-{
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(selectedIndex);
-}
-
-@end
-
-#endif
 
 namespace WebCore {
 
@@ -212,14 +134,17 @@ void WebPlaybackSessionInterfaceMac::ensureControlsManager()
 WebPlaybackControlsManager *WebPlaybackSessionInterfaceMac::playBackControlsManager()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    if (!m_playbackControlsManager)
-        m_playbackControlsManager = adoptNS([[WebPlaybackControlsManager alloc] initWithWebPlaybackSessionInterfaceMac:this]);
     return m_playbackControlsManager.get();
 #else
     return nil;
 #endif
 }
-    
+
+void WebPlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackControlsManager *manager)
+{
+    m_playbackControlsManager = manager;
+}
+
 }
 
 #endif // PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)

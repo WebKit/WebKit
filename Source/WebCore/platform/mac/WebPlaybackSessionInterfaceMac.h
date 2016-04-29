@@ -74,6 +74,7 @@ public:
     WEBCORE_EXPORT void setWirelessVideoPlaybackDisabled(bool) final { }
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void ensureControlsManager();
+    WEBCORE_EXPORT void setPlayBackControlsManager(WebPlaybackControlsManager *);
     WEBCORE_EXPORT WebPlaybackControlsManager *playBackControlsManager();
 
 private:

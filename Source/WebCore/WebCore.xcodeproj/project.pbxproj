@@ -6038,6 +6038,8 @@
 		CD54DE4B17469C6D005E5B36 /* AudioSessionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD54DE4917469C6D005E5B36 /* AudioSessionMac.cpp */; };
 		CD5596911475B678001D0BD0 /* AudioFileReaderIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD55968F1475B678001D0BD0 /* AudioFileReaderIOS.cpp */; };
 		CD5596921475B678001D0BD0 /* AudioFileReaderIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5596901475B678001D0BD0 /* AudioFileReaderIOS.h */; };
+		CD5896E11CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD5896DF1CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm */; };
+		CD5896E21CD2B15100B3BCC8 /* WebPlaybackControlsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5896E01CD2B15100B3BCC8 /* WebPlaybackControlsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5E5B5E1A15CE54000C609E /* PageConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD5E5B611A15F156000C609E /* PageConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5E5B601A15F156000C609E /* PageConfiguration.cpp */; };
 		CD60C0C6193E87C7003C656B /* MediaTimeQTKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD60C0C4193E87C7003C656B /* MediaTimeQTKit.mm */; };
@@ -14015,6 +14017,8 @@
 		CD54DE4917469C6D005E5B36 /* AudioSessionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSessionMac.cpp; sourceTree = "<group>"; };
 		CD55968F1475B678001D0BD0 /* AudioFileReaderIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioFileReaderIOS.cpp; sourceTree = "<group>"; };
 		CD5596901475B678001D0BD0 /* AudioFileReaderIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioFileReaderIOS.h; sourceTree = "<group>"; };
+		CD5896DF1CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlaybackControlsManager.mm; sourceTree = "<group>"; };
+		CD5896E01CD2B15100B3BCC8 /* WebPlaybackControlsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackControlsManager.h; sourceTree = "<group>"; };
 		CD5E5B5E1A15CE54000C609E /* PageConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageConfiguration.h; sourceTree = "<group>"; };
 		CD5E5B601A15F156000C609E /* PageConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageConfiguration.cpp; sourceTree = "<group>"; };
 		CD60C0C4193E87C7003C656B /* MediaTimeQTKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaTimeQTKit.mm; sourceTree = "<group>"; };
@@ -17905,6 +17909,8 @@
 				E1A3162C134BC32D007C9A4F /* WebNSAttributedStringExtras.mm */,
 				CDA29A151CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.h */,
 				CDA29A141CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.mm */,
+				CD5896DF1CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm */,
+				CD5896E01CD2B15100B3BCC8 /* WebPlaybackControlsManager.h */,
 				CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */,
 				CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */,
 				CD8203081395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h */,
@@ -25940,6 +25946,7 @@
 				A7CA595D0B27BD9E00FA021D /* DragController.h in Headers */,
 				A7B6E69F0B291A9600D0529F /* DragData.h in Headers */,
 				A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */,
+				CD5896E21CD2B15100B3BCC8 /* WebPlaybackControlsManager.h in Headers */,
 				81F65FF613788FAA00FF6F2D /* DragState.h in Headers */,
 				E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */,
 				CE1252451A16C22500864480 /* DynamicLinkerSPI.h in Headers */,
@@ -31505,6 +31512,7 @@
 				163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */,
 				E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */,
 				585D6E031A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp in Sources */,
+				CD5896E11CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm in Sources */,
 				E4E9B11B18145692003ACCDF /* SimpleLineLayoutFunctions.cpp in Sources */,
 				585D6DFC1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp in Sources */,
 				582CB0551A78A2B200AFFCC4 /* SimpleLineLayoutTextFragmentIterator.cpp in Sources */,
