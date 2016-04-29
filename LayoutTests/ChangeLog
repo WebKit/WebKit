@@ -1,5 +1,19 @@
 2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        [ATK] accessibility/double-nested-inline-element-missing-from-tree.html has been failed since r198219
+        https://bugs.webkit.org/show_bug.cgi?id=155939
+
+        Reviewed by Darin Adler.
+
+        Platform-specific expectations were needed because the ATK accessibility tree folds
+        certain elements, including spans, into the parent element.
+
+        * platform/efl/TestExpectations: Unskipped the failing test.
+        * platform/efl/accessibility/double-nested-inline-element-missing-from-tree-expected.txt: Added.
+        * platform/gtk/accessibility/double-nested-inline-element-missing-from-tree-expected.txt: Added.
+
+2016-04-29  Joanmarie Diggs  <jdiggs@igalia.com>
+
         AX: [ATK] Expose elements with ARIA's "text" role
         https://bugs.webkit.org/show_bug.cgi?id=157160
 
