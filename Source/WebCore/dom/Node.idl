@@ -61,8 +61,6 @@
     readonly attribute Node             nextSibling;
     readonly attribute Document         ownerDocument;
 
-    readonly attribute Node rootNode;
-
     // FIXME: newChild should not be nullable.
     [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node insertBefore([CustomReturn] Node? newChild,
                                                             Node? refChild);
