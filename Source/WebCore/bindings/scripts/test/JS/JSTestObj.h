@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestObj_h
-#define JSTestObj_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestObj.h"
@@ -104,5 +103,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestObj*);
 
 
 } // namespace WebCore
-
-#endif

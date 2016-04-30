@@ -71,27 +71,15 @@ static const MediaTime& currentTimeFudgeFactor()
     return fudgeFactor;
 }
 
-const AtomicString& SourceBuffer::segmentsKeyword()
-{
-    static NeverDestroyed<AtomicString> segments("segments");
-    return segments.get();
-}
-
-const AtomicString& SourceBuffer::sequenceKeyword()
-{
-    static NeverDestroyed<AtomicString> segments("sequence");
-    return segments.get();
-}
-
 struct SourceBuffer::TrackBuffer {
     MediaTime lastDecodeTimestamp;
     MediaTime lastFrameDuration;
     MediaTime highestPresentationTimestamp;
     MediaTime lastEnqueuedPresentationTime;
     MediaTime lastEnqueuedDecodeEndTime;
-    bool needRandomAccessFlag;
-    bool enabled;
-    bool needsReenqueueing;
+    bool needRandomAccessFlag { true };
+    bool enabled { false };
+    bool needsReenqueueing { false };
     SampleMap samples;
     DecodeOrderSampleMap::MapType decodeQueue;
     RefPtr<MediaDescription> description;
@@ -102,18 +90,15 @@ struct SourceBuffer::TrackBuffer {
         , highestPresentationTimestamp(MediaTime::invalidTime())
         , lastEnqueuedPresentationTime(MediaTime::invalidTime())
         , lastEnqueuedDecodeEndTime(MediaTime::invalidTime())
-        , needRandomAccessFlag(true)
-        , enabled(false)
-        , needsReenqueueing(false)
     {
     }
 };
 
 Ref<SourceBuffer> SourceBuffer::create(Ref<SourceBufferPrivate>&& sourceBufferPrivate, MediaSource* source)
 {
-    RefPtr<SourceBuffer> sourceBuffer(adoptRef(new SourceBuffer(WTFMove(sourceBufferPrivate), source)));
+    auto sourceBuffer = adoptRef(*new SourceBuffer(WTFMove(sourceBufferPrivate), source));
     sourceBuffer->suspendIfNeeded();
-    return sourceBuffer.releaseNonNull();
+    return sourceBuffer;
 }
 
 SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, MediaSource* source)
@@ -121,7 +106,6 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_private(WTFMove(sourceBufferPrivate))
     , m_source(source)
     , m_asyncEventQueue(*this)
-    , m_mode(segmentsKeyword())
     , m_appendBufferTimer(*this, &SourceBuffer::appendBufferTimerFired)
     , m_appendWindowStart(MediaTime::zeroTime())
     , m_appendWindowEnd(MediaTime::positiveInfiniteTime())
@@ -130,17 +114,9 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_buffered(TimeRanges::create())
     , m_appendState(WaitingForSegment)
     , m_timeOfBufferingMonitor(monotonicallyIncreasingTime())
-    , m_bufferedSinceLastMonitor(0)
-    , m_averageBufferRate(0)
-    , m_reportedExtraMemoryCost(0)
     , m_pendingRemoveStart(MediaTime::invalidTime())
     , m_pendingRemoveEnd(MediaTime::invalidTime())
     , m_removeTimer(*this, &SourceBuffer::removeTimerFired)
-    , m_updating(false)
-    , m_receivedFirstInitializationSegment(false)
-    , m_active(false)
-    , m_bufferFull(false)
-    , m_shouldGenerateTimestamps(false)
 {
     ASSERT(m_source);
 
@@ -206,7 +182,7 @@ void SourceBuffer::setTimestampOffset(double offset, ExceptionCode& ec)
     MediaTime newTimestampOffset = MediaTime::createWithDouble(offset);
 
     // 6. If the mode attribute equals "sequence", then set the group start timestamp to new timestamp offset.
-    if (m_mode == sequenceKeyword())
+    if (m_mode == AppendMode::Sequence)
         m_groupStartTimestamp = newTimestampOffset;
 
     // 7. Update the attribute to the new value.
@@ -672,7 +648,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(SourceBufferPriva
     LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(%p) - result = %i", this, error);
 
     if (!isRemoved())
-        m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
+        m_source->streamEndedWithError(EndOfStreamError::Decode);
 }
 
 static bool decodeTimeComparator(const PresentationOrderSampleMap::MapType::value_type& a, const PresentationOrderSampleMap::MapType::value_type& b)
@@ -926,18 +902,6 @@ size_t SourceBuffer::maximumBufferSize() const
     return element->maximumSourceBufferSize(*this);
 }
 
-const AtomicString& SourceBuffer::decodeError()
-{
-    static NeverDestroyed<AtomicString> decode("decode", AtomicString::ConstructFromLiteral);
-    return decode;
-}
-
-const AtomicString& SourceBuffer::networkError()
-{
-    static NeverDestroyed<AtomicString> network("network", AtomicString::ConstructFromLiteral);
-    return network;
-}
-
 VideoTrackList* SourceBuffer::videoTracks()
 {
     if (!m_source || !m_source->mediaElement())
@@ -979,15 +943,7 @@ void SourceBuffer::setActive(bool active)
     m_active = active;
     m_private->setActive(active);
     if (!isRemoved())
-        m_source->sourceBufferDidChangeAcitveState(this, active);
-}
-
-void SourceBuffer::sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const WTF::AtomicString& error)
-{
-    LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidEndStream(%p) - result = %s", this, String(error).utf8().data());
-
-    if (!isRemoved())
-        m_source->streamEndedWithError(error, IgnorableExceptionCode());
+        m_source->sourceBufferDidChangeActiveState(*this, active);
 }
 
 void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment& segment)
@@ -1319,7 +1275,7 @@ void SourceBuffer::appendError(bool decodeErrorParam)
 
     // 5. If decode error is true, then run the end of stream algorithm with the error parameter set to "decode".
     if (decodeErrorParam)
-        m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
+        m_source->streamEndedWithError(EndOfStreamError::Decode);
 }
 
 void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, PassRefPtr<MediaSample> prpSample)
@@ -1374,7 +1330,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         MediaTime frameDuration = sample->duration();
 
         // 1.3 If mode equals "sequence" and group start timestamp is set, then run the following steps:
-        if (m_mode == sequenceKeyword() && m_groupStartTimestamp.isValid()) {
+        if (m_mode == AppendMode::Sequence && m_groupStartTimestamp.isValid()) {
             // 1.3.1 Set timestampOffset equal to group start timestamp - presentation timestamp.
             m_timestampOffset = m_groupStartTimestamp;
 
@@ -1414,11 +1370,11 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             || abs(decodeTimestamp - trackBuffer.lastDecodeTimestamp) > (trackBuffer.lastFrameDuration * 2))) {
 
             // 1.6.1:
-            if (m_mode == segmentsKeyword()) {
+            if (m_mode == AppendMode::Segments) {
                 // ↳ If mode equals "segments":
                 // Set group end timestamp to presentation timestamp.
                 m_groupEndTimestamp = presentationTimestamp;
-            } else if (m_mode == sequenceKeyword()) {
+            } else {
                 // ↳ If mode equals "sequence":
                 // Set group start timestamp equal to the group end timestamp.
                 m_groupStartTimestamp = m_groupEndTimestamp;
@@ -1439,7 +1395,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             continue;
         }
 
-        if (m_mode == sequenceKeyword()) {
+        if (m_mode == AppendMode::Sequence) {
             // Use the generated timestamps instead of the sample's timestamps.
             sample->setTimestamps(presentationTimestamp, decodeTimestamp);
         } else if (m_timestampOffset) {
@@ -1470,7 +1426,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         MediaTime presentationStartTime = MediaTime::zeroTime();
         if (presentationTimestamp < presentationStartTime) {
             LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidReceiveSample(%p) - failing because presentationTimestamp < presentationStartTime", this);
-            m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
+            m_source->streamEndedWithError(EndOfStreamError::Decode);
             return;
         }
 
@@ -2022,7 +1978,7 @@ Document& SourceBuffer::document() const
     return downcast<Document>(*scriptExecutionContext());
 }
 
-void SourceBuffer::setMode(const AtomicString& newMode, ExceptionCode& ec)
+void SourceBuffer::setMode(AppendMode newMode, ExceptionCode& ec)
 {
     // 3.1 Attributes - mode
     // http://www.w3.org/TR/media-source/#widl-SourceBuffer-mode
@@ -2031,7 +1987,7 @@ void SourceBuffer::setMode(const AtomicString& newMode, ExceptionCode& ec)
 
     // 1. Let new mode equal the new value being assigned to this attribute.
     // 2. If generate timestamps flag equals true and new mode equals "segments", then throw an INVALID_ACCESS_ERR exception and abort these steps.
-    if (m_shouldGenerateTimestamps && newMode == segmentsKeyword()) {
+    if (m_shouldGenerateTimestamps && newMode == AppendMode::Segments) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
@@ -2057,7 +2013,7 @@ void SourceBuffer::setMode(const AtomicString& newMode, ExceptionCode& ec)
     }
 
     // 7. If the new mode equals "sequence", then set the group start timestamp to the group end timestamp.
-    if (newMode == sequenceKeyword())
+    if (newMode == AppendMode::Sequence)
         m_groupStartTimestamp = m_groupEndTimestamp;
 
     // 8. Update the attribute to new mode.

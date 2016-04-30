@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestException_h
-#define JSTestException_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestException.h"
@@ -90,5 +89,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestException
 
 
 } // namespace WebCore
-
-#endif

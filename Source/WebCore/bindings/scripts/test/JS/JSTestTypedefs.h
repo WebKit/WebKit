@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestTypedefs_h
-#define JSTestTypedefs_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestTypedefs.h"
@@ -89,5 +88,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestTypedefs*
 
 
 } // namespace WebCore
-
-#endif

@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestClassWithJSBuiltinConstructor_h
-#define JSTestClassWithJSBuiltinConstructor_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestClassWithJSBuiltinConstructor.h"
@@ -88,5 +87,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestClassWith
 
 
 } // namespace WebCore
-
-#endif

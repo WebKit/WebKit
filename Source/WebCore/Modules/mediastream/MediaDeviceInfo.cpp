@@ -28,18 +28,9 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ContextDestructionObserver.h"
-#include "ScriptWrappable.h"
-#include <wtf/NeverDestroyed.h>
-
 namespace WebCore {
 
-Ref<MediaDeviceInfo> MediaDeviceInfo::create(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, const String& kind)
-{
-    return adoptRef(*new MediaDeviceInfo(context, label, deviceId, groupId, kind));
-}
-
-MediaDeviceInfo::MediaDeviceInfo(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, const String& kind)
+inline MediaDeviceInfo::MediaDeviceInfo(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, MediaDeviceKind kind)
     : ContextDestructionObserver(context)
     , m_label(label)
     , m_deviceId(deviceId)
@@ -48,22 +39,9 @@ MediaDeviceInfo::MediaDeviceInfo(ScriptExecutionContext* context, const String& 
 {
 }
 
-const AtomicString& MediaDeviceInfo::audioInputType()
+Ref<MediaDeviceInfo> MediaDeviceInfo::create(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, MediaDeviceKind kind)
 {
-    static NeverDestroyed<AtomicString> audioinput("audioinput");
-    return audioinput;
-}
-
-const AtomicString& MediaDeviceInfo::audioOutputType()
-{
-    static NeverDestroyed<AtomicString> audiooutput("audiooutput");
-    return audiooutput;
-}
-
-const AtomicString& MediaDeviceInfo::videoInputType()
-{
-    static NeverDestroyed<AtomicString> videoinput("videoinput");
-    return videoinput;
+    return adoptRef(*new MediaDeviceInfo(context, label, deviceId, groupId, kind));
 }
 
 } // namespace WebCore

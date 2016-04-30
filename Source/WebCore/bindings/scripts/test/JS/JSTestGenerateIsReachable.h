@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestGenerateIsReachable_h
-#define JSTestGenerateIsReachable_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestGenerateIsReachable.h"
@@ -86,5 +85,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestGenerateI
 
 
 } // namespace WebCore
-
-#endif

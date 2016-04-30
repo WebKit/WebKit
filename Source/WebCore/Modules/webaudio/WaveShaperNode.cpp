@@ -28,6 +28,7 @@
 
 #include "WaveShaperNode.h"
 
+#include "AudioContext.h"
 #include "ExceptionCode.h"
 #include <wtf/MainThread.h>
 
@@ -53,36 +54,41 @@ Float32Array* WaveShaperNode::curve()
     return waveShaperProcessor()->curve();
 }
 
-void WaveShaperNode::setOversample(const String& type, ExceptionCode& ec)
+static inline WaveShaperProcessor::OverSampleType processorType(OverSampleType type)
+{
+    switch (type) {
+    case OverSampleType::None:
+        return WaveShaperProcessor::OverSampleNone;
+    case OverSampleType::_2x:
+        return WaveShaperProcessor::OverSample2x;
+    case OverSampleType::_4x:
+        return WaveShaperProcessor::OverSample4x;
+    }
+    ASSERT_NOT_REACHED();
+    return WaveShaperProcessor::OverSampleNone;
+}
+
+void WaveShaperNode::setOversample(OverSampleType type)
 {
     ASSERT(isMainThread());
 
     // Synchronize with any graph changes or changes to channel configuration.
     AudioContext::AutoLocker contextLocker(context());
-
-    if (type == "none")
-        waveShaperProcessor()->setOversample(WaveShaperProcessor::OverSampleNone);
-    else if (type == "2x")
-        waveShaperProcessor()->setOversample(WaveShaperProcessor::OverSample2x);
-    else if (type == "4x")
-        waveShaperProcessor()->setOversample(WaveShaperProcessor::OverSample4x);
-    else
-        ec = INVALID_STATE_ERR;
+    waveShaperProcessor()->setOversample(processorType(type));
 }
 
-String WaveShaperNode::oversample() const
+OverSampleType WaveShaperNode::oversample() const
 {
     switch (const_cast<WaveShaperNode*>(this)->waveShaperProcessor()->oversample()) {
     case WaveShaperProcessor::OverSampleNone:
-        return "none";
+        return OverSampleType::None;
     case WaveShaperProcessor::OverSample2x:
-        return "2x";
+        return OverSampleType::_2x;
     case WaveShaperProcessor::OverSample4x:
-        return "4x";
-    default:
-        ASSERT_NOT_REACHED();
-        return "none";
+        return OverSampleType::_4x;
     }
+    ASSERT_NOT_REACHED();
+    return OverSampleType::None;
 }
 
 } // namespace WebCore

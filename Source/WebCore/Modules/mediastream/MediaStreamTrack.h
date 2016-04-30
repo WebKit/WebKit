@@ -25,8 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamTrack_h
-#define MediaStreamTrack_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -35,7 +34,6 @@
 #include "MediaStreamTrackPrivate.h"
 #include "RealtimeMediaSource.h"
 #include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -48,7 +46,9 @@ class MediaConstraintsImpl;
 class MediaSourceSettings;
 class MediaTrackConstraints;
 
-class MediaStreamTrack final : public RefCounted<MediaStreamTrack>, public ActiveDOMObject, public EventTargetWithInlineData, public MediaStreamTrackPrivate::Observer {
+enum class MediaStreamTrackState { New, Live, Ended };
+
+class MediaStreamTrack final : public RefCounted<MediaStreamTrack>, public ActiveDOMObject, public EventTargetWithInlineData, private MediaStreamTrackPrivate::Observer {
 public:
     class Observer {
     public:
@@ -70,7 +70,7 @@ public:
     bool readonly() const;
     bool remote() const;
 
-    const AtomicString& readyState() const;
+    MediaStreamTrackState readyState() const;
 
     bool ended() const;
 
@@ -132,5 +132,3 @@ typedef Vector<RefPtr<MediaStreamTrack>> MediaStreamTrackVector;
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaStreamTrack_h

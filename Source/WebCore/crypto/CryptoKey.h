@@ -47,6 +47,10 @@ enum class CryptoKeyClass {
     RSA
 };
 
+enum class KeyUsage { Encrypt, Decrypt, Sign, Verify, DeriveKey, DeriveBits, WrapKey, UnwrapKey };
+
+using KeyType = CryptoKeyType;
+
 class CryptoKey : public RefCounted<CryptoKey> {
 public:
     CryptoKey(CryptoAlgorithmIdentifier, CryptoKeyType, bool extractable, CryptoKeyUsage);
@@ -54,10 +58,10 @@ public:
 
     virtual CryptoKeyClass keyClass() const = 0;
 
-    String type() const;
+    CryptoKeyType type() const;
     bool extractable() const { return m_extractable; }
     virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const;
-    Vector<String> usages() const;
+    Vector<KeyUsage> usages() const;
 
     CryptoAlgorithmIdentifier algorithmIdentifier() const { return m_algorithm; }
     CryptoKeyUsage usagesBitmap() const { return m_usages; }
@@ -73,6 +77,11 @@ private:
     bool m_extractable;
     CryptoKeyUsage m_usages;
 };
+
+inline CryptoKeyType CryptoKey::type() const
+{
+    return m_type;
+}
 
 } // namespace WebCore
 

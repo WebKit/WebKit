@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestMediaQueryListListener_h
-#define JSTestMediaQueryListListener_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestMediaQueryListListener.h"
@@ -86,5 +85,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestMediaQuer
 
 
 } // namespace WebCore
-
-#endif

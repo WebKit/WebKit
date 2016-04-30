@@ -120,26 +120,10 @@ my %svgTypeWithWritablePropertiesNeedingTearOff = (
 # enumeration to using an actual enum class in the C++. Once that is done, we should
 # remove this hash and the function that calls it.
 my %stringBasedEnumerationHash = (
-    "AppendMode" => 1,
-    "AudioContextState" => 1,
     "AutoFillButtonType" => 1,
     "CachePolicy" => 1,
-    "CanvasWindingRule" => 1,
-    "DeviceType" => 1,
-    "EndOfStreamError" => 1,
-    "FontFaceSetLoadStatus" => 1,
-    "IDBCursorDirection" => 1,
-    "IDBRequestReadyState" => 1,
-    "IDBTransactionMode" => 1,
-    "ImageSmoothingQuality" => 1,
-    "KeyType" => 1,
-    "KeyUsage" => 1,
     "MediaControlEvent" => 1,
-    "MediaDeviceKind" => 1,
     "MediaSessionInterruptingCategory" => 1,
-    "MediaSessionKind" => 1,
-    "MediaStreamTrackState" => 1,
-    "OverSampleType" => 1,
     "PageOverlayType" => 1,
     "RTCBundlePolicyEnum" => 1,
     "RTCIceTransportPolicyEnum" => 1,
@@ -151,10 +135,8 @@ my %stringBasedEnumerationHash = (
     "RequestRedirect" => 1,
     "RequestType" => 1,
     "ResourceLoadPriority" => 1,
-    "ResponseType" => 1,
     "TextTrackKind" => 1,
     "TextTrackMode" => 1,
-    "VideoPresentationMode" => 1,
     "XMLHttpRequestResponseType" => 1,
 );
 

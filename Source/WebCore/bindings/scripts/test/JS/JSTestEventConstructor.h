@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestEventConstructor_h
-#define JSTestEventConstructor_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestEventConstructor.h"
@@ -90,5 +89,3 @@ bool fillTestEventConstructorInit(TestEventConstructorInit&, JSDictionary&);
 
 
 } // namespace WebCore
-
-#endif

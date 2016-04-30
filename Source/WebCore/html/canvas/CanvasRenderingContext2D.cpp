@@ -58,31 +58,28 @@
 #include "TextMetrics.h"
 #include "TextRun.h"
 #include "TextStream.h"
-
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
-#if USE(CG)
-#if !PLATFORM(IOS)
+#if USE(CG) && !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
-#endif // !PLATFORM(IOS)
 #endif
 
 #if PLATFORM(IOS)
 #include "Settings.h"
 #endif
 
-#if USE(CG)
-#define DefaultSmoothingQuality SmoothingQuality::Low
-#else
-#define DefaultSmoothingQuality SmoothingQuality::Medium
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
+
+#if USE(CG)
+const ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Low;
+#else
+const ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Medium;
+#endif
 
 static const int defaultFontSize = 10;
 static const char* const defaultFontFamily = "sans-serif";
@@ -207,7 +204,7 @@ CanvasRenderingContext2D::State::State()
     , hasInvertibleTransform(true)
     , lineDashOffset(0)
     , imageSmoothingEnabled(true)
-    , imageSmoothingQuality(DefaultSmoothingQuality)
+    , imageSmoothingQuality(defaultSmoothingQuality)
     , textAlign(StartTextAlign)
     , textBaseline(AlphabeticTextBaseline)
     , direction(Direction::Inherit)
@@ -933,21 +930,14 @@ static bool isFullCanvasCompositeMode(CompositeOperator op)
     return op == CompositeSourceIn || op == CompositeSourceOut || op == CompositeDestinationIn || op == CompositeDestinationAtop;
 }
 
-static bool parseWinding(const String& windingRuleString, WindRule& windRule)
+static WindRule toWindRule(CanvasWindingRule rule)
 {
-    if (windingRuleString == "nonzero")
-        windRule = RULE_NONZERO;
-    else if (windingRuleString == "evenodd")
-        windRule = RULE_EVENODD;
-    else
-        return false;
-    
-    return true;
+    return rule == CanvasWindingRule::Nonzero ? RULE_NONZERO : RULE_EVENODD;
 }
 
-void CanvasRenderingContext2D::fill(const String& windingRuleString)
+void CanvasRenderingContext2D::fill(CanvasWindingRule windingRule)
 {
-    fillInternal(m_path, windingRuleString);
+    fillInternal(m_path, windingRule);
 
 #if ENABLE(DASHBOARD_SUPPORT)
     clearPathForDashboardBackwardCompatibilityMode();
@@ -963,18 +953,18 @@ void CanvasRenderingContext2D::stroke()
 #endif
 }
 
-void CanvasRenderingContext2D::clip(const String& windingRuleString)
+void CanvasRenderingContext2D::clip(CanvasWindingRule windingRule)
 {
-    clipInternal(m_path, windingRuleString);
+    clipInternal(m_path, windingRule);
 
 #if ENABLE(DASHBOARD_SUPPORT)
     clearPathForDashboardBackwardCompatibilityMode();
 #endif
 }
 
-void CanvasRenderingContext2D::fill(DOMPath& path, const String& windingRuleString)
+void CanvasRenderingContext2D::fill(DOMPath& path, CanvasWindingRule windingRule)
 {
-    fillInternal(path.path(), windingRuleString);
+    fillInternal(path.path(), windingRule);
 }
 
 void CanvasRenderingContext2D::stroke(DOMPath& path)
@@ -982,12 +972,12 @@ void CanvasRenderingContext2D::stroke(DOMPath& path)
     strokeInternal(path.path());
 }
 
-void CanvasRenderingContext2D::clip(DOMPath& path, const String& windingRuleString)
+void CanvasRenderingContext2D::clip(DOMPath& path, CanvasWindingRule windingRule)
 {
-    clipInternal(path.path(), windingRuleString);
+    clipInternal(path.path(), windingRule);
 }
 
-void CanvasRenderingContext2D::fillInternal(const Path& path, const String& windingRuleString)
+void CanvasRenderingContext2D::fillInternal(const Path& path, CanvasWindingRule windingRule)
 {
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1002,10 +992,7 @@ void CanvasRenderingContext2D::fillInternal(const Path& path, const String& wind
 
     if (!path.isEmpty()) {
         WindRule windRule = c->fillRule();
-        WindRule newWindRule = RULE_NONZERO;
-        if (!parseWinding(windingRuleString, newWindRule))
-            return;
-        c->setFillRule(newWindRule);
+        c->setFillRule(toWindRule(windingRule));
 
         if (isFullCanvasCompositeMode(state().globalComposite)) {
             beginCompositeLayer();
@@ -1057,7 +1044,7 @@ void CanvasRenderingContext2D::strokeInternal(const Path& path)
     }
 }
 
-void CanvasRenderingContext2D::clipInternal(const Path& path, const String& windingRuleString)
+void CanvasRenderingContext2D::clipInternal(const Path& path, CanvasWindingRule windingRule)
 {
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1065,12 +1052,8 @@ void CanvasRenderingContext2D::clipInternal(const Path& path, const String& wind
     if (!state().hasInvertibleTransform)
         return;
 
-    WindRule newWindRule = RULE_NONZERO;
-    if (!parseWinding(windingRuleString, newWindRule))
-        return;
-
     realizeSaves();
-    c->canvasClip(path, newWindRule);
+    c->canvasClip(path, toWindRule(windingRule));
 }
 
 inline void CanvasRenderingContext2D::beginCompositeLayer()
@@ -1087,27 +1070,27 @@ inline void CanvasRenderingContext2D::endCompositeLayer()
 #endif
 }
 
-bool CanvasRenderingContext2D::isPointInPath(const float x, const float y, const String& windingRuleString)
+bool CanvasRenderingContext2D::isPointInPath(float x, float y, CanvasWindingRule windingRule)
 {
-    return isPointInPathInternal(m_path, x, y, windingRuleString);
+    return isPointInPathInternal(m_path, x, y, windingRule);
 }
 
-bool CanvasRenderingContext2D::isPointInStroke(const float x, const float y)
+bool CanvasRenderingContext2D::isPointInStroke(float x, float y)
 {
     return isPointInStrokeInternal(m_path, x, y);
 }
 
-bool CanvasRenderingContext2D::isPointInPath(DOMPath& path, const float x, const float y, const String& windingRuleString)
+bool CanvasRenderingContext2D::isPointInPath(DOMPath& path, float x, float y, CanvasWindingRule windingRule)
 {
-    return isPointInPathInternal(path.path(), x, y, windingRuleString);
+    return isPointInPathInternal(path.path(), x, y, windingRule);
 }
 
-bool CanvasRenderingContext2D::isPointInStroke(DOMPath& path, const float x, const float y)
+bool CanvasRenderingContext2D::isPointInStroke(DOMPath& path, float x, float y)
 {
     return isPointInStrokeInternal(path.path(), x, y);
 }
 
-bool CanvasRenderingContext2D::isPointInPathInternal(const Path& path, float x, float y, const String& windingRuleString)
+bool CanvasRenderingContext2D::isPointInPathInternal(const Path& path, float x, float y, CanvasWindingRule windingRule)
 {
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1120,11 +1103,7 @@ bool CanvasRenderingContext2D::isPointInPathInternal(const Path& path, float x, 
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 
-    WindRule windRule = RULE_NONZERO;
-    if (!parseWinding(windingRuleString, windRule))
-        return false;
-    
-    return path.contains(transformedPoint, windRule);
+    return path.contains(transformedPoint, toWindRule(windingRule));
 }
 
 bool CanvasRenderingContext2D::isPointInStrokeInternal(const Path& path, float x, float y)
@@ -2558,14 +2537,14 @@ PlatformLayer* CanvasRenderingContext2D::platformLayer() const
 }
 #endif
 
-static InterpolationQuality smoothingToInterpolationQuality(CanvasRenderingContext2D::SmoothingQuality quality)
+static InterpolationQuality smoothingToInterpolationQuality(ImageSmoothingQuality quality)
 {
     switch (quality) {
-    case CanvasRenderingContext2D::SmoothingQuality::Low:
+    case ImageSmoothingQuality::Low:
         return InterpolationLow;
-    case CanvasRenderingContext2D::SmoothingQuality::Medium:
+    case ImageSmoothingQuality::Medium:
         return InterpolationMedium;
-    case CanvasRenderingContext2D::SmoothingQuality::High:
+    case ImageSmoothingQuality::High:
         return InterpolationHigh;
     }
 
@@ -2573,35 +2552,13 @@ static InterpolationQuality smoothingToInterpolationQuality(CanvasRenderingConte
     return InterpolationLow;
 };
 
-String CanvasRenderingContext2D::imageSmoothingQuality() const
+ImageSmoothingQuality CanvasRenderingContext2D::imageSmoothingQuality() const
 {
-    switch (state().imageSmoothingQuality) {
-    case SmoothingQuality::Low:
-        return ASCIILiteral("low");
-    case SmoothingQuality::Medium:
-        return ASCIILiteral("medium");
-    case SmoothingQuality::High:
-        return ASCIILiteral("high");
-    }
-
-    ASSERT_NOT_REACHED();
-    return ASCIILiteral("low");
+    return state().imageSmoothingQuality;
 }
 
-void CanvasRenderingContext2D::setImageSmoothingQuality(const String& smoothingQualityString)
+void CanvasRenderingContext2D::setImageSmoothingQuality(ImageSmoothingQuality quality)
 {
-    SmoothingQuality quality;
-    if (smoothingQualityString == "low")
-        quality = SmoothingQuality::Low;
-    else if (smoothingQualityString == "medium")
-        quality = SmoothingQuality::Medium;
-    else if (smoothingQualityString == "high")
-        quality = SmoothingQuality::High;
-    else {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
     if (quality == state().imageSmoothingQuality)
         return;
 

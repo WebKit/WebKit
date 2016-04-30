@@ -89,10 +89,11 @@ using namespace JSC;
 
 namespace WebCore {
 
-const String& stringValue(TestEnumType);
-Optional<TestEnumType> enumerationValueTestEnumType(const String&);
+JSString* jsStringWithCache(ExecState*, TestEnumType);
+Optional<TestEnumType> parseTestEnumType(ExecState&, JSValue);
+extern const char* const expectedEnumerationValuesTestEnumType;
 
-const String& stringValue(TestEnumType enumerationValue)
+JSString* jsStringWithCache(ExecState* state, TestEnumType enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         ASCIILiteral(""),
@@ -100,17 +101,22 @@ const String& stringValue(TestEnumType enumerationValue)
         ASCIILiteral("EnumValue2"),
         ASCIILiteral("EnumValue3"),
     };
-    static_assert(!static_cast<size_t>(TestEnumType::EmptyString), "TestEnumType::EmptyString is not 0 as expected");
+    static_assert(static_cast<size_t>(TestEnumType::EmptyString) == 0, "TestEnumType::EmptyString is not 0 as expected");
     static_assert(static_cast<size_t>(TestEnumType::EnumValue1) == 1, "TestEnumType::EnumValue1 is not 1 as expected");
     static_assert(static_cast<size_t>(TestEnumType::EnumValue2) == 2, "TestEnumType::EnumValue2 is not 2 as expected");
     static_assert(static_cast<size_t>(TestEnumType::EnumValue3) == 3, "TestEnumType::EnumValue3 is not 3 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return values[static_cast<size_t>(enumerationValue)];
+    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
 }
 
-Optional<TestEnumType> enumerationValueTestEnumType(const String& stringValue)
+template<> struct JSValueTraits<TestEnumType> {
+    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestEnumType value) { return jsStringWithCache(state, value); }
+};
+
+Optional<TestEnumType> parseTestEnumType(ExecState& state, JSValue value)
 {
-    if (stringValue == "")
+    auto stringValue = value.toWTFString(&state);
+    if (stringValue.isEmpty())
         return TestEnumType::EmptyString;
     if (stringValue == "EnumValue1")
         return TestEnumType::EnumValue1;
@@ -121,10 +127,13 @@ Optional<TestEnumType> enumerationValueTestEnumType(const String& stringValue)
     return Nullopt;
 }
 
-const String& stringValue(Optional);
-Optional<Optional> enumerationValueOptional(const String&);
+const char* const expectedEnumerationValuesTestEnumType = "\"\", \"EnumValue1\", \"EnumValue2\", \"EnumValue3\"";
 
-const String& stringValue(Optional enumerationValue)
+JSString* jsStringWithCache(ExecState*, Optional);
+Optional<Optional> parseOptional(ExecState&, JSValue);
+extern const char* const expectedEnumerationValuesOptional;
+
+JSString* jsStringWithCache(ExecState* state, Optional enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         ASCIILiteral(""),
@@ -132,17 +141,22 @@ const String& stringValue(Optional enumerationValue)
         ASCIILiteral("OptionalValue2"),
         ASCIILiteral("OptionalValue3"),
     };
-    static_assert(!static_cast<size_t>(Optional::EmptyString), "Optional::EmptyString is not 0 as expected");
+    static_assert(static_cast<size_t>(Optional::EmptyString) == 0, "Optional::EmptyString is not 0 as expected");
     static_assert(static_cast<size_t>(Optional::OptionalValue1) == 1, "Optional::OptionalValue1 is not 1 as expected");
     static_assert(static_cast<size_t>(Optional::OptionalValue2) == 2, "Optional::OptionalValue2 is not 2 as expected");
     static_assert(static_cast<size_t>(Optional::OptionalValue3) == 3, "Optional::OptionalValue3 is not 3 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return values[static_cast<size_t>(enumerationValue)];
+    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
 }
 
-Optional<Optional> enumerationValueOptional(const String& stringValue)
+template<> struct JSValueTraits<Optional> {
+    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, Optional value) { return jsStringWithCache(state, value); }
+};
+
+Optional<Optional> parseOptional(ExecState& state, JSValue value)
 {
-    if (stringValue == "")
+    auto stringValue = value.toWTFString(&state);
+    if (stringValue.isEmpty())
         return Optional::EmptyString;
     if (stringValue == "OptionalValue1")
         return Optional::OptionalValue1;
@@ -152,6 +166,8 @@ Optional<Optional> enumerationValueOptional(const String& stringValue)
         return Optional::OptionalValue3;
     return Nullopt;
 }
+
+const char* const expectedEnumerationValuesOptional = "\"\", \"OptionalValue1\", \"OptionalValue2\", \"OptionalValue3\"";
 
 // Functions
 
@@ -1054,7 +1070,7 @@ EncodedJSValue jsTestObjEnumAttr(ExecState* state, EncodedJSValue thisValue, Pro
         return throwGetterTypeError(*state, "TestObj", "enumAttr");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, stringValue(impl.enumAttr()));
+    JSValue result = jsStringWithCache(state, impl.enumAttr());
     return JSValue::encode(result);
 }
 
@@ -2211,7 +2227,7 @@ EncodedJSValue jsTestObjAttributeWithReservedEnumType(ExecState* state, EncodedJ
         return throwGetterTypeError(*state, "TestObj", "attributeWithReservedEnumType");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, stringValue(impl.attributeWithReservedEnumType()));
+    JSValue result = jsStringWithCache(state, impl.attributeWithReservedEnumType());
     return JSValue::encode(result);
 }
 
@@ -2299,12 +2315,12 @@ bool setJSTestObjEnumAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSV
         return throwSetterTypeError(*state, "TestObj", "enumAttr");
     }
     auto& impl = castedThis->wrapped();
-    TestEnumType nativeValue = enumerationValueTestEnumType(value.toWTFString(state)).value();
+    auto nativeValue = parseTestEnumType(*state, value);
     if (UNLIKELY(state->hadException()))
         return false;
-    if (nativeValue != "" && nativeValue != "EnumValue1" && nativeValue != "EnumValue2" && nativeValue != "EnumValue3")
+    if (UNLIKELY(!nativeValue))
         return false;
-    impl.setEnumAttr(nativeValue);
+    impl.setEnumAttr(nativeValue.value());
     return true;
 }
 
@@ -3366,12 +3382,12 @@ bool setJSTestObjAttributeWithReservedEnumType(ExecState* state, EncodedJSValue 
         return throwSetterTypeError(*state, "TestObj", "attributeWithReservedEnumType");
     }
     auto& impl = castedThis->wrapped();
-    Optional nativeValue = enumerationValueOptional(value.toWTFString(state)).value();
+    auto nativeValue = parseOptional(*state, value);
     if (UNLIKELY(state->hadException()))
         return false;
-    if (nativeValue != "" && nativeValue != "OptionalValue1" && nativeValue != "OptionalValue2" && nativeValue != "OptionalValue3")
+    if (UNLIKELY(!nativeValue))
         return false;
-    impl.setAttributeWithReservedEnumType(nativeValue);
+    impl.setAttributeWithReservedEnumType(nativeValue.value());
     return true;
 }
 
@@ -3779,13 +3795,14 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecSta
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    // Keep pointer to the JSString in a local so we don't need to ref the String.
-    auto* enumArgString = state->argument(0).toString(state);
-    auto& enumArg = enumArgString->value(state);
+    auto enumArgValue = state->argument(0);
+    TestEnumType enumArg;
+    auto optionalValue = parseTestEnumType(*state, enumArgValue);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (enumArg != "" && enumArg != "EnumValue1" && enumArg != "EnumValue2" && enumArg != "EnumValue3")
-        return throwArgumentMustBeEnumError(*state, 0, "enumArg", "TestObj", "methodWithEnumArg", "\"\", \"EnumValue1\", \"EnumValue2\", \"EnumValue3\"");
+    if (!optionalValue)
+        return throwArgumentMustBeEnumError(*state, 0, "enumArg", "TestObj", "methodWithEnumArg", expectedEnumerationValuesTestEnumType);
+    enumArg = optionalValue.value();
     impl.methodWithEnumArg(enumArg);
     return JSValue::encode(jsUndefined());
 }
@@ -3798,15 +3815,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArg
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalEnumArgAndDefaultValue");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    String enumArg;
-    if (state->argument(0).isUndefined())
-        enumArg = ASCIILiteral("EnumValue1");
-    else {
-        enumArg = state->uncheckedArgument(0).toWTFString(state);
+    auto enumArgValue = state->argument(0);
+    TestEnumType enumArg;
+    if (enumArgValue.isUndefined()) {
+        enumArg = TestEnumType::EnumValue1;
+    } else {
+        auto optionalValue = parseTestEnumType(*state, enumArgValue);
         if (UNLIKELY(state->hadException()))
             return JSValue::encode(jsUndefined());
-        if (enumArg != "" && enumArg != "EnumValue1" && enumArg != "EnumValue2" && enumArg != "EnumValue3")
-            return throwArgumentMustBeEnumError(*state, 0, "enumArg", "TestObj", "methodWithOptionalEnumArgAndDefaultValue", "\"\", \"EnumValue1\", \"EnumValue2\", \"EnumValue3\"");
+        if (!optionalValue)
+            return throwArgumentMustBeEnumError(*state, 0, "enumArg", "TestObj", "methodWithOptionalEnumArgAndDefaultValue", expectedEnumerationValuesTestEnumType);
+        enumArg = optionalValue.value();
     }
     impl.methodWithOptionalEnumArgAndDefaultValue(enumArg);
     return JSValue::encode(jsUndefined());

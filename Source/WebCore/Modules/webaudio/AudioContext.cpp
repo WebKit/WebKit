@@ -309,28 +309,6 @@ void AudioContext::setState(State state)
         promise.resolve(nullptr);
 }
 
-const AtomicString& AudioContext::state() const
-{
-    static NeverDestroyed<AtomicString> suspended("suspended");
-    static NeverDestroyed<AtomicString> running("running");
-    static NeverDestroyed<AtomicString> interrupted("interrupted");
-    static NeverDestroyed<AtomicString> closed("closed");
-
-    switch (m_state) {
-    case State::Suspended:
-        return suspended;
-    case State::Running:
-        return running;
-    case State::Interrupted:
-        return interrupted;
-    case State::Closed:
-        return closed;
-    }
-
-    ASSERT_NOT_REACHED();
-    return suspended;
-}
-
 void AudioContext::stop()
 {
     ASSERT(isMainThread());

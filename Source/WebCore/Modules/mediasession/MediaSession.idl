@@ -25,7 +25,7 @@
 
 [
     Conditional=MEDIA_SESSION,
-    CustomConstructor(optional MediaSessionKind kind),
+    CustomConstructor(optional MediaSessionKind kind = "content"),
     ConstructorCallWith=ScriptExecutionContext,
     ImplementationLacksVTable,
     ExportMacro=WEBCORE_EXPORT,

@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestActiveDOMObject_h
-#define JSTestActiveDOMObject_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestActiveDOMObject.h"
@@ -89,5 +88,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestActiveDOM
 
 
 } // namespace WebCore
-
-#endif

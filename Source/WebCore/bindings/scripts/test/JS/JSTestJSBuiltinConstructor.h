@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestJSBuiltinConstructor_h
-#define JSTestJSBuiltinConstructor_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 
@@ -67,5 +66,3 @@ protected:
 
 
 } // namespace WebCore
-
-#endif

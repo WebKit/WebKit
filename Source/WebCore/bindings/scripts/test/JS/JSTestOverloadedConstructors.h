@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestOverloadedConstructors_h
-#define JSTestOverloadedConstructors_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestOverloadedConstructors.h"
@@ -86,5 +85,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestOverloade
 
 
 } // namespace WebCore
-
-#endif

@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestCallback_h
-#define JSTestCallback_h
+#pragma once
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
@@ -65,5 +64,3 @@ inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject,
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)
-
-#endif

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SourceBufferPrivateClient_h
-#define SourceBufferPrivateClient_h
+#pragma once
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -44,8 +43,6 @@ class MediaDescription;
 class SourceBufferPrivateClient {
 public:
     virtual ~SourceBufferPrivateClient() { }
-
-    virtual void sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const WTF::AtomicString&) = 0;
 
     struct InitializationSegment {
         MediaTime duration;
@@ -90,5 +87,3 @@ public:
 }
 
 #endif // ENABLE(MEDIA_SOURCE)
-
-#endif

@@ -42,6 +42,8 @@ class MediaControlTextTrackContainerElement;
 class TextTrack;
 class TextTrackList;
 
+enum class DeviceType { None, Airplay, Tvout };
+
 class MediaControlsHost : public RefCounted<MediaControlsHost> {
 public:
     static Ref<MediaControlsHost> create(HTMLMediaElement*);
@@ -71,7 +73,7 @@ public:
     void exitedFullscreen();
 
     String externalDeviceDisplayName() const;
-    String externalDeviceType() const;
+    DeviceType externalDeviceType() const;
 
     bool controlsDependOnPageScaleFactor() const;
     void setControlsDependOnPageScaleFactor(bool v);

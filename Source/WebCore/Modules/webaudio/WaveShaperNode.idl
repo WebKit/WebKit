@@ -33,5 +33,5 @@ enum OverSampleType {
     JSGenerateToJSObject
 ] interface WaveShaperNode : AudioNode {
     attribute Float32Array curve;
-    [SetterRaisesException] attribute OverSampleType oversample;
+    attribute OverSampleType oversample;
 };

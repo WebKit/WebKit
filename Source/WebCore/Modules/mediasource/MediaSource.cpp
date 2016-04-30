@@ -414,12 +414,7 @@ void MediaSource::setReadyState(const AtomicString& state)
     onReadyStateChange(oldState, state);
 }
 
-void MediaSource::endOfStream(ExceptionCode& ec)
-{
-    endOfStream(emptyAtom, ec);
-}
-
-void MediaSource::endOfStream(const AtomicString& error, ExceptionCode& ec)
+void MediaSource::endOfStream(Optional<EndOfStreamError> error, ExceptionCode& ec)
 {
     // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#widl-MediaSource-endOfStream-void-EndOfStreamError-error
     // 1. If the readyState attribute is not in the "open" state then throw an
@@ -437,15 +432,12 @@ void MediaSource::endOfStream(const AtomicString& error, ExceptionCode& ec)
     }
 
     // 3. Run the end of stream algorithm with the error parameter set to error.
-    streamEndedWithError(error, ec);
+    streamEndedWithError(error);
 }
 
-void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode& ec)
+void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
 {
-    static NeverDestroyed<const AtomicString> network("network", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomicString> decode("decode", AtomicString::ConstructFromLiteral);
-
-    LOG(MediaSource, "MediaSource::streamEndedWithError(%p) : %s", this, error.string().ascii().data());
+    LOG(MediaSource, "MediaSource::streamEndedWithError(%p)", this);
 
     // 2.4.7 https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#end-of-stream-algorithm
 
@@ -454,7 +446,7 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
     setReadyState(endedKeyword());
 
     // 3.
-    if (error.isEmpty()) {
+    if (!error) {
         // ↳ If error is not set, is null, or is an empty string
         // 1. Run the duration change algorithm with new duration set to the highest end time reported by
         // the buffered attribute across all SourceBuffer objects in sourceBuffers.
@@ -467,9 +459,7 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
 
         // 2. Notify the media element that it now has all of the media data.
         m_private->markEndOfStream(MediaSourcePrivate::EosNoError);
-    }
-
-    if (error == network) {
+    } else if (error == EndOfStreamError::Network) {
         // ↳ If error is set to "network"
         ASSERT(m_mediaElement);
         if (m_mediaElement->readyState() == HTMLMediaElement::HAVE_NOTHING) {
@@ -485,8 +475,9 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
             //    NOTE: This step is handled by HTMLMediaElement::mediaLoadingFailedFatally().
             m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::NetworkError);
         }
-    } else if (error == decode) {
+    } else {
         // ↳ If error is set to "decode"
+        ASSERT(error == EndOfStreamError::Decode);
         ASSERT(m_mediaElement);
         if (m_mediaElement->readyState() == HTMLMediaElement::HAVE_NOTHING) {
             //  ↳ If the HTMLMediaElement.readyState attribute equals HAVE_NOTHING
@@ -500,10 +491,6 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
             //    NOTE: This step is handled by HTMLMediaElement::mediaLoadingFailedFatally().
             m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::DecodeError);
         }
-    } else if (!error.isEmpty()) {
-        // ↳ Otherwise
-        //   Throw an INVALID_ACCESS_ERR exception.
-        ec = INVALID_ACCESS_ERR;
     }
 }
 
@@ -558,7 +545,7 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
     // ↳ Set the mode attribute on the new object to "sequence".
     // Otherwise:
     // ↳ Set the mode attribute on the new object to "segments".
-    buffer->setMode(shouldGenerateTimestamps ? SourceBuffer::sequenceKeyword() : SourceBuffer::segmentsKeyword(), IGNORE_EXCEPTION);
+    buffer->setMode(shouldGenerateTimestamps ? AppendMode::Sequence : AppendMode::Segments, IGNORE_EXCEPTION);
 
     SourceBuffer* result = buffer.ptr();
 
@@ -771,7 +758,7 @@ void MediaSource::close()
     setReadyState(closedKeyword());
 }
 
-void MediaSource::sourceBufferDidChangeAcitveState(SourceBuffer*, bool)
+void MediaSource::sourceBufferDidChangeActiveState(SourceBuffer&, bool)
 {
     regenerateActiveSourceBuffers();
 }

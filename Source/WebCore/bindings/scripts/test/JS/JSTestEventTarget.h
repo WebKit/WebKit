@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestEventTarget_h
-#define JSTestEventTarget_h
+#pragma once
 
 #include "JSEventTarget.h"
 #include "TestEventTarget.h"
@@ -81,5 +80,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestEventTarg
 
 
 } // namespace WebCore
-
-#endif

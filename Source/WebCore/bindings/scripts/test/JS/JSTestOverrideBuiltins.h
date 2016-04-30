@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestOverrideBuiltins_h
-#define JSTestOverrideBuiltins_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestOverrideBuiltins.h"
@@ -93,5 +92,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestOverrideB
 
 
 } // namespace WebCore
-
-#endif

@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestNode_h
-#define JSTestNode_h
+#pragma once
 
 #include "JSNode.h"
 #include "TestNode.h"
@@ -69,5 +68,3 @@ protected:
 
 
 } // namespace WebCore
-
-#endif

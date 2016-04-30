@@ -144,9 +144,8 @@ void MediaDevicesRequest::didCompleteTrackSourceInfoRequest(const TrackSourceInf
     }
 
     Vector<RefPtr<MediaDeviceInfo>> devices;
-    for (auto deviceInfo : captureDevices) {
-        String deviceType = deviceInfo->kind() == TrackSourceInfo::SourceKind::Audio ? MediaDeviceInfo::audioInputType() : MediaDeviceInfo::videoInputType();
-        AtomicString label = emptyAtom;
+    for (auto& deviceInfo : captureDevices) {
+        String label = emptyString();
         if (m_havePersistentPermission || document.hasHadActiveMediaStreamTrack())
             label = deviceInfo->label();
 
@@ -156,6 +155,8 @@ void MediaDevicesRequest::didCompleteTrackSourceInfoRequest(const TrackSourceInf
 
         String groupId = hashID(deviceInfo->groupId());
 
+        auto deviceType = deviceInfo->kind() == TrackSourceInfo::SourceKind::Audio ? MediaDeviceKind::Audioinput : MediaDeviceKind::Videoinput;
+
         devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
     }
 
@@ -164,7 +165,6 @@ void MediaDevicesRequest::didCompleteTrackSourceInfoRequest(const TrackSourceInf
         protectedThis->m_promise.resolve(devices);
     });
     m_protector = nullptr;
-
 }
 
 const String& MediaDevicesRequest::requestOrigin() const

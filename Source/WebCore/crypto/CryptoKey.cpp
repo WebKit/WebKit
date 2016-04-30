@@ -47,47 +47,32 @@ CryptoKey::~CryptoKey()
 {
 }
 
-String CryptoKey::type() const
-{
-    switch (m_type) {
-    case CryptoKeyType::Secret:
-        return ASCIILiteral("secret");
-    case CryptoKeyType::Public:
-        return ASCIILiteral("public");
-    case CryptoKeyType::Private:
-        return ASCIILiteral("private");
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return emptyString();
-}
-
 void CryptoKey::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& builder) const
 {
     builder.add("name", CryptoAlgorithmRegistry::singleton().nameForIdentifier(m_algorithm));
     // Subclasses will add other keys.
 }
 
-Vector<String> CryptoKey::usages() const
+Vector<KeyUsage> CryptoKey::usages() const
 {
     // The result is ordered alphabetically.
-    Vector<String> result;
+    Vector<KeyUsage> result;
     if (m_usages & CryptoKeyUsageDecrypt)
-        result.append(ASCIILiteral("decrypt"));
+        result.append(KeyUsage::Decrypt);
     if (m_usages & CryptoKeyUsageDeriveBits)
-        result.append(ASCIILiteral("deriveBits"));
+        result.append(KeyUsage::DeriveBits);
     if (m_usages & CryptoKeyUsageDeriveKey)
-        result.append(ASCIILiteral("deriveKey"));
+        result.append(KeyUsage::DeriveKey);
     if (m_usages & CryptoKeyUsageEncrypt)
-        result.append(ASCIILiteral("encrypt"));
+        result.append(KeyUsage::Encrypt);
     if (m_usages & CryptoKeyUsageSign)
-        result.append(ASCIILiteral("sign"));
+        result.append(KeyUsage::Sign);
     if (m_usages & CryptoKeyUsageUnwrapKey)
-        result.append(ASCIILiteral("unwrapKey"));
+        result.append(KeyUsage::UnwrapKey);
     if (m_usages & CryptoKeyUsageVerify)
-        result.append(ASCIILiteral("verify"));
+        result.append(KeyUsage::Verify);
     if (m_usages & CryptoKeyUsageWrapKey)
-        result.append(ASCIILiteral("wrapKey"));
-
+        result.append(KeyUsage::WrapKey);
     return result;
 }
 

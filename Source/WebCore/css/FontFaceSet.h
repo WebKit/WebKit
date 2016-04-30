@@ -35,6 +35,8 @@ namespace WebCore {
 
 class DOMCoreException;
 
+enum class FontFaceSetLoadStatus { Loading, Loaded };
+
 class FontFaceSet final : public RefCounted<FontFaceSet>, private CSSFontFaceSetClient, public EventTargetWithInlineData, private ActiveDOMObject {
 public:
     static Ref<FontFaceSet> create(Document&, const Vector<RefPtr<FontFace>>& initialFaces);
@@ -50,7 +52,7 @@ public:
     void load(JSC::ExecState&, const String& font, const String& text, DeferredWrapper&& promise, ExceptionCode&);
     bool check(const String& font, const String& text, ExceptionCode&);
 
-    String status() const;
+    FontFaceSetLoadStatus status() const;
 
     typedef DOMPromise<FontFaceSet&, DOMCoreException&> Promise;
     Promise& promise(JSC::ExecState&);

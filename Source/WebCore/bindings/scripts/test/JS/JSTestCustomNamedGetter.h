@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestCustomNamedGetter_h
-#define JSTestCustomNamedGetter_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestCustomNamedGetter.h"
@@ -92,5 +91,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestCustomNam
 
 
 } // namespace WebCore
-
-#endif

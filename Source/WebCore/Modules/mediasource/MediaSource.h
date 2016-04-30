@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSource_h
-#define MediaSource_h
+#pragma once
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -49,6 +48,8 @@ namespace WebCore {
 
 class GenericEventQueue;
 
+enum class EndOfStreamError { Network, Decode };
+
 class MediaSource : public MediaSourcePrivateClient, public ActiveDOMObject, public EventTargetWithInlineData, public URLRegistrable {
 public:
     static void setRegistry(URLRegistry*);
@@ -67,8 +68,8 @@ public:
     bool isOpen() const;
     bool isClosed() const;
     bool isEnded() const;
-    void sourceBufferDidChangeAcitveState(SourceBuffer*, bool);
-    void streamEndedWithError(const AtomicString& error, ExceptionCode&);
+    void sourceBufferDidChangeActiveState(SourceBuffer&, bool);
+    void streamEndedWithError(Optional<EndOfStreamError>);
 
     // MediaSourcePrivateClient
     void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) override;
@@ -87,8 +88,7 @@ public:
     MediaTime currentTime() const;
     const AtomicString& readyState() const { return m_readyState; }
     void setReadyState(const AtomicString&);
-    void endOfStream(ExceptionCode&);
-    void endOfStream(const AtomicString& error, ExceptionCode&);
+    void endOfStream(Optional<EndOfStreamError>, ExceptionCode&);
 
     HTMLMediaElement* mediaElement() const { return m_mediaElement; }
 
@@ -145,7 +145,5 @@ protected:
 };
 
 }
-
-#endif
 
 #endif

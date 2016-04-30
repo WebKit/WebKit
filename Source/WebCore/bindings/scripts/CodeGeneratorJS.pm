@@ -442,9 +442,7 @@ sub GenerateHeaderContentHeader
         @headerContentHeader = split("\r", $headerTemplate);
     }
 
-    # - Add header protection
-    push(@headerContentHeader, "\n#ifndef $className" . "_h");
-    push(@headerContentHeader, "\n#define $className" . "_h\n\n");
+    push(@headerContentHeader, "\n#pragma once\n\n");
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@headerContentHeader, "#if ${conditionalString}\n\n") if $conditionalString;
@@ -839,12 +837,17 @@ sub GetEnumerationClassName {
 sub GetEnumerationValueName {
     my ($name) = @_;
     return "EmptyString" if $name eq "";
-    return $codeGenerator->WK_ucfirst($name);
+    $name = join("", map { $codeGenerator->WK_ucfirst($_) } split("-", $name));
+    $name = "_$name" if $name =~ /^\d/;
+    return $name;
 };
 
 sub GetEnumerationImplementationContent
 {
     my ($enumerations) = @_;
+
+    # FIXME: Could optimize this to only generate things that are used, which would require
+    # iterating over everything in the interface.
 
     my $result = "";
     foreach my $enumeration (@$enumerations) {
@@ -853,12 +856,18 @@ sub GetEnumerationImplementationContent
 
         my $className = GetEnumerationClassName($name);
 
-        # Declare these instead of using "static" because these functions may be unused
-        # and we don't want to get warnings about unused static functions.
-        $result .= "const String& stringValue($className);\n";
-        $result .= "Optional<$className> enumerationValue$className(const String&);\n\n";
+        # FIXME: A little ugly to have this be a side effect instead of a return value.
+        AddToImplIncludes("<runtime/JSString.h>");
 
-        $result .= "const String& stringValue($className enumerationValue)\n";
+        # Declare these instead of using "static" because these may be unused and we don't
+        # want to get warnings about them.
+        $result .= "JSString* jsStringWithCache(ExecState*, $className);\n";
+        $result .= "Optional<$className> parse$className(ExecState&, JSValue);\n";
+        $result .= "extern const char expectedEnumerationValues${className}[];\n\n";
+
+        # Take an ExecState* instead of an ExecState& to match the jsStringWithCache from JSString.h.
+        # FIXME: Change to take VM& instead of ExecState*.
+        $result .= "JSString* jsStringWithCache(ExecState* state, $className enumerationValue)\n";
         $result .= "{\n";
         # FIXME: Might be nice to make this global be "const", but NeverDestroyed does not currently support that.
         # FIXME: Might be nice to make the entire array be NeverDestroyed instead of each value, but not sure the syntax for that.
@@ -870,27 +879,36 @@ sub GetEnumerationImplementationContent
         my $index = 0;
         foreach my $value (@{$enumeration->values}) {
             my $enumerationValueName = GetEnumerationValueName($value);
-            if ($index) {
-                $result .= "    static_assert(static_cast<size_t>($className::$enumerationValueName) == $index, \"$className::$enumerationValueName is not $index as expected\");\n";
-            } else {
-                # Keep the style checker happy. Not sure I still love this style guideline.
-                $result .= "    static_assert(!static_cast<size_t>($className::$enumerationValueName), \"$className::$enumerationValueName is not $index as expected\");\n";
-            }
+            $result .= "    static_assert(static_cast<size_t>($className::$enumerationValueName) == $index, \"$className::$enumerationValueName is not $index as expected\");\n";
             $index++;
         }
         $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
-        $result .= "    return values[static_cast<size_t>(enumerationValue)];\n";
+        $result .= "    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);\n";
         $result .= "}\n\n";
 
-        $result .= "Optional<$className> enumerationValue$className(const String& stringValue)\n";
+        $result .= "template<> struct JSValueTraits<$className> {\n";
+        $result .= "    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, $className value) { return jsStringWithCache(state, value); }\n";
+        $result .= "};\n\n";
+
+        # FIXME: Change to take VM& instead of ExecState&.
+        # FIXME: Consider using toStringOrNull to make exception checking faster.
+        # FIXME: Consider finding a more efficient way to match against all the strings quickly.
+        $result .= "Optional<$className> parse$className(ExecState& state, JSValue value)\n";
         $result .= "{\n";
+        $result .= "    auto stringValue = value.toWTFString(&state);\n";
         foreach my $value (@{$enumeration->values}) {
             my $enumerationValueName = GetEnumerationValueName($value);
-            $result .= "    if (stringValue == \"$value\")\n";
+            if ($value eq "") {
+                $result .= "    if (stringValue.isEmpty())\n";
+            } else {
+                $result .= "    if (stringValue == \"$value\")\n";
+            }
             $result .= "        return $className::$enumerationValueName;\n";
         }
         $result .= "    return Nullopt;\n";
         $result .= "}\n\n";
+
+        $result .= "const char expectedEnumerationValues${className}[] = \"\\\"" . join ("\\\", \\\"", @{$enumeration->values}) . "\\\"\";\n\n";
     }
     return $result;
 }
@@ -1399,11 +1417,11 @@ sub GenerateHeader
     }
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
-    push(@headerContent, "\n} // namespace WebCore\n\n");
-    push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
-    push(@headerContent, "#endif\n");
+    push(@headerContent, "\n} // namespace WebCore\n");
+    push(@headerContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 
     if ($interface->extendedAttributes->{"AppleCopyright"}) {
+        push(@headerContent, "\n");
         push(@headerContent, split("\r", $endAppleCopyright));
     }
 }
@@ -2778,8 +2796,8 @@ sub GenerateImplementation
                     push(@implContent, "    $setter(*state, *castedThis, castedThis->wrapped(), $eventName, value);\n");
                 }
                 push(@implContent, "    return true;\n");
-            } elsif ($attribute->signature->type =~ /Constructor$/) {
-                my $constructorType = $attribute->signature->type;
+            } elsif ($type =~ /Constructor$/) {
+                my $constructorType = $type;
                 $constructorType =~ s/Constructor$//;
                 # $constructorType ~= /Constructor$/ indicates that it is NamedConstructor.
                 # We do not generate the header file for NamedConstructor of class XXXX,
@@ -2797,18 +2815,17 @@ sub GenerateImplementation
                     my $putForwards = $attribute->signature->extendedAttributes->{"PutForwards"};
                     if ($putForwards) {
                         my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
-                        my $attributeType = $attribute->signature->type;
                         if ($attribute->signature->isNullable) {
-                            push(@implContent, "    RefPtr<${attributeType}> forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
+                            push(@implContent, "    RefPtr<${type}> forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
                             push(@implContent, "    if (!forwardedImpl)\n");
                             push(@implContent, "        return false;\n");
                             push(@implContent, "    auto& impl = *forwardedImpl;\n");
                         } else {
                             # Attribute is not nullable, the implementation is expected to return a reference.
-                            push(@implContent, "    Ref<${attributeType}> forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
+                            push(@implContent, "    Ref<${type}> forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
                             push(@implContent, "    auto& impl = forwardedImpl.get();\n");
                         }
-                        $attribute = $codeGenerator->GetAttributeFromInterface($interface, $attribute->signature->type, $putForwards);
+                        $attribute = $codeGenerator->GetAttributeFromInterface($interface, $type, $putForwards);
                     } else {
                         push(@implContent, "    auto& impl = castedThis->wrapped();\n");
                     }
@@ -2827,10 +2844,9 @@ sub GenerateImplementation
                 if ($attribute->signature->extendedAttributes->{"StrictTypeChecking"}) {
                     $implIncludes{"<runtime/Error.h>"} = 1;
 
-                    my $argType = $attribute->signature->type;
-                    if ($codeGenerator->IsWrapperType($argType)) {
-                        push(@implContent, "    if (UNLIKELY(!value.isUndefinedOrNull() && !value.inherits(JS${argType}::info()))) {\n");
-                        push(@implContent, "        throwAttributeTypeError(*state, \"$interfaceName\", \"$name\", \"$argType\");\n");
+                    if ($codeGenerator->IsWrapperType($type)) {
+                        push(@implContent, "    if (UNLIKELY(!value.isUndefinedOrNull() && !value.inherits(JS${type}::info()))) {\n");
+                        push(@implContent, "        throwAttributeTypeError(*state, \"$interfaceName\", \"$name\", \"$type\");\n");
                         push(@implContent, "        return false;\n");
                         push(@implContent, "    };\n");
                     }
@@ -2840,7 +2856,7 @@ sub GenerateImplementation
                 push(@implContent, "    if (UNLIKELY(state->hadException()))\n");
                 push(@implContent, "        return false;\n");
 
-                if ($codeGenerator->IsEnumType($type)) {
+                if ($codeGenerator->IsStringBasedEnumType($type)) {
                     my @enumValues = $codeGenerator->ValidEnumValues($type);
                     my @enumChecks = ();
                     foreach my $enumValue (@enumValues) {
@@ -2850,7 +2866,12 @@ sub GenerateImplementation
                     push (@implContent, "        return false;\n");
                 }
 
-                if ($attribute->signature->type eq "double" or $attribute->signature->type eq "float") {
+                if ($codeGenerator->IsEnumType($type)) {
+                    push (@implContent, "    if (UNLIKELY(!nativeValue))\n");
+                    push (@implContent, "        return false;\n");
+                }
+
+                if ($type eq "double" or $type eq "float") {
                     push(@implContent, "    if (UNLIKELY(!std::isfinite(nativeValue))) {\n");
                     push(@implContent, "        throwVMTypeError(state);\n");
                     push(@implContent, "        return false;\n");
@@ -2888,8 +2909,10 @@ sub GenerateImplementation
                     push(@implContent, "    return true;\n");
                 } else {
                     my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
-                    if ($codeGenerator->IsTypedArrayType($attribute->signature->type) and not $attribute->signature->type eq "ArrayBuffer") {
+                    if ($codeGenerator->IsTypedArrayType($type) and not $type eq "ArrayBuffer") {
                         push(@arguments, "nativeValue.get()");
+                    } elsif ($codeGenerator->IsEnumType($type) and not $codeGenerator->IsStringBasedEnumType($type)) {
+                        push(@arguments, "nativeValue.value()");
                     } else {
                         push(@arguments, "nativeValue");
                     }
@@ -3444,7 +3467,7 @@ sub CanUseWTFOptionalForParameter
     # FIXME: We should progressively stop blacklisting each type below
     # and eventually get rid of this function entirely.
     return 0 if $parameter->isVariadic;
-    return 0 if $codeGenerator->IsEnumType($type);
+    return 0 if $codeGenerator->IsStringBasedEnumType($type);
 
     return 1;
 }
@@ -3638,7 +3661,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
-        } elsif ($codeGenerator->IsEnumType($argType)) {
+        } elsif ($codeGenerator->IsStringBasedEnumType($argType)) {
             $implIncludes{"<runtime/Error.h>"} = 1;
 
             my $exceptionCheck = sub {
@@ -3681,6 +3704,42 @@ sub GenerateParametersCheck
                 &$exceptionCheck("");
                 &$enumValueCheck("");
             }
+        } elsif ($codeGenerator->IsEnumType($argType)) {
+            my $className = GetEnumerationClassName($argType);
+            $implIncludes{"<runtime/Error.h>"} = 1;
+
+            my $nativeType = $className;
+            my $optionalValue = "optionalValue";
+            my $defineOptionalValue = "auto optionalValue";
+            my $indent = "";
+
+            if ($parameter->isOptional && !defined($parameter->default)) {
+                $nativeType = "Optional<$className>";
+                $optionalValue = $name;
+                $defineOptionalValue = $name;
+            }
+
+            push(@$outputArray, "    auto ${name}Value = state->argument($argsIndex);\n");
+            push(@$outputArray, "    $nativeType $name;\n");
+
+            if ($parameter->isOptional) {
+                push(@$outputArray, "    if (${name}Value.isUndefined()) {\n");
+                if (defined($parameter->default)) {
+                    my $enumerationValueName = GetEnumerationValueName(substr($parameter->default, 1, -1));
+                    push(@$outputArray, "        $name = $className::$enumerationValueName;\n");
+                }
+                push(@$outputArray, "    } else {\n");
+                $indent = "    ";
+            }
+
+            push(@$outputArray, "$indent    $defineOptionalValue = parse$className(*state, ${name}Value);\n");
+            push(@$outputArray, "$indent    if (UNLIKELY(state->hadException()))\n");
+            push(@$outputArray, "$indent        return JSValue::encode(jsUndefined());\n");
+            push(@$outputArray, "$indent    if (UNLIKELY(!$optionalValue))\n");
+            push(@$outputArray, "$indent        return throwArgumentMustBeEnumError(*state, $argsIndex, \"$name\", \"$interfaceName\", $quotedFunctionName, expectedEnumerationValues$className);\n");
+            push(@$outputArray, "$indent    $name = optionalValue.value();\n") if $optionalValue ne $name;
+
+            push(@$outputArray, "    }\n") if $indent ne "";
         } else {
             # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
             # interface type, then if the incoming value does not implement that interface, a TypeError
@@ -3835,8 +3894,7 @@ sub GenerateCallbackHeader
         push(@headerContent, "\n    // Functions\n");
         foreach my $function (@{$interface->functions}) {
             my @params = @{$function->parameters};
-            if (!$function->signature->extendedAttributes->{"Custom"} &&
-                !(GetNativeType($function->signature->type) eq "bool")) {
+            if (!$function->signature->extendedAttributes->{"Custom"} && GetNativeType($function->signature->type) ne "bool") {
                 push(@headerContent, "    COMPILE_ASSERT(false)");
             }
 
@@ -3865,10 +3923,10 @@ sub GenerateCallbackHeader
     push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName*);\n");
     push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $interfaceName& impl) { return toJS(state, globalObject, &impl); }\n\n");
 
-    push(@headerContent, "} // namespace WebCore\n\n");
+    push(@headerContent, "} // namespace WebCore\n");
+
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
-    push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
-    push(@headerContent, "#endif\n");
+    push(@headerContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
 sub GenerateCallbackImplementation
@@ -3980,8 +4038,7 @@ sub GenerateCallbackImplementation
         push(@implContent, "\n// Functions\n");
         foreach my $function (@{$interface->functions}) {
             my @params = @{$function->parameters};
-            if ($function->signature->extendedAttributes->{"Custom"} ||
-                !(GetNativeType($function->signature->type) eq "bool")) {
+            if ($function->signature->extendedAttributes->{"Custom"} || GetNativeType($function->signature->type) ne "bool") {
                 next;
             }
 
@@ -4237,6 +4294,8 @@ sub GetNativeType
 {
     my $type = shift;
 
+    # FIXME: Maybe we can start using "auto" for most of these?
+
     my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
     return "${svgNativeType}*" if $svgNativeType;
     return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
@@ -4249,7 +4308,7 @@ sub GetNativeType
 
     return "Vector<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">" if $arrayOrSequenceType;
     return "String" if $codeGenerator->IsStringBasedEnumType($type);
-    return GetEnumerationClassName($type) if $codeGenerator->IsEnumType($type);
+    return "auto" if $codeGenerator->IsEnumType($type);
 
     # For all other types, the native type is a pointer with same type name as the IDL type.
     return "${type}*";
@@ -4416,7 +4475,7 @@ sub JSValueToNative
 
     if ($codeGenerator->IsEnumType($type)) {
         my $className = GetEnumerationClassName($type);
-        return "enumerationValue$className($value.toWTFString(state)).value()";
+        return "parse$className(*state, $value)";
     }
 
     # Default, assume autogenerated type conversion routines
@@ -4467,7 +4526,6 @@ sub NativeToJSValue
 
     if ($codeGenerator->IsEnumType($type)) {
         AddToImplIncludes("<runtime/JSString.h>", $conditional);
-        $value = "stringValue($value)" unless $codeGenerator->IsStringBasedEnumType($type);
         return "jsStringWithCache(state, $value)";
     }
 

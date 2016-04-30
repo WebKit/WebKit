@@ -3041,7 +3041,7 @@ void HTMLMediaElement::playInternal()
             if (m_session) {
                 m_session->addActiveMediaElement(*this);
 
-                if (m_session->kindEnum() == MediaSession::Kind::Content) {
+                if (m_session->kind() == MediaSessionKind::Content) {
                     if (Page* page = document().page())
                         page->chrome().client().focusedContentMediaElementDidChange(m_elementID);
                 }

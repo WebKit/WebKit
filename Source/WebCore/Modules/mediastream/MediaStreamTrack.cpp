@@ -111,12 +111,9 @@ bool MediaStreamTrack::remote() const
     return m_private->remote();
 }
 
-const AtomicString& MediaStreamTrack::readyState() const
+MediaStreamTrackState MediaStreamTrack::readyState() const
 {
-    static NeverDestroyed<AtomicString> endedState("ended", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> liveState("live", AtomicString::ConstructFromLiteral);
-
-    return ended() ? endedState : liveState;
+    return ended() ? MediaStreamTrackState::Ended : MediaStreamTrackState::Live;
 }
 
 bool MediaStreamTrack::ended() const

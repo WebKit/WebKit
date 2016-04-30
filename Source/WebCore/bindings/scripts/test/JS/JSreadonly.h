@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSreadonly_h
-#define JSreadonly_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "readonly.h"
@@ -86,5 +85,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, readonly*);
 
 
 } // namespace WebCore
-
-#endif

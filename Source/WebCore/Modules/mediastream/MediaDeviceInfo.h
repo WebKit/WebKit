@@ -23,40 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaDeviceInfo_h
-#define MediaDeviceInfo_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "ContextDestructionObserver.h"
 #include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class MediaDeviceInfo : public RefCounted<MediaDeviceInfo>, public ScriptWrappable, public ContextDestructionObserver {
-public:
-    static Ref<MediaDeviceInfo> create(ScriptExecutionContext*, const String&, const String&, const String&, const String&);
+enum class MediaDeviceKind { Audioinput, Audiooutput, Videoinput };
 
-    virtual ~MediaDeviceInfo() { }
-    
+class MediaDeviceInfo : public RefCounted<MediaDeviceInfo>, public ScriptWrappable, private ContextDestructionObserver {
+public:
+    static Ref<MediaDeviceInfo> create(ScriptExecutionContext*, const String&, const String&, const String&, MediaDeviceKind);
+
     const String& label() const { return m_label; }
     const String& deviceId() const { return m_deviceId; }
     const String& groupId() const { return m_groupId; }
-    const String& kind() const { return m_kind; }
-
-    static const AtomicString& audioInputType();
-    static const AtomicString& audioOutputType();
-    static const AtomicString& videoInputType();
+    MediaDeviceKind kind() const { return m_kind; }
 
 private:
-    MediaDeviceInfo(ScriptExecutionContext*, const String&, const String&, const String&, const String&);
+    MediaDeviceInfo(ScriptExecutionContext*, const String&, const String&, const String&, MediaDeviceKind);
 
     const String m_label;
     const String m_deviceId;
     const String m_groupId;
-    const String m_kind;
+    const MediaDeviceKind m_kind;
 };
 
 typedef Vector<RefPtr<MediaDeviceInfo>> MediaDeviceInfoVector;
@@ -64,5 +58,3 @@ typedef Vector<RefPtr<MediaDeviceInfo>> MediaDeviceInfoVector;
 }
 
 #endif
-
-#endif /* MediaDeviceInfo_h */

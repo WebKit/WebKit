@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestCustomConstructorWithNoInterfaceObject_h
-#define JSTestCustomConstructorWithNoInterfaceObject_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestCustomConstructorWithNoInterfaceObject.h"
@@ -88,5 +87,3 @@ JSC::EncodedJSValue JSC_HOST_CALL constructJSTestCustomConstructorWithNoInterfac
 
 
 } // namespace WebCore
-
-#endif

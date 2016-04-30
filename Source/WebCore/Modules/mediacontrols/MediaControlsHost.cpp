@@ -233,37 +233,29 @@ String MediaControlsHost::externalDeviceDisplayName() const
 #endif
 }
 
-String MediaControlsHost::externalDeviceType() const
+DeviceType MediaControlsHost::externalDeviceType() const
 {
-    static NeverDestroyed<String> none(ASCIILiteral("none"));
-    String type = none;
-    
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    static NeverDestroyed<String> airplay(ASCIILiteral("airplay"));
-    static NeverDestroyed<String> tvout(ASCIILiteral("tvout"));
-    
+#if !ENABLE(WIRELESS_PLAYBACK_TARGET)
+    return DeviceType::None;
+#else
     MediaPlayer* player = m_mediaElement->player();
     if (!player) {
         LOG(Media, "MediaControlsHost::externalDeviceType - returning \"none\" because player is NULL");
-        return none;
+        return DeviceType::None;
     }
     
     switch (player->wirelessPlaybackTargetType()) {
     case MediaPlayer::TargetTypeNone:
-        type = none;
-        break;
+        return DeviceType::None;
     case MediaPlayer::TargetTypeAirPlay:
-        type = airplay;
-        break;
+        return DeviceType::Airplay;
     case MediaPlayer::TargetTypeTVOut:
-        type = tvout;
-        break;
+        return DeviceType::Tvout;
     }
+
+    ASSERT_NOT_REACHED();
+    return DeviceType::None;
 #endif
-    
-    LOG(Media, "MediaControlsHost::externalDeviceType - returning \"%s\"", type.utf8().data());
-    
-    return type;
 }
 
 bool MediaControlsHost::controlsDependOnPageScaleFactor() const

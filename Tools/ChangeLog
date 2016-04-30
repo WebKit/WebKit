@@ -1,3 +1,13 @@
+2016-04-30  Darin Adler  <darin@apple.com>
+
+        Next batch of conversions to use C++ enum class instead of strings for enumerations
+        https://bugs.webkit.org/show_bug.cgi?id=157232
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/webkitpy/style/checker.py: Skip the bindings script tests when doing style
+        checking. We don't want to waste time trying to make our generated code match our style.
+
 2016-04-29  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         Add JSC test results in JSON format to a Buildbot log.

@@ -37,33 +37,9 @@
 
 namespace WebCore {
 
-static const char* defaultKind = "";
-static const char* ambientKind = "ambient";
-static const char* transientKind = "transient";
-static const char* transientSoloKind = "transient-solo";
-static const char* contentKind = "content";
-
-MediaSession::Kind MediaSession::parseKind(const String& kind)
-{
-    // 4. Media Session
-    // 2. Set media session's current media session type to the corresponding media session type of media session category.
-
-    if (kind.isNull() || kind == contentKind)
-        return MediaSession::Kind::Content;
-    if (kind == ambientKind)
-        return MediaSession::Kind::Ambient;
-    if (kind == transientKind)
-        return MediaSession::Kind::Transient;
-    if (kind == transientSoloKind)
-        return MediaSession::Kind::TransientSolo;
-
-    ASSERT_NOT_REACHED();
-    return MediaSession::Kind::Content;
-}
-
-MediaSession::MediaSession(ScriptExecutionContext& context, const String& kind)
+MediaSession::MediaSession(ScriptExecutionContext& context, MediaSessionKind kind)
     : m_document(downcast<Document>(context))
-    , m_kind(parseKind(kind))
+    , m_kind(kind)
 {
     // 4. Media Sessions
     // 3. If media session's current media session type is "content", then create a new media remote controller for media
@@ -80,22 +56,6 @@ MediaSession::~MediaSession()
 
     if (m_controls)
         m_controls->clearSession();
-}
-
-String MediaSession::kind() const
-{
-    switch (m_kind) {
-    case MediaSession::Kind::Default:
-        return defaultKind;
-    case MediaSession::Kind::Ambient:
-        return ambientKind;
-    case MediaSession::Kind::Transient:
-        return transientKind;
-    case MediaSession::Kind::TransientSolo:
-        return transientSoloKind;
-    case MediaSession::Kind::Content:
-        return contentKind;
-    }
 }
 
 MediaRemoteControls* MediaSession::controls()

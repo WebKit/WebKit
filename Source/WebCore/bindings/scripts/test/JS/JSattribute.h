@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSattribute_h
-#define JSattribute_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "attribute.h"
@@ -90,5 +89,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, attribute*);
 
 
 } // namespace WebCore
-
-#endif

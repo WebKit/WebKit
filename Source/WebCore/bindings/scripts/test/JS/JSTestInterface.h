@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestInterface_h
-#define JSTestInterface_h
+#pragma once
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
@@ -115,5 +114,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestInterface
 } // namespace WebCore
 
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
-
-#endif

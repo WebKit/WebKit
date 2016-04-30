@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSession_h
-#define MediaSession_h
+#pragma once
 
 #if ENABLE(MEDIA_SESSION)
 
@@ -37,31 +36,20 @@ class Dictionary;
 class Document;
 class HTMLMediaElement;
 
+enum class MediaSessionKind { Content, Transient, TransientSolo, Ambient };
+
 class MediaSession final : public RefCounted<MediaSession> {
 public:
-    enum class State {
-        Idle,
-        Active,
-        Interrupted
-    };
+    enum class State { Idle, Active, Interrupted };
 
-    enum class Kind {
-        Default,
-        Content,
-        Transient,
-        TransientSolo,
-        Ambient
-    };
-
-    static Ref<MediaSession> create(ScriptExecutionContext& context, const String& kind = String())
+    static Ref<MediaSession> create(ScriptExecutionContext& context, MediaSessionKind kind)
     {
         return adoptRef(*new MediaSession(context, kind));
     }
 
     ~MediaSession();
 
-    String kind() const;
-    Kind kindEnum() const { return m_kind; }
+    MediaSessionKind kind() const { return m_kind; }
     MediaRemoteControls* controls();
 
     WEBCORE_EXPORT State currentState() const { return m_currentState; }
@@ -91,8 +79,6 @@ private:
 
     MediaSession(ScriptExecutionContext&, const String&);
 
-    static Kind parseKind(const String&);
-
     void addMediaElement(HTMLMediaElement&);
     void removeMediaElement(HTMLMediaElement&);
 
@@ -109,7 +95,7 @@ private:
     HashSet<HTMLMediaElement*>* m_iteratedActiveParticipatingElements { nullptr };
 
     Document& m_document;
-    const Kind m_kind { Kind::Default };
+    const MediaSessionKind m_kind;
     RefPtr<MediaRemoteControls> m_controls;
     MediaSessionMetadata m_metadata;
 };
@@ -117,5 +103,3 @@ private:
 } // namespace WebCore
 
 #endif /* ENABLE(MEDIA_SESSION) */
-
-#endif /* MediaSession_h */

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLVideoElement_h
-#define HTMLVideoElement_h
+#pragma once
 
 #if ENABLE(VIDEO)
 
@@ -34,6 +33,8 @@
 namespace WebCore {
 
 class HTMLImageLoader;
+
+enum class VideoPresentationMode { Fullscreen, PictureInPicture, Inline };
 
 class HTMLVideoElement final : public HTMLMediaElement {
 public:
@@ -81,9 +82,9 @@ public:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    bool webkitSupportsPresentationMode(const String&) const;
-    void webkitSetPresentationMode(const String&);
-    String webkitPresentationMode() const;
+    bool webkitSupportsPresentationMode(VideoPresentationMode) const;
+    void webkitSetPresentationMode(VideoPresentationMode);
+    VideoPresentationMode webkitPresentationMode() const;
     void setFullscreenMode(VideoFullscreenMode);
     void fullscreenModeChanged(VideoFullscreenMode) override;
 #endif
@@ -132,4 +133,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLVideoElement)
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(VIDEO)
-#endif // HTMLVideoElement_h

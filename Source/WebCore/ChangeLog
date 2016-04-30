@@ -1,3 +1,198 @@
+2016-04-30  Darin Adler  <darin@apple.com>
+
+        Next batch of conversions to use C++ enum class instead of strings for enumerations
+        https://bugs.webkit.org/show_bug.cgi?id=157232
+
+        Reviewed by Chris Dumez.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::error): Use ResponseType.
+        (WebCore::FetchResponse::redirect): Ditto.
+        (WebCore::FetchResponse::FetchResponse): Ditto.
+        (WebCore::FetchResponse::clone): Ditto.
+        (WebCore::FetchResponse::type): Return ResponseType.
+        (WebCore::FetchResponse::startFetching): Use auto.
+        * Modules/fetch/FetchResponse.h: Added ResponseType and used it for the return value
+        of the type function, and also to replace FetchResponse::Type.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::externalDeviceType): Return DeviceType.
+        * Modules/mediacontrols/MediaControlsHost.h: Added DeviceType and use it for the
+        return value for the externalDeviceType function.
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::parseKind): Deleted.
+        (WebCore::MediaSession::MediaSession): Use MediaSessionKind.
+        (WebCore::MediaSession::kind): Deleted.
+        * Modules/mediasession/MediaSession.h: Added MediaSessionKind and use it as the
+        argument to MediaSession::create and the return type for the kind function.
+        Probably didn't get this 100% right because this code does not seem to be compiled.
+        * Modules/mediasession/MediaSession.idl: Added default value for kind, as specified
+        in the current version of the specification for this class.
+        * Modules/mediasession/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::didReceiveStartOfInterruptionNotification):
+        Tried to update for changes above.
+        (WebCore::MediaSessionManager::didReceiveEndOfInterruptionNotification): Ditto.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::endOfStream): Changed to take Optional<EndOfStreamError>
+        instead of overloading and taking const AtomicString&.
+        (WebCore::MediaSource::streamEndedWithError): Ditto. Also removed exception code.
+        (WebCore::MediaSource::addSourceBuffer): Updated to use EndOfStreamError. Also
+        used an if statement.
+        (WebCore::MediaSource::sourceBufferDidChangeActiveState): Updated to take a reference
+        instead of a pointer.
+        * Modules/mediasource/MediaSource.h: Added EndOfStreamError and changed as above.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::segmentsKeyword): Deleted.
+        (WebCore::SourceBuffer::sequenceKeyword): Deleted.
+        (WebCore::SourceBuffer::TrackBuffer::TrackBuffer): Initialize booleans where they are
+        defined rather than in this constructor.
+        (WebCore::SourceBuffer::create): Use Ref instead of RefPtr.
+        (WebCore::SourceBuffer::SourceBuffer): Initialize many data members where they are
+        defined rather than in this constructor.
+        (WebCore::SourceBuffer::setTimestampOffset): Use AppendMode.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveRenderingError): Ditto.
+        (WebCore::SourceBuffer::decodeError): Deleted.
+        (WebCore::SourceBuffer::networkError): Deleted.
+        (WebCore::SourceBuffer::setActive): Pass reference instead of pointer.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidEndStream): Deleted. No callers.
+        (WebCore::SourceBuffer::appendError): Use AppendMode.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): Ditto.
+        (WebCore::SourceBuffer::setMode): Take AppendMode.
+        * Modules/mediasource/SourceBuffer.h: Added AppendMode, removed various string
+        constant functions, initialize more data emebers in this header. Removed unused
+        sourceBufferPrivateDidEndStream function.
+
+        * Modules/mediastream/MediaDeviceInfo.cpp:
+        (WebCore::MediaDeviceInfo::MediaDeviceInfo): Take MediaDeviceKind instead of string.
+        (WebCore::MediaDeviceInfo::create): Ditto.
+        (WebCore::MediaDeviceInfo::audioInputType): Deleted.
+        (WebCore::MediaDeviceInfo::audioOutputType): Deleted.
+        (WebCore::MediaDeviceInfo::videoInputType): Deleted.
+        * Modules/mediastream/MediaDeviceInfo.h: Aedded MediaDeviceKind and used it.
+        * Modules/mediastream/MediaDeviceInfo.idl: Changed type of the kind attribute
+        to be MediaDeviceKind as in the specification.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::didCompleteTrackSourceInfoRequest): Fix loop to not
+        churn the reference countds. Also updated to use String instead of AtomicString for
+        label, and MediaDeviceKind instead of string for kind.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::readyState): Return MediaStreamTrackState.
+        * Modules/mediastream/MediaStreamTrack.h: Added MediaStreamTrackState and used it
+        for the return value from the readyState function.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::state): Return AudioContextState.
+        * Modules/webaudio/AudioContext.h: Added AudioContextState and used it.
+
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::processorType): Added.
+        (WebCore::WaveShaperNode::setOversample): Take OverSampletype instead of a string.
+        (WebCore::WaveShaperNode::oversample): Return OverSampleType.
+        * Modules/webaudio/WaveShaperNode.h: Added OverSampleType and used it.
+        * Modules/webaudio/WaveShaperNode.idl: Removed unneeded [SetterRaisesException].
+
+        * bindings/scripts/CodeGenerator.pm: Removed special cases for 18 enumerations that
+        either don't exist or were converted to no longer pass strings in to the C++ DOM.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeaderContentHeader): Use #pragma once instead of header guards.
+        (GetEnumerationValueName): Added logic to handle names with "-" and starting with
+        a numeric digit.
+        (GetEnumerationImplementationContent): Changed functions so they do more of the
+        binding work. Added JSValueTraits specialization so we can generate bindings for
+        a vector of any enumeration. Added special cases for null string. Removed special
+        case to keep the style checker happy.
+        (GenerateHeader): Removed the #endif that matched the header guards in
+        GenerateHeaderContentHeader.
+        (GenerateImplementation): Use the $type local variable rather than writing out
+        $attribute->signature->type or $attributeType. Fixed code path that checks for
+        valid enumeration values to work for non-string-based enumerations.
+        (CanUseWTFOptionalForParameter): Turn this function off for the new enumerations.
+        For now, leave it on for the old string-based enumerations.
+        (GenerateParametersCheck): Added appropriate parameter checking for the new
+        enumerations.
+        (GenerateCallbackHeader): Removed the #endif that matched the header guards in
+        GenerateHeaderContentHeader.
+        (GetNativeType): Use "auto" instead of the enumeration name in generated code.
+        (JSValueToNative): Updated since the name of enumerationValueMyEnum was changed
+        to parseMyEnum.
+        (NativeToJSValue): Took out call to stringValue, since we now overload the
+        jsStringWithCache function instead.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCallback.h:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.h:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.h:
+        * bindings/scripts/test/JS/JSreadonly.h:
+        Regenerated.
+
+        * crypto/CryptoKey.cpp:
+        (WebCore::CryptoKey::type): Use CryptoKeyType.
+        (WebCore::CryptoKey::usages): Use KeyUsage.
+        * crypto/CryptoKey.h: Added KeyUsage and use CryptoKeyType.
+
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::status): Use FontFaceSetLoadStatus.
+        * css/FontFaceSet.h: Added FontFaceSetLoadStatus and used it.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::playInternal): Use kind instead of kindEnum.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::presentationModeFullscreen): Deleted.
+        (WebCore::presentationModePictureInPicture): Deleted.
+        (WebCore::presentationModeInline): Deleted.
+        (WebCore::HTMLVideoElement::webkitSupportsPresentationMode): Use VideoPresentationMode.
+        (WebCore::toFullscreenMode): Ditto.
+        (WebCore::HTMLVideoElement::webkitSetPresentationMode): Ditto.
+        (WebCore::toPresentationMode): Ditto.
+        (WebCore::HTMLVideoElement::webkitPresentationMode): Ditto.
+        * html/HTMLVideoElement.h: Added VideoPresentationMode and used it.
+
+        * html/canvas/CanvasRenderingContext2D.cpp: Tweaked formatting. Changed
+        DefaultSmoothingQuality macro to a constant.
+        (WebCore::toWindRule): Replaces parseWinding.
+        (WebCore::CanvasRenderingContext2D::fill): Use CanvasWindingRule instead of string.
+        (WebCore::CanvasRenderingContext2D::clip): Ditto.
+        (WebCore::CanvasRenderingContext2D::fillInternal): Ditto.
+        (WebCore::CanvasRenderingContext2D::clipInternal): Ditto.
+        (WebCore::CanvasRenderingContext2D::isPointInPath): Ditto.
+        (WebCore::CanvasRenderingContext2D::isPointInStroke): Ditto.
+        (WebCore::CanvasRenderingContext2D::isPointInPathInternal): Ditto.
+        (WebCore::smoothingToInterpolationQuality): Ditto.
+        (WebCore::CanvasRenderingContext2D::imageSmoothingQuality): Ditto.
+        (WebCore::CanvasRenderingContext2D::setImageSmoothingQuality): Ditto.
+        * html/canvas/CanvasRenderingContext2D.h: Added CanvasWindingRule and
+        ImageSmoothingQuality, and use them throughout the class.
+
+        * platform/graphics/SourceBufferPrivateClient.h: Removed unused
+        sourceBufferPrivateDidEndStream function.
+
 2016-04-30  Nan Wang  <n_wang@apple.com>
 
         AX: @aria-label attribute should work on <label> element
@@ -14,6 +209,10 @@
         (WebCore::AccessibilityNodeObject::titleElementText):
         * accessibility/AccessibilityRenderObject.cpp:
         (WebCore::AccessibilityRenderObject::exposesTitleUIElement):
+
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebCore::WebPlaybackSessionModelMediaElement::updateForEventName):
+        Use DeviceType instead of String for externalDeviceType.
 
 2016-04-29  Chris Dumez  <cdumez@apple.com>
 

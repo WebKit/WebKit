@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CanvasRenderingContext2D_h
-#define CanvasRenderingContext2D_h
+#pragma once
 
 #include "AffineTransform.h"
 #include "CanvasPathMethods.h"
@@ -57,6 +56,9 @@ class ImageData;
 class TextMetrics;
 
 typedef int ExceptionCode;
+
+enum class CanvasWindingRule { Nonzero, Evenodd };
+enum class ImageSmoothingQuality { Low, Medium, High };
 
 class CanvasRenderingContext2D final : public CanvasRenderingContext, public CanvasPathMethods {
 public:
@@ -129,19 +131,19 @@ public:
 
     void beginPath();
 
-    void fill(const String& winding = ASCIILiteral("nonzero"));
+    void fill(CanvasWindingRule = CanvasWindingRule::Nonzero);
     void stroke();
-    void clip(const String& winding = ASCIILiteral("nonzero"));
+    void clip(CanvasWindingRule = CanvasWindingRule::Nonzero);
 
-    void fill(DOMPath&, const String& winding = ASCIILiteral("nonzero"));
+    void fill(DOMPath&, CanvasWindingRule = CanvasWindingRule::Nonzero);
     void stroke(DOMPath&);
-    void clip(DOMPath&, const String& winding = ASCIILiteral("nonzero"));
+    void clip(DOMPath&, CanvasWindingRule = CanvasWindingRule::Nonzero);
 
-    bool isPointInPath(const float x, const float y, const String& winding = ASCIILiteral("nonzero"));
-    bool isPointInStroke(const float x, const float y);
+    bool isPointInPath(float x, float y, CanvasWindingRule = CanvasWindingRule::Nonzero);
+    bool isPointInStroke(float x, float y);
 
-    bool isPointInPath(DOMPath&, const float x, const float y, const String& winding = ASCIILiteral("nonzero"));
-    bool isPointInStroke(DOMPath&, const float x, const float y);
+    bool isPointInPath(DOMPath&, float x, float y, CanvasWindingRule = CanvasWindingRule::Nonzero);
+    bool isPointInStroke(DOMPath&, float x, float y);
 
     void clearRect(float x, float y, float width, float height);
     void fillRect(float x, float y, float width, float height);
@@ -220,14 +222,8 @@ public:
     bool imageSmoothingEnabled() const;
     void setImageSmoothingEnabled(bool);
 
-    String imageSmoothingQuality() const;
-    void setImageSmoothingQuality(const String&);
-
-    enum class SmoothingQuality {
-        Low,
-        Medium,
-        High
-    };
+    ImageSmoothingQuality imageSmoothingQuality() const;
+    void setImageSmoothingQuality(ImageSmoothingQuality);
 
     bool usesDisplayListDrawing() const { return m_usesDisplayListDrawing; };
     void setUsesDisplayListDrawing(bool flag) { m_usesDisplayListDrawing = flag; };
@@ -291,7 +287,7 @@ private:
         Vector<float> lineDash;
         float lineDashOffset;
         bool imageSmoothingEnabled;
-        SmoothingQuality imageSmoothingQuality;
+        ImageSmoothingQuality imageSmoothingQuality;
 
         // Text state.
         TextAlign textAlign;
@@ -349,11 +345,11 @@ private:
     void beginCompositeLayer();
     void endCompositeLayer();
 
-    void fillInternal(const Path&, const String& winding);
+    void fillInternal(const Path&, CanvasWindingRule);
     void strokeInternal(const Path&);
-    void clipInternal(const Path&, const String& winding);
+    void clipInternal(const Path&, CanvasWindingRule);
 
-    bool isPointInPathInternal(const Path&, float x, float y, const String& winding);
+    bool isPointInPathInternal(const Path&, float x, float y, CanvasWindingRule);
     bool isPointInStrokeInternal(const Path&, float x, float y);
 
     void drawFocusIfNeededInternal(const Path&, Element*);
@@ -401,5 +397,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::CanvasRenderingContext2D, is2d())
-
-#endif

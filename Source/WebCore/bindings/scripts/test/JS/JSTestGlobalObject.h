@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestGlobalObject_h
-#define JSTestGlobalObject_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestGlobalObject.h"
@@ -119,5 +118,3 @@ public:
 
 
 } // namespace WebCore
-
-#endif

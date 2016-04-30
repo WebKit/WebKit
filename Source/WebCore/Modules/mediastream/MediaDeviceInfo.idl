@@ -24,15 +24,15 @@
 */
 
 [
-NoInterfaceObject,
-Conditional=MEDIA_STREAM,
-Constructor(DOMString deviceId, DOMString label, DOMString groupId, MediaDeviceKind kind),
-JSGenerateToJSObject,
+    Conditional=MEDIA_STREAM,
+    Constructor(DOMString deviceId, DOMString label, DOMString groupId, MediaDeviceKind kind),
+    JSGenerateToJSObject,
+    NoInterfaceObject,
 ] interface MediaDeviceInfo {
-    readonly    attribute DOMString deviceId;
-    readonly    attribute DOMString groupId;
-    readonly    attribute DOMString kind;
-    readonly    attribute DOMString label;
+    readonly attribute DOMString deviceId;
+    readonly attribute DOMString groupId;
+    readonly attribute MediaDeviceKind kind;
+    readonly attribute DOMString label;
 };
 
 enum MediaDeviceKind {

@@ -118,19 +118,19 @@ void MediaSessionManager::didReceiveStartOfInterruptionNotification(MediaSession
             // -  If interrupting media session category is Content:
             //    If media session's current media session type is Default or Content then indefinitely pause all of media
             //    session's active audio-producing participants and set media session's current state to idle.
-            if (session->kindEnum() == MediaSession::Kind::Default || session->kindEnum() == MediaSession::Kind::Content)
+            if (session->kind() == MediaSessionKind::Default || session->kind() == MediaSessionKind::Content)
                 session->handleIndefinitePauseInterruption();
         } else if (interruptingCategory == MediaSessionInterruptingCategory::Transient) {
             // - If interrupting media session category is Transient:
             //   If media session's current media session type is Default or Content then duck all of media session's active
             //   audio-producing participants and set media session's current state to interrupted.
-            if (session->kindEnum() == MediaSession::Kind::Default || session->kindEnum() == MediaSession::Kind::Content)
+            if (session->kind() == MediaSessionKind::Default || session->kind() == MediaSessionKind::Content)
                 session->handleDuckInterruption();
         } else if (interruptingCategory == MediaSessionInterruptingCategory::TransientSolo) {
             // - If interrupting media session category is Transient Solo:
             //   If media session's current media session type is Default, Content, Transient or Transient Solo then pause
             //   all of media session's active audio-producing participants and set current media session's current state to interrupted.
-            if (session->kindEnum() != MediaSession::Kind::Ambient)
+            if (session->kind() != MediaSessionKind::Ambient)
                 session->handlePauseInterruption();
         }
     }
@@ -154,13 +154,13 @@ void MediaSessionManager::didReceiveEndOfInterruptionNotification(MediaSessionIn
             // - If interrupting media session category is Transient:
             //   If media session's current media session type is Default or Content, then unduck all of media session's
             //   active audio-producing participants and set media session's current state to active.
-            if (session->kindEnum() == MediaSession::Kind::Default || session->kindEnum() == MediaSession::Kind::Content)
+            if (session->kind() == MediaSessionKind::Default || session->kind() == MediaSessionKind::Content)
                 session->handleUnduckInterruption();
         } else if (interruptingCategory == MediaSessionInterruptingCategory::TransientSolo) {
             // - If interrupting media session category is Transient Solo:
             //   If media session's current media session type is Default, Content, Transient, or Transient Solo, then
             //   unpause the media session's active audio-producing participants and set media session's current state to active.
-            if (session->kindEnum() != MediaSession::Kind::Ambient)
+            if (session->kind() != MediaSessionKind::Ambient)
                 session->handleUnpauseInterruption();
         }
     }

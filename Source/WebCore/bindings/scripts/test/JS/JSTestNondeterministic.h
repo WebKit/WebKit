@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestNondeterministic_h
-#define JSTestNondeterministic_h
+#pragma once
 
 #include "JSDOMWrapper.h"
 #include "TestNondeterministic.h"
@@ -86,5 +85,3 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, TestNondeterm
 
 
 } // namespace WebCore
-
-#endif
