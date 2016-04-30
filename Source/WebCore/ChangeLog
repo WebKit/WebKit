@@ -1,3 +1,30 @@
+2016-04-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] do not exit AirPlay when the screen locks
+        https://bugs.webkit.org/show_bug.cgi?id=156502
+        <rdar://problem/24616592>
+
+        Reviewed by Dean Jackson
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pendingActionTimerFired): Use m_isPlayingToWirelessTarget.
+        (WebCore::HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless): Ditto.
+        (WebCore::HTMLMediaElement::wirelessRoutesAvailableDidChange): Set m_isPlayingToWirelessTarget.
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged): Use
+          m_isPlayingToWirelessTarget.
+        (WebCore::HTMLMediaElement::isPlayingToWirelessPlaybackTarget): Ditto.
+        (WebCore::HTMLMediaElement::configureMediaControls): Ditto.
+        (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction): Add logging.
+        (WebCore::HTMLMediaElement::purgeBufferedDataIfPossible): Don't tell the media engine to purge 
+          data if it is playing to a wireless target because that will drop the connection.
+        * html/HTMLMediaElement.h:
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted): Add logging.
+        (WebCore::MediaElementSession::canPlayToWirelessPlaybackTarget): Drive by fix: iOS doesn't 
+          have an explicit playbackTarget, don't test for it.
+        (WebCore::MediaElementSession::isPlayingToWirelessPlaybackTarget): Ditto.
+
 2016-04-29  Chris Dumez  <cdumez@apple.com>
 
         Node.nodeName should not be nullable
