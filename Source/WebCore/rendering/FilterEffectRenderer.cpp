@@ -387,7 +387,7 @@ bool FilterEffectRendererHelper::prepareFilterEffect(RenderLayer* renderLayer, c
 GraphicsContext* FilterEffectRendererHelper::filterContext() const
 {
     if (!m_haveFilterEffect)
-        return 0;
+        return nullptr;
 
     FilterEffectRenderer* filter = m_renderLayer->filterRenderer();
     return filter->inputContext();

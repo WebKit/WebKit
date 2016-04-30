@@ -786,7 +786,7 @@ private:
 
     bool hasFilterThatIsPainting(GraphicsContext&, PaintLayerFlags) const;
     std::unique_ptr<FilterEffectRendererHelper> setupFilters(GraphicsContext&, LayerPaintingInfo&, PaintLayerFlags, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
-    GraphicsContext& applyFilters(FilterEffectRendererHelper*, GraphicsContext& originalContext, LayerPaintingInfo&, LayerFragments&);
+    void applyFilters(FilterEffectRendererHelper*, GraphicsContext& originalContext, LayerPaintingInfo&, LayerFragments&);
 
     void paintLayer(GraphicsContext&, const LayerPaintingInfo&, PaintLayerFlags);
     void paintFixedLayersInNamedFlows(GraphicsContext&, const LayerPaintingInfo&, PaintLayerFlags);

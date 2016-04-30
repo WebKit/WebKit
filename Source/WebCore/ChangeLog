@@ -1,3 +1,32 @@
+2016-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up GraphicsContext use in RenderLayer::paintLayerContents()
+        https://bugs.webkit.org/show_bug.cgi?id=157193
+
+        Reviewed by Zalan Bujtas.
+
+        Make the lifetime of the temporary GraphicsContext used to paint filters more explicit
+        by putting it in an inner scope.
+        
+        Make currentContext a reference.
+        
+        transparencyLayerContext was a confusing name (it doens't mean we've started a
+        transparency layer), so just use "context" to refer to the original context. When
+        passed to other functions, this is called "contextForTransparencyLayer".
+        
+        No longer leaves "context" as a null pointer if filterPainter->filterContext() returns
+        a null pointer. It's unclear if this ever happened.
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRendererHelper::filterContext):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::applyFilters):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintBackgroundForFragments):
+        (WebCore::RenderLayer::paintForegroundForFragments):
+        * rendering/RenderLayer.h:
+
 2016-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Issues inspecting the inspector, pausing on breakpoints causes content to not load

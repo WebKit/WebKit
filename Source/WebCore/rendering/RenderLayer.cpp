@@ -1819,8 +1819,8 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
 #endif
 
 #ifdef REVEAL_TRANSPARENCY_LAYERS
-        context->setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f));
-        context->fillRect(pixelSnappedClipRect);
+        context.setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f));
+        context.fillRect(pixelSnappedClipRect);
 #endif
     }
 }
@@ -4196,7 +4196,7 @@ std::unique_ptr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsCo
     return nullptr;
 }
 
-GraphicsContext& RenderLayer::applyFilters(FilterEffectRendererHelper* filterPainter, GraphicsContext& originalContext, LayerPaintingInfo& paintingInfo, LayerFragments& layerFragments)
+void RenderLayer::applyFilters(FilterEffectRendererHelper* filterPainter, GraphicsContext& originalContext, LayerPaintingInfo& paintingInfo, LayerFragments& layerFragments)
 {
     ASSERT(filterPainter->hasStartedFilterEffect());
     // Apply the correct clipping (ie. overflow: hidden).
@@ -4205,7 +4205,6 @@ GraphicsContext& RenderLayer::applyFilters(FilterEffectRendererHelper* filterPai
     clipToRect(paintingInfo, originalContext, backgroundRect);
     filterPainter->applyFilterEffect(originalContext);
     restoreClip(originalContext, paintingInfo.paintDirtyRect, backgroundRect);
-    return originalContext;
 }
 
 // Helper for the sorting of layers by z-index.
@@ -4239,7 +4238,7 @@ void RenderLayer::paintFixedLayersInNamedFlows(GraphicsContext& context, const L
         fixedLayer->paintLayer(context, paintingInfo, paintFlags);
 }
 
-void RenderLayer::paintLayerContents(GraphicsContext& originalContext, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags)
+void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags)
 {
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
 
@@ -4281,143 +4280,142 @@ void RenderLayer::paintLayerContents(GraphicsContext& originalContext, const Lay
     // FIXME: We shouldn't have to disable subpixel quantization for overflow clips or subframes once we scroll those
     // things on the scrolling thread.
     bool didQuantizeFonts = true;
-    bool needToAdjustSubpixelQuantization = setupFontSubpixelQuantization(originalContext, didQuantizeFonts);
+    bool needToAdjustSubpixelQuantization = setupFontSubpixelQuantization(context, didQuantizeFonts);
 
     // Apply clip-path to context.
     LayoutSize columnAwareOffsetFromRoot = offsetFromRoot;
-    if (renderer().flowThreadContainingBlock() && (renderer().hasClipPath() || hasFilterThatIsPainting(originalContext, paintFlags)))
+    if (renderer().flowThreadContainingBlock() && (renderer().hasClipPath() || hasFilterThatIsPainting(context, paintFlags)))
         columnAwareOffsetFromRoot = toLayoutSize(convertToLayerCoords(paintingInfo.rootLayer, LayoutPoint(), AdjustForColumns));
 
     bool hasClipPath = false;
     if (shouldApplyClipPath(paintingInfo.paintBehavior, localPaintFlags))
-        hasClipPath = setupClipPath(originalContext, paintingInfo, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
+        hasClipPath = setupClipPath(context, paintingInfo, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
 
     LayerPaintingInfo localPaintingInfo(paintingInfo);
 
-    GraphicsContext* context = &originalContext;
-    GraphicsContext& transparencyLayerContext = originalContext;
-    std::unique_ptr<FilterEffectRendererHelper> filterPainter = setupFilters(*context, localPaintingInfo, paintFlags, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
-    if (filterPainter) {
-        context = filterPainter->filterContext();
-        if (context != &transparencyLayerContext && haveTransparency) {
-            // If we have a filter and transparency, we have to eagerly start a transparency layer here, rather than risk a child layer lazily starts one with the wrong context.
-            beginTransparencyLayers(transparencyLayerContext, localPaintingInfo, paintingInfo.paintDirtyRect);
-        }
-    }
-
-    // If this layer's renderer is a child of the subtreePaintRoot, we render unconditionally, which
-    // is done by passing a nil subtreePaintRoot down to our renderer (as if no subtreePaintRoot was ever set).
-    // Otherwise, our renderer tree may or may not contain the subtreePaintRoot root, so we pass that root along
-    // so it will be tested against as we descend through the renderers.
-    RenderObject* subtreePaintRootForRenderer = nullptr;
-    if (localPaintingInfo.subtreePaintRoot && !renderer().isDescendantOf(localPaintingInfo.subtreePaintRoot))
-        subtreePaintRootForRenderer = localPaintingInfo.subtreePaintRoot;
-
-    if (localPaintingInfo.overlapTestRequests && isSelfPaintingLayer)
-        performOverlapTests(*localPaintingInfo.overlapTestRequests, localPaintingInfo.rootLayer, this);
-
     bool selectionAndBackgroundsOnly = localPaintingInfo.paintBehavior & PaintBehaviorSelectionAndBackgroundsOnly;
     bool selectionOnly = localPaintingInfo.paintBehavior & PaintBehaviorSelectionOnly;
-    
-    PaintBehavior paintBehavior = PaintBehaviorNormal;
-    if (localPaintFlags & PaintLayerPaintingSkipRootBackground)
-        paintBehavior |= PaintBehaviorSkipRootBackground;
-    else if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly)
-        paintBehavior |= PaintBehaviorRootBackgroundOnly;
-
     LayerFragments layerFragments;
-    LayoutRect paintDirtyRect = localPaintingInfo.paintDirtyRect;
-    if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
-        // Collect the fragments. This will compute the clip rectangles and paint offsets for each layer fragment, as well as whether or not the content of each
-        // fragment should paint. If the parent's filter dictates full repaint to ensure proper filter effect,
-        // use the overflow clip as dirty rect, instead of no clipping. It maintains proper clipping for overflow::scroll.
-        if (!paintingInfo.clipToDirtyRect && renderer().hasOverflowClip()) {
-            // We can turn clipping back by requesting full repaint for the overflow area.
-            localPaintingInfo.clipToDirtyRect = true;
-            paintDirtyRect = selfClipRect();
+    RenderObject* subtreePaintRootForRenderer = nullptr;
+
+    { // Scope for currentContext.
+        std::unique_ptr<FilterEffectRendererHelper> filterPainter = setupFilters(context, localPaintingInfo, paintFlags, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
+
+        GraphicsContext* filterContext = filterPainter ? filterPainter->filterContext() : nullptr;
+        if (filterContext && haveTransparency) {
+            // If we have a filter and transparency, we have to eagerly start a transparency layer here, rather than risk a child layer lazily starts one with the wrong context.
+            beginTransparencyLayers(context, localPaintingInfo, paintingInfo.paintDirtyRect);
         }
-        collectFragments(layerFragments, localPaintingInfo.rootLayer, paintDirtyRect, ExcludeCompositedPaginatedLayers,
-            (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, IgnoreOverlayScrollbarSize,
-            (isPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip, offsetFromRoot);
-        updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, offsetFromRoot);
-    }
-    
-    if (isPaintingCompositedBackground) {
-        // Paint only the backgrounds for all of the fragments of the layer.
-        if (shouldPaintContent && !selectionOnly)
-            paintBackgroundForFragments(layerFragments, *context, transparencyLayerContext, paintingInfo.paintDirtyRect, haveTransparency,
-                localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
-    }
+        GraphicsContext& currentContext = filterContext ? *filterContext : context;
 
-    // Now walk the sorted list of children with negative z-indices.
-    if ((isPaintingScrollingContent && isPaintingOverflowContents) || (!isPaintingScrollingContent && isPaintingCompositedBackground))
-        paintList(negZOrderList(), *context, localPaintingInfo, localPaintFlags);
-    
-    if (isPaintingCompositedForeground) {
-        if (shouldPaintContent)
-            paintForegroundForFragments(layerFragments, *context, transparencyLayerContext, paintingInfo.paintDirtyRect, haveTransparency,
-                localPaintingInfo, paintBehavior, subtreePaintRootForRenderer, selectionOnly || selectionAndBackgroundsOnly);
-    }
+        // If this layer's renderer is a child of the subtreePaintRoot, we render unconditionally, which
+        // is done by passing a nil subtreePaintRoot down to our renderer (as if no subtreePaintRoot was ever set).
+        // Otherwise, our renderer tree may or may not contain the subtreePaintRoot root, so we pass that root along
+        // so it will be tested against as we descend through the renderers.
+        if (localPaintingInfo.subtreePaintRoot && !renderer().isDescendantOf(localPaintingInfo.subtreePaintRoot))
+            subtreePaintRootForRenderer = localPaintingInfo.subtreePaintRoot;
 
-    if (shouldPaintOutline)
-        paintOutlineForFragments(layerFragments, *context, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
+        if (localPaintingInfo.overlapTestRequests && isSelfPaintingLayer)
+            performOverlapTests(*localPaintingInfo.overlapTestRequests, localPaintingInfo.rootLayer, this);
 
-    if (isPaintingCompositedForeground) {
-        // Paint any child layers that have overflow.
-        paintList(m_normalFlowList.get(), *context, localPaintingInfo, localPaintFlags);
-    
-        // Now walk the sorted list of children with positive z-indices.
-        paintList(posZOrderList(), *context, localPaintingInfo, localPaintFlags);
+        PaintBehavior paintBehavior = PaintBehaviorNormal;
+        if (localPaintFlags & PaintLayerPaintingSkipRootBackground)
+            paintBehavior |= PaintBehaviorSkipRootBackground;
+        else if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly)
+            paintBehavior |= PaintBehaviorRootBackgroundOnly;
 
-        // Paint the fixed elements from flow threads.
-        paintFixedLayersInNamedFlows(*context, localPaintingInfo, localPaintFlags);
+        LayoutRect paintDirtyRect = localPaintingInfo.paintDirtyRect;
+        if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
+            // Collect the fragments. This will compute the clip rectangles and paint offsets for each layer fragment, as well as whether or not the content of each
+            // fragment should paint. If the parent's filter dictates full repaint to ensure proper filter effect,
+            // use the overflow clip as dirty rect, instead of no clipping. It maintains proper clipping for overflow::scroll.
+            if (!paintingInfo.clipToDirtyRect && renderer().hasOverflowClip()) {
+                // We can turn clipping back by requesting full repaint for the overflow area.
+                localPaintingInfo.clipToDirtyRect = true;
+                paintDirtyRect = selfClipRect();
+            }
+            collectFragments(layerFragments, localPaintingInfo.rootLayer, paintDirtyRect, ExcludeCompositedPaginatedLayers,
+                (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, IgnoreOverlayScrollbarSize,
+                (isPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip, offsetFromRoot);
+            updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, offsetFromRoot);
+        }
         
-        // If this is a region, paint its contents via the flow thread's layer.
-        if (shouldPaintContent)
-            paintFlowThreadIfRegionForFragments(layerFragments, *context, localPaintingInfo, localPaintFlags);
-    }
+        if (isPaintingCompositedBackground) {
+            // Paint only the backgrounds for all of the fragments of the layer.
+            if (shouldPaintContent && !selectionOnly) {
+                paintBackgroundForFragments(layerFragments, currentContext, context, paintingInfo.paintDirtyRect, haveTransparency,
+                    localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
+            }
+        }
 
-    if (isPaintingOverlayScrollbars && hasScrollbars())
-        paintOverflowControlsForFragments(layerFragments, *context, localPaintingInfo);
+        // Now walk the sorted list of children with negative z-indices.
+        if ((isPaintingScrollingContent && isPaintingOverflowContents) || (!isPaintingScrollingContent && isPaintingCompositedBackground))
+            paintList(negZOrderList(), currentContext, localPaintingInfo, localPaintFlags);
+        
+        if (isPaintingCompositedForeground) {
+            if (shouldPaintContent) {
+                paintForegroundForFragments(layerFragments, currentContext, context, paintingInfo.paintDirtyRect, haveTransparency,
+                    localPaintingInfo, paintBehavior, subtreePaintRootForRenderer, selectionOnly || selectionAndBackgroundsOnly);
+            }
+        }
 
-    if (filterPainter) {
-        context = &applyFilters(filterPainter.get(), transparencyLayerContext, localPaintingInfo, layerFragments);
-        filterPainter = nullptr;
+        if (shouldPaintOutline)
+            paintOutlineForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
+
+        if (isPaintingCompositedForeground) {
+            // Paint any child layers that have overflow.
+            paintList(m_normalFlowList.get(), currentContext, localPaintingInfo, localPaintFlags);
+        
+            // Now walk the sorted list of children with positive z-indices.
+            paintList(posZOrderList(), currentContext, localPaintingInfo, localPaintFlags);
+
+            // Paint the fixed elements from flow threads.
+            paintFixedLayersInNamedFlows(currentContext, localPaintingInfo, localPaintFlags);
+            
+            // If this is a region, paint its contents via the flow thread's layer.
+            if (shouldPaintContent)
+                paintFlowThreadIfRegionForFragments(layerFragments, currentContext, localPaintingInfo, localPaintFlags);
+        }
+
+        if (isPaintingOverlayScrollbars && hasScrollbars())
+            paintOverflowControlsForFragments(layerFragments, currentContext, localPaintingInfo);
+
+        if (filterContext) {
+            applyFilters(filterPainter.get(), context, localPaintingInfo, layerFragments);
+            filterPainter = nullptr;
+        }
     }
     
-    // Make sure that we now use the original transparency context.
-    ASSERT(&transparencyLayerContext == context);
-
     if (shouldPaintContent && !(selectionOnly || selectionAndBackgroundsOnly)) {
         if (shouldPaintMask(paintingInfo.paintBehavior, localPaintFlags)) {
             // Paint the mask for the fragments.
-            paintMaskForFragments(layerFragments, *context, localPaintingInfo, subtreePaintRootForRenderer);
+            paintMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
         }
 
         if (!(paintFlags & PaintLayerPaintingCompositingMaskPhase) && (paintFlags & PaintLayerPaintingCompositingClipPathPhase)) {
             // Re-use paintChildClippingMaskForFragments to paint black for the compositing clipping mask.
-            paintChildClippingMaskForFragments(layerFragments, *context, localPaintingInfo, subtreePaintRootForRenderer);
+            paintChildClippingMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
         }
         
         if ((localPaintFlags & PaintLayerPaintingChildClippingMaskPhase)) {
             // Paint the border radius mask for the fragments.
-            paintChildClippingMaskForFragments(layerFragments, *context, localPaintingInfo, subtreePaintRootForRenderer);
+            paintChildClippingMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
         }
     }
 
     // End our transparency layer
     if (haveTransparency && m_usedTransparency && !m_paintingInsideReflection) {
-        context->endTransparencyLayer();
-        context->restore();
+        context.endTransparencyLayer();
+        context.restore();
         m_usedTransparency = false;
     }
 
     // Re-set this to whatever it was before we painted the layer.
     if (needToAdjustSubpixelQuantization)
-        context->setShouldSubpixelQuantizeFonts(didQuantizeFonts);
+        context.setShouldSubpixelQuantizeFonts(didQuantizeFonts);
 
     if (hasClipPath)
-        context->restore();
+        context.restore();
 }
 
 void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags, const LayoutSize& translationOffset)
@@ -4663,7 +4661,7 @@ void RenderLayer::paintTransformedLayerIntoFragments(GraphicsContext& context, c
     }
 }
 
-void RenderLayer::paintBackgroundForFragments(const LayerFragments& layerFragments, GraphicsContext& context, GraphicsContext& transparencyLayerContext,
+void RenderLayer::paintBackgroundForFragments(const LayerFragments& layerFragments, GraphicsContext& context, GraphicsContext& contextForTransparencyLayer,
     const LayoutRect& transparencyPaintDirtyRect, bool haveTransparency, const LayerPaintingInfo& localPaintingInfo, PaintBehavior paintBehavior,
     RenderObject* subtreePaintRootForRenderer)
 {
@@ -4673,7 +4671,7 @@ void RenderLayer::paintBackgroundForFragments(const LayerFragments& layerFragmen
 
         // Begin transparency layers lazily now that we know we have to paint something.
         if (haveTransparency)
-            beginTransparencyLayers(transparencyLayerContext, localPaintingInfo, transparencyPaintDirtyRect);
+            beginTransparencyLayers(contextForTransparencyLayer, localPaintingInfo, transparencyPaintDirtyRect);
     
         if (localPaintingInfo.clipToDirtyRect) {
             // Paint our background first, before painting any child layers.
@@ -4691,7 +4689,7 @@ void RenderLayer::paintBackgroundForFragments(const LayerFragments& layerFragmen
     }
 }
 
-void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragments, GraphicsContext& context, GraphicsContext& transparencyLayerContext,
+void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragments, GraphicsContext& context, GraphicsContext& contextForTransparencyLayer,
     const LayoutRect& transparencyPaintDirtyRect, bool haveTransparency, const LayerPaintingInfo& localPaintingInfo, PaintBehavior paintBehavior,
     RenderObject* subtreePaintRootForRenderer, bool selectionOnly)
 {
@@ -4699,7 +4697,7 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
     if (haveTransparency) {
         for (const auto& fragment : layerFragments) {
             if (fragment.shouldPaintContent && !fragment.foregroundRect.isEmpty()) {
-                beginTransparencyLayers(transparencyLayerContext, localPaintingInfo, transparencyPaintDirtyRect);
+                beginTransparencyLayers(contextForTransparencyLayer, localPaintingInfo, transparencyPaintDirtyRect);
                 break;
             }
         }
