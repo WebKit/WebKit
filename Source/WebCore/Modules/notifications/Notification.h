@@ -124,7 +124,7 @@ public:
 #if ENABLE(NOTIFICATIONS)
     static const String permission(Document&);
     WEBCORE_EXPORT static const String permissionString(NotificationClient::Permission);
-    static void requestPermission(Document&, PassRefPtr<NotificationPermissionCallback> = nullptr);
+    static void requestPermission(Document&, RefPtr<NotificationPermissionCallback>&&);
 #endif
 
 private:

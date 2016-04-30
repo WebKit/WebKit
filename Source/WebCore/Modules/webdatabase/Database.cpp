@@ -554,17 +554,17 @@ void Database::scheduleTransaction()
         m_transactionInProgress = false;
 }
 
-PassRefPtr<SQLTransactionBackend> Database::runTransaction(PassRefPtr<SQLTransaction> transaction, bool readOnly, const ChangeVersionData* data)
+RefPtr<SQLTransactionBackend> Database::runTransaction(Ref<SQLTransaction>&& transaction, bool readOnly, const ChangeVersionData* data)
 {
     LockHolder locker(m_transactionInProgressMutex);
     if (!m_isTransactionQueueEnabled)
-        return 0;
+        return nullptr;
 
     RefPtr<SQLTransactionWrapper> wrapper;
     if (data)
         wrapper = ChangeVersionWrapper::create(data->oldVersion(), data->newVersion());
 
-    RefPtr<SQLTransactionBackend> transactionBackend = SQLTransactionBackend::create(this, transaction, wrapper, readOnly);
+    RefPtr<SQLTransactionBackend> transactionBackend = SQLTransactionBackend::create(this, WTFMove(transaction), wrapper, readOnly);
     m_transactionQueue.append(transactionBackend);
     if (!m_transactionInProgress)
         scheduleTransaction();
@@ -635,22 +635,20 @@ void Database::markAsDeletedAndClose()
     synchronizer.waitForTaskCompletion();
 }
 
-void Database::changeVersion(const String& oldVersion, const String& newVersion,
-                             PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
-                             PassRefPtr<VoidCallback> successCallback)
+void Database::changeVersion(const String& oldVersion, const String& newVersion, RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
 {
     ChangeVersionData data(oldVersion, newVersion);
-    runTransaction(callback, errorCallback, successCallback, false, &data);
+    runTransaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback), false, &data);
 }
 
-void Database::transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<VoidCallback> successCallback)
+void Database::transaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
 {
-    runTransaction(callback, errorCallback, successCallback, false);
+    runTransaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback), false);
 }
 
-void Database::readTransaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<VoidCallback> successCallback)
+void Database::readTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
 {
-    runTransaction(callback, errorCallback, successCallback, true);
+    runTransaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback), true);
 }
 
 String Database::stringIdentifier() const
@@ -732,11 +730,11 @@ void Database::resetAuthorizer()
 
 void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback, bool readOnly, const ChangeVersionData* changeVersionData)
 {
-    RefPtr<SQLTransaction> transaction = SQLTransaction::create(*this, WTFMove(callback), WTFMove(successCallback), errorCallback.copyRef(), readOnly);
+    Ref<SQLTransaction> transaction = SQLTransaction::create(*this, WTFMove(callback), WTFMove(successCallback), errorCallback.copyRef(), readOnly);
 
-    RefPtr<SQLTransactionBackend> transactionBackend = runTransaction(transaction.release(), readOnly, changeVersionData);
+    RefPtr<SQLTransactionBackend> transactionBackend = runTransaction(WTFMove(transaction), readOnly, changeVersionData);
     if (!transactionBackend && errorCallback) {
-        WTF::RefPtr<SQLTransactionErrorCallback> errorCallbackProtector = WTFMove(errorCallback);
+        RefPtr<SQLTransactionErrorCallback> errorCallbackProtector = WTFMove(errorCallback);
         m_scriptExecutionContext->postTask([errorCallbackProtector](ScriptExecutionContext&) {
             errorCallbackProtector->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed").ptr());
         });

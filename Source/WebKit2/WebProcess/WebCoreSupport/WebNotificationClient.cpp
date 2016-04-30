@@ -73,16 +73,16 @@ void WebNotificationClient::notificationControllerDestroyed()
 }
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
-void WebNotificationClient::requestPermission(ScriptExecutionContext* context, PassRefPtr<WebCore::VoidCallback> callback)
+void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<WebCore::VoidCallback>&& callback)
 {
-    m_page->notificationPermissionRequestManager()->startRequest(context->securityOrigin(), callback);
+    m_page->notificationPermissionRequestManager()->startRequest(context->securityOrigin(), WTFMove(callback));
 }
 #endif
 
 #if ENABLE(NOTIFICATIONS)
-void WebNotificationClient::requestPermission(ScriptExecutionContext* context, PassRefPtr<NotificationPermissionCallback> callback)
+void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<NotificationPermissionCallback>&& callback)
 {
-    m_page->notificationPermissionRequestManager()->startRequest(context->securityOrigin(), callback);
+    m_page->notificationPermissionRequestManager()->startRequest(context->securityOrigin(), WTFMove(callback));
 }
 #endif
 

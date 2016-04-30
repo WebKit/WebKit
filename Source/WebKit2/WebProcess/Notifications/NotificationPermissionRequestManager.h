@@ -50,10 +50,10 @@ public:
     static Ref<NotificationPermissionRequestManager> create(WebPage*);
 
 #if ENABLE(NOTIFICATIONS)
-    void startRequest(WebCore::SecurityOrigin*, PassRefPtr<WebCore::NotificationPermissionCallback>);
+    void startRequest(WebCore::SecurityOrigin*, RefPtr<WebCore::NotificationPermissionCallback>&&);
 #endif
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    void startRequest(WebCore::SecurityOrigin*, PassRefPtr<WebCore::VoidCallback>);
+    void startRequest(WebCore::SecurityOrigin*, RefPtr<WebCore::VoidCallback>&&);
 #endif
     void cancelRequest(WebCore::SecurityOrigin*);
     bool hasPendingPermissionRequests(WebCore::SecurityOrigin*) const;

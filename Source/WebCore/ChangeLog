@@ -1,3 +1,47 @@
+2016-04-29  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Specify default parameter values for callback parameters
+        https://bugs.webkit.org/show_bug.cgi?id=157188
+
+        Reviewed by Darin Adler.
+
+        Specify default parameter values for callback parameters.
+
+        * Modules/geolocation/Geolocation.idl:
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::requestPermission):
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/Notification.idl:
+        * Modules/notifications/NotificationCenter.idl:
+        * Modules/quota/StorageInfo.cpp:
+        (WebCore::StorageInfo::queryUsageAndQuota):
+        (WebCore::StorageInfo::requestQuota):
+        * Modules/quota/StorageInfo.h:
+        * Modules/quota/StorageInfo.idl:
+        * Modules/quota/StorageQuota.h:
+        * Modules/quota/StorageQuota.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        (WebCore::DOMWindowWebDatabase::openDatabase):
+        * Modules/webdatabase/DOMWindowWebDatabase.h:
+        (WebCore::DOMWindowWebDatabase::DOMWindowWebDatabase):
+        (WebCore::DOMWindowWebDatabase::~DOMWindowWebDatabase):
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::runTransaction):
+        (WebCore::Database::changeVersion):
+        (WebCore::Database::transaction):
+        (WebCore::Database::readTransaction):
+        * Modules/webdatabase/Database.h:
+        * Modules/webdatabase/Database.idl:
+        * Modules/webdatabase/SQLTransaction.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        (CanUseWTFOptionalForParameter): Deleted.
+        * bindings/scripts/test/TestObj.idl:
+        * dom/DataTransferItem.h:
+        * dom/DataTransferItem.idl:
+
 2016-04-28  Darin Adler  <darin@apple.com>
 
         First step in using "enum class" instead of "String" for enumerations in DOM

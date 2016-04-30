@@ -52,10 +52,10 @@ private:
     void notificationObjectDestroyed(WebCore::Notification*) override;
     void notificationControllerDestroyed() override;
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::VoidCallback>) override;
+    void requestPermission(WebCore::ScriptExecutionContext*, RefPtr<WebCore::VoidCallback>&&) override;
 #endif
 #if ENABLE(NOTIFICATIONS)
-    void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::NotificationPermissionCallback>) override;
+    void requestPermission(WebCore::ScriptExecutionContext*, RefPtr<WebCore::NotificationPermissionCallback>&&) override;
 #endif
     void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) override;
     bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override;

@@ -208,15 +208,15 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     // Callback interface parameters.
     void    methodWithCallbackArg(TestCallback callback);
     void    methodWithNonCallbackArgAndCallbackArg(long nonCallback, TestCallback callback);
-    void    methodWithCallbackAndOptionalArg(optional TestCallback callback);
+    void    methodWithCallbackAndOptionalArg(optional TestCallback? callback);
 
     // Callback function parameters.
     void    methodWithCallbackFunctionArg(TestCallbackFunction callback);
     void    methodWithNonCallbackArgAndCallbackFunctionArg(long nonCallback, TestCallbackFunction callback);
-    void    methodWithCallbackFunctionAndOptionalArg(optional TestCallbackFunction callback);
+    void    methodWithCallbackFunctionAndOptionalArg(optional TestCallbackFunction? callback);
 
     // static methods with 'Callback' extended attribute
-    static void    staticMethodWithCallbackAndOptionalArg(optional TestCallback callback);
+    static void    staticMethodWithCallbackAndOptionalArg(optional TestCallback? callback);
     static void    staticMethodWithCallbackArg(TestCallback callback);
 #endif
 

@@ -30,11 +30,11 @@
     GenerateIsReachable=ImplFrame,
 ] interface Geolocation {
     [Custom] void getCurrentPosition(PositionCallback successCallback,
-                                     optional PositionErrorCallback errorCallback,
+                                     optional PositionErrorCallback? errorCallback,
                                      optional PositionOptions options);
 
     [Custom] long watchPosition(PositionCallback successCallback,
-                                optional PositionErrorCallback errorCallback,
+                                optional PositionErrorCallback? errorCallback,
                                 optional PositionOptions options);
 
     void clearWatch(long watchID);

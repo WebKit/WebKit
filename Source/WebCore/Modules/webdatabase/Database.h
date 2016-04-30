@@ -64,7 +64,7 @@ public:
 
     unsigned long long maximumSize() const;
 
-    PassRefPtr<SQLTransactionBackend> runTransaction(PassRefPtr<SQLTransaction>, bool readOnly, const ChangeVersionData*);
+    RefPtr<SQLTransactionBackend> runTransaction(Ref<SQLTransaction>&&, bool readOnly, const ChangeVersionData*);
     void scheduleTransactionStep(SQLTransactionBackend*);
     void inProgressTransactionCompleted();
 
@@ -78,10 +78,9 @@ public:
 
     // Direct support for the DOM API
     String version() const;
-    void changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionCallback>,
-                       PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
-    void transaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
-    void readTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
+    void changeVersion(const String& oldVersion, const String& newVersion, RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback);
+    void transaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback);
+    void readTransaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback);
 
     // Internal engine support
     String stringIdentifier() const;

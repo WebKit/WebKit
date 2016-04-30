@@ -170,14 +170,14 @@ void WebDesktopNotificationsDelegate::notificationControllerDestroyed()
 {
 }
 
-void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin* origin, PassRefPtr<VoidCallback>)
+void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin* origin, RefPtr<VoidCallback>&&)
 {
     BString org(origin->toString());
     if (hasNotificationDelegate())
         notificationDelegate()->requestNotificationPermission(org);
 }
 
-void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin*, PassRefPtr<NotificationPermissionCallback>)
+void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin*, RefPtr<NotificationPermissionCallback>&&)
 {
 }
 

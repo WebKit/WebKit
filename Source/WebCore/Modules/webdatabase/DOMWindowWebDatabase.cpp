@@ -37,16 +37,16 @@
 
 namespace WebCore {
 
-RefPtr<Database> DOMWindowWebDatabase::openDatabase(DOMWindow& window, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
+RefPtr<Database> DOMWindowWebDatabase::openDatabase(DOMWindow& window, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, RefPtr<DatabaseCallback>&& creationCallback, ExceptionCode& ec)
 {
     if (!window.isCurrentlyDisplayedInFrame())
         return nullptr;
 
-    RefPtr<Database> database = nullptr;
+    RefPtr<Database> database;
     DatabaseManager& dbManager = DatabaseManager::singleton();
     DatabaseError error = DatabaseError::None;
     if (dbManager.isAvailable() && window.document()->securityOrigin()->canAccessDatabase(window.document()->topOrigin())) {
-        database = dbManager.openDatabase(window.document(), name, version, displayName, estimatedSize, creationCallback, error);
+        database = dbManager.openDatabase(window.document(), name, version, displayName, estimatedSize, WTFMove(creationCallback), error);
         ASSERT(database || error != DatabaseError::None);
         ec = DatabaseManager::exceptionCodeForDatabaseError(error);
     } else

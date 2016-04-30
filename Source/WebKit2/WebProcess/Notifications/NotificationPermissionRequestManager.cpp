@@ -69,7 +69,7 @@ NotificationPermissionRequestManager::NotificationPermissionRequestManager(WebPa
 #endif
 
 #if ENABLE(NOTIFICATIONS)
-void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, PassRefPtr<NotificationPermissionCallback> callback)
+void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, RefPtr<NotificationPermissionCallback>&& callback)
 {
     NotificationClient::Permission permission = permissionLevel(origin);
     if (permission != NotificationClient::PermissionNotAllowed) {
@@ -81,13 +81,13 @@ void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, 
     uint64_t requestID = generateRequestID();
     m_originToIDMap.set(origin, requestID);
     m_idToOriginMap.set(requestID, origin);
-    m_idToCallbackMap.set(requestID, callback);
+    m_idToCallbackMap.set(requestID, WTFMove(callback));
     m_page->send(Messages::WebPageProxy::RequestNotificationPermission(requestID, origin->toString()));
 }
 #endif
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
-void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, PassRefPtr<WebCore::VoidCallback> callback)
+void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, RefPtr<WebCore::VoidCallback>&& callback)
 {
     NotificationClient::Permission permission = permissionLevel(origin);
     if (permission != NotificationClient::PermissionNotAllowed) {
@@ -99,7 +99,7 @@ void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, 
     uint64_t requestID = generateRequestID();
     m_originToIDMap.set(origin, requestID);
     m_idToOriginMap.set(requestID, origin);
-    m_idToVoidCallbackMap.set(requestID, callback);
+    m_idToVoidCallbackMap.set(requestID, WTFMove(callback));
     m_page->send(Messages::WebPageProxy::RequestNotificationPermission(requestID, origin->toString()));
 }
 #endif

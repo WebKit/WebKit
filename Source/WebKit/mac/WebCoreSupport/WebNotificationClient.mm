@@ -182,7 +182,7 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext* context, W
 #endif
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
-void WebNotificationClient::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
+void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<VoidCallback>&& callback)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WebNotificationPolicyListener *listener = [[WebNotificationPolicyListener alloc] initWithVoidCallback:callback];
@@ -204,7 +204,7 @@ bool WebNotificationClient::hasPendingPermissionRequests(ScriptExecutionContext*
 }
 
 #if ENABLE(NOTIFICATIONS)
-void WebNotificationClient::requestPermission(ScriptExecutionContext* context, PassRefPtr<NotificationPermissionCallback> callback)
+void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<NotificationPermissionCallback>&& callback)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WebNotificationPolicyListener *listener = [[WebNotificationPolicyListener alloc] initWithCallback:callback];

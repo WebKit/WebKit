@@ -3444,7 +3444,6 @@ sub CanUseWTFOptionalForParameter
     # FIXME: We should progressively stop blacklisting each type below
     # and eventually get rid of this function entirely.
     return 0 if $parameter->isVariadic;
-    return 0 if $codeGenerator->IsCallbackInterface($type);
     return 0 if $codeGenerator->IsEnumType($type);
 
     return 1;
@@ -3536,7 +3535,7 @@ sub GenerateParametersCheck
         my $argType = $parameter->type;
         my $optional = $parameter->isOptional;
 
-        die "Optional parameters of non-nullable wrapper types are not supported" if $optional && !$parameter->isNullable && $codeGenerator->IsWrapperType($argType) && !$codeGenerator->IsCallbackInterface($argType);
+        die "Optional parameters of non-nullable wrapper types are not supported" if $optional && !$parameter->isNullable && $codeGenerator->IsWrapperType($argType);
 
         if ($optional && !defined($parameter->default)) {
             # As per Web IDL, optional dictionary parameters are always considered to have a default value of an empty dictionary, unless otherwise specified.
@@ -3551,10 +3550,13 @@ sub GenerateParametersCheck
             # As per Web IDL, passing undefined for a nullable parameter is treated as null. Therefore, use null as
             # default value for nullable parameters unless otherwise specified.
             $parameter->default("null") if $parameter->isNullable;
+
+            # For callback parameters, the generated bindings treat undefined as null, so use null as implicit default value.
+            $parameter->default("null") if $codeGenerator->IsCallbackInterface($argType);
         }
 
         # FIXME: We should eventually stop generating any early calls, and instead use either default parameter values or WTF::Optional<>.
-        if ($optional && !defined($parameter->default) && !CanUseWTFOptionalForParameter($parameter) && !$codeGenerator->IsCallbackInterface($argType)) {
+        if ($optional && !defined($parameter->default) && !CanUseWTFOptionalForParameter($parameter)) {
             # Generate early call if there are enough parameters.
             if (!$hasOptionalArguments) {
                 push(@$outputArray, "\n    size_t argsCount = state->argumentCount();\n");

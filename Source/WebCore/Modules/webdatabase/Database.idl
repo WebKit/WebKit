@@ -28,8 +28,8 @@
 
 interface Database {
     readonly attribute DOMString version;
-    void changeVersion(DOMString oldVersion, DOMString newVersion, optional SQLTransactionCallback callback, optional SQLTransactionErrorCallback errorCallback, optional VoidCallback successCallback);
-    void transaction(SQLTransactionCallback callback, optional SQLTransactionErrorCallback errorCallback, optional VoidCallback successCallback);
-    void readTransaction(SQLTransactionCallback callback, optional SQLTransactionErrorCallback errorCallback, optional VoidCallback successCallback);
+    void changeVersion(DOMString oldVersion, DOMString newVersion, optional SQLTransactionCallback? callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);
+    void transaction(SQLTransactionCallback callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);
+    void readTransaction(SQLTransactionCallback callback, optional SQLTransactionErrorCallback? errorCallback, optional VoidCallback? successCallback);
 };
 

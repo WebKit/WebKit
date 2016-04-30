@@ -241,9 +241,9 @@ const String Notification::permissionString(NotificationClient::Permission permi
     return String();
 }
 
-void Notification::requestPermission(Document& document, PassRefPtr<NotificationPermissionCallback> callback)
+void Notification::requestPermission(Document& document, RefPtr<NotificationPermissionCallback>&& callback)
 {
-    NotificationController::from(document.page())->client()->requestPermission(&document, callback);
+    NotificationController::from(document.page())->client()->requestPermission(&document, WTFMove(callback));
 }
 #endif
 

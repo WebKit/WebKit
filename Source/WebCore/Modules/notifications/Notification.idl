@@ -43,7 +43,7 @@
     [Conditional=NOTIFICATIONS] void close();
 
     [Conditional=NOTIFICATIONS, CallWith=Document] static readonly attribute DOMString permission;
-    [Conditional=NOTIFICATIONS, CallWith=Document] static void requestPermission(optional NotificationPermissionCallback callback);
+    [Conditional=NOTIFICATIONS, CallWith=Document] static void requestPermission(optional NotificationPermissionCallback? callback);
 
     attribute EventHandler onclick;
     attribute EventHandler onclose;

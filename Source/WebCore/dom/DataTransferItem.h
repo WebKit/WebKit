@@ -53,7 +53,7 @@ public:
     virtual String kind() const = 0;
     virtual String type() const = 0;
 
-    virtual void getAsString(PassRefPtr<StringCallback>) const = 0;
+    virtual void getAsString(RefPtr<StringCallback>&&) const = 0;
     virtual PassRefPtr<Blob> getAsFile() const = 0;
 };
 
