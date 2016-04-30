@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<label for="input" aria-label="aria label">Some text</label>
+<input id="input" type="text" size=20>
+
+<label id="label2" for="input2">Some other text</label>
+<input id="input2" type="text" size=20>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the aria-label attribute works on <label> element.");
+
+    if (window.accessibilityController) {
+    
+        // aria-label on the <label> element return a title for the input, instead of a title ui element.
+        var input1 = accessibilityController.accessibleElementById("input");
+        var titleUIElement1 = input1.titleUIElement();
+        shouldBeTrue("!titleUIElement1");
+        shouldBe("input1.title", "'AXTitle: aria label'");
+        
+        // Normal case.
+        var input2 = accessibilityController.accessibleElementById("input2");
+        var titleUIElement2 = input2.titleUIElement();
+        shouldBeTrue("titleUIElement2.isEqual(accessibilityController.accessibleElementById('label2'))");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

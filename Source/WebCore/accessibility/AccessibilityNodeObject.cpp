@@ -1265,6 +1265,11 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
         if (HTMLLabelElement* label = labelForElement(downcast<Element>(node))) {
             AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label);
             String innerText = label->innerText();
+            
+            const AtomicString& ariaLabel = labelObject->getAttribute(aria_labelAttr);
+            if (!ariaLabel.isEmpty())
+                innerText = ariaLabel;
+            
             // Only use the <label> text if there's no ARIA override.
             if (!innerText.isEmpty() && !ariaAccessibilityDescription())
                 textOrder.append(AccessibilityText(innerText, LabelByElementText, labelObject));

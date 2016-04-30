@@ -1,3 +1,20 @@
+2016-04-30  Nan Wang  <n_wang@apple.com>
+
+        AX: @aria-label attribute should work on <label> element
+        https://bugs.webkit.org/show_bug.cgi?id=157219
+
+        Reviewed by Chris Fleizach.
+
+        When there's aria-label on a <label> element, we shouldn't expose it
+        as the titleUIElement. Instead, we return its aria-label as a title.
+
+        Test: accessibility/mac/aria-label-on-label-element.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::titleElementText):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::exposesTitleUIElement):
+
 2016-04-29  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Specify default parameter values for callback parameters

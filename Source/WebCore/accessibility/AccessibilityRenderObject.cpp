@@ -1071,6 +1071,15 @@ bool AccessibilityRenderObject::exposesTitleUIElement() const
     if (hasTextAlternative())
         return false;
     
+    // When <label> element has aria-label on it, we shouldn't expose it as the titleUIElement,
+    // otherwise its inner text will be announced by a screenreader.
+    if (is<HTMLInputElement>(*this->node()) || AccessibilityObject::isARIAInput(ariaRoleAttribute())) {
+        if (HTMLLabelElement* label = labelForElement(downcast<Element>(node()))) {
+            if (!label->fastGetAttribute(aria_labelAttr).isEmpty())
+                return false;
+        }
+    }
+    
     return true;
 }
     
