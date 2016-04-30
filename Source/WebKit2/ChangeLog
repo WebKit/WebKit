@@ -1,3 +1,21 @@
+2016-04-29  Brian Burg  <bburg@apple.com>
+
+        Web Automation: use a magic eventNumber as a fallback for detecting NSEvents synthesized for automation
+        https://bugs.webkit.org/show_bug.cgi?id=157222
+
+        Reviewed by Timothy Hatcher.
+
+        Sometimes events are copied and redelivered in a way that can't be reliably intercepted,
+        so use eventNumber as an alternate means of detecting synthesized mouse NSEvents.
+
+        * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::wasEventSynthesizedForAutomation):
+        If it's a mouse-related event, check the eventNumber if the associated object was missing.
+
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        Most real events from input devices fill in eventNumber with a non-zero value.
+        In my testing, using zero did not seem to adversely affect event delivery.
+
 2016-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Issues inspecting the inspector, pausing on breakpoints causes content to not load
