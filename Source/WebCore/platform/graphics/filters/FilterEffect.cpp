@@ -197,10 +197,9 @@ void FilterEffect::clearResult()
 {
     if (m_imageBufferResult)
         m_imageBufferResult.reset();
-    if (m_unmultipliedImageResult)
-        m_unmultipliedImageResult = nullptr;
-    if (m_premultipliedImageResult)
-        m_premultipliedImageResult = nullptr;
+
+    m_unmultipliedImageResult = nullptr;
+    m_premultipliedImageResult = nullptr;
 }
 
 void FilterEffect::clearResultsRecursive()

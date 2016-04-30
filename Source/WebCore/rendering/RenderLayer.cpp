@@ -4196,11 +4196,11 @@ std::unique_ptr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsCo
     return nullptr;
 }
 
-void RenderLayer::applyFilters(FilterEffectRendererHelper* filterPainter, GraphicsContext& originalContext, LayerPaintingInfo& paintingInfo, LayerFragments& layerFragments)
+void RenderLayer::applyFilters(FilterEffectRendererHelper* filterPainter, GraphicsContext& originalContext, const LayerPaintingInfo& paintingInfo, const LayerFragments& layerFragments)
 {
     ASSERT(filterPainter->hasStartedFilterEffect());
-    // Apply the correct clipping (ie. overflow: hidden).
-    // FIXME: It is incorrect to just clip to the damageRect here once multiple fragments are involved.
+
+    // FIXME: Handle more than one fragment.
     ClipRect backgroundRect = layerFragments.isEmpty() ? ClipRect() : layerFragments[0].backgroundRect;
     clipToRect(paintingInfo, originalContext, backgroundRect);
     filterPainter->applyFilterEffect(originalContext);
@@ -4291,14 +4291,13 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     if (shouldApplyClipPath(paintingInfo.paintBehavior, localPaintFlags))
         hasClipPath = setupClipPath(context, paintingInfo, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
 
-    LayerPaintingInfo localPaintingInfo(paintingInfo);
-
-    bool selectionAndBackgroundsOnly = localPaintingInfo.paintBehavior & PaintBehaviorSelectionAndBackgroundsOnly;
-    bool selectionOnly = localPaintingInfo.paintBehavior & PaintBehaviorSelectionOnly;
+    bool selectionAndBackgroundsOnly = paintingInfo.paintBehavior & PaintBehaviorSelectionAndBackgroundsOnly;
+    bool selectionOnly = paintingInfo.paintBehavior & PaintBehaviorSelectionOnly;
     LayerFragments layerFragments;
     RenderObject* subtreePaintRootForRenderer = nullptr;
 
-    { // Scope for currentContext.
+    { // Scope for filter-related state changes.
+        LayerPaintingInfo localPaintingInfo(paintingInfo);
         std::unique_ptr<FilterEffectRendererHelper> filterPainter = setupFilters(context, localPaintingInfo, paintFlags, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
 
         GraphicsContext* filterContext = filterPainter ? filterPainter->filterContext() : nullptr;
@@ -4329,7 +4328,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             // Collect the fragments. This will compute the clip rectangles and paint offsets for each layer fragment, as well as whether or not the content of each
             // fragment should paint. If the parent's filter dictates full repaint to ensure proper filter effect,
             // use the overflow clip as dirty rect, instead of no clipping. It maintains proper clipping for overflow::scroll.
-            if (!paintingInfo.clipToDirtyRect && renderer().hasOverflowClip()) {
+            if (!localPaintingInfo.clipToDirtyRect && renderer().hasOverflowClip()) {
                 // We can turn clipping back by requesting full repaint for the overflow area.
                 localPaintingInfo.clipToDirtyRect = true;
                 paintDirtyRect = selfClipRect();
@@ -4381,7 +4380,16 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             paintOverflowControlsForFragments(layerFragments, currentContext, localPaintingInfo);
 
         if (filterContext) {
-            applyFilters(filterPainter.get(), context, localPaintingInfo, layerFragments);
+            // When we called collectFragments() last time, paintDirtyRect was reset to represent the filter bounds.
+            // Now we need to compute the backgroundRect uncontaminated by filters, in order to clip the filtered result.
+            // Note that we also use paintingInfo here, not localPaintingInfo which filters also contaminated.
+            LayerFragments layerFragments;
+            collectFragments(layerFragments, paintingInfo.rootLayer, paintingInfo.paintDirtyRect, ExcludeCompositedPaginatedLayers,
+                (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, IgnoreOverlayScrollbarSize,
+                (isPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip, offsetFromRoot);
+            updatePaintingInfoForFragments(layerFragments, paintingInfo, localPaintFlags, shouldPaintContent, offsetFromRoot);
+
+            applyFilters(filterPainter.get(), context, paintingInfo, layerFragments);
             filterPainter = nullptr;
         }
     }
@@ -4389,17 +4397,17 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     if (shouldPaintContent && !(selectionOnly || selectionAndBackgroundsOnly)) {
         if (shouldPaintMask(paintingInfo.paintBehavior, localPaintFlags)) {
             // Paint the mask for the fragments.
-            paintMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
+            paintMaskForFragments(layerFragments, context, paintingInfo, subtreePaintRootForRenderer);
         }
 
         if (!(paintFlags & PaintLayerPaintingCompositingMaskPhase) && (paintFlags & PaintLayerPaintingCompositingClipPathPhase)) {
             // Re-use paintChildClippingMaskForFragments to paint black for the compositing clipping mask.
-            paintChildClippingMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
+            paintChildClippingMaskForFragments(layerFragments, context, paintingInfo, subtreePaintRootForRenderer);
         }
         
         if ((localPaintFlags & PaintLayerPaintingChildClippingMaskPhase)) {
             // Paint the border radius mask for the fragments.
-            paintChildClippingMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
+            paintChildClippingMaskForFragments(layerFragments, context, paintingInfo, subtreePaintRootForRenderer);
         }
     }
 

@@ -58,9 +58,7 @@ class FilterEffectRendererHelper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FilterEffectRendererHelper(bool haveFilterEffect)
-        : m_renderLayer(0)
-        , m_haveFilterEffect(haveFilterEffect)
-        , m_startedFilterEffect(false)
+        : m_haveFilterEffect(haveFilterEffect)
     {
     }
     
@@ -76,11 +74,11 @@ public:
     const LayoutRect& repaintRect() const { return m_repaintRect; }
 
 private:
-    RenderLayer* m_renderLayer; // FIXME: this is mainly used to get the FilterEffectRenderer. FilterEffectRendererHelper should be weaned off it.
+    RenderLayer* m_renderLayer { nullptr }; // FIXME: this is mainly used to get the FilterEffectRenderer. FilterEffectRendererHelper should be weaned off it.
     LayoutPoint m_paintOffset;
     LayoutRect m_repaintRect;
-    bool m_haveFilterEffect;
-    bool m_startedFilterEffect;
+    bool m_haveFilterEffect { false };
+    bool m_startedFilterEffect { false };
 };
 
 class FilterEffectRenderer final : public Filter {
@@ -145,8 +143,8 @@ private:
     
     IntRectExtent m_outsets;
 
-    bool m_graphicsBufferAttached;
-    bool m_hasFilterThatMovesPixels;
+    bool m_graphicsBufferAttached { false };
+    bool m_hasFilterThatMovesPixels { false };
 };
 
 } // namespace WebCore

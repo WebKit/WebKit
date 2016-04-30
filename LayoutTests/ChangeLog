@@ -1,3 +1,19 @@
+2016-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Blur filter escapes an enclosing overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=155029
+
+        Reviewed by Zalan Bujtas.
+
+        * css3/filters/blur-clipped-by-ancestor-expected.html: Added.
+        * css3/filters/blur-clipped-by-ancestor.html: Added.
+        * css3/filters/blur-clipped-with-overflow-expected.html: Added.
+        * css3/filters/blur-clipped-with-overflow.html: Added.
+        * css3/filters/drop-shadow-expected.html: Added.
+        * css3/filters/drop-shadow-with-overflow-hidden-expected.html: Added.
+        * css3/filters/drop-shadow-with-overflow-hidden.html: Added.
+        * css3/filters/drop-shadow.html: Added.
+
 2016-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(194502): overflow: scroll; direction: rtl; divs jump horizontally when scrolled vertically
