@@ -42,6 +42,7 @@ WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 
 #if !TARGET_OS_IPHONE
 - (BOOL)wasEventSynthesizedForAutomation:(NSEvent *)event;
+- (void)markEventAsSynthesizedForAutomation:(NSEvent *)event;
 #endif
 
 @end

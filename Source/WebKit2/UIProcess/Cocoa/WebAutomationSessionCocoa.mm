@@ -51,9 +51,14 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
     NSWindow *window = page.platformWindow();
 
     for (NSEvent *event in eventsToSend) {
-        objc_setAssociatedObject(event, &synthesizedAutomationEventAssociatedObjectKey, m_sessionIdentifier, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        markEventAsSynthesizedForAutomation(event);
         [window sendEvent:event];
     }
+}
+
+void WebAutomationSession::markEventAsSynthesizedForAutomation(NSEvent *event)
+{
+    objc_setAssociatedObject(event, &synthesizedAutomationEventAssociatedObjectKey, m_sessionIdentifier, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 bool WebAutomationSession::wasEventSynthesizedForAutomation(NSEvent *event)

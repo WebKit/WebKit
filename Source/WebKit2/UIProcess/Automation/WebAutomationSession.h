@@ -122,6 +122,7 @@ public:
     void deleteAllCookies(Inspector::ErrorString&, const String& browsingContextHandle, Ref<DeleteAllCookiesCallback>&&) override;
 #if USE(APPKIT)
     bool wasEventSynthesizedForAutomation(NSEvent *);
+    void markEventAsSynthesizedForAutomation(NSEvent *);
 #endif
 
 private:

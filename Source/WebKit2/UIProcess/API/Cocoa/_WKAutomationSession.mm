@@ -88,6 +88,11 @@
 {
     return _session->wasEventSynthesizedForAutomation(event);
 }
+
+- (void)markEventAsSynthesizedForAutomation:(NSEvent *)event
+{
+    _session->markEventAsSynthesizedForAutomation(event);
+}
 #endif
 
 #pragma mark WKObject protocol implementation

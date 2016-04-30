@@ -1,5 +1,24 @@
 2016-04-29  Brian Burg  <bburg@apple.com>
 
+        Web Automation: add SPI to mark an existing NSEvent as synthesized for automation
+        https://bugs.webkit.org/show_bug.cgi?id=157221
+        <rdar://problem/26019356>
+
+        Reviewed by Timothy Hatcher.
+
+        In cases where an NSEvent is duplicated, clients need to re-mark an NSEvent
+        as synthesized for automation if the original NSEvent was marked as such.
+
+        * UIProcess/API/Cocoa/_WKAutomationSession.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        (-[_WKAutomationSession markEventAsSynthesizedForAutomation:]):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::sendSynthesizedEventsToPage):
+        (WebKit::WebAutomationSession::markEventAsSynthesizedForAutomation):
+
+2016-04-29  Brian Burg  <bburg@apple.com>
+
         Web Automation: use a magic eventNumber as a fallback for detecting NSEvents synthesized for automation
         https://bugs.webkit.org/show_bug.cgi?id=157222
 
