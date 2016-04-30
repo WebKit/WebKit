@@ -358,8 +358,9 @@ bool SpeculativeLoadManager::retrieve(const GlobalFrameID& frameID, const Key& s
 void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const ResourceRequest& request, const Key& resourceKey)
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(request.url().protocolIsInHTTPFamily());
 
-    if (!request.url().protocolIsInHTTPFamily() || request.httpMethod() != "GET")
+    if (request.httpMethod() != "GET")
         return;
 
     auto isMainResource = request.requester() == ResourceRequest::Requester::Main;

@@ -1,3 +1,16 @@
+2016-04-29  Chris Dumez  <cdumez@apple.com>
+
+        Drop useless check in SpeculativeLoadManager::registerLoad()
+        https://bugs.webkit.org/show_bug.cgi?id=157204
+
+        Reviewed by Antti Koivisto.
+
+        Drop useless check in SpeculativeLoadManager::registerLoad(). There is
+        no way to end up this code path with a non-HTTP family request.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+
 2016-04-29  Brian Burg  <bburg@apple.com>
 
         Web Automation: add SPI to mark an existing NSEvent as synthesized for automation
