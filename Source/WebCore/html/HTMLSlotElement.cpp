@@ -28,6 +28,7 @@
 
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 
+#include "Dictionary.h"
 #include "ElementChildIterator.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -97,6 +98,36 @@ const Vector<Node*>* HTMLSlotElement::assignedNodes() const
         return nullptr;
 
     return shadowRoot->assignedNodesForSlot(*this);
+}
+
+static void flattenAssignedNodes(Vector<Node*>& nodes, const Vector<Node*>& assignedNodes)
+{
+    for (Node* node : assignedNodes) {
+        if (is<HTMLSlotElement>(*node)) {
+            if (auto* innerAssignedNodes = downcast<HTMLSlotElement>(*node).assignedNodes())
+                flattenAssignedNodes(nodes, *innerAssignedNodes);
+            continue;
+        }
+        nodes.append(node);
+    }
+}
+
+const Vector<Node*> HTMLSlotElement::assignedNodesForBindings(const Dictionary& options) const
+{
+    bool shouldFlatten = false;
+    options.get("flatten", shouldFlatten);
+
+    Vector<Node*> nodes;
+    auto* assignedNodes = this->assignedNodes();
+    if (!assignedNodes)
+        return nodes;
+
+    if (shouldFlatten)
+        flattenAssignedNodes(nodes, *assignedNodes);
+    else
+        nodes = *assignedNodes;
+
+    return nodes;
 }
 
 void HTMLSlotElement::enqueueSlotChangeEvent()

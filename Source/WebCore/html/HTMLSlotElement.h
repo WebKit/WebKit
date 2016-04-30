@@ -38,6 +38,7 @@ public:
     static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);
 
     const Vector<Node*>* assignedNodes() const;
+    const Vector<Node*> assignedNodesForBindings(const Dictionary& options) const;
 
     void enqueueSlotChangeEvent();
 

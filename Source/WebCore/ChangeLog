@@ -1,3 +1,21 @@
+2016-04-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename getAssignedNodes to assignedNodes and support flattened option
+        https://bugs.webkit.org/show_bug.cgi?id=157225
+
+        Reviewed by Antti Koivisto.
+
+        Renamed getAssignedNodes and added the the support for {flattened: true/false} as spec'ed at
+        http://w3c.github.io/webcomponents/spec/shadow/#widl-HTMLSlotElement-assignedNodes-sequence-Node--AssignedNodesOptions-options
+
+        Test: fast/shadow-dom/HTMLSlotElement-interface.html
+
+        * html/HTMLSlotElement.cpp:
+        (WebCore::flattenAssignedNodes): Added.
+        (WebCore::HTMLSlotElement::assignedNodesForBindings): Added.
+        * html/HTMLSlotElement.h:
+        * html/HTMLSlotElement.idl:
+
 2016-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Make clipToRect() and restoreClip() have similar signatures
