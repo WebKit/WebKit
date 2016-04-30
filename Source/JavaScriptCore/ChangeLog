@@ -1,3 +1,15 @@
+2016-04-30  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Guard ObjC-specific code in Heap.cpp with USE(FOUNDATION)
+        https://bugs.webkit.org/show_bug.cgi?id=157236
+
+        Reviewed by Darin Adler.
+
+        This also fixes build with GCC 4.8 which does not provide
+        __has_include.
+
+        * heap/Heap.cpp:
+
 2016-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Assertion failure for destructuring assignment with new.target and unary operator
