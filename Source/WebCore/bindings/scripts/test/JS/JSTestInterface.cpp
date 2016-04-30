@@ -208,18 +208,17 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 #endif
 };
 
-
 #if ENABLE(Condition22) || ENABLE(Condition23)
-COMPILE_ASSERT(1 == TestInterface::IMPLEMENTSCONSTANT1, TestInterfaceEnumIMPLEMENTSCONSTANT1IsWrongUseDoNotCheckConstants);
+static_assert(TestInterface::IMPLEMENTSCONSTANT1 == 1, "IMPLEMENTSCONSTANT1 in TestInterface does not match value from IDL");
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-COMPILE_ASSERT(2 == TestInterface::CONST_IMPL, TestInterfaceEnumCONST_IMPLIsWrongUseDoNotCheckConstants);
+static_assert(TestInterface::CONST_IMPL == 2, "CONST_IMPL in TestInterface does not match value from IDL");
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-COMPILE_ASSERT(1 == TestSupplemental::SUPPLEMENTALCONSTANT1, TestInterfaceEnumSUPPLEMENTALCONSTANT1IsWrongUseDoNotCheckConstants);
+static_assert(TestSupplemental::SUPPLEMENTALCONSTANT1 == 1, "SUPPLEMENTALCONSTANT1 in TestSupplemental does not match value from IDL");
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-COMPILE_ASSERT(2 == TestSupplemental::CONST_IMPL, TestInterfaceEnumCONST_IMPLIsWrongUseDoNotCheckConstants);
+static_assert(TestSupplemental::CONST_IMPL == 2, "CONST_IMPL in TestSupplemental does not match value from IDL");
 #endif
 
 template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(ExecState* state)
@@ -935,7 +934,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterfac
     // attribute. You should remove that attribute. If the class has subclasses
     // that may be passed through this toJS() function you should use the SkipVTableValidation
     // attribute to TestInterface.
-    COMPILE_ASSERT(!__is_polymorphic(TestInterface), TestInterface_is_polymorphic_but_idl_claims_not_to_be);
+    static_assert(!__is_polymorphic(TestInterface), "TestInterface is polymorphic but the IDL claims it is not");
 #endif
     return createNewWrapper<JSTestInterface>(globalObject, impl);
 }

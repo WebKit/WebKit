@@ -199,7 +199,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestClassWit
 #if COMPILER(CLANG)
     // If this fails TestClassWithJSBuiltinConstructor does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    COMPILE_ASSERT(__is_polymorphic(TestClassWithJSBuiltinConstructor), TestClassWithJSBuiltinConstructor_is_not_polymorphic);
+    static_assert(__is_polymorphic(TestClassWithJSBuiltinConstructor), "TestClassWithJSBuiltinConstructor is not polymorphic");
 #endif
 #endif
     // If you hit this assertion you either have a use after free bug, or

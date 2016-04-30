@@ -682,7 +682,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestTypedefs
 #if COMPILER(CLANG)
     // If this fails TestTypedefs does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    COMPILE_ASSERT(__is_polymorphic(TestTypedefs), TestTypedefs_is_not_polymorphic);
+    static_assert(__is_polymorphic(TestTypedefs), "TestTypedefs is not polymorphic");
 #endif
 #endif
     // If you hit this assertion you either have a use after free bug, or

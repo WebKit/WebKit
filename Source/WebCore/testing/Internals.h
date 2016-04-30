@@ -28,6 +28,7 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
+#include "MediaSessionInterruptionProvider.h"
 #include "PageConsoleClient.h"
 #include <runtime/Float32Array.h>
 
@@ -36,8 +37,6 @@ namespace WebCore {
 class AudioContext;
 class ClientRect;
 class ClientRectList;
-class DOMPath;
-class DOMStringList;
 class DOMURL;
 class DOMWindow;
 class Document;
@@ -56,12 +55,10 @@ class MediaSession;
 class MemoryInfo;
 class MockContentFilterSettings;
 class MockPageOverlay;
-class Node;
 class NodeList;
 class Page;
 class Range;
 class RenderedDocumentMarker;
-class ScriptExecutionContext;
 class SerializedScriptValue;
 class SourceBuffer;
 class TimeRanges;
@@ -69,6 +66,12 @@ class TypeConversions;
 class XMLHttpRequest;
 
 typedef int ExceptionCode;
+
+enum class InternalsAutoFillButtonType { AutoFillButtonTypeNone, AutoFillButtonTypeContacts, AutoFillButtonTypeCredentials };
+enum class InternalsCachePolicy { UseProtocolCachePolicy, ReloadIgnoringCacheData, ReturnCacheDataElseLoad, ReturnCacheDataDontLoad };
+enum class InternalsResourceLoadPriority { ResourceLoadPriorityVeryLow, ResourceLoadPriorityLow, ResourceLoadPriorityMedium, ResourceLoadPriorityHigh, ResourceLoadPriorityVeryHigh };
+enum class MediaControlEvent { PlayPause, NextTrack, PreviousTrack };
+enum class PageOverlayType { View, Document };
 
 class Internals final : public RefCounted<Internals>, private ContextDestructionObserver {
 public:
@@ -88,11 +91,11 @@ public:
     bool isPreloaded(const String& url);
     bool isLoadingFromMemoryCache(const String& url);
     String xhrResponseSource(XMLHttpRequest&);
-    bool isSharingStyleSheetContents(HTMLLinkElement& a, HTMLLinkElement& b);
+    bool isSharingStyleSheetContents(HTMLLinkElement&, HTMLLinkElement&);
     bool isStyleSheetLoadingSubresources(HTMLLinkElement&);
-    void setOverrideCachePolicy(const String&);
+    void setOverrideCachePolicy(InternalsCachePolicy);
     void setCanShowModalDialogOverride(bool allow, ExceptionCode&);
-    void setOverrideResourceLoadPriority(const String&);
+    void setOverrideResourceLoadPriority(InternalsResourceLoadPriority);
     void setStrictRawResourceValidationPolicyDisabled(bool);
 
     void clearMemoryCache();
@@ -169,7 +172,7 @@ public:
     bool elementShouldAutoComplete(HTMLInputElement&);
     void setEditingValue(HTMLInputElement&, const String&);
     void setAutofilled(HTMLInputElement&, bool enabled);
-    void setShowAutoFillButton(HTMLInputElement&, const String& autoFillButtonType);
+    void setShowAutoFillButton(HTMLInputElement&, InternalsAutoFillButtonType);
     void scrollElementToRect(Element&, int x, int y, int w, int h, ExceptionCode&);
 
     String autofillFieldName(Element&, ExceptionCode&);
@@ -410,11 +413,11 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SESSION)
-    void sendMediaSessionStartOfInterruptionNotification(const String&);
-    void sendMediaSessionEndOfInterruptionNotification(const String&);
+    void sendMediaSessionStartOfInterruptionNotification(MediaSessionInterruptingCategory);
+    void sendMediaSessionEndOfInterruptionNotification(MediaSessionInterruptingCategory);
     String mediaSessionCurrentState(MediaSession&) const;
     double mediaElementPlayerVolume(HTMLMediaElement&) const;
-    void sendMediaControlEvent(const String&);
+    void sendMediaControlEvent(MediaControlEvent);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -429,7 +432,7 @@ public:
     void simulateSystemSleep() const;
     void simulateSystemWake() const;
 
-    RefPtr<MockPageOverlay> installMockPageOverlay(const String& overlayType, ExceptionCode&);
+    RefPtr<MockPageOverlay> installMockPageOverlay(PageOverlayType, ExceptionCode&);
     String pageOverlayLayerTreeAsText(ExceptionCode&) const;
 
     void setPageMuted(bool);

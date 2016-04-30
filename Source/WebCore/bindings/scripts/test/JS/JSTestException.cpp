@@ -227,7 +227,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestExceptio
 #if COMPILER(CLANG)
     // If this fails TestException does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    COMPILE_ASSERT(__is_polymorphic(TestException), TestException_is_not_polymorphic);
+    static_assert(__is_polymorphic(TestException), "TestException is not polymorphic");
 #endif
 #endif
     // If you hit this assertion you either have a use after free bug, or

@@ -35,6 +35,10 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 // Leading underscore on an enum should be removed.
 enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
 
+[Conditional=Condition1] enum TestEnumA { "A" };
+[Conditional=Condition1&Condition2] enum TestEnumB { "B" };
+[Conditional=Condition1|Condition2] enum TestEnumC { "C" };
+
 [
     Constructor(TestCallback testCallback, TestCallbackFunction testCallbackFunction),
     InterfaceName=TestObject

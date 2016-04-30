@@ -172,7 +172,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, readonly* im
     // attribute. You should remove that attribute. If the class has subclasses
     // that may be passed through this toJS() function you should use the SkipVTableValidation
     // attribute to readonly.
-    COMPILE_ASSERT(!__is_polymorphic(readonly), readonly_is_polymorphic_but_idl_claims_not_to_be);
+    static_assert(!__is_polymorphic(readonly), "readonly is polymorphic but the IDL claims it is not");
 #endif
     return createNewWrapper<JSreadonly>(globalObject, impl);
 }

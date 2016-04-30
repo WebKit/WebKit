@@ -71,9 +71,8 @@ static const HashTableValue JSTestCallbackConstructorTableValues[] =
     { "CONSTANT2", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(2) } },
 };
 
-
-COMPILE_ASSERT(1 == TestCallback::CONSTANT1, TestCallbackEnumCONSTANT1IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(2 == TestCallback::CONSTANT2, TestCallbackEnumCONSTANT2IsWrongUseDoNotCheckConstants);
+static_assert(TestCallback::CONSTANT1 == 1, "CONSTANT1 in TestCallback does not match value from IDL");
+static_assert(TestCallback::CONSTANT2 == 2, "CONSTANT2 in TestCallback does not match value from IDL");
 
 template<> JSValue JSTestCallbackConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {

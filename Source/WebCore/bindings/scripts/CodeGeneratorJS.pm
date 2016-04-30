@@ -859,6 +859,9 @@ sub GetEnumerationImplementationContent
         # FIXME: A little ugly to have this be a side effect instead of a return value.
         AddToImplIncludes("<runtime/JSString.h>");
 
+        my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
+        $result .= "#if ${conditionalString}\n\n" if $conditionalString;
+
         # Declare these instead of using "static" because these may be unused and we don't
         # want to get warnings about them.
         $result .= "JSString* jsStringWithCache(ExecState*, $className);\n";
@@ -909,6 +912,8 @@ sub GetEnumerationImplementationContent
         $result .= "}\n\n";
 
         $result .= "const char expectedEnumerationValues${className}[] = \"\\\"" . join ("\\\", \\\"", @{$enumeration->values}) . "\\\"\";\n\n";
+
+        $result .= "#endif\n\n" if $conditionalString;
     }
     return $result;
 }
@@ -1236,7 +1241,6 @@ sub GenerateHeader
         my $inAppleCopyright = 0;
         push(@headerContent, "\n    // Custom functions\n");
         foreach my $function (@{$interface->functions}) {
-            # PLATFORM_IOS
             my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
             if ($needsAppleCopyright) {
                 if (!$inAppleCopyright) {
@@ -1247,7 +1251,6 @@ sub GenerateHeader
                 push(@headerContent, $endAppleCopyright);
                 $inAppleCopyright = 0;
             }
-            # end PLATFORM_IOS
             next unless HasCustomMethod($function->signature->extendedAttributes);
             next if $function->{overloads} && $function->{overloadIndex} != 1;
             my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
@@ -1552,7 +1555,7 @@ sub GenerateParametersCheckExpression
         # are accepted for compatibility. Otherwise, no restrictions are made to
         # match the non-overloaded behavior.
         # FIXME: Implement WebIDL overload resolution algorithm.
-        if ($codeGenerator->IsStringType($type) || $codeGenerator->IsEnumType($type)) {
+        if ($type eq "DOMString" || $codeGenerator->IsEnumType($type)) {
             if ($parameter->extendedAttributes->{"StrictTypeChecking"}) {
                 push(@andExpression, "(${value}.isUndefinedOrNull() || ${value}.isString() || ${value}.isObject())");
                 $usedArguments{$parameterIndex} = 1;
@@ -3326,7 +3329,7 @@ END
 #if COMPILER(CLANG)
     // If this fails $implType does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    COMPILE_ASSERT(__is_polymorphic($implType), ${implType}_is_not_polymorphic);
+    static_assert(__is_polymorphic($implType), "${implType} is not polymorphic");
 #endif
 #endif
     // If you hit this assertion you either have a use after free bug, or
@@ -3342,7 +3345,7 @@ END
     // attribute. You should remove that attribute. If the class has subclasses
     // that may be passed through this toJS() function you should use the SkipVTableValidation
     // attribute to $interfaceName.
-    COMPILE_ASSERT(!__is_polymorphic($implType), ${implType}_is_polymorphic_but_idl_claims_not_to_be);
+    static_assert(!__is_polymorphic($implType), "${implType} is polymorphic but the IDL claims it is not");
 #endif
 END
         push(@implContent, <<END) if $interface->extendedAttributes->{"ReportExtraMemoryCost"};
@@ -3893,20 +3896,11 @@ sub GenerateCallbackHeader
     if ($numFunctions > 0) {
         push(@headerContent, "\n    // Functions\n");
         foreach my $function (@{$interface->functions}) {
-            my @params = @{$function->parameters};
-            if (!$function->signature->extendedAttributes->{"Custom"} && GetNativeType($function->signature->type) ne "bool") {
-                push(@headerContent, "    COMPILE_ASSERT(false)");
+            my @arguments = ();
+            foreach my $parameter (@{$function->parameters}) {
+                push(@arguments, GetNativeTypeForCallbacks($parameter->type) . " " . $parameter->name);
             }
-
-            push(@headerContent, "    virtual " . GetNativeTypeForCallbacks($function->signature->type) . " " . $function->signature->name . "(");
-
-            my @args = ();
-            foreach my $param (@params) {
-                push(@args, GetNativeTypeForCallbacks($param->type) . " " . $param->name);
-            }
-            push(@headerContent, join(", ", @args));
-
-            push(@headerContent, ");\n");
+            push(@headerContent, "    virtual " . GetNativeTypeForCallbacks($function->signature->type) . " " . $function->signature->name . "(" . join(", ", @arguments) . ");\n");
         }
     }
 
@@ -4529,7 +4523,7 @@ sub NativeToJSValue
         return "jsStringWithCache(state, $value)";
     }
 
-    if ($codeGenerator->IsStringType($type)) {
+    if ($type eq "DOMString") {
         AddToImplIncludes("URL.h", $conditional);
         return "jsStringOrNull(state, $value)" if $signature->isNullable;
         AddToImplIncludes("<runtime/JSString.h>", $conditional);

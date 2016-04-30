@@ -169,6 +169,102 @@ Optional<Optional> parseOptional(ExecState& state, JSValue value)
 
 const char expectedEnumerationValuesOptional[] = "\"\", \"OptionalValue1\", \"OptionalValue2\", \"OptionalValue3\"";
 
+#if ENABLE(Condition1)
+
+JSString* jsStringWithCache(ExecState*, TestEnumA);
+Optional<TestEnumA> parseTestEnumA(ExecState&, JSValue);
+extern const char expectedEnumerationValuesTestEnumA[];
+
+JSString* jsStringWithCache(ExecState* state, TestEnumA enumerationValue)
+{
+    static NeverDestroyed<const String> values[] = {
+        ASCIILiteral("A"),
+    };
+    static_assert(static_cast<size_t>(TestEnumA::A) == 0, "TestEnumA::A is not 0 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+}
+
+template<> struct JSValueTraits<TestEnumA> {
+    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestEnumA value) { return jsStringWithCache(state, value); }
+};
+
+Optional<TestEnumA> parseTestEnumA(ExecState& state, JSValue value)
+{
+    auto stringValue = value.toWTFString(&state);
+    if (stringValue == "A")
+        return TestEnumA::A;
+    return Nullopt;
+}
+
+const char expectedEnumerationValuesTestEnumA[] = "\"A\"";
+
+#endif
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+
+JSString* jsStringWithCache(ExecState*, TestEnumB);
+Optional<TestEnumB> parseTestEnumB(ExecState&, JSValue);
+extern const char expectedEnumerationValuesTestEnumB[];
+
+JSString* jsStringWithCache(ExecState* state, TestEnumB enumerationValue)
+{
+    static NeverDestroyed<const String> values[] = {
+        ASCIILiteral("B"),
+    };
+    static_assert(static_cast<size_t>(TestEnumB::B) == 0, "TestEnumB::B is not 0 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+}
+
+template<> struct JSValueTraits<TestEnumB> {
+    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestEnumB value) { return jsStringWithCache(state, value); }
+};
+
+Optional<TestEnumB> parseTestEnumB(ExecState& state, JSValue value)
+{
+    auto stringValue = value.toWTFString(&state);
+    if (stringValue == "B")
+        return TestEnumB::B;
+    return Nullopt;
+}
+
+const char expectedEnumerationValuesTestEnumB[] = "\"B\"";
+
+#endif
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+
+JSString* jsStringWithCache(ExecState*, TestEnumC);
+Optional<TestEnumC> parseTestEnumC(ExecState&, JSValue);
+extern const char expectedEnumerationValuesTestEnumC[];
+
+JSString* jsStringWithCache(ExecState* state, TestEnumC enumerationValue)
+{
+    static NeverDestroyed<const String> values[] = {
+        ASCIILiteral("C"),
+    };
+    static_assert(static_cast<size_t>(TestEnumC::C) == 0, "TestEnumC::C is not 0 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+}
+
+template<> struct JSValueTraits<TestEnumC> {
+    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestEnumC value) { return jsStringWithCache(state, value); }
+};
+
+Optional<TestEnumC> parseTestEnumC(ExecState& state, JSValue value)
+{
+    auto stringValue = value.toWTFString(&state);
+    if (stringValue == "C")
+        return TestEnumC::C;
+    return Nullopt;
+}
+
+const char expectedEnumerationValuesTestEnumC[] = "\"C\"";
+
+#endif
+
 // Functions
 
 #if ENABLE(TEST_FEATURE)
@@ -585,22 +681,21 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
     { "testStaticPromiseFunctionWithException", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionTestStaticPromiseFunctionWithException), (intptr_t) (0) } },
 };
 
-
 #if ENABLE(Condition1)
-COMPILE_ASSERT(0 == TestObj::CONDITIONAL_CONST, TestObjEnumCONDITIONAL_CONSTIsWrongUseDoNotCheckConstants);
+static_assert(TestObj::CONDITIONAL_CONST == 0, "CONDITIONAL_CONST in TestObj does not match value from IDL");
 #endif
-COMPILE_ASSERT(0 == TestObj::CONST_VALUE_0, TestObjEnumCONST_VALUE_0IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(1 == TestObj::CONST_VALUE_1, TestObjEnumCONST_VALUE_1IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(2 == TestObj::CONST_VALUE_2, TestObjEnumCONST_VALUE_2IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(4 == TestObj::CONST_VALUE_4, TestObjEnumCONST_VALUE_4IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(8 == TestObj::CONST_VALUE_8, TestObjEnumCONST_VALUE_8IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(-1 == TestObj::CONST_VALUE_9, TestObjEnumCONST_VALUE_9IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(0xffffffff == TestObj::CONST_VALUE_11, TestObjEnumCONST_VALUE_11IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(0x01 == TestObj::CONST_VALUE_12, TestObjEnumCONST_VALUE_12IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(15 == TestObj::CONST_IMPL, TestObjEnumCONST_IMPLIsWrongUseDoNotCheckConstants);
-COMPILE_ASSERT(0 == TestObj::readonly, TestObjEnumreadonlyIsWrongUseDoNotCheckConstants);
+static_assert(TestObj::CONST_VALUE_0 == 0, "CONST_VALUE_0 in TestObj does not match value from IDL");
+static_assert(TestObj::CONST_VALUE_1 == 1, "CONST_VALUE_1 in TestObj does not match value from IDL");
+static_assert(TestObj::CONST_VALUE_2 == 2, "CONST_VALUE_2 in TestObj does not match value from IDL");
+static_assert(TestObj::CONST_VALUE_4 == 4, "CONST_VALUE_4 in TestObj does not match value from IDL");
+static_assert(TestObj::CONST_VALUE_8 == 8, "CONST_VALUE_8 in TestObj does not match value from IDL");
+static_assert(TestObj::CONST_VALUE_9 == -1, "CONST_VALUE_9 in TestObj does not match value from IDL");
+static_assert(TestObj::CONST_VALUE_11 == 0xffffffff, "CONST_VALUE_11 in TestObj does not match value from IDL");
+static_assert(TestObj::CONST_VALUE_12 == 0x01, "CONST_VALUE_12 in TestObj does not match value from IDL");
+static_assert(TestObj::CONST_VALUE_13 == 0X20, "CONST_VALUE_13 in TestObj does not match value from IDL");
+static_assert(TestObj::CONST_VALUE_14 == 0x1abc, "CONST_VALUE_14 in TestObj does not match value from IDL");
+static_assert(TestObj::CONST_IMPL == 15, "CONST_IMPL in TestObj does not match value from IDL");
+static_assert(TestObj::readonly == 0, "readonly in TestObj does not match value from IDL");
 
 template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(ExecState* state)
 {
@@ -5810,7 +5905,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestObj* imp
 #if COMPILER(CLANG)
     // If this fails TestObj does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    COMPILE_ASSERT(__is_polymorphic(TestObj), TestObj_is_not_polymorphic);
+    static_assert(__is_polymorphic(TestObj), "TestObj is not polymorphic");
 #endif
 #endif
     // If you hit this assertion you either have a use after free bug, or

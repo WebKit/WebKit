@@ -30,14 +30,15 @@ enum PageOverlayType {
 };
 
 // These map to ResourceRequestCachePolicy.
-enum CachePolicy {
+enum InternalsCachePolicy {
     "UseProtocolCachePolicy",
     "ReloadIgnoringCacheData",
     "ReturnCacheDataElseLoad",
     "ReturnCacheDataDontLoad"
 };
 
-enum ResourceLoadPriority {
+// FIXME: Strings in an enum should not have the name of the enum as a prefix.
+enum InternalsResourceLoadPriority {
     "ResourceLoadPriorityVeryLow",
     "ResourceLoadPriorityLow",
     "ResourceLoadPriorityMedium",
@@ -45,19 +46,20 @@ enum ResourceLoadPriority {
     "ResourceLoadPriorityVeryHigh"
 };
 
-enum MediaSessionInterruptingCategory {
+[Conditional=MEDIA_SESSION] enum MediaSessionInterruptingCategory {
     "content",
     "transient",
     "transient-solo"
 };
 
-enum MediaControlEvent {
+[Conditional=MEDIA_SESSION] enum MediaControlEvent {
     "play-pause",
     "next-track",
     "previous-track"
 };
 
-enum AutoFillButtonType {
+// FIXME: Strings in an enum should not have the name of the enum as a prefix.
+enum InternalsAutoFillButtonType {
     "AutoFillButtonTypeNone",
     "AutoFillButtonTypeContacts",
     "AutoFillButtonTypeCredentials"
@@ -84,8 +86,8 @@ enum AutoFillButtonType {
     void clearMemoryCache();
     void pruneMemoryCacheToSize(long size);
     long memoryCacheSize();
-    void setOverrideCachePolicy(CachePolicy policy);
-    void setOverrideResourceLoadPriority(ResourceLoadPriority priority);
+    void setOverrideCachePolicy(InternalsCachePolicy policy);
+    void setOverrideResourceLoadPriority(InternalsResourceLoadPriority priority);
     void setStrictRawResourceValidationPolicyDisabled(boolean disabled);
 
     void clearPageCache();
@@ -157,7 +159,7 @@ enum AutoFillButtonType {
     boolean elementShouldAutoComplete(HTMLInputElement inputElement);
     void setEditingValue(HTMLInputElement inputElement, DOMString value);
     void setAutofilled(HTMLInputElement inputElement, boolean enabled);
-    void setShowAutoFillButton(HTMLInputElement inputElement, AutoFillButtonType autoFillButtonType);
+    void setShowAutoFillButton(HTMLInputElement inputElement, InternalsAutoFillButtonType autoFillButtonType);
     [RaisesException] unsigned long countMatchesForText(DOMString text, unsigned long findOptions, DOMString markMatches);
 
     [RaisesException] DOMString autofillFieldName(Element formControlElement);

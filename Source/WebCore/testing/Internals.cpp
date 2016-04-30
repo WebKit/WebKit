@@ -563,23 +563,25 @@ bool Internals::isStyleSheetLoadingSubresources(HTMLLinkElement& link)
     return link.sheet() && link.sheet()->contents().isLoadingSubresources();
 }
 
-static ResourceRequestCachePolicy stringToResourceRequestCachePolicy(const String& policy)
+static ResourceRequestCachePolicy toResourceRequestCachePolicy(InternalsCachePolicy policy)
 {
-    if (policy == "UseProtocolCachePolicy")
+    switch (policy) {
+    case InternalsCachePolicy::UseProtocolCachePolicy:
         return UseProtocolCachePolicy;
-    if (policy == "ReloadIgnoringCacheData")
+    case InternalsCachePolicy::ReloadIgnoringCacheData:
         return ReloadIgnoringCacheData;
-    if (policy == "ReturnCacheDataElseLoad")
+    case InternalsCachePolicy::ReturnCacheDataElseLoad:
         return ReturnCacheDataElseLoad;
-    if (policy == "ReturnCacheDataDontLoad")
+    case InternalsCachePolicy::ReturnCacheDataDontLoad:
         return ReturnCacheDataDontLoad;
+    }
     ASSERT_NOT_REACHED();
     return UseProtocolCachePolicy;
 }
 
-void Internals::setOverrideCachePolicy(const String& policy)
+void Internals::setOverrideCachePolicy(InternalsCachePolicy policy)
 {
-    frame()->loader().setOverrideCachePolicyForTesting(stringToResourceRequestCachePolicy(policy));
+    frame()->loader().setOverrideCachePolicyForTesting(toResourceRequestCachePolicy(policy));
 }
 
 void Internals::setCanShowModalDialogOverride(bool allow, ExceptionCode& ec)
@@ -592,25 +594,27 @@ void Internals::setCanShowModalDialogOverride(bool allow, ExceptionCode& ec)
     contextDocument()->domWindow()->setCanShowModalDialogOverride(allow);
 }
 
-static ResourceLoadPriority stringToResourceLoadPriority(const String& policy)
+static ResourceLoadPriority toResourceLoadPriority(InternalsResourceLoadPriority priority)
 {
-    if (policy == "ResourceLoadPriorityVeryLow")
+    switch (priority) {
+    case InternalsResourceLoadPriority::ResourceLoadPriorityVeryLow:
         return ResourceLoadPriority::VeryLow;
-    if (policy == "ResourceLoadPriorityLow")
+    case InternalsResourceLoadPriority::ResourceLoadPriorityLow:
         return ResourceLoadPriority::Low;
-    if (policy == "ResourceLoadPriorityMedium")
+    case InternalsResourceLoadPriority::ResourceLoadPriorityMedium:
         return ResourceLoadPriority::Medium;
-    if (policy == "ResourceLoadPriorityHigh")
+    case InternalsResourceLoadPriority::ResourceLoadPriorityHigh:
         return ResourceLoadPriority::High;
-    if (policy == "ResourceLoadPriorityVeryHigh")
+    case InternalsResourceLoadPriority::ResourceLoadPriorityVeryHigh:
         return ResourceLoadPriority::VeryHigh;
+    }
     ASSERT_NOT_REACHED();
     return ResourceLoadPriority::Low;
 }
 
-void Internals::setOverrideResourceLoadPriority(const String& priority)
+void Internals::setOverrideResourceLoadPriority(InternalsResourceLoadPriority priority)
 {
-    frame()->loader().setOverrideResourceLoadPriorityForTesting(stringToResourceLoadPriority(priority));
+    frame()->loader().setOverrideResourceLoadPriorityForTesting(toResourceLoadPriority(priority));
 }
 
 void Internals::setStrictRawResourceValidationPolicyDisabled(bool disabled)
@@ -1214,23 +1218,24 @@ void Internals::setAutofilled(HTMLInputElement& element, bool enabled)
     element.setAutoFilled(enabled);
 }
 
-static AutoFillButtonType stringToAutoFillButtonType(const String& autoFillButtonType)
+static AutoFillButtonType toAutoFillButtonType(InternalsAutoFillButtonType type)
 {
-    if (autoFillButtonType == "AutoFillButtonTypeNone")
+    switch (type) {
+    case InternalsAutoFillButtonType::AutoFillButtonTypeNone:
         return AutoFillButtonType::None;
-    if (autoFillButtonType == "AutoFillButtonTypeCredentials")
+    case InternalsAutoFillButtonType::AutoFillButtonTypeCredentials:
         return AutoFillButtonType::Credentials;
-    if (autoFillButtonType == "AutoFillButtonTypeContacts")
+    case InternalsAutoFillButtonType::AutoFillButtonTypeContacts:
         return AutoFillButtonType::Contacts;
+    }
     ASSERT_NOT_REACHED();
     return AutoFillButtonType::None;
 }
 
-void Internals::setShowAutoFillButton(HTMLInputElement& element, const String& autoFillButtonType)
+void Internals::setShowAutoFillButton(HTMLInputElement& element, InternalsAutoFillButtonType type)
 {
-    element.setShowAutoFillButton(stringToAutoFillButtonType(autoFillButtonType));
+    element.setShowAutoFillButton(toAutoFillButtonType(type));
 }
-
 
 void Internals::scrollElementToRect(Element& element, int x, int y, int w, int h, ExceptionCode& ec)
 {
@@ -2909,26 +2914,14 @@ bool Internals::elementIsBlockingDisplaySleep(HTMLMediaElement& element) const
 
 #if ENABLE(MEDIA_SESSION)
 
-static MediaSessionInterruptingCategory interruptingCategoryFromString(const String& interruptingCategoryString)
+void Internals::sendMediaSessionStartOfInterruptionNotification(MediaSessionInterruptingCategory category)
 {
-    if (interruptingCategoryString == "content")
-        return MediaSessionInterruptingCategory::Content;
-    if (interruptingCategoryString == "transient")
-        return MediaSessionInterruptingCategory::Transient;
-    if (interruptingCategoryString == "transient-solo")
-        return MediaSessionInterruptingCategory::TransientSolo;
-    ASSERT_NOT_REACHED();
-    return MediaSessionInterruptingCategory::Content;
+    MediaSessionManager::singleton().didReceiveStartOfInterruptionNotification(category);
 }
 
-void Internals::sendMediaSessionStartOfInterruptionNotification(const String& interruptingCategoryString)
+void Internals::sendMediaSessionEndOfInterruptionNotification(MediaSessionInterruptingCategory category)
 {
-    MediaSessionManager::singleton().didReceiveStartOfInterruptionNotification(interruptingCategoryFromString(interruptingCategoryString));
-}
-
-void Internals::sendMediaSessionEndOfInterruptionNotification(const String& interruptingCategoryString)
-{
-    MediaSessionManager::singleton().didReceiveEndOfInterruptionNotification(interruptingCategoryFromString(interruptingCategoryString));
+    MediaSessionManager::singleton().didReceiveEndOfInterruptionNotification(category);
 }
 
 String Internals::mediaSessionCurrentState(MediaSession* session) const
@@ -2949,16 +2942,20 @@ double Internals::mediaElementPlayerVolume(HTMLMediaElement* element) const
     return element->playerVolume();
 }
 
-void Internals::sendMediaControlEvent(const String& event)
+void Internals::sendMediaControlEvent(MediaControlEvent event)
 {
-    if (event == "play-pause")
+    // FIXME: No good reason to use a single function with an argument instead of three functions.
+    switch (event) {
+    case MediControlEvent::PlayPause:
         MediaSessionManager::singleton().togglePlayback();
-    else if (event == "next-track")
+        break;
+    case MediControlEvent::NextTrack:
         MediaSessionManager::singleton().skipToNextTrack();
-    else if (event == "previous-track")
+        break;
+    case MediControlEvent::PreviousTrack:
         MediaSessionManager::singleton().skipToPreviousTrack();
-    else
-        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 #endif // ENABLE(MEDIA_SESSION)
@@ -3034,7 +3031,7 @@ void Internals::setMockMediaPlaybackTargetPickerState(const String& deviceName, 
 
 #endif
 
-RefPtr<MockPageOverlay> Internals::installMockPageOverlay(const String& overlayType, ExceptionCode& ec)
+RefPtr<MockPageOverlay> Internals::installMockPageOverlay(PageOverlayType type, ExceptionCode& ec)
 {
     Document* document = contextDocument();
     if (!document || !document->frame()) {
@@ -3042,7 +3039,7 @@ RefPtr<MockPageOverlay> Internals::installMockPageOverlay(const String& overlayT
         return nullptr;
     }
 
-    return MockPageOverlayClient::singleton().installOverlay(document->frame()->mainFrame(), overlayType == "view" ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
+    return MockPageOverlayClient::singleton().installOverlay(document->frame()->mainFrame(), type == PageOverlayType::View ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
 }
 
 String Internals::pageOverlayLayerTreeAsText(ExceptionCode& ec) const

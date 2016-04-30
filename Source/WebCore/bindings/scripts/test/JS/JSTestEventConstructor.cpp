@@ -294,7 +294,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventCon
 #if COMPILER(CLANG)
     // If this fails TestEventConstructor does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    COMPILE_ASSERT(__is_polymorphic(TestEventConstructor), TestEventConstructor_is_not_polymorphic);
+    static_assert(__is_polymorphic(TestEventConstructor), "TestEventConstructor is not polymorphic");
 #endif
 #endif
     // If you hit this assertion you either have a use after free bug, or

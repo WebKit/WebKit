@@ -1,5 +1,91 @@
 2016-04-30  Darin Adler  <darin@apple.com>
 
+        Stop using old-style string-based enums in Internals.idl
+        https://bugs.webkit.org/show_bug.cgi?id=157235
+
+        Reviewed by Chris Dumez.
+
+        * bindings/scripts/CodeGenerator.pm: Removed the six enumeration names
+        that are used in Internals.idl.
+        (GenerateCompileTimeCheckForEnumsIfNeeded): Unrelated cleanup. Tighten
+        code and use static_assert instead of COMPILE_ASSERT.
+        (IsStringType): Marked this function as deprecated. Calling a function
+        just to check if something is specifically "DOMString" isn't a good pattern.
+        Lots of call sites were checking "DOMString" directly and there is no
+        reason to mix the two different idioms.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetEnumerationImplementationContent): Use GenerateConditionalString.
+        (GenerateImplementation): Use static_assert instead of COMPILE_ASSERT.
+        (GenerateCallbackHeader): Tighten code. Remove peculiar code that was
+        trying to emit COMPILE_ASSERT(false); not an important case to detect, and
+        if we did want to detect it, then having the code generator report an error
+        is better than COMPILE_ASSERT when compiling the output.
+        (NativeToJSValue): Stop using IsStringType.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GetClassName): Stop using IsStringType.
+        (GetPropertyAttributes): Ditto.
+        (ConversionNeeded): Ditto.
+        (GetObjCTypeGetter): Ditto.
+        (AddIncludesForType): Ditto.
+        (GenerateImplementation): Removed unused @needsAssert. It was a write-only
+        variable.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseEnum): Put the extended attributes into the enumeration object.
+
+        * bindings/scripts/test/TestObj.idl: Added test cases for the Conditional
+        extended attribute, used with enumerations.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        * bindings/scripts/test/JS/JSTestCallback.h:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.h:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        Regenerated.
+
+        * testing/Internals.cpp:
+        (WebCore::toResourceRequestCachePolicy): Take enum instead of string.
+        (WebCore::Internals::setOverrideCachePolicy): Ditto.
+        (WebCore::toResourceLoadPriority): Ditto.
+        (WebCore::Internals::setOverrideResourceLoadPriority): Ditto.
+        (WebCore::toAutoFillButtonType): Ditto.
+        (WebCore::Internals::setShowAutoFillButton): Ditto.
+        (WebCore::interruptingCategoryFromString): Deleted.
+        (WebCore::Internals::sendMediaSessionStartOfInterruptionNotification): Ditto.
+        (WebCore::Internals::sendMediaSessionEndOfInterruptionNotification): Ditto.
+        (WebCore::Internals::sendMediaControlEvent): Ditto.
+        (WebCore::Internals::installMockPageOverlay): Ditto.
+
+        * testing/Internals.h: Added enum class and use those instead of strings for
+        enumerations defined in the IDL.
+
+        * testing/Internals.idl: Renamed enumerations that conflict with ones that already
+        exist in WebCore; added Internals prefix. Made MediaSessionInterruptingCategory and
+        MediaControlEvent conditional to match the functions they are used on. Added some
+        FIXMEs about peculiarities of some of the enumerations.
+
+2016-04-30  Darin Adler  <darin@apple.com>
+
         Fixed expected results from bindings tests.
 
         * bindings/scripts/test/JS/JSTestObj.cpp: Regenerated.

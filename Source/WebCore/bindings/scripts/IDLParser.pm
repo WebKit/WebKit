@@ -107,6 +107,7 @@ struct( domConstant => {
 struct( domEnum => {
     name => '$', # Enumeration identifier
     values => '@', # Enumeration values (list of unique strings)
+    extendedAttributes => '$',
 });
 
 struct( Token => {
@@ -777,7 +778,7 @@ sub parseInheritance
 sub parseEnum
 {
     my $self = shift;
-    my $extendedAttributeList = shift; # ignored: Extended attributes are not applicable to enumerations
+    my $extendedAttributeList = shift;
 
     my $next = $self->nextToken();
     if ($next->value() eq "enum") {
@@ -790,6 +791,7 @@ sub parseEnum
         push(@{$enum->values}, @{$self->parseEnumValueList()});
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
+        $enum->extendedAttributes($extendedAttributeList);
         return $enum;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);

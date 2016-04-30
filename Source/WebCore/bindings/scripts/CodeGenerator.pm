@@ -63,8 +63,6 @@ my %numericTypeHash = (
 
 my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1 );
 
-my %stringTypeHash = ( "DOMString" => 1 );
-
 # WebCore types used directly in IDL files.
 my %webCoreTypeHash = (
     "Dictionary" => 1,
@@ -120,11 +118,6 @@ my %svgTypeWithWritablePropertiesNeedingTearOff = (
 # enumeration to using an actual enum class in the C++. Once that is done, we should
 # remove this hash and the function that calls it.
 my %stringBasedEnumerationHash = (
-    "AutoFillButtonType" => 1,
-    "CachePolicy" => 1,
-    "MediaControlEvent" => 1,
-    "MediaSessionInterruptingCategory" => 1,
-    "PageOverlayType" => 1,
     "RTCBundlePolicyEnum" => 1,
     "RTCIceTransportPolicyEnum" => 1,
     "ReferrerPolicy" => 1,
@@ -134,7 +127,6 @@ my %stringBasedEnumerationHash = (
     "RequestMode" => 1,
     "RequestRedirect" => 1,
     "RequestType" => 1,
-    "ResourceLoadPriority" => 1,
     "TextTrackKind" => 1,
     "TextTrackMode" => 1,
     "XMLHttpRequestResponseType" => 1,
@@ -374,13 +366,14 @@ sub IsPrimitiveType
     return 0;
 }
 
+# Deprecated: Just check for "DOMString" instead.
+# Currently used outside WebKit in an internal Apple project; can be removed soon.
 sub IsStringType
 {
     my $object = shift;
     my $type = shift;
 
-    return 1 if $stringTypeHash{$type};
-    return 0;
+    return $type eq "DOMString";
 }
 
 sub IsStringBasedEnumType
@@ -854,34 +847,20 @@ sub GenerateConditionalStringFromAttributeValue
 sub GenerateCompileTimeCheckForEnumsIfNeeded
 {
     my ($generator, $interface) = @_;
-    my $interfaceName = $interface->name;
+
+    return () if $interface->extendedAttributes->{"DoNotCheckConstants"} || !@{$interface->constants};
+
     my @checks = ();
-    # If necessary, check that all constants are available as enums with the same value.
-    if (!$interface->extendedAttributes->{"DoNotCheckConstants"} && @{$interface->constants}) {
-        push(@checks, "\n");
-        foreach my $constant (@{$interface->constants}) {
-            my $reflect = $constant->extendedAttributes->{"Reflect"};
-            my $name = $reflect ? $reflect : $constant->name;
-            my $value = $constant->value;
-            my $conditional = $constant->extendedAttributes->{"Conditional"};
-
-            if ($conditional) {
-                my $conditionalString = $generator->GenerateConditionalStringFromAttributeValue($conditional);
-                push(@checks, "#if ${conditionalString}\n");
-            }
-
-            if ($constant->extendedAttributes->{"ImplementedBy"}) {
-                push(@checks, "COMPILE_ASSERT($value == " . $constant->extendedAttributes->{"ImplementedBy"} . "::$name, ${interfaceName}Enum${name}IsWrongUseDoNotCheckConstants);\n");
-            } else {
-                push(@checks, "COMPILE_ASSERT($value == ${interfaceName}::$name, ${interfaceName}Enum${name}IsWrongUseDoNotCheckConstants);\n");
-            }
-
-            if ($conditional) {
-                push(@checks, "#endif\n");
-            }
-        }
-        push(@checks, "\n");
+    foreach my $constant (@{$interface->constants}) {
+        my $className = $constant->extendedAttributes->{"ImplementedBy"} || $interface->name;
+        my $name = $constant->extendedAttributes->{"Reflect"} || $constant->name;
+        my $value = $constant->value;
+        my $conditional = $constant->extendedAttributes->{"Conditional"};
+        push(@checks, "#if " . $generator->GenerateConditionalStringFromAttributeValue($conditional) . "\n") if $conditional;
+        push(@checks, "static_assert(${className}::$name == $value, \"$name in $className does not match value from IDL\");\n");
+        push(@checks, "#endif\n") if $conditional;
     }
+    push(@checks, "\n");
     return @checks;
 }
 

@@ -393,7 +393,7 @@ sub GetClassName
     my $name = shift;
 
     # special cases
-    return "NSString" if $codeGenerator->IsStringType($name) or $name eq "SerializedScriptValue";
+    return "NSString" if $name eq "DOMString" or $name eq "SerializedScriptValue";
     return "CGColorRef" if $name eq "Color" and $shouldUseCGColor;
     return "NS$name" if IsNativeObjCType($name);
     return "BOOL" if $name eq "boolean";
@@ -597,9 +597,9 @@ sub GetPropertyAttributes
     push(@attributes, "readonly") if $readOnly;
 
     # FIXME: <rdar://problem/5049934> Consider using 'nonatomic' on the DOM @property declarations.
-    if ($codeGenerator->IsStringType($type) || IsNativeObjCType($type)) {
+    if ($type eq "DOMString" || IsNativeObjCType($type)) {
         push(@attributes, "copy");
-    } elsif (!$codeGenerator->IsStringType($type) && !$codeGenerator->IsPrimitiveType($type) && $type ne "DOMTimeStamp") {
+    } elsif ($type ne "DOMString" && !$codeGenerator->IsPrimitiveType($type) && $type ne "DOMTimeStamp") {
         push(@attributes, "strong");
     }
 
@@ -611,7 +611,7 @@ sub ConversionNeeded
 {
     my $type = shift;
 
-    return !$codeGenerator->IsNonPointerType($type) && !$codeGenerator->IsStringType($type) && !IsNativeObjCType($type);
+    return !$codeGenerator->IsNonPointerType($type) && $type ne "DOMString" && !IsNativeObjCType($type);
 }
 
 sub GetObjCTypeGetter
@@ -619,7 +619,7 @@ sub GetObjCTypeGetter
     my $argName = shift;
     my $type = shift;
 
-    return $argName if $codeGenerator->IsPrimitiveType($type) or $codeGenerator->IsStringType($type) or IsNativeObjCType($type);
+    return $argName if $codeGenerator->IsPrimitiveType($type) or $type eq "DOMString" or IsNativeObjCType($type);
     return $argName . "Node" if $type eq "EventTarget";
     return "WTF::getPtr(nativeEventListener)" if $type eq "EventListener";
     return "WTF::getPtr(nativeNodeFilter)" if $type eq "NodeFilter";
@@ -675,7 +675,7 @@ sub AddIncludesForType
         return;
     }
 
-    if ($codeGenerator->IsStringType($type)) {
+    if ($type eq "DOMString") {
         $implIncludes{"URL.h"} = 1;
         return;
     }
@@ -1409,7 +1409,7 @@ sub GenerateImplementation
                 push(@implContent, "{\n");
                 push(@implContent, "    $jsContextSetter\n");
 
-                unless ($codeGenerator->IsPrimitiveType($idlType) or $codeGenerator->IsStringType($idlType)) {
+                unless ($codeGenerator->IsPrimitiveType($idlType) or $idlType eq "DOMString") {
                     push(@implContent, "    ASSERT($argName);\n\n");
                 }
 
@@ -1455,7 +1455,6 @@ sub GenerateImplementation
             my $raisesExceptions = $function->signature->extendedAttributes->{"RaisesException"};
 
             my @parameterNames = ();
-            my @needsAssert = ();
             my %needsCustom = ();
 
             my $parameterIndex = 0;
@@ -1491,10 +1490,6 @@ sub GenerateImplementation
                 $needsCustom{"EventListener"} = $paramName if $idlType eq "EventListener";
                 $needsCustom{"EventTarget"} = $paramName if $idlType eq "EventTarget";
                 $needsCustom{"NodeToReturn"} = $paramName if $param->extendedAttributes->{"CustomReturn"};
-
-                unless ($codeGenerator->IsPrimitiveType($idlType) or $codeGenerator->IsStringType($idlType)) {
-                    push(@needsAssert, "    ASSERT($paramName);\n");
-                }
 
                 if ($parameterIndex >= 1) {
                     $functionSig .= " " . $param->name;
