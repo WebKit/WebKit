@@ -1,3 +1,17 @@
+2016-04-29  Brian Burg  <bburg@apple.com>
+
+        Web Automation: performMouseInteraction command computes mouse event coordinates incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=157218
+        <rdar://problem/26018230>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch fixes two issues: the min/max clamp was in the wrong order,
+        and the y-value did not account for the window's top content inset.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::performMouseInteraction):
+
 2016-04-29  Dean Jackson  <dino@apple.com>
 
         RTL <select> popup menu is in the wrong location

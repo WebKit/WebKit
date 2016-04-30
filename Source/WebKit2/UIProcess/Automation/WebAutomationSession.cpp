@@ -866,8 +866,8 @@ void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& error
     WebCore::FloatRect windowFrame;
     page->getWindowFrame(windowFrame);
 
-    x = std::max(std::min(0.0f, x), windowFrame.size().width());
-    y = std::max(std::min(0.0f, y), windowFrame.size().height());
+    x = std::min(std::max(0.0f, x), windowFrame.size().width());
+    y = std::min(std::max(0.0f, y + page->topContentInset()), windowFrame.size().height());
 
     WebCore::IntPoint viewPosition = WebCore::IntPoint(static_cast<int>(x), static_cast<int>(y));
 
