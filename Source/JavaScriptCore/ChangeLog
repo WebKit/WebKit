@@ -1,3 +1,31 @@
+2016-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Assertion failure for destructuring assignment with new.target and unary operator
+        https://bugs.webkit.org/show_bug.cgi?id=157149
+
+        Reviewed by Saam Barati.
+
+        The caller of parseDefaultValueForDestructuringPattern() should propagate errors.
+        And this patch also cleans up createSavePoint and createSavePointForError; introducing SavePointWithError.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseSourceElements):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        Add propagateErorr() for parseDefaultValueForDestructuringPattern.
+
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        * parser/Parser.h:
+        (JSC::Parser::restoreLexerState):
+        (JSC::Parser::internalSaveState):
+        (JSC::Parser::createSavePointForError):
+        (JSC::Parser::createSavePoint):
+        (JSC::Parser::internalRestoreState):
+        (JSC::Parser::restoreSavePointWithError):
+        (JSC::Parser::restoreSavePoint):
+        * tests/stress/default-value-parsing-should-propagate-error.js: Added.
+        (testSyntaxError):
+        (testSyntaxError.f):
+
 2016-04-28  Darin Adler  <darin@apple.com>
 
         First step in using "enum class" instead of "String" for enumerations in DOM

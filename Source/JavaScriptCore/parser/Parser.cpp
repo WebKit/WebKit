@@ -421,6 +421,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
                             semanticFail("Cannot declare a variable named 'eval' in strict mode");
                         semanticFailIfFalse(isValidStrictMode(), "Invalid parameters or function name in strict mode");
                     }
+                    // Since strict mode is changed, restoring lexer state by calling next() may cause errors.
                     restoreSavePoint(savePoint);
                     propagateError();
                     continue;
@@ -954,6 +955,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 return 0;
             failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
             TreeExpression defaultValue = parseDefaultValueForDestructuringPattern(context);
+            propagateError();
             context.appendArrayPatternEntry(arrayPattern, location, innerPattern, defaultValue);
         } while (consume(COMMA));
 
@@ -1037,6 +1039,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 return 0;
             failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
             TreeExpression defaultValue = parseDefaultValueForDestructuringPattern(context);
+            propagateError();
             if (propertyExpression)
                 context.appendObjectPatternEntry(objectPattern, location, propertyExpression, innerPattern, defaultValue);
             else {
@@ -3078,19 +3081,14 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     if (isValidArrowFunctionStart && !match(EOFTOK)) {
         bool isArrowFunctionToken = match(ARROWFUNCTION);
         if (!lhs || isArrowFunctionToken) {
-            SavePoint errorRestorationSavePoint = createSavePointForError();
-            String oldErrorMessage = m_errorMessage;
-            String oldLexerErrorMessage = m_lexer->getErrorMessage();
-            bool hasLexerError = m_lexer->sawError();
+            SavePointWithError errorRestorationSavePoint = createSavePointForError();
             restoreSavePoint(savePoint);
             if (isArrowFunctionParameters()) {
                 if (wasOpenParen)
                     currentScope()->revertToPreviousUsedVariables(usedVariablesSize);
                 return parseArrowFunctionExpression(context);
             }
-            restoreSavePointWithError(errorRestorationSavePoint, oldErrorMessage);
-            m_lexer->setErrorMessage(oldLexerErrorMessage);
-            m_lexer->setSawError(hasLexerError);
+            restoreSavePointWithError(errorRestorationSavePoint);
             if (isArrowFunctionToken)
                 failDueToUnexpectedToken();
         }
@@ -3102,16 +3100,11 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         propagateError();
 
     if (maybeAssignmentPattern && (!lhs || (context.isObjectOrArrayLiteral(lhs) && match(EQUAL)))) {
-        String expressionError = m_errorMessage;
-        String oldLexerErrorMessage = m_lexer->getErrorMessage();
-        bool hasLexerError = m_lexer->sawError();
-        SavePoint expressionErrorLocation = createSavePointForError();
+        SavePointWithError expressionErrorLocation = createSavePointForError();
         restoreSavePoint(savePoint);
         auto pattern = tryParseDestructuringPatternExpression(context, AssignmentContext::AssignmentExpression);
         if (classifier.indicatesPossiblePattern() && (!pattern || !match(EQUAL))) {
-            restoreSavePointWithError(expressionErrorLocation, expressionError);
-            m_lexer->setErrorMessage(oldLexerErrorMessage);
-            m_lexer->setSawError(hasLexerError);
+            restoreSavePointWithError(expressionErrorLocation);
             return 0;
         }
         failIfFalse(pattern, "Cannot parse assignment pattern");
