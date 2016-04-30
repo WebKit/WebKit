@@ -187,7 +187,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::update(ExecState& exec, JSValue value, Ex
         return nullptr;
     }
 
-    if (isKeyCursor()) {
+    if (!isKeyCursorWithValue()) {
         ec.code = IDBDatabaseException::InvalidStateError;
         ec.message = ASCIILiteral("Failed to execute 'update' on 'IDBCursor': The cursor is a key cursor.");
         return nullptr;
@@ -350,7 +350,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext& co
         return nullptr;
     }
 
-    if (isKeyCursor()) {
+    if (!isKeyCursorWithValue()) {
         ec.code = IDBDatabaseException::InvalidStateError;
         ec.message = ASCIILiteral("Failed to execute 'delete' on 'IDBCursor': The cursor is a key cursor.");
         return nullptr;
@@ -393,10 +393,10 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
     m_currentPrimaryKey = { vm, idbKeyDataToScriptValue(*context, getResult.primaryKeyData()) };
     m_currentPrimaryKeyData = getResult.primaryKeyData();
 
-    if (isKeyCursor())
-        m_currentValue = { };
-    else
+    if (isKeyCursorWithValue())
         m_currentValue = { vm, deserializeIDBValueToJSValue(*context, getResult.value()) };
+    else
+        m_currentValue = { };
 
     m_gotValue = true;
 }

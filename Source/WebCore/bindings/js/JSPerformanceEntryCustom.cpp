@@ -52,19 +52,19 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, PerformanceEntry* entr
         return jsNull();
 
 #if ENABLE(RESOURCE_TIMING)
-    if (entry->isResource())
-        return wrap<JSPerformanceResourceTiming>(globalObject, static_cast<PerformanceResourceTiming*>(entry));
+    if (is<PerformanceResourceTiming>(*entry))
+        return wrap<JSPerformanceResourceTiming>(globalObject, downcast<PerformanceResourceTiming>(*entry));
 #endif
 
 #if ENABLE(USER_TIMING)
-    if (entry->isMark())
-        return wrap<JSPerformanceMark>(globalObject, static_cast<PerformanceMark*>(entry));
+    if (is<PerformanceMark>(*entry))
+        return wrap<JSPerformanceMark>(globalObject, downcast<PerformanceMark>(*entry));
 
-    if (entry->isMeasure())
-        return wrap<JSPerformanceMeasure>(globalObject, static_cast<PerformanceMeasure*>(entry));
+    if (is<PerformanceMeasure>(*entry))
+        return wrap<JSPerformanceMeasure>(globalObject, downcast<PerformanceMeasure>(*entry));
 #endif
 
-    return wrap<JSPerformanceEntry>(globalObject, entry);
+    return wrap<JSPerformanceEntry>(globalObject, *entry);
 }
 
 } // namespace WebCore

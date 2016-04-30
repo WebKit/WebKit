@@ -54,9 +54,13 @@ JSValue JSIDBCursor::source(ExecState& state) const
 
 JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, IDBCursor* cursor)
 {
-    if (cursor->isKeyCursor())
-        return wrap<JSIDBCursor>(globalObject, cursor);
-    return wrap<JSIDBCursorWithValue>(globalObject, static_cast<IDBCursorWithValue*>(cursor));
+    if (!cursor)
+        return JSC::jsNull();
+
+    if (is<IDBCursorWithValue>(*cursor))
+        return wrap<JSIDBCursorWithValue>(globalObject, downcast<IDBCursorWithValue>(*cursor));
+
+    return wrap<JSIDBCursor>(globalObject, *cursor);
 }
 
 } // namespace WebCore

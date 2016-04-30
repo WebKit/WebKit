@@ -37,6 +37,7 @@
 #include "Performance.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -50,9 +51,9 @@ public:
     double startTime() const;
     double duration() const;
 
-    virtual bool isResource() { return false; }
-    virtual bool isMark() { return false; }
-    virtual bool isMeasure() { return false; }
+    virtual bool isResource() const { return false; }
+    virtual bool isMark() const { return false; }
+    virtual bool isMeasure() const { return false; }
 
     static bool startTimeCompareLessThan(PassRefPtr<PerformanceEntry> a, PassRefPtr<PerformanceEntry> b)
     {

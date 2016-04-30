@@ -85,4 +85,6 @@ protected:
     
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGLRenderingContext, isWebGL1())
+
 #endif

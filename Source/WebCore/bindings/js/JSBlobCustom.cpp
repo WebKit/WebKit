@@ -53,10 +53,10 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Blob* blob)
     if (!blob)
         return jsNull();
 
-    if (blob->isFile())
-        return wrap<JSFile>(globalObject, static_cast<File*>(blob));
+    if (is<File>(*blob))
+        return wrap<JSFile>(globalObject, downcast<File>(*blob));
 
-    return wrap<JSBlob>(globalObject, blob);
+    return wrap<JSBlob>(globalObject, *blob);
 }
 
 EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState* exec)

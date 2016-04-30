@@ -267,13 +267,11 @@ template<typename WrapperClass, typename DOMClass> inline JSDOMObject* createWra
     return wrapper;
 }
 
-template<typename WrapperClass, typename DOMClass> inline JSC::JSValue wrap(JSDOMGlobalObject* globalObject, DOMClass* domObject)
+template<typename WrapperClass, typename DOMClass> inline JSC::JSValue wrap(JSDOMGlobalObject* globalObject, DOMClass& domObject)
 {
-    if (!domObject)
-        return JSC::jsNull();
-    if (JSC::JSObject* wrapper = getCachedWrapper(globalObject->world(), domObject))
+    if (JSC::JSObject* wrapper = getCachedWrapper(globalObject->world(), &domObject))
         return wrapper;
-    return createWrapper<WrapperClass>(globalObject, domObject);
+    return createWrapper<WrapperClass>(globalObject, &domObject);
 }
 
 template<typename WrapperClass, typename DOMClass> inline JSC::JSValue getExistingWrapper(JSDOMGlobalObject* globalObject, DOMClass* domObject)

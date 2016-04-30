@@ -43,9 +43,9 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, MediaStreamC
         return jsNull();
 
     if (object->hasVideoSource())
-        return wrap<JSAllVideoCapabilities>(globalObject, static_cast<AllVideoCapabilities*>(object));
+        return wrap<JSAllVideoCapabilities>(globalObject, static_cast<AllVideoCapabilities>(*object));
 
-    return wrap<JSAllAudioCapabilities>(globalObject, static_cast<AllAudioCapabilities*>(object));
+    return wrap<JSAllAudioCapabilities>(globalObject, static_cast<AllAudioCapabilities>(*object));
 }
 
 } // namespace WebCore

@@ -1,5 +1,50 @@
 2016-04-29  Chris Dumez  <cdumez@apple.com>
 
+        Get rid of unnecessary null check in wrap(JSDOMGlobalObject*, DOMClass*)
+        https://bugs.webkit.org/show_bug.cgi?id=157224
+
+        Reviewed by Ryosuke Niwa.
+
+        Get rid of unnecessary null check in wrap(JSDOMGlobalObject*, DOMClass*)
+        since all the call sites already do a null check. Also update the function
+        to take the implementation object by reference instead of pointer. Finally,
+        use is<>() / downcast<>() more at the call sites.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::deleteFunction):
+        (WebCore::IDBCursor::setGetResult):
+        * Modules/indexeddb/IDBCursor.h:
+        (WebCore::IDBCursor::isKeyCursorWithValue):
+        (WebCore::IDBCursor::isKeyCursor): Deleted.
+        * Modules/indexeddb/IDBCursorWithValue.h:
+        (isType):
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::wrap):
+        * bindings/js/JSIDBCursorCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSMediaStreamCapabilitiesCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSPerformanceEntryCustom.cpp:
+        (WebCore::toJS):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLRenderingContext.h:
+        * page/PerformanceMark.h:
+        (isType):
+        (WebCore::PerformanceMark::isMark): Deleted.
+        * page/PerformanceMeasure.h:
+        (isType):
+        (WebCore::PerformanceMeasure::isMeasure): Deleted.
+        * page/PerformanceResourceTiming.h:
+        (isType):
+        (WebCore::PerformanceResourceTiming::isResource): Deleted.
+
+2016-04-29  Chris Dumez  <cdumez@apple.com>
+
         Use LIKELY() / UNLIKELY() hints when suitable in the JavaScript bindings
         https://bugs.webkit.org/show_bug.cgi?id=157210
 

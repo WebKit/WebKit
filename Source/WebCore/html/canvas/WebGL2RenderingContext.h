@@ -220,6 +220,8 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGL2RenderingContext, isWebGL2())
+
 #endif // WEBGL2
 
 #endif
