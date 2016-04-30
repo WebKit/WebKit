@@ -1,5 +1,11 @@
 2016-04-30  Darin Adler  <darin@apple.com>
 
+        Fixed expected results from bindings tests.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp: Regenerated.
+
+2016-04-30  Darin Adler  <darin@apple.com>
+
         Next batch of conversions to use C++ enum class instead of strings for enumerations
         https://bugs.webkit.org/show_bug.cgi?id=157232
 

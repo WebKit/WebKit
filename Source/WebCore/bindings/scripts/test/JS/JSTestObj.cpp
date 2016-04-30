@@ -91,7 +91,7 @@ namespace WebCore {
 
 JSString* jsStringWithCache(ExecState*, TestEnumType);
 Optional<TestEnumType> parseTestEnumType(ExecState&, JSValue);
-extern const char* const expectedEnumerationValuesTestEnumType;
+extern const char expectedEnumerationValuesTestEnumType[];
 
 JSString* jsStringWithCache(ExecState* state, TestEnumType enumerationValue)
 {
@@ -127,11 +127,11 @@ Optional<TestEnumType> parseTestEnumType(ExecState& state, JSValue value)
     return Nullopt;
 }
 
-const char* const expectedEnumerationValuesTestEnumType = "\"\", \"EnumValue1\", \"EnumValue2\", \"EnumValue3\"";
+const char expectedEnumerationValuesTestEnumType[] = "\"\", \"EnumValue1\", \"EnumValue2\", \"EnumValue3\"";
 
 JSString* jsStringWithCache(ExecState*, Optional);
 Optional<Optional> parseOptional(ExecState&, JSValue);
-extern const char* const expectedEnumerationValuesOptional;
+extern const char expectedEnumerationValuesOptional[];
 
 JSString* jsStringWithCache(ExecState* state, Optional enumerationValue)
 {
@@ -167,7 +167,7 @@ Optional<Optional> parseOptional(ExecState& state, JSValue value)
     return Nullopt;
 }
 
-const char* const expectedEnumerationValuesOptional = "\"\", \"OptionalValue1\", \"OptionalValue2\", \"OptionalValue3\"";
+const char expectedEnumerationValuesOptional[] = "\"\", \"OptionalValue1\", \"OptionalValue2\", \"OptionalValue3\"";
 
 // Functions
 
@@ -3800,7 +3800,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecSta
     auto optionalValue = parseTestEnumType(*state, enumArgValue);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!optionalValue)
+    if (UNLIKELY(!optionalValue))
         return throwArgumentMustBeEnumError(*state, 0, "enumArg", "TestObj", "methodWithEnumArg", expectedEnumerationValuesTestEnumType);
     enumArg = optionalValue.value();
     impl.methodWithEnumArg(enumArg);
@@ -3823,7 +3823,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArg
         auto optionalValue = parseTestEnumType(*state, enumArgValue);
         if (UNLIKELY(state->hadException()))
             return JSValue::encode(jsUndefined());
-        if (!optionalValue)
+        if (UNLIKELY(!optionalValue))
             return throwArgumentMustBeEnumError(*state, 0, "enumArg", "TestObj", "methodWithOptionalEnumArgAndDefaultValue", expectedEnumerationValuesTestEnumType);
         enumArg = optionalValue.value();
     }
