@@ -1,3 +1,18 @@
+2016-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(194502): overflow: scroll; direction: rtl; divs jump horizontally when scrolled vertically
+        https://bugs.webkit.org/show_bug.cgi?id=157201
+
+        Reviewed by Simon Fraser.
+
+        ScrollableArea::scrollToOffsetWithoutAnimation() was mistakenly conflating scroll offsets with
+        scroll positions.
+
+        Test: fast/scrolling/rtl-drag-vertical-scroller.html
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scrollToOffsetWithoutAnimation):
+
 2016-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up GraphicsContext use in RenderLayer::paintLayerContents()
