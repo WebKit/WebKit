@@ -1,5 +1,12 @@
 2016-04-30  Darin Adler  <darin@apple.com>
 
+        Try to fix GTK build.
+
+        * testing/Internals.h: Added conditional around include of
+        MediaSessionInterruptionProvider.h.
+
+2016-04-30  Darin Adler  <darin@apple.com>
+
         Stop using old-style string-based enums in Internals.idl
         https://bugs.webkit.org/show_bug.cgi?id=157235
 

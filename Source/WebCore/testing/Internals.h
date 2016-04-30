@@ -28,9 +28,12 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
-#include "MediaSessionInterruptionProvider.h"
 #include "PageConsoleClient.h"
 #include <runtime/Float32Array.h>
+
+#if ENABLE(MEDIA_SESSION)
+#include "MediaSessionInterruptionProvider.h"
+#endif
 
 namespace WebCore {
 
