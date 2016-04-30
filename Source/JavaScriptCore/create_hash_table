@@ -306,10 +306,6 @@ sub output() {
             $intrinsic = "ArrayPushIntrinsic" if ($key eq "push");
             $intrinsic = "ArrayPopIntrinsic" if ($key eq "pop");
         }
-        if ($name eq "regExpPrototypeTable") {
-            $intrinsic = "RegExpExecIntrinsic" if ($key eq "exec");
-            $intrinsic = "RegExpTestIntrinsic" if ($key eq "test");
-        }
 
         if ($values[$i]{"type"} eq "Function" && $firstValue eq "JSBuiltin")  {
             my $tableHead = $name;

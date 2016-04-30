@@ -1,3 +1,47 @@
+2016-04-29  Mark Lam  <mark.lam@apple.com>
+
+        Make RegExp.prototype.test spec compliant.
+        https://bugs.webkit.org/show_bug.cgi?id=155862
+
+        Reviewed by Saam Barati.
+
+        * builtins/RegExpPrototype.js:
+        (intrinsic.RegExpTestIntrinsic.test):
+
+        * create_hash_table:
+        - Delete obsoleted code.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        - We now have 2 intrinsics for RegExp.prototype.test:
+          RegExpTestIntrinsic and RegExpTestFastIntrinsic.
+
+          RegExpTestIntrinsic maps to the entry at the top of the builtin ES6
+          RegExp.prototype.test.
+          RegExpTestFastIntrinsic maps to the fast path in the builtin ES6
+          RegExp.prototype.test.
+
+          Both will end up using the RegExpTest DFG node to implement the fast path
+          of RegExp.prototype.test.  RegExpTestIntrinsic will have some additional checks
+          before the RegExpTest node.  Those checks are for speculating that it is ok for
+          us to take the fast path.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/Intrinsic.h:
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        - Added the regExpTestFast function.
+        - Also fixed the parameter length on 2 other functions that were erroneous.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        (JSC::regExpProtoFuncTestFast):
+        (JSC::regExpProtoFuncTest): Deleted.
+        * runtime/RegExpPrototype.h:
+        * tests/es6.yaml:
+
 2016-04-29  Benjamin Poulain  <benjamin@webkit.org>
 
         Extend math-pow-stable-results.js to get more information about the failure
