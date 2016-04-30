@@ -1,3 +1,70 @@
+2016-04-28  Darin Adler  <darin@apple.com>
+
+        First step in using "enum class" instead of "String" for enumerations in DOM
+        https://bugs.webkit.org/show_bug.cgi?id=157163
+
+        Reviewed by Chris Dumez.
+
+        This patch adds the basic support for using "enum class" to implement enumerations
+        in the C++ DOM. This is enough so we can use it for one case, but not enough for
+        others. For example, it correctly generates code to get an attribute, but likely
+        does not correctly generate code to set an attribute or call a function with an
+        argument type that is the new style of enum.
+
+        * bindings/scripts/CodeGenerator.pm: Cleaned up the formatting of the hashes
+        at the start of this file. Added a new one named stringBasedEnumerationHash
+        and a comment explaining that we need to eventually make it empty.
+        (ProcessDocument): Pass the enumerations into the GenerateInterface function.
+        (IsStringBasedEnumType): Added. Returns 1 for the old-style string-based enumerations,
+        as opposed to enumerations we use "enum class" for.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateInterface): Take the enumerations argument and pass it along to the
+        functions that generate headers and implementation files.
+        (EnumerationClassName): Added. Maps from an enumeration type name as seen
+        in the IDL file to the enumeration class name used in the C++ DOM implementation.
+        (EnumerationValueName): Added. Maps from an anumeration string value as seen
+        in the IDL file to an enumeration value name used in the C++ DOM implementatino.
+        (EnumerationImplementationContent): Added. Generates a string with all the content
+        needed in the implementation file to define the helper functions for enumerations.
+        (GenerateHeader): Tweak.
+        (GenerateImplementation): Added call to EnumerationImplementationContent.
+        (GenerateParametersCheck): Use toWTFString instead of toString/value, which is a
+        longer way of writing out the same thing.
+        (GenerateCallbackHeader): Tweak.
+        (GenerateCallbackImplementation): Added call to EnumerationImplementationContent.
+        (GetNativeType): Continue to return String for string-based enum types, but for
+        other enum types, return the result of EnumerationClassName instead.
+        (JSValueToNative): Use toWTFString instead of toString/value (see above), convert
+        to a string only for string-based enum types, and add a preliminary, probably not
+        yet working, version of the code for non-string-based enum types. Will finish this
+        in the next patch when we are trying to use one of the new enumerations for a setter
+        or a function argument.
+        (NativeToJSValue): Call the stringValue function to convert an enumeration value
+        into a string when it's not a string-based enumeration.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Regenerated.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::status): Updated to return enum values rather than strings.
+
+        * css/FontFace.h: Removed unneeded forward declaration of Deprecated::ScriptValue.
+        Added enum class for FontFaceLoadStatus, with names that match the names from the
+        enumeration in the IDL, but with our standard enum capitalization style. Changed
+        the return value of the status function to FontFaceLoadStatus.
+
 2016-04-29  Chris Dumez  <cdumez@apple.com>
 
         Get rid of unnecessary null check in wrap(JSDOMGlobalObject*, DOMClass*)

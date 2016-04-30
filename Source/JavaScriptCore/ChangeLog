@@ -1,3 +1,13 @@
+2016-04-28  Darin Adler  <darin@apple.com>
+
+        First step in using "enum class" instead of "String" for enumerations in DOM
+        https://bugs.webkit.org/show_bug.cgi?id=157163
+
+        Reviewed by Chris Dumez.
+
+        * runtime/JSString.h:
+        (JSC::jsStringWithCache): Deleted unneeded overload for AtomicString.
+
 2016-04-29  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC][ARMv7S] Arithmetic module results change when tiering up to DFG

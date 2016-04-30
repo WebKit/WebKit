@@ -123,16 +123,17 @@ sub GenerateInterface
     my $object = shift;
     my $interface = shift;
     my $defines = shift;
+    my $enumerations = shift;
 
     $codeGenerator->LinkOverloadedFunctions($interface);
 
     # Start actual generation
     if ($interface->isCallback) {
         $object->GenerateCallbackHeader($interface);
-        $object->GenerateCallbackImplementation($interface);
+        $object->GenerateCallbackImplementation($interface, $enumerations);
     } else {
         $object->GenerateHeader($interface);
-        $object->GenerateImplementation($interface);
+        $object->GenerateImplementation($interface, $enumerations);
     }
 }
 
@@ -830,10 +831,73 @@ sub GetImplClassName
     return $name;
 }
 
+sub GetEnumerationClassName {
+    my ($name) = @_;
+    return $codeGenerator->WK_ucfirst($name);
+};
+
+sub GetEnumerationValueName {
+    my ($name) = @_;
+    return "EmptyString" if $name eq "";
+    return $codeGenerator->WK_ucfirst($name);
+};
+
+sub GetEnumerationImplementationContent
+{
+    my ($enumerations) = @_;
+
+    my $result = "";
+    foreach my $enumeration (@$enumerations) {
+        my $name = $enumeration->name;
+        next if $codeGenerator->IsStringBasedEnumType($name);
+
+        my $className = GetEnumerationClassName($name);
+
+        # Declare these instead of using "static" because these functions may be unused
+        # and we don't want to get warnings about unused static functions.
+        $result .= "const String& stringValue($className);\n";
+        $result .= "Optional<$className> enumerationValue$className(const String&);\n\n";
+
+        $result .= "const String& stringValue($className enumerationValue)\n";
+        $result .= "{\n";
+        # FIXME: Might be nice to make this global be "const", but NeverDestroyed does not currently support that.
+        # FIXME: Might be nice to make the entire array be NeverDestroyed instead of each value, but not sure the syntax for that.
+        $result .= "    static NeverDestroyed<const String> values[] = {\n";
+        foreach my $value (@{$enumeration->values}) {
+            $result .= "        ASCIILiteral(\"$value\"),\n";
+        }
+        $result .= "    };\n";
+        my $index = 0;
+        foreach my $value (@{$enumeration->values}) {
+            my $enumerationValueName = GetEnumerationValueName($value);
+            if ($index) {
+                $result .= "    static_assert(static_cast<size_t>($className::$enumerationValueName) == $index, \"$className::$enumerationValueName is not $index as expected\");\n";
+            } else {
+                # Keep the style checker happy. Not sure I still love this style guideline.
+                $result .= "    static_assert(!static_cast<size_t>($className::$enumerationValueName), \"$className::$enumerationValueName is not $index as expected\");\n";
+            }
+            $index++;
+        }
+        $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
+        $result .= "    return values[static_cast<size_t>(enumerationValue)];\n";
+        $result .= "}\n\n";
+
+        $result .= "Optional<$className> enumerationValue$className(const String& stringValue)\n";
+        $result .= "{\n";
+        foreach my $value (@{$enumeration->values}) {
+            my $enumerationValueName = GetEnumerationValueName($value);
+            $result .= "    if (stringValue == \"$value\")\n";
+            $result .= "        return $className::$enumerationValueName;\n";
+        }
+        $result .= "    return Nullopt;\n";
+        $result .= "}\n\n";
+    }
+    return $result;
+}
+
 sub GenerateHeader
 {
-    my $object = shift;
-    my $interface = shift;
+    my ($object, $interface) = @_;
 
     my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
@@ -1796,7 +1860,7 @@ sub GetIndexedGetterExpression
 
 sub GenerateImplementation
 {
-    my ($object, $interface) = @_;
+    my ($object, $interface, $enumerations) = @_;
 
     my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
@@ -1827,6 +1891,8 @@ sub GenerateImplementation
 
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
+
+    push(@implContent, GetEnumerationImplementationContent($enumerations));
 
     my @functions = @{$interface->functions};
     push(@functions, @{$interface->iterable->functions}) if $interface->iterable;
@@ -3602,7 +3668,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    if (${argValue}.isUndefined())\n");
                 push(@$outputArray, "        $name = ASCIILiteral(" . $parameter->default . ");\n");
                 push(@$outputArray, "    else {\n");
-                push(@$outputArray, "        $name = state->uncheckedArgument($argsIndex).toString(state)->value(state);\n");
+                push(@$outputArray, "        $name = state->uncheckedArgument($argsIndex).toWTFString(state);\n");
                 &$exceptionCheck("    ");
                 &$enumValueCheck("    ");
                 push(@$outputArray, "    }\n");
@@ -3721,8 +3787,7 @@ sub GenerateReturnParameters
 
 sub GenerateCallbackHeader
 {
-    my $object = shift;
-    my $interface = shift;
+    my ($object, $interface) = @_;
 
     my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
@@ -3806,7 +3871,7 @@ sub GenerateCallbackHeader
 
 sub GenerateCallbackImplementation
 {
-    my ($object, $interface) = @_;
+    my ($object, $interface, $enumerations) = @_;
 
     my $interfaceName = $interface->name;
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
@@ -3822,6 +3887,8 @@ sub GenerateCallbackImplementation
 
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
+
+    push(@implContent, GetEnumerationImplementationContent($enumerations));
 
     # Constructor
     push(@implContent, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");
@@ -4179,7 +4246,8 @@ sub GetNativeType
     my $arrayOrSequenceType = $arrayType || $sequenceType;
 
     return "Vector<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">" if $arrayOrSequenceType;
-    return "String" if $codeGenerator->IsEnumType($type);
+    return "String" if $codeGenerator->IsStringBasedEnumType($type);
+    return GetEnumerationClassName($type) if $codeGenerator->IsEnumType($type);
 
     # For all other types, the native type is a pointer with same type name as the IDL type.
     return "${type}*";
@@ -4296,7 +4364,7 @@ sub JSValueToNative
         return "valueToStringWithUndefinedOrNullCheck(state, $value)" if $signature->isNullable;
         return "$value.toString(state)->toAtomicString(state)" if $signature->extendedAttributes->{"AtomicString"};
 
-        return "$value.toString(state)->value(state)";
+        return "$value.toWTFString(state)";
     }
 
     if ($type eq "any") {
@@ -4342,8 +4410,11 @@ sub JSValueToNative
         return "toNativeArray<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">(state, $value)";
     }
 
+    return "$value.toWTFString(state)" if $codeGenerator->IsStringBasedEnumType($type);
+
     if ($codeGenerator->IsEnumType($type)) {
-        return "$value.toString(state)->value(state)";
+        my $className = GetEnumerationClassName($type);
+        return "enumerationValue$className($value.toWTFString(state)).value()";
     }
 
     # Default, assume autogenerated type conversion routines
@@ -4394,6 +4465,7 @@ sub NativeToJSValue
 
     if ($codeGenerator->IsEnumType($type)) {
         AddToImplIncludes("<runtime/JSString.h>", $conditional);
+        $value = "stringValue($value)" unless $codeGenerator->IsStringBasedEnumType($type);
         return "jsStringWithCache(state, $value)";
     }
 

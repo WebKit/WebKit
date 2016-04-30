@@ -653,11 +653,6 @@ ALWAYS_INLINE JSString* jsStringWithCache(ExecState* exec, const String& s)
     return jsStringWithCacheSlowCase(vm, *stringImpl);
 }
 
-ALWAYS_INLINE JSString* jsStringWithCache(ExecState* exec, const AtomicString& s)
-{
-    return jsStringWithCache(exec, s.string());
-}
-
 ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().length) {

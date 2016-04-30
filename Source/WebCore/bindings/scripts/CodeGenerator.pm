@@ -44,33 +44,55 @@ my $codeGenerator = 0;
 
 my $verbose = 0;
 
-my %numericTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1,
-                       "unsigned int" => 1, "unsigned short" => 1,
-                       "unsigned long" => 1, "unsigned long long" => 1,
-                       "float" => 1, "double" => 1, 
-                       "unrestricted float" => 1, "unrestricted double" => 1,
-                       "byte" => 1, "octet" => 1);
+my %numericTypeHash = (
+    "byte" => 1,
+    "double" => 1,
+    "float" => 1,
+    "int" => 1,
+    "long long" => 1,
+    "long" => 1,
+    "octet" => 1,
+    "short" => 1,
+    "unrestricted double" => 1,
+    "unrestricted float" => 1,
+    "unsigned int" => 1,
+    "unsigned long long" => 1,
+    "unsigned long" => 1,
+    "unsigned short" => 1,
+);
 
-my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1);
+my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1 );
 
-my %stringTypeHash = ("DOMString" => 1);
+my %stringTypeHash = ( "DOMString" => 1 );
 
 # WebCore types used directly in IDL files.
 my %webCoreTypeHash = (
+    "Dictionary" => 1,
     "SerializedScriptValue" => 1,
-    "Dictionary" => 1
 );
 
 my %enumTypeHash = ();
 
-my %nonPointerTypeHash = ("DOMTimeStamp" => 1);
+my %nonPointerTypeHash = ( "DOMTimeStamp" => 1 );
 
-my %svgAttributesInHTMLHash = ("class" => 1, "id" => 1, "onabort" => 1, "onclick" => 1,
-                               "onerror" => 1, "onload" => 1, "onmousedown" => 1,
-                               "onmouseenter" => 1, "onmouseleave" => 1,
-                               "onmousemove" => 1, "onmouseout" => 1, "onmouseover" => 1,
-                               "onmouseup" => 1, "onresize" => 1, "onscroll" => 1,
-                               "onunload" => 1);
+my %svgAttributesInHTMLHash = (
+    "class" => 1,
+    "id" => 1,
+    "onabort" => 1,
+    "onclick" => 1,
+    "onerror" => 1,
+    "onload" => 1,
+    "onmousedown" => 1,
+    "onmouseenter" => 1,
+    "onmouseleave" => 1,
+    "onmousemove" => 1,
+    "onmouseout" => 1,
+    "onmouseover" => 1,
+    "onmouseup" => 1,
+    "onresize" => 1,
+    "onscroll" => 1,
+    "onunload" => 1,
+);
 
 my %svgTypeNeedingTearOff = (
     "SVGAngle" => "SVGPropertyTearOff<SVGAngle>",
@@ -92,6 +114,48 @@ my %svgTypeNeedingTearOff = (
 my %svgTypeWithWritablePropertiesNeedingTearOff = (
     "SVGPoint" => 1,
     "SVGMatrix" => 1
+);
+
+# FIXME: Remove each enum from this hash as we convert it from the string-based
+# enumeration to using an actual enum class in the C++. Once that is done, we should
+# remove this hash and the function that calls it.
+my %stringBasedEnumerationHash = (
+    "AppendMode" => 1,
+    "AudioContextState" => 1,
+    "AutoFillButtonType" => 1,
+    "CachePolicy" => 1,
+    "CanvasWindingRule" => 1,
+    "DeviceType" => 1,
+    "EndOfStreamError" => 1,
+    "FontFaceSetLoadStatus" => 1,
+    "IDBCursorDirection" => 1,
+    "IDBRequestReadyState" => 1,
+    "IDBTransactionMode" => 1,
+    "ImageSmoothingQuality" => 1,
+    "KeyType" => 1,
+    "KeyUsage" => 1,
+    "MediaControlEvent" => 1,
+    "MediaDeviceKind" => 1,
+    "MediaSessionInterruptingCategory" => 1,
+    "MediaSessionKind" => 1,
+    "MediaStreamTrackState" => 1,
+    "OverSampleType" => 1,
+    "PageOverlayType" => 1,
+    "RTCBundlePolicyEnum" => 1,
+    "RTCIceTransportPolicyEnum" => 1,
+    "ReferrerPolicy" => 1,
+    "RequestCache" => 1,
+    "RequestCredentials" => 1,
+    "RequestDestination" => 1,
+    "RequestMode" => 1,
+    "RequestRedirect" => 1,
+    "RequestType" => 1,
+    "ResourceLoadPriority" => 1,
+    "ResponseType" => 1,
+    "TextTrackKind" => 1,
+    "TextTrackMode" => 1,
+    "VideoPresentationMode" => 1,
+    "XMLHttpRequestResponseType" => 1,
 );
 
 # Cache of IDL file pathnames.
@@ -141,7 +205,9 @@ sub ProcessDocument
     my $interfaces = $useDocument->interfaces;
     foreach my $interface (@$interfaces) {
         print "Generating $useGenerator bindings code for IDL interface \"" . $interface->name . "\"...\n" if $verbose;
-        $codeGenerator->GenerateInterface($interface, $defines);
+        # FIXME: Repeating each enumeration for every interface would not work if we actually were using
+        # multiple interfaces per file, but we aren't, so this is fine for now.
+        $codeGenerator->GenerateInterface($interface, $defines, $useDocument->enumerations);
         $codeGenerator->WriteData($interface, $useOutputDir, $useOutputHeadersDir);
     }
 }
@@ -332,6 +398,16 @@ sub IsStringType
     my $type = shift;
 
     return 1 if $stringTypeHash{$type};
+    return 0;
+}
+
+sub IsStringBasedEnumType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return 0 if !$object->IsEnumType($type);
+    return 1 if exists $stringBasedEnumerationHash{$type};
     return 0;
 }
 

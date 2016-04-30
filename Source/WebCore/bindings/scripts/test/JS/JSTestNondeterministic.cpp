@@ -352,7 +352,7 @@ bool setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* state, En
         return throwSetterTypeError(*state, "TestNondeterministic", "nondeterministicWriteableAttr");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toString(state)->value(state);
+    String nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setNondeterministicWriteableAttr(nativeValue);
@@ -369,7 +369,7 @@ bool setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* state, En
         return throwSetterTypeError(*state, "TestNondeterministic", "nondeterministicExceptionAttr");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toString(state)->value(state);
+    String nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setNondeterministicExceptionAttr(nativeValue);
@@ -386,7 +386,7 @@ bool setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* sta
         return throwSetterTypeError(*state, "TestNondeterministic", "nondeterministicGetterExceptionAttr");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toString(state)->value(state);
+    String nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setNondeterministicGetterExceptionAttr(nativeValue);
@@ -404,7 +404,7 @@ bool setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* sta
     }
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
-    String nativeValue = value.toString(state)->value(state);
+    String nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setNondeterministicSetterExceptionAttr(nativeValue, ec);

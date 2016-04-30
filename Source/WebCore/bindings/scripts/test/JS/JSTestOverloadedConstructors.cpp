@@ -110,7 +110,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* s
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    String string = state->argument(0).toString(state)->value(state);
+    String string = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(string);

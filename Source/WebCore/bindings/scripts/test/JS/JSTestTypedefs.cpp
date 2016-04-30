@@ -128,7 +128,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(Exe
     auto* castedThis = jsCast<JSTestTypedefsConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    String hello = state->argument(0).toString(state)->value(state);
+    String hello = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!state->argument(1).isObject()))
@@ -423,7 +423,7 @@ bool setJSTestTypedefsStringAttrWithGetterException(ExecState* state, EncodedJSV
         return throwSetterTypeError(*state, "TestTypedefs", "stringAttrWithGetterException");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toString(state)->value(state);
+    String nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setStringAttrWithGetterException(nativeValue);
@@ -441,7 +441,7 @@ bool setJSTestTypedefsStringAttrWithSetterException(ExecState* state, EncodedJSV
     }
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
-    String nativeValue = value.toString(state)->value(state);
+    String nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setStringAttrWithSetterException(nativeValue, ec);
@@ -489,7 +489,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
     float blur = state->argument(2).toFloat(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    String color = state->argument(3).isUndefined() ? String() : state->uncheckedArgument(3).toString(state)->value(state);
+    String color = state->argument(3).isUndefined() ? String() : state->uncheckedArgument(3).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     Optional<float> alpha = state->argument(4).isUndefined() ? Optional<float>() : state->uncheckedArgument(4).toFloat(state);
