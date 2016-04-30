@@ -3810,18 +3810,21 @@ sub GenerateParametersCheck
             push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
 
             my $isTearOff = $codeGenerator->IsSVGTypeNeedingTearOff($argType) && $interfaceName !~ /List$/;
-            if ($isTearOff or ShouldPassWrapperByReference($parameter, $interface)) {
+            my $shouldPassByReference = ShouldPassWrapperByReference($parameter, $interface);
+            if ($isTearOff or $shouldPassByReference) {
                 push(@$outputArray, "    if (UNLIKELY(!$name))\n");
                 push(@$outputArray, "        return throwVMTypeError(state);\n");
                 $value = $isTearOff ? "$name->propertyReference()" : "*$name";
+            }
+
+            if ($codeGenerator->IsTypedArrayType($argType) and $argType ne "ArrayBuffer") {
+               $value = $shouldPassByReference ? "$name.releaseNonNull()" : "WTFMove($name)";
             }
 
             if ($argType eq "double" or $argType eq "float") {
                 push(@$outputArray, "    if (UNLIKELY(!std::isfinite($name)))\n");
                 push(@$outputArray, "        return throwVMTypeError(state);\n");
             }
-
-            $value = "$name.get()" if $codeGenerator->IsTypedArrayType($argType) and $argType ne "ArrayBuffer";
         }
 
         push(@arguments, $value);
@@ -4312,7 +4315,10 @@ sub ShouldPassWrapperByReference
 {
     my $parameter = shift;
     my $interface = shift;
-    return $codeGenerator->ShouldPassWrapperByReference($parameter, $interface) && substr(GetNativeType($parameter->type), -1) eq '*';
+
+    my $nativeType = GetNativeType($parameter->type);
+
+    return $codeGenerator->ShouldPassWrapperByReference($parameter, $interface) && (substr($nativeType, -1) eq '*' || $nativeType =~ /^RefPtr/);
 }
 
 sub GetNativeVectorInnerType

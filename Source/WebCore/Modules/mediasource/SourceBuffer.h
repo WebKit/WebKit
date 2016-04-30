@@ -87,7 +87,7 @@ public:
     void setAppendWindowEnd(double, ExceptionCode&);
 
     void appendBuffer(ArrayBuffer&, ExceptionCode&);
-    void appendBuffer(ArrayBufferView*, ExceptionCode&);
+    void appendBuffer(ArrayBufferView&, ExceptionCode&);
     void abort(ExceptionCode&);
     void remove(double start, double end, ExceptionCode&);
     void remove(const MediaTime&, const MediaTime&, ExceptionCode&);

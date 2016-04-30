@@ -221,12 +221,9 @@ void RTCDataChannel::send(ArrayBuffer& data, ExceptionCode& ec)
     }
 }
 
-void RTCDataChannel::send(ArrayBufferView* data, ExceptionCode& ec)
+void RTCDataChannel::send(ArrayBufferView& data, ExceptionCode& ec)
 {
-    ASSERT(data);
-    RefPtr<ArrayBuffer> arrayBuffer(data->buffer());
-    ASSERT(arrayBuffer);
-    send(*arrayBuffer, ec);
+    send(*data.buffer(), ec);
 }
 
 void RTCDataChannel::send(Blob&, ExceptionCode& ec)

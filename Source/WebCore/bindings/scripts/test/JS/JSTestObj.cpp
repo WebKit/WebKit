@@ -5294,7 +5294,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(Exe
     RefPtr<DOMStringList> values = toDOMStringList(state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.domStringListFunction(values, ec)));
+    if (UNLIKELY(!values))
+        return throwVMTypeError(state);
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.domStringListFunction(*values, ec)));
 
     setDOMException(state, ec);
     return JSValue::encode(result);

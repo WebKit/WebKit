@@ -32,7 +32,7 @@
                 testExpected('mediaKeys.keySystem', 'com.webcore.mock');
                 testExpected('typeof mediaKeys.createSession', 'function');
                 testDOMException('mediaKeys.createSession("", new Uint8Array(1))', "DOMException.INVALID_ACCESS_ERR");
-                testDOMException('mediaKeys.createSession("unsupported/type")', "DOMException.INVALID_ACCESS_ERR");
+                testException('mediaKeys.createSession("unsupported/type")', "'TypeError: Not enough arguments'");
                 testDOMException('mediaKeys.createSession("unsupported/type", new Uint8Array(1))', "DOMException.NOT_SUPPORTED_ERR");
                 consoleWrite("");
 
@@ -47,7 +47,7 @@
                 testExpected('mediaKeySession.onwebkitkeyadded', null);
                 testExpected('mediaKeySession.onwebkitkeyerror', null);
                 testExpected('mediaKeySession.onwebkitkeymessage', null);
-                testDOMException('mediaKeySession.update(null)', "DOMException.INVALID_ACCESS_ERR");
+                testException('mediaKeySession.update(null)', "'TypeError: Type error'");
                 endTest();
             }
         </script>

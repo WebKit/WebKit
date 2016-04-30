@@ -29,8 +29,7 @@
     ConstructorRaisesException,
     InterfaceName=WebKitMediaKeys,
 ] interface MediaKeys {
-    // FIXME: The default value for the 'type' parameter is wrong.
-    [CallWith=ScriptExecutionContext, RaisesException] MediaKeySession createSession(optional DOMString type = "undefined", optional Uint8Array initData = null);
+    [CallWith=ScriptExecutionContext, RaisesException] MediaKeySession createSession(DOMString type, Uint8Array initData);
     static boolean isTypeSupported(DOMString keySystem, optional DOMString type);
     readonly attribute DOMString keySystem;
 };

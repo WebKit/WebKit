@@ -62,9 +62,7 @@ public:
 
     // Get the magnitude and phase response of the filter at the given
     // set of frequencies (in Hz). The phase response is in radians.
-    void getFrequencyResponse(const Float32Array* frequencyHz,
-                              Float32Array* magResponse,
-                              Float32Array* phaseResponse);
+    void getFrequencyResponse(const RefPtr<Float32Array>& frequencyHz, const RefPtr<Float32Array>& magResponse, const RefPtr<Float32Array>& phaseResponse);
 
 private:
     BiquadFilterNode(AudioContext&, float sampleRate);

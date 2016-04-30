@@ -141,7 +141,7 @@ public:
     RefPtr<ChannelSplitterNode> createChannelSplitter(size_t numberOfOutputs, ExceptionCode&);
     RefPtr<ChannelMergerNode> createChannelMerger(size_t numberOfInputs, ExceptionCode&);
     Ref<OscillatorNode> createOscillator();
-    RefPtr<PeriodicWave> createPeriodicWave(Float32Array* real, Float32Array* imag, ExceptionCode&);
+    RefPtr<PeriodicWave> createPeriodicWave(Float32Array& real, Float32Array& imaginary, ExceptionCode&);
 
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
     void notifyNodeFinishedProcessing(AudioNode*);

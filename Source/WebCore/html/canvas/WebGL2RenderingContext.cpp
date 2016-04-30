@@ -64,8 +64,8 @@ WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement* passedCanvas, 
 {
 }
 
-WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement* passedCanvas, PassRefPtr<GraphicsContext3D> context,
-    GraphicsContext3D::Attributes attributes) : WebGLRenderingContextBase(passedCanvas, context, attributes)
+WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement* passedCanvas, RefPtr<GraphicsContext3D>&& context,
+    GraphicsContext3D::Attributes attributes) : WebGLRenderingContextBase(passedCanvas, WTFMove(context), attributes)
 {
     initializeShaderExtensions();
     initializeVertexArrayObjects();
@@ -88,360 +88,166 @@ void WebGL2RenderingContext::initializeShaderExtensions()
     m_context->getExtensions()->ensureEnabled("GL_EXT_frag_depth");
 }
 
-void WebGL2RenderingContext::copyBufferSubData(GC3Denum readTarget, GC3Denum writeTarget, GC3Dint64 readOffset, GC3Dint64 writeOffset, GC3Dint64 size)
+void WebGL2RenderingContext::copyBufferSubData(GC3Denum, GC3Denum, GC3Dint64, GC3Dint64, GC3Dint64)
 {
-    UNUSED_PARAM(readTarget);
-    UNUSED_PARAM(writeTarget);
-    UNUSED_PARAM(readOffset);
-    UNUSED_PARAM(writeOffset);
-    UNUSED_PARAM(size);
 }
 
-void WebGL2RenderingContext::getBufferSubData(GC3Denum target, GC3Dint64 offset, ArrayBuffer* returnedData)
+void WebGL2RenderingContext::getBufferSubData(GC3Denum, GC3Dint64, ArrayBuffer*)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(returnedData);
 }
 
-void WebGL2RenderingContext::blitFramebuffer(GC3Dint srcX0, GC3Dint srcY0, GC3Dint srcX1, GC3Dint srcY1, GC3Dint dstX0, GC3Dint dstY0, GC3Dint dstX1, GC3Dint dstY1, GC3Dbitfield mask, GC3Denum filter)
+void WebGL2RenderingContext::blitFramebuffer(GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dbitfield, GC3Denum)
 {
-    UNUSED_PARAM(srcX0);
-    UNUSED_PARAM(srcX1);
-    UNUSED_PARAM(srcY0);
-    UNUSED_PARAM(srcY1);
-    UNUSED_PARAM(dstX0);
-    UNUSED_PARAM(dstX1);
-    UNUSED_PARAM(dstY0);
-    UNUSED_PARAM(dstY1);
-    UNUSED_PARAM(mask);
-    UNUSED_PARAM(filter);
 }
 
-void WebGL2RenderingContext::framebufferTextureLayer(GC3Denum target, GC3Denum attachment, GC3Duint texture, GC3Dint level, GC3Dint layer)
+void WebGL2RenderingContext::framebufferTextureLayer(GC3Denum, GC3Denum, GC3Duint, GC3Dint, GC3Dint)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(attachment);
-    UNUSED_PARAM(texture);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(layer);
 }
 
-WebGLGetInfo WebGL2RenderingContext::getInternalformatParameter(GC3Denum target, GC3Denum internalformat, GC3Denum pname)
+WebGLGetInfo WebGL2RenderingContext::getInternalformatParameter(GC3Denum, GC3Denum, GC3Denum)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(internalformat);
-    UNUSED_PARAM(pname);
     return WebGLGetInfo();
 }
 
-void WebGL2RenderingContext::invalidateFramebuffer(GC3Denum target, Vector<GC3Denum> attachments)
+void WebGL2RenderingContext::invalidateFramebuffer(GC3Denum, Vector<GC3Denum>)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(attachments);
 }
 
-void WebGL2RenderingContext::invalidateSubFramebuffer(GC3Denum target, Vector<GC3Denum> attachments, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height)
+void WebGL2RenderingContext::invalidateSubFramebuffer(GC3Denum, Vector<GC3Denum>, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(attachments);
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
 }
 
-void WebGL2RenderingContext::readBuffer(GC3Denum src)
+void WebGL2RenderingContext::readBuffer(GC3Denum)
 {
-    UNUSED_PARAM(src);
 }
 
-void WebGL2RenderingContext::renderbufferStorageMultisample(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
+void WebGL2RenderingContext::renderbufferStorageMultisample(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(samples);
-    UNUSED_PARAM(internalformat);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
 }
 
-void WebGL2RenderingContext::texStorage2D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
+void WebGL2RenderingContext::texStorage2D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(levels);
-    UNUSED_PARAM(internalformat);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
 }
 
-void WebGL2RenderingContext::texStorage3D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth)
+void WebGL2RenderingContext::texStorage3D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dsizei)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(levels);
-    UNUSED_PARAM(internalformat);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(depth);
 }
 
-void WebGL2RenderingContext::texImage3D(GC3Denum target, GC3Dint level, GC3Dint internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Dint border, GC3Denum format, GC3Denum type, ArrayBufferView* pixels)
+void WebGL2RenderingContext::texImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(internalformat);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(depth);
-    UNUSED_PARAM(border);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(pixels);
 }
 
-void WebGL2RenderingContext::texSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Denum format, GC3Denum type, ArrayBufferView* pixels)
+void WebGL2RenderingContext::texSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(xoffset);
-    UNUSED_PARAM(yoffset);
-    UNUSED_PARAM(zoffset);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(depth);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(pixels);
 }
 
-void WebGL2RenderingContext::texSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Denum format, GC3Denum type, ImageData* source)
+void WebGL2RenderingContext::texSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Denum, GC3Denum, ImageData*)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(xoffset);
-    UNUSED_PARAM(yoffset);
-    UNUSED_PARAM(zoffset);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(source);
 }
 
-void WebGL2RenderingContext::texSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Denum format, GC3Denum type, HTMLImageElement* source)
+void WebGL2RenderingContext::texSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Denum, GC3Denum, HTMLImageElement*)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(xoffset);
-    UNUSED_PARAM(yoffset);
-    UNUSED_PARAM(zoffset);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(source);
 }
 
-void WebGL2RenderingContext::texSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Denum format, GC3Denum type, HTMLCanvasElement* source)
+void WebGL2RenderingContext::texSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Denum, GC3Denum, HTMLCanvasElement*)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(xoffset);
-    UNUSED_PARAM(yoffset);
-    UNUSED_PARAM(zoffset);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(source);
 }
 
-void WebGL2RenderingContext::texSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Denum format, GC3Denum type, HTMLVideoElement* source)
+void WebGL2RenderingContext::texSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Denum, GC3Denum, HTMLVideoElement*)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(xoffset);
-    UNUSED_PARAM(yoffset);
-    UNUSED_PARAM(zoffset);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(source);
 }
 
-void WebGL2RenderingContext::copyTexSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height)
+void WebGL2RenderingContext::copyTexSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(xoffset);
-    UNUSED_PARAM(yoffset);
-    UNUSED_PARAM(zoffset);
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
 }
 
-void WebGL2RenderingContext::compressedTexImage3D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Dint border, GC3Dsizei imageSize, ArrayBufferView* data)
+void WebGL2RenderingContext::compressedTexImage3D(GC3Denum, GC3Dint, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Dsizei, RefPtr<ArrayBufferView>&&)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(internalformat);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(depth);
-    UNUSED_PARAM(border);
-    UNUSED_PARAM(imageSize);
-    UNUSED_PARAM(data);
 }
 
-void WebGL2RenderingContext::compressedTexSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Denum format, GC3Dsizei imageSize, ArrayBufferView* data)
+void WebGL2RenderingContext::compressedTexSubImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Dsizei, RefPtr<ArrayBufferView>&&)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(xoffset);
-    UNUSED_PARAM(yoffset);
-    UNUSED_PARAM(zoffset);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-    UNUSED_PARAM(depth);
-    UNUSED_PARAM(format);
-    UNUSED_PARAM(imageSize);
-    UNUSED_PARAM(data);
 }
 
-GC3Dint WebGL2RenderingContext::getFragDataLocation(WebGLProgram* program, String name)
+GC3Dint WebGL2RenderingContext::getFragDataLocation(WebGLProgram*, String)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(name);
     return 0;
 }
 
-void WebGL2RenderingContext::uniform1ui(WebGLUniformLocation* location, GC3Duint v0)
+void WebGL2RenderingContext::uniform1ui(WebGLUniformLocation*, GC3Duint)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(v0);
 }
 
-void WebGL2RenderingContext::uniform2ui(WebGLUniformLocation* location, GC3Duint v0, GC3Duint v1)
+void WebGL2RenderingContext::uniform2ui(WebGLUniformLocation*, GC3Duint, GC3Duint)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(v0);
-    UNUSED_PARAM(v1);
 }
 
-void WebGL2RenderingContext::uniform3ui(WebGLUniformLocation* location, GC3Duint v0, GC3Duint v1, GC3Duint v2)
+void WebGL2RenderingContext::uniform3ui(WebGLUniformLocation*, GC3Duint, GC3Duint, GC3Duint)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(v0);
-    UNUSED_PARAM(v1);
-    UNUSED_PARAM(v2);
 }
 
-void WebGL2RenderingContext::uniform4ui(WebGLUniformLocation* location, GC3Duint v0, GC3Duint v1, GC3Duint v2, GC3Duint v3)
+void WebGL2RenderingContext::uniform4ui(WebGLUniformLocation*, GC3Duint, GC3Duint, GC3Duint, GC3Duint)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(v0);
-    UNUSED_PARAM(v1);
-    UNUSED_PARAM(v2);
-    UNUSED_PARAM(v3);
 }
 
-void WebGL2RenderingContext::uniform1uiv(WebGLUniformLocation* location, Uint32Array* value)
+void WebGL2RenderingContext::uniform1uiv(WebGLUniformLocation*, RefPtr<Uint32Array>&&)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(value);
 }
 
-void WebGL2RenderingContext::uniform2uiv(WebGLUniformLocation* location, Uint32Array* value)
+void WebGL2RenderingContext::uniform2uiv(WebGLUniformLocation*, RefPtr<Uint32Array>&&)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(value);
 }
 
-void WebGL2RenderingContext::uniform3uiv(WebGLUniformLocation* location, Uint32Array* value)
+void WebGL2RenderingContext::uniform3uiv(WebGLUniformLocation*, RefPtr<Uint32Array>&&)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(value);
 }
 
-void WebGL2RenderingContext::uniform4uiv(WebGLUniformLocation* location, Uint32Array* value)
+void WebGL2RenderingContext::uniform4uiv(WebGLUniformLocation*, RefPtr<Uint32Array>&&)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(value);
 }
 
-void WebGL2RenderingContext::uniformMatrix2x3fv(WebGLUniformLocation* location, GC3Dboolean transpose, Float32Array* value)
+void WebGL2RenderingContext::uniformMatrix2x3fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(transpose);
-    UNUSED_PARAM(value);
 }
 
-void WebGL2RenderingContext::uniformMatrix3x2fv(WebGLUniformLocation* location, GC3Dboolean transpose, Float32Array* value)
+void WebGL2RenderingContext::uniformMatrix3x2fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(transpose);
-    UNUSED_PARAM(value);
 }
 
-void WebGL2RenderingContext::uniformMatrix2x4fv(WebGLUniformLocation* location, GC3Dboolean transpose, Float32Array* value)
+void WebGL2RenderingContext::uniformMatrix2x4fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(transpose);
-    UNUSED_PARAM(value);
 }
 
-void WebGL2RenderingContext::uniformMatrix4x2fv(WebGLUniformLocation* location, GC3Dboolean transpose, Float32Array* value)
+void WebGL2RenderingContext::uniformMatrix4x2fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(transpose);
-    UNUSED_PARAM(value);
 }
 
-void WebGL2RenderingContext::uniformMatrix3x4fv(WebGLUniformLocation* location, GC3Dboolean transpose, Float32Array* value)
+void WebGL2RenderingContext::uniformMatrix3x4fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(transpose);
-    UNUSED_PARAM(value);
 }
 
-void WebGL2RenderingContext::uniformMatrix4x3fv(WebGLUniformLocation* location, GC3Dboolean transpose, Float32Array* value)
+void WebGL2RenderingContext::uniformMatrix4x3fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
 {
-    UNUSED_PARAM(location);
-    UNUSED_PARAM(transpose);
-    UNUSED_PARAM(value);
 }
 
-void WebGL2RenderingContext::vertexAttribI4i(GC3Duint index, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w)
+void WebGL2RenderingContext::vertexAttribI4i(GC3Duint, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(z);
-    UNUSED_PARAM(w);
 }
 
-void WebGL2RenderingContext::vertexAttribI4iv(GC3Duint index, Int32Array* v)
+void WebGL2RenderingContext::vertexAttribI4iv(GC3Duint, RefPtr<Int32Array>&&)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(v);
 }
 
-void WebGL2RenderingContext::vertexAttribI4ui(GC3Duint index, GC3Duint x, GC3Duint y, GC3Duint z, GC3Duint w)
+void WebGL2RenderingContext::vertexAttribI4ui(GC3Duint, GC3Duint, GC3Duint, GC3Duint, GC3Duint)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(z);
-    UNUSED_PARAM(w);
 }
 
-void WebGL2RenderingContext::vertexAttribI4uiv(GC3Duint index, Uint32Array* v)
+void WebGL2RenderingContext::vertexAttribI4uiv(GC3Duint, RefPtr<Uint32Array>&&)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(v);
 }
 
-void WebGL2RenderingContext::vertexAttribIPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dsizei stride, GC3Dint64 offset)
+void WebGL2RenderingContext::vertexAttribIPointer(GC3Duint, GC3Dint, GC3Denum, GC3Dsizei, GC3Dint64)
 {
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(size);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(stride);
-    UNUSED_PARAM(offset);
 }
 
 void WebGL2RenderingContext::clear(GC3Dbitfield mask)
@@ -490,14 +296,8 @@ void WebGL2RenderingContext::drawElementsInstanced(GC3Denum mode, GC3Dsizei coun
     WebGLRenderingContextBase::drawElementsInstanced(mode, count, type, offset, instanceCount);
 }
 
-void WebGL2RenderingContext::drawRangeElements(GC3Denum mode, GC3Duint start, GC3Duint end, GC3Dsizei count, GC3Denum type, GC3Dint64 offset)
+void WebGL2RenderingContext::drawRangeElements(GC3Denum, GC3Duint, GC3Duint, GC3Dsizei, GC3Denum, GC3Dint64)
 {
-    UNUSED_PARAM(mode);
-    UNUSED_PARAM(start);
-    UNUSED_PARAM(end);
-    UNUSED_PARAM(count);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(offset);
 }
 
 void WebGL2RenderingContext::drawBuffers(Vector<GC3Denum> buffers)
@@ -534,9 +334,8 @@ void WebGL2RenderingContext::drawBuffers(Vector<GC3Denum> buffers)
     }
 }
 
-void WebGL2RenderingContext::clearBufferiv(GC3Denum buffer, GC3Dint drawbuffer, Int32Array* value)
+void WebGL2RenderingContext::clearBufferiv(GC3Denum buffer, GC3Dint drawbuffer, RefPtr<Int32Array>&&)
 {
-    UNUSED_PARAM(value);
     switch (buffer) {
     case GraphicsContext3D::COLOR:
         if (drawbuffer < 0 || drawbuffer >= getMaxDrawBuffers()) {
@@ -560,9 +359,8 @@ void WebGL2RenderingContext::clearBufferiv(GC3Denum buffer, GC3Dint drawbuffer, 
     }
 }
 
-void WebGL2RenderingContext::clearBufferuiv(GC3Denum buffer, GC3Dint drawbuffer, Uint32Array* value)
+void WebGL2RenderingContext::clearBufferuiv(GC3Denum buffer, GC3Dint drawbuffer, RefPtr<Uint32Array>&&)
 {
-    UNUSED_PARAM(value);
     switch (buffer) {
     case GraphicsContext3D::COLOR:
         if (drawbuffer < 0 || drawbuffer >= getMaxDrawBuffers()) {
@@ -580,9 +378,8 @@ void WebGL2RenderingContext::clearBufferuiv(GC3Denum buffer, GC3Dint drawbuffer,
     }
 }
 
-void WebGL2RenderingContext::clearBufferfv(GC3Denum buffer, GC3Dint drawbuffer, Float32Array* value)
+void WebGL2RenderingContext::clearBufferfv(GC3Denum buffer, GC3Dint drawbuffer, RefPtr<Float32Array>&&)
 {
-    UNUSED_PARAM(value);
     switch (buffer) {
     case GraphicsContext3D::COLOR:
         if (drawbuffer < 0 || drawbuffer >= getMaxDrawBuffers()) {
@@ -606,10 +403,8 @@ void WebGL2RenderingContext::clearBufferfv(GC3Denum buffer, GC3Dint drawbuffer, 
     }
 }
 
-void WebGL2RenderingContext::clearBufferfi(GC3Denum buffer, GC3Dint drawbuffer, GC3Dfloat depth, GC3Dint stencil)
+void WebGL2RenderingContext::clearBufferfi(GC3Denum buffer, GC3Dint drawbuffer, GC3Dfloat, GC3Dint)
 {
-    UNUSED_PARAM(depth);
-    UNUSED_PARAM(stencil);
     switch (buffer) {
     case GraphicsContext3D::DEPTH_STENCIL:
         if (drawbuffer) {
@@ -627,172 +422,129 @@ void WebGL2RenderingContext::clearBufferfi(GC3Denum buffer, GC3Dint drawbuffer, 
     }
 }
 
-PassRefPtr<WebGLQuery> WebGL2RenderingContext::createQuery()
+RefPtr<WebGLQuery> WebGL2RenderingContext::createQuery()
 {
     return nullptr;
 }
 
-void WebGL2RenderingContext::deleteQuery(WebGLQuery* query)
+void WebGL2RenderingContext::deleteQuery(WebGLQuery*)
 {
-    UNUSED_PARAM(query);
 }
 
-GC3Dboolean WebGL2RenderingContext::isQuery(WebGLQuery* query)
+GC3Dboolean WebGL2RenderingContext::isQuery(WebGLQuery*)
 {
-    UNUSED_PARAM(query);
     return false;
 }
 
-void WebGL2RenderingContext::beginQuery(GC3Denum target, WebGLQuery* query)
+void WebGL2RenderingContext::beginQuery(GC3Denum, WebGLQuery*)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(query);
 }
 
-void WebGL2RenderingContext::endQuery(GC3Denum target)
+void WebGL2RenderingContext::endQuery(GC3Denum)
 {
-    UNUSED_PARAM(target);
 }
 
-PassRefPtr<WebGLQuery> WebGL2RenderingContext::getQuery(GC3Denum target, GC3Denum pname)
+RefPtr<WebGLQuery> WebGL2RenderingContext::getQuery(GC3Denum, GC3Denum)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(pname);
     return nullptr;
 }
 
-WebGLGetInfo WebGL2RenderingContext::getQueryParameter(WebGLQuery* query, GC3Denum pname)
+WebGLGetInfo WebGL2RenderingContext::getQueryParameter(WebGLQuery*, GC3Denum)
 {
-    UNUSED_PARAM(query);
-    UNUSED_PARAM(pname);
     return WebGLGetInfo();
 }
 
-PassRefPtr<WebGLSampler> WebGL2RenderingContext::createSampler()
+RefPtr<WebGLSampler> WebGL2RenderingContext::createSampler()
 {
     return nullptr;
 }
 
-void WebGL2RenderingContext::deleteSampler(WebGLSampler* sampler)
+void WebGL2RenderingContext::deleteSampler(WebGLSampler*)
 {
-    UNUSED_PARAM(sampler);
 }
 
-GC3Dboolean WebGL2RenderingContext::isSampler(WebGLSampler* sampler)
+GC3Dboolean WebGL2RenderingContext::isSampler(WebGLSampler*)
 {
-    UNUSED_PARAM(sampler);
     return false;
 }
 
-void WebGL2RenderingContext::bindSampler(GC3Duint unit, WebGLSampler* sampler)
+void WebGL2RenderingContext::bindSampler(GC3Duint, WebGLSampler*)
 {
-    UNUSED_PARAM(unit);
-    UNUSED_PARAM(sampler);
 }
 
-void WebGL2RenderingContext::samplerParameteri(WebGLSampler* sampler, GC3Denum pname, GC3Dint param)
+void WebGL2RenderingContext::samplerParameteri(WebGLSampler*, GC3Denum, GC3Dint)
 {
-    UNUSED_PARAM(sampler);
-    UNUSED_PARAM(pname);
-    UNUSED_PARAM(param);
 }
 
-void WebGL2RenderingContext::samplerParameterf(WebGLSampler* sampler, GC3Denum pname, GC3Dfloat param)
+void WebGL2RenderingContext::samplerParameterf(WebGLSampler*, GC3Denum, GC3Dfloat)
 {
-    UNUSED_PARAM(sampler);
-    UNUSED_PARAM(pname);
-    UNUSED_PARAM(param);
 }
 
-WebGLGetInfo WebGL2RenderingContext::getSamplerParameter(WebGLSampler* sampler, GC3Denum pname)
+WebGLGetInfo WebGL2RenderingContext::getSamplerParameter(WebGLSampler*, GC3Denum)
 {
-    UNUSED_PARAM(sampler);
-    UNUSED_PARAM(pname);
     return WebGLGetInfo();
 }
 
-PassRefPtr<WebGLSync> WebGL2RenderingContext::fenceSync(GC3Denum condition, GC3Dbitfield flags)
+RefPtr<WebGLSync> WebGL2RenderingContext::fenceSync(GC3Denum, GC3Dbitfield)
 {
-    UNUSED_PARAM(condition);
-    UNUSED_PARAM(flags);
     return nullptr;
 }
 
-GC3Dboolean WebGL2RenderingContext::isSync(WebGLSync* sync)
+GC3Dboolean WebGL2RenderingContext::isSync(WebGLSync*)
 {
-    UNUSED_PARAM(sync);
     return false;
 }
 
-void WebGL2RenderingContext::deleteSync(WebGLSync* sync)
+void WebGL2RenderingContext::deleteSync(WebGLSync*)
 {
-    UNUSED_PARAM(sync);
 }
 
-GC3Denum WebGL2RenderingContext::clientWaitSync(WebGLSync* sync, GC3Dbitfield flags, GC3Duint64 timeout)
+GC3Denum WebGL2RenderingContext::clientWaitSync(WebGLSync*, GC3Dbitfield, GC3Duint64)
 {
-    UNUSED_PARAM(sync);
-    UNUSED_PARAM(flags);
-    UNUSED_PARAM(timeout);
     return 0;
 }
 
-void WebGL2RenderingContext::waitSync(WebGLSync* sync, GC3Dbitfield flags, GC3Duint64 timeout)
+void WebGL2RenderingContext::waitSync(WebGLSync*, GC3Dbitfield, GC3Duint64)
 {
-    UNUSED_PARAM(sync);
-    UNUSED_PARAM(flags);
-    UNUSED_PARAM(timeout);
 }
 
-WebGLGetInfo WebGL2RenderingContext::getSyncParameter(WebGLSync* sync, GC3Denum pname)
+WebGLGetInfo WebGL2RenderingContext::getSyncParameter(WebGLSync*, GC3Denum)
 {
-    UNUSED_PARAM(sync);
-    UNUSED_PARAM(pname);
     return WebGLGetInfo();
 }
 
-PassRefPtr<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()
+RefPtr<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()
 {
     return nullptr;
 }
 
-void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback* id)
+void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback*)
 {
-    UNUSED_PARAM(id);
 }
 
-GC3Dboolean WebGL2RenderingContext::isTransformFeedback(WebGLTransformFeedback* id)
+GC3Dboolean WebGL2RenderingContext::isTransformFeedback(WebGLTransformFeedback*)
 {
-    UNUSED_PARAM(id);
     return false;
 }
 
-void WebGL2RenderingContext::bindTransformFeedback(GC3Denum target, WebGLTransformFeedback* id)
+void WebGL2RenderingContext::bindTransformFeedback(GC3Denum, WebGLTransformFeedback*)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(id);
 }
 
-void WebGL2RenderingContext::beginTransformFeedback(GC3Denum primitiveMode)
+void WebGL2RenderingContext::beginTransformFeedback(GC3Denum)
 {
-    UNUSED_PARAM(primitiveMode);
 }
 
 void WebGL2RenderingContext::endTransformFeedback()
 {
 }
 
-void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram* program, Vector<String> varyings, GC3Denum bufferMode)
+void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram*, Vector<String>, GC3Denum)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(varyings);
-    UNUSED_PARAM(bufferMode);
 }
 
-PassRefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebGLProgram* program, GC3Duint index)
+RefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebGLProgram*, GC3Duint)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(index);
     return nullptr;
 }
 
@@ -804,26 +556,16 @@ void WebGL2RenderingContext::resumeTransformFeedback()
 {
 }
 
-void WebGL2RenderingContext::bindBufferBase(GC3Denum target, GC3Duint index, WebGLBuffer* buffer)
+void WebGL2RenderingContext::bindBufferBase(GC3Denum, GC3Duint, WebGLBuffer*)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(buffer);
 }
 
-void WebGL2RenderingContext::bindBufferRange(GC3Denum target, GC3Duint index, WebGLBuffer* buffer, GC3Dint64 offset, GC3Dint64 size)
+void WebGL2RenderingContext::bindBufferRange(GC3Denum, GC3Duint, WebGLBuffer*, GC3Dint64, GC3Dint64)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(size);
 }
 
-WebGLGetInfo WebGL2RenderingContext::getIndexedParameter(GC3Denum target, GC3Duint index)
+WebGLGetInfo WebGL2RenderingContext::getIndexedParameter(GC3Denum target, GC3Duint)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(index);
     switch (target) {
     case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER_BINDING:
     case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER_SIZE:
@@ -841,58 +583,43 @@ WebGLGetInfo WebGL2RenderingContext::getIndexedParameter(GC3Denum target, GC3Dui
     return WebGLGetInfo();
 }
 
-Uint32Array* WebGL2RenderingContext::getUniformIndices(WebGLProgram* program, Vector<String> uniformNames)
+Uint32Array* WebGL2RenderingContext::getUniformIndices(WebGLProgram*, Vector<String>)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(uniformNames);
     return nullptr;
 }
 
-Int32Array* WebGL2RenderingContext::getActiveUniforms(WebGLProgram* program, Uint32Array* uniformIndices, GC3Denum pname)
+Int32Array* WebGL2RenderingContext::getActiveUniforms(WebGLProgram*, RefPtr<Uint32Array>&&, GC3Denum)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(uniformIndices);
-    UNUSED_PARAM(pname);
     return nullptr;
 }
 
-GC3Duint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram* program, String uniformBlockName)
+GC3Duint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram*, String)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(uniformBlockName);
     return 0;
 }
 
-WebGLGetInfo WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram* program, GC3Duint uniformBlockIndex, GC3Denum pname)
+WebGLGetInfo WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram*, GC3Duint, GC3Denum)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(uniformBlockIndex);
-    UNUSED_PARAM(pname);
     return WebGLGetInfo();
 }
 
-WebGLGetInfo WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram* program, GC3Duint uniformBlockIndex)
+WebGLGetInfo WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram*, GC3Duint)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(uniformBlockIndex);
     return WebGLGetInfo();
 }
 
-void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram* program, GC3Duint uniformBlockIndex, GC3Duint uniformBlockBinding)
+void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram*, GC3Duint, GC3Duint)
 {
-    UNUSED_PARAM(program);
-    UNUSED_PARAM(uniformBlockIndex);
-    UNUSED_PARAM(uniformBlockBinding);
 }
 
-PassRefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
+RefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
 {
     if (isContextLost())
-        return 0;
+        return nullptr;
     
-    RefPtr<WebGLVertexArrayObject> o = WebGLVertexArrayObject::create(this, WebGLVertexArrayObject::VAOTypeUser);
-    addContextObject(o.get());
-    return o.release();
+    auto object = WebGLVertexArrayObject::create(this, WebGLVertexArrayObject::VAOTypeUser);
+    addContextObject(object.ptr());
+    return WTFMove(object);
 }
 
 void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObject)
@@ -1064,9 +791,8 @@ Vector<String> WebGL2RenderingContext::getSupportedExtensions()
     return result;
 }
 
-WebGLGetInfo WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode& ec)
+WebGLGetInfo WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&)
 {
-    UNUSED_PARAM(ec);
     if (isContextLostOrPending() || !validateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
         return WebGLGetInfo();
     
@@ -1091,7 +817,7 @@ WebGLGetInfo WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum 
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
             return WebGLGetInfo(GraphicsContext3D::TEXTURE);
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
-            return WebGLGetInfo(PassRefPtr<WebGLTexture>(reinterpret_cast<WebGLTexture*>(object)));
+            return WebGLGetInfo(reinterpret_cast<WebGLTexture*>(object));
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING: {
@@ -1108,7 +834,7 @@ WebGLGetInfo WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum 
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
             return WebGLGetInfo(GraphicsContext3D::RENDERBUFFER);
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
-            return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(reinterpret_cast<WebGLRenderbuffer*>(object)));
+            return WebGLGetInfo(reinterpret_cast<WebGLRenderbuffer*>(object));
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING : {
             WebGLRenderbuffer* renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object);
             GC3Denum renderBufferFormat = renderBuffer->getInternalFormat();
@@ -1352,9 +1078,9 @@ void WebGL2RenderingContext::texSubImage2DImpl(GC3Denum target, GC3Dint level, G
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
-void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode& ec)
+void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&& pixels, ExceptionCode& ec)
 {
-    if (isContextLostOrPending() || !validateTexFuncData("texSubImage2D", level, width, height, GraphicsContext3D::NONE, format, type, pixels, NullNotAllowed) || !validateTexFunc("texSubImage2D", TexSubImage, SourceArrayBufferView, target, level, GraphicsContext3D::NONE, width, height, 0, format, type, xoffset, yoffset))
+    if (isContextLostOrPending() || !validateTexFuncData("texSubImage2D", level, width, height, GraphicsContext3D::NONE, format, type, pixels.get(), NullNotAllowed) || !validateTexFunc("texSubImage2D", TexSubImage, SourceArrayBufferView, target, level, GraphicsContext3D::NONE, width, height, 0, format, type, xoffset, yoffset))
         return;
     
     void* data = pixels->baseAddress();
@@ -2071,9 +1797,8 @@ bool WebGL2RenderingContext::isIntegerFormat(GC3Denum internalformat)
     return false;
 }
 
-WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode& ec)
+WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&)
 {
-    UNUSED_PARAM(ec);
     if (isContextLostOrPending())
         return WebGLGetInfo();
     const int intZero = 0;
@@ -2087,7 +1812,7 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
     case GraphicsContext3D::ALPHA_BITS:
         return getIntParameter(pname);
     case GraphicsContext3D::ARRAY_BUFFER_BINDING:
-        return WebGLGetInfo(PassRefPtr<WebGLBuffer>(m_boundArrayBuffer));
+        return WebGLGetInfo(m_boundArrayBuffer.get());
     case GraphicsContext3D::BLEND:
         return getBooleanParameter(pname);
     case GraphicsContext3D::BLEND_COLOR:
@@ -2117,7 +1842,7 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
     case GraphicsContext3D::CULL_FACE_MODE:
         return getUnsignedIntParameter(pname);
     case GraphicsContext3D::CURRENT_PROGRAM:
-        return WebGLGetInfo(PassRefPtr<WebGLProgram>(m_currentProgram));
+        return WebGLGetInfo(m_currentProgram.get());
     case GraphicsContext3D::DEPTH_BITS:
         if (!m_framebufferBinding && !m_attributes.depth)
             return WebGLGetInfo(intZero);
@@ -2135,9 +1860,9 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
     case GraphicsContext3D::DITHER:
         return getBooleanParameter(pname);
     case GraphicsContext3D::ELEMENT_ARRAY_BUFFER_BINDING:
-        return WebGLGetInfo(PassRefPtr<WebGLBuffer>(m_boundVertexArrayObject->getElementArrayBuffer()));
+        return WebGLGetInfo(m_boundVertexArrayObject->getElementArrayBuffer());
     case GraphicsContext3D::FRAMEBUFFER_BINDING:
-        return WebGLGetInfo(PassRefPtr<WebGLFramebuffer>(m_framebufferBinding));
+        return WebGLGetInfo(m_framebufferBinding.get());
     case GraphicsContext3D::FRONT_FACE:
         return getUnsignedIntParameter(pname);
     case GraphicsContext3D::GENERATE_MIPMAP_HINT:
@@ -2185,7 +1910,7 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
     case GraphicsContext3D::RED_BITS:
         return getIntParameter(pname);
     case GraphicsContext3D::RENDERBUFFER_BINDING:
-        return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(m_renderbufferBinding));
+        return WebGLGetInfo(m_renderbufferBinding.get());
     case GraphicsContext3D::RENDERER:
         return WebGLGetInfo(String("WebKit WebGL"));
     case GraphicsContext3D::SAMPLE_BUFFERS:
@@ -2241,9 +1966,9 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
     case GraphicsContext3D::SUBPIXEL_BITS:
         return getIntParameter(pname);
     case GraphicsContext3D::TEXTURE_BINDING_2D:
-        return WebGLGetInfo(PassRefPtr<WebGLTexture>(m_textureUnits[m_activeTextureUnit].texture2DBinding));
+        return WebGLGetInfo(m_textureUnits[m_activeTextureUnit].texture2DBinding.get());
     case GraphicsContext3D::TEXTURE_BINDING_CUBE_MAP:
-        return WebGLGetInfo(PassRefPtr<WebGLTexture>(m_textureUnits[m_activeTextureUnit].textureCubeMapBinding));
+        return WebGLGetInfo(m_textureUnits[m_activeTextureUnit].textureCubeMapBinding.get());
     case GraphicsContext3D::UNPACK_ALIGNMENT:
         return getIntParameter(pname);
     case GraphicsContext3D::UNPACK_FLIP_Y_WEBGL:
@@ -2357,7 +2082,7 @@ WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&
         return getIntParameter(pname);
     case GraphicsContext3D::VERTEX_ARRAY_BINDING: {
         if (!m_boundVertexArrayObject->isDefaultObject())
-            return WebGLGetInfo(PassRefPtr<WebGLVertexArrayObject>(static_cast<WebGLVertexArrayObject*>(m_boundVertexArrayObject.get())));
+            return WebGLGetInfo(static_cast<WebGLVertexArrayObject*>(m_boundVertexArrayObject.get()));
         return WebGLGetInfo();
         }
         break;

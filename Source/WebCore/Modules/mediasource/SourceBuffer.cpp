@@ -252,14 +252,9 @@ void SourceBuffer::appendBuffer(ArrayBuffer& data, ExceptionCode& ec)
     appendBufferInternal(static_cast<unsigned char*>(data.data()), data.byteLength(), ec);
 }
 
-void SourceBuffer::appendBuffer(ArrayBufferView* data, ExceptionCode& ec)
+void SourceBuffer::appendBuffer(ArrayBufferView& data, ExceptionCode& ec)
 {
-    if (!data) {
-        ec = TypeError;
-        return;
-    }
-
-    appendBufferInternal(static_cast<unsigned char*>(data->baseAddress()), data->byteLength(), ec);
+    appendBufferInternal(static_cast<unsigned char*>(data.baseAddress()), data.byteLength(), ec);
 }
 
 void SourceBuffer::resetParserState()

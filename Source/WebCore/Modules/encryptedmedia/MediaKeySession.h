@@ -60,8 +60,8 @@ public:
     void setKeys(MediaKeys* keys) { m_keys = keys; }
     MediaKeys* keys() const { return m_keys; }
 
-    void generateKeyRequest(const String& mimeType, Uint8Array* initData);
-    void update(Uint8Array* key, ExceptionCode&);
+    void generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData);
+    void update(Ref<Uint8Array>&& key, ExceptionCode&);
 
     bool isClosed() const { return !m_session; }
     void close();
@@ -97,14 +97,13 @@ protected:
     std::unique_ptr<CDMSession> m_session;
 
     struct PendingKeyRequest {
-        PendingKeyRequest(const String& mimeType, Uint8Array* initData) : mimeType(mimeType), initData(initData) { }
         String mimeType;
-        RefPtr<Uint8Array> initData;
+        Ref<Uint8Array> initData;
     };
     Deque<PendingKeyRequest> m_pendingKeyRequests;
     Timer m_keyRequestTimer;
 
-    Deque<RefPtr<Uint8Array>> m_pendingKeys;
+    Deque<Ref<Uint8Array>> m_pendingKeys;
     Timer m_addKeyTimer;
 
 private:

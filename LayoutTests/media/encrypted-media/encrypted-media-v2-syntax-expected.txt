@@ -8,7 +8,7 @@ RUN(mediaKeys = new WebKitMediaKeys("com.webcore.mock"))
 EXPECTED (mediaKeys.keySystem == 'com.webcore.mock') OK
 EXPECTED (typeof mediaKeys.createSession == 'function') OK
 TEST(mediaKeys.createSession("", new Uint8Array(1))) THROWS(DOMException.INVALID_ACCESS_ERR) OK
-TEST(mediaKeys.createSession("unsupported/type")) THROWS(DOMException.INVALID_ACCESS_ERR) OK
+TEST(mediaKeys.createSession("unsupported/type")) THROWS('TypeError: Not enough arguments') OK
 TEST(mediaKeys.createSession("unsupported/type", new Uint8Array(1))) THROWS(DOMException.NOT_SUPPORTED_ERR) OK
 
 Test WebKitMediaKeySession.
@@ -22,6 +22,6 @@ EXPECTED (mediaKeySession.sessionId != 'null') OK
 EXPECTED (mediaKeySession.onwebkitkeyadded == 'null') OK
 EXPECTED (mediaKeySession.onwebkitkeyerror == 'null') OK
 EXPECTED (mediaKeySession.onwebkitkeymessage == 'null') OK
-TEST(mediaKeySession.update(null)) THROWS(DOMException.INVALID_ACCESS_ERR) OK
+TEST(mediaKeySession.update(null)) THROWS('TypeError: Type error') OK
 END OF TEST
 

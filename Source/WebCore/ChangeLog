@@ -1,3 +1,144 @@
+2016-04-30  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Pass even more types by reference
+        https://bugs.webkit.org/show_bug.cgi?id=157231
+
+        Reviewed by Darin Adler.
+
+        Pass even more types by reference when the parameters are not marked as
+        nullable in the IDL.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::generateKeyRequest):
+        (WebCore::MediaKeySession::keyRequestTimerFired):
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::addKeyTimerFired):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::createSession):
+        * Modules/encryptedmedia/MediaKeys.h:
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBuffer):
+        (WebCore::SourceBuffer::resetParserState): Deleted.
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::send):
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/webaudio/AnalyserNode.h:
+        (WebCore::AnalyserNode::getFloatFrequencyData):
+        (WebCore::AnalyserNode::getByteFrequencyData):
+        (WebCore::AnalyserNode::getByteTimeDomainData):
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createPeriodicWave):
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioParam.h:
+        (WebCore::AudioParam::setValueCurveAtTime):
+        * Modules/webaudio/AudioParam.idl:
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::getFrequencyResponse):
+        * Modules/webaudio/BiquadFilterNode.h:
+        * Modules/webaudio/BiquadFilterNode.idl:
+        * Modules/webaudio/PeriodicWave.cpp:
+        (WebCore::PeriodicWave::create):
+        (WebCore::PeriodicWave::createSine): Deleted.
+        * Modules/webaudio/PeriodicWave.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::send):
+        * Modules/websockets/WebSocket.h:
+        * bindings/js/JSWebGLRenderingContextBaseCustom.cpp:
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        (ShouldPassWrapperByReference):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionDomStringListFunction):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors2):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::webkitAddKey):
+        (WebCore::HTMLMediaElement::webkitCancelKeyRequest): Deleted.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * html/ImageData.cpp:
+        (WebCore::ImageData::create):
+        (WebCore::ImageData::ImageData):
+        * html/ImageData.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::texImage3D):
+        (WebCore::WebGL2RenderingContext::texSubImage3D):
+        (WebCore::WebGL2RenderingContext::compressedTexImage3D):
+        (WebCore::WebGL2RenderingContext::compressedTexSubImage3D):
+        (WebCore::WebGL2RenderingContext::uniform1uiv):
+        (WebCore::WebGL2RenderingContext::uniform2uiv):
+        (WebCore::WebGL2RenderingContext::uniform3uiv):
+        (WebCore::WebGL2RenderingContext::uniform4uiv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix2x3fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix3x2fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix2x4fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix4x2fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix3x4fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix4x3fv):
+        (WebCore::WebGL2RenderingContext::vertexAttribI4iv):
+        (WebCore::WebGL2RenderingContext::vertexAttribI4uiv):
+        (WebCore::WebGL2RenderingContext::clearBufferiv):
+        (WebCore::WebGL2RenderingContext::clearBufferuiv):
+        (WebCore::WebGL2RenderingContext::clearBufferfv):
+        (WebCore::WebGL2RenderingContext::getActiveUniforms):
+        (WebCore::WebGL2RenderingContext::texSubImage2D):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::bufferData):
+        (WebCore::WebGLRenderingContextBase::bufferSubData):
+        (WebCore::WebGLRenderingContextBase::compressedTexImage2D):
+        (WebCore::WebGLRenderingContextBase::compressedTexSubImage2D):
+        (WebCore::WebGLRenderingContextBase::readPixels):
+        (WebCore::WebGLRenderingContextBase::texImage2D):
+        (WebCore::WebGLRenderingContextBase::uniform1fv):
+        (WebCore::WebGLRenderingContextBase::uniform1iv):
+        (WebCore::WebGLRenderingContextBase::uniform2fv):
+        (WebCore::WebGLRenderingContextBase::uniform2iv):
+        (WebCore::WebGLRenderingContextBase::uniform3fv):
+        (WebCore::WebGLRenderingContextBase::uniform3iv):
+        (WebCore::WebGLRenderingContextBase::uniform4fv):
+        (WebCore::WebGLRenderingContextBase::uniform4iv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix2fv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix3fv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix4fv):
+        (WebCore::WebGLRenderingContextBase::vertexAttrib1fv):
+        (WebCore::WebGLRenderingContextBase::vertexAttrib2fv):
+        (WebCore::WebGLRenderingContextBase::vertexAttrib3fv):
+        (WebCore::WebGLRenderingContextBase::vertexAttrib4fv):
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexFuncData):
+        (WebCore::WebGLRenderingContextBase::validateUniformParameters):
+        (WebCore::WebGLRenderingContextBase::validateUniformMatrixParameters):
+        (WebCore::WebGLRenderingContextBase::vertexAttribfvImpl):
+        (WebCore::WebGLRenderingContextBase::validateSettableTexFormat): Deleted.
+        (WebCore::WebGLRenderingContextBase::uniform1i): Deleted.
+        (WebCore::WebGLRenderingContextBase::uniform2i): Deleted.
+        (WebCore::WebGLRenderingContextBase::uniform3f): Deleted.
+        (WebCore::WebGLRenderingContextBase::uniform3i): Deleted.
+        (WebCore::WebGLRenderingContextBase::uniform4f): Deleted.
+        (WebCore::WebGLRenderingContextBase::uniform4i): Deleted.
+        (WebCore::WebGLRenderingContextBase::useProgram): Deleted.
+        (WebCore::WebGLRenderingContextBase::vertexAttribPointer): Deleted.
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexDimensions): Deleted.
+        (WebCore::WebGLRenderingContextBase::validateBufferDataParameters): Deleted.
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLRenderingContextBase.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::createTimeRanges):
+        * testing/Internals.h:
+
 2016-04-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Node.prototype.rootNode is not Web compatible

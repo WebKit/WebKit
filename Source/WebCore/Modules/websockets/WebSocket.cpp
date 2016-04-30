@@ -339,23 +339,22 @@ void WebSocket::send(ArrayBuffer& binaryData, ExceptionCode& ec)
     m_channel->send(binaryData, 0, binaryData.byteLength());
 }
 
-void WebSocket::send(ArrayBufferView* arrayBufferView, ExceptionCode& ec)
+void WebSocket::send(ArrayBufferView& arrayBufferView, ExceptionCode& ec)
 {
-    LOG(Network, "WebSocket %p send() Sending ArrayBufferView %p", this, arrayBufferView);
-    ASSERT(arrayBufferView);
+    LOG(Network, "WebSocket %p send() Sending ArrayBufferView %p", this, &arrayBufferView);
+
     if (m_state == CONNECTING) {
         ec = INVALID_STATE_ERR;
         return;
     }
     if (m_state == CLOSING || m_state == CLOSED) {
-        unsigned payloadSize = arrayBufferView->byteLength();
+        unsigned payloadSize = arrayBufferView.byteLength();
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return;
     }
     ASSERT(m_channel);
-    RefPtr<ArrayBuffer> arrayBuffer(arrayBufferView->buffer());
-    m_channel->send(*arrayBuffer, arrayBufferView->byteOffset(), arrayBufferView->byteLength());
+    m_channel->send(*arrayBufferView.buffer(), arrayBufferView.byteOffset(), arrayBufferView.byteLength());
 }
 
 void WebSocket::send(Blob& binaryData, ExceptionCode& ec)

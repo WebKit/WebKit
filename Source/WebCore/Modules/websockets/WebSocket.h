@@ -73,7 +73,7 @@ public:
 
     void send(const String& message, ExceptionCode&);
     void send(JSC::ArrayBuffer&, ExceptionCode&);
-    void send(JSC::ArrayBufferView*, ExceptionCode&);
+    void send(JSC::ArrayBufferView&, ExceptionCode&);
     void send(Blob&, ExceptionCode&);
 
     void close(Optional<unsigned short> code, const String& reason, ExceptionCode&);

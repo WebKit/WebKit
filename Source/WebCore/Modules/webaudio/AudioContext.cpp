@@ -577,17 +577,17 @@ Ref<OscillatorNode> AudioContext::createOscillator()
     return node;
 }
 
-RefPtr<PeriodicWave> AudioContext::createPeriodicWave(Float32Array* real, Float32Array* imag, ExceptionCode& ec)
+RefPtr<PeriodicWave> AudioContext::createPeriodicWave(Float32Array& real, Float32Array& imaginary, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
     
-    if (!real || !imag || (real->length() != imag->length() || (real->length() > MaxPeriodicWaveLength) || (real->length() <= 0))) {
+    if (real.length() != imaginary.length() || (real.length() > MaxPeriodicWaveLength) || !real.length()) {
         ec = INDEX_SIZE_ERR;
         return nullptr;
     }
     
     lazyInitialize();
-    return PeriodicWave::create(sampleRate(), real, imag);
+    return PeriodicWave::create(sampleRate(), real, imaginary);
 }
 
 void AudioContext::notifyNodeFinishedProcessing(AudioNode* node)

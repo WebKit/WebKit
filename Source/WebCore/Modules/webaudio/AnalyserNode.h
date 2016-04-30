@@ -59,9 +59,9 @@ public:
     void setSmoothingTimeConstant(double k, ExceptionCode&);
     double smoothingTimeConstant() const { return m_analyser.smoothingTimeConstant(); }
 
-    void getFloatFrequencyData(JSC::Float32Array* array) { m_analyser.getFloatFrequencyData(array); }
-    void getByteFrequencyData(JSC::Uint8Array* array) { m_analyser.getByteFrequencyData(array); }
-    void getByteTimeDomainData(JSC::Uint8Array* array) { m_analyser.getByteTimeDomainData(array); }
+    void getFloatFrequencyData(const RefPtr<JSC::Float32Array>& array) { m_analyser.getFloatFrequencyData(array.get()); }
+    void getByteFrequencyData(const RefPtr<JSC::Uint8Array>& array) { m_analyser.getByteFrequencyData(array.get()); }
+    void getByteTimeDomainData(const RefPtr<JSC::Uint8Array>& array) { m_analyser.getByteTimeDomainData(array.get()); }
 
 private:
     double tailTime() const override { return 0; }

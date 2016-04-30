@@ -87,7 +87,9 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* s
     RefPtr<ArrayBufferView> arrayBufferView = toArrayBufferView(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(arrayBufferView);
+    if (UNLIKELY(!arrayBufferView))
+        return throwVMTypeError(state);
+    RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*arrayBufferView);
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 

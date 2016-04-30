@@ -89,9 +89,9 @@ const String& MediaKeySession::sessionId() const
     return m_session->sessionId();
 }
 
-void MediaKeySession::generateKeyRequest(const String& mimeType, Uint8Array* initData)
+void MediaKeySession::generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData)
 {
-    m_pendingKeyRequests.append(PendingKeyRequest(mimeType, initData));
+    m_pendingKeyRequests.append({ mimeType, WTFMove(initData) });
     m_keyRequestTimer.startOneShot(0);
 }
 
@@ -115,7 +115,7 @@ void MediaKeySession::keyRequestTimerFired()
 
         // 3. Use cdm to generate a key request and follow the steps for the first matching condition from the following list:
 
-        RefPtr<Uint8Array> keyRequest = m_session->generateKeyRequest(request.mimeType, request.initData.get(), destinationURL, errorCode, systemCode);
+        RefPtr<Uint8Array> keyRequest = m_session->generateKeyRequest(request.mimeType, request.initData.ptr(), destinationURL, errorCode, systemCode);
 
         // Otherwise [if a request is not successfully generated]:
         if (errorCode) {
@@ -138,19 +138,19 @@ void MediaKeySession::keyRequestTimerFired()
     }
 }
 
-void MediaKeySession::update(Uint8Array* key, ExceptionCode& ec)
+void MediaKeySession::update(Ref<Uint8Array>&& key, ExceptionCode& ec)
 {
     // From <http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html#dom-addkey>:
     // The addKey(key) method must run the following steps:
-    // 1. If the first or second argument [sic] is null or an empty array, throw an INVALID_ACCESS_ERR.
+    // 1. If the first or second argument [sic] is an empty array, throw an INVALID_ACCESS_ERR.
     // NOTE: the reference to a "second argument" is a spec bug.
-    if (!key || !key->length()) {
+    if (!key->length()) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
 
     // 2. Schedule a task to handle the call, providing key.
-    m_pendingKeys.append(key);
+    m_pendingKeys.append(WTFMove(key));
     m_addKeyTimer.startOneShot(0);
 }
 
@@ -161,7 +161,7 @@ void MediaKeySession::addKeyTimerFired()
         return;
 
     while (!m_pendingKeys.isEmpty()) {
-        RefPtr<Uint8Array> pendingKey = m_pendingKeys.takeFirst();
+        auto pendingKey = m_pendingKeys.takeFirst();
         unsigned short errorCode = 0;
         uint32_t systemCode = 0;
 
@@ -173,7 +173,7 @@ void MediaKeySession::addKeyTimerFired()
         // 2.3. Let 'next message' be null.
         RefPtr<Uint8Array> nextMessage;
         // 2.4. Use cdm to handle key.
-        didStoreKey = m_session->update(pendingKey.get(), nextMessage, errorCode, systemCode);
+        didStoreKey = m_session->update(pendingKey.ptr(), nextMessage, errorCode, systemCode);
         // 2.5. If did store key is true and the media element is waiting for a key, queue a task to attempt to resume playback.
         // TODO: Find and restart the media element
 

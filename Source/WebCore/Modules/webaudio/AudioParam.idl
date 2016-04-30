@@ -49,7 +49,7 @@
 
     // Sets an array of arbitrary parameter values starting at time for the given duration.
     // The number of values will be scaled to fit into the desired duration.
-    void setValueCurveAtTime(Float32Array values, unrestricted float time, unrestricted float duration);
+    void setValueCurveAtTime(Float32Array? values, unrestricted float time, unrestricted float duration); // FIXME: values should not be nullable.
 
     // Cancels all scheduled parameter changes with times greater than or equal to startTime.
     void cancelScheduledValues(unrestricted float startTime);

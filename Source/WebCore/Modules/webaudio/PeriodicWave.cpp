@@ -45,17 +45,13 @@ namespace WebCore {
     
 using namespace VectorMath;
 
-RefPtr<PeriodicWave> PeriodicWave::create(float sampleRate, Float32Array* real, Float32Array* imag)
+Ref<PeriodicWave> PeriodicWave::create(float sampleRate, Float32Array& real, Float32Array& imaginary)
 {
-    bool isGood = real && imag && real->length() == imag->length();
-    ASSERT(isGood);
-    if (isGood) {
-        RefPtr<PeriodicWave> waveTable = adoptRef(new PeriodicWave(sampleRate));
-        size_t numberOfComponents = real->length();
-        waveTable->createBandLimitedTables(real->data(), imag->data(), numberOfComponents);
-        return waveTable;
-    }
-    return nullptr;
+    ASSERT(real.length() == imaginary.length());
+
+    auto waveTable = adoptRef(*new PeriodicWave(sampleRate));
+    waveTable->createBandLimitedTables(real.data(), imaginary.data(), real.length());
+    return waveTable;
 }
 
 Ref<PeriodicWave> PeriodicWave::createSine(float sampleRate)

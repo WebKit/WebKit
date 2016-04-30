@@ -50,7 +50,7 @@ public:
     void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&) override;
     void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
         GC3Dsizei width, GC3Dsizei height,
-        GC3Denum format, GC3Denum type, ArrayBufferView*, ExceptionCode&) override;
+        GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&&, ExceptionCode&) override;
     void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
         GC3Denum format, GC3Denum type, ImageData*, ExceptionCode&) override;
     void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,

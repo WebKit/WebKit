@@ -96,9 +96,7 @@ bool BiquadFilterNode::setType(unsigned type)
     return true;
 }
 
-void BiquadFilterNode::getFrequencyResponse(const Float32Array* frequencyHz,
-                                            Float32Array* magResponse,
-                                            Float32Array* phaseResponse)
+void BiquadFilterNode::getFrequencyResponse(const RefPtr<Float32Array>& frequencyHz, const RefPtr<Float32Array>& magResponse, const RefPtr<Float32Array>& phaseResponse)
 {
     if (!frequencyHz || !magResponse || !phaseResponse)
         return;

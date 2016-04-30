@@ -40,19 +40,20 @@ typedef int ExceptionCode;
 
 class ImageData : public RefCounted<ImageData> {
 public:
-    static PassRefPtr<ImageData> create(unsigned sw, unsigned sh, ExceptionCode&);
-    static PassRefPtr<ImageData> create(const IntSize&);
-    static PassRefPtr<ImageData> create(const IntSize&, PassRefPtr<Uint8ClampedArray>);
-    static PassRefPtr<ImageData> create(PassRefPtr<Uint8ClampedArray>, unsigned sw, unsigned sh, ExceptionCode&);
+    static RefPtr<ImageData> create(unsigned sw, unsigned sh, ExceptionCode&);
+    static RefPtr<ImageData> create(const IntSize&);
+    static RefPtr<ImageData> create(const IntSize&, Ref<Uint8ClampedArray>&&);
+    static RefPtr<ImageData> create(Ref<Uint8ClampedArray>&&, unsigned sw, unsigned sh, ExceptionCode&);
 
     IntSize size() const { return m_size; }
     int width() const { return m_size.width(); }
     int height() const { return m_size.height(); }
+
     Uint8ClampedArray* data() const { return m_data.get(); }
 
 private:
     explicit ImageData(const IntSize&);
-    ImageData(const IntSize&, PassRefPtr<Uint8ClampedArray>);
+    ImageData(const IntSize&, Ref<Uint8ClampedArray>&&);
 
     IntSize m_size;
     RefPtr<Uint8ClampedArray> m_data;

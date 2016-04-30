@@ -43,7 +43,6 @@
     readonly attribute AudioParam Q; // Quality factor
     readonly attribute AudioParam gain; // in Decibels
 
-    void getFrequencyResponse(Float32Array frequencyHz,
-                              Float32Array magResponse,
-                              Float32Array phaseResponse);
+    // FIXME: the parameters should not be nullable.
+    void getFrequencyResponse(Float32Array? frequencyHz, Float32Array? magResponse, Float32Array? phaseResponse);
 };

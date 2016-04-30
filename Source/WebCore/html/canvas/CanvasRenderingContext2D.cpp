@@ -2013,7 +2013,7 @@ RefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::Coordinate
     if (!byteArray)
         return nullptr;
 
-    return ImageData::create(imageDataRect.size(), byteArray.release());
+    return ImageData::create(imageDataRect.size(), byteArray.releaseNonNull());
 }
 
 void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy, ExceptionCode& ec)

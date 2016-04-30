@@ -66,7 +66,7 @@ public:
 
     void send(const String&, ExceptionCode&);
     void send(JSC::ArrayBuffer&, ExceptionCode&);
-    void send(JSC::ArrayBufferView*, ExceptionCode&);
+    void send(JSC::ArrayBufferView&, ExceptionCode&);
     void send(Blob&, ExceptionCode&);
 
     void close();

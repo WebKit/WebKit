@@ -512,28 +512,28 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState& state, W
     if (webGLArray) {
         switch (f) {
         case f_uniform1v:
-            context.uniform1fv(location, webGLArray.get(), ec);
+            context.uniform1fv(location, *webGLArray, ec);
             break;
         case f_uniform2v:
-            context.uniform2fv(location, webGLArray.get(), ec);
+            context.uniform2fv(location, *webGLArray, ec);
             break;
         case f_uniform3v:
-            context.uniform3fv(location, webGLArray.get(), ec);
+            context.uniform3fv(location, *webGLArray, ec);
             break;
         case f_uniform4v:
-            context.uniform4fv(location, webGLArray.get(), ec);
+            context.uniform4fv(location, *webGLArray, ec);
             break;
         case f_vertexAttrib1v:
-            context.vertexAttrib1fv(index, webGLArray.get());
+            context.vertexAttrib1fv(index, *webGLArray);
             break;
         case f_vertexAttrib2v:
-            context.vertexAttrib2fv(index, webGLArray.get());
+            context.vertexAttrib2fv(index, *webGLArray);
             break;
         case f_vertexAttrib3v:
-            context.vertexAttrib3fv(index, webGLArray.get());
+            context.vertexAttrib3fv(index, *webGLArray);
             break;
         case f_vertexAttrib4v:
-            context.vertexAttrib4fv(index, webGLArray.get());
+            context.vertexAttrib4fv(index, *webGLArray);
             break;
         }
         
@@ -591,16 +591,16 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState& state, W
     if (webGLArray) {
         switch (f) {
         case f_uniform1v:
-            context.uniform1iv(location, webGLArray.get(), ec);
+            context.uniform1iv(location, *webGLArray, ec);
             break;
         case f_uniform2v:
-            context.uniform2iv(location, webGLArray.get(), ec);
+            context.uniform2iv(location, *webGLArray, ec);
             break;
         case f_uniform3v:
-            context.uniform3iv(location, webGLArray.get(), ec);
+            context.uniform3iv(location, *webGLArray, ec);
             break;
         case f_uniform4v:
-            context.uniform4iv(location, webGLArray.get(), ec);
+            context.uniform4iv(location, *webGLArray, ec);
             break;
         default:
             break;
@@ -655,13 +655,13 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
     if (webGLArray) {
         switch (f) {
         case f_uniformMatrix2fv:
-            context.uniformMatrix2fv(location, transpose, webGLArray.get(), ec);
+            context.uniformMatrix2fv(location, transpose, *webGLArray, ec);
             break;
         case f_uniformMatrix3fv:
-            context.uniformMatrix3fv(location, transpose, webGLArray.get(), ec);
+            context.uniformMatrix3fv(location, transpose, *webGLArray, ec);
             break;
         case f_uniformMatrix4fv:
-            context.uniformMatrix4fv(location, transpose, webGLArray.get(), ec);
+            context.uniformMatrix4fv(location, transpose, *webGLArray, ec);
             break;
         }
         

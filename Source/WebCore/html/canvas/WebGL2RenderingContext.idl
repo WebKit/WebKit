@@ -359,8 +359,8 @@ typedef unrestricted float GLclampf;
     [StrictTypeChecking] void texSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLenum format, GLenum type, HTMLCanvasElement? source);
     [StrictTypeChecking] void texSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLenum format, GLenum type, HTMLVideoElement? source);
     [StrictTypeChecking] void copyTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
-    [StrictTypeChecking] void compressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, ArrayBufferView data);
-    [StrictTypeChecking] void compressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, ArrayBufferView data);
+    [StrictTypeChecking] void compressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, ArrayBufferView? data);
+    [StrictTypeChecking] void compressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, ArrayBufferView? data);
 
     /* Programs and shaders */
     [StrictTypeChecking] GLint getFragDataLocation(WebGLProgram? program, DOMString name);
@@ -370,20 +370,20 @@ typedef unrestricted float GLclampf;
     [StrictTypeChecking] void uniform2ui(WebGLUniformLocation? location, GLuint v0, GLuint v1);
     [StrictTypeChecking] void uniform3ui(WebGLUniformLocation? location, GLuint v0, GLuint v1, GLuint v2);
     [StrictTypeChecking] void uniform4ui(WebGLUniformLocation? location, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
-    [StrictTypeChecking] void uniform1uiv(WebGLUniformLocation? location, Uint32Array value);
-    [StrictTypeChecking] void uniform2uiv(WebGLUniformLocation? location, Uint32Array value);
-    [StrictTypeChecking] void uniform3uiv(WebGLUniformLocation? location, Uint32Array value);
-    [StrictTypeChecking] void uniform4uiv(WebGLUniformLocation? location, Uint32Array value);
-    [StrictTypeChecking] void uniformMatrix2x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
-    [StrictTypeChecking] void uniformMatrix3x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
-    [StrictTypeChecking] void uniformMatrix2x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
-    [StrictTypeChecking] void uniformMatrix4x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
-    [StrictTypeChecking] void uniformMatrix3x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
-    [StrictTypeChecking] void uniformMatrix4x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
+    [StrictTypeChecking] void uniform1uiv(WebGLUniformLocation? location, Uint32Array? value);
+    [StrictTypeChecking] void uniform2uiv(WebGLUniformLocation? location, Uint32Array? value);
+    [StrictTypeChecking] void uniform3uiv(WebGLUniformLocation? location, Uint32Array? value);
+    [StrictTypeChecking] void uniform4uiv(WebGLUniformLocation? location, Uint32Array? value);
+    [StrictTypeChecking] void uniformMatrix2x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array? value);
+    [StrictTypeChecking] void uniformMatrix3x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array? value);
+    [StrictTypeChecking] void uniformMatrix2x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array? value);
+    [StrictTypeChecking] void uniformMatrix4x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array? value);
+    [StrictTypeChecking] void uniformMatrix3x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array? value);
+    [StrictTypeChecking] void uniformMatrix4x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array? value);
     [StrictTypeChecking] void vertexAttribI4i(GLuint index, GLint x, GLint y, GLint z, GLint w);
-    [StrictTypeChecking] void vertexAttribI4iv(GLuint index, Int32Array v);
+    [StrictTypeChecking] void vertexAttribI4iv(GLuint index, Int32Array? v);
     [StrictTypeChecking] void vertexAttribI4ui(GLuint index, GLuint x, GLuint y, GLuint z, GLuint w);
-    [StrictTypeChecking] void vertexAttribI4uiv(GLuint index, Uint32Array v);
+    [StrictTypeChecking] void vertexAttribI4uiv(GLuint index, Uint32Array? v);
     [StrictTypeChecking] void vertexAttribIPointer(GLuint index, GLint size, GLenum type, GLsizei stride, GLintptr offset);
 
     /* Writing to the drawing buffer */
@@ -394,9 +394,9 @@ typedef unrestricted float GLclampf;
 
     /* Multiple Render Targets */
     [StrictTypeChecking] void drawBuffers(sequence<GLenum> buffers);
-    [StrictTypeChecking] void clearBufferiv(GLenum buffer, GLint drawbuffer, Int32Array value);
-    [StrictTypeChecking] void clearBufferuiv(GLenum buffer, GLint drawbuffer, Uint32Array value);
-    [StrictTypeChecking] void clearBufferfv(GLenum buffer, GLint drawbuffer, Float32Array value);
+    [StrictTypeChecking] void clearBufferiv(GLenum buffer, GLint drawbuffer, Int32Array? value);
+    [StrictTypeChecking] void clearBufferuiv(GLenum buffer, GLint drawbuffer, Uint32Array? value);
+    [StrictTypeChecking] void clearBufferfv(GLenum buffer, GLint drawbuffer, Float32Array? value);
     [StrictTypeChecking] void clearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil);
 
     /* Query Objects */
@@ -442,7 +442,7 @@ typedef unrestricted float GLclampf;
     [StrictTypeChecking] void bindBufferRange(GLenum target, GLuint index, WebGLBuffer? buffer, GLintptr offset, GLsizeiptr size);
     [StrictTypeChecking, Custom] any getIndexedParameter(GLenum target, GLuint index);
     [StrictTypeChecking] Uint32Array getUniformIndices(WebGLProgram? program, sequence<DOMString> uniformNames);
-    [StrictTypeChecking] Int32Array getActiveUniforms(WebGLProgram? program, Uint32Array uniformIndices, GLenum pname);
+    [StrictTypeChecking] Int32Array getActiveUniforms(WebGLProgram? program, Uint32Array? uniformIndices, GLenum pname);
     [StrictTypeChecking] GLuint getUniformBlockIndex(WebGLProgram? program, DOMString uniformBlockName);
     [StrictTypeChecking, Custom] any getActiveUniformBlockParameter(WebGLProgram? program, GLuint uniformBlockIndex, GLenum pname);
     [StrictTypeChecking, Custom] any getActiveUniformBlockName(WebGLProgram? program, GLuint uniformBlockIndex);
