@@ -1,3 +1,27 @@
+2016-04-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC][ARMv7S] Arithmetic module results change when tiering up to DFG
+        https://bugs.webkit.org/show_bug.cgi?id=157217
+        rdar://problem/24733432
+
+        Reviewed by Mark Lam.
+
+        ARMv7's fmod() returns less accurate results than an integer division.
+        Since we have integer div on ARMv7s, the results start changing when
+        we reach DFG.
+
+        In this patch, I change our fmod slow path to behave like the fast path
+        on ARMv7s.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        (JSC::DFG::fmodAsDFGOperation): Deleted.
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/MathCommon.cpp:
+        (JSC::isStrictInt32):
+        * runtime/MathCommon.h:
+
 2016-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Issues inspecting the inspector, pausing on breakpoints causes content to not load

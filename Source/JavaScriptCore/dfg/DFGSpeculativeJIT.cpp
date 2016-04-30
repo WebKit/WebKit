@@ -362,17 +362,6 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
     }
 }
 
-// On Windows we need to wrap fmod; on other platforms we can call it directly.
-// On ARMv7 we assert that all function pointers have to low bit set (point to thumb code).
-#if CALLING_CONVENTION_IS_STDCALL || CPU(ARM_THUMB2)
-static double JIT_OPERATION fmodAsDFGOperation(double x, double y)
-{
-    return fmod(x, y);
-}
-#else
-#define fmodAsDFGOperation fmod
-#endif
-
 void SpeculativeJIT::clearGenerationInfo()
 {
     for (unsigned i = 0; i < m_generationInfo.size(); ++i)
@@ -4589,7 +4578,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
         
         FPRResult result(this);
         
-        callOperation(fmodAsDFGOperation, result.fpr(), op1FPR, op2FPR);
+        callOperation(jsMod, result.fpr(), op1FPR, op2FPR);
         
         doubleResult(result.fpr(), node);
         return;

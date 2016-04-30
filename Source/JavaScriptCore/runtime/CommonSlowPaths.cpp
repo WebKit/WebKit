@@ -49,6 +49,7 @@
 #include "LLIntCommon.h"
 #include "LLIntExceptions.h"
 #include "LowLevelInterpreter.h"
+#include "MathCommon.h"
 #include "ObjectConstructor.h"
 #include "ScopedArguments.h"
 #include "StructureRareDataInlines.h"
@@ -462,7 +463,7 @@ SLOW_PATH_DECL(slow_path_mod)
     BEGIN();
     double a = OP_C(2).jsValue().toNumber(exec);
     double b = OP_C(3).jsValue().toNumber(exec);
-    RETURN(jsNumber(fmod(a, b)));
+    RETURN(jsNumber(jsMod(a, b)));
 }
 
 SLOW_PATH_DECL(slow_path_lshift)

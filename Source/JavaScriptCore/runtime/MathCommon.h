@@ -27,6 +27,7 @@
 #define MathCommon_h
 
 #include "JITOperations.h"
+#include "MacroAssemblerCodeRef.h"
 #include <cmath>
 #include <wtf/Optional.h>
 
@@ -88,6 +89,14 @@ inline Optional<double> safeReciprocalForDivByConst(double constant)
 
 extern "C" {
 double JIT_OPERATION jsRound(double value) REFERENCED_FROM_ASM WTF_INTERNAL;
+
+// On Windows we need to wrap fmod; on other platforms we can call it directly.
+// On ARMv7 we assert that all function pointers have to low bit set (point to thumb code).
+#if CALLING_CONVENTION_IS_STDCALL || CPU(ARM_THUMB2)
+double JIT_OPERATION jsMod(double x, double y) REFERENCED_FROM_ASM WTF_INTERNAL;
+#else
+#define jsMod fmod
+#endif
 }
 
 }

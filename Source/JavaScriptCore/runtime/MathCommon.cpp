@@ -450,12 +450,53 @@ double JIT_OPERATION operationMathPow(double x, double y)
     return mathPowInternal(x, y);
 }
 
+#if HAVE(ARM_IDIV_INSTRUCTIONS)
+static inline bool isStrictInt32(double value)
+{
+    int32_t valueAsInt32 = static_cast<int32_t>(value);
+    if (value != valueAsInt32)
+        return false;
+
+    if (!valueAsInt32) {
+        if (std::signbit(value))
+            return false;
+    }
+    return true;
+}
+#endif
+
 extern "C" {
 double jsRound(double value)
 {
     double integer = ceil(value);
     return integer - (integer - value > 0.5);
 }
+
+#if CALLING_CONVENTION_IS_STDCALL || CPU(ARM_THUMB2)
+double jsMod(double x, double y)
+{
+#if HAVE(ARM_IDIV_INSTRUCTIONS)
+    // fmod() does not have exact results for integer on ARMv7.
+    // When DFG/FTL use IDIV, the result of op_mod can change if we use fmod().
+    //
+    // We implement here the same algorithm and conditions as the upper tier to keep
+    // a stable result when tiering up.
+    if (y) {
+        if (isStrictInt32(x) && isStrictInt32(y)) {
+            int32_t xAsInt32 = static_cast<int32_t>(x);
+            int32_t yAsInt32 = static_cast<int32_t>(y);
+            int32_t quotient = xAsInt32 / yAsInt32;
+            if (!productOverflows<int32_t>(quotient, yAsInt32)) {
+                int32_t remainder = xAsInt32 - (quotient * yAsInt32);
+                if (remainder || xAsInt32 >= 0)
+                    return remainder;
+            }
+        }
+    }
+#endif
+    return fmod(x, y);
 }
+#endif
+} // extern "C"
 
 } // namespace JSC
