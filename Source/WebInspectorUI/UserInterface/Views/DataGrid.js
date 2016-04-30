@@ -73,7 +73,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._scrollContainerElement.className = "data-container";
 
         this._scrollListener = () => this.needsLayout();
-        this._scrollContainerElement.addEventListener("scroll", this._scrollListener);
+        this._updateScrollListeners();
 
         this._topDataTableMarginElement = this._scrollContainerElement.createChild("div");
 
@@ -261,10 +261,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         this._element.classList.toggle("inline", this._inline);
 
-        if (this._inline || this._variableHeightRows)
-            this._scrollContainerElement.removeEventListener("scroll", this._scrollListener);
-        else
-            this._scrollContainerElement.addEventListener("scroll", this._scrollListener);
+        this._updateScrollListeners();
     }
 
     get variableHeightRows() { return this._variableHeightRows; }
@@ -278,10 +275,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         this._element.classList.toggle("variable-height-rows", this._variableHeightRows);
 
-        if (this._inline || this._variableHeightRows)
-            this._scrollContainerElement.removeEventListener("scroll", this._scrollListener);
-        else
-            this._scrollContainerElement.addEventListener("scroll", this._scrollListener);
+        this._updateScrollListeners();
     }
 
     set filterText(x)
@@ -319,6 +313,17 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         if (!this._hasFilterDelegate())
             return true;
         return this._filterDelegate.dataGridMatchNodeAgainstCustomFilters(node);
+    }
+
+    _updateScrollListeners()
+    {
+        if (this._inline || this._variableHeightRows) {
+            this._scrollContainerElement.removeEventListener("scroll", this._scrollListener);
+            this._scrollContainerElement.removeEventListener("mousewheel", this._scrollListener);
+        } else {
+            this._scrollContainerElement.addEventListener("scroll", this._scrollListener);
+            this._scrollContainerElement.addEventListener("mousewheel", this._scrollListener);
+        }
     }
 
     _applyFiltersToNode(node)

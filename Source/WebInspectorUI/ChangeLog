@@ -1,3 +1,19 @@
+2016-04-29  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Scrolling in Timelines causes flashing of the DataGrid
+        https://bugs.webkit.org/show_bug.cgi?id=157212
+        rdar://problem/25994717
+
+        Listen for mousewheel events too so we can update the visible rows sooner.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid): Call _updateScrollListeners.
+        (WebInspector.DataGrid.prototype.set inline): Use _updateScrollListeners.
+        (WebInspector.DataGrid.prototype.set variableHeightRows): Use _updateScrollListeners.
+        (WebInspector.DataGrid.prototype._updateScrollListeners): Added. Listen for mousewheel too.
+
 2016-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Jump to Line in auto formatted JavaScript does not work the first time
