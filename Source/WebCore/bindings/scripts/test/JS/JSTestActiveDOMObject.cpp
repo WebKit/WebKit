@@ -169,7 +169,7 @@ EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, EncodedJSValu
 EncodedJSValue jsTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestActiveDOMObjectPrototype* domObject = jsDynamicCast<JSTestActiveDOMObjectPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestActiveDOMObject::getConstructor(state->vm(), domObject->globalObject()));
 }
@@ -206,7 +206,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
     Node* nextChild = JSNode::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!nextChild)
+    if (UNLIKELY(!nextChild))
         return throwVMTypeError(state);
     impl.excitingFunction(*nextChild);
     return JSValue::encode(jsUndefined());

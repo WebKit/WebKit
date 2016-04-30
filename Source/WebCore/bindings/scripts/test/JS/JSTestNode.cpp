@@ -139,7 +139,7 @@ EncodedJSValue jsTestNodeName(ExecState* state, EncodedJSValue thisValue, Proper
 EncodedJSValue jsTestNodeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestNodePrototype* domObject = jsDynamicCast<JSTestNodePrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestNode::getConstructor(state->vm(), domObject->globalObject()));
 }

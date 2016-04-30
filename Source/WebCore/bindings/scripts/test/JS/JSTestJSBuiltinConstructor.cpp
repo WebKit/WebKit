@@ -161,7 +161,7 @@ EncodedJSValue jsTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state,
 EncodedJSValue jsTestJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestJSBuiltinConstructorPrototype* domObject = jsDynamicCast<JSTestJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestJSBuiltinConstructor::getConstructor(state->vm(), domObject->globalObject()));
 }

@@ -131,7 +131,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(Exe
     String hello = state->argument(0).toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!state->argument(1).isObject())
+    if (UNLIKELY(!state->argument(1).isObject()))
         return throwArgumentMustBeFunctionError(*state, 1, "testCallback", "TestTypedefs", nullptr);
     RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
     RefPtr<TestTypedefs> object = TestTypedefs::create(hello, *testCallback);
@@ -327,7 +327,7 @@ EncodedJSValue jsTestTypedefsStringAttrWithSetterException(ExecState* state, Enc
 EncodedJSValue jsTestTypedefsConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestTypedefsPrototype* domObject = jsDynamicCast<JSTestTypedefsPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestTypedefs::getConstructor(state->vm(), domObject->globalObject()));
 }

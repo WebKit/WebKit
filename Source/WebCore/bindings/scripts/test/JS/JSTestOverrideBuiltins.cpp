@@ -159,7 +159,7 @@ bool JSTestOverrideBuiltins::getOwnPropertySlotByIndex(JSObject* object, ExecSta
 EncodedJSValue jsTestOverrideBuiltinsConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestOverrideBuiltinsPrototype* domObject = jsDynamicCast<JSTestOverrideBuiltinsPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestOverrideBuiltins::getConstructor(state->vm(), domObject->globalObject()));
 }

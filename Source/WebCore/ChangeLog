@@ -1,3 +1,106 @@
+2016-04-29  Chris Dumez  <cdumez@apple.com>
+
+        Use LIKELY() / UNLIKELY() hints when suitable in the JavaScript bindings
+        https://bugs.webkit.org/show_bug.cgi?id=157210
+
+        Reviewed by Darin Adler.
+
+        Use LIKELY() / UNLIKELY() hints when suitable in the JavaScript bindings.
+        We already make use of them in the JS bindings but they are some cases
+        where we don't and they may be useful.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateOverloadedFunction):
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        (GenerateImplementationFunctionCall):
+        (GenerateOverloadedConstructorDefinition):
+        (GenerateConstructorDefinition):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectConstructor):
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionExcitingFunction):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::jsTestClassWithJSBuiltinConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::jsTestCustomConstructorWithNoInterfaceObjectConstructor):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::jsTestCustomNamedGetterConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::jsTestEventConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::getOwnPropertySlotByIndex):
+        (WebCore::jsTestEventTargetConstructor):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::jsTestExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::jsTestGenerateIsReachableConstructor):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::jsTestGlobalObjectConstructor):
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::construct):
+        (WebCore::jsTestInterfaceConstructor):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::jsTestJSBuiltinConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::jsTestMediaQueryListListenerConstructor):
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorNamedConstructor::construct):
+        (WebCore::jsTestNamedConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::jsTestNodeConstructor):
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        (WebCore::jsTestNondeterministicConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        (WebCore::JSTestObj::getOwnPropertySlotByIndex):
+        (WebCore::jsTestObjTestSubObjEnabledBySettingConstructor):
+        (WebCore::jsTestObjConstructor):
+        (WebCore::jsTestObjPrototypeFunctionEnabledAtRuntimeOperation):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionByteMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionOctetMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionLongMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackFunctionArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArg):
+        (WebCore::jsTestObjConstructorFunctionStaticMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod5):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod8):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter):
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionConvert1):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithSequence):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithArray):
+        (WebCore::jsTestObjPrototypeFunctionVariadicNodeMethod):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Promise):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Promise):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors1):
+        (WebCore::constructJSTestOverloadedConstructors3):
+        (WebCore::JSTestOverloadedConstructorsConstructor::construct):
+        (WebCore::jsTestOverloadedConstructorsConstructor):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::jsTestOverrideBuiltinsConstructor):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::jsTestSerializedScriptValueInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::construct):
+        (WebCore::jsTestTypedefsConstructor):
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::jsattributeConstructor):
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        (WebCore::jsreadonlyConstructor):
+
 2016-04-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename getAssignedNodes to assignedNodes and support flattened option

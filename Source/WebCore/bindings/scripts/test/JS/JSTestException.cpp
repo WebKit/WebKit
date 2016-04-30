@@ -159,7 +159,7 @@ EncodedJSValue jsTestExceptionName(ExecState* state, EncodedJSValue thisValue, P
 EncodedJSValue jsTestExceptionConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestExceptionPrototype* domObject = jsDynamicCast<JSTestExceptionPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestException::getConstructor(state->vm(), domObject->globalObject()));
 }

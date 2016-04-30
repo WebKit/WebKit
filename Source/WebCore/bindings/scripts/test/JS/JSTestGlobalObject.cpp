@@ -188,7 +188,7 @@ EncodedJSValue jsTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, Enc
 EncodedJSValue jsTestGlobalObjectConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestGlobalObjectPrototype* domObject = jsDynamicCast<JSTestGlobalObjectPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestGlobalObject::getConstructor(state->vm(), domObject->globalObject()));
 }
@@ -316,7 +316,7 @@ EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeO
         return jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2(state);
 #endif
 
-    if (argsCount < 1)
+    if (UNLIKELY(argsCount < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     return throwVMTypeError(state);
 }

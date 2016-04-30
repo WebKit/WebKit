@@ -124,7 +124,7 @@ void JSTestClassWithJSBuiltinConstructor::destroy(JSC::JSCell* cell)
 EncodedJSValue jsTestClassWithJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestClassWithJSBuiltinConstructorPrototype* domObject = jsDynamicCast<JSTestClassWithJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestClassWithJSBuiltinConstructor::getConstructor(state->vm(), domObject->globalObject()));
 }

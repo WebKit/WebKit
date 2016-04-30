@@ -1612,7 +1612,7 @@ END
 
     }
     if ($leastNumMandatoryParams >= 1) {
-        push(@implContent, "    if (argsCount < $leastNumMandatoryParams)\n");
+        push(@implContent, "    if (UNLIKELY(argsCount < $leastNumMandatoryParams))\n");
         push(@implContent, "        return throwVMError(state, createNotEnoughArgumentsError(state));\n");
     }
     push(@implContent, <<END);
@@ -2290,9 +2290,9 @@ sub GenerateImplementation
 
             if ($indexedGetterFunction) {
                 if ($indexedGetterFunction->signature->type eq "DOMString") {
-                    push(@implContent, "    if (index <= MAX_ARRAY_INDEX) {\n");
+                    push(@implContent, "    if (LIKELY(index <= MAX_ARRAY_INDEX)) {\n");
                 } else {
-                    push(@implContent, "    if (index < thisObject->wrapped().length()) {\n");
+                    push(@implContent, "    if (LIKELY(index < thisObject->wrapped().length())) {\n");
                 }
                 # Assume that if there's a setter, the index will be writable
                 if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
@@ -2402,7 +2402,7 @@ sub GenerateImplementation
                     AddToImplIncludes("Frame.h");
                     AddToImplIncludes("Settings.h");
                     my $enable_function = ToMethodName($attribute->signature->extendedAttributes->{"EnabledBySetting"}) . "Enabled";
-                    push(@implContent, "    if (!castedThis->wrapped().frame())\n");
+                    push(@implContent, "    if (UNLIKELY(!castedThis->wrapped().frame()))\n");
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                     push(@implContent, "    Settings& settings = castedThis->wrapped().frame()->settings();\n");
                     push(@implContent, "    if (!settings.$enable_function())\n");
@@ -2558,7 +2558,7 @@ sub GenerateImplementation
             push(@implContent, "EncodedJSValue ${constructorFunctionName}(ExecState* state, EncodedJSValue thisValue, PropertyName)\n");
             push(@implContent, "{\n");
             push(@implContent, "    ${className}Prototype* domObject = jsDynamicCast<${className}Prototype*>(JSValue::decode(thisValue));\n");
-            push(@implContent, "    if (!domObject)\n");
+            push(@implContent, "    if (UNLIKELY(!domObject))\n");
             push(@implContent, "        return throwVMTypeError(state);\n");
 
             if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
@@ -2619,7 +2619,7 @@ sub GenerateImplementation
                 push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
 
                 if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
-                    push(@implContent, "    if (index <= MAX_ARRAY_INDEX) {\n");
+                    push(@implContent, "    if (LIKELY(index <= MAX_ARRAY_INDEX)) {\n");
                     push(@implContent, "        thisObject->indexSetter(state, index, value);\n");
                     push(@implContent, "        return true;\n");
                     push(@implContent, "    }\n");
@@ -2785,7 +2785,7 @@ sub GenerateImplementation
                 }
 
                 if ($attribute->signature->type eq "double" or $attribute->signature->type eq "float") {
-                    push(@implContent, "    if (!std::isfinite(nativeValue)) {\n");
+                    push(@implContent, "    if (UNLIKELY(!std::isfinite(nativeValue))) {\n");
                     push(@implContent, "        throwVMTypeError(state);\n");
                     push(@implContent, "        return false;\n");
                     push(@implContent, "    }\n");
@@ -2810,10 +2810,10 @@ sub GenerateImplementation
                     }
                     if ($svgPropertyType) {
                         if ($setterRaisesExceptionWithMessage) {
-                            push(@implContent, "    if (!ec.code)\n");
+                            push(@implContent, "    if (LIKELY(!ec.code))\n");
                             push(@implContent, "        impl.commitChange();\n");
                         } elsif ($setterRaisesException) {
-                            push(@implContent, "    if (!ec)\n");
+                            push(@implContent, "    if (LIKELY(!ec))\n");
                             push(@implContent, "        impl.commitChange();\n");
                         } else {
                             push(@implContent, "    impl.commitChange();\n");
@@ -3536,9 +3536,9 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    }\n");
             } else {
                 if ($codeGenerator->IsFunctionOnlyCallbackInterface($argType)) {
-                    push(@$outputArray, "    if (!state->argument($argsIndex).isFunction())\n");
+                    push(@$outputArray, "    if (UNLIKELY(!state->argument($argsIndex).isFunction()))\n");
                 } else {
-                    push(@$outputArray, "    if (!state->argument($argsIndex).isObject())\n");
+                    push(@$outputArray, "    if (UNLIKELY(!state->argument($argsIndex).isObject()))\n");
                 }
                 push(@$outputArray, "        return throwArgumentMustBeFunctionError(*state, $argsIndex, \"$name\", \"$interfaceName\", $quotedFunctionName);\n");
                 if ($function->isStatic) {
@@ -3624,7 +3624,7 @@ sub GenerateParametersCheck
 
                 my $argValue = "state->argument($argsIndex)";
                 if ($codeGenerator->IsWrapperType($argType)) {
-                    push(@$outputArray, "    if (!${argValue}.isUndefinedOrNull() && !${argValue}.inherits(JS${argType}::info()))\n");
+                    push(@$outputArray, "    if (UNLIKELY(!${argValue}.isUndefinedOrNull() && !${argValue}.inherits(JS${argType}::info())))\n");
                     push(@$outputArray, "        return throwArgumentTypeError(*state, $argsIndex, \"$name\", \"$interfaceName\", $quotedFunctionName, \"$argType\");\n");
                 }
             }
@@ -3681,13 +3681,13 @@ sub GenerateParametersCheck
 
             my $isTearOff = $codeGenerator->IsSVGTypeNeedingTearOff($argType) && $interfaceName !~ /List$/;
             if ($isTearOff or ShouldPassWrapperByReference($parameter, $interface)) {
-                push(@$outputArray, "    if (!$name)\n");
+                push(@$outputArray, "    if (UNLIKELY(!$name))\n");
                 push(@$outputArray, "        return throwVMTypeError(state);\n");
                 $value = $isTearOff ? "$name->propertyReference()" : "*$name";
             }
 
             if ($argType eq "double" or $argType eq "float") {
-                push(@$outputArray, "    if (!std::isfinite($name))\n");
+                push(@$outputArray, "    if (UNLIKELY(!std::isfinite($name)))\n");
                 push(@$outputArray, "        return throwVMTypeError(state);\n");
             }
 
@@ -4020,10 +4020,10 @@ sub GenerateImplementationFunctionCall()
 
         if ($svgPropertyType and !$function->isStatic) {
             if ($raisesExceptionWithMessage) {
-                push(@implContent, $indent . "if (!ec.code)\n");
+                push(@implContent, $indent . "if (LIKELY(!ec.code))\n");
                 push(@implContent, $indent . "    impl.commitChange();\n");
             } elsif ($raisesException) {
-                push(@implContent, $indent . "if (!ec)\n");
+                push(@implContent, $indent . "if (LIKELY(!ec))\n");
                 push(@implContent, $indent . "    impl.commitChange();\n");
             } else {
                 push(@implContent, $indent . "impl.commitChange();\n");
@@ -4908,7 +4908,7 @@ END
     }
 
     if ($leastNumMandatoryParams >= 1) {
-        push(@$outputArray, "    if (argsCount < $leastNumMandatoryParams)\n");
+        push(@$outputArray, "    if (UNLIKELY(argsCount < $leastNumMandatoryParams))\n");
         push(@$outputArray, "        return throwVMError(state, createNotEnoughArgumentsError(state));\n");
     }
     push(@$outputArray, <<END);
@@ -5053,14 +5053,14 @@ END
             if ($codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{"ConstructorCallWith"}, "ScriptExecutionContext")) {
                 push(@constructorArgList, "*context");
                 push(@$outputArray, "    ScriptExecutionContext* context = castedThis->scriptExecutionContext();\n");
-                push(@$outputArray, "    if (!context)\n");
+                push(@$outputArray, "    if (UNLIKELY(!context))\n");
                 push(@$outputArray, "        return throwConstructorDocumentUnavailableError(*state, \"${interfaceName}\");\n");
             }
             if ($codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{"ConstructorCallWith"}, "Document")) {
                 $implIncludes{"Document.h"} = 1;
                 push(@constructorArgList, "document");
                 push(@$outputArray, "    ScriptExecutionContext* context = castedThis->scriptExecutionContext();\n");
-                push(@$outputArray, "    if (!context)\n");
+                push(@$outputArray, "    if (UNLIKELY(!context))\n");
                 push(@$outputArray, "        return throwConstructorDocumentUnavailableError(*state, \"${interfaceName}\");\n");
                 push(@$outputArray, "    ASSERT(context->isDocument());\n");
                 push(@$outputArray, "    auto& document = downcast<Document>(*context);\n");
@@ -5091,7 +5091,7 @@ END
             }
 
             if ($interface->extendedAttributes->{"ConstructorRaisesException"}) {
-                push(@$outputArray, "    if (ec) {\n");
+                push(@$outputArray, "    if (UNLIKELY(ec)) {\n");
                 push(@$outputArray, "        setDOMException(state, ec);\n");
                 push(@$outputArray, "        return JSValue::encode(JSValue());\n");
                 push(@$outputArray, "    }\n");

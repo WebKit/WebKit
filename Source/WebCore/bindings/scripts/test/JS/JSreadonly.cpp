@@ -118,7 +118,7 @@ void JSreadonly::destroy(JSC::JSCell* cell)
 EncodedJSValue jsreadonlyConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSreadonlyPrototype* domObject = jsDynamicCast<JSreadonlyPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSreadonly::getConstructor(state->vm(), domObject->globalObject()));
 }

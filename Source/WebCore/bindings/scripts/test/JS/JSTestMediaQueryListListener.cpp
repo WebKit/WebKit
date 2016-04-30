@@ -126,7 +126,7 @@ void JSTestMediaQueryListListener::destroy(JSC::JSCell* cell)
 EncodedJSValue jsTestMediaQueryListListenerConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestMediaQueryListListenerPrototype* domObject = jsDynamicCast<JSTestMediaQueryListListenerPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestMediaQueryListListener::getConstructor(state->vm(), domObject->globalObject()));
 }
@@ -158,7 +158,7 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    if (!state->argument(0).isFunction())
+    if (UNLIKELY(!state->argument(0).isFunction()))
         return throwArgumentMustBeFunctionError(*state, 0, "listener", "TestMediaQueryListListener", "method");
     RefPtr<MediaQueryListListener> listener = JSMediaQueryListListener::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     impl.method(WTFMove(listener));

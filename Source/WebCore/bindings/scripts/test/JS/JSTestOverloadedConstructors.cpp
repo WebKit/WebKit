@@ -73,7 +73,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* s
     ArrayBuffer* arrayBuffer = toArrayBuffer(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!arrayBuffer)
+    if (UNLIKELY(!arrayBuffer))
         return throwVMTypeError(state);
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*arrayBuffer);
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
@@ -99,7 +99,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* s
     Blob* blob = JSBlob::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!blob)
+    if (UNLIKELY(!blob))
         return throwVMTypeError(state);
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*blob);
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
@@ -141,7 +141,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor:
         return constructJSTestOverloadedConstructors4(state);
     if ()
         return constructJSTestOverloadedConstructors5(state);
-    if (argsCount < 1)
+    if (UNLIKELY(argsCount < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     return throwVMTypeError(state);
 }
@@ -202,7 +202,7 @@ void JSTestOverloadedConstructors::destroy(JSC::JSCell* cell)
 EncodedJSValue jsTestOverloadedConstructorsConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestOverloadedConstructorsPrototype* domObject = jsDynamicCast<JSTestOverloadedConstructorsPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestOverloadedConstructors::getConstructor(state->vm(), domObject->globalObject()));
 }

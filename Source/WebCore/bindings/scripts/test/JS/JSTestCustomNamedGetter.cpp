@@ -161,7 +161,7 @@ bool JSTestCustomNamedGetter::getOwnPropertySlotByIndex(JSObject* object, ExecSt
 EncodedJSValue jsTestCustomNamedGetterConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestCustomNamedGetterPrototype* domObject = jsDynamicCast<JSTestCustomNamedGetterPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestCustomNamedGetter::getConstructor(state->vm(), domObject->globalObject()));
 }

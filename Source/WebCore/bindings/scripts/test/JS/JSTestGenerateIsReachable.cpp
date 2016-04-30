@@ -118,7 +118,7 @@ void JSTestGenerateIsReachable::destroy(JSC::JSCell* cell)
 EncodedJSValue jsTestGenerateIsReachableConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestGenerateIsReachablePrototype* domObject = jsDynamicCast<JSTestGenerateIsReachablePrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestGenerateIsReachable::getConstructor(state->vm(), domObject->globalObject()));
 }

@@ -235,10 +235,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(Ex
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     ScriptExecutionContext* context = castedThis->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return throwConstructorDocumentUnavailableError(*state, "TestInterface");
     RefPtr<TestInterface> object = TestInterface::create(*context, str1, str2, ec);
-    if (ec) {
+    if (UNLIKELY(ec)) {
         setDOMException(state, ec);
         return JSValue::encode(JSValue());
     }
@@ -589,7 +589,7 @@ EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue 
 EncodedJSValue jsTestInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestInterfacePrototype* domObject = jsDynamicCast<JSTestInterfacePrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestInterface::getConstructor(state->vm(), domObject->globalObject()));
 }
@@ -801,7 +801,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     TestObj* objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg)
+    if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(*context, strArg, *objArg, ec)));
 
@@ -869,7 +869,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     TestObj* objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg)
+    if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(impl, *context, strArg, *objArg, ec)));
 

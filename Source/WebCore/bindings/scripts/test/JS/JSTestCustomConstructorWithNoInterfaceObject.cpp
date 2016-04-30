@@ -123,7 +123,7 @@ void JSTestCustomConstructorWithNoInterfaceObject::destroy(JSC::JSCell* cell)
 EncodedJSValue jsTestCustomConstructorWithNoInterfaceObjectConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestCustomConstructorWithNoInterfaceObjectPrototype* domObject = jsDynamicCast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     JSValue constructor = JSTestCustomConstructorWithNoInterfaceObjectConstructor::create(state->vm(), JSTestCustomConstructorWithNoInterfaceObjectConstructor::createStructure(state->vm(), *domObject->globalObject(), domObject->globalObject()->objectPrototype()), *jsCast<JSDOMGlobalObject*>(domObject->globalObject()));
     // Shadowing constructor property to ensure reusing the same constructor object

@@ -527,10 +527,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(ExecStat
     auto* castedThis = jsCast<JSTestObjConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    if (!state->argument(0).isObject())
+    if (UNLIKELY(!state->argument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, 0, "testCallback", "TestObj", nullptr);
     RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
-    if (!state->argument(1).isFunction())
+    if (UNLIKELY(!state->argument(1).isFunction()))
         return throwArgumentMustBeFunctionError(*state, 1, "testCallbackFunction", "TestObj", nullptr);
     RefPtr<TestCallbackFunction> testCallbackFunction = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
     RefPtr<TestObj> object = TestObj::create(*testCallback, *testCallbackFunction);
@@ -878,7 +878,7 @@ bool JSTestObj::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, un
 {
     auto* thisObject = jsCast<JSTestObj*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (index <= MAX_ARRAY_INDEX) {
+    if (LIKELY(index <= MAX_ARRAY_INDEX)) {
         unsigned attributes = DontDelete | ReadOnly;
         slot.setValue(thisObject, attributes, jsStringOrUndefined(state, thisObject->wrapped().item(index)));
         return true;
@@ -971,7 +971,7 @@ EncodedJSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* state, 
     if (UNLIKELY(!castedThis)) {
         return throwGetterTypeError(*state, "TestObj", "TestSubObjEnabledBySetting");
     }
-    if (!castedThis->wrapped().frame())
+    if (UNLIKELY(!castedThis->wrapped().frame()))
         return JSValue::encode(jsUndefined());
     Settings& settings = castedThis->wrapped().frame()->settings();
     if (!settings.testSettingEnabled())
@@ -2185,7 +2185,7 @@ EncodedJSValue jsTestObjPutForwardsNullableAttribute(ExecState* state, EncodedJS
 EncodedJSValue jsTestObjConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestObjPrototype* domObject = jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestObj::getConstructor(state->vm(), domObject->globalObject()));
 }
@@ -3417,7 +3417,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation
         return jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2(state);
 #endif
 
-    if (argsCount < 1)
+    if (UNLIKELY(argsCount < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     return throwVMTypeError(state);
 }
@@ -3453,7 +3453,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
     TestObj* objArg = JSTestObj::toWrapped(state->argument(2));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg)
+    if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
     impl.voidMethodWithArgs(longArg, strArg, *objArg);
     return JSValue::encode(jsUndefined());
@@ -3490,7 +3490,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecSt
     TestObj* objArg = JSTestObj::toWrapped(state->argument(2));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg)
+    if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
     JSValue result = jsNumber(impl.byteMethodWithArgs(byteArg, strArg, *objArg));
     return JSValue::encode(result);
@@ -3527,7 +3527,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecS
     TestObj* objArg = JSTestObj::toWrapped(state->argument(2));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg)
+    if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
     JSValue result = jsNumber(impl.octetMethodWithArgs(octetArg, strArg, *objArg));
     return JSValue::encode(result);
@@ -3564,7 +3564,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecSt
     TestObj* objArg = JSTestObj::toWrapped(state->argument(2));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg)
+    if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
     JSValue result = jsNumber(impl.longMethodWithArgs(longArg, strArg, *objArg));
     return JSValue::encode(result);
@@ -3601,7 +3601,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
     TestObj* objArg = JSTestObj::toWrapped(state->argument(2));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg)
+    if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.objMethodWithArgs(longArg, strArg, *objArg)));
     return JSValue::encode(result);
@@ -3765,7 +3765,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
     TestObj* objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg)
+    if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.methodThatRequiresAllArgsAndThrows(strArg, *objArg, ec)));
 
@@ -4487,7 +4487,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    if (!state->argument(0).isObject())
+    if (UNLIKELY(!state->argument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "methodWithCallbackArg");
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     impl.methodWithCallbackArg(WTFMove(callback));
@@ -4507,7 +4507,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
     int nonCallback = toInt32(state, state->argument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!state->argument(1).isObject())
+    if (UNLIKELY(!state->argument(1).isObject()))
         return throwArgumentMustBeFunctionError(*state, 1, "callback", "TestObj", "methodWithNonCallbackArgAndCallbackArg");
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
     impl.methodWithNonCallbackArgAndCallbackArg(nonCallback, WTFMove(callback));
@@ -4542,7 +4542,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctio
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    if (!state->argument(0).isFunction())
+    if (UNLIKELY(!state->argument(0).isFunction()))
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "methodWithCallbackFunctionArg");
     RefPtr<TestCallbackFunction> callback = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     impl.methodWithCallbackFunctionArg(WTFMove(callback));
@@ -4562,7 +4562,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
     int nonCallback = toInt32(state, state->argument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!state->argument(1).isFunction())
+    if (UNLIKELY(!state->argument(1).isFunction()))
         return throwArgumentMustBeFunctionError(*state, 1, "callback", "TestObj", "methodWithNonCallbackArgAndCallbackFunctionArg");
     RefPtr<TestCallbackFunction> callback = JSTestCallbackFunction::create(asObject(state->uncheckedArgument(1)), castedThis->globalObject());
     impl.methodWithNonCallbackArgAndCallbackFunctionArg(nonCallback, WTFMove(callback));
@@ -4603,7 +4603,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
 {
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    if (!state->argument(0).isObject())
+    if (UNLIKELY(!state->argument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "staticMethodWithCallbackArg");
     RefPtr<TestCallback> callback = createFunctionOnlyCallback<JSTestCallback>(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), state->uncheckedArgument(0));
     TestObj::staticMethodWithCallbackArg(WTFMove(callback));
@@ -4739,7 +4739,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5(ExecSta
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    if (!state->argument(0).isObject())
+    if (UNLIKELY(!state->argument(0).isObject()))
         return throwArgumentMustBeFunctionError(*state, 0, "callback", "TestObj", "overloadedMethod");
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(state->uncheckedArgument(0)), castedThis->globalObject());
     impl.overloadedMethod(WTFMove(callback));
@@ -4793,7 +4793,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod8(ExecSta
     TestObj* objArg = JSTestObj::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg)
+    if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
     impl.overloadedMethod(*objArg);
     return JSValue::encode(jsUndefined());
@@ -4897,7 +4897,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
         return jsTestObjPrototypeFunctionOverloadedMethod11(state);
     if ()
         return jsTestObjPrototypeFunctionOverloadedMethod12(state);
-    if (argsCount < 1)
+    if (UNLIKELY(argsCount < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     return throwVMTypeError(state);
 }
@@ -4951,7 +4951,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptio
         return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(state);
     if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))))
         return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
-    if (argsCount < 1)
+    if (UNLIKELY(argsCount < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     return throwVMTypeError(state);
 }
@@ -5020,7 +5020,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(ExecS
         return jsTestObjConstructorFunctionOverloadedMethod12(state);
 #endif
 
-    if (argsCount < 1)
+    if (UNLIKELY(argsCount < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     return throwVMTypeError(state);
 }
@@ -5192,7 +5192,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* state
     TestNode* value = JSTestNode::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!value)
+    if (UNLIKELY(!value))
         return throwVMTypeError(state);
     impl.convert1(*value);
     return JSValue::encode(jsUndefined());
@@ -5322,12 +5322,12 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequenc
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
-    if (!state->argument(0).isUndefinedOrNull() && !state->argument(0).inherits(JSTestObj::info()))
+    if (UNLIKELY(!state->argument(0).isUndefinedOrNull() && !state->argument(0).inherits(JSTestObj::info())))
         return throwArgumentTypeError(*state, 0, "objArg", "TestObj", "strictFunctionWithSequence", "TestObj");
     TestObj* objArg = JSTestObj::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg)
+    if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
     Vector<unsigned> a = toNativeArray<unsigned>(state, state->argument(1));
     if (UNLIKELY(state->hadException()))
@@ -5349,12 +5349,12 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(E
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
-    if (!state->argument(0).isUndefinedOrNull() && !state->argument(0).inherits(JSTestObj::info()))
+    if (UNLIKELY(!state->argument(0).isUndefinedOrNull() && !state->argument(0).inherits(JSTestObj::info())))
         return throwArgumentTypeError(*state, 0, "objArg", "TestObj", "strictFunctionWithArray", "TestObj");
     TestObj* objArg = JSTestObj::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!objArg)
+    if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
     Vector<int> array = toNativeArray<int>(state, state->argument(1));
     if (UNLIKELY(state->hadException()))
@@ -5418,7 +5418,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
     Node* head = JSNode::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!head)
+    if (UNLIKELY(!head))
         return throwVMTypeError(state);
     Vector<Node*> tail;
     for (unsigned i = 1, count = state->argumentCount(); i < count; ++i) {
@@ -5487,7 +5487,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFl
     float a = state->argument(0).toFloat(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!std::isfinite(a))
+    if (UNLIKELY(!std::isfinite(a)))
         return throwVMTypeError(state);
     impl.testPromiseFunctionWithFloatArgument(a, DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
@@ -5553,7 +5553,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     float a = state->argument(0).toFloat(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!std::isfinite(a))
+    if (UNLIKELY(!std::isfinite(a)))
         return throwVMTypeError(state);
     impl.testPromiseOverloadedFunction(a, DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
@@ -5578,7 +5578,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     FetchRequest* request = JSFetchRequest::toWrapped(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (!request)
+    if (UNLIKELY(!request))
         return throwVMTypeError(state);
     impl.testPromiseOverloadedFunction(*request, DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
@@ -5592,7 +5592,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     JSValue arg0(state->argument(0));
     if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSFetchRequest::info())))))
         return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2(state);
-    if (argsCount < 1)
+    if (UNLIKELY(argsCount < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     return throwVMTypeError(state);
 }

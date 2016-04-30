@@ -159,7 +159,7 @@ EncodedJSValue jsattributeReadonly(ExecState* state, EncodedJSValue thisValue, P
 EncodedJSValue jsattributeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSattributePrototype* domObject = jsDynamicCast<JSattributePrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSattribute::getConstructor(state->vm(), domObject->globalObject()));
 }

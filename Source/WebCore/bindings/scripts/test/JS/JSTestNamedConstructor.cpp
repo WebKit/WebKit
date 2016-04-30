@@ -96,7 +96,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     RefPtr<TestNamedConstructor> object = TestNamedConstructor::createForJSConstructor(*castedThis->document(), str1, str2, str3, ec);
-    if (ec) {
+    if (UNLIKELY(ec)) {
         setDOMException(state, ec);
         return JSValue::encode(JSValue());
     }
@@ -159,7 +159,7 @@ void JSTestNamedConstructor::destroy(JSC::JSCell* cell)
 EncodedJSValue jsTestNamedConstructorConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     JSTestNamedConstructorPrototype* domObject = jsDynamicCast<JSTestNamedConstructorPrototype*>(JSValue::decode(thisValue));
-    if (!domObject)
+    if (UNLIKELY(!domObject))
         return throwVMTypeError(state);
     return JSValue::encode(JSTestNamedConstructor::getConstructor(state->vm(), domObject->globalObject()));
 }
