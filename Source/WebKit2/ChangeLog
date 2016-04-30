@@ -1,3 +1,17 @@
+2016-04-29  Chris Dumez  <cdumez@apple.com>
+
+        Remove unnecessary isolated String copying from one of NetworkCache::Key's constructor
+        https://bugs.webkit.org/show_bug.cgi?id=157207
+
+        Reviewed by Antti Koivisto.
+
+        Remove unnecessary isolated String copying from one of NetworkCache::Key's
+        constructor. We are anyway going to create isolated copies if the Key ends
+        up getting copied.
+
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::Key::Key):
+
 2016-04-29  Brian Burg  <bburg@apple.com>
 
         Web Automation: performMouseInteraction command computes mouse event coordinates incorrectly

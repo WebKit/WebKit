@@ -53,10 +53,10 @@ Key::Key(const Key& o)
 }
 
 Key::Key(const String& partition, const String& type, const String& range, const String& identifier)
-    : m_partition(partition.isEmpty() ? noPartitionString().isolatedCopy() : partition.isolatedCopy())
-    , m_type(type.isolatedCopy())
-    , m_identifier(identifier.isolatedCopy())
-    , m_range(range.isolatedCopy())
+    : m_partition(partition.isEmpty() ? noPartitionString() : partition)
+    , m_type(type)
+    , m_identifier(identifier)
+    , m_range(range)
     , m_hash(computeHash())
 {
 }
