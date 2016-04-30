@@ -45,10 +45,6 @@ WebInspector.FormatterWorkerProxy = class FormatterWorkerProxy extends WebInspec
         return FormatterWorkerProxy.instance;
     }
 
-    static canFormat(mimeType)
-    {
-    }
-
     // Actions
 
     formatJavaScript(sourceText, indentString, includeSourceMapData)

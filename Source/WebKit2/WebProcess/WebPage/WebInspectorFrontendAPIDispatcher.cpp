@@ -27,7 +27,6 @@
 #include "WebInspectorFrontendAPIDispatcher.h"
 
 #include "WebPage.h"
-#include <JavaScriptCore/ScriptValue.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/ScriptState.h>
@@ -42,7 +41,7 @@ WebInspectorFrontendAPIDispatcher::WebInspectorFrontendAPIDispatcher(WebPage& pa
 void WebInspectorFrontendAPIDispatcher::reset()
 {
     m_frontendLoaded = false;
-
+    m_suspended = false;
     m_queue.clear();
 }
 
@@ -50,41 +49,70 @@ void WebInspectorFrontendAPIDispatcher::frontendLoaded()
 {
     m_frontendLoaded = true;
 
-    for (const String& expression : m_queue)
-        m_page.corePage()->mainFrame().script().executeScript(expression);
+    evaluateQueuedExpressions();
+}
 
-    m_queue.clear();
+void WebInspectorFrontendAPIDispatcher::suspend()
+{
+    ASSERT(m_frontendLoaded);
+    ASSERT(!m_suspended);
+    ASSERT(m_queue.isEmpty());
+
+    m_suspended = true;
+}
+
+void WebInspectorFrontendAPIDispatcher::unsuspend()
+{
+    ASSERT(m_suspended);
+
+    m_suspended = false;
+
+    evaluateQueuedExpressions();
 }
 
 void WebInspectorFrontendAPIDispatcher::dispatchCommand(const String& command)
 {
-    evaluateExpressionOnLoad(makeString("InspectorFrontendAPI.dispatch([\"", command, "\"])"));
+    evaluateOrQueueExpression(makeString("InspectorFrontendAPI.dispatch([\"", command, "\"])"));
 }
 
 void WebInspectorFrontendAPIDispatcher::dispatchCommand(const String& command, const String& argument)
 {
-    evaluateExpressionOnLoad(makeString("InspectorFrontendAPI.dispatch([\"", command, "\", \"", argument, "\"])"));
+    evaluateOrQueueExpression(makeString("InspectorFrontendAPI.dispatch([\"", command, "\", \"", argument, "\"])"));
 }
 
 void WebInspectorFrontendAPIDispatcher::dispatchCommand(const String& command, bool argument)
 {
-    evaluateExpressionOnLoad(makeString("InspectorFrontendAPI.dispatch([\"", command, "\", ", argument ? "true" : "false", "])"));
+    evaluateOrQueueExpression(makeString("InspectorFrontendAPI.dispatch([\"", command, "\", ", argument ? "true" : "false", "])"));
 }
 
 void WebInspectorFrontendAPIDispatcher::dispatchMessageAsync(const String& message)
 {
-    evaluateExpressionOnLoad(makeString("InspectorFrontendAPI.dispatchMessageAsync(", message, ")"));
+    evaluateOrQueueExpression(makeString("InspectorFrontendAPI.dispatchMessageAsync(", message, ")"));
 }
 
-void WebInspectorFrontendAPIDispatcher::evaluateExpressionOnLoad(const String& expression)
+void WebInspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& expression)
 {
-    if (m_frontendLoaded) {
-        ASSERT(m_queue.isEmpty());
-        m_page.corePage()->mainFrame().script().executeScript(expression);
+    if (!m_frontendLoaded || m_suspended) {
+        m_queue.append(expression);
         return;
     }
 
-    m_queue.append(expression);
+    ASSERT(m_queue.isEmpty());
+    ASSERT(!m_page.corePage()->mainFrame().script().isPaused());
+    m_page.corePage()->mainFrame().script().executeScript(expression);
+}
+
+void WebInspectorFrontendAPIDispatcher::evaluateQueuedExpressions()
+{
+    if (m_queue.isEmpty())
+        return;
+
+    for (const String& expression : m_queue) {
+        ASSERT(!m_page.corePage()->mainFrame().script().isPaused());
+        m_page.corePage()->mainFrame().script().executeScript(expression);
+    }
+
+    m_queue.clear();
 }
 
 } // namespace WebKit

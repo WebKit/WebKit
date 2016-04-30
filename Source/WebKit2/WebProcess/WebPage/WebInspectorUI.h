@@ -104,6 +104,9 @@ public:
 
     void sendMessageToBackend(const String&) override;
 
+    void pagePaused() override;
+    void pageUnpaused() override;
+
     bool isUnderTest() override { return m_underTest; }
     unsigned inspectionLevel() const override { return m_inspectionLevel; }
 

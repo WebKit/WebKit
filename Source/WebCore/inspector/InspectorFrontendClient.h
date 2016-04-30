@@ -72,6 +72,9 @@ public:
 
     virtual void inspectedURLChanged(const String&) = 0;
 
+    virtual void pagePaused() { }
+    virtual void pageUnpaused() { }
+
     WEBCORE_EXPORT virtual void sendMessageToBackend(const String&) = 0;
 
     WEBCORE_EXPORT virtual bool isUnderTest() = 0;

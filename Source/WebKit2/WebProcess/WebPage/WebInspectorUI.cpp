@@ -258,6 +258,16 @@ void WebInspectorUI::sendMessageToFrontend(const String& message)
     m_frontendAPIDispatcher.dispatchMessageAsync(message);
 }
 
+void WebInspectorUI::pagePaused()
+{
+    m_frontendAPIDispatcher.suspend();
+}
+
+void WebInspectorUI::pageUnpaused()
+{
+    m_frontendAPIDispatcher.unsuspend();
+}
+
 void WebInspectorUI::sendMessageToBackend(const String& message)
 {
     if (m_backendConnection)

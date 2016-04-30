@@ -200,7 +200,7 @@ InspectorBackendClass = class InspectorBackendClass
             "method": command.qualifiedName,
         };
 
-        if (Object.keys(parameters).length)
+        if (!isEmptyObject(parameters))
             messageObject["params"] = parameters;
 
         let responseData = {command, callback};
@@ -221,7 +221,7 @@ InspectorBackendClass = class InspectorBackendClass
             "method": command.qualifiedName,
         };
 
-        if (Object.keys(parameters).length)
+        if (!isEmptyObject(parameters))
             messageObject["params"] = parameters;
 
         let responseData = {command};

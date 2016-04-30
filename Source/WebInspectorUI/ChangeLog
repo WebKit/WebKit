@@ -1,3 +1,20 @@
+2016-04-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Issues inspecting the inspector, pausing on breakpoints causes content to not load
+        https://bugs.webkit.org/show_bug.cgi?id=157198
+        <rdar://problem/26011049>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype._sendCommandToBackendWithCallback):
+        (InspectorBackendClass.prototype._sendCommandToBackendExpectingPromise):
+        While auditing, use simpler check.
+
+        * UserInterface/Proxies/FormatterWorkerProxy.js:
+        (WebInspector.FormatterWorkerProxy.canFormat): Deleted.
+        While auditing, remove dead code.
+
 2016-04-29  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Scrolling in Timelines causes flashing of the DataGrid

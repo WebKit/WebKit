@@ -192,7 +192,7 @@ void BackendDispatcher::sendResponse(long requestId, RefPtr<InspectorObject>&& r
     // The JSON-RPC 2.0 specification requires that the "error" member have the value 'null'
     // if no error occurred during an invocation, but we do not include it at all.
     Ref<InspectorObject> responseMessage = InspectorObject::create();
-    responseMessage->setObject(ASCIILiteral("result"), result);
+    responseMessage->setObject(ASCIILiteral("result"), WTFMove(result));
     responseMessage->setInteger(ASCIILiteral("id"), requestId);
     m_frontendRouter->sendResponse(responseMessage->toJSONString());
 }

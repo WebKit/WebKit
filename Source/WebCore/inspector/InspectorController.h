@@ -115,6 +115,7 @@ public:
     WEBCORE_EXPORT void setLegacyProfilerEnabled(bool);
 
     InspectorClient* inspectorClient() const { return m_inspectorClient; }
+    InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }
     InspectorPageAgent* pageAgent() const { return m_pageAgent; }
 
     bool developerExtrasEnabled() const override;

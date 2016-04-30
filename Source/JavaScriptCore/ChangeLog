@@ -1,3 +1,15 @@
+2016-04-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Issues inspecting the inspector, pausing on breakpoints causes content to not load
+        https://bugs.webkit.org/show_bug.cgi?id=157198
+        <rdar://problem/26011049>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::sendResponse):
+        While auditing the code, add a WTFMove.
+
 2016-04-29  Mark Lam  <mark.lam@apple.com>
 
         Make RegExp.prototype.test spec compliant.

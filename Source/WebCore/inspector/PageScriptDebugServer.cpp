@@ -30,6 +30,8 @@
 #include "Document.h"
 #include "EventLoop.h"
 #include "FrameView.h"
+#include "InspectorController.h"
+#include "InspectorFrontendClient.h"
 #include "JSDOMWindowCustom.h"
 #include "MainFrame.h"
 #include "Page.h"
@@ -142,6 +144,13 @@ void PageScriptDebugServer::setJavaScriptPaused(Page* page, bool paused)
 
     for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
         setJavaScriptPaused(frame, paused);
+
+    if (InspectorFrontendClient* frontendClient = page->inspectorController().inspectorFrontendClient()) {
+        if (paused)
+            frontendClient->pagePaused();
+        else
+            frontendClient->pageUnpaused();
+    }
 }
 
 void PageScriptDebugServer::setJavaScriptPaused(Frame* frame, bool paused)
