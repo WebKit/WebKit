@@ -94,7 +94,7 @@ extern const char expectedEnumerationValuesTestEnumType[];
 JSString* jsStringWithCache(ExecState* state, TestEnumType enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
-        ASCIILiteral(""),
+        emptyString(),
         ASCIILiteral("EnumValue1"),
         ASCIILiteral("EnumValue2"),
         ASCIILiteral("EnumValue3"),
@@ -134,7 +134,7 @@ extern const char expectedEnumerationValuesOptional[];
 JSString* jsStringWithCache(ExecState* state, Optional enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
-        ASCIILiteral(""),
+        emptyString(),
         ASCIILiteral("OptionalValue1"),
         ASCIILiteral("OptionalValue2"),
         ASCIILiteral("OptionalValue3"),

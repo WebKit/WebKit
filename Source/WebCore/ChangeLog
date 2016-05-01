@@ -1,3 +1,10 @@
+2016-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline bindings tests after r200300.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsStringWithCache):
+
 2016-05-01  Darin Adler  <darin@apple.com>
 
         Use enum class instead of string-based enums in RTC code
