@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum RTCIceTransportPolicyEnum { "none", "relay", "all" };
-enum RTCBundlePolicyEnum { "balanced", "max-compat", "max-bundle" };
+enum RTCIceTransportPolicy { "public", "relay", "all" };
+enum RTCBundlePolicy { "balanced", "max-compat", "max-bundle" };
 
 [
     Conditional=WEB_RTC,
     NoInterfaceObject,
 ] interface RTCConfiguration {
     readonly attribute RTCIceServer[] iceServers;
-    readonly attribute RTCIceTransportPolicyEnum iceTransportPolicy;
-    readonly attribute RTCBundlePolicyEnum bundlePolicy;
+    readonly attribute RTCIceTransportPolicy iceTransportPolicy;
+    readonly attribute RTCBundlePolicy bundlePolicy;
 };

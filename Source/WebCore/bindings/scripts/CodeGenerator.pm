@@ -133,8 +133,6 @@ my %svgTypeWithWritablePropertiesNeedingTearOff = (
 # enumeration to using an actual enum class in the C++. Once that is done, we should
 # remove this hash and the function that calls it.
 my %stringBasedEnumerationHash = (
-    "RTCBundlePolicyEnum" => 1,
-    "RTCIceTransportPolicyEnum" => 1,
     "ReferrerPolicy" => 1,
     "RequestCache" => 1,
     "RequestCredentials" => 1,

@@ -1,3 +1,27 @@
+2016-05-01  Darin Adler  <darin@apple.com>
+
+        Use enum class instead of string-based enums in RTC code
+        https://bugs.webkit.org/show_bug.cgi?id=157242
+
+        Reviewed by Alex Christensen.
+
+        * Modules/mediastream/RTCConfiguration.cpp:
+        (WebCore::RTCConfiguration::RTCConfiguration): Don't initialize members here,
+        do it in the header instead.
+        (WebCore::RTCConfiguration::initialize): Initialize data members to enum values,
+        not strings.
+
+        * Modules/mediastream/RTCConfiguration.h: Tried to keep this class compiling.
+        Added the new enum class, and changed to use that instead of strings. But note,
+        this should not even be a class. Needs to become a dictionary.
+
+        * Modules/mediastream/RTCConfiguration.idl: Updated the names and values of the
+        enums to match the current RTC specification. Again, as I said, this should be
+        a dictionary, not an interface.
+
+        * bindings/scripts/CodeGenerator.pm: Removed the RTC enumerations from the list
+        of string-based enums.
+
 2016-04-30  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r199640): position:absolute generated content inherits text-decoration from its element

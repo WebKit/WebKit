@@ -45,13 +45,16 @@ class Dictionary;
 
 typedef int ExceptionCode;
 
+enum class RTCBundlePolicy { Balanced, MaxCompat, MaxBundle };
+enum class RTCIceTransportPolicy { Public, Relay, All };
+
 class RTCConfiguration : public RefCounted<RTCConfiguration> {
 public:
     static RefPtr<RTCConfiguration> create(const Dictionary& configuration, ExceptionCode&);
     virtual ~RTCConfiguration() { }
 
-    const String& iceTransportPolicy() const { return m_iceTransportPolicy; }
-    const String& bundlePolicy() const { return m_bundlePolicy; }
+    RTCIceTransportPolicy iceTransportPolicy() const { return m_iceTransportPolicy; }
+    RTCBundlePolicy bundlePolicy() const { return m_bundlePolicy; }
     Vector<RefPtr<RTCIceServer>> iceServers() const { return m_iceServers; }
 
 private:
@@ -60,8 +63,8 @@ private:
     void initialize(const Dictionary& configuration, ExceptionCode&);
 
     Vector<RefPtr<RTCIceServer>> m_iceServers;
-    String m_iceTransportPolicy;
-    String m_bundlePolicy;
+    RTCIceTransportPolicy m_iceTransportPolicy { RTCIceTransportPolicy::All };
+    RTCBundlePolicy m_bundlePolicy { RTCBundlePolicy::Balanced };
 };
 
 } // namespace WebCore
