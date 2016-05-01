@@ -1,14 +1,14 @@
 [
     {
-        "name": "csswg-tests",
+        "name": "csswg-test",
         "url": "https://github.com/w3c/csswg-test.git", 
-        "revision": "9f45f89",
+        "revision": "b2daa426addd5ccb8e9ce1c5d800f9d82603f1ec",
         "paths_to_skip": [
-            "work-in-progress",
-            "tools"
+            "support",
+            "tools",
+            "work-in-progress"
         ],
         "paths_to_import": [
-            "support"
         ],
         "import_options": ["convert_test_harness_links"]
     },

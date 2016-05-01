@@ -1,3 +1,23 @@
+2016-05-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Fix 157169
+
+        Update W3C importer files related to csswg-test files after r200234
+        https://bugs.webkit.org/show_bug.cgi?id=157169
+
+        Reviewed by Ryosuke Niwa.
+
+        Updating ImportExpectations to import css-scoping-1 test suite only from css wg test repository.
+        Updating TestRepositories to set the current csswg-test revision to b2daa426addd5ccb8e9ce1c5d800f9d82603f1ec.
+        Rerun test importer to add some additional files (document, license...).
+
+        * csswg-test/CONTRIBUTING.md: Added.
+        * csswg-test/LICENSE: Added.
+        * csswg-test/README.md: Added.
+        * csswg-test/w3c-import.log: Added.
+        * resources/ImportExpectations:
+        * resources/TestRepositories:
+
 2016-04-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Regnerate w3c-import.log files after r200109
