@@ -1,3 +1,12 @@
+2016-05-01  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fixed build with !ENABLED(DATABASE_PROCESS).
+
+        Unreviewed build fix.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::grantSandboxExtensionsToDatabaseProcessForBlobs):
+
 2016-04-29  Chris Dumez  <cdumez@apple.com>
 
         Drop useless check in SpeculativeLoadManager::registerLoad()

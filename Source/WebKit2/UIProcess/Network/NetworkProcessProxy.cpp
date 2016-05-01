@@ -273,6 +273,7 @@ void NetworkProcessProxy::didDeleteWebsiteDataForOrigins(uint64_t callbackID)
 
 void NetworkProcessProxy::grantSandboxExtensionsToDatabaseProcessForBlobs(uint64_t requestID, const Vector<String>& paths)
 {
+#if ENABLE(DATABASE_PROCESS)
     SandboxExtension::HandleArray extensions;
     extensions.allocate(paths.size());
     for (size_t i = 0; i < paths.size(); ++i) {
@@ -282,6 +283,7 @@ void NetworkProcessProxy::grantSandboxExtensionsToDatabaseProcessForBlobs(uint64
 
     m_processPool.sendToDatabaseProcessRelaunchingIfNecessary(Messages::DatabaseProcess::GrantSandboxExtensionsForBlobs(paths, extensions));
     connection()->send(Messages::NetworkProcess::DidGrantSandboxExtensionsToDatabaseProcessForBlobs(requestID), 0);
+#endif
 }
 
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
