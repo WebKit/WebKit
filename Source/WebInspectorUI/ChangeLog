@@ -1,3 +1,12 @@
+2016-05-01  Dan Bernstein  <mitz@apple.com>
+
+        WebInspectorUI.framework/Versions/A/Resources/Images/Legacy is empty
+        https://bugs.webkit.org/show_bug.cgi?id=157248
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Images/Legacy: Removed.
+
 2016-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Issues inspecting the inspector, pausing on breakpoints causes content to not load
