@@ -3721,7 +3721,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    if (${name}Value.isUndefined()) {\n");
                 if (defined($parameter->default)) {
                     my $enumerationValueName = GetEnumerationValueName(substr($parameter->default, 1, -1));
-                    push(@$outputArray, "        $name = $className::$enumerationValueName;\n");
+                    push(@$outputArray, "        $name = ${className}::${enumerationValueName};\n");
                 }
                 push(@$outputArray, "    } else {\n");
                 $indent = "    ";

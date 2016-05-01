@@ -3,6 +3,13 @@
         Unreviewed attempt to fix Windows build after r200288.
 
         * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+
+2016-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix Windows build after r200288.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
         (GetEnumerationImplementationContent):
 
 2016-05-01  Chris Dumez  <cdumez@apple.com>
