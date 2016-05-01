@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<style>
+:link {
+    color: green;
+}
+a::before {
+    content: "before content ";
+    text-decoration: none;
+}
+a::after {
+    content: " after content";
+    text-decoration: none;
+}
+.absolute::before {
+    position: absolute;
+    top: 90px;
+}
+.absolute::after {
+    position: absolute;
+}
+</style>
+<p>Test that text decoration is not inherited to a positioned :before/:after pseudo element.</p>
+
+<a href="#">normal content</a>
+<br>
+<a class="absolute" href="#">normal content</a>

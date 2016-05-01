@@ -1,3 +1,19 @@
+2016-04-30  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r199640): position:absolute generated content inherits text-decoration from its element
+        https://bugs.webkit.org/show_bug.cgi?id=157199
+        <rdar://problem/26013111>
+
+        Reviewed by Zalan Bujtas.
+
+        Test: fast/css/text-decoration-inheritance-pseudo.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::doesNotInheritTextDecoration):
+        (WebCore::StyleResolver::adjustRenderStyle):
+
+            There was an accidental logic change here. Even if element is null other conditions may make this test true.
+
 2016-04-30  Zalan Bujtas  <zalan@apple.com>
 
         Some content causes deep recursion.
