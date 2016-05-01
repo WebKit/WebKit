@@ -872,7 +872,7 @@ sub GetEnumerationImplementationContent
         my $index = 0;
         foreach my $value (@{$enumeration->values}) {
             my $enumerationValueName = GetEnumerationValueName($value);
-            $result .= "    static_assert(static_cast<size_t>($className::$enumerationValueName) == $index, \"$className::$enumerationValueName is not $index as expected\");\n";
+            $result .= "    static_assert(static_cast<size_t>(${className}::$enumerationValueName) == $index, \"${className}::$enumerationValueName is not $index as expected\");\n";
             $index++;
         }
         $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
@@ -896,7 +896,7 @@ sub GetEnumerationImplementationContent
             } else {
                 $result .= "    if (stringValue == \"$value\")\n";
             }
-            $result .= "        return $className::$enumerationValueName;\n";
+            $result .= "        return ${className}::${enumerationValueName};\n";
         }
         $result .= "    return Nullopt;\n";
         $result .= "}\n\n";
