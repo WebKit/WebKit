@@ -239,18 +239,15 @@ sub AddIncludesForType
 
     return if SkipIncludeHeader($type);
     
-    # When we're finished with the one-file-per-class
-    # reorganization, we won't need these special cases.
+    # When we're finished with the one-file-per-class reorganization, we won't need these special cases.
     if ($type eq "XPathNSResolver") {
         $includesRef->{"JSXPathNSResolver.h"} = 1;
         $includesRef->{"JSCustomXPathNSResolver.h"} = 1;
     } elsif ($isCallback && $codeGenerator->IsWrapperType($type)) {
         $includesRef->{"JS${type}.h"} = 1;
-    } elsif ($codeGenerator->GetSequenceType($type) or $codeGenerator->GetArrayType($type)) {
+    } elsif ($codeGenerator->GetArrayOrSequenceType($type)) {
         my $arrayType = $codeGenerator->GetArrayType($type);
-        my $sequenceType = $codeGenerator->GetSequenceType($type);
-        my $arrayOrSequenceType = $arrayType || $sequenceType;
-
+        my $arrayOrSequenceType = $arrayType || $codeGenerator->GetSequenceType($type);
         if ($arrayType eq "DOMString") {
             $includesRef->{"JSDOMStringList.h"} = 1;
             $includesRef->{"DOMStringList.h"} = 1;
@@ -280,39 +277,28 @@ sub AddToImplIncludes
     }
 }
 
-sub IsScriptProfileType
-{
-    my $type = shift;
-    return 1 if ($type eq "ScriptProfileNode");
-    return 0;
-}
-
 sub IsReadonly
 {
     my $attribute = shift;
     return $attribute->isReadOnly && !$attribute->signature->extendedAttributes->{"Replaceable"} && !$attribute->signature->extendedAttributes->{"PutForwards"};
 }
 
-sub AddTypedefForScriptProfileType
-{
-    my $type = shift;
-    (my $jscType = $type) =~ s/Script//;
-
-    push(@headerContent, "typedef JSC::$jscType $type;\n\n");
-}
-
 sub AddClassForwardIfNeeded
 {
     my $interfaceName = shift;
 
-    # SVGAnimatedLength/Number/etc. are typedefs to SVGAnimatedTemplate, so don't use class forwards for them!
-    unless ($codeGenerator->IsSVGAnimatedType($interfaceName) or IsScriptProfileType($interfaceName) or $codeGenerator->IsTypedArrayType($interfaceName)) {
-        push(@headerContent, "class $interfaceName;\n\n");
-    # ScriptProfile and ScriptProfileNode are typedefs to JSC::Profile and JSC::ProfileNode.
-    } elsif (IsScriptProfileType($interfaceName)) {
+    if ($interfaceName eq "ScriptProfileNode") {
         $headerIncludes{"<profiler/ProfileNode.h>"} = 1;
-        AddTypedefForScriptProfileType($interfaceName);
+        push(@headerContent, "typedef JSC::ProfileNode ScriptProfileNode;\n\n");
+        return;
     }
+
+    # SVGAnimatedLength/Number/etc. are typedefs and should not be forward-declared as classes.
+    return if $codeGenerator->IsSVGAnimatedType($interfaceName);
+
+    return if $codeGenerator->IsTypedArrayType($interfaceName);
+
+    push(@headerContent, "class $interfaceName;\n\n");
 }
 
 sub GetGenerateIsReachable
@@ -472,7 +458,7 @@ sub NeedsImplementationClass
 {
     my ($interface) = @_;
 
-    return 0 if ($interface->extendedAttributes->{"JSBuiltin"});
+    return 0 if $interface->extendedAttributes->{"JSBuiltin"};
     return 1;
 }
 
@@ -679,8 +665,7 @@ sub OperationShouldBeOnInstance
     # FIXME: The bindings generator does not support putting runtime-enabled operations on the instance yet (except for global objects).
     return 0 if $function->signature->extendedAttributes->{"EnabledAtRuntime"};
 
-    # [Unforgeable] operations should be on the instance.
-    # https://heycam.github.io/webidl/#Unforgeable
+    # [Unforgeable] operations should be on the instance. https://heycam.github.io/webidl/#Unforgeable
     return 1 if IsUnforgeable($interface, $function);
 
     return 0;
@@ -781,7 +766,6 @@ sub InstanceOverridesGetOwnPropertySlot
         || $hasNamedGetter;
 
     return $numInstanceProperties > 0 || $hasComplexGetter;
-
 }
 
 sub PrototypeOverridesGetOwnPropertySlot
@@ -829,12 +813,14 @@ sub GetImplClassName
     return $name;
 }
 
-sub GetEnumerationClassName {
+sub GetEnumerationClassName
+{
     my ($name) = @_;
     return $codeGenerator->WK_ucfirst($name);
 };
 
-sub GetEnumerationValueName {
+sub GetEnumerationValueName
+{
     my ($name) = @_;
     return "EmptyString" if $name eq "";
     $name = join("", map { $codeGenerator->WK_ucfirst($_) } split("-", $name));
@@ -1577,7 +1563,7 @@ sub GenerateParametersCheckExpression
             # http://heycam.github.io/webidl/#es-nullable-type
             $condition .= "${value}.isNull() || " if $parameter->isNullable;
 
-            if ($codeGenerator->GetArrayType($type) || $codeGenerator->GetSequenceType($type)) {
+            if ($codeGenerator->GetArrayOrSequenceType($type)) {
                 # FIXME: Add proper support for T[], T[]?, sequence<T>.
                 $condition .= "(${value}.isObject() && isJSArray(${value}))";
             } else {
@@ -1593,20 +1579,19 @@ sub GenerateParametersCheckExpression
     return ($res, sort {$a <=> $b} (keys %usedArguments));
 }
 
-# As per Web IDL specification, the length of a function Object is
-# its number of mandatory parameters.
+# As per Web IDL specification, the length of a function Object is its number of mandatory parameters.
 sub GetFunctionLength
 {
-  my $function = shift;
+    my $function = shift;
 
-  my $numMandatoryParams = 0;
-  foreach my $parameter (@{$function->parameters}) {
-    # Abort as soon as we find the first optional parameter as no mandatory
-    # parameter can follow an optional one.
-    last if $parameter->isOptional || $parameter->isVariadic;
-    $numMandatoryParams++;
-  }
-  return $numMandatoryParams;
+    my $length = 0;
+    foreach my $parameter (@{$function->parameters}) {
+        # Abort as soon as we find the first optional parameter as no mandatory
+        # parameter can follow an optional one.
+        last if $parameter->isOptional || $parameter->isVariadic;
+        $length++;
+    }
+    return $length;
 }
 
 sub GenerateFunctionParametersCheck
@@ -2844,15 +2829,12 @@ sub GenerateImplementation
                 # is thrown rather than silently passing NULL to the C++ code.
                 # Per the Web IDL and ECMAScript specifications, incoming values can always be converted to
                 # both strings and numbers, so do not throw TypeError if the attribute is of these types.
-                if ($attribute->signature->extendedAttributes->{"StrictTypeChecking"}) {
+                if ($codeGenerator->IsWrapperType($type) && $attribute->signature->extendedAttributes->{"StrictTypeChecking"}) {
                     $implIncludes{"<runtime/Error.h>"} = 1;
-
-                    if ($codeGenerator->IsWrapperType($type)) {
-                        push(@implContent, "    if (UNLIKELY(!value.isUndefinedOrNull() && !value.inherits(JS${type}::info()))) {\n");
-                        push(@implContent, "        throwAttributeTypeError(*state, \"$interfaceName\", \"$name\", \"$type\");\n");
-                        push(@implContent, "        return false;\n");
-                        push(@implContent, "    };\n");
-                    }
+                    push(@implContent, "    if (UNLIKELY(!value.isUndefinedOrNull() && !value.inherits(JS${type}::info()))) {\n");
+                    push(@implContent, "        throwAttributeTypeError(*state, \"$interfaceName\", \"$name\", \"$type\");\n");
+                    push(@implContent, "        return false;\n");
+                    push(@implContent, "    };\n");
                 }
 
                 push(@implContent, "    " . GetNativeTypeFromSignature($attribute->signature) . " nativeValue = " . JSValueToNative($attribute->signature, "value", $attribute->signature->extendedAttributes->{"Conditional"}) . ";\n");
@@ -3475,42 +3457,48 @@ sub CanUseWTFOptionalForParameter
     return 1;
 }
 
+my %automaticallyGeneratedDefaultValues = (
+    "any" => "undefined",
+
+    # toString() will convert undefined to the string "undefined";
+    # (note that this optimizes a behavior that is almost never useful)
+    "DOMString" => "\"undefined\"",
+
+    # Dictionary(state, undefined) will construct an empty Dictionary.
+    "Dictionary" => "[]",
+
+    # JSValue::toBoolean() will convert undefined to false.
+    "boolean" => "false",
+
+    # JSValue::toInt*() / JSValue::toUint*() will convert undefined to 0.
+    "byte" => "0",
+    "long long" => "0",
+    "long" => "0",
+    "octet" => "0",
+    "short" => "0",
+    "unsigned long long" => "0",
+    "unsigned long" => "0",
+    "unsigned short" => "0",
+
+    # toNumber() / toFloat() convert undefined to NaN.
+    "double" => "NaN",
+    "float" => "NaN",
+    "unrestricted double" => "NaN",
+    "unrestricted float" => "NaN",
+);
+
 sub WillConvertUndefinedToDefaultParameterValue
 {
     my $parameterType = shift;
     my $defaultValue = shift;
 
-    if ($defaultValue eq "[]") {
-        # Dictionary(state, undefined) will construct an empty Dictionary.
-        return 1 if $parameterType eq "Dictionary";
+    my $automaticallyGeneratedDefaultValue = $automaticallyGeneratedDefaultValues{$parameterType};
+    return 1 if defined $automaticallyGeneratedDefaultValue && $automaticallyGeneratedDefaultValue eq $defaultValue;
 
-        # toRefPtrNativeArray() will convert undefined to an empty Vector.
-        return 1 if $codeGenerator->GetArrayType($parameterType) or $codeGenerator->GetSequenceType($parameterType);
-    }
+    # toRefPtrNativeArray() will convert undefined to an empty Vector.
+    return 1 if $defaultValue eq "[]" && $codeGenerator->GetArrayOrSequenceType($parameterType);
 
-    # toString() will convert undefined to the string "undefined";
-    return 1 if $parameterType eq "DOMString" and $defaultValue eq "\"undefined\"";
-
-    return 1 if $parameterType eq "any" and $defaultValue eq "undefined";
-
-    # JSValue::toBoolean() will convert undefined to false.
-    return 1 if $parameterType eq "boolean" and $defaultValue eq "false";
-
-    # JSValue::toInt*() / JSValue::toUint*() will convert undefined to 0.
-    if ($defaultValue eq "0") {
-        return 1 if $parameterType eq "byte" or $parameterType eq "octet";
-        return 1 if $parameterType eq "short" or $parameterType eq "unsigned short";
-        return 1 if $parameterType eq "long" or $parameterType eq "unsigned long";
-        return 1 if $parameterType eq "long long" or $parameterType eq "unsigned long long";
-    }
-
-    if ($defaultValue eq "NaN") {
-        # toNumber() / toFloat() convert undefined to NaN.
-        return 1 if $parameterType eq "double" or $parameterType eq "unrestricted double";
-        return 1 if $parameterType eq "float" or $parameterType eq "unrestricted float";
-    }
-
-    return 1 if $codeGenerator->IsWrapperType($parameterType) and $defaultValue eq "null";
+    return 1 if $defaultValue eq "null" && $codeGenerator->IsWrapperType($parameterType);
 
     return 0;
 }
@@ -4265,26 +4253,25 @@ sub GetNativeTypeFromSignature
 
 my %nativeType = (
     "DOMString" => "String",
-    "NodeFilter" => "RefPtr<NodeFilter>",
-    "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
+    "DOMTimeStamp" => "DOMTimeStamp",
     "Date" => "double",
     "Dictionary" => "Dictionary",
+    "NodeFilter" => "RefPtr<NodeFilter>",
+    "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "any" => "JSC::JSValue",
     "boolean" => "bool",
+    "byte" => "int8_t",
     "double" => "double",
     "float" => "float",
+    "long long" => "long long",
+    "long" => "int",
+    "octet" => "uint8_t",
+    "short" => "int16_t",
     "unrestricted double" => "double",
     "unrestricted float" => "float",
-    "short" => "int16_t",
-    "long" => "int",
+    "unsigned long long" => "unsigned long long",
     "unsigned long" => "unsigned",
     "unsigned short" => "uint16_t",
-    "long long" => "long long",
-    "unsigned long long" => "unsigned long long",
-    "byte" => "int8_t",
-    "octet" => "uint8_t",
-    "DOMTimeStamp" => "DOMTimeStamp",
-    "Symbol" => "PrivateName"
 );
 
 sub GetNativeType
@@ -4299,9 +4286,7 @@ sub GetNativeType
     return "RefPtr<${type}>" if $codeGenerator->IsTypedArrayType($type) and not $type eq "ArrayBuffer";
     return $nativeType{$type} if exists $nativeType{$type};
 
-    my $arrayType = $codeGenerator->GetArrayType($type);
-    my $sequenceType = $codeGenerator->GetSequenceType($type);
-    my $arrayOrSequenceType = $arrayType || $sequenceType;
+    my $arrayOrSequenceType = $codeGenerator->GetArrayOrSequenceType($type);
 
     return "Vector<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">" if $arrayOrSequenceType;
     return "String" if $codeGenerator->IsStringBasedEnumType($type);
@@ -4391,6 +4376,17 @@ sub IsNativeType
     return exists $nativeType{$type};
 }
 
+my %integerConversionFunction = (
+    "byte" => "toInt8",
+    "long long" => "toInt64",
+    "long" => "toInt32",
+    "octet" => "toUInt8",
+    "short" => "toInt16",
+    "unsigned long long" => "toUInt64",
+    "unsigned long" => "toUInt32",
+    "unsigned short" => "toUInt16",
+);
+
 sub JSValueToNative
 {
     my $signature = shift;
@@ -4399,23 +4395,13 @@ sub JSValueToNative
 
     my $type = $signature->type;
 
-    return "$value.toBoolean(state)" if $type eq "boolean";
-    return "$value.toNumber(state)" if $type eq "double" or $type eq "unrestricted double" ;
-    return "$value.toFloat(state)" if $type eq "float" or $type eq "unrestricted float" ;
-
-    my $intConversion = "NormalConversion";
-    $intConversion = "EnforceRange" if $signature->extendedAttributes->{"EnforceRange"};
-    $intConversion = "Clamp" if $signature->extendedAttributes->{"Clamp"};
-    return "toInt8(state, $value, $intConversion)" if $type eq "byte";
-    return "toUInt8(state, $value, $intConversion)" if $type eq "octet";
-    return "toInt16(state, $value, $intConversion)" if $type eq "short";
-    return "toUInt16(state, $value, $intConversion)" if $type eq "unsigned short";
-    return "toInt32(state, $value, $intConversion)" if $type eq "long";
-    return "toUInt32(state, $value, $intConversion)" if $type eq "unsigned long";
-    return "toInt64(state, $value, $intConversion)" if $type eq "long long";
-    return "toUInt64(state, $value, $intConversion)" if $type eq "unsigned long long";
-
-    return "valueToDate(state, $value)" if $type eq "Date";
+    my $function = $integerConversionFunction{$type};
+    if ($function) {
+        my $conversionType = "NormalConversion";
+        $conversionType = "EnforceRange" if $signature->extendedAttributes->{"EnforceRange"};
+        $conversionType = "Clamp" if $signature->extendedAttributes->{"Clamp"};
+        return "$function(state, $value, $conversionType)";
+    }
 
     if ($type eq "DOMString") {
         if ($signature->extendedAttributes->{"TreatNullAs"}) {
@@ -4424,17 +4410,7 @@ sub JSValueToNative
         }
         return "valueToStringWithUndefinedOrNullCheck(state, $value)" if $signature->isNullable;
         return "$value.toString(state)->toAtomicString(state)" if $signature->extendedAttributes->{"AtomicString"};
-
         return "$value.toWTFString(state)";
-    }
-
-    if ($type eq "any") {
-        return $value;
-    }
-
-    if ($type eq "NodeFilter") {
-        AddToImplIncludes("JS$type.h", $conditional);
-        return "JS${type}::toWrapped(state->vm(), $value)";
     }
 
     if ($type eq "SerializedScriptValue") {
@@ -4447,22 +4423,7 @@ sub JSValueToNative
         return "{ state, $value }";
     }
 
-    if ($type eq "DOMStringList" ) {
-        AddToImplIncludes("JSDOMStringList.h", $conditional);
-        return "toDOMStringList(state, $value)";
-    }
-    
-    if ($codeGenerator->IsTypedArrayType($type)) {
-        return "to$type($value)";
-    }
-
-    AddToImplIncludes("HTMLOptionElement.h", $conditional) if $type eq "HTMLOptionElement";
-    AddToImplIncludes("Event.h", $conditional) if $type eq "Event";
-
-    my $arrayType = $codeGenerator->GetArrayType($type);
-    my $sequenceType = $codeGenerator->GetSequenceType($type);
-    my $arrayOrSequenceType = $arrayType || $sequenceType;
-
+    my $arrayOrSequenceType = $codeGenerator->GetArrayOrSequenceType($type);
     if ($arrayOrSequenceType) {
         if ($codeGenerator->IsRefPtrType($arrayOrSequenceType)) {
             AddToImplIncludes("JS${arrayOrSequenceType}.h");
@@ -4471,15 +4432,22 @@ sub JSValueToNative
         return "toNativeArray<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">(state, $value)";
     }
 
+    return $value if $type eq "any";
+
+    return "$value.toBoolean(state)" if $type eq "boolean";
+    return "$value.toNumber(state)" if $type eq "double" or $type eq "unrestricted double";
+    return "$value.toFloat(state)" if $type eq "float" or $type eq "unrestricted float";
+    return "valueToDate(state, $value)" if $type eq "Date";
+
+    return "to$type($value)" if $codeGenerator->IsTypedArrayType($type);
     return "$value.toWTFString(state)" if $codeGenerator->IsStringBasedEnumType($type);
+    return "parse" . GetEnumerationClassName($type) . "(*state, $value)" if $codeGenerator->IsEnumType($type);
 
-    if ($codeGenerator->IsEnumType($type)) {
-        my $className = GetEnumerationClassName($type);
-        return "parse$className(*state, $value)";
-    }
-
-    # Default, assume autogenerated type conversion routines
     AddToImplIncludes("JS$type.h", $conditional);
+
+    return "toDOMStringList(state, $value)" if $type eq "DOMStringList";
+    return "JSNodeFilter::toWrapped(state->vm(), $value)" if $type eq "NodeFilter";
+
     return "JS${type}::toWrapped($value)";
 }
 
@@ -4494,32 +4462,24 @@ sub NativeToJSValue
     my $conditional = $signature->extendedAttributes->{"Conditional"};
     my $type = $signature->type;
 
+    my $globalObject = $thisValue ? "$thisValue->globalObject()" : "jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())";
+
     return "jsBoolean($value)" if $type eq "boolean";
 
-    # Need to check Date type before IsPrimitiveType().
     if ($type eq "Date") {
-        my $conv = $signature->extendedAttributes->{"TreatReturnedNaNDateAs"};
-        if (defined $conv) {
-            return "jsDateOrNull(state, $value)" if $conv eq "Null";
-            return "jsDateOrNaN(state, $value)" if $conv eq "NaN";
-            
-            die "Unknown value for TreatReturnedNaNDateAs extended attribute";
-        }
-        return "jsDateOrNull(state, $value)";
+        my $handlingForNaN = $signature->extendedAttributes->{"TreatReturnedNaNDateAs"};
+        return "jsDateOrNull(state, $value)" if !defined $handlingForNaN || $handlingForNaN eq "Null";
+        return "jsDateOrNaN(state, $value)" if $handlingForNaN eq "NaN";
+        die "Unknown value for TreatReturnedNaNDateAs extended attribute";
     }
 
-    if ($type eq "Symbol") {
-        AddToImplIncludes("<runtime/Symbol.h>", $conditional);
-        return "Symbol::create(state->vm(), *($value).uid())";
-    }
-
-    if ($codeGenerator->IsPrimitiveType($type) or $type eq "DOMTimeStamp") {
+    if ($codeGenerator->IsNumericType($type) or $type eq "DOMTimeStamp") {
         # We could instead overload a function to work with optional as well as non-optional numbers, but this
         # is slightly better because it guarantees we will fail to compile if the IDL file doesn't match the C++.
         my $function = $signature->isNullable ? "toNullableJSNumber" : "jsNumber";
         if ($signature->extendedAttributes->{"Reflect"} and ($type eq "unsigned long" or $type eq "unsigned short")) {
             $value =~ s/getUnsignedIntegralAttribute/getIntegralAttribute/g;
-            return "$function(std::max(0, " . $value . "))";
+            $value = "std::max(0, $value)";
         }
         return "$function($value)";
     }
@@ -4536,34 +4496,16 @@ sub NativeToJSValue
         return "jsStringWithCache(state, $value)";
     }
     
-    my $globalObject;
-    if ($thisValue) {
-        $globalObject = "$thisValue->globalObject()";
-    }
-
-    if ($type eq "CSSStyleDeclaration") {
-        AddToImplIncludes("StyleProperties.h", $conditional);
-    }
-
-    if ($type eq "NodeList") {
-        AddToImplIncludes("NameNodeList.h", $conditional);
-    }
-
     my $arrayType = $codeGenerator->GetArrayType($type);
-    my $sequenceType = $codeGenerator->GetSequenceType($type);
-    my $arrayOrSequenceType = $arrayType || $sequenceType;
+    my $arrayOrSequenceType = $arrayType || $codeGenerator->GetSequenceType($type);
 
     if ($arrayOrSequenceType) {
         if ($arrayType eq "DOMString") {
             AddToImplIncludes("JSDOMStringList.h", $conditional);
-            AddToImplIncludes("DOMStringList.h", $conditional);
-
         } elsif ($codeGenerator->IsRefPtrType($arrayOrSequenceType)) {
             AddToImplIncludes("JS${arrayOrSequenceType}.h", $conditional);
-            AddToImplIncludes("${arrayOrSequenceType}.h", $conditional);
         }
         AddToImplIncludes("<runtime/JSArray.h>", $conditional);
-
         return "jsArray(state, $globalObject, $value)";
     }
 
@@ -4572,35 +4514,30 @@ sub NativeToJSValue
         if (defined $returnType and ($returnType eq "IDBKeyPath" or $returnType eq "IDBKey")) {
             AddToImplIncludes("IDBBindingUtilities.h", $conditional);
             return "toJS(*state, *$globalObject, $value)";
-        } else {
-            return $value;
         }
-    } elsif ($type eq "SerializedScriptValue") {
+        return $value;
+    }
+
+    if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
         return "$value ? $value->deserialize(state, castedThis->globalObject(), 0) : jsNull()";
-    } elsif ($codeGenerator->IsTypedArrayType($type)) {
-        # Do nothing - all headers are already included.
-    } else {
-        # Default, include header with same name.
-        AddToImplIncludes("JS$type.h", $conditional);
-        AddToImplIncludes("$type.h", $conditional) if not $codeGenerator->SkipIncludeHeader($type);
     }
+
+    AddToImplIncludes("StyleProperties.h", $conditional) if $type eq "CSSStyleDeclaration";
+    AddToImplIncludes("NameNodeList.h", $conditional) if $type eq "NodeList";
+    AddToImplIncludes("JS$type.h", $conditional) if !$codeGenerator->IsTypedArrayType($type);
 
     return $value if $codeGenerator->IsSVGAnimatedType($type);
 
-    if ($signature->extendedAttributes->{"NewObject"}) {
-        return "toJSNewlyCreated(state, $globalObject, WTF::getPtr($value))";
-    }
-
     if ($codeGenerator->IsSVGAnimatedType($interfaceName) or ($interfaceName eq "SVGViewSpec" and $type eq "SVGTransformList")) {
         # Convert from abstract RefPtr<ListProperty> to real type, so the right toJS() method can be invoked.
-        $value = "static_cast<" . GetNativeType($type) . ">($value" . ".get())";
+        $value = "static_cast<" . GetNativeType($type) . ">($value.get())";
     } elsif ($interfaceName eq "SVGViewSpec") {
         # Convert from abstract SVGProperty to real type, so the right toJS() method can be invoked.
         $value = "static_cast<" . GetNativeType($type) . ">($value)";
     } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($type) and not $interfaceName =~ /List$/) {
         my $tearOffType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
-        if ($codeGenerator->IsSVGTypeWithWritablePropertiesNeedingTearOff($type) and $inFunctionCall eq 0 and not defined $signature->extendedAttributes->{"Immutable"}) {
+        if ($codeGenerator->IsSVGTypeWithWritablePropertiesNeedingTearOff($type) and !$inFunctionCall and not defined $signature->extendedAttributes->{"Immutable"}) {
             my $getter = $value;
             $getter =~ s/impl\.//;
             $getter =~ s/impl->//;
@@ -4609,8 +4546,8 @@ sub NativeToJSValue
 
             my $selfIsTearOffType = $codeGenerator->IsSVGTypeNeedingTearOff($interfaceName);
             if ($selfIsTearOffType) {
+                # FIXME: Why SVGMatrix specifically?
                 AddToImplIncludes("SVGMatrixTearOff.h", $conditional);
-                # FIXME: Blink: Don't create a new one everytime we access the matrix property. This means, e.g, === won't work.
                 $value = "SVGMatrixTearOff::create(castedThis->wrapped(), $value)";
             } else {
                 AddToImplIncludes("SVGStaticPropertyTearOff.h", $conditional);
@@ -4623,11 +4560,10 @@ sub NativeToJSValue
             $value = "${tearOffType}::create($value)";
         }
     }
-    if ($globalObject) {
-        return "toJS(state, $globalObject, WTF::getPtr($value))";
-    } else {
-        return "toJS(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), WTF::getPtr($value))";
-    }
+
+    my $function = $signature->extendedAttributes->{"NewObject"} ? "toJSNewlyCreated" : "toJS";
+
+    return "$function(state, $globalObject, WTF::getPtr($value))";
 }
 
 sub ceilingToPowerOf2

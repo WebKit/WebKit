@@ -24,10 +24,10 @@
 */
 
 [
-    NoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext
+    GenerateIsReachable=ImplWebGLRenderingContext,
+    NoInterfaceObject,
 ] interface EXTBlendMinMax {
-    const unsigned int MIN_EXT = 0x8007;
-    const unsigned int MAX_EXT = 0x8008;
+    const unsigned long MIN_EXT = 0x8007;
+    const unsigned long MAX_EXT = 0x8008;
 };

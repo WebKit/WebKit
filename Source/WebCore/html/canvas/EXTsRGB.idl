@@ -24,12 +24,12 @@
 */
 
 [
-    NoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext
+    GenerateIsReachable=ImplWebGLRenderingContext,
+    NoInterfaceObject,
 ] interface EXTsRGB {
-    const unsigned int SRGB_EXT                                     = 0x8C40;
-    const unsigned int SRGB_ALPHA_EXT                               = 0x8C42;
-    const unsigned int SRGB8_ALPHA8_EXT                             = 0x8C43;
-    const unsigned int FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT    = 0x8210;
+    const unsigned long SRGB_EXT = 0x8C40;
+    const unsigned long SRGB_ALPHA_EXT = 0x8C42;
+    const unsigned long SRGB8_ALPHA8_EXT = 0x8C43;
+    const unsigned long FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT = 0x8210;
 };

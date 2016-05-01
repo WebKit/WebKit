@@ -27,7 +27,6 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "JSMessagePort.h"
-#include "MessagePort.h"
 #include "SerializedScriptValue.h"
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSArray.h>

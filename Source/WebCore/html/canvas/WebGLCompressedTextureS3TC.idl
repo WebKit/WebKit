@@ -24,14 +24,13 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=WEBGL,
+    DoNotCheckConstants,
     GenerateIsReachable=ImplWebGLRenderingContext,
-    DoNotCheckConstants
+    NoInterfaceObject,
 ] interface WebGLCompressedTextureS3TC {
-    /* Compressed Texture Formats */
-    const unsigned int COMPRESSED_RGB_S3TC_DXT1_EXT        = 0x83F0;
-    const unsigned int COMPRESSED_RGBA_S3TC_DXT1_EXT       = 0x83F1;
-    const unsigned int COMPRESSED_RGBA_S3TC_DXT3_EXT       = 0x83F2;
-    const unsigned int COMPRESSED_RGBA_S3TC_DXT5_EXT       = 0x83F3;
+    const unsigned long COMPRESSED_RGB_S3TC_DXT1_EXT = 0x83F0;
+    const unsigned long COMPRESSED_RGBA_S3TC_DXT1_EXT = 0x83F1;
+    const unsigned long COMPRESSED_RGBA_S3TC_DXT3_EXT = 0x83F2;
+    const unsigned long COMPRESSED_RGBA_S3TC_DXT5_EXT = 0x83F3;
 };

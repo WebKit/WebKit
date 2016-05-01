@@ -1,3 +1,70 @@
+2016-04-30  Darin Adler  <darin@apple.com>
+
+        Streamline and remove unused bindings generation code
+        https://bugs.webkit.org/show_bug.cgi?id=157237
+
+        Reviewed by Chris Dumez.
+
+        * Modules/notifications/NotificationCenter.idl: Replace non-standard "int"
+        with standard "long", which means the same thing.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (UpdateFile): Use a better perl idiom for open.
+        (IsTypedArrayType): Use a hash instead of a list of checks in the code.
+        (IsRefPtrType): Use GetArrayOrSequenceType. Add handling for "any", which
+        is not a "RefPtr" type.
+        (IsWrapperType): Build on top of IsRefPtr type so we don't have to repeat
+        the list.
+        (getInterfaceExtendedAttributesFromName): Added a FIXME about why this is no good.
+        (ComputeIsCallbackInterface): Renamed.
+        (IsCallbackInterface): Added a cache so we don't keep reading the same file
+        over and over again. Added a FIXME about why this is no good.
+        (ComputeIsFunctionOnlyCallbackInterface): Ditto.
+        (IsFunctionOnlyCallbackInterface): Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddIncludesForType): Use GetArrayOrSequenceType.
+        (IsScriptProfileType): Deleted.
+        (AddTypedefForScriptProfileType): Deleted.
+        (AddClassForwardIfNeeded): Streamlined the code and made the ScriptProfileNode
+        special case easier to read.
+        (GenerateParametersCheckExpression): Use GetArrayOrSequenceType.
+        (GetFunctionLength): Tweaked formatting and argument names.
+        (GenerateImplementation): Merged a couple checks into a single if statement.
+        (WillConvertUndefinedToDefaultParameterValue): Streamlined the function by
+        using a hash instead of a sequence of if statements for most cases.
+        (GetNativeType): Use GetArrayOrSequenceType.
+        (JSValueToNative): Do the integer conversion based on a hash rather than
+        with lots of separate lines of code. Moved more of the simple names down to
+        the bottom of the function and streamlined the logic. Removed unnecessary
+        includes of the DOM headers directly, since our header file includes those.
+        (NativeToJSValue): Factored out the global object handling so it works across
+        more cases. Simplified the logic for dates. Use IsNumericType instead of
+        IsPrimitiveType to guard code that is right only for the numeric types.
+        Removed code to handle "Symbol" since we don't ever use that.
+
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        Regenerated.
+
+        * bindings/scripts/test/TestObj.idl: Removed test coverage for Symbol, which
+        we never use anywhere.
+
+        * html/canvas/EXTBlendMinMax.idl: Replace non-standard "int" with standard
+        "long", which means the same thing.
+        * html/canvas/EXTTextureFilterAnisotropic.idl: Ditto.
+        * html/canvas/EXTsRGB.idl: Ditto.
+        * html/canvas/OESStandardDerivatives.idl: Ditto.
+        * html/canvas/OESVertexArrayObject.idl: Ditto.
+        * html/canvas/WebGLCompressedTextureATC.idl: Ditto.
+        * html/canvas/WebGLCompressedTexturePVRTC.idl: Ditto.
+        * html/canvas/WebGLCompressedTextureS3TC.idl: Ditto.
+        * html/canvas/WebGLDebugRendererInfo.idl: Ditto.
+        * html/canvas/WebGLDepthTexture.idl: Ditto.
+
 2016-04-30  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Pass even more types by reference

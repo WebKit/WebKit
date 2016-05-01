@@ -74,7 +74,7 @@ interface TestRunner {
     void setTabKeyCyclesThroughElements(boolean enabled);
     void setSerializeHTTPLoads();
     void dispatchPendingLoadRequests();
-    void setCacheModel(int model);
+    void setCacheModel(long model);
     void setAsynchronousSpellCheckingEnabled(boolean value);
     void setPrinting();
     void setShouldDecideNavigationPolicyAfterDelay(boolean value);
@@ -95,7 +95,7 @@ interface TestRunner {
     void display();
 
     // Printing
-    boolean isPageBoxVisible(int pageIndex);
+    boolean isPageBoxVisible(long pageIndex);
 
     [PassContext] void setValueForUser(object element, DOMString value);
 

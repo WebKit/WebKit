@@ -24,14 +24,13 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=WEBGL,
+    DoNotCheckConstants,
     GenerateIsReachable=ImplWebGLRenderingContext,
-    DoNotCheckConstants
+    NoInterfaceObject,
 ] interface WebGLCompressedTexturePVRTC {
-    /* Compressed Texture Formats */
-    const unsigned int COMPRESSED_RGB_PVRTC_4BPPV1_IMG  = 0x8C00;
-    const unsigned int COMPRESSED_RGB_PVRTC_2BPPV1_IMG  = 0x8C01;
-    const unsigned int COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02;
-    const unsigned int COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;
+    const unsigned long COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00;
+    const unsigned long COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01;
+    const unsigned long COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02;
+    const unsigned long COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;
 };

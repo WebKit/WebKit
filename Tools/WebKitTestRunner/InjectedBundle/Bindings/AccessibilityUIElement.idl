@@ -31,7 +31,7 @@ interface AccessibilityUIElement {
     readonly attribute DOMString documentURI;
 
     // Element access.
-    AccessibilityUIElement elementAtPoint(int x, int y);
+    AccessibilityUIElement elementAtPoint(long x, long y);
     AccessibilityUIElement childAtIndex(unsigned long index);
     unsigned long indexOfChild(AccessibilityUIElement child);
     AccessibilityUIElement linkedUIElementAtIndex(unsigned long index);
@@ -54,7 +54,7 @@ interface AccessibilityUIElement {
     readonly attribute DOMString url;
     readonly attribute DOMString speak;
     readonly attribute DOMString orientation;
-    readonly attribute int insertionPointLineNumber;
+    readonly attribute long insertionPointLineNumber;
     readonly attribute DOMString selectedTextRange;
 
     DOMString stringAttributeValue(DOMString attr);
@@ -70,9 +70,9 @@ interface AccessibilityUIElement {
     boolean isDecrementActionSupported();
 
     readonly attribute DOMString stringValue;
-    readonly attribute int intValue;
-    readonly attribute int minValue;
-    readonly attribute int maxValue;
+    readonly attribute long intValue;
+    readonly attribute long minValue;
+    readonly attribute long maxValue;
     
     readonly attribute boolean isEnabled;
     readonly attribute boolean isRequired;
@@ -91,22 +91,22 @@ interface AccessibilityUIElement {
     readonly attribute boolean isIgnored;
     readonly attribute boolean isOffScreen;
     readonly attribute boolean isValid;
-    readonly attribute int hierarchicalLevel;
+    readonly attribute long hierarchicalLevel;
     readonly attribute boolean ariaIsGrabbed;
     readonly attribute DOMString ariaDropEffects;
     readonly attribute DOMString classList;
 
-    readonly attribute int x;
-    readonly attribute int y;
-    readonly attribute int width;
-    readonly attribute int height;
-    readonly attribute int clickPointX;
-    readonly attribute int clickPointY;
+    readonly attribute long x;
+    readonly attribute long y;
+    readonly attribute long width;
+    readonly attribute long height;
+    readonly attribute long clickPointX;
+    readonly attribute long clickPointY;
 
-    readonly attribute int childrenCount;
-    readonly attribute int selectedChildrenCount;
-    readonly attribute int rowCount;
-    readonly attribute int columnCount;
+    readonly attribute long childrenCount;
+    readonly attribute long selectedChildrenCount;
+    readonly attribute long rowCount;
+    readonly attribute long columnCount;
 
     // Actions.
     void increment();
@@ -121,10 +121,10 @@ interface AccessibilityUIElement {
     DOMString attributesOfDocumentLinks();
 
     // Text info.
-    DOMString characterAtOffset(int offset);
-    DOMString wordAtOffset(int offset);
-    DOMString lineAtOffset(int offset);
-    DOMString sentenceAtOffset(int offset);
+    DOMString characterAtOffset(long offset);
+    DOMString wordAtOffset(long offset);
+    DOMString lineAtOffset(long offset);
+    DOMString sentenceAtOffset(long offset);
     
     // Table info.
     DOMString attributesOfColumnHeaders();
@@ -138,11 +138,11 @@ interface AccessibilityUIElement {
     AccessibilityUIElement disclosedByRow();
     AccessibilityUIElement disclosedRowAtIndex(unsigned long index);
     AccessibilityUIElement rowAtIndex(unsigned long index);
-    int indexInTable();
+    long indexInTable();
     DOMString rowIndexRange();
     DOMString columnIndexRange();
-    int rowCount();
-    int columnCount();
+    long rowCount();
+    long columnCount();
     object columnHeaders();
     object rowHeaders();
 
@@ -152,14 +152,14 @@ interface AccessibilityUIElement {
 
     // Paramaterized attributes.
     DOMString parameterizedAttributeNames();
-    int lineForIndex(int index);
-    DOMString rangeForLine(int index);
-    DOMString rangeForPosition(int x, int y);
+    long lineForIndex(long index);
+    DOMString rangeForLine(long index);
+    DOMString rangeForPosition(long x, long y);
     DOMString boundsForRange(unsigned long location, unsigned long length);
     DOMString stringForRange(unsigned long location, unsigned long length);
     DOMString attributedStringForRange(unsigned long location, unsigned long length);
     boolean attributedStringRangeIsMisspelled(unsigned long location, unsigned long length);
-    [PassContext] unsigned int uiElementCountForSearchPredicate(AccessibilityUIElement startElement, boolean isDirectionNext, object searchKey, DOMString searchText, boolean visibleOnly, boolean immediateDescendantsOnly);
+    [PassContext] unsigned long uiElementCountForSearchPredicate(AccessibilityUIElement startElement, boolean isDirectionNext, object searchKey, DOMString searchText, boolean visibleOnly, boolean immediateDescendantsOnly);
     [PassContext] AccessibilityUIElement uiElementForSearchPredicate(AccessibilityUIElement startElement, boolean isDirectionNext, object searchKey, DOMString searchText, boolean visibleOnly, boolean immediateDescendantsOnly);
     [PassContext] DOMString selectTextWithCriteria(DOMString ambiguityResolution, object searchStrings, DOMString replacementString, DOMString activity);
     boolean setSelectedTextRange(unsigned long location, unsigned long length);
@@ -169,8 +169,8 @@ interface AccessibilityUIElement {
     readonly attribute AccessibilityUIElement verticalScrollbar;
 
     void scrollToMakeVisible();
-    void scrollToGlobalPoint(int x, int y);
-    void scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height);
+    void scrollToGlobalPoint(long x, long y);
+    void scrollToMakeVisibleWithSubFocus(long x, long y, long width, long height);
 
     void takeFocus();
     boolean scrollPageDown();
@@ -186,18 +186,18 @@ interface AccessibilityUIElement {
     void resetSelectedTextMarkerRange();
     AccessibilityTextMarker startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);
     AccessibilityTextMarker endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);
-    AccessibilityTextMarker endTextMarkerForBounds(int x, int y, int width, int height);
-    AccessibilityTextMarker startTextMarkerForBounds(int x, int y, int width, int height);
-    AccessibilityTextMarker textMarkerForPoint(int x, int y);
+    AccessibilityTextMarker endTextMarkerForBounds(long x, long y, long width, long height);
+    AccessibilityTextMarker startTextMarkerForBounds(long x, long y, long width, long height);
+    AccessibilityTextMarker textMarkerForPoint(long x, long y);
     AccessibilityTextMarker previousTextMarker(AccessibilityTextMarker marker);
     AccessibilityTextMarker nextTextMarker(AccessibilityTextMarker marker);
     AccessibilityUIElement accessibilityElementForTextMarker(AccessibilityTextMarker marker);
     DOMString stringForTextMarkerRange(AccessibilityTextMarkerRange range);
-    int textMarkerRangeLength(AccessibilityTextMarkerRange range);
+    long textMarkerRangeLength(AccessibilityTextMarkerRange range);
     boolean attributedStringForTextMarkerRangeContainsAttribute(DOMString attr, AccessibilityTextMarkerRange range);
-    int indexForTextMarker(AccessibilityTextMarker marker);
+    long indexForTextMarker(AccessibilityTextMarker marker);
     boolean isTextMarkerValid(AccessibilityTextMarker marker);
-    AccessibilityTextMarker textMarkerForIndex(int textIndex);
+    AccessibilityTextMarker textMarkerForIndex(long textIndex);
     readonly attribute AccessibilityTextMarker startTextMarker;
     readonly attribute AccessibilityTextMarker endTextMarker;
     boolean setSelectedVisibleTextRange(AccessibilityTextMarkerRange range);
@@ -222,8 +222,8 @@ interface AccessibilityUIElement {
     // iOS specific accessibility methods.
     readonly attribute DOMString identifier;
     readonly attribute DOMString traits;
-    readonly attribute int elementTextPosition;
-    readonly attribute int elementTextLength;
+    readonly attribute long elementTextPosition;
+    readonly attribute long elementTextLength;
     readonly attribute DOMString stringForSelection;
     object elementsForRange(unsigned long location, unsigned long length);
     void increaseTextSelection();

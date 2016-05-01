@@ -30,7 +30,7 @@ interface AccessibilityController {
     readonly attribute DOMString platformName;
     readonly attribute AccessibilityUIElement rootElement;
     readonly attribute AccessibilityUIElement focusedElement;
-    AccessibilityUIElement elementAtPoint(int x, int y);
+    AccessibilityUIElement elementAtPoint(long x, long y);
     AccessibilityUIElement accessibleElementById(DOMString id);
     
     boolean addNotificationListener(object functionCallback);

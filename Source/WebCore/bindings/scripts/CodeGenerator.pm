@@ -71,6 +71,21 @@ my %webCoreTypeHash = (
 
 my %enumTypeHash = ();
 
+my %typedArrayTypes = (
+    "ArrayBuffer" => 1,
+    "ArrayBufferView" => 1,
+    "DataView" => 1,
+    "Float32Array" => 1,
+    "Float64Array" => 1,
+    "Int16Array" => 1,
+    "Int32Array" => 1,
+    "Int8Array" => 1,
+    "Uint16Array" => 1,
+    "Uint32Array" => 1,
+    "Uint8Array" => 1,
+    "Uint8ClampedArray" => 1,
+);
+
 my %nonPointerTypeHash = ( "DOMTimeStamp" => 1 );
 
 my %svgAttributesInHTMLHash = (
@@ -204,7 +219,7 @@ sub UpdateFile
     my $fileName = shift;
     my $contents = shift;
 
-    open FH, "> $fileName" or die "Couldn't open $fileName: $!\n";
+    open FH, ">", $fileName or die "Couldn't open $fileName: $!\n";
     print FH $contents;
     close FH;
 }
@@ -434,10 +449,8 @@ sub IsTypedArrayType
 {
     my $object = shift;
     my $type = shift;
-    return 1 if (($type eq "ArrayBuffer") or ($type eq "ArrayBufferView"));
-    return 1 if (($type eq "Uint8Array") or ($type eq "Uint8ClampedArray") or ($type eq "Uint16Array") or ($type eq "Uint32Array"));
-    return 1 if (($type eq "Int8Array") or ($type eq "Int16Array") or ($type eq "Int32Array"));
-    return 1 if (($type eq "Float32Array") or ($type eq "Float64Array") or ($type eq "DataView"));
+
+    return 1 if $typedArrayTypes{$type};
     return 0;
 }
 
@@ -447,10 +460,10 @@ sub IsRefPtrType
     my $type = shift;
 
     return 0 if $object->IsPrimitiveType($type);
-    return 0 if $object->GetArrayType($type);
-    return 0 if $object->GetSequenceType($type);
-    return 0 if $type eq "DOMString";
+    return 0 if $object->GetArrayOrSequenceType($type);
     return 0 if $object->IsEnumType($type);
+    return 0 if $type eq "DOMString";
+    return 0 if $type eq "any";
 
     return 1;
 }
@@ -696,27 +709,24 @@ sub IsWrapperType
     my $object = shift;
     my $type = shift;
 
-    return 0 if $object->IsPrimitiveType($type);
-    return 0 if $object->GetArrayType($type);
-    return 0 if $object->GetSequenceType($type);
-    return 0 if $object->IsEnumType($type);
-    return 0 if $object->IsStringType($type);
+    return 0 if !$object->IsRefPtrType($type);
     return 0 if $object->IsTypedArrayType($type);
     return 0 if $webCoreTypeHash{$type};
-    return 0 if $type eq "any";
 
     return 1;
 }
 
 sub getInterfaceExtendedAttributesFromName
 {
+    # FIXME: It's bad to have a function like this that opens another IDL file to answer a question.
+    # Overusing this kind of function can make things really slow. Lets avoid these if we can.
+
     my $object = shift;
     my $interfaceName = shift;
 
-    my $idlFile = $object->IDLFileForInterface($interfaceName)
-      or die("Could NOT find IDL file for interface \"$interfaceName\"!\n");
+    my $idlFile = $object->IDLFileForInterface($interfaceName) or die("Could NOT find IDL file for interface \"$interfaceName\"!\n");
 
-    open FILE, "<", $idlFile;
+    open FILE, "<", $idlFile or die;
     my @lines = <FILE>;
     close FILE;
 
@@ -739,17 +749,16 @@ sub getInterfaceExtendedAttributesFromName
     return $extendedAttributes;
 }
 
-sub IsCallbackInterface
+sub ComputeIsCallbackInterface
 {
   my $object = shift;
   my $type = shift;
 
   return 0 unless $object->IsWrapperType($type);
 
-  my $idlFile = $object->IDLFileForInterface($type)
-      or die("Could NOT find IDL file for interface \"$type\"!\n");
+  my $idlFile = $object->IDLFileForInterface($type) or die("Could NOT find IDL file for interface \"$type\"!\n");
 
-  open FILE, "<", $idlFile;
+  open FILE, "<", $idlFile or die;
   my @lines = <FILE>;
   close FILE;
 
@@ -757,20 +766,35 @@ sub IsCallbackInterface
   return ($fileContents =~ /callback\s+interface\s+(\w+)/gs);
 }
 
+my %isCallbackInterface = ();
+
+sub IsCallbackInterface
+{
+    # FIXME: It's bad to have a function like this that opens another IDL file to answer a question.
+    # Overusing this kind of function can make things really slow. Lets avoid these if we can.
+    # To mitigate that, lets cache what we learn in a hash so we don't open the same file over and over.
+
+    my ($object, $type) = @_;
+
+    return $isCallbackInterface{$type} if exists $isCallbackInterface{$type};
+    my $result = ComputeIsCallbackInterface($object, $type);
+    $isCallbackInterface{$type} = $result;
+    return $result;
+}
+
 # Callback interface with [Callback=FunctionOnly].
 # FIXME: This should be a callback function:
 # https://heycam.github.io/webidl/#idl-callback-functions
-sub IsFunctionOnlyCallbackInterface
+sub ComputeIsFunctionOnlyCallbackInterface
 {
   my $object = shift;
   my $type = shift;
 
   return 0 unless $object->IsCallbackInterface($type);
 
-  my $idlFile = $object->IDLFileForInterface($type)
-      or die("Could NOT find IDL file for interface \"$type\"!\n");
+  my $idlFile = $object->IDLFileForInterface($type) or die("Could NOT find IDL file for interface \"$type\"!\n");
 
-  open FILE, "<", $idlFile;
+  open FILE, "<", $idlFile or die;
   my @lines = <FILE>;
   close FILE;
 
@@ -789,6 +813,22 @@ sub IsFunctionOnlyCallbackInterface
   }
 
   return 0;
+}
+
+my %isFunctionOnlyCallbackInterface = ();
+
+sub IsFunctionOnlyCallbackInterface
+{
+    # FIXME: It's bad to have a function like this that opens another IDL file to answer a question.
+    # Overusing this kind of function can make things really slow. Lets avoid these if we can.
+    # To mitigate that, lets cache what we learn in a hash so we don't open the same file over and over.
+
+    my ($object, $type) = @_;
+
+    return $isFunctionOnlyCallbackInterface{$type} if exists $isFunctionOnlyCallbackInterface{$type};
+    my $result = ComputeIsFunctionOnlyCallbackInterface($object, $type);
+    $isFunctionOnlyCallbackInterface{$type} = $result;
+    return $result;
 }
 
 sub GenerateConditionalString
@@ -933,6 +973,7 @@ sub ShouldPassWrapperByReference
     return 0 if $parameter->isNullable;
     return 0 if !$object->IsWrapperType($parameter->type) && !$object->IsTypedArrayType($parameter->type);
     return 0 if $object->IsSVGTypeNeedingTearOff($parameter->type);
+
     return 1;
 }
 

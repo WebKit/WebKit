@@ -24,10 +24,10 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=WEBGL,
+    DoNotCheckConstants,
     GenerateIsReachable=ImplWebGLRenderingContext,
-    DoNotCheckConstants
+    NoInterfaceObject,
 ] interface WebGLDepthTexture {
-    const unsigned int UNSIGNED_INT_24_8_WEBGL = 0x84FA;
+    const unsigned long UNSIGNED_INT_24_8_WEBGL = 0x84FA;
 };

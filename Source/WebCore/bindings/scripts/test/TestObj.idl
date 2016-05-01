@@ -71,10 +71,6 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     attribute TestObj                  XMLObjAttr;
     attribute boolean                  create;
 
-    // Readonly Symbol typed attributes.
-    readonly attribute Symbol readOnlySymbolAttr;
-    static readonly attribute Symbol staticReadOnlySymbolAttr;
-
     // Reflected DOM attributes
     [Reflect] attribute DOMString reflectedStringAttr;
     [Reflect] attribute long reflectedIntegralAttr;

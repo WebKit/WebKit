@@ -24,13 +24,11 @@
 
 #include "JSTestCallback.h"
 
-#include "DOMStringList.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMStringList.h"
 #include "JSTestNode.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
-#include "TestNode.h"
 #include "URL.h"
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSLock.h>

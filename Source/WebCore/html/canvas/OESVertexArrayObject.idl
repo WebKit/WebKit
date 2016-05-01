@@ -29,8 +29,8 @@
     GenerateIsReachable=ImplWebGLRenderingContext,
     NoInterfaceObject,
 ] interface OESVertexArrayObject {
-    const unsigned int VERTEX_ARRAY_BINDING_OES = 0x85B5;
-    
+    const unsigned long VERTEX_ARRAY_BINDING_OES = 0x85B5;
+
     [StrictTypeChecking] WebGLVertexArrayObjectOES createVertexArrayOES();
     [StrictTypeChecking] void deleteVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
     [StrictTypeChecking] boolean isVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
