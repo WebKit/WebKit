@@ -1,10 +1,10 @@
-CONSOLE MESSAGE: line 226: callback not yet supported
-CONSOLE MESSAGE: line 226: callback not yet supported
-CONSOLE MESSAGE: line 226: callback not yet supported
-CONSOLE MESSAGE: line 226: callback not yet supported
-CONSOLE MESSAGE: line 226: callback not yet supported
-CONSOLE MESSAGE: line 226: callback not yet supported
-CONSOLE MESSAGE: line 226: callback not yet supported
+CONSOLE MESSAGE: line 236: callback not yet supported
+CONSOLE MESSAGE: line 236: callback not yet supported
+CONSOLE MESSAGE: line 236: callback not yet supported
+CONSOLE MESSAGE: line 236: callback not yet supported
+CONSOLE MESSAGE: line 236: callback not yet supported
+CONSOLE MESSAGE: line 236: callback not yet supported
+CONSOLE MESSAGE: line 236: callback not yet supported
 HTML IDL tests
 
 
@@ -430,6 +430,314 @@ FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,
         }" did not throw
 PASS EventTarget interface: iframe.contentDocument must inherit property "dispatchEvent" with the proper type (2) 
 PASS EventTarget interface: calling dispatchEvent(Event) on iframe.contentDocument with too few arguments must throw TypeError 
+PASS Document must be primary interface of new Document() 
+PASS Stringification of new Document() 
+PASS Document interface: new Document() must inherit property "implementation" with the proper type (0) 
+PASS Document interface: new Document() must inherit property "URL" with the proper type (1) 
+PASS Document interface: new Document() must inherit property "documentURI" with the proper type (2) 
+PASS Document interface: new Document() must inherit property "origin" with the proper type (3) 
+PASS Document interface: new Document() must inherit property "compatMode" with the proper type (4) 
+PASS Document interface: new Document() must inherit property "characterSet" with the proper type (5) 
+PASS Document interface: new Document() must inherit property "charset" with the proper type (6) 
+PASS Document interface: new Document() must inherit property "inputEncoding" with the proper type (7) 
+PASS Document interface: new Document() must inherit property "contentType" with the proper type (8) 
+PASS Document interface: new Document() must inherit property "doctype" with the proper type (9) 
+PASS Document interface: new Document() must inherit property "documentElement" with the proper type (10) 
+PASS Document interface: new Document() must inherit property "getElementsByTagName" with the proper type (11) 
+FAIL Document interface: calling getElementsByTagName(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "getElementsByTagNameNS" with the proper type (12) 
+FAIL Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "getElementsByClassName" with the proper type (13) 
+FAIL Document interface: calling getElementsByClassName(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "createElement" with the proper type (14) 
+PASS Document interface: calling createElement(DOMString) on new Document() with too few arguments must throw TypeError 
+PASS Document interface: new Document() must inherit property "createElementNS" with the proper type (15) 
+FAIL Document interface: calling createElementNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "createDocumentFragment" with the proper type (16) 
+PASS Document interface: new Document() must inherit property "createTextNode" with the proper type (17) 
+FAIL Document interface: calling createTextNode(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "createComment" with the proper type (18) 
+FAIL Document interface: calling createComment(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "createProcessingInstruction" with the proper type (19) 
+FAIL Document interface: calling createProcessingInstruction(DOMString,DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "importNode" with the proper type (20) 
+PASS Document interface: calling importNode(Node,boolean) on new Document() with too few arguments must throw TypeError 
+PASS Document interface: new Document() must inherit property "adoptNode" with the proper type (21) 
+PASS Document interface: calling adoptNode(Node) on new Document() with too few arguments must throw TypeError 
+PASS Document interface: new Document() must inherit property "createAttribute" with the proper type (22) 
+FAIL Document interface: calling createAttribute(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "createAttributeNS" with the proper type (23) 
+FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "createEvent" with the proper type (24) 
+FAIL Document interface: calling createEvent(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
+PASS Document interface: new Document() must inherit property "createRange" with the proper type (25) 
+PASS Document interface: new Document() must inherit property "createNodeIterator" with the proper type (26) 
+PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on new Document() with too few arguments must throw TypeError 
+PASS Document interface: new Document() must inherit property "createTreeWalker" with the proper type (27) 
+PASS Document interface: calling createTreeWalker(Node,unsigned long,NodeFilter) on new Document() with too few arguments must throw TypeError 
+PASS Document interface: new Document() must inherit property "styleSheets" with the proper type (28) 
+FAIL Document interface: new Document() must inherit property "selectedStyleSheetSet" with the proper type (29) assert_inherits: property "selectedStyleSheetSet" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "lastStyleSheetSet" with the proper type (30) assert_inherits: property "lastStyleSheetSet" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "preferredStyleSheetSet" with the proper type (31) assert_inherits: property "preferredStyleSheetSet" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "styleSheetSets" with the proper type (32) assert_inherits: property "styleSheetSets" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "enableStyleSheetsForSet" with the proper type (33) assert_inherits: property "enableStyleSheetsForSet" not found in prototype chain
+FAIL Document interface: calling enableStyleSheetsForSet(DOMString) on new Document() with too few arguments must throw TypeError assert_inherits: property "enableStyleSheetsForSet" not found in prototype chain
+PASS Document interface: new Document() must have own property "location" 
+PASS Document interface: new Document() must inherit property "domain" with the proper type (35) 
+PASS Document interface: new Document() must inherit property "referrer" with the proper type (36) 
+PASS Document interface: new Document() must inherit property "cookie" with the proper type (37) 
+PASS Document interface: new Document() must inherit property "lastModified" with the proper type (38) 
+PASS Document interface: new Document() must inherit property "readyState" with the proper type (39) 
+PASS Document interface: new Document() must inherit property "title" with the proper type (41) 
+FAIL Document interface: new Document() must inherit property "dir" with the proper type (42) assert_inherits: property "dir" not found in prototype chain
+PASS Document interface: new Document() must inherit property "body" with the proper type (43) 
+PASS Document interface: new Document() must inherit property "head" with the proper type (44) 
+PASS Document interface: new Document() must inherit property "images" with the proper type (45) 
+FAIL Document interface: new Document() must inherit property "embeds" with the proper type (46) assert_inherits: property "embeds" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "plugins" with the proper type (47) assert_inherits: property "plugins" not found in prototype chain
+PASS Document interface: new Document() must inherit property "links" with the proper type (48) 
+PASS Document interface: new Document() must inherit property "forms" with the proper type (49) 
+FAIL Document interface: new Document() must inherit property "scripts" with the proper type (50) assert_inherits: property "scripts" not found in prototype chain
+PASS Document interface: new Document() must inherit property "getElementsByName" with the proper type (51) 
+FAIL Document interface: calling getElementsByName(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+FAIL Document interface: new Document() must inherit property "getItems" with the proper type (52) assert_inherits: property "getItems" not found in prototype chain
+FAIL Document interface: calling getItems(DOMString) on new Document() with too few arguments must throw TypeError assert_inherits: property "getItems" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "cssElementMap" with the proper type (53) assert_inherits: property "cssElementMap" not found in prototype chain
+PASS Document interface: new Document() must inherit property "currentScript" with the proper type (54) 
+FAIL Document interface: new Document() must inherit property "open" with the proper type (55) assert_inherits: property "open" not found in prototype chain
+FAIL Document interface: calling open(DOMString,DOMString) on new Document() with too few arguments must throw TypeError assert_inherits: property "open" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "open" with the proper type (56) assert_inherits: property "open" not found in prototype chain
+FAIL Document interface: calling open(DOMString,DOMString,DOMString,boolean) on new Document() with too few arguments must throw TypeError assert_inherits: property "open" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "close" with the proper type (57) assert_inherits: property "close" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "write" with the proper type (58) assert_inherits: property "write" not found in prototype chain
+FAIL Document interface: calling write(DOMString) on new Document() with too few arguments must throw TypeError assert_inherits: property "write" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "writeln" with the proper type (59) assert_inherits: property "writeln" not found in prototype chain
+FAIL Document interface: calling writeln(DOMString) on new Document() with too few arguments must throw TypeError assert_inherits: property "writeln" not found in prototype chain
+PASS Document interface: new Document() must inherit property "defaultView" with the proper type (60) 
+PASS Document interface: new Document() must inherit property "activeElement" with the proper type (61) 
+PASS Document interface: new Document() must inherit property "hasFocus" with the proper type (62) 
+FAIL Document interface: new Document() must inherit property "designMode" with the proper type (63) assert_inherits: property "designMode" not found in prototype chain
+PASS Document interface: new Document() must inherit property "execCommand" with the proper type (64) 
+FAIL Document interface: calling execCommand(DOMString,boolean,DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "queryCommandEnabled" with the proper type (65) 
+FAIL Document interface: calling queryCommandEnabled(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "queryCommandIndeterm" with the proper type (66) 
+FAIL Document interface: calling queryCommandIndeterm(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "queryCommandState" with the proper type (67) 
+FAIL Document interface: calling queryCommandState(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "queryCommandSupported" with the proper type (68) 
+FAIL Document interface: calling queryCommandSupported(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "queryCommandValue" with the proper type (69) 
+FAIL Document interface: calling queryCommandValue(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+FAIL Document interface: new Document() must inherit property "commands" with the proper type (70) assert_inherits: property "commands" not found in prototype chain
+PASS Document interface: new Document() must inherit property "onreadystatechange" with the proper type (71) 
+FAIL Document interface: new Document() must inherit property "fgColor" with the proper type (72) assert_inherits: property "fgColor" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "linkColor" with the proper type (73) assert_inherits: property "linkColor" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "vlinkColor" with the proper type (74) assert_inherits: property "vlinkColor" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "alinkColor" with the proper type (75) assert_inherits: property "alinkColor" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "bgColor" with the proper type (76) assert_inherits: property "bgColor" not found in prototype chain
+PASS Document interface: new Document() must inherit property "anchors" with the proper type (77) 
+PASS Document interface: new Document() must inherit property "applets" with the proper type (78) 
+FAIL Document interface: new Document() must inherit property "clear" with the proper type (79) assert_inherits: property "clear" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "captureEvents" with the proper type (80) assert_inherits: property "captureEvents" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "releaseEvents" with the proper type (81) assert_inherits: property "releaseEvents" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "all" with the proper type (82) assert_inherits: property "all" not found in prototype chain
+PASS Document interface: new Document() must inherit property "getElementById" with the proper type (83) 
+FAIL Document interface: calling getElementById(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Document interface: new Document() must inherit property "children" with the proper type (84) 
+PASS Document interface: new Document() must inherit property "firstElementChild" with the proper type (85) 
+PASS Document interface: new Document() must inherit property "lastElementChild" with the proper type (86) 
+PASS Document interface: new Document() must inherit property "childElementCount" with the proper type (87) 
+PASS Document interface: new Document() must inherit property "prepend" with the proper type (88) 
+PASS Document interface: calling prepend([object Object],[object Object]) on new Document() with too few arguments must throw TypeError 
+PASS Document interface: new Document() must inherit property "append" with the proper type (89) 
+PASS Document interface: calling append([object Object],[object Object]) on new Document() with too few arguments must throw TypeError 
+FAIL Document interface: new Document() must inherit property "query" with the proper type (90) assert_inherits: property "query" not found in prototype chain
+FAIL Document interface: calling query(DOMString) on new Document() with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "queryAll" with the proper type (91) assert_inherits: property "queryAll" not found in prototype chain
+FAIL Document interface: calling queryAll(DOMString) on new Document() with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
+PASS Document interface: new Document() must inherit property "querySelector" with the proper type (92) 
+PASS Document interface: calling querySelector(DOMString) on new Document() with too few arguments must throw TypeError 
+PASS Document interface: new Document() must inherit property "querySelectorAll" with the proper type (93) 
+PASS Document interface: calling querySelectorAll(DOMString) on new Document() with too few arguments must throw TypeError 
+PASS Document interface: new Document() must inherit property "onabort" with the proper type (94) 
+FAIL Document interface: new Document() must inherit property "onautocomplete" with the proper type (95) assert_inherits: property "onautocomplete" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "onautocompleteerror" with the proper type (96) assert_inherits: property "onautocompleteerror" not found in prototype chain
+PASS Document interface: new Document() must inherit property "onblur" with the proper type (97) 
+FAIL Document interface: new Document() must inherit property "oncancel" with the proper type (98) assert_inherits: property "oncancel" not found in prototype chain
+PASS Document interface: new Document() must inherit property "oncanplay" with the proper type (99) 
+PASS Document interface: new Document() must inherit property "oncanplaythrough" with the proper type (100) 
+PASS Document interface: new Document() must inherit property "onchange" with the proper type (101) 
+PASS Document interface: new Document() must inherit property "onclick" with the proper type (102) 
+FAIL Document interface: new Document() must inherit property "onclose" with the proper type (103) assert_inherits: property "onclose" not found in prototype chain
+PASS Document interface: new Document() must inherit property "oncontextmenu" with the proper type (104) 
+FAIL Document interface: new Document() must inherit property "oncuechange" with the proper type (105) assert_inherits: property "oncuechange" not found in prototype chain
+PASS Document interface: new Document() must inherit property "ondblclick" with the proper type (106) 
+PASS Document interface: new Document() must inherit property "ondrag" with the proper type (107) 
+PASS Document interface: new Document() must inherit property "ondragend" with the proper type (108) 
+PASS Document interface: new Document() must inherit property "ondragenter" with the proper type (109) 
+FAIL Document interface: new Document() must inherit property "ondragexit" with the proper type (110) assert_inherits: property "ondragexit" not found in prototype chain
+PASS Document interface: new Document() must inherit property "ondragleave" with the proper type (111) 
+PASS Document interface: new Document() must inherit property "ondragover" with the proper type (112) 
+PASS Document interface: new Document() must inherit property "ondragstart" with the proper type (113) 
+PASS Document interface: new Document() must inherit property "ondrop" with the proper type (114) 
+PASS Document interface: new Document() must inherit property "ondurationchange" with the proper type (115) 
+PASS Document interface: new Document() must inherit property "onemptied" with the proper type (116) 
+PASS Document interface: new Document() must inherit property "onended" with the proper type (117) 
+PASS Document interface: new Document() must inherit property "onerror" with the proper type (118) 
+PASS Document interface: new Document() must inherit property "onfocus" with the proper type (119) 
+PASS Document interface: new Document() must inherit property "oninput" with the proper type (120) 
+PASS Document interface: new Document() must inherit property "oninvalid" with the proper type (121) 
+PASS Document interface: new Document() must inherit property "onkeydown" with the proper type (122) 
+PASS Document interface: new Document() must inherit property "onkeypress" with the proper type (123) 
+PASS Document interface: new Document() must inherit property "onkeyup" with the proper type (124) 
+PASS Document interface: new Document() must inherit property "onload" with the proper type (125) 
+PASS Document interface: new Document() must inherit property "onloadeddata" with the proper type (126) 
+PASS Document interface: new Document() must inherit property "onloadedmetadata" with the proper type (127) 
+PASS Document interface: new Document() must inherit property "onloadstart" with the proper type (128) 
+PASS Document interface: new Document() must inherit property "onmousedown" with the proper type (129) 
+PASS Document interface: new Document() must inherit property "onmouseenter" with the proper type (130) 
+PASS Document interface: new Document() must inherit property "onmouseleave" with the proper type (131) 
+PASS Document interface: new Document() must inherit property "onmousemove" with the proper type (132) 
+PASS Document interface: new Document() must inherit property "onmouseout" with the proper type (133) 
+PASS Document interface: new Document() must inherit property "onmouseover" with the proper type (134) 
+PASS Document interface: new Document() must inherit property "onmouseup" with the proper type (135) 
+PASS Document interface: new Document() must inherit property "onmousewheel" with the proper type (136) 
+PASS Document interface: new Document() must inherit property "onpause" with the proper type (137) 
+PASS Document interface: new Document() must inherit property "onplay" with the proper type (138) 
+PASS Document interface: new Document() must inherit property "onplaying" with the proper type (139) 
+PASS Document interface: new Document() must inherit property "onprogress" with the proper type (140) 
+PASS Document interface: new Document() must inherit property "onratechange" with the proper type (141) 
+PASS Document interface: new Document() must inherit property "onreset" with the proper type (142) 
+PASS Document interface: new Document() must inherit property "onresize" with the proper type (143) 
+PASS Document interface: new Document() must inherit property "onscroll" with the proper type (144) 
+PASS Document interface: new Document() must inherit property "onseeked" with the proper type (145) 
+PASS Document interface: new Document() must inherit property "onseeking" with the proper type (146) 
+PASS Document interface: new Document() must inherit property "onselect" with the proper type (147) 
+FAIL Document interface: new Document() must inherit property "onshow" with the proper type (148) assert_inherits: property "onshow" not found in prototype chain
+FAIL Document interface: new Document() must inherit property "onsort" with the proper type (149) assert_inherits: property "onsort" not found in prototype chain
+PASS Document interface: new Document() must inherit property "onstalled" with the proper type (150) 
+PASS Document interface: new Document() must inherit property "onsubmit" with the proper type (151) 
+PASS Document interface: new Document() must inherit property "onsuspend" with the proper type (152) 
+PASS Document interface: new Document() must inherit property "ontimeupdate" with the proper type (153) 
+FAIL Document interface: new Document() must inherit property "ontoggle" with the proper type (154) assert_inherits: property "ontoggle" not found in prototype chain
+PASS Document interface: new Document() must inherit property "onvolumechange" with the proper type (155) 
+PASS Document interface: new Document() must inherit property "onwaiting" with the proper type (156) 
+PASS Node interface: new Document() must inherit property "ELEMENT_NODE" with the proper type (0) 
+PASS Node interface: new Document() must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
+PASS Node interface: new Document() must inherit property "TEXT_NODE" with the proper type (2) 
+PASS Node interface: new Document() must inherit property "CDATA_SECTION_NODE" with the proper type (3) 
+PASS Node interface: new Document() must inherit property "ENTITY_REFERENCE_NODE" with the proper type (4) 
+PASS Node interface: new Document() must inherit property "ENTITY_NODE" with the proper type (5) 
+PASS Node interface: new Document() must inherit property "PROCESSING_INSTRUCTION_NODE" with the proper type (6) 
+PASS Node interface: new Document() must inherit property "COMMENT_NODE" with the proper type (7) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_NODE" with the proper type (8) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_TYPE_NODE" with the proper type (9) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_FRAGMENT_NODE" with the proper type (10) 
+PASS Node interface: new Document() must inherit property "NOTATION_NODE" with the proper type (11) 
+PASS Node interface: new Document() must inherit property "nodeType" with the proper type (12) 
+PASS Node interface: new Document() must inherit property "nodeName" with the proper type (13) 
+PASS Node interface: new Document() must inherit property "baseURI" with the proper type (14) 
+PASS Node interface: new Document() must inherit property "ownerDocument" with the proper type (15) 
+PASS Node interface: new Document() must inherit property "parentNode" with the proper type (16) 
+PASS Node interface: new Document() must inherit property "parentElement" with the proper type (17) 
+PASS Node interface: new Document() must inherit property "hasChildNodes" with the proper type (18) 
+PASS Node interface: new Document() must inherit property "childNodes" with the proper type (19) 
+PASS Node interface: new Document() must inherit property "firstChild" with the proper type (20) 
+PASS Node interface: new Document() must inherit property "lastChild" with the proper type (21) 
+PASS Node interface: new Document() must inherit property "previousSibling" with the proper type (22) 
+PASS Node interface: new Document() must inherit property "nextSibling" with the proper type (23) 
+PASS Node interface: new Document() must inherit property "nodeValue" with the proper type (24) 
+PASS Node interface: new Document() must inherit property "textContent" with the proper type (25) 
+PASS Node interface: new Document() must inherit property "normalize" with the proper type (26) 
+PASS Node interface: new Document() must inherit property "cloneNode" with the proper type (27) 
+PASS Node interface: calling cloneNode(boolean) on new Document() with too few arguments must throw TypeError 
+PASS Node interface: new Document() must inherit property "isEqualNode" with the proper type (28) 
+FAIL Node interface: calling isEqualNode(Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_DISCONNECTED" with the proper type (29) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_PRECEDING" with the proper type (30) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_FOLLOWING" with the proper type (31) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_CONTAINS" with the proper type (32) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_CONTAINED_BY" with the proper type (33) 
+PASS Node interface: new Document() must inherit property "DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC" with the proper type (34) 
+PASS Node interface: new Document() must inherit property "compareDocumentPosition" with the proper type (35) 
+FAIL Node interface: calling compareDocumentPosition(Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Node interface: new Document() must inherit property "contains" with the proper type (36) 
+FAIL Node interface: calling contains(Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Node interface: new Document() must inherit property "lookupPrefix" with the proper type (37) 
+FAIL Node interface: calling lookupPrefix(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Node interface: new Document() must inherit property "lookupNamespaceURI" with the proper type (38) 
+FAIL Node interface: calling lookupNamespaceURI(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Node interface: new Document() must inherit property "isDefaultNamespace" with the proper type (39) 
+FAIL Node interface: calling isDefaultNamespace(DOMString) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS Node interface: new Document() must inherit property "insertBefore" with the proper type (40) 
+FAIL Node interface: calling insertBefore(Node,Node) on new Document() with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
+            fn.apply(obj, args);
+        }" threw object "Error: HierarchyRequestError: DOM Exception 3" ("HierarchyRequestError") expected object "TypeError" ("TypeError")
+PASS Node interface: new Document() must inherit property "appendChild" with the proper type (41) 
+PASS Node interface: calling appendChild(Node) on new Document() with too few arguments must throw TypeError 
+PASS Node interface: new Document() must inherit property "replaceChild" with the proper type (42) 
+PASS Node interface: calling replaceChild(Node,Node) on new Document() with too few arguments must throw TypeError 
+PASS Node interface: new Document() must inherit property "removeChild" with the proper type (43) 
+PASS Node interface: calling removeChild(Node) on new Document() with too few arguments must throw TypeError 
+PASS EventTarget interface: new Document() must inherit property "addEventListener" with the proper type (0) 
+FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS EventTarget interface: new Document() must inherit property "removeEventListener" with the proper type (1) 
+FAIL EventTarget interface: calling removeEventListener(DOMString,EventListener,boolean) on new Document() with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
+PASS EventTarget interface: new Document() must inherit property "dispatchEvent" with the proper type (2) 
+PASS EventTarget interface: calling dispatchEvent(Event) on new Document() with too few arguments must throw TypeError 
 FAIL XMLDocument interface: operation load(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "load" missing
 PASS XMLDocument must be primary interface of document.implementation.createDocument(null, "", null) 
 PASS Stringification of document.implementation.createDocument(null, "", null) 
@@ -1047,89 +1355,90 @@ PASS Element interface: document.createElement("noscript") must inherit property
 PASS Element interface: document.createElement("noscript") must inherit property "classList" with the proper type (6) 
 PASS Element interface: document.createElement("noscript") must inherit property "hasAttributes" with the proper type (7) 
 PASS Element interface: document.createElement("noscript") must inherit property "attributes" with the proper type (8) 
-PASS Element interface: document.createElement("noscript") must inherit property "getAttribute" with the proper type (9) 
+FAIL Element interface: document.createElement("noscript") must inherit property "getAttributeNames" with the proper type (9) assert_inherits: property "getAttributeNames" not found in prototype chain
+PASS Element interface: document.createElement("noscript") must inherit property "getAttribute" with the proper type (10) 
 FAIL Element interface: calling getAttribute(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Element interface: document.createElement("noscript") must inherit property "getAttributeNS" with the proper type (10) 
+PASS Element interface: document.createElement("noscript") must inherit property "getAttributeNS" with the proper type (11) 
 FAIL Element interface: calling getAttributeNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Element interface: document.createElement("noscript") must inherit property "setAttribute" with the proper type (11) 
+PASS Element interface: document.createElement("noscript") must inherit property "setAttribute" with the proper type (12) 
 FAIL Element interface: calling setAttribute(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Element interface: document.createElement("noscript") must inherit property "setAttributeNS" with the proper type (12) 
+PASS Element interface: document.createElement("noscript") must inherit property "setAttributeNS" with the proper type (13) 
 FAIL Element interface: calling setAttributeNS(DOMString,DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Element interface: document.createElement("noscript") must inherit property "removeAttribute" with the proper type (13) 
+PASS Element interface: document.createElement("noscript") must inherit property "removeAttribute" with the proper type (14) 
 FAIL Element interface: calling removeAttribute(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Element interface: document.createElement("noscript") must inherit property "removeAttributeNS" with the proper type (14) 
+PASS Element interface: document.createElement("noscript") must inherit property "removeAttributeNS" with the proper type (15) 
 PASS Element interface: calling removeAttributeNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "hasAttribute" with the proper type (15) 
+PASS Element interface: document.createElement("noscript") must inherit property "hasAttribute" with the proper type (16) 
 PASS Element interface: calling hasAttribute(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "hasAttributeNS" with the proper type (16) 
+PASS Element interface: document.createElement("noscript") must inherit property "hasAttributeNS" with the proper type (17) 
 FAIL Element interface: calling hasAttributeNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Element interface: document.createElement("noscript") must inherit property "getAttributeNode" with the proper type (17) 
+PASS Element interface: document.createElement("noscript") must inherit property "getAttributeNode" with the proper type (18) 
 FAIL Element interface: calling getAttributeNode(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Element interface: document.createElement("noscript") must inherit property "getAttributeNodeNS" with the proper type (18) 
+PASS Element interface: document.createElement("noscript") must inherit property "getAttributeNodeNS" with the proper type (19) 
 FAIL Element interface: calling getAttributeNodeNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Element interface: document.createElement("noscript") must inherit property "setAttributeNode" with the proper type (19) 
+PASS Element interface: document.createElement("noscript") must inherit property "setAttributeNode" with the proper type (20) 
 PASS Element interface: calling setAttributeNode(Attr) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "setAttributeNodeNS" with the proper type (20) 
+PASS Element interface: document.createElement("noscript") must inherit property "setAttributeNodeNS" with the proper type (21) 
 PASS Element interface: calling setAttributeNodeNS(Attr) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "removeAttributeNode" with the proper type (21) 
+PASS Element interface: document.createElement("noscript") must inherit property "removeAttributeNode" with the proper type (22) 
 PASS Element interface: calling removeAttributeNode(Attr) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "closest" with the proper type (22) 
+PASS Element interface: document.createElement("noscript") must inherit property "closest" with the proper type (23) 
 PASS Element interface: calling closest(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "matches" with the proper type (23) 
+PASS Element interface: document.createElement("noscript") must inherit property "matches" with the proper type (24) 
 PASS Element interface: calling matches(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "getElementsByTagName" with the proper type (24) 
+PASS Element interface: document.createElement("noscript") must inherit property "getElementsByTagName" with the proper type (25) 
 FAIL Element interface: calling getElementsByTagName(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Element interface: document.createElement("noscript") must inherit property "getElementsByTagNameNS" with the proper type (25) 
+PASS Element interface: document.createElement("noscript") must inherit property "getElementsByTagNameNS" with the proper type (26) 
 FAIL Element interface: calling getElementsByTagNameNS(DOMString,DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Element interface: document.createElement("noscript") must inherit property "getElementsByClassName" with the proper type (26) 
+PASS Element interface: document.createElement("noscript") must inherit property "getElementsByClassName" with the proper type (27) 
 FAIL Element interface: calling getElementsByClassName(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS Element interface: document.createElement("noscript") must inherit property "children" with the proper type (27) 
-PASS Element interface: document.createElement("noscript") must inherit property "firstElementChild" with the proper type (28) 
-PASS Element interface: document.createElement("noscript") must inherit property "lastElementChild" with the proper type (29) 
-PASS Element interface: document.createElement("noscript") must inherit property "childElementCount" with the proper type (30) 
-PASS Element interface: document.createElement("noscript") must inherit property "prepend" with the proper type (31) 
+PASS Element interface: document.createElement("noscript") must inherit property "children" with the proper type (28) 
+PASS Element interface: document.createElement("noscript") must inherit property "firstElementChild" with the proper type (29) 
+PASS Element interface: document.createElement("noscript") must inherit property "lastElementChild" with the proper type (30) 
+PASS Element interface: document.createElement("noscript") must inherit property "childElementCount" with the proper type (31) 
+PASS Element interface: document.createElement("noscript") must inherit property "prepend" with the proper type (32) 
 PASS Element interface: calling prepend([object Object],[object Object]) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "append" with the proper type (32) 
+PASS Element interface: document.createElement("noscript") must inherit property "append" with the proper type (33) 
 PASS Element interface: calling append([object Object],[object Object]) on document.createElement("noscript") with too few arguments must throw TypeError 
-FAIL Element interface: document.createElement("noscript") must inherit property "query" with the proper type (33) assert_inherits: property "query" not found in prototype chain
+FAIL Element interface: document.createElement("noscript") must inherit property "query" with the proper type (34) assert_inherits: property "query" not found in prototype chain
 FAIL Element interface: calling query(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
-FAIL Element interface: document.createElement("noscript") must inherit property "queryAll" with the proper type (34) assert_inherits: property "queryAll" not found in prototype chain
+FAIL Element interface: document.createElement("noscript") must inherit property "queryAll" with the proper type (35) assert_inherits: property "queryAll" not found in prototype chain
 FAIL Element interface: calling queryAll(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
-PASS Element interface: document.createElement("noscript") must inherit property "querySelector" with the proper type (35) 
+PASS Element interface: document.createElement("noscript") must inherit property "querySelector" with the proper type (36) 
 PASS Element interface: calling querySelector(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "querySelectorAll" with the proper type (36) 
+PASS Element interface: document.createElement("noscript") must inherit property "querySelectorAll" with the proper type (37) 
 PASS Element interface: calling querySelectorAll(DOMString) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "previousElementSibling" with the proper type (37) 
-PASS Element interface: document.createElement("noscript") must inherit property "nextElementSibling" with the proper type (38) 
-PASS Element interface: document.createElement("noscript") must inherit property "before" with the proper type (39) 
+PASS Element interface: document.createElement("noscript") must inherit property "previousElementSibling" with the proper type (38) 
+PASS Element interface: document.createElement("noscript") must inherit property "nextElementSibling" with the proper type (39) 
+PASS Element interface: document.createElement("noscript") must inherit property "before" with the proper type (40) 
 PASS Element interface: calling before([object Object],[object Object]) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "after" with the proper type (40) 
+PASS Element interface: document.createElement("noscript") must inherit property "after" with the proper type (41) 
 PASS Element interface: calling after([object Object],[object Object]) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "replaceWith" with the proper type (41) 
+PASS Element interface: document.createElement("noscript") must inherit property "replaceWith" with the proper type (42) 
 PASS Element interface: calling replaceWith([object Object],[object Object]) on document.createElement("noscript") with too few arguments must throw TypeError 
-PASS Element interface: document.createElement("noscript") must inherit property "remove" with the proper type (42) 
+PASS Element interface: document.createElement("noscript") must inherit property "remove" with the proper type (43) 
 PASS Node interface: document.createElement("noscript") must inherit property "ELEMENT_NODE" with the proper type (0) 
 PASS Node interface: document.createElement("noscript") must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
 PASS Node interface: document.createElement("noscript") must inherit property "TEXT_NODE" with the proper type (2) 

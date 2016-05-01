@@ -1,10 +1,10 @@
 
 PASS Passing null to replaceChild should throw a TypeError. 
-FAIL If child's parent is not the context node, a NotFoundError exception should be thrown assert_throws: function "function () {
-    a.replaceChild(a, c);
-  }" threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException NotFoundError: property "code" is equal to 3, expected 8
+PASS If child's parent is not the context node, a NotFoundError exception should be thrown 
 PASS If the context node is not a node that can contain children, a NotFoundError exception should be thrown 
-PASS If node is an inclusive ancestor of the context node, a HierarchyRequestError should be thrown. 
+FAIL If node is an inclusive ancestor of the context node, a HierarchyRequestError should be thrown. assert_throws: function "function () {
+    a.replaceChild(a, a);
+  }" did not throw
 PASS If the context node is a document, inserting a document or text node should throw a HierarchyRequestError. 
 PASS If the context node is a document, inserting a DocumentFragment that contains a text node or too many elements should throw a HierarchyRequestError. 
 PASS If the context node is a document (without element children), inserting a DocumentFragment that contains multiple elements should throw a HierarchyRequestError. 

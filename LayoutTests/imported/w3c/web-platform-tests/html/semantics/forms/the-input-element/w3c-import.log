@@ -29,7 +29,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/hidden.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-textselection-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-button.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-type-checkbox.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/maxlength.html
@@ -44,6 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/required_attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/reset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/search_input.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/telephone.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/text.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-2.html

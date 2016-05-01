@@ -18,7 +18,6 @@ PASS setRequestHeader should throw with header name "{".
 PASS setRequestHeader should throw with header name "}". 
 PASS setRequestHeader should throw with header name " ". 
 PASS setRequestHeader should throw with header name "". 
-PASS setRequestHeader should throw with header name "ﾃｽﾄ". 
 PASS setRequestHeader should throw with header name "". 
 PASS setRequestHeader should throw with header name "t\rt". 
 PASS setRequestHeader should throw with header name "t\nt". 
@@ -36,7 +35,6 @@ PASS setRequestHeader should throw with header name "t,t".
 PASS setRequestHeader should throw with header name "t;t". 
 PASS setRequestHeader should throw with header name "()[]{}". 
 PASS setRequestHeader should throw with header name "a?B". 
-PASS setRequestHeader should throw with header name "X-ﾃｽﾄ". 
 PASS setRequestHeader should throw with header name "a=B". 
 PASS setRequestHeader should throw with header name "\0". 
 PASS setRequestHeader should throw with header name "\x01". 
@@ -70,4 +68,6 @@ PASS setRequestHeader should throw with header name "\x1c".
 PASS setRequestHeader should throw with header name "\x1d". 
 PASS setRequestHeader should throw with header name "\x1e". 
 PASS setRequestHeader should throw with header name "\x1f". 
+FAIL setRequestHeader should throw with header name "ﾃｽﾄ". assert_throws: function "function () { client.setRequestHeader(name, 'x-value') }" threw object "Error: SyntaxError: DOM Exception 12" ("SyntaxError") expected object "TypeError" ("TypeError")
+FAIL setRequestHeader should throw with header name "X-ﾃｽﾄ". assert_throws: function "function () { client.setRequestHeader(name, 'x-value') }" threw object "Error: SyntaxError: DOM Exception 12" ("SyntaxError") expected object "TypeError" ("TypeError")
 

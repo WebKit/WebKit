@@ -3,8 +3,8 @@
         "path": [
             "resources"
         ], 
-        "url": "https://github.com/w3c/testharness.js/archive/72dd67688097e7d310c64d3e524807d8bc34070c.tar.gz", 
-        "url_subpath": "testharness.js-72dd67688097e7d310c64d3e524807d8bc34070c"
+        "url": "https://github.com/w3c/testharness.js/archive/f8de1efce69fe125846c2ae621e557947899413e.tar.gz", 
+        "url_subpath": "testharness.js-f8de1efce69fe125846c2ae621e557947899413e"
     }, 
     {
         "path": [
@@ -28,8 +28,8 @@
         "path": [
             "tools"
         ], 
-        "url": "https://github.com/w3c/wpt-tools/archive/32d22b092f6975f839ce56af4ca0ca8b89dde2aa.tar.gz", 
-        "url_subpath": "wpt-tools-32d22b092f6975f839ce56af4ca0ca8b89dde2aa"
+        "url": "https://github.com/w3c/wpt-tools/archive/7c265b92cd701122d28a8fb15478a383045eea70.tar.gz", 
+        "url_subpath": "wpt-tools-7c265b92cd701122d28a8fb15478a383045eea70"
     }, 
     {
         "path": [
@@ -53,6 +53,14 @@
     {
         "path": [
             "tools", 
+            "pytest"
+        ], 
+        "url": "https://github.com/pytest-dev/pytest/archive/168daaa71f4cc5f846064ebebab41b9cf625a89a.tar.gz", 
+        "url_subpath": "pytest-168daaa71f4cc5f846064ebebab41b9cf625a89a"
+    }, 
+    {
+        "path": [
+            "tools", 
             "pywebsocket"
         ], 
         "url": "https://github.com/w3c/pywebsocket/archive/8c285d9015121e8c1c40be852439fc03b4a18112.tar.gz", 
@@ -69,9 +77,17 @@
     {
         "path": [
             "tools", 
+            "webdriver"
+        ], 
+        "url": "https://github.com/w3c/wdclient/archive/f9aa1ffc00322a69cb52e8c8fc49eda127f4dbd9.tar.gz", 
+        "url_subpath": "wdclient-f9aa1ffc00322a69cb52e8c8fc49eda127f4dbd9"
+    }, 
+    {
+        "path": [
+            "tools", 
             "wptserve"
         ], 
-        "url": "https://github.com/w3c/wptserve/archive/b12d799c0be4fab1055df9a1e4dd5e45646b46ea.tar.gz", 
-        "url_subpath": "wptserve-b12d799c0be4fab1055df9a1e4dd5e45646b46ea"
+        "url": "https://github.com/w3c/wptserve/archive/01ed915048fae7a57b81d9f424889eb1ab6ece79.tar.gz", 
+        "url_subpath": "wptserve-01ed915048fae7a57b81d9f424889eb1ab6ece79"
     }
 ]

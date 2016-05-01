@@ -33,11 +33,23 @@ function testAlias(arg, iface) {
                   "isTrusted should be initialized to false");
   }, "createEvent('" + arg + "') should be initialized correctly.");
 }
-aliases.forEach(function(alias) {
-  testAlias(alias[0], alias[1]);
-  testAlias(alias[0].toLowerCase(), alias[1]);
-  testAlias(alias[0].toUpperCase(), alias[1]);
-});
+for (var alias in aliases) {
+  var iface = aliases[alias];
+  testAlias(alias, iface);
+  testAlias(alias.toLowerCase(), iface);
+  testAlias(alias.toUpperCase(), iface);
+
+  if (alias[alias.length - 1] != "s") {
+    var plural = alias + "s";
+    if (!(plural in aliases)) {
+      test(function () {
+        assert_throws("NOT_SUPPORTED_ERR", function () {
+          var evt = document.createEvent(plural);
+        });
+      }, 'Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "' + plural + '"');
+    }
+  }
+}
 
 test(function() {
   assert_throws("NOT_SUPPORTED_ERR", function() {
@@ -54,31 +66,88 @@ test(function() {
 }, "Should throw NOT_SUPPORTED_ERR for unrecognized arguments");
 
 /*
-The following are event interfaces which do actually exist, but must still
-throw since they're absent from the table in the spec
-for document.createEvent().
-This list is not exhaustive.
-*/
+ * The following are event interfaces which do actually exist, but must still
+ * throw since they're absent from the table in the spec for
+ * document.createEvent().  This list is not exhaustive, but includes all
+ * interfaces that it is known some UA does or did not throw for.
+ */
 var someNonCreateableEvents = [
-  "AnimationEvent",
-  "DragEvent",
-  "ErrorEvent",
-  "FocusEvent",
+  "AnimationPlayerEvent",
+  "ApplicationCacheErrorEvent",
+  "AudioProcessingEvent",
+  "AutocompleteErrorEvent",
+  "BeforeInstallPromptEvent",
+  "BlobEvent",
+  "ClipboardEvent",
+  "CommandEvent",
+  "DataContainerEvent",
+  "DeviceLightEvent",
+  "ExtendableEvent",
+  "ExtendableMessageEvent",
+  "FetchEvent",
+  "FontFaceSetLoadEvent",
+  "GamepadEvent",
+  "GeofencingEvent",
+  "InstallEvent",
+  "KeyEvent",
+  "MIDIConnectionEvent",
+  "MIDIMessageEvent",
+  "MediaEncryptedEvent",
+  "MediaKeyEvent",
+  "MediaKeyMessageEvent",
+  "MediaQueryListEvent",
+  "MediaStreamEvent",
+  "MediaStreamTrackEvent",
+  "MouseScrollEvent",
+  "MutationEvent",
+  "NotificationEvent",
+  "NotifyPaintEvent",
+  "OfflineAudioCompletionEvent",
+  "OrientationEvent",
+  "PageTransition", // Yes, with no "Event"
   "PointerEvent",
-  "TransitionEvent",
-  "WheelEvent"
+  "PopUpEvent",
+  "PresentationConnectionAvailableEvent",
+  "PresentationConnectionCloseEvent",
+  "PromiseRejectionEvent",
+  "PushEvent",
+  "RTCDTMFToneChangeEvent",
+  "RTCDataChannelEvent",
+  "RTCIceCandidateEvent",
+  "RelatedEvent",
+  "ResourceProgressEvent",
+  "SVGEvent",
+  "ScrollAreaEvent",
+  "SecurityPolicyViolationEvent",
+  "ServicePortConnectEvent",
+  "ServiceWorkerMessageEvent",
+  "SimpleGestureEvent",
+  "SpeechRecognitionError",
+  "SpeechRecognitionEvent",
+  "SpeechSynthesisEvent",
+  "SyncEvent",
+  "TimeEvent",
+  "WebKitAnimationEvent",
+  "WebKitTransitionEvent",
+  "XULCommandEvent",
 ];
 someNonCreateableEvents.forEach(function (eventInterface) {
-  test(function () {
-    assert_throws("NOT_SUPPORTED_ERR", function () {
-      var evt = document.createEvent(eventInterface);
-    });
-  }, 'Should throw NOT_SUPPORTED_ERR for non-legacy event interface "' + eventInterface + '"');
+  // SVGEvents is allowed, but not SVGEvent.  Make sure we only test if it's
+  // not whitelisted.
+  if (!(eventInterface in aliases)) {
+    test(function () {
+      assert_throws("NOT_SUPPORTED_ERR", function () {
+        var evt = document.createEvent(eventInterface);
+      });
+    }, 'Should throw NOT_SUPPORTED_ERR for non-legacy event interface "' + eventInterface + '"');
+  }
 
-  test(function () {
-    assert_throws("NOT_SUPPORTED_ERR", function () {
-      var evt = document.createEvent(eventInterface + "s");
-    });
-  }, 'Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "' + eventInterface + '"');
+  if (!(eventInterface + "s" in aliases)) {
+    test(function () {
+      assert_throws("NOT_SUPPORTED_ERR", function () {
+        var evt = document.createEvent(eventInterface + "s");
+      });
+    }, 'Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "' + eventInterface + 's"');
+  }
 });
 </script>

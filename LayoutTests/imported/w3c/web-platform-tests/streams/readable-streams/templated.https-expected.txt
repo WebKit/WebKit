@@ -1,6 +1,7 @@
 
 PASS Running templatedRSEmpty with ReadableStream (empty) 
 PASS instances have the correct methods and properties 
+FAIL calling getReader with invalid arguments should throw appropriate errors assert_throws: empty string mode should throw function "() => rs.getReader({ mode: '' })" did not throw
 PASS Running templatedRSEmptyReader with ReadableStream (empty) reader 
 PASS instances have the correct methods and properties 
 PASS locked should be true 
@@ -88,6 +89,7 @@ FAIL Load templated.js with SharedWorker assert_unreached: SharedWorker is unava
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
 PASS Running templatedRSEmpty with ReadableStream (empty) 
 PASS instances have the correct methods and properties 
+FAIL calling getReader with invalid arguments should throw appropriate errors assert_throws: empty string mode should throw function "() => rs.getReader({ mode: '' })" did not throw
 PASS Running templatedRSEmptyReader with ReadableStream (empty) reader 
 PASS instances have the correct methods and properties 
 PASS locked should be true 

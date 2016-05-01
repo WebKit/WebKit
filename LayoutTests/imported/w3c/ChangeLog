@@ -1,5 +1,289 @@
 2016-05-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Sync web-platform-tests up to revision 4af8373
+        https://bugs.webkit.org/show_bug.cgi?id=157170
+
+        Reviewed by Chris Dumez.
+
+        Rebasing expectations.
+
+        * resources/ImportExpectations: Skipping new test suites.
+        Skipping IndexedDB until we decide whether to continue having these tests here.
+        * resources/TestRepositories: Updating revision to 4af8373.
+        * resources/web-platform-tests-modules.json:
+        * web-platform-tests/IndexedDB/idbindex-multientry-big-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_get7-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_getKey7-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_openCursor2-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor3-expected.txt:
+        * web-platform-tests/README.md:
+        * web-platform-tests/XMLHttpRequest/OWNERS:
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials-expected.txt:
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.js:
+        (test_withCredentials.): Deleted.
+        * web-platform-tests/XMLHttpRequest/abort-during-open.htm:
+        * web-platform-tests/XMLHttpRequest/abort-during-open.js: Added.
+        (test.async_test.test.step.client.onreadystatechange):
+        (test.async_test.test.step):
+        * web-platform-tests/XMLHttpRequest/abort-during-open.worker.js: Added.
+        * web-platform-tests/XMLHttpRequest/data-uri-expected.txt:
+        * web-platform-tests/XMLHttpRequest/data-uri.htm:
+        * web-platform-tests/XMLHttpRequest/formdata-set-expected.txt:
+        * web-platform-tests/XMLHttpRequest/formdata-set.htm:
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt:
+        * web-platform-tests/XMLHttpRequest/resources/auth7/corsenabled.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/auth7/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/dom/lists/w3c-import.log.
+        * web-platform-tests/XMLHttpRequest/resources/auth8/corsenabled-no-authorize.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/auth8/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/dom/lists/w3c-import.log.
+        * web-platform-tests/XMLHttpRequest/resources/auth9/auth.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/auth9/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/dom/lists/w3c-import.log.
+        * web-platform-tests/XMLHttpRequest/responseurl-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/responseurl.html: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-setrequestheader-and-arguments-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-setrequestheader-and-arguments.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-cors-setrequestheader-no-cred-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-cors-setrequestheader-no-cred.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-send.htm:
+        * web-platform-tests/XMLHttpRequest/send-send.js: Added.
+        (test):
+        * web-platform-tests/XMLHttpRequest/send-send.worker.js: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-bogus-name-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-bogus-name.htm:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-bogus-value-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-bogus-value.htm:
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+        * web-platform-tests/common/OWNERS:
+        * web-platform-tests/dom/collections/HTMLCollection-as-proto-length-get-throws-expected.txt: Added.
+        * web-platform-tests/dom/collections/HTMLCollection-as-proto-length-get-throws.html: Added.
+        * web-platform-tests/dom/collections/HTMLCollection-supported-property-indices-expected.txt: Added.
+        * web-platform-tests/dom/collections/HTMLCollection-supported-property-indices.html: Added.
+        * web-platform-tests/dom/collections/w3c-import.log:
+        * web-platform-tests/dom/events/Event-constructors-expected.txt:
+        * web-platform-tests/dom/events/Event-constructors.html:
+        * web-platform-tests/dom/events/Event-defaultPrevented-after-dispatch-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-defaultPrevented-after-dispatch.html: Added.
+        * web-platform-tests/dom/events/Event-dispatch-bubbles-false-expected.txt:
+        * web-platform-tests/dom/events/Event-dispatch-bubbles-false.html:
+        * web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+        * web-platform-tests/dom/events/ProgressEvent-expected.txt:
+        * web-platform-tests/dom/events/ProgressEvent.html:
+        * web-platform-tests/dom/events/w3c-import.log:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces.html:
+        * web-platform-tests/dom/lists/DOMTokenList-value-expected.txt: Added.
+        * web-platform-tests/dom/lists/DOMTokenList-value.html: Added.
+        * web-platform-tests/dom/lists/w3c-import.log:
+        * web-platform-tests/dom/nodes/CharacterData-appendChild-expected.txt: Added.
+        * web-platform-tests/dom/nodes/CharacterData-appendChild.html: Added.
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument-expected.txt:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument.html:
+        * web-platform-tests/dom/nodes/Document-Element-getElementsByTagName.js:
+        (test_getElementsByTagName):
+        * web-platform-tests/dom/nodes/Document-characterSet-normalization-expected.txt:
+        * web-platform-tests/dom/nodes/Document-characterSet-normalization.html:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace.html:
+        * web-platform-tests/dom/nodes/Document-createEvent-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createEvent.html:
+        * web-platform-tests/dom/nodes/Document-createEvent.js:
+        * web-platform-tests/dom/nodes/Document-getElementsByTagName-expected.txt:
+        * web-platform-tests/dom/nodes/Document-getElementsByTagName-xhtml-expected.txt:
+        * web-platform-tests/dom/nodes/Document-getElementsByTagName-xhtml.xhtml:
+        * web-platform-tests/dom/nodes/Element-getElementsByTagName-expected.txt:
+        * web-platform-tests/dom/nodes/Element-hasAttributes-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Element-hasAttributes.html: Added.
+        * web-platform-tests/dom/nodes/Element-insertAdjacentElement-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Element-insertAdjacentElement.html: Added.
+        * web-platform-tests/dom/nodes/Element-insertAdjacentText-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Element-insertAdjacentText.html: Added.
+        * web-platform-tests/dom/nodes/Node-contains-xml-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Node-contains-xml.xml: Added.
+        * web-platform-tests/dom/nodes/Node-isSameNode-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Node-isSameNode.html: Added.
+        * web-platform-tests/dom/nodes/Node-parentElement.html:
+        * web-platform-tests/dom/nodes/Node-replaceChild-expected.txt:
+        * web-platform-tests/dom/nodes/Node-replaceChild.html:
+        * web-platform-tests/dom/nodes/attributes-expected.txt:
+        * web-platform-tests/dom/nodes/attributes.html:
+        * web-platform-tests/dom/nodes/attributes.js:
+        (attr_is):
+        * web-platform-tests/dom/nodes/case-expected.txt:
+        * web-platform-tests/dom/nodes/case.js:
+        (get_qualified_name):
+        (test_get_elements_tag_name):
+        * web-platform-tests/dom/nodes/insert-adjacent-expected.txt: Added.
+        * web-platform-tests/dom/nodes/insert-adjacent.html: Added.
+        * web-platform-tests/dom/nodes/remove-unscopable-expected.txt: Added.
+        * web-platform-tests/dom/nodes/remove-unscopable.html: Added.
+        * web-platform-tests/dom/nodes/rootNode-expected.txt: Added.
+        * web-platform-tests/dom/nodes/rootNode.html: Added.
+        * web-platform-tests/dom/nodes/w3c-import.log:
+        * web-platform-tests/dom/ranges/Range-stringifier-expected.txt: Added.
+        * web-platform-tests/dom/ranges/Range-stringifier.html: Added.
+        * web-platform-tests/dom/ranges/w3c-import.log:
+        * web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter.html:
+        * web-platform-tests/dom/traversal/TreeWalker-basic.html:
+        * web-platform-tests/dom/traversal/TreeWalker-currentNode.html:
+        * web-platform-tests/dom/traversal/TreeWalker-previousNodeLastChildReject.html:
+        * web-platform-tests/dom/traversal/TreeWalker-previousSiblingLastChildSkip.html:
+        * web-platform-tests/dom/traversal/TreeWalker-traversal-reject.html:
+        * web-platform-tests/dom/traversal/TreeWalker-traversal-skip-most.html:
+        * web-platform-tests/dom/traversal/TreeWalker-traversal-skip.html:
+        * web-platform-tests/dom/traversal/TreeWalker-walking-outside-a-tree.html:
+        * web-platform-tests/fetch/api/cors/cors-preflight.js:
+        * web-platform-tests/fetch/api/credentials/cookies.js:
+        (cookies):
+        * web-platform-tests/fetch/api/policies/referrer-origin-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin.js:
+        (promise_test):
+        * web-platform-tests/fetch/api/request/request-consume.html:
+        * web-platform-tests/fetch/api/request/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/dom/lists/w3c-import.log.
+        * web-platform-tests/fetch/api/request/w3c-import.log:
+        * web-platform-tests/fetch/api/resources/utils.js:
+        (validateStreamFromString):
+        * web-platform-tests/fetch/api/response/response-cancel-stream-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-stream-expected.txt:
+        * web-platform-tests/fetch/api/response/w3c-import.log:
+        * web-platform-tests/html/OWNERS:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/Document.getElementsByClassName-null-undef.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/Element.getElementsByClassName-null-undef.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByClassName-same.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-case-xhtml.xhtml:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-case.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-id-xhtml.xhtml:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-id.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-namespace-xhtml.xhtml:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-namespace.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-xhtml.xhtml:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-param-xhtml.xhtml:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-param.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-same.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.head-01.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.head-02.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-01.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-02.xhtml:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-03.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-04.xhtml:
+        * web-platform-tests/html/dom/elements/global-attributes/id-name-specialcase.html:
+        * web-platform-tests/html/dom/elements/global-attributes/id-name.html:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/resources/common.js:
+        (isVoidElement): Deleted.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/resources/stylesheet.css: Added.
+        (body):
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/dom/lists/w3c-import.log.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-with-base-expected.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-with-base.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet.css: Added.
+        (body):
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.scaled.png: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-ignored-in-media-element-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-ignored-in-media-element.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-with-base-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-with-base.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/document-base-url-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/document-base-url.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/resources/cat.jpg: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/dom/lists/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput.html:
+        * web-platform-tests/html/semantics/forms/form-submission-0/getactionurl-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/getactionurl.html: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change.html: Added.
+        * web-platform-tests/html/semantics/forms/textfieldselection/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-autocomplete-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-autocomplete.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/checkbox.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/selection.html: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-legend-element/legend-form-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-legend-element/legend-form.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/ol.start-reflection-1.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/ol.start-reflection-2.html:
+        * web-platform-tests/html/semantics/links/linktypes/alternate-css-expected.html: Added.
+        * web-platform-tests/html/semantics/links/linktypes/alternate-css.html: Added.
+        * web-platform-tests/html/semantics/links/linktypes/alternate.css: Added.
+        (div):
+        * web-platform-tests/html/semantics/links/linktypes/preferred.css: Added.
+        (div):
+        * web-platform-tests/html/semantics/links/linktypes/w3c-import.log:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/default-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/default.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/focus-autofocus-expected.txt: Added.
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/focus-autofocus.html: Added.
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/focus-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/focus.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/link-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/link.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/w3c-import.log:
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/insertRow-method-03-expected.txt: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/insertRow-method-03.html: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/tFoot-expected.txt: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/tFoot.html: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/tHead-expected.txt: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/tHead.html: Added.
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/w3c-import.log:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/media/OWNERS:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-add.https.html:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-delete.https.html:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-matchAll.https.html:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-put.https.html:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-keys.https.html:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-match.https.html:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage.https.html:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/credentials.html:
+        * web-platform-tests/streams/byte-length-queuing-strategy.js:
+        (test):
+        * web-platform-tests/streams/count-queuing-strategy.js:
+        (test):
+        * web-platform-tests/streams/readable-streams/bad-strategies.js:
+        (get string_appeared_here):
+        (promise_test):
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.https-expected.txt:
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.js:
+        (promise_test):
+        (promise_test.t.const.closed.new.ReadableStream.start):
+        * web-platform-tests/streams/readable-streams/cancel.js:
+        (promise_test): Deleted.
+        * web-platform-tests/streams/readable-streams/general.https-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.js:
+        (test):
+        (promise_test):
+        (promise_test.t.const.rs.new.ReadableStream.pull):
+        (promise_test.t.const.rs.new.ReadableStream.start): Deleted.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.js:
+        (test):
+        * web-platform-tests/streams/readable-streams/templated.https-expected.txt:
+        * web-platform-tests/streams/resources/rs-test-templates.js:
+        (self.templatedRSEmpty):
+
+2016-05-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Fix 157169
 
         Update W3C importer files related to csswg-test files after r200234

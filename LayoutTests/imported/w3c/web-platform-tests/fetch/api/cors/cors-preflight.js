@@ -58,25 +58,25 @@ function corsPreflight(desc, corsUrl, method, allowed, headers) {
 
 var corsUrl = "http://www1.{{host}}:{{ports[http][0]}}" + dirname(location.pathname) + RESOURCES_DIR + "preflight.py";
 
-//corsPreflight("CORS [DELETE], server allows", corsUrl, "DELETE", true);
-//corsPreflight("CORS [DELETE], server refuses", corsUrl, "DELETE", false);
-//corsPreflight("CORS [PUT], server allows", corsUrl, "PUT", true);
-//corsPreflight("CORS [PUT], server refuses", corsUrl, "PUT", false);
-//corsPreflight("CORS [PATCH], server allows", corsUrl, "PATCH", true);
-//corsPreflight("CORS [PATCH], server refuses", corsUrl, "PATCH", false);
-//corsPreflight("CORS [NEW], server allows", corsUrl, "NEW", true);
-//corsPreflight("CORS [NEW], server refuses", corsUrl, "NEW", false);
-//
-//corsPreflight("CORS [GET] [x-test-header: allowed], server allows", corsUrl, "GET", true, {"x-test-header1": "allowed"});
-//corsPreflight("CORS [GET] [x-test-header: refused], server refuses", corsUrl, "GET", false, {"x-test-header1": "refused"});
-//
+corsPreflight("CORS [DELETE], server allows", corsUrl, "DELETE", true);
+corsPreflight("CORS [DELETE], server refuses", corsUrl, "DELETE", false);
+corsPreflight("CORS [PUT], server allows", corsUrl, "PUT", true);
+corsPreflight("CORS [PUT], server refuses", corsUrl, "PUT", false);
+corsPreflight("CORS [PATCH], server allows", corsUrl, "PATCH", true);
+corsPreflight("CORS [PATCH], server refuses", corsUrl, "PATCH", false);
+corsPreflight("CORS [NEW], server allows", corsUrl, "NEW", true);
+corsPreflight("CORS [NEW], server refuses", corsUrl, "NEW", false);
+
+corsPreflight("CORS [GET] [x-test-header: allowed], server allows", corsUrl, "GET", true, {"x-test-header1": "allowed"});
+corsPreflight("CORS [GET] [x-test-header: refused], server refuses", corsUrl, "GET", false, {"x-test-header1": "refused"});
+
 var headers = {"x-test-header1": "allowedOrRefused",
                "x-test-header2": "allowedOrRefused",
                "x-test-header3": "allowedOrRefused",
 };
-//corsPreflight("CORS [GET] [several headers], server allows", corsUrl, "GET", true, headers);
-//corsPreflight("CORS [GET] [several headers], server refuses", corsUrl, "GET", false, headers);
-//corsPreflight("CORS [PUT] [several headers], server allows", corsUrl, "PUT", true, headers);
+corsPreflight("CORS [GET] [several headers], server allows", corsUrl, "GET", true, headers);
+corsPreflight("CORS [GET] [several headers], server refuses", corsUrl, "GET", false, headers);
+corsPreflight("CORS [PUT] [several headers], server allows", corsUrl, "PUT", true, headers);
 corsPreflight("CORS [PUT] [several headers], server refuses", corsUrl, "PUT", false, headers);
 
 done();

@@ -12,5 +12,5 @@ FAIL testFormDataSetToFormUndefined1 fd.set is not a function. (In 'fd.set('key'
 FAIL testFormDataSetToFormUndefined2 fd.set is not a function. (In 'fd.set('key', undefined)', 'fd.set' is undefined)
 FAIL testFormDataSetToFormNull1 fd.set is not a function. (In 'fd.set('key', null)', 'fd.set' is undefined)
 FAIL testFormDataSetToFormNull2 fd.set is not a function. (In 'fd.set('key', null)', 'fd.set' is undefined)
-FAIL testFormDataSetEmptyBlob undefined is not an object (evaluating 'fd.set.apply')
+FAIL testFormDataSetEmptyBlob fd.set is not a function. (In 'fd.set('key', new Blob([]), 'blank.txt')', 'fd.set' is undefined)
 

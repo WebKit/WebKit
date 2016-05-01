@@ -1,0 +1,48 @@
+
+PASS Input element programmatic selection support 
+PASS input type text should support the select() method 
+PASS input type search should support the select() method 
+PASS input type url should support the select() method 
+PASS input type tel should support the select() method 
+PASS input type email should support the select() method 
+PASS input type password should support the select() method 
+FAIL input type date should support the select() method assert_equals: the given input type is not supported expected "date" but got "text"
+FAIL input type month should support the select() method assert_equals: the given input type is not supported expected "month" but got "text"
+FAIL input type week should support the select() method assert_equals: the given input type is not supported expected "week" but got "text"
+FAIL input type time should support the select() method assert_equals: the given input type is not supported expected "time" but got "text"
+FAIL input type datetime-local should support the select() method assert_equals: the given input type is not supported expected "datetime-local" but got "text"
+PASS input type number should support the select() method 
+PASS input type color should support the select() method 
+PASS input type file should support the select() method 
+FAIL input type hidden should not support the select() method assert_throws: function "function () { input.select(); }" did not throw
+FAIL input type range should not support the select() method assert_throws: function "function () { input.select(); }" did not throw
+FAIL input type checkbox should not support the select() method assert_throws: function "function () { input.select(); }" did not throw
+FAIL input type radio should not support the select() method assert_throws: function "function () { input.select(); }" did not throw
+FAIL input type submit should not support the select() method assert_throws: function "function () { input.select(); }" did not throw
+FAIL input type image should not support the select() method assert_throws: function "function () { input.select(); }" did not throw
+FAIL input type reset should not support the select() method assert_throws: function "function () { input.select(); }" did not throw
+FAIL input type button should not support the select() method assert_throws: function "function () { input.select(); }" did not throw
+PASS Input element programmatic selection support 1 
+PASS input type text should support all selection attributes and methods 
+PASS input type search should support all selection attributes and methods 
+PASS input type url should support all selection attributes and methods 
+PASS input type tel should support all selection attributes and methods 
+PASS input type password should support all selection attributes and methods 
+FAIL input type hidden should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" threw object "TypeError: Type error" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+FAIL input type email should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" did not throw
+FAIL input type date should not support variable-length selections assert_equals: the given input type is not supported expected "date" but got "text"
+FAIL input type month should not support variable-length selections assert_equals: the given input type is not supported expected "month" but got "text"
+FAIL input type week should not support variable-length selections assert_equals: the given input type is not supported expected "week" but got "text"
+FAIL input type time should not support variable-length selections assert_equals: the given input type is not supported expected "time" but got "text"
+FAIL input type datetime-local should not support variable-length selections assert_equals: the given input type is not supported expected "datetime-local" but got "text"
+FAIL input type number should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" did not throw
+FAIL input type range should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" threw object "TypeError: Type error" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+FAIL input type color should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" threw object "TypeError: Type error" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+FAIL input type checkbox should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" threw object "TypeError: Type error" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+FAIL input type radio should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" threw object "TypeError: Type error" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+FAIL input type file should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" threw object "TypeError: Type error" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+FAIL input type submit should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" threw object "TypeError: Type error" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+FAIL input type image should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" threw object "TypeError: Type error" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+FAIL input type reset should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" threw object "TypeError: Type error" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+FAIL input type button should not support variable-length selections assert_throws: function "function () { var a = input.selectionStart; }" threw object "TypeError: Type error" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+

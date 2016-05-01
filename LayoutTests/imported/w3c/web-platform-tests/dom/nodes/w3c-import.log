@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/CharacterData-appendChild.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/CharacterData-appendData.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/CharacterData-data.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/CharacterData-deleteData.html
@@ -87,6 +88,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-getElementsByTagName-change-document-HTMLNess.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-getElementsByTagName.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-getElementsByTagNameNS.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-hasAttributes.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-insertAdjacentElement.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-insertAdjacentText.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-lastElementChild-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-lastElementChild.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-matches.html
@@ -113,13 +117,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-compareDocumentPosition.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-constants.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-contains-xml.xml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-contains.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-contains.xml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-insertBefore.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode-iframe1.xml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode-iframe2.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-isSameNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-lookupNamespaceURI.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-lookupPrefix.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-nodeName-xhtml.xhtml
@@ -183,7 +188,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/getElementsByClassName-30.htm
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/getElementsByClassName-31.htm
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/getElementsByClassNameFrame.htm
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insert-adjacent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/mutationobservers.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/prepend-on-Document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/productions.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-unscopable.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/rootNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/selectors.js

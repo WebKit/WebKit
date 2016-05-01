@@ -1,20 +1,4 @@
-CONSOLE MESSAGE: line 60: Error
+CONSOLE MESSAGE: line 20: TypeError: aliases.forEach is not a function. (In 'aliases.forEach', 'aliases.forEach' is undefined)
 
 PASS Calling dispatchEvent(null). 
-PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (CustomEvent). 
-PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (Event). 
-PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (Events). 
-PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (HTMLEvents). 
-PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (KeyboardEvent). 
-FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (KeyEvents). NotSupportedError: DOM Exception 9
-PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (MessageEvent). 
-PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (MouseEvent). 
-PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (MouseEvents). 
-FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (TouchEvent). NotSupportedError: DOM Exception 9
-PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (UIEvent). 
-PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (UIEvents). 
-PASS If the event's dispatch flag is set, an InvalidStateError must be thrown. 
-PASS Exceptions from event listeners must not be propagated. 
-PASS Event listeners added during dispatch should be called 
-PASS Event listeners should be called in order of addition 
 

@@ -17,6 +17,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-constants.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-constructors.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-defaultPrevented-after-dispatch.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-defaultPrevented.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-bubbles-false.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-handlers-changed.html

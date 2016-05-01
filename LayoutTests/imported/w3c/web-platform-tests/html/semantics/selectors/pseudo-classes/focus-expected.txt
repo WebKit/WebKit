@@ -1,9 +1,8 @@
-button1            
+button1          
 hello
 content
 
 
-FAIL input3 has the attribute autofocus assert_array_equals: lengths differ, expected 1 got 0
 PASS input1 has the focus 
 PASS tabindex attribute makes the element focusable 
 PASS editable elements are focusable 

@@ -3,7 +3,7 @@ PASS Event constructors
 PASS Event constructors 1 
 PASS Event constructors 2 
 PASS Event constructors 3 
-FAIL Event constructors 4 Constructor requires 'new' operator
+PASS Event constructors 4 
 PASS Event constructors 5 
 PASS Event constructors 6 
 PASS Event constructors 7 

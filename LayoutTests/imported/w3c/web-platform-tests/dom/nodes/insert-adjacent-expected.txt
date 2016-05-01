@@ -1,0 +1,19 @@
+raclettegateau aux pommes
+
+PASS insertAdjacentElement(beforebegin, [object HTMLHeadingElement] ) 
+PASS insertAdjacentText(beforebegin, raclette ) 
+PASS insertAdjacentElement(afterbegin, [object HTMLHeadingElement] ) 
+PASS insertAdjacentText(afterbegin, tartiflette ) 
+PASS insertAdjacentElement(beforeend, [object HTMLHeadingElement] ) 
+PASS insertAdjacentText(beforeend, lasagne ) 
+PASS insertAdjacentElement(afterend, [object HTMLHeadingElement] ) 
+PASS insertAdjacentText(afterend, gateau aux pommes ) 
+PASS invalid object argument insertAdjacentElement 
+PASS invalid caller object insertAdjacentElement 
+PASS invalid caller object insertAdjacentText 
+FAIL invalid syntax for insertAdjacentElement assert_throws: function "function () {
+    el.insertAdjacentElement('heeeee', div)..." threw object "Error: NotSupportedError: DOM Exception 9" that is not a DOMException SYNTAX_ERR: property "code" is equal to 9, expected 12
+FAIL invalid syntax for insertAdjacentText assert_throws: function "function () {
+    el.insertAdjacentText('hoooo', 'magret ..." threw object "Error: NotSupportedError: DOM Exception 9" that is not a DOMException SYNTAX_ERR: property "code" is equal to 9, expected 12
+PASS insertAdjacentText should return null 
+

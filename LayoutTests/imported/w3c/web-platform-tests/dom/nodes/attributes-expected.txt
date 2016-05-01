@@ -1,6 +1,7 @@
 
 FAIL AttrExodus assert_false: should not be a Node expected false got true
 PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (setAttribute) 
+PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown, even if the attribute is already present. (setAttribute) 
 PASS setAttribute should lowercase its name argument (upper case attribute) 
 PASS setAttribute should lowercase its name argument (mixed case attribute) 
 PASS setAttribute should not throw even when qualifiedName starts with 'xmlns' 
@@ -9,6 +10,7 @@ PASS setAttribute should not change the order of previously set attributes.
 PASS setAttribute should set the first attribute with the given name 
 PASS setAttribute should set the attribute with the given qualified name 
 PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (setAttributeNS) 
+PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown, even if the attribute is already present. (setAttributeNS) 
 PASS When qualifiedName does not match the QName production, an NAMESPACE_ERR exception is to be thrown. 
 PASS null and the empty string should result in a null namespace. 
 PASS A namespace is required to use a prefix. 

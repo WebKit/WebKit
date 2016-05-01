@@ -16,6 +16,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/original-id.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html

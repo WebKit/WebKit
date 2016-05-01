@@ -36,7 +36,7 @@ function cookies(desc, credentials1, credentials2 ,cookies) {
       return fetch(url + urlCleanParameters, {"credentials": "include"});
     }).catch(function(e) {
       return fetch(url + urlCleanParameters, {"credentials": "include"}).then(function() {
-        return Promise.reject(e);
+         return Promise.reject(e);
       });
     });
   }, desc);

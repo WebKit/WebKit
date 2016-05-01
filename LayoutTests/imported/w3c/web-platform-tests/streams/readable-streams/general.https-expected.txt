@@ -1,6 +1,7 @@
 
 PASS ReadableStream can be constructed with no errors 
 PASS ReadableStream can't be constructed with garbage 
+FAIL ReadableStream can't be constructed with an invalid type assert_throws: constructor should throw when the type is null function "() => new ReadableStream({ type: null })" did not throw
 FAIL ReadableStream instances should have the correct list of properties assert_false: method should be non-enumerable expected false got true
 PASS ReadableStream constructor should throw for non-function start arguments 
 PASS ReadableStream constructor can get initial garbage as cancel argument 
@@ -23,9 +24,10 @@ PASS ReadableStream: should pull after start, and after every read
 PASS ReadableStream: should not call pull after start if the stream is now closed 
 PASS ReadableStream: should call pull after enqueueing from inside pull (with no read requests), if strategy allows 
 PASS ReadableStream pull should be able to close a stream. 
+PASS ReadableStream pull should be able to error a stream. 
+PASS ReadableStream pull should be able to error a stream and throw. 
 PASS ReadableStream: enqueue should throw when the stream is readable but draining 
 PASS ReadableStream: enqueue should throw when the stream is closed 
-PASS ReadableStream: enqueue should throw the stored error when the stream is errored 
 PASS ReadableStream: should call underlying source methods as methods 
 PASS ReadableStream strategies: the default strategy should give desiredSize of 1 to start, decreasing by 1 per enqueue 
 PASS ReadableStream strategies: the default strategy should continue giving desiredSize of 1 if the chunks are read immediately 
@@ -36,6 +38,7 @@ FAIL Load general.js with SharedWorker assert_unreached: SharedWorker is unavail
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
 PASS ReadableStream can be constructed with no errors 
 PASS ReadableStream can't be constructed with garbage 
+FAIL ReadableStream can't be constructed with an invalid type assert_throws: constructor should throw when the type is null function "() => new ReadableStream({ type: null })" did not throw
 FAIL ReadableStream instances should have the correct list of properties assert_false: method should be non-enumerable expected false got true
 PASS ReadableStream constructor should throw for non-function start arguments 
 PASS ReadableStream constructor can get initial garbage as cancel argument 
@@ -58,9 +61,10 @@ PASS ReadableStream: should pull after start, and after every read
 PASS ReadableStream: should not call pull after start if the stream is now closed 
 PASS ReadableStream: should call pull after enqueueing from inside pull (with no read requests), if strategy allows 
 PASS ReadableStream pull should be able to close a stream. 
+PASS ReadableStream pull should be able to error a stream. 
+PASS ReadableStream pull should be able to error a stream and throw. 
 PASS ReadableStream: enqueue should throw when the stream is readable but draining 
 PASS ReadableStream: enqueue should throw when the stream is closed 
-PASS ReadableStream: enqueue should throw the stored error when the stream is errored 
 PASS ReadableStream: should call underlying source methods as methods 
 PASS ReadableStream strategies: the default strategy should give desiredSize of 1 to start, decreasing by 1 per enqueue 
 PASS ReadableStream strategies: the default strategy should continue giving desiredSize of 1 if the chunks are read immediately 

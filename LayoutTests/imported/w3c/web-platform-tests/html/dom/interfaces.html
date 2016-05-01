@@ -289,6 +289,7 @@ interface Element : Node {
 
   boolean hasAttributes();
   [SameObject] readonly attribute NamedNodeMap attributes;
+  sequence<DOMString> getAttributeNames();
   DOMString? getAttribute(DOMString name);
   DOMString? getAttributeNS(DOMString? namespace, DOMString localName);
   void setAttribute(DOMString name, DOMString value);
@@ -3201,7 +3202,7 @@ window.onload = function() {
     DOMStringMap: ['document.head.dataset'],
     DOMElementMap: ['document.cssElementMap'],
     Transferable: [],
-    Document: ['iframe.contentDocument'],
+    Document: ['iframe.contentDocument', 'new Document()'],
     XMLDocument: ['document.implementation.createDocument(null, "", null)'],
     HTMLElement: [
       'document.createElement("noscript")',

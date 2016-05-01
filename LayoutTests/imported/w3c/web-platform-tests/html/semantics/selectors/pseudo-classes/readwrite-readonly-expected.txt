@@ -1,3 +1,4 @@
+         
     
  
  
@@ -6,6 +7,8 @@ paragraph1.
 paragraph2.
 
 
+PASS The :read-write pseudo-class must not match input elements to which the readonly attribute does not apply 
+PASS The :read-only pseudo-class must match input elements to which the readonly attribute does not apply 
 PASS The :read-write pseudo-class must match input elements to which the readonly attribute applies, and that are mutable 
 FAIL The :read-only pseudo-class must not match input elements to which the readonly attribute applies, and that are mutable assert_array_equals: lengths differ, expected 1 got 4
 PASS The :read-write pseudo-class must not match input elements after the readonly attribute has been added 

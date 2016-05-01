@@ -35,5 +35,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-selectNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-set.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-stringifier.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-test-iframe.html

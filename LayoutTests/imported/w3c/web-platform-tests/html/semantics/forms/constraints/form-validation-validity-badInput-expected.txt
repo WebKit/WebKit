@@ -4,9 +4,9 @@ PASS [INPUT in EMAIL status] The multiple attribute is false and the value attri
 PASS [INPUT in EMAIL status] The multiple attribute is false and the value attribute is a valid e-mail address 
 PASS [INPUT in EMAIL status] The multiple attribute is true and the value contains valid e-mail addresses 
 PASS [INPUT in EMAIL status] The multiple attribute is true and the value attribute contains a ',' 
-FAIL [INPUT in DATETIME status] The datetime type must be supported. assert_equals: The datetime type should be supported. expected "datetime" but got "text"
-FAIL [INPUT in COLOR status] The value attribute is empty assert_true: The validity.badInput should be true. expected true got false
+FAIL [INPUT in DATETIME-LOCAL status] The datetime-local type must be supported. assert_equals: The datetime-local type should be supported. expected "datetime-local" but got "text"
+PASS [INPUT in COLOR status] The value attribute is empty 
 PASS [INPUT in COLOR status] The value attribute is a valid sample color 
 PASS [INPUT in COLOR status] The value attribute is not a valid lowercase sample color 
-FAIL [INPUT in COLOR status] The value attribute cannot convert to a valid sample color assert_true: The validity.badInput should be true. expected true got false
+PASS [INPUT in COLOR status] The value attribute cannot convert to a valid sample color 
 

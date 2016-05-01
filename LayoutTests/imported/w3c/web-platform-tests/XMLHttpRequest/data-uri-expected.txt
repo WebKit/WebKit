@@ -14,9 +14,9 @@ FAIL XHR method GET with charset text/plain (base64) assert_equals: expected "He
 FAIL XHR method GET with charset text/html assert_equals: expected "Hello, World!" but got ""
 FAIL XHR method GET with charset text/html;charset=UTF-8 assert_equals: expected "Hello, World!" but got ""
 FAIL XHR method GET with charset image/png assert_equals: expected "Hello, World!" but got ""
-FAIL XHR method POST with charset text/plain assert_equals: expected "OK" but got ""
-FAIL XHR method PUT with charset text/plain assert_equals: expected "OK" but got ""
-FAIL XHR method DELETE with charset text/plain assert_equals: expected "OK" but got ""
-FAIL XHR method HEAD with charset text/plain assert_equals: expected "OK" but got ""
-FAIL XHR method UNICORN with charset text/plain assert_equals: expected "OK" but got ""
+PASS XHR method POST with charset text/plain 
+PASS XHR method PUT with charset text/plain 
+PASS XHR method DELETE with charset text/plain 
+PASS XHR method HEAD with charset text/plain 
+PASS XHR method UNICORN with charset text/plain 
 

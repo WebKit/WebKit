@@ -12,8 +12,8 @@ FAIL hasOwnProperty, getOwnPropertyDescriptor, getOwnPropertyNames assert_false:
 PASS HTML element with uppercase tagName never matches in HTML Documents 
 PASS Element in non-HTML namespace, no prefix, lowercase name 
 PASS Element in non-HTML namespace, no prefix, uppercase name 
-PASS Element in non-HTML namespace, prefix, lowercase name 
-PASS Element in non-HTML namespace, prefix, uppercase name 
+FAIL Element in non-HTML namespace, prefix, lowercase name assert_array_equals: lengths differ, expected 0 got 1
+FAIL Element in non-HTML namespace, prefix, uppercase name assert_array_equals: lengths differ, expected 0 got 1
 PASS Element in HTML namespace, no prefix, non-ascii characters in name 
 PASS Element in non-HTML namespace, non-ascii characters in name 
 PASS Element in HTML namespace, prefix, non-ascii characters in name 

@@ -3,6 +3,6 @@ PASS XMLHttpRequest: setRequestHeader() value argument checks
 PASS XMLHttpRequest: setRequestHeader() value argument checks 1 
 PASS XMLHttpRequest: setRequestHeader() value argument checks 2 
 PASS XMLHttpRequest: setRequestHeader() value argument checks 3 
-PASS XMLHttpRequest: setRequestHeader() value argument checks 4 
+FAIL XMLHttpRequest: setRequestHeader() value argument checks 4 assert_throws:  given value ﾃｽﾄ, function "function () { client.setRequestHeader("x-test", "ﾃｽﾄ") }" threw object "Error: SyntaxError: DOM Exception 12" ("SyntaxError") expected object "TypeError" ("TypeError")
 PASS Omitted value argument 
 

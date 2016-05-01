@@ -3016,3 +3016,11 @@ webkit.org/b/156812 compositing/webgl/webgl-reflection.html [ Failure ]
 
 # iOS does not allow you to scroll by dragging the scrollbar thumb.
 webkit.org/b/157201 fast/scrolling/rtl-drag-vertical-scroller.html [ Failure ]
+
+# Tests that are failing after bug 157170 (WPT test sync). These tests may just need rebasing.
+imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/interfaces.html [ Failure ]
+imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html [ Failure ]

@@ -27,12 +27,13 @@ To get the tests running, you need to set up the test domains in your
 following entries are required:
 
 ```
-127.0.0.1	web-platform.test
-127.0.0.1	www.web-platform.test
-127.0.0.1	www1.web-platform.test
-127.0.0.1	www2.web-platform.test
-127.0.0.1	xn--n8j6ds53lwwkrqhv28a.web-platform.test
-127.0.0.1	xn--lve-6lad.web-platform.test
+127.0.0.1   web-platform.test
+127.0.0.1   www.web-platform.test
+127.0.0.1   www1.web-platform.test
+127.0.0.1   www2.web-platform.test
+127.0.0.1   xn--n8j6ds53lwwkrqhv28a.web-platform.test
+127.0.0.1   xn--lve-6lad.web-platform.test
+0.0.0.0     nonexistent-origin.web-platform.test
 ```
 
 Because web-platform-tests uses git submodules, you must ensure that
@@ -136,14 +137,6 @@ they will be under `html/browsers/history/the-history-interface/`.
 
 Various resources that tests depend on are in `common`, `images`, and
 `fonts`.
-
-
-If you're looking at a section of the specification and can't figure
-out where the directory is for it in the tree, just run:
-
-```
-node tools/scripts/id2path.js your-id
-```
 
 Branches
 ========

@@ -1,0 +1,3 @@
+
+PASS HTMLcollection as a prototype should not allow getting .length on the base object 
+

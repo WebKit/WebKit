@@ -6,10 +6,10 @@ button5
   
   
 
-     
+        
 button6  button7
 button8  button9
 
-FAIL ':default' matches <button>s that are their form's default button, <input>s of type submit/image that are their form's default button, checked <input>s and selected <option>s assert_array_equals: lengths differ, expected 9 got 7
-FAIL ':default' matches dynamically changed form's default buttons assert_array_equals: lengths differ, expected 9 got 7
+FAIL ':default' matches <button>s that are their form's default button, <input>s of type submit/image that are their form's default button, checked <input>s and selected <option>s assert_array_equals: lengths differ, expected 10 got 7
+FAIL ':default' matches dynamically changed form's default buttons assert_array_equals: lengths differ, expected 10 got 7
 

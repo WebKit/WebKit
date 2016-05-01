@@ -61,24 +61,14 @@ function validateStreamFromString(reader, expectedValue, retrievedArrayBuffer) {
     if (!data.done) {
       var newBuffer;
       if (retrievedArrayBuffer) {
-        newBuffer =  new ArrayBuffer(data.value.byteLength + retrievedArrayBuffer.byteLength);
+        newBuffer =  new ArrayBuffer(data.value.length + retrievedArrayBuffer.length);
         newBuffer.set(retrievedArrayBuffer, 0);
-        newBuffer.set(data.value, retrievedArrayBuffer.byteLength);
+        newBuffer.set(data.value, retrievedArrayBuffer.length);
       } else {
         newBuffer = data.value;
       }
       return validateStreamFromString(reader, expectedValue, newBuffer);
     }
-    if (!retrievedArrayBuffer)
-        retrievedArrayBuffer = new Uint8Array();
     validateBufferFromString(retrievedArrayBuffer, expectedValue, "Retrieve and verify stream");
   });
-}
-
-// From streams tests
-function delay(milliseconds)
-{
-    return new Promise(function(resolve) {
-        step_timeout(resolve, milliseconds);
-    });
 }
