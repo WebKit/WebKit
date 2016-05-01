@@ -1,5 +1,57 @@
 2016-04-30  Darin Adler  <darin@apple.com>
 
+        Update XMLHttpRequest to use enum class instead of string for enumeration
+        https://bugs.webkit.org/show_bug.cgi?id=157238
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::response): Rewrite to use responseType function
+        instead of responseTypeCode function.
+
+        * bindings/scripts/CodeGenerator.pm: Removed XMLHttpRequestResponseType
+        from the list of enumerations that use a string-based implementation.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetEnumerationImplementationContent): Use emptyString instead of ASCIILiteral
+        when the string constant is empty, to avoid the assertion.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest): Move simple scalar data member
+        initialization to where the data members are defined in the header.
+        (WebCore::XMLHttpRequest::responseText): Use m_responseType instead of
+        m_responseTypeCode.
+        (WebCore::XMLHttpRequest::didCacheResponseJSON): Ditto.
+        (WebCore::XMLHttpRequest::responseXML): Ditto.
+        (WebCore::XMLHttpRequest::responseBlob): Ditto.
+        (WebCore::XMLHttpRequest::responseArrayBuffer): Ditto.
+        (WebCore::XMLHttpRequest::setResponseType): Ditto.
+        (WebCore::XMLHttpRequest::responseType): Moved to header now that it's a
+        trivial function that should be inlined.
+        (WebCore::XMLHttpRequest::open): Use m_responseType instead of
+        m_responseTypeCode.
+        (WebCore::XMLHttpRequest::responseMIMEType): Removed one redundant check.
+        (WebCore::XMLHttpRequest::status): Ditto.
+        (WebCore::XMLHttpRequest::statusText): Ditto.
+        (WebCore::shouldDecodeResponse): Moved here from the header. This is now
+        a non-member function that gets passed a response type. It uses a switch
+        now instead of ordering the types so that the binary ones are all at the
+        end of the list.
+        (WebCore::XMLHttpRequest::didReceiveData): Use the new shouldDecodeResponse.
+        Also removed an unnecessary check that non-decoded responses are of type
+        "arraybuffer" or "blob"; that's the same check that shouldDecodeResponse does.
+
+        * xml/XMLHttpRequest.h: Removed some unneeded includes and forward declarations.
+        Removed a comment about the State values needing to be stable numbers; for one
+        thing the bindings already check that these values have no changed. It's not a
+        valuable comment. Removed ResponseTypeCode, responseTypeCode, and
+        m_responseTypeCode. Changed the type of the result of responseType and the
+        argument to setResponseType from a string to XMLHttpRequestResponseType.
+        Removed shouldDecodeResponse. Added the initial values for lots of data members
+        that are simple scalars, matching what was set in the constructor before.
+
+2016-04-30  Darin Adler  <darin@apple.com>
+
         Streamline and remove unused bindings generation code
         https://bugs.webkit.org/show_bug.cgi?id=157237
 

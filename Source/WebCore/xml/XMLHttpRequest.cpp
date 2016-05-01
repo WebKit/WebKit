@@ -81,7 +81,7 @@ static bool isSetCookieHeader(const String& name)
 
 static void replaceCharsetInMediaType(String& mediaType, const String& charsetValue)
 {
-    unsigned int pos = 0, len = 0;
+    unsigned pos = 0, len = 0;
 
     findCharsetInMediaType(mediaType, pos, len);
 
@@ -93,7 +93,7 @@ static void replaceCharsetInMediaType(String& mediaType, const String& charsetVa
     // Found at least one existing charset, replace all occurrences with new charset.
     while (len) {
         mediaType.replace(pos, len, charsetValue);
-        unsigned int start = pos + charsetValue.length();
+        unsigned start = pos + charsetValue.length();
         findCharsetInMediaType(mediaType, pos, len, start);
     }
 }
@@ -109,30 +109,15 @@ static void logConsoleError(ScriptExecutionContext* context, const String& messa
 
 Ref<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext& context)
 {
-    Ref<XMLHttpRequest> xmlHttpRequest = adoptRef(*new XMLHttpRequest(context));
+    auto xmlHttpRequest = adoptRef(*new XMLHttpRequest(context));
     xmlHttpRequest->suspendIfNeeded();
     return xmlHttpRequest;
 }
 
 XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
-    , m_async(true)
-    , m_includeCredentials(false)
-    , m_state(UNSENT)
-    , m_createdDocument(false)
-    , m_error(false)
-    , m_uploadEventsAllowed(true)
-    , m_uploadComplete(false)
-    , m_sameOriginRequest(true)
-    , m_receivedLength(0)
-    , m_lastSendLineNumber(0)
-    , m_lastSendColumnNumber(0)
-    , m_exceptionCode(0)
     , m_progressEventThrottle(this)
-    , m_responseTypeCode(ResponseTypeDefault)
-    , m_responseCacheIsValid(false)
     , m_resumeTimer(*this, &XMLHttpRequest::resumeTimerFired)
-    , m_dispatchErrorOnResuming(false)
     , m_networkErrorTimer(*this, &XMLHttpRequest::networkErrorTimerFired)
     , m_timeoutTimer(*this, &XMLHttpRequest::didReachTimeout)
 {
@@ -160,6 +145,7 @@ SecurityOrigin* XMLHttpRequest::securityOrigin() const
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)
+
 bool XMLHttpRequest::usesDashboardBackwardCompatibilityMode() const
 {
     if (scriptExecutionContext()->isWorkerGlobalScope())
@@ -167,6 +153,7 @@ bool XMLHttpRequest::usesDashboardBackwardCompatibilityMode() const
     Settings* settings = document()->settings();
     return settings && settings->usesDashboardBackwardCompatibilityMode();
 }
+
 #endif
 
 XMLHttpRequest::State XMLHttpRequest::readyState() const
@@ -176,16 +163,16 @@ XMLHttpRequest::State XMLHttpRequest::readyState() const
 
 String XMLHttpRequest::responseText(ExceptionCode& ec)
 {
-    if (m_responseTypeCode != ResponseTypeDefault && m_responseTypeCode != ResponseTypeText) {
+    if (m_responseType != XMLHttpRequestResponseType::EmptyString && m_responseType != XMLHttpRequestResponseType::Text) {
         ec = INVALID_STATE_ERR;
-        return "";
+        return { };
     }
     return responseTextIgnoringResponseType();
 }
 
 void XMLHttpRequest::didCacheResponseJSON()
 {
-    ASSERT(m_responseTypeCode == ResponseTypeJSON);
+    ASSERT(m_responseType == XMLHttpRequestResponseType::Json);
     ASSERT(doneWithoutErrors());
     m_responseCacheIsValid = true;
     m_responseBuilder.clear();
@@ -193,7 +180,7 @@ void XMLHttpRequest::didCacheResponseJSON()
 
 Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
 {
-    if (m_responseTypeCode != ResponseTypeDefault && m_responseTypeCode != ResponseTypeDocument) {
+    if (m_responseType != XMLHttpRequestResponseType::EmptyString && m_responseType != XMLHttpRequestResponseType::Document) {
         ec = INVALID_STATE_ERR;
         return nullptr;
     }
@@ -208,7 +195,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
         // The W3C spec requires the final MIME type to be some valid XML type, or text/html.
         // If it is text/html, then the responseType of "document" must have been supplied explicitly.
         if ((m_response.isHTTP() && !responseIsXML() && !isHTML)
-            || (isHTML && m_responseTypeCode == ResponseTypeDefault)
+            || (isHTML && m_responseType == XMLHttpRequestResponseType::EmptyString)
             || scriptExecutionContext()->isWorkerGlobalScope()) {
             m_responseDocument = nullptr;
         } else {
@@ -232,7 +219,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
 
 Blob* XMLHttpRequest::responseBlob()
 {
-    ASSERT(m_responseTypeCode == ResponseTypeBlob);
+    ASSERT(m_responseType == XMLHttpRequestResponseType::Blob);
     ASSERT(doneWithoutErrors());
 
     if (!m_responseBlob) {
@@ -254,7 +241,7 @@ Blob* XMLHttpRequest::responseBlob()
 
 ArrayBuffer* XMLHttpRequest::responseArrayBuffer()
 {
-    ASSERT(m_responseTypeCode == ResponseTypeArrayBuffer);
+    ASSERT(m_responseType == XMLHttpRequestResponseType::Arraybuffer);
     ASSERT(doneWithoutErrors());
 
     if (!m_responseArrayBuffer) {
@@ -286,7 +273,7 @@ void XMLHttpRequest::setTimeout(unsigned timeout, ExceptionCode& ec)
     m_timeoutTimer.startOneShot(std::max(0.0, interval.count()));
 }
 
-void XMLHttpRequest::setResponseType(const String& responseType, ExceptionCode& ec)
+void XMLHttpRequest::setResponseType(XMLHttpRequestResponseType type, ExceptionCode& ec)
 {
     if (m_state >= LOADING) {
         ec = INVALID_STATE_ERR;
@@ -303,39 +290,7 @@ void XMLHttpRequest::setResponseType(const String& responseType, ExceptionCode& 
         return;
     }
 
-    if (responseType == "")
-        m_responseTypeCode = ResponseTypeDefault;
-    else if (responseType == "text")
-        m_responseTypeCode = ResponseTypeText;
-    else if (responseType == "json")
-        m_responseTypeCode = ResponseTypeJSON;
-    else if (responseType == "document")
-        m_responseTypeCode = ResponseTypeDocument;
-    else if (responseType == "blob")
-        m_responseTypeCode = ResponseTypeBlob;
-    else if (responseType == "arraybuffer")
-        m_responseTypeCode = ResponseTypeArrayBuffer;
-    else
-        ASSERT_NOT_REACHED();
-}
-
-String XMLHttpRequest::responseType()
-{
-    switch (m_responseTypeCode) {
-    case ResponseTypeDefault:
-        return "";
-    case ResponseTypeText:
-        return "text";
-    case ResponseTypeJSON:
-        return "json";
-    case ResponseTypeDocument:
-        return "document";
-    case ResponseTypeBlob:
-        return "blob";
-    case ResponseTypeArrayBuffer:
-        return "arraybuffer";
-    }
-    return "";
+    m_responseType = type;
 }
 
 String XMLHttpRequest::responseURL() const
@@ -508,7 +463,7 @@ void XMLHttpRequest::open(const String& method, const URL& url, bool async, Exce
         // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
         // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
         // such as file: and data: still make sense to allow.
-        if (url.protocolIsInHTTPFamily() && m_responseTypeCode != ResponseTypeDefault) {
+        if (url.protocolIsInHTTPFamily() && m_responseType != XMLHttpRequestResponseType::EmptyString) {
             logConsoleError(scriptExecutionContext(), "Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.");
             ec = INVALID_ACCESS_ERR;
             return;
@@ -1025,10 +980,9 @@ String XMLHttpRequest::responseMIMEType() const
             mimeType = extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType));
         else
             mimeType = m_response.mimeType();
+        if (mimeType.isEmpty())
+            mimeType = ASCIILiteral("text/xml");
     }
-    if (mimeType.isEmpty())
-        mimeType = "text/xml";
-
     return mimeType;
 }
 
@@ -1042,10 +996,7 @@ int XMLHttpRequest::status() const
     if (m_state == UNSENT || m_state == OPENED || m_error)
         return 0;
 
-    if (m_response.httpStatusCode())
-        return m_response.httpStatusCode();
-
-    return 0;
+    return m_response.httpStatusCode();
 }
 
 String XMLHttpRequest::statusText() const
@@ -1053,10 +1004,7 @@ String XMLHttpRequest::statusText() const
     if (m_state == UNSENT || m_state == OPENED || m_error)
         return String();
 
-    if (!m_response.httpStatusText().isNull())
-        return m_response.httpStatusText();
-
-    return String();
+    return m_response.httpStatusText();
 }
 
 void XMLHttpRequest::didFail(const ResourceError& error)
@@ -1147,6 +1095,22 @@ void XMLHttpRequest::didReceiveResponse(unsigned long identifier, const Resource
         m_response.setHTTPHeaderField(HTTPHeaderName::ContentType, m_mimeTypeOverride);
 }
 
+static inline bool shouldDecodeResponse(XMLHttpRequestResponseType type)
+{
+    switch (type) {
+    case XMLHttpRequestResponseType::EmptyString:
+    case XMLHttpRequestResponseType::Document:
+    case XMLHttpRequestResponseType::Json:
+    case XMLHttpRequestResponseType::Text:
+        return true;
+    case XMLHttpRequestResponseType::Arraybuffer:
+    case XMLHttpRequestResponseType::Blob:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
 void XMLHttpRequest::didReceiveData(const char* data, int len)
 {
     if (m_error)
@@ -1161,7 +1125,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
     if (m_responseEncoding.isEmpty())
         m_responseEncoding = m_response.textEncodingName();
 
-    bool useDecoder = shouldDecodeResponse();
+    bool useDecoder = shouldDecodeResponse(m_responseType);
 
     if (useDecoder && !m_decoder) {
         if (!m_responseEncoding.isEmpty())
@@ -1185,7 +1149,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
 
     if (useDecoder)
         m_responseBuilder.append(m_decoder->decode(data, len));
-    else if (m_responseTypeCode == ResponseTypeArrayBuffer || m_responseTypeCode == ResponseTypeBlob) {
+    else {
         // Buffer binary data.
         if (!m_binaryResponseBuilder)
             m_binaryResponseBuilder = SharedBuffer::create();

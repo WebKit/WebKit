@@ -19,18 +19,14 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef XMLHttpRequest_h
-#define XMLHttpRequest_h
+#pragma once
 
 #include "ActiveDOMObject.h"
-#include "EventListener.h"
 #include "FormData.h"
 #include "ResourceResponse.h"
-#include "ScriptWrappable.h"
 #include "ThreadableLoaderClient.h"
 #include "XMLHttpRequestEventTarget.h"
 #include "XMLHttpRequestProgressEventThrottle.h"
-#include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
@@ -43,11 +39,12 @@ namespace WebCore {
 class Blob;
 class Document;
 class DOMFormData;
-class ResourceRequest;
 class SecurityOrigin;
 class SharedBuffer;
 class TextResourceDecoder;
 class ThreadableLoader;
+
+enum class XMLHttpRequestResponseType { EmptyString, Arraybuffer, Blob, Document, Json, Text };
 
 class XMLHttpRequest final : public RefCounted<XMLHttpRequest>, public XMLHttpRequestEventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
@@ -55,7 +52,6 @@ public:
     static Ref<XMLHttpRequest> create(ScriptExecutionContext&);
     WEBCORE_EXPORT ~XMLHttpRequest();
 
-    // These exact numeric values are important because JS expects them.
     enum State {
         UNSENT = 0,
         OPENED = 1,
@@ -64,18 +60,6 @@ public:
         DONE = 4
     };
     
-    enum ResponseTypeCode {
-        ResponseTypeDefault,
-        ResponseTypeText,
-        ResponseTypeJSON,
-        ResponseTypeDocument,
-
-        // Binary format
-        ResponseTypeBlob,
-        ResponseTypeArrayBuffer
-    };
-    static const ResponseTypeCode FirstBinaryResponseType = ResponseTypeBlob;
-
     virtual void didReachTimeout();
 
     EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestEventTargetInterfaceType; }
@@ -122,9 +106,8 @@ public:
     static String uppercaseKnownHTTPMethod(const String&);
     static bool isAllowedHTTPHeader(const String&);
 
-    void setResponseType(const String&, ExceptionCode&);
-    String responseType();
-    ResponseTypeCode responseTypeCode() const { return m_responseTypeCode; }
+    void setResponseType(XMLHttpRequestResponseType, ExceptionCode&);
+    XMLHttpRequestResponseType responseType() const;
 
     String responseURL() const;
 
@@ -194,8 +177,6 @@ private:
     void networkError();
     void abortError();
 
-    bool shouldDecodeResponse() const { return m_responseTypeCode < FirstBinaryResponseType; }
-
     void dispatchErrorEvents(const AtomicString&);
 
     void resumeTimerFired();
@@ -207,12 +188,12 @@ private:
     HTTPHeaderMap m_requestHeaders;
     RefPtr<FormData> m_requestEntityBody;
     String m_mimeTypeOverride;
-    bool m_async;
-    bool m_includeCredentials;
+    bool m_async { true };
+    bool m_includeCredentials { false };
     RefPtr<Blob> m_responseBlob;
 
     RefPtr<ThreadableLoader> m_loader;
-    State m_state;
+    State m_state { UNSENT };
     bool m_sendFlag { false };
 
     ResourceResponse m_response;
@@ -221,35 +202,34 @@ private:
     RefPtr<TextResourceDecoder> m_decoder;
 
     StringBuilder m_responseBuilder;
-    bool m_createdDocument;
+    bool m_createdDocument { false };
     RefPtr<Document> m_responseDocument;
     
     RefPtr<SharedBuffer> m_binaryResponseBuilder;
     RefPtr<JSC::ArrayBuffer> m_responseArrayBuffer;
 
-    bool m_error;
+    bool m_error { false };
 
-    bool m_uploadEventsAllowed;
-    bool m_uploadComplete;
+    bool m_uploadEventsAllowed { true };
+    bool m_uploadComplete { false };
 
-    bool m_sameOriginRequest;
+    bool m_sameOriginRequest { true };
 
-    // Used for onprogress tracking
-    long long m_receivedLength;
+    // Used for progress event tracking.
+    long long m_receivedLength { 0 };
 
-    unsigned m_lastSendLineNumber;
-    unsigned m_lastSendColumnNumber;
+    unsigned m_lastSendLineNumber { 0 };
+    unsigned m_lastSendColumnNumber { 0 };
     String m_lastSendURL;
-    ExceptionCode m_exceptionCode;
+    ExceptionCode m_exceptionCode { 0 };
 
     XMLHttpRequestProgressEventThrottle m_progressEventThrottle;
 
-    // An enum corresponding to the allowed string values for the responseType attribute.
-    ResponseTypeCode m_responseTypeCode;
-    bool m_responseCacheIsValid;
+    XMLHttpRequestResponseType m_responseType { XMLHttpRequestResponseType::EmptyString };
+    bool m_responseCacheIsValid { false };
 
     Timer m_resumeTimer;
-    bool m_dispatchErrorOnResuming;
+    bool m_dispatchErrorOnResuming { false };
 
     Timer m_networkErrorTimer;
     void networkErrorTimerFired();
@@ -259,6 +239,9 @@ private:
     Timer m_timeoutTimer;
 };
 
-} // namespace WebCore
+inline XMLHttpRequestResponseType XMLHttpRequest::responseType() const
+{
+    return m_responseType;
+}
 
-#endif // XMLHttpRequest_h
+} // namespace WebCore

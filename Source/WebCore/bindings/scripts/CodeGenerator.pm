@@ -144,7 +144,6 @@ my %stringBasedEnumerationHash = (
     "RequestType" => 1,
     "TextTrackKind" => 1,
     "TextTrackMode" => 1,
-    "XMLHttpRequestResponseType" => 1,
 );
 
 # Cache of IDL file pathnames.

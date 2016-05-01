@@ -862,7 +862,11 @@ sub GetEnumerationImplementationContent
         # FIXME: Might be nice to make the entire array be NeverDestroyed instead of each value, but not sure the syntax for that.
         $result .= "    static NeverDestroyed<const String> values[] = {\n";
         foreach my $value (@{$enumeration->values}) {
-            $result .= "        ASCIILiteral(\"$value\"),\n";
+            if ($value eq "") {
+                $result .= "        emptyString(),\n";
+            } else {
+                $result .= "        ASCIILiteral(\"$value\"),\n";
+            }
         }
         $result .= "    };\n";
         my $index = 0;
