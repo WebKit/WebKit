@@ -212,6 +212,7 @@ public:
 #endif
 
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
+    static const unsigned defaultMaximumRenderTreeDepth = 512;
 
     WEBCORE_EXPORT static void setMockScrollbarsEnabled(bool flag);
     WEBCORE_EXPORT static bool mockScrollbarsEnabled();

@@ -368,6 +368,13 @@ void TreeResolver::resolveComposedTree()
 
         auto& element = downcast<Element>(node);
 
+        if (it.depth() > Settings::defaultMaximumRenderTreeDepth) {
+            resetStyleForNonRenderedDescendants(element);
+            element.clearChildNeedsStyleRecalc();
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+
         // FIXME: We should deal with this during style invalidation.
         bool affectedByPreviousSibling = element.styleIsAffectedByPreviousSibling() && parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle;
         if (element.needsStyleRecalc() || parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle)

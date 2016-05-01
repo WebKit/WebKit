@@ -1,3 +1,19 @@
+2016-04-30  Zalan Bujtas  <zalan@apple.com>
+
+        Some content causes deep recursion.
+        https://bugs.webkit.org/show_bug.cgi?id=157230
+        <rdar://problem/7694756>
+
+        Reviewed by Antti Koivisto.
+
+        This patch sets a limit(512) on content nesting for the render tree. Elements injected over the limit
+        are still accessible through DOM APIs but
+        1. we stop generating renderers for them -they behave like display: none. 
+        2. their layout related computed style values are set to default (e.g. window.computedStyle(document.elementById("over512").width -> auto) 
+
+        * fast/block/nested-renderers-expected.html: Added.
+        * fast/block/nested-renderers.html: Added.
+
 2016-04-30  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Pass even more types by reference
