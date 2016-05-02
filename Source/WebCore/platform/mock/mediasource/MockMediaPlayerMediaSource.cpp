@@ -39,20 +39,8 @@
 namespace WebCore {
 
 // MediaPlayer Enigne Support
-static bool& registered()
-{
-    static bool isRegistered = false;
-    return isRegistered;
-}
-
-bool MockMediaPlayerMediaSource::isRegistered()
-{
-    return registered();
-}
-
 void MockMediaPlayerMediaSource::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    registered() = true;
     registrar([](MediaPlayer* player) { return std::make_unique<MockMediaPlayerMediaSource>(player); }, getSupportedTypes,
         supportsType, 0, 0, 0, 0);
 }
@@ -305,28 +293,6 @@ MediaTime MockMediaPlayerMediaSource::totalFrameDelay()
     return m_mediaSourcePrivate ? m_mediaSourcePrivate->totalFrameDelay() : MediaTime::zeroTime();
 }
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-void MockMediaPlayerMediaSource::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
-{
-    m_playbackTarget = WTFMove(target);
-}
-
-void MockMediaPlayerMediaSource::setShouldPlayToPlaybackTarget(bool shouldPlayToTarget)
-{
-    if (shouldPlayToTarget == m_shouldPlayToTarget)
-        return;
-
-    m_shouldPlayToTarget = shouldPlayToTarget;
-
-    if (m_player)
-        m_player->currentPlaybackTargetIsWirelessChanged();
-}
-
-bool MockMediaPlayerMediaSource::isCurrentPlaybackTargetWireless() const
-{
-    return m_playbackTarget && m_shouldPlayToTarget && m_playbackTarget->hasActiveRoute();
-}
-#endif
 }
 
 #endif

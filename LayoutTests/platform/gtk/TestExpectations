@@ -1865,9 +1865,6 @@ webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Failure ]
 webkit.org/b/123097 media/track/track-user-preferences.html [ Skip ]
 webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Failure ]
 
-# WIRELESS_PLAYBACK_TARGET not enabled.
-media/media-source/media-source-airplay.html [ Skip ]
-
 Bug(GTK) http/tests/media/video-play-stall-seek.html [ Skip ]
 
 Bug(GTK) http/tests/misc/acid3.html [ Failure ]

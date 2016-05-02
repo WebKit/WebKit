@@ -1036,11 +1036,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
-    if (m_shouldPlayToPlaybackTarget) {
-        // Clear m_shouldPlayToPlaybackTarget so doesn't return without doing anything.
-        m_shouldPlayToPlaybackTarget = false;
+    if (m_shouldPlayToPlaybackTarget)
         setShouldPlayToPlaybackTarget(true);
-    }
 #endif
 
     if (player()->client().mediaPlayerIsVideo())

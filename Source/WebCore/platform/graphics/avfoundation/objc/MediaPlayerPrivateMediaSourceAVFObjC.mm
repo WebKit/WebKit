@@ -35,7 +35,6 @@
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "MediaTimeAVFoundation.h"
-#import "MockMediaPlayerMediaSource.h"
 #import "PlatformClockCM.h"
 #import "WebCoreSystemInterface.h"
 #import <AVFoundation/AVAsset.h>
@@ -211,9 +210,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegist
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
 {
-    if (MockMediaPlayerMediaSource::isRegistered())
-        return false;
-
     return AVFoundationLibrary()
         && isCoreMediaFrameworkAvailable()
         && getAVStreamDataParserClass()
@@ -245,9 +241,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String, ASC
 
 MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    if (!isAvailable())
-        return MediaPlayer::IsNotSupported;
-
     // This engine does not support non-media-source sources.
     if (!parameters.isMediaSource)
         return MediaPlayer::IsNotSupported;
@@ -281,11 +274,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const String&)
 void MediaPlayerPrivateMediaSourceAVFObjC::load(const String& url, MediaSourcePrivateClient* client)
 {
     UNUSED_PARAM(url);
-
-    if (!isAvailable()) {
-        setNetworkState(MediaPlayer::FormatError);
-        return;
-    }
 
     m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(this, client);
 }
@@ -870,7 +858,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldPlayToPlaybackTarget(bool sh
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless() const
 {
-    return m_playbackTarget && m_shouldPlayToTarget && m_playbackTarget->hasActiveRoute();
+    if (!m_playbackTarget)
+        return false;
+
+    return m_shouldPlayToTarget && m_playbackTarget->hasActiveRoute();
 }
 #endif
 

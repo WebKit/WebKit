@@ -1,3 +1,24 @@
+2016-05-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r200264 and r200266.
+        https://bugs.webkit.org/show_bug.cgi?id=157251
+
+        This change caused existing LayoutTest media/media-source
+        /media-source-stalled-holds-sleep-assertion.html to time out
+        on Mac on every run. (Requested by ryanhaddad on #webkit).
+
+        Reverted changesets:
+
+        "[Mac] AirPlay fails if target is set before AVPlayer has been
+        created"
+        https://bugs.webkit.org/show_bug.cgi?id=157147
+        http://trac.webkit.org/changeset/200264
+
+        "[Mac] AirPlay fails if target is set before AVPlayer has been
+        created"
+        https://bugs.webkit.org/show_bug.cgi?id=157147
+        http://trac.webkit.org/changeset/200266
+
 2016-05-01  Chris Dumez  <cdumez@apple.com>
 
         Drop CanUseWTFOptionalForParameter() from bindings generator

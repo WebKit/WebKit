@@ -44,7 +44,6 @@ public:
     WEBCORE_EXPORT static void registerMediaEngine(MediaEngineRegistrar);
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
-    static bool isRegistered();
 
     virtual ~MockMediaPlayerMediaSource();
 
@@ -87,13 +86,6 @@ private:
     unsigned long corruptedVideoFrames() override;
     MediaTime totalFrameDelay() override;
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    bool isCurrentPlaybackTargetWireless() const override;
-    void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
-    void setShouldPlayToPlaybackTarget(bool) override;
-    bool wirelessVideoPlaybackDisabled() const override { return false; }
-#endif
-
     MediaPlayer* m_player;
     RefPtr<MockMediaSourcePrivate> m_mediaSourcePrivate;
 
@@ -101,10 +93,6 @@ private:
     MediaTime m_duration;
     MediaPlayer::ReadyState m_readyState;
     MediaPlayer::NetworkState m_networkState;
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    RefPtr<MediaPlaybackTarget> m_playbackTarget;
-    bool m_shouldPlayToTarget { false };
-#endif
     bool m_playing;
     bool m_seekCompleted;
 };

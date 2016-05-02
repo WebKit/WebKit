@@ -3337,7 +3337,6 @@ webkit.org/b/151756 fast/css/pseudo-visited-background-color-on-input.html [ Ima
 
 # WIRELESS_PLAYBACK_TARGET not enabled.
 media/airplay-target-availability.html
-media/media-source/media-source-airplay.html
 
 webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html [ Failure ]
 webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-default.html [ Failure ]
