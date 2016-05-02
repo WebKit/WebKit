@@ -721,14 +721,12 @@ static bool any_pointerMediaFeatureEval(CSSValue* value, const CSSToLengthConver
     return pointerMediaFeatureEval(value, cssToLengthConversionData, frame, prefix);
 }
 
-// FIXME: Remove unnecessary '&' from the following 'ADD_TO_FUNCTIONMAP' definition
-// once we switch to a non-broken Visual Studio compiler.  https://bugs.webkit.org/show_bug.cgi?id=121235
 static void createFunctionMap()
 {
     // Create the table.
     gFunctionMap = new FunctionMap;
 #define ADD_TO_FUNCTIONMAP(name, str)  \
-    gFunctionMap->set(name##MediaFeature.impl(), &name##MediaFeatureEval);
+    gFunctionMap->set(name##MediaFeature.impl(), name##MediaFeatureEval);
     CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(ADD_TO_FUNCTIONMAP);
 #undef ADD_TO_FUNCTIONMAP
 }

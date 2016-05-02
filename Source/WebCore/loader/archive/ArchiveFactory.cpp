@@ -64,14 +64,12 @@ static ArchiveMIMETypesMap& archiveMIMETypes()
     if (initialized)
         return mimeTypes;
 
-    // FIXME: Remove unnecessary 'static_cast<RawDataCreationFunction*>' from the following 'mimeTypes.set' operations
-    // once we switch to a non-broken Visual Studio compiler.  https://bugs.webkit.org/show_bug.cgi?id=121235
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
-    mimeTypes.get().set("application/x-webarchive", static_cast<RawDataCreationFunction*>(&archiveFactoryCreate<LegacyWebArchive>));
+    mimeTypes.get().set("application/x-webarchive", archiveFactoryCreate<LegacyWebArchive>);
 #endif
 #if ENABLE(MHTML)
-    mimeTypes.get().set("multipart/related", static_cast<RawDataCreationFunction*>(&archiveFactoryCreate<MHTMLArchive>));
-    mimeTypes.get().set("application/x-mimearchive", static_cast<RawDataCreationFunction*>(&archiveFactoryCreate<MHTMLArchive>));
+    mimeTypes.get().set("multipart/related", archiveFactoryCreate<MHTMLArchive>);
+    mimeTypes.get().set("application/x-mimearchive", archiveFactoryCreate<MHTMLArchive>);
 #endif
 
     initialized = true;

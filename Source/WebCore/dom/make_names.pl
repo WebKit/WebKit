@@ -1296,9 +1296,7 @@ END
             $ucTag = $enabledTags{$tag}{JSInterfaceName};
         }
 
-        # FIXME Remove unnecessary '&' from the following (print) line once we switch to a non-broken Visual Studio compiler.
-        # https://bugs.webkit.org/show_bug.cgi?id=121235:
-        print F "        { ${tag}Tag, &create${ucTag}Wrapper },\n";
+        print F "        { ${tag}Tag, create${ucTag}Wrapper },\n";
 
         if ($conditional) {
             print F "#endif\n";
