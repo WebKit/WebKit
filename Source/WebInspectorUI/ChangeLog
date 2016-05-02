@@ -1,3 +1,27 @@
+2016-05-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Prefer "Console Evaluation" to "Eval Code" if we know it was a console evaluation
+        https://bugs.webkit.org/show_bug.cgi?id=157278
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        "Console Evaluation" string.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype._sourceCodeLocationFromPayload): Deleted.
+        Delete an assert that would throw when the location is noSourceID:-1:-1.
+
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame.fromDebuggerPayload):
+        (WebInspector.CallFrame.fromPayload):
+        (WebInspector.CallFrame):
+        When this is in a Console Evalution provide better values.
+
+        * UserInterface/Models/GarbageCollection.js:
+        (WebInspector.GarbageCollection):
+        Drive-by address a common assertions seen while paused.
+
 2016-05-02  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Adding a new console message shouldn't modify DOM when the console log is hidden

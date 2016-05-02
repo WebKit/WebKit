@@ -133,6 +133,11 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
         let nativeCode = false;
         let programCode = WebInspector.CallFrame.programCodeFromPayload(payload);
 
+        if (sourceCodeLocation && isWebInspectorConsoleEvaluationScript(sourceCodeLocation.sourceCode.sourceURL)) {
+            functionName = WebInspector.UIString("Console Evaluation");
+            programCode = true;
+        }
+
         return new WebInspector.CallFrame(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode);
     }
 
@@ -171,6 +176,11 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
                 nativeCode = true;
                 url = null;
             }
+        }
+
+        if (sourceCodeLocation && isWebInspectorConsoleEvaluationScript(sourceCodeLocation.sourceCode.sourceURL)) {
+            functionName = WebInspector.UIString("Console Evaluation");
+            programCode = true;
         }
 
         return new WebInspector.CallFrame(null, sourceCodeLocation, functionName, null, null, nativeCode, programCode);

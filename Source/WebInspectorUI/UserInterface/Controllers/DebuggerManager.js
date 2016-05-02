@@ -633,7 +633,6 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
     _sourceCodeLocationFromPayload(payload)
     {
         let script = this._scriptIdMap.get(payload.scriptId);
-        console.assert(script);
         if (!script)
             return null;
 
