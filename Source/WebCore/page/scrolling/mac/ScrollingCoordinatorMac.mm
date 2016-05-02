@@ -135,7 +135,7 @@ void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
         return;
 
     ScrollingModeIndication indicatorMode;
-    if (shouldUpdateScrollLayerPositionSynchronously())
+    if (shouldUpdateScrollLayerPositionSynchronously(*frameView))
         indicatorMode = SynchronousScrollingBecauseOfStyleIndication;
     else
         indicatorMode = AsyncScrollingIndication;

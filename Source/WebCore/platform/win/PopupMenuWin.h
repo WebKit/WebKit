@@ -106,7 +106,6 @@ private:
     IntSize visibleSize() const override;
     IntSize contentsSize() const override;
     IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
-    bool updatesScrollLayerPositionOnMainThread() const override { return true; }
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override { return false; }
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const final { return false; }
 

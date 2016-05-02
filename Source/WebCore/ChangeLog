@@ -1,5 +1,39 @@
 2016-05-02  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix shouldUpdateScrollLayerPositionSynchronously() for non-main frames. Remove updatesScrollLayerPositionOnMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=157277
+
+        Reviewed by Dean Jackson, Tim Horton.
+
+        shouldUpdateScrollLayerPositionSynchronously() gave an answer for the main frame even if
+        called for a subframe. This could have caused scroll snapping, and isRubberBandInProgress()
+        to give wrong answers sometimes. Fix by passing in the FrameView.
+
+        I was unable to easily come up with a testcase to detect the incorrect behavior.
+
+        Remove updatesScrollLayerPositionOnMainThread() which is unused by all ports.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isScrollSnapInProgress):
+        (WebCore::FrameView::shouldUpdateCompositingLayersAfterScrolling):
+        (WebCore::FrameView::isRubberBandInProgress):
+        (WebCore::FrameView::updatesScrollLayerPositionOnMainThread): Deleted.
+        * page/FrameView.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateSynchronousScrollingReasons):
+        (WebCore::ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously):
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::updateTiledScrollingIndicator):
+        * platform/ScrollableArea.h:
+        * platform/win/PopupMenuWin.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupFontSubpixelQuantization):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.h:
+
+2016-05-02  Simon Fraser  <simon.fraser@apple.com>
+
         Add to the Animations log channel output about which properties are being blended
         https://bugs.webkit.org/show_bug.cgi?id=157271
 

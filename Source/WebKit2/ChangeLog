@@ -1,3 +1,14 @@
+2016-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix shouldUpdateScrollLayerPositionSynchronously() for non-main frames. Remove updatesScrollLayerPositionOnMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=157277
+
+        Reviewed by Dean Jackson, Tim Horton.
+
+        Remove updatesScrollLayerPositionOnMainThread() which is unused by all ports.
+
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.h:
+
 2016-05-02  Alex Christensen  <achristensen@webkit.org>
 
         Crash if a certificate chain has null certificates

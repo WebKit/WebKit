@@ -486,7 +486,6 @@ public:
 #endif
 
     bool isActive() const override;
-    bool updatesScrollLayerPositionOnMainThread() const override;
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
 
 #if ENABLE(RUBBER_BANDING)

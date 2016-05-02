@@ -883,7 +883,6 @@ private:
     bool shouldSuspendScrollAnimations() const override;
     IntRect scrollableAreaBoundingBox(bool* isInsideFixed = nullptr) const override;
     bool isRubberBandInProgress() const override;
-    bool updatesScrollLayerPositionOnMainThread() const override { return true; }
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
 #if ENABLE(CSS_SCROLL_SNAP)
     bool isScrollSnapInProgress() const override;

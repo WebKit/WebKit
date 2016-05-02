@@ -131,7 +131,6 @@ private:
     IntPoint lastKnownMousePosition() const override;
     bool isHandlingWheelEvent() const override;
     bool shouldSuspendScrollAnimations() const override;
-    bool updatesScrollLayerPositionOnMainThread() const override { return true; }
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
 
     ScrollableArea* enclosingScrollableArea() const override;

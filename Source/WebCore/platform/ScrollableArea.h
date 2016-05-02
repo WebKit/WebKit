@@ -155,8 +155,6 @@ public:
     virtual IntRect scrollCornerRect() const = 0;
     WEBCORE_EXPORT virtual void invalidateScrollCorner(const IntRect&);
 
-    virtual bool updatesScrollLayerPositionOnMainThread() const = 0;
-
     virtual bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const = 0;
 
     // Convert points and rects between the scrollbar and its containing view.

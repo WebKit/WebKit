@@ -195,7 +195,7 @@ public:
     };
 
     SynchronousScrollingReasons synchronousScrollingReasons(const FrameView&) const;
-    bool shouldUpdateScrollLayerPositionSynchronously() const;
+    bool shouldUpdateScrollLayerPositionSynchronously(const FrameView&) const;
 
     virtual void willDestroyScrollableArea(ScrollableArea&) { }
     virtual void scrollableAreaScrollLayerDidChange(ScrollableArea&) { }
@@ -227,7 +227,7 @@ private:
     virtual void setSynchronousScrollingReasons(SynchronousScrollingReasons) { }
 
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const;
-    void updateSynchronousScrollingReasons(FrameView&);
+    void updateSynchronousScrollingReasons(const FrameView&);
 
     Region absoluteNonFastScrollableRegionForFrame(const Frame&) const;
     
