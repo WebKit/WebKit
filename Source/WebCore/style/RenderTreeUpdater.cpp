@@ -488,8 +488,8 @@ void RenderTreeUpdater::updateBeforeOrAfterPseudoElement(Element& current, Pseud
     if (renderer && m_document.frame()->animation().updateAnimations(*renderer, *newStyle, animatedStyle))
         elementUpdate.isSynthetic = true;
 
-    elementUpdate.change = renderer ? Style::determineChange(renderer->style(), *newStyle) : Style::Detach;
     elementUpdate.style = animatedStyle ? WTFMove(animatedStyle) : WTFMove(newStyle);
+    elementUpdate.change = renderer ? Style::determineChange(renderer->style(), *elementUpdate.style) : Style::Detach;
 
     if (elementUpdate.change == Style::NoChange)
         return;

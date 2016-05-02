@@ -1,3 +1,24 @@
+2016-05-02  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r199964): Animation on pseudo elements doesn't trigger if first frame matches the current style
+        https://bugs.webkit.org/show_bug.cgi?id=157284
+
+        Reviewed by Simon Fraser.
+
+        r199964 accidentally changed the logic for computing style change for animations.
+
+        Test: fast/css/animation-pseudo-style-change.html
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateBeforeOrAfterPseudoElement):
+
+            If there is an animated style determine the style change using it rather than the originally resolved style.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+
+            Here too.
+
 2016-05-02  Brady Eidson  <beidson@apple.com>
 
         Add the ability to accumulate logs for specific logging channels to help diagnose test timeouts.

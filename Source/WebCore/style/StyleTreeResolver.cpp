@@ -198,8 +198,8 @@ ElementUpdate TreeResolver::resolveElement(Element& element)
     if (!needsNewRenderer && m_document.frame()->animation().updateAnimations(*renderer, *newStyle, animatedStyle))
         update.isSynthetic = true;
 
-    update.change = needsNewRenderer ? Detach : determineChange(renderer->style(), *newStyle);
     update.style = animatedStyle ? WTFMove(animatedStyle) : WTFMove(newStyle);
+    update.change = needsNewRenderer ? Detach : determineChange(renderer->style(), *update.style);
 
     if (element.styleChangeType() == SyntheticStyleChange)
         update.isSynthetic = true;
