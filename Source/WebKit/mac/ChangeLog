@@ -1,5 +1,16 @@
 2016-05-02  Daniel Bates  <dabates@apple.com>
 
+        CSP: Add workaround for XtraMath
+        https://bugs.webkit.org/show_bug.cgi?id=157252
+
+        Reviewed by Andy Estes.
+
+        * WebView/WebView.mm:
+        (shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol): Allow * to match any protocol for
+        applicable versions of app XtraMath.
+
+2016-05-02  Daniel Bates  <dabates@apple.com>
+
         DatabaseTracker::closeAllDatabases calls Database::close from the wrong thread
         https://bugs.webkit.org/show_bug.cgi?id=147672
         <rdar://problem/22357464>

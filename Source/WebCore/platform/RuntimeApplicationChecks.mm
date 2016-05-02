@@ -253,6 +253,12 @@ bool IOSApplication::isQuora()
     return isQuora;
 }
 
+bool IOSApplication::isXtraMath()
+{
+    static bool isXtraMath = applicationBundleIsEqualTo("org.xtramath.mathfacts");
+    return isXtraMath;
+}
+
 #endif
 
 } // namespace WebCore
