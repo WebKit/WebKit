@@ -1,3 +1,20 @@
+2016-05-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Assertion failure for bound function with custom prototype and Reflect.construct
+        https://bugs.webkit.org/show_bug.cgi?id=157081
+
+        Reviewed by Saam Barati.
+
+        We ensured `newTarget != exec->callee()`. However, it does not mean `newTarget.get("prototype") != exec->callee()->get("prototype")`.
+        When the given `prototype` is the same to `baseStructure->sotredPrototype()`, it is unnecessary to create a new structure from this
+        baseStructure.
+
+        * bytecode/InternalFunctionAllocationProfile.h:
+        (JSC::InternalFunctionAllocationProfile::createAllocationStructureFromBase):
+        * tests/stress/custom-prototype-may-be-same-to-original-one.js: Added.
+        (shouldBe):
+        (boundFunction):
+
 2016-04-30  Konstantin Tokarev  <annulen@yandex.ru>
 
         Guard ObjC-specific code in Heap.cpp with USE(FOUNDATION)

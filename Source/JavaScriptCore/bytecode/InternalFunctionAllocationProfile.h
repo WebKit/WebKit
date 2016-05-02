@@ -47,10 +47,13 @@ private:
 
 inline Structure* InternalFunctionAllocationProfile::createAllocationStructureFromBase(VM& vm, JSCell* owner, JSObject* prototype, Structure* baseStructure)
 {
-    ASSERT(prototype != baseStructure->storedPrototype());
     ASSERT(!m_structure || m_structure.get()->classInfo() != baseStructure->classInfo());
 
-    Structure* structure = vm.prototypeMap.emptyStructureForPrototypeFromBaseStructure(prototype, baseStructure);
+    Structure* structure;
+    if (prototype == baseStructure->storedPrototype())
+        structure = baseStructure;
+    else
+        structure = vm.prototypeMap.emptyStructureForPrototypeFromBaseStructure(prototype, baseStructure);
 
     // Ensure that if another thread sees the structure, it will see it properly created.
     WTF::storeStoreFence();
