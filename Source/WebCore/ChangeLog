@@ -1,3 +1,19 @@
+2016-05-02  Yoav Weiss  <yoav@yoav.ws>
+
+        Speculatively fix the cmake build
+        https://bugs.webkit.org/show_bug.cgi?id=157262
+
+        Reviewed by Darin Adler.
+
+        This patch adds WEB_TIMING build flag guards around calls to DOMWindow()->performance(),
+        in order to make sure builds that have WEB_TIMING disabled (e.g. cmake on Mac) continue
+        to build.
+
+        No new tests as there's no functional change.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::loadDone):
+
 2016-05-02  Daniel Bates  <dabates@apple.com>
 
         CSP: Add workaround for XtraMath

@@ -969,6 +969,7 @@ void CachedResourceLoader::loadDone(CachedResource* resource, bool shouldPerform
     RefPtr<DocumentLoader> protectDocumentLoader(m_documentLoader);
     RefPtr<Document> protectDocument(m_document);
 
+#if ENABLE(WEB_TIMING)
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()
         && resource && resource->response().isHTTP()
         && ((!resource->errorOccurred() && !resource->wasCanceled()) || resource->response().httpStatusCode() == 304)) {
@@ -984,6 +985,7 @@ void CachedResourceLoader::loadDone(CachedResource* resource, bool shouldPerform
             m_initiatorMap.remove(initiatorIt);
         }
     }
+#endif
 
     if (frame())
         frame()->loader().loadDone();
