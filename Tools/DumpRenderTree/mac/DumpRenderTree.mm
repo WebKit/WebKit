@@ -58,6 +58,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <JavaScriptCore/HeapStatistics.h>
 #import <JavaScriptCore/Options.h>
+#import <WebCore/Logging.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
@@ -86,6 +87,7 @@
 #import <getopt.h>
 #import <wtf/Assertions.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/LoggingAccumulator.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
@@ -1894,6 +1896,9 @@ static void resetWebViewToConsistentStateBeforeTesting()
 #endif
 
     [mainFrame _clearOpener];
+
+    resetAccumulatedLogs();
+    WebCoreTestSupport::initializeLoggingChannelsIfNecessary();
 }
 
 #if PLATFORM(IOS)

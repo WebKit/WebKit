@@ -1,7 +1,9 @@
 description("This test makes sure that un-handled requests in a transaction receive onerror callbacks when the transaction is aborted.");
 
+if (window.testRunner)
+    testRunner.accummulateLogsForChannel("IndexedDB");
+    
 indexedDBTest(prepareDatabase);
-
 
 function done()
 {

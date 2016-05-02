@@ -97,6 +97,7 @@ WEBCORE_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 
 String logLevelString();
 bool isLogChannelEnabled(const String& name);
+WEBCORE_EXPORT void setLogChannelToAccumulate(const String& name);
 WEBCORE_EXPORT void initializeLoggingChannelsIfNecessary();
 #ifndef NDEBUG
 void registerNotifyCallback(const String& notifyID, std::function<void()> callback);

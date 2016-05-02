@@ -35,13 +35,17 @@
 #include "Assertions.h"
 
 #include "Compiler.h"
+#include <mutex>
+#include <stdio.h>
+#include <string.h>
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
+#include <wtf/LoggingAccumulator.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
-
-#include <stdio.h>
-#include <string.h>
 
 #if HAVE(SIGNAL_H)
 #include <signal.h>
@@ -76,6 +80,14 @@
 
 extern "C" {
 
+static void logToStderr(const char* buffer)
+{
+#if USE(APPLE_SYSTEM_LOG)
+    asl_log(0, 0, ASL_LEVEL_NOTICE, "%s", buffer);
+#endif
+    fputs(buffer, stderr);
+}
+
 WTF_ATTRIBUTE_PRINTF(1, 0)
 static void vprintf_stderr_common(const char* format, va_list args)
 {
@@ -96,10 +108,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
 
         CFStringGetCString(str, buffer, length, kCFStringEncodingUTF8);
 
-#if USE(APPLE_SYSTEM_LOG)
-        asl_log(0, 0, ASL_LEVEL_NOTICE, "%s", buffer);
-#endif
-        fputs(buffer, stderr);
+        logToStderr(buffer);
 
         free(buffer);
         CFRelease(str);
@@ -412,15 +421,83 @@ void WTFReportError(const char* file, int line, const char* function, const char
     printCallSite(file, line, function);
 }
 
+class WTFLoggingAccumulator {
+public:
+    void accumulate(const String&);
+    void resetAccumulatedLogs();
+    String getAndResetAccumulatedLogs();
+
+private:
+    Lock accumulatorLock;
+    StringBuilder loggingAccumulator;
+};
+
+void WTFLoggingAccumulator::accumulate(const String& log)
+{
+    Locker<Lock> locker(accumulatorLock);
+    loggingAccumulator.append(log);
+}
+
+void WTFLoggingAccumulator::resetAccumulatedLogs()
+{
+    Locker<Lock> locker(accumulatorLock);
+    loggingAccumulator.clear();
+}
+
+String WTFLoggingAccumulator::getAndResetAccumulatedLogs()
+{
+    Locker<Lock> locker(accumulatorLock);
+    String result = loggingAccumulator.toString();
+    loggingAccumulator.clear();
+    return result;
+}
+
+static WTFLoggingAccumulator& loggingAccumulator()
+{
+    static WTFLoggingAccumulator* accumulator;
+    static std::once_flag initializeAccumulatorOnce;
+    std::call_once(initializeAccumulatorOnce, [] {
+        accumulator = new WTFLoggingAccumulator;
+    });
+
+    return *accumulator;
+}
+
 void WTFLog(WTFLogChannel* channel, const char* format, ...)
 {
-    if (channel->state != WTFLogChannelOn)
+    if (channel->state == WTFLogChannelOff)
         return;
+
+    if (channel->state == WTFLogChannelOn) {
+        va_list args;
+        va_start(args, format);
+        vprintf_stderr_with_trailing_newline(format, args);
+        va_end(args);
+        return;
+    }
+
+    ASSERT(channel->state == WTFLogChannelOnWithAccumulation);
 
     va_list args;
     va_start(args, format);
-    vprintf_stderr_with_trailing_newline(format, args);
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#endif
+    String loggingString = String::format(format, args);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+
     va_end(args);
+
+    if (!loggingString.endsWith('\n'))
+        loggingString.append('\n');
+
+    loggingAccumulator().accumulate(loggingString);
+
+    logToStderr(loggingString.utf8().data());
 }
 
 void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChannel* channel, const char* format, ...)
@@ -430,7 +507,16 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 
     va_list args;
     va_start(args, format);
-    vprintf_stderr_with_trailing_newline(format, args);
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#endif
+    WTFLog(channel, format, args);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+
     va_end(args);
 
     printCallSite(file, line, function);
@@ -503,3 +589,17 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
 }
 
 } // extern "C"
+
+namespace WTF {
+
+void resetAccumulatedLogs()
+{
+    loggingAccumulator().resetAccumulatedLogs();
+}
+
+String getAndResetAccumulatedLogs()
+{
+    return loggingAccumulator().getAndResetAccumulatedLogs();
+}
+
+} // namespace WTF

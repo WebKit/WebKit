@@ -1,3 +1,22 @@
+2016-05-02  Brady Eidson  <beidson@apple.com>
+
+        Add the ability to accumulate logs for specific logging channels to help diagnose test timeouts.
+        https://bugs.webkit.org/show_bug.cgi?id=157274
+
+        Reviewed by Alex Christensen.
+
+        * platform/Logging.cpp:
+        (WebCore::setLogChannelToAccumulate): Set the given log channel to accumulate logging,
+          and dirty the initializeLoggingChannelsIfNecessary flag.
+        (WebCore::initializeLoggingChannelsIfNecessary): Change from being a one-time-only call to a 
+          one-time-for-each-time-somebody-calls-setLogChannelToAccumulate call.
+        * platform/Logging.h:
+
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::setLogChannelToAccumulate):
+        (WebCoreTestSupport::initializeLoggingChannelsIfNecessary):
+        * testing/js/WebCoreTestSupport.h:
+
 2016-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Sort the project file.

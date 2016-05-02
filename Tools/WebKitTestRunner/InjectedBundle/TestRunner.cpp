@@ -601,6 +601,11 @@ void TestRunner::clearTestRunnerCallbacks()
     callbackMap().clear();
 }
 
+void TestRunner::accummulateLogsForChannel(JSStringRef)
+{
+    // FIXME: Implement getting the call to all processes.
+}
+
 void TestRunner::addChromeInputField(JSValueRef callback)
 {
     cacheTestRunnerCallback(AddChromeInputFieldCallbackID, callback);

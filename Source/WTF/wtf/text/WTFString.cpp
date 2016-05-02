@@ -463,6 +463,24 @@ String String::format(const char *format, ...)
     va_list args;
     va_start(args, format);
 
+#if USE(CF) && !OS(WINDOWS)
+    if (strstr(format, "%@")) {
+        RetainPtr<CFStringRef> cfFormat = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, format, kCFStringEncodingUTF8));
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#endif
+        RetainPtr<CFStringRef> result = adoptCF(CFStringCreateWithFormatAndArguments(kCFAllocatorDefault, nullptr, cfFormat.get(), args));
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+
+        va_end(args);
+        return result.get();
+    }
+#endif // USE(CF) && !OS(WINDOWS)
+
     // Do the format once to get the length.
 #if COMPILER(MSVC)
     int result = _vscprintf(format, args);

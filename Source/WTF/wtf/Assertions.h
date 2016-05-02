@@ -130,7 +130,7 @@ extern "C" {
 #define NO_RETURN_DUE_TO_CRASH
 #endif
 
-typedef enum { WTFLogChannelOff, WTFLogChannelOn } WTFLogChannelState;
+typedef enum { WTFLogChannelOff, WTFLogChannelOn, WTFLogChannelOnWithAccumulation } WTFLogChannelState;
 
 typedef struct {
     WTFLogChannelState state;

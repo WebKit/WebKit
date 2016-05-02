@@ -320,6 +320,8 @@ public:
 
     void clearTestRunnerCallbacks();
 
+    void accummulateLogsForChannel(JSStringRef channel);
+
 private:
     TestRunner();
 

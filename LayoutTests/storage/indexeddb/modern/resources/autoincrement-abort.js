@@ -3,8 +3,10 @@ It then puts some things in that object store, checking the keys that were used.
 But it then aborts that transaction. \
 Then it opens a new one and puts something in it, double checking that the key generator was reverted when the above transaction was aborted.");
 
+if (window.testRunner)
+    testRunner.accummulateLogsForChannel("IndexedDB");
+    
 indexedDBTest(prepareDatabase);
-
 
 function done()
 {

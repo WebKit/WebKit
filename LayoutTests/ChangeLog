@@ -1,3 +1,18 @@
+2016-05-02  Brady Eidson  <beidson@apple.com>
+
+        Add the ability to accumulate logs for specific logging channels to help diagnose test timeouts.
+        https://bugs.webkit.org/show_bug.cgi?id=157274
+
+        Reviewed by Alex Christensen.
+        
+        For the tests that are known flakes that are not imported, add the "accumulate IndexedDB logs" command.
+
+        * storage/indexeddb/modern/resources/256-open-databases.js:
+        * storage/indexeddb/modern/resources/abort-requests-cancelled.js:
+        * storage/indexeddb/modern/resources/autoincrement-abort.js:
+        * storage/indexeddb/resources/intversion-open-in-upgradeneeded.js:
+        * storage/indexeddb/resources/odd-strings.js:
+
 2016-05-02  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Enable IndexedDB.

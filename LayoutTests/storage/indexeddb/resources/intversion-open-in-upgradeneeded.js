@@ -5,6 +5,9 @@ if (this.importScripts) {
 
 description("Test calling db.open in upgradeneeded.");
 
+if (window.testRunner)
+    testRunner.accummulateLogsForChannel("IndexedDB");
+
 function test()
 {
     removeVendorPrefixes();

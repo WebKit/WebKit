@@ -35,6 +35,10 @@ typedef struct OpaqueJSValue* JSObjectRef;
 #define TEST_SUPPORT_EXPORT
 #endif
 
+namespace WTF {
+class String;
+}
+
 namespace WebCore {
 class Frame;
 }
@@ -46,6 +50,9 @@ void resetInternalsObject(JSContextRef) TEST_SUPPORT_EXPORT;
 void monitorWheelEvents(WebCore::Frame&) TEST_SUPPORT_EXPORT;
 void setTestCallbackAndStartNotificationTimer(WebCore::Frame&, JSContextRef, JSObjectRef) TEST_SUPPORT_EXPORT;
 void clearWheelEventTestTrigger(WebCore::Frame&) TEST_SUPPORT_EXPORT;
+
+void setLogChannelToAccumulate(const WTF::String& name) TEST_SUPPORT_EXPORT;
+void initializeLoggingChannelsIfNecessary() TEST_SUPPORT_EXPORT;
 
 } // namespace WebCore
 

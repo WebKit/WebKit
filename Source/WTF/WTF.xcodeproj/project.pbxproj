@@ -100,6 +100,7 @@
 		2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0F118115C85004DBA70 /* RunLoop.cpp */; };
 		2CDED0F418115C85004DBA70 /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CDED0F218115C85004DBA70 /* RunLoop.h */; };
 		430B47891AAAAC1A001223DA /* StringCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 430B47871AAAAC1A001223DA /* StringCommon.h */; };
+		513E170B1CD7D5BF00E3650B /* LoggingAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 513E170A1CD7D5BF00E3650B /* LoggingAccumulator.h */; };
 		553071CA1C40427200384898 /* TinyLRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 553071C91C40427200384898 /* TinyLRUCache.h */; };
 		70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */; };
 		70A993FF1AD7151300FA615B /* SymbolRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 70A993FD1AD7151300FA615B /* SymbolRegistry.h */; };
@@ -411,6 +412,7 @@
 		2CDED0F118115C85004DBA70 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		2CDED0F218115C85004DBA70 /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		430B47871AAAAC1A001223DA /* StringCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringCommon.h; sourceTree = "<group>"; };
+		513E170A1CD7D5BF00E3650B /* LoggingAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingAccumulator.h; sourceTree = "<group>"; };
 		553071C91C40427200384898 /* TinyLRUCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyLRUCache.h; sourceTree = "<group>"; };
 		5D247B6214689B8600E78B76 /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D247B6E14689C4700E78B76 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -835,6 +837,7 @@
 				0FE164681B6FFC9600400E7C /* Lock.cpp */,
 				0FE164691B6FFC9600400E7C /* Lock.h */,
 				A8A472C3151A825A004123FF /* Locker.h */,
+				513E170A1CD7D5BF00E3650B /* LoggingAccumulator.h */,
 				A8A472C6151A825A004123FF /* MainThread.cpp */,
 				A8A472C7151A825B004123FF /* MainThread.h */,
 				1A233C7C17DAA6E300A93ACF /* MallocPtr.h */,
@@ -1249,6 +1252,7 @@
 				A8A47415151A825B004123FF /* RandomNumber.h in Headers */,
 				A8A47416151A825B004123FF /* RandomNumberSeed.h in Headers */,
 				0F725CAC1C50461600AD943A /* RangeSet.h in Headers */,
+				513E170B1CD7D5BF00E3650B /* LoggingAccumulator.h in Headers */,
 				0F87105A16643F190090B0AD /* RawPointer.h in Headers */,
 				A8A47417151A825B004123FF /* RedBlackTree.h in Headers */,
 				26299B6E17A9E5B800ADEBE5 /* Ref.h in Headers */,

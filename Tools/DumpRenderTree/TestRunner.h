@@ -135,6 +135,8 @@ public:
     void setTextAutosizingEnabled(bool);
 #endif
 
+    void setAccummulateLogsForChannel(JSStringRef);
+
     // Legacy here refers to the old TestRunner API for handling web notifications, not the legacy web notification API.
     void ignoreLegacyWebNotificationPermissionRequests();
     // Legacy here refers to the old TestRunner API for handling web notifications, not the legacy web notification API.

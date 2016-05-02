@@ -5,6 +5,9 @@ if (this.importScripts) {
 
 description("Test IndexedDB odd value datatypes");
 
+if (window.testRunner)
+    testRunner.accummulateLogsForChannel("IndexedDB");
+
 function test()
 {
     removeVendorPrefixes();

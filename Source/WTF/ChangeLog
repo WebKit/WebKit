@@ -1,3 +1,25 @@
+2016-05-02  Brady Eidson  <beidson@apple.com>
+
+        Add the ability to accumulate logs for specific logging channels to help diagnose test timeouts.
+        https://bugs.webkit.org/show_bug.cgi?id=157274
+
+        Reviewed by Alex Christensen.
+
+        This patch changes WTFLog to add the logging string to the logging accumulator if the logging channel says so.
+        It also adds support for using this new accumulation mechanism.
+
+        * WTF.xcodeproj/project.pbxproj:
+
+        * wtf/Assertions.cpp:
+        (WTF::resetAccumulatedLogs):
+        (WTF::getAndResetAccumulatedLogs):
+        * wtf/Assertions.h:
+
+        * wtf/LoggingAccumulator.h: Added. Expose functions to get accumulated logs and to reset the accumulation.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::format): Update to handle %@ on CF (Well, really ObjC) platforms.
+
 2016-05-02  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Enable IndexedDB.

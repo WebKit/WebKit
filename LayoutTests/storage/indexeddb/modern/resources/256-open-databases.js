@@ -1,5 +1,8 @@
 description("This test makes sure that if you open 128 unique databases, close your connections to them, and then open 128 other unique databases, that it works.");
 
+if (window.testRunner)
+    testRunner.accummulateLogsForChannel("IndexedDB");
+
 var databaseConnections = new Array;
 
 for (var i = 0; i < 128; ++i) {

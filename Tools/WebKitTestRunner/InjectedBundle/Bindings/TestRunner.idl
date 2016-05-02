@@ -223,5 +223,7 @@ interface TestRunner {
     void runUIScript(DOMString script, object callback);
 
     void clearTestRunnerCallbacks();
+
+    void accummulateLogsForChannel(DOMString channel);
 };
 
