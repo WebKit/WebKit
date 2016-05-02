@@ -1,3 +1,137 @@
+2016-05-02  Chris Dumez  <cdumez@apple.com>
+
+        Modernize HTMLConstructionSite
+        https://bugs.webkit.org/show_bug.cgi?id=157279
+
+        Reviewed by Alex Christensen.
+
+        Modernize HTMLConstructionSite: Use less raw pointers, more auto, more
+        range loops and more nullptr.
+
+        * dom/ScriptElement.h:
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::setAttributes):
+        (WebCore::shouldUseLengthLimit):
+        (WebCore::executeReparentTask):
+        (WebCore::HTMLConstructionSite::attachLater):
+        (WebCore::HTMLConstructionSite::executeQueuedTasks):
+        (WebCore::HTMLConstructionSite::HTMLConstructionSite):
+        (WebCore::HTMLConstructionSite::takeForm):
+        (WebCore::HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        (WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagInBody):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyStartTagInBody):
+        (WebCore::HTMLConstructionSite::setDefaultCompatibilityMode):
+        (WebCore::HTMLConstructionSite::setCompatibilityMode):
+        (WebCore::HTMLConstructionSite::finishedParsing):
+        (WebCore::HTMLConstructionSite::insertDoctype):
+        (WebCore::HTMLConstructionSite::insertComment):
+        (WebCore::HTMLConstructionSite::insertCommentOnDocument):
+        (WebCore::HTMLConstructionSite::insertCommentOnHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHeadElement):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyElement):
+        (WebCore::HTMLConstructionSite::insertHTMLFormElement):
+        (WebCore::HTMLConstructionSite::insertHTMLElement):
+        (WebCore::HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface):
+        (WebCore::HTMLConstructionSite::insertCustomElement):
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+        (WebCore::HTMLConstructionSite::insertFormattingElement):
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        (WebCore::HTMLConstructionSite::insertForeignElement):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::reparent):
+        (WebCore::HTMLConstructionSite::insertAlreadyParsedChild):
+        (WebCore::HTMLConstructionSite::takeAllChildren):
+        (WebCore::HTMLConstructionSite::createElement):
+        (WebCore::HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        (WebCore::HTMLConstructionSite::createElementFromSavedToken):
+        (WebCore::HTMLConstructionSite::indexOfFirstUnopenFormattingElement):
+        (WebCore::HTMLConstructionSite::reconstructTheActiveFormattingElements):
+        (WebCore::HTMLConstructionSite::findFosterSite):
+        (WebCore::HTMLConstructionSite::shouldFosterParent):
+        (WebCore::HTMLConstructionSite::fosterParent):
+        (WebCore::HTMLConstructionSite::~HTMLConstructionSite): Deleted.
+        (WebCore::HTMLConstructionSite::setForm): Deleted.
+        (WebCore::HTMLConstructionSite::setCompatibilityModeFromDoctype): Deleted.
+        (WebCore::HTMLConstructionSite::ownerDocumentForCurrentNode): Deleted.
+        (WebCore::HTMLConstructionSite::generateImpliedEndTagsWithExclusion): Deleted.
+        * html/parser/HTMLConstructionSite.h:
+        (WebCore::HTMLConstructionSite::inQuirksMode):
+        (WebCore::HTMLConstructionSite::isTelephoneNumberParsingEnabled):
+        (WebCore::HTMLConstructionSite::RedirectToFosterParentGuard::RedirectToFosterParentGuard):
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isRootNode):
+        (WebCore::HTMLElementStack::ElementRecord::ElementRecord):
+        (WebCore::HTMLElementStack::ElementRecord::replaceElement):
+        (WebCore::HTMLElementStack::ElementRecord::isAbove):
+        (WebCore::HTMLElementStack::popAll):
+        (WebCore::HTMLElementStack::popUntil):
+        (WebCore::HTMLElementStack::popUntilPopped):
+        (WebCore::HTMLElementStack::pushRootNode):
+        (WebCore::HTMLElementStack::pushHTMLHtmlElement):
+        (WebCore::HTMLElementStack::pushRootNodeCommon):
+        (WebCore::HTMLElementStack::pushHTMLHeadElement):
+        (WebCore::HTMLElementStack::pushHTMLBodyElement):
+        (WebCore::HTMLElementStack::push):
+        (WebCore::HTMLElementStack::insertAbove):
+        (WebCore::HTMLElementStack::removeHTMLHeadElement):
+        (WebCore::HTMLElementStack::remove):
+        (WebCore::HTMLElementStack::contains):
+        (WebCore::inScopeCommon):
+        (WebCore::HTMLElementStack::hasNumberedHeaderElementInScope):
+        (WebCore::HTMLElementStack::inScope):
+        (WebCore::HTMLElementStack::pushCommon):
+        (WebCore::HTMLElementStack::popCommon):
+        (WebCore::HTMLElementStack::removeNonTopCommon):
+        (WebCore::HTMLElementStack::show):
+        (WebCore::HTMLElementStack::hasOnlyOneElement): Deleted.
+        (WebCore::HTMLElementStack::secondElementIsHTMLBodyElement): Deleted.
+        (WebCore::HTMLElementStack::pop): Deleted.
+        (WebCore::HTMLElementStack::popUntilTableScopeMarker): Deleted.
+        (WebCore::HTMLElementStack::oneBelowTop): Deleted.
+        * html/parser/HTMLElementStack.h:
+        (WebCore::HTMLElementStack::ElementRecord::stackItem):
+        (WebCore::HTMLElementStack::ElementRecord::setNext): Deleted.
+        (WebCore::HTMLElementStack::popUntilPopped): Deleted.
+        * html/parser/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::contains):
+        (WebCore::HTMLFormattingElementList::swapTo):
+        (WebCore::HTMLFormattingElementList::append):
+        (WebCore::HTMLFormattingElementList::remove):
+        (WebCore::HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly):
+        (WebCore::HTMLFormattingElementList::ensureNoahsArkCondition):
+        * html/parser/HTMLFormattingElementList.h:
+        (WebCore::HTMLFormattingElementList::Entry::Entry):
+        (WebCore::HTMLFormattingElementList::Entry::replaceElement):
+        (WebCore::HTMLFormattingElementList::Bookmark::Bookmark):
+        (WebCore::HTMLFormattingElementList::Bookmark::moveToAfter):
+        (WebCore::HTMLFormattingElementList::Bookmark::mark):
+        (WebCore::HTMLFormattingElementList::first):
+        (WebCore::HTMLFormattingElementList::Entry::isMarker): Deleted.
+        (WebCore::HTMLFormattingElementList::Entry::stackItem): Deleted.
+        (WebCore::HTMLFormattingElementList::Entry::operator!=): Deleted.
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processDoctypeToken):
+        (WebCore::HTMLTreeBuilder::processCloseWhenNestedTag):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::insertGenericHTMLElement):
+        (WebCore::HTMLTreeBuilder::processTemplateStartTag):
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processHtmlStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processComment):
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHTML):
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead):
+        (WebCore::HTMLTreeBuilder::processGenericRCDATAStartTag):
+        (WebCore::HTMLTreeBuilder::processGenericRawTextStartTag):
+        (WebCore::HTMLTreeBuilder::processScriptStartTag):
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent):
+
 2016-05-02  Per Arne Vollan  <peavo@outlook.com>
 
         Remove unneeded casts once we upgrade to a version of Visual Studio that is not broken

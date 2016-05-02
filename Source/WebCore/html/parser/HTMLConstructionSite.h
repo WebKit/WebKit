@@ -31,8 +31,8 @@
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -93,33 +93,32 @@ public:
     HTMLConstructionSite(DocumentFragment&, ParserContentPolicy, unsigned maximumDOMTreeDepth);
     ~HTMLConstructionSite();
 
-    void detach();
     void executeQueuedTasks();
 
     void setDefaultCompatibilityMode();
     void finishedParsing();
 
-    void insertDoctype(AtomicHTMLToken*);
-    void insertComment(AtomicHTMLToken*);
-    void insertCommentOnDocument(AtomicHTMLToken*);
-    void insertCommentOnHTMLHtmlElement(AtomicHTMLToken*);
-    void insertHTMLElement(AtomicHTMLToken*);
+    void insertDoctype(AtomicHTMLToken&);
+    void insertComment(AtomicHTMLToken&);
+    void insertCommentOnDocument(AtomicHTMLToken&);
+    void insertCommentOnHTMLHtmlElement(AtomicHTMLToken&);
+    void insertHTMLElement(AtomicHTMLToken&);
 #if ENABLE(CUSTOM_ELEMENTS)
-    JSCustomElementInterface* insertHTMLElementOrFindCustomElementInterface(AtomicHTMLToken*);
+    JSCustomElementInterface* insertHTMLElementOrFindCustomElementInterface(AtomicHTMLToken&);
     void insertCustomElement(Ref<Element>&&, const AtomicString& localName, Vector<Attribute>&);
 #endif
-    void insertSelfClosingHTMLElement(AtomicHTMLToken*);
-    void insertFormattingElement(AtomicHTMLToken*);
-    void insertHTMLHeadElement(AtomicHTMLToken*);
-    void insertHTMLBodyElement(AtomicHTMLToken*);
-    void insertHTMLFormElement(AtomicHTMLToken*, bool isDemoted = false);
-    void insertScriptElement(AtomicHTMLToken*);
+    void insertSelfClosingHTMLElement(AtomicHTMLToken&);
+    void insertFormattingElement(AtomicHTMLToken&);
+    void insertHTMLHeadElement(AtomicHTMLToken&);
+    void insertHTMLBodyElement(AtomicHTMLToken&);
+    void insertHTMLFormElement(AtomicHTMLToken&, bool isDemoted = false);
+    void insertScriptElement(AtomicHTMLToken&);
     void insertTextNode(const String&, WhitespaceMode = WhitespaceUnknown);
-    void insertForeignElement(AtomicHTMLToken*, const AtomicString& namespaceURI);
+    void insertForeignElement(AtomicHTMLToken&, const AtomicString& namespaceURI);
 
-    void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken*);
-    void insertHTMLHtmlStartTagInBody(AtomicHTMLToken*);
-    void insertHTMLBodyStartTagInBody(AtomicHTMLToken*);
+    void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&);
+    void insertHTMLHtmlStartTagInBody(AtomicHTMLToken&);
+    void insertHTMLBodyStartTagInBody(AtomicHTMLToken&);
 
     void reparent(HTMLElementStack::ElementRecord& newParent, HTMLElementStack::ElementRecord& child);
     void reparent(HTMLElementStack::ElementRecord& newParent, HTMLStackItem& child);
@@ -129,18 +128,18 @@ public:
     void insertAlreadyParsedChild(HTMLStackItem& newParent, HTMLElementStack::ElementRecord& child);
     void takeAllChildren(HTMLStackItem& newParent, HTMLElementStack::ElementRecord& oldParent);
 
-    Ref<HTMLStackItem> createElementFromSavedToken(HTMLStackItem*);
+    Ref<HTMLStackItem> createElementFromSavedToken(HTMLStackItem&);
 
     bool shouldFosterParent() const;
-    void fosterParent(PassRefPtr<Node>);
+    void fosterParent(Ref<Node>&&);
 
-    bool indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const;
+    Optional<unsigned> indexOfFirstUnopenFormattingElement() const;
     void reconstructTheActiveFormattingElements();
 
     void generateImpliedEndTags();
     void generateImpliedEndTagsWithExclusion(const AtomicString& tagName);
 
-    bool inQuirksMode();
+    bool inQuirksMode() { return m_inQuirksMode; }
 
     bool isEmpty() const { return !m_openElements.stackDepth(); }
     Element& currentElement() const { return m_openElements.top(); }
@@ -157,32 +156,23 @@ public:
 
     void setForm(HTMLFormElement*);
     HTMLFormElement* form() const { return m_form.get(); }
-    PassRefPtr<HTMLFormElement> takeForm();
+    RefPtr<HTMLFormElement> takeForm();
 
     ParserContentPolicy parserContentPolicy() { return m_parserContentPolicy; }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-    bool isTelephoneNumberParsingEnabled() { return m_document->isTelephoneNumberParsingEnabled(); }
+    bool isTelephoneNumberParsingEnabled() { return m_document.isTelephoneNumberParsingEnabled(); }
 #endif
 
     class RedirectToFosterParentGuard {
         WTF_MAKE_NONCOPYABLE(RedirectToFosterParentGuard);
     public:
-        RedirectToFosterParentGuard(HTMLConstructionSite& tree)
-            : m_tree(tree)
-            , m_wasRedirectingBefore(tree.m_redirectAttachToFosterParent)
-        {
-            m_tree.m_redirectAttachToFosterParent = true;
-        }
-
-        ~RedirectToFosterParentGuard()
-        {
-            m_tree.m_redirectAttachToFosterParent = m_wasRedirectingBefore;
-        }
+        explicit RedirectToFosterParentGuard(HTMLConstructionSite& tree)
+            : m_redirectAttachToFosterParentChange(tree.m_redirectAttachToFosterParent, true)
+        { }
 
     private:
-        HTMLConstructionSite& m_tree;
-        bool m_wasRedirectingBefore;
+        TemporaryChange<bool> m_redirectAttachToFosterParentChange;
     };
 
     static bool isFormattingTag(const AtomicString&);
@@ -195,23 +185,23 @@ private:
     void setCompatibilityMode(DocumentCompatibilityMode);
     void setCompatibilityModeFromDoctype(const String& name, const String& publicId, const String& systemId);
 
-    void attachLater(ContainerNode* parent, PassRefPtr<Node> child, bool selfClosing = false);
+    void attachLater(ContainerNode& parent, Ref<Node>&& child, bool selfClosing = false);
 
     void findFosterSite(HTMLConstructionSiteTask&);
 
-    RefPtr<Element> createHTMLElementOrFindCustomElementInterface(AtomicHTMLToken*, JSCustomElementInterface**);
-    Ref<Element> createHTMLElement(AtomicHTMLToken*);
-    Ref<Element> createElement(AtomicHTMLToken*, const AtomicString& namespaceURI);
+    RefPtr<Element> createHTMLElementOrFindCustomElementInterface(AtomicHTMLToken&, JSCustomElementInterface**);
+    Ref<Element> createHTMLElement(AtomicHTMLToken&);
+    Ref<Element> createElement(AtomicHTMLToken&, const AtomicString& namespaceURI);
 
-    void mergeAttributesFromTokenIntoElement(AtomicHTMLToken*, Element*);
+    void mergeAttributesFromTokenIntoElement(AtomicHTMLToken&, Element&);
     void dispatchDocumentElementAvailableIfNeeded();
 
-    Document* m_document;
+    Document& m_document;
     
     // This is the root ContainerNode to which the parser attaches all newly
     // constructed nodes. It points to a DocumentFragment when parsing fragments
     // and a Document in all other cases.
-    ContainerNode* m_attachmentRoot;
+    ContainerNode& m_attachmentRoot;
     
     RefPtr<HTMLStackItem> m_head;
     RefPtr<HTMLFormElement> m_form;

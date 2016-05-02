@@ -48,16 +48,14 @@ public:
     class Entry {
     public:
         // Inline because they're hot and Vector<T> uses them.
-        explicit Entry(PassRefPtr<HTMLStackItem> item)
-            : m_item(item)
+        explicit Entry(Ref<HTMLStackItem>&& item)
+            : m_item(WTFMove(item))
         {
         }
         enum MarkerEntryType { MarkerEntry };
         Entry(MarkerEntryType)
-            : m_item(0)
         {
         }
-        ~Entry() {}
 
         bool isMarker() const { return !m_item; }
 
@@ -69,7 +67,7 @@ public:
             ASSERT(m_item);
             return m_item->element();
         }
-        void replaceElement(PassRefPtr<HTMLStackItem> item) { m_item = item; }
+        void replaceElement(Ref<HTMLStackItem>&& item) { m_item = WTFMove(item); }
 
         // Needed for use with Vector.  These are super-hot and must be inline.
         bool operator==(Element* element) const { return !m_item ? !element : &m_item->element() == element; }
@@ -81,20 +79,20 @@ public:
 
     class Bookmark {
     public:
-        Bookmark(Entry* entry)
+        explicit Bookmark(Entry& entry)
             : m_hasBeenMoved(false)
-            , m_mark(entry)
+            , m_mark(&entry)
         {
         }
 
-        void moveToAfter(Entry* before)
+        void moveToAfter(Entry& before)
         {
             m_hasBeenMoved = true;
-            m_mark = before;
+            m_mark = &before;
         }
 
         bool hasBeenMoved() const { return m_hasBeenMoved; }
-        Entry* mark() const { return m_mark; }
+        Entry& mark() const { ASSERT(m_mark); return *m_mark; }
 
     private:
         bool m_hasBeenMoved;
@@ -106,13 +104,13 @@ public:
 
     Element* closestElementInScopeWithName(const AtomicString&);
 
-    Entry* find(Element*);
-    bool contains(Element*);
-    void append(PassRefPtr<HTMLStackItem>);
-    void remove(Element*);
+    Entry* find(Element&);
+    bool contains(Element&);
+    void append(Ref<HTMLStackItem>&&);
+    void remove(Element&);
 
-    Bookmark bookmarkFor(Element*);
-    void swapTo(Element* oldElement, PassRefPtr<HTMLStackItem> newItem, const Bookmark&);
+    Bookmark bookmarkFor(Element&);
+    void swapTo(Element& oldElement, Ref<HTMLStackItem>&& newItem, const Bookmark&);
 
     void appendMarker();
     // clearToLastMarker also clears the marker (per the HTML5 spec).
@@ -126,12 +124,12 @@ public:
 #endif
 
 private:
-    Entry* first() { return &at(0); }
+    Entry& first() { return at(0); }
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#list-of-active-formatting-elements
     // These functions enforce the "Noah's Ark" condition, which removes redundant mis-nested elements.
-    void tryToEnsureNoahsArkConditionQuickly(HTMLStackItem*, Vector<HTMLStackItem*>& remainingCandiates);
-    void ensureNoahsArkCondition(HTMLStackItem*);
+    void tryToEnsureNoahsArkConditionQuickly(HTMLStackItem&, Vector<HTMLStackItem*>& remainingCandidates);
+    void ensureNoahsArkCondition(HTMLStackItem&);
 
     Vector<Entry> m_entries;
 };

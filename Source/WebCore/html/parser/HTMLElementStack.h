@@ -44,22 +44,24 @@ class QualifiedName;
 class HTMLElementStack {
     WTF_MAKE_NONCOPYABLE(HTMLElementStack); WTF_MAKE_FAST_ALLOCATED;
 public:
-    HTMLElementStack();
+    HTMLElementStack() = default;
     ~HTMLElementStack();
 
     class ElementRecord {
         WTF_MAKE_NONCOPYABLE(ElementRecord); WTF_MAKE_FAST_ALLOCATED;
     public:
-        ElementRecord(PassRefPtr<HTMLStackItem>, std::unique_ptr<ElementRecord>);
+        ElementRecord(Ref<HTMLStackItem>&&, std::unique_ptr<ElementRecord>);
         ~ElementRecord();
     
         Element& element() const { return m_item->element(); }
         ContainerNode& node() const { return m_item->node(); }
         const AtomicString& namespaceURI() const { return m_item->namespaceURI(); }
-        HTMLStackItem& stackItem() const { return *m_item; }
-        void replaceElement(PassRefPtr<HTMLStackItem>);
+        HTMLStackItem& stackItem() { return m_item.get(); }
+        const HTMLStackItem& stackItem() const { return m_item.get(); }
 
-        bool isAbove(ElementRecord*) const;
+        void replaceElement(Ref<HTMLStackItem>&&);
+
+        bool isAbove(ElementRecord&) const;
 
         ElementRecord* next() const { return m_next.get(); }
 
@@ -69,7 +71,7 @@ public:
         std::unique_ptr<ElementRecord> releaseNext() { return WTFMove(m_next); }
         void setNext(std::unique_ptr<ElementRecord> next) { m_next = WTFMove(next); }
 
-        RefPtr<HTMLStackItem> m_item;
+        Ref<HTMLStackItem> m_item;
         std::unique_ptr<ElementRecord> m_next;
     };
 
@@ -94,25 +96,25 @@ public:
 
     HTMLStackItem* oneBelowTop() const;
     ElementRecord& topRecord() const;
-    ElementRecord* find(Element*) const;
-    ElementRecord* furthestBlockForFormattingElement(Element*) const;
+    ElementRecord* find(Element&) const;
+    ElementRecord* furthestBlockForFormattingElement(Element&) const;
     ElementRecord* topmost(const AtomicString& tagName) const;
 
-    void insertAbove(PassRefPtr<HTMLStackItem>, ElementRecord*);
+    void insertAbove(Ref<HTMLStackItem>&&, ElementRecord&);
 
-    void push(PassRefPtr<HTMLStackItem>);
-    void pushRootNode(PassRefPtr<HTMLStackItem>);
-    void pushHTMLHtmlElement(PassRefPtr<HTMLStackItem>);
-    void pushHTMLHeadElement(PassRefPtr<HTMLStackItem>);
-    void pushHTMLBodyElement(PassRefPtr<HTMLStackItem>);
+    void push(Ref<HTMLStackItem>&&);
+    void pushRootNode(Ref<HTMLStackItem>&&);
+    void pushHTMLHtmlElement(Ref<HTMLStackItem>&&);
+    void pushHTMLHeadElement(Ref<HTMLStackItem>&&);
+    void pushHTMLBodyElement(Ref<HTMLStackItem>&&);
 
     void pop();
     void popUntil(const AtomicString& tagName);
-    void popUntil(Element*);
+    void popUntil(Element&);
     void popUntilPopped(const AtomicString& tagName);
     void popUntilPopped(const QualifiedName& tagName) { popUntilPopped(tagName.localName()); }
 
-    void popUntilPopped(Element*);
+    void popUntilPopped(Element&);
     void popUntilNumberedHeaderElementPopped();
     void popUntilTableScopeMarker(); // "clear the stack back to a table context" in the spec.
     void popUntilTableBodyScopeMarker(); // "clear the stack back to a table body context" in the spec.
@@ -125,13 +127,13 @@ public:
     static bool isMathMLTextIntegrationPoint(HTMLStackItem&);
     static bool isHTMLIntegrationPoint(HTMLStackItem&);
 
-    void remove(Element*);
-    void removeHTMLHeadElement(Element*);
+    void remove(Element&);
+    void removeHTMLHeadElement(Element&);
 
-    bool contains(Element*) const;
+    bool contains(Element&) const;
     bool contains(const AtomicString& tagName) const;
 
-    bool inScope(Element*) const;
+    bool inScope(Element&) const;
     bool inScope(const AtomicString& tagName) const;
     bool inScope(const QualifiedName&) const;
     bool inListItemScope(const AtomicString& tagName) const;
@@ -159,10 +161,10 @@ public:
 #endif
 
 private:
-    void pushCommon(PassRefPtr<HTMLStackItem>);
-    void pushRootNodeCommon(PassRefPtr<HTMLStackItem>);
+    void pushCommon(Ref<HTMLStackItem>&&);
+    void pushRootNodeCommon(Ref<HTMLStackItem>&&);
     void popCommon();
-    void removeNonTopCommon(Element*);
+    void removeNonTopCommon(Element&);
 
     std::unique_ptr<ElementRecord> m_top;
 
@@ -171,10 +173,10 @@ private:
     // FIXME: We don't currently require type-specific information about
     // these elements so we haven't yet bothered to plumb the types all the
     // way down through createElement, etc.
-    ContainerNode* m_rootNode;
-    Element* m_headElement;
-    Element* m_bodyElement;
-    unsigned m_stackDepth;
+    ContainerNode* m_rootNode { nullptr };
+    Element* m_headElement { nullptr };
+    Element* m_bodyElement { nullptr };
+    unsigned m_stackDepth { 0 };
 };
     
 } // namespace WebCore

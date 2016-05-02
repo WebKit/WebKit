@@ -112,6 +112,7 @@ private:
     String m_fallbackCharacterEncoding;
 };
 
+// FIXME: replace with downcast<ScriptElement>.
 ScriptElement* toScriptElementIfPossible(Element*);
 
 }

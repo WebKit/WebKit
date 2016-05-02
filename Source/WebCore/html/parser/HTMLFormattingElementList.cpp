@@ -57,52 +57,52 @@ Element* HTMLFormattingElementList::closestElementInScopeWithName(const AtomicSt
     return nullptr;
 }
 
-bool HTMLFormattingElementList::contains(Element* element)
+bool HTMLFormattingElementList::contains(Element& element)
 {
     return !!find(element);
 }
 
-HTMLFormattingElementList::Entry* HTMLFormattingElementList::find(Element* element)
+auto HTMLFormattingElementList::find(Element& element) -> Entry*
 {
-    size_t index = m_entries.reverseFind(element);
+    size_t index = m_entries.reverseFind(&element);
     if (index != notFound) {
         // This is somewhat of a hack, and is why this method can't be const.
         return &m_entries[index];
     }
-    return 0;
+    return nullptr;
 }
 
-HTMLFormattingElementList::Bookmark HTMLFormattingElementList::bookmarkFor(Element* element)
+auto HTMLFormattingElementList::bookmarkFor(Element& element) -> Bookmark
 {
-    size_t index = m_entries.reverseFind(element);
+    size_t index = m_entries.reverseFind(&element);
     ASSERT(index != notFound);
-    return Bookmark(&at(index));
+    return Bookmark(at(index));
 }
 
-void HTMLFormattingElementList::swapTo(Element* oldElement, PassRefPtr<HTMLStackItem> newItem, const Bookmark& bookmark)
+void HTMLFormattingElementList::swapTo(Element& oldElement, Ref<HTMLStackItem>&& newItem, const Bookmark& bookmark)
 {
     ASSERT(contains(oldElement));
-    ASSERT(!contains(&newItem->element()));
+    ASSERT(!contains(newItem->element()));
     if (!bookmark.hasBeenMoved()) {
-        ASSERT(&bookmark.mark()->element() == oldElement);
-        bookmark.mark()->replaceElement(newItem);
+        ASSERT(&bookmark.mark().element() == &oldElement);
+        bookmark.mark().replaceElement(newItem.copyRef());
         return;
     }
-    size_t index = bookmark.mark() - first();
+    size_t index = &bookmark.mark() - &first();
     ASSERT_WITH_SECURITY_IMPLICATION(index < size());
-    m_entries.insert(index + 1, newItem);
+    m_entries.insert(index + 1, WTFMove(newItem));
     remove(oldElement);
 }
 
-void HTMLFormattingElementList::append(PassRefPtr<HTMLStackItem> item)
+void HTMLFormattingElementList::append(Ref<HTMLStackItem>&& item)
 {
-    ensureNoahsArkCondition(item.get());
-    m_entries.append(item);
+    ensureNoahsArkCondition(item);
+    m_entries.append(WTFMove(item));
 }
 
-void HTMLFormattingElementList::remove(Element* element)
+void HTMLFormattingElementList::remove(Element& element)
 {
-    size_t index = m_entries.reverseFind(element);
+    size_t index = m_entries.reverseFind(&element);
     if (index != notFound)
         m_entries.remove(index);
 }
@@ -123,7 +123,7 @@ void HTMLFormattingElementList::clearToLastMarker()
     }
 }
 
-void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(HTMLStackItem* newItem, Vector<HTMLStackItem*>& remainingCandidates)
+void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(HTMLStackItem& newItem, Vector<HTMLStackItem*>& remainingCandidates)
 {
     ASSERT(remainingCandidates.isEmpty());
 
@@ -134,7 +134,7 @@ void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(HTMLStackIte
     // of a quickly ensuring the condition.
     Vector<HTMLStackItem*, 10> candidates;
 
-    size_t newItemAttributeCount = newItem->attributes().size();
+    size_t newItemAttributeCount = newItem.attributes().size();
 
     for (size_t i = m_entries.size(); i; ) {
         --i;
@@ -144,7 +144,7 @@ void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(HTMLStackIte
 
         // Quickly reject obviously non-matching candidates.
         HTMLStackItem* candidate = entry.stackItem();
-        if (newItem->localName() != candidate->localName() || newItem->namespaceURI() != candidate->namespaceURI())
+        if (newItem.localName() != candidate->localName() || newItem.namespaceURI() != candidate->namespaceURI())
             continue;
         if (candidate->attributes().size() != newItemAttributeCount)
             continue;
@@ -158,7 +158,7 @@ void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(HTMLStackIte
     remainingCandidates.appendVector(candidates);
 }
 
-void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem* newItem)
+void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem& newItem)
 {
     Vector<HTMLStackItem*> candidates;
     tryToEnsureNoahsArkConditionQuickly(newItem, candidates);
@@ -170,15 +170,15 @@ void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem* newItem)
     Vector<HTMLStackItem*> remainingCandidates;
     remainingCandidates.reserveInitialCapacity(candidates.size());
 
-    for (auto& attribute : newItem->attributes()) {
+    for (auto& attribute : newItem.attributes()) {
         for (auto& candidate : candidates) {
             // These properties should already have been checked by tryToEnsureNoahsArkConditionQuickly.
-            ASSERT(newItem->attributes().size() == candidate->attributes().size());
-            ASSERT(newItem->localName() == candidate->localName() && newItem->namespaceURI() == candidate->namespaceURI());
+            ASSERT(newItem.attributes().size() == candidate->attributes().size());
+            ASSERT(newItem.localName() == candidate->localName() && newItem.namespaceURI() == candidate->namespaceURI());
 
-            const Attribute* candidateAttribute = candidate->findAttribute(attribute.name());
+            auto* candidateAttribute = candidate->findAttribute(attribute.name());
             if (candidateAttribute && candidateAttribute->value() == attribute.value())
-                remainingCandidates.append(candidate);
+                remainingCandidates.uncheckedAppend(candidate);
         }
 
         if (remainingCandidates.size() < kNoahsArkCapacity)
@@ -192,7 +192,7 @@ void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem* newItem)
     // however, that we wil spin the loop more than once because of how the
     // formatting element list gets permuted.
     for (size_t i = kNoahsArkCapacity - 1; i < candidates.size(); ++i)
-        remove(&candidates[i]->element());
+        remove(candidates[i]->element());
 }
 
 #if ENABLE(TREE_DEBUGGING)

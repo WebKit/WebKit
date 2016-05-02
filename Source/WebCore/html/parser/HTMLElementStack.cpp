@@ -40,8 +40,7 @@ namespace {
 
 inline bool isRootNode(HTMLStackItem& item)
 {
-    return item.isDocumentFragment()
-        || item.hasTagName(htmlTag);
+    return item.isDocumentFragment() || item.hasTagName(htmlTag);
 }
 
 inline bool isScopeMarker(HTMLStackItem& item)
@@ -116,40 +115,30 @@ inline bool isSelectScopeMarker(HTMLStackItem& item)
 
 }
 
-HTMLElementStack::ElementRecord::ElementRecord(PassRefPtr<HTMLStackItem> item, std::unique_ptr<ElementRecord> next)
-    : m_item(item)
+HTMLElementStack::ElementRecord::ElementRecord(Ref<HTMLStackItem>&& item, std::unique_ptr<ElementRecord> next)
+    : m_item(WTFMove(item))
     , m_next(WTFMove(next))
 {
-    ASSERT(m_item);
 }
 
 HTMLElementStack::ElementRecord::~ElementRecord()
 {
 }
 
-void HTMLElementStack::ElementRecord::replaceElement(PassRefPtr<HTMLStackItem> item)
+void HTMLElementStack::ElementRecord::replaceElement(Ref<HTMLStackItem>&& item)
 {
-    ASSERT(item);
-    ASSERT(!m_item || m_item->isElement());
+    ASSERT(m_item->isElement());
     // FIXME: Should this call finishParsingChildren?
-    m_item = item;
+    m_item = WTFMove(item);
 }
 
-bool HTMLElementStack::ElementRecord::isAbove(ElementRecord* other) const
+bool HTMLElementStack::ElementRecord::isAbove(ElementRecord& other) const
 {
-    for (ElementRecord* below = next(); below; below = below->next()) {
-        if (below == other)
+    for (auto* below = next(); below; below = below->next()) {
+        if (below == &other)
             return true;
     }
     return false;
-}
-
-HTMLElementStack::HTMLElementStack()
-    : m_rootNode(0)
-    , m_headElement(0)
-    , m_bodyElement(0)
-    , m_stackDepth(0)
-{
 }
 
 HTMLElementStack::~HTMLElementStack()
@@ -189,9 +178,9 @@ void HTMLElementStack::popHTMLBodyElement()
 
 void HTMLElementStack::popAll()
 {
-    m_rootNode = 0;
-    m_headElement = 0;
-    m_bodyElement = 0;
+    m_rootNode = nullptr;
+    m_headElement = nullptr;
+    m_bodyElement = nullptr;
     m_stackDepth = 0;
     while (m_top) {
         topNode().finishParsingChildren();
@@ -226,13 +215,13 @@ void HTMLElementStack::popUntilNumberedHeaderElementPopped()
     pop();
 }
 
-void HTMLElementStack::popUntil(Element* element)
+void HTMLElementStack::popUntil(Element& element)
 {
-    while (&top() != element)
+    while (&top() != &element)
         pop();
 }
 
-void HTMLElementStack::popUntilPopped(Element* element)
+void HTMLElementStack::popUntilPopped(Element& element)
 {
     popUntil(element);
     pop();
@@ -292,78 +281,76 @@ void HTMLElementStack::popUntilForeignContentScopeMarker()
         pop();
 }
     
-void HTMLElementStack::pushRootNode(PassRefPtr<HTMLStackItem> rootItem)
+void HTMLElementStack::pushRootNode(Ref<HTMLStackItem>&& rootItem)
 {
     ASSERT(rootItem->isDocumentFragment());
-    pushRootNodeCommon(rootItem);
+    pushRootNodeCommon(WTFMove(rootItem));
 }
 
-void HTMLElementStack::pushHTMLHtmlElement(PassRefPtr<HTMLStackItem> item)
+void HTMLElementStack::pushHTMLHtmlElement(Ref<HTMLStackItem>&& item)
 {
     ASSERT(item->hasTagName(HTMLNames::htmlTag));
-    pushRootNodeCommon(item);
+    pushRootNodeCommon(WTFMove(item));
 }
     
-void HTMLElementStack::pushRootNodeCommon(PassRefPtr<HTMLStackItem> rootItem)
+void HTMLElementStack::pushRootNodeCommon(Ref<HTMLStackItem>&& rootItem)
 {
     ASSERT(!m_top);
     ASSERT(!m_rootNode);
     m_rootNode = &rootItem->node();
-    pushCommon(rootItem);
+    pushCommon(WTFMove(rootItem));
 }
 
-void HTMLElementStack::pushHTMLHeadElement(PassRefPtr<HTMLStackItem> item)
+void HTMLElementStack::pushHTMLHeadElement(Ref<HTMLStackItem>&& item)
 {
     ASSERT(item->hasTagName(HTMLNames::headTag));
     ASSERT(!m_headElement);
     m_headElement = &item->element();
-    pushCommon(item);
+    pushCommon(WTFMove(item));
 }
 
-void HTMLElementStack::pushHTMLBodyElement(PassRefPtr<HTMLStackItem> item)
+void HTMLElementStack::pushHTMLBodyElement(Ref<HTMLStackItem>&& item)
 {
     ASSERT(item->hasTagName(HTMLNames::bodyTag));
     ASSERT(!m_bodyElement);
     m_bodyElement = &item->element();
-    pushCommon(item);
+    pushCommon(WTFMove(item));
 }
 
-void HTMLElementStack::push(PassRefPtr<HTMLStackItem> item)
+void HTMLElementStack::push(Ref<HTMLStackItem>&& item)
 {
     ASSERT(!item->hasTagName(HTMLNames::htmlTag));
     ASSERT(!item->hasTagName(HTMLNames::headTag));
     ASSERT(!item->hasTagName(HTMLNames::bodyTag));
     ASSERT(m_rootNode);
-    pushCommon(item);
+    pushCommon(WTFMove(item));
 }
 
-void HTMLElementStack::insertAbove(PassRefPtr<HTMLStackItem> item, ElementRecord* recordBelow)
+void HTMLElementStack::insertAbove(Ref<HTMLStackItem>&& item, ElementRecord& recordBelow)
 {
-    ASSERT(item);
-    ASSERT(recordBelow);
     ASSERT(m_top);
     ASSERT(!item->hasTagName(HTMLNames::htmlTag));
     ASSERT(!item->hasTagName(HTMLNames::headTag));
     ASSERT(!item->hasTagName(HTMLNames::bodyTag));
     ASSERT(m_rootNode);
-    if (recordBelow == m_top.get()) {
-        push(item);
+    if (&recordBelow == m_top.get()) {
+        push(item.copyRef());
         return;
     }
 
-    for (ElementRecord* recordAbove = m_top.get(); recordAbove; recordAbove = recordAbove->next()) {
-        if (recordAbove->next() != recordBelow)
+    for (auto* recordAbove = m_top.get(); recordAbove; recordAbove = recordAbove->next()) {
+        if (recordAbove->next() != &recordBelow)
             continue;
 
-        m_stackDepth++;
-        recordAbove->setNext(std::make_unique<ElementRecord>(item, recordAbove->releaseNext()));
+        ++m_stackDepth;
+        recordAbove->setNext(std::make_unique<ElementRecord>(WTFMove(item), recordAbove->releaseNext()));
         recordAbove->next()->element().beginParsingChildren();
         return;
     }
     ASSERT_NOT_REACHED();
 }
 
-HTMLElementStack::ElementRecord& HTMLElementStack::topRecord() const
+auto HTMLElementStack::topRecord() const -> ElementRecord&
 {
     ASSERT(m_top);
     return *m_top;
@@ -379,10 +366,10 @@ HTMLStackItem* HTMLElementStack::oneBelowTop() const
     return nullptr;
 }
 
-void HTMLElementStack::removeHTMLHeadElement(Element* element)
+void HTMLElementStack::removeHTMLHeadElement(Element& element)
 {
-    ASSERT(m_headElement == element);
-    if (&m_top->element() == element) {
+    ASSERT(m_headElement == &element);
+    if (&m_top->element() == &element) {
         popHTMLHeadElement();
         return;
     }
@@ -390,35 +377,35 @@ void HTMLElementStack::removeHTMLHeadElement(Element* element)
     removeNonTopCommon(element);
 }
 
-void HTMLElementStack::remove(Element* element)
+void HTMLElementStack::remove(Element& element)
 {
-    ASSERT(!element->hasTagName(HTMLNames::headTag));
-    if (&m_top->element() == element) {
+    ASSERT(!element.hasTagName(HTMLNames::headTag));
+    if (&m_top->element() == &element) {
         pop();
         return;
     }
     removeNonTopCommon(element);
 }
 
-HTMLElementStack::ElementRecord* HTMLElementStack::find(Element* element) const
+auto HTMLElementStack::find(Element& element) const -> ElementRecord*
 {
-    for (ElementRecord* record = m_top.get(); record; record = record->next()) {
-        if (&record->node() == element)
+    for (auto* record = m_top.get(); record; record = record->next()) {
+        if (&record->node() == &element)
             return record;
     }
     return nullptr;
 }
 
-HTMLElementStack::ElementRecord* HTMLElementStack::topmost(const AtomicString& tagName) const
+auto HTMLElementStack::topmost(const AtomicString& tagName) const -> ElementRecord*
 {
-    for (ElementRecord* record = m_top.get(); record; record = record->next()) {
+    for (auto* record = m_top.get(); record; record = record->next()) {
         if (record->stackItem().matchesHTMLTag(tagName))
             return record;
     }
     return nullptr;
 }
 
-bool HTMLElementStack::contains(Element* element) const
+bool HTMLElementStack::contains(Element& element) const
 {
     return !!find(element);
 }
@@ -431,7 +418,7 @@ bool HTMLElementStack::contains(const AtomicString& tagName) const
 template <bool isMarker(HTMLStackItem&)> bool inScopeCommon(HTMLElementStack::ElementRecord* top, const AtomicString& targetTag)
 {
     for (auto* record = top; record; record = record->next()) {
-        HTMLStackItem& item = record->stackItem();
+        auto& item = record->stackItem();
         if (item.matchesHTMLTag(targetTag))
             return true;
         if (isMarker(item))
@@ -443,8 +430,8 @@ template <bool isMarker(HTMLStackItem&)> bool inScopeCommon(HTMLElementStack::El
 
 bool HTMLElementStack::hasNumberedHeaderElementInScope() const
 {
-    for (ElementRecord* record = m_top.get(); record; record = record->next()) {
-        HTMLStackItem& item = record->stackItem();
+    for (auto* record = m_top.get(); record; record = record->next()) {
+        auto& item = record->stackItem();
         if (isNumberedHeaderElement(item))
             return true;
         if (isScopeMarker(item))
@@ -454,11 +441,11 @@ bool HTMLElementStack::hasNumberedHeaderElementInScope() const
     return false;
 }
 
-bool HTMLElementStack::inScope(Element* targetElement) const
+bool HTMLElementStack::inScope(Element& targetElement) const
 {
-    for (ElementRecord* record = m_top.get(); record; record = record->next()) {
-        HTMLStackItem& item = record->stackItem();
-        if (&item.node() == targetElement)
+    for (auto* record = m_top.get(); record; record = record->next()) {
+        auto& item = record->stackItem();
+        if (&item.node() == &targetElement)
             return true;
         if (isScopeMarker(item))
             return false;
@@ -545,12 +532,12 @@ ContainerNode& HTMLElementStack::rootNode() const
     return *m_rootNode;
 }
 
-void HTMLElementStack::pushCommon(PassRefPtr<HTMLStackItem> item)
+void HTMLElementStack::pushCommon(Ref<HTMLStackItem>&& item)
 {
     ASSERT(m_rootNode);
 
-    m_stackDepth++;
-    m_top = std::make_unique<ElementRecord>(item, WTFMove(m_top));
+    ++m_stackDepth;
+    m_top = std::make_unique<ElementRecord>(WTFMove(item), WTFMove(m_top));
 }
 
 void HTMLElementStack::popCommon()
@@ -562,32 +549,32 @@ void HTMLElementStack::popCommon()
     top().finishParsingChildren();
     m_top = m_top->releaseNext();
 
-    m_stackDepth--;
+    --m_stackDepth;
 }
 
-void HTMLElementStack::removeNonTopCommon(Element* element)
+void HTMLElementStack::removeNonTopCommon(Element& element)
 {
-    ASSERT(!element->hasTagName(HTMLNames::htmlTag));
-    ASSERT(!element->hasTagName(HTMLNames::bodyTag));
-    ASSERT(&top() != element);
-    for (ElementRecord* record = m_top.get(); record; record = record->next()) {
-        if (&record->next()->element() == element) {
+    ASSERT(!element.hasTagName(HTMLNames::htmlTag));
+    ASSERT(!element.hasTagName(HTMLNames::bodyTag));
+    ASSERT(&top() != &element);
+    for (auto* record = m_top.get(); record; record = record->next()) {
+        if (&record->next()->element() == &element) {
             // FIXME: Is it OK to call finishParsingChildren()
             // when the children aren't actually finished?
-            element->finishParsingChildren();
+            element.finishParsingChildren();
             record->setNext(record->next()->releaseNext());
-            m_stackDepth--;
+            --m_stackDepth;
             return;
         }
     }
     ASSERT_NOT_REACHED();
 }
 
-HTMLElementStack::ElementRecord* HTMLElementStack::furthestBlockForFormattingElement(Element* formattingElement) const
+auto HTMLElementStack::furthestBlockForFormattingElement(Element& formattingElement) const -> ElementRecord*
 {
     ElementRecord* furthestBlock = nullptr;
-    for (ElementRecord* record = m_top.get(); record; record = record->next()) {
-        if (&record->element() == formattingElement)
+    for (auto* record = m_top.get(); record; record = record->next()) {
+        if (&record->element() == &formattingElement)
             return furthestBlock;
         if (isSpecialNode(record->stackItem()))
             furthestBlock = record;
@@ -600,7 +587,7 @@ HTMLElementStack::ElementRecord* HTMLElementStack::furthestBlockForFormattingEle
 
 void HTMLElementStack::show()
 {
-    for (ElementRecord* record = m_top.get(); record; record = record->next())
+    for (auto* record = m_top.get(); record; record = record->next())
         record->element().showNode();
 }
 
