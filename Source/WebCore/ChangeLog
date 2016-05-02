@@ -1,3 +1,19 @@
+2016-05-02  Sam Weinig  <sam@webkit.org>
+
+        DataDetector underline color should be based on the text color
+        https://bugs.webkit.org/show_bug.cgi?id=157272
+
+        Fixes:
+            <rdar://problem/25663930> DataDetectors links should use the default text color for their parent nodes
+            <rdar://problem/25663983> DataDetectors links underline color update
+
+        Reviewed by Tim Horton.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+        When using light links, use the color of the parent element as the text color, and that same color with
+        20% alpha as the underline color.
+
 2016-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.currentScript must be null when we're executing a script inside a shadow tree

@@ -53,8 +53,6 @@
 #import <WebKitAdditions/DataDetectorsAdditions.h>
 #endif
 
-const char* dataDetectorsLinkStyle = "-webkit-text-decoration-color:rgb(199, 199, 204); color:initial;";
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -635,9 +633,19 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
             Ref<HTMLAnchorElement> anchorElement = HTMLAnchorElement::create(document);
             anchorElement->setHref(correspondingURL);
             anchorElement->setDir("ltr");
-            if (shouldUseLightLinks)
-                anchorElement->setAttribute(styleAttr, dataDetectorsLinkStyle);
-            else if (is<StyledElement>(*parentNode)) {
+            if (shouldUseLightLinks) {
+                document.updateStyleIfNeeded();
+                auto* renderStyle = parentNode->computedStyle();
+                if (renderStyle) {
+                    auto textColor = renderStyle->visitedDependentColor(CSSPropertyColor);
+                    if (textColor.isValid()) {
+                        auto underlineColor = Color(colorWithOverrideAlpha(textColor.rgb(), 0.2));
+
+                        anchorElement->setInlineStyleProperty(CSSPropertyColor, textColor.cssText());
+                        anchorElement->setInlineStyleProperty(CSSPropertyWebkitTextDecorationColor, underlineColor.cssText());
+                    }
+                }
+            } else if (is<StyledElement>(*parentNode)) {
                 if (auto* style = downcast<StyledElement>(*parentNode).presentationAttributeStyle()) {
                     String color = style->getPropertyValue(CSSPropertyColor);
                     if (!color.isEmpty())
