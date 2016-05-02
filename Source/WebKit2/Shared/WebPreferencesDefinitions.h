@@ -257,7 +257,7 @@
     macro(StorageBlockingPolicy, storageBlockingPolicy, UInt32, uint32_t, WebCore::SecurityOrigin::BlockThirdPartyStorage, "", "") \
     macro(JavaScriptRuntimeFlags, javaScriptRuntimeFlags, UInt32, uint32_t, 0, "", "") \
     macro(DataDetectorTypes, dataDetectorTypes, UInt32, uint32_t, 0, "", "") \
-    macro(UserInterfaceDirection, userInterfaceDirection, UInt32, uint32_t, 0, "", "") \
+    macro(UserInterfaceDirectionPolicy, userInterfaceDirectionPolicy, UInt32, uint32_t, 0, "", "") \
     macro(SystemLayoutDirection, systemLayoutDirection, UInt32, uint32_t, 0, "", "") \
     \
 
