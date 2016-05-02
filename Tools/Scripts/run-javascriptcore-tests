@@ -67,6 +67,7 @@ my $gmallocDefaultPath = "/usr/lib/libgmalloc.dylib";
 my $enableFTL = isAppleMacWebKit() || isX86_64() && (isGtk() || isEfl());
 my $createTarball = 0;
 my $remoteHost = 0;
+my $failFast = 1;
 my $remoteConfigFile;
 my $jsonFileName;
 
@@ -76,6 +77,7 @@ my $testapiDefault = $runTestAPI ? "will run" : "will not run";
 my $jscStressDefault = $runJSCStress ? "will run" : " will not run";
 my $jitStressTestsDefault = $runJITStressTests ? "will run" : " will not run";
 my $quickModeDefault = $runQuickMode ? "some" : "all";
+my $failFastDefault = $failFast ? "fail fast" : "don't fail fast";
 my $filter;
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
@@ -90,6 +92,7 @@ Usage: $programName [options] [options to pass to build system]
                                 If the runner only runs some it will run the default and no-cjit-validate modes.
                                 Note, this will not change the behavior of tests that specify their own modes.
 
+  --[no-]fail-fast              Stop this script when a test family reports an error or failure (default: $failFastDefault)
   --json-output=                Create a file at specified path, listing failed stress tests in JSON format.
   --tarball                     Create a tarball of the bundle produced by running the JSC stress tests.
   --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
@@ -116,6 +119,7 @@ GetOptions(
     'jsc-stress!' => \$runJSCStress,
     'jit-stress-tests!' => \$runJITStressTests,
     'quick!' => \$runQuickMode,
+    'fail-fast!' => \$failFast,
     'json-output=s' => \$jsonFileName,
     'tarball!' => \$createTarball,
     'remote=s' => \$remoteHost,
@@ -203,7 +207,9 @@ if ($runTestAPI) {
     my $testapiResult = system { $command[0] } @command;
     my $exitStatus = exitStatus($testapiResult);
     print "testAPI completed with rc=$testapiResult ($exitStatus)\n";
-    exit exitStatus($testapiResult) if $testapiResult;
+    if ($testapiResult && $failFast) {
+        exit exitStatus($testapiResult);
+    }
 }
 
 # Find JavaScriptCore directory
