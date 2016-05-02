@@ -338,7 +338,11 @@ static bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
         return false;
 
     for (CFIndex i = 0; i < count1; i++) {
-        if (!CFEqual(SecTrustGetCertificateAtIndex(trust1, i), SecTrustGetCertificateAtIndex(trust2, i)))
+        auto cert1 = SecTrustGetCertificateAtIndex(trust1, i);
+        auto cert2 = SecTrustGetCertificateAtIndex(trust2, i);
+        RELEASE_ASSERT(cert1);
+        RELEASE_ASSERT(cert2);
+        if (!CFEqual(cert1, cert2))
             return false;
     }
 
