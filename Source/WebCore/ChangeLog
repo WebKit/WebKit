@@ -1,3 +1,61 @@
+2016-05-01  Darin Adler  <darin@apple.com>
+
+        Update Fetch to use enum class instead of string for enumerations
+        https://bugs.webkit.org/show_bug.cgi?id=157241
+
+        Reviewed by Chris Dumez.
+
+        * Modules/fetch/FetchOptions.h: Changed this class into a struct,
+        getting rid of all the getter and setter functions. Moved all the
+        enumeration types out of this class to the WebCore namespace level
+        and gave them all the names and values that match the ones from the
+        IDL file.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::setReferrerPolicy): Updated for the changes to FetchOptions.
+        The string matching here will likely go away when we change dictionary
+        so it sets up a structure, which will parse the enumeration values, but
+        that won't be for a while, so this stays for now.
+        (WebCore::setMode): Ditto.
+        (WebCore::setCredentials): Ditto.
+        (WebCore::setCache): Ditto.
+        (WebCore::setRedirect): Ditto.
+        (WebCore::buildOptions): Updated for changes to FetchOptions.
+        (WebCore::buildHeaders): Ditto.
+        (WebCore::FetchRequest::create): Ditto.
+        (WebCore::FetchRequest::type): Moved this to the header and changed its
+        return type to the enum; it's not just a single return statement.
+        (WebCore::FetchRequest::destination): Ditto.
+        (WebCore::FetchRequest::referrerPolicy): Ditto.
+        (WebCore::FetchRequest::mode): Ditto.
+        (WebCore::FetchRequest::credentials): Ditto.
+        (WebCore::FetchRequest::cache): Ditto.
+        (WebCore::FetchRequest::redirect): Ditto.
+
+        * Modules/fetch/FetchRequest.h: Changed all the getters that return
+        enumerations to return the enum class values instead of strings.
+        Put all the inline versions here in the header.
+
+        * bindings/scripts/CodeGenerator.pm: Removed the seven enum types that
+        are in FetchRequest.idl from the list of "string-based" enums.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Updated for the change where I
+        renamed ReferrerPolicy to ReferrerHeaderPolicy, at least for now.
+        (WebCore::Document::processReferrerPolicy): Ditto.
+        (WebCore::Document::applyContentDispositionAttachmentSandbox): Ditto.
+        * dom/Document.h: Ditto.
+        * loader/FrameNetworkingContext.h: Ditto.
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::generateReferrerHeader): Ditto.
+        * page/SecurityPolicy.h: Ditto.
+
+        * platform/ReferrerPolicy.h: Renamed this enum from ReferrerPolicy to
+        ReferrerHeaderPolicy, since the one specified in the Fetch API has the
+        name ReferrerPolicy. I think the best way to resolve this longer term is
+        to merge them since they really do represent the same concept, although
+        the one from the Fetch API has a few more features.
+
 2016-05-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix Windows build after r200288.

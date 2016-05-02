@@ -66,7 +66,7 @@ bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
     return !URLIsSecureURL;
 }
 
-String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, const URL& url, const String& referrer)
+String SecurityPolicy::generateReferrerHeader(ReferrerHeaderPolicy referrerPolicy, const URL& url, const String& referrer)
 {
     if (referrer.isEmpty())
         return String();
@@ -75,11 +75,11 @@ String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, con
         return String();
 
     switch (referrerPolicy) {
-    case ReferrerPolicyNever:
+    case ReferrerHeaderPolicy::Never:
         return String();
-    case ReferrerPolicyAlways:
+    case ReferrerHeaderPolicy::Always:
         return referrer;
-    case ReferrerPolicyOrigin: {
+    case ReferrerHeaderPolicy::Origin: {
         String origin = SecurityOrigin::createFromString(referrer)->toString();
         if (origin == "null")
             return String();
@@ -87,7 +87,7 @@ String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, con
         // to turn it into a canonical URL we can use as referrer.
         return origin + "/";
     }
-    case ReferrerPolicyDefault:
+    case ReferrerHeaderPolicy::Default:
         break;
     }
 

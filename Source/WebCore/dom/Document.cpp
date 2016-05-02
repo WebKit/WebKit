@@ -521,7 +521,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 #endif
     , m_loadEventDelayCount(0)
     , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
-    , m_referrerPolicy(ReferrerPolicyDefault)
+    , m_referrerPolicy(ReferrerHeaderPolicy::Default)
     , m_writeRecursionIsTooDeep(false)
     , m_writeRecursionDepth(0)
     , m_lastHandledUserGestureTimestamp(0)
@@ -3360,16 +3360,16 @@ void Document::processReferrerPolicy(const String& policy)
     // Note that we're supporting both the standard and legacy keywords for referrer
     // policies, as defined by http://www.w3.org/TR/referrer-policy/#referrer-policy-delivery-meta
     if (equalLettersIgnoringASCIICase(policy, "no-referrer") || equalLettersIgnoringASCIICase(policy, "never"))
-        setReferrerPolicy(ReferrerPolicyNever);
+        setReferrerPolicy(ReferrerHeaderPolicy::Never);
     else if (equalLettersIgnoringASCIICase(policy, "unsafe-url") || equalLettersIgnoringASCIICase(policy, "always"))
-        setReferrerPolicy(ReferrerPolicyAlways);
+        setReferrerPolicy(ReferrerHeaderPolicy::Always);
     else if (equalLettersIgnoringASCIICase(policy, "origin"))
-        setReferrerPolicy(ReferrerPolicyOrigin);
+        setReferrerPolicy(ReferrerHeaderPolicy::Origin);
     else if (equalLettersIgnoringASCIICase(policy, "no-referrer-when-downgrade") || equalLettersIgnoringASCIICase(policy, "default"))
-        setReferrerPolicy(ReferrerPolicyDefault);
+        setReferrerPolicy(ReferrerHeaderPolicy::Default);
     else {
         addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, "Failed to set referrer policy: The value '" + policy + "' is not one of 'no-referrer', 'origin', 'no-referrer-when-downgrade', or 'unsafe-url'. Defaulting to 'no-referrer'.");
-        setReferrerPolicy(ReferrerPolicyNever);
+        setReferrerPolicy(ReferrerHeaderPolicy::Never);
     }
 }
 
@@ -6937,7 +6937,7 @@ void Document::applyContentDispositionAttachmentSandbox()
 {
     ASSERT(shouldEnforceContentDispositionAttachmentSandbox());
 
-    setReferrerPolicy(ReferrerPolicyNever);
+    setReferrerPolicy(ReferrerHeaderPolicy::Never);
     if (!isMediaDocument())
         enforceSandboxFlags(SandboxAll);
     else

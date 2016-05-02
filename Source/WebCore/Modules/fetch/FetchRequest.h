@@ -48,19 +48,18 @@ public:
     static RefPtr<FetchRequest> create(ScriptExecutionContext&, FetchRequest&, const Dictionary&, ExceptionCode&);
     static RefPtr<FetchRequest> create(ScriptExecutionContext&, const String&, const Dictionary&, ExceptionCode&);
 
-    // Request API
     const String& method() const { return m_internalRequest.request.httpMethod(); }
     const String& url() const { return m_internalRequest.request.url().string(); }
     FetchHeaders& headers() { return m_headers.get(); }
 
-    String type() const;
-    String destination() const;
+    RequestType type() const;
+    RequestDestination destination() const;
     String referrer() const;
-    String referrerPolicy() const;
-    String mode() const;
-    String credentials() const;
-    String cache() const;
-    String redirect() const;
+    ReferrerPolicy referrerPolicy() const;
+    RequestMode mode() const;
+    RequestCredentials credentials() const;
+    RequestCache cache() const;
+    RequestRedirect redirect() const;
     const String& integrity() const { return m_internalRequest.integrity; }
 
     RefPtr<FetchRequest> clone(ScriptExecutionContext&, ExceptionCode&);
@@ -91,6 +90,41 @@ inline FetchRequest::FetchRequest(ScriptExecutionContext& context, FetchBody&& b
     , m_headers(WTFMove(headers))
     , m_internalRequest(WTFMove(internalRequest))
 {
+}
+
+inline RequestCache FetchRequest::cache() const
+{
+    return m_internalRequest.options.cache;
+}
+
+inline RequestCredentials FetchRequest::credentials() const
+{
+    return m_internalRequest.options.credentials;
+}
+
+inline RequestDestination FetchRequest::destination() const
+{
+    return m_internalRequest.options.destination;
+}
+
+inline RequestMode FetchRequest::mode() const
+{
+    return m_internalRequest.options.mode;
+}
+
+inline RequestRedirect FetchRequest::redirect() const
+{
+    return m_internalRequest.options.redirect;
+}
+
+inline ReferrerPolicy FetchRequest::referrerPolicy() const
+{
+    return m_internalRequest.options.referrerPolicy;
+}
+
+inline RequestType FetchRequest::type() const
+{
+    return m_internalRequest.options.type;
 }
 
 } // namespace WebCore

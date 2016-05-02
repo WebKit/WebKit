@@ -42,17 +42,17 @@ namespace WebCore {
 static bool setReferrerPolicy(FetchOptions& options, const String& referrerPolicy)
 {
     if (referrerPolicy.isEmpty())
-        options.setReferrerPolicy(FetchOptions::ReferrerPolicy::Empty);
+        options.referrerPolicy = ReferrerPolicy::EmptyString;
     else if (referrerPolicy == "no-referrer")
-        options.setReferrerPolicy(FetchOptions::ReferrerPolicy::NoReferrer);
+        options.referrerPolicy = ReferrerPolicy::NoReferrer;
     else if (referrerPolicy == "no-referrer-when-downgrade")
-        options.setReferrerPolicy(FetchOptions::ReferrerPolicy::NoReferrerWhenDowngrade);
+        options.referrerPolicy = ReferrerPolicy::NoReferrerWhenDowngrade;
     else if (referrerPolicy == "origin-only")
-        options.setReferrerPolicy(FetchOptions::ReferrerPolicy::OriginOnly);
+        options.referrerPolicy = ReferrerPolicy::OriginOnly;
     else if (referrerPolicy == "origin-when-cross-origin")
-        options.setReferrerPolicy(FetchOptions::ReferrerPolicy::OriginWhenCrossOrigin);
+        options.referrerPolicy = ReferrerPolicy::OriginWhenCrossOrigin;
     else if (referrerPolicy == "unsafe-url")
-        options.setReferrerPolicy(FetchOptions::ReferrerPolicy::UnsafeURL);
+        options.referrerPolicy = ReferrerPolicy::UnsafeUrl;
     else
         return false;
     return true;
@@ -61,13 +61,13 @@ static bool setReferrerPolicy(FetchOptions& options, const String& referrerPolic
 static bool setMode(FetchOptions& options, const String& mode)
 {
     if (mode == "navigate")
-        options.setMode(FetchOptions::Mode::Navigate);
+        options.mode = RequestMode::Navigate;
     else if (mode == "same-origin")
-        options.setMode(FetchOptions::Mode::SameOrigin);
+        options.mode = RequestMode::SameOrigin;
     else if (mode == "no-cors")
-        options.setMode(FetchOptions::Mode::NoCors);
+        options.mode = RequestMode::NoCors;
     else if (mode == "cors")
-        options.setMode(FetchOptions::Mode::Cors);
+        options.mode = RequestMode::Cors;
     else
         return false;
     return true;
@@ -76,11 +76,11 @@ static bool setMode(FetchOptions& options, const String& mode)
 static bool setCredentials(FetchOptions& options, const String& credentials)
 {
     if (credentials == "omit")
-        options.setCredentials(FetchOptions::Credentials::Omit);
+        options.credentials = RequestCredentials::Omit;
     else if (credentials == "same-origin")
-        options.setCredentials(FetchOptions::Credentials::SameOrigin);
+        options.credentials = RequestCredentials::SameOrigin;
     else if (credentials == "include")
-        options.setCredentials(FetchOptions::Credentials::Include);
+        options.credentials = RequestCredentials::Include;
     else
         return false;
     return true;
@@ -89,15 +89,15 @@ static bool setCredentials(FetchOptions& options, const String& credentials)
 static bool setCache(FetchOptions& options, const String& cache)
 {
     if (cache == "default")
-        options.setCache(FetchOptions::Cache::Default);
+        options.cache = RequestCache::Default;
     else if (cache == "no-store")
-        options.setCache(FetchOptions::Cache::NoStore);
+        options.cache = RequestCache::NoStore;
     else if (cache == "reload")
-        options.setCache(FetchOptions::Cache::Reload);
+        options.cache = RequestCache::Reload;
     else if (cache == "no-cache")
-        options.setCache(FetchOptions::Cache::NoCache);
+        options.cache = RequestCache::NoCache;
     else if (cache == "force-cache")
-        options.setCache(FetchOptions::Cache::ForceCache);
+        options.cache = RequestCache::ForceCache;
     else
         return false;
     return true;
@@ -106,11 +106,11 @@ static bool setCache(FetchOptions& options, const String& cache)
 static bool setRedirect(FetchOptions& options, const String& redirect)
 {
     if (redirect == "follow")
-        options.setRedirect(FetchOptions::Redirect::Follow);
+        options.redirect = RequestRedirect::Follow;
     else if (redirect == "error")
-        options.setRedirect(FetchOptions::Redirect::Error);
+        options.redirect = RequestRedirect::Error;
     else if (redirect == "manual")
-        options.setRedirect(FetchOptions::Redirect::Manual);
+        options.redirect = RequestRedirect::Manual;
     else
         return false;
     return true;
@@ -173,7 +173,7 @@ static bool buildOptions(FetchRequest::InternalRequest& request, ScriptExecution
 
     if (init.get("mode", value) && !setMode(request.options, value))
         return false;
-    if (request.options.mode() == FetchOptions::Mode::Navigate)
+    if (request.options.mode == RequestMode::Navigate)
         return false;
 
     if (init.get("credentials", value) && !setCredentials(request.options, value))
@@ -196,7 +196,7 @@ static bool buildOptions(FetchRequest::InternalRequest& request, ScriptExecution
 static RefPtr<FetchHeaders> buildHeaders(const Dictionary& init, const FetchRequest::InternalRequest& request, const FetchHeaders* inputHeaders = nullptr)
 {
     FetchHeaders::Guard guard = FetchHeaders::Guard::Request;
-    if (request.options.mode() == FetchOptions::Mode::NoCors) {
+    if (request.options.mode == RequestMode::NoCors) {
         const String& method = request.request.httpMethod();
         if (method != "GET" && method != "POST" && method != "HEAD")
             return nullptr;
@@ -244,8 +244,8 @@ RefPtr<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, const
     }
 
     FetchRequest::InternalRequest internalRequest;
-    internalRequest.options.setMode(FetchOptions::Mode::Cors);
-    internalRequest.options.setCredentials(FetchOptions::Credentials::Omit);
+    internalRequest.options.mode = RequestMode::Cors;
+    internalRequest.options.credentials = RequestCredentials::Omit;
     internalRequest.referrer = ASCIILiteral("client");
     internalRequest.request.setURL(requestURL);
 
@@ -301,70 +301,6 @@ RefPtr<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, Fetch
     return adoptRef(*new FetchRequest(context, WTFMove(body), headers.releaseNonNull(), WTFMove(internalRequest)));
 }
 
-String FetchRequest::type() const
-{
-    switch (m_internalRequest.options.type()) {
-    case FetchOptions::Type::Default:
-        return String();
-    case FetchOptions::Type::Audio :
-        return ASCIILiteral("audio");
-    case FetchOptions::Type::Font :
-        return ASCIILiteral("font");
-    case FetchOptions::Type::Image :
-        return ASCIILiteral("image");
-    case FetchOptions::Type::Script :
-        return ASCIILiteral("script");
-    case FetchOptions::Type::Style :
-        return ASCIILiteral("style");
-    case FetchOptions::Type::Track :
-        return ASCIILiteral("track");
-    case FetchOptions::Type::Video :
-        return ASCIILiteral("video");
-    };
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-String FetchRequest::destination() const
-{
-    switch (m_internalRequest.options.destination()) {
-    case FetchOptions::Destination::Default:
-        return String();
-    case FetchOptions::Destination::Document:
-        return ASCIILiteral("document");
-    case FetchOptions::Destination::SharedWorker:
-        return ASCIILiteral("sharedworker");
-    case FetchOptions::Destination::Subresource:
-        return ASCIILiteral("subresource");
-    case FetchOptions::Destination::Unknown:
-        return ASCIILiteral("unknown");
-    case FetchOptions::Destination::Worker:
-        return ASCIILiteral("worker");
-    }
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-String FetchRequest::referrerPolicy() const
-{
-    switch (m_internalRequest.options.referrerPolicy()) {
-    case FetchOptions::ReferrerPolicy::Empty:
-        return String();
-    case FetchOptions::ReferrerPolicy::NoReferrer:
-        return ASCIILiteral("no-referrer");
-    case FetchOptions::ReferrerPolicy::NoReferrerWhenDowngrade:
-        return ASCIILiteral("no-referrer-when-downgrade");
-    case FetchOptions::ReferrerPolicy::OriginOnly:
-        return ASCIILiteral("origin-only");
-    case FetchOptions::ReferrerPolicy::OriginWhenCrossOrigin:
-        return ASCIILiteral("origin-when-cross-origin");
-    case FetchOptions::ReferrerPolicy::UnsafeURL:
-        return ASCIILiteral("unsafe-url");
-    }
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
 String FetchRequest::referrer() const
 {
     if (m_internalRequest.referrer == "no-referrer")
@@ -372,68 +308,6 @@ String FetchRequest::referrer() const
     if (m_internalRequest.referrer == "client")
         return ASCIILiteral("about:client");
     return m_internalRequest.referrer;
-}
-
-String FetchRequest::mode() const
-{
-    switch (m_internalRequest.options.mode()) {
-    case FetchOptions::Mode::Navigate:
-        return ASCIILiteral("navigate");
-    case FetchOptions::Mode::SameOrigin:
-        return ASCIILiteral("same-origin");
-    case FetchOptions::Mode::NoCors:
-        return ASCIILiteral("no-cors");
-    case FetchOptions::Mode::Cors:
-        return ASCIILiteral("cors");
-    };
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-String FetchRequest::credentials() const
-{
-    switch (m_internalRequest.options.credentials()) {
-    case FetchOptions::Credentials::Omit:
-        return ASCIILiteral("omit");
-    case FetchOptions::Credentials::SameOrigin:
-        return ASCIILiteral("same-origin");
-    case FetchOptions::Credentials::Include:
-        return ASCIILiteral("include");
-    };
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-String FetchRequest::cache() const
-{
-    switch (m_internalRequest.options.cache()) {
-    case FetchOptions::Cache::Default:
-        return ASCIILiteral("default");
-    case FetchOptions::Cache::NoStore:
-        return ASCIILiteral("no-store");
-    case FetchOptions::Cache::Reload:
-        return ASCIILiteral("reload");
-    case FetchOptions::Cache::NoCache:
-        return ASCIILiteral("no-cache");
-    case FetchOptions::Cache::ForceCache:
-        return ASCIILiteral("force-cache");
-    }
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-String FetchRequest::redirect() const
-{
-    switch (m_internalRequest.options.redirect()) {
-    case FetchOptions::Redirect::Follow:
-        return ASCIILiteral("follow");
-    case FetchOptions::Redirect::Error:
-        return ASCIILiteral("error");
-    case FetchOptions::Redirect::Manual:
-        return ASCIILiteral("manual");
-    }
-    ASSERT_NOT_REACHED();
-    return String();
 }
 
 ResourceRequest FetchRequest::internalRequest() const

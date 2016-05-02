@@ -75,7 +75,7 @@ RefPtr<SubresourceLoader> WebLoaderStrategy::loadResource(Frame* frame, CachedRe
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
-        scheduleLoad(loader.get(), resource, frame->document()->referrerPolicy() == ReferrerPolicyDefault);
+        scheduleLoad(loader.get(), resource, frame->document()->referrerPolicy() == ReferrerHeaderPolicy::Default);
     return loader;
 }
 
@@ -83,7 +83,7 @@ RefPtr<NetscapePlugInStreamLoader> WebLoaderStrategy::schedulePluginStreamLoad(F
 {
     RefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
     if (loader)
-        scheduleLoad(loader.get(), 0, frame->document()->referrerPolicy() == ReferrerPolicyDefault);
+        scheduleLoad(loader.get(), 0, frame->document()->referrerPolicy() == ReferrerHeaderPolicy::Default);
     return loader;
 }
 

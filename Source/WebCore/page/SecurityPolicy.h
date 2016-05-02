@@ -26,28 +26,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SecurityPolicy_h
-#define SecurityPolicy_h
+#pragma once
 
 #include "ReferrerPolicy.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class URL;
 class SecurityOrigin;
+class URL;
 
 class SecurityPolicy {
 public:
-    // True if the referrer should be omitted according to the
-    // ReferrerPolicyDefault. If you intend to send a referrer header, you
-    // should use generateReferrerHeader instead.
+    // True if the referrer should be omitted according to ReferrerHeaderPolicy::Default.
+    // If you intend to send a referrer header, you should use generateReferrerHeader instead.
     WEBCORE_EXPORT static bool shouldHideReferrer(const URL&, const String& referrer);
 
     // Returns the referrer modified according to the referrer policy for a
     // navigation to a given URL. If the referrer returned is empty, the
     // referrer header should be omitted.
-    WEBCORE_EXPORT static String generateReferrerHeader(ReferrerPolicy, const URL&, const String& referrer);
+    WEBCORE_EXPORT static String generateReferrerHeader(ReferrerHeaderPolicy, const URL&, const String& referrer);
 
     enum LocalLoadPolicy {
         AllowLocalLoadsForAll, // No restriction on local loads.
@@ -68,5 +66,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // SecurityPolicy_h

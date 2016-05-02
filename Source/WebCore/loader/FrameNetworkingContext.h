@@ -17,8 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef FrameNetworkingContext_h
-#define FrameNetworkingContext_h
+#pragma once
 
 #include "Document.h"
 #include "Frame.h"
@@ -40,7 +39,7 @@ public:
         if (!m_frame)
             return true;
 
-        return m_frame->document()->referrerPolicy() == ReferrerPolicyDefault;
+        return m_frame->document()->referrerPolicy() == ReferrerHeaderPolicy::Default;
     }
 
 protected:
@@ -58,5 +57,3 @@ private:
 };
 
 }
-
-#endif // FrameNetworkingContext_h

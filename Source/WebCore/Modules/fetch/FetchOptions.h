@@ -26,107 +26,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FetchOptions_h
-#define FetchOptions_h
+#pragma once
 
 #if ENABLE(FETCH_API)
 
 namespace WebCore {
 
-class FetchOptions {
-public:
-    enum class Type {
-        Default,
-        Audio,
-        Font,
-        Image,
-        Script,
-        Style,
-        Track,
-        Video
-    };
-    enum class Destination {
-        Default,
-        Document,
-        SharedWorker,
-        Subresource,
-        Unknown,
-        Worker
-    };
-    enum class Mode {
-        NoCors,
-        Navigate,
-        SameOrigin,
-        Cors
-    };
-    enum class Credentials {
-        Omit,
-        SameOrigin,
-        Include
-    };
-    enum class Cache {
-        Default,
-        NoStore,
-        Reload,
-        NoCache,
-        ForceCache,
-    };
-    enum class Redirect {
-        Follow,
-        Error,
-        Manual
-    };
-    enum class ReferrerPolicy {
-        Empty,
-        NoReferrer,
-        NoReferrerWhenDowngrade,
-        OriginOnly,
-        OriginWhenCrossOrigin,
-        UnsafeURL
-    };
+enum class ReferrerPolicy { EmptyString, NoReferrer, NoReferrerWhenDowngrade, OriginOnly, OriginWhenCrossOrigin, UnsafeUrl };
+enum class RequestCache { Default, NoStore, Reload, NoCache, ForceCache };
+enum class RequestCredentials { Omit, SameOrigin, Include };
+enum class RequestDestination { EmptyString, Document, Sharedworker, Subresource, Unknown, Worker };
+enum class RequestMode { Navigate, SameOrigin, NoCors, Cors };
+enum class RequestRedirect { Follow, Error, Manual };
+enum class RequestType { EmptyString, Audio, Font, Image, Script, Style, Track, Video };
 
-    FetchOptions() { }
-    FetchOptions(Type, Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy);
-
-    Type type() const { return m_type; }
-    Destination destination() const { return m_destination; }
-    Mode mode() const { return m_mode; }
-    Credentials credentials() const { return m_credentials; }
-    Cache cache() const { return m_cache; }
-    Redirect redirect() const { return m_redirect; }
-    ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
-
-    void setType(Type type) { m_type = type; }
-    void setDestination(Destination destination) { m_destination = destination; }
-    void setMode(Mode mode) { m_mode = mode; }
-    void setCredentials(Credentials credentials) { m_credentials = credentials; }
-    void setCache(Cache cache) { m_cache = cache; }
-    void setRedirect(Redirect redirect) { m_redirect = redirect; }
-    void setReferrerPolicy(ReferrerPolicy referrerPolicy) { m_referrerPolicy = referrerPolicy; }
-
-private:
-    Type m_type = Type::Default;
-    Destination m_destination = Destination::Default;
-    Mode m_mode = Mode::NoCors;
-    Credentials m_credentials = Credentials::Omit;
-    Cache m_cache = Cache::Default;
-    Redirect m_redirect = Redirect:: Follow;
-    ReferrerPolicy m_referrerPolicy = ReferrerPolicy::Empty;
+struct FetchOptions {
+    RequestType type { RequestType::EmptyString };
+    RequestDestination destination { RequestDestination::EmptyString };
+    RequestMode mode { RequestMode::NoCors };
+    RequestCredentials credentials { RequestCredentials::Omit };
+    RequestCache cache { RequestCache::Default };
+    RequestRedirect redirect { RequestRedirect::Follow };
+    ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
 };
-
-inline FetchOptions::FetchOptions(Type type, Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy)
-    : m_type(type)
-    , m_destination(destination)
-    , m_mode(mode)
-    , m_credentials(credentials)
-    , m_cache(cache)
-    , m_redirect(redirect)
-    , m_referrerPolicy(referrerPolicy)
-{
-}
 
 } // namespace WebCore
 
 #endif // ENABLE(FETCH_API)
-
-#endif // FetchOptions_h

@@ -361,8 +361,8 @@ public:
     bool didDispatchViewportPropertiesChanged() const { return m_didDispatchViewportPropertiesChanged; }
 #endif
 
-    void setReferrerPolicy(ReferrerPolicy referrerPolicy) { m_referrerPolicy = referrerPolicy; }
-    ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
+    void setReferrerPolicy(ReferrerHeaderPolicy referrerPolicy) { m_referrerPolicy = referrerPolicy; }
+    ReferrerHeaderPolicy referrerPolicy() const { return m_referrerPolicy; }
 
     DocumentType* doctype() const;
 
@@ -1640,7 +1640,7 @@ private:
 
     ViewportArguments m_viewportArguments;
 
-    ReferrerPolicy m_referrerPolicy;
+    ReferrerHeaderPolicy m_referrerPolicy;
 
 #if ENABLE(WEB_TIMING)
     DocumentTiming m_documentTiming;
