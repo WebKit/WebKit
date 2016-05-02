@@ -1,3 +1,13 @@
+2016-05-01  Nan Wang  <n_wang@apple.com>
+
+        AX: Crash at  WebCore::AccessibilityObject::getAttribute const + 9
+        https://bugs.webkit.org/show_bug.cgi?id=157256
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/aria-label-on-label-element-expected.txt:
+        * accessibility/mac/aria-label-on-label-element.html:
+
 2016-05-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r200264 and r200266.

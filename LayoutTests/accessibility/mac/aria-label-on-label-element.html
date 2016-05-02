@@ -11,6 +11,9 @@
 <label id="label2" for="input2">Some other text</label>
 <input id="input2" type="text" size=20>
 
+<label id="label3" for="input3" hidden aria-label="hidden aria label">hidden text</label>
+<input id="input3" type="text">
+
 <p id="description"></p>
 <div id="console"></div>
 
@@ -30,6 +33,10 @@
         var input2 = accessibilityController.accessibleElementById("input2");
         var titleUIElement2 = input2.titleUIElement();
         shouldBeTrue("titleUIElement2.isEqual(accessibilityController.accessibleElementById('label2'))");
+        
+        // Make sure when the input element has no rendered label, it won't cause crash.
+        var input3 = accessibilityController.accessibleElementById("input3");
+        shouldBe("input3.title", "'AXTitle: hidden aria label'");
     }
 
 </script>

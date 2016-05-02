@@ -1266,7 +1266,7 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
             AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label);
             String innerText = label->innerText();
             
-            const AtomicString& ariaLabel = labelObject->getAttribute(aria_labelAttr);
+            const AtomicString& ariaLabel = label->fastGetAttribute(aria_labelAttr);
             if (!ariaLabel.isEmpty())
                 innerText = ariaLabel;
             

@@ -1,3 +1,20 @@
+2016-05-01  Nan Wang  <n_wang@apple.com>
+
+        AX: Crash at  WebCore::AccessibilityObject::getAttribute const + 9
+        https://bugs.webkit.org/show_bug.cgi?id=157256
+
+        Reviewed by Chris Fleizach.
+
+        When the <label> for the input element has no renderer, it will cause
+        crash when we ask for the title element text. Fixed it by getting the 
+        aria-label attribute directly from the <label> element instead of its 
+        accessibility object. 
+
+        Test case covered in accessibility/mac/aria-label-on-label-element.html.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::titleElementText):
+
 2016-05-01  Darin Adler  <darin@apple.com>
 
         Stop using string-based enumerations in TextTrack, and eliminate support for string-based enumerations
