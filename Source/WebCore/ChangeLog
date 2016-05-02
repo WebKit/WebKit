@@ -1,3 +1,61 @@
+2016-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Add to the Animations log channel output about which properties are being blended
+        https://bugs.webkit.org/show_bug.cgi?id=157271
+
+        Reviewed by Dean Jackson.
+
+        Make the Animations log channel dump information as CSS properties are being blended.
+        Sample output:
+
+          blending left from 0px to 400px at 0.57 -> 227.76px
+          blending transform from translate(0px, 0px, 0px) to translate(400px, 0px, 0px) at 0.74 -> translate(294.97px, 0px, 0px)
+
+        This makes it easier to see, for example, transitions to or from "auto" values.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::PropertyWrapperGetter::value):
+        (WebCore::PropertyWrapperMaybeInvalidColor::value):
+        (WebCore::CSSPropertyAnimationWrapperMap::wrapperForProperty):
+        (WebCore::CSSPropertyAnimation::blendProperties):
+        * platform/Length.cpp:
+        (WebCore::operator<<):
+        * platform/LengthBox.h:
+        * platform/graphics/transforms/IdentityTransformOperation.h:
+        * platform/graphics/transforms/Matrix3DTransformOperation.cpp:
+        (WebCore::Matrix3DTransformOperation::dump):
+        * platform/graphics/transforms/Matrix3DTransformOperation.h:
+        * platform/graphics/transforms/MatrixTransformOperation.cpp:
+        (WebCore::MatrixTransformOperation::dump):
+        * platform/graphics/transforms/MatrixTransformOperation.h:
+        * platform/graphics/transforms/PerspectiveTransformOperation.cpp:
+        (WebCore::PerspectiveTransformOperation::dump):
+        * platform/graphics/transforms/PerspectiveTransformOperation.h:
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        (WebCore::RotateTransformOperation::dump):
+        * platform/graphics/transforms/RotateTransformOperation.h:
+        * platform/graphics/transforms/ScaleTransformOperation.cpp:
+        (WebCore::ScaleTransformOperation::dump):
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        * platform/graphics/transforms/SkewTransformOperation.cpp:
+        (WebCore::SkewTransformOperation::dump):
+        * platform/graphics/transforms/SkewTransformOperation.h:
+        * platform/graphics/transforms/TransformOperation.h:
+        * platform/graphics/transforms/TransformOperations.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/transforms/TransformOperations.h:
+        * platform/graphics/transforms/TranslateTransformOperation.cpp:
+        (WebCore::TranslateTransformOperation::dump):
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::operator<<):
+        * rendering/style/NinePieceImage.h:
+        * svg/SVGLength.cpp:
+        (WebCore::operator<<):
+        * svg/SVGLength.h:
+
 2016-05-02  Chris Dumez  <cdumez@apple.com>
 
         Modernize HTMLConstructionSite

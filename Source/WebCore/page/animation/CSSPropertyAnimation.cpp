@@ -42,6 +42,7 @@
 #include "ClipPathOperation.h"
 #include "FloatConversion.h"
 #include "IdentityTransformOperation.h"
+#include "Logging.h"
 #include "Matrix3DTransformOperation.h"
 #include "MatrixTransformOperation.h"
 #include "RenderBox.h"
@@ -50,6 +51,7 @@
 #include "StyleGeneratedImage.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
+#include "TextStream.h"
 #include <algorithm>
 #include <memory>
 #include <wtf/MathExtras.h>
@@ -384,6 +386,10 @@ public:
     virtual bool isShorthandWrapper() const { return false; }
     virtual bool equals(const RenderStyle* a, const RenderStyle* b) const = 0;
     virtual void blend(const AnimationBase*, RenderStyle*, const RenderStyle*, const RenderStyle*, double) const = 0;
+    
+#if !LOG_DISABLED
+    virtual void logBlend(const RenderStyle* a, const RenderStyle* b, const RenderStyle* result, double) const = 0;
+#endif
 
     CSSPropertyID property() const { return m_prop; }
 
@@ -411,6 +417,18 @@ public:
             return false;
         return (a->*m_getter)() == (b->*m_getter)();
     }
+
+    T value(const RenderStyle* a) const
+    {
+        return (a->*m_getter)();
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle* a, const RenderStyle* b, const RenderStyle* result, double progress) const final
+    {
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(a) << " to " << value(b) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(result));
+    }
+#endif
 
 protected:
     T (RenderStyle::*m_getter)() const;
@@ -717,6 +735,14 @@ public:
         (dst->*m_setter)(blendMismatchedShadowLists(anim, progress, shadowA, shadowB, fromLength, toLength), false);
     }
 
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle*, const RenderStyle*, const RenderStyle*, double progress) const final
+    {
+        // FIXME: better logging.
+        LOG_WITH_STREAM(Animations, stream << "  blending ShadowData at " << TextStream::FormatNumberRespectingIntegers(progress));
+    }
+#endif
+
 private:
     std::unique_ptr<ShadowData> blendSimpleOrMatchedShadowLists(const AnimationBase* anim, double progress, const ShadowData* shadowA, const ShadowData* shadowB) const
     {
@@ -800,8 +826,8 @@ public:
         if (!a || !b)
             return false;
 
-        Color fromColor = (a->*m_getter)();
-        Color toColor = (b->*m_getter)();
+        Color fromColor = value(a);
+        Color toColor = value(b);
 
         if (!fromColor.isValid() && !toColor.isValid())
             return true;
@@ -816,8 +842,8 @@ public:
 
     void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        Color fromColor = (a->*m_getter)();
-        Color toColor = (b->*m_getter)();
+        Color fromColor = value(a);
+        Color toColor = value(b);
 
         if (!fromColor.isValid() && !toColor.isValid())
             return;
@@ -828,6 +854,19 @@ public:
             toColor = b->color();
         (dst->*m_setter)(blendFunc(anim, fromColor, toColor, progress));
     }
+
+    Color value(const RenderStyle* a) const
+    {
+        return (a->*m_getter)();
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle* a, const RenderStyle* b, const RenderStyle* result, double progress) const final
+    {
+        // FIXME: better logging.
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(a) << " to " << value(b) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(result));
+    }
+#endif
 
 private:
     Color (RenderStyle::*m_getter)() const;
@@ -862,6 +901,14 @@ public:
         m_wrapper->blend(anim, dst, a, b, progress);
         m_visitedWrapper->blend(anim, dst, a, b, progress);
     }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle* a, const RenderStyle* b, const RenderStyle* result, double progress) const final
+    {
+        m_wrapper->logBlend(a, b, result, progress);
+        m_visitedWrapper->logBlend(a, b, result, progress);
+    }
+#endif
 
 private:
     std::unique_ptr<AnimationPropertyWrapperBase> m_wrapper;
@@ -1032,6 +1079,14 @@ public:
         }
     }
 
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle*, const RenderStyle*, const RenderStyle*, double progress) const final
+    {
+        // FIXME: better logging.
+        LOG_WITH_STREAM(Animations, stream << "  blending FillLayers at " << TextStream::FormatNumberRespectingIntegers(progress));
+    }
+#endif
+
 private:
     std::unique_ptr<FillLayerAnimationPropertyWrapperBase> m_fillLayerPropertyWrapper;
 
@@ -1070,6 +1125,14 @@ public:
             wrapper->blend(anim, dst, a, b, progress);
     }
 
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle*, const RenderStyle*, const RenderStyle*, double progress) const final
+    {
+        // FIXME: better logging.
+        LOG_WITH_STREAM(Animations, stream << "  blending shorthand property " << getPropertyName(property()) << " at " << TextStream::FormatNumberRespectingIntegers(progress));
+    }
+#endif
+
     const Vector<AnimationPropertyWrapperBase*>& propertyWrappers() const { return m_propertyWrappers; }
 
 private:
@@ -1100,6 +1163,14 @@ public:
         dst->setFlexGrow(blendFunc(anim, a->flexGrow(), b->flexGrow(), progress));
         dst->setFlexShrink(blendFunc(anim, a->flexShrink(), b->flexShrink(), progress));
     }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle*, const RenderStyle*, const RenderStyle*, double progress) const final
+    {
+        // FIXME: better logging.
+        LOG_WITH_STREAM(Animations, stream << "  blending flex at " << TextStream::FormatNumberRespectingIntegers(progress));
+    }
+#endif
 };
 
 class PropertyWrapperSVGPaint : public AnimationPropertyWrapperBase {
@@ -1162,6 +1233,14 @@ public:
         (dst->*m_setter)(blendFunc(anim, fromColor, toColor, progress));
     }
 
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle*, const RenderStyle*, const RenderStyle*, double progress) const final
+    {
+        // FIXME: better logging.
+        LOG_WITH_STREAM(Animations, stream << "  blending SVGPaint at " << TextStream::FormatNumberRespectingIntegers(progress));
+    }
+#endif
+
 private:
     const SVGPaint::SVGPaintType& (RenderStyle::*m_paintTypeGetter)() const;
     Color (RenderStyle::*m_getter)() const;
@@ -1181,11 +1260,11 @@ public:
     AnimationPropertyWrapperBase* wrapperForProperty(CSSPropertyID propertyID)
     {
         if (propertyID < firstCSSProperty || propertyID > lastCSSProperty)
-            return 0;
+            return nullptr;
 
         unsigned wrapperIndex = indexFromPropertyID(propertyID);
         if (wrapperIndex == cInvalidPropertyWrapperIndex)
-            return 0;
+            return nullptr;
 
         return m_propertyWrappers[wrapperIndex].get();
     }
@@ -1470,6 +1549,9 @@ bool CSSPropertyAnimation::blendProperties(const AnimationBase* anim, CSSPropert
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(prop);
     if (wrapper) {
         wrapper->blend(anim, dst, a, b, progress);
+#if !LOG_DISABLED
+        wrapper->logBlend(a, b, dst, progress);
+#endif
         return !wrapper->animationIsAccelerated() || !anim->isAccelerated();
     }
     return false;

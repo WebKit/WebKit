@@ -62,6 +62,8 @@ private:
         return *this;
     }
 
+    void dump(TextStream&) const final;
+
     IdentityTransformOperation()
     {
     }

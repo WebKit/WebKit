@@ -153,6 +153,8 @@ public:
 typedef BoxExtent<LayoutUnit> LayoutBoxExtent;
 typedef BoxExtent<float> FloatBoxExtent;
 
+TextStream& operator<<(TextStream&, const LengthBox&);
+
 } // namespace WebCore
 
 #endif // LengthBox_h

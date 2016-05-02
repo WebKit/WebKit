@@ -169,6 +169,7 @@ struct SVGPropertyTraits<SVGLength> {
     static String toString(const SVGLength& type) { return type.valueAsString(); }
 };
 
+TextStream& operator<<(TextStream&, const SVGLength&);
 
 } // namespace WebCore
 

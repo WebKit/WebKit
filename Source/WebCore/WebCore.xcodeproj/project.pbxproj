@@ -559,6 +559,8 @@
 		0FE5FBD91C3DD51E0007A2CA /* DisplayListReplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBD11C3DD51E0007A2CA /* DisplayListReplayer.h */; };
 		0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */; };
 		0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */; };
+		0FE95F1B1CD540D000D2F45A /* LengthBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE95F1A1CD540D000D2F45A /* LengthBox.cpp */; };
+		0FE95F1D1CD543DF00D2F45A /* TransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE95F1C1CD543DF00D2F45A /* TransformOperation.cpp */; };
 		0FEA3E7B191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA3E79191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA3E7C191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA3E7A191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.cpp */; };
 		0FEA3E7F191B3169000F1B55 /* ScrollingTreeOverflowScrollingNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA3E7D191B3169000F1B55 /* ScrollingTreeOverflowScrollingNode.cpp */; };
@@ -7974,6 +7976,8 @@
 		0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarThemeMock.cpp; sourceTree = "<group>"; };
 		0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeMock.h; sourceTree = "<group>"; };
 		0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarTheme.cpp; sourceTree = "<group>"; };
+		0FE95F1A1CD540D000D2F45A /* LengthBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LengthBox.cpp; sourceTree = "<group>"; };
+		0FE95F1C1CD543DF00D2F45A /* TransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformOperation.cpp; sourceTree = "<group>"; };
 		0FEA3E79191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateFrameScrollingNode.h; sourceTree = "<group>"; };
 		0FEA3E7A191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateFrameScrollingNode.cpp; sourceTree = "<group>"; };
 		0FEA3E7D191B3169000F1B55 /* ScrollingTreeOverflowScrollingNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeOverflowScrollingNode.cpp; sourceTree = "<group>"; };
@@ -17214,6 +17218,7 @@
 				49E911BD0EF86D47009D0CAF /* SkewTransformOperation.h */,
 				49E911B30EF86D47009D0CAF /* TransformationMatrix.cpp */,
 				49E911B40EF86D47009D0CAF /* TransformationMatrix.h */,
+				0FE95F1C1CD543DF00D2F45A /* TransformOperation.cpp */,
 				49E911BE0EF86D47009D0CAF /* TransformOperation.h */,
 				49E911BF0EF86D47009D0CAF /* TransformOperations.cpp */,
 				49E911C00EF86D47009D0CAF /* TransformOperations.h */,
@@ -22945,6 +22950,7 @@
 				141DC0471648348F00371E5A /* LayoutUnit.h */,
 				BCE65BE80EACDF16007E4533 /* Length.cpp */,
 				BCE65BE90EACDF16007E4533 /* Length.h */,
+				0FE95F1A1CD540D000D2F45A /* LengthBox.cpp */,
 				BCFF648F0EAD15C200C1D6F7 /* LengthBox.h */,
 				0F87166D1C869D83004FF0DE /* LengthPoint.cpp */,
 				0F87166E1C869D83004FF0DE /* LengthPoint.h */,
@@ -30924,6 +30930,7 @@
 				F5973DE115CFB2030027F804 /* LocaleMac.mm in Sources */,
 				7633A72713D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp in Sources */,
 				A516E8B8136E04DB0076C3C0 /* LocalizedDateCache.mm in Sources */,
+				0FE95F1B1CD540D000D2F45A /* LengthBox.cpp in Sources */,
 				C046E1AC1208A9FE00BA2CF7 /* LocalizedStrings.cpp in Sources */,
 				1A4832B31A953BA6008B4DFE /* LocalizedStringsCocoa.mm in Sources */,
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
@@ -31282,6 +31289,7 @@
 				0F580D000F12DE9B0051D689 /* RenderLayerBacking.cpp in Sources */,
 				0F580CFE0F12DE9B0051D689 /* RenderLayerCompositor.cpp in Sources */,
 				50D10D991545F5760096D288 /* RenderLayerFilterInfo.cpp in Sources */,
+				0FE95F1D1CD543DF00D2F45A /* TransformOperation.cpp in Sources */,
 				3C244FEBA375AC633F88BE6F /* RenderLayerModelObject.cpp in Sources */,
 				BC33FB1B0F30EE85002CDD7C /* RenderLineBoxList.cpp in Sources */,
 				BCEA4863097D93020094C9E4 /* RenderLineBreak.cpp in Sources */,

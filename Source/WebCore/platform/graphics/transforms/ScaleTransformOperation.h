@@ -68,6 +68,8 @@ private:
 
     Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
+    void dump(TextStream&) const final;
+
     ScaleTransformOperation(double sx, double sy, double sz, OperationType type)
         : m_x(sx)
         , m_y(sy)

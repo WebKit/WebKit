@@ -61,6 +61,8 @@ private:
     }
 
     Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+
+    void dump(TextStream&) const final;
     
     SkewTransformOperation(double angleX, double angleY, OperationType type)
         : m_angleX(angleX)

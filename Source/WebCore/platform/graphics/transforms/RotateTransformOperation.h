@@ -69,6 +69,8 @@ private:
 
     Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
+    void dump(TextStream&) const final;
+
     RotateTransformOperation(double x, double y, double z, double angle, OperationType type)
         : m_x(x)
         , m_y(y)

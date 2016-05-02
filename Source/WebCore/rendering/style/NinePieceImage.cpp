@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 #include "LengthFunctions.h"
 #include "RenderStyle.h"
+#include "TextStream.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PointerComparison.h>
 
@@ -261,6 +262,12 @@ bool NinePieceImageData::operator==(const NinePieceImageData& other) const
         && outset == other.outset
         && horizontalRule == other.horizontalRule
         && verticalRule == other.verticalRule;
+}
+
+TextStream& operator<<(TextStream& ts, const NinePieceImage& image)
+{
+    ts << "style-image " << image.image() << " slices " << image.imageSlices();
+    return ts;
 }
 
 }

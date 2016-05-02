@@ -23,6 +23,7 @@
 #include "SkewTransformOperation.h"
 
 #include "AnimationUtilities.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -46,6 +47,11 @@ Ref<TransformOperation> SkewTransformOperation::blend(const TransformOperation* 
     double fromAngleX = fromOp ? fromOp->m_angleX : 0;
     double fromAngleY = fromOp ? fromOp->m_angleY : 0;
     return SkewTransformOperation::create(WebCore::blend(fromAngleX, m_angleX, progress), WebCore::blend(fromAngleY, m_angleY, progress), m_type);
+}
+
+void SkewTransformOperation::dump(TextStream& ts) const
+{
+    ts << type() << "(" << TextStream::FormatNumberRespectingIntegers(m_angleX) << "deg, " << TextStream::FormatNumberRespectingIntegers(m_angleY) << "deg)";
 }
 
 } // namespace WebCore

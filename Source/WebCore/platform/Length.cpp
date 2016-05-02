@@ -328,8 +328,10 @@ TextStream& operator<<(TextStream& ts, Length length)
     case Undefined:
         ts << length.type();
         break;
-    case Relative:
     case Fixed:
+        ts << TextStream::FormatNumberRespectingIntegers(length.value()) << "px";
+        break;
+    case Relative:
     case Intrinsic:
     case MinIntrinsic:
     case MinContent:
@@ -343,6 +345,7 @@ TextStream& operator<<(TextStream& ts, Length length)
         break;
     case Calculated:
         // FIXME: dump CalculationValue.
+        ts << "calc(...)";
         break;
     }
     

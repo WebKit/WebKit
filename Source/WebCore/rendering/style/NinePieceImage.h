@@ -210,6 +210,8 @@ private:
     DataRef<NinePieceImageData> m_data;
 };
 
+TextStream& operator<<(TextStream&, const NinePieceImage&);
+
 } // namespace WebCore
 
 #endif // NinePieceImage_h

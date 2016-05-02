@@ -62,6 +62,8 @@ private:
 
     Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
     
+    void dump(TextStream&) const final;
+
     Matrix3DTransformOperation(const TransformationMatrix& mat)
     {
         m_matrix = mat;

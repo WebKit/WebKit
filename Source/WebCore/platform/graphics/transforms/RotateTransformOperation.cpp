@@ -23,6 +23,7 @@
 #include "RotateTransformOperation.h"
 
 #include "AnimationUtilities.h"
+#include "TextStream.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
@@ -97,6 +98,11 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
         z = 1;
     }
     return RotateTransformOperation::create(x, y, z, angle, ROTATE_3D);
+}
+
+void RotateTransformOperation::dump(TextStream& ts) const
+{
+    ts << type() << "(" << TextStream::FormatNumberRespectingIntegers(m_x) << ", " << TextStream::FormatNumberRespectingIntegers(m_y) << ", " << TextStream::FormatNumberRespectingIntegers(m_z) << ", " << TextStream::FormatNumberRespectingIntegers(m_angle) << "deg)";
 }
 
 } // namespace WebCore

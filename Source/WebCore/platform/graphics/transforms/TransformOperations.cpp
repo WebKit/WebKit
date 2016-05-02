@@ -24,6 +24,7 @@
 
 #include "IdentityTransformOperation.h"
 #include "Matrix3DTransformOperation.h"
+#include "TextStream.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -124,6 +125,13 @@ TransformOperations TransformOperations::blend(const TransformOperations& from, 
         return blendByMatchingOperations(from, progress);
 
     return blendByUsingMatrixInterpolation(from, progress, size);
+}
+
+TextStream& operator<<(TextStream& ts, const TransformOperations& ops)
+{
+    for (const auto& operation : ops.operations())
+        ts << *operation;
+    return ts;
 }
 
 } // namespace WebCore

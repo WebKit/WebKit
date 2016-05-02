@@ -21,7 +21,9 @@
 
 #include "config.h"
 #include "TranslateTransformOperation.h"
+
 #include "FloatConversion.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -47,6 +49,11 @@ Ref<TransformOperation> TranslateTransformOperation::blend(const TransformOperat
     Length fromY = fromOp ? fromOp->m_y : zeroLength;
     Length fromZ = fromOp ? fromOp->m_z : zeroLength;
     return TranslateTransformOperation::create(m_x.blend(fromX, progress), m_y.blend(fromY, progress), m_z.blend(fromZ, progress), m_type);
+}
+
+void TranslateTransformOperation::dump(TextStream& ts) const
+{
+    ts << type() << "(" << m_x << ", " << m_y << ", " << m_z << ")";
 }
 
 } // namespace WebCore

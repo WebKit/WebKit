@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,46 +24,16 @@
  */
 
 #include "config.h"
-#include "Matrix3DTransformOperation.h"
+#include "LengthBox.h"
 
 #include "TextStream.h"
-#include <algorithm>
 
 namespace WebCore {
 
-bool Matrix3DTransformOperation::operator==(const TransformOperation& other) const
+TextStream& operator<<(TextStream& ts, const LengthBox& box)
 {
-    return isSameType(other) && m_matrix == downcast<Matrix3DTransformOperation>(other).m_matrix;
-}
-
-static Ref<TransformOperation> createOperation(TransformationMatrix& to, TransformationMatrix& from, double progress)
-{
-    to.blend(from, progress);
-    return Matrix3DTransformOperation::create(to);
-}
-
-Ref<TransformOperation> Matrix3DTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
-{
-    if (from && !from->isSameType(*this))
-        return *this;
-
-    // Convert the TransformOperations into matrices
-    FloatSize size;
-    TransformationMatrix fromT;
-    TransformationMatrix toT;
-    if (from)
-        from->apply(fromT, size);
-
-    apply(toT, size);
-
-    if (blendToIdentity)
-        return createOperation(fromT, toT, progress);
-    return createOperation(toT, fromT, progress);
-}
-
-void Matrix3DTransformOperation::dump(TextStream& ts) const
-{
-    ts << type() << "(" << m_matrix << ")";
+    ts << "top: " << box.top() << " right: " << box.right() << " bottom: " << box.bottom() << " left: " << box.left();
+    return ts;
 }
 
 } // namespace WebCore

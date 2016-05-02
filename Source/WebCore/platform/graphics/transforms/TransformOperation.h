@@ -104,7 +104,12 @@ public:
     {
         return type() == TRANSLATE_X || type() == TRANSLATE_Y || type() == TRANSLATE_Z || type() == TRANSLATE || type() == TRANSLATE_3D;
     }
+    
+    virtual void dump(TextStream&) const = 0;
 };
+
+TextStream& operator<<(TextStream&, TransformOperation::OperationType);
+TextStream& operator<<(TextStream&, const TransformOperation&);
 
 } // namespace WebCore
 

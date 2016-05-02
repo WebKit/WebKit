@@ -82,6 +82,8 @@ private:
     Vector<RefPtr<TransformOperation>> m_operations;
 };
 
+TextStream& operator<<(TextStream&, const TransformOperations&);
+
 } // namespace WebCore
 
 #endif // TransformOperations_h

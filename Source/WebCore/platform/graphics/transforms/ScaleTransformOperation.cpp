@@ -23,6 +23,7 @@
 #include "ScaleTransformOperation.h"
 
 #include "AnimationUtilities.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -51,6 +52,11 @@ Ref<TransformOperation> ScaleTransformOperation::blend(const TransformOperation*
     return ScaleTransformOperation::create(WebCore::blend(fromX, m_x, progress),
                                            WebCore::blend(fromY, m_y, progress),
                                            WebCore::blend(fromZ, m_z, progress), m_type);
+}
+
+void ScaleTransformOperation::dump(TextStream& ts) const
+{
+    ts << type() << "(" << TextStream::FormatNumberRespectingIntegers(m_x) << ", " << TextStream::FormatNumberRespectingIntegers(m_y) << ", " << TextStream::FormatNumberRespectingIntegers(m_z) << ")";
 }
 
 } // namespace WebCore

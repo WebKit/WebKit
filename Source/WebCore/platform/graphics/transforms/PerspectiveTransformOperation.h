@@ -64,6 +64,8 @@ private:
 
     Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
+    void dump(TextStream&) const final;
+
     PerspectiveTransformOperation(const Length& p)
         : m_p(p)
     {

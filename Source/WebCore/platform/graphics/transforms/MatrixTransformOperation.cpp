@@ -22,6 +22,7 @@
 #include "config.h"
 #include "MatrixTransformOperation.h"
 
+#include "TextStream.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -56,6 +57,17 @@ Ref<TransformOperation> MatrixTransformOperation::blend(const TransformOperation
     if (blendToIdentity)
         return createOperation(fromT, toT, progress);
     return createOperation(toT, fromT, progress);
+}
+
+void MatrixTransformOperation::dump(TextStream& ts) const
+{
+    ts << "("
+        << TextStream::FormatNumberRespectingIntegers(m_a) << ", "
+        << TextStream::FormatNumberRespectingIntegers(m_b) << ", "
+        << TextStream::FormatNumberRespectingIntegers(m_c) << ", "
+        << TextStream::FormatNumberRespectingIntegers(m_d) << ", "
+        << TextStream::FormatNumberRespectingIntegers(m_e) << ", "
+        << TextStream::FormatNumberRespectingIntegers(m_f) << ")";
 }
 
 } // namespace WebCore
