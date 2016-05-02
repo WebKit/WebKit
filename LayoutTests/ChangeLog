@@ -1,3 +1,12 @@
+2016-05-02  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Enable IndexedDB.
+        https://bugs.webkit.org/show_bug.cgi?id=157192
+
+        Reviewed by Brent Fulgham.
+
+        * platform/win/TestExpectations: Update IndexedDB test expectations.
+
 2016-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.currentScript must be null when we're executing a script inside a shadow tree

@@ -249,8 +249,20 @@ fast/autoresize/ [ Skip ]
 # TODO Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 fast/overflow/scrollbar-restored-and-then-locked.html [ Skip ]
 
-# TODO IndexedDB is not yet enabled.
-storage/indexeddb/ [ Skip ]
+storage/indexeddb/clone-exception.html [ Timeout ]
+storage/indexeddb/database-odd-names.html [ Timeout Failure ]
+storage/indexeddb/primary-key-unique-to-objectstore.html [ Timeout ]
+storage/indexeddb/version-change-event-basic.html [ Timeout ]
+storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
+storage/indexeddb/modern/blob-simple.html [ Failure ]
+storage/indexeddb/modern/date-basic-private.html [ Failure ]
+storage/indexeddb/modern/date-basic.html [ Failure ]
+storage/indexeddb/modern/get-keyrange-private.html [ Failure ]
+storage/indexeddb/modern/get-keyrange.html [ Failure ]
+storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
+storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]
+storage/indexeddb/modern/workers-enable.html [ Failure ]
+
 imported/w3c/IndexedDB-private-browsing [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB [ Skip ]
 js/dom/global-constructors-attributes-idb.html [ Skip ]

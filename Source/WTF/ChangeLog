@@ -1,3 +1,15 @@
+2016-05-02  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Enable IndexedDB.
+        https://bugs.webkit.org/show_bug.cgi?id=157192
+
+        Reviewed by Brent Fulgham.
+
+        Fix compile errors when format specifiers like PRIu64 is used, by defining
+        __STDC_FORMAT_MACROS before inttypes.h is included.
+
+        * wtf/Platform.h: 
+
 2016-04-27  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Implement native IDBFactory.getAllDatabaseNames for WebInspector.

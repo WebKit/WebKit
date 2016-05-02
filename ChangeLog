@@ -1,3 +1,12 @@
+2016-05-02  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Enable IndexedDB.
+        https://bugs.webkit.org/show_bug.cgi?id=157192
+
+        Reviewed by Brent Fulgham.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2016-05-02  Yoav Weiss  <yoav@yoav.ws>
 
         Move ResourceTiming behind a runtime flag
