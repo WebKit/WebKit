@@ -162,11 +162,11 @@ PassRefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* fr
     LengthType lengthType = m_stdDeviation.type();
 
     if (blendToPassthrough)
-        return BlurFilterOperation::create(Length(lengthType).blend(m_stdDeviation, progress));
+        return BlurFilterOperation::create(WebCore::blend(m_stdDeviation, Length(lengthType), progress));
 
     const BlurFilterOperation* fromOperation = downcast<BlurFilterOperation>(from);
     Length fromLength = fromOperation ? fromOperation->m_stdDeviation : Length(lengthType);
-    return BlurFilterOperation::create(m_stdDeviation.blend(fromLength, progress));
+    return BlurFilterOperation::create(WebCore::blend(fromLength, m_stdDeviation, progress));
 }
     
 bool DropShadowFilterOperation::operator==(const FilterOperation& operation) const

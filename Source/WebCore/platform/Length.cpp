@@ -251,18 +251,6 @@ Length::Length(Ref<CalculationValue>&& value)
 {
     m_calculationValueHandle = calculationValues().insert(WTFMove(value));
 }
-        
-Length Length::blendMixedTypes(const Length& from, double progress) const
-{
-    if (progress <= 0.0)
-        return from;
-        
-    if (progress >= 1.0)
-        return *this;
-        
-    auto blend = std::make_unique<CalcExpressionBlendLength>(from, *this, progress);
-    return Length(CalculationValue::create(WTFMove(blend), CalculationRangeAll));
-}
 
 CalculationValue& Length::calculationValue() const
 {
@@ -294,6 +282,44 @@ float Length::nonNanCalculatedValue(int maxValue) const
 bool Length::isCalculatedEqual(const Length& other) const
 {
     return calculationValue() == other.calculationValue();
+}
+
+static Length blendMixedTypes(const Length& from, const Length& to, double progress)
+{
+    if (progress <= 0.0)
+        return from;
+        
+    if (progress >= 1.0)
+        return to;
+        
+    auto blend = std::make_unique<CalcExpressionBlendLength>(from, to, progress);
+    return Length(CalculationValue::create(WTFMove(blend), CalculationRangeAll));
+}
+
+Length blend(const Length& from, const Length& to, double progress)
+{
+    if (from.type() == Calculated || to.type() == Calculated)
+        return blendMixedTypes(from, to, progress);
+
+    if (!from.isZero() && !to.isZero() && from.type() != to.type())
+        return blendMixedTypes(from, to, progress);
+
+    if (from.isZero() && to.isZero())
+        return progress ? to : from; // Pick up 'auto' from 'from' if progress is zero.
+
+    LengthType resultType = to.type();
+    if (to.isZero())
+        resultType = from.type();
+
+    if (resultType == Percent) {
+        float fromPercent = from.isZero() ? 0 : from.percent();
+        float toPercent = to.isZero() ? 0 : to.percent();
+        return Length(WebCore::blend(fromPercent, toPercent, progress), Percent);
+    }
+
+    float fromValue = from.isZero() ? 0 : from.value();
+    float toValue = to.isZero() ? 0 : to.value();
+    return Length(WebCore::blend(fromValue, toValue, progress), resultType);
 }
 
 struct SameSizeAsLength {

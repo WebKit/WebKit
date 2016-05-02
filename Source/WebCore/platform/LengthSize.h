@@ -48,15 +48,15 @@ public:
     void setHeight(Length height) { m_height = WTFMove(height); }
     const Length& height() const { return m_height; }
 
-    LengthSize blend(const LengthSize& from, double progress) const
-    {
-        return LengthSize(m_width.blend(from.width(), progress), m_height.blend(from.height(), progress));
-    }
-
 private:
     Length m_width;
     Length m_height;
 };
+
+inline LengthSize blend(const LengthSize& from, const LengthSize& to, double progress)
+{
+    return LengthSize(blend(from.width(), to.width(), progress), blend(from.height(), to.height(), progress));
+}
 
 TextStream& operator<<(TextStream&, const LengthSize&);
 

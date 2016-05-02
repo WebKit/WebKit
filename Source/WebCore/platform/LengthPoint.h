@@ -58,16 +58,16 @@ public:
     void setY(Length y) { m_y = WTFMove(y); }
     const Length& y() const { return m_y; }
 
-    LengthPoint blend(const LengthPoint& from, double progress) const
-    {
-        return LengthPoint(m_x.blend(from.x(), progress), m_y.blend(from.y(), progress));
-    }
-
 private:
     // FIXME: it would be nice to pack the two Lengths together better somehow (to avoid padding between them).
     Length m_x;
     Length m_y;
 };
+
+inline LengthPoint blend(const LengthPoint& from, const LengthPoint& to, double progress)
+{
+    return LengthPoint(blend(from.x(), to.x(), progress), blend(from.y(), to.y(), progress));
+}
 
 TextStream& operator<<(TextStream&, const LengthPoint&);
 

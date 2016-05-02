@@ -64,7 +64,7 @@ public:
     virtual WindRule windRule() const { return RULE_NONZERO; }
 
     virtual bool canBlend(const BasicShape&) const = 0;
-    virtual Ref<BasicShape> blend(const BasicShape&, double) const = 0;
+    virtual Ref<BasicShape> blend(const BasicShape& from, double) const = 0;
 
     virtual bool operator==(const BasicShape&) const = 0;
 };
@@ -101,9 +101,9 @@ public:
     const Length& length() const { return m_length; }
     const Length& computedLength() const { return m_computedLength; }
 
-    BasicShapeCenterCoordinate blend(const BasicShapeCenterCoordinate& other, double progress) const
+    BasicShapeCenterCoordinate blend(const BasicShapeCenterCoordinate& from, double progress) const
     {
-        return BasicShapeCenterCoordinate(TopLeft, m_computedLength.blend(other.m_computedLength, progress));
+        return BasicShapeCenterCoordinate(TopLeft, WebCore::blend(from.m_computedLength, m_computedLength, progress));
     }
     
     bool operator==(const BasicShapeCenterCoordinate& other) const
@@ -155,12 +155,12 @@ public:
         return m_type == Value && other.type() == Value;
     }
 
-    BasicShapeRadius blend(const BasicShapeRadius& other, double progress) const
+    BasicShapeRadius blend(const BasicShapeRadius& from, double progress) const
     {
-        if (m_type != Value || other.type() != Value)
-            return BasicShapeRadius(other);
+        if (m_type != Value || from.type() != Value)
+            return BasicShapeRadius(from);
 
-        return BasicShapeRadius(m_value.blend(other.value(), progress));
+        return BasicShapeRadius(WebCore::blend(from.value(), value(), progress));
     }
     
     bool operator==(const BasicShapeRadius& other) const
@@ -195,7 +195,7 @@ private:
     const Path& path(const FloatRect&) override;
 
     bool canBlend(const BasicShape&) const override;
-    Ref<BasicShape> blend(const BasicShape&, double) const override;
+    Ref<BasicShape> blend(const BasicShape& from, double) const override;
 
     bool operator==(const BasicShape&) const override;
 
@@ -227,7 +227,7 @@ private:
     const Path& path(const FloatRect&) override;
 
     bool canBlend(const BasicShape&) const override;
-    Ref<BasicShape> blend(const BasicShape&, double) const override;
+    Ref<BasicShape> blend(const BasicShape& from, double) const override;
 
     bool operator==(const BasicShape&) const override;
 
@@ -258,7 +258,7 @@ private:
     const Path& path(const FloatRect&) override;
 
     bool canBlend(const BasicShape&) const override;
-    Ref<BasicShape> blend(const BasicShape&, double) const override;
+    Ref<BasicShape> blend(const BasicShape& from, double) const override;
 
     bool operator==(const BasicShape&) const override;
 
@@ -286,7 +286,7 @@ private:
     const Path& path(const FloatRect&) override;
 
     bool canBlend(const BasicShape&) const override;
-    Ref<BasicShape> blend(const BasicShape&, double) const override;
+    Ref<BasicShape> blend(const BasicShape& from, double) const override;
 
     bool operator==(const BasicShape&) const override;
 
@@ -326,7 +326,7 @@ private:
     const Path& path(const FloatRect&) override;
 
     bool canBlend(const BasicShape&) const override;
-    Ref<BasicShape> blend(const BasicShape&, double) const override;
+    Ref<BasicShape> blend(const BasicShape& from, double) const override;
 
     bool operator==(const BasicShape&) const override;
 

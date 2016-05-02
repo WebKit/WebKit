@@ -1,5 +1,42 @@
 2016-05-02  Simon Fraser  <simon.fraser@apple.com>
 
+        Make Length, LengthSize and LengthPoint blending not use member functions
+        https://bugs.webkit.org/show_bug.cgi?id=157281
+
+        Reviewed by Zalan Bujtas.
+
+        Having blend() be a member function is ambiguous because it's hard to tell which are
+        the 'from' and 'to' values. Fix Length, LengthSize and LengthPoint accordingly.
+
+        No behavior change.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * platform/Length.cpp:
+        (WebCore::blendMixedTypes):
+        (WebCore::blend):
+        (WebCore::Length::blendMixedTypes): Deleted.
+        * platform/Length.h:
+        (WebCore::Length::blend): Deleted.
+        * platform/LengthPoint.h:
+        (WebCore::blend):
+        (WebCore::LengthPoint::blend): Deleted.
+        * platform/LengthSize.h:
+        (WebCore::blend):
+        (WebCore::LengthSize::blend): Deleted.
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::BlurFilterOperation::blend):
+        * platform/graphics/transforms/TranslateTransformOperation.cpp:
+        (WebCore::TranslateTransformOperation::blend):
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapePolygon::blend):
+        (WebCore::BasicShapeInset::blend):
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShapeCenterCoordinate::blend):
+        (WebCore::BasicShapeRadius::blend):
+
+2016-05-02  Simon Fraser  <simon.fraser@apple.com>
+
         Fix shouldUpdateScrollLayerPositionSynchronously() for non-main frames. Remove updatesScrollLayerPositionOnMainThread()
         https://bugs.webkit.org/show_bug.cgi?id=157277
 

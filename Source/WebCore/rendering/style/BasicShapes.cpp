@@ -319,8 +319,9 @@ Ref<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progres
     result->setWindRule(otherPolygon.windRule());
 
     for (size_t i = 0; i < length; i = i + 2) {
-        result->appendPoint(m_values.at(i).blend(otherPolygon.values().at(i), progress),
-            m_values.at(i + 1).blend(otherPolygon.values().at(i + 1), progress));
+        result->appendPoint(
+            WebCore::blend(otherPolygon.values().at(i), m_values.at(i), progress),
+            WebCore::blend(otherPolygon.values().at(i + 1), m_values.at(i + 1), progress));
     }
 
     return WTFMove(result);
@@ -411,21 +412,21 @@ bool BasicShapeInset::canBlend(const BasicShape& other) const
     return type() == other.type();
 }
 
-Ref<BasicShape> BasicShapeInset::blend(const BasicShape& other, double progress) const
+Ref<BasicShape> BasicShapeInset::blend(const BasicShape& from, double progress) const
 {
-    ASSERT(type() == other.type());
+    ASSERT(type() == from.type());
 
-    auto& otherInset = downcast<BasicShapeInset>(other);
+    auto& fromInset = downcast<BasicShapeInset>(from);
     auto result =  BasicShapeInset::create();
-    result->setTop(m_top.blend(otherInset.top(), progress));
-    result->setRight(m_right.blend(otherInset.right(), progress));
-    result->setBottom(m_bottom.blend(otherInset.bottom(), progress));
-    result->setLeft(m_left.blend(otherInset.left(), progress));
+    result->setTop(WebCore::blend(fromInset.top(), top(), progress));
+    result->setRight(WebCore::blend(fromInset.right(), right(), progress));
+    result->setBottom(WebCore::blend(fromInset.bottom(), bottom(), progress));
+    result->setLeft(WebCore::blend(fromInset.left(), left(), progress));
 
-    result->setTopLeftRadius(m_topLeftRadius.blend(otherInset.topLeftRadius(), progress));
-    result->setTopRightRadius(m_topRightRadius.blend(otherInset.topRightRadius(), progress));
-    result->setBottomRightRadius(m_bottomRightRadius.blend(otherInset.bottomRightRadius(), progress));
-    result->setBottomLeftRadius(m_bottomLeftRadius.blend(otherInset.bottomLeftRadius(), progress));
+    result->setTopLeftRadius(WebCore::blend(fromInset.topLeftRadius(), topLeftRadius(), progress));
+    result->setTopRightRadius(WebCore::blend(fromInset.topRightRadius(), topRightRadius(), progress));
+    result->setBottomRightRadius(WebCore::blend(fromInset.bottomRightRadius(), bottomRightRadius(), progress));
+    result->setBottomLeftRadius(WebCore::blend(fromInset.bottomLeftRadius(), bottomLeftRadius(), progress));
 
     return WTFMove(result);
 }
