@@ -1,3 +1,52 @@
+2016-05-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Adding a new console message shouldn't modify DOM when the console log is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=155629
+        <rdar://problem/25235470>
+
+        Reviewed by Timothy Hatcher.
+
+        Instead of rendering console messages right away, store them (in _pendingMessages)
+        and render only when the console tab or the split console is visible.
+        Also, batch rendering operations using requestAnimationFrame.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController):
+        Store console message views in _pendingMessages.
+
+        (WebInspector.JavaScriptLogViewController.prototype._appendConsoleMessageView):
+        (WebInspector.JavaScriptLogViewController.prototype.renderPendingMessages):
+        Use requestAnimationFrame batching. Run isScrolledToBottom() at most only once
+        per batch.
+
+        (WebInspector.JavaScriptLogViewController.prototype.renderPendingMessagesSoon):
+        (WebInspector.JavaScriptLogViewController.prototype._didRenderConsoleMessageView):
+        There is no need to run scrollToBottom again.
+
+        * UserInterface/Views/ConsoleCommandView.js:
+        (WebInspector.ConsoleCommandView):
+        Move all DOM operations to a new render method.
+
+        (WebInspector.ConsoleCommandView.prototype.render):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView):
+        (WebInspector.ConsoleMessageView.prototype.render):
+        (WebInspector.ConsoleMessageView.prototype.set repeatCount):
+        (WebInspector.ConsoleMessageView.prototype._renderRepeatCount):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.shown):
+        When the console tab or the split console is opened render all pending messages.
+
+        (WebInspector.LogContentView.prototype.didAppendConsoleMessageView):
+        No need to scrollToBottom once again.
+
+        (WebInspector.LogContentView.prototype._messageAdded):
+        (WebInspector.LogContentView.prototype._previousMessageRepeatCountUpdated):
+        (WebInspector.LogContentView.prototype._scopeFromMessageLevel): Deleted.
+        (WebInspector.LogContentView.prototype._markScopeBarItemUnread): Added.
+        Rename _pulseScopeBarItemBorder. In the very first version the border was pulsing,
+        but now we use small colored circles instead.
+
 2016-05-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Uncaught Exception: TypeError: null is not an object (evaluating 'sourceCodeLocation.formattedLineNumber')
