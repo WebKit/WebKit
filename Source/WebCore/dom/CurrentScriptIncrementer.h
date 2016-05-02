@@ -37,23 +37,23 @@ namespace WebCore {
 class CurrentScriptIncrementer {
     WTF_MAKE_NONCOPYABLE(CurrentScriptIncrementer);
 public:
-    CurrentScriptIncrementer(Document& document, Element* element)
+    CurrentScriptIncrementer(Document& document, Element& element)
         : m_document(document)
-        , m_isHTMLScriptElement(is<HTMLScriptElement>(*element))
+        , m_isHTMLScriptElementOutsideShadowTree(is<HTMLScriptElement>(element) && !element.isInShadowTree())
     {
-        if (m_isHTMLScriptElement)
-            m_document.pushCurrentScript(downcast<HTMLScriptElement>(element));
+        if (m_isHTMLScriptElementOutsideShadowTree)
+            m_document.pushCurrentScript(&downcast<HTMLScriptElement>(element));
     }
 
     ~CurrentScriptIncrementer()
     {
-        if (m_isHTMLScriptElement)
+        if (m_isHTMLScriptElementOutsideShadowTree)
             m_document.popCurrentScript();
     }
 
 private:
     Document& m_document;
-    bool m_isHTMLScriptElement;
+    bool m_isHTMLScriptElementOutsideShadowTree;
 };
 
 }

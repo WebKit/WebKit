@@ -1,3 +1,16 @@
+2016-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.currentScript must be null when we're executing a script inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=157245
+
+        Reviewed by Darin Adler.
+
+        Add a W3C style testharness.js test.
+
+        * fast/shadow-dom/Document-prototype-currentScript-expected.txt: Added.
+        * fast/shadow-dom/Document-prototype-currentScript.html: Added.
+        * fast/shadow-dom/resources/Document-prototype-currentScript-helper.js: Added.
+
 2016-04-29  Alex Christensen  <achristensen@webkit.org>
 
         Do not reuse cache entries with conditional headers

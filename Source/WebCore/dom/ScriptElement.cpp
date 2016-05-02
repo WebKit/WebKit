@@ -312,7 +312,7 @@ void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
     Ref<Document> document(m_element.document());
     if (Frame* frame = document->frame()) {
         IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(m_isExternalScript ? document.ptr() : nullptr);
-        CurrentScriptIncrementer currentScriptIncrementer(document, &m_element);
+        CurrentScriptIncrementer currentScriptIncrementer(document, m_element);
 
         // Create a script from the script element node, using the script
         // block's source and the script block's type.
