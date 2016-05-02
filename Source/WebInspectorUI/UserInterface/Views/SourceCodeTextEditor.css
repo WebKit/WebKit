@@ -57,7 +57,7 @@
 
 .source-code.text-editor > .CodeMirror .issue-widget.inline > .arrow {
     position: absolute;
-    left: -5.5px;
+    left: -5px;
     display: block;
 
     top: 0px;
@@ -67,6 +67,12 @@
     border-top: 6.5px solid transparent;
     border-bottom: 6.5px solid transparent; 
     border-right: 5.5px solid transparent;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .source-code.text-editor > .CodeMirror .issue-widget.inline > .arrow {
+        left: -5.5px;
+    }
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget > .icon {

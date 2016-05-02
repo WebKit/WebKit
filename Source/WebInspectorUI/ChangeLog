@@ -1,3 +1,25 @@
+2016-05-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Uncaught Exception: TypeError: null is not an object (evaluating 'sourceCodeLocation.formattedLineNumber')
+        https://bugs.webkit.org/show_bug.cgi?id=157239
+        <rdar://problem/26030791>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/IssueManager.js:
+        (WebInspector.IssueManager.issueMatchSourceCode):
+        Require a sourceCodeLocation for Script errors.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._addIssue):
+        Be safe against a missing sourceCodeLocation.
+
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline > .arrow):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        Adjust the style, on non-Retina the inline message arrow would sometimes
+        be detached from the warning message.
+
 2016-05-02  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Zooming of docked Web Inspector affects the webpage, but reset to 0 does not

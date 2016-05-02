@@ -804,6 +804,10 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
     _addIssue(issue)
     {
         var sourceCodeLocation = issue.sourceCodeLocation;
+        console.assert(sourceCodeLocation, "Expected source code location to place issue.");
+        if (!sourceCodeLocation)
+            return;
+
         var lineNumber = sourceCodeLocation.formattedLineNumber;
 
         var lineNumberIssues = this._issuesLineNumberMap.get(lineNumber);

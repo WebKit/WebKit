@@ -42,7 +42,7 @@ WebInspector.IssueManager = class IssueManager extends WebInspector.Object
         if (sourceCode instanceof WebInspector.Resource)
             return issue.url === sourceCode.url && (!issue.sourceCodeLocation || issue.sourceCodeLocation.sourceCode === sourceCode);
         if (sourceCode instanceof WebInspector.Script)
-            return (issue.sourceCodeLocation && issue.sourceCodeLocation.sourceCode === sourceCode) || (!issue.sourceCodeLocation && issue.url === sourceCode.url);
+            return issue.sourceCodeLocation && issue.sourceCodeLocation.sourceCode === sourceCode;
         return false;
     }
 
