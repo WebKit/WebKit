@@ -39,31 +39,27 @@ TreeWalker::TreeWalker(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilt
 {
 }
 
-void TreeWalker::setCurrentNode(Node* node, ExceptionCode& ec)
+void TreeWalker::setCurrentNode(Node& node)
 {
-    if (!node) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
     m_current = node;
 }
 
-inline Node* TreeWalker::setCurrent(RefPtr<Node>&& node)
+inline Node* TreeWalker::setCurrent(Ref<Node>&& node)
 {
-    m_current = node;
-    return m_current.get();
+    m_current = WTFMove(node);
+    return m_current.ptr();
 }
 
 Node* TreeWalker::parentNode()
 {
-    RefPtr<Node> node = m_current;
-    while (node != root()) {
+    RefPtr<Node> node = m_current.ptr();
+    while (node != &root()) {
         node = node->parentNode();
         if (!node)
             return nullptr;
         short acceptNodeResult = acceptNode(node.get());
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
-            return setCurrent(WTFMove(node));
+            return setCurrent(node.releaseNonNull());
     }
     return nullptr;
 }
@@ -74,8 +70,8 @@ Node* TreeWalker::firstChild()
         short acceptNodeResult = acceptNode(node.get());
         switch (acceptNodeResult) {
             case NodeFilter::FILTER_ACCEPT:
-                m_current = node.release();
-                return m_current.get();
+                m_current = node.releaseNonNull();
+                return m_current.ptr();
             case NodeFilter::FILTER_SKIP:
                 if (node->firstChild()) {
                     node = node->firstChild();
@@ -91,7 +87,7 @@ Node* TreeWalker::firstChild()
                 break;
             }
             ContainerNode* parent = node->parentNode();
-            if (!parent || parent == root() || parent == m_current)
+            if (!parent || parent == &root() || parent == m_current.ptr())
                 return nullptr;
             node = parent;
         } while (node);
@@ -105,8 +101,8 @@ Node* TreeWalker::lastChild()
         short acceptNodeResult = acceptNode(node.get());
         switch (acceptNodeResult) {
             case NodeFilter::FILTER_ACCEPT:
-                m_current = node.release();
-                return m_current.get();
+                m_current = node.releaseNonNull();
+                return m_current.ptr();
             case NodeFilter::FILTER_SKIP:
                 if (node->lastChild()) {
                     node = node->lastChild();
@@ -122,7 +118,7 @@ Node* TreeWalker::lastChild()
                 break;
             }
             ContainerNode* parent = node->parentNode();
-            if (!parent || parent == root() || parent == m_current)
+            if (!parent || parent == &root() || parent == m_current.ptr())
                 return nullptr;
             node = parent;
         } while (node);
@@ -132,8 +128,8 @@ Node* TreeWalker::lastChild()
 
 template<TreeWalker::SiblingTraversalType type> Node* TreeWalker::traverseSiblings()
 {
-    RefPtr<Node> node = m_current;
-    if (node == root())
+    RefPtr<Node> node = m_current.ptr();
+    if (node == &root())
         return nullptr;
 
     auto isNext = type == SiblingTraversalType::Next;
@@ -141,8 +137,8 @@ template<TreeWalker::SiblingTraversalType type> Node* TreeWalker::traverseSiblin
         for (RefPtr<Node> sibling = isNext ? node->nextSibling() : node->previousSibling(); sibling; ) {
             short acceptNodeResult = acceptNode(sibling.get());
             if (acceptNodeResult == NodeFilter::FILTER_ACCEPT) {
-                m_current = WTFMove(sibling);
-                return m_current.get();
+                m_current = sibling.releaseNonNull();
+                return m_current.ptr();
             }
             node = sibling;
             sibling = isNext ? sibling->firstChild() : sibling->lastChild();
@@ -150,7 +146,7 @@ template<TreeWalker::SiblingTraversalType type> Node* TreeWalker::traverseSiblin
                 sibling = isNext ? node->nextSibling() : node->previousSibling();
         }
         node = node->parentNode();
-        if (!node || node == root())
+        if (!node || node == &root())
             return nullptr;
         short acceptNodeResult = acceptNode(node.get());
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
@@ -170,8 +166,8 @@ Node* TreeWalker::nextSibling()
 
 Node* TreeWalker::previousNode()
 {
-    RefPtr<Node> node = m_current;
-    while (node != root()) {
+    RefPtr<Node> node = m_current.ptr();
+    while (node != &root()) {
         while (Node* previousSibling = node->previousSibling()) {
             node = previousSibling;
             short acceptNodeResult = acceptNode(node.get());
@@ -184,11 +180,11 @@ Node* TreeWalker::previousNode()
                     break;
             }
             if (acceptNodeResult == NodeFilter::FILTER_ACCEPT) {
-                m_current = node.release();
-                return m_current.get();
+                m_current = node.releaseNonNull();
+                return m_current.ptr();
             }
         }
-        if (node == root())
+        if (node == &root())
             return nullptr;
         ContainerNode* parent = node->parentNode();
         if (!parent)
@@ -196,28 +192,28 @@ Node* TreeWalker::previousNode()
         node = parent;
         short acceptNodeResult = acceptNode(node.get());
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
-            return setCurrent(WTFMove(node));
+            return setCurrent(node.releaseNonNull());
     }
     return nullptr;
 }
 
 Node* TreeWalker::nextNode()
 {
-    RefPtr<Node> node = m_current;
+    RefPtr<Node> node = m_current.ptr();
 Children:
     while (Node* firstChild = node->firstChild()) {
         node = firstChild;
         short acceptNodeResult = acceptNode(node.get());
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
-            return setCurrent(WTFMove(node));
+            return setCurrent(node.releaseNonNull());
         if (acceptNodeResult == NodeFilter::FILTER_REJECT)
             break;
     }
-    while (Node* nextSibling = NodeTraversal::nextSkippingChildren(*node, root())) {
+    while (Node* nextSibling = NodeTraversal::nextSkippingChildren(*node, &root())) {
         node = nextSibling;
         short acceptNodeResult = acceptNode(node.get());
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
-            return setCurrent(WTFMove(node));
+            return setCurrent(node.releaseNonNull());
         if (acceptNodeResult == NodeFilter::FILTER_SKIP)
             goto Children;
     }

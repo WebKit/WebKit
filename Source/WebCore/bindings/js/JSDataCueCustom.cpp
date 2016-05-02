@@ -53,7 +53,6 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState* exec)
     if (exec->argumentCount() < 3)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
 
-    ExceptionCode ec = 0;
     double startTime(exec->argument(0).toNumber(exec));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
@@ -84,15 +83,16 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState* exec)
     RefPtr<DataCue> object;
     if (valueArgument.isCell() && valueArgument.asCell()->inherits(std::remove_pointer<JSArrayBuffer*>::type::info())) {
 
-        ArrayBuffer* data(toArrayBuffer(valueArgument));
+        ArrayBuffer* data = toArrayBuffer(valueArgument);
         if (UNLIKELY(exec->hadException()))
             return JSValue::encode(jsUndefined());
 
-        object = DataCue::create(*context, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), data, type, ec);
-        if (ec) {
-            setDOMException(exec, ec);
-            return JSValue::encode(JSValue());
+        if (UNLIKELY(!data)) {
+            setDOMException(exec, TypeError);
+            return JSValue::encode(jsUndefined());
         }
+
+        object = DataCue::create(*context, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), *data, type);
 
         return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
     }

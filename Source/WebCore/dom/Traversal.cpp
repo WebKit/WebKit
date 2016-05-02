@@ -31,7 +31,7 @@
 namespace WebCore {
 
 NodeIteratorBase::NodeIteratorBase(Node& rootNode, unsigned whatToShow, RefPtr<NodeFilter>&& nodeFilter)
-    : m_root(&rootNode)
+    : m_root(rootNode)
     , m_whatToShow(whatToShow)
     , m_filter(WTFMove(nodeFilter))
 {

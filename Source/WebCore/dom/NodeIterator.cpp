@@ -33,13 +33,9 @@
 
 namespace WebCore {
 
-NodeIterator::NodePointer::NodePointer()
-{
-}
-
-NodeIterator::NodePointer::NodePointer(Node* n, bool b)
-    : node(n)
-    , isPointerBeforeNode(b)
+NodeIterator::NodePointer::NodePointer(Node& node, bool isPointerBeforeNode)
+    : node(&node)
+    , isPointerBeforeNode(isPointerBeforeNode)
 {
 }
 
@@ -48,7 +44,7 @@ void NodeIterator::NodePointer::clear()
     node = nullptr;
 }
 
-bool NodeIterator::NodePointer::moveToNext(Node* root)
+bool NodeIterator::NodePointer::moveToNext(Node& root)
 {
     if (!node)
         return false;
@@ -56,11 +52,11 @@ bool NodeIterator::NodePointer::moveToNext(Node* root)
         isPointerBeforeNode = false;
         return true;
     }
-    node = NodeTraversal::next(*node, root);
+    node = NodeTraversal::next(*node, &root);
     return node;
 }
 
-bool NodeIterator::NodePointer::moveToPrevious(Node* root)
+bool NodeIterator::NodePointer::moveToPrevious(Node& root)
 {
     if (!node)
         return false;
@@ -68,7 +64,7 @@ bool NodeIterator::NodePointer::moveToPrevious(Node* root)
         isPointerBeforeNode = true;
         return true;
     }
-    if (node == root) {
+    if (node == &root) {
         node = nullptr;
         return false;
     }
@@ -80,12 +76,12 @@ NodeIterator::NodeIterator(Node& rootNode, unsigned long whatToShow, RefPtr<Node
     : NodeIteratorBase(rootNode, whatToShow, WTFMove(filter))
     , m_referenceNode(root(), true)
 {
-    root()->document().attachNodeIterator(this);
+    root().document().attachNodeIterator(this);
 }
 
 NodeIterator::~NodeIterator()
 {
-    root()->document().detachNodeIterator(this);
+    root().document().detachNodeIterator(this);
 }
 
 RefPtr<Node> NodeIterator::nextNode()
@@ -145,11 +141,11 @@ void NodeIterator::nodeWillBeRemoved(Node& removedNode)
 
 void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenceNode) const
 {
-    ASSERT(&root()->document() == &removedNode.document());
+    ASSERT(&root().document() == &removedNode.document());
 
     // Iterator is not affected if the removed node is the reference node and is the root.
     // or if removed node is not the reference node, or the ancestor of the reference node.
-    if (!removedNode.isDescendantOf(root()))
+    if (!removedNode.isDescendantOf(&root()))
         return;
     bool willRemoveReferenceNode = &removedNode == referenceNode.node;
     bool willRemoveReferenceNodeAncestor = referenceNode.node && referenceNode.node->isDescendantOf(&removedNode);
@@ -157,12 +153,12 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
         return;
 
     if (referenceNode.isPointerBeforeNode) {
-        Node* node = NodeTraversal::next(removedNode, root());
+        Node* node = NodeTraversal::next(removedNode, &root());
         if (node) {
             // Move out from under the node being removed if the new reference
             // node is a descendant of the node being removed.
             while (node && node->isDescendantOf(&removedNode))
-                node = NodeTraversal::next(*node, root());
+                node = NodeTraversal::next(*node, &root());
             if (node)
                 referenceNode.node = node;
         } else {
@@ -196,7 +192,7 @@ void NodeIterator::updateForNodeRemoval(Node& removedNode, NodePointer& referenc
                 referenceNode.node = node;
         } else {
             // FIXME: This branch doesn't appear to have any LayoutTests.
-            node = NodeTraversal::next(removedNode, root());
+            node = NodeTraversal::next(removedNode, &root());
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
             if (willRemoveReferenceNodeAncestor) {

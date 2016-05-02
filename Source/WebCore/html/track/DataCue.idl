@@ -34,7 +34,7 @@
 #endif
     ConstructorRaisesException,
 ] interface DataCue : TextTrackCue {
-    [SetterRaisesException] attribute ArrayBuffer data;
+    attribute ArrayBuffer data;
 
 #if defined(ENABLE_DATACUE_VALUE) && ENABLE_DATACUE_VALUE
     [CustomGetter, CustomSetter] attribute any value;

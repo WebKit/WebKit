@@ -41,8 +41,10 @@ namespace WebCore {
             return adoptRef(*new TreeWalker(rootNode, whatToShow, WTFMove(filter)));
         }                            
 
-        Node* currentNode() const { return m_current.get(); }
-        void setCurrentNode(Node*, ExceptionCode&);
+        Node& currentNode() { return m_current.get(); }
+        const Node& currentNode() const { return m_current.get(); }
+
+        void setCurrentNode(Node&);
 
         Node* parentNode();
         Node* firstChild();
@@ -57,9 +59,9 @@ namespace WebCore {
         enum class SiblingTraversalType { Previous, Next };
         template<SiblingTraversalType> Node* traverseSiblings();
         
-        Node* setCurrent(RefPtr<Node>&&);
+        Node* setCurrent(Ref<Node>&&);
 
-        RefPtr<Node> m_current;
+        Ref<Node> m_current;
     };
 
 } // namespace WebCore

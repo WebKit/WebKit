@@ -3964,7 +3964,7 @@ void Document::moveNodeIteratorsToNewDocument(Node* node, Document* newDocument)
     Vector<NodeIterator*> nodeIterators;
     copyToVector(m_nodeIterators, nodeIterators);
     for (auto* it : nodeIterators) {
-        if (it->root() == node) {
+        if (&it->root() == node) {
             detachNodeIterator(it);
             newDocument->attachNodeIterator(it);
         }

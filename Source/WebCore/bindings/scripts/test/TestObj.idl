@@ -63,6 +63,7 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     attribute unsigned long long       unsignedLongLongAttr;
     attribute DOMString                stringAttr;
     attribute TestObj                  testObjAttr;
+    attribute TestObj?                 testNullableObjAttr;
     [LenientThis] attribute TestObj    lenientTestObjAttr;
     [Unforgeable] readonly attribute DOMString unforgeableAttr;
     [TreatNullAs=EmptyString] attribute DOMString stringAttrTreatingNullAsEmptyString;

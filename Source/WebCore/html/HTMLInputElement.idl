@@ -32,7 +32,7 @@
     [Reflect] attribute DOMString dirName;
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
-    attribute FileList files;
+    attribute FileList? files;
     attribute DOMString formAction;
 
     // FIXME: These should not use [TreatNullAs=LegacyNullString].

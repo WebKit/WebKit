@@ -45,9 +45,9 @@ class ScriptExecutionContext;
 
 class DataCue final : public TextTrackCue {
 public:
-    static Ref<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer* data, ExceptionCode& ec)
+    static Ref<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer& data)
     {
-        return adoptRef(*new DataCue(context, start, end, data, emptyString(), ec));
+        return adoptRef(*new DataCue(context, start, end, data, emptyString()));
     }
 
     static Ref<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
@@ -55,9 +55,9 @@ public:
         return adoptRef(*new DataCue(context, start, end, data, length));
     }
 
-    static Ref<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer* data, const String& type, ExceptionCode& ec)
+    static Ref<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer& data, const String& type)
     {
-        return adoptRef(*new DataCue(context, start, end, data, type, ec));
+        return adoptRef(*new DataCue(context, start, end, data, type));
     }
 
 #if ENABLE(DATACUE_VALUE)
@@ -76,7 +76,7 @@ public:
     CueType cueType() const override { return Data; }
 
     RefPtr<ArrayBuffer> data() const;
-    void setData(ArrayBuffer*, ExceptionCode&);
+    void setData(ArrayBuffer&);
 
 #if ENABLE(DATACUE_VALUE)
     const SerializedPlatformRepresentation* platformValue() const { return m_platformValue.get(); }
@@ -93,7 +93,7 @@ public:
     bool doesExtendCue(const TextTrackCue&) const override;
 
 protected:
-    DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, ArrayBuffer*, const String&, ExceptionCode&);
+    DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, ArrayBuffer&, const String&);
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const void*, unsigned);
 #if ENABLE(DATACUE_VALUE)
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, RefPtr<SerializedPlatformRepresentation>&&, const String&);

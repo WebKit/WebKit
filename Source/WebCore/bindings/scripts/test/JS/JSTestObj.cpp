@@ -430,6 +430,8 @@ JSC::EncodedJSValue jsTestObjStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JS
 bool setJSTestObjStringAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestObjTestNullableObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestObjTestNullableObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjLenientTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjLenientTestObjAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjUnforgeableAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -743,6 +745,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "unsignedLongLongAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjUnsignedLongLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjUnsignedLongLongAttr) } },
     { "stringAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttr) } },
     { "testObjAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTestObjAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjTestObjAttr) } },
+    { "testNullableObjAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTestNullableObjAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjTestNullableObjAttr) } },
     { "lenientTestObjAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjLenientTestObjAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjLenientTestObjAttr) } },
     { "stringAttrTreatingNullAsEmptyString", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrTreatingNullAsEmptyString), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrTreatingNullAsEmptyString) } },
     { "XMLObjAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjXMLObjAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjXMLObjAttr) } },
@@ -1325,6 +1328,21 @@ EncodedJSValue jsTestObjTestObjAttr(ExecState* state, EncodedJSValue thisValue, 
     }
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.testObjAttr()));
+    return JSValue::encode(result);
+}
+
+
+EncodedJSValue jsTestObjTestNullableObjAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(thisValue);
+    JSValue decodedThisValue = JSValue::decode(thisValue);
+    auto* castedThis = jsDynamicCast<JSTestObj*>(decodedThisValue);
+    if (UNLIKELY(!castedThis)) {
+        return throwGetterTypeError(*state, "TestObj", "testNullableObjAttr");
+    }
+    auto& impl = castedThis->wrapped();
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.testNullableObjAttr()));
     return JSValue::encode(result);
 }
 
@@ -2572,7 +2590,28 @@ bool setJSTestObjTestObjAttr(ExecState* state, EncodedJSValue thisValue, Encoded
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setTestObjAttr(nativeValue);
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
+    impl.setTestObjAttr(*nativeValue);
+    return true;
+}
+
+
+bool setJSTestObjTestNullableObjAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(thisValue);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        return throwSetterTypeError(*state, "TestObj", "testNullableObjAttr");
+    }
+    auto& impl = castedThis->wrapped();
+    TestObj* nativeValue = JSTestObj::toWrapped(value);
+    if (UNLIKELY(state->hadException()))
+        return false;
+    impl.setTestNullableObjAttr(nativeValue);
     return true;
 }
 
@@ -2589,7 +2628,11 @@ bool setJSTestObjLenientTestObjAttr(ExecState* state, EncodedJSValue thisValue, 
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setLenientTestObjAttr(nativeValue);
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
+    impl.setLenientTestObjAttr(*nativeValue);
     return true;
 }
 
@@ -2623,7 +2666,11 @@ bool setJSTestObjXMLObjAttr(ExecState* state, EncodedJSValue thisValue, EncodedJ
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setXMLObjAttr(nativeValue);
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
+    impl.setXMLObjAttr(*nativeValue);
     return true;
 }
 
@@ -2829,6 +2876,10 @@ bool setJSTestObjTypedArrayAttr(ExecState* state, EncodedJSValue thisValue, Enco
     RefPtr<Float32Array> nativeValue = toFloat32Array(value);
     if (UNLIKELY(state->hadException()))
         return false;
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
     impl.setTypedArrayAttr(nativeValue.get());
     return true;
 }
@@ -2958,7 +3009,11 @@ bool setJSTestObjStrictTypeCheckingAttribute(ExecState* state, EncodedJSValue th
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setStrictTypeCheckingAttribute(nativeValue);
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
+    impl.setStrictTypeCheckingAttribute(*nativeValue);
     return true;
 }
 
@@ -3048,10 +3103,14 @@ bool setJSTestObjWithScriptExecutionContextAttribute(ExecState* state, EncodedJS
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return false;
-    impl.setWithScriptExecutionContextAttribute(*context, nativeValue);
+    impl.setWithScriptExecutionContextAttribute(*context, *nativeValue);
     return true;
 }
 
@@ -3068,7 +3127,11 @@ bool setJSTestObjWithScriptStateAttributeRaises(ExecState* state, EncodedJSValue
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setWithScriptStateAttributeRaises(*state, nativeValue);
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
+    impl.setWithScriptStateAttributeRaises(*state, *nativeValue);
     return true;
 }
 
@@ -3085,10 +3148,14 @@ bool setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* state, Enc
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return false;
-    impl.setWithScriptExecutionContextAttributeRaises(*context, nativeValue);
+    impl.setWithScriptExecutionContextAttributeRaises(*context, *nativeValue);
     return true;
 }
 
@@ -3105,10 +3172,14 @@ bool setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* st
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return false;
-    impl.setWithScriptExecutionContextAndScriptStateAttribute(*state, *context, nativeValue);
+    impl.setWithScriptExecutionContextAndScriptStateAttribute(*state, *context, *nativeValue);
     return true;
 }
 
@@ -3125,10 +3196,14 @@ bool setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecSta
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return false;
-    impl.setWithScriptExecutionContextAndScriptStateAttributeRaises(*state, *context, nativeValue);
+    impl.setWithScriptExecutionContextAndScriptStateAttributeRaises(*state, *context, *nativeValue);
     return true;
 }
 
@@ -3145,10 +3220,14 @@ bool setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(Exe
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return false;
-    impl.setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(*state, *context, nativeValue);
+    impl.setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(*state, *context, *nativeValue);
     return true;
 }
 
@@ -3165,7 +3244,11 @@ bool setJSTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* state, Enco
     TestObj* nativeValue = JSTestObj::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setWithScriptArgumentsAndCallStackAttribute(nativeValue);
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
+    impl.setWithScriptArgumentsAndCallStackAttribute(*nativeValue);
     return true;
 }
 

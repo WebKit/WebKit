@@ -36,11 +36,11 @@
 
 namespace WebCore {
 
-DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer* data, const String& type, ExceptionCode& ec)
+DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer& data, const String& type)
     : TextTrackCue(context, start, end)
     , m_type(type)
 {
-    setData(data, ec);
+    setData(data);
 }
 
 DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
@@ -88,13 +88,8 @@ RefPtr<ArrayBuffer> DataCue::data() const
     return ArrayBuffer::create(*m_data);
 }
 
-void DataCue::setData(ArrayBuffer* data, ExceptionCode& ec)
+void DataCue::setData(ArrayBuffer& data)
 {
-    if (!data) {
-        ec = TypeError;
-        return;
-    }
-
 #if ENABLE(DATACUE_VALUE)
     m_platformValue = nullptr;
     if (m_value)
@@ -102,7 +97,7 @@ void DataCue::setData(ArrayBuffer* data, ExceptionCode& ec)
     m_value = JSC::JSValue();
 #endif
 
-    m_data = ArrayBuffer::create(*data);
+    m_data = ArrayBuffer::create(data);
 }
 
 DataCue* toDataCue(TextTrackCue* cue)

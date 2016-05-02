@@ -75,6 +75,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property unsigned long long unsignedLongLongAttr;
 @property (copy) NSString *stringAttr;
 @property (strong) DOMTestObj *testObjAttr;
+@property (strong) DOMTestObj *testNullableObjAttr;
 @property (strong) DOMTestObj *lenientTestObjAttr;
 @property (readonly, copy) NSString *unforgeableAttr;
 @property (copy) NSString *stringAttrTreatingNullAsEmptyString;

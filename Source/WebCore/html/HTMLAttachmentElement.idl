@@ -26,5 +26,5 @@
 [
     Conditional=ATTACHMENT_ELEMENT
 ] interface HTMLAttachmentElement : HTMLElement {
-    attribute File file;
+    attribute File? file;
 };

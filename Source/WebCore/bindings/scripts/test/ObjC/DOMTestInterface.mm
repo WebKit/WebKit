@@ -109,7 +109,9 @@
     WebCore::JSMainThreadNullState state;
     ASSERT(newImplementsNode);
 
-    IMPL->setImplementsNode(core(newImplementsNode));
+    if (!core(newImplementsNode))
+        WebCore::raiseTypeErrorException();
+    IMPL->setImplementsNode(*core(newImplementsNode));
 }
 #endif
 
@@ -161,7 +163,9 @@
     WebCore::JSMainThreadNullState state;
     ASSERT(newSupplementalNode);
 
-    WebCore::TestSupplemental::setSupplementalNode(*IMPL, core(newSupplementalNode));
+    if (!core(newSupplementalNode))
+        WebCore::raiseTypeErrorException();
+    WebCore::TestSupplemental::setSupplementalNode(*IMPL, *core(newSupplementalNode));
 }
 #endif
 

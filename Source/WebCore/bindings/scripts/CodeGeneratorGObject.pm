@@ -1110,9 +1110,7 @@ sub GenerateFunction {
         }
         if ($paramIsGDOMType || ($paramIDLType eq "DOMString")) {
             $paramName = "converted" . $codeGenerator->WK_ucfirst($paramName);
-            if ($prefix ne "set_" && $codeGenerator->ShouldPassWrapperByReference($param, $parentNode)) {
-                $paramName = "*$paramName";
-            }
+            $paramName = "*$paramName" if $codeGenerator->ShouldPassWrapperByReference($param, $parentNode);
         }
         if ($paramIDLType eq "NodeFilter" || $paramIDLType eq "XPathNSResolver") {
             $paramName = "WTF::getPtr(" . $paramName . ")";
@@ -1497,6 +1495,7 @@ sub GenerateFunctions {
         my $param = new domSignature();
         $param->name("value");
         $param->type($attribute->signature->type);
+        $param->isNullable($attribute->signature->isNullable);
         my %attributes = ();
         $param->extendedAttributes(\%attributes);
         my $arrayRef = $function->parameters;

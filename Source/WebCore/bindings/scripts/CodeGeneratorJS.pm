@@ -2860,6 +2860,14 @@ sub GenerateImplementation
                     push (@implContent, "        return false;\n");
                 }
 
+                my $shouldPassByReference = ShouldPassWrapperByReference($attribute->signature, $interface);
+                if ($shouldPassByReference) {
+                    push(@implContent, "    if (UNLIKELY(!nativeValue)) {\n");
+                    push(@implContent, "        throwVMTypeError(state);\n");
+                    push(@implContent, "        return false;\n");
+                    push(@implContent, "    }\n");
+                }
+
                 if ($type eq "double" or $type eq "float") {
                     push(@implContent, "    if (UNLIKELY(!std::isfinite(nativeValue))) {\n");
                     push(@implContent, "        throwVMTypeError(state);\n");
@@ -2903,7 +2911,7 @@ sub GenerateImplementation
                     } elsif ($codeGenerator->IsEnumType($type) and not $codeGenerator->IsStringBasedEnumType($type)) {
                         push(@arguments, "nativeValue.value()");
                     } else {
-                        push(@arguments, "nativeValue");
+                        push(@arguments, $shouldPassByReference ? "*nativeValue" : "nativeValue");
                     }
                     if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                         my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};

@@ -29,7 +29,7 @@
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     readonly attribute boolean expandEntityReferences;
 #endif
-    [SetterRaisesException] attribute Node currentNode;
+    attribute Node currentNode;
 
     Node parentNode();
     Node firstChild();

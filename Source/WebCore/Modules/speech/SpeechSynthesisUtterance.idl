@@ -30,7 +30,7 @@
 ] interface SpeechSynthesisUtterance : EventTarget {
     attribute DOMString text;
     attribute DOMString lang;
-    attribute SpeechSynthesisVoice voice;
+    attribute SpeechSynthesisVoice? voice; // FIXME: should not be nullable.
     attribute unrestricted float volume;
     attribute unrestricted float rate;
     attribute unrestricted float pitch;

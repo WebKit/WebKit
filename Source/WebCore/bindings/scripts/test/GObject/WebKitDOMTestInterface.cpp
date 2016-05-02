@@ -450,7 +450,7 @@ void webkit_dom_test_interface_set_implements_node(WebKitDOMTestInterface* self,
     g_return_if_fail(WEBKIT_DOM_IS_NODE(value));
     WebCore::TestInterface* item = WebKit::core(self);
     WebCore::Node* convertedValue = WebKit::core(value);
-    item->setImplementsNode(convertedValue);
+    item->setImplementsNode(*convertedValue);
 #else
     UNUSED_PARAM(self);
     UNUSED_PARAM(value);
@@ -567,7 +567,7 @@ void webkit_dom_test_interface_set_supplemental_node(WebKitDOMTestInterface* sel
     g_return_if_fail(WEBKIT_DOM_IS_NODE(value));
     WebCore::TestInterface* item = WebKit::core(self);
     WebCore::Node* convertedValue = WebKit::core(value);
-    WebCore::TestSupplemental::setSupplementalNode(*item, convertedValue);
+    WebCore::TestSupplemental::setSupplementalNode(*item, *convertedValue);
 #else
     UNUSED_PARAM(self);
     UNUSED_PARAM(value);

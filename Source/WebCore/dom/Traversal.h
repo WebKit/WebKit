@@ -33,7 +33,9 @@ class NodeFilter;
 
 class NodeIteratorBase {
 public:
-    Node* root() const { return m_root.get(); }
+    Node& root() { return m_root.get(); }
+    const Node& root() const { return m_root.get(); }
+
     unsigned whatToShow() const { return m_whatToShow; }
     NodeFilter* filter() const { return m_filter.get(); }
     bool expandEntityReferences() const { return false; }
@@ -43,7 +45,7 @@ protected:
     short acceptNode(Node*) const;
 
 private:
-    RefPtr<Node> m_root;
+    Ref<Node> m_root;
     unsigned m_whatToShow;
     RefPtr<NodeFilter> m_filter;
 };

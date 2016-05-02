@@ -1,3 +1,69 @@
+2016-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Pass reference instead of pointer to IDL attribute setters if not nullable
+        https://bugs.webkit.org/show_bug.cgi?id=157250
+
+        Reviewed by Darin Adler.
+
+        Update the bindings generator so that we pass wrapper types by reference
+        to attribute setters instead of by raw pointer when the attribute is not
+        marked as nullable in the IDL.
+
+        There is no intended Web-exposed behavior change.
+
+        * Modules/speech/SpeechSynthesisUtterance.idl:
+        * Modules/webaudio/ConvolverNode.idl:
+        * bindings/js/JSDataCueCustom.cpp:
+        (WebCore::constructJSDataCue):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        Rebaseline bindings tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::moveNodeIteratorsToNewDocument):
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::NodePointer::NodePointer):
+        (WebCore::NodeIterator::NodePointer::moveToNext):
+        (WebCore::NodeIterator::NodePointer::moveToPrevious):
+        (WebCore::NodeIterator::NodeIterator):
+        (WebCore::NodeIterator::~NodeIterator):
+        (WebCore::NodeIterator::updateForNodeRemoval):
+        (WebCore::NodeIterator::NodePointer::clear): Deleted.
+        (WebCore::NodeIterator::nextNode): Deleted.
+        * dom/NodeIterator.h:
+        * dom/Traversal.cpp:
+        (WebCore::NodeIteratorBase::NodeIteratorBase):
+        * dom/Traversal.h:
+        (WebCore::NodeIteratorBase::root):
+        * dom/TreeWalker.cpp:
+        (WebCore::TreeWalker::setCurrentNode):
+        (WebCore::TreeWalker::setCurrent):
+        (WebCore::TreeWalker::parentNode):
+        (WebCore::TreeWalker::firstChild):
+        (WebCore::TreeWalker::lastChild):
+        (WebCore::TreeWalker::traverseSiblings):
+        (WebCore::TreeWalker::previousNode):
+        (WebCore::TreeWalker::nextNode):
+        * dom/TreeWalker.h:
+        (WebCore::TreeWalker::currentNode):
+        * dom/TreeWalker.idl:
+        * html/HTMLAttachmentElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/track/DataCue.cpp:
+        (WebCore::DataCue::DataCue):
+        (WebCore::DataCue::setData):
+        (WebCore::toDataCue): Deleted.
+        * html/track/DataCue.h:
+        * html/track/DataCue.idl:
+
 2016-05-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r200264 and r200266.

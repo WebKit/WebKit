@@ -686,7 +686,11 @@ bool setJSTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue
     Node* nativeValue = JSNode::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setImplementsNode(nativeValue);
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
+    impl.setImplementsNode(*nativeValue);
     return true;
 }
 
@@ -752,7 +756,11 @@ bool setJSTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisVal
     Node* nativeValue = JSNode::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return false;
-    WebCore::TestSupplemental::setSupplementalNode(impl, nativeValue);
+    if (UNLIKELY(!nativeValue)) {
+        throwVMTypeError(state);
+        return false;
+    }
+    WebCore::TestSupplemental::setSupplementalNode(impl, *nativeValue);
     return true;
 }
 

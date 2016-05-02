@@ -1417,6 +1417,12 @@ sub GenerateImplementation
                     $arg = "core(" . $arg . ")";
                 }
 
+                if ($codeGenerator->ShouldPassWrapperByReference($attribute->signature, $interface)) {
+                    push(@implContent, "    if (!$arg)\n");
+                    push(@implContent, "        WebCore::raiseTypeErrorException();\n");
+                    $arg = "*$arg";
+                }
+
                 my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
                 push(@arguments, $arg);
                 push(@arguments, "ec") if $hasSetterException;

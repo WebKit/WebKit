@@ -57,12 +57,14 @@ namespace WebCore {
 
         struct NodePointer {
             RefPtr<Node> node;
-            bool isPointerBeforeNode;
-            NodePointer();
-            NodePointer(Node*, bool);
+            bool isPointerBeforeNode { true };
+
+            NodePointer() = default;
+            NodePointer(Node&, bool);
+
             void clear();
-            bool moveToNext(Node* root);
-            bool moveToPrevious(Node* root);
+            bool moveToNext(Node& root);
+            bool moveToPrevious(Node& root);
         };
 
         void updateForNodeRemoval(Node& nodeToBeRemoved, NodePointer&) const;
