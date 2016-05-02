@@ -1,3 +1,24 @@
+2016-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        Do not reuse cache entries with conditional headers
+        https://bugs.webkit.org/show_bug.cgi?id=157205
+        rdar://problem/25856933
+
+        Reviewed by Chris Dumez.
+
+        Test: http/tests/xmlhttprequest/if-modified-since-0.html
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::canReuse):
+        CachedResourceLoader::determineRevalidationPolicy asserts that the request is not conditional,
+        which means that it does not have any headers like If-Modified-Since.  They are usually different,
+        because we put the timestamp in the If-Modified-Since header, so it fails the canReuse test because
+        time has passed since the last If-Modified-Since header was sent.  When a user sets the If-Modified-Since
+        manually to something that is constant, we reuse cache entries when we should not.
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        Set the source so we can use it in Internals.
+
 2016-05-02  Yoav Weiss  <yoav@yoav.ws>
 
         Speculatively fix the cmake build

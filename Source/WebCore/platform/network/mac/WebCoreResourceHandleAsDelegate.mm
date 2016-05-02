@@ -142,10 +142,6 @@ using namespace WebCore;
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)r
 {
-#if !PLATFORM(IOS)
-    UNUSED_PARAM(connection);
-#endif
-
     LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, reported MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
 
     if (!m_handle || !m_handle->client())
@@ -170,6 +166,7 @@ using namespace WebCore;
 #endif
     
     ResourceResponse resourceResponse(r);
+    resourceResponse.setSource(ResourceResponse::Source::Network);
 #if ENABLE(WEB_TIMING)
     ResourceHandle::getConnectionTimingData(connection, resourceResponse.resourceLoadTiming());
 #else
