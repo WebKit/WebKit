@@ -3448,19 +3448,6 @@ sub GenerateArgumentsCountCheck
     }
 }
 
-sub CanUseWTFOptionalForParameter
-{
-    my $parameter = shift;
-    my $type = $parameter->type;
-
-    # FIXME: We should progressively stop blacklisting each type below
-    # and eventually get rid of this function entirely.
-    return 0 if $parameter->isVariadic;
-    return 0 if $codeGenerator->IsStringBasedEnumType($type);
-
-    return 1;
-}
-
 my %automaticallyGeneratedDefaultValues = (
     "any" => "undefined",
 
@@ -3571,22 +3558,6 @@ sub GenerateParametersCheck
 
             # For callback parameters, the generated bindings treat undefined as null, so use null as implicit default value.
             $parameter->default("null") if $codeGenerator->IsCallbackInterface($argType);
-        }
-
-        # FIXME: We should eventually stop generating any early calls, and instead use either default parameter values or WTF::Optional<>.
-        if ($optional && !defined($parameter->default) && !CanUseWTFOptionalForParameter($parameter)) {
-            # Generate early call if there are enough parameters.
-            if (!$hasOptionalArguments) {
-                push(@$outputArray, "\n    size_t argsCount = state->argumentCount();\n");
-                $hasOptionalArguments = 1;
-            }
-            push(@$outputArray, "    if (argsCount <= $argsIndex) {\n");
-
-            my @optionalCallbackArguments = @arguments;
-            push @optionalCallbackArguments, GenerateReturnParameters($function);
-            my $functionString = "$functionName(" . join(", ", @optionalCallbackArguments) . ")";
-            GenerateImplementationFunctionCall($function, $functionString, "    " x 2, $svgPropertyType, $interfaceName);
-            push(@$outputArray, "    }\n\n");
         }
 
         my $name = $parameter->name;
@@ -3783,7 +3754,7 @@ sub GenerateParametersCheck
 
                     $outer = "state->argument($argsIndex).isUndefined() ? $defaultValue : ";
                     $inner = "state->uncheckedArgument($argsIndex)";
-                } elsif ($optional && !defined($parameter->default) && CanUseWTFOptionalForParameter($parameter)) {
+                } elsif ($optional && !defined($parameter->default)) {
                     # Use WTF::Optional<>() for optional parameters that are missing or undefined and that do not have
                     # a default value in the IDL.
                     my $defaultValue = "Optional<$nativeType>()";

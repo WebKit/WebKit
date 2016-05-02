@@ -1,3 +1,14 @@
+2016-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Drop CanUseWTFOptionalForParameter() from bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=157247
+
+        Reviewed by Darin Adler.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        (CanUseWTFOptionalForParameter): Deleted.
+
 2016-05-01  Darin Adler  <darin@apple.com>
 
         Update Fetch to use enum class instead of string for enumerations
