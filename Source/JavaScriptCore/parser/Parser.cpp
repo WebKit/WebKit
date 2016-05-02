@@ -3063,7 +3063,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     bool wasOpenParen = match(OPENPAREN);
     bool isValidArrowFunctionStart = match(OPENPAREN) || match(IDENT);
     SavePoint savePoint = createSavePoint();
-    size_t usedVariablesSize;
+    size_t usedVariablesSize = 0;
     if (wasOpenParen) {
         usedVariablesSize = currentScope()->currentUsedVariablesSize();
         currentScope()->pushUsedVariableSet();

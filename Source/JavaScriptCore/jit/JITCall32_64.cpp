@@ -226,7 +226,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         - Caller initializes ReturnPC; CodeBlock.
         - Caller restores callFrameRegister after return.
     */
-    CallLinkInfo* info;
+    CallLinkInfo* info = nullptr;
     if (opcodeID != op_call_eval)
         info = m_codeBlock->addCallLinkInfo();
     if (opcodeID == op_call_varargs || opcodeID == op_construct_varargs || opcodeID == op_tail_call_varargs)

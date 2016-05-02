@@ -235,7 +235,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
         }
     }
 
-    unsigned currencyDigits;
+    unsigned currencyDigits = 0;
     if (m_style == Style::Currency) {
         // 22. If s is "currency" and c is undefined, throw a TypeError exception.
         if (currency.isNull()) {

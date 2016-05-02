@@ -174,6 +174,7 @@ typedef std::array<char, 5 + 1> FlagsString; // 5 different flags and a null cha
 static inline FlagsString flagsString(ExecState* exec, JSObject* regexp)
 {
     FlagsString string;
+    string[0] = 0;
 
     VM& vm = exec->vm();
 

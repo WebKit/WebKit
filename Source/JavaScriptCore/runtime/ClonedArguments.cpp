@@ -83,7 +83,7 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, Exec
     else
         callee = jsCast<JSFunction*>(targetFrame->callee());
 
-    ClonedArguments* result;
+    ClonedArguments* result = nullptr;
     
     unsigned length = 0; // Initialize because VC needs it.
     switch (mode) {

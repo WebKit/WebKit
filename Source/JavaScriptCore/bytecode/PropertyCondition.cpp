@@ -254,7 +254,7 @@ bool PropertyCondition::isWatchableWhenValid(
         // shouldn't have a TOCTOU race either.
         RELEASE_ASSERT(offset != invalidOffset);
         
-        WatchpointSet* set;
+        WatchpointSet* set = nullptr;
         switch (effort) {
         case MakeNoChanges:
             set = structure->propertyReplacementWatchpointSet(offset);

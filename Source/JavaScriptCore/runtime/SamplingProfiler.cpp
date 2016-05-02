@@ -675,10 +675,10 @@ int SamplingProfiler::StackFrame::functionStartLine()
 unsigned SamplingProfiler::StackFrame::functionStartColumn()
 {
     if (frameType == FrameType::Unknown || frameType == FrameType::Host)
-        return -1;
+        return std::numeric_limits<unsigned>::max();
 
     if (executable->isHostFunction())
-        return -1;
+        return std::numeric_limits<unsigned>::max();
 
     return static_cast<ScriptExecutable*>(executable)->startColumn();
 }

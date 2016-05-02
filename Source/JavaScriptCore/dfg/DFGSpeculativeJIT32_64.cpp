@@ -716,8 +716,8 @@ void SpeculativeJIT::emitCall(Node* node)
     }
 
     Edge calleeEdge = m_jit.graph().child(node, 0);
-    GPRReg calleeTagGPR;
-    GPRReg calleePayloadGPR;
+    GPRReg calleeTagGPR = InvalidGPRReg;
+    GPRReg calleePayloadGPR = InvalidGPRReg;
     CallFrameShuffleData shuffleData;
     
     // Gotta load the arguments somehow. Varargs is trickier.

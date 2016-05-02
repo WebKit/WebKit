@@ -1371,7 +1371,7 @@ private:
             // first.
             if (materialized.isEmpty()) {
                 uint64_t maxEvaluation = 0;
-                Allocation* bestAllocation;
+                Allocation* bestAllocation = nullptr;
                 for (auto& entry : escapees) {
                     if (!forMaterialization.find(entry.key)->value.isEmpty())
                         continue;

@@ -212,7 +212,7 @@ void BackendDispatcher::sendPendingErrors()
     // To construct the error object, only use the last error's code and message.
     // Per JSON-RPC 2.0, Section 5.1, the 'data' member may contain nested errors,
     // but only one top-level Error object should be sent per request.
-    CommonErrorCode errorCode;
+    CommonErrorCode errorCode = InternalError;
     String errorMessage;
     Ref<InspectorArray> payload = InspectorArray::create();
     

@@ -1,3 +1,35 @@
+2016-05-02  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Clean up annoying compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=149813
+
+        Reviewed by Alex Christensen.
+
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isWatchableWhenValid):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::sendPendingErrors):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createWithInlineFrame):
+        * runtime/Error.cpp:
+        (JSC::addErrorInfoAndGetBytecodeOffset):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::heapSnapshot):
+        (JSC::callToPrimitiveFunction):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::flagsString):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::functionStartColumn):
+
 2016-05-02  Keith Miller  <keith_miller@apple.com>
 
         ToThis should be able to be eliminated in Constant Folding
