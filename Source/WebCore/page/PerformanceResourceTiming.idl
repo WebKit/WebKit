@@ -30,7 +30,8 @@
 
 // See: https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/ResourceTiming/Overview.html
 [
-    Conditional=RESOURCE_TIMING,
+    Conditional=WEB_TIMING,
+    EnabledAtRuntime=ResourceTiming
 ] interface PerformanceResourceTiming : PerformanceEntry {
     readonly attribute DOMString initiatorType;
 

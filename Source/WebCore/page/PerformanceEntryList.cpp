@@ -32,7 +32,7 @@
 #include "config.h"
 #include "PerformanceEntryList.h"
 
-#if ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
+#if ENABLE(WEB_TIMING)
 
 #include "PerformanceEntry.h"
 
@@ -75,4 +75,4 @@ void PerformanceEntryList::sort()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
+#endif // ENABLE(WEB_TIMING)

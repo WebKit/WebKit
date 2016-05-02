@@ -32,7 +32,7 @@
 #ifndef PerformanceResourceTiming_h
 #define PerformanceResourceTiming_h
 
-#if ENABLE(RESOURCE_TIMING)
+#if ENABLE(WEB_TIMING)
 
 #include "PerformanceEntry.h"
 #include "ResourceLoadTiming.h"
@@ -85,11 +85,9 @@ private:
 
 }
 
-
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PerformanceResourceTiming)
     static bool isType(const WebCore::PerformanceEntry& entry) { return entry.isResource(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(RESOURCE_TIMING)
-
+#endif // ENABLE(WEB_TIMING)
 #endif // !defined(PerformanceResourceTiming_h)

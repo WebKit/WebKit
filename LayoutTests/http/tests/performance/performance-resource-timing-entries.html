@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<script>
+    if (window.internals)
+        internals.setResourceTimingSupport(true);
+    var url = "../../resources/square100.png?";
+    url += Math.random();
+    document.write("<img src='" + url + "'>");
+
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    var foundImg = false;
+    window.addEventListener("load", function() {
+        var resources = performance.getEntriesByType('resource');
+        for (var i = 0; i < resources.length; ++i) {
+            if (resources[i].name.indexOf("square100") != -1) {
+                foundImg = true;
+                break;
+            }
+        };
+        shouldBeTrue("foundImg");
+        if (window.internals)
+            window.internals.setResourceTimingSupport(false);
+    });
+</script>
+</body>
+</html>

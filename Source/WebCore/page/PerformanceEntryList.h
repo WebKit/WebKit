@@ -32,7 +32,7 @@
 #ifndef PerformanceEntryList_h
 #define PerformanceEntryList_h
 
-#if ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
+#if ENABLE(WEB_TIMING)
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -64,5 +64,5 @@ private:
 
 } // namespace WebCore
 
-#endif // !ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
+#endif // ENABLE(WEB_TIMING)
 #endif // PerformanceEntryList_h

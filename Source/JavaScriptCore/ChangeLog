@@ -1,3 +1,12 @@
+2016-05-02  Yoav Weiss  <yoav@yoav.ws>
+
+        Move ResourceTiming behind a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=157133
+
+        Reviewed by Alex Christensen.
+
+        * runtime/CommonIdentifiers.h: Added PerformanceEntry, PerformanceEntryList and PerformanceResourceTiming as property names.
+
 2016-05-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Assertion failure for bound function with custom prototype and Reflect.construct

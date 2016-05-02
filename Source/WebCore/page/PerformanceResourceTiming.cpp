@@ -32,7 +32,7 @@
 #include "config.h"
 #include "PerformanceResourceTiming.h"
 
-#if ENABLE(RESOURCE_TIMING)
+#if ENABLE(WEB_TIMING)
 
 #include "Document.h"
 #include "DocumentLoadTiming.h"
@@ -199,5 +199,4 @@ double PerformanceResourceTiming::resourceTimeToDocumentMilliseconds(int deltaMi
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(RESOURCE_TIMING)
+#endif // ENABLE(WEB_TIMING)

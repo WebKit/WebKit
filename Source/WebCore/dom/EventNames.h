@@ -183,6 +183,7 @@ namespace WebCore {
     macro(removetrack) \
     macro(reset) \
     macro(resize) \
+    macro(resourcetimingbufferfull) \
     macro(result) \
     macro(resume) \
     macro(scroll) \
@@ -261,7 +262,6 @@ namespace WebCore {
     macro(webkitpresentationmodechanged) \
     macro(webkitregionoversetchange) \
     macro(webkitremovesourcebuffer) \
-    macro(webkitresourcetimingbufferfull) \
     macro(webkitsourceclose) \
     macro(webkitsourceended) \
     macro(webkitsourceopen) \

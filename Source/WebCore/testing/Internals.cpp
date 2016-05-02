@@ -3316,4 +3316,9 @@ void Internals::setCSSGridLayoutEnabled(bool enable)
 }
 #endif
 
+void Internals::setResourceTimingSupport(bool enable)
+{
+    RuntimeEnabledFeatures::sharedFeatures().setResourceTimingEnabled(enable);
+}
+
 }

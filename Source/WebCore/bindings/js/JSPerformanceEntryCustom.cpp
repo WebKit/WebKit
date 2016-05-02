@@ -30,13 +30,14 @@
 
 #include "config.h"
 
-#if ENABLE(PERFORMANCE_TIMELINE)
-
+#if ENABLE(WEB_TIMING)
 #include "JSPerformanceEntry.h"
 
 #include "JSDOMBinding.h"
+#if ENABLE(USER_TIMING)
 #include "JSPerformanceMark.h"
 #include "JSPerformanceMeasure.h"
+#endif
 #include "JSPerformanceResourceTiming.h"
 #include "PerformanceMark.h"
 #include "PerformanceMeasure.h"
@@ -51,10 +52,8 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, PerformanceEntry* entr
     if (!entry)
         return jsNull();
 
-#if ENABLE(RESOURCE_TIMING)
     if (is<PerformanceResourceTiming>(*entry))
         return wrap<JSPerformanceResourceTiming>(globalObject, downcast<PerformanceResourceTiming>(*entry));
-#endif
 
 #if ENABLE(USER_TIMING)
     if (is<PerformanceMark>(*entry))
@@ -68,5 +67,4 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, PerformanceEntry* entr
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(PERFORMANCE_TIMELINE)
+#endif // ENABLE(WEB_TIMING)
