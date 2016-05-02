@@ -1,3 +1,9 @@
+2016-05-02  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * platform/mac/WebPlaybackControlsManager.h:
+
 2016-05-02  Sam Weinig  <sam@webkit.org>
 
         DataDetector underline color should be based on the text color

@@ -35,10 +35,15 @@ class WebPlaybackSessionInterfaceMac;
 #if USE(APPLE_INTERNAL_SDK) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 #import <WebKitAdditions/WebPlaybackControlsControllerAdditions.h>
 #else
+#import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
+
+OBJC_CLASS AVValueTiming;
 
 WEBCORE_EXPORT
 @interface WebPlaybackControlsManager : NSObject {
     NSTimeInterval _contentDuration;
+
     RetainPtr<AVValueTiming> _timing;
     RetainPtr<NSArray> _seekableTimeRanges;
     BOOL _hasEnabledAudio;
@@ -56,6 +61,9 @@ WEBCORE_EXPORT
 @property (readwrite) BOOL hasEnabledAudio;
 @property (readwrite) BOOL hasEnabledVideo;
 @property (nonatomic) float rate;
+
+- (void)setAudioMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
+- (void)setLegibleMediaSelectionOptions:(const Vector<WTF::String>&)options withSelectedIndex:(NSUInteger)selectedIndex;
 
 @end
 #endif // USE(APPLE_INTERNAL_SDK) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
