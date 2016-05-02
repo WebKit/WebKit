@@ -38,6 +38,7 @@ set(MiniBrowser_LIBRARIES
     WebKit2
     ${GTK3_LIBRARIES}
     ${GLIB_LIBRARIES}
+    ${LIBSOUP_LIBRARIES}
 )
 
 add_custom_command(
