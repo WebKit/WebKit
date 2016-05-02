@@ -1728,6 +1728,9 @@ private:
             return;
         }
 
+        // FIXME: This should cover other use cases but we don't have use kinds for them. It's not critical,
+        // however, since we cover all the missing cases in constant folding.
+        // https://bugs.webkit.org/show_bug.cgi?id=157213
         if (node->child1()->shouldSpeculateStringObject()) {
             fixEdge<StringObjectUse>(node->child1());
             node->convertToIdentity();

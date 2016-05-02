@@ -557,6 +557,15 @@ private:
                 break;
             }
 
+            case ToThis: {
+                if (!isToThisAnIdentity(m_graph.executableFor(node->origin.semantic)->isStrictMode(), m_state.forNode(node->child1())))
+                    break;
+
+                node->convertToIdentity();
+                changed = true;
+                break;
+            }
+
             case Check: {
                 alreadyHandled = true;
                 m_interpreter.execute(indexInBlock);

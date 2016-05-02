@@ -1,3 +1,35 @@
+2016-05-02  Keith Miller  <keith_miller@apple.com>
+
+        ToThis should be able to be eliminated in Constant Folding
+        https://bugs.webkit.org/show_bug.cgi?id=157213
+
+        Reviewed by Saam Barati.
+
+        This patch enables eliminating the ToThis value when we have abstract interpreter
+        indicates the node is not needed. Since there are Objects that override their
+        ToThis behavior we first check if we can eliminate the node by looking at its
+        speculated type. If the function is in strict mode then we can eliminate ToThis as
+        long as the speculated type is not SpecObjectOther since that contains objects
+        that may set OverridesToThis. If the function is not in strict mode then we can
+        eliminate ToThis as long is the speculated type is an object that is not SpecObjectOther.
+
+        If we can't eliminate with type information we can still eliminate the ToThis node with
+        the proven structure set. When ToThis only sees structures that do not set OverridesToThis
+        it can be eliminated. Additionally, if the function is in strict mode then we can eliminate
+        ToThis as long as all only the object structures don't set OverridesToThis.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::isToThisAnIdentity):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupToThis):
+        * tests/stress/to-this-global-object.js: Added.
+        (test):
+        (test2):
+        (get for):
+
 2016-05-01  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         Class contructor and methods shouldn't have "arguments" and "caller"
