@@ -59,6 +59,8 @@ public:
     virtual bool openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
     void close();
 
+    void interrupt();
+
     bool opened() const { return m_opened; }
     bool isNew() const { return m_new; }
 
@@ -113,10 +115,14 @@ public:
 
     void scheduleTransactionCallback(SQLTransaction*);
 
+    void incrementalVacuumIfNeeded();
+
+    // Called from DatabaseTask
     bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, DatabaseError&, String& errorMessage);
     Vector<String> performGetTableNames();
 
-    void incrementalVacuumIfNeeded();
+    // Called from DatabaseTask and DatabaseThread
+    void performClose();
 
 private:
     Database(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);

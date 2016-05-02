@@ -307,7 +307,7 @@ unsigned long long DatabaseTracker::getMaxSizeForDatabase(const Database* databa
     return maxSize;
 }
 
-void DatabaseTracker::closeAllDatabases()
+void DatabaseTracker::closeAllDatabases(CurrentQueryBehavior currentQueryBehavior)
 {
     Vector<Ref<Database>> openDatabases;
     {
@@ -321,8 +321,11 @@ void DatabaseTracker::closeAllDatabases()
             }
         }
     }
-    for (auto& database : openDatabases)
+    for (auto& database : openDatabases) {
+        if (currentQueryBehavior == CurrentQueryBehavior::Interrupt)
+            database->interrupt();
         database->close();
+    }
 }
 
 String DatabaseTracker::originPath(SecurityOrigin* origin) const

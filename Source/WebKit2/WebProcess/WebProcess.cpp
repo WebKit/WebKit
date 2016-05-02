@@ -1249,7 +1249,7 @@ void WebProcess::processWillSuspendImminently(bool& handled)
     }
 
     WEBPROCESS_LOG_ALWAYS("%p - WebProcess::processWillSuspendImminently()", this);
-    DatabaseTracker::tracker().closeAllDatabases();
+    DatabaseTracker::tracker().closeAllDatabases(CurrentQueryBehavior::Interrupt);
     actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
     handled = true;
 }

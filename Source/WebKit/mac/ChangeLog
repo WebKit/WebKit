@@ -1,3 +1,18 @@
+2016-05-02  Daniel Bates  <dabates@apple.com>
+
+        DatabaseTracker::closeAllDatabases calls Database::close from the wrong thread
+        https://bugs.webkit.org/show_bug.cgi?id=147672
+        <rdar://problem/22357464>
+
+        Reviewed by Brady Eidson.
+
+        Update the background assertion expiration callback to call DatabaseTracker::closeAllDatabases()
+        with CurrentQueryBehavior::Interrupt so that we abort a long running query and close the database
+        immediately to avoid holding a locked file when the process is suspended.
+
+        * Storage/WebDatabaseManager.mm:
+        (+[WebDatabaseManager startBackgroundTask]):
+
 2016-04-29  Dean Jackson  <dino@apple.com>
 
         RTL <select> popup menu is in the wrong location

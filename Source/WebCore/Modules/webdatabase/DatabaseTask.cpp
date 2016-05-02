@@ -131,7 +131,7 @@ DatabaseCloseTask::DatabaseCloseTask(Database& database, DatabaseTaskSynchronize
 
 void DatabaseCloseTask::doPerformTask()
 {
-    database().close();
+    database().performClose();
 }
 
 #if !LOG_DISABLED

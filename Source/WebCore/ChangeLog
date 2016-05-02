@@ -1,3 +1,47 @@
+2016-05-02  Daniel Bates  <dabates@apple.com>
+
+        DatabaseTracker::closeAllDatabases calls Database::close from the wrong thread
+        https://bugs.webkit.org/show_bug.cgi?id=147672
+        <rdar://problem/22357464>
+
+        Reviewed by Brady Eidson.
+
+        Schedule a DatabaseCloseTask when Database::close() is called from a thread other than the
+        database thread as the database thread is responsible for interacting with the database.
+
+        Currently -[WebDatabaseManager startBackgroundTask] and WebProcess::processWillSuspendImminently()
+        call DatabaseTracker::closeAllDatabases() indirectly and directly, respectively, from a
+        thread other than the database thread. In a debug build, this causes an assertion failure
+        in Database::close(). In a release/production build, this starts a race between the calling
+        thread and the database thread that can lead to a crash. It is the responsibility of the
+        database thread to manage the database. We should ensure that calling Database::close()
+        delegates the responsibility of actually closing the database to the database thread to
+        avoid interfering with the database thread or the need to synchronize access to data
+        structures used by the database thread.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::interrupt): Added. Turns around and calls SQLiteDatabase::interrupt().
+        (WebCore::Database::close): Added. Schedules a DatabaseCloseTask to close the database and
+        wait for it to complete if we have not already scheduled closing the database.
+        (WebCore::Database::performClose): Renamed; formerly named close.
+        (WebCore::Database::markAsDeletedAndClose): Extracted logic to schedule a DatabaseCloseTask
+        from here to Database::close() and modified this function to call Database::close().
+        * Modules/webdatabase/Database.h:
+        * Modules/webdatabase/DatabaseTask.cpp:
+        (WebCore::DatabaseCloseTask::doPerformTask): Call Database::performClose() instead of Database::close()
+        as the latter has been repurposed to schedule closing the database.
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThread): Ditto.
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::closeAllDatabases): Added argument currentQueryBehavior (defaults
+        to CurrentQueryBehavior::RunToCompletion - close every database after completion of the
+        current database query, if any).
+        * Modules/webdatabase/DatabaseTracker.h:
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::interrupt): Added. This is safe to call regardless of the state
+        of the database and thread safe by <https://www.sqlite.org/c3ref/interrupt.html>.
+        * platform/sql/SQLiteDatabase.h:
+
 2016-05-02  Yoav Weiss  <yoav@yoav.ws>
 
         Move ResourceTiming behind a runtime flag

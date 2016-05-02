@@ -334,6 +334,13 @@ int SQLiteDatabase::runIncrementalVacuumCommand()
     return lastError();
 }
 
+void SQLiteDatabase::interrupt()
+{
+    LockHolder locker(m_databaseClosingMutex);
+    if (m_db)
+        sqlite3_interrupt(m_db);
+}
+
 int64_t SQLiteDatabase::lastInsertRowID()
 {
     if (!m_db)

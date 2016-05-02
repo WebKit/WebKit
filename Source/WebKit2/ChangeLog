@@ -1,3 +1,18 @@
+2016-05-02  Daniel Bates  <dabates@apple.com>
+
+        DatabaseTracker::closeAllDatabases calls Database::close from the wrong thread
+        https://bugs.webkit.org/show_bug.cgi?id=147672
+        <rdar://problem/22357464>
+
+        Reviewed by Brady Eidson.
+
+        Call DatabaseTracker::closeAllDatabases() with CurrentQueryBehavior::Interrupt so that we abort
+        a long running query and close the database immediately to avoid holding a locked file when the
+        process is suspended.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::processWillSuspendImminently):
+
 2016-05-01  Darin Adler  <darin@apple.com>
 
         Update Fetch to use enum class instead of string for enumerations

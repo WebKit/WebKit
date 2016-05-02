@@ -46,6 +46,8 @@ class DatabaseManagerClient;
 class OriginLock;
 class SecurityOrigin;
 
+enum class CurrentQueryBehavior { Interrupt, RunToCompletion };
+
 class DatabaseTracker {
     WTF_MAKE_NONCOPYABLE(DatabaseTracker); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -74,7 +76,7 @@ public:
 
     unsigned long long getMaxSizeForDatabase(const Database*);
 
-    WEBCORE_EXPORT void closeAllDatabases();
+    WEBCORE_EXPORT void closeAllDatabases(CurrentQueryBehavior = CurrentQueryBehavior::RunToCompletion);
 
 private:
     explicit DatabaseTracker(const String& databasePath);

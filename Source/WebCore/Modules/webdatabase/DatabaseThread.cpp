@@ -127,7 +127,7 @@ void DatabaseThread::databaseThread()
     }
 
     for (auto& openDatabase : openSetCopy)
-        openDatabase->close();
+        openDatabase->performClose();
 
     // Detach the thread so its resources are no longer of any concern to anyone else
     detachThread(m_threadID);

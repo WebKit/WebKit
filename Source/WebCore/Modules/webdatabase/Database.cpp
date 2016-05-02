@@ -279,7 +279,32 @@ bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&
     return success;
 }
 
+void Database::interrupt()
+{
+    // It is safe to call this from any thread for an opened or closed database.
+    m_sqliteDatabase.interrupt();
+}
+
 void Database::close()
+{
+    if (!databaseContext()->databaseThread())
+        return;
+
+    DatabaseTaskSynchronizer synchronizer;
+    if (databaseContext()->databaseThread()->terminationRequested(&synchronizer)) {
+        LOG(StorageAPI, "Database handle %p is on a terminated DatabaseThread, cannot be marked for normal closure\n", this);
+        return;
+    }
+
+    databaseContext()->databaseThread()->scheduleImmediateTask(std::make_unique<DatabaseCloseTask>(*this, synchronizer));
+
+    // FIXME: iOS depends on this function blocking until the database is closed as part
+    // of closing all open databases from a process assertion expiration handler.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=157184>.
+    synchronizer.waitForTaskCompletion();
+}
+
+void Database::performClose()
 {
     ASSERT(databaseContext()->databaseThread());
     ASSERT(currentThread() == databaseContext()->databaseThread()->getThreadID());
@@ -624,15 +649,7 @@ void Database::markAsDeletedAndClose()
     LOG(StorageAPI, "Marking %s (%p) as deleted", stringIdentifier().ascii().data(), this);
     m_deleted = true;
 
-    DatabaseTaskSynchronizer synchronizer;
-    if (databaseContext()->databaseThread()->terminationRequested(&synchronizer)) {
-        LOG(StorageAPI, "Database handle %p is on a terminated DatabaseThread, cannot be marked for normal closure\n", this);
-        return;
-    }
-
-    auto task = std::make_unique<DatabaseCloseTask>(*this, synchronizer);
-    databaseContext()->databaseThread()->scheduleImmediateTask(WTFMove(task));
-    synchronizer.waitForTaskCompletion();
+    close();
 }
 
 void Database::changeVersion(const String& oldVersion, const String& newVersion, RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)

@@ -68,7 +68,10 @@ public:
     int runIncrementalVacuumCommand();
     
     bool transactionInProgress() const { return m_transactionInProgress; }
-    
+
+    // Aborts the current database operation. This is thread safe.
+    void interrupt();
+
     int64_t lastInsertRowID();
     int lastChanges();
 

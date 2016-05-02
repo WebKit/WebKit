@@ -269,7 +269,7 @@ static WebBackgroundTaskIdentifier getTransactionBackgroundTaskIdentifier()
         return;
     
     setTransactionBackgroundTaskIdentifier(startBackgroundTask(^ {
-        DatabaseTracker::tracker().closeAllDatabases();
+        DatabaseTracker::tracker().closeAllDatabases(CurrentQueryBehavior::Interrupt);
         [WebDatabaseManager endBackgroundTask];
     }));
 }
