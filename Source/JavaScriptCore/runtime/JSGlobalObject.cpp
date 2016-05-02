@@ -893,6 +893,15 @@ void JSGlobalObject::createThrowTypeError(VM& vm)
     m_throwTypeErrorGetterSetter.set(vm, this, getterSetter);
 }
 
+void JSGlobalObject::createThrowTypeErrorArgumentsAndCaller(VM& vm)
+{
+    JSFunction* thrower = JSFunction::create(vm, this, 0, String(), globalFuncThrowTypeErrorArgumentsAndCaller);
+    GetterSetter* getterSetter = GetterSetter::create(vm, this);
+    getterSetter->setGetter(vm, this, thrower);
+    getterSetter->setSetter(vm, this, thrower);
+    m_throwTypeErrorArgumentsAndCallerGetterSetter.set(vm, this, getterSetter);
+}
+
 // Set prototype, and also insert the object prototype at the end of the chain.
 void JSGlobalObject::resetPrototype(VM& vm, JSValue prototype)
 {
@@ -942,6 +951,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_newPromiseCapabilityFunction);
     visitor.append(&thisObject->m_functionProtoHasInstanceSymbolFunction);
     visitor.append(&thisObject->m_throwTypeErrorGetterSetter);
+    visitor.append(&thisObject->m_throwTypeErrorArgumentsAndCallerGetterSetter);
     visitor.append(&thisObject->m_moduleLoader);
 
     visitor.append(&thisObject->m_objectPrototype);

@@ -1,3 +1,14 @@
+2016-05-01  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Class contructor and methods shouldn't have "arguments" and "caller"
+        https://bugs.webkit.org/show_bug.cgi?id=144238
+
+        Reviewed by Ryosuke Niwa.
+
+        * js/class-method-and-constructor-properties-expected.txt: Added.
+        * js/class-method-and-constructor-properties.html: Added.
+        * js/script-tests/class-method-and-constructor-properties.js: Added.
+
 2016-05-02  Yoav Weiss  <yoav@yoav.ws>
 
         Move ResourceTiming behind a runtime flag

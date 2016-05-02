@@ -781,6 +781,11 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState* exec)
 {
     return throwVMTypeError(exec);
 }
+    
+EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsAndCaller(ExecState* exec)
+{
+    return throwVMTypeError(exec, "'caller' and 'arguments' cannot be accessed in class context.");
+}
 
 class GlobalFuncProtoGetterFunctor {
 public:

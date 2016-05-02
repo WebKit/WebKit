@@ -1,3 +1,29 @@
+2016-05-01  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Class contructor and methods shouldn't have "arguments" and "caller"
+        https://bugs.webkit.org/show_bug.cgi?id=144238
+
+        Reviewed by Ryosuke Niwa.
+
+        Added TypeError that is raised in case of access to properties 'arguments' or 'caller'
+        of constructor or method of class. Actually TypeError already raised for most cases, except
+        case with undeclared constructor e. g. 
+        class A {}
+        (new A).constructor.caller 
+        (new A).constructor.arguments
+
+        * runtime/JSFunction.cpp:
+        (JSC::getThrowTypeErrorGetterSetter):
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createThrowTypeErrorArgumentsAndCaller):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::throwTypeErrorArgumentsAndCallerGetterSetter):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncThrowTypeErrorArgumentsAndCaller):
+        * runtime/JSGlobalObjectFunctions.h:
+
 2016-05-02  Yoav Weiss  <yoav@yoav.ws>
 
         Move ResourceTiming behind a runtime flag

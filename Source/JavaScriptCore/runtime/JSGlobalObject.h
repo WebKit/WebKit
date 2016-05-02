@@ -234,6 +234,7 @@ protected:
     WriteBarrier<JSObject> m_regExpProtoGlobalGetter;
     WriteBarrier<JSObject> m_regExpProtoUnicodeGetter;
     WriteBarrier<GetterSetter> m_throwTypeErrorGetterSetter;
+    WriteBarrier<GetterSetter> m_throwTypeErrorArgumentsAndCallerGetterSetter;
 
     WriteBarrier<ModuleLoaderObject> m_moduleLoader;
 
@@ -468,6 +469,13 @@ public:
         return m_throwTypeErrorGetterSetter.get();
     }
 
+    GetterSetter* throwTypeErrorArgumentsAndCallerGetterSetter(VM& vm)
+    {
+        if (!m_throwTypeErrorArgumentsAndCallerGetterSetter)
+            createThrowTypeErrorArgumentsAndCaller(vm);
+        return m_throwTypeErrorArgumentsAndCallerGetterSetter.get();
+    }
+    
     ModuleLoaderObject* moduleLoader() const { return m_moduleLoader.get(); }
 
     ObjectPrototype* objectPrototype() const { return m_objectPrototype.get(); }
@@ -733,6 +741,7 @@ private:
     JS_EXPORT_PRIVATE void init(VM&);
 
     void createThrowTypeError(VM&);
+    void createThrowTypeErrorArgumentsAndCaller(VM&);
 
     JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
 };

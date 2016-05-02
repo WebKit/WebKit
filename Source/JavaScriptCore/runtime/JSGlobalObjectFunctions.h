@@ -49,6 +49,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsAndCaller(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState*);
