@@ -129,14 +129,6 @@ my %svgTypeWithWritablePropertiesNeedingTearOff = (
     "SVGMatrix" => 1
 );
 
-# FIXME: Remove each enum from this hash as we convert it from the string-based
-# enumeration to using an actual enum class in the C++. Once that is done, we should
-# remove this hash and the function that calls it.
-my %stringBasedEnumerationHash = (
-    "TextTrackKind" => 1,
-    "TextTrackMode" => 1,
-);
-
 # Cache of IDL file pathnames.
 my $idlFiles;
 my $cachedInterfaces = {};
@@ -379,16 +371,6 @@ sub IsStringType
     my $type = shift;
 
     return $type eq "DOMString";
-}
-
-sub IsStringBasedEnumType
-{
-    my $object = shift;
-    my $type = shift;
-
-    return 0 if !$object->IsEnumType($type);
-    return 1 if exists $stringBasedEnumerationHash{$type};
-    return 0;
 }
 
 sub IsEnumType

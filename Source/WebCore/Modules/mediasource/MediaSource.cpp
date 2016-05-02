@@ -671,7 +671,7 @@ void MediaSource::removeSourceBuffer(SourceBuffer& buffer, ExceptionCode& ec)
 
             // 9.3.2 If the mode attribute on the TextTrack object is set to "showing" or "hidden", then
             // set the removed enabled text track flag to true.
-            if (track->mode() == TextTrack::showingKeyword() || track->mode() == TextTrack::hiddenKeyword())
+            if (track->mode() == TextTrackMode::Showing || track->mode() == TextTrackMode::Hidden)
                 removedEnabledTextTrack = true;
 
             // 9.3.3 Remove the TextTrack object from the HTMLMediaElement textTracks list.

@@ -102,56 +102,41 @@ void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomicStr
         // 4.8.10.12.3 Sourcing out-of-band text tracks
         // As the kind, label, and srclang attributes are set, changed, or removed, the text track must update accordingly...
         } else if (name == kindAttr)
-            track()->setKind(value.convertToASCIILowercase());
+            ensureTrack().setKindKeywordIgnoringASCIICase(value.string());
         else if (name == labelAttr)
-            track()->setLabel(value);
+            ensureTrack().setLabel(value);
         else if (name == srclangAttr)
-            track()->setLanguage(value);
+            ensureTrack().setLanguage(value);
         else if (name == defaultAttr)
-            track()->setIsDefault(!value.isNull());
+            ensureTrack().setIsDefault(!value.isNull());
     }
 
     HTMLElement::parseAttribute(name, value);
 }
 
-String HTMLTrackElement::kind()
+const AtomicString& HTMLTrackElement::kind()
 {
-    return track()->kind();
+    return ensureTrack().kindKeyword();
 }
 
-void HTMLTrackElement::setKind(const String& kind)
+void HTMLTrackElement::setKind(const AtomicString& kind)
 {
-    setAttribute(kindAttr, kind);
+    setAttributeWithoutSynchronization(kindAttr, kind);
 }
 
-String HTMLTrackElement::srclang() const
+const AtomicString& HTMLTrackElement::srclang() const
 {
-    return getAttribute(srclangAttr);
+    return fastGetAttribute(srclangAttr);
 }
 
-void HTMLTrackElement::setSrclang(const String& srclang)
+const AtomicString& HTMLTrackElement::label() const
 {
-    setAttribute(srclangAttr, srclang);
-}
-
-String HTMLTrackElement::label() const
-{
-    return getAttribute(labelAttr);
-}
-
-void HTMLTrackElement::setLabel(const String& label)
-{
-    setAttribute(labelAttr, label);
+    return fastGetAttribute(labelAttr);
 }
 
 bool HTMLTrackElement::isDefault() const
 {
     return fastHasAttribute(defaultAttr);
-}
-
-void HTMLTrackElement::setIsDefault(bool isDefault)
-{
-    setBooleanAttribute(defaultAttr, isDefault);
 }
 
 LoadableTextTrack& HTMLTrackElement::ensureTrack()
@@ -189,7 +174,7 @@ void HTMLTrackElement::scheduleLoad()
         return;
 
     // 2. If the text track's text track mode is not set to one of hidden or showing, abort these steps.
-    if (ensureTrack().mode() != TextTrack::hiddenKeyword() && ensureTrack().mode() != TextTrack::showingKeyword())
+    if (ensureTrack().mode() != TextTrackMode::Hidden && ensureTrack().mode() != TextTrackMode::Showing)
         return;
 
     // 3. If the text track's track element does not have a media element as a parent, abort these steps.

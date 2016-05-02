@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TrackBase_h
-#define TrackBase_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -51,9 +50,6 @@ public:
     virtual AtomicString id() const { return m_id; }
     virtual void setId(const AtomicString& id) { m_id = id; }
 
-    AtomicString kind() const { return m_kind; }
-    virtual void setKind(const AtomicString&);
-
     AtomicString label() const { return m_label; }
     void setLabel(const AtomicString& label) { m_label = label; }
 
@@ -74,27 +70,37 @@ public:
 protected:
     TrackBase(Type, const AtomicString& id, const AtomicString& label, const AtomicString& language);
 
-    virtual bool isValidKind(const AtomicString&) const = 0;
-    virtual const AtomicString& defaultKindKeyword() const = 0;
-
-    void setKindInternal(const AtomicString&);
-
-    HTMLMediaElement* m_mediaElement;
+    HTMLMediaElement* m_mediaElement { nullptr };
 
 #if ENABLE(MEDIA_SOURCE)
-    SourceBuffer* m_sourceBuffer;
+    SourceBuffer* m_sourceBuffer { nullptr };
 #endif
 
 private:
     Type m_type;
     int m_uniqueId;
     AtomicString m_id;
-    AtomicString m_kind;
     AtomicString m_label;
     AtomicString m_language;
+};
+
+class MediaTrackBase : public TrackBase {
+public:
+    const AtomicString& kind() const { return m_kind; }
+    virtual void setKind(const AtomicString&);
+
+protected:
+    MediaTrackBase(Type, const AtomicString& id, const AtomicString& label, const AtomicString& language);
+
+    void setKindInternal(const AtomicString&);
+
+private:
+    virtual bool isValidKind(const AtomicString&) const = 0;
+    virtual const AtomicString& defaultKindKeyword() const = 0;
+
+    AtomicString m_kind;
 };
 
 } // namespace WebCore
 
 #endif
-#endif // TrackBase_h

@@ -82,7 +82,7 @@ const AtomicString& VideoTrack::commentaryKeyword()
 }
 
 VideoTrack::VideoTrack(VideoTrackClient* client, PassRefPtr<VideoTrackPrivate> trackPrivate)
-    : TrackBase(TrackBase::VideoTrack, trackPrivate->id(), trackPrivate->label(), trackPrivate->language())
+    : MediaTrackBase(MediaTrackBase::VideoTrack, trackPrivate->id(), trackPrivate->label(), trackPrivate->language())
     , m_selected(trackPrivate->selected())
     , m_client(client)
     , m_private(trackPrivate)
@@ -208,7 +208,7 @@ void VideoTrack::setLanguage(const AtomicString& language)
     // FIXME(123926): Validate the BCP47-ness of langague.
 
     // 2. Update this attribute to the new value.
-    TrackBase::setLanguage(language);
+    MediaTrackBase::setLanguage(language);
 
     // 3. If the sourceBuffer attribute on this track is not null, then queue a task to fire a simple
     // event named change at sourceBuffer.videoTracks.

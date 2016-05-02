@@ -1674,7 +1674,7 @@ void SourceBuffer::textTrackModeChanged(TextTrack* track)
     // 2.4.5 Changes to selected/enabled track state
     // If a text track mode becomes "disabled" and the SourceBuffer associated with this track is not
     // associated with any other enabled or selected track, then run the following steps:
-    if (track->mode() == TextTrack::disabledKeyword()
+    if (track->mode() == TextTrackMode::Disabled
         && (!m_videoTracks || !m_videoTracks->isAnyTrackEnabled())
         && (!m_audioTracks || !m_audioTracks->isAnyTrackEnabled())
         && (!m_textTracks || !m_textTracks->isAnyTrackEnabled())) {

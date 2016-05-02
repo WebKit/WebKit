@@ -1,3 +1,185 @@
+2016-05-01  Darin Adler  <darin@apple.com>
+
+        Stop using string-based enumerations in TextTrack, and eliminate support for string-based enumerations
+        https://bugs.webkit.org/show_bug.cgi?id=157253
+
+        Reviewed by Chris Dumez.
+
+        This was the most difficult case to convert from the old style of enumeration to enum class.
+        Afterward there is a bit of messy duplication, but it still seems like an improvement overall.
+
+        After this patch, I plan to change the rule for the name of the enumeration; instead of
+        living at the top level of the WebCore namespace, we will look for them inside the class for the
+        first interface defined in the same file along with the enumeration, and remove the name prefix,
+        if the interfaces's name is a prefix of the enumerations's name.
+
+        Once that's done, next step is to do something in the bindings for dictionaries. And adopt both the
+        enumeration and dictionary mechanisms more widely, and remove the old use of "dictionary" as a type name.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::removeSourceBuffer): Use enum values instead of keywords.
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::textTrackModeChanged): Ditto.
+
+        * bindings/js/JSTextTrackCustom.cpp:
+        (WebCore::JSTextTrack::setKind): Deleted.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsStringBasedEnumType): Deleted.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetEnumerationImplementationContent): Removed IsStringBasedEnumType check.
+        (GenerateParametersCheck): Ditto.
+        (GenerateImplementation): Ditto.
+        (GetNativeType): Ditto.
+        (JSValueToNative): Ditto.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadInternal): Use enum values instead of keywords.
+        (WebCore::HTMLMediaElement::textTrackModeChanged): Ditto.
+        (WebCore::HTMLMediaElement::textTrackKindChanged): Ditto.
+        (WebCore::HTMLMediaElement::textTrackAddCues): Ditto.
+        (WebCore::HTMLMediaElement::textTrackAddCue): Ditto.
+        (WebCore::HTMLMediaElement::addTextTrack): Ditto.
+        (WebCore::HTMLMediaElement::configureTextTrackGroup): Ditto.
+        (WebCore::HTMLMediaElement::setSelectedTextTrack): Ditto.
+        (WebCore::HTMLMediaElement::configureTextTracks): Ditto.
+        (WebCore::HTMLMediaElement::hasClosedCaptions): Ditto.
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay): Ditto.
+        (WebCore::HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured): Ditto.
+        (WebCore::toPlatform): Added helpers for the outOfBandTrackSources function.
+        (WebCore::HTMLMediaElement::outOfBandTrackSources): Removed unneeded fastHasAttribute
+        check since getNonEmptyURLAttribute already returns an empty URL when the attribute is
+        not present. Changed to use enum values instead of keywords.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::parseAttribute): Use new setKindKeywordIgnoringASCIICase
+        function rather than calling setKind and convertToASCIILowercase. Also use ensureTrack
+        instead of track since the latter is a cover that calls it and dumbs down the return type.
+        (WebCore::HTMLTrackElement::kind): Changed return type to const AtomicString& since
+        that's what we will have for kind keywords and because it matches what we normally have
+        for attribute getting fuctions. Also use ensureTrack.
+        (WebCore::HTMLTrackElement::setKind): Changed argument to AtomicString so we don't waste
+        time making a string and then destroying it before turning it into an AtomicString so it
+        can be an attribute value.
+        (WebCore::HTMLTrackElement::srclang): Changed return type to const AtomicString& as is
+        customary and efficient for attribute value convenience functions. Also use fastGetAttribute.
+        (WebCore::HTMLTrackElement::setSrclang): Deleted.
+        (WebCore::HTMLTrackElement::label): Ditto.
+        (WebCore::HTMLTrackElement::setLabel): Deleted.
+        (WebCore::HTMLTrackElement::setIsDefault): Deleted.
+        (WebCore::HTMLTrackElement::scheduleLoad): Use enum values instead of keywords.
+
+        * html/HTMLTrackElement.h: Use pragma once. Update for changes mentioned above.
+        Also mark things final instead of override as per our recent style discussion.
+
+        * html/HTMLTrackElement.idl: Use [Reflect] for srclang and label.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay): Use enum value
+        instead of keyword.
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay): Ditto.
+
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::AudioTrack): Use new base class MediaTrackBase.
+
+        * html/track/AudioTrack.h: Use pragma once. Make base class be MediaTrackBase instead
+        of TrackBase.
+
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::setMode): Change argument type to enum instead of string.
+        (WebCore::toPrivate): Added. Helper for setModeInternal.
+        (WebCore::InbandTextTrack::setModeInternal): Change argument type to enum instead of string.
+        (WebCore::InbandTextTrack::updateKindFromPrivate): Use enum instead of string to call setKind.
+
+        * html/track/InbandTextTrack.h: Use pragma once. Use TextTrackMode for argument types.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::captionsKeyword): Converted this to a non-member function since it is now
+        private to this file.
+        (WebCore::descriptionsKeyword): Ditto.
+        (WebCore::chaptersKeyword): Ditto.
+        (WebCore::metadataKeyword): Ditto.
+        (WebCore::forcedKeyword): Ditto.
+        (WebCore::TextTrack::disabledKeyword): Deleted.
+        (WebCore::TextTrack::hiddenKeyword): Deleted.
+        (WebCore::TextTrack::showingKeyword): Deleted.
+        (WebCore::TextTrack::TextTrack): Moved some initialization to be done in the header where
+        the data members are defined. Put the code that is the equivalent to setKindInternal here,
+        because it turns out it's not needed anywhere else. Over time we might change the types
+        involved and there's no need to have that be across multiple functions.
+        (WebCore::TextTrack::~TextTrack): Removed unneeded call to clearClient, right when the
+        object is about to be destroyed. Perhaps there was an illusion that the old call might
+        be a virtual function call that invokes the clearClient from a derived class, but that
+        doesn't work in a destructor, so this code was only clearing out the data member and
+        that does not need to be done.
+        (WebCore::TextTrack::isValidKind): Deleted.
+        (WebCore::TextTrack::enabled): Use enum value instead of keyword.
+        (WebCore::TextTrack::kindKeyword): Added. Function for callers who need a string, not the
+        enum value.
+        (WebCore::TextTrack::setKind): Take enum value instead of keyword. Also changed since
+        we store the kind in a data member in this class, not inherited.
+        (WebCore::TextTrack::setKindKeywordIgnoringASCIICase): Added. For HTMLTrackElement to use
+        when setting the kind attribute.
+        (WebCore::TextTrack::setMode): Take enum value instread of keyword. Also removed assertion
+        since the enum already makes it intrinsically clear what values are valid, unlike a string.
+        (WebCore::TextTrack::cues): Use enum value instead of keyword.
+        (WebCore::TextTrack::activeCues): Ditto.
+        (WebCore::TextTrack::addCue): Ditto.
+        (WebCore::TextTrack::ensureVTTRegionList): Changed return type to reference.
+        (WebCore::TextTrack::regions): Use enum value instead of keyword.
+        (WebCore::TextTrack::addRegion): Use reference.
+        (WebCore::TextTrack::cueDidChange): Ditto.
+        (WebCore::TextTrack::isRendered): Use enum values instead of keywords. Also write to be
+        a boolean expression instead of a couple different if statements.
+        (WebCore::TextTrack::ensureTextTrackCueList): Changed return type to reference.
+        (WebCore::TextTrack::isMainProgramContent): Use enum value instead of keyword.
+        (WebCore::TextTrack::containsOnlyForcedSubtitles): Ditto.
+
+        * html/track/TextTrack.h: Use pragma once. Removed unneeded include. Added enums for
+        TextTrackKind and TextTrackMode. Updated for changes to functions listed above.
+        Added m_mode and m_kind and initialized those data members and some others.
+
+        * html/track/TextTrack.idl: Tweaked formatting. Used ImplementedAs for the kind
+        attribute rather than using a CustomSetter. This preserves the strange behavior
+        where setting kind does nothing when !ENABLE(MEDIA_SOURCE). If we discover we don't
+        need that, then we won't need ImplementedAs any more either.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::dispatchEvent): Use enum instad of keyword.
+        (WebCore::TextTrackCue::isActive): Ditto.
+
+        * html/track/TrackBase.cpp:
+        (WebCore::TrackBase::TrackBase): Removed unneeded initialization that is handled in
+        the data member definition in the header now.
+        (WebCore::MediaTrackBase::MediaTrackBase): Added. Calls through to TrackBase.
+        (WebCore::MediaTrackBase::setKind): Moved to MediaTrackBase from TrackBase, because
+        this isn't needed for text tracks.
+        (WebCore::MediaTrackBase::setKindInternal): Ditto.
+
+        * html/track/TrackBase.h: Use pragma once. Move kind, setKind, isValidKind, defaultKindKeyword,
+        setKindInternal, and m_kind all to a derived class, MediaTrackBase, since TextTrack doesn't need
+        any of those any more. Later we might adopt enumerations more and it's possible the need for
+        MediaTrackBase will go away.
+
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::VideoTrack): Updated to use MediaTrackBase.
+        (WebCore::VideoTrack::setLanguage): Ditto.
+
+        * html/track/VideoTrack.h: Use pragma once. Removed unneeded header include.
+        Derive from MediaTrackBase instead of TrackBase.
+
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::sortedTrackListForMenu): Use enum values instead
+        of keywords.
+        (WebCore::CaptionUserPreferences::textTrackSelectionScore): Ditto.
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::textTrackSelectionScore): Ditto.
+        (WebCore::CaptionUserPreferencesMediaAF::sortedTrackListForMenu): Ditto. Also used
+        kindKeyword since we want a string for logging.
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebPlaybackSessionModelMediaElement::updateLegibleOptions): Ditto.
+
 2016-05-01  Chris Dumez  <cdumez@apple.com>
 
         Pass reference instead of pointer to IDL attribute setters if not nullable

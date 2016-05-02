@@ -24,15 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VideoTrack_h
-#define VideoTrack_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
 #include "ExceptionCode.h"
 #include "TrackBase.h"
 #include "VideoTrackPrivate.h"
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -46,7 +44,7 @@ public:
     virtual void videoTrackSelectedChanged(VideoTrack*) = 0;
 };
 
-class VideoTrack final : public TrackBase, public VideoTrackPrivateClient {
+class VideoTrack final : public MediaTrackBase, public VideoTrackPrivateClient {
 public:
     static Ref<VideoTrack> create(VideoTrackClient* client, PassRefPtr<VideoTrackPrivate> trackPrivate)
     {
@@ -112,5 +110,4 @@ inline VideoTrack* toVideoTrack(TrackBase* track)
 
 } // namespace WebCore
 
-#endif
 #endif

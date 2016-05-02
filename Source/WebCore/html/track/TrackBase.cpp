@@ -26,20 +26,16 @@
 #include "config.h"
 #include "TrackBase.h"
 
-#include "HTMLMediaElement.h"
-
 #if ENABLE(VIDEO_TRACK)
+
+#include "HTMLMediaElement.h"
 
 namespace WebCore {
 
 static int s_uniqueId = 0;
 
 TrackBase::TrackBase(Type type, const AtomicString& id, const AtomicString& label, const AtomicString& language)
-    : m_mediaElement(0)
-#if ENABLE(MEDIA_SOURCE)
-    , m_sourceBuffer(0)
-#endif
-    , m_uniqueId(++s_uniqueId)
+    : m_uniqueId(++s_uniqueId)
     , m_id(id)
     , m_label(label)
     , m_language(language)
@@ -57,15 +53,18 @@ Element* TrackBase::element()
     return m_mediaElement;
 }
 
-void TrackBase::setKind(const AtomicString& kind)
+MediaTrackBase::MediaTrackBase(Type type, const AtomicString& id, const AtomicString& label, const AtomicString& language)
+    : TrackBase(type, id, label, language)
+{
+}
+
+void MediaTrackBase::setKind(const AtomicString& kind)
 {
     setKindInternal(kind);
 }
 
-void TrackBase::setKindInternal(const AtomicString& kind)
+void MediaTrackBase::setKindInternal(const AtomicString& kind)
 {
-    String oldKind = m_kind;
-
     if (isValidKind(kind))
         m_kind = kind;
     else

@@ -70,7 +70,7 @@ InbandTextTrack::InbandTextTrack(ScriptExecutionContext* context, TextTrackClien
 
 InbandTextTrack::~InbandTextTrack()
 {
-    m_private->setClient(0);
+    m_private->setClient(nullptr);
 }
 
 void InbandTextTrack::setPrivate(PassRefPtr<InbandTextTrackPrivate> trackPrivate)
@@ -81,7 +81,7 @@ void InbandTextTrack::setPrivate(PassRefPtr<InbandTextTrackPrivate> trackPrivate
     if (m_private == trackPrivate)
         return;
 
-    m_private->setClient(0);
+    m_private->setClient(nullptr);
     m_private = trackPrivate;
     m_private->setClient(this);
 
@@ -89,22 +89,29 @@ void InbandTextTrack::setPrivate(PassRefPtr<InbandTextTrackPrivate> trackPrivate
     updateKindFromPrivate();
 }
 
-void InbandTextTrack::setMode(const AtomicString& mode)
+void InbandTextTrack::setMode(TextTrackMode mode)
 {
     TextTrack::setMode(mode);
     setModeInternal(mode);
 }
 
-void InbandTextTrack::setModeInternal(const AtomicString& mode)
+static inline InbandTextTrackPrivate::Mode toPrivate(TextTrackMode mode)
 {
-    if (mode == TextTrack::disabledKeyword())
-        m_private->setMode(InbandTextTrackPrivate::Disabled);
-    else if (mode == TextTrack::hiddenKeyword())
-        m_private->setMode(InbandTextTrackPrivate::Hidden);
-    else if (mode == TextTrack::showingKeyword())
-        m_private->setMode(InbandTextTrackPrivate::Showing);
-    else
-        ASSERT_NOT_REACHED();
+    switch (mode) {
+    case TextTrackMode::Disabled:
+        return InbandTextTrackPrivate::Disabled;
+    case TextTrackMode::Hidden:
+        return InbandTextTrackPrivate::Hidden;
+    case TextTrackMode::Showing:
+        return InbandTextTrackPrivate::Showing;
+    }
+    ASSERT_NOT_REACHED();
+    return InbandTextTrackPrivate::Disabled;
+}
+
+void InbandTextTrack::setModeInternal(TextTrackMode mode)
+{
+    m_private->setMode(toPrivate(mode));
 }
 
 bool InbandTextTrack::isClosedCaptions() const
@@ -189,22 +196,22 @@ void InbandTextTrack::updateKindFromPrivate()
 {
     switch (m_private->kind()) {
     case InbandTextTrackPrivate::Subtitles:
-        setKind(TextTrack::subtitlesKeyword());
+        setKind(TextTrackKind::Subtitles);
         break;
     case InbandTextTrackPrivate::Captions:
-        setKind(TextTrack::captionsKeyword());
+        setKind(TextTrackKind::Captions);
         break;
     case InbandTextTrackPrivate::Descriptions:
-        setKind(TextTrack::descriptionsKeyword());
+        setKind(TextTrackKind::Descriptions);
         break;
     case InbandTextTrackPrivate::Chapters:
-        setKind(TextTrack::chaptersKeyword());
+        setKind(TextTrackKind::Chapters);
         break;
     case InbandTextTrackPrivate::Metadata:
-        setKind(TextTrack::metadataKeyword());
+        setKind(TextTrackKind::Metadata);
         break;
     case InbandTextTrackPrivate::Forced:
-        setKind(TextTrack::forcedKeyword());
+        setKind(TextTrackKind::Forced);
         break;
     case InbandTextTrackPrivate::None:
     default:

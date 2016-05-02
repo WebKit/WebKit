@@ -303,7 +303,7 @@ void WebPlaybackSessionModelMediaElement::updateLegibleOptions()
             trackMenuItemSelected = true;
         }
 
-        if (displayMode != MediaControlsHost::automaticKeyword() && track->mode() == TextTrack::showingKeyword()) {
+        if (displayMode != MediaControlsHost::automaticKeyword() && track->mode() == TextTrackMode::Showing) {
             selectedIndex = index;
             trackMenuItemSelected = true;
         }

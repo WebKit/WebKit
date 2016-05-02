@@ -24,17 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioTrack_h
-#define AudioTrack_h
-
-#include "PlatformExportMacros.h"
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
 #include "AudioTrackPrivate.h"
 #include "ExceptionCode.h"
+#include "PlatformExportMacros.h"
 #include "TrackBase.h"
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -47,7 +44,7 @@ public:
     virtual void audioTrackEnabledChanged(AudioTrack*) = 0;
 };
 
-class AudioTrack final : public TrackBase, public AudioTrackPrivateClient {
+class AudioTrack final : public MediaTrackBase, public AudioTrackPrivateClient {
 public:
     static Ref<AudioTrack> create(AudioTrackClient* client, PassRefPtr<AudioTrackPrivate> trackPrivate)
     {
@@ -104,5 +101,4 @@ inline AudioTrack* toAudioTrack(TrackBase* track)
 
 } // namespace WebCore
 
-#endif
 #endif

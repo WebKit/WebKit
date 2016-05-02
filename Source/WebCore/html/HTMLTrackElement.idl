@@ -28,8 +28,8 @@
 ] interface HTMLTrackElement : HTMLElement {
     attribute DOMString kind;
     [Reflect, URL] attribute DOMString src;
-    attribute DOMString srclang;
-    attribute DOMString label;
+    [Reflect] attribute DOMString srclang;
+    [Reflect] attribute DOMString label;
     [Reflect] attribute boolean default;
 
     const unsigned short NONE = 0;

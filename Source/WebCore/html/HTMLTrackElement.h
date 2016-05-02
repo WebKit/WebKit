@@ -23,13 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLTrackElement_h
-#define HTMLTrackElement_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
+
 #include "HTMLElement.h"
 #include "LoadableTextTrack.h"
-#include "TextTrack.h"
 
 namespace WebCore {
 
@@ -39,17 +38,12 @@ class HTMLTrackElement final : public HTMLElement, public TextTrackClient {
 public:
     static Ref<HTMLTrackElement> create(const QualifiedName&, Document&);
 
-    String kind();
-    void setKind(const String&);
+    const AtomicString& kind();
+    void setKind(const AtomicString&);
 
-    String srclang() const;
-    void setSrclang(const String&);
-
-    String label() const;
-    void setLabel(const String&);
-
+    const AtomicString& srclang() const;
+    const AtomicString& label() const;
     bool isDefault() const;
-    void setIsDefault(bool);
 
     enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, TRACK_ERROR = 3 };
     ReadyState readyState();
@@ -68,24 +62,24 @@ private:
     HTMLTrackElement(const QualifiedName&, Document&);
     virtual ~HTMLTrackElement();
 
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    void removedFrom(ContainerNode&) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    void removedFrom(ContainerNode&) final;
 
-    bool isURLAttribute(const Attribute&) const override;
+    bool isURLAttribute(const Attribute&) const final;
 
     void loadTimerFired();
 
     HTMLMediaElement* mediaElement() const;
 
     // TextTrackClient
-    void textTrackModeChanged(TextTrack*) override;
-    void textTrackKindChanged(TextTrack*) override;
-    void textTrackAddCues(TextTrack*, const TextTrackCueList*) override;
-    void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) override;
-    void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>) override;
-    void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) override;
+    void textTrackModeChanged(TextTrack*) final;
+    void textTrackKindChanged(TextTrack*) final;
+    void textTrackAddCues(TextTrack*, const TextTrackCueList*) final;
+    void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) final;
+    void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>) final;
+    void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) final;
 
     LoadableTextTrack& ensureTrack();
     bool canLoadURL(const URL&);
@@ -96,5 +90,4 @@ private:
 
 }
 
-#endif
 #endif

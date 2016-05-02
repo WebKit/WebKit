@@ -838,7 +838,6 @@ sub GetEnumerationImplementationContent
     my $result = "";
     foreach my $enumeration (@$enumerations) {
         my $name = $enumeration->name;
-        next if $codeGenerator->IsStringBasedEnumType($name);
 
         my $className = GetEnumerationClassName($name);
 
@@ -2845,16 +2844,6 @@ sub GenerateImplementation
                 push(@implContent, "    if (UNLIKELY(state->hadException()))\n");
                 push(@implContent, "        return false;\n");
 
-                if ($codeGenerator->IsStringBasedEnumType($type)) {
-                    my @enumValues = $codeGenerator->ValidEnumValues($type);
-                    my @enumChecks = ();
-                    foreach my $enumValue (@enumValues) {
-                        push(@enumChecks, "nativeValue != \"$enumValue\"");
-                    }
-                    push (@implContent, "    if (" . join(" && ", @enumChecks) . ")\n");
-                    push (@implContent, "        return false;\n");
-                }
-
                 if ($codeGenerator->IsEnumType($type)) {
                     push (@implContent, "    if (UNLIKELY(!nativeValue))\n");
                     push (@implContent, "        return false;\n");
@@ -2908,7 +2897,7 @@ sub GenerateImplementation
                     my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
                     if ($codeGenerator->IsTypedArrayType($type) and not $type eq "ArrayBuffer") {
                         push(@arguments, "nativeValue.get()");
-                    } elsif ($codeGenerator->IsEnumType($type) and not $codeGenerator->IsStringBasedEnumType($type)) {
+                    } elsif ($codeGenerator->IsEnumType($type)) {
                         push(@arguments, "nativeValue.value()");
                     } else {
                         push(@arguments, $shouldPassByReference ? "*nativeValue" : "nativeValue");
@@ -3635,49 +3624,6 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
-        } elsif ($codeGenerator->IsStringBasedEnumType($argType)) {
-            $implIncludes{"<runtime/Error.h>"} = 1;
-
-            my $exceptionCheck = sub {
-                my $indent = shift;
-                push(@$outputArray, $indent . "    if (UNLIKELY(state->hadException()))\n");
-                push(@$outputArray, $indent . "        return JSValue::encode(jsUndefined());\n");
-            };
-
-            my $enumValueCheck = sub {
-                my $indent = shift;
-                my @enumValues = $codeGenerator->ValidEnumValues($argType);
-                my @enumChecks = ();
-                my $enums = 0;
-                foreach my $enumValue (@enumValues) {
-                    push(@enumChecks, "${name} != \"$enumValue\"");
-                    if (!$enums) {
-                        $enums = "\\\"$enumValue\\\"";
-                    } else {
-                        $enums = $enums . ", \\\"" . $enumValue . "\\\"";
-                    }
-                }
-                push(@$outputArray, $indent . "    if (" . join(" && ", @enumChecks) . ")\n");
-                push(@$outputArray, $indent . "        return throwArgumentMustBeEnumError(*state, $argsIndex, \"$name\", \"$interfaceName\", $quotedFunctionName, \"$enums\");\n");
-            };
-
-            my $argValue = "state->argument($argsIndex)";
-            if ($parameter->isOptional && defined($parameter->default)) {
-                push(@$outputArray, "    String $name;\n");
-                push(@$outputArray, "    if (${argValue}.isUndefined())\n");
-                push(@$outputArray, "        $name = ASCIILiteral(" . $parameter->default . ");\n");
-                push(@$outputArray, "    else {\n");
-                push(@$outputArray, "        $name = state->uncheckedArgument($argsIndex).toWTFString(state);\n");
-                &$exceptionCheck("    ");
-                &$enumValueCheck("    ");
-                push(@$outputArray, "    }\n");
-            } else {
-                push(@$outputArray, "    // Keep pointer to the JSString in a local so we don't need to ref the String.\n");
-                push(@$outputArray, "    auto* ${name}String = ${argValue}.toString(state);\n");
-                push(@$outputArray, "    auto& $name = ${name}String->value(state);\n");
-                &$exceptionCheck("");
-                &$enumValueCheck("");
-            }
         } elsif ($codeGenerator->IsEnumType($argType)) {
             my $className = GetEnumerationClassName($argType);
             $implIncludes{"<runtime/Error.h>"} = 1;
@@ -4272,7 +4218,6 @@ sub GetNativeType
     my $arrayOrSequenceType = $codeGenerator->GetArrayOrSequenceType($type);
 
     return "Vector<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">" if $arrayOrSequenceType;
-    return "String" if $codeGenerator->IsStringBasedEnumType($type);
     return "auto" if $codeGenerator->IsEnumType($type);
 
     # For all other types, the native type is a pointer with same type name as the IDL type.
@@ -4423,7 +4368,6 @@ sub JSValueToNative
     return "valueToDate(state, $value)" if $type eq "Date";
 
     return "to$type($value)" if $codeGenerator->IsTypedArrayType($type);
-    return "$value.toWTFString(state)" if $codeGenerator->IsStringBasedEnumType($type);
     return "parse" . GetEnumerationClassName($type) . "(*state, $value)" if $codeGenerator->IsEnumType($type);
 
     AddToImplIncludes("JS$type.h", $conditional);

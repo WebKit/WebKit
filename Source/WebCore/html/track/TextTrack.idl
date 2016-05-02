@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-enum TextTrackMode { "disabled",  "hidden",  "showing" };
-enum TextTrackKind { "subtitles",  "captions",  "descriptions",  "chapters", "metadata" };
+enum TextTrackMode { "disabled", "hidden", "showing" };
+enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metadata", "forced" };
 
 [
     Conditional=VIDEO_TRACK,
@@ -33,7 +33,7 @@ enum TextTrackKind { "subtitles",  "captions",  "descriptions",  "chapters", "me
     SkipVTableValidation,
 ] interface TextTrack : EventTarget {
     readonly attribute DOMString id;
-    [CustomSetter] attribute TextTrackKind kind;
+    [ImplementedAs=kindForBindings] attribute TextTrackKind kind;
     readonly attribute DOMString label;
     [CustomSetter] attribute DOMString language;
     readonly attribute DOMString inBandMetadataTrackDispatchType;

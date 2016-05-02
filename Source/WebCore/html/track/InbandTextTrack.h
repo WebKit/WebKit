@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InbandTextTrack_h
-#define InbandTextTrack_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -46,7 +45,7 @@ public:
     bool containsOnlyForcedSubtitles() const override;
     bool isMainProgramContent() const override;
     bool isEasyToRead() const override;
-    void setMode(const AtomicString&) override;
+    void setMode(TextTrackMode) override;
     size_t inbandTrackIndex();
 
     AtomicString inBandMetadataTrackDispatchType() const override;
@@ -56,7 +55,7 @@ public:
 protected:
     InbandTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
-    void setModeInternal(const AtomicString&);
+    void setModeInternal(TextTrackMode);
     void updateKindFromPrivate();
 
     RefPtr<InbandTextTrackPrivate> m_private;
@@ -94,5 +93,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InbandTextTrack)
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(VIDEO_TRACK)
-
-#endif // InbandTextTrack_h
