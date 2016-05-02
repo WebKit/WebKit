@@ -1,3 +1,19 @@
+2016-05-02  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Zooming of docked Web Inspector affects the webpage, but reset to 0 does not
+        https://bugs.webkit.org/show_bug.cgi?id=157234
+        rdar://problem/26027177
+
+        Always prevent default for the zoom keyboard shortcuts to avoid passing the event back to
+        Safari to handle and add explicit beeps when max/min is hit.
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded): Removed setting implicitlyPreventsDefault on zoom keyboard shortcuts.
+        (WebInspector._increaseZoom): Add explicit beep and remove preventDefault call.
+        (WebInspector._decreaseZoom): Ditto.
+
 2016-05-01  Dan Bernstein  <mitz@apple.com>
 
         WebInspectorUI.framework/Versions/A/Resources/Images/Legacy is empty

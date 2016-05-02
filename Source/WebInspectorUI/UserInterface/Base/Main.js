@@ -263,8 +263,6 @@ WebInspector.contentLoaded = function()
 
     this._increaseZoomKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Plus, this._increaseZoom.bind(this));
     this._decreaseZoomKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Minus, this._decreaseZoom.bind(this));
-    this._increaseZoomKeyboardShortcut.implicitlyPreventsDefault = this._decreaseZoomKeyboardShortcut.implicitlyPreventsDefault = false;
-
     this._resetZoomKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "0", this._resetZoom.bind(this));
 
     this._showTabAtIndexKeyboardShortcuts = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, `${i}`, this._showTabAtIndex.bind(this, i)));
@@ -1960,12 +1958,13 @@ WebInspector._increaseZoom = function(event)
     const epsilon = 0.0001;
     const maximumZoom = 2.4;
     let currentZoom = this._zoomFactor();
-    if (currentZoom + epsilon >= maximumZoom)
+    if (currentZoom + epsilon >= maximumZoom) {
+        InspectorFrontendHost.beep();
         return;
+    }
 
     let newZoom = Math.min(maximumZoom, currentZoom + 0.2);
     this._setZoomFactor(newZoom);
-    event.preventDefault();
 };
 
 WebInspector._decreaseZoom = function(event)
@@ -1973,12 +1972,13 @@ WebInspector._decreaseZoom = function(event)
     const epsilon = 0.0001;
     const minimumZoom = 0.6;
     let currentZoom = this._zoomFactor();
-    if (currentZoom - epsilon <= minimumZoom)
+    if (currentZoom - epsilon <= minimumZoom) {
+        InspectorFrontendHost.beep();
         return;
+    }
 
     let newZoom = Math.max(minimumZoom, currentZoom - 0.2);
     this._setZoomFactor(newZoom);
-    event.preventDefault();
 };
 
 WebInspector._resetZoom = function(event)
