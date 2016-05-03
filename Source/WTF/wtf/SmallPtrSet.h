@@ -147,7 +147,7 @@ public:
     iterator begin() const
     {
         iterator it;
-        it.m_index = -1;
+        it.m_index = std::numeric_limits<unsigned>::max();
         it.m_capacity = m_capacity;
         if (isSmall())
             it.m_buffer = const_cast<void**>(m_smallStorage);
