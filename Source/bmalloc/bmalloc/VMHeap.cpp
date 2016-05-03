@@ -68,7 +68,7 @@ void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageC
     // guarantee that we can service aligned allocation requests at equal
     // and smaller powers of two.
     size_t vmPageSize = roundUpToMultipleOf(bmalloc::vmPageSize(), pageSize);
-    size_t metadataSize = roundUpToMultipleOfSloppy(vmPageSize, sizeof(Chunk));
+    size_t metadataSize = roundUpToMultipleOfNonPowerOfTwo(vmPageSize, sizeof(Chunk));
 
     Object begin(chunk, metadataSize);
     Object end(chunk, chunkSize);

@@ -101,7 +101,7 @@ template<typename T> inline T divideRoundingUp(T numerator, T denominator)
     return (numerator + denominator - 1) / denominator;
 }
 
-template<typename T> inline T roundUpToMultipleOfSloppy(size_t divisor, T x)
+template<typename T> inline T roundUpToMultipleOfNonPowerOfTwo(size_t divisor, T x)
 {
     return divideRoundingUp(x, divisor) * divisor;
 }
