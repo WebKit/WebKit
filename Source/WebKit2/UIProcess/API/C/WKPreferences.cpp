@@ -1540,13 +1540,3 @@ bool WKPreferencesGetDownloadAttributeEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->downloadAttributeEnabled();
 }
-
-void WKPreferencesSetCSSGridLayoutEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setCSSGridLayoutEnabled(flag);
-}
-
-bool WKPreferencesGetCSSGridLayoutEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->cssGridLayoutEnabled();
-}

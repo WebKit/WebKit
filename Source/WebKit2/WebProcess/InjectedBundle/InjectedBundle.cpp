@@ -219,7 +219,7 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
-    if (preference == "WebKitCSSGridLayoutEnabled")
+    if (preference == "WebKitExperimentalCSSGridLayoutEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(enabled);
 #endif
 

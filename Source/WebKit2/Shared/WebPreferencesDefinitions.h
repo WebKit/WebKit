@@ -278,10 +278,15 @@
 #define FOR_EACH_WEBKIT_DEBUG_UINT32_PREFERENCE(macro) \
     macro(VisibleDebugOverlayRegions, visibleDebugOverlayRegions, UInt32, uint32_t, 0, "", "")
 
+// Remember to provide the last two parameters for all experimental features. They
+// are the text exposed to the user from the WebKit client. Also note that the key
+// should be prefixed with "experimental" so that it doesn't clash if/when the feature
+// becomes stable.
+
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
     macro(ExperimentalShadowDOMEnabled, experimentalShadowDOMEnabled, Bool, bool, false, "Shadow DOM", "Support for the Shadow DOM feature") \
     macro(ExperimentalWebGL2Enabled, experimentalWebGL2Enabled, Bool, bool, false, "WebGL 2.0", "Prototype WebGL 2 Support") \
-    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, true, "", "") \
+    macro(ExperimentalCSSGridLayoutEnabled, experimentalCSSGridLayoutEnabled, Bool, bool, true, "CSS Grid Layout", "CSS Grid Layout") \
     \
 
 #if PLATFORM(COCOA)

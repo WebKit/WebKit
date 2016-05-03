@@ -1,3 +1,30 @@
+2016-05-03  Dean Jackson  <dino@apple.com>
+
+        CSS Grid should be an experimental feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=157327
+        <rdar://problem/26075147>
+
+        Reviewed by Anders Carlsson.
+
+        The CSS Grid Layout runtime flag was exposed by
+        a WebKit preference. It was in the experimental
+        section but was missing the "Experimental" prefix.
+
+        It was also missing the human readable description.
+
+        Lastly, there is no need for the C API for experimental
+        features.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCSSGridLayoutEnabled): Deleted.
+        (WKPreferencesGetCSSGridLayoutEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-05-03  Alex Christensen  <achristensen@webkit.org>
 
         Remove firing assertion when redirecting

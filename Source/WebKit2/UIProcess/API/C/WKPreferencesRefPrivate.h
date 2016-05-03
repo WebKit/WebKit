@@ -431,10 +431,6 @@ WK_EXPORT bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetDownloadAttributeEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetDownloadAttributeEnabled(WKPreferencesRef);
 
-// Defaults to true
-WK_EXPORT void WKPreferencesSetCSSGridLayoutEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetCSSGridLayoutEnabled(WKPreferencesRef);
-
 #ifdef __cplusplus
 }
 #endif
