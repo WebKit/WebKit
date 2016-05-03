@@ -99,8 +99,6 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* s
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     Blob* blob = JSBlob::toWrapped(state->argument(0));
-    if (UNLIKELY(state->hadException()))
-        return JSValue::encode(jsUndefined());
     if (UNLIKELY(!blob))
         return throwVMTypeError(state);
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*blob);

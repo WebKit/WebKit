@@ -1,3 +1,29 @@
+2016-05-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop some unnecessary exception checking in the generated bindings
+        https://bugs.webkit.org/show_bug.cgi?id=157299
+
+        Reviewed by Darin Adler.
+
+        Drop some unnecessary exception checking in the generated bindings.
+        Only do a check for state->hadException() after converting a JSValue
+        to a native value when necessary. Update JSValueToNative() to
+        indicate the caller if converting to the native value may throw an
+        exception.
+
+        This gets rid of a lot of unnecessary branching in the bindings.
+
+        No new tests, no intended web-exposed behavior change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        (JSValueToNative):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+
 2016-05-03  Brady Eidson  <beidson@apple.com>
 
         Add/refactor isolatedCopy methods for 3 IDB classes.
