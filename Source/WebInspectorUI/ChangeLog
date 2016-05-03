@@ -1,5 +1,16 @@
 2016-05-02  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Unexpected "Script Element #" resources in Debugger Sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=157280
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._addScript):
+        Don't include Script Element resources in the debugger sidebar by default.
+
+2016-05-02  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Prefer "Console Evaluation" to "Eval Code" if we know it was a console evaluation
         https://bugs.webkit.org/show_bug.cgi?id=157278
 

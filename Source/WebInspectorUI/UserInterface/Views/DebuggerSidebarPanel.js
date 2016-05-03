@@ -451,6 +451,10 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (!script.url && !script.sourceURL)
             return null;
 
+        // In general, do not show dynamically added script elements.
+        if (script.dynamicallyAddedScriptElement && !script.sourceURL)
+            return null;
+
         // Don't add breakpoints if the script is represented by a Resource. They were
         // already added by _resourceAdded.
         if (script.resource)
