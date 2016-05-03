@@ -1,3 +1,11 @@
+2016-05-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop outdated layout test after r200375.
+
+        * fast/workers/resources/worker-replace-self.js: Removed.
+        * fast/workers/worker-replace-self-expected.txt: Removed.
+        * fast/workers/worker-replace-self.html: Removed.
+
 2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         Unreviewed GTK+ gardening.
