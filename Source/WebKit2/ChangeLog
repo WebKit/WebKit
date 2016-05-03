@@ -1,3 +1,14 @@
+2016-05-03  Daniel Bates  <dabates@apple.com>
+
+        Temporary workaround for Apple Internal builds
+        <rdar://problem/25992976>
+
+        For Apple Internal builds treat error code errSecCSGuestInvalid as if it were error code errSecCSUnsigned.
+        We will look to remove this workaround in the fix for <rdar://problem/26075714>.
+
+        * Shared/mac/CodeSigning.mm:
+        (WebKit::secCodeSigningIdentifier):
+
 2016-05-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r199259 and r200161.

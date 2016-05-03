@@ -79,6 +79,11 @@ static String secCodeSigningIdentifier(SecCodeRef code)
     OSStatus errorCode = SecCodeCheckValidity(code, kSecCSDefaultFlags, signingRequirement.get());
     if (errorCode == errSecCSUnsigned || errorCode == errSecCSReqFailed)
         return String(); // Unsigned or signed by a third-party
+#if USE(APPLE_INTERNAL_SDK)
+    // FIXME: Temporary workaround for <rdar://problem/25992976>. We need to fix <rdar://problem/25697779>.
+    if (errorCode == errSecCSGuestInvalid)
+        return String();
+#endif
     RELEASE_ASSERT_WITH_MESSAGE(!errorCode, "SecCodeCheckValidity() failed with error: %ld", static_cast<long>(errorCode));
     String codeSigningIdentifier;
     RetainPtr<CFDictionaryRef> signingInfo = secCodeSigningInformation(code);
