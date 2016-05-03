@@ -137,7 +137,7 @@ unsigned PropertySetCSSStyleDeclaration::length() const
 String PropertySetCSSStyleDeclaration::item(unsigned i) const
 {
     if (i >= m_propertySet->propertyCount())
-        return "";
+        return String();
     return m_propertySet->propertyAt(i).cssName();
 }
 

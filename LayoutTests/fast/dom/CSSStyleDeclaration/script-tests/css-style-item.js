@@ -7,7 +7,8 @@ var style = element.style;
 
 shouldEvaluateTo('style.length', 1);
 shouldBeEqualToString('style[0]', 'color');
-shouldBeEqualToString('style[1]', '');
+shouldBeEqualToString('style.item(1)', '');
+shouldBeUndefined('style[1]');
 shouldBeUndefined('style[-1]')
 
 document.documentElement.removeChild(element);

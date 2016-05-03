@@ -1,3 +1,20 @@
+2016-05-02  Chris Dumez  <cdumez@apple.com>
+
+        Indexing CSSStyleDeclaration object with out-of-range index should return undefined
+        https://bugs.webkit.org/show_bug.cgi?id=157283
+
+        Reviewed by Darin Adler.
+
+        Rebaseline a couple of existing tests due to the slight behavior change.
+        Also add a new layout test for more extensive testing.
+
+        * fast/dom/CSSStyleDeclaration/css-computed-style-item-expected.txt:
+        * fast/dom/CSSStyleDeclaration/css-style-item-expected.txt:
+        * fast/dom/CSSStyleDeclaration/script-tests/css-computed-style-item.js:
+        * fast/dom/CSSStyleDeclaration/script-tests/css-style-item.js:
+        * fast/dom/indexed-getters-returning-string-expected.txt: Added.
+        * fast/dom/indexed-getters-returning-string.html: Added.
+
 2016-05-02  Antoine Quint  <graouts@apple.com>
 
         Specifying a longhand property should not serialize to a shorthand property

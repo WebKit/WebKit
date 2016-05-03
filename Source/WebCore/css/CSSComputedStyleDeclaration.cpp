@@ -3873,24 +3873,24 @@ unsigned CSSComputedStyleDeclaration::length() const
 String CSSComputedStyleDeclaration::item(unsigned i) const
 {
     if (i >= length())
-        return emptyString();
+        return String();
     
     if (i < numComputedProperties)
         return getPropertyNameString(computedProperties[i]);
     
     Node* node = m_node.get();
     if (!node)
-        return emptyString();
+        return String();
 
     auto* style = node->computedStyle(m_pseudoElementSpecifier);
     if (!style)
-        return emptyString();
+        return String();
     
     unsigned index = i - numComputedProperties;
     
     const auto& customProperties = style->customProperties();
     if (index >= customProperties.size())
-        return emptyString();
+        return String();
     
     Vector<String, 4> results;
     copyKeysToVector(customProperties, results);

@@ -1,3 +1,29 @@
+2016-05-02  Chris Dumez  <cdumez@apple.com>
+
+        Indexing CSSStyleDeclaration object with out-of-range index should return undefined
+        https://bugs.webkit.org/show_bug.cgi?id=157283
+
+        Reviewed by Darin Adler.
+
+        Indexing CSSStyleDeclaration object with out-of-range index should return undefined,
+        as per:
+        - http://heycam.github.io/webidl/#idl-indexed-properties
+        - http://heycam.github.io/webidl/#getownproperty-guts
+
+        WebKit was incorrectly returning the empty string in this case. We however, still
+        return the empty string if calling the indexed property getter via item(), as is
+        expected.
+
+        The new behavior matches Firefox and the Web IDL specification. Chrome returns the
+        empty string in this case though.
+
+        Test: fast/dom/indexed-getters-returning-string.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::item):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::item):
+
 2016-05-02  Antoine Quint  <graouts@apple.com>
 
         Specifying a longhand property should not serialize to a shorthand property
