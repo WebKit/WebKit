@@ -1,3 +1,12 @@
+2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed follow-up testapi fix after r200355.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        Revert back to non-enumerable. This matches our older behavior,
+        we can decide to make this Enumerable later if needed.
+
 2016-05-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reflect.toString() should be [object Object] not [object Reflect]

@@ -13,7 +13,7 @@ shouldBe("console", "console");
 var consoleDescriptor = Object.getOwnPropertyDescriptor(window, "console");
 shouldBeTrue('consoleDescriptor.configurable');
 shouldBeTrue('consoleDescriptor.writable');
-shouldBeTrue('consoleDescriptor.enumerable');
+shouldBeFalse('consoleDescriptor.enumerable');
 
 // Console methods don't care what their this object is.
 console.log("log message");

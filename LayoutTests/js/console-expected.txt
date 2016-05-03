@@ -14,7 +14,7 @@ PASS Object.getPrototypeOf(console) is Object.getPrototypeOf({})
 PASS console is console
 PASS consoleDescriptor.configurable is true
 PASS consoleDescriptor.writable is true
-PASS consoleDescriptor.enumerable is true
+PASS consoleDescriptor.enumerable is false
 
 console.debug
 PASS typeof console.debug is "function"

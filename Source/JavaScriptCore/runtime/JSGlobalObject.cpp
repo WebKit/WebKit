@@ -497,7 +497,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     ReflectObject* reflectObject = ReflectObject::create(vm, this, ReflectObject::createStructure(vm, this, m_objectPrototype.get()));
     putDirectWithoutTransition(vm, vm.propertyNames->Reflect, reflectObject, DontEnum);
 
-    putDirectWithoutTransition(vm, vm.propertyNames->console, ConsoleObject::create(vm, this, ConsoleObject::createStructure(vm, this, m_objectPrototype.get())));
+    putDirectWithoutTransition(vm, vm.propertyNames->console, ConsoleObject::create(vm, this, ConsoleObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);
 
     JSTypedArrayViewConstructor* typedArraySuperConstructor = JSTypedArrayViewConstructor::create(vm, this, JSTypedArrayViewConstructor::createStructure(vm, this, m_functionPrototype.get()), typedArrayProto, speciesGetterSetter);
     typedArrayProto->putDirectWithoutTransition(vm, vm.propertyNames->constructor, typedArraySuperConstructor, DontEnum);

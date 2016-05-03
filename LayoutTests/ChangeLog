@@ -1,3 +1,11 @@
+2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed follow-up testapi fix after r200355.
+
+        * js/console-expected.txt:
+        * js/console.html:
+        Make window.console non-enumerable.
+
 2016-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Update drag and drop tests bug reference.
