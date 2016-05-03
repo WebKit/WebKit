@@ -1,3 +1,20 @@
+2016-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't run transitions to/from 'auto' values
+        https://bugs.webkit.org/show_bug.cgi?id=38243
+        rdar://problem/20904225
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac-wk2/transitions/default-timing-function-expected.txt: New baseline.
+        * transitions/default-timing-function.html: Set explicit start value.
+        * transitions/interrupted-all-transition.html: Set explicit start value.
+        * transitions/lengthsize-transition-to-from-auto-expected.txt: Added.
+        * transitions/lengthsize-transition-to-from-auto.html: Added.
+        * transitions/transition-to-from-auto-expected.txt: Added.
+        * transitions/transition-to-from-auto.html: Added.
+        * transitions/zero-duration-in-list.html: Set explicit start value.
+
 2016-05-02  Chris Dumez  <cdumez@apple.com>
 
         Indexing CSSStyleDeclaration object with out-of-range index should return undefined

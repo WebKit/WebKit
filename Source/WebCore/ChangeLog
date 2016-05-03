@@ -1,3 +1,24 @@
+2016-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't run transitions to/from 'auto' values
+        https://bugs.webkit.org/show_bug.cgi?id=38243
+        rdar://problem/20904225
+
+        Reviewed by Dean Jackson.
+        
+        The specified behavior of transitions and animations is to not animate when either endpoint is 'auto'.
+        Previously, we were treating 'auto' as zero and interpolating, which caused unwanted animations
+        on fandango.com, airbnb.com and others.
+        
+        Fix by having blend() return the from value if progress is 0, otherwise the to value. The
+        isZero() check can be removed, since this was effectively picking up auto value for one endpoint.
+
+        Tests: transitions/lengthsize-transition-to-from-auto.html
+               transitions/transition-to-from-auto.html
+
+        * platform/Length.cpp:
+        (WebCore::blend):
+
 2016-05-02  Chris Dumez  <cdumez@apple.com>
 
         Indexing CSSStyleDeclaration object with out-of-range index should return undefined
