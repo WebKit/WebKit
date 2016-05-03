@@ -1,3 +1,17 @@
+2016-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] AirPlay fails if target is set before AVPlayer has been created
+        https://bugs.webkit.org/show_bug.cgi?id=157147
+        <rdar://problem/24197592>
+
+        Reviewed by Dean Jackson.
+
+        No new tests, it won't be possible to test this until 
+        https://bugs.webkit.org/show_bug.cgi?id=157290 has been fixed.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+
 2016-05-02  Brady Eidson  <beidson@apple.com>
 
         Const-ify some IDB code.
