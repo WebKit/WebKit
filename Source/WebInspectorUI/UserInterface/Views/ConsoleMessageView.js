@@ -234,9 +234,10 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             case WebInspector.ConsoleMessage.MessageType.Trace:
                 var args = [WebInspector.UIString("Trace")];
                 if (this._message.parameters) {
-                    if (this._message.parameters[0].type === "string")
-                        args = [WebInspector.UIString("Trace: %s")].concat(this._message.parameters);
-                    else
+                    if (this._message.parameters[0].type === "string") {
+                        var prefixedFormatString = WebInspector.UIString("Trace: %s").format(this._message.parameters[0].description);
+                        args = [prefixedFormatString].concat(this._message.parameters.slice(1));
+                    } else
                         args = args.concat(this._message.parameters);
                 }
                 this._appendFormattedArguments(element, args);
@@ -245,9 +246,10 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             case WebInspector.ConsoleMessage.MessageType.Assert:
                 var args = [WebInspector.UIString("Assertion Failed")];
                 if (this._message.parameters) {
-                    if (this._message.parameters[0].type === "string")
-                        args = [WebInspector.UIString("Assertion Failed: %s")].concat(this._message.parameters);
-                    else
+                    if (this._message.parameters[0].type === "string") {
+                        var prefixedFormatString = WebInspector.UIString("Assertion Failed: %s").format(this._message.parameters[0].description);
+                        args = [prefixedFormatString].concat(this._message.parameters.slice(1));
+                    } else
                         args = args.concat(this._message.parameters);
                 }
                 this._appendFormattedArguments(element, args);

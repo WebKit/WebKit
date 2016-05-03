@@ -1,3 +1,15 @@
+2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Allow format specifiers in console.assert and console.trace
+        https://bugs.webkit.org/show_bug.cgi?id=157295
+        <rdar://problem/26056039>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendMessageTextAndArguments):
+        Treat the first argument as a format specifier.
+
 2016-05-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r200337.
