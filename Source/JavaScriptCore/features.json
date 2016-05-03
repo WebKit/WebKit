@@ -27,6 +27,22 @@
         "keywords": ["Intl", "Collator", "ECMA-402"]
     },
     {
+        "name": "Resource Timing",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "http://www.w3.org/TR/resource-timing/",
+        "webkit-url": "https://webkit.org/b/61138",
+        "keywords": ["resourcetiming","resource timing","rsrc"], 
+        "description": "Provides detailed timing information to JavaScript for sub-resources loaded by the page.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "email": "web-evangelist@apple.com",
+            "twitter": "@jonathandavis"
+        }
+    },
+    {
         "name": "Web Animations",
         "status": {
             "status": "Under Consideration"

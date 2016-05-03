@@ -1,3 +1,12 @@
+2016-05-02  Jon Davis  <jond@apple.com>
+
+        Add Resource Timing entry to the Feature Status page.
+        https://bugs.webkit.org/show_bug.cgi?id=157285
+
+        Reviewed by Timothy Hatcher.
+
+        * features.json:
+
 2016-05-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Make console a namespace object (like Math/JSON), allowing functions to be called unbound
