@@ -1,3 +1,22 @@
+2016-05-03  Alex Christensen  <achristensen@webkit.org>
+
+        Remove firing assertion when redirecting
+        https://bugs.webkit.org/show_bug.cgi?id=155800
+        rdar://25299194
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:willCacheResponse:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        With NSURLConnection, we stopped getting delegate callbacks once the delegate is destroyed, and everything was cancelled.
+        With NSURLSession we continue getting delegate callbacks because the session's delegate is not destroyed after each load.
+        As documented in NSURLSession.h: "In some cases, the task may signal other work before it acknowledges the cancelation."
+        In the cases where we cancel a load, delete the NetworkLoad and corresponding NetworkDataTask, we want to call all
+        completion handlers indicating that we really want to cancel instead of asserting.
+
 2016-05-02  Darin Adler  <darin@apple.com>
 
         Change IDL enumerations to be nested in their C++ class instead of at WebCore namespace level

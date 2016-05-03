@@ -121,10 +121,8 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
             completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
             Block_release(completionHandlerCopy);
         });
-    } else {
-        ASSERT_NOT_REACHED();
+    } else
         completionHandler(nil);
-    }
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask willCacheResponse:(NSCachedURLResponse *)proposedResponse completionHandler:(void (^)(NSCachedURLResponse * _Nullable cachedResponse))completionHandler
@@ -168,10 +166,8 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
             Block_release(completionHandlerCopy);
         };
         networkDataTask->didReceiveChallenge(challenge, challengeCompletionHandler);
-    } else {
-        ASSERT_NOT_REACHED();
-        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
-    }
+    } else
+        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
