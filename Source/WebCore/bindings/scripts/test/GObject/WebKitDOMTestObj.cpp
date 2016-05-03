@@ -2655,7 +2655,7 @@ void webkit_dom_test_obj_set_strict_type_checking_attribute(WebKitDOMTestObj* se
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(value));
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::TestObj* convertedValue = WebKit::core(value);
-    item->setStrictTypeCheckingAttribute(*convertedValue);
+    item->setStrictTypeCheckingAttribute(convertedValue);
 }
 
 glong webkit_dom_test_obj_get_with_script_state_attribute(WebKitDOMTestObj* self)

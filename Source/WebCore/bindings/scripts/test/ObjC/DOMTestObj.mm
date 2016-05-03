@@ -544,9 +544,7 @@
     WebCore::JSMainThreadNullState state;
     ASSERT(newStrictTypeCheckingAttribute);
 
-    if (!core(newStrictTypeCheckingAttribute))
-        WebCore::raiseTypeErrorException();
-    IMPL->setStrictTypeCheckingAttribute(*core(newStrictTypeCheckingAttribute));
+    IMPL->setStrictTypeCheckingAttribute(core(newStrictTypeCheckingAttribute));
 }
 
 - (int)customAttr

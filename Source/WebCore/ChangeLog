@@ -1,5 +1,34 @@
 2016-05-03  Chris Dumez  <cdumez@apple.com>
 
+        Optimize [StrictTypeChecking] on IDL attributes
+        https://bugs.webkit.org/show_bug.cgi?id=157321
+
+        Reviewed by Geoffrey Garen.
+
+        Optimize [StrictTypeChecking] on IDL attributes:
+        - Only generate extra code for nullable attributes because for non-nullable
+          attributes, JSXXX::toWrapped() will return null in case of a bad input
+          type. We will then throw a TypeError when null-checking it already.
+        - After the JSValue::isNullOrUndefined() check, avoid calling
+          JSXXX::toWrapped() and set nativeValue to nullptr directly.
+        - Drop the check for JSValue::inherits(JSXXX::info()) and just do a null
+          check on the value returned by JSXXX::toWrapped(). toWrapped() already
+          does a JSValue::inherits(JSXXX::info() check. Since we only call
+          toWrapped() if the JSValue is not null/undefined, a null return value
+          always indicates a bad input type.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_set_strict_type_checking_attribute):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjStrictTypeCheckingAttribute):
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj setStrictTypeCheckingAttribute:]):
+        * bindings/scripts/test/TestObj.idl:
+
+2016-05-03  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r199259 and r200161.
 
         Seems to have caused a ~1.2% PLT regression on iOS

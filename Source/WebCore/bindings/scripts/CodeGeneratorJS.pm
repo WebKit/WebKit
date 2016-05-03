@@ -2855,19 +2855,27 @@ sub GenerateImplementation
                 # is thrown rather than silently passing NULL to the C++ code.
                 # Per the Web IDL and ECMAScript specifications, incoming values can always be converted to
                 # both strings and numbers, so do not throw TypeError if the attribute is of these types.
-                if ($codeGenerator->IsWrapperType($type) && $attribute->signature->extendedAttributes->{"StrictTypeChecking"}) {
-                    $implIncludes{"<runtime/Error.h>"} = 1;
-                    push(@implContent, "    if (UNLIKELY(!value.isUndefinedOrNull() && !value.inherits(JS${type}::info()))) {\n");
-                    push(@implContent, "        throwAttributeTypeError(*state, \"$interfaceName\", \"$name\", \"$type\");\n");
-                    push(@implContent, "        return false;\n");
-                    push(@implContent, "    };\n");
-                }
-
                 my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $attribute->signature, "value", $attribute->signature->extendedAttributes->{"Conditional"});
-                push(@implContent, "    " . GetNativeTypeFromSignature($attribute->signature) . " nativeValue = $nativeValue;\n");
-                if ($mayThrowException) {
-                    push(@implContent, "    if (UNLIKELY(state->hadException()))\n");
-                    push(@implContent, "        return false;\n");
+                if ($codeGenerator->IsWrapperType($type) && $attribute->signature->extendedAttributes->{"StrictTypeChecking"} && $attribute->signature->isNullable) {
+                    $implIncludes{"<runtime/Error.h>"} = 1;
+                    push(@implContent, "    " . GetNativeTypeFromSignature($attribute->signature) . " nativeValue = nullptr;\n");
+                    push(@implContent, "    if (!value.isUndefinedOrNull()) {\n");
+                    push(@implContent, "        nativeValue = $nativeValue;\n");
+                    if ($mayThrowException) {
+                        push(@implContent, "    if (UNLIKELY(state->hadException()))\n");
+                        push(@implContent, "        return false;\n");
+                    }
+                    push(@implContent, "        if (UNLIKELY(!nativeValue)) {\n");
+                    push(@implContent, "            throwAttributeTypeError(*state, \"$interfaceName\", \"$name\", \"$type\");\n");
+                    push(@implContent, "            return false;\n");
+                    push(@implContent, "        }\n");
+                    push(@implContent, "    }\n");
+                } else {
+                    push(@implContent, "    " . GetNativeTypeFromSignature($attribute->signature) . " nativeValue = $nativeValue;\n");
+                    if ($mayThrowException) {
+                        push(@implContent, "    if (UNLIKELY(state->hadException()))\n");
+                        push(@implContent, "        return false;\n");
+                    }
                 }
 
                 if ($codeGenerator->IsEnumType($type)) {

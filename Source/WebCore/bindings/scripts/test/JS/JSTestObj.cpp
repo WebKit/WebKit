@@ -3090,16 +3090,15 @@ bool setJSTestObjStrictTypeCheckingAttribute(ExecState* state, EncodedJSValue th
         return throwSetterTypeError(*state, "TestObj", "strictTypeCheckingAttribute");
     }
     auto& impl = castedThis->wrapped();
-    if (UNLIKELY(!value.isUndefinedOrNull() && !value.inherits(JSTestObj::info()))) {
-        throwAttributeTypeError(*state, "TestObj", "strictTypeCheckingAttribute", "TestObj");
-        return false;
-    };
-    TestObj* nativeValue = JSTestObj::toWrapped(value);
-    if (UNLIKELY(!nativeValue)) {
-        throwVMTypeError(state);
-        return false;
+    TestObj* nativeValue = nullptr;
+    if (!value.isUndefinedOrNull()) {
+        nativeValue = JSTestObj::toWrapped(value);
+        if (UNLIKELY(!nativeValue)) {
+            throwAttributeTypeError(*state, "TestObj", "strictTypeCheckingAttribute", "TestObj");
+            return false;
+        }
     }
-    impl.setStrictTypeCheckingAttribute(*nativeValue);
+    impl.setStrictTypeCheckingAttribute(nativeValue);
     return true;
 }
 

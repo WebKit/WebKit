@@ -137,7 +137,7 @@ enum TestConfidence { "high", "kinda-low" };
     [SetterRaisesException] attribute DOMString stringAttrWithSetterException;
 
     // Strict type checking.
-    [StrictTypeChecking] attribute TestObj strictTypeCheckingAttribute;
+    [StrictTypeChecking] attribute TestObj? strictTypeCheckingAttribute;
 
     // 'Custom' extended attribute
     [Custom] attribute long            customAttr;
