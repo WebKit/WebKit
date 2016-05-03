@@ -1,3 +1,11 @@
+2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        Unreviewed GTK+ gardening.
+
+        Adding a platform-specific expectations file for aria-text-role.html.
+
+        * platform/gtk/accessibility/aria-text-role-expected.txt: Added.
+
 2016-05-03  Pranjal Jumde  <pjumde@apple.com>
 
         WorkerGlobalScope's self, location and navigator attributes should not be replaceable
