@@ -1044,7 +1044,8 @@ sub FunctionUsedToRaiseException {
         || $functionName eq "webkit_dom_range_get_collapsed"
         || $functionName eq "webkit_dom_range_get_end_offset"
         || $functionName eq "webkit_dom_range_get_start_offset"
-        || $functionName eq "webkit_dom_range_to_string";
+        || $functionName eq "webkit_dom_range_to_string"
+        || $functionName eq "webkit_dom_tree_walker_set_current_node";
 }
 
 sub FunctionUsedToNotRaiseException {

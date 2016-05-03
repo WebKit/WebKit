@@ -1,5 +1,14 @@
 2016-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GObject DOM bindings API break after r200316.
+
+        webkit_dom_tree_walker_set_current_node no longer raises exceptions after r200316, so mark it accordingly.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (FunctionUsedToRaiseException):
+
+2016-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [OpenType] OpenTypeVerticalData object should not be created if the font is not OpenType
         https://bugs.webkit.org/show_bug.cgi?id=157172
 
