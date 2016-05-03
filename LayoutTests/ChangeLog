@@ -1,3 +1,34 @@
+2016-05-02  Antoine Quint  <graouts@apple.com>
+
+        Specifying a longhand property should not serialize to a shorthand property
+        https://bugs.webkit.org/show_bug.cgi?id=157180
+
+        Reviewed by Dean Jackson.
+
+        A fair few tests relied on reading from a shorthand value when it was incorrect
+        to produce one, so we fix those incorrect assertions. We also add a new test that
+        goes through all the longhand properties for a given shorthand property and checks
+        that none of the longhand properties will yield a shorthand value.
+
+        * cssom/cssvalue-comparison-expected.txt:
+        * cssom/cssvalue-comparison.html:
+        * fast/css/background-position-serialize-expected.txt:
+        * fast/css/background-position-serialize.html:
+        * fast/css/no-shorthand-with-incomplete-longhands-expected.txt: Added.
+        * fast/css/no-shorthand-with-incomplete-longhands.html: Added.
+        * fast/css/remove-shorthand-expected.txt:
+        * fast/css/script-tests/image-set-setting.js:
+        (testComputedStyle):
+        * fast/css/uri-token-parsing-expected.txt:
+        * fast/css/uri-token-parsing.html:
+        * fast/css/webkit-mask-crash-implicit-expected.txt:
+        * fast/css/webkit-mask-crash-implicit.html:
+        * fast/dom/Element/setAttributeNode-for-existing-attribute.html:
+        * fast/dom/background-shorthand-csstext-expected.txt:
+        * fast/dom/background-shorthand-csstext.html:
+        * http/tests/security/contentSecurityPolicy/inline-style-allowed-while-cloning-objects-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-style-allowed-while-cloning-objects.html:
+
 2016-05-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Make console a namespace object (like Math/JSON), allowing functions to be called unbound

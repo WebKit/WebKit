@@ -35,7 +35,7 @@ function run() {
 
    var tests = [ {"width" : ["20%", "2em", "2rem", "20px", "2cm", "20mm", "4in", "20pt", "10pc", "6vw", "6vh", "4vmin", "-webkit-calc(-100px + 100%)"]}, // lengths, calc
                   {"-webkit-transform" : ["rotate(15deg)", "rotate(1.55rad)", "rotate(200grad)", "rotate(0.5turn)"]}, // angle
-                  {"background" : ["url(dummy://test.png)", "url(dummy://green.png)"]}, // uri
+                  {"background-image" : ["url(dummy://test.png)", "url(dummy://green.png)"]}, // uri
                   {"font-weight" : ["bold", "inherit"]}, // ident
                   {"content" : ["counter(a)", "counters(a, '.')"]}, // counter
                   {"content" : ["attr(a)", "attr(p)"]}, // attr
@@ -49,9 +49,9 @@ function run() {
                   {"border-image-slice" : ["1 2 3 4", "2 3 4 5"]}, // border image slice
                   {"cursor" : ["url(resources/greenbox.png) 0 0, pointer", "url(resources/cursor.png) 1 1, wait"]}, // cursor
                   {"font" : ["italic bold 12px/30px arial", "italic bold 8px/16px helvetica"]}, // font
-                  {"background" : ["-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))", "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))"]}, // gradients
-                  {"background" : ["radial-gradient(circle, #ccc, #000)"]}, // gradients
-                  {"background" : ["linear-gradient(#000, #234)", "linear-gradient(to top, #000, #234)"]}, // gradients
+                  {"background-image" : ["-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))", "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))"]}, // gradients
+                  {"background-image" : ["radial-gradient(circle, #ccc, #000)"]}, // gradients
+                  {"background-image" : ["linear-gradient(#000, #234)", "linear-gradient(to top, #000, #234)"]}, // gradients
                   {"background-image" : ["-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)", "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)"]}, // crossfade
                   {"-webkit-box-reflect" : ["below 10px", "below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(10, 55, 234, 1)))"]}, // reflect
                   {"-webkit-box-shadow" : ["0 -20px 10px red, 0 20px 10px blue", "0 20px 10px blue", "5px 5px 5px rgba(0, 0, 0, 0.3)"]}, // shadow

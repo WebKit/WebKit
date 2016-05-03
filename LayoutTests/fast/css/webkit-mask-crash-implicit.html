@@ -9,9 +9,9 @@
 <script>
 if (window.internals)
     testRunner.dumpAsText();
-shouldBeEqualToString("document.styleSheets[1].rules[0].style.cssText", "-webkit-mask-repeat: repeat-x; -webkit-mask-repeat-y: inherit;");
+shouldBeEqualToString("document.styleSheets[1].rules[0].style.cssText", "-webkit-mask-repeat-x: repeat; -webkit-mask-repeat-y: inherit;");
 shouldBeEqualToString("document.styleSheets[1].rules[0].style.getPropertyValue('-webkit-mask')", "");
-shouldBeEqualToString("document.styleSheets[1].rules[0].style.getPropertyValue('-webkit-mask-repeat')", "repeat inherit");
+shouldBeEqualToString("document.styleSheets[1].rules[0].style.getPropertyValue('-webkit-mask-repeat')", "inherit");
 </script>
 </head>
 <body>

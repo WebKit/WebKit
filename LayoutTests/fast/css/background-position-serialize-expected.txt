@@ -1,5 +1,5 @@
 t.style.backgroundPositionX = '5%';
-PASS: t.style.backgroundPosition should be 5% and is.
+PASS: t.style.backgroundPosition should be and is.
 PASS: t.style.backgroundPositionX should be 5% and is.
 PASS: t.style.backgroundPositionY should be and is.
 PASS: t.style.cssText should be background-position-x: 5%; and is.

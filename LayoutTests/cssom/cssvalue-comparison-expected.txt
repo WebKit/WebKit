@@ -20,9 +20,9 @@ PASS Two CSSValues "rotate(1.55rad)" for property "-webkit-transform" are equal.
 PASS Two CSSValues "rotate(200grad)" for property "-webkit-transform" are equal. 
 PASS Two CSSValues "rotate(0.5turn)" for property "-webkit-transform" are equal. 
 PASS Two CSSValues "rotate(15deg)" and "rotate(1.55rad)" for property "-webkit-transform" are not equal. 
-PASS Two CSSValues "url(dummy://test.png)" for property "background" are equal. 
-PASS Two CSSValues "url(dummy://green.png)" for property "background" are equal. 
-PASS Two CSSValues "url(dummy://test.png)" and "url(dummy://green.png)" for property "background" are not equal. 
+PASS Two CSSValues "url(dummy://test.png)" for property "background-image" are equal. 
+PASS Two CSSValues "url(dummy://green.png)" for property "background-image" are equal. 
+PASS Two CSSValues "url(dummy://test.png)" and "url(dummy://green.png)" for property "background-image" are not equal. 
 PASS Two CSSValues "bold" for property "font-weight" are equal. 
 PASS Two CSSValues "inherit" for property "font-weight" are equal. 
 PASS Two CSSValues "bold" and "inherit" for property "font-weight" are not equal. 
@@ -63,13 +63,13 @@ PASS Two CSSValues "url(resources/greenbox.png) 0 0, pointer" and "url(resources
 PASS Two CSSValues "italic bold 12px/30px arial" for property "font" are equal. 
 PASS Two CSSValues "italic bold 8px/16px helvetica" for property "font" are equal. 
 PASS Two CSSValues "italic bold 12px/30px arial" and "italic bold 8px/16px helvetica" for property "font" are not equal. 
-PASS Two CSSValues "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" for property "background" are equal. 
-PASS Two CSSValues "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background" are equal. 
-PASS Two CSSValues "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" and "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background" are not equal. 
-PASS Two CSSValues "radial-gradient(circle, #ccc, #000)" for property "background" are equal. 
-PASS Two CSSValues "linear-gradient(#000, #234)" for property "background" are equal. 
-PASS Two CSSValues "linear-gradient(to top, #000, #234)" for property "background" are equal. 
-PASS Two CSSValues "linear-gradient(#000, #234)" and "linear-gradient(to top, #000, #234)" for property "background" are not equal. 
+PASS Two CSSValues "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" for property "background-image" are equal. 
+PASS Two CSSValues "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background-image" are equal. 
+PASS Two CSSValues "-webkit-gradient(linear, left top, left bottom, from(#ccc), to(#000))" and "-webkit-gradient(radial, 45 45, 0, 52 50, 0, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62))" for property "background-image" are not equal. 
+PASS Two CSSValues "radial-gradient(circle, #ccc, #000)" for property "background-image" are equal. 
+PASS Two CSSValues "linear-gradient(#000, #234)" for property "background-image" are equal. 
+PASS Two CSSValues "linear-gradient(to top, #000, #234)" for property "background-image" are equal. 
+PASS Two CSSValues "linear-gradient(#000, #234)" and "linear-gradient(to top, #000, #234)" for property "background-image" are not equal. 
 PASS Two CSSValues "-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)" for property "background-image" are equal. 
 PASS Two CSSValues "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)" for property "background-image" are equal. 
 PASS Two CSSValues "-webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 50%)" and "-webkit-cross-fade(url(dummy://background.png), url(dummy://foreground.png), 80%)" for property "background-image" are not equal. 

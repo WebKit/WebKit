@@ -382,14 +382,18 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
 
     for (unsigned i = 0; i < size; ++i) {
         values[i] = getPropertyCSSValueInternal(shorthand.properties()[i]);
-        if (values[i]) {
-            if (values[i]->isVariableDependentValue())
-                return values[i]->cssText();
-            if (values[i]->isBaseValueList())
-                numLayers = std::max(downcast<CSSValueList>(*values[i]).length(), numLayers);
-            else
-                numLayers = std::max<size_t>(1U, numLayers);
+        if (!values[i]) {
+            // We don't have all longhand properties defined as required for the shorthand
+            // property and thus should not serialize to a shorthand value. See spec at
+            // http://www.w3.org/TR/cssom-1/#serialize-a-css-declaration-block.
+            return String();
         }
+        if (values[i]->isVariableDependentValue())
+            return values[i]->cssText();
+        if (values[i]->isBaseValueList())
+            numLayers = std::max(downcast<CSSValueList>(*values[i]).length(), numLayers);
+        else
+            numLayers = std::max<size_t>(1U, numLayers);
     }
 
     String commonValue;

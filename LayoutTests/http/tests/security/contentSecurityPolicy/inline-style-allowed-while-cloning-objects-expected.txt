@@ -1,10 +1,10 @@
 CONSOLE MESSAGE: line 1: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
 CONSOLE MESSAGE: line 79: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
 This test ensures that styles can be set by object.cloneNode()
-PASS node1.style.background is "yellow"
-PASS node2.style.background is "yellow"
-PASS node3.style.background is "blue"
-PASS node4.style.background is "blue"
+PASS node1.style.backgroundColor is "yellow"
+PASS node2.style.backgroundColor is "yellow"
+PASS node3.style.backgroundColor is "blue"
+PASS node4.style.backgroundColor is "blue"
 PASS node1.style.color is "red"
 PASS node2.style.color is "red"
 PASS node3.style.color is "green"

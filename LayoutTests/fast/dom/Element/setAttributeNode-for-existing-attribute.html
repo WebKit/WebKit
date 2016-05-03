@@ -7,12 +7,12 @@ function runTest() {
         testRunner.dumpAsText();
         
     var testElement = document.getElementById('test');
-    var testElementBgColor = testElement.style.background;
+    var testElementBgColor = testElement.style.backgroundColor;
     
     var newAttr = document.createAttribute("STYLE");
     newAttr.value = "background-color: green";
     testElement.setAttributeNode(newAttr);
-    var testElementBgColorAfterReset = testElement.style.background;
+    var testElementBgColorAfterReset = testElement.style.backgroundColor;
     
     document.getElementById('result').innerHTML = "background-color specified with lowercase style attribute was: "+testElementBgColor+" and specified with uppercase style attribute is: "+testElementBgColorAfterReset;
 }

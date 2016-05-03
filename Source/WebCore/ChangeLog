@@ -1,3 +1,22 @@
+2016-05-02  Antoine Quint  <graouts@apple.com>
+
+        Specifying a longhand property should not serialize to a shorthand property
+        https://bugs.webkit.org/show_bug.cgi?id=157180
+
+        Reviewed by Dean Jackson.
+
+        Ensure that we don't serialize to a shorthand property when the required longhand components
+        are not specified, per http://www.w3.org/TR/cssom-1/#serialize-a-css-declaration-block.
+
+        Test: fast/css/no-shorthand-with-incomplete-longhands.html
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getLayeredShorthandValue):
+        Returning an empty string here means that calling getPropertyValue() with
+        the shorthand property matching the currently processed longhand property
+        in asText() will return an empty string as well and the shorthand property
+        will be disregarded.
+
 2016-05-02  Dean Jackson  <dino@apple.com>
 
         REGRESSION: Page layout of Manga/Picture books and all Fixed Layout ePubs corrupted

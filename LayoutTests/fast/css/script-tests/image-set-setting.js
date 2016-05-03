@@ -5,7 +5,7 @@ function testComputedStyle(property, fullRule)
     var div = document.createElement("div");
     document.body.appendChild(div);
     div.setAttribute("style", property + ": " + fullRule);
-    var computedValue = div.style.background;
+    var computedValue = div.style.backgroundImage;
     document.body.removeChild(div);
     return computedValue;
 }
