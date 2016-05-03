@@ -1,3 +1,14 @@
+2016-05-02  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r198943): Transitions don't work if they animate display property
+        https://bugs.webkit.org/show_bug.cgi?id=157244
+        <rdar://problem/26042189>
+
+        Reviewed by Simon Fraser.
+
+        * transitions/transition-display-property-expected.html: Added.
+        * transitions/transition-display-property.html: Added.
+
 2016-05-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop outdated layout test after r200375.

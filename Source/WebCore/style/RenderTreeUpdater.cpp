@@ -480,16 +480,9 @@ void RenderTreeUpdater::updateBeforeOrAfterPseudoElement(Element& current, Pseud
         return;
     }
 
-    Style::ElementUpdate elementUpdate;
-
     auto newStyle = RenderStyle::clonePtr(*current.renderer()->getCachedPseudoStyle(pseudoId, &current.renderer()->style()));
 
-    std::unique_ptr<RenderStyle> animatedStyle;
-    if (renderer && m_document.frame()->animation().updateAnimations(*renderer, *newStyle, animatedStyle))
-        elementUpdate.isSynthetic = true;
-
-    elementUpdate.style = animatedStyle ? WTFMove(animatedStyle) : WTFMove(newStyle);
-    elementUpdate.change = renderer ? Style::determineChange(renderer->style(), *elementUpdate.style) : Style::Detach;
+    auto elementUpdate = Style::TreeResolver::createAnimatedElementUpdate(WTFMove(newStyle), renderer, m_document);
 
     if (elementUpdate.change == Style::NoChange)
         return;

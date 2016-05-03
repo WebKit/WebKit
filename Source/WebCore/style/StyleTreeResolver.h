@@ -60,6 +60,8 @@ public:
 
     std::unique_ptr<Update> resolve(Change);
 
+    static ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, RenderElement* existingRenderer, Document&);
+
 private:
     std::unique_ptr<RenderStyle> styleForElement(Element&, const RenderStyle& inheritedStyle);
 

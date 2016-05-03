@@ -1,0 +1,23 @@
+<style>
+test { transition:0.1s; display:block; height:100px; border: 2px solid green; }
+.animate { display:inline-block; height:10px; width:10px; }
+</style>
+<test></test>
+<script>
+var test = document.querySelector("test");
+var count = 0;
+function testUntilComplete()
+{
+    if (test.offsetWidth == 10 || ++count == 10)
+        testRunner.notifyDone();
+    else
+        setTimeout(testUntilComplete, 0.1);
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testUntilComplete();
+}
+test.offsetWidth;
+test.className = "animate";
+</script>
