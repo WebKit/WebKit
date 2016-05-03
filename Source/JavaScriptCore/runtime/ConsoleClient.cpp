@@ -228,11 +228,8 @@ void ConsoleClient::trace(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
     internalMessageWithTypeAndLevel(MessageType::Trace, MessageLevel::Log, exec, WTFMove(arguments), ArgumentNotRequired);
 }
 
-void ConsoleClient::assertCondition(ExecState* exec, RefPtr<ScriptArguments>&& arguments, bool condition)
+void ConsoleClient::assertion(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
 {
-    if (condition)
-        return;
-
     internalMessageWithTypeAndLevel(MessageType::Assert, MessageLevel::Error, exec, WTFMove(arguments), ArgumentNotRequired);
 }
 

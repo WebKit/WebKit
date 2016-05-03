@@ -50,7 +50,7 @@ public:
     void dirXML(ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     void table(ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     void trace(ExecState*, RefPtr<Inspector::ScriptArguments>&&);
-    void assertCondition(ExecState*, RefPtr<Inspector::ScriptArguments>&&, bool condition);
+    void assertion(ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     void group(ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     void groupCollapsed(ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     void groupEnd(ExecState*, RefPtr<Inspector::ScriptArguments>&&);

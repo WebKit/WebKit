@@ -201,12 +201,15 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncAssert(ExecState* exec)
     if (!client)
         return JSValue::encode(jsUndefined());
 
-    bool condition(exec->argument(0).toBoolean(exec));
+    bool condition = exec->argument(0).toBoolean(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
+    if (condition)
+        return JSValue::encode(jsUndefined());
+
     RefPtr<Inspector::ScriptArguments> arguments(Inspector::createScriptArguments(exec, 1));
-    client->assertCondition(exec, arguments.release(), condition);
+    client->assertion(exec, arguments.release());
     return JSValue::encode(jsUndefined());
 }
 
