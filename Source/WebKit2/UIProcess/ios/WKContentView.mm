@@ -356,12 +356,8 @@ private:
 }
 
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
-    obscuredInset:(CGSize)obscuredInset scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView
+    obscuredInset:(CGSize)obscuredInset scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
 {
-    auto drawingArea = _page->drawingArea();
-    if (!drawingArea)
-        return;
-
     double timestamp = monotonicallyIncreasingTime();
     HistoricalVelocityData::VelocityData velocityData;
     if (!isStableState)
@@ -370,32 +366,16 @@ private:
         _historicalKinematicData.clear();
 
     FloatRect fixedPositionRectForLayout = _page->computeCustomFixedPositionRect(unobscuredRect, zoomScale, WebPageProxy::UnobscuredRectConstraint::ConstrainedToDocumentRect);
-
-    VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(
-        visibleRect,
-        unobscuredRect,
-        unobscuredRectInScrollViewCoordinates,
-        fixedPositionRectForLayout,
-        WebCore::FloatSize(obscuredInset),
-        zoomScale,
-        isStableState,
-        isChangingObscuredInsetsInteractively,
-        _webView._allowsViewportShrinkToFit,
-        enclosedInScrollableAncestorView,
-        timestamp,
-        velocityData.horizontalVelocity,
-        velocityData.verticalVelocity,
-        velocityData.scaleChangeRate,
-        downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedLayerTreeTransactionID());
-
-    _page->updateVisibleContentRects(visibleContentRectUpdateInfo);
+    _page->updateVisibleContentRects(visibleRect, unobscuredRect, unobscuredRectInScrollViewCoordinates, fixedPositionRectForLayout, WebCore::FloatSize(obscuredInset),
+        zoomScale, isStableState, isChangingObscuredInsetsInteractively, _webView._allowsViewportShrinkToFit, timestamp, velocityData.horizontalVelocity, velocityData.verticalVelocity, velocityData.scaleChangeRate);
 
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
     FloatRect fixedPositionRect = _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), zoomScale);
     scrollingCoordinator->viewportChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), fixedPositionRect, zoomScale);
 
-    drawingArea->updateDebugIndicator();
-    
+    if (auto drawingArea = _page->drawingArea())
+        drawingArea->updateDebugIndicator();
+        
     [self updateFixedClippingView:fixedPositionRect];
 }
 

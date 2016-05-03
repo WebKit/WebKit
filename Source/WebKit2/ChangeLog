@@ -1,3 +1,21 @@
+2016-05-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r199259 and r200161.
+
+        Seems to have caused a ~1.2% PLT regression on iOS
+
+        Reverted changesets:
+
+        "[iOS WK2] WKWebViews should consult ancestor UIScrollViews to
+        determine tiling area"
+        https://bugs.webkit.org/show_bug.cgi?id=156429
+        http://trac.webkit.org/changeset/199259
+
+        "[iOS WK2] When determining tile size, check whether ancestor
+        UIScrollViews are actually scrollable"
+        https://bugs.webkit.org/show_bug.cgi?id=157107
+        http://trac.webkit.org/changeset/200161
+
 2016-05-03  Dean Jackson  <dino@apple.com>
 
         CSS Grid should be an experimental feature flag
