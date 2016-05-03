@@ -47,7 +47,6 @@ using namespace std;
 
 namespace WebCore {
 
-typedef LCID (WINAPI* LocaleNameToLCIDPtr)(LPCWSTR, DWORD);
 typedef HashMap<String, LCID, ASCIICaseInsensitiveHash> NameToLCIDMap;
 
 static String extractLanguageCode(const String& locale)
@@ -58,88 +57,24 @@ static String extractLanguageCode(const String& locale)
     return locale.left(dashPosition);
 }
 
-static String removeLastComponent(const String& name)
-{
-    size_t lastSeparator = name.reverseFind('-');
-    if (lastSeparator == notFound)
-        return emptyString();
-    return name.left(lastSeparator);
-}
-
-static void ensureNameToLCIDMap(NameToLCIDMap& map)
-{
-    if (!map.isEmpty())
-        return;
-    // http://www.microsoft.com/resources/msdn/goglobal/default.mspx
-    // We add only locales used in layout tests for now.
-    map.add("ar", 0x0001);
-    map.add("ar-eg", 0x0C01);
-    map.add("de", 0x0007);
-    map.add("de-de", 0x0407);
-    map.add("el", 0x0008);
-    map.add("el-gr", 0x0408);
-    map.add("en", 0x0009);
-    map.add("en-gb", 0x0809);
-    map.add("en-us", 0x0409);
-    map.add("fr", 0x000C);
-    map.add("fr-fr", 0x040C);
-    map.add("he", 0x000D);
-    map.add("he-il", 0x040D);
-    map.add("hi", 0x0039);
-    map.add("hi-in", 0x0439);
-    map.add("ja", 0x0011);
-    map.add("ja-jp", 0x0411);
-    map.add("ko", 0x0012);
-    map.add("ko-kr", 0x0412);
-    map.add("ru", 0x0019);
-    map.add("ru-ru", 0x0419);
-    map.add("zh-cn", 0x0804);
-    map.add("zh-tw", 0x0404);
-}
-
-// Fallback implementation of LocaleNameToLCID API. This is used for
-// testing on Windows XP.
-// FIXME: Remove this, ensureNameToLCIDMap, and removeLastComponent when we drop
-// Windows XP support.
-static LCID WINAPI convertLocaleNameToLCID(LPCWSTR name, DWORD)
-{
-    if (!name || !name[0])
-        return LOCALE_USER_DEFAULT;
-    DEPRECATED_DEFINE_STATIC_LOCAL(NameToLCIDMap, map, ());
-    ensureNameToLCIDMap(map);
-    String localeName = String(name).replace('_', '-');
-    do {
-        NameToLCIDMap::const_iterator iterator = map.find(localeName);
-        if (iterator != map.end())
-            return iterator->value;
-        localeName = removeLastComponent(localeName);
-    } while (!localeName.isEmpty());
-    return LOCALE_USER_DEFAULT;
-}
-
-static LCID LCIDFromLocaleInternal(LCID userDefaultLCID, const String& userDefaultLanguageCode, LocaleNameToLCIDPtr localeNameToLCID, String& locale)
+static LCID LCIDFromLocaleInternal(LCID userDefaultLCID, const String& userDefaultLanguageCode, String& locale)
 {
     if (equalIgnoringASCIICase(extractLanguageCode(locale), userDefaultLanguageCode))
         return userDefaultLCID;
-    return localeNameToLCID(locale.charactersWithNullTermination().data(), 0);
+    return LocaleNameToLCID(locale.charactersWithNullTermination().data(), 0);
 }
 
 static LCID LCIDFromLocale(const AtomicString& locale)
 {
-    // LocaleNameToLCID() is available since Windows Vista.
-    LocaleNameToLCIDPtr localeNameToLCID = reinterpret_cast<LocaleNameToLCIDPtr>(::GetProcAddress(::GetModuleHandle(L"kernel32"), "LocaleNameToLCID"));
-    if (!localeNameToLCID)
-        localeNameToLCID = convertLocaleNameToLCID;
-
     // According to MSDN, 9 is enough for LOCALE_SISO639LANGNAME.
     const size_t languageCodeBufferSize = 9;
     WCHAR lowercaseLanguageCode[languageCodeBufferSize];
     ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, lowercaseLanguageCode, languageCodeBufferSize);
     String userDefaultLanguageCode = String(lowercaseLanguageCode);
 
-    LCID lcid = LCIDFromLocaleInternal(LOCALE_USER_DEFAULT, userDefaultLanguageCode, localeNameToLCID, String(locale));
+    LCID lcid = LCIDFromLocaleInternal(LOCALE_USER_DEFAULT, userDefaultLanguageCode, String(locale));
     if (!lcid)
-        lcid = LCIDFromLocaleInternal(LOCALE_USER_DEFAULT, userDefaultLanguageCode, localeNameToLCID, defaultLanguage());
+        lcid = LCIDFromLocaleInternal(LOCALE_USER_DEFAULT, userDefaultLanguageCode, defaultLanguage());
     return lcid;
 }
 

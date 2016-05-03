@@ -1,5 +1,16 @@
 2016-05-03  Per Arne Vollan  <peavo@outlook.com>
 
+        [Win] Remove Windows XP Compatibility Requirements
+        https://bugs.webkit.org/show_bug.cgi?id=152899
+
+        Reviewed by Brent Fulgham.
+
+        Windows XP is not supported anymore, we can remove workarounds.
+
+        * wtf/Assertions.cpp:
+
+2016-05-03  Per Arne Vollan  <peavo@outlook.com>
+
         [Win] Warning fix.
         https://bugs.webkit.org/show_bug.cgi?id=157309
 

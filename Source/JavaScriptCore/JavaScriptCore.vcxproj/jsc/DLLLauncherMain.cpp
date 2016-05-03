@@ -54,21 +54,8 @@ using namespace std;
 
 static void enableTerminationOnHeapCorruption()
 {
-    // Enable termination on heap corruption on OSes that support it (Vista and XPSP3).
-    // http://msdn.microsoft.com/en-us/library/aa366705(VS.85).aspx
-
     HEAP_INFORMATION_CLASS heapEnableTerminationOnCorruption = static_cast<HEAP_INFORMATION_CLASS>(1);
-
-    HMODULE module = ::GetModuleHandleW(L"kernel32.dll");
-    if (!module)
-        return;
-
-    typedef BOOL (WINAPI*HSI)(HANDLE, HEAP_INFORMATION_CLASS, PVOID, SIZE_T);
-    HSI heapSetInformation = reinterpret_cast<HSI>(::GetProcAddress(module, "HeapSetInformation"));
-    if (!heapSetInformation)
-        return;
-
-    heapSetInformation(0, heapEnableTerminationOnCorruption, 0, 0);
+    HeapSetInformation(0, heapEnableTerminationOnCorruption, 0, 0);
 }
 
 static wstring getStringValue(HKEY key, const wstring& valueName)

@@ -1,3 +1,15 @@
+2016-05-03  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Remove Windows XP Compatibility Requirements
+        https://bugs.webkit.org/show_bug.cgi?id=152899
+
+        Reviewed by Brent Fulgham.
+
+        Windows XP is not supported anymore, we can remove workarounds.
+
+        * JavaScriptCore.vcxproj/jsc/DLLLauncherMain.cpp:
+        (enableTerminationOnHeapCorruption):
+
 2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.assert should do far less work when the assertion is true

@@ -1,3 +1,20 @@
+2016-05-03  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Remove Windows XP Compatibility Requirements
+        https://bugs.webkit.org/show_bug.cgi?id=152899
+
+        Reviewed by Brent Fulgham.
+
+        Windows XP is not supported anymore, we can remove compatibility workarounds.
+
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::extractLanguageCode):
+        (WebCore::LCIDFromLocaleInternal):
+        (WebCore::LCIDFromLocale):
+        (WebCore::removeLastComponent): Deleted.
+        (WebCore::ensureNameToLCIDMap): Deleted.
+        (WebCore::convertLocaleNameToLCID): Deleted.
+
 2016-05-02  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r198943): Transitions don't work if they animate display property

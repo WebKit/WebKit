@@ -237,21 +237,7 @@ void WTFGetBacktrace(void** stack, int* size)
 #if OS(DARWIN) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__))
     *size = backtrace(stack, *size);
 #elif OS(WINDOWS)
-    // The CaptureStackBackTrace function is available in XP, but it is not defined
-    // in the Windows Server 2003 R2 Platform SDK. So, we'll grab the function
-    // through GetProcAddress.
-    typedef WORD (NTAPI* RtlCaptureStackBackTraceFunc)(DWORD, DWORD, PVOID*, PDWORD);
-    HMODULE kernel32 = ::GetModuleHandleW(L"Kernel32.dll");
-    if (!kernel32) {
-        *size = 0;
-        return;
-    }
-    RtlCaptureStackBackTraceFunc captureStackBackTraceFunc = reinterpret_cast<RtlCaptureStackBackTraceFunc>(
-        ::GetProcAddress(kernel32, "RtlCaptureStackBackTrace"));
-    if (captureStackBackTraceFunc)
-        *size = captureStackBackTraceFunc(0, *size, stack, 0);
-    else
-        *size = 0;
+    *size = RtlCaptureStackBackTrace(0, *size, stack, 0);
 #else
     *size = 0;
 #endif
