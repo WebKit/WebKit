@@ -1,3 +1,14 @@
+2016-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Update drag and drop tests bug reference.
+
+        We were using a fixed bug, because drag and drop was already implemented in WebKit2. However, some tests still
+        fail because some drag and drop events are not emitted when using synthetic events like even sender does. So,
+        update the bug reference to https://bugs.webkit.org/show_bug.cgi?id=157179 and add two more tests that are
+        timing out in the bots for the same reason.
+
+        * platform/gtk/TestExpectations:
+
 2016-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Don't run transitions to/from 'auto' values
