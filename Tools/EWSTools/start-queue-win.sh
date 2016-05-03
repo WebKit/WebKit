@@ -12,6 +12,8 @@ function start_ews()
 {
     trap 'error_handler ${LINENO} $?' ERR
 
+    "$PROGRAMFILES/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
+
     while :
     do
         date

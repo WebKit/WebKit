@@ -1,3 +1,10 @@
+2016-05-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * EWSTools/start-queue-win.sh: Establish proper VS2015 build
+        environment at start of queue run.
+
 2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] accessibility/content-editable-as-textarea.html fails
