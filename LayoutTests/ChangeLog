@@ -1,3 +1,21 @@
+2016-05-03  Pranjal Jumde  <pjumde@apple.com>
+
+        WorkerGlobalScope's self, location and navigator attributes should not be replaceable
+        https://bugs.webkit.org/show_bug.cgi?id=157296
+        <rdar://problem/25962738>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/location-readonly-expected.txt: Added.
+        * http/tests/workers/location-readonly.html: Added.
+        * http/tests/workers/navigator-readonly-expected.txt: Added.
+        * http/tests/workers/navigator-readonly.html: Added.
+        * http/tests/workers/self-readonly-expected.txt: Added.
+        * http/tests/workers/self-readonly.html: Added.
+        * http/tests/workers/worker-location.js: Added.
+        * http/tests/workers/worker-navigator.js: Added.
+        * http/tests/workers/worker-self.js: Added.
+
 2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] accessibility/content-editable-as-textarea.html fails

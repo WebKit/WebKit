@@ -1,3 +1,19 @@
+2016-05-03  Pranjal Jumde  <pjumde@apple.com>
+
+        WorkerGlobalScope's self, location and navigator attributes should not be replaceable
+        https://bugs.webkit.org/show_bug.cgi?id=157296
+        <rdar://problem/25962738>
+
+        Reviewed by Chris Dumez.
+
+        Tests: http/tests/workers/location-readonly.html
+               http/tests/workers/navigator-readonly.html
+               http/tests/workers/self-readonly.html
+
+        * workers/WorkerGlobalScope.idl:
+        The 'self', 'location', and 'navigator' properties of the WorkerGlobalScope must be immutable.
+        See: https://html.spec.whatwg.org/multipage/workers.html#the-workerglobalscope-common-interface
+
 2016-05-03  Chris Dumez  <cdumez@apple.com>
 
         Drop some unnecessary exception checking in the generated bindings
