@@ -1,3 +1,29 @@
+2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] accessibility/content-editable-as-textarea.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=155353
+
+        Reviewed by Darin Adler.
+
+        The test was timing out because it expected an AXValueChanged notification.
+        In ATK, AXValueChanged notifications are made for widgets which implement
+        the AtkValue interface (sliders, progress bars, etc.). We should be listening
+        for AXTextChanged instead. AtkText's text-insert and text-remove have been
+        added to the AccessibilityNotificationHandler.
+
+        Also, ATK's AccessibilityUIElement support had a number of unimplemented
+        methods that are being used as part of the previously-failing test. Those
+        methods are now implemented so that the ATK results are much more similar
+        to those on the Mac.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (WTR::AccessibilityNotificationHandler::connectAccessibilityCallbacks):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+        (WTR::AccessibilityUIElement::rangeForLine):
+        (WTR::AccessibilityUIElement::boundsForRange):
+        (WTR::AccessibilityUIElement::attributedStringForRange):
+
 2016-05-02  Brady Eidson  <beidson@apple.com>
 
         Add the ability to accumulate logs for specific logging channels to help diagnose test timeouts.

@@ -534,6 +534,7 @@ public:
     bool isToggleButton() const { return roleValue() == ToggleButtonRole; }
     bool isTextControl() const;
     bool isARIATextControl() const;
+    bool isNonNativeTextControl() const;
     bool isTabList() const { return roleValue() == TabListRole; }
     bool isTabItem() const { return roleValue() == TabRole; }
     bool isRadioGroup() const { return roleValue() == RadioGroupRole; }

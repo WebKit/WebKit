@@ -44,7 +44,11 @@
                     shouldBecomeEqual("content.selectedTextRange", "'{1, 12}'", function() {
                         debug("\nSet range: {-1, 0}");
                         content.setSelectedTextRange(-1, 0);
-                        shouldBecomeEqual("content.selectedTextRange", "'{0, 0}'", function() {
+
+                        // In ATK, -1 is used as an alias for the final offset.
+                        expectations = accessibilityController.platformName == "atk" ? "'{16, 0}'" : "'{0, 0}'";
+
+                        shouldBecomeEqual("content.selectedTextRange", expectations, function() {
                             debug("\nSet range: {7, 3}");
                             content.setSelectedTextRange(7, 3);
                             shouldBecomeEqual("content.selectedTextRange", "'{7, 3}'", finishJSTest);

@@ -186,9 +186,8 @@ String getAttributeSetValueForId(AtkObject* accessible, AtkAttributeType type, S
     return atkAttributeValueToCoreAttributeValue(type, id, attributeValue);
 }
 
-String getAtkAttributeSetAsString(AtkObject* accessible, AtkAttributeType type)
+String attributeSetToString(AtkAttributeSet* attributeSet, String separator=", ")
 {
-    AtkAttributeSet* attributeSet = getAttributeSet(accessible, type);
     if (!attributeSet)
         return String();
 
@@ -198,11 +197,16 @@ String getAtkAttributeSetAsString(AtkObject* accessible, AtkAttributeType type)
         GUniquePtr<gchar> attributeData(g_strconcat(attribute->name, ":", attribute->value, NULL));
         builder.append(attributeData.get());
         if (attributes->next)
-            builder.append(", ");
+            builder.append(separator);
     }
     atk_attribute_set_free(attributeSet);
 
     return builder.toString();
+}
+
+String getAtkAttributeSetAsString(AtkObject* accessible, AtkAttributeType type,  String separator=", ")
+{
+    return attributeSetToString(getAttributeSet(accessible, type), separator);
 }
 
 bool checkElementState(PlatformUIElement element, AtkStateType stateType)
@@ -500,6 +504,19 @@ const gchar* roleToString(AtkObject* object)
         // our DRT isn't properly handling.
         return "FIXME not identified";
     }
+}
+
+String selectedText(AtkObject* accessible)
+{
+    if (!ATK_IS_TEXT(accessible))
+        return String();
+
+    AtkText* text = ATK_TEXT(accessible);
+
+    gint start, end;
+    g_free(atk_text_get_selection(text, 0, &start, &end));
+
+    return atk_text_get_text(text, start, end);
 }
 
 String attributesOfElement(AccessibilityUIElement* element)
@@ -914,7 +931,13 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
     String atkAttributeName = coreAttributeToAtkAttribute(attribute);
 
-    // Try object attributes first.
+    // The value of AXSelectedText is not exposed through any AtkAttribute.
+    if (atkAttributeName == "AXSelectedText") {
+        String string = selectedText(m_element.get());
+        return JSStringCreateWithUTF8CString(string.utf8().data());
+    }
+
+    // Try object attributes before text attributes.
     String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, atkAttributeName);
 
     // Try text attributes if the requested one was not found and we have an AtkText object.
@@ -1452,8 +1475,16 @@ int AccessibilityUIElement::lineForIndex(int index)
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForLine(int line)
 {
-    // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    if (!ATK_IS_TEXT(m_element.get()))
+        return JSStringCreateWithCharacters(0, 0);
+
+    AtkText* text = ATK_TEXT(m_element.get());
+    gint startOffset = 0, endOffset = 0;
+    for (int i = 0; i <= line; ++i)
+        atk_text_get_string_at_offset(text, endOffset, ATK_TEXT_GRANULARITY_LINE, &startOffset, &endOffset);
+
+    GUniquePtr<gchar> range(g_strdup_printf("{%d, %d}", startOffset, endOffset - startOffset));
+    return JSStringCreateWithUTF8CString(range.get());
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForPosition(int x, int y)
@@ -1464,8 +1495,14 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForPosition(int x, int y)
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::boundsForRange(unsigned location, unsigned length)
 {
-    // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    if (!ATK_IS_TEXT(m_element.get()))
+        return JSStringCreateWithCharacters(0, 0);
+
+    AtkTextRectangle rect;
+    atk_text_get_range_extents(ATK_TEXT(m_element.get()), location, location + length, ATK_XY_WINDOW, &rect);
+
+    GUniquePtr<gchar> bounds(g_strdup_printf("{%d, %d, %d, %d}", rect.x, rect.y, rect.width, rect.height));
+    return JSStringCreateWithUTF8CString(bounds.get());
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForRange(unsigned location, unsigned length)
@@ -1479,8 +1516,29 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForRange(unsigned locatio
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsigned location, unsigned length)
 {
-    // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    if (!ATK_IS_TEXT(m_element.get()))
+        return JSStringCreateWithCharacters(0, 0);
+
+    StringBuilder builder;
+
+    // The default text attributes apply to the entire element.
+    builder.append("\n\tDefault text attributes:\n\t\t");
+    builder.append(attributeSetToString(getAttributeSet(m_element.get(), TextAttributeType), "\n\t\t"));
+
+    // The attribute run provides attributes specific to the range of text at the specified offset.
+    AtkAttributeSet* attributeSet;
+    AtkText* text = ATK_TEXT(m_element.get());
+    gint start = 0, end = 0;
+    for (int i = location; i < location + length; i = end) {
+        AtkAttributeSet* attributeSet = atk_text_get_run_attributes(text, i, &start, &end);
+        GUniquePtr<gchar> substring(replaceCharactersForResults(atk_text_get_text(text, start, end)));
+        builder.append(String::format("\n\tRange attributes for '%s':\n\t\t", substring.get()));
+        builder.append(attributeSetToString(attributeSet, "\n\t\t"));
+    }
+
+    atk_attribute_set_free(attributeSet);
+
+    return JSStringCreateWithUTF8CString(builder.toString().utf8().data());
 }
 
 bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location, unsigned length)

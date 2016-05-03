@@ -1,3 +1,38 @@
+2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] accessibility/content-editable-as-textarea.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=155353
+
+        Reviewed by Darin Adler.
+
+        The test was timing out because it expected an AXValueChanged notification.
+        In ATK, AXValueChanged notifications are made for widgets which implement
+        the AtkValue interface (sliders, progress bars, etc.). We should be listening
+        for AXTextChanged instead.
+
+        In addition, for contenteditable elements, we should emit the notification on
+        the element itself. Because we were handling the notification in the same way
+        as native text controls (where the notification we receive from WebCore is for
+        StaticTextRole children), we were attempting to emit the notification from
+        the parent of the contenteditable.
+
+        Lastly, ATK's AccessibilityUIElement support had a number of unimplemented
+        methods that are being used as part of the previously-failing test. Those
+        methods are now implemented so that the ATK results are much more similar
+        to those on the Mac.
+
+        No new tests needed. The previously-failing test now passes.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::childrenChanged):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isNonNativeTextControl):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textChanged):
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+
 2016-05-02  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Add support for position resolution with auto-repeat tracks

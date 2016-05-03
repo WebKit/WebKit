@@ -1,3 +1,24 @@
+2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] accessibility/content-editable-as-textarea.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=155353
+
+        Reviewed by Darin Adler.
+
+        Updated the test identified in the bug to listen for the appropriate
+        notification for ATK and created platform-specific expectations.
+
+        In addition, set-selected-text-range-contenteditable.html was timing out
+        due to the use of shouldBecomeEqual() with an assertion that is wrong for
+        ATK. Modifying the test so that it verifies the result appropriate for
+        each platform eliminates the timeout.
+
+        * accessibility/content-editable-as-textarea.html: Updated.
+        * accessibility/set-selected-text-range-contenteditable.html: Updated.
+        * platform/gtk/TestExpectations: Unskipped the failing tests.
+        * platform/gtk/accessibility/content-editable-as-textarea-expected.txt: Added.
+        * platform/gtk/accessibility/set-selected-text-range-contenteditable-expected.txt: Added.
+
 2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed follow-up testapi fix after r200355.
