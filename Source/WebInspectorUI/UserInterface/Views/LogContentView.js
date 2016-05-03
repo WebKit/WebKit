@@ -122,11 +122,6 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         return this.messagesElement.classList.contains(WebInspector.LogContentView.SearchInProgressStyleClassName);
     }
 
-    shown()
-    {
-        this._logViewController.renderPendingMessages();
-    }
-
     didAppendConsoleMessageView(messageView)
     {
         console.assert(messageView instanceof WebInspector.ConsoleMessageView || messageView instanceof WebInspector.ConsoleCommandView);
@@ -160,14 +155,6 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         // We want to remove focusable children after those pending dispatches too.
         InspectorBackend.runAfterPendingDispatches(this._clearFocusableChildren.bind(this));
 
-        if (type && type !== WebInspector.ConsoleMessage.MessageType.EndGroup) {
-            console.assert(messageView.message instanceof WebInspector.ConsoleMessage);
-            this._markScopeBarItemUnread(messageView.message.level);
-
-            console.assert(messageView.element instanceof Element);
-            this._filterMessageElements([messageView.element]);
-        }
-
         // We only auto show the console if the message is a non-synthetic result.
         // This is when the user evaluated something directly in the prompt.
         if (type !== WebInspector.ConsoleMessage.MessageType.Result || messageView.message.synthetic)
@@ -175,6 +162,8 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
 
         if (!WebInspector.isShowingConsoleTab())
             WebInspector.showSplitConsole();
+
+        this._logViewController.scrollToBottom();
     }
 
     get supportsSearch()
@@ -320,7 +309,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         return messageLevel;
     }
 
-    _markScopeBarItemUnread(level)
+    _pulseScopeBarItemBorder(level)
     {
         var messageLevel = this._scopeFromMessageLevel(level);
 
@@ -338,13 +327,17 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         if (this._startedProvisionalLoad)
             this._provisionalMessages.push(event.data.message);
 
-        this._logViewController.appendConsoleMessage(event.data.message);
+        this._lastMessageView = this._logViewController.appendConsoleMessage(event.data.message);
+        if (this._lastMessageView.message.type !== WebInspector.ConsoleMessage.MessageType.EndGroup) {
+            this._pulseScopeBarItemBorder(this._lastMessageView.message.level);
+            this._filterMessageElements([this._lastMessageView.element]);
+        }
     }
 
     _previousMessageRepeatCountUpdated(event)
     {        
         if (this._logViewController.updatePreviousMessageRepeatCount(event.data.count) && this._lastMessageView)
-            this._markScopeBarItemUnread(this._lastMessageView.message.level);
+            this._pulseScopeBarItemBorder(this._lastMessageView.message.level);
     }
 
     _handleContextMenuEvent(event)
