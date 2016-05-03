@@ -46,14 +46,36 @@ enum GridTrackSizingDirection {
     ForRows
 };
 
+class NamedLineCollection {
+    WTF_MAKE_NONCOPYABLE(NamedLineCollection);
+public:
+    NamedLineCollection(const RenderStyle&, const String& namedLine, GridTrackSizingDirection, unsigned lastLine, unsigned autoRepeatTracksCount);
+
+    static bool isValidNamedLineOrArea(const String& namedLine, const RenderStyle&, GridPositionSide);
+
+    bool hasNamedLines() const;
+    unsigned firstPosition() const;
+
+    bool contains(unsigned line) const;
+
+private:
+    size_t find(unsigned line) const;
+
+    const Vector<unsigned>* m_namedLinesIndexes { nullptr };
+    const Vector<unsigned>* m_autoRepeatNamedLinesIndexes { nullptr };
+
+    unsigned m_insertionPoint;
+    unsigned m_lastLine;
+    unsigned m_repetitions;
+};
+
 // Class with all the code related to grid items positions resolution.
 class GridPositionsResolver {
 public:
     static unsigned spanSizeForAutoPlacedItem(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
-    static GridSpan resolveGridPositionsFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
-    static unsigned explicitGridColumnCount(const RenderStyle&);
-    static unsigned explicitGridRowCount(const RenderStyle&);
-    static bool isNonExistentNamedLineOrArea(const String& lineName, const RenderStyle&, GridPositionSide);
+    static GridSpan resolveGridPositionsFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection, unsigned autoRepeatTracksCount);
+    static unsigned explicitGridColumnCount(const RenderStyle&, unsigned autoRepeatColumnsCount);
+    static unsigned explicitGridRowCount(const RenderStyle&, unsigned autoRepeatRowsCount);
 };
 
 } // namespace WebCore

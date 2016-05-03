@@ -1,3 +1,67 @@
+2016-05-02  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Add support for position resolution with auto-repeat tracks
+        https://bugs.webkit.org/show_bug.cgi?id=157260
+
+        Reviewed by Darin Adler.
+
+        This is a generalization of our position resolution code so it now supports every possible
+        type of resolution (definite position, position spans, automatic resolution, named lines
+        resolution, grid areas...) under the presence of auto-repeat tracks, i.e., tracks that are
+        dynamically created by the LayoutGrid depending on the available space and that cannot be
+        directly inferred from the CSS declarations.
+
+        This means that we need two extra things to resolve positions:
+        - the LayoutGrid needs to provide the number of auto-repeat tracks per axis
+        - a wrapper is needed to hide the eventual presence of auto-repeat tracks (with their line
+        names) from the rest of the resolution code which should remain mostly unchanged.
+
+        The former is trivial (requires passing a new argument to some functions at the most) but
+        the latter requires a new class called NamedLineCollection. This class allow us to locate
+        and resolve named lines without having to insert the auto-repeat named lines in the already
+        existing data structures. It does it in a very compact representation as it does not
+        duplicate the names for every single repetition.
+
+        No new tests required as there is no change in behavior because the auto-repeat tracks
+        computation is not implemented yet. Current tests already test this code extensively, and
+        the auto-repeat code paths will be tested later once
+        RenderGrid::computeAutoRepeatTracksCount() is implemented.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeAutoRepeatTracksCount): New method with empty implementation.
+        (WebCore::RenderGrid::placeItemsOnGrid): Initialize the auto repeat tracks count.
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        * rendering/RenderGrid.h:
+        * rendering/style/GridPositionsResolver.cpp:
+        (WebCore::directionFromSide):
+        (WebCore::NamedLineCollection::NamedLineCollection): New class which is able to resolve the
+        positions of a given named line in the presence of auto-repeat and "normal" tracks.
+        (WebCore::NamedLineCollection::isValidNamedLineOrArea): Checks whether the given named line
+        is a valid line name or area.
+        (WebCore::NamedLineCollection::hasNamedLines): Checks whether the named line exists in the
+        given axis (either specified by auto-repeat or "normal" tracks).
+        (WebCore::NamedLineCollection::find): Looks for a line number whithin the line numbers where
+        the given named line was found.
+        (WebCore::NamedLineCollection::contains):
+        (WebCore::NamedLineCollection::firstPosition): Returns the first line where the given named
+        line is located.
+        (WebCore::adjustGridPositionsFromStyle): Use NamedLineCollection.
+        (WebCore::GridPositionsResolver::explicitGridColumnCount): Include auto repeat tracks.
+        (WebCore::GridPositionsResolver::explicitGridRowCount): Ditto.
+        (WebCore::explicitGridSizeForSide): Ditto.
+        (WebCore::lookAheadForNamedGridLine): Use NamedLineCollection.
+        (WebCore::lookBackForNamedGridLine): Ditto.
+        (WebCore::resolveNamedGridLinePositionFromStyle):
+        (WebCore::definiteGridSpanWithNamedLineSpanAgainstOpposite):
+        (WebCore::resolveNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::resolveGridPositionAgainstOppositePosition):
+        (WebCore::resolveGridPositionFromStyle):
+        (WebCore::GridPositionsResolver::resolveGridPositionsFromStyle):
+        (WebCore::gridLinesForSide): Deleted.
+        (WebCore::GridPositionsResolver::isNonExistentNamedLineOrArea): Deleted.
+        * rendering/style/GridPositionsResolver.h:
+
 2016-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GObject DOM bindings API break after r200316.

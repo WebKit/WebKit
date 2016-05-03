@@ -63,6 +63,8 @@ public:
     LayoutUnit guttersSize(GridTrackSizingDirection, size_t span) const;
     LayoutUnit offsetBetweenTracks(GridTrackSizingDirection) const;
 
+    size_t autoRepeatCountForDirection(GridTrackSizingDirection) const;
+
 private:
     const char* renderName() const override;
     bool isRenderGrid() const override { return true; }
@@ -79,6 +81,9 @@ private:
 
     void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
     void insertItemIntoGrid(RenderBox&, const GridArea&);
+
+    unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection) const;
+
     void placeItemsOnGrid();
     void populateExplicitGridAndOrderIterator();
     std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
@@ -198,7 +203,15 @@ private:
 
     int m_smallestColumnStart;
     int m_smallestRowStart;
+
+    unsigned m_autoRepeatColumns { 0 };
+    unsigned m_autoRepeatRows { 0 };
 };
+
+size_t inline RenderGrid::autoRepeatCountForDirection(GridTrackSizingDirection direction) const
+{
+    return direction == ForColumns ? m_autoRepeatColumns : m_autoRepeatRows;
+}
 
 } // namespace WebCore
 
