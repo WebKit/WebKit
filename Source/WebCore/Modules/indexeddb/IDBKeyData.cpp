@@ -98,33 +98,41 @@ RefPtr<IDBKey> IDBKeyData::maybeCreateIDBKey() const
     return nullptr;
 }
 
+IDBKeyData::IDBKeyData(const IDBKeyData& that, IsolatedCopyTag)
+{
+    isolatedCopy(that, *this);
+}
+
 IDBKeyData IDBKeyData::isolatedCopy() const
 {
-    IDBKeyData result;
-    result.m_type = m_type;
-    result.m_isNull = m_isNull;
+    return { *this, IsolatedCopy };
+}
 
-    switch (m_type) {
+void IDBKeyData::isolatedCopy(const IDBKeyData& source, IDBKeyData& destination)
+{
+    destination.m_type = source.m_type;
+    destination.m_isNull = source.m_isNull;
+
+    switch (source.m_type) {
     case KeyType::Invalid:
-        return result;
+        return;
     case KeyType::Array:
-        for (auto& key : m_arrayValue)
-            result.m_arrayValue.append(key.isolatedCopy());
-        return result;
+        for (auto& key : source.m_arrayValue)
+            destination.m_arrayValue.append(key.isolatedCopy());
+        return;
     case KeyType::String:
-        result.m_stringValue = m_stringValue.isolatedCopy();
-        return result;
+        destination.m_stringValue = source.m_stringValue.isolatedCopy();
+        return;
     case KeyType::Date:
     case KeyType::Number:
-        result.m_numberValue = m_numberValue;
-        return result;
+        destination.m_numberValue = source.m_numberValue;
+        return;
     case KeyType::Max:
     case KeyType::Min:
-        return result;
+        return;
     }
 
     ASSERT_NOT_REACHED();
-    return result;
 }
 
 void IDBKeyData::encode(KeyedEncoder& encoder) const

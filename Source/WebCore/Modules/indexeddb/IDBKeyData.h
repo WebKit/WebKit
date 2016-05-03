@@ -46,6 +46,9 @@ public:
 
     WEBCORE_EXPORT IDBKeyData(const IDBKey*);
 
+    enum IsolatedCopyTag { IsolatedCopy };
+    IDBKeyData(const IDBKeyData&, IsolatedCopyTag);
+
     static IDBKeyData minimum()
     {
         IDBKeyData result;
@@ -153,6 +156,8 @@ public:
     }
 
 private:
+    static void isolatedCopy(const IDBKeyData& source, IDBKeyData& destination);
+
     KeyType m_type;
     Vector<IDBKeyData> m_arrayValue;
     String m_stringValue;

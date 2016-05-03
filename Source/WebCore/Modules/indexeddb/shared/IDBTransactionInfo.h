@@ -50,6 +50,9 @@ public:
 
     IDBTransactionInfo(const IDBTransactionInfo&);
 
+    enum IsolatedCopyTag { IsolatedCopy };
+    IDBTransactionInfo(const IDBTransactionInfo&, IsolatedCopyTag);
+
     IDBTransactionInfo isolatedCopy() const;
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
@@ -71,6 +74,8 @@ public:
 
 private:
     IDBTransactionInfo(const IDBResourceIdentifier&);
+
+    static void isolatedCopy(const IDBTransactionInfo& source, IDBTransactionInfo& destination);
 
     IDBResourceIdentifier m_identifier;
 

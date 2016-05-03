@@ -1,3 +1,32 @@
+2016-05-03  Brady Eidson  <beidson@apple.com>
+
+        Add/refactor isolatedCopy methods for 3 IDB classes.
+        https://bugs.webkit.org/show_bug.cgi?id=157289
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, no behavior change).
+
+        In an upcoming, much larger patch, I'll need the ability to directly construct these three objects
+        as isolated copies.
+        
+        This is a nice standalone refactor that enables that ability.
+
+        * Modules/indexeddb/IDBGetResult.cpp:
+        (WebCore::IDBGetResult::IDBGetResult):
+        (WebCore::IDBGetResult::isolatedCopy):
+        * Modules/indexeddb/IDBGetResult.h:
+        
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::IDBKeyData):
+        (WebCore::IDBKeyData::isolatedCopy):
+        * Modules/indexeddb/IDBKeyData.h:
+
+        * Modules/indexeddb/shared/IDBTransactionInfo.cpp:
+        (WebCore::IDBTransactionInfo::IDBTransactionInfo):
+        (WebCore::IDBTransactionInfo::isolatedCopy):
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+
 2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] accessibility/content-editable-as-textarea.html fails

@@ -70,20 +70,28 @@ IDBTransactionInfo::IDBTransactionInfo(const IDBTransactionInfo& info)
         m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(*info.m_originalDatabaseInfo);
 }
 
+IDBTransactionInfo::IDBTransactionInfo(const IDBTransactionInfo& that, IsolatedCopyTag)
+{
+    isolatedCopy(that, *this);
+}
+
 IDBTransactionInfo IDBTransactionInfo::isolatedCopy() const
 {
-    IDBTransactionInfo result(m_identifier);
-    result.m_mode = m_mode;
-    result.m_newVersion = m_newVersion;
+    return { *this, IsolatedCopy };
+}
 
-    result.m_objectStores.reserveCapacity(m_objectStores.size());
-    for (auto& objectStore : m_objectStores)
-        result.m_objectStores.uncheckedAppend(objectStore.isolatedCopy());
+void IDBTransactionInfo::isolatedCopy(const IDBTransactionInfo& source, IDBTransactionInfo& destination)
+{
+    destination.m_identifier = source.m_identifier.isolatedCopy();
+    destination.m_mode = source.m_mode;
+    destination.m_newVersion = source.m_newVersion;
 
-    if (m_originalDatabaseInfo)
-        result.m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(*m_originalDatabaseInfo, IDBDatabaseInfo::IsolatedCopy);
+    destination.m_objectStores.reserveCapacity(source.m_objectStores.size());
+    for (auto& objectStore : source.m_objectStores)
+        destination.m_objectStores.uncheckedAppend(objectStore.isolatedCopy());
 
-    return result;
+    if (source.m_originalDatabaseInfo)
+        destination.m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(*source.m_originalDatabaseInfo, IDBDatabaseInfo::IsolatedCopy);
 }
 
 #ifndef NDEBUG

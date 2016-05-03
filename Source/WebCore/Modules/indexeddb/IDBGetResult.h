@@ -97,6 +97,9 @@ public:
     {
     }
 
+    enum IsolatedCopyTag { IsolatedCopy };
+    IDBGetResult(const IDBGetResult&, IsolatedCopyTag);
+
     IDBGetResult isolatedCopy() const;
 
     const IDBValue& value() const { return m_value; }
@@ -110,6 +113,8 @@ public:
 
 private:
     void dataFromBuffer(SharedBuffer&);
+
+    static void isolatedCopy(const IDBGetResult& source, IDBGetResult& destination);
 
     IDBValue m_value;
     IDBKeyData m_keyData;
