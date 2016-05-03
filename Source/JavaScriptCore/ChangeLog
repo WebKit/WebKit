@@ -1,3 +1,25 @@
+2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Eliminate PassRefPtr conversion from ConsoleObject
+        https://bugs.webkit.org/show_bug.cgi?id=157300
+
+        Reviewed by Timothy Hatcher.
+
+        * runtime/ConsoleObject.cpp:
+        (JSC::consoleLogWithLevel):
+        (JSC::consoleProtoFuncClear):
+        (JSC::consoleProtoFuncDir):
+        (JSC::consoleProtoFuncDirXML):
+        (JSC::consoleProtoFuncTable):
+        (JSC::consoleProtoFuncTrace):
+        (JSC::consoleProtoFuncAssert):
+        (JSC::consoleProtoFuncCount):
+        (JSC::consoleProtoFuncTimeStamp):
+        (JSC::consoleProtoFuncGroup):
+        (JSC::consoleProtoFuncGroupCollapsed):
+        (JSC::consoleProtoFuncGroupEnd):
+        No need to release to a PassRefPtr, we can just move into the RefPtr<>&&.
+
 2016-05-01  Filip Pizlo  <fpizlo@apple.com>
 
         Speed up JSGlobalObject initialization by making some properties lazy
