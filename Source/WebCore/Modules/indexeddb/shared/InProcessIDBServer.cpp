@@ -89,7 +89,7 @@ IDBServer::IDBConnectionToClient& InProcessIDBServer::connectionToClient() const
     return *m_connectionToClient;
 }
 
-void InProcessIDBServer::deleteDatabase(IDBRequestData& requestData)
+void InProcessIDBServer::deleteDatabase(const IDBRequestData& requestData)
 {
     RefPtr<InProcessIDBServer> self(this);
     RunLoop::current().dispatch([this, self, requestData] {
@@ -105,7 +105,7 @@ void InProcessIDBServer::didDeleteDatabase(const IDBResultData& resultData)
     });
 }
 
-void InProcessIDBServer::openDatabase(IDBRequestData& requestData)
+void InProcessIDBServer::openDatabase(const IDBRequestData& requestData)
 {
     RefPtr<InProcessIDBServer> self(this);
     RunLoop::current().dispatch([this, self, requestData] {
@@ -225,7 +225,7 @@ void InProcessIDBServer::didIterateCursor(const IDBResultData& resultData)
     });
 }
 
-void InProcessIDBServer::abortTransaction(IDBResourceIdentifier& resourceIdentifier)
+void InProcessIDBServer::abortTransaction(const IDBResourceIdentifier& resourceIdentifier)
 {
     RefPtr<InProcessIDBServer> self(this);
     RunLoop::current().dispatch([this, self, resourceIdentifier] {
@@ -233,7 +233,7 @@ void InProcessIDBServer::abortTransaction(IDBResourceIdentifier& resourceIdentif
     });
 }
 
-void InProcessIDBServer::commitTransaction(IDBResourceIdentifier& resourceIdentifier)
+void InProcessIDBServer::commitTransaction(const IDBResourceIdentifier& resourceIdentifier)
 {
     RefPtr<InProcessIDBServer> self(this);
     RunLoop::current().dispatch([this, self, resourceIdentifier] {
@@ -241,7 +241,7 @@ void InProcessIDBServer::commitTransaction(IDBResourceIdentifier& resourceIdenti
     });
 }
 
-void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(IDBResourceIdentifier& transactionIdentifier)
+void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
     RefPtr<InProcessIDBServer> self(this);
     RunLoop::current().dispatch([this, self, transactionIdentifier] {

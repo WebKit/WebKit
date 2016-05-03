@@ -1,3 +1,18 @@
+2016-05-02  Brady Eidson  <beidson@apple.com>
+
+        Const-ify some IDB code.
+        https://bugs.webkit.org/show_bug.cgi?id=157287
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::deleteDatabase):
+        (WebKit::WebIDBConnectionToServer::openDatabase):
+        (WebKit::WebIDBConnectionToServer::abortTransaction):
+        (WebKit::WebIDBConnectionToServer::commitTransaction):
+        (WebKit::WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+
 2016-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Sort the project file.

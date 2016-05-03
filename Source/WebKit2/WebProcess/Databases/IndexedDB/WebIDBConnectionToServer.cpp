@@ -81,27 +81,27 @@ IDBClient::IDBConnectionToServer& WebIDBConnectionToServer::coreConnectionToServ
     return *m_connectionToServer;
 }
 
-void WebIDBConnectionToServer::deleteDatabase(IDBRequestData& requestData)
+void WebIDBConnectionToServer::deleteDatabase(const IDBRequestData& requestData)
 {
     send(Messages::WebIDBConnectionToClient::DeleteDatabase(requestData));
 }
 
-void WebIDBConnectionToServer::openDatabase(IDBRequestData& requestData)
+void WebIDBConnectionToServer::openDatabase(const IDBRequestData& requestData)
 {
     send(Messages::WebIDBConnectionToClient::OpenDatabase(requestData));
 }
 
-void WebIDBConnectionToServer::abortTransaction(IDBResourceIdentifier& transactionIdentifier)
+void WebIDBConnectionToServer::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
     send(Messages::WebIDBConnectionToClient::AbortTransaction(transactionIdentifier));
 }
 
-void WebIDBConnectionToServer::commitTransaction(IDBResourceIdentifier& transactionIdentifier)
+void WebIDBConnectionToServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
     send(Messages::WebIDBConnectionToClient::CommitTransaction(transactionIdentifier));
 }
 
-void WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction(IDBResourceIdentifier& transactionIdentifier)
+void WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
     send(Messages::WebIDBConnectionToClient::DidFinishHandlingVersionChangeTransaction(transactionIdentifier));
 }

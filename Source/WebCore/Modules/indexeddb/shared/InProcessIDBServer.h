@@ -55,11 +55,11 @@ public:
     IDBServer::IDBConnectionToClient& connectionToClient() const;
 
     // IDBConnectionToServer
-    void deleteDatabase(IDBRequestData&) final;
-    void openDatabase(IDBRequestData&) final;
-    void abortTransaction(IDBResourceIdentifier&) final;
-    void commitTransaction(IDBResourceIdentifier&) final;
-    void didFinishHandlingVersionChangeTransaction(IDBResourceIdentifier&) final;
+    void deleteDatabase(const IDBRequestData&) final;
+    void openDatabase(const IDBRequestData&) final;
+    void abortTransaction(const IDBResourceIdentifier&) final;
+    void commitTransaction(const IDBResourceIdentifier&) final;
+    void didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier&) final;
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) final;
     void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) final;
     void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier) final;

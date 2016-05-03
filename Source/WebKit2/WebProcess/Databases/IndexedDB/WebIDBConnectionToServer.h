@@ -45,11 +45,11 @@ public:
     uint64_t messageSenderDestinationID() final { return m_identifier; }
 
     // IDBConnectionToServerDelegate
-    void deleteDatabase(WebCore::IDBRequestData&) final;
-    void openDatabase(WebCore::IDBRequestData&) final;
-    void abortTransaction(WebCore::IDBResourceIdentifier&) final;
-    void commitTransaction(WebCore::IDBResourceIdentifier&) final;
-    void didFinishHandlingVersionChangeTransaction(WebCore::IDBResourceIdentifier&) final;
+    void deleteDatabase(const WebCore::IDBRequestData&) final;
+    void openDatabase(const WebCore::IDBRequestData&) final;
+    void abortTransaction(const WebCore::IDBResourceIdentifier&) final;
+    void commitTransaction(const WebCore::IDBResourceIdentifier&) final;
+    void didFinishHandlingVersionChangeTransaction(const WebCore::IDBResourceIdentifier&) final;
     void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&) final;
     void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName) final;
     void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier) final;
