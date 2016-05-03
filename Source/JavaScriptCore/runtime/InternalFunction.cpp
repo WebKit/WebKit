@@ -58,7 +58,7 @@ void InternalFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_originalName);
 }
 
-const String& InternalFunction::name(ExecState*)
+const String& InternalFunction::name()
 {
     const String& name = m_originalName->tryGetValue();
     ASSERT(name); // m_originalName was built from a String, and hence, there is no rope to resolve.
@@ -88,7 +88,7 @@ const String InternalFunction::calculatedDisplayName(ExecState* exec)
     if (!explicitName.isEmpty())
         return explicitName;
     
-    return name(exec);
+    return name();
 }
 
 Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue newTarget, Structure* baseClass)

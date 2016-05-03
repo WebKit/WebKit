@@ -1,3 +1,49 @@
+2016-05-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Speed up JSGlobalObject initialization by making some properties lazy
+        https://bugs.webkit.org/show_bug.cgi?id=157045
+
+        Reviewed by Keith Miller.
+        
+        This WTF change is at the heart of a large JSC change. In JSC I found myself wanting to
+        do this a lot:
+        
+            static void callback(Foo& foo) { ... }
+        
+            foo.setCallback(callback);
+        
+        But that's not very nice to write if many different setCallback() calls are inside of the
+        same very large function: you'll have to have a lot of static function definitions in
+        one part of the file, and then a bunch of setCallback() calls in another part. It's hard
+        to reason about what's going on with such code.
+        
+        So what if you wrote this instead:
+        
+            foo.setCallback([] (Foo& foo) { ... });
+        
+        Much nicer! There is a standard way to do this: lambdas that are stateless are
+        convertible to function pointers. This change also offers another approach that is a bit
+        more general.
+        
+        These additions to WTF help you do it:
+        
+        isStatelessLambda<Func>(): tells you if Func is a stateless lambda. This uses is_empty to
+        test if the lambda is stateless. This turns out to be a stronger property than
+        convertibility to function pointers. For example, a function pointer is convertible to a
+        function pointer, but it is definitely stateful: you cannot successfully call it if you
+        only has its type. On the other hand, a stateless lambda is really stateless in the sense
+        that you only need its type to call it.
+        
+        callStatelessLambda<ResultType, Func>(Arguments&&...): calls the given stateless lambda.
+        
+        JSC uses these to build up some sophisticated lazy-initialization APIs. The use of
+        statelessness allows JSC to combine a lambda with other logic into a single function
+        pointer.
+
+        * wtf/StdLibExtras.h:
+        (WTF::isStatelessLambda):
+        (WTF::callStatelessLambda):
+
 2016-05-03  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Remove Windows XP Compatibility Requirements

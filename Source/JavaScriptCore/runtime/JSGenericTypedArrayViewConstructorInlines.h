@@ -221,7 +221,9 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState*);
 template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
 {
-    Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), asInternalFunction(exec->callee())->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType));
+    InternalFunction* function = asInternalFunction(exec->callee());
+    Structure* parentStructure = function->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType);
+    Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), parentStructure);
     if (exec->hadException())
         return JSValue::encode(JSValue());
 

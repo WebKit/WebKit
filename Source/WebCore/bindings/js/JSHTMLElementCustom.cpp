@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,14 +101,21 @@ JSScope* JSHTMLElement::pushEventHandlerScope(ExecState* exec, JSScope* scope) c
     HTMLElement& element = wrapped();
 
     // The document is put on first, fall back to searching it only after the element and form.
-    scope = JSWithScope::create(exec, asObject(toJS(exec, globalObject(), &element.document())), scope);
+    // FIXME: This probably may use the wrong global object. If this is called from a native
+    // function, then it would be correct but not optimal since the native function would *know*
+    // the global object. But, it may be that globalObject() is more correct.
+    // https://bugs.webkit.org/show_bug.cgi?id=134932
+    VM& vm = exec->vm();
+    JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
+    
+    scope = JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), &element.document())), scope);
 
     // The form is next, searched before the document, but after the element itself.
     if (HTMLFormElement* form = element.form())
-        scope = JSWithScope::create(exec, asObject(toJS(exec, globalObject(), form)), scope);
+        scope = JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), form)), scope);
 
     // The element is on top, searched first.
-    return JSWithScope::create(exec, asObject(toJS(exec, globalObject(), &element)), scope);
+    return JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), &element)), scope);
 }
 
 } // namespace WebCore

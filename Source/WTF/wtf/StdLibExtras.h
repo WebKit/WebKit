@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2016 Apple Inc. All Rights Reserved.
  * Copyright (C) 2013 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@
 
 #include <chrono>
 #include <memory>
+#include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 
@@ -284,6 +285,20 @@ inline void insertIntoBoundedVector(VectorType& vector, size_t size, const Eleme
 // https://bugs.webkit.org/show_bug.cgi?id=131815
 WTF_EXPORT_PRIVATE bool isCompilationThread();
 
+template<typename Func>
+bool isStatelessLambda()
+{
+    return std::is_empty<Func>::value;
+}
+
+template<typename ResultType, typename Func, typename... ArgumentTypes>
+ResultType callStatelessLambda(ArgumentTypes&&... arguments)
+{
+    uint64_t data[(sizeof(Func) + sizeof(uint64_t) - 1) / sizeof(uint64_t)];
+    memset(data, 0, sizeof(data));
+    return (*bitwise_cast<Func*>(data))(std::forward<ArgumentTypes>(arguments)...);
+}
+
 } // namespace WTF
 
 // This version of placement new omits a 0 check.
@@ -403,6 +418,8 @@ using WTF::tryBinarySearch;
 using WTF::approximateBinarySearch;
 using WTF::bitwise_cast;
 using WTF::safeCast;
+using WTF::isStatelessLambda;
+using WTF::callStatelessLambda;
 
 #if COMPILER_SUPPORTS(CXX_USER_LITERALS)
 // We normally don't want to bring in entire std namespaces, but literals are an exception.

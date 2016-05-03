@@ -762,7 +762,7 @@ SLOW_PATH_DECL(slow_path_push_with_scope)
 
     int scopeReg = pc[3].u.operand;
     JSScope* currentScope = exec->uncheckedR(scopeReg).Register::scope();
-    RETURN(JSWithScope::create(exec, newScope, currentScope));
+    RETURN(JSWithScope::create(vm, exec->lexicalGlobalObject(), newScope, currentScope));
 }
 
 SLOW_PATH_DECL(slow_path_resolve_scope)

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005, 2007, 2008, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005, 2007, 2008, 2015-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -46,9 +46,12 @@ enum Attribute {
     Function          = 1 << 8,  // property is a function - only used by static hashtables
     Builtin           = 1 << 9,  // property is a builtin function - only used by static hashtables
     ConstantInteger   = 1 << 10, // property is a constant integer - only used by static hashtables
+    CellProperty      = 1 << 11, // property is a lazy property - only used by static hashtables
+    ClassStructure    = 1 << 12, // property is a lazy class structure - only used by static hashtables
+    PropertyCallback  = 1 << 13, // property that is a lazy property callback - only used by static hashtables
     BuiltinOrFunction = Builtin | Function, // helper only used by static hashtables
-    BuiltinOrFunctionOrAccessor = Builtin | Function | Accessor, // helper only used by static hashtables
-    BuiltinOrFunctionOrAccessorOrConstant = Builtin | Function | Accessor | ConstantInteger, // helper only used by static hashtables
+    BuiltinOrFunctionOrAccessorOrLazyProperty = Builtin | Function | Accessor | CellProperty | ClassStructure | PropertyCallback, // helper only used by static hashtables
+    BuiltinOrFunctionOrAccessorOrLazyPropertyOrConstant = Builtin | Function | Accessor | CellProperty | ClassStructure | PropertyCallback | ConstantInteger // helper only used by static hashtables
 };
 
 enum CacheabilityType : uint8_t {

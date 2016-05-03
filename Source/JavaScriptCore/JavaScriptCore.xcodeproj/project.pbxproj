@@ -1995,6 +1995,11 @@
 		DC17E81A1C9C91E9008A6AB3 /* CCallHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC17E8161C9C802B008A6AB3 /* CCallHelpers.cpp */; };
 		DC2143071CA32E55000A8869 /* ICStats.h in Headers */ = {isa = PBXBuildFile; fileRef = DC2143061CA32E52000A8869 /* ICStats.h */; };
 		DC2143081CA32E58000A8869 /* ICStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC2143051CA32E52000A8869 /* ICStats.cpp */; };
+		DCF3D5691CD2946D003D5C65 /* LazyClassStructure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCF3D5641CD29468003D5C65 /* LazyClassStructure.cpp */; };
+		DCF3D56A1CD29470003D5C65 /* LazyClassStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF3D5651CD29468003D5C65 /* LazyClassStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DCF3D56B1CD29472003D5C65 /* LazyClassStructureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF3D5661CD29468003D5C65 /* LazyClassStructureInlines.h */; };
+		DCF3D56C1CD29475003D5C65 /* LazyProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF3D5671CD29468003D5C65 /* LazyProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DCF3D56D1CD29476003D5C65 /* LazyPropertyInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */; };
 		DE26E9031CB5DD0500D2BE82 /* BuiltinExecutableCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */; };
 		DE26E9071CB5DEFB00D2BE82 /* BuiltinExecutableCreator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE26E9061CB5DD9600D2BE82 /* BuiltinExecutableCreator.cpp */; };
 		DE5A0A001BA3AC3E003D4424 /* IntrinsicEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5A09FF1BA3AC3E003D4424 /* IntrinsicEmitter.cpp */; };
@@ -4204,6 +4209,11 @@
 		DC17E8161C9C802B008A6AB3 /* CCallHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCallHelpers.cpp; sourceTree = "<group>"; };
 		DC2143051CA32E52000A8869 /* ICStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ICStats.cpp; sourceTree = "<group>"; };
 		DC2143061CA32E52000A8869 /* ICStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICStats.h; sourceTree = "<group>"; };
+		DCF3D5641CD29468003D5C65 /* LazyClassStructure.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LazyClassStructure.cpp; sourceTree = "<group>"; };
+		DCF3D5651CD29468003D5C65 /* LazyClassStructure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyClassStructure.h; sourceTree = "<group>"; };
+		DCF3D5661CD29468003D5C65 /* LazyClassStructureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyClassStructureInlines.h; sourceTree = "<group>"; };
+		DCF3D5671CD29468003D5C65 /* LazyProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyProperty.h; sourceTree = "<group>"; };
+		DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyPropertyInlines.h; sourceTree = "<group>"; };
 		DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinExecutableCreator.h; sourceTree = "<group>"; };
 		DE26E9061CB5DD9600D2BE82 /* BuiltinExecutableCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinExecutableCreator.cpp; sourceTree = "<group>"; };
 		DE5A09FF1BA3AC3E003D4424 /* IntrinsicEmitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntrinsicEmitter.cpp; sourceTree = "<group>"; };
@@ -5496,6 +5506,11 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
+				DCF3D5641CD29468003D5C65 /* LazyClassStructure.cpp */,
+				DCF3D5651CD29468003D5C65 /* LazyClassStructure.h */,
+				DCF3D5661CD29468003D5C65 /* LazyClassStructureInlines.h */,
+				DCF3D5671CD29468003D5C65 /* LazyProperty.h */,
+				DCF3D5681CD29468003D5C65 /* LazyPropertyInlines.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				0FE0500C1AA9091100D33B33 /* ArgumentsMode.h */,
@@ -7127,6 +7142,7 @@
 				A5FD0074189B038C00633231 /* ConsoleTypes.h in Headers */,
 				0FFC99D1184EC8AD009C10AB /* ConstantMode.h in Headers */,
 				E354622B1B6065D100545386 /* ConstructAbility.h in Headers */,
+				DCF3D56D1CD29476003D5C65 /* LazyPropertyInlines.h in Headers */,
 				BC18C3F60E16F5CD00B34460 /* ConstructData.h in Headers */,
 				A57D23F21891B5B40031C7FA /* ContentSearchUtilities.h in Headers */,
 				52678F911A04177C006A306D /* ControlFlowProfiler.h in Headers */,
@@ -7770,6 +7786,7 @@
 				BC18C4520E16F5CD00B34460 /* LegacyProfiler.h in Headers */,
 				BC18C4310E16F5CD00B34460 /* Lexer.h in Headers */,
 				BC18C52E0E16FCE100B34460 /* Lexer.lut.h in Headers */,
+				DCF3D56B1CD29472003D5C65 /* LazyClassStructureInlines.h in Headers */,
 				FE187A021BFBE5610038BBCA /* JITMulGenerator.h in Headers */,
 				86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */,
 				0F431738146BAC69007E3890 /* ListableHandler.h in Headers */,
@@ -7847,6 +7864,7 @@
 				86F3EEBD168CDE930077B92A /* ObjCCallbackFunction.h in Headers */,
 				86F3EEBF168CDE930077B92A /* ObjcRuntimeExtras.h in Headers */,
 				14CA958D16AB50FA00938A06 /* ObjectAllocationProfile.h in Headers */,
+				DCF3D56C1CD29475003D5C65 /* LazyProperty.h in Headers */,
 				BC18C4450E16F5CD00B34460 /* ObjectConstructor.h in Headers */,
 				996B73221BDA08EF00331B84 /* ObjectConstructor.lut.h in Headers */,
 				0FD3E40A1B618B6600C80E1E /* ObjectPropertyCondition.h in Headers */,
@@ -7862,6 +7880,7 @@
 				BC18C44B0E16F5CD00B34460 /* Parser.h in Headers */,
 				93052C350FB792190048FDC3 /* ParserArena.h in Headers */,
 				0FCCAE4516D0CF7400D0C65B /* ParserError.h in Headers */,
+				DCF3D56A1CD29470003D5C65 /* LazyClassStructure.h in Headers */,
 				A77F1825164192C700640A47 /* ParserModes.h in Headers */,
 				65303D641447B9E100D3F904 /* ParserTokens.h in Headers */,
 				0FF9CE741B9CD6D0004EDCA6 /* PolymorphicAccess.h in Headers */,
@@ -8927,6 +8946,7 @@
 				A54982031891D0B00081E5B8 /* EventLoop.cpp in Sources */,
 				FE1C0FFF1B194FD100B53FCA /* Exception.cpp in Sources */,
 				0F12DE0F1979D5FD0006FF4E /* ExceptionFuzz.cpp in Sources */,
+				DCF3D5691CD2946D003D5C65 /* LazyClassStructure.cpp in Sources */,
 				1429D8780ED21ACD00B89619 /* ExceptionHelpers.cpp in Sources */,
 				86CA032E1038E8440028A609 /* Executable.cpp in Sources */,
 				0FF054F91AC35B4400E5BE57 /* ExecutableAllocationFuzz.cpp in Sources */,

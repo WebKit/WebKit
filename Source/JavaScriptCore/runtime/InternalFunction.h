@@ -40,7 +40,7 @@ public:
 
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
-    JS_EXPORT_PRIVATE const String& name(ExecState*);
+    JS_EXPORT_PRIVATE const String& name();
     const String displayName(ExecState*);
     const String calculatedDisplayName(ExecState*);
 
