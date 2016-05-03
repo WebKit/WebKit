@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-MediaSession::MediaSession(ScriptExecutionContext& context, MediaSessionKind kind)
+MediaSession::MediaSession(ScriptExecutionContext& context, Kind kind)
     : m_document(downcast<Document>(context))
     , m_kind(kind)
 {

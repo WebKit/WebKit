@@ -30,7 +30,7 @@ enum PageOverlayType {
 };
 
 // These map to ResourceRequestCachePolicy.
-enum InternalsCachePolicy {
+enum CachePolicy {
     "UseProtocolCachePolicy",
     "ReloadIgnoringCacheData",
     "ReturnCacheDataElseLoad",
@@ -38,7 +38,7 @@ enum InternalsCachePolicy {
 };
 
 // FIXME: Strings in an enum should not have the name of the enum as a prefix.
-enum InternalsResourceLoadPriority {
+enum ResourceLoadPriority {
     "ResourceLoadPriorityVeryLow",
     "ResourceLoadPriorityLow",
     "ResourceLoadPriorityMedium",
@@ -59,7 +59,7 @@ enum InternalsResourceLoadPriority {
 };
 
 // FIXME: Strings in an enum should not have the name of the enum as a prefix.
-enum InternalsAutoFillButtonType {
+enum AutoFillButtonType {
     "AutoFillButtonTypeNone",
     "AutoFillButtonTypeContacts",
     "AutoFillButtonTypeCredentials"
@@ -86,8 +86,8 @@ enum InternalsAutoFillButtonType {
     void clearMemoryCache();
     void pruneMemoryCacheToSize(long size);
     long memoryCacheSize();
-    void setOverrideCachePolicy(InternalsCachePolicy policy);
-    void setOverrideResourceLoadPriority(InternalsResourceLoadPriority priority);
+    void setOverrideCachePolicy(CachePolicy policy);
+    void setOverrideResourceLoadPriority(ResourceLoadPriority priority);
     void setStrictRawResourceValidationPolicyDisabled(boolean disabled);
 
     void clearPageCache();
@@ -159,7 +159,7 @@ enum InternalsAutoFillButtonType {
     boolean elementShouldAutoComplete(HTMLInputElement inputElement);
     void setEditingValue(HTMLInputElement inputElement, DOMString value);
     void setAutofilled(HTMLInputElement inputElement, boolean enabled);
-    void setShowAutoFillButton(HTMLInputElement inputElement, InternalsAutoFillButtonType autoFillButtonType);
+    void setShowAutoFillButton(HTMLInputElement inputElement, AutoFillButtonType autoFillButtonType);
     [RaisesException] unsigned long countMatchesForText(DOMString text, unsigned long findOptions, DOMString markMatches);
 
     [RaisesException] DOMString autofillFieldName(Element formControlElement);

@@ -33,24 +33,24 @@
 
 namespace WebCore {
 
-enum class MediaDeviceKind { Audioinput, Audiooutput, Videoinput };
-
 class MediaDeviceInfo : public RefCounted<MediaDeviceInfo>, public ScriptWrappable, private ContextDestructionObserver {
 public:
-    static Ref<MediaDeviceInfo> create(ScriptExecutionContext*, const String&, const String&, const String&, MediaDeviceKind);
+    enum class Kind { Audioinput, Audiooutput, Videoinput };
+
+    static Ref<MediaDeviceInfo> create(ScriptExecutionContext*, const String&, const String&, const String&, Kind);
 
     const String& label() const { return m_label; }
     const String& deviceId() const { return m_deviceId; }
     const String& groupId() const { return m_groupId; }
-    MediaDeviceKind kind() const { return m_kind; }
+    Kind kind() const { return m_kind; }
 
 private:
-    MediaDeviceInfo(ScriptExecutionContext*, const String&, const String&, const String&, MediaDeviceKind);
+    MediaDeviceInfo(ScriptExecutionContext*, const String&, const String&, const String&, Kind);
 
     const String m_label;
     const String m_deviceId;
     const String m_groupId;
-    const MediaDeviceKind m_kind;
+    const Kind m_kind;
 };
 
 typedef Vector<RefPtr<MediaDeviceInfo>> MediaDeviceInfoVector;

@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-enum class OverSampleType { None, _2x, _4x };
-
 class WaveShaperNode final : public AudioBasicProcessorNode {
 public:
     static Ref<WaveShaperNode> create(AudioContext& context)
@@ -43,6 +41,7 @@ public:
     void setCurve(Float32Array*);
     Float32Array* curve();
 
+    enum class OverSampleType { None, _2x, _4x };
     void setOversample(OverSampleType);
     OverSampleType oversample() const;
 

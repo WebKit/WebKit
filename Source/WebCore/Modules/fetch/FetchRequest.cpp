@@ -42,17 +42,17 @@ namespace WebCore {
 static bool setReferrerPolicy(FetchOptions& options, const String& referrerPolicy)
 {
     if (referrerPolicy.isEmpty())
-        options.referrerPolicy = ReferrerPolicy::EmptyString;
+        options.referrerPolicy = FetchOptions::ReferrerPolicy::EmptyString;
     else if (referrerPolicy == "no-referrer")
-        options.referrerPolicy = ReferrerPolicy::NoReferrer;
+        options.referrerPolicy = FetchOptions::ReferrerPolicy::NoReferrer;
     else if (referrerPolicy == "no-referrer-when-downgrade")
-        options.referrerPolicy = ReferrerPolicy::NoReferrerWhenDowngrade;
+        options.referrerPolicy = FetchOptions::ReferrerPolicy::NoReferrerWhenDowngrade;
     else if (referrerPolicy == "origin-only")
-        options.referrerPolicy = ReferrerPolicy::OriginOnly;
+        options.referrerPolicy = FetchOptions::ReferrerPolicy::OriginOnly;
     else if (referrerPolicy == "origin-when-cross-origin")
-        options.referrerPolicy = ReferrerPolicy::OriginWhenCrossOrigin;
+        options.referrerPolicy = FetchOptions::ReferrerPolicy::OriginWhenCrossOrigin;
     else if (referrerPolicy == "unsafe-url")
-        options.referrerPolicy = ReferrerPolicy::UnsafeUrl;
+        options.referrerPolicy = FetchOptions::ReferrerPolicy::UnsafeUrl;
     else
         return false;
     return true;
@@ -61,13 +61,13 @@ static bool setReferrerPolicy(FetchOptions& options, const String& referrerPolic
 static bool setMode(FetchOptions& options, const String& mode)
 {
     if (mode == "navigate")
-        options.mode = RequestMode::Navigate;
+        options.mode = FetchOptions::Mode::Navigate;
     else if (mode == "same-origin")
-        options.mode = RequestMode::SameOrigin;
+        options.mode = FetchOptions::Mode::SameOrigin;
     else if (mode == "no-cors")
-        options.mode = RequestMode::NoCors;
+        options.mode = FetchOptions::Mode::NoCors;
     else if (mode == "cors")
-        options.mode = RequestMode::Cors;
+        options.mode = FetchOptions::Mode::Cors;
     else
         return false;
     return true;
@@ -76,11 +76,11 @@ static bool setMode(FetchOptions& options, const String& mode)
 static bool setCredentials(FetchOptions& options, const String& credentials)
 {
     if (credentials == "omit")
-        options.credentials = RequestCredentials::Omit;
+        options.credentials = FetchOptions::Credentials::Omit;
     else if (credentials == "same-origin")
-        options.credentials = RequestCredentials::SameOrigin;
+        options.credentials = FetchOptions::Credentials::SameOrigin;
     else if (credentials == "include")
-        options.credentials = RequestCredentials::Include;
+        options.credentials = FetchOptions::Credentials::Include;
     else
         return false;
     return true;
@@ -89,15 +89,15 @@ static bool setCredentials(FetchOptions& options, const String& credentials)
 static bool setCache(FetchOptions& options, const String& cache)
 {
     if (cache == "default")
-        options.cache = RequestCache::Default;
+        options.cache = FetchOptions::Cache::Default;
     else if (cache == "no-store")
-        options.cache = RequestCache::NoStore;
+        options.cache = FetchOptions::Cache::NoStore;
     else if (cache == "reload")
-        options.cache = RequestCache::Reload;
+        options.cache = FetchOptions::Cache::Reload;
     else if (cache == "no-cache")
-        options.cache = RequestCache::NoCache;
+        options.cache = FetchOptions::Cache::NoCache;
     else if (cache == "force-cache")
-        options.cache = RequestCache::ForceCache;
+        options.cache = FetchOptions::Cache::ForceCache;
     else
         return false;
     return true;
@@ -106,11 +106,11 @@ static bool setCache(FetchOptions& options, const String& cache)
 static bool setRedirect(FetchOptions& options, const String& redirect)
 {
     if (redirect == "follow")
-        options.redirect = RequestRedirect::Follow;
+        options.redirect = FetchOptions::Redirect::Follow;
     else if (redirect == "error")
-        options.redirect = RequestRedirect::Error;
+        options.redirect = FetchOptions::Redirect::Error;
     else if (redirect == "manual")
-        options.redirect = RequestRedirect::Manual;
+        options.redirect = FetchOptions::Redirect::Manual;
     else
         return false;
     return true;
@@ -173,7 +173,7 @@ static bool buildOptions(FetchRequest::InternalRequest& request, ScriptExecution
 
     if (init.get("mode", value) && !setMode(request.options, value))
         return false;
-    if (request.options.mode == RequestMode::Navigate)
+    if (request.options.mode == FetchOptions::Mode::Navigate)
         return false;
 
     if (init.get("credentials", value) && !setCredentials(request.options, value))
@@ -196,7 +196,7 @@ static bool buildOptions(FetchRequest::InternalRequest& request, ScriptExecution
 static RefPtr<FetchHeaders> buildHeaders(const Dictionary& init, const FetchRequest::InternalRequest& request, const FetchHeaders* inputHeaders = nullptr)
 {
     FetchHeaders::Guard guard = FetchHeaders::Guard::Request;
-    if (request.options.mode == RequestMode::NoCors) {
+    if (request.options.mode == FetchOptions::Mode::NoCors) {
         const String& method = request.request.httpMethod();
         if (method != "GET" && method != "POST" && method != "HEAD")
             return nullptr;
@@ -244,8 +244,8 @@ RefPtr<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, const
     }
 
     FetchRequest::InternalRequest internalRequest;
-    internalRequest.options.mode = RequestMode::Cors;
-    internalRequest.options.credentials = RequestCredentials::Omit;
+    internalRequest.options.mode = Mode::Cors;
+    internalRequest.options.credentials = Credentials::Omit;
     internalRequest.referrer = ASCIILiteral("client");
     internalRequest.request.setURL(requestURL);
 

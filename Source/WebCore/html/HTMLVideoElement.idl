@@ -23,9 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// FIXME: This should be Conditional=VIDEO_PRESENTATION_MODE.
-enum VideoPresentationMode { "fullscreen", "picture-in-picture", "inline" };
-
 [
     Conditional=VIDEO,
     JSGenerateToNativeObject,
@@ -63,3 +60,5 @@ enum VideoPresentationMode { "fullscreen", "picture-in-picture", "inline" };
     [Conditional=VIDEO_PRESENTATION_MODE] void webkitSetPresentationMode(VideoPresentationMode mode);
 #endif
 };
+
+[Conditional=VIDEO_PRESENTATION_MODE] enum VideoPresentationMode { "fullscreen", "picture-in-picture", "inline" };

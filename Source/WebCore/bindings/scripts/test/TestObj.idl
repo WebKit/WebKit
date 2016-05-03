@@ -39,6 +39,10 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
 [Conditional=Condition1&Condition2] enum TestEnumB { "B" };
 [Conditional=Condition1|Condition2] enum TestEnumC { "C" };
 
+enum TestObjKind { "quick", "dead" };
+enum ObjSize { "small", "much-much-larger" };
+enum TestConfidence { "high", "kinda-low" };
+
 [
     Constructor(TestCallback testCallback, TestCallbackFunction testCallbackFunction),
     InterfaceName=TestObject

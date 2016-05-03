@@ -111,9 +111,9 @@ bool MediaStreamTrack::remote() const
     return m_private->remote();
 }
 
-MediaStreamTrackState MediaStreamTrack::readyState() const
+auto MediaStreamTrack::readyState() const -> State
 {
-    return ended() ? MediaStreamTrackState::Ended : MediaStreamTrackState::Live;
+    return ended() ? State::Ended : State::Live;
 }
 
 bool MediaStreamTrack::ended() const

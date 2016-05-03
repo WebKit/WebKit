@@ -643,7 +643,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(SourceBufferPriva
     LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(%p) - result = %i", this, error);
 
     if (!isRemoved())
-        m_source->streamEndedWithError(EndOfStreamError::Decode);
+        m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
 }
 
 static bool decodeTimeComparator(const PresentationOrderSampleMap::MapType::value_type& a, const PresentationOrderSampleMap::MapType::value_type& b)
@@ -1270,7 +1270,7 @@ void SourceBuffer::appendError(bool decodeErrorParam)
 
     // 5. If decode error is true, then run the end of stream algorithm with the error parameter set to "decode".
     if (decodeErrorParam)
-        m_source->streamEndedWithError(EndOfStreamError::Decode);
+        m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
 }
 
 void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, PassRefPtr<MediaSample> prpSample)
@@ -1421,7 +1421,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         MediaTime presentationStartTime = MediaTime::zeroTime();
         if (presentationTimestamp < presentationStartTime) {
             LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidReceiveSample(%p) - failing because presentationTimestamp < presentationStartTime", this);
-            m_source->streamEndedWithError(EndOfStreamError::Decode);
+            m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
             return;
         }
 
@@ -1674,7 +1674,7 @@ void SourceBuffer::textTrackModeChanged(TextTrack* track)
     // 2.4.5 Changes to selected/enabled track state
     // If a text track mode becomes "disabled" and the SourceBuffer associated with this track is not
     // associated with any other enabled or selected track, then run the following steps:
-    if (track->mode() == TextTrackMode::Disabled
+    if (track->mode() == TextTrack::Mode::Disabled
         && (!m_videoTracks || !m_videoTracks->isAnyTrackEnabled())
         && (!m_audioTracks || !m_audioTracks->isAnyTrackEnabled())
         && (!m_textTracks || !m_textTracks->isAnyTrackEnabled())) {

@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-CryptoKey::CryptoKey(CryptoAlgorithmIdentifier algorithm, CryptoKeyType type, bool extractable, CryptoKeyUsage usages)
+CryptoKey::CryptoKey(CryptoAlgorithmIdentifier algorithm, Type type, bool extractable, CryptoKeyUsage usages)
     : m_algorithm(algorithm)
     , m_type(type)
     , m_extractable(extractable)
@@ -53,26 +53,26 @@ void CryptoKey::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& bui
     // Subclasses will add other keys.
 }
 
-Vector<KeyUsage> CryptoKey::usages() const
+auto CryptoKey::usages() const -> Vector<Usage>
 {
     // The result is ordered alphabetically.
-    Vector<KeyUsage> result;
+    Vector<Usage> result;
     if (m_usages & CryptoKeyUsageDecrypt)
-        result.append(KeyUsage::Decrypt);
+        result.append(Usage::Decrypt);
     if (m_usages & CryptoKeyUsageDeriveBits)
-        result.append(KeyUsage::DeriveBits);
+        result.append(Usage::DeriveBits);
     if (m_usages & CryptoKeyUsageDeriveKey)
-        result.append(KeyUsage::DeriveKey);
+        result.append(Usage::DeriveKey);
     if (m_usages & CryptoKeyUsageEncrypt)
-        result.append(KeyUsage::Encrypt);
+        result.append(Usage::Encrypt);
     if (m_usages & CryptoKeyUsageSign)
-        result.append(KeyUsage::Sign);
+        result.append(Usage::Sign);
     if (m_usages & CryptoKeyUsageUnwrapKey)
-        result.append(KeyUsage::UnwrapKey);
+        result.append(Usage::UnwrapKey);
     if (m_usages & CryptoKeyUsageVerify)
-        result.append(KeyUsage::Verify);
+        result.append(Usage::Verify);
     if (m_usages & CryptoKeyUsageWrapKey)
-        result.append(KeyUsage::WrapKey);
+        result.append(Usage::WrapKey);
     return result;
 }
 
@@ -84,6 +84,7 @@ Vector<uint8_t> CryptoKey::randomData(size_t size)
     return result;
 }
 #endif
+
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)

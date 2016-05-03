@@ -54,14 +54,14 @@ Float32Array* WaveShaperNode::curve()
     return waveShaperProcessor()->curve();
 }
 
-static inline WaveShaperProcessor::OverSampleType processorType(OverSampleType type)
+static inline WaveShaperProcessor::OverSampleType processorType(WaveShaperNode::OverSampleType type)
 {
     switch (type) {
-    case OverSampleType::None:
+    case WaveShaperNode::OverSampleType::None:
         return WaveShaperProcessor::OverSampleNone;
-    case OverSampleType::_2x:
+    case WaveShaperNode::OverSampleType::_2x:
         return WaveShaperProcessor::OverSample2x;
-    case OverSampleType::_4x:
+    case WaveShaperNode::OverSampleType::_4x:
         return WaveShaperProcessor::OverSample4x;
     }
     ASSERT_NOT_REACHED();
@@ -77,7 +77,7 @@ void WaveShaperNode::setOversample(OverSampleType type)
     waveShaperProcessor()->setOversample(processorType(type));
 }
 
-OverSampleType WaveShaperNode::oversample() const
+auto WaveShaperNode::oversample() const -> OverSampleType
 {
     switch (const_cast<WaveShaperNode*>(this)->waveShaperProcessor()->oversample()) {
     case WaveShaperProcessor::OverSampleNone:

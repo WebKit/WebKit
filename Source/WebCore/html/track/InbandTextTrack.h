@@ -45,7 +45,7 @@ public:
     bool containsOnlyForcedSubtitles() const override;
     bool isMainProgramContent() const override;
     bool isEasyToRead() const override;
-    void setMode(TextTrackMode) override;
+    void setMode(Mode) override;
     size_t inbandTrackIndex();
 
     AtomicString inBandMetadataTrackDispatchType() const override;
@@ -55,7 +55,7 @@ public:
 protected:
     InbandTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
-    void setModeInternal(TextTrackMode);
+    void setModeInternal(Mode);
     void updateKindFromPrivate();
 
     RefPtr<InbandTextTrackPrivate> m_private;

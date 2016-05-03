@@ -58,10 +58,6 @@ class TextTrackList;
 class TimeRanges;
 class VideoTrackList;
 
-enum class EndOfStreamError;
-
-enum class AppendMode { Segments, Sequence };
-
 class SourceBuffer final : public RefCounted<SourceBuffer>, public ActiveDOMObject, public EventTargetWithInlineData, public SourceBufferPrivateClient, public AudioTrackClient, public VideoTrackClient, public TextTrackClient {
 public:
     static Ref<SourceBuffer> create(Ref<SourceBufferPrivate>&&, MediaSource*);
@@ -117,6 +113,7 @@ public:
 
     Document& document() const;
 
+    enum class AppendMode { Segments, Sequence };
     AppendMode mode() const { return m_mode; }
     void setMode(AppendMode, ExceptionCode&);
 

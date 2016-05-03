@@ -37,9 +37,8 @@ namespace WebCore {
 // FIXME: Move this workaround to a global location, perhaps config.h; maybe a GTK-specific location.
 #undef Always
 
-// FIXME: Merge this with the ReferrerPolicy defined in the Fetch specification.
-// FIXME: Rename back to ReferrerPolicy even before that, if we find a way.
-enum class ReferrerHeaderPolicy {
+// FIXME: Merge this with FetchOptions::ReferrerPolicy, which is the one defined in the Fetch specification.
+enum class ReferrerPolicy {
     Always,
     Default,
     Never,

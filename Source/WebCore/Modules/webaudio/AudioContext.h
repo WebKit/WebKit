@@ -71,8 +71,6 @@ class PeriodicWave;
 class ScriptProcessorNode;
 class WaveShaperNode;
 
-enum class AudioContextState { Suspended, Running, Interrupted, Closed };
-
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
 
@@ -117,7 +115,7 @@ public:
     void resume(Promise&&);
     void close(Promise&&);
 
-    using State = AudioContextState;
+    enum class State { Suspended, Running, Interrupted, Closed };
     State state() const;
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
@@ -405,7 +403,7 @@ inline bool operator!=(const AudioContext& lhs, const AudioContext& rhs)
     return &lhs != &rhs;
 }
 
-inline AudioContextState AudioContext::state() const
+inline AudioContext::State AudioContext::state() const
 {
     return m_state;
 }

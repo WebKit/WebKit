@@ -51,7 +51,7 @@ static inline bool isNullBodyStatus(int status)
 
 Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext& context)
 {
-    return adoptRef(*new FetchResponse(context, ResponseType::Error, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+    return adoptRef(*new FetchResponse(context, Type::Error, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
 }
 
 RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext& context, const String& url, int status, ExceptionCode& ec)
@@ -66,7 +66,7 @@ RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext& context, c
         ec = TypeError;
         return nullptr;
     }
-    auto redirectResponse = adoptRef(*new FetchResponse(context, ResponseType::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+    auto redirectResponse = adoptRef(*new FetchResponse(context, Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     redirectResponse->m_response.setHTTPStatusCode(status);
     redirectResponse->m_headers->fastSet(HTTPHeaderName::Location, requestURL.string());
     return WTFMove(redirectResponse);
@@ -109,7 +109,7 @@ void FetchResponse::initializeWith(const Dictionary& init, ExceptionCode& ec)
     }
 }
 
-FetchResponse::FetchResponse(ScriptExecutionContext& context, ResponseType type, FetchBody&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
+FetchResponse::FetchResponse(ScriptExecutionContext& context, Type type, FetchBody&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
     : FetchBodyOwner(context, WTFMove(body))
     , m_type(type)
     , m_response(WTFMove(response))
@@ -130,7 +130,7 @@ RefPtr<FetchResponse> FetchResponse::clone(ScriptExecutionContext& context, Exce
 
 void FetchResponse::startFetching(ScriptExecutionContext& context, const FetchRequest& request, FetchPromise&& promise)
 {
-    auto response = adoptRef(*new FetchResponse(context, ResponseType::Basic, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
+    auto response = adoptRef(*new FetchResponse(context, Type::Basic, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), ResourceResponse()));
 
     // Setting pending activity until BodyLoader didFail or didSucceed callback is called.
     response->setPendingActivity(response.ptr());

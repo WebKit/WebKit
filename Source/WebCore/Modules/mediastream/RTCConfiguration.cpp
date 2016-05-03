@@ -142,11 +142,11 @@ void RTCConfiguration::initialize(const Dictionary& configuration, ExceptionCode
     String iceTransportPolicy;
     if (configuration.get("iceTransportPolicy", iceTransportPolicy)) {
         if (iceTransportPolicy == "public")
-            m_iceTransportPolicy = RTCIceTransportPolicy::Public;
+            m_iceTransportPolicy = IceTransportPolicy::Public;
         else if (iceTransportPolicy == "relay")
-            m_iceTransportPolicy = RTCIceTransportPolicy::Relay;
+            m_iceTransportPolicy = IceTransportPolicy::Relay;
         else if (iceTransportPolicy == "all")
-            m_iceTransportPolicy = RTCIceTransportPolicy::All;
+            m_iceTransportPolicy = IceTransportPolicy::All;
         else {
             ec = TypeError;
             return;
@@ -156,11 +156,11 @@ void RTCConfiguration::initialize(const Dictionary& configuration, ExceptionCode
     String bundlePolicy;
     if (configuration.get("bundlePolicy", bundlePolicy)) {
         if (bundlePolicy == "balanced")
-            m_bundlePolicy = RTCBundlePolicy::Balanced;
+            m_bundlePolicy = BundlePolicy::Balanced;
         else if (bundlePolicy == "max-compat")
-            m_bundlePolicy = RTCBundlePolicy::MaxCompat;
+            m_bundlePolicy = BundlePolicy::MaxCompat;
         else if (bundlePolicy == "max-bundle")
-            m_bundlePolicy = RTCBundlePolicy::MaxBundle;
+            m_bundlePolicy = BundlePolicy::MaxBundle;
         else
             ec = TypeError;
     }

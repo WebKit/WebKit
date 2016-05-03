@@ -317,22 +317,22 @@ String FontFace::featureSettings() const
     return list->cssText();
 }
 
-FontFaceLoadStatus FontFace::status() const
+auto FontFace::status() const -> LoadStatus
 {
     switch (m_backing->status()) {
     case CSSFontFace::Status::Pending:
-        return FontFaceLoadStatus::Unloaded;
+        return LoadStatus::Unloaded;
     case CSSFontFace::Status::Loading:
-        return FontFaceLoadStatus::Loading;
+        return LoadStatus::Loading;
     case CSSFontFace::Status::TimedOut:
-        return FontFaceLoadStatus::Error;
+        return LoadStatus::Error;
     case CSSFontFace::Status::Success:
-        return FontFaceLoadStatus::Loaded;
+        return LoadStatus::Loaded;
     case CSSFontFace::Status::Failure:
-        return FontFaceLoadStatus::Error;
+        return LoadStatus::Error;
     }
     ASSERT_NOT_REACHED();
-    return FontFaceLoadStatus::Error;
+    return LoadStatus::Error;
 }
 
 void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontFace::Status newState)

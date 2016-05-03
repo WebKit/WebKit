@@ -57,9 +57,6 @@ class TextMetrics;
 
 typedef int ExceptionCode;
 
-enum class CanvasWindingRule { Nonzero, Evenodd };
-enum class ImageSmoothingQuality { Low, Medium, High };
-
 class CanvasRenderingContext2D final : public CanvasRenderingContext, public CanvasPathMethods {
 public:
     CanvasRenderingContext2D(HTMLCanvasElement*, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
@@ -131,18 +128,20 @@ public:
 
     void beginPath();
 
-    void fill(CanvasWindingRule = CanvasWindingRule::Nonzero);
+    enum class WindingRule { Nonzero, Evenodd };
+
+    void fill(WindingRule = WindingRule::Nonzero);
     void stroke();
-    void clip(CanvasWindingRule = CanvasWindingRule::Nonzero);
+    void clip(WindingRule = WindingRule::Nonzero);
 
-    void fill(DOMPath&, CanvasWindingRule = CanvasWindingRule::Nonzero);
+    void fill(DOMPath&, WindingRule = WindingRule::Nonzero);
     void stroke(DOMPath&);
-    void clip(DOMPath&, CanvasWindingRule = CanvasWindingRule::Nonzero);
+    void clip(DOMPath&, WindingRule = WindingRule::Nonzero);
 
-    bool isPointInPath(float x, float y, CanvasWindingRule = CanvasWindingRule::Nonzero);
+    bool isPointInPath(float x, float y, WindingRule = WindingRule::Nonzero);
     bool isPointInStroke(float x, float y);
 
-    bool isPointInPath(DOMPath&, float x, float y, CanvasWindingRule = CanvasWindingRule::Nonzero);
+    bool isPointInPath(DOMPath&, float x, float y, WindingRule = WindingRule::Nonzero);
     bool isPointInStroke(DOMPath&, float x, float y);
 
     void clearRect(float x, float y, float width, float height);
@@ -222,6 +221,7 @@ public:
     bool imageSmoothingEnabled() const;
     void setImageSmoothingEnabled(bool);
 
+    enum class ImageSmoothingQuality { Low, Medium, High };
     ImageSmoothingQuality imageSmoothingQuality() const;
     void setImageSmoothingQuality(ImageSmoothingQuality);
 
@@ -345,11 +345,11 @@ private:
     void beginCompositeLayer();
     void endCompositeLayer();
 
-    void fillInternal(const Path&, CanvasWindingRule);
+    void fillInternal(const Path&, WindingRule);
     void strokeInternal(const Path&);
-    void clipInternal(const Path&, CanvasWindingRule);
+    void clipInternal(const Path&, WindingRule);
 
-    bool isPointInPathInternal(const Path&, float x, float y, CanvasWindingRule);
+    bool isPointInPathInternal(const Path&, float x, float y, WindingRule);
     bool isPointInStrokeInternal(const Path&, float x, float y);
 
     void drawFocusIfNeededInternal(const Path&, Element*);

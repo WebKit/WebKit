@@ -104,15 +104,15 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
     , m_renderedTrackIndex(invalidTrackIndex)
 {
     if (kind == captionsKeyword())
-        m_kind = TextTrackKind::Captions;
+        m_kind = Kind::Captions;
     else if (kind == chaptersKeyword())
-        m_kind = TextTrackKind::Chapters;
+        m_kind = Kind::Chapters;
     else if (kind == descriptionsKeyword())
-        m_kind = TextTrackKind::Descriptions;
+        m_kind = Kind::Descriptions;
     else if (kind == forcedKeyword())
-        m_kind = TextTrackKind::Forced;
+        m_kind = Kind::Forced;
     else if (kind == metadataKeyword())
-        m_kind = TextTrackKind::Metadata;
+        m_kind = Kind::Metadata;
 }
 
 TextTrack::~TextTrack()
@@ -132,7 +132,7 @@ TextTrack::~TextTrack()
 
 bool TextTrack::enabled() const
 {
-    return m_mode != TextTrackMode::Disabled;
+    return m_mode != Mode::Disabled;
 }
 
 bool TextTrack::isValidKindKeyword(const AtomicString& value)
@@ -156,24 +156,24 @@ bool TextTrack::isValidKindKeyword(const AtomicString& value)
 const AtomicString& TextTrack::kindKeyword() const
 {
     switch (m_kind) {
-    case TextTrackKind::Captions:
+    case Kind::Captions:
         return captionsKeyword();
-    case TextTrackKind::Chapters:
+    case Kind::Chapters:
         return chaptersKeyword();
-    case TextTrackKind::Descriptions:
+    case Kind::Descriptions:
         return descriptionsKeyword();
-    case TextTrackKind::Forced:
+    case Kind::Forced:
         return forcedKeyword();
-    case TextTrackKind::Metadata:
+    case Kind::Metadata:
         return metadataKeyword();
-    case TextTrackKind::Subtitles:
+    case Kind::Subtitles:
         return subtitlesKeyword();
     }
     ASSERT_NOT_REACHED();
     return subtitlesKeyword();
 }
 
-void TextTrack::setKind(TextTrackKind newKind)
+void TextTrack::setKind(Kind newKind)
 {
     auto oldKind = m_kind;
 
@@ -203,28 +203,28 @@ void TextTrack::setKind(TextTrackKind newKind)
 void TextTrack::setKindKeywordIgnoringASCIICase(StringView keyword)
 {
     if (equalLettersIgnoringASCIICase(keyword, "captions"))
-        setKind(TextTrackKind::Captions);
+        setKind(Kind::Captions);
     else if (equalLettersIgnoringASCIICase(keyword, "chapters"))
-        setKind(TextTrackKind::Chapters);
+        setKind(Kind::Chapters);
     else if (equalLettersIgnoringASCIICase(keyword, "descriptions"))
-        setKind(TextTrackKind::Descriptions);
+        setKind(Kind::Descriptions);
     else if (equalLettersIgnoringASCIICase(keyword, "forced"))
-        setKind(TextTrackKind::Forced);
+        setKind(Kind::Forced);
     else if (equalLettersIgnoringASCIICase(keyword, "metadata"))
-        setKind(TextTrackKind::Metadata);
+        setKind(Kind::Metadata);
     else if (equalLettersIgnoringASCIICase(keyword, "subtitles"))
-        setKind(TextTrackKind::Subtitles);
+        setKind(Kind::Subtitles);
 #if !ENABLE(MEDIA_SOURCE)
     // FIXME: This preserves the behavior of an older version of this code before refactoring.
     // !ENABLE(MEDIA_SOURCE): unknown keywords all get turned into Subtitles.
     // ENABLE(MEDIA_SOURCE): unknown keywords leave the old value for kind untouched.
     // I am not sure that either of those is the correct behavior; should test and fix.
     else
-        setKind(TextTrackKind::Subtitles);
+        setKind(Kind::Subtitles);
 #endif
 }
 
-void TextTrack::setMode(TextTrackMode mode)
+void TextTrack::setMode(Mode mode)
 {
     // On setting, if the new value isn't equal to what the attribute would currently
     // return, the new value must be processed as follows ...
@@ -233,10 +233,10 @@ void TextTrack::setMode(TextTrackMode mode)
 
     // If mode changes to disabled, remove this track's cues from the client
     // because they will no longer be accessible from the cues() function.
-    if (mode == TextTrackMode::Disabled && m_client && m_cues)
+    if (mode == Mode::Disabled && m_client && m_cues)
         m_client->textTrackRemoveCues(this, m_cues.get());
 
-    if (mode != TextTrackMode::Showing && m_cues) {
+    if (mode != Mode::Showing && m_cues) {
         for (size_t i = 0; i < m_cues->length(); ++i) {
             TextTrackCue* cue = m_cues->item(i);
             if (cue->isRenderable())
@@ -257,7 +257,7 @@ TextTrackCueList* TextTrack::cues()
     // Otherwise, it must return null. When an object is returned, the
     // same object must be returned each time.
     // http://www.whatwg.org/specs/web-apps/current-work/#dom-texttrack-cues
-    if (m_mode == TextTrackMode::Disabled)
+    if (m_mode == Mode::Disabled)
         return nullptr;
     return &ensureTextTrackCueList();
 }
@@ -284,7 +284,7 @@ TextTrackCueList* TextTrack::activeCues() const
     // order. Otherwise, it must return null. When an object is returned, the
     // same object must be returned each time.
     // http://www.whatwg.org/specs/web-apps/current-work/#dom-texttrack-activecues
-    if (!m_cues || m_mode == TextTrackMode::Disabled)
+    if (!m_cues || m_mode == Mode::Disabled)
         return nullptr;
     return m_cues->activeCues();
 }
@@ -302,7 +302,7 @@ void TextTrack::addCue(PassRefPtr<TextTrackCue> prpCue, ExceptionCode& ec)
     // If a DataCue is added to a TextTrack via the addCue() method but the text track does not have its text
     // track kind set to metadata, throw a InvalidNodeTypeError exception and don't add the cue to the TextTrackList
     // of the TextTrack.
-    if (cue->cueType() == TextTrackCue::Data && m_kind != TextTrackKind::Metadata) {
+    if (cue->cueType() == TextTrackCue::Data && m_kind != Kind::Metadata) {
         ec = INVALID_NODE_TYPE_ERR;
         return;
     }
@@ -372,7 +372,7 @@ VTTRegionList* TextTrack::regions()
     // the text track list of regions of the text track. Otherwise, it must
     // return null. When an object is returned, the same object must be returned
     // each time.
-    if (m_mode == TextTrackMode::Disabled)
+    if (m_mode == Mode::Disabled)
         return nullptr;
     return &ensureVTTRegionList();
 }
@@ -467,8 +467,8 @@ void TextTrack::invalidateTrackIndex()
 
 bool TextTrack::isRendered()
 {
-    return (m_kind == TextTrackKind::Captions || m_kind == TextTrackKind::Subtitles || m_kind == TextTrackKind::Forced)
-        && m_mode == TextTrackMode::Showing;
+    return (m_kind == Kind::Captions || m_kind == Kind::Subtitles || m_kind == Kind::Forced)
+        && m_mode == Mode::Showing;
 }
 
 TextTrackCueList& TextTrack::ensureTextTrackCueList()
@@ -553,12 +553,12 @@ bool TextTrack::isMainProgramContent() const
     // directors commentary is not "main program" because it is not essential for the presentation. HTML5 doesn't have
     // a way to express this in a machine-reable form, it is typically done with the track label, so we assume that caption
     // tracks are main content and all other track types are not.
-    return m_kind == TextTrackKind::Captions;
+    return m_kind == Kind::Captions;
 }
 
 bool TextTrack::containsOnlyForcedSubtitles() const
 {
-    return m_kind == TextTrackKind::Forced;
+    return m_kind == Kind::Forced;
 }
 
 #if ENABLE(MEDIA_SOURCE)

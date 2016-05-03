@@ -545,7 +545,7 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
     // ↳ Set the mode attribute on the new object to "sequence".
     // Otherwise:
     // ↳ Set the mode attribute on the new object to "segments".
-    buffer->setMode(shouldGenerateTimestamps ? AppendMode::Sequence : AppendMode::Segments, IGNORE_EXCEPTION);
+    buffer->setMode(shouldGenerateTimestamps ? SourceBuffer::AppendMode::Sequence : SourceBuffer::AppendMode::Segments, IGNORE_EXCEPTION);
 
     SourceBuffer* result = buffer.ptr();
 
@@ -671,7 +671,7 @@ void MediaSource::removeSourceBuffer(SourceBuffer& buffer, ExceptionCode& ec)
 
             // 9.3.2 If the mode attribute on the TextTrack object is set to "showing" or "hidden", then
             // set the removed enabled text track flag to true.
-            if (track->mode() == TextTrackMode::Showing || track->mode() == TextTrackMode::Hidden)
+            if (track->mode() == TextTrack::Mode::Showing || track->mode() == TextTrack::Mode::Hidden)
                 removedEnabledTextTrack = true;
 
             // 9.3.3 Remove the TextTrack object from the HTMLMediaElement textTracks list.

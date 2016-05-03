@@ -52,14 +52,29 @@ public:
     const String& url() const { return m_internalRequest.request.url().string(); }
     FetchHeaders& headers() { return m_headers.get(); }
 
-    RequestType type() const;
-    RequestDestination destination() const;
+    using Type = FetchOptions::Type;
+    Type type() const;
+
+    using Destination = FetchOptions::Destination;
+    Destination destination() const;
+
     String referrer() const;
+
+    using ReferrerPolicy = FetchOptions::ReferrerPolicy;
     ReferrerPolicy referrerPolicy() const;
-    RequestMode mode() const;
-    RequestCredentials credentials() const;
-    RequestCache cache() const;
-    RequestRedirect redirect() const;
+
+    using Mode = FetchOptions::Mode;
+    Mode mode() const;
+
+    using Credentials = FetchOptions::Credentials;
+    Credentials credentials() const;
+
+    using Cache = FetchOptions::Cache;
+    Cache cache() const;
+
+    using Redirect = FetchOptions::Redirect;
+    Redirect redirect() const;
+
     const String& integrity() const { return m_internalRequest.integrity; }
 
     RefPtr<FetchRequest> clone(ScriptExecutionContext&, ExceptionCode&);
@@ -92,37 +107,37 @@ inline FetchRequest::FetchRequest(ScriptExecutionContext& context, FetchBody&& b
 {
 }
 
-inline RequestCache FetchRequest::cache() const
+inline auto FetchRequest::cache() const -> Cache
 {
     return m_internalRequest.options.cache;
 }
 
-inline RequestCredentials FetchRequest::credentials() const
+inline auto FetchRequest::credentials() const -> Credentials
 {
     return m_internalRequest.options.credentials;
 }
 
-inline RequestDestination FetchRequest::destination() const
+inline auto FetchRequest::destination() const -> Destination
 {
     return m_internalRequest.options.destination;
 }
 
-inline RequestMode FetchRequest::mode() const
+inline auto FetchRequest::mode() const -> Mode
 {
     return m_internalRequest.options.mode;
 }
 
-inline RequestRedirect FetchRequest::redirect() const
+inline auto FetchRequest::redirect() const -> Redirect
 {
     return m_internalRequest.options.redirect;
 }
 
-inline ReferrerPolicy FetchRequest::referrerPolicy() const
+inline auto FetchRequest::referrerPolicy() const -> ReferrerPolicy
 {
     return m_internalRequest.options.referrerPolicy;
 }
 
-inline RequestType FetchRequest::type() const
+inline auto FetchRequest::type() const -> Type
 {
     return m_internalRequest.options.type;
 }

@@ -163,7 +163,7 @@ XMLHttpRequest::State XMLHttpRequest::readyState() const
 
 String XMLHttpRequest::responseText(ExceptionCode& ec)
 {
-    if (m_responseType != XMLHttpRequestResponseType::EmptyString && m_responseType != XMLHttpRequestResponseType::Text) {
+    if (m_responseType != ResponseType::EmptyString && m_responseType != ResponseType::Text) {
         ec = INVALID_STATE_ERR;
         return { };
     }
@@ -172,7 +172,7 @@ String XMLHttpRequest::responseText(ExceptionCode& ec)
 
 void XMLHttpRequest::didCacheResponseJSON()
 {
-    ASSERT(m_responseType == XMLHttpRequestResponseType::Json);
+    ASSERT(m_responseType == ResponseType::Json);
     ASSERT(doneWithoutErrors());
     m_responseCacheIsValid = true;
     m_responseBuilder.clear();
@@ -180,7 +180,7 @@ void XMLHttpRequest::didCacheResponseJSON()
 
 Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
 {
-    if (m_responseType != XMLHttpRequestResponseType::EmptyString && m_responseType != XMLHttpRequestResponseType::Document) {
+    if (m_responseType != ResponseType::EmptyString && m_responseType != ResponseType::Document) {
         ec = INVALID_STATE_ERR;
         return nullptr;
     }
@@ -195,7 +195,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
         // The W3C spec requires the final MIME type to be some valid XML type, or text/html.
         // If it is text/html, then the responseType of "document" must have been supplied explicitly.
         if ((m_response.isHTTP() && !responseIsXML() && !isHTML)
-            || (isHTML && m_responseType == XMLHttpRequestResponseType::EmptyString)
+            || (isHTML && m_responseType == ResponseType::EmptyString)
             || scriptExecutionContext()->isWorkerGlobalScope()) {
             m_responseDocument = nullptr;
         } else {
@@ -219,7 +219,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
 
 Blob* XMLHttpRequest::responseBlob()
 {
-    ASSERT(m_responseType == XMLHttpRequestResponseType::Blob);
+    ASSERT(m_responseType == ResponseType::Blob);
     ASSERT(doneWithoutErrors());
 
     if (!m_responseBlob) {
@@ -241,7 +241,7 @@ Blob* XMLHttpRequest::responseBlob()
 
 ArrayBuffer* XMLHttpRequest::responseArrayBuffer()
 {
-    ASSERT(m_responseType == XMLHttpRequestResponseType::Arraybuffer);
+    ASSERT(m_responseType == ResponseType::Arraybuffer);
     ASSERT(doneWithoutErrors());
 
     if (!m_responseArrayBuffer) {
@@ -273,7 +273,7 @@ void XMLHttpRequest::setTimeout(unsigned timeout, ExceptionCode& ec)
     m_timeoutTimer.startOneShot(std::max(0.0, interval.count()));
 }
 
-void XMLHttpRequest::setResponseType(XMLHttpRequestResponseType type, ExceptionCode& ec)
+void XMLHttpRequest::setResponseType(ResponseType type, ExceptionCode& ec)
 {
     if (m_state >= LOADING) {
         ec = INVALID_STATE_ERR;
@@ -463,7 +463,7 @@ void XMLHttpRequest::open(const String& method, const URL& url, bool async, Exce
         // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
         // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
         // such as file: and data: still make sense to allow.
-        if (url.protocolIsInHTTPFamily() && m_responseType != XMLHttpRequestResponseType::EmptyString) {
+        if (url.protocolIsInHTTPFamily() && m_responseType != ResponseType::EmptyString) {
             logConsoleError(scriptExecutionContext(), "Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.");
             ec = INVALID_ACCESS_ERR;
             return;
@@ -1095,16 +1095,16 @@ void XMLHttpRequest::didReceiveResponse(unsigned long identifier, const Resource
         m_response.setHTTPHeaderField(HTTPHeaderName::ContentType, m_mimeTypeOverride);
 }
 
-static inline bool shouldDecodeResponse(XMLHttpRequestResponseType type)
+static inline bool shouldDecodeResponse(XMLHttpRequest::ResponseType type)
 {
     switch (type) {
-    case XMLHttpRequestResponseType::EmptyString:
-    case XMLHttpRequestResponseType::Document:
-    case XMLHttpRequestResponseType::Json:
-    case XMLHttpRequestResponseType::Text:
+    case XMLHttpRequest::ResponseType::EmptyString:
+    case XMLHttpRequest::ResponseType::Document:
+    case XMLHttpRequest::ResponseType::Json:
+    case XMLHttpRequest::ResponseType::Text:
         return true;
-    case XMLHttpRequestResponseType::Arraybuffer:
-    case XMLHttpRequestResponseType::Blob:
+    case XMLHttpRequest::ResponseType::Arraybuffer:
+    case XMLHttpRequest::ResponseType::Blob:
         return false;
     }
     ASSERT_NOT_REACHED();

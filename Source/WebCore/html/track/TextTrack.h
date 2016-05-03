@@ -42,9 +42,6 @@ class TextTrackCueList;
 class VTTRegion;
 class VTTRegionList;
 
-enum class TextTrackKind { Subtitles, Captions, Descriptions, Chapters, Metadata, Forced };
-enum class TextTrackMode { Disabled, Hidden, Showing };
-
 class TextTrackClient {
 public:
     virtual ~TextTrackClient() { }
@@ -77,19 +74,21 @@ public:
     static const AtomicString& hiddenKeyword();
     static const AtomicString& showingKeyword();
 
-    TextTrackKind kind() const;
-    void setKind(TextTrackKind);
+    enum class Kind { Subtitles, Captions, Descriptions, Chapters, Metadata, Forced };
+    Kind kind() const;
+    void setKind(Kind);
 
-    TextTrackKind kindForBindings() const;
-    void setKindForBindings(TextTrackKind);
+    Kind kindForBindings() const;
+    void setKindForBindings(Kind);
 
     const AtomicString& kindKeyword() const;
     void setKindKeywordIgnoringASCIICase(StringView);
 
     virtual AtomicString inBandMetadataTrackDispatchType() const { return emptyString(); }
 
-    TextTrackMode mode() const;
-    virtual void setMode(TextTrackMode);
+    enum class Mode { Disabled, Hidden, Showing };
+    Mode mode() const;
+    virtual void setMode(Mode);
 
     enum ReadinessState { NotLoaded = 0, Loading = 1, Loaded = 2, FailedToLoad = 3 };
     ReadinessState readinessState() const { return m_readinessState; }
@@ -164,8 +163,8 @@ private:
     TextTrackCueList& ensureTextTrackCueList();
 
     ScriptExecutionContext* m_scriptExecutionContext;
-    TextTrackMode m_mode { TextTrackMode::Disabled };
-    TextTrackKind m_kind { TextTrackKind::Subtitles };
+    Mode m_mode { Mode::Disabled };
+    Kind m_kind { Kind::Subtitles };
     TextTrackClient* m_client;
     TextTrackType m_trackType;
     ReadinessState m_readinessState { NotLoaded };
@@ -180,24 +179,24 @@ inline TextTrack* toTextTrack(TrackBase* track)
     return static_cast<TextTrack*>(track);
 }
 
-inline TextTrackMode TextTrack::mode() const
+inline auto TextTrack::mode() const -> Mode
 {
     return m_mode;
 }
 
-inline TextTrackKind TextTrack::kind() const
+inline auto TextTrack::kind() const -> Kind
 {
     return m_kind;
 }
 
-inline TextTrackKind TextTrack::kindForBindings() const
+inline auto TextTrack::kindForBindings() const -> Kind
 {
     return kind();
 }
 
 #if !ENABLE(MEDIA_SOURCE)
 
-inline void TextTrack::setKindForBindings(TextTrackKind)
+inline void TextTrack::setKindForBindings(Kind)
 {
     // FIXME: We are using kindForBindings only to implement this empty function, preserving the
     // behavior of doing nothing when trying to set the kind, originally implemented in a custom setter.
@@ -206,7 +205,7 @@ inline void TextTrack::setKindForBindings(TextTrackKind)
 
 #else
 
-inline void TextTrack::setKindForBindings(TextTrackKind kind)
+inline void TextTrack::setKindForBindings(Kind kind)
 {
     setKind(kind);
 }

@@ -70,12 +70,6 @@ class XMLHttpRequest;
 
 typedef int ExceptionCode;
 
-enum class InternalsAutoFillButtonType { AutoFillButtonTypeNone, AutoFillButtonTypeContacts, AutoFillButtonTypeCredentials };
-enum class InternalsCachePolicy { UseProtocolCachePolicy, ReloadIgnoringCacheData, ReturnCacheDataElseLoad, ReturnCacheDataDontLoad };
-enum class InternalsResourceLoadPriority { ResourceLoadPriorityVeryLow, ResourceLoadPriorityLow, ResourceLoadPriorityMedium, ResourceLoadPriorityHigh, ResourceLoadPriorityVeryHigh };
-enum class MediaControlEvent { PlayPause, NextTrack, PreviousTrack };
-enum class PageOverlayType { View, Document };
-
 class Internals final : public RefCounted<Internals>, private ContextDestructionObserver {
 public:
     static Ref<Internals> create(Document&);
@@ -96,9 +90,11 @@ public:
     String xhrResponseSource(XMLHttpRequest&);
     bool isSharingStyleSheetContents(HTMLLinkElement&, HTMLLinkElement&);
     bool isStyleSheetLoadingSubresources(HTMLLinkElement&);
-    void setOverrideCachePolicy(InternalsCachePolicy);
+    enum class CachePolicy { UseProtocolCachePolicy, ReloadIgnoringCacheData, ReturnCacheDataElseLoad, ReturnCacheDataDontLoad };
+    void setOverrideCachePolicy(CachePolicy);
     void setCanShowModalDialogOverride(bool allow, ExceptionCode&);
-    void setOverrideResourceLoadPriority(InternalsResourceLoadPriority);
+    enum class ResourceLoadPriority { ResourceLoadPriorityVeryLow, ResourceLoadPriorityLow, ResourceLoadPriorityMedium, ResourceLoadPriorityHigh, ResourceLoadPriorityVeryHigh };
+    void setOverrideResourceLoadPriority(ResourceLoadPriority);
     void setStrictRawResourceValidationPolicyDisabled(bool);
 
     void clearMemoryCache();
@@ -175,7 +171,8 @@ public:
     bool elementShouldAutoComplete(HTMLInputElement&);
     void setEditingValue(HTMLInputElement&, const String&);
     void setAutofilled(HTMLInputElement&, bool enabled);
-    void setShowAutoFillButton(HTMLInputElement&, InternalsAutoFillButtonType);
+    enum class AutoFillButtonType { AutoFillButtonTypeNone, AutoFillButtonTypeContacts, AutoFillButtonTypeCredentials };
+    void setShowAutoFillButton(HTMLInputElement&, AutoFillButtonType);
     void scrollElementToRect(Element&, int x, int y, int w, int h, ExceptionCode&);
 
     String autofillFieldName(Element&, ExceptionCode&);
@@ -420,6 +417,7 @@ public:
     void sendMediaSessionEndOfInterruptionNotification(MediaSessionInterruptingCategory);
     String mediaSessionCurrentState(MediaSession&) const;
     double mediaElementPlayerVolume(HTMLMediaElement&) const;
+    enum class MediaControlEvent { PlayPause, NextTrack, PreviousTrack };
     void sendMediaControlEvent(MediaControlEvent);
 #endif
 
@@ -435,6 +433,7 @@ public:
     void simulateSystemSleep() const;
     void simulateSystemWake() const;
 
+    enum class PageOverlayType { View, Document };
     RefPtr<MockPageOverlay> installMockPageOverlay(PageOverlayType, ExceptionCode&);
     String pageOverlayLayerTreeAsText(ExceptionCode&) const;
 

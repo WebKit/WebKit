@@ -44,8 +44,6 @@ class SharedBuffer;
 class TextResourceDecoder;
 class ThreadableLoader;
 
-enum class XMLHttpRequestResponseType { EmptyString, Arraybuffer, Blob, Document, Json, Text };
-
 class XMLHttpRequest final : public RefCounted<XMLHttpRequest>, public XMLHttpRequestEventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -106,8 +104,9 @@ public:
     static String uppercaseKnownHTTPMethod(const String&);
     static bool isAllowedHTTPHeader(const String&);
 
-    void setResponseType(XMLHttpRequestResponseType, ExceptionCode&);
-    XMLHttpRequestResponseType responseType() const;
+    enum class ResponseType { EmptyString, Arraybuffer, Blob, Document, Json, Text };
+    void setResponseType(ResponseType, ExceptionCode&);
+    ResponseType responseType() const;
 
     String responseURL() const;
 
@@ -225,7 +224,7 @@ private:
 
     XMLHttpRequestProgressEventThrottle m_progressEventThrottle;
 
-    XMLHttpRequestResponseType m_responseType { XMLHttpRequestResponseType::EmptyString };
+    ResponseType m_responseType { ResponseType::EmptyString };
     bool m_responseCacheIsValid { false };
 
     Timer m_resumeTimer;
@@ -239,7 +238,7 @@ private:
     Timer m_timeoutTimer;
 };
 
-inline XMLHttpRequestResponseType XMLHttpRequest::responseType() const
+inline auto XMLHttpRequest::responseType() const -> ResponseType
 {
     return m_responseType;
 }

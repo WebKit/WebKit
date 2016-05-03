@@ -217,7 +217,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTra
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
         TextTrack* track = trackList->item(i);
         auto kind = track->kind();
-        if (kind == TextTrackKind::Captions || kind == TextTrackKind::Descriptions || kind == TextTrackKind::Subtitles)
+        if (kind == TextTrack::Kind::Captions || kind == TextTrack::Kind::Descriptions || kind == TextTrack::Kind::Subtitles)
             tracksForMenu.append(track);
     }
 
@@ -265,7 +265,7 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioT
 
 int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaElement*) const
 {
-    if (track->kind() != TextTrackKind::Captions && track->kind() != TextTrackKind::Subtitles)
+    if (track->kind() != TextTrack::Kind::Captions && track->kind() != TextTrack::Kind::Subtitles)
         return 0;
     
     if (!userPrefersSubtitles() && !userPrefersCaptions())

@@ -174,7 +174,7 @@ void HTMLTrackElement::scheduleLoad()
         return;
 
     // 2. If the text track's text track mode is not set to one of hidden or showing, abort these steps.
-    if (ensureTrack().mode() != TextTrackMode::Hidden && ensureTrack().mode() != TextTrackMode::Showing)
+    if (ensureTrack().mode() != TextTrack::Mode::Hidden && ensureTrack().mode() != TextTrack::Mode::Showing)
         return;
 
     // 3. If the text track's track element does not have a media element as a parent, abort these steps.

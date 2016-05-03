@@ -189,8 +189,8 @@ JSValue JSXMLHttpRequest::response(ExecState& state) const
     auto type = wrapped().responseType();
 
     switch (type) {
-    case XMLHttpRequestResponseType::EmptyString:
-    case XMLHttpRequestResponseType::Text:
+    case XMLHttpRequest::ResponseType::EmptyString:
+    case XMLHttpRequest::ResponseType::Text:
         return responseText(state);
     default:
         break;
@@ -200,12 +200,12 @@ JSValue JSXMLHttpRequest::response(ExecState& state) const
         return jsNull();
 
     switch (type) {
-    case XMLHttpRequestResponseType::EmptyString:
-    case XMLHttpRequestResponseType::Text:
+    case XMLHttpRequest::ResponseType::EmptyString:
+    case XMLHttpRequest::ResponseType::Text:
         ASSERT_NOT_REACHED();
         break;
 
-    case XMLHttpRequestResponseType::Json:
+    case XMLHttpRequest::ResponseType::Json:
         {
             JSValue value = JSONParse(&state, wrapped().responseTextIgnoringResponseType());
             if (!value)
@@ -215,7 +215,7 @@ JSValue JSXMLHttpRequest::response(ExecState& state) const
             return value;
         }
 
-    case XMLHttpRequestResponseType::Document:
+    case XMLHttpRequest::ResponseType::Document:
         {
             ExceptionCode ec = 0;
             Document* document = wrapped().responseXML(ec);
@@ -226,10 +226,10 @@ JSValue JSXMLHttpRequest::response(ExecState& state) const
             return toJS(&state, globalObject(), document);
         }
 
-    case XMLHttpRequestResponseType::Blob:
+    case XMLHttpRequest::ResponseType::Blob:
         return toJS(&state, globalObject(), wrapped().responseBlob());
 
-    case XMLHttpRequestResponseType::Arraybuffer:
+    case XMLHttpRequest::ResponseType::Arraybuffer:
         return toJS(&state, globalObject(), wrapped().responseArrayBuffer());
     }
 

@@ -233,7 +233,7 @@ String MediaControlsHost::externalDeviceDisplayName() const
 #endif
 }
 
-DeviceType MediaControlsHost::externalDeviceType() const
+auto MediaControlsHost::externalDeviceType() const -> DeviceType
 {
 #if !ENABLE(WIRELESS_PLAYBACK_TARGET)
     return DeviceType::None;

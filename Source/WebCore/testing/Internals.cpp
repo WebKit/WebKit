@@ -563,23 +563,23 @@ bool Internals::isStyleSheetLoadingSubresources(HTMLLinkElement& link)
     return link.sheet() && link.sheet()->contents().isLoadingSubresources();
 }
 
-static ResourceRequestCachePolicy toResourceRequestCachePolicy(InternalsCachePolicy policy)
+static ResourceRequestCachePolicy toResourceRequestCachePolicy(Internals::CachePolicy policy)
 {
     switch (policy) {
-    case InternalsCachePolicy::UseProtocolCachePolicy:
+    case Internals::CachePolicy::UseProtocolCachePolicy:
         return UseProtocolCachePolicy;
-    case InternalsCachePolicy::ReloadIgnoringCacheData:
+    case Internals::CachePolicy::ReloadIgnoringCacheData:
         return ReloadIgnoringCacheData;
-    case InternalsCachePolicy::ReturnCacheDataElseLoad:
+    case Internals::CachePolicy::ReturnCacheDataElseLoad:
         return ReturnCacheDataElseLoad;
-    case InternalsCachePolicy::ReturnCacheDataDontLoad:
+    case Internals::CachePolicy::ReturnCacheDataDontLoad:
         return ReturnCacheDataDontLoad;
     }
     ASSERT_NOT_REACHED();
     return UseProtocolCachePolicy;
 }
 
-void Internals::setOverrideCachePolicy(InternalsCachePolicy policy)
+void Internals::setOverrideCachePolicy(CachePolicy policy)
 {
     frame()->loader().setOverrideCachePolicyForTesting(toResourceRequestCachePolicy(policy));
 }
@@ -594,25 +594,25 @@ void Internals::setCanShowModalDialogOverride(bool allow, ExceptionCode& ec)
     contextDocument()->domWindow()->setCanShowModalDialogOverride(allow);
 }
 
-static ResourceLoadPriority toResourceLoadPriority(InternalsResourceLoadPriority priority)
+static ResourceLoadPriority toResourceLoadPriority(Internals::ResourceLoadPriority priority)
 {
     switch (priority) {
-    case InternalsResourceLoadPriority::ResourceLoadPriorityVeryLow:
+    case Internals::ResourceLoadPriority::ResourceLoadPriorityVeryLow:
         return ResourceLoadPriority::VeryLow;
-    case InternalsResourceLoadPriority::ResourceLoadPriorityLow:
+    case Internals::ResourceLoadPriority::ResourceLoadPriorityLow:
         return ResourceLoadPriority::Low;
-    case InternalsResourceLoadPriority::ResourceLoadPriorityMedium:
+    case Internals::ResourceLoadPriority::ResourceLoadPriorityMedium:
         return ResourceLoadPriority::Medium;
-    case InternalsResourceLoadPriority::ResourceLoadPriorityHigh:
+    case Internals::ResourceLoadPriority::ResourceLoadPriorityHigh:
         return ResourceLoadPriority::High;
-    case InternalsResourceLoadPriority::ResourceLoadPriorityVeryHigh:
+    case Internals::ResourceLoadPriority::ResourceLoadPriorityVeryHigh:
         return ResourceLoadPriority::VeryHigh;
     }
     ASSERT_NOT_REACHED();
     return ResourceLoadPriority::Low;
 }
 
-void Internals::setOverrideResourceLoadPriority(InternalsResourceLoadPriority priority)
+void Internals::setOverrideResourceLoadPriority(ResourceLoadPriority priority)
 {
     frame()->loader().setOverrideResourceLoadPriorityForTesting(toResourceLoadPriority(priority));
 }
@@ -1218,21 +1218,21 @@ void Internals::setAutofilled(HTMLInputElement& element, bool enabled)
     element.setAutoFilled(enabled);
 }
 
-static AutoFillButtonType toAutoFillButtonType(InternalsAutoFillButtonType type)
+static AutoFillButtonType toAutoFillButtonType(Internals::AutoFillButtonType type)
 {
     switch (type) {
-    case InternalsAutoFillButtonType::AutoFillButtonTypeNone:
+    case Internals::AutoFillButtonType::AutoFillButtonTypeNone:
         return AutoFillButtonType::None;
-    case InternalsAutoFillButtonType::AutoFillButtonTypeCredentials:
+    case Internals::AutoFillButtonType::AutoFillButtonTypeCredentials:
         return AutoFillButtonType::Credentials;
-    case InternalsAutoFillButtonType::AutoFillButtonTypeContacts:
+    case Internals::AutoFillButtonType::AutoFillButtonTypeContacts:
         return AutoFillButtonType::Contacts;
     }
     ASSERT_NOT_REACHED();
     return AutoFillButtonType::None;
 }
 
-void Internals::setShowAutoFillButton(HTMLInputElement& element, InternalsAutoFillButtonType type)
+void Internals::setShowAutoFillButton(HTMLInputElement& element, AutoFillButtonType type)
 {
     element.setShowAutoFillButton(toAutoFillButtonType(type));
 }

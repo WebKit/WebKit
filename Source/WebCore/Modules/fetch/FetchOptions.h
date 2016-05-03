@@ -32,21 +32,26 @@
 
 namespace WebCore {
 
-enum class ReferrerPolicy { EmptyString, NoReferrer, NoReferrerWhenDowngrade, OriginOnly, OriginWhenCrossOrigin, UnsafeUrl };
-enum class RequestCache { Default, NoStore, Reload, NoCache, ForceCache };
-enum class RequestCredentials { Omit, SameOrigin, Include };
-enum class RequestDestination { EmptyString, Document, Sharedworker, Subresource, Unknown, Worker };
-enum class RequestMode { Navigate, SameOrigin, NoCors, Cors };
-enum class RequestRedirect { Follow, Error, Manual };
-enum class RequestType { EmptyString, Audio, Font, Image, Script, Style, Track, Video };
-
 struct FetchOptions {
-    RequestType type { RequestType::EmptyString };
-    RequestDestination destination { RequestDestination::EmptyString };
-    RequestMode mode { RequestMode::NoCors };
-    RequestCredentials credentials { RequestCredentials::Omit };
-    RequestCache cache { RequestCache::Default };
-    RequestRedirect redirect { RequestRedirect::Follow };
+    enum class Type { EmptyString, Audio, Font, Image, Script, Style, Track, Video };
+    Type type { Type::EmptyString };
+
+    enum class Destination { EmptyString, Document, Sharedworker, Subresource, Unknown, Worker };
+    Destination destination { Destination::EmptyString };
+
+    enum class Mode { Navigate, SameOrigin, NoCors, Cors };
+    Mode mode { Mode::NoCors };
+
+    enum class Credentials { Omit, SameOrigin, Include };
+    Credentials credentials { Credentials::Omit };
+
+    enum class Cache { Default, NoStore, Reload, NoCache, ForceCache };
+    Cache cache { Cache::Default };
+
+    enum class Redirect { Follow, Error, Manual };
+    Redirect redirect { Redirect::Follow };
+
+    enum class ReferrerPolicy { EmptyString, NoReferrer, NoReferrerWhenDowngrade, OriginOnly, OriginWhenCrossOrigin, UnsafeUrl };
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
 };
 

@@ -710,7 +710,7 @@ int CaptionUserPreferencesMediaAF::textTrackSelectionScore(TextTrack* track, HTM
     bool legacyOverride = mediaElement->webkitClosedCaptionsVisible();
     if (displayMode == AlwaysOn && (!userPrefersSubtitles() && !userPrefersCaptions() && !legacyOverride))
         return 0;
-    if (track->kind() != TextTrackKind::Captions && track->kind() != TextTrackKind::Subtitles && track->kind() != TextTrackKind::Forced)
+    if (track->kind() != TextTrack::Kind::Captions && track->kind() != TextTrack::Kind::Subtitles && track->kind() != TextTrack::Kind::Forced)
         return 0;
     if (!track->isMainProgramContent())
         return 0;
@@ -771,7 +771,7 @@ int CaptionUserPreferencesMediaAF::textTrackSelectionScore(TextTrack* track, HTM
 
     if (userPrefersCaptions()) {
         // When the user prefers accessibility tracks, rank is SDH, then CC, then subtitles.
-        if (track->kind() == TextTrackKind::Subtitles)
+        if (track->kind() == TextTrack::Kind::Subtitles)
             trackScore = 1;
         else if (track->isClosedCaptions())
             trackScore = 2;
@@ -779,7 +779,7 @@ int CaptionUserPreferencesMediaAF::textTrackSelectionScore(TextTrack* track, HTM
             trackScore = 3;
     } else {
         // When the user prefers translation tracks, rank is subtitles, then SDH, then CC tracks.
-        if (track->kind() == TextTrackKind::Subtitles)
+        if (track->kind() == TextTrack::Kind::Subtitles)
             trackScore = 3;
         else if (!track->isClosedCaptions())
             trackScore = 2;
@@ -865,7 +865,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
         }
 
         auto kind = track->kind();
-        if (kind != TextTrackKind::Captions && kind != TextTrackKind::Descriptions && kind != TextTrackKind::Subtitles)
+        if (kind != TextTrack::Kind::Captions && kind != TextTrack::Kind::Descriptions && kind != TextTrack::Kind::Subtitles)
             continue;
 
         if (track->containsOnlyForcedSubtitles()) {
@@ -881,7 +881,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
             continue;
         }
 
-        if (track->mode() == TextTrackMode::Showing) {
+        if (track->mode() == TextTrack::Mode::Showing) {
             LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '%s' track with language '%s' because it is already visible", track->kindKeyword().string().utf8().data(), language.utf8().data());
             if (!language.isEmpty())
                 languagesIncluded.add(language);
@@ -890,7 +890,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
         }
 
         if (!language.isEmpty() && track->isMainProgramContent()) {
-            bool isAccessibilityTrack = track->kind() == TextTrackKind::Captions;
+            bool isAccessibilityTrack = track->kind() == TextTrack::Kind::Captions;
             if (prefersAccessibilityTracks) {
                 // In the first pass, include only caption tracks if the user prefers accessibility tracks.
                 if (!isAccessibilityTrack && filterTrackList) {
@@ -926,7 +926,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
             continue;
 
         auto kind = track->kind();
-        if (kind != TextTrackKind::Captions && kind != TextTrackKind::Descriptions && kind != TextTrackKind::Subtitles)
+        if (kind != TextTrack::Kind::Captions && kind != TextTrack::Kind::Descriptions && kind != TextTrack::Kind::Subtitles)
             continue;
 
         // All candidates with no languge were added the first time through.

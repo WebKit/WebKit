@@ -39,7 +39,7 @@ public:
         if (!m_frame)
             return true;
 
-        return m_frame->document()->referrerPolicy() == ReferrerHeaderPolicy::Default;
+        return m_frame->document()->referrerPolicy() == ReferrerPolicy::Default;
     }
 
 protected:

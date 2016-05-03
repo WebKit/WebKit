@@ -46,8 +46,6 @@ class MediaConstraintsImpl;
 class MediaSourceSettings;
 class MediaTrackConstraints;
 
-enum class MediaStreamTrackState { New, Live, Ended };
-
 class MediaStreamTrack final : public RefCounted<MediaStreamTrack>, public ActiveDOMObject, public EventTargetWithInlineData, private MediaStreamTrackPrivate::Observer {
 public:
     class Observer {
@@ -70,7 +68,8 @@ public:
     bool readonly() const;
     bool remote() const;
 
-    MediaStreamTrackState readyState() const;
+    enum class State { New, Live, Ended };
+    State readyState() const;
 
     bool ended() const;
 

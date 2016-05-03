@@ -46,11 +46,11 @@ class ReadableStreamSource;
 
 typedef int ExceptionCode;
 
-enum class ResponseType { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
-
 class FetchResponse final : public FetchBodyOwner {
 public:
-    static Ref<FetchResponse> create(ScriptExecutionContext& context) { return adoptRef(*new FetchResponse(context, ResponseType::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Response), ResourceResponse())); }
+    enum class Type { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
+
+    static Ref<FetchResponse> create(ScriptExecutionContext& context) { return adoptRef(*new FetchResponse(context, Type::Default, { }, FetchHeaders::create(FetchHeaders::Guard::Response), ResourceResponse())); }
     static Ref<FetchResponse> error(ScriptExecutionContext&);
     static RefPtr<FetchResponse> redirect(ScriptExecutionContext&, const String&, int, ExceptionCode&);
 
@@ -60,7 +60,7 @@ public:
 
     void initializeWith(const Dictionary&, ExceptionCode&);
 
-    ResponseType type() const;
+    Type type() const;
     const String& url() const { return m_response.url().string(); }
     bool redirected() const { return m_isRedirected; }
     int status() const { return m_response.httpStatusCode(); }
@@ -76,7 +76,7 @@ public:
 #endif
 
 private:
-    FetchResponse(ScriptExecutionContext&, ResponseType, FetchBody&&, Ref<FetchHeaders>&&, ResourceResponse&&);
+    FetchResponse(ScriptExecutionContext&, Type, FetchBody&&, Ref<FetchHeaders>&&, ResourceResponse&&);
 
     static void startFetching(ScriptExecutionContext&, const FetchRequest&, FetchPromise&&);
 
@@ -109,14 +109,14 @@ private:
         std::unique_ptr<FetchLoader> m_loader;
     };
 
-    ResponseType m_type;
+    Type m_type;
     ResourceResponse m_response;
     Ref<FetchHeaders> m_headers;
     bool m_isRedirected = false;
     Optional<BodyLoader> m_bodyLoader;
 };
 
-inline ResponseType FetchResponse::type() const
+inline auto FetchResponse::type() const -> Type
 {
     return m_type;
 }

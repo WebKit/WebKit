@@ -89,27 +89,27 @@ void InbandTextTrack::setPrivate(PassRefPtr<InbandTextTrackPrivate> trackPrivate
     updateKindFromPrivate();
 }
 
-void InbandTextTrack::setMode(TextTrackMode mode)
+void InbandTextTrack::setMode(Mode mode)
 {
     TextTrack::setMode(mode);
     setModeInternal(mode);
 }
 
-static inline InbandTextTrackPrivate::Mode toPrivate(TextTrackMode mode)
+static inline InbandTextTrackPrivate::Mode toPrivate(TextTrack::Mode mode)
 {
     switch (mode) {
-    case TextTrackMode::Disabled:
+    case TextTrack::Mode::Disabled:
         return InbandTextTrackPrivate::Disabled;
-    case TextTrackMode::Hidden:
+    case TextTrack::Mode::Hidden:
         return InbandTextTrackPrivate::Hidden;
-    case TextTrackMode::Showing:
+    case TextTrack::Mode::Showing:
         return InbandTextTrackPrivate::Showing;
     }
     ASSERT_NOT_REACHED();
     return InbandTextTrackPrivate::Disabled;
 }
 
-void InbandTextTrack::setModeInternal(TextTrackMode mode)
+void InbandTextTrack::setModeInternal(Mode mode)
 {
     m_private->setMode(toPrivate(mode));
 }
@@ -196,22 +196,22 @@ void InbandTextTrack::updateKindFromPrivate()
 {
     switch (m_private->kind()) {
     case InbandTextTrackPrivate::Subtitles:
-        setKind(TextTrackKind::Subtitles);
+        setKind(Kind::Subtitles);
         break;
     case InbandTextTrackPrivate::Captions:
-        setKind(TextTrackKind::Captions);
+        setKind(Kind::Captions);
         break;
     case InbandTextTrackPrivate::Descriptions:
-        setKind(TextTrackKind::Descriptions);
+        setKind(Kind::Descriptions);
         break;
     case InbandTextTrackPrivate::Chapters:
-        setKind(TextTrackKind::Chapters);
+        setKind(Kind::Chapters);
         break;
     case InbandTextTrackPrivate::Metadata:
-        setKind(TextTrackKind::Metadata);
+        setKind(Kind::Metadata);
         break;
     case InbandTextTrackPrivate::Forced:
-        setKind(TextTrackKind::Forced);
+        setKind(Kind::Forced);
         break;
     case InbandTextTrackPrivate::None:
     default:

@@ -193,7 +193,7 @@ void TextTrackCue::invalidateCueIndex()
 bool TextTrackCue::dispatchEvent(Event& event)
 {
     // When a TextTrack's mode is disabled: no cues are active, no events fired.
-    if (!track() || track()->mode() == TextTrackMode::Disabled)
+    if (!track() || track()->mode() == TextTrack::Mode::Disabled)
         return false;
 
     return EventTarget::dispatchEvent(event);
@@ -201,7 +201,7 @@ bool TextTrackCue::dispatchEvent(Event& event)
 
 bool TextTrackCue::isActive()
 {
-    return m_isActive && track() && track()->mode() != TextTrackMode::Disabled;
+    return m_isActive && track() && track()->mode() != TextTrack::Mode::Disabled;
 }
 
 void TextTrackCue::setIsActive(bool active)

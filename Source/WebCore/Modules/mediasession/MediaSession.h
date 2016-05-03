@@ -36,20 +36,19 @@ class Dictionary;
 class Document;
 class HTMLMediaElement;
 
-enum class MediaSessionKind { Content, Transient, TransientSolo, Ambient };
-
 class MediaSession final : public RefCounted<MediaSession> {
 public:
+    enum class Kind { Content, Transient, TransientSolo, Ambient };
     enum class State { Idle, Active, Interrupted };
 
-    static Ref<MediaSession> create(ScriptExecutionContext& context, MediaSessionKind kind)
+    static Ref<MediaSession> create(ScriptExecutionContext& context, Kind kind)
     {
         return adoptRef(*new MediaSession(context, kind));
     }
 
     ~MediaSession();
 
-    MediaSessionKind kind() const { return m_kind; }
+    Kind kind() const { return m_kind; }
     MediaRemoteControls* controls();
 
     WEBCORE_EXPORT State currentState() const { return m_currentState; }
@@ -95,7 +94,7 @@ private:
     HashSet<HTMLMediaElement*>* m_iteratedActiveParticipatingElements { nullptr };
 
     Document& m_document;
-    const MediaSessionKind m_kind;
+    const Kind m_kind;
     RefPtr<MediaRemoteControls> m_controls;
     MediaSessionMetadata m_metadata;
 };

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-inline MediaDeviceInfo::MediaDeviceInfo(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, MediaDeviceKind kind)
+inline MediaDeviceInfo::MediaDeviceInfo(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, Kind kind)
     : ContextDestructionObserver(context)
     , m_label(label)
     , m_deviceId(deviceId)
@@ -39,7 +39,7 @@ inline MediaDeviceInfo::MediaDeviceInfo(ScriptExecutionContext* context, const S
 {
 }
 
-Ref<MediaDeviceInfo> MediaDeviceInfo::create(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, MediaDeviceKind kind)
+Ref<MediaDeviceInfo> MediaDeviceInfo::create(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, Kind kind)
 {
     return adoptRef(*new MediaDeviceInfo(context, label, deviceId, groupId, kind));
 }

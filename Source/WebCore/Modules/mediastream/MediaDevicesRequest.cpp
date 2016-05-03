@@ -155,7 +155,7 @@ void MediaDevicesRequest::didCompleteTrackSourceInfoRequest(const TrackSourceInf
 
         String groupId = hashID(deviceInfo->groupId());
 
-        auto deviceType = deviceInfo->kind() == TrackSourceInfo::SourceKind::Audio ? MediaDeviceKind::Audioinput : MediaDeviceKind::Videoinput;
+        auto deviceType = deviceInfo->kind() == TrackSourceInfo::SourceKind::Audio ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
 
         devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
     }

@@ -42,8 +42,6 @@ class CSSFontFace;
 class CSSValue;
 class Dictionary;
 
-enum class FontFaceLoadStatus { Unloaded, Loading, Loaded, Error };
-
 class FontFace final : public RefCounted<FontFace>, public CSSFontFace::Client {
 public:
     static RefPtr<FontFace> create(JSC::ExecState&, ScriptExecutionContext&, const String& family, JSC::JSValue source, const Dictionary& descriptors, ExceptionCode&);
@@ -65,7 +63,9 @@ public:
     String unicodeRange() const;
     String variant() const;
     String featureSettings() const;
-    FontFaceLoadStatus status() const;
+
+    enum class LoadStatus { Unloaded, Loading, Loaded, Error };
+    LoadStatus status() const;
 
     typedef DOMPromise<FontFace&, DOMCoreException&> Promise;
     Promise& promise() { return m_promise; }

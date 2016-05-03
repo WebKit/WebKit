@@ -401,14 +401,14 @@ bool HTMLVideoElement::webkitSupportsPresentationMode(VideoPresentationMode mode
     return false;
 }
 
-static inline HTMLMediaElementEnums::VideoFullscreenMode toFullscreenMode(VideoPresentationMode mode)
+static inline HTMLMediaElementEnums::VideoFullscreenMode toFullscreenMode(HTMLVideoElement::VideoPresentationMode mode)
 {
     switch (mode) {
-    case VideoPresentationMode::Fullscreen:
+    case HTMLVideoElement::VideoPresentationMode::Fullscreen:
         return HTMLMediaElementEnums::VideoFullscreenModeStandard;
-    case VideoPresentationMode::PictureInPicture:
+    case HTMLVideoElement::VideoPresentationMode::PictureInPicture:
         return HTMLMediaElementEnums::VideoFullscreenModePictureInPicture;
-    case VideoPresentationMode::Inline:
+    case HTMLVideoElement::VideoPresentationMode::Inline:
         return HTMLMediaElementEnums::VideoFullscreenModeNone;
     }
     ASSERT_NOT_REACHED();
@@ -433,22 +433,22 @@ void HTMLVideoElement::setFullscreenMode(HTMLMediaElementEnums::VideoFullscreenM
     enterFullscreen(mode);
 }
 
-static VideoPresentationMode toPresentationMode(HTMLMediaElement::VideoFullscreenMode mode)
+static HTMLVideoElement::VideoPresentationMode toPresentationMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     if (mode == HTMLMediaElementEnums::VideoFullscreenModeStandard)
-        return VideoPresentationMode::Fullscreen;
+        return HTMLVideoElement::VideoPresentationMode::Fullscreen;
 
     if (mode & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
-        return VideoPresentationMode::PictureInPicture;
+        return HTMLVideoElement::VideoPresentationMode::PictureInPicture;
 
     if (mode == HTMLMediaElementEnums::VideoFullscreenModeNone)
-        return VideoPresentationMode::Inline;
+        return HTMLVideoElement::VideoPresentationMode::Inline;
 
     ASSERT_NOT_REACHED();
-    return VideoPresentationMode::Inline;
+    return HTMLVideoElement::VideoPresentationMode::Inline;
 }
 
-VideoPresentationMode HTMLVideoElement::webkitPresentationMode() const
+auto HTMLVideoElement::webkitPresentationMode() const -> VideoPresentationMode
 {
     return toPresentationMode(fullscreenMode());
 }

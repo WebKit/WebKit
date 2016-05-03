@@ -1,3 +1,257 @@
+2016-05-02  Darin Adler  <darin@apple.com>
+
+        Change IDL enumerations to be nested in their C++ class instead of at WebCore namespace level
+        https://bugs.webkit.org/show_bug.cgi?id=157257
+
+        Reviewed by Chris Dumez.
+
+        Chris and Alex requested this alternate style, where the enum class for each enumeration
+        goes inside the class for the interface the enumeration is used in. Also made a rule that
+        keeps the names short and not redundant with the class name they are nested in.
+
+        * Modules/fetch/FetchOptions.h: Moved all the enum class types into the struct.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::setReferrerPolicy): Updated.
+        (WebCore::setMode): Ditto.
+        (WebCore::setCredentials): Ditto.
+        (WebCore::setCache): Ditto.
+        (WebCore::setRedirect): Ditto.
+        (WebCore::buildOptions): Ditto.
+        (WebCore::buildHeaders): Ditto.
+        (WebCore::FetchRequest::create): Ditto.
+        * Modules/fetch/FetchRequest.h: Used "using" to repeat the types from FetchOptions
+        here in FetchRequest. That way the generated bindings can find the types, and we don't
+        need to do any trick like [ImplementedAs] in thd IDL to make it work.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::error): Updated.
+        (WebCore::FetchResponse::redirect): Ditto.
+        (WebCore::FetchResponse::FetchResponse): Ditto.
+        (WebCore::FetchResponse::startFetching): Ditto.
+        * Modules/fetch/FetchResponse.h: Moved enum class into the class.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::externalDeviceType): Updated.
+        * Modules/mediacontrols/MediaControlsHost.h: Moved enum classs into the class.
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::MediaSession): Updated.
+        * Modules/mediasession/MediaSession.h: Moved enum classs into the class.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::addSourceBuffer): Updated.
+        (WebCore::MediaSource::removeSourceBuffer): Ditto.
+
+        * Modules/mediasource/MediaSource.h: Moved enum class into the class.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveRenderingError): Updated.
+        (WebCore::SourceBuffer::appendError): Ditto.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): Ditto.
+        (WebCore::SourceBuffer::textTrackModeChanged): Ditto.
+
+        * Modules/mediasource/SourceBuffer.h: Removed incorrect forward declaration
+        of EndOfStreamError that also now seems to be unneeded. Moved enum class into
+        the class.
+
+        * Modules/mediastream/MediaDeviceInfo.cpp:
+        (WebCore::MediaDeviceInfo::MediaDeviceInfo): Updated.
+        (WebCore::MediaDeviceInfo::create): Ditto.
+        * Modules/mediastream/MediaDeviceInfo.h: Moved enum class into the class.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::didCompleteTrackSourceInfoRequest): Updated.
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::readyState): Updated.
+
+        * Modules/mediastream/MediaStreamTrack.h: Moved enum class into the class.
+
+        * Modules/mediastream/RTCConfiguration.h: Moved enum classes into the class.
+
+        * Modules/webaudio/AudioContext.h: Moved enum class into the class.
+
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::processorType): Updated.
+        (WebCore::WaveShaperNode::oversample): Ditto.
+        * Modules/webaudio/WaveShaperNode.h: Moved enum class into the class.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::response): Updated.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody): Removed unneeded $interfaceName argument.
+        (GetAttributeGetterName): Ditto.
+        (GetAttributeSetterName): Ditto.
+        (GetFunctionName): Tweaked style.
+        (AttributeShouldBeOnInstanceForCompatibility): Deleted. Was a function that
+        always returned 0.
+        (AttributeShouldBeOnInstance): Removed the call to the function above.
+        (IsClassNameWordBoundary): Added. Helper for function below.
+        (IsPrefixRemovable): Ditto.
+        (GetEnumerationClassName): Added an $interface argument and changed this
+        so it creates a nested name inside the class rather than a top level name
+        for use at the WebCore namespace level.
+        (GetEnumerationClassIdentifier): Added. Calls GetEnumerationClassName and
+        makes a flattened name without "::" that can be used in an identifier.
+        (GenerateEnumerationImplementationContent): Renamed from GetXXX. Added an
+        $interface argument, so it can pass that along to the functions above.
+        (GenerateHeader): Updated to not pass $interfaceName.
+        (GeneratePropertiesHashTable): Ditto.
+        (GenerateOverloadedFunction): Removed unneeded $interfaceName argument.
+        (GenerateImplementation): Updated for changes above. Tweaked formatting.
+        (GenerateFunctionCastedThis): Removed unneeded $interfaceName argument.
+        (GenerateParametersCheck): Ditto. Also streamlined implementation a bit
+        and made the IsEnumType section call the new functions.
+        (GenerateCallbackImplementation): Ditto.
+        (JSValueToNative): Added an $interface argument and pass it along when
+        dealing with enumerations.
+        (GeneratePrototypeDeclaration): Removed unneeded $interfaceName argument.
+        (GenerateConstructorDeclaration): Ditto.
+        (GenerateConstructorDefinitions): Ditto.
+        (GenerateConstructorDefinition): Ditto.
+        (GenerateConstructorHelperMethods): Ditto.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp: Regenerated.
+
+        * bindings/scripts/test/TestObj.idl: Added some new enums that test some
+        of the logic above.
+
+        * crypto/CryptoKey.cpp:
+        (WebCore::CryptoKey::CryptoKey): Updated.
+        (WebCore::CryptoKey::usages): Ditto.
+        * crypto/CryptoKey.h: Moved enum class types inside the CryptoKey class.
+        Added comments about the two similar but distinct types named
+        CryptoKeyUsage and CryptoKey::Usage.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::status): Updated.
+        * css/FontFace.h: Moved enum class into the class.
+
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::status): Updated.
+        * css/FontFaceSet.h: Moved enum class into the class.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Updated for the name change back from
+        ReferrerHeaderPolicy to ReferrerPolicy.
+        (WebCore::Document::processReferrerPolicy): Ditto.
+        (WebCore::Document::applyContentDispositionAttachmentSandbox): Ditto.
+        * dom/Document.h: More of the same.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadInternal): Updated.
+        (WebCore::HTMLMediaElement::textTrackModeChanged): Ditto.
+        (WebCore::HTMLMediaElement::textTrackKindChanged): Ditto.
+        (WebCore::HTMLMediaElement::textTrackAddCues): Ditto.
+        (WebCore::HTMLMediaElement::textTrackAddCue): Ditto.
+        (WebCore::HTMLMediaElement::addTextTrack): Ditto.
+        (WebCore::HTMLMediaElement::configureTextTrackGroup): Ditto.
+        (WebCore::HTMLMediaElement::setSelectedTextTrack): Ditto.
+        (WebCore::HTMLMediaElement::configureTextTracks): Ditto.
+        (WebCore::HTMLMediaElement::hasClosedCaptions): Ditto.
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay): Ditto.
+        (WebCore::HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured): Ditto.
+        (WebCore::toPlatform): Ditto.
+        (WebCore::HTMLMediaElement::outOfBandTrackSources): Ditto.
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::scheduleLoad): Ditto.
+
+        * html/HTMLVideoElement.h: Moved enum class into class.
+
+        * html/HTMLVideoElement.idl: Added the missing conditional on
+        VideoPresentationMode, and also moved it to the bottom of the file
+        to work around what is apparently a bug in the IDL parser.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::toWindRule): Updated.
+        (WebCore::CanvasRenderingContext2D::fill): Ditto.
+        (WebCore::CanvasRenderingContext2D::clip): Ditto.
+        (WebCore::CanvasRenderingContext2D::fillInternal): Ditto.
+        (WebCore::CanvasRenderingContext2D::clipInternal): Ditto.
+        (WebCore::CanvasRenderingContext2D::isPointInPath): Ditto.
+        (WebCore::CanvasRenderingContext2D::isPointInPathInternal): Ditto.
+        (WebCore::smoothingToInterpolationQuality): Ditto.
+
+        * html/canvas/CanvasRenderingContext2D.h: Moved enum class types into the class.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay): Updated.
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay): Ditto.
+
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::setMode): Updated.
+        (WebCore::toPrivate): Ditto.
+        (WebCore::InbandTextTrack::setModeInternal): Ditto.
+        (WebCore::InbandTextTrack::updateKindFromPrivate): Ditto.
+        * html/track/InbandTextTrack.h: Ditto.
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack): Ditto.
+        (WebCore::TextTrack::enabled): Ditto.
+        (WebCore::TextTrack::kindKeyword): Ditto.
+        (WebCore::TextTrack::setKind): Ditto.
+        (WebCore::TextTrack::setKindKeywordIgnoringASCIICase): Ditto.
+        (WebCore::TextTrack::setMode): Ditto.
+        (WebCore::TextTrack::cues): Ditto.
+        (WebCore::TextTrack::activeCues): Ditto.
+        (WebCore::TextTrack::addCue): Ditto.
+        (WebCore::TextTrack::regions): Ditto.
+        (WebCore::TextTrack::isRendered): Ditto.
+        (WebCore::TextTrack::isMainProgramContent): Ditto.
+        (WebCore::TextTrack::containsOnlyForcedSubtitles): Ditto.
+
+        * html/track/TextTrack.h: Moved enum class types into the class.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::dispatchEvent): Updated.
+        (WebCore::TextTrackCue::isActive): Ditto.
+        * loader/FrameNetworkingContext.h: Ditto.
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::sortedTrackListForMenu): Ditto.
+        (WebCore::CaptionUserPreferences::textTrackSelectionScore): Ditto.
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::textTrackSelectionScore): Ditto.
+        (WebCore::CaptionUserPreferencesMediaAF::sortedTrackListForMenu): Ditto.
+
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::generateReferrerHeader): Updated since we
+        changed ReferrerHeaderPolicy back to ReferrerPolicy.
+        * page/SecurityPolicy.h: Ditto.
+
+        * platform/ReferrerPolicy.h: Changed ReferrerHeaderPolicy name back
+        to ReferrerPolicy now that nesting inside a class eliminated the conflict;
+        still should merge them and that FIXME remains.
+
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebPlaybackSessionModelMediaElement::updateForEventName): Updated.
+        (WebPlaybackSessionModelMediaElement::updateLegibleOptions): Ditto.
+
+        * testing/Internals.cpp:
+        (WebCore::toResourceRequestCachePolicy): Updated.
+        (WebCore::Internals::setOverrideCachePolicy): Ditto.
+        (WebCore::toResourceLoadPriority): Ditto.
+        (WebCore::Internals::setOverrideResourceLoadPriority): Ditto.
+        (WebCore::toAutoFillButtonType): Ditto.
+        (WebCore::Internals::setShowAutoFillButton): Ditto.
+
+        * testing/Internals.h: Moved enum class types into class.
+
+        * testing/Internals.idl: Removed the "Internals" prefixes we added
+        to resolve ambiguity before. Nesting these in the class now takes care
+        of the ambiguity instead.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseText): Updated.
+        (WebCore::XMLHttpRequest::didCacheResponseJSON): Ditto.
+        (WebCore::XMLHttpRequest::responseXML): Ditto.
+        (WebCore::XMLHttpRequest::responseBlob): Ditto.
+        (WebCore::XMLHttpRequest::responseArrayBuffer): Ditto.
+        (WebCore::XMLHttpRequest::setResponseType): Ditto.
+        (WebCore::XMLHttpRequest::open): Ditto.
+        (WebCore::shouldDecodeResponse): Ditto.
+
+        * xml/XMLHttpRequest.h: Moved the enum class into the class.
+
 2016-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Don't run transitions to/from 'auto' values

@@ -48,8 +48,6 @@ namespace WebCore {
 
 class GenericEventQueue;
 
-enum class EndOfStreamError { Network, Decode };
-
 class MediaSource : public MediaSourcePrivateClient, public ActiveDOMObject, public EventTargetWithInlineData, public URLRegistrable {
 public:
     static void setRegistry(URLRegistry*);
@@ -69,6 +67,8 @@ public:
     bool isClosed() const;
     bool isEnded() const;
     void sourceBufferDidChangeActiveState(SourceBuffer&, bool);
+
+    enum class EndOfStreamError { Network, Decode };
     void streamEndedWithError(Optional<EndOfStreamError>);
 
     // MediaSourcePrivateClient

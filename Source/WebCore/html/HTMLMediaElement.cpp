@@ -1174,7 +1174,7 @@ void HTMLMediaElement::loadInternal()
         if (m_textTracks) {
             for (unsigned i = 0; i < m_textTracks->length(); ++i) {
                 TextTrack* track = m_textTracks->item(i);
-                if (track->mode() != TextTrackMode::Disabled)
+                if (track->mode() != TextTrack::Mode::Disabled)
                     m_textTracksWhenResourceSelectionBegan.append(track);
             }
         }
@@ -1731,7 +1731,7 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
     // Mark this track as "configured" so configureTextTracks won't change the mode again.
     track->setHasBeenConfigured(true);
     
-    if (track->mode() != TextTrackMode::Disabled && trackIsLoaded)
+    if (track->mode() != TextTrack::Mode::Disabled && trackIsLoaded)
         textTrackAddCues(track, track->cues());
 
     configureTextTrackDisplay(AssumeTextTrackVisibilityChanged);
@@ -1755,8 +1755,8 @@ void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack* track)
 
 void HTMLMediaElement::textTrackKindChanged(TextTrack* track)
 {
-    if (track->kind() != TextTrackKind::Captions && track->kind() != TextTrackKind::Subtitles && track->mode() == TextTrackMode::Showing)
-        track->setMode(TextTrackMode::Hidden);
+    if (track->kind() != TextTrack::Kind::Captions && track->kind() != TextTrack::Kind::Subtitles && track->mode() == TextTrack::Mode::Showing)
+        track->setMode(TextTrack::Mode::Hidden);
 }
 
 void HTMLMediaElement::beginIgnoringTrackDisplayUpdateRequests()
@@ -1774,7 +1774,7 @@ void HTMLMediaElement::endIgnoringTrackDisplayUpdateRequests()
 
 void HTMLMediaElement::textTrackAddCues(TextTrack* track, const TextTrackCueList* cues) 
 {
-    if (track->mode() == TextTrackMode::Disabled)
+    if (track->mode() == TextTrack::Mode::Disabled)
         return;
 
     TrackDisplayUpdateScope scope(this);
@@ -1791,7 +1791,7 @@ void HTMLMediaElement::textTrackRemoveCues(TextTrack*, const TextTrackCueList* c
 
 void HTMLMediaElement::textTrackAddCue(TextTrack* track, PassRefPtr<TextTrackCue> prpCue)
 {
-    if (track->mode() == TextTrackMode::Disabled)
+    if (track->mode() == TextTrack::Mode::Disabled)
         return;
 
     RefPtr<TextTrackCue> cue = prpCue;
@@ -3664,7 +3664,7 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const S
     textTrack->setReadinessState(TextTrack::Loaded);
 
     // ... its text track mode to the text track hidden mode, and its text track list of cues to an empty list ...
-    textTrack->setMode(TextTrackMode::Hidden);
+    textTrack->setMode(TextTrack::Mode::Hidden);
 
     return textTrack.release();
 }
@@ -3792,7 +3792,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     for (size_t i = 0; i < group.tracks.size(); ++i) {
         RefPtr<TextTrack> textTrack = group.tracks[i];
 
-        if (m_processingPreferenceChange && textTrack->mode() == TextTrackMode::Showing)
+        if (m_processingPreferenceChange && textTrack->mode() == TextTrack::Mode::Showing)
             currentlyEnabledTracks.append(textTrack);
 
         int trackScore = captionPreferences ? captionPreferences->textTrackSelectionScore(textTrack.get(), this) : 0;
@@ -3861,12 +3861,12 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
         for (size_t i = 0; i < currentlyEnabledTracks.size(); ++i) {
             RefPtr<TextTrack> textTrack = currentlyEnabledTracks[i];
             if (textTrack != trackToEnable)
-                textTrack->setMode(TextTrackMode::Disabled);
+                textTrack->setMode(TextTrack::Mode::Disabled);
         }
     }
 
     if (trackToEnable) {
-        trackToEnable->setMode(TextTrackMode::Showing);
+        trackToEnable->setMode(TextTrack::Mode::Showing);
 
         // If user preferences indicate we should always display captions, make sure we reflect the
         // proper status via the webkitClosedCaptionsVisible API call:
@@ -3996,13 +3996,13 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
         for (int i = 0, length = trackList->length(); i < length; ++i) {
             TextTrack* track = trackList->item(i);
             if (!trackToSelect || track != trackToSelect)
-                track->setMode(TextTrackMode::Disabled);
+                track->setMode(TextTrack::Mode::Disabled);
             else
-                track->setMode(TextTrackMode::Showing);
+                track->setMode(TextTrack::Mode::Showing);
         }
     } else if (trackToSelect == TextTrack::captionMenuOffItem()) {
         for (int i = 0, length = trackList->length(); i < length; ++i)
-            trackList->item(i)->setMode(TextTrackMode::Disabled);
+            trackList->item(i)->setMode(TextTrack::Mode::Disabled);
     }
 
     if (!document().page())
@@ -4041,18 +4041,18 @@ void HTMLMediaElement::configureTextTracks()
 
         auto kind = textTrack->kind();
         TrackGroup* currentGroup;
-        if (kind == TextTrackKind::Subtitles || kind == TextTrackKind::Captions || kind == TextTrackKind::Forced)
+        if (kind == TextTrack::Kind::Subtitles || kind == TextTrack::Kind::Captions || kind == TextTrack::Kind::Forced)
             currentGroup = &captionAndSubtitleTracks;
-        else if (kind == TextTrackKind::Descriptions)
+        else if (kind == TextTrack::Kind::Descriptions)
             currentGroup = &descriptionTracks;
-        else if (kind == TextTrackKind::Chapters)
+        else if (kind == TextTrack::Kind::Chapters)
             currentGroup = &chapterTracks;
-        else if (kind == TextTrackKind::Metadata)
+        else if (kind == TextTrack::Kind::Metadata)
             currentGroup = &metadataTracks;
         else
             currentGroup = &otherTracks;
 
-        if (!currentGroup->visibleTrack && textTrack->mode() == TextTrackMode::Showing)
+        if (!currentGroup->visibleTrack && textTrack->mode() == TextTrack::Mode::Showing)
             currentGroup->visibleTrack = textTrack;
         if (!currentGroup->defaultTrack && textTrack->isDefault())
             currentGroup->defaultTrack = textTrack;
@@ -5491,7 +5491,7 @@ bool HTMLMediaElement::hasClosedCaptions() const
         auto& track = *m_textTracks->item(i);
         if (track.readinessState() == TextTrack::FailedToLoad)
             continue;
-        if (track.kind() == TextTrackKind::Captions || track.kind() == TextTrackKind::Subtitles)
+        if (track.kind() == TextTrack::Kind::Captions || track.kind() == TextTrack::Kind::Subtitles)
             return true;
     }
 #endif
@@ -5758,7 +5758,7 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
 
     bool haveVisibleTextTrack = false;
     for (unsigned i = 0; i < m_textTracks->length(); ++i) {
-        if (m_textTracks->item(i)->mode() == TextTrackMode::Showing) {
+        if (m_textTracks->item(i)->mode() == TextTrack::Mode::Showing) {
             haveVisibleTextTrack = true;
             break;
         }
@@ -5834,7 +5834,7 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMod
     for (unsigned i = 0; i < m_textTracks->length(); ++i) {
         auto& track = *m_textTracks->item(i);
         auto kind = track.kind();
-        if (kind == TextTrackKind::Subtitles || kind == TextTrackKind::Captions)
+        if (kind == TextTrack::Kind::Subtitles || kind == TextTrack::Kind::Captions)
             track.setHasBeenConfigured(false);
     }
 
@@ -6080,34 +6080,34 @@ String HTMLMediaElement::mediaPlayerUserAgent() const
 
 #if ENABLE(AVF_CAPTIONS)
 
-static inline PlatformTextTrack::TrackKind toPlatform(TextTrackKind kind)
+static inline PlatformTextTrack::TrackKind toPlatform(TextTrack::Kind kind)
 {
     switch (kind) {
-    case TextTrackKind::Captions:
+    case TextTrack::Kind::Captions:
         return PlatformTextTrack::Caption;
-    case TextTrackKind::Chapters:
+    case TextTrack::Kind::Chapters:
         return PlatformTextTrack::Chapter;
-    case TextTrackKind::Descriptions:
+    case TextTrack::Kind::Descriptions:
         return PlatformTextTrack::Description;
-    case TextTrackKind::Forced:
+    case TextTrack::Kind::Forced:
         return PlatformTextTrack::Forced;
-    case TextTrackKind::Metadata:
+    case TextTrack::Kind::Metadata:
         return PlatformTextTrack::MetaData;
-    case TextTrackKind::Subtitles:
+    case TextTrack::Kind::Subtitles:
         return PlatformTextTrack::Subtitle;
     }
     ASSERT_NOT_REACHED();
     return PlatformTextTrack::Caption;
 }
 
-static inline PlatformTextTrack::TrackMode toPlatform(TextTrackMode mode)
+static inline PlatformTextTrack::TrackMode toPlatform(TextTrack::Mode mode)
 {
     switch (mode) {
-    case TextTrackMode::Disabled:
+    case TextTrack::Mode::Disabled:
         return PlatformTextTrack::Disabled;
-    case TextTrackMode::Hidden:
+    case TextTrack::Mode::Hidden:
         return PlatformTextTrack::Hidden;
-    case TextTrackMode::Showing:
+    case TextTrack::Mode::Showing:
         return PlatformTextTrack::Showing;
     }
     ASSERT_NOT_REACHED();
@@ -6131,13 +6131,13 @@ Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
         // FIXME: The switch statement below preserves existing behavior where we ignore chapters and metadata tracks.
         // If we confirm this behavior is valuable, we should remove this comment. Otherwise, remove both comment and switch.
         switch (kind) {
-        case TextTrackKind::Captions:
-        case TextTrackKind::Descriptions:
-        case TextTrackKind::Forced:
-        case TextTrackKind::Subtitles:
+        case TextTrack::Kind::Captions:
+        case TextTrack::Kind::Descriptions:
+        case TextTrack::Kind::Forced:
+        case TextTrack::Kind::Subtitles:
             break;
-        case TextTrackKind::Chapters:
-        case TextTrackKind::Metadata:
+        case TextTrack::Kind::Chapters:
+        case TextTrack::Kind::Metadata:
             continue;
         }
 
