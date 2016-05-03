@@ -1,3 +1,26 @@
+2016-05-03  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][DiskCache] Store common HTTP header names as strings
+        https://bugs.webkit.org/show_bug.cgi?id=157326
+        <rdar://problem/26073498>
+
+        Reviewed by Antti Koivisto.
+
+        Store common HTTP header names as strings in the disk cache instead of
+        using their value in the HTTPHeaderName enumeration. Having the disk
+        cache rely in the HTTPHeaderName enumeration is risky becomes it means
+        the cached data would become invalid every time someone updates
+        HTTPHeaderNames.in in WebCore. If someone were to update
+        HTTPHeaderNames.in without bumping the disk cache version, we would end
+        up with wrongly recognized HTTP header names after loading responses
+        from the cache.
+
+        * NetworkProcess/cache/NetworkCacheCoders.cpp:
+        (WebKit::NetworkCache::Coder<WebCore::HTTPHeaderMap>::encode):
+        (WebKit::NetworkCache::Coder<WebCore::HTTPHeaderMap>::decode):
+        * NetworkProcess/cache/NetworkCacheCoders.h:
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2016-05-03  Daniel Bates  <dabates@apple.com>
 
         Temporary workaround for Apple Internal builds

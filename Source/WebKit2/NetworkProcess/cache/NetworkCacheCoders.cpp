@@ -190,6 +190,34 @@ bool Coder<SHA1::Digest>::decode(Decoder& decoder, SHA1::Digest& digest)
     return decoder.decodeFixedLengthData(digest.data(), sizeof(digest));
 }
 
+// Store common HTTP headers as strings instead of using their value in the HTTPHeaderName enumeration
+// so that the headers stored in the cache stays valid even after HTTPHeaderName.in gets updated.
+void Coder<WebCore::HTTPHeaderMap>::encode(Encoder& encoder, const WebCore::HTTPHeaderMap& headers)
+{
+    encoder << static_cast<uint64_t>(headers.size());
+    for (auto& keyValue : headers) {
+        encoder << keyValue.key;
+        encoder << keyValue.value;
+    }
+}
+
+bool Coder<WebCore::HTTPHeaderMap>::decode(Decoder& decoder, WebCore::HTTPHeaderMap& headers)
+{
+    uint64_t headersSize;
+    if (!decoder.decode(headersSize))
+        return false;
+    for (uint64_t i = 0; i < headersSize; ++i) {
+        String name;
+        if (!decoder.decode(name))
+            return false;
+        String value;
+        if (!decoder.decode(value))
+            return false;
+        headers.add(name, value);
+    }
+    return true;
+}
+
 }
 }
 

@@ -86,7 +86,7 @@ public:
     size_t capacity() const { return m_capacity; }
     size_t approximateSize() const;
 
-    static const unsigned version = 6;
+    static const unsigned version = 7;
 
     String basePath() const;
     String versionPath() const;

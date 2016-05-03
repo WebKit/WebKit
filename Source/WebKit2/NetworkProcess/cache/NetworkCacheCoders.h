@@ -31,6 +31,7 @@
 #include "NetworkCacheDecoder.h"
 #include "NetworkCacheEncoder.h"
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/URL.h>
 #include <utility>
 #include <wtf/Forward.h>
@@ -262,6 +263,11 @@ template<> struct Coder<WebCore::CertificateInfo> {
 template<> struct Coder<SHA1::Digest> {
     static void encode(Encoder&, const SHA1::Digest&);
     static bool decode(Decoder&, SHA1::Digest&);
+};
+
+template<> struct Coder<WebCore::HTTPHeaderMap> {
+    static void encode(Encoder&, const WebCore::HTTPHeaderMap&);
+    static bool decode(Decoder&, WebCore::HTTPHeaderMap&);
 };
 
 }

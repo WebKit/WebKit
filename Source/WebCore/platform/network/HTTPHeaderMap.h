@@ -138,7 +138,7 @@ public:
 
     WEBCORE_EXPORT String get(const String& name) const;
     WEBCORE_EXPORT void set(const String& name, const String& value);
-    void add(const String& name, const String& value);
+    WEBCORE_EXPORT void add(const String& name, const String& value);
     WEBCORE_EXPORT bool contains(const String&) const;
     bool remove(const String&);
 
