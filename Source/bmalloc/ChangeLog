@@ -1,3 +1,23 @@
+2016-05-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Assertion failure in bmalloc::vmRevokePermissions(void*, unsigned long).
+        https://bugs.webkit.org/show_bug.cgi?id=157047
+
+        Reviewed by Filip Pizlo.
+
+        The previous fix aligned the guard page sizes correctly but forgot to
+        align the guard page start address correctly.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::roundUpToMultipleOfSloppy): Use a new helper method to round
+        up when not working with a power of two, instead of writing out the
+        math by hand.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::allocateSmallChunk): Make sure to round up the guard
+        page start address in addition to its size. Assert at the very end to
+        try to catch more bugs.
+
 2016-04-27  Geoffrey Garen  <ggaren@apple.com>
 
         Assertion failure in bmalloc::vmRevokePermissions(void*, unsigned long).

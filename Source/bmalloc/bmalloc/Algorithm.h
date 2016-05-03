@@ -101,6 +101,11 @@ template<typename T> inline T divideRoundingUp(T numerator, T denominator)
     return (numerator + denominator - 1) / denominator;
 }
 
+template<typename T> inline T roundUpToMultipleOfSloppy(size_t divisor, T x)
+{
+    return divideRoundingUp(x, divisor) * divisor;
+}
+
 // Version of sizeof that returns 0 for empty classes.
 
 template<typename T> inline constexpr size_t sizeOf()

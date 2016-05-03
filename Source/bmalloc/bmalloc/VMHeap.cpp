@@ -61,25 +61,26 @@ void VMHeap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageC
     size_t pageSize = bmalloc::pageSize(pageClass);
     size_t smallPageCount = pageSize / smallPageSize;
 
-    // We align to our page size in order to guarantee that we can service
-    // aligned allocation requests at equal and smaller powers of two.
-    size_t metadataSize = divideRoundingUp(sizeof(Chunk), pageSize) * pageSize;
-
     void* memory = vmAllocate(chunkSize, chunkSize);
     Chunk* chunk = static_cast<Chunk*>(memory);
+
+    // We align to our page size in order to honor OS APIs and in order to
+    // guarantee that we can service aligned allocation requests at equal
+    // and smaller powers of two.
+    size_t vmPageSize = roundUpToMultipleOf(bmalloc::vmPageSize(), pageSize);
+    size_t metadataSize = roundUpToMultipleOfSloppy(vmPageSize, sizeof(Chunk));
 
     Object begin(chunk, metadataSize);
     Object end(chunk, chunkSize);
 
     // Establish guard pages before writing to Chunk memory to work around
     // an edge case in the Darwin VM system (<rdar://problem/25910098>).
-    size_t guardSize = roundUpToMultipleOf(vmPageSize(), pageSize);
-    BASSERT(chunkSize >= 2 * guardSize + pageSize);
-    vmRevokePermissions(begin.address(), guardSize);
-    vmRevokePermissions(end.address() - guardSize, guardSize);
-
-    begin = begin + guardSize;
-    end = end - guardSize;
+    vmRevokePermissions(begin.address(), vmPageSize);
+    vmRevokePermissions(end.address() - vmPageSize, vmPageSize);
+    
+    begin = begin + vmPageSize;
+    end = end - vmPageSize;
+    BASSERT(begin <= end && end.offset() - begin.offset() >= pageSize);
 
     new (chunk) Chunk(lock);
 
