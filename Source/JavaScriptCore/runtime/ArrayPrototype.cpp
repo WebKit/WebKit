@@ -863,7 +863,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
         return JSValue::encode(jsUndefined());
 
-    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj))) {
+    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == getLength(exec, thisObj))) {
         if (JSArray* result = asArray(thisObj)->fastSlice(*exec, begin, end - begin))
             return JSValue::encode(result);
     }
@@ -932,7 +932,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     JSObject* result = nullptr;
-    if (speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj))
+    if (speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == getLength(exec, thisObj))
         result = asArray(thisObj)->fastSlice(*exec, begin, deleteCount);
 
     if (!result) {

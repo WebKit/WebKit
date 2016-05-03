@@ -1,3 +1,18 @@
+2016-05-03  Michael Saboff  <msaboff@apple.com>
+
+        Crash: Array.prototype.slice() and .splice() can call fastSlice() after an array is truncated
+        https://bugs.webkit.org/show_bug.cgi?id=157322
+
+        Reviewed by Filip Pizlo.
+
+        Check to see if the source array has changed length before calling fastSlice().
+        If it has, take the slow path.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        * tests/stress/regress-157322.js: New test.
+
 2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Eliminate PassRefPtr conversion from ConsoleObject
