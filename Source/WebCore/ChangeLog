@@ -1,3 +1,25 @@
+2016-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [OpenType] OpenTypeVerticalData object should not be created if the font is not OpenType
+        https://bugs.webkit.org/show_bug.cgi?id=157172
+
+        Reviewed by Michael Catanzaro.
+
+        It's a bit weird that the object is always created and has an isOpenType() method to check whether it's an
+        OpenType or not. The caller is always deleting the object when it's not an OpenType, so it would be better if
+        the create method returned nullptr instead of creating the object when the font is not OpenType.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::verticalData): Do not use isOpenType(), we can now simply use the return value of OpenTypeVerticalData::create().
+        * platform/graphics/opentype/OpenTypeVerticalData.cpp:
+        (WebCore::loadHmtxTable): Moved to a helper funtion that returns false if the font is not OpenType.
+        (WebCore::OpenTypeVerticalData::create): Try to load the Hmtx table, and create the object if succeeded or
+        return nullptr otherwise.
+        (WebCore::OpenTypeVerticalData::OpenTypeVerticalData): Receive the advanceWidths as constructor parameter.
+        (WebCore::OpenTypeVerticalData::loadMetrics): Load all other tables.
+        * platform/graphics/opentype/OpenTypeVerticalData.h:
+        (WebCore::OpenTypeVerticalData::isOpenType): Deleted.
+
 2016-05-02  Darin Adler  <darin@apple.com>
 
         Change IDL enumerations to be nested in their C++ class instead of at WebCore namespace level

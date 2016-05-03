@@ -317,11 +317,9 @@ FontVerticalDataCache& fontVerticalDataCache()
 
 RefPtr<OpenTypeVerticalData> FontCache::verticalData(const FontPlatformData& platformData)
 {
-    auto addResult = fontVerticalDataCache().add(platformData, nullptr);
-    if (addResult.isNewEntry) {
-        RefPtr<OpenTypeVerticalData> data = OpenTypeVerticalData::create(platformData);
-        addResult.iterator->value = data->isOpenType() ? WTFMove(data) : nullptr;
-    }
+    auto addResult = fontVerticalDataCache().ensure(platformData, [&platformData] {
+        return OpenTypeVerticalData::create(platformData);
+    });
     return addResult.iterator->value;
 }
 #endif
