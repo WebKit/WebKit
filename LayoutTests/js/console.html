@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+shouldBeEqualToString("typeof console", "object");
+shouldBeEqualToString("console.toString()", "[object Console]");
+shouldBe("Object.getPrototypeOf(console)", "Object.getPrototypeOf({})");
+shouldBe("console", "console");
+
+var consoleDescriptor = Object.getOwnPropertyDescriptor(window, "console");
+shouldBeTrue('consoleDescriptor.configurable');
+shouldBeTrue('consoleDescriptor.writable');
+shouldBeTrue('consoleDescriptor.enumerable');
+
+// Console methods don't care what their this object is.
+console.log("log message");
+console.log.call(null, "log message");
+console.log.call(undefined, "log message");
+console.log.call(console, "log message");
+console.log.call(123, "log message");
+console.log.call("ignore", "log message");
+console.log.bind(console, "log message");
+console.log.bind(console)("log message");
+[1,2,3].forEach(console.log);
+
+// All properties should be enumerable.
+var property, descriptor;
+var enumerablePropertyCount = 0;
+for (property in console) {
+    enumerablePropertyCount++;
+    descriptor = Object.getOwnPropertyDescriptor(console, property);
+
+    debug("");
+    debug(`console.${property}`);
+    shouldBeEqualToString(`typeof console.${property}`, "function");
+    shouldBe(`console.${property}.length`, '0');
+    shouldBeTrue('descriptor.configurable');
+    shouldBeTrue('descriptor.writable');
+    shouldBeTrue('descriptor.enumerable');
+}
+
+debug("");
+shouldBe("Object.getOwnPropertyNames(console).length", "enumerablePropertyCount");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

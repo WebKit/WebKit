@@ -1,3 +1,77 @@
+2016-05-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Make console a namespace object (like Math/JSON), allowing functions to be called unbound
+        https://bugs.webkit.org/show_bug.cgi?id=157286
+        <rdar://problem/26052830>
+
+        Reviewed by Timothy Hatcher.
+
+        This changes `console` to be a global namespace object, like `Math` and `JSON`.
+        It just holds a bunch of functions, that can be used on their own, unbound.
+        For example, `[1,2,3].forEach(console.log)` and `var log = console.log; log(1)`
+        used to throw exceptions and now do not.
+
+        Previously console was an Object/Prototype pair, so functions were on
+        ConsolePrototype (console.__proto__.log) and they needed to be called
+        Console objects as the `this` value. Now, `console` is just a standard
+        object with a bunch of functions. Since there is no console prototype the
+        functions can be passed around and called as expected and they will
+        just do the right thing.
+
+        For compatability with other browsers, `console` was made enumerable
+        on the global object.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add new files and remove old files.
+
+        * runtime/CommonIdentifiers.h:
+        Add "console".
+
+        * runtime/ConsoleObject.cpp: Renamed from Source/JavaScriptCore/runtime/ConsolePrototype.cpp.
+        (JSC::ConsoleObject::ConsoleObject):
+        (JSC::ConsoleObject::finishCreation):
+        (JSC::valueToStringWithUndefinedOrNullCheck):
+        (JSC::consoleLogWithLevel):
+        (JSC::consoleProtoFuncDebug):
+        (JSC::consoleProtoFuncError):
+        (JSC::consoleProtoFuncLog):
+        (JSC::consoleProtoFuncInfo):
+        (JSC::consoleProtoFuncWarn):
+        (JSC::consoleProtoFuncClear):
+        (JSC::consoleProtoFuncDir):
+        (JSC::consoleProtoFuncDirXML):
+        (JSC::consoleProtoFuncTable):
+        (JSC::consoleProtoFuncTrace):
+        (JSC::consoleProtoFuncAssert):
+        (JSC::consoleProtoFuncCount):
+        (JSC::consoleProtoFuncProfile):
+        (JSC::consoleProtoFuncProfileEnd):
+        (JSC::consoleProtoFuncTakeHeapSnapshot):
+        (JSC::consoleProtoFuncTime):
+        (JSC::consoleProtoFuncTimeEnd):
+        (JSC::consoleProtoFuncTimeStamp):
+        (JSC::consoleProtoFuncGroup):
+        (JSC::consoleProtoFuncGroupCollapsed):
+        (JSC::consoleProtoFuncGroupEnd):
+        Console functions no longer need to check if the this object is
+        a Console object. They will always just work now.
+
+        * runtime/MathObject.cpp:
+        * runtime/MathObject.h:
+        * runtime/ConsoleObject.h: Renamed from Source/JavaScriptCore/runtime/ConsolePrototype.h.
+        (JSC::ConsoleObject::create):
+        (JSC::ConsoleObject::createStructure):
+        ConsoleObject is a basic object like MathObject.
+
+        * runtime/JSConsole.cpp: Removed.
+        * runtime/JSConsole.h: Removed.
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        Remove JSConsole / ConsolePrototype in favor of the single ConsoleObject.
+
 2016-05-02  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Clean up annoying compiler warnings

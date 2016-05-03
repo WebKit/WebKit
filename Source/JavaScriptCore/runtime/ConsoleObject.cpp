@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,19 +24,17 @@
  */
 
 #include "config.h"
-#include "ConsolePrototype.h"
+#include "ConsoleObject.h"
 
 #include "ConsoleClient.h"
 #include "Error.h"
-#include "ExceptionHelpers.h"
 #include "JSCInlines.h"
-#include "JSConsole.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStackFactory.h"
 
 namespace JSC {
 
-const ClassInfo ConsolePrototype::s_info = { "ConsolePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(ConsolePrototype) };
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ConsoleObject);
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncDebug(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncError(ExecState*);
@@ -60,11 +58,17 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroup(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroupCollapsed(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroupEnd(ExecState*);
 
-void ConsolePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
+const ClassInfo ConsoleObject::s_info = { "Console", &Base::s_info, 0, CREATE_METHOD_TABLE(ConsoleObject) };
+
+ConsoleObject::ConsoleObject(VM& vm, Structure* structure)
+    : JSNonFinalObject(vm, structure)
+{
+}
+
+void ConsoleObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    vm.prototypeMap.addPrototype(this);
 
     // For legacy reasons, console properties are enumerable, writable, deleteable,
     // and all have a length of 0. This may change if Console is standardized.
@@ -75,13 +79,13 @@ void ConsolePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("info", consoleProtoFuncInfo, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("warn", consoleProtoFuncWarn, None, 0);
 
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("clear", consoleProtoFuncClear, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->clear, consoleProtoFuncClear, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("dir", consoleProtoFuncDir, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("dirxml", consoleProtoFuncDirXML, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("table", consoleProtoFuncTable, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trace", consoleProtoFuncTrace, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("assert", consoleProtoFuncAssert, None, 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("count", consoleProtoFuncCount, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->count, consoleProtoFuncCount, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profile", consoleProtoFuncProfile, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profileEnd", consoleProtoFuncProfileEnd, None, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("time", consoleProtoFuncTime, None, 0);
@@ -102,11 +106,7 @@ static String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue val
 
 static EncodedJSValue consoleLogWithLevel(ExecState* exec, MessageLevel level)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -142,11 +142,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncWarn(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncClear(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -157,11 +153,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncClear(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncDir(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -172,11 +164,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncDir(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncDirXML(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -187,11 +175,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncDirXML(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTable(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -202,11 +186,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTable(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTrace(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -217,11 +197,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTrace(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncAssert(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -236,11 +212,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncAssert(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncCount(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -251,11 +223,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncCount(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfile(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -275,11 +243,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfile(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfileEnd(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -299,11 +263,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncProfileEnd(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTakeHeapSnapshot(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -323,11 +283,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTakeHeapSnapshot(ExecState* 
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTime(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -344,11 +300,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTime(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeEnd(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -365,11 +317,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeEnd(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeStamp(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -380,11 +328,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeStamp(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroup(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -395,11 +339,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroup(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroupCollapsed(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -410,11 +350,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroupCollapsed(ExecState* ex
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroupEnd(ExecState* exec)
 {
-    JSConsole* castedThis = jsDynamicCast<JSConsole*>(exec->thisValue());
-    if (!castedThis)
-        return throwVMTypeError(exec);
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSConsole::info());
-    ConsoleClient* client = castedThis->globalObject()->consoleClient();
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -423,4 +359,4 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroupEnd(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-}
+} // namespace JSC

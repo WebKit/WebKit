@@ -31,7 +31,6 @@ private:
 
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static MathObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {

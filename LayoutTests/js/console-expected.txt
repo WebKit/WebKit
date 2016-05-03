@@ -1,0 +1,170 @@
+CONSOLE MESSAGE: line 19: log message
+CONSOLE MESSAGE: line 20: log message
+CONSOLE MESSAGE: line 21: log message
+CONSOLE MESSAGE: line 22: log message
+CONSOLE MESSAGE: line 23: log message
+CONSOLE MESSAGE: line 24: log message
+CONSOLE MESSAGE: line 26: log message
+CONSOLE MESSAGE: line 1: 1
+CONSOLE MESSAGE: line 1: 2
+CONSOLE MESSAGE: line 1: 3
+PASS typeof console is "object"
+PASS console.toString() is "[object Console]"
+PASS Object.getPrototypeOf(console) is Object.getPrototypeOf({})
+PASS console is console
+PASS consoleDescriptor.configurable is true
+PASS consoleDescriptor.writable is true
+PASS consoleDescriptor.enumerable is true
+
+console.debug
+PASS typeof console.debug is "function"
+PASS console.debug.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.error
+PASS typeof console.error is "function"
+PASS console.error.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.log
+PASS typeof console.log is "function"
+PASS console.log.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.info
+PASS typeof console.info is "function"
+PASS console.info.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.warn
+PASS typeof console.warn is "function"
+PASS console.warn.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.clear
+PASS typeof console.clear is "function"
+PASS console.clear.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.dir
+PASS typeof console.dir is "function"
+PASS console.dir.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.dirxml
+PASS typeof console.dirxml is "function"
+PASS console.dirxml.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.table
+PASS typeof console.table is "function"
+PASS console.table.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.trace
+PASS typeof console.trace is "function"
+PASS console.trace.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.assert
+PASS typeof console.assert is "function"
+PASS console.assert.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.count
+PASS typeof console.count is "function"
+PASS console.count.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.profile
+PASS typeof console.profile is "function"
+PASS console.profile.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.profileEnd
+PASS typeof console.profileEnd is "function"
+PASS console.profileEnd.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.time
+PASS typeof console.time is "function"
+PASS console.time.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.timeEnd
+PASS typeof console.timeEnd is "function"
+PASS console.timeEnd.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.timeStamp
+PASS typeof console.timeStamp is "function"
+PASS console.timeStamp.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.takeHeapSnapshot
+PASS typeof console.takeHeapSnapshot is "function"
+PASS console.takeHeapSnapshot.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.group
+PASS typeof console.group is "function"
+PASS console.group.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.groupCollapsed
+PASS typeof console.groupCollapsed is "function"
+PASS console.groupCollapsed.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.groupEnd
+PASS typeof console.groupEnd is "function"
+PASS console.groupEnd.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+PASS Object.getOwnPropertyNames(console).length is enumerablePropertyCount
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

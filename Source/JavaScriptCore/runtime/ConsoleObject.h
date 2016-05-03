@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSConsole.h"
+#pragma once
 
-#include "JSCJSValueInlines.h"
-#include "StructureInlines.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-const ClassInfo JSConsole::s_info = { "Console", &Base::s_info, 0, CREATE_METHOD_TABLE(JSConsole) };
+class ConsoleObject : public JSNonFinalObject {
+private:
+    ConsoleObject(VM&, Structure*);
 
-}
+public:
+    typedef JSNonFinalObject Base;
+
+    static ConsoleObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    {
+        ConsoleObject* object = new (NotNull, allocateCell<ConsoleObject>(vm.heap)) ConsoleObject(vm, structure);
+        object->finishCreation(vm, globalObject);
+        return object;
+    }
+
+    DECLARE_INFO;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+protected:
+    void finishCreation(VM&, JSGlobalObject*);
+};
+
+} // namespace JSC

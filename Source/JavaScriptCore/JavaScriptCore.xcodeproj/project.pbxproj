@@ -1568,10 +1568,6 @@
 		A5339EC91BB4B4600054F005 /* HeapObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = A5339EC81BB4B4510054F005 /* HeapObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5398FAB1C750DA40060A963 /* HeapProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = A5398FAA1C750D950060A963 /* HeapProfiler.h */; };
 		A5398FAC1C750DA60060A963 /* HeapProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5398FA91C750D950060A963 /* HeapProfiler.cpp */; };
-		A53CE08518BC1A5600BEDF76 /* ConsolePrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53CE08118BC1A5600BEDF76 /* ConsolePrototype.cpp */; };
-		A53CE08618BC1A5600BEDF76 /* ConsolePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A53CE08218BC1A5600BEDF76 /* ConsolePrototype.h */; };
-		A53CE08718BC1A5600BEDF76 /* JSConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */; };
-		A53CE08818BC1A5600BEDF76 /* JSConsole.h in Headers */ = {isa = PBXBuildFile; fileRef = A53CE08418BC1A5600BEDF76 /* JSConsole.h */; };
 		A53CE08A18BC21C300BEDF76 /* ConsoleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A53CE08918BC21C300BEDF76 /* ConsoleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A53F1AC018C90F8F0072EB6D /* framework.sb in Resources */ = {isa = PBXBuildFile; fileRef = A53F1ABE18C90EC70072EB6D /* framework.sb */; };
 		A54982031891D0B00081E5B8 /* EventLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54982011891D0B00081E5B8 /* EventLoop.cpp */; };
@@ -1589,6 +1585,8 @@
 		A55165D51BDF135A003B75C1 /* ScriptProfilingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = A55165D41BDF134D003B75C1 /* ScriptProfilingScope.h */; };
 		A552C37F1ADDB8FE00139726 /* JSRemoteInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A552C37D1ADDB8FE00139726 /* JSRemoteInspector.cpp */; };
 		A552C3801ADDB8FE00139726 /* JSRemoteInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = A552C37E1ADDB8FE00139726 /* JSRemoteInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A55714BE1CD8049F0004D2C6 /* ConsoleObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A55714BD1CD8048E0004D2C6 /* ConsoleObject.h */; };
+		A55714BF1CD804A40004D2C6 /* ConsoleObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55714BC1CD8048E0004D2C6 /* ConsoleObject.cpp */; };
 		A55D93A5185012A800400DED /* ScriptFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55D93A3185012A800400DED /* ScriptFunctionCall.cpp */; };
 		A55D93A6185012A800400DED /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A55D93A4185012A800400DED /* ScriptFunctionCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A55D93AC18514F7900400DED /* InspectorProtocolTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A55D93AB18514F7900400DED /* InspectorProtocolTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3789,10 +3787,6 @@
 		A5339EC81BB4B4510054F005 /* HeapObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapObserver.h; sourceTree = "<group>"; };
 		A5398FA91C750D950060A963 /* HeapProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapProfiler.cpp; sourceTree = "<group>"; };
 		A5398FAA1C750D950060A963 /* HeapProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapProfiler.h; sourceTree = "<group>"; };
-		A53CE08118BC1A5600BEDF76 /* ConsolePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsolePrototype.cpp; sourceTree = "<group>"; };
-		A53CE08218BC1A5600BEDF76 /* ConsolePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsolePrototype.h; sourceTree = "<group>"; };
-		A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConsole.cpp; sourceTree = "<group>"; };
-		A53CE08418BC1A5600BEDF76 /* JSConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSConsole.h; sourceTree = "<group>"; };
 		A53CE08918BC21C300BEDF76 /* ConsoleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleClient.h; sourceTree = "<group>"; };
 		A53F1ABE18C90EC70072EB6D /* framework.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = framework.sb; sourceTree = "<group>"; };
 		A54982011891D0B00081E5B8 /* EventLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventLoop.cpp; sourceTree = "<group>"; };
@@ -3808,6 +3802,8 @@
 		A55165D41BDF134D003B75C1 /* ScriptProfilingScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptProfilingScope.h; sourceTree = "<group>"; };
 		A552C37D1ADDB8FE00139726 /* JSRemoteInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemoteInspector.cpp; sourceTree = "<group>"; };
 		A552C37E1ADDB8FE00139726 /* JSRemoteInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRemoteInspector.h; sourceTree = "<group>"; };
+		A55714BC1CD8048E0004D2C6 /* ConsoleObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsoleObject.cpp; sourceTree = "<group>"; };
+		A55714BD1CD8048E0004D2C6 /* ConsoleObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleObject.h; sourceTree = "<group>"; };
 		A55D93A3185012A800400DED /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
 		A55D93A4185012A800400DED /* ScriptFunctionCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFunctionCall.h; sourceTree = "<group>"; };
 		A55D93AB18514F7900400DED /* InspectorProtocolTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorProtocolTypes.h; sourceTree = "<group>"; };
@@ -5554,8 +5550,8 @@
 				0FDB2CE9174896C7007B3C1B /* ConcurrentJITLock.h */,
 				A5B6A74C18C6DBA600F11E91 /* ConsoleClient.cpp */,
 				A53CE08918BC21C300BEDF76 /* ConsoleClient.h */,
-				A53CE08118BC1A5600BEDF76 /* ConsolePrototype.cpp */,
-				A53CE08218BC1A5600BEDF76 /* ConsolePrototype.h */,
+				A55714BC1CD8048E0004D2C6 /* ConsoleObject.cpp */,
+				A55714BD1CD8048E0004D2C6 /* ConsoleObject.h */,
 				A5FD0071189B038C00633231 /* ConsoleTypes.h */,
 				0F978B3A1AAEA71D007C7369 /* ConstantMode.cpp */,
 				0FFC99D0184EC8AD009C10AB /* ConstantMode.h */,
@@ -5706,8 +5702,6 @@
 				F692A8870255597D01FF60F7 /* JSCJSValue.cpp */,
 				14ABB36E099C076400E2A24F /* JSCJSValue.h */,
 				865A30F0135007E100CDB49E /* JSCJSValueInlines.h */,
-				A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */,
-				A53CE08418BC1A5600BEDF76 /* JSConsole.h */,
 				0F2B66BD17B6B5AB00A7AE3F /* JSDataView.cpp */,
 				0F2B66BE17B6B5AB00A7AE3F /* JSDataView.h */,
 				0F2B66BF17B6B5AB00A7AE3F /* JSDataViewPrototype.cpp */,
@@ -7130,7 +7124,6 @@
 				144836E7132DA7BE005BE785 /* ConservativeRoots.h in Headers */,
 				A53CE08A18BC21C300BEDF76 /* ConsoleClient.h in Headers */,
 				A5FD007A189B051000633231 /* ConsoleMessage.h in Headers */,
-				A53CE08618BC1A5600BEDF76 /* ConsolePrototype.h in Headers */,
 				A5FD0074189B038C00633231 /* ConsoleTypes.h in Headers */,
 				0FFC99D1184EC8AD009C10AB /* ConstantMode.h in Headers */,
 				E354622B1B6065D100545386 /* ConstructAbility.h in Headers */,
@@ -7581,6 +7574,7 @@
 				A5398FAB1C750DA40060A963 /* HeapProfiler.h in Headers */,
 				A1587D721B4DC14100D69849 /* IntlDateTimeFormatPrototype.h in Headers */,
 				A1587D761B4DC1C600D69849 /* IntlDateTimeFormatPrototype.lut.h in Headers */,
+				A55714BE1CD8049F0004D2C6 /* ConsoleObject.h in Headers */,
 				A1D792FD1B43864B004516F5 /* IntlNumberFormat.h in Headers */,
 				A1D792FF1B43864B004516F5 /* IntlNumberFormatConstructor.h in Headers */,
 				A125846E1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h in Headers */,
@@ -7636,7 +7630,6 @@
 				BC18C42B0E16F5CD00B34460 /* JSCJSValue.h in Headers */,
 				865A30F1135007E100CDB49E /* JSCJSValueInlines.h in Headers */,
 				BC18C41D0E16F5CD00B34460 /* JSClassRef.h in Headers */,
-				A53CE08818BC1A5600BEDF76 /* JSConsole.h in Headers */,
 				86E3C613167BABD7006D760A /* JSContext.h in Headers */,
 				86E3C617167BABEE006D760A /* JSContextInternal.h in Headers */,
 				A58C024218E4A41A00032BC5 /* JSContextPrivate.h in Headers */,
@@ -8674,6 +8667,7 @@
 				0FEC851F1BDACDAC0080FF74 /* B3MemoryValue.cpp in Sources */,
 				0FEC85211BDACDAC0080FF74 /* B3Opcode.cpp in Sources */,
 				0FEC85231BDACDAC0080FF74 /* B3Origin.cpp in Sources */,
+				A55714BF1CD804A40004D2C6 /* ConsoleObject.cpp in Sources */,
 				0FEC85251BDACDAC0080FF74 /* B3PatchpointSpecial.cpp in Sources */,
 				0FEC85271BDACDAC0080FF74 /* B3PatchpointValue.cpp in Sources */,
 				0FEC85291BDACDAC0080FF74 /* B3PhaseScope.cpp in Sources */,
@@ -8738,7 +8732,6 @@
 				146B16D812EB5B59001BEC1B /* ConservativeRoots.cpp in Sources */,
 				A5B6A74D18C6DBA600F11E91 /* ConsoleClient.cpp in Sources */,
 				A5FD0079189B051000633231 /* ConsoleMessage.cpp in Sources */,
-				A53CE08518BC1A5600BEDF76 /* ConsolePrototype.cpp in Sources */,
 				0F978B3B1AAEA71D007C7369 /* ConstantMode.cpp in Sources */,
 				1428082E107EC0570013E7B2 /* ConstructData.cpp in Sources */,
 				A57D23F11891B5B40031C7FA /* ContentSearchUtilities.cpp in Sources */,
@@ -9092,7 +9085,6 @@
 				147F39D1107EC37600427A48 /* JSCell.cpp in Sources */,
 				147F39D6107EC37600427A48 /* JSCJSValue.cpp in Sources */,
 				1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */,
-				A53CE08718BC1A5600BEDF76 /* JSConsole.cpp in Sources */,
 				86E3C616167BABEE006D760A /* JSContext.mm in Sources */,
 				14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */,
 				A72028B61797601E0098028C /* JSCTestRunnerUtils.cpp in Sources */,
