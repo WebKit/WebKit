@@ -269,7 +269,7 @@ private:
     FloatSize m_minimumLayoutSizeInScrollViewCoordinates;
     IntSize m_contentSize;
     FloatSize m_obscuredInset;
-    float m_scale { 1 };
+    float m_scale { 0 }; // Note that UIWebView looks for a non-zero value, so this has to start as 0.
     bool m_scaleIsInitial { false };
     ViewportArguments m_viewportArguments;
 

@@ -1,3 +1,17 @@
+2016-05-02  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: Page layout of Manga/Picture books and all Fixed Layout ePubs corrupted
+        https://bugs.webkit.org/show_bug.cgi?id=157292
+        <rdar://problem/25750144>
+
+        Reviewed by Tim Horton.
+
+        The scroll state restoration fixes caused a regression in UIWebViews.
+        Code in UIKit checks for a non-zero page scale in a history item, and
+        r199233 changed the initialization from 0 to 1.
+
+        * history/HistoryItem.h: Use 0 instead of 1 as the initial m_scale.
+
 2016-05-02  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] AirPlay fails if target is set before AVPlayer has been created
