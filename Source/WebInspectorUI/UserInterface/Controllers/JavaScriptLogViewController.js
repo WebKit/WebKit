@@ -60,6 +60,9 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         this._promptFindNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._prompt.element);
         this._promptFindPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._prompt.element);
 
+        this._pendingMessages = [];
+        this._scheduledRenderIdentifier = 0;
+
         this.startNewSession();
     }
 
@@ -252,7 +255,7 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
 
     _appendConsoleMessageView(messageView, repeatCountWasInterrupted)
     {
-        var wasScrolledToBottom = this.isScrolledToBottom();
+        this._pendingMessages.push(messageView);
 
         this._cleared = false;
         this._repeatCountWasInterrupted = repeatCountWasInterrupted || false;
@@ -263,6 +266,53 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         if (messageView.message && messageView.message.source !== WebInspector.ConsoleMessage.MessageSource.JS)
             this._lastCommitted = "";
 
+        if (WebInspector.consoleContentView.visible)
+            this.renderPendingMessagesSoon();
+
+        // We only auto show the console if the message is a non-synthetic result.
+        // This is when the user evaluated something directly in the prompt.
+        if (!WebInspector.isShowingConsoleTab() && messageView.message && (messageView.message.type === WebInspector.ConsoleMessage.MessageType.Result || messageView.message.synthetic))
+            WebInspector.showSplitConsole();
+    }
+
+    renderPendingMessages()
+    {
+        if (this._scheduledRenderIdentifier) {
+            cancelAnimationFrame(this._scheduledRenderIdentifier);
+            this._scheduledRenderIdentifier = 0;
+        }
+
+        if (this._pendingMessages.length === 0)
+            return;
+
+        let lastMessageView = this._pendingMessages.lastValue;
+        let isCommandView = lastMessageView instanceof WebInspector.ConsoleCommandView;
+        let shouldScrollToBottom = isCommandView || lastMessageView.message.type === WebInspector.ConsoleMessage.MessageType.Result || this.isScrolledToBottom();
+
+        var messages = this._pendingMessages;
+        this._pendingMessages = [];
+
+        for (let messageView of messages) {
+            messageView.render();
+            this._didRenderConsoleMessageView(messageView);
+        }
+
+        if (shouldScrollToBottom)
+            this.scrollToBottom();
+
+        WebInspector.quickConsole.needsLayout();
+    }
+
+    renderPendingMessagesSoon()
+    {
+        if (this._scheduledRenderIdentifier)
+            return;
+
+        this._scheduledRenderIdentifier = requestAnimationFrame(() => this.renderPendingMessages());
+    }
+
+    _didRenderConsoleMessageView(messageView)
+    {
         var type = messageView instanceof WebInspector.ConsoleCommandView ? null : messageView.message.type;
         if (type === WebInspector.ConsoleMessage.MessageType.EndGroup) {
             var parentGroup = this._currentConsoleGroup.parentGroup;
@@ -277,9 +327,6 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
             } else
                 this._currentConsoleGroup.addMessageView(messageView);
         }
-
-        if (type === WebInspector.ConsoleMessage.MessageType.Result || wasScrolledToBottom)
-            this.scrollToBottom();
 
         if (this.delegate && typeof this.delegate.didAppendConsoleMessageView === "function")
             this.delegate.didAppendConsoleMessageView(messageView);

@@ -34,13 +34,19 @@ WebInspector.ConsoleCommandView = class ConsoleCommandView extends WebInspector.
         super();
 
         this._commandText = commandText;
+        this._className = className || "";
+    }
 
+    // Public
+
+    render()
+    {
         this._element = document.createElement("div");
         this._element.classList.add("console-user-command");
         this._element.setAttribute("data-labelprefix", WebInspector.UIString("Input: "));
 
-        if (className)
-            this._element.classList.add(className);
+        if (this._className)
+            this._element.classList.add(this._className);
 
         this._formattedCommandElement = this._element.appendChild(document.createElement("span"));
         this._formattedCommandElement.classList.add("console-message-text");
@@ -49,8 +55,6 @@ WebInspector.ConsoleCommandView = class ConsoleCommandView extends WebInspector.
         // FIXME: <https://webkit.org/b/143545> Web Inspector: LogContentView should use higher level objects
         this._element.__commandView = this;
     }
-
-    // Public
 
     get element()
     {
