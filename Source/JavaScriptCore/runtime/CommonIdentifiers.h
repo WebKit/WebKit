@@ -140,7 +140,6 @@
     macro(displayName) \
     macro(document) \
     macro(done) \
-    macro(entries) \
     macro(enumerable) \
     macro(era) \
     macro(eval) \
@@ -181,7 +180,6 @@
     macro(isWatchpoint) \
     macro(jettisonReason) \
     macro(join) \
-    macro(keys) \
     macro(lastIndex) \
     macro(length) \
     macro(line) \
@@ -247,7 +245,6 @@
     macro(usage) \
     macro(value) \
     macro(valueOf) \
-    macro(values) \
     macro(webkit) \
     macro(webkitIDBCursor) \
     macro(webkitIDBDatabase) \
@@ -333,6 +330,8 @@
     macro(iteratedObject) \
     macro(arrayIteratorNextIndex) \
     macro(arrayIterationKind) \
+    macro(arrayIteratorNext) \
+    macro(arrayIteratorIsDone) \
     macro(charCodeAt) \
     macro(iteratedString) \
     macro(stringIteratorNextIndex) \
@@ -340,7 +339,6 @@
     macro(fulfillmentHandler) \
     macro(rejectionHandler) \
     macro(index) \
-    macro(values) \
     macro(deferred) \
     macro(countdownHolder) \
     macro(Object) \

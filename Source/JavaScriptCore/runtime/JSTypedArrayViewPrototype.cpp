@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSTypedArrayViewPrototype.h"
 
+#include "BuiltinNames.h"
 #include "CallFrame.h"
 #include "GetterSetter.h"
 #include "JSCellInlines.h"
@@ -96,14 +97,6 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncSet(ExecState* exec)
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncSet);
 }
 
-static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncEntries(ExecState* exec)
-{
-    JSValue thisValue = exec->thisValue();
-    if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
-    CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncEntries);
-}
-
 static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncCopyWithin(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
@@ -142,14 +135,6 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncJoin(ExecState* exec)
     if (!thisValue.isObject())
         return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncJoin);
-}
-
-static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncKeys(ExecState* exec)
-{
-    JSValue thisValue = exec->thisValue();
-    if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
-    CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncKeys);
 }
 
 static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncBuffer(ExecState* exec)
@@ -208,14 +193,6 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncSlice(ExecState* exec
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncSlice);
 }
 
-static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncValues(ExecState* exec)
-{
-    JSValue thisValue = exec->thisValue();
-    if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
-    CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(typedArrayViewProtoFuncValues);
-}
-
 static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncToStringTag(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
@@ -270,14 +247,14 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("every", typedArrayPrototypeEveryCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("filter", typedArrayPrototypeFilterCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("sort", typedArrayPrototypeSortCodeGenerator, DontEnum);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->entries, typedArrayViewProtoFuncEntries, DontEnum, 0);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().entriesPublicName(), typedArrayPrototypeEntriesCodeGenerator, DontEnum);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("fill", typedArrayViewProtoFuncFill, DontEnum, 1);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("find", typedArrayPrototypeFindCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("findIndex", typedArrayPrototypeFindIndexCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->forEach, typedArrayPrototypeForEachCodeGenerator, DontEnum);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("indexOf", typedArrayViewProtoFuncIndexOf, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->join, typedArrayViewProtoFuncJoin, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->keys, typedArrayViewProtoFuncKeys, DontEnum, 0);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().keysPublicName(), typedArrayPrototypeKeysCodeGenerator, DontEnum);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf", typedArrayViewProtoFuncLastIndexOf, DontEnum, 1);
     JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->length, typedArrayViewProtoGetterFuncLength, DontEnum | ReadOnly | DontDelete, TypedArrayLengthIntrinsic);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("map", typedArrayPrototypeMapCodeGenerator, DontEnum);
@@ -292,9 +269,9 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, arrayProtoFuncToString, DontEnum, 0);
     JSC_NATIVE_GETTER(vm.propertyNames->toStringTagSymbol, typedArrayViewProtoGetterFuncToStringTag, DontEnum | ReadOnly);
 
-    JSFunction* valuesFunction = JSFunction::create(vm, globalObject, 0, vm.propertyNames->values.string(), typedArrayViewProtoFuncValues);
+    JSFunction* valuesFunction = JSFunction::createBuiltinFunction(vm, typedArrayPrototypeValuesCodeGenerator(vm), globalObject);
 
-    putDirectWithoutTransition(vm, vm.propertyNames->values, valuesFunction, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().valuesPublicName(), valuesFunction, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, valuesFunction, DontEnum);
 
 }

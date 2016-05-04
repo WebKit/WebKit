@@ -303,7 +303,7 @@ void JSGlobalObject::init(VM& vm)
     m_functionPrototype->addFunctionProperties(exec, this, &callFunction, &applyFunction, &hasInstanceSymbolFunction);
     m_callFunction.set(vm, this, callFunction);
     m_applyFunction.set(vm, this, applyFunction);
-    m_arrayProtoValuesFunction.set(vm, this, JSFunction::create(vm, this, 0, vm.propertyNames->values.string(), arrayProtoFuncValues));
+    m_arrayProtoValuesFunction.set(vm, this, JSFunction::createBuiltinFunction(vm, arrayPrototypeValuesCodeGenerator(vm), this));
     m_initializePromiseFunction.set(vm, this, JSFunction::createBuiltinFunction(vm, promiseOperationsInitializePromiseCodeGenerator(vm), this));
     m_newPromiseCapabilityFunction.set(vm, this, JSFunction::createBuiltinFunction(vm, promiseOperationsNewPromiseCapabilityCodeGenerator(vm), this));
     m_functionProtoHasInstanceSymbolFunction.set(vm, this, hasInstanceSymbolFunction);
@@ -554,6 +554,14 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSFunction* privateFuncThisNumberValue = JSFunction::create(vm, this, 0, String(), numberProtoFuncValueOf);
     JSFunction* privateFuncIsArrayConstructor = JSFunction::create(vm, this, 0, String(), arrayConstructorPrivateFuncIsArrayConstructor);
 
+    JSObject* arrayIteratorPrototype = ArrayIteratorPrototype::create(vm, this, ArrayIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
+    JSFunction* privateFuncCreateArrayIterator = JSFunction::createBuiltinFunction(vm, arrayPrototypeCreateArrayIteratorConstructorCodeGenerator(vm), this);
+    privateFuncCreateArrayIterator->putDirect(vm, vm.propertyNames->prototype, arrayIteratorPrototype);
+    JSFunction* privateFuncArrayIteratorValueNext = JSFunction::createBuiltinFunction(vm, arrayIteratorPrototypeArrayIteratorValueNextCodeGenerator(vm), this);
+    JSFunction* privateFuncArrayIteratorKeyNext = JSFunction::createBuiltinFunction(vm, arrayIteratorPrototypeArrayIteratorKeyNextCodeGenerator(vm), this);
+    JSFunction* privateFuncArrayIteratorKeyValueNext = JSFunction::createBuiltinFunction(vm, arrayIteratorPrototypeArrayIteratorKeyValueNextCodeGenerator(vm), this);
+
+
     JSObject* regExpProtoFlagsGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->flags);
     JSObject* regExpProtoGlobalGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->global);
     m_regExpProtoGlobalGetter.set(vm, this, regExpProtoGlobalGetterObject);
@@ -611,6 +619,10 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->isArrayConstructorPrivateName, privateFuncIsArrayConstructor, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->MapIteratorPrivateName, JSFunction::create(vm, this, 1, String(), privateFuncMapIterator), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->mapIteratorNextPrivateName, JSFunction::create(vm, this, 0, String(), privateFuncMapIteratorNext), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().arrayIteratorValueNextPrivateName(), privateFuncArrayIteratorValueNext, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().arrayIteratorKeyNextPrivateName(), privateFuncArrayIteratorKeyNext, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().arrayIteratorKeyValueNextPrivateName(), privateFuncArrayIteratorKeyValueNext, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().createArrayIteratorPrivateName(), privateFuncCreateArrayIterator, DontEnum | DontDelete | ReadOnly),
 
         GlobalPropertyInfo(vm.propertyNames->builtinNames().toLengthPrivateName(), privateFuncToLength, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().toIntegerPrivateName(), privateFuncToInteger, DontEnum | DontDelete | ReadOnly),

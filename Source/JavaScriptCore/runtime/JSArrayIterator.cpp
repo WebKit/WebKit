@@ -56,15 +56,5 @@ JSValue JSArrayIterator::iteratedValue(ExecState* exec) const
     return getDirect(exec->vm(), exec->vm().propertyNames->iteratedObjectPrivateName);
 }
 
-JSArrayIterator* JSArrayIterator::clone(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    JSValue iteratedObject = getDirect(vm, vm.propertyNames->iteratedObjectPrivateName);
-    JSValue nextIndex = getDirect(vm, vm.propertyNames->arrayIteratorNextIndexPrivateName);
-
-    auto clone = JSArrayIterator::create(exec, exec->callee()->globalObject()->arrayIteratorStructure(), kind(exec), asObject(iteratedObject));
-    clone->putDirect(vm, vm.propertyNames->arrayIteratorNextIndexPrivateName, nextIndex);
-    return clone;
-}
 
 }

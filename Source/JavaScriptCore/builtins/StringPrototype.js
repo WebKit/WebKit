@@ -221,7 +221,8 @@ function hasObservableSideEffectsForStringReplace(regexp, replacer) {
     return !@isRegExpObject(regexp);
 }
 
-[intrinsic=StringPrototypeReplaceIntrinsic] function replace(search, replace)
+@intrinsic=StringPrototypeReplaceIntrinsic
+function replace(search, replace)
 {
     "use strict";
 

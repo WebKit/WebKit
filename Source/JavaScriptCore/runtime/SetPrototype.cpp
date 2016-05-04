@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SetPrototype.h"
 
+#include "BuiltinNames.h"
 #include "CachedCall.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
@@ -71,11 +72,11 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->clear, setProtoFuncClear, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, setProtoFuncDelete, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, setProtoFuncHas, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->entries, setProtoFuncEntries, DontEnum, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().entriesPublicName(), setProtoFuncEntries, DontEnum, 0);
 
-    JSFunction* values = JSFunction::create(vm, globalObject, 0, vm.propertyNames->values.string(), setProtoFuncValues);
-    putDirectWithoutTransition(vm, vm.propertyNames->values, values, DontEnum);
-    putDirectWithoutTransition(vm, vm.propertyNames->keys, values, DontEnum);
+    JSFunction* values = JSFunction::create(vm, globalObject, 0, vm.propertyNames->builtinNames().valuesPublicName().string(), setProtoFuncValues);
+    putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().valuesPublicName(), values, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().keysPublicName(), values, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, values, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Set"), DontEnum | ReadOnly);
 

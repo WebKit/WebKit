@@ -111,7 +111,6 @@ struct HashTable;
     DEFINE_STANDARD_BUILTIN(macro, WeakSet, weakSet) \
 
 #define FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(macro) \
-    DEFINE_STANDARD_BUILTIN(macro, ArrayIterator, arrayIterator) \
     DEFINE_STANDARD_BUILTIN(macro, MapIterator, mapIterator) \
     DEFINE_STANDARD_BUILTIN(macro, SetIterator, setIterator) \
     DEFINE_STANDARD_BUILTIN(macro, StringIterator, stringIterator) \

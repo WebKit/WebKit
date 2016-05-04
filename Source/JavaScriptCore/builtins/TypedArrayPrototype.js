@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,27 @@
 
 // Note that the intrisic @typedArrayLength checks the that the argument passed is a typed array
 // and throws if it is not.
+
+function values()
+{
+    "use strict";
+    @typedArrayLength(this);
+    return new @createArrayIterator(this, @arrayIteratorValueNext);
+}
+
+function keys()
+{
+    "use strict";
+    @typedArrayLength(this);
+    return new @createArrayIterator(this, @arrayIteratorKeyNext);
+}
+
+function entries()
+{
+    "use strict";
+    @typedArrayLength(this);
+    return new @createArrayIterator(this, @arrayIteratorKeyValueNext);
+}
 
 function every(callback /*, thisArg */)
 {

@@ -489,7 +489,8 @@ function split(string, limit)
 }
 
 // ES 21.2.5.13 RegExp.prototype.test(string)
-[intrinsic=RegExpTestIntrinsic] function test(strArg)
+@intrinsic=RegExpTestIntrinsic
+function test(strArg)
 {
     "use strict";
 

@@ -30,7 +30,6 @@
 #include "DFGSpeculativeJIT.h"
 #include "JITOperations.h"
 #include "JSArray.h"
-#include "JSArrayIterator.h"
 #include "JSBoundFunction.h"
 #include "JSStack.h"
 #include "MathCommon.h"

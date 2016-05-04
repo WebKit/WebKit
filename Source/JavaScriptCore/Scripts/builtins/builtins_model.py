@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2015 Apple Inc. All rights reserved.
+# Copyright (c) 2015-2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -40,19 +40,19 @@ _FRAMEWORK_CONFIG_MAP = {
     },
 }
 
-functionHeadRegExp = re.compile(r"(\[intrinsic=\w+\]\s+)?(?:function|constructor)\s+\w+\s*\(.*?\)", re.MULTILINE | re.S)
-functionIntrinsicRegExp = re.compile(r"^\[intrinsic=(\w+)\]\s+", re.MULTILINE | re.S)
-functionNameRegExp = re.compile(r"(?:function|constructor)\s+(\w+)\s*\(", re.MULTILINE | re.S)
-functionIsConstructorRegExp = re.compile(r"^constructor", re.MULTILINE | re.S)
-functionParameterFinder = re.compile(r"^(?:function|constructor)\s+(?:\w+)\s*\(((?:\s*\w+)?\s*(?:\s*,\s*\w+)*)?\s*\)", re.MULTILINE | re.S)
+functionHeadRegExp = re.compile(r"(?:@[\w|=]+\s*\n)*(?:function)\s+\w+\s*\(.*?\)", re.MULTILINE | re.DOTALL)
+functionIntrinsicRegExp = re.compile(r"^@intrinsic=(\w+)\s*\n", re.MULTILINE | re.DOTALL)
+functionIsConstructorRegExp = re.compile(r"^@constructor", re.MULTILINE | re.DOTALL)
+functionNameRegExp = re.compile(r"(?:function)\s+(\w+)\s*\(", re.MULTILINE | re.DOTALL)
+functionParameterFinder = re.compile(r"^(?:function)\s+(?:\w+)\s*\(((?:\s*\w+)?\s*(?:\s*,\s*\w+)*)?\s*\)", re.MULTILINE | re.DOTALL)
 
-multilineCommentRegExp = re.compile(r"\/\*.*?\*\/", re.MULTILINE | re.S)
-singleLineCommentRegExp = re.compile(r"\/\/.*?\n", re.MULTILINE | re.S)
-keyValueAnnotationCommentRegExp = re.compile(r"^\/\/ @(\w+)=([^=]+?)\n", re.MULTILINE | re.S)
-flagAnnotationCommentRegExp = re.compile(r"^\/\/ @(\w+)[^=]*?\n", re.MULTILINE | re.S)
-lineWithOnlySingleLineCommentRegExp = re.compile(r"^\s*\/\/\n", re.MULTILINE | re.S)
-lineWithTrailingSingleLineCommentRegExp = re.compile(r"\s*\/\/\n", re.MULTILINE | re.S)
-multipleEmptyLinesRegExp = re.compile(r"\n{2,}", re.MULTILINE | re.S)
+multilineCommentRegExp = re.compile(r"\/\*.*?\*\/", re.MULTILINE | re.DOTALL)
+singleLineCommentRegExp = re.compile(r"\/\/.*?\n", re.MULTILINE | re.DOTALL)
+keyValueAnnotationCommentRegExp = re.compile(r"^\/\/ @(\w+)=([^=]+?)\n", re.MULTILINE | re.DOTALL)
+flagAnnotationCommentRegExp = re.compile(r"^\/\/ @(\w+)[^=]*?\n", re.MULTILINE | re.DOTALL)
+lineWithOnlySingleLineCommentRegExp = re.compile(r"^\s*\/\/\n", re.MULTILINE | re.DOTALL)
+lineWithTrailingSingleLineCommentRegExp = re.compile(r"\s*\/\/\n", re.MULTILINE | re.DOTALL)
+multipleEmptyLinesRegExp = re.compile(r"\n{2,}", re.MULTILINE | re.DOTALL)
 
 class ParseException(Exception):
     pass

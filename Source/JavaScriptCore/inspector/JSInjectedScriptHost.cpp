@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSInjectedScriptHost.h"
 
+#include "BuiltinNames.h"
 #include "DateInstance.h"
 #include "DirectArguments.h"
 #include "Error.h"
@@ -433,16 +434,26 @@ JSValue JSInjectedScriptHost::weakSetEntries(ExecState* exec)
     return array;
 }
 
+static JSObject* cloneArrayIteratorObject(ExecState* exec, VM& vm, JSObject* iteratorObject, JSValue nextIndex)
+{
+    ASSERT(iteratorObject->type() == FinalObjectType);
+    JSObject* clone = constructEmptyObject(exec, iteratorObject->structure());
+    clone->putDirect(vm, vm.propertyNames->builtinNames().arrayIteratorNextIndexPrivateName(), nextIndex);
+    clone->putDirect(vm, vm.propertyNames->builtinNames().iteratedObjectPrivateName(), iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().iteratedObjectPrivateName()));
+    clone->putDirect(vm, vm.propertyNames->builtinNames().arrayIteratorIsDonePrivateName(), iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().arrayIteratorIsDonePrivateName()));
+    clone->putDirect(vm, vm.propertyNames->builtinNames().arrayIteratorNextPrivateName(), iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().arrayIteratorNextPrivateName()));
+    return clone;
+}
+
 JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
+    VM& vm = exec->vm();
     JSValue iterator;
     JSValue value = exec->uncheckedArgument(0);
-    if (JSArrayIterator* arrayIterator = jsDynamicCast<JSArrayIterator*>(value))
-        iterator = arrayIterator->clone(exec);
-    else if (JSMapIterator* mapIterator = jsDynamicCast<JSMapIterator*>(value))
+    if (JSMapIterator* mapIterator = jsDynamicCast<JSMapIterator*>(value))
         iterator = mapIterator->clone(exec);
     else if (JSSetIterator* setIterator = jsDynamicCast<JSSetIterator*>(value))
         iterator = setIterator->clone(exec);
@@ -452,7 +463,15 @@ JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
         iterator = propertyNameIterator->clone(exec);
         if (UNLIKELY(exec->hadException()))
             return JSValue();
-    } else
+    } else {
+        if (JSObject* iteratorObject = jsDynamicCast<JSObject*>(value)) {
+            // Array Iterators are created in JS for performance reasons. Thus the only way to know we have one is to
+            // look for a property that is unique to them.
+            if (JSValue nextIndex = iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().arrayIteratorNextIndexPrivateName()))
+                iterator = cloneArrayIteratorObject(exec, vm, iteratorObject, nextIndex);
+        }
+    }
+    if (!iterator)
         return jsUndefined();
 
     unsigned numberToFetch = 5;

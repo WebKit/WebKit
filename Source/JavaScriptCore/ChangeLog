@@ -1,3 +1,96 @@
+2016-05-04  Keith Miller  <keith_miller@apple.com>
+
+        Speedup array iterators
+        https://bugs.webkit.org/show_bug.cgi?id=157315
+
+        Reviewed by Michael Saboff.
+
+        This patch improves the performance of Array iterators in ES6. There are two main changes
+        that make things faster. The first is that the value, keys and entries functions have been
+        moved to JS. This enables us to inline the construction of the iterator. Thus, when we get
+        to the FTL we are able to sink the allocation of the iterator object. This significantly
+        improves the performance of any for-of loop since we are now able to have both the iteration
+        counter and the iterated object in local variables rather than in the heap.
+
+        Secondly, instead of using a number to store the iteratation kind we now use a virtual
+        method on the iteration object to indicate which next function to use. This ends up being
+        helpful because it means we can eliminate the branches in the old next function that decide
+        what value to return. With those branches gone the various next functions are now small
+        enough to inline. Once the next functions are inlined then the FTL is able to sink the
+        allocation of next() result object. There is still room for optimization in the loop since
+        we currently don't recognize that the array access in the next function is in bounds or that
+        the increment to the loop counter cannot overflow.
+
+        The overall performance changes appear to be a ~4-6x speedup in a simple microbenchmark that
+        computes the sum of an array with some extra arithmetic. The variance depends on the exact
+        body of the loop. Additionally, on a new regress test that changes all the loops in
+        deltablue into for-of loops this patch is a 1.8x progression. Overall, it still looks like
+        for-of loops are significantly slower than an indexed for loop. In the first test it's ~2-4x
+        slower with the difference depending on the body of the loop. If the loop is just the sum
+        then we see a much larger regression than if the loop does even simple arithmetic. It looks
+        like the indexed for loop without extra arithmetic is small enough to fit into the x86
+        replay buffer on my machine, which would explain why there is such a big difference between
+        the for of loop in that case. On the deltablue benchmark it's 1.4x slower. It's clear from
+        these numbers that there is still a lot of work we can do to make for of loops faster.
+
+        This patch also makes some changes to the way that we decorate our builtin js
+        functions. Instead of the old syntax (putting the decorated values in [] before the function
+        declaration i.e. [intrinsic=foo]) this patch changes the syntax to be closer to the way that
+        decorators are proposed in a future ECMAScript proposal (using @ followed by the entry on a
+        new line before the function declaration i.e. @intrinsic=foo).
+
+        Finally, in the builtin scripts regular expressions re.S has been changed to re.DOTALL since
+        DOTALL is easier to understand without going to the reference page for python regular
+        expressions.
+
+        * Scripts/builtins/builtins_model.py:
+        * builtins/ArrayIteratorPrototype.js:
+        (next):
+        (arrayIteratorValueNext):
+        (arrayIteratorKeyNext):
+        (arrayIteratorKeyValueNext):
+        * builtins/ArrayPrototype.js:
+        (createArrayIterator):
+        (values):
+        (keys):
+        (entries):
+        * builtins/RegExpPrototype.js:
+        (intrinsic.RegExpTestIntrinsic.test):
+        * builtins/StringPrototype.js:
+        (intrinsic.StringPrototypeReplaceIntrinsic.replace):
+        * builtins/TypedArrayPrototype.js:
+        (values):
+        (keys):
+        (entries):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::cloneArrayIteratorObject):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * jit/ThunkGenerators.cpp:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        (JSC::arrayProtoFuncValues): Deleted.
+        (JSC::arrayProtoFuncEntries): Deleted.
+        (JSC::arrayProtoFuncKeys): Deleted.
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSArrayIterator.cpp:
+        (JSC::JSArrayIterator::clone): Deleted.
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncEntries): Deleted.
+        (JSC::genericTypedArrayViewProtoFuncKeys): Deleted.
+        (JSC::typedArrayViewProtoFuncValues): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        (JSC::typedArrayViewProtoFuncEntries): Deleted.
+        (JSC::typedArrayViewProtoFuncKeys): Deleted.
+        (JSC::typedArrayViewProtoFuncValues): Deleted.
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+
 2016-05-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Object constructor need to be aware of new.target

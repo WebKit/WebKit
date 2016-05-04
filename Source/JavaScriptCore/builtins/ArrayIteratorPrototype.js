@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2016a Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,33 +29,77 @@ function next()
     "use strict";
 
     if (this == null)
-        throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| not be null or undefined");
+        throw @TypeError("%ArrayIteratorPrototype%.next requires that |this| not be null or undefined");
 
-    var itemKind = this.@arrayIterationKind;
-    if (itemKind === @undefined)
-        throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance");
+    let next = this.@arrayIteratorNext;
+    if (next === @undefined)
+        throw @TypeError("%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance");
 
+    return next.@call(this);
+}
+
+function arrayIteratorValueNext()
+{
+    "use strict";
     var done = true;
     var value = @undefined;
 
     var array = this.@iteratedObject;
-    if (array !== @undefined) {
+    if (!this.@arrayIteratorIsDone) {
         var index = this.@arrayIteratorNextIndex;
         var length = array.length >>> 0;
         if (index >= length) {
-            this.@iteratedObject = @undefined;
+            this.@arrayIteratorIsDone = true;
         } else {
             this.@arrayIteratorNextIndex = index + 1;
             done = false;
-            if (itemKind === @arrayIterationKindKey) {
-                value = index;
-            } else if (itemKind === @arrayIterationKindValue) {
-                value = array[index];
-            } else {
-                value = [ index, array[index] ];
-            }
+            value = array[index];
         }
     }
 
-    return {done, value};
+    return { done, value };
+}
+
+function arrayIteratorKeyNext()
+{
+    "use strict";
+    var done = true;
+    var value = @undefined;
+
+    var array = this.@iteratedObject;
+    if (!this.@arrayIteratorIsDone) {
+        var index = this.@arrayIteratorNextIndex;
+        var length = array.length >>> 0;
+        if (index >= length) {
+            this.@arrayIteratorIsDone = true;
+        } else {
+            this.@arrayIteratorNextIndex = index + 1;
+            done = false;
+            value = index;
+        }
+    }
+
+    return { done, value };
+}
+
+function arrayIteratorKeyValueNext()
+{
+    "use strict";
+    var done = true;
+    var value = @undefined;
+
+    var array = this.@iteratedObject;
+    if (!this.@arrayIteratorIsDone) {
+        var index = this.@arrayIteratorNextIndex;
+        var length = array.length >>> 0;
+        if (index >= length) {
+            this.@arrayIteratorIsDone = true;
+        } else {
+            this.@arrayIteratorNextIndex = index + 1;
+            done = false;
+            value = [ index, array[index] ];
+        }
+    }
+
+    return { done, value };
 }
