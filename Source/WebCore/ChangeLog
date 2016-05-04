@@ -1,3 +1,24 @@
+2016-05-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Clicks inside button elements are sometimes discarded when the mouse moves
+        https://bugs.webkit.org/show_bug.cgi?id=39620
+
+        Reviewed by Darin Adler.
+
+        Test: fast/events/click-over-descendant-elements.html
+
+        * dom/Node.cpp:
+        (WebCore::ancestor):
+        (WebCore::commonAncestor): Method inspired from
+        http://src.chromium.org/viewvc/blink?view=revision&revision=162081.
+        (WebCore::commonAncestorCrossingShadowBoundary): Helper routine
+        that handles the case of nodes into a shadow node.
+        * dom/Node.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent): Selecting click event
+        target node according commonAncestorOverShadowBoundary method.
+        (WebCore::EventHandler::targetNodeForClickEvent): Deleted.
+
 2016-05-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, fixing crashing GTK+ tests after r200407.

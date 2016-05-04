@@ -783,6 +783,9 @@ inline void Node::setCustomElementIsResolved()
 
 #endif
 
+Node* commonAncestor(Node&, Node&);
+Node* commonAncestorCrossingShadowBoundary(Node&, Node&);
+
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)

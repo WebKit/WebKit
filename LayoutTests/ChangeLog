@@ -1,3 +1,17 @@
+2016-05-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Clicks inside button elements are sometimes discarded when the mouse moves
+        https://bugs.webkit.org/show_bug.cgi?id=39620
+
+        Reviewed by Darin Adler.
+
+        Test coming from http://src.chromium.org/viewvc/blink?view=revision&revision=162081.
+        Modified to ensure click events do not end up being considered as double click events.
+
+        * fast/events/click-over-descendant-elements-expected.txt: Added.
+        * fast/events/click-over-descendant-elements.html: Added.
+        * platform/ios-simulator/TestExpectations: Marked new test as failing.
+
 2016-05-03  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r200383): Setting lazily initialized properties across frame boundaries crashes

@@ -1665,6 +1665,7 @@ fast/events/shadow-event-path.html [ Failure ]
 fast/events/show-modal-dialog-onblur-onfocus.html [ Failure ]
 fast/events/tab-focus-link-in-canvas.html [ Failure ]
 fast/events/tabindex-focus-blur-all.html [ Failure ]
+fast/events/click-over-descendant-elements.html [ Failure ]
 
 # Ref-test imported from W3C that is failing because type=image input elements have rounded corners on iOS.
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.html [ ImageOnlyFailure ]
