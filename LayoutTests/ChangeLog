@@ -1,3 +1,22 @@
+2016-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Improve Symbol() to string coercion error message
+        https://bugs.webkit.org/show_bug.cgi?id=157317
+
+        Reviewed by Geoffrey Garen.
+
+        * js/math-clz32-expected.txt:
+        * js/script-tests/symbol-abstract-relational-comparison.js:
+        (relationalOperators.forEach):
+        * js/script-tests/symbol-object.js:
+        * js/script-tests/symbol-prototype-is-ordinary-object.js:
+        * js/script-tests/symbol-tostring.js:
+        * js/string-code-point-at-expected.txt:
+        * js/symbol-abstract-relational-comparison-expected.txt:
+        * js/symbol-object-expected.txt:
+        * js/symbol-prototype-is-ordinary-object-expected.txt:
+        * js/symbol-tostring-expected.txt:
+
 2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Give console.time/timeEnd a default label and warnings

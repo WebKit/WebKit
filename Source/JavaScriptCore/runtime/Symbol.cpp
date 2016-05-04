@@ -79,7 +79,7 @@ JSObject* Symbol::toObject(ExecState* exec, JSGlobalObject* globalObject) const
 
 double Symbol::toNumber(ExecState* exec) const
 {
-    throwTypeError(exec);
+    throwTypeError(exec, "Cannot convert a symbol to a number");
     return 0.0;
 }
 

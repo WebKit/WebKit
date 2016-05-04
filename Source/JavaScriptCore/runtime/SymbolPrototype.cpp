@@ -72,18 +72,21 @@ bool SymbolPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 
 // ------------------------------ Functions ---------------------------
 
+static const char* SymbolToStringTypeError = "Symbol.prototype.toString requires that |this| be a symbol or a symbol object";
+static const char* SymbolValueOfTypeError = "Symbol.prototype.valueOf requires that |this| be a symbol or a symbol object";
+
 EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     Symbol* symbol = nullptr;
     if (thisValue.isSymbol())
         symbol = asSymbol(thisValue);
-    else if (!thisValue.isObject())
-        return throwVMTypeError(exec);
     else {
+        if (!thisValue.isObject())
+            return throwVMTypeError(exec, SymbolToStringTypeError);
         JSObject* thisObject = asObject(thisValue);
         if (!thisObject->inherits(SymbolObject::info()))
-            return throwVMTypeError(exec);
+            return throwVMTypeError(exec, SymbolToStringTypeError);
         symbol = asSymbol(jsCast<SymbolObject*>(thisObject)->internalValue());
     }
 
@@ -97,11 +100,11 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(ExecState* exec)
         return JSValue::encode(thisValue);
 
     if (!thisValue.isObject())
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, SymbolValueOfTypeError);
 
     JSObject* thisObject = asObject(thisValue);
     if (!thisObject->inherits(SymbolObject::info()))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, SymbolValueOfTypeError);
 
     return JSValue::encode(jsCast<SymbolObject*>(thisObject)->internalValue());
 }

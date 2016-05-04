@@ -11,7 +11,7 @@ var symbolObject = Object(Symbol.iterator);
 shouldBeTrue("symbolObject instanceof Symbol");
 // Since Symbol object's @@toPrimitive returns Symbol value,
 // ToString(symbol) will be called.
-shouldThrow("String(symbolObject)", "'TypeError: Type error'");
+shouldThrow("String(symbolObject)", `"TypeError: Cannot convert a symbol to a string"`);
 shouldBeEqualToString("symbolObject.toString()", "Symbol(Symbol.iterator)");
 
 var object = {};

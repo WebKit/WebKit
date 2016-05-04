@@ -3,7 +3,7 @@ description(
 );
 
 shouldBeEqualToString("String(Symbol.iterator)", "Symbol(Symbol.iterator)");
-shouldThrow("String(Symbol.prototype)", "'TypeError: Type error'");
+shouldThrow("String(Symbol.prototype)", `"TypeError: Symbol.prototype.valueOf requires that |this| be a symbol or a symbol object"`);
 shouldBeEqualToString("Symbol.prototype.toString.call(Symbol.iterator)", "Symbol(Symbol.iterator)");
 shouldBeEqualToString("Symbol.prototype.toString.call(Symbol('hello'))", "Symbol(hello)");
 shouldBeEqualToString("Symbol.prototype.toString.call(Symbol())", "Symbol()");

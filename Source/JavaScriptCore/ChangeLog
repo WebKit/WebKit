@@ -1,3 +1,31 @@
+2016-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Improve Symbol() to string coercion error message
+        https://bugs.webkit.org/show_bug.cgi?id=157317
+
+        Reviewed by Geoffrey Garen.
+
+        Improve error messages related to Symbols.
+
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toStringSlowCase):
+        * runtime/Symbol.cpp:
+        (JSC::Symbol::toNumber):
+        * runtime/SymbolConstructor.cpp:
+        (JSC::symbolConstructorKeyFor):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::symbolProtoFuncToString):
+        (JSC::symbolProtoFuncValueOf):
+        * tests/stress/dfg-to-primitive-pass-symbol.js:
+        * tests/stress/floating-point-div-to-mul.js:
+        (i.catch):
+        * tests/stress/string-from-code-point.js:
+        (shouldThrow):
+        (string_appeared_here.shouldThrow):
+        * tests/stress/symbol-error-messages.js: Added.
+        (shouldThrow):
+        * tests/stress/symbol-registry.js:
+
 2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Give console.time/timeEnd a default label and warnings

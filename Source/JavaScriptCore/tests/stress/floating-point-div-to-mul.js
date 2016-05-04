@@ -201,7 +201,7 @@ for (let i = 0; i < 1e3; ++i) {
         result = opaqueDivBy2(Symbol());
         throw "Failed opaqueDivBy2(Symbol())";
     } catch (exception) {
-        if (exception != "TypeError: Type error")
+        if (exception != "TypeError: Cannot convert a symbol to a number")
             throw "Wrong exception: " + exception;
     }
     result = opaqueDivBy4(true);

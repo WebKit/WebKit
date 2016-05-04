@@ -89,7 +89,7 @@ function test(actual, expected) {
         }
         if (!error)
             throw new Error('not thrown');
-        if (String(error) !== 'TypeError: Type error')
+        if (String(error) !== 'TypeError: Symbol.keyFor requires that the first argument be a symbol')
             throw new Error('bad error: ' + String(error));
     }
 }());

@@ -105,7 +105,7 @@ for (var test of invalidTests) {
 // toNumber causes errors.
 shouldThrow(function () {
     String.fromCodePoint(Symbol.iterator);
-}, "TypeError: Type error")
+}, "TypeError: Cannot convert a symbol to a number")
 
 var toNumberObject = {
     valueOf() {
@@ -119,7 +119,7 @@ shouldThrow(function () {
 
 shouldThrow(function () {
     String.fromCodePoint(Symbol.iterator, toNumberObject);
-}, "TypeError: Type error")
+}, "TypeError: Cannot convert a symbol to a number")
 
 var convertAndPassTests = [
     [ null, "\0" ],

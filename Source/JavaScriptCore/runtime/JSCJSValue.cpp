@@ -391,7 +391,7 @@ JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnErr
     if (isUndefined())
         return vm.smallStrings.undefinedString();
     if (isSymbol()) {
-        throwTypeError(exec);
+        throwTypeError(exec, "Cannot convert a symbol to a string");
         return errorValue();
     }
 

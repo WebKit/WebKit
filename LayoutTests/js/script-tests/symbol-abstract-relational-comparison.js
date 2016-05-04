@@ -29,8 +29,8 @@ relationalOperators.forEach(function (op) {
     ];
 
     targets.forEach(function (target) {
-        shouldThrow(target + " " + op + " symbol", "'TypeError: Type error'");
-        shouldThrow("symbol " + op + " " + target, "'TypeError: Type error'");
+        shouldThrow(target + " " + op + " symbol", `"TypeError: Cannot convert a symbol to a number"`);
+        shouldThrow("symbol " + op + " " + target, `"TypeError: Cannot convert a symbol to a number"`);
     });
 });
 

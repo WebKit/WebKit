@@ -31,5 +31,5 @@ try {
     didThrow = e;
 }
 
-if (String(didThrow) !== "TypeError: Type error")
+if (String(didThrow) !== "TypeError: Cannot convert a symbol to a string")
     throw "Error: didn't throw or threw wrong exception: " + didThrow;
