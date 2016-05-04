@@ -2949,6 +2949,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings.setHttpEquivEnabled(store.getBoolValueForKey(WebPreferencesKey::httpEquivEnabledKey()));
 
+    settings.setSelectionPaintingWithoutSelectionGapsEnabled(store.getBoolValueForKey(WebPreferencesKey::selectionPaintingWithoutSelectionGapsEnabledKey()));
+
     DatabaseManager::singleton().setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
 
 #if ENABLE(FULLSCREEN_API)

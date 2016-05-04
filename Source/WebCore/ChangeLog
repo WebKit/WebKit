@@ -1,3 +1,21 @@
+2016-05-04  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Add WKPreference for SelectionPaintingWithoutSelectionGaps
+        https://bugs.webkit.org/show_bug.cgi?id=156900
+
+        Reviewed by Michael Catanzaro.
+
+        Unlike other browsers WebKit has been drawing selection gaps
+        between render blocks during the text selection. This often
+        cause text selection screen looks messy.
+
+        This patch adds a setting method to disable the functionality,
+        and EFL port disables it by default.
+
+        * page/Settings.in:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::shouldPaintSelectionGaps):
+
 2016-05-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Rename JSKeyValueIterator as JSDOMIterator

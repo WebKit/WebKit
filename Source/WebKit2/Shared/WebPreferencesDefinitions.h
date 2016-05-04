@@ -40,6 +40,12 @@
 #define DEFAULT_WEBKIT_TABSTOLINKS_ENABLED false
 #endif
 
+#if PLATFORM(EFL)
+#define DEFAULT_SELECTION_PAINTING_WITHOUT_SELECTION_GAPS_ENABLED true
+#else
+#define DEFAULT_SELECTION_PAINTING_WITHOUT_SELECTION_GAPS_ENABLED false
+#endif
+
 #if ENABLE(SMOOTH_SCROLLING)
 #define DEFAULT_WEBKIT_SCROLL_ANIMATOR_ENABLED true
 #else
@@ -230,6 +236,7 @@
     macro(FetchAPIEnabled, fetchAPIEnabled, Bool, bool, false, "", "") \
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false, "", "") \
     macro(DownloadAttributeEnabled, downloadAttributeEnabled, Bool, bool, false, "", "") \
+    macro(SelectionPaintingWithoutSelectionGapsEnabled, selectionPaintingWithoutSelectionGapsEnabled, Bool, bool, DEFAULT_SELECTION_PAINTING_WITHOUT_SELECTION_GAPS_ENABLED, "", "") \
     FOR_EACH_ADDITIONAL_WEBKIT_BOOL_PREFERENCE(macro) \
     \
 

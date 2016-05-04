@@ -1540,3 +1540,13 @@ bool WKPreferencesGetDownloadAttributeEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->downloadAttributeEnabled();
 }
+
+void WKPreferencesSetSelectionPaintingWithoutSelectionGapsEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setSelectionPaintingWithoutSelectionGapsEnabled(flag);
+}
+
+bool WKPreferencesGetSelectionPaintingWithoutSelectionGapsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->selectionPaintingWithoutSelectionGapsEnabled();
+}

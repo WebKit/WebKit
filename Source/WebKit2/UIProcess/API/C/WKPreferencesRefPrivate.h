@@ -431,6 +431,10 @@ WK_EXPORT bool WKPreferencesGetFetchAPIEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetDownloadAttributeEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetDownloadAttributeEnabled(WKPreferencesRef);
 
+// Defaults to false
+WK_EXPORT void WKPreferencesSetSelectionPaintingWithoutSelectionGapsEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetSelectionPaintingWithoutSelectionGapsEnabled(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

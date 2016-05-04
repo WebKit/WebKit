@@ -1714,6 +1714,9 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
 
 bool RenderBlock::shouldPaintSelectionGaps() const
 {
+    if (frame().settings().selectionPaintingWithoutSelectionGapsEnabled())
+        return false;
+
     return selectionState() != SelectionNone && style().visibility() == VISIBLE && isSelectionRoot();
 }
 
