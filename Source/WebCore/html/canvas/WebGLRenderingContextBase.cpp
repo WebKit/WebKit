@@ -62,6 +62,7 @@
 #include "OESVertexArrayObject.h"
 #include "Page.h"
 #include "RenderBox.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLActiveInfo.h"
@@ -348,7 +349,10 @@ private:
 
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTMLCanvasElement* canvas, WebGLContextAttributes* attrs, const String& type)
 {
-#if !ENABLE(WEBGL2)
+#if ENABLE(WEBGL2)
+    if (type == "webgl2" && !RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
+        return nullptr;
+#else
     UNUSED_PARAM(type);
 #endif
 

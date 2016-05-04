@@ -3316,6 +3316,18 @@ void Internals::setCSSGridLayoutEnabled(bool enable)
 }
 #endif
 
+#if ENABLE(WEBGL2)
+bool Internals::webGL2Enabled() const
+{
+    return RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled();
+}
+
+void Internals::setWebGL2Enabled(bool enable)
+{
+    RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(enable);
+}
+#endif
+
 void Internals::setResourceTimingSupport(bool enable)
 {
     RuntimeEnabledFeatures::sharedFeatures().setResourceTimingEnabled(enable);

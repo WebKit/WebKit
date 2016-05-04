@@ -1,3 +1,16 @@
+2016-05-04  Dean Jackson  <dino@apple.com>
+
+        Disabling WebGL2 should mean no context is created
+        https://bugs.webkit.org/show_bug.cgi?id=157352
+        <rdar://problem/26096346>
+
+        Reviewed by Eric Carlson.
+
+        Check that toggling the runtime flag enables/disables WebGL 2.0.
+
+        * fast/canvas/webgl/webgl2-runtime-flag-expected.txt: Added.
+        * fast/canvas/webgl/webgl2-runtime-flag.html: Added.
+
 2016-05-04  Chris Dumez  <cdumez@apple.com>
 
         Media elements should not be paused right away when removed from the document

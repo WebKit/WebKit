@@ -478,6 +478,11 @@ public:
     void setCSSGridLayoutEnabled(bool);
 #endif
 
+#if ENABLE(WEBGL2)
+    bool webGL2Enabled() const;
+    void setWebGL2Enabled(bool);
+#endif
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

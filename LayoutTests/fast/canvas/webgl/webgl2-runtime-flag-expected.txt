@@ -1,0 +1,2 @@
+PASS: WebGL 2.0 was available when enabled.
+PASS: WebGL 2.0 was not available when disabled.

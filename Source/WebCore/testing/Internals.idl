@@ -453,5 +453,10 @@ enum AutoFillButtonType {
     void setCSSGridLayoutEnabled(boolean enable);
 #endif
 
+#if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
+    boolean webGL2Enabled();
+    void setWebGL2Enabled(boolean enable);
+#endif
+
     void setResourceTimingSupport(boolean scalable);
 };
