@@ -35,6 +35,7 @@
 #include "TextureMapperShaderProgram.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TemporaryChange.h>
@@ -47,113 +48,84 @@
 #endif
 
 namespace WebCore {
-struct TextureMapperGLData {
+
+class TextureMapperGLData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    struct SharedGLData : public RefCounted<SharedGLData> {
+    explicit TextureMapperGLData(GraphicsContext3D&);
+    ~TextureMapperGLData();
 
-        typedef HashMap<PlatformGraphicsContext3D, SharedGLData*> GLContextDataMap;
-        static GLContextDataMap& glContextDataMap()
+    void initializeStencil();
+    Platform3DObject getStaticVBO(GC3Denum target, GC3Dsizeiptr, const void* data);
+    Ref<TextureMapperShaderProgram> getShaderProgram(TextureMapperShaderProgram::Options);
+
+    TransformationMatrix projectionMatrix;
+    TextureMapper::PaintFlags PaintFlags { 0 };
+    GC3Dint previousProgram { 0 };
+    GC3Dint targetFrameBuffer { 0 };
+    bool didModifyStencil { false };
+    GC3Dint previousScissorState { 0 };
+    GC3Dint previousDepthState { 0 };
+    GC3Dint viewport[4] { 0, };
+    GC3Dint previousScissor[4] { 0, };
+    RefPtr<BitmapTexture> currentSurface;
+    const BitmapTextureGL::FilterInfo* filterInfo { nullptr };
+
+private:
+    class SharedGLData : public RefCounted<SharedGLData> {
+    public:
+        static Ref<SharedGLData> currentSharedGLData(GraphicsContext3D& context)
         {
-            static GLContextDataMap map;
-            return map;
-        }
+            RefPtr<SharedGLData> data;
+            auto addResult = contextDataMap().add(context.platformGraphicsContext3D(), nullptr);
+            if (addResult.isNewEntry) {
+                data = adoptRef(new SharedGLData(context));
+                addResult.iterator->value = data.get();
+            } else
+                data = addResult.iterator->value;
 
-        static PassRefPtr<SharedGLData> currentSharedGLData(GraphicsContext3D* context)
-        {
-            GLContextDataMap::iterator it = glContextDataMap().find(context->platformGraphicsContext3D());
-            if (it != glContextDataMap().end())
-                return it->value;
-
-            return adoptRef(new SharedGLData(context));
-        }
-
-        PassRefPtr<TextureMapperShaderProgram> getShaderProgram(TextureMapperShaderProgram::Options options)
-        {
-            HashMap<TextureMapperShaderProgram::Options, RefPtr<TextureMapperShaderProgram> >::AddResult result = m_programs.add(options, nullptr);
-            if (result.isNewEntry)
-                result.iterator->value = TextureMapperShaderProgram::create(m_context, options);
-
-            return result.iterator->value;
-        }
-
-        HashMap<TextureMapperShaderProgram::Options, RefPtr<TextureMapperShaderProgram> > m_programs;
-        RefPtr<GraphicsContext3D> m_context;
-
-        explicit SharedGLData(GraphicsContext3D* context)
-            : m_context(context)
-        {
-            glContextDataMap().add(context->platformGraphicsContext3D(), this);
+            return *data;
         }
 
         ~SharedGLData()
         {
-            for (auto it = glContextDataMap().begin(), end = glContextDataMap().end(); it != end; ++it) {
-                if (it->value == this) {
-                    glContextDataMap().remove(it);
-                    return;
-                }
-            }
-
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT(contextDataMap().contains(this));
+            contextDataMap().removeIf([this] (GLContextDataMap::KeyValuePairType& entry) { return entry.value == this; });
         }
+
+    private:
+        friend class TextureMapperGLData;
+
+        using GLContextDataMap = HashMap<PlatformGraphicsContext3D, SharedGLData*>;
+        static GLContextDataMap& contextDataMap()
+        {
+            static NeverDestroyed<GLContextDataMap> map;
+            return map;
+        }
+
+        explicit SharedGLData(GraphicsContext3D& context)
+        {
+            contextDataMap().add(context.platformGraphicsContext3D(), this);
+        }
+
+        HashMap<TextureMapperShaderProgram::Options, RefPtr<TextureMapperShaderProgram>> m_programs;
     };
 
-    SharedGLData& sharedGLData() const
-    {
-        return *sharedData;
-    }
-
-    void initializeStencil();
-
-    explicit TextureMapperGLData(GraphicsContext3D* context)
-        : context(context)
-        , PaintFlags(0)
-        , previousProgram(0)
-        , targetFrameBuffer(0)
-        , didModifyStencil(false)
-        , previousScissorState(0)
-        , previousDepthState(0)
-        , sharedData(TextureMapperGLData::SharedGLData::currentSharedGLData(this->context))
-        , filterInfo(0)
-    { }
-
-    ~TextureMapperGLData();
-    Platform3DObject getStaticVBO(GC3Denum target, GC3Dsizeiptr, const void* data);
-
-    GraphicsContext3D* context;
-    TransformationMatrix projectionMatrix;
-    TextureMapper::PaintFlags PaintFlags;
-    GC3Dint previousProgram;
-    GC3Dint targetFrameBuffer;
-    bool didModifyStencil;
-    GC3Dint previousScissorState;
-    GC3Dint previousDepthState;
-    GC3Dint viewport[4];
-    GC3Dint previousScissor[4];
-    RefPtr<SharedGLData> sharedData;
-    RefPtr<BitmapTexture> currentSurface;
-    HashMap<const void*, Platform3DObject> vbos;
-    const BitmapTextureGL::FilterInfo* filterInfo;
+    GraphicsContext3D& m_context;
+    Ref<SharedGLData> m_sharedGLData;
+    HashMap<const void*, Platform3DObject> m_vbos;
 };
 
-Platform3DObject TextureMapperGLData::getStaticVBO(GC3Denum target, GC3Dsizeiptr size, const void* data)
+TextureMapperGLData::TextureMapperGLData(GraphicsContext3D& context)
+    : m_context(context)
+    , m_sharedGLData(SharedGLData::currentSharedGLData(m_context))
 {
-    HashMap<const void*, Platform3DObject>::AddResult result = vbos.add(data, 0);
-    if (result.isNewEntry) {
-        Platform3DObject vbo = context->createBuffer();
-        context->bindBuffer(target, vbo);
-        context->bufferData(target, size, data, GraphicsContext3D::STATIC_DRAW);
-        result.iterator->value = vbo;
-    }
-
-    return result.iterator->value;
 }
 
 TextureMapperGLData::~TextureMapperGLData()
 {
-    for (auto& entry : vbos)
-        context->deleteBuffer(entry.value);
+    for (auto& entry : m_vbos)
+        m_context.deleteBuffer(entry.value);
 }
 
 void TextureMapperGLData::initializeStencil()
@@ -166,16 +138,37 @@ void TextureMapperGLData::initializeStencil()
     if (didModifyStencil)
         return;
 
-    context->clearStencil(0);
-    context->clear(GraphicsContext3D::STENCIL_BUFFER_BIT);
+    m_context.clearStencil(0);
+    m_context.clear(GraphicsContext3D::STENCIL_BUFFER_BIT);
     didModifyStencil = true;
+}
+
+Platform3DObject TextureMapperGLData::getStaticVBO(GC3Denum target, GC3Dsizeiptr size, const void* data)
+{
+    auto addResult = m_vbos.ensure(data,
+        [this, target, size, data] {
+            Platform3DObject vbo = m_context.createBuffer();
+            m_context.bindBuffer(target, vbo);
+            m_context.bufferData(target, size, data, GraphicsContext3D::STATIC_DRAW);
+            return vbo;
+        });
+    return addResult.iterator->value;
+}
+
+Ref<TextureMapperShaderProgram> TextureMapperGLData::getShaderProgram(TextureMapperShaderProgram::Options options)
+{
+    auto addResult = m_sharedGLData->m_programs.ensure(options,
+        [this, options] { return TextureMapperShaderProgram::create(Ref<GraphicsContext3D>(m_context), options); });
+    return *addResult.iterator->value;
 }
 
 TextureMapperGL::TextureMapperGL()
     : m_enableEdgeDistanceAntialiasing(false)
 {
     m_context3D = GraphicsContext3D::createForCurrentGLContext();
-    m_data = new TextureMapperGLData(m_context3D.get());
+    ASSERT(m_context3D);
+
+    m_data = new TextureMapperGLData(*m_context3D);
 #if USE(TEXTURE_MAPPER_GL)
     m_texturePool = std::make_unique<BitmapTexturePool>(m_context3D.copyRef());
 #endif
@@ -229,7 +222,7 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
     if (clipStack().isCurrentScissorBoxEmpty())
         return;
 
-    RefPtr<TextureMapperShaderProgram> program = data().sharedGLData().getShaderProgram(TextureMapperShaderProgram::SolidColor);
+    RefPtr<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
     m_context3D->useProgram(program->programID());
 
     float r, g, b, a;
@@ -456,8 +449,7 @@ void TextureMapperGL::drawTexture(Platform3DObject texture, Flags flags, const I
     if (useAntialiasing || opacity < 1)
         flags |= ShouldBlend;
 
-    RefPtr<TextureMapperShaderProgram> program;
-    program = data().sharedGLData().getShaderProgram(options);
+    RefPtr<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)
         prepareFilterProgram(program.get(), *filter.get(), data().filterInfo->pass, textureSize, filterContentTextureID);
@@ -474,7 +466,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
         flags |= ShouldBlend | ShouldAntialias;
     }
 
-    RefPtr<TextureMapperShaderProgram> program = data().sharedGLData().getShaderProgram(options);
+    RefPtr<TextureMapperShaderProgram> program = data().getShaderProgram(options);
     m_context3D->useProgram(program->programID());
 
     float r, g, b, a;
@@ -591,7 +583,7 @@ void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTex
 {
     // For standard filters, we always draw the whole texture without transformations.
     TextureMapperShaderProgram::Options options = optionsForFilterType(filter.type(), pass);
-    RefPtr<TextureMapperShaderProgram> program = data().sharedGLData().getShaderProgram(options);
+    RefPtr<TextureMapperShaderProgram> program = data().getShaderProgram(options);
     ASSERT(program);
 
     prepareFilterProgram(program.get(), filter, pass, sampler.contentSize(), contentTexture ? static_cast<const BitmapTextureGL*>(contentTexture)->id() : 0);
@@ -669,7 +661,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     data().initializeStencil();
 
-    RefPtr<TextureMapperShaderProgram> program = data().sharedGLData().getShaderProgram(TextureMapperShaderProgram::SolidColor);
+    RefPtr<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
 
     m_context3D->useProgram(program->programID());
     m_context3D->enableVertexAttribArray(program->vertexLocation());

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-struct TextureMapperGLData;
+class TextureMapperGLData;
 class TextureMapperShaderProgram;
 class FilterOperation;
 

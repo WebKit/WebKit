@@ -1,3 +1,49 @@
+2016-05-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Clean up TextureMapperGLData, TextureMapperGLData::SharedGLData
+        https://bugs.webkit.org/show_bug.cgi?id=157303
+
+        Reviewed by Carlos Garcia Campos.
+
+        Torch the TextureMapperGLData and TextureMapperGLData::SharedGLData
+        classes into a better form.
+
+        SharedGLData is now private to the TextureMapperGLData class, but
+        lists that class as a friend. This enables moving the getShaderProgram()
+        method to TextureMapperGLData and removes the need to expose the
+        SharedGLData publicly. SharedGLData also doesn't have to keep a
+        reference to the GraphicsContext3D object.
+
+        TextureMapperGLData now default-initializes the publicly accessible
+        member variables while making some other members private, not exposing
+        anything that isn't necessary.
+
+        Usual whitespace cleanup included. More elegant HashMap::ensure()
+        insertions are used where they don't obfuscate object creation.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGLData::SharedGLData::currentSharedGLData):
+        (WebCore::TextureMapperGLData::SharedGLData::~SharedGLData):
+        (WebCore::TextureMapperGLData::SharedGLData::contextDataMap):
+        (WebCore::TextureMapperGLData::SharedGLData::SharedGLData):
+        (WebCore::TextureMapperGLData::TextureMapperGLData):
+        (WebCore::TextureMapperGLData::~TextureMapperGLData):
+        (WebCore::TextureMapperGLData::initializeStencil):
+        (WebCore::TextureMapperGLData::getStaticVBO):
+        (WebCore::TextureMapperGLData::getShaderProgram):
+        (WebCore::TextureMapperGL::TextureMapperGL):
+        (WebCore::TextureMapperGL::drawBorder):
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::TextureMapperGL::drawSolidColor):
+        (WebCore::TextureMapperGL::drawFiltered):
+        (WebCore::TextureMapperGL::beginClip):
+        (WebCore::TextureMapperGLData::SharedGLData::glContextDataMap): Deleted.
+        (WebCore::TextureMapperGLData::SharedGLData::getShaderProgram): Deleted.
+        (WebCore::TextureMapperGLData::sharedGLData): Deleted.
+        * platform/graphics/texmap/TextureMapperGL.h:
+
 2016-05-03  Chris Dumez  <cdumez@apple.com>
 
         Optimize [StrictTypeChecking] on IDL attributes
