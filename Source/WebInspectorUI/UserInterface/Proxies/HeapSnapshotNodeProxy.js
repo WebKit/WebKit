@@ -89,8 +89,10 @@ WebInspector.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
 
     retainers(callback)
     {
-        WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "retainers", this.id, (serializedNodes) => {
-            callback(serializedNodes.map(WebInspector.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId)));
+        WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "retainers", this.id, ({retainers: serializedNodes, edges: serializedEdges}) => {
+            let deserializedNodes = serializedNodes.map(WebInspector.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId));
+            let deserializedEdges = serializedEdges.map(WebInspector.HeapSnapshotEdgeProxy.deserialize.bind(null, this._proxyObjectId));
+            callback(deserializedNodes, deserializedEdges);
         });
     }
 };

@@ -238,7 +238,7 @@ HeapSnapshot = class HeapSnapshot
     shortestGCRootPath(nodeIdentifier)
     {
         // Returns an array from this node to a gcRoot node.
-        // E.g. [Node, Edge, Node, Edge, Node].
+        // E.g. [Node (target), Edge, Node, Edge, Node (root)].
         // Internal nodes are avoided, so if the path is empty this
         // node is either a gcRoot or only reachable via Internal nodes.
 
@@ -247,8 +247,17 @@ HeapSnapshot = class HeapSnapshot
             return [];
 
         paths.sort((a, b) => a.length - b.length);
-        let shortestPath = paths[0];
 
+        let shortestPathWithGlobalObject = null;
+        for (let path of paths) {
+            let lastNodeIndex = path[path.length - 1].node;
+            if (this._isNodeGlobalObject(lastNodeIndex)) {
+                shortestPathWithGlobalObject = path;
+                break;
+            }
+        }
+
+        let shortestPath = shortestPathWithGlobalObject || paths[0];
         console.assert("node" in shortestPath[0], "Path should start with a node");
         console.assert("node" in shortestPath[shortestPath.length - 1], "Path should end with a node");
 
@@ -296,6 +305,7 @@ HeapSnapshot = class HeapSnapshot
     retainers(nodeIdentifier)
     {
         let retainers = [];
+        let edges = [];
 
         let nodeOrdinal = this._nodeIdentifierToOrdinal.get(nodeIdentifier);
         let incomingEdgeIndex = this._nodeOrdinalToFirstIncomingEdge[nodeOrdinal];
@@ -304,9 +314,13 @@ HeapSnapshot = class HeapSnapshot
             let fromNodeOrdinal = this._incomingNodes[edgeIndex];
             let fromNodeIndex = fromNodeOrdinal * nodeFieldCount;
             retainers.push(fromNodeIndex);
+            edges.push(this._incomingEdges[edgeIndex]);
         }
 
-        return retainers.map(this.serializeNode, this);
+        return {
+            retainers: retainers.map(this.serializeNode, this),
+            edges: edges.map(this.serializeEdge, this),
+        };
     }
 
     // Public
@@ -410,7 +424,7 @@ HeapSnapshot = class HeapSnapshot
             let count = this._nodeOrdinalToFirstIncomingEdge[nodeOrdinal];
             this._nodeOrdinalToFirstIncomingEdge[nodeOrdinal] = runningFirstIndex;
             this._incomingNodes[runningFirstIndex] = count;
-            runningFirstIndex += count;            
+            runningFirstIndex += count;
         }
 
         // Fill in the incoming edges list. Use the count as an offset when placing edges in the list.
@@ -518,7 +532,7 @@ HeapSnapshot = class HeapSnapshot
         dominators.fill(noEntry);
 
         // Mark the root's dominator value.
-        dominators[rootPostOrderIndex] = rootPostOrderIndex;        
+        dominators[rootPostOrderIndex] = rootPostOrderIndex;
 
         // Affect the root's children. Also use this opportunity to mark them as GC roots.
         let rootEdgeIndex = this._nodeOrdinalToFirstOutgoingEdge[rootNodeOrdinal];
@@ -603,6 +617,14 @@ HeapSnapshot = class HeapSnapshot
             let dominatorNodeOrdinal = this._nodeOrdinalToDominatorNodeOrdinal[nodeOrdinal];
             this._nodeOrdinalToRetainedSizes[dominatorNodeOrdinal] += nodeRetainedSize;
         }
+    }
+
+    _isNodeGlobalObject(nodeIndex)
+    {
+        let className = this._nodeClassNamesTable[this._nodes[nodeIndex + nodeClassNameOffset]];
+        return className === "Window"
+            || className === "JSDOMWindowShell"
+            || className === "GlobalObject";
     }
 
     _gcRootPathes(nodeIdentifier)

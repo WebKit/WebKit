@@ -39,5 +39,6 @@ PASS: Node values should match.
 
 -- Running test case: HeapSnapshotNodeProxy.prototype.retainers
 PASS: Number of retainer nodes should match.
+PASS: Number of edges should match the number of nodes.
 PASS: Node values should match.
 
