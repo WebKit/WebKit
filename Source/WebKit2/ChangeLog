@@ -1,5 +1,24 @@
 2016-05-04  Dean Jackson  <dino@apple.com>
 
+        Experimental Features don't need an "Experimental" prefix
+        https://bugs.webkit.org/show_bug.cgi?id=157363
+        <rdar://problem/26100630>
+
+        Reviewed by Anders Carlsson.
+
+        Since we're not persisting the value of the experimental
+        features, it's unlikely there will ever be the case
+        where we move a Preference from experimental to normal
+        and use a stored value.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+2016-05-04  Dean Jackson  <dino@apple.com>
+
         Experimental features should toggle runtime flags
         https://bugs.webkit.org/show_bug.cgi?id=157353
         <rdar://problem/23621603>

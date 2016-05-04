@@ -287,15 +287,13 @@
 // - You must provide the last two parameters for all experimental features. They
 //   are the text exposed to the user from the WebKit client.
 // - They should be alphabetically ordered by the human readable text.
-// - The key should be prefixed with "experimental" so that it doesn't clash if/when the feature
-//   becomes stable.
 // - They should be false by default. The client is responsible for enabling them.
 
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
-    macro(ExperimentalCSSGridLayoutEnabled, experimentalCSSGridLayoutEnabled, Bool, bool, false, "CSS Grid", "CSS Grid Layout Module support") \
-    macro(ExperimentalCustomElementsEnabled, experimentalCustomElementsEnabled, Bool, bool, false, "Custom Elements", "HTML Custom Elements prototype") \
-    macro(ExperimentalShadowDOMEnabled, experimentalShadowDOMEnabled, Bool, bool, false, "Shadow DOM", "HTML Shadow DOM prototype") \
-    macro(ExperimentalWebGL2Enabled, experimentalWebGL2Enabled, Bool, bool, false, "WebGL 2.0", "WebGL 2 prototype") \
+    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, false, "CSS Grid", "CSS Grid Layout Module support") \
+    macro(CustomElementsEnabled, customElementsEnabled, Bool, bool, false, "Custom Elements", "HTML Custom Elements prototype") \
+    macro(ShadowDOMEnabled, shadowDOMEnabled, Bool, bool, false, "Shadow DOM", "HTML Shadow DOM prototype") \
+    macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false, "WebGL 2.0", "WebGL 2 prototype") \
     \
 
 #if PLATFORM(COCOA)
