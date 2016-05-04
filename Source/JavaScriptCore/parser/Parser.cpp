@@ -69,6 +69,10 @@
     consumeOrFail(token, "Expected '", tokenString, "' to ", operation, " a ", production);\
 } while (0)
 
+#define handleProductionOrFail2(token, tokenString, operation, production) do {\
+    consumeOrFail(token, "Expected '", tokenString, "' to ", operation, " an ", production);\
+} while (0)
+
 #define semanticFailureDueToKeyword(...) do { \
     if (strictMode() && m_token.m_type == RESERVED_IF_STRICT) \
         semanticFail("Cannot use the reserved word '", getToken(), "' as a ", __VA_ARGS__, " in strict mode"); \
@@ -2528,12 +2532,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
     JSTokenLocation ifLocation(tokenLocation());
     int start = tokenLine();
     next();
-    handleProductionOrFail(OPENPAREN, "(", "start", "'if' condition");
+    handleProductionOrFail2(OPENPAREN, "(", "start", "'if' condition");
 
     TreeExpression condition = parseExpression(context);
     failIfFalse(condition, "Expected a expression as the condition for an if statement");
     int end = tokenLine();
-    handleProductionOrFail(CLOSEPAREN, ")", "end", "'if' condition");
+    handleProductionOrFail2(CLOSEPAREN, ")", "end", "'if' condition");
 
     const Identifier* unused = 0;
     m_immediateParentAllowsFunctionDeclarationInStatement = true;
@@ -2563,12 +2567,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         int innerStart = tokenLine();
         next();
         
-        handleProductionOrFail(OPENPAREN, "(", "start", "'if' condition");
+        handleProductionOrFail2(OPENPAREN, "(", "start", "'if' condition");
 
         TreeExpression innerCondition = parseExpression(context);
         failIfFalse(innerCondition, "Expected a expression as the condition for an if statement");
         int innerEnd = tokenLine();
-        handleProductionOrFail(CLOSEPAREN, ")", "end", "'if' condition");
+        handleProductionOrFail2(CLOSEPAREN, ")", "end", "'if' condition");
         const Identifier* unused = 0;
         m_immediateParentAllowsFunctionDeclarationInStatement = true;
         TreeStatement innerTrueBlock = parseStatement(context, unused);
@@ -2754,7 +2758,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
                 if (!consume(COMMA))
                     break;
             }
-            handleProductionOrFail(CLOSEBRACE, "}", "end", "import list");
+            handleProductionOrFail2(CLOSEBRACE, "}", "end", "import list");
         } else
             failWithMessage("Expected namespace import or import list");
     }
@@ -2916,7 +2920,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             if (!consume(COMMA))
                 break;
         }
-        handleProductionOrFail(CLOSEBRACE, "}", "end", "export list");
+        handleProductionOrFail2(CLOSEBRACE, "}", "end", "export list");
 
         typename TreeBuilder::ModuleName moduleName = 0;
         if (matchContextualKeyword(m_vm->propertyNames->from)) {
@@ -3498,7 +3502,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
     }
 
     location = tokenLocation();
-    handleProductionOrFail(CLOSEBRACE, "}", "end", "object literal");
+    handleProductionOrFail2(CLOSEBRACE, "}", "end", "object literal");
     
     m_parserState.nonLHSCount = oldNonLHSCount;
     
@@ -3544,7 +3548,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
     }
 
     location = tokenLocation();
-    handleProductionOrFail(CLOSEBRACE, "}", "end", "object literal");
+    handleProductionOrFail2(CLOSEBRACE, "}", "end", "object literal");
 
     m_parserState.nonLHSCount = oldNonLHSCount;
 
@@ -3850,7 +3854,7 @@ template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(Tre
         tail = context.createArgumentsList(argumentLocation, tail, arg);
     }
 
-    handleProductionOrFail(CLOSEPAREN, ")", "end", "argument list");
+    handleProductionOrFail2(CLOSEPAREN, ")", "end", "argument list");
     if (hasSpread) {
         TreeExpression spreadArray = context.createSpreadExpression(location, context.createArray(location, context.createElementList(argList)), argumentsStart, argumentsDivot, m_lastTokenEndPosition);
         return context.createArguments(context.createArgumentsList(location, spreadArray));

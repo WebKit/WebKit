@@ -468,7 +468,7 @@ Error Range: {"startOffset":17,"endOffset":18}
 PASS: Should be SyntaxErrorType Irrecoverable.
 Source: if x(1)
            ^
-Error Message: Unexpected identifier 'x'. Expected '(' to start a 'if' condition.
+Error Message: Unexpected identifier 'x'. Expected '(' to start an 'if' condition.
 Error Range: {"startOffset":3,"endOffset":4}
 
 

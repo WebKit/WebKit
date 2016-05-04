@@ -400,7 +400,7 @@ PASS parseThenSerializeRule(':lang(*-    ) { }') threw exception TypeError: unde
 PASS parseThenSerializeRule(':lang(*--) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*---) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*----) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
-PASS parseThenSerializeRule(':lang(*)' { }) threw exception SyntaxError: Unexpected token '{'. Expected ')' to end a argument list..
+PASS parseThenSerializeRule(':lang(*)' { }) threw exception SyntaxError: Unexpected token '{'. Expected ')' to end an argument list..
 PASS parseThenSerializeRule(':lang(**) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(-*-) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*-*) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').

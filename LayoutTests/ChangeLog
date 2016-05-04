@@ -1,3 +1,19 @@
+2016-05-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Improve the grammar of some error messages 'a argument list' => 'an argument list'
+        https://bugs.webkit.org/show_bug.cgi?id=157350
+        <rdar://problem/26082108>
+
+        Reviewed by Mark Lam.
+
+        * fast/css/css-selector-text-expected.txt:
+        * inspector/runtime/parse-expected.txt:
+        * js/object-literal-computed-methods-expected.txt:
+        * js/object-literal-methods-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.5_Tokens/7.5.2_Keywords/S7.5.2_A1.12-expected.txt:
+        * sputnik/Conformance/12_Statement/12.5_The_if_Statement/S12.5_A6_T1-expected.txt:
+        * sputnik/Conformance/12_Statement/12.5_The_if_Statement/S12.5_A6_T2-expected.txt:
+
 2016-05-04  Keith Miller  <keith_miller@apple.com>
 
         Corrections to r200422

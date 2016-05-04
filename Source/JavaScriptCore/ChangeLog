@@ -1,3 +1,21 @@
+2016-05-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Improve the grammar of some error messages 'a argument list' => 'an argument list'
+        https://bugs.webkit.org/show_bug.cgi?id=157350
+        <rdar://problem/26082108>
+
+        Reviewed by Mark Lam.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseIfStatement):
+        (JSC::Parser<LexerType>::parseImportDeclaration):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parseObjectLiteral):
+        (JSC::Parser<LexerType>::parseStrictObjectLiteral):
+        (JSC::Parser<LexerType>::parseArguments):
+        Use the alternate error message formatter macro which outputs 'an'
+        instead of 'a' preceding the last argument.
+
 2016-05-04  Keith Miller  <keith_miller@apple.com>
 
         Corrections to r200422

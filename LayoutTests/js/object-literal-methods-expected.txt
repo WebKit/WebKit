@@ -64,7 +64,7 @@ PASS ({ (){} }) threw exception SyntaxError: Unexpected token '('. Expected a pr
 PASS ({ foo(,,,){} }) threw exception SyntaxError: Unexpected token ','. Expected a parameter pattern or a ')' in parameter list..
 PASS ({ foo(a{}, bar(){} }) threw exception SyntaxError: Unexpected token '{'. Expected a ')' or a ',' after a parameter declaration..
 PASS ({ foo(a, b), bar(){} }) threw exception SyntaxError: Unexpected token ','. Expected an opening '{' at the start of a method body..
-PASS ({ foo(a, b) { if }, bar(){} }) threw exception SyntaxError: Unexpected token '}'. Expected '(' to start a 'if' condition..
+PASS ({ foo(a, b) { if }, bar(){} }) threw exception SyntaxError: Unexpected token '}'. Expected '(' to start an 'if' condition..
 PASS ({__proto__: function(){}}) instanceof Function is true
 PASS ({__proto__(){}}) instanceof Function is false
 PASS ({__proto__(){}}).__proto__ instanceof Function is true

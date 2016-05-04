@@ -1,3 +1,13 @@
+2016-05-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Improve the grammar of some error messages 'a argument list' => 'an argument list'
+        https://bugs.webkit.org/show_bug.cgi?id=157350
+        <rdar://problem/26082108>
+
+        Reviewed by Mark Lam.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-05-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Sync web-platform-tests up to revision 4af8373
