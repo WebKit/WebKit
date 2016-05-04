@@ -2025,8 +2025,6 @@ webkit.org/b/124970 compositing/geometry/fixed-position-flipped-writing-mode.htm
 
 webkit.org/b/124971 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure ]
 
-webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]
-
 webkit.org/b/125355 fast/events/updateLayoutForHitTest.html [ Failure ]
 
 # Started failing after r154906

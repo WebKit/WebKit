@@ -1,3 +1,18 @@
+2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] accessibility/document-attributes.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=125348
+
+        Reviewed by Chris Fleizach.
+
+        The test was failing because the WebArea is now being exposed with the role of
+        ATK_ROLE_DOCUMENT_WEB; not ATK_ROLE_DOCUMENT_FRAME. Unfortunately, when that
+        change was made, documentEncoding() and documentURI() were not updated accordingly.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::documentEncoding):
+        (WTR::AccessibilityUIElement::documentURI):
+
 2016-05-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.

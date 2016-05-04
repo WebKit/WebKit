@@ -1,3 +1,13 @@
+2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] accessibility/document-attributes.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=125348
+
+        Reviewed by Chris Fleizach.
+
+        * platform/efl/TestExpectations: Unskipped failing test.
+        * platform/gtk/TestExpectations: Unskipped failing test.
+
 2016-05-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Un-skipping storage/indexeddb/intversion-open-in-upgradeneeded.html, but leaving it as flaky
