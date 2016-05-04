@@ -1,3 +1,3 @@
 
-FAIL paused state when moving within a document assert_false: paused after moving expected false got true
+PASS paused state when moving within a document 
 

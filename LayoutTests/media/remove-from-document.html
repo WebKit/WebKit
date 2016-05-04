@@ -19,10 +19,15 @@
             run("document.body.removeChild(video)");
     
             testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY, "!=");
-            testExpected("video.paused", true);
-    
-            document.body.offsetTop;
-            endTest();
+            testExpected("video.paused", false);
+
+            setTimeout(function() {
+                testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY, "!=");
+                testExpected("video.paused", true);
+
+                document.body.offsetTop;
+                endTest();
+            }, 0);
         }
 
         window.addEventListener('load', doSetup, false);

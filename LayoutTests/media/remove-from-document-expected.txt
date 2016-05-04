@@ -5,6 +5,8 @@ EXPECTED (video.networkState != '0') OK
 EXPECTED (video.paused == 'false') OK
 RUN(document.body.removeChild(video))
 EXPECTED (video.networkState != '0') OK
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.networkState != '0') OK
 EXPECTED (video.paused == 'true') OK
 END OF TEST
 

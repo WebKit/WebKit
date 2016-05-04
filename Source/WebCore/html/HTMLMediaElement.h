@@ -772,10 +772,13 @@ private:
     void isVisibleInViewportChanged() final;
     void updateShouldAutoplay();
 
+    void pauseAfterDetachedTimerFired();
+
     Timer m_pendingActionTimer;
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;
+    Timer m_pauseAfterDetachedTimer;
     GenericTaskQueue<ScriptExecutionContext> m_seekTaskQueue;
     GenericTaskQueue<ScriptExecutionContext> m_resizeTaskQueue;
     GenericTaskQueue<ScriptExecutionContext> m_shadowDOMTaskQueue;

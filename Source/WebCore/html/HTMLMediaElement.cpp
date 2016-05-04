@@ -348,6 +348,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_progressEventTimer(*this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(*this, &HTMLMediaElement::playbackProgressTimerFired)
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
+    , m_pauseAfterDetachedTimer(*this, &HTMLMediaElement::pauseAfterDetachedTimerFired)
     , m_seekTaskQueue(document)
     , m_resizeTaskQueue(document)
     , m_shadowDOMTaskQueue(document)
@@ -783,32 +784,43 @@ Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode&
     return InsertionDone;
 }
 
+void HTMLMediaElement::pauseAfterDetachedTimerFired()
+{
+    // If we were re-inserted into an active document, no need to pause.
+    if (m_inActiveDocument)
+        return;
+
+    if (hasMediaControls())
+        mediaControls()->hide();
+    if (m_networkState > NETWORK_EMPTY)
+        pause();
+    if (m_videoFullscreenMode != VideoFullscreenModeNone)
+        exitFullscreen();
+
+    if (!m_player)
+        return;
+
+    size_t extraMemoryCost = m_player->extraMemoryCost();
+    if (extraMemoryCost > m_reportedExtraMemoryCost) {
+        JSC::VM& vm = JSDOMWindowBase::commonVM();
+        JSC::JSLockHolder lock(vm);
+
+        size_t extraMemoryCostDelta = extraMemoryCost - m_reportedExtraMemoryCost;
+        m_reportedExtraMemoryCost = extraMemoryCost;
+        // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
+        // https://bugs.webkit.org/show_bug.cgi?id=142595
+        vm.heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
+    }
+}
+
 void HTMLMediaElement::removedFrom(ContainerNode& insertionPoint)
 {
     LOG(Media, "HTMLMediaElement::removedFrom(%p)", this);
 
     m_inActiveDocument = false;
     if (insertionPoint.inDocument()) {
-        if (hasMediaControls())
-            mediaControls()->hide();
-        if (m_networkState > NETWORK_EMPTY)
-            pause();
-        if (m_videoFullscreenMode != VideoFullscreenModeNone)
-            exitFullscreen();
-
-        if (m_player) {
-            size_t extraMemoryCost = m_player->extraMemoryCost();
-            if (extraMemoryCost > m_reportedExtraMemoryCost) {
-                JSC::VM& vm = JSDOMWindowBase::commonVM();
-                JSC::JSLockHolder lock(vm);
-
-                size_t extraMemoryCostDelta = extraMemoryCost - m_reportedExtraMemoryCost;
-                m_reportedExtraMemoryCost = extraMemoryCost;
-                // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
-                // https://bugs.webkit.org/show_bug.cgi?id=142595
-                vm.heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
-            }
-        }
+        // Pause asynchronously to let the operation that removed us finish, in case we get inserted back into a document.
+        m_pauseAfterDetachedTimer.startOneShot(0);
     }
 
     HTMLElement::removedFrom(insertionPoint);

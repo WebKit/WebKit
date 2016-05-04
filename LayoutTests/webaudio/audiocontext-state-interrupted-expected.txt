@@ -37,6 +37,7 @@ EVENT statechange
 PASS context.state is "suspended"
 
 Test 4: resume() while interrupted will not resume playback after an interruption.
+internals.setMediaSessionRestrictions("WebAudio", "InterruptedPlaybackNotPermitted")
 internals.beginMediaSessionInterruption("System")
 EVENT statechange
 PASS context.state is "interrupted"

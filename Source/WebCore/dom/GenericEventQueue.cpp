@@ -75,15 +75,16 @@ void GenericEventQueue::sharedTimerFired()
     ASSERT(!sharedTimer().isActive());
     ASSERT(!pendingQueues().isEmpty());
 
-    while (!pendingQueues().isEmpty()) {
-        WeakPtr<GenericEventQueue> queue = pendingQueues().takeFirst();
+    // Copy the pending events first because we don't want to process synchronously the new events
+    // queued by the JS events handlers that are executed in the loop below.
+    Deque<WeakPtr<GenericEventQueue>> queuedEvents;
+    std::swap(queuedEvents, pendingQueues());
+    while (!queuedEvents.isEmpty()) {
+        WeakPtr<GenericEventQueue> queue = queuedEvents.takeFirst();
         if (!queue)
             continue;
         queue->dispatchOneEvent();
     }
-
-    if (sharedTimer().isActive())
-        sharedTimer().stop();
 }
 
 Deque<WeakPtr<GenericEventQueue>>& GenericEventQueue::pendingQueues()

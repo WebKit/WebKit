@@ -1,3 +1,17 @@
+2016-05-04  Chris Dumez  <cdumez@apple.com>
+
+        Media elements should not be paused right away when removed from the document
+        https://bugs.webkit.org/show_bug.cgi?id=157347
+        <rdar://problem/25888758>
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline now that more W3C tests are passing.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-move-to-other-document-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-move-within-document-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document-expected.txt:
+
 2016-05-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Improve the grammar of some error messages 'a argument list' => 'an argument list'

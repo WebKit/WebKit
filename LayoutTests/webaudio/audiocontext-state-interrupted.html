@@ -117,6 +117,9 @@ function thirdInterruptionEnded() {
     debug('');
     debug('Test 4: resume() while interrupted will not resume playback after an interruption.')
 
+    if (window.internals)
+        evalAndLog('internals.setMediaSessionRestrictions("WebAudio", "InterruptedPlaybackNotPermitted")');
+
     context.onstatechange = fourthInterruptionStarted;
     if (window.internals)
         evalAndLog('internals.beginMediaSessionInterruption("System")');

@@ -1,3 +1,31 @@
+2016-05-04  Chris Dumez  <cdumez@apple.com>
+
+        Media elements should not be paused right away when removed from the document
+        https://bugs.webkit.org/show_bug.cgi?id=157347
+        <rdar://problem/25888758>
+
+        Reviewed by Alex Christensen.
+
+        * media/remove-from-document-expected.txt:
+        * media/remove-from-document.html:
+        Check asynchronously if the video has been paused after removing it from
+        the document instead of synchronously as we no longer pause the video
+        synchronously in this case.
+
+        * media/replaceChild-should-not-pause-video-expected.txt: Added.
+        * media/replaceChild-should-not-pause-video.html: Added.
+        Add test case to make sure that calling replaceChild() on with a video
+        element as newChild does not pause the video if it is already playing.
+        This is a regression test for <rdar://problem/25888758>.
+
+        * webaudio/audiocontext-state-interrupted-expected.txt:
+        * webaudio/audiocontext-state-interrupted.html:
+        Add a missing call to
+        internals.setMediaSessionRestrictions("WebAudio", "InterruptedPlaybackNotPermitted")
+        before the fourth test. The fourth test was previously passing by
+        chance, due to a bug in GenericEventQueue sometimes firing events
+        synchronously after they are scheduled.
+
 2016-05-04  Filip Pizlo  <fpizlo@apple.com>
 
         Speed up JSGlobalObject initialization by making some properties lazy

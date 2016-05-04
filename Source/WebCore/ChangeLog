@@ -1,3 +1,51 @@
+2016-05-04  Chris Dumez  <cdumez@apple.com>
+
+        Media elements should not be paused right away when removed from the document
+        https://bugs.webkit.org/show_bug.cgi?id=157347
+        <rdar://problem/25888758>
+
+        Reviewed by Alex Christensen.
+
+        Media elements should not be paused right away when removed from the document.
+        Instead we should allow the task that removed the media element from the
+        document to finish because considering pausing.
+
+        This avoid inadvertently pausing media elements when the JS merely moves them
+        on the page (e.g. using Node.replaceChild()).
+
+        Text from the HTML specification:
+        """
+        When a media element is removed from a Document, the user agent must run the
+        following steps:
+        1.  Await a stable state, allowing the task that removed the media element
+            from the Document to continue. The synchronous section consists of all the
+            remaining steps of this algorithm. (Steps in the synchronous section are
+            marked with ⌛.)
+        2. ⌛ If the media element is in a Document, abort these steps.
+        3. ⌛ Run the internal pause steps for the media element.
+        """
+
+        c.f. https://html.spec.whatwg.org/multipage/embedded-content.html#htmlmediaelement
+
+        Test: media/replaceChild-should-not-pause-video.html
+
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueue::sharedTimerFired):
+        Copy the queue of events before processing it so that we don't fire events that
+        get scheduled by the event handlers as a result of us firing the pending events.
+        Otherwise, we end up firing events synchronously right after they've been queued,
+        which is wrong. This was causing several W3C tests to fail.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::pauseAfterDetachedTimerFired):
+        (WebCore::HTMLMediaElement::removedFrom):
+        * html/HTMLMediaElement.h:
+        After the media element gets removed from the document, schedule a 0 timer before
+        pausing the media element, to give the task that removed us a chance to finish.
+        When the timer fires, we check if we were added back into an active document and
+        avoid pausing in such case.
+
 2016-05-04  Filip Pizlo  <fpizlo@apple.com>
 
         Speed up JSGlobalObject initialization by making some properties lazy
