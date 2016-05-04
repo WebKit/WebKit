@@ -52,7 +52,7 @@ ScriptArguments::~ScriptArguments()
 {
 }
 
-const Deprecated::ScriptValue &ScriptArguments::argumentAt(size_t index) const
+const Deprecated::ScriptValue& ScriptArguments::argumentAt(size_t index) const
 {
     ASSERT(m_arguments.size() > index);
     return m_arguments[index];
@@ -66,13 +66,9 @@ JSC::ExecState* ScriptArguments::globalState() const
     return nullptr;
 }
 
-bool ScriptArguments::getFirstArgumentAsString(String& result, bool checkForNullOrUndefined)
+bool ScriptArguments::getFirstArgumentAsString(String& result)
 {
     if (!argumentCount())
-        return false;
-
-    const Deprecated::ScriptValue& value = argumentAt(0);
-    if (checkForNullOrUndefined && (value.isNull() || value.isUndefined()))
         return false;
 
     if (!globalState()) {
@@ -80,7 +76,7 @@ bool ScriptArguments::getFirstArgumentAsString(String& result, bool checkForNull
         return false;
     }
 
-    result = value.toString(globalState());
+    result = argumentAt(0).toString(globalState());
     return true;
 }
 

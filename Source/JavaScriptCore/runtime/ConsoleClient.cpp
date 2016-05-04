@@ -178,7 +178,7 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
                 functionName = ASCIILiteral("(unknown)");
 
             StringBuilder callFrameBuilder;
-            callFrameBuilder.appendNumber(static_cast<unsigned long>(i));
+            callFrameBuilder.appendNumber(i);
             callFrameBuilder.appendLiteral(": ");
             callFrameBuilder.append(functionName);
             callFrameBuilder.append('(');

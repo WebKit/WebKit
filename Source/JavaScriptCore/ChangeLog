@@ -1,3 +1,19 @@
+2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused parameter of ScriptArguments::getFirstArgumentAsString
+        https://bugs.webkit.org/show_bug.cgi?id=157301
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/ScriptArguments.cpp:
+        (Inspector::ScriptArguments::getFirstArgumentAsString):
+        * inspector/ScriptArguments.h:
+        Remove unused argument and related code.
+
+        * runtime/ConsoleClient.cpp:
+        (JSC::ConsoleClient::printConsoleMessageWithArguments):
+        Drive by remove unnecessary cast.
+
 2016-05-03  Michael Saboff  <msaboff@apple.com>
 
         Crash: Array.prototype.slice() and .splice() can call fastSlice() after an array is truncated
