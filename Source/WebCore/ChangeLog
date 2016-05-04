@@ -1,3 +1,33 @@
+2016-05-04  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Refactor information stored related to column positions
+        https://bugs.webkit.org/show_bug.cgi?id=157342
+
+        Reviewed by Darin Adler.
+
+        In m_columnPositions we were storing position of each column
+        including the alignment offset, always from the logical left,
+        and the border and padding, depending on the direction.
+
+        This was really confusing as in the case of RTL direction
+        we were adding the offset from the left and
+        the right border and padding.
+
+        This patches changes it to store always the info from the left,
+        so even in RTL direction we use the left border and padding.
+
+        This allows us to simplify translateRTLCoordinate() as
+        it doesn't need to care about border and padding anymore.
+        And also to refactor offsetAndBreadthForPositionedChild()
+        which became really complex after adding RTL support.
+
+        No new tests, no change of behavior.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::populateGridPositions):
+        (WebCore::RenderGrid::translateRTLCoordinate):
+
 2016-05-04  Mark Lam  <mark.lam@apple.com>
 
         ES6 Function.name inferred from property names of literal objects can break some websites.

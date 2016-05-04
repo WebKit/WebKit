@@ -1560,18 +1560,24 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
     // We're normalizing the positions to avoid issues with RTL (as they're stored in the same order than LTR but adding an offset).
     LayoutUnit start;
     if (!startIsAuto) {
-        if (isRowAxis)
-            start = m_columnPositions[startLine] - m_columnPositions[0] + paddingStart();
-        else
-            start = m_rowPositions[startLine] - m_rowPositions[0] + paddingBefore();
+        if (isRowAxis) {
+            if (style().isLeftToRightDirection())
+                start = m_columnPositions[startLine] - borderLogicalLeft();
+            else
+                start = logicalWidth() - translateRTLCoordinate(m_columnPositions[startLine]) - borderLogicalRight();
+        } else
+            start = m_rowPositions[startLine] - borderBefore();
     }
 
     LayoutUnit end = isRowAxis ? clientLogicalWidth() : clientLogicalHeight();
     if (!endIsAuto) {
-        if (isRowAxis)
-            end = m_columnPositions[endLine] - m_columnPositions[0] + paddingStart();
-        else
-            end = m_rowPositions[endLine] - m_rowPositions[0] + paddingBefore();
+        if (isRowAxis) {
+            if (style().isLeftToRightDirection())
+                end = m_columnPositions[endLine] - borderLogicalLeft();
+            else
+                end = logicalWidth() - translateRTLCoordinate(m_columnPositions[endLine]) - borderLogicalRight();
+        } else
+            end = m_rowPositions[endLine] - borderBefore();
 
         // These vectors store line positions including gaps, but we shouldn't consider them for the edges of the grid.
         if (endLine > firstExplicitLine && endLine < lastExplicitLine) {
@@ -1579,15 +1585,6 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
             end -= isRowAxis ? m_offsetBetweenColumns : m_offsetBetweenRows;
         }
     }
-
-    LayoutUnit alignmentOffset = isRowAxis ? m_columnPositions[0] - borderAndPaddingStart() : m_rowPositions[0] - borderAndPaddingBefore();
-    if (isRowAxis && !style().isLeftToRightDirection())
-        alignmentOffset = contentLogicalWidth() - (m_columnPositions[m_columnPositions.size() - 1] - borderAndPaddingStart());
-
-    if (!startIsAuto)
-        start += alignmentOffset;
-    if (!endIsAuto)
-        end += alignmentOffset;
 
     breadth = end - start;
     offset = start;
@@ -1672,7 +1669,7 @@ void RenderGrid::populateGridPositions(GridSizingData& sizingData)
     ContentAlignmentData offset = computeContentPositionAndDistributionOffset(ForColumns, sizingData.freeSpaceForDirection(ForColumns).value(), numberOfTracks);
     LayoutUnit trackGap = guttersSize(ForColumns, 2);
     m_columnPositions.resize(numberOfLines);
-    m_columnPositions[0] = borderAndPaddingStart() + offset.positionOffset;
+    m_columnPositions[0] = borderAndPaddingLogicalLeft() + offset.positionOffset;
     for (unsigned i = 0; i < nextToLastLine; ++i)
         m_columnPositions[i + 1] = m_columnPositions[i] + offset.distributionOffset + sizingData.columnTracks[i].baseSize() + trackGap;
     m_columnPositions[lastLine] = m_columnPositions[nextToLastLine] + sizingData.columnTracks[nextToLastLine].baseSize();
@@ -2098,9 +2095,9 @@ LayoutUnit RenderGrid::translateRTLCoordinate(LayoutUnit coordinate) const
 {
     ASSERT(!style().isLeftToRightDirection());
 
-    LayoutUnit alignmentOffset = m_columnPositions[0] - borderAndPaddingStart();
+    LayoutUnit alignmentOffset = m_columnPositions[0];
     LayoutUnit rightGridEdgePosition = m_columnPositions[m_columnPositions.size() - 1];
-    return borderAndPaddingLogicalLeft() + rightGridEdgePosition + alignmentOffset - coordinate;
+    return rightGridEdgePosition + alignmentOffset - coordinate;
 }
 
 LayoutPoint RenderGrid::findChildLogicalPosition(const RenderBox& child) const
