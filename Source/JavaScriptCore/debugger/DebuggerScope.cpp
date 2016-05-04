@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2009, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,16 +36,8 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DebuggerScope);
 
 const ClassInfo DebuggerScope::s_info = { "DebuggerScope", &Base::s_info, 0, CREATE_METHOD_TABLE(DebuggerScope) };
 
-DebuggerScope* DebuggerScope::create(VM& vm, JSScope* scope)
-{
-    Structure* structure = scope->globalObject()->debuggerScopeStructure();
-    DebuggerScope* debuggerScope = new (NotNull, allocateCell<DebuggerScope>(vm.heap)) DebuggerScope(vm, structure, scope);
-    debuggerScope->finishCreation(vm);
-    return debuggerScope;
-}
-
-DebuggerScope::DebuggerScope(VM& vm, Structure* structure, JSScope* scope)
-    : JSNonFinalObject(vm, structure)
+DebuggerScope::DebuggerScope(VM& vm, JSScope* scope)
+    : JSNonFinalObject(vm, scope->globalObject()->debuggerScopeStructure())
 {
     ASSERT(scope);
     m_scope.set(vm, this, scope);

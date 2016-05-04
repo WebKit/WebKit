@@ -6763,8 +6763,7 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
 {
     JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
     TypedArrayType type = node->typedArrayType();
-    Structure* structure = globalObject->typedArrayStructureConcurrently(type);
-    RELEASE_ASSERT(structure);
+    Structure* structure = globalObject->typedArrayStructure(type);
     
     SpeculateInt32Operand size(this, node->child1());
     GPRReg sizeGPR = size.gpr();

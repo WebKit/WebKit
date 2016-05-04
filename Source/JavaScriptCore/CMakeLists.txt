@@ -740,7 +740,6 @@ set(JavaScriptCore_SOURCES
     runtime/JSWeakSet.cpp
     runtime/JSWithScope.cpp
     runtime/JSWrapperObject.cpp
-    runtime/LazyClassStructure.cpp
     runtime/LiteralParser.cpp
     runtime/Lookup.cpp
     runtime/MapConstructor.cpp

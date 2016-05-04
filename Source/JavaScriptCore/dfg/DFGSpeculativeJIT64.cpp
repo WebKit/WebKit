@@ -3861,7 +3861,7 @@ void SpeculativeJIT::compile(Node* node)
             JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
             callOperation(
                 operationNewTypedArrayWithOneArgumentForType(node->typedArrayType()),
-                resultGPR, globalObject->typedArrayStructureConcurrently(node->typedArrayType()),
+                resultGPR, globalObject->typedArrayStructure(node->typedArrayType()),
                 argumentGPR);
             m_jit.exceptionCheck();
             

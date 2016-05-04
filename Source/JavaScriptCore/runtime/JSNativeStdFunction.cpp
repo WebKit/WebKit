@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,8 +68,7 @@ JSNativeStdFunction* JSNativeStdFunction::create(VM& vm, JSGlobalObject* globalO
 {
     NativeExecutable* executable = lookUpOrCreateNativeExecutable(vm, runStdFunction, intrinsic, nativeConstructor, name);
     NativeStdFunctionCell* functionCell = NativeStdFunctionCell::create(vm, WTFMove(nativeStdFunction));
-    Structure* structure = globalObject->nativeStdFunctionStructure();
-    JSNativeStdFunction* function = new (NotNull, allocateCell<JSNativeStdFunction>(vm.heap)) JSNativeStdFunction(vm, globalObject, structure);
+    JSNativeStdFunction* function = new (NotNull, allocateCell<JSNativeStdFunction>(vm.heap)) JSNativeStdFunction(vm, globalObject, globalObject->nativeStdFunctionStructure());
     function->finishCreation(vm, executable, length, name, functionCell);
     return function;
 }

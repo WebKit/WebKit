@@ -64,8 +64,7 @@ JSBoundSlotBaseFunction* JSBoundSlotBaseFunction::create(VM& vm, JSGlobalObject*
 {
     NativeExecutable* executable = vm.getHostFunction(boundSlotBaseFunctionCall, callHostFunctionAsConstructor, name);
 
-    Structure* structure = globalObject->boundSlotBaseFunctionStructure();
-    JSBoundSlotBaseFunction* function = new (NotNull, allocateCell<JSBoundSlotBaseFunction>(vm.heap)) JSBoundSlotBaseFunction(vm, globalObject, structure, type);
+    JSBoundSlotBaseFunction* function = new (NotNull, allocateCell<JSBoundSlotBaseFunction>(vm.heap)) JSBoundSlotBaseFunction(vm, globalObject, globalObject->boundSlotBaseFunctionStructure(), type);
 
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     const char* prefix = (type == Type::Getter) ? "get " : "set ";
