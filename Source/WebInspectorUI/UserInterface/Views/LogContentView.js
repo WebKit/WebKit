@@ -970,11 +970,8 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
 
         this._startedProvisionalLoad = false;
 
-        for (var provisionalMessage of this._provisionalMessages) {
-            var messageView = this._logViewController.appendConsoleMessage(provisionalMessage);
-            if (messageView.message.type !== WebInspector.ConsoleMessage.MessageType.EndGroup)
-                this._filterMessageElements([messageView.element]);
-        }
+        for (let provisionalMessage of this._provisionalMessages)
+            this._logViewController.appendConsoleMessage(provisionalMessage);
 
         this._provisionalMessages = [];
     }

@@ -1,3 +1,15 @@
+2016-05-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r200401): Web Inspector: TypeError: undefined is not an object (evaluating 'messageElement.classList')
+        https://bugs.webkit.org/show_bug.cgi?id=157356
+        <rdar://problem/26097424>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._reappendProvisionalMessages):
+        Don't filter messages since we already do that in didAppendConsoleMessageView.
+
 2016-05-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: GC Root Path sometimes does not go up to Window
