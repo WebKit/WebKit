@@ -1,3 +1,23 @@
+2016-05-04  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Deduplicated initializer lists of BitmapImage constructors.
+        https://bugs.webkit.org/show_bug.cgi?id=157249
+
+        Reviewed by Darin Adler.
+
+        No new tests needed.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage): Added new private constructor of
+        BitmapImage for delegation purpose only.
+        * platform/graphics/BitmapImage.h: Use inline initialization for some
+        BitmapImage fields.
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::BitmapImage): Delegate field initialization to
+        new private constructor.
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::BitmapImage): Ditto.
+
 2016-05-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r200383 and r200406.

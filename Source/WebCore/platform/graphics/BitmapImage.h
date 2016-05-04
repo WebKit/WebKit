@@ -284,6 +284,8 @@ protected:
 #endif
 
 private:
+    template<typename T> BitmapImage(ImageObserver*, T fromNativeImage);
+
     void clearTimer();
     void startTimer(double delay);
 
@@ -293,14 +295,14 @@ private:
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).
     mutable IntSize m_sizeRespectingOrientation;
 
-    size_t m_currentFrame; // The index of the current frame of animation.
+    size_t m_currentFrame { 0 }; // The index of the current frame of animation.
     Vector<FrameData, 1> m_frames; // An array of the cached frames of the animation. We have to ref frames to pin them in the cache.
 
     std::unique_ptr<Timer> m_frameTimer;
-    int m_repetitionCount; // How many total animation loops we should do. This will be cAnimationNone if this image type is incapable of animation.
-    RepetitionCountStatus m_repetitionCountStatus;
-    int m_repetitionsComplete;  // How many repetitions we've finished.
-    double m_desiredFrameStartTime;  // The system time at which we hope to see the next call to startAnimation().
+    int m_repetitionCount { cAnimationNone }; // How many total animation loops we should do. This will be cAnimationNone if this image type is incapable of animation.
+    RepetitionCountStatus m_repetitionCountStatus { Unknown };
+    int m_repetitionsComplete { 0 }; // How many repetitions we've finished.
+    double m_desiredFrameStartTime { 0 }; // The system time at which we hope to see the next call to startAnimation().
 
 #if USE(APPKIT)
     mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
@@ -311,14 +313,14 @@ private:
 
     Color m_solidColor;  // If we're a 1x1 solid color, this is the color to use to fill.
 
-    unsigned m_decodedSize; // The current size of all decoded frames.
-    mutable unsigned m_decodedPropertiesSize; // The size of data decoded by the source to determine image properties (e.g. size, frame count, etc).
+    unsigned m_decodedSize { 0 }; // The current size of all decoded frames.
+    mutable unsigned m_decodedPropertiesSize { 0 }; // The size of data decoded by the source to determine image properties (e.g. size, frame count, etc).
     size_t m_frameCount;
 
 #if PLATFORM(IOS)
     // FIXME: We should expose a setting to enable/disable progressive loading remove the PLATFORM(IOS)-guard.
-    double m_progressiveLoadChunkTime;
-    uint16_t m_progressiveLoadChunkCount;
+    double m_progressiveLoadChunkTime { 0 };
+    uint16_t m_progressiveLoadChunkCount { 0 };
 #endif
     bool m_isSolidColor : 1; // Whether or not we are a 1x1 solid image.
     bool m_checkedForSolidColor : 1; // Whether we've checked the frame for solid color.
@@ -334,6 +336,22 @@ private:
 
     RefPtr<Image> m_cachedImage;
 };
+
+template<typename T>
+inline BitmapImage::BitmapImage(ImageObserver* observer, T fromNativeImage)
+    : Image(observer)
+    , m_frameCount(fromNativeImage ? 1 : 0)
+    , m_isSolidColor(false)
+    , m_checkedForSolidColor(false)
+    , m_animationFinished(fromNativeImage)
+    , m_allDataReceived(fromNativeImage)
+    , m_haveSize(fromNativeImage)
+    , m_sizeAvailable(fromNativeImage)
+    , m_hasUniformFrameSize(true)
+    , m_haveFrameCount(fromNativeImage)
+    , m_animationFinishedWhenCatchingUp(false)
+{
+}
 
 } // namespace WebCore
 

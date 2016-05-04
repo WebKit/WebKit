@@ -46,29 +46,7 @@
 namespace WebCore {
 
 BitmapImage::BitmapImage(ImageObserver* observer)
-    : Image(observer)
-    , m_currentFrame(0)
-    , m_repetitionCount(cAnimationNone)
-    , m_repetitionCountStatus(Unknown)
-    , m_repetitionsComplete(0)
-    , m_desiredFrameStartTime(0)
-    , m_decodedSize(0)
-    , m_decodedPropertiesSize(0)
-    , m_frameCount(0)
-#if PLATFORM(IOS)
-    // FIXME: We should expose a setting to enable/disable progressive loading remove the PLATFORM(IOS)-guard.
-    , m_progressiveLoadChunkTime(0)
-    , m_progressiveLoadChunkCount(0)
-#endif
-    , m_isSolidColor(false)
-    , m_checkedForSolidColor(false)
-    , m_animationFinished(false)
-    , m_allDataReceived(false)
-    , m_haveSize(false)
-    , m_sizeAvailable(false)
-    , m_hasUniformFrameSize(true)
-    , m_haveFrameCount(false)
-    , m_animationFinishedWhenCatchingUp(false)
+    : BitmapImage(observer, std::false_type())
 {
 }
 

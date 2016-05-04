@@ -68,21 +68,7 @@ bool FrameData::clear(bool clearMetadata)
 }
 
 BitmapImage::BitmapImage(RetainPtr<CGImageRef>&& image, ImageObserver* observer)
-    : Image(observer)
-    , m_currentFrame(0)
-    , m_repetitionCount(cAnimationNone)
-    , m_repetitionCountStatus(Unknown)
-    , m_repetitionsComplete(0)
-    , m_decodedSize(0)
-    , m_decodedPropertiesSize(0)
-    , m_frameCount(1)
-    , m_isSolidColor(false)
-    , m_checkedForSolidColor(false)
-    , m_animationFinished(true)
-    , m_allDataReceived(true)
-    , m_haveSize(true)
-    , m_sizeAvailable(true)
-    , m_haveFrameCount(true)
+    : BitmapImage(observer, std::true_type())
 {
     CGFloat width = CGImageGetWidth(image.get());
     CGFloat height = CGImageGetHeight(image.get());
