@@ -105,6 +105,7 @@ const char* landmarkStringComplementary = "AXLandmarkComplementary";
 const char* landmarkStringContentinfo = "AXLandmarkContentInfo";
 const char* landmarkStringMain = "AXLandmarkMain";
 const char* landmarkStringNavigation = "AXLandmarkNavigation";
+const char* landmarkStringRegion = "AXLandmarkRegion";
 const char* landmarkStringSearch = "AXLandmarkSearch";
 #endif
 
@@ -331,6 +332,8 @@ const gchar* roleToString(AtkObject* object)
             return landmarkStringMain;
         if (equalLettersIgnoringASCIICase(xmlRolesValue, "navigation"))
             return landmarkStringNavigation;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "region"))
+            return landmarkStringRegion;
         if (equalLettersIgnoringASCIICase(xmlRolesValue, "search"))
             return landmarkStringSearch;
     }

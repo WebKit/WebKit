@@ -1,3 +1,16 @@
+2016-05-04  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: ARIA 'region' role is now a landmark; HTML 'section' element should be a landmark only if named
+        https://bugs.webkit.org/show_bug.cgi?id=157331
+
+        Reviewed by Chris Fleizach.
+
+        As part of this change, the WebCore DocumentRegionRole AccessibilityRole has
+        been renamed to LandmarkRegionRole. Update MSAARole() to use the new name.
+
+        * AccessibleBase.cpp:
+        (MSAARole):
+
 2016-04-25  Per Arne Vollan  <peavo@outlook.com>
 
         [Win][IndexedDB] Fix build errors.

@@ -1,3 +1,32 @@
+2016-05-04  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: ARIA 'region' role is now a landmark; HTML 'section' element should be a landmark only if named
+        https://bugs.webkit.org/show_bug.cgi?id=157331
+
+        Reviewed by Chris Fleizach.
+
+        Our existing test coverage for exposure of the 'region' role and the 'section'
+        element is sufficient. These tests were updated to reflect the new behavior.
+        Several new test cases were added to cover both sections with accessible names
+        and those without.
+
+        * accessibility/gtk/xml-roles-exposed-expected.txt: Updated.
+        * accessibility/mac/aria-grouping-roles-expected.txt: Updated.
+        * accessibility/mac/aria-grouping-roles.html: Updated.
+        * accessibility/mac/html-section-elements-expected.txt: Updated.
+        * accessibility/mac/html-section-elements.html: Updated.
+        * accessibility/mac/landmark-not-ignored-expected.txt: Updated.
+        * accessibility/mac/landmark-not-ignored.html: Updated.
+        * accessibility/roles-computedRoleString-expected.txt: Updated.
+        * accessibility/roles-computedRoleString.html: New test cases added.
+        * accessibility/roles-exposed.html: New test cases added.
+        * platform/efl/accessibility/roles-exposed-expected.txt: Updated.
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt: Updated.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated.
+        * platform/mac-mavericks/accessibility/roles-exposed-expected.txt: Updated.
+        * platform/mac/accessibility/roles-exposed-expected.txt: Updated.
+        * platform/win/accessibility/roles-exposed-expected.txt: Updated.
+
 2016-05-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Clicks inside button elements are sometimes discarded when the mouse moves

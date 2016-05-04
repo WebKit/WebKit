@@ -24,7 +24,7 @@ PASS el.subrole is "AXSubrole: AXLandmarkNavigation"
 PASS el.role is "AXRole: AXGroup"
 PASS el.subrole is "AXSubrole: AXDocumentArticle"
 PASS el.role is "AXRole: AXGroup"
-PASS el.subrole is "AXSubrole: AXDocumentRegion"
+PASS el.subrole is "AXSubrole: "
 PASS successfullyParsed is true
 
 TEST COMPLETE

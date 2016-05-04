@@ -502,13 +502,13 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case DocumentRole:
     case DocumentArticleRole:
     case DocumentNoteRole:
-    case DocumentRegionRole:
     case FooterRole:
     case LandmarkBannerRole:
     case LandmarkComplementaryRole:
     case LandmarkContentInfoRole:
     case LandmarkMainRole:
     case LandmarkNavigationRole:
+    case LandmarkRegionRole:
     case LandmarkSearchRole:
         return YES;
     default:
@@ -809,7 +809,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case DocumentRole:
         case DocumentArticleRole:
         case DocumentNoteRole:
-        case DocumentRegionRole:
         case DrawerRole:
         case EditableTextRole:
         case FooterRole:
@@ -826,6 +825,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case LandmarkContentInfoRole:
         case LandmarkMainRole:
         case LandmarkNavigationRole:
+        case LandmarkRegionRole:
         case LandmarkSearchRole:
         case LegendRole:
         case ListRole:

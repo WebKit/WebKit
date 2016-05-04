@@ -161,7 +161,11 @@
 <s data-platform="atk,mac" class="ex">X</s>
 <samp data-platform="atk,mac" class="ex">X</samp>
 <!-- skipped <script> -->
-<!-- http://webkit.org/b/109024 --><section data-platform="atk,mac" class="ex">X</section>
+<!-- http://webkit.org/b/109024 --><section data-platform="atk,mac" data-note=":not([aria-label]:not([aria-labelledby])" class="ex">X</section>
+<section data-platform="atk,mac" class="ex" aria-label="x" data-note="[aria-label]">X</section>
+<section data-platform="atk,mac" class="ex" aria-labelledby="section-label" data-note="[aria-labelledby]">
+    <h2 id="section-label">X</h2>
+</section>
 <select data-platform="atk,mac" class="ex" data-note=":not([multiple])">
     <option data-platform="atk,mac" class="ex">X</option>
     <optgroup data-platform="atk,mac" class="ex" label="more">

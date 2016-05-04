@@ -1,3 +1,15 @@
+2016-05-04  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: ARIA 'region' role is now a landmark; HTML 'section' element should be a landmark only if named
+        https://bugs.webkit.org/show_bug.cgi?id=157331
+
+        Reviewed by Chris Fleizach.
+
+        Add AXLandmarkRegion to the landmark strings handled by roleToString
+        for objects with ATK_ROLE_LANDMARK.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+
 2016-05-03  Beth Dakin  <bdakin@apple.com>
 
         Add VideoControlsManager tests

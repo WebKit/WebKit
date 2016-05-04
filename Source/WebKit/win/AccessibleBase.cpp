@@ -967,7 +967,6 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::DocumentRole:
         case WebCore::DocumentArticleRole:
         case WebCore::DocumentNoteRole:
-        case WebCore::DocumentRegionRole:
             return ROLE_SYSTEM_GROUPING;
         case WebCore::DocumentMathRole:
         case WebCore::MathElementRole:
@@ -980,6 +979,7 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::LandmarkContentInfoRole:
         case WebCore::LandmarkMainRole:
         case WebCore::LandmarkNavigationRole:
+        case WebCore::LandmarkRegionRole:
         case WebCore::LandmarkSearchRole:
         case WebCore::LegendRole:
             return ROLE_SYSTEM_GROUPING;

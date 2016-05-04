@@ -310,7 +310,7 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     case DocumentArticleRole:
     case DocumentMathRole:
     case DocumentNoteRole:
-    case DocumentRegionRole:
+    case LandmarkRegionRole:
     case FormRole:
     case GridRole:
     case GroupRole:
@@ -406,6 +406,7 @@ bool AccessibilityObject::isLandmark() const
         || role == LandmarkContentInfoRole
         || role == LandmarkMainRole
         || role == LandmarkNavigationRole
+        || role == LandmarkRegionRole
         || role == LandmarkSearchRole;
 }
 
@@ -2076,7 +2077,7 @@ static void initializeRoleMap()
         { "progressbar", ProgressIndicatorRole },
         { "radio", RadioButtonRole },
         { "radiogroup", RadioGroupRole },
-        { "region", DocumentRegionRole },
+        { "region", LandmarkRegionRole },
         { "row", RowRole },
         { "rowgroup", RowGroupRole },
         { "scrollbar", ScrollBarRole },

@@ -76,7 +76,11 @@
 <s data-role="" class="ex">X</s>
 <samp data-role="" class="ex">X</samp>
 <!-- skipped <script> -->
-<section data-role="region" class="ex">X</section>
+<section data-role="group" class="ex" data-note=":not([aria-label]:not([aria-labelledby])">X</section>
+<section data-role="region" class="ex" aria-label="x" data-note="[aria-label]">X</section>
+<section data-role="region" class="ex" aria-labelledby="section-label" data-note="[aria-labelledby]">
+    <h2 id="section-label">X</h2>
+</section>
 <select data-role="" class="ex" data-note=":not([multiple])">
     <option data-role="" class="ex">X</option>
     <optgroup data-role="" class="ex" label="more">

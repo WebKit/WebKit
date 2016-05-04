@@ -1254,7 +1254,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     case DescriptionListDetailRole:
     case DetailsRole:
     case DocumentArticleRole:
-    case DocumentRegionRole:
+    case LandmarkRegionRole:
     case ListItemRole:
     case VideoRole:
         return false;
@@ -2699,8 +2699,11 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(asideTag))
         return LandmarkComplementaryRole;
 
+    // The default role attribute value for the section element, region, became a landmark in ARIA 1.1.
+    // The HTML AAM spec says it is "strongly recommended" that ATs only convey and provide navigation
+    // for section elements which have names.
     if (node && node->hasTagName(sectionTag))
-        return DocumentRegionRole;
+        return hasAttribute(aria_labelAttr) || hasAttribute(aria_labelledbyAttr) ? LandmarkRegionRole : GroupRole;
 
     if (node && node->hasTagName(addressTag))
         return LandmarkContentInfoRole;

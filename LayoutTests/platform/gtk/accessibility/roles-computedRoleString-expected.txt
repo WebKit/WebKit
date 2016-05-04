@@ -52,7 +52,9 @@ PASS: p -> .
 PASS: pre -> group. 
 PASS: progress -> progressbar. 
 PASS: samp -> . 
-PASS: section -> region. 
+PASS: section:not([aria-label]:not([aria-labelledby]) -> group. 
+PASS: section[aria-label] -> region. 
+PASS: section[aria-labelledby] -> region. 
 PASS: select:not([multiple]) -> . 
 PASS: option -> . 
 PASS: option -> . 

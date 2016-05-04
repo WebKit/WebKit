@@ -27,18 +27,18 @@
         shouldBe("test.childrenCount", "7");
 
         var subroles = [
-            "LandmarkBanner",
-            "LandmarkComplementary",
-            "LandmarkContentInfo",
-            "LandmarkMain",
-            "LandmarkNavigation",
-            "DocumentArticle",
-            "DocumentRegion"
+            "AXLandmarkBanner",
+            "AXLandmarkComplementary",
+            "AXLandmarkContentInfo",
+            "AXLandmarkMain",
+            "AXLandmarkNavigation",
+            "AXDocumentArticle",
+            ""
         ];
         for (var i = 0; i < test.childrenCount; i++) {
             var el = test.childAtIndex(i);
             shouldBeEqualToString("el.role", "AXRole: AXGroup");
-            shouldBeEqualToString("el.subrole", "AXSubrole: AX" + subroles[i]);
+            shouldBeEqualToString("el.subrole", "AXSubrole: " + subroles[i]);
         }
     }
 

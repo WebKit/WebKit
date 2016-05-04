@@ -1,3 +1,43 @@
+2016-05-04  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: ARIA 'region' role is now a landmark; HTML 'section' element should be a landmark only if named
+        https://bugs.webkit.org/show_bug.cgi?id=157331
+
+        Reviewed by Chris Fleizach.
+
+        The 'region' role is now mapped as a landmark: The WebCore DocumentRegionRole
+        AccessibilityRole has been renamed to LandmarkRegionRole. The AXDocumentRegion
+        subrole has been renamed to AXLandmarkRegion. A 'section' element is mapped to
+        the LandmarkRegionRole if it has an author-provided accessible name via either
+        the aria-label or aria-labelledby attribute. Otherwise, it is mapped as GroupRole
+        with no subrole.
+
+        Our existing test coverage for exposure of the 'region' role and the 'section'
+        element is sufficient. These tests were updated to reflect the new behavior.
+        Several new test cases were added to cover both sections with accessible names
+        and those without.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::accessibleNameDerivesFromContent):
+        (WebCore::AccessibilityObject::isLandmark):
+        (WebCore::initializeRoleMap):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityIsLandmarkRole:]):
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase ariaLandmarkRoleDescription]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXARIAContentGroupText):
+
 2016-05-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Clicks inside button elements are sometimes discarded when the mouse moves

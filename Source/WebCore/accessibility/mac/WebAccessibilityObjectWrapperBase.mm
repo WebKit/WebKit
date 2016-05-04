@@ -332,6 +332,8 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
         return AXARIAContentGroupText(@"ARIALandmarkMain");
     case LandmarkNavigationRole:
         return AXARIAContentGroupText(@"ARIALandmarkNavigation");
+    case LandmarkRegionRole:
+        return AXARIAContentGroupText(@"ARIALandmarkRegion");
     case LandmarkSearchRole:
         return AXARIAContentGroupText(@"ARIALandmarkSearch");
     case ApplicationAlertRole:
@@ -356,8 +358,6 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
         return AXARIAContentGroupText(@"ARIADocumentMath");
     case DocumentNoteRole:
         return AXARIAContentGroupText(@"ARIADocumentNote");
-    case DocumentRegionRole:
-        return AXARIAContentGroupText(@"ARIADocumentRegion");
     case UserInterfaceTooltipRole:
         return AXARIAContentGroupText(@"ARIAUserInterfaceTooltip");
     case TabPanelRole:

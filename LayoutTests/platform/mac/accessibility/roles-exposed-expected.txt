@@ -579,9 +579,19 @@ samp
       AXSubrole: AXSampleStyleGroup
       AXRoleDescription: group
       
-section
+section:not([aria-label]:not([aria-labelledby])
       AXRole: AXGroup
-      AXSubrole: AXDocumentRegion
+      AXSubrole: 
+      AXRoleDescription: group
+      
+section[aria-label]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
+      AXRoleDescription: region
+      
+section[aria-labelledby]
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkRegion
       AXRoleDescription: region
       
 select:not([multiple])
@@ -1036,7 +1046,7 @@ div[role=radio]
       
 div[role=region]
       AXRole: AXGroup
-      AXSubrole: AXDocumentRegion
+      AXSubrole: AXLandmarkRegion
       AXRoleDescription: region
       
 div[role=scrollbar]

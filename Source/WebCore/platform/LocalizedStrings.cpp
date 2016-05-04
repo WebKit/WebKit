@@ -710,8 +710,6 @@ String AXARIAContentGroupText(const String& ariaType)
         return WEB_UI_STRING("article", "An ARIA accessibility group that acts as an article.");
     if (ariaType == "ARIADocumentNote")
         return WEB_UI_STRING("note", "An ARIA accessibility group that acts as a note in a document.");
-    if (ariaType == "ARIADocumentRegion")
-        return WEB_UI_STRING("region", "An ARIA accessibility group that acts as a distinct region in a document.");
     if (ariaType == "ARIAWebApplication")
         return WEB_UI_STRING("web application", "An ARIA accessibility group that acts as an application.");
     if (ariaType == "ARIALandmarkBanner")
@@ -724,6 +722,8 @@ String AXARIAContentGroupText(const String& ariaType)
         return WEB_UI_STRING("main", "An ARIA accessibility group that is the main portion of the website.");
     if (ariaType == "ARIALandmarkNavigation")
         return WEB_UI_STRING("navigation", "An ARIA accessibility group that contains the main navigation elements of a website.");
+    if (ariaType == "ARIALandmarkRegion")
+        return WEB_UI_STRING("region", "An ARIA accessibility group that acts as a distinct region in a document.");
     if (ariaType == "ARIALandmarkSearch")
         return WEB_UI_STRING("search", "An ARIA accessibility group that contains a search feature of a website.");
     if (ariaType == "ARIAUserInterfaceTooltip")

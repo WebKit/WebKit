@@ -518,7 +518,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:radio, xml-roles:radio, tag:div, toolkit:WebKitGtk
 ------------
-AXRole: AXGroup
+AXRole: AXLandmarkRegion
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }

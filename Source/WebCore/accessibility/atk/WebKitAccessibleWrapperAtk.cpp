@@ -597,7 +597,6 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_TABLE;
     case ApplicationRole:
         return ATK_ROLE_APPLICATION;
-    case DocumentRegionRole:
     case RadioGroupRole:
     case SVGRootRole:
     case TabPanelRole:
@@ -714,6 +713,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case LandmarkContentInfoRole:
     case LandmarkMainRole:
     case LandmarkNavigationRole:
+    case LandmarkRegionRole:
     case LandmarkSearchRole:
         return ATK_ROLE_LANDMARK;
 #endif

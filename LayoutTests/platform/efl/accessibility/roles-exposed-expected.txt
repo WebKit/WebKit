@@ -349,8 +349,14 @@ s
 samp
       AXRole: 
       
-section
+section:not([aria-label]:not([aria-labelledby])
       AXRole: AXGroup
+      
+section[aria-label]
+      AXRole: AXLandmarkRegion
+      
+section[aria-labelledby]
+      AXRole: AXLandmarkRegion
       
 select:not([multiple])
       AXRole: AXComboBox
@@ -623,7 +629,7 @@ div[role=radio]
       AXRole: AXRadioButton
       
 div[role=region]
-      AXRole: AXGroup
+      AXRole: AXLandmarkRegion
       
 div[role=scrollbar]
       AXRole: AXScrollBar
