@@ -1,3 +1,13 @@
+2016-05-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, fixing crashing GTK+ tests after r200407.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGLData::SharedGLData::~SharedGLData):
+        Don't use RELEASE_ASSERT. Also fix the actual assertion,
+        checking that any of the values in the map matches the object
+        that's being destroyed, instead of checking the keys.
+
 2016-05-04  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Add WKPreference for SelectionPaintingWithoutSelectionGaps
