@@ -468,16 +468,6 @@ bool WKPreferencesGetWebGLEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->webGLEnabled();
 }
 
-void WKPreferencesSetWebGL2Enabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setWebGL2Enabled(flag);
-}
-
-bool WKPreferencesGetWebGL2Enabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->webGL2Enabled();
-}
-
 void WKPreferencesSetForceSoftwareWebGLRendering(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setForceSoftwareWebGLRendering(flag);
@@ -1504,26 +1494,6 @@ void WKPreferencesSetMockCaptureDevicesEnabled(WKPreferencesRef preferencesRef, 
 bool WKPreferencesGetMockCaptureDevicesEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->mockCaptureDevicesEnabled();
-}
-
-void WKPreferencesSetShadowDOMEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setShadowDOMEnabled(flag);
-}
-
-bool WKPreferencesGetShadowDOMEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->shadowDOMEnabled();
-}
-
-void WKPreferencesSetCustomElementsEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setCustomElementsEnabled(flag);
-}
-
-bool WKPreferencesGetCustomElementsEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->customElementsEnabled();
 }
 
 void WKPreferencesSetFetchAPIEnabled(WKPreferencesRef preferencesRef, bool flag)

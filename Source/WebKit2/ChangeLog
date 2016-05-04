@@ -1,5 +1,43 @@
 2016-05-04  Dean Jackson  <dino@apple.com>
 
+        Experimental features should toggle runtime flags
+        https://bugs.webkit.org/show_bug.cgi?id=157353
+        <rdar://problem/23621603>
+
+        Reviewed by Anders Carlsson.
+
+        Hook up the experimental WebPreferences to RuntimeEnabledFeatures.
+        In the process I removed the general preference for WebGL 2 (we
+        already had an experimental feature for it) and moved Custom
+        Elements and Shadow DOM to experimental.
+
+        I also removed the C versions of the preferences, since experimental
+        features only need the ObjC API (which is generated automatically).
+
+        * Shared/WebPreferencesDefinitions.h: Move/remove some features and
+        make the experimental section more clear.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebGL2Enabled): Deleted.
+        (WKPreferencesGetWebGL2Enabled): Deleted.
+        (WKPreferencesSetShadowDOMEnabled): Deleted.
+        (WKPreferencesGetShadowDOMEnabled): Deleted.
+        (WKPreferencesSetCustomElementsEnabled): Deleted.
+        (WKPreferencesGetCustomElementsEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::updateBoolValueForExperimentalFeatureKey): A
+        version of updateBoolValueForKey that doesn't call the platform
+        function (e.g. doesn't save to NSUserDefaults).
+        * UIProcess/WebPreferences.h:
+        * UIProcess/mac/WebPreferencesMac.mm:
+        (WebKit::WebPreferences::platformInitializeStore): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+2016-05-04  Dean Jackson  <dino@apple.com>
+
         TestRunner should always enable all the experimental features
         https://bugs.webkit.org/show_bug.cgi?id=157360
         <rdar://problem/26099748>

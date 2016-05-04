@@ -193,21 +193,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setCSSCompositingEnabled(enabled);
 #endif
     
-#if ENABLE(SHADOW_DOM)
-    if (preference == "WebKitShadowDOMEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
-#endif
-
-#if ENABLE(CUSTOM_ELEMENTS)
-    if (preference == "WebKitCustomElementsEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled(enabled);
-#endif
-
-#if ENABLE(WEBGL2)
-    if (preference == "WebKitWebGL2Enabled")
-        RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(enabled);
-#endif
-
 #if ENABLE(FETCH_API)
     if (preference == "WebKitFetchAPIEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(enabled);
@@ -221,6 +206,21 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #if ENABLE(CSS_GRID_LAYOUT)
     if (preference == "WebKitExperimentalCSSGridLayoutEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(enabled);
+#endif
+
+#if ENABLE(CUSTOM_ELEMENTS)
+    if (preference == "WebKitExperimentalCustomElementsEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled(enabled);
+#endif
+
+#if ENABLE(SHADOW_DOM)
+    if (preference == "WebKitExperimentalShadowDOMEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
+#endif
+
+#if ENABLE(WEBGL2)
+    if (preference == "WebKitExperimentalWebGL2Enabled")
+        RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(enabled);
 #endif
 
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.

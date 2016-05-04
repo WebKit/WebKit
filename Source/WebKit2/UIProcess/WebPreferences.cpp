@@ -129,6 +129,11 @@ void WebPreferences::updateBoolValueForKey(const String& key, bool value)
     update(); // FIXME: Only send over the changed key and value.
 }
 
+void WebPreferences::updateBoolValueForExperimentalFeatureKey(const String& key, bool value)
+{
+    update(); // FIXME: Only send over the changed key and value.
+}
+
 void WebPreferences::updateUInt32ValueForKey(const String& key, uint32_t value)
 {
     platformUpdateUInt32ValueForKey(key, value);
@@ -187,9 +192,26 @@ void WebPreferences::updatePrivateBrowsingValue(bool value)
 
 FOR_EACH_WEBKIT_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
 FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
-FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
 
 #undef DEFINE_PREFERENCE_GETTER_AND_SETTERS
+
+#define DEFINE_EXPERIMENTAL_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
+    void WebPreferences::set##KeyUpper(const Type& value) \
+    { \
+        if (!m_store.set##TypeName##ValueForKey(WebPreferencesKey::KeyLower##Key(), value)) \
+            return; \
+        update##TypeName##ValueForExperimentalFeatureKey(WebPreferencesKey::KeyLower##Key(), value); \
+    \
+    } \
+    \
+    Type WebPreferences::KeyLower() const \
+    { \
+        return m_store.get##TypeName##ValueForKey(WebPreferencesKey::KeyLower##Key()); \
+    } \
+
+FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DEFINE_EXPERIMENTAL_PREFERENCE_GETTER_AND_SETTERS)
+
+#undef DEFINE_EXPERIMENTAL_PREFERENCE_GETTER_AND_SETTERS
 
 static Vector<RefPtr<API::Object>> createExperimentalFeaturesVector()
 {
