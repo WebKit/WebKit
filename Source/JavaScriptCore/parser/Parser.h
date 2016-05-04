@@ -530,11 +530,11 @@ public:
     bool isArrowFunctionBoundary() { return m_isArrowFunctionBoundary; }
     bool isArrowFunction() { return m_isArrowFunction; }
 
-    bool hasDirectSuper() { return m_hasDirectSuper; }
-    void setHasDirectSuper() { m_hasDirectSuper = true; }
+    bool hasDirectSuper() const { return m_hasDirectSuper; }
+    bool setHasDirectSuper() { return std::exchange(m_hasDirectSuper, true); }
 
-    bool needsSuperBinding() { return m_needsSuperBinding; }
-    void setNeedsSuperBinding() { m_needsSuperBinding = true; }
+    bool needsSuperBinding() const { return m_needsSuperBinding; }
+    bool setNeedsSuperBinding() { return std::exchange(m_needsSuperBinding, true); }
     
     void setEvalContextType(EvalContextType evalContextType) { m_evalContextType = evalContextType; }
     EvalContextType evalContextType() { return m_evalContextType; }
@@ -1034,6 +1034,7 @@ private:
         ASSERT(i < m_scopeStack.size() && m_scopeStack.size());
         while (i && (!m_scopeStack[i].isFunctionBoundary() || m_scopeStack[i].isGeneratorBoundary() || m_scopeStack[i].isArrowFunctionBoundary()))
             i--;
+        // When reaching the top level scope (it can be non ordinary function scope), we return it.
         return ScopeRef(&m_scopeStack, i);
     }
     

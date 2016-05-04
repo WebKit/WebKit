@@ -505,6 +505,9 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseGenerato
     {
         AutoPopScopeRef generatorBodyScope(this, pushScope());
         generatorBodyScope->setSourceParseMode(SourceParseMode::GeneratorBodyMode);
+        generatorBodyScope->setConstructorKind(ConstructorKind::None);
+        generatorBodyScope->setExpectedSuperBinding(m_superBinding);
+
         SyntaxChecker generatorFunctionContext(const_cast<VM*>(m_vm), m_lexer.get());
         failIfFalse(parseSourceElements(generatorFunctionContext, mode), "Cannot parse the body of a generator");
         popScope(generatorBodyScope, TreeBuilder::NeedsFreeVariableInfo);
@@ -2115,15 +2118,14 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     if (mode == SourceParseMode::GeneratorWrapperFunctionMode) {
         AutoPopScopeRef generatorBodyScope(this, pushScope());
         generatorBodyScope->setSourceParseMode(SourceParseMode::GeneratorBodyMode);
+        generatorBodyScope->setConstructorKind(ConstructorKind::None);
+        generatorBodyScope->setExpectedSuperBinding(expectedSuperBinding);
+
         functionInfo.body = performParsingFunctionBody();
 
         // When a generator has a "use strict" directive, a generator function wrapping it should be strict mode.
         if  (generatorBodyScope->strictMode())
             functionScope->setStrictMode();
-
-        semanticFailIfTrue(generatorBodyScope->hasDirectSuper(), "super is not valid in this context");
-        if (generatorBodyScope->needsSuperBinding())
-            semanticFailIfTrue(expectedSuperBinding == SuperBinding::NotNeeded, "super is not valid in this context");
 
         popScope(generatorBodyScope, TreeBuilder::NeedsFreeVariableInfo);
     } else
@@ -2136,26 +2138,6 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         RELEASE_ASSERT(mode == SourceParseMode::NormalFunctionMode || mode == SourceParseMode::MethodMode || mode == SourceParseMode::ArrowFunctionMode || mode == SourceParseMode::GeneratorBodyMode || mode == SourceParseMode::GeneratorWrapperFunctionMode);
         semanticFailIfTrue(m_vm->propertyNames->arguments == *functionInfo.name, "'", functionInfo.name->impl(), "' is not a valid function name in strict mode");
         semanticFailIfTrue(m_vm->propertyNames->eval == *functionInfo.name, "'", functionInfo.name->impl(), "' is not a valid function name in strict mode");
-    }
-    // It unncecessary to check of using super during reparsing one more time. Also it can lead to syntax error
-    // in case of arrow function becuase during reparsing we don't know that parse arrow function
-    // inside of the constructor or method
-    if (!m_lexer->isReparsingFunction()) {
-        if (functionScope->hasDirectSuper()) {
-            ScopeRef scopeRef = closestParentOrdinaryFunctionNonLexicalScope();
-            ConstructorKind functionConstructorKind = functionBodyType == StandardFunctionBodyBlock && !scopeRef->isEvalContext()
-                ? constructorKind
-                : scopeRef->constructorKind();
-            semanticFailIfTrue(functionConstructorKind == ConstructorKind::None, "super is not valid in this context");
-            semanticFailIfTrue(functionConstructorKind != ConstructorKind::Derived, "super is not valid in this context");
-        }
-        if (functionScope->needsSuperBinding()) {
-            ScopeRef scopeRef = closestParentOrdinaryFunctionNonLexicalScope();
-            SuperBinding functionSuperBinding = functionBodyType == StandardFunctionBodyBlock && !scopeRef->isEvalContext()
-                ? expectedSuperBinding
-                : scopeRef->expectedSuperBinding();
-            semanticFailIfTrue(functionSuperBinding == SuperBinding::NotNeeded, "super is not valid in this context");
-        }
     }
 
     JSTokenLocation location = JSTokenLocation(m_token.m_location);
@@ -3932,11 +3914,22 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     }
 
     if (baseIsSuper) {
-        ScopeRef scopeRef = closestParentOrdinaryFunctionNonLexicalScope();
-        semanticFailIfFalse(currentScope()->isFunction() || (scopeRef->isEvalContext() && scopeRef->expectedSuperBinding() == SuperBinding::Needed), "super is not valid in this context");
+        ScopeRef closestOrdinaryFunctionScope = closestParentOrdinaryFunctionNonLexicalScope();
+        semanticFailIfFalse(currentScope()->isFunction() || (closestOrdinaryFunctionScope->isEvalContext() && closestOrdinaryFunctionScope->expectedSuperBinding() == SuperBinding::Needed), "super is not valid in this context");
         base = context.createSuperExpr(location);
         next();
-        currentFunctionScope()->setNeedsSuperBinding();
+        ScopeRef functionScope = currentFunctionScope();
+        if (!functionScope->setNeedsSuperBinding()) {
+            // It unnecessary to check of using super during reparsing one more time. Also it can lead to syntax error
+            // in case of arrow function because during reparsing we don't know whether we currently parse the arrow function
+            // inside of the constructor or method.
+            if (!m_lexer->isReparsingFunction()) {
+                SuperBinding functionSuperBinding = !functionScope->isArrowFunction() && !closestOrdinaryFunctionScope->isEvalContext()
+                    ? functionScope->expectedSuperBinding()
+                    : closestOrdinaryFunctionScope->expectedSuperBinding();
+                semanticFailIfTrue(functionSuperBinding == SuperBinding::NotNeeded, "super is not valid in this context");
+            }
+        }
     } else if (!baseIsNewTarget)
         base = parsePrimaryExpression(context);
 
@@ -3975,9 +3968,22 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 TreeArguments arguments = parseArguments(context);
                 failIfFalse(arguments, "Cannot parse call arguments");
                 if (baseIsSuper) {
-                    currentFunctionScope()->setHasDirectSuper();
+                    ScopeRef functionScope = currentFunctionScope();
+                    if (!functionScope->setHasDirectSuper()) {
+                        // It unnecessary to check of using super during reparsing one more time. Also it can lead to syntax error
+                        // in case of arrow function because during reparsing we don't know whether we currently parse the arrow function
+                        // inside of the constructor or method.
+                        if (!m_lexer->isReparsingFunction()) {
+                            ScopeRef closestOrdinaryFunctionScope = closestParentOrdinaryFunctionNonLexicalScope();
+                            ConstructorKind functionConstructorKind = !functionScope->isArrowFunction() && !closestOrdinaryFunctionScope->isEvalContext()
+                                ? functionScope->constructorKind()
+                                : closestOrdinaryFunctionScope->constructorKind();
+                            semanticFailIfTrue(functionConstructorKind == ConstructorKind::None, "super is not valid in this context");
+                            semanticFailIfTrue(functionConstructorKind != ConstructorKind::Derived, "super is not valid in this context");
+                        }
+                    }
                     if (currentScope()->isArrowFunction())
-                        currentFunctionScope()->setInnerArrowFunctionUsesSuperCall();
+                        functionScope->setInnerArrowFunctionUsesSuperCall();
                 }
                 base = context.makeFunctionCallNode(startLocation, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
             }

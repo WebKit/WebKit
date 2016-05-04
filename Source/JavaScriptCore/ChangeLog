@@ -1,3 +1,39 @@
+2016-05-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Assertion failure for super() call in direct eval in method function
+        https://bugs.webkit.org/show_bug.cgi?id=157091
+
+        Reviewed by Darin Adler.
+
+        While we ensure that direct super is under the correct context,
+        we don't check it for the eval code. This patch moves the check from the end of parsing the function
+        to the places where we found the direct super or the super bindings. This covers the direct eval that
+        contains the direct super calls.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseGeneratorFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Scope::hasDirectSuper):
+        (JSC::Scope::setHasDirectSuper):
+        (JSC::Scope::needsSuperBinding):
+        (JSC::Scope::setNeedsSuperBinding):
+        (JSC::Parser::closestParentOrdinaryFunctionNonLexicalScope):
+        * tests/stress/eval-and-super.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (prototype.m):
+        (prototype.n):
+        * tests/stress/generator-and-super.js: Added.
+        (testSyntaxError):
+        (testSyntaxError.Base.prototype.hello):
+        (testSyntaxError.Base.prototype.ok):
+        (testSyntaxError.Base):
+        (Hello.prototype.gen):
+        (Hello):
+        (testSyntaxError.hello):
+
 2016-05-03  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r200383): Setting lazily initialized properties across frame boundaries crashes
