@@ -4348,6 +4348,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 #endif // PLATFORM(IOS)
 
+#if PLATFORM(MAC)
+- (BOOL)_hasActiveVideoForControlsManager
+{
+    return _page && _page->hasActiveVideoForControlsManager();
+}
+#endif // PLATFORM(MAC)
+
 // Execute the supplied block after the next transaction from the WebProcess.
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock
 {

@@ -252,6 +252,10 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (CGPoint)_convertPointFromViewToContents:(CGPoint)point WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 #endif
 
+#if !TARGET_OS_IPHONE
+@property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager WK_AVAILABLE(WK_MAC_TBA, NA);
+#endif
+
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @end

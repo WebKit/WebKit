@@ -1,3 +1,24 @@
+2016-05-03  Beth Dakin  <bdakin@apple.com>
+
+        Add VideoControlsManager tests
+        https://bugs.webkit.org/show_bug.cgi?id=157332
+        -and corresponding-
+        rdar://problem/24358431
+
+        Reviewed by Sam Weinig.
+
+        This patch adds three VideoControlsManager tests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/ios/video-with-audio.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm: Added.
+        (-[DidPlayMessageHandler initWithWKWebView:]):
+        (-[DidPlayMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-with-audio.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-with-audio.mp4: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/large-video-without-audio.html: Added.
+
 2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] accessibility/document-attributes.html is failing
