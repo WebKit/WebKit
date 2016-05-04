@@ -1,3 +1,19 @@
+2016-05-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        File Upload: Photo upload name is always generic (image.jpg)
+        https://bugs.webkit.org/show_bug.cgi?id=157291
+        <rdar://problem/12353008>
+
+        Reviewed by Darin Adler.
+
+        Use the original filename as the name of an uploaded image instead of
+        a generic name, i.e. image.jpg.
+
+        * Platform/spi/ios/PhotosSPI.h: Added.
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _uploadItemForImage:withAssetURL:successBlock:failureBlock:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-05-03  Chris Dumez  <cdumez@apple.com>
 
         [WK2][DiskCache] Store common HTTP header names as strings

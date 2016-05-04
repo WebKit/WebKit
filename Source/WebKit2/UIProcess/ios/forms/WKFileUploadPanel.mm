@@ -32,6 +32,7 @@
 #import "APIData.h"
 #import "APIOpenPanelParameters.h"
 #import "APIString.h"
+#import "PhotosSPI.h"
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
 #import "WKData.h"
@@ -42,7 +43,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CoreMedia.h>
 #import <MobileCoreServices/MobileCoreServices.h>
-#import <Photos/Photos.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
 #import <WebKit/WebNSFileManagerExtras.h>
@@ -734,22 +734,26 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
             return;
         }
 
+        PHAsset *firstAsset = result[0];
+        [firstAsset fetchPropertySetsIfNeeded];
+        NSString *originalFilename = [[firstAsset originalMetadataProperties] originalFilename];
+        ASSERT(originalFilename);
+
         RetainPtr<PHImageRequestOptions> options = adoptNS([allocPHImageRequestOptionsInstance() init]);
         [options setVersion:PHImageRequestOptionsVersionCurrent];
         [options setSynchronous:YES];
         [options setResizeMode:PHImageRequestOptionsResizeModeNone];
 
         PHImageManager *manager = (PHImageManager *)[getPHImageManagerClass() defaultManager];
-        [manager requestImageDataForAsset:result[0] options:options.get() resultHandler:^(NSData *imageData, NSString *dataUTI, UIImageOrientation, NSDictionary *info) {
+        [manager requestImageDataForAsset:firstAsset options:options.get() resultHandler:^(NSData *imageData, NSString *dataUTI, UIImageOrientation, NSDictionary *info)
+        {
             if (!imageData) {
                 LOG_ERROR("WKFileUploadPanel: Failed to request image data for asset with URL %@", assetURL);
                 [self _uploadItemForJPEGRepresentationOfImage:image successBlock:successBlock failureBlock:failureBlock];
                 return;
             }
 
-            RetainPtr<CFStringRef> extension = adoptCF(UTTypeCopyPreferredTagWithClass((CFStringRef)dataUTI, kUTTagClassFilenameExtension));
-            NSString *imageName = [@"image." stringByAppendingString:(extension ? (id)extension.get() : @"jpg")];
-            [self _uploadItemForImageData:imageData imageName:imageName successBlock:successBlock failureBlock:failureBlock];
+            [self _uploadItemForImageData:imageData imageName:originalFilename successBlock:successBlock failureBlock:failureBlock];
         }];
     });
 }
