@@ -1,5 +1,19 @@
 2016-05-03  Filip Pizlo  <fpizlo@apple.com>
 
+        REGRESSION(r200383): Setting lazily initialized properties across frame boundaries crashes
+        https://bugs.webkit.org/show_bug.cgi?id=157333
+
+        Reviewed by Benjamin Poulain.
+        
+        I forgot to add logic for lazy properties in putEntry(). It turns out that it's easy to
+        add.
+
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        * runtime/PropertySlot.h:
+
+2016-05-03  Filip Pizlo  <fpizlo@apple.com>
+
         References from code to Structures should be stronger than weak
         https://bugs.webkit.org/show_bug.cgi?id=157324
 
