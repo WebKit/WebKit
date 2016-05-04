@@ -1471,7 +1471,7 @@ private:
         end.append(jump());
 
         checkJSNumber.link(this);
-        unboxDoubleWithoutAssertions(valueRegs.gpr(), dst);
+        unboxDoubleWithoutAssertions(valueRegs.gpr(), scratch, dst);
         end.link(this);
     }
 #else

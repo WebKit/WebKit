@@ -1,3 +1,15 @@
+2016-05-03  Xan Lopez  <xlopez@igalia.com>
+
+        Fix the ENABLE(WEBASSEMBLY) build
+        https://bugs.webkit.org/show_bug.cgi?id=157312
+
+        Reviewed by Darin Adler.
+
+        * runtime/Executable.cpp:
+        (JSC::WebAssemblyExecutable::WebAssemblyExecutable):
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::convertValueToDouble):
+
 2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused parameter of ScriptArguments::getFirstArgumentAsString

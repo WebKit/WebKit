@@ -734,7 +734,7 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(
 const ClassInfo WebAssemblyExecutable::s_info = { "WebAssemblyExecutable", &ExecutableBase::s_info, 0, CREATE_METHOD_TABLE(WebAssemblyExecutable) };
 
 WebAssemblyExecutable::WebAssemblyExecutable(VM& vm, const SourceCode& source, JSWASMModule* module, unsigned functionIndex)
-    : ExecutableBase(vm, vm.webAssemblyExecutableStructure.get(), NUM_PARAMETERS_NOT_COMPILED)
+    : ExecutableBase(vm, vm.webAssemblyExecutableStructure.get(), NUM_PARAMETERS_NOT_COMPILED, NoIntrinsic)
     , m_source(source)
     , m_module(vm, this, module)
     , m_functionIndex(functionIndex)
