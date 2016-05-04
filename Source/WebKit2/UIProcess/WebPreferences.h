@@ -67,6 +67,7 @@ public:
     static const Vector<RefPtr<API::Object>>& experimentalFeatures();
     bool isEnabledForFeature(const API::ExperimentalFeature&) const;
     void setEnabledForFeature(bool, const API::ExperimentalFeature&);
+    void enableAllExperimentalFeatures();
 
     // Exposed for WebKitTestRunner use only.
     void forceUpdate() { update(); }

@@ -643,6 +643,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     // Reset preferences
     WKPreferencesRef preferences = platformPreferences();
     WKPreferencesResetTestRunnerOverrides(preferences);
+    WKPreferencesEnableAllExperimentalFeatures(preferences);
     WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, false);
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);

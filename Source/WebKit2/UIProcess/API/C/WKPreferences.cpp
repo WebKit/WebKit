@@ -62,6 +62,11 @@ WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef preferencesRef)
     return toAPI(preferences.release().leakRef());
 }
 
+void WKPreferencesEnableAllExperimentalFeatures(WKPreferencesRef preferencesRef)
+{
+    toImpl(preferencesRef)->enableAllExperimentalFeatures();
+}
+
 void WKPreferencesSetJavaScriptEnabled(WKPreferencesRef preferencesRef, bool javaScriptEnabled)
 {
     toImpl(preferencesRef)->setJavaScriptEnabled(javaScriptEnabled);

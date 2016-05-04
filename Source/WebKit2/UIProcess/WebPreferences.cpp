@@ -263,6 +263,16 @@ void WebPreferences::setEnabledForFeature(bool value, const API::ExperimentalFea
     }
 }
 
+void WebPreferences::enableAllExperimentalFeatures()
+{
+#define SET_FEATURE_ENABLED(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
+    set##KeyUpper(true); \
+
+    FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(SET_FEATURE_ENABLED)
+
+#undef SET_FEATURE_ENABLED
+}
+
 bool WebPreferences::anyPagesAreUsingPrivateBrowsing()
 {
     return privateBrowsingPageCount;

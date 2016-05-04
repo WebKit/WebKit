@@ -1,3 +1,22 @@
+2016-05-04  Dean Jackson  <dino@apple.com>
+
+        TestRunner should always enable all the experimental features
+        https://bugs.webkit.org/show_bug.cgi?id=157360
+        <rdar://problem/26099748>
+
+        Reviewed by Anders Carlsson.
+
+        Experimental features are disabled by default, but it is
+        a pain to enable them in every test. Instead, have the
+        test runner turn them all on.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesEnableAllExperimentalFeatures):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::enableAllExperimentalFeatures):
+        * UIProcess/WebPreferences.h:
+
 2016-05-04  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Add WKPreference for SelectionPaintingWithoutSelectionGaps
