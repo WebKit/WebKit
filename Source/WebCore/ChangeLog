@@ -1,3 +1,22 @@
+2016-05-04  Anders Carlsson  <andersca@apple.com>
+
+        Add an override point for drawing named images in ThemeCocoa
+        https://bugs.webkit.org/show_bug.cgi?id=157357
+        rdar://problem/25878445
+
+        Reviewed by Dean Jackson.
+
+        Rename ThemeCocoa.cpp to ThemeCocoa.mm and rearrange the code that draws the wireless-playback image
+        so we can import ThemeCocoaDrawNamedImage.mm below.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/ThemeCocoa.cpp:
+        (WebCore::fitContextToBox): Deleted.
+        (WebCore::ThemeCocoa::drawNamedImage): Deleted.
+        * platform/cocoa/ThemeCocoa.mm: Renamed from Source/WebCore/platform/cocoa/ThemeCocoa.cpp.
+        (WebCore::fitContextToBox):
+        (WebCore::ThemeCocoa::drawNamedImage):
+
 2016-05-04  Jeremy Jones  <jeremyj@apple.com>
 
         Don't disconnect WebAVPlayerController from its delegate since there is no way to reconnect it.

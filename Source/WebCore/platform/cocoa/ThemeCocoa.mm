@@ -52,39 +52,43 @@ static void fitContextToBox(GraphicsContext& context, const FloatSize& srcImageS
 void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, const FloatRect& rect) const
 {
     // We only handle one icon at the moment.
-    if (name != "wireless-playback") {
-        Theme::drawNamedImage(name, context, rect);
+    if (name == "wireless-playback") {
+        GraphicsContextStateSaver stateSaver(context);
+        context.setFillColor(Color::black);
+
+        FloatSize wirelessPlaybackSrcSize(32, 24.016);
+        fitContextToBox(context, wirelessPlaybackSrcSize, rect.size());
+
+        Path outline;
+        outline.moveTo(FloatPoint(24.066, 18));
+        outline.addLineTo(FloatPoint(22.111, 16));
+        outline.addLineTo(FloatPoint(30, 16));
+        outline.addLineTo(FloatPoint(30, 2));
+        outline.addLineTo(FloatPoint(2, 2));
+        outline.addLineTo(FloatPoint(2, 16));
+        outline.addLineTo(FloatPoint(9.908, 16));
+        outline.addLineTo(FloatPoint(7.953, 18));
+        outline.addLineTo(FloatPoint(0, 18));
+        outline.addLineTo(FloatPoint(0, 0));
+        outline.addLineTo(FloatPoint(32, 0));
+        outline.addLineTo(FloatPoint(32, 18));
+        outline.addLineTo(FloatPoint(24.066, 18));
+        outline.closeSubpath();
+        outline.moveTo(FloatPoint(26.917, 24.016));
+        outline.addLineTo(FloatPoint(5.040, 24.016));
+        outline.addLineTo(FloatPoint(15.978, 12.828));
+        outline.addLineTo(FloatPoint(26.917, 24.016));
+        outline.closeSubpath();
+
+        context.fillPath(outline);
         return;
     }
 
-    GraphicsContextStateSaver stateSaver(context);
-    context.setFillColor(Color::black);
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ThemeCocoaDrawNamedImage.mm>
+#endif
 
-    FloatSize wirelessPlaybackSrcSize(32, 24.016);
-    fitContextToBox(context, wirelessPlaybackSrcSize, rect.size());
-
-    Path outline;
-    outline.moveTo(FloatPoint(24.066, 18));
-    outline.addLineTo(FloatPoint(22.111, 16));
-    outline.addLineTo(FloatPoint(30, 16));
-    outline.addLineTo(FloatPoint(30, 2));
-    outline.addLineTo(FloatPoint(2, 2));
-    outline.addLineTo(FloatPoint(2, 16));
-    outline.addLineTo(FloatPoint(9.908, 16));
-    outline.addLineTo(FloatPoint(7.953, 18));
-    outline.addLineTo(FloatPoint(0, 18));
-    outline.addLineTo(FloatPoint(0, 0));
-    outline.addLineTo(FloatPoint(32, 0));
-    outline.addLineTo(FloatPoint(32, 18));
-    outline.addLineTo(FloatPoint(24.066, 18));
-    outline.closeSubpath();
-    outline.moveTo(FloatPoint(26.917, 24.016));
-    outline.addLineTo(FloatPoint(5.040, 24.016));
-    outline.addLineTo(FloatPoint(15.978, 12.828));
-    outline.addLineTo(FloatPoint(26.917, 24.016));
-    outline.closeSubpath();
-    
-    context.fillPath(outline);
+    Theme::drawNamedImage(name, context, rect);
 }
 
 }
