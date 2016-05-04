@@ -1,3 +1,9 @@
+2016-05-04  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, fix test for new ArrayIteratorPrototype.next() error message.
+
+        * tests/stress/array-iterators-next-with-call.js:
+
 2016-05-04  Filip Pizlo  <fpizlo@apple.com>
 
         Speed up JSGlobalObject initialization by making some properties lazy
