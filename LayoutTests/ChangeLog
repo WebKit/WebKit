@@ -1,3 +1,19 @@
+2016-05-04  Mark Lam  <mark.lam@apple.com>
+
+        ES6 Function.name inferred from property names of literal objects can break some websites.
+        https://bugs.webkit.org/show_bug.cgi?id=157246
+
+        Reviewed by Geoffrey Garen.
+
+        * js/dom/regress-157246-expected.txt: Added.
+        * js/dom/regress-157246.html: Added.
+        * js/dom/script-tests/regress-157246.js: Added.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        - Skip js/dom/regress-157246.html for wk1 because it relies on a WKTR feature to
+          enable the needsSiteSpecificQuirks settings before running the test.
+
 2016-05-04  Keith Miller  <keith_miller@apple.com>
 
         Speedup array iterators

@@ -1,3 +1,16 @@
+2016-05-04  Mark Lam  <mark.lam@apple.com>
+
+        ES6 Function.name inferred from property names of literal objects can break some websites.
+        https://bugs.webkit.org/show_bug.cgi?id=157246
+
+        Reviewed by Geoffrey Garen.
+
+        Test: js/dom/regress-157246.html
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::finishCreation):
+        - Set the needsSiteSpecificQuirks flag in the JSGlobalObject if needed.
+
 2016-05-04  Konstantin Tokarev  <annulen@yandex.ru>
 
         Deduplicated initializer lists of BitmapImage constructors.

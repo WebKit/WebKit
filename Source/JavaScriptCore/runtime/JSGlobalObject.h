@@ -717,6 +717,8 @@ public:
     UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, EvalExecutable*, ThisTDZMode, const VariableEnvironment*);
     UnlinkedModuleProgramCodeBlock* createModuleProgramCodeBlock(CallFrame*, ModuleProgramExecutable*);
 
+    bool needsSiteSpecificQuirks() const { return m_needsSiteSpecificQuirks; }
+
 protected:
     struct GlobalPropertyInfo {
         GlobalPropertyInfo(const Identifier& i, JSValue v, unsigned a)
@@ -734,6 +736,8 @@ protected:
 
     JS_EXPORT_PRIVATE static JSC::JSValue toThis(JSC::JSCell*, JSC::ExecState*, ECMAMode);
 
+    void setNeedsSiteSpecificQuirks(bool needQuirks) { m_needsSiteSpecificQuirks = needQuirks; }
+
 private:
     friend class LLIntOffsetsExtractor;
 
@@ -745,6 +749,8 @@ private:
     void createThrowTypeErrorArgumentsAndCaller(VM&);
 
     JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
+
+    bool m_needsSiteSpecificQuirks { false };
 };
 
 JSGlobalObject* asGlobalObject(JSValue);

@@ -631,6 +631,14 @@ void JSFunction::reifyName(ExecState* exec, String name)
     unsigned initialAttributes = DontEnum | ReadOnly;
     const Identifier& propID = exec->propertyNames().name;
 
+    if (exec->lexicalGlobalObject()->needsSiteSpecificQuirks()) {
+        auto illegalCharMatcher = [] (UChar ch) -> bool {
+            return ch == ' ' || ch == '|';
+        };
+        if (name.find(illegalCharMatcher) != notFound)
+            name = String();
+    }
+    
     if (jsExecutable()->isGetter())
         name = makeString("get ", name);
     else if (jsExecutable()->isSetter())

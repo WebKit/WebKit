@@ -1,3 +1,98 @@
+2016-05-04  Mark Lam  <mark.lam@apple.com>
+
+        ES6 Function.name inferred from property names of literal objects can break some websites.
+        https://bugs.webkit.org/show_bug.cgi?id=157246
+
+        Reviewed by Geoffrey Garen.
+
+        Specifically, the library mathjs (see http://mathjs.org and https://github.com/josdejong/mathjs)
+        uses an idiom where it created literal objects with property names that look like
+        this: 'number | BigNumber | Unit'.  Later, this name is used in a string to create
+        function source code that gets eval'ed.  Since 'number | BigNumber | Unit' is not
+        a valid function name, we get a syntax error.
+
+        Here are the details:
+
+        1. mathjs uses object literals with the funky property names for its function members.
+           For example, 
+
+              // helper function to type check the middle value of the array
+              var middle = typed({
+                'number | BigNumber | Unit': function (value) {
+                  return value;
+                }
+              });
+
+        2. mathjs' getName() uses Function.name to get the name of functions (hence, picks
+           up the property name as inferred value of Function.name as specified by ES6):
+
+                /**
+                 * Retrieve the function name from a set of functions, and check
+                 * whether the name of all functions match (if given)
+                 ...
+                 */
+                function getName (fns) {
+                  var name = '';
+
+                  for (var i = 0; i < fns.length; i++) {
+                    var fn = fns[i];
+                    ...
+                        name = fn.name;
+                    ...
+                  return name;
+                }
+
+        3. mathjs uses that name to assembler new function source code that gets eval'ed:
+
+                /**
+                 * Compose a function from sub-functions each handling a single type signature.
+                 ...
+                 */
+                function _typed(name, signatures) {
+                  ...
+                  // generate code for the typed function
+                  var code = [];
+                  var _name = name || '';
+                  ...
+                  code.push('function ' + _name + '(' + _args.join(', ') + ') {');
+                  code.push('  "use strict";');
+                  code.push('  var name = \'' + _name + '\';');
+                  code.push(node.toCode(refs, '  '));
+                  code.push('}');
+
+                  // generate body for the factory function
+                  var body = [
+                    refs.toCode(),
+                    'return ' + code.join('\n')
+                  ].join('\n');
+
+                  // evaluate the JavaScript code and attach function references
+                  var factory = (new Function(refs.name, 'createError', body));  // <== Syntax Error here!
+                  var fn = factory(refs, createError);
+                  ...
+                  return fn;
+                }
+
+        Until mathjs (and any other frameworks that does similar things) and sites that
+        uses mathjs has been updated to work with ES6, we'll need a compatibility hack to
+        work around it.
+
+        Here's what we'll do:
+        1. Introduce a needsSiteSpecificQuirks flag in JSGlobalObject.
+        2. Have WebCore's JSDOMWindowBase set that flag if the browser's
+           needsSiteSpecificQuirks is enabled in its settings.
+        3. If needsSiteSpecificQuirks is enabled, have JSFunction::reifyName() check for
+           ' ' or '|' in the name string it will use to reify the Function.name property.
+           If those characters exists in the name, we'll replace the name string with a
+           null string.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::reifyName):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::needsSiteSpecificQuirks):
+        (JSC::JSGlobalObject::GlobalPropertyInfo::GlobalPropertyInfo):
+        (JSC::JSGlobalObject::setNeedsSiteSpecificQuirks):
+
 2016-05-04  Keith Miller  <keith_miller@apple.com>
 
         Speedup array iterators

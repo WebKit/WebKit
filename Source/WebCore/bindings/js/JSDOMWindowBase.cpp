@@ -85,6 +85,9 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
     };
 
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
+
+    if (m_wrapped && m_wrapped->frame() && m_wrapped->frame()->settings().needsSiteSpecificQuirks())
+        setNeedsSiteSpecificQuirks(true);
 }
 
 void JSDOMWindowBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
