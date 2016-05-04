@@ -99,6 +99,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RandomNumberSeed.h>
 #include <wtf/WTFThreadData.h>
 
@@ -141,7 +142,7 @@ void initializeCurrentThreadInternal(const char* szThreadName)
 
 static Mutex& threadMapMutex()
 {
-    static Mutex mutex;
+    static NeverDestroyed<Mutex> mutex;
     return mutex;
 }
 
@@ -166,7 +167,7 @@ void initializeThreading()
 
 static HashMap<DWORD, HANDLE>& threadMap()
 {
-    static HashMap<DWORD, HANDLE> map;
+    static NeverDestroyed<HashMap<DWORD, HANDLE>> map;
     return map;
 }
 

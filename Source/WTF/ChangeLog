@@ -1,3 +1,14 @@
+2016-05-04  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Use NeverDestroyed template.
+        https://bugs.webkit.org/show_bug.cgi?id=157345
+
+        Reviewed by Darin Adler.
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::threadMapMutex):
+        (WTF::threadMap):
+
 2016-05-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r200383 and r200406.
