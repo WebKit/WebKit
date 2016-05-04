@@ -196,8 +196,8 @@ void JSBoundFunction::finishCreation(VM& vm, NativeExecutable* executable, int l
     Base::finishCreation(vm, executable, length, name);
     ASSERT(inherits(info()));
 
-    putDirectNonIndexAccessor(vm, vm.propertyNames->arguments, globalObject()->throwTypeErrorGetterSetter(vm), DontDelete | DontEnum | Accessor);
-    putDirectNonIndexAccessor(vm, vm.propertyNames->caller, globalObject()->throwTypeErrorGetterSetter(vm), DontDelete | DontEnum | Accessor);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->arguments, globalObject()->throwTypeErrorGetterSetter(), DontDelete | DontEnum | Accessor);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->caller, globalObject()->throwTypeErrorGetterSetter(), DontDelete | DontEnum | Accessor);
 }
 
 void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)

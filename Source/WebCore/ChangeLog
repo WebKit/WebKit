@@ -1,3 +1,20 @@
+2016-05-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Speed up JSGlobalObject initialization by making some properties lazy
+        https://bugs.webkit.org/show_bug.cgi?id=157045
+
+        Reviewed by Keith Miller.
+
+        No new tests because no change in behavior.
+        
+        This adapts JSHTMLElementCustom.cpp to the new JSWithScope API. Note that this revealed
+        that this was using a curious choice of global object, which may not be right. I decided
+        to do a very literal refactoring that exactly preserves what this code got before, but I
+        added a FIXME to reconsider this later.
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::JSHTMLElement::pushEventHandlerScope):
+
 2016-05-04  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Refactor information stored related to column positions

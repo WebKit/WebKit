@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,34 +34,18 @@ class JSWithScope : public JSScope {
 public:
     typedef JSScope Base;
 
-    static JSWithScope* create(ExecState* exec, JSObject* object, JSScope* next)
-    {
-        JSWithScope* withScope = new (NotNull, allocateCell<JSWithScope>(*exec->heap())) JSWithScope(exec, object, next);
-        withScope->finishCreation(exec->vm());
-        return withScope;
-    }
+    JS_EXPORT_PRIVATE static JSWithScope* create(VM&, JSGlobalObject*, JSObject*, JSScope* next);
 
     JSObject* object() { return m_object.get(); }
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
-    {
-        return Structure::create(vm, globalObject, proto, TypeInfo(WithScopeType, StructureFlags), info());
-    }
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue proto);
 
     DECLARE_EXPORT_INFO;
 
 private:
-    JSWithScope(ExecState* exec, JSObject* object, JSScope* next)
-        : Base(
-            exec->vm(),
-            exec->lexicalGlobalObject()->withScopeStructure(),
-            next
-        )
-        , m_object(exec->vm(), this, object)
-    {
-    }
+    JSWithScope(VM&, Structure*, JSObject*, JSScope* next);
 
     WriteBarrier<JSObject> m_object;
 };

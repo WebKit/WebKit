@@ -5,7 +5,7 @@
 # (c) 2000-2002 by Harri Porten <porten@kde.org> and
 #                  David Faure <faure@kde.org>
 # Modified (c) 2004 by Nikolas Zimmermann <wildfox@kde.org>
-# Copyright (C) 2007, 2008, 2009, 2015 Apple Inc. All rights reserved.
+# Copyright (C) 2007, 2008, 2009, 2015-2016 Apple Inc. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -97,6 +97,15 @@ while (<IN>) {
             my $put = "nullptr";
             $hasSetter = "true";
             push(@values, { "type" => "Accessor", "get" => $get, "put" => $put });
+        } elsif ($att =~ m/CellProperty/) {
+            my $property = $val;
+            push(@values, { "type" => "CellProperty", "property" => $property });
+        } elsif ($att =~ m/ClassStructure/) {
+            my $property = $val;
+            push(@values, { "type" => "ClassStructure", "property" => $property });
+        } elsif ($att =~ m/PropertyCallback/) {
+            my $cback = $val;
+            push(@values, { "type" => "PropertyCallback", "cback" => $cback });
         } elsif (length($att)) {
             my $get = $val;
             my $put = "0";
@@ -297,6 +306,14 @@ sub output() {
             $secondValue = $values[$i]{"put"};
         } elsif ($values[$i]{"type"} eq "Lexer") {
             $firstValue = $values[$i]{"value"};
+            $secondValue = "0";
+        } elsif ($values[$i]{"type"} eq "CellProperty" || $values[$i]{"type"} eq "ClassStructure") {
+            $values[$i]{"property"} =~ /\A([a-zA-Z0-9_]+)::(.*)\Z/ or die;
+            $firstValue = "OBJECT_OFFSETOF($1, $2)";
+            $secondValue = "0";
+        } elsif ($values[$i]{"type"} eq "PropertyCallback") {
+            $firstCastStr = "static_cast<LazyPropertyCallback>";
+            $firstValue = $values[$i]{"cback"};
             $secondValue = "0";
         }
 

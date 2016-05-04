@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008, 2012, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2012, 2015-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,7 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObj,
 bool setUpStaticFunctionSlot(ExecState* exec, const HashTableValue* entry, JSObject* thisObj, PropertyName propertyName, PropertySlot& slot)
 {
     ASSERT(thisObj->globalObject());
-    ASSERT(entry->attributes() & BuiltinOrFunctionOrAccessor);
+    ASSERT(entry->attributes() & BuiltinOrFunctionOrAccessorOrLazyProperty);
     VM& vm = exec->vm();
     unsigned attributes;
     bool isAccessor = entry->attributes() & Accessor;
@@ -63,13 +63,25 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashTableValue* entry, JSObj
             thisObj->putDirectNativeFunction(
                 vm, thisObj->globalObject(), propertyName, entry->functionLength(),
                 entry->function(), entry->intrinsic(), attributesForStructure(entry->attributes()));
-        } else {
-            ASSERT(isAccessor);
+        } else if (isAccessor)
             reifyStaticAccessor(vm, *entry, *thisObj, propertyName);
-        }
+        else if (entry->attributes() & CellProperty) {
+            LazyCellProperty* property = bitwise_cast<LazyCellProperty*>(
+                bitwise_cast<char*>(thisObj) + entry->lazyCellPropertyOffset());
+            JSCell* result = property->get(thisObj);
+            thisObj->putDirect(vm, propertyName, result, attributesForStructure(entry->attributes()));
+        } else if (entry->attributes() & ClassStructure) {
+            LazyClassStructure* structure = bitwise_cast<LazyClassStructure*>(
+                bitwise_cast<char*>(thisObj) + entry->lazyClassStructureOffset());
+            structure->get(jsCast<JSGlobalObject*>(thisObj));
+        } else if (entry->attributes() & PropertyCallback) {
+            JSValue result = entry->lazyPropertyCallback()(vm, thisObj);
+            thisObj->putDirect(vm, propertyName, result, attributesForStructure(entry->attributes()));
+        } else
+            RELEASE_ASSERT_NOT_REACHED();
 
         offset = thisObj->getDirectOffset(vm, propertyName, attributes);
-        ASSERT(isValidOffset(offset));
+        RELEASE_ASSERT(isValidOffset(offset));
     }
 
     if (isAccessor)

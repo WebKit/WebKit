@@ -3942,7 +3942,7 @@ private:
         
         switch (m_node->child1().useKind()) {
         case Int32Use: {
-            Structure* structure = globalObject->typedArrayStructure(type);
+            Structure* structure = globalObject->typedArrayStructureConcurrently(type);
 
             LValue size = lowInt32(m_node->child1());
 
@@ -4003,7 +4003,7 @@ private:
 
             LValue result = vmCall(
                 m_out.intPtr, m_out.operation(operationNewTypedArrayWithOneArgumentForType(type)),
-                m_callFrame, weakPointer(globalObject->typedArrayStructure(type)), argument);
+                m_callFrame, weakPointer(globalObject->typedArrayStructureConcurrently(type)), argument);
 
             setJSValue(result);
             return;

@@ -323,20 +323,20 @@ Structure* ArrayMode::originalArrayStructure(Graph& graph, const CodeOrigin& cod
             return globalObject->originalArrayStructureForIndexingType(ArrayWithArrayStorage);
         default:
             CRASH();
-            return 0;
+            return nullptr;
         }
     }
         
     case Array::OriginalNonArray: {
         TypedArrayType type = typedArrayType();
         if (type == NotTypedArray)
-            return 0;
+            return nullptr;
         
-        return globalObject->typedArrayStructure(type);
+        return globalObject->typedArrayStructureConcurrently(type);
     }
         
     default:
-        return 0;
+        return nullptr;
     }
 }
 

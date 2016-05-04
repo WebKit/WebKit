@@ -104,7 +104,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
 
     if (thisValue.inherits(InternalFunction::info())) {
         InternalFunction* function = asInternalFunction(thisValue);
-        return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
+        return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(), "() {\n    [native code]\n}"));
     }
 
     if (thisValue.isObject()) {

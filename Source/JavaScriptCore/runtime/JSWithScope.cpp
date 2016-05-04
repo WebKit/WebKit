@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +32,32 @@ namespace JSC {
 
 const ClassInfo JSWithScope::s_info = { "WithScope", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWithScope) };
 
+JSWithScope* JSWithScope::create(
+    VM& vm, JSGlobalObject* globalObject, JSObject* object, JSScope* next)
+{
+    Structure* structure = globalObject->withScopeStructure();
+    JSWithScope* withScope = new (NotNull, allocateCell<JSWithScope>(vm.heap)) JSWithScope(vm, structure, object, next);
+    withScope->finishCreation(vm);
+    return withScope;
+}
+
 void JSWithScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWithScope* thisObject = jsCast<JSWithScope*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_object);
+}
+
+Structure* JSWithScope::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+{
+    return Structure::create(vm, globalObject, proto, TypeInfo(WithScopeType, StructureFlags), info());
+}
+
+JSWithScope::JSWithScope(VM& vm, Structure* structure, JSObject* object, JSScope* next)
+    : Base(vm, structure, next)
+    , m_object(vm, this, object)
+{
 }
 
 } // namespace JSC

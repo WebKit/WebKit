@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -158,11 +158,11 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 
         if (isStrictMode) {
             if (ident == vm.propertyNames->callee) {
-                slot.setGetterSlot(thisObject, DontDelete | DontEnum | Accessor, thisObject->globalObject()->throwTypeErrorGetterSetter(vm));
+                slot.setGetterSlot(thisObject, DontDelete | DontEnum | Accessor, thisObject->globalObject()->throwTypeErrorGetterSetter());
                 return true;
             }
             if (ident == vm.propertyNames->caller) {
-                slot.setGetterSlot(thisObject, DontDelete | DontEnum | Accessor, thisObject->globalObject()->throwTypeErrorGetterSetter(vm));
+                slot.setGetterSlot(thisObject, DontDelete | DontEnum | Accessor, thisObject->globalObject()->throwTypeErrorGetterSetter());
                 return true;
             }
 
@@ -238,8 +238,8 @@ void ClonedArguments::materializeSpecials(ExecState* exec)
     bool isStrictMode = executable->isStrictMode();
     
     if (isStrictMode) {
-        putDirectAccessor(exec, vm.propertyNames->callee, globalObject()->throwTypeErrorGetterSetter(vm), DontDelete | DontEnum | Accessor);
-        putDirectAccessor(exec, vm.propertyNames->caller, globalObject()->throwTypeErrorGetterSetter(vm), DontDelete | DontEnum | Accessor);
+        putDirectAccessor(exec, vm.propertyNames->callee, globalObject()->throwTypeErrorGetterSetter(), DontDelete | DontEnum | Accessor);
+        putDirectAccessor(exec, vm.propertyNames->caller, globalObject()->throwTypeErrorGetterSetter(), DontDelete | DontEnum | Accessor);
     } else
         putDirect(vm, vm.propertyNames->callee, JSValue(m_callee.get()));
 

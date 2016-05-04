@@ -2604,6 +2604,9 @@ bool ByteCodeParser::handleTypedArrayConstructor(
     
     if (argumentCountIncludingThis != 2)
         return false;
+    
+    if (!function->globalObject()->typedArrayStructureConcurrently(type))
+        return false;
 
     insertChecks();
     set(VirtualRegister(resultOperand),

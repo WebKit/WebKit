@@ -1,3 +1,13 @@
+2016-05-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Speed up JSGlobalObject initialization by making some properties lazy
+        https://bugs.webkit.org/show_bug.cgi?id=157045
+
+        Reviewed by Mark Lam.
+
+        * js/dom/cross-window-put-math-expected.txt: Added.
+        * js/dom/cross-window-put-math.html: Added.
+
 2016-05-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Improve the grammar of some error messages 'a argument list' => 'an argument list'

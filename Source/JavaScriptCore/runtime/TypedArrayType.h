@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,18 +33,34 @@ namespace JSC {
 
 struct ClassInfo;
 
+#define FOR_EACH_TYPED_ARRAY_TYPE(macro) \
+    macro(Int8) \
+    macro(Uint8) \
+    macro(Uint8Clamped) \
+    macro(Int16) \
+    macro(Uint16) \
+    macro(Int32) \
+    macro(Uint32) \
+    macro(Float32) \
+    macro(Float64) \
+    macro(DataView)
+
+#define FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(macro) \
+    macro(Int8) \
+    macro(Uint8) \
+    macro(Uint8Clamped) \
+    macro(Int16) \
+    macro(Uint16) \
+    macro(Int32) \
+    macro(Uint32) \
+    macro(Float32) \
+    macro(Float64)
+
 enum TypedArrayType {
     NotTypedArray,
-    TypeInt8,
-    TypeUint8,
-    TypeUint8Clamped,
-    TypeInt16,
-    TypeUint16,
-    TypeInt32,
-    TypeUint32,
-    TypeFloat32,
-    TypeFloat64,
-    TypeDataView
+#define DECLARE_TYPED_ARRAY_TYPE(name) Type ## name,
+    FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE)
+#undef DECLARE_TYPED_ARRAY_TYPE
 };
 
 #define NUMBER_OF_TYPED_ARRAY_TYPES TypeDataView
