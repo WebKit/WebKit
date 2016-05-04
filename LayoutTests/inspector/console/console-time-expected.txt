@@ -1,0 +1,32 @@
+Tests for the console.time and console.timeEnd APIs.
+
+
+== Running test suite: console.time and console.timeEnd
+-- Running test case: DefaultLabel
+PASS: Should receive a Timing type message.
+PASS: Message should contain the 'default' label name somewhere.
+PASS: Should receive a Timing type message.
+PASS: Message should contain the 'default' label name somewhere.
+PASS: Should receive a Timing type message.
+PASS: Message should contain the 'default' label name somewhere.
+
+-- Running test case: UserLabels
+PASS: Should receive a Timing type message.
+PASS: Message should contain the 'my-label' label name somewhere.
+
+-- Running test case: MultipleTimers
+PASS: Should receive a Timing type message.
+PASS: Message should contain the 'my-label-2' label name somewhere.
+PASS: Should receive a Timing type message.
+PASS: Message should contain the 'my-label-1' label name somewhere.
+
+-- Running test case: WarnWhenExisting
+PASS: Should receive a Timing type message.
+PASS: Should receive a Warning level message
+PASS: Message should contain the 'default' label name somewhere.
+
+-- Running test case: WarnWhenNotExisting
+PASS: Should receive a Timing type message.
+PASS: Should receive a Warning level message.
+PASS: Message should contain the 'default' label name somewhere.
+

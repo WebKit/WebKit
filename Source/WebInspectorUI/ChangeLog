@@ -1,5 +1,16 @@
 2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Give console.time/timeEnd a default label and warnings
+        https://bugs.webkit.org/show_bug.cgi?id=157325
+        <rdar://problem/26073290>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+        Update the convenience signature.
+
+2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Update window.console function API description strings in Console
         https://bugs.webkit.org/show_bug.cgi?id=157298
 

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("console.time and console.timeEnd");
+
+    suite.addTestCase({
+        name: "DefaultLabel",
+        description: "Test that default label works as expected.",
+        test: (resolve, reject) => {
+            let seen = 0;
+            const expected = 3;
+            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.messageText.includes("default"), "Message should contain the 'default' label name somewhere.");
+                if (++seen === expected) {
+                    WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+                    resolve();
+                }                
+            }
+
+            InspectorTest.evaluateInPage("console.time()");
+            InspectorTest.evaluateInPage("console.timeEnd()");
+
+            InspectorTest.evaluateInPage("console.time(undefined)");
+            InspectorTest.evaluateInPage("console.timeEnd('default')");
+
+            InspectorTest.evaluateInPage("console.time('default')");
+            InspectorTest.evaluateInPage("console.timeEnd(undefined)");
+        }
+    });
+
+    suite.addTestCase({
+        name: "UserLabels",
+        description: "Test that user labels works as expected.",
+        test: (resolve, reject) => {
+            let seen = 0;
+            const expected = 3;
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+                let message = event.data.message;
+                InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.messageText.includes("my-label"), "Message should contain the 'my-label' label name somewhere.");
+                resolve();
+            });
+
+            InspectorTest.evaluateInPage("console.time('my-label')");
+            InspectorTest.evaluateInPage("console.timeEnd('my-label')");
+        }
+    });
+
+    suite.addTestCase({
+        name: "MultipleTimers",
+        description: "Test that multiple timers running at the same time work as expected.",
+        test: (resolve, reject) => {
+            let seen = 0;
+            const expected = 2;
+            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                let expectedLabel = seen === 0 ? "my-label-2" : "my-label-1";
+                InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.messageText.includes(expectedLabel), "Message should contain the '" + expectedLabel + "' label name somewhere.");
+                if (++seen === expected) {
+                    WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+                    resolve();
+                }                
+            }
+
+            InspectorTest.evaluateInPage("console.time('my-label-1')");
+            InspectorTest.evaluateInPage("console.time('my-label-2')");
+            InspectorTest.evaluateInPage("console.timeEnd('my-label-2')");
+            InspectorTest.evaluateInPage("console.timeEnd('my-label-1')");
+        }
+    });
+
+    suite.addTestCase({
+        name: "WarnWhenExisting",
+        description: "Test for a warning when trying to start an already started timer.",
+        test: (resolve, reject) => {
+            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                if (message.level === WebInspector.ConsoleMessage.MessageLevel.Warning) {
+                    InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                    InspectorTest.pass("Should receive a Warning level message");
+                    InspectorTest.expectThat(message.messageText.includes("default"), "Message should contain the 'default' label name somewhere.");
+                    return;
+                }
+                if (message.type === WebInspector.ConsoleMessage.MessageType.Timing) {
+                    WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+                    resolve();
+                }                
+            }
+
+            InspectorTest.evaluateInPage("console.time()");
+            InspectorTest.evaluateInPage("console.time()"); // Warning
+            InspectorTest.evaluateInPage("console.timeEnd()");
+        }
+    });
+
+    suite.addTestCase({
+        name: "WarnWhenNotExisting",
+        description: "Test for a warning when trying to start an already started timer.",
+        test: (resolve, reject) => {
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+                let message = event.data.message;
+                InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.level === WebInspector.ConsoleMessage.MessageLevel.Warning, "Should receive a Warning level message.");
+                InspectorTest.expectThat(message.messageText.includes("default"), "Message should contain the 'default' label name somewhere.");
+                resolve();
+            });
+
+            InspectorTest.evaluateInPage("console.timeEnd()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the console.time and console.timeEnd APIs.</p>
+</body>
+</html>

@@ -128,24 +128,32 @@ void InspectorConsoleAgent::addMessageToConsole(std::unique_ptr<ConsoleMessage> 
 
 void InspectorConsoleAgent::startTiming(const String& title)
 {
-    // Follow Firebug's behavior of requiring a title that is not null or
-    // undefined for timing functions
+    ASSERT(!title.isNull());
     if (title.isNull())
         return;
 
-    m_times.add(title, monotonicallyIncreasingTime());
+    auto result = m_times.add(title, monotonicallyIncreasingTime());
+
+    if (!result.isNewEntry) {
+        // FIXME: Send an enum to the frontend for localization?
+        String warning = makeString("Timer \"", title, "\" already exists");
+        addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Warning, warning));
+    }
 }
 
 void InspectorConsoleAgent::stopTiming(const String& title, PassRefPtr<ScriptCallStack> callStack)
 {
-    // Follow Firebug's behavior of requiring a title that is not null or
-    // undefined for timing functions
+    ASSERT(!title.isNull());
     if (title.isNull())
         return;
 
-    HashMap<String, double>::iterator it = m_times.find(title);
-    if (it == m_times.end())
+    auto it = m_times.find(title);
+    if (it == m_times.end()) {
+        // FIXME: Send an enum to the frontend for localization?
+        String warning = makeString("Timer \"", title, "\" does not exist");
+        addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Warning, warning));
         return;
+    }
 
     double startTime = it->value;
     m_times.remove(it);

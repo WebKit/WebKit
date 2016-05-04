@@ -1,3 +1,27 @@
+2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Give console.time/timeEnd a default label and warnings
+        https://bugs.webkit.org/show_bug.cgi?id=157325
+        <rdar://problem/26073290>
+
+        Reviewed by Timothy Hatcher.
+
+        Provide more user friendly console.time/timeEnd. The timer name
+        is now optional, and is "default" if not provided. Also provide
+        warnings when attempting to start an already started timer,
+        or stop a timer that does not exist.
+
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::startTiming):
+        (Inspector::InspectorConsoleAgent::stopTiming):
+        Warnings for bad cases.
+
+        * runtime/ConsoleObject.cpp:
+        (JSC::defaultLabelString):
+        (JSC::consoleProtoFuncTime):
+        (JSC::consoleProtoFuncTimeEnd):
+        Optional label becomes "default".
+
 2016-05-03  Xan Lopez  <xlopez@igalia.com>
 
         Fix the ENABLE(WEBASSEMBLY) build
