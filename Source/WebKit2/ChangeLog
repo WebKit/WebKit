@@ -1,3 +1,16 @@
+2016-05-03  Jer Noble  <jer.noble@apple.com>
+
+        [iOS][WK2] Allow WKWebView to play local filesystem media when created with -loadFileURL:allowingReadAccessToURL:
+        https://bugs.webkit.org/show_bug.cgi?id=156875
+        <rdar://problem/24281444>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Grant AVFoundation the right to issue file read sandbox extensions from the WebContent process to the mediaserverd
+        process, so that it can play back local media files.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2016-05-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         File Upload: Photo upload name is always generic (image.jpg)

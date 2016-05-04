@@ -91,3 +91,8 @@
 
 ;; Allow ManagedPreference access
 (allow file-read* (literal "/private/var/Managed Preferences/mobile/com.apple.webcontentfilter.plist"))
+
+;; Allow mediaserverd to issue file extensions for the purposes of reading media
+(allow file-issue-extension (require-all
+    (extension "com.apple.app-sandbox.read")
+    (extension-class "com.apple.mediaserverd.read")))
