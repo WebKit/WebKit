@@ -40,11 +40,11 @@ _FRAMEWORK_CONFIG_MAP = {
     },
 }
 
-functionHeadRegExp = re.compile(r"(?:@[\w|=]+\s*\n)*(?:function)\s+\w+\s*\(.*?\)", re.MULTILINE | re.DOTALL)
+functionHeadRegExp = re.compile(r"(?:@[\w|=]+\s*\n)*function\s+\w+\s*\(.*?\)", re.MULTILINE | re.DOTALL)
 functionIntrinsicRegExp = re.compile(r"^@intrinsic=(\w+)\s*\n", re.MULTILINE | re.DOTALL)
 functionIsConstructorRegExp = re.compile(r"^@constructor", re.MULTILINE | re.DOTALL)
-functionNameRegExp = re.compile(r"(?:function)\s+(\w+)\s*\(", re.MULTILINE | re.DOTALL)
-functionParameterFinder = re.compile(r"^(?:function)\s+(?:\w+)\s*\(((?:\s*\w+)?\s*(?:\s*,\s*\w+)*)?\s*\)", re.MULTILINE | re.DOTALL)
+functionNameRegExp = re.compile(r"function\s+(\w+)\s*\(", re.MULTILINE | re.DOTALL)
+functionParameterFinder = re.compile(r"^function\s+(?:\w+)\s*\(((?:\s*\w+)?\s*(?:\s*,\s*\w+)*)?\s*\)", re.MULTILINE | re.DOTALL)
 
 multilineCommentRegExp = re.compile(r"\/\*.*?\*\/", re.MULTILINE | re.DOTALL)
 singleLineCommentRegExp = re.compile(r"\/\/.*?\n", re.MULTILINE | re.DOTALL)

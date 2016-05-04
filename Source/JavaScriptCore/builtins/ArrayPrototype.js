@@ -50,7 +50,7 @@ function keys()
     if (this == null) {
         if (this === null)
             throw new @TypeError("Array.prototype.keys requires that |this| not be null");
-        throw new @TypeError("Array.prototype.keys requires that |this| not be null");
+        throw new @TypeError("Array.prototype.keys requires that |this| not be undefined");
     }
 
     return new @createArrayIterator(@Object(this), @arrayIteratorKeyNext);
@@ -62,7 +62,7 @@ function entries()
     if (this == null) {
         if (this === null)
             throw new @TypeError("Array.prototype.entries requires that |this| not be null");
-        throw new @TypeError("Array.prototype.entries requires that |this| not be null");
+        throw new @TypeError("Array.prototype.entries requires that |this| not be undefined");
     }
 
     return new @createArrayIterator(@Object(this), @arrayIteratorKeyValueNext);

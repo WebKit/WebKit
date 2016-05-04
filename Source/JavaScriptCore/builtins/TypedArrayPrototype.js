@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Note that the intrisic @typedArrayLength checks the that the argument passed is a typed array
+// Note that the intrisic @typedArrayLength checks that the argument passed is a typed array
 // and throws if it is not.
 
 function values()

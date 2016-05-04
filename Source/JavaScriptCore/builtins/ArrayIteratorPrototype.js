@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2016a Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,15 @@ function next()
 {
     "use strict";
 
-    if (this == null)
-        throw @TypeError("%ArrayIteratorPrototype%.next requires that |this| not be null or undefined");
+    if (this == null) {
+        if (this === null)
+            throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| not be null");
+        throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| not be undefined");
+    }
 
     let next = this.@arrayIteratorNext;
     if (next === @undefined)
-        throw @TypeError("%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance");
+        throw new @TypeError("%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance");
 
     return next.@call(this);
 }
@@ -42,7 +45,7 @@ function arrayIteratorValueNext()
 {
     "use strict";
     var done = true;
-    var value = @undefined;
+    var value;
 
     var array = this.@iteratedObject;
     if (!this.@arrayIteratorIsDone) {
@@ -64,7 +67,7 @@ function arrayIteratorKeyNext()
 {
     "use strict";
     var done = true;
-    var value = @undefined;
+    var value;
 
     var array = this.@iteratedObject;
     if (!this.@arrayIteratorIsDone) {
@@ -86,7 +89,7 @@ function arrayIteratorKeyValueNext()
 {
     "use strict";
     var done = true;
-    var value = @undefined;
+    var value;
 
     var array = this.@iteratedObject;
     if (!this.@arrayIteratorIsDone) {

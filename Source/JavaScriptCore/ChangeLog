@@ -1,5 +1,32 @@
 2016-05-04  Keith Miller  <keith_miller@apple.com>
 
+        Corrections to r200422
+        https://bugs.webkit.org/show_bug.cgi?id=157351
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix some typos in various files. Also, make separate error messages
+        for the this value being undefined vs null in the ArrayIteratorprototype
+        next function and add test.
+
+        * Scripts/builtins/builtins_model.py:
+        * builtins/ArrayIteratorPrototype.js:
+        (next):
+        (arrayIteratorValueNext):
+        (arrayIteratorKeyNext):
+        (arrayIteratorKeyValueNext):
+        * builtins/ArrayPrototype.js:
+        (keys):
+        (entries):
+        * builtins/TypedArrayPrototype.js:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Deleted.
+        * tests/stress/array-iterators-next-error-messages.js: Added.
+        (assert):
+        (catch):
+
+2016-05-04  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, reland r200149 since the rollout had inconclusive PLT AB testing results.
 
 2016-05-04  Mark Lam  <mark.lam@apple.com>

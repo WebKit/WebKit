@@ -567,7 +567,6 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSFunction* privateFuncArrayIteratorKeyNext = JSFunction::createBuiltinFunction(vm, arrayIteratorPrototypeArrayIteratorKeyNextCodeGenerator(vm), this);
     JSFunction* privateFuncArrayIteratorKeyValueNext = JSFunction::createBuiltinFunction(vm, arrayIteratorPrototypeArrayIteratorKeyValueNextCodeGenerator(vm), this);
 
-
     JSObject* regExpProtoFlagsGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->flags);
     JSObject* regExpProtoGlobalGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->global);
     m_regExpProtoGlobalGetter.set(vm, this, regExpProtoGlobalGetterObject);

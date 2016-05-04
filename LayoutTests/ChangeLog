@@ -1,5 +1,17 @@
 2016-05-04  Keith Miller  <keith_miller@apple.com>
 
+        Corrections to r200422
+        https://bugs.webkit.org/show_bug.cgi?id=157351
+
+        Reviewed by Joseph Pecoraro.
+
+        Test case had some code changed that was not intended.
+
+        * js/regress/script-tests/deltablue-for-of.js:
+        (deltaBlue):
+
+2016-05-04  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, reland r200149 since the rollout had inconclusive PLT AB testing results.
 
 2016-05-04  Joseph Pecoraro  <pecoraro@apple.com>
