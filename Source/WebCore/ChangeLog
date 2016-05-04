@@ -1,3 +1,25 @@
+2016-05-04  Jeremy Jones  <jeremyj@apple.com>
+
+        Don't disconnect WebAVPlayerController from its delegate since there is no way to reconnect it.
+        https://bugs.webkit.org/show_bug.cgi?id=157337
+
+        Reviewed by Jer Noble.
+
+        WebAVPlayerController used to be deleted and recreated each time we begin fullscreen video mode.
+        Since it is now preserved, we shouldn't paritally tear it down in cleanupFullscreen by disconnecting it
+        from its delegate, especially since we have no way to reconnect it.
+
+        The side effect of leaving it connected is that it can continue to make callbacks during cleanup.
+        Of importance is that it sets the audio and legible media selctions to nil. We don't want to change 
+        the selection as a result of teardown. Nil selection is unsupported by WebVideoFullscreenModelVideoElement
+        and causes an assert. This transition to nil selection is now ignored.
+
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController setCurrentAudioMediaSelectionOption:]):
+        (-[WebAVPlayerController setCurrentLegibleMediaSelectionOption:]):
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::cleanupFullscreen):
+
 2016-05-04  Chris Dumez  <cdumez@apple.com>
 
         Media elements should not be paused right away when removed from the document

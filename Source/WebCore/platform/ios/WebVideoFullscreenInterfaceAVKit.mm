@@ -815,8 +815,6 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreen()
             [[getUIApplicationClass() sharedApplication] _setStatusBarOrientation:[m_parentWindow interfaceOrientation]];
     }
     
-    [playerController() setDelegate:nil];
-    
     [m_playerViewController setDelegate:nil];
     [m_playerViewController setPlayerController:nil];
     

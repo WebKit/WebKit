@@ -401,7 +401,10 @@ using namespace WebCore;
     if (option && self.audioMediaSelectionOptions)
         index = [self.audioMediaSelectionOptions indexOfObject:option];
 
-    self.delegate->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
+    if (index == NSNotFound)
+        return;
+
+    self.delegate->selectAudioMediaOption(index);
 }
 
 - (WebAVMediaSelectionOption *)currentLegibleMediaSelectionOption
@@ -425,7 +428,10 @@ using namespace WebCore;
     if (option && self.legibleMediaSelectionOptions)
         index = [self.legibleMediaSelectionOptions indexOfObject:option];
 
-    self.delegate->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
+    if (index == NSNotFound)
+        return;
+
+    self.delegate->selectLegibleMediaOption(index);
 }
 
 - (BOOL)isPlayingOnExternalScreen
