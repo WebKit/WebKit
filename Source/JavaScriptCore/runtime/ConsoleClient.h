@@ -45,7 +45,7 @@ public:
     JS_EXPORT_PRIVATE static void printConsoleMessageWithArguments(MessageSource, MessageType, MessageLevel, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&);
 
     void logWithLevel(ExecState*, RefPtr<Inspector::ScriptArguments>&&, MessageLevel);
-    void clear(ExecState*, RefPtr<Inspector::ScriptArguments>&&);
+    void clear(ExecState*);
     void dir(ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     void dirXML(ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     void table(ExecState*, RefPtr<Inspector::ScriptArguments>&&);

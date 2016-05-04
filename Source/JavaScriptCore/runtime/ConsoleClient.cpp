@@ -203,9 +203,9 @@ void ConsoleClient::logWithLevel(ExecState* exec, RefPtr<ScriptArguments>&& argu
     internalMessageWithTypeAndLevel(MessageType::Log, level, exec, WTFMove(arguments), ArgumentRequired);
 }
 
-void ConsoleClient::clear(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
+void ConsoleClient::clear(ExecState* exec)
 {
-    internalMessageWithTypeAndLevel(MessageType::Clear, MessageLevel::Log, exec, WTFMove(arguments), ArgumentNotRequired);
+    internalMessageWithTypeAndLevel(MessageType::Clear, MessageLevel::Log, exec, ScriptArguments::createEmpty(exec), ArgumentNotRequired);
 }
 
 void ConsoleClient::dir(ExecState* exec, RefPtr<ScriptArguments>&& arguments)

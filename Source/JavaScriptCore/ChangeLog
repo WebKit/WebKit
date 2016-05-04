@@ -1,3 +1,25 @@
+2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Simplify console.clear
+        https://bugs.webkit.org/show_bug.cgi?id=157316
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/ScriptArguments.cpp:
+        (Inspector::ScriptArguments::createEmpty):
+        (Inspector::ScriptArguments::ScriptArguments):
+        * inspector/ScriptArguments.h:
+        Provide a way to create an empty list.
+
+        * runtime/ConsoleClient.cpp:
+        (JSC::ConsoleClient::clear):
+        * runtime/ConsoleClient.h:
+        Drop unnecessary parameter.
+
+        * runtime/ConsoleObject.cpp:
+        (JSC::consoleProtoFuncClear):
+        No need to parse arguments.
+
 2016-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Improve Symbol() to string coercion error message

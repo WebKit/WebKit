@@ -146,8 +146,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncClear(ExecState* exec)
     if (!client)
         return JSValue::encode(jsUndefined());
 
-    RefPtr<Inspector::ScriptArguments> arguments(Inspector::createScriptArguments(exec, 0));
-    client->clear(exec, WTFMove(arguments));
+    client->clear(exec);
     return JSValue::encode(jsUndefined());
 }
 

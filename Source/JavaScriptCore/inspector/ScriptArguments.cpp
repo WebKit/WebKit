@@ -42,6 +42,16 @@ Ref<ScriptArguments> ScriptArguments::create(JSC::ExecState* scriptState, Vector
     return adoptRef(*new ScriptArguments(scriptState, arguments));
 }
 
+Ref<ScriptArguments> ScriptArguments::createEmpty(JSC::ExecState* scriptState)
+{
+    return adoptRef(*new ScriptArguments(scriptState));
+}
+
+ScriptArguments::ScriptArguments(JSC::ExecState* execState)
+    : m_globalObject(execState->vm(), execState->lexicalGlobalObject())
+{
+}
+
 ScriptArguments::ScriptArguments(JSC::ExecState* execState, Vector<Deprecated::ScriptValue>& arguments)
     : m_globalObject(execState->vm(), execState->lexicalGlobalObject())
 {
