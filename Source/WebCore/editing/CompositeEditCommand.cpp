@@ -212,7 +212,8 @@ void EditCommandComposition::unapply()
 {
     ASSERT(m_document);
     RefPtr<Frame> frame = m_document->frame();
-    ASSERT(frame);
+    if (!frame)
+        return;
 
     m_replacedText.captureTextToBeDeletedByUnapply();
 
@@ -243,7 +244,8 @@ void EditCommandComposition::reapply()
 {
     ASSERT(m_document);
     RefPtr<Frame> frame = m_document->frame();
-    ASSERT(frame);
+    if (!frame)
+        return;
 
     m_replacedText.captureTextToBeDeletedByReapply();
 
