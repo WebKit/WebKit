@@ -1,5 +1,23 @@
 2016-05-04  Filip Pizlo  <fpizlo@apple.com>
 
+        Add a few more WTF locking benchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=157365
+
+        Rubber stamped by Benjamin Poulain.
+        
+        Factors out our toy locks into ToyLocks.h and adds a new test (LockFairnessTest) that measures
+        the fairness of locks.
+        
+        The result: WTF::Lock is pretty fair enough.
+
+        * benchmarks/LockFairnessTest.cpp: Added.
+        (main):
+        * benchmarks/LockSpeedTest.cpp:
+        (main):
+        * benchmarks/ToyLocks.h: Added.
+
+2016-05-04  Filip Pizlo  <fpizlo@apple.com>
+
         Speed up JSGlobalObject initialization by making some properties lazy
         https://bugs.webkit.org/show_bug.cgi?id=157045
 
