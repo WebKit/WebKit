@@ -230,7 +230,10 @@ void StructureStubInfo::visitWeakReferences(CodeBlock* codeBlock)
 {
     VM& vm = *codeBlock->vm();
     
-    bufferedStructures.clear();
+    bufferedStructures.genericFilter(
+        [&] (Structure* structure) -> bool {
+            return Heap::isMarked(structure);
+        });
 
     switch (cacheType) {
     case CacheType::GetByIdSelf:
@@ -248,6 +251,22 @@ void StructureStubInfo::visitWeakReferences(CodeBlock* codeBlock)
 
     reset(codeBlock);
     resetByGC = true;
+}
+
+bool StructureStubInfo::propagateTransitions(SlotVisitor& visitor)
+{
+    switch (cacheType) {
+    case CacheType::Unset:
+        return true;
+    case CacheType::GetByIdSelf:
+    case CacheType::PutByIdReplace:
+        return u.byIdSelf.baseObjectStructure->markIfCheap(visitor);
+    case CacheType::Stub:
+        return u.stub->propagateTransitions(visitor);
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+    return true;
 }
 
 bool StructureStubInfo::containsPC(void* pc) const

@@ -1135,6 +1135,25 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_inferredTypeTable);
 }
 
+bool Structure::isCheapDuringGC()
+{
+    // FIXME: We could make this even safer by returning false if this structure's property table
+    // has any large property names.
+    // https://bugs.webkit.org/show_bug.cgi?id=157334
+    
+    return (!m_globalObject || Heap::isMarked(m_globalObject.get()))
+        && (!storedPrototypeObject() || Heap::isMarked(storedPrototypeObject()));
+}
+
+bool Structure::markIfCheap(SlotVisitor& visitor)
+{
+    if (!isCheapDuringGC())
+        return Heap::isMarked(this);
+    
+    visitor.appendUnbarrieredReadOnlyPointer(this);
+    return true;
+}
+
 bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyName)
 {
     if (parseIndex(propertyName))

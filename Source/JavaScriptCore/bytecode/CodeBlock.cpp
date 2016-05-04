@@ -2616,32 +2616,16 @@ void CodeBlock::propagateTransitions(SlotVisitor& visitor)
 
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType())) {
-        for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
-            StructureStubInfo& stubInfo = **iter;
-            if (stubInfo.cacheType != CacheType::Stub)
-                continue;
-            PolymorphicAccess* list = stubInfo.u.stub;
-            JSCell* origin = stubInfo.codeOrigin.codeOriginOwner();
-            if (origin && !Heap::isMarked(origin)) {
-                allAreMarkedSoFar = false;
-                continue;
-            }
-            for (unsigned j = list->size(); j--;) {
-                const AccessCase& access = list->at(j);
-                if (access.type() != AccessCase::Transition)
-                    continue;
-                if (Heap::isMarked(access.structure()))
-                    visitor.appendUnbarrieredReadOnlyPointer(access.newStructure());
-                else
-                    allAreMarkedSoFar = false;
-            }
-        }
+        for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter)
+            allAreMarkedSoFar &= (*iter)->propagateTransitions(visitor);
     }
 #endif // ENABLE(JIT)
     
 #if ENABLE(DFG_JIT)
     if (JITCode::isOptimizingJIT(jitType())) {
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
+        for (auto& weakReference : dfgCommon->weakStructureReferences)
+            allAreMarkedSoFar &= weakReference->markIfCheap(visitor);
         
         for (unsigned i = 0; i < dfgCommon->transitions.size(); ++i) {
             if (shouldMarkTransition(dfgCommon->transitions[i])) {

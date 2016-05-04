@@ -81,6 +81,9 @@ public:
     // Check if the stub has weak references that are dead. If it does, then it resets itself,
     // either entirely or just enough to ensure that those dead pointers don't get used anymore.
     void visitWeakReferences(CodeBlock*);
+    
+    // This returns true if it has marked everything that it will ever mark.
+    bool propagateTransitions(SlotVisitor&);
         
     ALWAYS_INLINE bool considerCaching(Structure* structure)
     {

@@ -1,3 +1,98 @@
+2016-05-03  Filip Pizlo  <fpizlo@apple.com>
+
+        References from code to Structures should be stronger than weak
+        https://bugs.webkit.org/show_bug.cgi?id=157324
+
+        Reviewed by Mark Lam.
+        
+        If code refers to a Structure and the Structure dies, then previously we'd kill the code. 
+        This makes sense because the Structure could be the only thing left referring to some global
+        object or prototype.
+
+        But this also causes unnecessary churn. Sometimes there will be a structure that we just
+        haven't really done anything with recently and so it appears dead. The approach we use
+        elsewhere in our type inference is that the type that the code uses is general enough to
+        handle every past execution. Having the GC clear code when some Structure it uses dies means
+        that we forget that the code used that Structure. We'll either assume that the code is more
+        monomorphic than it really is (because after GC we patch in some other structure but not the
+        deleted one, so it looks like we only ever saw the new structure), or we'll assume that it's
+        crazier than it really is (because we'll remember that there had been some structure that
+        caused deletion, so we'll assume that deletions might happen in the future, so we'll use a
+        fully dynamic IC).
+
+        This change introduces a more nuanced policy: if it's cheap to mark a dead Structure then we
+        should mark it just so that all of the code that refers to it remembers that there had been
+        this exact Structure in the past. If the code often goes through different Structures then
+        we already have great mechanisms to realize that the code is nutty (namely, the
+        PolymorphicAccess size limit). But if the code just does this a handful of times then
+        remembering this old Structure is probably net good:
+
+        - It obeys the "handle all past executions" law.
+        - It preserves the history of the property access, allowing a precise measure of its past
+          polymorphism.
+        - It makes the code ready to run fast if the user decides to use that Structure again.
+          Marking the Structure means it will stay in whatever property transition tables it was in,
+          so if the program does the same thing it did in the past, it will get this old Structure.
+
+        It looks like this is a progression in gbemu and it makes gbemu perform more
+        deterministically. Also, it seems that this makes JetStream run faster.
+        
+        Over five in-browser runs of JetStream, here's what we see before and after:
+        
+        Geometric Mean:
+            Before              After
+            229.23 +- 8.2523    230.70 +- 12.888
+            232.91 +- 15.638    239.04 +- 13.766
+            234.79 +- 12.760    236.32 +- 15.562
+            236.20 +- 23.125    242.02 +- 3.3865
+            237.22 +- 2.1929    237.23 +- 17.664
+        
+        Just gbemu:
+            Before              After
+            541.0 +- 135.8      481.7 +- 143.4
+            518.9 +- 15.65      508.1 +- 136.3
+            362.5 +- 0.8884     489.7 +- 101.4
+            470.7 +- 313.3      530.7 +- 11.49
+            418.7 +- 180.6      537.2 +- 6.514
+        
+        Notice that there is plenty of noise before and after, but the noise is now far less severe.
+        After this change I did not see any runs like "470.7 +- 313.3" where the size of the 
+        confidence interval (313.3 * 2) is greater than the score (470.7). Also, notice that the
+        least noisy run before the change also got a lower score than we ever observed after the
+        change (36.5 +- 0.8884). The noise, and these occasional very low scores, are due to a
+        pathology where the GC would reset some stubs at an unfortunate time during profiling,
+        causing the optimizing compiler to make many poor decisions. That pathology doesn't exist
+        anymore.
+        
+        On the other hand, prior to this change it was possible for gbemu to sometimes run sooooper
+        fast because the GC would cause the profiler to forget gbemu's behavior on the first tick
+        and focus only on its behavior in subsequent ticks. So, in steady state, we'd optimize gbemu
+        for its later behavior rather than a combination of its early behavior and later behavior.
+        We rarely got lucky this way, so it's not fair to view this quirk as a feature.
+        
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::propagateTransitions):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::visitWeak):
+        (JSC::AccessCase::propagateTransitions):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::PolymorphicAccess::visitWeak):
+        (JSC::PolymorphicAccess::propagateTransitions):
+        (JSC::PolymorphicAccess::dump):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::visitWeakReferences):
+        (JSC::StructureStubInfo::propagateTransitions):
+        (JSC::StructureStubInfo::containsPC):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::considerCaching):
+        * runtime/Structure.cpp:
+        (JSC::Structure::visitChildren):
+        (JSC::Structure::isCheapDuringGC):
+        (JSC::Structure::markIfCheap):
+        (JSC::Structure::prototypeChainMayInterceptStoreTo):
+        * runtime/Structure.h:
+
 2016-05-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Simplify console.clear

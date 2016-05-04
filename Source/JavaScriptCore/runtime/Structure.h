@@ -260,6 +260,17 @@ public:
     StructureChain* prototypeChain(VM&, JSGlobalObject*) const;
     StructureChain* prototypeChain(ExecState*) const;
     static void visitChildren(JSCell*, SlotVisitor&);
+    
+    // A Structure is cheap to mark during GC if doing so would only add a small and bounded amount
+    // to our heap footprint. For example, if the structure refers to a global object that is not
+    // yet marked, then as far as we know, the decision to mark this Structure would lead to a large
+    // increase in footprint because no other object refers to that global object. This method
+    // returns true if all user-controlled (and hence unbounded in size) objects referenced from the
+    // Structure are already marked.
+    bool isCheapDuringGC();
+    
+    // Returns true if this structure is now marked.
+    bool markIfCheap(SlotVisitor&);
         
     // Will just the prototype chain intercept this property access?
     JS_EXPORT_PRIVATE bool prototypeChainMayInterceptStoreTo(VM&, PropertyName);
