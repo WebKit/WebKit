@@ -28,7 +28,6 @@
 
 #include "FontFace.h"
 #include "JSFontFace.h"
-#include "JSKeyValueIterator.h"
 
 namespace WebCore {
 

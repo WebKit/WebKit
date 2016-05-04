@@ -1,3 +1,27 @@
+2016-05-04  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Rename JSKeyValueIterator as JSDOMIterator
+        https://bugs.webkit.org/show_bug.cgi?id=157308
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+
+        * bindings/js/JSDOMIterator.h: Renamed from Source/WebCore/bindings/js/JSKeyValueIterator.h.
+        (WebCore::JSDOMIteratorPrototype::create):
+        (WebCore::JSDOMIteratorPrototype::createStructure):
+        (WebCore::JSDOMIteratorPrototype::JSDOMIteratorPrototype):
+        (WebCore::createKeyValueIterator):
+        (WebCore::keyValueIteratorForEach):
+        (WebCore::JSDOMIterator<JSWrapper>::destroy):
+        (WebCore::JSDOMIterator<JSWrapper>::next):
+        (WebCore::JSDOMIteratorPrototype<JSWrapper>::next):
+        (WebCore::JSDOMIteratorPrototype<JSWrapper>::finishCreation):
+        * bindings/js/JSFontFaceSetCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementationIterableFunctions):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+
 2016-05-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         CrashTracer: [USER] com.apple.WebKit.WebContent at …ple.WebCore: WebCore::EditCommandComposition::unapply + 105

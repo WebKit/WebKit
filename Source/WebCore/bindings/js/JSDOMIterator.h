@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSKeyValueIterator_h
-#define JSKeyValueIterator_h
+#ifndef JSDOMIterator_h
+#define JSDOMIterator_h
 
 #include "JSDOMBinding.h"
 #include <runtime/JSDestructibleObject.h>
@@ -33,14 +33,14 @@
 namespace WebCore {
 
 template<typename JSWrapper>
-class JSKeyValueIteratorPrototype : public JSC::JSNonFinalObject {
+class JSDOMIteratorPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     using DOMWrapped = typename JSWrapper::DOMWrapped;
 
-    static JSKeyValueIteratorPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSDOMIteratorPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSKeyValueIteratorPrototype* prototype = new (NotNull, JSC::allocateCell<JSKeyValueIteratorPrototype>(vm.heap)) JSKeyValueIteratorPrototype(vm, structure);
+        JSDOMIteratorPrototype* prototype = new (NotNull, JSC::allocateCell<JSDOMIteratorPrototype>(vm.heap)) JSDOMIteratorPrototype(vm, structure);
         prototype->finishCreation(vm, globalObject);
         return prototype;
     }
@@ -55,7 +55,7 @@ public:
     static JSC::EncodedJSValue JSC_HOST_CALL next(JSC::ExecState*);
 
 private:
-    JSKeyValueIteratorPrototype(JSC::VM& vm, JSC::Structure* structure) : Base(vm, structure) { }
+    JSDOMIteratorPrototype(JSC::VM& vm, JSC::Structure* structure) : Base(vm, structure) { }
 
     void finishCreation(JSC::VM&, JSC::JSGlobalObject*);
 };
@@ -63,7 +63,7 @@ private:
 enum class IterationKind { Key, Value, KeyValue };
 
 template<typename JSWrapper>
-class JSKeyValueIterator: public JSDOMObject {
+class JSDOMIterator: public JSDOMObject {
 public:
     using DOMWrapped = typename std::remove_reference<decltype(std::declval<JSWrapper>().wrapped())>::type;
     using Base = JSDOMObject;
@@ -75,23 +75,23 @@ public:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
-    static JSKeyValueIterator* create(JSC::VM& vm, JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind)
+    static JSDOMIterator* create(JSC::VM& vm, JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind)
     {
-        JSKeyValueIterator* instance = new (NotNull, JSC::allocateCell<JSKeyValueIterator>(vm.heap)) JSKeyValueIterator(structure, iteratedObject, kind);
+        JSDOMIterator* instance = new (NotNull, JSC::allocateCell<JSDOMIterator>(vm.heap)) JSDOMIterator(structure, iteratedObject, kind);
         instance->finishCreation(vm);
         return instance;
     }
 
-    static JSKeyValueIteratorPrototype<JSWrapper>* createPrototype(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
+    static JSDOMIteratorPrototype<JSWrapper>* createPrototype(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
     {
-        return JSKeyValueIteratorPrototype<JSWrapper>::create(vm, globalObject,
-            JSKeyValueIteratorPrototype<JSWrapper>::createStructure(vm, globalObject, globalObject->objectPrototype()));
+        return JSDOMIteratorPrototype<JSWrapper>::create(vm, globalObject,
+            JSDOMIteratorPrototype<JSWrapper>::createStructure(vm, globalObject, globalObject->objectPrototype()));
     }
 
     JSC::JSValue next(JSC::ExecState&);
 
 private:
-    JSKeyValueIterator(JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind)
+    JSDOMIterator(JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind)
         : Base(structure, *iteratedObject.globalObject())
         , m_iterator(iteratedObject.wrapped().createIterator())
         , m_kind(kind)
@@ -111,7 +111,7 @@ JSC::EncodedJSValue createKeyValueIterator(JSC::ExecState& state, IterationKind 
     if (UNLIKELY(!wrapper))
         return throwThisTypeError(state, JSWrapper::info()->className, propertyName);
     JSDOMGlobalObject& globalObject = *wrapper->globalObject();
-    return JSC::JSValue::encode(JSKeyValueIterator<JSWrapper>::create(globalObject.vm(), getDOMStructure<JSKeyValueIterator<JSWrapper>>(globalObject.vm(), globalObject), *wrapper, kind));
+    return JSC::JSValue::encode(JSDOMIterator<JSWrapper>::create(globalObject.vm(), getDOMStructure<JSDOMIterator<JSWrapper>>(globalObject.vm(), globalObject), *wrapper, kind));
 }
 
 template<typename JSWrapper>
@@ -140,14 +140,14 @@ JSC::EncodedJSValue keyValueIteratorForEach(JSC::ExecState& state, const char* p
 }
 
 template<typename JSWrapper>
-void JSKeyValueIterator<JSWrapper>::destroy(JSCell* cell)
+void JSDOMIterator<JSWrapper>::destroy(JSCell* cell)
 {
-    JSKeyValueIterator<JSWrapper>* thisObject = JSC::jsCast<JSKeyValueIterator<JSWrapper>*>(cell);
-    thisObject->JSKeyValueIterator<JSWrapper>::~JSKeyValueIterator();
+    JSDOMIterator<JSWrapper>* thisObject = JSC::jsCast<JSDOMIterator<JSWrapper>*>(cell);
+    thisObject->JSDOMIterator<JSWrapper>::~JSDOMIterator();
 }
 
 template<typename JSWrapper>
-JSC::JSValue JSKeyValueIterator<JSWrapper>::next(JSC::ExecState& state)
+JSC::JSValue JSDOMIterator<JSWrapper>::next(JSC::ExecState& state)
 {
     auto iteratorValue = m_iterator.next(state);
     if (!iteratorValue)
@@ -165,9 +165,9 @@ JSC::JSValue JSKeyValueIterator<JSWrapper>::next(JSC::ExecState& state)
 }
 
 template<typename JSWrapper>
-JSC::EncodedJSValue JSC_HOST_CALL JSKeyValueIteratorPrototype<JSWrapper>::next(JSC::ExecState* state)
+JSC::EncodedJSValue JSC_HOST_CALL JSDOMIteratorPrototype<JSWrapper>::next(JSC::ExecState* state)
 {
-    auto iterator = JSC::jsDynamicCast<JSKeyValueIterator<JSWrapper>*>(state->thisValue());
+    auto iterator = JSC::jsDynamicCast<JSDOMIterator<JSWrapper>*>(state->thisValue());
     if (!iterator)
         return JSC::JSValue::encode(throwTypeError(state, ASCIILiteral("Cannot call next() on a non-Iterator object")));
 
@@ -175,7 +175,7 @@ JSC::EncodedJSValue JSC_HOST_CALL JSKeyValueIteratorPrototype<JSWrapper>::next(J
 }
 
 template<typename JSWrapper>
-void JSKeyValueIteratorPrototype<JSWrapper>::finishCreation(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
+void JSDOMIteratorPrototype<JSWrapper>::finishCreation(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
@@ -185,4 +185,4 @@ void JSKeyValueIteratorPrototype<JSWrapper>::finishCreation(JSC::VM& vm, JSC::JS
 
 }
 
-#endif // !defined(JSKeyValueIterator_h)
+#endif // !defined(JSDOMIterator_h)

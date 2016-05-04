@@ -30,12 +30,12 @@
 #include "HTMLNames.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMIterator.h"
 #include "JSDOMPromise.h"
 #include "JSDOMStringList.h"
 #include "JSDocument.h"
 #include "JSEventListener.h"
 #include "JSFetchRequest.h"
-#include "JSKeyValueIterator.h"
 #include "JSNode.h"
 #include "JSSVGDocument.h"
 #include "JSSVGPoint.h"
@@ -5890,8 +5890,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNeedsLifecycleP
     return JSValue::encode(jsUndefined());
 }
 
-using TestObjIterator = JSKeyValueIterator<JSTestObj>;
-using TestObjIteratorPrototype = JSKeyValueIteratorPrototype<JSTestObj>;
+using TestObjIterator = JSDOMIterator<JSTestObj>;
+using TestObjIteratorPrototype = JSDOMIteratorPrototype<JSTestObj>;
 
 template<>
 const JSC::ClassInfo TestObjIterator::s_info = { "TestObject Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(TestObjIterator) };

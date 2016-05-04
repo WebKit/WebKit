@@ -4157,11 +4157,11 @@ sub GenerateImplementationIterableFunctions
     my $className = "JS$interfaceName";
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
 
-    AddToImplIncludes("JSKeyValueIterator.h");
+    AddToImplIncludes("JSDOMIterator.h");
 
     push(@implContent,  <<END);
-using ${interfaceName}Iterator = JSKeyValueIterator<${className}>;
-using ${interfaceName}IteratorPrototype = JSKeyValueIteratorPrototype<${className}>;
+using ${interfaceName}Iterator = JSDOMIterator<${className}>;
+using ${interfaceName}IteratorPrototype = JSDOMIteratorPrototype<${className}>;
 
 template<>
 const JSC::ClassInfo ${interfaceName}Iterator::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(${interfaceName}Iterator) };
