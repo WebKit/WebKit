@@ -1,3 +1,34 @@
+2016-05-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Object constructor need to be aware of new.target
+        https://bugs.webkit.org/show_bug.cgi?id=157196
+
+        Reviewed by Darin Adler.
+
+        Object constructor should be aware of new.target.
+        When the new.target is specified, we should store it.prototype to the newly created
+        object's [[Prototype]].
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        Take the design that caches the structure used for empty object.
+        This structure is also used in constructEmptyObject frequently.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::objectStructureForObjectConstructor):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObject):
+        (JSC::constructWithObjectConstructor):
+        (JSC::callObjectConstructor):
+        * runtime/ObjectConstructor.h:
+        (JSC::constructEmptyObject):
+        Construct the object by using the plain structure that is also used in the ObjectConstructor.
+
+        * tests/stress/object-constructor-should-be-new-target-aware.js: Added.
+        (shouldBe):
+        (Hello):
+
 2016-05-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r200383 and r200406.

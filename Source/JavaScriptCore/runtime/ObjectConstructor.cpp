@@ -118,19 +118,37 @@ bool ObjectConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
     return getStaticFunctionSlot<JSObject>(exec, objectConstructorTable, jsCast<ObjectConstructor*>(object), propertyName, slot);
 }
 
-static ALWAYS_INLINE JSObject* constructObject(ExecState* exec)
+// ES 19.1.1.1 Object([value])
+static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, JSValue newTarget)
 {
-    JSGlobalObject* globalObject = exec->callee()->globalObject();
+    ObjectConstructor* objectConstructor = jsCast<ObjectConstructor*>(exec->callee());
+    JSGlobalObject* globalObject = objectConstructor->globalObject();
+
+    // We need to check newTarget condition in this caller side instead of InternalFunction::createSubclassStructure side.
+    // Since if we found this condition is met, we should not fall into the type conversion in the step 3.
+
+    // 1. If NewTarget is neither undefined nor the active function, then
+    if (newTarget && newTarget != objectConstructor) {
+        // a. Return ? OrdinaryCreateFromConstructor(NewTarget, "%ObjectPrototype%").
+        Structure* objectStructure = InternalFunction::createSubclassStructure(exec, newTarget, globalObject->objectStructureForObjectConstructor());
+        if (exec->hadException())
+            return nullptr;
+        return constructEmptyObject(exec, objectStructure);
+    }
+
+    // 2. If value is null, undefined or not supplied, return ObjectCreate(%ObjectPrototype%).
     ArgList args(exec);
     JSValue arg = args.at(0);
     if (arg.isUndefinedOrNull())
-        return constructEmptyObject(exec, globalObject->objectPrototype());
+        return constructEmptyObject(exec, globalObject->objectStructureForObjectConstructor());
+
+    // 3. Return ToObject(value).
     return arg.toObject(exec, globalObject);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithObjectConstructor(ExecState* exec)
 {
-    return JSValue::encode(constructObject(exec));
+    return JSValue::encode(constructObject(exec, exec->newTarget()));
 }
 
 ConstructType ObjectConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -141,7 +159,7 @@ ConstructType ObjectConstructor::getConstructData(JSCell*, ConstructData& constr
 
 static EncodedJSValue JSC_HOST_CALL callObjectConstructor(ExecState* exec)
 {
-    return JSValue::encode(constructObject(exec));
+    return JSValue::encode(constructObject(exec, JSValue()));
 }
 
 CallType ObjectConstructor::getCallData(JSCell*, CallData& callData)
