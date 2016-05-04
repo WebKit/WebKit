@@ -1,3 +1,14 @@
+2016-05-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove failure expectation for imported/w3c/web-platform-tests/html/dom/interfaces.html on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=157344
+
+        Unreviewed test gardening.
+
+        This failure expectation was overriding the global skip on debug builds.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-05-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r200383 and r200406.
