@@ -67,7 +67,6 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
     , m_layerFlushTimer(*this, &CoordinatedLayerTreeHost::layerFlushTimerFired)
     , m_layerFlushSchedulingEnabled(true)
     , m_forceRepaintAsyncCallbackID(0)
-    , m_contentLayer(nullptr)
     , m_viewOverlayRootLayer(nullptr)
 {
     m_coordinator = std::make_unique<CompositingCoordinator>(webPage->corePage(), this);
@@ -114,24 +113,15 @@ void CoordinatedLayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush(bool 
     m_notifyAfterScheduledLayerFlush = notifyAfterScheduledLayerFlush;
 }
 
-void CoordinatedLayerTreeHost::updateRootLayers()
-{
-    if (!m_contentLayer && !m_viewOverlayRootLayer)
-        return;
-
-    m_coordinator->setRootCompositingLayer(m_contentLayer, m_viewOverlayRootLayer);
-}
-
 void CoordinatedLayerTreeHost::setViewOverlayRootLayer(WebCore::GraphicsLayer* viewOverlayRootLayer)
 {
     m_viewOverlayRootLayer = viewOverlayRootLayer;
-    updateRootLayers();
+    m_coordinator->setViewOverlayRootLayer(viewOverlayRootLayer);
 }
 
 void CoordinatedLayerTreeHost::setRootCompositingLayer(WebCore::GraphicsLayer* graphicsLayer)
 {
-    m_contentLayer = graphicsLayer;
-    updateRootLayers();
+    m_coordinator->setRootCompositingLayer(graphicsLayer);
 }
 
 void CoordinatedLayerTreeHost::invalidate()

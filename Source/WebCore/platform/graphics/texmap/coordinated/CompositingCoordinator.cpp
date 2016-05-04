@@ -70,16 +70,28 @@ CompositingCoordinator::~CompositingCoordinator()
         registeredLayer->setCoordinator(nullptr);
 }
 
-void CompositingCoordinator::setRootCompositingLayer(GraphicsLayer* compositingLayer, GraphicsLayer* overlayLayer)
+void CompositingCoordinator::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
+    if (m_rootCompositingLayer == graphicsLayer)
+        return;
+
     if (m_rootCompositingLayer)
         m_rootCompositingLayer->removeFromParent();
 
-    m_rootCompositingLayer = compositingLayer;
+    m_rootCompositingLayer = graphicsLayer;
     if (m_rootCompositingLayer)
         m_rootLayer->addChildAtIndex(m_rootCompositingLayer, 0);
+}
 
-    m_overlayCompositingLayer = overlayLayer;
+void CompositingCoordinator::setViewOverlayRootLayer(GraphicsLayer* graphicsLayer)
+{
+    if (m_overlayCompositingLayer == graphicsLayer)
+        return;
+
+    if (m_overlayCompositingLayer)
+        m_overlayCompositingLayer->removeFromParent();
+
+    m_overlayCompositingLayer = graphicsLayer;
     if (m_overlayCompositingLayer)
         m_rootLayer->addChild(m_overlayCompositingLayer);
 }

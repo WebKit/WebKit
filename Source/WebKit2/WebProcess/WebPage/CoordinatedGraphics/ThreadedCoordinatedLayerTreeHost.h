@@ -108,8 +108,6 @@ private:
     void compositorDidFlushLayers();
     void didScaleFactorChanged(float scale, const WebCore::IntPoint& origin);
 
-    void updateRootLayers();
-
     void cancelPendingLayerFlush();
     void performScheduledLayerFlush();
 
@@ -131,9 +129,6 @@ private:
     uint64_t m_forceRepaintAsyncCallbackID;
 
     WebCore::IntPoint m_prevScrollPosition;
-
-    WebCore::GraphicsLayer* m_contentLayer;
-    WebCore::GraphicsLayer* m_viewOverlayRootLayer;
 
     std::unique_ptr<WebCore::CompositingCoordinator> m_coordinator;
     RefPtr<ThreadedCompositor> m_compositor;

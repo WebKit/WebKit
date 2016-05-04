@@ -88,8 +88,6 @@ private:
 
     void layerFlushTimerFired();
 
-    void updateRootLayers();
-
     // CompositingCoordinator::Client
     void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) override;
     void notifyFlushRequired() override { scheduleLayerFlush(); };
@@ -109,7 +107,6 @@ private:
     bool m_layerFlushSchedulingEnabled;
     uint64_t m_forceRepaintAsyncCallbackID;
 
-    WebCore::GraphicsLayer* m_contentLayer;
     WebCore::GraphicsLayer* m_viewOverlayRootLayer;
 };
 

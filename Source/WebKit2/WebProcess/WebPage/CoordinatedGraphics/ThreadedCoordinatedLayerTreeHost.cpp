@@ -60,8 +60,6 @@ ThreadedCoordinatedLayerTreeHost::~ThreadedCoordinatedLayerTreeHost()
 ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage* webPage)
     : LayerTreeHost(webPage)
     , m_forceRepaintAsyncCallbackID(0)
-    , m_contentLayer(nullptr)
-    , m_viewOverlayRootLayer(nullptr)
     , m_notifyAfterScheduledLayerFlush(false)
     , m_isSuspended(false)
     , m_isWaitingForRenderer(false)
@@ -114,8 +112,7 @@ void ThreadedCoordinatedLayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlu
 
 void ThreadedCoordinatedLayerTreeHost::setRootCompositingLayer(WebCore::GraphicsLayer* graphicsLayer)
 {
-    m_contentLayer = graphicsLayer;
-    updateRootLayers();
+    m_coordinator->setRootCompositingLayer(graphicsLayer);
 }
 
 void ThreadedCoordinatedLayerTreeHost::invalidate()
@@ -191,18 +188,9 @@ void ThreadedCoordinatedLayerTreeHost::didScaleFactorChanged(float scale, const 
     m_webPage->scalePage(scale, origin);
 }
 
-void ThreadedCoordinatedLayerTreeHost::updateRootLayers()
+void ThreadedCoordinatedLayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* graphicsLayer)
 {
-    if (!m_contentLayer && !m_viewOverlayRootLayer)
-        return;
-
-    m_coordinator->setRootCompositingLayer(m_contentLayer, m_viewOverlayRootLayer);
-}
-
-void ThreadedCoordinatedLayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* viewOverlayRootLayer)
-{
-    m_viewOverlayRootLayer = viewOverlayRootLayer;
-    updateRootLayers();
+    m_coordinator->setViewOverlayRootLayer(graphicsLayer);
 }
 
 #if PLATFORM(GTK)

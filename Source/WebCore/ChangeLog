@@ -1,5 +1,24 @@
 2016-05-04  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] CompositingCoordinator should hande root compositing and view overlay layers separately
+        https://bugs.webkit.org/show_bug.cgi?id=157305
+
+        Reviewed by Carlos Garcia Campos.
+
+        Split out handling of the root compositing and the view overlay layers
+        into two separate methods. Both do nothing if the passed-in layer is
+        the same as the current one. Otherwise, the current one is removed
+        from the tree and the new one added to it.
+
+        No change in behavior is expected.
+
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::setRootCompositingLayer):
+        (WebCore::CompositingCoordinator::setViewOverlayRootLayer):
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.h:
+
+2016-05-04  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Clean up TextureMapperGLData, TextureMapperGLData::SharedGLData
         https://bugs.webkit.org/show_bug.cgi?id=157303
 

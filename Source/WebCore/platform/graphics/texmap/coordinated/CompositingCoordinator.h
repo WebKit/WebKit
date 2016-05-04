@@ -64,7 +64,8 @@ public:
     CompositingCoordinator(Page*, CompositingCoordinator::Client*);
     virtual ~CompositingCoordinator();
 
-    void setRootCompositingLayer(GraphicsLayer* compositingLayer, GraphicsLayer* overlayLayer);
+    void setRootCompositingLayer(GraphicsLayer*);
+    void setViewOverlayRootLayer(GraphicsLayer*);
     void sizeDidChange(const IntSize& newSize);
     void deviceOrPageScaleFactorChanged();
 
