@@ -1060,7 +1060,18 @@ private:
             fixEdge<Int32Use>(node->child1());
             break;
         }
-            
+
+        case CallObjectConstructor: {
+            if (node->child1()->shouldSpeculateObject()) {
+                fixEdge<ObjectUse>(node->child1());
+                node->convertToIdentity();
+                break;
+            }
+
+            fixEdge<UntypedUse>(node->child1());
+            break;
+        }
+
         case ToThis: {
             fixupToThis(node);
             break;
@@ -1530,6 +1541,9 @@ private:
         case ProfileWillCall:
         case ProfileDidCall:
         case DeleteById:
+        case IsArrayObject:
+        case IsJSArray:
+        case IsArrayConstructor:
         case IsEmpty:
         case IsUndefined:
         case IsBoolean:

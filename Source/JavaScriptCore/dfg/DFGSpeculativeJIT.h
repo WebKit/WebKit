@@ -735,8 +735,11 @@ public:
     void compileInstanceOf(Node*);
     void compileInstanceOfCustom(Node*);
 
+    void compileIsJSArray(Node*);
+    void compileIsArrayConstructor(Node*);
+    void compileIsArrayObject(Node*);
     void compileIsRegExpObject(Node*);
-
+    
     void emitCall(Node*);
     
     // Called once a node has completed code generation but prior to setting
@@ -1426,6 +1429,17 @@ public:
         return appendCallSetResult(operation, result);
     }
 
+    JITCompiler::Call callOperation(C_JITOperation_EGJ operation, GPRReg result, JSGlobalObject* globalObject, GPRReg arg1)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(globalObject), arg1);
+        return appendCallSetResult(operation, result);
+    }
+
+    JITCompiler::Call callOperation(C_JITOperation_EGJ operation, GPRReg result, JSGlobalObject* globalObject, JSValueRegs arg1)
+    {
+        return callOperation(operation, result, globalObject, arg1.gpr());
+    }
+
     JITCompiler::Call callOperation(C_JITOperation_EJ operation, GPRReg result, GPRReg arg1)
     {
         m_jit.setupArgumentsWithExecState(arg1);
@@ -1466,9 +1480,17 @@ public:
         m_jit.setupArgumentsWithExecState(arg1);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(S_JITOperation_EJ operation, GPRReg result, JSValueRegs arg1)
+    {
+        return callOperation(operation, result, arg1.gpr());
+    }
     JITCompiler::Call callOperation(J_JITOperation_EJ operation, JSValueRegs result, JSValueRegs arg1)
     {
         return callOperation(operation, result.payloadGPR(), arg1.payloadGPR());
+    }
+    JITCompiler::Call callOperation(J_JITOperation_EJ operation, GPRReg result, JSValueRegs arg1)
+    {
+        return callOperation(operation, result, arg1.payloadGPR());
     }
     JITCompiler::Call callOperation(J_JITOperation_EJ operation, GPRReg result, GPRReg arg1)
     {
@@ -1868,6 +1890,17 @@ public:
         return appendCallSetResult(operation, result);
     }
 
+    JITCompiler::Call callOperation(C_JITOperation_EGJ operation, GPRReg result, JSGlobalObject* globalObject, GPRReg arg1Tag, GPRReg arg1Payload)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(globalObject), arg1Payload, arg1Tag);
+        return appendCallSetResult(operation, result);
+    }
+
+    JITCompiler::Call callOperation(C_JITOperation_EGJ operation, GPRReg result, JSGlobalObject* globalObject, JSValueRegs arg1)
+    {
+        return callOperation(operation, result, globalObject, arg1.tagGPR(), arg1.payloadGPR());
+    }
+
     JITCompiler::Call callOperation(C_JITOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
     {
         m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag);
@@ -1890,6 +1923,11 @@ public:
     {
         m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag);
         return appendCallSetResult(operation, result);
+    }
+
+    JITCompiler::Call callOperation(S_JITOperation_EJ operation, GPRReg result, JSValueRegs arg1)
+    {
+        return callOperation(operation, result, arg1.tagGPR(), arg1.payloadGPR());
     }
 
     JITCompiler::Call callOperation(S_JITOperation_EJI operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload, UniquedStringImpl* uid)
@@ -2478,6 +2516,7 @@ public:
     void compileLazyJSConstant(Node*);
     void compileMaterializeNewObject(Node*);
     void compileRecordRegExpCachedResult(Node*);
+    void compileCallObjectConstructor(Node*);
     void compileResolveScope(Node*);
     void compileGetDynamicVar(Node*);
     void compilePutDynamicVar(Node*);
