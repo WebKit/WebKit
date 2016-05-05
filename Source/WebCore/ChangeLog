@@ -1,3 +1,40 @@
+2016-05-05  Nan Wang  <n_wang@apple.com>
+
+        For keyboard users, activating a fragment URL should transfer focus and caret to the destination
+        https://bugs.webkit.org/show_bug.cgi?id=116046
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a sequential focus navigation starting node to document. When TAB or SHIFT-TAB is pressed
+        and there is no focused element, we start searching for next focus candidates at the sequential
+        focus navigation node.
+
+        Test: fast/events/sequential-focus-navigation-starting-point.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::destroyRenderTree):
+        (WebCore::Document::removeFocusedNodeOfSubtree):
+        (WebCore::Document::hoveredElementDidDetach):
+        (WebCore::Document::setFocusedElement):
+        (WebCore::isNodeFrameOrDocument):
+        (WebCore::Document::setFocusNavigationStartingNode):
+        (WebCore::Document::focusNavigationStartingNode):
+        (WebCore::Document::setCSSTarget):
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        (WebCore::fallbackFocusNavigationStartingNodeAfterRemoval):
+        (WebCore::Document::updateFocusNavigationStartingNodeWithNodeRemoval):
+        (WebCore::Document::textInserted):
+        * dom/Document.h:
+        (WebCore::Document::userActionElements):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToAnchor):
+
 2016-05-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another iOS debug build fix after r200464.

@@ -691,6 +691,7 @@ void Document::removedLastRef()
         m_activeElement = nullptr;
         m_titleElement = nullptr;
         m_documentElement = nullptr;
+        m_focusNavigationStartingNode = nullptr;
         m_userActionElements.documentDidRemoveLastRef();
 #if ENABLE(FULLSCREEN_API)
         m_fullScreenElement = nullptr;
@@ -2311,6 +2312,7 @@ void Document::destroyRenderTree()
     m_hoveredElement = nullptr;
     m_focusedElement = nullptr;
     m_activeElement = nullptr;
+    m_focusNavigationStartingNode = nullptr;
 
     if (m_documentElement)
         RenderTreeUpdater::tearDownRenderers(*m_documentElement);
@@ -3711,8 +3713,10 @@ void Document::removeFocusedNodeOfSubtree(Node* node, bool amongChildrenOnly)
     else
         nodeInSubtree = (focusedElement == node) || focusedElement->isDescendantOf(node);
     
-    if (nodeInSubtree)
+    if (nodeInSubtree) {
         setFocusedElement(nullptr);
+        setFocusNavigationStartingNode(focusedElement);
+    }
 }
 
 void Document::hoveredElementDidDetach(Element* element)
@@ -3772,6 +3776,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction)
             oldFocusedElement->setActive(false);
 
         oldFocusedElement->setFocus(false);
+        setFocusNavigationStartingNode(nullptr);
 
         // Dispatch a change event for form control elements that have been edited.
         if (is<HTMLFormControlElement>(*oldFocusedElement)) {
@@ -3819,6 +3824,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction)
         }
         // Set focus on the new node
         m_focusedElement = newFocusedElement;
+        setFocusNavigationStartingNode(m_focusedElement.get());
 
         // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
         m_focusedElement->dispatchFocusEvent(oldFocusedElement.copyRef(), direction);
@@ -3883,6 +3889,59 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction)
 SetFocusedNodeDone:
     updateStyleIfNeeded();
     return !focusChangeBlocked;
+}
+
+static bool isNodeFrameOrDocument(Node& node)
+{
+    return is<HTMLIFrameElement>(node) || is<HTMLHtmlElement>(node) || is<HTMLDocument>(node);
+}
+
+void Document::setFocusNavigationStartingNode(Node* node)
+{
+    if (!m_frame)
+        return;
+
+    m_focusNavigationStartingNodeIsRemoved = false;
+    if (!node || isNodeFrameOrDocument(*node)) {
+        m_focusNavigationStartingNode = nullptr;
+        return;
+    }
+
+    m_focusNavigationStartingNode = node;
+}
+
+Element* Document::focusNavigationStartingNode(FocusDirection direction) const
+{
+    if (m_focusedElement) {
+        if (!m_focusNavigationStartingNode || !m_focusNavigationStartingNode->isDescendantOf(m_focusedElement.get()))
+            return m_focusedElement.get();
+    }
+
+    if (!m_focusNavigationStartingNode)
+        return nullptr;
+
+    Node* node = m_focusNavigationStartingNode.get();
+    
+    // When the node was removed from the document tree. This case is not specified in the spec:
+    // https://html.spec.whatwg.org/multipage/interaction.html#sequential-focus-navigation-starting-point
+    // Current behaivor is to move the sequential navigation node to / after (based on the focus direction)
+    // the previous sibling of the removed node.
+    if (m_focusNavigationStartingNodeIsRemoved) {
+        Node* nextNode = NodeTraversal::next(*node);
+        if (direction == FocusDirectionForward)
+            return ElementTraversal::previous(*nextNode);
+        if (is<Element>(*nextNode))
+            return downcast<Element>(nextNode);
+        return ElementTraversal::next(*nextNode);
+    }
+
+    if (is<Element>(*node))
+        return downcast<Element>(node);
+    // When going forward, the sibling needs to be an element prior to the next focusable element.
+    // Similar logic goes to the backwards case.
+    if (Element* sibling = direction == FocusDirectionForward ? ElementTraversal::previous(*node) : ElementTraversal::next(*node))
+        return sibling;
+    return node->parentOrShadowHostElement();
 }
 
 void Document::setCSSTarget(Element* n)
@@ -3999,6 +4058,8 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
         for (Text* textNode = TextNodeTraversal::firstChild(container); textNode; textNode = TextNodeTraversal::nextSibling(*textNode))
             m_markers->removeMarkers(textNode);
     }
+
+    updateFocusNavigationStartingNodeWithNodeRemoval(container, true);
 }
 
 void Document::nodeWillBeRemoved(Node& n)
@@ -4017,6 +4078,35 @@ void Document::nodeWillBeRemoved(Node& n)
 
     if (is<Text>(n))
         m_markers->removeMarkers(&n);
+
+    updateFocusNavigationStartingNodeWithNodeRemoval(n, false);
+}
+
+static Node* fallbackFocusNavigationStartingNodeAfterRemoval(Node& node)
+{
+    return node.previousSibling() ? node.previousSibling() : node.parentNode();
+}
+
+void Document::updateFocusNavigationStartingNodeWithNodeRemoval(Node& node, bool removeChildren)
+{
+    if (!m_focusNavigationStartingNode)
+        return;
+
+    if (m_focusNavigationStartingNode.get() == &node) {
+        if (removeChildren)
+            return;
+        m_focusNavigationStartingNode = fallbackFocusNavigationStartingNodeAfterRemoval(node);
+        m_focusNavigationStartingNodeIsRemoved = true;
+        return;
+    }
+
+    for (Node* parentNode = m_focusNavigationStartingNode->parentNode(); parentNode; parentNode = parentNode->parentNode()) {
+        if (parentNode == &node) {
+            m_focusNavigationStartingNode = removeChildren ? &node : fallbackFocusNavigationStartingNodeAfterRemoval(node);
+            m_focusNavigationStartingNodeIsRemoved = true;
+            return;
+        }
+    }
 }
 
 void Document::textInserted(Node* text, unsigned offset, unsigned length)

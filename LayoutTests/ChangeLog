@@ -1,3 +1,19 @@
+2016-05-05  Nan Wang  <n_wang@apple.com>
+
+        For keyboard users, activating a fragment URL should transfer focus and caret to the destination
+        https://bugs.webkit.org/show_bug.cgi?id=116046
+
+        Reviewed by Ryosuke Niwa.
+
+        Updated fast/dom/fragment-activation-focuses-target.html, now that navigating to a unfocusable
+        fragment will unset the focused element.
+
+        * fast/dom/fragment-activation-focuses-target-expected.txt:
+        * fast/dom/fragment-activation-focuses-target.html:
+        * fast/events/sequential-focus-navigation-starting-point-expected.txt: Added.
+        * fast/events/sequential-focus-navigation-starting-point.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-05-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed gardening.

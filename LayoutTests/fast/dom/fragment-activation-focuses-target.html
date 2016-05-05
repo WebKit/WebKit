@@ -43,12 +43,12 @@ if (window.testRunner) {
   shouldBe("document.activeElement", "document.getElementById('fragment1')");
 }
 
-debug("Activate a link that does not have a focusable fragment and verify focus does not move.");
+debug("Activate a link that does not have a focusable fragment and verify that the currently focused element is unfocused.");
 var link2 = document.getElementById("link2");
 link2.focus();
 shouldBe("document.activeElement", "link2");
 link2.click();
-shouldBe("document.activeElement", "link2");
+shouldBe("document.activeElement", "document.body");
 
 var successfullyParsed = true;
 
