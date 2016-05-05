@@ -483,6 +483,7 @@ protected:
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     bool mediaControlsDependOnPageScaleFactor() const { return m_mediaControlsDependOnPageScaleFactor; }
     void setMediaControlsDependOnPageScaleFactor(bool);
+    void updateMediaControlsAfterPresentationModeChange();
 #endif
 
     void scheduleEvent(const AtomicString& eventName);

@@ -1,3 +1,17 @@
+2016-05-04  Ada Chan  <adachan@apple.com>
+
+        When exiting fullscreen, call a JS method immediately to implement the style changes for the presentation mode change right away
+        https://bugs.webkit.org/show_bug.cgi?id=157359
+
+        Reviewed by Eric Carlson.
+
+        No new tests as this is done to just mitigate a visual glitch.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        (WebCore::HTMLMediaElement::updateMediaControlsAfterPresentationModeChange):
+        * html/HTMLMediaElement.h:
+
 2016-05-04  Alex Christensen  <achristensen@webkit.org>
 
         Blocked redirected main resource requests need descriptive errors
