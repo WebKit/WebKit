@@ -1,3 +1,15 @@
+2016-05-05  Oliver Hunt  <oliver@apple.com>
+
+        Enable separated heap by default on ios
+        https://bugs.webkit.org/show_bug.cgi?id=156720
+
+        Reviewed by Geoffrey Garen.
+
+        We've fixed the xnu side of things, so we can reland this.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSContext Inspector: Better CommandLineAPI in JSContext inspection
