@@ -1,3 +1,28 @@
+2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSContext Inspector: Better CommandLineAPI in JSContext inspection
+        https://bugs.webkit.org/show_bug.cgi?id=157387
+        <rdar://problem/22630583>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._evaluateOn):
+        (BasicCommandLineAPI.inScopeVariables):
+        (BasicCommandLineAPI):
+        When creating a BasicCommandLineAPI, pass the call frame so
+        that we don't shadow variables in the callstack.
+
+        (BasicCommandLineAPI.methods):
+        (clear):
+        (table):
+        (profile):
+        (profileEnd):
+        (keys):
+        (values):
+        Some just pass through to console, others are tiny methods.
+        Implement them, and give them the expected toString string.
+
 2016-05-05  Filip Pizlo  <fpizlo@apple.com>
 
         Reduce maximum JIT pool size on X86_64.

@@ -475,7 +475,7 @@ InjectedScript.prototype = {
             if (this.CommandLineAPI)
                 commandLineAPI = new this.CommandLineAPI(this._commandLineAPIImpl, isEvalOnCallFrame ? object : null);
             else
-                commandLineAPI = new BasicCommandLineAPI;
+                commandLineAPI = new BasicCommandLineAPI(isEvalOnCallFrame ? object : null);
         }
 
         if (isEvalOnCallFrame) {
@@ -1406,8 +1406,21 @@ function bind(func, thisObject, var_args)
     }
 }
 
-function BasicCommandLineAPI()
+function BasicCommandLineAPI(callFrame)
 {
+    function inScopeVariables(member)
+    {
+        if (!callFrame)
+            return false;
+
+        var scopeChain = callFrame.scopeChain;
+        for (var i = 0; i < scopeChain.length; ++i) {
+            if (member in scopeChain[i])
+                return true;
+        }
+        return false;
+    }
+
     this.$_ = injectedScript._lastResult;
     this.$exception = injectedScript._exceptionValue;
 
@@ -1418,7 +1431,35 @@ function BasicCommandLineAPI()
             continue;
         this.__defineGetter__("$" + i, bind(injectedScript._savedResult, injectedScript, i));
     }
+
+    // Command Line API methods.
+    for (var i = 0; i < BasicCommandLineAPI.methods.length; ++i) {
+        var method = BasicCommandLineAPI.methods[i];
+        var name = method.name;
+        if (name in inspectedGlobalObject || inScopeVariables(name))
+            continue;
+        this[name] = method;
+    }
 }
+
+BasicCommandLineAPI.methods = [
+    function dir() { return inspectedGlobalObject.console.dir(...arguments); },
+    function clear() { return inspectedGlobalObject.console.clear(...arguments); },
+    function table() { return inspectedGlobalObject.console.table(...arguments); },
+    function profile() { return inspectedGlobalObject.console.profile(...arguments); },
+    function profileEnd() { return inspectedGlobalObject.console.profileEnd(...arguments); },
+
+    function keys(object) { return Object.keys(object); },
+    function values(object) {
+        var result = [];
+        for (var key in object)
+            result.push(object[key]);
+        return result;
+    },
+];
+
+for (let method of BasicCommandLineAPI.methods)
+    method.toString = function() { return "function " + method.name + "() { [Command Line API] }"; };
 
 return injectedScript;
 })
