@@ -184,10 +184,10 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
     if (m_contextStopped) {
         switch (data.type()) {
         case IDBResultType::OpenDatabaseSuccess:
-            connectionProxy().connectionToServer().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), IDBResourceIdentifier::emptyValue());
+            connectionProxy().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), IDBResourceIdentifier::emptyValue());
             break;
         case IDBResultType::OpenDatabaseUpgradeNeeded:
-            connectionProxy().connectionToServer().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), data.transactionInfo().identifier());
+            connectionProxy().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), data.transactionInfo().identifier());
             break;
         default:
             break;

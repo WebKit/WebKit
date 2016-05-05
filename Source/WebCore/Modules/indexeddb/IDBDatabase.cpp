@@ -189,7 +189,7 @@ RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*
         return nullptr;
     }
 
-    auto info = IDBTransactionInfo::clientTransaction(m_connectionProxy->connectionToServer(), objectStores, mode);
+    auto info = IDBTransactionInfo::clientTransaction(m_connectionProxy.get(), objectStores, mode);
     auto transaction = IDBTransaction::create(*this, info);
 
     LOG(IndexedDB, "IDBDatabase::transaction - Added active transaction %s", info.identifier().loggingString().utf8().data());
@@ -427,7 +427,7 @@ void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIde
     ASSERT(currentThread() == m_originThreadID);
 
     if (!scriptExecutionContext() || m_closePending) {
-        serverConnection().didFireVersionChangeEvent(m_databaseConnectionIdentifier, requestIdentifier);
+        connectionProxy().didFireVersionChangeEvent(m_databaseConnectionIdentifier, requestIdentifier);
         return;
     }
 
@@ -444,7 +444,7 @@ bool IDBDatabase::dispatchEvent(Event& event)
     bool result = EventTargetWithInlineData::dispatchEvent(event);
 
     if (event.isVersionChangeEvent() && event.type() == eventNames().versionchangeEvent)
-        serverConnection().didFireVersionChangeEvent(m_databaseConnectionIdentifier, downcast<IDBVersionChangeEvent>(event).requestIdentifier());
+        connectionProxy().didFireVersionChangeEvent(m_databaseConnectionIdentifier, downcast<IDBVersionChangeEvent>(event).requestIdentifier());
 
     return result;
 }

@@ -35,7 +35,6 @@ class IDBRequest;
 
 namespace IDBClient {
 class IDBConnectionProxy;
-class IDBConnectionToServer;
 }
 
 namespace IDBServer {
@@ -44,7 +43,7 @@ class IDBConnectionToClient;
 
 class IDBResourceIdentifier {
 public:
-    explicit IDBResourceIdentifier(const IDBClient::IDBConnectionToServer&);
+    explicit IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&);
     IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&, const IDBRequest&);
     explicit IDBResourceIdentifier(const IDBServer::IDBConnectionToClient&);
 

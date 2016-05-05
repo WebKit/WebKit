@@ -41,9 +41,9 @@ IDBTransactionInfo::IDBTransactionInfo(const IDBResourceIdentifier& identifier)
 {
 }
 
-IDBTransactionInfo IDBTransactionInfo::clientTransaction(const IDBClient::IDBConnectionToServer& connection, const Vector<String>& objectStores, IndexedDB::TransactionMode mode)
+IDBTransactionInfo IDBTransactionInfo::clientTransaction(const IDBClient::IDBConnectionProxy& connectionProxy, const Vector<String>& objectStores, IndexedDB::TransactionMode mode)
 {
-    IDBTransactionInfo result((IDBResourceIdentifier(connection)));
+    IDBTransactionInfo result((IDBResourceIdentifier(connectionProxy)));
     result.m_mode = mode;
     result.m_objectStores = objectStores;
 

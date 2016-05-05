@@ -76,7 +76,7 @@ public:
 protected:
     TransactionOperation(IDBTransaction& transaction)
         : m_transaction(transaction)
-        , m_identifier(transaction.serverConnection())
+        , m_identifier(transaction.connectionProxy())
     {
     }
 

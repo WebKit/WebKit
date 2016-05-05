@@ -55,15 +55,6 @@ void IDBConnectionProxy::deref()
     m_connectionToServer.deref();
 }
 
-// FIXME: Temporarily required during bringup of IDB-in-Workers.
-// Once all IDB object reliance on the IDBConnectionToServer has been shifted to reliance on
-// IDBConnectionProxy, remove this.
-IDBConnectionToServer& IDBConnectionProxy::connectionToServer()
-{
-    ASSERT(isMainThread());
-    return m_connectionToServer;
-}
-
 RefPtr<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
 {
     // FIXME: Handle Workers
@@ -265,6 +256,15 @@ void IDBConnectionProxy::completeOperation(const IDBResultData& resultData)
     // FIXME: Handle getting operation->completed() onto the correct thread via the IDBTransaction.
     
     operation->completed(resultData);
+}
+
+void IDBConnectionProxy::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+{
+    // FIXME: Handle workers
+    if (!isMainThread())
+        return;
+
+    m_connectionToServer.abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
 }
 
 void IDBConnectionProxy::fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)

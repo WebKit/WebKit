@@ -89,14 +89,11 @@ public:
     void didFinishHandlingVersionChangeTransaction(IDBTransaction&);
     void databaseConnectionClosed(IDBDatabase&);
 
+    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
+
     void completeOperation(const IDBResultData&);
 
     uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
-
-    // FIXME: Temporarily required during bringup of IDB-in-Workers.
-    // Once all IDB object reliance on the IDBConnectionToServer has been shifted to reliance on
-    // IDBConnectionProxy, remove this.
-    IDBConnectionToServer& connectionToServer();
 
     void ref();
     void deref();

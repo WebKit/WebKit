@@ -157,6 +157,11 @@ IDBTransaction::~IDBTransaction()
     ASSERT(currentThread() == m_database->originThreadID());
 }
 
+IDBClient::IDBConnectionProxy& IDBTransaction::connectionProxy()
+{
+    return m_database->connectionProxy();
+}
+
 const String& IDBTransaction::mode() const
 {
     ASSERT(currentThread() == m_database->originThreadID());
@@ -177,12 +182,6 @@ WebCore::IDBDatabase* IDBTransaction::db()
 {
     ASSERT(currentThread() == m_database->originThreadID());
     return &m_database.get();
-}
-
-IDBClient::IDBConnectionToServer& IDBTransaction::serverConnection()
-{
-    ASSERT(currentThread() == m_database->originThreadID());
-    return m_database->serverConnection();
 }
 
 RefPtr<DOMError> IDBTransaction::error() const

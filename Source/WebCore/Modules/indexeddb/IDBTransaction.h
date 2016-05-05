@@ -55,6 +55,7 @@ class SerializedScriptValue;
 struct IDBKeyRangeData;
 
 namespace IDBClient {
+class IDBConnectionProxy;
 class TransactionOperation;
 }
 
@@ -132,8 +133,6 @@ public:
 
     void abortDueToFailedRequest(DOMError&);
 
-    IDBClient::IDBConnectionToServer& serverConnection();
-
     void activate();
     void deactivate();
 
@@ -141,6 +140,8 @@ public:
 
     bool isFinishedOrFinishing() const;
     bool isFinished() const { return m_state == IndexedDB::TransactionState::Finished; }
+
+    IDBClient::IDBConnectionProxy& connectionProxy();
 
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest*);

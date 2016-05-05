@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabase.h"
 #include "IDBTransaction.h"
 #include "IndexedDB.h"
 
@@ -48,7 +49,7 @@ IDBCursorInfo::IDBCursorInfo()
 }
 
 IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
-    : m_cursorIdentifier(transaction.serverConnection())
+    : m_cursorIdentifier(transaction.database().connectionProxy())
     , m_transactionIdentifier(transaction.info().identifier())
     , m_objectStoreIdentifier(objectStoreIdentifier)
     , m_sourceIdentifier(objectStoreIdentifier)
@@ -60,7 +61,7 @@ IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, uint64_t objectStoreId
 }
 
 IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
-    : m_cursorIdentifier(transaction.serverConnection())
+    : m_cursorIdentifier(transaction.database().connectionProxy())
     , m_transactionIdentifier(transaction.info().identifier())
     , m_objectStoreIdentifier(objectStoreIdentifier)
     , m_sourceIdentifier(indexIdentifier)

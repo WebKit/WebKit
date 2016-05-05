@@ -1,3 +1,55 @@
+2016-05-05  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Workers): Remove the need for IDBConnectionProxy to expose its IDBConnectionToServer.
+        https://bugs.webkit.org/show_bug.cgi?id=157394
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No current change in behavior, will be tested as bug 149953 makes progress).
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::transaction):
+        (WebCore::IDBDatabase::fireVersionChangeEvent):
+        (WebCore::IDBDatabase::dispatchEvent):
+        * Modules/indexeddb/IDBDatabase.h:
+        (WebCore::IDBDatabase::serverConnection): Deleted.
+
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::requestCompleted):
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::connectionProxy):
+        (WebCore::IDBTransaction::serverConnection): Deleted.
+        * Modules/indexeddb/IDBTransaction.h:
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::abortOpenAndUpgradeNeeded):
+        (WebCore::IDBClient::IDBConnectionProxy::connectionToServer): Deleted.
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::abortOpenAndUpgradeNeeded):
+
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::TransactionOperation):
+
+        * Modules/indexeddb/shared/IDBCursorInfo.cpp:
+        (WebCore::IDBCursorInfo::IDBCursorInfo):
+
+        * Modules/indexeddb/shared/IDBRequestData.cpp:
+        (WebCore::IDBRequestData::IDBRequestData):
+
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp:
+        (WebCore::IDBResourceIdentifier::IDBResourceIdentifier):
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+
+        * Modules/indexeddb/shared/IDBTransactionInfo.cpp:
+        (WebCore::IDBTransactionInfo::clientTransaction):
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+
 2016-05-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r200479.

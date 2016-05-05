@@ -66,8 +66,8 @@ IDBResourceIdentifier::IDBResourceIdentifier(uint64_t connectionIdentifier, uint
 {
 }
 
-IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionToServer& connection)
-    : m_idbConnectionIdentifier(connection.identifier())
+IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionProxy& connectionProxy)
+    : m_idbConnectionIdentifier(connectionProxy.serverConnectionIdentifier())
     , m_resourceNumber(nextClientResourceNumber())
 {
 }

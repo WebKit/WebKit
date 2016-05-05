@@ -89,9 +89,6 @@ public:
 
     IDBClient::IDBConnectionProxy& connectionProxy() { return m_connectionProxy.get(); }
 
-    // FIXME: Remove the need for this accessor.
-    IDBClient::IDBConnectionToServer& serverConnection() { return m_connectionProxy->connectionToServer(); }
-
     void didCreateIndexInfo(const IDBIndexInfo&);
     void didDeleteIndexInfo(const IDBIndexInfo&);
 

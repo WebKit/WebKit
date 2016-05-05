@@ -48,7 +48,7 @@ IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionProxy& connectionPr
 }
 
 IDBRequestData::IDBRequestData(IDBClient::TransactionOperation& operation)
-    : m_serverConnectionIdentifier(operation.transaction().database().serverConnection().identifier())
+    : m_serverConnectionIdentifier(operation.transaction().database().connectionProxy().serverConnectionIdentifier())
     , m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(operation.identifier()))
     , m_transactionIdentifier(std::make_unique<IDBResourceIdentifier>(operation.transactionIdentifier()))
     , m_objectStoreIdentifier(operation.objectStoreIdentifier())

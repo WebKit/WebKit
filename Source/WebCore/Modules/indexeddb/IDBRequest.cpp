@@ -80,7 +80,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBClient::IDBConnection
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectStore, IDBTransaction& transaction)
     : ActiveDOMObject(&context)
     , m_transaction(&transaction)
-    , m_resourceIdentifier(transaction.serverConnection())
+    , m_resourceIdentifier(transaction.connectionProxy())
     , m_objectStoreSource(&objectStore)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
@@ -90,7 +90,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTransaction& transaction)
     : ActiveDOMObject(&context)
     , m_transaction(&transaction)
-    , m_resourceIdentifier(transaction.serverConnection())
+    , m_resourceIdentifier(transaction.connectionProxy())
     , m_objectStoreSource(cursor.objectStore())
     , m_indexSource(cursor.index())
     , m_pendingCursor(&cursor)
@@ -104,7 +104,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTransaction& transaction)
     : ActiveDOMObject(&context)
     , m_transaction(&transaction)
-    , m_resourceIdentifier(transaction.serverConnection())
+    , m_resourceIdentifier(transaction.connectionProxy())
     , m_indexSource(&index)
     , m_connectionProxy(transaction.database().connectionProxy())
 {

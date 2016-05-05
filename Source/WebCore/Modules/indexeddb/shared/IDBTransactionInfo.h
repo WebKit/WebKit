@@ -36,7 +36,7 @@
 namespace WebCore {
 
 namespace IDBClient {
-class IDBConnectionToServer;
+class IDBConnectionProxy;
 }
 
 namespace IDBServer {
@@ -45,7 +45,7 @@ class IDBConnectionToClient;
 
 class IDBTransactionInfo {
 public:
-    static IDBTransactionInfo clientTransaction(const IDBClient::IDBConnectionToServer&, const Vector<String>& objectStores, IndexedDB::TransactionMode);
+    static IDBTransactionInfo clientTransaction(const IDBClient::IDBConnectionProxy&, const Vector<String>& objectStores, IndexedDB::TransactionMode);
     static IDBTransactionInfo versionChange(const IDBServer::IDBConnectionToClient&, const IDBDatabaseInfo& originalDatabaseInfo, uint64_t newVersion);
 
     IDBTransactionInfo(const IDBTransactionInfo&);

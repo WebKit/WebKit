@@ -335,6 +335,7 @@ void IDBConnectionToServer::databaseConnectionClosed(uint64_t databaseConnection
 void IDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::abortOpenAndUpgradeNeeded");
+    ASSERT(isMainThread());
 
     m_delegate->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
 }
