@@ -82,7 +82,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
             if (node.className === "string") {
                 HeapAgent.getPreview(heapObjectIdentifier, function(error, string, functionDetails, objectPreviewPayload) {
                     let remoteObject = error ? WebInspector.RemoteObject.fromPrimitiveValue(undefined) : WebInspector.RemoteObject.fromPrimitiveValue(string);
-                    WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, synthetic);                
+                    WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, synthetic);
                 });
             } else {
                 HeapAgent.getRemoteObject(heapObjectIdentifier, WebInspector.RuntimeManager.ConsoleObjectGroup, function(error, remoteObjectPayload) {
@@ -109,8 +109,8 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
     createCellContent(columnIdentifier)
     {
         if (columnIdentifier === "retainedSize") {
-            let subRetainedSize = false;            
-            if (this._base) {
+            let subRetainedSize = false;
+            if (this._base && !this._tree.alwaysShowRetainedSize) {
                 if (this._isDominatedByNonBaseParent())
                     subRetainedSize = true;
                 else if (!this._isDominatedByBase())
@@ -164,47 +164,11 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
             let spacerElement = containerElement.appendChild(document.createElement("span"));
             spacerElement.textContent = " ";
 
-            HeapAgent.getPreview(id, (error, string, functionDetails, objectPreviewPayload) => {
-                if (error) {
-                    let previewErrorElement = containerElement.appendChild(document.createElement("span"));
-                    previewErrorElement.classList.add("preview-error");
-                    previewErrorElement.textContent = internal ? WebInspector.UIString("Internal object") : WebInspector.UIString("No preview available");
-                    return;
-                }
-
-                if (string) {
-                    let primitiveRemoteObject = WebInspector.RemoteObject.fromPrimitiveValue(string);
-                    containerElement.appendChild(WebInspector.FormattedValue.createElementForRemoteObject(primitiveRemoteObject));
-                    return;
-                }
-
-                if (functionDetails) {
-                    let {location, name, displayName} = functionDetails;
-                    let functionNameElement = containerElement.appendChild(document.createElement("span"));
-                    functionNameElement.classList.add("function-name");
-                    functionNameElement.textContent = name || displayName || WebInspector.UIString("(anonymous function)");
-                    let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
-                    if (sourceCode) {
-                        let locationElement = containerElement.appendChild(document.createElement("span"));
-                        locationElement.classList.add("location");
-                        let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber);
-                        sourceCodeLocation.populateLiveDisplayLocationString(locationElement, "textContent", WebInspector.SourceCodeLocation.ColumnStyle.Hidden, WebInspector.SourceCodeLocation.NameStyle.Short);
-
-                        const dontFloat = true;
-                        const useGoToArrowButton = true;
-                        let goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, dontFloat, useGoToArrowButton);
-                        containerElement.appendChild(goToArrowButtonLink);
-                    }
-                    return;
-                }
-
-                if (objectPreviewPayload) {
-                    let objectPreview = WebInspector.ObjectPreview.fromPayload(objectPreviewPayload);
-                    let previewElement = WebInspector.FormattedValue.createObjectPreviewOrFormattedValueForObjectPreview(objectPreview);
-                    containerElement.appendChild(previewElement);
-                    return;
-                }
-            });
+            if (className === "Window" && this._node.dominatorNodeIdentifier === 0) {
+                containerElement.append("Window ");
+                this._populateWindowPreview(containerElement);
+            } else
+                this._populatePreview(containerElement);
 
             return containerElement;
         }
@@ -261,7 +225,7 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
 
             for (let instance of instances)
                 this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this._tree, instance.__edge, this._base || this));
-        });        
+        });
     }
 
     _contextMenuHandler(event)
@@ -269,6 +233,85 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
         let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
         contextMenu.appendSeparator();
         contextMenu.appendItem(WebInspector.UIString("Log Value"), WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode.bind(null, this._node));
+    }
+
+    _populateError(containerElement)
+    {
+        if (this._node.internal)
+            return;
+
+        let previewErrorElement = containerElement.appendChild(document.createElement("span"));
+        previewErrorElement.classList.add("preview-error");
+        previewErrorElement.textContent = WebInspector.UIString("No preview available");
+    }
+
+    _populateWindowPreview(containerElement)
+    {
+        HeapAgent.getRemoteObject(this._node.id, (error, remoteObjectPayload) => {
+            if (error) {
+                this._populateError(containerElement)
+                return;
+            }
+
+            function inspectedPage_window_getLocationHref() {
+                return this.location.href;
+            }
+
+            let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
+            remoteObject.callFunctionJSON(inspectedPage_window_getLocationHref, undefined, (href) => {
+                remoteObject.release();
+
+                if (!href)
+                    this._populateError(containerElement);
+                else {
+                    let primitiveRemoteObject = WebInspector.RemoteObject.fromPrimitiveValue(href);
+                    containerElement.appendChild(WebInspector.FormattedValue.createElementForRemoteObject(primitiveRemoteObject));
+                }
+            });
+        });
+    }
+
+    _populatePreview(containerElement)
+    {
+        HeapAgent.getPreview(this._node.id, (error, string, functionDetails, objectPreviewPayload) => {
+            if (error) {
+                this._populateError(containerElement);
+                return;
+            }
+
+            if (string) {
+                let primitiveRemoteObject = WebInspector.RemoteObject.fromPrimitiveValue(string);
+                containerElement.appendChild(WebInspector.FormattedValue.createElementForRemoteObject(primitiveRemoteObject));
+                return;
+            }
+
+            if (functionDetails) {
+                let {location, name, displayName} = functionDetails;
+                let functionNameElement = containerElement.appendChild(document.createElement("span"));
+                functionNameElement.classList.add("function-name");
+                functionNameElement.textContent = name || displayName || WebInspector.UIString("(anonymous function)");
+                let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+                if (sourceCode) {
+                    let locationElement = containerElement.appendChild(document.createElement("span"));
+                    locationElement.classList.add("location");
+                    let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber);
+                    sourceCodeLocation.populateLiveDisplayLocationString(locationElement, "textContent", WebInspector.SourceCodeLocation.ColumnStyle.Hidden, WebInspector.SourceCodeLocation.NameStyle.Short);
+
+                    const dontFloat = true;
+                    const useGoToArrowButton = true;
+                    let goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, dontFloat, useGoToArrowButton);
+                    containerElement.appendChild(goToArrowButtonLink);
+                }
+                return;
+            }
+
+            if (objectPreviewPayload) {
+                let objectPreview = WebInspector.ObjectPreview.fromPayload(objectPreviewPayload);
+                let previewElement = WebInspector.FormattedValue.createObjectPreviewOrFormattedValueForObjectPreview(objectPreview);
+                containerElement.appendChild(previewElement);
+                return;
+            }
+        });
     }
 
     _mouseoverHandler(event)

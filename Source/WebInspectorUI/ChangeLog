@@ -1,3 +1,121 @@
+2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: HeapSnapshot should exploratory Object Graph view
+        https://bugs.webkit.org/show_bug.cgi?id=157371
+        <rdar://problem/26107304>
+
+        Reviewed by Timothy Hatcher.
+
+        HeapSnapshots now have two ContentViews for viewing the graph.
+
+        HeapSnapshotInstancesContentView:
+          - top level are Class Categories nodes
+          - categories expand to Instances
+          - instances expand to show what they retain
+          - retained sizes only shown for dominated nodes of the instance
+
+        HeapSnapshotObjectGraphContentView:
+          - top level are GlobalObject or Window nodes
+          - expand to show what they retain
+          - retained sizes are shown for all nodes, everything is shown
+
+        This also provides a custom preview for Window instances. Instead of
+        showing an ObjectPreview, it just shows the `window.location.href`
+        for that instance, which is useful when there are multiple Window
+        instances for different frames.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New "Object Graph" string and new files.
+
+        * UserInterface/Images/HeapSnapshotObjectGraph.svg: Added.
+        * UserInterface/Images/gtk/HeapSnapshotObjectGraph.svg: Added.
+        * UserInterface/Views/PathComponentIcons.css:
+        (.heap-snapshot-object-graph-icon .icon):
+        Copy the red [{}] icon from Style Rules.
+
+        * UserInterface/Views/HeapSnapshotClusterContentView.js:
+        (WebInspector.HeapSnapshotClusterContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.get objectGraphContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.showObjectGraph):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._supportsObjectGraph):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._pathComponentForContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._identifierForContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._showContentViewForIdentifier):
+        Include an "Object Graph" content view. This is unavailable in Diff views
+        but is available for individual HeapSnapshots.
+
+        * UserInterface/Views/HeapSnapshotContentView.js: Renamed from Source/WebInspectorUI/UserInterface/Views/HeapSnapshotInstancesContentView.js.
+        (WebInspector.HeapSnapshotContentView):
+        (WebInspector.HeapSnapshotContentView.prototype.shown):
+        (WebInspector.HeapSnapshotContentView.prototype.hidden):
+        (WebInspector.HeapSnapshotContentView.prototype._sortDataGrid):
+        (WebInspector.HeapSnapshotContentView.prototype._heapSnapshotDataGridTreeDidPopulate):
+        (WebInspector.HeapSnapshotInstancesContentView):
+        (WebInspector.HeapSnapshotObjectGraphContentView):
+        Share and generalize a HeapSnapshot ContentView. The only differences are
+        the DataGrid columns, DataGridTree class, and identifier prefix for settings.
+
+        * UserInterface/Views/HeapSnapshotDataGridTree.js: Renamed from Source/WebInspectorUI/UserInterface/Views/HeapSnapshotInstancesDataGridTree.js.
+        (WebInspector.HeapSnapshotDataGridTree):
+        (WebInspector.HeapSnapshotDataGridTree.buildSortComparator):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.get heapSnapshot):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.get visible):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.get popover):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.get popoverNode):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.set popoverNode):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.get children):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.appendChild):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.insertChild):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.removeChildren):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.set sortComparator):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.sort):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.shown):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.hidden):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.willDismissPopover):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.get alwaysShowRetainedSize):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.populateTopLevel):
+        (WebInspector.HeapSnapshotDataGridTree.prototype.didPopulate):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.get alwaysShowRetainedSize):
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.populateTopLevel):
+        (WebInspector.HeapSnapshotInstancesDataGridTree):
+        (WebInspector.HeapSnapshotObjectGraphDataGridTree.prototype.get alwaysShowRetainedSize):
+        (WebInspector.HeapSnapshotObjectGraphDataGridTree.prototype.populateTopLevel):
+        (WebInspector.HeapSnapshotObjectGraphDataGridTree):
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.createCellContent):
+        Start using different previews based on instance type.
+
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populateError):
+        Common preview error logic. Also, don't output "Internal object" next to things
+        like Structure, InferredType, etc. Just don't output anything. Eventually, if
+        we provide preview data, something will show, but for now nothing is fine.
+
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populateWindowPreview.inspectedPage_window_getLocationHref):
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populateWindowPreview):
+        Custom preview logic for Window's gets `window.location.href` on the instance if it is alive.
+
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._populatePreview):
+        Normal preview logic.
+
+        * UserInterface/Views/HeapSnapshotInstancesContentView.css:
+        (.heap-snapshot > .data-grid tr:not(.selected) td .preview-error): Deleted.
+        The red text for errors was standing out too much. Make it the default black.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView.prototype.showHeapSnapshotTimelineRecord):
+        Better variable name.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WebInspector.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.inspectedPage_evalResult_getArrayCompletions):
+        (WebInspector.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.inspectedPage_evalResult_getCompletions):
+        (WebInspector.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.getArrayCompletions): Deleted.
+        (WebInspector.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.getCompletions): Deleted.
+        (WebInspector.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.evaluated):
+        Try to be clearer about functions that run on the inspected page
+        by using the pattern with inspectedPage_<thisObject>_functionName.
+
 2016-05-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Console is unresponsive for >10 seconds when it tries to render 10,000 messages

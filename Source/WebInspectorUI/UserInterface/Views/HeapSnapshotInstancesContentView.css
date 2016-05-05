@@ -49,10 +49,6 @@
     text-decoration: underline;
 }
 
-.heap-snapshot > .data-grid tr:not(.selected) td .preview-error {
-    color: red;
-}
-
 .heap-snapshot > .data-grid td .location {
     margin-left: 1ex;
     color: hsl(0, 0%, 60%);

@@ -23,7 +23,7 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesDataGridTree extends WebInspector.Object
+WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends WebInspector.Object
 {
     constructor(heapSnapshot, sortComparator)
     {
@@ -40,8 +40,7 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
         this._popover = null;
         this._popoverNode = null;
 
-        this._populateTopLevel();
-        this.sort();
+        this.populateTopLevel();
     }
 
     // Static
@@ -149,17 +148,74 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
         this._popoverNode = null;
     }
 
-    // Private
+    // Protected
 
-    _populateTopLevel()
+    get alwaysShowRetainedSize()
     {
-        this.removeChildren();
+        return false;
+    }
 
+    populateTopLevel()
+    {
+        // Implemented by subclasses.
+    }
+
+    didPopulate()
+    {
+        this.sort();
+
+        this.dispatchEventToListeners(WebInspector.HeapSnapshotDataGridTree.Event.DidPopulate);
+    }
+};
+
+WebInspector.HeapSnapshotDataGridTree.Event = {
+    DidPopulate: "heap-snapshot-data-grid-tree-did-populate",
+};
+
+WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesDataGridTree extends WebInspector.HeapSnapshotDataGridTree
+{
+    get alwaysShowRetainedSize()
+    {
+        return false;
+    }
+
+    populateTopLevel()
+    {
         // Populate the first level with the different non-internal classes.
-        for (let [className, {size, retainedSize, count, internalCount}] of this._heapSnapshot.categories) {
+        for (let [className, {size, retainedSize, count, internalCount}] of this.heapSnapshot.categories) {
             if (count === internalCount)
                 continue;
             this.appendChild(new WebInspector.HeapSnapshotClassDataGridNode({className, size, retainedSize, count}, this));
         }
+
+        this.didPopulate()
+    }
+};
+
+WebInspector.HeapSnapshotObjectGraphDataGridTree = class HeapSnapshotInstancesDataGridTree extends WebInspector.HeapSnapshotDataGridTree
+{
+    get alwaysShowRetainedSize()
+    {
+        return true;
+    }
+
+    populateTopLevel()
+    {
+        this.heapSnapshot.instancesWithClassName("GlobalObject", (instances) => {
+            for (let instance of instances)
+                this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this));
+        });
+
+        this.heapSnapshot.instancesWithClassName("Window", (instances) => {
+            for (let instance of instances) {
+                // FIXME: Why is the window.Window Function classified as a Window?
+                // In any case, ignore objects not dominated by the root, as they
+                // are probably not what we want.
+                if (instance.dominatorNodeIdentifier === 0)
+                    this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this));
+            }
+
+            this.didPopulate();
+        });
     }
 };

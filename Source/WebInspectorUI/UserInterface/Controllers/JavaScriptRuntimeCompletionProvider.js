@@ -125,7 +125,7 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
                 return;
             }
 
-            function getArrayCompletions(primitiveType)
+            function inspectedPage_evalResult_getArrayCompletions(primitiveType)
             {
                 var array = this;
                 var arrayLength;
@@ -153,7 +153,7 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
                 return resultSet;
             }
 
-            function getCompletions(primitiveType)
+            function inspectedPage_evalResult_getCompletions(primitiveType)
             {
                 var object;
                 if (primitiveType === "string")
@@ -182,9 +182,9 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
             }
 
             if (result.subtype === "array")
-                result.callFunctionJSON(getArrayCompletions, undefined, receivedArrayPropertyNames.bind(this));
+                result.callFunctionJSON(inspectedPage_evalResult_getArrayCompletions, undefined, receivedArrayPropertyNames.bind(this));
             else if (result.type === "object" || result.type === "function")
-                result.callFunctionJSON(getCompletions, undefined, receivedPropertyNames.bind(this));
+                result.callFunctionJSON(inspectedPage_evalResult_getCompletions, undefined, receivedPropertyNames.bind(this));
             else if (result.type === "string" || result.type === "number" || result.type === "boolean" || result.type === "symbol")
                 WebInspector.runtimeManager.evaluateInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, false, false, receivedPropertyNamesFromEvaluate.bind(this));
             else
