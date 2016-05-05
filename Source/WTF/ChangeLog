@@ -1,3 +1,16 @@
+2016-05-02  Sam Weinig  <sam@webkit.org>
+
+        On platforms that support it, use a SecTrustRef as the basis of CertificateInfo instead of a chain of SecCertificateRefs.
+        https://bugs.webkit.org/show_bug.cgi?id=157220
+
+        Reviewed by Darin Adler.
+
+        * wtf/Platform.h:
+        Add support for HAVE(SEC_TRUST_SERIALIZATION).
+
+        * wtf/spi/cocoa/SecuritySPI.h:
+        Add SPI access to SecTrustSerialize and SecTrustDeserialize.
+
 2016-05-04  Filip Pizlo  <fpizlo@apple.com>
 
         Add HLE locks and synchronic TTAS locks to the ToyLocks benchmark suite

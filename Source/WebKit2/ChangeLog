@@ -1,3 +1,45 @@
+2016-05-02  Sam Weinig  <sam@webkit.org>
+
+        On platforms that support it, use a SecTrustRef as the basis of CertificateInfo instead of a chain of SecCertificateRefs.
+        https://bugs.webkit.org/show_bug.cgi?id=157220
+
+        Reviewed by Darin Adler.
+
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        (WebKit::leafCertificate):
+        (WebKit::chain):
+        (WebKit::AuthenticationManager::tryUseCertificateInfoForChallenge):
+        When supported, get the SecCertificateRef from the SecTrustRef rather than the
+        stored certificate chain.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::typeFromCFTypeRef):
+        (IPC::encode):
+        (IPC::decode):
+        * Shared/cf/ArgumentCodersCF.h:
+        Add support for encoding/decoding SecTrustRef objects.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<CertificateInfo>::encode):
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+        Add support for encoding/decoding CertificateInfo's that contain SecTrustRef objects.
+
+        (IPC::encodeNSError):
+        (IPC::decodeNSError):
+        Simplify error encoding/decoding by not using an addition CertificateInfo object for encoding
+        the peerCertificateChain. Also, add the peerTrust to the userInfo that get's encoded/decoded.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView serverTrust]):
+        (-[WKWebView certificateChain]):
+        Add new serverTrust API and deprecate certificateChain.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::willChangeCertificateInfo):
+        (WebKit::NavigationState::didChangeCertificateInfo):
+        Add support for KVO of -[WKWebView serverTrust].
+
 2016-05-05  Daniel Bates  <dabates@apple.com>
 
         Remove workaround added in r200391 (rdar://problem/25992976)

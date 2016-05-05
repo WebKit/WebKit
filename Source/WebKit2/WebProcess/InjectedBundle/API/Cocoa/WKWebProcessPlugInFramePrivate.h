@@ -37,6 +37,7 @@
 
 @property (nonatomic, readonly) BOOL _hasCustomContentProvider;
 @property (nonatomic, readonly) NSArray *_certificateChain;
+@property (nonatomic, readonly) SecTrustRef _serverTrust;
 @property (nonatomic, readonly) NSURL *_provisionalURL;
 
 @property (nonatomic, readonly) WKWebProcessPlugInFrame *_parentFrame;

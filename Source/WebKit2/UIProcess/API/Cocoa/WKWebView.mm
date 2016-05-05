@@ -721,13 +721,17 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     return _page->pageLoadState().hasOnlySecureContent();
 }
 
-- (NSArray *)certificateChain
+- (SecTrustRef)serverTrust
 {
+#if HAVE(SEC_TRUST_SERIALIZATION)
     auto certificateInfo = _page->pageLoadState().certificateInfo();
     if (!certificateInfo)
-        return @[ ];
+        return nil;
 
-    return (NSArray *)certificateInfo->certificateInfo().certificateChain() ?: @[ ];
+    return certificateInfo->certificateInfo().trust();
+#else
+    return nil;
+#endif
 }
 
 - (BOOL)canGoBack
@@ -4490,6 +4494,19 @@ static constexpr std::chrono::milliseconds didFinishLoadingTimeout = std::chrono
 
 @end
 #endif
+
+@implementation WKWebView (WKDeprecated)
+
+- (NSArray *)certificateChain
+{
+    auto certificateInfo = _page->pageLoadState().certificateInfo();
+    if (!certificateInfo)
+        return @[ ];
+
+    return (NSArray *)certificateInfo->certificateInfo().certificateChain() ?: @[ ];
+}
+
+@end
 
 #if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKWebViewAdditions.mm>

@@ -122,6 +122,15 @@ using namespace WebKit;
     return (NSArray *)_frame->certificateInfo().certificateChain();
 }
 
+- (SecTrustRef)_serverTrust
+{
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    return _frame->certificateInfo().trust();
+#else
+    return nil;
+#endif
+}
+
 - (NSURL *)_provisionalURL
 {
     return [NSURL _web_URLWithWTFString:_frame->provisionalURL()];

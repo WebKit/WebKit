@@ -902,12 +902,14 @@ void NavigationState::didChangeNetworkRequestsInProgress()
 
 void NavigationState::willChangeCertificateInfo()
 {
+    [m_webView willChangeValueForKey:@"serverTrust"];
     [m_webView willChangeValueForKey:@"certificateChain"];
 }
 
 void NavigationState::didChangeCertificateInfo()
 {
     [m_webView didChangeValueForKey:@"certificateChain"];
+    [m_webView didChangeValueForKey:@"serverTrust"];
 }
 
 void NavigationState::willChangeWebProcessIsResponsive()

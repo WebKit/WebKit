@@ -31,35 +31,104 @@
 
 namespace WebCore {
 
+#if PLATFORM(COCOA)
+RetainPtr<CFArrayRef> CertificateInfo::certificateChainFromSecTrust(SecTrustRef trust)
+{
+    auto count = SecTrustGetCertificateCount(trust);
+    auto certificateChain = CFArrayCreateMutable(0, count, &kCFTypeArrayCallBacks);
+    for (CFIndex i = 0; i < count; i++)
+        CFArrayAppendValue(certificateChain, SecTrustGetCertificateAtIndex(trust, i));
+    return adoptCF((CFArrayRef)certificateChain);
+}
+#endif
+
+CertificateInfo::Type CertificateInfo::type() const
+{
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    if (m_trust)
+        return Type::Trust;
+#endif
+    if (m_certificateChain)
+        return Type::CertificateChain;
+    return Type::None;
+}
+
+CFArrayRef CertificateInfo::certificateChain() const
+{
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    if (m_certificateChain)
+        return m_certificateChain.get();
+
+    if (m_trust) 
+        m_certificateChain = CertificateInfo::certificateChainFromSecTrust(m_trust.get());
+#endif
+
+    return m_certificateChain.get();
+}
+
 bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || PLATFORM(IOS)
-    if (!m_certificateChain)
-        return false;
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    if (m_trust) {
+        // Allow only the root certificate (the last in the chain) to be SHA1.
+        for (CFIndex i = 0, size = SecTrustGetCertificateCount(trust()) - 1; i < size; ++i) {
+            auto certificate = SecTrustGetCertificateAtIndex(trust(), i);
+            if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
+                return true;
+        }
 
-    for (CFIndex i = 0, size = CFArrayGetCount(m_certificateChain.get()) - 1; i < size; ++i) {
-        SecCertificateRef certificate = (SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i);
-        if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
-            return true;
+        return false;
     }
-    return false;
+#endif
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || PLATFORM(IOS)
+    if (m_certificateChain) {
+        // Allow only the root certificate (the last in the chain) to be SHA1.
+        for (CFIndex i = 0, size = CFArrayGetCount(m_certificateChain.get()) - 1; i < size; ++i) {
+            auto certificate = (SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i);
+            if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
+                return true;
+        }
+        return false;
+    }
 #else
     notImplemented();
-    return false;
 #endif
+
+    return false;
 }
 
 #ifndef NDEBUG
 void CertificateInfo::dump() const
 {
-    unsigned entries = m_certificateChain ? CFArrayGetCount(m_certificateChain.get()) : 0;
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    if (m_trust) {
+        CFIndex entries = SecTrustGetCertificateCount(trust());
 
-    NSLog(@"CertificateInfo\n");
-    NSLog(@"  Entries: %d\n", entries);
-    for (unsigned i = 0; i < entries; ++i) {
-        RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary((SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i)));
-        NSLog(@"  %@", (NSString *)summary.get());
+        NSLog(@"CertificateInfo SecTrust\n");
+        NSLog(@"  Entries: %ld\n", entries);
+        for (CFIndex i = 0; i < entries; ++i) {
+            RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary(SecTrustGetCertificateAtIndex(trust(), i)));
+            NSLog(@"  %@", (NSString *)summary.get());
+        }
+
+        return;
     }
+#endif
+    if (m_certificateChain) {
+        CFIndex entries = CFArrayGetCount(m_certificateChain.get());
+
+        NSLog(@"CertificateInfo (Certificate Chain)\n");
+        NSLog(@"  Entries: %ld\n", entries);
+        for (CFIndex i = 0; i < entries; ++i) {
+            RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary((SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i)));
+            NSLog(@"  %@", (NSString *)summary.get());
+        }
+
+        return;
+    }
+    
+    NSLog(@"CertificateInfo (Empty)\n");
 }
 #endif
 

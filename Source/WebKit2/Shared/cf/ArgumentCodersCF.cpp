@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include <WebCore/CFURLExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/spi/cocoa/SecuritySPI.h>
 
 #if USE(FOUNDATION)
 #import <Foundation/Foundation.h>
@@ -87,6 +88,9 @@ enum CFType {
 #if HAVE(SEC_ACCESS_CONTROL)
     SecAccessControl,
 #endif
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    SecTrust,
+#endif
     Null,
     Unknown,
 };
@@ -128,6 +132,10 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
 #if HAVE(SEC_ACCESS_CONTROL)
     if (typeID == SecAccessControlGetTypeID())
         return SecAccessControl;
+#endif
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    if (typeID == SecTrustGetTypeID())
+        return SecTrust;
 #endif
 
     ASSERT_NOT_REACHED();
@@ -180,6 +188,11 @@ void encode(ArgumentEncoder& encoder, CFTypeRef typeRef)
 #if HAVE(SEC_ACCESS_CONTROL)
     case SecAccessControl:
         encode(encoder, (SecAccessControlRef)typeRef);
+        return;
+#endif
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    case SecTrust:
+        encode(encoder, (SecTrustRef)typeRef);
         return;
 #endif
     case Null:
@@ -286,6 +299,15 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
         if (!decode(decoder, accessControl))
             return false;
         result = adoptCF(accessControl.leakRef());
+        return true;
+    }
+#endif
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    case SecTrust: {
+        RetainPtr<SecTrustRef> trust;
+        if (!decode(decoder, trust))
+            return false;
+        result = adoptCF(trust.leakRef());
         return true;
     }
 #endif
@@ -741,7 +763,41 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecAccessControlRef>& result)
 
     return true;
 }
+#endif
 
+#if HAVE(SEC_TRUST_SERIALIZATION)
+void encode(ArgumentEncoder& encoder, SecTrustRef trust)
+{
+    auto data = adoptCF(SecTrustSerialize(trust, nullptr));
+    if (!data) {
+        encoder << false;
+        return;
+    }
+
+    encoder << true;
+    IPC::encode(encoder, data.get());
+}
+
+bool decode(ArgumentDecoder& decoder, RetainPtr<SecTrustRef>& result)
+{
+    bool hasTrust;
+    if (!decoder.decode(hasTrust))
+        return false;
+
+    if (!hasTrust)
+        return true;
+
+    RetainPtr<CFDataRef> trustData;
+    if (!IPC::decode(decoder, trustData))
+        return false;
+
+    auto trust = adoptCF(SecTrustDeserialize(trustData.get(), nullptr));
+    if (!trust)
+        return false;
+
+    result = WTFMove(trust);
+    return true;
+}
 #endif
 
 } // namespace IPC

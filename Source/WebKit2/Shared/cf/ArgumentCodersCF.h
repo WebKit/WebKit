@@ -27,6 +27,7 @@
 #define ArgumentCodersCF_h
 
 #include <Security/SecCertificate.h>
+#include <Security/SecTrust.h>
 #include <wtf/RetainPtr.h>
 
 #if HAVE(SEC_KEYCHAIN)
@@ -92,6 +93,12 @@ bool decode(ArgumentDecoder&, RetainPtr<SecKeychainItemRef>& result);
 // SecAccessControlRef
 void encode(ArgumentEncoder&, SecAccessControlRef);
 bool decode(ArgumentDecoder&, RetainPtr<SecAccessControlRef>& result);
+#endif
+
+#if HAVE(SEC_TRUST_SERIALIZATION)
+// SecTrustRef
+void encode(ArgumentEncoder&, SecTrustRef);
+bool decode(ArgumentDecoder&, RetainPtr<SecTrustRef>&);
 #endif
 
 #if PLATFORM(IOS)

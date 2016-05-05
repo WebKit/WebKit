@@ -164,12 +164,11 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic, readonly) BOOL hasOnlySecureContent;
 
-/*! @abstract An array of SecCertificateRef objects forming the certificate
- chain for the currently committed navigation.
- @discussion The certificates are ordered from leaf (at index 0) to anchor.
- @link WKWebView @/link is key-value observing (KVO) compliant for this property.
+/*! @abstract A SecTrustRef for the currently committed navigation.
+ @discussion @link WKWebView @/link is key-value observing (KVO) compliant 
+ for this property.
  */
-@property (nonatomic, readonly, copy) NSArray *certificateChain WK_AVAILABLE(10_11, 9_0);
+@property (nonatomic, readonly, nullable) SecTrustRef serverTrust WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 /*! @abstract A Boolean value indicating whether there is a back item in
  the back-forward list that can be navigated to.
@@ -304,6 +303,12 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @end
 
 #endif
+
+@interface WKWebView (WKDeprecated)
+
+@property (nonatomic, readonly, copy) NSArray *certificateChain WK_DEPRECATED(10_11, WK_MAC_TBA, 9_0, WK_IOS_TBA, "Please use serverTrust");
+
+@end
 
 NS_ASSUME_NONNULL_END
 

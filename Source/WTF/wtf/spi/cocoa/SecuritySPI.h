@@ -30,6 +30,7 @@
 
 #include <Security/SecCertificatePriv.h>
 #include <Security/SecTask.h>
+#include <Security/SecTrustPriv.h>
 
 #else
 
@@ -56,5 +57,10 @@ typedef struct __SecTask *SecTaskRef;
 EXTERN_C SecTaskRef SecTaskCreateWithAuditToken(CFAllocatorRef, audit_token_t);
 EXTERN_C SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef);
 EXTERN_C CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CFErrorRef *);
+
+#if HAVE(SEC_TRUST_SERIALIZATION)
+EXTERN_C CF_RETURNS_RETAINED CFDataRef SecTrustSerialize(SecTrustRef, CFErrorRef *);
+EXTERN_C CF_RETURNS_RETAINED SecTrustRef SecTrustDeserialize(CFDataRef serializedTrust, CFErrorRef *);
+#endif
 
 #endif // SecuritySPI_h

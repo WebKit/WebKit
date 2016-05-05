@@ -1,3 +1,28 @@
+2016-05-02  Sam Weinig  <sam@webkit.org>
+
+        On platforms that support it, use a SecTrustRef as the basis of CertificateInfo instead of a chain of SecCertificateRefs.
+        https://bugs.webkit.org/show_bug.cgi?id=157220
+
+        Reviewed by Darin Adler.
+
+        * platform/network/cf/CertificateInfo.h:
+        (WebCore::CertificateInfo::CertificateInfo):
+        (WebCore::CertificateInfo::trust):
+        (WebCore::CertificateInfo::isEmpty):
+        (WebCore::CertificateInfo::setCertificateChain): Deleted.
+        (WebCore::CertificateInfo::certificateChain): Deleted.
+        * platform/network/mac/CertificateInfoMac.mm:
+        (WebCore::CertificateInfo::type):
+        (WebCore::CertificateInfo::certificateChain):
+        (WebCore::CertificateInfo::containsNonRootSHA1SignedCertificate):
+        (WebCore::CertificateInfo::dump):
+        When supported, allow CertificateInfo to contain a SecTrustRef instead of a certificate chain. We keep
+        support for holding on to a certificate chain as well, since there is API that depends on this.
+
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformCertificateInfo):
+        When supported, use the SecTrustRef from the error instead of extracting it's certificate chain.
+
 2016-05-04  Ada Chan  <adachan@apple.com>
 
         When exiting fullscreen, call a JS method immediately to implement the style changes for the presentation mode change right away

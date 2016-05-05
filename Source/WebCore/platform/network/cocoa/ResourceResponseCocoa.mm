@@ -99,12 +99,11 @@ CertificateInfo ResourceResponse::platformCertificateInfo() const
             return { };
     }
 
-    CFIndex count = SecTrustGetCertificateCount(trust);
-    auto certificateChain = CFArrayCreateMutable(0, count, &kCFTypeArrayCallBacks);
-    for (CFIndex i = 0; i < count; i++)
-        CFArrayAppendValue(certificateChain, SecTrustGetCertificateAtIndex(trust, i));
-
-    return CertificateInfo(adoptCF(certificateChain));
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    return CertificateInfo(trust);
+#else
+    return CertificateInfo(CertificateInfo::certificateChainFromSecTrust(trust));
+#endif
 }
 
 #if USE(CFNETWORK)
