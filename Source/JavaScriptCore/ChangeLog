@@ -1,5 +1,23 @@
 2016-05-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Reduce maximum JIT pool size on X86_64.
+
+        Rubber stamped by Geoffrey Garen.
+        
+        This changes our maximum pool size to 100MB. The problem with letting a page allocate much
+        more than this is that we will sometimes call deleteAllCode() or one of its friends. Deleting
+        a huge amount of memory is expensive in our allocator.
+        
+        So long as we allow for such large-scale code death to happen, and so long as it's expensive,
+        we should bound the amount of code we end up with in the first place.
+        
+        In the long run, we should fix our executable allocator so that it's not so expensive to kill
+        all code.
+        
+        * jit/ExecutableAllocator.h:
+
+2016-05-05  Filip Pizlo  <fpizlo@apple.com>
+
         Reduce thresholds that control the maximum IC stub size.
 
         Rubber stamped by Chris Dumez and Benjamin Poulain.
