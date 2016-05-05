@@ -1,3 +1,9 @@
+2016-05-05  Sam Weinig  <sam@webkit.org>
+
+        Fix the build.
+
+        * platform/network/cf/CertificateInfo.h:
+
 2016-05-05  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Media information is sometimes not shown in Control Center
