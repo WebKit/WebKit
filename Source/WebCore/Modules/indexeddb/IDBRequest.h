@@ -104,6 +104,8 @@ public:
 
     bool hasPendingActivity() const final;
 
+    ThreadIdentifier originThreadID() const { return m_originThreadID; }
+
 protected:
     IDBRequest(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&);
 
@@ -170,6 +172,8 @@ private:
     std::unique_ptr<ScopeGuard> m_cursorRequestNotifier;
 
     Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
+
+    ThreadIdentifier m_originThreadID { currentThread() };
 };
 
 } // namespace WebCore

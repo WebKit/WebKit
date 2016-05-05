@@ -30,6 +30,7 @@
 
 #include "ExceptionCode.h"
 #include "IDBBindingUtilities.h"
+#include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
 #include "IDBGetResult.h"
 #include "IDBIndex.h"
@@ -116,6 +117,8 @@ IDBCursor::IDBCursor(IDBTransaction& transaction, IDBObjectStore& objectStore, c
     , m_info(info)
     , m_objectStore(&objectStore)
 {
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+
     suspendIfNeeded();
 }
 
@@ -124,15 +127,20 @@ IDBCursor::IDBCursor(IDBTransaction& transaction, IDBIndex& index, const IDBCurs
     , m_info(info)
     , m_index(&index)
 {
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+
     suspendIfNeeded();
 }
 
 IDBCursor::~IDBCursor()
 {
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
 }
 
 bool IDBCursor::sourcesDeleted() const
 {
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+
     if (m_objectStore)
         return m_objectStore->isDeleted();
 
@@ -151,17 +159,20 @@ IDBObjectStore& IDBCursor::effectiveObjectStore() const
 
 IDBTransaction& IDBCursor::transaction() const
 {
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
     return effectiveObjectStore().modernTransaction();
 }
 
 const String& IDBCursor::direction() const
 {
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
     return directionToString(m_info.cursorDirection());
 }
 
 RefPtr<WebCore::IDBRequest> IDBCursor::update(ExecState& exec, JSValue value, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::update");
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
 
     if (sourcesDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -220,6 +231,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::update(ExecState& exec, JSValue value, Ex
 void IDBCursor::advance(unsigned count, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::advance");
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
 
     if (!m_request) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -267,6 +279,7 @@ void IDBCursor::continueFunction(ScriptExecutionContext& context, JSValue keyVal
 void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::continueFunction (to key %s)", key.loggingString().utf8().data());
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
 
     if (!m_request) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -316,6 +329,8 @@ void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCodeWithMessage
 
 void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
 {
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
+
     ++m_outstandingRequestCount;
 
     m_request->willIterateCursor(*this);
@@ -325,6 +340,7 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
 RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext& context, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::deleteFunction");
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
 
     if (sourcesDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -370,6 +386,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext& co
 void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
 {
     LOG(IndexedDB, "IDBCursor::setGetResult - current key %s", getResult.keyData().loggingString().substring(0, 100).utf8().data());
+    ASSERT(currentThread() == effectiveObjectStore().modernTransaction().database().originThreadID());
 
     auto* context = request.scriptExecutionContext();
     if (!context)

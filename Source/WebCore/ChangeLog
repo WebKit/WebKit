@@ -1,3 +1,209 @@
+2016-05-04  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Add thread identifiers and assertions to IDB DOM objects.
+        https://bugs.webkit.org/show_bug.cgi?id=157329
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No current change in behavior, will be tested as bug 149953 makes progress).
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::IDBCursor):
+        (WebCore::IDBCursor::~IDBCursor):
+        (WebCore::IDBCursor::sourcesDeleted):
+        (WebCore::IDBCursor::transaction):
+        (WebCore::IDBCursor::direction):
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::advance):
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::uncheckedIterateCursor):
+        (WebCore::IDBCursor::deleteFunction):
+        (WebCore::IDBCursor::setGetResult):
+        
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::~IDBDatabase):
+        (WebCore::IDBDatabase::hasPendingActivity):
+        (WebCore::IDBDatabase::name):
+        (WebCore::IDBDatabase::version):
+        (WebCore::IDBDatabase::objectStoreNames):
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::transaction):
+        (WebCore::IDBDatabase::deleteObjectStore):
+        (WebCore::IDBDatabase::close):
+        (WebCore::IDBDatabase::maybeCloseInServer):
+        (WebCore::IDBDatabase::activeDOMObjectName):
+        (WebCore::IDBDatabase::canSuspendForDocumentSuspension):
+        (WebCore::IDBDatabase::stop):
+        (WebCore::IDBDatabase::startVersionChangeTransaction):
+        (WebCore::IDBDatabase::didStartTransaction):
+        (WebCore::IDBDatabase::willCommitTransaction):
+        (WebCore::IDBDatabase::didCommitTransaction):
+        (WebCore::IDBDatabase::willAbortTransaction):
+        (WebCore::IDBDatabase::didAbortTransaction):
+        (WebCore::IDBDatabase::didCommitOrAbortTransaction):
+        (WebCore::IDBDatabase::fireVersionChangeEvent):
+        (WebCore::IDBDatabase::dispatchEvent):
+        (WebCore::IDBDatabase::didCreateIndexInfo):
+        (WebCore::IDBDatabase::didDeleteIndexInfo):
+        * Modules/indexeddb/IDBDatabase.h:
+        (WebCore::IDBDatabase::originThreadID):
+        
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::IDBIndex):
+        (WebCore::IDBIndex::~IDBIndex):
+        (WebCore::IDBIndex::name):
+        (WebCore::IDBIndex::objectStore):
+        (WebCore::IDBIndex::keyPath):
+        (WebCore::IDBIndex::unique):
+        (WebCore::IDBIndex::multiEntry):
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::doCount):
+        (WebCore::IDBIndex::openKeyCursor):
+        (WebCore::IDBIndex::doGet):
+        (WebCore::IDBIndex::doGetKey):
+        (WebCore::IDBIndex::markAsDeleted):
+        
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::IDBObjectStore):
+        (WebCore::IDBObjectStore::~IDBObjectStore):
+        (WebCore::IDBObjectStore::name):
+        (WebCore::IDBObjectStore::keyPath):
+        (WebCore::IDBObjectStore::indexNames):
+        (WebCore::IDBObjectStore::transaction):
+        (WebCore::IDBObjectStore::autoIncrement):
+        (WebCore::IDBObjectStore::openCursor):
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::putOrAdd):
+        (WebCore::IDBObjectStore::doDelete):
+        (WebCore::IDBObjectStore::clear):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::deleteIndex):
+        (WebCore::IDBObjectStore::doCount):
+        (WebCore::IDBObjectStore::markAsDeleted):
+        (WebCore::IDBObjectStore::rollbackInfoForVersionChangeAbort):
+        
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::~IDBOpenDBRequest):
+        (WebCore::IDBOpenDBRequest::onError):
+        (WebCore::IDBOpenDBRequest::versionChangeTransactionDidFinish):
+        (WebCore::IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit):
+        (WebCore::IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion):
+        (WebCore::IDBOpenDBRequest::dispatchEvent):
+        (WebCore::IDBOpenDBRequest::onSuccess):
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):
+        (WebCore::IDBOpenDBRequest::onDeleteDatabaseSuccess):
+        (WebCore::IDBOpenDBRequest::requestCompleted):
+        (WebCore::IDBOpenDBRequest::requestBlocked):
+        
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::~IDBRequest):
+        (WebCore::IDBRequest::errorCode):
+        (WebCore::IDBRequest::error):
+        (WebCore::IDBRequest::setSource):
+        (WebCore::IDBRequest::setVersionChangeTransaction):
+        (WebCore::IDBRequest::transaction):
+        (WebCore::IDBRequest::readyState):
+        (WebCore::IDBRequest::sourceObjectStoreIdentifier):
+        (WebCore::IDBRequest::sourceIndexIdentifier):
+        (WebCore::IDBRequest::requestedIndexRecordType):
+        (WebCore::IDBRequest::eventTargetInterface):
+        (WebCore::IDBRequest::activeDOMObjectName):
+        (WebCore::IDBRequest::canSuspendForDocumentSuspension):
+        (WebCore::IDBRequest::hasPendingActivity):
+        (WebCore::IDBRequest::stop):
+        (WebCore::IDBRequest::enqueueEvent):
+        (WebCore::IDBRequest::dispatchEvent):
+        (WebCore::IDBRequest::uncaughtExceptionInEventHandler):
+        (WebCore::IDBRequest::setResult):
+        (WebCore::IDBRequest::setResultToStructuredClone):
+        (WebCore::IDBRequest::clearResult):
+        (WebCore::IDBRequest::setResultToUndefined):
+        (WebCore::IDBRequest::resultCursor):
+        (WebCore::IDBRequest::willIterateCursor):
+        (WebCore::IDBRequest::didOpenOrIterateCursor):
+        (WebCore::IDBRequest::requestCompleted):
+        (WebCore::IDBRequest::onError):
+        (WebCore::IDBRequest::onSuccess):
+        * Modules/indexeddb/IDBRequest.h:
+        (WebCore::IDBRequest::originThreadID):
+        
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::~IDBTransaction):
+        (WebCore::IDBTransaction::mode):
+        (WebCore::IDBTransaction::db):
+        (WebCore::IDBTransaction::serverConnection):
+        (WebCore::IDBTransaction::error):
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::abortDueToFailedRequest):
+        (WebCore::IDBTransaction::transitionedToFinishing):
+        (WebCore::IDBTransaction::abort):
+        (WebCore::IDBTransaction::abortOnServerAndCancelRequests):
+        (WebCore::IDBTransaction::activeDOMObjectName):
+        (WebCore::IDBTransaction::canSuspendForDocumentSuspension):
+        (WebCore::IDBTransaction::hasPendingActivity):
+        (WebCore::IDBTransaction::stop):
+        (WebCore::IDBTransaction::isActive):
+        (WebCore::IDBTransaction::isFinishedOrFinishing):
+        (WebCore::IDBTransaction::addRequest):
+        (WebCore::IDBTransaction::removeRequest):
+        (WebCore::IDBTransaction::scheduleOperation):
+        (WebCore::IDBTransaction::scheduleOperationTimer):
+        (WebCore::IDBTransaction::operationTimerFired):
+        (WebCore::IDBTransaction::commit):
+        (WebCore::IDBTransaction::commitOnServer):
+        (WebCore::IDBTransaction::finishAbortOrCommit):
+        (WebCore::IDBTransaction::didStart):
+        (WebCore::IDBTransaction::notifyDidAbort):
+        (WebCore::IDBTransaction::didAbort):
+        (WebCore::IDBTransaction::didCommit):
+        (WebCore::IDBTransaction::fireOnComplete):
+        (WebCore::IDBTransaction::fireOnAbort):
+        (WebCore::IDBTransaction::enqueueEvent):
+        (WebCore::IDBTransaction::dispatchEvent):
+        (WebCore::IDBTransaction::createObjectStore):
+        (WebCore::IDBTransaction::createObjectStoreOnServer):
+        (WebCore::IDBTransaction::didCreateObjectStoreOnServer):
+        (WebCore::IDBTransaction::createIndex):
+        (WebCore::IDBTransaction::createIndexOnServer):
+        (WebCore::IDBTransaction::didCreateIndexOnServer):
+        (WebCore::IDBTransaction::requestOpenCursor):
+        (WebCore::IDBTransaction::doRequestOpenCursor):
+        (WebCore::IDBTransaction::openCursorOnServer):
+        (WebCore::IDBTransaction::didOpenCursorOnServer):
+        (WebCore::IDBTransaction::iterateCursor):
+        (WebCore::IDBTransaction::iterateCursorOnServer):
+        (WebCore::IDBTransaction::didIterateCursorOnServer):
+        (WebCore::IDBTransaction::requestGetRecord):
+        (WebCore::IDBTransaction::requestGetValue):
+        (WebCore::IDBTransaction::requestGetKey):
+        (WebCore::IDBTransaction::requestIndexRecord):
+        (WebCore::IDBTransaction::getRecordOnServer):
+        (WebCore::IDBTransaction::didGetRecordOnServer):
+        (WebCore::IDBTransaction::requestCount):
+        (WebCore::IDBTransaction::getCountOnServer):
+        (WebCore::IDBTransaction::didGetCountOnServer):
+        (WebCore::IDBTransaction::requestDeleteRecord):
+        (WebCore::IDBTransaction::deleteRecordOnServer):
+        (WebCore::IDBTransaction::didDeleteRecordOnServer):
+        (WebCore::IDBTransaction::requestClearObjectStore):
+        (WebCore::IDBTransaction::clearObjectStoreOnServer):
+        (WebCore::IDBTransaction::didClearObjectStoreOnServer):
+        (WebCore::IDBTransaction::requestPutOrAdd):
+        (WebCore::IDBTransaction::putOrAddOnServer):
+        (WebCore::IDBTransaction::didPutOrAddOnServer):
+        (WebCore::IDBTransaction::deleteObjectStore):
+        (WebCore::IDBTransaction::deleteObjectStoreOnServer):
+        (WebCore::IDBTransaction::didDeleteObjectStoreOnServer):
+        (WebCore::IDBTransaction::deleteIndex):
+        (WebCore::IDBTransaction::deleteIndexOnServer):
+        (WebCore::IDBTransaction::didDeleteIndexOnServer):
+        (WebCore::IDBTransaction::operationDidComplete):
+        (WebCore::IDBTransaction::establishOnServer):
+        (WebCore::IDBTransaction::activate):
+        (WebCore::IDBTransaction::deactivate):
+
 2016-05-05  Nan Wang  <n_wang@apple.com>
 
         For keyboard users, activating a fragment URL should transfer focus and caret to the destination

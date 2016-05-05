@@ -101,6 +101,8 @@ public:
 
     bool hasPendingActivity() const final;
 
+    ThreadIdentifier originThreadID() const { return m_originThreadID; }
+
 private:
     IDBDatabase(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, const IDBResultData&);
 
@@ -119,6 +121,8 @@ private:
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_activeTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
+
+    ThreadIdentifier m_originThreadID { currentThread() };
 };
 
 } // namespace WebCore
