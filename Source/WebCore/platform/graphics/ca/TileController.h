@@ -182,6 +182,9 @@ private:
 
     PlatformCALayer* m_tileCacheLayer;
 
+    float m_zoomedOutContentsScale { 0 };
+    float m_deviceScaleFactor;
+
     std::unique_ptr<TileCoverageMap> m_coverageMap;
 
     std::unique_ptr<TileGrid> m_tileGrid;
@@ -193,9 +196,6 @@ private:
 
     Timer m_tileRevalidationTimer;
     DeferrableOneShotTimer m_tileSizeChangeTimer;
-
-    float m_zoomedOutContentsScale { 0 };
-    float m_deviceScaleFactor;
 
     TileCoverage m_tileCoverage { CoverageForVisibleArea };
     

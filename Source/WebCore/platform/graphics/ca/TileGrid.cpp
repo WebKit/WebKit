@@ -48,6 +48,7 @@ TileGrid::TileGrid(TileController& controller)
     , m_tileSize(kDefaultTileSize, kDefaultTileSize)
 {
     m_containerLayer.get().setName(TileController::tileGridContainerLayerName());
+    m_containerLayer.get().setContentsScale(m_controller.deviceScaleFactor());
 }
 
 TileGrid::~TileGrid()
@@ -76,6 +77,8 @@ void TileGrid::setScale(float scale)
 
     // FIXME: we may revalidateTiles twice in this commit.
     revalidateTiles(PruneSecondaryTiles);
+
+    m_containerLayer.get().setContentsScale(m_controller.deviceScaleFactor());
 
     for (auto& tile : m_tiles.values())
         tile.layer->setContentsScale(m_controller.deviceScaleFactor());

@@ -1,3 +1,25 @@
+2016-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Comments on wired.com are blurry
+        https://bugs.webkit.org/show_bug.cgi?id=148630
+        rdar://problem/22499655
+
+        Reviewed by Tim Horton.
+
+        Make sure to set -rasterizationScale on TileGrid container layers to avoid blurry layers
+        with some configurations of transforms, perspective and clipping.
+
+        Test: compositing/contents-scale/rasterization-scale.html
+
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::TileController): Initialize m_deviceScaleFactor before m_tileGrid,
+        because TileGrid's constructor needs to read the device scale.
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::TileGrid): Push a contentsScale (which also sets rasterizationScale) onto 
+        the tile grid container layer on constructions, and in setScale().
+        (WebCore::TileGrid::setScale):
+
 2016-05-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         event.target shouldn't be retargeted as the event bubbles into a slot
