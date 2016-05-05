@@ -551,9 +551,9 @@ template<typename Value1, typename Value2> inline JSC::JSValue jsPair(JSC::ExecS
 
 WEBCORE_EXPORT JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<DOMStringList>);
 
-inline PassRefPtr<JSC::ArrayBufferView> toArrayBufferView(JSC::JSValue value)
+inline RefPtr<JSC::ArrayBufferView> toArrayBufferView(JSC::JSValue value)
 {
-    JSC::JSArrayBufferView* wrapper = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(value);
+    auto* wrapper = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(value);
     if (!wrapper)
         return nullptr;
     return wrapper->impl();

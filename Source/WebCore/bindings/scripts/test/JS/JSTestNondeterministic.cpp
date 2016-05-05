@@ -352,10 +352,10 @@ bool setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* state, En
         return throwSetterTypeError(*state, "TestNondeterministic", "nondeterministicWriteableAttr");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setNondeterministicWriteableAttr(nativeValue);
+    impl.setNondeterministicWriteableAttr(WTFMove(nativeValue));
     return true;
 }
 
@@ -369,10 +369,10 @@ bool setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* state, En
         return throwSetterTypeError(*state, "TestNondeterministic", "nondeterministicExceptionAttr");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setNondeterministicExceptionAttr(nativeValue);
+    impl.setNondeterministicExceptionAttr(WTFMove(nativeValue));
     return true;
 }
 
@@ -386,10 +386,10 @@ bool setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* sta
         return throwSetterTypeError(*state, "TestNondeterministic", "nondeterministicGetterExceptionAttr");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setNondeterministicGetterExceptionAttr(nativeValue);
+    impl.setNondeterministicGetterExceptionAttr(WTFMove(nativeValue));
     return true;
 }
 
@@ -404,10 +404,10 @@ bool setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* sta
     }
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
-    String nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setNondeterministicSetterExceptionAttr(nativeValue, ec);
+    impl.setNondeterministicSetterExceptionAttr(WTFMove(nativeValue), ec);
     setDOMException(state, ec);
     return true;
 }

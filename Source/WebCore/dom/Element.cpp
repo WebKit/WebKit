@@ -1674,21 +1674,14 @@ RefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
     return nullptr;
 }
 
-RefPtr<ShadowRoot> Element::attachShadow(const Dictionary& dictionary, ExceptionCode& ec)
+bool Element::canHaveUserAgentShadowRoot() const
 {
-    String mode;
-    dictionary.get("mode", mode);
+    return false;
+}
 
-    auto type = ShadowRoot::Type::Closed;
-    if (mode == "open")
-        type = ShadowRoot::Type::Open;
-    else if (mode != "closed") {
-        ec = TypeError;
-        return nullptr;
-    }
-
-    // FIXME: The current spec allows attachShadow on non-HTML elements.
-    if (!is<HTMLElement>(this) || downcast<HTMLElement>(this)->canHaveUserAgentShadowRoot()) {
+RefPtr<ShadowRoot> Element::attachShadow(const ShadowRootInit& init, ExceptionCode& ec)
+{
+    if (canHaveUserAgentShadowRoot()) {
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     }
@@ -1698,9 +1691,9 @@ RefPtr<ShadowRoot> Element::attachShadow(const Dictionary& dictionary, Exception
         return nullptr;
     }
 
-    addShadowRoot(ShadowRoot::create(document(), type));
-
-    return shadowRoot();
+    auto shadow = ShadowRoot::create(document(), init.mode == ShadowRootMode::Open ? ShadowRoot::Type::Open : ShadowRoot::Type::Closed);
+    addShadowRoot(shadow.copyRef());
+    return WTFMove(shadow);
 }
 
 ShadowRoot* Element::shadowRootForBindings(JSC::ExecState& state) const

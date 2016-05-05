@@ -847,11 +847,11 @@ webkit_dom_test_obj_orange(WebKitDOMTestObj* self);
  * @b: A #glong
  * @error: #GError
  *
- * Returns: (transfer none): A #WebKitDOMbool
+ * Returns: A #gboolean
  *
  * Stability: Unstable
 **/
-WEBKIT_API WebKitDOMbool*
+WEBKIT_API gboolean
 webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gfloat a, glong b, GError** error);
 
 /**
@@ -861,11 +861,11 @@ webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gf
  * @array: A #glong
  * @error: #GError
  *
- * Returns: (transfer none): A #WebKitDOMbool
+ * Returns: A #gboolean
  *
  * Stability: Unstable
 **/
-WEBKIT_API WebKitDOMbool*
+WEBKIT_API gboolean
 webkit_dom_test_obj_strict_function_with_array(WebKitDOMTestObj* self, WebKitDOMTestObj* objArg, glong array, GError** error);
 
 /**
@@ -911,6 +911,16 @@ webkit_dom_test_obj_variadic_node_method(WebKitDOMTestObj* self, WebKitDOMNode* 
 **/
 WEBKIT_API void
 webkit_dom_test_obj_any(WebKitDOMTestObj* self, gfloat a, glong b);
+
+/**
+ * webkit_dom_test_obj_attach_shadow_root:
+ * @self: A #WebKitDOMTestObj
+ * @init: A #WebKitDOMShadowRootInit
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_attach_shadow_root(WebKitDOMTestObj* self, WebKitDOMShadowRootInit* init);
 
 /**
  * webkit_dom_test_obj_get_read_only_long_attr:

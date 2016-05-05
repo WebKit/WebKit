@@ -226,10 +226,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(Ex
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
-    String str1 = state->argument(0).toWTFString(state);
+    auto str1 = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    String str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : state->uncheckedArgument(1).toWTFString(state);
+    auto str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : state->uncheckedArgument(1).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     ScriptExecutionContext* context = castedThis->scriptExecutionContext();
@@ -630,10 +630,10 @@ bool JSTestInterface::putByIndex(JSCell* cell, ExecState* state, unsigned index,
 bool setJSTestInterfaceConstructorImplementsStaticAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
-    String nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
-    TestInterface::setImplementsStaticAttr(nativeValue);
+    TestInterface::setImplementsStaticAttr(WTFMove(nativeValue));
     return true;
 }
 
@@ -649,10 +649,10 @@ bool setJSTestInterfaceImplementsStr2(ExecState* state, EncodedJSValue thisValue
         return throwSetterTypeError(*state, "TestInterface", "implementsStr2");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setImplementsStr2(nativeValue);
+    impl.setImplementsStr2(WTFMove(nativeValue));
     return true;
 }
 
@@ -683,7 +683,7 @@ bool setJSTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue
         return throwSetterTypeError(*state, "TestInterface", "implementsNode");
     }
     auto& impl = castedThis->wrapped();
-    Node* nativeValue = JSNode::toWrapped(value);
+    auto nativeValue = JSNode::toWrapped(value);
     if (UNLIKELY(!nativeValue)) {
         throwVMTypeError(state);
         return false;
@@ -698,10 +698,10 @@ bool setJSTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue
 bool setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
-    String nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
-    WebCore::TestSupplemental::setSupplementalStaticAttr(nativeValue);
+    WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue));
     return true;
 }
 
@@ -717,10 +717,10 @@ bool setJSTestInterfaceSupplementalStr2(ExecState* state, EncodedJSValue thisVal
         return throwSetterTypeError(*state, "TestInterface", "supplementalStr2");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
-    WebCore::TestSupplemental::setSupplementalStr2(impl, nativeValue);
+    WebCore::TestSupplemental::setSupplementalStr2(impl, WTFMove(nativeValue));
     return true;
 }
 
@@ -751,7 +751,7 @@ bool setJSTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisVal
         return throwSetterTypeError(*state, "TestInterface", "supplementalNode");
     }
     auto& impl = castedThis->wrapped();
-    Node* nativeValue = JSNode::toWrapped(value);
+    auto nativeValue = JSNode::toWrapped(value);
     if (UNLIKELY(!nativeValue)) {
         throwVMTypeError(state);
         return false;
@@ -797,13 +797,13 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return JSValue::encode(jsUndefined());
-    String strArg = state->argument(0).toWTFString(state);
+    auto strArg = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    TestObj* objArg = JSTestObj::toWrapped(state->argument(1));
+    auto objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(*context, strArg, *objArg, ec)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(*context, WTFMove(strArg), *objArg, ec)));
 
     setDOMException(state, ec);
     return JSValue::encode(result);
@@ -863,13 +863,13 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return JSValue::encode(jsUndefined());
-    String strArg = state->argument(0).toWTFString(state);
+    auto strArg = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    TestObj* objArg = JSTestObj::toWrapped(state->argument(1));
+    auto objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(!objArg))
         return throwVMTypeError(state);
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(impl, *context, strArg, *objArg, ec)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(impl, *context, WTFMove(strArg), *objArg, ec)));
 
     setDOMException(state, ec);
     return JSValue::encode(result);

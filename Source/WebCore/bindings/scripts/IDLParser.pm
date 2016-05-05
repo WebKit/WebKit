@@ -35,9 +35,10 @@ use constant EmptyToken => 5;
 
 # Used to represent a parsed IDL document
 struct( idlDocument => {
-    interfaces => '@', # All parsed interfaces
-    enumerations => '@', # All parsed enumerations
-    fileName => '$', # file name
+    interfaces => '@', # List of 'domInterface'
+    enumerations => '@', # List of 'domEnum'
+    dictionaries => '@', # List of 'domDictionary'
+    fileName => '$',
 });
 
 # Used to represent 'interface' blocks
@@ -107,6 +108,12 @@ struct( domConstant => {
 struct( domEnum => {
     name => '$', # Enumeration identifier
     values => '@', # Enumeration values (list of unique strings)
+    extendedAttributes => '$',
+});
+
+struct( domDictionary => {
+    name => '$',
+    members => '@', # List of 'domSignature'
     extendedAttributes => '$',
 });
 
@@ -217,6 +224,8 @@ sub Parse
             push(@{$document->interfaces}, $definition);
         } elsif (ref($definition) eq "domEnum") {
             push(@{$document->enumerations}, $definition);
+        } elsif (ref($definition) eq "domDictionary") {
+            push(@{$document->dictionaries}, $definition);
         } else {
             die "Unrecognized IDL definition kind: \"" . ref($definition) . "\"";
         }
@@ -623,14 +632,18 @@ sub parseDictionary
 
     my $next = $self->nextToken();
     if ($next->value() eq "dictionary") {
+        my $dictionary = domDictionary->new();
+        $dictionary->extendedAttributes($extendedAttributeList);
         $self->assertTokenValue($self->getToken(), "dictionary", __LINE__);
-        $self->assertTokenType($self->getToken(), IdentifierToken);
+        my $nameToken = $self->getToken();
+        $self->assertTokenType($nameToken, IdentifierToken);
+        $dictionary->name($nameToken->value());
         $self->parseInheritance();
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
-        $self->parseDictionaryMembers();
+        $dictionary->members($self->parseDictionaryMembers());
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return;
+        return $dictionary;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -639,15 +652,19 @@ sub parseDictionaryMembers
 {
     my $self = shift;
 
+    my @members = ();
+
     while (1) {
         my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
         my $next = $self->nextToken();
         if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
-            $self->parseDictionaryMember($extendedAttributeList);
+            push(@members, $self->parseDictionaryMember($extendedAttributeList));
         } else {
             last;
         }
     }
+
+    return \@members;
 }
 
 sub parseDictionaryMember
@@ -657,11 +674,20 @@ sub parseDictionaryMember
 
     my $next = $self->nextToken();
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
-        $self->parseType();
-        $self->assertTokenType($self->getToken(), IdentifierToken);
-        $self->parseDefault();
+        my $member = domSignature->new();
+        if ($next->value ne "required") {
+            $member->isOptional(1);
+        } else {
+            $self->assertTokenValue($self->getToken(), "required", __LINE__);
+            $member->isOptional(0);
+        }
+        $member->type($self->parseType());
+        my $nameToken = $self->getToken();
+        $self->assertTokenType($nameToken, IdentifierToken);
+        $member->name($nameToken->value);
+        $member->default($self->parseDefault());
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return;
+        return $member;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }

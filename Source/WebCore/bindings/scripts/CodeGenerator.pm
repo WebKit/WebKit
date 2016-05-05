@@ -70,6 +70,7 @@ my %webCoreTypeHash = (
 );
 
 my %enumTypeHash = ();
+my %dictionaryTypes = ();
 
 my %typedArrayTypes = (
     "ArrayBuffer" => 1,
@@ -162,6 +163,7 @@ sub ProcessDocument
     require $ifaceName . ".pm";
 
     %enumTypeHash = map { $_->name => $_->values } @{$useDocument->enumerations};
+    %dictionaryTypes = map { $_->name => 1 } @{$useDocument->dictionaries};
 
     # Dynamically load external code generation perl module
     $codeGenerator = $ifaceName->new($object, $writeDependencies, $verbose, $targetIdlFilePath);
@@ -176,9 +178,9 @@ sub ProcessDocument
     my $interfaces = $useDocument->interfaces;
     foreach my $interface (@$interfaces) {
         print "Generating $useGenerator bindings code for IDL interface \"" . $interface->name . "\"...\n" if $verbose;
-        # FIXME: Repeating each enumeration for every interface would not work if we actually were using
+        # FIXME: Repeating each enumeration and dictionaries for every interface would not work if we actually were using
         # multiple interfaces per file, but we aren't, so this is fine for now.
-        $codeGenerator->GenerateInterface($interface, $defines, $useDocument->enumerations);
+        $codeGenerator->GenerateInterface($interface, $defines, $useDocument->enumerations, $useDocument->dictionaries);
         $codeGenerator->WriteData($interface, $useOutputDir, $useOutputHeadersDir);
     }
 }
@@ -324,14 +326,16 @@ sub SkipIncludeHeader
     my $object = shift;
     my $type = shift;
 
-    return 1 if $object->IsPrimitiveType($type);
+    # FIXME: This is a lot like !IsRefPtrType. Maybe they could share code?
 
-    # Special case: SVGNumber.h does not exist.
-    return 1 if $type eq "SVGNumber";
-    
-    # Typed arrays already included by JSDOMBinding.h.
+    return 1 if $object->IsPrimitiveType($type);
     return 1 if $object->IsTypedArrayType($type);
-    
+    return 1 if $type eq "Array";
+    return 1 if $type eq "DOMString";
+    return 1 if $type eq "DOMTimeStamp";
+    return 1 if $type eq "SVGNumber";
+    return 1 if $type eq "any";
+
     return 0;
 }
 
@@ -390,6 +394,13 @@ sub ValidEnumValues
     return @{$enumTypeHash{$type}};
 }
 
+sub IsDictionaryType
+{
+    my ($object, $type) = @_;
+
+    return $dictionaryTypes{$type} || 0;
+}
+
 sub IsNonPointerType
 {
     my $object = shift;
@@ -432,8 +443,9 @@ sub IsRefPtrType
     my $type = shift;
 
     return 0 if $object->IsPrimitiveType($type);
-    return 0 if $object->GetArrayOrSequenceType($type);
+    return 0 if $object->IsDictionaryType($type);
     return 0 if $object->IsEnumType($type);
+    return 0 if $object->GetArrayOrSequenceType($type);
     return 0 if $type eq "DOMString";
     return 0 if $type eq "any";
 

@@ -185,7 +185,7 @@
 
     // Shadow DOM API
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM, RaisesException] ShadowRoot attachShadow(Dictionary options);
+    [Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM, RaisesException] ShadowRoot attachShadow(ShadowRootInit init);
     [Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM, ImplementedAs=shadowRootForBindings, CallWith=ScriptState] readonly attribute ShadowRoot shadowRoot;
     [Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM, Reflect] attribute DOMString slot;
 #endif
@@ -231,6 +231,12 @@
     [NotEnumerable, Conditional=VIDEO_PRESENTATION_MODE] attribute EventHandler onwebkitpresentationmodechanged;
     [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitcurrentplaybacktargetiswirelesschanged;
     [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
+};
+
+enum ShadowRootMode { "open", "closed" };
+
+dictionary ShadowRootInit {
+    required ShadowRootMode mode;
 };
 
 Element implements ChildNode;

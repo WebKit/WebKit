@@ -31,6 +31,7 @@
 @class DOMNode;
 @class DOMSVGDocument;
 @class DOMSVGPoint;
+@class DOMShadowRootInit;
 @class DOMTestEnumType;
 @class DOMTestNode;
 @class DOMTestObj;
@@ -39,7 +40,6 @@
 @class DOMTestObjectCConstructor;
 @class DOMTestSubObjConstructor;
 @class DOMany;
-@class DOMbool;
 @class NSString;
 @protocol DOMEventListener;
 
@@ -209,9 +209,10 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (DOMSVGPoint *)mutablePointFunction;
 - (DOMSVGPoint *)immutablePointFunction;
 - (void)orange;
-- (DOMbool *)strictFunction:(NSString *)str a:(float)a b:(int)b;
+- (BOOL)strictFunction:(NSString *)str a:(float)a b:(int)b;
 - (void)variadicStringMethod:(NSString *)head tail:(NSString *)tail;
 - (void)variadicDoubleMethod:(double)head tail:(double)tail;
 - (void)variadicNodeMethod:(DOMNode *)head tail:(DOMNode *)tail;
 - (void)any:(float)a b:(int)b;
+- (void)attachShadowRoot:(DOMShadowRootInit *)init;
 @end

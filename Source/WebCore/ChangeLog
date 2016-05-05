@@ -1,3 +1,119 @@
+2016-05-03  Darin Adler  <darin@apple.com>
+
+        Start on dictionary support for IDL, getting enough to work for one dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=157336
+
+        Reviewed by Alex Christensen.
+
+        * bindings/js/JSDOMBinding.h: Return RefPtr instead of PassRefPtr for the return
+        value of toArrayBufferView. Not only is this the correct modern idiom, it also
+        works properly with auto, and PassRefPtr does not.
+
+        * bindings/js/JSDOMBuild.h: Added. This has the build function template in it.
+        It's used to build values like dictionaries. We specialize and call the tempate
+        in generated code. This is only the initial simplistic version; will be refining
+        for exception handling, optional handling, default value handling, and lots of
+        other things not yet needed for this first dictionary.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ProcessDocument): Handle dictionaries much like how we handle enumerations.
+        (SkipIncludeHeader): Moved small list of special types here from CodeGeneratorJS.
+        (IsDictionaryType): Added.
+        (IsRefPtrType): Make this return 0 for dictionary types.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateInterface): Added handling for dictionaries.
+        (SkipIncludeHeader): Deleted.
+        (AddIncludesForType): Call the the SkipIncludeHeader from CodeGenerator.pm directly.
+        (GetNestedClassName): Factored out the work that was previously in
+        GetEnumerationClassName so we could reuse it for dictionaries too.
+        (GetEnumerationClassName): Changed to call GetNestedClassName.
+        (GetEnumerationClassIdentifier): Deleted. Instead of using this, we now use templates
+        so we can use the actual class name.
+        (GenerateEnumerationImplementationContent): Changed parse and expectedEnumerationValues
+        to use function template specialization instead of functions. This cleans up the code
+        a bit and makes it eaiser to use from other templates. Later we may want to merge the
+        parse function template build function template from JSDOMBuild.h. Added specialization
+        of the build function template.
+        (GetDictionaryClassName): Added. Calls GetNestedClassName.
+        (GenerateDictionaryImplementationContent): Added. Generates the build function for each
+        dictionary type. Initial simplistic version to be refined.
+        (GenerateImplementation): Added dictionaries argument and called the
+        GenerateDictionaryImplementationContent function. Also changed many functions to take
+        interface arguments and also removed redundant interfaceName arguments from functions
+        that formerly took both.
+        (GenerateParametersCheck): Updated for changes above. That includes calling the new
+        parse function template. Also changed to use auto and WTFMove, which makes the code
+        both more generic and potentially more efficient and obviates the need for a special
+        case for dictionary types.
+        (GenerateCallbackHeader): Updated for changes above.
+        (GenerateCallbackImplementation): Ditto.
+        (GenerateImplementationFunctionCall): Ditto.
+        (GetNativeTypeFromSignature): Ditto.
+        (GetNativeType): Changed this function to take the interface because that's needed to
+        get the type name right for enumeration types rather than returning "auto". Made that
+        change as well. Moved one type, DOMStringList, into the nativeType hash instead of
+        having explicit code here for it. Didn't add a dictionary type case here yet, but
+        probably will need to do that in the next patch.
+        (ShouldPassWrapperByReference): Pass interface in to GetNativeType.
+        (GetNativeVectorInnerType): Removed unneeded special case for DOMString.
+        (GetNativeTypeForCallbacks): Changed to take the interface.
+        (GetNativeTypeForMemoization): Ditto.
+        (JSValueToNative): Changed expression for Dictionary (the thing I am working to make
+        obsolete) to name the type so it will work with auto. Added a case for dictionary
+        types and updated the case for enumeration types.
+        (NativeToJSValue): Updated to take an interface rather than an interface name, and to
+        pass that along as needed.
+
+        * bindings/scripts/IDLParser.pm:
+        (Parse): Add dictionaries to a list.
+        (parseDictionary): Put name, extended attributes, and members into the dictionary.
+        (parseDictionaryMembers): Build up a members array.
+        (parseDictionaryMember): Put isOptional, type, name, and default value into the
+        dictionary member.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        Regenerated.
+
+        * bindings/scripts/test/TestObj.idl: Added some test cases that I was using to
+        get the bindings script to work. Right now this is basically identical to the
+        actual use of this in Element.idl, but over time I will modify it to cover more
+        features of dictionaries. Also fixed some incorrect test cases trying to use
+        the type "bool", which doesn't exist in IDL.
+
+        * dom/Element.cpp:
+        (WebCore::Element::canHaveUserAgentShadowRoot): Added. The existing code used a
+        combination of a virtual function on HTMLElement and type checking. It's better
+        to just use a virtual function on Element.
+        (WebCore::Element::attachShadow): Updated to take a ShadowRootInit struct instead
+        of a Dictionary. Also tweaked the code in a couple other minor ways.
+
+        * dom/Element.h: Added the ShadowRootMode enum class and the ShadowRootInit struct,
+        and changed attachShadow to take ShadowRootInit instead of Dictionary. Also added
+        the private canHaveUserAgentShadowRoot virtual function.
+
+        * dom/Element.idl: Added ShadowRootMode, ShadowRootInit, and used them in as the
+        arguemnt type for attachShadow.
+
+        * html/HTMLElement.h: Made canHaveUserAgentShadowRoot a private override instead
+        of a public virtual function.
+
 2016-05-04  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Playback does not pause when locking screen after playing to AirPlay.

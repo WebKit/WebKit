@@ -89,7 +89,6 @@ public:
 
     virtual bool isHTMLUnknownElement() const { return false; }
     virtual bool isTextControlInnerTextElement() const { return false; }
-    virtual bool canHaveUserAgentShadowRoot() const { return false; }
 
     bool willRespondToMouseMoveEvents() override;
     bool willRespondToMouseWheelEvents() override;

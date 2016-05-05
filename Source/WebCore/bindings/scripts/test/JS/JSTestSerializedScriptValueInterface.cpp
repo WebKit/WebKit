@@ -243,10 +243,10 @@ bool setJSTestSerializedScriptValueInterfaceValue(ExecState* state, EncodedJSVal
         return throwSetterTypeError(*state, "TestSerializedScriptValueInterface", "value");
     }
     auto& impl = castedThis->wrapped();
-    RefPtr<SerializedScriptValue> nativeValue = SerializedScriptValue::create(state, value, 0, 0);
+    auto nativeValue = SerializedScriptValue::create(state, value, 0, 0);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setValue(nativeValue);
+    impl.setValue(WTFMove(nativeValue));
     return true;
 }
 
@@ -260,10 +260,10 @@ bool setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* state, Encode
         return throwSetterTypeError(*state, "TestSerializedScriptValueInterface", "cachedValue");
     }
     auto& impl = castedThis->wrapped();
-    RefPtr<SerializedScriptValue> nativeValue = SerializedScriptValue::create(state, value, 0, 0);
+    auto nativeValue = SerializedScriptValue::create(state, value, 0, 0);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setCachedValue(nativeValue);
+    impl.setCachedValue(WTFMove(nativeValue));
     return true;
 }
 

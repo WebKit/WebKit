@@ -205,10 +205,10 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* s
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    unsigned index = toUInt32(state, state->argument(0), NormalConversion);
+    auto index = toUInt32(state, state->argument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.item(index)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.item(WTFMove(index))));
     return JSValue::encode(result);
 }
 

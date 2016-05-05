@@ -86,13 +86,13 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
-    String str1 = state->argument(0).toWTFString(state);
+    auto str1 = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    String str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : state->uncheckedArgument(1).toWTFString(state);
+    auto str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : state->uncheckedArgument(1).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    String str3 = state->argument(2).isUndefined() ? String() : state->uncheckedArgument(2).toWTFString(state);
+    auto str3 = state->argument(2).isUndefined() ? String() : state->uncheckedArgument(2).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     RefPtr<TestNamedConstructor> object = TestNamedConstructor::createForJSConstructor(*castedThis->document(), str1, str2, str3, ec);

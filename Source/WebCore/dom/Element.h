@@ -249,8 +249,13 @@ public:
     WEBCORE_EXPORT ShadowRoot* shadowRoot() const;
     WEBCORE_EXPORT RefPtr<ShadowRoot> createShadowRoot(ExceptionCode&);
 
+    enum class ShadowRootMode { Open, Closed };
+    struct ShadowRootInit {
+        ShadowRootMode mode;
+    };
+
     ShadowRoot* shadowRootForBindings(JSC::ExecState&) const;
-    RefPtr<ShadowRoot> attachShadow(const Dictionary&, ExceptionCode&);
+    RefPtr<ShadowRoot> attachShadow(const ShadowRootInit&, ExceptionCode&);
 
     ShadowRoot* userAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();
@@ -585,11 +590,11 @@ private:
 
     void cancelFocusAppearanceUpdate();
 
-    // cloneNode is private so that non-virtual cloneElementWithChildren and cloneElementWithoutChildren
-    // are used instead.
+    // The cloneNode function is private so that non-virtual cloneElementWith/WithoutChildren are used instead.
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
     virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&);
 
+    virtual bool canHaveUserAgentShadowRoot() const;
     void removeShadowRoot();
 
     const RenderStyle* existingComputedStyle();

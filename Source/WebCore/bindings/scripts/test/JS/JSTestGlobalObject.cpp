@@ -214,10 +214,10 @@ bool setJSTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSValue this
         return throwSetterTypeError(*state, "TestGlobalObject", "regularAttribute");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setRegularAttribute(nativeValue);
+    impl.setRegularAttribute(WTFMove(nativeValue));
     return true;
 }
 
@@ -232,10 +232,10 @@ bool setJSTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, EncodedJSV
         return throwSetterTypeError(*state, "TestGlobalObject", "enabledAtRuntimeAttribute");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setEnabledAtRuntimeAttribute(nativeValue);
+    impl.setEnabledAtRuntimeAttribute(WTFMove(nativeValue));
     return true;
 }
 
@@ -256,10 +256,10 @@ EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionRegularOperation(
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    String testParam = state->argument(0).toWTFString(state);
+    auto testParam = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    impl.regularOperation(testParam);
+    impl.regularOperation(WTFMove(testParam));
     return JSValue::encode(jsUndefined());
 }
 
@@ -274,10 +274,10 @@ static inline EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeO
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    String testParam = state->argument(0).toWTFString(state);
+    auto testParam = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    impl.enabledAtRuntimeOperation(testParam);
+    impl.enabledAtRuntimeOperation(WTFMove(testParam));
     return JSValue::encode(jsUndefined());
 }
 
@@ -294,10 +294,10 @@ static inline EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeO
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    int testParam = toInt32(state, state->argument(0), NormalConversion);
+    auto testParam = toInt32(state, state->argument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    impl.enabledAtRuntimeOperation(testParam);
+    impl.enabledAtRuntimeOperation(WTFMove(testParam));
     return JSValue::encode(jsUndefined());
 }
 

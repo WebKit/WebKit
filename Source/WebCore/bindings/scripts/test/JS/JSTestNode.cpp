@@ -165,10 +165,10 @@ bool setJSTestNodeName(ExecState* state, EncodedJSValue thisValue, EncodedJSValu
         return throwSetterTypeError(*state, "TestNode", "name");
     }
     auto& impl = castedThis->wrapped();
-    String nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return false;
-    impl.setName(nativeValue);
+    impl.setName(WTFMove(nativeValue));
     return true;
 }
 

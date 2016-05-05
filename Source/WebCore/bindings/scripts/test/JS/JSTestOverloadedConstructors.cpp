@@ -70,7 +70,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* s
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    ArrayBuffer* arrayBuffer = toArrayBuffer(state->argument(0));
+    auto arrayBuffer = toArrayBuffer(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!arrayBuffer))
@@ -84,7 +84,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* s
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    RefPtr<ArrayBufferView> arrayBufferView = toArrayBufferView(state->argument(0));
+    auto arrayBufferView = toArrayBufferView(state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!arrayBufferView))
@@ -98,7 +98,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* s
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    Blob* blob = JSBlob::toWrapped(state->argument(0));
+    auto blob = JSBlob::toWrapped(state->argument(0));
     if (UNLIKELY(!blob))
         return throwVMTypeError(state);
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*blob);
@@ -110,7 +110,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* s
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    String string = state->argument(0).toWTFString(state);
+    auto string = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(string);

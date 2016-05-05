@@ -34,6 +34,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMSVGDocumentInternal.h"
 #import "DOMSVGPointInternal.h"
+#import "DOMShadowRootInitInternal.h"
 #import "DOMTestEnumTypeInternal.h"
 #import "DOMTestNodeInternal.h"
 #import "DOMTestObjInternal.h"
@@ -42,7 +43,6 @@
 #import "DOMTestObjectCConstructorInternal.h"
 #import "DOMTestSubObjConstructorInternal.h"
 #import "DOManyInternal.h"
-#import "DOMboolInternal.h"
 #import "Dictionary.h"
 #import "Document.h"
 #import "EventListener.h"
@@ -54,6 +54,7 @@
 #import "SVGDocument.h"
 #import "SVGPoint.h"
 #import "SerializedScriptValue.h"
+#import "ShadowRootInit.h"
 #import "TestEnumType.h"
 #import "TestNode.h"
 #import "TestObj.h"
@@ -65,8 +66,6 @@
 #import "URL.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
-#import "any.h"
-#import "bool.h"
 #import <wtf/GetPtr.h>
 
 #define IMPL reinterpret_cast<WebCore::TestObj*>(_internal)
@@ -1571,11 +1570,11 @@
     IMPL->banana();
 }
 
-- (DOMbool *)strictFunction:(NSString *)str a:(float)a b:(int)b
+- (BOOL)strictFunction:(NSString *)str a:(float)a b:(int)b
 {
     WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
-    DOMbool *result = kit(WTF::getPtr(IMPL->strictFunction(str, a, b, ec)));
+    BOOL result = IMPL->strictFunction(str, a, b, ec);
     WebCore::raiseOnDOMError(ec);
     return result;
 }
@@ -1604,6 +1603,12 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->any(a, b);
+}
+
+- (void)attachShadowRoot:(DOMShadowRootInit *)init
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->attachShadowRoot(core(init));
 }
 
 @end

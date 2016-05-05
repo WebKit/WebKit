@@ -307,10 +307,10 @@ enum TestConfidence { "high", "kinda-low" };
     [ImplementedAs=blueberry] attribute long strawberry;
 
     [StrictTypeChecking] attribute unrestricted float strictFloat;
-    [StrictTypeChecking, RaisesException] bool strictFunction(DOMString str, unrestricted float a, long b);
+    [StrictTypeChecking, RaisesException] boolean strictFunction(DOMString str, unrestricted float a, long b);
 
-    [StrictTypeChecking, RaisesException] bool strictFunctionWithSequence(TestObj objArg, sequence<unsigned long> a);
-    [StrictTypeChecking, RaisesException] bool strictFunctionWithArray(TestObj objArg, long[] array);
+    [StrictTypeChecking, RaisesException] boolean strictFunctionWithSequence(TestObj objArg, sequence<unsigned long> a);
+    [StrictTypeChecking, RaisesException] boolean strictFunctionWithArray(TestObj objArg, long[] array);
 
     // ObjectiveC reserved words.
     readonly attribute long      description;
@@ -370,8 +370,14 @@ enum TestConfidence { "high", "kinda-low" };
 #if defined(TESTING_JS)
     [InvokesCustomElementLifecycleCallbacks] void methodWithNeedsLifecycleProcessingStack();
 #endif
+
+    void attachShadowRoot(ShadowRootInit init);
 };
 
 // The following comment should not generate any code.
 // TestObj implements TestImplements;
 
+enum ShadowRootMode { "open", "closed" };
+dictionary ShadowRootInit {
+    required ShadowRootMode mode;
+};
