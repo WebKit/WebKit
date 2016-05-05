@@ -1,3 +1,50 @@
+2016-05-04  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Summary page should show warnings when current or baseline data is missing.
+        https://bugs.webkit.org/show_bug.cgi?id=157339
+
+        Reviewed by Ryosuke Niwa.
+
+        Set summary page to be the default page of v3 UI.
+        Show warning icon when either baseline or current data is missing.
+        Make fetchBetween returns a promise.
+        Update unit tests for MeasurementSet.fetchBetween since it returns a promise now.
+        Add a workaround to skip some platform and metric configurations.
+
+        * public/v3/components/ratio-bar-graph.js:
+        (RatioBarGraph):
+        (RatioBarGraph.prototype.update): Add showWarningIcon flag to indicate whether we should show warning icon.
+        (RatioBarGraph.prototype.render): Show warning icon when showWarningIcon is true.
+        (RatioBarGraph.cssTemplate): Add style for warning icon.
+        * public/v3/components/warning-icon.js: Add warning icon.
+        (WarningIcon):
+        (WarningIcon.cssTemplate):
+        * public/v3/index.html:
+        * public/v3/main.js:
+        (main): Set summary page to be the default page of v3 UI.
+        * public/v3/models/measurement-set.js:
+        (MeasurementSet):
+        (MeasurementSet.prototype.fetchBetween): Returns a promise. Fix the bug in previous implementation that we miss
+        some callbacks sometimes. Basically, we will fetch primary cluster first, then secondary clusters. For each
+        secondary cluster fetch, we will always invoke callback even when it fails.
+        (MeasurementSet.prototype._fetchSecondaryClusters): Deleted.
+        (MeasurementSet.prototype._fetch.else.url.api.measurement.set platform): Deleted.
+        * public/v3/pages/summary-page.js:
+        (SummaryPage): Add a variable for excluded configurations.
+        (SummaryPage.prototype._createConfigurationGroup): Pass excluded configurations while building config groups.
+        (SummaryPage.prototype._constructTable): Remove the logic for unified header since it breaks consistency of the table appearance.
+        (SummaryPage.prototype.this._renderQueue.push): Show warning message when baseline/current data is missing.
+        (SummaryPageConfigurationGroup): Add a variable to keep track of the warnings while computing summary.
+        (SummaryPageConfigurationGroup.prototype.warnings): A getter for warnings.
+        (SummaryPageConfigurationGroup._computeSummary): Fix a bug in calculating ratios. We should always use
+        current/baseline for ratio and present the difference between ratio and 1 in the summary page.
+        (SummaryPageConfigurationGroup.set then): Deleted.
+        (SummaryPageConfigurationGroup.set var): Deleted.
+        * unit-tests/measurement-set-tests.js: Add a helper function to wait for fetchBetween. Update unit tests since fetchBetween returns a promise now.
+        (promise.set fetchBetween):
+        (set MeasurementSet):
+        (set fetchBetween): Deleted.
+
 2016-04-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chart status should always be computed against prior values

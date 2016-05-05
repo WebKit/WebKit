@@ -10,16 +10,16 @@ class MeasurementSet {
         this._metricId = metricId;
         this._lastModified = +lastModified;
 
-        this._waitingForPrimaryCluster = null;
-        this._fetchedPrimary = false;
-        this._endTimeToCallback = {};
-
         this._sortedClusters = [];
         this._primaryClusterEndTime = null;
         this._clusterCount = null;
         this._clusterStart = null;
         this._clusterSize = null;
+        this._allFetches = {};
+        this._primaryClusterPromise = null;
     }
+
+    platformId() { return this._platformId; }
 
     static findSet(platformId, metricId, lastModified)
     {
@@ -35,7 +35,6 @@ class MeasurementSet {
     {
         var clusterStart = this._clusterStart;
         var clusterSize = this._clusterSize;
-        console.assert(clusterStart && clusterSize);
 
         function computeClusterStart(time) {
             var diff = time - clusterStart;
@@ -58,87 +57,61 @@ class MeasurementSet {
 
     fetchBetween(startTime, endTime, callback)
     {
-        if (!this._fetchedPrimary) {
-            var primaryFetchHadFailed = this._waitingForPrimaryCluster === false;
-            if (primaryFetchHadFailed) {
-                callback();
-                return;
-            }
-
-            var shouldStartPrimaryFetch = !this._waitingForPrimaryCluster;
-            if (shouldStartPrimaryFetch)
-                this._waitingForPrimaryCluster = [];
-
-            this._waitingForPrimaryCluster.push({startTime: startTime, endTime: endTime, callback: callback});
-
-            if (shouldStartPrimaryFetch)
-                this._fetch(null, true);
-
-            return;
-        }
-
-        this._fetchSecondaryClusters(startTime, endTime, callback);
-    }
-
-    _fetchSecondaryClusters(startTime, endTime, callback)
-    {
-        console.assert(this._fetchedPrimary);
-        console.assert(this._clusterStart && this._clusterSize);
-        console.assert(this._sortedClusters.length);
-
-        var clusters = this.findClusters(startTime, endTime);
-        var shouldInvokeCallackNow = false;
-        for (var endTime of clusters) {
-            var isPrimaryCluster = endTime == this._primaryClusterEndTime;
-            var shouldStartFetch = !isPrimaryCluster && !(endTime in this._endTimeToCallback);
-            if (shouldStartFetch)
-                this._endTimeToCallback[endTime] = [];
-
-            var callbackList = this._endTimeToCallback[endTime];
-            if (isPrimaryCluster || callbackList === true)
-                shouldInvokeCallackNow = true;
-            else if (!callbackList.includes(callback))
-                callbackList.push(callback);
-
-            if (shouldStartFetch)
-                this._fetch(endTime, true);
-        }
-
-        if (shouldInvokeCallackNow)
-            callback();
-    }
-
-    _fetch(clusterEndTime, useCache)
-    {
-        console.assert(!clusterEndTime || useCache);
-
-        var url;
-        if (useCache) {
-            url = `../data/measurement-set-${this._platformId}-${this._metricId}`;
-            if (clusterEndTime)
-                url += '-' + +clusterEndTime;
-            url += '.json';
-        } else
-            url = `../api/measurement-set?platform=${this._platformId}&metric=${this._metricId}`;
-
+        if (!this._primaryClusterPromise)
+            this._primaryClusterPromise = this._fetchPrimaryCluster();
         var self = this;
+        this._primaryClusterPromise.catch(callback);
+        return this._primaryClusterPromise.then(function () {
+            var promiseList = [];
+            self.findClusters(startTime, endTime).map(function (clusterEndTime) {
+                if(!self._allFetches[clusterEndTime])
+                    self._allFetches[clusterEndTime] = self._fetchSecondaryCluster(clusterEndTime);
+                self._allFetches[clusterEndTime].then(callback, callback);
+                promiseList.push(self._allFetches[clusterEndTime]);
+            });
+            return Promise.all(promiseList);
+        });
+    }
 
-        return RemoteAPI.getJSONWithStatus(url).then(function (data) {
-            if (!clusterEndTime && useCache && +data['lastModified'] < self._lastModified)
-                self._fetch(clusterEndTime, false);
-            else
-                self._didFetchJSON(!clusterEndTime, data);
-        }, function (error, xhr) {
-            if (!clusterEndTime && error == 404 && useCache)
-                self._fetch(clusterEndTime, false);
-            else
-                self._failedToFetchJSON(clusterEndTime, error);
+    _constructUrl(useCache, clusterEndTime)
+    {
+        if (!useCache) {
+            return `../api/measurement-set?platform=${this._platformId}&metric=${this._metricId}`;
+        }
+        var url;
+        url = `../data/measurement-set-${this._platformId}-${this._metricId}`;
+        if (clusterEndTime)
+            url += '-' + +clusterEndTime;
+        url += '.json';
+        return url;
+    }
+
+    _fetchPrimaryCluster() {
+        var self = this;
+        return RemoteAPI.getJSONWithStatus(self._constructUrl(true, null)).then(function (data) {
+            if (+data['lastModified'] < self._lastModified)
+                return RemoteAPI.getJSONWithStatus(self._constructUrl(false, null));
+            return data;
+        }).catch(function (error) {
+            if(error == 404)
+                return RemoteAPI.getJSONWithStatus(self._constructUrl(false, null));
+            return Promise.reject(error);
+        }).then(function (data) {
+            self._didFetchJSON(true, data);
+            self._allFetches[self._primaryClusterEndTime] = self._primaryClusterPromise;
+        });
+    }
+
+    _fetchSecondaryCluster(endTime) {
+        var self = this;
+        return RemoteAPI.getJSONWithStatus(self._constructUrl(true, endTime)).then(function (data) {
+            self._didFetchJSON(false, data);
         });
     }
 
     _didFetchJSON(isPrimaryCluster, response, clusterEndTime)
     {
-        console.assert(isPrimaryCluster || this._fetchedPrimary);
+        console.assert(isPrimaryCluster);
 
         if (isPrimaryCluster) {
             this._primaryClusterEndTime = response['endTime'];
@@ -149,40 +122,6 @@ class MeasurementSet {
             console.assert(this._primaryClusterEndTime);
 
         this._addFetchedCluster(new MeasurementCluster(response));
-
-        console.assert(this._waitingForPrimaryCluster);
-        if (!isPrimaryCluster) {
-            this._invokeCallbacks(response.endTime);
-            return;
-        }
-        console.assert(this._waitingForPrimaryCluster instanceof Array);
-
-        this._fetchedPrimary = true;
-        for (var entry of this._waitingForPrimaryCluster)
-            this._fetchSecondaryClusters(entry.startTime, entry.endTime, entry.callback);
-        this._waitingForPrimaryCluster = true;
-    }
-
-    _failedToFetchJSON(clusterEndTime, error)
-    {
-        if (clusterEndTime) {
-            this._invokeCallbacks(clusterEndTime, error || true);
-            return;
-        }
-
-        console.assert(!this._fetchedPrimary);
-        console.assert(this._waitingForPrimaryCluster instanceof Array);
-        for (var entry of this._waitingForPrimaryCluster)
-            entry.callback(error || true);
-        this._waitingForPrimaryCluster = false;
-    }
-
-    _invokeCallbacks(clusterEndTime, error)
-    {
-        var callbackList = this._endTimeToCallback[clusterEndTime];
-        for (var callback of callbackList)
-            callback(error);
-        this._endTimeToCallback[clusterEndTime] = true;
     }
 
     _addFetchedCluster(cluster)

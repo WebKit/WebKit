@@ -20,7 +20,7 @@ function main() {
         var router = new PageRouter();
         var chartsToolbar = new ChartsToolbar;
 
-        var summaryPage = new SummaryPage(manifest.summary);
+        var summaryPage = manifest.summary ? new SummaryPage(manifest.summary) : null;
         var chartsPage = new ChartsPage(chartsToolbar);
         var analysisCategoryPage = new AnalysisCategoryPage();
 
@@ -31,13 +31,14 @@ function main() {
         analysisTaskPage.setParentPage(analysisCategoryPage);
 
         var heading = new Heading(manifest.siteTitle);
-        heading.addPageGroup([summaryPage, chartsPage, analysisCategoryPage]);
+        heading.addPageGroup([summaryPage, chartsPage, analysisCategoryPage].filter(function (page) { return page; }));
 
         heading.setTitle(manifest.siteTitle);
         heading.addPageGroup(dashboardPages);
 
         var router = new PageRouter();
-        router.addPage(summaryPage);
+        if(summaryPage)
+            router.addPage(summaryPage);
         router.addPage(chartsPage);
         router.addPage(createAnalysisTaskPage);
         router.addPage(analysisTaskPage);
@@ -45,7 +46,9 @@ function main() {
         for (var page of dashboardPages)
             router.addPage(page);
 
-        if (dashboardPages)
+        if (summaryPage)
+            router.setDefaultPage(summaryPage);
+        else if (dashboardPages)
             router.setDefaultPage(dashboardPages[0]);
         else
             router.setDefaultPage(chartsPage);

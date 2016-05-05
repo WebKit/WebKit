@@ -12,6 +12,7 @@ class SummaryPage extends PageWithHeading {
         this._shouldConstructTable = true;
         this._renderQueue = [];
         this._configGroups = [];
+        this._excludedConfigurations = summarySettings.excludedConfigurations;
 
         for (var metricGroup of summarySettings.metricGroups) {
             var group = {name: metricGroup.name, rows: []};
@@ -52,7 +53,7 @@ class SummaryPage extends PageWithHeading {
     {
         var platforms = platformIdList.map(function (id) { return Platform.findById(id); }).filter(function (obj) { return !!obj; });
         var metrics = metricIdList.map(function (id) { return Metric.findById(id); }).filter(function (obj) { return !!obj; });
-        var configGroup = new SummaryPageConfigurationGroup(platforms, metrics);
+        var configGroup = new SummaryPageConfigurationGroup(platforms, metrics, this._excludedConfigurations);
         this._configGroups.push(configGroup);
         return configGroup;
     }
@@ -75,13 +76,9 @@ class SummaryPage extends PageWithHeading {
             this._table.groups.map(function (rowGroup) {
                 return rowGroup.rows.map(function (row, rowIndex) {
                     var headings;
-                    if (rowGroup.rows.length == 1)
-                        headings = [element('th', {class: 'unifiedHeader', colspan: 2}, row.name)];
-                    else {
-                        headings = [element('th', {class: 'minorHeader'}, row.name)];
-                        if (!rowIndex)
-                            headings.unshift(element('th', {class: 'majorHeader', rowspan: rowGroup.rows.length}, rowGroup.name));
-                    }
+                    headings = [element('th', {class: 'minorHeader'}, row.name)];
+                    if (!rowIndex)
+                        headings.unshift(element('th', {class: 'majorHeader', rowspan: rowGroup.rows.length}, rowGroup.name));
                     return element('tr', [headings, row.cells.map(self._constructRatioGraph.bind(self))]);
                 });
             }),
@@ -92,16 +89,28 @@ class SummaryPage extends PageWithHeading {
     {
         var element = ComponentBase.createElement;
         var link = ComponentBase.createLink;
+        var configurationList = configurationGroup.configurationList();
 
         var ratioGraph = new RatioBarGraph();
 
+        var state = ChartsPage.createStateForConfigurationList(configurationList);
+        var anchor = link(ratioGraph, this.router().url('charts', state));
         this._renderQueue.push(function () {
-            ratioGraph.update(configurationGroup.ratio(), configurationGroup.label());
+            var warnings = configurationGroup.warnings();
+            var warningText = '';
+            for (var type in warnings) {
+                var platformString = Array.from(warnings[type]).map(function (platform) { return platform.name(); }).join(', ');
+                warningText += `Missing ${type} for following platform(s): ${platformString}`;
+            }
+
+            anchor.title = warningText || 'Open charts';
+            ratioGraph.update(configurationGroup.ratio(), configurationGroup.label(), !!warningText);
             ratioGraph.render();
         });
+        if (configurationList.length == 0)
+            return element('td', ratioGraph);
 
-        var state = ChartsPage.createStateForConfigurationList(configurationGroup.configurationList());
-        return element('td', link(ratioGraph, 'Open charts', this.router().url('charts', state)));
+        return element('td', anchor);
     }
 
     static htmlTemplate()
@@ -167,14 +176,14 @@ class SummaryPage extends PageWithHeading {
 }
 
 class SummaryPageConfigurationGroup {
-    constructor(platforms, metrics)
+    constructor(platforms, metrics, excludedConfigurations)
     {
         this._measurementSets = [];
         this._configurationList = [];
         this._setToRatio = new Map;
         this._ratio = null;
         this._label = null;
-        this._changeType = null;
+        this._warnings = {};
         this._smallerIsBetter = metrics.length ? metrics[0].isSmallerBetter() : null;
 
         for (var platform of platforms) {
@@ -183,6 +192,9 @@ class SummaryPageConfigurationGroup {
                 console.assert(metric instanceof Metric);
                 console.assert(this._smallerIsBetter == metric.isSmallerBetter());
                 metric.isSmallerBetter();
+
+                if (excludedConfigurations && platform.id() in excludedConfigurations && excludedConfigurations[platform.id()].includes(+metric.id()))
+                    continue;
                 if (platform.hasMetric(metric)) {
                     this._measurementSets.push(MeasurementSet.findSet(platform.id(), metric.id(), platform.lastModified(metric)));
                     this._configurationList.push([platform.id(), metric.id()]);
@@ -193,6 +205,7 @@ class SummaryPageConfigurationGroup {
 
     ratio() { return this._ratio; }
     label() { return this._label; }
+    warnings() { return this._warnings; }
     changeType() { return this._changeType; }
     configurationList() { return this._configurationList; }
 
@@ -219,37 +232,40 @@ class SummaryPageConfigurationGroup {
         }
 
         var averageRatio = Statistics.mean(ratios);
-        if (isNaN(averageRatio)) {
-            this._summary = '-';
-            this._changeType = null;
+        if (isNaN(averageRatio))
             return;
-        }
-
-        if (Math.abs(averageRatio - 1) < 0.001) { // Less than 0.1% difference.
-            this._summary = 'No change';
-            this._changeType = null;
-            return;
-        }
 
         var currentIsSmallerThanBaseline = averageRatio < 1;
         var changeType = this._smallerIsBetter == currentIsSmallerThanBaseline ? 'better' : 'worse';
-        if (currentIsSmallerThanBaseline)
-            averageRatio = 1 / averageRatio;
+        averageRatio = Math.abs(averageRatio - 1);
 
-        this._ratio = (averageRatio - 1) * (changeType == 'better' ? 1 : -1);
-        this._label = ((averageRatio - 1) * 100).toFixed(1) + '%';
+        this._ratio = averageRatio * (changeType == 'better' ? 1 : -1);
+        this._label = (averageRatio * 100).toFixed(1) + '%';
         this._changeType = changeType;
     }
 
     _fetchAndComputeRatio(set, timeRange)
     {
         var setToRatio = this._setToRatio;
-        return SummaryPageConfigurationGroup._fetchData(set, timeRange).then(function () {
+        var self = this;
+        return set.fetchBetween(timeRange[0], timeRange[1]).then(function () {
             var baselineTimeSeries = set.fetchedTimeSeries('baseline', false, false);
             var currentTimeSeries = set.fetchedTimeSeries('current', false, false);
 
             var baselineMedian = SummaryPageConfigurationGroup._medianForTimeRange(baselineTimeSeries, timeRange);
             var currentMedian = SummaryPageConfigurationGroup._medianForTimeRange(currentTimeSeries, timeRange);
+            var platform = Platform.findById(set.platformId());
+            if (!baselineMedian) {
+                if(!('baseline' in self._warnings))
+                    self._warnings['baseline'] = new Set;
+                self._warnings['baseline'].add(platform);
+            }
+            if (!currentMedian) {
+                if(!('current' in self._warnings))
+                    self._warnings['current'] = new Set;
+                self._warnings['current'].add(platform);
+            }
+
             setToRatio.set(set, currentMedian / baselineMedian);
         }).catch(function () {
             setToRatio.set(set, NaN);
@@ -269,22 +285,5 @@ class SummaryPageConfigurationGroup {
 
         var points = timeSeries.dataBetweenPoints(startPoint, endPoint).map(function (point) { return point.value; });
         return Statistics.median(points);
-    }
-
-    static _fetchData(set, timeRange)
-    {
-        // FIXME: Make fetchBetween return a promise.
-        var done = false;
-        return new Promise(function (resolve, reject) {
-            set.fetchBetween(timeRange[0], timeRange[1], function (error) {
-                if (done)
-                    return;
-                if (error)
-                    reject(null);
-                else if (set.hasFetchedRange(timeRange[0], timeRange[1]))
-                    resolve();
-                done = true;
-            });
-        });
     }
 }

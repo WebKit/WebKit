@@ -45,7 +45,7 @@ describe('MeasurementSet', function () {
         it('should invoke the callback when the up-to-date cached primary cluster is fetched and it matches the requested range', function (done) {
             var set = MeasurementSet.findSet(1, 1, 3000);
             var callCount = 0;
-            set.fetchBetween(2000, 3000, function () {
+            var promise = set.fetchBetween(2000, 3000, function () {
                 callCount++;
             });
             assert.equal(requests.length, 1);
@@ -62,7 +62,7 @@ describe('MeasurementSet', function () {
                 'clusterCount': 2,
                 'status': 'OK'});
 
-            requests[0].promise.then(function () {
+            promise.then(function () {
                 assert.equal(callCount, 1);
                 assert.equal(requests.length, 1);
                 done();
@@ -71,11 +71,19 @@ describe('MeasurementSet', function () {
             });
         });
 
-        it('should invoke the callback and fetch a secondary cluster'
-            + 'when the cached primary cluster is up-to-date and within in the requested range', function (done) {
+        function waitForMeasurementSet()
+        {
+            return Promise.resolve().then(function () {
+                return Promise.resolve();
+            }).then(function () {
+                return Promise.resolve();
+            });
+        }
+
+        it('should invoke the callback and fetch a secondary cluster when the cached primary cluster is up-to-date and within in the requested range', function (done) {
             var set = MeasurementSet.findSet(1, 1, 3000);
             var callCount = 0;
-            set.fetchBetween(1000, 3000, function () {
+            var promise = set.fetchBetween(1000, 3000, function () {
                 callCount++;
             });
             assert.equal(requests.length, 1);
@@ -92,7 +100,7 @@ describe('MeasurementSet', function () {
                 'clusterCount': 2,
                 'status': 'OK'});
 
-            Promise.resolve().then(function () {
+            waitForMeasurementSet().then(function () {
                 assert.equal(callCount, 1);
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-2000.json');
@@ -121,13 +129,15 @@ describe('MeasurementSet', function () {
                 'clusterCount': 3,
                 'status': 'OK'});
 
-            Promise.resolve().then(function () {
+            var callCount = 0;
+            waitForMeasurementSet().then(function () {
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-3000.json');
 
-                var callCount = 0;
                 set.fetchBetween(0, 7000, function () { callCount++; });
 
+                return waitForMeasurementSet();
+            }).then(function () {
                 assert.equal(callCount, 1);
                 assert.equal(requests.length, 4);
                 assert.equal(requests[2].url, '../data/measurement-set-1-1-2000.json');
@@ -158,7 +168,7 @@ describe('MeasurementSet', function () {
                 'clusterCount': 3,
                 'status': 'OK'});
 
-            Promise.resolve().then(function () {
+            waitForMeasurementSet().then(function () {
                 assert.equal(requests.length, 3);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-3000.json');
                 assert.equal(requests[2].url, '../data/measurement-set-1-1-4000.json');
@@ -187,23 +197,22 @@ describe('MeasurementSet', function () {
                 'clusterCount': 3,
                 'status': 'OK'});
 
-            Promise.resolve().then(function () {
+            var callCount = 0;
+            waitForMeasurementSet().then(function () {
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-4000.json');
-
-                var callCount = 0;
                 set.fetchBetween(1207, 1293, function () { callCount++; });
-
+                return waitForMeasurementSet();
+            }).then(function () {
                 assert.equal(callCount, 0);
                 assert.equal(requests.length, 3);
                 assert.equal(requests[2].url, '../data/measurement-set-1-1-2000.json');
-
                 set.fetchBetween(1964, 3401, function () { callCount++; });
-
+                return waitForMeasurementSet();
+            }).then(function () {
                 assert.equal(callCount, 0);
                 assert.equal(requests.length, 4);
                 assert.equal(requests[3].url, '../data/measurement-set-1-1-3000.json');
-
                 done();
             }).catch(function (error) {
                 done(error);
@@ -221,7 +230,7 @@ describe('MeasurementSet', function () {
 
             requests[0].reject(500);
 
-            Promise.resolve().then(function () {
+            waitForMeasurementSet().then(function () {
                 assert.equal(callCount, 1);
                 assert.equal(requests.length, 1);
                 done();
@@ -271,7 +280,7 @@ describe('MeasurementSet', function () {
 
             requests[0].reject(404);
 
-            Promise.resolve().then(function () {
+            waitForMeasurementSet().then(function () {
                 assert.equal(callCount, 0);
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../api/measurement-set?platform=1&metric=1');
@@ -306,7 +315,7 @@ describe('MeasurementSet', function () {
                 'clusterCount': 2,
                 'status': 'OK'});
 
-            Promise.resolve().then(function () {
+            waitForMeasurementSet().then(function () {
                 assert.equal(callCount, 1);
                 assert.equal(alternativeCallCount, 1);
                 assert.equal(requests.length, 1);
@@ -337,16 +346,20 @@ describe('MeasurementSet', function () {
             var callCountFor4000To5000 = 0;
             var callCountFor2000 = 0;
             var callCountFor2000To4000 = 0;
-            Promise.resolve().then(function () {
+            waitForMeasurementSet().then(function () {
                 assert.equal(callCountFor4000, 0);
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-4000.json');
 
                 set.fetchBetween(3708, 4800, function () { callCountFor4000To5000++; });
+                return waitForMeasurementSet();
+            }).then(function () {
                 assert.equal(callCountFor4000To5000, 1);
                 assert.equal(requests.length, 2);
 
                 set.fetchBetween(1207, 1293, function () { callCountFor2000++; });
+                return waitForMeasurementSet();
+            }).then(function () {
                 assert.equal(callCountFor2000, 0);
                 assert.equal(requests.length, 3);
                 assert.equal(requests[2].url, '../data/measurement-set-1-1-2000.json');
@@ -358,6 +371,7 @@ describe('MeasurementSet', function () {
                     'endTime': 2000,
                     'lastModified': 5000,
                     'status': 'OK'});
+                return waitForMeasurementSet();
             }).then(function () {
                 assert.equal(requests.length, 3);
                 assert.equal(callCountFor4000, 0);
@@ -365,7 +379,8 @@ describe('MeasurementSet', function () {
                 assert.equal(callCountFor2000, 1);
 
                 set.fetchBetween(1964, 3401, function () { callCountFor2000To4000++; });
-
+                return waitForMeasurementSet();
+            }).then(function () {
                 assert.equal(callCountFor2000To4000, 1);
                 assert.equal(requests.length, 4);
                 assert.equal(requests[3].url, '../data/measurement-set-1-1-3000.json');
@@ -377,6 +392,7 @@ describe('MeasurementSet', function () {
                     'endTime': 3000,
                     'lastModified': 5000,
                     'status': 'OK'});
+                return waitForMeasurementSet();
             }).then(function () {
                 assert.equal(callCountFor4000, 0);
                 assert.equal(callCountFor4000To5000, 1);
@@ -391,6 +407,7 @@ describe('MeasurementSet', function () {
                     'endTime': 4000,
                     'lastModified': 5000,
                     'status': 'OK'});
+                return waitForMeasurementSet();
             }).then(function () {
                 assert.equal(callCountFor4000, 1);
                 assert.equal(callCountFor4000To5000, 2);
