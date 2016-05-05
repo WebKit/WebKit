@@ -123,9 +123,9 @@ typedef const char* optionString;
     v(bool, forceCodeBlockLiveness, false, Normal, nullptr) \
     v(bool, forceICFailure, false, Normal, nullptr) \
     \
-    v(unsigned, repatchCountForCoolDown, 10, Normal, nullptr) \
+    v(unsigned, repatchCountForCoolDown, 8, Normal, nullptr) \
     v(unsigned, initialCoolDownCount, 20, Normal, nullptr) \
-    v(unsigned, repatchBufferingCountdown, 10, Normal, nullptr) \
+    v(unsigned, repatchBufferingCountdown, 8, Normal, nullptr) \
     \
     v(bool, dumpGeneratedBytecodes, false, Normal, nullptr) \
     v(bool, dumpBytecodeLivenessResults, false, Normal, nullptr) \
@@ -191,7 +191,7 @@ typedef const char* optionString;
     v(bool, ftlCrashes, false, Normal, nullptr) /* fool-proof way of checking that you ended up in the FTL. ;-) */\
     v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED, Normal, nullptr) \
     v(bool, useAccessInlining, true, Normal, nullptr) \
-    v(unsigned, maxAccessVariantListSize, 13, Normal, nullptr) \
+    v(unsigned, maxAccessVariantListSize, 8, Normal, nullptr) \
     v(unsigned, megamorphicLoadCost, 999, Normal, nullptr) /* This used to be 10, but we're temporarily testing what happens when the feature is disabled. */\
     v(bool, usePolyvariantDevirtualization, true, Normal, nullptr) \
     v(bool, usePolymorphicAccessInlining, true, Normal, nullptr) \

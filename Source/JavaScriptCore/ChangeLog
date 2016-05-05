@@ -1,5 +1,16 @@
 2016-05-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Reduce thresholds that control the maximum IC stub size.
+
+        Rubber stamped by Chris Dumez and Benjamin Poulain.
+        
+        This reduces the thresholds to before the megamorphic load optimizations to see if that
+        recovers a PLT regression.
+
+        * runtime/Options.h:
+
+2016-05-05  Filip Pizlo  <fpizlo@apple.com>
+
         We shouldn't crash if DFG AI proved that something was unreachable on one run but then decided not to prove it on another run
         https://bugs.webkit.org/show_bug.cgi?id=157379
 
