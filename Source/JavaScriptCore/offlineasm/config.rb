@@ -60,18 +60,15 @@ $enableInstrAnnotations = false
 # Allows for source level debuging of the original .asm files in a debugger.
 #
 def shouldEnableDebugAnnotations()
-    if ENV['GCC_VERSION'] =~ /\.clang\./ and ENV['TOOLCHAIN_DIR'] != ''
-        clangExecutable = ENV['TOOLCHAIN_DIR'] + '/usr/bin/clang'
-        if File.executable?(clangExecutable)
-            clangVersionOut = %x`#{clangExecutable} --version`
-            if ($? == 0)
-                # clang version 800.0.12 or higher is required for debug annotations
-                versionMatch = /clang-(\d+).(\d+).(\d+)/.match(clangVersionOut)
-                if versionMatch.length >= 4
-                    totalVersion = versionMatch[1].to_i * 1000000 + versionMatch[2].to_i * 1000 + versionMatch[3].to_i
-                    if totalVersion >= 800000012
-                        return true
-                    end
+    if ENV['GCC_VERSION'] =~ /\.clang\./ and ENV['DT_TOOLCHAIN_DIR'] =~ /Xcode.app/
+        clangVersionOut = %x`xcrun clang --version`
+        if ($? == 0)
+            # clang version 800.0.12 or higher is required for debug annotations
+            versionMatch = /clang-(\d{3,}).(\d{1,3}).(\d{1,3})/.match(clangVersionOut)
+            if versionMatch.length >= 4
+                totalVersion = versionMatch[1].to_i * 1000000 + versionMatch[2].to_i * 1000 + versionMatch[3].to_i
+                if totalVersion >= 800000012
+                    return true
                 end
             end
         end
