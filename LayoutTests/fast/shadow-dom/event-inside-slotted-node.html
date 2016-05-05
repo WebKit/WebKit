@@ -80,9 +80,9 @@
                 assert_equals(log.length, 6, 'EventPath must contain [target, target parent, slot, slot parent, shadow root, shadow host]');
                 assert_array_equals(log[0], [shadow.target, shadow.target], 'EventPath[0] must be the target');
                 assert_array_equals(log[1], [shadow.targetParent, shadow.target], 'EventPath[1] must be the parent of the target');
-                assert_array_equals(log[2], [shadow.slot, shadow.slot], 'EventPath[2] must be the slot');
-                assert_array_equals(log[3], [shadow.slotParent, shadow.slot], 'EventPath[3] must be the parent of the slot');
-                assert_array_equals(log[4], [shadow.root, shadow.slot], 'EventPath[4] must be the shadow root');
+                assert_array_equals(log[2], [shadow.slot, shadow.target], 'EventPath[2] must be the slot');
+                assert_array_equals(log[3], [shadow.slotParent, shadow.target], 'EventPath[3] must be the parent of the slot');
+                assert_array_equals(log[4], [shadow.root, shadow.target], 'EventPath[4] must be the shadow root');
                 assert_array_equals(log[5], [shadow.host, shadow.target], 'EventPath[5] must be the shadow host');
 
             }, 'Firing an event inside a grand child of a detached ' + mode + ' mode shadow host');
@@ -101,9 +101,9 @@
                 assert_equals(log.length, 9, 'EventPath must contain [target, target parent, slot, slot parent, shadow root, shadow host, body, html, document]');
                 assert_array_equals(log[0], [shadow.target, shadow.target], 'EventPath[0] must be the target');
                 assert_array_equals(log[1], [shadow.targetParent, shadow.target], 'EventPath[1] must be the parent of the target');
-                assert_array_equals(log[2], [shadow.slot, shadow.slot], 'EventPath[2] must be the slot');
-                assert_array_equals(log[3], [shadow.slotParent, shadow.slot], 'EventPath[3] must be the parent of the slot');
-                assert_array_equals(log[4], [shadow.root, shadow.slot], 'EventPath[4] must be the shadow root');
+                assert_array_equals(log[2], [shadow.slot, shadow.target], 'EventPath[2] must be the slot');
+                assert_array_equals(log[3], [shadow.slotParent, shadow.target], 'EventPath[3] must be the parent of the slot');
+                assert_array_equals(log[4], [shadow.root, shadow.target], 'EventPath[4] must be the shadow root');
                 assert_array_equals(log[5], [shadow.host, shadow.target], 'EventPath[5] must be the shadow host');
                 assert_array_equals(log[6], [document.body, shadow.target], 'EventPath[6] must be the body element');
                 assert_array_equals(log[7], [document.documentElement, shadow.target], 'EventPath[7] must be the html element');
@@ -179,19 +179,19 @@
                 assert_equals(log.length, 15, 'EventPath must contain 15 targets');
 
                 assert_array_equals(log[0], [shadow.target, shadow.target], 'EventPath[0] must be the target');
-                assert_array_equals(log[1], [shadow.lowerSlot, shadow.lowerSlot], 'EventPath[1] must be the slot inside the lower shadow tree');
-                assert_array_equals(log[2], [shadow.lowerSlot.parentNode, shadow.lowerSlot], 'EventPath[2] must be the parent of the slot inside the lower shadow tree');
-                assert_array_equals(log[3], [shadow.innerSlot, shadow.innerSlot], 'EventPath[3] must be the slot inside the shadow tree inside the lower shadow tree');
-                assert_array_equals(log[4], [shadow.innerSlot.parentNode, shadow.innerSlot], 'EventPath[4] must be the child of the inner shadow root');
-                assert_array_equals(log[5], [shadow.innerShadow, shadow.innerSlot], 'EventPath[5] must be the inner shadow root');
-                assert_array_equals(log[6], [shadow.innerShadow.host, shadow.lowerSlot], 'EventPath[6] must be the host of the inner shadow tree');
-                assert_array_equals(log[7], [shadow.lowerShadow.firstChild, shadow.lowerSlot], 'EventPath[7] must be the parent of the inner shadow host');
-                assert_array_equals(log[8], [shadow.lowerShadow, shadow.lowerSlot], 'EventPath[8] must be the lower shadow root');
+                assert_array_equals(log[1], [shadow.lowerSlot, shadow.target], 'EventPath[1] must be the slot inside the lower shadow tree');
+                assert_array_equals(log[2], [shadow.lowerSlot.parentNode, shadow.target], 'EventPath[2] must be the parent of the slot inside the lower shadow tree');
+                assert_array_equals(log[3], [shadow.innerSlot, shadow.target], 'EventPath[3] must be the slot inside the shadow tree inside the lower shadow tree');
+                assert_array_equals(log[4], [shadow.innerSlot.parentNode, shadow.target], 'EventPath[4] must be the child of the inner shadow root');
+                assert_array_equals(log[5], [shadow.innerShadow, shadow.target], 'EventPath[5] must be the inner shadow root');
+                assert_array_equals(log[6], [shadow.innerShadow.host, shadow.target], 'EventPath[6] must be the host of the inner shadow tree');
+                assert_array_equals(log[7], [shadow.lowerShadow.firstChild, shadow.target], 'EventPath[7] must be the parent of the inner shadow host');
+                assert_array_equals(log[8], [shadow.lowerShadow, shadow.target], 'EventPath[8] must be the lower shadow root');
                 assert_array_equals(log[9], [shadow.lowerShadow.host, shadow.target], 'EventPath[9] must be the lower shadow host');
                 assert_array_equals(log[10], [shadow.host.firstChild, shadow.target], 'EventPath[10] must be the parent of the grand parent of the target');
-                assert_array_equals(log[11], [shadow.upperSlot, shadow.upperSlot], 'EventPath[11] must be the slot inside the upper shadow tree');
-                assert_array_equals(log[12], [shadow.upperSlot.parentNode, shadow.upperSlot], 'EventPath[12] must be the parent of the slot inside the upper shadow tree');
-                assert_array_equals(log[13], [shadow.upperShadow, shadow.upperSlot], 'EventPath[13] must be the upper shadow root');
+                assert_array_equals(log[11], [shadow.upperSlot, shadow.target], 'EventPath[11] must be the slot inside the upper shadow tree');
+                assert_array_equals(log[12], [shadow.upperSlot.parentNode, shadow.target], 'EventPath[12] must be the parent of the slot inside the upper shadow tree');
+                assert_array_equals(log[13], [shadow.upperShadow, shadow.target], 'EventPath[13] must be the upper shadow root');
                 assert_array_equals(log[14], [shadow.host, shadow.target], 'EventPath[14] must be the host');
 
             }, 'Firing an event on a node with two ancestors with a detached ' + outerUpperMode + ' and ' + outerLowerMode
@@ -215,7 +215,7 @@
             + a               + em (4)
                                 + inner-host (3) -- (innerShadow; 2)
                                   + span            + i (1)
-                                    + slot            + slot (innerSlot; 0)
+                                    + slot            + slot (innerSlot, target; 0)
         */
 
         function testEventInsideNestedShadowsUnderAnotherShadow(outerUpperMode, outerLowerMode, innerMode) {
@@ -236,9 +236,9 @@
                 assert_array_equals(log[5], [shadow.lowerShadow, shadow.innerShadow.host], 'EventPath[5] must be the lower (but outer) shadow root');
                 assert_array_equals(log[6], [shadow.lowerShadow.host, shadow.lowerShadow.host], 'EventPath[6] must be the lower (but outer) shadow root');
                 assert_array_equals(log[7], [shadow.host.firstChild, shadow.lowerShadow.host], 'EventPath[7] must be the slot inside the upper shadow tree');
-                assert_array_equals(log[8], [shadow.upperSlot, shadow.upperSlot], 'EventPath[8] must be the slot inside the upper shadow tree');
-                assert_array_equals(log[9], [shadow.upperSlot.parentNode, shadow.upperSlot], 'EventPath[9] must be the parent of the slot inside the upper shadow tree');
-                assert_array_equals(log[10], [shadow.upperShadow, shadow.upperSlot], 'EventPath[10] must be the upper shadow root');
+                assert_array_equals(log[8], [shadow.upperSlot, shadow.lowerShadow.host], 'EventPath[8] must be the slot inside the upper shadow tree');
+                assert_array_equals(log[9], [shadow.upperSlot.parentNode, shadow.lowerShadow.host], 'EventPath[9] must be the parent of the slot inside the upper shadow tree');
+                assert_array_equals(log[10], [shadow.upperShadow, shadow.lowerShadow.host], 'EventPath[10] must be the upper shadow root');
                 assert_array_equals(log[11], [shadow.upperShadow.host, shadow.lowerShadow.host], 'EventPath[11] must be the host');
 
             }, 'Firing an event on a node with two ancestors with a detached ' + outerUpperMode + ' and ' + outerLowerMode

@@ -191,7 +191,7 @@ Vector<EventTarget*> Event::deepPath() const
 {
     if (!m_eventPath)
         return Vector<EventTarget*>();
-    return m_eventPath->computePathDisclosedToTarget(*m_target);
+    return m_eventPath->computePathUnclosedToTarget(*m_currentTarget);
 }
 
 void Event::receivedTarget()

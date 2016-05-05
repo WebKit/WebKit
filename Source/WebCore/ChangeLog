@@ -1,3 +1,46 @@
+2016-05-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        event.target shouldn't be retargeted as the event bubbles into a slot
+        https://bugs.webkit.org/show_bug.cgi?id=157369
+
+        Reviewed by Antti Koivisto.
+
+        When an event bubbles up from an assigned node to its assigned slot, we shouldn't be adjusting
+        event.target to point to the slot. Since a shadow tree should have access to nodes outside
+        the shadow tree, event.target is accessible inside the shadow tree of such a slot.
+
+        New behavior matches the behavior of Google Chrome Canary as well as the shadow DOM specification:
+        http://w3c.github.io/webcomponents/spec/shadow/#dfn-retargeting-algorithm
+
+        Test: fast/shadow-dom/event-inside-slotted-node.html
+
+        * dom/Event.cpp:
+        (WebCore::Event::deepPath):
+        * dom/EventContext.h:
+        (WebCore::EventContext::isUnreachableNode): Use Node::isUnclosedNode instead of isReachable.
+        (WebCore::EventContext::isReachable): Deleted.
+        * dom/EventPath.cpp:
+        (WebCore::EventPath::EventPath): Don't set the target to the slot when entering a slot. Also moved
+        the code to adjust the target as we exit a shadow tree to the end of the outer loop for clarity.
+        (WebCore::isUnclosedNodeOf): Deleted. Renamed to Node::isUnclosedNode.
+        (WebCore::EventPath::setRelatedTarget):
+        (WebCore::EventPath::computePathUnclosedToTarget): Renamed from computePathDisclosedToTarget.
+        (WebCore::moveOutOfAllShadowRoots): Extracted from RelatedNodeRetargeter::RelatedNodeRetargeter.
+        (WebCore::RelatedNodeRetargeter::RelatedNodeRetargeter): Fixed a bug that we were exiting early
+        without setting m_hasDifferentTreeRoot true when target and relatedNode are disconnected from
+        a document.
+        (WebCore::RelatedNodeRetargeter::currentNode):
+        (WebCore::RelatedNodeRetargeter::checkConsistency): Updated to match the spec with one exception.
+        We don't use null as the adjusted related target when the (original) related target and the target
+        are in two distinct disconnected trees since such a behavior is not Web compatible. This spec bug is
+        tracked by https://github.com/w3c/webcomponents/issues/494
+        * dom/EventPath.h:
+        (WebCore::EventPath::eventTargetRespectingTargetRules): Returns Node* instead of EventTarget* since
+        we need a Node in RelatedNodeRetargeter::checkConsistency.
+        * dom/Node.cpp:
+        (WebCore::Node::isUnclosedNode): Moved from RelatedNodeRetargeter.cpp
+        * dom/Node.h:
+
 2016-05-02  Sam Weinig  <sam@webkit.org>
 
         On platforms that support it, use a SecTrustRef as the basis of CertificateInfo instead of a chain of SecCertificateRefs.

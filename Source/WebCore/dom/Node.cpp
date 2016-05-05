@@ -1117,6 +1117,28 @@ ShadowRoot* Node::containingShadowRoot() const
     return is<ShadowRoot>(root) ? downcast<ShadowRoot>(&root) : nullptr;
 }
 
+// http://w3c.github.io/webcomponents/spec/shadow/#dfn-unclosed-node
+bool Node::isUnclosedNode(const Node& otherNode) const
+{
+    // Use Vector instead of HashSet since we expect the number of ancestor tree scopes to be small.
+    Vector<TreeScope*, 8> ancestorScopesOfThisNode;
+
+    for (auto* scope = &treeScope(); scope; scope = scope->parentTreeScope())
+        ancestorScopesOfThisNode.append(scope);
+
+    for (auto* treeScopeThatCanAccessOtherNode = &otherNode.treeScope(); treeScopeThatCanAccessOtherNode; treeScopeThatCanAccessOtherNode = treeScopeThatCanAccessOtherNode->parentTreeScope()) {
+        for (auto* scope : ancestorScopesOfThisNode) {
+            if (scope == treeScopeThatCanAccessOtherNode)
+                return true; // treeScopeThatCanAccessOtherNode is a shadow-including inclusive ancestor of this node.
+        }
+        auto& root = treeScopeThatCanAccessOtherNode->rootNode();
+        if (is<ShadowRoot>(root) && downcast<ShadowRoot>(root).type() != ShadowRoot::Type::Open)
+            break;
+    }
+
+    return false;
+}
+
 #if ENABLE(SHADOW_DOM)
 HTMLSlotElement* Node::assignedSlot() const
 {
