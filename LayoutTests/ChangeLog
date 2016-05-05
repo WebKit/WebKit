@@ -1,3 +1,16 @@
+2016-05-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        TestExpectations gardening for ios-simulator
+
+        Unreviewed test gardening.
+
+        Remove failure expectation for passing tests, move some to more specific ports, and remove expectations
+		for tests that are no longer in the tree.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-05-05  Zalan Bujtas  <zalan@apple.com>
 
         Do not attempt to compute min/max width.

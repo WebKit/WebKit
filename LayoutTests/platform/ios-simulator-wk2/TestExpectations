@@ -383,7 +383,6 @@ webarchive/archive-empty-frame-source.html [ Failure ]
 webarchive/doctype.html [ Failure ]
 webarchive/test-css-import.html [ Failure ]
 webarchive/test-link-href.html [ Failure ]
-webarchive/test-link-rel-icon-beforeload.html [ Failure ]
 webarchive/test-script-src.html [ Failure ]
 
 # HTTP tests that fail:
@@ -1674,10 +1673,6 @@ fast/images/background-image-size-changes-fractional-position.html [ ImageOnlyFa
 fast/masking/clip-path-on-subpixel-position.html [ ImageOnlyFailure ]
 fast/text/hidpi-text-selection-gap-between-words.html [ ImageOnlyFailure ]
 svg/filters/feMorphology-radius-cases.svg [ ImageOnlyFailure ]
-
-# Crashes as of 06/08/2015
-http/tests/navigation/anchor-basic.html [ Crash ]
-http/tests/navigation/timerredirect-basic.html [ Crash ]
 
 # Time outs as of 06/08/2015
 fast/images/animated-gif-iframe-webkit-transform.html
