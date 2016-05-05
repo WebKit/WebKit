@@ -1,3 +1,9 @@
+2016-05-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Add more HiDPI tests failing.
+
 2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Crash if you type "debugger" in the console and continue
