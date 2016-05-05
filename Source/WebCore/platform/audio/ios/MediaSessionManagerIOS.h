@@ -73,7 +73,10 @@ private:
     PlatformMediaSession* nowPlayingEligibleSession();
     
     RetainPtr<WebMediaSessionHelper> m_objcObserver;
-    RetainPtr<NSMutableDictionary> m_nowPlayingInfo;
+    double m_reportedRate { 0 };
+    double m_reportedDuration { 0 };
+    String m_reportedTitle;
+    bool m_nowPlayingActive { false };
     bool m_isInBackground { false };
 };
 

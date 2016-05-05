@@ -1,3 +1,15 @@
+2016-05-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Media information is sometimes not shown in Control Center
+        https://bugs.webkit.org/show_bug.cgi?id=157377
+
+        Reviewed by Jer Noble.
+
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::updateNowPlayingInfo): Store values passed to MPNowPlayingInfoCenter
+          individually instead of in a dictionary.
+
 2016-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         Comments on wired.com are blurry

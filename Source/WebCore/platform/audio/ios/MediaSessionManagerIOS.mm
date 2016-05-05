@@ -240,40 +240,42 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
     LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - currentSession = %p", currentSession);
 
     if (!currentSession) {
-        if (m_nowPlayingInfo) {
+        if (m_nowPlayingActive) {
             LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - clearing now playing info");
             [nowPlaying setNowPlayingInfo:nil];
-            m_nowPlayingInfo = nil;
+            m_nowPlayingActive = false;
         }
 
         return;
     }
 
-    RetainPtr<NSMutableDictionary> info = adoptNS([[NSMutableDictionary alloc] init]);
-
     String title = currentSession->title();
-    if (!title.isEmpty())
-        [info setValue:static_cast<NSString *>(title) forKey:MPMediaItemPropertyTitle];
-
     double duration = currentSession->duration();
-    if (std::isfinite(duration) && duration != MediaPlayer::invalidTime())
-        [info setValue:@(duration) forKey:MPMediaItemPropertyPlaybackDuration];
-
-    [info setValue:(currentSession->state() == PlatformMediaSession::Playing ? @YES : @NO) forKey:MPNowPlayingInfoPropertyPlaybackRate];
-
-    if ([m_nowPlayingInfo.get() isEqualToDictionary:info.get()]) {
+    double rate = currentSession->state() == PlatformMediaSession::Playing ? 1 : 0;
+    if (m_reportedTitle == title && m_reportedRate == rate && m_reportedDuration == duration) {
         LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - nothing new to show");
         return;
     }
 
-    m_nowPlayingInfo = info;
+    m_reportedRate = rate;
+    m_reportedDuration = duration;
+    m_reportedTitle = title;
+
+    auto info = adoptNS([[NSMutableDictionary alloc] init]);
+    if (!title.isEmpty())
+        info.get()[MPMediaItemPropertyTitle] = static_cast<NSString *>(title);
+    if (std::isfinite(duration) && duration != MediaPlayer::invalidTime())
+        info.get()[MPMediaItemPropertyPlaybackDuration] = @(duration);
+    info.get()[MPNowPlayingInfoPropertyPlaybackRate] = @(rate);
 
     double currentTime = currentSession->currentTime();
     if (std::isfinite(currentTime) && currentTime != MediaPlayer::invalidTime())
-        [info setValue:@(currentTime) forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+        info.get()[MPNowPlayingInfoPropertyElapsedPlaybackTime] = @(currentTime);
 
-    LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - title = \"%s\"", [[info.get() valueForKey:MPMediaItemPropertyTitle] UTF8String]);
+    LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo - title = \"%s\", rate = %f, duration = %f, now = %f",
+        title.utf8().data(), rate, duration, currentTime);
 
+    m_nowPlayingActive = true;
     [nowPlaying setNowPlayingInfo:info.get()];
 }
 
