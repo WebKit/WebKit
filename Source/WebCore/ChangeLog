@@ -1,3 +1,14 @@
+2016-05-05  Ada Chan  <adachan@apple.com>
+
+        Add WebKitAdditions extension points in media controls related code in RenderThemeMac
+        https://bugs.webkit.org/show_bug.cgi?id=157390
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsStyleSheet):
+        (WebCore::RenderThemeMac::mediaControlsScript):
+
 2016-05-05  Jer Noble  <jer.noble@apple.com>
 
         [WK2] Media controls don't update if controller is created after the interface is created
