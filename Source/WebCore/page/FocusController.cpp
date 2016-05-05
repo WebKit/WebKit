@@ -345,7 +345,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
     Frame& frame = focusedOrMainFrame();
     Document* document = frame.document();
 
-    Node* currentNode = document->focusNavigationStartingNode(direction);
+    Node* currentNode = document->focusedElement();
     // FIXME: Not quite correct when it comes to focus transitions leaving/entering the WebView itself
     bool caretBrowsing = frame.settings().caretBrowsingEnabled();
 

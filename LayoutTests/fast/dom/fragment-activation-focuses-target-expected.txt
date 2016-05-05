@@ -14,9 +14,9 @@ PASS document.activeElement is document.getElementById('fragment1')
 Verify Tab behaves correctly after following the link.
 PASS document.activeElement is document.getElementById('fragment3')
 PASS document.activeElement is document.getElementById('fragment1')
-Activate a link that does not have a focusable fragment and verify that the currently focused element is unfocused.
+Activate a link that does not have a focusable fragment and verify focus does not move.
 PASS document.activeElement is link2
-PASS document.activeElement is document.body
+PASS document.activeElement is link2
 PASS successfullyParsed is true
 
 TEST COMPLETE
