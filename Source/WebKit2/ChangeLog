@@ -1,3 +1,24 @@
+2016-05-05  Dean Jackson  <dino@apple.com>
+
+        Shadow DOM should not be experimental
+        https://bugs.webkit.org/show_bug.cgi?id=157384
+        <rdar://problem/26123254>
+
+        Reviewed by Anders Carlsson.
+
+        Shadow DOM is not an experimental feature. We want
+        it enabled by default.
+
+        This fixes the timeout in:
+        WebKit2.InjectedBundleMakeAllShadowRootOpenTest
+
+        * Shared/WebPreferencesDefinitions.h: Move the Shadow
+        DOM preference out of Experimental.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-05-05  Simon Fraser  <simon.fraser@apple.com>
 
         Revert r200390, thus putting r199259 and r200161 and back.

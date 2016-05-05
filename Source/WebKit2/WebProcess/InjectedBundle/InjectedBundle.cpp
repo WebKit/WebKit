@@ -203,6 +203,11 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setDownloadAttributeEnabled(enabled);
 #endif
 
+#if ENABLE(SHADOW_DOM)
+    if (preference == "WebKitShadowDOMEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
+#endif
+
 #if ENABLE(CSS_GRID_LAYOUT)
     if (preference == "WebKitCSSGridLayoutEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(enabled);
@@ -211,11 +216,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #if ENABLE(CUSTOM_ELEMENTS)
     if (preference == "WebKitCustomElementsEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled(enabled);
-#endif
-
-#if ENABLE(SHADOW_DOM)
-    if (preference == "WebKitShadowDOMEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
 #endif
 
 #if ENABLE(WEBGL2)
