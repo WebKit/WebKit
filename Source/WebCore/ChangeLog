@@ -1,3 +1,25 @@
+2016-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        Blocked redirected main resource requests need descriptive errors
+        https://bugs.webkit.org/show_bug.cgi?id=156828
+        rdar://problem/25711316
+
+        Reviewed by Daniel Bates.
+
+        Test: http/tests/contentextensions/main-resource-redirect-error.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        Call cancelMainResourceLoad() so that InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame()
+        is called to be consistent with blocked redirected main resource requests.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        (WebCore::ResourceLoader::blockedError):
+        (WebCore::ResourceLoader::blockedByContentBlockerError):
+        (WebCore::ResourceLoader::cannotShowURLError):
+        * loader/ResourceLoader.h:
+        Use a blockedByContentBlockerError() instead of a cannotShowURLError() when we blocked the load.
+
 2016-05-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Fix assertions in debug builds for the GTK+ port.

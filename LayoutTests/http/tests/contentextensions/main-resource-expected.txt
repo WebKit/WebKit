@@ -1,5 +1,8 @@
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
 http://127.0.0.1:8000/contentextensions/main-resource.html - didFinishLoading
+main frame - didStartProvisionalLoadForFrame
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/resources/should-not-load.html from loading a resource from http://127.0.0.1:8000/contentextensions/resources/should-not-load.html
-http://127.0.0.1:8000/contentextensions/resources/should-not-load.html - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 104, failing URL "http://127.0.0.1:8000/contentextensions/resources/should-not-load.html">
-http://127.0.0.1:8000/contentextensions/resources/should-not-load.html - didFinishLoading
-
+main frame - didFailProvisionalLoadWithError
+main frame - (kWKErrorCodeFrameLoadBlockedByContentBlocker)

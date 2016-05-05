@@ -1,0 +1,9 @@
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+http://127.0.0.1:8000/contentextensions/main-resource-redirect-error.html - didFinishLoading
+main frame - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/resources/redirect.php?url=should-not-load.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/resources/redirect.php?url=should-not-load.html, main document URL http://127.0.0.1:8000/resources/redirect.php?url=should-not-load.html, http method GET> redirectResponse (null)
+CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/resources/should-not-load.html from loading a resource from http://127.0.0.1:8000/resources/should-not-load.html
+main frame - didFailProvisionalLoadWithError
+main frame - (kWKErrorCodeFrameLoadBlockedByContentBlocker)

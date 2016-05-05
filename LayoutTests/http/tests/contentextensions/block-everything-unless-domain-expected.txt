@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: line 18: http://127.0.0.1:8000/contentextensions/resources/block-everything-unless-domain-helper.html
 CONSOLE MESSAGE: line 5: helper loaded
 CONSOLE MESSAGE: line 7: Content blocker prevented frame displaying http://localhost:8000/contentextensions/resources/should-not-load.html from loading a resource from http://localhost:8000/contentextensions/resources/should-not-load.html
-CONSOLE MESSAGE: line 15: successfully blocked load from localhost
+CONSOLE MESSAGE: line 13: PASS - blocked the load
 

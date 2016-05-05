@@ -9,13 +9,12 @@ if (window.testRunner) {
 var maxEventLoopRuns = 50;
 function helperLoaded () {
     if (!maxEventLoopRuns) {
-        console.log("blocking load failed");
-        testRunner.notifyDone();
-    } else if (helper.location == "about:blank") {
-        console.log("successfully blocked load from localhost");
+        if (helper.location == "http://127.0.0.1:8000/contentextensions/resources/block-everything-unless-domain-helper.html")
+            console.log("PASS - blocked the load");
+        else
+            console.log("FAIL - loaded blocked URL");
         testRunner.notifyDone();
     } else {
-        console.log(helper.location);
         setTimeout(helperLoaded, 1);
         maxEventLoopRuns--;
     }

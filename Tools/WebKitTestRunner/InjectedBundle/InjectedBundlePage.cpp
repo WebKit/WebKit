@@ -697,8 +697,11 @@ void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRe
 
     if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks()) {
         dumpLoadEvent(frame, "didFailProvisionalLoadWithError");
-        if (WKErrorGetErrorCode(error) == kWKErrorCodeCannotShowURL)
+        auto code = WKErrorGetErrorCode(error);
+        if (code == kWKErrorCodeCannotShowURL)
             dumpLoadEvent(frame, "(kWKErrorCodeCannotShowURL)");
+        else if (code == kWKErrorCodeFrameLoadBlockedByContentBlocker)
+            dumpLoadEvent(frame, "(kWKErrorCodeFrameLoadBlockedByContentBlocker)");
     }
 
     frameDidChangeLocation(frame);
