@@ -147,6 +147,7 @@ ControllerIOS.prototype = {
 
     addStartPlaybackControls: function() {
         this.base.appendChild(this.controls.startPlaybackButton);
+        this.showShowControlsButton(false);
     },
 
     removeStartPlaybackControls: function() {
@@ -441,6 +442,7 @@ ControllerIOS.prototype = {
             return true;
 
         this.video.play();
+        this.canToggleShowControlsButton = true;
         this.updateControls();
 
         return true;
@@ -522,6 +524,7 @@ ControllerIOS.prototype = {
         if (this.shouldHaveControls() && !this.controls.panelContainer.parentElement) {
             this.base.appendChild(this.controls.inlinePlaybackPlaceholder);
             this.base.appendChild(this.controls.panelContainer);
+            this.showShowControlsButton(false);
         }
     },
 

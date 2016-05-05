@@ -13,6 +13,7 @@ function Controller(root, video, host)
     this.isLive = false;
     this.statusHidden = true;
     this.hasWirelessPlaybackTargets = false;
+    this.canToggleShowControlsButton = false;
     this.isListeningForPlaybackTargetAvailabilityEvent = false;
     this.currentTargetIsWireless = false;
     this.wirelessPlaybackDisabled = false;
@@ -512,7 +513,7 @@ Controller.prototype = {
         // Show controls button is an accessibility workaround since the controls are now removed from the DOM. http://webkit.org/b/145684
         var showControlsButton = this.showControlsButton = document.createElement('button');
         showControlsButton.setAttribute('pseudo', '-webkit-media-show-controls');
-        showControlsButton.hidden = true;
+        this.showShowControlsButton(false);
         showControlsButton.setAttribute('aria-label', this.UIString('Show Controls'));
         this.listenFor(showControlsButton, 'click', this.handleShowControlsClick);
         this.base.appendChild(showControlsButton);
@@ -647,9 +648,11 @@ Controller.prototype = {
             this.controls.panel.classList.add(this.ClassNames.show);
             this.controls.panel.classList.remove(this.ClassNames.hidden);
             this.resetHideControlsTimer();
+            this.showShowControlsButton(false);
         } else {
             this.controls.panel.classList.remove(this.ClassNames.show);
             this.controls.panel.classList.add(this.ClassNames.hidden);
+            this.showShowControlsButton(true);
         }
     },
 
@@ -987,9 +990,10 @@ Controller.prototype = {
 
     handlePlayButtonClicked: function(event)
     {
-        if (this.canPlay())
+        if (this.canPlay()) {
+            this.canToggleShowControlsButton = true;
             this.video.play();
-        else
+        } else
             this.video.pause();
         return true;
     },
@@ -1496,6 +1500,7 @@ Controller.prototype = {
             this.controls.playButton.classList.remove(this.ClassNames.paused);
             this.controls.playButton.setAttribute('aria-label', this.UIString('Pause'));
             this.resetHideControlsTimer();
+            this.canToggleShowControlsButton = true;
         }
     },
 
@@ -1515,6 +1520,12 @@ Controller.prototype = {
         }
     },
 
+    showShowControlsButton: function (shouldShow) {
+        this.showControlsButton.hidden = !shouldShow;
+        if (shouldShow) 
+            this.showControlsButton.focus();
+    },
+
     showControls: function(focusControls)
     {
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
@@ -1528,7 +1539,7 @@ Controller.prototype = {
             if (focusControls)
                 this.controls.playButton.focus();
         }
-        this.showControlsButton.hidden = true;
+        this.showShowControlsButton(false);
     },
 
     hideControls: function()
@@ -1541,7 +1552,7 @@ Controller.prototype = {
         this.controls.panel.classList.remove(this.ClassNames.show);
         if (this.controls.panelBackground)
             this.controls.panelBackground.classList.remove(this.ClassNames.show);
-        this.showControlsButton.hidden = false;
+        this.showShowControlsButton(this.isPlayable() && this.isPlaying && this.canToggleShowControlsButton);
     },
 
     setNeedsUpdateForDisplayedWidth: function()

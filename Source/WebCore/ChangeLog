@@ -1,3 +1,29 @@
+2016-05-04  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Nonfunctional controls appear before every HTML5 video when using VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=153089
+        <rdar://problem/24050668>
+
+        Reviewed by Dean Jackson.
+
+        Test: media/video-controls-show-on-kb-or-ax-event.html
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller):
+        (Controller.prototype.createControls):
+        (Controller.prototype.updateControls):
+        (Controller.prototype.handlePlayButtonClicked):
+        (Controller.prototype.setPlaying):
+        (Controller.prototype.showShowControlsButton):
+        (Controller.prototype.showControls):
+        (Controller.prototype.hideControls):
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.addStartPlaybackControls):
+        (ControllerIOS.prototype.handleStartPlaybackButtonTouchEnd):
+        (ControllerIOS.prototype.showControls):
+
+        Fix to make sure the showControls button in a media player behaves correctly.
+
 2016-05-04  Dean Jackson  <dino@apple.com>
 
         Disabling WebGL2 should mean no context is created
