@@ -1,5 +1,12 @@
 2016-05-05  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another iOS debug build fix after r200464.
+
+        * dom/EventContext.h:
+        (WebCore::EventContext::isUnreachableNode):
+
+2016-05-05  Ryosuke Niwa  <rniwa@webkit.org>
+
         iOS debug build fix after r200464.
 
         * dom/EventContext.cpp:

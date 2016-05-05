@@ -56,7 +56,7 @@ public:
 
 protected:
 #if !ASSERT_DISABLED
-    bool isUnreachableNode(EventTarget*);
+    bool isUnreachableNode(EventTarget*) const;
 #endif
     RefPtr<Node> m_node;
     RefPtr<EventTarget> m_currentTarget;
@@ -130,7 +130,7 @@ inline TouchEventContext* toTouchEventContext(EventContext* eventContext)
 #endif // ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 
 #if !ASSERT_DISABLED
-inline bool EventContext::isUnreachableNode(EventTarget* target)
+inline bool EventContext::isUnreachableNode(EventTarget* target) const
 {
     // FIXME: Checks also for SVG elements.
     return target && target->toNode() && !target->toNode()->isSVGElement() && !m_node->isUnclosedNode(*target->toNode());
