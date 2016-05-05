@@ -347,7 +347,7 @@ static float* gaussianKernel()
 
 static void prepareFilterProgram(TextureMapperShaderProgram* program, const FilterOperation& operation, unsigned pass, const IntSize& size, GC3Duint contentTexture)
 {
-    RefPtr<GraphicsContext3D> context = program->context();
+    Ref<GraphicsContext3D> context = program->context();
     context->useProgram(program->programID());
 
     switch (operation.type()) {
