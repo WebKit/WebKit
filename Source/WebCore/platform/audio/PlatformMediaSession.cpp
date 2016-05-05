@@ -289,7 +289,12 @@ void PlatformMediaSession::isPlayingToWirelessPlaybackTargetChanged(bool isWirel
         return;
 
     m_isPlayingToWirelessPlaybackTarget = isWireless;
+
+    // Save and restore the interruption count so it doesn't get out of sync if beginInterruption is called because
+    // if we in the background.
+    int interruptionCount = m_interruptionCount;
     PlatformMediaSessionManager::sharedManager().sessionIsPlayingToWirelessPlaybackTargetChanged(*this);
+    m_interruptionCount = interruptionCount;
 }
 
 PlatformMediaSession::DisplayType PlatformMediaSession::displayType() const

@@ -1,3 +1,17 @@
+2016-05-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Playback does not pause when locking screen after playing to AirPlay.
+        https://bugs.webkit.org/show_bug.cgi?id=157366
+        <rdar://problem/22100651>
+
+        Reviewed by Dean Jackson.
+
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::isPlayingToWirelessPlaybackTargetChanged): Save and restore
+          m_interruptionCount around calling sessionIsPlayingToWirelessPlaybackTargetChanged because
+          it will call beginInterruption if we are already in the background and the counter will
+          get out of sync.
+
 2016-05-04  Daniel Bates  <dabates@apple.com>
 
         CSP: Perform case sensitive match against path portion of source expression URL that ends in '/'
