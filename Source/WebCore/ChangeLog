@@ -1,3 +1,20 @@
+2016-05-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert r200390, thus putting r199259 and r200161 and back.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustTiledBackingScrollability):
+        * page/Page.h:
+        (WebCore::Page::obscuredInset):
+        (WebCore::Page::setObscuredInset):
+        (WebCore::Page::enclosedInScrollableAncestorView):
+        (WebCore::Page::setEnclosedInScrollableAncestorView):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::platformObscuredInset): Deleted.
+        (WebCore::ScrollView::platformSetObscuredInset): Deleted.
+
 2016-05-05  Sam Weinig  <sam@webkit.org>
 
         Fix the build.
