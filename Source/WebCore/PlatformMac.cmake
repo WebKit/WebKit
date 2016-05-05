@@ -340,7 +340,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/SearchPopupMenuCocoa.mm
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
-    platform/cocoa/ThemeCocoa.cpp
+    platform/cocoa/ThemeCocoa.mm
     platform/cocoa/VNodeTrackerCocoa.cpp
     platform/cocoa/WebCoreNSErrorExtras.mm
 
