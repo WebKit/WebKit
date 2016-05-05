@@ -78,6 +78,36 @@ IDBRequestData::IDBRequestData(const IDBRequestData& other)
         m_cursorIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_cursorIdentifier);
 }
 
+IDBRequestData::IDBRequestData(const IDBRequestData& that, IsolatedCopyTag)
+{
+    isolatedCopy(that, *this);
+}
+
+
+IDBRequestData IDBRequestData::isolatedCopy() const
+{
+    return { *this, IsolatedCopy };
+}
+
+void IDBRequestData::isolatedCopy(const IDBRequestData& source, IDBRequestData& destination)
+{
+    destination.m_serverConnectionIdentifier = source.m_serverConnectionIdentifier;
+    destination.m_objectStoreIdentifier = source.m_objectStoreIdentifier;
+    destination.m_indexIdentifier = source.m_indexIdentifier;
+    destination.m_indexRecordType = source.m_indexRecordType;
+    destination.m_requestedVersion = source.m_requestedVersion;
+    destination.m_requestType = source.m_requestType;
+
+    destination.m_databaseIdentifier = source.m_databaseIdentifier.isolatedCopy();
+
+    if (source.m_requestIdentifier)
+        destination.m_requestIdentifier = std::make_unique<IDBResourceIdentifier>(*source.m_requestIdentifier);
+    if (source.m_transactionIdentifier)
+        destination.m_transactionIdentifier = std::make_unique<IDBResourceIdentifier>(*source.m_transactionIdentifier);
+    if (source.m_cursorIdentifier)
+        destination.m_cursorIdentifier = std::make_unique<IDBResourceIdentifier>(*source.m_cursorIdentifier);
+}
+
 uint64_t IDBRequestData::serverConnectionIdentifier() const
 {
     ASSERT(m_serverConnectionIdentifier);

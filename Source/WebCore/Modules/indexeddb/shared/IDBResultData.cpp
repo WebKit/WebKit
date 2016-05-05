@@ -66,6 +66,34 @@ IDBResultData::IDBResultData(const IDBResultData& other)
         m_getResult = std::make_unique<IDBGetResult>(*other.m_getResult);
 }
 
+IDBResultData::IDBResultData(const IDBResultData& that, IsolatedCopyTag)
+{
+    isolatedCopy(that, *this);
+}
+
+IDBResultData IDBResultData::isolatedCopy() const
+{
+    return { *this, IsolatedCopy };
+}
+
+void IDBResultData::isolatedCopy(const IDBResultData& source, IDBResultData& destination)
+{
+    destination.m_type = source.m_type;
+    destination.m_requestIdentifier = source.m_requestIdentifier.isolatedCopy();
+    destination.m_error = source.m_error.isolatedCopy();
+    destination.m_databaseConnectionIdentifier = source.m_databaseConnectionIdentifier;
+    destination.m_resultInteger = source.m_resultInteger;
+
+    if (source.m_databaseInfo)
+        destination.m_databaseInfo = std::make_unique<IDBDatabaseInfo>(*source.m_databaseInfo, IDBDatabaseInfo::IsolatedCopy);
+    if (source.m_transactionInfo)
+        destination.m_transactionInfo = std::make_unique<IDBTransactionInfo>(*source.m_transactionInfo, IDBTransactionInfo::IsolatedCopy);
+    if (source.m_resultKey)
+        destination.m_resultKey = std::make_unique<IDBKeyData>(*source.m_resultKey, IDBKeyData::IsolatedCopy);
+    if (source.m_getResult)
+        destination.m_getResult = std::make_unique<IDBGetResult>(*source.m_getResult, IDBGetResult::IsolatedCopy);
+}
+
 IDBResultData IDBResultData::error(const IDBResourceIdentifier& requestIdentifier, const IDBError& error)
 {
     IDBResultData result(requestIdentifier);

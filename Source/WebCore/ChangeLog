@@ -1,5 +1,24 @@
 2016-05-04  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Add isolatedCopy to a few more objects.
+        https://bugs.webkit.org/show_bug.cgi?id=157330
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No current change in behavior, will be tested as bug 149953 makes progress).
+
+        * Modules/indexeddb/shared/IDBRequestData.cpp:
+        (WebCore::IDBRequestData::IDBRequestData):
+        (WebCore::IDBRequestData::isolatedCopy):
+        * Modules/indexeddb/shared/IDBRequestData.h:
+
+        * Modules/indexeddb/shared/IDBResultData.cpp:
+        (WebCore::IDBResultData::IDBResultData):
+        (WebCore::IDBResultData::isolatedCopy):
+        * Modules/indexeddb/shared/IDBResultData.h:
+
+2016-05-04  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Add thread identifiers and assertions to IDB DOM objects.
         https://bugs.webkit.org/show_bug.cgi?id=157329
 

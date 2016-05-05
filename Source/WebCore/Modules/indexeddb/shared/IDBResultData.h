@@ -84,6 +84,10 @@ public:
 
     WEBCORE_EXPORT IDBResultData(const IDBResultData&);
 
+    enum IsolatedCopyTag { IsolatedCopy };
+    IDBResultData(const IDBResultData&, IsolatedCopyTag);
+    IDBResultData isolatedCopy() const;
+
     IDBResultType type() const { return m_type; }
     IDBResourceIdentifier requestIdentifier() const { return m_requestIdentifier; }
 
@@ -105,6 +109,8 @@ public:
 private:
     IDBResultData(const IDBResourceIdentifier&);
     IDBResultData(IDBResultType, const IDBResourceIdentifier&);
+
+    static void isolatedCopy(const IDBResultData& source, IDBResultData& destination);
 
     IDBResultType m_type { IDBResultType::Error };
     IDBResourceIdentifier m_requestIdentifier;
