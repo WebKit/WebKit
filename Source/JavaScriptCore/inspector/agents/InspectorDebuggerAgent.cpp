@@ -565,9 +565,14 @@ void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString& errorString, cons
 
 void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex)
 {
+    if (m_currentCallStack.hasNoValue()) {
+        errorString = ASCIILiteral("Not paused");
+        return;
+    }
+
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(callFrameId);
     if (injectedScript.hasNoValue()) {
-        errorString = ASCIILiteral("Inspected frame has gone");
+        errorString = ASCIILiteral("Could not find InjectedScript for callFrameId");
         return;
     }
 

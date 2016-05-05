@@ -55,6 +55,6 @@ Sending message: {"id":123,"method":"Runtime.getProperties","params":{"objectId"
 PASS: the backend should send a protocol error when receiving an invalid message.
 PASS: the reported error should be "ServerError" (-32000)
 Actual error code: -32000
-Actual error message: Inspected frame has gone
-Actual error data: [{"code":-32000,"message":"Inspected frame has gone"}]
+Actual error message: Could not find InjectedScript for objectId
+Actual error data: [{"code":-32000,"message":"Could not find InjectedScript for objectId"}]
 

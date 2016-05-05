@@ -137,7 +137,7 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const Strin
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        errorString = ASCIILiteral("Inspected frame has gone");
+        errorString = ASCIILiteral("Could not find InjectedScript for objectId");
         return;
     }
 
@@ -163,7 +163,7 @@ void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        errorString = ASCIILiteral("Inspected frame has gone");
+        errorString = ASCIILiteral("Could not find InjectedScript for objectId");
         return;
     }
 
@@ -181,7 +181,7 @@ void InspectorRuntimeAgent::getDisplayableProperties(ErrorString& errorString, c
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        errorString = ASCIILiteral("Inspected frame has gone");
+        errorString = ASCIILiteral("Could not find InjectedScript for objectId");
         return;
     }
 
@@ -199,7 +199,7 @@ void InspectorRuntimeAgent::getCollectionEntries(ErrorString& errorString, const
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        errorString = ASCIILiteral("Inspected frame has gone");
+        errorString = ASCIILiteral("Could not find InjectedScript for objectId");
         return;
     }
 
@@ -217,7 +217,7 @@ void InspectorRuntimeAgent::saveResult(ErrorString& errorString, const Inspector
     if (callArgument.getString(ASCIILiteral("objectId"), objectId)) {
         injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
         if (injectedScript.hasNoValue()) {
-            errorString = ASCIILiteral("Inspected frame has gone");
+            errorString = ASCIILiteral("Could not find InjectedScript for objectId");
             return;
         }
     } else {

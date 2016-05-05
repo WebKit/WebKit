@@ -36,6 +36,8 @@ InspectorProtocol.sendCommand = function(methodOrObject, params, handler)
     let method = methodOrObject;
     if (typeof methodOrObject === "object")
         ({method, params, handler} = methodOrObject);
+    else if (!params)
+        params = {};
 
     this._dispatchTable[++this._requestId] = handler;
     let messageObject = {method, params, id: this._requestId};

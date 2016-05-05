@@ -1,3 +1,15 @@
+2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Crash if you type "debugger" in the console and continue
+        https://bugs.webkit.org/show_bug.cgi?id=156924
+        <rdar://problem/25884189>
+
+        Reviewed by Mark Lam.
+
+        * UserInterface/Test/InspectorProtocol.js:
+        (InspectorProtocol.sendCommand):
+        Simplify sending a command with no parameters.
+
 2016-05-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r200401): Web Inspector: TypeError: undefined is not an object (evaluating 'messageElement.classList')
