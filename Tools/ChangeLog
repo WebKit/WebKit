@@ -1,3 +1,14 @@
+2016-05-04  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        Add JSC test results in JSON format to a Buildbot log
+        https://bugs.webkit.org/show_bug.cgi?id=156920
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests): Move command-line option for output file out
+        of WithProperties.
+
 2016-05-04  Dean Jackson  <dino@apple.com>
 
         TestRunner should always enable all the experimental features
