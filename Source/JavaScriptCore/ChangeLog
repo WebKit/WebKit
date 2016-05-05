@@ -1,3 +1,16 @@
+2016-05-04  Michael Saboff  <msaboff@apple.com>
+
+        Enable Dwarf2 debug information in offline assembler for clang compiler
+        https://bugs.webkit.org/show_bug.cgi?id=157364.
+
+        Reviewed by Mark Lam.
+
+        Added a new function shouldEnableDebugAnnotations() that determines if
+        we are using clang and a new enough version to support the debug annotations.
+
+        * offlineasm/config.rb:
+        (shouldEnableDebugAnnotations): Added.
+
 2016-05-04  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, fix test for new ArrayIteratorPrototype.next() error message.
