@@ -1,3 +1,39 @@
+2016-05-05  Filip Pizlo  <fpizlo@apple.com>
+
+        We shouldn't crash if DFG AI proved that something was unreachable on one run but then decided not to prove it on another run
+        https://bugs.webkit.org/show_bug.cgi?id=157379
+
+        Reviewed by Mark Lam.
+        
+        Any run of DFG AI is a fixpoint that loosens the proof until it can't find any more
+        counterexamples to the proof.  It errs on the side of loosening proofs, i.e., on the side of
+        proving fewer things.
+
+        We run this fixpoint multiple times since there are multiple points in the DFG optimization
+        pipeline when we run DFG AI.  Each of those runs completes a fixpoint and produces the
+        tightest proof it can that did not result in counterexamples being found.
+
+        It's possible that on run K of DFG AI, we prove some property, but on run K+1, we don't prove
+        that property. The code could have changed between the two runs due to other phases. Other
+        phases may modify the code in such a way that it's less amenable to AI's analysis. Our design
+        allows this because DFG AI is not 100% precise. It defends itself from making unsound choices
+        or running forever by sometimes punting on proving some property. It must be able to do this,
+        and so therefore, it might sometimes prove fewer things on a later run.
+
+        Currently in trunk if the property that AI proves on run K but fails to prove on run K+1 is
+        the reachability of a piece of code, then run K+1 will crash on an assertion at the
+        Unreachable node. It will complain that it reached an Unreachable. But it might be reaching
+        that Unreachable because it failed to prove that something earlier was always exiting. That's
+        OK, see above.
+
+        So, we should remove the assertion that AI doesn't see Unreachable.
+        
+        No new tests because I don't know how to make this happen. I believe that this happens in the
+        wild based on crash logs.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Crash if you type "debugger" in the console and continue
