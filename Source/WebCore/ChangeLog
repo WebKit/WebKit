@@ -1,3 +1,10 @@
+2016-05-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS debug build fix after r200464.
+
+        * dom/EventContext.cpp:
+        (WebCore::TouchEventContext::checkReachability):
+
 2016-05-05  Simon Fraser  <simon.fraser@apple.com>
 
         Revert r200390, thus putting r199259 and r200161 and back.
