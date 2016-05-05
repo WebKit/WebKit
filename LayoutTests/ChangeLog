@@ -1,5 +1,14 @@
 2016-05-05  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unskip 9 compositing tests on ios-simulator, mark 2 as failures on ios-simulator-wk1
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
+2016-05-05  Ryan Haddad  <ryanhaddad@apple.com>
+
         TestExpectations gardening for ios-simulator
 
         Unreviewed test gardening.

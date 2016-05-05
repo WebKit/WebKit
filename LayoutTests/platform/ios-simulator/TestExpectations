@@ -441,18 +441,9 @@ compositing/video/video-reflection.html
 compositing/visibility/visibility-simple-video-layer.html
 
 # Compositing tests that time out:
-compositing/framesets/composited-frame-alignment.html
-compositing/geometry/abs-position-inside-opacity.html
-compositing/iframes/become-composited-nested-iframes.html
-compositing/images/clip-on-directly-composited-image.html
 compositing/layer-creation/animation-overlap-with-children.html
-compositing/masks/become-tiled-mask.html
 compositing/overflow/ancestor-overflow.html
-compositing/overlap-blending/children-opacity-huge.html
-compositing/patterns/direct-pattern-compositing-add-text.html
-compositing/reflections/backface-hidden-reflection.html
 compositing/tiling/huge-layer-img.html
-compositing/video/video-border-radius.html
 
 # <rdar://problem/19191637> compositing/layer-creation/deep-tree.html fails
 compositing/layer-creation/deep-tree.html
