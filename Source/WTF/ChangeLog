@@ -1,5 +1,18 @@
 2016-05-04  Filip Pizlo  <fpizlo@apple.com>
 
+        Add HLE locks and synchronic TTAS locks to the ToyLocks benchmark suite
+        https://bugs.webkit.org/show_bug.cgi?id=157367
+
+        Rubber stamped by Benjamin Poulain.
+        
+        Turns out they are both a lot slower than WTF::Lock. The HLE lock is written according to Intel's
+        documentation. The synchronic lock follows the algorithm of the "ttas_lock" in the synchronic
+        test.hpp.
+
+        * benchmarks/ToyLocks.h:
+
+2016-05-04  Filip Pizlo  <fpizlo@apple.com>
+
         Add a few more WTF locking benchmarks
         https://bugs.webkit.org/show_bug.cgi?id=157365
 

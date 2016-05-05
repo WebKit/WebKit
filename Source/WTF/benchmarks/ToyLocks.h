@@ -32,6 +32,10 @@
 #include <wtf/ParkingLot.h>
 #include <wtf/WordLock.h>
 
+#if defined(EXTRA_LOCKS) && EXTRA_LOCKS
+#include <synchronic>
+#endif
+
 namespace {
 
 unsigned toyLockSpinLimit = 40;
@@ -91,6 +95,83 @@ public:
 private:
     Atomic<unsigned> m_lock;
 };
+
+#if defined(EXTRA_LOCKS) && EXTRA_LOCKS
+class TransactionalSpinLock {
+public:
+    TransactionalSpinLock()
+    {
+        m_lock = 0;
+    }
+
+    void lock()
+    {
+        for (;;) {
+            unsigned char result;
+            unsigned expected = 0;
+            unsigned desired = 1;
+            asm volatile (
+                "xacquire; lock; cmpxchgl %3, %2\n\t"
+                "sete %1"
+                : "+a"(expected), "=q"(result), "+m"(m_lock)
+                : "r"(desired)
+                : "memory");
+            if (result)
+                return;
+            std::this_thread::yield();
+        }
+    }
+
+    void unlock()
+    {
+        asm volatile (
+            "xrelease; movl $0, %0"
+            :
+            : "m"(m_lock)
+            : "memory");
+    }
+
+    bool isLocked() const
+    {
+        return m_lock;
+    }
+
+private:
+    unsigned m_lock;
+};
+
+class SynchronicLock {
+public:
+    SynchronicLock()
+        : m_locked(0)
+    {
+    }
+    
+    void lock()
+    {
+        for (;;) {
+            int state = 0;
+            if (m_locked.compare_exchange_weak(state, 1, std::memory_order_acquire))
+                return;
+            m_sync.wait_for_change(m_locked, state, std::memory_order_relaxed);
+        }
+    }
+    
+    void unlock()
+    {
+        m_sync.notify_one(m_locked, 0, std::memory_order_release);
+    }
+    
+    bool isLocked()
+    {
+        return m_locked.load();
+    }
+
+private:
+    std::atomic<int> m_locked;
+    std::experimental::synchronic<int> m_sync;
+};
+#endif
 
 template<typename StateType>
 class BargingLock {
@@ -392,6 +473,12 @@ void runEverything(const char* what)
         Benchmark::template run<YieldSpinLock>("YieldSpinLock");
     if (!strcmp(what, "pausespinlock") || !strcmp(what, "all"))
         Benchmark::template run<PauseSpinLock>("PauseSpinLock");
+#if defined(EXTRA_LOCKS) && EXTRA_LOCKS
+    if (!strcmp(what, "transactionalspinlock") || !strcmp(what, "all"))
+        Benchmark::template run<TransactionalSpinLock>("TransactionalSpinLock");
+    if (!strcmp(what, "synchroniclock") || !strcmp(what, "all"))
+        Benchmark::template run<SynchronicLock>("SynchronicLock");
+#endif
     if (!strcmp(what, "wordlock") || !strcmp(what, "all"))
         Benchmark::template run<WordLock>("WTFWordLock");
     if (!strcmp(what, "lock") || !strcmp(what, "all"))
