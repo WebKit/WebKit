@@ -32,7 +32,6 @@
 #import "WebPlaybackSessionManagerMessages.h"
 #import "WebPlaybackSessionManagerProxyMessages.h"
 #import "WebProcessProxy.h"
-#import <WebCore/TimeRanges.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -242,17 +241,25 @@ void WebPlaybackSessionManagerProxy::resetMediaState(uint64_t contextId)
 
 void WebPlaybackSessionManagerProxy::setCurrentTime(uint64_t contextId, double currentTime, double hostTime)
 {
-    ensureInterface(contextId).setCurrentTime(currentTime, hostTime);
+    RefPtr<WebPlaybackSessionModelContext> model;
+    RefPtr<PlatformWebPlaybackSessionInterface> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    model->setCurrentTime(currentTime);
+    interface->setCurrentTime(currentTime, hostTime);
 }
 
 void WebPlaybackSessionManagerProxy::setBufferedTime(uint64_t contextId, double bufferedTime)
 {
-    ensureInterface(contextId).setBufferedTime(bufferedTime);
+    RefPtr<WebPlaybackSessionModelContext> model;
+    RefPtr<PlatformWebPlaybackSessionInterface> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    model->setBufferedTime(bufferedTime);
+    interface->setBufferedTime(bufferedTime);
 }
 
 void WebPlaybackSessionManagerProxy::setSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges)
 {
-    RefPtr<TimeRanges> timeRanges = TimeRanges::create();
+    Ref<TimeRanges> timeRanges = TimeRanges::create();
     for (const auto& range : ranges) {
         ASSERT(isfinite(range.first));
         ASSERT(isfinite(range.second));
@@ -260,22 +267,40 @@ void WebPlaybackSessionManagerProxy::setSeekableRangesVector(uint64_t contextId,
         timeRanges->add(range.first, range.second);
     }
 
-    ensureInterface(contextId).setSeekableRanges(*timeRanges);
+    RefPtr<WebPlaybackSessionModelContext> model;
+    RefPtr<PlatformWebPlaybackSessionInterface> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    model->setSeekableRanges(timeRanges);
+    interface->setSeekableRanges(timeRanges);
 }
 
 void WebPlaybackSessionManagerProxy::setCanPlayFastReverse(uint64_t contextId, bool value)
 {
-    ensureInterface(contextId).setCanPlayFastReverse(value);
+    RefPtr<WebPlaybackSessionModelContext> model;
+    RefPtr<PlatformWebPlaybackSessionInterface> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    model->setCanPlayFastReverse(value);
+    interface->setCanPlayFastReverse(value);
 }
 
 void WebPlaybackSessionManagerProxy::setAudioMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
 {
-    ensureInterface(contextId).setAudioMediaSelectionOptions(options, selectedIndex);
+    RefPtr<WebPlaybackSessionModelContext> model;
+    RefPtr<PlatformWebPlaybackSessionInterface> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    model->setAudioMediaSelectionOptions(options);
+    model->setAudioMediaSelectedIndex(selectedIndex);
+    interface->setAudioMediaSelectionOptions(options, selectedIndex);
 }
 
 void WebPlaybackSessionManagerProxy::setLegibleMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
 {
-    ensureInterface(contextId).setLegibleMediaSelectionOptions(options, selectedIndex);
+    RefPtr<WebPlaybackSessionModelContext> model;
+    RefPtr<PlatformWebPlaybackSessionInterface> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    model->setLegibleMediaSelectionOptions(options);
+    model->setLegibleMediaSelectedIndex(selectedIndex);
+    interface->setLegibleMediaSelectionOptions(options, selectedIndex);
 }
 
 void WebPlaybackSessionManagerProxy::setExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
@@ -283,22 +308,39 @@ void WebPlaybackSessionManagerProxy::setExternalPlaybackProperties(uint64_t cont
     WebPlaybackSessionInterface::ExternalPlaybackTargetType type = static_cast<WebPlaybackSessionInterface::ExternalPlaybackTargetType>(targetType);
     ASSERT(type == WebPlaybackSessionInterface::TargetTypeAirPlay || type == WebPlaybackSessionInterface::TargetTypeTVOut || type == WebPlaybackSessionInterface::TargetTypeNone);
 
-    ensureInterface(contextId).setExternalPlayback(enabled, type, localizedDeviceName);
+    RefPtr<WebPlaybackSessionModelContext> model;
+    RefPtr<PlatformWebPlaybackSessionInterface> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    model->setExternalPlaybackEnabled(enabled);
+    interface->setExternalPlayback(enabled, type, localizedDeviceName);
 }
 
 void WebPlaybackSessionManagerProxy::setWirelessVideoPlaybackDisabled(uint64_t contextId, bool disabled)
 {
-    ensureInterface(contextId).setWirelessVideoPlaybackDisabled(disabled);
+    RefPtr<WebPlaybackSessionModelContext> model;
+    RefPtr<PlatformWebPlaybackSessionInterface> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    model->setWirelessVideoPlaybackDisabled(disabled);
+    interface->setWirelessVideoPlaybackDisabled(disabled);
 }
 
 void WebPlaybackSessionManagerProxy::setDuration(uint64_t contextId, double duration)
 {
-    ensureInterface(contextId).setDuration(duration);
+    RefPtr<WebPlaybackSessionModelContext> model;
+    RefPtr<PlatformWebPlaybackSessionInterface> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    model->setDuration(duration);
+    interface->setDuration(duration);
 }
 
 void WebPlaybackSessionManagerProxy::setRate(uint64_t contextId, bool isPlaying, double rate)
 {
-    ensureInterface(contextId).setRate(isPlaying, rate);
+    RefPtr<WebPlaybackSessionModelContext> model;
+    RefPtr<PlatformWebPlaybackSessionInterface> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+    model->setIsPlaying(isPlaying);
+    model->setPlaybackRate(rate);
+    interface->setRate(isPlaying, rate);
 }
 
 #pragma mark Messages to WebPlaybackSessionManager

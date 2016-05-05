@@ -4636,7 +4636,7 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
-PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const
+Ref<TimeRanges> HTMLMediaElement::buffered() const
 {
     if (!m_player)
         return TimeRanges::create();
@@ -4659,7 +4659,7 @@ double HTMLMediaElement::maxBufferedTime() const
     return bufferedRanges->end(numRanges - 1, ASSERT_NO_EXCEPTION);
 }
 
-PassRefPtr<TimeRanges> HTMLMediaElement::played()
+Ref<TimeRanges> HTMLMediaElement::played()
 {
     if (m_playing) {
         MediaTime time = currentMediaTime();
@@ -4673,7 +4673,7 @@ PassRefPtr<TimeRanges> HTMLMediaElement::played()
     return m_playedTimeRanges->copy();
 }
 
-PassRefPtr<TimeRanges> HTMLMediaElement::seekable() const
+Ref<TimeRanges> HTMLMediaElement::seekable() const
 {
     if (m_player)
         return TimeRanges::create(*m_player->seekable());

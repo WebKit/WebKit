@@ -59,6 +59,7 @@ public:
     }
     virtual ~WebVideoFullscreenInterfaceMac();
     WebVideoFullscreenModel* webVideoFullscreenModel() const { return m_videoFullscreenModel; }
+    WebPlaybackSessionModel* webPlaybackSessionModel() const { return m_playbackSessionInterface->webPlaybackSessionModel(); }
     WEBCORE_EXPORT void setWebVideoFullscreenModel(WebVideoFullscreenModel*);
     WebVideoFullscreenChangeObserver* webVideoFullscreenChangeObserver() const { return m_fullscreenChangeObserver; }
     WEBCORE_EXPORT void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);

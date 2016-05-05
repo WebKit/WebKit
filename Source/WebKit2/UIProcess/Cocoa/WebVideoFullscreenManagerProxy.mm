@@ -123,56 +123,6 @@ WebVideoFullscreenModelContext::~WebVideoFullscreenModelContext()
 {
 }
 
-void WebVideoFullscreenModelContext::play()
-{
-    m_playbackSessionModel->play();
-}
-
-void WebVideoFullscreenModelContext::pause()
-{
-    m_playbackSessionModel->pause();
-}
-
-void WebVideoFullscreenModelContext::togglePlayState()
-{
-    m_playbackSessionModel->togglePlayState();
-}
-
-void WebVideoFullscreenModelContext::beginScrubbing()
-{
-    m_playbackSessionModel->beginScrubbing();
-}
-
-void WebVideoFullscreenModelContext::endScrubbing()
-{
-    m_playbackSessionModel->endScrubbing();
-}
-
-void WebVideoFullscreenModelContext::seekToTime(double time)
-{
-    m_playbackSessionModel->seekToTime(time);
-}
-
-void WebVideoFullscreenModelContext::fastSeek(double time)
-{
-    m_playbackSessionModel->fastSeek(time);
-}
-
-void WebVideoFullscreenModelContext::beginScanningForward()
-{
-    m_playbackSessionModel->beginScanningForward();
-}
-
-void WebVideoFullscreenModelContext::beginScanningBackward()
-{
-    m_playbackSessionModel->beginScanningBackward();
-}
-
-void WebVideoFullscreenModelContext::endScanning()
-{
-    m_playbackSessionModel->endScanning();
-}
-
 void WebVideoFullscreenModelContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     if (m_manager)
@@ -189,16 +139,6 @@ void WebVideoFullscreenModelContext::setVideoLayerGravity(WebCore::WebVideoFulls
 {
     if (m_manager)
         m_manager->setVideoLayerGravity(m_contextId, gravity);
-}
-
-void WebVideoFullscreenModelContext::selectAudioMediaOption(uint64_t optionId)
-{
-    m_playbackSessionModel->selectAudioMediaOption(optionId);
-}
-
-void WebVideoFullscreenModelContext::selectLegibleMediaOption(uint64_t optionId)
-{
-    m_playbackSessionModel->selectLegibleMediaOption(optionId);
 }
 
 void WebVideoFullscreenModelContext::fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)

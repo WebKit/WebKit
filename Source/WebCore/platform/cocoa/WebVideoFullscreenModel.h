@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class WebVideoFullscreenModel : public WebPlaybackSessionModel {
+class WebVideoFullscreenModel {
 public:
     virtual ~WebVideoFullscreenModel() { };
     virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) = 0;

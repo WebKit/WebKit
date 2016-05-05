@@ -95,19 +95,23 @@ void WebPlaybackSessionInterfaceMac::setRate(bool isPlaying, float playbackRate)
         m_client->rateChanged(isPlaying, playbackRate);
 }
 
-void WebPlaybackSessionInterfaceMac::setSeekableRanges(const TimeRanges& timeRanges)
+static RetainPtr<NSMutableArray> timeRangesToArray(const TimeRanges& timeRanges)
 {
-    WebPlaybackControlsManager* controlsManager = playBackControlsManager();
-
-    RetainPtr<NSMutableArray> seekableRanges = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray> rangeArray = adoptNS([[NSMutableArray alloc] init]);
 
     for (unsigned i = 0; i < timeRanges.length(); i++) {
         const PlatformTimeRanges& ranges = timeRanges.ranges();
         CMTimeRange range = CMTimeRangeMake(toCMTime(ranges.start(i)), toCMTime(ranges.end(i)));
-        [seekableRanges addObject:[NSValue valueWithCMTimeRange:range]];
+        [rangeArray addObject:[NSValue valueWithCMTimeRange:range]];
     }
 
-    [controlsManager setSeekableTimeRanges:seekableRanges.get()];
+    return rangeArray;
+}
+
+void WebPlaybackSessionInterfaceMac::setSeekableRanges(const TimeRanges& timeRanges)
+{
+    WebPlaybackControlsManager* controlsManager = playBackControlsManager();
+    [controlsManager setSeekableTimeRanges:timeRangesToArray(timeRanges).get()];
 }
 
 void WebPlaybackSessionInterfaceMac::setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex)
@@ -143,6 +147,20 @@ WebPlaybackControlsManager *WebPlaybackSessionInterfaceMac::playBackControlsMana
 void WebPlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackControlsManager *manager)
 {
     m_playbackControlsManager = manager;
+
+    if (!manager || !m_playbackSessionModel)
+        return;
+
+    NSTimeInterval anchorTimeStamp = ![manager rate] ? NAN : [[NSProcessInfo processInfo] systemUptime];
+    manager.timing = [getAVValueTimingClass() valueTimingWithAnchorValue:m_playbackSessionModel->currentTime() anchorTimeStamp:anchorTimeStamp rate:0];
+    double duration = m_playbackSessionModel->duration();
+    manager.contentDuration = duration;
+    manager.hasEnabledAudio = duration > 0;
+    manager.hasEnabledVideo = duration > 0;
+    manager.rate = m_playbackSessionModel->isPlaying() ? m_playbackSessionModel->playbackRate() : 0.;
+    manager.seekableTimeRanges = timeRangesToArray(m_playbackSessionModel->seekableRanges()).get();
+    [manager setAudioMediaSelectionOptions:m_playbackSessionModel->audioMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->audioMediaSelectedIndex())];
+    [manager setLegibleMediaSelectionOptions:m_playbackSessionModel->legibleMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->legibleMediaSelectedIndex())];
 }
 
 }

@@ -136,21 +136,9 @@ private:
     void setWirelessVideoPlaybackDisabled(bool) override;
 
     // WebVideoFullscreenModel
-    void play() override;
-    void pause() override;
-    void togglePlayState() override;
-    void beginScrubbing() override;
-    void endScrubbing() override;
-    void seekToTime(double time) override;
-    void fastSeek(double time) override;
-    void beginScanningForward() override;
-    void beginScanningBackward() override;
-    void endScanning() override;
     void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) override;
     void setVideoLayerFrame(FloatRect) override;
     void setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity) override;
-    void selectAudioMediaOption(uint64_t index) override;
-    void selectLegibleMediaOption(uint64_t index) override;
     void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
     bool isVisible() const override;
 
@@ -365,106 +353,6 @@ void WebVideoFullscreenControllerContext::setWirelessVideoPlaybackDisabled(bool 
 
 #pragma mark WebVideoFullscreenModel
 
-void WebVideoFullscreenControllerContext::play()
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this] {
-        if (m_model)
-            m_model->play();
-    });
-}
-
-void WebVideoFullscreenControllerContext::pause()
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this] {
-        if (m_model)
-            m_model->pause();
-    });
-}
-
-void WebVideoFullscreenControllerContext::togglePlayState()
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this] {
-        if (m_model)
-            m_model->togglePlayState();
-    });
-}
-
-void WebVideoFullscreenControllerContext::beginScrubbing()
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this] {
-        if (m_model)
-            m_model->beginScrubbing();
-    });
-}
-
-void WebVideoFullscreenControllerContext::endScrubbing()
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this] {
-        if (m_model)
-            m_model->endScrubbing();
-    });
-}
-
-void WebVideoFullscreenControllerContext::seekToTime(double time)
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this, time] {
-        if (m_model)
-            m_model->seekToTime(time);
-    });
-}
-
-void WebVideoFullscreenControllerContext::fastSeek(double time)
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this, time] {
-        if (m_model)
-            m_model->fastSeek(time);
-    });
-}
-
-void WebVideoFullscreenControllerContext::beginScanningForward()
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this] {
-        if (m_model)
-            m_model->beginScanningForward();
-    });
-}
-
-void WebVideoFullscreenControllerContext::beginScanningBackward()
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this] {
-        if (m_model)
-            m_model->beginScanningBackward();
-    });
-}
-
-void WebVideoFullscreenControllerContext::endScanning()
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this] {
-        if (m_model)
-            m_model->endScanning();
-    });
-}
-
 void WebVideoFullscreenControllerContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ASSERT(isUIThread());
@@ -505,26 +393,6 @@ void WebVideoFullscreenControllerContext::setVideoLayerGravity(WebVideoFullscree
     WebThreadRun([strongThis, this, videoGravity] {
         if (m_model)
             m_model->setVideoLayerGravity(videoGravity);
-    });
-}
-
-void WebVideoFullscreenControllerContext::selectAudioMediaOption(uint64_t index)
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this, index] {
-        if (m_model)
-            m_model->selectAudioMediaOption(index);
-    });
-}
-
-void WebVideoFullscreenControllerContext::selectLegibleMediaOption(uint64_t index)
-{
-    ASSERT(isUIThread());
-    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this, index] {
-        if (m_model)
-            m_model->selectLegibleMediaOption(index);
     });
 }
 

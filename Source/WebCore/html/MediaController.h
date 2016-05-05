@@ -54,9 +54,9 @@ public:
 
     const String& mediaGroup() const { return m_mediaGroup; }
     
-    PassRefPtr<TimeRanges> buffered() const override;
-    PassRefPtr<TimeRanges> seekable() const override;
-    PassRefPtr<TimeRanges> played() override;
+    Ref<TimeRanges> buffered() const override;
+    Ref<TimeRanges> seekable() const override;
+    Ref<TimeRanges> played() override;
     
     double duration() const override;
     double currentTime() const override;

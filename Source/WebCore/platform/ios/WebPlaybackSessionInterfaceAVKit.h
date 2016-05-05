@@ -72,6 +72,7 @@ public:
     }
     virtual ~WebPlaybackSessionInterfaceAVKit();
     WEBCORE_EXPORT void setWebPlaybackSessionModel(WebPlaybackSessionModel*);
+    WebPlaybackSessionModel* webPlaybackSessionModel() const { return m_playbackSessionModel; }
     void setClient(WebPlaybackSessionInterfaceAVKitClient* client) { m_client = client; }
 
     WEBCORE_EXPORT void resetMediaState() override;

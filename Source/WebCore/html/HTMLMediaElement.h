@@ -167,7 +167,7 @@ public:
     String preload() const;    
     void setPreload(const String&);
 
-    PassRefPtr<TimeRanges> buffered() const override;
+    Ref<TimeRanges> buffered() const override;
     void load();
     String canPlayType(const String& mimeType, const String& keySystem = String(), const URL& = URL()) const;
 
@@ -197,8 +197,8 @@ public:
     void updatePlaybackRate();
     bool webkitPreservesPitch() const;
     void setWebkitPreservesPitch(bool);
-    PassRefPtr<TimeRanges> played() override;
-    PassRefPtr<TimeRanges> seekable() const override;
+    Ref<TimeRanges> played() override;
+    Ref<TimeRanges> seekable() const override;
     WEBCORE_EXPORT bool ended() const;
     bool autoplay() const;
     bool isAutoplaying() const { return m_autoplaying; }

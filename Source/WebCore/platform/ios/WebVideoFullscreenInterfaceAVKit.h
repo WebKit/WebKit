@@ -70,7 +70,8 @@ public:
     virtual ~WebVideoFullscreenInterfaceAVKit();
     WEBCORE_EXPORT void setWebVideoFullscreenModel(WebVideoFullscreenModel*);
     WEBCORE_EXPORT void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);
-    
+    WebPlaybackSessionModel* webPlaybackSessionModel() const { return m_playbackSessionInterface->webPlaybackSessionModel(); }
+
     WEBCORE_EXPORT void resetMediaState() final;
     WEBCORE_EXPORT void setDuration(double) final;
     WEBCORE_EXPORT void setCurrentTime(double currentTime, double anchorTime) final;

@@ -74,21 +74,9 @@ private:
     WebVideoFullscreenModelContext(WebVideoFullscreenManagerProxy&, WebPlaybackSessionModelContext&, uint64_t);
 
     // WebVideoFullscreenModel
-    void play() override;
-    void pause() override;
-    void togglePlayState() override;
-    void beginScrubbing() override;
-    void endScrubbing() override;
-    void seekToTime(double) override;
-    void fastSeek(double time) override;
-    void beginScanningForward() override;
-    void beginScanningBackward() override;
-    void endScanning() override;
     void requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     void setVideoLayerFrame(WebCore::FloatRect) override;
     void setVideoLayerGravity(VideoGravity) override;
-    void selectAudioMediaOption(uint64_t) override;
-    void selectLegibleMediaOption(uint64_t) override;
     void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     bool isVisible() const override;
 

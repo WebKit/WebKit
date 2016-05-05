@@ -135,56 +135,6 @@ void WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer*
         m_videoElement->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
 }
 
-void WebVideoFullscreenModelVideoElement::play()
-{
-    m_playbackSessionModel->play();
-}
-
-void WebVideoFullscreenModelVideoElement::pause()
-{
-    m_playbackSessionModel->pause();
-}
-
-void WebVideoFullscreenModelVideoElement::togglePlayState()
-{
-    m_playbackSessionModel->togglePlayState();
-}
-
-void WebVideoFullscreenModelVideoElement::beginScrubbing()
-{
-    m_playbackSessionModel->beginScrubbing();
-}
-
-void WebVideoFullscreenModelVideoElement::endScrubbing()
-{
-    m_playbackSessionModel->endScrubbing();
-}
-
-void WebVideoFullscreenModelVideoElement::seekToTime(double time)
-{
-    m_playbackSessionModel->seekToTime(time);
-}
-
-void WebVideoFullscreenModelVideoElement::fastSeek(double time)
-{
-    m_playbackSessionModel->fastSeek(time);
-}
-
-void WebVideoFullscreenModelVideoElement::beginScanningForward()
-{
-    m_playbackSessionModel->beginScanningForward();
-}
-
-void WebVideoFullscreenModelVideoElement::beginScanningBackward()
-{
-    m_playbackSessionModel->beginScanningBackward();
-}
-
-void WebVideoFullscreenModelVideoElement::endScanning()
-{
-    m_playbackSessionModel->endScanning();
-}
-
 void WebVideoFullscreenModelVideoElement::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     if (m_videoElement && m_videoElement->fullscreenMode() != mode)
@@ -212,16 +162,6 @@ void WebVideoFullscreenModelVideoElement::setVideoLayerGravity(WebVideoFullscree
         ASSERT_NOT_REACHED();
     
     m_videoElement->setVideoFullscreenGravity(videoGravity);
-}
-
-void WebVideoFullscreenModelVideoElement::selectAudioMediaOption(uint64_t selectedAudioIndex)
-{
-    m_playbackSessionModel->selectAudioMediaOption(selectedAudioIndex);
-}
-
-void WebVideoFullscreenModelVideoElement::selectLegibleMediaOption(uint64_t index)
-{
-    m_playbackSessionModel->selectLegibleMediaOption(index);
 }
 
 const Vector<AtomicString>& WebVideoFullscreenModelVideoElement::observedEventNames()

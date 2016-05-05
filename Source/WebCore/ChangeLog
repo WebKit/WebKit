@@ -1,3 +1,94 @@
+2016-05-05  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] Media controls don't update if controller is created after the interface is created
+        https://bugs.webkit.org/show_bug.cgi?id=157376
+
+        Reviewed by Beth Dakin.
+
+        Add getter methods to WebPlaybackSessionModel so that the model's values can be retrieved
+        if those values were missed before the equivalent WebPlaybackSessionInterface methods were
+        called. This necessatates a bunch of changes in HTMLMediaElement and related classes to
+        change PassRefPtr<TimeRanges> types to Ref<TimeRanges> (and one change in TimeRanges itself).
+        WebPlaybackSessionModelMediaElement can implement these new getter methods by querying the
+        values from the HTMLMediaElement, something it was doing already, so most of those changes
+        are simple refactoring.
+
+        There's no reason any longer for WebVideoFullscreenModel to inherit from WebPlaybackSessionModel,
+        so remove that superclass.
+
+        In WebPlaybackSessionInterfaceMac, when a new WebPlaybackControlsManager is set, use the new
+        getter methods on WebPlaybackSessionModel to update the values in the manager.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::maxBufferedTime):
+        (WebCore::HTMLMediaElement::played):
+        (WebCore::HTMLMediaElement::buffered): Deleted.
+        (WebCore::HTMLMediaElement::seekable): Deleted.
+        * html/HTMLMediaElement.h:
+        * html/MediaController.cpp:
+        (MediaController::buffered):
+        (MediaController::seekable):
+        (MediaController::played):
+        * html/MediaController.h:
+        * html/MediaControllerInterface.h:
+        * html/TimeRanges.cpp:
+        (WebCore::TimeRanges::copy):
+        * html/TimeRanges.h:
+        * platform/cocoa/WebPlaybackSessionModel.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebPlaybackSessionModelMediaElement::setWebPlaybackSessionInterface):
+        (WebPlaybackSessionModelMediaElement::updateForEventName):
+        (WebPlaybackSessionModelMediaElement::updateLegibleOptions):
+        (WebPlaybackSessionModelMediaElement::observedEventNames):
+        (WebPlaybackSessionModelMediaElement::eventNameAll):
+        (WebPlaybackSessionModelMediaElement::duration):
+        (WebPlaybackSessionModelMediaElement::currentTime):
+        (WebPlaybackSessionModelMediaElement::bufferedTime):
+        (WebPlaybackSessionModelMediaElement::isPlaying):
+        (WebPlaybackSessionModelMediaElement::playbackRate):
+        (WebPlaybackSessionModelMediaElement::seekableRanges):
+        (WebPlaybackSessionModelMediaElement::canPlayFastReverse):
+        (WebPlaybackSessionModelMediaElement::audioMediaSelectionOptions):
+        (WebPlaybackSessionModelMediaElement::audioMediaSelectedIndex):
+        (WebPlaybackSessionModelMediaElement::legibleMediaSelectionOptions):
+        (WebPlaybackSessionModelMediaElement::legibleMediaSelectedIndex):
+        (WebPlaybackSessionModelMediaElement::externalPlaybackEnabled):
+        (WebPlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled):
+        * platform/cocoa/WebVideoFullscreenModel.h:
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.h:
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::requestFullscreenMode): Deleted.
+        (WebVideoFullscreenModelVideoElement::setVideoLayerFrame): Deleted.
+        (WebVideoFullscreenModelVideoElement::setVideoLayerGravity): Deleted.
+        (WebVideoFullscreenModelVideoElement::observedEventNames): Deleted.
+        (WebVideoFullscreenModelVideoElement::eventNameAll): Deleted.
+        (WebVideoFullscreenModelVideoElement::fullscreenModeChanged): Deleted.
+        * platform/ios/WebPlaybackSessionInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::play): Deleted.
+        (WebVideoFullscreenControllerContext::pause): Deleted.
+        (WebVideoFullscreenControllerContext::togglePlayState): Deleted.
+        (WebVideoFullscreenControllerContext::beginScrubbing): Deleted.
+        (WebVideoFullscreenControllerContext::endScrubbing): Deleted.
+        (WebVideoFullscreenControllerContext::seekToTime): Deleted.
+        (WebVideoFullscreenControllerContext::fastSeek): Deleted.
+        (WebVideoFullscreenControllerContext::beginScanningForward): Deleted.
+        (WebVideoFullscreenControllerContext::beginScanningBackward): Deleted.
+        (WebVideoFullscreenControllerContext::endScanning): Deleted.
+        (WebVideoFullscreenControllerContext::selectAudioMediaOption): Deleted.
+        (WebVideoFullscreenControllerContext::selectLegibleMediaOption): Deleted.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen):
+        (WebVideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason):
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::timeRangesToArray):
+        (WebCore::WebPlaybackSessionInterfaceMac::setSeekableRanges):
+        (WebCore::WebPlaybackSessionInterfaceMac::setPlayBackControlsManager):
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+
 2016-05-05  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Move TransactionOperation management from IDBConnectionToServer to IDBConnectionProxy.

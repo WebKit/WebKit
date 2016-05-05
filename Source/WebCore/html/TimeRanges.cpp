@@ -90,7 +90,7 @@ void TimeRanges::invert()
     m_ranges.invert();
 }
 
-PassRefPtr<TimeRanges> TimeRanges::copy() const
+Ref<TimeRanges> TimeRanges::copy() const
 {
     return TimeRanges::create(m_ranges);
 }

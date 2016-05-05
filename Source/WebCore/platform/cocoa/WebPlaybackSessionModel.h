@@ -28,7 +28,13 @@
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#include <wtf/Forward.h>
+#include <wtf/Ref.h>
+#include <wtf/Vector.h>
+
 namespace WebCore {
+
+class TimeRanges;
 
 class WebPlaybackSessionModel {
 public:
@@ -45,6 +51,20 @@ public:
     virtual void endScanning() = 0;
     virtual void selectAudioMediaOption(uint64_t index) = 0;
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
+
+    virtual double duration() const = 0;
+    virtual double currentTime() const = 0;
+    virtual double bufferedTime() const = 0;
+    virtual bool isPlaying() const = 0;
+    virtual float playbackRate() const = 0;
+    virtual Ref<TimeRanges> seekableRanges() const = 0;
+    virtual bool canPlayFastReverse() const = 0;
+    virtual Vector<WTF::String> audioMediaSelectionOptions() const = 0;
+    virtual uint64_t audioMediaSelectedIndex() const = 0;
+    virtual Vector<WTF::String> legibleMediaSelectionOptions() const = 0;
+    virtual uint64_t legibleMediaSelectedIndex() const = 0;
+    virtual bool externalPlaybackEnabled() const = 0;
+    virtual bool wirelessVideoPlaybackDisabled() const = 0;
 };
 
 }

@@ -85,7 +85,7 @@ bool MediaController::containsMediaElement(HTMLMediaElement* element) const
     return m_mediaElements.contains(element);
 }
 
-PassRefPtr<TimeRanges> MediaController::buffered() const
+Ref<TimeRanges> MediaController::buffered() const
 {
     if (m_mediaElements.isEmpty())
         return TimeRanges::create();
@@ -93,13 +93,13 @@ PassRefPtr<TimeRanges> MediaController::buffered() const
     // The buffered attribute must return a new static normalized TimeRanges object that represents 
     // the intersection of the ranges of the media resources of the slaved media elements that the 
     // user agent has buffered, at the time the attribute is evaluated.
-    RefPtr<TimeRanges> bufferedRanges = m_mediaElements.first()->buffered();
+    Ref<TimeRanges> bufferedRanges = m_mediaElements.first()->buffered();
     for (size_t index = 1; index < m_mediaElements.size(); ++index)
-        bufferedRanges->intersectWith(*m_mediaElements[index]->buffered().get());
+        bufferedRanges->intersectWith(m_mediaElements[index]->buffered());
     return bufferedRanges;
 }
 
-PassRefPtr<TimeRanges> MediaController::seekable() const
+Ref<TimeRanges> MediaController::seekable() const
 {
     if (m_mediaElements.isEmpty())
         return TimeRanges::create();
@@ -107,13 +107,13 @@ PassRefPtr<TimeRanges> MediaController::seekable() const
     // The seekable attribute must return a new static normalized TimeRanges object that represents
     // the intersection of the ranges of the media resources of the slaved media elements that the
     // user agent is able to seek to, at the time the attribute is evaluated.
-    RefPtr<TimeRanges> seekableRanges = m_mediaElements.first()->seekable();
+    Ref<TimeRanges> seekableRanges = m_mediaElements.first()->seekable();
     for (size_t index = 1; index < m_mediaElements.size(); ++index)
-        seekableRanges->intersectWith(*m_mediaElements[index]->seekable().get());
+        seekableRanges->intersectWith(m_mediaElements[index]->seekable());
     return seekableRanges;
 }
 
-PassRefPtr<TimeRanges> MediaController::played()
+Ref<TimeRanges> MediaController::played()
 {
     if (m_mediaElements.isEmpty())
         return TimeRanges::create();
@@ -121,9 +121,9 @@ PassRefPtr<TimeRanges> MediaController::played()
     // The played attribute must return a new static normalized TimeRanges object that represents 
     // the union of the ranges of the media resources of the slaved media elements that the 
     // user agent has so far rendered, at the time the attribute is evaluated.
-    RefPtr<TimeRanges> playedRanges = m_mediaElements.first()->played();
+    Ref<TimeRanges> playedRanges = m_mediaElements.first()->played();
     for (size_t index = 1; index < m_mediaElements.size(); ++index)
-        playedRanges->unionWith(*m_mediaElements[index]->played().get());
+        playedRanges->unionWith(m_mediaElements[index]->played());
     return playedRanges;
 }
 

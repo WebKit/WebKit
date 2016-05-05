@@ -68,6 +68,20 @@ public:
     WEBCORE_EXPORT void selectAudioMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void selectLegibleMediaOption(uint64_t index) final;
 
+    double duration() const final;
+    double currentTime() const final;
+    double bufferedTime() const final;
+    bool isPlaying() const final;
+    float playbackRate() const final;
+    Ref<TimeRanges> seekableRanges() const final;
+    bool canPlayFastReverse() const final;
+    Vector<WTF::String> audioMediaSelectionOptions() const final;
+    uint64_t audioMediaSelectedIndex() const final;
+    Vector<WTF::String> legibleMediaSelectionOptions() const final;
+    uint64_t legibleMediaSelectedIndex() const final;
+    bool externalPlaybackEnabled() const final;
+    bool wirelessVideoPlaybackDisabled() const final;
+
 protected:
     WEBCORE_EXPORT WebPlaybackSessionModelMediaElement();
 
