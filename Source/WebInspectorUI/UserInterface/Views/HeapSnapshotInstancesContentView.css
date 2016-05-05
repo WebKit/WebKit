@@ -178,3 +178,8 @@
     display: inline-block;
     vertical-align: top;
 }
+
+.heap-snapshot-instance-popover-content .node .go-to-link {
+    position: relative;
+    top: 1px;
+}

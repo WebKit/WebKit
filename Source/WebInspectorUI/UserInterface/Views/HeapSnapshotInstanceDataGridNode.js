@@ -399,6 +399,26 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
             idElement.classList.add("object-id");
             idElement.textContent = "@" + node.id;
             idElement.addEventListener("click", WebInspector.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode.bind(null, node));
+
+            // Extra.
+            if (node.className === "Function") {
+                let goToArrowPlaceHolderElement = containerElement.appendChild(document.createElement("span"));
+                goToArrowPlaceHolderElement.style.display = "inline-block";
+                goToArrowPlaceHolderElement.style.width = "10px";
+                HeapAgent.getPreview(node.id, function(error, string, functionDetails, objectPreviewPayload) {
+                    if (functionDetails) {
+                        let location = functionDetails.location;
+                        let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+                        if (sourceCode) {
+                            const dontFloat = true;
+                            const useGoToArrowButton = true;
+                            let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber);
+                            let goToArrowButtonLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, dontFloat, useGoToArrowButton);
+                            containerElement.replaceChild(goToArrowButtonLink, goToArrowPlaceHolderElement);
+                        }
+                    }
+                });
+            }
         }
 
         function sanitizeClassName(className) {

@@ -1,5 +1,23 @@
 2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Provide go-to links next to Functions in GC Root Path popover
+        https://bugs.webkit.org/show_bug.cgi?id=157381
+        <rdar://problem/26122531>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype._mouseoverHandler.appendPathRow):
+        For functions, create a go-to-link. Insert a placeholder to replace
+        so that the popover sizes itself with a potential go-to arrow, as
+        it won't resize when the go-to arrows get inserted.
+
+        * UserInterface/Views/HeapSnapshotInstancesContentView.css:
+        (.heap-snapshot-instance-popover-content .node .go-to-link):
+        Move down 1px to align better with the text.
+
+2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: HeapSnapshot should exploratory Object Graph view
         https://bugs.webkit.org/show_bug.cgi?id=157371
         <rdar://problem/26107304>
