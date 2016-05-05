@@ -1,3 +1,16 @@
+2016-05-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Fix assertions in debug builds for the GTK+ port.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGLData::SharedGLData::currentSharedGLData):
+        Switch back to the find() + add() combo for retrieving the pointer
+        to the SharedGLData object stored for the specific GraphicsContext3D.
+        add() + isNewEntry is causing assertions in debug builds when adding
+        the first entry.
+
 2016-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Adaptive streaming issues

@@ -76,15 +76,13 @@ private:
     public:
         static Ref<SharedGLData> currentSharedGLData(GraphicsContext3D& context)
         {
-            RefPtr<SharedGLData> data;
-            auto addResult = contextDataMap().add(context.platformGraphicsContext3D(), nullptr);
-            if (addResult.isNewEntry) {
-                data = adoptRef(new SharedGLData(context));
-                addResult.iterator->value = data.get();
-            } else
-                data = addResult.iterator->value;
+            auto it = contextDataMap().find(context.platformGraphicsContext3D());
+            if (it != contextDataMap().end())
+                return *it->value;
 
-            return *data;
+            Ref<SharedGLData> data = adoptRef(*new SharedGLData(context));
+            contextDataMap().add(context.platformGraphicsContext3D(), data.ptr());
+            return data;
         }
 
         ~SharedGLData()
