@@ -72,8 +72,8 @@ IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionToSer
 {
 }
 
-IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionToServer& connection, const IDBRequest& request)
-    : m_idbConnectionIdentifier(connection.identifier())
+IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionProxy& connectionProxy, const IDBRequest& request)
+    : m_idbConnectionIdentifier(connectionProxy.serverConnectionIdentifier())
     , m_resourceNumber(request.resourceIdentifier().m_resourceNumber)
 {
 }

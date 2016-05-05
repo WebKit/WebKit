@@ -56,14 +56,13 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBClient::IDBConnecti
 {
     LOG(IndexedDB, "IDBDatabase::IDBDatabase - Creating database %s with version %" PRIu64 " connection %" PRIu64, m_info.name().utf8().data(), m_info.version(), m_databaseConnectionIdentifier);
     suspendIfNeeded();
-    relaxAdoptionRequirement();
-    m_connectionProxy->connectionToServer().registerDatabaseConnection(*this);
+    m_connectionProxy->registerDatabaseConnection(*this);
 }
 
 IDBDatabase::~IDBDatabase()
 {
     ASSERT(currentThread() == m_originThreadID);
-    m_connectionProxy->connectionToServer().unregisterDatabaseConnection(*this);
+    m_connectionProxy->unregisterDatabaseConnection(*this);
 }
 
 bool IDBDatabase::hasPendingActivity() const
@@ -262,7 +261,7 @@ void IDBDatabase::maybeCloseInServer()
         return;
 
     m_closedInServer = true;
-    m_connectionProxy->connectionToServer().databaseConnectionClosed(*this);
+    m_connectionProxy->databaseConnectionClosed(*this);
 }
 
 const char* IDBDatabase::activeDOMObjectName() const

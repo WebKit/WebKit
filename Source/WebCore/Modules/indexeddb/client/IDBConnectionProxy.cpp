@@ -28,7 +28,10 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabase.h"
 #include "IDBOpenDBRequest.h"
+#include "IDBRequestData.h"
+#include "IDBResultData.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -66,9 +69,21 @@ RefPtr<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext
     if (!isMainThread())
         return nullptr;
 
-    auto request = IDBOpenDBRequest::createOpenRequest(context, *this, databaseIdentifier, version);
-    m_connectionToServer.openDatabase(request.get());
-    return WTFMove(request);
+    RefPtr<IDBOpenDBRequest> request;
+    {
+        Locker<Lock> locker(m_openDBRequestMapLock);
+
+        request = IDBOpenDBRequest::createOpenRequest(context, *this, databaseIdentifier, version);
+        ASSERT(!m_openDBRequestMap.contains(request->resourceIdentifier()));
+        m_openDBRequestMap.set(request->resourceIdentifier(), request.get());
+    }
+
+    IDBRequestData requestData(*this, *request);
+
+    // FIXME: For workers, marshall this to the main thread if necessary.
+    m_connectionToServer.openDatabase(requestData);
+
+    return request;
 }
 
 RefPtr<IDBOpenDBRequest> IDBConnectionProxy::deleteDatabase(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier)
@@ -77,9 +92,201 @@ RefPtr<IDBOpenDBRequest> IDBConnectionProxy::deleteDatabase(ScriptExecutionConte
     if (!isMainThread())
         return nullptr;
 
-    auto request = IDBOpenDBRequest::createDeleteRequest(context, *this, databaseIdentifier);
-    m_connectionToServer.deleteDatabase(request.get());
-    return WTFMove(request);
+    RefPtr<IDBOpenDBRequest> request;
+    {
+        Locker<Lock> locker(m_openDBRequestMapLock);
+
+        request = IDBOpenDBRequest::createDeleteRequest(context, *this, databaseIdentifier);
+        ASSERT(!m_openDBRequestMap.contains(request->resourceIdentifier()));
+        m_openDBRequestMap.set(request->resourceIdentifier(), request.get());
+    }
+
+    IDBRequestData requestData(*this, *request);
+
+    // FIXME: For workers, marshall this to the main thread if necessary.
+    m_connectionToServer.deleteDatabase(requestData);
+
+    return request;
+}
+
+void IDBConnectionProxy::didOpenDatabase(const IDBResultData& resultData)
+{
+    completeOpenDBRequest(resultData);
+}
+
+void IDBConnectionProxy::didDeleteDatabase(const IDBResultData& resultData)
+{
+    completeOpenDBRequest(resultData);
+}
+
+void IDBConnectionProxy::completeOpenDBRequest(const IDBResultData& resultData)
+{
+    ASSERT(isMainThread());
+
+    RefPtr<IDBOpenDBRequest> request;
+    {
+        Locker<Lock> locker(m_openDBRequestMapLock);
+        request = m_openDBRequestMap.get(resultData.requestIdentifier());
+        ASSERT(request);
+    }
+
+    request->requestCompleted(resultData);
+}
+
+void IDBConnectionProxy::fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
+{
+    ASSERT(isMainThread());
+
+    RefPtr<IDBDatabase> database;
+    {
+        Locker<Lock> locker(m_databaseConnectionMapLock);
+        database = m_databaseConnectionMap.get(databaseConnectionIdentifier);
+    }
+
+    if (!database)
+        return;
+
+    database->fireVersionChangeEvent(requestIdentifier, requestedVersion);
+}
+
+void IDBConnectionProxy::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
+{
+    // FIXME: Handle Workers
+    if (!isMainThread())
+        return;
+
+    m_connectionToServer.didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier);
+}
+
+void IDBConnectionProxy::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
+{
+    ASSERT(isMainThread());
+
+    RefPtr<IDBOpenDBRequest> request;
+    {
+        Locker<Lock> locker(m_openDBRequestMapLock);
+        request = m_openDBRequestMap.get(requestIdentifier);
+    }
+
+    ASSERT(request);
+
+    request->requestBlocked(oldVersion, newVersion);
+}
+
+void IDBConnectionProxy::establishTransaction(IDBTransaction& transaction)
+{
+    {
+        Locker<Lock> locker(m_transactionMapLock);
+        ASSERT(!hasRecordOfTransaction(transaction));
+        m_pendingTransactions.set(transaction.info().identifier(), &transaction);
+    }
+
+    // FIXME: Handle Workers
+    if (!isMainThread())
+        return;
+
+    m_connectionToServer.establishTransaction(transaction.database().databaseConnectionIdentifier(), transaction.info());
+}
+
+void IDBConnectionProxy::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    RefPtr<IDBTransaction> transaction;
+    {
+        Locker<Lock> locker(m_transactionMapLock);
+        transaction = m_pendingTransactions.take(transactionIdentifier);
+    }
+
+    ASSERT(transaction);
+
+    // FIXME: Handle hopping to the Worker thread here if necessary.
+
+    transaction->didStart(error);
+}
+
+void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction)
+{
+    {
+        Locker<Lock> locker(m_transactionMapLock);
+        ASSERT(!m_committingTransactions.contains(transaction.info().identifier()));
+        m_committingTransactions.set(transaction.info().identifier(), &transaction);
+    }
+
+    // FIXME: Handle Workers
+    if (!isMainThread())
+        return;
+
+    m_connectionToServer.commitTransaction(transaction.info().identifier());
+}
+
+void IDBConnectionProxy::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    RefPtr<IDBTransaction> transaction;
+    {
+        Locker<Lock> locker(m_transactionMapLock);
+        transaction = m_committingTransactions.take(transactionIdentifier);
+    }
+
+    ASSERT(transaction);
+
+    // FIXME: Handle hopping to the Worker thread here if necessary.
+
+    transaction->didCommit(error);
+}
+
+void IDBConnectionProxy::abortTransaction(IDBTransaction& transaction)
+{
+    {
+        Locker<Lock> locker(m_transactionMapLock);
+        ASSERT(!m_abortingTransactions.contains(transaction.info().identifier()));
+        m_abortingTransactions.set(transaction.info().identifier(), &transaction);
+    }
+
+    // FIXME: Handle Workers
+    if (!isMainThread())
+        return;
+
+    m_connectionToServer.abortTransaction(transaction.info().identifier());
+}
+
+void IDBConnectionProxy::didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    RefPtr<IDBTransaction> transaction;
+    {
+        Locker<Lock> locker(m_transactionMapLock);
+        transaction = m_abortingTransactions.take(transactionIdentifier);
+    }
+
+    ASSERT(transaction);
+
+    // FIXME: Handle hopping to the Worker thread here if necessary.
+
+    transaction->didAbort(error);
+}
+
+bool IDBConnectionProxy::hasRecordOfTransaction(const IDBTransaction& transaction) const
+{
+    ASSERT(m_transactionMapLock.isLocked());
+
+    auto identifier = transaction.info().identifier();
+    return m_pendingTransactions.contains(identifier) || m_committingTransactions.contains(identifier) || m_abortingTransactions.contains(identifier);
+}
+
+void IDBConnectionProxy::didFinishHandlingVersionChangeTransaction(IDBTransaction& transaction)
+{
+    // FIXME: Handle Workers
+    if (!isMainThread())
+        return;
+
+    m_connectionToServer.didFinishHandlingVersionChangeTransaction(transaction.info().identifier());
+}
+
+void IDBConnectionProxy::databaseConnectionClosed(IDBDatabase& database)
+{
+    // FIXME: Handle Workers
+    if (!isMainThread())
+        return;
+
+    m_connectionToServer.databaseConnectionClosed(database.databaseConnectionIdentifier());
 }
 
 void IDBConnectionProxy::getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)> callback)
@@ -90,6 +297,22 @@ void IDBConnectionProxy::getAllDatabaseNames(const SecurityOrigin& mainFrameOrig
     m_connectionToServer.getAllDatabaseNames(mainFrameOrigin, openingOrigin, callback);
 }
 
+void IDBConnectionProxy::registerDatabaseConnection(IDBDatabase& database)
+{
+    Locker<Lock> locker(m_databaseConnectionMapLock);
+
+    ASSERT(!m_databaseConnectionMap.contains(database.databaseConnectionIdentifier()));
+    m_databaseConnectionMap.set(database.databaseConnectionIdentifier(), &database);
+}
+
+void IDBConnectionProxy::unregisterDatabaseConnection(IDBDatabase& database)
+{
+    Locker<Lock> locker(m_databaseConnectionMapLock);
+
+    ASSERT(m_databaseConnectionMap.contains(database.databaseConnectionIdentifier()));
+    ASSERT(m_databaseConnectionMap.get(database.databaseConnectionIdentifier()) == &database);
+    m_databaseConnectionMap.remove(database.databaseConnectionIdentifier());
+}
 
 } // namesapce IDBClient
 } // namespace WebCore

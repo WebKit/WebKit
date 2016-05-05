@@ -36,6 +36,7 @@
 #include "IDBResultData.h"
 #include "Logging.h"
 #include "TransactionOperation.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 namespace IDBClient {
@@ -62,46 +63,28 @@ IDBConnectionProxy& IDBConnectionToServer::proxy()
     return *m_proxy;
 }
 
-void IDBConnectionToServer::deleteDatabase(IDBOpenDBRequest& request)
+void IDBConnectionToServer::deleteDatabase(const IDBRequestData& request)
 {
     LOG(IndexedDB, "IDBConnectionToServer::deleteDatabase - %s", request.databaseIdentifier().debugString().utf8().data());
-
-    ASSERT(!m_openDBRequestMap.contains(request.resourceIdentifier()));
-    m_openDBRequestMap.set(request.resourceIdentifier(), &request);
-
-    IDBRequestData requestData(*this, request);
-    m_delegate->deleteDatabase(requestData);
+    m_delegate->deleteDatabase(request);
 }
 
 void IDBConnectionToServer::didDeleteDatabase(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didDeleteDatabase");
-
-    auto request = m_openDBRequestMap.take(resultData.requestIdentifier());
-    ASSERT(request);
-
-    request->requestCompleted(resultData);
+    m_proxy->didDeleteDatabase(resultData);
 }
 
-void IDBConnectionToServer::openDatabase(IDBOpenDBRequest& request)
+void IDBConnectionToServer::openDatabase(const IDBRequestData& request)
 {
-    LOG(IndexedDB, "IDBConnectionToServer::openDatabase - %s (%" PRIu64 ")", request.databaseIdentifier().debugString().utf8().data(), request.version());
-
-    ASSERT(!m_openDBRequestMap.contains(request.resourceIdentifier()));
-    m_openDBRequestMap.set(request.resourceIdentifier(), &request);
-    
-    IDBRequestData requestData(*this, request);
-    m_delegate->openDatabase(requestData);
+    LOG(IndexedDB, "IDBConnectionToServer::openDatabase - %s (%" PRIu64 ")", request.databaseIdentifier().debugString().utf8().data(), request.requestedVersion());
+    m_delegate->openDatabase(request);
 }
 
 void IDBConnectionToServer::didOpenDatabase(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didOpenDatabase");
-
-    auto request = m_openDBRequestMap.take(resultData.requestIdentifier());
-    ASSERT(request);
-
-    request->requestCompleted(resultData);
+    m_proxy->didOpenDatabase(resultData);
 }
 
 void IDBConnectionToServer::createObjectStore(TransactionOperation& operation, const IDBObjectStoreInfo& info)
@@ -269,77 +252,66 @@ void IDBConnectionToServer::didIterateCursor(const IDBResultData& resultData)
     completeOperation(resultData);
 }
 
-void IDBConnectionToServer::establishTransaction(IDBTransaction& transaction)
+void IDBConnectionToServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     LOG(IndexedDB, "IDBConnectionToServer::establishTransaction");
+    ASSERT(isMainThread());
 
-    ASSERT(!hasRecordOfTransaction(transaction));
-    m_pendingTransactions.set(transaction.info().identifier(), &transaction);
-
-    m_delegate->establishTransaction(transaction.database().databaseConnectionIdentifier(), transaction.info());
+    m_delegate->establishTransaction(databaseConnectionIdentifier, info);
 }
 
-void IDBConnectionToServer::commitTransaction(IDBTransaction& transaction)
+void IDBConnectionToServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::commitTransaction");
-    ASSERT(!m_committingTransactions.contains(transaction.info().identifier()));
-    m_committingTransactions.set(transaction.info().identifier(), &transaction);
+    ASSERT(isMainThread());
 
-    auto identifier = transaction.info().identifier();
-    m_delegate->commitTransaction(identifier);
+    m_delegate->commitTransaction(transactionIdentifier);
 }
 
 void IDBConnectionToServer::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didCommitTransaction");
+    ASSERT(isMainThread());
 
-    auto transaction = m_committingTransactions.take(transactionIdentifier);
-    ASSERT(transaction);
-
-    transaction->didCommit(error);
+    m_proxy->didCommitTransaction(transactionIdentifier, error);
 }
 
-void IDBConnectionToServer::didFinishHandlingVersionChangeTransaction(IDBTransaction& transaction)
+void IDBConnectionToServer::didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didFinishHandlingVersionChangeTransaction");
-    auto identifier = transaction.info().identifier();
-    m_delegate->didFinishHandlingVersionChangeTransaction(identifier);
+    ASSERT(isMainThread());
+
+    m_delegate->didFinishHandlingVersionChangeTransaction(transactionIdentifier);
 }
 
-void IDBConnectionToServer::abortTransaction(IDBTransaction& transaction)
+void IDBConnectionToServer::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::abortTransaction");
-    ASSERT(!m_abortingTransactions.contains(transaction.info().identifier()));
-    m_abortingTransactions.set(transaction.info().identifier(), &transaction);
+    ASSERT(isMainThread());
 
-    auto identifier = transaction.info().identifier();
-    m_delegate->abortTransaction(identifier);
+    m_delegate->abortTransaction(transactionIdentifier);
 }
 
 void IDBConnectionToServer::didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didAbortTransaction");
+    ASSERT(isMainThread());
 
-    auto transaction = m_abortingTransactions.take(transactionIdentifier);
-    ASSERT(transaction);
-
-    transaction->didAbort(error);
+    m_proxy->didAbortTransaction(transactionIdentifier, error);
 }
 
 void IDBConnectionToServer::fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
     LOG(IndexedDB, "IDBConnectionToServer::fireVersionChangeEvent");
+    ASSERT(isMainThread());
 
-    auto connection = m_databaseConnectionMap.get(databaseConnectionIdentifier);
-    if (!connection)
-        return;
-
-    connection->fireVersionChangeEvent(requestIdentifier, requestedVersion);
+    m_proxy->fireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, requestedVersion);
 }
 
 void IDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didFireVersionChangeEvent");
+    ASSERT(isMainThread());
 
     m_delegate->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier);
 }
@@ -347,28 +319,25 @@ void IDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnectio
 void IDBConnectionToServer::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didStartTransaction");
+    ASSERT(isMainThread());
 
-    auto transaction = m_pendingTransactions.take(transactionIdentifier);
-    ASSERT(transaction);
-
-    transaction->didStart(error);
+    m_proxy->didStartTransaction(transactionIdentifier, error);
 }
 
 void IDBConnectionToServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didStartTransaction");
+    ASSERT(isMainThread());
 
-    auto openDBRequest = m_openDBRequestMap.get(requestIdentifier);
-    ASSERT(openDBRequest);
-
-    openDBRequest->requestBlocked(oldVersion, newVersion);
+    m_proxy->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
 }
 
-void IDBConnectionToServer::databaseConnectionClosed(IDBDatabase& database)
+void IDBConnectionToServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::databaseConnectionClosed");
+    ASSERT(isMainThread());
 
-    m_delegate->databaseConnectionClosed(database.databaseConnectionIdentifier());
+    m_delegate->databaseConnectionClosed(databaseConnectionIdentifier);
 }
 
 void IDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
@@ -376,19 +345,6 @@ void IDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectio
     LOG(IndexedDB, "IDBConnectionToServer::abortOpenAndUpgradeNeeded");
 
     m_delegate->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
-}
-
-void IDBConnectionToServer::registerDatabaseConnection(IDBDatabase& database)
-{
-    ASSERT(!m_databaseConnectionMap.contains(database.databaseConnectionIdentifier()));
-    m_databaseConnectionMap.set(database.databaseConnectionIdentifier(), &database);
-}
-
-void IDBConnectionToServer::unregisterDatabaseConnection(IDBDatabase& database)
-{
-    ASSERT(m_databaseConnectionMap.contains(database.databaseConnectionIdentifier()));
-    ASSERT(m_databaseConnectionMap.get(database.databaseConnectionIdentifier()) == &database);
-    m_databaseConnectionMap.remove(database.databaseConnectionIdentifier());
 }
 
 void IDBConnectionToServer::saveOperation(TransactionOperation& operation)
@@ -403,12 +359,6 @@ void IDBConnectionToServer::completeOperation(const IDBResultData& resultData)
     ASSERT(operation);
 
     operation->completed(resultData);
-}
-
-bool IDBConnectionToServer::hasRecordOfTransaction(const IDBTransaction& transaction) const
-{
-    auto identifier = transaction.info().identifier();
-    return m_pendingTransactions.contains(identifier) || m_committingTransactions.contains(identifier) || m_abortingTransactions.contains(identifier);
 }
 
 void IDBConnectionToServer::getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)> callback)

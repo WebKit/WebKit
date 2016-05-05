@@ -133,8 +133,6 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
     LOG(IndexedDB, "IDBTransaction::IDBTransaction - %s", m_info.loggingString().utf8().data());
     ASSERT(currentThread() == m_database->originThreadID());
 
-    relaxAdoptionRequirement();
-
     if (m_info.mode() == IndexedDB::TransactionMode::VersionChange) {
         ASSERT(m_openDBRequest);
         m_openDBRequest->setVersionChangeTransaction(*this);
@@ -295,7 +293,7 @@ void IDBTransaction::abortOnServerAndCancelRequests(IDBClient::TransactionOperat
     ASSERT(currentThread() == m_database->originThreadID());
     ASSERT(m_transactionOperationQueue.isEmpty());
 
-    serverConnection().abortTransaction(*this);
+    m_database->connectionProxy().abortTransaction(*this);
 
     ASSERT(m_transactionOperationMap.contains(operation.identifier()));
     m_transactionOperationMap.remove(operation.identifier());
@@ -432,7 +430,7 @@ void IDBTransaction::commitOnServer(IDBClient::TransactionOperation& operation)
     LOG(IndexedDB, "IDBTransaction::commitOnServer");
     ASSERT(currentThread() == m_database->originThreadID());
 
-    serverConnection().commitTransaction(*this);
+    m_database->connectionProxy().commitTransaction(*this);
 
     ASSERT(m_transactionOperationMap.contains(operation.identifier()));
     m_transactionOperationMap.remove(operation.identifier());
@@ -1044,7 +1042,7 @@ void IDBTransaction::establishOnServer()
     LOG(IndexedDB, "IDBTransaction::establishOnServer");
     ASSERT(currentThread() == m_database->originThreadID());
 
-    serverConnection().establishTransaction(*this);
+    m_database->connectionProxy().establishTransaction(*this);
 }
 
 void IDBTransaction::activate()

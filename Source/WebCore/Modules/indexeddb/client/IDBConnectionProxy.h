@@ -28,15 +28,21 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBConnectionToServer.h"
+#include "IDBResourceIdentifier.h"
 #include <functional>
+#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class IDBDatabase;
 class IDBDatabaseIdentifier;
+class IDBError;
 class IDBOpenDBRequest;
+class IDBResultData;
+class IDBTransaction;
 class ScriptExecutionContext;
 class SecurityOrigin;
 
@@ -49,7 +55,26 @@ public:
     IDBConnectionProxy(IDBConnectionToServer&);
 
     RefPtr<IDBOpenDBRequest> openDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
+    void didOpenDatabase(const IDBResultData&);
+
     RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&);
+    void didDeleteDatabase(const IDBResultData&);
+
+    void fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
+    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier);
+
+    void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
+
+    void establishTransaction(IDBTransaction&);
+    void commitTransaction(IDBTransaction&);
+    void abortTransaction(IDBTransaction&);
+
+    void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
+    void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
+    void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
+
+    void didFinishHandlingVersionChangeTransaction(IDBTransaction&);
+    void databaseConnectionClosed(IDBDatabase&);
 
     uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
 
@@ -63,9 +88,26 @@ public:
 
     void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)>);
 
+    void registerDatabaseConnection(IDBDatabase&);
+    void unregisterDatabaseConnection(IDBDatabase&);
+
 private:
+    void completeOpenDBRequest(const IDBResultData&);
+    bool hasRecordOfTransaction(const IDBTransaction&) const;
+
     IDBConnectionToServer& m_connectionToServer;
     uint64_t m_serverConnectionIdentifier;
+
+    HashMap<uint64_t, IDBDatabase*> m_databaseConnectionMap;
+    Lock m_databaseConnectionMapLock;
+
+    HashMap<IDBResourceIdentifier, RefPtr<IDBOpenDBRequest>> m_openDBRequestMap;
+    Lock m_openDBRequestMapLock;
+
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_pendingTransactions;
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
+    Lock m_transactionMapLock;
 };
 
 } // namespace IDBClient

@@ -42,9 +42,7 @@ class IDBCursorInfo;
 class IDBDatabase;
 class IDBError;
 class IDBObjectStoreInfo;
-class IDBOpenDBRequest;
 class IDBResultData;
-class IDBTransaction;
 class IDBValue;
 
 namespace IDBClient {
@@ -59,10 +57,10 @@ public:
 
     IDBConnectionProxy& proxy();
 
-    void deleteDatabase(IDBOpenDBRequest&);
+    void deleteDatabase(const IDBRequestData&);
     WEBCORE_EXPORT void didDeleteDatabase(const IDBResultData&);
 
-    void openDatabase(IDBOpenDBRequest&);
+    void openDatabase(const IDBRequestData&);
     WEBCORE_EXPORT void didOpenDatabase(const IDBResultData&);
 
     void createObjectStore(TransactionOperation&, const IDBObjectStoreInfo&);
@@ -98,12 +96,12 @@ public:
     void iterateCursor(TransactionOperation&, const IDBKeyData&, unsigned long count);
     WEBCORE_EXPORT void didIterateCursor(const IDBResultData&);
 
-    void commitTransaction(IDBTransaction&);
+    void commitTransaction(const IDBResourceIdentifier& transactionIdentifier);
     WEBCORE_EXPORT void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
-    void didFinishHandlingVersionChangeTransaction(IDBTransaction&);
+    void didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier&);
 
-    void abortTransaction(IDBTransaction&);
+    void abortTransaction(const IDBResourceIdentifier& transactionIdentifier);
     WEBCORE_EXPORT void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
     WEBCORE_EXPORT void fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
@@ -112,16 +110,13 @@ public:
     WEBCORE_EXPORT void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
     WEBCORE_EXPORT void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
 
-    void establishTransaction(IDBTransaction&);
+    void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&);
 
-    void databaseConnectionClosed(IDBDatabase&);
+    void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
 
     // To be used when an IDBOpenDBRequest gets a new database connection, optionally with a
     // versionchange transaction, but the page is already torn down.
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
-    
-    void registerDatabaseConnection(IDBDatabase&);
-    void unregisterDatabaseConnection(IDBDatabase&);
 
     void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)>);
     WEBCORE_EXPORT void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames);
@@ -132,15 +127,8 @@ private:
     void saveOperation(TransactionOperation&);
     void completeOperation(const IDBResultData&);
 
-    bool hasRecordOfTransaction(const IDBTransaction&) const;
-
     Ref<IDBConnectionToServerDelegate> m_delegate;
 
-    HashMap<IDBResourceIdentifier, RefPtr<IDBOpenDBRequest>> m_openDBRequestMap;
-    HashMap<uint64_t, IDBDatabase*> m_databaseConnectionMap;
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_pendingTransactions;
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations;
 
     HashMap<uint64_t, std::function<void (const Vector<String>&)>> m_getAllDatabaseNamesCallbacks;

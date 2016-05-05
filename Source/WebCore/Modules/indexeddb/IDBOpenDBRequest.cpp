@@ -118,7 +118,7 @@ bool IDBOpenDBRequest::dispatchEvent(Event& event)
     bool result = IDBRequest::dispatchEvent(event);
 
     if (m_transaction && m_transaction->isVersionChange() && (event.type() == eventNames().errorEvent || event.type() == eventNames().successEvent))
-        m_transaction->database().serverConnection().didFinishHandlingVersionChangeTransaction(*m_transaction);
+        m_transaction->database().connectionProxy().didFinishHandlingVersionChangeTransaction(*m_transaction);
 
     return result;
 }

@@ -1,5 +1,89 @@
 2016-05-04  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Move all IDB DOM object management from IDBConnectionToServer to IDBConnectionProxy.
+        https://bugs.webkit.org/show_bug.cgi?id=157348
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, no change in behavior yet).
+
+        This is in-progress IDB-in-Workers code that is isolated enough to land right now.
+        
+        The goal is to have IDBConnectionToServer be a main-thread-only object, leaving IDBConnectionProxy
+        as the threading bridge between the worker thread and the main thread.
+        
+        As such, IDBConnectionToServer no longer maintains maps of IDB DOM objects, but instead the proxy
+        does and guards that access with locks.
+        
+        No threading changes takes place in this patch but it does scatter some isMainThread() checks and FIXMEs 
+        accurately representing where threading changes will take place once I can return to this.
+        
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::IDBDatabase):
+        (WebCore::IDBDatabase::~IDBDatabase):
+        (WebCore::IDBDatabase::maybeCloseInServer):
+
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::dispatchEvent):
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::abortOnServerAndCancelRequests):
+        (WebCore::IDBTransaction::commitOnServer):
+        (WebCore::IDBTransaction::establishOnServer):
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::openDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::didOpenDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::didDeleteDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::completeOpenDBRequest):
+        (WebCore::IDBClient::IDBConnectionProxy::fireVersionChangeEvent):
+        (WebCore::IDBClient::IDBConnectionProxy::didFireVersionChangeEvent):
+        (WebCore::IDBClient::IDBConnectionProxy::notifyOpenDBRequestBlocked):
+        (WebCore::IDBClient::IDBConnectionProxy::establishTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didStartTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::commitTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didCommitTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::abortTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didAbortTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::hasRecordOfTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didFinishHandlingVersionChangeTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::databaseConnectionClosed):
+        (WebCore::IDBClient::IDBConnectionProxy::registerDatabaseConnection):
+        (WebCore::IDBClient::IDBConnectionProxy::unregisterDatabaseConnection):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::deleteDatabase):
+        (WebCore::IDBClient::IDBConnectionToServer::didDeleteDatabase):
+        (WebCore::IDBClient::IDBConnectionToServer::openDatabase):
+        (WebCore::IDBClient::IDBConnectionToServer::didOpenDatabase):
+        (WebCore::IDBClient::IDBConnectionToServer::establishTransaction):
+        (WebCore::IDBClient::IDBConnectionToServer::commitTransaction):
+        (WebCore::IDBClient::IDBConnectionToServer::didCommitTransaction):
+        (WebCore::IDBClient::IDBConnectionToServer::didFinishHandlingVersionChangeTransaction):
+        (WebCore::IDBClient::IDBConnectionToServer::abortTransaction):
+        (WebCore::IDBClient::IDBConnectionToServer::didAbortTransaction):
+        (WebCore::IDBClient::IDBConnectionToServer::fireVersionChangeEvent):
+        (WebCore::IDBClient::IDBConnectionToServer::didFireVersionChangeEvent):
+        (WebCore::IDBClient::IDBConnectionToServer::didStartTransaction):
+        (WebCore::IDBClient::IDBConnectionToServer::notifyOpenDBRequestBlocked):
+        (WebCore::IDBClient::IDBConnectionToServer::databaseConnectionClosed):
+        (WebCore::IDBClient::IDBConnectionToServer::registerDatabaseConnection): Deleted.
+        (WebCore::IDBClient::IDBConnectionToServer::unregisterDatabaseConnection): Deleted.
+        (WebCore::IDBClient::IDBConnectionToServer::hasRecordOfTransaction): Deleted.
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        
+        * Modules/indexeddb/shared/IDBRequestData.cpp:
+        (WebCore::IDBRequestData::IDBRequestData):
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp:
+        (WebCore::IDBResourceIdentifier::IDBResourceIdentifier):
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+
+2016-05-04  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Add isolatedCopy to a few more objects.
         https://bugs.webkit.org/show_bug.cgi?id=157330
 

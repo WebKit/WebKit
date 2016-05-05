@@ -38,9 +38,9 @@ IDBRequestData::IDBRequestData()
 {
 }
 
-IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionToServer& connection, const IDBOpenDBRequest& request)
-    : m_serverConnectionIdentifier(connection.identifier())
-    , m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(connection, request))
+IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionProxy& connectionProxy, const IDBOpenDBRequest& request)
+    : m_serverConnectionIdentifier(connectionProxy.serverConnectionIdentifier())
+    , m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(connectionProxy, request))
     , m_databaseIdentifier(request.databaseIdentifier())
     , m_requestedVersion(request.version())
     , m_requestType(request.requestType())

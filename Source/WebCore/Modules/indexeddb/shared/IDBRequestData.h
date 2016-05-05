@@ -42,13 +42,13 @@ enum class IndexRecordType;
 }
 
 namespace IDBClient {
-class IDBConnectionToServer;
+class IDBConnectionProxy;
 class TransactionOperation;
 }
 
 class IDBRequestData {
 public:
-    IDBRequestData(const IDBClient::IDBConnectionToServer&, const IDBOpenDBRequest&);
+    IDBRequestData(const IDBClient::IDBConnectionProxy&, const IDBOpenDBRequest&);
     explicit IDBRequestData(IDBClient::TransactionOperation&);
     IDBRequestData(const IDBRequestData&);
 
