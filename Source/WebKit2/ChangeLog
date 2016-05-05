@@ -1,3 +1,23 @@
+2016-05-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Add CSS Grid Layout as experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=157391
+
+        Reviewed by Michael Catanzaro.
+
+        Now that we've a runtime feature again for CSS Grid Layout (r200215),
+        we can recover the old patch (r162215) that allows to enable/disable
+        CSS Grid Layout through the environment variable
+        WEBKITGTK_EXPERIMENTAL_FEATURES.
+
+        Example: WEBKITGTK_EXPERIMENTAL_FEATURES="CSS_GRID_LAYOUT=1"
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsConstructed): Use new experimental feature to enable
+        or disable CSS Grid Layout.
+        * UIProcess/gtk/ExperimentalFeatures.cpp: Add new experimental feature.
+        * UIProcess/gtk/ExperimentalFeatures.h: Ditto.
+
 2016-05-05  Jer Noble  <jer.noble@apple.com>
 
         [WK2] Media controls don't update if controller is created after the interface is created
