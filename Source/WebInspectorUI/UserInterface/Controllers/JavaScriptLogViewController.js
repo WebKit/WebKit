@@ -285,12 +285,12 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         if (this._pendingMessages.length === 0)
             return;
 
-        let lastMessageView = this._pendingMessages.lastValue;
+        const maxMessagesPerFrame = 100;
+        let messages = this._pendingMessages.splice(0, maxMessagesPerFrame);
+
+        let lastMessageView = messages.lastValue;
         let isCommandView = lastMessageView instanceof WebInspector.ConsoleCommandView;
         let shouldScrollToBottom = isCommandView || lastMessageView.message.type === WebInspector.ConsoleMessage.MessageType.Result || this.isScrolledToBottom();
-
-        var messages = this._pendingMessages;
-        this._pendingMessages = [];
 
         for (let messageView of messages) {
             messageView.render();
@@ -301,6 +301,9 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
             this.scrollToBottom();
 
         WebInspector.quickConsole.needsLayout();
+
+        if (this._pendingMessages.length > 0)
+            this.renderPendingMessagesSoon();
     }
 
     renderPendingMessagesSoon()

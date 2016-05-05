@@ -1,3 +1,16 @@
+2016-05-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Console is unresponsive for >10 seconds when it tries to render 10,000 messages
+        https://bugs.webkit.org/show_bug.cgi?id=157368
+        <rdar://problem/26103657>
+
+        Reviewed by Timothy Hatcher.
+
+        Render only up to 100 messages per animation frame to keep the Inspector's UI responsive.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.renderPendingMessages):
+
 2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Crash if you type "debugger" in the console and continue
