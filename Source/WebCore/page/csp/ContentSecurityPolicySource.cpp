@@ -76,7 +76,7 @@ bool ContentSecurityPolicySource::pathMatches(const URL& url) const
     String path = decodeURLEscapeSequences(url.path());
 
     if (m_path.endsWith("/"))
-        return path.startsWith(m_path, false);
+        return path.startsWith(m_path);
 
     return path == m_path;
 }

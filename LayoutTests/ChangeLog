@@ -1,3 +1,16 @@
+2016-05-04  Daniel Bates  <dabates@apple.com>
+
+        CSP: Perform case sensitive match against path portion of source expression URL that ends in '/'
+        https://bugs.webkit.org/show_bug.cgi?id=157275
+
+        Reviewed by Darin Adler.
+
+        Add test to ensure that the path portion of a request URL is case-sensitively
+        matched against the path portion of a source expression that ends in '/'.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-paths-01-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-paths-01.html:
+
 2016-05-04  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Nonfunctional controls appear before every HTML5 video when using VoiceOver

@@ -1,3 +1,21 @@
+2016-05-04  Daniel Bates  <dabates@apple.com>
+
+        CSP: Perform case sensitive match against path portion of source expression URL that ends in '/'
+        https://bugs.webkit.org/show_bug.cgi?id=157275
+
+        Reviewed by Darin Adler.
+
+        Merged from Blink:
+        <https://chromium.googlesource.com/chromium/src/+/7bd0a75e3f71a10e71ded31ea5905d5ee3d992eb>
+
+        Perform a case-sensitive prefix match of the path portion a source expression that ends in '/'
+        against the path portion of a request URL as per step 8.5.4 of section Does url match expression
+        in origin with redirect count of the Content Security Policy Level 3 spec., <https://w3c.github.io/webappsec-csp>
+        (Editor's Draft, 27 April 2016).
+
+        * page/csp/ContentSecurityPolicySource.cpp:
+        (WebCore::ContentSecurityPolicySource::pathMatches):
+
 2016-05-04  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Nonfunctional controls appear before every HTML5 video when using VoiceOver
