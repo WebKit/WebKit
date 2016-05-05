@@ -194,6 +194,12 @@ static JSValue createMathProperty(VM& vm, JSObject* object)
     return MathObject::create(vm, global, MathObject::createStructure(vm, global, global->objectPrototype()));
 }
 
+static JSValue createConsoleProperty(VM& vm, JSObject* object)
+{
+    JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
+    return ConsoleObject::create(vm, global, ConsoleObject::createStructure(vm, global, global->objectPrototype()));
+}
+
 } // namespace JSC
 
 #include "JSGlobalObject.lut.h"
@@ -222,6 +228,7 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &all
   Proxy                 createProxyProperty                          DontEnum|PropertyCallback
   JSON                  createJSONProperty                           DontEnum|PropertyCallback
   Math                  createMathProperty                           DontEnum|PropertyCallback
+  console               createConsoleProperty                        DontEnum|PropertyCallback
   Int8Array             JSGlobalObject::m_typedArrayInt8             DontEnum|ClassStructure
   Int16Array            JSGlobalObject::m_typedArrayInt16            DontEnum|ClassStructure
   Int32Array            JSGlobalObject::m_typedArrayInt32            DontEnum|ClassStructure
@@ -634,8 +641,6 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 #endif // ENABLE(INTL)
     ReflectObject* reflectObject = ReflectObject::create(vm, this, ReflectObject::createStructure(vm, this, m_objectPrototype.get()));
     putDirectWithoutTransition(vm, vm.propertyNames->Reflect, reflectObject, DontEnum);
-
-    putDirectWithoutTransition(vm, vm.propertyNames->console, ConsoleObject::create(vm, this, ConsoleObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);
 
     m_moduleLoader.set(vm, this, ModuleLoaderObject::create(vm, this, ModuleLoaderObject::createStructure(vm, this, m_objectPrototype.get())));
     if (Options::exposeInternalModuleLoader())

@@ -129,7 +129,6 @@
     macro(compilations) \
     macro(compile) \
     macro(configurable) \
-    macro(console) \
     macro(constructor) \
     macro(count) \
     macro(counters) \
