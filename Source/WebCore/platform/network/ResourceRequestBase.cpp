@@ -545,6 +545,8 @@ static const HTTPHeaderName conditionalHeaderNames[] = {
 
 bool ResourceRequestBase::isConditional() const
 {
+    updateResourceRequest();
+
     for (auto headerName : conditionalHeaderNames) {
         if (m_httpHeaderFields.contains(headerName))
             return true;
@@ -555,6 +557,8 @@ bool ResourceRequestBase::isConditional() const
 
 void ResourceRequestBase::makeUnconditional()
 {
+    updateResourceRequest();
+
     for (auto headerName : conditionalHeaderNames)
         m_httpHeaderFields.remove(headerName);
 }

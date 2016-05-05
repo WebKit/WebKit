@@ -1,3 +1,45 @@
+2016-05-05  Chris Dumez  <cdumez@apple.com>
+
+        CORS check is sometimes incorrectly failing for media loads
+        https://bugs.webkit.org/show_bug.cgi?id=157370
+        <rdar://problem/26071607>
+
+        Reviewed by Alex Christensen.
+
+        When the media library is issuing a conditional request for a media
+        element that had the 'crossorigin' attribute, we would fail the CORS
+        check and log an error if the server were to respond with a "304 Not
+        Modified" response because the 304 response usually does not have
+        the necessary "Access-Control-Allow-Origin: *" header (At least for
+        Apache) and we cannot use the cached headers either since WebKit
+        does not have them.
+
+        To work around the problem in the short term, we now drop the
+        conditional headers from the request that the media library is
+        giving us when the media element has the 'crossorigin' attribute
+        set. As a result, the server will never respond with a 304 and we
+        will be able to do a CORS check on the full (e.g. 206) response.
+
+        In the long term, we need to deal with this better as this means
+        we may sometimes fail to reuse cached data. For now, this is only
+        potentially inefficient in the cases that were broken (i.e. no
+        video would play and we would log an error in the console).
+
+        Test: http/tests/security/video-cross-origin-caching.html
+
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::requestResource):
+        Make the request unconditional if the media element has the
+        'crossorigin' attribute set.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::isConditional):
+        (WebCore::ResourceRequestBase::makeUnconditional):
+        When fixing the bug above, I noticed that those method do not do
+        the right thing if the m_httpHeaderFields data member has not
+        been populated yet. m_httpHeaderFields is lazily initialized so
+        we need to call updateResourceRequest() before using it.
+
 2016-05-05  Zalan Bujtas  <zalan@apple.com>
 
         Stop traversing at the container block when computing RTL inline static distance.

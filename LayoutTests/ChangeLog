@@ -1,3 +1,18 @@
+2016-05-05  Chris Dumez  <cdumez@apple.com>
+
+        CORS check is sometimes incorrectly failing for media loads
+        https://bugs.webkit.org/show_bug.cgi?id=157370
+        <rdar://problem/26071607>
+
+        Reviewed by Alex Christensen.
+
+        Add a regression test for <rdar://problem/26071607>.
+
+        * http/tests/media/resources/reference.mov: Added.
+        * http/tests/security/resources/reference-movie-cross-origin-allow.php: Added.
+        * http/tests/security/video-cross-origin-caching-expected.txt: Added.
+        * http/tests/security/video-cross-origin-caching.html: Added.
+
 2016-05-05  Zalan Bujtas  <zalan@apple.com>
 
         Stop traversing at the container block when computing RTL inline static distance.
