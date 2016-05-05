@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that multi-column positioned RTL content works.</title>
+<style>
+div { 
+    -webkit-column-count: 2; 
+}
+.outer { 
+    position: relative;  
+    direction: rtl; 
+}
+.inner { 
+    position: absolute; 
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<div><span class=outer><span class=inner></span></span></div>
+PASS if no crash or ASSERT.
+</body>
+</html>

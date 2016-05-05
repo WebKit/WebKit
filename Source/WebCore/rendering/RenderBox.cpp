@@ -3383,28 +3383,33 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
         }
         logicalLeft.setValue(Fixed, staticPosition);
     } else {
-        const RenderBox& enclosingBox = child->parent()->enclosingBox();
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() + containerLogicalWidth + containerBlock.borderLogicalLeft();
+        auto& enclosingBox = child->parent()->enclosingBox();
+        if (&enclosingBox != &containerBlock && containerBlock.isDescendantOf(&enclosingBox)) {
+            logicalRight.setValue(Fixed, staticPosition);
+            return;
+        }
+
+        staticPosition -= enclosingBox.logicalWidth();
         for (const RenderElement* current = &enclosingBox; current; current = current->container()) {
-            if (is<RenderBox>(*current)) {
-                if (current != &containerBlock) {
-                    const auto& renderBox = downcast<RenderBox>(*current);
-                    staticPosition -= renderBox.logicalLeft();
-                    if (renderBox.isInFlowPositioned())
-                        staticPosition -= renderBox.isHorizontalWritingMode() ? renderBox.offsetForInFlowPosition().width() : renderBox.offsetForInFlowPosition().height();
-                }
-                if (current == &enclosingBox)
-                    staticPosition -= enclosingBox.logicalWidth();
-                if (region && is<RenderBlock>(*current)) {
-                    const RenderBlock& currentBlock = downcast<RenderBlock>(*current);
-                    region = currentBlock.clampToStartAndEndRegions(region);
-                    RenderBoxRegionInfo* boxInfo = currentBlock.renderBoxRegionInfo(region);
-                    if (boxInfo) {
-                        if (current != &containerBlock)
-                            staticPosition -= currentBlock.logicalWidth() - (boxInfo->logicalLeft() + boxInfo->logicalWidth());
-                        if (current == &enclosingBox)
-                            staticPosition += enclosingBox.logicalWidth() - boxInfo->logicalWidth();
-                    }
+            if (!is<RenderBox>(*current))
+                continue;
+
+            if (current != &containerBlock) {
+                auto& renderBox = downcast<RenderBox>(*current);
+                staticPosition -= renderBox.logicalLeft();
+                if (renderBox.isInFlowPositioned())
+                    staticPosition -= renderBox.isHorizontalWritingMode() ? renderBox.offsetForInFlowPosition().width() : renderBox.offsetForInFlowPosition().height();
+            }
+            if (region && is<RenderBlock>(*current)) {
+                auto& currentBlock = downcast<RenderBlock>(*current);
+                region = currentBlock.clampToStartAndEndRegions(region);
+                RenderBoxRegionInfo* boxInfo = currentBlock.renderBoxRegionInfo(region);
+                if (boxInfo) {
+                    if (current != &containerBlock)
+                        staticPosition -= currentBlock.logicalWidth() - (boxInfo->logicalLeft() + boxInfo->logicalWidth());
+                    if (current == &enclosingBox)
+                        staticPosition += enclosingBox.logicalWidth() - boxInfo->logicalWidth();
                 }
             }
             if (current == &containerBlock)

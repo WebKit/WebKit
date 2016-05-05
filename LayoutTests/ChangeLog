@@ -1,3 +1,19 @@
+2016-05-05  Zalan Bujtas  <zalan@apple.com>
+
+        Stop traversing at the container block when computing RTL inline static distance.
+        https://bugs.webkit.org/show_bug.cgi?id=157349
+        <rdar://problem/25994087>
+
+        Reviewed by David Hyatt.
+
+        When computing the inline static distance for a child renderer, we start at its enclosing box
+        and traverse up all the way to the container block.
+        However when the enclosing box is the ancestor of the container block, we
+        should just bail out right away since there's no container to use to adjust the position.
+
+        * fast/multicol/positioned-rtl-column-crash-expected.txt: Added.
+        * fast/multicol/positioned-rtl-column-crash.html: Added.
+
 2016-05-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unskip 9 compositing tests on ios-simulator, mark 2 as failures on ios-simulator-wk1
