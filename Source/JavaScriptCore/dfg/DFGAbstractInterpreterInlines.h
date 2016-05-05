@@ -2191,7 +2191,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case DeleteById: {
+    case DeleteById:
+    case DeleteByVal: {
         // FIXME: This could decide if the delete will be successful based on the set of structures that
         // we get from our base value. https://bugs.webkit.org/show_bug.cgi?id=156611
         clobberWorld(node->origin.semantic, clobberLimit);

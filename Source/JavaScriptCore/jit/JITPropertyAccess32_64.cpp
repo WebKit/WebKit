@@ -130,6 +130,15 @@ void JIT::emit_op_del_by_id(Instruction* currentInstruction)
     callOperation(operationDeleteByIdJSResult, dst, regT1, regT0, m_codeBlock->identifier(property).impl());
 }
 
+void JIT::emit_op_del_by_val(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int base = currentInstruction[2].u.operand;
+    int property = currentInstruction[3].u.operand;
+    emitLoad2(base, regT1, regT0, property, regT3, regT2);
+    callOperation(operationDeleteByValJSResult, dst, regT1, regT0, regT3, regT2);
+}
+
 JIT::CodeRef JIT::stringGetByValStubGenerator(VM* vm)
 {
     JSInterfaceJIT jit(vm);

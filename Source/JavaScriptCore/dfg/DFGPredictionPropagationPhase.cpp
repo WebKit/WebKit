@@ -751,6 +751,7 @@ private:
             setPrediction(SpecDoubleReal);
             break;
         }
+        case DeleteByVal:
         case DeleteById:
         case LogicalNot:
         case CompareLess:

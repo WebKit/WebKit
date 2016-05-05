@@ -448,6 +448,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PutGetterByVal:
     case PutSetterByVal:
     case DeleteById:
+    case DeleteByVal:
     case ArrayPush:
     case ArrayPop:
     case Call:

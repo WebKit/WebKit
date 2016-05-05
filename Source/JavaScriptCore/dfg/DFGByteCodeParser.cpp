@@ -4160,6 +4160,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_del_by_id);
         }
 
+        case op_del_by_val: {
+            int dst = currentInstruction[1].u.operand;
+            Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* key = get(VirtualRegister(currentInstruction[3].u.operand));
+            set(VirtualRegister(dst), addToGraph(DeleteByVal, base, key));
+            NEXT_OPCODE(op_del_by_val);
+        }
+
         case op_profile_type: {
             Node* valueToProfile = get(VirtualRegister(currentInstruction[1].u.operand));
             addToGraph(ProfileType, OpInfo(currentInstruction[2].u.location), valueToProfile);

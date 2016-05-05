@@ -532,6 +532,16 @@ void JIT::emit_op_del_by_id(Instruction* currentInstruction)
     callOperation(operationDeleteByIdJSResult, dst, regT0, m_codeBlock->identifier(property).impl());
 }
 
+void JIT::emit_op_del_by_val(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int base = currentInstruction[2].u.operand;
+    int property = currentInstruction[3].u.operand;
+    emitGetVirtualRegister(base, regT0);
+    emitGetVirtualRegister(property, regT1);
+    callOperation(operationDeleteByValJSResult, dst, regT0, regT1);
+}
+
 void JIT::emit_op_try_get_by_id(Instruction* currentInstruction)
 {
     int resultVReg = currentInstruction[1].u.operand;

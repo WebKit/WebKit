@@ -1871,7 +1871,6 @@ EncodedJSValue JIT_OPERATION operationDeleteByIdJSResult(ExecState* exec, Encode
     return JSValue::encode(jsBoolean(operationDeleteById(exec, base, uid)));
 }
 
-
 size_t JIT_OPERATION operationDeleteById(ExecState* exec, EncodedJSValue encodedBase, UniquedStringImpl* uid)
 {
     VM& vm = exec->vm();
@@ -1879,8 +1878,40 @@ size_t JIT_OPERATION operationDeleteById(ExecState* exec, EncodedJSValue encoded
 
     JSObject* baseObj = JSValue::decode(encodedBase).toObject(exec);
     if (!baseObj)
-        JSValue::encode(JSValue());
+        return false;
     bool couldDelete = baseObj->methodTable(vm)->deleteProperty(baseObj, exec, Identifier::fromUid(&vm, uid));
+    if (!couldDelete && exec->codeBlock()->isStrictMode())
+        vm.throwException(exec, createTypeError(exec, ASCIILiteral("Unable to delete property.")));
+    return couldDelete;
+}
+
+EncodedJSValue JIT_OPERATION operationDeleteByValJSResult(ExecState* exec, EncodedJSValue base,  EncodedJSValue key)
+{
+    return JSValue::encode(jsBoolean(operationDeleteByVal(exec, base, key)));
+}
+
+size_t JIT_OPERATION operationDeleteByVal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedKey)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSObject* baseObj = JSValue::decode(encodedBase).toObject(exec);
+    JSValue key = JSValue::decode(encodedKey);
+    if (!baseObj)
+        return false;
+
+    bool couldDelete;
+    uint32_t index;
+    if (key.getUInt32(index))
+        couldDelete = baseObj->methodTable(vm)->deletePropertyByIndex(baseObj, exec, index);
+    else {
+        if (vm.exception())
+            return false;
+        Identifier property = key.toPropertyKey(exec);
+        if (vm.exception())
+            return false;
+        couldDelete = baseObj->methodTable(vm)->deleteProperty(baseObj, exec, property);
+    }
     if (!couldDelete && exec->codeBlock()->isStrictMode())
         vm.throwException(exec, createTypeError(exec, ASCIILiteral("Unable to delete property.")));
     return couldDelete;

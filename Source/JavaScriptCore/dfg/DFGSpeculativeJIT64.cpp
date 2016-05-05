@@ -4143,6 +4143,11 @@ void SpeculativeJIT::compile(Node* node)
         compileDeleteById(node);
         break;
     }
+
+    case DeleteByVal: {
+        compileDeleteByVal(node);
+        break;
+    }
         
     case CheckCell: {
         SpeculateCellOperand cell(this, node->child1());
