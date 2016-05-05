@@ -29,6 +29,7 @@
 
 #include "IDBConnectionToServer.h"
 #include "IDBResourceIdentifier.h"
+#include "TransactionOperation.h"
 #include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -60,6 +61,18 @@ public:
     RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&);
     void didDeleteDatabase(const IDBResultData&);
 
+    void createObjectStore(TransactionOperation&, const IDBObjectStoreInfo&);
+    void deleteObjectStore(TransactionOperation&, const String& objectStoreName);
+    void clearObjectStore(TransactionOperation&, uint64_t objectStoreIdentifier);
+    void createIndex(TransactionOperation&, const IDBIndexInfo&);
+    void deleteIndex(TransactionOperation&, uint64_t objectStoreIdentifier, const String& indexName);
+    void putOrAdd(TransactionOperation&, IDBKey*, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode);
+    void getRecord(TransactionOperation&, const IDBKeyRangeData&);
+    void getCount(TransactionOperation&, const IDBKeyRangeData&);
+    void deleteRecord(TransactionOperation&, const IDBKeyRangeData&);
+    void openCursor(TransactionOperation&, const IDBCursorInfo&);
+    void iterateCursor(TransactionOperation&, const IDBKeyData&, unsigned long count);
+    
     void fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier);
 
@@ -75,6 +88,8 @@ public:
 
     void didFinishHandlingVersionChangeTransaction(IDBTransaction&);
     void databaseConnectionClosed(IDBDatabase&);
+
+    void completeOperation(const IDBResultData&);
 
     uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
 
@@ -95,6 +110,8 @@ private:
     void completeOpenDBRequest(const IDBResultData&);
     bool hasRecordOfTransaction(const IDBTransaction&) const;
 
+    void saveOperation(TransactionOperation&);
+
     IDBConnectionToServer& m_connectionToServer;
     uint64_t m_serverConnectionIdentifier;
 
@@ -108,6 +125,9 @@ private:
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
     Lock m_transactionMapLock;
+
+    HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations;
+    Lock m_transactionOperationLock;
 };
 
 } // namespace IDBClient

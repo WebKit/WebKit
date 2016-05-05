@@ -1,3 +1,86 @@
+2016-05-05  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Workers): Move TransactionOperation management from IDBConnectionToServer to IDBConnectionProxy.
+        https://bugs.webkit.org/show_bug.cgi?id=157392
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No current change in behavior, will be tested as bug 149953 makes progress).
+
+        Set up TransactionOperations on the IDBConnectionProxy instead of the IDBConnectionToServer:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::createObjectStoreOnServer):
+        (WebCore::IDBTransaction::createIndexOnServer):
+        (WebCore::IDBTransaction::openCursorOnServer):
+        (WebCore::IDBTransaction::iterateCursorOnServer):
+        (WebCore::IDBTransaction::getRecordOnServer):
+        (WebCore::IDBTransaction::getCountOnServer):
+        (WebCore::IDBTransaction::deleteRecordOnServer):
+        (WebCore::IDBTransaction::clearObjectStoreOnServer):
+        (WebCore::IDBTransaction::putOrAddOnServer):
+        (WebCore::IDBTransaction::deleteObjectStoreOnServer):
+        (WebCore::IDBTransaction::deleteIndexOnServer):
+        
+        IDBConnectionProxy is now the owner of dispatched TransactionOperations:
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::createObjectStore):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteObjectStore):
+        (WebCore::IDBClient::IDBConnectionProxy::clearObjectStore):
+        (WebCore::IDBClient::IDBConnectionProxy::createIndex):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteIndex):
+        (WebCore::IDBClient::IDBConnectionProxy::putOrAdd):
+        (WebCore::IDBClient::IDBConnectionProxy::getRecord):
+        (WebCore::IDBClient::IDBConnectionProxy::getCount):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteRecord):
+        (WebCore::IDBClient::IDBConnectionProxy::openCursor):
+        (WebCore::IDBClient::IDBConnectionProxy::iterateCursor):
+        (WebCore::IDBClient::IDBConnectionProxy::saveOperation):
+        (WebCore::IDBClient::IDBConnectionProxy::completeOperation):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        
+        Proxy this in-and-out calls to the ConnectionProxy:
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::createObjectStore):
+        (WebCore::IDBClient::IDBConnectionToServer::didCreateObjectStore):
+        (WebCore::IDBClient::IDBConnectionToServer::deleteObjectStore):
+        (WebCore::IDBClient::IDBConnectionToServer::didDeleteObjectStore):
+        (WebCore::IDBClient::IDBConnectionToServer::clearObjectStore):
+        (WebCore::IDBClient::IDBConnectionToServer::didClearObjectStore):
+        (WebCore::IDBClient::IDBConnectionToServer::createIndex):
+        (WebCore::IDBClient::IDBConnectionToServer::didCreateIndex):
+        (WebCore::IDBClient::IDBConnectionToServer::deleteIndex):
+        (WebCore::IDBClient::IDBConnectionToServer::didDeleteIndex):
+        (WebCore::IDBClient::IDBConnectionToServer::putOrAdd):
+        (WebCore::IDBClient::IDBConnectionToServer::didPutOrAdd):
+        (WebCore::IDBClient::IDBConnectionToServer::getRecord):
+        (WebCore::IDBClient::IDBConnectionToServer::didGetRecord):
+        (WebCore::IDBClient::IDBConnectionToServer::getCount):
+        (WebCore::IDBClient::IDBConnectionToServer::didGetCount):
+        (WebCore::IDBClient::IDBConnectionToServer::deleteRecord):
+        (WebCore::IDBClient::IDBConnectionToServer::didDeleteRecord):
+        (WebCore::IDBClient::IDBConnectionToServer::openCursor):
+        (WebCore::IDBClient::IDBConnectionToServer::didOpenCursor):
+        (WebCore::IDBClient::IDBConnectionToServer::iterateCursor):
+        (WebCore::IDBClient::IDBConnectionToServer::didIterateCursor):
+        (WebCore::IDBClient::IDBConnectionToServer::saveOperation): Deleted.
+        (WebCore::IDBClient::IDBConnectionToServer::completeOperation): Deleted.
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+
+        - Give TransactionOperation a ThreadIdentifier member
+        - Privatize most public methods from TransactionOperation
+        - Make IDBRequestData a friend so it can get at the private methods
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::~TransactionOperation):
+        (WebCore::IDBClient::TransactionOperation::perform):
+        (WebCore::IDBClient::TransactionOperation::completed):
+        (WebCore::IDBClient::TransactionOperation::originThreadID):
+        (WebCore::IDBClient::TransactionOperation::transactionIdentifier):
+        (WebCore::IDBClient::TransactionOperation::objectStoreIdentifier):
+        (WebCore::IDBClient::TransactionOperation::indexIdentifier):
+        (WebCore::IDBClient::TransactionOperation::cursorIdentifier):
+        (WebCore::IDBClient::TransactionOperation::transaction):
+        (WebCore::IDBClient::TransactionOperation::indexRecordType):
+
 2016-05-05  Zalan Bujtas  <zalan@apple.com>
 
         Do not attempt to compute min/max width.

@@ -87,169 +87,161 @@ void IDBConnectionToServer::didOpenDatabase(const IDBResultData& resultData)
     m_proxy->didOpenDatabase(resultData);
 }
 
-void IDBConnectionToServer::createObjectStore(TransactionOperation& operation, const IDBObjectStoreInfo& info)
+void IDBConnectionToServer::createObjectStore(const IDBRequestData& requestData, const IDBObjectStoreInfo& info)
 {
     LOG(IndexedDB, "IDBConnectionToServer::createObjectStore");
+    ASSERT(isMainThread());
 
-    saveOperation(operation);
-
-    m_delegate->createObjectStore(IDBRequestData(operation), info);
+    m_delegate->createObjectStore(requestData, info);
 }
 
 void IDBConnectionToServer::didCreateObjectStore(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didCreateObjectStore");
-    completeOperation(resultData);
+    m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::deleteObjectStore(TransactionOperation& operation, const String& objectStoreName)
+void IDBConnectionToServer::deleteObjectStore(const IDBRequestData& requestData, const String& objectStoreName)
 {
     LOG(IndexedDB, "IDBConnectionToServer::deleteObjectStore");
+    ASSERT(isMainThread());
 
-    saveOperation(operation);
-
-    m_delegate->deleteObjectStore(IDBRequestData(operation), objectStoreName);
+    m_delegate->deleteObjectStore(requestData, objectStoreName);
 }
 
 void IDBConnectionToServer::didDeleteObjectStore(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didDeleteObjectStore");
-    completeOperation(resultData);
+    m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::clearObjectStore(TransactionOperation& operation, uint64_t objectStoreIdentifier)
+void IDBConnectionToServer::clearObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::clearObjectStore");
+    ASSERT(isMainThread());
 
-    saveOperation(operation);
-
-    m_delegate->clearObjectStore(IDBRequestData(operation), objectStoreIdentifier);
+    m_delegate->clearObjectStore(requestData, objectStoreIdentifier);
 }
 
 void IDBConnectionToServer::didClearObjectStore(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didClearObjectStore");
-    completeOperation(resultData);
+    m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::createIndex(TransactionOperation& operation, const IDBIndexInfo& info)
+void IDBConnectionToServer::createIndex(const IDBRequestData& requestData, const IDBIndexInfo& info)
 {
     LOG(IndexedDB, "IDBConnectionToServer::createIndex");
+    ASSERT(isMainThread());
 
-    saveOperation(operation);
-
-    m_delegate->createIndex(IDBRequestData(operation), info);
+    m_delegate->createIndex(requestData, info);
 }
 
 void IDBConnectionToServer::didCreateIndex(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didCreateIndex");
-    completeOperation(resultData);
+    m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::deleteIndex(TransactionOperation& operation, uint64_t objectStoreIdentifier, const String& indexName)
+void IDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& indexName)
 {
     LOG(IndexedDB, "IDBConnectionToServer::deleteIndex");
+    ASSERT(isMainThread());
 
-    saveOperation(operation);
-
-    m_delegate->deleteIndex(IDBRequestData(operation), objectStoreIdentifier, indexName);
+    m_delegate->deleteIndex(requestData, objectStoreIdentifier, indexName);
 }
 
 void IDBConnectionToServer::didDeleteIndex(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didDeleteIndex");
-    completeOperation(resultData);
+    m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::putOrAdd(TransactionOperation& operation, IDBKey* key, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+void IDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, IDBKey* key, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBConnectionToServer::putOrAdd");
+    ASSERT(isMainThread());
 
-    saveOperation(operation);
-    m_delegate->putOrAdd(IDBRequestData(operation), key, value, overwriteMode);
+    m_delegate->putOrAdd(requestData, key, value, overwriteMode);
 }
 
 void IDBConnectionToServer::didPutOrAdd(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didPutOrAdd");
-    completeOperation(resultData);
+    m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::getRecord(TransactionOperation& operation, const IDBKeyRangeData& keyRangeData)
+void IDBConnectionToServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::getRecord");
-
+    ASSERT(isMainThread());
     ASSERT(!keyRangeData.isNull);
 
-    saveOperation(operation);
-    m_delegate->getRecord(IDBRequestData(operation), keyRangeData);
+    m_delegate->getRecord(requestData, keyRangeData);
 }
 
 void IDBConnectionToServer::didGetRecord(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didGetRecord");
-    completeOperation(resultData);
+    m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::getCount(TransactionOperation& operation, const IDBKeyRangeData& keyRangeData)
+void IDBConnectionToServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::getCount");
-
+    ASSERT(isMainThread());
     ASSERT(!keyRangeData.isNull);
 
-    saveOperation(operation);
-    m_delegate->getCount(IDBRequestData(operation), keyRangeData);
+    m_delegate->getCount(requestData, keyRangeData);
 }
 
 void IDBConnectionToServer::didGetCount(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didGetCount");
-    completeOperation(resultData);
+    m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::deleteRecord(TransactionOperation& operation, const IDBKeyRangeData& keyRangeData)
+void IDBConnectionToServer::deleteRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::deleteRecord");
-
+    ASSERT(isMainThread());
     ASSERT(!keyRangeData.isNull);
 
-    saveOperation(operation);
-    m_delegate->deleteRecord(IDBRequestData(operation), keyRangeData);
+    m_delegate->deleteRecord(requestData, keyRangeData);
 }
 
 void IDBConnectionToServer::didDeleteRecord(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didDeleteRecord");
-    completeOperation(resultData);
+    m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::openCursor(TransactionOperation& operation, const IDBCursorInfo& info)
+void IDBConnectionToServer::openCursor(const IDBRequestData& requestData, const IDBCursorInfo& info)
 {
     LOG(IndexedDB, "IDBConnectionToServer::openCursor");
+    ASSERT(isMainThread());
 
-    saveOperation(operation);
-    m_delegate->openCursor(IDBRequestData(operation), info);
+    m_delegate->openCursor(requestData, info);
 }
 
 void IDBConnectionToServer::didOpenCursor(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didOpenCursor");
-    completeOperation(resultData);
+    m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::iterateCursor(TransactionOperation& operation, const IDBKeyData& key, unsigned long count)
+void IDBConnectionToServer::iterateCursor(const IDBRequestData& requestData, const IDBKeyData& key, unsigned long count)
 {
     LOG(IndexedDB, "IDBConnectionToServer::iterateCursor");
+    ASSERT(isMainThread());
 
-    saveOperation(operation);
-    m_delegate->iterateCursor(IDBRequestData(operation), key, count);
+    m_delegate->iterateCursor(requestData, key, count);
 }
 
 void IDBConnectionToServer::didIterateCursor(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didIterateCursor");
-    completeOperation(resultData);
+    m_proxy->completeOperation(resultData);
 }
 
 void IDBConnectionToServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
@@ -345,20 +337,6 @@ void IDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectio
     LOG(IndexedDB, "IDBConnectionToServer::abortOpenAndUpgradeNeeded");
 
     m_delegate->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
-}
-
-void IDBConnectionToServer::saveOperation(TransactionOperation& operation)
-{
-    ASSERT(!m_activeOperations.contains(operation.identifier()));
-    m_activeOperations.set(operation.identifier(), &operation);
-}
-
-void IDBConnectionToServer::completeOperation(const IDBResultData& resultData)
-{
-    auto operation = m_activeOperations.take(resultData.requestIdentifier());
-    ASSERT(operation);
-
-    operation->completed(resultData);
 }
 
 void IDBConnectionToServer::getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)> callback)

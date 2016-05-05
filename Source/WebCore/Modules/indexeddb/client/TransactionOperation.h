@@ -29,8 +29,10 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBRequest.h"
+#include "IDBRequestData.h"
 #include "IDBResourceIdentifier.h"
 #include "IDBTransaction.h"
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -43,9 +45,16 @@ enum class IndexRecordType;
 namespace IDBClient {
 
 class TransactionOperation : public ThreadSafeRefCounted<TransactionOperation> {
+    friend IDBRequestData::IDBRequestData(TransactionOperation&);
 public:
+    virtual ~TransactionOperation()
+    {
+        ASSERT(m_originThreadID == currentThread());
+    }
+
     void perform()
     {
+        ASSERT(m_originThreadID == currentThread());
         ASSERT(m_performFunction);
         m_performFunction();
         m_performFunction = { };
@@ -53,6 +62,7 @@ public:
 
     void completed(const IDBResultData& data)
     {
+        ASSERT(m_originThreadID == currentThread());
         ASSERT(m_completeFunction);
         m_completeFunction(data);
         m_transaction->operationDidComplete(*this);
@@ -60,12 +70,8 @@ public:
     }
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
-    IDBResourceIdentifier transactionIdentifier() const { return m_transaction->info().identifier(); }
-    uint64_t objectStoreIdentifier() const { return m_objectStoreIdentifier; }
-    uint64_t indexIdentifier() const { return m_indexIdentifier; }
-    IDBResourceIdentifier* cursorIdentifier() const { return m_cursorIdentifier.get(); }
-    IDBTransaction& transaction() { return m_transaction.get(); }
-    IndexedDB::IndexRecordType indexRecordType() const { return m_indexRecordType; }
+
+    ThreadIdentifier originThreadID() const { return m_originThreadID; }
 
 protected:
     TransactionOperation(IDBTransaction& transaction)
@@ -84,6 +90,16 @@ protected:
     IndexedDB::IndexRecordType m_indexRecordType;
     std::function<void ()> m_performFunction;
     std::function<void (const IDBResultData&)> m_completeFunction;
+
+private:
+    IDBResourceIdentifier transactionIdentifier() const { return m_transaction->info().identifier(); }
+    uint64_t objectStoreIdentifier() const { return m_objectStoreIdentifier; }
+    uint64_t indexIdentifier() const { return m_indexIdentifier; }
+    IDBResourceIdentifier* cursorIdentifier() const { return m_cursorIdentifier.get(); }
+    IDBTransaction& transaction() { return m_transaction.get(); }
+    IndexedDB::IndexRecordType indexRecordType() const { return m_indexRecordType; }
+
+    ThreadIdentifier m_originThreadID { currentThread() };
 };
 
 template <typename... Arguments>

@@ -32,6 +32,7 @@
 #include "IDBOpenDBRequest.h"
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
+#include "SecurityOrigin.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -131,6 +132,139 @@ void IDBConnectionProxy::completeOpenDBRequest(const IDBResultData& resultData)
     }
 
     request->requestCompleted(resultData);
+}
+
+void IDBConnectionProxy::createObjectStore(TransactionOperation& operation, const IDBObjectStoreInfo& info)
+{
+    IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    // FIXME: Handle worker thread marshalling.
+
+    m_connectionToServer.createObjectStore(requestData, info);
+}
+
+void IDBConnectionProxy::deleteObjectStore(TransactionOperation& operation, const String& objectStoreName)
+{
+    IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    // FIXME: Handle worker thread marshalling.
+
+    m_connectionToServer.deleteObjectStore(requestData, objectStoreName);
+}
+
+void IDBConnectionProxy::clearObjectStore(TransactionOperation& operation, uint64_t objectStoreIdentifier)
+{
+    IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    // FIXME: Handle worker thread marshalling.
+
+    m_connectionToServer.clearObjectStore(requestData, objectStoreIdentifier);
+}
+
+void IDBConnectionProxy::createIndex(TransactionOperation& operation, const IDBIndexInfo& info)
+{
+    IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    // FIXME: Handle worker thread marshalling.
+
+    m_connectionToServer.createIndex(requestData, info);
+}
+
+void IDBConnectionProxy::deleteIndex(TransactionOperation& operation, uint64_t objectStoreIdentifier, const String& indexName)
+{
+    IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    // FIXME: Handle worker thread marshalling.
+
+    m_connectionToServer.deleteIndex(requestData, objectStoreIdentifier, indexName);
+}
+
+void IDBConnectionProxy::putOrAdd(TransactionOperation& operation, IDBKey* key, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode mode)
+{
+    IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    // FIXME: Handle worker thread marshalling.
+
+    m_connectionToServer.putOrAdd(requestData, key, value, mode);
+}
+
+void IDBConnectionProxy::getRecord(TransactionOperation& operation, const IDBKeyRangeData& keyRange)
+{
+    IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    // FIXME: Handle worker thread marshalling.
+
+    m_connectionToServer.getRecord(requestData, keyRange);
+}
+
+void IDBConnectionProxy::getCount(TransactionOperation& operation, const IDBKeyRangeData& keyRange)
+{
+    IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    // FIXME: Handle worker thread marshalling.
+
+    m_connectionToServer.getCount(requestData, keyRange);
+}
+
+void IDBConnectionProxy::deleteRecord(TransactionOperation& operation, const IDBKeyRangeData& keyRange)
+{
+    IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    // FIXME: Handle worker thread marshalling.
+
+    m_connectionToServer.deleteRecord(requestData, keyRange);
+}
+
+void IDBConnectionProxy::openCursor(TransactionOperation& operation, const IDBCursorInfo& info)
+{
+    IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    // FIXME: Handle worker thread marshalling.
+
+    m_connectionToServer.openCursor(requestData, info);
+}
+
+void IDBConnectionProxy::iterateCursor(TransactionOperation& operation, const IDBKeyData& key, unsigned long count)
+{
+    IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    // FIXME: Handle worker thread marshalling.
+
+    m_connectionToServer.iterateCursor(requestData, key, count);
+}
+
+void IDBConnectionProxy::saveOperation(TransactionOperation& operation)
+{
+    Locker<Lock> locker(m_transactionOperationLock);
+
+    ASSERT(!m_activeOperations.contains(operation.identifier()));
+    m_activeOperations.set(operation.identifier(), &operation);
+}
+
+void IDBConnectionProxy::completeOperation(const IDBResultData& resultData)
+{
+    RefPtr<TransactionOperation> operation;
+    {
+        Locker<Lock> locker(m_transactionOperationLock);
+        operation = m_activeOperations.take(resultData.requestIdentifier());
+    }
+
+    ASSERT(operation);
+
+    // FIXME: Handle getting operation->completed() onto the correct thread via the IDBTransaction.
+    
+    operation->completed(resultData);
 }
 
 void IDBConnectionProxy::fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)

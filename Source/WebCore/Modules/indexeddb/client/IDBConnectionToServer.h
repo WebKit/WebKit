@@ -30,7 +30,6 @@
 #include "IDBConnectionProxy.h"
 #include "IDBConnectionToServerDelegate.h"
 #include "IDBResourceIdentifier.h"
-#include "TransactionOperation.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
@@ -44,10 +43,9 @@ class IDBError;
 class IDBObjectStoreInfo;
 class IDBResultData;
 class IDBValue;
+class SecurityOrigin;
 
 namespace IDBClient {
-
-class TransactionOperation;
 
 class IDBConnectionToServer : public ThreadSafeRefCounted<IDBConnectionToServer> {
 public:
@@ -63,37 +61,37 @@ public:
     void openDatabase(const IDBRequestData&);
     WEBCORE_EXPORT void didOpenDatabase(const IDBResultData&);
 
-    void createObjectStore(TransactionOperation&, const IDBObjectStoreInfo&);
+    void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
     WEBCORE_EXPORT void didCreateObjectStore(const IDBResultData&);
 
-    void deleteObjectStore(TransactionOperation&, const String& objectStoreName);
+    void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
     WEBCORE_EXPORT void didDeleteObjectStore(const IDBResultData&);
 
-    void clearObjectStore(TransactionOperation&, uint64_t objectStoreIdentifier);
+    void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier);
     WEBCORE_EXPORT void didClearObjectStore(const IDBResultData&);
 
-    void createIndex(TransactionOperation&, const IDBIndexInfo&);
+    void createIndex(const IDBRequestData&, const IDBIndexInfo&);
     WEBCORE_EXPORT void didCreateIndex(const IDBResultData&);
 
-    void deleteIndex(TransactionOperation&, uint64_t objectStoreIdentifier, const String& indexName);
+    void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
     WEBCORE_EXPORT void didDeleteIndex(const IDBResultData&);
 
-    void putOrAdd(TransactionOperation&, IDBKey*, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode);
+    void putOrAdd(const IDBRequestData&, IDBKey*, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode);
     WEBCORE_EXPORT void didPutOrAdd(const IDBResultData&);
 
-    void getRecord(TransactionOperation&, const IDBKeyRangeData&);
+    void getRecord(const IDBRequestData&, const IDBKeyRangeData&);
     WEBCORE_EXPORT void didGetRecord(const IDBResultData&);
 
-    void getCount(TransactionOperation&, const IDBKeyRangeData&);
+    void getCount(const IDBRequestData&, const IDBKeyRangeData&);
     WEBCORE_EXPORT void didGetCount(const IDBResultData&);
 
-    void deleteRecord(TransactionOperation&, const IDBKeyRangeData&);
+    void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&);
     WEBCORE_EXPORT void didDeleteRecord(const IDBResultData&);
 
-    void openCursor(TransactionOperation&, const IDBCursorInfo&);
+    void openCursor(const IDBRequestData&, const IDBCursorInfo&);
     WEBCORE_EXPORT void didOpenCursor(const IDBResultData&);
 
-    void iterateCursor(TransactionOperation&, const IDBKeyData&, unsigned long count);
+    void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count);
     WEBCORE_EXPORT void didIterateCursor(const IDBResultData&);
 
     void commitTransaction(const IDBResourceIdentifier& transactionIdentifier);
@@ -124,12 +122,7 @@ public:
 private:
     IDBConnectionToServer(IDBConnectionToServerDelegate&);
 
-    void saveOperation(TransactionOperation&);
-    void completeOperation(const IDBResultData&);
-
     Ref<IDBConnectionToServerDelegate> m_delegate;
-
-    HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations;
 
     HashMap<uint64_t, std::function<void (const Vector<String>&)>> m_getAllDatabaseNamesCallbacks;
 

@@ -588,7 +588,7 @@ void IDBTransaction::createObjectStoreOnServer(IDBClient::TransactionOperation& 
     ASSERT(currentThread() == m_database->originThreadID());
     ASSERT(isVersionChange());
 
-    m_database->serverConnection().createObjectStore(operation, info);
+    m_database->connectionProxy().createObjectStore(operation, info);
 }
 
 void IDBTransaction::didCreateObjectStoreOnServer(const IDBResultData& resultData)
@@ -619,7 +619,7 @@ void IDBTransaction::createIndexOnServer(IDBClient::TransactionOperation& operat
     ASSERT(currentThread() == m_database->originThreadID());
     ASSERT(isVersionChange());
 
-    m_database->serverConnection().createIndex(operation, info);
+    m_database->connectionProxy().createIndex(operation, info);
 }
 
 void IDBTransaction::didCreateIndexOnServer(const IDBResultData& resultData)
@@ -678,7 +678,7 @@ void IDBTransaction::openCursorOnServer(IDBClient::TransactionOperation& operati
     LOG(IndexedDB, "IDBTransaction::openCursorOnServer");
     ASSERT(currentThread() == m_database->originThreadID());
 
-    m_database->serverConnection().openCursor(operation, info);
+    m_database->connectionProxy().openCursor(operation, info);
 }
 
 void IDBTransaction::didOpenCursorOnServer(IDBRequest& request, const IDBResultData& resultData)
@@ -707,7 +707,7 @@ void IDBTransaction::iterateCursorOnServer(IDBClient::TransactionOperation& oper
     LOG(IndexedDB, "IDBTransaction::iterateCursorOnServer");
     ASSERT(currentThread() == m_database->originThreadID());
 
-    serverConnection().iterateCursor(operation, key, count);
+    m_database->connectionProxy().iterateCursor(operation, key, count);
 }
 
 void IDBTransaction::didIterateCursorOnServer(IDBRequest& request, const IDBResultData& resultData)
@@ -771,7 +771,7 @@ void IDBTransaction::getRecordOnServer(IDBClient::TransactionOperation& operatio
     LOG(IndexedDB, "IDBTransaction::getRecordOnServer");
     ASSERT(currentThread() == m_database->originThreadID());
 
-    serverConnection().getRecord(operation, keyRange);
+    m_database->connectionProxy().getRecord(operation, keyRange);
 }
 
 void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultData& resultData)
@@ -838,7 +838,7 @@ void IDBTransaction::getCountOnServer(IDBClient::TransactionOperation& operation
     LOG(IndexedDB, "IDBTransaction::getCountOnServer");
     ASSERT(currentThread() == m_database->originThreadID());
 
-    serverConnection().getCount(operation, keyRange);
+    m_database->connectionProxy().getCount(operation, keyRange);
 }
 
 void IDBTransaction::didGetCountOnServer(IDBRequest& request, const IDBResultData& resultData)
@@ -869,7 +869,7 @@ void IDBTransaction::deleteRecordOnServer(IDBClient::TransactionOperation& opera
     LOG(IndexedDB, "IDBTransaction::deleteRecordOnServer");
     ASSERT(currentThread() == m_database->originThreadID());
 
-    serverConnection().deleteRecord(operation, keyRange);
+    m_database->connectionProxy().deleteRecord(operation, keyRange);
 }
 
 void IDBTransaction::didDeleteRecordOnServer(IDBRequest& request, const IDBResultData& resultData)
@@ -902,7 +902,7 @@ void IDBTransaction::clearObjectStoreOnServer(IDBClient::TransactionOperation& o
     LOG(IndexedDB, "IDBTransaction::clearObjectStoreOnServer");
     ASSERT(currentThread() == m_database->originThreadID());
 
-    serverConnection().clearObjectStore(operation, objectStoreIdentifier);
+    m_database->connectionProxy().clearObjectStore(operation, objectStoreIdentifier);
 }
 
 void IDBTransaction::didClearObjectStoreOnServer(IDBRequest& request, const IDBResultData& resultData)
@@ -939,7 +939,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
     ASSERT(value);
 
     if (!value->hasBlobURLs()) {
-        serverConnection().putOrAdd(operation, key.get(), *value, overwriteMode);
+        m_database->connectionProxy().putOrAdd(operation, key.get(), *value, overwriteMode);
         return;
     }
 
@@ -947,7 +947,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
     RefPtr<IDBClient::TransactionOperation> operationRef(&operation);
     value->writeBlobsToDiskForIndexedDB([protector, this, operationRef, key, value, overwriteMode](const IDBValue& idbValue) {
         if (idbValue.data().data()) {
-            serverConnection().putOrAdd(*operationRef, key.get(), idbValue, overwriteMode);
+            m_database->connectionProxy().putOrAdd(*operationRef, key.get(), idbValue, overwriteMode);
             return;
         }
 
@@ -991,7 +991,7 @@ void IDBTransaction::deleteObjectStoreOnServer(IDBClient::TransactionOperation& 
     ASSERT(isVersionChange());
     ASSERT(currentThread() == m_database->originThreadID());
 
-    serverConnection().deleteObjectStore(operation, objectStoreName);
+    m_database->connectionProxy().deleteObjectStore(operation, objectStoreName);
 }
 
 void IDBTransaction::didDeleteObjectStoreOnServer(const IDBResultData& resultData)
@@ -1017,7 +1017,7 @@ void IDBTransaction::deleteIndexOnServer(IDBClient::TransactionOperation& operat
     ASSERT(isVersionChange());
     ASSERT(currentThread() == m_database->originThreadID());
 
-    serverConnection().deleteIndex(operation, objectStoreIdentifier, indexName);
+    m_database->connectionProxy().deleteIndex(operation, objectStoreIdentifier, indexName);
 }
 
 void IDBTransaction::didDeleteIndexOnServer(const IDBResultData& resultData)
