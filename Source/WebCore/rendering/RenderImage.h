@@ -124,11 +124,11 @@ private:
     // Text to display as long as the image isn't available.
     String m_altText;
     std::unique_ptr<RenderImageResource> m_imageResource;
-    bool m_needsToSetSizeForAltText;
-    bool m_didIncrementVisuallyNonEmptyPixelCount;
-    bool m_isGeneratedContent;
-    bool m_hasShadowControls;
-    float m_imageDevicePixelRatio;
+    bool m_needsToSetSizeForAltText { false };
+    bool m_didIncrementVisuallyNonEmptyPixelCount { false };
+    bool m_isGeneratedContent { false };
+    bool m_hasShadowControls { false };
+    float m_imageDevicePixelRatio { 1 };
 
     friend class RenderImageScaleObserver;
 };

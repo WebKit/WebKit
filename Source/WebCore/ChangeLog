@@ -1,3 +1,24 @@
+2016-05-05  Zalan Bujtas  <zalan@apple.com>
+
+        Do not attempt to compute min/max width.
+        https://bugs.webkit.org/show_bug.cgi?id=157320
+
+        Reviewed by David Hyatt.
+
+        Replaced elements with no intrinsic size (only with ratio) should not call the containing
+        block to compute the min/max width when the containing block's min/max width
+        depends on the children's intrinsic size. It could lead to infinite recursion.
+
+        Test: fast/replaced/before-content-intrinsic-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth): Unrelated code change.
+        * rendering/RenderImage.cpp: Unrelated code change.
+        (WebCore::RenderImage::RenderImage): Deleted.
+        * rendering/RenderImage.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+
 2016-05-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Move all IDB DOM object management from IDBConnectionToServer to IDBConnectionProxy.

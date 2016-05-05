@@ -122,15 +122,10 @@ using namespace HTMLNames;
 RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styleImage, const float imageDevicePixelRatio)
     : RenderReplaced(element, WTFMove(style), IntSize())
     , m_imageResource(styleImage ? std::make_unique<RenderImageResourceStyleImage>(*styleImage) : std::make_unique<RenderImageResource>())
-    , m_needsToSetSizeForAltText(false)
-    , m_didIncrementVisuallyNonEmptyPixelCount(false)
-    , m_isGeneratedContent(false)
-    , m_hasShadowControls(false)
     , m_imageDevicePixelRatio(imageDevicePixelRatio)
 {
     updateAltText();
     imageResource().initialize(this);
-
     if (is<HTMLImageElement>(element))
         m_hasShadowControls = downcast<HTMLImageElement>(element).hasShadowControls();
 }
@@ -138,11 +133,6 @@ RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styl
 RenderImage::RenderImage(Document& document, RenderStyle&& style, StyleImage* styleImage)
     : RenderReplaced(document, WTFMove(style), IntSize())
     , m_imageResource(styleImage ? std::make_unique<RenderImageResourceStyleImage>(*styleImage) : std::make_unique<RenderImageResource>())
-    , m_needsToSetSizeForAltText(false)
-    , m_didIncrementVisuallyNonEmptyPixelCount(false)
-    , m_isGeneratedContent(false)
-    , m_hasShadowControls(false)
-    , m_imageDevicePixelRatio(1.0f)
 {
     imageResource().initialize(this);
 }

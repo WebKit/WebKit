@@ -1,3 +1,17 @@
+2016-05-05  Zalan Bujtas  <zalan@apple.com>
+
+        Do not attempt to compute min/max width.
+        https://bugs.webkit.org/show_bug.cgi?id=157320
+
+        Reviewed by David Hyatt.
+
+        Replaced elements with no intrinsic size (only with ratio) should not call the containing
+        block to compute the min/max width when the containing block's min/max width
+        depends on the children's intrinsic size. It could lead to infinite recursion.
+
+        * fast/replaced/before-content-intrinsic-crash-expected.txt: Added.
+        * fast/replaced/before-content-intrinsic-crash.html: Added.
+
 2016-05-05  Nan Wang  <n_wang@apple.com>
 
         For keyboard users, activating a fragment URL should transfer focus and caret to the destination

@@ -415,9 +415,11 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
                 // The aforementioned 'constraint equation' used for block-level, non-replaced elements in normal flow:
                 // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
                 LayoutUnit logicalWidth;
-                if (RenderBlock* blockWithWidth = firstContainingBlockWithLogicalWidth(this))
-                    logicalWidth = blockWithWidth->computeReplacedLogicalWidthRespectingMinMaxWidth(blockWithWidth->computeReplacedLogicalWidthUsing(MainOrPreferredSize, blockWithWidth->style().logicalWidth()), shouldComputePreferred);
-                else
+                if (auto* blockWithWidth = firstContainingBlockWithLogicalWidth(this)) {
+                    logicalWidth = blockWithWidth->computeReplacedLogicalWidthUsing(MainOrPreferredSize, blockWithWidth->style().logicalWidth());
+                    if (!blockWithWidth->style().logicalMaxWidth().isMaxContent() && !blockWithWidth->style().logicalMinWidth().isMinContent())
+                        logicalWidth = blockWithWidth->computeReplacedLogicalWidthRespectingMinMaxWidth(logicalWidth, shouldComputePreferred);
+                } else
                     logicalWidth = containingBlock()->availableLogicalWidth();
 
                 // This solves above equation for 'width' (== logicalWidth).
