@@ -1,3 +1,40 @@
+2016-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Adaptive streaming issues
+        https://bugs.webkit.org/show_bug.cgi?id=144040
+
+        Reviewed by Philippe Normand.
+
+        In the case of adaptive streaming, the GST URI downloader object is creating the source object, in our case
+        WebKitWebSrc, without taking its ownership. This is breaking the lifetime of the WebKitWebSrc element. We are
+        using GRefPtr in WebKitWebSrc to ref/unref the object when sending notifications to the main thread, ensuring
+        that the object is not destroyed before the main thread dispatches the message. But our smart pointers are so
+        smart that in case of receiving a floating reference, it's converted to a full reference, so that the first time
+        we try to take a ref of a WebKitWebSrc having a floating reference we are actually taking the ownership
+        instead. When we try to release the reference, we are actuallty destroying the object, something that the actual
+        owner is not expecting and causing runtime critical warnings and very often web process crashes.
+
+            (WebKitWebProcess:6863): GStreamer-CRITICAL **:
+            Trying to dispose element appsrc1, but it is in READY instead of the NULL state.
+            You need to explicitly set elements to the NULL state before
+            dropping the final reference, to allow them to clean up.
+            This problem may also be caused by a refcounting bug in the
+            application or some element.
+
+            (WebKitWebProcess:6863): GStreamer-CRITICAL **: gst_uri_handler_get_uri: assertion 'GST_IS_URI_HANDLER(handler)' failed
+
+            (WebKitWebProcess:6863): GStreamer-CRITICAL **: gst_uri_get_protocol: assertion 'uri != NULL' failed
+
+        This should be fixed in GST, but we can workaround it in WebKit while it's fixed in GST or to prevent this from
+        happening if other users make the same mistake. The idea is to add a ensureGRef() only available for GRefPtr
+        when using WebKitWebSrc objects that consumes the floating reference if needed before taking the actual reference.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::ensureGRef): Consume the floating ref if needed.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcChangeState): Use ensureGRef().
+
 2016-05-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Unreviewed speculative buildfix after r200433, just for fun.
