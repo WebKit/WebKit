@@ -333,10 +333,10 @@
     <dependencies>
       <dep package="orc"/>
     </dependencies>
-    <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.6.3"
+    <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.8.0"
             repo="gstreamer"
-            hash="sha256:22f9568d67b87cf700a111f381144bd37cb93790a77e4e331db01fe854a37f24"
-            md5sum="b4cdeb2b9cb20dd6ac022a4f417eae0d"/>
+            hash="sha256:947a314a212b5d94985d89b43440dbe66b696e12bbdf9a2f78967b98d74abedc"
+            md5sum="6846d7289ec323c38c49b818171e955a"/>
   </autotools>
 
   <autotools id="gst-plugins-base"
@@ -348,10 +348,10 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" version="1.6.3"
+    <branch module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" version="1.8.0"
             repo="gstreamer"
-            hash="sha256:b6154f8fdba4877e95efd94610ef0ada4f0171cd12eb829a3c3c97345d9c7a75"
-            md5sum="3ddde0ad598ef69f58d6a2e87f8b460f"/>
+            hash="sha256:abc0acc1d15b4b9c97c65cd9689bd6400081853b9980ea428d3c8572dd791522"
+            md5sum="20cc8231609318310f2a55f64c86cbb4"/>
   </autotools>
 
   <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup --disable-gtk-doc">
@@ -362,10 +362,13 @@
       <dep package="gst-plugins-base"/>
     </dependencies>
 
-    <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.6.3"
+    <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.8.0"
             repo="gstreamer"
-            hash="sha256:24b19db70b2a83461ebddfe20033db432dadfdb5d4b54ffb1dfa0d830134a177"
-            md5sum="a1958df7aa498b42793e2f2048673815"/>
+            hash="sha256:c20c134d47dbc238d921707a3b66da709c2b4dd89f9d267cec13d1ddf16e9f4d"
+            md5sum="91ed4649c7c2e43a61f731d144f6f6d0">
+      <patch file="gst-plugins-good-use-the-tfdt-decode-time.patch" strip="1"/>
+      <patch file="gst-plugins-good-Revert-qtdemux-expose-streams-with-first-moof-for-fr.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="gst-plugins-bad" autogenargs="--disable-examples --disable-gtk-doc">
@@ -375,20 +378,20 @@
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.6.3"
+    <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.8.0"
             repo="gstreamer"
-            hash="sha256:971b29101d6a9c5e3fe94d99d977a227f58f0b2d29b6ca2c7f292052542b3a61"
-            md5sum="4857adcafe41e4b9b8805cf88303bd55"/>
+            hash="sha256:116376dd1085082422e0b21b0ecd3d1cb345c469c58e32463167d4675f4ca90e"
+            md5sum="1c2d797bb96a81e9ef570c7a0a37203e"/>
   </autotools>
 
   <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="gst-libav/gst-libav-${version}.tar.xz" version="1.6.3"
+    <branch module="gst-libav/gst-libav-${version}.tar.xz" version="1.8.0"
             repo="gstreamer"
-            hash="sha256:857b9c060a0337de38c6d26238c47352433c02eabf26c2f860c854dbc35bd4ab"
-            md5sum="cfe9a06913d4fd4067e9e47f6e05fac2"/>
+            hash="sha256:5a1ce28876aee93cb4f3d090f0e807915a5d9bc1325e3480dd302b85aeb4291c"
+            md5sum="361638fa45466c5050bcde6bfe10fa46"/>
   </autotools>
 
   <autotools id="xserver" autogenargs="--disable-xinerama --enable-glx --enable-composite --disable-xorg --disable-dmx --disable-xnest --disable-xquartz --disable-xwin --disable-xephyr --disable-xfake --disable-xfbdev --disable-install-setuid --disable-unit-tests --disable-present --enable-unix-transport --enable-tcp-transport --disable-local-transport --with-xkb-path=/usr/share/X11/xkb --with-xkb-output=/var/lib/xkb --with-xkb-bin-directory=/usr/bin --without-dtrace">
