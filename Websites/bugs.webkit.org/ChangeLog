@@ -1,3 +1,18 @@
+2016-05-05  David Kilzer  <ddkilzer@apple.com>
+
+        bugs.webkit.org: "See Also" field should support Chromium bugs
+
+        Merge Bugzilla upstream master 3af55bfe0bd10a85b7cd69e26a19034a6d2e78f5.
+        <https://bugzilla.mozilla.org/show_bug.cgi?id=1252782>
+
+        * Bugzilla/BugUrl.pm: Add Bugzilla::BugUrl::Chromium class to
+        list of classes that parse supported URLs.
+        * Bugzilla/BugUrl/Chromium.pm: Added.
+        (should_handle):
+        (_check_value):
+        * template/en/default/global/user-error.html.tmpl: Update error
+        message.
+
 2015-12-09  Daniel Bates  <dabates@apple.com>
 
         REGRESSION: code-review-tests.html fails with error "Received an error at line 214"
