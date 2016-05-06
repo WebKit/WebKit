@@ -33,7 +33,7 @@
 
 namespace WTR {
 
-static String testPathFromURL(WKURLRef url)
+static String testDescription(WKURLRef url)
 {
     RetainPtr<CFURLRef> cfURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, url));
     if (!cfURL)
@@ -59,18 +59,18 @@ static String testPathFromURL(WKURLRef url)
 
     RetainPtr<CFStringRef> hostCFString = adoptCF(CFURLCopyHostName(cfURL.get()));
     String hostString(hostCFString.get());
-    if (hostString == "127.0.0.1"  && (CFURLGetPortNumber(cfURL.get()) == 8000 || CFURLGetPortNumber(cfURL.get()) == 8443))
-        return pathString;
+    if (hostString != "127.0.0.1")
+        return String();
 
-    return String();
+    return CFURLGetString(cfURL.get());
 }
 
 void setCrashReportApplicationSpecificInformationToURL(WKURLRef url)
 {
-    String testPath = testPathFromURL(url);
-    if (!testPath.isNull()) {
+    String description = testDescription(url);
+    if (!description.isNull()) {
         String message("CRASHING TEST: ");
-        message = message + testPath;
+        message = message + description;
         WKSetCrashReportApplicationSpecificInformation(message.createCFString().get());
     }
 }

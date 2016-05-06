@@ -42,6 +42,8 @@ void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRe
     if (!WKBundleFrameIsMainFrame(frame))
         return;
 
+    // FIXME: We should not be changing test URL every time the test navigates. The current URL could be
+    // aditional information, but it shouldn't replace the initial test URL.
     setCrashReportApplicationSpecificInformationToURL(InjectedBundle::singleton().testRunner()->testURL());
 }
 
