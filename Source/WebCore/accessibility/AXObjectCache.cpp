@@ -1655,9 +1655,9 @@ static bool characterOffsetsInOrder(const CharacterOffset& characterOffset1, con
     
     Node* node1 = characterOffset1.node;
     Node* node2 = characterOffset2.node;
-    if (!node1->offsetInCharacters() && !isReplacedNodeOrBR(node1))
+    if (!node1->offsetInCharacters() && !isReplacedNodeOrBR(node1) && node1->hasChildNodes())
         node1 = node1->traverseToChildAt(characterOffset1.offset);
-    if (!node2->offsetInCharacters() && !isReplacedNodeOrBR(node2))
+    if (!node2->offsetInCharacters() && !isReplacedNodeOrBR(node2) && node2->hasChildNodes())
         node2 = node2->traverseToChildAt(characterOffset2.offset);
     
     if (!node1 || !node2)
@@ -1997,7 +1997,11 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
         }
     }
     
-    return traverseToOffsetInRange(rangeForNodeContents(obj->node()), characterOffset);
+    // Sometimes when the node is a replaced node and is ignored in accessibility, we get a wrong CharacterOffset from it.
+    CharacterOffset result = traverseToOffsetInRange(rangeForNodeContents(obj->node()), characterOffset);
+    if  (result.remainingOffset > 0 && !result.isNull() && isRendererReplacedElement(result.node->renderer()))
+        result.offset += result.remainingOffset;
+    return result;
 }
 
 AccessibilityObject* AXObjectCache::accessibilityObjectForTextMarkerData(TextMarkerData& textMarkerData)

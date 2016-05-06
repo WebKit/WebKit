@@ -1,3 +1,21 @@
+2016-05-06  Nan Wang  <n_wang@apple.com>
+
+        AX: String for document range is empty if end visible position anchors to a ignored replaced node
+        https://bugs.webkit.org/show_bug.cgi?id=157403
+
+        Reviewed by Chris Fleizach.
+
+        The CharacterOffset that is converted from VisiblePositon is wrong when the VisiblePostion anchors
+        to an ignored replaced node. Fixed it by adjusting the offset of the CharacterOffset correctly in 
+        such case.
+
+        Test: accessibility/mac/text-marker-string-for-document-end-replaced-node.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::characterOffsetsInOrder):
+        (WebCore::AXObjectCache::characterOffsetFromVisiblePosition):
+        (WebCore::AXObjectCache::accessibilityObjectForTextMarkerData):
+
 2016-05-05  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] WebCore does not need to link to CoreAudio, GraphicsServices, SystemConfiguration frameworks
