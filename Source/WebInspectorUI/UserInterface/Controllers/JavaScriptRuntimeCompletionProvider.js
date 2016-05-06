@@ -186,7 +186,7 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
             else if (result.type === "object" || result.type === "function")
                 result.callFunctionJSON(inspectedPage_evalResult_getCompletions, undefined, receivedPropertyNames.bind(this));
             else if (result.type === "string" || result.type === "number" || result.type === "boolean" || result.type === "symbol")
-                WebInspector.runtimeManager.evaluateInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, false, false, receivedPropertyNamesFromEvaluate.bind(this));
+                WebInspector.runtimeManager.evaluateInInspectedWindow("(" + inspectedPage_evalResult_getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, false, false, receivedPropertyNamesFromEvaluate.bind(this));
             else
                 console.error("Unknown result type: " + result.type);
         }

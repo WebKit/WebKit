@@ -1,5 +1,16 @@
 2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        REGRESSION(r200474): Exception in autocompletion - `getCompletions` not found
+        https://bugs.webkit.org/show_bug.cgi?id=157408
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WebInspector.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.evaluated):
+        This function was renamed, but this instance was missed.
+
+2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Provide go-to links next to Functions in GC Root Path popover
         https://bugs.webkit.org/show_bug.cgi?id=157381
         <rdar://problem/26122531>
