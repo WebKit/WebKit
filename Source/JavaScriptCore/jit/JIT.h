@@ -253,6 +253,8 @@ namespace JSC {
         static unsigned frameRegisterCountFor(CodeBlock*);
         static int stackPointerOffsetFor(CodeBlock*);
 
+        JS_EXPORT_PRIVATE static HashMap<CString, double> compileTimeStats();
+
     private:
         JIT(VM*, CodeBlock* = 0);
 
@@ -896,6 +898,9 @@ namespace JSC {
         // in which case all code gets profiled.
         bool shouldEmitProfiling() { return false; }
 #endif
+
+        static bool reportCompileTimes();
+        static bool computeCompileTimes();
 
         Interpreter* m_interpreter;
 

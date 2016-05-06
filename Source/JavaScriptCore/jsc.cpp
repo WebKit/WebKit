@@ -29,7 +29,6 @@
 #include "CodeBlock.h"
 #include "Completion.h"
 #include "CopiedSpaceInlines.h"
-#include "DFGPlan.h"
 #include "Disassembler.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"
@@ -39,6 +38,7 @@
 #include "HeapStatistics.h"
 #include "InitializeThreading.h"
 #include "Interpreter.h"
+#include "JIT.h"
 #include "JSArray.h"
 #include "JSArrayBuffer.h"
 #include "JSCInlines.h"
@@ -2264,14 +2264,15 @@ static int NEVER_INLINE runJSC(VM* vm, CommandLine options)
         printf("JSC OSR EXIT FUZZ: encountered %u static checks.\n", numberOfStaticOSRExitFuzzChecks());
         printf("JSC OSR EXIT FUZZ: encountered %u dynamic checks.\n", numberOfOSRExitFuzzChecks());
     }
-#endif
-    auto compileTimeStats = DFG::Plan::compileTimeStats();
+
+    auto compileTimeStats = JIT::compileTimeStats();
     Vector<CString> compileTimeKeys;
     for (auto& entry : compileTimeStats)
         compileTimeKeys.append(entry.key);
     std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
     for (CString key : compileTimeKeys)
         printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key));
+#endif
 
     return result;
 }

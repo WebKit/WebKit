@@ -110,8 +110,6 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
 
     RefPtr<DeferredCompilationCallback> callback;
 
-    JS_EXPORT_PRIVATE static HashMap<CString, double> compileTimeStats();
-
 private:
     bool computeCompileTimes() const;
     bool reportCompileTimes() const;
@@ -123,14 +121,6 @@ private:
     void reallyAdd(CommonData*);
 
     double m_timeBeforeFTL;
-};
-
-#else // ENABLE(DFG_JIT)
-
-class Plan : public RefCounted<Plan> {
-    // Dummy class to allow !ENABLE(DFG_JIT) to build.
-public:
-    static HashMap<CString, double> compileTimeStats() { return HashMap<CString, double>(); }
 };
 
 #endif // ENABLE(DFG_JIT)

@@ -168,7 +168,9 @@ typedef const char* optionString;
     v(bool, verboseFTLOSRExit, false, Normal, nullptr) \
     v(bool, verboseCallLink, false, Normal, nullptr) \
     v(bool, verboseCompilationQueue, false, Normal, nullptr) \
-    v(bool, reportCompileTimes, false, Normal, "dumps JS function signature and the time it took to compile") \
+    v(bool, reportCompileTimes, false, Normal, "dumps JS function signature and the time it took to compile in all tiers") \
+    v(bool, reportBaselineCompileTimes, false, Normal, "dumps JS function signature and the time it took to BaselineJIT compile") \
+    v(bool, reportDFGCompileTimes, false, Normal, "dumps JS function signature and the time it took to DFG and FTL compile") \
     v(bool, reportFTLCompileTimes, false, Normal, "dumps JS function signature and the time it took to FTL compile") \
     v(bool, reportTotalCompileTimes, false, Normal, nullptr) \
     v(bool, verboseCFA, false, Normal, nullptr) \

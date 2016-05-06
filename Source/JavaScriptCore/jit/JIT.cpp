@@ -52,6 +52,12 @@ using namespace std;
 
 namespace JSC {
 
+double totalBaselineCompileTime;
+double totalDFGCompileTime;
+double totalFTLCompileTime;
+double totalFTLDFGCompileTime;
+double totalFTLB3CompileTime;
+
 void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr newCalleeFunction)
 {
     MacroAssembler::repatchCall(
@@ -484,6 +490,10 @@ void JIT::privateCompileSlowCases()
 
 CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 {
+    double before = 0;
+    if (UNLIKELY(computeCompileTimes()))
+        before = monotonicallyIncreasingTimeMS();
+
     DFG::CapabilityLevel level = m_codeBlock->capabilityLevel();
     switch (level) {
     case DFG::CannotCompile:
@@ -741,7 +751,20 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     m_codeBlock->shrinkToFit(CodeBlock::LateShrink);
     m_codeBlock->setJITCode(
         adoptRef(new DirectJITCode(result, withArityCheck, JITCode::BaselineJIT)));
-    
+
+    double after;
+    if (UNLIKELY(computeCompileTimes())) {
+        after = monotonicallyIncreasingTimeMS();
+
+        if (Options::reportTotalCompileTimes())
+            totalBaselineCompileTime += after - before;
+    }
+    if (UNLIKELY(reportCompileTimes())) {
+        CString codeBlockName = toCString(*m_codeBlock);
+        
+        dataLog("Optimized ", codeBlockName, " with Baseline JIT into ", patchBuffer.size(), " bytes in ", after - before, " ms.\n");
+    }
+
 #if ENABLE(JIT_VERBOSE)
     dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
 #endif
@@ -799,6 +822,34 @@ unsigned JIT::frameRegisterCountFor(CodeBlock* codeBlock)
 int JIT::stackPointerOffsetFor(CodeBlock* codeBlock)
 {
     return virtualRegisterForLocal(frameRegisterCountFor(codeBlock) - 1).offset();
+}
+
+bool JIT::reportCompileTimes()
+{
+    return Options::reportCompileTimes() || Options::reportBaselineCompileTimes();
+}
+
+bool JIT::computeCompileTimes()
+{
+    return reportCompileTimes() || Options::reportTotalCompileTimes();
+}
+
+HashMap<CString, double> JIT::compileTimeStats()
+{
+    HashMap<CString, double> result;
+    if (Options::reportTotalCompileTimes()) {
+        result.add("Total Compile Time", totalBaselineCompileTime + totalDFGCompileTime + totalFTLCompileTime);
+        result.add("Baseline Compile Time", totalBaselineCompileTime);
+#if ENABLE(DFG_JIT)
+        result.add("DFG Compile Time", totalDFGCompileTime);
+#if ENABLE(FTL_JIT)
+        result.add("FTL Compile Time", totalFTLCompileTime);
+        result.add("FTL (DFG) Compile Time", totalFTLDFGCompileTime);
+        result.add("FTL (B3) Compile Time", totalFTLB3CompileTime);
+#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(DFG_JIT)
+    }
+    return result;
 }
 
 } // namespace JSC

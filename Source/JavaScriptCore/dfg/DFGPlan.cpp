@@ -90,14 +90,18 @@
 #include "FTLState.h"
 #endif
 
+namespace JSC {
+
+extern double totalDFGCompileTime;
+extern double totalFTLCompileTime;
+extern double totalFTLDFGCompileTime;
+extern double totalFTLB3CompileTime;
+
+}
+
 namespace JSC { namespace DFG {
 
 namespace {
-
-double totalDFGCompileTime;
-double totalFTLCompileTime;
-double totalFTLDFGCompileTime;
-double totalFTLB3CompileTime;
 
 void dumpAndVerifyGraph(Graph& graph, const char* text, bool forceDump = false)
 {
@@ -160,6 +164,7 @@ bool Plan::computeCompileTimes() const
 bool Plan::reportCompileTimes() const
 {
     return Options::reportCompileTimes()
+        || Options::reportDFGCompileTimes()
         || (Options::reportFTLCompileTimes() && isFTL(mode));
 }
 
@@ -169,9 +174,9 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
     
     double before = 0;
     CString codeBlockName;
-    if (computeCompileTimes())
+    if (UNLIKELY(computeCompileTimes()))
         before = monotonicallyIncreasingTimeMS();
-    if (reportCompileTimes())
+    if (UNLIKELY(reportCompileTimes()))
         codeBlockName = toCString(*codeBlock);
     
     CompilationScope compilationScope;
@@ -185,19 +190,19 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
     RELEASE_ASSERT((path == CancelPath) == (stage == Cancelled));
     
     double after = 0;
-    if (computeCompileTimes())
+    if (UNLIKELY(computeCompileTimes())) {
         after = monotonicallyIncreasingTimeMS();
     
-    if (Options::reportTotalCompileTimes()) {
-        if (isFTL(mode)) {
-            totalFTLCompileTime += after - before;
-            totalFTLDFGCompileTime += m_timeBeforeFTL - before;
-            totalFTLB3CompileTime += after - m_timeBeforeFTL;
-        } else
-            totalDFGCompileTime += after - before;
+        if (Options::reportTotalCompileTimes()) {
+            if (isFTL(mode)) {
+                totalFTLCompileTime += after - before;
+                totalFTLDFGCompileTime += m_timeBeforeFTL - before;
+                totalFTLB3CompileTime += after - m_timeBeforeFTL;
+            } else
+                totalDFGCompileTime += after - before;
+        }
     }
-    
-    if (reportCompileTimes()) {
+    if (UNLIKELY(reportCompileTimes())) {
         const char* pathName;
         switch (path) {
         case FailPath:
@@ -458,7 +463,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         FTL::State state(dfg);
         FTL::lowerDFGToB3(state);
         
-        if (computeCompileTimes())
+        if (UNLIKELY(computeCompileTimes()))
             m_timeBeforeFTL = monotonicallyIncreasingTimeMS();
         
         if (Options::b3AlwaysFailsBeforeCompile()) {
@@ -649,19 +654,6 @@ void Plan::cancel()
     transitions = DesiredTransitions();
     callback = nullptr;
     stage = Cancelled;
-}
-
-HashMap<CString, double> Plan::compileTimeStats()
-{
-    HashMap<CString, double> result;
-    if (Options::reportTotalCompileTimes()) {
-        result.add("Compile Time", totalDFGCompileTime + totalFTLCompileTime);
-        result.add("DFG Compile Time", totalDFGCompileTime);
-        result.add("FTL Compile Time", totalFTLCompileTime);
-        result.add("FTL (DFG) Compile Time", totalFTLDFGCompileTime);
-        result.add("FTL (B3) Compile Time", totalFTLB3CompileTime);
-    }
-    return result;
 }
 
 } } // namespace JSC::DFG
