@@ -1,3 +1,12 @@
+2016-05-06  Daniel Bates  <dabates@apple.com>
+
+        Remove workaround for Apple Internal bots
+        <rdar://problem/25989808>
+
+        Reverts the workaround added in r200211 as it is no longer needed.
+
+        * WebView/WebPDFView.h:
+
 2016-05-02  Daniel Bates  <dabates@apple.com>
 
         CSP: Add workaround for XtraMath
