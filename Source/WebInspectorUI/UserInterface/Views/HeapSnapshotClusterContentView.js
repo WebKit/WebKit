@@ -41,16 +41,11 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
         }
 
         this._shownInitialContent = false;
-        this._summaryContentView = null;
         this._instancesContentView = null;
         this._objectGraphContentView = null;
 
-        this._summaryPathComponent = createPathComponent.call(this, WebInspector.UIString("Summary"), "heap-snapshot-summary-icon", WebInspector.HeapSnapshotClusterContentView.SummaryIdentifier);
         this._instancesPathComponent = createPathComponent.call(this, WebInspector.UIString("Instances"), "heap-snapshot-instances-icon", WebInspector.HeapSnapshotClusterContentView.InstancesIdentifier);
         this._objectGraphPathComponent = createPathComponent.call(this, WebInspector.UIString("Object Graph"), "heap-snapshot-object-graph-icon", WebInspector.HeapSnapshotClusterContentView.ObjectGraphIdentifier);
-
-        this._summaryPathComponent.nextSibling = this._instancesPathComponent;
-        this._instancesPathComponent.previousSibling = this._summaryPathComponent;
 
         if (this._supportsObjectGraph()) {
             this._instancesPathComponent.nextSibling = this._objectGraphPathComponent;
@@ -111,13 +106,6 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
 
     get heapSnapshot() { return this._heapSnapshot; }
 
-    get summaryContentView()
-    {
-        if (!this._summaryContentView)
-            this._summaryContentView = new WebInspector.HeapSnapshotSummaryContentView(this._heapSnapshot);
-        return this._summaryContentView;
-    }
-
     get instancesContentView()
     {
         if (!this._instancesContentView)
@@ -172,12 +160,6 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
         this._showContentViewForIdentifier(cookie[WebInspector.HeapSnapshotClusterContentView.ContentViewIdentifierCookieKey]);
     }
 
-    showSummary()
-    {
-        this._shownInitialContent = true;
-        return this._showContentViewForIdentifier(WebInspector.HeapSnapshotClusterContentView.SummaryIdentifier);
-    }
-
     showInstances()
     {
         this._shownInitialContent = true;
@@ -202,8 +184,6 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
         console.assert(contentView);
         if (!contentView)
             return null;
-        if (contentView === this._summaryContentView)
-            return this._summaryPathComponent;
         if (contentView === this._instancesContentView)
             return this._instancesPathComponent;
         if (contentView === this._objectGraphContentView)
@@ -217,8 +197,6 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
         console.assert(contentView);
         if (!contentView)
             return null;
-        if (contentView === this._summaryContentView)
-            return WebInspector.HeapSnapshotClusterContentView.SummaryIdentifier;
         if (contentView === this._instancesContentView)
             return WebInspector.HeapSnapshotClusterContentView.InstancesIdentifier;
         if (contentView === this._objectGraphContentView)
@@ -232,9 +210,6 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
         let contentViewToShow = null;
 
         switch (identifier) {
-        case WebInspector.HeapSnapshotClusterContentView.SummaryIdentifier:
-            contentViewToShow = this.summaryContentView;
-            break;
         case WebInspector.HeapSnapshotClusterContentView.InstancesIdentifier:
             contentViewToShow = this.instancesContentView;
             break;
@@ -263,6 +238,5 @@ WebInspector.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentVi
 
 WebInspector.HeapSnapshotClusterContentView.ContentViewIdentifierCookieKey = "heap-snapshot-cluster-content-view-identifier";
 
-WebInspector.HeapSnapshotClusterContentView.SummaryIdentifier = "summary";
 WebInspector.HeapSnapshotClusterContentView.InstancesIdentifier = "instances";
 WebInspector.HeapSnapshotClusterContentView.ObjectGraphIdentifier = "object-graph";

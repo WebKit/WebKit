@@ -1,3 +1,24 @@
+2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove HeapSnapshot Summary View
+        https://bugs.webkit.org/show_bug.cgi?id=157385
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Views/HeapSnapshotClusterContentView.js:
+        (WebInspector.HeapSnapshotClusterContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype.get summaryContentView): Deleted.
+        (WebInspector.HeapSnapshotClusterContentView.prototype.showSummary): Deleted.
+        (WebInspector.HeapSnapshotClusterContentView.prototype._pathComponentForContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._identifierForContentView):
+        (WebInspector.HeapSnapshotClusterContentView.prototype._showContentViewForIdentifier):
+        * UserInterface/Views/HeapSnapshotSummaryContentView.css: Removed.
+        * UserInterface/Views/HeapSnapshotSummaryContentView.js: Removed.
+        * UserInterface/Views/Variables.css:
+        (:root):
+
 2016-05-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Unprefix CSS Grid Layout properties
