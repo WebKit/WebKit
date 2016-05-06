@@ -1,3 +1,18 @@
+2016-05-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Unexpected white border at the bottom of Debugger filter bar
+        https://bugs.webkit.org/show_bug.cgi?id=157430
+        <rdar://problem/26146602>
+
+        Reviewed by Timothy Hatcher.
+
+        Remove the semi-transparent white borders.
+
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar): Deleted.
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search > .search-bar): Deleted.
+
 2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove HeapSnapshot Summary View

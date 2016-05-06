@@ -35,8 +35,6 @@
 
     display: flex;
 
-    box-shadow: inset hsla(0, 0%, 100%, 0.2) 0 1px 0;
-
     height: 28px;
 
     white-space: nowrap;
