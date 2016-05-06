@@ -912,7 +912,6 @@ webkit.org/b/154619 storage/indexeddb/odd-strings.html [ Skip ]
 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html [ Failure ]
 storage/indexeddb/dont-commit-on-blocked-private.html [ Failure ]
 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
-storage/indexeddb/factory-basics-workers.html [ Failure ]
 storage/indexeddb/pending-activity-workers.html [ Failure ]
 storage/indexeddb/unprefix-workers.html [ Failure ]
 

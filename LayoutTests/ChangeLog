@@ -1,5 +1,15 @@
 2016-05-06  Brady Eidson  <beidson@apple.com>
 
+        Unreviewed IDB test gardening.
+
+        Remove the Workers variant of a test that had been removed for being irrelevant.
+
+        * TestExpectations:
+        * storage/indexeddb/factory-basics-workers-expected.txt: Removed.
+        * storage/indexeddb/factory-basics-workers.html: Removed.
+
+2016-05-06  Brady Eidson  <beidson@apple.com>
+
         Modern IDB (Workers): Start running a lot of the workers tests.
         https://bugs.webkit.org/show_bug.cgi?id=157424
 
