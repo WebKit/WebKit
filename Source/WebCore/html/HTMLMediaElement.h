@@ -496,7 +496,6 @@ private:
     // FIXME: Shadow DOM spec says we should be able to create shadow root on audio and video elements
     bool canHaveUserAgentShadowRoot() const final { return true; }
 
-    bool hasCustomFocusLogic() const override;
     bool supportsFocus() const override;
     bool isMouseFocusable() const override;
     bool rendererIsNeeded(const RenderStyle&) override;

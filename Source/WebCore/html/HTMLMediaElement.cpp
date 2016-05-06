@@ -659,11 +659,6 @@ void HTMLMediaElement::resumeFromDocumentSuspension()
 }
 #endif
 
-bool HTMLMediaElement::hasCustomFocusLogic() const
-{
-    return true;
-}
-
 bool HTMLMediaElement::supportsFocus() const
 {
     if (document().isMediaDocument())

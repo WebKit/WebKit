@@ -1,3 +1,23 @@
+2016-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        FKA: No way to get focus from DOM to shadow DOM components (Was: HTML5 media controls not keyboard accessible)
+        https://bugs.webkit.org/show_bug.cgi?id=117857
+
+        Reviewed by Jer Noble.
+
+        The bug was caused by hasCustomFocusLogic returning true on media elements.
+
+        Fix the bug by removing this function so that FocusController will walk into the shadow tree of media elements
+        to look for focusable elements. This will allow AT such as Voice Over to iterate through controls.
+
+        We don't seem to draw focus rings inside the media elements but that could be tweaked in a separate patch.
+
+        Test: media/tab-focus-inside-media-elements.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::hasCustomFocusLogic): Deleted.
+        * html/HTMLMediaElement.h:
+
 2016-05-06  Anders Carlsson  <andersca@apple.com>
 
         Tidy up the LinkRelAttribute code
