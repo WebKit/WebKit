@@ -1,3 +1,12 @@
+2016-05-06  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed IDB test gardening.
+
+        Update the workers variant of "deletedatabase-delayed-by-open-and-versionchange" to the modern expected results.
+
+        * TestExpectations:
+        * storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers-expected.txt:
+
 2016-05-06  Dean Jackson  <dino@apple.com>
 
         Regions, Shapes and Tracks don't need runtime features

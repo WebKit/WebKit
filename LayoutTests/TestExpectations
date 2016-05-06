@@ -909,7 +909,6 @@ storage/indexeddb/request-leak.html [ Failure ]
 webkit.org/b/154619 storage/indexeddb/odd-strings.html [ Skip ]
 
 # IDB workers tests that fail
-storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html [ Failure ]
 storage/indexeddb/dont-commit-on-blocked-private.html [ Failure ]
 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
 storage/indexeddb/pending-activity-workers.html [ Failure ]
