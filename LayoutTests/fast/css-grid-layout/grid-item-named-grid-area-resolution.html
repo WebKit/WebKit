@@ -5,52 +5,52 @@
 <link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-template-rows: [before] 50px [middle] 100px [after] 150px;
-    -webkit-grid-template-columns: 40px 80px 160px;
+    grid-template-rows: [before] 50px [middle] 100px [after] 150px;
+    grid-template-columns: 40px 80px 160px;
 }
 
 .gridWithoutRepeat {
-    -webkit-grid-template-areas: "first second third"
+    grid-template-areas: "first second third"
                                  "fourth fifth sixth";
 }
 
 .gridWithRepeat {
-    -webkit-grid-template-areas: "first  second third"
+    grid-template-areas: "first  second third"
                                  "fourth fourth third";
 }
 
 .gridItemFirstArea {
-    -webkit-grid-area: first;
+    grid-area: first;
 }
 
 .gridItemSecondArea {
-    -webkit-grid-area: second;
+    grid-area: second;
 }
 
 .gridItemThirdArea {
-    -webkit-grid-area: third;
+    grid-area: third;
 }
 
 .gridItemFourthArea {
-    -webkit-grid-area: fourth;
+    grid-area: fourth;
 }
 
 .gridItemFifthArea {
-    -webkit-grid-area: fifth;
+    grid-area: fifth;
 }
 
 .gridItemSixthArea {
-    -webkit-grid-area: sixth;
+    grid-area: sixth;
 }
 
 .gridItemSpan2ThirdArea {
-    -webkit-grid-row: fourth;
-    -webkit-grid-column: span 2 / third;
+    grid-row: fourth;
+    grid-column: span 2 / third;
 }
 
 .gridItemNamedGridLineWithArea {
-    -webkit-grid-row: third / after;
-    -webkit-grid-column: 1;
+    grid-row: third / after;
+    grid-column: 1;
 }
 </style>
 <script src="../../resources/check-layout.js"></script>

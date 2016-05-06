@@ -4,63 +4,63 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-auto-columns: 5px;
-    -webkit-grid-auto-rows: 5px;
+    grid-auto-columns: 5px;
+    grid-auto-rows: 5px;
 }
 
 .gridWithoutRepeat {
-    -webkit-grid-template-columns: [a] 50px [b] 100px [c] 200px [d];
-    -webkit-grid-template-rows: [e] 50px [f] 100px [g] 200px [h];
+    grid-template-columns: [a] 50px [b] 100px [c] 200px [d];
+    grid-template-rows: [e] 50px [f] 100px [g] 200px [h];
 }
 
 .gridWithRepeat {
-    -webkit-grid-template-columns: [b] 50px [b] 100px [b] 200px [b];
-    -webkit-grid-template-rows: [g] 50px [g] 100px [g] 200px [g];
+    grid-template-columns: [b] 50px [b] 100px [b] 200px [b];
+    grid-template-rows: [g] 50px [g] 100px [g] 200px [g];
 }
 
 .gridFromSpecs {
-    -webkit-grid-template-columns: [A] 10px [B] 20px [C] 30px [A] 40px [B] 50px [C] 60px [A] 70px [B] 80px [C];
-    -webkit-grid-template-rows: 100px;
+    grid-template-columns: [A] 10px [B] 20px [C] 30px [A] 40px [B] 50px [C] 60px [A] 70px [B] 80px [C];
+    grid-template-rows: 100px;
 }
 
 .gridItemBToD {
-    -webkit-grid-column: b / d;
-    -webkit-grid-row: 1;
+    grid-column: b / d;
+    grid-row: 1;
 }
 
 .gridItemGToH {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: g / h;
+    grid-column: 1;
+    grid-row: g / h;
 }
 
 .gridItemInvalidPositiveGridLine {
-    -webkit-grid-column: nonexistent / span 2;
-    -webkit-grid-row: span 2 / nonexistent;
+    grid-column: nonexistent / span 2;
+    grid-row: span 2 / nonexistent;
 }
 
 .gridItemInvalidNegativeGridLine {
-    -webkit-grid-column: 1 / -1 nonexistent;
-    -webkit-grid-row: span 2 / -10 nonexistent;
+    grid-column: 1 / -1 nonexistent;
+    grid-row: span 2 / -10 nonexistent;
 }
 
 .gridItemAToSpanC {
-    -webkit-grid-column: a / span c;
-    -webkit-grid-row: 1;
+    grid-column: a / span c;
+    grid-row: 1;
 }
 
 .gridItemFToSpanH {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: f span / h;
+    grid-column: 1;
+    grid-row: f span / h;
 }
 
 .gridItem2BSpan2B {
-    -webkit-grid-column: 2 b / span 2 b;
-    -webkit-grid-row: 1;
+    grid-column: 2 b / span 2 b;
+    grid-row: 1;
 }
 
 .gridItemSpan2GNegativeG {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: span 2 g / -1 g;
+    grid-column: 1;
+    grid-row: span 2 g / -1 g;
 }
 </style>
 <script src="../../resources/check-layout.js"></script>
@@ -162,61 +162,61 @@
 
 <div style="position: relative">
     <div class="grid gridFromSpecs">
-      <div class="sizedToGridArea" style="-webkit-grid-column: 4 / auto;" data-offset-x="60px" data-expected-width="40px"></div>
+      <div class="sizedToGridArea" style="grid-column: 4 / auto;" data-offset-x="60px" data-expected-width="40px"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid gridFromSpecs">
-      <div class="sizedToGridArea" style="-webkit-grid-column: auto / 6;" data-offset-x="100px" data-expected-width="50px"></div>
+      <div class="sizedToGridArea" style="grid-column: auto / 6;" data-offset-x="100px" data-expected-width="50px"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid gridFromSpecs">
-      <div class="sizedToGridArea" style="-webkit-grid-column: C / C -1;" data-offset-x="30px" data-expected-width="330px"></div>
+      <div class="sizedToGridArea" style="grid-column: C / C -1;" data-offset-x="30px" data-expected-width="330px"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid gridFromSpecs">
-      <div class="sizedToGridArea" style="-webkit-grid-column: C / span C;" data-offset-x="30px" data-expected-width="120px"></div>
+      <div class="sizedToGridArea" style="grid-column: C / span C;" data-offset-x="30px" data-expected-width="120px"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid gridFromSpecs">
-      <div class="sizedToGridArea" style="-webkit-grid-column: span C / C -1;" data-offset-x="150px" data-expected-width="210px"></div>
+      <div class="sizedToGridArea" style="grid-column: span C / C -1;" data-offset-x="150px" data-expected-width="210px"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid gridFromSpecs">
-      <div class="sizedToGridArea" style="-webkit-grid-column: span C / span C;" data-offset-x="0px" data-expected-width="10px"></div>
+      <div class="sizedToGridArea" style="grid-column: span C / span C;" data-offset-x="0px" data-expected-width="10px"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid gridFromSpecs">
-      <div class="sizedToGridArea" style="-webkit-grid-column: 5 / C -1;" data-offset-x="100px" data-expected-width="260px"></div>
+      <div class="sizedToGridArea" style="grid-column: 5 / C -1;" data-offset-x="100px" data-expected-width="260px"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid gridFromSpecs">
-      <div class="sizedToGridArea" style="-webkit-grid-column: 5 / span C;" data-offset-x="100px" data-expected-width="50px"></div>
+      <div class="sizedToGridArea" style="grid-column: 5 / span C;" data-offset-x="100px" data-expected-width="50px"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid gridFromSpecs">
-      <div class="sizedToGridArea" style="-webkit-grid-column: 8 / 8;" data-offset-x="280px" data-expected-width="80px"></div>
+      <div class="sizedToGridArea" style="grid-column: 8 / 8;" data-offset-x="280px" data-expected-width="80px"></div>
     </div>
 </div>
 
 <div style="position: relative">
     <div class="grid gridFromSpecs">
-      <div class="sizedToGridArea" style="-webkit-grid-column: B 2 / span 1;" data-offset-x="100px" data-expected-width="50px"></div>
+      <div class="sizedToGridArea" style="grid-column: B 2 / span 1;" data-offset-x="100px" data-expected-width="50px"></div>
     </div>
 </div>
 

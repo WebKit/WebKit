@@ -3,8 +3,8 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-template-columns: 50px 100px;
-    -webkit-grid-template-rows: 70px 140px;
+    grid-template-columns: 50px 100px;
+    grid-template-rows: 70px 140px;
 }
 
 #minHeightPercent {
@@ -22,7 +22,7 @@
 function testLayout(gridElementID, gridTracks, size)
 {
     var gridElement = document.getElementById(gridElementID);
-    gridElement.style.webkitGridTemplateRows = gridTracks.rows;
+    gridElement.style.gridTemplateRows = gridTracks.rows;
     var gridItem = gridElement.firstChild.nextSibling;
     gridItem.setAttribute("data-expected-width", size.width);
     gridItem.setAttribute("data-expected-height", size.height);

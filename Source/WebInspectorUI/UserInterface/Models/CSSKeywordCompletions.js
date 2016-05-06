@@ -392,7 +392,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "inline", "block", "list-item", "compact", "inline-block", "table", "inline-table",
         "table-row-group", "table-header-group", "table-footer-group", "table-row", "table-column-group",
         "table-column", "table-cell", "table-caption", "-webkit-box", "-webkit-inline-box", "-wap-marquee",
-        "flex", "inline-flex", "-webkit-grid", "-webkit-inline-grid"
+        "flex", "inline-flex", "grid", "inline-grid"
     ],
     "image-rendering": [
         "auto", "optimizeSpeed", "optimizeQuality", "-webkit-crisp-edges", "-webkit-optimize-contrast", "crisp-edges", "pixelated"
@@ -776,31 +776,31 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "flex-basis": [
         "auto"
     ],
-    "-webkit-grid-after": [
+    "grid-after": [
         "auto"
     ],
-    "-webkit-grid-before": [
+    "grid-before": [
         "auto"
     ],
-    "-webkit-grid-end": [
+    "grid-end": [
         "auto"
     ],
-    "-webkit-grid-start": [
+    "grid-start": [
         "auto"
     ],
-    "-webkit-grid-auto-flow": [
+    "grid-auto-flow": [
         "row", "column", "dense"
     ],
-    "-webkit-grid-column": [
+    "grid-column": [
         "auto"
     ],
-    "-webkit-grid-row": [
+    "grid-row": [
         "auto"
     ],
-    "-webkit-grid-columns": [
+    "grid-columns": [
         "auto", "-webkit-max-content", "-webkit-min-content"
     ],
-    "-webkit-grid-rows": [
+    "grid-rows": [
         "auto", "-webkit-max-content", "-webkit-min-content"
     ],
     "-webkit-ruby-position": [

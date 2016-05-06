@@ -4,7 +4,7 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .frGrid {
-    -webkit-grid: 1fr / 1fr;
+    grid: 1fr / 1fr;
     font: 50px/1 Ahem;
     border: 50px solid magenta;
     width: 300px;
@@ -20,13 +20,13 @@
 }
 
 .frRowsGrid {
-    -webkit-grid-auto-columns: 100px;
-    -webkit-grid-auto-rows: minmax(0, 1fr);
+    grid-auto-columns: 100px;
+    grid-auto-rows: minmax(0, 1fr);
 }
 
 .frColsGrid {
-    -webkit-grid-auto-columns: minmax(0, 1fr);
-    -webkit-grid-auto-rows: 100px;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-rows: 100px;
 }
 
 span {

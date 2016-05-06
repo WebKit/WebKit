@@ -11,99 +11,99 @@
     height: 600px;
 }
 .gridItem {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: 1;
+    grid-column: 1;
+    grid-row: 1;
     width: 7px;
     height: 11px;
 }
 .gridItem2 {
-    -webkit-grid-column: 2;
-    -webkit-grid-row: 2;
+    grid-column: 2;
+    grid-row: 2;
     width: 17px;
     height: 3px;
 }
 .gridWithFixed {
-    -webkit-grid-template-columns: 7px 11px;
-    -webkit-grid-template-rows: 17px 2px;
+    grid-template-columns: 7px 11px;
+    grid-template-rows: 17px 2px;
 }
 .gridWithPercent {
-    -webkit-grid-template-columns: 53% 99%;
-    -webkit-grid-template-rows: 27% 52%;
+    grid-template-columns: 53% 99%;
+    grid-template-rows: 27% 52%;
 }
 .gridWithAuto {
-    -webkit-grid-template-columns: auto auto;
-    -webkit-grid-template-rows: auto auto;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
 }
 .gridWithEM {
-    -webkit-grid-template-columns: 10em 12em;
-    -webkit-grid-template-rows: 15em 17em;
+    grid-template-columns: 10em 12em;
+    grid-template-rows: 15em 17em;
     font: 10px Ahem;
 }
 .gridWithNoneAndAuto {
-    -webkit-grid-template-columns: none auto;
-    -webkit-grid-template-rows: none auto;
+    grid-template-columns: none auto;
+    grid-template-rows: none auto;
 }
 .gridNoneWithAndFixed {
-    -webkit-grid-template-columns: none 15px;
-    -webkit-grid-template-rows: none 22px;
+    grid-template-columns: none 15px;
+    grid-template-rows: none 22px;
 }
 .gridWithThreeItems {
-    -webkit-grid-template-columns: 15px auto 10em;
-    -webkit-grid-template-rows: 12em 18px auto;
+    grid-template-columns: 15px auto 10em;
+    grid-template-rows: 12em 18px auto;
     font: 10px Ahem;
 }
 .gridWithPercentAndViewportPercent {
-    -webkit-grid-template-columns: 50% 15vw;
-    -webkit-grid-template-rows: 35% 28vh;
+    grid-template-columns: 50% 15vw;
+    grid-template-rows: 35% 28vh;
 }
 .gridWithFitContentAndFitAvailable {
-    -webkit-grid-template-columns: -webkit-content-available;
-    -webkit-grid-template-rows: -webkit-fitcontent -webkit-fit-available;
+    grid-template-columns: -webkit-content-available;
+    grid-template-rows: -webkit-fitcontent -webkit-fit-available;
 }
 .gridWithMinMaxContent {
-    -webkit-grid-template-columns: -webkit-min-content -webkit-max-content;
-    -webkit-grid-template-rows: -webkit-max-content -webkit-min-content;
+    grid-template-columns: -webkit-min-content -webkit-max-content;
+    grid-template-rows: -webkit-max-content -webkit-min-content;
 }
 .gridWithMinMaxAndFixed {
-    -webkit-grid-template-columns: minmax(45px, 30%) 15px;
-    -webkit-grid-template-rows: 12em minmax(35%, 10px);
+    grid-template-columns: minmax(45px, 30%) 15px;
+    grid-template-rows: 12em minmax(35%, 10px);
     font: 10px Ahem;
 }
 .gridWithMinMaxAndMinMaxContent {
-    -webkit-grid-template-columns: minmax(-webkit-min-content, 30%) 15px;
-    -webkit-grid-template-rows: 12em minmax(35%, -webkit-max-content);
+    grid-template-columns: minmax(-webkit-min-content, 30%) 15px;
+    grid-template-rows: 12em minmax(35%, -webkit-max-content);
     font: 10px Ahem;
 }
 .gridWithFractionFraction {
-    -webkit-grid-template-columns: 2fr 3fr;
-    -webkit-grid-template-rows: 3fr 5fr;
+    grid-template-columns: 2fr 3fr;
+    grid-template-rows: 3fr 5fr;
 }
 .gridWithFractionMinMax {
-    -webkit-grid-template-columns: minmax(-webkit-min-content, 45px) 2fr;
-    -webkit-grid-template-rows: 3fr minmax(14px, -webkit-max-content);
+    grid-template-columns: minmax(-webkit-min-content, 45px) 2fr;
+    grid-template-rows: 3fr minmax(14px, -webkit-max-content);
 }
 .gridWithCalcCalc {
-    -webkit-grid-template-columns: calc(200px) calc(10em);
-    -webkit-grid-template-rows: calc(15em) calc(75px);
+    grid-template-columns: calc(200px) calc(10em);
+    grid-template-rows: calc(15em) calc(75px);
     font: 10px Ahem;
 }
 .gridWithCalcAndFixed {
-    -webkit-grid-template-columns: calc(50%) 8em;
-    -webkit-grid-template-rows: 88px calc(25%);
+    grid-template-columns: calc(50%) 8em;
+    grid-template-rows: 88px calc(25%);
     font: 10px Ahem;
 }
 .gridWithCalcAndMinMax {
-    -webkit-grid-template-columns: calc(30px + 20%) minmax(-webkit-min-content, 80px);
-    -webkit-grid-template-rows: minmax(25%, -webkit-max-content) calc(10% - 7px);
+    grid-template-columns: calc(30px + 20%) minmax(-webkit-min-content, 80px);
+    grid-template-rows: minmax(25%, -webkit-max-content) calc(10% - 7px);
 }
 .gridWithCalcInsideMinMax {
-    -webkit-grid-template-columns: minmax(calc(23px + 10%), 400px) 12em;
-    -webkit-grid-template-rows: calc(150px) minmax(5%, calc(50% - 125px));
+    grid-template-columns: minmax(calc(23px + 10%), 400px) 12em;
+    grid-template-rows: calc(150px) minmax(5%, calc(50% - 125px));
     font: 10px Ahem;
 }
 .gridWithAutoInsideMinMax {
-    -webkit-grid-template-columns: minmax(auto, -webkit-min-content) 30px;
-    -webkit-grid-template-rows: calc(100px + 2em) minmax(10%, auto);
+    grid-template-columns: minmax(auto, -webkit-min-content) 30px;
+    grid-template-rows: calc(100px + 2em) minmax(10%, auto);
 }
 </style>
 <script src="../../resources/js-test-pre.js"></script>

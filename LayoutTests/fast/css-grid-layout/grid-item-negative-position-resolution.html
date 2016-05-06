@@ -3,99 +3,99 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-template-columns: [first] 50px [middle] 100px [last];
-    -webkit-grid-template-rows: [first] 50px [middle] 100px [last];
+    grid-template-columns: [first] 50px [middle] 100px [last];
+    grid-template-rows: [first] 50px [middle] 100px [last];
     /* To detect how much we extend the grid. */
-    -webkit-grid-auto-columns: 200px;
-    -webkit-grid-auto-rows: 200px;
+    grid-auto-columns: 200px;
+    grid-auto-rows: 200px;
 
     /* Make the grid shrink-to-fit. */
     position: absolute;
 }
 
 .negativeStartPositionGrowGridInColumnDirection {
-    -webkit-grid-column: -1 / auto;
-    -webkit-grid-row: 1;
+    grid-column: -1 / auto;
+    grid-row: 1;
 }
 
 .negativeStartPositionGrowGridInRowDirection {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: -1 / auto;
+    grid-column: 1;
+    grid-row: -1 / auto;
 }
 
 .lastNamedGridLineStartPositionGrowGridInRowDirection {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: -1 / auto;
+    grid-column: 1;
+    grid-row: -1 / auto;
 }
 
 .lastNamedGridLineStartPositionGrowGridInColumnDirection {
-    -webkit-grid-column: last / auto;
-    -webkit-grid-row: 1;
+    grid-column: last / auto;
+    grid-row: 1;
 }
 
 .negativeStartPositionGrowGridInRowDirection {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: last / auto;
+    grid-column: 1;
+    grid-row: last / auto;
 }
 
 .endSpanGrowGridInColumnDirection {
-    -webkit-grid-column: -2 / span 3;
-    -webkit-grid-row: 1;
+    grid-column: -2 / span 3;
+    grid-row: 1;
 }
 
 .endSpanGrowGridInRowDirection {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: -2 / span 3;
+    grid-column: 1;
+    grid-row: -2 / span 3;
 }
 
 .namedEndSpanGrowGridInColumnDirection {
-    -webkit-grid-column: -1 middle / span 3;
-    -webkit-grid-row: 1;
+    grid-column: -1 middle / span 3;
+    grid-row: 1;
 }
 
 .namedEndSpanGrowGridInRowDirection {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: 2 middle / span 3;
+    grid-column: 1;
+    grid-row: 2 middle / span 3;
 }
 
 .negativeEndPositionStartSpanInColumnDirection {
-    -webkit-grid-column: span / -1;
-    -webkit-grid-row: 1;
+    grid-column: span / -1;
+    grid-row: 1;
 }
 
 .negativeEndPositionStartSpanInRowDirection {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: span 5 / -1;
+    grid-column: 1;
+    grid-row: span 5 / -1;
 }
 
 .negativeNamedGridLineEndPositionStartSpanInColumnDirection {
-    -webkit-grid-column: span / last;
-    -webkit-grid-row: 1;
+    grid-column: span / last;
+    grid-row: 1;
 }
 
 .negativeNamedGridLineEndPositionStartSpanInRowDirection {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: span 5 / last;
+    grid-column: 1;
+    grid-row: span 5 / last;
 }
 
 .negativeEndPositionStartNegativeInColumnDirection {
-    -webkit-grid-column: -3 / -1;
-    -webkit-grid-row: 1;
+    grid-column: -3 / -1;
+    grid-row: 1;
 }
 
 .negativeEndPositionStartNegativeInRowDirection {
-    -webkit-grid-column: -5 / -2;
-    -webkit-grid-row: 1;
+    grid-column: -5 / -2;
+    grid-row: 1;
 }
 
 .namedGridLineEndPositionStartNegativeInColumnDirection {
-    -webkit-grid-column: -3 / 10 last;
-    -webkit-grid-row: 1;
+    grid-column: -3 / 10 last;
+    grid-row: 1;
 }
 
 .namedGridLineEndPositionStartNegativeInRowDirection {
-    -webkit-grid-column: -5 / -2 middle;
-    -webkit-grid-row: 1;
+    grid-column: -5 / -2 middle;
+    grid-row: 1;
 }
 </style>
 <script src="../../resources/check-layout.js"></script>

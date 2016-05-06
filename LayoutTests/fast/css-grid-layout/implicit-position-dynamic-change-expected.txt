@@ -1,4 +1,4 @@
-This test checks that we properly recompute our grid tracks' sizes when a grid item changes its -webkit-grid-row or -webkit-grid-column.
+This test checks that we properly recompute our grid tracks' sizes when a grid item changes its grid-row or grid-column.
 
 XXXX XXXX XXXX
 PASS

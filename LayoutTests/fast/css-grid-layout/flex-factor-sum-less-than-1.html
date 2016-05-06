@@ -3,41 +3,41 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .onlyColumnFractionFlexFactors {
-    -webkit-grid-template-columns: minmax(0,0.1fr) minmax(0,0.2fr) minmax(0,0.3fr);
-    -webkit-grid-template-rows: 50px;
+    grid-template-columns: minmax(0,0.1fr) minmax(0,0.2fr) minmax(0,0.3fr);
+    grid-template-rows: 50px;
     width: 100px;
 }
 .onlyRowFractionFlexFactors {
-    -webkit-grid-template-columns: 50px;
-    -webkit-grid-template-rows: minmax(0,0.1fr) minmax(0,0.2fr) minmax(0,0.3fr);
+    grid-template-columns: 50px;
+    grid-template-rows: minmax(0,0.1fr) minmax(0,0.2fr) minmax(0,0.3fr);
     width: 50px;
     height: 100px;
 }
 .fixedAndfractionFlexFactors {
-    -webkit-grid-template-columns: 50px minmax(0,0.2fr) 30px;
-    -webkit-grid-template-rows: minmax(0,0.1fr) 50px minmax(0,0.3fr);
+    grid-template-columns: 50px minmax(0,0.2fr) 30px;
+    grid-template-rows: minmax(0,0.1fr) 50px minmax(0,0.3fr);
     width: 100px;
     height: 100px;
 }
 .firstRowThirdColumn {
     background-color: yellow;
-    -webkit-grid-column: 3;
-    -webkit-grid-row: 1;
+    grid-column: 3;
+    grid-row: 1;
 }
 .secondRowThirdColumn {
     background-color: yellow;
-    -webkit-grid-column: 3;
-    -webkit-grid-row: 2;
+    grid-column: 3;
+    grid-row: 2;
 }
 .thirdRowFirstColumn {
     background-color: brown;
-    -webkit-grid-column: 1;
-    -webkit-grid-row: 3;
+    grid-column: 1;
+    grid-row: 3;
 }
 .thirdRowThirdColumn {
     background-color: magenta;
-    -webkit-grid-column: 3;
-    -webkit-grid-row: 3;
+    grid-column: 3;
+    grid-row: 3;
 }
 </style>
 <script src="../../resources/check-layout.js"></script>

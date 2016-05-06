@@ -7,52 +7,52 @@
     font: 10px/1 Ahem;
 }
 .gridMinContentFixedAndAuto {
-    -webkit-grid-template-columns: minmax(-webkit-min-content, 15px) auto;
+    grid-template-columns: minmax(-webkit-min-content, 15px) auto;
 }
 .gridMaxContentFixedAndAuto {
-    -webkit-grid-template-columns: minmax(-webkit-max-content, 15px) auto;
+    grid-template-columns: minmax(-webkit-max-content, 15px) auto;
 }
 .gridAutoAndAuto {
-    -webkit-grid-template-columns: auto auto;
+    grid-template-columns: auto auto;
 }
 .gridMinContentAndMinContentFixed {
-    -webkit-grid-template-columns: -webkit-min-content minmax(-webkit-min-content, 30px);
+    grid-template-columns: -webkit-min-content minmax(-webkit-min-content, 30px);
 }
 .gridMinContentAndMaxContentFixed {
-    -webkit-grid-template-columns: -webkit-min-content minmax(-webkit-max-content, 30px);
+    grid-template-columns: -webkit-min-content minmax(-webkit-max-content, 30px);
 }
 .gridMaxContentAndMinContent {
-    -webkit-grid-template-columns: -webkit-max-content -webkit-min-content;
+    grid-template-columns: -webkit-max-content -webkit-min-content;
 }
 .gridFixedMinContentAndMaxContent {
-    -webkit-grid-template-columns: minmax(10px, -webkit-min-content) -webkit-max-content;
+    grid-template-columns: minmax(10px, -webkit-min-content) -webkit-max-content;
 }
 .gridFixedMaxContentAndMinContent {
-    -webkit-grid-template-columns: minmax(10px, -webkit-max-content) -webkit-min-content;
+    grid-template-columns: minmax(10px, -webkit-max-content) -webkit-min-content;
 }
 .gridAutoMinContent {
-    -webkit-grid-template-columns: auto -webkit-min-content;
+    grid-template-columns: auto -webkit-min-content;
 }
 .gridAutoMaxContent {
-    -webkit-grid-template-columns: auto -webkit-max-content;
+    grid-template-columns: auto -webkit-max-content;
 }
 .gridMaxContentAndMinContentFixed {
-    -webkit-grid-template-columns: -webkit-max-content minmax(-webkit-min-content, 35px);
+    grid-template-columns: -webkit-max-content minmax(-webkit-min-content, 35px);
 }
 .gridMaxContentAndMaxContentFixed {
-    -webkit-grid-template-columns: -webkit-max-content minmax(-webkit-max-content, 35px);
+    grid-template-columns: -webkit-max-content minmax(-webkit-max-content, 35px);
 }
 .gridMinContentFixedAndFixedFixedAndAuto {
-    -webkit-grid-template-columns: minmax(-webkit-min-content, 20px) minmax(20px, 30px) auto;
+    grid-template-columns: minmax(-webkit-min-content, 20px) minmax(20px, 30px) auto;
 }
 .gridAutoAndFixedFixedAndMaxContentFixed {
-    -webkit-grid-template-columns: auto minmax(20px, 30px) minmax(-webkit-max-content, 20px);
+    grid-template-columns: auto minmax(20px, 30px) minmax(-webkit-max-content, 20px);
 }
 .gridMaxContentAndMaxContentFixedAndMaxContent {
-    -webkit-grid-template-columns: -webkit-max-content minmax(-webkit-max-content, 20px) -webkit-max-content;
+    grid-template-columns: -webkit-max-content minmax(-webkit-max-content, 20px) -webkit-max-content;
 }
 .gridAutoAndMinContentFixedAndMinContent {
-    -webkit-grid-template-columns: auto minmax(-webkit-min-content, 30px) -webkit-min-content;
+    grid-template-columns: auto minmax(-webkit-min-content, 30px) -webkit-min-content;
 }
 
 </style>
@@ -304,20 +304,20 @@
 
 <div class="grid gridMaxContentAndMaxContentFixedAndMaxContent" id="gridMaxContentAndMaxContentFixedAndMaxContent">
     <div class="firstRowFirstColumn">X X X</div>
-    <div style="-webkit-grid-row: 1; -webkit-grid-column: 3;">X X</div>
+    <div style="grid-row: 1; grid-column: 3;">X X</div>
     <div class="firstRowBothColumn">XX XX XX XX XX</div>
 </div>
 
 <div class="grid gridAutoAndMinContentFixedAndMinContent justifyContentStart" id="gridAutoAndMinContentFixedAndMinContent">
     <div class="firstRowFirstColumn">XX</div>
     <div class="firstRowBothColumn">XXXXXXXXXXXXXXX</div>
-    <div style="-webkit-grid-row: 1; -webkit-grid-column: 3;">XXX XXX</div>
+    <div style="grid-row: 1; grid-column: 3;">XXX XXX</div>
 </div>
 
 <script>
 function testGridColumnsValues(id, computedColumnValue)
 {
-    shouldBeEqualToString("window.getComputedStyle(" + id + ", '').getPropertyValue('-webkit-grid-template-columns')", computedColumnValue);
+    shouldBeEqualToString("window.getComputedStyle(" + id + ", '').getPropertyValue('grid-template-columns')", computedColumnValue);
 }
 
 testGridColumnsValues("gridMinContentFixedAndAuto", "15px 75px");

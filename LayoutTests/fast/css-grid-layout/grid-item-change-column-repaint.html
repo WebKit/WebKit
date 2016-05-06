@@ -5,7 +5,7 @@
 function repaintTest()
 {
     var gridItem = document.getElementsByClassName("sizedToGridArea")[0];
-    gridItem.style.webkitGridColumn = "3";
+    gridItem.style.gridColumn = "3";
 }
 window.addEventListener("load", runRepaintTest, false);
 </script>
@@ -17,8 +17,8 @@ body {
 }
 
 .grid {
-    -webkit-grid-template-rows: 50px;
-    -webkit-grid-template-columns: minmax(100px, 180px) 100px minmax(50px, 100px);
+    grid-template-rows: 50px;
+    grid-template-columns: minmax(100px, 180px) 100px minmax(50px, 100px);
 }
 .sizedToGridArea {
     background-color: purple;

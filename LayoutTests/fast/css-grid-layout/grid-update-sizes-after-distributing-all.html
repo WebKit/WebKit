@@ -6,36 +6,36 @@
  .grid { font: 10px/1 Ahem; }
 
  .gridAutoAndMaxContent {
-    -webkit-grid-template-columns: auto -webkit-max-content;
+    grid-template-columns: auto -webkit-max-content;
  }
  .gridFixedMinContentAndFixedMaxContent {
-    -webkit-grid-template-columns: minmax(10px, -webkit-min-content) minmax(10px, -webkit-max-content);
+    grid-template-columns: minmax(10px, -webkit-min-content) minmax(10px, -webkit-max-content);
  }
  .gridMinContentAndMaxContent {
-    -webkit-grid-template-columns: -webkit-min-content -webkit-max-content;
+    grid-template-columns: -webkit-min-content -webkit-max-content;
  }
 
  .gridMinContentAndFixedAndMaxContent {
-    -webkit-grid-template-columns: -webkit-min-content 20px -webkit-max-content;
+    grid-template-columns: -webkit-min-content 20px -webkit-max-content;
  }
 
  .gridMaxContentAndFixedAndAuto {
-    -webkit-grid-template-columns: -webkit-max-content 20px auto;
+    grid-template-columns: -webkit-max-content 20px auto;
  }
 
  .gridRepeatTwoMaxContentAndMinContent {
-    -webkit-grid-template-columns: repeat(2, -webkit-max-content -webkit-min-content);
+    grid-template-columns: repeat(2, -webkit-max-content -webkit-min-content);
  }
 
  .gridRepeatTwoAutoAndMaxContent {
-    -webkit-grid-template-columns: repeat(2, auto -webkit-max-content);
+    grid-template-columns: repeat(2, auto -webkit-max-content);
  }
 
- .columns1And2 { -webkit-grid-column: 1 / span 2; }
- .columns2And3 { -webkit-grid-column: 2 / span 2; }
- .columns3And4 { -webkit-grid-column: 3 / span 2; }
- .columns1To3 { -webkit-grid-column: 1 / span 3; }
- .columns1To4 { -webkit-grid-column: 1 / span 4; }
+ .columns1And2 { grid-column: 1 / span 2; }
+ .columns2And3 { grid-column: 2 / span 2; }
+ .columns3And4 { grid-column: 3 / span 2; }
+ .columns1To3 { grid-column: 1 / span 3; }
+ .columns1To4 { grid-column: 1 / span 4; }
 </style>
 <script src="../../resources/js-test.js"></script>
 </head>
@@ -115,7 +115,7 @@
 <script>
 function testGridColumnsValues(id, computedColumnValue)
 {
-    shouldBeEqualToString("window.getComputedStyle(" + id + ", '').getPropertyValue('-webkit-grid-template-columns')", computedColumnValue);
+    shouldBeEqualToString("window.getComputedStyle(" + id + ", '').getPropertyValue('grid-template-columns')", computedColumnValue);
 }
 
 debug("Check that tracks are updated after distributing the extra space for all the items in the same group span.");

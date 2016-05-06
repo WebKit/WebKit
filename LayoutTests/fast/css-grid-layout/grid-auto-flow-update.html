@@ -4,15 +4,15 @@
 <script src="../../resources/check-layout.js"></script>
 <style>
 .grid {
-    -webkit-grid-template-columns: 50px 100px;
-    -webkit-grid-template-rows: 50px 100px;
+    grid-template-columns: 50px 100px;
+    grid-template-rows: 50px 100px;
 }
 </style>
 <script>
 function testGrid(flow, positionAndSize)
 {
     var gridElement = document.getElementsByClassName("grid")[0];
-    gridElement.style.webkitGridAutoFlow = flow;
+    gridElement.style.gridAutoFlow = flow;
     var gridItem = document.getElementById("autoItem");
     gridItem.setAttribute("data-offset-x", positionAndSize.offsetX);
     gridItem.setAttribute("data-offset-y", positionAndSize.offsetY);

@@ -4,8 +4,8 @@
 <link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .gridFixedContent {
-    -webkit-grid-template-columns: 50px minmax(-webkit-min-content, 50px) minmax(-webkit-max-content, 50px) minmax(50px, -webkit-min-content);
-    -webkit-grid-template-rows: 70px minmax(-webkit-max-content, 70px) minmax(50px, -webkit-min-content) minmax(65px, -webkit-max-content);
+    grid-template-columns: 50px minmax(-webkit-min-content, 50px) minmax(-webkit-max-content, 50px) minmax(50px, -webkit-min-content);
+    grid-template-rows: 70px minmax(-webkit-max-content, 70px) minmax(50px, -webkit-min-content) minmax(65px, -webkit-max-content);
 }
 </style>
 <script src="../../resources/check-layout.js"></script>
@@ -13,8 +13,8 @@
 function testPosition(gridElementID, position, size)
 {
     gridItem = document.getElementById(gridElementID).firstChild;
-    gridItem.style.webkitGridColumn = position.column;
-    gridItem.style.webkitGridRow = position.row;
+    gridItem.style.gridColumn = position.column;
+    gridItem.style.gridRow = position.row;
     gridItem.setAttribute("data-expected-width", size.width);
     gridItem.setAttribute("data-expected-height", size.height);
     checkLayout("#" + gridElementID);
@@ -104,7 +104,7 @@ window.addEventListener("load", updateImplicitGridColumn, false);
 </script>
 <body>
 
-<p>This test checks that we properly recompute our grid tracks' sizes when a grid item changes its -webkit-grid-row or -webkit-grid-column.</p>
+<p>This test checks that we properly recompute our grid tracks' sizes when a grid item changes its grid-row or grid-column.</p>
 
 <div class="constrainedContainer">
     <div class="grid gridFixedContent" id="constrainedGrid" style="height: 100%"><div class="sizedToGridArea">XXXX XXXX XXXX</div></div>

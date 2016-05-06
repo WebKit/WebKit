@@ -1379,10 +1379,10 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDisplay e)
         break;
 #if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
-        m_value.valueID = CSSValueWebkitGrid;
+        m_value.valueID = CSSValueGrid;
         break;
     case INLINE_GRID:
-        m_value.valueID = CSSValueWebkitInlineGrid;
+        m_value.valueID = CSSValueInlineGrid;
         break;
 #endif
     case NONE:

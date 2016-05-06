@@ -25,8 +25,8 @@ debug("");
 debug("Test the initial value");
 var element = document.createElement("div");
 document.body.appendChild(element);
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'none'");
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-rows')", "'none'");
 
 debug("");
 debug("Test getting and setting grid-template-rows and grid-template-columns through JS");
@@ -67,14 +67,14 @@ function testInherit()
     document.body.appendChild(parentElement);
     parentElement.style.width = "800px";
     parentElement.style.font = "10px Ahem"; // Used to resolve em font consistently.
-    parentElement.style.webkitGridTemplateColumns = "50px 1fr [last]";
-    parentElement.style.webkitGridTemplateRows = "2em [middle] 45px";
+    parentElement.style.gridTemplateColumns = "50px 1fr [last]";
+    parentElement.style.gridTemplateRows = "2em [middle] 45px";
 
     element = document.createElement("div");
     parentElement.appendChild(element);
-    element.style.display = "-webkit-grid";
-    element.style.webkitGridTemplateColumns = "inherit";
-    element.style.webkitGridTemplateRows = "inherit";
+    element.style.display = "grid";
+    element.style.gridTemplateColumns = "inherit";
+    element.style.gridTemplateRows = "inherit";
     testGridTemplatesValues(element, "50px 750px [last]", "20px [middle] 45px");
 
     document.body.removeChild(parentElement);
@@ -87,15 +87,15 @@ function testInitial()
 {
     element = document.createElement("div");
     document.body.appendChild(element);
-    element.style.display = "-webkit-grid";
+    element.style.display = "grid";
     element.style.width = "800px";
     element.style.height = "600px";
-    element.style.webkitGridTemplateColumns = "150% [middle] 55px";
-    element.style.webkitGridTemplateRows = "1fr [line] 2fr [line]";
+    element.style.gridTemplateColumns = "150% [middle] 55px";
+    element.style.gridTemplateRows = "1fr [line] 2fr [line]";
     testGridTemplatesValues(element, "1200px [middle] 55px", "200px [line] 400px [line]");
 
-    element.style.webkitGridTemplateColumns = "initial";
-    element.style.webkitGridTemplateRows = "initial";
+    element.style.gridTemplateColumns = "initial";
+    element.style.gridTemplateRows = "initial";
     testGridTemplatesValues(element, "none", "none");
 
     document.body.removeChild(element);

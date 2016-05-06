@@ -3,8 +3,8 @@
 <style>
 
 .grid {
-    -webkit-grid-template-columns: 100px 200px;
-    -webkit-grid-template-rows: 50px 150px;
+    grid-template-columns: 100px 200px;
+    grid-template-rows: 50px 150px;
     width: 500px;
     height: 300px;
     border: 5px solid black;
@@ -20,26 +20,26 @@
 
 .startImplicitLine {
     background-color: blue;
-    -webkit-grid-column: 5;
-    -webkit-grid-row: 8;
+    grid-column: 5;
+    grid-row: 8;
 }
 
 .endImplicitLine {
     background-color: orange;
-    -webkit-grid-column: 1 / 5;
-    -webkit-grid-row: 1 / 8;
+    grid-column: 1 / 5;
+    grid-row: 1 / 8;
 }
 
 .startImplicitLineSpan {
     background-color: blue;
-    -webkit-grid-column: span 5;
-    -webkit-grid-row: span 8;
+    grid-column: span 5;
+    grid-row: span 8;
 }
 
 .endImplicitLineSpan {
     background-color: orange;
-    -webkit-grid-column: 1 / span 5;
-    -webkit-grid-row: 1 / span 8;
+    grid-column: 1 / span 5;
+    grid-row: 1 / span 8;
 }
 
 </style>

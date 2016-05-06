@@ -21,15 +21,15 @@
 .padding8 { padding: 0px 8px 0px; }
 
 /* All these 4 cases are equivalent. We use them interchangeably. */
-.gridAuto { -webkit-grid-template-columns: auto; }
-.gridMinMaxAutoAuto { -webkit-grid-template-columns: minmax(auto, auto); }
-.gridMinMaxAutoMaxContent { -webkit-grid-template-columns: minmax(auto, -webkit-max-content); }
-.gridMinMaxMinContentAuto { -webkit-grid-template-columns: minmax(-webkit-min-content, auto); }
+.gridAuto { grid-template-columns: auto; }
+.gridMinMaxAutoAuto { grid-template-columns: minmax(auto, auto); }
+.gridMinMaxAutoMaxContent { grid-template-columns: minmax(auto, -webkit-max-content); }
+.gridMinMaxMinContentAuto { grid-template-columns: minmax(-webkit-min-content, auto); }
 
 /* All these 3 cases are equivalent. We use them interchangeably. */
-.gridAutoAndAuto { -webkit-grid-template-columns: auto auto; }
-.gridAutoAndMinMaxAutoAuto { -webkit-grid-template-columns: auto minmax(auto, auto); }
-.gridMinMaxAutoMaxContentAndAuto { -webkit-grid-template-columns: minmax(auto, -webkit-max-content) auto; }
+.gridAutoAndAuto { grid-template-columns: auto auto; }
+.gridAutoAndMinMaxAutoAuto { grid-template-columns: auto minmax(auto, auto); }
+.gridMinMaxAutoMaxContentAndAuto { grid-template-columns: minmax(auto, -webkit-max-content) auto; }
 
 </style>
 <script src="../../resources/js-test.js"></script>
@@ -237,7 +237,7 @@
 <script>
 function testGridColumnsValues(id, computedColumnValue)
 {
-    shouldBeEqualToString("window.getComputedStyle(" + id + ", '').getPropertyValue('-webkit-grid-template-columns')", computedColumnValue);
+    shouldBeEqualToString("window.getComputedStyle(" + id + ", '').getPropertyValue('grid-template-columns')", computedColumnValue);
 }
 
 debug("Check that min-width is honored when sizing auto columns.");

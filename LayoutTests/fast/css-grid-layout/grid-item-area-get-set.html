@@ -4,36 +4,36 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-template-areas: "firstArea secondArea"
+    grid-template-areas: "firstArea secondArea"
                                  "thirdArea thirdArea";
 }
 
 #oneValueGridArea {
-    -webkit-grid-area: 1;
+    grid-area: 1;
 }
 
 #oneValueIdentGridArea {
-    -webkit-grid-area: thirdArea;
+    grid-area: thirdArea;
 }
 
 #twoValueGridArea {
-    -webkit-grid-area: -1 / span 1;
+    grid-area: -1 / span 1;
 }
 
 #twoValueIdentGridArea {
-    -webkit-grid-area: firstArea / secondArea;
+    grid-area: firstArea / secondArea;
 }
 
 #threeValueGridArea {
-    -webkit-grid-area: span / 10 / -1;
+    grid-area: span / 10 / -1;
 }
 
 #fourValueGridArea {
-    -webkit-grid-area: -5 / 5 span / span 8 / 9;
+    grid-area: -5 / 5 span / span 8 / 9;
 }
 
 #fourValueMixedGridArea {
-    -webkit-grid-area: firstArea / span / nonexistent / 1 foobar;
+    grid-area: firstArea / span / nonexistent / 1 foobar;
 }
 </style>
 <script src="../../resources/js-test-pre.js"></script>
@@ -49,7 +49,7 @@
     <div id="fourValueMixedGridArea"></div>
 </div>
 <script>
-    description('This test checks that -webkit-grid-area is properly parsed and stored internally.');
+    description('This test checks that grid-area is properly parsed and stored internally.');
     function valueOrDefaultGridPosition(gridPosition)
     {
         return gridPosition === undefined ? "auto" : gridPosition;
@@ -58,11 +58,11 @@
     function checkColumnRowValues(gridItem, gridRowStart, gridColumnStart, gridRowEnd, gridColumnEnd)
     {
         this.gridItem = gridItem;
-        shouldBeEqualToString("getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start')", gridRowStart);
-        shouldBeEqualToString("getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start')", valueOrDefaultGridPosition(gridColumnStart));
+        shouldBeEqualToString("getComputedStyle(gridItem, '').getPropertyValue('grid-row-start')", gridRowStart);
+        shouldBeEqualToString("getComputedStyle(gridItem, '').getPropertyValue('grid-column-start')", valueOrDefaultGridPosition(gridColumnStart));
 
-        shouldBeEqualToString("getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end')", valueOrDefaultGridPosition(gridRowEnd));
-        shouldBeEqualToString("getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end')", valueOrDefaultGridPosition(gridColumnEnd));
+        shouldBeEqualToString("getComputedStyle(gridItem, '').getPropertyValue('grid-row-end')", valueOrDefaultGridPosition(gridRowEnd));
+        shouldBeEqualToString("getComputedStyle(gridItem, '').getPropertyValue('grid-column-end')", valueOrDefaultGridPosition(gridColumnEnd));
     }
 
     function testGridAreaCSSParsing(gridItemId, gridRowStart, gridColumnStart, gridRowEnd, gridColumnEnd)
@@ -75,8 +75,8 @@
         var element = document.createElement("div");
         document.body.appendChild(element);
         // Pre-fill it with values to detect that we properly handle and reset unset values.
-        element.style.webkitGridArea = "1 / 2 / 3 / 4";
-        element.style.webkitGridArea = gridAreaValue;
+        element.style.gridArea = "1 / 2 / 3 / 4";
+        element.style.gridArea = gridAreaValue;
 
         // Get the different values.
         var gridColumnRowValues = gridAreaValue.split("/");

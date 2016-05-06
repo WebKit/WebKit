@@ -7,16 +7,16 @@
      font: 10px/1 Ahem;
  }
  .gridAutoAndAuto {
-     -webkit-grid-template-columns: auto auto;
+     grid-template-columns: auto auto;
  }
  .gridFixedMinContentFixedMaxContent {
-    -webkit-grid-template-columns: minmax(50px, -webkit-min-content) minmax(40px, -webkit-max-content);
+    grid-template-columns: minmax(50px, -webkit-min-content) minmax(40px, -webkit-max-content);
  }
  .gridMaxContentAndAuto {
-     -webkit-grid-template-columns: -webkit-max-content auto;
+     grid-template-columns: -webkit-max-content auto;
  }
  .gridMinContentAndAuto {
-     -webkit-grid-template-columns: -webkit-min-content auto;
+     grid-template-columns: -webkit-min-content auto;
  }
 </style>
 <script src="../../resources/js-test.js"></script>
@@ -71,7 +71,7 @@
 <script>
 function testGridColumnsValues(id, computedColumnValue)
 {
-    shouldBeEqualToString("window.getComputedStyle(" + id + ", '').getPropertyValue('-webkit-grid-template-columns')", computedColumnValue);
+    shouldBeEqualToString("window.getComputedStyle(" + id + ", '').getPropertyValue('grid-template-columns')", computedColumnValue);
 }
 
 description('This test checks that content sized tracks are initialized using non-spanning grid items.');

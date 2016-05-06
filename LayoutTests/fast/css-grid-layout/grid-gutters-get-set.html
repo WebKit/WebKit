@@ -3,39 +3,39 @@
 <head>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
-.gridGap { -webkit-grid-gap: 20px 15px; }
-.gridSimpleGap { -webkit-grid-gap: 25px; }
-.gridColumnGap { -webkit-grid-column-gap: 2vw; }
-.gridRowGap { -webkit-grid-row-gap: 2em; }
+.gridGap { grid-gap: 20px 15px; }
+.gridSimpleGap { grid-gap: 25px; }
+.gridColumnGap { grid-column-gap: 2vw; }
+.gridRowGap { grid-row-gap: 2em; }
 .gridRowColumnGaps {
-    -webkit-grid-row-gap: 12px;
-    -webkit-grid-column-gap: 1rem;
+    grid-row-gap: 12px;
+    grid-column-gap: 1rem;
 }
 .gridRowColumnInheritGaps {
-    -webkit-grid-row-gap: inherit;
-    -webkit-grid-column-gap: inherit;
+    grid-row-gap: inherit;
+    grid-column-gap: inherit;
 }
 .gridRowColumnInitialGaps {
-    -webkit-grid-row-gap: initial;
-    -webkit-grid-column-gap: initial;
+    grid-row-gap: initial;
+    grid-column-gap: initial;
 }
 .gridCalcGaps {
-    -webkit-grid-row-gap: calc(10px + 3px);
-    -webkit-grid-column-gap: calc(2px + 1vw);
+    grid-row-gap: calc(10px + 3px);
+    grid-column-gap: calc(2px + 1vw);
 }
-.gridInvalidRowGap { -webkit-grid-row-gap: 10%; }
-.gridInvalidColumnGap { -webkit-grid-column-gap: -webkit-max-content; }
+.gridInvalidRowGap { grid-row-gap: 10%; }
+.gridInvalidColumnGap { grid-column-gap: -webkit-max-content; }
 .gridInvalidMultipleRowColumnGaps {
-    -webkit-grid-row-gap: 10px 1px;
-    -webkit-grid-column-gap: 0px 0px 0px;
+    grid-row-gap: 10px 1px;
+    grid-column-gap: 0px 0px 0px;
 }
 .gridInvalidLengthRowColumnGaps {
-    -webkit-grid-row-gap: 2dpi;
-    -webkit-grid-column-gap: 3rad;
+    grid-row-gap: 2dpi;
+    grid-column-gap: 3rad;
 }
-.gridInvalidGridGap { -webkit-grid-gap: 20px 20px 10px; }
-.gridInvalidNoneGap { -webkit-grid-gap: none; }
-.gridInvalidImplicitGridGap { -webkit-grid-gap: -webkit-fit-content; }
+.gridInvalidGridGap { grid-gap: 20px 20px 10px; }
+.gridInvalidNoneGap { grid-gap: none; }
+.gridInvalidImplicitGridGap { grid-gap: -webkit-fit-content; }
 
 </style>
 <script src="../../resources/js-test.js"></script>

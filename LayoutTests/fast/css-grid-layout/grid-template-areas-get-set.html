@@ -4,54 +4,54 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 #gridWithSingleStringTemplate {
-    -webkit-grid-template-areas: "area";
+    grid-template-areas: "area";
 }
 
 #gridWithTwoColumnsTemplate {
-    -webkit-grid-template-areas: "first second";
+    grid-template-areas: "first second";
 }
 
 #gridWithTwoRowsTemplate {
-    -webkit-grid-template-areas: "first"
+    grid-template-areas: "first"
                                  "second";
 }
 
 #gridWithSpanningColumnsTemplate {
-    -webkit-grid-template-areas: "span span";
+    grid-template-areas: "span span";
 }
 
 #gridWithSpanningRowsDotTemplate {
-    -webkit-grid-template-areas: "span"
+    grid-template-areas: "span"
                                  ".";
 }
 
 #gridWithSpanningRowsDotsTemplate {
-    -webkit-grid-template-areas: "span"
+    grid-template-areas: "span"
                                  "....";
 }
 
 #gridWithDotColumn {
-    -webkit-grid-template-areas: "header ."
+    grid-template-areas: "header ."
                                  "footer .";
 }
 
 #gridWithDotsColumn {
-    -webkit-grid-template-areas: "header ......"
+    grid-template-areas: "header ......"
                                  "footer ......";
 }
 
 #gridWithDotCells {
-    -webkit-grid-template-areas: "first ."
+    grid-template-areas: "first ."
                                  ". second";
 }
 
 #gridWithDotsCells {
-    -webkit-grid-template-areas: "first ......"
+    grid-template-areas: "first ......"
                                  "..... second";
 }
 
 #gridWithComplexDotAreas {
-    -webkit-grid-template-areas: ". header header ."
+    grid-template-areas: ". header header ."
                                  ". . . ."
                                  "nav main main aside"
                                  "nav main main aside"
@@ -60,7 +60,7 @@
 }
 
 #gridWithComplexDotsAreas {
-    -webkit-grid-template-areas: "... header header ....."
+    grid-template-areas: "... header header ....."
                                  "... ...... ...... ....."
                                  "nav main   main   aside"
                                  "nav main   main   aside"
@@ -69,28 +69,28 @@
 }
 
 #gridWithMixedDotAndDotsAreas {
-    -webkit-grid-template-areas: "... title ."
+    grid-template-areas: "... title ."
                                  "..  main main"
                                  "nav ................... aside"
                                  ". footer ......";
 }
 
 #gridWithDotsNoSpaceTwoColumns {
-    -webkit-grid-template-areas: "...A"
+    grid-template-areas: "...A"
                                  ".A"
                                  "B.."
                                  "B.";
 }
 
 #gridWithDotsNoSpaceThreeColumns {
-    -webkit-grid-template-areas: "...A.."
+    grid-template-areas: "...A.."
                                  ".A."
                                  "B..C"
                                  "B.C";
 }
 
 #gridWithDotsNoSpaceFourColumns {
-    -webkit-grid-template-areas: "...A..B"
+    grid-template-areas: "...A..B"
                                  ".A.B"
                                  "..A.B"
                                  ".A...B"
@@ -101,7 +101,7 @@
 }
 
 #gridWithDotsNoSpaceComplex {
-    -webkit-grid-template-areas: ".title...nav. ..main test"
+    grid-template-areas: ".title...nav. ..main test"
                                  "... title.nav... .main test"
                                  "..title .. nav . .. main test"
                                  ". title .nav... . main test";
@@ -109,12 +109,12 @@
 }
 
 #gridWithHorizontalRectangle {
-    -webkit-grid-template-areas: "a a a"
+    grid-template-areas: "a a a"
                                  "a a a";
 }
 
 #gridWithVerticalRectangle {
-    -webkit-grid-template-areas: "a a"
+    grid-template-areas: "a a"
                                  "a a"
                                  "a a";
 }
@@ -147,12 +147,12 @@
     description("This test checks that grid-template-areas is properly parsed.");
 
     function testGridTemplateAreas(gridItemID, expectedResult) {
-        shouldBeEqualToString("getComputedStyle(" + gridItemID + ").getPropertyValue('-webkit-grid-template-areas')", expectedResult);
+        shouldBeEqualToString("getComputedStyle(" + gridItemID + ").getPropertyValue('grid-template-areas')", expectedResult);
     }
 
     function testJSGridTemplateAreas(element, expectedResult) {
         this.element = element;
-        shouldBeEqualToString("getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas')", expectedResult);
+        shouldBeEqualToString("getComputedStyle(element).getPropertyValue('grid-template-areas')", expectedResult);
     }
 
     debug("Test getting grid-template-areas set through CSS.");
@@ -180,25 +180,25 @@
     debug("Test grid-template-areas: initial");
     var element = document.createElement("div");
     document.body.appendChild(element);
-    element.style.webkitGridTemplateAreas = "'foobar'";
+    element.style.gridTemplateAreas = "'foobar'";
     testJSGridTemplateAreas(element, '"foobar"');
-    element.style.webkitGridTemplateAreas = "initial";
+    element.style.gridTemplateAreas = "initial";
     testJSGridTemplateAreas(element, 'none');
-    element.style.webkitGridTemplateAreas = "'foobar'";
+    element.style.gridTemplateAreas = "'foobar'";
     testJSGridTemplateAreas(element, '"foobar"');
-    element.style.webkitGridTemplateAreas = "none";
+    element.style.gridTemplateAreas = "none";
     testJSGridTemplateAreas(element, 'none');
     document.body.removeChild(element);
 
     debug("Test grid-template-areas: inherit");
     var parentElement = document.createElement("div");
     document.body.appendChild(parentElement);
-    parentElement.style.webkitGridTemplateAreas = "'foo bar'";
-    shouldBeEqualToString("getComputedStyle(parentElement).getPropertyValue('-webkit-grid-template-areas')", '"foo bar"');
+    parentElement.style.gridTemplateAreas = "'foo bar'";
+    shouldBeEqualToString("getComputedStyle(parentElement).getPropertyValue('grid-template-areas')", '"foo bar"');
 
     var element = document.createElement("div");
     parentElement.appendChild(element);
-    element.style.webkitGridTemplateAreas = "inherit";
+    element.style.gridTemplateAreas = "inherit";
     testJSGridTemplateAreas(element, '"foo bar"');
     document.body.removeChild(parentElement);
 
@@ -207,29 +207,29 @@
     document.body.appendChild(element);
 
     // 'nav' is not a rectangular definition.
-    element.style.webkitGridTemplateAreas = "'nav head' 'nav nav'";
+    element.style.gridTemplateAreas = "'nav head' 'nav nav'";
     testJSGridTemplateAreas(element, "none");
 
     // 'nav' is not contiguous in the column direction.
-    element.style.webkitGridTemplateAreas = "'nav head nav'";
+    element.style.gridTemplateAreas = "'nav head nav'";
     testJSGridTemplateAreas(element, "none");
 
     // 'nav' is not contiguous in the row direction.
-    element.style.webkitGridTemplateAreas = "'nav head' 'middle middle' 'nav footer'";
+    element.style.gridTemplateAreas = "'nav head' 'middle middle' 'nav footer'";
     testJSGridTemplateAreas(element, "none");
 
     // The rows don't have the same number of columns.
-    element.style.webkitGridTemplateAreas = "'nav head' 'foot'";
+    element.style.gridTemplateAreas = "'nav head' 'foot'";
     testJSGridTemplateAreas(element, "none");
 
     // Empty rows.
-    element.style.webkitGridTemplateAreas = "'' ''";
+    element.style.gridTemplateAreas = "'' ''";
     testJSGridTemplateAreas(element, "none");
 
     debug("");
     debug("FIXME: We currently don't validate that the named grid areas are &lt;indent&gt;.");
     // <ident> only allows a leading '-'.
-    element.style.webkitGridTemplateAreas = "'nav-up'";
+    element.style.gridTemplateAreas = "'nav-up'";
     testJSGridTemplateAreas(element, "none");
 </script>
 <script src="../../resources/js-test-post.js"></script>

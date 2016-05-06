@@ -4,34 +4,34 @@
 <link href="resources/grid-alignment.css" rel="stylesheet"/>
 <style>
 .grid {
-    -webkit-grid-template-rows: 10px 20px;
-    -webkit-grid-auto-rows: 5px;
-    -webkit-grid-template-columns: 30px 40px;
-    -webkit-grid-auto-columns: 15px;
-    -webkit-grid-auto-flow: row;
+    grid-template-rows: 10px 20px;
+    grid-auto-rows: 5px;
+    grid-template-columns: 30px 40px;
+    grid-auto-columns: 15px;
+    grid-auto-flow: row;
 }
 
 .bothNamedGridLineRow {
-    -webkit-grid-row: nonExistentArea / nonExistentArea;
-    -webkit-grid-column: 1;
+    grid-row: nonExistentArea / nonExistentArea;
+    grid-column: 1;
     background-color: lime;
 }
 
 .bothNamedGridLineColumn {
-    -webkit-grid-row: 1;
-    -webkit-grid-column: nonExistentArea / span 3;
+    grid-row: 1;
+    grid-column: nonExistentArea / span 3;
     background-color: lime;
 }
 
 .namedGridLineSpanRow {
-    -webkit-grid-row: nonExistentArea / span 5 firstRow;
-    -webkit-grid-column: 1;
+    grid-row: nonExistentArea / span 5 firstRow;
+    grid-column: 1;
     background-color: lime;
 }
 
 .namedGridLineSpanColumn {
-    -webkit-grid-row: 1;
-    -webkit-grid-column: nonExistentArea / span;
+    grid-row: 1;
+    grid-column: nonExistentArea / span;
     background-color: lime;
 }
 </style>

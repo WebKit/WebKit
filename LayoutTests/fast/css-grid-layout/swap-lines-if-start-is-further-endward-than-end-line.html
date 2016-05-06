@@ -2,32 +2,32 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-template-columns: [a] 50px [b] 50px [c] 50px [d];
-    -webkit-grid-auto-rows: 20px;
-    -webkit-grid-auto-columns: 20px;
+    grid-template-columns: [a] 50px [b] 50px [c] 50px [d];
+    grid-auto-rows: 20px;
+    grid-auto-columns: 20px;
 }
 </style>
 
 <div class="grid">
 
-    <div style="-webkit-grid-column: 3 / 1; background-color: gray"></div>
-    <div style="-webkit-grid-column: -2 / 1; background-color: purple"></div>
-    <div style="-webkit-grid-column: 4 / -2; background-color: orange"></div>
+    <div style="grid-column: 3 / 1; background-color: gray"></div>
+    <div style="grid-column: -2 / 1; background-color: purple"></div>
+    <div style="grid-column: 4 / -2; background-color: orange"></div>
 
-    <div style="-webkit-grid-column: d / 2; background-color: gray"></div>
-    <div style="-webkit-grid-column: -1 / b; background-color: purple"></div>
-    <div style="-webkit-grid-column: d / c; background-color: orange"></div>
+    <div style="grid-column: d / 2; background-color: gray"></div>
+    <div style="grid-column: -1 / b; background-color: purple"></div>
+    <div style="grid-column: d / c; background-color: orange"></div>
 
-    <div style="-webkit-grid-column: 3 / a -1; background-color: gray"></div>
-    <div style="-webkit-grid-column: -1 / b 1; background-color: purple"></div>
-    <div style="-webkit-grid-column: d / c -1; background-color: orange"></div>
+    <div style="grid-column: 3 / a -1; background-color: gray"></div>
+    <div style="grid-column: -1 / b 1; background-color: purple"></div>
+    <div style="grid-column: d / c -1; background-color: orange"></div>
 
     <!-- Check that we do not break already valid use cases. -->
-    <div style="-webkit-grid-column: -3 / -2; background-color: blue"></div>
-    <div style="-webkit-grid-column: -4 / -2; background-color: lightblue"></div>
-    <div style="-webkit-grid-column: -3 / -1; background-color: maroon"></div>
+    <div style="grid-column: -3 / -2; background-color: blue"></div>
+    <div style="grid-column: -4 / -2; background-color: lightblue"></div>
+    <div style="grid-column: -3 / -1; background-color: maroon"></div>
 
-    <div style="-webkit-grid-column: 2 / 2; background-color: lightgreen"></div>
-    <div style="-webkit-grid-column: c / c; background-color: green"></div>
+    <div style="grid-column: 2 / 2; background-color: lightgreen"></div>
+    <div style="grid-column: c / c; background-color: green"></div>
 
 </div>

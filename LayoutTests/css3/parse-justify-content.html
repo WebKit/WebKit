@@ -296,7 +296,7 @@ element.style.display = "-webkit-flex";
 element.style.justifyContent = "normal";
 checkValues(element, "justifyContent", "justify-content",  "normal", "normal");
 
-element.style.display = "-webkit-grid";
+element.style.display = "grid";
 element.style.justifyContent = "normal";
 checkValues(element, "justifyContent", "justify-content",  "normal", "normal");
 
@@ -338,7 +338,7 @@ checkInitialValues(element, "justifyContent", "justify-content", "stretch center
 
 debug("");
 debug("Test the value 'initial' for grid containers");
-element.style.display = "-webkit-grid";
+element.style.display = "grid";
 checkInitialValues(element, "justifyContent", "justify-content", "space-between left", "normal");
 
 debug("");

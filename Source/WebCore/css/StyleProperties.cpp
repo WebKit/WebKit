@@ -166,16 +166,16 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyFlexFlow:
         return getShorthandValue(flexFlowShorthand());
 #if ENABLE(CSS_GRID_LAYOUT)
-    case CSSPropertyWebkitGridArea:
-        return getShorthandValue(webkitGridAreaShorthand());
-    case CSSPropertyWebkitGridTemplate:
-        return getShorthandValue(webkitGridTemplateShorthand());
-    case CSSPropertyWebkitGrid:
-        return getShorthandValue(webkitGridShorthand());
-    case CSSPropertyWebkitGridColumn:
-        return getShorthandValue(webkitGridColumnShorthand());
-    case CSSPropertyWebkitGridRow:
-        return getShorthandValue(webkitGridRowShorthand());
+    case CSSPropertyGridArea:
+        return getShorthandValue(gridAreaShorthand());
+    case CSSPropertyGridTemplate:
+        return getShorthandValue(gridTemplateShorthand());
+    case CSSPropertyGrid:
+        return getShorthandValue(gridShorthand());
+    case CSSPropertyGridColumn:
+        return getShorthandValue(gridColumnShorthand());
+    case CSSPropertyGridRow:
+        return getShorthandValue(gridRowShorthand());
 #endif
     case CSSPropertyFont:
         return fontValue();

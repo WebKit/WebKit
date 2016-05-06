@@ -8,37 +8,37 @@
 }
 
 #grid1 {
-    -webkit-grid-template-columns: minmax(20px, 80px) 60px;
-    -webkit-grid-template-rows: 30px;
+    grid-template-columns: minmax(20px, 80px) 60px;
+    grid-template-rows: 30px;
 }
 
 #grid2 {
     /* First minmax more constraining than available logical width. */
-    -webkit-grid-template-columns: minmax(50%, 60px) minmax(10px, 40%);
-    -webkit-grid-template-rows: 30px;
+    grid-template-columns: minmax(50%, 60px) minmax(10px, 40%);
+    grid-template-rows: 30px;
 }
 
 #grid3 {
     /* Overlapping range. */
-    -webkit-grid-template-columns: minmax(10px, 80px) minmax(20px, 50px);
-    -webkit-grid-template-rows: 30px;
+    grid-template-columns: minmax(10px, 80px) minmax(20px, 50px);
+    grid-template-rows: 30px;
 }
 
 #grid4 {
-    -webkit-grid-template-columns: minmax(20px, 80px) 160px;
-    -webkit-grid-template-rows: 30px;
+    grid-template-columns: minmax(20px, 80px) 160px;
+    grid-template-rows: 30px;
 }
 
 #grid5 {
     /* 50% > 80px, 80px should be ignored. */
-    -webkit-grid-template-columns: minmax(50%, 80px) minmax(10px, 60%);
-    -webkit-grid-template-rows: 30px;
+    grid-template-columns: minmax(50%, 80px) minmax(10px, 60%);
+    grid-template-rows: 30px;
 }
 
 #grid6 {
     /* Overlapping range. */
-    -webkit-grid-template-columns: minmax(10px, 180px) minmax(30px, 150px);
-    -webkit-grid-template-rows: 30px;
+    grid-template-columns: minmax(10px, 180px) minmax(30px, 150px);
+    grid-template-rows: 30px;
 }
 
 .firstRowFirstColumn {

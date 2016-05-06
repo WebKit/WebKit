@@ -6,7 +6,7 @@ if (window.testRunner)
 </script>
 <style>
     .grid {
-        -webkit-grid-template: 100px / 50px;
+        grid-template: 100px / 50px;
     }
 </style>
 <p>This test checks that getting computed style of grid-template shorthand does not crash.</p>
@@ -14,5 +14,5 @@ if (window.testRunner)
 </div>
 <script>
     var grid = document.getElementById("grid");
-    getComputedStyle(grid).webkitGridTemplate;
+    getComputedStyle(grid).gridTemplate;
 </script>

@@ -207,7 +207,7 @@ element.style.display = "-webkit-flex";
 element.style.webkitAlignItems = "auto";
 checkValues(element, "webkitAlignItems", "-webkit-align-items",  "auto", "stretch");
 
-element.style.display = "-webkit-grid";
+element.style.display = "grid";
 element.style.webkitAlignItems = "auto";
 checkValues(element, "webkitAlignItems", "-webkit-align-items",  "auto", "stretch");
 
@@ -251,7 +251,7 @@ checkInitialValues(element, "webkitAlignItems", "-webkit-align-items", "center",
 
 debug("");
 debug("Test the value 'initial' for grid containers");
-element.style.display = "-webkit-grid";
+element.style.display = "grid";
 checkInitialValues(element, "webkitAlignItems", "-webkit-align-items", "left safe", "stretch");
 
 debug("");

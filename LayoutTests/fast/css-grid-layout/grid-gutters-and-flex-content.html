@@ -5,23 +5,23 @@
 <script src="../../resources/check-layout.js"></script>
 <script src="../../resources/js-test.js"></script>
 <style>
-.gridPercentAndFlexContent { -webkit-grid-template: 50px / 50% minmax(30px, 2fr); }
-.gridTwoDoubleMaxFlexContent { -webkit-grid-template: 50px / minmax(10px, 0.5fr) minmax(10px, 2fr); }
-.gridIgnoreSecondGridItem { -webkit-grid-template: 50px / minmax(300px, 3fr) minmax(150px, 1fr); }
+.gridPercentAndFlexContent { grid-template: 50px / 50% minmax(30px, 2fr); }
+.gridTwoDoubleMaxFlexContent { grid-template: 50px / minmax(10px, 0.5fr) minmax(10px, 2fr); }
+.gridIgnoreSecondGridItem { grid-template: 50px / minmax(300px, 3fr) minmax(150px, 1fr); }
 
-.gridRowsPercentAndFlexContent { -webkit-grid-template: minmax(30px, 2fr) 50% / 50px; }
-.gridRowsTwoMaxFlexContent { -webkit-grid-template: minmax(10px, 1fr) minmax(10px, 2fr) / 50px; }
-.gridRowsTwoDoubleMaxFlexContent { -webkit-grid-template: minmax(10px, 0.5fr) minmax(10px, 2fr) / 50px; }
+.gridRowsPercentAndFlexContent { grid-template: minmax(30px, 2fr) 50% / 50px; }
+.gridRowsTwoMaxFlexContent { grid-template: minmax(10px, 1fr) minmax(10px, 2fr) / 50px; }
+.gridRowsTwoDoubleMaxFlexContent { grid-template: minmax(10px, 0.5fr) minmax(10px, 2fr) / 50px; }
 
-.gridMinMaxFlexFixedAndMinContentAndFixed { -webkit-grid-template-columns: minmax(0.5fr, 35px) -webkit-min-content 25px; }
-.gridMinContentAndMinMaxFixedMinContentAndFlex { -webkit-grid-template-columns: -webkit-min-content minmax(20px, -webkit-min-content) 2fr; }
-.gridMaxContentAndMinMaxFixedMaxContentAndFlex { -webkit-grid-template-columns: -webkit-max-content minmax(20px, -webkit-max-content) 1fr; }
+.gridMinMaxFlexFixedAndMinContentAndFixed { grid-template-columns: minmax(0.5fr, 35px) -webkit-min-content 25px; }
+.gridMinContentAndMinMaxFixedMinContentAndFlex { grid-template-columns: -webkit-min-content minmax(20px, -webkit-min-content) 2fr; }
+.gridMaxContentAndMinMaxFixedMaxContentAndFlex { grid-template-columns: -webkit-max-content minmax(20px, -webkit-max-content) 1fr; }
 
 div.grid > div { font: 10px/1 Ahem; }
 
 .gridRowColumnGaps {
-    -webkit-grid-row-gap: 33px;
-    -webkit-grid-column-gap: 19px;
+    grid-row-gap: 33px;
+    grid-column-gap: 19px;
 }
 
 </style>
@@ -77,28 +77,28 @@ div.grid > div { font: 10px/1 Ahem; }
 
 <div style="position: relative; width: 100px;">
     <div class="grid gridMinMaxFlexFixedAndMinContentAndFixed gridRowColumnGaps" data-expected-width="100" data-expected-height="199">
-	<div style="-webkit-grid-column: 1 / span 2;" data-expected-width="54" data-expected-height="20">XXXX XXXX</div>
-	<div style="-webkit-grid-column: 2 / span 2; -webkit-grid-row: 2;" data-expected-width="44" data-expected-height="20">XXX XXX</div>
-	<div style="-webkit-grid-column: 1 / -1; -webkit-grid-row: 3;" data-expected-width="98" data-expected-height="20">XXXXX XXXXX</div>
-	<div style="-webkit-grid-column: 2 / span 2; -webkit-grid-row: 4;" data-expected-width="44" data-expected-height="40">XX XX XX XX</div>
+	<div style="grid-column: 1 / span 2;" data-expected-width="54" data-expected-height="20">XXXX XXXX</div>
+	<div style="grid-column: 2 / span 2; grid-row: 2;" data-expected-width="44" data-expected-height="20">XXX XXX</div>
+	<div style="grid-column: 1 / -1; grid-row: 3;" data-expected-width="98" data-expected-height="20">XXXXX XXXXX</div>
+	<div style="grid-column: 2 / span 2; grid-row: 4;" data-expected-width="44" data-expected-height="40">XX XX XX XX</div>
     </div>
 </div>
 
 <div style="position: relative; width: 100px;">
     <div class="grid gridMinContentAndMinMaxFixedMinContentAndFlex gridRowColumnGaps" data-expected-width="100" data-expected-height="149">
-	<div style="-webkit-grid-column: 2 / span 2;" data-expected-width="80">XXXXX</div>
-	<div style="-webkit-grid-column: 1 / -1; -webkit-grid-row: 2;" data-expected-width="100">XXX XXX XXX</div>
-	<div style="-webkit-grid-column: 1 / span 2; -webkit-grid-row: 3;" data-expected-width="40">XXXX XXXX</div>
-        <div style="-webkit-grid-column: 1; -webkit-grid-row: 4;" data-expected-width="1" data-expected-height="0"></div>
+	<div style="grid-column: 2 / span 2;" data-expected-width="80">XXXXX</div>
+	<div style="grid-column: 1 / -1; grid-row: 2;" data-expected-width="100">XXX XXX XXX</div>
+	<div style="grid-column: 1 / span 2; grid-row: 3;" data-expected-width="40">XXXX XXXX</div>
+        <div style="grid-column: 1; grid-row: 4;" data-expected-width="1" data-expected-height="0"></div>
     </div>
 </div>
 
 <div style="position: relative; width: 100px;">
     <div class="grid gridMaxContentAndMinMaxFixedMaxContentAndFlex gridRowColumnGaps" data-expected-width="100" data-expected-height="139">
-	<div style="-webkit-grid-column: 2 / span 2;" data-expected-width="39">XX</div>
-	<div style="-webkit-grid-column: 1 / -1; -webkit-grid-row: 2;" data-expected-width="109">XXX XXX XXX</div>
-	<div style="-webkit-grid-column: 1 / span 2; -webkit-grid-row: 3;" data-expected-width="90">XXXX XXXX</div>
-        <div style="-webkit-grid-column: 1; -webkit-grid-row: 4;" data-expected-width="51" data-expected-height="0"></div>
+	<div style="grid-column: 2 / span 2;" data-expected-width="39">XX</div>
+	<div style="grid-column: 1 / -1; grid-row: 2;" data-expected-width="109">XXX XXX XXX</div>
+	<div style="grid-column: 1 / span 2; grid-row: 3;" data-expected-width="90">XXXX XXXX</div>
+        <div style="grid-column: 1; grid-row: 4;" data-expected-width="51" data-expected-height="0"></div>
     </div>
 </div>
 

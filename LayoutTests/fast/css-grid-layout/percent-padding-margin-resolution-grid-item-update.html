@@ -3,8 +3,8 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-template-columns: 200px 200px;
-    -webkit-grid-template-rows: 100px 100px;
+    grid-template-columns: 200px 200px;
+    grid-template-rows: 100px 100px;
     height: 200px;
     width: 400px;
 }
@@ -34,8 +34,8 @@ function changeGridTrackSizesAndCheckLayout()
 {
     var grid = document.getElementsByClassName("grid")[0];
     grid.offsetLeft;
-    grid.style.webkitGridTemplateColumns = "100px 300px";
-    grid.style.webkitGridTemplateRows = "50px 150px";
+    grid.style.gridTemplateColumns = "100px 300px";
+    grid.style.gridTemplateRows = "50px 150px";
     checkLayout('.grid');
 }
 window.addEventListener("load", changeGridTrackSizesAndCheckLayout, false);

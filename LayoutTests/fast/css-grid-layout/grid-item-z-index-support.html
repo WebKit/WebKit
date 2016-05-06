@@ -18,7 +18,7 @@ shouldBe("getComputedStyle(item, '').getPropertyValue('z-index')", "'auto'");
 
 debug('Test z-index property once the element becomes a grid item');
 var grid = document.getElementById("grid");
-grid.style.display = "-webkit-grid";
+grid.style.display = "grid";
 shouldBe("getComputedStyle(item, '').getPropertyValue('z-index')", "'-10'");
 item.style.zIndex = "10";
 shouldBe("getComputedStyle(item, '').getPropertyValue('z-index')", "'10'");

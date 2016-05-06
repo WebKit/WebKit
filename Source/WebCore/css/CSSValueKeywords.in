@@ -418,8 +418,8 @@ flex
 inline-flex
 -webkit-inline-flex
 contents
--webkit-grid
--webkit-inline-grid
+grid
+inline-grid
 //none
 //
 // CSS_PROP_CURSOR:
@@ -1155,10 +1155,10 @@ snap
 // stroke
 markers
 
-// -webkit-grid-{column-start|column-end|row-start|row-end}
+// grid-{column-start|column-end|row-start|row-end}
 span
 
-// -webkit-grid-auto-flow
+// grid-auto-flow
 dense
 
 #if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT

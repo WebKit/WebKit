@@ -4,88 +4,88 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 #gridWithDense {
-    -webkit-grid: dense;
+    grid: dense;
 }
 #gridWithTemplate {
-    -webkit-grid: 10px / 15px;
+    grid: 10px / 15px;
 }
 #gridWithTemplate1 {
-    -webkit-grid: 10px / none;
+    grid: 10px / none;
 }
 #gridWithTemplateNone {
-    -webkit-grid: 10px / none;
+    grid: 10px / none;
 }
 #gridWithAutoFlowDenseAndRowsAndColumns {
-    -webkit-grid: dense 10px / 20px;
+    grid: dense 10px / 20px;
 }
 #gridWithAutoFlowAndRows {
-    -webkit-grid: column 10px;
+    grid: column 10px;
 }
 #gridWithAutoFlowDense {
-    -webkit-grid: dense 10px;
+    grid: dense 10px;
 }
 #gridWithAutoFlowColumnDense {
-    -webkit-grid: column dense 10px;
+    grid: column dense 10px;
 }
 #gridWithAutoFlowDenseRow {
-    -webkit-grid: dense row 10px;
+    grid: dense row 10px;
 }
 #gridWithAutoFlowAndRowsAndColumns {
-    -webkit-grid: column 10px / 20px;
+    grid: column 10px / 20px;
 }
 
 /* Bad values. */
 
 #gridWithNone {
-    -webkit-grid: none;
+    grid: none;
 }
 #gridWithAutoFlowNoneAndRowsAndColumns {
-    -webkit-grid: none 10px / 20px;
+    grid: none 10px / 20px;
 }
 #gridWithAutoFlowNone {
-    -webkit-grid: none 10px;
+    grid: none 10px;
 }
 #gridWithExplicitAndImplicit {
-    -webkit-grid: 10px / 20px column;
+    grid: 10px / 20px column;
 }
 #gridWithMisplacedNone1 {
-    -webkit-grid: column 10px / none 20px;
+    grid: column 10px / none 20px;
 }
 #gridWithMisplacedNone2 {
-    -webkit-grid: 10px / 20px none;
+    grid: 10px / 20px none;
 }
 #gridWithWrongSlash1 {
-    -webkit-grid: column / 10px;
+    grid: column / 10px;
 }
 #gridWithWrongSlash2 {
-    -webkit-grid: column 10px 20px;
+    grid: column 10px 20px;
 }
 #gridWithWrongSlash3 {
-    -webkit-grid: 5x / 10px / 20px;
+    grid: 5x / 10px / 20px;
 }
 #gridWithAutoFlowRowAndColumn {
-    -webkit-grid: row column 10px;
+    grid: row column 10px;
 }
 #gridWithoutAutoFlowAndExtraBreath {
-    -webkit-grid: row 10px / 20px 30px;
+    grid: row 10px / 20px 30px;
 }
 #gridWithAutoFlowString1 {
-    -webkit-grid: row 10px "a";
+    grid: row 10px "a";
 }
 #gridWithAutoFlowString2 {
-    -webkit-grid: row "a" 10px;
+    grid: row "a" 10px;
 }
 #gridWithAutoFlowString3 {
-    -webkit-grid: row "a";
+    grid: row "a";
 }
 #gridWithTemplateAndAutoFlow {
-    -webkit-grid: 10px / 10px row;
+    grid: 10px / 10px row;
 }
 #gridWithTemplateAndMisplacedString1 {
-    -webkit-grid: 10px / 10px "a";
+    grid: 10px / 10px "a";
 }
 #gridWithMisplacedDense {
-    -webkit-grid: dense column dense;
+    grid: dense column dense;
 }
 </style>
 <script src="../../resources/js-test.js"></script>
@@ -166,12 +166,12 @@
     var element = document.createElement("div");
     document.body.appendChild(element);
     testGridDefinitionsValues(element, "none", "none", "none", "row", "auto", "auto");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'none'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'none'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-areas')", "'none'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'auto'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'auto'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-columns')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-rows')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-areas')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-flow')", "'row'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-columns')", "'auto'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-auto-rows')", "'auto'");
 
     debug("");
     debug("Test setting grid-template-columns and grid-template-rows back to 'none' through JS");
@@ -180,15 +180,15 @@
 
     debug("");
     debug("Test the inherit value on reset-only subproperties (grid-*-gap)");
-    document.body.style.webkitGridRowGap = "100px";
-    document.body.style.webkitGridColumnGap = "20px";
+    document.body.style.gridRowGap = "100px";
+    document.body.style.gridColumnGap = "20px";
     var anotherElement = document.createElement("div");
     document.body.appendChild(anotherElement);
-    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-column-gap')", "0px");
-    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-row-gap')", "0px");
-    anotherElement.style.webkitGrid = "inherit";
-    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-column-gap')", "20px");
-    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-row-gap')", "100px");
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap')", "0px");
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap')", "0px");
+    anotherElement.style.grid = "inherit";
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap')", "20px");
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap')", "100px");
 </script>
 </body>
 </html>

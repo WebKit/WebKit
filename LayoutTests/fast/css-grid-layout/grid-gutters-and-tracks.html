@@ -6,34 +6,34 @@
 <style>
 body { margin: 0px; }
 
-.normalGap { -webkit-grid-gap: normal; }
+.normalGap { grid-gap: normal; }
 
-.gridGap { -webkit-grid-gap: 16px; }
+.gridGap { grid-gap: 16px; }
 
 .gridRowColumnGaps {
-    -webkit-grid-row-gap: 12px;
-    -webkit-grid-column-gap: 23px;
+    grid-row-gap: 12px;
+    grid-column-gap: 23px;
 }
 
-.gridMultipleCols { -webkit-grid-template-columns: 30px minmax(10px, 50px) 80px; }
-.gridMultipleRows { -webkit-grid-template-rows: 90px 70px -webkit-min-content; }
-.gridAutoAuto { -webkit-grid-template: auto auto / auto auto; }
-.gridMultipleFixed { -webkit-grid-template: [first] 37px [foo] 57px [bar] 77px [last] / [first] 15px [foo] 25px [bar] 35px [last]; }
-.gridFixed100 { -webkit-grid-template: repeat(2, 100px) / repeat(2, 100px); }
-.gridWithPercent { -webkit-grid-template: 10% 10px / 10px 20% repeat(1, 30px); }
-.gridWithDoublePercent { -webkit-grid-template: 35% 65% / 60% 40%; }
+.gridMultipleCols { grid-template-columns: 30px minmax(10px, 50px) 80px; }
+.gridMultipleRows { grid-template-rows: 90px 70px -webkit-min-content; }
+.gridAutoAuto { grid-template: auto auto / auto auto; }
+.gridMultipleFixed { grid-template: [first] 37px [foo] 57px [bar] 77px [last] / [first] 15px [foo] 25px [bar] 35px [last]; }
+.gridFixed100 { grid-template: repeat(2, 100px) / repeat(2, 100px); }
+.gridWithPercent { grid-template: 10% 10px / 10px 20% repeat(1, 30px); }
+.gridWithDoublePercent { grid-template: 35% 65% / 60% 40%; }
 
 .fixedSizeGrid {
     width: 220px;
     height: 300px;
 }
 .gridFixedAutoTracks {
-    -webkit-grid-auto-rows: 20px;
-    -webkit-grid-auto-columns: 40px;
+    grid-auto-rows: 20px;
+    grid-auto-columns: 40px;
 }
 
-.thirdRowThirdColumn { -webkit-grid-area: 3 / 3; }
-.firstRowThirdColumn { -webkit-grid-area: 1 / 3; }
+.thirdRowThirdColumn { grid-area: 3 / 3; }
+.firstRowThirdColumn { grid-area: 1 / 3; }
 
 div.grid > div { font: 10px/1 Ahem; }
 
@@ -88,9 +88,9 @@ div.grid > div { font: 10px/1 Ahem; }
 
 <div style="position: relative">
     <div class="grid gridMultipleFixed gridRowColumnGaps">
-        <div style="-webkit-grid-row: 2; -webkit-grid-column: -2 / -1;" data-offset-x="86" data-offset-y="49" data-expected-width="35" data-expected-height="57">X X X</div>
-        <div style="-webkit-grid-row: 1 / bar; -webkit-grid-column: bar" data-offset-x="86" data-offset-y="0" data-expected-width="35" data-expected-height="106">X XX X XX XX XX X</div>
-        <div style="-webkit-grid-row: -2; -webkit-grid-column-end: foo" data-offset-x="0" data-offset-y="118" data-expected-width="15" data-expected-height="77">X X</div>
+        <div style="grid-row: 2; grid-column: -2 / -1;" data-offset-x="86" data-offset-y="49" data-expected-width="35" data-expected-height="57">X X X</div>
+        <div style="grid-row: 1 / bar; grid-column: bar" data-offset-x="86" data-offset-y="0" data-expected-width="35" data-expected-height="106">X XX X XX XX XX X</div>
+        <div style="grid-row: -2; grid-column-end: foo" data-offset-x="0" data-offset-y="118" data-expected-width="15" data-expected-height="77">X X</div>
     </div>
 </div>
 
@@ -130,9 +130,9 @@ div.grid > div { font: 10px/1 Ahem; }
 
 <div style="position: relative">
     <div class="grid gridMultipleFixed gridRowColumnGaps">
-        <div style="-webkit-grid-row: 2; -webkit-grid-column: 1 / -1;" data-offset-x="0" data-offset-y="49" data-expected-width="121" data-expected-height="57">XXXX X XXXX</div>
-        <div style="-webkit-grid-row: first / last; -webkit-grid-column-start: 2" data-offset-x="38" data-offset-y="0" data-expected-width="25" data-expected-height="195">X XX X XX X</div>
-        <div style="-webkit-grid-row: 1 / 3; -webkit-grid-column: first / bar" data-offset-x="0" data-offset-y="0" data-expected-width="63" data-expected-height="106">XXX XX<br>XX<br>XXXXX</div>
+        <div style="grid-row: 2; grid-column: 1 / -1;" data-offset-x="0" data-offset-y="49" data-expected-width="121" data-expected-height="57">XXXX X XXXX</div>
+        <div style="grid-row: first / last; grid-column-start: 2" data-offset-x="38" data-offset-y="0" data-expected-width="25" data-expected-height="195">X XX X XX X</div>
+        <div style="grid-row: 1 / 3; grid-column: first / bar" data-offset-x="0" data-offset-y="0" data-expected-width="63" data-expected-height="106">XXX XX<br>XX<br>XXXXX</div>
     </div>
 </div>
 

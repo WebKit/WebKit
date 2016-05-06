@@ -327,18 +327,18 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyFontVariantAlternates,
     CSSPropertyFontVariantEastAsian,
 #if ENABLE(CSS_GRID_LAYOUT)
-    CSSPropertyWebkitGridAutoColumns,
-    CSSPropertyWebkitGridAutoFlow,
-    CSSPropertyWebkitGridAutoRows,
-    CSSPropertyWebkitGridColumnEnd,
-    CSSPropertyWebkitGridColumnStart,
-    CSSPropertyWebkitGridTemplateAreas,
-    CSSPropertyWebkitGridTemplateColumns,
-    CSSPropertyWebkitGridTemplateRows,
-    CSSPropertyWebkitGridRowEnd,
-    CSSPropertyWebkitGridRowStart,
-    CSSPropertyWebkitGridColumnGap,
-    CSSPropertyWebkitGridRowGap,
+    CSSPropertyGridAutoColumns,
+    CSSPropertyGridAutoFlow,
+    CSSPropertyGridAutoRows,
+    CSSPropertyGridColumnEnd,
+    CSSPropertyGridColumnStart,
+    CSSPropertyGridTemplateAreas,
+    CSSPropertyGridTemplateColumns,
+    CSSPropertyGridTemplateRows,
+    CSSPropertyGridRowEnd,
+    CSSPropertyGridRowStart,
+    CSSPropertyGridColumnGap,
+    CSSPropertyGridRowGap,
 #endif
     CSSPropertyWebkitHyphenateCharacter,
     CSSPropertyWebkitHyphenateLimitAfter,
@@ -2183,10 +2183,10 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
     case CSSPropertyPaddingLeft:
         return paddingOrMarginIsRendererDependent<&RenderStyle::paddingLeft>(style, renderer); 
 #if ENABLE(CSS_GRID_LAYOUT)
-    case CSSPropertyWebkitGridTemplateColumns:
-    case CSSPropertyWebkitGridTemplateRows:
-    case CSSPropertyWebkitGridTemplate:
-    case CSSPropertyWebkitGrid:
+    case CSSPropertyGridTemplateColumns:
+    case CSSPropertyGridTemplateRows:
+    case CSSPropertyGridTemplate:
+    case CSSPropertyGrid:
         return renderer && renderer->isRenderGrid();
 #endif
     default:
@@ -2789,7 +2789,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return list;
         }
 #if ENABLE(CSS_GRID_LAYOUT)
-        case CSSPropertyWebkitGridAutoFlow: {
+        case CSSPropertyGridAutoFlow: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             ASSERT(style->isGridAutoFlowDirectionRow() || style->isGridAutoFlowDirectionColumn());
             if (style->isGridAutoFlowDirectionRow())
@@ -2808,48 +2808,48 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         // grid-auto-columns: 2fr; cannot be resolved to a value in pixels as the '2fr' means very different things
         // depending on the size of the explicit grid or the number of implicit tracks added to the grid. See
         // http://lists.w3.org/Archives/Public/www-style/2013Nov/0014.html
-        case CSSPropertyWebkitGridAutoColumns:
+        case CSSPropertyGridAutoColumns:
             return specifiedValueForGridTrackSize(style->gridAutoColumns(), *style);
-        case CSSPropertyWebkitGridAutoRows:
+        case CSSPropertyGridAutoRows:
             return specifiedValueForGridTrackSize(style->gridAutoRows(), *style);
 
-        case CSSPropertyWebkitGridTemplateColumns:
+        case CSSPropertyGridTemplateColumns:
             return valueForGridTrackList(ForColumns, renderer, *style);
-        case CSSPropertyWebkitGridTemplateRows:
+        case CSSPropertyGridTemplateRows:
             return valueForGridTrackList(ForRows, renderer, *style);
 
-        case CSSPropertyWebkitGridColumnStart:
+        case CSSPropertyGridColumnStart:
             return valueForGridPosition(style->gridItemColumnStart());
-        case CSSPropertyWebkitGridColumnEnd:
+        case CSSPropertyGridColumnEnd:
             return valueForGridPosition(style->gridItemColumnEnd());
-        case CSSPropertyWebkitGridRowStart:
+        case CSSPropertyGridRowStart:
             return valueForGridPosition(style->gridItemRowStart());
-        case CSSPropertyWebkitGridRowEnd:
+        case CSSPropertyGridRowEnd:
             return valueForGridPosition(style->gridItemRowEnd());
-        case CSSPropertyWebkitGridArea:
-            return getCSSPropertyValuesForGridShorthand(webkitGridAreaShorthand());
-        case CSSPropertyWebkitGridTemplate:
-            return getCSSPropertyValuesForGridShorthand(webkitGridTemplateShorthand());
-        case CSSPropertyWebkitGrid:
-            return getCSSPropertyValuesForGridShorthand(webkitGridShorthand());
-        case CSSPropertyWebkitGridColumn:
-            return getCSSPropertyValuesForGridShorthand(webkitGridColumnShorthand());
-        case CSSPropertyWebkitGridRow:
-            return getCSSPropertyValuesForGridShorthand(webkitGridRowShorthand());
+        case CSSPropertyGridArea:
+            return getCSSPropertyValuesForGridShorthand(gridAreaShorthand());
+        case CSSPropertyGridTemplate:
+            return getCSSPropertyValuesForGridShorthand(gridTemplateShorthand());
+        case CSSPropertyGrid:
+            return getCSSPropertyValuesForGridShorthand(gridShorthand());
+        case CSSPropertyGridColumn:
+            return getCSSPropertyValuesForGridShorthand(gridColumnShorthand());
+        case CSSPropertyGridRow:
+            return getCSSPropertyValuesForGridShorthand(gridRowShorthand());
 
-        case CSSPropertyWebkitGridTemplateAreas:
+        case CSSPropertyGridTemplateAreas:
             if (!style->namedGridAreaRowCount()) {
                 ASSERT(!style->namedGridAreaColumnCount());
                 return cssValuePool.createIdentifierValue(CSSValueNone);
             }
 
             return CSSGridTemplateAreasValue::create(style->namedGridArea(), style->namedGridAreaRowCount(), style->namedGridAreaColumnCount());
-        case CSSPropertyWebkitGridColumnGap:
+        case CSSPropertyGridColumnGap:
             return zoomAdjustedPixelValueForLength(style->gridColumnGap(), *style);
-        case CSSPropertyWebkitGridRowGap:
+        case CSSPropertyGridRowGap:
             return zoomAdjustedPixelValueForLength(style->gridRowGap(), *style);
-        case CSSPropertyWebkitGridGap:
-            return getCSSPropertyValuesForGridShorthand(webkitGridGapShorthand());
+        case CSSPropertyGridGap:
+            return getCSSPropertyValuesForGridShorthand(gridGapShorthand());
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
         case CSSPropertyHeight:
             if (renderer && !renderer->isRenderSVGModelObject()) {

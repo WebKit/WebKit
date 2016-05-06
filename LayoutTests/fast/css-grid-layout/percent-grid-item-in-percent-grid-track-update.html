@@ -3,8 +3,8 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-template-columns: 70% 30%;
-    -webkit-grid-template-rows: 40% 60%;
+    grid-template-columns: 70% 30%;
+    grid-template-rows: 40% 60%;
     width: 400px;
     height: 300px;
 }
@@ -37,12 +37,12 @@ function changeGridTemplatesAndCheckValues()
     var grid1 = document.getElementsByClassName("grid")[1];
     var grid2 = document.getElementsByClassName("grid")[2];
     document.body.offsetLeft;
-    grid0.style.webkitGridTemplateColumns = "40% 60%";
+    grid0.style.gridTemplateColumns = "40% 60%";
 
-    grid1.style.webkitGridTemplateRows = "30% 70%";
+    grid1.style.gridTemplateRows = "30% 70%";
 
-    grid2.style.webkitGridTemplateColumns = "40% 60%";
-    grid2.style.webkitGridTemplateRows = "30% 70%";
+    grid2.style.gridTemplateColumns = "40% 60%";
+    grid2.style.gridTemplateRows = "30% 70%";
 
     checkLayout('.grid');
 }

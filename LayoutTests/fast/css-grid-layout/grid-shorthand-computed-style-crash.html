@@ -6,7 +6,7 @@ if (window.testRunner)
 </script>
 <style>
     .grid {
-        -webkit-grid: 100px / 50px;
+        grid: 100px / 50px;
     }
 </style>
 <p>This test checks that getting computed style of grid shorthand does not crash.</p>
@@ -14,5 +14,5 @@ if (window.testRunner)
 </div>
 <script>
     var grid = document.getElementById("grid");
-    getComputedStyle(grid).webkitGrid;
+    getComputedStyle(grid).grid;
 </script>

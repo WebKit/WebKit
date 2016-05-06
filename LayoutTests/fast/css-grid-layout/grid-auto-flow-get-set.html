@@ -4,41 +4,41 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .gridAutoFlowDense {
-    -webkit-grid-auto-flow: dense;
+    grid-auto-flow: dense;
 }
 .gridAutoFlowColumnDense {
-    -webkit-grid-auto-flow: column dense;
+    grid-auto-flow: column dense;
 }
 .gridAutoFlowRowDense {
-    -webkit-grid-auto-flow: row dense;
+    grid-auto-flow: row dense;
 }
 .gridAutoFlowDenseColumn {
-    -webkit-grid-auto-flow: dense column;
+    grid-auto-flow: dense column;
 }
 .gridAutoFlowDenseRow {
-    -webkit-grid-auto-flow: dense row;
+    grid-auto-flow: dense row;
 }
 .gridAutoFlowInherit {
-    -webkit-grid-auto-flow: inherit;
+    grid-auto-flow: inherit;
 }
 /* Bad values. */
 .gridAutoFlowNone {
-    -webkit-grid-auto-flow: none;
+    grid-auto-flow: none;
 }
 .gridAutoFlowRows {
-    -webkit-grid-auto-flow: rows;
+    grid-auto-flow: rows;
 }
 .gridAutoFlowColumns {
-    -webkit-grid-auto-flow: columns;
+    grid-auto-flow: columns;
 }
 .gridAutoFlowColumnFoo {
-    -webkit-grid-auto-flow: column foo;
+    grid-auto-flow: column foo;
 }
 .gridAutoFlowColumnColumn {
-    -webkit-grid-auto-flow: column column;
+    grid-auto-flow: column column;
 }
 .gridAutoFlowDenseRowRow {
-    -webkit-grid-auto-flow: dense row row;
+    grid-auto-flow: dense row row;
 }
 </style>
 <script src="../../resources/js-test-pre.js"></script>
@@ -66,9 +66,9 @@
 <div class="grid gridAutoFlowDenseRowRow" id="gridAutoFlowDenseRowRow"></div>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
 <script>
-    description('Test that setting and getting -webkit-grid-auto-flow works as expected');
+    description('Test that setting and getting grid-auto-flow works as expected');
 
-    debug("Test getting -webkit-grid-auto-flow set through CSS");
+    debug("Test getting grid-auto-flow set through CSS");
     checkGridAutoFlowSetCSSValue("gridAutoFlowColumnSparse", "column");
     checkGridAutoFlowSetCSSValue("gridAutoFlowRowSparse", "row");
     checkGridAutoFlowSetCSSValue("gridAutoFlowDense", "row dense");
@@ -80,7 +80,7 @@
     checkGridAutoFlowSetCSSValue("gridAutoFlowNoInherit", "row");
 
     debug("");
-    debug("Test getting -webkit-grid-auto-flow bad values set through CSS");
+    debug("Test getting grid-auto-flow bad values set through CSS");
     checkGridAutoFlowSetCSSValue("gridAutoFlowNone", "row");
     checkGridAutoFlowSetCSSValue("gridAutoFlowColumns", "row");
     checkGridAutoFlowSetCSSValue("gridAutoFlowRows", "row");
@@ -93,7 +93,7 @@
     checkGridAutoFlowSetJSValue("", "", "row");
 
     debug("");
-    debug("Test getting and setting -webkit-grid-auto-flow through JS");
+    debug("Test getting and setting grid-auto-flow through JS");
     checkGridAutoFlowSetJSValue("column", "column", "column");
     checkGridAutoFlowSetJSValue("column dense", "column dense", "column dense");
     checkGridAutoFlowSetJSValue("dense", "row dense", "row dense");
@@ -103,13 +103,13 @@
     checkGridAutoFlowSetJSValue("row", "row", "row");
 
     debug("");
-    debug("Test getting and setting bad values for -webkit-grid-auto-flow through JS");
+    debug("Test getting and setting bad values for grid-auto-flow through JS");
     checkGridAutoFlowSetJSValue("noone", "", "row");
     checkGridAutoFlowSetJSValue("column column", "", "row");
     checkGridAutoFlowSetJSValue("dense row row", "", "row");
 
     debug("");
-    debug("Test setting -webkit-grid-auto-flow to 'initial' through JS");
+    debug("Test setting grid-auto-flow to 'initial' through JS");
     // Reusing the value so that we can check that it is set back to its initial value.
     checkGridAutoFlowSetJSValue("initial", "initial", "row");
 </script>

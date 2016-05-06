@@ -549,8 +549,8 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyWebkitPaddingEnd:
     case CSSPropertyWebkitPaddingStart:
 #if ENABLE(CSS_GRID_LAYOUT)
-    case CSSPropertyWebkitGridColumnGap:
-    case CSSPropertyWebkitGridRowGap:
+    case CSSPropertyGridColumnGap:
+    case CSSPropertyGridRowGap:
 #endif
         acceptsNegativeNumbers = false;
         return true;
@@ -679,11 +679,11 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         // inline | block | list-item | inline-block | table |
         // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
         // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none | inherit
-        // flex | -webkit-flex | inline-flex | -webkit-inline-flex | -webkit-grid | -webkit-inline-grid | contents
+        // flex | -webkit-flex | inline-flex | -webkit-inline-flex | grid | inline-grid | contents
         if ((valueID >= CSSValueInline && valueID <= CSSValueContents) || valueID == CSSValueNone)
             return true;
 #if ENABLE(CSS_GRID_LAYOUT)
-        if (parserContext.cssGridLayoutEnabled && (valueID == CSSValueWebkitGrid || valueID == CSSValueWebkitInlineGrid))
+        if (parserContext.cssGridLayoutEnabled && (valueID == CSSValueGrid || valueID == CSSValueInlineGrid))
             return true;
 #endif
         break;
@@ -2796,68 +2796,68 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         m_valueList->setCurrentIndex(0);
         return parseItemPositionOverflowPosition(propId, important);
 #if ENABLE(CSS_GRID_LAYOUT)
-    case CSSPropertyWebkitGridAutoColumns:
-    case CSSPropertyWebkitGridAutoRows:
+    case CSSPropertyGridAutoColumns:
+    case CSSPropertyGridAutoRows:
         if (!isCSSGridLayoutEnabled())
             return false;
         parsedValue = parseGridTrackSize(*m_valueList);
         break;
 
-    case CSSPropertyWebkitGridTemplateColumns:
-    case CSSPropertyWebkitGridTemplateRows:
+    case CSSPropertyGridTemplateColumns:
+    case CSSPropertyGridTemplateRows:
         if (!isCSSGridLayoutEnabled())
             return false;
         parsedValue = parseGridTrackList();
         break;
 
-    case CSSPropertyWebkitGridColumnStart:
-    case CSSPropertyWebkitGridColumnEnd:
-    case CSSPropertyWebkitGridRowStart:
-    case CSSPropertyWebkitGridRowEnd:
+    case CSSPropertyGridColumnStart:
+    case CSSPropertyGridColumnEnd:
+    case CSSPropertyGridRowStart:
+    case CSSPropertyGridRowEnd:
         if (!isCSSGridLayoutEnabled())
             return false;
         parsedValue = parseGridPosition();
         break;
 
-    case CSSPropertyWebkitGridColumnGap:
-    case CSSPropertyWebkitGridRowGap:
+    case CSSPropertyGridColumnGap:
+    case CSSPropertyGridRowGap:
         if (!isCSSGridLayoutEnabled())
             return false;
         validPrimitive = validateUnit(valueWithCalculation, FLength | FNonNeg);
         break;
 
-    case CSSPropertyWebkitGridGap:
+    case CSSPropertyGridGap:
         if (!isCSSGridLayoutEnabled())
             return false;
         return parseGridGapShorthand(important);
 
-    case CSSPropertyWebkitGridColumn:
-    case CSSPropertyWebkitGridRow:
+    case CSSPropertyGridColumn:
+    case CSSPropertyGridRow:
         if (!isCSSGridLayoutEnabled())
             return false;
         return parseGridItemPositionShorthand(propId, important);
 
-    case CSSPropertyWebkitGridTemplate:
+    case CSSPropertyGridTemplate:
         if (!isCSSGridLayoutEnabled())
             return false;
         return parseGridTemplateShorthand(important);
 
-    case CSSPropertyWebkitGrid:
+    case CSSPropertyGrid:
         if (!isCSSGridLayoutEnabled())
             return false;
         return parseGridShorthand(important);
 
-    case CSSPropertyWebkitGridArea:
+    case CSSPropertyGridArea:
         if (!isCSSGridLayoutEnabled())
             return false;
         return parseGridAreaShorthand(important);
 
-    case CSSPropertyWebkitGridTemplateAreas:
+    case CSSPropertyGridTemplateAreas:
         if (!isCSSGridLayoutEnabled())
             return false;
         parsedValue = parseGridTemplateAreas();
         break;
-    case CSSPropertyWebkitGridAutoFlow:
+    case CSSPropertyGridAutoFlow:
         if (!isCSSGridLayoutEnabled())
             return false;
         parsedValue = parseGridAutoFlow(*m_valueList);
@@ -5579,8 +5579,8 @@ bool CSSParser::parseGridGapShorthand(bool important)
 {
     ASSERT(isCSSGridLayoutEnabled());
 
-    ShorthandScope scope(this, CSSPropertyWebkitGridGap);
-    ASSERT(shorthandForProperty(CSSPropertyWebkitGridGap).length() == 2);
+    ShorthandScope scope(this, CSSPropertyGridGap);
+    ASSERT(shorthandForProperty(CSSPropertyGridGap).length() == 2);
 
     CSSParserValue* value = m_valueList->current();
     if (!value)
@@ -5594,8 +5594,8 @@ bool CSSParser::parseGridGapShorthand(bool important)
 
     value = m_valueList->next();
     if (!value) {
-        addProperty(CSSPropertyWebkitGridColumnGap, rowGap, important);
-        addProperty(CSSPropertyWebkitGridRowGap, rowGap, important);
+        addProperty(CSSPropertyGridColumnGap, rowGap, important);
+        addProperty(CSSPropertyGridRowGap, rowGap, important);
         return true;
     }
 
@@ -5608,8 +5608,8 @@ bool CSSParser::parseGridGapShorthand(bool important)
 
     RefPtr<CSSPrimitiveValue> columnGap = createPrimitiveNumericValue(columnValueWithCalculation);
 
-    addProperty(CSSPropertyWebkitGridRowGap, rowGap, important);
-    addProperty(CSSPropertyWebkitGridColumnGap, columnGap, important);
+    addProperty(CSSPropertyGridRowGap, rowGap, important);
+    addProperty(CSSPropertyGridColumnGap, columnGap, important);
 
     return true;
 }
@@ -5685,11 +5685,11 @@ bool CSSParser::parseGridTemplateRowsAndAreasAndColumns(bool important)
             return false;
     }
 
-    addProperty(CSSPropertyWebkitGridTemplateRows, templateRows.release(), important);
-    addProperty(CSSPropertyWebkitGridTemplateColumns, templateColumns ? templateColumns.release() : CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+    addProperty(CSSPropertyGridTemplateRows, templateRows.release(), important);
+    addProperty(CSSPropertyGridTemplateColumns, templateColumns ? templateColumns.release() : CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
 
     RefPtr<CSSValue> templateAreas = CSSGridTemplateAreasValue::create(gridAreaMap, rowCount, columnCount);
-    addProperty(CSSPropertyWebkitGridTemplateAreas, templateAreas.release(), important);
+    addProperty(CSSPropertyGridTemplateAreas, templateAreas.release(), important);
 
     return true;
 }
@@ -5698,8 +5698,8 @@ bool CSSParser::parseGridTemplateShorthand(bool important)
 {
     ASSERT(isCSSGridLayoutEnabled());
 
-    ShorthandScope scope(this, CSSPropertyWebkitGridTemplate);
-    ASSERT(shorthandForProperty(CSSPropertyWebkitGridTemplate).length() == 3);
+    ShorthandScope scope(this, CSSPropertyGridTemplate);
+    ASSERT(shorthandForProperty(CSSPropertyGridTemplate).length() == 3);
 
     // At least "none" must be defined.
     if (!m_valueList->current())
@@ -5709,9 +5709,9 @@ bool CSSParser::parseGridTemplateShorthand(bool important)
 
     // 1- 'none' case.
     if (firstValueIsNone && !m_valueList->next()) {
-        addProperty(CSSPropertyWebkitGridTemplateColumns, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
-        addProperty(CSSPropertyWebkitGridTemplateRows, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
-        addProperty(CSSPropertyWebkitGridTemplateAreas, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+        addProperty(CSSPropertyGridTemplateColumns, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+        addProperty(CSSPropertyGridTemplateRows, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+        addProperty(CSSPropertyGridTemplateAreas, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
         return true;
     }
 
@@ -5727,9 +5727,9 @@ bool CSSParser::parseGridTemplateShorthand(bool important)
         if (!columnsValue)
             return false;
 
-        addProperty(CSSPropertyWebkitGridTemplateColumns, columnsValue.release(), important);
-        addProperty(CSSPropertyWebkitGridTemplateRows, rowsValue.release(), important);
-        addProperty(CSSPropertyWebkitGridTemplateAreas, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+        addProperty(CSSPropertyGridTemplateColumns, columnsValue.release(), important);
+        addProperty(CSSPropertyGridTemplateRows, rowsValue.release(), important);
+        addProperty(CSSPropertyGridTemplateAreas, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
         return true;
     }
 
@@ -5744,18 +5744,18 @@ bool CSSParser::parseGridShorthand(bool important)
 {
     ASSERT(isCSSGridLayoutEnabled());
 
-    ShorthandScope scope(this, CSSPropertyWebkitGrid);
-    ASSERT(shorthandForProperty(CSSPropertyWebkitGrid).length() == 8);
+    ShorthandScope scope(this, CSSPropertyGrid);
+    ASSERT(shorthandForProperty(CSSPropertyGrid).length() == 8);
 
     // 1- <grid-template>
     if (parseGridTemplateShorthand(important)) {
         // It can only be specified the explicit or the implicit grid properties in a single grid declaration.
         // The sub-properties not specified are set to their initial value, as normal for shorthands.
-        addProperty(CSSPropertyWebkitGridAutoFlow, CSSValuePool::singleton().createImplicitInitialValue(), important);
-        addProperty(CSSPropertyWebkitGridAutoColumns, CSSValuePool::singleton().createImplicitInitialValue(), important);
-        addProperty(CSSPropertyWebkitGridAutoRows, CSSValuePool::singleton().createImplicitInitialValue(), important);
-        addProperty(CSSPropertyWebkitGridColumnGap, CSSValuePool::singleton().createImplicitInitialValue(), important);
-        addProperty(CSSPropertyWebkitGridRowGap, CSSValuePool::singleton().createImplicitInitialValue(), important);
+        addProperty(CSSPropertyGridAutoFlow, CSSValuePool::singleton().createImplicitInitialValue(), important);
+        addProperty(CSSPropertyGridAutoColumns, CSSValuePool::singleton().createImplicitInitialValue(), important);
+        addProperty(CSSPropertyGridAutoRows, CSSValuePool::singleton().createImplicitInitialValue(), important);
+        addProperty(CSSPropertyGridColumnGap, CSSValuePool::singleton().createImplicitInitialValue(), important);
+        addProperty(CSSPropertyGridRowGap, CSSValuePool::singleton().createImplicitInitialValue(), important);
         return true;
     }
 
@@ -5763,7 +5763,7 @@ bool CSSParser::parseGridShorthand(bool important)
     m_valueList->setCurrentIndex(0);
 
     // 2- <grid-auto-flow> [ <grid-auto-columns> [ / <grid-auto-rows> ]? ]
-    if (!parseValue(CSSPropertyWebkitGridAutoFlow, important))
+    if (!parseValue(CSSPropertyGridAutoFlow, important))
         return false;
 
     RefPtr<CSSValue> autoColumnsValue;
@@ -5792,16 +5792,16 @@ bool CSSParser::parseGridShorthand(bool important)
     if (!autoColumnsValue)
         autoColumnsValue = autoRowsValue;
 
-    addProperty(CSSPropertyWebkitGridAutoColumns, autoColumnsValue.release(), important);
-    addProperty(CSSPropertyWebkitGridAutoRows, autoRowsValue.release(), important);
+    addProperty(CSSPropertyGridAutoColumns, autoColumnsValue.release(), important);
+    addProperty(CSSPropertyGridAutoRows, autoRowsValue.release(), important);
 
     // It can only be specified the explicit or the implicit grid properties in a single grid declaration.
     // The sub-properties not specified are set to their initial value, as normal for shorthands.
-    addProperty(CSSPropertyWebkitGridTemplateColumns, CSSValuePool::singleton().createImplicitInitialValue(), important);
-    addProperty(CSSPropertyWebkitGridTemplateRows, CSSValuePool::singleton().createImplicitInitialValue(), important);
-    addProperty(CSSPropertyWebkitGridTemplateAreas, CSSValuePool::singleton().createImplicitInitialValue(), important);
-    addProperty(CSSPropertyWebkitGridColumnGap, CSSValuePool::singleton().createImplicitInitialValue(), important);
-    addProperty(CSSPropertyWebkitGridRowGap, CSSValuePool::singleton().createImplicitInitialValue(), important);
+    addProperty(CSSPropertyGridTemplateColumns, CSSValuePool::singleton().createImplicitInitialValue(), important);
+    addProperty(CSSPropertyGridTemplateRows, CSSValuePool::singleton().createImplicitInitialValue(), important);
+    addProperty(CSSPropertyGridTemplateAreas, CSSValuePool::singleton().createImplicitInitialValue(), important);
+    addProperty(CSSPropertyGridColumnGap, CSSValuePool::singleton().createImplicitInitialValue(), important);
+    addProperty(CSSPropertyGridRowGap, CSSValuePool::singleton().createImplicitInitialValue(), important);
 
     return true;
 }
@@ -5810,8 +5810,8 @@ bool CSSParser::parseGridAreaShorthand(bool important)
 {
     ASSERT(isCSSGridLayoutEnabled());
 
-    ShorthandScope scope(this, CSSPropertyWebkitGridArea);
-    ASSERT(shorthandForProperty(CSSPropertyWebkitGridArea).length() == 4);
+    ShorthandScope scope(this, CSSPropertyGridArea);
+    ASSERT(shorthandForProperty(CSSPropertyGridArea).length() == 4);
 
     RefPtr<CSSValue> rowStartValue = parseGridPosition();
     if (!rowStartValue)
@@ -5838,10 +5838,10 @@ bool CSSParser::parseGridAreaShorthand(bool important)
     if (!columnEndValue)
         columnEndValue = gridMissingGridPositionValue(*columnStartValue);
 
-    addProperty(CSSPropertyWebkitGridRowStart, rowStartValue, important);
-    addProperty(CSSPropertyWebkitGridColumnStart, columnStartValue, important);
-    addProperty(CSSPropertyWebkitGridRowEnd, rowEndValue, important);
-    addProperty(CSSPropertyWebkitGridColumnEnd, columnEndValue, important);
+    addProperty(CSSPropertyGridRowStart, rowStartValue, important);
+    addProperty(CSSPropertyGridColumnStart, columnStartValue, important);
+    addProperty(CSSPropertyGridRowEnd, rowEndValue, important);
+    addProperty(CSSPropertyGridColumnEnd, columnEndValue, important);
     return true;
 }
 

@@ -11,62 +11,62 @@
     height: 600px;
 }
 .gridItem {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: 1;
+    grid-column: 1;
+    grid-row: 1;
     height: 22px;
     width: 77px;
 }
 .gridWithFixed {
-    -webkit-grid-template-columns: [first] 10px;
-    -webkit-grid-template-rows: [first] 15px;
+    grid-template-columns: [first] 10px;
+    grid-template-rows: [first] 15px;
 }
 .gridWithPercent {
-    -webkit-grid-template-columns: 53% [last];
-    -webkit-grid-template-rows: 27% [last];
+    grid-template-columns: 53% [last];
+    grid-template-rows: 27% [last];
 }
 .gridWithAuto {
-    -webkit-grid-template-columns: [first] auto;
-    -webkit-grid-template-rows: auto [last];
+    grid-template-columns: [first] auto;
+    grid-template-rows: auto [last];
 }
 .gridWithMinMax {
-    -webkit-grid-template-columns: [first] minmax(10%, 15px);
-    -webkit-grid-template-rows: minmax(20px, 50%) [last];
+    grid-template-columns: [first] minmax(10%, 15px);
+    grid-template-rows: minmax(20px, 50%) [last];
 }
 .gridWithFixedMultiple {
-    -webkit-grid-template-columns: [first nav] 10px [last];
-    -webkit-grid-template-rows: [first nav] 15px [last];
+    grid-template-columns: [first nav] 10px [last];
+    grid-template-rows: [first nav] 15px [last];
 }
 .gridWithPercentageSameStringMultipleTimes {
-    -webkit-grid-template-columns: [first nav] 10% [nav] 15% [last];
-    -webkit-grid-template-rows: [first nav2] 25% [nav2] 75% [last];
+    grid-template-columns: [first nav] 10% [nav] 15% [last];
+    grid-template-rows: [first nav2] 25% [nav2] 75% [last];
 }
 .gridWithRepeat {
-    -webkit-grid-template-columns: [first] 10px repeat(2, [nav nav2] 50%);
-    -webkit-grid-template-rows: 100px repeat(2, [nav nav2] 25%) [last];
+    grid-template-columns: [first] 10px repeat(2, [nav nav2] 50%);
+    grid-template-rows: 100px repeat(2, [nav nav2] 25%) [last];
 }
 .gridWithEmptyBrackets {
-    -webkit-grid-template-columns: [] 10px;
-    -webkit-grid-template-rows: 20px [ ] 50px [];
+    grid-template-columns: [] 10px;
+    grid-template-rows: 20px [ ] 50px [];
 }
 .gridWithoutBrackets {
-    -webkit-grid-template-columns: first nav 10px;
-    -webkit-grid-template-rows: first 50% last;
+    grid-template-columns: first nav 10px;
+    grid-template-rows: first 50% last;
 }
 .gridWithInvalidNestedBrackets {
-    -webkit-grid-template-columns: [first [nav]] 10px [last];
-    -webkit-grid-template-rows: [first] 50% [last [nav] nav2];
+    grid-template-columns: [first [nav]] 10px [last];
+    grid-template-rows: [first] 50% [last [nav] nav2];
 }
 .gridWithUnbalancedBrackets {
-    -webkit-grid-template-columns: [first nav 10px;
-    -webkit-grid-template-rows: [first] 50% last];
+    grid-template-columns: [first nav 10px;
+    grid-template-rows: [first] 50% last];
 }
 .gridWithMisplacedBrackets {
-    -webkit-grid-template-columns: [first 10px] 50%;
-    -webkit-grid-template-rows: [first] [nav 50%];
+    grid-template-columns: [first 10px] 50%;
+    grid-template-rows: [first] [nav 50%];
 }
 .gridWithContiguousBrackets {
-    -webkit-grid-template-columns: [first] [nav] 10px;
-    -webkit-grid-template-rows: 50px [nav nav2] [middle] 10px;
+    grid-template-columns: [first] [nav] 10px;
+    grid-template-rows: 50px [nav nav2] [middle] 10px;
 }
 </style>
 <script src="../../resources/js-test-pre.js"></script>
@@ -97,7 +97,7 @@
 <script>
     description('Test that setting and getting grid-template-columns and grid-template-rows works as expected');
 
-    debug("Test getting -webkit-grid-template-columns and -webkit-grid-template-rows set through CSS");
+    debug("Test getting grid-template-columns and grid-template-rows set through CSS");
     testGridTemplatesValues(document.getElementById("gridWithFixedElement"), "[first] 10px", "[first] 15px");
     testGridTemplatesValues(document.getElementById("gridWithPercentElement"), "424px [last]", "162px [last]");
     testGridTemplatesValues(document.getElementById("gridWithPercentWithoutSize"), "0px [last]", "0px [last]");
@@ -111,7 +111,7 @@
     testGridTemplatesValues(document.getElementById("gridWithEmptyBrackets"), "10px", "20px 50px");
 
     debug("");
-    debug("Test getting and setting -webkit-grid-template-columns and -webkit-grid-template-rows through JS");
+    debug("Test getting and setting grid-template-columns and grid-template-rows through JS");
     testGridTemplatesSetJSValues("[first] 18px", "66px [last]", "[first] 18px", "66px [last]", "[first] 18px", "66px [last]");
     testGridTemplatesSetJSValues("[first] 55%", "40% [last]", "[first] 440px", "240px [last]", "[first] 55%", "40% [last]");
     testGridTemplatesSetJSValues("[first] auto", "auto [last]", "[first] 0px", "0px [last]", "[first] auto", "auto [last]");
@@ -135,7 +135,7 @@
     testGridTemplatesValues(document.getElementById("gridWithContiguousBrackets"), "none", "none");
 
     debug("");
-    debug("Test getting and setting invalid -webkit-grid-template-columns and -webkit-grid-template-rows through JS");
+    debug("Test getting and setting invalid grid-template-columns and grid-template-rows through JS");
     testGridTemplatesSetBadJSValues("foo", "bar");
     testGridTemplatesSetBadJSValues("foo bar", "bar foo");
     testGridTemplatesSetBadJSValues("[foo]", "[bar");

@@ -1,6 +1,6 @@
 description('Test that setting and getting grid-template-columns and grid-template-rows works as expected');
 
-debug("Test getting -webkit-grid-template-columns and -webkit-grid-template-rows set through CSS");
+debug("Test getting grid-template-columns and grid-template-rows set through CSS");
 testGridTemplatesValues(document.getElementById("gridWithNoneElement"), "none", "none");
 testGridTemplatesValues(document.getElementById("gridWithFixedElement"), "10px", "15px");
 testGridTemplatesValues(document.getElementById("gridWithPercentElement"), "424px", "162px");
@@ -23,7 +23,7 @@ testGridTemplatesValues(document.getElementById("gridWithCalcComplexInsideMinMax
 testGridTemplatesValues(document.getElementById("gridWithAutoInsideMinMaxElement"), "20px", "11px");
 
 debug("");
-debug("Test getting wrong values for -webkit-grid-template-columns and -webkit-grid-template-rows through CSS (they should resolve to the default: 'none')");
+debug("Test getting wrong values for grid-template-columns and grid-template-rows through CSS (they should resolve to the default: 'none')");
 var gridWithFitContentElement = document.getElementById("gridWithFitContentElement");
 testGridTemplatesValues(gridWithFitContentElement, "none", "none");
 
@@ -37,7 +37,7 @@ document.body.appendChild(element);
 testGridTemplatesValues(element, "none", "none");
 
 debug("");
-debug("Test getting and setting -webkit-grid-template-columns and -webkit-grid-template-rows through JS");
+debug("Test getting and setting grid-template-columns and grid-template-rows through JS");
 testGridTemplatesSetJSValues("18px", "66px");
 testGridTemplatesSetJSValues("55%", "40%", "440px", "240px");
 testGridTemplatesSetJSValues("auto", "auto", "0px", "0px");
@@ -46,7 +46,7 @@ testGridTemplatesSetJSValues("-webkit-min-content", "-webkit-min-content", "0px"
 testGridTemplatesSetJSValues("-webkit-max-content", "-webkit-max-content", "0px", "0px");
 
 debug("");
-debug("Test getting and setting -webkit-grid-template-columns and -webkit-grid-template-rows to minmax() values through JS");
+debug("Test getting and setting grid-template-columns and grid-template-rows to minmax() values through JS");
 testGridTemplatesSetJSValues("minmax(55%, 45px)", "minmax(30px, 40%)", "440px", "240px");
 testGridTemplatesSetJSValues("minmax(22em, 8vh)", "minmax(10vw, 5em)", "220px", "80px");
 testGridTemplatesSetJSValues("minmax(-webkit-min-content, 8vh)", "minmax(10vw, -webkit-min-content)", "48px", "80px");
@@ -102,16 +102,16 @@ function testInherit()
     var parentElement = document.createElement("div");
     document.body.appendChild(parentElement);
     parentElement.style.font = "10px Ahem"; // Used to resolve em font consistently.
-    parentElement.style.webkitGridTemplateColumns = "50px [last]";
-    parentElement.style.webkitGridTemplateRows = "[first] 2em";
+    parentElement.style.gridTemplateColumns = "50px [last]";
+    parentElement.style.gridTemplateRows = "[first] 2em";
 
     element = document.createElement("div");
     parentElement.appendChild(element);
-    element.style.display = "-webkit-grid";
-    element.style.webkitGridTemplateColumns = "inherit";
-    element.style.webkitGridTemplateRows = "inherit";
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'50px [last]'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'[first] 20px'");
+    element.style.display = "grid";
+    element.style.gridTemplateColumns = "inherit";
+    element.style.gridTemplateRows = "inherit";
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-columns')", "'50px [last]'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-rows')", "'[first] 20px'");
 
     document.body.removeChild(parentElement);
 }
@@ -123,19 +123,19 @@ function testInitial()
 {
     element = document.createElement("div");
     document.body.appendChild(element);
-    element.style.display = "-webkit-grid";
+    element.style.display = "grid";
     element.style.width = "300px";
     element.style.height = "150px";
-    element.style.webkitGridTemplateColumns = "150% [last]";
-    element.style.webkitGridTemplateRows = "[first] 1fr";
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'450px [last]'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'[first] 150px'");
+    element.style.gridTemplateColumns = "150% [last]";
+    element.style.gridTemplateRows = "[first] 1fr";
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-columns')", "'450px [last]'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-rows')", "'[first] 150px'");
 
-    element.style.display = "-webkit-grid";
-    element.style.webkitGridTemplateColumns = "initial";
-    element.style.webkitGridTemplateRows = "initial";
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'none'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'none'");
+    element.style.display = "grid";
+    element.style.gridTemplateColumns = "initial";
+    element.style.gridTemplateRows = "initial";
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-columns')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-rows')", "'none'");
 
     document.body.removeChild(element);
 }

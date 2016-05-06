@@ -1,3 +1,16 @@
+2016-05-06  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Unprefix CSS Grid Layout properties
+        https://bugs.webkit.org/show_bug.cgi?id=157137
+
+        Reviewed by Simon Fraser.
+
+        Remove "-webkit" prefix from all the grid layout properties,
+        including the display value.
+        Update the source code to remove the prefix where it was used too.
+
+        * ManualTests/css-grid-layout-item-with-huge-span-crash.html:
+
 2016-05-02  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Enable IndexedDB.

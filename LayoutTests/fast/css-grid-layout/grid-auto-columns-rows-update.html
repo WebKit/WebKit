@@ -5,10 +5,10 @@
 <link href="resources/grid-alignment.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-template-rows: 20px;
-    -webkit-grid-template-columns: 10px;
-    -webkit-grid-auto-rows: 30px;
-    -webkit-grid-auto-columns: 50px;
+    grid-template-rows: 20px;
+    grid-template-columns: 10px;
+    grid-auto-rows: 30px;
+    grid-auto-columns: 50px;
     font: 10px/1 Ahem;
 }
 </style>
@@ -18,8 +18,8 @@
 function updateAndCheck(gridElementID, defaultSizing, gridItemSize)
 {
     var gridElement = document.getElementById(gridElementID);
-    gridElement.style.webkitGridAutoRows = defaultSizing.rows;
-    gridElement.style.webkitGridAutoColumns = defaultSizing.columns;
+    gridElement.style.gridAutoRows = defaultSizing.rows;
+    gridElement.style.gridAutoColumns = defaultSizing.columns;
 
     var gridItem = gridElement.firstChild.nextSibling;
     gridItem.setAttribute("data-expected-width", gridItemSize.width);

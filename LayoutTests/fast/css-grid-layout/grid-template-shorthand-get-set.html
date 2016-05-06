@@ -4,137 +4,137 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 #gridTemplateWithNone {
-    -webkit-grid-template: none;
+    grid-template: none;
 }
 #gridTemplateSimpleForm {
-    -webkit-grid-template: 15px / 10px;
+    grid-template: 15px / 10px;
 }
 #gridTemplateSimpleFormWithNoneColumns {
-    -webkit-grid-template: 15px / none;
+    grid-template: 15px / none;
 }
 #gridTemplateSimpleFormWithNoneRows {
-    -webkit-grid-template: none / 10px;
+    grid-template: none / 10px;
 }
 #gridTemplateSimpleFormWithNone {
-    -webkit-grid-template: none / none;
+    grid-template: none / none;
 }
 #gridTemplateComplexForm {
-    -webkit-grid-template: "a" 15px / 10px;
+    grid-template: "a" 15px / 10px;
 }
 #gridTemplateComplexFormWithLineNames {
-    -webkit-grid-template: [head] "a" 15px [tail] / 10px;
+    grid-template: [head] "a" 15px [tail] / 10px;
 }
 #gridTemplateComplexFormWithLineNamesWithoutRowSize {
-    -webkit-grid-template: [head] "a" [tail] / 10px;
+    grid-template: [head] "a" [tail] / 10px;
 }
 #gridTemplateComplexFormWithLineNamesMultipleColumns {
-    -webkit-grid-template: [head] "a b" 15px [tail] / 10px 20px;
+    grid-template: [head] "a b" 15px [tail] / 10px 20px;
 }
 #gridTemplateComplexFormWithLineNamesMultipleColumnsWithoutRowSize {
-    -webkit-grid-template: [head] "a b" [tail] / 10px 20px;
+    grid-template: [head] "a b" [tail] / 10px 20px;
 }
 #gridTemplateComplexFormWithLineNamesMultipleRows {
-    -webkit-grid-template: [head1] "a" 15px [tail1]
+    grid-template: [head1] "a" 15px [tail1]
                            [head2] "b" 20px [tail2] / 10px;
 }
 #gridTemplateComplexFormWithLineNamesMultipleRowsWithoutRowsSizes {
-    -webkit-grid-template: [head1] "a" [tail1]
+    grid-template: [head1] "a" [tail1]
                            [head2] "b" [tail2] / 10px;
 }
 #gridTemplateComplexFormWithLineNamesMultipleRowsAndColumns {
-    -webkit-grid-template:        "a b c" 100px [nav]
+    grid-template:        "a b c" 100px [nav]
                            [nav2] "d e f" 25px  [nav]
                            [nav2] "g h i" 25px  [last] / [first] 10px repeat(2, [nav nav2] 15px);
 }
 #gridTemplateComplexFormWithLineNamesMultipleRowsAndColumnsWithoutRowsSizes {
-    -webkit-grid-template:        "a b c" [nav]
+    grid-template:        "a b c" [nav]
                            [nav2] "d e f" [nav]
                            [nav2] "g h i" [last] / [first] 10px repeat(2, [nav nav2] 15px);
 }
 #gridTemplateComplexFormWithAuto {
-    -webkit-grid-template: "a" / 10px;
+    grid-template: "a" / 10px;
 }
 #gridTemplateComplexFormOnlyAreas {
-    -webkit-grid-template: "a";
+    grid-template: "a";
 }
 #gridTemplateNoColumnsRowWithEmptyTrailingLineNames {
-    -webkit-grid-template: [first] "a" auto [];
+    grid-template: [first] "a" auto [];
 }
 
 /* Bad values. */
 
 #gridTemplateMultipleSlash {
-    -webkit-grid-template: 10px / 20px / 30px;
+    grid-template: 10px / 20px / 30px;
 }
 #gridTemplateSimpleFormJustColumns {
-    -webkit-grid-template: 10px;
+    grid-template: 10px;
 }
 #gridTemplateSimpleFormNoRows {
-    -webkit-grid-template: / 10px;
+    grid-template: / 10px;
 }
 #gridTemplateSimpleFormNoColumns {
-    -webkit-grid-template: 10px /;
+    grid-template: 10px /;
 }
 #gridTemplateSimpleFormNoColumnSize {
-    -webkit-grid-template: 10px / [line];
+    grid-template: 10px / [line];
 }
 #gridTemplateSimpleFormWithFitContent {
-    -webkit-grid-template: 10px / -webkit-fit-content;
+    grid-template: 10px / -webkit-fit-content;
 }
 #gridTemplateSimpleFormWithWrongRepeat {
-    -webkit-grid-template:  10px / repeat(2, 50% [title] a);
+    grid-template:  10px / repeat(2, 50% [title] a);
 }
 #gridTemplateSimpleFormWithMisplacedNone1 {
-    -webkit-grid-template: none 20px / 10px;
+    grid-template: none 20px / 10px;
 }
 #gridTemplateSimpleFormWithMisplacedNone2 {
-    -webkit-grid-template: 20px none / 10px;
+    grid-template: 20px none / 10px;
 }
 #gridTemplateSimpleFormWithMisplacedNone3 {
-    -webkit-grid-template: 20px / none 10px;
+    grid-template: 20px / none 10px;
 }
 #gridTemplateSimpleFormWithMisplacedNone4 {
-    -webkit-grid-template: 20px / 10px none;
+    grid-template: 20px / 10px none;
 }
 #gridTemplateComplexFormWithRepeat {
-    -webkit-grid-template: "a" repeat(2, 50% [title]) / 10px;
+    grid-template: "a" repeat(2, 50% [title]) / 10px;
 }
 #gridTemplateComplexFormWithWrongRepeat {
-    -webkit-grid-template: "a" / repeat(2, 50% [title] a);
+    grid-template: "a" / repeat(2, 50% [title] a);
 }
 #griTemplateComplexFormdWithFitAvailable {
-    -webkit-grid-template: "a" / -webkit-fit-available;
+    grid-template: "a" / -webkit-fit-available;
 }
 #gridTemplateComplexFormNoColumnSize {
-    -webkit-grid-template: "a" / [line];
+    grid-template: "a" / [line];
 }
 #gridTemplateComplexFormMisplacedRowsSize1 {
-    -webkit-grid-template: 10px "a" / 25px;
+    grid-template: 10px "a" / 25px;
 }
 #gridTemplateComplexFormMisplacedRowsSize2 {
-    -webkit-grid-template: "a" [name] 10px / 25px;
+    grid-template: "a" [name] 10px / 25px;
 }
 #gridTemplateComplexFormMisplacedRowsSize3 {
-    -webkit-grid-template: [head] "a" [tail] 10px / 10px;
+    grid-template: [head] "a" [tail] 10px / 10px;
 }
 #gridTemplateComplexFormMisplacedRowsSize4 {
-    -webkit-grid-template: [head1] "a" [tail1]
+    grid-template: [head1] "a" [tail1]
                            [head2] "a" [tail2] 100px / 10px;
 }
 #gridTemplateComplexFormColumnsNotParsing1 {
-    -webkit-grid-template: "a" [name] 10px / a;
+    grid-template: "a" [name] 10px / a;
 }
 #gridTemplateComplexFormColumnsNotParsing2 {
-    -webkit-grid-template: "a" [name] 10px / "B";
+    grid-template: "a" [name] 10px / "B";
 }
 #gridTemplateComplexFormWithNoneColumns {
-    -webkit-grid-template: "a" [name] 10px / none;
+    grid-template: "a" [name] 10px / none;
 }
 #gridTemplateNoColumnsRowWithTwoEmptyTrailingLineNames {
-    -webkit-grid-template: [first] "a" auto [] [];
+    grid-template: [first] "a" auto [] [];
 }
 #gridTemplateNoColumnsRowWithEmptyTrailingLineNamesAndNonEmptyLeadingLineNames {
-    -webkit-grid-template: [first] "a" auto [] [tail];
+    grid-template: [first] "a" auto [] [tail];
 }
 
 </style>
@@ -238,9 +238,9 @@
     var element = document.createElement("div");
     document.body.appendChild(element);
     testGridDefinitionsValues(element, "none", "none", "none");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'none'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'none'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-areas')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-columns')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-rows')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('grid-template-areas')", "'none'");
 
     debug("");
     debug("Test setting grid-template-columns and grid-template-rows back to 'none' through JS");

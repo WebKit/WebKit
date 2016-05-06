@@ -1,3 +1,18 @@
+2016-05-06  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Unprefix CSS Grid Layout properties
+        https://bugs.webkit.org/show_bug.cgi?id=157137
+
+        Reviewed by Simon Fraser.
+
+        Remove "-webkit" prefix from all the grid layout properties,
+        including the display value.
+        Update the source code to remove the prefix where it was used too.
+
+        * Layout/auto-grid-lots-of-data.html:
+        * Layout/fixed-grid-lots-of-data.html:
+        * Layout/fixed-grid-lots-of-stretched-data.html:
+
 2016-04-25  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Misc improvements to MallocBench

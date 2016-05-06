@@ -10,33 +10,33 @@ body {
 }
 
 .grid {
-    -webkit-grid-auto-columns: 20px;
-    -webkit-grid-auto-rows: 40px;
-    -webkit-grid-template-areas: "a a b"
+    grid-auto-columns: 20px;
+    grid-auto-rows: 40px;
+    grid-template-areas: "a a b"
                                  "c d b";
     position: relative;
     width: 200px;
     height: 300px;
 }
 .a {
-    -webkit-grid-area: a;
+    grid-area: a;
     background-color: blue;
 }
 .b {
-    -webkit-grid-area: b;
+    grid-area: b;
     background-color: lime;
 }
 .c {
-    -webkit-grid-area: c;
+    grid-area: c;
     background-color: purple;
 }
 .d {
-    -webkit-grid-area: d;
+    grid-area: d;
     background-color: orange;
 }
 .stretchedGrid {
-    -webkit-grid-auto-columns: auto;
-    -webkit-grid-auto-rows: auto;
+    grid-auto-columns: auto;
+    grid-auto-rows: auto;
 }
 </style>
 </head>

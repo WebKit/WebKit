@@ -3,30 +3,30 @@
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    display: -webkit-grid;
-    -webkit-grid-template-rows: [firstRow] 10px 20px;
-    -webkit-grid-template-columns: [firstColumn] 30px 40px;
-    -webkit-grid-auto-flow: row;
+    display: grid;
+    grid-template-rows: [firstRow] 10px 20px;
+    grid-template-columns: [firstColumn] 30px 40px;
+    grid-auto-flow: row;
 }
 
 .bothSpanRow {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: span 5 firstRow / span 1;
+    grid-column: 1;
+    grid-row: span 5 firstRow / span 1;
 }
 
 .bothSpanColumn {
-    -webkit-grid-column: span / span 3;
-    -webkit-grid-row: 1;
+    grid-column: span / span 3;
+    grid-row: 1;
 }
 
 .spanAutoRow {
-    -webkit-grid-column: 1;
-    -webkit-grid-row: span 5 firstRow / auto;
+    grid-column: 1;
+    grid-row: span 5 firstRow / auto;
 }
 
 .spanAutoColumn {
-    -webkit-grid-column: span / auto;
-    -webkit-grid-row: 1;
+    grid-column: span / auto;
+    grid-row: 1;
 }
 </style>
 <script src="../../resources/check-layout.js"></script>

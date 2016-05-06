@@ -33,15 +33,15 @@ body {
 }
 
 /* track sizes allowed to be stetched */
-.autoTracks { -webkit-grid: auto auto / auto auto; }
-.autoMaxTracks { -webkit-grid: minmax(20px, auto) minmax(20px, auto) / minmax(40px, auto) minmax(40px, auto); }
+.autoTracks { grid: auto auto / auto auto; }
+.autoMaxTracks { grid: minmax(20px, auto) minmax(20px, auto) / minmax(40px, auto) minmax(40px, auto); }
 
 /* content-sized tracks disallowed to be stetched */
-.minContentTracks { -webkit-grid: -webkit-min-content -webkit-min-content / -webkit-min-content -webkit-min-content; }
-.maxContentTracks { -webkit-grid: -webkit-max-content -webkit-max-content / -webkit-max-content -webkit-max-content; }
-.minMaxWithMaxContentTracks { -webkit-grid: minmax(20px, -webkit-max-content) minmax(20px, -webkit-max-content) / minmax(20px, -webkit-max-content) minmax(20px, -webkit-max-content); }
-.minMaxWithMinContentTracks { -webkit-grid: minmax(20px, -webkit-min-content) minmax(20px, -webkit-min-content) / minmax(20px, -webkit-min-content) minmax(20px, -webkit-min-content); }
-.minMaxWithMinAutoTracks { -webkit-grid: minmax(auto, -webkit-max-content) minmax(auto, -webkit-max-content) / minmax(auto, -webkit-max-content) minmax(auto, -webkit-max-content); }
+.minContentTracks { grid: -webkit-min-content -webkit-min-content / -webkit-min-content -webkit-min-content; }
+.maxContentTracks { grid: -webkit-max-content -webkit-max-content / -webkit-max-content -webkit-max-content; }
+.minMaxWithMaxContentTracks { grid: minmax(20px, -webkit-max-content) minmax(20px, -webkit-max-content) / minmax(20px, -webkit-max-content) minmax(20px, -webkit-max-content); }
+.minMaxWithMinContentTracks { grid: minmax(20px, -webkit-min-content) minmax(20px, -webkit-min-content) / minmax(20px, -webkit-min-content) minmax(20px, -webkit-min-content); }
+.minMaxWithMinAutoTracks { grid: minmax(auto, -webkit-max-content) minmax(auto, -webkit-max-content) / minmax(auto, -webkit-max-content) minmax(auto, -webkit-max-content); }
 
 </style>
 </head>

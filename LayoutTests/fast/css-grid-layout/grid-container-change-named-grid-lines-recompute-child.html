@@ -6,30 +6,30 @@
 <script src="../../resources/check-layout.js"></script>
 <style type="text/css">
     .grid {
-	-webkit-grid-auto-flow: row dense;
+	grid-auto-flow: row dense;
     }
 
     #firstGridItem {
-	-webkit-grid-row: auto;
-	-webkit-grid-column: column;
+	grid-row: auto;
+	grid-column: column;
     }
 
     #secondGridItem {
-	-webkit-grid-row: row;
-	-webkit-grid-column: auto;
+	grid-row: row;
+	grid-column: auto;
     }
 
     #thirdGridItem {
-	-webkit-grid-row: auto;
-	-webkit-grid-column: auto;
+	grid-row: auto;
+	grid-column: auto;
     }
 </style>
 <script>
 function testGridDefinitions(gridTemplateRows, gridTemplateColumns, firstGridItemData, secondGridItemData, thirdGridItemData)
 {
     var gridElement = document.getElementsByClassName("grid")[0];
-    gridElement.style.webkitGridTemplateRows = gridTemplateRows;
-    gridElement.style.webkitGridTemplateColumns = gridTemplateColumns;
+    gridElement.style.gridTemplateRows = gridTemplateRows;
+    gridElement.style.gridTemplateColumns = gridTemplateColumns;
 
     var firstGridItem = document.getElementById("firstGridItem");
     firstGridItem.setAttribute("data-expected-width", firstGridItemData.width);

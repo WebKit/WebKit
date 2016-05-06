@@ -3,15 +3,15 @@
 <script src="../../resources/js-test-pre.js"></script>
 <div id="testDiv" style="width: 400px; height: 400px"></div>
 <script>
-description("Tests using calculated value in function() for '-webkit-grid-template-rows' CSS property works.");
+description("Tests using calculated value in function() for 'grid-template-rows' CSS property works.");
 
 var testDiv = document.getElementById("testDiv");
-//-webkit-grid-template-rows: repeat(1, 18px);
-// -webkit-grid-template-columns: repeat(1, 15%);
-shouldBeEmptyString("testDiv.style['-webkit-grid-template-rows']");
-evalAndLog("testDiv.style['-webkit-grid-template-rows'] = 'repeat(calc(1 + 1), 18px)'");
-shouldBeEqualToString("testDiv.style['-webkit-grid-template-rows']", "18px 18px");
-shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-grid-template-rows')", "18px 18px");
+//grid-template-rows: repeat(1, 18px);
+// grid-template-columns: repeat(1, 15%);
+shouldBeEmptyString("testDiv.style['grid-template-rows']");
+evalAndLog("testDiv.style['grid-template-rows'] = 'repeat(calc(1 + 1), 18px)'");
+shouldBeEqualToString("testDiv.style['grid-template-rows']", "18px 18px");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('grid-template-rows')", "18px 18px");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

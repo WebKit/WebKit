@@ -8,29 +8,29 @@
 body { margin: 0px; }
 
 .grid100And200 {
-    -webkit-grid-template-columns: 100px 100px;
-    -webkit-grid-template-rows: 200px 200px;
+    grid-template-columns: 100px 100px;
+    grid-template-rows: 200px 200px;
     position: relative; /* For the <p> comments */
 }
 
 .grid50And100 {
-    -webkit-grid: 100px 100px / 50px 50px;
+    grid: 100px 100px / 50px 50px;
     width: 200px;
     height: 300px;
     position: relative; /* For the <p> comments */
 }
 
 .gridAuto20And40 {
-    -webkit-grid-auto-columns: 20px;
-    -webkit-grid-auto-rows: 40px;
+    grid-auto-columns: 20px;
+    grid-auto-rows: 40px;
     width: 400px;
     height: 300px;
     position: relative; /* For the <p> comments */
 }
 
 .gridWithPaddingBorder {
-    -webkit-grid-template-columns: 100px 200px;
-    -webkit-grid-template-rows: 200px 200px;
+    grid-template-columns: 100px 200px;
+    grid-template-rows: 200px 200px;
     padding: 10px 15px 20px 30px;
     border-width: 5px 10px 15px 20px;
     border-style: dotted;
@@ -47,18 +47,18 @@ body { margin: 0px; }
 }
 
 .gridWithAutoRows {
-    -webkit-grid-auto-rows: 40px;
+    grid-auto-rows: 40px;
     border: 2px solid black;
     height: 50px;
     width: 20px;
     position: relative;
 }
 
-.stretchedGrid { -webkit-grid-auto-columns: auto; }
+.stretchedGrid { grid-auto-columns: auto; }
 
 .gridRowColumnGaps {
-    -webkit-grid-row-gap: 17px;
-    -webkit-grid-column-gap: 21px;
+    grid-row-gap: 17px;
+    grid-column-gap: 21px;
 }
 
 div.grid > div { font: 10px/1 Ahem; }

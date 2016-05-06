@@ -300,7 +300,7 @@ element.style.display = "-webkit-flex";
 element.style.alignContent = "normal";
 checkValues(element, "alignContent", "align-content",  "normal", "normal");
 
-element.style.display = "-webkit-grid";
+element.style.display = "grid";
 element.style.alignContent = "normal";
 checkValues(element, "alignContent", "align-content",  "normal", "normal");
 
@@ -342,7 +342,7 @@ checkInitialValues(element, "alignContent", "align-content", "stretch center", "
 
 debug("");
 debug("Test the value 'initial' for grid containers");
-element.style.display = "-webkit-grid";
+element.style.display = "grid";
 checkInitialValues(element, "alignContent", "align-content", "space-between left", "normal");
 
 debug("");

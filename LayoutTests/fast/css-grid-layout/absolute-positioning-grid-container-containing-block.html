@@ -4,8 +4,8 @@
 <style>
 
 .grid {
-    -webkit-grid-template-columns: 50px 100px 150px 200px;
-    -webkit-grid-template-rows: 50px 100px 150px 200px;
+    grid-template-columns: 50px 100px 150px 200px;
+    grid-template-rows: 50px 100px 150px 200px;
     width: 500px;
     height: 500px;
     border: 5px solid black;
@@ -20,56 +20,56 @@
 }
 
 .thirdRowThirdColumnSpanning2Rows {
-    -webkit-grid-column: 3;
-    -webkit-grid-row: 3 / span 2;
+    grid-column: 3;
+    grid-row: 3 / span 2;
     background-color: maroon;
 }
 
 .thirdRowThirdColumnSpanning2Rows2Columns {
-    -webkit-grid-column: 3 / span 2;
-    -webkit-grid-row: 3 / span 2;
+    grid-column: 3 / span 2;
+    grid-row: 3 / span 2;
     background-color: aqua;
 }
 
 .endFirstRowEndFirstColumn {
     background-color: blue;
-    -webkit-grid-column-end: 2;
-    -webkit-grid-row-end: 2;
+    grid-column-end: 2;
+    grid-row-end: 2;
 }
 
 .endFirstRowEndSecondColumn {
     background-color: lime;
-    -webkit-grid-column-end: 3;
-    -webkit-grid-row-end: 2;
+    grid-column-end: 3;
+    grid-row-end: 2;
 }
 
 .endSecondRowEndFirstColumn {
     background-color: purple;
-    -webkit-grid-column-end: 2;
-    -webkit-grid-row-end: 3;
+    grid-column-end: 2;
+    grid-row-end: 3;
 }
 
 .endThirdRowEndThirdColumnSpanning2Rows {
-    -webkit-grid-column-end: 4;
-    -webkit-grid-row: span 2 / 4;
+    grid-column-end: 4;
+    grid-row: span 2 / 4;
     background-color: maroon;
 }
 
 .endThirdRowEndThirdColumnSpanning2Rows2Columns {
-    -webkit-grid-column: span 2 / 4;
-    -webkit-grid-row: span 2 / 4;
+    grid-column: span 2 / 4;
+    grid-row: span 2 / 4;
     background-color: aqua;
 }
 
 .onlyThirdRowOnlyThirdColumnSpanning2Rows {
-    -webkit-grid-column: 3 / 4;
-    -webkit-grid-row: 3 / 5;
+    grid-column: 3 / 4;
+    grid-row: 3 / 5;
     background-color: maroon;
 }
 
 .onlyThirdRowOnlyThirdColumnSpanning2Rows2Columns {
-    -webkit-grid-column: 3 / 5;
-    -webkit-grid-row: 3 / 5;
+    grid-column: 3 / 5;
+    grid-row: 3 / 5;
     background-color: aqua;
 }
 

@@ -5,7 +5,7 @@
 function repaintTest()
 {
     var gridElement = document.getElementsByClassName("grid")[0];
-    gridElement.style.webkitGridTemplateColumns = "minmax(50px, 180px) 100px 100px";
+    gridElement.style.gridTemplateColumns = "minmax(50px, 180px) 100px 100px";
 }
 window.addEventListener("load", runRepaintTest, false);
 </script>
@@ -17,8 +17,8 @@ body {
 }
 
 .grid {
-    -webkit-grid-template-rows: 50px;
-    -webkit-grid-template-columns: minmax(100px, 180px) 100px minmax(50px, 100px);
+    grid-template-rows: 50px;
+    grid-template-columns: minmax(100px, 180px) 100px minmax(50px, 100px);
 }
 .sizedToGridArea {
     background-color: purple;

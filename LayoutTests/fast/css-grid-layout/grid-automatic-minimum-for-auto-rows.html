@@ -22,15 +22,15 @@
 .padding8 { padding: 8px 0px; }
 
 /* All these 4 cases are equivalent. We use them interchangeably. */
-.gridAuto { -webkit-grid-template-rows: auto; }
-.gridMinMaxAutoAuto { -webkit-grid-template-rows: minmax(auto, auto); }
-.gridMinMaxAutoMaxContent { -webkit-grid-template-rows: minmax(auto, -webkit-max-content); }
-.gridMinMaxMinContentAuto { -webkit-grid-template-rows: minmax(-webkit-min-content, auto); }
+.gridAuto { grid-template-rows: auto; }
+.gridMinMaxAutoAuto { grid-template-rows: minmax(auto, auto); }
+.gridMinMaxAutoMaxContent { grid-template-rows: minmax(auto, -webkit-max-content); }
+.gridMinMaxMinContentAuto { grid-template-rows: minmax(-webkit-min-content, auto); }
 
 /* All these 3 cases are equivalent. We use them interchangeably. */
-.gridAutoAndAuto { -webkit-grid-template-rows: auto auto; }
-.gridAutoAndMinMaxAutoAuto { -webkit-grid-template-rows: auto minmax(auto, auto); }
-.gridMinMaxAutoMaxContentAndAuto { -webkit-grid-template-rows: minmax(auto, -webkit-max-content) auto; }
+.gridAutoAndAuto { grid-template-rows: auto auto; }
+.gridAutoAndMinMaxAutoAuto { grid-template-rows: auto minmax(auto, auto); }
+.gridMinMaxAutoMaxContentAndAuto { grid-template-rows: minmax(auto, -webkit-max-content) auto; }
 
 </style>
 <script src="../../resources/js-test.js"></script>
@@ -220,7 +220,7 @@
 <script>
 function testGridRowsValues(id, computedRowValue)
 {
-    shouldBeEqualToString("window.getComputedStyle(" + id + ", '').getPropertyValue('-webkit-grid-template-rows')", computedRowValue);
+    shouldBeEqualToString("window.getComputedStyle(" + id + ", '').getPropertyValue('grid-template-rows')", computedRowValue);
 }
 
 debug("");

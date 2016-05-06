@@ -208,7 +208,7 @@ container.style.display = "-webkit-flex";
 element.style.webkitAlignSelf = "auto";
 checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto", "stretch");
 
-container.style.display = "-webkit-grid";
+container.style.display = "grid";
 element.style.webkitAlignSelf = "auto";
 checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto", "stretch");
 
@@ -254,7 +254,7 @@ checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "center", "
 
 debug("");
 debug("Test the value 'initial' for grid containers");
-container.style.display = "-webkit-grid";
+container.style.display = "grid";
 checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "left safe", "stretch");
 
 debug("");
@@ -270,7 +270,7 @@ checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "left", "au
 
 debug("");
 debug("Test the value 'initial' for positioned elements in grid containers");
-container.style.display = "-webkit-grid";
+container.style.display = "grid";
 element.style.position = "absolute";
 checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "right", "auto");
 

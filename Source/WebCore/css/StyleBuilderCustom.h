@@ -94,9 +94,9 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantNumeric);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantEastAsian);
 #if ENABLE(CSS_GRID_LAYOUT)
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitGridTemplateAreas);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitGridTemplateColumns);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitGridTemplateRows);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateAreas);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateColumns);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateRows);
 #endif // ENABLE(CSS_GRID_LAYOUT)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageOutset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageRepeat);
@@ -1599,21 +1599,21 @@ inline void StyleBuilderCustom::applyValueFontSize(StyleResolver& styleResolver,
 }
 
 #if ENABLE(CSS_GRID_LAYOUT)
-inline void StyleBuilderCustom::applyInitialWebkitGridTemplateAreas(StyleResolver& styleResolver)
+inline void StyleBuilderCustom::applyInitialGridTemplateAreas(StyleResolver& styleResolver)
 {
     styleResolver.style()->setNamedGridArea(RenderStyle::initialNamedGridArea());
     styleResolver.style()->setNamedGridAreaRowCount(RenderStyle::initialNamedGridAreaCount());
     styleResolver.style()->setNamedGridAreaColumnCount(RenderStyle::initialNamedGridAreaCount());
 }
 
-inline void StyleBuilderCustom::applyInheritWebkitGridTemplateAreas(StyleResolver& styleResolver)
+inline void StyleBuilderCustom::applyInheritGridTemplateAreas(StyleResolver& styleResolver)
 {
     styleResolver.style()->setNamedGridArea(styleResolver.parentStyle()->namedGridArea());
     styleResolver.style()->setNamedGridAreaRowCount(styleResolver.parentStyle()->namedGridAreaRowCount());
     styleResolver.style()->setNamedGridAreaColumnCount(styleResolver.parentStyle()->namedGridAreaColumnCount());
 }
 
-inline void StyleBuilderCustom::applyValueWebkitGridTemplateAreas(StyleResolver& styleResolver, CSSValue& value)
+inline void StyleBuilderCustom::applyValueGridTemplateAreas(StyleResolver& styleResolver, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
@@ -1635,14 +1635,14 @@ inline void StyleBuilderCustom::applyValueWebkitGridTemplateAreas(StyleResolver&
     styleResolver.style()->setNamedGridAreaColumnCount(gridTemplateAreasValue.columnCount());
 }
 
-inline void StyleBuilderCustom::applyInitialWebkitGridTemplateColumns(StyleResolver& styleResolver)
+inline void StyleBuilderCustom::applyInitialGridTemplateColumns(StyleResolver& styleResolver)
 {
     styleResolver.style()->setGridColumns(RenderStyle::initialGridColumns());
     styleResolver.style()->setNamedGridColumnLines(RenderStyle::initialNamedGridColumnLines());
     styleResolver.style()->setOrderedNamedGridColumnLines(RenderStyle::initialOrderedNamedGridColumnLines());
 }
 
-inline void StyleBuilderCustom::applyInheritWebkitGridTemplateColumns(StyleResolver& styleResolver)
+inline void StyleBuilderCustom::applyInheritGridTemplateColumns(StyleResolver& styleResolver)
 {
     styleResolver.style()->setGridColumns(styleResolver.parentStyle()->gridColumns());
     styleResolver.style()->setNamedGridColumnLines(styleResolver.parentStyle()->namedGridColumnLines());
@@ -1659,7 +1659,7 @@ inline void StyleBuilderCustom::applyInheritWebkitGridTemplateColumns(StyleResol
     style->setAutoRepeatOrderedNamedGrid##TrackType##Lines(tracksData.m_autoRepeatOrderedNamedGridLines); \
     style->setGridAutoRepeat##TrackType##sType(tracksData.m_autoRepeatType);
 
-inline void StyleBuilderCustom::applyValueWebkitGridTemplateColumns(StyleResolver& styleResolver, CSSValue& value)
+inline void StyleBuilderCustom::applyValueGridTemplateColumns(StyleResolver& styleResolver, CSSValue& value)
 {
     StyleBuilderConverter::TracksData tracksData;
     if (!StyleBuilderConverter::createGridTrackList(value, tracksData, styleResolver))
@@ -1671,21 +1671,21 @@ inline void StyleBuilderCustom::applyValueWebkitGridTemplateColumns(StyleResolve
     SET_TRACKS_DATA(tracksData, styleResolver.style(), Column);
 }
 
-inline void StyleBuilderCustom::applyInitialWebkitGridTemplateRows(StyleResolver& styleResolver)
+inline void StyleBuilderCustom::applyInitialGridTemplateRows(StyleResolver& styleResolver)
 {
     styleResolver.style()->setGridRows(RenderStyle::initialGridRows());
     styleResolver.style()->setNamedGridRowLines(RenderStyle::initialNamedGridRowLines());
     styleResolver.style()->setOrderedNamedGridRowLines(RenderStyle::initialOrderedNamedGridRowLines());
 }
 
-inline void StyleBuilderCustom::applyInheritWebkitGridTemplateRows(StyleResolver& styleResolver)
+inline void StyleBuilderCustom::applyInheritGridTemplateRows(StyleResolver& styleResolver)
 {
     styleResolver.style()->setGridRows(styleResolver.parentStyle()->gridRows());
     styleResolver.style()->setNamedGridRowLines(styleResolver.parentStyle()->namedGridRowLines());
     styleResolver.style()->setOrderedNamedGridRowLines(styleResolver.parentStyle()->orderedNamedGridRowLines());
 }
 
-inline void StyleBuilderCustom::applyValueWebkitGridTemplateRows(StyleResolver& styleResolver, CSSValue& value)
+inline void StyleBuilderCustom::applyValueGridTemplateRows(StyleResolver& styleResolver, CSSValue& value)
 {
     StyleBuilderConverter::TracksData tracksData;
     if (!StyleBuilderConverter::createGridTrackList(value, tracksData, styleResolver))

@@ -10,15 +10,15 @@ function testLayout(gridDefinitions, itemsDefinitions)
     var gridContainer = document.getElementById("gridContainer");
     var gridElement = document.createElement("div");
     gridElement.className = "grid";
-    gridElement.style.webkitGridAutoFlow = "dense";
+    gridElement.style.gridAutoFlow = "dense";
 
     for (var key in gridDefinitions) {
 	if (key == "rows")
-	    gridElement.style.webkitGridTemplateRows = gridDefinitions[key];
+	    gridElement.style.gridTemplateRows = gridDefinitions[key];
 	else if (key == "columns")
-	    gridElement.style.webkitGridTemplateColumns = gridDefinitions[key];
+	    gridElement.style.gridTemplateColumns = gridDefinitions[key];
 	else
-	    gridElement.style.webkitGridTemplateAreas = gridDefinitions[key];
+	    gridElement.style.gridTemplateAreas = gridDefinitions[key];
     }
 
     for (var i in itemsDefinitions) {
@@ -27,9 +27,9 @@ function testLayout(gridDefinitions, itemsDefinitions)
 	gridItem.className = "sizedToGridArea";
 
 	if (itemDefinition.row)
-	    gridItem.style.webkitGridRow = itemDefinition.row;
+	    gridItem.style.gridRow = itemDefinition.row;
 	if (itemDefinition.column)
-	    gridItem.style.webkitGridColumn = itemDefinition.column;
+	    gridItem.style.gridColumn = itemDefinition.column;
 
 	gridItem.setAttribute("data-offset-x", itemDefinition.x);
 	gridItem.setAttribute("data-offset-y", itemDefinition.y);

@@ -3,8 +3,8 @@
 <style>
 
 .grid {
-    -webkit-grid-template-columns: 100px 200px;
-    -webkit-grid-template-rows: 50px 150px;
+    grid-template-columns: 100px 200px;
+    grid-template-rows: 50px 150px;
     width: 500px;
     height: 300px;
     border: 5px solid black;
@@ -20,20 +20,20 @@
 
 .startUnknownLine {
     background-color: blue;
-    -webkit-grid-column: foo / 3;
-    -webkit-grid-row: bar / 3;
+    grid-column: foo / 3;
+    grid-row: bar / 3;
 }
 
 .endUnknownLine {
     background-color: orange;
-    -webkit-grid-column: 1 / foo;
-    -webkit-grid-row: 1 / bar;
+    grid-column: 1 / foo;
+    grid-row: 1 / bar;
 }
 
 .startAndEndUnknownLines {
     background-color: green;
-    -webkit-grid-column: foo / bar;
-    -webkit-grid-row: foo / bar;
+    grid-column: foo / bar;
+    grid-row: foo / bar;
 }
 
 </style>

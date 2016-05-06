@@ -1,3 +1,43 @@
+2016-05-06  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Unprefix CSS Grid Layout properties
+        https://bugs.webkit.org/show_bug.cgi?id=157137
+
+        Reviewed by Simon Fraser.
+
+        Remove "-webkit" prefix from all the grid layout properties,
+        including the display value.
+        Update the source code to remove the prefix where it was used too.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::isLayoutDependent):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseGridGapShorthand):
+        (WebCore::CSSParser::parseGridTemplateRowsAndAreasAndColumns):
+        (WebCore::CSSParser::parseGridTemplateShorthand):
+        (WebCore::CSSParser::parseGridShorthand):
+        (WebCore::CSSParser::parseGridAreaShorthand):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialGridTemplateAreas):
+        (WebCore::StyleBuilderCustom::applyInheritGridTemplateAreas):
+        (WebCore::StyleBuilderCustom::applyValueGridTemplateAreas):
+        (WebCore::StyleBuilderCustom::applyInitialGridTemplateColumns):
+        (WebCore::StyleBuilderCustom::applyInheritGridTemplateColumns):
+        (WebCore::StyleBuilderCustom::applyValueGridTemplateColumns):
+        (WebCore::StyleBuilderCustom::applyInitialGridTemplateRows):
+        (WebCore::StyleBuilderCustom::applyInheritGridTemplateRows):
+        (WebCore::StyleBuilderCustom::applyValueGridTemplateRows):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+
 2016-05-06  Nan Wang  <n_wang@apple.com>
 
         AX: <attachment> element should have a replacement character

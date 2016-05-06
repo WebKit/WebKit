@@ -5,7 +5,7 @@
 function repaintTest()
 {
     var gridItem = document.getElementsByClassName("sizedToGridArea")[0];
-    gridItem.style.webkitGridRow = "2";
+    gridItem.style.gridRow = "2";
 }
 window.addEventListener("load", runRepaintTest, false);
 </script>
@@ -16,8 +16,8 @@ body {
 }
 
 .grid {
-    -webkit-grid-template-rows: 50px 100px;
-    -webkit-grid-template-columns: 100px 50px;
+    grid-template-rows: 50px 100px;
+    grid-template-columns: 100px 50px;
     /* Make the grid shrink to fit. */
     position: absolute;
 }
