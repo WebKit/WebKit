@@ -2,6 +2,17 @@
 
         Unreviewed IDB test gardening.
 
+        Remove unsupported lines from the "unprefix" test.
+        
+        * TestExpectations:
+        * storage/indexeddb/resources/unprefix.js:
+        * storage/indexeddb/unprefix-expected.txt:
+        * storage/indexeddb/unprefix-workers-expected.txt:
+
+2016-05-06  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed IDB test gardening.
+
         Remove the Workers variant of a test that had been removed for being irrelevant.
 
         * TestExpectations:

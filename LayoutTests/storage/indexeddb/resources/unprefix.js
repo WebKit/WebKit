@@ -8,7 +8,6 @@ description("Check that IDBFactory is available through the prefixed or unprefix
 function test()
 {
     shouldBeEqualToString("String(self.indexedDB)", "[object IDBFactory]");
-    shouldBeEqualToString("String(self.webkitIndexedDB)", "[object IDBFactory]");
     shouldBeNonNull("IDBCursor");
     shouldBeNonNull("IDBDatabase");
     shouldBeNonNull("IDBFactory");

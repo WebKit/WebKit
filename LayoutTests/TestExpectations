@@ -913,7 +913,6 @@ storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html 
 storage/indexeddb/dont-commit-on-blocked-private.html [ Failure ]
 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
 storage/indexeddb/pending-activity-workers.html [ Failure ]
-storage/indexeddb/unprefix-workers.html [ Failure ]
 
 # IDB workers tests that timeout
 storage/indexeddb/pending-version-change-stuck.html
