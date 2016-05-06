@@ -4,7 +4,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS String(self.indexedDB) is "[object IDBFactory]"
-PASS String(self.webkitIndexedDB) is "[object IDBFactory]"
 PASS IDBCursor is non-null.
 PASS IDBDatabase is non-null.
 PASS IDBFactory is non-null.
