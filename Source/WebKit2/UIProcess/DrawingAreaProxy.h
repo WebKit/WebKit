@@ -39,6 +39,12 @@
 #include <wtf/RunLoop.h>
 #include <wtf/TypeCasts.h>
 
+#if PLATFORM(COCOA)
+namespace WebCore {
+class MachSendRight;
+}
+#endif
+
 namespace WebKit {
 
 class LayerTreeContext;
@@ -96,6 +102,10 @@ public:
     virtual bool hasVisibleContent() const { return true; }
 
     virtual void willSendUpdateGeometry() { }
+
+#if PLATFORM(COCOA)
+    virtual WebCore::MachSendRight createFence();
+#endif
 
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy&);

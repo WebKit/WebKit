@@ -31,6 +31,10 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
+#if PLATFORM(COCOA)
+#include <WebCore/MachSendRight.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -61,6 +65,14 @@ void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& layerPosition
     m_scrollOffset += scrollOffset;
     sizeDidChange();
 }
+
+#if PLATFORM(COCOA)
+MachSendRight DrawingAreaProxy::createFence()
+{
+    ASSERT_NOT_REACHED();
+    return MachSendRight();
+}
+#endif
 
 #if PLATFORM(MAC)
 void DrawingAreaProxy::setViewExposedRect(Optional<WebCore::FloatRect> viewExposedRect)

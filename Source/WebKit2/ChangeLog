@@ -1,3 +1,27 @@
+2016-05-05  Ada Chan  <adachan@apple.com>
+
+        Create a fence in WebVideoFullscreenManagerProxy::setVideoLayerFrame() to pass to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=157409
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerFrame):
+        Create a fence by calling DrawingAreaProxy::createFence() and pass it when sending the
+        WebVideoFullscreenManager::SetVideoLayerFrameFenced message.
+
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::createFence):
+        Stub implementation. Assert not to be reached here since it's only implemented on Mac so far.
+        * UIProcess/DrawingAreaProxy.h:
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::createFence):
+        Renamed from createFenceForGeometryUpdate() since we are using it for more than just updating geometry.
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry):
+        Update due to method rename.
+
 2016-05-05  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Get everything to the right threads.

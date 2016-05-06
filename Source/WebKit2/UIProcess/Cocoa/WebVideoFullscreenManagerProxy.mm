@@ -34,6 +34,7 @@
 #import "WebVideoFullscreenManagerMessages.h"
 #import "WebVideoFullscreenManagerProxyMessages.h"
 #import <QuartzCore/CoreAnimation.h>
+#import <WebCore/MachSendRight.h>
 #import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/TimeRanges.h>
 #import <WebKitSystemInterface.h>
@@ -449,7 +450,10 @@ void WebVideoFullscreenManagerProxy::setVideoLayerFrame(uint64_t contextId, WebC
 #if PLATFORM(IOS)
         mach_port_name_t fencePort = [UIWindow _synchronizeDrawingAcrossProcesses];
 #else
-        mach_port_name_t fencePort = 0;
+        MachSendRight fenceSendRight;
+        if (DrawingAreaProxy* drawingArea = m_page->drawingArea())
+            fenceSendRight = drawingArea->createFence();
+        mach_port_name_t fencePort = fenceSendRight.leakSendRight();
 #endif
 
         m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerFrameFenced(contextId, frame, IPC::Attachment(fencePort, MACH_MSG_TYPE_MOVE_SEND)), m_page->pageID());
