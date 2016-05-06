@@ -3288,6 +3288,8 @@ void HTMLMediaElement::setMuted(bool muted)
         }
         scheduleEvent(eventNames().volumechangeEvent);
 
+        updateShouldPlay();
+
 #if ENABLE(MEDIA_SESSION)
         document().updateIsPlayingMedia(m_elementID);
 #else

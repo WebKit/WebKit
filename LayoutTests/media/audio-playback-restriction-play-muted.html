@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audio-playback-restriction</title>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+
+    <script>
+    function runTest()
+    {
+        video = document.getElementsByTagName('audio')[0];
+
+        if (window.internals)
+            run('internals.setMediaElementRestrictions(video, "RequireUserGestureForAudioRateChange")');
+
+        waitForEventAndFail('error');
+        waitForEvent('canplaythrough', canplaythrough);
+        run('video.src = findMediaFile("audio", "content/test")');
+    }    
+
+    function canplaythrough()
+    {
+        waitForEvent('playing', playing);
+        run('video.play()');
+    }
+
+    function playing()
+    {
+        run('video.muted = false');
+        waitForEventAndEnd('pause');
+        failTestIn(100);
+    }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <p>Test that, when RequireUserGestureForAudioRateChange is set, starting playback of an muted audio file does not require a user gesture.</p>
+    <audio muted controls></audio>
+</body>
+</html>
+

@@ -159,7 +159,7 @@ bool MediaElementSession::playbackPermitted(const HTMLMediaElement& element) con
         return false;
     }
 
-    if (m_restrictions & RequireUserGestureForAudioRateChange && (!element.isVideo() || element.hasAudio()) && !ScriptController::processingUserGestureForMedia()) {
+    if (m_restrictions & RequireUserGestureForAudioRateChange && (!element.isVideo() || element.hasAudio()) && !element.muted() && !ScriptController::processingUserGestureForMedia()) {
         LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of audio rate change restriction");
         return false;
     }

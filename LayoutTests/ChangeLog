@@ -1,3 +1,14 @@
+2016-05-06  Jer Noble  <jer.noble@apple.com>
+
+        Muted media elements should be allowed to autoplay, even if RequireUserGestureForAudioRateChange is set.
+        https://bugs.webkit.org/show_bug.cgi?id=157404
+        <rdar://problem/26016802>
+
+        Reviewed by Eric Carlson.
+
+        * media/audio-playback-restriction-play-muted-expected.txt: Added.
+        * media/audio-playback-restriction-play-muted.html: Added.
+
 2016-05-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Unprefix CSS Grid Layout properties
