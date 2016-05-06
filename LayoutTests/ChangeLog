@@ -34,6 +34,13 @@
 
         Unreviewed IDB test gardening.
 
+        * TestExpectations:
+        * storage/indexeddb/pending-activity-workers-expected.txt: Updated expectations.
+
+2016-05-06  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed IDB test gardening.
+
         Fix a failing test, and add better classification/comments to a different failing test.
 
         * TestExpectations:
