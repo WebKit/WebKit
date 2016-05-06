@@ -6,7 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Starting worker: resources/objectstore-basics.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 [Worker] 
-[Worker] dbname = "objectstore-basics.js"
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] indexedDB.open(dbname)
 [Worker] 
@@ -30,8 +29,6 @@ PASS [Worker] 'clear' in store is true
 PASS [Worker] typeof store.clear is "function"
 PASS [Worker] 'openCursor' in store is true
 PASS [Worker] typeof store.openCursor is "function"
-PASS [Worker] 'openKeyCursor' in store is true
-PASS [Worker] typeof store.openKeyCursor is "function"
 PASS [Worker] 'createIndex' in store is true
 PASS [Worker] typeof store.createIndex is "function"
 PASS [Worker] 'index' in store is true
@@ -98,7 +95,7 @@ PASS [Worker] store.indexNames.item(100) is null
 [Worker] Expecting exception from store.add({x: 'bar', y: self}, 'bar')
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is DOMException.DATA_CLONE_ERR
-[Worker] Exception message: Failed to execute 'add' on 'IDBObjectStore': An object could not be cloned.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: An object could not be cloned.
 [Worker] Try to insert data where key path yields a Date key:
 [Worker] store.add({x: testDateB, y: 'value'}, 'key')
 [Worker] addSuccess():
@@ -114,7 +111,7 @@ PASS [Worker] event.target.error.name is 'ConstraintError'
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'add' on 'IDBObjectStore': The parameter is not a valid key.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: The parameter is not a valid key.
 [Worker] db.transaction(['storeName'], 'readwrite')
 [Worker] store = transaction.objectStore('storeName')
 [Worker] Ensure invalid key pointed at by index keyPath is ignored
@@ -152,13 +149,13 @@ PASS [Worker] ename is 'DataError'
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'add' on 'IDBObjectStore': The parameter is not a valid key.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: The parameter is not a valid key.
 [Worker] Passing an invalid key into store.put().
 [Worker] Expecting exception from store.put(null, {})
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: The parameter is not a valid key.
 [Worker] 
 [Worker] testPreConditions():
 [Worker] indexedDB.open(dbname, 3)
@@ -175,31 +172,31 @@ PASS [Worker] ename is 'DataError'
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'put' on 'IDBObjectStore': The object store uses in-line keys and the key parameter was provided.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: The object store uses in-line keys and the key parameter was provided.
 [Worker] The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 [Worker] Expecting exception from storeWithOutOfLineKeys.put({})
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'put' on 'IDBObjectStore': The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 [Worker] The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.
 [Worker] Expecting exception from storeWithInLineKeys.put({key: null})
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'put' on 'IDBObjectStore': Evaluating the object store's key path yielded a value that is not a valid key.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: Evaluating the object store's key path yielded a value that is not a valid key.
 [Worker] The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.
 [Worker] Expecting exception from storeWithInLineKeys.put({})
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'put' on 'IDBObjectStore': Evaluating the object store's key path did not yield a value.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: Evaluating the object store's key path did not yield a value.
 [Worker] The key parameter was provided but does not contain a valid key.
 [Worker] Expecting exception from storeWithOutOfLineKeys.put({}, null)
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: The parameter is not a valid key.
 [Worker] 
 [Worker] IDBObjectStore.add()
 [Worker] The object store uses in-line keys and the key parameter was provided.
@@ -207,31 +204,31 @@ PASS [Worker] ename is 'DataError'
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'add' on 'IDBObjectStore': The object store uses in-line keys and the key parameter was provided.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: The object store uses in-line keys and the key parameter was provided.
 [Worker] The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 [Worker] Expecting exception from storeWithOutOfLineKeys.add({})
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'add' on 'IDBObjectStore': The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 [Worker] The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.
 [Worker] Expecting exception from storeWithInLineKeys.add({key: null})
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'add' on 'IDBObjectStore': Evaluating the object store's key path yielded a value that is not a valid key.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: Evaluating the object store's key path yielded a value that is not a valid key.
 [Worker] The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.
 [Worker] Expecting exception from storeWithInLineKeys.add({})
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'add' on 'IDBObjectStore': Evaluating the object store's key path did not yield a value.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: Evaluating the object store's key path did not yield a value.
 [Worker] The key parameter was provided but does not contain a valid key.
 [Worker] Expecting exception from storeWithOutOfLineKeys.add({}, null)
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
-[Worker] Exception message: Failed to execute 'add' on 'IDBObjectStore': The parameter is not a valid key.
+[Worker] Exception message: Failed to store record in an IDBObjectStore: The parameter is not a valid key.
 PASS successfullyParsed is true
 
 TEST COMPLETE

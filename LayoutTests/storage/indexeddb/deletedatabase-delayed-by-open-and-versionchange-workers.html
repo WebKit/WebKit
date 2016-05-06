@@ -4,6 +4,10 @@
 <script src="resources/shared.js"></script>
 </head>
 <body>
-<script>worker = startWorker('resources/deletedatabase-delayed-by-open-and-versionchange.js');</script>
+<script>
+if (window.internals)
+    window.internals.settings.setIndexedDBWorkersEnabled(true);
+worker = startWorker('resources/deletedatabase-delayed-by-open-and-versionchange.js');
+</script>
 </body>
 </html>

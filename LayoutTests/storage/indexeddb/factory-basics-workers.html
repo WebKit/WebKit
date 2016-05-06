@@ -4,6 +4,10 @@
 <script src="resources/shared.js"></script>
 </head>
 <body>
-<script>worker = startWorker('resources/factory-basics.js');</script>
+<script>
+if (window.internals)
+    window.internals.settings.setIndexedDBWorkersEnabled(true);
+worker = startWorker('resources/factory-basics.js');
+</script>
 </body>
 </html>

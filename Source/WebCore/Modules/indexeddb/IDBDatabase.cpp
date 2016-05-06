@@ -285,6 +285,8 @@ void IDBDatabase::stop()
 
     ASSERT(currentThread() == m_originThreadID);
 
+    removeAllEventListeners();
+
     Vector<IDBResourceIdentifier> transactionIdentifiers;
     transactionIdentifiers.reserveInitialCapacity(m_activeTransactions.size());
 

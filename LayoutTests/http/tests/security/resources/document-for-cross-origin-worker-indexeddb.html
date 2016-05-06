@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script>
-        var frames = 2;
+<script>
+if (window.internals)
+    window.internals.settings.setIndexedDBWorkersEnabled(true);
+    
+var frames = 2;
 
-        function decrement() {
-            --frames;
-            if (!frames && window.testRunner) {
-                internals.settings.setStorageBlockingPolicy('AllowAll');
-                testRunner.notifyDone();
-            }
-        }
+function decrement() {
+    --frames;
+    if (!frames && window.testRunner) {
+        internals.settings.setStorageBlockingPolicy('AllowAll');
+        testRunner.notifyDone();
+    }
+}
 
-        window.onmessage = decrement;
-    </script>
+window.onmessage = decrement;
+</script>
 </head>
 <body>
     <p>The first iframe below should return a security error, and the second should successfully open the database.</p>

@@ -140,8 +140,11 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
     } else {
         activate();
 
+        auto* context = scriptExecutionContext();
+        ASSERT(context);
+
         RefPtr<IDBTransaction> self;
-        JSC::VM& vm = JSDOMWindowBase::commonVM();
+        JSC::VM& vm = context->vm();
         vm.whenIdle([self, this]() {
             deactivate();
         });
@@ -332,6 +335,8 @@ void IDBTransaction::stop()
     // Since the order of calling ActiveDOMObject::stop() is random, we might already have been stopped.
     if (m_contextStopped)
         return;
+
+    removeAllEventListeners();
 
     m_contextStopped = true;
 
@@ -1030,6 +1035,7 @@ void IDBTransaction::operationDidComplete(IDBClient::TransactionOperation& opera
 {
     ASSERT(m_transactionOperationMap.get(operation.identifier()) == &operation);
     ASSERT(currentThread() == m_database->originThreadID());
+    ASSERT(currentThread() == operation.originThreadID());
 
     m_transactionOperationMap.remove(operation.identifier());
 

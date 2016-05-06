@@ -1,17 +1,16 @@
 self.onmessage = function() {
     function test(method, args) {
         try {
-            var request = self.webkitIndexedDB[method].call(self.webkitIndexedDB, args);
-            return 'Successfully called self.webkitIndexedDB.' + method + '().<br>';
+            var request = self.indexedDB[method].call(self.indexedDB, args);
+            return 'Successfully called self.indexedDB.' + method + '().<br>';
         } catch (exception) {
-            return 'self.webkitIndexedDB.' + method + '() threw an exception: ' + exception.name + '<br>';
+            return 'self.indexedDB.' + method + '() threw an exception: ' + exception.name + '<br>';
         }
     }
     self.postMessage({
         'result': [
             test('deleteDatabase', 'testDBName'),
             test('open', 'testDBName'),
-            test('webkitGetDatabaseNames')
         ]
     });
 };

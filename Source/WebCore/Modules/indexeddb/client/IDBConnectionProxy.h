@@ -106,6 +106,8 @@ public:
     void registerDatabaseConnection(IDBDatabase&);
     void unregisterDatabaseConnection(IDBDatabase&);
 
+    RefPtr<IDBOpenDBRequest> takeIDBOpenDBRequest(IDBOpenDBRequest&);
+
 private:
     void completeOpenDBRequest(const IDBResultData&);
     bool hasRecordOfTransaction(const IDBTransaction&) const;

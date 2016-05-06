@@ -117,14 +117,26 @@ void IDBConnectionProxy::didDeleteDatabase(const IDBResultData& resultData)
     completeOpenDBRequest(resultData);
 }
 
+RefPtr<IDBOpenDBRequest> IDBConnectionProxy::takeIDBOpenDBRequest(IDBOpenDBRequest& request)
+{
+    ASSERT(request.originThreadID() == currentThread());
+
+    Locker<Lock> locker(m_openDBRequestMapLock);
+
+    auto mappedRequest = m_openDBRequestMap.take(request.resourceIdentifier());
+    ASSERT(mappedRequest.get() == &request);
+
+    return mappedRequest;
+}
+
 void IDBConnectionProxy::completeOpenDBRequest(const IDBResultData& resultData)
 {
     ASSERT(isMainThread());
 
-    RefPtr<IDBOpenDBRequest> request;
+    IDBOpenDBRequest* request;
     {
         Locker<Lock> locker(m_openDBRequestMapLock);
-        request = m_openDBRequestMap.take(resultData.requestIdentifier());
+        request = m_openDBRequestMap.get(resultData.requestIdentifier());
         ASSERT(request);
     }
 

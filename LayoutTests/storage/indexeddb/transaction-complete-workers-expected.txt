@@ -6,7 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Starting worker: resources/transaction-complete-workers.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 [Worker] 
-[Worker] dbname = "transaction-complete-workers.js"
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] indexedDB.open(dbname)
 [Worker] 
@@ -21,7 +20,7 @@ PASS [Worker] Transaction completed
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
-[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction has finished.
+[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished.
 [Worker] 
 [Worker] recursionTest():
 [Worker] transaction = db.transaction('store')
@@ -51,7 +50,7 @@ PASS [Worker] transaction completed
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
-[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction has finished.
+[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished.
 [Worker] 
 [Worker] trying a timeout callback:
 [Worker] setTimeout(timeoutTest, 0)
@@ -64,7 +63,7 @@ PASS [Worker] transaction started in setTimeout() callback completed
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
-[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction has finished.
+[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished.
 [Worker] 
 [Worker] errorTest():
 [Worker] self.old_onerror = self.onerror
@@ -81,7 +80,7 @@ PASS [Worker] Transaction completed
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
-[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction has finished.
+[Worker] Exception message: Failed to execute 'get' on 'IDBObjectStore': The transaction is inactive or finished.
 PASS successfullyParsed is true
 
 TEST COMPLETE

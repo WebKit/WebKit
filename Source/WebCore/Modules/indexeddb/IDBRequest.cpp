@@ -241,6 +241,9 @@ void IDBRequest::stop()
 {
     ASSERT(currentThread() == m_originThreadID);
     ASSERT(!m_contextStopped);
+
+    removeAllEventListeners();
+
     m_contextStopped = true;
 }
 

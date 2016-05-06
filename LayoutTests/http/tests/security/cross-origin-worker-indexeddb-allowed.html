@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script>
-        var frames = 2;
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.dumpChildFramesAsText();
-            testRunner.waitUntilDone();
-        }
+<script>
+if (window.internals)
+    window.internals.settings.setIndexedDBWorkersEnabled(true);
 
-        function decrement() {
-            --frames;
-            if (!frames && window.testRunner)
-                testRunner.notifyDone();
-        }
+var frames = 2;
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
 
-        window.onmessage = decrement;
-    </script>
+function decrement() {
+    --frames;
+    if (!frames && window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.onmessage = decrement;
+</script>
 </head>
 <body>
     <p>Both of these frames should successfully open the database:</p>

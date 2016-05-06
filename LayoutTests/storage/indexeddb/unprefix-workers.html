@@ -5,6 +5,10 @@
 <script src="resources/shared.js"></script>
 </head>
 <body>
-<script>worker = startWorker('resources/unprefix.js');</script>
+<script>
+if (window.internals)
+    window.internals.settings.setIndexedDBWorkersEnabled(true);
+worker = startWorker('resources/unprefix.js');
+</script>
 </body>
 </html>

@@ -66,7 +66,11 @@ public:
         ASSERT(m_completeFunction);
         m_completeFunction(data);
         m_transaction->operationDidComplete(*this);
-        m_completeFunction = { };
+
+        // m_completeFunction might be holding the last ref to this TransactionOperation,
+        // so we need to do this trick to null it out without first destroying it.
+        std::function<void (const IDBResultData&)> oldCompleteFunction;
+        std::swap(m_completeFunction, oldCompleteFunction);
     }
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
