@@ -777,7 +777,6 @@
 		1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7FA6180DDA3B3A0028F8A5 /* NetworkStateNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A7FA61B0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7FA61A0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp */; };
 		1A7FA6490DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7FA6470DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp */; };
-		1A7FA7CC0DDA4B770028F8A5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7FA7CB0DDA4B770028F8A5 /* SystemConfiguration.framework */; };
 		1A85B18F0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A85B18D0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp */; };
 		1A85B1900A1B18A200D8C87C /* JSHTMLHtmlElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A85B18E0A1B18A200D8C87C /* JSHTMLHtmlElement.h */; };
 		1A85B1E60A1B240500D8C87C /* JSHTMLDirectoryElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A85B1E00A1B240500D8C87C /* JSHTMLDirectoryElement.cpp */; };
@@ -6889,7 +6888,6 @@
 		FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */; };
 		FD2DBF1212B048A300ED98C6 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */; };
 		FD2DBF1312B048A300ED98C6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */; };
-		FD2DBF1512B048A300ED98C6 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF1112B048A300ED98C6 /* CoreAudio.framework */; };
 		FD315FF612B0267600C1A359 /* AudioBasicProcessorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FAC12B0267500C1A359 /* AudioBasicProcessorNode.cpp */; };
 		FD315FF712B0267600C1A359 /* AudioBasicProcessorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FAD12B0267500C1A359 /* AudioBasicProcessorNode.h */; };
 		FD315FF812B0267600C1A359 /* AudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FAE12B0267500C1A359 /* AudioBuffer.cpp */; };
@@ -8223,7 +8221,6 @@
 		1A7FA6180DDA3B3A0028F8A5 /* NetworkStateNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkStateNotifier.h; sourceTree = "<group>"; };
 		1A7FA61A0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkStateNotifier.cpp; sourceTree = "<group>"; };
 		1A7FA6470DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkStateNotifierMac.cpp; sourceTree = "<group>"; };
-		1A7FA7CB0DDA4B770028F8A5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
 		1A85B17D0A1B183600D8C87C /* HTMLHtmlElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLHtmlElement.idl; sourceTree = "<group>"; };
 		1A85B18D0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLHtmlElement.cpp; sourceTree = "<group>"; };
 		1A85B18E0A1B18A200D8C87C /* JSHTMLHtmlElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLHtmlElement.h; sourceTree = "<group>"; };
@@ -14998,7 +14995,6 @@
 		FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaElementAudioSourceNode.h; sourceTree = "<group>"; };
 		FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
 		FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
-		FD2DBF1112B048A300ED98C6 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		FD315FAC12B0267500C1A359 /* AudioBasicProcessorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBasicProcessorNode.cpp; sourceTree = "<group>"; };
 		FD315FAD12B0267500C1A359 /* AudioBasicProcessorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBasicProcessorNode.h; sourceTree = "<group>"; };
 		FD315FAE12B0267500C1A359 /* AudioBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBuffer.cpp; sourceTree = "<group>"; };
@@ -15309,7 +15305,6 @@
 			files = (
 				FD2DBF1212B048A300ED98C6 /* Accelerate.framework in Frameworks */,
 				FD2DBF1312B048A300ED98C6 /* AudioToolbox.framework in Frameworks */,
-				FD2DBF1512B048A300ED98C6 /* CoreAudio.framework in Frameworks */,
 				1AB33DA512551E320024457A /* IOKit.framework in Frameworks */,
 				93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */,
 				93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */,
@@ -15318,7 +15313,6 @@
 				379919B21200DE5000EA041C /* libz.dylib in Frameworks */,
 				A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */,
 				5FE1D292178FD1F3001AA3C3 /* Security.framework in Frameworks */,
-				1A7FA7CC0DDA4B770028F8A5 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15779,7 +15773,6 @@
 			children = (
 				FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */,
 				FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */,
-				FD2DBF1112B048A300ED98C6 /* CoreAudio.framework */,
 				AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */,
 				1AB33DA412551E320024457A /* IOKit.framework */,
 				F8216299029F4FB501000131 /* JavaScriptCore.framework */,
@@ -15789,7 +15782,6 @@
 				379919B11200DE5000EA041C /* libz.dylib */,
 				A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */,
 				5FE1D291178FD1F3001AA3C3 /* Security.framework */,
-				1A7FA7CB0DDA4B770028F8A5 /* SystemConfiguration.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

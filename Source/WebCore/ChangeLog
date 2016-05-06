@@ -1,3 +1,18 @@
+2016-05-05  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] WebCore does not need to link to CoreAudio, GraphicsServices, SystemConfiguration frameworks
+        <https://webkit.org/b/157413>
+        <rdar://problem/26104189>
+
+        Reviewed by Gavin Barraclough.
+
+        * Configurations/WebCore.xcconfig:
+        (OTHER_LDFLAGS_BASE_ios): Remove "-framework GraphicsServices".
+        (OTHER_LDFLAGS_PLATFORM[sdk=macosx*]): Add "-framework CoreAudio"
+        and "-framework SystemConfiguration".
+        * WebCore.xcodeproj/project.pbxproj: Remove CoreAudio.framework
+        and SystemConfiguration.framework from the project file.
+
 2016-05-05  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Get everything to the right threads.
