@@ -62,7 +62,6 @@ public:
 
 #if PLATFORM(MAC)
     static RefPtr<Icon> createIconForUTI(const String&);
-    static RefPtr<Icon> createIconForMIMEType(const String&);
     static RefPtr<Icon> createIconForFileExtension(const String&);
 #endif
 

@@ -1497,7 +1497,7 @@ static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& pro
 
 static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, FloatSize& size)
 {
-    String MIMEType = attachment.attachmentElement().attachmentType();
+    auto documentInteractionController = adoptNS([[getUIDocumentInteractionControllerClass() alloc] init]);
 
     String fileName;
     if (File* file = attachment.attachmentElement().file())
@@ -1505,18 +1505,25 @@ static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, 
 
     if (fileName.isEmpty())
         fileName = attachment.attachmentElement().attachmentTitle();
-
-    RetainPtr<UIImage> result;
-
-    RetainPtr<UIDocumentInteractionController> documentInteractionController = adoptNS([[getUIDocumentInteractionControllerClass() alloc] init]);
     [documentInteractionController setName:fileName];
-    [documentInteractionController setUTI:static_cast<NSString *>(mimeTypeFromUTITree(MIMEType.createCFString().get()).get())];
+
+    String attachmentType = attachment.attachmentElement().attachmentType();
+    if (!attachmentType.isEmpty()) {
+        auto attachmentTypeCF = attachmentType.createCFString();
+        RetainPtr<CFStringRef> UTI;
+        if (isDeclaredUTI(attachmentTypeCF.get()))
+            UTI = attachmentTypeCF;
+        else
+            UTI = UTIFromMIMEType(attachmentTypeCF.get());
+
+        [documentInteractionController setUTI:static_cast<NSString *>(UTI.get())];
+    }
 
     NSArray *icons = [documentInteractionController icons];
     if (!icons.count)
         return nil;
 
-    result = icons.lastObject;
+    RetainPtr<UIImage> result = icons.lastObject;
 
     BOOL useHeightForClosestMatch = [result size].height > [result size].width;
     CGFloat bestMatchRatio = -1;

@@ -32,6 +32,7 @@
 
 SOFT_LINK_FRAMEWORK(MobileCoreServices)
 
+SOFT_LINK(MobileCoreServices, UTTypeIsDeclared, Boolean, (CFStringRef inUTI), (inUTI))
 SOFT_LINK(MobileCoreServices, UTTypeCopyDeclaration, CFDictionaryRef, (CFStringRef inUTI), (inUTI))
 SOFT_LINK(MobileCoreServices, UTTypeCopyPreferredTagWithClass, CFStringRef, (CFStringRef inUTI, CFStringRef inTagClass), (inUTI, inTagClass))
 SOFT_LINK(MobileCoreServices, UTTypeCreatePreferredIdentifierForTag, CFStringRef, (CFStringRef inTagClass, CFStringRef inTag, CFStringRef inConformingToUTI), (inTagClass, inTag, inConformingToUTI))
@@ -84,6 +85,11 @@ RetainPtr<CFStringRef> UTIFromMIMEType(CFStringRef mime)
 {
     RetainPtr<CFStringRef> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mime, 0));
     return uti;
+}
+
+bool isDeclaredUTI(CFStringRef UTI)
+{
+    return UTTypeIsDeclared(UTI);
 }
 
 }

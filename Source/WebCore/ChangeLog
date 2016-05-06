@@ -1,3 +1,33 @@
+2016-05-06  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> element should understand UTIs
+        https://bugs.webkit.org/show_bug.cgi?id=157425
+        <rdar://problem/25585401>
+
+        Reviewed by Anders Carlsson.
+
+        UTIs are often much more specific than MIME types, so we should allow
+        clients of <attachment> to use them to get more accurate icons.
+
+        Test: fast/attachment/attachment-uti.html
+
+        * platform/graphics/Icon.h:
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::createIconForMIMEType): Deleted.
+        Remove the now-unused createIconForMIMEType.
+
+        * platform/network/mac/UTIUtilities.h:
+        * platform/network/mac/UTIUtilities.mm:
+        (WebCore::isDeclaredUTI):
+        Expose UTTypeIsDeclared as isDeclaredUTI.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::iconForAttachment):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::iconForAttachment):
+        If the attachment's type is a UTI, request the icon for it directly.
+        If it's a MIME type, convert to a UTI before requesting.
+
 2016-05-06  Chris Dumez  <cdumez@apple.com>
 
         Clean up converting from JSValue to float / double in the bindings generator

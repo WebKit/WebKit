@@ -91,11 +91,6 @@ RefPtr<Icon> Icon::createIconForUTI(const String& UTI)
     return adoptRef(new Icon(image));
 }
 
-RefPtr<Icon> Icon::createIconForMIMEType(const String& MIMEType)
-{
-    return createIconForUTI(UTIFromMIMEType(MIMEType.createCFString().get()).get());
-}
-
 void Icon::paint(GraphicsContext& context, const FloatRect& rect)
 {
     if (context.paintingDisabled())

@@ -68,6 +68,7 @@
 #import "StyleResolver.h"
 #import "ThemeMac.h"
 #import "TimeRanges.h"
+#import "UTIUtilities.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
 #import "WebCoreSystemInterface.h"
@@ -2403,13 +2404,23 @@ static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsConte
 
 static RefPtr<Icon> iconForAttachment(const RenderAttachment& attachment)
 {
-    String MIMEType = attachment.attachmentElement().attachmentType();
-    if (!MIMEType.isEmpty()) {
-        if (equalIgnoringASCIICase(MIMEType, "multipart/x-folder") || equalIgnoringASCIICase(MIMEType, "application/vnd.apple.folder")) {
+    String attachmentType = attachment.attachmentElement().attachmentType();
+    
+    if (!attachmentType.isEmpty()) {
+        if (equalIgnoringASCIICase(attachmentType, "multipart/x-folder") || equalIgnoringASCIICase(attachmentType, "application/vnd.apple.folder")) {
             if (auto icon = Icon::createIconForUTI("public.directory"))
                 return icon;
-        } else if (auto icon = Icon::createIconForMIMEType(MIMEType))
-            return icon;
+        } else {
+            auto attachmentTypeCF = attachmentType.createCFString();
+            RetainPtr<CFStringRef> UTI;
+            if (isDeclaredUTI(attachmentTypeCF.get()))
+                UTI = attachmentTypeCF;
+            else
+                UTI = UTIFromMIMEType(attachmentTypeCF.get());
+
+            if (auto icon = Icon::createIconForUTI(UTI.get()))
+                return icon;
+        }
     }
 
     if (File* file = attachment.attachmentElement().file()) {

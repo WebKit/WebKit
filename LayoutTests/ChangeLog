@@ -1,3 +1,15 @@
+2016-05-06  Tim Horton  <timothy_horton@apple.com>
+
+        <attachment> element should understand UTIs
+        https://bugs.webkit.org/show_bug.cgi?id=157425
+        <rdar://problem/25585401>
+
+        Reviewed by Anders Carlsson.
+
+        * fast/attachment/attachment-uti-expected.html: Added.
+        * fast/attachment/attachment-uti.html: Added.
+        Add a test that UTIs render the same as their corresponding MIME types.
+
 2016-05-06  Chris Dumez  <cdumez@apple.com>
 
         Clean up converting from JSValue to float / double in the bindings generator
