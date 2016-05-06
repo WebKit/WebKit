@@ -254,7 +254,11 @@ bool isRendererReplacedElement(RenderObject* renderer)
     if (!renderer)
         return false;
     
-    if (renderer->isImage() || renderer->isWidget() || renderer->isMedia())
+    bool isAttachment = false;
+#if ENABLE(ATTACHMENT_ELEMENT)
+    isAttachment = renderer->isAttachment();
+#endif
+    if (renderer->isImage() || renderer->isWidget() || renderer->isMedia() || isAttachment)
         return true;
 
     if (is<Element>(renderer->node())) {

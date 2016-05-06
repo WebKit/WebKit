@@ -1,0 +1,15 @@
+some  test
+This tests that attachment element replacements are present in strings.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+String: 
+some [ATTACHMENT] test
+This tests that attachment element replacements are present in strings.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
