@@ -35,7 +35,6 @@
 #include "CachePolicy.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderTypes.h"
-#include "IconURL.h"
 #include "LayoutMilestones.h"
 #include "MixedContentChecker.h"
 #include "Page.h"

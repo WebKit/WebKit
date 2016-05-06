@@ -79,7 +79,9 @@ static URL iconFromLinkElements(Frame& frame)
         return result;
 
     for (auto& linkElement : childrenOfType<HTMLLinkElement>(*head)) {
-        if (!(linkElement.iconType() & Favicon))
+        if (!linkElement.iconType())
+            continue;
+        if (*linkElement.iconType() != LinkRelAttribute::IconType::Favicon)
             continue;
         if (linkElement.href().isEmpty())
             continue;

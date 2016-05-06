@@ -54,7 +54,7 @@ public:
 
     const AtomicString& type() const;
 
-    IconType iconType() const;
+    Optional<LinkRelAttribute::IconType> iconType() const;
 
     // the icon size string as parsed from the HTML attribute
     String iconSizes();

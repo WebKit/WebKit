@@ -495,7 +495,7 @@ const AtomicString& HTMLLinkElement::type() const
     return getAttribute(typeAttr);
 }
 
-IconType HTMLLinkElement::iconType() const
+Optional<LinkRelAttribute::IconType> HTMLLinkElement::iconType() const
 {
     return m_relAttribute.iconType;
 }
@@ -510,7 +510,7 @@ void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     HTMLElement::addSubresourceAttributeURLs(urls);
 
     // Favicons are handled by a special case in LegacyWebArchive::create()
-    if (m_relAttribute.iconType != InvalidIcon)
+    if (m_relAttribute.iconType)
         return;
 
     if (!m_relAttribute.isStyleSheet)

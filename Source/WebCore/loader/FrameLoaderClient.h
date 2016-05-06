@@ -31,7 +31,6 @@
 #define FrameLoaderClient_h
 
 #include "FrameLoaderTypes.h"
-#include "IconURL.h"
 #include "LayoutMilestones.h"
 #include "ResourceLoadPriority.h"
 #include <functional>
@@ -51,8 +50,6 @@ typedef id RemoteAXObjectRef;
 typedef void* RemoteAXObjectRef;
 #endif
 #endif
-
-typedef class _jobject* jobject;
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSArray;

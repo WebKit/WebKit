@@ -46,13 +46,11 @@ LinkRelAttribute::LinkRelAttribute(const String& rel)
     if (equalLettersIgnoringASCIICase(rel, "stylesheet"))
         isStyleSheet = true;
     else if (equalLettersIgnoringASCIICase(rel, "icon") || equalLettersIgnoringASCIICase(rel, "shortcut icon"))
-        iconType = Favicon;
-#if ENABLE(TOUCH_ICON_LOADING)
+        iconType = IconType::Favicon;
     else if (equalLettersIgnoringASCIICase(rel, "apple-touch-icon"))
-        iconType = TouchIcon;
+        iconType = IconType::TouchIcon;
     else if (equalLettersIgnoringASCIICase(rel, "apple-touch-icon-precomposed"))
-        iconType = TouchPrecomposedIcon;
-#endif
+        iconType = IconType::TouchPrecomposedIcon;
     else if (equalLettersIgnoringASCIICase(rel, "dns-prefetch"))
         isDNSPrefetch = true;
     else if (RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled() && equalLettersIgnoringASCIICase(rel, "preload"))
@@ -72,13 +70,11 @@ LinkRelAttribute::LinkRelAttribute(const String& rel)
             else if (equalLettersIgnoringASCIICase(word, "alternate"))
                 isAlternate = true;
             else if (equalLettersIgnoringASCIICase(word, "icon"))
-                iconType = Favicon;
-#if ENABLE(TOUCH_ICON_LOADING)
+                iconType = IconType::Favicon;
             else if (equalLettersIgnoringASCIICase(word, "apple-touch-icon"))
-                iconType = TouchIcon;
+                iconType = IconType::TouchIcon;
             else if (equalLettersIgnoringASCIICase(word, "apple-touch-icon-precomposed"))
-                iconType = TouchPrecomposedIcon;
-#endif
+                iconType = IconType::TouchPrecomposedIcon;
 #if ENABLE(LINK_PREFETCH)
             else if (equalLettersIgnoringASCIICase(word, "prefetch"))
                 isLinkPrefetch = true;

@@ -1,3 +1,29 @@
+2016-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Tidy up the LinkRelAttribute code
+        https://bugs.webkit.org/show_bug.cgi?id=157429
+
+        Reviewed by Sam Weinig.
+
+        Get rid of IconURL.h and move the IconType enumeration inside LinkRelAttribute.
+        Remove the InvalidIcon enum declaration and use WTF::Optional instead.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/IconURL.h: Removed.
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::iconType):
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs):
+        * html/HTMLLinkElement.h:
+        * html/LinkRelAttribute.cpp:
+        (WebCore::LinkRelAttribute::LinkRelAttribute):
+        * html/LinkRelAttribute.h:
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::relAttributeIsStyleSheet):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/icon/IconController.cpp:
+        (WebCore::iconFromLinkElements):
+
 2016-05-06  Jer Noble  <jer.noble@apple.com>
 
         Muted media elements should be allowed to autoplay, even if RequireUserGestureForAudioRateChange is set.
