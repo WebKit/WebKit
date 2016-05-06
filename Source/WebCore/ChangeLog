@@ -1,3 +1,46 @@
+2016-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Clean up converting from JSValue to float / double in the bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=157407
+
+        Reviewed by Darin Adler.
+
+        Clean up converting from JSValue to float / double in the bindings generator:
+        - Handle all aspects of converting to float / double inside JSValueToNative()
+          instead of relying partly on the call sites.
+        - Add a build<>() template function to JSDOMBuild.h that is now
+          called from the bindings to convert to float / double and deal with
+          non-finite values.
+        - Provide a better message with the TypeError that is thrown for non-finite
+          values.
+
+        No new tests, rebaselined existing tests.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::throwSequenceTypeError):
+        (WebCore::throwNonFiniteTypeError):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMBuild.h:
+        (WebCore::build):
+        * bindings/scripts/CodeGenerator.pm:
+        (IsFloatingPointType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (JSValueToNative):
+        (GenerateImplementation): Deleted.
+        (GenerateParametersCheck): Deleted.
+        (GenerateReturnParameters): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjStrictFloat):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaN):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaN):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunction):
+        (WebCore::jsTestObjPrototypeFunctionVariadicDoubleMethod):
+        (WebCore::jsTestObjPrototypeFunctionAny):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Promise):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsPrototypeFunctionSetShadow):
+
 2016-05-06  Dean Jackson  <dino@apple.com>
 
         Regions, Shapes and Tracks don't need runtime features

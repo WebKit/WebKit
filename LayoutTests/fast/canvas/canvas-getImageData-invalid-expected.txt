@@ -3,18 +3,18 @@ Test the handling of invalid arguments in canvas getImageData().
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS ctx.getImageData(NaN, 10, 10, 10) threw exception TypeError: Type error.
-PASS ctx.getImageData(10, NaN, 10, 10) threw exception TypeError: Type error.
-PASS ctx.getImageData(10, 10, NaN, 10) threw exception TypeError: Type error.
-PASS ctx.getImageData(10, 10, 10, NaN) threw exception TypeError: Type error.
-PASS ctx.getImageData(Infinity, 10, 10, 10) threw exception TypeError: Type error.
-PASS ctx.getImageData(10, Infinity, 10, 10) threw exception TypeError: Type error.
-PASS ctx.getImageData(10, 10, Infinity, 10) threw exception TypeError: Type error.
-PASS ctx.getImageData(10, 10, 10, Infinity) threw exception TypeError: Type error.
-PASS ctx.getImageData(undefined, 10, 10, 10) threw exception TypeError: Type error.
-PASS ctx.getImageData(10, undefined, 10, 10) threw exception TypeError: Type error.
-PASS ctx.getImageData(10, 10, undefined, 10) threw exception TypeError: Type error.
-PASS ctx.getImageData(10, 10, 10, undefined) threw exception TypeError: Type error.
+PASS ctx.getImageData(NaN, 10, 10, 10) threw exception TypeError: The provided value is non-finite.
+PASS ctx.getImageData(10, NaN, 10, 10) threw exception TypeError: The provided value is non-finite.
+PASS ctx.getImageData(10, 10, NaN, 10) threw exception TypeError: The provided value is non-finite.
+PASS ctx.getImageData(10, 10, 10, NaN) threw exception TypeError: The provided value is non-finite.
+PASS ctx.getImageData(Infinity, 10, 10, 10) threw exception TypeError: The provided value is non-finite.
+PASS ctx.getImageData(10, Infinity, 10, 10) threw exception TypeError: The provided value is non-finite.
+PASS ctx.getImageData(10, 10, Infinity, 10) threw exception TypeError: The provided value is non-finite.
+PASS ctx.getImageData(10, 10, 10, Infinity) threw exception TypeError: The provided value is non-finite.
+PASS ctx.getImageData(undefined, 10, 10, 10) threw exception TypeError: The provided value is non-finite.
+PASS ctx.getImageData(10, undefined, 10, 10) threw exception TypeError: The provided value is non-finite.
+PASS ctx.getImageData(10, 10, undefined, 10) threw exception TypeError: The provided value is non-finite.
+PASS ctx.getImageData(10, 10, 10, undefined) threw exception TypeError: The provided value is non-finite.
 PASS ctx.getImageData(10, 10, 0, 10) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS ctx.getImageData(10, 10, 10, 0) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS successfullyParsed is true

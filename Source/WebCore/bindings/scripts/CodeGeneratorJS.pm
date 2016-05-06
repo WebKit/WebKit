@@ -2928,13 +2928,6 @@ sub GenerateImplementation
                     push(@implContent, "    }\n");
                 }
 
-                if ($type eq "double" or $type eq "float") {
-                    push(@implContent, "    if (UNLIKELY(!std::isfinite(nativeValue))) {\n");
-                    push(@implContent, "        throwVMTypeError(state);\n");
-                    push(@implContent, "        return false;\n");
-                    push(@implContent, "    }\n");
-                }
-
                 if ($svgPropertyOrListPropertyType) {
                     if ($svgPropertyType) {
                         push(@implContent, "    if (impl.isReadOnly()) {\n");
@@ -3798,11 +3791,6 @@ sub GenerateParametersCheck
             if ($codeGenerator->IsTypedArrayType($argType) and $argType ne "ArrayBuffer") {
                $value = $shouldPassByReference ? "$name.releaseNonNull()" : "WTFMove($name)";
             }
-
-            if ($argType eq "double" or $argType eq "float") {
-                push(@$outputArray, "    if (UNLIKELY(!std::isfinite($name)))\n");
-                push(@$outputArray, "        return throwVMTypeError(state);\n");
-            }
         }
 
         push(@arguments, $value);
@@ -4414,8 +4402,16 @@ sub JSValueToNative
     return ($value, 0) if $type eq "any";
 
     return ("$value.toBoolean(state)", 1) if $type eq "boolean";
-    return ("$value.toNumber(state)", 1) if $type eq "double" or $type eq "unrestricted double";
-    return ("$value.toFloat(state)", 1) if $type eq "float" or $type eq "unrestricted float";
+
+    if ($codeGenerator->IsFloatingPointType($type)) {
+        AddToImplIncludes("JSDOMBuild.h");
+        return ("build<double>(*state, $value, ShouldAllowNonFinite::No)", 1) if $type eq "double";
+        return ("build<double>(*state, $value, ShouldAllowNonFinite::Yes)", 1) if $type eq "unrestricted double";
+        return ("build<float>(*state, $value, ShouldAllowNonFinite::No)", 1) if $type eq "float";
+        return ("build<float>(*state, $value, ShouldAllowNonFinite::Yes)", 1) if $type eq "unrestricted float";
+        die "Unhandled floating point type: " . $type;
+    }
+
     return ("valueToDate(state, $value)", 1) if $type eq "Date";
 
     return ("to$type($value)", 1) if $codeGenerator->IsTypedArrayType($type);

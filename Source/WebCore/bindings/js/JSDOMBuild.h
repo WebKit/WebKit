@@ -26,14 +26,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
+#include "JSDOMBinding.h"
+
 namespace WebCore {
 
 template<typename T> T build(JSC::ExecState&, JSC::JSValue);
 template<typename T, unsigned characterCount> T build(JSC::ExecState&, JSC::JSValue, const char (&propertyName)[characterCount]);
+enum class ShouldAllowNonFinite { No, Yes };
+template<typename T> T build(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite);
 
 template<typename T, unsigned characterCount> inline T build(JSC::ExecState& state, JSC::JSValue value, const char (&propertyName)[characterCount])
 {
     return build<T>(state, value.get(&state, JSC::Identifier::fromString(&state, propertyName)));
+}
+
+template<typename T> inline T build(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allowNonFinite)
+{
+    static_assert(std::is_same<T, float>::value || std::is_same<T, double>::value, "Should be called with converting to float or double");
+    double number = value.toNumber(&state);
+    if (allowNonFinite == ShouldAllowNonFinite::No && UNLIKELY(!std::isfinite(number)))
+        throwNonFiniteTypeError(state);
+    return static_cast<T>(number);
 }
 
 }

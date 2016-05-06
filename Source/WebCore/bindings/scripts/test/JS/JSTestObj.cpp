@@ -3630,7 +3630,7 @@ bool setJSTestObjStrictFloat(ExecState* state, EncodedJSValue thisValue, Encoded
         return throwSetterTypeError(*state, "TestObj", "strictFloat");
     }
     auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toFloat(state);
+    auto nativeValue = build<float>(*state, value, ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setStrictFloat(WTFMove(nativeValue));
@@ -4688,7 +4688,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalDoubleI
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalDoubleIsNaN");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    auto number = state->argument(0).toNumber(state);
+    auto number = build<double>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalDoubleIsNaN(WTFMove(number));
@@ -4703,7 +4703,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalFloatIs
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalFloatIsNaN");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    auto number = state->argument(0).toFloat(state);
+    auto number = build<float>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalFloatIsNaN(WTFMove(number));
@@ -5692,7 +5692,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState*
     auto str = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto a = state->argument(1).toFloat(state);
+    auto a = build<float>(*state, state->argument(1), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     auto b = toInt32(state, state->argument(2), NormalConversion);
@@ -5784,7 +5784,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(Exec
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto head = state->argument(0).toNumber(state);
+    auto head = build<double>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     Vector<double> tail = toNativeArguments<double>(state, 1);
@@ -5827,7 +5827,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* state)
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto a = state->argument(0).toFloat(state);
+    auto a = build<float>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     auto b = toInt32(state, state->argument(1), NormalConversion);
@@ -5871,11 +5871,9 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFl
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto a = state->argument(0).toFloat(state);
+    auto a = build<float>(*state, state->argument(0), ShouldAllowNonFinite::No);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (UNLIKELY(!std::isfinite(a)))
-        return throwVMTypeError(state);
     impl.testPromiseFunctionWithFloatArgument(WTFMove(a), DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }
@@ -5937,11 +5935,9 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto a = state->argument(0).toFloat(state);
+    auto a = build<float>(*state, state->argument(0), ShouldAllowNonFinite::No);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    if (UNLIKELY(!std::isfinite(a)))
-        return throwVMTypeError(state);
     impl.testPromiseOverloadedFunction(WTFMove(a), DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }

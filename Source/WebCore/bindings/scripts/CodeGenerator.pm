@@ -61,6 +61,13 @@ my %numericTypeHash = (
     "unsigned short" => 1,
 );
 
+my %floatingPointTypeHash = (
+    "float" => 1,
+    "unrestricted float" => 1,
+    "double" => 1,
+    "unrestricted double" => 1,
+);
+
 my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1 );
 
 # WebCore types used directly in IDL files.
@@ -354,6 +361,13 @@ sub IsNumericType
     my $type = shift;
 
     return 1 if $numericTypeHash{$type};
+    return 0;
+}
+
+sub IsFloatingPointType
+{
+    my ($object, $type) = @_;
+    return 1 if $floatingPointTypeHash{$type};
     return 0;
 }
 

@@ -24,6 +24,7 @@
 #include "DOMStringList.h"
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
+#include "JSDOMBuild.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMStringList.h"
 #include "JSSVGPoint.h"
@@ -480,19 +481,19 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 3))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto width = state->argument(0).toFloat(state);
+    auto width = build<float>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto height = state->argument(1).toFloat(state);
+    auto height = build<float>(*state, state->argument(1), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto blur = state->argument(2).toFloat(state);
+    auto blur = build<float>(*state, state->argument(2), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     auto color = state->argument(3).isUndefined() ? String() : state->uncheckedArgument(3).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto alpha = state->argument(4).isUndefined() ? Optional<float>() : state->uncheckedArgument(4).toFloat(state);
+    auto alpha = state->argument(4).isUndefined() ? Optional<float>() : build<float>(*state, state->uncheckedArgument(4), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.setShadow(WTFMove(width), WTFMove(height), WTFMove(blur), WTFMove(color), WTFMove(alpha));

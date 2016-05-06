@@ -788,7 +788,12 @@ JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState& state, const char* inte
 
 void throwSequenceTypeError(JSC::ExecState& state)
 {
-    throwTypeError(state, "Value is not a sequence");
+    throwTypeError(state, ASCIILiteral("Value is not a sequence"));
+}
+
+void throwNonFiniteTypeError(ExecState& state)
+{
+    throwTypeError(&state, ASCIILiteral("The provided value is non-finite"));
 }
 
 bool throwSetterTypeError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)

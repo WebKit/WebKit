@@ -1,3 +1,23 @@
+2016-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Clean up converting from JSValue to float / double in the bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=157407
+
+        Reviewed by Darin Adler.
+
+        Rebaseline the tests now that we provide a more useful exception message.
+
+        * fast/canvas/canvas-2d-imageData-create-nonfinite-expected.txt:
+        * fast/canvas/canvas-getImageData-invalid-expected.txt:
+        * fast/canvas/canvas-putImageData-expected.txt:
+        * fast/canvas/canvas-putImageData.js:
+        * fast/canvas/linearGradient-infinite-values-expected.txt:
+        * fast/canvas/radialGradient-infinite-values-expected.txt:
+        * fast/canvas/resources/canvas-2d-imageData-create-nonfinite.js:
+        * fast/canvas/script-tests/canvas-getImageData-invalid.js:
+        * fast/canvas/script-tests/linearGradient-infinite-values.js:
+        * fast/canvas/script-tests/radialGradient-infinite-values.js:
+
 2016-05-06  Brady Eidson  <beidson@apple.com>
 
         Unreviewed IDB test gardening.
