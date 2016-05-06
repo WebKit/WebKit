@@ -203,8 +203,18 @@ JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& id
         JSScope* scope = it.scope();
         JSObject* object = it.get();
 
-        if (++it == end) // Global scope.
+        // Global scope.
+        if (++it == end) {
+            JSScope* globalScopeExtension = scope->globalObject()->globalScopeExtension();
+            if (UNLIKELY(globalScopeExtension)) {
+                if (object->hasProperty(exec, ident))
+                    return object;
+                JSObject* extensionScopeObject = JSScope::objectAtScope(globalScopeExtension);
+                if (extensionScopeObject->hasProperty(exec, ident))
+                    return extensionScopeObject;
+            }
             return object;
+        }
 
         if (object->hasProperty(exec, ident)) {
             if (!isUnscopable(exec, scope, object, ident))

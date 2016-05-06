@@ -217,6 +217,7 @@ public:
     WriteBarrier<JSObject> m_globalThis;
 
     WriteBarrier<JSGlobalLexicalEnvironment> m_globalLexicalEnvironment;
+    WriteBarrier<JSScope> m_globalScopeExtension;
     WriteBarrier<JSObject> m_globalCallee;
     WriteBarrier<RegExpConstructor> m_regExpConstructor;
     WriteBarrier<ErrorConstructor> m_errorConstructor;
@@ -454,6 +455,10 @@ public:
 
     JSScope* globalScope() { return m_globalLexicalEnvironment.get(); }
     JSGlobalLexicalEnvironment* globalLexicalEnvironment() { return m_globalLexicalEnvironment.get(); }
+
+    JSScope* globalScopeExtension() { return m_globalScopeExtension.get(); }
+    void setGlobalScopeExtension(JSScope*);
+    void clearGlobalScopeExtension();
 
     // The following accessors return pristine values, even if a script 
     // replaces the global object's associated property.

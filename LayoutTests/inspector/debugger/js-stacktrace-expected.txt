@@ -19,7 +19,7 @@ console.trace():
     {
         "lineNumber": 0,
         "columnNumber": 14,
-        "functionName": "Eval Code",
+        "functionName": "Global Code",
         "nativeCode": false,
         "programCode": true
     }
@@ -40,7 +40,7 @@ Error object:
         "columnNumber": 21
     },
     {
-        "functionName": "eval code",
+        "functionName": "global code",
         "url": "",
         "lineNumber": 0,
         "columnNumber": 0
@@ -73,7 +73,7 @@ console.trace():
     {
         "lineNumber": 0,
         "columnNumber": 28,
-        "functionName": "Eval Code",
+        "functionName": "Global Code",
         "nativeCode": false,
         "programCode": true
     }
@@ -100,7 +100,7 @@ Error object:
         "columnNumber": 20
     },
     {
-        "functionName": "eval code",
+        "functionName": "global code",
         "url": "",
         "lineNumber": 0,
         "columnNumber": 0

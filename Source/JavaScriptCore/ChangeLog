@@ -1,3 +1,56 @@
+2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Console: Variables defined with let/const aren't accessible outside of console's scope
+        https://bugs.webkit.org/show_bug.cgi?id=150752
+        <rdar://problem/23343385>
+
+        Reviewed by Mark Lam.
+
+        This approach allows Web Inspector to hang a "Scope Extension", a
+        WithObjectScope, off the GlobalObject. When resolving identifiers
+        in fails to resolve anything in the normal scope chain, consult
+        the scope extension.
+
+        This allows us to eliminate the `with (commandLineAPI) { ... }`
+        block in global console evaluations, and instead makes it a full
+        program evaluation, with the commandLineAPI available and safely
+        shadowed by actual variables as expected.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._evaluateOn):
+        Use the new evaluateWithScopeExtension and provide the CommandLineAPI
+        object as the scope extension object.
+
+        (BasicCommandLineAPI):
+        (BasicCommandLineAPI.inScopeVariables): Deleted.
+        Simplify now that we don't need to check for variable shadowing ourselves.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::evaluateWithScopeExtension):
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension):
+        Provide a new InjectedScriptHost method to evaluate a program
+        with a scope extension.
+
+        * runtime/Completion.cpp:
+        (JSC::evaluateWithScopeExtension):
+        * runtime/Completion.h:
+        General JSC::evaluate function to evaluate a program with a scope extension.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::setGlobalScopeExtension):
+        (JSC::JSGlobalObject::clearGlobalScopeExtension):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::globalScopeExtension):
+        Hang a scope extension off the global object.
+
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::resolve):
+        Consult the scope extension when resolve fails to find anything normally.
+
 2016-05-06  Mark Lam  <mark.lam@apple.com>
 
         Add JSC options reportBaselineCompileTimes and reportDFGCompileTimes.

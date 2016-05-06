@@ -875,6 +875,16 @@ void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName
     addGlobalVar(propertyName);
 }
 
+void JSGlobalObject::setGlobalScopeExtension(JSScope* scope)
+{
+    m_globalScopeExtension.set(vm(), this, scope);
+}
+
+void JSGlobalObject::clearGlobalScopeExtension()
+{
+    m_globalScopeExtension.clear();
+}
+
 static inline JSObject* lastInPrototypeChain(JSObject* object)
 {
     JSObject* o = object;
@@ -1034,6 +1044,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_globalThis);
 
     visitor.append(&thisObject->m_globalLexicalEnvironment);
+    visitor.append(&thisObject->m_globalScopeExtension);
     visitor.append(&thisObject->m_globalCallee);
     visitor.append(&thisObject->m_regExpConstructor);
     visitor.append(&thisObject->m_errorConstructor);

@@ -31,7 +31,7 @@ namespace JSC {
 
 class Exception;
 class ExecState;
-class JSScope;
+class JSObject;
 class ParserError;
 class SourceCode;
 class VM;
@@ -54,6 +54,8 @@ inline JSValue profiledEvaluate(ExecState* exec, ProfilingReason reason, const S
     NakedPtr<Exception> unused;
     return profiledEvaluate(exec, reason, sourceCode, thisValue, unused);
 }
+
+JS_EXPORT_PRIVATE JSValue evaluateWithScopeExtension(ExecState*, const SourceCode&, JSObject* scopeExtension);
 
 // Load the module source and evaluate it.
 JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(ExecState*, const String& moduleName);

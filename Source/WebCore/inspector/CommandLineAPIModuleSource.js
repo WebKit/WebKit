@@ -37,40 +37,13 @@
  */
 (function (InjectedScriptHost, inspectedWindow, injectedScriptId, injectedScript, CommandLineAPIHost) {
 
-/**
- * @param {Arguments} array
- * @param {number=} index
- * @return {Array.<*>}
- */
-function slice(array, index)
-{
-    var result = [];
-    for (var i = index || 0; i < array.length; ++i)
-        result.push(array[i]);
-    return result;
-}
+// FIXME: <https://webkit.org/b/152294> Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overriden built-ins
 
-/**
- * Please use this bind, not the one from Function.prototype
- * @param {function(...)} func
- * @param {Object} thisObject
- * @param {...number} var_args
- */
-function bind(func, thisObject, var_args)
+function bind(func, thisObject, ...outerArgs)
 {
-    var args = slice(arguments, 2);
-
-    /**
-     * @param {...number} var_args
-     */
-    function bound(var_args)
-    {
-        return func.apply(thisObject, args.concat(slice(arguments)));
+    return function(...innerArgs) {
+        return func.apply(thisObject, outerArgs.concat(innerArgs));
     }
-    bound.toString = function() {
-        return "bound: " + func;
-    };
-    return bound;
 }
 
 /**
@@ -80,55 +53,21 @@ function bind(func, thisObject, var_args)
  */
 function CommandLineAPI(commandLineAPIImpl, callFrame)
 {
-    /**
-     * @param {string} member
-     * @return {boolean}
-     */
-    function inScopeVariables(member)
-    {
-        if (!callFrame)
-            return false;
-
-        var scopeChain = callFrame.scopeChain;
-        for (var i = 0; i < scopeChain.length; ++i) {
-            if (member in scopeChain[i])
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * @param {string} name The name of the method for which a toString method should be generated.
-     * @return {function():string}
-     */
-    function customToStringMethod(name)
-    {
-        return function () { return "function " + name + "() { [Command Line API] }"; };
-    }
-
-    for (var i = 0; i < CommandLineAPI.members_.length; ++i) {
-        var member = CommandLineAPI.members_[i];
-        if (member in inspectedWindow || inScopeVariables(member))
-            continue;
-
-        this[member] = bind(commandLineAPIImpl[member], commandLineAPIImpl);
-        this[member].toString = customToStringMethod(member);
-    }
+    this.$_ = injectedScript._lastResult;
+    this.$exception = injectedScript._exceptionValue;
 
     // $0
     this.__defineGetter__("$0", bind(commandLineAPIImpl._inspectedObject, commandLineAPIImpl));
 
     // $1-$99
-    for (var i = 1; i <= injectedScript._savedResults.length; ++i) {
-        var member = "$" + i;
-        if (member in inspectedWindow || inScopeVariables(member))
-            continue;
-
+    for (var i = 1; i <= injectedScript._savedResults.length; ++i)
         this.__defineGetter__("$" + i, bind(injectedScript._savedResult, injectedScript, i));
-    }
 
-    this.$_ = injectedScript._lastResult;
-    this.$exception = injectedScript._exceptionValue;
+    // Command Line API methods.
+    for (let member of CommandLineAPI.members_) {
+        this[member] = bind(commandLineAPIImpl[member], commandLineAPIImpl);
+        this[member].toString = function() { return "function " + member + "() { [Command Line API] }" };
+    }
 }
 
 /**
@@ -177,8 +116,8 @@ CommandLineAPIImpl.prototype = {
     $$: function (selector, start)
     {
         if (this._canQuerySelectorOnNode(start))
-            return slice(start.querySelectorAll(selector));
-        return slice(inspectedWindow.document.querySelectorAll(selector));
+            return Array.from(start.querySelectorAll(selector));
+        return Array.from(inspectedWindow.document.querySelectorAll(selector));
     },
 
     /**

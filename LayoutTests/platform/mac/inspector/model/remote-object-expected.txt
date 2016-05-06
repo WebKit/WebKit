@@ -2328,7 +2328,7 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
         "_listeners": null,
         "_name": "stack",
         "_type": "string",
-        "_value": "eval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
+        "_value": "global code\nevaluateWithScopeExtension@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
       }
     ],
     "_entries": null
@@ -2372,7 +2372,7 @@ EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
         "_listeners": null,
         "_name": "stack",
         "_type": "string",
-        "_value": "eval@[native code]\neval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
+        "_value": "eval@[native code]\nglobal code\nevaluateWithScopeEx…ative code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
       }
     ],
     "_entries": null

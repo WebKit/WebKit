@@ -1,3 +1,26 @@
+2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Console: Variables defined with let/const aren't accessible outside of console's scope
+        https://bugs.webkit.org/show_bug.cgi?id=150752
+        <rdar://problem/23343385>
+
+        Reviewed by Mark Lam.
+
+        * inspector/runtime/evaluate-CommandLineAPI-expected.txt: Added.
+        * inspector/runtime/evaluate-CommandLineAPI.html: Added.
+        New test covering the different cases of global evaluation with the
+        CommandLineAPI as a scope extension.
+
+        * http/tests/inspector/console/cross-domain-inspected-node-access-expected.txt:
+        * inspector/console/command-line-api-expected.txt:
+        * inspector/debugger/js-stacktrace-expected.txt:
+        * inspector/debugger/js-stacktrace.html:
+        * inspector/model/stack-trace-expected.txt:
+        * platform/mac/inspector/model/remote-object-expected.txt:
+        Update expectations now that global evaluations are treated as
+        program's [global code] and not evals [eval code]. Also some
+        line number changes.
+
 2016-05-06  Tim Horton  <timothy_horton@apple.com>
 
         <attachment> element should understand UTIs

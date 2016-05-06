@@ -67,7 +67,7 @@ function test()
         if (error)
             InspectorTest.log(error);
 
-        var stackTrace = stripPayloadAfterEval(WebInspector.StackTrace._parseStackTrace(result.value));
+        var stackTrace = stripPayloadAfterGlobalCode(WebInspector.StackTrace._parseStackTrace(result.value));
         stackTrace = stripFilePaths(stackTrace);
 
         InspectorTest.log(JSON.stringify(stackTrace, null, 4));
@@ -80,7 +80,7 @@ function test()
         if (error)
             InspectorTest.log(error);
 
-        var stackTrace = stripPayloadAfterEval(WebInspector.StackTrace._parseStackTrace(result.value));
+        var stackTrace = stripPayloadAfterGlobalCode(WebInspector.StackTrace._parseStackTrace(result.value));
         stackTrace = stripFilePaths(stackTrace);
 
         InspectorTest.log(JSON.stringify(stackTrace, null, 4));
@@ -93,7 +93,7 @@ function test()
         if (error)
             InspectorTest.log(error);
 
-        var stackTrace = stripPayloadAfterEval(WebInspector.StackTrace._parseStackTrace(result.value));
+        var stackTrace = stripPayloadAfterGlobalCode(WebInspector.StackTrace._parseStackTrace(result.value));
         stackTrace = stripFilePaths(stackTrace);
 
         InspectorTest.log(JSON.stringify(stackTrace, null, 4));
@@ -120,12 +120,12 @@ function test()
         return stackTrace.slice(0, index);
     }
 
-    function stripPayloadAfterEval(payload)
+    function stripPayloadAfterGlobalCode(payload)
     {
         var index = 0;
         for (var frame of payload) {
             index++;
-            if (frame.functionName === "eval code")
+            if (frame.functionName === "global code")
                 break;
         }
         return payload.slice(0, index);

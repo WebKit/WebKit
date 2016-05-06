@@ -60,6 +60,7 @@ public:
     JSC::JSValue evaluate(JSC::ExecState*) const;
 
     // Functions.
+    JSC::JSValue evaluateWithScopeExtension(JSC::ExecState*);
     JSC::JSValue internalConstructorName(JSC::ExecState*);
     JSC::JSValue isHTMLAllCollection(JSC::ExecState*);
     JSC::JSValue subtype(JSC::ExecState*);

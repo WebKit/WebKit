@@ -35,6 +35,7 @@
 #include "JSInternalPromiseDeferred.h"
 #include "JSLock.h"
 #include "JSModuleRecord.h"
+#include "JSWithScope.h"
 #include "ModuleAnalyzer.h"
 #include "ModuleLoaderObject.h"
 #include "Parser.h"
@@ -119,6 +120,28 @@ JSValue profiledEvaluate(ExecState* exec, ProfilingReason reason, const SourceCo
 {
     ScriptProfilingScope profilingScope(exec->vmEntryGlobalObject(), reason);
     return evaluate(exec, source, thisValue, returnedException);
+}
+
+JSValue evaluateWithScopeExtension(ExecState* exec, const SourceCode& source, JSObject* scopeExtensionObject)
+{
+    JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
+
+    if (scopeExtensionObject) {
+        JSScope* ignoredPreviousScope = globalObject->globalScope();
+        globalObject->setGlobalScopeExtension(JSWithScope::create(exec->vm(), globalObject, scopeExtensionObject, ignoredPreviousScope));
+    }
+
+    NakedPtr<Exception> exception;
+    JSValue returnValue = JSC::evaluate(globalObject->globalExec(), source, globalObject, exception);
+
+    // Don't swallow the exception.
+    if (exception)
+        globalObject->vm().restorePreviousException(exception);
+
+    if (scopeExtensionObject)
+        globalObject->clearGlobalScopeExtension();
+
+    return returnValue;
 }
 
 static Symbol* createSymbolForEntryPointModule(VM& vm)

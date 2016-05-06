@@ -27,6 +27,7 @@
 #include "JSInjectedScriptHost.h"
 
 #include "BuiltinNames.h"
+#include "Completion.h"
 #include "DateInstance.h"
 #include "DirectArguments.h"
 #include "Error.h"
@@ -37,6 +38,7 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
+#include "JSGlobalObjectFunctions.h"
 #include "JSInjectedScriptHostPrototype.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
@@ -48,6 +50,7 @@
 #include "JSTypedArrays.h"
 #include "JSWeakMap.h"
 #include "JSWeakSet.h"
+#include "JSWithScope.h"
 #include "ObjectConstructor.h"
 #include "ProxyObject.h"
 #include "RegExpObject.h"
@@ -89,6 +92,20 @@ JSValue JSInjectedScriptHost::evaluate(ExecState* exec) const
 {
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     return globalObject->evalFunction();
+}
+
+JSValue JSInjectedScriptHost::evaluateWithScopeExtension(ExecState* exec)
+{
+    JSValue scriptValue = exec->argument(0);
+    if (!scriptValue.isString())
+        return throwTypeError(exec, "InjectedScriptHost.evaluateWithScopeExtension first argument must be a string.");
+
+    String program = scriptValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return jsUndefined();
+
+    JSObject* scopeExtension = exec->argument(1).getObject();
+    return JSC::evaluateWithScopeExtension(exec, makeSource(program), scopeExtension);
 }
 
 JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
