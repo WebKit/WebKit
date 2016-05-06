@@ -113,7 +113,6 @@ private:
                 m_values.operand(node->unlinkedLocal()) = nullptr;
                 break;
 
-            case SetLocal:
             case GetLocal:
             case SetArgument:
                 m_values.operand(node->local()) = nullptr;
@@ -122,8 +121,9 @@ private:
             default:
                 break;
             }
-            
-            if (mayExit(m_graph, node) != DoesNotExit) {
+
+            bool nodeMayExit = mayExit(m_graph, node) != DoesNotExit;
+            if (nodeMayExit) {
                 currentEpoch.bump();
                 lastExitingIndex = nodeIndex;
             }
@@ -136,38 +136,53 @@ private:
             
             node->setEpoch(currentEpoch);
 
-            forAllKilledOperands(
-                m_graph, node, block->tryAt(nodeIndex + 1),
-                [&] (VirtualRegister reg) {
-                    if (verbose)
-                        dataLog("    Killed operand: ", reg, "\n");
-                    
-                    Node* killedNode = m_values.operand(reg);
-                    if (!killedNode)
-                        return;
-                    
-                    // We only need to insert a Phantom if the node hasn't been used since the last
-                    // exit, and was born before the last exit.
-                    if (killedNode->epoch() == currentEpoch)
-                        return;
-                    
-                    if (verbose) {
-                        dataLog(
-                            "    Inserting Phantom on ", killedNode, " after ",
-                            block->at(lastExitingIndex), "\n");
-                    }
-                    
-                    // We have exact ref counts, so creating a new use means that we have to
-                    // increment the ref count.
-                    killedNode->postfixRef();
+            VirtualRegister alreadyKilled;
 
-                    Node* lastExitingNode = block->at(lastExitingIndex);
-                    
-                    m_insertionSet.insertNode(
-                        lastExitingIndex + 1, SpecNone, Phantom,
-                        lastExitingNode->origin.forInsertingAfter(m_graph, lastExitingNode),
-                        killedNode->defaultEdge());
-            });
+            auto processKilledOperand = [&] (VirtualRegister reg) {
+                if (verbose)
+                    dataLog("    Killed operand: ", reg, "\n");
+
+                // Already handled from SetLocal.
+                if (reg == alreadyKilled)
+                    return;
+                
+                Node* killedNode = m_values.operand(reg);
+                if (!killedNode)
+                    return;
+                
+                // We only need to insert a Phantom if the node hasn't been used since the last
+                // exit, and was born before the last exit.
+                if (killedNode->epoch() == currentEpoch)
+                    return;
+                
+                if (verbose) {
+                    dataLog(
+                        "    Inserting Phantom on ", killedNode, " after ",
+                        block->at(lastExitingIndex), "\n");
+                }
+                
+                // We have exact ref counts, so creating a new use means that we have to
+                // increment the ref count.
+                killedNode->postfixRef();
+
+                Node* lastExitingNode = block->at(lastExitingIndex);
+                
+                m_insertionSet.insertNode(
+                    lastExitingIndex + 1, SpecNone, Phantom,
+                    lastExitingNode->origin.forInsertingAfter(m_graph, lastExitingNode),
+                    killedNode->defaultEdge());
+            };
+
+            if (nodeMayExit && node->op() == SetLocal) {
+                // If the SetLocal does exit, we need the MovHint of its local
+                // to be live until the SetLocal is done.
+                VirtualRegister local = node->local();
+                processKilledOperand(local);
+                alreadyKilled = local;
+                m_values.operand(local) = nullptr;
+            }
+
+            forAllKilledOperands(m_graph, node, block->tryAt(nodeIndex + 1), processKilledOperand);
         }
         
         m_insertionSet.execute(block);
