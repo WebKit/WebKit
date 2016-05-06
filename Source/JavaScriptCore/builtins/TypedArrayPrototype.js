@@ -30,21 +30,21 @@ function values()
 {
     "use strict";
     @typedArrayLength(this);
-    return new @createArrayIterator(this, @arrayIteratorValueNext);
+    return new @createArrayIterator(this, "value", @arrayIteratorValueNext);
 }
 
 function keys()
 {
     "use strict";
     @typedArrayLength(this);
-    return new @createArrayIterator(this, @arrayIteratorKeyNext);
+    return new @createArrayIterator(this, "key", @arrayIteratorKeyNext);
 }
 
 function entries()
 {
     "use strict";
     @typedArrayLength(this);
-    return new @createArrayIterator(this, @arrayIteratorKeyValueNext);
+    return new @createArrayIterator(this, "key+value", @arrayIteratorKeyValueNext);
 }
 
 function every(callback /*, thisArg */)

@@ -161,6 +161,9 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
         || value.inherits(JSPropertyNameIterator::info()))
         return jsNontrivialString(exec, ASCIILiteral("iterator"));
 
+    if (object && object->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().arrayIteratorNextIndexPrivateName()))
+        return jsNontrivialString(exec, ASCIILiteral("iterator"));
+
     if (value.inherits(JSInt8Array::info()) || value.inherits(JSInt16Array::info()) || value.inherits(JSInt32Array::info()))
         return jsNontrivialString(exec, ASCIILiteral("array"));
     if (value.inherits(JSUint8Array::info()) || value.inherits(JSUint16Array::info()) || value.inherits(JSUint32Array::info()))
@@ -268,6 +271,19 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("target"), proxy->target()));
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("handler"), proxy->handler()));
         return array;
+    }
+
+    if (JSObject* iteratorObject = jsDynamicCast<JSObject*>(value)) {
+        if (iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().arrayIteratorNextIndexPrivateName())) {
+            JSValue iteratedValue = iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().iteratedObjectPrivateName());
+            JSValue kind = iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().arrayIteratorKindPrivateName());
+
+            unsigned index = 0;
+            JSArray* array = constructEmptyArray(exec, nullptr, 2);
+            array->putDirectIndex(exec, index++, constructInternalProperty(exec, "array", iteratedValue));
+            array->putDirectIndex(exec, index++, constructInternalProperty(exec, "kind", kind));
+            return array;
+        }
     }
 
     if (JSArrayIterator* arrayIterator = jsDynamicCast<JSArrayIterator*>(value)) {

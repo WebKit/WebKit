@@ -25,9 +25,10 @@
  */
 
 @constructor
-function createArrayIterator(iteratedObject, iterationFunction)
+function createArrayIterator(iteratedObject, kind, iterationFunction)
 {
     this.@iteratedObject = iteratedObject;
+    this.@arrayIteratorKind = kind;
     this.@arrayIteratorNextIndex = 0;
     this.@arrayIteratorNext = iterationFunction;
     this.@arrayIteratorIsDone = false;
@@ -41,7 +42,7 @@ function values()
             throw new @TypeError("Array.prototype.values requires that |this| not be null");
         throw new @TypeError("Array.prototype.values requires that |this| not be undefined");
     }
-    return new @createArrayIterator(@Object(this), @arrayIteratorValueNext);
+    return new @createArrayIterator(@Object(this), "value", @arrayIteratorValueNext);
 }
 
 function keys()
@@ -53,7 +54,7 @@ function keys()
         throw new @TypeError("Array.prototype.keys requires that |this| not be undefined");
     }
 
-    return new @createArrayIterator(@Object(this), @arrayIteratorKeyNext);
+    return new @createArrayIterator(@Object(this), "key", @arrayIteratorKeyNext);
 }
 
 function entries()
@@ -65,7 +66,7 @@ function entries()
         throw new @TypeError("Array.prototype.entries requires that |this| not be undefined");
     }
 
-    return new @createArrayIterator(@Object(this), @arrayIteratorKeyValueNext);
+    return new @createArrayIterator(@Object(this), "key+value", @arrayIteratorKeyValueNext);
 }
 
 function reduce(callback /*, initialValue */)

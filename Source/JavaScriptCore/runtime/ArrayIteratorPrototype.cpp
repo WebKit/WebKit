@@ -26,12 +26,7 @@
 #include "config.h"
 #include "ArrayIteratorPrototype.h"
 
-namespace JSC {
-
-}
-
 #include "ArrayIteratorPrototype.lut.h"
-
 #include "IteratorOperations.h"
 #include "JSArrayIterator.h"
 #include "JSCInlines.h"

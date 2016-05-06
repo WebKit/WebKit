@@ -331,6 +331,7 @@
     macro(arrayIterationKind) \
     macro(arrayIteratorNext) \
     macro(arrayIteratorIsDone) \
+    macro(arrayIteratorKind) \
     macro(charCodeAt) \
     macro(iteratedString) \
     macro(stringIteratorNextIndex) \

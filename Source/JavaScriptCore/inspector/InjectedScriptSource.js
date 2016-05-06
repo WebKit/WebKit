@@ -863,6 +863,9 @@ InjectedScript.prototype = {
         if (subtype === "array")
             return className;
 
+        if (subtype === "iterator" && Symbol.toStringTag in obj)
+            return obj[Symbol.toStringTag];
+
         // NodeList in JSC is a function, check for array prior to this.
         if (typeof obj === "function")
             return toString(obj);
