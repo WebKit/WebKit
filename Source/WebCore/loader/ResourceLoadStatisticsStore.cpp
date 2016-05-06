@@ -57,13 +57,18 @@ bool ResourceLoadStatisticsStore::isPrevalentResource(const String& primaryDomai
     return mapEntry->value.isPrevalentResource;
 }
     
-ResourceLoadStatistics& ResourceLoadStatisticsStore::resourceStatisticsForPrimaryDomain(const String& primaryDomain)
+ResourceLoadStatistics& ResourceLoadStatisticsStore::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
 {
     auto addResult = m_resourceStatisticsMap.ensure(primaryDomain, [&primaryDomain] {
         return ResourceLoadStatistics(primaryDomain);
     });
 
     return addResult.iterator->value;
+}
+
+void ResourceLoadStatisticsStore::setResourceStatisticsForPrimaryDomain(const String& primaryDomain, ResourceLoadStatistics&& statistics)
+{
+    m_resourceStatisticsMap.set(primaryDomain, WTFMove(statistics));
 }
 
 typedef HashMap<String, ResourceLoadStatistics>::KeyValuePairType StatisticsValue;

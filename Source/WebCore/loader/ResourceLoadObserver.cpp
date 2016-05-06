@@ -96,7 +96,7 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
         return;
     
     auto targetOrigin = SecurityOrigin::create(targetURL);
-    auto& targetStatistics = m_store->resourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    auto targetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
     
     if (isMainFrame)
         targetStatistics.topFrameHasBeenNavigatedToBefore = true;
@@ -108,7 +108,7 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     }
     
     if (isRedirect) {
-        auto& redirectingOriginResourceStatistics = m_store->resourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
+        auto& redirectingOriginResourceStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
         
         if (m_store->isPrevalentResource(targetPrimaryDomain))
             redirectingOriginResourceStatistics.redirectedToOtherPrevalentResourceOrigins.add(targetPrimaryDomain);
@@ -130,7 +130,7 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
             else
                 ++targetStatistics.subframeSubResourceCount;
         } else {
-            auto& sourceOriginResourceStatistics = m_store->resourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
+            auto& sourceOriginResourceStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
 
             if (isMainFrame) {
                 ++sourceOriginResourceStatistics.topFrameHasBeenNavigatedFrom;
@@ -142,6 +142,7 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
         }
     }
 
+    m_store->setResourceStatisticsForPrimaryDomain(targetPrimaryDomain, WTFMove(targetStatistics));
     m_store->fireDataModificationHandler();
 }
     
@@ -175,13 +176,13 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     if (targetPrimaryDomain == mainFramePrimaryDomain || targetPrimaryDomain == sourcePrimaryDomain)
         return;
 
-    auto& targetStatistics = m_store->resourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    auto& targetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
 
     auto mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
     targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
 
     if (isRedirect) {
-        auto& redirectingOriginStatistics = m_store->resourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
+        auto& redirectingOriginStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
         
         if (m_store->isPrevalentResource(targetPrimaryDomain))
             redirectingOriginStatistics.redirectedToOtherPrevalentResourceOrigins.add(targetPrimaryDomain);
@@ -219,7 +220,7 @@ void ResourceLoadObserver::logUserInteraction(const Document& document)
     if (needPrivacy)
         return;
 
-    auto& statistics = m_store->resourceStatisticsForPrimaryDomain(primaryDomain(document.url()));
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(document.url()));
     statistics.hadUserInteraction = true;
     m_store->fireDataModificationHandler();
 }

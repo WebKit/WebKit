@@ -49,7 +49,8 @@ public:
     size_t size() const { return m_resourceStatisticsMap.size(); }
     void clear() { m_resourceStatisticsMap.clear(); }
 
-    ResourceLoadStatistics& resourceStatisticsForPrimaryDomain(const String&);
+    ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
+    void setResourceStatisticsForPrimaryDomain(const String&, ResourceLoadStatistics&&);
 
     bool isPrevalentResource(const String&) const;
     
