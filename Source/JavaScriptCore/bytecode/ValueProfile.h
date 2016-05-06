@@ -218,25 +218,20 @@ public:
     }
 
     enum ObservedResults {
-        NonNegZeroDouble = 1 << 0,
-        NegZeroDouble    = 1 << 1,
-        NonNumber        = 1 << 2,
-        Int32Overflow    = 1 << 3,
-        Int52Overflow    = 1 << 4,
+        NegZeroDouble    = 1 << 0,
+        NonNumber        = 1 << 1,
+        Int32Overflow    = 1 << 2,
+        Int52Overflow    = 1 << 3,
     };
 
     int bytecodeOffset() const { return m_bytecodeOffsetAndFlags >> numberOfFlagBits; }
     unsigned specialFastPathCount() const { return m_specialFastPathCount; }
 
-    bool didObserveNonInt32() const { return hasBits(NonNegZeroDouble | NegZeroDouble | NonNumber); }
-    bool didObserveDouble() const { return hasBits(NonNegZeroDouble | NegZeroDouble); }
-    bool didObserveNonNegZeroDouble() const { return hasBits(NonNegZeroDouble); }
     bool didObserveNegZeroDouble() const { return hasBits(NegZeroDouble); }
     bool didObserveNonNumber() const { return hasBits(NonNumber); }
     bool didObserveInt32Overflow() const { return hasBits(Int32Overflow); }
     bool didObserveInt52Overflow() const { return hasBits(Int52Overflow); }
 
-    void setObservedNonNegZeroDouble() { setBit(NonNegZeroDouble); }
     void setObservedNegZeroDouble() { setBit(NegZeroDouble); }
     void setObservedNonNumber() { setBit(NonNumber); }
     void setObservedInt32Overflow() { setBit(Int32Overflow); }

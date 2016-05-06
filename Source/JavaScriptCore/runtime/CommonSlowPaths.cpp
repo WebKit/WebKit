@@ -378,8 +378,6 @@ static void updateResultProfileForBinaryArithOp(ExecState* exec, Instruction* pc
             if (!doubleVal && std::signbit(doubleVal))
                 profile->setObservedNegZeroDouble();
             else {
-                profile->setObservedNonNegZeroDouble();
-
                 // The Int52 overflow check here intentionally omits 1ll << 51 as a valid negative Int52 value.
                 // Therefore, we will get a false positive if the result is that value. This is intentionally
                 // done to simplify the checking algorithm.

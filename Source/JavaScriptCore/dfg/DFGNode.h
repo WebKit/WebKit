@@ -950,11 +950,6 @@ struct Node {
         return result & ~NodeBytecodeNeedsNegZero;
     }
 
-    bool mayHaveNonIntResult()
-    {
-        return m_flags & NodeMayHaveNonIntResult;
-    }
-
     bool hasConstantBuffer()
     {
         return op() == NewArrayBuffer;

@@ -275,12 +275,8 @@ private:
                         changed |= mergePrediction(SpecInt52Only);
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
-                } else {
-                    if (node->mayHaveNonIntResult())
-                        changed |= mergePrediction(SpecInt32Only | SpecBytecodeDouble);
-                    else
-                        changed |= mergePrediction(SpecInt32Only);
-                }
+                } else
+                    changed |= mergePrediction(SpecInt32Only | SpecBytecodeDouble);
             }
             break;
         }

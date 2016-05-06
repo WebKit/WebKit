@@ -34,31 +34,23 @@ void printInternal(PrintStream& out, const ResultProfile& profile)
 {
     const char* separator = "";
 
-    if (!profile.didObserveNonInt32()) {
-        out.print("Int32");
+    if (profile.didObserveNegZeroDouble()) {
+        out.print(separator, "NegZeroDouble");
         separator = "|";
-    } else {
-        if (profile.didObserveNegZeroDouble()) {
-            out.print(separator, "NegZeroDouble");
-            separator = "|";
-        }
-        if (profile.didObserveNonNegZeroDouble()) {
-            out.print("NonNegZeroDouble");
-            separator = "|";
-        }
-        if (profile.didObserveNonNumber()) {
-            out.print("NonNumber");
-            separator = "|";
-        }
-        if (profile.didObserveInt32Overflow()) {
-            out.print("Int32Overflow");
-            separator = "|";
-        }
-        if (profile.didObserveInt52Overflow()) {
-            out.print("Int52Overflow");
-            separator = "|";
-        }
     }
+    if (profile.didObserveNonNumber()) {
+        out.print("NonNumber");
+        separator = "|";
+    }
+    if (profile.didObserveInt32Overflow()) {
+        out.print("Int32Overflow");
+        separator = "|";
+    }
+    if (profile.didObserveInt52Overflow()) {
+        out.print("Int52Overflow");
+        separator = "|";
+    }
+
     if (profile.specialFastPathCount()) {
         out.print(" special fast path: ");
         out.print(profile.specialFastPathCount());

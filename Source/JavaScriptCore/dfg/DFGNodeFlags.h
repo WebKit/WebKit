@@ -48,7 +48,6 @@ namespace JSC { namespace DFG {
 #define NodeHasVarArgs                   0x0010
     
 #define NodeBehaviorMask                 0x07e0
-#define NodeMayHaveNonIntResult          0x0020
 #define NodeMayOverflowInt52             0x0040
 #define NodeMayOverflowInt32InBaseline   0x0080
 #define NodeMayOverflowInt32InDFG        0x0100

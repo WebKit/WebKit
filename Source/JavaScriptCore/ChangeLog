@@ -1,3 +1,57 @@
+2016-05-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Get rid of NonNegZeroDouble, it is broken
+        https://bugs.webkit.org/show_bug.cgi?id=157399
+        rdar://problem/25339647
+
+        Reviewed by Mark Lam.
+
+        The profile "NonNegZeroDouble" is fundamentally broken.
+
+        It is used by DFG to predict the result of ArithMul as being a Double
+        or Int32.
+        The problem is you are likely to mispredict, and when you do, you are
+        guaranteed to end up in a recompile loop.
+
+        The compile loops usually happen like this:
+        -We speculate you have Int32 despite producing doubles.
+        -We OSR exit on another node (ValueToInt32 for example) from the result of this ArithMul.
+        -When we compile this block again, ArithMul will do the same misprediction
+         because it unconditionally predicts Int32.
+
+        The flag NonNegZeroDouble was very unlikely to be set correctly
+        in the first place.
+
+        In LLINT, the flag is only set on the slow path.
+        Since double*double is on the fast path, those cases are ignored.
+
+        In Baseline, the flag is set for any case that falls back on double
+        multiplication. BUT, the DFG flag was only set for nodes that spend
+        many iteration in slow path, which obviously does not apply to double*double.
+
+        Given the perf drawbacks and the recompile loops, I removed
+        the whole flag for now.
+
+        * bytecode/ValueProfile.cpp:
+        (WTF::printInternal):
+        * bytecode/ValueProfile.h:
+        (JSC::ResultProfile::didObserveNonInt32): Deleted.
+        (JSC::ResultProfile::didObserveDouble): Deleted.
+        (JSC::ResultProfile::didObserveNonNegZeroDouble): Deleted.
+        (JSC::ResultProfile::setObservedNonNegZeroDouble): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::mayHaveNonIntResult): Deleted.
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags): Deleted.
+        * dfg/DFGNodeFlags.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateFastPath): Deleted.
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::updateResultProfileForBinaryArithOp): Deleted.
+
 2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r200422): Web Inspector: Make new Array Iterator objects play nice with Web Inspector

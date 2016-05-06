@@ -934,8 +934,6 @@ private:
                 node->mergeFlags(NodeMayOverflowInt32InBaseline);
             if (resultProfile.didObserveNegZeroDouble() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
                 node->mergeFlags(NodeMayNegZeroInBaseline);
-            if (resultProfile.didObserveNonInt32())
-                node->mergeFlags(NodeMayHaveNonIntResult);
             break;
         }
 
