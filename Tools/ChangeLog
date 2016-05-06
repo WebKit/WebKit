@@ -1,5 +1,14 @@
 2016-05-05  Alexey Proskuryakov  <ap@apple.com>
 
+        Partially revert http://trac.webkit.org/r200504
+        Improve HTTP test names in WebKitTestRunner's crash report information
+        https://bugs.webkit.org/show_bug.cgi?id=157389
+
+        * WebKitTestRunner/cocoa/CrashReporterInfo.mm: Turns out that we can't have URLs
+        in crash reporter information.
+
+2016-05-05  Alexey Proskuryakov  <ap@apple.com>
+
         Improve HTTP test names in WebKitTestRunner's crash report information
         https://bugs.webkit.org/show_bug.cgi?id=157389
 
