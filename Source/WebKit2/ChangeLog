@@ -1,5 +1,19 @@
 2016-05-05  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [GTK] Remove "region based columns" runtime feature remainings
+        https://bugs.webkit.org/show_bug.cgi?id=157393
+
+        The runtime feature was removed in r168978,
+        and the usage in WebKitSettings.cpp in r168988.
+        However it was still around in ExperimentalFeatures class.
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/gtk/ExperimentalFeatures.cpp: Remove runtime feature.
+        * UIProcess/gtk/ExperimentalFeatures.h: Ditto.
+
+2016-05-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [GTK] Add CSS Grid Layout as experimental feature
         https://bugs.webkit.org/show_bug.cgi?id=157391
 
