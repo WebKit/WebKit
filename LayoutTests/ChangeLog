@@ -1,3 +1,18 @@
+2016-05-06  Dean Jackson  <dino@apple.com>
+
+        Regions, Shapes and Tracks don't need runtime features
+        https://bugs.webkit.org/show_bug.cgi?id=157426
+        <rdar://problem/26146262>
+
+        Reviewed by Simon Fraser.
+
+        Remove these tests since their runtime flags no longer exist.
+
+        * fast/regions/css-regions-disabled-expected.txt: Removed.
+        * fast/regions/css-regions-disabled.html: Removed.
+        * fast/shapes/css-shapes-disabled-expected.txt: Removed.
+        * fast/shapes/css-shapes-disabled.html: Removed.
+
 2016-05-06  Brady Eidson  <beidson@apple.com>
 
         Unreviewed IDB test gardening.

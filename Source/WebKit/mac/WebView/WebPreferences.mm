@@ -490,8 +490,6 @@ public:
         [NSNumber numberWithBool:NO],   WebKitJavaScriptCanAccessClipboardPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitXSSAuditorEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES], WebKitCSSRegionsEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES], WebKitCSSCompositingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitDisplayListDrawingEnabledPreferenceKey,
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
         [NSNumber numberWithBool:YES],  WebKitAcceleratedDrawingEnabledPreferenceKey,
@@ -1878,26 +1876,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setAcceleratedCompositingEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitAcceleratedCompositingEnabledPreferenceKey];
-}
-
-- (BOOL)cssRegionsEnabled
-{
-    return [self _boolValueForKey:WebKitCSSRegionsEnabledPreferenceKey];
-}
-
-- (void)setCSSRegionsEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitCSSRegionsEnabledPreferenceKey];
-}
-
-- (BOOL)cssCompositingEnabled
-{
-    return [self _boolValueForKey:WebKitCSSCompositingEnabledPreferenceKey];
-}
-
-- (void)setCSSCompositingEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitCSSCompositingEnabledPreferenceKey];
 }
 
 - (BOOL)showDebugBorders

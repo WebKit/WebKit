@@ -64,8 +64,6 @@ public:
     String charset;
     CSSParserMode mode;
     bool isHTMLDocument;
-    bool isCSSRegionsEnabled;
-    bool isCSSCompositingEnabled;
 #if ENABLE(CSS_GRID_LAYOUT)
     bool cssGridLayoutEnabled;
 #endif

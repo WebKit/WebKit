@@ -72,25 +72,6 @@ public:
     bool indexedDBWorkersEnabled() const { return m_isIndexedDBWorkersEnabled; }
 #endif
 
-#if ENABLE(CSS_SHAPES)
-    void setCSSShapesEnabled(bool isEnabled) { m_isCSSShapesEnabled = isEnabled; }
-    bool cssShapesEnabled() const { return m_isCSSShapesEnabled; }
-#else
-    void setCSSShapesEnabled(bool) { }
-    bool cssShapesEnabled() const { return false; }
-#endif
-
-#if ENABLE(CSS_REGIONS)
-    void setCSSRegionsEnabled(bool isEnabled) { m_isCSSRegionsEnabled = isEnabled; }
-    bool cssRegionsEnabled() const { return m_isCSSRegionsEnabled; }
-#else
-    void setCSSRegionsEnabled(bool) { }
-    bool cssRegionsEnabled() const { return false; }
-#endif
-
-    void setCSSCompositingEnabled(bool isEnabled) { m_isCSSCompositingEnabled = isEnabled; }
-    bool cssCompositingEnabled() const { return m_isCSSCompositingEnabled; }
-
 #if ENABLE(FONT_LOAD_EVENTS)
     void setFontLoadEventsEnabled(bool isEnabled) { m_isFontLoadEventsEnabled = isEnabled; }
     bool fontLoadEventsEnabled() const { return m_isFontLoadEventsEnabled; }
@@ -152,11 +133,6 @@ public:
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     void setLegacyCSSVendorPrefixesEnabled(bool isEnabled) { m_isLegacyCSSVendorPrefixesEnabled = isEnabled; }
     bool legacyCSSVendorPrefixesEnabled() const { return m_isLegacyCSSVendorPrefixesEnabled; }
-#endif
-
-#if ENABLE(VIDEO_TRACK)
-    bool webkitVideoTrackEnabled() const { return m_isVideoTrackEnabled; }
-    void setWebkitVideoTrackEnabled(bool isEnabled) { m_isVideoTrackEnabled = isEnabled; }
 #endif
 
 #if ENABLE(INPUT_TYPE_DATE)
@@ -265,9 +241,6 @@ private:
     bool m_isDeviceMotionEnabled;
     bool m_isDeviceOrientationEnabled;
     bool m_isLinkPreloadEnabled;
-    bool m_isCSSShapesEnabled;
-    bool m_isCSSRegionsEnabled;
-    bool m_isCSSCompositingEnabled;
     bool m_isLangAttributeAwareFormControlUIEnabled;
     bool m_isPluginReplacementEnabled;
     bool m_isResourceTimingEnabled;
@@ -293,10 +266,6 @@ private:
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     bool m_isLegacyCSSVendorPrefixesEnabled;
-#endif
-
-#if ENABLE(VIDEO_TRACK)
-    bool m_isVideoTrackEnabled;
 #endif
 
 #if ENABLE(INPUT_TYPE_DATE)

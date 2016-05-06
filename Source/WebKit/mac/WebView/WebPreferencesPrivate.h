@@ -212,12 +212,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)acceleratedCompositingEnabled;
 - (void)setAcceleratedCompositingEnabled:(BOOL)enabled;
 
-- (BOOL)cssRegionsEnabled;
-- (void)setCSSRegionsEnabled:(BOOL)enabled;
-
-- (BOOL)cssCompositingEnabled;
-- (void)setCSSCompositingEnabled:(BOOL)enabled;
-
 - (BOOL)showDebugBorders;
 - (void)setShowDebugBorders:(BOOL)show;
 

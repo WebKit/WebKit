@@ -45,9 +45,6 @@
     [RaisesException] void setTextAutosizingWindowSizeOverride(long width, long height);
     [RaisesException] void setTextAutosizingFontScaleFactor(unrestricted float fontScaleFactor);
 
-    // Features
-    [RaisesException] void setCSSShapesEnabled(boolean enabled);
-
     // Media
     [RaisesException] void setCanStartMedia(boolean enabled);
     [Conditional=VIDEO_TRACK, RaisesException] void setShouldDisplayTrackKind(DOMString kind, boolean enabled);

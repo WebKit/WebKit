@@ -3142,7 +3142,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
 void RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded()
 {
-    if (!document().cssRegionsEnabled() || renderNamedFlowFragment() || isRenderNamedFlowFragment())
+    if (renderNamedFlowFragment() || isRenderNamedFlowFragment())
         return;
 
     // FIXME: Multicolumn regions not yet supported (http://dev.w3.org/csswg/css-regions/#multi-column-regions)

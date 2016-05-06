@@ -348,8 +348,6 @@ public:
     bool parseFontFeatureTag(CSSValueList&);
     bool parseFontFeatureSettings(bool important);
 
-    bool cssRegionsEnabled() const;
-    bool cssCompositingEnabled() const;
     bool parseFlowThread(CSSPropertyID, bool important);
     bool parseRegionThread(CSSPropertyID, bool important);
 

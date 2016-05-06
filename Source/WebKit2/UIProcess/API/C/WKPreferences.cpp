@@ -508,16 +508,6 @@ bool WKPreferencesGetWebAnimationsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->webAnimationsEnabled();
 }
 
-void WKPreferencesSetCSSRegionsEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setCSSRegionsEnabled(flag);
-}
-
-bool WKPreferencesGetCSSRegionsEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->cssRegionsEnabled();
-}
-
 void WKPreferencesSetNeedsSiteSpecificQuirks(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setNeedsSiteSpecificQuirks(flag);

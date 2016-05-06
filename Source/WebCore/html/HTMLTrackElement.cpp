@@ -92,24 +92,22 @@ void HTMLTrackElement::removedFrom(ContainerNode& insertionPoint)
 
 void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled()) {
-        if (name == srcAttr) {
-            if (!value.isEmpty())
-                scheduleLoad();
-            else if (m_track)
-                m_track->removeAllCues();
+    if (name == srcAttr) {
+        if (!value.isEmpty())
+            scheduleLoad();
+        else if (m_track)
+            m_track->removeAllCues();
 
-        // 4.8.10.12.3 Sourcing out-of-band text tracks
-        // As the kind, label, and srclang attributes are set, changed, or removed, the text track must update accordingly...
-        } else if (name == kindAttr)
-            ensureTrack().setKindKeywordIgnoringASCIICase(value.string());
-        else if (name == labelAttr)
-            ensureTrack().setLabel(value);
-        else if (name == srclangAttr)
-            ensureTrack().setLanguage(value);
-        else if (name == defaultAttr)
-            ensureTrack().setIsDefault(!value.isNull());
-    }
+    // 4.8.10.12.3 Sourcing out-of-band text tracks
+    // As the kind, label, and srclang attributes are set, changed, or removed, the text track must update accordingly...
+    } else if (name == kindAttr)
+        ensureTrack().setKindKeywordIgnoringASCIICase(value.string());
+    else if (name == labelAttr)
+        ensureTrack().setLabel(value);
+    else if (name == srclangAttr)
+        ensureTrack().setLanguage(value);
+    else if (name == defaultAttr)
+        ensureTrack().setIsDefault(!value.isNull());
 
     HTMLElement::parseAttribute(name, value);
 }
@@ -170,9 +168,6 @@ void HTMLTrackElement::scheduleLoad()
     if (m_loadTimer.isActive())
         return;
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
-        return;
-
     // 2. If the text track's text track mode is not set to one of hidden or showing, abort these steps.
     if (ensureTrack().mode() != TextTrack::Mode::Hidden && ensureTrack().mode() != TextTrack::Mode::Showing)
         return;
@@ -208,9 +203,6 @@ void HTMLTrackElement::loadTimerFired()
 
 bool HTMLTrackElement::canLoadURL(const URL& url)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
-        return false;
-
     HTMLMediaElement* parent = mediaElement();
     if (!parent)
         return false;

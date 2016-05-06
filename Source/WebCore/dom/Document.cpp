@@ -1128,16 +1128,6 @@ Ref<Element> Document::createElement(const QualifiedName& name, bool createdByPa
     return element.releaseNonNull();
 }
 
-bool Document::cssRegionsEnabled() const
-{
-    return RuntimeEnabledFeatures::sharedFeatures().cssRegionsEnabled(); 
-}
-
-bool Document::cssCompositingEnabled() const
-{
-    return RuntimeEnabledFeatures::sharedFeatures().cssCompositingEnabled();
-}
-
 #if ENABLE(CSS_GRID_LAYOUT)
 bool Document::isCSSGridLayoutEnabled() const
 {
@@ -1146,17 +1136,15 @@ bool Document::isCSSGridLayoutEnabled() const
 #endif
 
 #if ENABLE(CSS_REGIONS)
-
 RefPtr<DOMNamedFlowCollection> Document::webkitGetNamedFlows()
 {
-    if (!cssRegionsEnabled() || !renderView())
+    if (!renderView())
         return nullptr;
 
     updateStyleIfNeeded();
 
     return namedFlows().createCSSOMSnapshot();
 }
-
 #endif
 
 NamedFlowCollection& Document::namedFlows()

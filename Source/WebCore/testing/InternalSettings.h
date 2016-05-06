@@ -53,7 +53,6 @@ public:
         explicit Backup(Settings&);
         void restoreTo(Settings&);
 
-        bool m_originalCSSShapesEnabled;
         EditingBehaviorType m_originalEditingBehavior;
 
         // Initially empty, only used if changed by a test.
@@ -131,7 +130,6 @@ public:
     void setTextAutosizingWindowSizeOverride(int width, int height, ExceptionCode&);
     void setTextAutosizingFontScaleFactor(float fontScaleFactor, ExceptionCode&);
     void setMediaTypeOverride(const String& mediaType, ExceptionCode&);
-    void setCSSShapesEnabled(bool, ExceptionCode&);
     void setCanStartMedia(bool, ExceptionCode&);
     void setWirelessPlaybackDisabled(bool);
     void setEditingBehavior(const String&, ExceptionCode&);

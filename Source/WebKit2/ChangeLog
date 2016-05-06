@@ -1,3 +1,31 @@
+2016-05-06  Dean Jackson  <dino@apple.com>
+
+        Regions, Shapes and Tracks don't need runtime features
+        https://bugs.webkit.org/show_bug.cgi?id=157426
+        <rdar://problem/26146262>
+
+        Reviewed by Simon Fraser.
+
+        The following RuntimeEnabledFeatures can be removed since
+        we have no need to disable them (they are stable and have
+        shipped for a while):
+        - CSS Regions
+        - CSS Shapes
+        - Media tracks
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCSSRegionsEnabled): Deleted.
+        (WKPreferencesGetCSSRegionsEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner): Deleted.
+        (WebKit::InjectedBundle::setCSSRegionsEnabled): Deleted.
+        (WebKit::InjectedBundle::setCSSCompositingEnabled): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Deleted.
+
 2016-05-05  Ada Chan  <adachan@apple.com>
 
         Create a fence in WebVideoFullscreenManagerProxy::setVideoLayerFrame() to pass to the web process

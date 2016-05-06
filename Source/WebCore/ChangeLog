@@ -1,3 +1,96 @@
+2016-05-06  Dean Jackson  <dino@apple.com>
+
+        Regions, Shapes and Tracks don't need runtime features
+        https://bugs.webkit.org/show_bug.cgi?id=157426
+        <rdar://problem/26146262>
+
+        Reviewed by Simon Fraser.
+
+        The following RuntimeEnabledFeatures can be removed since
+        we have no need to disable them (they are stable and have
+        shipped for a while):
+        - CSS Regions
+        - CSS Shapes
+        - Media tracks
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures): Deleted.
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setCSSShapesEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::cssShapesEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setCSSRegionsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::cssRegionsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setCSSCompositingEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::cssCompositingEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitVideoTrackEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setWebkitVideoTrackEnabled): Deleted.
+        * css/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::createRegionRule):
+        (WebCore::CSSParserContext::CSSParserContext): Deleted.
+        (WebCore::operator==): Deleted.
+        (WebCore::CSSParser::parseShapeProperty): Deleted.
+        (WebCore::CSSParser::cssRegionsEnabled): Deleted.
+        (WebCore::CSSParser::cssCompositingEnabled): Deleted.
+        (WebCore::CSSParser::parseFlowThread): Deleted.
+        (WebCore::CSSParser::parseRegionThread): Deleted.
+        * css/CSSParser.h:
+        * css/CSSParserMode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::webkitGetNamedFlows):
+        (WebCore::Document::cssRegionsEnabled): Deleted.
+        (WebCore::Document::cssCompositingEnabled): Deleted.
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::unregisterNamedFlowContentElement):
+        (WebCore::Element::webkitRegionOverset):
+        (WebCore::Element::webkitGetRegionFlowRanges): Deleted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::scheduleDelayedAction):
+        (WebCore::HTMLMediaElement::pendingActionTimerFired):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::loadInternal):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        (WebCore::HTMLMediaElement::setVideoFullscreenLayer):
+        (WebCore::HTMLMediaElement::hasClosedCaptions):
+        (WebCore::HTMLMediaElement::setClosedCaptionsVisible):
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay):
+        (WebCore::HTMLMediaElement::finishParsingChildren): Deleted.
+        (WebCore::HTMLMediaElement::audioTrackEnabledChanged): Deleted.
+        (WebCore::HTMLMediaElement::videoTrackSelectedChanged): Deleted.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack): Deleted.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddTextTrack): Deleted.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddVideoTrack): Deleted.
+        (WebCore::HTMLMediaElement::addAudioTrack): Deleted.
+        (WebCore::HTMLMediaElement::addTextTrack): Deleted.
+        (WebCore::HTMLMediaElement::addVideoTrack): Deleted.
+        (WebCore::HTMLMediaElement::removeAudioTrack): Deleted.
+        (WebCore::HTMLMediaElement::removeTextTrack): Deleted.
+        (WebCore::HTMLMediaElement::removeVideoTrack): Deleted.
+        (WebCore::HTMLMediaElement::audioTracks): Deleted.
+        (WebCore::HTMLMediaElement::textTracks): Deleted.
+        (WebCore::HTMLMediaElement::videoTracks): Deleted.
+        (WebCore::HTMLMediaElement::didAddTextTrack): Deleted.
+        (WebCore::HTMLMediaElement::didRemoveTextTrack): Deleted.
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::parseAttribute):
+        (WebCore::HTMLTrackElement::scheduleLoad): Deleted.
+        (WebCore::HTMLTrackElement::canLoadURL): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo): Deleted.
+        (WebCore::InternalSettings::setCSSShapesEnabled): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2016-05-06  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Start running a lot of the workers tests.

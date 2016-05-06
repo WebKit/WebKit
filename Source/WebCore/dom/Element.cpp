@@ -1614,7 +1614,7 @@ void Element::removedFrom(ContainerNode& insertionPoint)
 
 void Element::unregisterNamedFlowContentElement()
 {
-    if (document().cssRegionsEnabled() && isNamedFlowContentNode() && document().renderView())
+    if (isNamedFlowContentNode() && document().renderView())
         document().renderView()->flowThreadController().unregisterNamedFlowContentElement(*this);
 }
 
@@ -2930,7 +2930,7 @@ const AtomicString& Element::webkitRegionOverset() const
     document().updateLayoutIgnorePendingStylesheets();
 
     static NeverDestroyed<AtomicString> undefinedState("undefined", AtomicString::ConstructFromLiteral);
-    if (!document().cssRegionsEnabled() || !renderNamedFlowFragment())
+    if (!renderNamedFlowFragment())
         return undefinedState;
 
     switch (regionOversetState()) {
@@ -2957,9 +2957,6 @@ const AtomicString& Element::webkitRegionOverset() const
 Vector<RefPtr<Range>> Element::webkitGetRegionFlowRanges() const
 {
     Vector<RefPtr<Range>> rangeObjects;
-    if (!document().cssRegionsEnabled())
-        return rangeObjects;
-
     document().updateLayoutIgnorePendingStylesheets();
     if (renderer() && renderer()->isRenderNamedFlowFragmentContainer()) {
         RenderNamedFlowFragment& namedFlowFragment = *downcast<RenderBlockFlow>(*renderer()).renderNamedFlowFragment();

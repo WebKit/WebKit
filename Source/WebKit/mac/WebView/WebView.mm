@@ -2313,8 +2313,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setFrameFlatteningEnabled([preferences isFrameFlatteningEnabled]);
     settings.setSpatialNavigationEnabled([preferences isSpatialNavigationEnabled]);
     settings.setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
-    RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled([preferences cssRegionsEnabled]);
-    RuntimeEnabledFeatures::sharedFeatures().setCSSCompositingEnabled([preferences cssCompositingEnabled]);
 
     settings.setAsynchronousSpellCheckingEnabled([preferences asynchronousSpellCheckingEnabled]);
     settings.setHyperlinkAuditingEnabled([preferences hyperlinkAuditingEnabled]);

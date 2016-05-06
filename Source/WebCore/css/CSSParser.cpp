@@ -246,8 +246,6 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     : baseURL(baseURL)
     , mode(mode)
     , isHTMLDocument(false)
-    , isCSSRegionsEnabled(RuntimeEnabledFeatures::sharedFeatures().cssRegionsEnabled())
-    , isCSSCompositingEnabled(RuntimeEnabledFeatures::sharedFeatures().cssCompositingEnabled())
 #if ENABLE(CSS_GRID_LAYOUT)
     , cssGridLayoutEnabled(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled())
 #endif
@@ -268,8 +266,6 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
     , charset(charset)
     , mode(document.inQuirksMode() ? CSSQuirksMode : CSSStrictMode)
     , isHTMLDocument(document.isHTMLDocument())
-    , isCSSRegionsEnabled(document.cssRegionsEnabled())
-    , isCSSCompositingEnabled(document.cssCompositingEnabled())
 #if ENABLE(CSS_GRID_LAYOUT)
     , cssGridLayoutEnabled(document.isCSSGridLayoutEnabled())
 #endif
@@ -291,8 +287,6 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.charset == b.charset
         && a.mode == b.mode
         && a.isHTMLDocument == b.isHTMLDocument
-        && a.isCSSRegionsEnabled == b.isCSSRegionsEnabled
-        && a.isCSSCompositingEnabled == b.isCSSCompositingEnabled
 #if ENABLE(CSS_GRID_LAYOUT)
         && a.cssGridLayoutEnabled == b.cssGridLayoutEnabled
 #endif
@@ -552,13 +546,11 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyGridColumnGap:
     case CSSPropertyGridRowGap:
 #endif
-        acceptsNegativeNumbers = false;
-        return true;
 #if ENABLE(CSS_SHAPES)
     case CSSPropertyWebkitShapeMargin:
-        acceptsNegativeNumbers = false;
-        return RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled();
 #endif
+        acceptsNegativeNumbers = false;
+        return true;
     case CSSPropertyBottom:
     case CSSPropertyCx:
     case CSSPropertyCy:
@@ -821,14 +813,14 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         break;
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyMixBlendMode:
-        if (parserContext.isCSSCompositingEnabled && (valueID == CSSValueNormal || valueID == CSSValueMultiply || valueID == CSSValueScreen
+        if (valueID == CSSValueNormal || valueID == CSSValueMultiply || valueID == CSSValueScreen
             || valueID == CSSValueOverlay || valueID == CSSValueDarken || valueID == CSSValueLighten ||  valueID == CSSValueColorDodge
             || valueID == CSSValueColorBurn || valueID == CSSValueHardLight || valueID == CSSValueSoftLight || valueID == CSSValueDifference
-            || valueID == CSSValueExclusion || valueID == CSSValuePlusDarker || valueID == CSSValuePlusLighter))
+            || valueID == CSSValueExclusion || valueID == CSSValuePlusDarker || valueID == CSSValuePlusLighter)
             return true;
         break;
     case CSSPropertyIsolation:
-        if (parserContext.isCSSCompositingEnabled && (valueID == CSSValueAuto || valueID == CSSValueIsolate))
+        if (valueID == CSSValueAuto || valueID == CSSValueIsolate)
             return true;
         break;
 #endif
@@ -931,15 +923,15 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
 #if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitRegionBreakAfter:
     case CSSPropertyWebkitRegionBreakBefore:
-        if (parserContext.isCSSRegionsEnabled && (valueID == CSSValueAuto || valueID == CSSValueAlways || valueID == CSSValueAvoid || valueID == CSSValueLeft || valueID == CSSValueRight))
+        if (valueID == CSSValueAuto || valueID == CSSValueAlways || valueID == CSSValueAvoid || valueID == CSSValueLeft || valueID == CSSValueRight)
             return true;
         break;
     case CSSPropertyWebkitRegionBreakInside:
-        if (parserContext.isCSSRegionsEnabled && (valueID == CSSValueAuto || valueID == CSSValueAvoid))
+        if (valueID == CSSValueAuto || valueID == CSSValueAvoid)
             return true;
         break;
     case CSSPropertyWebkitRegionFragment:
-        if (parserContext.isCSSRegionsEnabled && (valueID == CSSValueAuto || valueID == CSSValueBreak))
+        if (valueID == CSSValueAuto || valueID == CSSValueBreak)
             return true;
         break;
 #endif
@@ -2624,12 +2616,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyMixBlendMode:
-        if (cssCompositingEnabled())
-            validPrimitive = true;
+        validPrimitive = true;
         break;
     case CSSPropertyIsolation:
-        if (cssCompositingEnabled())
-            validPrimitive = true;
+        validPrimitive = true;
         break;
 #endif
     case CSSPropertyFlex: {
@@ -2683,12 +2673,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
 #if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlowInto:
-        if (!cssRegionsEnabled())
-            return false;
         return parseFlowThread(propId, important);
     case CSSPropertyWebkitFlowFrom:
-        if (!cssRegionsEnabled())
-            return false;
         return parseRegionThread(propId, important);
 #endif
     case CSSPropertyTransform:
@@ -3186,10 +3172,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         parsedValue = parseShapeProperty(propId);
         break;
     case CSSPropertyWebkitShapeMargin:
-        validPrimitive = (RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled() && !id && validateUnit(valueWithCalculation, FLength | FPercent | FNonNeg));
+        validPrimitive = !id && validateUnit(valueWithCalculation, FLength | FPercent | FNonNeg);
         break;
     case CSSPropertyWebkitShapeImageThreshold:
-        validPrimitive = (RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled() && !id && validateUnit(valueWithCalculation, FNumber));
+        validPrimitive = !id && validateUnit(valueWithCalculation, FNumber);
         break;
 #endif
 #if ENABLE(CSS_IMAGE_ORIENTATION)
@@ -4975,11 +4961,11 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                     }
                     break;
                 case CSSPropertyBackgroundBlendMode:
-                    if (cssCompositingEnabled() && (currentValue->id == CSSValueNormal || currentValue->id == CSSValueMultiply
+                    if (currentValue->id == CSSValueNormal || currentValue->id == CSSValueMultiply
                         || currentValue->id == CSSValueScreen || currentValue->id == CSSValueOverlay || currentValue->id == CSSValueDarken
                         || currentValue->id == CSSValueLighten ||  currentValue->id == CSSValueColorDodge || currentValue->id == CSSValueColorBurn
                         || currentValue->id == CSSValueHardLight || currentValue->id == CSSValueSoftLight || currentValue->id == CSSValueDifference
-                        || currentValue->id == CSSValueExclusion)) {
+                        || currentValue->id == CSSValueExclusion) {
                         currValue = CSSValuePool::singleton().createIdentifierValue(currentValue->id);
                         m_valueList->next();
                     }
@@ -6874,9 +6860,6 @@ RefPtr<CSSValue> CSSParser::parseBasicShapeAndOrBox(CSSPropertyID propId)
 #if ENABLE(CSS_SHAPES)
 RefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled())
-        return nullptr;
-
     CSSParserValue& value = *m_valueList->current();
     CSSValueID valueId = value.id;
 
@@ -10267,16 +10250,6 @@ static bool validFlowName(const String& flowName)
 }
 #endif
 
-bool CSSParser::cssRegionsEnabled() const
-{
-    return m_context.isCSSRegionsEnabled;
-}
-
-bool CSSParser::cssCompositingEnabled() const
-{
-    return m_context.isCSSCompositingEnabled;
-}
-
 #if ENABLE(CSS_GRID_LAYOUT)
 bool CSSParser::isCSSGridLayoutEnabled() const
 {
@@ -10290,7 +10263,6 @@ bool CSSParser::isCSSGridLayoutEnabled() const
 bool CSSParser::parseFlowThread(CSSPropertyID propId, bool important)
 {
     ASSERT(propId == CSSPropertyWebkitFlowInto);
-    ASSERT(cssRegionsEnabled());
 
     if (m_valueList->size() != 1)
         return false;
@@ -10322,7 +10294,6 @@ bool CSSParser::parseFlowThread(CSSPropertyID propId, bool important)
 bool CSSParser::parseRegionThread(CSSPropertyID propId, bool important)
 {
     ASSERT(propId == CSSPropertyWebkitFlowFrom);
-    ASSERT(cssRegionsEnabled());
 
     if (m_valueList->size() != 1)
         return false;
@@ -13197,7 +13168,7 @@ void CSSParser::recycleSelectorVector(std::unique_ptr<Vector<std::unique_ptr<CSS
 
 RefPtr<StyleRuleBase> CSSParser::createRegionRule(Vector<std::unique_ptr<CSSParserSelector>>* regionSelector, RuleList* rules)
 {
-    if (!cssRegionsEnabled() || !regionSelector || !rules) {
+    if (!regionSelector || !rules) {
         popRuleData();
         return nullptr;
     }

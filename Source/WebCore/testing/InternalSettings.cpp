@@ -66,8 +66,7 @@
 namespace WebCore {
 
 InternalSettings::Backup::Backup(Settings& settings)
-    : m_originalCSSShapesEnabled(RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled())
-    , m_originalEditingBehavior(settings.editingBehaviorType())
+    : m_originalEditingBehavior(settings.editingBehaviorType())
 #if ENABLE(TEXT_AUTOSIZING)
     , m_originalTextAutosizingEnabled(settings.textAutosizingEnabled())
     , m_originalTextAutosizingWindowSizeOverride(settings.textAutosizingWindowSizeOverride())
@@ -113,7 +112,6 @@ InternalSettings::Backup::Backup(Settings& settings)
 
 void InternalSettings::Backup::restoreTo(Settings& settings)
 {
-    RuntimeEnabledFeatures::sharedFeatures().setCSSShapesEnabled(m_originalCSSShapesEnabled);
     settings.setEditingBehaviorType(m_originalEditingBehavior);
 
     for (const auto& standardFont : m_standardFontFamilies)
@@ -363,12 +361,6 @@ void InternalSettings::setTextAutosizingFontScaleFactor(float fontScaleFactor, E
     UNUSED_PARAM(fontScaleFactor);
     UNUSED_PARAM(ec);
 #endif
-}
-
-void InternalSettings::setCSSShapesEnabled(bool enabled, ExceptionCode& ec)
-{
-    UNUSED_PARAM(ec);
-    RuntimeEnabledFeatures::sharedFeatures().setCSSShapesEnabled(enabled);
 }
 
 void InternalSettings::setCanStartMedia(bool enabled, ExceptionCode& ec)
