@@ -1139,11 +1139,19 @@ void HTMLElement::addHTMLColorToStyle(MutableStyleProperties& style, CSSProperty
         return;
 
     // If the string is a named CSS color or a 3/6-digit hex color, use that.
-    Color parsedColor(colorString);
-    if (!parsedColor.isValid())
-        parsedColor.setRGB(parseColorStringWithCrazyLegacyRules(colorString));
+    // We can't use the default Color constructor because it accepts
+    // 4/8-digit hex, which conflict with some legacy HTML content using attributes.
 
-    style.setProperty(propertyID, CSSValuePool::singleton().createColorValue(parsedColor.rgb()));
+    Color color;
+
+    if ((colorString.length() == 4 || colorString.length() == 7) && colorString[0] == '#')
+        color = Color(colorString);
+    if (!color.isValid())
+        color.setNamedColor(colorString);
+    if (!color.isValid())
+        color.setRGB(parseColorStringWithCrazyLegacyRules(colorString));
+
+    style.setProperty(propertyID, CSSValuePool::singleton().createColorValue(color.rgb()));
 }
 
 bool HTMLElement::willRespondToMouseMoveEvents()

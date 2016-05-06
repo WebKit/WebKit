@@ -1,3 +1,21 @@
+2016-05-05  Dean Jackson  <dino@apple.com>
+
+        4 and 8 digit color attributes should use the crazypants algorithm, not the CSS one.
+        https://bugs.webkit.org/show_bug.cgi?id=157402
+        <rdar://problem/26131142>
+
+        Reviewed by Simon Fraser.
+
+        Noel and Tab from Google alerted me to the fact I broke some legacy
+        HTML color attributes when I added support for 4 and 8 digit hex colors
+        in CSS. The fix is to favor the "crazy" parsing unless we know it is a 3 or 6
+        digit hex value (in which case we try the CSS algorithm first).
+
+        Covered by reverting an existing test.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::addHTMLColorToStyle):
+
 2016-05-05  Brady Eidson  <beidson@apple.com>
 
         Modern IDB (Workers): Remove the need for IDBConnectionProxy to expose its IDBConnectionToServer.

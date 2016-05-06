@@ -1,3 +1,17 @@
+2016-05-05  Dean Jackson  <dino@apple.com>
+
+        4 and 8 digit color attributes should use the crazypants algorithm, not the CSS one.
+        https://bugs.webkit.org/show_bug.cgi?id=157402
+        <rdar://problem/26131142>
+
+        Reviewed by Simon Fraser.
+
+        Restore the version that was there before I added support for
+        4 and 8 digit hex colors in CSS.
+
+        * fast/dom/attribute-legacy-colors-expected.txt:
+        * fast/dom/script-tests/attribute-legacy-colors.js:
+
 2016-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r200422): Web Inspector: Make new Array Iterator objects play nice with Web Inspector
