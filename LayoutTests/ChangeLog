@@ -2,6 +2,16 @@
 
         Unreviewed IDB test gardening.
 
+        Fix a failing test, and add better classification/comments to a different failing test.
+
+        * TestExpectations:
+        * storage/indexeddb/dont-commit-on-blocked-expected.txt:
+        * storage/indexeddb/dont-commit-on-blocked.html:
+
+2016-05-06  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed IDB test gardening.
+
         Update the workers variant of "deletedatabase-delayed-by-open-and-versionchange" to the modern expected results.
 
         * TestExpectations:

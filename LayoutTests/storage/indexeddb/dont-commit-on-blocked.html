@@ -30,7 +30,10 @@ function holdConnection()
 function onVersionChange(e)
 {
     // Timing of logging from worker vs. this event is racy, so do not log here.
-    db.close();
+    // Don't close within this turn of the event loop, so that worker sees 'blocked'.
+    setTimeout(function() {
+        db.close();
+    }, 0);
 }
 
 </script>

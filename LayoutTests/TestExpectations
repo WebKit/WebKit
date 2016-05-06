@@ -908,9 +908,11 @@ storage/indexeddb/request-leak.html [ Failure ]
 
 webkit.org/b/154619 storage/indexeddb/odd-strings.html [ Skip ]
 
-# IDB workers tests that fail
+# IDB workers test fails - The worker's attempt to open the database creates a new UniqueIDBDatabase
+# Could be a SessionID difference? Something is giving the worker a different namespace.
 storage/indexeddb/dont-commit-on-blocked-private.html [ Failure ]
-storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
+
+# IDB workers tests that fail for unknown reasons
 storage/indexeddb/pending-activity-workers.html [ Failure ]
 
 # IDB workers tests that timeout
