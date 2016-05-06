@@ -28,15 +28,35 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCursorInfo.h"
 #include "IDBDatabase.h"
+#include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 namespace IDBClient {
+
+template<typename T, typename... Parameters, typename... Arguments>
+void performCallbackOnCorrectThread(T& object, void (T::*method)(Parameters...), Arguments&&... arguments)
+{
+    ASSERT(isMainThread());
+
+    if (object.originThreadID() == currentThread()) {
+        (object.*method)(arguments...);
+        return;
+    }
+
+    ScriptExecutionContext* context = object.scriptExecutionContext();
+    if (!context)
+        return;
+
+    context->postCrossThreadTask(object, method, arguments...);
+}
 
 IDBConnectionProxy::IDBConnectionProxy(IDBConnectionToServer& connection)
     : m_connectionToServer(connection)
@@ -57,10 +77,6 @@ void IDBConnectionProxy::deref()
 
 RefPtr<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
 {
-    // FIXME: Handle Workers
-    if (!isMainThread())
-        return nullptr;
-
     RefPtr<IDBOpenDBRequest> request;
     {
         Locker<Lock> locker(m_openDBRequestMapLock);
@@ -70,20 +86,13 @@ RefPtr<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext
         m_openDBRequestMap.set(request->resourceIdentifier(), request.get());
     }
 
-    IDBRequestData requestData(*this, *request);
-
-    // FIXME: For workers, marshall this to the main thread if necessary.
-    m_connectionToServer.openDatabase(requestData);
+    callConnectionOnMainThread(&IDBConnectionToServer::openDatabase, IDBRequestData(*this, *request));
 
     return request;
 }
 
 RefPtr<IDBOpenDBRequest> IDBConnectionProxy::deleteDatabase(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier)
 {
-    // FIXME: Handle Workers
-    if (!isMainThread())
-        return nullptr;
-
     RefPtr<IDBOpenDBRequest> request;
     {
         Locker<Lock> locker(m_openDBRequestMapLock);
@@ -93,10 +102,7 @@ RefPtr<IDBOpenDBRequest> IDBConnectionProxy::deleteDatabase(ScriptExecutionConte
         m_openDBRequestMap.set(request->resourceIdentifier(), request.get());
     }
 
-    IDBRequestData requestData(*this, *request);
-
-    // FIXME: For workers, marshall this to the main thread if necessary.
-    m_connectionToServer.deleteDatabase(requestData);
+    callConnectionOnMainThread(&IDBConnectionToServer::deleteDatabase, IDBRequestData(*this, *request));
 
     return request;
 }
@@ -118,121 +124,101 @@ void IDBConnectionProxy::completeOpenDBRequest(const IDBResultData& resultData)
     RefPtr<IDBOpenDBRequest> request;
     {
         Locker<Lock> locker(m_openDBRequestMapLock);
-        request = m_openDBRequestMap.get(resultData.requestIdentifier());
+        request = m_openDBRequestMap.take(resultData.requestIdentifier());
         ASSERT(request);
     }
 
-    request->requestCompleted(resultData);
+    ASSERT(request);
+
+    performCallbackOnCorrectThread(*request, &IDBOpenDBRequest::requestCompleted, resultData);
 }
 
 void IDBConnectionProxy::createObjectStore(TransactionOperation& operation, const IDBObjectStoreInfo& info)
 {
-    IDBRequestData requestData(operation);
+    const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    // FIXME: Handle worker thread marshalling.
-
-    m_connectionToServer.createObjectStore(requestData, info);
+    callConnectionOnMainThread(&IDBConnectionToServer::createObjectStore, requestData, info);
 }
 
 void IDBConnectionProxy::deleteObjectStore(TransactionOperation& operation, const String& objectStoreName)
 {
-    IDBRequestData requestData(operation);
+    const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    // FIXME: Handle worker thread marshalling.
-
-    m_connectionToServer.deleteObjectStore(requestData, objectStoreName);
+    callConnectionOnMainThread(&IDBConnectionToServer::deleteObjectStore, requestData, objectStoreName);
 }
 
 void IDBConnectionProxy::clearObjectStore(TransactionOperation& operation, uint64_t objectStoreIdentifier)
 {
-    IDBRequestData requestData(operation);
+    const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    // FIXME: Handle worker thread marshalling.
-
-    m_connectionToServer.clearObjectStore(requestData, objectStoreIdentifier);
+    callConnectionOnMainThread(&IDBConnectionToServer::clearObjectStore, requestData, objectStoreIdentifier);
 }
 
 void IDBConnectionProxy::createIndex(TransactionOperation& operation, const IDBIndexInfo& info)
 {
-    IDBRequestData requestData(operation);
+    const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    // FIXME: Handle worker thread marshalling.
-
-    m_connectionToServer.createIndex(requestData, info);
+    callConnectionOnMainThread(&IDBConnectionToServer::createIndex, requestData, info);
 }
 
 void IDBConnectionProxy::deleteIndex(TransactionOperation& operation, uint64_t objectStoreIdentifier, const String& indexName)
 {
-    IDBRequestData requestData(operation);
+    const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    // FIXME: Handle worker thread marshalling.
-
-    m_connectionToServer.deleteIndex(requestData, objectStoreIdentifier, indexName);
+    callConnectionOnMainThread(&IDBConnectionToServer::deleteIndex, requestData, WTFMove(objectStoreIdentifier), indexName);
 }
 
 void IDBConnectionProxy::putOrAdd(TransactionOperation& operation, IDBKey* key, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode mode)
 {
-    IDBRequestData requestData(operation);
+    const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    // FIXME: Handle worker thread marshalling.
-
-    m_connectionToServer.putOrAdd(requestData, key, value, mode);
+    callConnectionOnMainThread(&IDBConnectionToServer::putOrAdd, requestData, IDBKeyData(key), value, mode);
 }
 
 void IDBConnectionProxy::getRecord(TransactionOperation& operation, const IDBKeyRangeData& keyRange)
 {
-    IDBRequestData requestData(operation);
+    const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    // FIXME: Handle worker thread marshalling.
-
-    m_connectionToServer.getRecord(requestData, keyRange);
+    callConnectionOnMainThread(&IDBConnectionToServer::getRecord, requestData, keyRange);
 }
 
 void IDBConnectionProxy::getCount(TransactionOperation& operation, const IDBKeyRangeData& keyRange)
 {
-    IDBRequestData requestData(operation);
+    const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    // FIXME: Handle worker thread marshalling.
-
-    m_connectionToServer.getCount(requestData, keyRange);
+    callConnectionOnMainThread(&IDBConnectionToServer::getCount, requestData, keyRange);
 }
 
 void IDBConnectionProxy::deleteRecord(TransactionOperation& operation, const IDBKeyRangeData& keyRange)
 {
-    IDBRequestData requestData(operation);
+    const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    // FIXME: Handle worker thread marshalling.
-
-    m_connectionToServer.deleteRecord(requestData, keyRange);
+    callConnectionOnMainThread(&IDBConnectionToServer::deleteRecord, requestData, keyRange);
 }
 
 void IDBConnectionProxy::openCursor(TransactionOperation& operation, const IDBCursorInfo& info)
 {
-    IDBRequestData requestData(operation);
+    const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    // FIXME: Handle worker thread marshalling.
-
-    m_connectionToServer.openCursor(requestData, info);
+    callConnectionOnMainThread(&IDBConnectionToServer::openCursor, requestData, info);
 }
 
 void IDBConnectionProxy::iterateCursor(TransactionOperation& operation, const IDBKeyData& key, unsigned long count)
 {
-    IDBRequestData requestData(operation);
+    const IDBRequestData requestData(operation);
     saveOperation(operation);
 
-    // FIXME: Handle worker thread marshalling.
-
-    m_connectionToServer.iterateCursor(requestData, key, count);
+    callConnectionOnMainThread(&IDBConnectionToServer::iterateCursor, requestData, key, count);
 }
 
 void IDBConnectionProxy::saveOperation(TransactionOperation& operation)
@@ -253,24 +239,16 @@ void IDBConnectionProxy::completeOperation(const IDBResultData& resultData)
 
     ASSERT(operation);
 
-    // FIXME: Handle getting operation->completed() onto the correct thread via the IDBTransaction.
-    
-    operation->completed(resultData);
+    performCallbackOnCorrectThread(*operation, &TransactionOperation::completed, resultData);
 }
 
 void IDBConnectionProxy::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
-    // FIXME: Handle workers
-    if (!isMainThread())
-        return;
-
-    m_connectionToServer.abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
+    callConnectionOnMainThread(&IDBConnectionToServer::abortOpenAndUpgradeNeeded, databaseConnectionIdentifier, transactionIdentifier);
 }
 
 void IDBConnectionProxy::fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
-    ASSERT(isMainThread());
-
     RefPtr<IDBDatabase> database;
     {
         Locker<Lock> locker(m_databaseConnectionMapLock);
@@ -280,16 +258,12 @@ void IDBConnectionProxy::fireVersionChangeEvent(uint64_t databaseConnectionIdent
     if (!database)
         return;
 
-    database->fireVersionChangeEvent(requestIdentifier, requestedVersion);
+    performCallbackOnCorrectThread(*database, &IDBDatabase::fireVersionChangeEvent, requestIdentifier, requestedVersion);
 }
 
 void IDBConnectionProxy::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
 {
-    // FIXME: Handle Workers
-    if (!isMainThread())
-        return;
-
-    m_connectionToServer.didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier);
+    callConnectionOnMainThread(&IDBConnectionToServer::didFireVersionChangeEvent, databaseConnectionIdentifier, requestIdentifier);
 }
 
 void IDBConnectionProxy::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
@@ -304,7 +278,7 @@ void IDBConnectionProxy::notifyOpenDBRequestBlocked(const IDBResourceIdentifier&
 
     ASSERT(request);
 
-    request->requestBlocked(oldVersion, newVersion);
+    performCallbackOnCorrectThread(*request, &IDBOpenDBRequest::requestBlocked, oldVersion, newVersion);
 }
 
 void IDBConnectionProxy::establishTransaction(IDBTransaction& transaction)
@@ -315,11 +289,7 @@ void IDBConnectionProxy::establishTransaction(IDBTransaction& transaction)
         m_pendingTransactions.set(transaction.info().identifier(), &transaction);
     }
 
-    // FIXME: Handle Workers
-    if (!isMainThread())
-        return;
-
-    m_connectionToServer.establishTransaction(transaction.database().databaseConnectionIdentifier(), transaction.info());
+    callConnectionOnMainThread(&IDBConnectionToServer::establishTransaction, transaction.database().databaseConnectionIdentifier(), transaction.info());
 }
 
 void IDBConnectionProxy::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
@@ -332,9 +302,7 @@ void IDBConnectionProxy::didStartTransaction(const IDBResourceIdentifier& transa
 
     ASSERT(transaction);
 
-    // FIXME: Handle hopping to the Worker thread here if necessary.
-
-    transaction->didStart(error);
+    performCallbackOnCorrectThread(*transaction, &IDBTransaction::didStart, error);
 }
 
 void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction)
@@ -345,11 +313,7 @@ void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction)
         m_committingTransactions.set(transaction.info().identifier(), &transaction);
     }
 
-    // FIXME: Handle Workers
-    if (!isMainThread())
-        return;
-
-    m_connectionToServer.commitTransaction(transaction.info().identifier());
+    callConnectionOnMainThread(&IDBConnectionToServer::commitTransaction, transaction.info().identifier());
 }
 
 void IDBConnectionProxy::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
@@ -362,9 +326,7 @@ void IDBConnectionProxy::didCommitTransaction(const IDBResourceIdentifier& trans
 
     ASSERT(transaction);
 
-    // FIXME: Handle hopping to the Worker thread here if necessary.
-
-    transaction->didCommit(error);
+    performCallbackOnCorrectThread(*transaction, &IDBTransaction::didCommit, error);
 }
 
 void IDBConnectionProxy::abortTransaction(IDBTransaction& transaction)
@@ -375,11 +337,7 @@ void IDBConnectionProxy::abortTransaction(IDBTransaction& transaction)
         m_abortingTransactions.set(transaction.info().identifier(), &transaction);
     }
 
-    // FIXME: Handle Workers
-    if (!isMainThread())
-        return;
-
-    m_connectionToServer.abortTransaction(transaction.info().identifier());
+    callConnectionOnMainThread(&IDBConnectionToServer::abortTransaction, transaction.info().identifier());
 }
 
 void IDBConnectionProxy::didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
@@ -392,9 +350,7 @@ void IDBConnectionProxy::didAbortTransaction(const IDBResourceIdentifier& transa
 
     ASSERT(transaction);
 
-    // FIXME: Handle hopping to the Worker thread here if necessary.
-
-    transaction->didAbort(error);
+    performCallbackOnCorrectThread(*transaction, &IDBTransaction::didAbort, error);
 }
 
 bool IDBConnectionProxy::hasRecordOfTransaction(const IDBTransaction& transaction) const
@@ -407,20 +363,37 @@ bool IDBConnectionProxy::hasRecordOfTransaction(const IDBTransaction& transactio
 
 void IDBConnectionProxy::didFinishHandlingVersionChangeTransaction(IDBTransaction& transaction)
 {
-    // FIXME: Handle Workers
-    if (!isMainThread())
-        return;
-
-    m_connectionToServer.didFinishHandlingVersionChangeTransaction(transaction.info().identifier());
+    callConnectionOnMainThread(&IDBConnectionToServer::didFinishHandlingVersionChangeTransaction, transaction.info().identifier());
 }
 
 void IDBConnectionProxy::databaseConnectionClosed(IDBDatabase& database)
 {
-    // FIXME: Handle Workers
-    if (!isMainThread())
+    callConnectionOnMainThread(&IDBConnectionToServer::databaseConnectionClosed, database.databaseConnectionIdentifier());
+}
+
+void IDBConnectionProxy::scheduleMainThreadTasks()
+{
+    Locker<Lock> locker(m_mainThreadTaskLock);
+    if (m_mainThreadProtector)
         return;
 
-    m_connectionToServer.databaseConnectionClosed(database.databaseConnectionIdentifier());
+    m_mainThreadProtector = &m_connectionToServer;
+    callOnMainThread([this] {
+        handleMainThreadTasks();
+    });
+}
+
+void IDBConnectionProxy::handleMainThreadTasks()
+{
+    RefPtr<IDBConnectionToServer> protector;
+    {
+        Locker<Lock> locker(m_mainThreadTaskLock);
+        ASSERT(m_mainThreadProtector);
+        protector = WTFMove(m_mainThreadProtector);
+    }
+
+    while (auto task = m_mainThreadQueue.tryGetMessage())
+        task->performTask();
 }
 
 void IDBConnectionProxy::getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)> callback)

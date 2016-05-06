@@ -73,6 +73,8 @@ public:
 
     ThreadIdentifier originThreadID() const { return m_originThreadID; }
 
+    ScriptExecutionContext* scriptExecutionContext() const;
+
 protected:
     TransactionOperation(IDBTransaction& transaction)
         : m_transaction(transaction)

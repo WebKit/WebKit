@@ -1,3 +1,73 @@
+2016-05-05  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB (Workers): Get everything to the right threads.
+        https://bugs.webkit.org/show_bug.cgi?id=157398
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No current change in behavior, will be tested as bug 149953 is resolved, enabling IDB in workers).
+
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::postCrossThreadTask): Add a helper to post a CrossThreadTask to a context.
+                
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::performCallbackOnCorrectThread): Helper to perform an IDB callback on either the main thread
+          or Worker thread as necessary.
+        (WebCore::IDBClient::IDBConnectionProxy::openDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::completeOpenDBRequest):
+        (WebCore::IDBClient::IDBConnectionProxy::createObjectStore):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteObjectStore):
+        (WebCore::IDBClient::IDBConnectionProxy::clearObjectStore):
+        (WebCore::IDBClient::IDBConnectionProxy::createIndex):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteIndex):
+        (WebCore::IDBClient::IDBConnectionProxy::putOrAdd):
+        (WebCore::IDBClient::IDBConnectionProxy::getRecord):
+        (WebCore::IDBClient::IDBConnectionProxy::getCount):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteRecord):
+        (WebCore::IDBClient::IDBConnectionProxy::openCursor):
+        (WebCore::IDBClient::IDBConnectionProxy::iterateCursor):
+        (WebCore::IDBClient::IDBConnectionProxy::completeOperation):
+        (WebCore::IDBClient::IDBConnectionProxy::abortOpenAndUpgradeNeeded):
+        (WebCore::IDBClient::IDBConnectionProxy::fireVersionChangeEvent):
+        (WebCore::IDBClient::IDBConnectionProxy::didFireVersionChangeEvent):
+        (WebCore::IDBClient::IDBConnectionProxy::notifyOpenDBRequestBlocked):
+        (WebCore::IDBClient::IDBConnectionProxy::establishTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didStartTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::commitTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didCommitTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::abortTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didAbortTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didFinishHandlingVersionChangeTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::databaseConnectionClosed):
+        (WebCore::IDBClient::IDBConnectionProxy::scheduleMainThreadTasks):
+        (WebCore::IDBClient::IDBConnectionProxy::handleMainThreadTasks):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        (WebCore::IDBClient::IDBConnectionProxy::callConnectionOnMainThread): Helper to marshall IDB operations from the
+          Worker thread to the main thread.
+        (WebCore::IDBClient::IDBConnectionProxy::postMainThreadTask):
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::originThreadID):
+        * Modules/indexeddb/IDBTransaction.h:
+        
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::putOrAdd):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+
+        * Modules/indexeddb/client/TransactionOperation.cpp:
+        (WebCore::IDBClient::TransactionOperation::scriptExecutionContext):
+        * Modules/indexeddb/client/TransactionOperation.h:
+
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp:
+        (WebCore::nextClientResourceNumber):
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::putOrAdd):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
 2016-05-05  Dean Jackson  <dino@apple.com>
 
         4 and 8 digit color attributes should use the crazypants algorithm, not the CSS one.

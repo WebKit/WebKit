@@ -143,6 +143,8 @@ public:
 
     IDBClient::IDBConnectionProxy& connectionProxy();
 
+    ThreadIdentifier originThreadID() const;
+
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest*);
 

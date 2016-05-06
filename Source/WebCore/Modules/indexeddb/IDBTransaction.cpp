@@ -1064,6 +1064,11 @@ void IDBTransaction::deactivate()
     scheduleOperationTimer();
 }
 
+ThreadIdentifier IDBTransaction::originThreadID() const
+{
+    return m_database->originThreadID();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

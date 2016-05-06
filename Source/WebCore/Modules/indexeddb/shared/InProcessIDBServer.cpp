@@ -289,11 +289,9 @@ void InProcessIDBServer::deleteIndex(const IDBRequestData& requestData, uint64_t
     });
 }
 
-void InProcessIDBServer::putOrAdd(const IDBRequestData& requestData, IDBKey* key, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+void InProcessIDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     RefPtr<InProcessIDBServer> self(this);
-    IDBKeyData keyData(key);
-
     RunLoop::current().dispatch([this, self, requestData, keyData, value, overwriteMode] {
         m_server->putOrAdd(requestData, keyData, value, overwriteMode);
     });

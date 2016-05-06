@@ -37,8 +37,7 @@ namespace WebCore {
 
 static uint64_t nextClientResourceNumber()
 {
-    ASSERT(isMainThread());
-    static uint64_t currentNumber = 1;
+    static std::atomic<uint64_t> currentNumber(1);
     return currentNumber += 2;
 }
 

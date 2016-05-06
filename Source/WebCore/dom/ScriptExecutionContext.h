@@ -28,6 +28,7 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "CrossThreadTask.h"
 #include "DOMTimer.h"
 #include "ResourceRequest.h"
 #include "SecurityContext.h"
@@ -166,6 +167,17 @@ public:
     };
 
     virtual void postTask(Task) = 0; // Executes the task on context's thread asynchronously.
+
+    template<typename... Arguments>
+    void postCrossThreadTask(Arguments&&... arguments)
+    {
+        auto crossThreadTask = createCrossThreadTask(arguments...);
+        auto* rawTask = crossThreadTask.release();
+        postTask([=](ScriptExecutionContext&) {
+            std::unique_ptr<CrossThreadTask> task(rawTask);
+            task->performTask();
+        });
+    }
 
     // Gets the next id in a circular sequence from 1 to 2^31-1.
     int circularSequentialID();

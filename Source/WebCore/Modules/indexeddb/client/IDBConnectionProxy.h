@@ -27,11 +27,14 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "CrossThreadTask.h"
 #include "IDBConnectionToServer.h"
 #include "IDBResourceIdentifier.h"
 #include "TransactionOperation.h"
 #include <functional>
 #include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
+#include <wtf/MessageQueue.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -109,6 +112,27 @@ private:
 
     void saveOperation(TransactionOperation&);
 
+    template<typename... Parameters, typename... Arguments>
+    void callConnectionOnMainThread(void (IDBConnectionToServer::*method)(Parameters...), Arguments&&... arguments)
+    {
+        if (isMainThread())
+            (m_connectionToServer.*method)(arguments...);
+        else
+            postMainThreadTask(m_connectionToServer, method, arguments...);
+    }
+
+    template<typename... Arguments>
+    void postMainThreadTask(Arguments&&... arguments)
+    {
+        auto task = createCrossThreadTask(arguments...);
+        m_mainThreadQueue.append(WTFMove(task));
+
+        scheduleMainThreadTasks();
+    }
+
+    void scheduleMainThreadTasks();
+    void handleMainThreadTasks();
+
     IDBConnectionToServer& m_connectionToServer;
     uint64_t m_serverConnectionIdentifier;
 
@@ -125,6 +149,10 @@ private:
 
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations;
     Lock m_transactionOperationLock;
+
+    MessageQueue<CrossThreadTask> m_mainThreadQueue;
+    Lock m_mainThreadTaskLock;
+    RefPtr<IDBConnectionToServer> m_mainThreadProtector;
 };
 
 } // namespace IDBClient
