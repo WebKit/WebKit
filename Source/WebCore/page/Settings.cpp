@@ -185,12 +185,6 @@ Settings::Settings(Page* page)
     , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
 #if ENABLE(TEXT_AUTOSIZING)
     , m_textAutosizingFontScaleFactor(1)
-#if HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP
-    , m_textAutosizingWindowSizeOverride(320, 480)
-    , m_textAutosizingEnabled(true)
-#else
-    , m_textAutosizingEnabled(false)
-#endif
 #endif
     SETTINGS_INITIALIZER_LIST
     , m_isJavaEnabled(false)
@@ -326,26 +320,6 @@ void Settings::setPictographFontFamily(const AtomicString& family, UScriptCode s
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
-void Settings::setTextAutosizingEnabled(bool textAutosizingEnabled)
-{
-    if (m_textAutosizingEnabled == textAutosizingEnabled)
-        return;
-
-    m_textAutosizingEnabled = textAutosizingEnabled;
-    if (m_page)
-        m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void Settings::setTextAutosizingWindowSizeOverride(const IntSize& textAutosizingWindowSizeOverride)
-{
-    if (m_textAutosizingWindowSizeOverride == textAutosizingWindowSizeOverride)
-        return;
-
-    m_textAutosizingWindowSizeOverride = textAutosizingWindowSizeOverride;
-    if (m_page)
-        m_page->setNeedsRecalcStyleInAllFrames();
-}
-
 void Settings::setTextAutosizingFontScaleFactor(float fontScaleFactor)
 {
     m_textAutosizingFontScaleFactor = fontScaleFactor;
@@ -359,7 +333,18 @@ void Settings::setTextAutosizingFontScaleFactor(float fontScaleFactor)
 
     m_page->setNeedsRecalcStyleInAllFrames();
 }
+#endif
 
+float Settings::defaultMinimumZoomFontSize()
+{
+    return 15;
+}
+
+#if !PLATFORM(IOS)
+bool Settings::defaultTextAutosizingEnabled()
+{
+    return false;
+}
 #endif
 
 void Settings::setMediaTypeOverride(const String& mediaTypeOverride)

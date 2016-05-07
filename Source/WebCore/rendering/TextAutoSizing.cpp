@@ -30,6 +30,7 @@
 
 #include "CSSFontSelector.h"
 #include "Document.h"
+#include "Logging.h"
 #include "RenderListMarker.h"
 #include "RenderText.h"
 #include "StyleResolver.h"
@@ -116,7 +117,9 @@ bool TextAutoSizingValue::adjustNodeSizes()
                 averageSize = roundf(specifiedSize * MAX_SCALE_INCREASE);
                 scaleChange = averageSize / specifiedSize;
             }
-            
+
+            LOG(TextAutosizing, "  adjust node size %p firstPass=%d averageSize=%f scaleChange=%f", autoSizingNode.get(), firstPass, averageSize, scaleChange);
+
             auto style = cloneRenderStyleWithState(text->style());
             auto fontDescription = style.fontDescription();
             fontDescription.setComputedSize(averageSize);

@@ -84,7 +84,7 @@ void WebKitSetIsClassic(BOOL flag)
 
 float WebKitGetMinimumZoomFontSize(void)
 {
-    return Settings::defaultMinimumZoomFontSize();
+    return WebCore::Settings::defaultMinimumZoomFontSize();
 }
 
 int WebKitGetLastLineBreakInBuffer(UChar *characters, int position, int length)

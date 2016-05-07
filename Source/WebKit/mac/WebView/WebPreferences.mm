@@ -579,6 +579,7 @@ public:
 #endif
 #if ENABLE(IOS_TEXT_AUTOSIZING)
         [NSNumber numberWithFloat:Settings::defaultMinimumZoomFontSize()], WebKitMinimumZoomFontSizePreferenceKey,
+        [NSNumber numberWithBool:Settings::defaultTextAutosizingEnabled()], WebKitTextAutosizingEnabledPreferenceKey,
 #endif
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1474,6 +1475,16 @@ public:
 - (float)_minimumZoomFontSize
 {
     return [self _floatValueForKey:WebKitMinimumZoomFontSizePreferenceKey];
+}
+
+- (void)_setTextAutosizingEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitTextAutosizingEnabledPreferenceKey];
+}
+
+- (BOOL)_textAutosizingEnabled
+{
+    return [self _boolValueForKey:WebKitTextAutosizingEnabledPreferenceKey];
 }
 #endif
 

@@ -109,16 +109,12 @@ public:
     WEBCORE_EXPORT const AtomicString& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
 #if ENABLE(TEXT_AUTOSIZING)
-    void setTextAutosizingEnabled(bool);
-    bool textAutosizingEnabled() const { return m_textAutosizingEnabled; }
-
     void setTextAutosizingFontScaleFactor(float);
     float textAutosizingFontScaleFactor() const { return m_textAutosizingFontScaleFactor; }
-
-    // Only set by Layout Tests, and only used if textAutosizingEnabled() returns true.
-    void setTextAutosizingWindowSizeOverride(const IntSize&);
-    const IntSize& textAutosizingWindowSizeOverride() const { return m_textAutosizingWindowSizeOverride; }
 #endif
+
+    WEBCORE_EXPORT static bool defaultTextAutosizingEnabled();
+    WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
 
     // Only set by Layout Tests.
     WEBCORE_EXPORT void setMediaTypeOverride(const String&);
@@ -290,10 +286,6 @@ public:
     WEBCORE_EXPORT void setForcePendingWebGLPolicy(bool);
     bool isForcePendingWebGLPolicy() const { return m_forcePendingWebGLPolicy; }
     
-#if PLATFORM(IOS)
-    WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
-#endif
-
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/SettingsGettersAndSetters.h>
 #endif
@@ -314,8 +306,6 @@ private:
 
 #if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingFontScaleFactor;
-    IntSize m_textAutosizingWindowSizeOverride;
-    bool m_textAutosizingEnabled : 1;
 #endif
 
     SETTINGS_MEMBER_VARIABLES

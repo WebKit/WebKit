@@ -1,3 +1,37 @@
+2016-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable IOS_TEXT_AUTOSIZING on Mac and make it testable
+        https://bugs.webkit.org/show_bug.cgi?id=157432
+        rdar://problem/16406720
+
+        Reviewed by Dean Jackson.
+
+        Enable IOS_TEXT_AUTOSIZING on Mac so it can be tested.
+
+        Make the setTextAutosizingEnabled() Setting work, and plumb it through WK1 and WK2
+        preferences for WTR and DRT. Make textAutosizingWindowSizeOverride() work, for layout tests.
+        These two settings are shared with TEXT_AUTOSIZING.
+
+        Add a TextAutosizing log channel, which is useful for generated -expected.html results.
+
+        Move adjustComputedFontSizesOnBlocks() and related code from RenderObject to RenderElement
+        without changes.
+
+        An implication of this set of changes is that the way clients enable text autosizing
+        has changed. Previously, they set the "MinimumZoomFontSize" preference to 0.
+        Settings::defaultMinimumZoomFontSize() used to do this in order to enable text autosizing
+        on iPhone only, not iPad.
+
+        Now the preferred technique is to leave minimumZoomFontSize alone, and to use textAutosizingEnabled()
+        instead. Settings::defaultTextAutosizingEnabled() now does the check for iPhone.
+
+        UIWebView calls WebKitGetMinimumZoomFontSize() to setup the default minimum font zoom size,
+        which will now always return 15, but had no other code that toggled this. So it's safe to just rely
+        on Settings::defaultTextAutosizingEnabled() doing the right thing for iPhone/iPad.
+
+        * Misc/WebUIKitSupport.mm:
+        (WebKitGetMinimumZoomFontSize):
+
 2016-03-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         URL Parsing should signal failure for illegal IDN

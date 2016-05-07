@@ -1,0 +1,29 @@
+Test the 'line-height' property interaction with '-webkit-text-size-adjust'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Case without text size adjust.
+PASS window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height') is "23px"
+PASS window.getComputedStyle(testDivNoAdjust).getPropertyValue('font-size') is "20px"
+testDivNoAdjust.style['line-height'] = '1.6'
+PASS window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height') is "32px"
+testDivNoAdjust.style['line-height'] = '80%'
+PASS window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height') is "16px"
+testDivNoAdjust.style['line-height'] = '12px'
+PASS window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height') is "12px"
+Case with text size adjust.
+Platform supports -webkit-text-size-adjust
+FAIL window.getComputedStyle(testDivAdjust).getPropertyValue('line-height') should be normal. Was 36px.
+PASS window.getComputedStyle(testDivAdjust).getPropertyValue('font-size') is "30px"
+testDivAdjust.style['line-height'] = '1.6'
+PASS window.getComputedStyle(testDivAdjust).getPropertyValue('line-height') is "48px"
+testDivAdjust.style['line-height'] = '80%'
+PASS window.getComputedStyle(testDivAdjust).getPropertyValue('line-height') is "24px"
+testDivAdjust.style['line-height'] = '12px'
+PASS window.getComputedStyle(testDivAdjust).getPropertyValue('line-height') is "18px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test
+Test

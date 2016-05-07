@@ -1402,11 +1402,17 @@ void FrameView::layout(bool allowSubtree)
         ASSERT(m_layoutPhase == InRenderTreeLayout);
 
         root->layout();
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-        if (Page* page = frame().page()) {
+        if (frame().settings().textAutosizingEnabled() && !root->view().printing()) {
             float minimumZoomFontSize = frame().settings().minimumZoomFontSize();
-            float textAutosizingWidth = page->textAutosizingWidth();
-            if (minimumZoomFontSize && textAutosizingWidth && !root->view().printing()) {
+            float textAutosizingWidth = frame().page() ? frame().page()->textAutosizingWidth() : 0;
+            if (int overrideWidth = frame().settings().textAutosizingWindowSizeOverride().width())
+                textAutosizingWidth = overrideWidth;
+
+            LOG(TextAutosizing, "Text Autosizing: minimumZoomFontSize=%.2f textAutosizingWidth=%.2f", minimumZoomFontSize, textAutosizingWidth);
+            
+            if (minimumZoomFontSize && textAutosizingWidth) {
                 root->adjustComputedFontSizesOnBlocks(minimumZoomFontSize, textAutosizingWidth);
                 if (root->needsLayout())
                     root->layout();

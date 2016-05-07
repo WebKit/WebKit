@@ -539,8 +539,7 @@ void TestRunner::setPagePaused(bool paused)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 void TestRunner::setTextAutosizingEnabled(bool enabled)
 {
-    const float phoneMinimumZoomFontSize = 15;
-    [[[mainFrame webView] preferences] _setMinimumZoomFontSize:(enabled ? phoneMinimumZoomFontSize : 0)];
+    [[[mainFrame webView] preferences] _setTextAutosizingEnabled:enabled];
 }
 #endif
 

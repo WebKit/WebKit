@@ -314,6 +314,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)mediaPlaybackAllowsAirPlay;
 #endif
 
+- (void)_setTextAutosizingEnabled:(BOOL)enabled;
+- (BOOL)_textAutosizingEnabled;
+
 - (BOOL)isInheritURIQueryComponentEnabled;
 - (void)setEnableInheritURIQueryComponent:(BOOL)flag;
 

@@ -793,7 +793,7 @@ svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
 # LayoutTests/fast tests that fail:
 fast/block/min-max-height-percent-height-child.html [ Failure ]
 fast/borders/hidpi-border-clipping-right-after-move.html [ ImageOnlyFailure ]
-fast/css/line-height-text-autosizing.html [ Failure ]
+fast/text-autosizing/ios/line-height-text-autosizing.html [ Failure ]
 fast/css/nested-rounded-corners.html [ Failure ]
 fast/css/relative-positioned-block-crash.html [ Failure ]
 fast/css/sticky/sticky-overflowing.html [ ImageOnlyFailure ]

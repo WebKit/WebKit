@@ -69,7 +69,6 @@
 #define DEFAULT_TEXT_AREAS_ARE_RESIZABLE false
 #define DEFAULT_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY false
 #define DEFAULT_SHOULD_RESPECT_IMAGE_ORIENTATION true
-#define DEFAULT_MINIMUM_FONT_ZOOM_SIZE WebCore::Settings::defaultMinimumZoomFontSize()
 #define DEFAULT_PASSWORD_ECHO_ENABLED true
 #define DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK false
 #define DEFAULT_INLINE_MEDIA_PLAYBACK_REQUIRES_PLAYS_INLINE_ATTRIBUTE true
@@ -85,7 +84,6 @@
 #define DEFAULT_TEXT_AREAS_ARE_RESIZABLE true
 #define DEFAULT_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY true
 #define DEFAULT_SHOULD_RESPECT_IMAGE_ORIENTATION false
-#define DEFAULT_MINIMUM_FONT_ZOOM_SIZE 0
 #define DEFAULT_PASSWORD_ECHO_ENABLED false
 #define DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK true
 #define DEFAULT_INLINE_MEDIA_PLAYBACK_REQUIRES_PLAYS_INLINE_ATTRIBUTE false
@@ -194,7 +192,7 @@
     macro(PrimaryPlugInSnapshotDetectionEnabled, primaryPlugInSnapshotDetectionEnabled, Bool, bool, true, "", "") \
     macro(PDFPluginEnabled, pdfPluginEnabled, Bool, bool, DEFAULT_PDFPLUGIN_ENABLED, "", "") \
     macro(UsesEncodingDetector, usesEncodingDetector, Bool, bool, false, "", "") \
-    macro(TextAutosizingEnabled, textAutosizingEnabled, Bool, bool, false, "", "") \
+    macro(TextAutosizingEnabled, textAutosizingEnabled, Bool, bool, WebCore::Settings::defaultTextAutosizingEnabled(), "", "") \
     macro(AggressiveTileRetentionEnabled, aggressiveTileRetentionEnabled, Bool, bool, false, "", "") \
     macro(TemporaryTileCohortRetentionEnabled, temporaryTileCohortRetentionEnabled, Bool, bool, DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED, "", "") \
     macro(QTKitEnabled, isQTKitEnabled, Bool, bool, WebCore::Settings::isQTKitEnabled(), "", "") \
@@ -240,7 +238,7 @@
     macro(IncrementalRenderingSuppressionTimeout, incrementalRenderingSuppressionTimeout, Double, double, 5, "", "") \
     macro(MinimumFontSize, minimumFontSize, Double, double, 0, "", "") \
     macro(MinimumLogicalFontSize, minimumLogicalFontSize, Double, double, 9, "", "") \
-    macro(MinimumZoomFontSize, minimumZoomFontSize, Double, double, DEFAULT_MINIMUM_FONT_ZOOM_SIZE, "", "") \
+    macro(MinimumZoomFontSize, minimumZoomFontSize, Double, double, WebCore::Settings::defaultMinimumZoomFontSize(), "", "") \
     macro(DefaultFontSize, defaultFontSize, Double, double, 16, "", "") \
     macro(DefaultFixedFontSize, defaultFixedFontSize, Double, double, 13, "", "") \
     macro(LayoutInterval, layoutInterval, Double, double, -1, "", "") \

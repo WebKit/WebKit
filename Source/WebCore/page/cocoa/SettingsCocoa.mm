@@ -111,12 +111,10 @@ void Settings::initializeDefaultFontFamilies()
     setSerifFontFamily("Times", USCRIPT_COMMON);
     setSansSerifFontFamily("Helvetica", USCRIPT_COMMON);
 }
-    
-float Settings::defaultMinimumZoomFontSize()
+
+bool Settings::defaultTextAutosizingEnabled()
 {
-    if (deviceHasIPadCapability() && ![[getUIApplicationClass() sharedApplication] _isClassic])
-        return 0;
-    return 15;
+    return !deviceHasIPadCapability() || [[getUIApplicationClass() sharedApplication] _isClassic];
 }
 
 #endif

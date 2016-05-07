@@ -303,6 +303,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setDisplayListDrawingEnabled(displayListDrawingEnabled);
 }
 
+- (BOOL)_textAutosizingEnabled
+{
+    return _preferences->textAutosizingEnabled();
+}
+
+- (void)_setTextAutosizingEnabled:(BOOL)enabled
+{
+    _preferences->setTextAutosizingEnabled(enabled);
+}
+
 - (BOOL)_developerExtrasEnabled
 {
     return _preferences->developerExtrasEnabled();

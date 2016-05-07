@@ -67,9 +67,11 @@ namespace WebCore {
 
 InternalSettings::Backup::Backup(Settings& settings)
     : m_originalEditingBehavior(settings.editingBehaviorType())
-#if ENABLE(TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING) || ENABLE(IOS_TEXT_AUTOSIZING)
     , m_originalTextAutosizingEnabled(settings.textAutosizingEnabled())
     , m_originalTextAutosizingWindowSizeOverride(settings.textAutosizingWindowSizeOverride())
+#endif
+#if ENABLE(TEXT_AUTOSIZING)
     , m_originalTextAutosizingFontScaleFactor(settings.textAutosizingFontScaleFactor())
 #endif
     , m_originalMediaTypeOverride(settings.mediaTypeOverride())
@@ -142,9 +144,11 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
         settings.setPictographFontFamily(pictographFont.value, static_cast<UScriptCode>(pictographFont.key));
     m_pictographFontFamilies.clear();
 
-#if ENABLE(TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING) || ENABLE(IOS_TEXT_AUTOSIZING)
     settings.setTextAutosizingEnabled(m_originalTextAutosizingEnabled);
     settings.setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
+#endif
+#if ENABLE(TEXT_AUTOSIZING)
     settings.setTextAutosizingFontScaleFactor(m_originalTextAutosizingFontScaleFactor);
 #endif
     settings.setMediaTypeOverride(m_originalMediaTypeOverride);
@@ -325,7 +329,7 @@ void InternalSettings::setPictographFontFamily(const String& family, const Strin
 
 void InternalSettings::setTextAutosizingEnabled(bool enabled, ExceptionCode& ec)
 {
-#if ENABLE(TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING) || ENABLE(IOS_TEXT_AUTOSIZING)
     InternalSettingsGuardForSettings();
     settings()->setTextAutosizingEnabled(enabled);
 #else
@@ -336,7 +340,7 @@ void InternalSettings::setTextAutosizingEnabled(bool enabled, ExceptionCode& ec)
 
 void InternalSettings::setTextAutosizingWindowSizeOverride(int width, int height, ExceptionCode& ec)
 {
-#if ENABLE(TEXT_AUTOSIZING)
+#if ENABLE(TEXT_AUTOSIZING) || ENABLE(IOS_TEXT_AUTOSIZING)
     InternalSettingsGuardForSettings();
     settings()->setTextAutosizingWindowSizeOverride(IntSize(width, height));
 #else

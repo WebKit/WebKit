@@ -11,6 +11,8 @@ displaylists [ Pass ]
 quicklook [ Pass ]
 http/tests/quicklook [ Pass ]
 
+fast/text-autosizing/ios [ Pass ]
+
 # <rdar://problem/22898927> Crashes in iWorkImport.framework
 quicklook/pages.html [ Pass Crash ]
 
@@ -2210,6 +2212,8 @@ fast/table/table-row-style-not-updated.html [ Failure ]
 fast/table/table-style-not-updated.html [ Failure ]
 fast/table/wide-colspan.html [ Failure ]
 fast/table/wide-column.html [ Failure ]
+
+# Tests designed for TEXT_AUTOSIZING, not IOS_TEXT_AUTOSIZING behavior.
 fast/text-autosizing/cluster-inline-block-or-table.html [ ImageOnlyFailure ]
 fast/text-autosizing/cluster-inline-grid-flex-box.html [ ImageOnlyFailure ]
 fast/text-autosizing/cluster-list-item.html [ ImageOnlyFailure ]
@@ -2257,6 +2261,7 @@ fast/text-autosizing/wide-block.html [ ImageOnlyFailure ]
 fast/text-autosizing/wide-child.html [ ImageOnlyFailure ]
 fast/text-autosizing/wide-iframe.html [ ImageOnlyFailure ]
 fast/text-autosizing/wide-in-narrow-overflow-scroll.html [ ImageOnlyFailure ]
+
 fast/text/decorations-transformed.html [ Failure ]
 fast/text/emphasis-avoid-ruby.html [ Failure ]
 fast/text/emphasis-overlap.html [ Failure ]
@@ -2559,7 +2564,7 @@ webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyF
 ###
 # Mark as passing specific tests in folders that were skipped temporarily above.
 ##
-webkit.org/b/138970 fast/css/line-height-text-autosizing.html [ Pass ]
+webkit.org/b/138970 fast/text-autosizing/ios/line-height-text-autosizing.html [ Pass ]
 
 # Skipped for mac as well:
 webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]

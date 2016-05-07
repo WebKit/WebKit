@@ -77,8 +77,7 @@ void TestController::initializeTestPluginDirectory()
 void TestController::platformResetPreferencesToConsistentValues()
 {
     WKPreferencesRef preferences = platformPreferences();
-    // Note that WKPreferencesSetTextAutosizingEnabled has no effect on iOS.
-    WKPreferencesSetMinimumZoomFontSize(preferences, 0);
+    WKPreferencesSetTextAutosizingEnabled(preferences, false);
 }
 
 void TestController::platformResetStateToConsistentValues()

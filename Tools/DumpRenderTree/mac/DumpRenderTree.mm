@@ -954,8 +954,7 @@ static void resetWebPreferencesToConsistentValues()
 #endif
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-    // Disable text autosizing by default.
-    [preferences _setMinimumZoomFontSize:0];
+    [preferences _setTextAutosizingEnabled:NO];
 #endif
 
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
@@ -974,11 +973,6 @@ static void resetWebPreferencesToConsistentValues()
 
 #if ENABLE(WEB_AUDIO)
     [preferences setWebAudioEnabled:YES];
-#endif
-
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-    // Disable text autosizing by default.
-    [preferences _setMinimumZoomFontSize:0];
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

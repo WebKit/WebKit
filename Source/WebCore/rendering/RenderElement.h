@@ -215,6 +215,11 @@ public:
     bool childRequiresTable(const RenderObject& child) const;
     bool hasContinuation() const { return m_hasContinuation; }
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    void adjustComputedFontSizesOnBlocks(float size, float visibleWidth);
+    WEBCORE_EXPORT void resetTextAutosizing();
+#endif
+
 protected:
     enum BaseTypeFlag {
         RenderLayerModelObjectFlag  = 1 << 0,

@@ -197,7 +197,13 @@ selectionIncludesAltImageText initial=true
 useLegacyBackgroundSizeShorthandBehavior initial=false
 fixedBackgroundsPaintRelativeToDocument initial=defaultFixedBackgroundsPaintRelativeToDocument
 
-minimumZoomFontSize type=float, initial=15, conditional=IOS_TEXT_AUTOSIZING
+textAutosizingEnabled initial=false, setNeedsStyleRecalcInAllFrames=1, conditional=TEXT_AUTOSIZING
+textAutosizingEnabled initial=defaultTextAutosizingEnabled(), setNeedsStyleRecalcInAllFrames=1, conditional=IOS_TEXT_AUTOSIZING
+
+textAutosizingWindowSizeOverride type=IntSize, setNeedsStyleRecalcInAllFrames=1, conditional=TEXT_AUTOSIZING
+textAutosizingWindowSizeOverride type=IntSize, setNeedsStyleRecalcInAllFrames=1, conditional=IOS_TEXT_AUTOSIZING
+
+minimumZoomFontSize type=float, initial=defaultMinimumZoomFontSize(), conditional=IOS_TEXT_AUTOSIZING
 
 simpleLineLayoutEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
 simpleLineLayoutDebugBordersEnabled initial=false, setNeedsStyleRecalcInAllFrames=1

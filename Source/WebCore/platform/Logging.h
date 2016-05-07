@@ -81,6 +81,7 @@ namespace WebCore {
     M(Scrolling) \
     M(SpellingAndGrammar) \
     M(StorageAPI) \
+    M(TextAutosizing) \
     M(Threading) \
     M(WebAudio) \
     M(WebGL) \
