@@ -1,3 +1,13 @@
+2016-05-07  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
+
+        Fix an incorrect usage of OS(DARWIN) with PLATFORM(COCOA)
+        https://bugs.webkit.org/show_bug.cgi?id=157167
+
+        Reviewed by Myles C. Maxfield.
+
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::hash):
+
 2016-05-07  Joanmarie Diggs  <jdiggs@igalia.com>
 
         REGRESSION(r196222): [AX][GTK] accessibility/gtk/caret-offsets.html failing
