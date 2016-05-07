@@ -1131,8 +1131,6 @@
 		2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A83638918D7D0FE0000EBCC /* FullGCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */; };
 		2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2A88067819107D5500CB0BBB /* DFGFunctionWhitelist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A88067619107D5500CB0BBB /* DFGFunctionWhitelist.cpp */; };
-		2A88067919107D5500CB0BBB /* DFGFunctionWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A88067719107D5500CB0BBB /* DFGFunctionWhitelist.h */; };
 		2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AABCDE718EF294200002096 /* GCLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AABCDE618EF294200002096 /* GCLogging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AACE63C18CA5A0300ED0191 /* GCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */; };
@@ -2094,6 +2092,8 @@
 		FE99B24A1C24C3D700C82159 /* JITNegGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE99B2471C24B6D300C82159 /* JITNegGenerator.cpp */; };
 		FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861E182B7A0400F6D851 /* Breakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA08621182B7A0400F6D851 /* DebuggerPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEA0C4021CDD7D1D00481991 /* FunctionWhitelist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEA0C4001CDD7D0E00481991 /* FunctionWhitelist.cpp */; };
+		FEA0C4031CDD7D1D00481991 /* FunctionWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0C4011CDD7D0E00481991 /* FunctionWhitelist.h */; };
 		FEA1E4391C213A2B00277A16 /* ValueProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEA1E4381C213A2600277A16 /* ValueProfile.cpp */; };
 		FEB137571BB11EF900CD5100 /* MacroAssemblerARM64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEB137561BB11EEE00CD5100 /* MacroAssemblerARM64.cpp */; };
 		FEB51F6C1A97B688001F921C /* Regress141809.mm in Sources */ = {isa = PBXBuildFile; fileRef = FEB51F6B1A97B688001F921C /* Regress141809.mm */; };
@@ -3265,8 +3265,6 @@
 		2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdenGCActivityCallback.h; sourceTree = "<group>"; };
 		2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FullGCActivityCallback.cpp; sourceTree = "<group>"; };
 		2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullGCActivityCallback.h; sourceTree = "<group>"; };
-		2A88067619107D5500CB0BBB /* DFGFunctionWhitelist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFunctionWhitelist.cpp; path = dfg/DFGFunctionWhitelist.cpp; sourceTree = "<group>"; };
-		2A88067719107D5500CB0BBB /* DFGFunctionWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFunctionWhitelist.h; path = dfg/DFGFunctionWhitelist.h; sourceTree = "<group>"; };
 		2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDBlob.h; sourceTree = "<group>"; };
 		2AABCDE618EF294200002096 /* GCLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCLogging.h; sourceTree = "<group>"; };
 		2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCActivityCallback.cpp; sourceTree = "<group>"; };
@@ -4347,6 +4345,8 @@
 		FE99B2481C24B6D300C82159 /* JITNegGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITNegGenerator.h; sourceTree = "<group>"; };
 		FEA0861E182B7A0400F6D851 /* Breakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Breakpoint.h; sourceTree = "<group>"; };
 		FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerPrimitives.h; sourceTree = "<group>"; };
+		FEA0C4001CDD7D0E00481991 /* FunctionWhitelist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionWhitelist.cpp; sourceTree = "<group>"; };
+		FEA0C4011CDD7D0E00481991 /* FunctionWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionWhitelist.h; sourceTree = "<group>"; };
 		FEA1E4381C213A2600277A16 /* ValueProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueProfile.cpp; sourceTree = "<group>"; };
 		FEB137561BB11EEE00CD5100 /* MacroAssemblerARM64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerARM64.cpp; sourceTree = "<group>"; };
 		FEB51F6A1A97B688001F921C /* Regress141809.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Regress141809.h; path = API/tests/Regress141809.h; sourceTree = "<group>"; };
@@ -6060,6 +6060,8 @@
 				8603CEF314C7546400AE59E3 /* CodeProfiling.h */,
 				FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */,
 				FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */,
+				FEA0C4001CDD7D0E00481991 /* FunctionWhitelist.cpp */,
+				FEA0C4011CDD7D0E00481991 /* FunctionWhitelist.h */,
 				FE384EE11ADDB7AD0055DE2C /* JSDollarVM.cpp */,
 				FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */,
 				FE384EE31ADDB7AD0055DE2C /* JSDollarVMPrototype.cpp */,
@@ -6214,8 +6216,6 @@
 				0F2DD8101AB3D8BE00BBB8E8 /* DFGForAllKills.h */,
 				0F69CC86193AC60A0045759E /* DFGFrozenValue.cpp */,
 				0F69CC87193AC60A0045759E /* DFGFrozenValue.h */,
-				2A88067619107D5500CB0BBB /* DFGFunctionWhitelist.cpp */,
-				2A88067719107D5500CB0BBB /* DFGFunctionWhitelist.h */,
 				86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */,
 				86EC9DB71328DF82002B2AD7 /* DFGGraph.cpp */,
 				86EC9DB81328DF82002B2AD7 /* DFGGraph.h */,
@@ -7078,6 +7078,7 @@
 				99DA00A81BD5993100F4575C /* builtins_generate_combined_implementation.py in Headers */,
 				99DA00A91BD5993100F4575C /* builtins_generate_separate_header.py in Headers */,
 				0F338E111BF0276C0013C88F /* B3OpaqueByproduct.h in Headers */,
+				FEA0C4031CDD7D1D00481991 /* FunctionWhitelist.h in Headers */,
 				99DA00AA1BD5993100F4575C /* builtins_generate_separate_implementation.py in Headers */,
 				99DA00A31BD5993100F4575C /* builtins_generator.py in Headers */,
 				FE3A06A61C10B72D00390FDD /* JITBitOrGenerator.h in Headers */,
@@ -7267,7 +7268,6 @@
 				A7D89CF817A0B8CC00773AD8 /* DFGFlushFormat.h in Headers */,
 				0F2DD8151AB3D8BE00BBB8E8 /* DFGForAllKills.h in Headers */,
 				0F69CC89193AC60A0045759E /* DFGFrozenValue.h in Headers */,
-				2A88067919107D5500CB0BBB /* DFGFunctionWhitelist.h in Headers */,
 				86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */,
 				86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */,
 				0F2FCCFA18A60070001A27F8 /* DFGGraphSafepoint.h in Headers */,
@@ -8834,7 +8834,6 @@
 				0F9D339617FFC4E60073C2BC /* DFGFlushedAt.cpp in Sources */,
 				A7D89CF717A0B8CC00773AD8 /* DFGFlushFormat.cpp in Sources */,
 				0F69CC88193AC60A0045759E /* DFGFrozenValue.cpp in Sources */,
-				2A88067819107D5500CB0BBB /* DFGFunctionWhitelist.cpp in Sources */,
 				86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */,
 				0F2FCCF918A60070001A27F8 /* DFGGraphSafepoint.cpp in Sources */,
 				0FB17660196B8F9E0091052A /* DFGHeapLocation.cpp in Sources */,
@@ -8849,6 +8848,7 @@
 				86EC9DCB1328DF82002B2AD7 /* DFGJITCompiler.cpp in Sources */,
 				A78A9778179738B8009DF744 /* DFGJITFinalizer.cpp in Sources */,
 				0FC97F3F18202119002C9B26 /* DFGJumpReplacement.cpp in Sources */,
+				FEA0C4021CDD7D1D00481991 /* FunctionWhitelist.cpp in Sources */,
 				A73A535A1799CD5D00170C19 /* DFGLazyJSValue.cpp in Sources */,
 				62F2AA371B0BEDE300610C7A /* DFGLazyNode.cpp in Sources */,
 				A7D9A29717A0BC7400EE2618 /* DFGLICMPhase.cpp in Sources */,

@@ -1,3 +1,43 @@
+2016-05-07  Mark Lam  <mark.lam@apple.com>
+
+        Add JSC options bytecodeRangeToJITCompile and jitWhitelist.
+        https://bugs.webkit.org/show_bug.cgi?id=157428
+
+        Reviewed by Michael Saboff.
+
+        1. Added Options::bytecodeRangeToJITCompile and Options::jitWhitelist options.
+
+        2. Moved DFGFunctionWhitelist* to FunctionWhitelist* and made it generic so that
+           it can be used for more than one whitelist instance.  In this case, we now have
+           two: the dfgWhitelist and the jitWhitelist.
+
+        3. Added "can compile" checks in LLInt::shouldJIT() to check
+           Options::bytecodeRangeToJITCompile and Options::jitWhitelist.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::getNumCompilations):
+        (JSC::DFG::ensureGlobalDFGWhitelist):
+        (JSC::DFG::compileImpl):
+        * dfg/DFGFunctionWhitelist.cpp: Removed.
+        * dfg/DFGFunctionWhitelist.h: Removed.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::ensureGlobalJITWhitelist):
+        (JSC::LLInt::shouldJIT):
+
+        * runtime/Options.h:
+
+        * tools/FunctionWhitelist.cpp: Copied from Source/JavaScriptCore/dfg/DFGFunctionWhitelist.cpp.
+        (JSC::FunctionWhitelist::FunctionWhitelist):
+        (JSC::FunctionWhitelist::contains):
+        (JSC::DFG::FunctionWhitelist::ensureGlobalWhitelist): Deleted.
+        (JSC::DFG::FunctionWhitelist::FunctionWhitelist): Deleted.
+        (JSC::DFG::FunctionWhitelist::parseFunctionNamesInFile): Deleted.
+        (JSC::DFG::FunctionWhitelist::contains): Deleted.
+        * tools/FunctionWhitelist.h: Copied from Source/JavaScriptCore/dfg/DFGFunctionWhitelist.h.
+
 2016-05-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC][32bit] stress/tagged-templates-template-object.js fails in debug

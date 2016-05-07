@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,36 +24,19 @@
  */
 
 #include "config.h"
-#include "DFGFunctionWhitelist.h"
+#include "FunctionWhitelist.h"
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
 #include "CodeBlock.h"
 #include "Options.h"
 #include <stdio.h>
 #include <string.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace JSC { namespace DFG {
-
-FunctionWhitelist& FunctionWhitelist::ensureGlobalWhitelist()
-{
-    static LazyNeverDestroyed<FunctionWhitelist> functionWhitelist;
-    static std::once_flag initializeWhitelistFlag;
-    std::call_once(initializeWhitelistFlag, [] {
-        const char* functionWhitelistFile = Options::dfgWhitelist();
-        functionWhitelist.construct(functionWhitelistFile);
-    });
-    return functionWhitelist;
-}
+namespace JSC {
 
 FunctionWhitelist::FunctionWhitelist(const char* filename)
-{
-    parseFunctionNamesInFile(filename);
-}
-
-void FunctionWhitelist::parseFunctionNamesInFile(const char* filename)
 {
     if (!filename)
         return;
@@ -63,6 +46,8 @@ void FunctionWhitelist::parseFunctionNamesInFile(const char* filename)
         dataLogF("Failed to open file %s. Did you add the file-read-data entitlement to WebProcess.sb?\n", filename); 
         return;
     }
+
+    m_hasActiveWhitelist = true;
 
     char* line;
     char buffer[BUFSIZ];
@@ -89,10 +74,10 @@ void FunctionWhitelist::parseFunctionNamesInFile(const char* filename)
         dataLogF("Failed to close file %s: %s\n", filename, strerror(errno));
 }
 
-bool FunctionWhitelist::contains(CodeBlock* codeBlock) const 
+bool FunctionWhitelist::contains(CodeBlock* codeBlock) const
 {
     ASSERT(!isCompilationThread());
-    if (!Options::dfgWhitelist())
+    if (!m_hasActiveWhitelist)
         return true;
 
     if (m_entries.isEmpty())
@@ -109,7 +94,7 @@ bool FunctionWhitelist::contains(CodeBlock* codeBlock) const
     return m_entries.contains(name + '#' + hash);
 }
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // ENABLE(DFG_JIT)
+#endif // ENABLE(JIT)
 

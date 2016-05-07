@@ -30,16 +30,17 @@
 #include "JSString.h"
 
 #include "CodeBlock.h"
-#include "DFGFunctionWhitelist.h"
 #include "DFGJITCode.h"
 #include "DFGPlan.h"
 #include "DFGThunks.h"
 #include "DFGWorklist.h"
+#include "FunctionWhitelist.h"
 #include "JITCode.h"
 #include "JSCInlines.h"
 #include "Options.h"
 #include "TypeProfilerLog.h"
 #include <wtf/Atomics.h>
+#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(FTL_JIT)
 #include "FTLThunks.h"
@@ -55,13 +56,24 @@ unsigned getNumCompilations()
 }
 
 #if ENABLE(DFG_JIT)
+static FunctionWhitelist& ensureGlobalDFGWhitelist()
+{
+    static LazyNeverDestroyed<FunctionWhitelist> dfgWhitelist;
+    static std::once_flag initializeWhitelistFlag;
+    std::call_once(initializeWhitelistFlag, [] {
+        const char* functionWhitelistFile = Options::dfgWhitelist();
+        dfgWhitelist.construct(functionWhitelistFile);
+    });
+    return dfgWhitelist;
+}
+
 static CompilationResult compileImpl(
     VM& vm, CodeBlock* codeBlock, CodeBlock* profiledDFGCodeBlock, CompilationMode mode,
     unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues,
     PassRefPtr<DeferredCompilationCallback> callback)
 {
     if (!Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount())
-        || !FunctionWhitelist::ensureGlobalWhitelist().contains(codeBlock))
+        || !ensureGlobalDFGWhitelist().contains(codeBlock))
         return CompilationFailed;
     
     numCompilations++;
