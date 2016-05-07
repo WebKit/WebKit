@@ -1,3 +1,10 @@
+2016-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline bindings tests after r200547.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convert<TestObj::FontFaceDescriptors>):
+
 2016-05-07  Darin Adler  <darin@apple.com>
 
         Next step on dictionary bindings, along with other bindings refinements

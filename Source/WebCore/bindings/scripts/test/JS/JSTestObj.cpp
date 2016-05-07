@@ -492,19 +492,19 @@ template<> TestObj::ShadowRootInit convert<TestObj::ShadowRootInit>(ExecState& s
 template<> TestObj::FontFaceDescriptors convert<TestObj::FontFaceDescriptors>(ExecState& state, JSValue value)
 {
     auto style = convertOptional<String>(state, propertyValue(state, value, "style"), "normal");
-    if (state.hadException())
+    if (UNLIKELY(state.hadException()))
         return { };
     auto weight = convertOptional<String>(state, propertyValue(state, value, "weight"), "normal");
-    if (state.hadException())
+    if (UNLIKELY(state.hadException()))
         return { };
     auto stretch = convertOptional<String>(state, propertyValue(state, value, "stretch"), "normal");
-    if (state.hadException())
+    if (UNLIKELY(state.hadException()))
         return { };
     auto unicodeRange = convertOptional<String>(state, propertyValue(state, value, "unicodeRange"), "U+0-10FFFF");
-    if (state.hadException())
+    if (UNLIKELY(state.hadException()))
         return { };
     auto variant = convertOptional<String>(state, propertyValue(state, value, "variant"), "normal");
-    if (state.hadException())
+    if (UNLIKELY(state.hadException()))
         return { };
     auto featureSettings = convertOptional<String>(state, propertyValue(state, value, "featureSettings"), "normal");
     return { WTFMove(style), WTFMove(weight), WTFMove(stretch), WTFMove(unicodeRange), WTFMove(variant), WTFMove(featureSettings) };
