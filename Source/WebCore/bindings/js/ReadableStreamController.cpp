@@ -41,15 +41,15 @@ namespace WebCore {
 static inline JSC::JSValue callFunction(JSC::ExecState& state, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
 {
     JSC::CallData callData;
-    JSC::CallType callType = JSC::getCallData(jsFunction, callData);
-    return JSC::call(&state, jsFunction, callType, callData, thisValue, arguments);
+    auto callType = JSC::getCallData(jsFunction, callData);
+    return call(&state, jsFunction, callType, callData, thisValue, arguments);
 }
 
 JSC::JSValue ReadableStreamController::invoke(JSC::ExecState& state, JSC::JSObject& object, const char* propertyName, JSC::JSValue parameter)
 {
     JSC::JSLockHolder lock(&state);
 
-    JSC::JSValue function = getPropertyFromObject(state, object, propertyName);
+    auto function = object.get(&state, JSC::Identifier::fromString(&state, propertyName));
     if (state.hadException())
         return JSC::jsUndefined();
 
@@ -67,18 +67,18 @@ JSC::JSValue ReadableStreamController::invoke(JSC::ExecState& state, JSC::JSObje
 
 bool ReadableStreamController::isControlledReadableStreamLocked() const
 {
-    JSC::ExecState& state = *globalObject()->globalExec();
+    auto& state = *globalObject()->globalExec();
     JSC::JSLockHolder lock(&state);
 
-    JSVMClientData& clientData = *static_cast<JSVMClientData*>(state.vm().clientData);
-    JSC::JSValue readableStream = m_jsController->get(&state, clientData.builtinNames().controlledReadableStreamPrivateName());
+    auto& clientData = *static_cast<JSVMClientData*>(state.vm().clientData);
+    auto readableStream = m_jsController->get(&state, clientData.builtinNames().controlledReadableStreamPrivateName());
     ASSERT(!state.hadException());
 
-    JSC::JSValue isLocked = globalObject()->builtinInternalFunctions().readableStreamInternals().m_isReadableStreamLockedFunction.get();
+    auto isLocked = globalObject()->builtinInternalFunctions().readableStreamInternals().m_isReadableStreamLockedFunction.get();
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(readableStream);
-    JSC::JSValue result = callFunction(state, isLocked, JSC::jsUndefined(), arguments);
+    auto result = callFunction(state, isLocked, JSC::jsUndefined(), arguments);
     ASSERT(!state.hadException());
 
     return result.isTrue();
@@ -88,29 +88,29 @@ JSC::JSValue createReadableStream(JSC::ExecState& state, JSDOMGlobalObject* glob
 {
     JSC::JSLockHolder lock(&state);
 
-    JSC::JSValue jsSource = source ? toJS(&state, globalObject, source) : JSC::jsUndefined();
+    auto jsSource = source ? toJS(&state, globalObject, source) : JSC::jsUndefined();
     JSC::Strong<JSC::Unknown> protect(state.vm(), jsSource);
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(jsSource);
 
-    JSC::JSValue constructor = JSReadableStream::getConstructor(state.vm(), globalObject);
+    auto constructor = JSReadableStream::getConstructor(state.vm(), globalObject);
 
     JSC::ConstructData constructData;
-    JSC::ConstructType constructType = JSC::getConstructData(constructor, constructData);
+    auto constructType = JSC::getConstructData(constructor, constructData);
     ASSERT(constructType != JSC::ConstructType::None);
 
-    return JSC::construct(&state, constructor, constructType, constructData, arguments);
+    return construct(&state, constructor, constructType, constructData, arguments);
 }
 
 JSC::JSValue getReadableStreamReader(JSC::ExecState& state, JSC::JSValue readableStream)
 {
     ASSERT(readableStream.isObject());
 
-    JSC::JSValue getReader = readableStream.getObject()->get(&state, JSC::Identifier::fromString(&state, "getReader"));
+    auto getReader = readableStream.getObject()->get(&state, JSC::Identifier::fromString(&state, "getReader"));
     ASSERT(!state.hadException());
 
-    JSC::JSValue reader = callFunction(state, getReader, readableStream, JSC::MarkedArgumentBuffer());
+    auto reader = callFunction(state, getReader, readableStream, JSC::MarkedArgumentBuffer());
     ASSERT(!state.hadException());
 
     return reader;

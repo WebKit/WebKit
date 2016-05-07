@@ -30,10 +30,19 @@ enum FontFaceLoadStatus {
     "error"
 };
 
+dictionary FontFaceDescriptors {
+    DOMString style = "normal";
+    DOMString weight = "normal";
+    DOMString stretch = "normal";
+    DOMString unicodeRange = "U+0-10FFFF";
+    DOMString variant = "normal";
+    DOMString featureSettings = "normal";
+};
+
 [
-    ConstructorCallWith=ScriptExecutionContext&ScriptState,
+    ConstructorCallWith=Document&ScriptState,
     ConstructorRaisesException,
-    Constructor(DOMString family, any source, Dictionary descriptors)
+    Constructor(DOMString family, any source, optional FontFaceDescriptors descriptors)
 ] interface FontFace {
     [SetterRaisesException] attribute DOMString family;
     [SetterRaisesException] attribute DOMString style;

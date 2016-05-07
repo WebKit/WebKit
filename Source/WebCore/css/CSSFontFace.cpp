@@ -209,8 +209,8 @@ bool CSSFontFace::setUnicodeRange(CSSValue& unicodeRange)
     m_ranges.clear();
     auto& list = downcast<CSSValueList>(unicodeRange);
     for (auto& rangeValue : list) {
-        CSSUnicodeRangeValue& range = downcast<CSSUnicodeRangeValue>(rangeValue.get());
-        m_ranges.append(UnicodeRange(range.from(), range.to()));
+        auto& range = downcast<CSSUnicodeRangeValue>(rangeValue.get());
+        m_ranges.append({ range.from(), range.to() });
     }
 
     iterateClients(m_clients, [&](Client& client) {
@@ -223,6 +223,7 @@ bool CSSFontFace::setUnicodeRange(CSSValue& unicodeRange)
 bool CSSFontFace::setVariantLigatures(CSSValue& variantLigatures)
 {
     auto ligatures = extractFontVariantLigatures(variantLigatures);
+
     m_variantSettings.commonLigatures = ligatures.commonLigatures;
     m_variantSettings.discretionaryLigatures = ligatures.discretionaryLigatures;
     m_variantSettings.historicalLigatures = ligatures.historicalLigatures;
@@ -239,6 +240,7 @@ bool CSSFontFace::setVariantPosition(CSSValue& variantPosition)
 {
     if (!is<CSSPrimitiveValue>(variantPosition))
         return false;
+
     m_variantSettings.position = downcast<CSSPrimitiveValue>(variantPosition);
 
     iterateClients(m_clients, [&](Client& client) {
@@ -252,6 +254,7 @@ bool CSSFontFace::setVariantCaps(CSSValue& variantCaps)
 {
     if (!is<CSSPrimitiveValue>(variantCaps))
         return false;
+
     m_variantSettings.caps = downcast<CSSPrimitiveValue>(variantCaps);
 
     iterateClients(m_clients, [&](Client& client) {
@@ -264,6 +267,7 @@ bool CSSFontFace::setVariantCaps(CSSValue& variantCaps)
 bool CSSFontFace::setVariantNumeric(CSSValue& variantNumeric)
 {
     auto numeric = extractFontVariantNumeric(variantNumeric);
+
     m_variantSettings.numericFigure = numeric.figure;
     m_variantSettings.numericSpacing = numeric.spacing;
     m_variantSettings.numericFraction = numeric.fraction;
@@ -281,6 +285,7 @@ bool CSSFontFace::setVariantAlternates(CSSValue& variantAlternates)
 {
     if (!is<CSSPrimitiveValue>(variantAlternates))
         return false;
+
     m_variantSettings.alternates = downcast<CSSPrimitiveValue>(variantAlternates);
 
     iterateClients(m_clients, [&](Client& client) {
@@ -293,6 +298,7 @@ bool CSSFontFace::setVariantAlternates(CSSValue& variantAlternates)
 bool CSSFontFace::setVariantEastAsian(CSSValue& variantEastAsian)
 {
     auto eastAsian = extractFontVariantEastAsian(variantEastAsian);
+
     m_variantSettings.eastAsianVariant = eastAsian.variant;
     m_variantSettings.eastAsianWidth = eastAsian.width;
     m_variantSettings.eastAsianRuby = eastAsian.ruby;
@@ -304,23 +310,29 @@ bool CSSFontFace::setVariantEastAsian(CSSValue& variantEastAsian)
     return true;
 }
 
-bool CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
+void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
 {
-    if (!is<CSSValueList>(featureSettings))
-        return false;
+    // Can only call this with a primitive value of normal, or a value list containing font feature values.
+    ASSERT(is<CSSPrimitiveValue>(featureSettings) || is<CSSValueList>(featureSettings));
 
-    m_featureSettings = FontFeatureSettings();
-    auto& list = downcast<CSSValueList>(featureSettings);
-    for (auto& rangeValue : list) {
-        CSSFontFeatureValue& feature = downcast<CSSFontFeatureValue>(rangeValue.get());
-        m_featureSettings.insert(FontFeature(feature.tag(), feature.value()));
+    FontFeatureSettings settings;
+
+    if (is<CSSValueList>(featureSettings)) {
+        auto& list = downcast<CSSValueList>(featureSettings);
+        for (auto& rangeValue : list) {
+            auto& feature = downcast<CSSFontFeatureValue>(rangeValue.get());
+            settings.insert({ feature.tag(), feature.value() });
+        }
     }
+
+    if (m_featureSettings == settings)
+        return;
+
+    m_featureSettings = WTFMove(settings);
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontPropertyChanged(*this);
     });
-
-    return true;
 }
 
 bool CSSFontFace::allSourcesFailed() const

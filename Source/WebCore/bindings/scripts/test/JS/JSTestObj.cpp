@@ -29,8 +29,8 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "JSDOMBinding.h"
-#include "JSDOMBuild.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMConvert.h"
 #include "JSDOMIterator.h"
 #include "JSDOMPromise.h"
 #include "JSDOMStringList.h"
@@ -124,7 +124,7 @@ template<> Optional<TestObj::EnumType> parse<TestObj::EnumType>(ExecState& state
     return Nullopt;
 }
 
-template<> TestObj::EnumType build<TestObj::EnumType>(ExecState& state, JSValue value)
+template<> TestObj::EnumType convert<TestObj::EnumType>(ExecState& state, JSValue value)
 {
     auto result = parse<TestObj::EnumType>(state, value);
     if (UNLIKELY(!result)) {
@@ -174,7 +174,7 @@ template<> Optional<TestObj::Optional> parse<TestObj::Optional>(ExecState& state
     return Nullopt;
 }
 
-template<> TestObj::Optional build<TestObj::Optional>(ExecState& state, JSValue value)
+template<> TestObj::Optional convert<TestObj::Optional>(ExecState& state, JSValue value)
 {
     auto result = parse<TestObj::Optional>(state, value);
     if (UNLIKELY(!result)) {
@@ -214,7 +214,7 @@ template<> Optional<TestObj::EnumA> parse<TestObj::EnumA>(ExecState& state, JSVa
     return Nullopt;
 }
 
-template<> TestObj::EnumA build<TestObj::EnumA>(ExecState& state, JSValue value)
+template<> TestObj::EnumA convert<TestObj::EnumA>(ExecState& state, JSValue value)
 {
     auto result = parse<TestObj::EnumA>(state, value);
     if (UNLIKELY(!result)) {
@@ -256,7 +256,7 @@ template<> Optional<TestObj::EnumB> parse<TestObj::EnumB>(ExecState& state, JSVa
     return Nullopt;
 }
 
-template<> TestObj::EnumB build<TestObj::EnumB>(ExecState& state, JSValue value)
+template<> TestObj::EnumB convert<TestObj::EnumB>(ExecState& state, JSValue value)
 {
     auto result = parse<TestObj::EnumB>(state, value);
     if (UNLIKELY(!result)) {
@@ -298,7 +298,7 @@ template<> Optional<TestObj::EnumC> parse<TestObj::EnumC>(ExecState& state, JSVa
     return Nullopt;
 }
 
-template<> TestObj::EnumC build<TestObj::EnumC>(ExecState& state, JSValue value)
+template<> TestObj::EnumC convert<TestObj::EnumC>(ExecState& state, JSValue value)
 {
     auto result = parse<TestObj::EnumC>(state, value);
     if (UNLIKELY(!result)) {
@@ -342,7 +342,7 @@ template<> Optional<TestObj::Kind> parse<TestObj::Kind>(ExecState& state, JSValu
     return Nullopt;
 }
 
-template<> TestObj::Kind build<TestObj::Kind>(ExecState& state, JSValue value)
+template<> TestObj::Kind convert<TestObj::Kind>(ExecState& state, JSValue value)
 {
     auto result = parse<TestObj::Kind>(state, value);
     if (UNLIKELY(!result)) {
@@ -384,7 +384,7 @@ template<> Optional<TestObj::Size> parse<TestObj::Size>(ExecState& state, JSValu
     return Nullopt;
 }
 
-template<> TestObj::Size build<TestObj::Size>(ExecState& state, JSValue value)
+template<> TestObj::Size convert<TestObj::Size>(ExecState& state, JSValue value)
 {
     auto result = parse<TestObj::Size>(state, value);
     if (UNLIKELY(!result)) {
@@ -426,7 +426,7 @@ template<> Optional<TestObj::Confidence> parse<TestObj::Confidence>(ExecState& s
     return Nullopt;
 }
 
-template<> TestObj::Confidence build<TestObj::Confidence>(ExecState& state, JSValue value)
+template<> TestObj::Confidence convert<TestObj::Confidence>(ExecState& state, JSValue value)
 {
     auto result = parse<TestObj::Confidence>(state, value);
     if (UNLIKELY(!result)) {
@@ -468,7 +468,7 @@ template<> Optional<TestObj::ShadowRootMode> parse<TestObj::ShadowRootMode>(Exec
     return Nullopt;
 }
 
-template<> TestObj::ShadowRootMode build<TestObj::ShadowRootMode>(ExecState& state, JSValue value)
+template<> TestObj::ShadowRootMode convert<TestObj::ShadowRootMode>(ExecState& state, JSValue value)
 {
     auto result = parse<TestObj::ShadowRootMode>(state, value);
     if (UNLIKELY(!result)) {
@@ -483,11 +483,31 @@ template<> inline const char* expectedEnumerationValues<TestObj::ShadowRootMode>
     return "\"open\", \"closed\"";
 }
 
-template<> TestObj::ShadowRootInit build<TestObj::ShadowRootInit>(ExecState& state, JSValue value)
+template<> TestObj::ShadowRootInit convert<TestObj::ShadowRootInit>(ExecState& state, JSValue value)
 {
-    return { 
-        build<TestObj::ShadowRootMode>(state, value, "mode"),
-    };
+    auto mode = convert<TestObj::ShadowRootMode>(state, propertyValue(state, value, "mode"));
+    return { WTFMove(mode) };
+}
+
+template<> TestObj::FontFaceDescriptors convert<TestObj::FontFaceDescriptors>(ExecState& state, JSValue value)
+{
+    auto style = convertOptional<String>(state, propertyValue(state, value, "style"), "normal");
+    if (state.hadException())
+        return { };
+    auto weight = convertOptional<String>(state, propertyValue(state, value, "weight"), "normal");
+    if (state.hadException())
+        return { };
+    auto stretch = convertOptional<String>(state, propertyValue(state, value, "stretch"), "normal");
+    if (state.hadException())
+        return { };
+    auto unicodeRange = convertOptional<String>(state, propertyValue(state, value, "unicodeRange"), "U+0-10FFFF");
+    if (state.hadException())
+        return { };
+    auto variant = convertOptional<String>(state, propertyValue(state, value, "variant"), "normal");
+    if (state.hadException())
+        return { };
+    auto featureSettings = convertOptional<String>(state, propertyValue(state, value, "featureSettings"), "normal");
+    return { WTFMove(style), WTFMove(weight), WTFMove(stretch), WTFMove(unicodeRange), WTFMove(variant), WTFMove(featureSettings) };
 }
 
 // Functions
@@ -3630,7 +3650,7 @@ bool setJSTestObjStrictFloat(ExecState* state, EncodedJSValue thisValue, Encoded
         return throwSetterTypeError(*state, "TestObj", "strictFloat");
     }
     auto& impl = castedThis->wrapped();
-    auto nativeValue = build<float>(*state, value, ShouldAllowNonFinite::Yes);
+    auto nativeValue = convert<float>(*state, value, ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setStrictFloat(WTFMove(nativeValue));
@@ -4688,7 +4708,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalDoubleI
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalDoubleIsNaN");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    auto number = build<double>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
+    auto number = convert<double>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalDoubleIsNaN(WTFMove(number));
@@ -4703,7 +4723,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalFloatIs
         return throwThisTypeError(*state, "TestObj", "methodWithOptionalFloatIsNaN");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    auto number = build<float>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
+    auto number = convert<float>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalFloatIsNaN(WTFMove(number));
@@ -5692,7 +5712,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState*
     auto str = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto a = build<float>(*state, state->argument(1), ShouldAllowNonFinite::Yes);
+    auto a = convert<float>(*state, state->argument(1), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     auto b = toInt32(state, state->argument(2), NormalConversion);
@@ -5784,7 +5804,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(Exec
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto head = build<double>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
+    auto head = convert<double>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     Vector<double> tail = toNativeArguments<double>(state, 1);
@@ -5827,7 +5847,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* state)
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto a = build<float>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
+    auto a = convert<float>(*state, state->argument(0), ShouldAllowNonFinite::Yes);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     auto b = toInt32(state, state->argument(1), NormalConversion);
@@ -5871,7 +5891,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFl
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto a = build<float>(*state, state->argument(0), ShouldAllowNonFinite::No);
+    auto a = convert<float>(*state, state->argument(0), ShouldAllowNonFinite::No);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.testPromiseFunctionWithFloatArgument(WTFMove(a), DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
@@ -5935,7 +5955,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto a = build<float>(*state, state->argument(0), ShouldAllowNonFinite::No);
+    auto a = convert<float>(*state, state->argument(0), ShouldAllowNonFinite::No);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.testPromiseOverloadedFunction(WTFMove(a), DeferredWrapper(state, castedThis->globalObject(), promiseDeferred));
@@ -6029,7 +6049,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAttachShadowRoot(ExecStat
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto init = build<TestObj::ShadowRootInit>(*state, state->argument(0));
+    auto init = convert<TestObj::ShadowRootInit>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.attachShadowRoot(WTFMove(init));

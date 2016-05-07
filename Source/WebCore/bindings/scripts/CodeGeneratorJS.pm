@@ -916,9 +916,9 @@ sub GenerateEnumerationImplementationContent
         $result .= "}\n\n";
 
         # FIXME: A little ugly to have this be a side effect instead of a return value.
-        AddToImplIncludes("JSDOMBuild.h");
+        AddToImplIncludes("JSDOMConvert.h");
 
-        $result .= "template<> $className build<$className>(ExecState& state, JSValue value)\n";
+        $result .= "template<> $className convert<$className>(ExecState& state, JSValue value)\n";
         $result .= "{\n";
         $result .= "    auto result = parse<$className>(state, value);\n";
         $result .= "    if (UNLIKELY(!result)) {\n";
@@ -959,17 +959,30 @@ sub GenerateDictionaryImplementationContent
         my $className = GetDictionaryClassName($interface, $name);
 
         # FIXME: A little ugly to have this be a side effect instead of a return value.
-        AddToImplIncludes("JSDOMBuild.h");
+        AddToImplIncludes("JSDOMConvert.h");
 
-        $result .= "template<> $className build<$className>(ExecState& state, JSValue value)\n";
+        $result .= "template<> $className convert<$className>(ExecState& state, JSValue value)\n";
         $result .= "{\n";
-        $result .= "    return { \n";
-
+        my $needExceptionCheck = 0;
         foreach my $member (@{$dictionary->members}) {
-            $result .= "        build<" . GetNativeTypeFromSignature($interface, $member) . ">(state, value, \"" . $member->name . "\"),\n";
+            if ($needExceptionCheck) {
+                $result .= "    if (UNLIKELY(state.hadException()))\n";
+                $result .= "        return { };\n";
+            }
+            # FIXME: Eventually we will want this to call JSValueToNative.
+            my $function = $member->isOptional ? "convertOptional" : "convert";
+            my $defaultValueWithLeadingComma = $member->isOptional ? ", " . $member->default : "";
+            $result .= "    auto " . $member->name . " = " . $function . "<" . GetNativeTypeFromSignature($interface, $member) . ">"
+                . "(state, propertyValue(state, value, \"" . $member->name . "\")" . $defaultValueWithLeadingComma . ");\n";
+            $needExceptionCheck = 1;
         }
-
-        $result .= "    };\n";
+        $result .= "    return { ";
+        my $comma = "";
+        foreach my $member (@{$dictionary->members}) {
+            $result .= $comma . "WTFMove(" . $member->name . ")";
+            $comma = ", ";
+        }
+        $result .= " };\n";
         $result .= "}\n\n";
 
         $result .= "#endif\n\n" if $conditionalString;
@@ -3586,11 +3599,10 @@ sub GenerateParametersCheck
     my $argsIndex = 0;
     foreach my $parameter (@{$function->parameters}) {
         my $argType = $parameter->type;
-        my $optional = $parameter->isOptional;
 
-        die "Optional parameters of non-nullable wrapper types are not supported" if $optional && !$parameter->isNullable && $codeGenerator->IsWrapperType($argType);
+        die "Optional parameters of non-nullable wrapper types are not supported" if $parameter->isOptional && !$parameter->isNullable && $codeGenerator->IsWrapperType($argType);
 
-        if ($optional && !defined($parameter->default)) {
+        if ($parameter->isOptional && !defined($parameter->default)) {
             # As per Web IDL, optional dictionary parameters are always considered to have a default value of an empty dictionary, unless otherwise specified.
             $parameter->default("[]") if $argType eq "Dictionary";
             
@@ -3623,7 +3635,7 @@ sub GenerateParametersCheck
         } elsif ($codeGenerator->IsCallbackInterface($argType)) {
             my $callbackClassName = GetCallbackClassName($argType);
             $implIncludes{"$callbackClassName.h"} = 1;
-            if ($optional) {
+            if ($parameter->isOptional) {
                 push(@$outputArray, "    RefPtr<$argType> $name;\n");
                 push(@$outputArray, "    if (!state->argument($argsIndex).isUndefinedOrNull()) {\n");
                 if ($codeGenerator->IsFunctionOnlyCallbackInterface($argType)) {
@@ -3740,7 +3752,7 @@ sub GenerateParametersCheck
                 my $inner;
                 my $nativeType = GetNativeTypeFromSignature($interface, $parameter);
 
-                if ($optional && defined($parameter->default) && !WillConvertUndefinedToDefaultParameterValue($parameter->type, $parameter->default)) {
+                if ($parameter->isOptional && defined($parameter->default) && !WillConvertUndefinedToDefaultParameterValue($parameter->type, $parameter->default)) {
                     my $defaultValue = $parameter->default;
 
                     # String-related optimizations.
@@ -3762,7 +3774,7 @@ sub GenerateParametersCheck
 
                     $outer = "state->argument($argsIndex).isUndefined() ? $defaultValue : ";
                     $inner = "state->uncheckedArgument($argsIndex)";
-                } elsif ($optional && !defined($parameter->default)) {
+                } elsif ($parameter->isOptional && !defined($parameter->default)) {
                     # Use WTF::Optional<>() for optional parameters that are missing or undefined and that do not have
                     # a default value in the IDL.
                     $outer = "state->argument($argsIndex).isUndefined() ? Optional<$nativeType>() : ";
@@ -4255,6 +4267,7 @@ sub GetNativeType
     return $nativeType{$type} if exists $nativeType{$type};
 
     return GetEnumerationClassName($interface, $type) if $codeGenerator->IsEnumType($type);
+    return GetDictionaryClassName($interface, $type) if $codeGenerator->IsDictionaryType($type);
 
     my $tearOffType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
     return "${tearOffType}*" if $tearOffType;
@@ -4404,11 +4417,11 @@ sub JSValueToNative
     return ("$value.toBoolean(state)", 1) if $type eq "boolean";
 
     if ($codeGenerator->IsFloatingPointType($type)) {
-        AddToImplIncludes("JSDOMBuild.h");
-        return ("build<double>(*state, $value, ShouldAllowNonFinite::No)", 1) if $type eq "double";
-        return ("build<double>(*state, $value, ShouldAllowNonFinite::Yes)", 1) if $type eq "unrestricted double";
-        return ("build<float>(*state, $value, ShouldAllowNonFinite::No)", 1) if $type eq "float";
-        return ("build<float>(*state, $value, ShouldAllowNonFinite::Yes)", 1) if $type eq "unrestricted float";
+        AddToImplIncludes("JSDOMConvert.h");
+        return ("convert<double>(*state, $value, ShouldAllowNonFinite::No)", 1) if $type eq "double";
+        return ("convert<double>(*state, $value, ShouldAllowNonFinite::Yes)", 1) if $type eq "unrestricted double";
+        return ("convert<float>(*state, $value, ShouldAllowNonFinite::No)", 1) if $type eq "float";
+        return ("convert<float>(*state, $value, ShouldAllowNonFinite::Yes)", 1) if $type eq "unrestricted float";
         die "Unhandled floating point type: " . $type;
     }
 
@@ -4416,7 +4429,7 @@ sub JSValueToNative
 
     return ("to$type($value)", 1) if $codeGenerator->IsTypedArrayType($type);
     return ("parse<" . GetEnumerationClassName($interface, $type) . ">(*state, $value)", 1) if $codeGenerator->IsEnumType($type);
-    return ("build<" . GetDictionaryClassName($interface, $type) . ">(*state, $value)", 1) if $codeGenerator->IsDictionaryType($type);
+    return ("convert<" . GetDictionaryClassName($interface, $type) . ">(*state, $value)", 1) if $codeGenerator->IsDictionaryType($type);
 
     AddToImplIncludes("JS$type.h", $conditional);
 

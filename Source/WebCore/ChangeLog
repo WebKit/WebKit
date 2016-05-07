@@ -1,3 +1,92 @@
+2016-05-07  Darin Adler  <darin@apple.com>
+
+        Next step on dictionary bindings, along with other bindings refinements
+        https://bugs.webkit.org/show_bug.cgi?id=157451
+
+        Reviewed by Chris Dumez.
+
+        Converted one dictionary, the one passed to the constructor in FontFace.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for name change of JSDOMBuild.h to
+        JSDOMConvert.h and also let Xcode update a file type.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::propertyValue): Added.
+        * bindings/js/JSDOMBinding.h: Use pragma once. Remove unnecessary forward declaration.
+        Move all declarations to the top of the file, separating them from definitions. This
+        is a small step toward better overview of what's in this file and paves the way for
+        future simplifications and improvements we can make after we observe patterns.
+        Also removed a couple unused functions.
+
+        * bindings/js/JSDOMConvert.h: Renamed from JSDOMBuild.h.
+        Renamed function templates from build to convert. Added convertOptional.
+
+        * bindings/js/ReadableStreamController.cpp:
+        (WebCore::callFunction): Use auto and remove some unneeded namespacing.
+        (WebCore::ReadableStreamController::invoke): Ditto. Also remove use of helper function
+        getPropertyFromObject, since this was the only call site and it was not very helpful.
+        (WebCore::ReadableStreamController::isControlledReadableStreamLocked): Ditto.
+        (WebCore::createReadableStream): Ditto.
+        (WebCore::getReadableStreamReader): Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateEnumerationImplementationContent): Updated for name change from build to
+        convert and JSDOMBuild.h to JSDOMConvert.h.
+        (GenerateDictionaryImplementationContent): Ditto. Also added code to handle optional
+        and added explicit exception checking, using local variables. Not clear longer term
+        if the local variable approach is OK since this will unnecessarily change types like
+        const String& to String.
+        (GenerateParametersCheck): Removed local variable $optional and use $parameter->isOptional
+        directly consistently. This is slightly clearer because the old code used a mix of the
+        two, and also is a better pattern for when we refactor this into smaller functions.
+        Note that this function name is not good any more--this is a lot more then parameter checks.
+        (GetNativeType): Return appropriate name for dictionary types.
+        (JSValueToNative): Updated for name change from build to convert and JSDOMBuild.h to
+        JSDOMConvert.h.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Regenerated results.
+
+        * bindings/scripts/test/TestObj.idl: Added another dictionary test case, just a copy
+        of the current state of the one in FontFace.idl.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::setUnicodeRange): Update for simplified UnicodeRange struct.
+        (WebCore::CSSFontFace::setFeatureSettings): Fix to correctly handle being called
+        with "normal". Also fix so it doesn't call fontPropertyChanged if nothing changed.
+        Also got rid of return value, which had no real value: it was returning false for
+        some bad inputs, but others would just lead to assertions, and the real reason this
+        was OK is that this function is only passed known-valid values.
+
+        * css/CSSFontFace.h: Used prama once. Tweaked formatting. Removed return value from
+        the setFeatureSettings function. Changed UnicodeRange to be struct with public data
+        members instead a struct with a constructor and getter functions.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Updated since setFeatureSettings no
+        longer has a boolean return value.
+
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::appendFontWithInvalidUnicodeRangeIfLoading): Updated for simplified
+        UnicodeRange struct.
+
+        * css/FontFace.cpp:
+        (WebCore::valueFromDictionary): Deleted.
+        (WebCore::FontFace::create): Updated to take the descriptors as a struct instead of
+        a WebCore::Dictionary. Also made that argument optional as specified in the current
+        specification draft.
+        (WebCore::FontFace::setFeatureSettings): Updated since setFeatureSettings no longer
+        has a boolean return value.
+        (WebCore::FontFace::unicodeRange): Updated for simplified UnicodeRange struct.
+
+        * css/FontFace.h: Used pragma once. Removed unneeded includes and forward declarations.
+        Derived privately from CSSFontFace::Client. Added a FontFace::Descriptors struct and
+        used it as an argument to the create function as described above.
+
+        * css/FontFace.idl: Added FontFaceDescriptors and changed the argument to the
+        constructor to be an optional FontFaceDescriptors instead of a Dictionary.
+
 2016-05-07  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Rework FontFace promise attribute handling

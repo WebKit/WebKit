@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSFontFace_h
-#define CSSFontFace_h
+#pragma once
 
 #include "CSSFontFaceRule.h"
 #include "FontFeatureSettings.h"
@@ -61,6 +60,8 @@ public:
     }
     virtual ~CSSFontFace();
 
+    // FIXME: These functions don't need to have boolean return values.
+    // Callers only call this with known-valid CSS values.
     bool setFamilies(CSSValue&);
     bool setStyle(CSSValue&);
     bool setWeight(CSSValue&);
@@ -71,7 +72,7 @@ public:
     bool setVariantNumeric(CSSValue&);
     bool setVariantAlternates(CSSValue&);
     bool setVariantEastAsian(CSSValue&);
-    bool setFeatureSettings(CSSValue&);
+    void setFeatureSettings(CSSValue&);
 
     enum class Status;
     struct UnicodeRange;
@@ -109,8 +110,8 @@ public:
     public:
         virtual ~Client() { }
         virtual void fontLoaded(CSSFontFace&) { }
-        virtual void fontStateChanged(CSSFontFace&, Status oldState, Status newState) { UNUSED_PARAM(oldState); UNUSED_PARAM(newState); }
-        virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) { UNUSED_PARAM(oldFamilies); }
+        virtual void fontStateChanged(CSSFontFace&, Status /*oldState*/, Status /*newState*/) { }
+        virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* /*oldFamilies*/ = nullptr) { }
         virtual void ref() = 0;
         virtual void deref() = 0;
     };
@@ -124,27 +125,11 @@ public:
     //              ||   //  \\   ||
     //              \/  \/    \/  \/
     //             Success    Failure
-    enum class Status {
-        Pending,
-        Loading,
-        TimedOut,
-        Success,
-        Failure
-    };
+    enum class Status { Pending, Loading, TimedOut, Success, Failure };
 
     struct UnicodeRange {
-        UnicodeRange(UChar32 from, UChar32 to)
-            : m_from(from)
-            , m_to(to)
-        {
-        }
-
-        UChar32 from() const { return m_from; }
-        UChar32 to() const { return m_to; }
-
-    private:
-        UChar32 m_from;
-        UChar32 m_to;
+        UChar32 from;
+        UChar32 to;
     };
 
     // We don't guarantee that the FontFace wrapper will be the same every time you ask for it.
@@ -177,5 +162,3 @@ private:
 };
 
 }
-
-#endif

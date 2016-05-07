@@ -62,6 +62,7 @@ if (!$getOptionsResult || $showHelp) {
 }
 
 my @directoriesToIgnoreList = (
+    "expected",
     "icu",
 );
 my %directoriesToIgnore = map { $_ => 1 } @directoriesToIgnoreList;
@@ -98,7 +99,7 @@ sub wanted
 my $isDOMTypeRename = 0;
 my %renames = (
     # Renames go here in the form of:
-    "CaseFoldingHash" => "ASCIICaseInsensitiveHash",
+    "JSDOMBuild" => "JSDOMConvert",
 );
 
 my %renamesContemplatedForTheFuture = (

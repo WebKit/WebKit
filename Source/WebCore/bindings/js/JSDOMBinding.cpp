@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "HTMLParserIdioms.h"
 #include "IDBDatabaseException.h"
+#include "JSDOMConvert.h"
 #include "JSDOMWindowCustom.h"
 #include "JSExceptionBase.h"
 #include "SecurityOrigin.h"
@@ -837,6 +838,11 @@ CallType DOMConstructorObject::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callThrowTypeError;
     return CallType::Host;
+}
+
+JSValue propertyValue(ExecState& state, JSValue value, const char* propertyName)
+{
+    return value.get(&state, Identifier::fromString(&state, propertyName));
 }
 
 } // namespace WebCore

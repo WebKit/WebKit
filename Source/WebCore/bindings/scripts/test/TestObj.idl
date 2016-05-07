@@ -381,3 +381,12 @@ enum ShadowRootMode { "open", "closed" };
 dictionary ShadowRootInit {
     required ShadowRootMode mode;
 };
+
+dictionary FontFaceDescriptors {
+    DOMString style = "normal";
+    DOMString weight = "normal";
+    DOMString stretch = "normal";
+    DOMString unicodeRange = "U+0-10FFFF";
+    DOMString variant = "normal";
+    DOMString featureSettings = "normal";
+};

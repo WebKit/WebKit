@@ -30,17 +30,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace WebCore {
 
-template<typename T> T build(JSC::ExecState&, JSC::JSValue);
-template<typename T, unsigned characterCount> T build(JSC::ExecState&, JSC::JSValue, const char (&propertyName)[characterCount]);
 enum class ShouldAllowNonFinite { No, Yes };
-template<typename T> T build(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite);
 
-template<typename T, unsigned characterCount> inline T build(JSC::ExecState& state, JSC::JSValue value, const char (&propertyName)[characterCount])
+template<typename T> T convert(JSC::ExecState&, JSC::JSValue);
+template<typename T> T convert(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite);
+
+template<typename T> Optional<T> convertOptional(JSC::ExecState&, JSC::JSValue);
+template<typename T, typename U> T convertOptional(JSC::ExecState&, JSC::JSValue, U&& defaultValue);
+
+template<typename T> Optional<T> inline convertOptional(JSC::ExecState& state, JSC::JSValue value)
 {
-    return build<T>(state, value.get(&state, JSC::Identifier::fromString(&state, propertyName)));
+    return value.isUndefined() ? Nullopt : convert<T>(state, value);
 }
 
-template<typename T> inline T build(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allowNonFinite)
+template<typename T, typename U> inline T convertOptional(JSC::ExecState& state, JSC::JSValue value, U&& defaultValue)
+{
+    return value.isUndefined() ? std::forward<U>(defaultValue) : convert<T>(state, value);
+}
+
+template<> inline String convert<String>(JSC::ExecState& state, JSC::JSValue value)
+{
+    return value.toWTFString(&state);
+}
+
+template<typename T> inline T convert(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allowNonFinite)
 {
     static_assert(std::is_same<T, float>::value || std::is_same<T, double>::value, "Should be called with converting to float or double");
     double number = value.toNumber(&state);

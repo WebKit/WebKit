@@ -159,8 +159,8 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
         return;
     if (variantEastAsian && !fontFace->setVariantEastAsian(*variantEastAsian))
         return;
-    if (featureSettings && !fontFace->setFeatureSettings(*featureSettings))
-        return;
+    if (featureSettings)
+        fontFace->setFeatureSettings(*featureSettings);
 
     CSSFontFace::appendSources(fontFace, srcList, m_document, isInitiatingElementInUserAgentShadowTree);
     if (fontFace->allSourcesFailed())

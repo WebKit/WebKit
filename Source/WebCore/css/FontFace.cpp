@@ -26,39 +26,19 @@
 #include "config.h"
 #include "FontFace.h"
 
-#include "CSSFontFace.h"
 #include "CSSFontFeatureValue.h"
-#include "CSSFontSelector.h"
 #include "CSSUnicodeRangeValue.h"
-#include "CSSValue.h"
 #include "CSSValuePool.h"
-#include "Dictionary.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "FontVariantBuilder.h"
-#include "JSDOMCoreException.h"
 #include "JSFontFace.h"
-#include "ScriptExecutionContext.h"
 #include "StyleProperties.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-static inline Optional<String> valueFromDictionary(const Dictionary& dictionary, const char* key)
+RefPtr<FontFace> FontFace::create(JSC::ExecState& state, Document& document, const String& family, JSC::JSValue source, const Optional<Descriptors>& descriptors, ExceptionCode& ec)
 {
-    String result;
-    dictionary.get(key, result);
-    return result.isNull() ? Nullopt : Optional<String>(result);
-}
-
-RefPtr<FontFace> FontFace::create(JSC::ExecState& execState, ScriptExecutionContext& context, const String& family, JSC::JSValue source, const Dictionary& descriptors, ExceptionCode& ec)
-{
-    if (!context.isDocument()) {
-        ec = TypeError;
-        return nullptr;
-    }
-
-    Ref<FontFace> result = adoptRef(*new FontFace(downcast<Document>(context).fontSelector()));
+    auto result = adoptRef(*new FontFace(document.fontSelector()));
 
     ec = 0;
     result->setFamily(family, ec);
@@ -66,41 +46,36 @@ RefPtr<FontFace> FontFace::create(JSC::ExecState& execState, ScriptExecutionCont
         return nullptr;
 
     if (source.isString()) {
-        String sourceString = source.toString(&execState)->value(&execState);
-        auto value = FontFace::parseString(sourceString, CSSPropertySrc);
+        auto value = FontFace::parseString(source.getString(&state), CSSPropertySrc);
         if (!is<CSSValueList>(value.get())) {
             ec = SYNTAX_ERR;
             return nullptr;
         }
-        CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &downcast<Document>(context), false);
+        CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &document, false);
     }
 
-    if (auto style = valueFromDictionary(descriptors, "style"))
-        result->setStyle(style.value(), ec);
-    if (ec)
-        return nullptr;
-    if (auto style = valueFromDictionary(descriptors, "weight"))
-        result->setWeight(style.value(), ec);
-    if (ec)
-        return nullptr;
-    if (auto style = valueFromDictionary(descriptors, "stretch"))
-        result->setStretch(style.value(), ec);
-    if (ec)
-        return nullptr;
-    if (auto style = valueFromDictionary(descriptors, "unicodeRange"))
-        result->setUnicodeRange(style.value(), ec);
-    if (ec)
-        return nullptr;
-    if (auto style = valueFromDictionary(descriptors, "variant"))
-        result->setVariant(style.value(), ec);
-    if (ec)
-        return nullptr;
-    if (auto style = valueFromDictionary(descriptors, "featureSettings"))
-        result->setFeatureSettings(style.value(), ec);
-    if (ec)
-        return nullptr;
+    if (descriptors) {
+        result->setStyle(descriptors->style, ec);
+        if (ec)
+            return nullptr;
+        result->setWeight(descriptors->weight, ec);
+        if (ec)
+            return nullptr;
+        result->setStretch(descriptors->stretch, ec);
+        if (ec)
+            return nullptr;
+        result->setUnicodeRange(descriptors->unicodeRange, ec);
+        if (ec)
+            return nullptr;
+        result->setVariant(descriptors->variant, ec);
+        if (ec)
+            return nullptr;
+        result->setFeatureSettings(descriptors->featureSettings, ec);
+        if (ec)
+            return nullptr;
+    }
 
-    return result.ptr();
+    return WTFMove(result);
 }
 
 Ref<FontFace> FontFace::create(CSSFontFace& face)
@@ -109,10 +84,8 @@ Ref<FontFace> FontFace::create(CSSFontFace& face)
 }
 
 FontFace::FontFace(CSSFontSelector& fontSelector)
-    : m_weakPtrFactory(this)
-    , m_backing(CSSFontFace::create(&fontSelector, nullptr, this))
+    : FontFace(CSSFontFace::create(&fontSelector, nullptr, this))
 {
-    m_backing->addClient(*this);
 }
 
 FontFace::FontFace(CSSFontFace& face)
@@ -134,9 +107,8 @@ WeakPtr<FontFace> FontFace::createWeakPtr() const
 
 RefPtr<CSSValue> FontFace::parseString(const String& string, CSSPropertyID propertyID)
 {
-    Ref<MutableStyleProperties> style = MutableStyleProperties::create();
-    auto result = CSSParser::parseValue(style.ptr(), propertyID, string, true, CSSStrictMode, nullptr);
-    if (result == CSSParser::ParseResult::Error)
+    auto style = MutableStyleProperties::create();
+    if (CSSParser::parseValue(style.ptr(), propertyID, string, true, CSSStrictMode, nullptr) == CSSParser::ParseResult::Error)
         return nullptr;
     return style->getPropertyCSSValue(propertyID);
 }
@@ -184,56 +156,64 @@ void FontFace::setUnicodeRange(const String& unicodeRange, ExceptionCode& ec)
 
 void FontFace::setVariant(const String& variant, ExceptionCode& ec)
 {
-    Ref<MutableStyleProperties> style = MutableStyleProperties::create();
+    auto style = MutableStyleProperties::create();
     auto result = CSSParser::parseValue(style.ptr(), CSSPropertyFontVariant, variant, true, CSSStrictMode, nullptr);
-    if (result != CSSParser::ParseResult::Error) {
-        FontVariantSettings backup = m_backing->variantSettings();
-        auto normal = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
-        bool success = true;
-        if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantLigatures))
-            success &= m_backing->setVariantLigatures(*value);
-        else
-            m_backing->setVariantLigatures(normal);
-
-        if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantPosition))
-            success &= m_backing->setVariantPosition(*value);
-        else
-            m_backing->setVariantPosition(normal);
-
-        if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantCaps))
-            success &= m_backing->setVariantCaps(*value);
-        else
-            m_backing->setVariantCaps(normal);
-
-        if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantNumeric))
-            success &= m_backing->setVariantNumeric(*value);
-        else
-            m_backing->setVariantNumeric(normal);
-
-        if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantAlternates))
-            success &= m_backing->setVariantAlternates(*value);
-        else
-            m_backing->setVariantAlternates(normal);
-
-        if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantEastAsian))
-            success &= m_backing->setVariantEastAsian(*value);
-        else
-            m_backing->setVariantEastAsian(normal);
-
-        if (success)
-            return;
-        m_backing->setVariantSettings(backup);
+    if (result == CSSParser::ParseResult::Error) {
+        ec = SYNTAX_ERR;
+        return;
     }
-    ec = SYNTAX_ERR;
+
+    // FIXME: Would be much better to stage the new settings and set them all at once
+    // instead of this dance where we make a backup and revert to it if something fails.
+    FontVariantSettings backup = m_backing->variantSettings();
+
+    auto normal = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+    bool success = true;
+
+    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantLigatures))
+        success &= m_backing->setVariantLigatures(*value);
+    else
+        m_backing->setVariantLigatures(normal);
+
+    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantPosition))
+        success &= m_backing->setVariantPosition(*value);
+    else
+        m_backing->setVariantPosition(normal);
+
+    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantCaps))
+        success &= m_backing->setVariantCaps(*value);
+    else
+        m_backing->setVariantCaps(normal);
+
+    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantNumeric))
+        success &= m_backing->setVariantNumeric(*value);
+    else
+        m_backing->setVariantNumeric(normal);
+
+    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantAlternates))
+        success &= m_backing->setVariantAlternates(*value);
+    else
+        m_backing->setVariantAlternates(normal);
+
+    if (auto value = style->getPropertyCSSValue(CSSPropertyFontVariantEastAsian))
+        success &= m_backing->setVariantEastAsian(*value);
+    else
+        m_backing->setVariantEastAsian(normal);
+
+    if (!success) {
+        m_backing->setVariantSettings(backup);
+        ec = SYNTAX_ERR;
+    }
 }
 
 void FontFace::setFeatureSettings(const String& featureSettings, ExceptionCode& ec)
 {
-    bool success = false;
-    if (auto value = parseString(featureSettings, CSSPropertyFontFeatureSettings))
-        success = m_backing->setFeatureSettings(*value);
-    if (!success)
+    auto value = parseString(featureSettings, CSSPropertyFontFeatureSettings);
+    if (!value) {
         ec = SYNTAX_ERR;
+        return;
+    }
+    m_backing->setFeatureSettings(*value);
 }
 
 String FontFace::family() const
@@ -290,7 +270,7 @@ String FontFace::unicodeRange() const
         return "U+0-10FFFF";
     RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
     for (auto& range : m_backing->ranges())
-        values->append(CSSUnicodeRangeValue::create(range.from(), range.to()));
+        values->append(CSSUnicodeRangeValue::create(range.from, range.to));
     return values->cssText();
 }
 

@@ -3515,6 +3515,7 @@
 		9307F1130AF2C8BE00DBA31A /* DOMNodeInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85B498FA0ADB340200925CBB /* DOMNodeInternal.h */; };
 		9307F1D70AF2D59000DBA31A /* HitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9307F1D50AF2D59000DBA31A /* HitTestResult.cpp */; };
 		9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 9307F1D60AF2D59000DBA31A /* HitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		930841341CDDB15500B0958C /* JSDOMConvert.h in Headers */ = {isa = PBXBuildFile; fileRef = 930841331CDDB15500B0958C /* JSDOMConvert.h */; };
 		930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 930908900AF7EDE40081DF01 /* HitTestRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930C90DD19CF965300D6C21A /* InlineIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930C90DC19CF965300D6C21A /* InlineIterator.cpp */; };
 		93153BDA14181F7A00FCF5BE /* missingImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BD914181F7A00FCF5BE /* missingImage@2x.png */; };
@@ -9666,7 +9667,7 @@
 		51741D0B0B07259A00ED442C /* BackForwardClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardClient.h; sourceTree = "<group>"; };
 		51741D0D0B07259A00ED442C /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
 		51741D0E0B07259A00ED442C /* HistoryItem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryItem.cpp; sourceTree = "<group>"; };
-		51748FA21CC6EEEB00728D84 /* WorkerGlobalScopeConstructors.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = WorkerGlobalScopeConstructors.idl; sourceTree = "<group>"; };
+		51748FA21CC6EEEB00728D84 /* WorkerGlobalScopeConstructors.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerGlobalScopeConstructors.idl; sourceTree = "<group>"; };
 		5174E20810A1F44F00F95E6F /* PopStateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopStateEvent.h; sourceTree = "<group>"; };
 		5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PopStateEvent.idl; sourceTree = "<group>"; };
 		51771DFC1BDB475600CAE8E4 /* MemoryObjectStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryObjectStore.cpp; sourceTree = "<group>"; };
@@ -11163,6 +11164,7 @@
 		9307061309E0CA8200B17FE4 /* DerivedSources.make */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; lineEnding = 0; path = DerivedSources.make; sourceTree = "<group>"; usesTabs = 1; xcLanguageSpecificationIdentifier = xcode.lang.simpleColoring; };
 		9307F1D50AF2D59000DBA31A /* HitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResult.cpp; sourceTree = "<group>"; };
 		9307F1D60AF2D59000DBA31A /* HitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HitTestResult.h; sourceTree = "<group>"; };
+		930841331CDDB15500B0958C /* JSDOMConvert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvert.h; sourceTree = "<group>"; };
 		930908900AF7EDE40081DF01 /* HitTestRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HitTestRequest.h; sourceTree = "<group>"; };
 		930C90DC19CF965300D6C21A /* InlineIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineIterator.cpp; sourceTree = "<group>"; };
 		93153BD914181F7A00FCF5BE /* missingImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "missingImage@2x.png"; sourceTree = "<group>"; };
@@ -22302,6 +22304,7 @@
 				93B70D4709EB0C7C009D8468 /* JSDOMBinding.cpp */,
 				93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */,
 				413C2C331BC29A7B0075204C /* JSDOMConstructor.h */,
+				930841331CDDB15500B0958C /* JSDOMConvert.h */,
 				E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */,
 				E1C36C020EB076D6007410BC /* JSDOMGlobalObject.h */,
 				7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */,
@@ -25480,6 +25483,7 @@
 				BC80C9880CD294EE00A0B7B3 /* CSSTimingFunctionValue.h in Headers */,
 				9AB1F38018E2489A00534743 /* CSSToLengthConversionData.h in Headers */,
 				A882DA231593848D000115ED /* CSSToStyleMap.h in Headers */,
+				930841341CDDB15500B0958C /* JSDOMConvert.h in Headers */,
 				371F53E90D2704F900ECE0D5 /* CSSUnicodeRangeValue.h in Headers */,
 				DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */,
 				BC7D8FF01BD03B6400FFE540 /* CSSUnsetValue.h in Headers */,
