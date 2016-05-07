@@ -84,8 +84,10 @@ Ref<FontFace> FontFace::create(CSSFontFace& face)
 }
 
 FontFace::FontFace(CSSFontSelector& fontSelector)
-    : FontFace(CSSFontFace::create(&fontSelector, nullptr, this))
+    : m_weakPtrFactory(this)
+    , m_backing(CSSFontFace::create(&fontSelector, nullptr, this))
 {
+    m_backing->addClient(*this);
 }
 
 FontFace::FontFace(CSSFontFace& face)

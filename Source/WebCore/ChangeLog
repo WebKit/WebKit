@@ -1,3 +1,14 @@
+2016-05-07  Darin Adler  <darin@apple.com>
+
+        Fix crash introduced by the last patch.
+
+        Fix suggested by Chris Dumez.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::FontFace): Roll out incorrect change. Things were getting
+        initialized in the wrong order in a change I had made to the FontFace constructor
+        that takes a CSSFontSelector.
+
 2016-05-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline bindings tests after r200547.
