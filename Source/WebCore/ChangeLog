@@ -1,3 +1,49 @@
+2016-05-07  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Rework FontFace promise attribute handling
+        https://bugs.webkit.org/show_bug.cgi?id=157310
+
+        Reviewed by Myles C. Maxfield.
+
+        Making promise attributes cached attributes, so that they are created only once.
+        They are created in the custom binding code and passed to DOM class as needed.
+
+        Removed usage of ExecState& from DOM iterators.
+
+        No change should be visible from user scripts.
+
+        * Modules/fetch/FetchHeaders.cpp:
+        (WebCore::FetchHeaders::Iterator::next): Removing ExecState parameter.
+        * Modules/fetch/FetchHeaders.h:
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::keyValueIteratorForEach):
+        (WebCore::JSDOMIterator<JSWrapper>::next): Ditto.
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DeferredWrapper::promise): Removed deferred() and added access to promise directly.
+        * bindings/js/JSDOMPromise.h:
+        * bindings/js/JSFontFaceCustom.cpp:
+        (WebCore::JSFontFace::loaded): Using cached attribute to call FontFace::loaded only once.
+        * bindings/js/JSFontFaceSetCustom.cpp:
+        (WebCore::JSFontFaceSet::ready): Using cached attribute to call FontFaceSet::ready only once.
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::wrapper): Removing ExecState parameter.
+        * css/CSSFontFace.h:
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create): Ditto.
+        (WebCore::FontFace::FontFace): Ditto.
+        (WebCore::FontFace::fontStateChanged): Updating promise handling.
+        (WebCore::FontFace::registerLoaded): Resolving/rejecting promise if backing CSSFontFace loading is ended.
+        (WebCore::FontFace::load): Calling backing load.
+        * css/FontFace.h:
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::Iterator::next): Removing ExecState parameter.
+        (WebCore::FontFaceSet::load): Removing ExecState and ExceptionCode parameter.
+        (WebCore::FontFaceSet::registerReady): Resolving promise if ready otherwise storing it for resolving it later.
+        (WebCore::FontFaceSet::completedLoading): Resolving promise if any is stored.
+        (WebCore::FontFaceSet::create): Deleted.
+        * css/FontFaceSet.h:
+        * css/FontFaceSet.idl:
+
 2016-05-07  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
 
         Fix an incorrect usage of OS(DARWIN) with PLATFORM(COCOA)

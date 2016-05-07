@@ -46,10 +46,10 @@ JSDOMGlobalObject& DeferredWrapper::globalObject() const
     return *m_globalObject.get();
 }
 
-JSC::JSPromiseDeferred& DeferredWrapper::deferred() const
+JSC::JSValue DeferredWrapper::promise() const
 {
     ASSERT(m_deferred);
-    return *m_deferred.get();
+    return m_deferred->promise();
 }
 
 void DeferredWrapper::callFunction(ExecState& exec, JSValue function, JSValue resolution)

@@ -35,10 +35,6 @@
 #include <wtf/HashTraits.h>
 #include <wtf/Optional.h>
 
-namespace JSC {
-class ExecState;
-}
-
 namespace WebCore {
 
 typedef int ExceptionCode;
@@ -72,7 +68,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(FetchHeaders&);
-        Optional<WTF::KeyValuePair<String, String>> next(JSC::ExecState&);
+        Optional<WTF::KeyValuePair<String, String>> next();
 
     private:
         Ref<FetchHeaders> m_headers;

@@ -127,7 +127,7 @@ JSC::EncodedJSValue keyValueIteratorForEach(JSC::ExecState& state, const char* p
         return throwVMTypeError(&state);
 
     auto iterator = wrapper->wrapped().createIterator();
-    while (auto value = iterator.next(state)) {
+    while (auto value = iterator.next()) {
         JSC::MarkedArgumentBuffer arguments;
         arguments.append(toJS(&state, wrapper->globalObject(), value.value().value));
         arguments.append(toJS(&state, wrapper->globalObject(), value.value().key));
@@ -149,7 +149,7 @@ void JSDOMIterator<JSWrapper>::destroy(JSCell* cell)
 template<typename JSWrapper>
 JSC::JSValue JSDOMIterator<JSWrapper>::next(JSC::ExecState& state)
 {
-    auto iteratorValue = m_iterator.next(state);
+    auto iteratorValue = m_iterator.next();
     if (!iteratorValue)
         return createIteratorResultObject(&state, JSC::jsUndefined(), true);
 

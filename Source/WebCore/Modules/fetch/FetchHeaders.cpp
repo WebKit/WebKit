@@ -177,7 +177,7 @@ void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
     }
 }
 
-Optional<WTF::KeyValuePair<String, String>> FetchHeaders::Iterator::next(JSC::ExecState&)
+Optional<WTF::KeyValuePair<String, String>> FetchHeaders::Iterator::next()
 {
     while (m_currentIndex < m_keys.size()) {
         String key = m_keys[m_currentIndex++];

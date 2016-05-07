@@ -47,21 +47,21 @@ public:
     bool remove(FontFace&);
     void clear();
 
-    void load(JSC::ExecState&, const String& font, const String& text, DeferredWrapper&& promise, ExceptionCode&);
+    void load(const String& font, const String& text, DeferredWrapper&& promise);
     bool check(const String& font, const String& text, ExceptionCode&);
 
     enum class LoadStatus { Loading, Loaded };
     LoadStatus status() const;
 
     typedef DOMPromise<FontFaceSet&, DOMCoreException&> Promise;
-    Promise& promise(JSC::ExecState&);
+    void registerReady(Promise&&);
 
     CSSFontFaceSet& backing() { return m_backing; }
 
     class Iterator {
     public:
         explicit Iterator(FontFaceSet&);
-        Optional<WTF::KeyValuePair<RefPtr<FontFace>, RefPtr<FontFace>>> next(JSC::ExecState&);
+        Optional<WTF::KeyValuePair<RefPtr<FontFace>, RefPtr<FontFace>>> next();
 
     private:
         Ref<FontFaceSet> m_target;
@@ -93,8 +93,6 @@ private:
     FontFaceSet(Document&, const Vector<RefPtr<FontFace>>&);
     FontFaceSet(Document&, CSSFontFaceSet&);
 
-    void fulfillPromise();
-
     // CSSFontFaceSetClient
     void startedLoading() final;
     void completedLoading() final;
@@ -113,6 +111,7 @@ private:
     Ref<CSSFontFaceSet> m_backing;
     HashMap<RefPtr<CSSFontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
     Optional<Promise> m_promise;
+    bool m_isReady { false };
 };
 
 }

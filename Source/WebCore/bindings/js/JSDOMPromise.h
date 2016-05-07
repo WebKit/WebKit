@@ -44,7 +44,7 @@ public:
     void reject(const RejectResultType&);
 
     JSDOMGlobalObject& globalObject() const;
-    JSC::JSPromiseDeferred& deferred() const;
+    JSC::JSValue promise() const;
 
 private:
     void callFunction(JSC::ExecState&, JSC::JSValue function, JSC::JSValue resolution);
@@ -82,8 +82,6 @@ public:
 
     void resolve(const Value& value) { m_wrapper.resolve<Value>(value); }
     void reject(const Error& error) { m_wrapper.reject<Error>(error); }
-
-    JSC::JSPromiseDeferred& deferred() const { return m_wrapper.deferred(); }
 
 private:
     DeferredWrapper m_wrapper;

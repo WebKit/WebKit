@@ -31,10 +31,14 @@
 
 namespace WebCore {
 
-JSC::JSValue JSFontFaceSet::ready(JSC::ExecState& execState) const
+JSC::JSValue JSFontFaceSet::ready(JSC::ExecState& state) const
 {
-    auto& promise = wrapped().promise(execState);
-    return promise.deferred().promise();
+    if (!m_ready) {
+        DeferredWrapper promise(&state, globalObject(), JSC::JSPromiseDeferred::create(&state, globalObject()));
+        m_ready.set(state.vm(), this, promise.promise());
+        wrapped().registerReady(WTFMove(promise));
+    }
+    return m_ready.get();
 }
 
 }

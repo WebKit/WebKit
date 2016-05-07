@@ -148,7 +148,7 @@ public:
     };
 
     // We don't guarantee that the FontFace wrapper will be the same every time you ask for it.
-    Ref<FontFace> wrapper(JSC::ExecState&);
+    Ref<FontFace> wrapper();
 
 #if ENABLE(SVG_FONTS)
     bool hasSVGFontFaceSource() const;

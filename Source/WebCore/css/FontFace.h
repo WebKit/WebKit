@@ -28,8 +28,6 @@
 
 #include "CSSFontFace.h"
 #include "CSSPropertyNames.h"
-#include "DOMCoreException.h"
-#include "ExceptionCode.h"
 #include "JSDOMPromise.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -42,10 +40,12 @@ class CSSFontFace;
 class CSSValue;
 class Dictionary;
 
+using ExceptionCode = int;
+
 class FontFace final : public RefCounted<FontFace>, public CSSFontFace::Client {
 public:
     static RefPtr<FontFace> create(JSC::ExecState&, ScriptExecutionContext&, const String& family, JSC::JSValue source, const Dictionary& descriptors, ExceptionCode&);
-    static Ref<FontFace> create(JSC::ExecState&, CSSFontFace&);
+    static Ref<FontFace> create(CSSFontFace&);
     virtual ~FontFace();
 
     void setFamily(const String&, ExceptionCode&);
@@ -67,8 +67,8 @@ public:
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
     LoadStatus status() const;
 
-    typedef DOMPromise<FontFace&, DOMCoreException&> Promise;
-    Promise& promise() { return m_promise; }
+    typedef DOMPromise<FontFace&, ExceptionCode> Promise;
+    void registerLoaded(Promise&&);
 
     void load();
 
@@ -85,15 +85,12 @@ public:
     void deref() override { RefCounted<FontFace>::deref(); }
 
 private:
-    FontFace(JSC::ExecState&, CSSFontSelector&);
-    FontFace(JSC::ExecState&, CSSFontFace&);
-
-    void fulfillPromise();
-    void rejectPromise(ExceptionCode);
+    FontFace(CSSFontSelector&);
+    FontFace(CSSFontFace&);
 
     WeakPtrFactory<FontFace> m_weakPtrFactory;
     Ref<CSSFontFace> m_backing;
-    Promise m_promise;
+    Optional<Promise> m_promise;
 };
 
 }

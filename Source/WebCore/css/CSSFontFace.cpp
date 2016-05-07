@@ -343,12 +343,12 @@ void CSSFontFace::removeClient(Client& client)
     m_clients.remove(&client);
 }
 
-Ref<FontFace> CSSFontFace::wrapper(JSC::ExecState& execState)
+Ref<FontFace> CSSFontFace::wrapper()
 {
     if (m_wrapper)
         return Ref<FontFace>(*m_wrapper.get());
 
-    Ref<FontFace> wrapper = FontFace::create(execState, *this);
+    Ref<FontFace> wrapper = FontFace::create(*this);
     switch (m_status) {
     case Status::Pending:
         break;

@@ -34,7 +34,7 @@
 #include "CSSValuePool.h"
 #include "Dictionary.h"
 #include "Document.h"
-#include "ExceptionCodeDescription.h"
+#include "ExceptionCode.h"
 #include "FontVariantBuilder.h"
 #include "JSDOMCoreException.h"
 #include "JSFontFace.h"
@@ -43,12 +43,6 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-
-static FontFace::Promise createPromise(JSC::ExecState& exec)
-{
-    JSDOMGlobalObject& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(exec.lexicalGlobalObject());
-    return FontFace::Promise(DeferredWrapper(&exec, &globalObject, JSC::JSPromiseDeferred::create(&exec, &globalObject)));
-}
 
 static inline Optional<String> valueFromDictionary(const Dictionary& dictionary, const char* key)
 {
@@ -64,7 +58,7 @@ RefPtr<FontFace> FontFace::create(JSC::ExecState& execState, ScriptExecutionCont
         return nullptr;
     }
 
-    Ref<FontFace> result = adoptRef(*new FontFace(execState, downcast<Document>(context).fontSelector()));
+    Ref<FontFace> result = adoptRef(*new FontFace(downcast<Document>(context).fontSelector()));
 
     ec = 0;
     result->setFamily(family, ec);
@@ -109,23 +103,21 @@ RefPtr<FontFace> FontFace::create(JSC::ExecState& execState, ScriptExecutionCont
     return result.ptr();
 }
 
-Ref<FontFace> FontFace::create(JSC::ExecState& execState, CSSFontFace& face)
+Ref<FontFace> FontFace::create(CSSFontFace& face)
 {
-    return adoptRef(*new FontFace(execState, face));
+    return adoptRef(*new FontFace(face));
 }
 
-FontFace::FontFace(JSC::ExecState& execState, CSSFontSelector& fontSelector)
+FontFace::FontFace(CSSFontSelector& fontSelector)
     : m_weakPtrFactory(this)
     , m_backing(CSSFontFace::create(&fontSelector, nullptr, this))
-    , m_promise(createPromise(execState))
 {
     m_backing->addClient(*this);
 }
 
-FontFace::FontFace(JSC::ExecState& execState, CSSFontFace& face)
+FontFace::FontFace(CSSFontFace& face)
     : m_weakPtrFactory(this)
     , m_backing(face)
-    , m_promise(createPromise(execState))
 {
     m_backing->addClient(*this);
 }
@@ -343,19 +335,37 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
         // We still need to resolve promises when loading completes, even if all references to use have fallen out of scope.
         ref();
         break;
-    case CSSFontFace::Status::TimedOut:
-        rejectPromise(NETWORK_ERR);
+    case CSSFontFace::Status::Success:
+        if (m_promise)
+            std::exchange(m_promise, Nullopt)->resolve(*this);
         deref();
+        return;
+    case CSSFontFace::Status::TimedOut:
+    case CSSFontFace::Status::Failure:
+        if (m_promise)
+            std::exchange(m_promise, Nullopt)->reject(NETWORK_ERR);
+        deref();
+        return;
+    case CSSFontFace::Status::Pending:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+}
+
+void FontFace::registerLoaded(Promise&& promise)
+{
+    ASSERT(!m_promise);
+    switch (m_backing->status()) {
+    case CSSFontFace::Status::Loading:
+    case CSSFontFace::Status::Pending:
+        m_promise = WTFMove(promise);
         return;
     case CSSFontFace::Status::Success:
-        fulfillPromise();
-        deref();
+        promise.resolve(*this);
         return;
+    case CSSFontFace::Status::TimedOut:
     case CSSFontFace::Status::Failure:
-        rejectPromise(NETWORK_ERR);
-        deref();
-        return;
-    default:
+        promise.reject(NETWORK_ERR);
         return;
     }
 }
@@ -363,28 +373,6 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
 void FontFace::load()
 {
     m_backing->load();
-}
-
-void FontFace::fulfillPromise()
-{
-    // Normally, DeferredWrapper::callFunction resets the reference to the promise.
-    // However, API semantics require our promise to live for the entire lifetime of the FontFace.
-    // Let's make sure it stays alive.
-
-    Promise guard(m_promise);
-    m_promise.resolve(*this);
-    m_promise = guard;
-}
-
-void FontFace::rejectPromise(ExceptionCode code)
-{
-    // Normally, DeferredWrapper::callFunction resets the reference to the promise.
-    // However, API semantics require our promise to live for the entire lifetime of the FontFace.
-    // Let's make sure it stays alive.
-
-    Promise guard(m_promise);
-    m_promise.reject(DOMCoreException::create(ExceptionCodeDescription(code)).get());
-    m_promise = guard;
 }
 
 }
