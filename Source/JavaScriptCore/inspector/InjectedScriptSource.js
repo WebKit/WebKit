@@ -1374,20 +1374,11 @@ InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeOb
 }
 
 
-function slice(array, index)
+function bind(func, thisObject, ...outerArgs)
 {
-    var result = [];
-    for (var i = index || 0; i < array.length; ++i)
-        result.push(array[i]);
-    return result;
-}
-
-function bind(func, thisObject, var_args)
-{
-    var args = slice(arguments, 2);
-    return function(var_args) {
-        return func.apply(thisObject, args.concat(slice(arguments)));
-    }
+    return function(...innerArgs) {
+        return func.apply(thisObject, outerArgs.concat(innerArgs));
+    };
 }
 
 function BasicCommandLineAPI(callFrame)
@@ -1396,11 +1387,11 @@ function BasicCommandLineAPI(callFrame)
     this.$exception = injectedScript._exceptionValue;
 
     // $1-$99
-    for (var i = 1; i <= injectedScript._savedResults.length; ++i)
+    for (let i = 1; i <= injectedScript._savedResults.length; ++i)
         this.__defineGetter__("$" + i, bind(injectedScript._savedResult, injectedScript, i));
 
     // Command Line API methods.
-    for (var i = 0; i < BasicCommandLineAPI.methods.length; ++i)
+    for (let method of BasicCommandLineAPI.methods)
         this[method.name] = method;
 }
 
@@ -1413,8 +1404,8 @@ BasicCommandLineAPI.methods = [
 
     function keys(object) { return Object.keys(object); },
     function values(object) {
-        var result = [];
-        for (var key in object)
+        let result = [];
+        for (let key in object)
             result.push(object[key]);
         return result;
     },

@@ -1,3 +1,13 @@
+2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Misc CommandLineAPI cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=157450
+
+        Reviewed by Ryosuke Niwa.
+
+        * inspector/CommandLineAPIModuleSource.js:
+        (bind):
+
 2016-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         Enable IOS_TEXT_AUTOSIZING on Mac and make it testable

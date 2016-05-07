@@ -43,7 +43,7 @@ function bind(func, thisObject, ...outerArgs)
 {
     return function(...innerArgs) {
         return func.apply(thisObject, outerArgs.concat(innerArgs));
-    }
+    };
 }
 
 /**
@@ -60,7 +60,7 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
     this.__defineGetter__("$0", bind(commandLineAPIImpl._inspectedObject, commandLineAPIImpl));
 
     // $1-$99
-    for (var i = 1; i <= injectedScript._savedResults.length; ++i)
+    for (let i = 1; i <= injectedScript._savedResults.length; ++i)
         this.__defineGetter__("$" + i, bind(injectedScript._savedResult, injectedScript, i));
 
     // Command Line API methods.
