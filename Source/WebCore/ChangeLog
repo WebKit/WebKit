@@ -1,5 +1,57 @@
 2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Rename HitTestRequest DisallowShadowContent to DisallowUserAgentShadowContent
+        https://bugs.webkit.org/show_bug.cgi?id=157447
+
+        Reviewed by Ryosuke Niwa.
+
+        HitTesting is intended to reach nodes inside shadow content. This property
+        on the HitTestRequest is intended to avoid hit testing in UserAgent shadow
+        content. Rename the enum value, and cascading methods for clarity.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::isMainContent):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::handleMouseForceEvent):
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::isInsideScrollbar):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        (WebCore::EventHandler::hoverTimerFired):
+        (WebCore::EventHandler::dragSourceEndedAt):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::dispatchSyntheticTouchEventIfEnabled):
+        * page/EventHandler.h:
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateIfNeeded):
+        * rendering/HitTestRequest.h:
+        (WebCore::HitTestRequest::HitTestRequest):
+        (WebCore::HitTestRequest::disallowsUserAgentShadowContent):
+        (WebCore::HitTestRequest::disallowsShadowContent): Deleted.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::setToNonUserAgentShadowAncestor):
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult):
+        (WebCore::HitTestResult::setToNonShadowAncestor): Deleted.
+        * rendering/HitTestResult.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::isReplacementObscured):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::hitTestClipContent):
+        * testing/Internals.cpp:
+        (WebCore::Internals::nodesFromRect):
+
+2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Inspect Element and Element Selection searching should work with Shadow DOM Nodes
         https://bugs.webkit.org/show_bug.cgi?id=157446
         <rdar://problem/24688447>

@@ -1,3 +1,13 @@
+2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Rename HitTestRequest DisallowShadowContent to DisallowUserAgentShadowContent
+        https://bugs.webkit.org/show_bug.cgi?id=157447
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView.cpp:
+        (WebView::gestureNotify):
+
 2016-05-04  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: ARIA 'region' role is now a landmark; HTML 'section' element should be a landmark only if named

@@ -7049,7 +7049,7 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
         LayoutSize hitTestOffset = portionLocation - (fragment.layerBounds.location() + regionContentBox.location()) + region.fragmentContainer().scrolledContentOffset();
 
         // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
-        HitTestRequest newRequest(request.type() | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
+        HitTestRequest newRequest(request.type() | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowUserAgentShadowContent);
 
         // Make a new temporary HitTestLocation in the new region.
         HitTestLocation newHitTestLocation(hitTestLocation, hitTestOffset);

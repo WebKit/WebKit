@@ -132,7 +132,7 @@ static Node* moveOutOfUserAgentShadowTree(Node& node)
     return &node;
 }
 
-void HitTestResult::setToNonShadowAncestor()
+void HitTestResult::setToNonUserAgentShadowAncestor()
 {
     if (Node* node = innerNode()) {
         node = moveOutOfUserAgentShadowTree(*node);
@@ -668,7 +668,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestReques
     if (!node)
         return true;
 
-    if (request.disallowsShadowContent())
+    if (request.disallowsUserAgentShadowContent())
         node = node->document().ancestorInThisScope(node);
 
     mutableRectBasedTestResult().add(node);
@@ -688,7 +688,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestReques
     if (!node)
         return true;
 
-    if (request.disallowsShadowContent())
+    if (request.disallowsUserAgentShadowContent())
         node = node->document().ancestorInThisScope(node);
 
     mutableRectBasedTestResult().add(node);
