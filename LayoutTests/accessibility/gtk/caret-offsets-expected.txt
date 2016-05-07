@@ -23,14 +23,14 @@ PASS setCaretOffset(h1, 5) is true
 PASS caretMovedData is "Heading|5"
 PASS caretMovedData is "Paragraph|5"
 PASS caretMovedData is "Paragraph|20"
-PASS caretMovedData is "Paragraph|30"
+PASS caretMovedData became "Paragraph|30"
 PASS setCaretOffset(link, 5) is true
 PASS caretMovedData is "Paragraph|17"
 PASS list.role is "AXRole: AXList"
 PASS list.childrenCount is 3
 PASS setCaretOffset(listItem, 1) is false
 PASS setCaretOffset(listItem, 5) is true
-PASS caretMovedData is "ListItem|2"
+PASS caretMovedData is "ListItem|5"
 PASS comboBox.role is "AXRole: AXComboBox"
 PASS menuPopup.role is "AXRole: AXMenu"
 PASS comboBoxOption.role is "AXRole: AXMenuItem"
@@ -41,7 +41,7 @@ PASS table.role is "AXRole: AXTable"
 PASS table.childrenCount is 1
 PASS row.role is "AXRole: AXRow"
 PASS tableCell.role is "AXRole: AXCell"
-PASS caretMovedData is "Cell|2"
+PASS caretMovedData became "Cell|2"
 PASS successfullyParsed is true
 
 TEST COMPLETE

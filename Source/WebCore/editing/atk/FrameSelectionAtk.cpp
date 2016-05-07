@@ -25,6 +25,7 @@
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "Frame.h"
+#include "RenderListItem.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include <glib.h>
 #include <wtf/NeverDestroyed.h>
@@ -37,6 +38,13 @@ static void emitTextSelectionChange(AccessibilityObject* object, VisibleSelectio
     AtkObject* axObject = object->wrapper();
     if (!axObject || !ATK_IS_TEXT(axObject))
         return;
+
+    // We need to adjust the offset for the list item marker in Left-To-Right text because
+    // the list item marker is exposed through the text of the accessible list item rather
+    // than through a separate accessible object.
+    RenderObject* renderer = object->renderer();
+    if (is<RenderListItem>(renderer) && renderer->style().direction() == LTR)
+        offset += downcast<RenderListItem>(*renderer).markerTextWithSuffix().length();
 
     g_signal_emit_by_name(axObject, "text-caret-moved", offset);
     if (selection.isRange())

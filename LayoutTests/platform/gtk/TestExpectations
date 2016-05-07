@@ -2556,8 +2556,6 @@ webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.xh
 webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.html [ ImageOnlyFailure Pass ]
 webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.xhtml [ ImageOnlyFailure Pass ]
 
-webkit.org/b/153956 accessibility/gtk/caret-offsets.html [ Failure ]
-
 webkit.org/b/156438 imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Timeout Failure ]
 webkit.org/b/156438 imported/w3c/web-platform-tests/IndexedDB/keyorder.htm [ Failure ]
 webkit.org/b/156438 inspector/indexeddb/requestDatabaseNames.html [ Failure ]

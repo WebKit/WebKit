@@ -1,3 +1,16 @@
+2016-05-07  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        REGRESSION(r196222): [AX][GTK] accessibility/gtk/caret-offsets.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=153956
+
+        Reviewed by Chris Fleizach.
+
+        Change the test to run asynchronously and update the expectations.
+
+        * accessibility/gtk/caret-offsets-expected.txt: Updated.
+        * accessibility/gtk/caret-offsets.html: Updated.
+        * platform/gtk/TestExpectations: Unskipped the previously-failing test.
+
 2016-05-06  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Skip failing INTL test.

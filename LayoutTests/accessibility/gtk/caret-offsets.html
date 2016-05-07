@@ -54,6 +54,8 @@ if (window.testRunner) {
 }
 
 if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
     accessibilityController.addNotificationListener(globalListener);
     root = accessibilityController.accessibleElementById('firstChild').parentElement();
     shouldBe('root.childrenCount', '5');
@@ -71,47 +73,48 @@ if (window.accessibilityController) {
     resetCaretOffsetForObject(p1, 20);
     shouldBeEqualToString('caretMovedData', 'Paragraph|20');
     resetCaretOffsetForObject(p1, 30);
-    shouldBeEqualToString('caretMovedData', 'Paragraph|30');
-    link = p1.childAtIndex(0);
-    caretMovedData = '';
-    shouldBeTrue('setCaretOffset(link, 5)');
-    /* Positions inside links are reported relative to the paragraph. */
-    shouldBeEqualToString('caretMovedData', 'Paragraph|17');
+    shouldBecomeEqualToString('caretMovedData', 'Paragraph|30', function () { 
+        caretMovedData = '';
+        link = p1.childAtIndex(0);
+        shouldBeTrue('setCaretOffset(link, 5)');
+        /* Positions inside links are reported relative to the paragraph. */
+        shouldBeEqualToString('caretMovedData', 'Paragraph|17');
 
-    list = root.childAtIndex(2);
-    shouldBeEqualToString('list.role', 'AXRole: AXList');
-    shouldBe('list.childrenCount', '3');
-    listItem = list.childAtIndex(2);
-    /* It's not possible to place the caret inside an item's marker. */
-    shouldBe('setCaretOffset(listItem, 1)', 'false');
-    /* It should be possible to place the caret inside an item's text. */
-    caretMovedData = '';
-    shouldBe('setCaretOffset(listItem, 5)', 'true');
-    shouldBeEqualToString('caretMovedData', 'ListItem|2');
+        list = root.childAtIndex(2);
+        shouldBeEqualToString('list.role', 'AXRole: AXList');
+        shouldBe('list.childrenCount', '3');
+        listItem = list.childAtIndex(2);
+        /* It's not possible to place the caret inside an item's marker. */
+        shouldBe('setCaretOffset(listItem, 1)', 'false');
+        /* It should be possible to place the caret inside an item's text. */
+        caretMovedData = '';
+        shouldBe('setCaretOffset(listItem, 5)', 'true');
+        shouldBeEqualToString('caretMovedData', 'ListItem|5');
 
-    panel = root.childAtIndex(3);
-    comboBox = panel.childAtIndex(0);
-    shouldBeEqualToString('comboBox.role', 'AXRole: AXComboBox');
-    menuPopup = comboBox.childAtIndex(0);
-    shouldBeEqualToString('menuPopup.role', 'AXRole: AXMenu');
-    comboBoxOption = menuPopup.childAtIndex(0);
-    shouldBeEqualToString('comboBoxOption.role', 'AXRole: AXMenuItem');
-    /* It's not possible to place the caret inside an option for a combobox. */
-    shouldBe('setCaretOffset(comboBoxOption, 1)', 'false');
-    textEntry = panel.childAtIndex(1);
-    shouldBeEqualToString('textEntry.role', 'AXRole: AXTextField');
-    resetCaretOffsetForObject(textEntry, 5);
-    shouldBeEqualToString('caretMovedData', 'TextField|5');
+        panel = root.childAtIndex(3);
+        comboBox = panel.childAtIndex(0);
+        shouldBeEqualToString('comboBox.role', 'AXRole: AXComboBox');
+        menuPopup = comboBox.childAtIndex(0);
+        shouldBeEqualToString('menuPopup.role', 'AXRole: AXMenu');
+        comboBoxOption = menuPopup.childAtIndex(0);
+        shouldBeEqualToString('comboBoxOption.role', 'AXRole: AXMenuItem');
+        /* It's not possible to place the caret inside an option for a combobox. */
+        shouldBe('setCaretOffset(comboBoxOption, 1)', 'false');
+        textEntry = panel.childAtIndex(1);
+        shouldBeEqualToString('textEntry.role', 'AXRole: AXTextField');
+        resetCaretOffsetForObject(textEntry, 5);
+        shouldBeEqualToString('caretMovedData', 'TextField|5');
 
-    table = root.childAtIndex(4);
-    shouldBeEqualToString('table.role', 'AXRole: AXTable');
-    shouldBe('table.childrenCount', '1');
-    row = table.childAtIndex(0);
-    shouldBeEqualToString('row.role', 'AXRole: AXRow');
-    tableCell = row.childAtIndex(0);
-    shouldBeEqualToString('tableCell.role', 'AXRole: AXCell');
-    resetCaretOffsetForObject(tableCell, 2);
-    shouldBeEqualToString('caretMovedData', 'Cell|2');
+        table = root.childAtIndex(4);
+        shouldBeEqualToString('table.role', 'AXRole: AXTable');
+        shouldBe('table.childrenCount', '1');
+        row = table.childAtIndex(0);
+        shouldBeEqualToString('row.role', 'AXRole: AXRow');
+        tableCell = row.childAtIndex(0);
+        shouldBeEqualToString('tableCell.role', 'AXRole: AXCell');
+        resetCaretOffsetForObject(tableCell, 2);
+        shouldBecomeEqualToString('caretMovedData', 'Cell|2', finishJSTest);
+    });
 }
 
 description("This test is replicated from old file testatk.c and tests various scenarios of caret movement: setting caret offset and receiving text-caret-moved signal.");

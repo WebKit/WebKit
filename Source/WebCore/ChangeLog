@@ -1,3 +1,28 @@
+2016-05-07  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        REGRESSION(r196222): [AX][GTK] accessibility/gtk/caret-offsets.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=153956
+
+        Reviewed by Chris Fleizach.
+
+        The reason the test began failing is that it was checking the new caret offset
+        synchronously. For most of the test cases, this was not a problem. But when the
+        caret was moved out of a focused link, the focus change (and associated repainting)
+        delayed the caret-moved event long enough to cause the associated test case to fail.
+        The test now uses shouldBecomeEqualToString() instead of shouldBeEqualToString().
+
+        The test also had a supposedly-correct expectation which was wrong: When moving the
+        caret to a valid accessible offset, the caret-moved event should be for that offset.
+        This was not the case for the list item test case because emitTextSelectionChange()
+        was not adjusting the offset for the RenderListMarker, the text of which is exposed
+        as part of the ATK_ROLE_LIST_ITEM object. This bug was also fixed and the test case
+        updated accordingly.
+
+        No new tests are needed. The previously-failing test is now passing.
+
+        * editing/atk/FrameSelectionAtk.cpp:
+        (WebCore::emitTextSelectionChange):
+
 2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Rename HitTestRequest DisallowShadowContent to DisallowUserAgentShadowContent
