@@ -2484,6 +2484,7 @@ js/intl-datetimeformat.html [ Skip ]
 js/intl-numberformat.html [ Skip ]
 js/intl.html [ Skip ]
 js/number-toLocaleString.html [ Skip ]
+js/string-localeCompare.html [ Skip ]
 js/string-toLocaleLowerCase.html [ Skip ]
 js/string-toLocaleUpperCase.html [ Skip ]
 

@@ -1,3 +1,4 @@
+//@ skip if $hostOS == "windows"
 description("This test checks the behavior of String.prototype.localeCompare as described in the ECMAScript Internationalization API Specification (ECMA-402 2.0).");
 
 shouldBe("String.prototype.localeCompare.length", "1");
