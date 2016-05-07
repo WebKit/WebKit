@@ -18,7 +18,7 @@ Suites.push(new Suite("Animometer",
         },
         {
             url: "master/canvas-stage.html?pathType=arcs",
-            name: "Canvas arcs"
+            name: "Canvas Arcs"
         },
         {
             url: "master/leaves.html",
@@ -30,7 +30,7 @@ Suites.push(new Suite("Animometer",
         },
         {
             url: "master/canvas-stage.html?pathType=line&lineCap=square",
-            name: "Canvas line segments"
+            name: "Canvas Lines"
         },
         {
             url: "master/focus.html",

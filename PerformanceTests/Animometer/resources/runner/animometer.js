@@ -223,7 +223,7 @@ ResultsTable = Utilities.createClass(
 
     clear: function()
     {
-        this.element.innerHTML = "";
+        this.element.textContent = "";
     },
 
     _addHeader: function()
@@ -327,6 +327,12 @@ window.sectionsManager =
 {
     showSection: function(sectionIdentifier, pushState)
     {
+        document.body.classList.remove("showing-intro");
+        document.body.classList.remove("showing-results");
+        document.body.classList.remove("showing-test-container");
+
+        document.body.classList.add("showing-" + sectionIdentifier);
+
         var currentSectionElement = document.querySelector("section.selected");
         console.assert(currentSectionElement);
 
@@ -344,7 +350,7 @@ window.sectionsManager =
     {
         document.querySelector("#" + sectionIdentifier + " .score").textContent = score;
         if (mean)
-            document.querySelector("#" + sectionIdentifier + " .mean").innerHTML = mean;
+            document.querySelector("#" + sectionIdentifier + " .mean").textContent = mean;
     },
 
     populateTable: function(tableIdentifier, headers, dashboard)
@@ -457,7 +463,7 @@ window.benchmarkController = {
         var container = Utilities.createElement("div", {}, overlay);
 
         var header = Utilities.createElement("h3", {}, container);
-        header.textContent = "Debug output";
+        header.textContent = "Debug Output";
 
         var data = Utilities.createElement("div", {}, container);
         data.textContent = "Please wait...";

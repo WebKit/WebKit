@@ -1,3 +1,30 @@
+2016-05-07  Timothy Hatcher  <timothy@apple.com>
+
+        Update Animometer design
+        https://bugs.webkit.org/show_bug.cgi?id=157449
+
+        Reviewed by Darin Adler.
+
+        * Animometer/developer.html: Stop including runner/animometer.css.
+        * Animometer/index.html: Udpated elements to fit new styles.
+
+        * Animometer/resources/debug-runner/animometer.css:
+        Copy the old runner/animometer.css to here so the debug runner is unaffected.
+
+        * Animometer/resources/runner/animometer.css:
+        New styles for the design. Drop flex box for broad browser support.
+
+        * Animometer/resources/runner/animometer.js:
+        (ResultsTable.clear): Use textContent.
+        (window.sectionsManager.showSection): Add class to the body.
+        (window.sectionsManager.setSectionScore): Use textContent, not innerHTML.
+
+        * Animometer/resources/runner/crystal.svg: Added.
+        * Animometer/resources/runner/lines.svg: Added.
+        * Animometer/resources/runner/logo.svg: Added.
+
+        * Animometer/resources/runner/tests.js: Shorten test name and title case them.
+
 2016-05-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Unprefix CSS Grid Layout properties

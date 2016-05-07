@@ -1,45 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Animometer</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no">
+
+    <title>Motion Mark 1.0</title>
+
     <link rel="stylesheet" href="resources/runner/animometer.css">
-    <script src="resources/strings.js"></script>
-    <script src="resources/extensions.js"></script>
-    <script src="resources/statistics.js"></script>
 
-    <script src="resources/runner/tests.js"></script>
-    <script src="resources/runner/animometer.js"></script>
+    <script src="resources/strings.js" defer></script>
+    <script src="resources/extensions.js" defer></script>
+    <script src="resources/statistics.js" defer></script>
 
-    <script src="resources/runner/benchmark-runner.js"></script>
+    <script src="resources/runner/tests.js" defer></script>
+    <script src="resources/runner/animometer.js" defer></script>
+
+    <script src="resources/runner/benchmark-runner.js" defer></script>
+
+    <script>
+        window.addEventListener("load", function() {
+            // Start the fade in animation.
+            document.body.classList.add("images-loaded");
+        });
+    </script>
 </head>
-<body>
+<body class="showing-intro">
     <main>
-        <hr>
         <section id="intro" class="selected">
-            <h1>Animometer</h1>
-            <p>Animometer is a graphics benchmark that measures a browser’s capability to animate complex scenes at a target frame rate.</p>
-            <p>For accurate results, please take the browser window full screen, or rotate the device to landscape orientation.</p>
-            <div class="orientation-check">
-                <p class="hidden">Please rotate the device to orientation before starting.</p>
-                <button id="run-benchmark" onclick="benchmarkController.startBenchmark()">Run benchmark</button>
+            <svg class="logo"><use xlink:href="resources/runner/logo.svg#root"></svg>
+            <div class="body">
+                <p>Motion Mark is a graphics benchmark that measures a browser’s capability to animate complex scenes at a target frame rate.</p>
+                <p>For accurate results, please take your browser window full screen, or rotate your device to landscape orientation.</p>
+                <p class="portrait-orientation-check"><b>Please rotate your device.</b></p>
+                <button class="landscape-orientation-check" onclick="benchmarkController.startBenchmark()">Run Benchmark</button>
             </div>
         </section>
-        <section id="test-container" class="frame-container">
-        </section>
+
+        <section id="test-container" class="frame-container"></section>
+
         <section id="results">
-            <h1>Animometer score</h1>
-            <p class="score" onclick="benchmarkController.showDebugInfo()"></p>
-            <div id="results-tables">
-                <table id="results-score"></table>
-                <table id="results-header"></table>
-            </div>
-            <footer>
+            <svg class="logo"><use xlink:href="resources/runner/logo.svg#root"></svg>
+            <div class="body">
+                <p class="score" onclick="benchmarkController.showDebugInfo()"></p>
+                <table id="results-header"></table><table id="results-score"></table><br>
                 <button onclick="benchmarkController.startBenchmark()">Test Again</button>
-            </footer>
+            </div>
         </section>
-        <hr>
     </main>
 </body>
 </html>

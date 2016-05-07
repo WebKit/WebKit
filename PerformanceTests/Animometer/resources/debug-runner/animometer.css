@@ -1,3 +1,339 @@
+/* Outer harness */
+html,body {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    background-color: rgb(241, 241, 241);
+    color: rgb(96, 96, 96);
+    font-family: -apple-system, "Helvetica Neue", Helvetica, Verdana, sans-serif;
+}
+
+main {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-flow: column;
+}
+
+hr {
+    flex: 1 0 20px;
+    width: 1px;
+    border: 0;
+    margin: 0;
+}
+
+section {
+    box-sizing: border-box;
+    width: 100%;
+    display: none;
+}
+
+section.selected {
+    display: initial;
+}
+
+h1 {
+    font-size: 3em;
+    text-align: center;
+    font-weight: 600;
+    margin: 10vh 0;
+    flex: 0 1 1em;
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+    flex: 0 0 auto;
+    display: block;
+    font-size: 1.5em;
+    border: 2px solid rgb(96, 96, 96);
+    color: rgb(96, 96, 96);
+    background: transparent;
+    border-radius: 10px;
+    padding: .5em 2em;
+}
+
+button:hover {
+    background-color: rgba(0, 0, 0, .1);
+    cursor: pointer;
+}
+
+button:active {
+    color: inherit;
+    background-color: rgba(0, 0, 0, .2);
+}
+
+button:disabled {
+    border-color: rgba(96, 96, 96, .5);
+    color: rgba(96, 96, 96, .5);
+}
+
+@media screen and (min-device-height: 1024px),
+    screen and (min-device-width: 1024px) and (orientation: landscape) {
+    section {
+        padding: 0 20px;
+    }
+
+    section.selected {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-flow: column;
+    }
+}
+
+@media screen and (max-device-width: 414px),
+    screen and (max-device-height: 414px) and (orientation: landscape) {
+    h1 {
+        font-size: 2.5em;
+    }
+
+    hr {
+        flex: 0 0 0;
+    }
+
+    section {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        align-self: stretch;
+        padding: 0 5px;
+    }
+}
+
+/* Intro section */
+#intro.selected {
+    flex: 1 0 auto;
+}
+
+#intro > p {
+    flex: 0 1 auto;
+    padding: .5em 0;
+    margin: 0;
+    font-size: 2em;
+}
+
+#intro .orientation-check {
+    padding: 10vh 0;
+    text-align: center;
+}
+
+#intro .orientation-check p {
+    font-size: 1em;
+    color: hsl(11, 72%, 50%);
+    margin-bottom: 1em;
+    -apple-trailing-word: -apple-partially-balanced;
+}
+
+#intro .orientation-check button {
+    margin: 0 auto;
+}
+
+@media screen and (min-device-height: 1024px),
+    screen and (min-device-width: 1024px) and (orientation: landscape) {
+    #intro p {
+        max-width: 800px;
+        margin: 0;
+    }
+}
+
+@media screen and (max-device-width: 414px),
+    screen and (max-device-height: 414px) and (orientation: landscape) {
+    #intro.selected {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-flow: column;
+    }
+
+    #intro p {
+        padding-left: 20px;
+        padding-right: 20px;
+        font-size: 1.5em;
+    }
+}
+
+/* Running test section */
+#test-container.selected {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.frame-container > iframe {
+    width: 1200px;
+    height: 600px;
+    border: 0;
+    margin: 0 auto;
+}
+
+@media screen and (max-device-width: 414px),
+    screen and (max-device-height: 414px) and (orientation: landscape) {
+    #test-container {
+        padding: 0;
+    }
+
+    .frame-container {
+        width: 100%;
+        height: calc(100% + 1px);
+    }
+
+    .frame-container > iframe {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+@media (min-device-height: 768px) and (max-device-height: 1024px) {
+    .frame-container > iframe {
+        width: 900px;
+        height: 600px;
+    }
+}
+
+@media screen and (max-device-width: 1024px) and (min-device-height: 1366px) {
+    .frame-container > iframe {
+        width: 1200px;
+        height: 800px;
+    }
+}
+
+@media screen and (min-width: 1800px) {
+    .frame-container > iframe {
+        width: 1600px;
+        height: 800px;
+    }
+}
+
+/* Results section */
+#results {
+    text-align: center;
+}
+
+#results.selected {
+    flex: 1 0 auto;
+}
+
+.score {
+    font-size: 5em;
+    font-weight: bold;
+    margin: 0;
+}
+
+#results-tables {
+    direction: rtl;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin: 3em 0;
+}
+
+#results table {
+    direction: ltr;
+    border-spacing: 0;
+}
+
+#results th {
+    padding: .5em 0;
+}
+
+#results tr td {
+    padding: .25em 0;
+}
+
+#results-header td, #results-header th {
+    text-align: left;
+}
+#results-header tr td {
+    padding-right: 1em;
+}
+#results-score td, #results-score th {
+    text-align: right;
+}
+#results footer {
+    padding-bottom: 10vh;
+}
+
+@media screen and (max-device-width: 414px),
+    screen and (max-device-height: 414px) and (orientation: landscape) {
+    #results.selected {
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-flow: column;
+    }
+
+    .score {
+        font-size: 3em;
+    }
+}
+
+#overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    color: rgb(255, 255, 255);
+    background: rgba(0, 0, 10, .8);
+}
+
+@supports (-webkit-backdrop-filter: blur(10px)) {
+    #overlay {
+        background: rgba(0, 0, 10, .4);
+        -webkit-backdrop-filter: blur(10px);
+    }
+}
+
+#overlay > div {
+    width: 500px;
+    height: 500px;
+    position: absolute;
+    margin-top: -250px;
+    margin-left: -250px;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    justify-content: flex-start;
+    flex-flow: column;
+}
+
+#overlay > div div {
+    flex: 1 1 auto;
+    overflow: scroll;
+    border: 1px solid rgb(241, 241, 241);
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+#overlay button {
+    margin: 1em 5em;
+    border-color: rgb(241, 241, 241);
+    color: rgb(241, 241, 241);
+}
+
+#overlay button:hover {
+    background-color: rgba(255, 255, 255, .1);
+}
+
+#overlay button:active {
+    background-color: rgba(255, 255, 255, .2);
+}
+
+/* Debug specific */
 body {
     background-color: rgb(96, 96, 96);
     color: rgb(235, 235, 235);
