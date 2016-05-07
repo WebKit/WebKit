@@ -1,3 +1,24 @@
+2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inspect Element and Element Selection searching should work with Shadow DOM Nodes
+        https://bugs.webkit.org/show_bug.cgi?id=157446
+        <rdar://problem/24688447>
+
+        Reviewed by Ryosuke Niwa.
+
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode):
+        Shadow DOM nodes did not have a parent, and so when attempting
+        to create DOM Tree elements up the chain, we were failing at
+        shadow boundaries. Create the parent relationship, the parent
+        already treats it as a child.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype._revealAndSelectNode):
+        Whenever we try to reveal and select an element in a shadow tree
+        but the setting to show shadow DOM is disabled, walk up until
+        we are out of the shadow tree.
+
 2016-05-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Unexpected white border at the bottom of Debugger filter bar

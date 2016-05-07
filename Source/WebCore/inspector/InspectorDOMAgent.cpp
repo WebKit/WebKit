@@ -1850,6 +1850,8 @@ Node* InspectorDOMAgent::innerParentNode(Node* node)
     ASSERT(node);
     if (is<Document>(*node))
         return downcast<Document>(*node).ownerElement();
+    if (is<ShadowRoot>(*node))
+        return downcast<ShadowRoot>(*node).host();
     return node->parentNode();
 }
 

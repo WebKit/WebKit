@@ -71,11 +71,13 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
 
         this._enabledPseudoClasses = [];
 
+        // FIXME: The logic around this._shadowRoots and this._children is very confusing.
         this._shadowRoots = [];
         if (payload.shadowRoots) {
             for (var i = 0; i < payload.shadowRoots.length; ++i) {
                 var root = payload.shadowRoots[i];
                 var node = new WebInspector.DOMNode(this._domTreeManager, this.ownerDocument, true, root);
+                node.parentNode = this;
                 this._shadowRoots.push(node);
             }
         }
@@ -87,6 +89,8 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
 
         if (payload.children)
             this._setChildrenPayload(payload.children);
+        else if (!this._children && this._shadowRoots.length)
+            this._children = this._shadowRoots.slice();
 
         this._pseudoElements = new Map;
         if (payload.pseudoElements) {

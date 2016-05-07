@@ -1,5 +1,25 @@
 2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Inspect Element and Element Selection searching should work with Shadow DOM Nodes
+        https://bugs.webkit.org/show_bug.cgi?id=157446
+        <rdar://problem/24688447>
+
+        Reviewed by Ryosuke Niwa.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::innerParentNode):
+        The Inspector backend was informing the frontend that all ShadowRoots
+        were floating and had no parent. Get the host element for ShadowRoots.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::moveOutOfUserAgentShadowTree):
+        (WebCore::HitTestResult::setToNonShadowAncestor):
+        EventHandler::mouseMoved is calling setToNonShadowAncestor before
+        notifying Page::chrome / Inspector about the moused over element.
+        This should be the deepest non-user-agent-shadow node.
+
+2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Misc CommandLineAPI cleanup
         https://bugs.webkit.org/show_bug.cgi?id=157450
 

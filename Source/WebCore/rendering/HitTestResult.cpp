@@ -121,16 +121,27 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     return *this;
 }
 
+static Node* moveOutOfUserAgentShadowTree(Node& node)
+{
+    if (node.isInShadowTree()) {
+        if (ShadowRoot* root = node.containingShadowRoot()) {
+            if (root->type() == ShadowRoot::Type::UserAgent)
+                return root->host();
+        }
+    }
+    return &node;
+}
+
 void HitTestResult::setToNonShadowAncestor()
 {
-    Node* node = innerNode();
-    if (node)
-        node = node->document().ancestorInThisScope(node);
-    setInnerNode(node);
-    node = innerNonSharedNode();
-    if (node)
-        node = node->document().ancestorInThisScope(node);
-    setInnerNonSharedNode(node);
+    if (Node* node = innerNode()) {
+        node = moveOutOfUserAgentShadowTree(*node);
+        setInnerNode(node);
+    }
+    if (Node *node = innerNonSharedNode()) {
+        node = moveOutOfUserAgentShadowTree(*node);
+        setInnerNonSharedNode(node);
+    }
 }
 
 void HitTestResult::setInnerNode(Node* node)

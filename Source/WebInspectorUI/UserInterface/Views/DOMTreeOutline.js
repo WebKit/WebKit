@@ -282,6 +282,13 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         if (!node || this._suppressRevealAndSelect)
             return;
 
+        if (!WebInspector.showShadowDOMSetting.value) {
+            while (node && node.isInShadowTree())
+                node = node.parentNode;
+            if (!node)
+                return;
+        }
+
         var treeElement = this.createTreeElementFor(node);
         if (!treeElement)
             return;
