@@ -1,3 +1,18 @@
+2016-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        MouseEvent's offsetX and offsetY should be based on relative target
+        https://bugs.webkit.org/show_bug.cgi?id=157444
+        <rdar://problem/24396408>
+
+        Reviewed by Darin Adler.
+
+        Add a W3C style testharness.js test for adjusting offsetX and offsetY to the adjusted target
+        since our existing behavior matches the spec as well as Chrome's behavior:
+        http://w3c.github.io/webcomponents/spec/shadow/#event-dispatch
+
+        * fast/shadow-dom/MouseEvent-prototype-offsetX-offsetY-expected.txt: Added.
+        * fast/shadow-dom/MouseEvent-prototype-offsetX-offsetY.html: Added.
+
 2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve console.count()
