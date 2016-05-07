@@ -1,3 +1,16 @@
+2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve console.count()
+        https://bugs.webkit.org/show_bug.cgi?id=157439
+        <rdar://problem/26152654>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/console/console-api-expected.txt:
+        * inspector/console/console-count-expected.txt: Added.
+        * inspector/console/console-count.html: Added.
+        * inspector/console/console-time.html:
+
 2016-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         Enable IOS_TEXT_AUTOSIZING on Mac and make it testable

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerCountNoArguments() {
+    for (let i = 0; i < 10; ++i) {
+        console.count();
+        if (i % 2)
+            console.count();
+    }
+}
+
+function triggerLabeledCounters() {
+    for (let i = 0; i < 10; ++i) {
+        console.count("alpha");
+        if (i % 2) {
+            console.count("beta");
+            console.count("alpha");
+        }
+    }
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("console.count");
+
+    suite.addTestCase({
+        name: "NoArguments",
+        description: "No arguments increments a shared global counter.",
+        test: (resolve, reject) => {
+            let seen = 0;
+            const expected = 16;
+            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                InspectorTest.log(message.messageText);
+                if (++seen === expected) {
+                    WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+                    resolve();
+                }
+            }
+
+            InspectorTest.evaluateInPage("triggerCountNoArguments()"); // 15
+            InspectorTest.evaluateInPage("console.count()"); // 1
+        }
+    });
+
+    suite.addTestCase({
+        name: "WithLabel",
+        description: "Labeled counters increment the label.",
+        test: (resolve, reject) => {
+            let seen = 0;
+            const expected = 20;
+            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                InspectorTest.log(message.messageText);
+                if (++seen === expected) {
+                    WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+                    resolve();
+                }
+            }
+
+            InspectorTest.evaluateInPage("triggerLabeledCounters()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the console.count API.</p>
+</body>
+</html>

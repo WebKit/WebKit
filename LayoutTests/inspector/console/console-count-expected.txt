@@ -1,0 +1,44 @@
+Tests for the console.count API.
+
+
+== Running test suite: console.count
+-- Running test case: NoArguments
+Global: 1
+Global: 2
+Global: 3
+Global: 4
+Global: 5
+Global: 6
+Global: 7
+Global: 8
+Global: 9
+Global: 10
+Global: 11
+Global: 12
+Global: 13
+Global: 14
+Global: 15
+Global: 16
+
+-- Running test case: WithLabel
+alpha: 1
+alpha: 2
+beta: 1
+alpha: 3
+alpha: 4
+alpha: 5
+beta: 2
+alpha: 6
+alpha: 7
+alpha: 8
+beta: 3
+alpha: 9
+alpha: 10
+alpha: 11
+beta: 4
+alpha: 12
+alpha: 13
+alpha: 14
+beta: 5
+alpha: 15
+

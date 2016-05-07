@@ -21,7 +21,7 @@ function test()
                 if (++seen === expected) {
                     WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
                     resolve();
-                }                
+                }
             }
 
             InspectorTest.evaluateInPage("console.time()");
@@ -39,8 +39,6 @@ function test()
         name: "UserLabels",
         description: "Test that user labels works as expected.",
         test: (resolve, reject) => {
-            let seen = 0;
-            const expected = 3;
             WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
                 let message = event.data.message;
                 InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
@@ -68,7 +66,7 @@ function test()
                 if (++seen === expected) {
                     WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
                     resolve();
-                }                
+                }
             }
 
             InspectorTest.evaluateInPage("console.time('my-label-1')");
@@ -94,7 +92,7 @@ function test()
                 if (message.type === WebInspector.ConsoleMessage.MessageType.Timing) {
                     WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
                     resolve();
-                }                
+                }
             }
 
             InspectorTest.evaluateInPage("console.time()");
