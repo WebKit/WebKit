@@ -1,3 +1,17 @@
+2016-05-08  David Kilzer  <ddkilzer@apple.com>
+
+        Roll out: ThreadSanitizer: Data race and thread leak in WebCore::ScrollingThread::createThreadIfNeeded
+        <https://webkit.org/b/157462>
+
+        This reverts commit r200554.
+
+        This doesn't fix the data race, and the thread leak is a
+        separate issue.
+
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::createThreadIfNeeded): Roll out the
+        change.
+
 2016-05-08  Darin Adler  <darin@apple.com>
 
         Follow-up to that last patch (missed review comments).

@@ -74,21 +74,19 @@ ScrollingThread& ScrollingThread::singleton()
 
 void ScrollingThread::createThreadIfNeeded()
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        // Wait for the thread to initialize the run loop.
-        {
-            std::unique_lock<Lock> lock(m_initializeRunLoopMutex);
+    if (m_threadIdentifier)
+        return;
 
-            m_threadIdentifier = createThread(threadCallback, this, "WebCore: Scrolling");
+    // Wait for the thread to initialize the run loop.
+    {
+        std::unique_lock<Lock> lock(m_initializeRunLoopMutex);
+
+        m_threadIdentifier = createThread(threadCallback, this, "WebCore: Scrolling");
         
 #if PLATFORM(COCOA)
-            m_initializeRunLoopConditionVariable.wait(lock, [this] {
-                return m_threadRunLoop;
-            });
+        m_initializeRunLoopConditionVariable.wait(lock, [this]{ return m_threadRunLoop; });
 #endif
-        }
-    });
+    }
 }
 
 void ScrollingThread::threadCallback(void* scrollingThread)
