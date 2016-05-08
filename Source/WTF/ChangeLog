@@ -1,3 +1,19 @@
+2016-05-08  Chris Dumez  <cdumez@apple.com>
+
+        [Bindings] Simplify [RequiresExistingAtomicString] IDL extended attribute handling
+        https://bugs.webkit.org/show_bug.cgi?id=157465
+
+        Reviewed by Darin Adler.
+
+        Add an AtomicString(RefPtr<AtomicStringImpl>&&) constructor that is now
+        used by the bindings when [RequiresExistingAtomicString] is used. This
+        is more efficient than using AtomicString(AtomicStringImpl*) as the
+        caller has a RefPtr<AtomicStringImpl> and is consistent with the
+        pre-existing String(RefPtr<AtomicStringImpl>&&) constructor.
+
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::AtomicString):
+
 2016-05-08  Darin Adler  <darin@apple.com>
 
         * wtf/text/WTFString.h: Remove pragma once. Not working for some reason.

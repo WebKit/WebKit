@@ -56,6 +56,7 @@ public:
     }
 
     AtomicString(AtomicStringImpl*);
+    AtomicString(RefPtr<AtomicStringImpl>&&);
     ATOMICSTRING_CONVERSION AtomicString(StringImpl*);
     ATOMICSTRING_CONVERSION AtomicString(const String&);
     AtomicString(StringImpl* baseString, unsigned start, unsigned length);
@@ -256,6 +257,11 @@ inline AtomicString::AtomicString(const UChar* s)
 
 inline AtomicString::AtomicString(AtomicStringImpl* imp)
     : m_string(imp)
+{
+}
+
+inline AtomicString::AtomicString(RefPtr<AtomicStringImpl>&& imp)
+    : m_string(WTFMove(imp))
 {
 }
 

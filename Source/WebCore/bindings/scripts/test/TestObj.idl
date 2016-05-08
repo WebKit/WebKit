@@ -290,6 +290,8 @@ enum TestConfidence { "high", "kinda-low" };
 
     void methodWithAndWithoutNullableSequence(sequence<unsigned long> arrayArg, sequence<unsigned long>? nullableArrayArg);
     void methodWithAndWithoutNullableSequence2(unsigned long[] arrayArg, unsigned long[]? nullableArrayArg);
+
+    Element? getElementById([RequiresExistingAtomicString] DOMString elementId);
 #endif
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;

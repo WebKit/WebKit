@@ -3748,55 +3748,46 @@ sub GenerateParametersCheck
                 }
             }
 
-            if ($parameter->extendedAttributes->{"RequiresExistingAtomicString"}) {
-                # FIXME: This could be made slightly more efficient if we added an AtomicString(RefPtr<AtomicStringImpl>&&) constructor and removed the call to get() here.
-                push(@$outputArray, "    AtomicString $name = state->argument($argumentIndex).toString(state)->toExistingAtomicString(state).get();\n");
-                push(@$outputArray, "    if ($name.isNull())\n");
-                push(@$outputArray, "        return JSValue::encode(jsNull());\n");
+            my $outer;
+            my $inner;
+            my $nativeType = GetNativeTypeFromSignature($interface, $parameter);
+
+            if ($parameter->isOptional && defined($parameter->default) && !WillConvertUndefinedToDefaultParameterValue($type, $parameter->default)) {
+                my $defaultValue = $parameter->default;
+
+                # String-related optimizations.
+                if ($type eq "DOMString") {
+                    my $useAtomicString = $parameter->extendedAttributes->{"AtomicString"};
+                    if ($defaultValue eq "null") {
+                        $defaultValue = $useAtomicString ? "nullAtom" : "String()";
+                    } elsif ($defaultValue eq "\"\"") {
+                        $defaultValue = $useAtomicString ? "emptyAtom" : "emptyString()";
+                    } else {
+                        $defaultValue = $useAtomicString ? "AtomicString($defaultValue, AtomicString::ConstructFromLiteral)" : "ASCIILiteral($defaultValue)";
+                    }
+                } else {
+                    $defaultValue = "nullptr" if $defaultValue eq "null";
+                    $defaultValue = "PNaN" if $defaultValue eq "NaN";
+                    $defaultValue = "$nativeType()" if $defaultValue eq "[]";
+                    $defaultValue = "JSValue::JSUndefined" if $defaultValue eq "undefined";
+                }
+
+                $outer = "state->argument($argumentIndex).isUndefined() ? $defaultValue : ";
+                $inner = "state->uncheckedArgument($argumentIndex)";
+            } elsif ($parameter->isOptional && !defined($parameter->default)) {
+                # Use WTF::Optional<>() for optional parameters that are missing or undefined and that do not have a default value in the IDL.
+                $outer = "state->argument($argumentIndex).isUndefined() ? Optional<$nativeType>() : ";
+                $inner = "state->uncheckedArgument($argumentIndex)";
+            } else {
+                $outer = "";
+                $inner = "state->argument($argumentIndex)";
+            }
+            my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $parameter, $inner, $function->signature->extendedAttributes->{"Conditional"});
+            push(@$outputArray, "    auto $name = ${outer}${nativeValue};\n");
+            $value = "WTFMove($name)";
+            if ($mayThrowException) {
                 push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
-            } else {
-                my $outer;
-                my $inner;
-                my $nativeType = GetNativeTypeFromSignature($interface, $parameter);
-
-                if ($parameter->isOptional && defined($parameter->default) && !WillConvertUndefinedToDefaultParameterValue($type, $parameter->default)) {
-                    my $defaultValue = $parameter->default;
-
-                    # String-related optimizations.
-                    if ($type eq "DOMString") {
-                        my $useAtomicString = $parameter->extendedAttributes->{"AtomicString"};
-                        if ($defaultValue eq "null") {
-                            $defaultValue = $useAtomicString ? "nullAtom" : "String()";
-                        } elsif ($defaultValue eq "\"\"") {
-                            $defaultValue = $useAtomicString ? "emptyAtom" : "emptyString()";
-                        } else {
-                            $defaultValue = $useAtomicString ? "AtomicString($defaultValue, AtomicString::ConstructFromLiteral)" : "ASCIILiteral($defaultValue)";
-                        }
-                    } else {
-                        $defaultValue = "nullptr" if $defaultValue eq "null";
-                        $defaultValue = "PNaN" if $defaultValue eq "NaN";
-                        $defaultValue = "$nativeType()" if $defaultValue eq "[]";
-                        $defaultValue = "JSValue::JSUndefined" if $defaultValue eq "undefined";
-                    }
-
-                    $outer = "state->argument($argumentIndex).isUndefined() ? $defaultValue : ";
-                    $inner = "state->uncheckedArgument($argumentIndex)";
-                } elsif ($parameter->isOptional && !defined($parameter->default)) {
-                    # Use WTF::Optional<>() for optional parameters that are missing or undefined and that do not have a default value in the IDL.
-                    $outer = "state->argument($argumentIndex).isUndefined() ? Optional<$nativeType>() : ";
-                    $inner = "state->uncheckedArgument($argumentIndex)";
-                } else {
-                    $outer = "";
-                    $inner = "state->argument($argumentIndex)";
-                }
-                my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $parameter, $inner, $function->signature->extendedAttributes->{"Conditional"});
-                push(@$outputArray, "    auto $name = ${outer}${nativeValue};\n");
-                $value = "WTFMove($name)";
-                if ($mayThrowException) {
-                    push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
-                    push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
-                }
             }
 
             my $isTearOff = $codeGenerator->IsSVGTypeNeedingTearOff($type) && $interfaceName !~ /List$/;
@@ -4388,6 +4379,8 @@ sub JSValueToNative
     }
 
     if ($type eq "DOMString") {
+        return ("AtomicString($value.toString(state)->toExistingAtomicString(state))", 1) if $signature->extendedAttributes->{"RequiresExistingAtomicString"};
+
         if ($signature->extendedAttributes->{"TreatNullAs"}) {
             return ("valueToStringTreatingNullAsEmptyString(state, $value)", 1) if $signature->extendedAttributes->{"TreatNullAs"} eq "EmptyString";
             return ("valueToStringWithNullCheck(state, $value)", 1) if $signature->extendedAttributes->{"TreatNullAs"} eq "LegacyNullString";

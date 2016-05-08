@@ -672,6 +672,9 @@ void SVGSVGElement::resumeFromDocumentSuspension()
 // See http://www.w3.org/TR/SVG11/struct.html#InterfaceSVGSVGElement
 Element* SVGSVGElement::getElementById(const AtomicString& id)
 {
+    if (id.isNull())
+        return nullptr;
+
     Element* element = treeScope().getElementById(id);
     if (element && element->isDescendantOf(this))
         return element;
