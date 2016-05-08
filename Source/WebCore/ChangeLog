@@ -1,3 +1,10 @@
+2016-05-08  Darin Adler  <darin@apple.com>
+
+        Try to fix build without rolling out that last change.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::convert<Vector<String>>): Make this an inline. Just call toNativeArray.
+
 2016-05-07  Darin Adler  <darin@apple.com>
 
         Change MutationObserver::observe to take an IDL dictionary, rather than WebCore::Dictionary

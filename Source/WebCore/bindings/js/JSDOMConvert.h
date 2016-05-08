@@ -67,25 +67,10 @@ template<typename T> inline T convert(JSC::ExecState& state, JSC::JSValue value,
     return static_cast<T>(number);
 }
 
-template<> Vector<String> convert<Vector<String>>(JSC::ExecState& state, JSC::JSValue value)
+template<> inline Vector<String> convert<Vector<String>>(JSC::ExecState& state, JSC::JSValue value)
 {
-    // FIXME: This code has a lot in common with toNativeArray.
-    // Should find a way to share code.
-    unsigned length;
-    auto* object = toJSSequence(&state, value, length);
-    if (state.hadException())
-        return { };
-    Vector<String> vector;
-    vector.reserveInitialCapacity(length);
-    for (unsigned i = 0 ; i < length; ++i) {
-        auto itemValue = object->get(&state, i);
-        if (state.hadException())
-            return { };
-        vector.uncheckedAppend(convert<String>(state, itemValue));
-        if (state.hadException())
-            return { };
-    }
-    return vector;
+    // FIXME: The toNativeArray function doesn't throw a type error if the value is not an object. Is that really OK?
+    return toNativeArray<String>(&state, value);
 }
 
 }
