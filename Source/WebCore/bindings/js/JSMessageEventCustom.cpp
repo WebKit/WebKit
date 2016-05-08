@@ -109,7 +109,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     bool cancelableArg = state.argument(2).toBoolean(&state);
     const String originArg = state.argument(4).toString(&state)->value(&state);
     const String lastEventIdArg = state.argument(5).toString(&state)->value(&state);
-    DOMWindow* sourceArg = JSDOMWindow::toWrapped(state.argument(6));
+    DOMWindow* sourceArg = JSDOMWindow::toWrapped(state, state.argument(6));
     std::unique_ptr<MessagePortArray> messagePorts;
     std::unique_ptr<ArrayBufferArray> arrayBuffers;
     if (!state.argument(7).isUndefinedOrNull()) {

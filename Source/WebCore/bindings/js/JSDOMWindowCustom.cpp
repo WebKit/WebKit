@@ -612,16 +612,16 @@ JSValue JSDOMWindow::setInterval(ExecState& state)
     return jsNumber(result);
 }
 
-DOMWindow* JSDOMWindow::toWrapped(JSValue value)
+DOMWindow* JSDOMWindow::toWrapped(ExecState&, JSValue value)
 {
     if (!value.isObject())
-        return 0;
+        return nullptr;
     JSObject* object = asObject(value);
     if (object->inherits(JSDOMWindow::info()))
         return &jsCast<JSDOMWindow*>(object)->wrapped();
     if (object->inherits(JSDOMWindowShell::info()))
         return &jsCast<JSDOMWindowShell*>(object)->wrapped();
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore

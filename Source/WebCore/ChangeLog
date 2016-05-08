@@ -1,3 +1,119 @@
+2016-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Reduce special handling of XPathNSResolver type in the bindings
+        https://bugs.webkit.org/show_bug.cgi?id=157454
+
+        Reviewed by Darin Adler.
+
+        Reduce special handling of XPathNSResolver type in the bindings.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Add new JSXPathNSResolverCustom.cpp file.
+
+        * bindings/js/JSDOMStringListCustom.cpp:
+        (WebCore::JSDOMStringList::toWrapped):
+        Take the ExecState by reference instead of pointer.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::toWrapped):
+        Update to take an ExecState& parameter. The bindings now pass
+        an ExecState to all custom toWrapped() methods for consistency
+        and flexibility.
+
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        Pass an ExecState now that those toWrapped() methods expect
+        it.
+
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::JSEventTarget::toWrapped):
+        Update to take an ExecState& parameter.
+
+        * bindings/js/JSIDBDatabaseCustom.cpp:
+        (WebCore::JSIDBDatabase::transaction):
+        Pass ExecState by reference instead of pointer.
+
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::handleInitMessageEvent):
+        Pass ExecState to JSDOMWindow::toWrapped().
+
+        * bindings/js/JSXPathNSResolverCustom.cpp: Added.
+        (WebCore::JSXPathNSResolver::toWrapped):
+        Provide a custom implementation of JSXPathNSResolver::toWrapped()
+        instead of having the custom code in the bindings generator.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddIncludesForType):
+        Drop special includes for XPathNSResolver as they are no longer needed.
+
+        (GenerateHeader):
+        Drop special casing of certain types for generating the toWrapped()
+        declaration by:
+        1. Relying on GetNativeType() for the return value as certain types
+           return a RefPtr instead of a raw pointer.
+        2. Adding an extra ExecState parameter when a custom implementation of
+           toWrapped() is provided, given that some of them need it.
+
+        (GenerateParametersCheck):
+        Drop custom code for XPathNSResolver and use the normal code path for
+        this type now. The custom code now resides in the custom implementation
+        of JSXPathNSResolver::toWrapped(), in custom bindings.
+
+        (JSValueToNative):
+        - Drop NodeFilter from the nativeType hash map as it was updated to
+          be a callback interface a while back.
+        - Add XPathNSResolver to nativeType hash map so that we now to use
+          a RefPtr<> instead of a raw pointer in the bindings. We should
+          probably add an IDL extended attribute for this at some point.
+        - Drop special casing for DOMStringList which was outdated since there
+          is no toDOMStringList() function. DOMStringList has a custom
+          toWrapped() function instead nowadays so we now call this one
+          instead. We apparently do not have any DOMStringList parameters
+          outside our bindings tests at the moment, which is why no one
+          noticed.
+        - Pass an ExecState to toWrapped() if the interface has the
+          JSCustomToNativeObject IDL extended attribute.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        * bindings/scripts/test/TestObj.idl:
+        Add bindings test coverage for having an operation with an
+        XPathNSResolver parameter.
+
+        * dom/Document.idl:
+        * xml/XPathEvaluator.idl:
+        Drop some unnecessary default parameter values.
+
+        * xml/XPathNSResolver.idl:
+        Add JSCustomToNativeObject IDL extended attribute so that we can
+        provide our own custom implementation of JSXPathNSResolver::toWrapped(),
+        instead of having the custom code in the bindings generator.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createExpression):
+        (WebCore::Document::evaluate):
+        * dom/Document.h:
+        * inspector/InspectorNodeFinder.cpp:
+        * xml/XPathEvaluator.cpp:
+        (WebCore::XPathEvaluator::createExpression):
+        (WebCore::XPathEvaluator::evaluate):
+        * xml/XPathEvaluator.h:
+        * xml/XPathExpression.cpp:
+        (WebCore::XPathExpression::createExpression):
+        * xml/XPathExpression.h:
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::Parser::Parser):
+        (WebCore::XPath::Parser::parseStatement):
+        * xml/XPathParser.h:
+        Take XPathNSResolver parameter as a Ref<XPathNSResolver>&& as this is
+        what the generated bindings now provide us, given that this sometimes
+        have to create a wrapper around a JSObject.
+
 2016-05-07  Darin Adler  <darin@apple.com>
 
         Fix crash introduced by the last patch.

@@ -399,9 +399,9 @@ inline Parser::Token Parser::nextToken()
     return token;
 }
 
-Parser::Parser(const String& statement, XPathNSResolver* resolver)
+Parser::Parser(const String& statement, RefPtr<XPathNSResolver>&& resolver)
     : m_data(statement)
-    , m_resolver(resolver)
+    , m_resolver(WTFMove(resolver))
     , m_nextPos(0)
     , m_lastTokenType(0)
     , m_sawNamespaceError(false)
@@ -456,9 +456,9 @@ bool Parser::expandQualifiedName(const String& qualifiedName, String& localName,
     return true;
 }
 
-std::unique_ptr<Expression> Parser::parseStatement(const String& statement, XPathNSResolver* resolver, ExceptionCode& ec)
+std::unique_ptr<Expression> Parser::parseStatement(const String& statement, RefPtr<XPathNSResolver>&& resolver, ExceptionCode& ec)
 {
-    Parser parser(statement, resolver);
+    Parser parser(statement, WTFMove(resolver));
 
     int parseError = xpathyyparse(parser);
 

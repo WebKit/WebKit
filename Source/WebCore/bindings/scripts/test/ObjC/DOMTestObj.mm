@@ -29,6 +29,7 @@
 
 #import "DOMTestObj.h"
 
+#import "DOMCustomXPathNSResolver.h"
 #import "DOMDictionaryInternal.h"
 #import "DOMDocumentInternal.h"
 #import "DOMNodeInternal.h"
@@ -66,6 +67,7 @@
 #import "URL.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
+#import "XPathNSResolver.h"
 #import <wtf/GetPtr.h>
 
 #define IMPL reinterpret_cast<WebCore::TestObj*>(_internal)
@@ -1110,6 +1112,24 @@
     IMPL->methodWithArgTreatingNullAsEmptyString(arg);
 }
 
+- (void)methodWithXPathNSResolverParameter:(id <DOMXPathNSResolver>)resolver
+{
+    WebCore::JSMainThreadNullState state;
+    if (!resolver)
+        WebCore::raiseTypeErrorException();
+    WebCore::XPathNSResolver* nativeResolver = 0;
+    RefPtr<WebCore::XPathNSResolver> customResolver;
+    if (resolver) {
+        if ([resolver isMemberOfClass:[DOMNativeXPathNSResolver class]])
+            nativeResolver = core(static_cast<DOMNativeXPathNSResolver *>(resolver));
+        else {
+            customResolver = WebCore::DOMCustomXPathNSResolver::create(resolver);
+            nativeResolver = WTF::getPtr(customResolver);
+        }
+    }
+    IMPL->methodWithXPathNSResolverParameter(*WTF::getPtr(nativeResolver));
+}
+
 - (NSString *)nullableStringMethod
 {
     WebCore::JSMainThreadNullState state;
@@ -1441,6 +1461,22 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->methodWithOptionalNullableWrapperIsNull(core(obj));
+}
+
+- (void)methodWithOptionalXPathNSResolver:(id <DOMXPathNSResolver>)resolver
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::XPathNSResolver* nativeResolver = 0;
+    RefPtr<WebCore::XPathNSResolver> customResolver;
+    if (resolver) {
+        if ([resolver isMemberOfClass:[DOMNativeXPathNSResolver class]])
+            nativeResolver = core(static_cast<DOMNativeXPathNSResolver *>(resolver));
+        else {
+            customResolver = WebCore::DOMCustomXPathNSResolver::create(resolver);
+            nativeResolver = WTF::getPtr(customResolver);
+        }
+    }
+    IMPL->methodWithOptionalXPathNSResolver(WTF::getPtr(nativeResolver));
 }
 
 

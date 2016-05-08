@@ -2873,6 +2873,7 @@
 		8367587F1C56E99B008A1087 /* JSHTMLDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B86A81C56E93E00F3F0E3 /* JSHTMLDataElement.h */; };
 		836BAD211BD1CA670037356A /* HTMLTableHeaderCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 836BAD1F1BD1CA670037356A /* HTMLTableHeaderCellElement.h */; };
 		836BAD221BD1CA670037356A /* HTMLTableDataCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 836BAD201BD1CA670037356A /* HTMLTableDataCellElement.h */; };
+		836C14431CDEAFD80073493F /* JSXPathNSResolverCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */; };
 		836CB1F61BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 836CB1F21BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.h */; };
 		836CB1F71BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836CB1F31BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.cpp */; };
 		836CB1F81BD1E41800AF1591 /* JSHTMLTableDataCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 836CB1F41BD1E41800AF1591 /* JSHTMLTableDataCellElement.h */; };
@@ -10545,6 +10546,7 @@
 		8369E58F1AFDD0300087DF68 /* NonDocumentTypeChildNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NonDocumentTypeChildNode.idl; sourceTree = "<group>"; };
 		836BAD1F1BD1CA670037356A /* HTMLTableHeaderCellElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTableHeaderCellElement.h; sourceTree = "<group>"; };
 		836BAD201BD1CA670037356A /* HTMLTableDataCellElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTableDataCellElement.h; sourceTree = "<group>"; };
+		836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathNSResolverCustom.cpp; sourceTree = "<group>"; };
 		836CB1F21BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableHeaderCellElement.h; sourceTree = "<group>"; };
 		836CB1F31BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableHeaderCellElement.cpp; sourceTree = "<group>"; };
 		836CB1F41BD1E41800AF1591 /* JSHTMLTableDataCellElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableDataCellElement.h; sourceTree = "<group>"; };
@@ -22342,6 +22344,7 @@
 				418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */,
 				E1C36D320EB0A094007410BC /* JSWorkerGlobalScopeBase.cpp */,
 				E1C36D330EB0A094007410BC /* JSWorkerGlobalScopeBase.h */,
+				836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */,
 				418C395E1C8F0AAB0051C8A3 /* ReadableStreamController.cpp */,
 				418C395F1C8F0AAB0051C8A3 /* ReadableStreamController.h */,
 				BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */,
@@ -30094,6 +30097,7 @@
 				DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */,
 				517138EF1BED1D1A000D5F01 /* IndexKey.cpp in Sources */,
 				51EEAA731BEFFAB100218008 /* IndexValueEntry.cpp in Sources */,
+				836C14431CDEAFD80073493F /* JSXPathNSResolverCustom.cpp in Sources */,
 				517138F71BF128BB000D5F01 /* IndexValueStore.cpp in Sources */,
 				A8CFF5E60A155A05000A4234 /* InlineBox.cpp in Sources */,
 				B57CB52D182A3EED0079A647 /* InlineElementBox.cpp in Sources */,

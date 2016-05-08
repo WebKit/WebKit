@@ -45,9 +45,9 @@ inline XPathExpression::XPathExpression(std::unique_ptr<XPath::Expression> expre
 {
 }
 
-RefPtr<XPathExpression> XPathExpression::createExpression(const String& expression, XPathNSResolver* resolver, ExceptionCode& ec)
+RefPtr<XPathExpression> XPathExpression::createExpression(const String& expression, RefPtr<XPathNSResolver>&& resolver, ExceptionCode& ec)
 {
-    auto parsedExpression = Parser::parseStatement(expression, resolver, ec);
+    auto parsedExpression = Parser::parseStatement(expression, WTFMove(resolver), ec);
     if (!parsedExpression)
         return nullptr;
 

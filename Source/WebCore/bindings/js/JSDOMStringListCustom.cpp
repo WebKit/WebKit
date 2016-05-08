@@ -26,7 +26,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-RefPtr<DOMStringList> JSDOMStringList::toWrapped(ExecState* exec, JSValue value)
+RefPtr<DOMStringList> JSDOMStringList::toWrapped(ExecState& state, JSValue value)
 {
     if (value.inherits(JSDOMStringList::info()))
         return &jsCast<JSDOMStringList*>(asObject(value))->wrapped();
@@ -37,7 +37,7 @@ RefPtr<DOMStringList> JSDOMStringList::toWrapped(ExecState* exec, JSValue value)
     JSArray* array = asArray(value);
     RefPtr<DOMStringList> stringList = DOMStringList::create();
     for (unsigned i = 0; i < array->length(); ++i)
-        stringList->append(array->getIndex(exec, i).toString(exec)->value(exec));
+        stringList->append(array->getIndex(&state, i).toString(&state)->value(&state));
 
     return stringList;
 }

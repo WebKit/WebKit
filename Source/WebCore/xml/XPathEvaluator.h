@@ -44,10 +44,10 @@ namespace WebCore {
     public:
         static Ref<XPathEvaluator> create() { return adoptRef(*new XPathEvaluator); }
         
-        RefPtr<XPathExpression> createExpression(const String& expression, XPathNSResolver*, ExceptionCode&);
+        RefPtr<XPathExpression> createExpression(const String& expression, RefPtr<XPathNSResolver>&&, ExceptionCode&);
         Ref<XPathNSResolver> createNSResolver(Node* nodeResolver);
         RefPtr<XPathResult> evaluate(const String& expression, Node* contextNode,
-            XPathNSResolver*, unsigned short type, XPathResult*, ExceptionCode&);
+            RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*, ExceptionCode&);
 
     private:
         XPathEvaluator() { }

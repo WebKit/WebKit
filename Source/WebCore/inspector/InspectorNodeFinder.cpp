@@ -38,6 +38,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"
+#include "XPathNSResolver.h"
 #include "XPathResult.h"
 
 namespace WebCore {

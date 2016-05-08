@@ -43,14 +43,14 @@ namespace WebCore {
         class Parser {
             WTF_MAKE_NONCOPYABLE(Parser);
         public:
-            static std::unique_ptr<Expression> parseStatement(const String& statement, XPathNSResolver*, ExceptionCode&);
+            static std::unique_ptr<Expression> parseStatement(const String& statement, RefPtr<XPathNSResolver>&&, ExceptionCode&);
 
             int lex(YYSTYPE&);
             bool expandQualifiedName(const String& qualifiedName, String& localName, String& namespaceURI);
             void setParseResult(std::unique_ptr<Expression> expression) { m_result = WTFMove(expression); }
 
         private:
-            Parser(const String&, XPathNSResolver*);
+            Parser(const String&, RefPtr<XPathNSResolver>&&);
 
             struct Token;
 
@@ -72,7 +72,7 @@ namespace WebCore {
             Token nextTokenInternal();
 
             const String& m_data;
-            XPathNSResolver* m_resolver;
+            RefPtr<XPathNSResolver> m_resolver;
 
             unsigned m_nextPos;
             int m_lastTokenType;

@@ -138,6 +138,7 @@
 #include "JSWorkerGlobalScopeBase.cpp"
 #include "JSWorkerGlobalScopeCustom.cpp"
 #include "JSXMLHttpRequestCustom.cpp"
+#include "JSXPathNSResolverCustom.cpp"
 #include "JSXPathResultCustom.cpp"
 #include "JSXSLTProcessorCustom.cpp"
 #include "ScheduledAction.cpp"

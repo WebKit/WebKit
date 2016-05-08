@@ -42,6 +42,7 @@
 @class DOMany;
 @class NSString;
 @protocol DOMEventListener;
+@protocol DOMXPathNSResolver;
 
 enum {
     DOM_CONST_VALUE_0 = 0,
@@ -149,6 +150,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (DOMTestObj *)objMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (int)unforgeableMethod;
 - (void)methodWithArgTreatingNullAsEmptyString:(NSString *)arg;
+- (void)methodWithXPathNSResolverParameter:(id <DOMXPathNSResolver>)resolver;
 - (NSString *)nullableStringMethod;
 - (NSString *)nullableStringStaticMethod;
 - (NSString *)nullableStringSpecialMethod:(unsigned)index;
@@ -197,6 +199,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)methodWithOptionalAny:(DOMany *)a;
 - (void)methodWithOptionalNullableWrapper:(DOMTestObj *)obj;
 - (void)methodWithOptionalNullableWrapperIsNull:(DOMTestObj *)obj;
+- (void)methodWithOptionalXPathNSResolver:(id <DOMXPathNSResolver>)resolver;
 - (void)classMethod;
 - (int)classMethodWithOptional:(int)arg;
 - (void)classMethod2:(int)arg;

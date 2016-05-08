@@ -952,9 +952,9 @@ public:
     uint64_t domTreeVersion() const { return m_domTreeVersion; }
 
     // XPathEvaluator methods
-    RefPtr<XPathExpression> createExpression(const String& expression, XPathNSResolver*, ExceptionCode&);
+    RefPtr<XPathExpression> createExpression(const String& expression, RefPtr<XPathNSResolver>&&, ExceptionCode&);
     RefPtr<XPathNSResolver> createNSResolver(Node* nodeResolver);
-    RefPtr<XPathResult> evaluate(const String& expression, Node* contextNode, XPathNSResolver*, unsigned short type, XPathResult*, ExceptionCode&);
+    RefPtr<XPathResult> evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*, ExceptionCode&);
 
     enum PendingSheetLayout { NoLayoutWithPendingSheets, DidLayoutWithPendingSheets, IgnoreLayoutWithPendingSheets };
 

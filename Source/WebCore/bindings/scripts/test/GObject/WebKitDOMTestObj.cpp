@@ -38,6 +38,7 @@
 #include "WebKitDOMTestEnumTypePrivate.h"
 #include "WebKitDOMTestNodePrivate.h"
 #include "WebKitDOMTestObjPrivate.h"
+#include "WebKitDOMXPathNSResolverPrivate.h"
 #include "gobject/ConvertToUTF8String.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -1374,6 +1375,16 @@ void webkit_dom_test_obj_method_with_arg_treating_null_as_empty_string(WebKitDOM
     item->methodWithArgTreatingNullAsEmptyString(convertedArg);
 }
 
+void webkit_dom_test_obj_method_with_xpath_ns_resolver_parameter(WebKitDOMTestObj* self, WebKitDOMXPathNSResolver* resolver)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(WEBKIT_DOM_IS_XPATH_NS_RESOLVER(resolver));
+    WebCore::TestObj* item = WebKit::core(self);
+    RefPtr<WebCore::XPathNSResolver> convertedResolver = WebKit::core(resolver);
+    item->methodWithXPathNSResolverParameter(WTF::getPtr(*convertedResolver));
+}
+
 gchar* webkit_dom_test_obj_nullable_string_method(WebKitDOMTestObj* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -1802,6 +1813,16 @@ void webkit_dom_test_obj_method_with_optional_nullable_wrapper_is_null(WebKitDOM
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::TestObj* convertedObj = WebKit::core(obj);
     item->methodWithOptionalNullableWrapperIsNull(convertedObj);
+}
+
+void webkit_dom_test_obj_method_with_optional_xpath_ns_resolver(WebKitDOMTestObj* self, WebKitDOMXPathNSResolver* resolver)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(WEBKIT_DOM_IS_XPATH_NS_RESOLVER(resolver));
+    WebCore::TestObj* item = WebKit::core(self);
+    RefPtr<WebCore::XPathNSResolver> convertedResolver = WebKit::core(resolver);
+    item->methodWithOptionalXPathNSResolver(WTF::getPtr(convertedResolver));
 }
 
 gchar* webkit_dom_test_obj_conditional_method1(WebKitDOMTestObj* self)

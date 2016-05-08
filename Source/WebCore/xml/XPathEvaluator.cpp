@@ -37,11 +37,9 @@ namespace WebCore {
 
 using namespace XPath;
 
-RefPtr<XPathExpression> XPathEvaluator::createExpression(const String& expression,
-                                                             XPathNSResolver* resolver,
-                                                             ExceptionCode& ec)
+RefPtr<XPathExpression> XPathEvaluator::createExpression(const String& expression, RefPtr<XPathNSResolver>&& resolver, ExceptionCode& ec)
 {
-    return XPathExpression::createExpression(expression, resolver, ec);
+    return XPathExpression::createExpression(expression, WTFMove(resolver), ec);
 }
 
 Ref<XPathNSResolver> XPathEvaluator::createNSResolver(Node* nodeResolver)
@@ -49,12 +47,7 @@ Ref<XPathNSResolver> XPathEvaluator::createNSResolver(Node* nodeResolver)
     return NativeXPathNSResolver::create(nodeResolver);
 }
 
-RefPtr<XPathResult> XPathEvaluator::evaluate(const String& expression,
-                                                 Node* contextNode,
-                                                 XPathNSResolver* resolver,
-                                                 unsigned short type,
-                                                 XPathResult* result,
-                                                 ExceptionCode& ec)
+RefPtr<XPathResult> XPathEvaluator::evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&& resolver, unsigned short type, XPathResult* result, ExceptionCode& ec)
 {
     if (!isValidContextNode(contextNode)) {
         ec = NOT_SUPPORTED_ERR;
@@ -62,7 +55,7 @@ RefPtr<XPathResult> XPathEvaluator::evaluate(const String& expression,
     }
 
     ec = 0;
-    RefPtr<XPathExpression> expr = createExpression(expression, resolver, ec);
+    RefPtr<XPathExpression> expr = createExpression(expression, WTFMove(resolver), ec);
     if (ec)
         return nullptr;
     

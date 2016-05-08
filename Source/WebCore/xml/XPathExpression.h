@@ -44,7 +44,7 @@ namespace WebCore {
 
     class XPathExpression : public RefCounted<XPathExpression> {
     public:
-        static RefPtr<XPathExpression> createExpression(const String& expression, XPathNSResolver*, ExceptionCode&);
+        static RefPtr<XPathExpression> createExpression(const String& expression, RefPtr<XPathNSResolver>&&, ExceptionCode&);
         ~XPathExpression();
         
         RefPtr<XPathResult> evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode&);

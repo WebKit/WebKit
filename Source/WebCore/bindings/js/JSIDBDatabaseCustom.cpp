@@ -94,7 +94,7 @@ JSValue JSIDBDatabase::transaction(ExecState& exec)
 
     Vector<String> scope;
     JSValue scopeArg(exec.argument(0));
-    auto domStringList = JSDOMStringList::toWrapped(&exec, scopeArg);
+    auto domStringList = JSDOMStringList::toWrapped(exec, scopeArg);
     if (exec.hadException())
         return jsUndefined();
 

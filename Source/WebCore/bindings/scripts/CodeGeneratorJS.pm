@@ -220,10 +220,7 @@ sub AddIncludesForType
     return if $codeGenerator->SkipIncludeHeader($type);
     
     # When we're finished with the one-file-per-class reorganization, we won't need these special cases.
-    if ($type eq "XPathNSResolver") {
-        $includesRef->{"JSXPathNSResolver.h"} = 1;
-        $includesRef->{"JSCustomXPathNSResolver.h"} = 1;
-    } elsif ($isCallback && $codeGenerator->IsWrapperType($type)) {
+    if ($isCallback && $codeGenerator->IsWrapperType($type)) {
         $includesRef->{"JS${type}.h"} = 1;
     } elsif ($codeGenerator->GetArrayOrSequenceType($type)) {
         my $arrayType = $codeGenerator->GetArrayType($type);
@@ -1115,12 +1112,11 @@ sub GenerateHeader
 
     # JSValue to implementation type
     if (ShouldGenerateToWrapped($hasParent, $interface)) {
-        if ($interfaceName eq "NodeFilter") {
-            push(@headerContent, "    static RefPtr<NodeFilter> toWrapped(JSC::VM&, JSC::JSValue);\n");
-        } elsif ($interfaceName eq "DOMStringList") {
-            push(@headerContent, "    static RefPtr<DOMStringList> toWrapped(JSC::ExecState*, JSC::JSValue);\n");
+        my $nativeType = GetNativeType($interface, $implType);
+        if ($interface->extendedAttributes->{"JSCustomToNativeObject"}) {
+            push(@headerContent, "    static $nativeType toWrapped(JSC::ExecState&, JSC::JSValue);\n");
         } else {
-            push(@headerContent, "    static $implType* toWrapped(JSC::JSValue);\n");
+            push(@headerContent, "    static $nativeType toWrapped(JSC::JSValue);\n");
         }
     }
 
@@ -3623,16 +3619,7 @@ sub GenerateParametersCheck
         my $name = $parameter->name;
         my $value = $name;
 
-        if ($argType eq "XPathNSResolver") {
-            push(@$outputArray, "    RefPtr<XPathNSResolver> customResolver;\n");
-            push(@$outputArray, "    XPathNSResolver* resolver = JSXPathNSResolver::toWrapped(state->argument($argsIndex));\n");
-            push(@$outputArray, "    if (!resolver) {\n");
-            push(@$outputArray, "        customResolver = JSCustomXPathNSResolver::create(state, state->argument($argsIndex));\n");
-            push(@$outputArray, "        if (UNLIKELY(state->hadException()))\n");
-            push(@$outputArray, "            return JSValue::encode(jsUndefined());\n");
-            push(@$outputArray, "        resolver = customResolver.get();\n");
-            push(@$outputArray, "    }\n");
-        } elsif ($codeGenerator->IsCallbackInterface($argType)) {
+        if ($codeGenerator->IsCallbackInterface($argType)) {
             my $callbackClassName = GetCallbackClassName($argType);
             $implIncludes{"$callbackClassName.h"} = 1;
             if ($parameter->isOptional) {
@@ -4242,8 +4229,8 @@ my %nativeType = (
     "DOMTimeStamp" => "DOMTimeStamp",
     "Date" => "double",
     "Dictionary" => "Dictionary",
-    "NodeFilter" => "RefPtr<NodeFilter>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
+    "XPathNSResolver" => "RefPtr<XPathNSResolver>",
     "any" => "JSC::JSValue",
     "boolean" => "bool",
     "byte" => "int8_t",
@@ -4433,9 +4420,8 @@ sub JSValueToNative
 
     AddToImplIncludes("JS$type.h", $conditional);
 
-    return ("toDOMStringList(state, $value)", 1) if $type eq "DOMStringList";
-    return ("JSNodeFilter::toWrapped(state->vm(), $value)", 1) if $type eq "NodeFilter";
-
+    my $extendedAttributes = $codeGenerator->getInterfaceExtendedAttributesFromName($type);
+    return ("JS${type}::toWrapped(*state, $value)", 1) if $extendedAttributes->{"JSCustomToNativeObject"};
     return ("JS${type}::toWrapped($value)", 0);
 }
 

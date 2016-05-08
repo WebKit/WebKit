@@ -46,6 +46,7 @@
 #include "JSTestNode.h"
 #include "JSTestObj.h"
 #include "JSTestSubObj.h"
+#include "JSXPathNSResolver.h"
 #include "LifecycleCallbackQueue.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
@@ -527,6 +528,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(JSC::ExecS
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjInstanceFunctionUnforgeableMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyString(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameter(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionNullableStringStaticMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringSpecialMethod(JSC::ExecState*);
@@ -581,6 +583,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalBo
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAny(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapper(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNull(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolver(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg(JSC::ExecState*);
@@ -1096,6 +1099,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "objMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionObjMethod), (intptr_t) (0) } },
     { "objMethodWithArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionObjMethodWithArgs), (intptr_t) (3) } },
     { "methodWithArgTreatingNullAsEmptyString", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyString), (intptr_t) (1) } },
+    { "methodWithXPathNSResolverParameter", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameter), (intptr_t) (1) } },
     { "nullableStringMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionNullableStringMethod), (intptr_t) (0) } },
     { "nullableStringSpecialMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionNullableStringSpecialMethod), (intptr_t) (1) } },
     { "methodWithSequenceArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithSequenceArg), (intptr_t) (1) } },
@@ -1158,6 +1162,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithOptionalAny", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalAny), (intptr_t) (0) } },
     { "methodWithOptionalNullableWrapper", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapper), (intptr_t) (0) } },
     { "methodWithOptionalNullableWrapperIsNull", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNull), (intptr_t) (0) } },
+    { "methodWithOptionalXPathNSResolver", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolver), (intptr_t) (0) } },
     { "methodWithCallbackArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackArg), (intptr_t) (1) } },
     { "methodWithNonCallbackArgAndCallbackArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg), (intptr_t) (2) } },
     { "methodWithCallbackAndOptionalArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg), (intptr_t) (0) } },
@@ -4072,6 +4077,25 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithArgTreatingNull
     return JSValue::encode(jsUndefined());
 }
 
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameter(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "methodWithXPathNSResolverParameter");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, createNotEnoughArgumentsError(state));
+    auto resolver = JSXPathNSResolver::toWrapped(*state, state->argument(0));
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    if (UNLIKELY(!resolver))
+        return throwVMTypeError(state);
+    impl.methodWithXPathNSResolverParameter(*resolver);
+    return JSValue::encode(jsUndefined());
+}
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringMethod(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
@@ -4904,6 +4928,21 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalNullabl
     return JSValue::encode(jsUndefined());
 }
 
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolver(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "methodWithOptionalXPathNSResolver");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    auto resolver = JSXPathNSResolver::toWrapped(*state, state->argument(0));
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithOptionalXPathNSResolver(WTFMove(resolver));
+    return JSValue::encode(jsUndefined());
+}
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
@@ -5179,7 +5218,7 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod6(ExecSta
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto listArg = toDOMStringList(state, state->argument(0));
+    auto listArg = JSDOMStringList::toWrapped(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.overloadedMethod(WTFMove(listArg));
@@ -5528,7 +5567,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(Exe
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
-    auto values = toDOMStringList(state, state->argument(0));
+    auto values = JSDOMStringList::toWrapped(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!values))

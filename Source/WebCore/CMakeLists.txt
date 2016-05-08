@@ -1224,6 +1224,7 @@ set(WebCore_SOURCES
     bindings/js/JSWorkerGlobalScopeBase.cpp
     bindings/js/JSWorkerGlobalScopeCustom.cpp
     bindings/js/JSXMLHttpRequestCustom.cpp
+    bindings/js/JSXPathNSResolverCustom.cpp
     bindings/js/JSXPathResultCustom.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
     bindings/js/ReadableStreamController.cpp

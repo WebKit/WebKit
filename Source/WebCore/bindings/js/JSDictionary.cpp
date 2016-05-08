@@ -173,14 +173,14 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, RefPtr<Serialize
     result = SerializedScriptValue::create(exec, value, 0, 0);
 }
 
-void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<DOMWindow>& result)
+void JSDictionary::convertValue(ExecState* state, JSValue value, RefPtr<DOMWindow>& result)
 {
-    result = JSDOMWindow::toWrapped(value);
+    result = JSDOMWindow::toWrapped(*state, value);
 }
 
-void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<EventTarget>& result)
+void JSDictionary::convertValue(ExecState* state, JSValue value, RefPtr<EventTarget>& result)
 {
-    result = JSEventTarget::toWrapped(value);
+    result = JSEventTarget::toWrapped(*state, value);
 }
 
 void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Node>& result)

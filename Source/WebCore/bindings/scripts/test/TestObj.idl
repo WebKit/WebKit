@@ -110,6 +110,7 @@ enum TestConfidence { "high", "kinda-low" };
     TestObj objMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
     [Unforgeable] long unforgeableMethod();
     void methodWithArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] DOMString arg);
+    void methodWithXPathNSResolverParameter(XPathNSResolver resolver);
 
     // Nullable String return values.
     DOMString? nullableStringMethod();
@@ -208,6 +209,7 @@ enum TestConfidence { "high", "kinda-low" };
     void    methodWithOptionalAny(optional any a);
     void    methodWithOptionalNullableWrapper(optional TestObj? obj);
     void    methodWithOptionalNullableWrapperIsNull(optional TestObj? obj = null);
+    void    methodWithOptionalXPathNSResolver(optional XPathNSResolver? resolver);
 
 #if defined(TESTING_JS)
     // Callback interface parameters.

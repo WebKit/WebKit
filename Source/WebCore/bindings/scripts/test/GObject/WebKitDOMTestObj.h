@@ -277,6 +277,16 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_arg_treating_null_as_empty_string(WebKitDOMTestObj* self, const gchar* arg);
 
 /**
+ * webkit_dom_test_obj_method_with_xpath_ns_resolver_parameter:
+ * @self: A #WebKitDOMTestObj
+ * @resolver: A #WebKitDOMXPathNSResolver
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_xpath_ns_resolver_parameter(WebKitDOMTestObj* self, WebKitDOMXPathNSResolver* resolver);
+
+/**
  * webkit_dom_test_obj_nullable_string_method:
  * @self: A #WebKitDOMTestObj
  *
@@ -727,6 +737,16 @@ webkit_dom_test_obj_method_with_optional_nullable_wrapper(WebKitDOMTestObj* self
 **/
 WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_nullable_wrapper_is_null(WebKitDOMTestObj* self, WebKitDOMTestObj* obj);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_xpath_ns_resolver:
+ * @self: A #WebKitDOMTestObj
+ * @resolver: A #WebKitDOMXPathNSResolver
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_xpath_ns_resolver(WebKitDOMTestObj* self, WebKitDOMXPathNSResolver* resolver);
 
 /**
  * webkit_dom_test_obj_conditional_method1:
