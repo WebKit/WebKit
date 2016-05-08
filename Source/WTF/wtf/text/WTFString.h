@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef WTFString_h
-#define WTFString_h
+#pragma once
 
 // This file would be called String.h, but that conflicts with <string.h>
 // on systems without case-sensitive file systems.
@@ -38,35 +37,35 @@ class ASCIILiteral;
 
 // Declarations of string operations
 
-WTF_EXPORT_STRING_API int charactersToIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
-WTF_EXPORT_STRING_API int charactersToIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
-WTF_EXPORT_STRING_API unsigned charactersToUIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
-WTF_EXPORT_STRING_API unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
-int64_t charactersToInt64Strict(const LChar*, size_t, bool* ok = 0, int base = 10);
-int64_t charactersToInt64Strict(const UChar*, size_t, bool* ok = 0, int base = 10);
-uint64_t charactersToUInt64Strict(const LChar*, size_t, bool* ok = 0, int base = 10);
-uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = 0, int base = 10);
-intptr_t charactersToIntPtrStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
-intptr_t charactersToIntPtrStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
+WTF_EXPORT_STRING_API int charactersToIntStrict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_STRING_API int charactersToIntStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_STRING_API unsigned charactersToUIntStrict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_STRING_API unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
+int64_t charactersToInt64Strict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
+int64_t charactersToInt64Strict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
+uint64_t charactersToUInt64Strict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
+uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
+intptr_t charactersToIntPtrStrict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
+intptr_t charactersToIntPtrStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
 
-WTF_EXPORT_STRING_API int charactersToInt(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
-WTF_EXPORT_STRING_API int charactersToInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
-unsigned charactersToUInt(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
-unsigned charactersToUInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
-int64_t charactersToInt64(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
-int64_t charactersToInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
-uint64_t charactersToUInt64(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
-WTF_EXPORT_STRING_API uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
-intptr_t charactersToIntPtr(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
-intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+WTF_EXPORT_STRING_API int charactersToInt(const LChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+WTF_EXPORT_STRING_API int charactersToInt(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+unsigned charactersToUInt(const LChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+unsigned charactersToUInt(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+int64_t charactersToInt64(const LChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+int64_t charactersToInt64(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+uint64_t charactersToUInt64(const LChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+WTF_EXPORT_STRING_API uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+intptr_t charactersToIntPtr(const LChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
 
 // FIXME: Like the strict functions above, these give false for "ok" when there is trailing garbage.
 // Like the non-strict functions above, these return the value when there is trailing garbage.
 // It would be better if these were more consistent with the above functions instead.
-WTF_EXPORT_STRING_API double charactersToDouble(const LChar*, size_t, bool* ok = 0);
-WTF_EXPORT_STRING_API double charactersToDouble(const UChar*, size_t, bool* ok = 0);
-WTF_EXPORT_STRING_API float charactersToFloat(const LChar*, size_t, bool* ok = 0);
-WTF_EXPORT_STRING_API float charactersToFloat(const UChar*, size_t, bool* ok = 0);
+WTF_EXPORT_STRING_API double charactersToDouble(const LChar*, size_t, bool* ok = nullptr);
+WTF_EXPORT_STRING_API double charactersToDouble(const UChar*, size_t, bool* ok = nullptr);
+WTF_EXPORT_STRING_API float charactersToFloat(const LChar*, size_t, bool* ok = nullptr);
+WTF_EXPORT_STRING_API float charactersToFloat(const UChar*, size_t, bool* ok = nullptr);
 WTF_EXPORT_STRING_API float charactersToFloat(const LChar*, size_t, size_t& parsedLength);
 WTF_EXPORT_STRING_API float charactersToFloat(const UChar*, size_t, size_t& parsedLength);
 
@@ -365,23 +364,23 @@ public:
         split(separator, false, result);
     }
 
-    WTF_EXPORT_STRING_API int toIntStrict(bool* ok = 0, int base = 10) const;
-    WTF_EXPORT_STRING_API unsigned toUIntStrict(bool* ok = 0, int base = 10) const;
-    WTF_EXPORT_STRING_API int64_t toInt64Strict(bool* ok = 0, int base = 10) const;
-    WTF_EXPORT_STRING_API uint64_t toUInt64Strict(bool* ok = 0, int base = 10) const;
-    WTF_EXPORT_STRING_API intptr_t toIntPtrStrict(bool* ok = 0, int base = 10) const;
+    WTF_EXPORT_STRING_API int toIntStrict(bool* ok = nullptr, int base = 10) const;
+    WTF_EXPORT_STRING_API unsigned toUIntStrict(bool* ok = nullptr, int base = 10) const;
+    WTF_EXPORT_STRING_API int64_t toInt64Strict(bool* ok = nullptr, int base = 10) const;
+    WTF_EXPORT_STRING_API uint64_t toUInt64Strict(bool* ok = nullptr, int base = 10) const;
+    WTF_EXPORT_STRING_API intptr_t toIntPtrStrict(bool* ok = nullptr, int base = 10) const;
 
-    WTF_EXPORT_STRING_API int toInt(bool* ok = 0) const;
-    WTF_EXPORT_STRING_API unsigned toUInt(bool* ok = 0) const;
-    WTF_EXPORT_STRING_API int64_t toInt64(bool* ok = 0) const;
-    WTF_EXPORT_STRING_API uint64_t toUInt64(bool* ok = 0) const;
-    WTF_EXPORT_STRING_API intptr_t toIntPtr(bool* ok = 0) const;
+    WTF_EXPORT_STRING_API int toInt(bool* ok = nullptr) const;
+    WTF_EXPORT_STRING_API unsigned toUInt(bool* ok = nullptr) const;
+    WTF_EXPORT_STRING_API int64_t toInt64(bool* ok = nullptr) const;
+    WTF_EXPORT_STRING_API uint64_t toUInt64(bool* ok = nullptr) const;
+    WTF_EXPORT_STRING_API intptr_t toIntPtr(bool* ok = nullptr) const;
 
     // FIXME: Like the strict functions above, these give false for "ok" when there is trailing garbage.
     // Like the non-strict functions above, these return the value when there is trailing garbage.
     // It would be better if these were more consistent with the above functions instead.
-    WTF_EXPORT_STRING_API double toDouble(bool* ok = 0) const;
-    WTF_EXPORT_STRING_API float toFloat(bool* ok = 0) const;
+    WTF_EXPORT_STRING_API double toDouble(bool* ok = nullptr) const;
+    WTF_EXPORT_STRING_API float toFloat(bool* ok = nullptr) const;
 
     bool percentage(int& percentage) const;
 
@@ -757,5 +756,3 @@ using WTF::ASCIILiteral;
 using WTF::StringCapture;
 
 #include <wtf/text/AtomicString.h>
-
-#endif

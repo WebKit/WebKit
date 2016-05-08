@@ -1,5 +1,11 @@
 2016-05-08  Darin Adler  <darin@apple.com>
 
+        Follow-up to that last patch (missed review comments).
+
+        * wtf/text/WTFString.h: Use nullptr instead of 0 as needed. Also use pragma once.
+
+2016-05-08  Darin Adler  <darin@apple.com>
+
         Change EventSource constructor to take an IDL dictionary instead of a WebCore::Dictionary
         https://bugs.webkit.org/show_bug.cgi?id=157459
 

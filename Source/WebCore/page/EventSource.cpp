@@ -286,13 +286,13 @@ void EventSource::parseEventStream()
     while (position < size) {
         if (m_discardTrailingNewline) {
             if (m_receiveBuffer[position] == '\n')
-                position++;
+                ++position;
             m_discardTrailingNewline = false;
         }
 
         Optional<unsigned> lineLength;
         Optional<unsigned> fieldLength;
-        for (unsigned i = position; !lineLength && i < size; i++) {
+        for (unsigned i = position; !lineLength && i < size; ++i) {
             switch (m_receiveBuffer[i]) {
             case ':':
                 if (!fieldLength)
@@ -398,7 +398,7 @@ void EventSource::dispatchMessageEvent()
     // Omit the trailing "\n" character.
     ASSERT(!m_data.isEmpty());
     unsigned size = m_data.size() - 1;
-    auto data = SerializedScriptValue::create(StringView { m_data.data(), size });
+    auto data = SerializedScriptValue::create({ m_data.data(), size });
     m_data = { };
 
     dispatchEvent(MessageEvent::create(name, WTFMove(data), m_eventStreamOrigin, m_lastEventId));

@@ -1,5 +1,13 @@
 2016-05-08  Darin Adler  <darin@apple.com>
 
+        Follow-up to that last patch (missed review comments).
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::parseEventStream): Pre-increment, not post-increment.
+        (WebCore::EventSource::dispatchMessageEvent): More elegant form without explicit StringView.
+
+2016-05-08  Darin Adler  <darin@apple.com>
+
         Change EventSource constructor to take an IDL dictionary instead of a WebCore::Dictionary
         https://bugs.webkit.org/show_bug.cgi?id=157459
 
@@ -63,8 +71,6 @@
 
         * page/EventSource.idl: Define EventSourceInit dictionary and use it.
         Other small cleanup.
-
-        * page/EventSource.idl: U
 
 2016-05-07  Darin Adler  <darin@apple.com>
 
