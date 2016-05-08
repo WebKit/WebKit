@@ -39,15 +39,19 @@ void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData& data
 {
 #if USE(APPKIT)
     // FIXME: font will be nil here for custom fonts, we should fix that.
-    NSFont *font = m_popupClient->menuStyle().font().primaryFont().getNSFont();
+    CTFontRef font = m_popupClient->menuStyle().font().primaryFont().getCTFont();
     if (!font)
         return;
-    
-    CFDictionaryRef fontDescriptorAttributes = (CFDictionaryRef)[[font fontDescriptor] fontAttributes];
-    if (!fontDescriptorAttributes)
+
+    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(font));
+    if (!fontDescriptor)
+        return;
+
+    auto attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
+    if (!attributes)
         return;
     
-    data.fontInfo.fontAttributeDictionary = fontDescriptorAttributes;
+    data.fontInfo.fontAttributeDictionary = attributes.get();
     data.shouldPopOver = m_popupClient->shouldPopOver();
     data.hideArrows = !m_popupClient->menuStyle().hasDefaultAppearance();
     data.menuSize = m_popupClient->menuStyle().menuSize();

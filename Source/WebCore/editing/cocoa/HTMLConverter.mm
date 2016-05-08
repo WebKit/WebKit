@@ -1034,23 +1034,13 @@ PlatformColor *HTMLConverter::_colorForElement(Element& element, CSSPropertyID p
     return platformResult;
 }
 
-#if !PLATFORM(IOS)
 static PlatformFont *_font(Element& element)
 {
-    auto renderer = element.renderer();
+    auto* renderer = element.renderer();
     if (!renderer)
         return nil;
-    return renderer->style().fontCascade().primaryFont().getNSFont();
+    return toNSFont(renderer->style().fontCascade().primaryFont().getCTFont());
 }
-#else
-static PlatformFont *_font(Element& element)
-{
-    auto renderer = element.renderer();
-    if (!renderer)
-        return nil;
-    return (PlatformFont *)renderer->style().fontCascade().primaryFont().getCTFont();
-}
-#endif
 
 #define UIFloatIsZero(number) (fabs(number - 0) < FLT_EPSILON)
 
@@ -2535,8 +2525,8 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
             [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
         if (style.textDecorationsInEffect() & TextDecorationLineThrough)
             [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
-        if (NSFont *font = style.fontCascade().primaryFont().getNSFont())
-            [attrs.get() setObject:font forKey:NSFontAttributeName];
+        if (auto font = style.fontCascade().primaryFont().getCTFont())
+            [attrs.get() setObject:toNSFont(font) forKey:NSFontAttributeName];
         else
             [attrs.get() setObject:[fontManager convertFont:WebDefaultFont() toSize:style.fontCascade().primaryFont().platformData().size()] forKey:NSFontAttributeName];
         if (style.visitedDependentColor(CSSPropertyColor).alpha())

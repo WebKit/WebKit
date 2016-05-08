@@ -724,7 +724,7 @@ static AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate
     if ([searchTextParameter isKindOfClass:[NSString class]])
         searchText = searchTextParameter;
     
-    AccessibilityObject *startElement = nullptr;
+    AccessibilityObject* startElement = nullptr;
     if ([startElementParameter isKindOfClass:[WebAccessibilityObjectWrapper class]])
         startElement = [startElementParameter accessibilityObject];
     
@@ -831,7 +831,7 @@ static AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cach
     return textMarkerRangeFromRange(m_object->axObjectCache(), range);
 }
 
-static id textMarkerRangeFromRange(AXObjectCache *cache, const RefPtr<Range> range)
+static id textMarkerRangeFromRange(AXObjectCache* cache, const RefPtr<Range> range)
 {
     id startTextMarker = startOrEndTextmarkerForRange(cache, range, true);
     id endTextMarker = startOrEndTextmarkerForRange(cache, range, false);
@@ -980,12 +980,12 @@ static VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, CFType
     return visiblePositionForTextMarker(m_object->axObjectCache(), textMarker);
 }
 
-static VisiblePosition visiblePositionForStartOfTextMarkerRange(AXObjectCache *cache, id textMarkerRange)
+static VisiblePosition visiblePositionForStartOfTextMarkerRange(AXObjectCache* cache, id textMarkerRange)
 {
     return visiblePositionForTextMarker(cache, AXTextMarkerRangeStart(textMarkerRange));
 }
 
-static VisiblePosition visiblePositionForEndOfTextMarkerRange(AXObjectCache *cache, id textMarkerRange)
+static VisiblePosition visiblePositionForEndOfTextMarkerRange(AXObjectCache* cache, id textMarkerRange)
 {
     return visiblePositionForTextMarker(cache, AXTextMarkerRangeEnd(textMarkerRange));
 }
@@ -1000,23 +1000,23 @@ static id textMarkerRangeFromMarkers(id textMarker1, id textMarker2)
 
 // When modifying attributed strings, the range can come from a source which may provide faulty information (e.g. the spell checker).
 // To protect against such cases the range should be validated before adding or removing attributes.
-static BOOL AXAttributedStringRangeIsValid(NSAttributedString* attrString, NSRange range)
+static BOOL AXAttributedStringRangeIsValid(NSAttributedString *attrString, NSRange range)
 {
     return (range.location < [attrString length] && NSMaxRange(range) <= [attrString length]);
 }
 
-static void AXAttributeStringSetFont(NSMutableAttributedString* attrString, NSString* attribute, NSFont* font, NSRange range)
+static void AXAttributeStringSetFont(NSMutableAttributedString *attrString, NSString *attribute, CTFontRef font, NSRange range)
 {
     if (!AXAttributedStringRangeIsValid(attrString, range))
         return;
-    
+
     if (font) {
-        NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [font fontName]                             , NSAccessibilityFontNameKey,
-                              [font familyName]                           , NSAccessibilityFontFamilyKey,
-                              [font displayName]                          , NSAccessibilityVisibleNameKey,
-                              [NSNumber numberWithFloat:[font pointSize]] , NSAccessibilityFontSizeKey,
-                              nil];
+        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+            static_cast<NSString *>(adoptCF(CTFontCopyPostScriptName(font)).get()), NSAccessibilityFontNameKey,
+            static_cast<NSString *>(adoptCF(CTFontCopyFamilyName(font)).get()), NSAccessibilityFontFamilyKey,
+            static_cast<NSString *>(adoptCF(CTFontCopyDisplayName(font)).get()), NSAccessibilityVisibleNameKey,
+            [NSNumber numberWithFloat:CTFontGetSize(font)], NSAccessibilityFontSizeKey,
+            nil];
         
         [attrString addAttribute:attribute value:dict range:range];
     } else
@@ -1024,10 +1024,10 @@ static void AXAttributeStringSetFont(NSMutableAttributedString* attrString, NSSt
     
 }
 
-static CGColorRef CreateCGColorIfDifferent(NSColor* nsColor, CGColorRef existingColor)
+static CGColorRef CreateCGColorIfDifferent(NSColor *nsColor, CGColorRef existingColor)
 {
     // get color information assuming NSDeviceRGBColorSpace
-    NSColor* rgbColor = [nsColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+    NSColor *rgbColor = [nsColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     if (rgbColor == nil)
         rgbColor = [NSColor blackColor];
     CGFloat components[4];
@@ -1079,7 +1079,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     const RenderStyle& style = renderer->style();
     
     // set basic font info
-    AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style.fontCascade().primaryFont().getNSFont(), range);
+    AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style.fontCascade().primaryFont().getCTFont(), range);
     
     // set basic colors
     AXAttributeStringSetColor(attrString, NSAccessibilityForegroundColorTextAttribute, nsColor(style.visitedDependentColor(CSSPropertyColor)), range);
@@ -1348,7 +1348,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
     return [attrString autorelease];
 }
 
-static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const VisiblePosition& startPosition, const VisiblePosition& endPosition)
+static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const VisiblePosition& startPosition, const VisiblePosition& endPosition)
 {
     id startTextMarker = textMarkerForVisiblePosition(cache, startPosition);
     id endTextMarker = textMarkerForVisiblePosition(cache, endPosition);

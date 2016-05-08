@@ -1,3 +1,44 @@
+2016-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Migrate our Font classes entirely off of NSFont
+        https://bugs.webkit.org/show_bug.cgi?id=157464
+
+        Reviewed by Darin Adler.
+
+        Because NSFont and CTFont are toll-free-bridged, we don't need NSFont at all anywhere.
+
+        No new tests because there is no behavior change.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute):
+        (textMarkerRangeFromRange):
+        (visiblePositionForStartOfTextMarkerRange):
+        (visiblePositionForEndOfTextMarkerRange):
+        (AXAttributedStringRangeIsValid):
+        (AXAttributeStringSetFont):
+        (CreateCGColorIfDifferent):
+        (AXAttributeStringSetStyle):
+        (textMarkerRangeFromVisiblePositions):
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _font]):
+        * bindings/objc/DOMPrivate.h:
+        * editing/cocoa/HTMLConverter.mm:
+        (_font):
+        (WebCore::editingAttributedStringFromRange):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart):
+        * platform/graphics/Font.h:
+        (WebCore::Font::getCTFont):
+        (WebCore::Font::getNSFont): Deleted.
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::nsFont): Deleted.
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::determinePitch):
+        (WebCore::advanceForColorBitmapFont):
+        (WebCore::Font::platformWidthForGlyph):
+        (WebCore::renderingStyle): Deleted.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+
 2016-05-08  Chris Dumez  <cdumez@apple.com>
 
         [Bindings] Simplify [RequiresExistingAtomicString] IDL extended attribute handling

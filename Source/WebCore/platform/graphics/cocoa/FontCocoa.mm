@@ -525,10 +525,16 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleF
     return createDerivativeFont(scaledFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.syntheticBold(), m_platformData.syntheticOblique());
 }
 
+static inline bool caseInsensitiveCompare(CFStringRef a, CFStringRef b)
+{
+    return a && CFStringCompare(a, b, kCFCompareCaseInsensitive) == kCFCompareEqualTo;
+}
+
 void Font::determinePitch()
 {
-#if USE(APPKIT)
-    NSFont* f = m_platformData.nsFont();
+    CTFontRef ctFont = m_platformData.font();
+    ASSERT(ctFont);
+
     // Special case Osaka-Mono.
     // According to <rdar://problem/3999467>, we should treat Osaka-Mono as fixed pitch.
     // Note that the AppKit does not report Osaka-Mono as fixed pitch.
@@ -541,18 +547,11 @@ void Font::determinePitch()
     // According to <rdar://problem/5454704>, we should not treat MonotypeCorsiva as fixed pitch.
     // Note that AppKit does report MonotypeCorsiva as fixed pitch.
 
-    NSString *name = [f fontName];
-    m_treatAsFixedPitch = ([f isFixedPitch]  || [f _isFakeFixedPitch] || [name caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame) && [name caseInsensitiveCompare:@"MS-PGothic"] != NSOrderedSame && [name caseInsensitiveCompare:@"MonotypeCorsiva"] != NSOrderedSame;
-#else
-    CTFontRef ctFont = m_platformData.font();
-    m_treatAsFixedPitch = false;
-    if (!ctFont)
-        return; // CTFont is null in the case of SVG fonts for example.
-
     RetainPtr<CFStringRef> fullName = adoptCF(CTFontCopyFullName(ctFont));
     RetainPtr<CFStringRef> familyName = adoptCF(CTFontCopyFamilyName(ctFont));
 
-    m_treatAsFixedPitch = CGFontIsFixedPitch(m_platformData.cgFont()) || (fullName && (CFStringCompare(fullName.get(), CFSTR("Osaka-Mono"), kCFCompareCaseInsensitive) == kCFCompareEqualTo || CFStringCompare(fullName.get(), CFSTR("MS-PGothic"), kCFCompareCaseInsensitive) == kCFCompareEqualTo));
+    m_treatAsFixedPitch = (CTFontGetSymbolicTraits(ctFont) & kCTFontMonoSpaceTrait) || CGFontIsFixedPitch(m_platformData.cgFont()) || (caseInsensitiveCompare(fullName.get(), CFSTR("Osaka-Mono")) || caseInsensitiveCompare(fullName.get(), CFSTR("MS-PGothic")) || caseInsensitiveCompare(fullName.get(), CFSTR("MonotypeCorsiva")));
+#if PLATFORM(IOS)
     if (familyName && CFStringCompare(familyName.get(), CFSTR("Courier New"), kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
         // Special case Courier New to not be treated as fixed pitch, as this will make use of a hacked space width which is undesireable for iPhone (see rdar://6269783).
         m_treatAsFixedPitch = false;
@@ -571,43 +570,14 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
     return boundingBox;
 }
 
-static inline CGFontRenderingStyle renderingStyle(const FontPlatformData& platformData)
-{
-#if USE(APPKIT)
-    CGFontRenderingStyle style = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization;
-    NSFont *font = platformData.nsFont();
-    if (font) {
-        switch ([font renderingMode]) {
-        case NSFontIntegerAdvancementsRenderingMode:
-            style = 0;
-            break;
-        case NSFontAntialiasedIntegerAdvancementsRenderingMode:
-            style = kCGFontRenderingStyleAntialiasing;
-            break;
-        default:
-            break;
-        }
-    }
-    return style;
-
-#else
-    UNUSED_PARAM(platformData);
-    return kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
-#endif
-}
-
 static inline Optional<CGSize> advanceForColorBitmapFont(const FontPlatformData& platformData, Glyph glyph)
 {
-#if PLATFORM(MAC)
-    NSFont *font = platformData.nsFont();
+    CTFontRef font = platformData.font();
     if (!font || !platformData.isColorBitmapFont())
         return Nullopt;
-    return NSSizeToCGSize([font advancementForGlyph:glyph]);
-#else
-    UNUSED_PARAM(platformData);
-    UNUSED_PARAM(glyph);
-    return Nullopt;
-#endif
+    CGSize advance;
+    CTFontGetAdvancesForGlyphs(font, kCTFontOrientationDefault, &glyph, &advance, 1);
+    return advance;
 }
 
 static inline bool canUseFastGlyphAdvanceGetter(const FontPlatformData& platformData, Glyph glyph, CGSize& advance, bool& populatedAdvance)
@@ -630,7 +600,8 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     if ((horizontal || m_isBrokenIdeographFallback) && canUseFastGlyphAdvanceGetter(this->platformData(), glyph, advance, populatedAdvance)) {
         float pointSize = platformData().size();
         CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
-        if (!CGFontGetGlyphAdvancesForStyle(platformData().cgFont(), &m, renderingStyle(platformData()), &glyph, 1, &advance)) {
+        CGFontRenderingStyle style = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
+        if (!CGFontGetGlyphAdvancesForStyle(platformData().cgFont(), &m, style, &glyph, 1, &advance)) {
             RetainPtr<CFStringRef> fullName = adoptCF(CGFontCopyFullName(platformData().cgFont()));
             LOG_ERROR("Unable to cache glyph widths for %@ %f", fullName.get(), pointSize);
             advance.width = 0;

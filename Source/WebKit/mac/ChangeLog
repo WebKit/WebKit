@@ -1,3 +1,17 @@
+2016-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Migrate our Font classes entirely off of NSFont
+        https://bugs.webkit.org/show_bug.cgi?id=157464
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::populate):
+        (PopupMenuMac::show):
+        * WebView/WebHTMLView.mm:
+        (fontNameForDescription):
+        (-[WebHTMLView _addToStyle:fontA:fontB:]):
+
 2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Rename HitTestRequest DisallowShadowContent to DisallowUserAgentShadowContent

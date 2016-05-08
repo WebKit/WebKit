@@ -363,11 +363,11 @@ void WebPage::fontAtSelection(uint64_t callbackID)
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     
     if (!frame.selection().selection().isNone()) {
-        const Font* font = frame.editor().fontForSelection(selectionHasMultipleFonts);
-        NSFont *nsFont = font ? font->getNSFont() : nil;
-        if (nsFont) {
-            fontName = nsFont.fontName;
-            fontSize = nsFont.pointSize;
+        if (auto* font = frame.editor().fontForSelection(selectionHasMultipleFonts)) {
+            if (auto ctFont = font->getCTFont()) {
+                fontName = adoptCF(CTFontCopyPostScriptName(ctFont)).get();
+                fontSize = CTFontGetSize(ctFont);
+            }
         }
     }
     send(Messages::WebPageProxy::FontAtSelectionCallback(fontName, fontSize, selectionHasMultipleFonts, callbackID));

@@ -5599,14 +5599,14 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     return [[NSFontManager sharedFontManager] fontWithFamily:@"Times" traits:NSFontItalicTrait weight:STANDARD_BOLD_WEIGHT size:12.0f];
 }
 
-static NSString *fontNameForDescription(NSString *familyName, BOOL italic, BOOL bold)
+static RetainPtr<CFStringRef> fontNameForDescription(NSString *familyName, BOOL italic, BOOL bold)
 {
     // Find the font the same way the rendering code would later if it encountered this CSS.
     FontDescription fontDescription;
     fontDescription.setIsItalic(italic);
     fontDescription.setWeight(bold ? FontWeight900 : FontWeight500);
     RefPtr<Font> font = FontCache::singleton().fontForFamily(fontDescription, familyName);
-    return [font->platformData().nsFont() fontName];
+    return adoptCF(CTFontCopyPostScriptName(font->getCTFont()));
 }
 
 - (void)_addToStyle:(DOMCSSStyleDeclaration *)style fontA:(NSFont *)a fontB:(NSFont *)b
@@ -5645,8 +5645,10 @@ static NSString *fontNameForDescription(NSString *familyName, BOOL italic, BOOL 
         // the Postscript name.
         // If we don't find a font with the same Postscript name, then we'll have to use the
         // Postscript name to make the CSS specific enough.
-        if (![fontNameForDescription(aFamilyName, aIsItalic, aIsBold) isEqualToString:[a fontName]])
-            familyNameForCSS = [a fontName];
+        auto fontName = fontNameForDescription(aFamilyName, aIsItalic, aIsBold);
+        auto aName = [a fontName];
+        if (!fontName || !aName || !CFEqual(fontName.get(), static_cast<CFStringRef>(aName)))
+            familyNameForCSS = aName;
 
         // FIXME: Need more sophisticated escaping code if we want to handle family names
         // with characters like single quote or backslash in their names.

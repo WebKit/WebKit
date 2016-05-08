@@ -130,11 +130,6 @@ public:
     RetainPtr<CFTypeRef> objectForEqualityCheck() const;
 
     bool hasCustomTracking() const { return isSystemFont(); }
-
-#if USE(APPKIT)
-    // FIXME: Remove this when all NSFont usage is removed.
-    NSFont *nsFont() const { return (NSFont *)m_font.get(); }
-#endif
 #endif
 
 #if PLATFORM(WIN) || PLATFORM(COCOA)

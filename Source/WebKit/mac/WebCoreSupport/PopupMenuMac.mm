@@ -81,12 +81,12 @@ void PopupMenuMac::populate()
         PopupMenuStyle style = m_client->itemStyle(i);
         RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] init]);
         if (style.font() != FontCascade()) {
-            NSFont *font = style.font().primaryFont().getNSFont();
+            RetainPtr<CTFontRef> font = style.font().primaryFont().getCTFont();
             if (!font) {
                 CGFloat size = style.font().primaryFont().platformData().size();
-                font = style.font().weight() < FontWeightBold ? [NSFont systemFontOfSize:size] : [NSFont boldSystemFontOfSize:size];
+                font = adoptCF(CTFontCreateUIFontForLanguage(style.font().weight() < FontWeightBold ? kCTFontUIFontSystem : kCTFontUIFontEmphasizedSystem, size, nullptr));
             }
-            [attributes setObject:font forKey:NSFontAttributeName];
+            [attributes setObject:toNSFont(font.get()) forKey:NSFontAttributeName];
         }
 
         RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
@@ -154,13 +154,13 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
     [m_popup selectItemAtIndex:index];
     [m_popup setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
-    NSMenu* menu = [m_popup menu];
+    NSMenu *menu = [m_popup menu];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     [menu setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 #endif
 
     NSPoint location;
-    NSFont* font = m_client->menuStyle().font().primaryFont().getNSFont();
+    CTFontRef font = m_client->menuStyle().font().primaryFont().getCTFont();
 
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -10;
@@ -172,8 +172,8 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
             titleFrame = r;
         float vertOffset = roundf((NSMaxY(r) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
         // Adjust for fonts other than the system font.
-        NSFont* defaultFont = [NSFont systemFontOfSize:[font pointSize]];
-        vertOffset += [font descender] - [defaultFont descender];
+        auto defaultFont = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, CTFontGetSize(font), nil));
+        vertOffset += CTFontGetDescent(font) - CTFontGetDescent(defaultFont.get());
         vertOffset = fminf(NSHeight(r), vertOffset);
 
         float horizontalOffset = textDirection == LTR ? popOverHorizontalAdjust : 0;
@@ -215,7 +215,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
 #pragma clang diagnostic pop
     }
 
-    WKPopupMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, font, controlSize, !m_client->menuStyle().hasDefaultAppearance());
+    WKPopupMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, toNSFont(font), controlSize, !m_client->menuStyle().hasDefaultAppearance());
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];

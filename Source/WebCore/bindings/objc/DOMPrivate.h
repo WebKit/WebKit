@@ -74,11 +74,9 @@
 
 @interface DOMElement (WebPrivate)
 #if !TARGET_OS_IPHONE
-- (NSFont *)_font;
 - (NSData *)_imageTIFFRepresentation;
-#else
-- (CTFontRef)_font;
 #endif
+- (CTFontRef)_font;
 - (NSURL *)_getURLAttribute:(NSString *)name;
 - (BOOL)isFocused;
 @end

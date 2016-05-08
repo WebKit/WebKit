@@ -29,9 +29,7 @@
 #import "WebCoreSystemInterface.h"
 #import <wtf/text/WTFString.h>
 
-#if !PLATFORM(IOS)
-#import <AppKit/NSFont.h>
-#else
+#if PLATFORM(IOS)
 #import "CoreGraphicsSPI.h"
 #import <CoreText/CoreText.h>
 #endif

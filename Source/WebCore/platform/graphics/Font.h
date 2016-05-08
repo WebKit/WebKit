@@ -172,15 +172,11 @@ public:
     String description() const;
 #endif
 
-#if USE(APPKIT)
-    NSFont* getNSFont() const { return m_platformData.nsFont(); }
-#endif
-
 #if PLATFORM(IOS)
-    CTFontRef getCTFont() const { return m_platformData.font(); }
     bool shouldNotBeUsedForArabic() const { return m_shouldNotBeUsedForArabic; };
 #endif
 #if PLATFORM(COCOA)
+    CTFontRef getCTFont() const { return m_platformData.font(); }
     CFDictionaryRef getCFStringAttributes(bool enableKerning, FontOrientation) const;
     const BitVector& glyphsSupportedBySmallCaps() const;
     const BitVector& glyphsSupportedByAllSmallCaps() const;
