@@ -74,13 +74,13 @@ class SummaryPage extends PageWithHeading {
                     this._table.heading.map(function (label) { return element('td', label); }),
                 ])),
             this._table.groups.map(function (rowGroup) {
-                return rowGroup.rows.map(function (row, rowIndex) {
+                return element('tbody', rowGroup.rows.map(function (row, rowIndex) {
                     var headings;
                     headings = [element('th', {class: 'minorHeader'}, row.name)];
                     if (!rowIndex)
                         headings.unshift(element('th', {class: 'majorHeader', rowspan: rowGroup.rows.length}, rowGroup.name));
                     return element('tr', [headings, row.cells.map(self._constructRatioGraph.bind(self))]);
-                });
+                }));
             }),
         ];
     }
@@ -124,8 +124,8 @@ class SummaryPage extends PageWithHeading {
             .summary-table {
                 border-collapse: collapse;
                 border: none;
-                margin: 0 1rem;
-                width: calc(100% - 2rem - 2px);
+                margin: 0;
+                width: 100%;
             }
 
             .summary-table td,
@@ -146,7 +146,11 @@ class SummaryPage extends PageWithHeading {
                 padding-left: 5rem;
             }
 
-            .summary-table > tr:nth-child(even) > *:not(.majorHeader) {
+            .summary-table tbody tr:first-child > * {
+                border-top: solid 1px #ddd;
+            }
+
+            .summary-table tbody tr:nth-child(even) > *:not(.majorHeader) {
                 background: #f9f9f9;
             }
 
