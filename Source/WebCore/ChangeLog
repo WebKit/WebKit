@@ -1,3 +1,25 @@
+2016-05-07  Darin Adler  <darin@apple.com>
+
+        Change HTMLSlotElement::assignedNodes to take a IDL dictionary instead of a WebCore::Dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=157457
+
+        Reviewed by Chris Dumez.
+
+        * html/HTMLSlotElement.cpp:
+        (WebCore::HTMLSlotElement::removedFrom): Fixed typo in comment.
+        (WebCore::HTMLSlotElement::assignedNodes): Renamed assignedNodesForBindings back to this
+        and changed the argument type to Optional<AssignedNodesOptions> instead of Dictionary.
+        Also streamlined the logic a bit.
+        (WebCore::HTMLSlotElement::enqueueSlotChangeEvent): Changed to use a pointer to the
+        enqueued event instead of a boolean. With only a boolean, we could end up clearing the
+        flag in cases where we don't really want to.
+        (WebCore::HTMLSlotElement::dispatchEvent): Ditto.
+        (WebCore::HTMLSlotElement::assignedNodesForBindings): Deleted.
+        * html/HTMLSlotElement.h: Use pragma once. Added AssignedNodeOptions. Changed for the
+        above, including changing the data member.
+        * html/HTMLSlotElement.idl: Removed use of ImplementedAs. Fixed the type of the options
+        dictionary.
+
 2016-05-08  Chris Dumez  <cdumez@apple.com>
 
         [Bindings] Add convert<>() template specializations for integer types

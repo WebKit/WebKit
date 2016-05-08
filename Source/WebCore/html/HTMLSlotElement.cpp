@@ -28,8 +28,6 @@
 
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 
-#include "Dictionary.h"
-#include "ElementChildIterator.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
@@ -68,7 +66,7 @@ HTMLSlotElement::InsertionNotificationRequest HTMLSlotElement::insertedInto(Cont
 
 void HTMLSlotElement::removedFrom(ContainerNode& insertionPoint)
 {
-    // ContainerNode::removeBetween always sets the removed chid's tree scope to Document's but InShadowRoot flag is unset in Node::removedFrom.
+    // ContainerNode::removeBetween always sets the removed child's tree scope to Document's but InShadowRoot flag is unset in Node::removedFrom.
     // So if InShadowRoot flag is set but this element's tree scope is Document's, this element has just been removed from a shadow root.
     if (insertionPoint.isInShadowTree() && isInShadowTree() && &treeScope() == &document()) {
         auto* oldShadowRoot = insertionPoint.containingShadowRoot();
@@ -112,42 +110,37 @@ static void flattenAssignedNodes(Vector<Node*>& nodes, const Vector<Node*>& assi
     }
 }
 
-const Vector<Node*> HTMLSlotElement::assignedNodesForBindings(const Dictionary& options) const
+Vector<Node*> HTMLSlotElement::assignedNodes(const AssignedNodesOptions& options) const
 {
-    bool shouldFlatten = false;
-    options.get("flatten", shouldFlatten);
-
-    Vector<Node*> nodes;
     auto* assignedNodes = this->assignedNodes();
     if (!assignedNodes)
-        return nodes;
+        return { };
 
-    if (shouldFlatten)
-        flattenAssignedNodes(nodes, *assignedNodes);
-    else
-        nodes = *assignedNodes;
+    if (!options.flatten)
+        return *assignedNodes;
 
+    Vector<Node*> nodes;
+    flattenAssignedNodes(nodes, *assignedNodes);
     return nodes;
 }
 
 void HTMLSlotElement::enqueueSlotChangeEvent()
 {
-    if (m_hasEnqueuedSlotChangeEvent)
+    if (m_enqueuedSlotChangeEvent)
         return;
 
     bool bubbles = false;
     bool cancelable = false;
     auto event = Event::create(eventNames().slotchangeEvent, bubbles, cancelable);
     event->setTarget(this);
+    m_enqueuedSlotChangeEvent = event.ptr();
     document().enqueueSlotchangeEvent(WTFMove(event));
-
-    m_hasEnqueuedSlotChangeEvent = true;
 }
 
 bool HTMLSlotElement::dispatchEvent(Event& event)
 {
-    if (event.type() == eventNames().slotchangeEvent)
-        m_hasEnqueuedSlotChangeEvent = false;
+    if (&event == m_enqueuedSlotChangeEvent)
+        m_enqueuedSlotChangeEvent = nullptr;
     return HTMLElement::dispatchEvent(event);
 }
 

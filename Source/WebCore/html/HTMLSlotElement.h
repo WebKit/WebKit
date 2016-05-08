@@ -23,13 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLSlotElement_h
-#define HTMLSlotElement_h
+#pragma once
 
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 
 #include "HTMLElement.h"
-#include "Range.h"
 
 namespace WebCore {
 
@@ -38,23 +36,24 @@ public:
     static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);
 
     const Vector<Node*>* assignedNodes() const;
-    const Vector<Node*> assignedNodesForBindings(const Dictionary& options) const;
+    struct AssignedNodesOptions {
+        bool flatten;
+    };
+    Vector<Node*> assignedNodes(const AssignedNodesOptions&) const;
 
     void enqueueSlotChangeEvent();
 
 private:
     HTMLSlotElement(const QualifiedName&, Document&);
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    void removedFrom(ContainerNode&) override;
-    void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason) override;
+    InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    void removedFrom(ContainerNode&) final;
+    void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason) final;
+    bool dispatchEvent(Event&) final;
 
-    bool dispatchEvent(Event&) override;
-
-    bool m_hasEnqueuedSlotChangeEvent { false };
+    Event* m_enqueuedSlotChangeEvent { nullptr };
 };
 
 }
 
-#endif
 #endif

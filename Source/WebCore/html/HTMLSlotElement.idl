@@ -23,14 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://w3c.github.io/webcomponents/spec/shadow/#idl-def-HTMLSlotElement
 [
     Conditional=SHADOW_DOM,
     EnabledAtRuntime=ShadowDOM,
     JSGenerateToNativeObject
 ] interface HTMLSlotElement : HTMLElement {
-
     [Reflect] attribute DOMString name;
-    [ImplementedAs=assignedNodesForBindings] sequence<Node> assignedNodes(optional Dictionary options);
+    sequence<Node> assignedNodes(optional AssignedNodesOptions options);
+};
 
+dictionary AssignedNodesOptions {
+    boolean flatten = false;
 };
