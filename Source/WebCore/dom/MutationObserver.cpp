@@ -71,34 +71,30 @@ bool MutationObserver::validateOptions(MutationObserverOptions options)
         && ((options & CharacterData) || !(options & CharacterDataOldValue));
 }
 
-void MutationObserver::observe(Node& node, const Dictionary& optionsDictionary, ExceptionCode& ec)
+void MutationObserver::observe(Node& node, const Init& init, ExceptionCode& ec)
 {
-    static const struct {
-        const char* name;
-        MutationObserverOptions value;
-    } booleanOptions[] = {
-        { "childList", ChildList },
-        { "subtree", Subtree },
-        { "attributeOldValue", AttributeOldValue },
-        { "characterDataOldValue", CharacterDataOldValue }
-    };
     MutationObserverOptions options = 0;
-    bool value = false;
-    for (auto& booleanOption : booleanOptions) {
-        if (optionsDictionary.get(booleanOption.name, value) && value)
-            options |= booleanOption.value;
-    }
+
+    if (init.childList)
+        options |= ChildList;
+    if (init.subtree)
+        options |= Subtree;
+    if (init.attributeOldValue.valueOr(false))
+        options |= AttributeOldValue;
+    if (init.characterDataOldValue.valueOr(false))
+        options |= CharacterDataOldValue;
 
     HashSet<AtomicString> attributeFilter;
-    if (optionsDictionary.get("attributeFilter", attributeFilter))
+    if (init.attributeFilter) {
+        for (auto& value : init.attributeFilter.value())
+            attributeFilter.add(value);
         options |= AttributeFilter;
+    }
 
-    bool attributesOptionIsSet = optionsDictionary.get("attributes", value);
-    if ((attributesOptionIsSet && value) || (!attributesOptionIsSet && (options & (AttributeFilter | AttributeOldValue))))
+    if (init.attributes ? init.attributes.value() : (options & (AttributeFilter | AttributeOldValue)))
         options |= Attributes;
 
-    bool characterDataOptionIsSet = optionsDictionary.get("characterData", value);
-    if ((characterDataOptionIsSet && value) || (!characterDataOptionIsSet && (options & CharacterDataOldValue)))
+    if (init.characterData ? init.characterData.value() : (options & CharacterDataOldValue))
         options |= CharacterData;
 
     if (!validateOptions(options)) {
@@ -124,16 +120,16 @@ void MutationObserver::disconnect()
         MutationObserverRegistration::unregisterAndDelete(registration);
 }
 
-void MutationObserver::observationStarted(MutationObserverRegistration* registration)
+void MutationObserver::observationStarted(MutationObserverRegistration& registration)
 {
-    ASSERT(!m_registrations.contains(registration));
-    m_registrations.add(registration);
+    ASSERT(!m_registrations.contains(&registration));
+    m_registrations.add(&registration);
 }
 
-void MutationObserver::observationEnded(MutationObserverRegistration* registration)
+void MutationObserver::observationEnded(MutationObserverRegistration& registration)
 {
-    ASSERT(m_registrations.contains(registration));
-    m_registrations.remove(registration);
+    ASSERT(m_registrations.contains(&registration));
+    m_registrations.remove(&registration);
 }
 
 typedef HashSet<RefPtr<MutationObserver>> MutationObserverSet;
@@ -154,22 +150,11 @@ static bool mutationObserverCompoundMicrotaskQueuedFlag;
 
 class MutationObserverMicrotask final : public Microtask {
     WTF_MAKE_FAST_ALLOCATED;
-public:
-    MutationObserverMicrotask()
-    {
-    }
-
-    virtual ~MutationObserverMicrotask()
-    {
-    }
-
 private:
-    Result run() override
+    Result run() final
     {
         mutationObserverCompoundMicrotaskQueuedFlag = false;
-
         MutationObserver::deliverAllMutations();
-
         return Result::Done;
     }
 };
@@ -179,9 +164,7 @@ static void queueMutationObserverCompoundMicrotask()
     if (mutationObserverCompoundMicrotaskQueuedFlag)
         return;
     mutationObserverCompoundMicrotaskQueuedFlag = true;
-
-    auto microtask = std::make_unique<MutationObserverMicrotask>();
-    MicrotaskQueue::mainThreadQueue().append(WTFMove(microtask));
+    MicrotaskQueue::mainThreadQueue().append(std::make_unique<MutationObserverMicrotask>());
 }
 
 void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
@@ -201,7 +184,7 @@ void MutationObserver::setHasTransientRegistration()
     queueMutationObserverCompoundMicrotask();
 }
 
-HashSet<Node*> MutationObserver::getObservedNodes() const
+HashSet<Node*> MutationObserver::observedNodes() const
 {
     HashSet<Node*> observedNodes;
     for (auto* registration : m_registrations)

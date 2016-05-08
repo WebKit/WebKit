@@ -386,9 +386,11 @@ dictionary ShadowRootInit {
 
 dictionary FontFaceDescriptors {
     DOMString style = "normal";
-    DOMString weight = "normal";
-    DOMString stretch = "normal";
     DOMString unicodeRange = "U+0-10FFFF";
-    DOMString variant = "normal";
-    DOMString featureSettings = "normal";
+};
+
+dictionary MutationObserverInit {
+    boolean childList = false;
+    boolean attributes;
+    sequence<DOMString> attributeFilter;
 };

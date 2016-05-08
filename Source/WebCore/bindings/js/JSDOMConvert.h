@@ -40,12 +40,17 @@ template<typename T, typename U> T convertOptional(JSC::ExecState&, JSC::JSValue
 
 template<typename T> Optional<T> inline convertOptional(JSC::ExecState& state, JSC::JSValue value)
 {
-    return value.isUndefined() ? Nullopt : convert<T>(state, value);
+    return value.isUndefined() ? Optional<T>() : convert<T>(state, value);
 }
 
 template<typename T, typename U> inline T convertOptional(JSC::ExecState& state, JSC::JSValue value, U&& defaultValue)
 {
     return value.isUndefined() ? std::forward<U>(defaultValue) : convert<T>(state, value);
+}
+
+template<> inline bool convert<bool>(JSC::ExecState& state, JSC::JSValue value)
+{
+    return value.toBoolean(&state);
 }
 
 template<> inline String convert<String>(JSC::ExecState& state, JSC::JSValue value)
@@ -60,6 +65,27 @@ template<typename T> inline T convert(JSC::ExecState& state, JSC::JSValue value,
     if (allowNonFinite == ShouldAllowNonFinite::No && UNLIKELY(!std::isfinite(number)))
         throwNonFiniteTypeError(state);
     return static_cast<T>(number);
+}
+
+template<> Vector<String> convert<Vector<String>>(JSC::ExecState& state, JSC::JSValue value)
+{
+    // FIXME: This code has a lot in common with toNativeArray.
+    // Should find a way to share code.
+    unsigned length;
+    auto* object = toJSSequence(&state, value, length);
+    if (state.hadException())
+        return { };
+    Vector<String> vector;
+    vector.reserveInitialCapacity(length);
+    for (unsigned i = 0 ; i < length; ++i) {
+        auto itemValue = object->get(&state, i);
+        if (state.hadException())
+            return { };
+        vector.uncheckedAppend(convert<String>(state, itemValue));
+        if (state.hadException())
+            return { };
+    }
+    return vector;
 }
 
 }

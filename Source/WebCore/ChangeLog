@@ -1,3 +1,49 @@
+2016-05-07  Darin Adler  <darin@apple.com>
+
+        Change MutationObserver::observe to take an IDL dictionary, rather than WebCore::Dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=157456
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::convertOptional): Use a specific Optional null rather than Nullopt so we
+        can compile the ternary operator.
+        (WebCore::convert<bool>): Added.
+        (WebCore::convert<Vector<String>>): Added. Later we probably need to change convert to use
+        a member function of a class template rather than a function template so we can make partial
+        specialization work and do this just once for all Vector<T>.
+
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::JSMutationObserverOwner::isReachableFromOpaqueRoots): Streamlined code and removed
+        some local variables. Changed to call the new observedNodes rather than getObservedNodes.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent): Fixed bug where we tried to call the version of
+        the convert function with a default value even when there was none.
+
+        * bindings/scripts/test/TestObj.idl: Added a test case basically identical to what's needed
+        in MutationObserver.idl.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Regenerated.
+
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::observe): Chagned function to take a MutationObserver::Init
+        instead of a Dictionary.
+        (WebCore::MutationObserver::observationStarted): Changed argument type to a reference.
+        (WebCore::MutationObserver::observationEnded): Ditto.
+        (WebCore::MutationObserverMicrotask): Removed unneeded explicit constructor and destructor.
+        (WebCore::queueMutationObserverCompoundMicrotask): Got rid of unnneeded local variable.
+        (WebCore::MutationObserver::observedNodes): Renamed to remove the "get" prefix.
+
+        * dom/MutationObserver.h: Reduced includes. Added MutationObserver::Init struct and
+        used it for the type of the argument to the observe function. Changed a few argument
+        types and removed unused forward declarations.
+
+        * dom/MutationObserver.idl: Added MutationObserverInit and used it instead of Dictionary.
+
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::MutationObserverRegistration): Pass a reference.
+        (WebCore::MutationObserverRegistration::~MutationObserverRegistration): Ditto.
+
 2016-05-07  Chris Dumez  <cdumez@apple.com>
 
         Reduce special handling of XPathNSResolver type in the bindings

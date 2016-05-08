@@ -968,7 +968,7 @@ sub GenerateDictionaryImplementationContent
             }
             # FIXME: Eventually we will want this to call JSValueToNative.
             my $function = $member->isOptional ? "convertOptional" : "convert";
-            my $defaultValueWithLeadingComma = $member->isOptional ? ", " . $member->default : "";
+            my $defaultValueWithLeadingComma = $member->isOptional && defined $member->default ? ", " . $member->default : "";
             $result .= "    auto " . $member->name . " = " . $function . "<" . GetNativeTypeFromSignature($interface, $member) . ">"
                 . "(state, propertyValue(state, value, \"" . $member->name . "\")" . $defaultValueWithLeadingComma . ");\n";
             $needExceptionCheck = 1;

@@ -43,13 +43,13 @@ MutationObserverRegistration::MutationObserverRegistration(PassRefPtr<MutationOb
     , m_options(options)
     , m_attributeFilter(attributeFilter)
 {
-    m_observer->observationStarted(this);
+    m_observer->observationStarted(*this);
 }
 
 MutationObserverRegistration::~MutationObserverRegistration()
 {
     clearTransientRegistrations();
-    m_observer->observationEnded(this);
+    m_observer->observationEnded(*this);
 }
 
 void MutationObserverRegistration::resetObservation(MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter)

@@ -495,20 +495,20 @@ template<> TestObj::FontFaceDescriptors convert<TestObj::FontFaceDescriptors>(Ex
     auto style = convertOptional<String>(state, propertyValue(state, value, "style"), "normal");
     if (UNLIKELY(state.hadException()))
         return { };
-    auto weight = convertOptional<String>(state, propertyValue(state, value, "weight"), "normal");
-    if (UNLIKELY(state.hadException()))
-        return { };
-    auto stretch = convertOptional<String>(state, propertyValue(state, value, "stretch"), "normal");
-    if (UNLIKELY(state.hadException()))
-        return { };
     auto unicodeRange = convertOptional<String>(state, propertyValue(state, value, "unicodeRange"), "U+0-10FFFF");
+    return { WTFMove(style), WTFMove(unicodeRange) };
+}
+
+template<> TestObj::MutationObserverInit convert<TestObj::MutationObserverInit>(ExecState& state, JSValue value)
+{
+    auto childList = convertOptional<bool>(state, propertyValue(state, value, "childList"), false);
     if (UNLIKELY(state.hadException()))
         return { };
-    auto variant = convertOptional<String>(state, propertyValue(state, value, "variant"), "normal");
+    auto attributes = convertOptional<bool>(state, propertyValue(state, value, "attributes"));
     if (UNLIKELY(state.hadException()))
         return { };
-    auto featureSettings = convertOptional<String>(state, propertyValue(state, value, "featureSettings"), "normal");
-    return { WTFMove(style), WTFMove(weight), WTFMove(stretch), WTFMove(unicodeRange), WTFMove(variant), WTFMove(featureSettings) };
+    auto attributeFilter = convertOptional<Vector<String>>(state, propertyValue(state, value, "attributeFilter"));
+    return { WTFMove(childList), WTFMove(attributes), WTFMove(attributeFilter) };
 }
 
 // Functions

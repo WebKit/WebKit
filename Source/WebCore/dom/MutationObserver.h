@@ -31,17 +31,14 @@
 #ifndef MutationObserver_h
 #define MutationObserver_h
 
-#include <wtf/HashMap.h>
+#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Dictionary;
 class MutationCallback;
 class MutationObserverRegistration;
 class MutationRecord;
@@ -77,20 +74,29 @@ public:
 
     ~MutationObserver();
 
-    void observe(Node&, const Dictionary&, ExceptionCode&);
+    struct Init {
+        bool childList;
+        Optional<bool> attributes;
+        Optional<bool> characterData;
+        bool subtree;
+        Optional<bool> attributeOldValue;
+        Optional<bool> characterDataOldValue;
+        Optional<Vector<String>> attributeFilter;
+    };
+
+    void observe(Node&, const Init&, ExceptionCode&);
     Vector<Ref<MutationRecord>> takeRecords();
     void disconnect();
-    void observationStarted(MutationObserverRegistration*);
-    void observationEnded(MutationObserverRegistration*);
+
+    void observationStarted(MutationObserverRegistration&);
+    void observationEnded(MutationObserverRegistration&);
     void enqueueMutationRecord(Ref<MutationRecord>&&);
     void setHasTransientRegistration();
     bool canDeliver();
 
-    HashSet<Node*> getObservedNodes() const;
+    HashSet<Node*> observedNodes() const;
 
 private:
-    struct ObserverLessThan;
-
     explicit MutationObserver(Ref<MutationCallback>&&);
     void deliver();
 
