@@ -165,7 +165,7 @@ bool JSTestCallbackFunction::callbackWithBoolean(bool boolParam)
     return !returnedException;
 }
 
-bool JSTestCallbackFunction::callbackRequiresThisToPass(int longParam, TestNode* testNodeParam)
+bool JSTestCallbackFunction::callbackRequiresThisToPass(int32_t longParam, TestNode* testNodeParam)
 {
     if (!canInvokeCallback())
         return true;

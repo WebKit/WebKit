@@ -34,6 +34,7 @@ enum class ShouldAllowNonFinite { No, Yes };
 
 template<typename T> T convert(JSC::ExecState&, JSC::JSValue);
 template<typename T> T convert(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite);
+template<typename T> T convert(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration);
 
 template<typename T> Optional<T> convertOptional(JSC::ExecState&, JSC::JSValue);
 template<typename T, typename U> T convertOptional(JSC::ExecState&, JSC::JSValue, U&& defaultValue);
@@ -73,4 +74,114 @@ template<> inline Vector<String> convert<Vector<String>>(JSC::ExecState& state, 
     return toNativeArray<String>(&state, value);
 }
 
+template<> inline int8_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
+{
+    switch (configuration) {
+    case NormalConversion:
+        break;
+    case EnforceRange:
+        return toInt8EnforceRange(state, value);
+    case Clamp:
+        return toInt8Clamp(state, value);
+    }
+    return toInt8(state, value);
 }
+
+template<> inline uint8_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
+{
+    switch (configuration) {
+    case NormalConversion:
+        break;
+    case EnforceRange:
+        return toUInt8EnforceRange(state, value);
+    case Clamp:
+        return toUInt8Clamp(state, value);
+    }
+    return toUInt8(state, value);
+}
+
+template<> inline int16_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
+{
+    switch (configuration) {
+    case NormalConversion:
+        break;
+    case EnforceRange:
+        return toInt16EnforceRange(state, value);
+    case Clamp:
+        return toInt16Clamp(state, value);
+    }
+    return toInt16(state, value);
+}
+
+template<> inline uint16_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
+{
+    switch (configuration) {
+    case NormalConversion:
+        break;
+    case EnforceRange:
+        return toUInt16EnforceRange(state, value);
+    case Clamp:
+        return toUInt16Clamp(state, value);
+    }
+    return toUInt16(state, value);
+}
+
+template<> inline int32_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
+{
+    switch (configuration) {
+    case NormalConversion:
+        break;
+    case EnforceRange:
+        return toInt32EnforceRange(state, value);
+    case Clamp:
+        return toInt32Clamp(state, value);
+    }
+    return value.toInt32(&state);
+}
+
+template<> inline uint32_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
+{
+    switch (configuration) {
+    case NormalConversion:
+        break;
+    case EnforceRange:
+        return toUInt32EnforceRange(state, value);
+    case Clamp:
+        return toUInt32Clamp(state, value);
+    }
+    return value.toUInt32(&state);
+}
+
+template<> inline int64_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
+{
+    if (value.isInt32())
+        return value.asInt32();
+
+    switch (configuration) {
+    case NormalConversion:
+        break;
+    case EnforceRange:
+        return toInt64EnforceRange(state, value);
+    case Clamp:
+        return toInt64Clamp(state, value);
+    }
+    return toInt64(state, value);
+}
+
+template<> inline uint64_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
+{
+    if (value.isUInt32())
+        return value.asUInt32();
+
+    switch (configuration) {
+    case NormalConversion:
+        break;
+    case EnforceRange:
+        return toUInt64EnforceRange(state, value);
+    case Clamp:
+        return toUInt64Clamp(state, value);
+    }
+    return toUInt64(state, value);
+}
+
+} // namespace WebCore

@@ -366,15 +366,15 @@ static String rangeErrorString(double value, double min, double max)
     return makeString("Value ", String::numberToStringECMAScript(value), " is outside the range [", String::numberToStringECMAScript(min), ", ", String::numberToStringECMAScript(max), "]");
 }
 
-static double enforceRange(ExecState* exec, double x, double minimum, double maximum)
+static double enforceRange(ExecState& state, double x, double minimum, double maximum)
 {
     if (std::isnan(x) || std::isinf(x)) {
-        exec->vm().throwException(exec, createTypeError(exec, rangeErrorString(x, minimum, maximum)));
+        state.vm().throwException(&state, createTypeError(&state, rangeErrorString(x, minimum, maximum)));
         return 0;
     }
     x = trunc(x);
     if (x < minimum || x > maximum) {
-        exec->vm().throwException(exec, createTypeError(exec, rangeErrorString(x, minimum, maximum)));
+        state.vm().throwException(&state, createTypeError(&state, rangeErrorString(x, minimum, maximum)));
         return 0;
     }
     return x;
@@ -411,8 +411,10 @@ struct IntTypeLimits<uint16_t> {
 };
 
 template <typename T>
-static inline T toSmallerInt(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+static inline T toSmallerInt(ExecState& state, JSValue value, IntegerConversionConfiguration configuration)
 {
+    static_assert(std::is_signed<T>::value && std::is_integral<T>::value, "Should only be used for signed integral types");
+
     typedef IntTypeLimits<T> LimitsTrait;
     // Fast path if the value is already a 32-bit signed integer in the right range.
     if (value.isInt32()) {
@@ -423,7 +425,7 @@ static inline T toSmallerInt(ExecState* exec, JSValue value, IntegerConversionCo
         case NormalConversion:
             break;
         case EnforceRange:
-            throwTypeError(exec);
+            throwTypeError(&state);
             return 0;
         case Clamp:
             return d < LimitsTrait::minValue ? LimitsTrait::minValue : LimitsTrait::maxValue;
@@ -432,15 +434,15 @@ static inline T toSmallerInt(ExecState* exec, JSValue value, IntegerConversionCo
         return static_cast<T>(d > LimitsTrait::maxValue ? d - LimitsTrait::numberOfValues : d);
     }
 
-    double x = value.toNumber(exec);
-    if (UNLIKELY(exec->hadException()))
+    double x = value.toNumber(&state);
+    if (UNLIKELY(state.hadException()))
         return 0;
 
     switch (configuration) {
     case NormalConversion:
         break;
     case EnforceRange:
-        return enforceRange(exec, x, LimitsTrait::minValue, LimitsTrait::maxValue);
+        return enforceRange(state, x, LimitsTrait::minValue, LimitsTrait::maxValue);
     case Clamp:
         return std::isnan(x) ? 0 : clampTo<T>(x);
     }
@@ -455,8 +457,10 @@ static inline T toSmallerInt(ExecState* exec, JSValue value, IntegerConversionCo
 }
 
 template <typename T>
-static inline T toSmallerUInt(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+static inline T toSmallerUInt(ExecState& state, JSValue value, IntegerConversionConfiguration configuration)
 {
+    static_assert(std::is_unsigned<T>::value && std::is_integral<T>::value, "Should only be used for unsigned integral types");
+
     typedef IntTypeLimits<T> LimitsTrait;
     // Fast path if the value is already a 32-bit unsigned integer in the right range.
     if (value.isUInt32()) {
@@ -467,22 +471,22 @@ static inline T toSmallerUInt(ExecState* exec, JSValue value, IntegerConversionC
         case NormalConversion:
             return static_cast<T>(d);
         case EnforceRange:
-            throwTypeError(exec);
+            throwTypeError(&state);
             return 0;
         case Clamp:
             return LimitsTrait::maxValue;
         }
     }
 
-    double x = value.toNumber(exec);
-    if (UNLIKELY(exec->hadException()))
+    double x = value.toNumber(&state);
+    if (UNLIKELY(state.hadException()))
         return 0;
 
     switch (configuration) {
     case NormalConversion:
         break;
     case EnforceRange:
-        return enforceRange(exec, x, 0, LimitsTrait::maxValue);
+        return enforceRange(state, x, 0, LimitsTrait::maxValue);
     case Clamp:
         return std::isnan(x) ? 0 : clampTo<T>(x);
     }
@@ -494,94 +498,144 @@ static inline T toSmallerUInt(ExecState* exec, JSValue value, IntegerConversionC
     return static_cast<T>(fmod(x, LimitsTrait::numberOfValues));
 }
 
-// http://www.w3.org/TR/WebIDL/#es-byte
-int8_t toInt8(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+int8_t toInt8EnforceRange(JSC::ExecState& state, JSValue value)
 {
-    return toSmallerInt<int8_t>(exec, value, configuration);
+    return toSmallerInt<int8_t>(state, value, EnforceRange);
+}
+
+uint8_t toUInt8EnforceRange(JSC::ExecState& state, JSValue value)
+{
+    return toSmallerUInt<uint8_t>(state, value, EnforceRange);
+}
+
+int8_t toInt8Clamp(JSC::ExecState& state, JSValue value)
+{
+    return toSmallerInt<int8_t>(state, value, Clamp);
+}
+
+uint8_t toUInt8Clamp(JSC::ExecState& state, JSValue value)
+{
+    return toSmallerUInt<uint8_t>(state, value, Clamp);
+}
+
+// http://www.w3.org/TR/WebIDL/#es-byte
+int8_t toInt8(ExecState& state, JSValue value)
+{
+    return toSmallerInt<int8_t>(state, value, NormalConversion);
 }
 
 // http://www.w3.org/TR/WebIDL/#es-octet
-uint8_t toUInt8(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+uint8_t toUInt8(ExecState& state, JSValue value)
 {
-    return toSmallerUInt<uint8_t>(exec, value, configuration);
+    return toSmallerUInt<uint8_t>(state, value, NormalConversion);
+}
+
+int16_t toInt16EnforceRange(ExecState& state, JSValue value)
+{
+    return toSmallerInt<int16_t>(state, value, EnforceRange);
+}
+
+uint16_t toUInt16EnforceRange(ExecState& state, JSValue value)
+{
+    return toSmallerUInt<uint16_t>(state, value, EnforceRange);
+}
+
+int16_t toInt16Clamp(ExecState& state, JSValue value)
+{
+    return toSmallerInt<int16_t>(state, value, Clamp);
+}
+
+uint16_t toUInt16Clamp(ExecState& state, JSValue value)
+{
+    return toSmallerUInt<uint16_t>(state, value, Clamp);
 }
 
 // http://www.w3.org/TR/WebIDL/#es-short
-int16_t toInt16(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+int16_t toInt16(ExecState& state, JSValue value)
 {
-    return toSmallerInt<int16_t>(exec, value, configuration);
+    return toSmallerInt<int16_t>(state, value, NormalConversion);
 }
 
 // http://www.w3.org/TR/WebIDL/#es-unsigned-short
-uint16_t toUInt16(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+uint16_t toUInt16(ExecState& state, JSValue value)
 {
-    return toSmallerUInt<uint16_t>(exec, value, configuration);
+    return toSmallerUInt<uint16_t>(state, value, NormalConversion);
 }
 
 // http://www.w3.org/TR/WebIDL/#es-long
-int32_t toInt32EnforceRange(ExecState* exec, JSValue value)
+int32_t toInt32EnforceRange(ExecState& state, JSValue value)
 {
     if (value.isInt32())
         return value.asInt32();
 
-    double x = value.toNumber(exec);
-    if (UNLIKELY(exec->hadException()))
+    double x = value.toNumber(&state);
+    if (UNLIKELY(state.hadException()))
         return 0;
-    return enforceRange(exec, x, kMinInt32, kMaxInt32);
+    return enforceRange(state, x, kMinInt32, kMaxInt32);
 }
 
-int32_t toInt32Clamp(ExecState* exec, JSValue value)
+int32_t toInt32Clamp(ExecState& state, JSValue value)
 {
     if (value.isInt32())
         return value.asInt32();
 
-    double x = value.toNumber(exec);
-    if (UNLIKELY(exec->hadException()))
-        return 0;
+    double x = value.toNumber(&state);
     return std::isnan(x) ? 0 : clampTo<int32_t>(x);
 }
 
-uint32_t toUInt32Clamp(ExecState* exec, JSValue value)
+uint32_t toUInt32Clamp(ExecState& state, JSValue value)
 {
     if (value.isUInt32())
         return value.asUInt32();
 
-    double x = value.toNumber(exec);
-    if (UNLIKELY(exec->hadException()))
-        return 0;
+    double x = value.toNumber(&state);
     return std::isnan(x) ? 0 : clampTo<uint32_t>(x);
 }
 
 // http://www.w3.org/TR/WebIDL/#es-unsigned-long
-uint32_t toUInt32EnforceRange(ExecState* exec, JSValue value)
+uint32_t toUInt32EnforceRange(ExecState& state, JSValue value)
 {
     if (value.isUInt32())
         return value.asUInt32();
 
-    double x = value.toNumber(exec);
-    if (UNLIKELY(exec->hadException()))
+    double x = value.toNumber(&state);
+    if (UNLIKELY(state.hadException()))
         return 0;
-    return enforceRange(exec, x, 0, kMaxUInt32);
+    return enforceRange(state, x, 0, kMaxUInt32);
+}
+
+int64_t toInt64EnforceRange(ExecState& state, JSC::JSValue value)
+{
+    double x = value.toNumber(&state);
+    if (UNLIKELY(state.hadException()))
+        return 0;
+    return enforceRange(state, x, -kJSMaxInteger, kJSMaxInteger);
+}
+
+uint64_t toUInt64EnforceRange(ExecState& state, JSC::JSValue value)
+{
+    double x = value.toNumber(&state);
+    if (UNLIKELY(state.hadException()))
+        return 0;
+    return enforceRange(state, x, 0, kJSMaxInteger);
+}
+
+int64_t toInt64Clamp(ExecState& state, JSC::JSValue value)
+{
+    double x = value.toNumber(&state);
+    return std::isnan(x) ? 0 : static_cast<int64_t>(std::min<double>(std::max<double>(x, -kJSMaxInteger), kJSMaxInteger));
+}
+
+uint64_t toUInt64Clamp(ExecState& state, JSC::JSValue value)
+{
+    double x = value.toNumber(&state);
+    return std::isnan(x) ? 0 : static_cast<uint64_t>(std::min<double>(std::max<double>(x, 0), kJSMaxInteger));
 }
 
 // http://www.w3.org/TR/WebIDL/#es-long-long
-int64_t toInt64(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+int64_t toInt64(ExecState& state, JSValue value)
 {
-    if (value.isInt32())
-        return value.asInt32();
-
-    double x = value.toNumber(exec);
-    if (UNLIKELY(exec->hadException()))
-        return 0;
-
-    switch (configuration) {
-    case NormalConversion:
-        break;
-    case EnforceRange:
-        return enforceRange(exec, x, -kJSMaxInteger, kJSMaxInteger);
-    case Clamp:
-        return std::isnan(x) ? 0 : static_cast<int64_t>(std::min<double>(std::max<double>(x, -kJSMaxInteger), kJSMaxInteger));
-    }
+    double x = value.toNumber(&state);
 
     // Map NaNs and +/-Infinity to 0; convert finite values modulo 2^64.
     unsigned long long n;
@@ -590,23 +644,9 @@ int64_t toInt64(ExecState* exec, JSValue value, IntegerConversionConfiguration c
 }
 
 // http://www.w3.org/TR/WebIDL/#es-unsigned-long-long
-uint64_t toUInt64(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+uint64_t toUInt64(ExecState& state, JSValue value)
 {
-    if (value.isUInt32())
-        return value.asUInt32();
-
-    double x = value.toNumber(exec);
-    if (UNLIKELY(exec->hadException()))
-        return 0;
-
-    switch (configuration) {
-    case NormalConversion:
-        break;
-    case EnforceRange:
-        return enforceRange(exec, x, 0, kJSMaxInteger);
-    case Clamp:
-        return std::isnan(x) ? 0 : static_cast<uint64_t>(std::min<double>(std::max<double>(x, 0), kJSMaxInteger));
-    }
+    double x = value.toNumber(&state);
 
     // Map NaNs and +/-Infinity to 0; convert finite values modulo 2^64.
     unsigned long long n;

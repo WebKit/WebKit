@@ -1,3 +1,77 @@
+2016-05-08  Chris Dumez  <cdumez@apple.com>
+
+        [Bindings] Add convert<>() template specializations for integer types
+        https://bugs.webkit.org/show_bug.cgi?id=157458
+
+        Reviewed by Darin Adler.
+
+        Add convert<>() template specializations for integer types and use them
+        in the JS bindings. Also, treat non-32bit types the same way as the
+        32bit ones, allowing the compiler to optimize out branching based on
+        the IntegerConversionConfiguration.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::enforceRange):
+        (WebCore::toSmallerInt):
+        (WebCore::toSmallerUInt):
+        (WebCore::toInt8EnforceRange):
+        (WebCore::toUInt8EnforceRange):
+        (WebCore::toInt8Clamp):
+        (WebCore::toUInt8Clamp):
+        (WebCore::toInt8):
+        (WebCore::toUInt8):
+        (WebCore::toInt16EnforceRange):
+        (WebCore::toUInt16EnforceRange):
+        (WebCore::toInt16Clamp):
+        (WebCore::toUInt16Clamp):
+        (WebCore::toInt16):
+        (WebCore::toUInt16):
+        (WebCore::toInt32EnforceRange):
+        (WebCore::toInt32Clamp):
+        (WebCore::toUInt32Clamp):
+        (WebCore::toUInt32EnforceRange):
+        (WebCore::toInt64EnforceRange):
+        (WebCore::toUInt64EnforceRange):
+        (WebCore::toInt64Clamp):
+        (WebCore::toUInt64Clamp):
+        (WebCore::toInt64):
+        (WebCore::toUInt64):
+        * bindings/js/JSDOMBinding.h:
+        - Splt some integer conversion functions into 3 Normal / Clamp /
+          Enforce versions, similarly to what was done for 32bit types already.
+          This is so that these can be called from the inline functions in
+          JSDOMConvert.h, allowing the compiler to optimize out the branches.
+        - Get rid of some unnecessary state.hadException() checks.
+
+        * bindings/js/JSDOMConvert.h:
+        Add convert<> specializations for integer types.
+
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::acceptNode):
+
+        * bindings/scripts/CodeGenerator.pm:
+        - Add utility function to distinguish integer types.
+        - Have IsNumericType() using the integerType / floatingPointType
+          hashes to avoid duplication.
+        - Stop int / unsigned int from integer types as those are not
+          in Web IDL and they are not used.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetIntegerConversionType):
+        (JSValueToNative):
+        Use convert<>() for converting JSValue to integer types.
+
+        * bindings/scripts/IDLParser.pm:
+        Stop allowing int / unsigned int types as those are not in Web IDL.
+
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Rebaseline bindings tests.
+
 2016-05-08  Darin Adler  <darin@apple.com>
 
         Correct dictionary bindings handling of optional, null, and undefined

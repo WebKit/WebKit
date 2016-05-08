@@ -29,6 +29,7 @@
 #if ENABLE(CONTENT_FILTERING)
 
 #include "JSDOMBinding.h"
+#include "JSDOMConvert.h"
 #include "MockContentFilterSettings.h"
 
 using namespace JSC;
@@ -57,7 +58,7 @@ JSValue JSMockContentFilterSettings::decisionPoint(ExecState&) const
 
 void JSMockContentFilterSettings::setDecisionPoint(ExecState& state, JSValue value)
 {
-    uint8_t nativeValue { toUInt8(&state, value, EnforceRange) };
+    uint8_t nativeValue { convert<uint8_t>(state, value, EnforceRange) };
     if (state.hadException())
         return;
 
@@ -90,7 +91,7 @@ static inline JSValue toJSValue(Decision decision)
 
 static inline Decision toDecision(ExecState& state, JSValue value)
 {
-    uint8_t nativeValue { toUInt8(&state, value, EnforceRange) };
+    uint8_t nativeValue { convert<uint8_t>(state, value, EnforceRange) };
     if (state.hadException())
         return Decision::Allow;
 

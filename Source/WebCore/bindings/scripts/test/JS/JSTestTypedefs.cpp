@@ -354,7 +354,7 @@ bool setJSTestTypedefsUnsignedLongLongAttr(ExecState* state, EncodedJSValue this
         return throwSetterTypeError(*state, "TestTypedefs", "unsignedLongLongAttr");
     }
     auto& impl = castedThis->wrapped();
-    auto nativeValue = toUInt64(state, value, NormalConversion);
+    auto nativeValue = convert<uint64_t>(*state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setUnsignedLongLongAttr(WTFMove(nativeValue));
@@ -388,7 +388,7 @@ bool setJSTestTypedefsAttrWithGetterException(ExecState* state, EncodedJSValue t
         return throwSetterTypeError(*state, "TestTypedefs", "attrWithGetterException");
     }
     auto& impl = castedThis->wrapped();
-    auto nativeValue = toInt32(state, value, NormalConversion);
+    auto nativeValue = convert<int32_t>(*state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setAttrWithGetterException(WTFMove(nativeValue));
@@ -406,7 +406,7 @@ bool setJSTestTypedefsAttrWithSetterException(ExecState* state, EncodedJSValue t
     }
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
-    auto nativeValue = toInt32(state, value, NormalConversion);
+    auto nativeValue = convert<int32_t>(*state, value, NormalConversion);
     if (UNLIKELY(state->hadException()))
         return false;
     impl.setAttrWithSetterException(WTFMove(nativeValue), ec);
@@ -464,7 +464,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* stat
         return throwThisTypeError(*state, "TestTypedefs", "func");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     auto& impl = castedThis->wrapped();
-    auto x = toNativeArray<int>(state, state->argument(0));
+    auto x = toNativeArray<int32_t>(state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.func(WTFMove(x));
@@ -544,10 +544,10 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto arg1 = toUInt64(state, state->argument(0), Clamp);
+    auto arg1 = convert<uint64_t>(*state, state->argument(0), Clamp);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    auto arg2 = state->argument(1).isUndefined() ? Optional<unsigned long long>() : toUInt64(state, state->uncheckedArgument(1), Clamp);
+    auto arg2 = state->argument(1).isUndefined() ? Optional<uint64_t>() : convert<uint64_t>(*state, state->uncheckedArgument(1), Clamp);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.funcWithClamp(WTFMove(arg1), WTFMove(arg2));

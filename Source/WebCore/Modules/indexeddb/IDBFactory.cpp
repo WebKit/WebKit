@@ -76,7 +76,7 @@ IDBFactory::~IDBFactory()
 {
 }
 
-RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, Optional<unsigned long long> version, ExceptionCodeWithMessage& ec)
+RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, Optional<uint64_t> version, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBFactory::open");
     

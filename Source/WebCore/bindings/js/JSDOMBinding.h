@@ -211,23 +211,30 @@ int32_t finiteInt32Value(JSC::JSValue, JSC::ExecState*, bool& okay);
 
 enum IntegerConversionConfiguration { NormalConversion, EnforceRange, Clamp };
 
-WEBCORE_EXPORT int32_t toInt32EnforceRange(JSC::ExecState*, JSC::JSValue);
-WEBCORE_EXPORT uint32_t toUInt32EnforceRange(JSC::ExecState*, JSC::JSValue);
+WEBCORE_EXPORT int8_t toInt8EnforceRange(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT uint8_t toUInt8EnforceRange(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT int16_t toInt16EnforceRange(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT uint16_t toUInt16EnforceRange(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT int32_t toInt32EnforceRange(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT uint32_t toUInt32EnforceRange(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT int64_t toInt64EnforceRange(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT uint64_t toUInt64EnforceRange(JSC::ExecState&, JSC::JSValue);
 
-WEBCORE_EXPORT int32_t toInt32Clamp(JSC::ExecState*, JSC::JSValue);
-WEBCORE_EXPORT uint32_t toUInt32Clamp(JSC::ExecState*, JSC::JSValue);
+WEBCORE_EXPORT int8_t toInt8Clamp(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT uint8_t toUInt8Clamp(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT int16_t toInt16Clamp(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT uint16_t toUInt16Clamp(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT int32_t toInt32Clamp(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT uint32_t toUInt32Clamp(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT int64_t toInt64Clamp(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT uint64_t toUInt64Clamp(JSC::ExecState&, JSC::JSValue);
 
-WEBCORE_EXPORT int8_t toInt8(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
-WEBCORE_EXPORT uint8_t toUInt8(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
-
-WEBCORE_EXPORT int16_t toInt16(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
-WEBCORE_EXPORT uint16_t toUInt16(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
-
-int32_t toInt32(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
-uint32_t toUInt32(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
-
-WEBCORE_EXPORT int64_t toInt64(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
-WEBCORE_EXPORT uint64_t toUInt64(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
+WEBCORE_EXPORT int8_t toInt8(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT uint8_t toUInt8(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT int16_t toInt16(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT uint16_t toUInt16(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT int64_t toInt64(JSC::ExecState&, JSC::JSValue);
+WEBCORE_EXPORT uint64_t toUInt64(JSC::ExecState&, JSC::JSValue);
 
 // Returns a Date instance for the specified value, or NaN if the date is not a number.
 JSC::JSValue jsDateOrNaN(JSC::ExecState*, double);
@@ -479,38 +486,6 @@ inline int32_t finiteInt32Value(JSC::JSValue value, JSC::ExecState* exec, bool& 
     double number = value.toNumber(exec);
     okay = std::isfinite(number);
     return JSC::toInt32(number);
-}
-
-/*
-    Convert a value to an integer as per <http://www.w3.org/TR/WebIDL/>.
-    The conversion fails if the value cannot be converted to a number or,
-    if EnforceRange is specified, the value is outside the range of the
-    destination integer type.
-*/
-inline int32_t toInt32(JSC::ExecState* exec, JSC::JSValue value, IntegerConversionConfiguration configuration)
-{
-    switch (configuration) {
-    case NormalConversion:
-        break;
-    case EnforceRange:
-        return toInt32EnforceRange(exec, value);
-    case Clamp:
-        return toInt32Clamp(exec, value);
-    }
-    return value.toInt32(exec);
-}
-
-inline uint32_t toUInt32(JSC::ExecState* exec, JSC::JSValue value, IntegerConversionConfiguration configuration)
-{
-    switch (configuration) {
-    case NormalConversion:
-        break;
-    case EnforceRange:
-        return toUInt32EnforceRange(exec, value);
-    case Clamp:
-        return toUInt32Clamp(exec, value);
-    }
-    return value.toUInt32(exec);
 }
 
 // Validates that the passed object is a sequence type per section 4.1.13 of the WebIDL spec.

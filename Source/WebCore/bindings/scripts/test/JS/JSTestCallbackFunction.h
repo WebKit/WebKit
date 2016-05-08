@@ -45,11 +45,11 @@ public:
     virtual bool callbackWithNoParam();
     virtual bool callbackWithArrayParam(RefPtr<Float32Array> arrayParam);
     virtual bool callbackWithSerializedScriptValueParam(PassRefPtr<SerializedScriptValue> srzParam, const String& strArg);
-    virtual int callbackWithNonBoolReturnType(const String& strArg);
-    virtual int customCallback(Class5* class5Param, Class6* class6Param);
+    virtual int32_t callbackWithNonBoolReturnType(const String& strArg);
+    virtual int32_t customCallback(Class5* class5Param, Class6* class6Param);
     virtual bool callbackWithStringList(PassRefPtr<DOMStringList> listParam);
     virtual bool callbackWithBoolean(bool boolParam);
-    virtual bool callbackRequiresThisToPass(int longParam, TestNode* testNodeParam);
+    virtual bool callbackRequiresThisToPass(int32_t longParam, TestNode* testNodeParam);
 
 private:
     JSTestCallbackFunction(JSC::JSObject* callback, JSDOMGlobalObject*);

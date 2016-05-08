@@ -44,18 +44,12 @@ my $codeGenerator = 0;
 
 my $verbose = 0;
 
-my %numericTypeHash = (
+my %integerTypeHash = (
     "byte" => 1,
-    "double" => 1,
-    "float" => 1,
-    "int" => 1,
     "long long" => 1,
     "long" => 1,
     "octet" => 1,
     "short" => 1,
-    "unrestricted double" => 1,
-    "unrestricted float" => 1,
-    "unsigned int" => 1,
     "unsigned long long" => 1,
     "unsigned long" => 1,
     "unsigned short" => 1,
@@ -357,27 +351,35 @@ sub IsConstructorTemplate
 
 sub IsNumericType
 {
-    my $object = shift;
-    my $type = shift;
+    my ($object, $type) = @_;
 
-    return 1 if $numericTypeHash{$type};
+    return 1 if $integerTypeHash{$type};
+    return 1 if $floatingPointTypeHash{$type};
+    return 0;
+}
+
+sub IsIntegerType
+{
+    my ($object, $type) = @_;
+
+    return 1 if $integerTypeHash{$type};
     return 0;
 }
 
 sub IsFloatingPointType
 {
     my ($object, $type) = @_;
+
     return 1 if $floatingPointTypeHash{$type};
     return 0;
 }
 
 sub IsPrimitiveType
 {
-    my $object = shift;
-    my $type = shift;
+    my ($object, $type) = @_;
 
     return 1 if $primitiveTypeHash{$type};
-    return 1 if $numericTypeHash{$type};
+    return 1 if $object->IsNumericType($type);
     return 0;
 }
 
@@ -417,10 +419,10 @@ sub IsDictionaryType
 
 sub IsNonPointerType
 {
-    my $object = shift;
-    my $type = shift;
+    my ($object, $type) = @_;
 
-    return 1 if $nonPointerTypeHash{$type} or $primitiveTypeHash{$type} or $numericTypeHash{$type};
+    return 1 if $nonPointerTypeHash{$type};
+    return 1 if $object->IsPrimitiveType($type);
     return 0;
 }
 

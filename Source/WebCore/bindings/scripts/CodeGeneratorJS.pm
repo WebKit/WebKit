@@ -4256,14 +4256,14 @@ my %nativeType = (
     "byte" => "int8_t",
     "double" => "double",
     "float" => "float",
-    "long long" => "long long",
-    "long" => "int",
+    "long long" => "int64_t",
+    "long" => "int32_t",
     "octet" => "uint8_t",
     "short" => "int16_t",
     "unrestricted double" => "double",
     "unrestricted float" => "float",
-    "unsigned long long" => "unsigned long long",
-    "unsigned long" => "unsigned",
+    "unsigned long long" => "uint64_t",
+    "unsigned long" => "uint32_t",
     "unsigned short" => "uint16_t",
 );
 
@@ -4364,16 +4364,14 @@ sub IsNativeType
     return exists $nativeType{$type};
 }
 
-my %integerConversionFunction = (
-    "byte" => "toInt8",
-    "long long" => "toInt64",
-    "long" => "toInt32",
-    "octet" => "toUInt8",
-    "short" => "toInt16",
-    "unsigned long long" => "toUInt64",
-    "unsigned long" => "toUInt32",
-    "unsigned short" => "toUInt16",
-);
+sub GetIntegerConversionType
+{
+    my $signature = shift;
+
+    return "EnforceRange" if $signature->extendedAttributes->{"EnforceRange"};
+    return "Clamp" if $signature->extendedAttributes->{"Clamp"};
+    return "NormalConversion";
+}
 
 # Returns (convertString, mayThrowException).
 sub JSValueToNative
@@ -4382,12 +4380,11 @@ sub JSValueToNative
 
     my $type = $signature->type;
 
-    my $function = $integerConversionFunction{$type};
-    if ($function) {
-        my $conversionType = "NormalConversion";
-        $conversionType = "EnforceRange" if $signature->extendedAttributes->{"EnforceRange"};
-        $conversionType = "Clamp" if $signature->extendedAttributes->{"Clamp"};
-        return ("$function(state, $value, $conversionType)", 1);
+    if ($codeGenerator->IsIntegerType($type)) {
+        my $nativeType = GetNativeType($interface, $type);
+        my $conversionType = GetIntegerConversionType($signature);
+        AddToImplIncludes("JSDOMConvert.h");
+        return ("convert<$nativeType>(*state, $value, $conversionType)", 1);
     }
 
     if ($type eq "DOMString") {

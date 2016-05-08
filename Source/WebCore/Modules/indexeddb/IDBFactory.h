@@ -56,7 +56,7 @@ public:
     static Ref<IDBFactory> create(IDBClient::IDBConnectionProxy&);
     ~IDBFactory();
 
-    RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, Optional<unsigned long long> version, ExceptionCodeWithMessage&);
+    RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, Optional<uint64_t> version, ExceptionCodeWithMessage&);
     RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const String& name, ExceptionCodeWithMessage&);
 
     short cmp(ScriptExecutionContext&, JSC::JSValue first, JSC::JSValue second, ExceptionCodeWithMessage&);
