@@ -1,3 +1,17 @@
+2016-05-08  David Kilzer  <ddkilzer@apple.com>
+
+        ThreadSanitizer: Data race and thread leak in WebCore::ScrollingThread::createThreadIfNeeded
+        <https://webkit.org/b/157462>
+
+        Reviewed by Darin Adler.
+
+        Reproduced with multiple existing tests.
+
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::createThreadIfNeeded): Use a
+        std::once_flag to initialize Scrolling Thread since this may be
+        called from background threads.
+
 2016-05-08  Darin Adler  <darin@apple.com>
 
         Try to fix build without rolling out that last change.
