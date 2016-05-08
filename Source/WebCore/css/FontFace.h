@@ -42,7 +42,7 @@ public:
         String variant;
         String featureSettings;
     };
-    static RefPtr<FontFace> create(JSC::ExecState&, Document&, const String& family, JSC::JSValue source, const Optional<Descriptors>&, ExceptionCode&);
+    static RefPtr<FontFace> create(JSC::ExecState&, Document&, const String& family, JSC::JSValue source, const Descriptors&, ExceptionCode&);
     static Ref<FontFace> create(CSSFontFace&);
     virtual ~FontFace();
 

@@ -486,28 +486,47 @@ template<> inline const char* expectedEnumerationValues<TestObj::ShadowRootMode>
 
 template<> TestObj::ShadowRootInit convert<TestObj::ShadowRootInit>(ExecState& state, JSValue value)
 {
-    auto mode = convert<TestObj::ShadowRootMode>(state, propertyValue(state, value, "mode"));
+    auto* object = value.getObject();
+    if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
+        throwTypeError(&state);
+        return { };
+    }
+    auto mode = convert<TestObj::ShadowRootMode>(state, object->get(&state, Identifier::fromString(&state, "mode")));
     return { WTFMove(mode) };
 }
 
 template<> TestObj::FontFaceDescriptors convert<TestObj::FontFaceDescriptors>(ExecState& state, JSValue value)
 {
-    auto style = convertOptional<String>(state, propertyValue(state, value, "style"), "normal");
+    if (value.isUndefinedOrNull())
+        return { "normal", "U+0-10FFFF" };
+    auto* object = value.getObject();
+    if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
+        throwTypeError(&state);
+        return { };
+    }
+    auto style = convertOptional<String>(state, object->get(&state, Identifier::fromString(&state, "style")), "normal");
     if (UNLIKELY(state.hadException()))
         return { };
-    auto unicodeRange = convertOptional<String>(state, propertyValue(state, value, "unicodeRange"), "U+0-10FFFF");
+    auto unicodeRange = convertOptional<String>(state, object->get(&state, Identifier::fromString(&state, "unicodeRange")), "U+0-10FFFF");
     return { WTFMove(style), WTFMove(unicodeRange) };
 }
 
 template<> TestObj::MutationObserverInit convert<TestObj::MutationObserverInit>(ExecState& state, JSValue value)
 {
-    auto childList = convertOptional<bool>(state, propertyValue(state, value, "childList"), false);
+    if (value.isUndefinedOrNull())
+        return { false, Nullopt, Nullopt };
+    auto* object = value.getObject();
+    if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
+        throwTypeError(&state);
+        return { };
+    }
+    auto childList = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "childList")), false);
     if (UNLIKELY(state.hadException()))
         return { };
-    auto attributes = convertOptional<bool>(state, propertyValue(state, value, "attributes"));
+    auto attributes = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "attributes")));
     if (UNLIKELY(state.hadException()))
         return { };
-    auto attributeFilter = convertOptional<Vector<String>>(state, propertyValue(state, value, "attributeFilter"));
+    auto attributeFilter = convertOptional<Vector<String>>(state, object->get(&state, Identifier::fromString(&state, "attributeFilter")));
     return { WTFMove(childList), WTFMove(attributes), WTFMove(attributeFilter) };
 }
 

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-RefPtr<FontFace> FontFace::create(JSC::ExecState& state, Document& document, const String& family, JSC::JSValue source, const Optional<Descriptors>& descriptors, ExceptionCode& ec)
+RefPtr<FontFace> FontFace::create(JSC::ExecState& state, Document& document, const String& family, JSC::JSValue source, const Descriptors& descriptors, ExceptionCode& ec)
 {
     auto result = adoptRef(*new FontFace(document.fontSelector()));
 
@@ -54,26 +54,24 @@ RefPtr<FontFace> FontFace::create(JSC::ExecState& state, Document& document, con
         CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &document, false);
     }
 
-    if (descriptors) {
-        result->setStyle(descriptors->style, ec);
-        if (ec)
-            return nullptr;
-        result->setWeight(descriptors->weight, ec);
-        if (ec)
-            return nullptr;
-        result->setStretch(descriptors->stretch, ec);
-        if (ec)
-            return nullptr;
-        result->setUnicodeRange(descriptors->unicodeRange, ec);
-        if (ec)
-            return nullptr;
-        result->setVariant(descriptors->variant, ec);
-        if (ec)
-            return nullptr;
-        result->setFeatureSettings(descriptors->featureSettings, ec);
-        if (ec)
-            return nullptr;
-    }
+    result->setStyle(descriptors.style, ec);
+    if (ec)
+        return nullptr;
+    result->setWeight(descriptors.weight, ec);
+    if (ec)
+        return nullptr;
+    result->setStretch(descriptors.stretch, ec);
+    if (ec)
+        return nullptr;
+    result->setUnicodeRange(descriptors.unicodeRange, ec);
+    if (ec)
+        return nullptr;
+    result->setVariant(descriptors.variant, ec);
+    if (ec)
+        return nullptr;
+    result->setFeatureSettings(descriptors.featureSettings, ec);
+    if (ec)
+        return nullptr;
 
     return WTFMove(result);
 }

@@ -298,8 +298,6 @@ AtomicString propertyNameToAtomicString(JSC::PropertyName);
 template<typename DOMClass> const JSC::HashTableValue* getStaticValueSlotEntryWithoutCaching(JSC::ExecState*, JSC::PropertyName);
 template<JSC::NativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFunctionGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 
-JSC::JSValue propertyValue(JSC::ExecState&, JSC::JSValue, const char* propertyName);
-
 // Inline functions and template definitions.
 
 inline JSC::Structure* DOMConstructorObject::createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)

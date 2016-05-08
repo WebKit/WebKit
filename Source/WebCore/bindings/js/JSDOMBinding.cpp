@@ -840,9 +840,4 @@ CallType DOMConstructorObject::getCallData(JSCell*, CallData& callData)
     return CallType::Host;
 }
 
-JSValue propertyValue(ExecState& state, JSValue value, const char* propertyName)
-{
-    return value.get(&state, Identifier::fromString(&state, propertyName));
-}
-
 } // namespace WebCore

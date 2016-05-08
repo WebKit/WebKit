@@ -1,3 +1,16 @@
+2016-05-08  Darin Adler  <darin@apple.com>
+
+        Correct dictionary bindings handling of optional, null, and undefined
+        https://bugs.webkit.org/show_bug.cgi?id=157463
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/MutationObserver/observe-exceptions-expected.txt: Reverted that
+        change to expect a more specific TypeError just as it was a day ago before
+        my last patch. The TypeError is back to being a problem with the specifics
+        of the arguments passed rather than a problem with null and undefined
+        themselves being invalid.
+
 2016-05-07  Darin Adler  <darin@apple.com>
 
         Change MutationObserver::observe to take an IDL dictionary, rather than WebCore::Dictionary

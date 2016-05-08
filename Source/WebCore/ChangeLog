@@ -1,3 +1,36 @@
+2016-05-08  Darin Adler  <darin@apple.com>
+
+        Correct dictionary bindings handling of optional, null, and undefined
+        https://bugs.webkit.org/show_bug.cgi?id=157463
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::propertyValue): Deleted.
+        * bindings/js/JSDOMBinding.h: Deleted propertyValue, not all that helpful for now.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent): Added a new early exit for convert to
+        a dictionary type when the value is undefined or null and all members are either
+        optional or have a default value. This returns the default values for everything
+        without raising an exception. Added checking that requires that the dictionary
+        argument is an object and not a regular expression, since that's also called for
+        in the latest draft of the Web IDL specification. This ends up speeding up the
+        code a bit since we now use JSObject::get for properties instead of JSValue::get.
+        (GenerateParametersCheck): Renamed some local variables. Taught the code that
+        optional dictionaries all have a default value; before it was doing that for the
+        type "Dictionary" but not the real dictionary types (IsDictionaryType).
+
+        * bindings/scripts/test/JS/JSTestObj.cpp: Regenerated.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create): Changed argument to be Descriptors instead of
+        Optional<Descriptors>. It would have compiled the other way, but there is now
+        no caller that will pass a null. Because the IDL dictionary support was new,
+        this was the only place that was doing it wrong. Good that we "nipped it in the bud"
+        before doing this in more places.
+        * css/FontFace.h: Ditto.
+
 2016-05-08  David Kilzer  <ddkilzer@apple.com>
 
         ThreadSanitizer: Data race and thread leak in WebCore::ScrollingThread::createThreadIfNeeded

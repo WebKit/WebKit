@@ -7,8 +7,8 @@ PASS observer.observe() threw exception TypeError: Not enough arguments.
 PASS observer.observe(null) threw exception TypeError: Not enough arguments.
 PASS observer.observe(undefined) threw exception TypeError: Not enough arguments.
 PASS observer.observe(document.body) threw exception TypeError: Not enough arguments.
-PASS observer.observe(document.body, null) threw exception TypeError: null is not an object (evaluating 'observer.observe(document.body, null)').
-PASS observer.observe(document.body, undefined) threw exception TypeError: undefined is not an object (evaluating 'observer.observe(document.body, undefined)').
+PASS observer.observe(document.body, null) threw exception TypeError: Type error.
+PASS observer.observe(document.body, undefined) threw exception TypeError: Type error.
 PASS observer.observe(null, {attributes: true}) threw exception TypeError: Type error.
 PASS observer.observe(undefined, {attributes: true}) threw exception TypeError: Type error.
 PASS observer.observe(document.body, {subtree: true}) threw exception TypeError: Type error.
