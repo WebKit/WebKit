@@ -1,5 +1,9 @@
 2016-05-08  Darin Adler  <darin@apple.com>
 
+        * wtf/text/WTFString.h: Remove pragma once. Not working for some reason.
+
+2016-05-08  Darin Adler  <darin@apple.com>
+
         Follow-up to that last patch (missed review comments).
 
         * wtf/text/WTFString.h: Use nullptr instead of 0 as needed. Also use pragma once.
