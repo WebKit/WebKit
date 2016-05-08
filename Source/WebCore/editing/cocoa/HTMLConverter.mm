@@ -1039,7 +1039,7 @@ static PlatformFont *_font(Element& element)
     auto* renderer = element.renderer();
     if (!renderer)
         return nil;
-    return toNSFont(renderer->style().fontCascade().primaryFont().getCTFont());
+    return (PlatformFont *)renderer->style().fontCascade().primaryFont().getCTFont();
 }
 
 #define UIFloatIsZero(number) (fabs(number - 0) < FLT_EPSILON)
