@@ -34,6 +34,8 @@
 
 namespace WTF {
 
+class ASCIILiteral;
+
 // Declarations of string operations
 
 WTF_EXPORT_STRING_API int charactersToIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
@@ -54,7 +56,7 @@ unsigned charactersToUInt(const UChar*, size_t, bool* ok = 0); // ignores traili
 int64_t charactersToInt64(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 int64_t charactersToInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 uint64_t charactersToUInt64(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
-uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+WTF_EXPORT_STRING_API uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 intptr_t charactersToIntPtr(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 
@@ -68,15 +70,9 @@ WTF_EXPORT_STRING_API float charactersToFloat(const UChar*, size_t, bool* ok = 0
 WTF_EXPORT_STRING_API float charactersToFloat(const LChar*, size_t, size_t& parsedLength);
 WTF_EXPORT_STRING_API float charactersToFloat(const UChar*, size_t, size_t& parsedLength);
 
-class ASCIILiteral;
+template<bool isSpecialCharacter(UChar), typename CharacterType> bool isAllSpecialCharacters(const CharacterType*, size_t);
 
-enum TrailingZerosTruncatingPolicy {
-    KeepTrailingZeros,
-    TruncateTrailingZeros
-};
-
-template<bool isSpecialCharacter(UChar), typename CharacterType>
-bool isAllSpecialCharacters(const CharacterType*, size_t);
+enum TrailingZerosTruncatingPolicy { KeepTrailingZeros, TruncateTrailingZeros };
 
 class String {
 public:

@@ -1,3 +1,71 @@
+2016-05-08  Darin Adler  <darin@apple.com>
+
+        Change EventSource constructor to take an IDL dictionary instead of a WebCore::Dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=157459
+
+        Reviewed by Chris Dumez.
+
+        Patch also includes some updating of EventSource class to modern idioms.
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::EventSource): Initialize based on Init.
+        (WebCore::EventSource::create): Take/pass Init instead of Dictionary.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize): Take a StringView instead of a string
+        so callers don't have to allocate a String just to use this.
+        (WebCore::SerializedScriptValue::create): Ditto.
+        * bindings/js/SerializedScriptValue.h: Ditto.
+
+        * page/EventSource.cpp: Changed defaultReconnectDelay to be a uint64_t
+        instead of an unsigned long long.
+        (WebCore::EventSource::EventSource): Changed constructor to take a struct
+        instead of a Dictionary for eventSourceInit. Also moved initialization of
+        data members to the header and used ASCIILiteral.
+        (WebCore::EventSource::create): Changed type to Init and streamlined code
+        a little bit using auto.
+        (WebCore::EventSource::connect): Used a reference instead of a pointer.
+        Also added a FIXME since I noticed that m_requestInFlight is probably not
+        needed, since it's basically the same thing as "is m_loader null".
+        (WebCore::EventSource::url): Moved to the header and made it inline.
+        (WebCore::EventSource::networkRequestEnded): Removed unneeded check that
+        is already done by all callers and turned it into an assertion.
+        (WebCore::EventSource::withCredentials): Ditto.
+        (WebCore::EventSource::readyState): Ditto.
+        (WebCore::EventSource::responseIsValid): Added. Helper function to make
+        the logic in didReceiveResponse easier to read. Fixed logic to compare
+        MIME type ignoring ASCII case, since that's how MIME types work.
+        (WebCore::EventSource::didReceiveResponse): Use the helper above, and also
+        move the m_eventStreamOrigin set up code into the valid response case,
+        since there is no point doing it if the response is not valid. Also use
+        the early return idiom.
+        (WebCore::EventSource::didReceiveData): Removed the unneeded explicit
+        conversion to StringView here. Also removed a FIXME that I fixed.
+        (WebCore::EventSource::didFinishLoading): Added code to flush the decoder
+        as mentioned in didReceiveData. Added FIXME about peculiar clearing code
+        that exists only here. Removed check for empty receive buffer and data
+        that is not needed since parseEventStream does sufficient checking.
+        (WebCore::EventSource::didFail): Added FIXME because of things that
+        didFinishLoading does that seem equally valuable here.
+        (WebCore::EventSource::parseEventStream): Tweaked types and names of local
+        variables, and changed to use Optional instead of magic number -1. Also
+        added a FIXME about how the buffer type is probably not right since we
+        keep moving the characters in the buffer as we consume the start of it.
+        (WebCore::EventSource::parseEventStreamLine): Refactor and reorganize so
+        this doesn't do so much string allocation and is easier to read
+        (WebCore::EventSource::canSuspendForDocumentSuspension): Tweaked comment.
+        (WebCore::EventSource::dispatchMessageEvent): Renamed this from
+        createMessageEvent, and moved more code in here. We now don't have to
+        allocate a temporary string just to pass it to SerializedScriptValue.
+
+        * page/EventSource.h: Updated for changes above. Use pragma once.
+        Define and use EventSource::Init struct. Other small cleanup.
+
+        * page/EventSource.idl: Define EventSourceInit dictionary and use it.
+        Other small cleanup.
+
+        * page/EventSource.idl: U
+
 2016-05-07  Darin Adler  <darin@apple.com>
 
         Change HTMLSlotElement::assignedNodes to take a IDL dictionary instead of a WebCore::Dictionary

@@ -29,34 +29,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EventSource_h
-#define EventSource_h
+#pragma once
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "URL.h"
 #include "ThreadableLoaderClient.h"
 #include "Timer.h"
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Dictionary;
 class MessageEvent;
-class ResourceResponse;
 class TextResourceDecoder;
 class ThreadableLoader;
 
 class EventSource final : public RefCounted<EventSource>, public EventTargetWithInlineData, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<EventSource> create(ScriptExecutionContext&, const String& url, const Dictionary&, ExceptionCode&);
+    struct Init {
+        bool withCredentials;
+    };
+    static RefPtr<EventSource> create(ScriptExecutionContext&, const String& url, const Init&, ExceptionCode&);
     virtual ~EventSource();
 
-    static const unsigned long long defaultReconnectDelay;
-
-    String url() const;
+    const String& url() const;
     bool withCredentials() const;
 
     typedef short State;
@@ -68,29 +65,28 @@ public:
 
     void close();
 
-    using RefCounted<EventSource>::ref;
-    using RefCounted<EventSource>::deref;
-
-    EventTargetInterface eventTargetInterface() const override { return EventSourceEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
+    using RefCounted::ref;
+    using RefCounted::deref;
 
 private:
-    EventSource(ScriptExecutionContext&, const URL&, const Dictionary&);
+    EventSource(ScriptExecutionContext&, const URL&, const Init&);
 
-    void refEventTarget() override { ref(); }
-    void derefEventTarget() override { deref(); }
+    EventTargetInterface eventTargetInterface() const final { return EventSourceEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
-    void didReceiveResponse(unsigned long, const ResourceResponse&) override;
-    void didReceiveData(const char*, int) override;
-    void didFinishLoading(unsigned long, double) override;
-    void didFail(const ResourceError&) override;
-    void didFailAccessControlCheck(const ResourceError&) override;
-    void didFailRedirectCheck() override;
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
-    // ActiveDOMObject API.
-    void stop() override;
-    const char* activeDOMObjectName() const override;
-    bool canSuspendForDocumentSuspension() const override;
+    void didReceiveResponse(unsigned long, const ResourceResponse&) final;
+    void didReceiveData(const char*, int) final;
+    void didFinishLoading(unsigned long, double) final;
+    void didFail(const ResourceError&) final;
+    void didFailAccessControlCheck(const ResourceError&) final;
+    void didFailRedirectCheck() final;
+
+    void stop() final;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
 
     void connect();
     void networkRequestEnded();
@@ -98,28 +94,45 @@ private:
     void scheduleReconnect();
     void abortConnectionAttempt();
     void parseEventStream();
-    void parseEventStreamLine(unsigned pos, int fieldLength, int lineLength);
-    Ref<MessageEvent> createMessageEvent();
+    void parseEventStreamLine(unsigned position, Optional<unsigned> fieldLength, unsigned lineLength);
+    void dispatchMessageEvent();
+
+    bool responseIsValid(const ResourceResponse&) const;
+
+    static const uint64_t defaultReconnectDelay;
 
     URL m_url;
     bool m_withCredentials;
-    State m_state;
+    State m_state { CONNECTING };
 
-    RefPtr<TextResourceDecoder> m_decoder;
+    Ref<TextResourceDecoder> m_decoder;
     RefPtr<ThreadableLoader> m_loader;
     Timer m_connectTimer;
-    Vector<UChar> m_receiveBuf;
-    bool m_discardTrailingNewline;
-    bool m_requestInFlight;
+    Vector<UChar> m_receiveBuffer;
+    bool m_discardTrailingNewline { false };
+    bool m_requestInFlight { false };
 
-    String m_eventName;
+    AtomicString m_eventName;
     Vector<UChar> m_data;
     String m_currentlyParsedEventId;
     String m_lastEventId;
-    unsigned long long m_reconnectDelay;
+    uint64_t m_reconnectDelay { defaultReconnectDelay };
     String m_eventStreamOrigin;
 };
 
-} // namespace WebCore
+inline const String& EventSource::url() const
+{
+    return m_url.string();
+}
 
-#endif // EventSource_h
+inline bool EventSource::withCredentials() const
+{
+    return m_withCredentials;
+}
+
+inline EventSource::State EventSource::readyState() const
+{
+    return m_state;
+}
+
+} // namespace WebCore

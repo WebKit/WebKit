@@ -478,20 +478,20 @@ public:
         return serializer.serialize(value);
     }
 
-    static bool serialize(const String& s, Vector<uint8_t>& out)
+    static bool serialize(StringView string, Vector<uint8_t>& out)
     {
         writeLittleEndian(out, CurrentVersion);
-        if (s.isEmpty()) {
+        if (string.isEmpty()) {
             writeLittleEndian<uint8_t>(out, EmptyStringTag);
             return true;
         }
         writeLittleEndian<uint8_t>(out, StringTag);
-        if (s.is8Bit()) {
-            writeLittleEndian(out, s.length() | StringDataIs8BitFlag);
-            return writeLittleEndian(out, s.characters8(), s.length());
+        if (string.is8Bit()) {
+            writeLittleEndian(out, string.length() | StringDataIs8BitFlag);
+            return writeLittleEndian(out, string.characters8(), string.length());
         }
-        writeLittleEndian(out, s.length());
-        return writeLittleEndian(out, s.characters16(), s.length());
+        writeLittleEndian(out, string.length());
+        return writeLittleEndian(out, string.characters16(), string.length());
     }
 
     static void serializeUndefined(Vector<uint8_t>& out)
@@ -2687,7 +2687,7 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec, JSV
     return adoptRef(*new SerializedScriptValue(WTFMove(buffer), blobURLs, WTFMove(arrayBufferContentsArray)));
 }
 
-RefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& string)
+RefPtr<SerializedScriptValue> SerializedScriptValue::create(StringView string)
 {
     Vector<uint8_t> buffer;
     if (!CloneSerializer::serialize(string, buffer))

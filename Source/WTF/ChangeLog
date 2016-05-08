@@ -1,3 +1,12 @@
+2016-05-08  Darin Adler  <darin@apple.com>
+
+        Change EventSource constructor to take an IDL dictionary instead of a WebCore::Dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=157459
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/WTFString.h: Export a symbol now used in WebCore.
+
 2016-05-02  Sam Weinig  <sam@webkit.org>
 
         On platforms that support it, use a SecTrustRef as the basis of CertificateInfo instead of a chain of SecCertificateRefs.

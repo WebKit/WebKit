@@ -62,7 +62,7 @@ class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue>
 public:
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, MessagePortArray*, ArrayBufferArray*, SerializationErrorMode = Throwing);
 
-    WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(const String&);
+    WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(StringView);
     static Ref<SerializedScriptValue> adopt(Vector<uint8_t>&& buffer)
     {
         return adoptRef(*new SerializedScriptValue(WTFMove(buffer)));
