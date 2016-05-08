@@ -1,5 +1,58 @@
 2016-05-08  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Add Breakpoints and Scripts folders to Debugger sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=151119
+        <rdar://problem/23488916>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a collapsible Sources section to the Debugger beneath the existing
+        Breakpoints section.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        Remove unused CSS class names.
+
+        (.sidebar > .panel.navigation.debugger .details-section.scripts:not(.collapsed)):
+        Hide scripts section bottom border when expanded. As the last
+        section, a border only adds visual clutter.
+
+        (.sidebar > .panel.navigation.debugger .details-section.scripts): Deleted.
+        (.sidebar > .panel.navigation.debugger.paused .details-section.scripts): Deleted.
+        (.sidebar > .panel.navigation.debugger .details-section.scripts .header): Deleted.
+        (.sidebar > .panel.navigation.debugger.paused .details-section.scripts .header): Deleted.
+        (.sidebar > .panel.navigation.debugger .details-section.scripts.collapsed > .content): Deleted.
+        (.sidebar > .panel.navigation.debugger.paused .details-section.scripts.collapsed > .content): Deleted.
+        No longer needed.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        Create separate "Breakpoints" and "Sources" sections, and make filter
+        placeholder text generic. Remove unused class from breakpoints tree.
+
+        (WebInspector.DebuggerSidebarPanel.prototype.treeElementForRepresentedObject):
+        Check both breakpoint and scripts tree outlines.
+
+        (WebInspector.DebuggerSidebarPanel.prototype._addBreakpoint):
+        (WebInspector.DebuggerSidebarPanel.prototype._addTreeElementForSourceCodeToTreeOutline):
+        Make helper function generic.
+
+        (WebInspector.DebuggerSidebarPanel.prototype._addResource):
+        (WebInspector.DebuggerSidebarPanel.prototype._mainResourceDidChange):
+        (WebInspector.DebuggerSidebarPanel.prototype._addScript):
+        Add resources to the scripts tree.
+
+        (WebInspector.DebuggerSidebarPanel.prototype._scriptsCleared):
+        Clear the scripts tree.
+
+        (WebInspector.DebuggerSidebarPanel.prototype._removeDebuggerTreeElement):
+        Remove script element when last breakpoint is removed.
+
+        (WebInspector.DebuggerSidebarPanel.prototype._addIssue):
+        (WebInspector.DebuggerSidebarPanel.prototype._addTreeElementForSourceCodeToContentTreeOutline): Deleted.
+        Renamed _addTreeElementForSourceCodeToTreeOutline.
+
+2016-05-08  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: SourceCodeTextEditor issue widgets/line styles should reset when log is cleared
         https://bugs.webkit.org/show_bug.cgi?id=157460
         <rdar://problem/26159633>

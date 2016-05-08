@@ -66,26 +66,6 @@
     display: block;
 }
 
-.sidebar > .panel.navigation.debugger .details-section.scripts {
+.sidebar > .panel.navigation.debugger .details-section.scripts:not(.collapsed) {
     border-bottom: none;
-}
-
-.sidebar > .panel.navigation.debugger.paused .details-section.scripts {
-    border-bottom: 1px solid var(--border-color);
-}
-
-.sidebar > .panel.navigation.debugger .details-section.scripts .header {
-    display: none;
-}
-
-.sidebar > .panel.navigation.debugger.paused .details-section.scripts .header {
-    display: block;
-}
-
-.sidebar > .panel.navigation.debugger .details-section.scripts.collapsed > .content {
-    display: block;
-}
-
-.sidebar > .panel.navigation.debugger.paused .details-section.scripts.collapsed > .content {
-    display: none;
 }
