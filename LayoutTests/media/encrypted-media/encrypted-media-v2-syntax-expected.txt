@@ -22,6 +22,6 @@ EXPECTED (mediaKeySession.sessionId != 'null') OK
 EXPECTED (mediaKeySession.onwebkitkeyadded == 'null') OK
 EXPECTED (mediaKeySession.onwebkitkeyerror == 'null') OK
 EXPECTED (mediaKeySession.onwebkitkeymessage == 'null') OK
-TEST(mediaKeySession.update(null)) THROWS('TypeError: Type error') OK
+TEST(mediaKeySession.update(null)) THROWS('TypeError: Argument 1 (\'key\') to MediaKeySession.update must be an instance of Uint8Array') OK
 END OF TEST
 

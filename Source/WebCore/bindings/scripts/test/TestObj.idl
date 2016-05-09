@@ -313,7 +313,7 @@ enum TestConfidence { "high", "kinda-low" };
     [StrictTypeChecking] attribute unrestricted float strictFloat;
     [StrictTypeChecking, RaisesException] boolean strictFunction(DOMString str, unrestricted float a, long b);
 
-    [StrictTypeChecking, RaisesException] boolean strictFunctionWithSequence(TestObj objArg, sequence<unsigned long> a);
+    [StrictTypeChecking, RaisesException] boolean strictFunctionWithSequence(TestObj? objArg, sequence<unsigned long> a);
     [StrictTypeChecking, RaisesException] boolean strictFunctionWithArray(TestObj objArg, long[] array);
 
     // ObjectiveC reserved words.

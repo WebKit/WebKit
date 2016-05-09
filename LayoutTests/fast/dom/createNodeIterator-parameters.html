@@ -10,7 +10,7 @@ shouldThrow("document.createNodeIterator()", "'TypeError: Not enough arguments'"
 
 debug("")
 debug("Null root node");
-shouldThrow("document.createNodeIterator(null)", "'TypeError: Type error'");
+shouldThrow("document.createNodeIterator(null)", "'TypeError: Argument 1 (\\'root\\') to Document.createNodeIterator must be an instance of Node'");
 
 debug("");
 debug("Default parameters");

@@ -1,3 +1,72 @@
+2016-05-09  Chris Dumez  <cdumez@apple.com>
+
+        Optimize [StrictTypeChecking] on IDL operations
+        https://bugs.webkit.org/show_bug.cgi?id=157467
+
+        Reviewed by Darin Adler.
+
+        Optimize [StrictTypeChecking] on IDL operations so that:
+        - Only generate extra code for nullable parameters because for non-nullable
+          parameters, JSXXX::toWrapped() will return null in case of a bad input
+          type. We will then throw a TypeError when null-checking it already.
+        - After the JSValue::isNullOrUndefined() check, avoid calling
+          JSXXX::toWrapped() and set nativeValue to nullptr directly.
+        - Drop the check for JSValue::inherits(JSXXX::info()) and just do a null
+          check on the value returned by JSXXX::toWrapped(). toWrapped() already
+          does a JSValue::inherits(JSXXX::info() check. Since we only call
+          toWrapped() if the JSValue is not null/undefined, a null return value
+          always indicates a bad input type.
+
+        Also update the TypeError message to be more useful when passing null
+        for non-nullable parameters or assigning null to a non-nullable
+        attribute. The message is now consistent with the one used for strict
+        type checking.
+
+        No new tests, rebaselined existing tests.
+
+        * bindings/js/JSDOMBinding.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionExcitingFunction):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::setJSTestInterfaceImplementsNode):
+        (WebCore::setJSTestInterfaceSupplementalNode):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjTestObjAttr):
+        (WebCore::setJSTestObjLenientTestObjAttr):
+        (WebCore::setJSTestObjXMLObjAttr):
+        (WebCore::setJSTestObjTypedArrayAttr):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttribute):
+        (WebCore::setJSTestObjWithScriptStateAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::setJSTestObjWithScriptArgumentsAndCallStackAttribute):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionByteMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionOctetMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionLongMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameter):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod8):
+        (WebCore::jsTestObjPrototypeFunctionDomStringListFunction):
+        (WebCore::jsTestObjPrototypeFunctionConvert1):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithSequence):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithArray):
+        (WebCore::jsTestObjPrototypeFunctionVariadicNodeMethod):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Promise):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors1):
+        (WebCore::constructJSTestOverloadedConstructors2):
+        (WebCore::constructJSTestOverloadedConstructors3):
+        * bindings/scripts/test/TestObj.idl:
+
 2016-05-09  Tim Horton  <timothy_horton@apple.com>
 
         Download progress on attachment elements sometimes exceeds element bounds

@@ -1,3 +1,42 @@
+2016-05-09  Chris Dumez  <cdumez@apple.com>
+
+        Optimize [StrictTypeChecking] on IDL operations
+        https://bugs.webkit.org/show_bug.cgi?id=157467
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing tests now that we provide a more useful exception
+        message when passing null for a non-nullable parameter and assigning
+        null to a non-nullable attribute.
+
+        * editing/selection/extend-expected.txt:
+        * fast/dom/Document/adoptNode-null-expected.txt:
+        * fast/dom/Document/adoptNode-null.html:
+        * fast/dom/Document/importNode-null-expected.txt:
+        * fast/dom/Document/importNode-null.html:
+        * fast/dom/Element/attr-param-typechecking-expected.txt:
+        * fast/dom/MutationObserver/observe-exceptions-expected.txt:
+        * fast/dom/NamedNodeMap-setNamedItem-crash-expected.txt:
+        * fast/dom/Range/range-intersectsNode-expected.txt:
+        * fast/dom/createNodeIterator-parameters-expected.txt:
+        * fast/dom/createNodeIterator-parameters.html:
+        * fast/dom/createTreeWalker-parameters-expected.txt:
+        * fast/dom/createTreeWalker-parameters.html:
+        * fast/dom/xmlserializer-serialize-to-string-exception-expected.txt:
+        * fast/dynamic/insertAdjacentElement-expected.txt:
+        * fast/mediastream/MediaStream-add-remove-null-undefined-tracks-expected.txt:
+        * fast/speechsynthesis/speech-synthesis-crash-on-bad-utterance-expected.txt:
+        * fast/text/font-face-set-javascript-expected.txt:
+        * fast/text/text-combine-crash-expected.txt:
+        * media/encrypted-media/encrypted-media-v2-syntax-expected.txt:
+        * media/encrypted-media/encrypted-media-v2-syntax.html:
+        * webaudio/createMediaStreamSource-null-expected.txt:
+        * webaudio/createMediaStreamSource-null.html:
+        * webaudio/decode-audio-data-basic-expected.txt:
+        * webaudio/decode-audio-data-basic.html:
+        * webaudio/mediaelementaudiosourcenode-expected.txt:
+        * webaudio/mediaelementaudiosourcenode.html:
+
 2016-05-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Focusing a shadow host places the slot content after the shadow DOM content

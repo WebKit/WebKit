@@ -7,7 +7,7 @@ No parameters
 PASS document.createNodeIterator() threw exception TypeError: Not enough arguments.
 
 Null root node
-PASS document.createNodeIterator(null) threw exception TypeError: Type error.
+PASS document.createNodeIterator(null) threw exception TypeError: Argument 1 ('root') to Document.createNodeIterator must be an instance of Node.
 
 Default parameters
 iterator = document.createNodeIterator(document)

@@ -1,5 +1,5 @@
 Caught expected exception: Error: NotSupportedError: DOM Exception 9
-Caught expected exception: TypeError: Type error
+Caught expected exception: TypeError: Argument 2 ('element') to HTMLElement.insertAdjacentElement must be an instance of Element
 1 (black) 2 (green) 3 (green) 4 (black) 
 
 PASS

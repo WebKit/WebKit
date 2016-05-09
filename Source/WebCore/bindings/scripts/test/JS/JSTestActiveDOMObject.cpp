@@ -205,7 +205,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
         return throwVMError(state, createNotEnoughArgumentsError(state));
     auto nextChild = JSNode::toWrapped(state->argument(0));
     if (UNLIKELY(!nextChild))
-        return throwVMTypeError(state);
+        return throwArgumentTypeError(*state, 0, "nextChild", "TestActiveDOMObject", "excitingFunction", "Node");
     impl.excitingFunction(*nextChild);
     return JSValue::encode(jsUndefined());
 }

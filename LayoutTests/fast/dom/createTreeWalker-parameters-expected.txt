@@ -7,7 +7,7 @@ No parameters
 PASS document.createTreeWalker() threw exception TypeError: Not enough arguments.
 
 Null root node
-PASS document.createTreeWalker(null) threw exception TypeError: Type error.
+PASS document.createTreeWalker(null) threw exception TypeError: Argument 1 ('root') to Document.createTreeWalker must be an instance of Node.
 
 Default parameters
 walker = document.createTreeWalker(document)

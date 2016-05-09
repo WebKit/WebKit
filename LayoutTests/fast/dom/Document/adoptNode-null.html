@@ -5,7 +5,7 @@
 <script>
 description("Tests that document.adoptNode(null) throws a TypeError");
 
-shouldThrow("document.adoptNode(null)", "'TypeError: Type error'");
+shouldThrow("document.adoptNode(null)", "'TypeError: Argument 1 (\\'source\\') to Document.adoptNode must be an instance of Node'");
 shouldThrow("document.adoptNode()", "'TypeError: Not enough arguments'");
 </script>
 <script src="../../../resources/js-test-post.js"></script>

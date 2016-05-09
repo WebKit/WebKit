@@ -5,7 +5,7 @@
 <script>
 description("Tests that document.importNode(null) throws a TypeError");
 
-shouldThrow("document.importNode(null)", "'TypeError: Type error'");
+shouldThrow("document.importNode(null)", "'TypeError: Argument 1 (\\'importedNode\\') to Document.importNode must be an instance of Node'");
 shouldThrow("document.importNode()", "'TypeError: Not enough arguments'");
 </script>
 <script src="../../../resources/js-test-post.js"></script>

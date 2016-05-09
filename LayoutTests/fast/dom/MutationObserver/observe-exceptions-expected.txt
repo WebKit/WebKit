@@ -9,8 +9,8 @@ PASS observer.observe(undefined) threw exception TypeError: Not enough arguments
 PASS observer.observe(document.body) threw exception TypeError: Not enough arguments.
 PASS observer.observe(document.body, null) threw exception TypeError: Type error.
 PASS observer.observe(document.body, undefined) threw exception TypeError: Type error.
-PASS observer.observe(null, {attributes: true}) threw exception TypeError: Type error.
-PASS observer.observe(undefined, {attributes: true}) threw exception TypeError: Type error.
+PASS observer.observe(null, {attributes: true}) threw exception TypeError: Argument 1 ('target') to MutationObserver.observe must be an instance of Node.
+PASS observer.observe(undefined, {attributes: true}) threw exception TypeError: Argument 1 ('target') to MutationObserver.observe must be an instance of Node.
 PASS observer.observe(document.body, {subtree: true}) threw exception TypeError: Type error.
 PASS observer.observe(document.body, {childList: true, attributeOldValue: true}) did not throw exception.
 PASS observer.observe(document.body, {attributes: true, characterDataOldValue: true}) did not throw exception.

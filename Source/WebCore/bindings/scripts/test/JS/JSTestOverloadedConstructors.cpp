@@ -74,7 +74,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* s
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!arrayBuffer))
-        return throwVMTypeError(state);
+        return throwArgumentTypeError(*state, 0, "arrayBuffer", "TestOverloadedConstructors", nullptr, "ArrayBuffer");
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*arrayBuffer);
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
@@ -88,7 +88,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* s
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!arrayBufferView))
-        return throwVMTypeError(state);
+        return throwArgumentTypeError(*state, 0, "arrayBufferView", "TestOverloadedConstructors", nullptr, "ArrayBufferView");
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*arrayBufferView);
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
@@ -100,7 +100,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* s
         return throwVMError(state, createNotEnoughArgumentsError(state));
     auto blob = JSBlob::toWrapped(state->argument(0));
     if (UNLIKELY(!blob))
-        return throwVMTypeError(state);
+        return throwArgumentTypeError(*state, 0, "blob", "TestOverloadedConstructors", nullptr, "Blob");
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*blob);
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }

@@ -1,19 +1,19 @@
 This tests XMLSerializer.serializeToString() throwing exception when node value is invalid and passing otherwise.
 
 1. Verifying XMLSerializer.serializeToString() should THROW exception with node value = null
-Exception thrown = [TypeError: Type error]
+Exception thrown = [TypeError: Argument 1 ('node') to XMLSerializer.serializeToString must be an instance of Node]
 PASS
 
 2. Verifying XMLSerializer.serializeToString() should THROW exception with node value = undefined
-Exception thrown = [TypeError: Type error]
+Exception thrown = [TypeError: Argument 1 ('node') to XMLSerializer.serializeToString must be an instance of Node]
 PASS
 
 3. Verifying XMLSerializer.serializeToString() should THROW exception with node value = <html><title>Hello World</title></html>
-Exception thrown = [TypeError: Type error]
+Exception thrown = [TypeError: Argument 1 ('node') to XMLSerializer.serializeToString must be an instance of Node]
 PASS
 
 4. Verifying XMLSerializer.serializeToString() should THROW exception with node value = [object HTMLCollection]
-Exception thrown = [TypeError: Type error]
+Exception thrown = [TypeError: Argument 1 ('node') to XMLSerializer.serializeToString must be an instance of Node]
 PASS
 
 5. Verifying XMLSerializer.serializeToString() should NOT-THROW exception with node value = [object HTMLDocument]

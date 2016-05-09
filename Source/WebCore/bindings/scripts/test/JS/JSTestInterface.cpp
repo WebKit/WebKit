@@ -685,7 +685,7 @@ bool setJSTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue
     auto& impl = castedThis->wrapped();
     auto nativeValue = JSNode::toWrapped(value);
     if (UNLIKELY(!nativeValue)) {
-        throwVMTypeError(state);
+        throwAttributeTypeError(*state, "TestInterface", "implementsNode", "Node");
         return false;
     }
     impl.setImplementsNode(*nativeValue);
@@ -753,7 +753,7 @@ bool setJSTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisVal
     auto& impl = castedThis->wrapped();
     auto nativeValue = JSNode::toWrapped(value);
     if (UNLIKELY(!nativeValue)) {
-        throwVMTypeError(state);
+        throwAttributeTypeError(*state, "TestInterface", "supplementalNode", "Node");
         return false;
     }
     WebCore::TestSupplemental::setSupplementalNode(impl, *nativeValue);
@@ -802,7 +802,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
         return JSValue::encode(jsUndefined());
     auto objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(!objArg))
-        return throwVMTypeError(state);
+        return throwArgumentTypeError(*state, 1, "objArg", "TestInterface", "implementsMethod2", "TestObj");
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(*context, WTFMove(strArg), *objArg, ec)));
 
     setDOMException(state, ec);
@@ -868,7 +868,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
         return JSValue::encode(jsUndefined());
     auto objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(!objArg))
-        return throwVMTypeError(state);
+        return throwArgumentTypeError(*state, 1, "objArg", "TestInterface", "supplementalMethod2", "TestObj");
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(impl, *context, WTFMove(strArg), *objArg, ec)));
 
     setDOMException(state, ec);

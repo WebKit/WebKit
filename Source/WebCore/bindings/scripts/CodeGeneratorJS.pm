@@ -2917,13 +2917,15 @@ sub GenerateImplementation
                     push(@implContent, "    ExceptionCode ec = 0;\n");
                 }
 
+                my $shouldPassByReference = ShouldPassWrapperByReference($attribute->signature, $interface);
+
                 # If the "StrictTypeChecking" extended attribute is present, and the attribute's type is an
                 # interface type, then if the incoming value does not implement that interface, a TypeError
                 # is thrown rather than silently passing NULL to the C++ code.
                 # Per the Web IDL and ECMAScript specifications, incoming values can always be converted to
                 # both strings and numbers, so do not throw TypeError if the attribute is of these types.
                 my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $attribute->signature, "value", $attribute->signature->extendedAttributes->{"Conditional"});
-                if ($codeGenerator->IsWrapperType($type) && $attribute->signature->extendedAttributes->{"StrictTypeChecking"} && $attribute->signature->isNullable) {
+                if ($attribute->signature->extendedAttributes->{"StrictTypeChecking"} && !$shouldPassByReference && $codeGenerator->IsWrapperType($type)) {
                     $implIncludes{"<runtime/Error.h>"} = 1;
                     push(@implContent, "    " . GetNativeTypeFromSignature($interface, $attribute->signature) . " nativeValue = nullptr;\n");
                     push(@implContent, "    if (!value.isUndefinedOrNull()) {\n");
@@ -2950,10 +2952,9 @@ sub GenerateImplementation
                     push (@implContent, "        return false;\n");
                 }
 
-                my $shouldPassByReference = ShouldPassWrapperByReference($attribute->signature, $interface);
                 if ($shouldPassByReference) {
                     push(@implContent, "    if (UNLIKELY(!nativeValue)) {\n");
-                    push(@implContent, "        throwVMTypeError(state);\n");
+                    push(@implContent, "        throwAttributeTypeError(*state, \"$interfaceName\", \"$name\", \"$type\");\n");
                     push(@implContent, "        return false;\n");
                     push(@implContent, "    }\n");
                 }
@@ -3733,68 +3734,71 @@ sub GenerateParametersCheck
 
             push(@$outputArray, "    }\n") if $indent ne "";
         } else {
-            # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
-            # interface type, then if the incoming value does not implement that interface, a TypeError
-            # is thrown rather than silently passing NULL to the C++ code.
-            # Per the Web IDL and ECMAScript semantics, incoming values can always be converted to both
-            # strings and numbers, so do not throw TypeError if the argument is of these types.
-            if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
-                $implIncludes{"<runtime/Error.h>"} = 1;
-
-                my $argValue = "state->argument($argumentIndex)";
-                if ($codeGenerator->IsWrapperType($type)) {
-                    push(@$outputArray, "    if (UNLIKELY(!${argValue}.isUndefinedOrNull() && !${argValue}.inherits(JS${type}::info())))\n");
-                    push(@$outputArray, "        return throwArgumentTypeError(*state, $argumentIndex, \"$name\", \"$interfaceName\", $quotedFunctionName, \"$type\");\n");
-                }
-            }
-
             my $outer;
             my $inner;
             my $nativeType = GetNativeTypeFromSignature($interface, $parameter);
+            my $isTearOff = $codeGenerator->IsSVGTypeNeedingTearOff($type) && $interfaceName !~ /List$/;
+            my $shouldPassByReference = $isTearOff || ShouldPassWrapperByReference($parameter, $interface);
 
-            if ($parameter->isOptional && defined($parameter->default) && !WillConvertUndefinedToDefaultParameterValue($type, $parameter->default)) {
-                my $defaultValue = $parameter->default;
-
-                # String-related optimizations.
-                if ($type eq "DOMString") {
-                    my $useAtomicString = $parameter->extendedAttributes->{"AtomicString"};
-                    if ($defaultValue eq "null") {
-                        $defaultValue = $useAtomicString ? "nullAtom" : "String()";
-                    } elsif ($defaultValue eq "\"\"") {
-                        $defaultValue = $useAtomicString ? "emptyAtom" : "emptyString()";
+            if ($function->signature->extendedAttributes->{"StrictTypeChecking"} && !$shouldPassByReference && $codeGenerator->IsWrapperType($type)) {
+                $implIncludes{"<runtime/Error.h>"} = 1;
+                my $checkedArgument = "state->argument($argumentIndex)";
+                my $uncheckedArgument = "state->uncheckedArgument($argumentIndex)";
+                my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $parameter, $uncheckedArgument, $function->signature->extendedAttributes->{"Conditional"});
+                push(@$outputArray, "    $nativeType $name = nullptr;\n");
+                push(@$outputArray, "    if (!$checkedArgument.isUndefinedOrNull()) {\n");
+                push(@$outputArray, "        $name = $nativeValue;\n");
+                if ($mayThrowException) {
+                    push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
+                    push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+                }
+                push(@$outputArray, "        if (UNLIKELY(!$name))\n");
+                push(@$outputArray, "            return throwArgumentTypeError(*state, $argumentIndex, \"$name\", \"$interfaceName\", $quotedFunctionName, \"$type\");\n");
+                push(@$outputArray, "    }\n");
+            } else {
+                if ($parameter->isOptional && defined($parameter->default) && !WillConvertUndefinedToDefaultParameterValue($type, $parameter->default)) {
+                    my $defaultValue = $parameter->default;
+    
+                    # String-related optimizations.
+                    if ($type eq "DOMString") {
+                        my $useAtomicString = $parameter->extendedAttributes->{"AtomicString"};
+                        if ($defaultValue eq "null") {
+                            $defaultValue = $useAtomicString ? "nullAtom" : "String()";
+                        } elsif ($defaultValue eq "\"\"") {
+                            $defaultValue = $useAtomicString ? "emptyAtom" : "emptyString()";
+                        } else {
+                            $defaultValue = $useAtomicString ? "AtomicString($defaultValue, AtomicString::ConstructFromLiteral)" : "ASCIILiteral($defaultValue)";
+                        }
                     } else {
-                        $defaultValue = $useAtomicString ? "AtomicString($defaultValue, AtomicString::ConstructFromLiteral)" : "ASCIILiteral($defaultValue)";
+                        $defaultValue = "nullptr" if $defaultValue eq "null";
+                        $defaultValue = "PNaN" if $defaultValue eq "NaN";
+                        $defaultValue = "$nativeType()" if $defaultValue eq "[]";
+                        $defaultValue = "JSValue::JSUndefined" if $defaultValue eq "undefined";
                     }
+    
+                    $outer = "state->argument($argumentIndex).isUndefined() ? $defaultValue : ";
+                    $inner = "state->uncheckedArgument($argumentIndex)";
+                } elsif ($parameter->isOptional && !defined($parameter->default)) {
+                    # Use WTF::Optional<>() for optional parameters that are missing or undefined and that do not have a default value in the IDL.
+                    $outer = "state->argument($argumentIndex).isUndefined() ? Optional<$nativeType>() : ";
+                    $inner = "state->uncheckedArgument($argumentIndex)";
                 } else {
-                    $defaultValue = "nullptr" if $defaultValue eq "null";
-                    $defaultValue = "PNaN" if $defaultValue eq "NaN";
-                    $defaultValue = "$nativeType()" if $defaultValue eq "[]";
-                    $defaultValue = "JSValue::JSUndefined" if $defaultValue eq "undefined";
+                    $outer = "";
+                    $inner = "state->argument($argumentIndex)";
                 }
 
-                $outer = "state->argument($argumentIndex).isUndefined() ? $defaultValue : ";
-                $inner = "state->uncheckedArgument($argumentIndex)";
-            } elsif ($parameter->isOptional && !defined($parameter->default)) {
-                # Use WTF::Optional<>() for optional parameters that are missing or undefined and that do not have a default value in the IDL.
-                $outer = "state->argument($argumentIndex).isUndefined() ? Optional<$nativeType>() : ";
-                $inner = "state->uncheckedArgument($argumentIndex)";
-            } else {
-                $outer = "";
-                $inner = "state->argument($argumentIndex)";
-            }
-            my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $parameter, $inner, $function->signature->extendedAttributes->{"Conditional"});
-            push(@$outputArray, "    auto $name = ${outer}${nativeValue};\n");
-            $value = "WTFMove($name)";
-            if ($mayThrowException) {
-                push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
-                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+                my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $parameter, $inner, $function->signature->extendedAttributes->{"Conditional"});
+                push(@$outputArray, "    auto $name = ${outer}${nativeValue};\n");
+                $value = "WTFMove($name)";
+                if ($mayThrowException) {
+                    push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
+                    push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+                }
             }
 
-            my $isTearOff = $codeGenerator->IsSVGTypeNeedingTearOff($type) && $interfaceName !~ /List$/;
-            my $shouldPassByReference = ShouldPassWrapperByReference($parameter, $interface);
-            if ($isTearOff or $shouldPassByReference) {
+            if ($shouldPassByReference) {
                 push(@$outputArray, "    if (UNLIKELY(!$name))\n");
-                push(@$outputArray, "        return throwVMTypeError(state);\n");
+                push(@$outputArray, "        return throwArgumentTypeError(*state, $argumentIndex, \"$name\", \"$interfaceName\", $quotedFunctionName, \"$type\");\n");
                 $value = $isTearOff ? "$name->propertyReference()" : "*$name";
             }
 

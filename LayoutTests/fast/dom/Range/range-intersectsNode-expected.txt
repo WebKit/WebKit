@@ -59,7 +59,7 @@ PASS range.selectNode(document) threw exception Error: InvalidNodeTypeError: DOM
 PASS intersects is false
 
 2.6 Node deleted
-PASS range.intersectsNode(node) threw exception TypeError: Type error.
+PASS range.intersectsNode(node) threw exception TypeError: Argument 1 ('refNode') to Range.intersectsNode must be an instance of Node.
 
 PASS successfullyParsed is true
 

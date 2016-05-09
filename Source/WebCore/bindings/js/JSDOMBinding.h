@@ -123,7 +123,7 @@ WEBCORE_EXPORT void throwNonFiniteTypeError(JSC::ExecState&);
 
 WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues);
 JSC::EncodedJSValue throwArgumentMustBeFunctionError(JSC::ExecState&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName);
-JSC::EncodedJSValue throwArgumentTypeError(JSC::ExecState&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedType);
+WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentTypeError(JSC::ExecState&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedType);
 JSC::EncodedJSValue throwConstructorDocumentUnavailableError(JSC::ExecState&, const char* interfaceName);
 WEBCORE_EXPORT JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
 WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::ExecState&, const char* interfaceName, const char* functionName);

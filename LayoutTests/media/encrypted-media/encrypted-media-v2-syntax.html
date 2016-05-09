@@ -47,7 +47,7 @@
                 testExpected('mediaKeySession.onwebkitkeyadded', null);
                 testExpected('mediaKeySession.onwebkitkeyerror', null);
                 testExpected('mediaKeySession.onwebkitkeymessage', null);
-                testException('mediaKeySession.update(null)', "'TypeError: Type error'");
+                testException('mediaKeySession.update(null)', "'TypeError: Argument 1 (\\'key\\') to MediaKeySession.update must be an instance of Uint8Array'");
                 endTest();
             }
         </script>

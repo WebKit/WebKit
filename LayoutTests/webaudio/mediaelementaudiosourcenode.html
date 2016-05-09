@@ -79,7 +79,7 @@ function runTest() {
         testPassed("createMediaElementSource() threw error when called twice on same HTMLMediaElement.");
     }
 
-    shouldThrow("context.createMediaElementSource(null)", "'TypeError: Type error'");
+    shouldThrow("context.createMediaElementSource(null)", "'TypeError: Argument 1 (\\'mediaElement\\') to AudioContext.createMediaElementSource must be an instance of HTMLMediaElement'");
 
     finishJSTest();
 }
