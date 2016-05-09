@@ -1,3 +1,17 @@
+2016-05-09  Eric Carlson  <eric.carlson@apple.com>
+
+        "Main content" restrictions should not apply to media documents
+        https://bugs.webkit.org/show_bug.cgi?id=157479
+        <rdar://problem/25840861>
+
+        Reviewed by Jer Noble.
+
+        No new tests, this change only applies to media documents in a top level document so it
+        isn't possible to have a layout test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Don't apply restrictions to a media document.
+
 2016-05-09  Dean Jackson  <dino@apple.com>
 
         Update Picture-in-picture artwork

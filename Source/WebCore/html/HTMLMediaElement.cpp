@@ -461,22 +461,25 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
         m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
     }
 #endif
+
     if (settings && settings->invisibleAutoplayNotPermitted())
         m_mediaSession->addBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted);
 
-    if (settings && settings->audioPlaybackRequiresUserGesture())
-        m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange);
+    if (document.ownerElement() || !document.isMediaDocument()) {
+        if (settings && settings->audioPlaybackRequiresUserGesture())
+            m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange);
 
-    if (!settings || !settings->mediaDataLoadsAutomatically())
-        m_mediaSession->addBehaviorRestriction(MediaElementSession::AutoPreloadingNotPermitted);
+        if (!settings || !settings->mediaDataLoadsAutomatically())
+            m_mediaSession->addBehaviorRestriction(MediaElementSession::AutoPreloadingNotPermitted);
+
+        if (settings && settings->mainContentUserGestureOverrideEnabled())
+            m_mediaSession->addBehaviorRestriction(MediaElementSession::OverrideUserGestureRequirementForMainContent);
+    }
 
 #if ENABLE(VIDEO_TRACK)
     if (document.page())
         m_captionDisplayMode = document.page()->group().captionPreferences().captionDisplayMode();
 #endif
-
-    if (settings && settings->mainContentUserGestureOverrideEnabled())
-        m_mediaSession->addBehaviorRestriction(MediaElementSession::OverrideUserGestureRequirementForMainContent);
 
 #if ENABLE(MEDIA_SESSION)
     m_elementID = nextElementID();
