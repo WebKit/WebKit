@@ -1,3 +1,21 @@
+2016-05-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove testRunner.setTextAutosizingEnabled and migrate the one test that uses it
+        https://bugs.webkit.org/show_bug.cgi?id=157480
+
+        Reviewed by Zalan Bujtas.
+
+        Migrate the one test that used testRunner.setTextAutosizingEnabled() to window.internals.settings.setTextAutosizingEnabled()
+        and move it next to the other iOS text autosizing tests.
+        
+        Remove testRunner.setTextAutosizingEnabled(), which was only implemented in DumpRenderTree.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setTextAutosizingEnabledCallback): Deleted.
+        (TestRunner::staticFunctions): Deleted.
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setTextAutosizingEnabled): Deleted.
+
 2016-05-07  Darin Adler  <darin@apple.com>
 
         Next step on dictionary bindings, along with other bindings refinements

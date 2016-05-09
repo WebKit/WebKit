@@ -536,13 +536,6 @@ void TestRunner::setPagePaused(bool paused)
 }
 #endif
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-void TestRunner::setTextAutosizingEnabled(bool enabled)
-{
-    [[[mainFrame webView] preferences] _setTextAutosizingEnabled:enabled];
-}
-#endif
-
 void TestRunner::setUseDashboardCompatibilityMode(bool flag)
 {
 #if !PLATFORM(IOS)

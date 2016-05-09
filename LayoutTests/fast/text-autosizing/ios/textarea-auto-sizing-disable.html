@@ -14,8 +14,8 @@
             if (!window.eventSender)
                 return;
 
-            // Enable autosizing
-            testRunner.setTextAutosizingEnabled(true);
+            window.internals.settings.setTextAutosizingEnabled(true);
+            window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
             
             var obj = document.getElementById('test');
             var oldHeight = obj.offsetHeight;
@@ -29,7 +29,7 @@
             eventSender.keyDown('B');
             eventSender.keyDown('\n');
             
-            // Textarea heigth shouldn't change after we add new lines.
+            // Textarea height shouldn't change after we add new lines.
             document.getElementById("result").innerHTML= obj.offsetHeight == oldHeight ? 'SUCCESS' : 'FAIL';
             
             testRunner.dumpAsText();

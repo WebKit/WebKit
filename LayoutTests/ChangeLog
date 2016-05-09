@@ -1,5 +1,19 @@
 2016-05-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove testRunner.setTextAutosizingEnabled and migrate the one test that uses it
+        https://bugs.webkit.org/show_bug.cgi?id=157480
+
+        Reviewed by Zalan Bujtas.
+
+        Migrate the one test that used testRunner.setTextAutosizingEnabled() to window.internals.settings.setTextAutosizingEnabled()
+        and move it next to the other iOS text autosizing tests.
+
+        * fast/text-autosizing/ios/textarea-auto-sizing-disable-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/fast/html/textarea-auto-sizing-disable-expected.txt.
+        * fast/text-autosizing/ios/textarea-auto-sizing-disable.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/html/textarea-auto-sizing-disable.html.
+        * platform/ios-simulator/TestExpectations:
+
+2016-05-09  Simon Fraser  <simon.fraser@apple.com>
+
         Upstream some iOS text autosizing tests.
 
         * fast/text-autosizing/ios/anonymous-block.html: Added.
