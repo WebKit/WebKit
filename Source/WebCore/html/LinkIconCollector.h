@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#pragma once
 
-#if WK_API_ENABLED
+#include "URL.h"
+#include <wtf/OptionSet.h>
+#include <wtf/Optional.h>
 
-#import <CoreGraphics/CoreGraphics.h>
-#import <Foundation/Foundation.h>
-#import <JavaScriptCore/JSContext.h>
+namespace WebCore {
 
-@class _WKFrameHandle;
-@class WKWebProcessPlugInHitTestResult;
-@class WKWebProcessPlugInNodeHandle;
-@class WKWebProcessPlugInScriptWorld;
+class Document;
+enum class LinkIconType;
 
-WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface WKWebProcessPlugInFrame : NSObject
+class LinkIconCollector {
+public:
+    explicit LinkIconCollector(Document& document)
+        : m_document(document)
+    {
+    }
 
-@property (nonatomic, readonly) NSURL *URL;
-@property (nonatomic, readonly) NSArray *childFrames;
-@property (nonatomic, readonly) BOOL containsAnyFormElements;
+    struct Icon {
+        URL url;
 
-@property (nonatomic, readonly) _WKFrameHandle *handle;
+        LinkIconType type;
+        Optional<unsigned> size;
+    };
 
-// Returns URLs ordered by resolution in descending order.
-// FIXME: These should be tagged nonnull.
-@property (nonatomic, readonly) WK_ARRAY(NSURL *) *appleTouchIconURLs WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-@property (nonatomic, readonly) WK_ARRAY(NSURL *) *faviconURLs WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+    WEBCORE_EXPORT Vector<Icon> iconsOfTypes(OptionSet<LinkIconType>);
 
-- (JSContext *)jsContextForWorld:(WKWebProcessPlugInScriptWorld *)world;
-- (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point;
-- (JSValue *)jsNodeForNodeHandle:(WKWebProcessPlugInNodeHandle *)nodeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world;
+private:
+    Document& m_document;
+};
 
-@end
-
-#endif // WK_API_ENABLED
+}

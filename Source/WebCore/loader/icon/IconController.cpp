@@ -44,6 +44,7 @@
 #include "HTMLLinkElement.h"
 #include "IconDatabase.h"
 #include "IconLoader.h"
+#include "LinkIconType.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
@@ -81,7 +82,7 @@ static URL iconFromLinkElements(Frame& frame)
     for (auto& linkElement : childrenOfType<HTMLLinkElement>(*head)) {
         if (!linkElement.iconType())
             continue;
-        if (*linkElement.iconType() != LinkRelAttribute::IconType::Favicon)
+        if (*linkElement.iconType() != LinkIconType::Favicon)
             continue;
         if (linkElement.href().isEmpty())
             continue;

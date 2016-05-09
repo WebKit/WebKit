@@ -495,7 +495,7 @@ const AtomicString& HTMLLinkElement::type() const
     return getAttribute(typeAttr);
 }
 
-Optional<LinkRelAttribute::IconType> HTMLLinkElement::iconType() const
+Optional<LinkIconType> HTMLLinkElement::iconType() const
 {
     return m_relAttribute.iconType;
 }

@@ -32,6 +32,7 @@
 #include "config.h"
 #include "LinkRelAttribute.h"
 
+#include "LinkIconType.h"
 #include "RuntimeEnabledFeatures.h"
 #include <wtf/text/WTFString.h>
 
@@ -46,11 +47,11 @@ LinkRelAttribute::LinkRelAttribute(const String& rel)
     if (equalLettersIgnoringASCIICase(rel, "stylesheet"))
         isStyleSheet = true;
     else if (equalLettersIgnoringASCIICase(rel, "icon") || equalLettersIgnoringASCIICase(rel, "shortcut icon"))
-        iconType = IconType::Favicon;
+        iconType = LinkIconType::Favicon;
     else if (equalLettersIgnoringASCIICase(rel, "apple-touch-icon"))
-        iconType = IconType::TouchIcon;
+        iconType = LinkIconType::TouchIcon;
     else if (equalLettersIgnoringASCIICase(rel, "apple-touch-icon-precomposed"))
-        iconType = IconType::TouchPrecomposedIcon;
+        iconType = LinkIconType::TouchPrecomposedIcon;
     else if (equalLettersIgnoringASCIICase(rel, "dns-prefetch"))
         isDNSPrefetch = true;
     else if (RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled() && equalLettersIgnoringASCIICase(rel, "preload"))
@@ -70,11 +71,11 @@ LinkRelAttribute::LinkRelAttribute(const String& rel)
             else if (equalLettersIgnoringASCIICase(word, "alternate"))
                 isAlternate = true;
             else if (equalLettersIgnoringASCIICase(word, "icon"))
-                iconType = IconType::Favicon;
+                iconType = LinkIconType::Favicon;
             else if (equalLettersIgnoringASCIICase(word, "apple-touch-icon"))
-                iconType = IconType::TouchIcon;
+                iconType = LinkIconType::TouchIcon;
             else if (equalLettersIgnoringASCIICase(word, "apple-touch-icon-precomposed"))
-                iconType = IconType::TouchPrecomposedIcon;
+                iconType = LinkIconType::TouchPrecomposedIcon;
 #if ENABLE(LINK_PREFETCH)
             else if (equalLettersIgnoringASCIICase(word, "prefetch"))
                 isLinkPrefetch = true;

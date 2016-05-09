@@ -1736,6 +1736,7 @@ set(WebCore_SOURCES
     html/InputTypeNames.cpp
     html/LabelableElement.cpp
     html/LabelsNodeList.cpp
+    html/LinkIconCollector.cpp
     html/LinkRelAttribute.cpp
     html/MediaController.cpp
     html/MediaDocument.cpp

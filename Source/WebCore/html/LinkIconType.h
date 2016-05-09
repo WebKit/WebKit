@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#pragma once
 
-#if WK_API_ENABLED
+namespace WebCore {
 
-#import <CoreGraphics/CoreGraphics.h>
-#import <Foundation/Foundation.h>
-#import <JavaScriptCore/JSContext.h>
+// These values are arranged so that they can be used with WTF::OptionSet.
 
-@class _WKFrameHandle;
-@class WKWebProcessPlugInHitTestResult;
-@class WKWebProcessPlugInNodeHandle;
-@class WKWebProcessPlugInScriptWorld;
+enum class LinkIconType {
+    Favicon = 1 << 0,
+    TouchIcon = 1 << 1,
+    TouchPrecomposedIcon = 1 <<2
+};
 
-WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface WKWebProcessPlugInFrame : NSObject
-
-@property (nonatomic, readonly) NSURL *URL;
-@property (nonatomic, readonly) NSArray *childFrames;
-@property (nonatomic, readonly) BOOL containsAnyFormElements;
-
-@property (nonatomic, readonly) _WKFrameHandle *handle;
-
-// Returns URLs ordered by resolution in descending order.
-// FIXME: These should be tagged nonnull.
-@property (nonatomic, readonly) WK_ARRAY(NSURL *) *appleTouchIconURLs WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-@property (nonatomic, readonly) WK_ARRAY(NSURL *) *faviconURLs WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-
-- (JSContext *)jsContextForWorld:(WKWebProcessPlugInScriptWorld *)world;
-- (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point;
-- (JSValue *)jsNodeForNodeHandle:(WKWebProcessPlugInNodeHandle *)nodeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world;
-
-@end
-
-#endif // WK_API_ENABLED
+}

@@ -1,3 +1,21 @@
+2016-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Add injected bundle SPI for getting favicon and touch icon URLs
+        https://bugs.webkit.org/show_bug.cgi?id=157435
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (collectIcons):
+        New helper function that calls into the WebCore LinkCollector.
+
+        (-[WKWebProcessPlugInFrame appleTouchIconURLs]):
+        Call collectIcons.
+
+        (-[WKWebProcessPlugInFrame faviconURLs]):
+        Ditto.
+
 2016-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Font size increases on some pages after navigating then going back

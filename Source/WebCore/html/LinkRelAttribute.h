@@ -37,15 +37,11 @@
 
 namespace WebCore {
 
-struct LinkRelAttribute {
-    enum class IconType {
-        Favicon,
-        TouchIcon,
-        TouchPrecomposedIcon,
-    };
+enum class LinkIconType;
 
+struct LinkRelAttribute {
     bool isStyleSheet { false };
-    Optional<IconType> iconType;
+    Optional<LinkIconType> iconType;
     bool isAlternate { false };
     bool isDNSPrefetch { false };
     bool isLinkPreload { false };

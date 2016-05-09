@@ -1,3 +1,44 @@
+2016-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Add injected bundle SPI for getting favicon and touch icon URLs
+        https://bugs.webkit.org/show_bug.cgi?id=157435
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        Add new files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::iconType):
+        * html/HTMLLinkElement.h:
+        Rename LinkRelAttribute::IconType to LinkIconType.
+
+        * html/LinkIconCollector.cpp: Added.
+        (WebCore::iconSize):
+        New helper function that returns the icon size for an icon.
+
+        (WebCore::compareIcons):
+        Icon comparison function, to be used by for sorting.
+
+        (LinkIconCollector::iconsOfTypes):
+        Gather the right icons, sort them (descending by size) and return them.
+
+        * html/LinkIconCollector.h:
+        Added.
+
+        * html/LinkIconType.h:
+        Move icon type declarations here and arrange them so we can use them in an OptionSet.
+
+        * html/LinkRelAttribute.cpp:
+        (WebCore::LinkRelAttribute::LinkRelAttribute):
+        * html/LinkRelAttribute.h:
+        * loader/icon/IconController.cpp:
+        (WebCore::iconFromLinkElements):
+        Rename IconType to LinkIconType.
+
 2016-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Font size increases on some pages after navigating then going back
