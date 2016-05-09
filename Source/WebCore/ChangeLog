@@ -1,3 +1,36 @@
+2016-05-09  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Prevent the same transaction from being commited/aborted twice.
+        https://bugs.webkit.org/show_bug.cgi?id=157494
+
+        Reviewed by Tim Horton.
+
+        When a page navigates or a worker terminates, in rare cases with specific unfortunate timing, the IDBServer
+        might receive a request to commit/abort a transaction that is already in the process of committing/aborting.
+        
+        By moving transactions that are finishing into their own map we can at least detect this situation and
+        return an error. This seems like an improvement over some mysterious ASSERTs/timeouts.
+
+        No new tests:
+        While apparent that this is at least partially to blame for some existing timeouts/ASSERTs, I could not nail 
+        down a reliable way to reproduce this with a dedicated test.
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::~UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::prepareToFinishTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformCommitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformAbortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::hasUnfinishedTransactions):
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired):
+        (WebCore::IDBServer::UniqueIDBDatabase::takeNextRunnableTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::transactionCompleted): Renamed from inProgressTransactionCompleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::inProgressTransactionCompleted): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2016-05-09  Tim Horton  <timothy_horton@apple.com>
 
         Draw border and correct icon for placeholder attachments

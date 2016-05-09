@@ -124,7 +124,7 @@ private:
     bool isVersionChangeInProgress();
 
     void activateTransactionInBackingStore(UniqueIDBDatabaseTransaction&);
-    void inProgressTransactionCompleted(const IDBResourceIdentifier&);
+    void transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction>&&);
 
     // Database thread operations
     void deleteBackingStore(const IDBDatabaseIdentifier&);
@@ -176,10 +176,13 @@ private:
 
     bool hasAnyPendingCallbacks() const;
     bool isCurrentlyInUse() const;
+    bool hasUnfinishedTransactions() const;
 
     void invokeOperationAndTransactionTimer();
     void operationAndTransactionTimerFired();
     RefPtr<UniqueIDBDatabaseTransaction> takeNextRunnableTransaction(bool& hadDeferredTransactions);
+
+    bool prepareToFinishTransaction(UniqueIDBDatabaseTransaction&);
 
     IDBServer& m_server;
     IDBDatabaseIdentifier m_identifier;
@@ -211,6 +214,7 @@ private:
 
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> m_pendingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_inProgressTransactions;
+    HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_finishingTransactions;
 
     // The keys into these sets are the object store ID.
     // These sets help to decide which transactions can be started and which must be deferred.
