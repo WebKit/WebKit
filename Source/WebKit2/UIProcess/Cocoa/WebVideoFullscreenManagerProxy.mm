@@ -250,11 +250,12 @@ bool WebVideoFullscreenManagerProxy::mayAutomaticallyShowVideoPictureInPicture()
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 bool WebVideoFullscreenManagerProxy::isPlayingVideoInEnhancedFullscreen() const
 {
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebVideoFullscreenManagerProxyIsPlayingVideoInEnhancedFullscreenAdditions.mm>
-#else
+    for (auto& tuple : m_contextMap.values()) {
+        if (std::get<1>(tuple)->isPlayingVideoInEnhancedFullscreen())
+            return true;
+    }
+    
     return false;
-#endif
 }
 #endif
 

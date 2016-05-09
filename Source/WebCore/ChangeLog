@@ -1,3 +1,14 @@
+2016-05-09  Ada Chan  <adachan@apple.com>
+
+        Introduce WebVideoFullscreenInterfaceMac::isPlayingVideoInEnhancedFullscreen() and use it in WebVideoFullscreenManagerProxy::isPlayingVideoInEnhancedFullscreen()
+        https://bugs.webkit.org/show_bug.cgi?id=157493
+
+        Reviewed by Dan Bernstein.
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.h:
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (WebCore::WebVideoFullscreenInterfaceMac::isPlayingVideoInEnhancedFullscreen):
+
 2016-05-09  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up iOS text autosizing code

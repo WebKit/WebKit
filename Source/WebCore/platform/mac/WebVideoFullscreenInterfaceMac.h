@@ -93,6 +93,8 @@ public:
     void setMode(HTMLMediaElementEnums::VideoFullscreenMode);
     void clearMode(HTMLMediaElementEnums::VideoFullscreenMode);
 
+    bool isPlayingVideoInEnhancedFullscreen() const;
+
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const { return false; }
     void applicationDidBecomeActive() { }
 

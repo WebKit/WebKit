@@ -167,6 +167,11 @@ void WebVideoFullscreenInterfaceMac::setVideoDimensions(bool, float, float)
 {
 }
 
+bool WebVideoFullscreenInterfaceMac::isPlayingVideoInEnhancedFullscreen() const
+{
+    return false;
+}
+
 bool supportsPictureInPicture()
 {
     return false;
