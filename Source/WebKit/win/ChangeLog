@@ -1,3 +1,16 @@
+2016-05-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [wincairo] web inspector failed to launch in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=156184
+        <rdar://problem/25539297>
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::openLocalFrontend): Enable
+        AllowFileAccessFromFileURLs and AllowUniversalAccessFromFileURLs
+        of WebPreferences for Web Inspector.
+
 2016-05-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Rename HitTestRequest DisallowShadowContent to DisallowUserAgentShadowContent

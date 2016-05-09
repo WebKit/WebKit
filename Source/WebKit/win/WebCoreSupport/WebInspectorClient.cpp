@@ -120,6 +120,10 @@ Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorContr
         return 0;
     if (FAILED(preferences->setAuthorAndUserStylesEnabled(TRUE)))
         return 0;
+    if (FAILED(preferences->setAllowFileAccessFromFileURLs(TRUE)))
+        return 0;
+    if (FAILED(preferences->setAllowUniversalAccessFromFileURLs(TRUE)))
+        return 0;
     if (FAILED(preferences->setAllowsAnimatedImages(TRUE)))
         return 0;
     if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
