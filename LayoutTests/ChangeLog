@@ -1,3 +1,18 @@
+2016-05-08  Zalan Bujtas  <zalan@apple.com>
+
+        iOS selection: Use inflow containing block for positioned <br>.
+        https://bugs.webkit.org/show_bug.cgi?id=157115
+        <rdar://problem/25969295>
+
+        Reviewed by Ryosuke Niwa.
+
+        Similarly to RenderText, we should just use the inflow containing block for
+        selected <br> even when it is positioned out of flow. This visually matches Mac OS X
+        behaviour (selection painting does not get extended to the positioned <br>).
+
+        * fast/text/fixed-positioned-br-crash-expected.txt: Added.
+        * fast/text/fixed-positioned-br-crash.html: Added.
+
 2016-05-08  Darin Adler  <darin@apple.com>
 
         Correct dictionary bindings handling of optional, null, and undefined
