@@ -1,3 +1,21 @@
+2016-05-09  Dean Jackson  <dino@apple.com>
+
+        Update Picture-in-picture artwork
+        https://bugs.webkit.org/show_bug.cgi?id=157484
+        <rdar://problem/26177784>
+
+        Reviewed by Eric Carlson.
+
+        We have new artwork for the picture-in-picture presentation mode. I
+        also converted it to use SVG (and moved the button style to a
+        more consistent part of the file).
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (video::-webkit-media-controls-panel .picture-in-picture-button):
+        (video::-webkit-media-controls-panel .picture-in-picture-button.return-from-picture-in-picture):
+        (video::-webkit-media-controls-panel .picture-in-picture-button:active):
+        (video::-webkit-media-controls-panel .picture-in-picture-button.return-from-picture-in-picture:active):
+
 2016-05-09  Chris Dumez  <cdumez@apple.com>
 
         Optimize [StrictTypeChecking] on IDL operations
