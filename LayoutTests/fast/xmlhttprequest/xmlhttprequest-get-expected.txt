@@ -47,10 +47,10 @@ bubbles : 'false'
 cancelBubble : 'false'
 cancelable : 'false'
 clipboardData : 'undefined'
-currentTarget : '[object XMLHttpRequest]'
-deepPath : 'function deepPath() {
+composedPath : 'function composedPath() {
     [native code]
 }'
+currentTarget : '[object XMLHttpRequest]'
 defaultPrevented : 'false'
 eventPhase : '2'
 initEvent : 'function initEvent() {

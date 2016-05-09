@@ -75,7 +75,7 @@ ALL PROPERTIES:
     returnValue
     cancelBubble
     clipboardData
-    deepPath
+    composedPath
     stopPropagation
     preventDefault
     initEvent
