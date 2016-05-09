@@ -776,32 +776,50 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "flex-basis": [
         "auto"
     ],
-    "grid-after": [
+    "grid": [
+        "none"
+    ],
+    "grid-area": [
         "auto"
     ],
-    "grid-before": [
-        "auto"
-    ],
-    "grid-end": [
-        "auto"
-    ],
-    "grid-start": [
-        "auto"
+    "grid-auto-columns": [
+        "auto", "-webkit-max-content", "-webkit-min-content", "minmax()",
     ],
     "grid-auto-flow": [
         "row", "column", "dense"
     ],
+    "grid-auto-rows": [
+        "auto", "-webkit-max-content", "-webkit-min-content", "minmax()",
+    ],
     "grid-column": [
+        "auto"
+    ],
+    "grid-column-start": [
+        "auto"
+    ],
+    "grid-column-end": [
         "auto"
     ],
     "grid-row": [
         "auto"
     ],
-    "grid-columns": [
-        "auto", "-webkit-max-content", "-webkit-min-content"
+    "grid-row-start": [
+        "auto"
     ],
-    "grid-rows": [
-        "auto", "-webkit-max-content", "-webkit-min-content"
+    "grid-row-end": [
+        "auto"
+    ],
+    "grid-template": [
+        "none"
+    ],
+    "grid-template-areas": [
+        "none"
+    ],
+    "grid-template-columns": [
+        "none", "auto", "-webkit-max-content", "-webkit-min-content", "minmax()", "repeat()"
+    ],
+    "grid-template-rows": [
+        "none", "auto", "-webkit-max-content", "-webkit-min-content", "minmax()", "repeat()"
     ],
     "-webkit-ruby-position": [
         "after", "before", "inter-character"

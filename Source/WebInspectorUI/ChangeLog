@@ -1,3 +1,17 @@
+2016-05-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Update Grid Layout properties in CSSKeywordCompletions.js
+        https://bugs.webkit.org/show_bug.cgi?id=157166
+
+        Reviewed by Timothy Hatcher.
+
+        The CSS Grid Layout properties have been changing on the spec,
+        however they haven't been updated in CSSKeywordCompletions for a long time.
+        Update them using the last spec draft:
+        https://drafts.csswg.org/css-grid/#property-index
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2016-05-09  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Cleanup issue tree elements in the Debugger sidebar
