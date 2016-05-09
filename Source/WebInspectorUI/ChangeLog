@@ -1,5 +1,26 @@
 2016-05-09  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Cleanup issue tree elements in the Debugger sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=157469
+        <rdar://problem/26162999>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._addIssue):
+        Don't add duplicate issue tree elements.
+        (WebInspector.DebuggerSidebarPanel.prototype._handleIssuesCleared):
+        Remove issues from the correct tree outline.
+
+        * UserInterface/Views/IssueTreeElement.css:
+        (.issue .icon):
+        (.issue.warning .icon):
+        (.issue.error .icon):
+        Match dashboard icons.
+
+2016-05-09  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Show in progress message in Timeline views that do not show data until the recording finishes
         https://bugs.webkit.org/show_bug.cgi?id=156761
         <rdar://problem/25970771>

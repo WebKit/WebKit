@@ -866,11 +866,15 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     _addIssue(issueMessage)
     {
+        let issueTreeElement = this._scriptsContentTreeOutline.findTreeElement(issueMessage);
+        if (issueTreeElement)
+            return issueTreeElement;
+
         let parentTreeElement = this._addTreeElementForSourceCodeToTreeOutline(issueMessage.sourceCodeLocation.sourceCode, this._scriptsContentTreeOutline);
         if (!parentTreeElement)
             return null;
 
-        var issueTreeElement = new WebInspector.IssueTreeElement(issueMessage);
+        issueTreeElement = new WebInspector.IssueTreeElement(issueMessage);
 
         parentTreeElement.insertChild(issueTreeElement, insertionIndexForObjectInListSortedByFunction(issueTreeElement, parentTreeElement.children, this._compareDebuggerTreeElements));
         if (parentTreeElement.children.length === 1)
@@ -892,8 +896,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     _handleIssuesCleared(event)
     {
-        var currentTreeElement = this._contentTreeOutline.children[0];
-        var issueTreeElements = [];
+        let currentTreeElement = this._scriptsContentTreeOutline.children[0];
+        let issueTreeElements = [];
 
         while (currentTreeElement && !currentTreeElement.root) {
             if (currentTreeElement instanceof WebInspector.IssueTreeElement)
@@ -901,8 +905,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, true);
         }
 
-        for (var issueTreeElement of issueTreeElements)
-            issueTreeElement.parent.removeChild(issueTreeElement);
+        issueTreeElements.forEach((treeElement) => treeElement.parent.removeChild(treeElement));
     }
 };
 

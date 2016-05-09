@@ -24,10 +24,13 @@
  */
 
 .issue .icon {
-    background-image: url(../Images/Warning.svg);
-    content: '';
+    content: "";
+}
+
+.issue.warning .icon {
+    background-image: url(../Images/IssuesEnabled.svg);
 }
 
 .issue.error .icon {
-    background-image: url(../Images/Error.svg);
+    background-image: url(../Images/ErrorsEnabled.svg);
 }
