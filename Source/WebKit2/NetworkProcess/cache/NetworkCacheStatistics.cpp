@@ -206,6 +206,8 @@ static String retrieveDecisionToDiagnosticKey(RetrieveDecision retrieveDecision)
         return WebCore::DiagnosticLoggingKeys::isConditionalRequestKey();
     case RetrieveDecision::NoDueToReloadIgnoringCache:
         return WebCore::DiagnosticLoggingKeys::isReloadIgnoringCacheDataKey();
+    case RetrieveDecision::NoDueToStreamingMedia:
+        return WebCore::DiagnosticLoggingKeys::streamingMedia();
     case RetrieveDecision::Yes:
         ASSERT_NOT_REACHED();
         break;

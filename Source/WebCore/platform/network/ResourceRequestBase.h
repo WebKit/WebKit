@@ -150,7 +150,7 @@ namespace WebCore {
         bool hiddenFromInspector() const { return m_hiddenFromInspector; }
         void setHiddenFromInspector(bool hiddenFromInspector) { m_hiddenFromInspector = hiddenFromInspector; }
 
-        enum class Requester { Unspecified, Main, XHR };
+        enum class Requester { Unspecified, Main, XHR, Media };
         Requester requester() const { return m_requester; }
         void setRequester(Requester requester) { m_requester = requester; }
 

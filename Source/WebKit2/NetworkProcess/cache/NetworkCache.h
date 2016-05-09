@@ -60,7 +60,8 @@ enum class RetrieveDecision {
     Yes,
     NoDueToHTTPMethod,
     NoDueToConditionalRequest,
-    NoDueToReloadIgnoringCache
+    NoDueToReloadIgnoringCache,
+    NoDueToStreamingMedia,
 };
 
 // FIXME: This enum is used in the Statistics code in a way that prevents removing or reordering anything.
@@ -73,7 +74,7 @@ enum class StoreDecision {
     NoDueToHTTPStatusCode,
     NoDueToNoStoreRequest,
     NoDueToUnlikelyToReuse,
-    NoDueToStreamingMedia
+    NoDueToStreamingMedia,
 };
 
 enum class UseDecision {

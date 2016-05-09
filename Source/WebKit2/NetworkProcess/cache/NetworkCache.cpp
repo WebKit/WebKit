@@ -242,6 +242,8 @@ static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& req
     // FIXME: Support HEAD requests.
     if (request.httpMethod() != "GET")
         return RetrieveDecision::NoDueToHTTPMethod;
+    if (request.requester() == WebCore::ResourceRequest::Requester::Media)
+        return RetrieveDecision::NoDueToStreamingMedia;
     if (request.cachePolicy() == WebCore::ReloadIgnoringCacheData && !request.isConditional())
         return RetrieveDecision::NoDueToReloadIgnoringCache;
 
@@ -334,8 +336,10 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     // Streaming media fills the cache quickly and is unlikely to be reused.
     // FIXME: We should introduce a separate media cache partition that doesn't affect other resources.
     // FIXME: We should also make sure make the MSE paths are copy-free so we can use mapped buffers from disk effectively.
-    bool isLikelyStreamingMedia = originalRequest.requester() == WebCore::ResourceRequest::Requester::XHR && isMediaMIMEType(response.mimeType());
-    if (isLikelyStreamingMedia)
+    auto requester = originalRequest.requester();
+    bool isDefinitelyStreamingMedia = requester == WebCore::ResourceRequest::Requester::Media;
+    bool isLikelyStreamingMedia = requester == WebCore::ResourceRequest::Requester::XHR && isMediaMIMEType(response.mimeType());
+    if (isLikelyStreamingMedia || isDefinitelyStreamingMedia)
         return StoreDecision::NoDueToStreamingMedia;
 
     return StoreDecision::Yes;

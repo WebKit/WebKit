@@ -415,7 +415,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     ASSERT(isMainThread());
     [self _cancel];
 
-    _resource = self.session.loader.requestResource(self.originalRequest, 0);
+    _resource = self.session.loader.requestResource(self.originalRequest, PlatformMediaResourceLoader::LoadOption::DisallowCaching);
     if (_resource)
         _resource->setClient(std::make_unique<WebCoreNSURLSessionDataTaskClient>(self));
 }
@@ -526,6 +526,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (void)resource:(PlatformMediaResource&)resource receivedResponse:(const ResourceResponse&)response
 {
+    ASSERT(response.source() == ResourceResponse::Source::Network);
     ASSERT_UNUSED(resource, &resource == _resource);
     ASSERT(isMainThread());
     [self.session task:self didReceiveCORSAccessCheckResult:resource.didPassAccessControlCheck()];

@@ -61,6 +61,7 @@ class PlatformMediaResourceLoader : public ThreadSafeRefCounted<PlatformMediaRes
 public:
     enum LoadOption {
         BufferData = 1 << 0,
+        DisallowCaching = 1 << 1,
     };
     typedef unsigned LoadOptions;
 
