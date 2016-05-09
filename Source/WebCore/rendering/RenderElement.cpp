@@ -2169,15 +2169,15 @@ void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto) const
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject* renderer)
+static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject& renderer)
 {
-    const RenderStyle& style = renderer->style();
+    const RenderStyle& style = renderer.style();
     if (style.height().type() == Fixed) {
-        if (is<RenderBlock>(*renderer)) {
+        if (is<RenderBlock>(renderer)) {
             // For fixed height styles, if the overflow size of the element spills out of the specified
             // height, assume we can apply text auto-sizing.
             if (style.overflowY() == OVISIBLE
-                && style.height().value() < downcast<RenderBlock>(renderer)->layoutOverflowRect().maxY())
+                && style.height().value() < downcast<RenderBlock>(renderer).layoutOverflowRect().maxY())
                 return RenderObject::OverflowHeight;
         }
         return RenderObject::FixedHeight;

@@ -190,8 +190,8 @@ public:
     };
 
     RenderObject* traverseNext(const RenderObject* stayWithin) const;
-    typedef bool (*TraverseNextInclusionFunction)(const RenderObject*);
-    typedef BlockContentHeightType (*HeightTypeTraverseNextInclusionFunction)(const RenderObject*);
+    typedef bool (*TraverseNextInclusionFunction)(const RenderObject&);
+    typedef BlockContentHeightType (*HeightTypeTraverseNextInclusionFunction)(const RenderObject&);
 
     RenderObject* traverseNext(const RenderObject* stayWithin, TraverseNextInclusionFunction) const;
     RenderObject* traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction, int& currentDepth,  int& newFixedDepth) const;

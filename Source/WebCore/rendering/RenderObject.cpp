@@ -325,7 +325,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightT
 
     // Check for suitable children.
     for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling()) {
-        overflowType = inclusionFunction(child);
+        overflowType = inclusionFunction(*child);
         if (overflowType != FixedHeight) {
             currentDepth++;
             if (overflowType == OverflowHeight)
@@ -349,7 +349,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightT
         if (!n)
             return nullptr;
         for (RenderObject* sibling = n->nextSibling(); sibling; sibling = sibling->nextSibling()) {
-            overflowType = inclusionFunction(sibling);
+            overflowType = inclusionFunction(*sibling);
             if (overflowType != FixedHeight) {
                 if (overflowType == OverflowHeight)
                     newFixedDepth = currentDepth;
@@ -369,7 +369,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightT
 RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, TraverseNextInclusionFunction inclusionFunction) const
 {
     for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling()) {
-        if (inclusionFunction(child)) {
+        if (inclusionFunction(*child)) {
             ASSERT(!stayWithin || child->isDescendantOf(stayWithin));
             return child;
         }
@@ -379,7 +379,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, Travers
         return nullptr;
 
     for (RenderObject* sibling = nextSibling(); sibling; sibling = sibling->nextSibling()) {
-        if (inclusionFunction(sibling)) {
+        if (inclusionFunction(*sibling)) {
             ASSERT(!stayWithin || sibling->isDescendantOf(stayWithin));
             return sibling;
         }
@@ -391,7 +391,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, Travers
             n = n->parent();
         if (n) {
             for (RenderObject* sibling = n->nextSibling(); sibling; sibling = sibling->nextSibling()) {
-                if (inclusionFunction(sibling)) {
+                if (inclusionFunction(*sibling)) {
                     ASSERT(!stayWithin || !n->nextSibling() || n->nextSibling()->isDescendantOf(stayWithin));
                     return sibling;
                 }

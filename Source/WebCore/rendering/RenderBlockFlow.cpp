@@ -3739,12 +3739,12 @@ int RenderBlockFlow::lineCountForTextAutosizing()
     return count;
 }
 
-static bool isNonBlocksOrNonFixedHeightListItems(const RenderObject* render)
+static bool isNonBlocksOrNonFixedHeightListItems(const RenderObject& render)
 {
-    if (!render->isRenderBlock())
+    if (!render.isRenderBlock())
         return true;
-    if (render->isListItem())
-        return render->style().height().type() != Fixed;
+    if (render.isListItem())
+        return render.style().height().type() != Fixed;
     return false;
 }
 
@@ -3790,7 +3790,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
     
     for (RenderObject* descendent = traverseNext(this, isNonBlocksOrNonFixedHeightListItems); descendent; descendent = descendent->traverseNext(this, isNonBlocksOrNonFixedHeightListItems)) {
         if (isVisibleRenderText(descendent) && resizeTextPermitted(descendent)) {
-            RenderText& text = downcast<RenderText>(*descendent);
+            auto& text = downcast<RenderText>(*descendent);
             auto& oldStyle = text.style();
             auto fontDescription = oldStyle.fontDescription();
             float specifiedSize = fontDescription.specifiedSize();

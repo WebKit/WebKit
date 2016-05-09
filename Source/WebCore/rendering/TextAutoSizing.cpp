@@ -74,41 +74,41 @@ void TextAutoSizingValue::addNode(Node* node, float size)
 bool TextAutoSizingValue::adjustNodeSizes()
 {
     bool objectsRemoved = false;
-    
+
     // Remove stale nodes.  Nodes may have had their renderers detached.  We'll
     // also need to remove the style from the documents m_textAutoSizedNodes
     // collection.  Return true indicates we need to do that removal.
     Vector<RefPtr<Node> > nodesForRemoval;
     for (auto& autoSizingNode : m_autoSizedNodes) {
-        RenderText* text = static_cast<RenderText*>(autoSizingNode->renderer());
+        auto* text = downcast<RenderText>(autoSizingNode->renderer());
         if (!text || !text->style().textSizeAdjust().isAuto() || !text->candidateComputedTextSize()) {
             // remove node.
             nodesForRemoval.append(autoSizingNode);
             objectsRemoved = true;
         }
     }
-    
+
     for (auto& node : nodesForRemoval)
         m_autoSizedNodes.remove(node);
-    
+
     // If we only have one piece of text with the style on the page don't
     // adjust it's size.
     if (m_autoSizedNodes.size() <= 1)
         return objectsRemoved;
-    
+
     // Compute average size
     float cumulativeSize = 0;
     for (auto& autoSizingNode : m_autoSizedNodes) {
-        RenderText* renderText = static_cast<RenderText*>(autoSizingNode->renderer());
-        cumulativeSize += renderText->candidateComputedTextSize();
+        RenderText& renderText = downcast<RenderText>(*autoSizingNode->renderer());
+        cumulativeSize += renderText.candidateComputedTextSize();
     }
-    
+
     float averageSize = roundf(cumulativeSize / m_autoSizedNodes.size());
-    
+
     // Adjust sizes
     bool firstPass = true;
     for (auto& autoSizingNode : m_autoSizedNodes) {
-        RenderText* text = static_cast<RenderText*>(autoSizingNode->renderer());
+        auto* text = downcast<RenderText>(autoSizingNode->renderer());
         if (text && text->style().fontDescription().computedSize() != averageSize) {
             float specifiedSize = text->style().fontDescription().specifiedSize();
             float scaleChange = averageSize / specifiedSize;
@@ -126,11 +126,11 @@ bool TextAutoSizingValue::adjustNodeSizes()
             style.setFontDescription(fontDescription);
             style.fontCascade().update(&autoSizingNode->document().fontSelector());
             text->parent()->setStyle(WTFMove(style));
-            
+
             RenderElement* parentRenderer = text->parent();
             if (parentRenderer->isAnonymousBlock())
                 parentRenderer = parentRenderer->parent();
-            
+
             // If we have a list we should resize ListMarkers separately.
             RenderObject* listMarkerRenderer = parentRenderer->firstChild();
             if (listMarkerRenderer->isListMarker()) {
@@ -139,17 +139,17 @@ bool TextAutoSizingValue::adjustNodeSizes()
                 style.fontCascade().update(&autoSizingNode->document().fontSelector());
                 downcast<RenderListMarker>(*listMarkerRenderer).setStyle(WTFMove(style));
             }
-            
+
             // Resize the line height of the parent.
-            const RenderStyle& parentStyle = parentRenderer->style();
+            auto& parentStyle = parentRenderer->style();
             Length lineHeightLength = parentStyle.specifiedLineHeight();
-            
+
             int specifiedLineHeight = 0;
             if (lineHeightLength.isPercent())
                 specifiedLineHeight = minimumValueForLength(lineHeightLength, fontDescription.specifiedSize());
             else
                 specifiedLineHeight = lineHeightLength.value();
-            
+
             int lineHeight = specifiedLineHeight * scaleChange;
             if (!lineHeightLength.isFixed() || lineHeightLength.value() != lineHeight) {
                 auto newParentStyle = cloneRenderStyleWithState(parentStyle);
@@ -161,14 +161,14 @@ bool TextAutoSizingValue::adjustNodeSizes()
             }
         }
     }
-    
+
     return objectsRemoved;
 }
 
 void TextAutoSizingValue::reset()
 {
     for (auto& autoSizingNode : m_autoSizedNodes) {
-        RenderText* text = static_cast<RenderText*>(autoSizingNode->renderer());
+        auto* text = downcast<RenderText>(autoSizingNode->renderer());
         if (!text)
             continue;
         // Reset the font size back to the original specified size
@@ -185,11 +185,11 @@ void TextAutoSizingValue::reset()
         RenderElement* parentRenderer = text->parent();
         if (!parentRenderer)
             continue;
-        
+
         if (parentRenderer->isAnonymousBlock())
             parentRenderer = parentRenderer->parent();
-        
-        const RenderStyle& parentStyle = parentRenderer->style();
+
+        auto& parentStyle = parentRenderer->style();
         Length originalLineHeight = parentStyle.specifiedLineHeight();
         if (originalLineHeight != parentStyle.lineHeight()) {
             auto newParentStyle = cloneRenderStyleWithState(parentStyle);
