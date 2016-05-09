@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MessageRecorder.h"
 
+#if HAVE(DTRACE)
+
 #include "Connection.h"
 #include "MessageDecoder.h"
 #include "MessageEncoder.h"
@@ -114,3 +116,5 @@ MessageRecorder::MessageProcessingToken::~MessageProcessingToken()
 }
 
 }
+
+#endif // HAVE(DTRACE)

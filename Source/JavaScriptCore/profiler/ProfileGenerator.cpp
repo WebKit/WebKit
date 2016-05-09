@@ -35,7 +35,6 @@
 #include "JSCInlines.h"
 #include "Profile.h"
 #include "StackVisitor.h"
-#include "Tracing.h"
 
 namespace JSC {
 
@@ -135,12 +134,6 @@ void ProfileGenerator::endCallEntry(ProfileNode* node)
 
 void ProfileGenerator::willExecute(ExecState* callerCallFrame, const CallIdentifier& callIdentifier)
 {
-    if (JAVASCRIPTCORE_PROFILE_WILL_EXECUTE_ENABLED()) {
-        CString name = callIdentifier.functionName().utf8();
-        CString url = callIdentifier.url().utf8();
-        JAVASCRIPTCORE_PROFILE_WILL_EXECUTE(m_profileGroup, const_cast<char*>(name.data()), const_cast<char*>(url.data()), callIdentifier.lineNumber(), callIdentifier.columnNumber());
-    }
-
     if (!m_origin)
         return;
 
@@ -166,12 +159,6 @@ void ProfileGenerator::willExecute(ExecState* callerCallFrame, const CallIdentif
 
 void ProfileGenerator::didExecute(ExecState* callerCallFrame, const CallIdentifier& callIdentifier)
 {
-    if (JAVASCRIPTCORE_PROFILE_DID_EXECUTE_ENABLED()) {
-        CString name = callIdentifier.functionName().utf8();
-        CString url = callIdentifier.url().utf8();
-        JAVASCRIPTCORE_PROFILE_DID_EXECUTE(m_profileGroup, const_cast<char*>(name.data()), const_cast<char*>(url.data()), callIdentifier.lineNumber(), callIdentifier.columnNumber());
-    }
-
     if (!m_origin)
         return;
 

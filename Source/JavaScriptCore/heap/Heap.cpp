@@ -46,7 +46,6 @@
 #include "JSVirtualMachineInternal.h"
 #include "SamplingProfiler.h"
 #include "ShadowChicken.h"
-#include "Tracing.h"
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
 #include "VM.h"
@@ -1148,7 +1147,6 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
     ASSERT(vm()->currentThreadIsHoldingAPILock());
     RELEASE_ASSERT(vm()->atomicStringTable() == wtfThreadData().atomicStringTable());
     ASSERT(m_isSafeToCollect);
-    JAVASCRIPTCORE_GC_BEGIN();
     RELEASE_ASSERT(m_operationInProgress == NoOperation);
 
     suspendCompilerThreads();
@@ -1175,7 +1173,6 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
         m_verifier->gatherLiveObjects(HeapVerifier::Phase::AfterMarking);
         m_verifier->verify(HeapVerifier::Phase::AfterMarking);
     }
-    JAVASCRIPTCORE_GC_MARKED();
 
     if (vm()->typeProfiler())
         vm()->typeProfiler()->invalidateTypeSetCache();
@@ -1480,7 +1477,6 @@ void Heap::didFinishCollection(double gcStartTime)
 
     RELEASE_ASSERT(m_operationInProgress == EdenCollection || m_operationInProgress == FullCollection);
     m_operationInProgress = NoOperation;
-    JAVASCRIPTCORE_GC_END();
 
     for (auto* observer : m_observers)
         observer->didGarbageCollect(operation);

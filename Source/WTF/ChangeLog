@@ -1,5 +1,18 @@
 2016-05-08  Chris Dumez  <cdumez@apple.com>
 
+        [COCOA] Disable HAVE_DTRACE at build time
+        https://bugs.webkit.org/show_bug.cgi?id=157433
+        <rdar://problem/26148841>
+
+        Reviewed by Mark Lam.
+
+        Disable HAVE_DTRACE on COCOA since it is mostly unused and has a performance
+        impact, at least on iOS.
+
+        * wtf/Platform.h:
+
+2016-05-08  Chris Dumez  <cdumez@apple.com>
+
         [Bindings] Simplify [RequiresExistingAtomicString] IDL extended attribute handling
         https://bugs.webkit.org/show_bug.cgi?id=157465
 

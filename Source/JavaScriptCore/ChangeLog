@@ -1,3 +1,25 @@
+2016-05-08  Chris Dumez  <cdumez@apple.com>
+
+        [COCOA] Disable HAVE_DTRACE at build time
+        https://bugs.webkit.org/show_bug.cgi?id=157433
+        <rdar://problem/26148841>
+
+        Reviewed by Mark Lam.
+
+        Drop DTRACE-related code from JSC since it is very old and seems
+        unused.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * PlatformMac.cmake:
+        * heap/Heap.cpp:
+        (JSC::Heap::collectImpl): Deleted.
+        (JSC::Heap::didFinishCollection): Deleted.
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::willExecute): Deleted.
+        (JSC::ProfileGenerator::didExecute): Deleted.
+        * runtime/Tracing.d: Removed.
+        * runtime/Tracing.h: Removed.
+
 2016-05-07  Mark Lam  <mark.lam@apple.com>
 
         Add JSC options bytecodeRangeToJITCompile and jitWhitelist.

@@ -23,20 +23,10 @@ list(APPEND JavaScriptCore_LIBRARIES
     ${SECURITY_LIBRARY}
 )
 
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/TracingDtrace.h
-    DEPENDS ${JAVASCRIPTCORE_DIR}/runtime/Tracing.d
-    WORKING_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
-    COMMAND dtrace -h -o "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/TracingDtrace.h" -s "${JAVASCRIPTCORE_DIR}/runtime/Tracing.d"
-    VERBATIM)
-
 list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
     ${WTF_DIR}
     ${JAVASCRIPTCORE_DIR}/disassembler/udis86
     ${JAVASCRIPTCORE_DIR}/icu
-)
-list(APPEND JavaScriptCore_HEADERS
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/TracingDtrace.h
 )
 
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
