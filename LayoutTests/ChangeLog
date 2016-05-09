@@ -1,3 +1,31 @@
+2016-05-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Upstream some iOS text autosizing tests.
+
+        * fast/text-autosizing/ios/anonymous-block.html: Added.
+        * fast/text-autosizing/ios/contenteditable.html: Added.
+        * fast/text-autosizing/ios/first-letter.html: Added.
+        * fast/text-autosizing/ios/font-family-case-insensitive-expected.txt: Added.
+        * fast/text-autosizing/ios/font-family-case-insensitive.html: Added.
+        * fast/text-autosizing/ios/lists.html: Added.
+        * fast/text-autosizing/ios/overflow.html: Added.
+        * fast/text-autosizing/ios/percent-adjust-length-line-height-expected.txt: Added.
+        * fast/text-autosizing/ios/percent-adjust-length-line-height.html: Added.
+        * fast/text-autosizing/ios/percent-adjust-number-line-height-expected.txt: Added.
+        * fast/text-autosizing/ios/percent-adjust-number-line-height.html: Added.
+        * fast/text-autosizing/ios/percent-adjust-percent-line-height-expected.txt: Added.
+        * fast/text-autosizing/ios/percent-adjust-percent-line-height.html: Added.
+        * platform/ios-simulator/fast/text-autosizing/ios/anonymous-block-expected.txt: Added.
+        * platform/ios-simulator/fast/text-autosizing/ios/contenteditable-expected.txt: Added.
+        * platform/ios-simulator/fast/text-autosizing/ios/first-letter-expected.txt: Added.
+        * platform/ios-simulator/fast/text-autosizing/ios/lists-expected.txt: Added.
+        * platform/ios-simulator/fast/text-autosizing/ios/overflow-expected.txt: Added.
+        * platform/mac/fast/text-autosizing/ios/anonymous-block-expected.txt: Added.
+        * platform/mac/fast/text-autosizing/ios/contenteditable-expected.txt: Added.
+        * platform/mac/fast/text-autosizing/ios/first-letter-expected.txt: Added.
+        * platform/mac/fast/text-autosizing/ios/lists-expected.txt: Added.
+        * platform/mac/fast/text-autosizing/ios/overflow-expected.txt: Added.
+
 2016-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Font size increases on some pages after navigating then going back
