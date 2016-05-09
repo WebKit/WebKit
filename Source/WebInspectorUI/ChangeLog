@@ -1,3 +1,15 @@
+2016-05-09  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Heap Snapshot Timeline view can be live
+        https://bugs.webkit.org/show_bug.cgi?id=157487
+        <rdar://problem/26178439>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView.prototype.get showsLiveRecordingData): Deleted.
+        Don't override, should return true.
+
 2016-05-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Update Grid Layout properties in CSSKeywordCompletions.js
