@@ -202,18 +202,6 @@ bool RenderMathMLOperator::isChildAllowed(const RenderObject&, const RenderStyle
     return false;
 }
 
-LayoutUnit RenderMathMLOperator::italicCorrection() const
-{
-    if (isLargeOperatorInDisplayStyle()) {
-        const auto& primaryFont = style().fontCascade().primaryFont();
-        if (auto* mathData = primaryFont.mathData()) {
-            StretchyData largeOperator = getDisplayStyleLargeOperator();
-            return mathData->getItalicCorrection(primaryFont, largeOperator.variant().glyph);
-        }
-    }
-    return 0;
-}
-
 void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline)
 {
     ASSERT(hasOperatorFlag(MathMLOperatorDictionary::Stretchy));
@@ -317,12 +305,12 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
     }
     if (isLargeOperatorInDisplayStyle()) {
         // Large operators in STIX Word have incorrect advance width, causing misplacement of superscript, so we use the glyph bound instead (http://sourceforge.net/p/stixfonts/tracking/49/).
-        StretchyData largeOperator = getDisplayStyleLargeOperator();
-        if (largeOperator.mode() == DrawSizeVariant)
-            maximumGlyphWidth = boundsForGlyph(largeOperator.variant()).width();
+        calculateDisplayStyleLargeOperator();
+        if (m_stretchType == StretchType::SizeVariant)
+            maximumGlyphWidth = boundsForGlyph(m_variant).width();
     } else {
         // FIXME: some glyphs (e.g. the one for "FRACTION SLASH" in the STIX Math font or large operators) have a width that depends on the height, resulting in large gaps (https://bugs.webkit.org/show_bug.cgi?id=130326).
-        findStretchyData(&maximumGlyphWidth);
+        calculateStretchyData(&maximumGlyphWidth);
     }
     m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_leadingSpace + maximumGlyphWidth + m_trailingSpace;
 }
@@ -392,13 +380,21 @@ bool RenderMathMLOperator::getBaseGlyph(const RenderStyle& style, GlyphData& bas
     return baseGlyph.isValid() && baseGlyph.font == &style.fontCascade().primaryFont();
 }
 
-bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::AssemblyPart> assemblyParts, StretchyData& stretchyData) const
+void RenderMathMLOperator::setSizeVariant(const GlyphData& sizeVariant)
 {
-    GlyphData top;
-    GlyphData extension;
-    GlyphData bottom;
-    GlyphData middle;
+    ASSERT(sizeVariant.isValid() && sizeVariant.font->mathData());
+    m_stretchType = StretchType::SizeVariant;
+    m_variant = sizeVariant;
+}
 
+void RenderMathMLOperator::setGlyphAssembly(const GlyphAssemblyData& assemblyData)
+{
+    m_stretchType = StretchType::GlyphAssembly;
+    m_assembly = assemblyData;
+}
+
+bool RenderMathMLOperator::calculateGlyphAssemblyFallBack(const Vector<OpenTypeMathData::AssemblyPart>& assemblyParts, GlyphAssemblyData& assemblyData) const
+{
     // The structure of the Open Type Math table is a bit more general than the one currently used by the RenderMathMLOperator code, so we try to fallback in a reasonable way.
     // FIXME: RenderMathMLOperator should support the most general format (https://bugs.webkit.org/show_bug.cgi?id=130327).
     // We use the approach of the copyComponents function in github.com/mathjax/MathJax-dev/blob/master/fonts/OpenTypeMath/fontUtil.py
@@ -422,8 +418,8 @@ bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::Ass
         None
     };
     PartType expectedPartType = Start;
-    extension.glyph = 0;
-    middle.glyph = 0;
+    assemblyData.extension.glyph = 0;
+    assemblyData.middle.glyph = 0;
     for (auto& part : assemblyParts) {
         if (nonExtenderCount < 3) {
             // If we only have at most two non-extenders then we skip the middle glyph.
@@ -433,9 +429,9 @@ bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::Ass
                 expectedPartType = End;
         }
         if (part.isExtender) {
-            if (!extension.glyph)
-                extension.glyph = part.glyph; // We copy the extender part.
-            else if (extension.glyph != part.glyph)
+            if (!assemblyData.extension.glyph)
+                assemblyData.extension.glyph = part.glyph; // We copy the extender part.
+            else if (assemblyData.extension.glyph != part.glyph)
                 return false; // This is not supported: the assembly has different extenders.
 
             switch (expectedPartType) {
@@ -461,19 +457,19 @@ bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::Ass
         switch (expectedPartType) {
         case Start:
             // We copy the left/bottom part.
-            bottom.glyph = part.glyph;
+            assemblyData.bottomOrLeft.glyph = part.glyph;
             expectedPartType = ExtenderBetweenStartAndMiddle;
             continue;
         case ExtenderBetweenStartAndMiddle:
         case Middle:
             // We copy the middle part.
-            middle.glyph = part.glyph;
+            assemblyData.middle.glyph = part.glyph;
             expectedPartType = ExtenderBetweenMiddleAndEnd;
             continue;
         case ExtenderBetweenMiddleAndEnd:
         case End:
             // We copy the right/top part.
-            top.glyph = part.glyph;
+            assemblyData.topOrRight.glyph = part.glyph;
             expectedPartType = None;
             continue;
         case None:
@@ -482,35 +478,30 @@ bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::Ass
         }
     }
 
-    if (!extension.glyph)
+    if (!assemblyData.extension.glyph)
         return false; // This is not supported: we always assume that we have an extension glyph.
 
-    // If we don't have top/bottom glyphs, we use the extension glyph.
-    if (!top.glyph)
-        top.glyph = extension.glyph;
-    if (!bottom.glyph)
-        bottom.glyph = extension.glyph;
+    // If we don't have top/right or left/bottom glyphs, we use the extension glyph.
+    if (!assemblyData.topOrRight.glyph)
+        assemblyData.topOrRight.glyph = assemblyData.extension.glyph;
+    if (!assemblyData.bottomOrLeft.glyph)
+        assemblyData.bottomOrLeft.glyph = assemblyData.extension.glyph;
 
-    top.font = &style().fontCascade().primaryFont();
-    extension.font = top.font;
-    bottom.font = top.font;
-    if (middle.glyph)
-        middle.font = top.font;
-
-    stretchyData.setGlyphAssemblyMode(top, extension, bottom, middle);
+    assemblyData.topOrRight.font = &style().fontCascade().primaryFont();
+    assemblyData.extension.font = assemblyData.topOrRight.font;
+    assemblyData.bottomOrLeft.font = assemblyData.topOrRight.font;
+    assemblyData.middle.font = assemblyData.middle.glyph ? assemblyData.topOrRight.font : nullptr;
 
     return true;
 }
 
-RenderMathMLOperator::StretchyData RenderMathMLOperator::getDisplayStyleLargeOperator() const
+void RenderMathMLOperator::calculateDisplayStyleLargeOperator()
 {
-    StretchyData data;
-
     ASSERT(m_isVertical && isLargeOperatorInDisplayStyle());
 
     GlyphData baseGlyph;
     if (!getBaseGlyph(style(), baseGlyph) || !baseGlyph.font->mathData())
-        return data;
+        return;
 
     Vector<Glyph> sizeVariants;
     Vector<OpenTypeMathData::AssemblyPart> assemblyParts;
@@ -521,53 +512,54 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::getDisplayStyleLargeOpe
     baseGlyph.font->mathData()->getMathVariants(baseGlyph.glyph, true, sizeVariants, assemblyParts);
 
     // We choose the first size variant that is larger than the expected displayOperatorMinHeight and otherwise fallback to the largest variant.
-    for (auto& variant : sizeVariants) {
-        GlyphData sizeVariant;
-        sizeVariant.glyph = variant;
-        sizeVariant.font = baseGlyph.font;
-        data.setSizeVariantMode(sizeVariant);
-        if (boundsForGlyph(sizeVariant).height() >= displayOperatorMinHeight)
-            return data;
+    for (auto& sizeVariant : sizeVariants) {
+        GlyphData glyphData(sizeVariant, baseGlyph.font);
+        setSizeVariant(glyphData);
+        m_italicCorrection = glyphData.font->mathData()->getItalicCorrection(*glyphData.font, glyphData.glyph);
+        if (heightForGlyph(glyphData) >= displayOperatorMinHeight)
+            break;
     }
-    return data;
 }
 
-RenderMathMLOperator::StretchyData RenderMathMLOperator::findStretchyData(float* maximumGlyphWidth)
+void RenderMathMLOperator::calculateStretchyData(float* maximumGlyphWidth, LayoutUnit targetSize)
 {
     ASSERT(!maximumGlyphWidth || m_isVertical);
 
-    StretchyData data;
-    StretchyData assemblyData;
-
     GlyphData baseGlyph;
     if (!getBaseGlyph(style(), baseGlyph))
-        return data;
+        return;
     
+    if (!maximumGlyphWidth) {
+        // We do not stretch if the base glyph is large enough.
+        float baseSize = m_isVertical ? heightForGlyph(baseGlyph) : advanceWidthForGlyph(baseGlyph);
+        if (targetSize <= baseSize)
+            return;
+    }
+
+    GlyphAssemblyData assemblyData;
     if (baseGlyph.font->mathData()) {
         Vector<Glyph> sizeVariants;
         Vector<OpenTypeMathData::AssemblyPart> assemblyParts;
         baseGlyph.font->mathData()->getMathVariants(baseGlyph.glyph, m_isVertical, sizeVariants, assemblyParts);
         // We verify the size variants.
-        for (auto& variant : sizeVariants) {
-            GlyphData sizeVariant;
-            sizeVariant.glyph = variant;
-            sizeVariant.font = baseGlyph.font;
+        for (auto& sizeVariant : sizeVariants) {
+            GlyphData glyphData(sizeVariant, baseGlyph.font);
             if (maximumGlyphWidth)
-                *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(sizeVariant));
+                *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(glyphData));
             else {
-                data.setSizeVariantMode(sizeVariant);
-                float size = m_isVertical ? heightForGlyph(sizeVariant) : advanceWidthForGlyph(sizeVariant);
-                if (size >= stretchSize()) 
-                    return data;
+                setSizeVariant(glyphData);
+                float size = m_isVertical ? heightForGlyph(glyphData) : advanceWidthForGlyph(glyphData);
+                if (size >= targetSize)
+                    return;
             }
         }
 
         // We verify if there is a construction.
-        if (!getGlyphAssemblyFallBack(assemblyParts, assemblyData))
-            return data;
+        if (!calculateGlyphAssemblyFallBack(assemblyParts, assemblyData))
+            return;
     } else {
         if (!m_isVertical)
-            return data;
+            return;
 
         // If the font does not have a MATH table, we fallback to the Unicode-only constructions.
         const StretchyCharacter* stretchyCharacter = nullptr;
@@ -585,45 +577,32 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::findStretchyData(float*
 
         // If we didn't find a stretchy character set for this character, we don't know how to stretch it.
         if (!stretchyCharacter)
-            return data;
+            return;
 
         // We convert the list of Unicode characters into a list of glyph data.
-        GlyphData top = style().fontCascade().glyphDataForCharacter(stretchyCharacter->topChar, false);
-        GlyphData extension = style().fontCascade().glyphDataForCharacter(stretchyCharacter->extensionChar, false);
-        GlyphData bottom = style().fontCascade().glyphDataForCharacter(stretchyCharacter->bottomChar, false);
-        GlyphData middle;
-        if (stretchyCharacter->middleChar)
-            middle = style().fontCascade().glyphDataForCharacter(stretchyCharacter->middleChar, false);
-        assemblyData.setGlyphAssemblyMode(top, extension, bottom, middle);
+        assemblyData.topOrRight = style().fontCascade().glyphDataForCharacter(stretchyCharacter->topChar, false);
+        assemblyData.extension = style().fontCascade().glyphDataForCharacter(stretchyCharacter->extensionChar, false);
+        assemblyData.bottomOrLeft = style().fontCascade().glyphDataForCharacter(stretchyCharacter->bottomChar, false);
+        assemblyData.middle = stretchyCharacter->middleChar ? style().fontCascade().glyphDataForCharacter(stretchyCharacter->middleChar, false) : GlyphData();
     }
-
-    ASSERT(assemblyData.mode() == DrawGlyphAssembly);
 
     // If we are measuring the maximum width, verify each component.
     if (maximumGlyphWidth) {
-        *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.top()));
-        *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.extension()));
-        if (assemblyData.middle().glyph)
-            *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.middle()));
-        *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.bottom()));
-        return assemblyData;
+        *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.topOrRight));
+        *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.extension));
+        *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.middle));
+        *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceWidthForGlyph(assemblyData.bottomOrLeft));
+        return;
     }
 
     // We ensure that the size is large enough to avoid glyph overlaps.
-    float size;
-    if (m_isVertical) {
-        size = heightForGlyph(assemblyData.top()) + heightForGlyph(assemblyData.bottom());
-        if (assemblyData.middle().glyph)
-            size += heightForGlyph(assemblyData.middle());
-    } else {
-        size = advanceWidthForGlyph(assemblyData.left()) + advanceWidthForGlyph(assemblyData.right());
-        if (assemblyData.middle().glyph)
-            size += advanceWidthForGlyph(assemblyData.middle());
-    }
-    if (size > stretchSize())
-        return data;
+    float minSize = m_isVertical ?
+        heightForGlyph(assemblyData.topOrRight) + heightForGlyph(assemblyData.middle) + heightForGlyph(assemblyData.bottomOrLeft)
+        : advanceWidthForGlyph(assemblyData.bottomOrLeft) + advanceWidthForGlyph(assemblyData.middle) + advanceWidthForGlyph(assemblyData.topOrRight);
+    if (minSize > targetSize)
+        return;
 
-    return assemblyData;
+    setGlyphAssembly(assemblyData);
 }
 
 void RenderMathMLOperator::updateStyle()
@@ -632,7 +611,8 @@ void RenderMathMLOperator::updateStyle()
     if (!firstChild())
         return;
 
-    m_stretchyData.setNormalMode();
+    m_stretchType = StretchType::Unstretched;
+    m_italicCorrection = 0;
     // We add spacing around the operator.
     // FIXME: The spacing should be added to the whole embellished operator (https://bugs.webkit.org/show_bug.cgi?id=124831).
     // FIXME: The spacing should only be added inside (perhaps inferred) mrow (http://www.w3.org/TR/MathML/chapter3.html#presm.opspacing).
@@ -647,27 +627,24 @@ void RenderMathMLOperator::updateStyle()
         return;
 
     if (m_isVertical && isLargeOperatorInDisplayStyle())
-        m_stretchyData = getDisplayStyleLargeOperator();
+        calculateDisplayStyleLargeOperator();
     else {
-        // We do not stretch if the base glyph is large enough.
-        GlyphData baseGlyph = style().fontCascade().glyphDataForCharacter(m_textContent, !style().isLeftToRightDirection());
-        float baseSize = m_isVertical ? heightForGlyph(baseGlyph) : advanceWidthForGlyph(baseGlyph);
-        if (stretchSize() <= baseSize)
+        calculateStretchyData(nullptr, stretchSize());
+        if (m_stretchType == StretchType::Unstretched)
             return;
-        m_stretchyData = findStretchyData(nullptr);
     }
 
-    if (m_isVertical && m_stretchyData.mode() == DrawSizeVariant) {
+    if (m_isVertical && m_stretchType == StretchType::SizeVariant) {
         // We resize the operator to match the one of the size variant.
         if (isLargeOperatorInDisplayStyle()) {
-            // The stretch size is actually not involved in the selection of the size variant in getDisplayStyleLargeOperator.
+            // The stretch size is actually not involved in the selection of the size variant in findDisplayStyleLargeOperator.
             // We simply use the height and depth of the selected size variant glyph.
-            FloatRect glyphBounds = boundsForGlyph(m_stretchyData.variant());
+            FloatRect glyphBounds = boundsForGlyph(m_variant);
             m_stretchHeightAboveBaseline = -glyphBounds.y();
             m_stretchDepthBelowBaseline = glyphBounds.maxY();
         } else {
             // We rescale the height and depth proportionately.
-            float variantSize = heightForGlyph(m_stretchyData.variant());
+            float variantSize = heightForGlyph(m_variant);
             float size = stretchSize();
             float aspect = size > 0 ? variantSize / size : 1.0;
             m_stretchHeightAboveBaseline *= aspect;
@@ -676,30 +653,30 @@ void RenderMathMLOperator::updateStyle()
     }
 
     if (!m_isVertical) {
-        if (m_stretchyData.mode() == DrawSizeVariant) {
-            FloatRect glyphBounds = boundsForGlyph(m_stretchyData.variant());
+        if (m_stretchType == StretchType::SizeVariant) {
+            FloatRect glyphBounds = boundsForGlyph(m_variant);
             m_stretchHeightAboveBaseline = -glyphBounds.y();
             m_stretchDepthBelowBaseline = glyphBounds.maxY();
-            m_stretchWidth = advanceWidthForGlyph(m_stretchyData.variant());
-        } else if (m_stretchyData.mode() == DrawGlyphAssembly) {
+            m_stretchWidth = advanceWidthForGlyph(m_variant);
+        } else if (m_stretchType == StretchType::GlyphAssembly) {
             FloatRect glyphBounds;
             m_stretchHeightAboveBaseline = 0;
             m_stretchDepthBelowBaseline = 0;
 
-            glyphBounds = boundsForGlyph(m_stretchyData.left());
+            glyphBounds = boundsForGlyph(m_assembly.bottomOrLeft);
             m_stretchHeightAboveBaseline = std::max<LayoutUnit>(m_stretchHeightAboveBaseline, -glyphBounds.y());
             m_stretchDepthBelowBaseline = std::max<LayoutUnit>(m_stretchDepthBelowBaseline, glyphBounds.maxY());
 
-            glyphBounds = boundsForGlyph(m_stretchyData.right());
+            glyphBounds = boundsForGlyph(m_assembly.topOrRight);
             m_stretchHeightAboveBaseline = std::max<LayoutUnit>(m_stretchHeightAboveBaseline, -glyphBounds.y());
             m_stretchDepthBelowBaseline = std::max<LayoutUnit>(m_stretchDepthBelowBaseline, glyphBounds.maxY());
 
-            glyphBounds = boundsForGlyph(m_stretchyData.extension());
+            glyphBounds = boundsForGlyph(m_assembly.extension);
             m_stretchHeightAboveBaseline = std::max<LayoutUnit>(m_stretchHeightAboveBaseline, -glyphBounds.y());
             m_stretchDepthBelowBaseline = std::max<LayoutUnit>(m_stretchDepthBelowBaseline, glyphBounds.maxY());
 
-            if (m_stretchyData.middle().glyph) {
-                glyphBounds = boundsForGlyph(m_stretchyData.middle());
+            if (m_assembly.middle.isValid()) {
+                glyphBounds = boundsForGlyph(m_assembly.middle);
                 m_stretchHeightAboveBaseline = std::max<LayoutUnit>(m_stretchHeightAboveBaseline, -glyphBounds.y());
                 m_stretchDepthBelowBaseline = std::max<LayoutUnit>(m_stretchDepthBelowBaseline, glyphBounds.maxY());
             }
@@ -709,14 +686,14 @@ void RenderMathMLOperator::updateStyle()
 
 Optional<int> RenderMathMLOperator::firstLineBaseline() const
 {
-    if (m_stretchyData.mode() != DrawNormal)
+    if (m_stretchType != StretchType::Unstretched)
         return Optional<int>(m_stretchHeightAboveBaseline);
     return RenderMathMLToken::firstLineBaseline();
 }
 
 void RenderMathMLOperator::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    if (m_stretchyData.mode() != DrawNormal)
+    if (m_stretchType != StretchType::Unstretched)
         logicalHeight = m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline;
     RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
 }
@@ -776,8 +753,8 @@ LayoutRect RenderMathMLOperator::paintGlyph(PaintInfo& info, const GlyphData& da
 void RenderMathMLOperator::fillWithVerticalExtensionGlyph(PaintInfo& info, const LayoutPoint& from, const LayoutPoint& to)
 {
     ASSERT(m_isVertical);
-    ASSERT(m_stretchyData.mode() == DrawGlyphAssembly);
-    ASSERT(m_stretchyData.extension().glyph);
+    ASSERT(m_stretchType == StretchType::GlyphAssembly);
+    ASSERT(m_assembly.extension.isValid());
     ASSERT(from.y() <= to.y());
 
     // If there is no space for the extension glyph, we don't need to do anything.
@@ -786,7 +763,7 @@ void RenderMathMLOperator::fillWithVerticalExtensionGlyph(PaintInfo& info, const
 
     GraphicsContextStateSaver stateSaver(info.context());
 
-    FloatRect glyphBounds = boundsForGlyph(m_stretchyData.extension());
+    FloatRect glyphBounds = boundsForGlyph(m_assembly.extension);
 
     // Clipping the extender region here allows us to draw the bottom extender glyph into the
     // regions of the bottom glyph without worrying about overdraw (hairy pixels) and simplifies later clipping.
@@ -801,7 +778,7 @@ void RenderMathMLOperator::fillWithVerticalExtensionGlyph(PaintInfo& info, const
     FloatRect lastPaintedGlyphRect(from, FloatSize());
 
     while (lastPaintedGlyphRect.maxY() < to.y()) {
-        lastPaintedGlyphRect = paintGlyph(info, m_stretchyData.extension(), glyphOrigin, TrimTopAndBottom);
+        lastPaintedGlyphRect = paintGlyph(info, m_assembly.extension, glyphOrigin, TrimTopAndBottom);
         glyphOrigin.setY(glyphOrigin.y() + lastPaintedGlyphRect.height());
 
         // There's a chance that if the font size is small enough the glue glyph has been reduced to an empty rectangle
@@ -814,8 +791,8 @@ void RenderMathMLOperator::fillWithVerticalExtensionGlyph(PaintInfo& info, const
 void RenderMathMLOperator::fillWithHorizontalExtensionGlyph(PaintInfo& info, const LayoutPoint& from, const LayoutPoint& to)
 {
     ASSERT(!m_isVertical);
-    ASSERT(m_stretchyData.mode() == DrawGlyphAssembly);
-    ASSERT(m_stretchyData.extension().glyph);
+    ASSERT(m_stretchType == StretchType::GlyphAssembly);
+    ASSERT(m_assembly.extension.isValid());
     ASSERT(from.x() <= to.x());
 
     // If there is no space for the extension glyph, we don't need to do anything.
@@ -837,7 +814,7 @@ void RenderMathMLOperator::fillWithHorizontalExtensionGlyph(PaintInfo& info, con
     FloatRect lastPaintedGlyphRect(from, FloatSize());
 
     while (lastPaintedGlyphRect.maxX() < to.x()) {
-        lastPaintedGlyphRect = paintGlyph(info, m_stretchyData.extension(), glyphOrigin, TrimLeftAndRight);
+        lastPaintedGlyphRect = paintGlyph(info, m_assembly.extension, glyphOrigin, TrimLeftAndRight);
         glyphOrigin.setX(glyphOrigin.x() + lastPaintedGlyphRect.width());
 
         // There's a chance that if the font size is small enough the glue glyph has been reduced to an empty rectangle
@@ -851,20 +828,20 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
 {
     RenderMathMLToken::paint(info, paintOffset);
 
-    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || m_stretchyData.mode() == DrawNormal)
+    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || m_stretchType == StretchType::Unstretched)
         return;
 
     GraphicsContextStateSaver stateSaver(info.context());
     info.context().setFillColor(style().visitedDependentColor(CSSPropertyColor));
 
-    if (m_stretchyData.mode() == DrawSizeVariant) {
-        ASSERT(m_stretchyData.variant().glyph);
+    if (m_stretchType == StretchType::SizeVariant) {
+        ASSERT(m_variant.isValid());
         GlyphBuffer buffer;
-        buffer.add(m_stretchyData.variant().glyph, m_stretchyData.variant().font, advanceWidthForGlyph(m_stretchyData.variant()));
+        buffer.add(m_variant.glyph, m_variant.font, advanceWidthForGlyph(m_variant));
         LayoutPoint operatorTopLeft = ceiledIntPoint(paintOffset + location());
-        FloatRect glyphBounds = boundsForGlyph(m_stretchyData.variant());
+        FloatRect glyphBounds = boundsForGlyph(m_variant);
         LayoutPoint operatorOrigin(operatorTopLeft.x(), operatorTopLeft.y() - glyphBounds.y());
-        info.context().drawGlyphs(style().fontCascade(), *m_stretchyData.variant().font, buffer, 0, 1, operatorOrigin);
+        info.context().drawGlyphs(style().fontCascade(), *m_variant.font, buffer, 0, 1, operatorOrigin);
         return;
     }
 
@@ -877,30 +854,30 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
 void RenderMathMLOperator::paintVerticalGlyphAssembly(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     ASSERT(m_isVertical);
-    ASSERT(m_stretchyData.mode() == DrawGlyphAssembly);
-    ASSERT(m_stretchyData.top().glyph);
-    ASSERT(m_stretchyData.bottom().glyph);
+    ASSERT(m_stretchType == StretchType::GlyphAssembly);
+    ASSERT(m_assembly.topOrRight.isValid());
+    ASSERT(m_assembly.bottomOrLeft.isValid());
 
     // We are positioning the glyphs so that the edge of the tight glyph bounds line up exactly with the edges of our paint box.
     LayoutPoint operatorTopLeft = paintOffset + location();
     operatorTopLeft.move(style().isLeftToRightDirection() ? m_leadingSpace : m_trailingSpace, 0);
     operatorTopLeft = ceiledIntPoint(operatorTopLeft);
-    FloatRect topGlyphBounds = boundsForGlyph(m_stretchyData.top());
+    FloatRect topGlyphBounds = boundsForGlyph(m_assembly.topOrRight);
     LayoutPoint topGlyphOrigin(operatorTopLeft.x(), operatorTopLeft.y() - topGlyphBounds.y());
-    LayoutRect topGlyphPaintRect = paintGlyph(info, m_stretchyData.top(), topGlyphOrigin, TrimBottom);
+    LayoutRect topGlyphPaintRect = paintGlyph(info, m_assembly.topOrRight, topGlyphOrigin, TrimBottom);
 
-    FloatRect bottomGlyphBounds = boundsForGlyph(m_stretchyData.bottom());
+    FloatRect bottomGlyphBounds = boundsForGlyph(m_assembly.bottomOrLeft);
     LayoutPoint bottomGlyphOrigin(operatorTopLeft.x(), operatorTopLeft.y() + offsetHeight() - (bottomGlyphBounds.height() + bottomGlyphBounds.y()));
-    LayoutRect bottomGlyphPaintRect = paintGlyph(info, m_stretchyData.bottom(), bottomGlyphOrigin, TrimTop);
+    LayoutRect bottomGlyphPaintRect = paintGlyph(info, m_assembly.bottomOrLeft, bottomGlyphOrigin, TrimTop);
 
-    if (m_stretchyData.middle().glyph) {
+    if (m_assembly.middle.isValid()) {
         // Center the glyph origin between the start and end glyph paint extents. Then shift it half the paint height toward the bottom glyph.
-        FloatRect middleGlyphBounds = boundsForGlyph(m_stretchyData.middle());
+        FloatRect middleGlyphBounds = boundsForGlyph(m_assembly.middle);
         LayoutPoint middleGlyphOrigin(operatorTopLeft.x(), topGlyphOrigin.y());
         middleGlyphOrigin.moveBy(LayoutPoint(0, (bottomGlyphPaintRect.y() - topGlyphPaintRect.maxY()) / 2.0));
         middleGlyphOrigin.moveBy(LayoutPoint(0, middleGlyphBounds.height() / 2.0));
 
-        LayoutRect middleGlyphPaintRect = paintGlyph(info, m_stretchyData.middle(), middleGlyphOrigin, TrimTopAndBottom);
+        LayoutRect middleGlyphPaintRect = paintGlyph(info, m_assembly.middle, middleGlyphOrigin, TrimTopAndBottom);
         fillWithVerticalExtensionGlyph(info, topGlyphPaintRect.minXMaxYCorner(), middleGlyphPaintRect.minXMinYCorner());
         fillWithVerticalExtensionGlyph(info, middleGlyphPaintRect.minXMaxYCorner(), bottomGlyphPaintRect.minXMinYCorner());
     } else
@@ -910,26 +887,26 @@ void RenderMathMLOperator::paintVerticalGlyphAssembly(PaintInfo& info, const Lay
 void RenderMathMLOperator::paintHorizontalGlyphAssembly(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     ASSERT(!m_isVertical);
-    ASSERT(m_stretchyData.mode() == DrawGlyphAssembly);
-    ASSERT(m_stretchyData.left().glyph);
-    ASSERT(m_stretchyData.right().glyph);
+    ASSERT(m_stretchType == StretchType::GlyphAssembly);
+    ASSERT(m_assembly.bottomOrLeft.isValid());
+    ASSERT(m_assembly.topOrRight.isValid());
 
     // We are positioning the glyphs so that the edge of the tight glyph bounds line up exactly with the edges of our paint box.
     LayoutPoint operatorTopLeft = paintOffset + location();
     operatorTopLeft.move(m_leadingSpace, 0);
     operatorTopLeft = ceiledIntPoint(operatorTopLeft);
     LayoutPoint leftGlyphOrigin(operatorTopLeft.x(), operatorTopLeft.y() + m_stretchHeightAboveBaseline);
-    LayoutRect leftGlyphPaintRect = paintGlyph(info, m_stretchyData.left(), leftGlyphOrigin, TrimRight);
+    LayoutRect leftGlyphPaintRect = paintGlyph(info, m_assembly.bottomOrLeft, leftGlyphOrigin, TrimRight);
 
-    FloatRect rightGlyphBounds = boundsForGlyph(m_stretchyData.right());
+    FloatRect rightGlyphBounds = boundsForGlyph(m_assembly.topOrRight);
     LayoutPoint rightGlyphOrigin(operatorTopLeft.x() + offsetWidth() - rightGlyphBounds.width(), operatorTopLeft.y() + m_stretchHeightAboveBaseline);
-    LayoutRect rightGlyphPaintRect = paintGlyph(info, m_stretchyData.right(), rightGlyphOrigin, TrimLeft);
+    LayoutRect rightGlyphPaintRect = paintGlyph(info, m_assembly.topOrRight, rightGlyphOrigin, TrimLeft);
 
-    if (m_stretchyData.middle().glyph) {
+    if (m_assembly.middle.isValid()) {
         // Center the glyph origin between the start and end glyph paint extents.
         LayoutPoint middleGlyphOrigin(operatorTopLeft.x(), leftGlyphOrigin.y());
         middleGlyphOrigin.moveBy(LayoutPoint((rightGlyphPaintRect.x() - leftGlyphPaintRect.maxX()) / 2.0, 0));
-        LayoutRect middleGlyphPaintRect = paintGlyph(info, m_stretchyData.middle(), middleGlyphOrigin, TrimLeftAndRight);
+        LayoutRect middleGlyphPaintRect = paintGlyph(info, m_assembly.middle, middleGlyphOrigin, TrimLeftAndRight);
         fillWithHorizontalExtensionGlyph(info, leftGlyphPaintRect.maxXMinYCorner(), middleGlyphPaintRect.minXMinYCorner());
         fillWithHorizontalExtensionGlyph(info, middleGlyphPaintRect.maxXMinYCorner(), rightGlyphPaintRect.minXMinYCorner());
     } else
@@ -939,7 +916,7 @@ void RenderMathMLOperator::paintHorizontalGlyphAssembly(PaintInfo& info, const L
 void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
 {
     // We skip painting for invisible operators too to avoid some "missing character" glyph to appear if appropriate math fonts are not available.
-    if (m_stretchyData.mode() != DrawNormal || isInvisibleOperator())
+    if (m_stretchType != StretchType::Unstretched || isInvisibleOperator())
         return;
     RenderMathMLToken::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
 }
@@ -954,19 +931,19 @@ LayoutUnit RenderMathMLOperator::trailingSpaceError()
     // Hence we determine the error in the logical width with respect to the actual width of the glyph(s) used to paint the operator.
     LayoutUnit width = logicalWidth();
 
-    if (m_stretchyData.mode() == DrawNormal) {
+    if (m_stretchType == StretchType::Unstretched) {
         GlyphData data = style().fontCascade().glyphDataForCharacter(textContent(), !style().isLeftToRightDirection());
         return width - advanceWidthForGlyph(data);
     }
 
-    if (m_stretchyData.mode() == DrawSizeVariant)
-        return width - advanceWidthForGlyph(m_stretchyData.variant());
+    if (m_stretchType == StretchType::SizeVariant)
+        return width - advanceWidthForGlyph(m_variant);
 
-    float assemblyWidth = advanceWidthForGlyph(m_stretchyData.top());
-    assemblyWidth = std::max(assemblyWidth, advanceWidthForGlyph(m_stretchyData.bottom()));
-    assemblyWidth = std::max(assemblyWidth, advanceWidthForGlyph(m_stretchyData.extension()));
-    if (m_stretchyData.middle().glyph)
-        assemblyWidth = std::max(assemblyWidth, advanceWidthForGlyph(m_stretchyData.middle()));
+    float assemblyWidth = advanceWidthForGlyph(m_assembly.topOrRight);
+    assemblyWidth = std::max(assemblyWidth, advanceWidthForGlyph(m_assembly.bottomOrLeft));
+    assemblyWidth = std::max(assemblyWidth, advanceWidthForGlyph(m_assembly.extension));
+    if (m_assembly.middle.isValid())
+        assemblyWidth = std::max(assemblyWidth, advanceWidthForGlyph(m_assembly.middle));
     return width - assemblyWidth;
 }
 

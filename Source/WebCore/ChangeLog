@@ -1,3 +1,64 @@
+2016-05-08  Frederic Wang  <fwang@igalia.com>
+
+        RenderMathMLOperator: refactor management of stretchy data and italic correction
+        https://bugs.webkit.org/show_bug.cgi?id=156913
+
+        Reviewed by Darin Adler.
+
+        No new tests, behavior is not changed.
+
+        The stretchy data uses a shared space to describe horizontal / vertical directions and
+        unstretched / size variant / glyph assembly. We use a simple struct with some unions to
+        represent it instead of the current implementation with a class.
+        We also modify the signature of some functions to retrieve display operator and stretchy
+        data to use that new structure and prepare the move to a separate MathOperator class.
+        Finally, we introduce some helper functions to easily set the stretchy data.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths): Use the new data members and
+        function signatures.
+        (WebCore::RenderMathMLOperator::setSizeVariant): New helper function to set a size variant.
+        (WebCore::RenderMathMLOperator::setGlyphAssembly): New helper function to set a glyph
+        assembly.
+        (WebCore::RenderMathMLOperator::getGlyphAssemblyFallBack): We change the signature to use a
+        GlyphAssemblyData.
+        (WebCore::RenderMathMLOperator::findDisplayStyleLargeOperator): We rename the function and
+        change its signature to remove the return value. We now also set the italic correction when
+        a display operator is found.
+        (WebCore::RenderMathMLOperator::findStretchyData): We change the signature to introduce a
+        target size and remove the return value. This also does the early return when the base glyph
+        is large enough.
+        (WebCore::RenderMathMLOperator::updateStyle): We use the new data members and function
+        signatures. The check for the base glyph size is now done in findStretchyData, so we just
+        check whether m_stretchType is Unstretched to do an early return.
+        (WebCore::RenderMathMLOperator::firstLineBaseline): We use m_stretchType.
+        (WebCore::RenderMathMLOperator::computeLogicalHeight): Ditto.
+        (WebCore::RenderMathMLOperator::fillWithVerticalExtensionGlyph): Use the new class members.
+        (WebCore::RenderMathMLOperator::fillWithHorizontalExtensionGlyph): Ditto.
+        (WebCore::RenderMathMLOperator::paint): Ditto.
+        (WebCore::RenderMathMLOperator::paintVerticalGlyphAssembly): Ditto.
+        (WebCore::RenderMathMLOperator::paintHorizontalGlyphAssembly): Ditto.
+        (WebCore::RenderMathMLOperator::paintChildren): Ditto.
+        (WebCore::RenderMathMLOperator::trailingSpaceError): Ditto.
+        (WebCore::RenderMathMLOperator::italicCorrection): Moved to RenderMathMLOperator.h.
+        (WebCore::RenderMathMLOperator::getDisplayStyleLargeOperator): Deleted.
+        * rendering/mathml/RenderMathMLOperator.h:
+        (WebCore::RenderMathMLOperator::italicCorrection): We just return m_italicCorrection.
+        (WebCore::RenderMathMLOperator::GlyphAssemblyData::GlyphAssemblyData): New class to store an
+        assembly of GlyphData.
+        (WebCore::RenderMathMLOperator::StretchyData::mode): Deleted.
+        (WebCore::RenderMathMLOperator::StretchyData::variant): Deleted.
+        (WebCore::RenderMathMLOperator::StretchyData::top): Deleted.
+        (WebCore::RenderMathMLOperator::StretchyData::extension): Deleted.
+        (WebCore::RenderMathMLOperator::StretchyData::bottom): Deleted.
+        (WebCore::RenderMathMLOperator::StretchyData::middle): Deleted.
+        (WebCore::RenderMathMLOperator::StretchyData::left): Deleted.
+        (WebCore::RenderMathMLOperator::StretchyData::right): Deleted.
+        (WebCore::RenderMathMLOperator::StretchyData::setNormalMode): Deleted.
+        (WebCore::RenderMathMLOperator::StretchyData::setSizeVariantMode): Deleted.
+        (WebCore::RenderMathMLOperator::StretchyData::setGlyphAssemblyMode): Deleted.
+        (WebCore::RenderMathMLOperator::StretchyData::StretchyData): Deleted.
+
 2016-05-08  Zalan Bujtas  <zalan@apple.com>
 
         iOS selection: Use inflow containing block for positioned <br>.

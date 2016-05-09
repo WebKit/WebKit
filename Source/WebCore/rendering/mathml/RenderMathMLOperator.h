@@ -51,7 +51,7 @@ public:
     // FIXME: The displaystyle property is not implemented (https://bugs.webkit.org/show_bug.cgi?id=118737).
     bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp); }
     bool isVertical() const { return m_isVertical; }
-    LayoutUnit italicCorrection() const;
+    LayoutUnit italicCorrection() const { return m_italicCorrection; }
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void updateStyle() final;
@@ -73,60 +73,19 @@ protected:
     UChar textContent() const { return m_textContent; }
 
 private:
-    enum DrawMode {
-        DrawNormal, DrawSizeVariant, DrawGlyphAssembly
+    struct GlyphAssemblyData {
+        GlyphData topOrRight;
+        GlyphData extension;
+        GlyphData bottomOrLeft;
+        GlyphData middle;
     };
-
-    class StretchyData {
-    public:
-        DrawMode mode() const { return m_mode; }
-        GlyphData variant() const { return m_data[0]; }
-        GlyphData top() const { return m_data[0]; }
-        GlyphData extension() const { return m_data[1]; }
-        GlyphData bottom() const { return m_data[2]; }
-        GlyphData middle() const { return m_data[3]; }
-        GlyphData left() const { return m_data[2]; }
-        GlyphData right() const { return m_data[0]; }
-
-        void setNormalMode()
-        {
-            m_mode = DrawNormal;
-        }
-        void setSizeVariantMode(const GlyphData& variant)
-        {
-            m_mode = DrawSizeVariant;
-            m_data[0] = variant;
-        }
-        void setGlyphAssemblyMode(const GlyphData& top, const GlyphData& extension, const GlyphData& bottom, const GlyphData& middle)
-        {
-            m_mode = DrawGlyphAssembly;
-            m_data[0] = top;
-            m_data[1] = extension;
-            m_data[2] = bottom;
-            m_data[3] = middle;
-        }
-        StretchyData()
-            : m_mode(DrawNormal) { }
-        StretchyData(const StretchyData& data)
-        {
-            switch (data.m_mode) {
-            case DrawNormal:
-                setNormalMode();
-                break;
-            case DrawSizeVariant:
-                setSizeVariantMode(data.variant());
-                break;
-            case DrawGlyphAssembly:
-                setGlyphAssemblyMode(data.top(), data.extension(), data.bottom(), data.middle());
-                break;
-            }
-        }
-
-    private:
-        DrawMode m_mode;
-        // FIXME: For OpenType fonts with a MATH table all the glyphs are from the same font, so we would only need to store the glyph indices here.
-        GlyphData m_data[4];
+    enum class StretchType { Unstretched, SizeVariant, GlyphAssembly };
+    StretchType m_stretchType;
+    union {
+        GlyphData m_variant;
+        GlyphAssemblyData m_assembly;
     };
+    LayoutUnit m_italicCorrection;
 
     const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) final;
@@ -142,9 +101,11 @@ private:
     bool shouldAllowStretching() const;
 
     bool getBaseGlyph(const RenderStyle&, GlyphData&) const;
-    bool getGlyphAssemblyFallBack(Vector<OpenTypeMathData::AssemblyPart>, StretchyData&) const;
-    StretchyData getDisplayStyleLargeOperator() const;
-    StretchyData findStretchyData(float* maximumGlyphWidth);
+    void setSizeVariant(const GlyphData&);
+    void setGlyphAssembly(const GlyphAssemblyData&);
+    bool calculateGlyphAssemblyFallBack(const Vector<OpenTypeMathData::AssemblyPart>&, GlyphAssemblyData&) const;
+    void calculateDisplayStyleLargeOperator();
+    void calculateStretchyData(float* maximumGlyphWidth, LayoutUnit targetSize = 0);
 
     enum GlyphPaintTrimming {
         TrimTop,
@@ -176,7 +137,6 @@ private:
     LayoutUnit m_trailingSpace;
     LayoutUnit m_minSize;
     LayoutUnit m_maxSize;
-    StretchyData m_stretchyData;
 };
 
 } // namespace WebCore
