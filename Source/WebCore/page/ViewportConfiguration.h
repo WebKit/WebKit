@@ -103,7 +103,7 @@ public:
     
 #ifndef NDEBUG
     WTF::CString description() const;
-    void dump() const;
+    WEBCORE_EXPORT void dump() const;
 #endif
 
 private:

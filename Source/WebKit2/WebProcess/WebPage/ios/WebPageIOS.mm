@@ -2574,8 +2574,6 @@ void WebPage::elementDidBlur(WebCore::Node* node)
 
 void WebPage::setViewportConfigurationMinimumLayoutSize(const FloatSize& size)
 {
-    resetTextAutosizingBeforeLayoutIfNeeded(m_viewportConfiguration.minimumLayoutSize(), size);
-    
     if (m_viewportConfiguration.setMinimumLayoutSize(size))
         viewportConfigurationChanged();
 }
@@ -2601,11 +2599,8 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     return WTF::areEssentiallyEqual(a, b);
 }
 
-void WebPage::resetTextAutosizingBeforeLayoutIfNeeded(const FloatSize& oldSize, const FloatSize& newSize)
+void WebPage::resetTextAutosizing()
 {
-    if (oldSize.width() == newSize.width())
-        return;
-
     for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         Document* document = frame->document();
         if (!document || !document->renderView())
@@ -2650,11 +2645,12 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
         }
     }
 
-    resetTextAutosizingBeforeLayoutIfNeeded(m_viewportConfiguration.minimumLayoutSize(), minimumLayoutSize);
     m_viewportConfiguration.setMinimumLayoutSize(minimumLayoutSize);
     IntSize newLayoutSize = m_viewportConfiguration.layoutSize();
 
-    setFixedLayoutSize(newLayoutSize);
+    if (setFixedLayoutSize(newLayoutSize))
+        resetTextAutosizing();
+
     setMaximumUnobscuredSize(maximumUnobscuredSize);
 
     frameView.updateLayoutAndStyleIfNeededRecursive();
@@ -2811,7 +2807,8 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame)
 
 void WebPage::viewportConfigurationChanged()
 {
-    setFixedLayoutSize(m_viewportConfiguration.layoutSize());
+    if (setFixedLayoutSize(m_viewportConfiguration.layoutSize()))
+        resetTextAutosizing();
 
     double initialScale = m_viewportConfiguration.initialScale();
     double scale;

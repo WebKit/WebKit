@@ -1,3 +1,37 @@
+2016-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Font size increases on some pages after navigating then going back
+        https://bugs.webkit.org/show_bug.cgi?id=157441
+        rdar://problem/22873240
+
+        Reviewed by Darin Adler.
+
+        There's an ordering dependency between setting the viewport configuration and doing
+        layouts when going back to a page from the page cache that is incorrectly handled.
+
+        In FrameLoader::commitProvisionalLoad(), CachedPage::restore() triggers a layout under
+        updateContentsSize(), but this happens before dispatchDidCommitLoad() which updates
+        the viewport arguments via ViewportConfiguration::setViewportArguments().
+
+        This issue is not addressed by the current commit. But a second problem is:
+        if the inputs to text autosizing change, we need to invalidate the autosizing state.
+        The relevant input here is the fixed layout width (which is determined from the viewport
+        configuration).
+
+        The current code invalidated text autosizing when m_viewportConfiguration.minimumLayoutSize()
+        changed, but the correct behavior is to invalidate based on fixed layout size changing.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+        (WebKit::WebPage::setFixedLayoutSize):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::resetTextAutosizing):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::viewportConfigurationChanged):
+        (WebKit::WebPage::setViewportConfigurationMinimumLayoutSize): Deleted.
+        (WebKit::WebPage::resetTextAutosizingBeforeLayoutIfNeeded): Deleted.
+
 2016-05-09  Alex Christensen  <achristensen@webkit.org>
 
         Don't use DiskCache for media resource loads

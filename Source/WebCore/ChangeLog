@@ -1,3 +1,17 @@
+2016-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Font size increases on some pages after navigating then going back
+        https://bugs.webkit.org/show_bug.cgi?id=157441
+        rdar://problem/22873240
+
+        Reviewed by Darin Adler.
+
+        Sometimes I want to dump ViewportConfigurations from WebKit2 so export dump().
+
+        Test: fast/text-autosizing/ios/text-autosizing-after-back.html
+
+        * page/ViewportConfiguration.h:
+
 2016-05-09  Eric Carlson  <eric.carlson@apple.com>
 
         "Main content" restrictions should not apply to media documents

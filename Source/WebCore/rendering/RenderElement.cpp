@@ -31,13 +31,14 @@
 #include "CursorList.h"
 #include "ElementChildIterator.h"
 #include "EventHandler.h"
+#include "FlowThreadController.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
-#include "FlowThreadController.h"
+#include "Logging.h"
 #include "PathUtilities.h"
 #include "RenderBlock.h"
 #include "RenderCounter.h"
@@ -2219,6 +2220,8 @@ void RenderElement::resetTextAutosizing()
     Document* document = view().frameView().frame().document();
     if (!document)
         return;
+
+    LOG(TextAutosizing, "RenderElement::resetTextAutosizing()");
 
     document->resetAutoSizingNodes();
 

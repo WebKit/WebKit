@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width"/>
+    <script>
+        function navigateAwayAndBack() 
+        {
+            // Simulate a link click to create a history entry
+            var evt = new MouseEvent("click", {
+                bubbles: true,
+                cancelable: true,
+                view: window
+            });
+            document.getElementById('anchor').dispatchEvent(evt);
+        }
+
+        function runTest() 
+        {
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
+                testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+            }
+
+            if (window.internals) {
+                window.internals.settings.setTextAutosizingEnabled(true);
+                window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+            }
+            window.setTimeout("navigateAwayAndBack()", 0);
+        }
+
+        var showCount = 0;
+        function pageShowed()
+        {
+            if (++showCount == 2) {
+                // Timeout required to get rendering in WK1.
+                window.setTimeout(function() {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, 0)
+            }
+        }
+
+        window.addEventListener('load', runTest, false);
+        window.addEventListener('pageshow', pageShowed, false);
+    </script>
+</head>
+<body>
+    <div id="content"><a id='anchor' href='data:text/html,<body onload="history.back()"><div style="width: 500px">Text</div></body>'>Anchor to another page</a></div>
+    <div>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+    </div>
+</body>
+</html>

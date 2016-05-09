@@ -1,3 +1,14 @@
+2016-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Font size increases on some pages after navigating then going back
+        https://bugs.webkit.org/show_bug.cgi?id=157441
+        rdar://problem/22873240
+
+        Reviewed by Darin Adler.
+
+        * fast/text-autosizing/ios/text-autosizing-after-back-expected.html: Added.
+        * fast/text-autosizing/ios/text-autosizing-after-back.html: Added.
+
 2016-05-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline failing LayoutTests after r200580
