@@ -1458,6 +1458,7 @@ private:
 
     void compileCallObjectConstructor()
     {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         LValue value = lowJSValue(m_node->child1());
 
         LBasicBlock isCellCase = m_out.newBlock();
@@ -1471,7 +1472,7 @@ private:
         m_out.branch(isObject(value), usually(continuation), rarely(slowCase));
 
         m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowResult = m_out.anchor(vmCall(m_out.int64, m_out.operation(operationToObject), m_callFrame, value));
+        ValueFromBlock slowResult = m_out.anchor(vmCall(m_out.int64, m_out.operation(operationObjectConstructor), m_callFrame, m_out.constIntPtr(globalObject), value));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
