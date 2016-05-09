@@ -61,7 +61,7 @@
     [InitializedByEventConstructor, Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM] readonly attribute boolean relatedTargetScoped;
     readonly attribute DOMTimeStamp     timeStamp;
 
-    [Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM] sequence<Node> deepPath();
+    [Conditional=SHADOW_DOM, EnabledAtRuntime=ShadowDOM] sequence<Node> composedPath();
 
     void               stopPropagation();
     void               preventDefault();

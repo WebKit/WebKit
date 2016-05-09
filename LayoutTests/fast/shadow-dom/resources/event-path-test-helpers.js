@@ -15,10 +15,10 @@ function dispatchEventWithLog(shadow, target, event) {
                 eventPath.push(this.label);
                 relatedTargets.push(event.relatedTarget ? event.relatedTarget.label : null);
 
-                if (!event.deepPath) // Don't fail all tests just for the lack of deepPath.
+                if (!event.composedPath) // Don't fail all tests just for the lack of composedPath.
                     return;
 
-                pathAtTargets.push(event.deepPath().map(function (node) { return node.label; }));
+                pathAtTargets.push(event.composedPath().map(function (node) { return node.label; }));
             }).bind(node));
         }
     }

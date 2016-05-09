@@ -124,7 +124,7 @@ public:
 
     void setEventPath(const EventPath& path) { m_eventPath = &path; }
     void clearEventPath() { m_eventPath = nullptr; }
-    Vector<EventTarget*> deepPath() const;
+    Vector<EventTarget*> composedPath() const;
 
     void stopPropagation() { m_propagationStopped = true; }
     void stopImmediatePropagation() { m_immediatePropagationStopped = true; }

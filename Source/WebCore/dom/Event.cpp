@@ -187,7 +187,7 @@ void Event::setTarget(RefPtr<EventTarget>&& target)
         receivedTarget();
 }
 
-Vector<EventTarget*> Event::deepPath() const
+Vector<EventTarget*> Event::composedPath() const
 {
     if (!m_eventPath)
         return Vector<EventTarget*>();

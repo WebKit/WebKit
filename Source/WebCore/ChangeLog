@@ -1,3 +1,20 @@
+2016-05-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (198056): Unable to use edit buttons on WordPress
+        https://bugs.webkit.org/show_bug.cgi?id=157475
+
+        Reviewed by Antti Koivisto.
+
+        Renamed Event.prototype.deepPath() to composedPath() per discussions on
+        https://github.com/whatwg/dom/issues/242 as the old name was not Web compatible.
+
+        Test: fast/shadow-dom/Extensions-to-Event-Interface.html
+
+        * dom/Event.cpp:
+        (WebCore::Event::composedPath): Renamed from deepPath.
+        * dom/Event.h:
+        * dom/Event.idl:
+
 2016-05-09  Alex Christensen  <achristensen@webkit.org>
 
         Don't use DiskCache for media resource loads

@@ -1,3 +1,17 @@
+2016-05-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (198056): Unable to use edit buttons on WordPress
+        https://bugs.webkit.org/show_bug.cgi?id=157475
+
+        Reviewed by Antti Koivisto.
+
+        Updated the tests.
+
+        * fast/shadow-dom/Extensions-to-Event-Interface-expected.txt:
+        * fast/shadow-dom/Extensions-to-Event-Interface.html:
+        * fast/shadow-dom/resources/event-path-test-helpers.js:
+        (dispatchEventWithLog):
+
 2016-05-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Removing timeout and adding failure expectation for storage/indexeddb/intversion-open-in-upgradeneeded.html

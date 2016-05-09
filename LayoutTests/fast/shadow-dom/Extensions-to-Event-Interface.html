@@ -3,7 +3,7 @@
 <head>
 <title>Shadow DOM: Extensions to Event Interface</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
-<meta name="assert" content="Event interface must have deepPath() as a method">
+<meta name="assert" content="Event interface must have composedPath() as a method">
 <link rel="help" href="http://w3c.github.io/webcomponents/spec/shadow/#extensions-to-event-interface">
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
@@ -15,20 +15,20 @@
 <script>
 
 test(function () {
-    assert_true('deepPath' in Event.prototype);
-    assert_true('deepPath' in new Event('my-event'));
-}, 'deepPath() must exist on Event');
+    assert_true('composedPath' in Event.prototype);
+    assert_true('composedPath' in new Event('my-event'));
+}, 'composedPath() must exist on Event');
 
 test(function () {
     var event = new Event('my-event');
-    assert_array_equals(event.deepPath(), []);
-}, 'deepPath() must return an empty array when the event has not been dispatched');
+    assert_array_equals(event.composedPath(), []);
+}, 'composedPath() must return an empty array when the event has not been dispatched');
 
 test(function () {
     var event = new Event('my-event');
     document.body.dispatchEvent(event);
-    assert_array_equals(event.deepPath(), []);
-}, 'deepPath() must return an empty array when the event is no longer dispatched');
+    assert_array_equals(event.composedPath(), []);
+}, 'composedPath() must return an empty array when the event is no longer dispatched');
 
 test(function () {
     assert_true('scoped' in Event.prototype);
@@ -87,7 +87,7 @@ function testUnscopedEvent(mode) {
         assert_array_equals(log.pathAtTargets[0], expectedPath);
         assert_array_equals(log.pathAtTargets[1], expectedPath);
         assert_array_equals(log.pathAtTargets[2], mode == 'open' ? expectedPath : ['A1', 'A-SR', 'A'],
-            'deepPath must only contain unclosed nodes of the current target.');
+            'composedPath must only contain unclosed nodes of the current target.');
     }, 'The event must propagate out of ' + mode + ' mode shadow boundaries when the scoped flag is unset');
 }
 
@@ -274,7 +274,7 @@ function testUnscopedEventWithScopedRelatedTargetThroughSlot(mode) {
         assert_array_equals(log.pathAtTargets[7], mode == 'open' ? expectedPath : pathExposedToA1);
         assert_array_equals(log.pathAtTargets[8], mode == 'open' ? expectedPath : pathExposedToB);
         assert_array_equals(log.relatedTargets, expectedRelatedTarget);
-    }, 'deepPath() must contain and only contain the unclosed nodes of target in ' + mode + ' mode shadow trees');
+    }, 'composedPath() must contain and only contain the unclosed nodes of target in ' + mode + ' mode shadow trees');
 }
 
 testUnscopedEventWithScopedRelatedTargetThroughSlot('open');
