@@ -61,3 +61,28 @@
 .content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple .arrows {
     color: black;
 }
+
+.content-view.timeline-recording > .content-browser .recording-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 30px;
+    bottom: 0;
+    text-align: center;
+    background-color: var(--panel-background-color-light);
+}
+
+.content-view.timeline-recording > .content-browser .recording-progress > .status {
+    margin-top: 40px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: hsl(0, 0%, 12%);
+}
+
+.content-view.timeline-recording > .content-browser .recording-progress > .status > .indeterminate-progress-spinner {
+    display: inline-block;
+    margin-top: -1px;
+    margin-left: 8px;
+    vertical-align: middle;
+}

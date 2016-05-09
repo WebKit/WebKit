@@ -93,6 +93,8 @@ WebInspector.HeapAllocationsTimelineView = class HeapAllocationsTimelineView ext
 
     // Public
 
+    get showsLiveRecordingData() { return false; }
+
     showHeapSnapshotList()
     {
         if (this._showingSnapshotList)

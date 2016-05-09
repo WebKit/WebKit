@@ -89,6 +89,8 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
 
     // Public
 
+    get showsLiveRecordingData() { return false; }
+
     shown()
     {
         super.shown();

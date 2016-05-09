@@ -1,3 +1,63 @@
+2016-05-09  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Show in progress message in Timeline views that do not show data until the recording finishes
+        https://bugs.webkit.org/show_bug.cgi?id=156761
+        <rdar://problem/25970771>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New UI strings.
+
+        * UserInterface/Main.html:
+        New view class.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView.prototype.get showsLiveRecordingData):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView.prototype.get showsLiveRecordingData):
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WebInspector.ScriptDetailsTimelineView.prototype.get showsLiveRecordingData):
+        * UserInterface/Views/ScriptProfileTimelineView.js:
+        (WebInspector.ScriptProfileTimelineView.prototype.get showsLiveRecordingData):
+        Don't show live recording data.
+
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WebInspector.ScriptClusterTimelineView.prototype.get showsLiveRecordingData):
+        Forward property to current child TimelineView.
+
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording > .content-browser .recording-progress):
+        (.content-view.timeline-recording > .content-browser .recording-progress > .status):
+        (.content-view.timeline-recording > .content-browser .recording-progress > .status > .indeterminate-progress-spinner):
+        New progress view styles.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._capturingStarted):
+        (WebInspector.TimelineRecordingContentView.prototype._capturingStopped):
+        Refresh progress view visibility.
+
+        (WebInspector.TimelineRecordingContentView.prototype._updateProgressView):
+        Show the progress view if we're currently capturing, and showing a view
+        that doesn't support showing live data.
+
+        * UserInterface/Views/TimelineRecordingProgressView.js:
+        (WebInspector.TimelineRecordingProgressView):
+        (WebInspector.TimelineRecordingProgressView.prototype.get visible):
+        (WebInspector.TimelineRecordingProgressView.prototype.set visible):
+        Show a status message, indeterminate progress spinner, and Stop Recording
+        button while timeline data is being recorded.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.get showsLiveRecordingData):
+        Implemented by TimelineViews that don't support showing data while recording.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Add --panel-background-color-light for the progress view.
+
 2016-05-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add Breakpoints and Scripts folders to Debugger sidebar

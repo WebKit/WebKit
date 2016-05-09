@@ -65,6 +65,10 @@ WebInspector.ScriptProfileTimelineView = class ScriptProfileTimelineView extends
         // FIXME: Support filtering the ProfileView.
     }
 
+    // Public
+
+    get showsLiveRecordingData() { return false; }
+
     // Protected
 
     closed()

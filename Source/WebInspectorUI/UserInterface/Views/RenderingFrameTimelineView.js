@@ -108,6 +108,8 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
 
     // Public
 
+    get showsLiveRecordingData() { return false; }
+
     shown()
     {
         super.shown();

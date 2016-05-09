@@ -43,6 +43,12 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
     // Public
 
+    get showsLiveRecordingData()
+    {
+        // Implemented by sub-classes if needed.
+        return true;
+    }
+
     get navigationItems()
     {
         return this._scopeBar ? [this._scopeBar] : [];

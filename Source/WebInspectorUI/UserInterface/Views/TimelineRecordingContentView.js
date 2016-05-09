@@ -63,6 +63,9 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._overviewTimelineView = new WebInspector.OverviewTimelineView(recording);
         this._overviewTimelineView.secondsPerPixel = this._timelineOverview.secondsPerPixel;
 
+        this._progressView = new WebInspector.TimelineRecordingProgressView;
+        this._timelineContentBrowser.addSubview(this._progressView);
+
         this._timelineViewMap = new Map;
         this._pathComponentMap = new Map;
 
@@ -271,6 +274,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         this._timelineOverview.viewMode = newViewMode;
         this._updateTimelineOverviewHeight();
+        this._updateProgressView();
 
         if (timelineView) {
             this._updateTimelineViewSelection(timelineView);
@@ -431,6 +435,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _capturingStarted(event)
     {
+        this._updateProgressView();
+
         if (!this._updating)
             this._startUpdatingCurrentTime(event.data.startTime);
         this._clearTimelineNavigationItem.enabled = !this._recording.readonly;
@@ -438,6 +444,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _capturingStopped(event)
     {
+        this._updateProgressView();
+
         if (this._updating)
             this._stopUpdatingCurrentTime();
     }
@@ -713,5 +721,11 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         let record = event.data.record;
         let filtered = event.data.filtered;
         this._timelineOverview.recordWasFiltered(this.currentTimelineView.representedObject, record, filtered);
+    }
+
+    _updateProgressView()
+    {
+        let isCapturing = WebInspector.timelineManager.isCapturing();
+        this._progressView.visible = isCapturing && this.currentTimelineView && !this.currentTimelineView.showsLiveRecordingData;
     }
 };
