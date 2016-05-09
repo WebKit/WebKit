@@ -128,3 +128,10 @@ bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url)
 
     return webPageProxy->process().processPool().isURLKnownHSTSHost(toImpl(url)->string(), privateBrowsingEnabled);
 }
+
+#if PLATFORM(MAC)
+bool WKPageIsPlayingVideoInEnhancedFullscreen(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->isPlayingVideoInEnhancedFullscreen();
+}
+#endif

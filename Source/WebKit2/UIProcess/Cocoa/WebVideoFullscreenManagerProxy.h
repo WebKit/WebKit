@@ -106,6 +106,10 @@ public:
     void applicationDidBecomeActive();
     bool isVisible() const;
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    bool isPlayingVideoInEnhancedFullscreen() const;
+#endif
+
 private:
     friend class WebVideoFullscreenModelContext;
 

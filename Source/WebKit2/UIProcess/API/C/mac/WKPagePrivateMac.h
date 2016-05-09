@@ -59,6 +59,10 @@ WK_EXPORT _WKRemoteObjectRegistry *WKPageGetObjectRegistry(WKPageRef page);
 WK_EXPORT pid_t WKPageGetProcessIdentifier(WKPageRef page);
 WK_EXPORT bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url);
 
+#if TARGET_OS_MAC
+WK_EXPORT bool WKPageIsPlayingVideoInEnhancedFullscreen(WKPageRef page);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

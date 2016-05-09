@@ -1,3 +1,20 @@
+2016-05-06  Ada Chan  <adachan@apple.com>
+
+        Add WKPageRef SPI to tell whether there's a video playing in enhanced fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=157434
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.h:
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (WKPageIsPlayingVideoInEnhancedFullscreen):
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::isPlayingVideoInEnhancedFullscreen):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingVideoInEnhancedFullscreen):
+        * UIProcess/WebPageProxy.h:
+
 2016-05-09  Anders Carlsson  <andersca@apple.com>
 
         Add injected bundle SPI for getting favicon and touch icon URLs

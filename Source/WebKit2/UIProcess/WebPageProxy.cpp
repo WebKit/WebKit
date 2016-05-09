@@ -6068,6 +6068,15 @@ bool WebPageProxy::hasActiveVideoForControlsManager() const
     return false;
 #endif
 }
+
+bool WebPageProxy::isPlayingVideoInEnhancedFullscreen() const
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    return m_videoFullscreenManager && m_videoFullscreenManager->isPlayingVideoInEnhancedFullscreen();
+#else
+    return false;
+#endif
+}
 #endif
 
 #if ENABLE(MEDIA_SESSION)

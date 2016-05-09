@@ -247,6 +247,17 @@ bool WebVideoFullscreenManagerProxy::mayAutomaticallyShowVideoPictureInPicture()
     return false;
 }
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+bool WebVideoFullscreenManagerProxy::isPlayingVideoInEnhancedFullscreen() const
+{
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebVideoFullscreenManagerProxyIsPlayingVideoInEnhancedFullscreenAdditions.mm>
+#else
+    return false;
+#endif
+}
+#endif
+
 void WebVideoFullscreenManagerProxy::applicationDidBecomeActive()
 {
     for (auto& tuple : m_contextMap.values())

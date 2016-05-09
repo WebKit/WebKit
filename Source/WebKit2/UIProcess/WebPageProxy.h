@@ -1026,6 +1026,7 @@ public:
 #if PLATFORM(MAC)
     void videoControlsManagerDidChange();
     bool hasActiveVideoForControlsManager() const;
+    bool isPlayingVideoInEnhancedFullscreen() const;
 #endif
 
 #if ENABLE(MEDIA_SESSION)
