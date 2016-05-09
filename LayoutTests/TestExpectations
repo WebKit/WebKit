@@ -51,14 +51,6 @@ http/tests/misc/will-send-request-with-client-provided-http-body.html [ Skip ]
 fast/harness/ui-side-scripts.html [ Skip ]
 fast/harness/concurrent-ui-side-scripts.html [ Skip ]
 
-# EFL port has not supported selection gap painting since r200412
-fast/repaint/selection-gap-absolute-child.html [ Skip ]
-fast/repaint/selection-gap-fixed-child.html [ Skip ]
-fast/repaint/selection-gap-flipped-absolute-child.html [ Skip ]
-fast/repaint/selection-gap-flipped-fixed-child.html [ Skip ]
-fast/repaint/selection-gap-transformed-absolute-child.html [ Skip ]
-fast/repaint/selection-gap-transformed-fixed-child.html [ Skip ]
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

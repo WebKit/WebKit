@@ -1,5 +1,14 @@
 2016-05-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
+        Fix wrong gardening in r200570
+
+        Unreviewed EFL gardening.
+
+        * TestExpectations: Move selection gap tests to EFL's one.
+        * platform/efl/TestExpectations:
+
+2016-05-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
         [EFL] Skip tests of selection gap because EFL port disabled to paint the selection gap
 
         Unreviewed EFL gardening.

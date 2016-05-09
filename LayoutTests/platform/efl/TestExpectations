@@ -376,6 +376,14 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 webkit.org/b/87661 crypto/subtle/rsa-indexeddb.html [ Skip ]
 storage/indexeddb/database-odd-names.html [ Skip ]
 
+# EFL port has not supported selection gap painting since r200412
+fast/repaint/selection-gap-absolute-child.html [ Skip ]
+fast/repaint/selection-gap-fixed-child.html [ Skip ]
+fast/repaint/selection-gap-flipped-absolute-child.html [ Skip ]
+fast/repaint/selection-gap-flipped-fixed-child.html [ Skip ]
+fast/repaint/selection-gap-transformed-absolute-child.html [ Skip ]
+fast/repaint/selection-gap-transformed-fixed-child.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
 #////////////////////////////////////////////////////////////////////////////////////////
