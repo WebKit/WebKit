@@ -1,5 +1,18 @@
 2016-05-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Focusing a shadow host places the slot content after the shadow DOM content
+        https://bugs.webkit.org/show_bug.cgi?id=154770
+        <rdar://problem/24873102>
+
+        Reviewed by Antti Koivisto.
+
+        Add a regression test now that the bug has been fixed.
+
+        * fast/shadow-dom/shadow-layout-after-focus-expected.html: Added.
+        * fast/shadow-dom/shadow-layout-after-focus.html: Added.
+
+2016-05-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION (198056): Unable to use edit buttons on WordPress
         https://bugs.webkit.org/show_bug.cgi?id=157475
 
