@@ -89,7 +89,11 @@ private:
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
 
     Element* findFocusableElementAcrossFocusScope(FocusDirection, const FocusNavigationScope& startScope, Node* start, KeyboardEvent*);
-    Element* findFocusableElementRecursively(FocusDirection, const FocusNavigationScope&, Node* start, KeyboardEvent*);
+
+    Element* findFocusableElementWithinScope(FocusDirection, const FocusNavigationScope&, Node* start, KeyboardEvent*);
+    Element* nextFocusableElementWithinScope(const FocusNavigationScope&, Node* start, KeyboardEvent*);
+    Element* previousFocusableElementWithinScope(const FocusNavigationScope&, Node* start, KeyboardEvent*);
+
     Element* findFocusableElementDescendingDownIntoFrameDocument(FocusDirection, Element*, KeyboardEvent*);
 
     // Searches through the given tree scope, starting from start node, for the next/previous selectable element that comes after/before start node.
@@ -101,12 +105,12 @@ private:
     // @return The focus node that comes after/before start node.
     //
     // See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
-    Element* findFocusableElement(FocusDirection, const FocusNavigationScope&, Node* start, KeyboardEvent*);
+    Element* findFocusableElementOrScopeOwner(FocusDirection, const FocusNavigationScope&, Node* start, KeyboardEvent*);
 
     Element* findElementWithExactTabIndex(const FocusNavigationScope&, Node* start, int tabIndex, KeyboardEvent*, FocusDirection);
     
-    Element* nextFocusableElement(const FocusNavigationScope&, Node* start, KeyboardEvent*);
-    Element* previousFocusableElement(const FocusNavigationScope&, Node* start, KeyboardEvent*);
+    Element* nextFocusableElementOrScopeOwner(const FocusNavigationScope&, Node* start, KeyboardEvent*);
+    Element* previousFocusableElementOrScopeOwner(const FocusNavigationScope&, Node* start, KeyboardEvent*);
 
     bool advanceFocusDirectionallyInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*);
     void findFocusCandidateInContainer(Node& container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);

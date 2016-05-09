@@ -300,7 +300,8 @@ Element* FocusController::findFocusableElementDescendingDownIntoFrameDocument(Fo
         HTMLFrameOwnerElement& owner = downcast<HTMLFrameOwnerElement>(*element);
         if (!owner.contentFrame())
             break;
-        Element* foundElement = findFocusableElement(direction, FocusNavigationScope::scopeOwnedByIFrame(owner), 0, event);
+        // FIXME: This can return a non-focusable shadow root.
+        Element* foundElement = findFocusableElementOrScopeOwner(direction, FocusNavigationScope::scopeOwnedByIFrame(owner), 0, event);
         if (!foundElement)
             break;
         ASSERT(element != foundElement);
@@ -366,8 +367,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         }
 
         // Chrome doesn't want focus, so we should wrap focus.
-        element = findFocusableElementRecursively(direction, FocusNavigationScope::scopeOf(*m_page.mainFrame().document()), 0, event);
-        element = findFocusableElementDescendingDownIntoFrameDocument(direction, element.get(), event);
+        element = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(*m_page.mainFrame().document()), nullptr, event);
 
         if (!element)
             return false;
@@ -421,57 +421,74 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 Element* FocusController::findFocusableElementAcrossFocusScope(FocusDirection direction, const FocusNavigationScope& scope, Node* currentNode, KeyboardEvent* event)
 {
     ASSERT(!is<Element>(currentNode) || !isNonFocusableShadowHost(*downcast<Element>(currentNode), *event));
-    Element* found;
+
     if (currentNode && direction == FocusDirectionForward && isFocusableShadowHost(*currentNode, *event)) {
-        Element* foundInInnerFocusScope = findFocusableElementRecursively(direction, FocusNavigationScope::scopeOwnedByShadowHost(downcast<Element>(*currentNode)), 0, event);
-        found = foundInInnerFocusScope ? foundInInnerFocusScope : findFocusableElementRecursively(direction, scope, currentNode, event);
-    } else
-        found = findFocusableElementRecursively(direction, scope, currentNode, event);
+        if (Element* candidateInInnerScope = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByShadowHost(downcast<Element>(*currentNode)), 0, event))
+            return candidateInInnerScope;
+    }
+
+    if (Element* candidateInCurrentScope = findFocusableElementWithinScope(direction, scope, currentNode, event))
+        return candidateInCurrentScope;
 
     // If there's no focusable node to advance to, move up the focus scopes until we find one.
     Element* owner = scope.owner();
-    while (!found && owner) {
-        FocusNavigationScope currentScope = FocusNavigationScope::scopeOf(*owner);
-        if (direction == FocusDirectionBackward && isFocusableShadowHost(*owner, *event)) {
-            found = owner;
-            break;
-        }
-        found = findFocusableElementRecursively(direction, currentScope, owner, event);
-        owner = currentScope.owner();
+    while (owner) {
+        FocusNavigationScope outerScope = FocusNavigationScope::scopeOf(*owner);
+        if (direction == FocusDirectionBackward && isFocusableShadowHost(*owner, *event))
+            return findFocusableElementDescendingDownIntoFrameDocument(direction, owner, event);
+        if (Element* candidateInOuterScope = findFocusableElementWithinScope(direction, outerScope, owner, event))
+            return candidateInOuterScope;
+        owner = outerScope.owner();
     }
-    found = findFocusableElementDescendingDownIntoFrameDocument(direction, found, event);
-    return found;
+    return nullptr;
 }
 
-Element* FocusController::findFocusableElementRecursively(FocusDirection direction, const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
+Element* FocusController::findFocusableElementWithinScope(FocusDirection direction, const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
 {
     // Starting node is exclusive.
-    Element* found = findFocusableElement(direction, scope, start, event);
+    Element* candidate = direction == FocusDirectionForward
+        ? nextFocusableElementWithinScope(scope, start, event)
+        : previousFocusableElementWithinScope(scope, start, event);
+    return findFocusableElementDescendingDownIntoFrameDocument(direction, candidate, event);
+}
+
+Element* FocusController::nextFocusableElementWithinScope(const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
+{
+    Element* found = nextFocusableElementOrScopeOwner(scope, start, event);
     if (!found)
         return nullptr;
-    if (direction == FocusDirectionForward) {
-        if (!isNonFocusableShadowHost(*found, *event))
-            return found;
-        Element* foundInInnerFocusScope = findFocusableElementRecursively(direction, FocusNavigationScope::scopeOwnedByShadowHost(*found), 0, event);
-        return foundInInnerFocusScope ? foundInInnerFocusScope : findFocusableElementRecursively(direction, scope, found, event);
-    }
-    ASSERT(direction == FocusDirectionBackward);
-    if (isFocusableShadowHost(*found, *event)) {
-        Element* foundInInnerFocusScope = findFocusableElementRecursively(direction, FocusNavigationScope::scopeOwnedByShadowHost(*found), 0, event);
-        return foundInInnerFocusScope ? foundInInnerFocusScope : found;
-    }
     if (isNonFocusableShadowHost(*found, *event)) {
-        Element* foundInInnerFocusScope = findFocusableElementRecursively(direction, FocusNavigationScope::scopeOwnedByShadowHost(*found), 0, event);
-        return foundInInnerFocusScope ? foundInInnerFocusScope :findFocusableElementRecursively(direction, scope, found, event);
+        if (Element* foundInInnerFocusScope = nextFocusableElementWithinScope(FocusNavigationScope::scopeOwnedByShadowHost(*found), 0, event))
+            return foundInInnerFocusScope;
+        return nextFocusableElementWithinScope(scope, found, event);
     }
     return found;
 }
 
-Element* FocusController::findFocusableElement(FocusDirection direction, const FocusNavigationScope& scope, Node* node, KeyboardEvent* event)
+Element* FocusController::previousFocusableElementWithinScope(const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
+{
+    Element* found = previousFocusableElementOrScopeOwner(scope, start, event);
+    if (!found)
+        return nullptr;
+    if (isFocusableShadowHost(*found, *event)) {
+        // Search an inner focusable element in the shadow tree from the end.
+        if (Element* foundInInnerFocusScope = previousFocusableElementWithinScope(FocusNavigationScope::scopeOwnedByShadowHost(*found), 0, event))
+            return foundInInnerFocusScope;
+        return found;
+    }
+    if (isNonFocusableShadowHost(*found, *event)) {
+        if (Element* foundInInnerFocusScope = previousFocusableElementWithinScope(FocusNavigationScope::scopeOwnedByShadowHost(*found), 0, event))
+            return foundInInnerFocusScope;
+        return previousFocusableElementWithinScope(scope, found, event);
+    }
+    return found;
+}
+
+Element* FocusController::findFocusableElementOrScopeOwner(FocusDirection direction, const FocusNavigationScope& scope, Node* node, KeyboardEvent* event)
 {
     return (direction == FocusDirectionForward)
-        ? nextFocusableElement(scope, node, event)
-        : previousFocusableElement(scope, node, event);
+        ? nextFocusableElementOrScopeOwner(scope, node, event)
+        : previousFocusableElementOrScopeOwner(scope, node, event);
 }
 
 Element* FocusController::findElementWithExactTabIndex(const FocusNavigationScope& scope, Node* start, int tabIndex, KeyboardEvent* event, FocusDirection direction)
@@ -528,17 +545,19 @@ static Element* previousElementWithLowerTabIndex(const FocusNavigationScope& sco
 
 Element* FocusController::nextFocusableElement(Node& start)
 {
+    // FIXME: This can return a non-focusable shadow host.
     Ref<KeyboardEvent> keyEvent = KeyboardEvent::createForDummy();
-    return nextFocusableElement(FocusNavigationScope::scopeOf(start), &start, keyEvent.ptr());
+    return nextFocusableElementOrScopeOwner(FocusNavigationScope::scopeOf(start), &start, keyEvent.ptr());
 }
 
 Element* FocusController::previousFocusableElement(Node& start)
 {
+    // FIXME: This can return a non-focusable shadow host.
     Ref<KeyboardEvent> keyEvent = KeyboardEvent::createForDummy();
-    return previousFocusableElement(FocusNavigationScope::scopeOf(start), &start, keyEvent.ptr());
+    return previousFocusableElementOrScopeOwner(FocusNavigationScope::scopeOf(start), &start, keyEvent.ptr());
 }
 
-Element* FocusController::nextFocusableElement(const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
+Element* FocusController::nextFocusableElementOrScopeOwner(const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
 {
     int startTabIndex = 0;
     if (start && is<Element>(*start))
@@ -575,7 +594,7 @@ Element* FocusController::nextFocusableElement(const FocusNavigationScope& scope
     return findElementWithExactTabIndex(scope, &scope.rootNode(), 0, event, FocusDirectionForward);
 }
 
-Element* FocusController::previousFocusableElement(const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
+Element* FocusController::previousFocusableElementOrScopeOwner(const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
 {
     Node* last = nullptr;
     for (Node* node = &scope.rootNode(); node; node = scope.lastChildInScope(node))

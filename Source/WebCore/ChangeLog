@@ -1,3 +1,39 @@
+2016-05-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Refactor FocusController::findFocusableElementRecursively
+        https://bugs.webkit.org/show_bug.cgi?id=157415
+
+        Reviewed by Darin Adler.
+
+        Refactor FocusController::findFocusableElementRecursively and related functions. Extracted two functions:
+        nextFocusableElementWithinScope and previousFocusableElementWithinScope out of it since they didn't really share
+        any code other than calling findFocusableElement at the beginning.
+
+        Also renamed internal variant of nextFocusableElement and previousFocusableElement to nextFocusableElementOrScopeOwner
+        and previousFocusableElementOrScopeOwner. It was confusing to have these internal functions in addition to public
+        member functions that are used in Objective-C DOM API.
+
+        No new tests are added since there should be no behavioral change.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::findFocusableElementDescendingDownIntoFrameDocument): Added a FIXME.
+        (WebCore::FocusController::advanceFocusInDocumentOrder): Use findFocusableElementAcrossFocusScope instead of manually
+        calling findFocusableElementRecursively and findFocusableElementDescendingDownIntoFrameDocument separately.
+        (WebCore::FocusController::findFocusableElementAcrossFocusScope): Now that findFocusableElementWithinScope calls
+        findFocusableElementDescendingDownIntoFrameDocument internally, there is no need to keep around "found" local variable.
+        Introduce a few early exists for a better clarity.
+        (WebCore::FocusController::findFocusableElementWithinScope): Renamed from findFocusableElementRecursively. Also call
+        findFocusableElementDescendingDownIntoFrameDocument here instead of findFocusableElementAcrossFocusScope.
+        (WebCore::FocusController::nextFocusableElementWithinScope): Extracted from findFocusableElementRecursively.
+        (WebCore::FocusController::previousFocusableElementWithinScope): Ditto.
+        (WebCore::FocusController::findFocusableElement):
+        (WebCore::FocusController::nextFocusableElement): Added a FIXME.
+        (WebCore::FocusController::previousFocusableElement): Ditto.
+        (WebCore::FocusController::findFocusableElementOrScopeOwner): Renamed from findFocusableElement for clarity.
+        (WebCore::FocusController::nextFocusableElementOrScopeOwner): Ditto from nextFocusableElement.
+        (WebCore::FocusController::previousFocusableElementOrScopeOwner): Ditto from nextFocusableElement.
+        * page/FocusController.h:
+
 2016-05-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix static position for positioned grid items
