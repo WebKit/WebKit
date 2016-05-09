@@ -1,3 +1,206 @@
+2016-05-09  Saam barati  <sbarati@apple.com>
+
+        Getter and setter on super are called with wrong "this" object
+        https://bugs.webkit.org/show_bug.cgi?id=147064
+        <rdar://problem/21885916>
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements calls to 'super' getters and setters.
+        The problem before is we were passing the 'super' (i.e, the prototype
+        object) as the this value to these getters/setters, which is wrong. 
+        We should be passing the caller's this value.
+
+        To implement this behavior, I've introduced four new opcodes and their corresponding DFG nodes:
+        - op_get_by_id_with_this | GetByIdWithThis
+        - op_put_by_id_with_this | PutByIdWithThis
+        - op_get_by_val_with_this | GetByValWithThis
+        - op_put_by_val_with_this | PutByValWithThis
+
+        These are implemented with no optimizations. The future plan is 
+        to unite them with the *by_id and *by_val opcodes and nodes:
+        https://bugs.webkit.org/show_bug.cgi?id=157215
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::emitPutByVal):
+        (JSC::BytecodeGenerator::emitDirectPutByVal):
+        (JSC::BytecodeGenerator::emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::ensureThis):
+        (JSC::BytecodeGenerator::isThisUsedInInnerArrowFunction):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode):
+        (JSC::emitHomeObjectForCallee):
+        (JSC::emitSuperBaseForCallee):
+        (JSC::emitGetSuperFunctionForConstruct):
+        (JSC::SuperNode::emitBytecode):
+        (JSC::NewTargetNode::emitBytecode):
+        (JSC::TaggedTemplateNode::emitBytecode):
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::DotAccessorNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::PostfixNode::emitBracket):
+        (JSC::PostfixNode::emitDot):
+        (JSC::PrefixNode::emitBracket):
+        (JSC::PrefixNode::emitDot):
+        (JSC::AssignDotNode::emitBytecode):
+        (JSC::ReadModifyDotNode::emitBytecode):
+        (JSC::AssignBracketNode::emitBytecode):
+        (JSC::ReadModifyBracketNode::emitBytecode):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::AssignmentElementNode::bindValue):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIdentifier):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::newTypedArrayWithSize):
+        (JSC::DFG::putWithThis):
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByValWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByValWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutById):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::setupShadowChickenPacket):
+        (JSC::CCallHelpers::setupFourStubArgsGPR):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        (JSC::CCallHelpers::setupThreeStubArgsGPR):
+        (JSC::CCallHelpers::setupTwoStubArgsFPR):
+        (JSC::CCallHelpers::setupStubArguments134):
+        * jit/GPRInfo.h:
+        (JSC::argumentRegisterFor): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_val_with_this):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_get_by_val_with_this):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emit_op_put_by_id_with_this):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_to_arguments):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_get_by_val_with_this):
+        (JSC::JIT::emit_op_put_by_id_with_this):
+        (JSC::JIT::emit_op_put_by_val_with_this):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * tests/stress/super-property-access-exceptions.js: Added.
+        (assert):
+        (test):
+        (test.fooProp):
+        (test.A.prototype.get foo):
+        (test.A.prototype.get x):
+        (test.A):
+        (test.B):
+        (test.B.prototype.bar):
+        (test.B.prototype.baz):
+        (test.foo):
+        (test.func):
+        (test.A.prototype.set foo):
+        * tests/stress/super-property-access-tdz.js: Added.
+        (assert):
+        (test):
+        (shouldThrowTDZ):
+        (test.A.prototype.get foo):
+        (test.A.prototype.set foo):
+        (test.A):
+        (test.fooProp):
+        (test.B):
+        (test.C):
+        (test.D):
+        (test.E):
+        (test.F):
+        * tests/stress/super-property-access.js: Added.
+        (assert):
+        (test):
+        (func):
+        (test.A):
+        (test.A.prototype.set value):
+        (test.A.prototype.get value):
+        (test.B.prototype.set value):
+        (test.B.prototype.get value):
+        (test.B):
+        (test.value):
+        (test.A.prototype.get func):
+        (test.B.prototype.inc):
+        (test.B.prototype.dec):
+        (test.B.prototype.preInc):
+        (test.B.prototype.preDec):
+        (test.B.prototype.plusEq):
+        (test.B.prototype.minusEq):
+        (test.B.prototype.timesEq):
+        (test.B.prototype.divEq):
+        (test.B.prototype.funcDot):
+        (test.B.prototype.funcBracket):
+        (test.foo):
+        (test.B.prototype.baz):
+        (test.B.prototype.jaz):
+        (test.B.prototype.bar):
+        (test.B.prototype.index):
+        (test.):
+        (test.prototype.bar):
+        (test.A.prototype.set foo):
+        (test.A.prototype.get array):
+        (test.A.prototype.get foo):
+        (test.obj):
+        (test.A.prototype.get call):
+        (test.A.prototype.get apply):
+        (test.B.prototype.foo):
+        (test.A.prototype.get i):
+
 2016-05-08  Chris Dumez  <cdumez@apple.com>
 
         [COCOA] Disable HAVE_DTRACE at build time

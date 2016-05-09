@@ -30,6 +30,7 @@
 
 #include "AssemblyHelpers.h"
 #include "GPRInfo.h"
+#include "RegisterMap.h"
 #include "StackAlignment.h"
 
 namespace JSC {
@@ -827,6 +828,21 @@ public:
         addCallArgument(arg2);
         addCallArgument(arg3);
     }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4, GPRReg arg5, GPRReg arg6, GPRReg arg7, GPRReg arg8)
+    {
+        resetCallArguments();
+        addCallArgument(GPRInfo::callFrameRegister);
+        addCallArgument(arg1);
+        addCallArgument(arg2);
+        addCallArgument(arg3);
+        addCallArgument(arg4);
+        addCallArgument(arg5);
+        addCallArgument(arg6);
+        addCallArgument(arg7);
+        addCallArgument(arg8);
+    }
+
 #endif // !NUMBER_OF_ARGUMENT_REGISTERS
     // These methods are suitable for any calling convention that provides for
     // at least 4 argument registers, e.g. X86_64, ARMv7.
@@ -912,6 +928,8 @@ public:
         if (srcB != destB)
             swap(destB, destC);
     }
+
+    void setupFourStubArgsGPR(GPRReg destA, GPRReg destB, GPRReg destC, GPRReg destD, GPRReg srcA, GPRReg srcB, GPRReg srcC, GPRReg srcD);
 
 #if CPU(X86_64) || CPU(ARM64)
     template<FPRReg destA, FPRReg destB>
@@ -1951,6 +1969,27 @@ public:
         setupArgumentsWithExecState(arg1, arg2, arg3);
     }
 
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4, GPRReg arg5, GPRReg arg6, GPRReg arg7, GPRReg arg8)
+    {
+        poke(arg8, POKE_ARGUMENT_OFFSET + 4);
+        poke(arg7, POKE_ARGUMENT_OFFSET + 3);
+        poke(arg6, POKE_ARGUMENT_OFFSET + 2);
+        poke(arg5, POKE_ARGUMENT_OFFSET + 1);
+        poke(arg4, POKE_ARGUMENT_OFFSET);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4, GPRReg arg5, GPRReg arg6, GPRReg arg7, GPRReg arg8, GPRReg arg9)
+    {
+        poke(arg9, POKE_ARGUMENT_OFFSET + 5);
+        poke(arg8, POKE_ARGUMENT_OFFSET + 4);
+        poke(arg7, POKE_ARGUMENT_OFFSET + 3);
+        poke(arg6, POKE_ARGUMENT_OFFSET + 2);
+        poke(arg5, POKE_ARGUMENT_OFFSET + 1);
+        poke(arg4, POKE_ARGUMENT_OFFSET);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, GPRReg arg2, GPRReg arg3, TrustedImm32 arg4, TrustedImm32 arg5, GPRReg arg6, GPRReg arg7)
     {
         poke(arg7, POKE_ARGUMENT_OFFSET + 3);
@@ -1986,6 +2025,12 @@ public:
 #endif // NUMBER_OF_ARGUMENT_REGISTERS == 4
 
 #if NUMBER_OF_ARGUMENT_REGISTERS >= 5
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4)
+    {
+        setupFourStubArgsGPR(GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, GPRInfo::argumentGPR4, arg1, arg2, arg3, arg4);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
     void setupStubArguments134(GPRReg arg1, GPRReg arg3, GPRReg arg4)
     {
         setupThreeStubArgsGPR<GPRInfo::argumentGPR1, GPRInfo::argumentGPR3, GPRInfo::argumentGPR4>(arg1, arg3, arg4);
@@ -2036,7 +2081,7 @@ public:
         move(arg4, GPRInfo::argumentGPR4);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
-    
+
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2, TrustedImm32 arg3, TrustedImm32 arg4)
     {
         move(arg2, GPRInfo::argumentGPR2); // In case arg2 is argumentGPR1.

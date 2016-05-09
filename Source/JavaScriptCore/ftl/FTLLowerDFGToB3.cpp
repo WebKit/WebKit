@@ -605,6 +605,9 @@ private:
         case GetByIdFlush:
             compileGetById(AccessType::Get);
             break;
+        case GetByIdWithThis:
+            compileGetByIdWithThis();
+            break;
         case In:
             compileIn();
             break;
@@ -612,6 +615,9 @@ private:
         case PutByIdDirect:
         case PutByIdFlush:
             compilePutById();
+            break;
+        case PutByIdWithThis:
+            compilePutByIdWithThis();
             break;
         case PutGetterById:
         case PutSetterById:
@@ -649,10 +655,16 @@ private:
         case GetMyArgumentByValOutOfBounds:
             compileGetMyArgumentByVal();
             break;
+        case GetByValWithThis:
+            compileGetByValWithThis();
+            break;
         case PutByVal:
         case PutByValAlias:
         case PutByValDirect:
             compilePutByVal();
+            break;
+        case PutByValWithThis:
+            compilePutByValWithThis();
             break;
         case ArrayPush:
             compileArrayPush();
@@ -2482,6 +2494,45 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             return;
         }
+    }
+
+    void compileGetByIdWithThis()
+    {
+        LValue base = lowJSValue(m_node->child1());
+        LValue thisValue = lowJSValue(m_node->child2());
+        LValue result = vmCall(m_out.int64, m_out.operation(operationGetByIdWithThis), m_callFrame, base, thisValue, m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()]));
+        setJSValue(result);
+    }
+
+    void compileGetByValWithThis()
+    {
+        LValue base = lowJSValue(m_node->child1());
+        LValue thisValue = lowJSValue(m_node->child2());
+        LValue subscript = lowJSValue(m_node->child3());
+
+        LValue result = vmCall(m_out.int64, m_out.operation(operationGetByValWithThis), m_callFrame, base, thisValue, subscript);
+        setJSValue(result);
+    }
+
+    void compilePutByIdWithThis()
+    {
+        LValue base = lowJSValue(m_node->child1());
+        LValue thisValue = lowJSValue(m_node->child2());
+        LValue value = lowJSValue(m_node->child3());
+
+        vmCall(m_out.voidType, m_out.operation(m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutByIdWithThisStrict : operationPutByIdWithThis),
+            m_callFrame, base, thisValue, value, m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()]));
+    }
+
+    void compilePutByValWithThis()
+    {
+        LValue base = lowJSValue(m_graph.varArgChild(m_node, 0));
+        LValue thisValue = lowJSValue(m_graph.varArgChild(m_node, 1));
+        LValue property = lowJSValue(m_graph.varArgChild(m_node, 2));
+        LValue value = lowJSValue(m_graph.varArgChild(m_node, 3));
+
+        vmCall(m_out.voidType, m_out.operation(m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis),
+            m_callFrame, base, thisValue, property, value);
     }
     
     void compilePutById()

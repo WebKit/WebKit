@@ -4029,6 +4029,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_get_by_val);
         }
 
+        case op_get_by_val_with_this: {
+            Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* thisValue = get(VirtualRegister(currentInstruction[3].u.operand));
+            Node* property = get(VirtualRegister(currentInstruction[4].u.operand));
+            Node* getByValWithThis = addToGraph(GetByValWithThis, base, thisValue, property);
+            set(VirtualRegister(currentInstruction[1].u.operand), getByValWithThis);
+
+            NEXT_OPCODE(op_get_by_val_with_this);
+        }
+
         case op_put_by_val_direct:
         case op_put_by_val: {
             Node* base = get(VirtualRegister(currentInstruction[1].u.operand));
@@ -4070,6 +4080,21 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_by_val);
         }
 
+        case op_put_by_val_with_this: {
+            Node* base = get(VirtualRegister(currentInstruction[1].u.operand));
+            Node* thisValue = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* property = get(VirtualRegister(currentInstruction[3].u.operand));
+            Node* value = get(VirtualRegister(currentInstruction[4].u.operand));
+
+            addVarArgChild(base);
+            addVarArgChild(thisValue);
+            addVarArgChild(property);
+            addVarArgChild(value);
+            addToGraph(Node::VarArg, PutByValWithThis, OpInfo(0), OpInfo(0));
+
+            NEXT_OPCODE(op_put_by_val_with_this);
+        }
+
         case op_try_get_by_id: {
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
@@ -4103,6 +4128,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             NEXT_OPCODE(op_get_by_id);
         }
+        case op_get_by_id_with_this: {
+            Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* thisValue = get(VirtualRegister(currentInstruction[3].u.operand));
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[4].u.operand];
+
+            set(VirtualRegister(currentInstruction[1].u.operand),
+                addToGraph(GetByIdWithThis, OpInfo(identifierNumber), base, thisValue));
+
+            NEXT_OPCODE(op_get_by_id_with_this);
+        }
         case op_put_by_id: {
             Node* value = get(VirtualRegister(currentInstruction[3].u.operand));
             Node* base = get(VirtualRegister(currentInstruction[1].u.operand));
@@ -4116,6 +4151,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             handlePutById(base, identifierNumber, value, putByIdStatus, direct);
             NEXT_OPCODE(op_put_by_id);
+        }
+
+        case op_put_by_id_with_this: {
+            Node* base = get(VirtualRegister(currentInstruction[1].u.operand));
+            Node* thisValue = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* value = get(VirtualRegister(currentInstruction[4].u.operand));
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
+
+            addToGraph(PutByIdWithThis, OpInfo(identifierNumber), base, thisValue, value);
+            NEXT_OPCODE(op_put_by_id_with_this);
         }
 
         case op_put_getter_by_id:

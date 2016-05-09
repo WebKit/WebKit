@@ -2681,6 +2681,30 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case GetByValWithThis: {
+        JSValueOperand base(this, node->child1());
+        GPRReg baseTag = base.tagGPR();
+        GPRReg basePayload = base.payloadGPR();
+        JSValueOperand thisValue(this, node->child2());
+        GPRReg thisValueTag = thisValue.tagGPR();
+        GPRReg thisValuePayload = thisValue.payloadGPR();
+        JSValueOperand subscript(this, node->child3());
+        GPRReg subscriptTag = subscript.tagGPR();
+        GPRReg subscriptPayload = subscript.payloadGPR();
+
+        GPRFlushedCallResult resultPayload(this);
+        GPRFlushedCallResult2 resultTag(this);
+        GPRReg resultPayloadGPR = resultPayload.gpr();
+        GPRReg resultTagGPR = resultTag.gpr();
+
+        flushRegisters();
+        callOperation(operationGetByValWithThis, resultTagGPR, resultPayloadGPR, baseTag, basePayload, thisValueTag, thisValuePayload, subscriptTag, subscriptPayload);
+        m_jit.exceptionCheck();
+
+        jsValueResult(resultTagGPR, resultPayloadGPR, node);
+        break;
+    }
+
     case PutByValDirect:
     case PutByVal:
     case PutByValAlias: {
@@ -2856,6 +2880,76 @@ void SpeculativeJIT::compile(Node* node)
             else
                 compilePutByValForFloatTypedArray(base.gpr(), property.gpr(), node, type);
         } }
+        break;
+    }
+
+    case PutByValWithThis: {
+#if CPU(X86)
+        // We don't have enough registers on X86 to do this
+        // without setting up the call frame incrementally.
+        unsigned index = 0;
+        m_jit.poke(GPRInfo::callFrameRegister, index++);
+
+        {
+            JSValueOperand base(this, m_jit.graph().varArgChild(node, 0));
+            GPRReg baseTag = base.tagGPR();
+            GPRReg basePayload = base.payloadGPR();
+
+            JSValueOperand thisValue(this, m_jit.graph().varArgChild(node, 1));
+            GPRReg thisValueTag = thisValue.tagGPR();
+            GPRReg thisValuePayload = thisValue.payloadGPR();
+
+            JSValueOperand property(this, m_jit.graph().varArgChild(node, 2));
+            GPRReg propertyTag = property.tagGPR();
+            GPRReg propertyPayload = property.payloadGPR();
+
+            m_jit.poke(basePayload, index++);
+            m_jit.poke(baseTag, index++);
+
+            m_jit.poke(thisValuePayload, index++);
+            m_jit.poke(thisValueTag, index++);
+
+            m_jit.poke(propertyPayload, index++);
+            m_jit.poke(propertyTag, index++);
+
+            flushRegisters();
+        }
+
+        JSValueOperand value(this, m_jit.graph().varArgChild(node, 3));
+        GPRReg valueTag = value.tagGPR();
+        GPRReg valuePayload = value.payloadGPR();
+        m_jit.poke(valuePayload, index++);
+        m_jit.poke(valueTag, index++);
+
+        flushRegisters();
+        appendCall(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis);
+        m_jit.exceptionCheck();
+#else
+        static_assert(GPRInfo::numberOfRegisters >= 8, "We are assuming we have enough registers to make this call without incrementally setting up the arguments.");
+
+        JSValueOperand base(this, m_jit.graph().varArgChild(node, 0));
+        GPRReg baseTag = base.tagGPR();
+        GPRReg basePayload = base.payloadGPR();
+
+        JSValueOperand thisValue(this, m_jit.graph().varArgChild(node, 1));
+        GPRReg thisValueTag = thisValue.tagGPR();
+        GPRReg thisValuePayload = thisValue.payloadGPR();
+
+        JSValueOperand property(this, m_jit.graph().varArgChild(node, 2));
+        GPRReg propertyTag = property.tagGPR();
+        GPRReg propertyPayload = property.payloadGPR();
+
+        JSValueOperand value(this, m_jit.graph().varArgChild(node, 3));
+        GPRReg valueTag = value.tagGPR();
+        GPRReg valuePayload = value.payloadGPR();
+
+        flushRegisters();
+        callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis,
+            NoResult, baseTag, basePayload, thisValueTag, thisValuePayload, propertyTag, propertyPayload, valueTag, valuePayload);
+        m_jit.exceptionCheck();
+#endif // CPU(X86)
+
+        noResult(node);
         break;
     }
 
@@ -4038,6 +4132,27 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case GetByIdWithThis: {
+        JSValueOperand base(this, node->child1());
+        GPRReg baseTag = base.tagGPR();
+        GPRReg basePayload = base.payloadGPR();
+        JSValueOperand thisValue(this, node->child2());
+        GPRReg thisTag = thisValue.tagGPR();
+        GPRReg thisPayload = thisValue.payloadGPR();
+
+        GPRFlushedCallResult resultPayload(this);
+        GPRFlushedCallResult2 resultTag(this);
+        GPRReg resultPayloadGPR = resultPayload.gpr();
+        GPRReg resultTagGPR = resultTag.gpr();
+
+        flushRegisters();
+        callOperation(operationGetByIdWithThis, resultTagGPR, resultPayloadGPR, baseTag, basePayload, thisTag, thisPayload, identifierUID(node->identifierNumber()));
+        m_jit.exceptionCheck();
+
+        jsValueResult(resultTagGPR, resultPayloadGPR, node);
+        break;
+    }
+
     case GetByIdFlush: {
         if (!node->prediction()) {
             terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
@@ -4310,6 +4425,26 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg scratchGPR = scratch.gpr();
         
         cachedPutById(node->origin.semantic, baseGPR, valueTagGPR, valuePayloadGPR, scratchGPR, node->identifierNumber(), Direct);
+
+        noResult(node);
+        break;
+    }
+
+    case PutByIdWithThis: {
+        JSValueOperand base(this, node->child1());
+        GPRReg baseTag = base.tagGPR();
+        GPRReg basePayload = base.payloadGPR();
+        JSValueOperand thisValue(this, node->child2());
+        GPRReg thisValueTag = thisValue.tagGPR();
+        GPRReg thisValuePayload = thisValue.payloadGPR();
+        JSValueOperand value(this, node->child3());
+        GPRReg valueTag = value.tagGPR();
+        GPRReg valuePayload = value.payloadGPR();
+
+        flushRegisters();
+        callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByIdWithThisStrict : operationPutByIdWithThis,
+            NoResult, baseTag, basePayload, thisValueTag, thisValuePayload, valueTag, valuePayload, identifierUID(node->identifierNumber()));
+        m_jit.exceptionCheck();
 
         noResult(node);
         break;

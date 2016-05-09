@@ -144,6 +144,16 @@ char* newTypedArrayWithSize(ExecState* exec, Structure* structure, int32_t size)
     return bitwise_cast<char*>(ViewClass::create(exec, structure, size));
 }
 
+template <bool strict>
+static ALWAYS_INLINE void putWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, const Identifier& ident)
+{
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue thisVal = JSValue::decode(encodedThis);
+    JSValue putValue = JSValue::decode(encodedValue);
+    PutPropertySlot slot(thisVal, strict);
+    baseValue.putInline(exec, ident, putValue, slot);
+}
+
 extern "C" {
 
 EncodedJSValue JIT_OPERATION operationToThis(ExecState* exec, EncodedJSValue encodedOp)
@@ -771,6 +781,94 @@ EncodedJSValue JIT_OPERATION operationToPrimitive(ExecState* exec, EncodedJSValu
     NativeCallFrameTracer tracer(vm, exec);
     
     return JSValue::encode(JSValue::decode(value).toPrimitive(exec));
+}
+
+EncodedJSValue JIT_OPERATION operationGetByIdWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, UniquedStringImpl* impl)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue thisVal = JSValue::decode(encodedThis);
+    PropertySlot slot(thisVal, PropertySlot::PropertySlot::InternalMethodType::Get);
+    JSValue result = baseValue.get(exec, Identifier::fromUid(exec, impl), slot);
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue thisVal = JSValue::decode(encodedThis);
+    JSValue subscript = JSValue::decode(encodedSubscript);
+
+    if (LIKELY(baseValue.isCell() && subscript.isString())) {
+        Structure& structure = *baseValue.asCell()->structure(vm);
+        if (JSCell::canUseFastGetOwnProperty(structure)) {
+            if (RefPtr<AtomicStringImpl> existingAtomicString = asString(subscript)->toExistingAtomicString(exec)) {
+                if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, existingAtomicString.get()))
+                    return JSValue::encode(result);
+            }
+        }
+    }
+    
+    PropertySlot slot(thisVal, PropertySlot::PropertySlot::InternalMethodType::Get);
+    if (subscript.isUInt32()) {
+        uint32_t i = subscript.asUInt32();
+        if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
+            return JSValue::encode(asString(baseValue)->getIndex(exec, i));
+        
+        return JSValue::encode(baseValue.get(exec, i, slot));
+    }
+
+    baseValue.requireObjectCoercible(exec);
+    if (vm.exception())
+        return JSValue::encode(JSValue());
+
+    auto property = subscript.toPropertyKey(exec);
+    if (vm.exception())
+        return JSValue::encode(JSValue());
+    return JSValue::encode(baseValue.get(exec, property, slot));
+}
+
+void JIT_OPERATION operationPutByIdWithThisStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, UniquedStringImpl* impl)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putWithThis<true>(exec, encodedBase, encodedThis, encodedValue, Identifier::fromUid(exec, impl));
+}
+
+void JIT_OPERATION operationPutByIdWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, UniquedStringImpl* impl)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putWithThis<false>(exec, encodedBase, encodedThis, encodedValue, Identifier::fromUid(exec, impl));
+}
+
+void JIT_OPERATION operationPutByValWithThisStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(exec);
+    if (vm.exception())
+        return;
+    putWithThis<true>(exec, encodedBase, encodedThis, encodedValue, property);
+}
+
+void JIT_OPERATION operationPutByValWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(exec);
+    if (vm.exception())
+        return;
+    putWithThis<false>(exec, encodedBase, encodedThis, encodedValue, property);
 }
 
 char* JIT_OPERATION operationNewArray(ExecState* exec, Structure* arrayStructure, void* buffer, size_t size)

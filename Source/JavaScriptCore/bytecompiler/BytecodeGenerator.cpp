@@ -2410,6 +2410,18 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, co
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, RegisterID* thisVal, const Identifier& property)
+{
+    ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with get_by_val.");
+
+    emitOpcode(op_get_by_id_with_this);
+    instructions().append(kill(dst));
+    instructions().append(base->index());
+    instructions().append(thisVal->index());
+    instructions().append(addConstant(property));
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& property, RegisterID* value)
 {
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with put_by_val.");
@@ -2429,6 +2441,21 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
     instructions().append(0); // new structure
     instructions().append(0); // structure chain
     instructions().append(static_cast<int>(PutByIdNone)); // is not direct
+
+    return value;
+}
+
+RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, RegisterID* thisValue, const Identifier& property, RegisterID* value)
+{
+    ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with put_by_val.");
+
+    unsigned propertyIndex = addConstant(property);
+
+    emitOpcode(op_put_by_id_with_this);
+    instructions().append(base->index());
+    instructions().append(thisValue->index());
+    instructions().append(propertyIndex);
+    instructions().append(value->index());
 
     return value;
 }
@@ -2557,6 +2584,16 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, RegisterID* thisValue, RegisterID* property)
+{
+    emitOpcode(op_get_by_val_with_this);
+    instructions().append(kill(dst));
+    instructions().append(base->index());
+    instructions().append(thisValue->index());
+    instructions().append(property->index());
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
 {
     UnlinkedArrayProfile arrayProfile = newArrayProfile();
@@ -2565,6 +2602,17 @@ RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* proper
     instructions().append(property->index());
     instructions().append(value->index());
     instructions().append(arrayProfile);
+
+    return value;
+}
+
+RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value)
+{
+    emitOpcode(op_put_by_val_with_this);
+    instructions().append(base->index());
+    instructions().append(thisValue->index());
+    instructions().append(property->index());
+    instructions().append(value->index());
 
     return value;
 }
@@ -4214,6 +4262,17 @@ RegisterID* BytecodeGenerator::emitLoadDerivedConstructorFromArrowFunctionLexica
 {
     Variable protoScopeVar = variable(propertyNames().derivedConstructorPrivateName);
     return emitGetFromScope(newTemporary(), emitLoadArrowFunctionLexicalEnvironment(propertyNames().derivedConstructorPrivateName), protoScopeVar, ThrowIfNotFound);
+}
+
+RegisterID* BytecodeGenerator::ensureThis()
+{
+    if (constructorKind() == ConstructorKind::Derived && needsToUpdateArrowFunctionContext() && isSuperCallUsedInInnerArrowFunction())
+        emitLoadThisFromArrowFunctionLexicalEnvironment();
+
+    if (constructorKind() == ConstructorKind::Derived || isDerivedConstructorContext())
+        emitTDZCheck(thisRegister());
+
+    return thisRegister();
 }
     
 bool BytecodeGenerator::isThisUsedInInnerArrowFunction()

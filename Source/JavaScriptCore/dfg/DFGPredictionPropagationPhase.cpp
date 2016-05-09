@@ -661,6 +661,11 @@ private:
             break;
         }
 
+        case GetByValWithThis:
+        case GetByIdWithThis: {
+            setPrediction(SpecBytecodeTop);
+            break;
+        }
         case TryGetById: {
             setPrediction(SpecBytecodeTop);
             break;
@@ -988,6 +993,8 @@ private:
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
         case PutByValDirect:
+        case PutByValWithThis:
+        case PutByIdWithThis:
         case PutByVal:
         case PutClosureVar:
         case PutToArguments:

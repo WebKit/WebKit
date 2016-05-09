@@ -1752,6 +1752,25 @@ _llint_op_instanceof:
     callSlowPath(_llint_slow_path_instanceof)
     dispatch(4)
 
+_llint_op_get_by_id_with_this:
+    traceExecution()
+    callSlowPath(_slow_path_get_by_id_with_this)
+    dispatch(5)
+
+_llint_op_get_by_val_with_this:
+    traceExecution()
+    callSlowPath(_slow_path_get_by_val_with_this)
+    dispatch(5)
+
+_llint_op_put_by_id_with_this:
+    traceExecution()
+    callSlowPath(_slow_path_put_by_id_with_this)
+    dispatch(5)
+
+_llint_op_put_by_val_with_this:
+    traceExecution()
+    callSlowPath(_slow_path_put_by_val_with_this)
+    dispatch(5)
 
 # Lastly, make sure that we can link even though we don't support all opcodes.
 # These opcodes should never arise when using LLInt or either JIT. We assert

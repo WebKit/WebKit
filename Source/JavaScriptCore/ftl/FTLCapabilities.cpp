@@ -169,6 +169,7 @@ inline CapabilityLevel canCompile(Node* node)
     case TryGetById:
     case GetById:
     case GetByIdFlush:
+    case GetByIdWithThis:
     case ToThis:
     case MultiGetByOffset:
     case MultiPutByOffset:
@@ -262,6 +263,8 @@ inline CapabilityLevel canCompile(Node* node)
         if (node->child1().useKind() == CellUse)
             break;
         return CannotCompile;
+    case PutByIdWithThis:
+        break;
     case GetIndexedPropertyStorage:
         if (node->arrayMode().type() == Array::String)
             break;
@@ -326,6 +329,8 @@ inline CapabilityLevel canCompile(Node* node)
             return CannotCompile;
         }
         break;
+    case GetByValWithThis:
+        break;
     case PutByVal:
     case PutByValAlias:
     case PutByValDirect:
@@ -341,6 +346,8 @@ inline CapabilityLevel canCompile(Node* node)
                 return CanCompileAndOSREnter;
             return CannotCompile;
         }
+        break;
+    case PutByValWithThis:
         break;
     case ArrayPush:
     case ArrayPop:

@@ -880,20 +880,6 @@ public:
 
 #endif // CPU(SH4)
 
-inline GPRReg argumentRegisterFor(unsigned argumentIndex)
-{
-#if USE(JSVALUE64)
-    if (argumentIndex >= NUMBER_OF_ARGUMENT_REGISTERS)
-        return InvalidGPRReg;
-
-    return GPRInfo::toArgumentRegister(argumentIndex);
-#else
-    UNUSED_PARAM(argumentIndex);
-
-    return InvalidGPRReg;
-#endif
-}
-
 // The baseline JIT uses "accumulator" style execution with regT0 (for 64-bit)
 // and regT0 + regT1 (for 32-bit) serving as the accumulator register(s) for
 // passing results of one opcode to the next. Hence:

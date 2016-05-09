@@ -1117,9 +1117,45 @@ void CodeBlock::dumpBytecode(
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
+        case op_get_by_id_with_this: {
+            printLocationAndOp(out, exec, location, it, "get_by_id_with_this");
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
+            int id0 = (++it)->u.operand;
+            out.printf("%s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), idName(id0, identifier(id0)).data());
+            break;
+        }
+        case op_get_by_val_with_this: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
+            int r3 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "get_by_val_with_this");
+            out.printf("%s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data());
+            break;
+        }
         case op_put_by_id: {
             printPutByIdOp(out, exec, location, it, "put_by_id");
             printPutByIdCacheStatus(out, location, stubInfos);
+            break;
+        }
+        case op_put_by_id_with_this: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int id0 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "put_by_id_with_this");
+            out.printf("%s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data(), registerName(r2).data());
+            break;
+        }
+        case op_put_by_val_with_this: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
+            int r3 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "put_by_val_with_this");
+            out.printf("%s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data());
             break;
         }
         case op_put_getter_by_id: {

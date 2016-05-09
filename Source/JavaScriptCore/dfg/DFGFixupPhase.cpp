@@ -1147,7 +1147,7 @@ private:
                 fixEdge<CellUse>(node->child1());
             break;
         }
-            
+
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect: {
@@ -1575,6 +1575,12 @@ private:
         case ExitOK:
         case BottomValue:
         case TypeOf:
+        case GetByIdWithThis:
+        case PutByIdWithThis:
+        case PutByValWithThis:
+        case GetByValWithThis:
+            break;
+            
             break;
 #else
         default:
