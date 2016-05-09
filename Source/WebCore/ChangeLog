@@ -1,3 +1,24 @@
+2016-05-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix static position for positioned grid items
+        https://bugs.webkit.org/show_bug.cgi?id=157417
+
+        Reviewed by Darin Adler.
+
+        The spec was updated to define properly the static position
+        for positioned grid items, but we didn't update the implementation yet:
+        https://drafts.csswg.org/css-grid-1/issues-wd-20150108#issue-1
+
+        We were only setting the static position when the start line
+        was not auto. Otherwise we were using the default one
+        which includes the padding.
+        With the spec change we need to set it always,
+        even if the start line is auto.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutPositionedObject):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+
 2016-05-08  Frederic Wang  <fwang@igalia.com>
 
         RenderMathMLOperator: refactor management of stretchy data and italic correction

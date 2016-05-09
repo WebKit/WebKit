@@ -1,3 +1,21 @@
+2016-05-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix static position for positioned grid items
+        https://bugs.webkit.org/show_bug.cgi?id=157417
+
+        Reviewed by Darin Adler.
+
+        Updated several tests to follow the new expected behavior.
+
+        * fast/css-grid-layout/absolute-positioning-grid-container-containing-block.html:
+        * fast/css-grid-layout/absolute-positioning-grid-container-parent.html:
+        * fast/css-grid-layout/grid-positioned-items-gaps-rtl.html:
+        * fast/css-grid-layout/grid-positioned-items-gaps.html:
+        * fast/css-grid-layout/grid-positioned-items-implicit-grid-line.html:
+        * fast/css-grid-layout/grid-positioned-items-implicit-grid.html:
+        * fast/css-grid-layout/grid-positioned-items-unknown-named-grid-line.html:
+        * fast/css-grid-layout/grid-sizing-positioned-items.html:
+
 2016-05-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Fix wrong gardening in r200570

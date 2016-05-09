@@ -25,7 +25,7 @@
 }
 
 .percentageSize {
-    width: 40%;
+    width: 50%;
     height: 20%;
 }
 
@@ -34,6 +34,18 @@
     right: 10px;
     top: 15px;
     bottom: 20px;
+}
+
+.onlyFirstRowOnlyFirstColumn {
+    background-color: blue;
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+
+.endSecondRowEndSecondColumn {
+    background-color: orange;
+    grid-column-end: 3;
+    grid-row-end: 3;
 }
 
 </style>
@@ -45,7 +57,7 @@
 <div class="unconstrainedContainer">
     <div class="grid">
         <div class="absolute autoRowAutoColumn sizedToGridArea"
-            data-offset-x="15" data-offset-y="15" data-expected-width="1030" data-expected-height="1030">
+            data-offset-x="0" data-offset-y="0" data-expected-width="1030" data-expected-height="1030">
         </div>
         <div class="absolute secondRowSecondColumn sizedToGridArea"
             data-offset-x="115" data-offset-y="65" data-expected-width="915" data-expected-height="965">
@@ -54,7 +66,7 @@
             data-offset-x="15" data-offset-y="15" data-expected-width="100" data-expected-height="50">
         </div>
         <div class="absolute endSecondRowEndSecondColumn sizedToGridArea"
-            data-offset-x="15" data-offset-y="15" data-expected-width="315" data-expected-height="215">
+            data-offset-x="0" data-offset-y="0" data-expected-width="315" data-expected-height="215">
         </div>
     </div>
 </div>
@@ -62,7 +74,7 @@
 <div class="unconstrainedContainer">
     <div class="grid">
         <div class="absolute autoRowAutoColumn lengthSize"
-            data-offset-x="15" data-offset-y="15" data-expected-width="50" data-expected-height="20">
+            data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="20">
         </div>
         <div class="absolute secondRowSecondColumn lengthSize"
             data-offset-x="115" data-offset-y="65" data-expected-width="50" data-expected-height="20">
@@ -71,7 +83,7 @@
             data-offset-x="15" data-offset-y="15" data-expected-width="50" data-expected-height="20">
         </div>
         <div class="absolute endSecondRowEndSecondColumn lengthSize"
-            data-offset-x="15" data-offset-y="15" data-expected-width="50" data-expected-height="20">
+            data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="20">
         </div>
     </div>
 </div>
@@ -79,16 +91,16 @@
 <div class="unconstrainedContainer">
     <div class="grid">
         <div class="absolute autoRowAutoColumn percentageSize"
-            data-offset-x="15" data-offset-y="15" data-expected-width="412" data-expected-height="206">
+            data-offset-x="0" data-offset-y="0" data-expected-width="515" data-expected-height="206">
         </div>
         <div class="absolute secondRowSecondColumn percentageSize"
-            data-offset-x="115" data-offset-y="65" data-expected-width="366" data-expected-height="193">
+            data-offset-x="115" data-offset-y="65" data-expected-width="458" data-expected-height="193">
         </div>
         <div class="absolute onlyFirstRowOnlyFirstColumn percentageSize"
-            data-offset-x="15" data-offset-y="15" data-expected-width="40" data-expected-height="10">
+            data-offset-x="15" data-offset-y="15" data-expected-width="50" data-expected-height="10">
         </div>
         <div class="absolute endSecondRowEndSecondColumn percentageSize"
-            data-offset-x="15" data-offset-y="15" data-expected-width="126" data-expected-height="43">
+            data-offset-x="0" data-offset-y="0" data-expected-width="158" data-expected-height="43">
         </div>
     </div>
 </div>
@@ -113,7 +125,7 @@
 <div class="unconstrainedContainer">
     <div class="grid directionRTL">
         <div class="absolute autoRowAutoColumn sizedToGridArea"
-            data-offset-x="-15" data-offset-y="15" data-expected-width="1030" data-expected-height="1030">
+            data-offset-x="0" data-offset-y="0" data-expected-width="1030" data-expected-height="1030">
         </div>
         <div class="absolute secondRowSecondColumn sizedToGridArea"
             data-offset-x="0" data-offset-y="65" data-expected-width="915" data-expected-height="965">
@@ -122,7 +134,7 @@
             data-offset-x="915" data-offset-y="15" data-expected-width="100" data-expected-height="50">
         </div>
         <div class="absolute endSecondRowEndSecondColumn sizedToGridArea"
-            data-offset-x="700" data-offset-y="15" data-expected-width="315" data-expected-height="215">
+            data-offset-x="715" data-offset-y="0" data-expected-width="315" data-expected-height="215">
         </div>
     </div>
 </div>
@@ -130,7 +142,7 @@
 <div class="unconstrainedContainer">
     <div class="grid directionRTL">
         <div class="absolute autoRowAutoColumn lengthSize"
-            data-offset-x="965" data-offset-y="15" data-expected-width="50" data-expected-height="20">
+            data-offset-x="980" data-offset-y="0" data-expected-width="50" data-expected-height="20">
         </div>
         <div class="absolute secondRowSecondColumn lengthSize"
             data-offset-x="865" data-offset-y="65" data-expected-width="50" data-expected-height="20">
@@ -139,7 +151,7 @@
             data-offset-x="965" data-offset-y="15" data-expected-width="50" data-expected-height="20">
         </div>
         <div class="absolute endSecondRowEndSecondColumn lengthSize"
-            data-offset-x="965" data-offset-y="15" data-expected-width="50" data-expected-height="20">
+            data-offset-x="980" data-offset-y="0" data-expected-width="50" data-expected-height="20">
         </div>
     </div>
 </div>
@@ -147,16 +159,16 @@
 <div class="unconstrainedContainer">
     <div class="grid directionRTL">
         <div class="absolute autoRowAutoColumn percentageSize"
-            data-offset-x="603" data-offset-y="15" data-expected-width="412" data-expected-height="206">
+            data-offset-x="515" data-offset-y="0" data-expected-width="515" data-expected-height="206">
         </div>
         <div class="absolute secondRowSecondColumn percentageSize"
-            data-offset-x="549" data-offset-y="65" data-expected-width="366" data-expected-height="193">
+            data-offset-x="458" data-offset-y="65" data-expected-width="458" data-expected-height="193">
         </div>
         <div class="absolute onlyFirstRowOnlyFirstColumn percentageSize"
-            data-offset-x="975" data-offset-y="15" data-expected-width="40" data-expected-height="10">
+            data-offset-x="965" data-offset-y="15" data-expected-width="50" data-expected-height="10">
         </div>
         <div class="absolute endSecondRowEndSecondColumn percentageSize"
-            data-offset-x="889" data-offset-y="15" data-expected-width="126" data-expected-height="43">
+            data-offset-x="873" data-offset-y="0" data-expected-width="158" data-expected-height="43">
         </div>
     </div>
 </div>

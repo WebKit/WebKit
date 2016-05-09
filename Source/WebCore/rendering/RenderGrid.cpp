@@ -1520,6 +1520,12 @@ void RenderGrid::layoutPositionedObject(RenderBox& child, bool relayoutChildren,
         child.setOverrideContainingBlockContentLogicalHeight(rowBreadth);
         child.setExtraInlineOffset(columnOffset);
         child.setExtraBlockOffset(rowOffset);
+
+        if (child.parent() == this) {
+            auto& childLayer = *child.layer();
+            childLayer.setStaticInlinePosition(borderStart() + columnOffset);
+            childLayer.setStaticBlockPosition(borderBefore() + rowOffset);
+        }
     }
 
     RenderBlock::layoutPositionedObject(child, relayoutChildren, fixedPositionObjectsOnly);
@@ -1602,15 +1608,6 @@ void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, Grid
                 offset += isRowAxis ? m_offsetBetweenColumns : m_offsetBetweenRows;
             }
         }
-    }
-
-    if (child.parent() == this && !startIsAuto) {
-        // If column/row start is "auto" the static position has been already set in prepareChildForPositionedLayout().
-        RenderLayer* childLayer = child.layer();
-        if (isRowAxis)
-            childLayer->setStaticInlinePosition(borderStart() + offset);
-        else
-            childLayer->setStaticBlockPosition(borderBefore() + offset);
     }
 }
 
