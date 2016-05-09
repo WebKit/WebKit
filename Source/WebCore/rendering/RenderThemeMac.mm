@@ -36,6 +36,7 @@
 #import "Frame.h"
 #import "FrameSelection.h"
 #import "FrameView.h"
+#import "GeometryUtilities.h"
 #import "GraphicsContextCG.h"
 #import "HTMLAttachmentElement.h"
 #import "HTMLAudioElement.h"
@@ -2182,6 +2183,11 @@ static Color attachmentProgressBarBackgroundColor() { return Color(0, 0, 0, 89);
 static Color attachmentProgressBarFillColor() { return Color(Color::white); }
 static Color attachmentProgressBarBorderColor() { return Color(0, 0, 0, 128); }
 
+const CGFloat attachmentPlaceholderBorderRadius = 5;
+static Color attachmentPlaceholderBorderColor() { return Color(0, 0, 0, 56); }
+const CGFloat attachmentPlaceholderBorderWidth = 2;
+const CGFloat attachmentPlaceholderBorderDashLength = 6;
+
 const CGFloat attachmentMargin = 3;
 
 struct AttachmentLayout {
@@ -2445,6 +2451,24 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
     icon->paint(context, layout.iconRect);
 }
 
+static void paintAttachmentIconPlaceholder(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
+{
+    RefPtr<Image> placeholderImage;
+    float imageScale = 1;
+    if (attachment.document().deviceScaleFactor() >= 2) {
+        placeholderImage = Image::loadPlatformResource("AttachmentPlaceholder@2x");
+        imageScale = 2;
+    } else
+        placeholderImage = Image::loadPlatformResource("AttachmentPlaceholder");
+
+    // Center the placeholder image where the icon would usually be.
+    FloatRect placeholderRect(0, 0, placeholderImage->width() / imageScale, placeholderImage->height() / imageScale);
+    placeholderRect.setX(layout.iconRect.x() + (layout.iconRect.width() - placeholderRect.width()) / 2);
+    placeholderRect.setY(layout.iconRect.y() + (layout.iconRect.height() - placeholderRect.height()) / 2);
+
+    context.drawImage(*placeholderImage, placeholderRect);
+}
+
 static void paintAttachmentTitleBackground(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
     if (layout.lines.isEmpty())
@@ -2491,16 +2515,8 @@ static void paintAttachmentSubtitle(const RenderAttachment&, GraphicsContext& co
     CTLineDraw(layout.subtitleLine.get(), context.platformContext());
 }
 
-static void paintAttachmentProgress(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
+static void paintAttachmentProgress(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout, float progress)
 {
-    String progressString = attachment.attachmentElement().fastGetAttribute(progressAttr);
-    if (progressString.isEmpty())
-        return;
-    bool validProgress;
-    float progress = progressString.toFloat(&validProgress);
-    if (!validProgress)
-        return;
-
     GraphicsContextStateSaver saver(context);
 
     FloatRect progressBounds((attachmentIconBackgroundSize - attachmentProgressBarWidth) / 2, layout.iconBackgroundRect.maxY() + attachmentProgressBarOffset - attachmentProgressBarHeight, attachmentProgressBarWidth, attachmentProgressBarHeight);
@@ -2532,6 +2548,17 @@ static void paintAttachmentProgress(const RenderAttachment& attachment, Graphics
     context.strokePath(borderPath);
 }
 
+static void paintAttachmentPlaceholderBorder(const RenderAttachment&, GraphicsContext& context, AttachmentLayout& layout)
+{
+    Path borderPath;
+    borderPath.addRoundedRect(layout.attachmentRect, FloatSize(attachmentPlaceholderBorderRadius, attachmentPlaceholderBorderRadius));
+    context.setStrokeColor(attachmentPlaceholderBorderColor());
+    context.setStrokeThickness(attachmentPlaceholderBorderWidth);
+    context.setStrokeStyle(DashedStroke);
+    context.setLineDash({attachmentPlaceholderBorderDashLength}, 0);
+    context.strokePath(borderPath);
+}
+
 bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& paintRect)
 {
     if (!is<RenderAttachment>(renderer))
@@ -2541,6 +2568,12 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
     AttachmentLayout layout(attachment);
 
+    String progressString = attachment.attachmentElement().fastGetAttribute(progressAttr);
+    bool validProgress = false;
+    float progress = 0;
+    if (!progressString.isEmpty())
+        progress = progressString.toFloat(&validProgress);
+
     GraphicsContext& context = paintInfo.context();
     LocalCurrentGraphicsContext localContext(context);
     GraphicsContextStateSaver saver(context);
@@ -2549,15 +2582,25 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
     context.translate(FloatSize((layout.attachmentRect.width() - attachmentIconBackgroundSize) / 2, 0));
 
     bool useSelectedStyle = attachment.selectionState() != RenderObject::SelectionNone;
+    bool usePlaceholder = validProgress && !progress;
 
     if (useSelectedStyle)
         paintAttachmentIconBackground(attachment, context, layout);
-    paintAttachmentIcon(attachment, context, layout);
+    if (usePlaceholder)
+        paintAttachmentIconPlaceholder(attachment, context, layout);
+    else
+        paintAttachmentIcon(attachment, context, layout);
+
     if (useSelectedStyle)
         paintAttachmentTitleBackground(attachment, context, layout);
     paintAttachmentTitle(attachment, context, layout);
     paintAttachmentSubtitle(attachment, context, layout);
-    paintAttachmentProgress(attachment, context, layout);
+
+    if (validProgress && progress)
+        paintAttachmentProgress(attachment, context, layout, progress);
+
+    if (usePlaceholder)
+        paintAttachmentPlaceholderBorder(attachment, context, layout);
 
     return true;
 }

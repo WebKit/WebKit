@@ -1,3 +1,23 @@
+2016-05-09  Tim Horton  <timothy_horton@apple.com>
+
+        Draw border and correct icon for placeholder attachments
+        https://bugs.webkit.org/show_bug.cgi?id=157495
+        rdar://problem/19982510
+
+        Reviewed by Anders Carlsson.
+
+        * Resources/AttachmentPlaceholder.png: Added.
+        * Resources/AttachmentPlaceholder@2x.png: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::attachmentPlaceholderBorderColor):
+        (WebCore::paintAttachmentIconPlaceholder):
+        (WebCore::paintAttachmentProgress):
+        (WebCore::paintAttachmentPlaceholderBorder):
+        (WebCore::RenderThemeMac::paintAttachment):
+        If progress is set, but set to 0, draw a dashed border around the attachment
+        and use the placeholder "download" artwork.
+
 2016-05-09  Ada Chan  <adachan@apple.com>
 
         Introduce WebVideoFullscreenInterfaceMac::isPlayingVideoInEnhancedFullscreen() and use it in WebVideoFullscreenManagerProxy::isPlayingVideoInEnhancedFullscreen()
