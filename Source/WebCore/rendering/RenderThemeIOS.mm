@@ -1397,7 +1397,7 @@ struct AttachmentInfo {
     CGFloat contentYOrigin { 0 };
 
 private:
-    void buildTitleLines(const RenderAttachment&);
+    void buildTitleLines(const RenderAttachment&, unsigned maximumLineCount);
     void buildSingleLine(const String&, CTFontRef, UIColor *);
 
     void addLine(CTLineRef);
@@ -1418,7 +1418,7 @@ void AttachmentInfo::addLine(CTLineRef line)
     lines.append(labelLine);
 }
 
-void AttachmentInfo::buildTitleLines(const RenderAttachment& attachment)
+void AttachmentInfo::buildTitleLines(const RenderAttachment& attachment, unsigned maximumLineCount)
 {
     RetainPtr<CTFontRef> font = attachmentTitleFont();
 
@@ -1444,17 +1444,16 @@ void AttachmentInfo::buildTitleLines(const RenderAttachment& attachment)
     if (!lineCount)
         return;
 
-    // Lay out and record the first (attachmentTitleMaximumLineCount - 1) lines.
+    // Lay out and record the first (maximumLineCount - 1) lines.
     CFIndex lineIndex = 0;
-    for (; lineIndex < std::min(attachmentTitleMaximumLineCount - 1, lineCount); ++lineIndex) {
-        CTLineRef line = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
-        addLine(line);
-    }
+    CFIndex nonTruncatedLineCount = std::min<CFIndex>(maximumLineCount - 1, lineCount);
+    for (; lineIndex < nonTruncatedLineCount; ++lineIndex)
+        addLine((CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex));
 
     if (lineIndex == lineCount)
         return;
 
-    // We had text that didn't fit in the first (attachmentTitleMaximumLineCount - 1) lines.
+    // We had text that didn't fit in the first (maximumLineCount - 1) lines.
     // Combine it into one last line, and center-truncate it.
     CTLineRef firstRemainingLine = (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex);
     CFIndex remainingRangeStart = CTLineGetStringRange(firstRemainingLine).location;
@@ -1573,7 +1572,8 @@ AttachmentInfo::AttachmentInfo(const RenderAttachment& attachment)
     } else
         buildSingleLine(action, attachmentActionFont().get(), attachmentActionColor(attachment));
 
-    buildTitleLines(attachment);
+    bool forceSingleLineTitle = !action.isEmpty() || !subtitle.isEmpty() || hasProgress;
+    buildTitleLines(attachment, forceSingleLineTitle ? 1 : attachmentTitleMaximumLineCount);
     buildSingleLine(subtitle, attachmentSubtitleFont().get(), attachmentSubtitleColor());
 
     if (!lines.isEmpty()) {
@@ -1643,10 +1643,15 @@ static void paintAttachmentProgress(GraphicsContext& context, AttachmentInfo& in
     context.fillPath(progressPath);
 }
 
-static void paintAttachmentBorder(GraphicsContext& context, AttachmentInfo& info)
+static Path attachmentBorderPath(AttachmentInfo& info)
 {
     Path borderPath;
     borderPath.addRoundedRect(info.attachmentRect, FloatSize(attachmentBorderRadius, attachmentBorderRadius));
+    return borderPath;
+}
+
+static void paintAttachmentBorder(GraphicsContext& context, Path& borderPath)
+{
     context.setStrokeColor(attachmentBorderColor());
     context.setStrokeThickness(1);
     context.strokePath(borderPath);
@@ -1666,7 +1671,9 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
     context.translate(toFloatSize(paintRect.location()));
 
-    paintAttachmentBorder(context, info);
+    Path borderPath = attachmentBorderPath(info);
+    paintAttachmentBorder(context, borderPath);
+    context.clipPath(borderPath);
 
     context.translate(FloatSize(0, info.contentYOrigin));
 

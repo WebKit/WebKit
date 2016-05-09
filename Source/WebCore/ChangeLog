@@ -1,3 +1,29 @@
+2016-05-09  Tim Horton  <timothy_horton@apple.com>
+
+        Download progress on attachment elements sometimes exceeds element bounds
+        https://bugs.webkit.org/show_bug.cgi?id=157440
+        <rdar://problem/25245440>
+
+        Reviewed by Darin Adler.
+
+        In the case of very large dynamic type sizes, we can overflow the
+        bounds of the attachment. It turns out that we used to limit to one
+        line in many cases anyway, so only wrap if we have only a title and/or icon.
+        This looks better when you have many of the other elements even in
+        non-large-type modes.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::AttachmentInfo::buildTitleLines):
+        (WebCore::AttachmentInfo::AttachmentInfo):
+        Limit the title to a single line if we have anything
+        other than a title and icon.
+
+        (WebCore::attachmentBorderPath):
+        (WebCore::paintAttachmentBorder):
+        (WebCore::RenderThemeIOS::paintAttachment):
+        Clip to the border, so that even if somehow we paint outside of
+        the bounds, we don't paint over other parts of the page.
+
 2016-05-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (198056): Unable to use edit buttons on WordPress
