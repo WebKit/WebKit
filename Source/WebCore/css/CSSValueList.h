@@ -67,7 +67,7 @@ public:
     void prepend(Ref<CSSValue>&&);
     bool removeAll(CSSValue*);
     bool hasValue(CSSValue*) const;
-    PassRefPtr<CSSValueList> copy();
+    Ref<CSSValueList> copy();
 
     String customCSSText() const;
     bool equals(const CSSValueList&) const;

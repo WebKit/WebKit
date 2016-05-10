@@ -166,7 +166,7 @@ public:
     bool removeAttribute(const AtomicString& name);
     bool removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName);
 
-    RefPtr<Attr> detachAttribute(unsigned index);
+    Ref<Attr> detachAttribute(unsigned index);
 
     RefPtr<Attr> getAttributeNode(const AtomicString& name);
     RefPtr<Attr> getAttributeNodeNS(const AtomicString& namespaceURI, const AtomicString& localName);
@@ -176,7 +176,7 @@ public:
 
     RefPtr<Attr> attrIfExists(const QualifiedName&);
     RefPtr<Attr> attrIfExists(const AtomicString& localName, bool shouldIgnoreAttributeCase);
-    RefPtr<Attr> ensureAttr(const QualifiedName&);
+    Ref<Attr> ensureAttr(const QualifiedName&);
 
     const Vector<RefPtr<Attr>>& attrNodeList();
 

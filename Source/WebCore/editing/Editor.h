@@ -164,9 +164,9 @@ public:
     WEBCORE_EXPORT PassRefPtr<Node> insertUnorderedList();
     WEBCORE_EXPORT bool canIncreaseSelectionListLevel();
     WEBCORE_EXPORT bool canDecreaseSelectionListLevel();
-    WEBCORE_EXPORT PassRefPtr<Node> increaseSelectionListLevel();
-    WEBCORE_EXPORT PassRefPtr<Node> increaseSelectionListLevelOrdered();
-    WEBCORE_EXPORT PassRefPtr<Node> increaseSelectionListLevelUnordered();
+    WEBCORE_EXPORT RefPtr<Node> increaseSelectionListLevel();
+    WEBCORE_EXPORT RefPtr<Node> increaseSelectionListLevelOrdered();
+    WEBCORE_EXPORT RefPtr<Node> increaseSelectionListLevelUnordered();
     WEBCORE_EXPORT void decreaseSelectionListLevel();
    
     void removeFormattingAndStyle();
@@ -364,8 +364,8 @@ public:
     String selectedTextForDataTransfer() const;
     WEBCORE_EXPORT bool findString(const String&, FindOptions);
 
-    PassRefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
-    PassRefPtr<Range> findStringAndScrollToVisible(const String&, Range*, FindOptions);
+    RefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
+    RefPtr<Range> findStringAndScrollToVisible(const String&, Range*, FindOptions);
 
     const VisibleSelection& mark() const; // Mark, to be used as emacs uses it.
     void setMark(const VisibleSelection&);

@@ -48,7 +48,7 @@ enum WebVTTNodeType {
 class WebVTTElement final : public Element {
 public:
     static Ref<WebVTTElement> create(const WebVTTNodeType, Document&);
-    PassRefPtr<HTMLElement> createEquivalentHTMLElement(Document&);
+    Ref<HTMLElement> createEquivalentHTMLElement(Document&);
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
 

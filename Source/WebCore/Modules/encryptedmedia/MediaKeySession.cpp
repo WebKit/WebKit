@@ -186,9 +186,9 @@ void MediaKeySession::addKeyTimerFired()
 
         // 2.7. If did store key is true, queue a task to fire a simple event named keyadded at the MediaKeySession object.
         if (didStoreKey) {
-            RefPtr<Event> keyaddedEvent = Event::create(eventNames().webkitkeyaddedEvent, false, false);
+            auto keyaddedEvent = Event::create(eventNames().webkitkeyaddedEvent, false, false);
             keyaddedEvent->setTarget(this);
-            m_asyncEventQueue.enqueueEvent(keyaddedEvent.release());
+            m_asyncEventQueue.enqueueEvent(WTFMove(keyaddedEvent));
 
             keys()->keyAdded();
         }
@@ -209,9 +209,9 @@ void MediaKeySession::addKeyTimerFired()
 
 void MediaKeySession::sendMessage(Uint8Array* message, String destinationURL)
 {
-    RefPtr<MediaKeyMessageEvent> event = MediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, message, destinationURL);
+    auto event = MediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, message, destinationURL);
     event->setTarget(this);
-    m_asyncEventQueue.enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(WTFMove(event));
 }
 
 void MediaKeySession::sendError(CDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)
@@ -219,9 +219,9 @@ void MediaKeySession::sendError(CDMSessionClient::MediaKeyErrorCode errorCode, u
     Ref<MediaKeyError> error = MediaKeyError::create(errorCode, systemCode).get();
     setError(error.ptr());
 
-    RefPtr<Event> keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, false, false);
+    auto keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, false, false);
     keyerrorEvent->setTarget(this);
-    m_asyncEventQueue.enqueueEvent(keyerrorEvent.release());
+    m_asyncEventQueue.enqueueEvent(WTFMove(keyerrorEvent));
 }
 
 String MediaKeySession::mediaKeysStorageDirectory() const

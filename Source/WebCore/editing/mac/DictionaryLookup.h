@@ -52,8 +52,8 @@ class VisibleSelection;
 
 class DictionaryLookup {
 public:
-    WEBCORE_EXPORT static PassRefPtr<Range> rangeForSelection(const VisibleSelection&, NSDictionary **options);
-    WEBCORE_EXPORT static PassRefPtr<Range> rangeAtHitTestResult(const HitTestResult&, NSDictionary **options);
+    WEBCORE_EXPORT static RefPtr<Range> rangeForSelection(const VisibleSelection&, NSDictionary **options);
+    WEBCORE_EXPORT static RefPtr<Range> rangeAtHitTestResult(const HitTestResult&, NSDictionary **options);
     WEBCORE_EXPORT static NSString *stringForPDFSelection(PDFSelection *, NSDictionary **options);
 
     // FIXME: Should move/unify dictionaryPopupInfoForRange here too.

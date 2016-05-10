@@ -75,7 +75,7 @@ RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(
         id objectForWebScript = [widgetView objectForWebScript];
         if (!objectForWebScript)
             return nullptr;
-        return JSC::Bindings::ObjcInstance::create(objectForWebScript, rootObject.release());
+        return JSC::Bindings::ObjcInstance::create(objectForWebScript, WTFMove(rootObject));
     }
 
     if ([widgetView respondsToSelector:@selector(createPluginScriptableObject)]) {
@@ -85,7 +85,7 @@ RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(
         NPObject* npObject = [widgetView createPluginScriptableObject];
         if (!npObject)
             return nullptr;
-        RefPtr<Instance> instance = JSC::Bindings::CInstance::create(npObject, rootObject.release());
+        RefPtr<Instance> instance = JSC::Bindings::CInstance::create(npObject, WTFMove(rootObject));
         // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
         _NPN_ReleaseObject(npObject);
         return instance;

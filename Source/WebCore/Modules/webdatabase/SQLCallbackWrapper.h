@@ -81,12 +81,12 @@ public:
         });
     }
 
-    PassRefPtr<T> unwrap()
+    RefPtr<T> unwrap()
     {
         LockHolder locker(m_mutex);
         ASSERT(!m_callback || m_scriptExecutionContext->isContextThread());
         m_scriptExecutionContext = nullptr;
-        return m_callback.release();
+        return WTFMove(m_callback);
     }
 
     // Useful for optimizations only, please test the return value of unwrap to be sure.

@@ -209,13 +209,13 @@ public:
     RefPtr<Node> nextNode()
     {
         if (LIKELY(!hasSnapshot())) {
-            RefPtr<Node> node = m_currentNode.release();
+            RefPtr<Node> node = WTFMove(m_currentNode);
             if (node)
                 m_currentNode = node->nextSibling();
-            return node.release();
+            return node;
         }
         if (m_currentIndex >= m_snapshot.size())
-            return 0;
+            return nullptr;
         return m_snapshot[m_currentIndex++];
     }
 

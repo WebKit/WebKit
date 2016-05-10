@@ -112,7 +112,6 @@ private:
     FilterOperations m_filterOperations;
 
     CachedResourceHandle<CachedImage> m_cachedImage;
-    RefPtr<Image> m_generatedImage;
 
     FilterSubimageObserverProxy m_filterSubimageObserver;
 };

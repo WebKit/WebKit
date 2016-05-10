@@ -398,9 +398,9 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         } else if (node->isTextNode() && node->renderer() && node->parentNode() != lastStyledNode) {
             // Last styled node was not parent node of this text node, but we wish to style this
             // text node. To make this possible, add a style span to surround this text node.
-            RefPtr<HTMLElement> span = createStyleSpanElement(document());
+            auto span = createStyleSpanElement(document());
             surroundNodeRangeWithElement(node, node, span.get());
-            element = span.release();
+            element = WTFMove(span);
         }  else {
             // Only handle HTML elements and text nodes.
             continue;
@@ -422,7 +422,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         if (inlineStyle->isEmpty()) {
             removeNodeAttribute(element.get(), styleAttr);
             if (isSpanWithoutAttributesOrUnstyledStyleSpan(element.get()))
-                unstyledSpans.append(element.release());
+                unstyledSpans.append(WTFMove(element));
         }
     }
 

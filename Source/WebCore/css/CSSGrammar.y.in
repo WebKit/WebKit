@@ -489,7 +489,7 @@ block_rule_list:
       if (RefPtr<StyleRuleBase> rule = adoptRef($2)) {
           if (!$$)
               $$ = new Vector<RefPtr<StyleRuleBase>>;
-          $$->append(rule.release());
+          $$->append(WTFMove(rule));
       }
   }
   ;
@@ -501,7 +501,7 @@ block_valid_rule_list:
       if (RefPtr<StyleRuleBase> rule = adoptRef($2)) {
           if (!$$)
               $$ = new Vector<RefPtr<StyleRuleBase>>;
-          $$->append(rule.release());
+          $$->append(WTFMove(rule));
       }
   }
   ;
@@ -817,7 +817,7 @@ keyframes_rule:
     | keyframes_rule keyframe_rule maybe_space {
         $$ = $1;
         if (RefPtr<StyleKeyframe> keyframe = adoptRef($2))
-            $$->append(keyframe.release());
+            $$->append(WTFMove(keyframe));
     }
     ;
 
@@ -1001,7 +1001,7 @@ before_viewport_rule:
 viewport:
     before_viewport_rule WEBKIT_VIEWPORT_RULE_SYM at_rule_header_end_maybe_space
     '{' at_rule_body_start maybe_space_before_declaration declaration_list closing_brace {
-        $$ = parser->createViewportRule().leakRef();
+        $$ = &parser->createViewportRule().leakRef();
         parser->markViewportRuleBodyEnd();
     }
     | before_viewport_rule WEBKIT_VIEWPORT_RULE_SYM error invalid_block {

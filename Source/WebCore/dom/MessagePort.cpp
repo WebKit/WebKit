@@ -160,7 +160,7 @@ void MessagePort::dispatchMessages()
             return;
 
         std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, WTFMove(channels));
-        Ref<Event> event = MessageEvent::create(WTFMove(ports), message.release());
+        Ref<Event> event = MessageEvent::create(WTFMove(ports), WTFMove(message));
         dispatchEvent(event);
     }
 }
@@ -214,9 +214,9 @@ std::unique_ptr<MessagePortArray> MessagePort::entanglePorts(ScriptExecutionCont
 
     auto portArray = std::make_unique<MessagePortArray>(channels->size());
     for (unsigned int i = 0; i < channels->size(); ++i) {
-        RefPtr<MessagePort> port = MessagePort::create(context);
+        auto port = MessagePort::create(context);
         port->entangle(WTFMove((*channels)[i]));
-        (*portArray)[i] = port.release();
+        (*portArray)[i] = WTFMove(port);
     }
     return portArray;
 }

@@ -58,7 +58,6 @@ private:
     }
 
     String m_name;
-    RefPtr<Image> m_generatedImage;
 };
 
 } // namespace WebCore

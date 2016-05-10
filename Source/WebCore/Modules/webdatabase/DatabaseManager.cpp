@@ -201,7 +201,7 @@ static void logOpenDatabaseError(ScriptExecutionContext* context, const String& 
         context->securityOrigin()->toString().ascii().data());
 }
 
-PassRefPtr<Database> DatabaseManager::openDatabaseBackend(ScriptExecutionContext* context, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+RefPtr<Database> DatabaseManager::openDatabaseBackend(ScriptExecutionContext* context, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
     ASSERT(error == DatabaseError::None);
 
@@ -217,11 +217,11 @@ PassRefPtr<Database> DatabaseManager::openDatabaseBackend(ScriptExecutionContext
         case DatabaseError::DatabaseSizeOverflowed:
         case DatabaseError::GenericSecurityError:
             logOpenDatabaseError(context, name);
-            return 0;
+            return nullptr;
 
         case DatabaseError::InvalidDatabaseState:
             logErrorMessage(context, errorMessage);
-            return 0;
+            return nullptr;
 
         case DatabaseError::DatabaseSizeExceededQuota:
             // Notify the client that we've exceeded the database quota.
@@ -245,15 +245,15 @@ PassRefPtr<Database> DatabaseManager::openDatabaseBackend(ScriptExecutionContext
 
             if (error == DatabaseError::InvalidDatabaseState) {
                 logErrorMessage(context, errorMessage);
-                return 0;
+                return nullptr;
             }
 
             logOpenDatabaseError(context, name);
-            return 0;
+            return nullptr;
         }
     }
 
-    return backend.release();
+    return backend;
 }
 
 void DatabaseManager::addProposedDatabase(ProposedDatabase* proposedDb)

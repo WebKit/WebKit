@@ -47,7 +47,7 @@ void RemoveNodePreservingChildrenCommand::doApply()
 
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i) {
-        RefPtr<Node> child = children[i].release();
+        RefPtr<Node> child = WTFMove(children[i]);
         removeNode(child, m_shouldAssumeContentIsAlwaysEditable);
         insertNodeBefore(child.release(), m_node, m_shouldAssumeContentIsAlwaysEditable);
     }

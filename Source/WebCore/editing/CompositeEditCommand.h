@@ -170,14 +170,14 @@ protected:
     void deleteInsignificantText(const Position& start, const Position& end);
     void deleteInsignificantTextDownstream(const Position&);
 
-    PassRefPtr<Node> appendBlockPlaceholder(PassRefPtr<Element>);
-    PassRefPtr<Node> insertBlockPlaceholder(const Position&);
-    PassRefPtr<Node> addBlockPlaceholderIfNeeded(Element*);
+    RefPtr<Node> appendBlockPlaceholder(PassRefPtr<Element>);
+    RefPtr<Node> insertBlockPlaceholder(const Position&);
+    RefPtr<Node> addBlockPlaceholderIfNeeded(Element*);
     void removePlaceholderAt(const Position&);
 
-    PassRefPtr<Node> insertNewDefaultParagraphElementAt(const Position&);
+    Ref<HTMLElement> insertNewDefaultParagraphElementAt(const Position&);
 
-    PassRefPtr<Node> moveParagraphContentsToNewBlockIfNecessary(const Position&);
+    RefPtr<Node> moveParagraphContentsToNewBlockIfNecessary(const Position&);
     
     void pushAnchorElementDown(Element&);
     
@@ -192,7 +192,7 @@ protected:
     
     Position positionAvoidingSpecialElementBoundary(const Position&);
     
-    PassRefPtr<Node> splitTreeToNode(Node*, Node*, bool splitAncestor = false);
+    RefPtr<Node> splitTreeToNode(Node*, Node*, bool splitAncestor = false);
 
     Vector<RefPtr<EditCommand>> m_commands;
 

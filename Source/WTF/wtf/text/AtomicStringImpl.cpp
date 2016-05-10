@@ -229,7 +229,7 @@ struct HashAndUTF8CharactersTranslator {
         if (isAllASCII)
             newString = StringImpl::create(buffer.characters, buffer.length);
 
-        location = newString.release().leakRef();
+        location = newString.leakRef();
         location->setHash(hash);
         location->setIsAtomic(true);
     }

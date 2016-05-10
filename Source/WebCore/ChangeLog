@@ -1,3 +1,214 @@
+2016-05-10  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of a lot of calls to RefPtr::release()
+        https://bugs.webkit.org/show_bug.cgi?id=157505
+
+        Reviewed by Alex Christensen.
+
+        Get rid of a lot of calls to RefPtr::release() and use WTFMove() instead.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::addKeyTimerFired):
+        (WebCore::MediaKeySession::sendMessage):
+        (WebCore::MediaKeySession::sendError):
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::createGeoposition):
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        (WebCore::DOMWindowIndexedDatabase::disconnectFrameForDocumentSuspension):
+        (WebCore::DOMWindowIndexedDatabase::reconnectFrameFromDocumentSuspension):
+        * Modules/indexeddb/IDBKey.h:
+        (WebCore::IDBKey::createMultiEntryArray):
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::scheduleEvent):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::scheduleEvent):
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::scheduleEvent):
+        * Modules/notifications/DOMWindowNotifications.cpp:
+        (WebCore::DOMWindowNotifications::disconnectFrameForDocumentSuspension):
+        (WebCore::DOMWindowNotifications::reconnectFrameFromDocumentSuspension):
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabaseBackend):
+        * Modules/webdatabase/DatabaseManager.h:
+        * Modules/webdatabase/SQLCallbackWrapper.h:
+        (WebCore::SQLCallbackWrapper::unwrap):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::enqueueTextFrame):
+        (WebCore::WebSocketChannel::enqueueRawFrame):
+        (WebCore::WebSocketChannel::enqueueBlobFrame):
+        (WebCore::WebSocketChannel::processOutgoingFrameQueue):
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::constructJSBlob):
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::createPositionOptions):
+        (WebCore::JSGeolocation::getCurrentPosition):
+        (WebCore::JSGeolocation::watchPosition):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::fillMessagePortArray):
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallWith):
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::generatePair):
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildSerializablePositionOffset):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImageRepeat):
+        (WebCore::counterToCSSValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSContentDistributionValue.cpp:
+        (WebCore::CSSContentDistributionValue::customCSSText):
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::image):
+        * css/CSSFilterImageValue.h:
+        * css/CSSGrammar.y.in:
+        * css/CSSNamedImageValue.cpp:
+        (WebCore::CSSNamedImageValue::image):
+        * css/CSSNamedImageValue.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseAnimationProperty):
+        (WebCore::CSSParser::parseInsetRoundedCorners):
+        (WebCore::ShadowParseContext::commitLength):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::BorderImageSliceParseContext::commitNumber):
+        (WebCore::BorderImageQuadParseContext::commitNumber):
+        (WebCore::CSSParser::parseBorderRadius):
+        (WebCore::CSSParser::parseCounter):
+        (WebCore::CSSParser::parseDeprecatedGradient):
+        (WebCore::CSSParser::parseDeprecatedLinearGradient):
+        (WebCore::CSSParser::parseDeprecatedRadialGradient):
+        (WebCore::CSSParser::parseLinearGradient):
+        (WebCore::CSSParser::parseRadialGradient):
+        (WebCore::CSSParser::parseTransformValue):
+        (WebCore::CSSParser::parseBuiltinFilterArguments):
+        (WebCore::CSSParser::parseTextIndent):
+        (WebCore::CSSParser::popRuleData):
+        (WebCore::CSSParser::markRuleHeaderStart):
+        (WebCore::CSSParser::createViewportRule):
+        * css/CSSParser.h:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue):
+        * css/CSSParserValues.h:
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::copy):
+        * css/CSSValueList.h:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertClipPath):
+        (WebCore::StyleBuilderConverter::convertReflection):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::cachedOrPendingFromValue):
+        (WebCore::StyleResolver::setOrPendingFromValue):
+        (WebCore::StyleResolver::cursorOrPendingFromValue):
+        * css/StyleResolver.h:
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        * css/StyleRule.h:
+        * dom/Attr.cpp:
+        (WebCore::Attr::create):
+        * dom/Attr.h:
+        * dom/ContainerNode.h:
+        (WebCore::ChildNodesLazySnapshot::nextNode):
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedElement):
+        (WebCore::Document::takeDOMWindowFrom):
+        (WebCore::Document::updateHoverActiveState):
+        * dom/Element.cpp:
+        (WebCore::Element::detachAttribute):
+        (WebCore::Element::setAttributeNodeNS):
+        (WebCore::Element::ensureAttr):
+        * dom/Element.h:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::dispatchMessages):
+        (WebCore::MessagePort::entanglePorts):
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::nextNode):
+        (WebCore::NodeIterator::previousNode):
+        * dom/Range.cpp:
+        (WebCore::Range::processContentsBetweenOffsets):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::createBlockElement):
+        * editing/ApplyBlockElementCommand.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::applyCommandToComposite):
+        (WebCore::CompositeEditCommand::appendBlockPlaceholder):
+        (WebCore::CompositeEditCommand::insertBlockPlaceholder):
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        (WebCore::CompositeEditCommand::insertNewDefaultParagraphElementAt):
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/CompositeEditCommand.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::wrappingStyleForSerialization):
+        (WebCore::styleFromMatchedRulesForElement):
+        (WebCore::extractPropertiesNotIn):
+        (WebCore::backgroundColorInEffect):
+        * editing/EditingStyle.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::increaseSelectionListLevel):
+        (WebCore::Editor::increaseSelectionListLevelOrdered):
+        (WebCore::Editor::increaseSelectionListLevelUnordered):
+        (WebCore::Editor::findStringAndScrollToVisible):
+        (WebCore::Editor::rangeOfString):
+        * editing/Editor.h:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock):
+        * editing/InsertParagraphSeparatorCommand.h:
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::doUnapply):
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::IncreaseSelectionListLevelCommand::doApply):
+        (WebCore::IncreaseSelectionListLevelCommand::increaseSelectionListLevel):
+        * editing/ModifySelectionListLevel.h:
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::doUnapply):
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        (WebCore::RemoveNodePreservingChildrenCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering):
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::doApply):
+        * editing/mac/DictionaryLookup.h:
+        * editing/mac/DictionaryLookup.mm:
+        (WebCore::DictionaryLookup::rangeForSelection):
+        (WebCore::DictionaryLookup::rangeAtHitTestResult):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::finishRequestAutocomplete):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::scheduleEvent):
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded):
+        (WebCore::HTMLMediaElement::addTextTrack):
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent):
+        * html/HTMLMediaElement.h:
+        * html/canvas/OESVertexArrayObject.cpp:
+        (WebCore::OESVertexArrayObject::createVertexArrayOES):
+        * html/canvas/OESVertexArrayObject.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getContextAttributes):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::getCueAsHTML):
+        (WebCore::VTTCue::createCueRenderingTree):
+        * html/track/VTTCue.h:
+        * html/track/WebVTTElement.cpp:
+        (WebCore::WebVTTElement::createEquivalentHTMLElement):
+        * html/track/WebVTTElement.h:
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTTreeBuilder::buildFromString):
+        (WebCore::WebVTTParser::createDocumentFragmentFromCueText):
+        * html/track/WebVTTParser.h:
+
 2016-05-05  Gavin Barraclough  <barraclough@apple.com>
 
         Allow some leeway after page load before throttling, to allow post load events to complete.

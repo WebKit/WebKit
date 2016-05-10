@@ -97,7 +97,7 @@ RefPtr<Node> NodeIterator::nextNode()
         bool nodeWasAccepted = acceptNode(provisionalResult.get()) == NodeFilter::FILTER_ACCEPT;
         if (nodeWasAccepted) {
             m_referenceNode = m_candidateNode;
-            result = provisionalResult.release();
+            result = WTFMove(provisionalResult);
             break;
         }
     }
@@ -119,7 +119,7 @@ RefPtr<Node> NodeIterator::previousNode()
         bool nodeWasAccepted = acceptNode(provisionalResult.get()) == NodeFilter::FILTER_ACCEPT;
         if (nodeWasAccepted) {
             m_referenceNode = m_candidateNode;
-            result = provisionalResult.release();
+            result = WTFMove(provisionalResult);
             break;
         }
     }

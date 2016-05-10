@@ -78,7 +78,7 @@ bool CSSValueList::hasValue(CSSValue* val) const
     return false;
 }
 
-PassRefPtr<CSSValueList> CSSValueList::copy()
+Ref<CSSValueList> CSSValueList::copy()
 {
     RefPtr<CSSValueList> newList;
     switch (m_valueListSeparator) {
@@ -96,7 +96,7 @@ PassRefPtr<CSSValueList> CSSValueList::copy()
     }
     for (auto& value : m_values)
         newList->append(value.get());
-    return newList.release();
+    return newList.releaseNonNull();
 }
 
 String CSSValueList::customCSSText() const

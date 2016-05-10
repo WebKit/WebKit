@@ -65,7 +65,7 @@ static bool selectionContainsPosition(const VisiblePosition& position, const Vis
     return selectedRange->contains(position);
 }
 
-PassRefPtr<Range> DictionaryLookup::rangeForSelection(const VisibleSelection& selection, NSDictionary **options)
+RefPtr<Range> DictionaryLookup::rangeForSelection(const VisibleSelection& selection, NSDictionary **options)
 {
     RefPtr<Range> selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
@@ -90,10 +90,10 @@ PassRefPtr<Range> DictionaryLookup::rangeForSelection(const VisibleSelection& se
         [luLookupDefinitionModule tokenRangeForString:fullPlainTextString range:rangeToPass options:options];
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    return selectedRange.release();
+    return selectedRange;
 }
 
-PassRefPtr<Range> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult, NSDictionary **options)
+RefPtr<Range> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult, NSDictionary **options)
 {
     Node* node = hitTestResult.innerNonSharedNode();
     if (!node)

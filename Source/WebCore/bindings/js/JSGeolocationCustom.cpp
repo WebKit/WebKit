@@ -72,12 +72,12 @@ static void setMaximumAge(PositionOptions* options, const double& maximumAge)
 static RefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue value)
 {
     // Create default options.
-    RefPtr<PositionOptions> options = PositionOptions::create();
+    auto options = PositionOptions::create();
 
     // Argument is optional (hence undefined is allowed), and null is allowed.
     if (value.isUndefinedOrNull()) {
         // Use default options.
-        return options;
+        return WTFMove(options);
     }
 
     // Given the above test, this will always yield an object.
@@ -87,35 +87,35 @@ static RefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue va
     // Create the dictionary wrapper from the initializer object.
     JSDictionary dictionary(exec, object);
 
-    if (!dictionary.tryGetProperty("enableHighAccuracy", options.get(), setEnableHighAccuracy))
+    if (!dictionary.tryGetProperty("enableHighAccuracy", options.ptr(), setEnableHighAccuracy))
         return nullptr;
-    if (!dictionary.tryGetProperty("timeout", options.get(), setTimeout))
+    if (!dictionary.tryGetProperty("timeout", options.ptr(), setTimeout))
         return nullptr;
-    if (!dictionary.tryGetProperty("maximumAge", options.get(), setMaximumAge))
+    if (!dictionary.tryGetProperty("maximumAge", options.ptr(), setMaximumAge))
         return nullptr;
 
-    return options;
+    return WTFMove(options);
 }
 
 JSValue JSGeolocation::getCurrentPosition(ExecState& state)
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
 
-    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<JSPositionCallback>(&state, globalObject(), state.argument(0));
+    auto positionCallback = createFunctionOnlyCallback<JSPositionCallback>(&state, globalObject(), state.argument(0));
     if (state.hadException())
         return jsUndefined();
     ASSERT(positionCallback);
 
-    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(&state, globalObject(), state.argument(1), CallbackAllowUndefined | CallbackAllowNull);
+    auto positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(&state, globalObject(), state.argument(1), CallbackAllowUndefined | CallbackAllowNull);
     if (state.hadException())
         return jsUndefined();
 
-    RefPtr<PositionOptions> positionOptions = createPositionOptions(&state, state.argument(2));
+    auto positionOptions = createPositionOptions(&state, state.argument(2));
     if (state.hadException())
         return jsUndefined();
     ASSERT(positionOptions);
 
-    wrapped().getCurrentPosition(positionCallback.release(), positionErrorCallback.release(), positionOptions.release());
+    wrapped().getCurrentPosition(WTFMove(positionCallback), WTFMove(positionErrorCallback), WTFMove(positionOptions));
     return jsUndefined();
 }
 
@@ -123,21 +123,21 @@ JSValue JSGeolocation::watchPosition(ExecState& state)
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
 
-    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<JSPositionCallback>(&state, globalObject(), state.argument(0));
+    auto positionCallback = createFunctionOnlyCallback<JSPositionCallback>(&state, globalObject(), state.argument(0));
     if (state.hadException())
         return jsUndefined();
     ASSERT(positionCallback);
 
-    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(&state, globalObject(), state.argument(1), CallbackAllowUndefined | CallbackAllowNull);
+    auto positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(&state, globalObject(), state.argument(1), CallbackAllowUndefined | CallbackAllowNull);
     if (state.hadException())
         return jsUndefined();
 
-    RefPtr<PositionOptions> positionOptions = createPositionOptions(&state, state.argument(2));
+    auto positionOptions = createPositionOptions(&state, state.argument(2));
     if (state.hadException())
         return jsUndefined();
     ASSERT(positionOptions);
 
-    int watchID = wrapped().watchPosition(positionCallback.release(), positionErrorCallback.release(), positionOptions.release());
+    int watchID = wrapped().watchPosition(WTFMove(positionCallback), WTFMove(positionErrorCallback), WTFMove(positionOptions));
     return jsNumber(watchID);
 }
 

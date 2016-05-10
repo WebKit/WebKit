@@ -1,3 +1,30 @@
+2016-05-10  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of a lot of calls to RefPtr::release()
+        https://bugs.webkit.org/show_bug.cgi?id=157505
+
+        Reviewed by Alex Christensen.
+
+        Get rid of a lot of calls to RefPtr::release() and use WTFMove() instead.
+
+        * wtf/text/AtomicStringImpl.cpp:
+        (WTF::HashAndUTF8CharactersTranslator::translate):
+        * wtf/text/CString.cpp:
+        (WTF::CString::copyBufferIfNeeded):
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::allocateBuffer):
+        (WTF::StringBuilder::allocateBufferUpConvert):
+        (WTF::StringBuilder::shrinkToFit):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::append):
+        (WTF::String::insert):
+        (WTF::String::removeInternal):
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+        (WTF::String::operator=):
+        (WTF::String::releaseImpl):
+        (WTF::String::isNull): Deleted.
+
 2016-05-08  Chris Dumez  <cdumez@apple.com>
 
         [COCOA] Disable HAVE_DTRACE at build time

@@ -58,8 +58,8 @@ void RemoveNodeCommand::doApply()
 
 void RemoveNodeCommand::doUnapply()
 {
-    RefPtr<ContainerNode> parent = m_parent.release();
-    RefPtr<Node> refChild = m_refChild.release();
+    RefPtr<ContainerNode> parent = WTFMove(m_parent);
+    RefPtr<Node> refChild = WTFMove(m_refChild);
     if (!parent || !parent->hasEditableStyle())
         return;
 

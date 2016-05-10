@@ -97,11 +97,11 @@ void StringBuilder::allocateBuffer(const LChar* currentCharacters, unsigned requ
 {
     ASSERT(m_is8Bit);
     // Copy the existing data into a new buffer, set result to point to the end of the existing data.
-    RefPtr<StringImpl> buffer = StringImpl::createUninitialized(requiredLength, m_bufferCharacters8);
+    auto buffer = StringImpl::createUninitialized(requiredLength, m_bufferCharacters8);
     memcpy(m_bufferCharacters8, currentCharacters, static_cast<size_t>(m_length) * sizeof(LChar)); // This can't overflow.
     
     // Update the builder state.
-    m_buffer = buffer.release();
+    m_buffer = WTFMove(buffer);
     m_string = String();
 }
 
@@ -111,11 +111,11 @@ void StringBuilder::allocateBuffer(const UChar* currentCharacters, unsigned requ
 {
     ASSERT(!m_is8Bit);
     // Copy the existing data into a new buffer, set result to point to the end of the existing data.
-    RefPtr<StringImpl> buffer = StringImpl::createUninitialized(requiredLength, m_bufferCharacters16);
+    auto buffer = StringImpl::createUninitialized(requiredLength, m_bufferCharacters16);
     memcpy(m_bufferCharacters16, currentCharacters, static_cast<size_t>(m_length) * sizeof(UChar)); // This can't overflow.
     
     // Update the builder state.
-    m_buffer = buffer.release();
+    m_buffer = WTFMove(buffer);
     m_string = String();
 }
 
@@ -125,14 +125,14 @@ void StringBuilder::allocateBufferUpConvert(const LChar* currentCharacters, unsi
 {
     ASSERT(m_is8Bit);
     // Copy the existing data into a new buffer, set result to point to the end of the existing data.
-    RefPtr<StringImpl> buffer = StringImpl::createUninitialized(requiredLength, m_bufferCharacters16);
+    auto buffer = StringImpl::createUninitialized(requiredLength, m_bufferCharacters16);
     for (unsigned i = 0; i < m_length; ++i)
         m_bufferCharacters16[i] = currentCharacters[i];
     
     m_is8Bit = false;
     
     // Update the builder state.
-    m_buffer = buffer.release();
+    m_buffer = WTFMove(buffer);
     m_string = String();
 }
 
@@ -357,7 +357,7 @@ void StringBuilder::shrinkToFit()
             reallocateBuffer<LChar>(m_length);
         else
             reallocateBuffer<UChar>(m_length);
-        m_string = m_buffer.release();
+        m_string = WTFMove(m_buffer);
     }
 }
 

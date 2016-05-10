@@ -144,7 +144,7 @@ public:
     void getNewRegions(Vector<RefPtr<VTTRegion>>&);
 
     // Create the DocumentFragment representation of the WebVTT cue text.
-    static PassRefPtr<DocumentFragment> createDocumentFragmentFromCueText(Document&, const String&);
+    static Ref<DocumentFragment> createDocumentFragmentFromCueText(Document&, const String&);
 
 protected:
     ScriptExecutionContext* m_scriptExecutionContext;

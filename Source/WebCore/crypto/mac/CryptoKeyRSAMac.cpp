@@ -262,9 +262,9 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
             return;
         }
         callOnWebThreadOrDispatchAsyncOnMainThread(^{
-            RefPtr<CryptoKeyRSA> publicKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Public, ccPublicKey, true, usage);
-            RefPtr<CryptoKeyRSA> privateKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Private, ccPrivateKey, extractable, usage);
-            (*localCallback)(CryptoKeyPair::create(publicKey.release(), privateKey.release()));
+            auto publicKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Public, ccPublicKey, true, usage);
+            auto privateKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Private, ccPrivateKey, extractable, usage);
+            (*localCallback)(CryptoKeyPair::create(WTFMove(publicKey), WTFMove(privateKey)));
             delete localCallback;
             delete localFailureCallback;
         });

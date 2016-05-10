@@ -52,18 +52,18 @@ Attr::Attr(Document& document, const QualifiedName& name, const AtomicString& st
 {
 }
 
-RefPtr<Attr> Attr::create(Element* element, const QualifiedName& name)
+Ref<Attr> Attr::create(Element* element, const QualifiedName& name)
 {
-    RefPtr<Attr> attr = adoptRef(new Attr(element, name));
+    Ref<Attr> attr = adoptRef(*new Attr(element, name));
     attr->createTextChild();
-    return attr.release();
+    return attr;
 }
 
-RefPtr<Attr> Attr::create(Document& document, const QualifiedName& name, const AtomicString& value)
+Ref<Attr> Attr::create(Document& document, const QualifiedName& name, const AtomicString& value)
 {
-    RefPtr<Attr> attr = adoptRef(new Attr(document, name, value));
+    Ref<Attr> attr = adoptRef(*new Attr(document, name, value));
     attr->createTextChild();
-    return attr.release();
+    return attr;
 }
 
 Attr::~Attr()

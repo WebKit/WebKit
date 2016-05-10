@@ -42,8 +42,8 @@ class MutableStyleProperties;
 
 class Attr final : public ContainerNode {
 public:
-    static RefPtr<Attr> create(Element*, const QualifiedName&);
-    static RefPtr<Attr> create(Document&, const QualifiedName&, const AtomicString& value);
+    static Ref<Attr> create(Element*, const QualifiedName&);
+    static Ref<Attr> create(Document&, const QualifiedName&, const AtomicString& value);
     virtual ~Attr();
 
     String name() const { return qualifiedName().toString(); }

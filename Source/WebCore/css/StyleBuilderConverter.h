@@ -80,13 +80,13 @@ public:
     static String convertStringOrNone(StyleResolver&, CSSValue&);
     static TextEmphasisPosition convertTextEmphasisPosition(StyleResolver&, CSSValue&);
     static ETextAlign convertTextAlign(StyleResolver&, CSSValue&);
-    static PassRefPtr<ClipPathOperation> convertClipPath(StyleResolver&, CSSValue&);
+    static RefPtr<ClipPathOperation> convertClipPath(StyleResolver&, CSSValue&);
     static EResize convertResize(StyleResolver&, CSSValue&);
     static int convertMarqueeRepetition(StyleResolver&, CSSValue&);
     static int convertMarqueeSpeed(StyleResolver&, CSSValue&);
     static PassRefPtr<QuotesData> convertQuotes(StyleResolver&, CSSValue&);
     static TextUnderlinePosition convertTextUnderlinePosition(StyleResolver&, CSSValue&);
-    static PassRefPtr<StyleReflection> convertReflection(StyleResolver&, CSSValue&);
+    static RefPtr<StyleReflection> convertReflection(StyleResolver&, CSSValue&);
     static IntSize convertInitialLetter(StyleResolver&, CSSValue&);
     static float convertTextStrokeWidth(StyleResolver&, CSSValue&);
     static LineBoxContain convertLineBoxContain(StyleResolver&, CSSValue&);
@@ -482,7 +482,7 @@ inline ETextAlign StyleBuilderConverter::convertTextAlign(StyleResolver& styleRe
     return parentStyle->textAlign();
 }
 
-inline PassRefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(StyleResolver& styleResolver, CSSValue& value)
+inline RefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(StyleResolver& styleResolver, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
@@ -523,7 +523,7 @@ inline PassRefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(Styl
         operation = BoxClipPathOperation::create(referenceBox);
     }
 
-    return operation.release();
+    return operation;
 }
 
 inline EResize StyleBuilderConverter::convertResize(StyleResolver& styleResolver, CSSValue& value)
@@ -616,7 +616,7 @@ inline TextUnderlinePosition StyleBuilderConverter::convertTextUnderlinePosition
     return static_cast<TextUnderlinePosition>(combinedPosition);
 }
 
-inline PassRefPtr<StyleReflection> StyleBuilderConverter::convertReflection(StyleResolver& styleResolver, CSSValue& value)
+inline RefPtr<StyleReflection> StyleBuilderConverter::convertReflection(StyleResolver& styleResolver, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
@@ -625,7 +625,7 @@ inline PassRefPtr<StyleReflection> StyleBuilderConverter::convertReflection(Styl
 
     auto& reflectValue = downcast<CSSReflectValue>(value);
 
-    RefPtr<StyleReflection> reflection = StyleReflection::create();
+    auto reflection = StyleReflection::create();
     reflection->setDirection(*reflectValue.direction());
 
     if (reflectValue.offset())
@@ -636,7 +636,7 @@ inline PassRefPtr<StyleReflection> StyleBuilderConverter::convertReflection(Styl
     styleResolver.styleMap()->mapNinePieceImage(CSSPropertyWebkitBoxReflect, reflectValue.mask(), mask);
     reflection->setMask(mask);
 
-    return reflection.release();
+    return WTFMove(reflection);
 }
 
 inline IntSize StyleBuilderConverter::convertInitialLetter(StyleResolver&, CSSValue& value)

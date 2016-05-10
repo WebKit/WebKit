@@ -198,7 +198,7 @@ void IncreaseSelectionListLevelCommand::doApply()
         }
         insertNodeBefore(newParent, startListChild);
         appendSiblingNodeRange(startListChild, endListChild, newParent.get());
-        m_listElement = newParent.release();
+        m_listElement = WTFMove(newParent);
     }
 }
 
@@ -209,13 +209,13 @@ bool IncreaseSelectionListLevelCommand::canIncreaseSelectionListLevel(Document* 
     return canIncreaseListLevel(document->frame()->selection().selection(), startListChild, endListChild);
 }
 
-PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevel(Document* document, Type type)
+RefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevel(Document* document, Type type)
 {
     ASSERT(document);
     ASSERT(document->frame());
-    RefPtr<IncreaseSelectionListLevelCommand> command = create(*document, type);
+    auto command = create(*document, type);
     command->apply();
-    return command->m_listElement.release();
+    return WTFMove(command->m_listElement);
 }
 
 PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevel(Document* document)

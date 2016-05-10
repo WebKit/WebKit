@@ -670,13 +670,13 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
         endOffset = std::min(endOffset, static_cast<CharacterData*>(container)->length());
         startOffset = std::min(startOffset, endOffset);
         if (action == Extract || action == Clone) {
-            RefPtr<CharacterData> c = static_cast<CharacterData*>(container->cloneNode(true).ptr());
-            deleteCharacterData(c, startOffset, endOffset, ec);
+            RefPtr<CharacterData> characters = static_cast<CharacterData*>(container->cloneNode(true).ptr());
+            deleteCharacterData(characters, startOffset, endOffset, ec);
             if (fragment) {
                 result = fragment;
-                result->appendChild(c.release(), ec);
+                result->appendChild(characters.release(), ec);
             } else
-                result = c.release();
+                result = WTFMove(characters);
         }
         if (action == Extract || action == Delete)
             downcast<CharacterData>(*container).deleteData(startOffset, endOffset - startOffset, ec);
@@ -685,13 +685,13 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
         endOffset = std::min(endOffset, static_cast<ProcessingInstruction*>(container)->data().length());
         startOffset = std::min(startOffset, endOffset);
         if (action == Extract || action == Clone) {
-            RefPtr<ProcessingInstruction> c = static_cast<ProcessingInstruction*>(container->cloneNode(true).ptr());
-            c->setData(c->data().substring(startOffset, endOffset - startOffset));
+            RefPtr<ProcessingInstruction> processingInstruction = static_cast<ProcessingInstruction*>(container->cloneNode(true).ptr());
+            processingInstruction->setData(processingInstruction->data().substring(startOffset, endOffset - startOffset));
             if (fragment) {
                 result = fragment;
-                result->appendChild(c.release(), ec);
+                result->appendChild(processingInstruction.release(), ec);
             } else
-                result = c.release();
+                result = WTFMove(processingInstruction);
         }
         if (action == Extract || action == Delete) {
             ProcessingInstruction& pi = downcast<ProcessingInstruction>(*container);

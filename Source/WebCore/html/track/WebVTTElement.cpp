@@ -87,7 +87,7 @@ Ref<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren(Document& t
     return WTFMove(clone);
 }
 
-PassRefPtr<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)
+Ref<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)
 {
     RefPtr<HTMLElement> htmlElement;
 
@@ -119,7 +119,7 @@ PassRefPtr<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& doc
     ASSERT(htmlElement);
     if (htmlElement)
         htmlElement->setAttribute(HTMLNames::classAttr, fastGetAttribute(HTMLNames::classAttr));
-    return htmlElement.release();
+    return htmlElement.releaseNonNull();
 }
 
 } // namespace WebCore

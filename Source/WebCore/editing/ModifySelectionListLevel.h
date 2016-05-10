@@ -55,7 +55,7 @@ public:
 
 private:
     enum Type { InheritedListType, OrderedList, UnorderedList };
-    static PassRefPtr<Node> increaseSelectionListLevel(Document*, Type);
+    static RefPtr<Node> increaseSelectionListLevel(Document*, Type);
 
     static Ref<IncreaseSelectionListLevelCommand> create(Document& document, Type type)
     {

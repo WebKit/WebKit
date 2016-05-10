@@ -5010,12 +5010,12 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
             if (values)
                 values->append(currValue.releaseNonNull());
             else
-                value = currValue.release();
+                value = WTFMove(currValue);
             if (currValue2) {
                 if (values2)
                     values2->append(currValue2.releaseNonNull());
                 else
-                    value2 = currValue2.release();
+                    value2 = WTFMove(currValue2);
             }
         }
 
@@ -5026,14 +5026,14 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
     }
 
     if (values && values->length()) {
-        retValue1 = values.release();
+        retValue1 = WTFMove(values);
         if (values2 && values2->length())
-            retValue2 = values2.release();
+            retValue2 = WTFMove(values2);
         return true;
     }
     if (value) {
-        retValue1 = value.release();
-        retValue2 = value2.release();
+        retValue1 = WTFMove(value);
+        retValue2 = WTFMove(value2);
         return true;
     }
     return false;
@@ -5407,7 +5407,7 @@ bool CSSParser::parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>& r
             if (values)
                 values->append(currValue.releaseNonNull());
             else
-                value = currValue.release();
+                value = WTFMove(currValue);
 
             allowComma = true;
         }
@@ -5419,11 +5419,11 @@ bool CSSParser::parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>& r
     }
 
     if (values && values->length()) {
-        result = values.release();
+        result = WTFMove(values);
         return true;
     }
     if (value) {
-        result = value.release();
+        result = WTFMove(value);
         return true;
     }
     return false;
@@ -6561,7 +6561,7 @@ RefPtr<CSSBasicShape> CSSParser::parseInsetRoundedCorners(PassRefPtr<CSSBasicSha
         if (!indexAfterSlash)
             radii[0][i] = radius;
         else
-            radii[1][i - indexAfterSlash] = radius.release();
+            radii[1][i - indexAfterSlash] = WTFMove(radius);
     }
 
     if (!indexAfterSlash) {
@@ -6571,10 +6571,10 @@ RefPtr<CSSBasicShape> CSSParser::parseInsetRoundedCorners(PassRefPtr<CSSBasicSha
     } else
         completeBorderRadii(radii[1]);
 
-    shape->setTopLeftRadius(createPrimitiveValuePair(radii[0][0].release(), radii[1][0].release()));
-    shape->setTopRightRadius(createPrimitiveValuePair(radii[0][1].release(), radii[1][1].release()));
-    shape->setBottomRightRadius(createPrimitiveValuePair(radii[0][2].release(), radii[1][2].release()));
-    shape->setBottomLeftRadius(createPrimitiveValuePair(radii[0][3].release(), radii[1][3].release()));
+    shape->setTopLeftRadius(createPrimitiveValuePair(WTFMove(radii[0][0]), WTFMove(radii[1][0])));
+    shape->setTopRightRadius(createPrimitiveValuePair(WTFMove(radii[0][1]), WTFMove(radii[1][1])));
+    shape->setBottomRightRadius(createPrimitiveValuePair(WTFMove(radii[0][2]), WTFMove(radii[1][2])));
+    shape->setBottomLeftRadius(createPrimitiveValuePair(WTFMove(radii[0][3]), WTFMove(radii[1][3])));
 
     return shape;
 }
@@ -7936,28 +7936,28 @@ struct ShadowParseContext {
 
     void commitLength(CSSParser::ValueWithCalculation& valueWithCalculation)
     {
-        RefPtr<CSSPrimitiveValue> primitiveValue = m_parser.createPrimitiveNumericValue(valueWithCalculation);
+        auto primitiveValue = m_parser.createPrimitiveNumericValue(valueWithCalculation);
 
         if (allowX) {
-            x = primitiveValue.release();
+            x = WTFMove(primitiveValue);
             allowX = false;
             allowY = true;
             allowColor = false;
             allowStyle = false;
             allowBreak = false;
         } else if (allowY) {
-            y = primitiveValue.release();
+            y = WTFMove(primitiveValue);
             allowY = false;
             allowBlur = true;
             allowColor = true;
             allowStyle = property == CSSPropertyWebkitBoxShadow || property == CSSPropertyBoxShadow;
             allowBreak = true;
         } else if (allowBlur) {
-            blur = primitiveValue.release();
+            blur = WTFMove(primitiveValue);
             allowBlur = false;
             allowSpread = property == CSSPropertyWebkitBoxShadow || property == CSSPropertyBoxShadow;
         } else if (allowSpread) {
-            spread = primitiveValue.release();
+            spread = WTFMove(primitiveValue);
             allowSpread = false;
         }
     }
@@ -8072,7 +8072,7 @@ RefPtr<CSSValueList> CSSParser::parseShadow(CSSParserValueList& valueList, CSSPr
     if (context.allowBreak) {
         context.commitValue();
         if (context.values && context.values->length())
-            return context.values.release();
+            return WTFMove(context.values);
     }
 
     return nullptr;
@@ -8416,16 +8416,16 @@ public:
 
     void commitNumber(CSSParser::ValueWithCalculation& valueWithCalculation)
     {
-        RefPtr<CSSPrimitiveValue> primitiveValue = m_parser.createPrimitiveNumericValue(valueWithCalculation);
+        auto primitiveValue = m_parser.createPrimitiveNumericValue(valueWithCalculation);
         if (!m_top)
-            m_top = primitiveValue.release();
+            m_top = WTFMove(primitiveValue);
         else if (!m_right)
-            m_right = primitiveValue.release();
+            m_right = WTFMove(primitiveValue);
         else if (!m_bottom)
-            m_bottom = primitiveValue.release();
+            m_bottom = WTFMove(primitiveValue);
         else {
             ASSERT(!m_left);
-            m_left = primitiveValue.release();
+            m_left = WTFMove(primitiveValue);
         }
 
         m_allowNumber = !m_left;
@@ -8535,14 +8535,14 @@ public:
             primitiveValue = m_parser.createPrimitiveNumericValue(valueWithCalculation);
 
         if (!m_top)
-            m_top = primitiveValue.release();
+            m_top = WTFMove(primitiveValue);
         else if (!m_right)
-            m_right = primitiveValue.release();
+            m_right = WTFMove(primitiveValue);
         else if (!m_bottom)
-            m_bottom = primitiveValue.release();
+            m_bottom = WTFMove(primitiveValue);
         else {
             ASSERT(!m_left);
-            m_left = primitiveValue.release();
+            m_left = WTFMove(primitiveValue);
         }
 
         m_allowNumber = !m_left;
@@ -8659,10 +8659,10 @@ bool CSSParser::parseBorderRadius(CSSPropertyID propId, bool important)
         if (!validateUnit(valueWithCalculation, FLength | FPercent | FNonNeg))
             return false;
 
-        RefPtr<CSSPrimitiveValue> radius = createPrimitiveNumericValue(valueWithCalculation);
+        auto radius = createPrimitiveNumericValue(valueWithCalculation);
 
         if (!indexAfterSlash) {
-            radii[0][i] = radius;
+            radii[0][i] = WTFMove(radius);
 
             // Legacy syntax: -webkit-border-radius: l1 l2; is equivalent to border-radius: l1 / l2;
             if (num == 2 && propId == CSSPropertyWebkitBorderRadius) {
@@ -8670,7 +8670,7 @@ bool CSSParser::parseBorderRadius(CSSPropertyID propId, bool important)
                 completeBorderRadii(radii[0]);
             }
         } else
-            radii[1][i - indexAfterSlash] = radius.release();
+            radii[1][i - indexAfterSlash] = WTFMove(radius);
     }
 
     if (!indexAfterSlash) {
@@ -8681,10 +8681,10 @@ bool CSSParser::parseBorderRadius(CSSPropertyID propId, bool important)
         completeBorderRadii(radii[1]);
 
     ImplicitScope implicitScope(*this, PropertyImplicit);
-    addProperty(CSSPropertyBorderTopLeftRadius, createPrimitiveValuePair(radii[0][0].release(), radii[1][0].release()), important);
-    addProperty(CSSPropertyBorderTopRightRadius, createPrimitiveValuePair(radii[0][1].release(), radii[1][1].release()), important);
-    addProperty(CSSPropertyBorderBottomRightRadius, createPrimitiveValuePair(radii[0][2].release(), radii[1][2].release()), important);
-    addProperty(CSSPropertyBorderBottomLeftRadius, createPrimitiveValuePair(radii[0][3].release(), radii[1][3].release()), important);
+    addProperty(CSSPropertyBorderTopLeftRadius, createPrimitiveValuePair(WTFMove(radii[0][0]), WTFMove(radii[1][0])), important);
+    addProperty(CSSPropertyBorderTopRightRadius, createPrimitiveValuePair(WTFMove(radii[0][1]), WTFMove(radii[1][1])), important);
+    addProperty(CSSPropertyBorderBottomRightRadius, createPrimitiveValuePair(WTFMove(radii[0][2]), WTFMove(radii[1][2])), important);
+    addProperty(CSSPropertyBorderBottomLeftRadius, createPrimitiveValuePair(WTFMove(radii[0][3]), WTFMove(radii[1][3])), important);
     return true;
 }
 
@@ -8746,7 +8746,7 @@ bool CSSParser::parseCounter(CSSPropertyID propId, int defaultValue, bool import
                     m_valueList->next();
                 }
 
-                list->append(createPrimitiveValuePair(counterName.release(),
+                list->append(createPrimitiveValuePair(WTFMove(counterName),
                     CSSValuePool::singleton().createValue(i, CSSPrimitiveValue::CSS_NUMBER)));
                 state = ID;
                 continue;
@@ -8978,7 +8978,7 @@ bool CSSParser::parseDeprecatedGradient(CSSParserValueList& valueList, RefPtr<CS
         argument = args->next();
     }
 
-    gradient = result.release();
+    gradient = WTFMove(result);
     return true;
 }
 
@@ -9076,7 +9076,7 @@ bool CSSParser::parseDeprecatedLinearGradient(CSSParserValueList& valueList, Ref
     if (!result->stopCount())
         return false;
 
-    gradient = result.release();
+    gradient = WTFMove(result);
     return true;
 }
 
@@ -9196,7 +9196,7 @@ bool CSSParser::parseDeprecatedRadialGradient(CSSParserValueList& valueList, Ref
     if (!parseGradientColorStops(*args, *result, expectComma))
         return false;
 
-    gradient = result.release();
+    gradient = WTFMove(result);
     return true;
 }
 
@@ -9269,7 +9269,7 @@ bool CSSParser::parseLinearGradient(CSSParserValueList& valueList, RefPtr<CSSVal
     if (!result->stopCount())
         return false;
 
-    gradient = result.release();
+    gradient = WTFMove(result);
     return true;
 }
 
@@ -9395,7 +9395,7 @@ bool CSSParser::parseRadialGradient(CSSParserValueList& valueList, RefPtr<CSSVal
     if (!parseGradientColorStops(*args, *result, expectComma))
         return false;
 
-    gradient = result.release();
+    gradient = WTFMove(result);
     return true;
 }
 
@@ -10069,7 +10069,7 @@ RefPtr<CSSValue> CSSParser::parseTransformValue(CSSParserValue& value)
         ++argNumber;
     }
 
-    return transformValue.release();
+    return WTFMove(transformValue);
 }
 
 bool CSSParser::isBlendMode(CSSValueID valueID)
@@ -10113,7 +10113,7 @@ static void filterInfoForName(const CSSParserString& name, WebKitCSSFilterValue:
 
 RefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParserValueList& args, WebKitCSSFilterValue::FilterOperationType filterType)
 {
-    RefPtr<WebKitCSSFilterValue> filterValue = WebKitCSSFilterValue::create(filterType);
+    auto filterValue = WebKitCSSFilterValue::create(filterType);
 
     switch (filterType) {    
     case WebKitCSSFilterValue::GrayscaleFilterOperation:
@@ -10199,7 +10199,7 @@ RefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParserVal
     default:
         ASSERT_NOT_REACHED();
     }
-    return filterValue.release();
+    return WTFMove(filterValue);
 }
 
 bool CSSParser::parseFilter(CSSParserValueList& valueList, RefPtr<CSSValue>& result)
@@ -10604,7 +10604,7 @@ RefPtr<CSSValue> CSSParser::parseTextIndent()
 {
     // <length> | <percentage> | inherit  when CSS3_TEXT is disabled.
     // [ <length> | <percentage> ] && [ -webkit-hanging || -webkit-each-line ]? | inherit  when CSS3_TEXT is enabled.
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    auto list = CSSValueList::createSpaceSeparated();
     bool hasLengthOrPercentage = false;
 #if ENABLE(CSS3_TEXT)
     bool hasEachLine = false;
@@ -10636,7 +10636,7 @@ RefPtr<CSSValue> CSSParser::parseTextIndent()
     if (!hasLengthOrPercentage)
         return nullptr;
 
-    return list.release();
+    return WTFMove(list);
 }
 
 bool CSSParser::parseHangingPunctuation(bool important)
@@ -12970,7 +12970,7 @@ void CSSParser::addNewRuleToSourceTree(PassRefPtr<CSSRuleSourceData> rule)
         m_currentRuleDataStack->last()->childRules.append(rule);
 }
 
-PassRefPtr<CSSRuleSourceData> CSSParser::popRuleData()
+RefPtr<CSSRuleSourceData> CSSParser::popRuleData()
 {
     if (!m_ruleSourceDataResult)
         return nullptr;
@@ -12979,7 +12979,7 @@ PassRefPtr<CSSRuleSourceData> CSSParser::popRuleData()
     m_currentRuleData = nullptr;
     RefPtr<CSSRuleSourceData> data = m_currentRuleDataStack->last();
     m_currentRuleDataStack->removeLast();
-    return data.release();
+    return data;
 }
 
 void CSSParser::syntaxError(const Location& location, SyntaxErrorType error)
@@ -13327,10 +13327,10 @@ void CSSParser::markRuleHeaderStart(CSSRuleSourceData::Type ruleType)
     if (m_currentRuleData)
         m_currentRuleDataStack->removeLast();
 
-    RefPtr<CSSRuleSourceData> data = CSSRuleSourceData::create(ruleType);
+    auto data = CSSRuleSourceData::create(ruleType);
     data->ruleHeaderRange.start = tokenStartOffset();
-    m_currentRuleData = data;
-    m_currentRuleDataStack->append(data.release());
+    m_currentRuleData = data.copyRef();
+    m_currentRuleDataStack->append(WTFMove(data));
 }
 
 template <typename CharacterType>
@@ -13449,16 +13449,16 @@ void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
 }
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-PassRefPtr<StyleRuleBase> CSSParser::createViewportRule()
+Ref<StyleRuleBase> CSSParser::createViewportRule()
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
 
-    RefPtr<StyleRuleViewport> rule = StyleRuleViewport::create(createStyleProperties());
+    auto rule = StyleRuleViewport::create(createStyleProperties());
     clearProperties();
 
     processAndAddNewRuleToSourceTreeIfNeeded();
 
-    return rule.release();
+    return rule;
 }
 
 bool CSSParser::parseViewportProperty(CSSPropertyID propId, bool important)

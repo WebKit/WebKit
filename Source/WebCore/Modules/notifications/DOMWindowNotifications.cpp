@@ -70,14 +70,14 @@ NotificationCenter* DOMWindowNotifications::webkitNotifications(DOMWindow& windo
 
 void DOMWindowNotifications::disconnectFrameForDocumentSuspension()
 {
-    m_suspendedNotificationCenter = m_notificationCenter.release();
+    m_suspendedNotificationCenter = WTFMove(m_notificationCenter);
     DOMWindowProperty::disconnectFrameForDocumentSuspension();
 }
 
 void DOMWindowNotifications::reconnectFrameFromDocumentSuspension(Frame* frame)
 {
     DOMWindowProperty::reconnectFrameFromDocumentSuspension(frame);
-    m_notificationCenter = m_suspendedNotificationCenter.release();
+    m_notificationCenter = WTFMove(m_suspendedNotificationCenter);
 }
 
 void DOMWindowNotifications::willDestroyGlobalObjectInCachedFrame()

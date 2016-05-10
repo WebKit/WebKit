@@ -45,14 +45,14 @@ CSSContentDistributionValue::~CSSContentDistributionValue()
 
 String CSSContentDistributionValue::customCSSText() const
 {
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    auto list = CSSValueList::createSpaceSeparated();
     if (m_distribution != CSSValueInvalid)
         list->append(distribution());
     if (m_position != CSSValueInvalid)
         list->append(position());
     if (m_overflow != CSSValueInvalid)
         list->append(overflow());
-    return list.release()->customCSSText();
+    return list->customCSSText();
 }
 
 bool CSSContentDistributionValue::equals(const CSSContentDistributionValue& other) const

@@ -3752,7 +3752,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction)
         return false;
 
     bool focusChangeBlocked = false;
-    RefPtr<Element> oldFocusedElement = m_focusedElement.release();
+    RefPtr<Element> oldFocusedElement = WTFMove(m_focusedElement);
 
     // Remove focus from the existing focus node (if any)
     if (oldFocusedElement) {
@@ -4068,7 +4068,7 @@ void Document::takeDOMWindowFrom(Document* document)
     // A valid DOMWindow is needed by CachedFrame for its documents.
     ASSERT(!document->inPageCache());
 
-    m_domWindow = document->m_domWindow.release();
+    m_domWindow = WTFMove(document->m_domWindow);
     m_domWindow->didSecureTransitionTo(this);
 
     ASSERT(m_domWindow->document() == this);
@@ -6573,7 +6573,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     // at the time the mouse went down.
     bool mustBeInActiveChain = request.active() && request.move();
 
-    RefPtr<Element> oldHoveredElement = m_hoveredElement.release();
+    RefPtr<Element> oldHoveredElement = WTFMove(m_hoveredElement);
 
     // A touch release does not set a new hover target; clearing the element we're working with
     // will clear the chain of hovered elements all the way to the top of the tree.

@@ -60,7 +60,7 @@ public:
         return adoptRef(*new IDBKey(KeyType::Date, date));
     }
 
-    static PassRefPtr<IDBKey> createMultiEntryArray(const Vector<RefPtr<IDBKey>>& array)
+    static Ref<IDBKey> createMultiEntryArray(const Vector<RefPtr<IDBKey>>& array)
     {
         Vector<RefPtr<IDBKey>> result;
 
@@ -81,9 +81,9 @@ public:
                 sizeEstimate += key->m_sizeEstimate;
             }
         }
-        RefPtr<IDBKey> idbKey = adoptRef(new IDBKey(result, sizeEstimate));
+        Ref<IDBKey> idbKey = adoptRef(*new IDBKey(result, sizeEstimate));
         ASSERT(idbKey->isValid());
-        return idbKey.release();
+        return idbKey;
     }
 
     static Ref<IDBKey> createArray(const Vector<RefPtr<IDBKey>>& array)

@@ -86,7 +86,7 @@ public:
     void removeNodePreservingChildren(PassRefPtr<Node>);
 
 private:
-    PassRefPtr<StyledElement> insertFragmentForTestRendering(Node* rootEditableNode);
+    Ref<HTMLElement> insertFragmentForTestRendering(Node* rootEditableNode);
     void removeUnrenderedNodes(Node*);
     void restoreAndRemoveTestRenderingNodesToFragment(StyledElement*);
     void removeInterchangeNodes(Node*);
@@ -252,15 +252,15 @@ void ReplacementFragment::insertNodeBefore(PassRefPtr<Node> node, Node* refNode)
     parent->insertBefore(*node, refNode, ASSERT_NO_EXCEPTION);
 }
 
-PassRefPtr<StyledElement> ReplacementFragment::insertFragmentForTestRendering(Node* rootEditableElement)
+Ref<HTMLElement> ReplacementFragment::insertFragmentForTestRendering(Node* rootEditableElement)
 {
-    RefPtr<StyledElement> holder = createDefaultParagraphElement(document());
+    auto holder = createDefaultParagraphElement(document());
 
     holder->appendChild(*m_fragment, ASSERT_NO_EXCEPTION);
-    rootEditableElement->appendChild(holder.get(), ASSERT_NO_EXCEPTION);
+    rootEditableElement->appendChild(holder.ptr(), ASSERT_NO_EXCEPTION);
     document().updateLayoutIgnorePendingStylesheets();
 
-    return holder.release();
+    return holder;
 }
 
 void ReplacementFragment::restoreAndRemoveTestRenderingNodesToFragment(StyledElement* holder)

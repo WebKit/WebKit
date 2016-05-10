@@ -101,16 +101,14 @@ void SpellingCorrectionCommand::doApply()
     if (!m_rangeToBeCorrected)
         return;
 
-    RefPtr<DocumentFragment> fragment = createFragmentFromText(*m_rangeToBeCorrected, m_correction);
-    if (!fragment)
-        return;
+    auto fragment = createFragmentFromText(*m_rangeToBeCorrected, m_correction);
 
     applyCommandToComposite(SetSelectionCommand::create(m_selectionToBeCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SpellCorrectionTriggered));
 #if USE(AUTOCORRECTION_PANEL)
     applyCommandToComposite(SpellingCorrectionRecordUndoCommand::create(document(), m_corrected, m_correction));
 #endif
 
-    applyCommandToComposite(ReplaceSelectionCommand::create(document(), fragment.release(), ReplaceSelectionCommand::MatchStyle, EditActionPaste));
+    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(fragment), ReplaceSelectionCommand::MatchStyle, EditActionPaste));
 }
 
 bool SpellingCorrectionCommand::shouldRetainAutocorrectionIndicator() const

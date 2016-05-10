@@ -462,7 +462,7 @@ void HTMLFormElement::finishRequestAutocomplete(AutocompleteResult result)
     }
 
     event->setTarget(this);
-    m_pendingAutocompleteEvents.append(event.release());
+    m_pendingAutocompleteEvents.append(WTFMove(event));
 
     // Dispatch events later as this API is meant to work asynchronously in all situations and implementations.
     if (!m_requestAutocompleteTimer.isActive())

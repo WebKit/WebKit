@@ -347,7 +347,7 @@ void StyledElement::rebuildPresentationAttributeStyle()
 
     std::unique_ptr<PresentationAttributeCacheEntry> newEntry = std::make_unique<PresentationAttributeCacheEntry>();
     newEntry->key = cacheKey;
-    newEntry->value = style.release();
+    newEntry->value = WTFMove(style);
 
     static const int presentationAttributeCacheMaximumSize = 4096;
     if (presentationAttributeCache().size() > presentationAttributeCacheMaximumSize) {

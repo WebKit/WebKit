@@ -2201,7 +2201,7 @@ WebGLGetInfo WebGLRenderingContextBase::getBufferParameter(GC3Denum target, GC3D
     return WebGLGetInfo(static_cast<unsigned int>(value));
 }
 
-PassRefPtr<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttributes()
+RefPtr<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttributes()
 {
     if (isContextLostOrPending())
         return nullptr;
@@ -2211,12 +2211,12 @@ PassRefPtr<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttribut
     // Also, we need to enforce requested values of "false" for depth
     // and stencil, regardless of the properties of the underlying
     // GraphicsContext3D.
-    RefPtr<WebGLContextAttributes> attributes = WebGLContextAttributes::create(m_context->getContextAttributes());
+    auto attributes = WebGLContextAttributes::create(m_context->getContextAttributes());
     if (!m_attributes.depth)
         attributes->setDepth(false);
     if (!m_attributes.stencil)
         attributes->setStencil(false);
-    return attributes.release();
+    return WTFMove(attributes);
 }
 
 GC3Denum WebGLRenderingContextBase::getError()

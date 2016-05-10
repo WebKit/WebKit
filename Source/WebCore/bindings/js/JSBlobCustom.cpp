@@ -119,8 +119,8 @@ EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState* exec)
 
         if (ArrayBuffer* arrayBuffer = toArrayBuffer(item))
             blobBuilder.append(arrayBuffer);
-        else if (RefPtr<ArrayBufferView> arrayBufferView = toArrayBufferView(item))
-            blobBuilder.append(arrayBufferView.release());
+        else if (auto arrayBufferView = toArrayBufferView(item))
+            blobBuilder.append(WTFMove(arrayBufferView));
         else if (Blob* blob = JSBlob::toWrapped(item))
             blobBuilder.append(blob);
         else {

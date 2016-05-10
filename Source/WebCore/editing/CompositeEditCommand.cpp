@@ -394,7 +394,7 @@ void CompositeEditCommand::applyCommandToComposite(PassRefPtr<EditCommand> prpCo
         command->setParent(nullptr);
         ensureComposition()->append(toSimpleEditCommand(command.get()));
     }
-    m_commands.append(command.release());
+    m_commands.append(WTFMove(command));
 }
 
 void CompositeEditCommand::applyCommandToComposite(PassRefPtr<CompositeEditCommand> command, const VisibleSelection& selection)
@@ -1024,35 +1024,35 @@ void CompositeEditCommand::deleteInsignificantTextDownstream(const Position& pos
     deleteInsignificantText(pos, end);
 }
 
-PassRefPtr<Node> CompositeEditCommand::appendBlockPlaceholder(PassRefPtr<Element> container)
+RefPtr<Node> CompositeEditCommand::appendBlockPlaceholder(PassRefPtr<Element> container)
 {
     if (!container)
-        return 0;
+        return nullptr;
 
     document().updateLayoutIgnorePendingStylesheets();
     
     // Should assert isBlockFlow || isInlineFlow when deletion improves. See 4244964.
     ASSERT(container->renderer());
 
-    RefPtr<Node> placeholder = createBlockPlaceholderElement(document());
-    appendNode(placeholder, container);
-    return placeholder.release();
+    auto placeholder = createBlockPlaceholderElement(document());
+    appendNode(placeholder.ptr(), container);
+    return WTFMove(placeholder);
 }
 
-PassRefPtr<Node> CompositeEditCommand::insertBlockPlaceholder(const Position& pos)
+RefPtr<Node> CompositeEditCommand::insertBlockPlaceholder(const Position& pos)
 {
     if (pos.isNull())
-        return 0;
+        return nullptr;
 
     // Should assert isBlockFlow || isInlineFlow when deletion improves.  See 4244964.
     ASSERT(pos.deprecatedNode()->renderer());
 
-    RefPtr<Node> placeholder = createBlockPlaceholderElement(document());
-    insertNodeAt(placeholder, pos);
-    return placeholder.release();
+    auto placeholder = createBlockPlaceholderElement(document());
+    insertNodeAt(placeholder.ptr(), pos);
+    return WTFMove(placeholder);
 }
 
-PassRefPtr<Node> CompositeEditCommand::addBlockPlaceholderIfNeeded(Element* container)
+RefPtr<Node> CompositeEditCommand::addBlockPlaceholderIfNeeded(Element* container)
 {
     if (!container)
         return nullptr;
@@ -1086,17 +1086,17 @@ void CompositeEditCommand::removePlaceholderAt(const Position& p)
     deleteTextFromNode(downcast<Text>(p.anchorNode()), p.offsetInContainerNode(), 1);
 }
 
-PassRefPtr<Node> CompositeEditCommand::insertNewDefaultParagraphElementAt(const Position& position)
+Ref<HTMLElement> CompositeEditCommand::insertNewDefaultParagraphElementAt(const Position& position)
 {
-    RefPtr<Element> paragraphElement = createDefaultParagraphElement(document());
+    auto paragraphElement = createDefaultParagraphElement(document());
     paragraphElement->appendChild(createBreakElement(document()), IGNORE_EXCEPTION);
-    insertNodeAt(paragraphElement, position);
-    return paragraphElement.release();
+    insertNodeAt(paragraphElement.ptr(), position);
+    return paragraphElement;
 }
 
 // If the paragraph is not entirely within it's own block, create one and move the paragraph into 
 // it, and return that block.  Otherwise return 0.
-PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Position& pos)
+RefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Position& pos)
 {
     if (pos.isNull())
         return nullptr;
@@ -1148,16 +1148,16 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
     // If upstreamStart is not editable, then we can bail here.
     if (!isEditablePosition(upstreamStart))
         return nullptr;
-    RefPtr<Node> newBlock = insertNewDefaultParagraphElementAt(upstreamStart);
+    auto newBlock = insertNewDefaultParagraphElementAt(upstreamStart);
 
     bool endWasBr = visibleParagraphEnd.deepEquivalent().deprecatedNode()->hasTagName(brTag);
 
-    moveParagraphs(visibleParagraphStart, visibleParagraphEnd, VisiblePosition(firstPositionInNode(newBlock.get())));
+    moveParagraphs(visibleParagraphStart, visibleParagraphEnd, VisiblePosition(firstPositionInNode(newBlock.ptr())));
 
     if (newBlock->lastChild() && newBlock->lastChild()->hasTagName(brTag) && !endWasBr)
         removeNode(newBlock->lastChild());
 
-    return newBlock.release();
+    return WTFMove(newBlock);
 }
 
 void CompositeEditCommand::pushAnchorElementDown(Element& anchorElement)
@@ -1200,9 +1200,9 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
 
         for (size_t i = ancestors.size(); i != 0; --i) {
             Node* item = ancestors[i - 1].get();
-            RefPtr<Node> child = item->cloneNode(isRenderedTable(item));
-            appendNode(child, downcast<Element>(lastNode.get()));
-            lastNode = child.release();
+            auto child = item->cloneNode(isRenderedTable(item));
+            appendNode(child.ptr(), downcast<Element>(lastNode.get()));
+            lastNode = WTFMove(child);
         }
     }
 
@@ -1227,9 +1227,9 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
                 lastNode = lastNode->parentNode();
             }
 
-            RefPtr<Node> clonedNode = node->cloneNode(true);
-            insertNodeAfter(clonedNode, lastNode);
-            lastNode = clonedNode.release();
+            auto clonedNode = node->cloneNode(true);
+            insertNodeAfter(clonedNode.ptr(), lastNode);
+            lastNode = WTFMove(clonedNode);
             if (node == end.deprecatedNode() || end.deprecatedNode()->isDescendantOf(node.get()))
                 break;
         }
@@ -1647,7 +1647,7 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
 
 // Splits the tree parent by parent until we reach the specified ancestor. We use VisiblePositions
 // to determine if the split is necessary. Returns the last split node.
-PassRefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, bool shouldSplitAncestor)
+RefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, bool shouldSplitAncestor)
 {
     ASSERT(start);
     ASSERT(end);
@@ -1668,7 +1668,7 @@ PassRefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, b
             splitElement(downcast<Element>(node->parentNode()), node);
     }
 
-    return node.release();
+    return node;
 }
 
 Ref<Element> createBlockPlaceholderElement(Document& document)

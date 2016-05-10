@@ -140,7 +140,7 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
     return Ref<StyleRuleBase>(*static_cast<StyleRuleBase*>(nullptr));
 }
 
-PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const
+RefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const
 {
     RefPtr<CSSRule> rule;
     StyleRuleBase& self = const_cast<StyleRuleBase&>(*this);
@@ -187,7 +187,7 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
     }
     if (parentRule)
         rule->setParentRule(parentRule);
-    return rule.release();
+    return rule;
 }
 
 unsigned StyleRule::averageSizeInBytes()

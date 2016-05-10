@@ -206,7 +206,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
             return glyphOrientationToCSSPrimitiveValue(svgStyle.glyphOrientationHorizontal());
         case CSSPropertyGlyphOrientationVertical: {
             if (RefPtr<CSSPrimitiveValue> value = glyphOrientationToCSSPrimitiveValue(svgStyle.glyphOrientationVertical()))
-                return value.release();
+                return value;
 
             if (svgStyle.glyphOrientationVertical() == GO_AUTO)
                 return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
