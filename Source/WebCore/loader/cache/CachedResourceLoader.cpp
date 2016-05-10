@@ -985,6 +985,8 @@ void CachedResourceLoader::loadDone(CachedResource* resource, bool shouldPerform
             m_initiatorMap.remove(initiatorIt);
         }
     }
+#else
+    UNUSED_PARAM(resource);
 #endif
 
     if (frame())
