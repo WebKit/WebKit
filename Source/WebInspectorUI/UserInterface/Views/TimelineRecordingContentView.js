@@ -719,9 +719,15 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         if (event.target !== this.currentTimelineView)
             return;
 
+        console.assert(this.currentTimelineView);
+
+        let timeline = this.currentTimelineView.representedObject;
+        if (!(timeline instanceof WebInspector.Timeline))
+            return;
+
         let record = event.data.record;
         let filtered = event.data.filtered;
-        this._timelineOverview.recordWasFiltered(this.currentTimelineView.representedObject, record, filtered);
+        this._timelineOverview.recordWasFiltered(timeline, record, filtered);
     }
 
     _updateProgressView()

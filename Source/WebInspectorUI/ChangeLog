@@ -1,5 +1,19 @@
 2016-05-10  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: TimelineOverview assertion failed: Missing overview graph for timeline type undefined
+        https://bugs.webkit.org/show_bug.cgi?id=157533
+        <rdar://problem/26204033>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._recordWasFiltered):
+        The OverviewTimelineView's represented object is the entire recording,
+        and TimelineOverview.recordWasFiltered expects a timeline. Return early
+        since no graph in the overview needs updating.
+
+2016-05-10  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Call Trees and Memory view blank
         https://bugs.webkit.org/show_bug.cgi?id=157486
         <rdar://problem/26178404>
