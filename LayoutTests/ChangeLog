@@ -1,3 +1,14 @@
+2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Backend should initiate timeline recordings on page navigations to ensure nothing is missed
+        https://bugs.webkit.org/show_bug.cgi?id=157504
+        <rdar://problem/26188642>
+
+        Reviewed by Brian Burg.
+
+        * inspector/timeline/setAutoCaptureInstruments-errors-expected.txt: Added.
+        * inspector/timeline/setAutoCaptureInstruments-errors.html: Added.
+
 2016-05-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/text/unicode-range-download.html as flaky

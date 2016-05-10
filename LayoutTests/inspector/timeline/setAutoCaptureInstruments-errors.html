@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Timeline.setAutoCaptureInstruments.errors");
+
+    ProtocolTest.dumpActivityToSystemConsole = true;
+    ProtocolTest.dumpInspectorProtocolMessages = true;
+
+    suite.addTestCase({
+        name: "MissingRequiredArgument",
+        test: (resolve, reject) => {
+            InspectorProtocol.sendCommand("Timeline.setAutoCaptureInstruments", {}, (messageObject) => {
+                ProtocolTest.expectThat(messageObject.error, `Should be an error: ${messageObject.error ? messageObject.error.message : ""}`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "InvalidTypeInInstrumentsList",
+        test: (resolve, reject) => {
+            InspectorProtocol.sendCommand("Timeline.setAutoCaptureInstruments", {"instruments": [123]}, (messageObject) => {
+                ProtocolTest.expectThat(messageObject.error, `Should be an error: ${messageObject.error ? messageObject.error.message : ""}`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "InvalidInstrumentInInstrumentsList",
+        test: (resolve, reject) => {
+            InspectorProtocol.sendCommand("Timeline.setAutoCaptureInstruments", {"instruments": ["NoSuchInstrument"]}, (messageObject) => {
+                ProtocolTest.expectThat(messageObject.error, `Should be an error: ${messageObject.error ? messageObject.error.message : ""}`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ValidInstrumentInInstrumentsList",
+        test: (resolve, reject) => {
+            InspectorProtocol.sendCommand("Timeline.setAutoCaptureInstruments", {"instruments": ["ScriptProfiler", "Heap", "Timeline", "Memory"]}, (messageObject) => {
+                ProtocolTest.expectThat(!messageObject.error, "Should not be an error setting valid instruments.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for error cases with Timeline.setAutoCaptureInstruments.</p>
+</body>
+</html>

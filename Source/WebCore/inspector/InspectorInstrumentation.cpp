@@ -775,6 +775,8 @@ void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& inst
     if (frame.isMainFrame()) {
         if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
             pageDebuggerAgent->mainFrameStartedLoading();
+        if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.persistentInspectorTimelineAgent())
+            timelineAgent->mainFrameStartedLoading();
     }
 
     if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents.inspectorPageAgent())

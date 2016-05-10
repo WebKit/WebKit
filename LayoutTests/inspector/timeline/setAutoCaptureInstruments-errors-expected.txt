@@ -1,0 +1,16 @@
+Tests for error cases with Timeline.setAutoCaptureInstruments.
+
+
+== Running test suite: Timeline.setAutoCaptureInstruments.errors
+-- Running test case: MissingRequiredArgument
+PASS: Should be an error: Some arguments of method 'Timeline.setAutoCaptureInstruments' can't be processed
+
+-- Running test case: InvalidTypeInInstrumentsList
+PASS: Should be an error: Unexpected type in instruments list, should be string
+
+-- Running test case: InvalidInstrumentInInstrumentsList
+PASS: Should be an error: Unexpected enum value: NoSuchInstrument
+
+-- Running test case: ValidInstrumentInInstrumentsList
+PASS: Should not be an error setting valid instruments.
+
