@@ -297,8 +297,10 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     m_applicationCacheStorage->setDefaultOriginQuota(25ULL * 1024 * 1024);
 #endif
 
+#if ENABLE(VIDEO)
     if (!parameters.mediaCacheDirectory.isEmpty())
         WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
+#endif
 
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
 

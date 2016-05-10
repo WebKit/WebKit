@@ -1,3 +1,16 @@
+2016-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(VIDEO) build
+        https://bugs.webkit.org/show_bug.cgi?id=157518
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::removeData):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2016-05-10  Anders Carlsson  <andersca@apple.com>
 
         Fix more deprecation warnings.

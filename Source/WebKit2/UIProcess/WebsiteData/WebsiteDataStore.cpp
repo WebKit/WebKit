@@ -261,6 +261,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
         StringCapture mediaCacheDirectory { m_mediaCacheDirectory };
         
+#if ENABLE(VIDEO)
         callbackAggregator->addPendingCallback();
         m_queue->dispatch([fetchOptions, mediaCacheDirectory, callbackAggregator] {
             HashSet<RefPtr<WebCore::SecurityOrigin>> origins = WebCore::HTMLMediaElement::originsInMediaCache(mediaCacheDirectory.string());
@@ -277,6 +278,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
                 delete websiteData;
             });
         });
+#endif
     }
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataFetch(dataTypes, !isPersistent());
@@ -557,6 +559,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
         StringCapture mediaCacheDirectory { m_mediaCacheDirectory };
 
+#if ENABLE(VIDEO)
         callbackAggregator->addPendingCallback();
         m_queue->dispatch([modifiedSince, mediaCacheDirectory, callbackAggregator] {
             WebCore::HTMLMediaElement::clearMediaCache(mediaCacheDirectory.string(), modifiedSince);
@@ -565,6 +568,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
                 callbackAggregator->removePendingCallback();
             });
         });
+#endif
     }
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
@@ -803,6 +807,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 origins.add(origin);
         }
         
+#if ENABLE(VIDEO)
         callbackAggregator->addPendingCallback();
         m_queue->dispatch([origins, mediaCacheDirectory, callbackAggregator] {
             WebCore::HTMLMediaElement::clearMediaCacheForOrigins(mediaCacheDirectory.string(), origins);
@@ -811,6 +816,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 callbackAggregator->removePendingCallback();
             });
         });
+#endif
     }
     
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
