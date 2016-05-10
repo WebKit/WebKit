@@ -104,8 +104,13 @@ JSValue JSInjectedScriptHost::evaluateWithScopeExtension(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
 
+    NakedPtr<Exception> exception;
     JSObject* scopeExtension = exec->argument(1).getObject();
-    return JSC::evaluateWithScopeExtension(exec, makeSource(program), scopeExtension);
+    JSValue result = JSC::evaluateWithScopeExtension(exec, makeSource(program), scopeExtension, exception);
+    if (exception)
+        exec->vm().throwException(exec, exception);
+
+    return result;
 }
 
 JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)

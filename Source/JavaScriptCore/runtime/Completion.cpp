@@ -122,7 +122,7 @@ JSValue profiledEvaluate(ExecState* exec, ProfilingReason reason, const SourceCo
     return evaluate(exec, source, thisValue, returnedException);
 }
 
-JSValue evaluateWithScopeExtension(ExecState* exec, const SourceCode& source, JSObject* scopeExtensionObject)
+JSValue evaluateWithScopeExtension(ExecState* exec, const SourceCode& source, JSObject* scopeExtensionObject, NakedPtr<Exception>& returnedException)
 {
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
 
@@ -131,12 +131,7 @@ JSValue evaluateWithScopeExtension(ExecState* exec, const SourceCode& source, JS
         globalObject->setGlobalScopeExtension(JSWithScope::create(exec->vm(), globalObject, scopeExtensionObject, ignoredPreviousScope));
     }
 
-    NakedPtr<Exception> exception;
-    JSValue returnValue = JSC::evaluate(globalObject->globalExec(), source, globalObject, exception);
-
-    // Don't swallow the exception.
-    if (exception)
-        globalObject->vm().restorePreviousException(exception);
+    JSValue returnValue = JSC::evaluate(globalObject->globalExec(), source, globalObject, returnedException);
 
     if (scopeExtensionObject)
         globalObject->clearGlobalScopeExtension();

@@ -1,3 +1,24 @@
+2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Make the different evaluateWithScopeExtension implementations more consistent
+        https://bugs.webkit.org/show_bug.cgi?id=157536
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::evaluateWithScopeExtension):
+        Throw the exception consistent with JSJavaScriptCallFrame.
+
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::evaluateWithScopeExtension):
+        Better error message consistent with InjectedScriptHost.
+
+        * runtime/Completion.h:
+        * runtime/Completion.cpp:
+        (JSC::evaluateWithScopeExtension):
+        Give this an Exception out parameter like other evaluations
+        so the caller can decide what to do with it.
+
 2016-05-10  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] FTL can produce GetByVal nodes without proper bounds checking

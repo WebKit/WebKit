@@ -75,7 +75,11 @@ JSJavaScriptCallFrame::~JSJavaScriptCallFrame()
 
 JSValue JSJavaScriptCallFrame::evaluateWithScopeExtension(ExecState* exec)
 {
-    String script = exec->argument(0).toString(exec)->value(exec);
+    JSValue scriptValue = exec->argument(0);
+    if (!scriptValue.isString())
+        return throwTypeError(exec, "JSJavaScriptCallFrame.evaluateWithScopeExtension first argument must be a string.");
+
+    String script = scriptValue.toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
 

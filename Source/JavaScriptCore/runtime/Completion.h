@@ -55,7 +55,7 @@ inline JSValue profiledEvaluate(ExecState* exec, ProfilingReason reason, const S
     return profiledEvaluate(exec, reason, sourceCode, thisValue, unused);
 }
 
-JS_EXPORT_PRIVATE JSValue evaluateWithScopeExtension(ExecState*, const SourceCode&, JSObject* scopeExtension);
+JS_EXPORT_PRIVATE JSValue evaluateWithScopeExtension(ExecState*, const SourceCode&, JSObject* scopeExtension, NakedPtr<Exception>& returnedException);
 
 // Load the module source and evaluate it.
 JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(ExecState*, const String& moduleName);
