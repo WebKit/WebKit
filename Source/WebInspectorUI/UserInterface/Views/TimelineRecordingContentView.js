@@ -322,8 +322,12 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         if (this.currentTimelineView === this._overviewTimelineView)
             return;
 
-        var recordPathComponent = this.selectionPathComponents.find(function(element) { return element.representedObject instanceof WebInspector.TimelineRecord; });
-        var record = recordPathComponent ? recordPathComponent.representedObject : null;
+        let record = null;
+        if (this.currentTimelineView.selectionPathComponents) {
+            let recordPathComponent = this.currentTimelineView.selectionPathComponents.find((element) => element.representedObject instanceof WebInspector.TimelineRecord);
+            record = recordPathComponent ? recordPathComponent.representedObject : null;
+        }
+
         this._timelineOverview.selectRecord(event.target.representedObject, record);
     }
 

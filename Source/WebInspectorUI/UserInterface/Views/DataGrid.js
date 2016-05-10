@@ -2028,6 +2028,22 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
             this.collapse();
     }
 
+    hasAncestor(ancestor)
+    {
+        if (!ancestor)
+            return false;
+
+        let currentAncestor = this.parent;
+        while (currentAncestor) {
+            if (ancestor === currentAncestor)
+                return true;
+
+            currentAncestor = currentAncestor.parent;
+        }
+
+        return false;
+    }
+
     refresh()
     {
         if (!this._element || !this.dataGrid)

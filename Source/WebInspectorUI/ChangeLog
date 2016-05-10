@@ -1,3 +1,28 @@
+2016-05-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Can't select record bar in Frames timeline
+        https://bugs.webkit.org/show_bug.cgi?id=156963
+        <rdar://problem/25898256>
+
+        Reviewed by Timothy Hatcher.
+
+        Sync record selection between the Rendering Frames grid and overview graph.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGridNode.prototype.hasAncestor):
+        Add helper function needed by TimelineView.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype._mouseClicked):
+        Don't deselect the selected record when clicked. Initially this seemed
+        like a good idea but it complicates the UI for no added value.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._contentViewSelectionPathComponentDidChange):
+        Get path components from the current TimelineView instead of the
+        TimelineRecordingContentView, now that the selected record appears
+        in the bottom ContentBrowser's navigation bar.
+
 2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Backend should initiate timeline recordings on page navigations to ensure nothing is missed
