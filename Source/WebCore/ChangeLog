@@ -1,3 +1,85 @@
+2016-05-05  Jer Noble  <jer.noble@apple.com>
+
+        Return a Promise from HTMLMediaElement.play()
+        https://bugs.webkit.org/show_bug.cgi?id=157400
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/media-play-promise-reject-error-notsupported.html
+               media/media-play-promise-reject-load-abort.html
+               media/media-play-promise-reject-pause-abort.html
+               media/media-play-promise-reject-play-notallowed.html
+               media/media-play-promise-reject-play-notsupported.html
+               media/media-play-promise-resolve-when-playing.html
+               media/media-play-promise-resolve.html
+
+        The HTML Living Standard Spec <https://html.spec.whatwg.org/multipage/embedded-content.html>
+        (5 May 2016) adds support for a Promise to be returned by the play() method, to be resolved
+        or rejected at defined points during loading and playback.
+
+        Add utility methods which encapsulate the definitions of the equivalent algorithms from the
+        HTML Spec.  Add a new, overloaded play() method on HTMLMediaElement which takes a DeferredWrapper
+        reference.
+
+        After the change to use scheduleNotifyAboutPlaying() instead of enqueueing the "playing" event
+        directly, we must ensure that the notifyAboutPlaying() task does not get fired before the
+        "play" event preceeding it does. So re-implement GenericEventQueue (which previously used
+        a timer to dispatch events) to use a GenericTaskQueue instead. This ensures that all tasks and
+        events are interleaved in the order in which they were enqueued.
+
+        Additionally, the new pauseAfterDetachedTimerFired() event was firing out of microtask order, which
+        broke some W3C tests after the changes to GenericEventQueue. Move GenericEventQueue and
+        GenericTaskQueue to the same timing source (namely, a WebCore Timer) and interleave Events
+        and Tasks by having GenericEventQueue use GenericTaskQueue to issue its Events. Because
+        Document::postTask() cannot ensure ordering with Timer-based events, switch HTMLMediaElement
+        over to Timer-backed GenericTaskQueues.
+
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueue::GenericEventQueue):
+        (WebCore::GenericEventQueue::enqueueEvent):
+        (WebCore::GenericEventQueue::close):
+        (WebCore::GenericEventQueue::cancelAllEvents):
+        (WebCore::GenericEventQueue::suspend):
+        (WebCore::GenericEventQueue::resume):
+        (WebCore::GenericEventQueue::sharedTimer): Deleted.
+        (WebCore::GenericEventQueue::sharedTimerFired): Deleted.
+        (WebCore::GenericEventQueue::pendingQueues): Deleted.
+        * dom/GenericEventQueue.h:
+        * platform/GenericTaskQueue.cpp: Added.
+        (WebCore::TaskDispatcher<Timer>::~TaskDispatcher):
+        (WebCore::TaskDispatcher<Timer>::postTask):
+        (WebCore::TaskDispatcher<Timer>::sharedTimer):
+        (WebCore::TaskDispatcher<Timer>::sharedTimerFired):
+        (WebCore::TaskDispatcher<Timer>::pendingDispatchers):
+        (WebCore::TaskDispatcher<Timer>::dispatchOneTask):
+        * platform/GenericTaskQueue.h:
+        (WebCore::TaskDispatcher<Timer>::TaskDispatcher): Deleted.
+        (WebCore::TaskDispatcher<Timer>::postTask): Deleted.
+        (WebCore::TaskDispatcher<Timer>::timerFired): Deleted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::scheduleResolvePendingPlayPromises):
+        (WebCore::HTMLMediaElement::rejectPendingPlayPromises):
+        (WebCore::HTMLMediaElement::resolvePendingPlayPromises):
+        (WebCore::HTMLMediaElement::scheduleNotifyAboutPlaying):
+        (WebCore::HTMLMediaElement::notifyAboutPlaying):
+        (WebCore::HTMLMediaElement::noneSupported):
+        (WebCore::HTMLMediaElement::cancelPendingEventsAndCallbacks):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::contextDestroyed):
+        (WebCore::HTMLMediaElement::stop):
+        (WebCore::HTMLMediaElement::pauseAfterDetachedTask): Renamed from pauseAfterDetachedTimerFired.
+        (WebCore::HTMLMediaElement::removedFrom):
+        (WebCore::HTMLMediaElement::contextDestroyed):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-05-10  Chris Dumez  <cdumez@apple.com>
 
         Get rid of a lot of calls to RefPtr::release()
