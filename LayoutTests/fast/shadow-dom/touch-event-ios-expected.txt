@@ -13,13 +13,13 @@ touchstart at document with
     changedTouches: [0: left-host]
 
 touchstart at right-lower-shadow with
-    target: slot
+    target: right-target
     touches: [0: left-host, 1: right-target]
     targetTouches: [0: right-target]
     changedTouches: [0: right-target]
 
 touchstart at right-upper-shadow with
-    target: slot
+    target: right-target
     touches: [0: left-host, 1: right-target]
     targetTouches: [0: right-target]
     changedTouches: [0: right-target]
@@ -48,6 +48,24 @@ touchstart at document with
     targetTouches: [0: bottom-target]
     changedTouches: [0: bottom-target]
 
+touchmove at right-lower-shadow with
+    target: right-target
+    touches: [0: left-host, 1: right-target, 2: bottom-target]
+    targetTouches: [0: right-target]
+    changedTouches: [0: right-target]
+
+touchmove at right-upper-shadow with
+    target: right-target
+    touches: [0: left-host, 1: right-target, 2: bottom-target]
+    targetTouches: [0: right-target]
+    changedTouches: [0: right-target]
+
+touchmove at document with
+    target: right-target
+    touches: [0: left-host, 1: right-target, 2: bottom-target]
+    targetTouches: [0: right-target]
+    changedTouches: [0: right-target]
+
 touchmove at left-shadow with
     target: left-shadow-target
     touches: [0: left-shadow-target, 1: right-target, 2: bottom-target]
@@ -60,22 +78,22 @@ touchmove at document with
     targetTouches: [0: left-host]
     changedTouches: [0: left-host]
 
-touchmove at right-lower-shadow with
-    target: slot
-    touches: [0: left-host, 1: right-target, 2: bottom-target]
-    targetTouches: [0: right-target]
-    changedTouches: [0: right-target]
-
-touchmove at right-upper-shadow with
-    target: slot
-    touches: [0: left-host, 1: right-target, 2: bottom-target]
-    targetTouches: [0: right-target]
-    changedTouches: [0: right-target]
-
-touchmove at document with
+touchend at right-lower-shadow with
     target: right-target
-    touches: [0: left-host, 1: right-target, 2: bottom-target]
-    targetTouches: [0: right-target]
+    touches: []
+    targetTouches: []
+    changedTouches: [0: right-target]
+
+touchend at right-upper-shadow with
+    target: right-target
+    touches: []
+    targetTouches: []
+    changedTouches: [0: right-target]
+
+touchend at document with
+    target: right-target
+    touches: []
+    targetTouches: []
     changedTouches: [0: right-target]
 
 touchend at document with
@@ -95,23 +113,5 @@ touchend at document with
     touches: []
     targetTouches: []
     changedTouches: [0: left-host]
-
-touchend at right-lower-shadow with
-    target: slot
-    touches: []
-    targetTouches: []
-    changedTouches: [0: right-target]
-
-touchend at right-upper-shadow with
-    target: slot
-    touches: []
-    targetTouches: []
-    changedTouches: [0: right-target]
-
-touchend at document with
-    target: right-target
-    touches: []
-    targetTouches: []
-    changedTouches: [0: right-target]
 
 

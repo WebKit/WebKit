@@ -1,3 +1,9 @@
+2016-05-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS rebaseline after r200464.
+
+        * fast/shadow-dom/touch-event-ios-expected.txt:
+
 2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Backend should initiate timeline recordings on page navigations to ensure nothing is missed
