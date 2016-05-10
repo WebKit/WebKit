@@ -1,3 +1,33 @@
+2016-05-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Implement auto-repeat computation
+        https://bugs.webkit.org/show_bug.cgi?id=157473
+
+        Reviewed by Darin Adler.
+
+        Apart from some home made tests I'm importing 5 patches from Mozilla's test suite as they
+        perfectly test the behavior of auto-repeat with positioned items. I've commented auto-fit
+        tests as that feature isn't implemented yet.
+
+        * fast/css-grid-layout/grid-auto-fill-columns-expected.txt: Added.
+        * fast/css-grid-layout/grid-auto-fill-columns.html: Added.
+        * fast/css-grid-layout/grid-auto-fill-rows-expected.txt: Added.
+        * fast/css-grid-layout/grid-auto-fill-rows.html: Added.
+        * fast/css-grid-layout/grid-change-auto-repeat-tracks-expected.txt: Added.
+        * fast/css-grid-layout/grid-change-auto-repeat-tracks.html: Added.
+        * fast/css-grid-layout/grid-element-auto-repeat-get-set-expected.txt:
+        * fast/css-grid-layout/grid-element-auto-repeat-get-set.html:
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-001-expected.html: Added.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-001.html: Added.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-002-expected.html: Added.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-002.html: Added.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-003-expected.html: Added.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-003.html: Added.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-004-expected.html: Added.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-004.html: Added.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-005-expected.html: Added.
+        * fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-005.html: Added.
+
 2016-05-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CRASH under JSC::DebuggerCallFrame::thisValue when hitting breakpoint

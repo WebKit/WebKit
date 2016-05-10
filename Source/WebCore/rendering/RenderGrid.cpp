@@ -417,7 +417,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     clearNeedsLayout();
 }
 
-LayoutUnit RenderGrid::guttersSize(GridTrackSizingDirection direction, size_t span) const
+LayoutUnit RenderGrid::guttersSize(GridTrackSizingDirection direction, unsigned span) const
 {
     ASSERT(span >= 1);
 
@@ -700,14 +700,40 @@ bool RenderGrid::hasDefiniteLogicalSize(GridTrackSizingDirection direction) cons
     return (direction == ForRows) ? hasDefiniteLogicalHeight() : hasDefiniteLogicalWidth();
 }
 
-GridTrackSize RenderGrid::gridTrackSize(GridTrackSizingDirection direction, unsigned i) const
+const GridTrackSize& RenderGrid::rawGridTrackSize(GridTrackSizingDirection direction, unsigned translatedIndex) const
 {
-    bool isForColumns = (direction == ForColumns);
-    auto& trackStyles =  isForColumns ? style().gridColumns() : style().gridRows();
+    bool isRowAxis = direction == ForColumns;
+    auto& trackStyles = isRowAxis ? style().gridColumns() : style().gridRows();
+    auto& autoRepeatTrackStyles = isRowAxis ? style().gridAutoRepeatColumns() : style().gridAutoRepeatRows();
+    auto& autoTrackSize = isRowAxis ? style().gridAutoColumns() : style().gridAutoRows();
+    unsigned insertionPoint = isRowAxis ? style().gridAutoRepeatColumnsInsertionPoint() : style().gridAutoRepeatRowsInsertionPoint();
+    unsigned repetitions = autoRepeatCountForDirection(direction);
 
-    auto& autoTrackSize = isForColumns ? style().gridAutoColumns() : style().gridAutoRows();
-    int translatedIndex = i + (isForColumns ? m_smallestColumnStart : m_smallestRowStart);
-    auto& trackSize = (translatedIndex < 0 || translatedIndex >= static_cast<int>(trackStyles.size())) ? autoTrackSize : trackStyles[translatedIndex];
+    // We should not use GridPositionsResolver::explicitGridXXXCount() for this because the
+    // explicit grid might be larger than the number of tracks in grid-template-rows|columns (if
+    // grid-template-areas is specified for example).
+    unsigned explicitTracksCount = trackStyles.size() + repetitions;
+
+    int untranslatedIndexAsInt = translatedIndex + (isRowAxis ? m_smallestColumnStart : m_smallestRowStart);
+    if (untranslatedIndexAsInt < 0)
+        return autoTrackSize;
+
+    unsigned untranslatedIndex = static_cast<unsigned>(untranslatedIndexAsInt);
+    if (untranslatedIndex >= explicitTracksCount)
+        return autoTrackSize;
+
+    if (!repetitions || untranslatedIndex < insertionPoint)
+        return trackStyles[untranslatedIndex];
+
+    if (untranslatedIndex < (insertionPoint + repetitions))
+        return autoRepeatTrackStyles[0];
+
+    return trackStyles[untranslatedIndex - repetitions];
+}
+
+GridTrackSize RenderGrid::gridTrackSize(GridTrackSizingDirection direction, unsigned translatedIndex) const
+{
+    auto& trackSize = rawGridTrackSize(direction, translatedIndex);
 
     GridLength minTrackBreadth = trackSize.minTrackBreadth();
     GridLength maxTrackBreadth = trackSize.maxTrackBreadth();
@@ -1185,10 +1211,80 @@ void RenderGrid::insertItemIntoGrid(RenderBox& child, const GridArea& area)
     }
 }
 
-unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection) const
+unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direction) const
 {
-    // FIXME: implement the algorithm to compute the number of auto repeat tracks.
-    return 0;
+    bool isRowAxis = direction == ForColumns;
+    const auto& autoRepeatTracks = isRowAxis ? style().gridAutoRepeatColumns() : style().gridAutoRepeatRows();
+
+    if (!autoRepeatTracks.size())
+        return 0;
+
+    ASSERT(autoRepeatTracks.size() == 1);
+    auto autoTrackSize = autoRepeatTracks.at(0);
+    ASSERT(autoTrackSize.minTrackBreadth().isLength());
+    ASSERT(!autoTrackSize.minTrackBreadth().isContentSized());
+
+    Optional<LayoutUnit> availableSize = isRowAxis ? availableLogicalWidth() : computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), Nullopt);
+    if (!isRowAxis || containingBlock()) {
+        if (!availableSize) {
+            const Length& maxLength = isRowAxis ? style().logicalMaxWidth() : style().logicalMaxHeight();
+            if (!maxLength.isUndefined()) {
+                availableSize = isRowAxis
+                    ? computeLogicalWidthInRegionUsing(MaxSize, maxLength, containingBlockLogicalWidthForContent(), *containingBlock(), nullptr)
+                    : computeContentLogicalHeight(MaxSize, maxLength, Nullopt);
+            }
+        } else {
+            availableSize = isRowAxis
+                ? constrainLogicalWidthInRegionByMinMax(availableSize.value(), availableLogicalWidth(), *containingBlock())
+                : constrainLogicalHeightByMinMax(availableSize.value(), Nullopt);
+        }
+    }
+
+    bool needsToFulfillMinimumSize = false;
+    if (!availableSize) {
+        const Length& minSize = isRowAxis ? style().logicalMinWidth() : style().logicalMinHeight();
+        if (!minSize.isSpecified())
+            return 1;
+
+        LayoutUnit containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
+        availableSize = valueForLength(minSize, containingBlockAvailableSize);
+        needsToFulfillMinimumSize = true;
+    }
+
+    bool hasDefiniteMaxTrackSizingFunction = autoTrackSize.maxTrackBreadth().isLength() && !autoTrackSize.maxTrackBreadth().isContentSized();
+    const Length trackLength = hasDefiniteMaxTrackSizingFunction ? autoTrackSize.maxTrackBreadth().length() : autoTrackSize.minTrackBreadth().length();
+    // For the purpose of finding the number of auto-repeated tracks, the UA must floor the track size to a UA-specified
+    // value to avoid division by zero. It is suggested that this floor be 1px.
+    LayoutUnit autoRepeatTrackSize = std::max<LayoutUnit>(LayoutUnit(1), valueForLength(trackLength, availableSize.value()));
+
+    // There will be always at least 1 auto-repeat track, so take it already into account when computing the total track size.
+    LayoutUnit tracksSize = autoRepeatTrackSize;
+    auto& trackSizes = isRowAxis ? style().gridColumns() : style().gridRows();
+
+    for (const auto& track : trackSizes) {
+        bool hasDefiniteMaxTrackBreadth = track.maxTrackBreadth().isLength() && !track.maxTrackBreadth().isContentSized();
+        ASSERT(hasDefiniteMaxTrackBreadth || (track.minTrackBreadth().isLength() && !track.minTrackBreadth().isContentSized()));
+        tracksSize += valueForLength(hasDefiniteMaxTrackBreadth ? track.maxTrackBreadth().length() : track.minTrackBreadth().length(), availableSize.value());
+    }
+
+    // Add gutters as if there where only 1 auto repeat track. Gaps between auto repeat tracks will be added later when
+    // computing the repetitions.
+    LayoutUnit gapSize = guttersSize(direction, 2);
+    tracksSize += gapSize * trackSizes.size();
+
+    LayoutUnit freeSpace = availableSize.value() - tracksSize;
+    if (freeSpace <= 0)
+        return 1;
+
+    unsigned repetitions = 1 + (freeSpace / (autoRepeatTrackSize + gapSize)).toInt();
+
+    // Provided the grid container does not have a definite size or max-size in the relevant axis,
+    // if the min size is definite then the number of repetitions is the largest possible positive
+    // integer that fulfills that minimum requirement.
+    if (needsToFulfillMinimumSize)
+        ++repetitions;
+
+    return repetitions;
 }
 
 void RenderGrid::placeItemsOnGrid()

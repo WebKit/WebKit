@@ -1,0 +1,25 @@
+This test checks that grid-template-{rows|columns} with auto-repeat tracks recomputes the positions of automatically placed grid items.
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

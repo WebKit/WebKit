@@ -6009,9 +6009,13 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list, bool& isAutoRep
     // grid size.
     repetitions = std::min(repetitions, kGridMaxTracks / numberOfTracks);
 
-    for (size_t i = 0; i < repetitions; ++i) {
-        for (size_t j = 0; j < repeatedValues->length(); ++j)
-            list.append(*repeatedValues->itemWithoutBoundsCheck(j));
+    if (isAutoRepeat)
+        list.append(*repeatedValues);
+    else {
+        for (unsigned i = 0; i < repetitions; ++i) {
+            for (unsigned j = 0; j < repeatedValues->length(); ++j)
+                list.append(*repeatedValues->itemWithoutBoundsCheck(j));
+        }
     }
 
     m_valueList->next();

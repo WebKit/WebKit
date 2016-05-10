@@ -1657,7 +1657,8 @@ inline void StyleBuilderCustom::applyInheritGridTemplateColumns(StyleResolver& s
     style->setGridAutoRepeat##TrackType##sInsertionPoint(tracksData.m_autoRepeatInsertionPoint); \
     style->setAutoRepeatNamedGrid##TrackType##Lines(tracksData.m_autoRepeatNamedGridLines); \
     style->setAutoRepeatOrderedNamedGrid##TrackType##Lines(tracksData.m_autoRepeatOrderedNamedGridLines); \
-    style->setGridAutoRepeat##TrackType##sType(tracksData.m_autoRepeatType);
+    style->setGridAutoRepeat##TrackType##sType(tracksData.m_autoRepeatType); \
+    style->setGridAutoRepeat##TrackType##sInsertionPoint(tracksData.m_autoRepeatInsertionPoint);
 
 inline void StyleBuilderCustom::applyValueGridTemplateColumns(StyleResolver& styleResolver, CSSValue& value)
 {

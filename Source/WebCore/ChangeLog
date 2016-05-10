@@ -1,3 +1,44 @@
+2016-05-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Implement auto-repeat computation
+        https://bugs.webkit.org/show_bug.cgi?id=157473
+
+        Reviewed by Darin Adler.
+
+        We added support for parsing and style for the new auto-repeat syntax. This patch actually
+        implements the feature by computing the number of auto-repeat tracks that will be part of
+        the explicit grid depending on the available size on the corresponding axis.
+
+        Note that we still do not drop the empty tracks, i.e., auto-fit will work exactly as
+        auto-fill until the empty track removal is implemented.
+
+        Some test results are not totally correct yet because we need to add the line names to the
+        computed style. As that requires a rather large piece of code it will be done in a follow up
+        patch. Track sizes are correct though.
+
+        Tests: fast/css-grid-layout/grid-auto-fill-columns.html
+               fast/css-grid-layout/grid-auto-fill-rows.html
+               fast/css-grid-layout/grid-change-auto-repeat-tracks.html
+               fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-001.html
+               fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-002.html
+               fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-003.html
+               fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-004.html
+               fast/css-grid-layout/mozilla/grid-repeat-auto-fill-fit-005.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTrackRepeatFunction): Add the CSSAutoRepeatValue directly
+        instead of adding the track size.
+        * css/StyleBuilderCustom.h: Store the insertion point in style.
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::guttersSize): Replaced size_t by unsigned.
+        (WebCore::RenderGrid::rawGridTrackSize): New function which retrieves the track size from
+        either explicit (including auto-repeat tracks) or implicit tracks.
+        (WebCore::RenderGrid::gridTrackSize): Use rawGridTrackSize().
+        (WebCore::RenderGrid::computeAutoRepeatTracksCount): This is the core of the patch. This
+        method computes the number of auto-repeat tracks that fits on the available size for a given
+        axis (or 1 if that's indefinite).
+        * rendering/RenderGrid.h:
+
 2016-05-09  Alex Christensen  <achristensen@webkit.org>
 
         Fix GTK build after r200607

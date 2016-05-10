@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<link href="resources/grid.css" rel="stylesheet">
 <script src="../../resources/js-test.js"></script>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
+<style>
+body { font-size: 10px; }
+</style>
 
-<body>
+<body style="width: 800px; height: 600px;">
 </body>
 <script>
     description('Test that setting/getting grid-template-{columns|rows} with repeat(auto-fill|auto-fit,) works as expected');
 
     debug("Test auto-repeat syntax.");
-    testGridTemplatesSetJSValues("repeat(auto-fill, [foo bar] 10px)", "repeat(auto-fill, 2em [foo bar])", "[foo bar] 10px", "20px [foo bar]", "[foo bar] 10px", "2em [foo bar]");
-    testGridTemplatesSetJSValues("repeat(auto-fill, [foo bar] minmax(10px, 1fr))", "repeat(auto-fill, [foo] minmax(2em, -webkit-max-content) [bar])", "[foo bar] 800px", "[foo] 20px [bar]", "[foo bar] minmax(10px, 1fr)", "[foo] minmax(2em, -webkit-max-content) [bar]");
-    testGridTemplatesSetJSValues("repeat(auto-fill, minmax(10px, 100px)) repeat(2, 20px)", "repeat(1, 70px) repeat(auto-fill, minmax(2em, -webkit-max-content) [bar]) repeat(2, [foo] 1em)", "100px 20px 20px", "70px 20px [bar foo] 10px [foo] 10px", "minmax(10px, 100px) 20px 20px", "70px minmax(2em, -webkit-max-content) [bar] [foo] 1em [foo] 1em");
-    testGridTemplatesSetJSValues("repeat(auto-fit, [foo bar] 10px)", "repeat(auto-fit, 2em [foo bar])", "[foo bar] 10px", "20px [foo bar]", "[foo bar] 10px", "2em [foo bar]");
-    testGridTemplatesSetJSValues("repeat(auto-fit, [foo bar] minmax(10px, 1fr))", "repeat(auto-fit, [foo] minmax(2em, -webkit-max-content) [bar])", "[foo bar] 800px", "[foo] 20px [bar]", "[foo bar] minmax(10px, 1fr)", "[foo] minmax(2em, -webkit-max-content) [bar]");
-    testGridTemplatesSetJSValues("repeat(auto-fit, minmax(10px, -webkit-min-content)) repeat(2, 20px)", "repeat(1, 10%) repeat(auto-fit, minmax(2em, -webkit-max-content) [bar]) repeat(2, [foo] 1em)", "10px 20px 20px", "60px 20px [bar foo] 10px [foo] 10px", "minmax(10px, -webkit-min-content) 20px 20px", "10% minmax(2em, -webkit-max-content) [bar] [foo] 1em [foo] 1em");
+    testGridTemplatesSetJSValues("repeat(auto-fill, [foo bar] 200px)", "repeat(auto-fill, 20em [foo bar])", "[foo bar] 200px [foo bar] 200px [foo bar] 200px [foo bar] 200px", "200px [foo bar] 200px [foo bar] 200px [foo bar]");
+    testGridTemplatesSetJSValues("repeat(auto-fill, [foo bar] minmax(300px, 1fr))", "repeat(auto-fill, [foo] minmax(175px, -webkit-max-content) [bar])", "[foo bar] 400px [foo bar] 400px", "[foo] 175px [bar foo] 175px [bar foo] 175px [bar]");
+    testGridTemplatesSetJSValues("repeat(auto-fill, minmax(50px, 100px)) repeat(2, 250px)", "repeat(1, 450px) repeat(auto-fill, minmax(5em, -webkit-max-content) [bar]) repeat(2, [foo] 1em)", "100px 100px 100px 250px 250px", "450px 50px [bar] 50px [bar foo] 10px [foo] 10px", "repeat(auto-fill, minmax(50px, 100px)) 250px 250px", "450px repeat(auto-fill, minmax(5em, -webkit-max-content) [bar]) [foo] 1em [foo] 1em");
+    testGridTemplatesSetJSValues("[start] 10% repeat(auto-fill, [foo bar] 200px) [end]", "75px [prev] repeat(auto-fill, 20em [foo bar]) [next] 15em [last end]", "[start] 80px [foo bar] 200px [foo bar] 200px [foo bar] 200px [end]", "75px [prev] 200px [foo bar next] 150px [last end]");
+    testGridTemplatesSetJSValues("repeat(auto-fit, [foo bar] 150px)", "repeat(auto-fit, 24em [foo bar])", "none", "none");
+    testGridTemplatesSetJSValues("repeat(auto-fit, [foo bar] minmax(270px, 1fr))", "repeat(auto-fit, [foo] minmax(20em, -webkit-max-content) [bar])", "none", "none");
+    testGridTemplatesSetJSValues("repeat(auto-fit, minmax(300px, -webkit-min-content)) repeat(2, 20px)", "repeat(1, 10%) repeat(auto-fit, minmax(30em, -webkit-max-content) [bar]) repeat(2, [foo] 1em)", "20px 20px", "60px [foo] 10px [foo] 10px", "repeat(auto-fit, minmax(300px, -webkit-min-content)) 20px 20px", "10% repeat(auto-fit, minmax(30em, -webkit-max-content) [bar]) [foo] 1em [foo] 1em");
 
     debug("");
     debug("Test invalid repeat syntax.");
