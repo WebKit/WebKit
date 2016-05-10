@@ -1,5 +1,6 @@
 PASS hitElement.id is "under-target"
 PASS scroller.scrollTop is 0
+body scroll
 swipe complete
 PASS scroller.scrollTop is 0
 PASS document.scrollingElement.scrollTop is 90

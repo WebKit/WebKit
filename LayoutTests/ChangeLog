@@ -1,5 +1,11 @@
 2016-05-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Land correct result for a recently added test.
+
+        * fast/scrolling/ios/touch-scroll-visibility-hidden-expected.txt:
+
+2016-05-09  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS] visibility:hidden -webkit-overflow-scrolling: touch divs can interfere with page scrolling
         https://bugs.webkit.org/show_bug.cgi?id=157496
         rdar://problem/22963278
