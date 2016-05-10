@@ -1,5 +1,18 @@
 2016-05-10  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Debugger sidebar should refresh when Debug UI enabled/disabled
+        https://bugs.webkit.org/show_bug.cgi?id=157540
+        <rdar://problem/26207064>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._scriptRemoved.removeScript):
+        (WebInspector.DebuggerSidebarPanel.prototype._scriptRemoved):
+        Remove element from both tree outlines, if it exists.
+
+2016-05-10  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: TimelineOverview assertion failed: Missing overview graph for timeline type undefined
         https://bugs.webkit.org/show_bug.cgi?id=157533
         <rdar://problem/26204033>
