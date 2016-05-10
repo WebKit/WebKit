@@ -21,7 +21,6 @@
       <dep package="gst-plugins-good"/>
       <dep package="gst-plugins-bad"/>
       <dep package="gst-libav"/>
-      <dep package="libseccomp"/>
       <dep package="atk"/>
       <dep package="openwebrtc"/>
     </dependencies>
@@ -265,13 +264,6 @@
             md5sum="cfe9a06913d4fd4067e9e47f6e05fac2">
       <patch file="gst-libav.patch" strip="1"/>
     </branch>
-  </autotools>
-
-  <autotools id="libseccomp" autogen-sh="configure">
-      <branch module="seccomp/libseccomp/releases/download/v2.2.3/libseccomp-2.2.3.tar.gz" version="2.2.3"
-          repo="github.com"
-          hash="sha256:d9b400b703cab7bb04b84b9b6e52076a630b673819d7541757bcc16467b6d49e">
-      </branch>
   </autotools>
 
   <autotools id="atk"

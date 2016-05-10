@@ -1,3 +1,17 @@
+2016-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Linux] Remove seccomp filters support
+        https://bugs.webkit.org/show_bug.cgi?id=157380
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WebKit2/SeccompFilters.cpp: Removed.
+        * efl/jhbuild.modules:
+        * gtk/jhbuild.modules:
+
 2016-05-09  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] visibility:hidden -webkit-overflow-scrolling: touch divs can interfere with page scrolling

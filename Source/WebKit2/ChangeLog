@@ -1,3 +1,48 @@
+2016-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Linux] Remove seccomp filters support
+        https://bugs.webkit.org/show_bug.cgi?id=157380
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode): Deleted.
+        (WebKit::NetworkProcessCreationParameters::decode): Deleted.
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Deleted.
+        (WebKit::WebProcessCreationParameters::decode): Deleted.
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/linux/SeccompFilters/OpenSyscall.cpp: Removed.
+        * Shared/linux/SeccompFilters/OpenSyscall.h: Removed.
+        * Shared/linux/SeccompFilters/SeccompBroker.cpp: Removed.
+        * Shared/linux/SeccompFilters/SeccompBroker.h: Removed.
+        * Shared/linux/SeccompFilters/SeccompFilters.cpp: Removed.
+        * Shared/linux/SeccompFilters/SeccompFilters.h: Removed.
+        * Shared/linux/SeccompFilters/SigactionSyscall.cpp: Removed.
+        * Shared/linux/SeccompFilters/SigactionSyscall.h: Removed.
+        * Shared/linux/SeccompFilters/SigprocmaskSyscall.cpp: Removed.
+        * Shared/linux/SeccompFilters/SigprocmaskSyscall.h: Removed.
+        * Shared/linux/SeccompFilters/Syscall.cpp: Removed.
+        * Shared/linux/SeccompFilters/Syscall.h: Removed.
+        * Shared/linux/SeccompFilters/SyscallPolicy.cpp: Removed.
+        * Shared/linux/SeccompFilters/SyscallPolicy.h: Removed.
+        * Shared/linux/SeccompFilters/XDGBaseDirectory.h: Removed.
+        * Shared/linux/SeccompFilters/XDGBaseDirectoryGLib.cpp: Removed.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess): Deleted.
+        (WebKit::WebProcessPool::createNewWebProcess): Deleted.
+        (WebKit::WebProcessPool::cookieStorageDirectory): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/efl/SeccompFiltersWebProcessEfl.cpp: Removed.
+        * WebProcess/efl/SeccompFiltersWebProcessEfl.h: Removed.
+        * WebProcess/gtk/SeccompFiltersWebProcessGtk.cpp: Removed.
+        * WebProcess/gtk/SeccompFiltersWebProcessGtk.h: Removed.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Deleted.
+
 2016-05-09  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r191922): Zoom in/Zoom Out is not working for PDFs

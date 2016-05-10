@@ -132,12 +132,6 @@ set(test_webkit2_api_fail_BINARIES
     WillLoad
 )
 
-if (ENABLE_SECCOMP_FILTERS)
-    list(APPEND test_webkit2_api_fail_BINARIES
-        SeccompFilters
-    )
-endif ()
-
 # Tests disabled because of missing features on the test harness:
 #
 #   SpacebarScrolling

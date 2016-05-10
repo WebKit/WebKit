@@ -62,9 +62,6 @@ struct NetworkProcessCreationParameters {
     bool shouldEnableNetworkCacheSpeculativeRevalidation;
 #endif
 #endif
-#if ENABLE(SECCOMP_FILTERS)
-    String cookieStorageDirectory;
-#endif
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif

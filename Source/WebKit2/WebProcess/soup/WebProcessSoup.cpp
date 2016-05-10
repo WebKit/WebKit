@@ -27,12 +27,6 @@
 #include "config.h"
 #include "WebProcess.h"
 
-#if PLATFORM(EFL)
-#include "SeccompFiltersWebProcessEfl.h"
-#elif PLATFORM(GTK)
-#include "SeccompFiltersWebProcessGtk.h"
-#endif
-
 #include "CertificateInfo.h"
 #include "WebCookieManager.h"
 #include "WebProcessCreationParameters.h"
@@ -84,16 +78,6 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& parameters)
 {
-#if ENABLE(SECCOMP_FILTERS)
-    {
-#if PLATFORM(EFL)
-        SeccompFiltersWebProcessEfl seccompFilters(parameters);
-#elif PLATFORM(GTK)
-        SeccompFiltersWebProcessGtk seccompFilters(parameters);
-#endif
-        seccompFilters.initialize();
-    }
-#endif
 }
 
 void WebProcess::platformTerminate()

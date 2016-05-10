@@ -401,7 +401,7 @@ private:
 
     String platformDefaultIconDatabasePath() const;
 
-#if PLATFORM(IOS) || ENABLE(SECCOMP_FILTERS)
+#if PLATFORM(IOS)
     String cookieStorageDirectory() const;
 #endif
 

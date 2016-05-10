@@ -33,7 +33,6 @@
       <if condition-set="linux">
           <dep package="xserver"/>
           <dep package="mesa"/>
-          <dep package="libseccomp"/>
           <dep package="at-spi2-core"/>
           <dep package="at-spi2-atk"/>
       </if>
@@ -134,10 +133,6 @@
              repo="sourceware.org-mirror"
              hash="sha256:97feeeadca5e21870fa4433bc953d1b3af3f698d5df8a428f68b73cd60aef6eb"
              md5sum="f5898b29bbfd70502831a212d9249d10"/>
-  </autotools>
-
-  <autotools id="libseccomp" supports-non-srcdir-builds="no" autogen-sh="./autogen.sh; ./configure">
-    <branch repo="github.com" module="seccomp/libseccomp.git" tag="v2.2.3"/>
   </autotools>
 
   <autotools id="gdk-pixbuf" autogen-sh="configure"

@@ -53,9 +53,6 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder << shouldEnableNetworkCacheSpeculativeRevalidation;
 #endif
 #endif
-#if ENABLE(SECCOMP_FILTERS)
-    encoder << cookieStorageDirectory;
-#endif
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     encoder << uiProcessCookieStorageIdentifier;
 #endif
@@ -110,10 +107,6 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
     if (!decoder.decode(result.shouldEnableNetworkCacheSpeculativeRevalidation))
         return false;
 #endif
-#endif
-#if ENABLE(SECCOMP_FILTERS)
-    if (!decoder.decode(result.cookieStorageDirectory))
-        return false;
 #endif
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     if (!decoder.decode(result.uiProcessCookieStorageIdentifier))
