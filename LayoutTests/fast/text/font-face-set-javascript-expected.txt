@@ -3,8 +3,11 @@ PASS new FontFaceSet([]).size is 0
 PASS new FontFaceSet([fontFace1]).size is 1
 PASS fontFaceSet.status is "loaded"
 PASS item.done is false
-PASS item.value is [fontFace1, fontFace1]
+PASS item.value.length is 2
+FAIL item.value[0] should be 0 (of type number). Was [object FontFace] (of type object).
+PASS item.value[1] is fontFace1
 PASS item.done is true
+PASS item.value is undefined
 PASS item.done is false
 PASS item.value is fontFace1
 PASS item.done is true

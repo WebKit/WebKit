@@ -61,7 +61,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(FontFaceSet&);
-        Optional<WTF::KeyValuePair<RefPtr<FontFace>, RefPtr<FontFace>>> next();
+        RefPtr<FontFace> next();
 
     private:
         Ref<FontFaceSet> m_target;

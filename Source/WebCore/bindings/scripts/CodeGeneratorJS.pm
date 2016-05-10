@@ -4208,10 +4208,6 @@ sub GenerateImplementationIterableFunctions
 {
     my $interface = shift;
 
-    if (not $interface->iterable->isKeyValue) {
-        die "No support yet for set iterators";
-    }
-
     my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
@@ -4238,10 +4234,11 @@ END
             my $iterationKind = "KeyValue";
             $iterationKind = "Key" if $propertyName eq "keys";
             $iterationKind = "Value" if $propertyName eq "values";
+            $iterationKind = "Value" if $propertyName eq "[Symbol.Iterator]" and not $interface->iterable->isKeyValue;
             push(@implContent,  <<END);
 JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState* state)
 {
-    return createKeyValueIterator<${className}>(*state, IterationKind::${iterationKind}, "${propertyName}");
+    return iteratorCreate<${className}>(*state, IterationKind::${iterationKind}, "${propertyName}");
 }
 
 END
@@ -4249,7 +4246,7 @@ END
             push(@implContent,  <<END);
 JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState* state)
 {
-    return keyValueIteratorForEach<${className}>(*state, "${propertyName}");
+    return iteratorForEach<${className}>(*state, "${propertyName}");
 }
 
 END

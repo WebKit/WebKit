@@ -23,5 +23,7 @@
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface TestNode : Node {
     attribute DOMString name;
+
+    iterable<TestNode>;
 };
 

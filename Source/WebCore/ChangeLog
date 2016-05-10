@@ -1,3 +1,45 @@
+2016-05-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        NodeList should be iterable
+        https://bugs.webkit.org/show_bug.cgi?id=131443
+        <rdar://problem/25731519>
+
+        Reviewed by Darin Adler.
+
+        Test: fast/dom/nodeListIterator.html
+
+        Updating JSKeyValueIterator to support map and set iterators,
+        depending on the signature of the result type of DOMClass::Iterator::next method.
+        Symbol.iterator method is made the same as values method for set iterators.
+
+        Adding support for NodeList.
+        Updating FontFaceSet to take benefit of that. 
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsPair):.
+        * bindings/js/JSKeyValueIterator.h:
+        (WebCore::IteratorInspector::decltype): IteratorInspector detects whether the iterator is a set or map iterator.
+        (WebCore::IteratorInspector::test):
+        (WebCore::fillForEachArgumentsWithIteratorValue): Specializing according set/map iterator.
+        (WebCore::iteratorValueToJS): Ditto.
+        (WebCore::keyValueIteratorForEach):
+        (WebCore::JSKeyValueIterator<JSWrapper>::next):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementationIterableFunctions): Removed the line forbidding set iterators.
+        Making Symbol.iterator function equal to values for set iterators.
+        * bindings/scripts/test/JS/JSTestNode.cpp: Rebasing with set iterator functions.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Rebasing according updated function names.
+        * bindings/scripts/test/TestNode.idl: Making TestNode set iterable.
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::Iterator::next): Refactoring to make it a set iterator.
+        * css/FontFaceSet.h:
+        * css/FontFaceSet.idl:
+        * dom/NodeList.h: Making NodeList iterable.
+        (WebCore::NodeList::Iterator::Iterator):
+        (WebCore::NodeList::Iterator::next):
+        (WebCore::NodeList::createIterator):
+        * dom/NodeList.idl:
+
 2016-05-09  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Implement auto-repeat computation

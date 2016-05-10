@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description('Testing of NodeList iterable capacities.');
+
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            var end;
+            function checkEndIterator(iteratorValue) {
+              end = iteratorValue;
+              shouldBe('end.done', 'true');
+              shouldBe('end.value', 'undefined');
+            }
+
+            var testingGround = document.createElement('div');
+            var children = [document.createElement('div'), document.createElement('ol')];
+            testingGround.appendChild(children[0]);
+            testingGround.appendChild(children[1]);
+            document.body.appendChild(testingGround);
+
+            var nodeList = testingGround.childNodes;
+
+            shouldBe("nodeList.length", "2");
+
+            var index = 0;
+            for (var item of nodeList)
+                shouldBe('item', 'children[index++]');
+
+            pair = Array.from(nodeList);
+            shouldBe('pair[0]', 'children[0]');
+            shouldBe('pair[1]', 'children[1]');
+
+            index = 0;
+            var node;
+            var forEachIndex;
+            var forEachContainer;
+            nodeList.forEach(function(n, i, c) {
+                node = n;
+                forEachIndex = i;
+                forEachContainer = c;
+                shouldBe('forEachContainer', 'nodeList');
+                shouldBe('forEachIndex', 'index');
+                shouldBe('node', 'children[index++]');
+            });
+                                                                   
+            var iterator = nodeList.keys();
+            shouldBe('iterator.next().value', 'children[0]');
+            shouldBe('iterator.next().value', 'children[1]');
+            checkEndIterator(iterator.next());
+
+            var iterator = nodeList.values();
+            shouldBe('iterator.next().value', 'children[0]');
+            shouldBe('iterator.next().value', 'children[1]');
+            checkEndIterator(iterator.next());
+
+            var iterator = nodeList.entries();
+            var pair = iterator.next().value;
+            shouldBe('pair.length', '2');
+            shouldBe('pair[0]', '0');
+            shouldBe('pair[1]', 'children[0]');
+            pair = iterator.next().value;
+            shouldBe('pair.length', '2');
+            shouldBe('pair[0]', '1');
+            shouldBe('pair[1]', 'children[1]');
+            checkEndIterator(iterator.next());
+
+            testingGround.appendChild(document.createElement('ul'));
+            testingGround.appendChild(document.createElement('p'));
+            checkEndIterator(iterator.next());
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

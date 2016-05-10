@@ -24,6 +24,7 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMIterator.h"
 #include "URL.h"
 #include <runtime/Error.h>
 #include <runtime/JSString.h>
@@ -32,6 +33,14 @@
 using namespace JSC;
 
 namespace WebCore {
+
+// Functions
+
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionSymbolIterator(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::ExecState*);
 
 // Attributes
 
@@ -94,6 +103,10 @@ static const HashTableValue JSTestNodePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNodeConstructor) } },
     { "name", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeName), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNodeName) } },
+    { "entries", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionEntries), (intptr_t) (0) } },
+    { "keys", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionKeys), (intptr_t) (0) } },
+    { "values", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionValues), (intptr_t) (0) } },
+    { "forEach", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNodePrototypeFunctionForEach), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
@@ -102,6 +115,7 @@ void JSTestNodePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNodePrototypeTableValues, *this);
+    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral("[Symbol.Iterator]"), jsTestNodePrototypeFunctionSymbolIterator), ReadOnly | DontEnum);
 }
 
 const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNode) };
@@ -176,6 +190,40 @@ bool setJSTestNodeName(ExecState* state, EncodedJSValue thisValue, EncodedJSValu
 JSValue JSTestNode::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
     return getDOMConstructor<JSTestNodeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+}
+
+using TestNodeIterator = JSDOMIterator<JSTestNode>;
+using TestNodeIteratorPrototype = JSDOMIteratorPrototype<JSTestNode>;
+
+template<>
+const JSC::ClassInfo TestNodeIterator::s_info = { "TestNode Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(TestNodeIterator) };
+
+template<>
+const JSC::ClassInfo TestNodeIteratorPrototype::s_info = { "TestNode Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(TestNodeIteratorPrototype) };
+
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionSymbolIterator(JSC::ExecState* state)
+{
+    return iteratorCreate<JSTestNode>(*state, IterationKind::Value, "[Symbol.Iterator]");
+}
+
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::ExecState* state)
+{
+    return iteratorCreate<JSTestNode>(*state, IterationKind::KeyValue, "entries");
+}
+
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::ExecState* state)
+{
+    return iteratorCreate<JSTestNode>(*state, IterationKind::Key, "keys");
+}
+
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::ExecState* state)
+{
+    return iteratorCreate<JSTestNode>(*state, IterationKind::Value, "values");
+}
+
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::ExecState* state)
+{
+    return iteratorForEach<JSTestNode>(*state, "forEach");
 }
 
 void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)

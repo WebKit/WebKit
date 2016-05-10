@@ -1,3 +1,18 @@
+2016-05-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        NodeList should be iterable
+        https://bugs.webkit.org/show_bug.cgi?id=131443
+        <rdar://problem/25731519>
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/nodeListIterator-expected.txt: Added.
+        * fast/dom/nodeListIterator.html: Added.
+        * fast/dom/script-tests/domListEnumeration.js:
+        * fast/text/font-face-set-javascript-expected.txt:
+        * fast/text/font-face-set-javascript.html:
+
 2016-05-09  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Implement auto-repeat computation
