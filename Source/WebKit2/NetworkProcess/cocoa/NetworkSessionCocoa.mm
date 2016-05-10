@@ -125,6 +125,19 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         completionHandler(nil);
 }
 
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask*)task _schemeUpgraded:(NSURLRequest*)request completionHandler:(void (^)(NSURLRequest*))completionHandler
+{
+    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials)) {
+        auto completionHandlerCopy = Block_copy(completionHandler);
+        networkDataTask->willPerformHTTPRedirection(WebCore::synthesizeRedirectResponseIfNecessary([task currentRequest], request, nil), request, [completionHandlerCopy](const WebCore::ResourceRequest& request) {
+            completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
+            Block_release(completionHandlerCopy);
+        });
+    } else
+        completionHandler(nil);
+}
+
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask willCacheResponse:(NSCachedURLResponse *)proposedResponse completionHandler:(void (^)(NSCachedURLResponse * _Nullable cachedResponse))completionHandler
 {
     // FIXME: remove if <rdar://problem/20001985> is ever resolved.

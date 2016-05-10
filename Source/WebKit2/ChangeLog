@@ -1,3 +1,17 @@
+2016-05-10  Alex Christensen  <achristensen@webkit.org>
+
+        Handle _schemeUpgraded delegate callbacks in NSURLSessionDataDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=157354
+        rdar://problem/25842107
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+        When we make a request to a http url and CFNetwork determines that that url would have redirected to an HSTS site
+        and it is going to change the request to an https request, this delegate callback is called.  We need to call the
+        redirection code to have the same behavior as the NSURLConnection-based loader.
+
 2016-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(VIDEO) build
