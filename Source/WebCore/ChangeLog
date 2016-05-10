@@ -1,3 +1,13 @@
+2016-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(CSS_REGIONS) build after r198990
+        https://bugs.webkit.org/show_bug.cgi?id=157516
+
+        Reviewed by Ryosuke Niwa.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::affectsRenderedSubtree):
+
 2016-05-05  Jer Noble  <jer.noble@apple.com>
 
         Return a Promise from HTMLMediaElement.play()

@@ -176,8 +176,10 @@ static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle
         return true;
     if (element.rendererIsNeeded(newStyle))
         return true;
+#if ENABLE(CSS_REGIONS)
     if (element.shouldMoveToFlowThread(newStyle))
         return true;
+#endif
     return false;
 }
 
