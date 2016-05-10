@@ -93,11 +93,12 @@ template<typename T> Optional<T> parse(ExecState&, JSValue);
 template<typename T> const char* expectedEnumerationValues();
 
 JSString* jsStringWithCache(ExecState*, TestObj::EnumType);
+
 JSString* jsStringWithCache(ExecState* state, TestObj::EnumType enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         emptyString(),
-        ASCIILiteral("EnumValue1"),
+        ASCIILiteral("enumValue1"),
         ASCIILiteral("EnumValue2"),
         ASCIILiteral("EnumValue3"),
     };
@@ -118,7 +119,7 @@ template<> Optional<TestObj::EnumType> parse<TestObj::EnumType>(ExecState& state
     auto stringValue = value.toWTFString(&state);
     if (stringValue.isEmpty())
         return TestObj::EnumType::EmptyString;
-    if (stringValue == "EnumValue1")
+    if (stringValue == "enumValue1")
         return TestObj::EnumType::EnumValue1;
     if (stringValue == "EnumValue2")
         return TestObj::EnumType::EnumValue2;
@@ -139,10 +140,11 @@ template<> TestObj::EnumType convert<TestObj::EnumType>(ExecState& state, JSValu
 
 template<> inline const char* expectedEnumerationValues<TestObj::EnumType>()
 {
-    return "\"\", \"EnumValue1\", \"EnumValue2\", \"EnumValue3\"";
+    return "\"\", \"enumValue1\", \"EnumValue2\", \"EnumValue3\"";
 }
 
 JSString* jsStringWithCache(ExecState*, TestObj::Optional);
+
 JSString* jsStringWithCache(ExecState* state, TestObj::Optional enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
@@ -195,6 +197,7 @@ template<> inline const char* expectedEnumerationValues<TestObj::Optional>()
 #if ENABLE(Condition1)
 
 JSString* jsStringWithCache(ExecState*, TestObj::EnumA);
+
 JSString* jsStringWithCache(ExecState* state, TestObj::EnumA enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
@@ -237,6 +240,7 @@ template<> inline const char* expectedEnumerationValues<TestObj::EnumA>()
 #if ENABLE(Condition1) && ENABLE(Condition2)
 
 JSString* jsStringWithCache(ExecState*, TestObj::EnumB);
+
 JSString* jsStringWithCache(ExecState* state, TestObj::EnumB enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
@@ -279,6 +283,7 @@ template<> inline const char* expectedEnumerationValues<TestObj::EnumB>()
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
 JSString* jsStringWithCache(ExecState*, TestObj::EnumC);
+
 JSString* jsStringWithCache(ExecState* state, TestObj::EnumC enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
@@ -319,6 +324,7 @@ template<> inline const char* expectedEnumerationValues<TestObj::EnumC>()
 #endif
 
 JSString* jsStringWithCache(ExecState*, TestObj::Kind);
+
 JSString* jsStringWithCache(ExecState* state, TestObj::Kind enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
@@ -361,6 +367,7 @@ template<> inline const char* expectedEnumerationValues<TestObj::Kind>()
 }
 
 JSString* jsStringWithCache(ExecState*, TestObj::Size);
+
 JSString* jsStringWithCache(ExecState* state, TestObj::Size enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
@@ -403,6 +410,7 @@ template<> inline const char* expectedEnumerationValues<TestObj::Size>()
 }
 
 JSString* jsStringWithCache(ExecState*, TestObj::Confidence);
+
 JSString* jsStringWithCache(ExecState* state, TestObj::Confidence enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
@@ -444,92 +452,68 @@ template<> inline const char* expectedEnumerationValues<TestObj::Confidence>()
     return "\"high\", \"kinda-low\"";
 }
 
-JSString* jsStringWithCache(ExecState*, TestObj::ShadowRootMode);
-JSString* jsStringWithCache(ExecState* state, TestObj::ShadowRootMode enumerationValue)
-{
-    static NeverDestroyed<const String> values[] = {
-        ASCIILiteral("open"),
-        ASCIILiteral("closed"),
-    };
-    static_assert(static_cast<size_t>(TestObj::ShadowRootMode::Open) == 0, "TestObj::ShadowRootMode::Open is not 0 as expected");
-    static_assert(static_cast<size_t>(TestObj::ShadowRootMode::Closed) == 1, "TestObj::ShadowRootMode::Closed is not 1 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
-}
-
-template<> struct JSValueTraits<TestObj::ShadowRootMode> {
-    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestObj::ShadowRootMode value) { return jsStringWithCache(state, value); }
-};
-
-template<> Optional<TestObj::ShadowRootMode> parse<TestObj::ShadowRootMode>(ExecState& state, JSValue value)
-{
-    auto stringValue = value.toWTFString(&state);
-    if (stringValue == "open")
-        return TestObj::ShadowRootMode::Open;
-    if (stringValue == "closed")
-        return TestObj::ShadowRootMode::Closed;
-    return Nullopt;
-}
-
-template<> TestObj::ShadowRootMode convert<TestObj::ShadowRootMode>(ExecState& state, JSValue value)
-{
-    auto result = parse<TestObj::ShadowRootMode>(state, value);
-    if (UNLIKELY(!result)) {
-        throwTypeError(&state);
-        return { };
-    }
-    return result.value();
-}
-
-template<> inline const char* expectedEnumerationValues<TestObj::ShadowRootMode>()
-{
-    return "\"open\", \"closed\"";
-}
-
-template<> TestObj::ShadowRootInit convert<TestObj::ShadowRootInit>(ExecState& state, JSValue value)
-{
-    auto* object = value.getObject();
-    if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
-        throwTypeError(&state);
-        return { };
-    }
-    auto mode = convert<TestObj::ShadowRootMode>(state, object->get(&state, Identifier::fromString(&state, "mode")));
-    return { WTFMove(mode) };
-}
-
-template<> TestObj::FontFaceDescriptors convert<TestObj::FontFaceDescriptors>(ExecState& state, JSValue value)
+template<> TestObj::Dictionary convert<TestObj::Dictionary>(ExecState& state, JSValue value)
 {
     if (value.isUndefinedOrNull())
-        return { "normal", "U+0-10FFFF" };
+        return { { }, TestObj::EnumType::EnumValue1, TestObj::EnumType::EmptyString, "defaultString", { }, false, { }, { } };
     auto* object = value.getObject();
     if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
         throwTypeError(&state);
         return { };
     }
-    auto style = convertOptional<String>(state, object->get(&state, Identifier::fromString(&state, "style")), "normal");
+    auto enumerationValueWithoutDefault = convertOptional<TestObj::EnumType>(state, object->get(&state, Identifier::fromString(&state, "enumerationValueWithoutDefault")));
     if (UNLIKELY(state.hadException()))
         return { };
-    auto unicodeRange = convertOptional<String>(state, object->get(&state, Identifier::fromString(&state, "unicodeRange")), "U+0-10FFFF");
-    return { WTFMove(style), WTFMove(unicodeRange) };
+    auto enumerationValueWithDefault = convertOptional<TestObj::EnumType>(state, object->get(&state, Identifier::fromString(&state, "enumerationValueWithDefault")), TestObj::EnumType::EnumValue1);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto enumerationValueWithEmptyStringDefault = convertOptional<TestObj::EnumType>(state, object->get(&state, Identifier::fromString(&state, "enumerationValueWithEmptyStringDefault")), TestObj::EnumType::EmptyString);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto stringWithDefault = convertOptional<String>(state, object->get(&state, Identifier::fromString(&state, "stringWithDefault")), "defaultString");
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto stringWithoutDefault = convertOptional<String>(state, object->get(&state, Identifier::fromString(&state, "stringWithoutDefault")));
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto booleanWithDefault = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "booleanWithDefault")), false);
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto booleanWithoutDefault = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault")));
+    if (UNLIKELY(state.hadException()))
+        return { };
+    auto sequenceOfStrings = convertOptional<Vector<String>>(state, object->get(&state, Identifier::fromString(&state, "sequenceOfStrings")));
+    return { WTFMove(enumerationValueWithoutDefault), WTFMove(enumerationValueWithDefault), WTFMove(enumerationValueWithEmptyStringDefault), WTFMove(stringWithDefault), WTFMove(stringWithoutDefault), WTFMove(booleanWithDefault), WTFMove(booleanWithoutDefault), WTFMove(sequenceOfStrings) };
 }
 
-template<> TestObj::MutationObserverInit convert<TestObj::MutationObserverInit>(ExecState& state, JSValue value)
+template<> TestObj::DictionaryThatShouldNotTolerateNull convert<TestObj::DictionaryThatShouldNotTolerateNull>(ExecState& state, JSValue value)
 {
-    if (value.isUndefinedOrNull())
-        return { false, Nullopt, Nullopt };
     auto* object = value.getObject();
     if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
         throwTypeError(&state);
         return { };
     }
-    auto childList = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "childList")), false);
+    auto requiredEnumerationValue = convert<TestObj::EnumType>(state, object->get(&state, Identifier::fromString(&state, "requiredEnumerationValue")));
     if (UNLIKELY(state.hadException()))
         return { };
-    auto attributes = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "attributes")));
+    auto booleanWithoutDefault = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault")));
+    return { WTFMove(requiredEnumerationValue), WTFMove(booleanWithoutDefault) };
+}
+
+template<> TestObj::DictionaryThatShouldTolerateNull convert<TestObj::DictionaryThatShouldTolerateNull>(ExecState& state, JSValue value)
+{
+    if (value.isUndefinedOrNull())
+        return { { }, { } };
+    auto* object = value.getObject();
+    if (UNLIKELY(!object || object->type() == RegExpObjectType)) {
+        throwTypeError(&state);
+        return { };
+    }
+    auto enumerationValue = convertOptional<TestObj::EnumType>(state, object->get(&state, Identifier::fromString(&state, "enumerationValue")));
     if (UNLIKELY(state.hadException()))
         return { };
-    auto attributeFilter = convertOptional<Vector<String>>(state, object->get(&state, Identifier::fromString(&state, "attributeFilter")));
-    return { WTFMove(childList), WTFMove(attributes), WTFMove(attributeFilter) };
+    auto booleanWithoutDefault = convertOptional<bool>(state, object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault")));
+    return { WTFMove(enumerationValue), WTFMove(booleanWithoutDefault) };
 }
 
 // Functions
@@ -556,6 +540,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringSpecia
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithSequenceArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodReturningSequence(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValue(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(JSC::ExecState*);
@@ -1127,6 +1112,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithSequenceArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithSequenceArg), (intptr_t) (1) } },
     { "methodReturningSequence", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodReturningSequence), (intptr_t) (1) } },
     { "methodWithEnumArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithEnumArg), (intptr_t) (1) } },
+    { "methodWithOptionalEnumArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalEnumArg), (intptr_t) (0) } },
     { "methodWithOptionalEnumArgAndDefaultValue", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValue), (intptr_t) (0) } },
     { "methodThatRequiresAllArgsAndThrows", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows), (intptr_t) (2) } },
     { "serializedValue", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionSerializedValue), (intptr_t) (1) } },
@@ -4210,6 +4196,27 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecSta
     return JSValue::encode(jsUndefined());
 }
 
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArg(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "methodWithOptionalEnumArg");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    auto enumArgValue = state->argument(0);
+    Optional<TestObj::EnumType> enumArg;
+    if (!enumArgValue.isUndefined()) {
+        enumArg = parse<TestObj::EnumType>(*state, enumArgValue);
+        if (UNLIKELY(state->hadException()))
+            return JSValue::encode(jsUndefined());
+        if (UNLIKELY(!enumArg))
+            return throwArgumentMustBeEnumError(*state, 0, "enumArg", "TestObj", "methodWithOptionalEnumArg", expectedEnumerationValues<TestObj::EnumType>());
+    }
+    impl.methodWithOptionalEnumArg(enumArg);
+    return JSValue::encode(jsUndefined());
+}
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValue(ExecState* state)
 {
     JSValue thisValue = state->thisValue();
@@ -6127,7 +6134,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAttachShadowRoot(ExecStat
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
-    auto init = convert<TestObj::ShadowRootInit>(*state, state->argument(0));
+    auto init = convert<TestObj::Dictionary>(*state, state->argument(0));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
     impl.attachShadowRoot(WTFMove(init));

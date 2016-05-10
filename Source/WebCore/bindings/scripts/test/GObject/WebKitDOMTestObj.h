@@ -320,6 +320,16 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_enum_arg(WebKitDOMTestObj* self, WebKitDOMTestEnumType* enumArg);
 
 /**
+ * webkit_dom_test_obj_method_with_optional_enum_arg:
+ * @self: A #WebKitDOMTestObj
+ * @enumArg: A #WebKitDOMTestEnumType
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_enum_arg(WebKitDOMTestObj* self, WebKitDOMTestEnumType* enumArg);
+
+/**
  * webkit_dom_test_obj_method_with_optional_enum_arg_and_default_value:
  * @self: A #WebKitDOMTestObj
  * @enumArg: A #WebKitDOMTestEnumType
@@ -935,12 +945,12 @@ webkit_dom_test_obj_any(WebKitDOMTestObj* self, gfloat a, glong b);
 /**
  * webkit_dom_test_obj_attach_shadow_root:
  * @self: A #WebKitDOMTestObj
- * @init: A #WebKitDOMShadowRootInit
+ * @init: A #WebKitDOMTestDictionary
  *
  * Stability: Unstable
 **/
 WEBKIT_API void
-webkit_dom_test_obj_attach_shadow_root(WebKitDOMTestObj* self, WebKitDOMShadowRootInit* init);
+webkit_dom_test_obj_attach_shadow_root(WebKitDOMTestObj* self, WebKitDOMTestDictionary* init);
 
 /**
  * webkit_dom_test_obj_get_read_only_long_attr:

@@ -30,7 +30,7 @@
 // This IDL file is for testing the bindings code generator and for tracking
 // changes in its ouput.
 
-enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
+enum TestEnumType { "", "enumValue1", "EnumValue2", "EnumValue3" };
 
 // Leading underscore on an enum should be removed.
 enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
@@ -121,6 +121,7 @@ enum TestConfidence { "high", "kinda-low" };
     sequence<ScriptProfile> methodReturningSequence(long longArg);
 
     void methodWithEnumArg(TestEnumType enumArg);
+    void methodWithOptionalEnumArg(optional TestEnumType enumArg);
     void methodWithOptionalEnumArgAndDefaultValue(optional TestEnumType enumArg = "EnumValue1");
     [RaisesException] TestObj methodThatRequiresAllArgsAndThrows(DOMString strArg, TestObj objArg);
 
@@ -375,24 +376,29 @@ enum TestConfidence { "high", "kinda-low" };
     [InvokesCustomElementLifecycleCallbacks] void methodWithNeedsLifecycleProcessingStack();
 #endif
 
-    void attachShadowRoot(ShadowRootInit init);
+    void attachShadowRoot(TestDictionary init);
 };
 
 // The following comment should not generate any code.
 // TestObj implements TestImplements;
 
-enum ShadowRootMode { "open", "closed" };
-dictionary ShadowRootInit {
-    required ShadowRootMode mode;
+dictionary TestDictionary {
+    TestEnumType enumerationValueWithoutDefault;
+    TestEnumType enumerationValueWithDefault = "enumValue1";
+    TestEnumType enumerationValueWithEmptyStringDefault = "";
+    DOMString stringWithDefault = "defaultString";
+    DOMString stringWithoutDefault;
+    boolean booleanWithDefault = false;
+    boolean booleanWithoutDefault;
+    sequence<DOMString> sequenceOfStrings;
 };
 
-dictionary FontFaceDescriptors {
-    DOMString style = "normal";
-    DOMString unicodeRange = "U+0-10FFFF";
+dictionary TestDictionaryThatShouldNotTolerateNull {
+    required TestEnumType requiredEnumerationValue;
+    boolean booleanWithoutDefault;
 };
 
-dictionary MutationObserverInit {
-    boolean childList = false;
-    boolean attributes;
-    sequence<DOMString> attributeFilter;
+dictionary TestDictionaryThatShouldTolerateNull {
+    TestEnumType enumerationValue;
+    boolean booleanWithoutDefault;
 };

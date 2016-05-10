@@ -31,7 +31,7 @@
 @class DOMNode;
 @class DOMSVGDocument;
 @class DOMSVGPoint;
-@class DOMShadowRootInit;
+@class DOMTestDictionary;
 @class DOMTestEnumType;
 @class DOMTestNode;
 @class DOMTestObj;
@@ -155,6 +155,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (NSString *)nullableStringStaticMethod;
 - (NSString *)nullableStringSpecialMethod:(unsigned)index;
 - (void)methodWithEnumArg:(DOMTestEnumType *)enumArg;
+- (void)methodWithOptionalEnumArg:(DOMTestEnumType *)enumArg;
 - (void)methodWithOptionalEnumArgAndDefaultValue:(DOMTestEnumType *)enumArg;
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (void)serializedValue:(NSString *)serializedArg;
@@ -217,5 +218,5 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)variadicDoubleMethod:(double)head tail:(double)tail;
 - (void)variadicNodeMethod:(DOMNode *)head tail:(DOMNode *)tail;
 - (void)any:(float)a b:(int)b;
-- (void)attachShadowRoot:(DOMShadowRootInit *)init;
+- (void)attachShadowRoot:(DOMTestDictionary *)init;
 @end

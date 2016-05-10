@@ -35,7 +35,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMSVGDocumentInternal.h"
 #import "DOMSVGPointInternal.h"
-#import "DOMShadowRootInitInternal.h"
+#import "DOMTestDictionaryInternal.h"
 #import "DOMTestEnumTypeInternal.h"
 #import "DOMTestNodeInternal.h"
 #import "DOMTestObjInternal.h"
@@ -55,7 +55,7 @@
 #import "SVGDocument.h"
 #import "SVGPoint.h"
 #import "SerializedScriptValue.h"
-#import "ShadowRootInit.h"
+#import "TestDictionary.h"
 #import "TestEnumType.h"
 #import "TestNode.h"
 #import "TestObj.h"
@@ -1154,6 +1154,12 @@
     IMPL->methodWithEnumArg(core(enumArg));
 }
 
+- (void)methodWithOptionalEnumArg:(DOMTestEnumType *)enumArg
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalEnumArg(core(enumArg));
+}
+
 - (void)methodWithOptionalEnumArgAndDefaultValue:(DOMTestEnumType *)enumArg
 {
     WebCore::JSMainThreadNullState state;
@@ -1641,7 +1647,7 @@
     IMPL->any(a, b);
 }
 
-- (void)attachShadowRoot:(DOMShadowRootInit *)init
+- (void)attachShadowRoot:(DOMTestDictionary *)init
 {
     WebCore::JSMainThreadNullState state;
     IMPL->attachShadowRoot(core(init));

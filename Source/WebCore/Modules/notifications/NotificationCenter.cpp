@@ -38,6 +38,7 @@
 #include "Notification.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "VoidCallback.h"
 
 namespace WebCore {
 
@@ -63,7 +64,7 @@ RefPtr<Notification> NotificationCenter::createNotification(const String& iconUR
         ec = INVALID_STATE_ERR;
         return nullptr;
     }
-    return Notification::create(title, body, iconURI, *scriptExecutionContext(), ec, this);
+    return Notification::create(title, body, iconURI, *scriptExecutionContext(), ec, *this);
 }
 
 int NotificationCenter::checkPermission()

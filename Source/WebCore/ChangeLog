@@ -1,3 +1,70 @@
+2016-05-09  Darin Adler  <darin@apple.com>
+
+        Change Notification constructor to take an IDL dictionary instead of a WebCore::Dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=157466
+
+        Reviewed by Alex Christensen.
+
+        * Modules/notifications/Notification.cpp: Got rid of unneeded includes.
+        (WebCore::Notification::Notification): Deleted the unused default constructor. Changed
+        NotificationCenter argument to be reference rather than PassRefPtr. Changed one of the
+        ScriptExecutionContext arguments to be a Document since the code relies on that already.
+        Used the lambda form of timer creation instead of the class member form. Added a FIXME
+        about when m_notificationCenter can be null.
+        (WebCore::Notification::create): Changed NotificationCenter argument to be reference
+        rather than PassRefPtr. Changed options argument to be Options rather than Dictionary.
+        (WebCore::directionString): Added. Helper because the class still wants to store the
+        direction as a string, at least for now.
+        (WebCore::Notification::show): Streamlined the code a bit.
+        (WebCore::Notification::taskTimerFired): Deleted. Not needed now that we use a lambda
+        inside the constructor.
+        (WebCore::Notification::permission): Removed unneeded const from return type.
+        (WebCore::Notification::permissionString): Ditto.
+
+        * Modules/notifications/Notification.h: Used pragma once, updated for changes above.
+        Removed a number of unused functions, including cancel, setIconURL, setLang,
+        stopLoadingIcon, detachPresenter, setBody, startLoadingIcon, finishLoadingIcon, and
+        taskTimerFired.
+
+        * Modules/notifications/Notification.idl: Add NotificationOptions and pass it instead
+        of Dictionary to the constructor. Note that this is only a subset of what is
+        currently specified in the Notifications API document. The latest document specifies
+        a much more complex feature with lots more options.
+
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::createNotification): Pass a reference rather than a
+        pointer to this.
+        * Modules/notifications/NotificationClient.h: Use pragma once. Removed unneeded
+        includes and forward declarations. Fixed #if to be easier to read.
+
+        * bindings/js/JSDOMConvert.h: Reworked the convert functions to use Converter and
+        DefaultConverter structs so we can do partial specialization in the future and so
+        we can get custom types for optional values. Used this to make an optional String
+        just be a null String, so it won't try to use Optional<String> instead. Might get
+        more complex latter when we add support for nullable.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateEnumerationImplementationContent): Generate a blank line to make the output
+        slightly clearer. Tweaked a comment.
+        (GenerateDefaultValue): Added. Converts the default syntax from IDL into the syntax
+        needed in C++ code.
+        (GenerateDefaultValueWithLeadingComma): Added. Helper for use below.
+        (GenerateDictionaryImplementationContent): Use GenerateDefaultValue and
+        GenerateDefaultValueWithLeadingComma to make default values.
+        (GenerateParametersCheck): Use GenerateDefaultValue here in the enumeration code
+        path. This is a step in the direction of being able to make the whole thing more
+        generic in the future.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        Regenerated.
+
+        * bindings/scripts/test/TestObj.idl: Simplified and extended some of the test cases
+        to cover more combinations of the dictionary and enumeration support.
+
 2016-05-09  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Have server database connections remember the OpenDB request that spawned them.

@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006, 2007-2010, 2013-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2006-2010, 2013-2016 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -861,16 +861,15 @@ sub GenerateEnumerationImplementationContent
         my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
         $result .= "#if ${conditionalString}\n\n" if $conditionalString;
 
-        # Declare this instead of using "static" because it may be unused and we don't
-        # want to get warnings about it.
-        $result .= "JSString* jsStringWithCache(ExecState*, $className);\n";
+        # Declare this instead of using "static" because it may be unused and we don't want warnings about that.
+        $result .= "JSString* jsStringWithCache(ExecState*, $className);\n\n";
 
         # Take an ExecState* instead of an ExecState& to match the jsStringWithCache from JSString.h.
         # FIXME: Change to take VM& instead of ExecState*.
         $result .= "JSString* jsStringWithCache(ExecState* state, $className enumerationValue)\n";
         $result .= "{\n";
         # FIXME: Might be nice to make this global be "const", but NeverDestroyed does not currently support that.
-        # FIXME: Might be nice to make the entire array be NeverDestroyed instead of each value, but not sure the syntax for that.
+        # FIXME: Might be nice to make the entire array be NeverDestroyed instead of each value, but not sure what the syntax for that is.
         $result .= "    static NeverDestroyed<const String> values[] = {\n";
         foreach my $value (@{$enumeration->values}) {
             if ($value eq "") {
@@ -942,6 +941,31 @@ sub GetDictionaryClassName
     return GetNestedClassName($interface, $name);
 }
 
+sub GenerateDefaultValue
+{
+    my ($interface, $member) = @_;
+
+    my $value = $member->default;
+
+    if ($codeGenerator->IsEnumType($member->type)) {
+        # FIXME: Would be nice to report an error if the value does not have quote marks around it.
+        # FIXME: Would be nice to report an error if the value is not one of the enumeration values.
+        my $className = GetEnumerationClassName($interface, $member->type);
+        my $enumerationValueName = GetEnumerationValueName(substr($value, 1, -1));
+        $value = $className . "::" . $enumerationValueName;
+    }
+
+    return $value;
+}
+
+sub GenerateDefaultValueWithLeadingComma
+{
+    my ($interface, $member) = @_;
+
+    return "" unless $member->isOptional && defined $member->default;
+    return ", " . GenerateDefaultValue($interface, $member);
+}
+
 sub GenerateDictionaryImplementationContent
 {
     my ($interface, $dictionaries) = @_;
@@ -965,7 +989,7 @@ sub GenerateDictionaryImplementationContent
                 $defaultValues = "";
                 last;
             }
-            $defaultValues .= $comma . (defined $member->default ? $member->default : "Nullopt");
+            $defaultValues .= $comma . (defined $member->default ? GenerateDefaultValue($interface, $member) : "{ }");
             $comma = ", ";
         }
 
@@ -985,11 +1009,12 @@ sub GenerateDictionaryImplementationContent
                 $result .= "    if (UNLIKELY(state.hadException()))\n";
                 $result .= "        return { };\n";
             }
-            # FIXME: Eventually we will want this to call JSValueToNative.
+            # FIXME: Eventually we will want this to share a lot more code with JSValueToNative.
             my $function = $member->isOptional ? "convertOptional" : "convert";
             my $defaultValueWithLeadingComma = $member->isOptional && defined $member->default ? ", " . $member->default : "";
             $result .= "    auto " . $member->name . " = " . $function . "<" . GetNativeTypeFromSignature($interface, $member) . ">"
-                . "(state, object->get(&state, Identifier::fromString(&state, \"" . $member->name . "\"))" . $defaultValueWithLeadingComma . ");\n";
+                . "(state, object->get(&state, Identifier::fromString(&state, \"" . $member->name . "\"))"
+                . GenerateDefaultValueWithLeadingComma($interface, $member) . ");\n";
             $needExceptionCheck = 1;
         }
 
@@ -3716,12 +3741,13 @@ sub GenerateParametersCheck
             push(@$outputArray, "    $nativeType $name;\n");
 
             if ($parameter->isOptional) {
-                push(@$outputArray, "    if (${name}Value.isUndefined()) {\n");
-                if (defined($parameter->default)) {
-                    my $enumerationValueName = GetEnumerationValueName(substr($parameter->default, 1, -1));
-                    push(@$outputArray, "        $name = ${className}::${enumerationValueName};\n");
+                if (!defined $parameter->default) {
+                    push(@$outputArray, "    if (!${name}Value.isUndefined()) {\n");
+                } else {
+                    push(@$outputArray, "    if (${name}Value.isUndefined()) {\n");
+                    push(@$outputArray, "        $name = " . GenerateDefaultValue($interface, $parameter) . ";\n");
+                    push(@$outputArray, "    } else {\n");
                 }
-                push(@$outputArray, "    } else {\n");
                 $indent = "    ";
             }
 

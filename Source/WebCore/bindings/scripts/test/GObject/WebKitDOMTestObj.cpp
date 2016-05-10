@@ -34,7 +34,7 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMSVGPointPrivate.h"
-#include "WebKitDOMShadowRootInitPrivate.h"
+#include "WebKitDOMTestDictionaryPrivate.h"
 #include "WebKitDOMTestEnumTypePrivate.h"
 #include "WebKitDOMTestNodePrivate.h"
 #include "WebKitDOMTestObjPrivate.h"
@@ -1413,6 +1413,16 @@ void webkit_dom_test_obj_method_with_enum_arg(WebKitDOMTestObj* self, WebKitDOMT
     item->methodWithEnumArg(convertedEnumArg);
 }
 
+void webkit_dom_test_obj_method_with_optional_enum_arg(WebKitDOMTestObj* self, WebKitDOMTestEnumType* enumArg)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_ENUM_TYPE(enumArg));
+    WebCore::TestObj* item = WebKit::core(self);
+    WebCore::TestEnumType* convertedEnumArg = WebKit::core(enumArg);
+    item->methodWithOptionalEnumArg(convertedEnumArg);
+}
+
 void webkit_dom_test_obj_method_with_optional_enum_arg_and_default_value(WebKitDOMTestObj* self, WebKitDOMTestEnumType* enumArg)
 {
     WebCore::JSMainThreadNullState state;
@@ -2022,13 +2032,13 @@ void webkit_dom_test_obj_any(WebKitDOMTestObj* self, gfloat a, glong b)
     item->any(a, b);
 }
 
-void webkit_dom_test_obj_attach_shadow_root(WebKitDOMTestObj* self, WebKitDOMShadowRootInit* init)
+void webkit_dom_test_obj_attach_shadow_root(WebKitDOMTestObj* self, WebKitDOMTestDictionary* init)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_SHADOW_ROOT_INIT(init));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_DICTIONARY(init));
     WebCore::TestObj* item = WebKit::core(self);
-    WebCore::ShadowRootInit* convertedInit = WebKit::core(init);
+    WebCore::TestDictionary* convertedInit = WebKit::core(init);
     item->attachShadowRoot(convertedInit);
 }
 
