@@ -1,3 +1,18 @@
+2016-05-09  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] visibility:hidden -webkit-overflow-scrolling: touch divs can interfere with page scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=157496
+        rdar://problem/22963278
+
+        Reviewed by Tim Horton.
+        
+        Add a fast/scrolling/ios directory, disable it everywhere except on iOS.
+
+        * TestExpectations:
+        * fast/scrolling/ios/touch-scroll-visibility-hidden-expected.txt: Added.
+        * fast/scrolling/ios/touch-scroll-visibility-hidden.html: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Web Font is downloaded even when all the characters in the document are outside its unicode-range

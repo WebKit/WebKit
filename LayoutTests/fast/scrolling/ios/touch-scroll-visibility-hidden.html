@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            height: 2000px;
+        }
+        
+        .box {
+            height: 100px;
+            width: 100px;
+            background-color: blue;
+        }
+        
+        .outer {
+            position: absolute;
+            top: 0;
+        }
+        
+        .box:hover {
+            background-color: green;
+        }
+        
+        .container {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            height: 300px;
+            width: 300px;
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid black;
+            visibility: hidden;
+        }
+        
+        .content {
+            height: 600px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.dragFromPointToPoint(60, 200, 60, 100, 0.5, function() {
+                    uiController.uiScriptComplete("");
+                });
+            })();`
+        }
+
+        var hitElement;
+        function runTest()
+        {
+            hitElement = document.elementFromPoint(20, 20);
+            shouldBeEqualToString("hitElement.id", "under-target");
+            
+            var scroller = document.getElementById('scroller');
+            shouldBe("scroller.scrollTop", "0");
+
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function() {
+                    debug("swipe complete");
+                    shouldBe("scroller.scrollTop", "0");
+                    shouldBe("document.scrollingElement.scrollTop", "90");
+                    finishJSTest();
+                });
+            }
+        }
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body onscroll="debug('body scroll')">
+<div class="outer box" id="under-target">
+</div>
+
+<div id="scroller" class="container" onscroll="debug('overflow scroll')">
+    <div class="content">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        <div class="inner box" style="visibility: visible">
+        </div>
+    </div>
+</div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -125,6 +125,20 @@ void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef callback)
     }];
 }
 
+void UIScriptController::dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    CGPoint startPoint = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), startX, startY);
+    CGPoint endPoint = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), endX, endY);
+    
+    [[HIDEventGenerator sharedHIDEventGenerator] dragWithStartPoint:startPoint endPoint:endPoint duration:durationSeconds completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
 void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);

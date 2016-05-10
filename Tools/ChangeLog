@@ -1,5 +1,25 @@
 2016-05-09  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS] visibility:hidden -webkit-overflow-scrolling: touch divs can interfere with page scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=157496
+        rdar://problem/22963278
+
+        Reviewed by Tim Horton.
+
+        Enhance UIScriptController to generate a drag, which is useful for scrolling.
+
+        * WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::dragFromPointToPoint):
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator dragWithStartPoint:endPoint:duration:completionBlock:]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::dragFromPointToPoint):
+
+2016-05-09  Simon Fraser  <simon.fraser@apple.com>
+
         Remove testRunner.setTextAutosizingEnabled and migrate the one test that uses it
         https://bugs.webkit.org/show_bug.cgi?id=157480
 

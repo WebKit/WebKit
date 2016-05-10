@@ -134,6 +134,10 @@ void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef)
 {
 }
 
+void UIScriptController::dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback)
+{
+}
+
 void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef, JSValueRef)
 {
 }

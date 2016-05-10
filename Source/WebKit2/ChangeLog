@@ -1,3 +1,34 @@
+2016-05-09  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] visibility:hidden -webkit-overflow-scrolling: touch divs can interfere with page scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=157496
+        rdar://problem/22963278
+
+        Reviewed by Tim Horton.
+
+        UIScrollViews are constructed in the UI process for visibility:hidden scrollable elements
+        with -webkit-overflow-scrolling: touch, and these intercept user events when they should not.
+
+        Fix by propagating a "contentsHidden" flag from the web process which is used to turn off
+        user interaction on these views.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties):
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::dumpChangedLayers):
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (-[UIView _recursiveFindDescendantScrollViewAtPoint:withEvent:]): Our custom hit
+        test needs to take view.isUserInteractionEnabled into account.
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::setHidden):
+        (WebKit::PlatformCALayerRemote::contentsHidden):
+        (WebKit::PlatformCALayerRemote::setContentsHidden):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
 2016-05-09  Ada Chan  <adachan@apple.com>
 
         Introduce WebVideoFullscreenInterfaceMac::isPlayingVideoInEnhancedFullscreen() and use it in WebVideoFullscreenManagerProxy::isPlayingVideoInEnhancedFullscreen()

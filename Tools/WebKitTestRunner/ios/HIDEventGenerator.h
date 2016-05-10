@@ -32,9 +32,6 @@
 + (HIDEventGenerator *)sharedHIDEventGenerator;
 
 // Touches
-- (void)touchDown:(CGPoint)location;
-- (void)liftUp:(CGPoint)location;
-- (void)moveToPoints:(CGPoint*)locations touchCount:(NSUInteger)count duration:(NSTimeInterval)seconds;
 - (void)touchDown:(CGPoint)location touchCount:(NSUInteger)count completionBlock:(void (^)(void))completionBlock;
 - (void)liftUp:(CGPoint)location touchCount:(NSUInteger)count completionBlock:(void (^)(void))completionBlock;
 

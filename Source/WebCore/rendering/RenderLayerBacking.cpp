@@ -1066,6 +1066,8 @@ void RenderLayerBacking::updateAfterDescendants()
     updateDrawsContent(isSimpleContainer);
 
     m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || isPaintDestinationForDescendantLayers());
+    if (m_scrollingLayer)
+        m_scrollingLayer->setContentsVisible(renderer().style().visibility() == VISIBLE);
 }
 
 // FIXME: Avoid repaints when clip path changes.

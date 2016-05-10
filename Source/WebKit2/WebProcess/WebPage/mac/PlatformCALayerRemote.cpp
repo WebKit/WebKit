@@ -503,8 +503,25 @@ bool PlatformCALayerRemote::isHidden() const
 
 void PlatformCALayerRemote::setHidden(bool value)
 {
+    if (m_properties.hidden == value)
+        return;
+
     m_properties.hidden = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::HiddenChanged);
+}
+
+bool PlatformCALayerRemote::contentsHidden() const
+{
+    return m_properties.contentsHidden;
+}
+
+void PlatformCALayerRemote::setContentsHidden(bool value)
+{
+    if (m_properties.contentsHidden == value)
+        return;
+
+    m_properties.contentsHidden = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ContentsHiddenChanged);
 }
 
 void PlatformCALayerRemote::setBackingStoreAttached(bool value)

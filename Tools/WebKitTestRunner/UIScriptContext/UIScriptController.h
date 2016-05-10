@@ -51,6 +51,7 @@ public:
     void liftUpAtPoint(long x, long y, long touchCount, JSValueRef callback);
     void singleTapAtPoint(long x, long y, JSValueRef callback);
     void doubleTapAtPoint(long x, long y, JSValueRef callback);
+    void dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback);
     
     void typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
     void keyDownUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);

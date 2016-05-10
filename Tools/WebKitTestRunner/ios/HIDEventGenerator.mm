@@ -415,6 +415,10 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
 - (void)dragWithStartPoint:(CGPoint)startLocation endPoint:(CGPoint)endLocation duration:(double)seconds completionBlock:(void (^)(void))completionBlock
 {
+    [self touchDown:startLocation touchCount:1];
+    [self moveToPoints:&endLocation touchCount:1 duration:seconds];
+    [self liftUp:endLocation];
+    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 
 - (void)pinchCloseWithStartPoint:(CGPoint)startLocation endPoint:(CGPoint)endLocation duration:(double)seconds completionBlock:(void (^)(void))completionBlock

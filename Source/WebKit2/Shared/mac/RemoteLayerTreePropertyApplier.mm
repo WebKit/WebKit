@@ -312,7 +312,6 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
     }
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
-
         CALayer *maskOwnerLayer = view.layer;
 
         if (properties.customAppearance == GraphicsLayer::LightBackdropAppearance || properties.customAppearance == GraphicsLayer::DarkBackdropAppearance) {
@@ -332,6 +331,10 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
                 maskOwnerLayer.mask = maskView.layer;
         }
     }
+    
+    if (properties.changedProperties & RemoteLayerTreeTransaction::ContentsHiddenChanged)
+        view.userInteractionEnabled = !properties.contentsHidden;
+
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 #endif

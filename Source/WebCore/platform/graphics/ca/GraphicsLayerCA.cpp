@@ -1877,6 +1877,8 @@ void GraphicsLayerCA::updateContentsVisibility()
         if (m_backdropLayer)
             m_backdropLayer->setHidden(true);
     }
+
+    m_layer->setContentsHidden(!m_contentsVisible);
 }
 
 void GraphicsLayerCA::updateContentsOpaque(float pageScaleFactor)

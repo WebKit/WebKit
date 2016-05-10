@@ -60,7 +60,7 @@ using namespace WebCore;
     [[self subviews] enumerateObjectsUsingBlock:^(UIView *view, NSUInteger idx, BOOL *stop) {
         CGPoint subviewPoint = [view convertPoint:point fromView:self];
 
-        if ([view pointInside:subviewPoint withEvent:event] && [view isKindOfClass:[UIScrollView class]])
+        if ([view pointInside:subviewPoint withEvent:event] && [view isKindOfClass:[UIScrollView class]] && view.isUserInteractionEnabled)
             foundView = view;
 
         if (![view subviews])

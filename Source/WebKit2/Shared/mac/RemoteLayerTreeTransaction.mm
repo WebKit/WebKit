@@ -103,6 +103,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     , doubleSided(true)
     , masksToBounds(false)
     , opaque(false)
+    , contentsHidden(false)
 {
 }
 
@@ -140,6 +141,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , doubleSided(other.doubleSided)
     , masksToBounds(other.masksToBounds)
     , opaque(other.opaque)
+    , contentsHidden(other.contentsHidden)
 {
     // FIXME: LayerProperties should reference backing store by ID, so that two layers can have the same backing store (for clones).
     // FIXME: LayerProperties shouldn't be copyable; PlatformCALayerRemote::clone should copy the relevant properties.
@@ -210,6 +212,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
 
     if (changedProperties & OpaqueChanged)
         encoder << opaque;
+
+    if (changedProperties & ContentsHiddenChanged)
+        encoder << contentsHidden;
 
     if (changedProperties & MaskLayerChanged)
         encoder << maskLayerID;
@@ -371,6 +376,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
 
     if (result.changedProperties & OpaqueChanged) {
         if (!decoder.decode(result.opaque))
+            return false;
+    }
+
+    if (result.changedProperties & ContentsHiddenChanged) {
+        if (!decoder.decode(result.contentsHidden))
             return false;
     }
 
@@ -741,6 +751,9 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::OpaqueChanged)
             ts.dumpProperty("opaque", layerProperties.opaque);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsHiddenChanged)
+            ts.dumpProperty("contentsHidden", layerProperties.contentsHidden);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged)
             ts.dumpProperty("maskLayer", layerProperties.maskLayerID);

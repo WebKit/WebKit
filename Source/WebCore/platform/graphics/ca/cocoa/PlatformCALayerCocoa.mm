@@ -616,6 +616,17 @@ void PlatformCALayerCocoa::setHidden(bool value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+bool PlatformCALayerCocoa::contentsHidden() const
+{
+    // Used to disable user interaction for some platforms.
+    return true;
+}
+
+void PlatformCALayerCocoa::setContentsHidden(bool)
+{
+    // Used to disable user interaction for some platforms.
+}
+
 void PlatformCALayerCocoa::setBackingStoreAttached(bool)
 {
     // We could throw away backing store here with setContents:nil.

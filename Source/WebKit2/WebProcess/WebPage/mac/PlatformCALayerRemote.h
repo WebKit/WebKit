@@ -94,6 +94,9 @@ public:
     bool isHidden() const override;
     void setHidden(bool) override;
 
+    bool contentsHidden() const override;
+    void setContentsHidden(bool) override;
+
     void setBackingStoreAttached(bool) override;
     bool backingStoreAttached() const override;
     bool backingContributesToMemoryEstimate() const override { return backingStoreAttached(); }
