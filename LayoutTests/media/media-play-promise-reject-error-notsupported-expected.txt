@@ -1,7 +1,0 @@
-
-RUN(mediaElement.src = findMediaFile("video", "content/invalid"))
-RUN(mediaElement.play().then(failTest).catch(promiseRejected))
-Promise rejected. OK
-EXPECTED (error.name == 'NotSupportedError') OK
-END OF TEST
-

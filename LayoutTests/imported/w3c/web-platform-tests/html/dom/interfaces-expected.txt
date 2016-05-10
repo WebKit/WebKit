@@ -2447,9 +2447,7 @@ PASS HTMLMediaElement interface: attribute seekable
 PASS HTMLMediaElement interface: attribute ended 
 PASS HTMLMediaElement interface: attribute autoplay 
 PASS HTMLMediaElement interface: attribute loop 
-FAIL HTMLMediaElement interface: operation play() assert_throws: calling operation with this = null didn't throw TypeError function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS HTMLMediaElement interface: operation play() 
 PASS HTMLMediaElement interface: operation pause() 
 PASS HTMLMediaElement interface: attribute mediaGroup 
 PASS HTMLMediaElement interface: attribute controller 

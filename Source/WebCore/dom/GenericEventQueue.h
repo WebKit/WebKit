@@ -26,7 +26,6 @@
 #ifndef GenericEventQueue_h
 #define GenericEventQueue_h
 
-#include "GenericTaskQueue.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -53,11 +52,15 @@ public:
     void resume();
 
 private:
+    static Timer& sharedTimer();
+    static void sharedTimerFired();
+    static Deque<WeakPtr<GenericEventQueue>>& pendingQueues();
+
     void dispatchOneEvent();
 
     EventTarget& m_owner;
-    GenericTaskQueue<Timer> m_taskQueue;
     Deque<RefPtr<Event>> m_pendingEvents;
+    WeakPtrFactory<GenericEventQueue> m_weakPtrFactory;
     bool m_isClosed;
     bool m_isSuspended { false };
 };

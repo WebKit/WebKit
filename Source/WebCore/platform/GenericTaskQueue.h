@@ -52,17 +52,27 @@ private:
 template<>
 class TaskDispatcher<Timer> {
 public:
-    ~TaskDispatcher();
-    void postTask(std::function<void()>);
+    TaskDispatcher()
+        : m_timer(*this, &TaskDispatcher<Timer>::timerFired)
+    {
+    }
 
-private:
-    static Timer& sharedTimer();
-    static void sharedTimerFired();
-    static Deque<TaskDispatcher<Timer>*>& pendingDispatchers();
+    void postTask(std::function<void()> function)
+    {
+        m_queue.append(function);
+        m_timer.startOneShot(0);
+    }
 
-    void dispatchOneTask();
+    void timerFired()
+    {
+        Deque<std::function<void()>> queue;
+        queue.swap(m_queue);
+        for (std::function<void()>& function : queue)
+            function();
+    }
 
-    Deque<std::function<void()>> m_pendingTasks;
+    Timer m_timer;
+    Deque<std::function<void()>> m_queue;
 };
 
 template <typename T>
