@@ -1,3 +1,14 @@
+2016-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Fix more deprecation warnings.
+
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (NetworkServiceInitializer):
+        * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm:
+        (PluginServiceInitializer):
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+
 2016-05-10  Chris Dumez  <cdumez@apple.com>
 
         [SpeculativeValidation] Do not start a preload if there is already one pending
