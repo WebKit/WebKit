@@ -48,6 +48,7 @@
 #include "StackAlignment.h"
 #include "StructureRareDataInlines.h"
 #include "StructureStubClearingWatchpoint.h"
+#include "StructureStubInfo.h"
 #include "ThunkGenerators.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
