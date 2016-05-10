@@ -1,3 +1,17 @@
+2016-05-10  David Kilzer  <ddkilzer@apple.com>
+
+        bmalloc should automatically disable itself when ThreadSanitizer is used
+        <https://webkit.org/b/157527>
+
+        Reviewed by Michael Catanzaro.
+
+        * bmalloc/Environment.cpp:
+        (bmalloc::isASanEnabled): Rename to isSanitizerEnabled.
+        (bmalloc::isSanitizerEnabled): Rename from isASanEnabled. Add
+        support for detecting ThreadSanitizer.
+        (bmalloc::Environment::computeIsBmallocEnabled): Switch from
+        isASanEnabled to isSanitizerEnabled.
+
 2016-05-03  Geoffrey Garen  <ggaren@apple.com>
 
         Assertion failure in bmalloc::vmRevokePermissions(void*, unsigned long).
