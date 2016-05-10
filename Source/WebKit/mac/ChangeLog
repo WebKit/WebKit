@@ -1,3 +1,15 @@
+2016-05-09  Tim Horton  <timothy_horton@apple.com>
+
+        [WebKit1] Invoking a link preview on a complex link (e.g. an image) results in an empty TextIndicator
+        https://bugs.webkit.org/show_bug.cgi?id=157497
+        <rdar://problem/25872773>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _defaultAnimationController]):
+        r198578 fixed this for WebKit2, but forgot about WebKit1.
+
 2016-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Migrate our Font classes entirely off of NSFont

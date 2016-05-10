@@ -278,7 +278,7 @@ using namespace WebCore;
             _type = WebImmediateActionLinkPreview;
 
             RefPtr<Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
-            auto indicator = TextIndicator::createWithRange(*linkRange, TextIndicatorOptionDefault, TextIndicatorPresentationTransition::FadeIn);
+            auto indicator = TextIndicator::createWithRange(*linkRange, TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorPresentationTransition::FadeIn);
             if (indicator)
                 [_webView _setTextIndicator:*indicator withLifetime:TextIndicatorWindowLifetime::Permanent];
 
