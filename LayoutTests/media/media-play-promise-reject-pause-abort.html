@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+        var promise;
+        var error;
+        function start()
+        {
+            findMediaElement();
+            run('mediaElement.play().then(failTest).catch(promiseRejected)');    
+            run('mediaElement.pause()');
+        }
+        function promiseRejected(e)
+        {
+            error = e;
+            logResult(true, "Promise rejected.");
+            testExpected('error.name', 'AbortError');
+            endTest();
+        }
+        </script>
+    </head>
+
+    <body onload="start()">
+
+        <video></video>
+    
+    </body>
+</html>

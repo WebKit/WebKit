@@ -32,6 +32,7 @@
 #include "GenericEventQueue.h"
 #include "GenericTaskQueue.h"
 #include "HTMLMediaElementEnums.h"
+#include "JSDOMPromise.h"
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
 #include "MediaElementSession.h"
@@ -58,6 +59,7 @@ namespace WebCore {
 class AudioSourceProvider;
 class MediaElementAudioSourceNode;
 #endif
+class DOMError;
 class DisplaySleepDisabler;
 class Event;
 class HTMLSourceElement;
@@ -141,6 +143,11 @@ public:
 
     using HTMLMediaElementEnums::DelayedActionType;
     void scheduleDelayedAction(DelayedActionType);
+    void scheduleResolvePendingPlayPromises();
+    void rejectPendingPlayPromises(DOMError&);
+    void resolvePendingPlayPromises();
+    void scheduleNotifyAboutPlaying();
+    void notifyAboutPlaying();
     
     MediaPlayerEnums::MovieLoadType movieLoadType() const;
     
@@ -204,6 +211,10 @@ public:
     bool isAutoplaying() const { return m_autoplaying; }
     bool loop() const;
     void setLoop(bool b);
+
+    typedef DOMPromise<std::nullptr_t, DOMError&> PlayPromise;
+    void play(PlayPromise&&);
+
     WEBCORE_EXPORT void play() override;
     WEBCORE_EXPORT void pause() override;
     void setShouldBufferData(bool) override;
@@ -671,7 +682,7 @@ private:
 
     // These "internal" functions do not check user gesture restrictions.
     void loadInternal();
-    void playInternal();
+    bool playInternal();
     void pauseInternal();
 
     void prepareForLoad();
@@ -772,18 +783,21 @@ private:
     void isVisibleInViewportChanged() final;
     void updateShouldAutoplay();
 
-    void pauseAfterDetachedTimerFired();
+    void pauseAfterDetachedTask();
 
     Timer m_pendingActionTimer;
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;
-    Timer m_pauseAfterDetachedTimer;
-    GenericTaskQueue<ScriptExecutionContext> m_seekTaskQueue;
-    GenericTaskQueue<ScriptExecutionContext> m_resizeTaskQueue;
-    GenericTaskQueue<ScriptExecutionContext> m_shadowDOMTaskQueue;
+    GenericTaskQueue<Timer> m_seekTaskQueue;
+    GenericTaskQueue<Timer> m_resizeTaskQueue;
+    GenericTaskQueue<Timer> m_shadowDOMTaskQueue;
+    GenericTaskQueue<Timer> m_promiseTaskQueue;
+    GenericTaskQueue<Timer> m_pauseAfterDetachedTaskQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
+
+    Vector<PlayPromise> m_pendingPlayPromises;
 
     double m_requestedPlaybackRate;
     double m_reportedPlaybackRate;

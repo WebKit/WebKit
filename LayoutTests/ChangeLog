@@ -1,3 +1,25 @@
+2016-05-05  Jer Noble  <jer.noble@apple.com>
+
+        Return a Promise from HTMLMediaElement.play()
+        https://bugs.webkit.org/show_bug.cgi?id=157400
+
+        Reviewed by Eric Carlson.
+
+        * media/media-play-promise-reject-error-notsupported-expected.txt: Added.
+        * media/media-play-promise-reject-error-notsupported.html: Added.
+        * media/media-play-promise-reject-load-abort-expected.txt: Added.
+        * media/media-play-promise-reject-load-abort.html: Added.
+        * media/media-play-promise-reject-pause-abort-expected.txt: Added.
+        * media/media-play-promise-reject-pause-abort.html: Added.
+        * media/media-play-promise-reject-play-notallowed-expected.txt: Added.
+        * media/media-play-promise-reject-play-notallowed.html: Added.
+        * media/media-play-promise-reject-play-notsupported-expected.txt: Added.
+        * media/media-play-promise-reject-play-notsupported.html: Added.
+        * media/media-play-promise-resolve-expected.txt: Added.
+        * media/media-play-promise-resolve-when-playing-expected.txt: Added.
+        * media/media-play-promise-resolve-when-playing.html: Added.
+        * media/media-play-promise-resolve.html: Added.
+
 2016-05-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r200627.

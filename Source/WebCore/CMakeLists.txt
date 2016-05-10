@@ -2109,6 +2109,7 @@ set(WebCore_SOURCES
     platform/FileChooser.cpp
     platform/FileStream.cpp
     platform/FileSystem.cpp
+    platform/GenericTaskQueue.cpp
     platform/Language.cpp
     platform/Length.cpp
     platform/LengthBox.cpp
