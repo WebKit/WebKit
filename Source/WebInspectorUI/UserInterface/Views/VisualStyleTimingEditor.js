@@ -41,12 +41,7 @@ WebInspector.VisualStyleTimingEditor = class VisualStyleTimingEditor extends Web
         this.contentElement.appendChild(this._bezierSwatch.element);
     }
 
-    // Protected
-
-    parseValue(text)
-    {
-        return /(cubic-bezier\(.+\))/.exec(text);
-    }
+    // Public
 
     get bezierValue()
     {
@@ -63,18 +58,18 @@ WebInspector.VisualStyleTimingEditor = class VisualStyleTimingEditor extends Web
         this._bezierSwatch.value = bezier;
     }
 
-    // Private
+    // Protected
 
-    _getValue()
+    get value()
     {
-        return this._customValueOptionElement.selected ? this.bezierValue : super._getValue();
+        return this._customValueOptionElement.selected ? this.bezierValue : super.value;
     }
 
-    _setValue(value)
+    set value(value)
     {
         this.bezierValue = value;
         if (this.valueIsSupportedKeyword(value)) {
-            super._setValue(value);
+            super.value = value;
             this.contentElement.classList.remove("bezier-value");
             return;
         }
@@ -84,13 +79,20 @@ WebInspector.VisualStyleTimingEditor = class VisualStyleTimingEditor extends Web
         this.contentElement.classList.toggle("bezier-value", !!bezier);
         this.specialPropertyPlaceholderElement.hidden = !!bezier;
         if (!bezier)
-            super._setValue(value);
+            super.value = value;
     }
 
-    _generateSynthesizedValue()
+    get synthesizedValue()
     {
-        return this._customValueOptionElement.selected ? this.bezierValue : super._generateSynthesizedValue();
+        return this._customValueOptionElement.selected ? this.bezierValue : super.synthesizedValue;
     }
+
+    parseValue(text)
+    {
+        return /(cubic-bezier\(.+\))/.exec(text);
+    }
+
+    // Private
 
     _handleKeywordChanged()
     {

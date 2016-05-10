@@ -215,8 +215,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
     {
         this._unchangedOptionElement.selected = true;
 
-        // FIXME: <https://webkit.org/b/147064> Getter and setter on super are called with wrong "this" object
-        WebInspector.VisualStylePropertyEditor.prototype.__lookupSetter__("specialPropertyPlaceholderElementText").call(this, text);
+        super.specialPropertyPlaceholderElementText = text;
     }
 
     parseValue(text)

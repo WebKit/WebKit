@@ -1,3 +1,33 @@
+2016-05-10  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Cleanup super getter/setter now that underlying issue is fixed
+        https://bugs.webkit.org/show_bug.cgi?id=157488
+        <rdar://problem/26179120>
+
+        Reviewed by Brian Burg.
+
+        Addressed FIXMEs for bug 147064:
+        <https://webkit.org/b/147064> Getter and setter on super are called with wrong "this" object
+
+        * UserInterface/Views/VisualStyleKeywordPicker.js:
+        (WebInspector.VisualStyleKeywordPicker.prototype.get value):
+        (WebInspector.VisualStyleKeywordPicker.prototype.set value):
+        (WebInspector.VisualStyleKeywordPicker.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleKeywordPicker.prototype._getValue): Deleted.
+        (WebInspector.VisualStyleKeywordPicker.prototype._setValue): Deleted.
+        (WebInspector.VisualStyleKeywordPicker.prototype._generateSynthesizedValue): Deleted.
+
+        * UserInterface/Views/VisualStyleNumberInputBox.js:
+        (WebInspector.VisualStyleNumberInputBox.prototype.set specialPropertyPlaceholderElementText):
+
+        * UserInterface/Views/VisualStyleTimingEditor.js:
+        (WebInspector.VisualStyleTimingEditor.prototype.get value):
+        (WebInspector.VisualStyleTimingEditor.prototype.set value):
+        (WebInspector.VisualStyleTimingEditor.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleTimingEditor.prototype._getValue): Deleted.
+        (WebInspector.VisualStyleTimingEditor.prototype._setValue): Deleted.
+        (WebInspector.VisualStyleTimingEditor.prototype._generateSynthesizedValue): Deleted.
+
 2016-05-09  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Filtering by Errors/Warnings should not filter Breakpoints list
