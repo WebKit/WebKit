@@ -1,3 +1,24 @@
+2016-05-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Call Trees and Memory view blank
+        https://bugs.webkit.org/show_bug.cgi?id=157486
+        <rdar://problem/26178404>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes):
+        Setting current time now handled by _updateTimelineViewTimes.
+        (WebInspector.TimelineRecordingContentView.prototype._capturingStopped):
+        Update times for the current TimelineView when the recording ends.
+        This ensures that views that don't call TimelineView.setupDataGrid are
+        able to update state that depends on the ruler selection.
+
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimelineViewTimes):
+        Renamed from _updateTimelineViewSelection. Sets start, end, and current times.
+
 2016-05-10  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Cleanup super getter/setter now that underlying issue is fixed
