@@ -1,3 +1,10 @@
+2016-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Mark fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html as flakey.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Eliminate the crazy code for evaluateOnCallFrame

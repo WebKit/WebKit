@@ -122,8 +122,6 @@ platform/ios-simulator/ios/fast/forms/range-input-touches.html [ Skip ]
 platform/ios-simulator/ios/fast/text/data-detectors/phone-disabled.html [ Skip ]
 platform/ios-simulator/ios/fast/text/data-detectors/phone.html [ Skip ]
 
-fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html [ Pass Failure ]
-
 # MediaSource is not currently supported on iOS.
 fast/history/page-cache-media-source-closed-2.html [ Skip ]
 fast/history/page-cache-media-source-closed.html [ Skip ]

@@ -1890,3 +1890,5 @@ webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html [ Pa
 webkit.org/b/156620 fast/animation/request-animation-frame-iframe2.html [ Pass Failure ]
 
 webkit.org/b/153049 perf/array-binary-search.html [ Pass Failure Timeout ]
+
+fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html [ Pass Failure ]
