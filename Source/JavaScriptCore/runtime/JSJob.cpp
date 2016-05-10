@@ -71,6 +71,7 @@ void JSJobMicrotask::run(ExecState* exec)
     for (unsigned index = 0, length = m_arguments->length(); index < length; ++index)
         handlerArguments.append(m_arguments->JSArray::get(exec, index));
     profiledCall(exec, ProfilingReason::Microtask, m_job.get(), handlerCallType, handlerCallData, jsUndefined(), handlerArguments);
+    exec->vm().clearException();
 }
 
 } // namespace JSC
