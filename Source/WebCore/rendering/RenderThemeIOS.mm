@@ -526,12 +526,15 @@ const float MenuListBaseFontSize = 11;
 
 const float MenuListArrowWidth = 7;
 const float MenuListArrowHeight = 6;
-const float MenuListButtonPaddingRight = 19;
+const float MenuListButtonPaddingAfter = 19;
 
 LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style) const
 {
-    if (style.appearance() == MenulistButtonPart)
-        return { 0, static_cast<int>(MenuListButtonPaddingRight + style.borderTopWidth()), 0, 0 };
+    if (style.appearance() == MenulistButtonPart) {
+        if (style.direction() == RTL)
+            return { 0, 0, 0, static_cast<int>(MenuListButtonPaddingAfter + style.borderTopWidth()) };
+        return { 0, static_cast<int>(MenuListButtonPaddingAfter + style.borderTopWidth()), 0, 0 };
+    }
     return { 0, 0, 0, 0 };
 }
 
@@ -601,8 +604,8 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
 
     ASSERT(maximumWidth >= 0);
 
-    if (maximumWidth > 0) {    
-        int width = static_cast<int>(maximumWidth + MenuListButtonPaddingRight);
+    if (maximumWidth > 0) {
+        int width = static_cast<int>(maximumWidth + MenuListButtonPaddingAfter);
         style.setWidth(Length(width, Fixed));
         style.setBoxSizing(CONTENT_BOX);
     }
@@ -631,6 +634,7 @@ void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& styl
 bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     auto& style = box.style();
+    bool isRTL = style.direction() == RTL;
     float borderTopWidth = style.borderTopWidth();
     FloatRect clip(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth(), rect.width() - style.borderLeftWidth() - style.borderRightWidth(), rect.height() - style.borderTopWidth() - style.borderBottomWidth());
     CGContextRef cgContext = paintInfo.context().platformContext();
@@ -640,15 +644,29 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     float adjustTop = 0.5;
     float adjustBottom = 0.5;
 
-    // Paint left-hand title portion.
+    // Paint title portion.
     {
-        FloatRect titleClip(clip.x() - adjustLeft, clip.y() - adjustTop, clip.width() - MenuListButtonPaddingRight + adjustLeft, clip.height() + adjustTop + adjustBottom);
+        float leftInset = isRTL ? MenuListButtonPaddingAfter : 0;
+        FloatRect titleClip(clip.x() + leftInset - adjustLeft, clip.y() - adjustTop, clip.width() - MenuListButtonPaddingAfter + adjustLeft, clip.height() + adjustTop + adjustBottom);
 
         GraphicsContextStateSaver stateSaver(paintInfo.context());
 
+        FloatSize topLeftRadius;
+        FloatSize topRightRadius;
+        FloatSize bottomLeftRadius;
+        FloatSize bottomRightRadius;
+
+        if (isRTL) {
+            topRightRadius = FloatSize(valueForLength(style.borderTopRightRadius().width(), rect.width()) - style.borderRightWidth(), valueForLength(style.borderTopRightRadius().height(), rect.height()) - style.borderTopWidth());
+            bottomRightRadius = FloatSize(valueForLength(style.borderBottomRightRadius().width(), rect.width()) - style.borderRightWidth(), valueForLength(style.borderBottomRightRadius().height(), rect.height()) - style.borderBottomWidth());
+        } else {
+            topLeftRadius = FloatSize(valueForLength(style.borderTopLeftRadius().width(), rect.width()) - style.borderLeftWidth(), valueForLength(style.borderTopLeftRadius().height(), rect.height()) - style.borderTopWidth());
+            bottomLeftRadius = FloatSize(valueForLength(style.borderBottomLeftRadius().width(), rect.width()) - style.borderLeftWidth(), valueForLength(style.borderBottomLeftRadius().height(), rect.height()) - style.borderBottomWidth());
+        }
+
         paintInfo.context().clipRoundedRect(FloatRoundedRect(titleClip,
-            FloatSize(valueForLength(style.borderTopLeftRadius().width(), rect.width()) - style.borderLeftWidth(), valueForLength(style.borderTopLeftRadius().height(), rect.height()) - style.borderTopWidth()), FloatSize(0, 0),
-            FloatSize(valueForLength(style.borderBottomLeftRadius().width(), rect.width()) - style.borderLeftWidth(), valueForLength(style.borderBottomLeftRadius().height(), rect.height()) - style.borderBottomWidth()), FloatSize(0, 0)));
+            topLeftRadius, topRightRadius,
+            bottomLeftRadius, bottomRightRadius));
 
         drawAxialGradient(cgContext, gradientWithName(ShadeGradient), titleClip.location(), FloatPoint(titleClip.x(), titleClip.maxY()), LinearInterpolation);
         drawAxialGradient(cgContext, gradientWithName(ShineGradient), FloatPoint(titleClip.x(), titleClip.maxY()), titleClip.location(), ExponentialInterpolation);
@@ -656,19 +674,36 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
 
     // Draw the separator after the initial padding.
 
-    float separator = clip.maxX() - MenuListButtonPaddingRight;
+    float separatorPosition = isRTL ? (clip.x() + MenuListButtonPaddingAfter) : (clip.maxX() - MenuListButtonPaddingAfter);
 
-    box.drawLineForBoxSide(paintInfo.context(), FloatRect(FloatPoint(separator - borderTopWidth, clip.y()), FloatPoint(separator, clip.maxY())), BSRight, style.visitedDependentColor(CSSPropertyBorderTopColor), style.borderTopStyle(), 0, 0);
+    box.drawLineForBoxSide(paintInfo.context(), FloatRect(FloatPoint(separatorPosition - borderTopWidth, clip.y()), FloatPoint(separatorPosition, clip.maxY())), BSRight, style.visitedDependentColor(CSSPropertyBorderTopColor), style.borderTopStyle(), 0, 0);
 
-    FloatRect buttonClip(separator - adjustTop, clip.y() - adjustTop, MenuListButtonPaddingRight + adjustTop + adjustRight, clip.height() + adjustTop + adjustBottom);
+    FloatRect buttonClip;
+    if (isRTL)
+        buttonClip = FloatRect(clip.x() - adjustTop, clip.y() - adjustTop, MenuListButtonPaddingAfter + adjustTop + adjustLeft, clip.height() + adjustTop + adjustBottom);
+    else
+        buttonClip = FloatRect(separatorPosition - adjustTop, clip.y() - adjustTop, MenuListButtonPaddingAfter + adjustTop + adjustRight, clip.height() + adjustTop + adjustBottom);
 
     // Now paint the button portion.
     {
         GraphicsContextStateSaver stateSaver(paintInfo.context());
 
+        FloatSize topLeftRadius;
+        FloatSize topRightRadius;
+        FloatSize bottomLeftRadius;
+        FloatSize bottomRightRadius;
+
+        if (isRTL) {
+            topLeftRadius = FloatSize(valueForLength(style.borderTopLeftRadius().width(), rect.width()) - style.borderLeftWidth(), valueForLength(style.borderTopLeftRadius().height(), rect.height()) - style.borderTopWidth());
+            bottomLeftRadius = FloatSize(valueForLength(style.borderBottomLeftRadius().width(), rect.width()) - style.borderLeftWidth(), valueForLength(style.borderBottomLeftRadius().height(), rect.height()) - style.borderBottomWidth());
+        } else {
+            topRightRadius = FloatSize(valueForLength(style.borderTopRightRadius().width(), rect.width()) - style.borderRightWidth(), valueForLength(style.borderTopRightRadius().height(), rect.height()) - style.borderTopWidth());
+            bottomRightRadius = FloatSize(valueForLength(style.borderBottomRightRadius().width(), rect.width()) - style.borderRightWidth(), valueForLength(style.borderBottomRightRadius().height(), rect.height()) - style.borderBottomWidth());
+        }
+
         paintInfo.context().clipRoundedRect(FloatRoundedRect(buttonClip,
-            FloatSize(0, 0), FloatSize(valueForLength(style.borderTopRightRadius().width(), rect.width()) - style.borderRightWidth(), valueForLength(style.borderTopRightRadius().height(), rect.height()) - style.borderTopWidth()),
-            FloatSize(0, 0), FloatSize(valueForLength(style.borderBottomRightRadius().width(), rect.width()) - style.borderRightWidth(), valueForLength(style.borderBottomRightRadius().height(), rect.height()) - style.borderBottomWidth())));
+            topLeftRadius, topRightRadius,
+            bottomLeftRadius, bottomRightRadius));
 
         paintInfo.context().fillRect(buttonClip, style.visitedDependentColor(CSSPropertyBorderTopColor));
 

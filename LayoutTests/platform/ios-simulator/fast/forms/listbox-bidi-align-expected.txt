@@ -25,13 +25,13 @@ layer at (0,0) size 800x292
             RenderTableCell {TD} at (333,2) size 161x26 [r=0 c=2 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 155x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 143x14
-                  RenderText at (123,0) size 0x14
-                    text run at (123,0) width 0 RTL: " "
+                  RenderText at (143,0) size 0x14
+                    text run at (143,0) width 0 RTL: " "
             RenderTableCell {TD} at (496,2) size 166x26 [r=0 c=3 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 160x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 148x14
-                  RenderText at (128,0) size 0x14
-                    text run at (128,0) width 0 RTL: " "
+                  RenderText at (148,0) size 0x14
+                    text run at (148,0) width 0 RTL: " "
           RenderTableRow {TR} at (0,30) size 664x26
             RenderTableCell {TD} at (2,30) size 161x26 [r=1 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 155x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
@@ -52,23 +52,23 @@ layer at (0,0) size 800x292
             RenderTableCell {TD} at (2,2) size 168x26 [r=0 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 162x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 150x14
-                  RenderText at (130,0) size 0x14
-                    text run at (130,0) width 0 RTL: " "
+                  RenderText at (150,0) size 0x14
+                    text run at (150,0) width 0 RTL: " "
             RenderTableCell {TD} at (172,2) size 155x26 [r=0 c=1 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 149x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 137x14
-                  RenderText at (117,0) size 0x14
-                    text run at (117,0) width 0 RTL: " "
+                  RenderText at (137,0) size 0x14
+                    text run at (137,0) width 0 RTL: " "
             RenderTableCell {TD} at (329,2) size 168x26 [r=0 c=2 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 162x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 150x14
-                  RenderText at (130,0) size 0x14
-                    text run at (130,0) width 0 RTL: " "
+                  RenderText at (150,0) size 0x14
+                    text run at (150,0) width 0 RTL: " "
             RenderTableCell {TD} at (499,2) size 155x26 [r=0 c=3 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 149x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 137x14
-                  RenderText at (117,0) size 0x14
-                    text run at (117,0) width 0 RTL: " "
+                  RenderText at (137,0) size 0x14
+                    text run at (137,0) width 0 RTL: " "
           RenderTableRow {TR} at (0,30) size 656x26
             RenderTableCell {TD} at (2,30) size 168x26 [r=1 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 162x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
@@ -89,13 +89,13 @@ layer at (0,0) size 800x292
             RenderTableCell {TD} at (2,2) size 177x26 [r=0 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 171x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 159x14
-                  RenderText at (139,0) size 0x14
-                    text run at (139,0) width 0 RTL: " "
+                  RenderText at (159,0) size 0x14
+                    text run at (159,0) width 0 RTL: " "
             RenderTableCell {TD} at (181,2) size 164x26 [r=0 c=1 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 158x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 146x14
-                  RenderText at (126,0) size 0x14
-                    text run at (126,0) width 0 RTL: " "
+                  RenderText at (146,0) size 0x14
+                    text run at (146,0) width 0 RTL: " "
             RenderTableCell {TD} at (347,2) size 177x26 [r=0 c=2 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 171x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 159x14
@@ -115,8 +115,8 @@ layer at (0,0) size 800x292
             RenderTableCell {TD} at (2,2) size 173x26 [r=0 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 167x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 155x14
-                  RenderText at (135,0) size 0x14
-                    text run at (135,0) width 0 RTL: " "
+                  RenderText at (155,0) size 0x14
+                    text run at (155,0) width 0 RTL: " "
             RenderTableCell {TD} at (177,2) size 173x26 [r=0 c=1 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 167x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 155x14
@@ -125,8 +125,8 @@ layer at (0,0) size 800x292
             RenderTableCell {TD} at (352,2) size 189x26 [r=0 c=2 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 183x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 171x14
-                  RenderText at (151,0) size 0x14
-                    text run at (151,0) width 0 RTL: " "
+                  RenderText at (171,0) size 0x14
+                    text run at (171,0) width 0 RTL: " "
             RenderTableCell {TD} at (543,2) size 189x26 [r=0 c=3 rs=1 cs=1]
               RenderMenuList {SELECT} at (3,3) size 183x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (6,3) size 171x14

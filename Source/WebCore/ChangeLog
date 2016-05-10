@@ -1,3 +1,25 @@
+2016-05-09  Dean Jackson  <dino@apple.com>
+
+        [iOS] <select> elements should render right-aligned when in RTL mode
+        https://bugs.webkit.org/show_bug.cgi?id=157501
+        <rdar://problem/26187870>
+
+        Reviewed by Antoine Quint.
+
+        This is the equivalent of http://webkit.org/b/157112 for iOS.
+        Handle <select> elements when we're in RTL mode. This means
+        drawing the button with the drop-down arrow on the left
+        side, and the button text right-aligned.
+
+        Test: fast/forms/select-non-native-rendering-direction.html
+        plus a bunch of other ones that needed rebaselining.
+
+        * rendering/RenderThemeIOS.mm: Rename MenuListButtonPaddingRight to MenuListButtonPaddingAfter.
+        (WebCore::RenderThemeIOS::popupInternalPaddingBox): Handle both directions.
+        (WebCore::adjustInputElementButtonStyle):
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorations): Handle drawing in
+        RTL mode.
+
 2016-05-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         NodeList should be iterable

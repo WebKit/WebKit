@@ -15,8 +15,8 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (101,15) size 1x0
         RenderMenuList {SELECT} at (2,22) size 86x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderBlock (anonymous) at (6,3) size 74x14
-            RenderText at (54,0) size 0x14
-              text run at (54,0) width 0 RTL: " "
+            RenderText at (74,0) size 0x14
+              text run at (74,0) width 0 RTL: " "
         RenderBR {BR} at (90,36) size 0x0
       RenderBlock {DIV} at (0,100) size 100x20
         RenderText {#text} at (31,0) size 69x19
