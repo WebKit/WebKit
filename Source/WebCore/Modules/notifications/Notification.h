@@ -80,13 +80,11 @@ public:
     const String& body() const { return m_body; }
     const String& lang() const { return m_lang; }
 
-#if ENABLE(LEGACY_NOTIFICATIONS)
     const String& dir() const { return m_direction; }
     void setDir(const String& dir) { m_direction = dir; }
 
     const String& replaceId() const { return m_tag; }
     void setReplaceId(const String& replaceId) { m_tag = replaceId; }
-#endif
 
     const String& tag() const { return m_tag; }
     void setTag(const String& tag) { m_tag = tag; }

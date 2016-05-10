@@ -1,3 +1,10 @@
+2016-05-09  Alex Christensen  <achristensen@webkit.org>
+
+        Fix GTK build after r200607
+
+        * Modules/notifications/Notification.h:
+        dir and replaceId are used in WebNotificationManager with NOTIFICATIONS and with LEGACY_NOTIFICATIONS
+
 2016-05-09  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the Windows build after r200602, and do some minor tidyup.
