@@ -31,6 +31,7 @@
 
 namespace JSC {
 
+#if ENABLE(JIT)
 void ResultProfile::emitDetectNumericness(CCallHelpers& jit, JSValueRegs regs, TagRegistersMode mode)
 {
     CCallHelpers::Jump isInt32 = jit.branchIfInt32(regs, mode);
@@ -53,6 +54,7 @@ void ResultProfile::emitSetNonNumber(CCallHelpers& jit)
 {
     jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NonNumber), CCallHelpers::AbsoluteAddress(addressOfFlags()));
 }
+#endif // ENABLE(JIT)
 
 } // namespace JSC
 

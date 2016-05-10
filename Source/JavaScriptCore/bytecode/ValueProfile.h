@@ -248,10 +248,6 @@ public:
     void* addressOfFlags() { return &m_bytecodeOffsetAndFlags; }
     void* addressOfSpecialFastPathCount() { return &m_specialFastPathCount; }
     
-    // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble) if it sees a
-    // double. Sets NonNumber if it sees a non-number.
-    void emitDetectNumericness(CCallHelpers&, JSValueRegs, TagRegistersMode = HaveTagRegisters);
-    
     void detectNumericness(JSValue value)
     {
         if (value.isInt32())
@@ -262,12 +258,18 @@ public:
         }
         m_bytecodeOffsetAndFlags |= NonNumber;
     }
+
+#if ENABLE(JIT)    
+    // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble) if it sees a
+    // double. Sets NonNumber if it sees a non-number.
+    void emitDetectNumericness(CCallHelpers&, JSValueRegs, TagRegistersMode = HaveTagRegisters);
     
     // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble).
     void emitSetDouble(CCallHelpers&);
     
     // Sets NonNumber.
     void emitSetNonNumber(CCallHelpers&);
+#endif // ENABLE(JIT)
 
 private:
     bool hasBits(int mask) const { return m_bytecodeOffsetAndFlags & mask; }

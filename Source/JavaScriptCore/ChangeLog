@@ -1,3 +1,16 @@
+2016-05-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix cloop.
+
+        * bytecode/ValueProfile.cpp:
+        (JSC::ResultProfile::emitDetectNumericness):
+        (JSC::ResultProfile::emitSetNonNumber):
+        * bytecode/ValueProfile.h:
+        (JSC::ResultProfile::addressOfFlags):
+        (JSC::ResultProfile::addressOfSpecialFastPathCount):
+        (JSC::ResultProfile::detectNumericness):
+        (JSC::ResultProfile::hasBits):
+
 2016-05-09  Michael Saboff  <msaboff@apple.com>
 
         Crash beneath ObjCCallbackFunctionImpl::call
