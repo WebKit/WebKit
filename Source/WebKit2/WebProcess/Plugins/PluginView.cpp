@@ -689,6 +689,12 @@ void PluginView::didInitializePlugin()
                 frameView->setNeedsLayout();
         }
     }
+
+    if (Frame* frame = m_pluginElement->document().frame()) {
+        auto* webFrame = WebFrame::fromCoreFrame(*frame);
+        if (webFrame->isMainFrame())
+            webFrame->page()->send(Messages::WebPageProxy::MainFramePluginHandlesPageScaleGestureDidChange(handlesPageScaleFactor()));
+    }
 }
 
 #if PLATFORM(COCOA)

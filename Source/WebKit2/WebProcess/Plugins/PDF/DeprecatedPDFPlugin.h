@@ -150,6 +150,7 @@ private:
     bool handleEditingCommand(const String& commandName, const String& argument) override;
     bool isEditingCommandEnabled(const String&) override;
     bool handlesPageScaleFactor() const override;
+    bool requiresUnifiedScaleFactor() const override { return true; }
     void setFocus(bool) override { }
     NPObject* pluginScriptableNPObject() override { return 0; }
     void windowFocusChanged(bool) override { }

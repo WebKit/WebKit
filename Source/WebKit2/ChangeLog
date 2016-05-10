@@ -1,3 +1,28 @@
+2016-05-09  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r191922): Zoom in/Zoom Out is not working for PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=157503
+        <rdar://problem/23736297>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.h:
+        Restore a requiresUnifiedScaleFactor that was lost in r191922.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::mainFramePluginHandlesPageScaleGestureDidChange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:        
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::didInitializePlugin):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        Separate mainFramePluginHandlesPageScaleGesture changes out from didCommitLoadForFrame,
+        because the PluginView doesn't exist at this point, so it can't answer
+        the handlesPageScaleGesture question correctly (or at all).
+        Instead, we'll send the message when the main-frame PluginView is initialized.
+
 2016-05-09  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] visibility:hidden -webkit-overflow-scrolling: touch divs can interfere with page scrolling

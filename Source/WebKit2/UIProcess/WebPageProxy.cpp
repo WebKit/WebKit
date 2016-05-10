@@ -3036,7 +3036,7 @@ void WebPageProxy::clearLoadDependentCallbacks()
     }
 }
 
-void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, bool pluginHandlesPageScaleGesture, uint32_t opaqueFrameLoadType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument, const UserData& userData)
+void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t opaqueFrameLoadType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument, const UserData& userData)
 {
     PageClientProtector protector(m_pageClient);
 
@@ -3096,11 +3096,10 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     // plugin is handling page scaling itself) so we should reset it to the default
     // for standard main frame loads.
     if (frame->isMainFrame()) {
-        m_mainFramePluginHandlesPageScaleGesture = pluginHandlesPageScaleGesture;
-
         if (static_cast<FrameLoadType>(opaqueFrameLoadType) == FrameLoadType::Standard) {
             m_pageScaleFactor = 1;
             m_pluginScaleFactor = 1;
+            m_mainFramePluginHandlesPageScaleGesture = false;
         }
     }
 
@@ -3340,6 +3339,11 @@ void WebPageProxy::didDetectXSSForFrame(uint64_t frameID, const UserData& userDa
     MESSAGE_CHECK(frame);
 
     m_loaderClient->didDetectXSSForFrame(*this, *frame, m_process->transformHandlesToObjects(userData.object()).get());
+}
+
+void WebPageProxy::mainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture)
+{
+    m_mainFramePluginHandlesPageScaleGesture = mainFramePluginHandlesPageScaleGesture;
 }
 
 void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
