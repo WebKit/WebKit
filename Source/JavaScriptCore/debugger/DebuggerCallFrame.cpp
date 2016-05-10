@@ -256,14 +256,17 @@ SourceID DebuggerCallFrame::sourceIDForCallFrame(CallFrame* callFrame)
 JSValue DebuggerCallFrame::thisValueForCallFrame(CallFrame* callFrame)
 {
     if (!callFrame)
-        return jsNull();
+        return jsUndefined();
+
+    if (!callFrame->thisValue())
+        return jsUndefined();
 
     ECMAMode ecmaMode = NotStrictMode;
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (codeBlock && codeBlock->isStrictMode())
         ecmaMode = StrictMode;
-    JSValue thisValue = callFrame->thisValue().toThis(callFrame, ecmaMode);
-    return thisValue;
+
+    return callFrame->thisValue().toThis(callFrame, ecmaMode);
 }
 
 } // namespace JSC

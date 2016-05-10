@@ -1,3 +1,18 @@
+2016-05-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CRASH under JSC::DebuggerCallFrame::thisValue when hitting breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=157442
+        <rdar://problem/24172015>
+
+        Reviewed by Saam Barati.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::thisValueForCallFrame):
+        When the thisValue is JSValue() return undefined and avoid calling
+        toThisValue which would lead to a crash. Having `this` be an empty
+        JSValue could happen inside an ES6 class constructor, before
+        calling super.
+
 2016-05-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix cloop.

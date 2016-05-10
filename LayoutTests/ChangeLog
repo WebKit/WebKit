@@ -1,3 +1,14 @@
+2016-05-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CRASH under JSC::DebuggerCallFrame::thisValue when hitting breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=157442
+        <rdar://problem/24172015>
+
+        Reviewed by Saam Barati.
+
+        * inspector/debugger/break-in-constructor-before-super-expected.txt: Added.
+        * inspector/debugger/break-in-constructor-before-super.html: Added.
+
 2016-05-09  Simon Fraser  <simon.fraser@apple.com>
 
         iOS-scrolling test cleanup.
