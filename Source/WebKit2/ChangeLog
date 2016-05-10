@@ -1,3 +1,10 @@
+2016-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Fix a deprecation warning.
+
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm:
+        (DatabaseServiceInitializer):
+
 2016-05-10  Tim Horton  <timothy_horton@apple.com>
 
         Clicks do not work in Safari after pressing the Track package button in Gmail
