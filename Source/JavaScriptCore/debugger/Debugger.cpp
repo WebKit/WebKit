@@ -453,7 +453,8 @@ bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Br
 
     NakedPtr<Exception> exception;
     DebuggerCallFrame* debuggerCallFrame = currentDebuggerCallFrame();
-    JSValue result = debuggerCallFrame->evaluate(breakpoint->condition, exception);
+    JSObject* scopeExtensionObject = nullptr;
+    JSValue result = debuggerCallFrame->evaluateWithScopeExtension(breakpoint->condition, scopeExtensionObject, exception);
 
     // We can lose the debugger while executing JavaScript.
     if (!m_currentCallFrame)

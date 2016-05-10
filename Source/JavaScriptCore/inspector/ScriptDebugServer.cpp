@@ -94,7 +94,8 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
     }
     case ScriptBreakpointActionTypeEvaluate: {
         NakedPtr<Exception> exception;
-        debuggerCallFrame->evaluate(breakpointAction.data, exception);
+        JSObject* scopeExtensionObject = nullptr;
+        debuggerCallFrame->evaluateWithScopeExtension(breakpointAction.data, scopeExtensionObject, exception);
         if (exception)
             reportException(debuggerCallFrame->exec(), exception);
         break;
@@ -104,7 +105,8 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         break;
     case ScriptBreakpointActionTypeProbe: {
         NakedPtr<Exception> exception;
-        JSValue result = debuggerCallFrame->evaluate(breakpointAction.data, exception);
+        JSObject* scopeExtensionObject = nullptr;
+        JSValue result = debuggerCallFrame->evaluateWithScopeExtension(breakpointAction.data, scopeExtensionObject, exception);
         if (exception)
             reportException(debuggerCallFrame->exec(), exception);
         

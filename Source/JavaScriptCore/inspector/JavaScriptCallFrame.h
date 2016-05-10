@@ -55,7 +55,7 @@ public:
     JSC::JSGlobalObject* vmEntryGlobalObject() const { return m_debuggerCallFrame->vmEntryGlobalObject(); }
 
     JSC::JSValue thisValue() const { return m_debuggerCallFrame->thisValue(); }
-    JSC::JSValue evaluate(const String& script, NakedPtr<JSC::Exception>& exception) const  { return m_debuggerCallFrame->evaluate(script, exception); }
+    JSC::JSValue evaluateWithScopeExtension(const String& script, JSC::JSObject* scopeExtension, NakedPtr<JSC::Exception>& exception) const { return m_debuggerCallFrame->evaluateWithScopeExtension(script, scopeExtension, exception); }
 
 private:
     JavaScriptCallFrame(PassRefPtr<JSC::DebuggerCallFrame>);

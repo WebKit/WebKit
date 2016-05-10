@@ -33,9 +33,10 @@
 #include "DebuggerEvalEnabler.h"
 #include "DebuggerScope.h"
 #include "Interpreter.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
-#include "JSCInlines.h"
+#include "JSWithScope.h"
 #include "Parser.h"
 #include "StackVisitor.h"
 #include "StrongInlines.h"
@@ -175,17 +176,17 @@ JSValue DebuggerCallFrame::thisValue() const
 }
 
 // Evaluate some JavaScript code in the scope of this frame.
-JSValue DebuggerCallFrame::evaluate(const String& script, NakedPtr<Exception>& exception)
+JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSObject* scopeExtensionObject, NakedPtr<Exception>& exception)
 {
     ASSERT(isValid());
     CallFrame* callFrame = m_callFrame;
     if (!callFrame)
-        return jsNull();
+        return jsUndefined();
 
     JSLockHolder lock(callFrame);
 
     if (!callFrame->codeBlock())
-        return JSValue();
+        return jsUndefined();
     
     DebuggerEvalEnabler evalEnabler(callFrame);
     VM& vm = callFrame->vm();
@@ -211,12 +212,22 @@ JSValue DebuggerCallFrame::evaluate(const String& script, NakedPtr<Exception>& e
         return jsUndefined();
     }
 
+    JSGlobalObject* globalObject = callFrame->vmEntryGlobalObject();
+    if (scopeExtensionObject) {
+        JSScope* ignoredPreviousScope = globalObject->globalScope();
+        globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, scopeExtensionObject, ignoredPreviousScope));
+    }
+
     JSValue thisValue = thisValueForCallFrame(callFrame);
     JSValue result = vm.interpreter->execute(eval, callFrame, thisValue, scope()->jsScope());
     if (vm.exception()) {
         exception = vm.exception();
         vm.clearException();
     }
+
+    if (scopeExtensionObject)
+        globalObject->clearGlobalScopeExtension();
+
     ASSERT(result);
     return result;
 }

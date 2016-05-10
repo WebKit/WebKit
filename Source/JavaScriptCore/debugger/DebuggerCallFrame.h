@@ -68,7 +68,7 @@ public:
     JS_EXPORT_PRIVATE String functionName() const;
     JS_EXPORT_PRIVATE Type type() const;
     JS_EXPORT_PRIVATE JSValue thisValue() const;
-    JSValue evaluate(const String&, NakedPtr<Exception>&);
+    JSValue evaluateWithScopeExtension(const String&, JSObject* scopeExtensionObject, NakedPtr<Exception>&);
 
     bool isValid() const { return !!m_callFrame; }
     JS_EXPORT_PRIVATE void invalidate();

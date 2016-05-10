@@ -380,7 +380,7 @@ InjectedScript.prototype = {
 
     evaluate: function(expression, objectGroup, injectCommandLineAPI, returnByValue, generatePreview, saveResult)
     {
-        return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, returnByValue, generatePreview, saveResult);
+        return this._evaluateAndWrap(InjectedScriptHost.evaluateWithScopeExtension, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, returnByValue, generatePreview, saveResult);
     },
 
     callFunctionOn: function(objectId, expression, args, returnByValue, generatePreview)
@@ -479,50 +479,7 @@ InjectedScript.prototype = {
                 commandLineAPI = new BasicCommandLineAPI(isEvalOnCallFrame ? object : null);
         }
 
-        if (isEvalOnCallFrame) {
-            // We can only use this approach if the evaluate function is the true 'eval'. That allows us to use it with
-            // the 'eval' identifier when calling it. Using 'eval' grants access to the local scope of the closure we
-            // create that provides the command line APIs.
-
-            var parameters = [InjectedScriptHost.evaluate, expression];
-            var expressionFunctionBody = "" +
-                "var global = Function('return this')() || (1, eval)('this');" +
-                "var __originalEval = global.eval; global.eval = __eval;" +
-                "try { return eval(__currentExpression); }" +
-                "finally { global.eval = __originalEval; }";
-
-            if (commandLineAPI) {
-                // To avoid using a 'with' statement (which fails in strict mode and requires injecting the API object)
-                // we instead create a closure where we evaluate the expression. The command line APIs are passed as
-                // parameters to the closure so they are in scope but not injected. This allows the code evaluated in
-                // the console to stay in strict mode (if is was already set), or to get strict mode by prefixing
-                // expressions with 'use strict';.
-
-                var parameterNames = Object.getOwnPropertyNames(commandLineAPI);
-                for (var i = 0; i < parameterNames.length; ++i)
-                    parameters.push(commandLineAPI[parameterNames[i]]);
-
-                var expressionFunctionString = "(function(__eval, __currentExpression, " + parameterNames.join(", ") + ") { " + expressionFunctionBody + " })";
-            } else {
-                // Use a closure in this case too to keep the same behavior of 'var' being captured by the closure instead
-                // of leaking out into the calling scope.
-                var expressionFunctionString = "(function(__eval, __currentExpression) { " + expressionFunctionBody + " })";
-            }
-
-            // Bind 'this' to the function expression using another closure instead of Function.prototype.bind. This ensures things will work if the page replaces bind.
-            var boundExpressionFunctionString = "(function(__function, __thisObject) { return function() { return __function.apply(__thisObject, arguments) }; })(" + expressionFunctionString + ", this)";
-            var expressionFunction = evalFunction.call(object, boundExpressionFunctionString);
-            var result = expressionFunction.apply(null, parameters);
-
-            if (saveResult)
-                this._saveResult(result);
-
-            return result;
-        }
-
-        // When not evaluating on a call frame, we evaluate as a program
-        // with the Command Line API as a scope extension object.
-        var result = InjectedScriptHost.evaluateWithScopeExtension(expression, commandLineAPI);
+        var result = evalFunction.call(object, expression, commandLineAPI);        
         if (saveResult)
             this._saveResult(result);
         return result;
@@ -547,7 +504,7 @@ InjectedScript.prototype = {
         var callFrame = this._callFrameForId(topCallFrame, callFrameId);
         if (!callFrame)
             return "Could not find call frame with given id";
-        return this._evaluateAndWrap(callFrame.evaluate, callFrame, expression, objectGroup, true, injectCommandLineAPI, returnByValue, generatePreview, saveResult);
+        return this._evaluateAndWrap(callFrame.evaluateWithScopeExtension, callFrame, expression, objectGroup, true, injectCommandLineAPI, returnByValue, generatePreview, saveResult);
     },
 
     _callFrameForId: function(topCallFrame, callFrameId)

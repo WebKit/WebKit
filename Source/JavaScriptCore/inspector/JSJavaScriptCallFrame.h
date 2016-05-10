@@ -57,7 +57,7 @@ public:
     void releaseImpl();
 
     // Functions.
-    JSC::JSValue evaluate(JSC::ExecState*);
+    JSC::JSValue evaluateWithScopeExtension(JSC::ExecState*);
     JSC::JSValue scopeType(JSC::ExecState*);
 
     // Attributes.

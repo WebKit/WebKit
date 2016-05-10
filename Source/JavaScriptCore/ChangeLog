@@ -1,3 +1,44 @@
+2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Eliminate the crazy code for evaluateOnCallFrame
+        https://bugs.webkit.org/show_bug.cgi?id=157510
+        <rdar://problem/26191332>
+
+        Reviewed by Timothy Hatcher.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        Set and clear an optional scope extension object.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype.evaluate):
+        (InjectedScript.prototype._evaluateOn):
+        (InjectedScript.prototype.evaluateOnCallFrame):
+        Unify the code to use the passed in evaluate function and object.
+        When evaluating on a call frame the evaluate function ends up being
+        DebuggerCallFrame::evaluateWithScopeExtension. When evaluating globally
+        this ends up being JSInjectedScriptHost::evaluateWithScopeExtension.
+        In both cases "object" is the preferred this object to use.
+
+        * debugger/DebuggerCallFrame.h:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::evaluateWithScopeExtension):
+        (Inspector::JSJavaScriptCallFrame::evaluate): Deleted.
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::JSJavaScriptCallFramePrototype::finishCreation):
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension):
+        * inspector/JavaScriptCallFrame.h:
+        (Inspector::JavaScriptCallFrame::evaluateWithScopeExtension):
+        (Inspector::JavaScriptCallFrame::evaluate): Deleted.
+        Pass through to DebuggerCallFrame with the proper arguments.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::hasBreakpoint):
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::evaluateBreakpointAction):
+        Use the new evaluate on call frame method name and no scope extension object.
+
 2016-05-10  Saam barati  <sbarati@apple.com>
 
         Make super-property-access.js test run for less time because it was timing out in debug builds.
