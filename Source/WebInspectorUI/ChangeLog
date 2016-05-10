@@ -1,3 +1,23 @@
+2016-05-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION: Web Inspector: DOM path bar blinks when modifying inline styles
+        https://bugs.webkit.org/show_bug.cgi?id=149258
+        <rdar://problem/22737843>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Utilities.js:
+        (Array.shallowEqual):
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype._updateContentViewNavigationItems):
+        (WebInspector.ContentBrowser.prototype._removeAllNavigationItems):
+        Don't re-render the navigation bar when all new navigation items match the previous ones.
+
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WebInspector.HierarchicalPathNavigationItem.set components.let.componentsEqual):
+        (WebInspector.HierarchicalPathNavigationItem.prototype.set components):
+        Don't re-render HierarchicalPathComponent when all new path components match the previous ones.
+
 2016-05-09  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Remove Global Breakpoints folder
