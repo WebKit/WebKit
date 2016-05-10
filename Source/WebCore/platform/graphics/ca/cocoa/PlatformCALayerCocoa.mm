@@ -618,13 +618,11 @@ void PlatformCALayerCocoa::setHidden(bool value)
 
 bool PlatformCALayerCocoa::contentsHidden() const
 {
-    // Used to disable user interaction for some platforms.
-    return true;
+    return false;
 }
 
 void PlatformCALayerCocoa::setContentsHidden(bool)
 {
-    // Used to disable user interaction for some platforms.
 }
 
 void PlatformCALayerCocoa::setBackingStoreAttached(bool)

@@ -158,6 +158,7 @@ public:
     virtual bool isHidden() const = 0;
     virtual void setHidden(bool) = 0;
 
+    // Used to disable user interaction for some platforms.
     virtual bool contentsHidden() const = 0;
     virtual void setContentsHidden(bool) = 0;
 

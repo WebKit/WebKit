@@ -448,6 +448,15 @@ void PlatformCALayerWin::setHidden(bool value)
     setNeedsCommit();
 }
 
+bool PlatformCALayerWin::contentsHidden() const
+{
+    return false;
+}
+
+void PlatformCALayerWin::setContentsHidden(bool)
+{
+}
+
 void PlatformCALayerWin::setBackingStoreAttached(bool)
 {
 }

@@ -1,3 +1,15 @@
+2016-05-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the Windows build after r200602, and do some minor tidyup.
+
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::contentsHidden):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::contentsHidden):
+        (PlatformCALayerWin::setContentsHidden):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+
 2016-05-09  Darin Adler  <darin@apple.com>
 
         Change Notification constructor to take an IDL dictionary instead of a WebCore::Dictionary
