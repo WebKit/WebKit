@@ -1,3 +1,70 @@
+2016-05-09  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS-scrolling test cleanup.
+        
+        Move iOS scrolling tests from platform/ios-simulator/fast/scrolling/ios to fast/scrolling/ios/.
+        Rebaseline those that need it. Enable some in iOS WK1 if they pass.
+        
+        Try to make fast/scrolling/ios/touch-scroll-visibility-hidden.html not flakey
+
+        * fast/scrolling/ios/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt: Copied from LayoutTests/platform/ios-simulator/ios/scrolling/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt.
+        * fast/scrolling/ios/clipping-ancestor-with-accelerated-scrolling-ancestor.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/clipping-ancestor-with-accelerated-scrolling-ancestor.html.
+        * fast/scrolling/ios/iframe-inside-overflow-clipping-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/iframe-inside-overflow-clipping-expected.txt.
+        * fast/scrolling/ios/iframe-inside-overflow-clipping.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/iframe-inside-overflow-clipping.html.
+        * fast/scrolling/ios/overflow-clip-with-accelerated-scrolling-ancestor-expected.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-clip-with-accelerated-scrolling-ancestor-expected.html.
+        * fast/scrolling/ios/overflow-clip-with-accelerated-scrolling-ancestor.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-clip-with-accelerated-scrolling-ancestor.html.
+        * fast/scrolling/ios/overflow-div-scrolling-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-div-scrolling-expected.txt.
+        * fast/scrolling/ios/overflow-div-scrolling.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-div-scrolling.html.
+        * fast/scrolling/ios/overflow-scroll-inherited-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-scroll-inherited-expected.txt.
+        * fast/scrolling/ios/overflow-scroll-inherited.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-scroll-inherited.html.
+        * fast/scrolling/ios/overflow-scroll-touch-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-scroll-touch-expected.txt.
+        * fast/scrolling/ios/overflow-scroll-touch.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-scroll-touch.html.
+        * fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt: Copied from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip-expected.txt.
+        * fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt: Copied from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip-size-expected.txt.
+        * fast/scrolling/ios/overflow-scrolling-ancestor-clip-size.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip-size.html.
+        * fast/scrolling/ios/overflow-scrolling-ancestor-clip.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip.html.
+        * fast/scrolling/ios/remove-overflow-crash-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/remove-overflow-crash-expected.txt.
+        * fast/scrolling/ios/remove-overflow-crash.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/remove-overflow-crash.html.
+        * fast/scrolling/ios/resources/jump-back.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/resources/jump-back.html.
+        * fast/scrolling/ios/script-tests/TEMPLATE.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/script-tests/TEMPLATE.html.
+        * fast/scrolling/ios/script-tests/overflow-div-scrolling.js: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/script-tests/overflow-div-scrolling.js.
+        (verifyScrollOffset):
+        * fast/scrolling/ios/scroll-event-from-scrollTo-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scroll-event-from-scrollTo-expected.txt.
+        * fast/scrolling/ios/scroll-event-from-scrollTo.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scroll-event-from-scrollTo.html.
+        * fast/scrolling/ios/scroll-events-back-forward-after-pageshow-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scroll-events-back-forward-after-pageshow-expected.txt.
+        * fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scroll-events-back-forward-after-pageshow.html.
+        * fast/scrolling/ios/scroll-events-back-forward-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scroll-events-back-forward-expected.txt.
+        * fast/scrolling/ios/scroll-events-back-forward.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scroll-events-back-forward.html.
+        * fast/scrolling/ios/scrollTo-at-page-load-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scrollTo-at-page-load-expected.txt.
+        * fast/scrolling/ios/scrollTo-at-page-load.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scrollTo-at-page-load.html.
+        * fast/scrolling/ios/scrollbar-hiding-expected.txt: Copied from LayoutTests/platform/ios-simulator/ios/scrolling/scrollbar-hiding-expected.txt.
+        * fast/scrolling/ios/scrollbar-hiding.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scrollbar-hiding.html.
+        * fast/scrolling/ios/scrolling-content-clip-to-viewport-expected.txt: Copied from LayoutTests/platform/ios-simulator/ios/scrolling/scrolling-content-clip-to-viewport-expected.txt.
+        * fast/scrolling/ios/scrolling-content-clip-to-viewport.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scrolling-content-clip-to-viewport.html.
+        * fast/scrolling/ios/table-cell-touch-scrolling-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/table-cell-touch-scrolling-expected.txt.
+        * fast/scrolling/ios/table-cell-touch-scrolling.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/table-cell-touch-scrolling.html.
+        * fast/scrolling/ios/textarea-scroll-touch-expected.txt: Copied from LayoutTests/platform/ios-simulator/ios/scrolling/textarea-scroll-touch-expected.txt.
+        * fast/scrolling/ios/textarea-scroll-touch.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/textarea-scroll-touch.html.
+        * fast/scrolling/ios/touch-scroll-back-forward-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/touch-scroll-back-forward-expected.txt.
+        * fast/scrolling/ios/touch-scroll-back-forward.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/touch-scroll-back-forward.html.
+        * fast/scrolling/ios/touch-scroll-visibility-hidden-expected.txt:
+        * fast/scrolling/ios/touch-scroll-visibility-hidden.html:
+        * fast/scrolling/ios/touch-stacking-expected.txt: Copied from LayoutTests/platform/ios-simulator/ios/scrolling/touch-stacking-expected.txt.
+        * fast/scrolling/ios/touch-stacking.html: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/touch-stacking.html.
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/fast/scrolling/ios/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.png: Added.
+        * platform/ios-simulator/fast/scrolling/ios/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt.
+        * platform/ios-simulator/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip-expected.txt.
+        * platform/ios-simulator/fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip-size-expected.txt.
+        * platform/ios-simulator/fast/scrolling/ios/scrollbar-hiding-expected.png: Added.
+        * platform/ios-simulator/fast/scrolling/ios/scrollbar-hiding-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scrollbar-hiding-expected.txt.
+        * platform/ios-simulator/fast/scrolling/ios/scrolling-content-clip-to-viewport-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/scrolling-content-clip-to-viewport-expected.txt.
+        * platform/ios-simulator/fast/scrolling/ios/textarea-scroll-touch-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/textarea-scroll-touch-expected.txt.
+        * platform/ios-simulator/fast/scrolling/ios/touch-stacking-expected.png: Added.
+        * platform/ios-simulator/fast/scrolling/ios/touch-stacking-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/scrolling/touch-stacking-expected.txt.
+
 2016-05-09  Filip Pizlo  <fpizlo@apple.com>
 
         Polymorphic operands in operators coerces downstream values to double.

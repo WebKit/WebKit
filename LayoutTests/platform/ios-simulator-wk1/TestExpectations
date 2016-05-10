@@ -893,8 +893,6 @@ js/dom/deep-recursion-test.html [ Failure ]
 js/large-expressions.html [ Failure ]
 
 # iOS-specific tests that fail:
-platform/ios-simulator/ios/scrolling/scrollTo-at-page-load.html [ Failure ]
-platform/ios-simulator/ios/scrolling/overflow-div-scrolling.html [ Failure ]
 platform/ios-simulator/ios/storage/domstorage/5mb-quota.html [ Failure ]
 
 # LayoutTests/fast test that time out:
@@ -1366,3 +1364,14 @@ webkit.org/b/137572 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 
 # This test relies on a settings option that we can only set with WKRT.
 js/dom/regress-157246.html
+
+fast/scrolling/ios/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Failure ]
+fast/scrolling/ios/overflow-div-scrolling.html [ Failure ]
+fast/scrolling/ios/overflow-scroll-touch.html [ Failure ]
+fast/scrolling/ios/overflow-scrolling-ancestor-clip-size.html [ Failure ]
+fast/scrolling/ios/overflow-scrolling-ancestor-clip.html [ Failure ]
+fast/scrolling/ios/scrollTo-at-page-load.html [ Failure ]
+fast/scrolling/ios/scrolling-content-clip-to-viewport.html [ Failure ]
+fast/scrolling/ios/textarea-scroll-touch.html [ Failure ]
+fast/scrolling/ios/touch-stacking.html [ Failure ]
+fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Skip ]

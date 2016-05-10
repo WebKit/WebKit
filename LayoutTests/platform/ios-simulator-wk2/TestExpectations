@@ -1773,7 +1773,6 @@ webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 perf/mouse-event.html [ Failure Pass ]
 perf/rel-list-remove.html [ Failure Pass ]
 platform/ios-simulator/ios/fast/coordinates/document-elementFromPoint.html [ Failure Pass ]
-platform/ios-simulator/ios/scrolling/scroll-event-from-scrollTo.html [ Failure Pass ]
 transitions/transition-on-element-with-content.html [ Failure Pass ]
 transitions/visited-link-color.html [ Failure Pass ]
 transitions/zero-duration-in-list.html [ Failure Pass ]

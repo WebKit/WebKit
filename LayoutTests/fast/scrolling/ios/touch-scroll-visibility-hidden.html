@@ -34,6 +34,7 @@
             -webkit-overflow-scrolling: touch;
             border: 1px solid black;
             visibility: hidden;
+            box-shadow: 0 0 10px black;
         }
         
         .content {
@@ -75,7 +76,7 @@
         window.addEventListener('load', runTest, false);
     </script>
 </head>
-<body onscroll="debug('body scroll')">
+<body>
 <div class="outer box" id="under-target">
 </div>
 

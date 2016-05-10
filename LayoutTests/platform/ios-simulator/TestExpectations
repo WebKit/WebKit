@@ -122,6 +122,8 @@ platform/ios-simulator/ios/fast/forms/range-input-touches.html [ Skip ]
 platform/ios-simulator/ios/fast/text/data-detectors/phone-disabled.html [ Skip ]
 platform/ios-simulator/ios/fast/text/data-detectors/phone.html [ Skip ]
 
+fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html [ Pass Failure ]
+
 # MediaSource is not currently supported on iOS.
 fast/history/page-cache-media-source-closed-2.html [ Skip ]
 fast/history/page-cache-media-source-closed.html [ Skip ]
@@ -2528,23 +2530,12 @@ platform/ios-simulator/ios/fixed/absolute-inside-fixed.html [ Failure ]
 platform/ios-simulator/ios/fixed/four-bars.html [ Failure ]
 platform/ios-simulator/ios/fixed/nested-fixed.html [ Failure ]
 platform/ios-simulator/ios/fixed/percentage-inside-fixed.html [ Failure ]
-platform/ios-simulator/ios/scrolling/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Failure ]
-platform/ios-simulator/ios/scrolling/overflow-scroll-touch.html [ Failure ]
-platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip-size.html [ Failure ]
-platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip.html [ Failure ]
-platform/ios-simulator/ios/scrolling/scrollbar-hiding.html [ Failure ]
-platform/ios-simulator/ios/scrolling/scrolling-content-clip-to-viewport.html [ Failure ]
-platform/ios-simulator/ios/scrolling/textarea-scroll-touch.html [ Failure ]
-platform/ios-simulator/ios/scrolling/touch-stacking.html [ Failure ]
 platform/ios-simulator/ios/touch [ Skip ]
 
 # image inputs get rounded corners on iOS
 fast/css/object-position/object-position-input-image.html [ ImageOnlyFailure ]
 # iOS snapshot is retina, results differ.
 fast/css/object-position/object-position-img.html [ ImageOnlyFailure ]
-
-webkit.org/b/152276 platform/ios-simulator/ios/scrolling/scroll-events-back-forward-after-pageshow.html [ Failure ]
-webkit.org/b/152276 platform/ios-simulator/ios/scrolling/scroll-events-back-forward.html [ Failure ]
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
