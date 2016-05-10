@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,17 +134,15 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             }
         }
         
-        if (!!exit.m_valueProfile) {
-            EncodedJSValue* bucket = exit.m_valueProfile.getSpecFailBucket(0);
-            
+        if (MethodOfGettingAValueProfile profile = exit.m_valueProfile) {
             if (exit.m_jsValueSource.isAddress()) {
                 // We can't be sure that we have a spare register. So use the tagTypeNumberRegister,
                 // since we know how to restore it.
                 m_jit.load64(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::tagTypeNumberRegister);
-                m_jit.store64(GPRInfo::tagTypeNumberRegister, bucket);
+                profile.emitReportValue(m_jit, JSValueRegs(GPRInfo::tagTypeNumberRegister));
                 m_jit.move(AssemblyHelpers::TrustedImm64(TagTypeNumber), GPRInfo::tagTypeNumberRegister);
             } else
-                m_jit.store64(exit.m_jsValueSource.gpr(), bucket);
+                profile.emitReportValue(m_jit, JSValueRegs(exit.m_jsValueSource.gpr()));
         }
     }
     

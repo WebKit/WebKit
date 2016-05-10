@@ -952,6 +952,21 @@ struct Node {
         return result & ~NodeBytecodeNeedsNegZero;
     }
 
+    bool mayHaveNonIntResult()
+    {
+        return m_flags & NodeMayHaveNonIntResult;
+    }
+    
+    bool mayHaveDoubleResult()
+    {
+        return m_flags & NodeMayHaveDoubleResult;
+    }
+    
+    bool mayHaveNonNumberResult()
+    {
+        return m_flags & NodeMayHaveNonNumberResult;
+    }
+
     bool hasConstantBuffer()
     {
         return op() == NewArrayBuffer;

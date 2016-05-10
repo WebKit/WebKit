@@ -191,13 +191,16 @@ private:
                         changed |= mergePrediction(SpecInt52Only);
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
-                } else if (
-                    !(left & (SpecFullNumber | SpecBoolean))
-                    || !(right & (SpecFullNumber | SpecBoolean))) {
+                } else if (isStringOrStringObjectSpeculation(left) && isStringOrStringObjectSpeculation(right)) {
                     // left or right is definitely something other than a number.
                     changed |= mergePrediction(SpecString);
-                } else
-                    changed |= mergePrediction(SpecString | SpecInt32Only | SpecBytecodeDouble);
+                } else {
+                    changed |= mergePrediction(SpecInt32Only);
+                    if (node->mayHaveDoubleResult())
+                        changed |= mergePrediction(SpecBytecodeDouble);
+                    if (node->mayHaveNonNumberResult())
+                        changed |= mergePrediction(SpecString);
+                }
             }
             break;
         }
@@ -211,8 +214,12 @@ private:
                     changed |= mergePrediction(SpecInt32Only);
                 else if (m_graph.addShouldSpeculateAnyInt(node))
                     changed |= mergePrediction(SpecInt52Only);
-                else
+                else if (isFullNumberOrBooleanSpeculation(left) && isFullNumberOrBooleanSpeculation(right))
                     changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
+                else if (node->mayHaveNonIntResult() || (left & SpecBytecodeDouble) || (right & SpecBytecodeDouble))
+                    changed |= mergePrediction(SpecInt32Only | SpecBytecodeDouble);
+                else
+                    changed |= mergePrediction(SpecInt32Only);
             }
             break;
         }
@@ -230,8 +237,10 @@ private:
                         changed |= mergePrediction(SpecInt52Only);
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
-                } else
+                } else if (node->mayHaveNonIntResult() || (left & SpecBytecodeDouble) || (right & SpecBytecodeDouble))
                     changed |= mergePrediction(SpecInt32Only | SpecBytecodeDouble);
+                else
+                    changed |= mergePrediction(SpecInt32Only);
             }
             break;
         }
@@ -267,6 +276,10 @@ private:
             SpeculatedType right = node->child2()->prediction();
             
             if (left && right) {
+                // FIXME: We're currently relying on prediction propagation and backwards propagation
+                // whenever we can, and only falling back on result flags if that fails. And the result
+                // flags logic doesn't know how to use backwards propagation. We should get rid of the
+                // prediction propagation logic and rely solely on the result type.
                 if (isFullNumberOrBooleanSpeculationExpectingDefined(left)
                     && isFullNumberOrBooleanSpeculationExpectingDefined(right)) {
                     if (m_graph.binaryArithShouldSpeculateInt32(node, m_pass))
@@ -275,8 +288,14 @@ private:
                         changed |= mergePrediction(SpecInt52Only);
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
-                } else
-                    changed |= mergePrediction(SpecInt32Only | SpecBytecodeDouble);
+                } else {
+                    if (node->mayHaveNonIntResult()
+                        || (left & SpecBytecodeDouble)
+                        || (right & SpecBytecodeDouble))
+                        changed |= mergePrediction(SpecInt32Only | SpecBytecodeDouble);
+                    else
+                        changed |= mergePrediction(SpecInt32Only);
+                }
             }
             break;
         }

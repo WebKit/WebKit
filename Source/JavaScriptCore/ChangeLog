@@ -1,3 +1,158 @@
+2016-05-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Polymorphic operands in operators coerces downstream values to double.
+        https://bugs.webkit.org/show_bug.cgi?id=151793
+
+        Reviewed by Mark Lam.
+        
+        Previously if an object flowed into arithmetic, the prediction propagation phase would either
+        assume that the output of the arithmetic had to be double or sometimes it would assume that it
+        couldn't be double. We want it to only assume that the output is double if it actually had been.
+        
+        The first part of this patch is to roll out http://trac.webkit.org/changeset/200502. That removed
+        some of the machinery that we had in place to detect whether the output of an operation is int or
+        double. That changeset claimed that the machinery was "fundamentally broken". It actually wasn't.
+        The reason why it didn't work was that ByteCodeParser was ignoring it if likelyToTakeSlowCase was
+        false. I think this was a complete goof-up: the code in ByteCodeParser::makeSafe was structured
+        in a way that made it non-obvious that the method is a no-op if !likelyToTakeSlowCase. So, this
+        change rolls out r200502 and makes ResultProfile do its job by reshaping how makeSafe processes
+        it.
+        
+        This also makes two other changes to shore up ResultProfile:
+        - OSR exit can now refine a ResultProfile the same way that it refines ValueProfile.
+        - Baseline JIT slow paths now set bits in ResultProfile.
+        
+        Based on this stuff, the DFG now predicts int/double/string in op_add/op_sub/op_mul based on
+        ResultProfiles. To be conservative, we still only use the ResultProfiles if the incoming
+        prediction is not number-or-boolean. This ensures that we exactly retain our old behavior in
+        those cases for which it was tuned. But I hope to remove this soon. I believe that ResultProfile
+        is already strictly better than what prediction propagation was doing before.
+        
+        This can be an enormous win. This patch adds some simple microbenchmarks that demonstrate the
+        problem of assuming that arithmetic on objects returns double. The most extreme of these speeds
+        up 8x with this change (object-int-add-array).
+        
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addFrequentExitSite):
+        (JSC::CodeBlock::hasExitSite):
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::FrequentExitSite::dump):
+        (JSC::DFG::ExitProfile::ExitProfile):
+        (JSC::DFG::ExitProfile::~ExitProfile):
+        (JSC::DFG::ExitProfile::add):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::FrequentExitSite::isHashTableDeletedValue):
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::fromLazyOperand):
+        (JSC::MethodOfGettingAValueProfile::emitReportValue):
+        (JSC::MethodOfGettingAValueProfile::getSpecFailBucket): Deleted.
+        * bytecode/MethodOfGettingAValueProfile.h:
+        (JSC::MethodOfGettingAValueProfile::MethodOfGettingAValueProfile):
+        (JSC::MethodOfGettingAValueProfile::operator bool):
+        (JSC::MethodOfGettingAValueProfile::operator!): Deleted.
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/ValueProfile.cpp:
+        (JSC::ResultProfile::emitDetectBitsLight):
+        (JSC::ResultProfile::emitSetDouble):
+        (JSC::ResultProfile::emitSetNonNumber):
+        (WTF::printInternal):
+        * bytecode/ValueProfile.h:
+        (JSC::ResultProfile::ResultProfile):
+        (JSC::ResultProfile::bytecodeOffset):
+        (JSC::ResultProfile::specialFastPathCount):
+        (JSC::ResultProfile::didObserveNonInt32):
+        (JSC::ResultProfile::didObserveDouble):
+        (JSC::ResultProfile::didObserveNonNegZeroDouble):
+        (JSC::ResultProfile::didObserveNegZeroDouble):
+        (JSC::ResultProfile::didObserveNonNumber):
+        (JSC::ResultProfile::didObserveInt32Overflow):
+        (JSC::ResultProfile::didObserveInt52Overflow):
+        (JSC::ResultProfile::setObservedNonNegZeroDouble):
+        (JSC::ResultProfile::setObservedNegZeroDouble):
+        (JSC::ResultProfile::setObservedNonNumber):
+        (JSC::ResultProfile::setObservedInt32Overflow):
+        (JSC::ResultProfile::addressOfFlags):
+        (JSC::ResultProfile::addressOfSpecialFastPathCount):
+        (JSC::ResultProfile::detectBitsLight):
+        (JSC::ResultProfile::hasBits):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::ensureNaturalLoops):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        (JSC::DFG::Graph::valueProfileFor): Deleted.
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::hasExitSite):
+        (JSC::DFG::Graph::numBlocks):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::arithNodeFlags):
+        (JSC::DFG::Node::mayHaveNonIntResult):
+        (JSC::DFG::Node::mayHaveDoubleResult):
+        (JSC::DFG::Node::mayHaveNonNumberResult):
+        (JSC::DFG::Node::hasConstantBuffer):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfEqual):
+        (JSC::AssemblyHelpers::branchIfNotCell):
+        (JSC::AssemblyHelpers::branchIfNotNumber):
+        (JSC::AssemblyHelpers::branchIfNotDoubleKnownNotInt32):
+        (JSC::AssemblyHelpers::branchIfBoolean):
+        (JSC::AssemblyHelpers::branchIfEmpty):
+        (JSC::AssemblyHelpers::branchStructure):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::CCallHelpers):
+        (JSC::CCallHelpers::setupArguments):
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::AccessCase::emitIntrinsicGetter):
+        * jit/JIT.h:
+        * jit/JITAddGenerator.cpp:
+        (JSC::JITAddGenerator::generateFastPath):
+        * jit/JITAddGenerator.h:
+        (JSC::JITAddGenerator::JITAddGenerator):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSlow_op_sub):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        (JSC::JIT::callOperationNoExceptionCheck):
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateFastPath):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITSubGenerator.cpp:
+        (JSC::JITSubGenerator::generateFastPath):
+        * jit/JITSubGenerator.h:
+        (JSC::JITSubGenerator::JITSubGenerator):
+        * jit/TagRegistersMode.cpp: Added.
+        (WTF::printInternal):
+        * jit/TagRegistersMode.h: Added.
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::updateResultProfileForBinaryArithOp):
+
 2016-05-09  Keith Miller  <keith_miller@apple.com>
 
         CallObjectConstructor should not call operationToThis in the FTL

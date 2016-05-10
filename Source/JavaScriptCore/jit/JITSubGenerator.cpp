@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,6 +83,9 @@ void JITSubGenerator::generateFastPath(CCallHelpers& jit)
     rightWasInteger.link(&jit);
 
     jit.subDouble(m_rightFPR, m_leftFPR);
+    if (m_resultProfile)
+        m_resultProfile->emitSetDouble(jit);
+
     jit.boxDouble(m_leftFPR, m_result);
 }
 

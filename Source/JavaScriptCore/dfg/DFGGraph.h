@@ -400,7 +400,6 @@ public:
         return hasExitSite(node->origin.semantic, exitKind);
     }
     
-    ValueProfile* valueProfileFor(Node*);
     MethodOfGettingAValueProfile methodOfGettingAValueProfileFor(Node*);
     
     BlockIndex numBlocks() const { return m_blocks.size(); }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +28,24 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeBlock.h"
+
 namespace JSC { namespace DFG {
+
+void FrequentExitSite::dump(PrintStream& out) const
+{
+    out.print("bc#", m_bytecodeOffset, ": ", m_kind, "/", m_jitType);
+}
 
 ExitProfile::ExitProfile() { }
 ExitProfile::~ExitProfile() { }
 
-bool ExitProfile::add(const ConcurrentJITLocker&, const FrequentExitSite& site)
+bool ExitProfile::add(const ConcurrentJITLocker&, CodeBlock* owner, const FrequentExitSite& site)
 {
     ASSERT(site.jitType() != ExitFromAnything);
+
+    if (Options::verboseExitProfile())
+        dataLog(pointerDump(owner), ": Adding exit site: ", site, "\n");
     
     // If we've never seen any frequent exits then create the list and put this site
     // into it.

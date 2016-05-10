@@ -1146,8 +1146,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             if (verbose)
                 dataLog("Have type: ", type->descriptor(), "\n");
             state.failAndRepatch.append(
-                jit.branchIfNotType(
-                    valueRegs, scratchGPR, type->descriptor(), CCallHelpers::HaveTagRegisters));
+                jit.branchIfNotType(valueRegs, scratchGPR, type->descriptor()));
         } else if (verbose)
             dataLog("Don't have type.\n");
         
@@ -1177,8 +1176,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             if (verbose)
                 dataLog("Have type: ", type->descriptor(), "\n");
             state.failAndRepatch.append(
-                jit.branchIfNotType(
-                    valueRegs, scratchGPR, type->descriptor(), CCallHelpers::HaveTagRegisters));
+                jit.branchIfNotType(valueRegs, scratchGPR, type->descriptor()));
         } else if (verbose)
             dataLog("Don't have type.\n");
         

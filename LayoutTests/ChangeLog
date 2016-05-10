@@ -1,3 +1,31 @@
+2016-05-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Polymorphic operands in operators coerces downstream values to double.
+        https://bugs.webkit.org/show_bug.cgi?id=151793
+
+        Reviewed by Mark Lam.
+
+        * js/regress/object-int-add-array-expected.txt: Added.
+        * js/regress/object-int-add-array.html: Added.
+        * js/regress/object-int-add-expected.txt: Added.
+        * js/regress/object-int-add.html: Added.
+        * js/regress/object-int-mul-array-expected.txt: Added.
+        * js/regress/object-int-mul-array.html: Added.
+        * js/regress/object-int-sub-array-expected.txt: Added.
+        * js/regress/object-int-sub-array.html: Added.
+        * js/regress/object-int-sub-expected.txt: Added.
+        * js/regress/object-int-sub.html: Added.
+        * js/regress/script-tests/object-int-add-array.js: Added.
+        (i.o.valueOf):
+        * js/regress/script-tests/object-int-add.js: Added.
+        (i.o.valueOf):
+        * js/regress/script-tests/object-int-mul-array.js: Added.
+        (i.o.valueOf):
+        * js/regress/script-tests/object-int-sub-array.js: Added.
+        (i.o.valueOf):
+        * js/regress/script-tests/object-int-sub.js: Added.
+        (i.o.valueOf):
+
 2016-05-09  Simon Fraser  <simon.fraser@apple.com>
 
         Land correct result for a recently added test.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,6 +116,8 @@ public:
     {
         return m_kind == ExitKindUnset && m_bytecodeOffset;
     }
+    
+    void dump(PrintStream& out) const;
 
 private:
     unsigned m_bytecodeOffset;
@@ -159,7 +161,7 @@ public:
     // be called a fixed number of times per recompilation. Recompilation is
     // rare to begin with, and implies doing O(n) operations on the CodeBlock
     // anyway.
-    bool add(const ConcurrentJITLocker&, const FrequentExitSite&);
+    bool add(const ConcurrentJITLocker&, CodeBlock* owner, const FrequentExitSite&);
     
     // Get the frequent exit sites for a bytecode index. This is O(n), and is
     // meant to only be used from debugging/profiling code.

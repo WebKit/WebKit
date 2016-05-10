@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -696,6 +696,10 @@ void JIT::emit_op_add(Instruction* currentInstruction)
     FPRReg scratchFPR = fpRegT2;
 #endif
 
+    ResultProfile* resultProfile = nullptr;
+    if (shouldEmitProfiling())
+        resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
+
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());
 
@@ -712,7 +716,7 @@ void JIT::emit_op_add(Instruction* currentInstruction)
         emitGetVirtualRegister(op2, rightRegs);
 
     JITAddGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-        fpRegT0, fpRegT1, scratchGPR, scratchFPR);
+        fpRegT0, fpRegT1, scratchGPR, scratchFPR, resultProfile);
 
     gen.generateFastPath(*this);
 
@@ -724,8 +728,17 @@ void JIT::emit_op_add(Instruction* currentInstruction)
     } else {
         ASSERT(gen.endJumpList().empty());
         ASSERT(gen.slowPathJumpList().empty());
-        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
-        slowPathCall.call();
+        if (resultProfile) {
+            if (leftOperand.isConst())
+                emitGetVirtualRegister(op1, leftRegs);
+            if (rightOperand.isConst())
+                emitGetVirtualRegister(op2, rightRegs);
+            callOperation(operationValueAddProfiled, resultRegs, leftRegs, rightRegs, resultProfile);
+            emitPutVirtualRegister(result, resultRegs);
+        } else {
+            JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
+            slowPathCall.call();
+        }
     }
 }
 
@@ -733,8 +746,41 @@ void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>
 {
     linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
 
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
-    slowPathCall.call();
+    int result = currentInstruction[1].u.operand;
+    int op1 = currentInstruction[2].u.operand;
+    int op2 = currentInstruction[3].u.operand;
+    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
+
+#if USE(JSVALUE64)
+    JSValueRegs leftRegs = JSValueRegs(regT0);
+    JSValueRegs rightRegs = JSValueRegs(regT1);
+    JSValueRegs resultRegs = leftRegs;
+#else
+    JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
+    JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
+    JSValueRegs resultRegs = leftRegs;
+#endif
+    
+    SnippetOperand leftOperand(types.first());
+    SnippetOperand rightOperand(types.second());
+
+    if (isOperandConstantInt(op1))
+        leftOperand.setConstInt32(getOperandConstantInt(op1));
+    else if (isOperandConstantInt(op2))
+        rightOperand.setConstInt32(getOperandConstantInt(op2));
+
+    if (shouldEmitProfiling()) {
+        if (leftOperand.isConst())
+            emitGetVirtualRegister(op1, leftRegs);
+        if (rightOperand.isConst())
+            emitGetVirtualRegister(op2, rightRegs);
+        ResultProfile* resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
+        callOperation(operationValueAddProfiled, resultRegs, leftRegs, rightRegs, resultProfile);
+        emitPutVirtualRegister(result, resultRegs);
+    } else {
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
+        slowPathCall.call();
+    }
 }
 
 void JIT::emit_op_div(Instruction* currentInstruction)
@@ -864,8 +910,17 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
     } else {
         ASSERT(gen.endJumpList().empty());
         ASSERT(gen.slowPathJumpList().empty());
-        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mul);
-        slowPathCall.call();
+        if (resultProfile) {
+            if (leftOperand.isPositiveConstInt32())
+                emitGetVirtualRegister(op1, leftRegs);
+            if (rightOperand.isPositiveConstInt32())
+                emitGetVirtualRegister(op2, rightRegs);
+            callOperation(operationValueMulProfiled, resultRegs, leftRegs, rightRegs, resultProfile);
+            emitPutVirtualRegister(result, resultRegs);
+        } else {
+            JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mul);
+            slowPathCall.call();
+        }
     }
 }
 
@@ -873,8 +928,41 @@ void JIT::emitSlow_op_mul(Instruction* currentInstruction, Vector<SlowCaseEntry>
 {
     linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
     
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mul);
-    slowPathCall.call();
+    int result = currentInstruction[1].u.operand;
+    int op1 = currentInstruction[2].u.operand;
+    int op2 = currentInstruction[3].u.operand;
+    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
+
+#if USE(JSVALUE64)
+    JSValueRegs leftRegs = JSValueRegs(regT0);
+    JSValueRegs rightRegs = JSValueRegs(regT1);
+    JSValueRegs resultRegs = leftRegs;
+#else
+    JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
+    JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
+    JSValueRegs resultRegs = leftRegs;
+#endif
+
+    SnippetOperand leftOperand(types.first());
+    SnippetOperand rightOperand(types.second());
+
+    if (isOperandConstantInt(op1))
+        leftOperand.setConstInt32(getOperandConstantInt(op1));
+    else if (isOperandConstantInt(op2))
+        rightOperand.setConstInt32(getOperandConstantInt(op2));
+
+    if (shouldEmitProfiling()) {
+        if (leftOperand.isPositiveConstInt32())
+            emitGetVirtualRegister(op1, leftRegs);
+        if (rightOperand.isPositiveConstInt32())
+            emitGetVirtualRegister(op2, rightRegs);
+        ResultProfile* resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
+        callOperation(operationValueMulProfiled, resultRegs, leftRegs, rightRegs, resultProfile);
+        emitPutVirtualRegister(result, resultRegs);
+    } else {
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mul);
+        slowPathCall.call();
+    }
 }
 
 void JIT::emit_op_sub(Instruction* currentInstruction)
@@ -898,6 +986,10 @@ void JIT::emit_op_sub(Instruction* currentInstruction)
     FPRReg scratchFPR = fpRegT2;
 #endif
 
+    ResultProfile* resultProfile = nullptr;
+    if (shouldEmitProfiling())
+        resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
+
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());
     
@@ -905,7 +997,7 @@ void JIT::emit_op_sub(Instruction* currentInstruction)
     emitGetVirtualRegister(op2, rightRegs);
 
     JITSubGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-        fpRegT0, fpRegT1, scratchGPR, scratchFPR);
+        fpRegT0, fpRegT1, scratchGPR, scratchFPR, resultProfile);
 
     gen.generateFastPath(*this);
 
@@ -920,8 +1012,25 @@ void JIT::emitSlow_op_sub(Instruction* currentInstruction, Vector<SlowCaseEntry>
 {
     linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
 
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_sub);
-    slowPathCall.call();
+    int result = currentInstruction[1].u.operand;
+#if USE(JSVALUE64)
+    JSValueRegs leftRegs = JSValueRegs(regT0);
+    JSValueRegs rightRegs = JSValueRegs(regT1);
+    JSValueRegs resultRegs = leftRegs;
+#else
+    JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
+    JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
+    JSValueRegs resultRegs = leftRegs;
+#endif
+
+    if (shouldEmitProfiling()) {
+        ResultProfile* resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
+        callOperation(operationValueSubProfiled, resultRegs, leftRegs, rightRegs, resultProfile);
+        emitPutVirtualRegister(result, resultRegs);
+    } else {
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_sub);
+        slowPathCall.call();
+    }
 }
 
 /* ------------------------------ END: OP_ADD, OP_SUB, OP_MUL ------------------------------ */

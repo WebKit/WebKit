@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,36 @@
 #include "config.h"
 #include "ValueProfile.h"
 
+#include "CCallHelpers.h"
+#include "JSCInlines.h"
+
+namespace JSC {
+
+void ResultProfile::emitDetectNumericness(CCallHelpers& jit, JSValueRegs regs, TagRegistersMode mode)
+{
+    CCallHelpers::Jump isInt32 = jit.branchIfInt32(regs, mode);
+    CCallHelpers::Jump notDouble = jit.branchIfNotDoubleKnownNotInt32(regs, mode);
+    // FIXME: We could be more precise here.
+    emitSetDouble(jit);
+    CCallHelpers::Jump done = jit.jump();
+    notDouble.link(&jit);
+    emitSetNonNumber(jit);
+    done.link(&jit);
+    isInt32.link(&jit);
+}
+
+void ResultProfile::emitSetDouble(CCallHelpers& jit)
+{
+    jit.or32(CCallHelpers::TrustedImm32(ResultProfile::Int32Overflow | ResultProfile::Int52Overflow | ResultProfile::NegZeroDouble | ResultProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(addressOfFlags()));
+}
+
+void ResultProfile::emitSetNonNumber(CCallHelpers& jit)
+{
+    jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NonNumber), CCallHelpers::AbsoluteAddress(addressOfFlags()));
+}
+
+} // namespace JSC
+
 namespace WTF {
     
 using namespace JSC;
@@ -34,23 +64,31 @@ void printInternal(PrintStream& out, const ResultProfile& profile)
 {
     const char* separator = "";
 
-    if (profile.didObserveNegZeroDouble()) {
-        out.print(separator, "NegZeroDouble");
+    if (!profile.didObserveNonInt32()) {
+        out.print("Int32");
         separator = "|";
+    } else {
+        if (profile.didObserveNegZeroDouble()) {
+            out.print(separator, "NegZeroDouble");
+            separator = "|";
+        }
+        if (profile.didObserveNonNegZeroDouble()) {
+            out.print("NonNegZeroDouble");
+            separator = "|";
+        }
+        if (profile.didObserveNonNumber()) {
+            out.print("NonNumber");
+            separator = "|";
+        }
+        if (profile.didObserveInt32Overflow()) {
+            out.print("Int32Overflow");
+            separator = "|";
+        }
+        if (profile.didObserveInt52Overflow()) {
+            out.print("Int52Overflow");
+            separator = "|";
+        }
     }
-    if (profile.didObserveNonNumber()) {
-        out.print("NonNumber");
-        separator = "|";
-    }
-    if (profile.didObserveInt32Overflow()) {
-        out.print("Int32Overflow");
-        separator = "|";
-    }
-    if (profile.didObserveInt52Overflow()) {
-        out.print("Int52Overflow");
-        separator = "|";
-    }
-
     if (profile.specialFastPathCount()) {
         out.print(" special fast path: ");
         out.print(profile.specialFastPathCount());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -284,8 +284,8 @@ static void compileStub(
             }
         }
 
-        if (!!exit.m_descriptor->m_valueProfile)
-            jit.store64(GPRInfo::regT0, exit.m_descriptor->m_valueProfile.getSpecFailBucket(0));
+        if (exit.m_descriptor->m_valueProfile)
+            exit.m_descriptor->m_valueProfile.emitReportValue(jit, JSValueRegs(GPRInfo::regT0));
     }
 
     // Materialize all objects. Don't materialize an object until all

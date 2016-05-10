@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -153,6 +153,7 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
         CCallHelpers::Jump done = jit.jump();
 
         notNegativeZero.link(&jit);
+        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
 
         jit.move(m_result.payloadGPR(), m_scratchGPR);
         jit.urshiftPtr(CCallHelpers::Imm32(52), m_scratchGPR);
@@ -174,6 +175,7 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
         CCallHelpers::Jump done = jit.jump();
 
         notNegativeZero.link(&jit);
+        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
 
         jit.move(m_result.tagGPR(), m_scratchGPR);
         jit.urshiftPtr(CCallHelpers::Imm32(52 - 32), m_scratchGPR);

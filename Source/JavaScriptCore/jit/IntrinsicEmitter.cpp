@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,7 +78,7 @@ void AccessCase::emitIntrinsicGetter(AccessGenerationState& state)
     switch (intrinsic()) {
     case TypedArrayLengthIntrinsic: {
         jit.load32(MacroAssembler::Address(state.baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
-        jit.boxInt32(valueGPR, valueRegs, CCallHelpers::DoNotHaveTagRegisters);
+        jit.boxInt32(valueGPR, valueRegs);
         state.succeed();
         return;
     }
@@ -93,7 +93,7 @@ void AccessCase::emitIntrinsicGetter(AccessGenerationState& state)
             jit.lshift32(valueGPR, Imm32(logElementSize(type)), valueGPR);
         }
 
-        jit.boxInt32(valueGPR, valueRegs, CCallHelpers::DoNotHaveTagRegisters);
+        jit.boxInt32(valueGPR, valueRegs);
         state.succeed();
         return;
     }
@@ -119,7 +119,7 @@ void AccessCase::emitIntrinsicGetter(AccessGenerationState& state)
         
         done.link(&jit);
         
-        jit.boxInt32(valueGPR, valueRegs, CCallHelpers::DoNotHaveTagRegisters);
+        jit.boxInt32(valueGPR, valueRegs);
         state.succeed();
         return;
     }

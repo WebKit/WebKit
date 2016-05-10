@@ -1446,46 +1446,50 @@ void Graph::ensureNaturalLoops()
         m_naturalLoops = std::make_unique<NaturalLoops>(*this);
 }
 
-ValueProfile* Graph::valueProfileFor(Node* node)
-{
-    if (!node)
-        return nullptr;
-        
-    CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
-        
-    if (node->hasLocal(*this)) {
-        if (!node->local().isArgument())
-            return nullptr;
-        int argument = node->local().toArgument();
-        Node* argumentNode = m_arguments[argument];
-        if (!argumentNode)
-            return nullptr;
-        if (node->variableAccessData() != argumentNode->variableAccessData())
-            return nullptr;
-        return profiledBlock->valueProfileForArgument(argument);
-    }
-        
-    if (node->hasHeapPrediction())
-        return profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-        
-    return nullptr;
-}
-
 MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* node)
 {
-    if (!node)
-        return MethodOfGettingAValueProfile();
-    
-    if (ValueProfile* valueProfile = valueProfileFor(node))
-        return MethodOfGettingAValueProfile(valueProfile);
-    
-    if (node->op() == GetLocal) {
+    while (node) {
         CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
         
-        return MethodOfGettingAValueProfile::fromLazyOperand(
-            profiledBlock,
-            LazyOperandValueProfileKey(
-                node->origin.semantic.bytecodeIndex, node->local()));
+        if (node->hasLocal(*this)) {
+            ValueProfile* result = [&] () -> ValueProfile* {
+                if (!node->local().isArgument())
+                    return nullptr;
+                int argument = node->local().toArgument();
+                Node* argumentNode = m_arguments[argument];
+                if (!argumentNode)
+                    return nullptr;
+                if (node->variableAccessData() != argumentNode->variableAccessData())
+                    return nullptr;
+                return profiledBlock->valueProfileForArgument(argument);
+            }();
+            if (result)
+                return result;
+            
+            if (node->op() == GetLocal) {
+                return MethodOfGettingAValueProfile::fromLazyOperand(
+                    profiledBlock,
+                    LazyOperandValueProfileKey(
+                        node->origin.semantic.bytecodeIndex, node->local()));
+            }
+        }
+        
+        if (node->hasHeapPrediction())
+            return profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+        
+        if (ResultProfile* result = profiledBlock->resultProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex))
+            return result;
+        
+        switch (node->op()) {
+        case Identity:
+        case ValueRep:
+        case DoubleRep:
+        case Int52Rep:
+            node = node->child1().node();
+            break;
+        default:
+            node = nullptr;
+        }
     }
     
     return MethodOfGettingAValueProfile();

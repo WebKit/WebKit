@@ -500,7 +500,7 @@ public:
     {
         ASSERT(JITCode::isBaselineCode(jitType()));
         ConcurrentJITLocker locker(m_lock);
-        return m_exitProfile.add(locker, site);
+        return m_exitProfile.add(locker, this, site);
     }
 
     bool hasExitSite(const ConcurrentJITLocker& locker, const DFG::FrequentExitSite& site) const
