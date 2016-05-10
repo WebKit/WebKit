@@ -76,6 +76,9 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, Wo
     , m_connectionProxy(connectionProxy)
 #endif
 {
+#if !ENABLE(INDEXED_DATABASE)
+    UNUSED_PARAM(connectionProxy);
+#endif
     auto origin = SecurityOrigin::create(url);
     if (m_topOrigin->hasUniversalAccess())
         origin->grantUniversalAccess();

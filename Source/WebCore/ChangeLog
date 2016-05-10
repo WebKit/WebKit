@@ -1,3 +1,15 @@
+2016-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(INDEXED_DATABASE) build
+        https://bugs.webkit.org/show_bug.cgi?id=157517
+
+        Reviewed by Alex Christensen.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::WorkerThread):
+
 2016-05-05  Jer Noble  <jer.noble@apple.com>
 
         Return a Promise from HTMLMediaElement.play()

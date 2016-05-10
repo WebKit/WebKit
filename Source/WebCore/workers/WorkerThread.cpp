@@ -105,6 +105,9 @@ WorkerThread::WorkerThread(const URL& scriptURL, const String& userAgent, const 
     , m_idbConnectionProxy(connectionProxy)
 #endif
 {
+#if !ENABLE(INDEXED_DATABASE)
+    UNUSED_PARAM(connectionProxy);
+#endif
     std::lock_guard<StaticLock> lock(threadSetMutex);
 
     workerThreads().add(this);
