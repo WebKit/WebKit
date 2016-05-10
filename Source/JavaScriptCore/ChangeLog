@@ -1,3 +1,16 @@
+2016-05-10  Saam barati  <sbarati@apple.com>
+
+        Make super-property-access.js test run for less time because it was timing out in debug builds.
+
+        Rubber stamped by Filip Pizlo.
+
+        * tests/stress/super-property-access.js:
+        (test):
+        (test.value):
+        (test.foo):
+        (test.B.prototype.bar):
+        (test.B):
+
 2016-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [JSC] Fix the !ENABLE(DFG_JIT) build

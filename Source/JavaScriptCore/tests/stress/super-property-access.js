@@ -43,7 +43,7 @@ test(function() {
     for (let i = 0; i < 1000; i++) {
         assert(arr[i].value === i);
     }
-}, 10);
+}, 2);
 
 test(function() {
     function value() { return 'value'; }
@@ -163,7 +163,7 @@ test(function() {
         assert(arr[i].funcBracket(i*2) === i + i*2);
     }
 
-}, 10);
+}, 2);
 
 
 test(function() {
@@ -280,7 +280,7 @@ test(function() {
         assert(arr[i].funcBracket(i*2) === i + i*2);
     }
 
-}, 10);
+}, 2);
 
 test(function() {
     function foo() { return 'foo'; }
@@ -317,7 +317,7 @@ test(function() {
     for (let i = 0; i < 1000; i++) {
         assert(b.index(i) === i);
     }
-}, 50);
+}, 2);
 
 test(function() {
     let obj = {};
@@ -360,7 +360,7 @@ test(function() { class A {
         assert(obj[1] === 'x')
         assert(obj[2] === 'y')
     }
-}, 1000);
+}, 100);
 
 test(function() {
     function foo() { return 'foo'; }
@@ -393,7 +393,7 @@ test(function() {
         assert(obj[1] === 'x')
         assert(obj[2] === 'y')
     }
-}, 1000);
+}, 100);
 
 test(function() {
     class A {
@@ -424,7 +424,7 @@ test(function() {
         assert(obj[1] === 'x')
         assert(obj[2] === 'y')
     }
-}, 1000);
+}, 100);
 
 test(function() {
     function foo() { return 'foo'; }
@@ -456,7 +456,7 @@ test(function() {
         assert(obj[1] === 'x')
         assert(obj[2] === 'y')
     }
-}, 1000);
+}, 100);
 
 test(function() {
     class A {
@@ -486,7 +486,7 @@ test(function() {
     for (let i = 0; i < 1000; i++) {
         assert(arr[i].foo === i);
     }
-}, 100);
+}, 10);
 
 test(function() {
     function foo() { return 'foo'; }
@@ -518,7 +518,7 @@ test(function() {
     for (let i = 0; i < 1000; i++) {
         assert(arr[i].foo === i);
     }
-}, 100);
+}, 10);
 
 test(function() {
     class A {
@@ -545,12 +545,12 @@ test(function() {
             return super.apply({}, [10, 20]);
         }
     }
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 1000; i++) {
         let b = new B;
         assert(b.foo() === 'call');
         assert(b.bar() === 'apply');
     }
-});
+}, 2);
 
 test(function() {
     class A {
@@ -583,4 +583,4 @@ test(function() {
         assert(r[1].length === 1);
         assert(r[1][0] === i);
     }
-});
+}, 10);
