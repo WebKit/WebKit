@@ -1,0 +1,6 @@
+unicode-range-download.html - didFinishLoading
+Ahem.otf - willSendRequest <NSURLRequest URL Ahem.otf, main document URL unicode-range-download.html, http method GET> redirectResponse (null)
+Ahem.otf - didReceiveResponse <NSURLResponse Ahem.otf, http status code 0>
+Ahem.otf - didFinishLoading
+This test makes sure that fonts with unicode-ranges which are never applicable are not downloaded. Note that, currently, we always download the first font, regardless of unicode-range. We use this font's metrics for things like baseline location. This test passes iff 2 or fewer fonts are downloaded.
+A

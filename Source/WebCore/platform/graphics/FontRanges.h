@@ -32,33 +32,50 @@
 
 namespace WebCore {
 
+class FontAccessor;
+
 class FontRanges {
 public:
     struct Range {
-        Range(UChar32 from, UChar32 to, Ref<Font>&& font)
+        Range(UChar32 from, UChar32 to, Ref<FontAccessor>&& fontAccessor)
             : m_from(from)
             , m_to(to)
-            , m_font(WTFMove(font))
+            , m_fontAccessor(WTFMove(fontAccessor))
         {
         }
 
+        Range(const Range& range)
+            : m_from(range.m_from)
+            , m_to(range.m_to)
+            , m_fontAccessor(range.m_fontAccessor.copyRef())
+        {
+        }
+
+        Range(Range&&) = default;
+        Range& operator=(const Range&) = delete;
+        Range& operator=(Range&&) = default;
+
         UChar32 from() const { return m_from; }
         UChar32 to() const { return m_to; }
-        const Font& font() const { return *m_font; }
+        const Font* font() const;
+        const FontAccessor& fontAccessor() const { return m_fontAccessor; }
 
     private:
         UChar32 m_from;
         UChar32 m_to;
-        RefPtr<Font> m_font;
+        Ref<FontAccessor> m_fontAccessor;
     };
 
     FontRanges();
     explicit FontRanges(RefPtr<Font>&&);
     ~FontRanges();
 
+    FontRanges(const FontRanges&) = default;
+    FontRanges& operator=(FontRanges&&) = default;
+
     bool isNull() const { return m_ranges.isEmpty(); }
 
-    void appendRange(const Range& range) { m_ranges.append(range); }
+    void appendRange(Range&& range) { m_ranges.append(WTFMove(range)); }
     unsigned size() const { return m_ranges.size(); }
     const Range& rangeAt(unsigned i) const { return m_ranges[i]; }
 

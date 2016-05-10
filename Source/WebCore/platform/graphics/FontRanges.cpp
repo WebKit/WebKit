@@ -27,19 +27,51 @@
 #include "FontRanges.h"
 
 #include "Font.h"
+#include "FontSelector.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+const Font* FontRanges::Range::font() const
+{
+    return m_fontAccessor->font();
+}
+
 FontRanges::FontRanges()
 {
 }
 
+class TrivialFontAccessor final : public FontAccessor {
+public:
+    static Ref<TrivialFontAccessor> create(Ref<Font>&& font)
+    {
+        return adoptRef(*new TrivialFontAccessor(WTFMove(font)));
+    }
+
+private:
+    TrivialFontAccessor(RefPtr<Font>&& font)
+        : m_font(WTFMove(font))
+    {
+    }
+
+    const Font* font() const final
+    {
+        return m_font.get();
+    }
+
+    bool isLoading() const final
+    {
+        return m_font->isLoading();
+    }
+
+    RefPtr<Font> m_font;
+};
+
 FontRanges::FontRanges(RefPtr<Font>&& font)
 {
     if (font)
-        m_ranges.append(Range { 0, 0x7FFFFFFF, font.releaseNonNull() });
+        m_ranges.append(Range { 0, 0x7FFFFFFF, TrivialFontAccessor::create(font.releaseNonNull()) });
 }
 
 FontRanges::~FontRanges()
@@ -50,9 +82,11 @@ GlyphData FontRanges::glyphDataForCharacter(UChar32 character) const
 {
     for (auto& range : m_ranges) {
         if (range.from() <= character && character <= range.to()) {
-            auto glyphData = range.font().glyphDataForCharacter(character);
-            if (glyphData.glyph)
-                return glyphData;
+            if (auto* font = range.font()) {
+                auto glyphData = font->glyphDataForCharacter(character);
+                if (glyphData.glyph)
+                    return glyphData;
+            }
         }
     }
     return GlyphData();
@@ -65,13 +99,15 @@ const Font* FontRanges::fontForCharacter(UChar32 character) const
 
 const Font& FontRanges::fontForFirstRange() const
 {
-    return m_ranges[0].font();
+    auto* font = m_ranges[0].font();
+    ASSERT(font);
+    return *font;
 }
 
 bool FontRanges::isLoading() const
 {
     for (auto& range : m_ranges) {
-        if (range.font().isLoading())
+        if (range.fontAccessor().isLoading())
             return true;
     }
     return false;

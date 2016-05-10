@@ -36,6 +36,14 @@ class FontCascadeDescription;
 class FontDescription;
 class FontSelectorClient;
 
+class FontAccessor : public RefCounted<FontAccessor> {
+public:
+    virtual ~FontAccessor() { }
+
+    virtual const Font* font() const = 0;
+    virtual bool isLoading() const = 0;
+};
+
 class FontSelector : public RefCounted<FontSelector> {
 public:
     virtual ~FontSelector() { }

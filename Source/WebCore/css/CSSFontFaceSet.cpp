@@ -238,6 +238,8 @@ void CSSFontFaceSet::remove(const CSSFontFace& face)
 
 void CSSFontFaceSet::clear()
 {
+    for (auto& face : m_faces)
+        face->removeClient(*this);
     m_faces.clear();
     m_facesLookupTable.clear();
     m_locallyInstalledFacesLookupTable.clear();

@@ -1,3 +1,19 @@
+2016-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Web Font is downloaded even when all the characters in the document are outside its unicode-range
+        https://bugs.webkit.org/show_bug.cgi?id=42154
+        <rdar://problem/17779042>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/unicode-range-download-expected.txt: Added.
+        * fast/text/unicode-range-download.html: Added.
+        * fast/text/resources/unicode-range-download-Ahem.otf: Added.
+        * fast/text/resources/unicode-range-download-Ahem.ttf: Added.
+        * fast/text/resources/unicode-range-download-Ahem.woff: Added.
+        * imported/blink/svg/custom/resources/graffiti.svg: Added.
+        imported/blink/svg/custom/svg-fonts-unloaded-segment.html requires this font.
+
 2016-05-09  Simon Fraser  <simon.fraser@apple.com>
 
         Remove testRunner.setTextAutosizingEnabled and migrate the one test that uses it

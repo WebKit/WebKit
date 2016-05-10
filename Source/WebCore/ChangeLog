@@ -1,3 +1,61 @@
+2016-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Web Font is downloaded even when all the characters in the document are outside its unicode-range
+        https://bugs.webkit.org/show_bug.cgi?id=42154
+        <rdar://problem/17779042>
+
+        Reviewed by Darin Adler.
+
+        Fonts are requested in two stages:
+        - For a given font family, all the relevant @font-face rules are consulted. We build up a
+        mapping of unicode-range -> Font object. This result is cached.
+        - Then, when we have the mapping, we look up the character we are trying to render to
+        find the appropriate Font object.
+
+        However, we are not supposed to create any Font objects (because that causes a download to
+        be triggered) until we consult with the character we're trying to render. Therefore, this
+        patch swaps out the Font objects with a FontAccessor. This FontAccessor is essentially a
+        lazily-created Font. When step 2 starts looking up the appropriate character, the
+        FontAccessor will be asked to start the download.
+
+        Test: fast/text/unicode-range-download.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::removeClient): 
+        as a client from all its CSSFontFaces.
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::clear): Clearing the CSSFontFaceSet needs to remove itself as a
+        client from all its CSSFontFaces.
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSFontAccessor::create): The lazy Font object.
+        (WebCore::CSSFontAccessor::CSSFontAccessor): Ditto.
+        (WebCore::appendFontWithInvalidUnicodeRangeIfLoading): Appends a FontAccessor.
+        (WebCore::CSSSegmentedFontFace::fontRanges): Create the FontAccessor and use it instead.
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::determinePitch): Use the fontForFirstRange() convenience
+        function.
+        (WebCore::glyphPageFromFontRanges): font() may now return nullptr. Update this function to
+        handle that.
+        * platform/graphics/FontRanges.cpp:
+        (WebCore::FontRanges::Range::font): Trigger the lazy initialization.
+        (WebCore::TrivialFontAccessor::create): Used in the case where there is only one font in
+        the Ranges object and it has a full unicode-range.
+        (WebCore::TrivialFontAccessor::TrivialFontAccessor):
+        (WebCore::FontRanges::FontRanges): Use TrivialFontAccessor.
+        (WebCore::FontRanges::glyphDataForCharacter): font() may now return nullptr. Update this
+        function to handle that. This is where the magic happens: this is where we trigger
+        downloads only if the character falls within the unicode-range.
+        (WebCore::FontRanges::fontForFirstRange): Add ASSERT.
+        (WebCore::FontRanges::isLoading): Update to use the new FontAccessor.
+        * platform/graphics/FontRanges.h: Ditto.
+        (WebCore::FontRanges::Range::Range):
+        (WebCore::FontRanges::Range::fontAccessor):
+        (WebCore::FontRanges::appendRange):
+        (WebCore::FontRanges::Range::font): Deleted.
+        * platform/graphics/FontSelector.h: The virtual base class of FontAccessor. This is
+        necessary because it must be shared between platform code and non-platform code.
+        (WebCore::FontAccessor::~FontAccessor):
+
 2016-05-09  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Prevent the same transaction from being commited/aborted twice.
