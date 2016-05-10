@@ -67,23 +67,21 @@ KeyframeAnimation::~KeyframeAnimation()
 
 void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property, const RenderStyle*& fromStyle, const RenderStyle*& toStyle, double& prog) const
 {
+    size_t numKeyframes = m_keyframes.size();
+    if (!numKeyframes)
+        return;
+
     // Find the first key
     double elapsedTime = getElapsedTime();
     if (m_animation->duration() && m_animation->iterationCount() != Animation::IterationCountInfinite)
         elapsedTime = std::min(elapsedTime, m_animation->duration() * m_animation->iterationCount());
 
     const double fractionalTime = this->fractionalTime(1, elapsedTime, 0);
-
-    size_t numKeyframes = m_keyframes.size();
-    if (!numKeyframes)
-        return;
-    
     ASSERT(!m_keyframes[0].key());
     ASSERT(m_keyframes[m_keyframes.size() - 1].key() == 1);
-    
+
     int prevIndex = -1;
     int nextIndex = -1;
-    
     // FIXME: with a lot of keys, this linear search will be slow. We could binary search.
     for (size_t i = 0; i < numKeyframes; ++i) {
         const KeyframeValue& currKeyFrame = m_keyframes[i];
@@ -95,31 +93,22 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
             nextIndex = i;
             break;
         }
-        
         prevIndex = i;
     }
 
     if (prevIndex == -1)
         prevIndex = 0;
-
-    if (nextIndex == -1) {
-        int lastIndex = m_keyframes.size() - 1;
-        if (prevIndex == lastIndex)
-            nextIndex = 0;
-        else
-            nextIndex = lastIndex;
-    }
-
-    ASSERT(prevIndex != nextIndex);
+    if (nextIndex == -1)
+        nextIndex = m_keyframes.size() - 1;
 
     const KeyframeValue& prevKeyframe = m_keyframes[prevIndex];
     const KeyframeValue& nextKeyframe = m_keyframes[nextIndex];
 
     fromStyle = prevKeyframe.style();
     toStyle = nextKeyframe.style();
-    
+
     double offset = prevKeyframe.key();
-    double scale = 1.0 / (nextKeyframe.key() - prevKeyframe.key());
+    double scale = 1.0 / (nextIndex == prevIndex ?  1 : (nextKeyframe.key() - prevKeyframe.key()));
 
     prog = progress(scale, offset, prevKeyframe.timingFunction(name()));
 }

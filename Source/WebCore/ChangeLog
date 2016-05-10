@@ -1,3 +1,22 @@
+2016-05-10  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r193610): Drop down menu doesn’t expand at allofbach.com
+        https://bugs.webkit.org/show_bug.cgi?id=157445
+
+        Reviewed by Simon Fraser.
+
+        When we don't run transitions (becasuse of to/from 'auto' values) we should also not
+        report the 'from' value and behave as if we finished the transition already.
+
+        Test: fast/animation/height-auto-transition-computed-value.html
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty): This is a revert of
+        looping the 'to' value back to the first keyframe when reverse animation is at the start value (last keyframe).
+
+        * platform/Length.cpp:
+        (WebCore::blend):
+
 2016-05-09  Dean Jackson  <dino@apple.com>
 
         [iOS] <select> elements should render right-aligned when in RTL mode
