@@ -66,12 +66,14 @@ public:
 
 private:
     void mediaActivityCounterChanged();
+    void pageLoadActivityCounterChanged();
     void setActivityFlag(PageActivityState::Flags, bool);
 
     Page& m_page;
     PageActivityState::Flags m_activityState { PageActivityState::NoFlags };
     HysteresisActivity m_userInputHysteresis;
     HysteresisActivity m_mediaActivityHysteresis;
+    HysteresisActivity m_pageLoadActivityHysteresis;
     PageActivityCounter m_mediaActivityCounter;
     PageActivityCounter m_pageLoadActivityCounter;
 };

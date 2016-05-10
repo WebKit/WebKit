@@ -1,3 +1,18 @@
+2016-05-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Allow some leeway after page load before throttling, to allow post load events to complete.
+        https://bugs.webkit.org/show_bug.cgi?id=157499
+
+        Reviewed by Ryosuke Niwa
+
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+            - m_pageLoadActivityCounter now affects activity state indirecty, via m_pageLoadActivityHysteresis.
+        (WebCore::PageThrottler::pageLoadActivityCounterChanged):
+            - counter updates hysteresis object, which in turn will affect activity state.
+        * page/PageThrottler.h:
+            - added m_pageLoadActivityHysteresis, pageLoadActivityCounterChanged.
+
 2016-05-10  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r193610): Drop down menu doesn’t expand at allofbach.com

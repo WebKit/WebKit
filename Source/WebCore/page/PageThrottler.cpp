@@ -30,12 +30,15 @@
 
 namespace WebCore {
 
+static const double PageLoadHysteresisSeconds = 10;
+
 PageThrottler::PageThrottler(Page& page)
     : m_page(page)
     , m_userInputHysteresis([this](HysteresisState state) { setActivityFlag(PageActivityState::UserInputActivity, state == HysteresisState::Started); })
     , m_mediaActivityHysteresis([this](HysteresisState state) { setActivityFlag(PageActivityState::MediaActivity, state == HysteresisState::Started); })
+    , m_pageLoadActivityHysteresis([this](HysteresisState state) { setActivityFlag(PageActivityState::PageLoadActivity, state == HysteresisState::Started); }, PageLoadHysteresisSeconds)
     , m_mediaActivityCounter([this](RefCounterEvent) { mediaActivityCounterChanged(); })
-    , m_pageLoadActivityCounter([this](RefCounterEvent) { setActivityFlag(PageActivityState::PageLoadActivity, m_pageLoadActivityCounter.value()); })
+    , m_pageLoadActivityCounter([this](RefCounterEvent) { pageLoadActivityCounterChanged(); })
 {
 }
 
@@ -55,6 +58,14 @@ void PageThrottler::mediaActivityCounterChanged()
         m_mediaActivityHysteresis.start();
     else
         m_mediaActivityHysteresis.stop();
+}
+
+void PageThrottler::pageLoadActivityCounterChanged()
+{
+    if (m_pageLoadActivityCounter.value())
+        m_pageLoadActivityHysteresis.start();
+    else
+        m_pageLoadActivityHysteresis.stop();
 }
 
 void PageThrottler::setActivityFlag(PageActivityState::Flags flag, bool value)
