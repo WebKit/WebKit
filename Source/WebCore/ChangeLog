@@ -1,5 +1,16 @@
 2016-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix the !ENABLE(SHADOW_DOM) && !ENABLE(DETAILS_ELEMENT) build
+        https://bugs.webkit.org/show_bug.cgi?id=157514
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/Element.cpp:
+        (WebCore::Element::insertedInto):
+        (WebCore::Element::removedFrom):
+
+2016-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
         Fix the !ENABLE(WEB_TIMING) build
         https://bugs.webkit.org/show_bug.cgi?id=157515
 

@@ -1511,10 +1511,12 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 #endif
 
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (parentNode() == &insertionPoint) {
         if (auto* shadowRoot = parentNode()->shadowRoot())
             shadowRoot->hostChildElementDidChange(*this);
     }
+#endif
 
     if (!insertionPoint.isInTreeScope())
         return InsertionDone;
@@ -1595,10 +1597,12 @@ void Element::removedFrom(ContainerNode& insertionPoint)
         }
     }
 
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (!parentNode()) {
         if (auto* shadowRoot = insertionPoint.shadowRoot())
             shadowRoot->hostChildElementDidChange(*this);
     }
+#endif
 
     ContainerNode::removedFrom(insertionPoint);
 
