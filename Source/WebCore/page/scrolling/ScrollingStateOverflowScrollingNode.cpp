@@ -68,13 +68,13 @@ void ScrollingStateOverflowScrollingNode::setScrolledContentsLayer(const LayerRe
     setPropertyChanged(ScrolledContentsLayer);
 }
 
-void ScrollingStateOverflowScrollingNode::dumpProperties(TextStream& ts, int indent) const
+void ScrollingStateOverflowScrollingNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior behavior) const
 {
     ts << "(" << "Overflow scrolling node" << "\n";
     
-    ScrollingStateScrollingNode::dumpProperties(ts, indent);
+    ScrollingStateScrollingNode::dumpProperties(ts, indent, behavior);
     
-    if (m_scrolledContentsLayer.layerID()) {
+    if ((behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerIDs) && m_scrolledContentsLayer.layerID()) {
         writeIndent(ts, indent + 1);
         ts << "(scrolled contents layer " << m_scrolledContentsLayer.layerID() << ")\n";
     }

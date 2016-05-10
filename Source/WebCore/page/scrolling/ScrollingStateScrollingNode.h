@@ -95,11 +95,11 @@ public:
     bool expectsWheelEventTestTrigger() const { return m_expectsWheelEventTestTrigger; }
     WEBCORE_EXPORT void setExpectsWheelEventTestTrigger(bool);
 
-    void dumpProperties(TextStream&, int indent) const override;
-    
 protected:
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&, ScrollingStateTree&);
+
+    void dumpProperties(TextStream&, int indent, ScrollingStateTreeAsTextBehavior) const override;
     
 private:
     FloatSize m_scrollableAreaSize;

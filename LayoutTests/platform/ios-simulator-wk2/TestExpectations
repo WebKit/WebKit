@@ -1664,7 +1664,7 @@ fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
 http/tests/loading/preload-img-srcset-sizes.html [ Failure ]
 http/tests/navigation/postredirect-basic.html [ Failure ]
 http/tests/navigation/postredirect-goback1.html [ Failure ]
-platform/ios-simulator-wk2/scrolling/remove-scrolling-role.html [ Failure ]
+
 platform/ios-simulator/ios/fast/text/underline-scaling.html [ Failure ]
 compositing/masks/compositing-clip-path-on-subpixel-position.html [ ImageOnlyFailure ]
 fast/borders/dashed-border-on-subpixel-position.html [ ImageOnlyFailure ]

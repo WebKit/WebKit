@@ -1,5 +1,16 @@
 2016-05-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix scrolling tree dumping
+        https://bugs.webkit.org/show_bug.cgi?id=157529
+
+        Reviewed by Tim Horton.
+
+        * fast/scrolling/ios/remove-scrolling-role-expected.txt: Renamed from LayoutTests/platform/ios-simulator-wk2/scrolling/remove-scrolling-role-expected.txt.
+        * fast/scrolling/ios/remove-scrolling-role.html: Renamed from LayoutTests/platform/ios-simulator-wk2/scrolling/remove-scrolling-role.html.
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2016-05-10  Simon Fraser  <simon.fraser@apple.com>
+
         Mark fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html as flakey.
 
         * platform/ios-simulator-wk2/TestExpectations:

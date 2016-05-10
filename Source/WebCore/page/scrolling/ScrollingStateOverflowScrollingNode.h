@@ -48,7 +48,7 @@ public:
     const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
     WEBCORE_EXPORT void setScrolledContentsLayer(const LayerRepresentation&);
     
-    void dumpProperties(TextStream&, int indent) const override;
+    void dumpProperties(TextStream&, int indent, ScrollingStateTreeAsTextBehavior) const override;
 
 private:
     ScrollingStateOverflowScrollingNode(ScrollingStateTree&, ScrollingNodeID);

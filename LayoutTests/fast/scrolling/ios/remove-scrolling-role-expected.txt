@@ -5,7 +5,6 @@
     (Overflow scrolling node
       (scrollable area size 300 400)
       (contents size 300 2000)
-      (scrolled contents layer 22)
     )
   )
 )

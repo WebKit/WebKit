@@ -58,7 +58,7 @@ private:
 
     void syncLayerPositionForViewportRect(const LayoutRect& viewportRect) override;
 
-    void dumpProperties(TextStream&, int indent) const override;
+    void dumpProperties(TextStream&, int indent, ScrollingStateTreeAsTextBehavior) const override;
 
     FixedPositionViewportConstraints m_constraints;
 };

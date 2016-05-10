@@ -75,7 +75,7 @@ void ScrollingStateFixedNode::syncLayerPositionForViewportRect(const LayoutRect&
         static_cast<GraphicsLayer*>(layer())->syncPosition(position);
 }
 
-void ScrollingStateFixedNode::dumpProperties(TextStream& ts, int indent) const
+void ScrollingStateFixedNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior) const
 {
     ts << "(" << "Fixed node" << "\n";
 

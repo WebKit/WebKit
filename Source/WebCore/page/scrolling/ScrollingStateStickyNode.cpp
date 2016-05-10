@@ -75,7 +75,7 @@ void ScrollingStateStickyNode::syncLayerPositionForViewportRect(const LayoutRect
         static_cast<GraphicsLayer*>(layer())->syncPosition(position);
 }
 
-void ScrollingStateStickyNode::dumpProperties(TextStream& ts, int indent) const
+void ScrollingStateStickyNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior) const
 {
     ts << "(" << "Sticky node" << "\n";
 

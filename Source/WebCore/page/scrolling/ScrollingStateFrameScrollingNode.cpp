@@ -221,11 +221,11 @@ void ScrollingStateFrameScrollingNode::setScrollerImpsFromScrollbars(Scrollbar*,
 }
 #endif
 
-void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, int indent) const
+void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, int indent, ScrollingStateTreeAsTextBehavior behavior) const
 {
     ts << "(Frame scrolling node" << "\n";
     
-    ScrollingStateScrollingNode::dumpProperties(ts, indent);
+    ScrollingStateScrollingNode::dumpProperties(ts, indent, behavior);
     
     if (m_frameScaleFactor != 1) {
         writeIndent(ts, indent + 1);

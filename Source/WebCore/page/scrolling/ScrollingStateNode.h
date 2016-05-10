@@ -40,6 +40,13 @@ class GraphicsLayer;
 class ScrollingStateTree;
 class TextStream;
 
+enum ScrollingStateTreeAsTextBehaviorFlags {
+    ScrollingStateTreeAsTextBehaviorNormal               = 0,
+    ScrollingStateTreeAsTextBehaviorIncludeLayerIDs      = 1 << 0,
+    ScrollingStateTreeAsTextBehaviorDebug                = ScrollingStateTreeAsTextBehaviorIncludeLayerIDs
+};
+typedef unsigned ScrollingStateTreeAsTextBehavior;
+
 // Used to allow ScrollingStateNodes to refer to layers in various contexts:
 // a) Async scrolling, main thread: ScrollingStateNode holds onto a GraphicsLayer, and uses m_layerID
 //    to detect whether that GraphicsLayer's underlying PlatformLayer changed.
@@ -238,9 +245,9 @@ protected:
     ScrollingStateNode(const ScrollingStateNode&, ScrollingStateTree&);
 
 private:
-    void dump(TextStream&, int indent) const;
+    void dump(TextStream&, int indent, ScrollingStateTreeAsTextBehavior) const;
 
-    virtual void dumpProperties(TextStream&, int indent) const = 0;
+    virtual void dumpProperties(TextStream&, int indent, ScrollingStateTreeAsTextBehavior) const = 0;
 
     const ScrollingNodeType m_nodeType;
     ScrollingNodeID m_nodeID;
