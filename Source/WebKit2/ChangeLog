@@ -1,3 +1,21 @@
+2016-05-10  Chris Dumez  <cdumez@apple.com>
+
+        [SpeculativeValidation] Do not start a preload if there is already one pending
+        https://bugs.webkit.org/show_bug.cgi?id=157522
+        <rdar://problem/26156083>
+
+        Reviewed by Alex Christensen.
+
+        Do not start a preload if there is already one pending. We failed to check in
+        SpeculativeLoadManager::preloadEntry() if there was already a pending preload.
+        As a result, we would sometimes cancel an already pending preload and start
+        one from scratch which is inefficient. It would also sometimes lead to hitting
+        an assertion in the SpeculativeLoad destructor because we could destroy the
+        SpeculativeLoad without finishing or cancelling the load.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+
 2016-05-10  Anders Carlsson  <andersca@apple.com>
 
         Fix a deprecation warning.
