@@ -399,8 +399,6 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performConstantHoisting(dfg);
         performGlobalCSE(dfg);
         performLivenessAnalysis(dfg);
-        performIntegerRangeOptimization(dfg);
-        performLivenessAnalysis(dfg);
         performCFA(dfg);
         performConstantFolding(dfg);
         performCleanUp(dfg); // Reduce the graph size a lot.
@@ -424,6 +422,16 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         // Alternatively, we could run loop pre-header creation after SSA conversion - but if we did that
         // then we'd need to do some simple SSA fix-up.
         performLICM(dfg);
+
+        // FIXME: Currently: IntegerRangeOptimization *must* be run after LICM.
+        //
+        // IntegerRangeOptimization makes changes on nodes based on preceding blocks
+        // and nodes. LICM moves nodes which can invalidates assumptions used
+        // by IntegerRangeOptimization.
+        //
+        // Ideally, the dependencies should be explicit. See https://bugs.webkit.org/show_bug.cgi?id=157534.
+        performLivenessAnalysis(dfg);
+        performIntegerRangeOptimization(dfg);
         
         performCleanUp(dfg);
         performIntegerCheckCombining(dfg);

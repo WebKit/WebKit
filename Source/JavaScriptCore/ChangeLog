@@ -1,3 +1,33 @@
+2016-05-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] FTL can produce GetByVal nodes without proper bounds checking
+        https://bugs.webkit.org/show_bug.cgi?id=157502
+        rdar://problem/26027027
+
+        Reviewed by Filip Pizlo.
+
+        It was possible for FTL to generates GetByVal on arbitrary offsets
+        without any bounds checking.
+
+        The bug is caused by the order of optimization phases:
+        -First, the Integer Range Optimization proves that a CheckInBounds
+         test can never fail.
+         This proof is based on control flow or preceeding instructions
+         inside a loop.
+        -The Loop Invariant Code Motion phase finds that the GetByVal does not
+         depend on anything in the loop and hoist it out of the loop.
+        -> As a result, the conditions that were necessary to eliminate
+           the CheckInBounds are no longer met before the GetByVal.
+
+        This patch just moves the Integer Range Optimization phase after
+        Loop Invariant Code Motion to make sure no code is moved after
+        its integer ranges bounds proofs have been used.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * tests/stress/bounds-check-not-eliminated-by-licm.js: Added.
+        (testInLoopTests):
+
 2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Eliminate the crazy code for evaluateOnCallFrame
