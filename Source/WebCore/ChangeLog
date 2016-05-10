@@ -1,3 +1,27 @@
+2016-05-09  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Have server database connections remember the OpenDB request that spawned them.
+        https://bugs.webkit.org/show_bug.cgi?id=157498
+
+        Reviewed by Tim Horton.
+
+        No new tests (No testable change in behavior, debug only for now).
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::create):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::UniqueIDBDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didFireVersionChangeEvent):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::createVersionChangeTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::establishTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didAbortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didCommitTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::openRequestIdentifier):
+
 2016-05-09  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] visibility:hidden -webkit-overflow-scrolling: touch divs can interfere with page scrolling

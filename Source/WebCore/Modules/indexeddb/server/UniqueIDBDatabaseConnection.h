@@ -41,16 +41,18 @@ class IDBResultData;
 namespace IDBServer {
 
 class IDBConnectionToClient;
+class ServerOpenDBRequest;
 class UniqueIDBDatabase;
 class UniqueIDBDatabaseTransaction;
 
 class UniqueIDBDatabaseConnection : public RefCounted<UniqueIDBDatabaseConnection> {
 public:
-    static Ref<UniqueIDBDatabaseConnection> create(UniqueIDBDatabase&, IDBConnectionToClient&);
+    static Ref<UniqueIDBDatabaseConnection> create(UniqueIDBDatabase&, ServerOpenDBRequest&);
 
     ~UniqueIDBDatabaseConnection();
 
     uint64_t identifier() const { return m_identifier; }
+    const IDBResourceIdentifier& openRequestIdentifier() { return m_openRequestIdentifier; }
     UniqueIDBDatabase& database() { return m_database; }
     IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
 
@@ -76,11 +78,12 @@ public:
     void abortTransactionWithoutCallback(UniqueIDBDatabaseTransaction&);
 
 private:
-    UniqueIDBDatabaseConnection(UniqueIDBDatabase&, IDBConnectionToClient&);
+    UniqueIDBDatabaseConnection(UniqueIDBDatabase&, ServerOpenDBRequest&);
 
     uint64_t m_identifier { 0 };
     UniqueIDBDatabase& m_database;
     IDBConnectionToClient& m_connectionToClient;
+    IDBResourceIdentifier m_openRequestIdentifier;
 
     bool m_closePending { false };
 

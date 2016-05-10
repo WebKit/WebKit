@@ -151,10 +151,10 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
         return;
     }
 
-    Ref<UniqueIDBDatabaseConnection> connection = UniqueIDBDatabaseConnection::create(*this, m_currentOpenDBRequest->connection());
-    UniqueIDBDatabaseConnection* rawConnection = &connection.get();
+    Ref<UniqueIDBDatabaseConnection> connection = UniqueIDBDatabaseConnection::create(*this, *m_currentOpenDBRequest);
 
     if (requestedVersion == m_databaseInfo->version()) {
+        auto* rawConnection = &connection.get();
         addOpenDatabaseConnection(WTFMove(connection));
 
         auto result = IDBResultData::openDatabaseSuccess(m_currentOpenDBRequest->requestData().requestIdentifier(), *rawConnection);
@@ -165,7 +165,7 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
     }
 
     ASSERT(!m_versionChangeDatabaseConnection);
-    m_versionChangeDatabaseConnection = rawConnection;
+    m_versionChangeDatabaseConnection = WTFMove(connection);
 
     // 3.3.7 "versionchange" transaction steps
     // If there's no other open connections to this database, the version change process can begin immediately.
