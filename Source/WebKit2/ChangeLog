@@ -1,3 +1,18 @@
+2016-05-10  Tim Horton  <timothy_horton@apple.com>
+
+        Clicks do not work in Safari after pressing the Track package button in Gmail
+        https://bugs.webkit.org/show_bug.cgi?id=157508
+        <rdar://problem/22646404>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        Explicitly cancel the force-click animation when we're removing the gesture
+        recognizer due to the WK*View being unparented. This works around a bug
+        where we don't get the cancellation callback in this situation, causing
+        Safari to be left in an inconsistent and unexpected state.
+
 2016-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [Linux] Remove seccomp filters support

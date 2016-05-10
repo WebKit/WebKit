@@ -1230,8 +1230,11 @@ void WebViewImpl::viewDidMoveToWindow()
 
         dismissContentRelativeChildWindowsWithAnimation(false);
 
-        if (m_immediateActionGestureRecognizer)
+        if (m_immediateActionGestureRecognizer) {
+            // Work around <rdar://problem/22646404> by explicitly cancelling the animation.
+            cancelImmediateActionAnimation();
             [m_view removeGestureRecognizer:m_immediateActionGestureRecognizer.get()];
+        }
     }
 
     m_page->setIntrinsicDeviceScaleFactor(intrinsicDeviceScaleFactor());
