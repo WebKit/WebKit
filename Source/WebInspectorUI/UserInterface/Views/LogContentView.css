@@ -199,6 +199,14 @@
     background-color: hsla(53, 83%, 53%, 0.75);
 }
 
+.search-in-progress .console-item:not(.filtered-out-by-search).special-user-log .console-message-text .highlighted {
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color-highlight);
+
+    border-bottom: none;
+    text-decoration: underline;
+}
+
 .console-user-command::before,
 .console-messages:focus .console-item.selected .console-user-command::before,
 .console-user-command-result.console-log-level::before,

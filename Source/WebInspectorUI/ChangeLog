@@ -1,3 +1,20 @@
+2016-05-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: "Selected Element" is hard to read when searching for "Element"
+        https://bugs.webkit.org/show_bug.cgi?id=157542
+        <rdar://problem/26207464>
+
+        Reviewed by Timothy Hatcher.
+
+        Change the style of highlighted text to match Xcode.
+
+        * UserInterface/Views/LogContentView.css:
+        (.search-in-progress .console-item:not(.filtered-out-by-search).special-user-log .console-message-text .highlighted):
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog > .tree-outline .item.selected .highlighted):
+        * UserInterface/Views/Variables.css:
+        (:root):
+
 2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Hide filter bar in TimelineViews where it is not needed or not yet working

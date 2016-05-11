@@ -108,6 +108,13 @@
     background-color: hsl(209, 100%, 49%);
 }
 
+.open-resource-dialog > .tree-outline .item.selected .highlighted {
+    background-color: var(--selected-background-color-highlight);
+
+    border-bottom: none;
+    text-decoration: underline;
+}
+
 .open-resource-dialog > .tree-outline .item.selected .subtitle {
     color: hsla(0, 0%, 100%, 0.9);
 }
