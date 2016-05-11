@@ -1,3 +1,15 @@
+2016-05-10  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r200447): Unable to build C_LOOP with clang version 800.0.12 or higher
+        https://bugs.webkit.org/show_bug.cgi?id=157549
+
+        Reviewed by Keith Miller.
+
+        Disable debug annotations for C_LOOP builds.  They are inline assembly directives,
+        unnecessary and they cause syntax errors.
+
+        * offlineasm/asm.rb:
+
 2016-05-10  Filip Pizlo  <fpizlo@apple.com>
 
         Internal JSC profiler should have a timestamped log of events for each code block
