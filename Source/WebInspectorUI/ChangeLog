@@ -1,5 +1,30 @@
 2016-05-11  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200600.
+
+    2016-05-09  Matt Baker  <mattbaker@apple.com>
+
+            Web Inspector: Remove Global Breakpoints folder
+            https://bugs.webkit.org/show_bug.cgi?id=157478
+            <rdar://problem/26176524>
+
+            Reviewed by Timothy Hatcher.
+
+            * Localizations/en.lproj/localizedStrings.js:
+            Remove UI string.
+
+            * UserInterface/Views/DebuggerSidebarPanel.js:
+            (WebInspector.DebuggerSidebarPanel):
+            (WebInspector.DebuggerSidebarPanel.prototype._breakpointTreeOutlineContextMenuTreeElement):
+            (WebInspector.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+            Remove references to folder tree element.
+
+            (WebInspector.DebuggerSidebarPanel.prototype._compareTopLevelTreeElements.isSpecialBreakpoint):
+            (WebInspector.DebuggerSidebarPanel.prototype._compareTopLevelTreeElements):
+            Top level comparison should check for "special" breakpoints.
+
+2016-05-11  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200594.
 
     2016-05-09  Matt Baker  <mattbaker@apple.com>

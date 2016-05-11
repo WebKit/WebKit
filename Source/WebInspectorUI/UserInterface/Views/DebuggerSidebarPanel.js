@@ -99,10 +99,9 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         // Add this offset-sections class name so the sticky headers don't overlap the navigation bar.
         this.element.classList.add(WebInspector.DebuggerSidebarPanel.OffsetSectionsStyleClassName);
 
-        this._globalBreakpointsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Global Breakpoints"), null, WebInspector.DebuggerSidebarPanel.GlobalIconStyleClassName);
         this._allExceptionsBreakpointTreeElement = new WebInspector.BreakpointTreeElement(WebInspector.debuggerManager.allExceptionsBreakpoint, WebInspector.DebuggerSidebarPanel.ExceptionIconStyleClassName, WebInspector.UIString("All Exceptions"));
         this._allUncaughtExceptionsBreakpointTreeElement = new WebInspector.BreakpointTreeElement(WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint, WebInspector.DebuggerSidebarPanel.ExceptionIconStyleClassName, WebInspector.UIString("All Uncaught Exceptions"));
-        this.suppressFilteringOnTreeElements([this._globalBreakpointsFolderTreeElement, this._allExceptionsBreakpointTreeElement, this._allUncaughtExceptionsBreakpointTreeElement]);
+        this.suppressFilteringOnTreeElements([this._allExceptionsBreakpointTreeElement, this._allUncaughtExceptionsBreakpointTreeElement]);
 
         this.filterBar.placeholder = WebInspector.UIString("Filter List");
 
@@ -137,10 +136,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._breakpointsContentTreeOutline.ondelete = this._breakpointTreeOutlineDeleteTreeElement.bind(this);
         this._breakpointsContentTreeOutline.oncontextmenu = this._breakpointTreeOutlineContextMenuTreeElement.bind(this);
 
-        this._breakpointsContentTreeOutline.appendChild(this._globalBreakpointsFolderTreeElement);
-        this._globalBreakpointsFolderTreeElement.appendChild(this._allExceptionsBreakpointTreeElement);
-        this._globalBreakpointsFolderTreeElement.appendChild(this._allUncaughtExceptionsBreakpointTreeElement);
-        this._globalBreakpointsFolderTreeElement.expand();
+        this._breakpointsContentTreeOutline.appendChild(this._allExceptionsBreakpointTreeElement);
+        this._breakpointsContentTreeOutline.appendChild(this._allUncaughtExceptionsBreakpointTreeElement);
 
         this._scriptsContentTreeOutline = this.createContentTreeOutline(true);
         this._scriptsContentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
@@ -658,7 +655,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     _breakpointTreeOutlineContextMenuTreeElement(event, treeElement)
     {
-        console.assert(treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement || treeElement.constructor === WebInspector.FolderTreeElement);
+        console.assert(treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement);
         if (!(treeElement instanceof WebInspector.ResourceTreeElement) && !(treeElement instanceof WebInspector.ScriptTreeElement))
             return;
 
@@ -714,7 +711,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             return;
         }
 
-        if (!(treeElement instanceof WebInspector.BreakpointTreeElement) || treeElement.parent.constructor === WebInspector.FolderTreeElement)
+        if (!(treeElement instanceof WebInspector.BreakpointTreeElement))
             return;
 
         let breakpoint = treeElement.breakpoint;
@@ -735,9 +732,14 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     _compareTopLevelTreeElements(a, b)
     {
-        if (a === this._globalBreakpointsFolderTreeElement)
+        function isSpecialBreakpoint(treeElement)
+        {
+            return treeElement.representedObject === WebInspector.debuggerManager.allExceptionsBreakpoint || treeElement.representedObject === WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint;
+        }
+
+        if (isSpecialBreakpoint(a))
             return -1;
-        if (b === this._globalBreakpointsFolderTreeElement)
+        if (isSpecialBreakpoint(b))
             return 1;
 
         return a.mainTitle.localeCompare(b.mainTitle);
