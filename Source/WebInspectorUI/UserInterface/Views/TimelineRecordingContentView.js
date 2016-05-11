@@ -277,8 +277,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._updateProgressView();
 
         if (timelineView) {
-            this._updateTimelineViewSelection(timelineView);
-            timelineView.currentTime = this._currentTime;
+            this._updateTimelineViewTimes(timelineView);
 
             let timeline = null;
             if (timelineView.representedObject instanceof WebInspector.Timeline)
@@ -383,11 +382,9 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         this._currentTime = currentTime;
         this._timelineOverview.currentTime = currentTime;
-        if (this.currentTimelineView)
-            this.currentTimelineView.currentTime = currentTime;
 
-        if (this._timelineOverview.timelineRuler.entireRangeSelected)
-            this._updateTimelineViewSelection(this._overviewTimelineView);
+        if (this.currentTimelineView)
+            this._updateTimelineViewTimes(this.currentTimelineView);
 
         // Force a layout now since we are already in an animation frame and don't need to delay it until the next.
         this._timelineOverview.updateLayoutIfNeeded();
@@ -448,6 +445,9 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         if (this._updating)
             this._stopUpdatingCurrentTime();
+
+        if (this.currentTimelineView)
+            this._updateTimelineViewTimes(this.currentTimelineView);
     }
 
     _debuggerPaused(event)
@@ -601,7 +601,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         if (!this.currentTimelineView)
             return;
 
-        this._updateTimelineViewSelection(this.currentTimelineView);
+        this._updateTimelineViewTimes(this.currentTimelineView);
 
         let selectedPathComponent;
         if (this._timelineOverview.timelineRuler.entireRangeSelected)
@@ -678,7 +678,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         return pathComponent;
     }
 
-    _updateTimelineViewSelection(timelineView)
+    _updateTimelineViewTimes(timelineView)
     {
         let timelineRuler = this._timelineOverview.timelineRuler;
         let entireRangeSelected = timelineRuler.entireRangeSelected;
@@ -694,6 +694,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         }
 
         timelineView.startTime = this._timelineOverview.selectionStartTime;
+        timelineView.currentTime = this._currentTime;
         timelineView.endTime = endTime;
     }
 
