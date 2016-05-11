@@ -300,8 +300,7 @@ Element* FocusController::findFocusableElementDescendingDownIntoFrameDocument(Fo
         HTMLFrameOwnerElement& owner = downcast<HTMLFrameOwnerElement>(*element);
         if (!owner.contentFrame())
             break;
-        // FIXME: This can return a non-focusable shadow root.
-        Element* foundElement = findFocusableElementOrScopeOwner(direction, FocusNavigationScope::scopeOwnedByIFrame(owner), 0, event);
+        Element* foundElement = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByIFrame(owner), nullptr, event);
         if (!foundElement)
             break;
         ASSERT(element != foundElement);
@@ -433,9 +432,10 @@ Element* FocusController::findFocusableElementAcrossFocusScope(FocusDirection di
     // If there's no focusable node to advance to, move up the focus scopes until we find one.
     Element* owner = scope.owner();
     while (owner) {
-        FocusNavigationScope outerScope = FocusNavigationScope::scopeOf(*owner);
         if (direction == FocusDirectionBackward && isFocusableShadowHost(*owner, *event))
             return findFocusableElementDescendingDownIntoFrameDocument(direction, owner, event);
+
+        auto outerScope = FocusNavigationScope::scopeOf(*owner);
         if (Element* candidateInOuterScope = findFocusableElementWithinScope(direction, outerScope, owner, event))
             return candidateInOuterScope;
         owner = outerScope.owner();
@@ -514,11 +514,9 @@ static Element* nextElementWithGreaterTabIndex(const FocusNavigationScope& scope
             continue;
         Element& candidate = downcast<Element>(*node);
         int candidateTabIndex = candidate.tabIndex();
-        if (isFocusableOrHasShadowTreeWithoutCustomFocusLogic(candidate, event) && candidateTabIndex > tabIndex) {
-            if (!winner || candidateTabIndex < winningTabIndex) {
-                winner = &candidate;
-                winningTabIndex = candidateTabIndex;
-            }
+        if (isFocusableOrHasShadowTreeWithoutCustomFocusLogic(candidate, event) && candidateTabIndex > tabIndex && (!winner || candidateTabIndex < winningTabIndex)) {
+            winner = &candidate;
+            winningTabIndex = candidateTabIndex;
         }
     }
 
@@ -535,7 +533,7 @@ static Element* previousElementWithLowerTabIndex(const FocusNavigationScope& sco
             continue;
         Element& element = downcast<Element>(*node);
         int currentTabIndex = shadowAdjustedTabIndex(element, event);
-        if ((isFocusableOrHasShadowTreeWithoutCustomFocusLogic(element, event) || isNonFocusableShadowHost(element, event)) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
+        if (isFocusableOrHasShadowTreeWithoutCustomFocusLogic(element, event) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
             winner = &element;
             winningTabIndex = currentTabIndex;
         }

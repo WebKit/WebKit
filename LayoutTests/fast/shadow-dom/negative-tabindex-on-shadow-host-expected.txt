@@ -7,4 +7,9 @@ To manually test, press tab key four times. It should traverse focusable element
 4.1. Focusable element inside a shadow host with no tabindex
 4.2. Shadow host with no tabindex
 5. Last sequentially focusable element outside shadow trees
+4.1. Focusable element inside a shadow host with no tabindex
+4.2. Shadow host with no tabindex
+3. Focusable element inside a shadow host with a positive tabindex
+2. Shadow host with a positive tabindex
+1. First sequentially focusable element outside shadow trees
 

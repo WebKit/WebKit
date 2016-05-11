@@ -1,3 +1,19 @@
+2016-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Moving focus by tab could erroneously focus a non-focusable shadow host
+        https://bugs.webkit.org/show_bug.cgi?id=157585
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test for moving focus across iframes.
+
+        Also expanded negative-tabindex-on-shadow-host.html to cover reverse traversal.
+
+        * fast/shadow-dom/focus-on-iframe-expected.txt: Added.
+        * fast/shadow-dom/focus-on-iframe.html: Added.
+        * fast/shadow-dom/negative-tabindex-on-shadow-host-expected.txt:
+        * fast/shadow-dom/negative-tabindex-on-shadow-host.html:
+
 2016-05-11  Darin Adler  <darin@apple.com>
 
         Change IDBObjectStore.createIndex to take an IDL dictionary

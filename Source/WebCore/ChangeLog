@@ -1,3 +1,27 @@
+2016-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Moving focus by tab could erroneously focus a non-focusable shadow host
+        https://bugs.webkit.org/show_bug.cgi?id=157585
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by findFocusableElementDescendingDownIntoFrameDocument erroneously returning a shadow host
+        that contains a focusable element instead of traversing it through to find a focusable element within. Fixed
+        the bug calling findFocusableElementWithinScope which traverses shadow trees to find a focusable element unlike
+        findFocusableElementOrScopeOwner which returns a focusable element or a shadow host.
+
+        Also done some refactoring for clarity.
+
+        Test: fast/shadow-dom/focus-on-iframe.html
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::findFocusableElementDescendingDownIntoFrameDocument): See above.
+
+        (WebCore::FocusController::findFocusableElementAcrossFocusScope): Declare outerScope as late as possible.
+        (WebCore::nextElementWithGreaterTabIndex): Merged if conditions for clarity.
+        (WebCore::previousElementWithLowerTabIndex): Removed the check for isNonFocusableShadowHost since
+        isFocusableOrHasShadowTreeWithoutCustomFocusLogic returns true whenever isNonFocusableShadowHost returns true.
+
 2016-05-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Updating bindings tests results after r200699
