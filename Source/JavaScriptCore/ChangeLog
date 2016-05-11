@@ -1,3 +1,15 @@
+2016-05-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r200481.
+        https://bugs.webkit.org/show_bug.cgi?id=157573
+
+        it's bad news for asm.js (Requested by pizlo on #webkit).
+
+        Reverted changeset:
+
+        "Reduce maximum JIT pool size on X86_64."
+        http://trac.webkit.org/changeset/200481
+
 2016-05-10  Keith Miller  <keith_miller@apple.com>
 
         TypedArray.prototype.slice should use the byteLength of passed array for memmove
