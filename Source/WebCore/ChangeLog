@@ -1,3 +1,9 @@
+2016-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix the Windows build after r200699.
+
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+
 2016-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS build fix attempt after r200700.

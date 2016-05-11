@@ -29,6 +29,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "JSDOMBinding.h"
 #include "JSIDBObjectStore.h"
 
 using namespace JSC;
