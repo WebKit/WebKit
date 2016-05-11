@@ -1,3 +1,112 @@
+2016-05-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Internal JSC profiler should have a timestamped log of events for each code block
+        https://bugs.webkit.org/show_bug.cgi?id=157538
+
+        Reviewed by Benjamin Poulain.
+        
+        For example, in 3d-cube, I can query the events for MMulti and I get:
+
+        1462917476.17083  MMulti#DTZ7qc                          installCode        
+        1462917476.179663 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline installCode        
+        1462917476.179664 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline osrEntry           at bc#49
+        1462917476.185651 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline delayOptimizeToDFG counter = 1011.214233/1717.000000, -707
+        1462917476.187913 MMulti#DTZ7qc MMulti#DTZ7qc-2-DFG      installCode        
+        1462917476.187917 MMulti#DTZ7qc MMulti#DTZ7qc-2-DFG      osrEntry           at bc#49
+        1462917476.205365 MMulti#DTZ7qc MMulti#DTZ7qc-2-DFG      jettison           due to OSRExit, counting = true, detail = (null)
+        1462917476.205368 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline frequentExit       bc#65: BadCache/FromDFG
+        1462917476.205369 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline installCode        
+        1462917476.205482 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline delayOptimizeToDFG counter = 1013.000000/3434.000000, -1000
+        1462917476.211547 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline delayOptimizeToDFG counter = 2013.000000/3434.000000, -1000
+        1462917476.213721 MMulti#DTZ7qc MMulti#DTZ7qc-3-DFG      installCode        
+        1462917476.213726 MMulti#DTZ7qc MMulti#DTZ7qc-3-DFG      osrEntry           at bc#49
+        1462917476.223976 MMulti#DTZ7qc MMulti#DTZ7qc-3-DFG      jettison           due to OSRExit, counting = true, detail = (null)
+        1462917476.223981 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline frequentExit       bc#77: BadCache/FromDFG
+        1462917476.223982 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline frequentExit       bc#94: BadCache/FromDFG
+        1462917476.223982 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline installCode        
+        1462917476.224064 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline delayOptimizeToDFG counter = 1013.000000/6868.000000, -1000
+        1462917476.224151 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline delayOptimizeToDFG counter = 2013.000000/6868.000000, -1000
+        1462917476.224258 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline delayOptimizeToDFG counter = 3013.000000/6868.000000, -1000
+        1462917476.224337 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline delayOptimizeToDFG counter = 4023.000000/6868.000000, -1000
+        1462917476.224425 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline delayOptimizeToDFG counter = 5023.000000/6868.000000, -1000
+        1462917476.224785 MMulti#DTZ7qc MMulti#DTZ7qc-1-Baseline delayOptimizeToDFG counter = 6023.396484/6868.000000, -862
+        1462917476.227669 MMulti#DTZ7qc MMulti#DTZ7qc-4-DFG      installCode        
+        1462917476.227675 MMulti#DTZ7qc MMulti#DTZ7qc-4-DFG      osrEntry           at bc#0
+        
+        The output is ugly but useful. We can make it less ugly later.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+        * bytecode/CodeBlock.h:
+        (JSC::ScriptExecutable::forEachCodeBlock):
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::ExitProfile::add):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGOperations.cpp:
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * profiler/ProfilerCompilation.cpp:
+        (JSC::Profiler::Compilation::Compilation):
+        (JSC::Profiler::Compilation::setJettisonReason):
+        (JSC::Profiler::Compilation::dump):
+        (JSC::Profiler::Compilation::toJS):
+        * profiler/ProfilerCompilation.h:
+        (JSC::Profiler::Compilation::uid):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::ensureBytecodesFor):
+        (JSC::Profiler::Database::notifyDestruction):
+        (JSC::Profiler::Database::addCompilation):
+        (JSC::Profiler::Database::toJS):
+        (JSC::Profiler::Database::registerToSaveAtExit):
+        (JSC::Profiler::Database::logEvent):
+        (JSC::Profiler::Database::addDatabaseToAtExit):
+        * profiler/ProfilerDatabase.h:
+        * profiler/ProfilerEvent.cpp: Added.
+        (JSC::Profiler::Event::dump):
+        (JSC::Profiler::Event::toJS):
+        * profiler/ProfilerEvent.h: Added.
+        (JSC::Profiler::Event::Event):
+        (JSC::Profiler::Event::operator bool):
+        (JSC::Profiler::Event::time):
+        (JSC::Profiler::Event::bytecodes):
+        (JSC::Profiler::Event::compilation):
+        (JSC::Profiler::Event::summary):
+        (JSC::Profiler::Event::detail):
+        * profiler/ProfilerUID.cpp: Added.
+        (JSC::Profiler::UID::create):
+        (JSC::Profiler::UID::dump):
+        (JSC::Profiler::UID::toJS):
+        * profiler/ProfilerUID.h: Added.
+        (JSC::Profiler::UID::UID):
+        (JSC::Profiler::UID::fromInt):
+        (JSC::Profiler::UID::toInt):
+        (JSC::Profiler::UID::operator==):
+        (JSC::Profiler::UID::operator!=):
+        (JSC::Profiler::UID::operator bool):
+        (JSC::Profiler::UID::isHashTableDeletedValue):
+        (JSC::Profiler::UID::hash):
+        (JSC::Profiler::UIDHash::hash):
+        (JSC::Profiler::UIDHash::equal):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        * runtime/VM.h:
+        (JSC::VM::bytecodeIntrinsicRegistry):
+        (JSC::VM::shadowChicken):
+        * runtime/VMInlines.h:
+        (JSC::VM::shouldTriggerTermination):
+        (JSC::VM::logEvent):
+
 2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Backend should initiate timeline recordings on page navigations to ensure nothing is missed

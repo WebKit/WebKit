@@ -319,6 +319,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
     codeBlock->updateAllValueProfilePredictions();
 
     if (!codeBlock->checkIfJITThresholdReached()) {
+        CODEBLOCK_LOG_EVENT(codeBlock, "delayJITCompile", ("threshold not reached, counter = ", codeBlock->llintExecuteCounter()));
         if (Options::verboseOSR())
             dataLogF("    JIT threshold should be lifted.\n");
         return false;
@@ -335,6 +336,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         CompilationResult result = JIT::compile(&vm, codeBlock, JITCompilationCanFail);
         switch (result) {
         case CompilationFailed:
+            CODEBLOCK_LOG_EVENT(codeBlock, "delayJITCompile", ("compilation failed"));
             if (Options::verboseOSR())
                 dataLogF("    JIT compilation failed.\n");
             codeBlock->dontJITAnytimeSoon();
@@ -371,6 +373,8 @@ static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* cod
     }
     if (!jitCompileAndSetHeuristics(codeBlock, exec))
         LLINT_RETURN_TWO(0, 0);
+    
+    CODEBLOCK_LOG_EVENT(codeBlock, "OSR entry", ("in prologue"));
     
     if (kind == Prologue)
         LLINT_RETURN_TWO(codeBlock->jitCode()->executableAddress(), 0);
@@ -429,6 +433,8 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     if (!jitCompileAndSetHeuristics(codeBlock, exec))
         LLINT_RETURN_TWO(0, 0);
     
+    CODEBLOCK_LOG_EVENT(codeBlock, "osrEntry", ("at bc#", pc - codeBlock->instructions().begin()));
+
     ASSERT(codeBlock->jitType() == JITCode::BaselineJIT);
     
     Vector<BytecodeAndMachineOffset> map;

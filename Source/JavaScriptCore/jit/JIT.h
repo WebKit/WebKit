@@ -257,6 +257,7 @@ namespace JSC {
 
     private:
         JIT(VM*, CodeBlock* = 0);
+        ~JIT();
 
         void privateCompileMainPass();
         void privateCompileLinkPass();

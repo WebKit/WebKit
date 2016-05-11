@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@ Compilation::Compilation(Bytecodes* bytecodes, CompilationKind kind)
     , m_numInlinedGetByIds(0)
     , m_numInlinedPutByIds(0)
     , m_numInlinedCalls(0)
+    , m_uid(UID::create())
 {
 }
 
@@ -106,6 +107,11 @@ void Compilation::setJettisonReason(JettisonReason jettisonReason, const FireDet
         m_additionalJettisonReason = CString();
 }
 
+void Compilation::dump(PrintStream& out) const
+{
+    out.print("Comp", m_uid);
+}
+
 JSValue Compilation::toJS(ExecState* exec) const
 {
     JSObject* result = constructEmptyObject(exec);
@@ -148,6 +154,8 @@ JSValue Compilation::toJS(ExecState* exec) const
     result->putDirect(exec->vm(), exec->propertyNames().jettisonReason, jsString(exec, String::fromUTF8(toCString(m_jettisonReason))));
     if (!m_additionalJettisonReason.isNull())
         result->putDirect(exec->vm(), exec->propertyNames().additionalJettisonReason, jsString(exec, String::fromUTF8(m_additionalJettisonReason)));
+    
+    result->putDirect(exec->vm(), exec->propertyNames().uid, m_uid.toJS(exec));
     
     return result;
 }

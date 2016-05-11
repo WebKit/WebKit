@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "JSONObject.h"
 #include "ObjectConstructor.h"
 #include "JSCInlines.h"
+#include <wtf/CurrentTime.h>
 
 namespace JSC { namespace Profiler {
 
@@ -58,7 +59,11 @@ Database::~Database()
 Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
 {
     LockHolder locker(m_lock);
-    
+    return ensureBytecodesFor(locker, codeBlock);
+}
+
+Bytecodes* Database::ensureBytecodesFor(const LockHolder&, CodeBlock* codeBlock)
+{
     codeBlock = codeBlock->baselineVersion();
     
     HashMap<CodeBlock*, Bytecodes*>::iterator iter = m_bytecodesMap.find(codeBlock);
@@ -78,13 +83,18 @@ void Database::notifyDestruction(CodeBlock* codeBlock)
     LockHolder locker(m_lock);
     
     m_bytecodesMap.remove(codeBlock);
+    m_compilationMap.remove(codeBlock);
 }
 
-void Database::addCompilation(PassRefPtr<Compilation> compilation)
+void Database::addCompilation(CodeBlock* codeBlock, PassRefPtr<Compilation> passedCompilation)
 {
+    LockHolder locker(m_lock);
     ASSERT(!isCompilationThread());
+
+    RefPtr<Compilation> compilation = passedCompilation;
     
     m_compilations.append(compilation);
+    m_compilationMap.set(codeBlock, compilation);
 }
 
 JSValue Database::toJS(ExecState* exec) const
@@ -100,6 +110,11 @@ JSValue Database::toJS(ExecState* exec) const
     for (unsigned i = 0; i < m_compilations.size(); ++i)
         compilations->putDirectIndex(exec, i, m_compilations[i]->toJS(exec));
     result->putDirect(exec->vm(), exec->propertyNames().compilations, compilations);
+    
+    JSArray* events = constructEmptyArray(exec, 0);
+    for (unsigned i = 0; i < m_events.size(); ++i)
+        events->putDirectIndex(exec, i, m_events[i].toJS(exec));
+    result->putDirect(exec->vm(), exec->propertyNames().events, events);
     
     return result;
 }
@@ -131,6 +146,15 @@ void Database::registerToSaveAtExit(const char* filename)
     
     addDatabaseToAtExit();
     m_shouldSaveAtExit = true;
+}
+
+void Database::logEvent(CodeBlock* codeBlock, const char* summary, const CString& detail)
+{
+    LockHolder locker(m_lock);
+    
+    Bytecodes* bytecodes = ensureBytecodesFor(locker, codeBlock);
+    Compilation* compilation = m_compilationMap.get(codeBlock);
+    m_events.append(Event(currentTime(), bytecodes, compilation, summary, detail));
 }
 
 void Database::addDatabaseToAtExit()

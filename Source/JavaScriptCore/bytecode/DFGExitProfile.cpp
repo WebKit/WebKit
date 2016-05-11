@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "VMInlines.h"
 
 namespace JSC { namespace DFG {
 
@@ -44,6 +45,8 @@ bool ExitProfile::add(const ConcurrentJITLocker&, CodeBlock* owner, const Freque
 {
     ASSERT(site.jitType() != ExitFromAnything);
 
+    CODEBLOCK_LOG_EVENT(owner, "frequentExit", (site));
+    
     if (Options::verboseExitProfile())
         dataLog(pointerDump(owner), ": Adding exit site: ", site, "\n");
     

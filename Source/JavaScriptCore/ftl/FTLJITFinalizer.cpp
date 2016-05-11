@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@ bool JITFinalizer::finalizeFunction()
     m_plan.codeBlock->setJITCode(jitCode);
 
     if (m_plan.compilation)
-        m_plan.vm.m_perBytecodeProfiler->addCompilation(m_plan.compilation);
+        m_plan.vm.m_perBytecodeProfiler->addCompilation(m_plan.codeBlock, m_plan.compilation);
     
     return true;
 }

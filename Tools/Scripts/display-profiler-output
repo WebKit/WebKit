@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2014, 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -331,7 +331,7 @@ end
 class Compilation
     attr_accessor :bytecode, :engine, :descriptions, :counters, :compilationIndex
     attr_accessor :osrExits, :profiledBytecodes, :numInlinedGetByIds, :numInlinedPutByIds
-    attr_accessor :numInlinedCalls, :jettisonReason, :additionalJettisonReason
+    attr_accessor :numInlinedCalls, :jettisonReason, :additionalJettisonReason, :uid
     
     def initialize(json)
         @bytecode = $bytecodes[json["bytecodesID"].to_i]
@@ -386,6 +386,7 @@ class Compilation
         @numInlinedCalls = json["numInlinedCalls"]
         @jettisonReason = json["jettisonReason"]
         @additionalJettisonReason = json["additionalJettisonReason"]
+        @uid = json["uid"]
     end
     
     def codeHashSortKey
@@ -438,6 +439,20 @@ class DescriptionLine
     end
 end
 
+class Event
+    attr_reader :time, :bytecode, :compilation, :summary, :detail
+    
+    def initialize(json)
+        @time = json["time"].to_f
+        @bytecode = $bytecodes[json["bytecodesID"].to_i]
+        if json["compilationUID"]
+            @compilation = $compilationMap[json["compilationUID"]]
+        end
+        @summary = json["summary"]
+        @detail = json["detail"]
+    end
+end
+
 def originToPrintStack(origin)
     (0...(origin.size - 1)).map {
         | index |
@@ -468,6 +483,15 @@ $compilations = $json["compilations"].map {
     | subJson |
     Compilation.new(subJson)
 }
+$compilationMap = {}
+$compilations.each {
+    | compilation |
+    $compilationMap[compilation.uid] = compilation
+}
+$events = $json["events"].map {
+    | subJson |
+    Event.new(subJson)
+}
 $engines = ["Baseline", "DFG", "FTL", "FTLForOSREntry"]
 
 def isOptimizing(engine)
@@ -477,15 +501,17 @@ end
 $showCounts = true
 $sortMode = :time
 
-def lpad(str,chars)
-  if str.length>chars
-    str
-  else
-    "%#{chars}s"%(str)
-  end
+def lpad(str, chars)
+    str = str.to_s
+    if str.length > chars
+        str
+    else
+        "%#{chars}s"%(str)
+    end
 end
 
 def rpad(str, chars)
+    str = str.to_s
     while str.length < chars
         str += " "
     end
@@ -493,6 +519,7 @@ def rpad(str, chars)
 end
 
 def center(str, chars)
+    str = str.to_s
     while str.length < chars
         str += " "
         if str.length < chars
@@ -736,6 +763,7 @@ def executeCommand(*commandArray)
         puts "bytecode (b)    Show the bytecode for a code block, with counts."
         puts "profiling (p)   Show the (internal) profiling data for a code block."
         puts "log (l)         List the compilations, exits, and jettisons involving this code block."
+        puts "events (e)      List of events involving this code block."
         puts "display (d)     Display details for a code block."
         puts "inlines         Show all inlining stacks that the code block was on."
         puts "counts          Set whether to show counts for 'bytecode' and 'display'."
@@ -874,6 +902,52 @@ def executeCommand(*commandArray)
                     puts "        #{compilation.additionalJettisonReason}"
                 end
             end
+        }
+    when "events", "e"
+        if args.length != 1
+            puts "Usage: inlines <code block hash>"
+            return
+        end
+        
+        hash = Regexp.new(Regexp.escape(args[0]))
+        
+        events = []
+        $events.each {
+            | event |
+            if event.bytecode.to_s =~ hash
+                events << event
+            end
+        }
+        
+        timeCols = 0
+        hashCols = 0
+        compilationCols = 0
+        summaryCols = 0
+        events.each {
+            | event |
+            timeCols = [event.time.to_s.size, timeCols].max
+            hashCols = [event.bytecode.to_s.size, hashCols].max
+            if event.compilation
+                compilationCols = [event.compilation.to_s.size, compilationCols].max
+            end
+            summaryCols = [event.summary.size, summaryCols].max
+        }
+        
+        events.each {
+            | event |
+            print rpad(event.time.to_s, timeCols)
+            print " "
+            print rpad(event.bytecode.to_s, hashCols)
+            print " "
+            compilationStr = ""
+            if event.compilation
+                compilationStr = event.compilation.to_s
+            end
+            print rpad(compilationStr, compilationCols)
+            print " "
+            print rpad(event.summary, summaryCols)
+            print " "
+            puts event.detail
         }
     when "inlines"
         if args.length != 1

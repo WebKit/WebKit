@@ -81,6 +81,10 @@ JIT::JIT(VM* vm, CodeBlock* codeBlock)
 {
 }
 
+JIT::~JIT()
+{
+}
+
 #if ENABLE(DFG_JIT)
 void JIT::emitEnterOptimizationCheck()
 {
@@ -738,7 +742,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     if (m_compilation) {
         if (Options::disassembleBaselineForProfiler())
             m_disassembler->reportToProfiler(m_compilation.get(), patchBuffer);
-        m_vm->m_perBytecodeProfiler->addCompilation(m_compilation);
+        m_vm->m_perBytecodeProfiler->addCompilation(m_codeBlock, m_compilation);
     }
 
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())

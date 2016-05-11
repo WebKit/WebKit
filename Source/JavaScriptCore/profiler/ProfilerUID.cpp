@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,35 +20,37 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef VMInlines_h
-#define VMInlines_h
+#include "config.h"
+#include "ProfilerUID.h"
 
-#include "ProfilerDatabase.h"
-#include "VM.h"
-#include "Watchdog.h"
+#include "JSCInlines.h"
+#include <wtf/Lock.h>
 
-namespace JSC {
-    
-bool VM::shouldTriggerTermination(ExecState* exec)
+namespace JSC { namespace Profiler {
+
+UID UID::create()
 {
-    if (!watchdog())
-        return false;
-    return watchdog()->shouldTerminate(exec);
+    static StaticLock lock;
+    static uint64_t counter;
+    
+    LockHolder locker(lock);
+    UID result;
+    result.m_uid = ++counter;
+    return result;
 }
 
-template<typename Func>
-void VM::logEvent(CodeBlock* codeBlock, const char* summary, const Func& func)
+void UID::dump(PrintStream& out) const
 {
-    if (LIKELY(!m_perBytecodeProfiler))
-        return;
-    
-    m_perBytecodeProfiler->logEvent(codeBlock, summary, func());
+    out.print(m_uid);
 }
 
-} // namespace JSC
+JSValue UID::toJS(ExecState* exec) const
+{
+    return jsString(exec, toString(*this));
+}
 
-#endif // LLIntData_h
+} } // namespace JSC::Profiler
 
