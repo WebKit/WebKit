@@ -1,3 +1,12 @@
+2016-05-10  Shaw rich  <richshaw@126.com>
+
+        [OS X] Compatible with gnu sed grammar due to compile error with gnu sed
+        https://bugs.webkit.org/show_bug.cgi?id=157526
+
+        Reviewed by Darin Adler.
+
+        * MigrateHeaders.make:
+
 2016-05-10  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK1] text autosizing was on for all layout tests

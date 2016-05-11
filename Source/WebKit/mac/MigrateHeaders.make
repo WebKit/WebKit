@@ -243,7 +243,7 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMGestureEvent.h
 endif
 
-WEBCORE_HEADER_REPLACE_RULES = -e 's/\<WebCore\//\<WebKitLegacy\//' -e s/DOMDOMImplementation/DOMImplementation/ -e "s/(^ *)WEBCORE_EXPORT /\1/"
+WEBCORE_HEADER_REPLACE_RULES = -e 's/<WebCore\//<WebKitLegacy\//' -e s/DOMDOMImplementation/DOMImplementation/ -e "s/(^ *)WEBCORE_EXPORT /\1/"
 WEBCORE_HEADER_MIGRATE_CMD = sed -E $(WEBCORE_HEADER_REPLACE_RULES) $< > $@
 
 $(PRIVATE_HEADERS_DIR)/DOM% : DOMDOM% MigrateHeaders.make
