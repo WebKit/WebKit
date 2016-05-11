@@ -757,7 +757,7 @@ public:
     bool hasExplicitlySetDirection() const { return noninherited_flags.hasExplicitlySetDirection(); }
 
     const Length& specifiedLineHeight() const;
-    Length lineHeight() const;
+    WEBCORE_EXPORT Length lineHeight() const;
     int computedLineHeight() const;
 
     EWhiteSpace whiteSpace() const { return static_cast<EWhiteSpace>(inherited_flags._white_space); }

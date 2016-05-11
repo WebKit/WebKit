@@ -1,3 +1,46 @@
+2016-05-10  Enrica Casucci  <enrica@apple.com>
+
+        Numerous block selection issues on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=157490
+        rdar://problem/25717977
+        rdar://problem/23042215
+
+        Reviewed by Tim Horton.
+
+        This patch fixes a number of issues with block selection on iOS.
+        We no longer eagerly choose block selection vs text selection and we
+        make sure we are capable of switching back to text selection from block
+        under every circumstance. The patch also fixes the logic used to decide
+        when to switch to block selection. It now computes the rectangle for the
+        paragraph containing the initial text selection to decide when we are
+        actually dragging outside the boundaries of the paragraph block.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (selectionChangedWithGesture):
+        (selectionChangedWithTouch):
+        (-[WKContentView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::gestureCallback):
+        (WebKit::WebPageProxy::touchesCallback):
+        (WebKit::WebPageProxy::autocorrectionDataCallback):
+        (WebKit::WebPageProxy::selectWithGesture):
+        (WebKit::WebPageProxy::updateSelectionWithTouches):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::selectionBoxForRange):
+        (WebKit::canShrinkToTextSelection):
+        (WebKit::hasCustomLineHeight):
+        (WebKit::WebPage::rangeForWebSelectionAtPosition):
+        (WebKit::WebPage::contractedRangeFromHandle):
+        (WebKit::WebPage::updateBlockSelectionWithTouch):
+        (WebKit::WebPage::clearSelection):
+        (WebKit::WebPage::switchToBlockSelectionAtPoint):
+        (WebKit::WebPage::shouldSwitchToBlockModeForHandle):
+        (WebKit::WebPage::updateSelectionWithTouches):
+        (WebKit::WebPage::selectWithTwoTouches):
+
 2016-05-10  Alex Christensen  <achristensen@webkit.org>
 
         Handle _schemeUpgraded delegate callbacks in NSURLSessionDataDelegate

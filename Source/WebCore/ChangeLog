@@ -1,3 +1,15 @@
+2016-05-10  Enrica Casucci  <enrica@apple.com>
+
+        Numerous block selection issues on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=157490
+        rdar://problem/25717977
+        rdar://problem/23042215
+
+        Reviewed by Tim Horton.
+
+        * rendering/style/RenderStyle.h:
+        Exporting method.
+
 2016-05-10  Sam Weinig  <sam@webkit.org>
 
         Tweak underline style for data detected links
