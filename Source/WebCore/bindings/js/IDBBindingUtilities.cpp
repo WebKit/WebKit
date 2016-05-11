@@ -170,7 +170,7 @@ IDBKeyPath idbKeyPathFromValue(ExecState& exec, JSValue keyPathValue)
     if (isJSArray(keyPathValue))
         keyPath = IDBKeyPath(toNativeArray<String>(&exec, keyPathValue));
     else
-        keyPath = IDBKeyPath(keyPathValue.toString(&exec)->value(&exec));
+        keyPath = IDBKeyPath(keyPathValue.toWTFString(&exec));
     return keyPath;
 }
 
@@ -240,7 +240,7 @@ bool injectIDBKeyIntoScriptValue(ExecState& exec, const IDBKeyData& keyData, JSV
 {
     LOG(IndexedDB, "injectIDBKeyIntoScriptValue");
 
-    ASSERT(keyPath.type() == IndexedDB::KeyPathType::String);
+    ASSERT(keyPath.type() == IDBKeyPath::Type::String);
 
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
@@ -269,7 +269,7 @@ RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(ExecState& exec, const
 {
     ASSERT(!keyPath.isNull());
 
-    if (keyPath.type() == IndexedDB::KeyPathType::Array) {
+    if (keyPath.type() == IDBKeyPath::Type::Array) {
         const Vector<String>& array = keyPath.array();
         Vector<RefPtr<IDBKey>> result;
         result.reserveInitialCapacity(array.size());
@@ -282,7 +282,7 @@ RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(ExecState& exec, const
         return IDBKey::createArray(WTFMove(result));
     }
 
-    ASSERT(keyPath.type() == IndexedDB::KeyPathType::String);
+    ASSERT(keyPath.type() == IDBKeyPath::Type::String);
     return internalCreateIDBKeyFromScriptValueAndKeyPath(&exec, value, keyPath.string());
 }
 
@@ -290,7 +290,7 @@ bool canInjectIDBKeyIntoScriptValue(ExecState& execState, const JSValue& scriptV
 {
     LOG(StorageAPI, "canInjectIDBKeyIntoScriptValue");
 
-    ASSERT(keyPath.type() == IndexedDB::KeyPathType::String);
+    ASSERT(keyPath.type() == IDBKeyPath::Type::String);
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
     IDBParseKeyPath(keyPath.string(), keyPathElements, error);
@@ -367,7 +367,7 @@ static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, con
     Vector<IDBKeyData> keys;
 
     switch (info.keyPath().type()) {
-    case IndexedDB::KeyPathType::Array:
+    case IDBKeyPath::Type::Array:
         for (auto& entry : info.keyPath().array()) {
             auto key = internalCreateIDBKeyFromScriptValueAndKeyPath(&exec, value, entry);
             if (!key)
@@ -375,7 +375,7 @@ static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, con
             keys.append(key.get());
         }
         break;
-    case IndexedDB::KeyPathType::String: {
+    case IDBKeyPath::Type::String: {
         auto idbKey = internalCreateIDBKeyFromScriptValueAndKeyPath(&exec, value, info.keyPath().string());
         if (!idbKey)
             return { };
@@ -388,7 +388,7 @@ static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, con
 
         break;
     }
-    case IndexedDB::KeyPathType::Null:
+    case IDBKeyPath::Type::Null:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
@@ -408,11 +408,11 @@ void generateIndexKeyForValue(ExecState& exec, const IDBIndexInfo& info, JSValue
 JSValue toJS(ExecState& state, JSDOMGlobalObject& globalObject, const IDBKeyPath& value)
 {
     switch (value.type()) {
-    case IndexedDB::KeyPathType::Null:
+    case IDBKeyPath::Type::Null:
         return jsNull();
-    case IndexedDB::KeyPathType::String:
+    case IDBKeyPath::Type::String:
         return jsStringWithCache(&state, value.string());
-    case IndexedDB::KeyPathType::Array:
+    case IDBKeyPath::Type::Array:
         auto keyPaths = DOMStringList::create();
         for (auto& path : value.array())
             keyPaths->append(path);

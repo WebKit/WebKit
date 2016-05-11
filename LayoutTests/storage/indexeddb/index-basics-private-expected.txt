@@ -18,10 +18,10 @@ PASS indexObject2.unique is false
 PASS indexObject3.unique is true
 Expecting TypeError exception from store.createIndex('failureIndex', 'zzz', true)
 PASS Exception was thrown.
-PASS store.createIndex('failureIndex', 'zzz', true) threw TypeError: Failed to execute 'createIndex' on 'IDBObjectStore': No function was found that matched the signature provided.
+PASS store.createIndex('failureIndex', 'zzz', true) threw TypeError: Type error
 Expecting TypeError exception from store.createIndex('failureIndex', 'zzz', 'string')
 PASS Exception was thrown.
-PASS store.createIndex('failureIndex', 'zzz', 'string') threw TypeError: Failed to execute 'createIndex' on 'IDBObjectStore': No function was found that matched the signature provided.
+PASS store.createIndex('failureIndex', 'zzz', 'string') threw TypeError: Type error
 PASS 'name' in indexObject is true
 PASS indexObject.name is "indexName"
 PASS 'objectStore' in indexObject is true

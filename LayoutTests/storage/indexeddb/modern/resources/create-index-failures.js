@@ -23,18 +23,6 @@ function prepareDatabase(event)
     database = event.target.result;
     var objectStore = database.createObjectStore("TestObjectStore");
 
-    try {
-        objectStore.createIndex(null, "foo");
-    } catch(e) {
-        debug("Failed to create index with null name");
-    }
-    
-    try {
-        objectStore.createIndex("TestIndex1", null);
-    } catch(e) {
-        debug("Failed to create index with invalid key path");
-    }
-    
     database.deleteObjectStore("TestObjectStore");
     try {
         objectStore.createIndex("TestIndex2", "foo");

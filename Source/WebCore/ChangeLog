@@ -1,3 +1,62 @@
+2016-05-11  Darin Adler  <darin@apple.com>
+
+        Change IDBObjectStore.createIndex to take an IDL dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=157520
+
+        Reviewed by Chris Dumez.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore): Use IDBKeyPath::Type instead of
+        IndexedDB::KeyPathType.
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::IDBKeyPath::IDBKeyPath): Ditto.
+        (WebCore::IDBKeyPath::isValid): Ditto.
+        (WebCore::IDBKeyPath::operator==): Ditto.
+        (WebCore::IDBKeyPath::encode): Ditto.
+        (WebCore::IDBKeyPath::decode): Ditto.
+
+        * Modules/indexeddb/IDBKeyPath.h: Use pragma once. Make constructors non-explicit so
+        we can just pass a string or vector and have it turn into an IDBKeyPath. Added an enum
+        class named Type here and use it instead of IndexedDB::KeyPathType.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::openCursor): Remove unneeded local variable.
+        (WebCore::IDBObjectStore::get): Ditto.
+        (WebCore::IDBObjectStore::doDelete): Ditto.
+        (WebCore::IDBObjectStore::createIndex): Changed argument type to take IndexParameters
+        instead of two seaparate booleans. Also updated to use IDBKeyPath::Type.
+
+        * Modules/indexeddb/IDBObjectStore.h: Removed include of IndexedDB, using a forward
+        decalration instead. Marked the class final. Added an IndexParameters struct and used
+        it for the argument to createIndex.
+
+        * Modules/indexeddb/IDBObjectStore.idl: Stopped using Custom for put, add, and
+        createIndex functions. Stopped using Dictionary for createIndex, using IDBIndexParameters
+        instead as in the specification. Added IDBIndexParameters dictionary definition.
+
+        * Modules/indexeddb/IndexedDB.h: Use pragma once. Removed KeyPathType.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::injectIDBKeyIntoScriptValue): Use IDBKeyPath::Type instead of
+        IndexedDB::KeyPathType.
+        (WebCore::maybeCreateIDBKeyFromScriptValueAndKeyPath): Ditto.
+        (WebCore::canInjectIDBKeyIntoScriptValue): Ditto.
+        (WebCore::createKeyPathArray): Ditto.
+        (WebCore::toJS): Ditto.
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+        (WebCore::putOrAdd): Deleted.
+        (WebCore::JSIDBObjectStore::putFunction): Deleted.
+        (WebCore::JSIDBObjectStore::add): Deleted.
+        (WebCore::JSIDBObjectStore::createIndex): Deleted.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheckExpression): Fixed code that generates a type check for
+        wrappers to only check types is knows how to check: wrappers and arrays, including
+        typed arrays. This prevents it from trying to check dictionaries.
+
+        * inspector/InspectorIndexedDBAgent.cpp: Use IDBKeyPath::Type instead of
+        IndexedDB::KeyPathType.
+
 2016-05-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: WebWorker support.

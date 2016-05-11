@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IndexedDB_h
-#define IndexedDB_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -71,12 +70,6 @@ enum class VersionNullness {
     NonNull,
 };
 
-enum class KeyPathType {
-    Null,
-    String,
-    Array,
-};
-
 enum class ObjectStoreOverwriteMode {
     Overwrite,
     OverwriteForCursor,
@@ -110,5 +103,3 @@ enum class RequestType {
 } // namespace WebCore
 
 #endif // ENABLED(INDEXED_DATABASE)
-
-#endif // IndexedDB_h

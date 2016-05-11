@@ -131,7 +131,7 @@ RefPtr<WebCore::IDBObjectStore> IDBDatabase::createObjectStore(const String& nam
     }
 
     if (autoIncrement && !keyPath.isNull()) {
-        if ((keyPath.type() == IndexedDB::KeyPathType::String && keyPath.string().isEmpty()) || keyPath.type() == IndexedDB::KeyPathType::Array) {
+        if ((keyPath.type() == IDBKeyPath::Type::String && keyPath.string().isEmpty()) || keyPath.type() == IDBKeyPath::Type::Array) {
             ec.code = IDBDatabaseException::InvalidAccessError;
             ec.message = ASCIILiteral("Failed to execute 'createObjectStore' on 'IDBDatabase': The autoIncrement option was set but the keyPath option was empty or an array.");
             return nullptr;

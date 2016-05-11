@@ -43,7 +43,7 @@ function prepareDatabase()
         { keyPath: "'_\\u0300'" }, // DIGIT ZERO (Nd)
         { keyPath: "'_\\u203F'" }, // UNDERTIE (Pc)
         { keyPath: "'_\\u200C'" }, // ZWNJ
-        { keyPath: "'_\\u200D'" }  // ZWJ
+        { keyPath: "'_\\u200D'" },  // ZWJ
     ];
 
     testKeyPaths.forEach(function (testCase) {
@@ -56,6 +56,18 @@ function prepareDatabase()
         shouldBe("index.keyPath", indexExpected);
         deleteAllObjectStores(db);
     });
+
+    evalAndLog("store = db.createObjectStore('name', {keyPath: 'undefined'})");
+    shouldBe("store.keyPath", "'undefined'");
+    evalAndLog("index = store.createIndex('name', undefined)");
+    shouldBe("index.keyPath", "'undefined'");
+    deleteAllObjectStores(db);
+
+    evalAndLog("store = db.createObjectStore('name', {keyPath: 'null'})");
+    shouldBe("store.keyPath", "'null'");
+    evalAndLog("index = store.createIndex('name', null)");
+    shouldBe("index.keyPath", "'null'");
+    deleteAllObjectStores(db);
 
     testInvalidKeyPaths();
 }
@@ -77,11 +89,6 @@ function testInvalidKeyPaths()
     debug("");
     debug("Key paths which are never valid:");
 
-    evalAndExpectException("db.createObjectStore('name').createIndex('name', null)", "DOMException.SYNTAX_ERR");
-    deleteAllObjectStores(db);
-    evalAndExpectException("db.createObjectStore('name').createIndex('name', undefined)", "DOMException.SYNTAX_ERR");
-    deleteAllObjectStores(db);
-    
     testKeyPaths = [
         "' '",
         "'foo '",

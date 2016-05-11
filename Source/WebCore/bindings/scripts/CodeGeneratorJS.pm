@@ -1661,7 +1661,6 @@ sub GenerateParametersCheckExpression
         my $value = "arg$parameterIndex";
         my $type = $parameter->type;
 
-        # Only DOMString or wrapper types are checked.
         # For DOMString with StrictTypeChecking only Null, Undefined and Object
         # are accepted for compatibility. Otherwise, no restrictions are made to
         # match the non-overloaded behavior.
@@ -1679,12 +1678,11 @@ sub GenerateParametersCheckExpression
                 push(@andExpression, "(${value}.isNull() || ${value}.isObject())");
             }
             $usedArguments{$parameterIndex} = 1;
-        } elsif (!IsNativeType($type)) {
+        } elsif ($codeGenerator->GetArrayOrSequenceType($type) || $codeGenerator->IsTypedArrayType($type) || $codeGenerator->IsWrapperType($type)) {
             my $condition = "";
             $condition .= "${value}.isUndefined() || " if $parameter->isOptional;
 
-            # FIXME: WebIDL says that undefined is also acceptable for nullable parameters and
-            # should be converted to null:
+            # FIXME: WebIDL says that undefined is also acceptable for nullable parameters and should be converted to null:
             # http://heycam.github.io/webidl/#es-nullable-type
             $condition .= "${value}.isNull() || " if $parameter->isNullable;
 
@@ -3701,13 +3699,7 @@ sub GenerateParametersCheck
             }
             $value = "WTFMove($name)";
         } elsif ($parameter->isVariadic) {
-            my $nativeElementType;
-            if ($type eq "DOMString") {
-                $nativeElementType = "String";
-            } else {
-                $nativeElementType = GetNativeType($interface, $type);
-            }
-
+            my $nativeElementType = GetNativeType($interface, $type);
             if (!IsNativeType($type)) {
                 push(@$outputArray, "    Vector<$nativeElementType> $name;\n");
                 push(@$outputArray, "    for (unsigned i = $argumentIndex, count = state->argumentCount(); i < count; ++i) {\n");
@@ -3717,7 +3709,6 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    }\n")
             } else {
                 push(@$outputArray, "    Vector<$nativeElementType> $name = toNativeArguments<$nativeElementType>(state, $argumentIndex);\n");
-                # Check if the type conversion succeeded.
                 push(@$outputArray, "    if (UNLIKELY(state->hadException()))\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }

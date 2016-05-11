@@ -26,9 +26,9 @@
 [
     Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
-    SkipVTableValidation,
-    JSCustomMarkFunction,
     GenerateIsReachable=Impl,
+    JSCustomMarkFunction,
+    SkipVTableValidation,
 ] interface IDBObjectStore {
     readonly attribute DOMString? name;
     [ImplementationReturnType=IDBKeyPath] readonly attribute any keyPath;
@@ -36,8 +36,8 @@
     readonly attribute IDBTransaction transaction;
     readonly attribute boolean autoIncrement;
 
-    [CallWith=ScriptExecutionContext, Custom, ImplementedAs=putFunction, RaisesExceptionWithMessage] IDBRequest put(any value, optional any key);
-    [CallWith=ScriptExecutionContext, Custom, RaisesExceptionWithMessage] IDBRequest add(any value, optional any key);
+    [CallWith=ScriptState, RaisesExceptionWithMessage] IDBRequest put(any value, optional any key);
+    [CallWith=ScriptState, RaisesExceptionWithMessage] IDBRequest add(any value, optional any key);
     [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction, RaisesExceptionWithMessage] IDBRequest delete(IDBKeyRange? keyRange);
     [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction, RaisesExceptionWithMessage] IDBRequest delete(any key);
     [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest get(IDBKeyRange? key);
@@ -45,10 +45,15 @@
     [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest clear();
     [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest openCursor(optional IDBKeyRange? range = null, optional DOMString direction = "next");
     [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest openCursor(any key, optional DOMString direction = "next");
-    [CallWith=ScriptExecutionContext, Custom, RaisesExceptionWithMessage] IDBIndex createIndex(DOMString name, sequence<DOMString> keyPath, optional Dictionary options);
-    [CallWith=ScriptExecutionContext, Custom, RaisesExceptionWithMessage] IDBIndex createIndex(DOMString name, DOMString keyPath, optional Dictionary options);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBIndex createIndex(DOMString name, sequence<DOMString> keyPath, optional IDBIndexParameters options);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBIndex createIndex(DOMString name, DOMString keyPath, optional IDBIndexParameters options);
     [RaisesExceptionWithMessage] IDBIndex index(DOMString name);
     [RaisesExceptionWithMessage] void deleteIndex(DOMString name);
     [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest count(optional IDBKeyRange? range = null);
     [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest count(any key);
+};
+
+dictionary IDBIndexParameters {
+    boolean unique = false;
+    boolean multiEntry = false;
 };

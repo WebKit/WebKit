@@ -135,6 +135,16 @@ PASS store.keyPath is '_\u200D'
 index = store.createIndex('name', '_\u200D')
 PASS index.keyPath is '_\u200D'
 Deleted all object stores.
+store = db.createObjectStore('name', {keyPath: 'undefined'})
+PASS store.keyPath is 'undefined'
+index = store.createIndex('name', undefined)
+PASS index.keyPath is 'undefined'
+Deleted all object stores.
+store = db.createObjectStore('name', {keyPath: 'null'})
+PASS store.keyPath is 'null'
+index = store.createIndex('name', null)
+PASS index.keyPath is 'null'
+Deleted all object stores.
 
 testInvalidKeyPaths():
 Deleted all object stores.
@@ -157,16 +167,6 @@ Exception message: Failed to execute 'createObjectStore' on 'IDBDatabase': The a
 Deleted all object stores.
 
 Key paths which are never valid:
-Expecting exception from db.createObjectStore('name').createIndex('name', null)
-PASS Exception was thrown.
-PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
-Deleted all object stores.
-Expecting exception from db.createObjectStore('name').createIndex('name', undefined)
-PASS Exception was thrown.
-PASS code is DOMException.SYNTAX_ERR
-Exception message: Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.
-Deleted all object stores.
 Expecting exception from db.createObjectStore('name', {keyPath: ' '})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR

@@ -31,16 +31,6 @@
 
 #include "JSIDBObjectStore.h"
 
-#include "IDBBindingUtilities.h"
-#include "IDBDatabaseException.h"
-#include "IDBKeyPath.h"
-#include "IDBObjectStore.h"
-#include "JSDOMBinding.h"
-#include "JSIDBIndex.h"
-#include "JSIDBRequest.h"
-#include <runtime/Error.h>
-#include <runtime/JSString.h>
-
 using namespace JSC;
 
 namespace WebCore {
@@ -48,97 +38,6 @@ namespace WebCore {
 void JSIDBObjectStore::visitAdditionalChildren(SlotVisitor& visitor)
 {
     static_cast<IDBObjectStore&>(wrapped()).visitReferencedIndexes(visitor);
-}
-
-static JSValue putOrAdd(JSC::ExecState& state, bool overwrite)
-{
-    JSValue thisValue = state.thisValue();
-    JSIDBObjectStore* castedThis = jsDynamicCast<JSIDBObjectStore*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return JSValue::decode(throwThisTypeError(state, "IDBObjectStore", "put"));
-
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSIDBObjectStore::info());
-    auto& wrapped = castedThis->wrapped();
-
-    size_t argsCount = state.argumentCount();
-    if (UNLIKELY(argsCount < 1))
-        return JSValue::decode(throwVMError(&state, createNotEnoughArgumentsError(&state)));
-
-    ExceptionCodeWithMessage ec;
-    auto value = state.uncheckedArgument(0);
-    auto key = state.argument(1);
-    JSValue result;
-    if (overwrite)
-        result = toJS(&state, castedThis->globalObject(), wrapped.put(state, value, key, ec).get());
-    else
-        result = toJS(&state, castedThis->globalObject(), wrapped.add(state, value, key, ec).get());
-
-    setDOMException(&state, ec);
-    return result;
-}
-
-JSValue JSIDBObjectStore::putFunction(JSC::ExecState& state)
-{
-    return putOrAdd(state, true);
-}
-
-JSValue JSIDBObjectStore::add(JSC::ExecState& state)
-{
-    return putOrAdd(state, false);
-}
-
-JSValue JSIDBObjectStore::createIndex(ExecState& state)
-{
-    ScriptExecutionContext* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
-        return state.vm().throwException(&state, createReferenceError(&state, "IDBObjectStore script &stateution context is unavailable"));
-
-    if (state.argumentCount() < 2)
-        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
-
-    String name;
-    JSValue nameValue = state.argument(0);
-    if (!nameValue.isUndefinedOrNull())
-        name = nameValue.toString(&state)->value(&state);
-
-    if (state.hadException())
-        return jsUndefined();
-
-    IDBKeyPath keyPath;
-    JSValue keyPathValue = state.argument(1);
-    if (!keyPathValue.isUndefinedOrNull())
-        keyPath = idbKeyPathFromValue(state, keyPathValue);
-    else {
-        ExceptionCodeWithMessage ec;
-        ec.code = IDBDatabaseException::SyntaxError;
-        ec.message = ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.");
-        setDOMException(&state, ec);
-        return jsUndefined();
-    }
-
-    if (state.hadException())
-        return jsUndefined();
-
-    JSValue optionsValue = state.argument(2);
-    if (!optionsValue.isUndefinedOrNull() && !optionsValue.isObject())
-        return throwTypeError(&state, "Failed to execute 'createIndex' on 'IDBObjectStore': No function was found that matched the signature provided.");
-
-    bool unique = false;
-    bool multiEntry = false;
-    if (!optionsValue.isUndefinedOrNull()) {
-        unique = optionsValue.get(&state, Identifier::fromString(&state, "unique")).toBoolean(&state);
-        if (state.hadException())
-            return jsUndefined();
-
-        multiEntry = optionsValue.get(&state, Identifier::fromString(&state, "multiEntry")).toBoolean(&state);
-        if (state.hadException())
-            return jsUndefined();
-    }
-
-    ExceptionCodeWithMessage ec;
-    JSValue result = toJS(&state, globalObject(), wrapped().createIndex(*context, name, keyPath, unique, multiEntry, ec).get());
-    setDOMException(&state, ec);
-    return result;
 }
 
 }

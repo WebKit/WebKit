@@ -146,8 +146,7 @@ RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, I
         return nullptr;
 
     auto info = IDBCursorInfo::objectStoreCursor(m_transaction.get(), m_info.identifier(), range, direction);
-    Ref<IDBRequest> request = m_transaction->requestOpenCursor(context, *this, info);
-    return WTFMove(request);
+    return m_transaction->requestOpenCursor(context, *this, info);
 }
 
 RefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext& context, JSValue key, const String& direction, ExceptionCodeWithMessage& ec)
@@ -185,8 +184,7 @@ RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, JSValue 
         return nullptr;
     }
 
-    Ref<IDBRequest> request = m_transaction->requestGetRecord(context, *this, idbKey.get());
-    return WTFMove(request);
+    return m_transaction->requestGetRecord(context, *this, idbKey.get());
 }
 
 RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
@@ -211,8 +209,7 @@ RefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext& context, IDBKeyRa
         return nullptr;
     }
 
-    Ref<IDBRequest> request = m_transaction->requestGetRecord(context, *this, keyRangeData);
-    return WTFMove(request);
+    return m_transaction->requestGetRecord(context, *this, keyRangeData);
 }
 
 RefPtr<IDBRequest> IDBObjectStore::add(ExecState& execState, JSValue value, JSValue key, ExceptionCodeWithMessage& ec)
@@ -382,8 +379,7 @@ RefPtr<IDBRequest> IDBObjectStore::doDelete(ScriptExecutionContext& context, IDB
         return nullptr;
     }
 
-    Ref<IDBRequest> request = m_transaction->requestDeleteRecord(context, *this, keyRangeData);
-    return WTFMove(request);
+    return m_transaction->requestDeleteRecord(context, *this, keyRangeData);
 }
 
 RefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext& context, JSValue key, ExceptionCodeWithMessage& ec)
@@ -435,7 +431,7 @@ RefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext& context, Except
     return adoptRef(request.leakRef());
 }
 
-RefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext&, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCodeWithMessage& ec)
+RefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext&, const String& name, const IDBKeyPath& keyPath, const IndexParameters& parameters, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::createIndex %s", name.utf8().data());
     ASSERT(currentThread() == m_transaction->database().originThreadID());
@@ -474,14 +470,14 @@ RefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext&, const Stri
         return nullptr;
     }
 
-    if (keyPath.type() == IndexedDB::KeyPathType::Array && multiEntry) {
+    if (keyPath.type() == IDBKeyPath::Type::Array && parameters.multiEntry) {
         ec.code = IDBDatabaseException::InvalidAccessError;
         ec.message = ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument was an array and the multiEntry option is true.");
         return nullptr;
     }
 
     // Install the new Index into the ObjectStore's info.
-    IDBIndexInfo info = m_info.createNewIndex(name, keyPath, unique, multiEntry);
+    IDBIndexInfo info = m_info.createNewIndex(name, keyPath, parameters.unique, parameters.multiEntry);
     m_transaction->database().didCreateIndexInfo(info);
 
     // Create the actual IDBObjectStore from the transaction, which also schedules the operation server side.

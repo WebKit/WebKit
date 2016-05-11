@@ -23,12 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBKeyPath_h
-#define IDBKeyPath_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IndexedDB.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,24 +47,25 @@ void IDBParseKeyPath(const String&, Vector<String>&, IDBKeyPathParseError&);
 class IDBKeyPath {
 public:
     IDBKeyPath() { }
-    WEBCORE_EXPORT explicit IDBKeyPath(const String&);
-    WEBCORE_EXPORT explicit IDBKeyPath(const Vector<String>& array);
+    WEBCORE_EXPORT IDBKeyPath(const String&);
+    WEBCORE_EXPORT IDBKeyPath(const Vector<String>& array);
 
-    IndexedDB::KeyPathType type() const { return m_type; }
+    enum class Type { Null, String, Array };
+    Type type() const { return m_type; }
 
     const Vector<String>& array() const
     {
-        ASSERT(m_type == IndexedDB::KeyPathType::Array);
+        ASSERT(m_type == Type::Array);
         return m_array;
     }
 
     const String& string() const
     {
-        ASSERT(m_type == IndexedDB::KeyPathType::String);
+        ASSERT(m_type == Type::String);
         return m_string;
     }
 
-    bool isNull() const { return m_type == IndexedDB::KeyPathType::Null; }
+    bool isNull() const { return m_type == Type::Null; }
     bool isValid() const;
     bool operator==(const IDBKeyPath& other) const;
 
@@ -79,23 +78,22 @@ public:
     WEBCORE_EXPORT static bool decode(KeyedDecoder&, IDBKeyPath&);
 
 private:
-    IndexedDB::KeyPathType m_type { IndexedDB::KeyPathType::Null };
+    Type m_type { Type::Null };
     String m_string;
     Vector<String> m_array;
 };
 
-template<class Encoder>
-void IDBKeyPath::encode(Encoder& encoder) const
+template<class Encoder> void IDBKeyPath::encode(Encoder& encoder) const
 {
     encoder.encodeEnum(m_type);
 
     switch (m_type) {
-    case IndexedDB::KeyPathType::Null:
+    case Type::Null:
         break;
-    case IndexedDB::KeyPathType::String:
+    case Type::String:
         encoder << m_string;
         break;
-    case IndexedDB::KeyPathType::Array:
+    case Type::Array:
         encoder << m_array;
         break;
     default:
@@ -103,19 +101,18 @@ void IDBKeyPath::encode(Encoder& encoder) const
     }
 }
 
-template<class Decoder>
-bool IDBKeyPath::decode(Decoder& decoder, IDBKeyPath& keyPath)
+template<class Decoder> bool IDBKeyPath::decode(Decoder& decoder, IDBKeyPath& keyPath)
 {
-    IndexedDB::KeyPathType type;
+    Type type;
     if (!decoder.decodeEnum(type))
         return false;
 
     switch (type) {
-    case IndexedDB::KeyPathType::Null:
+    case Type::Null:
         keyPath = IDBKeyPath();
         return true;
 
-    case IndexedDB::KeyPathType::String: {
+    case Type::String: {
         String string;
         if (!decoder.decode(string))
             return false;
@@ -123,7 +120,7 @@ bool IDBKeyPath::decode(Decoder& decoder, IDBKeyPath& keyPath)
         keyPath = IDBKeyPath(string);
         return true;
     }
-    case IndexedDB::KeyPathType::Array: {
+    case Type::Array: {
         Vector<String> array;
         if (!decoder.decode(array))
             return false;
@@ -139,5 +136,3 @@ bool IDBKeyPath::decode(Decoder& decoder, IDBKeyPath& keyPath)
 } // namespace WebCore
 
 #endif
-
-#endif // IDBKeyPath_h
