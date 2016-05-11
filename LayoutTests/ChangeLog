@@ -1,3 +1,14 @@
+2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Improve error messages for accessing arguments.callee and similar getters in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=157545
+
+        Reviewed by Mark Lam.
+
+        * js/basic-strict-mode-expected.txt:
+        * js/caller-property-expected.txt:
+        * js/script-tests/caller-property.js:
+
 2016-05-11  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r200686.

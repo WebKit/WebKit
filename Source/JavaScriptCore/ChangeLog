@@ -1,3 +1,37 @@
+2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Improve error messages for accessing arguments.callee and similar getters in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=157545
+
+        Reviewed by Mark Lam.
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::getOwnPropertySlot):
+        (JSC::ClonedArguments::materializeSpecials):
+        Provide better error GetterSetter in strict mode.
+
+        * runtime/JSFunction.cpp:
+        (JSC::getThrowTypeErrorGetterSetter):
+        (JSC::JSFunction::defineOwnProperty):
+        Provide better error GetterSetter in strict mode.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::throwTypeErrorGetterSetter):
+        (JSC::JSGlobalObject::throwTypeErrorCalleeAndCallerGetterSetter):
+        (JSC::JSGlobalObject::throwTypeErrorArgumentsAndCallerInStrictModeGetterSetter):
+        (JSC::JSGlobalObject::throwTypeErrorArgumentsAndCallerInClassContextGetterSetter):
+        (JSC::JSGlobalObject::throwTypeErrorArgumentsAndCallerGetterSetter): Deleted.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncThrowTypeErrorCalleeAndCaller):
+        (JSC::globalFuncThrowTypeErrorArgumentsAndCallerInStrictMode):
+        (JSC::globalFuncThrowTypeErrorArgumentsAndCallerInClassContext):
+        (JSC::globalFuncThrowTypeErrorArgumentsAndCaller): Deleted.
+        * runtime/JSGlobalObjectFunctions.h:
+        Rename and expose new handles for new error getter setter native functions.
+
 2016-05-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r200481.

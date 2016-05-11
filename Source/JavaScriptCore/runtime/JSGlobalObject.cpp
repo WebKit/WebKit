@@ -387,9 +387,25 @@ void JSGlobalObject::init(VM& vm)
             getterSetter->setSetter(init.vm, init.owner, thrower);
             init.set(getterSetter);
         });
-    m_throwTypeErrorArgumentsAndCallerGetterSetter.initLater(
+    m_throwTypeErrorCalleeAndCallerGetterSetter.initLater(
         [] (const Initializer<GetterSetter>& init) {
-            JSFunction* thrower = JSFunction::create(init.vm, init.owner, 0, String(), globalFuncThrowTypeErrorArgumentsAndCaller);
+            JSFunction* thrower = JSFunction::create(init.vm, init.owner, 0, String(), globalFuncThrowTypeErrorCalleeAndCaller);
+            GetterSetter* getterSetter = GetterSetter::create(init.vm, init.owner);
+            getterSetter->setGetter(init.vm, init.owner, thrower);
+            getterSetter->setSetter(init.vm, init.owner, thrower);
+            init.set(getterSetter);
+        });
+    m_throwTypeErrorArgumentsAndCallerInStrictModeGetterSetter.initLater(
+        [] (const Initializer<GetterSetter>& init) {
+            JSFunction* thrower = JSFunction::create(init.vm, init.owner, 0, String(), globalFuncThrowTypeErrorArgumentsAndCallerInStrictMode);
+            GetterSetter* getterSetter = GetterSetter::create(init.vm, init.owner);
+            getterSetter->setGetter(init.vm, init.owner, thrower);
+            getterSetter->setSetter(init.vm, init.owner, thrower);
+            init.set(getterSetter);
+        });
+    m_throwTypeErrorArgumentsAndCallerInClassContextGetterSetter.initLater(
+        [] (const Initializer<GetterSetter>& init) {
+            JSFunction* thrower = JSFunction::create(init.vm, init.owner, 0, String(), globalFuncThrowTypeErrorArgumentsAndCallerInClassContext);
             GetterSetter* getterSetter = GetterSetter::create(init.vm, init.owner);
             getterSetter->setGetter(init.vm, init.owner, thrower);
             getterSetter->setSetter(init.vm, init.owner, thrower);
@@ -1072,7 +1088,9 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_newPromiseCapabilityFunction);
     visitor.append(&thisObject->m_functionProtoHasInstanceSymbolFunction);
     thisObject->m_throwTypeErrorGetterSetter.visit(visitor);
-    thisObject->m_throwTypeErrorArgumentsAndCallerGetterSetter.visit(visitor);
+    thisObject->m_throwTypeErrorCalleeAndCallerGetterSetter.visit(visitor);
+    thisObject->m_throwTypeErrorArgumentsAndCallerInStrictModeGetterSetter.visit(visitor);
+    thisObject->m_throwTypeErrorArgumentsAndCallerInClassContextGetterSetter.visit(visitor);
     visitor.append(&thisObject->m_moduleLoader);
 
     visitor.append(&thisObject->m_objectPrototype);

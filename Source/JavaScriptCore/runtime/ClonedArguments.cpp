@@ -158,11 +158,11 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 
         if (isStrictMode) {
             if (ident == vm.propertyNames->callee) {
-                slot.setGetterSlot(thisObject, DontDelete | DontEnum | Accessor, thisObject->globalObject()->throwTypeErrorGetterSetter());
+                slot.setGetterSlot(thisObject, DontDelete | DontEnum | Accessor, thisObject->globalObject()->throwTypeErrorCalleeAndCallerGetterSetter());
                 return true;
             }
             if (ident == vm.propertyNames->caller) {
-                slot.setGetterSlot(thisObject, DontDelete | DontEnum | Accessor, thisObject->globalObject()->throwTypeErrorGetterSetter());
+                slot.setGetterSlot(thisObject, DontDelete | DontEnum | Accessor, thisObject->globalObject()->throwTypeErrorCalleeAndCallerGetterSetter());
                 return true;
             }
 
@@ -238,8 +238,8 @@ void ClonedArguments::materializeSpecials(ExecState* exec)
     bool isStrictMode = executable->isStrictMode();
     
     if (isStrictMode) {
-        putDirectAccessor(exec, vm.propertyNames->callee, globalObject()->throwTypeErrorGetterSetter(), DontDelete | DontEnum | Accessor);
-        putDirectAccessor(exec, vm.propertyNames->caller, globalObject()->throwTypeErrorGetterSetter(), DontDelete | DontEnum | Accessor);
+        putDirectAccessor(exec, vm.propertyNames->callee, globalObject()->throwTypeErrorCalleeAndCallerGetterSetter(), DontDelete | DontEnum | Accessor);
+        putDirectAccessor(exec, vm.propertyNames->caller, globalObject()->throwTypeErrorCalleeAndCallerGetterSetter(), DontDelete | DontEnum | Accessor);
     } else
         putDirect(vm, vm.propertyNames->callee, JSValue(m_callee.get()));
 

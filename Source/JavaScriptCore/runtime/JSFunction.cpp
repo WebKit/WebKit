@@ -322,8 +322,8 @@ static JSValue retrieveCallerFunction(ExecState* exec, JSFunction* functionObj)
 static GetterSetter* getThrowTypeErrorGetterSetter(JSFunction* function)
 {
     return function->jsExecutable()->isClassConstructorFunction() || function->jsExecutable()->parseMode() == SourceParseMode::MethodMode
-        ? function->globalObject()->throwTypeErrorArgumentsAndCallerGetterSetter()
-        : function->globalObject()->throwTypeErrorGetterSetter();
+        ? function->globalObject()->throwTypeErrorArgumentsAndCallerInClassContextGetterSetter()
+        : function->globalObject()->throwTypeErrorArgumentsAndCallerInStrictModeGetterSetter();
 }
 
 EncodedJSValue JSFunction::callerGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
@@ -499,7 +499,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         if (thisObject->jsExecutable()->isStrictMode()) {
             PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
             if (!Base::getOwnPropertySlot(thisObject, exec, propertyName, slot))
-                thisObject->putDirectAccessor(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(), DontDelete | DontEnum | Accessor);
+                thisObject->putDirectAccessor(exec, propertyName, getThrowTypeErrorGetterSetter(thisObject), DontDelete | DontEnum | Accessor);
             return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
         }
         valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), retrieveArguments(exec, thisObject));
@@ -507,7 +507,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         if (thisObject->jsExecutable()->isStrictMode()) {
             PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
             if (!Base::getOwnPropertySlot(thisObject, exec, propertyName, slot))
-                thisObject->putDirectAccessor(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(), DontDelete | DontEnum | Accessor);
+                thisObject->putDirectAccessor(exec, propertyName, getThrowTypeErrorGetterSetter(thisObject), DontDelete | DontEnum | Accessor);
             return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
         }
         valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), retrieveCallerFunction(exec, thisObject));

@@ -246,12 +246,14 @@ public:
     LazyProperty<JSGlobalObject, JSFunction> m_initializePromiseFunction;
     WriteBarrier<JSFunction> m_newPromiseCapabilityFunction;
     WriteBarrier<JSFunction> m_functionProtoHasInstanceSymbolFunction;
-    LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorGetterSetter;
     WriteBarrier<JSObject> m_regExpProtoExec;
     WriteBarrier<JSObject> m_regExpProtoSymbolReplace;
     WriteBarrier<JSObject> m_regExpProtoGlobalGetter;
     WriteBarrier<JSObject> m_regExpProtoUnicodeGetter;
-    LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorArgumentsAndCallerGetterSetter;
+    LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorGetterSetter;
+    LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorCalleeAndCallerGetterSetter;
+    LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorArgumentsAndCallerInStrictModeGetterSetter;
+    LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorArgumentsAndCallerInClassContextGetterSetter;
 
     WriteBarrier<ModuleLoaderObject> m_moduleLoader;
 
@@ -493,15 +495,11 @@ public:
     JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
     JSObject* regExpProtoGlobalGetter() const { return m_regExpProtoGlobalGetter.get(); }
     JSObject* regExpProtoUnicodeGetter() const { return m_regExpProtoUnicodeGetter.get(); }
-    GetterSetter* throwTypeErrorGetterSetter()
-    {
-        return m_throwTypeErrorGetterSetter.get(this);
-    }
 
-    GetterSetter* throwTypeErrorArgumentsAndCallerGetterSetter()
-    {
-        return m_throwTypeErrorArgumentsAndCallerGetterSetter.get(this);
-    }
+    GetterSetter* throwTypeErrorGetterSetter() { return m_throwTypeErrorGetterSetter.get(this); }
+    GetterSetter* throwTypeErrorCalleeAndCallerGetterSetter() { return m_throwTypeErrorCalleeAndCallerGetterSetter.get(this); }
+    GetterSetter* throwTypeErrorArgumentsAndCallerInStrictModeGetterSetter() { return m_throwTypeErrorArgumentsAndCallerInStrictModeGetterSetter.get(this); }
+    GetterSetter* throwTypeErrorArgumentsAndCallerInClassContextGetterSetter() { return m_throwTypeErrorArgumentsAndCallerInClassContextGetterSetter.get(this); }
     
     ModuleLoaderObject* moduleLoader() const { return m_moduleLoader.get(); }
 

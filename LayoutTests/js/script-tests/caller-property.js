@@ -27,21 +27,21 @@ function nonStrictCaller(x) { return x(); }
 function strictCaller(x) { "use strict"; var result = x(); return result; }
 function strictTailCaller(x) { "use strict"; return x(); }
 shouldBe("nonStrictCaller(nonStrictCallee)", "nonStrictCaller");
-shouldThrow("nonStrictCaller(strictCallee)", '"TypeError: Type error"');
+shouldThrow("nonStrictCaller(strictCallee)");
 shouldThrow("strictCaller(nonStrictCallee)", '"TypeError: Function.caller used to retrieve strict caller"');
-shouldThrow("strictCaller(strictCallee)", '"TypeError: Type error"');
+shouldThrow("strictCaller(strictCallee)");
 shouldBe("strictTailCaller(nonStrictCallee)", "null");
-shouldThrow("strictTailCaller(strictCallee)", '"TypeError: Type error"');
+shouldThrow("strictTailCaller(strictCallee)");
 
 // .caller within a bound function reaches the caller, ignoring the binding.
 var boundNonStrictCallee = nonStrictCallee.bind();
 var boundStrictCallee = strictCallee.bind();
 shouldBe("nonStrictCaller(boundNonStrictCallee)", "nonStrictCaller");
-shouldThrow("nonStrictCaller(boundStrictCallee)", '"TypeError: Type error"');
+shouldThrow("nonStrictCaller(boundStrictCallee)");
 shouldThrow("strictCaller(boundNonStrictCallee)", '"TypeError: Function.caller used to retrieve strict caller"');
-shouldThrow("strictCaller(boundStrictCallee)", '"TypeError: Type error"');
+shouldThrow("strictCaller(boundStrictCallee)");
 shouldBe("strictTailCaller(boundNonStrictCallee)", "null");
-shouldThrow("strictTailCaller(boundStrictCallee)", '"TypeError: Type error"');
+shouldThrow("strictTailCaller(boundStrictCallee)");
 
 // Check that .caller works (or throws) as expected, over an accessor call.
 function getFooGetter(x) { return Object.getOwnPropertyDescriptor(x, 'foo').get; }
@@ -60,9 +60,9 @@ function strictGetter(x) { "use strict"; return x.foo; }
 function strictSetter(x) { "use strict"; x.foo = nonStrictSetter; return true; }
 shouldBe("nonStrictGetter(nonStrictAccessor)", "nonStrictGetter");
 shouldBeTrue("nonStrictSetter(nonStrictAccessor)");
-shouldThrow("nonStrictGetter(strictAccessor)", '"TypeError: Type error"');
-shouldThrow("nonStrictSetter(strictAccessor)", '"TypeError: Type error"');
+shouldThrow("nonStrictGetter(strictAccessor)");
+shouldThrow("nonStrictSetter(strictAccessor)");
 shouldThrow("strictGetter(nonStrictAccessor)", '"TypeError: Function.caller used to retrieve strict caller"');
 shouldThrow("strictSetter(nonStrictAccessor)", '"TypeError: Function.caller used to retrieve strict caller"');
-shouldThrow("strictGetter(strictAccessor)", '"TypeError: Type error"');
-shouldThrow("strictSetter(strictAccessor)", '"TypeError: Type error"');
+shouldThrow("strictGetter(strictAccessor)");
+shouldThrow("strictSetter(strictAccessor)");
