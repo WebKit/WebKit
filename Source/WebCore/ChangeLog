@@ -1,3 +1,9 @@
+2016-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS build fix attempt after r200700.
+
+        * bindings/js/ios/TouchConstructors.cpp:
+
 2016-05-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Touch.prototype is undefined on iOS
