@@ -1,5 +1,21 @@
 2016-05-10  Sam Weinig  <sam@webkit.org>
 
+        Only expose WKDataDetectorTypes and -[WKWebViewConfiguration dataDetectorTypes] on iOS
+        for now, since we don't have it fully implemented on Mac.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (fromWKDataDetectorTypes):
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+
+2016-05-10  Sam Weinig  <sam@webkit.org>
+
         Add SPI for Data Detectors to get ranges of text around an existing range.
         <rdar://problem/26009749>
 
