@@ -1,3 +1,14 @@
+2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSC test stress/reflect-set.js failing after 200694
+        https://bugs.webkit.org/show_bug.cgi?id=157586
+
+        Unreviewed test rebaseline.
+
+        * tests/stress/reflect-set.js:
+        Update the expected error message. We are in strict mode, so the
+        improved error message makes sense.
+
 2016-05-11  Filip Pizlo  <fpizlo@apple.com>
 
         Beef up JSC profiler event log

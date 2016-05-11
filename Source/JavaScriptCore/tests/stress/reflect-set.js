@@ -877,10 +877,10 @@ var symbol = Symbol();
 
         shouldThrow(() => {
             Reflect.set(object, 'callee', 'Cappuccino');
-        }, `TypeError: Type error`);
+        }, `TypeError: 'callee' and 'caller' cannot be accessed in strict mode.`);
         shouldThrow(() => {
             Reflect.get(object, 'callee');
-        }, `TypeError: Type error`);
+        }, `TypeError: 'callee' and 'caller' cannot be accessed in strict mode.`);
     }
 
     function test4() {
