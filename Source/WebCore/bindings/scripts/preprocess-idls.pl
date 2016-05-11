@@ -318,6 +318,11 @@ sub getInterfaceExtendedAttributesFromIDL
 
     my $extendedAttributes = {};
 
+    # Remove comments from fileContents before processing.
+    # FIX: Preference to use Regex::Common::comment, however it is not available on
+    # all build systems.
+    $fileContents =~ s/(?:(?:(?:\/\/)(?:[^\n]*)(?:\n))|(?:(?:\/\*)(?:(?:[^\*]+|\*(?!\/))*)(?:\*\/)))//g;
+
     if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface|exception)\s+(\w+)/gs) {
         my @parts = split(m/,(?![^()]*\))/, $1);
         foreach my $part (@parts) {

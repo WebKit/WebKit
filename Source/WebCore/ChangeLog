@@ -1,3 +1,15 @@
+2016-05-11  Rawinder Singh  <rawinder.singh-webkit@cisra.canon.com.au>
+
+        preprocess-idls.pl not ignoring comments during processing
+        https://bugs.webkit.org/show_bug.cgi?id=157559
+
+        Reviewed by Darin Adler.
+
+        Remove comments from IDL file before processing.
+
+        * bindings/scripts/preprocess-idls.pl:
+        (getInterfaceExtendedAttributesFromIDL):
+
 2016-05-11  Jer Noble  <jer.noble@apple.com>
 
         Videos allowed to play through the Main Content restriction should not pause when scrolled off-screen.
