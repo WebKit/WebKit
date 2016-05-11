@@ -1,3 +1,15 @@
+2016-05-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: WebWorker support.
+        https://bugs.webkit.org/show_bug.cgi?id=149953
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by changes to existing tests).
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+
 2016-05-11  Chris Dumez  <cdumez@apple.com>
 
         Update Node::appendChild() / replaceChild() / removeChild() / insertBefore() to take references instead of pointers

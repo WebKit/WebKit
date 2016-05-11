@@ -61,7 +61,7 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
     , m_isIndexedDBEnabled(false)
 #endif
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
-    , m_isIndexedDBWorkersEnabled(false)
+    , m_isIndexedDBWorkersEnabled(true)
 #endif
 #if ENABLE(MEDIA_STREAM)
     , m_isMediaStreamEnabled(true)

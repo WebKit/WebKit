@@ -1,3 +1,13 @@
+2016-05-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: WebWorker support.
+        https://bugs.webkit.org/show_bug.cgi?id=149953
+
+        Reviewed by Alex Christensen.
+
+        * IndexedDB-private-browsing/idb_webworkers-expected.txt:
+        * web-platform-tests/IndexedDB/idb_webworkers-expected.txt:
+
 2016-05-06  Jer Noble  <jer.noble@apple.com>
 
         Return a Promise from HTMLMediaElement.play()
