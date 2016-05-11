@@ -1,3 +1,21 @@
+2016-05-11  Pranjal Jumde  <pjumde@apple.com>
+
+        Sites served over insecure connections should not be allowed to use geolocation.
+        https://bugs.webkit.org/show_bug.cgi?id=157423
+        <rdar://problem/23751632>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/security/geolocation-over-insecure-content.html: Added.
+        * http/tests/security/geolocation-over-mixed-content-block.html: Added.
+        * http/tests/security/geolocation-over-mixed-content.html: Added.
+        * http/tests/security/insecure-geolocation-expected.txt: Added.
+        * http/tests/security/insecure-geolocation.html: Added.
+        * http/tests/security/mixedcontent-geolocation-block-insecure-content-expected.txt: Added.
+        * http/tests/security/mixedcontent-geolocation-block-insecure-content.html: Added.
+        * http/tests/security/mixedcontent-geolocation-expected.txt: Added.
+        * http/tests/security/mixedcontent-geolocation.html: Added.
+
 2016-05-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Ensure DOM iterators remain done

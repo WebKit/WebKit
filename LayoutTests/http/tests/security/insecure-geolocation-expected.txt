@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 4: [blocked] Access to geolocation was blocked over insecure connection to http://127.0.0.1:8080.
+
+This test loads an insecure frame that tries to access geolocation. Access to geolocation is blocked over insecure connections.
