@@ -51,6 +51,10 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         this._webTimelineScriptRecordsExpectingScriptProfilerEvents = null;
         this._scriptProfilerRecords = null;
 
+        this._stopCapturingTimeout = undefined;
+        this._deadTimeTimeout = undefined;
+        this._lastDeadTimeTickle = 0;
+
         this.reset();
     }
 
@@ -218,6 +222,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
             return;
 
         this._isCapturing = true;
+
+        this._lastDeadTimeTickle = 0;
 
         if (startTime)
             this.activeRecording.initializeTimeBoundsIfNecessary(startTime);
@@ -729,6 +735,12 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         // Only monitor dead time when auto capturing.
         if (!this._isCapturing || !this._mainResourceForAutoCapturing)
             return;
+
+        // Avoid unnecessary churning of timeout identifier by not tickling until 10ms have passed.
+        let now = Date.now();
+        if (now <= this._lastDeadTimeTickle)
+            return;
+        this._lastDeadTimeTickle = now + 10;
 
         if (this._deadTimeTimeout)
             clearTimeout(this._deadTimeTimeout);

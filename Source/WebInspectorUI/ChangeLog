@@ -1,3 +1,16 @@
+2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Avoid unnecessary timeout identifier churn in TimelineManager
+        https://bugs.webkit.org/show_bug.cgi?id=157535
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.prototype.capturingStarted):
+        (WebInspector.TimelineManager.prototype._resetAutoRecordingDeadTimeTimeout):
+        Don't re-tickle if we tickled in the last 10ms.
+
 2016-05-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Can't select record bar in Frames timeline
