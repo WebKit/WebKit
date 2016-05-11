@@ -1,3 +1,15 @@
+2016-05-10  Sam Weinig  <sam@webkit.org>
+
+        Tweak underline style for data detected links
+        https://bugs.webkit.org/show_bug.cgi?id=157546
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/Color.cpp: Added.
+        (TestWebKitAPI::TEST):
+        Add tests for the new Color::getHSV() function.
+
 2016-05-10  Filip Pizlo  <fpizlo@apple.com>
 
         Internal JSC profiler should have a timestamped log of events for each code block

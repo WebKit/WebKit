@@ -422,15 +422,16 @@ void Color::getHSL(double& hue, double& saturation, double& lightness) const
     double b = static_cast<double>(blue()) / 255.0;
     double max = std::max(std::max(r, g), b);
     double min = std::min(std::min(r, g), b);
+    double chroma = max - min;
 
-    if (max == min)
+    if (!chroma)
         hue = 0.0;
     else if (max == r)
-        hue = (60.0 * ((g - b) / (max - min))) + 360.0;
+        hue = (60.0 * ((g - b) / chroma)) + 360.0;
     else if (max == g)
-        hue = (60.0 * ((b - r) / (max - min))) + 120.0;
+        hue = (60.0 * ((b - r) / chroma)) + 120.0;
     else
-        hue = (60.0 * ((r - g) / (max - min))) + 240.0;
+        hue = (60.0 * ((r - g) / chroma)) + 240.0;
 
     if (hue >= 360.0)
         hue -= 360.0;
@@ -439,12 +440,43 @@ void Color::getHSL(double& hue, double& saturation, double& lightness) const
     hue /= 360.0;
 
     lightness = 0.5 * (max + min);
-    if (max == min)
+    if (!chroma)
         saturation = 0.0;
     else if (lightness <= 0.5)
-        saturation = ((max - min) / (max + min));
+        saturation = (chroma / (max + min));
     else
-        saturation = ((max - min) / (2.0 - (max + min)));
+        saturation = (chroma / (2.0 - (max + min)));
+}
+
+void Color::getHSV(double& hue, double& saturation, double& value) const
+{
+    double r = static_cast<double>(red()) / 255.0;
+    double g = static_cast<double>(green()) / 255.0;
+    double b = static_cast<double>(blue()) / 255.0;
+    double max = std::max(std::max(r, g), b);
+    double min = std::min(std::min(r, g), b);
+    double chroma = max - min;
+
+    if (!chroma)
+        hue = 0.0;
+    else if (max == r)
+        hue = (60.0 * ((g - b) / chroma)) + 360.0;
+    else if (max == g)
+        hue = (60.0 * ((b - r) / chroma)) + 120.0;
+    else
+        hue = (60.0 * ((r - g) / chroma)) + 240.0;
+
+    if (hue >= 360.0)
+        hue -= 360.0;
+
+    hue /= 360.0;
+
+    if (!max)
+        saturation = 0;
+    else
+        saturation = chroma / max;
+
+    value = max;
 }
 
 Color colorFromPremultipliedARGB(RGBA32 pixelColor)
