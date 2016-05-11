@@ -411,6 +411,7 @@ private:
         case ValueRep::StackArgument:
             break;
         case ValueRep::Register:
+        case ValueRep::LateRegister:
             if (value.rep().reg().isGPR())
                 VALIDATE(isInt(value.value()->type()), ("At ", *context, ": ", value));
             else

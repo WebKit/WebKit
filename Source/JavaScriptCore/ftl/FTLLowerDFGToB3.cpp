@@ -184,9 +184,6 @@ public:
 
         auto preOrder = m_graph.blocksInPreOrder();
 
-        // We should not create any alloca's after this point, since they will cease to
-        // be mem2reg candidates.
-        
         m_callFrame = m_out.framePointer();
         m_tagTypeNumber = m_out.constInt64(TagTypeNumber);
         m_tagMask = m_out.constInt64(TagMask);
@@ -6146,8 +6143,8 @@ private:
                 UniquedStringImpl* str = bitwise_cast<UniquedStringImpl*>(string->tryGetValueImpl());
                 B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
                 patchpoint->appendSomeRegister(cell);
-                patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-                patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+                patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
+                patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
                 patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
                 RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
@@ -7619,8 +7616,8 @@ private:
 
         B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(base);
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
 
         // FIXME: If this is a GetByIdFlush, we might get some performance boost if we claim that it
         // clobbers volatile registers late. It's not necessary for correctness, though, since the
@@ -7972,8 +7969,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(left);
         patchpoint->appendSomeRegister(right);
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
@@ -8028,9 +8025,6 @@ private:
     {
         Node* node = m_node;
         
-        // FIXME: Make this do exceptions.
-        // https://bugs.webkit.org/show_bug.cgi?id=151686
-            
         LValue left = lowJSValue(node->child1());
         LValue right = lowJSValue(node->child2());
 
@@ -8040,8 +8034,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(left);
         patchpoint->appendSomeRegister(right);
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
@@ -8094,8 +8088,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(left);
         patchpoint->appendSomeRegister(right);
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;

@@ -1005,6 +1005,7 @@ private:
             case ValueRep::SomeRegister:
                 arg = tmp(value.value());
                 break;
+            case ValueRep::LateRegister:
             case ValueRep::Register:
                 stackmap->earlyClobbered().clear(value.rep().reg());
                 arg = Tmp(value.rep().reg());

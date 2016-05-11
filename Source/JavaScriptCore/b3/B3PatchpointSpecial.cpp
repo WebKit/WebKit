@@ -110,6 +110,7 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
             return true;
         case ValueRep::SomeRegister:
         case ValueRep::Register:
+        case ValueRep::LateRegister:
             return false;
         default:
             RELEASE_ASSERT_NOT_REACHED();

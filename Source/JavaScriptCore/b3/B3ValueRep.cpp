@@ -42,6 +42,7 @@ void ValueRep::addUsedRegistersTo(RegisterSet& set) const
     case SomeRegister:
     case Constant:
         return;
+    case LateRegister:
     case Register:
         set.set(reg());
         return;
@@ -70,6 +71,7 @@ void ValueRep::dump(PrintStream& out) const
     case LateColdAny:
     case SomeRegister:
         return;
+    case LateRegister:
     case Register:
         out.print("(", reg(), ")");
         return;
@@ -90,6 +92,7 @@ void ValueRep::emitRestore(AssemblyHelpers& jit, Reg reg) const
 {
     if (reg.isGPR()) {
         switch (kind()) {
+        case LateRegister:
         case Register:
             if (isGPR())
                 jit.move(gpr(), reg.gpr());
@@ -110,6 +113,7 @@ void ValueRep::emitRestore(AssemblyHelpers& jit, Reg reg) const
     }
     
     switch (kind()) {
+    case LateRegister:
     case Register:
         if (isGPR())
             jit.move64ToDouble(gpr(), reg.fpr());
@@ -132,6 +136,7 @@ void ValueRep::emitRestore(AssemblyHelpers& jit, Reg reg) const
 ValueRecovery ValueRep::recoveryForJSValue() const
 {
     switch (kind()) {
+    case LateRegister:
     case Register:
         return ValueRecovery::inGPR(gpr(), DataFormatJS);
     case Stack:
@@ -170,6 +175,9 @@ void printInternal(PrintStream& out, ValueRep::Kind kind)
         return;
     case ValueRep::Register:
         out.print("Register");
+        return;
+    case ValueRep::LateRegister:
+        out.print("LateRegister");
         return;
     case ValueRep::Stack:
         out.print("Stack");

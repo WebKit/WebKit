@@ -71,6 +71,12 @@ public:
         // representation, this tells us what register B3 picked.
         Register,
 
+        // As an input representation, this forces a particular register and states that
+        // the register is used late. This means that the register is used after the result
+        // is defined (i.e, the result will interfere with this as an input).
+        // It's not valid for this to be used as a result kind.
+        LateRegister,
+
         // As an output representation, this tells us what stack slot B3 picked. It's not a valid
         // input representation.
         Stack,
@@ -103,6 +109,13 @@ public:
     static ValueRep reg(Reg reg)
     {
         return ValueRep(reg);
+    }
+
+    static ValueRep lateReg(Reg reg)
+    {
+        ValueRep result(reg);
+        result.m_kind = LateRegister;
+        return result;
     }
 
     static ValueRep stack(intptr_t offsetFromFP)
@@ -141,6 +154,7 @@ public:
         if (kind() != other.kind())
             return false;
         switch (kind()) {
+        case LateRegister:
         case Register:
             return u.reg == other.u.reg;
         case Stack:
@@ -165,7 +179,7 @@ public:
 
     bool isSomeRegister() const { return kind() == SomeRegister; }
     
-    bool isReg() const { return kind() == Register; }
+    bool isReg() const { return kind() == Register || kind() == LateRegister; }
     
     Reg reg() const
     {

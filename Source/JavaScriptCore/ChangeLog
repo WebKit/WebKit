@@ -1,3 +1,58 @@
+2016-05-11  Saam barati  <sbarati@apple.com>
+
+        Air may decide to put the result register of an arithmetic snippet in the tag register
+        https://bugs.webkit.org/show_bug.cgi?id=157548
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds a new ValueRep to B3 called LateRegister. The semantics
+        are similar to Register in that it can be used to pin an argument to
+        a particular register. It differs from ValueRep::Register in that the semantics of
+        LateRegister are that it is used after the result of the node its an argument to
+        is computed. This means that a LateRegister argument will interfere with the result
+        of a node. LateRegister is not a valid result ValueRep.
+
+        This was needed because there was a bug where B3/Air would assign the
+        result of a patchpoint to the TagTypeNumber register. This broke our
+        code when we would box a double into a JSValue in a snippet when the
+        result is the same as the TagTypeNumber register. To fix the issue,
+        we pass TagMaskRegister and TagTypeNumberRegister as ValueRep::LateRegister
+        arguments to various patchpoints.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::fillStackmap):
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::admitsStack):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (JSC::B3::StackmapSpecial::isArgValidForRep):
+        * b3/B3Validate.cpp:
+        * b3/B3ValueRep.cpp:
+        (JSC::B3::ValueRep::addUsedRegistersTo):
+        (JSC::B3::ValueRep::dump):
+        (JSC::B3::ValueRep::emitRestore):
+        (JSC::B3::ValueRep::recoveryForJSValue):
+        (WTF::printInternal):
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::reg):
+        (JSC::B3::ValueRep::lateReg):
+        (JSC::B3::ValueRep::stack):
+        (JSC::B3::ValueRep::operator==):
+        (JSC::B3::ValueRep::isSomeRegister):
+        (JSC::B3::ValueRep::isReg):
+        * b3/testb3.cpp:
+        (JSC::B3::testSpillUseLargerThanDef):
+        (JSC::B3::testLateRegister):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIn):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinarySnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinaryBitOpSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitRightShiftSnippet):
+
 2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Improve error messages for accessing arguments.callee and similar getters in strict mode

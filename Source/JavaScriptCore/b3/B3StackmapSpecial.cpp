@@ -107,6 +107,9 @@ void StackmapSpecial::forEachArgImpl(
             case ValueRep::Constant:
                 role = Arg::Use;
                 break;
+            case ValueRep::LateRegister:
+                role = Arg::LateUse;
+                break;
             case ValueRep::ColdAny:
                 role = Arg::ColdUse;
                 break;
@@ -228,6 +231,7 @@ bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, con
         return true;
     case ValueRep::SomeRegister:
         return arg.isTmp();
+    case ValueRep::LateRegister:
     case ValueRep::Register:
         return arg == Tmp(rep.reg());
     case ValueRep::StackArgument:
