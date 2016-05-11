@@ -1,3 +1,16 @@
+2016-05-10  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed EFL Gardening on 10th May.
+
+        Rebaseline missing results.
+
+        * platform/efl/TestExpectations: Removed non existing tests.
+        * platform/efl/accessibility/content-editable-as-textarea-expected.txt: Added.
+        * platform/efl/accessibility/generated-content-with-display-table-crash-expected.txt: Added.
+        * platform/efl/accessibility/w3c-svg-content-language-attribute-expected.txt: Added.
+        * platform/efl/fast/text/hyphenate-avoid-orphaned-word-expected.txt: Added.
+        * platform/efl/mathml/presentation/menclose-notation-values-expected.txt: Added.
+
 2016-05-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS rebaseline after r200464.
