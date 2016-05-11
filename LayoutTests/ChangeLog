@@ -1,3 +1,11 @@
+2016-05-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline inspector/dom/getAccessibilityPropertiesForNode.html after r200677
+
+        Unreviewed test gardening.
+
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+
 2016-05-11  Chris Dumez  <cdumez@apple.com>
 
         Update Node::appendChild() / replaceChild() / removeChild() / insertBefore() to take references instead of pointers

@@ -303,7 +303,6 @@ Total elements to be tested: 65.
     disabled: true
     focused: false
     parentNodeId: exists
-    readonly: true
     required: false
 
 <input disabled="" value="disabled">
