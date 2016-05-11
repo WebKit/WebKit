@@ -231,7 +231,7 @@ bool JSGenericTypedArrayView<Adaptor>::set(
         if (!validateRange(exec, offset, length))
             return false;
 
-        memmove(typedVector() + offset, other->typedVector() + objectOffset, other->byteLength());
+        memmove(typedVector() + offset, other->typedVector() + objectOffset, length * elementSize);
         return true;
     }
     

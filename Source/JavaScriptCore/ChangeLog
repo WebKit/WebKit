@@ -1,3 +1,19 @@
+2016-05-10  Keith Miller  <keith_miller@apple.com>
+
+        TypedArray.prototype.slice should use the byteLength of passed array for memmove
+        https://bugs.webkit.org/show_bug.cgi?id=157551
+        <rdar://problem/26179914>
+
+        Reviewed by Michael Saboff.
+
+        The TypedArray.prototype.slice function would use the byteLength of the passed array
+        to determine the amount of data to copy. It should have been using the passed length
+        times the size of each element. This fixes a crash on JavaPoly.com
+
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        * tests/stress/typedarray-slice.js:
+
 2016-05-10  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r200447): Unable to build C_LOOP with clang version 800.0.12 or higher

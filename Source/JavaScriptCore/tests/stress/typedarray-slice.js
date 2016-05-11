@@ -20,6 +20,7 @@ shouldBeTrue("testPrototypeFunction('slice', '(0, -5)', [12, 5, 8, 13, 44], [])"
 shouldBeTrue("testPrototypeFunction('slice', '(-3, -2)', [12, 5, 8, 13, 44], [8])");
 shouldBeTrue("testPrototypeFunction('slice', '(4, 2)', [12, 5, 8, 13, 44], [])");
 shouldBeTrue("testPrototypeFunction('slice', '(-50, 50)', [12, 5, 8, 13, 44], [12, 5, 8, 13, 44])");
+shouldBeTrue("testPrototypeFunction('slice', '(0, 10)', 100000, [0,0,0,0,0,0,0,0,0,0])");
 debug("");
 
 debug("2.0 Preserve Underlying bits");
