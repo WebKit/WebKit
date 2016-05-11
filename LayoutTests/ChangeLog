@@ -1,5 +1,12 @@
 2016-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a failing expectation on iOS for the test added in r200712
+        since there is no support for eventSender on iOS.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Moving focus by tab could erroneously focus a non-focusable shadow host
         https://bugs.webkit.org/show_bug.cgi?id=157585
 
