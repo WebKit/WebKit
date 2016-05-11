@@ -1,3 +1,16 @@
+2016-05-10  Jeremy Jones  <jeremyj@apple.com>
+
+        Don't update media duration at playback end while seeking.
+        https://bugs.webkit.org/show_bug.cgi?id=157557
+
+        Reviewed by Jer Noble.
+
+        If JavaScript initiates a media element seek just as the media playback ends, don't update duration
+        to the current time as the current time is now the new seek time, not the time when playback ended.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::didEnd):
+
 2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix typo CaptionUserPreferences::updateCaptionStyleSheetOveride
