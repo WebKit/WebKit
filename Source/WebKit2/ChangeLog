@@ -1,3 +1,46 @@
+2016-05-10  Brian Burg  <bburg@apple.com>
+
+        Web Automation: add command to asynchronously load the Web Inspector frontend in the background
+        https://bugs.webkit.org/show_bug.cgi?id=157509
+
+        Reviewed by Timothy Hatcher and Joseph Pecoraro.
+
+        In order to make it easier to debug code that executes as a result of an automation
+        command, this patch adds a new Automation command to asynchronously load the debugger
+        and Inspector frontend. It is designed for use by automation clients to implement an
+        auto-inspection feature to aid in debugging automation scripts.
+
+        * UIProcess/Automation/Automation.json: Add new command.
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::inspectBrowsingContext): Added.
+        (WebKit::WebAutomationSession::inspectorFrontendLoaded): Added.
+        This message is forwarded by WebInspectorProxy to the inspected page's session.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::sendSynthesizedEventsToPage):
+        Force the active automation window to become key and bring to front prior to
+        sending each NSEvent. This way, if the Inspector pauses while a command executes,
+        the automation window will get back focus when the Inspector unpauses just before
+        the next synthesized mouse or keyboard NSEvent is sent to its NSWindow.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::frontendLoaded):
+        Forward to the inspected page's session.
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in: Add notification of the frontend's load.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::frontendLoaded):
+        Kick off notifying the automation session in UIProcess that the inspector loaded.
+
+        (WebKit::WebInspectorUI::closeWindow):
+        In some circumstances, the Web Inspector can be loaded without showing
+        the window. If this hidden page closes, make sure the frontend host gets
+        a chance to disconnect its InspectorFrontendClient. Normally this happens
+        when the window closes, but unshown Inspectors do not get window instances.
+
 2016-05-11  Chris Dumez  <cdumez@apple.com>
 
         Update Node::appendChild() / replaceChild() / removeChild() / insertBefore() to take references instead of pointers

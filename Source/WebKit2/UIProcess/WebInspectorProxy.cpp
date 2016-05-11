@@ -32,6 +32,7 @@
 #include "WKArray.h"
 #include "WKContextMenuItem.h"
 #include "WKMutableArray.h"
+#include "WebAutomationSession.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
 #include "WebInspectorMessages.h"
@@ -599,6 +600,12 @@ void WebInspectorProxy::didClose()
     m_connectionIdentifier = IPC::Attachment();
 
     platformDidClose();
+}
+
+void WebInspectorProxy::frontendLoaded()
+{
+    if (auto* automationSession = m_inspectedPage->process().processPool().automationSession())
+        automationSession->inspectorFrontendLoaded(*m_inspectedPage);
 }
 
 void WebInspectorProxy::bringToFront()
