@@ -39,11 +39,6 @@
 #include "ScheduledAction.h"
 #include "Settings.h"
 
-#if ENABLE(IOS_TOUCH_EVENTS)
-#include "JSTouchConstructorIOS.h"
-#include "JSTouchListConstructorIOS.h"
-#endif
-
 #if ENABLE(WEB_AUDIO)
 #include "JSAudioContext.h"
 #endif

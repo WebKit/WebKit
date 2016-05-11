@@ -1,5 +1,11 @@
 2016-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        iOS clean build fix after r200700.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+
+2016-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Moving focus by tab could erroneously focus a non-focusable shadow host
         https://bugs.webkit.org/show_bug.cgi?id=157585
 
