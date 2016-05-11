@@ -1,3 +1,14 @@
+2016-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Update Node::appendChild() / replaceChild() / removeChild() / insertBefore() to take references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=157556
+
+        Reviewed by Darin Adler.
+
+        * DOMCoreClasses.cpp:
+        (DOMNode::insertBefore):
+        (DOMNode::removeChild):
+
 2016-05-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/aria-readonly.html is failing

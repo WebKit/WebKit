@@ -125,20 +125,20 @@ DragController::~DragController()
     m_client.dragControllerDestroyed();
 }
 
-static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragData, Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
+static RefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragData, Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
 
     Document& document = context.ownerDocument();
     if (dragData.containsCompatibleContent()) {
-        if (PassRefPtr<DocumentFragment> fragment = frame.editor().webContentFromPasteboard(*Pasteboard::createForDragAndDrop(dragData), context, allowPlainText, chosePlainText))
+        if (auto fragment = frame.editor().webContentFromPasteboard(*Pasteboard::createForDragAndDrop(dragData), context, allowPlainText, chosePlainText))
             return fragment;
 
         if (dragData.containsURL(DragData::DoNotConvertFilenames)) {
             String title;
             String url = dragData.asURL(DragData::DoNotConvertFilenames, &title);
             if (!url.isEmpty()) {
-                Ref<HTMLAnchorElement> anchor = HTMLAnchorElement::create(document);
+                auto anchor = HTMLAnchorElement::create(document);
                 anchor->setHref(url);
                 if (title.isEmpty()) {
                     // Try the plain text first because the url might be normalized or escaped.
@@ -148,9 +148,9 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragD
                         title = url;
                 }
                 anchor->appendChild(document.createTextNode(title), IGNORE_EXCEPTION);
-                Ref<DocumentFragment> fragment = document.createDocumentFragment();
-                fragment->appendChild(WTFMove(anchor), IGNORE_EXCEPTION);
-                return fragment.ptr();
+                auto fragment = document.createDocumentFragment();
+                fragment->appendChild(anchor, IGNORE_EXCEPTION);
+                return WTFMove(fragment);
             }
         }
     }

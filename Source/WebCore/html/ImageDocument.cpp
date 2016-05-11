@@ -210,19 +210,19 @@ Ref<DocumentParser> ImageDocument::createParser()
 
 void ImageDocument::createDocumentStructure()
 {
-    Ref<Element> rootElement = Document::createElement(htmlTag, false);
-    appendChild(rootElement.copyRef());
+    auto rootElement = Document::createElement(htmlTag, false);
+    appendChild(rootElement);
     downcast<HTMLHtmlElement>(rootElement.get()).insertedByParser();
 
     frame()->injectUserScripts(InjectAtDocumentStart);
 
-    Ref<Element> body = Document::createElement(bodyTag, false);
+    auto body = Document::createElement(bodyTag, false);
     body->setAttribute(styleAttr, "margin: 0px");
     if (MIMETypeRegistry::isPDFMIMEType(document().loader()->responseMIMEType()))
         downcast<HTMLBodyElement>(body.get()).setInlineStyleProperty(CSSPropertyBackgroundColor, "white", CSSPrimitiveValue::CSS_IDENT);
-    rootElement->appendChild(body.copyRef());
+    rootElement->appendChild(body);
     
-    Ref<ImageDocumentElement> imageElement = ImageDocumentElement::create(*this);
+    auto imageElement = ImageDocumentElement::create(*this);
     if (m_shouldShrinkImage)
         imageElement->setAttribute(styleAttr, "-webkit-user-select:none; display:block; margin:auto;");
     else
@@ -230,7 +230,7 @@ void ImageDocument::createDocumentStructure()
     imageElement->setLoadManually(true);
     imageElement->setSrc(url().string());
     imageElement->cachedImage()->setResponse(loader()->response());
-    body->appendChild(imageElement.copyRef());
+    body->appendChild(imageElement);
     
     if (m_shouldShrinkImage) {
 #if PLATFORM(IOS)

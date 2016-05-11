@@ -107,14 +107,14 @@ void SearchInputType::createShadowSubtree()
     ASSERT(container);
     ASSERT(textWrapper);
 
-    Ref<SearchFieldResultsButtonElement> resultsButton = SearchFieldResultsButtonElement::create(element().document());
+    auto resultsButton = SearchFieldResultsButtonElement::create(element().document());
     m_resultsButton = resultsButton.ptr();
     updateResultButtonPseudoType(resultsButton.get(), element().maxResults());
-    container->insertBefore(WTFMove(resultsButton), textWrapper, IGNORE_EXCEPTION);
+    container->insertBefore(resultsButton, textWrapper, IGNORE_EXCEPTION);
 
-    Ref<SearchFieldCancelButtonElement> cancelButton = SearchFieldCancelButtonElement::create(element().document());
+    auto cancelButton = SearchFieldCancelButtonElement::create(element().document());
     m_cancelButton = cancelButton.ptr();
-    container->insertBefore(WTFMove(cancelButton), textWrapper->nextSibling(), IGNORE_EXCEPTION);
+    container->insertBefore(cancelButton, textWrapper->nextSibling(), IGNORE_EXCEPTION);
 }
 
 HTMLElement* SearchInputType::resultsButtonElement() const

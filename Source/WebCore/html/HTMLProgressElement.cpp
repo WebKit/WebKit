@@ -149,16 +149,16 @@ void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
     ASSERT(!m_value);
 
-    Ref<ProgressInnerElement> inner = ProgressInnerElement::create(document());
-    root->appendChild(inner.copyRef());
+    auto inner = ProgressInnerElement::create(document());
+    root->appendChild(inner);
 
-    Ref<ProgressBarElement> bar = ProgressBarElement::create(document());
-    Ref<ProgressValueElement> value = ProgressValueElement::create(document());
+    auto bar = ProgressBarElement::create(document());
+    auto value = ProgressValueElement::create(document());
     m_value = value.ptr();
     m_value->setWidthPercentage(HTMLProgressElement::IndeterminatePosition * 100);
-    bar->appendChild(*m_value, ASSERT_NO_EXCEPTION);
+    bar->appendChild(value, ASSERT_NO_EXCEPTION);
 
-    inner->appendChild(WTFMove(bar), ASSERT_NO_EXCEPTION);
+    inner->appendChild(bar, ASSERT_NO_EXCEPTION);
 }
 
 bool HTMLProgressElement::shouldAppearIndeterminate() const

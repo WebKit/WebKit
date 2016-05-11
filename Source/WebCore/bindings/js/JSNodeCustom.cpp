@@ -114,42 +114,74 @@ bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, v
 
 JSValue JSNode::insertBefore(ExecState& state)
 {
+    JSValue newChildValue = state.argument(0);
+    auto* newChild = JSNode::toWrapped(newChildValue);
+    if (UNLIKELY(!newChild))
+        return JSValue::decode(throwArgumentTypeError(state, 0, "node", "Node", "insertBefore", "Node"));
+
     ExceptionCode ec = 0;
-    bool ok = wrapped().insertBefore(JSNode::toWrapped(state.argument(0)), JSNode::toWrapped(state.argument(1)), ec);
-    setDOMException(&state, ec);
-    if (ok)
-        return state.argument(0);
-    return jsNull();
+    if (UNLIKELY(!wrapped().insertBefore(*newChild, JSNode::toWrapped(state.argument(1)), ec))) {
+        setDOMException(&state, ec);
+        return jsUndefined();
+    }
+
+    ASSERT(!ec);
+    return newChildValue;
 }
 
 JSValue JSNode::replaceChild(ExecState& state)
 {
+    auto* newChild = JSNode::toWrapped(state.argument(0));
+    JSValue oldChildValue = state.argument(1);
+    auto* oldChild = JSNode::toWrapped(oldChildValue);
+    if (UNLIKELY(!newChild || !oldChild)) {
+        if (!newChild)
+            return JSValue::decode(throwArgumentTypeError(state, 0, "node", "Node", "replaceChild", "Node"));
+        return JSValue::decode(throwArgumentTypeError(state, 1, "child", "Node", "replaceChild", "Node"));
+    }
+
     ExceptionCode ec = 0;
-    bool ok = wrapped().replaceChild(JSNode::toWrapped(state.argument(0)), JSNode::toWrapped(state.argument(1)), ec);
-    setDOMException(&state, ec);
-    if (ok)
-        return state.argument(1);
-    return jsNull();
+    if (UNLIKELY(!wrapped().replaceChild(*newChild, *oldChild, ec))) {
+        setDOMException(&state, ec);
+        return jsUndefined();
+    }
+
+    ASSERT(!ec);
+    return oldChildValue;
 }
 
 JSValue JSNode::removeChild(ExecState& state)
 {
+    JSValue childValue = state.argument(0);
+    auto* child = JSNode::toWrapped(childValue);
+    if (UNLIKELY(!child))
+        return JSValue::decode(throwArgumentTypeError(state, 0, "child", "Node", "removeChild", "Node"));
+
     ExceptionCode ec = 0;
-    bool ok = wrapped().removeChild(JSNode::toWrapped(state.argument(0)), ec);
-    setDOMException(&state, ec);
-    if (ok)
-        return state.argument(0);
-    return jsNull();
+    if (UNLIKELY(!wrapped().removeChild(*child, ec))) {
+        setDOMException(&state, ec);
+        return jsUndefined();
+    }
+
+    ASSERT(!ec);
+    return childValue;
 }
 
 JSValue JSNode::appendChild(ExecState& state)
 {
+    JSValue newChildValue = state.argument(0);
+    auto newChild = JSNode::toWrapped(newChildValue);
+    if (UNLIKELY(!newChild))
+        return JSValue::decode(throwArgumentTypeError(state, 0, "node", "Node", "appendChild", "Node"));
+
     ExceptionCode ec = 0;
-    bool ok = wrapped().appendChild(JSNode::toWrapped(state.argument(0)), ec);
-    setDOMException(&state, ec);
-    if (ok)
-        return state.argument(0);
-    return jsNull();
+    if (UNLIKELY(!wrapped().appendChild(*newChild, ec))) {
+        setDOMException(&state, ec);
+        return jsUndefined();
+    }
+
+    ASSERT(!ec);
+    return newChildValue;
 }
 
 JSScope* JSNode::pushEventHandlerScope(ExecState* exec, JSScope* node) const

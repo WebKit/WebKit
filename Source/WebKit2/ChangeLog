@@ -1,3 +1,19 @@
+2016-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Update Node::appendChild() / replaceChild() / removeChild() / insertBefore() to take references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=157556
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+        (-[WKDOMNode insertNode:before:]):
+        (-[WKDOMNode appendChild:]):
+        (-[WKDOMNode removeChild:]):
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::createAnnotationElement):
+
 2016-05-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: IDBOpenDBRequests that are stop()'ed don't notify the IDBServer of that fact.

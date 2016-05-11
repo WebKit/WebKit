@@ -2631,9 +2631,9 @@ void Document::setBodyOrFrameset(RefPtr<HTMLElement>&& newBody, ExceptionCode& e
     }
 
     if (auto* body = bodyOrFrameset())
-        documentElement()->replaceChild(newBody.releaseNonNull(), *body, ec);
+        documentElement()->replaceChild(*newBody, *body, ec);
     else
-        documentElement()->appendChild(newBody.releaseNonNull(), ec);
+        documentElement()->appendChild(*newBody, ec);
 }
 
 Location* Document::location() const

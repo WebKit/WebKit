@@ -64,7 +64,7 @@ private:
     std::pair<ResultMap, ResultMap> diff(const Vector<std::unique_ptr<Digest>>& oldChildren, const Vector<std::unique_ptr<Digest>>& newChildren);
     bool innerPatchChildren(ContainerNode*, const Vector<std::unique_ptr<Digest>>& oldChildren, const Vector<std::unique_ptr<Digest>>& newChildren, ExceptionCode&);
     std::unique_ptr<Digest> createDigest(Node*, UnusedNodesMap*);
-    bool insertBeforeAndMarkAsUsed(ContainerNode*, Digest*, Node* anchor, ExceptionCode&);
+    bool insertBeforeAndMarkAsUsed(ContainerNode&, Digest&, Node* anchor, ExceptionCode&);
     bool removeChildAndMoveToNew(Digest*, ExceptionCode&);
     void markNodeAsUsed(Digest*);
 #ifdef DEBUG_DOM_PATCH_SUPPORT

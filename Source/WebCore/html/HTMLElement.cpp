@@ -621,7 +621,7 @@ void HTMLElement::setOuterText(const String& text, ExceptionCode& ec)
         ec = HIERARCHY_REQUEST_ERR;
     if (ec)
         return;
-    parent->replaceChild(newChild.releaseNonNull(), *this, ec);
+    parent->replaceChild(*newChild, *this, ec);
 
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
     if (!ec && is<Text>(node.get()))
@@ -641,18 +641,18 @@ Node* HTMLElement::insertAdjacent(const String& where, Ref<Node>&& newChild, Exc
 
     if (equalLettersIgnoringASCIICase(where, "beforebegin")) {
         ContainerNode* parent = this->parentNode();
-        return (parent && parent->insertBefore(newChild.copyRef(), this, ec)) ? newChild.ptr() : nullptr;
+        return (parent && parent->insertBefore(newChild, this, ec)) ? newChild.ptr() : nullptr;
     }
 
     if (equalLettersIgnoringASCIICase(where, "afterbegin"))
-        return insertBefore(newChild.copyRef(), firstChild(), ec) ? newChild.ptr() : nullptr;
+        return insertBefore(newChild, firstChild(), ec) ? newChild.ptr() : nullptr;
 
     if (equalLettersIgnoringASCIICase(where, "beforeend"))
-        return appendChild(newChild.copyRef(), ec) ? newChild.ptr() : nullptr;
+        return appendChild(newChild, ec) ? newChild.ptr() : nullptr;
 
     if (equalLettersIgnoringASCIICase(where, "afterend")) {
         ContainerNode* parent = this->parentNode();
-        return (parent && parent->insertBefore(newChild.copyRef(), nextSibling(), ec)) ? newChild.ptr() : nullptr;
+        return (parent && parent->insertBefore(newChild, nextSibling(), ec)) ? newChild.ptr() : nullptr;
     }
     
     // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative.

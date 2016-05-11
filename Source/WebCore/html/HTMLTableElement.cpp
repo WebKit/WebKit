@@ -176,7 +176,7 @@ Ref<HTMLTableSectionElement> HTMLTableElement::createTBody()
 {
     Ref<HTMLTableSectionElement> body = HTMLTableSectionElement::create(tbodyTag, document());
     Node* referenceElement = lastBody() ? lastBody()->nextSibling() : nullptr;
-    insertBefore(body.copyRef(), referenceElement, ASSERT_NO_EXCEPTION);
+    insertBefore(body, referenceElement, ASSERT_NO_EXCEPTION);
     return body;
 }
 
@@ -237,16 +237,16 @@ RefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec)
     else {
         parent = lastBody();
         if (!parent) {
-            Ref<HTMLTableSectionElement> newBody = HTMLTableSectionElement::create(tbodyTag, document());
-            Ref<HTMLTableRowElement> newRow = HTMLTableRowElement::create(document());
-            newBody->appendChild(newRow.copyRef(), ec);
-            appendChild(WTFMove(newBody), ec);
+            auto newBody = HTMLTableSectionElement::create(tbodyTag, document());
+            auto newRow = HTMLTableRowElement::create(document());
+            newBody->appendChild(newRow, ec);
+            appendChild(newBody, ec);
             return WTFMove(newRow);
         }
     }
 
-    Ref<HTMLTableRowElement> newRow = HTMLTableRowElement::create(document());
-    parent->insertBefore(newRow.copyRef(), row.get(), ec);
+    auto newRow = HTMLTableRowElement::create(document());
+    parent->insertBefore(newRow, row.get(), ec);
     return WTFMove(newRow);
 }
 

@@ -55,23 +55,32 @@
 
 - (void)insertNode:(WKDOMNode *)node before:(WKDOMNode *)refNode
 {
+    if (!node)
+        return;
+
     // FIXME: Do something about the exception.
     WebCore::ExceptionCode ec;
-    _impl->insertBefore(WebKit::toWebCoreNode(node), WebKit::toWebCoreNode(refNode), ec);
+    _impl->insertBefore(*WebKit::toWebCoreNode(node), WebKit::toWebCoreNode(refNode), ec);
 }
 
 - (void)appendChild:(WKDOMNode *)node
 {
+    if (!node)
+        return;
+
     // FIXME: Do something about the exception.
     WebCore::ExceptionCode ec;
-    _impl->appendChild(WebKit::toWebCoreNode(node), ec);
+    _impl->appendChild(*WebKit::toWebCoreNode(node), ec);
 }
 
 - (void)removeChild:(WKDOMNode *)node
 {
+    if (!node)
+        return;
+
     // FIXME: Do something about the exception.
     WebCore::ExceptionCode ec;
-    _impl->removeChild(WebKit::toWebCoreNode(node), ec);
+    _impl->removeChild(*WebKit::toWebCoreNode(node), ec);
 }
 
 - (WKDOMDocument *)document

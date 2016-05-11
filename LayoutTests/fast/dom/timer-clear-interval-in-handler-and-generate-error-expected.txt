@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 10: TypeError: Type error
+CONSOLE MESSAGE: line 10: TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
 

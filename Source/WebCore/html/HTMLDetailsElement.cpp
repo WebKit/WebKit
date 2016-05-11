@@ -102,8 +102,8 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     defaultSummary->appendChild(Text::create(document(), defaultDetailsSummaryText()), ASSERT_NO_EXCEPTION);
     m_defaultSummary = defaultSummary.ptr();
 
-    summarySlot->appendChild(WTFMove(defaultSummary));
-    root->appendChild(WTFMove(summarySlot));
+    summarySlot->appendChild(defaultSummary);
+    root->appendChild(summarySlot);
 
     m_defaultSlot = HTMLSlotElement::create(slotTag, document());
     ASSERT(!m_isOpen);

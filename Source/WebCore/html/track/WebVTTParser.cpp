@@ -536,8 +536,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
 
     switch (m_token.type()) {
     case WebVTTTokenTypes::Character: {
-        auto child = Text::create(document, m_token.characters());
-        m_currentNode->parserAppendChild(WTFMove(child));
+        m_currentNode->parserAppendChild(Text::create(document, m_token.characters()));
         break;
     }
     case WebVTTTokenTypes::StartTag: {
@@ -562,7 +561,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
         }
         if (!m_languageStack.isEmpty())
             child->setLanguage(m_languageStack.last());
-        m_currentNode->parserAppendChild(child.copyRef());
+        m_currentNode->parserAppendChild(child);
         m_currentNode = WTFMove(child);
         break;
     }

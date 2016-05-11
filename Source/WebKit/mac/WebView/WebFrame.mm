@@ -914,9 +914,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
 
     for (auto* node : nodesVector) {
-        Ref<Element> element = createDefaultParagraphElement(*document);
+        auto element = createDefaultParagraphElement(*document);
         element->appendChild(*node);
-        fragment->appendChild(WTFMove(element));
+        fragment->appendChild(element);
     }
 
     return kit(fragment.release().get());
@@ -1691,7 +1691,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     if (!frame || !frame->document())
         return;
         
-    frame->editor().setTextAsChildOfElement(text, core(element));
+    frame->editor().setTextAsChildOfElement(text, *core(element));
 }
 
 - (void)setDictationPhrases:(NSArray *)dictationPhrases metadata:(id)metadata asChildOfElement:(DOMElement *)element

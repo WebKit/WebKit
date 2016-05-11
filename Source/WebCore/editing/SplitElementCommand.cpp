@@ -64,7 +64,7 @@ void SplitElementCommand::executeApply()
     m_element2->removeAttribute(HTMLNames::idAttr);
 
     for (auto& child : children)
-        m_element1->appendChild(WTFMove(child), ec);
+        m_element1->appendChild(child, ec);
 }
     
 void SplitElementCommand::doApply()
@@ -86,7 +86,7 @@ void SplitElementCommand::doUnapply()
     RefPtr<Node> refChild = m_element2->firstChild();
 
     for (auto& child : children)
-        m_element2->insertBefore(WTFMove(child), refChild.get(), IGNORE_EXCEPTION);
+        m_element2->insertBefore(child, refChild.get(), IGNORE_EXCEPTION);
 
     // Recover the id attribute of the original element.
     const AtomicString& id = m_element1->getIdAttribute();

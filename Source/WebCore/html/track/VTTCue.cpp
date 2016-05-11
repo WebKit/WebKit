@@ -784,7 +784,7 @@ void VTTCue::updateDisplayTree(const MediaTime& movieTime)
         return;
 
     markFutureAndPastNodes(referenceTree.get(), startMediaTime(), movieTime);
-    m_cueHighlightBox->appendChild(referenceTree.releaseNonNull());
+    m_cueHighlightBox->appendChild(*referenceTree);
 }
 
 VTTCueBox* VTTCue::getDisplayTree(const IntSize& videoSize, int fontSize)

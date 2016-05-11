@@ -51,7 +51,7 @@ void AppendNodeCommand::doApply()
     if (!m_parent->hasEditableStyle() && m_parent->renderer())
         return;
 
-    m_parent->appendChild(m_node.copyRef(), IGNORE_EXCEPTION);
+    m_parent->appendChild(m_node, IGNORE_EXCEPTION);
 }
 
 void AppendNodeCommand::doUnapply()

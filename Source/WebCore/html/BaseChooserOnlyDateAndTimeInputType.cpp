@@ -61,9 +61,9 @@ void BaseChooserOnlyDateAndTimeInputType::createShadowSubtree()
 {
     static NeverDestroyed<AtomicString> valueContainerPseudo("-webkit-date-and-time-value", AtomicString::ConstructFromLiteral);
 
-    Ref<HTMLDivElement> valueContainer = HTMLDivElement::create(element().document());
+    auto valueContainer = HTMLDivElement::create(element().document());
     valueContainer->setPseudo(valueContainerPseudo);
-    element().userAgentShadowRoot()->appendChild(WTFMove(valueContainer));
+    element().userAgentShadowRoot()->appendChild(valueContainer);
     updateAppearance();
 }
 

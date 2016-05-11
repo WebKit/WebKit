@@ -238,13 +238,13 @@ RefPtr<XMLDocument> DOMImplementation::createDocument(const String& namespaceURI
     if (!qualifiedName.isEmpty()) {
         documentElement = doc->createElementNS(namespaceURI, qualifiedName, ec);
         if (ec)
-            return 0;
+            return nullptr;
     }
 
     if (doctype)
         doc->appendChild(*doctype);
     if (documentElement)
-        doc->appendChild(documentElement.releaseNonNull());
+        doc->appendChild(*documentElement);
 
     return doc;
 }
@@ -312,7 +312,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
         auto titleElement = HTMLTitleElement::create(titleTag, document);
         titleElement->appendChild(document->createTextNode(title));
         ASSERT(document->head());
-        document->head()->appendChild(WTFMove(titleElement));
+        document->head()->appendChild(titleElement);
     }
     document->setSecurityOriginPolicy(m_document.securityOriginPolicy());
     return document;

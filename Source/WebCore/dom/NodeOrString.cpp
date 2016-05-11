@@ -36,7 +36,7 @@ RefPtr<Node> convertNodesOrStringsIntoNode(Node& context, Vector<NodeOrString>&&
     if (nodeOrStringVector.isEmpty())
         return nullptr;
 
-    Vector<RefPtr<Node>> nodes;
+    Vector<Ref<Node>> nodes;
     nodes.reserveInitialCapacity(nodeOrStringVector.size());
     for (auto& nodeOrString : nodeOrStringVector) {
         switch (nodeOrString.type()) {
@@ -44,24 +44,20 @@ RefPtr<Node> convertNodesOrStringsIntoNode(Node& context, Vector<NodeOrString>&&
             nodes.uncheckedAppend(Text::create(context.document(), nodeOrString.string()));
             break;
         case NodeOrString::Type::Node:
-            nodes.uncheckedAppend(&nodeOrString.node());
+            nodes.uncheckedAppend(nodeOrString.node());
             break;
         }
     }
 
-    RefPtr<Node> nodeToReturn;
     if (nodes.size() == 1)
-        nodeToReturn = nodes.first();
-    else {
-        nodeToReturn = DocumentFragment::create(context.document());
-        for (auto& node : nodes) {
-            nodeToReturn->appendChild(node, ec);
-            if (ec)
-                return nullptr;
-        }
+        return WTFMove(nodes.first());
+
+    auto nodeToReturn = DocumentFragment::create(context.document());
+    for (auto& node : nodes) {
+        if (!nodeToReturn->appendChild(node, ec))
+            return nullptr;
     }
-    
-    return nodeToReturn;
+    return WTFMove(nodeToReturn);
 }
 
 } // namespace WebCore

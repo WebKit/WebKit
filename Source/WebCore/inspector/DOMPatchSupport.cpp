@@ -152,7 +152,7 @@ Node* DOMPatchSupport::patchNode(Node& node, const String& markup, ExceptionCode
     if (!innerPatchChildren(parentNode, oldList, newList, ec)) {
         // Fall back to total replace.
         ec = 0;
-        if (!m_domEditor->replaceChild(parentNode, fragment.release(), &node, ec))
+        if (!m_domEditor->replaceChild(*parentNode, *fragment, node, ec))
             return nullptr;
     }
     return previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();
@@ -167,7 +167,7 @@ bool DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, Excep
     Node* newNode = newDigest->m_node;
 
     if (newNode->nodeType() != oldNode->nodeType() || newNode->nodeName() != oldNode->nodeName())
-        return m_domEditor->replaceChild(oldNode->parentNode(), newNode, oldNode, ec);
+        return m_domEditor->replaceChild(*oldNode->parentNode(), *newNode, *oldNode, ec);
 
     if (oldNode->nodeValue() != newNode->nodeValue()) {
         if (!m_domEditor->setNodeValue(oldNode, newNode->nodeValue(), ec))
@@ -377,7 +377,7 @@ bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
     for (size_t i = 0; i < newMap.size(); ++i) {
         if (newMap[i].first || merges.contains(newList[i].get()))
             continue;
-        if (!insertBeforeAndMarkAsUsed(parentNode, newList[i].get(), parentNode->traverseToChildAt(i), ec))
+        if (!insertBeforeAndMarkAsUsed(*parentNode, *newList[i], parentNode->traverseToChildAt(i), ec))
             return false;
     }
 
@@ -392,7 +392,7 @@ bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
         if (node->hasTagName(bodyTag) || node->hasTagName(headTag))
             continue; // Never move head or body, move the rest of the nodes around them.
 
-        if (!m_domEditor->insertBefore(parentNode, node.release(), anchorNode, ec))
+        if (!m_domEditor->insertBefore(*parentNode, node.releaseNonNull(), anchorNode, ec))
             return false;
     }
     return true;
@@ -446,17 +446,19 @@ std::unique_ptr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* nod
     return digest;
 }
 
-bool DOMPatchSupport::insertBeforeAndMarkAsUsed(ContainerNode* parentNode, Digest* digest, Node* anchor, ExceptionCode& ec)
+bool DOMPatchSupport::insertBeforeAndMarkAsUsed(ContainerNode& parentNode, Digest& digest, Node* anchor, ExceptionCode& ec)
 {
-    bool result = m_domEditor->insertBefore(parentNode, digest->m_node, anchor, ec);
-    markNodeAsUsed(digest);
+    ASSERT(digest.m_node);
+    bool result = m_domEditor->insertBefore(parentNode, *digest.m_node, anchor, ec);
+    markNodeAsUsed(&digest);
     return result;
 }
 
 bool DOMPatchSupport::removeChildAndMoveToNew(Digest* oldDigest, ExceptionCode& ec)
 {
     RefPtr<Node> oldNode = oldDigest->m_node;
-    if (!m_domEditor->removeChild(oldNode->parentNode(), oldNode.get(), ec))
+    ASSERT(oldNode->parentNode());
+    if (!m_domEditor->removeChild(*oldNode->parentNode(), *oldNode, ec))
         return false;
 
     // Diff works within levels. In order not to lose the node identity when user
@@ -468,7 +470,7 @@ bool DOMPatchSupport::removeChildAndMoveToNew(Digest* oldDigest, ExceptionCode& 
     if (it != m_unusedNodesMap.end()) {
         Digest* newDigest = it->value;
         Node* newNode = newDigest->m_node;
-        if (!m_domEditor->replaceChild(newNode->parentNode(), WTFMove(oldNode), newNode, ec))
+        if (!m_domEditor->replaceChild(*newNode->parentNode(), *oldNode, *newNode, ec))
             return false;
         newDigest->m_node = oldNode.get();
         markNodeAsUsed(newDigest);

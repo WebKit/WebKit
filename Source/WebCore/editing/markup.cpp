@@ -729,7 +729,7 @@ static void fillContainerFromString(ContainerNode& paragraph, const String& stri
                 tabText = emptyString();
             }
             Ref<Node> textNode = document.createTextNode(stringWithRebalancedWhitespace(s, first, i + 1 == numEntries));
-            paragraph.appendChild(WTFMove(textNode), ASSERT_NO_EXCEPTION);
+            paragraph.appendChild(textNode, ASSERT_NO_EXCEPTION);
         }
 
         // there is a tab after every entry, except the last entry
@@ -792,9 +792,9 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
     if (contextPreservesNewline(context)) {
         fragment->appendChild(document.createTextNode(string), ASSERT_NO_EXCEPTION);
         if (string.endsWith('\n')) {
-            Ref<Element> element = createBreakElement(document);
+            auto element = createBreakElement(document);
             element->setAttribute(classAttr, AppleInterchangeNewline);            
-            fragment->appendChild(WTFMove(element), ASSERT_NO_EXCEPTION);
+            fragment->appendChild(element, ASSERT_NO_EXCEPTION);
         }
         return fragment;
     }
@@ -836,7 +836,7 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
                 element = createDefaultParagraphElement(document);
             fillContainerFromString(*element, s);
         }
-        fragment->appendChild(element.releaseNonNull(), ASSERT_NO_EXCEPTION);
+        fragment->appendChild(*element, ASSERT_NO_EXCEPTION);
     }
     return fragment;
 }
@@ -1020,12 +1020,12 @@ void replaceChildrenWithFragment(ContainerNode& container, Ref<DocumentFragment>
             return;
         }
 
-        containerNode->replaceChild(WTFMove(fragment), *containerChild, ec);
+        containerNode->replaceChild(fragment, *containerChild, ec);
         return;
     }
 
     containerNode->removeChildren();
-    containerNode->appendChild(WTFMove(fragment), ec);
+    containerNode->appendChild(fragment, ec);
 }
 
 void replaceChildrenWithText(ContainerNode& container, const String& text, ExceptionCode& ec)
@@ -1038,15 +1038,15 @@ void replaceChildrenWithText(ContainerNode& container, const String& text, Excep
         return;
     }
 
-    Ref<Text> textNode = Text::create(containerNode->document(), text);
+    auto textNode = Text::create(containerNode->document(), text);
 
     if (hasOneChild(containerNode)) {
-        containerNode->replaceChild(WTFMove(textNode), *containerNode->firstChild(), ec);
+        containerNode->replaceChild(textNode, *containerNode->firstChild(), ec);
         return;
     }
 
     containerNode->removeChildren();
-    containerNode->appendChild(WTFMove(textNode), ec);
+    containerNode->appendChild(textNode, ec);
 }
 
 }

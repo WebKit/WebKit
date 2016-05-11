@@ -794,7 +794,7 @@ InspectorStyleSheet* InspectorCSSAgent::createInspectorStyleSheetForDocument(Doc
     m_creatingViaInspectorStyleSheet = true;
     InlineStyleOverrideScope overrideScope(document);
     ExceptionCode ec = 0;
-    targetNode->appendChild(WTFMove(styleElement), ec);
+    targetNode->appendChild(styleElement, ec);
     m_creatingViaInspectorStyleSheet = false;
     if (ec)
         return nullptr;

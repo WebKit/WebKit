@@ -44,7 +44,7 @@ void WrapContentsInDummySpanCommand::executeApply()
         children.append(*child);
 
     for (auto& child : children)
-        m_dummySpan->appendChild(WTFMove(child), IGNORE_EXCEPTION);
+        m_dummySpan->appendChild(child, IGNORE_EXCEPTION);
 
     m_element->appendChild(*m_dummySpan, IGNORE_EXCEPTION);
 }
@@ -66,7 +66,7 @@ void WrapContentsInDummySpanCommand::doUnapply()
         children.append(*child);
 
     for (auto& child : children)
-        m_element->appendChild(WTFMove(child), IGNORE_EXCEPTION);
+        m_element->appendChild(child, IGNORE_EXCEPTION);
 
     m_dummySpan->remove(IGNORE_EXCEPTION);
 }

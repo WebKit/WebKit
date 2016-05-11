@@ -110,12 +110,12 @@ void ColorInputType::createShadowSubtree()
     ASSERT(element().shadowRoot());
 
     Document& document = element().document();
-    Ref<HTMLDivElement> wrapperElement = HTMLDivElement::create(document);
+    auto wrapperElement = HTMLDivElement::create(document);
     wrapperElement->setPseudo(AtomicString("-webkit-color-swatch-wrapper", AtomicString::ConstructFromLiteral));
-    Ref<HTMLDivElement> colorSwatch = HTMLDivElement::create(document);
+    auto colorSwatch = HTMLDivElement::create(document);
     colorSwatch->setPseudo(AtomicString("-webkit-color-swatch", AtomicString::ConstructFromLiteral));
-    wrapperElement->appendChild(WTFMove(colorSwatch), ASSERT_NO_EXCEPTION);
-    element().userAgentShadowRoot()->appendChild(WTFMove(wrapperElement), ASSERT_NO_EXCEPTION);
+    wrapperElement->appendChild(colorSwatch, ASSERT_NO_EXCEPTION);
+    element().userAgentShadowRoot()->appendChild(wrapperElement, ASSERT_NO_EXCEPTION);
     
     updateColorSwatch();
 }

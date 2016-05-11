@@ -3,4 +3,4 @@ description(
 );
 
 // Should be a DOM exception, not just some "TypeError: Null value".
-shouldThrow('(document.appendChild()).foobar()', '"TypeError: Type error"');
+shouldThrow('(document.appendChild()).foobar()');

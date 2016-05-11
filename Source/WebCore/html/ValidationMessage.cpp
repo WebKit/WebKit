@@ -184,19 +184,19 @@ void ValidationMessage::buildBubbleTree()
     document.updateLayout();
     adjustBubblePosition(m_element->renderer()->absoluteBoundingBoxRect(), m_bubble.get());
 
-    Ref<HTMLDivElement> clipper = HTMLDivElement::create(document);
+    auto clipper = HTMLDivElement::create(document);
     clipper->setPseudo(AtomicString("-webkit-validation-bubble-arrow-clipper", AtomicString::ConstructFromLiteral));
-    Ref<HTMLDivElement> bubbleArrow = HTMLDivElement::create(document);
+    auto bubbleArrow = HTMLDivElement::create(document);
     bubbleArrow->setPseudo(AtomicString("-webkit-validation-bubble-arrow", AtomicString::ConstructFromLiteral));
-    clipper->appendChild(WTFMove(bubbleArrow), ASSERT_NO_EXCEPTION);
-    m_bubble->appendChild(WTFMove(clipper), ASSERT_NO_EXCEPTION);
+    clipper->appendChild(bubbleArrow, ASSERT_NO_EXCEPTION);
+    m_bubble->appendChild(clipper, ASSERT_NO_EXCEPTION);
 
-    Ref<HTMLElement> message = HTMLDivElement::create(document);
+    auto message = HTMLDivElement::create(document);
     message->setPseudo(AtomicString("-webkit-validation-bubble-message", AtomicString::ConstructFromLiteral));
-    Ref<HTMLElement> icon = HTMLDivElement::create(document);
+    auto icon = HTMLDivElement::create(document);
     icon->setPseudo(AtomicString("-webkit-validation-bubble-icon", AtomicString::ConstructFromLiteral));
-    message->appendChild(WTFMove(icon), ASSERT_NO_EXCEPTION);
-    Ref<HTMLElement> textBlock = HTMLDivElement::create(document);
+    message->appendChild(icon, ASSERT_NO_EXCEPTION);
+    auto textBlock = HTMLDivElement::create(document);
     textBlock->setPseudo(AtomicString("-webkit-validation-bubble-text-block", AtomicString::ConstructFromLiteral));
     m_messageHeading = HTMLDivElement::create(document);
     m_messageHeading->setPseudo(AtomicString("-webkit-validation-bubble-heading", AtomicString::ConstructFromLiteral));
@@ -204,8 +204,8 @@ void ValidationMessage::buildBubbleTree()
     m_messageBody = HTMLDivElement::create(document);
     m_messageBody->setPseudo(AtomicString("-webkit-validation-bubble-body", AtomicString::ConstructFromLiteral));
     textBlock->appendChild(*m_messageBody, ASSERT_NO_EXCEPTION);
-    message->appendChild(WTFMove(textBlock), ASSERT_NO_EXCEPTION);
-    m_bubble->appendChild(WTFMove(message), ASSERT_NO_EXCEPTION);
+    message->appendChild(textBlock, ASSERT_NO_EXCEPTION);
+    m_bubble->appendChild(message, ASSERT_NO_EXCEPTION);
 
     setMessageDOMAndStartTimer();
 

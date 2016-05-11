@@ -164,9 +164,9 @@ private:
     enum ActionType { Delete, Extract, Clone };
     RefPtr<DocumentFragment> processContents(ActionType, ExceptionCode&);
     static RefPtr<Node> processContentsBetweenOffsets(ActionType, PassRefPtr<DocumentFragment>, Node*, unsigned startOffset, unsigned endOffset, ExceptionCode&);
-    static void processNodes(ActionType, Vector<RefPtr<Node>>&, PassRefPtr<Node> oldContainer, PassRefPtr<Node> newContainer, ExceptionCode&);
+    static void processNodes(ActionType, Vector<Ref<Node>>&, Node* oldContainer, Node* newContainer, ExceptionCode&);
     enum ContentsProcessDirection { ProcessContentsForward, ProcessContentsBackward };
-    static RefPtr<Node> processAncestorsAndTheirSiblings(ActionType, Node* container, ContentsProcessDirection, PassRefPtr<Node> clonedContainer, Node* commonRoot, ExceptionCode&);
+    static RefPtr<Node> processAncestorsAndTheirSiblings(ActionType, Node* container, ContentsProcessDirection, RefPtr<Node>&& clonedContainer, Node* commonRoot, ExceptionCode&);
 
     enum class CoordinateSpace { Absolute, Client };
     void getBorderAndTextQuads(Vector<FloatQuad>&, CoordinateSpace) const;

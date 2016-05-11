@@ -114,14 +114,14 @@ RefPtr<HTMLTableCellElement> HTMLTableRowElement::insertCell(int index, Exceptio
 
     auto cell = HTMLTableDataCellElement::create(document());
     if (index < 0 || index >= numCells)
-        appendChild(cell.copyRef(), ec);
+        appendChild(cell, ec);
     else {
         Node* n;
         if (index < 1)
             n = firstChild();
         else
             n = children->item(index);
-        insertBefore(cell.copyRef(), n, ec);
+        insertBefore(cell, n, ec);
     }
     return WTFMove(cell);
 }

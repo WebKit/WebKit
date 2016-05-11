@@ -47,7 +47,7 @@ namespace WebCore {
 class DOMEditor::RemoveChildAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(RemoveChildAction);
 public:
-    RemoveChildAction(Node* parentNode, Node* node)
+    RemoveChildAction(Node& parentNode, Node& node)
         : InspectorHistory::Action("RemoveChild")
         , m_parentNode(parentNode)
         , m_node(node)
@@ -62,24 +62,24 @@ public:
 
     bool undo(ExceptionCode& ec) override
     {
-        return m_parentNode->insertBefore(m_node.get(), m_anchorNode.get(), ec);
+        return m_parentNode->insertBefore(m_node, m_anchorNode.get(), ec);
     }
 
     bool redo(ExceptionCode& ec) override
     {
-        return m_parentNode->removeChild(m_node.get(), ec);
+        return m_parentNode->removeChild(m_node, ec);
     }
 
 private:
-    RefPtr<Node> m_parentNode;
-    RefPtr<Node> m_node;
+    Ref<Node> m_parentNode;
+    Ref<Node> m_node;
     RefPtr<Node> m_anchorNode;
 };
 
 class DOMEditor::InsertBeforeAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(InsertBeforeAction);
 public:
-    InsertBeforeAction(Node* parentNode, RefPtr<Node>&& node, Node* anchorNode)
+    InsertBeforeAction(Node& parentNode, Ref<Node>&& node, Node* anchorNode)
         : InspectorHistory::Action("InsertBefore")
         , m_parentNode(parentNode)
         , m_node(WTFMove(node))
@@ -90,16 +90,16 @@ public:
     bool perform(ExceptionCode& ec) override
     {
         if (m_node->parentNode()) {
-            m_removeChildAction = std::make_unique<RemoveChildAction>(m_node->parentNode(), m_node.get());
+            m_removeChildAction = std::make_unique<RemoveChildAction>(*m_node->parentNode(), m_node);
             if (!m_removeChildAction->perform(ec))
                 return false;
         }
-        return m_parentNode->insertBefore(m_node.get(), m_anchorNode.get(), ec);
+        return m_parentNode->insertBefore(m_node, m_anchorNode.get(), ec);
     }
 
     bool undo(ExceptionCode& ec) override
     {
-        if (!m_parentNode->removeChild(m_node.get(), ec))
+        if (!m_parentNode->removeChild(m_node, ec))
             return false;
         if (m_removeChildAction)
             return m_removeChildAction->undo(ec);
@@ -110,12 +110,12 @@ public:
     {
         if (m_removeChildAction && !m_removeChildAction->redo(ec))
             return false;
-        return m_parentNode->insertBefore(m_node.get(), m_anchorNode.get(), ec);
+        return m_parentNode->insertBefore(m_node, m_anchorNode.get(), ec);
     }
 
 private:
-    RefPtr<Node> m_parentNode;
-    RefPtr<Node> m_node;
+    Ref<Node> m_parentNode;
+    Ref<Node> m_node;
     RefPtr<Node> m_anchorNode;
     std::unique_ptr<RemoveChildAction> m_removeChildAction;
 };
@@ -281,7 +281,7 @@ private:
 class DOMEditor::ReplaceChildNodeAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(ReplaceChildNodeAction);
 public:
-    ReplaceChildNodeAction(Node* parentNode, RefPtr<Node>&& newNode, Node* oldNode)
+    ReplaceChildNodeAction(Node& parentNode, Ref<Node>&& newNode, Node& oldNode)
         : InspectorHistory::Action("ReplaceChildNode")
         , m_parentNode(parentNode)
         , m_newNode(WTFMove(newNode))
@@ -301,13 +301,13 @@ public:
 
     bool redo(ExceptionCode& ec) override
     {
-        return m_parentNode->replaceChild(m_newNode, m_oldNode.get(), ec);
+        return m_parentNode->replaceChild(m_newNode, m_oldNode, ec);
     }
 
 private:
-    RefPtr<Node> m_parentNode;
-    RefPtr<Node> m_newNode;
-    RefPtr<Node> m_oldNode;
+    Ref<Node> m_parentNode;
+    Ref<Node> m_newNode;
+    Ref<Node> m_oldNode;
 };
 
 class DOMEditor::SetNodeValueAction : public InspectorHistory::Action {
@@ -348,12 +348,12 @@ DOMEditor::DOMEditor(InspectorHistory* history) : m_history(history) { }
 
 DOMEditor::~DOMEditor() { }
 
-bool DOMEditor::insertBefore(Node* parentNode, RefPtr<Node>&& node, Node* anchorNode, ExceptionCode& ec)
+bool DOMEditor::insertBefore(Node& parentNode, Ref<Node>&& node, Node* anchorNode, ExceptionCode& ec)
 {
     return m_history->perform(std::make_unique<InsertBeforeAction>(parentNode, WTFMove(node), anchorNode), ec);
 }
 
-bool DOMEditor::removeChild(Node* parentNode, Node* node, ExceptionCode& ec)
+bool DOMEditor::removeChild(Node& parentNode, Node& node, ExceptionCode& ec)
 {
     return m_history->perform(std::make_unique<RemoveChildAction>(parentNode, node), ec);
 }
@@ -383,7 +383,7 @@ bool DOMEditor::replaceWholeText(Text* textNode, const String& text, ExceptionCo
     return m_history->perform(std::make_unique<ReplaceWholeTextAction>(textNode, text), ec);
 }
 
-bool DOMEditor::replaceChild(Node* parentNode, RefPtr<Node>&& newNode, Node* oldNode, ExceptionCode& ec)
+bool DOMEditor::replaceChild(Node& parentNode, Ref<Node>&& newNode, Node& oldNode, ExceptionCode& ec)
 {
     return m_history->perform(std::make_unique<ReplaceChildNodeAction>(parentNode, WTFMove(newNode), oldNode), ec);
 }
@@ -401,7 +401,7 @@ static void populateErrorString(const ExceptionCode& ec, ErrorString& errorStrin
     }
 }
 
-bool DOMEditor::insertBefore(Node* parentNode, RefPtr<Node>&& node, Node* anchorNode, ErrorString& errorString)
+bool DOMEditor::insertBefore(Node& parentNode, Ref<Node>&& node, Node* anchorNode, ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     bool result = insertBefore(parentNode, WTFMove(node), anchorNode, ec);
@@ -409,7 +409,7 @@ bool DOMEditor::insertBefore(Node* parentNode, RefPtr<Node>&& node, Node* anchor
     return result;
 }
 
-bool DOMEditor::removeChild(Node* parentNode, Node* node, ErrorString& errorString)
+bool DOMEditor::removeChild(Node& parentNode, Node& node, ErrorString& errorString)
 {
     ExceptionCode ec = 0;
     bool result = removeChild(parentNode, node, ec);

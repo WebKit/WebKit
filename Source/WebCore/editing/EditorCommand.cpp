@@ -167,7 +167,7 @@ static bool executeInsertNode(Frame& frame, Ref<Node>&& content)
 {
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(*frame.document());
     ExceptionCode ec = 0;
-    fragment->appendChild(WTFMove(content), ec);
+    fragment->appendChild(content, ec);
     if (ec)
         return false;
     return executeInsertFragment(frame, fragment.release());

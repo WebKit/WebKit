@@ -5,7 +5,7 @@
 <![CDATA[
 description("Test that appropriate exceptions are thrown when adding children to a ProcessingInstruction.");
 var pi = document.createProcessingInstruction('target', 'data');
-shouldThrow("pi.appendChild(null)", "'TypeError: Type error'");
+shouldThrow("pi.appendChild(null)");
 var div = document.createElement('div');
 shouldThrow("pi.appendChild(div)", "'Error: HierarchyRequestError: DOM Exception 3'");
 var textNode = document.createTextNode('sometext');

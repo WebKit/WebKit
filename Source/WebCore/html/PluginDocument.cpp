@@ -67,8 +67,8 @@ private:
 
 void PluginDocumentParser::createDocumentStructure()
 {
-    Ref<Element> rootElement = document()->createElement(htmlTag, false);
-    document()->appendChild(rootElement.copyRef(), IGNORE_EXCEPTION);
+    auto rootElement = document()->createElement(htmlTag, false);
+    document()->appendChild(rootElement, IGNORE_EXCEPTION);
     downcast<HTMLHtmlElement>(rootElement.get()).insertedByParser();
 
     if (document()->frame())
@@ -79,7 +79,7 @@ void PluginDocumentParser::createDocumentStructure()
     document()->processViewport(ASCIILiteral("user-scalable=no"), ViewportArguments::PluginDocument);
 #endif
 
-    Ref<Element> body = document()->createElement(bodyTag, false);
+    auto body = document()->createElement(bodyTag, false);
     body->setAttribute(marginwidthAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
     body->setAttribute(marginheightAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
 #if PLATFORM(IOS)
@@ -88,9 +88,9 @@ void PluginDocumentParser::createDocumentStructure()
     body->setAttribute(styleAttr, AtomicString("background-color: rgb(38,38,38)", AtomicString::ConstructFromLiteral));
 #endif
 
-    rootElement->appendChild(body.copyRef(), IGNORE_EXCEPTION);
+    rootElement->appendChild(body, IGNORE_EXCEPTION);
         
-    Ref<Element> embedElement = document()->createElement(embedTag, false);
+    auto embedElement = document()->createElement(embedTag, false);
         
     m_embedElement = downcast<HTMLEmbedElement>(embedElement.ptr());
     m_embedElement->setAttribute(widthAttr, "100%");
@@ -106,7 +106,7 @@ void PluginDocumentParser::createDocumentStructure()
 
     downcast<PluginDocument>(*document()).setPluginElement(m_embedElement);
 
-    body->appendChild(WTFMove(embedElement), IGNORE_EXCEPTION);
+    body->appendChild(embedElement, IGNORE_EXCEPTION);
 }
 
 void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)

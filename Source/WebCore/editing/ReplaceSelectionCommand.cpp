@@ -257,7 +257,7 @@ Ref<HTMLElement> ReplacementFragment::insertFragmentForTestRendering(Node* rootE
     auto holder = createDefaultParagraphElement(document());
 
     holder->appendChild(*m_fragment, ASSERT_NO_EXCEPTION);
-    rootEditableElement->appendChild(holder.ptr(), ASSERT_NO_EXCEPTION);
+    rootEditableElement->appendChild(holder, ASSERT_NO_EXCEPTION);
     document().updateLayoutIgnorePendingStylesheets();
 
     return holder;

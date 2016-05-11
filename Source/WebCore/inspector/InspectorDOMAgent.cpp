@@ -712,7 +712,7 @@ void InspectorDOMAgent::removeNode(ErrorString& errorString, int nodeId)
         return;
     }
 
-    m_domEditor->removeChild(parentNode, node, errorString);
+    m_domEditor->removeChild(*parentNode, *node, errorString);
 }
 
 void InspectorDOMAgent::setNodeName(ErrorString& errorString, int nodeId, const String& tagName, int* newId)
@@ -724,7 +724,7 @@ void InspectorDOMAgent::setNodeName(ErrorString& errorString, int nodeId, const 
         return;
 
     ExceptionCode ec = 0;
-    RefPtr<Element> newElement = oldNode->document().createElementForBindings(tagName, ec);
+    auto newElement = oldNode->document().createElementForBindings(tagName, ec);
     if (ec)
         return;
 
@@ -734,15 +734,15 @@ void InspectorDOMAgent::setNodeName(ErrorString& errorString, int nodeId, const 
     // Copy over the original node's children.
     RefPtr<Node> child;
     while ((child = oldNode->firstChild())) {
-        if (!m_domEditor->insertBefore(newElement.get(), child.get(), 0, errorString))
+        if (!m_domEditor->insertBefore(*newElement, *child, 0, errorString))
             return;
     }
 
     // Replace the old node with the new node
     RefPtr<ContainerNode> parent = oldNode->parentNode();
-    if (!m_domEditor->insertBefore(parent.get(), newElement.get(), oldNode->nextSibling(), errorString))
+    if (!m_domEditor->insertBefore(*parent, *newElement, oldNode->nextSibling(), errorString))
         return;
-    if (!m_domEditor->removeChild(parent.get(), oldNode.get(), errorString))
+    if (!m_domEditor->removeChild(*parent, *oldNode, errorString))
         return;
 
     *newId = pushNodePathToFrontend(newElement.get());
@@ -1180,7 +1180,7 @@ void InspectorDOMAgent::moveTo(ErrorString& errorString, int nodeId, int targetE
         }
     }
 
-    if (!m_domEditor->insertBefore(targetElement, node, anchorNode, errorString))
+    if (!m_domEditor->insertBefore(*targetElement, *node, anchorNode, errorString))
         return;
 
     *newNodeId = pushNodePathToFrontend(node);

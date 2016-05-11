@@ -524,10 +524,10 @@ PDFPlugin::PDFPlugin(WebFrame* frame)
         m_annotationContainer = document->createElement(divTag, false);
         m_annotationContainer->setAttribute(idAttr, "annotationContainer");
 
-        Ref<Element> annotationStyleElement = document->createElement(styleTag, false);
+        auto annotationStyleElement = document->createElement(styleTag, false);
         annotationStyleElement->setTextContent(annotationStyle, ASSERT_NO_EXCEPTION);
 
-        m_annotationContainer->appendChild(WTFMove(annotationStyleElement));
+        m_annotationContainer->appendChild(annotationStyleElement);
         document->bodyOrFrameset()->appendChild(*m_annotationContainer);
     }
 

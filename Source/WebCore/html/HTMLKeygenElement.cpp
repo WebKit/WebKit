@@ -74,14 +74,14 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
     Vector<String> keys;
     getSupportedKeySizes(keys);
 
-    Ref<HTMLSelectElement> select = KeygenSelectElement::create(document);
+    auto select = KeygenSelectElement::create(document);
     for (auto& key : keys) {
-        Ref<HTMLOptionElement> option = HTMLOptionElement::create(document);
-        select->appendChild(option.copyRef(), IGNORE_EXCEPTION);
+        auto option = HTMLOptionElement::create(document);
+        select->appendChild(option, IGNORE_EXCEPTION);
         option->appendChild(Text::create(document, key), IGNORE_EXCEPTION);
     }
 
-    ensureUserAgentShadowRoot().appendChild(WTFMove(select), IGNORE_EXCEPTION);
+    ensureUserAgentShadowRoot().appendChild(select, IGNORE_EXCEPTION);
 }
 
 Ref<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)

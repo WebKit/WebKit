@@ -78,8 +78,8 @@ private:
     
 void MediaDocumentParser::createDocumentStructure()
 {
-    Ref<Element> rootElement = document()->createElement(htmlTag, false);
-    document()->appendChild(rootElement.copyRef(), IGNORE_EXCEPTION);
+    auto rootElement = document()->createElement(htmlTag, false);
+    document()->appendChild(rootElement, IGNORE_EXCEPTION);
     document()->setCSSTarget(rootElement.ptr());
     downcast<HTMLHtmlElement>(rootElement.get()).insertedByParser();
 
@@ -87,19 +87,19 @@ void MediaDocumentParser::createDocumentStructure()
         document()->frame()->injectUserScripts(InjectAtDocumentStart);
 
 #if PLATFORM(IOS)
-    Ref<Element> headElement = document()->createElement(headTag, false);
-    rootElement->appendChild(headElement.copyRef(), IGNORE_EXCEPTION);
+    auto headElement = document()->createElement(headTag, false);
+    rootElement->appendChild(headElement, IGNORE_EXCEPTION);
 
-    Ref<Element> metaElement = document()->createElement(metaTag, false);
+    auto metaElement = document()->createElement(metaTag, false);
     metaElement->setAttribute(nameAttr, "viewport");
     metaElement->setAttribute(contentAttr, "width=device-width,initial-scale=1,user-scalable=no");
-    headElement->appendChild(WTFMove(metaElement), IGNORE_EXCEPTION);
+    headElement->appendChild(metaElement, IGNORE_EXCEPTION);
 #endif
 
-    Ref<Element> body = document()->createElement(bodyTag, false);
-    rootElement->appendChild(body.copyRef(), IGNORE_EXCEPTION);
+    auto body = document()->createElement(bodyTag, false);
+    rootElement->appendChild(body, IGNORE_EXCEPTION);
 
-    Ref<Element> mediaElement = document()->createElement(videoTag, false);
+    auto mediaElement = document()->createElement(videoTag, false);
 
     m_mediaElement = downcast<HTMLVideoElement>(mediaElement.ptr());
     m_mediaElement->setAttribute(controlsAttr, emptyAtom);
@@ -114,15 +114,15 @@ void MediaDocumentParser::createDocumentStructure()
 #endif
     m_mediaElement->setAttribute(styleAttr, elementStyle.toString());
 
-    Ref<Element> sourceElement = document()->createElement(sourceTag, false);
+    auto sourceElement = document()->createElement(sourceTag, false);
     HTMLSourceElement& source = downcast<HTMLSourceElement>(sourceElement.get());
     source.setSrc(document()->url());
 
     if (DocumentLoader* loader = document()->loader())
         source.setType(loader->responseMIMEType());
 
-    m_mediaElement->appendChild(WTFMove(sourceElement), IGNORE_EXCEPTION);
-    body->appendChild(WTFMove(mediaElement), IGNORE_EXCEPTION);
+    m_mediaElement->appendChild(sourceElement, IGNORE_EXCEPTION);
+    body->appendChild(mediaElement, IGNORE_EXCEPTION);
 
     Frame* frame = document()->frame();
     if (!frame)

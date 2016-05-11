@@ -28,11 +28,11 @@ var aNode = document.createElement("div");
 var aSecondNode = document.createElement("div");
 aNode.appendChild(aSecondNode);
 
-shouldThrow("aNode.appendChild(aDOMImplementation)", "'TypeError: Type error'");
+shouldThrow("aNode.appendChild(aDOMImplementation)");
 
-shouldThrow("aNode.appendChild('knort')", "'TypeError: Type error'");
+shouldThrow("aNode.appendChild('knort')");
 
-shouldThrow("aNode.appendChild(void 0)", "'TypeError: Type error'");
+shouldThrow("aNode.appendChild(void 0)");
 
 shouldBeFalse("aNode.isSameNode(aDOMImplementation)");
 shouldBeFalse("aNode.isSameNode('foo')");

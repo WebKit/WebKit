@@ -977,7 +977,7 @@ Ref<Element> createTabSpanElement(Document& document, RefPtr<Node>&& tabTextNode
     if (!tabTextNode)
         tabTextNode = document.createEditingTextNode("\t");
 
-    spanElement->appendChild(tabTextNode.releaseNonNull(), ASSERT_NO_EXCEPTION);
+    spanElement->appendChild(*tabTextNode, ASSERT_NO_EXCEPTION);
 
     return spanElement;
 }

@@ -1,3 +1,23 @@
+2016-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Update Node::appendChild() / replaceChild() / removeChild() / insertBefore() to take references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=157556
+
+        Reviewed by Darin Adler.
+
+        Rebaseline several tests now that the Node API provides more useful
+        exception messages.
+
+        * fast/dom/Document/replaceChild-null-oldChild-expected.txt:
+        * fast/dom/Document/script-tests/replaceChild-null-oldChild.js:
+        * fast/dom/incompatible-operations-expected.txt:
+        * fast/dom/incompatible-operations.html:
+        * fast/dom/processing-instruction-appendChild-exceptions-expected.txt:
+        * fast/dom/processing-instruction-appendChild-exceptions.xhtml:
+        * fast/dom/timer-clear-interval-in-handler-and-generate-error-expected.txt:
+        * js/dom/dot-node-base-exception-expected.txt:
+        * js/dom/script-tests/dot-node-base-exception.js:
+
 2016-05-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: IDBOpenDBRequests that are stop()'ed don't notify the IDBServer of that fact.

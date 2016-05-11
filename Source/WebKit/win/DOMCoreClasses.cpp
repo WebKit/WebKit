@@ -250,7 +250,7 @@ HRESULT DOMNode::insertBefore(_In_opt_ IDOMNode* newChild, _In_opt_ IDOMNode* re
     COMPtr<DOMNode> refChildNode(Query, refChild);
 
     ExceptionCode ec;
-    if (!m_node->insertBefore(newChildNode->node(), refChildNode ? refChildNode->node() : 0, ec))
+    if (!m_node->insertBefore(*newChildNode->node(), refChildNode ? refChildNode->node() : nullptr, ec))
         return E_FAIL;
 
     *result = newChild;
@@ -282,7 +282,7 @@ HRESULT DOMNode::removeChild(_In_opt_ IDOMNode* oldChild, _COM_Outptr_opt_ IDOMN
         return E_FAIL;
 
     ExceptionCode ec;
-    if (!m_node->removeChild(oldChildNode->node(), ec))
+    if (!m_node->removeChild(*oldChildNode->node(), ec))
         return E_FAIL;
 
     *result = oldChild;

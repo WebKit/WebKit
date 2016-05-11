@@ -1,3 +1,198 @@
+2016-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Update Node::appendChild() / replaceChild() / removeChild() / insertBefore() to take references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=157556
+
+        Reviewed by Darin Adler.
+
+        Update Node::appendChild() / replaceChild() / removeChild() / insertBefore()
+        to take references instead of pointers. Do the parameter null checks in the
+        bindings instead of doing it in the implementation on Node.
+
+        Also update the ContainerNode::appendChild() / replaceChild() /
+        insertBefore() to take C++ references instead of Ref<>&& to avoid
+        unnecessarily causing ref counting churns at some call sites (including
+        in the bindings since they are a raw pointer to the nodes). The
+        implementation on ContainerNode was not actually using WTFMove() on the
+        Ref<>&& anyway.
+
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::installReplacement):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::insertBefore):
+        (WebCore::JSNode::replaceChild):
+        (WebCore::JSNode::removeChild):
+        (WebCore::JSNode::appendChild):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::parserInsertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::ContainerNode::parserAppendChild):
+        (WebCore::ContainerNode::cloneChildNodes):
+        (WebCore::ContainerNode::append):
+        (WebCore::ContainerNode::prepend):
+        * dom/ContainerNode.h:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::setBodyOrFrameset):
+        * dom/Element.cpp:
+        (WebCore::Element::setOuterHTML):
+        * dom/Node.cpp:
+        (WebCore::Node::insertBefore):
+        (WebCore::Node::replaceChild):
+        (WebCore::Node::removeChild):
+        (WebCore::Node::appendChild):
+        (WebCore::Node::before):
+        (WebCore::Node::after):
+        (WebCore::Node::replaceWith):
+        (WebCore::nodeSetPreTransformedFromNodeOrStringVector): Deleted.
+        (WebCore::Node::normalize): Deleted.
+        * dom/Node.h:
+        * dom/Node.idl:
+        * dom/NodeOrString.cpp:
+        (WebCore::convertNodesOrStringsIntoNode):
+        * dom/Range.cpp:
+        (WebCore::Range::processContents):
+        (WebCore::Range::processContentsBetweenOffsets):
+        (WebCore::Range::processNodes):
+        (WebCore::Range::processAncestorsAndTheirSiblings):
+        (WebCore::Range::insertNode):
+        (WebCore::Range::surroundContents):
+        * dom/Range.h:
+        * dom/Text.cpp:
+        (WebCore::Text::splitText):
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::doApply):
+        * editing/Editor.cpp:
+        (WebCore::Editor::setTextAsChildOfElement):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertNode):
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::doApply):
+        (WebCore::MergeIdenticalElementsCommand::doUnapply):
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::doUnapply):
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::swapInNodePreservingAttributesAndChildren):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering):
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::executeApply):
+        (WebCore::SplitElementCommand::doUnapply):
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::executeApply):
+        (WebCore::WrapContentsInDummySpanCommand::doUnapply):
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::styleForSelectionStart):
+        * editing/htmlediting.cpp:
+        (WebCore::createTabSpanElement):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::WebContentReader::readURL):
+        (WebCore::Editor::createFragmentForImageResourceAndAddResource):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::WebContentReader::readFilenames):
+        (WebCore::Editor::WebContentReader::readURL):
+        (WebCore::Editor::createFragmentForImageResourceAndAddResource):
+        * editing/markup.cpp:
+        (WebCore::fillContainerFromString):
+        (WebCore::createFragmentFromText):
+        (WebCore::replaceChildrenWithFragment):
+        (WebCore::replaceChildrenWithText):
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::createShadowSubtree):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::appendEntry):
+        (WebCore::FTPDirectoryDocumentParser::createTDForFilename):
+        (WebCore::FTPDirectoryDocumentParser::createBasicDocument):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::didAddUserAgentShadowRoot):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setOuterText):
+        (WebCore::HTMLElement::insertAdjacent):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::tryCreateImageControls):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::didAddUserAgentShadowRoot):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::createForJSConstructor):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::didAddUserAgentShadowRoot):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::createTBody):
+        (WebCore::HTMLTableElement::insertRow):
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::insertCell):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createShadowSubtree):
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::createShadowSubtree):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu):
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::createTextTrackDisplay):
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::tryCreateControls):
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        (WebCore::ImageControlsRootElement::tryCreate):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::updateDisplayTree):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTTreeBuilder::constructTreeFromToken):
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::RemoveChildAction::RemoveChildAction):
+        (WebCore::DOMEditor::InsertBeforeAction::InsertBeforeAction):
+        (WebCore::DOMEditor::ReplaceChildNodeAction::ReplaceChildNodeAction):
+        (WebCore::DOMEditor::insertBefore):
+        (WebCore::DOMEditor::removeChild):
+        (WebCore::DOMEditor::replaceChild):
+        * inspector/DOMEditor.h:
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchNode):
+        (WebCore::DOMPatchSupport::innerPatchNode):
+        (WebCore::DOMPatchSupport::innerPatchChildren):
+        (WebCore::DOMPatchSupport::insertBeforeAndMarkAsUsed):
+        (WebCore::DOMPatchSupport::removeChildAndMoveToNew):
+        * inspector/DOMPatchSupport.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::createInspectorStyleSheetForDocument):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::removeNode):
+        (WebCore::InspectorDOMAgent::setNodeName):
+        (WebCore::InspectorDOMAgent::moveTo):
+        * page/DragController.cpp:
+        (WebCore::documentFragmentFromDragData):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::initWithSimpleHTMLDocument):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::cloneTarget):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree):
+        * xml/XMLErrors.cpp:
+        (WebCore::createXHTMLParserErrorHeader):
+        (WebCore::XMLErrors::insertErrorMessageBlock):
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+        (WebCore::XMLDocumentParser::processingInstruction):
+        (WebCore::XMLDocumentParser::cdataBlock):
+        (WebCore::XMLDocumentParser::comment):
+
 2016-05-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: IDBOpenDBRequests that are stop()'ed don't notify the IDBServer of that fact.

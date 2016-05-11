@@ -89,7 +89,7 @@ RefPtr<ImageControlsRootElement> ImageControlsRootElement::tryCreate(Document& d
     controls->setAttribute(HTMLNames::classAttr, "x-webkit-image-controls");
 
     if (RefPtr<ImageControlsButtonElementMac> button = ImageControlsButtonElementMac::tryCreate(document))
-        controls->appendChild(button.releaseNonNull());
+        controls->appendChild(*button);
 
     return WTFMove(controls);
 }

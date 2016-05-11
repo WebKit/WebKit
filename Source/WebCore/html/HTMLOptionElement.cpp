@@ -69,12 +69,12 @@ Ref<HTMLOptionElement> HTMLOptionElement::create(const QualifiedName& tagName, D
 RefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document& document, const String& data, const String& value,
         bool defaultSelected, bool selected, ExceptionCode& ec)
 {
-    RefPtr<HTMLOptionElement> element = adoptRef(new HTMLOptionElement(optionTag, document));
+    Ref<HTMLOptionElement> element = adoptRef(*new HTMLOptionElement(optionTag, document));
 
-    Ref<Text> text = Text::create(document, data.isNull() ? "" : data);
+    auto text = Text::create(document, data.isNull() ? emptyString() : data);
 
     ec = 0;
-    element->appendChild(WTFMove(text), ec);
+    element->appendChild(text, ec);
     if (ec)
         return nullptr;
 
@@ -84,7 +84,7 @@ RefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document& do
         element->setAttribute(selectedAttr, emptyAtom);
     element->setSelected(selected);
 
-    return element;
+    return WTFMove(element);
 }
 
 bool HTMLOptionElement::isFocusable() const

@@ -1,3 +1,3 @@
 description('Test behavior of Document.replaceChild() when oldChild is null.');
 
-shouldThrow('document.replaceChild(document.firstChild, null)', '"TypeError: Type error"');
+shouldThrow('document.replaceChild(document.firstChild, null)');

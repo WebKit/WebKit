@@ -61,16 +61,10 @@
     readonly attribute Node             nextSibling;
     readonly attribute Document         ownerDocument;
 
-    // FIXME: newChild should not be nullable.
-    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node insertBefore([CustomReturn] Node? newChild,
-                                                            Node? refChild);
-    // FIXME: newChild and oldChild should not be nullable.
-    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node replaceChild(Node? newChild,
-                                                            [CustomReturn] Node? oldChild);
-    // FIXME: oldChild should not be nullable.
-    [Custom, RaisesException] Node removeChild([CustomReturn] Node? oldChild);
-    // FIXME: newChild should not be nullable.
-    [Custom, RaisesException] Node appendChild([CustomReturn] Node? newChild);
+    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node insertBefore([CustomReturn] Node newChild, Node? refChild);
+    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node replaceChild(Node newChild, [CustomReturn] Node oldChild);
+    [Custom, RaisesException] Node removeChild([CustomReturn] Node oldChild);
+    [Custom, RaisesException] Node appendChild([CustomReturn] Node newChild);
 
     boolean            hasChildNodes();
 

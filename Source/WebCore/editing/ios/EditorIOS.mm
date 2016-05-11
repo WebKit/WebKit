@@ -493,7 +493,7 @@ bool Editor::WebContentReader::readURL(const URL& url, const String&)
         anchor->appendChild(frame.document()->createTextNode([[(NSURL *)url absoluteString] precomposedStringWithCanonicalMapping]));
 
         auto newFragment = frame.document()->createDocumentFragment();
-        newFragment->appendChild(WTFMove(anchor));
+        newFragment->appendChild(anchor);
         addFragment(WTFMove(newFragment));
         return true;
     }
@@ -589,7 +589,7 @@ RefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResource(Re
         loader->addArchiveResource(resource.releaseNonNull());
 
     auto fragment = m_frame.document()->createDocumentFragment();
-    fragment->appendChild(WTFMove(imageElement));
+    fragment->appendChild(imageElement);
 
     return WTFMove(fragment);
 }

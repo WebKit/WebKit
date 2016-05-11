@@ -50,17 +50,17 @@ public:
     explicit DOMEditor(InspectorHistory*);
     ~DOMEditor();
 
-    bool insertBefore(Node* parentNode, RefPtr<Node>&&, Node* anchorNode, ExceptionCode&);
-    bool removeChild(Node* parentNode, Node*, ExceptionCode&);
+    bool insertBefore(Node& parentNode, Ref<Node>&&, Node* anchorNode, ExceptionCode&);
+    bool removeChild(Node& parentNode, Node&, ExceptionCode&);
     bool setAttribute(Element*, const String& name, const String& value, ExceptionCode&);
     bool removeAttribute(Element*, const String& name, ExceptionCode&);
     bool setOuterHTML(Node&, const String& html, Node** newNode, ExceptionCode&);
     bool replaceWholeText(Text*, const String& text, ExceptionCode&);
-    bool replaceChild(Node* parentNode, RefPtr<Node>&& newNode, Node* oldNode, ExceptionCode&);
+    bool replaceChild(Node& parentNode, Ref<Node>&& newNode, Node& oldNode, ExceptionCode&);
     bool setNodeValue(Node* parentNode, const String& value, ExceptionCode&);
 
-    bool insertBefore(Node* parentNode, RefPtr<Node>&&, Node* anchorNode, ErrorString&);
-    bool removeChild(Node* parentNode, Node*, ErrorString&);
+    bool insertBefore(Node& parentNode, Ref<Node>&&, Node* anchorNode, ErrorString&);
+    bool removeChild(Node& parentNode, Node&, ErrorString&);
     bool setAttribute(Element*, const String& name, const String& value, ErrorString&);
     bool removeAttribute(Element*, const String& name, ErrorString&);
     bool setOuterHTML(Node&, const String& html, Node** newNode, ErrorString&);

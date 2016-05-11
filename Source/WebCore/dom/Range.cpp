@@ -554,7 +554,7 @@ static inline unsigned lengthOfContentsInNode(Node& node)
 
 RefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode& ec)
 {
-    typedef Vector<RefPtr<Node>> NodeVector;
+    typedef Vector<Ref<Node>> NodeVector;
 
     RefPtr<DocumentFragment> fragment;
     if (action == Extract || action == Clone)
@@ -602,13 +602,13 @@ RefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode
     RefPtr<Node> leftContents;
     if (originalStart.container() != commonRoot && commonRoot->contains(originalStart.container())) {
         leftContents = processContentsBetweenOffsets(action, 0, originalStart.container(), originalStart.offset(), lengthOfContentsInNode(*originalStart.container()), ec);
-        leftContents = processAncestorsAndTheirSiblings(action, originalStart.container(), ProcessContentsForward, leftContents, commonRoot.get(), ec);
+        leftContents = processAncestorsAndTheirSiblings(action, originalStart.container(), ProcessContentsForward, WTFMove(leftContents), commonRoot.get(), ec);
     }
 
     RefPtr<Node> rightContents;
     if (&endContainer() != commonRoot && commonRoot->contains(originalEnd.container())) {
         rightContents = processContentsBetweenOffsets(action, 0, originalEnd.container(), 0, originalEnd.offset(), ec);
-        rightContents = processAncestorsAndTheirSiblings(action, originalEnd.container(), ProcessContentsBackward, rightContents, commonRoot.get(), ec);
+        rightContents = processAncestorsAndTheirSiblings(action, originalEnd.container(), ProcessContentsBackward, WTFMove(rightContents), commonRoot.get(), ec);
     }
 
     // delete all children of commonRoot between the start and end container
@@ -637,9 +637,9 @@ RefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode
 
     if (processStart) {
         NodeVector nodes;
-        for (Node* n = processStart.get(); n && n != processEnd; n = n->nextSibling())
-            nodes.append(n);
-        processNodes(action, nodes, commonRoot, fragment, ec);
+        for (Node* node = processStart.get(); node && node != processEnd; node = node->nextSibling())
+            nodes.append(*node);
+        processNodes(action, nodes, commonRoot.get(), fragment.get(), ec);
     }
 
     if ((action == Extract || action == Clone) && rightContents)
@@ -648,12 +648,12 @@ RefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode
     return fragment;
 }
 
-static inline void deleteCharacterData(PassRefPtr<CharacterData> data, unsigned startOffset, unsigned endOffset, ExceptionCode& ec)
+static inline void deleteCharacterData(CharacterData& data, unsigned startOffset, unsigned endOffset, ExceptionCode& ec)
 {
-    if (data->length() - endOffset)
-        data->deleteData(endOffset, data->length() - endOffset, ec);
+    if (data.length() - endOffset)
+        data.deleteData(endOffset, data.length() - endOffset, ec);
     if (startOffset)
-        data->deleteData(0, startOffset, ec);
+        data.deleteData(0, startOffset, ec);
 }
 
 RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<DocumentFragment> fragment, Node* container, unsigned startOffset, unsigned endOffset, ExceptionCode& ec)
@@ -670,11 +670,11 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
         endOffset = std::min(endOffset, static_cast<CharacterData*>(container)->length());
         startOffset = std::min(startOffset, endOffset);
         if (action == Extract || action == Clone) {
-            RefPtr<CharacterData> characters = static_cast<CharacterData*>(container->cloneNode(true).ptr());
+            Ref<CharacterData> characters = static_cast<CharacterData&>(container->cloneNode(true).get());
             deleteCharacterData(characters, startOffset, endOffset, ec);
             if (fragment) {
                 result = fragment;
-                result->appendChild(characters.release(), ec);
+                result->appendChild(characters, ec);
             } else
                 result = WTFMove(characters);
         }
@@ -685,11 +685,11 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
         endOffset = std::min(endOffset, static_cast<ProcessingInstruction*>(container)->data().length());
         startOffset = std::min(startOffset, endOffset);
         if (action == Extract || action == Clone) {
-            RefPtr<ProcessingInstruction> processingInstruction = static_cast<ProcessingInstruction*>(container->cloneNode(true).ptr());
+            Ref<ProcessingInstruction> processingInstruction = static_cast<ProcessingInstruction&>(container->cloneNode(true).get());
             processingInstruction->setData(processingInstruction->data().substring(startOffset, endOffset - startOffset));
             if (fragment) {
                 result = fragment;
-                result->appendChild(processingInstruction.release(), ec);
+                result->appendChild(processingInstruction, ec);
             } else
                 result = WTFMove(processingInstruction);
         }
@@ -714,7 +714,7 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
         }
 
         Node* n = container->firstChild();
-        Vector<RefPtr<Node>> nodes;
+        Vector<Ref<Node>> nodes;
         for (unsigned i = startOffset; n && i; i--)
             n = n->nextSibling();
         for (unsigned i = startOffset; n && i < endOffset; i++, n = n->nextSibling()) {
@@ -722,25 +722,25 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
                 ec = HIERARCHY_REQUEST_ERR;
                 return nullptr;
             }
-            nodes.append(n);
+            nodes.append(*n);
         }
 
-        processNodes(action, nodes, container, result, ec);
+        processNodes(action, nodes, container, result.get(), ec);
         break;
     }
 
     return result;
 }
 
-void Range::processNodes(ActionType action, Vector<RefPtr<Node>>& nodes, PassRefPtr<Node> oldContainer, PassRefPtr<Node> newContainer, ExceptionCode& ec)
+void Range::processNodes(ActionType action, Vector<Ref<Node>>& nodes, Node* oldContainer, Node* newContainer, ExceptionCode& ec)
 {
     for (auto& node : nodes) {
         switch (action) {
         case Delete:
-            oldContainer->removeChild(node.get(), ec);
+            oldContainer->removeChild(node, ec);
             break;
         case Extract:
-            newContainer->appendChild(node.release(), ec); // will remove n from its parent
+            newContainer->appendChild(node, ec); // will remove n from its parent
             break;
         case Clone:
             newContainer->appendChild(node->cloneNode(true), ec);
@@ -749,44 +749,44 @@ void Range::processNodes(ActionType action, Vector<RefPtr<Node>>& nodes, PassRef
     }
 }
 
-RefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node* container, ContentsProcessDirection direction, PassRefPtr<Node> passedClonedContainer, Node* commonRoot, ExceptionCode& ec)
+RefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node* container, ContentsProcessDirection direction, RefPtr<Node>&& passedClonedContainer, Node* commonRoot, ExceptionCode& ec)
 {
-    typedef Vector<RefPtr<Node>> NodeVector;
+    typedef Vector<Ref<Node>> NodeVector;
 
-    RefPtr<Node> clonedContainer = passedClonedContainer;
-    Vector<RefPtr<Node>> ancestors;
-    for (ContainerNode* n = container->parentNode(); n && n != commonRoot; n = n->parentNode())
-        ancestors.append(n);
+    RefPtr<Node> clonedContainer = WTFMove(passedClonedContainer);
+    Vector<Ref<ContainerNode>> ancestors;
+    for (ContainerNode* ancestor = container->parentNode(); ancestor && ancestor != commonRoot; ancestor = ancestor->parentNode())
+        ancestors.append(*ancestor);
 
     RefPtr<Node> firstChildInAncestorToProcess = direction == ProcessContentsForward ? container->nextSibling() : container->previousSibling();
     for (auto& ancestor : ancestors) {
         if (action == Extract || action == Clone) {
-            if (RefPtr<Node> clonedAncestor = ancestor->cloneNode(false)) { // Might have been removed already during mutation event.
-                clonedAncestor->appendChild(clonedContainer, ec);
-                clonedContainer = clonedAncestor;
-            }
+            auto clonedAncestor = ancestor->cloneNode(false); // Might have been removed already during mutation event.
+            if (clonedContainer)
+                clonedAncestor->appendChild(*clonedContainer, ec);
+            clonedContainer = WTFMove(clonedAncestor);
         }
 
         // Copy siblings of an ancestor of start/end containers
         // FIXME: This assertion may fail if DOM is modified during mutation event
         // FIXME: Share code with Range::processNodes
-        ASSERT(!firstChildInAncestorToProcess || firstChildInAncestorToProcess->parentNode() == ancestor);
+        ASSERT(!firstChildInAncestorToProcess || firstChildInAncestorToProcess->parentNode() == ancestor.ptr());
         
         NodeVector nodes;
         for (Node* child = firstChildInAncestorToProcess.get(); child;
             child = (direction == ProcessContentsForward) ? child->nextSibling() : child->previousSibling())
-            nodes.append(child);
+            nodes.append(*child);
 
         for (auto& child : nodes) {
             switch (action) {
             case Delete:
-                ancestor->removeChild(child.get(), ec);
+                ancestor->removeChild(child, ec);
                 break;
             case Extract: // will remove child from ancestor
                 if (direction == ProcessContentsForward)
-                    clonedContainer->appendChild(child.get(), ec);
+                    clonedContainer->appendChild(child, ec);
                 else
-                    clonedContainer->insertBefore(child.get(), clonedContainer->firstChild(), ec);
+                    clonedContainer->insertBefore(child, clonedContainer->firstChild(), ec);
                 break;
             case Clone:
                 if (direction == ProcessContentsForward)
@@ -853,7 +853,7 @@ void Range::insertNode(Ref<Node>&& node, ExceptionCode& ec)
     else
         ++newOffset;
 
-    parent->insertBefore(WTFMove(node), referenceNode.get(), ec);
+    parent->insertBefore(node, referenceNode.get(), ec);
     if (ec)
         return;
 
@@ -1084,7 +1084,7 @@ void Range::surroundContents(Node& passNewParent, ExceptionCode& ec)
     insertNode(newParent.copyRef(), ec);
     if (ec)
         return;
-    newParent->appendChild(fragment.release(), ec);
+    newParent->appendChild(*fragment, ec);
     if (ec)
         return;
     selectNode(newParent, ec);

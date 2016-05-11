@@ -75,7 +75,7 @@ RefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
     dispatchModifiedEvent(oldStr);
 
     if (parentNode())
-        parentNode()->insertBefore(newText.copyRef(), nextSibling(), ec);
+        parentNode()->insertBefore(newText, nextSibling(), ec);
     if (ec)
         return 0;
 

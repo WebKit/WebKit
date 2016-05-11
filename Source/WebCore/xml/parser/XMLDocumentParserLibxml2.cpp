@@ -844,7 +844,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (scriptElement)
         m_scriptStartPosition = textPosition();
 
-    m_currentNode->parserAppendChild(newElement.copyRef());
+    m_currentNode->parserAppendChild(newElement);
     if (!m_currentNode) // Synchronous DOM events may have removed the current node.
         return;
 
@@ -1001,7 +1001,7 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
     pi->setCreatedByParser(true);
 
-    m_currentNode->parserAppendChild(pi.copyRef());
+    m_currentNode->parserAppendChild(pi);
 
     pi->finishParsingChildren();
 
@@ -1027,8 +1027,7 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
     if (!updateLeafTextNode())
         return;
 
-    auto newNode = CDATASection::create(m_currentNode->document(), toString(s, len));
-    m_currentNode->parserAppendChild(WTFMove(newNode));
+    m_currentNode->parserAppendChild(CDATASection::create(m_currentNode->document(), toString(s, len)));
 }
 
 void XMLDocumentParser::comment(const xmlChar* s)
@@ -1044,8 +1043,7 @@ void XMLDocumentParser::comment(const xmlChar* s)
     if (!updateLeafTextNode())
         return;
 
-    auto newNode = Comment::create(m_currentNode->document(), toString(s));
-    m_currentNode->parserAppendChild(WTFMove(newNode));
+    m_currentNode->parserAppendChild(Comment::create(m_currentNode->document(), toString(s)));
 }
 
 enum StandaloneInfo {

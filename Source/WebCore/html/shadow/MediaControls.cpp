@@ -380,14 +380,14 @@ void MediaControls::createTextTrackDisplay()
     if (m_textDisplayContainer)
         return;
 
-    Ref<MediaControlTextTrackContainerElement> textDisplayContainer = MediaControlTextTrackContainerElement::create(document());
+    auto textDisplayContainer = MediaControlTextTrackContainerElement::create(document());
     m_textDisplayContainer = textDisplayContainer.ptr();
 
     if (m_mediaController)
         m_textDisplayContainer->setMediaController(m_mediaController);
 
     // Insert it before the first controller element so it always displays behind the controls.
-    insertBefore(WTFMove(textDisplayContainer), m_panel, IGNORE_EXCEPTION);
+    insertBefore(textDisplayContainer, m_panel, IGNORE_EXCEPTION);
 }
 
 void MediaControls::showTextTrackDisplay()

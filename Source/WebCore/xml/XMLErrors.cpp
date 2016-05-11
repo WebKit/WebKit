@@ -93,19 +93,19 @@ static inline Ref<Element> createXHTMLParserErrorHeader(Document* doc, const Str
     reportElement->parserSetAttributes(reportAttributes);
 
     auto h3 = doc->createElement(h3Tag, true);
-    reportElement->parserAppendChild(h3.copyRef());
+    reportElement->parserAppendChild(h3);
     h3->parserAppendChild(doc->createTextNode("This page contains the following errors:"));
 
     auto fixed = doc->createElement(divTag, true);
     Vector<Attribute> fixedAttributes;
     fixedAttributes.append(Attribute(styleAttr, "font-family:monospace;font-size:12px"));
     fixed->parserSetAttributes(fixedAttributes);
-    reportElement->parserAppendChild(fixed.copyRef());
+    reportElement->parserAppendChild(fixed);
 
     fixed->parserAppendChild(doc->createTextNode(errorMessages));
 
     h3 = doc->createElement(h3Tag, true);
-    reportElement->parserAppendChild(h3.get());
+    reportElement->parserAppendChild(h3);
     h3->parserAppendChild(doc->createTextNode("Below is a rendering of the page up to the first error."));
 
     return reportElement;
@@ -122,25 +122,25 @@ void XMLErrors::insertErrorMessageBlock()
     if (!documentElement) {
         auto rootElement = m_document->createElement(htmlTag, true);
         auto body = m_document->createElement(bodyTag, true);
-        rootElement->parserAppendChild(body.copyRef());
-        m_document->parserAppendChild(rootElement.copyRef());
+        rootElement->parserAppendChild(body);
+        m_document->parserAppendChild(rootElement);
         documentElement = WTFMove(body);
     }
     else if (documentElement->namespaceURI() == SVGNames::svgNamespaceURI) {
         auto rootElement = m_document->createElement(htmlTag, true);
         auto head = m_document->createElement(headTag, true);
         auto style = m_document->createElement(styleTag, true);
-        head->parserAppendChild(style.copyRef());
+        head->parserAppendChild(style);
         style->parserAppendChild(m_document->createTextNode("html, body { height: 100% } parsererror + svg { width: 100%; height: 100% }"));
         style->finishParsingChildren();
-        rootElement->parserAppendChild(head.copyRef());
+        rootElement->parserAppendChild(head);
         auto body = m_document->createElement(bodyTag, true);
-        rootElement->parserAppendChild(body.copyRef());
+        rootElement->parserAppendChild(body);
 
         m_document->parserRemoveChild(*documentElement);
 
         body->parserAppendChild(*documentElement);
-        m_document->parserAppendChild(WTFMove(rootElement));
+        m_document->parserAppendChild(rootElement);
 
         documentElement = WTFMove(body);
     }
@@ -155,15 +155,15 @@ void XMLErrors::insertErrorMessageBlock()
         auto paragraph = m_document->createElement(pTag, true);
         paragraph->parserSetAttributes(attributes);
         paragraph->parserAppendChild(m_document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."));
-        reportElement->parserAppendChild(WTFMove(paragraph));
+        reportElement->parserAppendChild(paragraph);
     }
 #endif
 
     Node* firstChild = documentElement->firstChild();
     if (firstChild)
-        documentElement->parserInsertBefore(WTFMove(reportElement), *firstChild);
+        documentElement->parserInsertBefore(reportElement, *firstChild);
     else
-        documentElement->parserAppendChild(WTFMove(reportElement));
+        documentElement->parserAppendChild(reportElement);
 
     m_document->updateStyleIfNeeded();
 }

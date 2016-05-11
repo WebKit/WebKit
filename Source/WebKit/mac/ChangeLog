@@ -1,3 +1,13 @@
+2016-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Update Node::appendChild() / replaceChild() / removeChild() / insertBefore() to take references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=157556
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _documentFragmentWithNodesAsParagraphs:]):
+
 2016-05-10  Shaw rich  <richshaw@126.com>
 
         [OS X] Compatible with gnu sed grammar due to compile error with gnu sed

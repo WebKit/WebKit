@@ -68,7 +68,7 @@ const RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node *&nodeToRem
     if (!parentNode->ensurePreInsertionValidity(styleElement.copyRef(), nullptr, IGNORE_EXCEPTION))
         return nullptr; 
 
-    parentNode->appendChild(styleElement.copyRef(), ASSERT_NO_EXCEPTION);
+    parentNode->appendChild(styleElement, ASSERT_NO_EXCEPTION);
 
     nodeToRemove = styleElement.ptr();
 
