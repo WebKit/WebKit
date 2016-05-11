@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc.
  * Copyright 2010, The Android Open Source Project
  *
@@ -43,7 +43,6 @@
 #include "SecurityOrigin.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -172,23 +171,6 @@ Page* Geolocation::page() const
 bool Geolocation::canSuspendForDocumentSuspension() const
 {
     return true;
-}
-    
-static void logError(const String& target, const bool isSecure, const bool isMixedContent, Document* document)
-{
-    StringBuilder message;
-    message.append("[blocked] Access to geolocation was blocked over");
-    
-    if (!isSecure)
-        message.append(" insecure connection to ");
-    else if (isMixedContent)
-        message.append(" secure connection with mixed content to ");
-    else
-        return;
-    
-    message.append(target);
-    message.append(".\n");
-    document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message.toString());
 }
 
 void Geolocation::suspend(ReasonForSuspension reason)
@@ -355,24 +337,12 @@ int Geolocation::watchPosition(RefPtr<PositionCallback>&& successCallback, RefPt
     return watchID;
 }
 
-bool Geolocation::shouldBlockGeolocationRequests()
-{
-    bool isSecure = SecurityOrigin::isSecure(document()->url());
-    bool hasMixedContent = document()->foundMixedContent();
-    if (securityOrigin()->canRequestGeolocation() && isSecure && !hasMixedContent)
-        return false;
-    
-    logError(securityOrigin()->toString(), isSecure, hasMixedContent, document());
-    return true;
-}
-
 void Geolocation::startRequest(GeoNotifier* notifier)
 {
-    if (shouldBlockGeolocationRequests()) {
+    if (!securityOrigin()->canRequestGeolocation()) {
         notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, ASCIILiteral(originCannotRequestGeolocationErrorMessage)));
         return;
     }
-    document()->setGeolocationAccessed();
 
     // Check whether permissions have already been denied. Note that if this is the case,
     // the permission state can not change again in the lifetime of this page.

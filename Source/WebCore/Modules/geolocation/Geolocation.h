@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All Rights Reserved.
  * Copyright 2010, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,7 +72,6 @@ public:
 
     void positionChanged();
     void setError(GeolocationError*);
-    bool shouldBlockGeolocationRequests();
 
 private:
     explicit Geolocation(ScriptExecutionContext*);

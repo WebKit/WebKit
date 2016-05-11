@@ -1,3 +1,16 @@
+2016-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r200686.
+
+        Caused a lot of layout test failures
+
+        Reverted changeset:
+
+        "Sites served over insecure connections should not be allowed
+        to use geolocation."
+        https://bugs.webkit.org/show_bug.cgi?id=157423
+        http://trac.webkit.org/changeset/200686
+
 2016-05-11  Jer Noble  <jer.noble@apple.com>
 
         Videos allowed to play through the Main Content restriction should not pause when scrolled off-screen.

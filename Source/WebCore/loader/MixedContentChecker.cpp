@@ -65,13 +65,11 @@ bool MixedContentChecker::canDisplayInsecureContent(SecurityOrigin* securityOrig
     if (!isMixedContent(securityOrigin, url))
         return true;
 
-    bool allowed = (m_frame.settings().allowDisplayOfInsecureContent() || type == ContentType::ActiveCanWarn) && !m_frame.document()->geolocationAccessed();
+    bool allowed = m_frame.settings().allowDisplayOfInsecureContent() || type == ContentType::ActiveCanWarn;
     logWarning(allowed, "display", url);
 
-    if (allowed) {
-        m_frame.document()->setFoundMixedContent();
+    if (allowed)
         client().didDisplayInsecureContent();
-    }
 
     return allowed;
 }
@@ -81,13 +79,11 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin* securityOrigin, 
     if (!isMixedContent(securityOrigin, url))
         return true;
 
-    bool allowed = m_frame.settings().allowRunningOfInsecureContent() && !m_frame.document()->geolocationAccessed();
+    bool allowed = m_frame.settings().allowRunningOfInsecureContent();
     logWarning(allowed, "run", url);
 
-    if (allowed) {
-        m_frame.document()->setFoundMixedContent();
+    if (allowed)
         client().didRunInsecureContent(securityOrigin, url);
-    }
 
     return allowed;
 }
