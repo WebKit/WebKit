@@ -285,6 +285,7 @@ AXPosition: { 8.000000, 332.000000 }
 AXSize: { 64.000000, 26.000000 }
 AXTitle: 
 AXDescription: 
+AXValue: asdf	asdf<\n>
 AXFocusable: 1
 AXFocused: 0
 AXSelectable: 0

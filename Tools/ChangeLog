@@ -1,3 +1,25 @@
+2016-05-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/aria-readonly.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=98357
+
+        Reviewed by Chris Fleizach.
+
+        Add checks to isAttributeSettable() for ATK_STATE_READ_ONLY and the 'readonly'
+        AtkObject attribute along with ATK_STATE_CHECKABLE for toggle-able elements,
+        ATK_STATE_SELECTABLE for select elements, and ATK_STATE_FOCUSABLE combined
+        with range verification for inputs which implement AtkValue. The latter two
+        additions are admittedly a heuristic workaround for platform accessibility
+        API differences. But they should be sufficient to facilitate cross-platform
+        testing of isAttributeSettable() for form elements which lack ARIA attributes.
+
+        Bump the minimum version of at-spi2-core and at-spi2-atk
+        to 2.15.4 (earliest version that supports STATE_READ_ONLY).
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::isAttributeSettable):
+        * gtk/jhbuild.modules:
+
 2016-05-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Another attempt to fix the build after r200668.

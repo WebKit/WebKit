@@ -97,7 +97,6 @@ public:
     bool isEnabled() const override;
     bool isIndeterminate() const override;
     bool isPressed() const override;
-    bool isReadOnly() const override;
     bool isRequired() const override;
     bool supportsRequiredAttribute() const override;
 
@@ -109,6 +108,8 @@ public:
 
     bool canSetFocusAttribute() const override;
     int headingLevel() const override;
+
+    bool canSetValueAttribute() const override;
 
     String valueDescription() const override;
     float valueForRange() const override;

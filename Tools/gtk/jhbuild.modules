@@ -285,9 +285,9 @@
 
   <autotools id="at-spi2-core" 
              autogenargs="--disable-introspection">
-    <branch module="pub/GNOME/sources/at-spi2-core/2.10/at-spi2-core-2.10.0.tar.xz" version="2.10.0"
+    <branch module="pub/GNOME/sources/at-spi2-core/2.15/at-spi2-core-2.15.4.tar.xz" version="2.15.4"
             repo="ftp.gnome.org"
-            hash="sha256:964155c7574220a00e11e1c0d91f2d3017ed603920eb1333ff9cbdb6a22744db">
+            hash="sha256:0e3b01af6ba06d98faf7b85891ece394897fe145b0760b7846e810b57f1b809f">
     </branch>
     <dependencies>
       <dep package="glib"/>
@@ -295,9 +295,9 @@
   </autotools>
 
   <autotools id="at-spi2-atk">
-    <branch module="pub/GNOME/sources/at-spi2-atk/2.10/at-spi2-atk-2.10.0.tar.xz" version="2.10.0"
+    <branch module="pub/GNOME/sources/at-spi2-atk/2.15/at-spi2-atk-2.15.4.tar.xz" version="2.15.4"
             repo="ftp.gnome.org"
-            hash="sha256:dea7ff2f9bc9bbdb0351112616d738de718b55739cd2511afecac51604c31a94">
+            hash="sha256:3283aa5207b81e4c77d24c4e8b1c0abe6c850b11a2e62cd873cc07af0b403501">
     </branch>
     <dependencies>
       <dep package="glib"/>

@@ -739,24 +739,6 @@ bool AccessibilityNodeObject::isMultiSelectable() const
     return node() && node()->hasTagName(selectTag) && downcast<HTMLSelectElement>(*node()).multiple();
 }
 
-bool AccessibilityNodeObject::isReadOnly() const
-{
-    Node* node = this->node();
-    if (!node)
-        return true;
-
-    if (is<HTMLTextAreaElement>(*node))
-        return downcast<HTMLTextAreaElement>(*node).isReadOnly();
-
-    if (is<HTMLInputElement>(*node)) {
-        HTMLInputElement& input = downcast<HTMLInputElement>(*node);
-        if (input.isTextField())
-            return input.isReadOnly();
-    }
-
-    return !node->hasEditableStyle();
-}
-
 bool AccessibilityNodeObject::isRequired() const
 {
     // Explicit aria-required values should trump native required attributes.
@@ -1973,6 +1955,57 @@ bool AccessibilityNodeObject::canSetFocusAttribute() const
         return false;
 
     return element.supportsFocus();
+}
+
+bool AccessibilityNodeObject::canSetValueAttribute() const
+{
+    Node* node = this->node();
+    if (!node)
+        return false;
+
+    // The host-language readonly attribute trumps aria-readonly.
+    if (is<HTMLTextAreaElement>(*node))
+        return !downcast<HTMLTextAreaElement>(*node).isReadOnly();
+    if (is<HTMLInputElement>(*node)) {
+        HTMLInputElement& input = downcast<HTMLInputElement>(*node);
+        if (input.isTextField())
+            return !input.isReadOnly();
+    }
+
+    String readOnly = ariaReadOnlyValue();
+    if (!readOnly.isEmpty())
+        return readOnly == "true" ? false : true;
+
+    if (isNonNativeTextControl())
+        return true;
+
+    if (isMeter())
+        return false;
+
+    if (isProgressIndicator() || isSlider())
+        return true;
+
+#if PLATFORM(GTK) || PLATFORM(EFL)
+    // In ATK, input types which support aria-readonly are treated as having a
+    // settable value if the user can modify the widget's value or its state.
+    if (supportsARIAReadOnly() || isRadioButton())
+        return true;
+#endif
+
+    if (isWebArea()) {
+        Document* document = this->document();
+        if (!document)
+            return false;
+
+        if (HTMLElement* body = document->bodyOrFrameset()) {
+            if (body->hasEditableStyle())
+                return true;
+        }
+
+        return document->hasEditableStyle();
+    }
+
+    return node->hasEditableStyle();
 }
 
 AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const

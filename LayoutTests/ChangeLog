@@ -1,3 +1,22 @@
+2016-05-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/aria-readonly.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=98357
+
+        Reviewed by Chris Fleizach.
+
+        As part of this change, a new AtkObject attribute and state are being exposed.
+        Update two tests accordingly. Also unskip the previously-failing test. Lastly,
+        move the Mac form-control-value-settable.html test to the shared test set,
+        with a minor tweak to check the platform for several elements' expectations.
+
+        * accessibility/form-control-value-settable.html: Moved to shared tests.
+        * accessibility/gtk/xml-roles-exposed-expected.txt: Updated.
+        * platform/gtk/TestExpectations: Unskipped previously-failing test.
+        * platform/gtk/accessibility/form-control-value-settable-expected.txt: Added.
+        * platform/gtk/accessibility/table-detection-expected.txt: Updated.
+        * platform/mac/accessibility/form-control-value-settable-expected.txt: Moved.
+
 2016-05-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test gardening after r200646

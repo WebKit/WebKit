@@ -198,7 +198,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
 
     result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INVISIBLE), (style->visibility() == HIDDEN) ? "true" : "false");
 
-    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_EDITABLE), object->isReadOnly() ? "false" : "true");
+    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_EDITABLE), object->canSetValueAttribute() ? "true" : "false");
 
     String language = object->language();
     if (!language.isEmpty())

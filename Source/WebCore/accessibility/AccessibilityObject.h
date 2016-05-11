@@ -569,7 +569,6 @@ public:
     virtual bool isMultiSelectable() const { return false; }
     virtual bool isOffScreen() const { return false; }
     virtual bool isPressed() const { return false; }
-    virtual bool isReadOnly() const { return false; }
     virtual bool isUnvisited() const { return false; }
     virtual bool isVisited() const { return false; }
     virtual bool isRequired() const { return false; }
@@ -923,6 +922,9 @@ public:
     static bool liveRegionStatusIsEnabled(const AtomicString&);
     static bool contentEditableAttributeIsEnabled(Element*);
     bool hasContentEditableAttributeSet() const;
+
+    bool supportsARIAReadOnly() const;
+    String ariaReadOnlyValue() const;
     
     bool supportsARIAAttributes() const;
     

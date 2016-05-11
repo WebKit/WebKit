@@ -1044,8 +1044,51 @@ bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
         return false;
 
     String attributeString = jsStringToWTFString(attribute);
-    if (attributeString == "AXValue")
-        return checkElementState(m_element.get(), ATK_STATE_EDITABLE);
+    if (attributeString != "AXValue")
+        return false;
+
+    // ATK does not have a single state or property to indicate whether or not the value
+    // of an accessible object can be set. ATs look at several states and properties based
+    // on the type of object. If nothing explicitly indicates the value can or cannot be
+    // set, ATs make role- and interface-based decisions. We'll do something similar here.
+
+    // This state is expected to be present only for text widgets and contenteditable elements.
+    if (checkElementState(m_element.get(), ATK_STATE_EDITABLE))
+        return true;
+
+#if ATK_CHECK_VERSION(2,11,2)
+    // This state is applicable to checkboxes, radiobuttons, switches, etc.
+    if (checkElementState(m_element.get(), ATK_STATE_CHECKABLE))
+        return true;
+#endif
+
+#if ATK_CHECK_VERSION(2,15,3)
+    // This state is expected to be present only for controls and only if explicitly set.
+    if (checkElementState(m_element.get(), ATK_STATE_READ_ONLY))
+        return false;
+#endif
+
+    // We expose an object attribute to ATs when there is an author-provided ARIA property
+    // and also when there is a supported ARIA role but no author-provided value.
+    String isReadOnly = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "readonly");
+    if (!isReadOnly.isEmpty())
+        return isReadOnly == "true" ? false : true;
+
+    // If we have a native listbox or combobox and the value can be set, the options should
+    // have ATK_STATE_SELECTABLE.
+    AtkRole role = atk_object_get_role(ATK_OBJECT(m_element.get()));
+    if (role == ATK_ROLE_LIST_BOX || role == ATK_ROLE_COMBO_BOX) {
+        if (GRefPtr<AtkObject> child = adoptGRef(atk_object_ref_accessible_child(ATK_OBJECT(m_element.get()), 0))) {
+            if (atk_object_get_role(ATK_OBJECT(child.get())) == ATK_ROLE_MENU)
+                child = adoptGRef(atk_object_ref_accessible_child(ATK_OBJECT(child.get()), 0));
+            return child && checkElementState(child.get(), ATK_STATE_SELECTABLE);
+        }
+    }
+
+    // If we have a native element which exposes a range whose value can be set, it should
+    // be focusable and have a true range.
+    if (ATK_IS_VALUE(m_element.get()) && checkElementState(m_element.get(), ATK_STATE_FOCUSABLE))
+        return minValue() != maxValue();
 
     return false;
 }

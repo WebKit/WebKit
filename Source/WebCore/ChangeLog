@@ -1,3 +1,50 @@
+2016-05-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/aria-readonly.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=98357
+
+        Reviewed by Chris Fleizach.
+
+        Add support for ATK_STATE_READ_ONLY and expose the value of aria-readonly
+        as an AtkObject attribute. In order to eliminate duplicate checks, remove
+        isReadOnly() and just use canSetAttributeValue(), moving all the logic into
+        AccessibilityNodeObject. Add AccessibilityObject::supportsARIAReadOnly() so
+        that we can explicitly expose the implicit value for aria-readonly on roles
+        which support this property. Also add support for ATK_STATE_CHECKABLE, both
+        because this state was missing and because it serves a similar function to
+        ATK_STATE_EDITABLE for the purpose of verifying exposure of toggle-able
+        elements that are not read-only.
+
+        Test: accessibility/form-control-value-settable.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canSetValueAttribute):
+        (WebCore::AccessibilityNodeObject::isRequired): Deleted.
+        (WebCore::AccessibilityNodeObject::supportsRequiredAttribute): Deleted.
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsARIAReadOnly):
+        (WebCore::AccessibilityObject::ariaReadOnlyValue):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isUnvisited): Deleted.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::clickPoint):
+        (WebCore::AccessibilityRenderObject::isOffScreen): Deleted.
+        (WebCore::AccessibilityRenderObject::anchorElement): Deleted.
+        (WebCore::AccessibilityRenderObject::internalLinkElement): Deleted.
+        (WebCore::AccessibilityRenderObject::textChanged): Deleted.
+        (WebCore::AccessibilityRenderObject::clearChildren): Deleted.
+        (WebCore::AccessibilityRenderObject::addImageMapChildren): Deleted.
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getAttributeSetForAccessibilityObject):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+        (setAtkStateSetFromCoreObject):
+        (getInterfaceMaskFromObject):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+
 2016-05-10  Jeremy Jones  <jeremyj@apple.com>
 
         Don't update media duration at playback end while seeking.

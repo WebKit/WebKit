@@ -135,7 +135,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:checkbox, xml-roles:checkbox, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:checkbox, xml-roles:checkbox, readonly:false, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXComboBox
 AXParent: AXWebArea
@@ -154,7 +154,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, readonly:false, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXLandmarkComplementary
 AXParent: AXWebArea
@@ -592,7 +592,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXSeparator
 AXParent: AXWebArea
@@ -630,7 +630,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:slider, xml-roles:slider, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:slider, xml-roles:slider, readonly:false, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXSpinButton
 AXParent: AXWebArea
@@ -649,7 +649,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:spinbutton, xml-roles:spinbutton, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:spinbutton, xml-roles:spinbutton, readonly:false, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXStatusBar
 AXParent: AXWebArea
@@ -687,7 +687,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:switch, xml-roles:switch, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:switch, xml-roles:switch, readonly:false, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXTextField
 AXParent: AXWebArea
@@ -706,7 +706,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: readonly:false, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXTimer
 AXParent: AXWebArea
