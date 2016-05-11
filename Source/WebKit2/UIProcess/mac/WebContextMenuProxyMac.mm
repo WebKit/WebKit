@@ -458,9 +458,12 @@ void WebContextMenuProxyMac::showContextMenu()
     Vector<RefPtr<WebContextMenuItem>> clientItems;
     bool useProposedItems = true;
 
-    // FIXME: Get rid of this once we don't need the C SPI.
+    // FIXME: Get rid of these two client calls once we don't need to support the C SPI.
     if (m_page.contextMenuClient().getContextMenuFromProposedMenu(m_page, proposedAPIItems, clientItems, m_context.webHitTestResultData(), m_page.process().transformHandlesToObjects(m_userData.object()).get()))
         useProposedItems = false;
+
+    if (m_page.contextMenuClient().showContextMenu(m_page, m_context.menuLocation(), useProposedItems ? proposedAPIItems : clientItems))
+        return;
 
     Vector<WebContextMenuItemData> items;
     for (auto& item : (useProposedItems ? proposedAPIItems : clientItems))

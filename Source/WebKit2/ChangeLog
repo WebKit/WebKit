@@ -1,3 +1,14 @@
+2016-05-11  Anders Carlsson  <andersca@apple.com>
+
+        We have two different types of contextual menus in iBooks
+        https://bugs.webkit.org/show_bug.cgi?id=157587
+        rdar://problem/25904169
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
 2016-05-10  Brian Burg  <bburg@apple.com>
 
         Web Automation: add command to asynchronously load the Web Inspector frontend in the background
