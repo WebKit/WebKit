@@ -639,7 +639,16 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
                 if (renderStyle) {
                     auto textColor = renderStyle->visitedDependentColor(CSSPropertyColor);
                     if (textColor.isValid()) {
-                        auto underlineColor = Color(colorWithOverrideAlpha(textColor.rgb(), 0.2));
+                        double h = 0;
+                        double s = 0;
+                        double v = 0;
+                        textColor.getHSV(h, s, v);
+
+                        // Set the alpha of the underline to 46% if the text color is white-ish (defined
+                        // as having a saturation of less than 2% and a value/brightness or greater than
+                        // 98%). Otherwise, set the alpha of the underline to 26%.
+                        double overrideAlpha = (s < 0.02 && v > 0.98) ? 0.46 : 0.26;
+                        auto underlineColor = Color(colorWithOverrideAlpha(textColor.rgb(), overrideAlpha));
 
                         anchorElement->setInlineStyleProperty(CSSPropertyColor, textColor.cssText());
                         anchorElement->setInlineStyleProperty(CSSPropertyWebkitTextDecorationColor, underlineColor.cssText());
