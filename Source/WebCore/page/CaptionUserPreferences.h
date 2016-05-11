@@ -98,7 +98,7 @@ public:
     PageGroup& pageGroup() const { return m_pageGroup; }
 
 protected:
-    void updateCaptionStyleSheetOveride();
+    void updateCaptionStyleSheetOverride();
     void beginBlockingNotifications();
     void endBlockingNotifications();
 

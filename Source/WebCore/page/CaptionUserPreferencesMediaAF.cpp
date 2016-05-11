@@ -213,7 +213,7 @@ bool CaptionUserPreferencesMediaAF::userPrefersSubtitles() const
 
 void CaptionUserPreferencesMediaAF::updateTimerFired()
 {
-    updateCaptionStyleSheetOveride();
+    updateCaptionStyleSheetOverride();
 }
 
 void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
@@ -247,7 +247,7 @@ void CaptionUserPreferencesMediaAF::captionPreferencesChanged()
         return;
 
     if (m_listeningForPreferenceChanges)
-        updateCaptionStyleSheetOveride();
+        updateCaptionStyleSheetOverride();
 
     CaptionUserPreferences::captionPreferencesChanged();
 }

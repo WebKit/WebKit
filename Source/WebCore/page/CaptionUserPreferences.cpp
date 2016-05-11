@@ -293,10 +293,10 @@ int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack* track, co
 void CaptionUserPreferences::setCaptionsStyleSheetOverride(const String& override)
 {
     m_captionsStyleSheetOverride = override;
-    updateCaptionStyleSheetOveride();
+    updateCaptionStyleSheetOverride();
 }
 
-void CaptionUserPreferences::updateCaptionStyleSheetOveride()
+void CaptionUserPreferences::updateCaptionStyleSheetOverride()
 {
     String captionsOverrideStyleSheet = captionsStyleSheetOverride();
     for (auto& page : m_pageGroup.pages())

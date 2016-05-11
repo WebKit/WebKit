@@ -1,3 +1,19 @@
+2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix typo CaptionUserPreferences::updateCaptionStyleSheetOveride
+        https://bugs.webkit.org/show_bug.cgi?id=157544
+
+        Reviewed by Darin Adler.
+
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::setCaptionsStyleSheetOverride):
+        (WebCore::CaptionUserPreferences::updateCaptionStyleSheetOverride):
+        (WebCore::CaptionUserPreferences::updateCaptionStyleSheetOveride): Deleted.
+        * page/CaptionUserPreferences.h:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::updateTimerFired):
+        (WebCore::CaptionUserPreferencesMediaAF::captionPreferencesChanged):
+
 2016-05-10  Simon Fraser  <simon.fraser@apple.com>
 
         Remove scrolledContentOffset() from rendering code
