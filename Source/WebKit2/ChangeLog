@@ -6,6 +6,8 @@
 
         Reviewed by Darin Adler.
 
+        Give clients the option to bypass the WebKit context menu machinery.
+
         * UIProcess/mac/WebContextMenuProxyMac.mm:
         (WebKit::WebContextMenuProxyMac::showContextMenu):
 
