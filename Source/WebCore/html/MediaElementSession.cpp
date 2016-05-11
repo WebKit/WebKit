@@ -511,9 +511,13 @@ static bool isMainContent(const HTMLMediaElement& element)
         return false;
 
     // Elements which are hidden by style, or have been scrolled out of view, cannot be main content.
+    // But elements which have audio & video and are already playing should not stop playing because
+    // they are scrolled off the page.
     if (renderer->style().visibility() != VISIBLE
-        || renderer->visibleInViewportState() != RenderElement::VisibleInViewport)
+        || (renderer->visibleInViewportState() != RenderElement::VisibleInViewport && !element.isPlaying())
+        ) {
         return false;
+    }
 
     // Main content elements must be in the main frame.
     Document& document = element.document();
