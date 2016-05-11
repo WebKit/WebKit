@@ -1,3 +1,10 @@
+2016-05-10  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the Mac build after r200668.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+
 2016-05-10  Sam Weinig  <sam@webkit.org>
 
         Tweak underline style for data detected links
