@@ -438,18 +438,6 @@ JSValue JSDOMWindow::image(ExecState& state) const
     return createImageConstructor(state.vm(), *this);
 }
 
-#if ENABLE(IOS_TOUCH_EVENTS)
-JSValue JSDOMWindow::touch(ExecState& state) const
-{
-    return getDOMConstructor<JSTouchConstructor>(state.vm(), *this);
-}
-
-JSValue JSDOMWindow::touchList(ExecState& state) const
-{
-    return getDOMConstructor<JSTouchListConstructor>(state.vm(), *this);
-}
-#endif
-
 // Custom functions
 
 JSValue JSDOMWindow::open(ExecState& state)
