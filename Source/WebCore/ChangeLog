@@ -1,3 +1,16 @@
+2016-05-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] curl_easy_setopt(CURLOPT_CONNECT_ONLY) should take a long parameter
+        https://bugs.webkit.org/show_bug.cgi?id=157562
+
+        Reviewed by Darin Adler.
+
+        The third argument of a calling curl_easy_setopt is missing.
+
+        * platform/network/curl/SocketStreamHandleCurl.cpp:
+        (WebCore::SocketStreamHandle::startThread): Give the third
+        argument of curl_easy_setopt.
+
 2016-05-11  Pranjal Jumde  <pjumde@apple.com>
 
         Sites served over insecure connections should not be allowed to use geolocation.
