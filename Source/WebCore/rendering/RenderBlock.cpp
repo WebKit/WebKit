@@ -1571,7 +1571,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).
     LayoutPoint scrolledOffset = paintOffset;
-    scrolledOffset.move(-scrolledContentOffset());
+    scrolledOffset.moveBy(-scrollPosition());
 
     // Column rules need to account for scrolling and clipping.
     // FIXME: Clipping of column rules does not work. We will need a separate paint phase for column rules I suspect in order to get
@@ -1754,7 +1754,7 @@ GapRects RenderBlock::selectionGapRectsForRepaint(const RenderLayerModelObject* 
         return GapRects();
 
     FloatPoint containerPoint = localToContainerPoint(FloatPoint(), repaintContainer, UseTransforms);
-    LayoutPoint offsetFromRepaintContainer(containerPoint - scrolledContentOffset());
+    LayoutPoint offsetFromRepaintContainer(containerPoint - toFloatSize(scrollPosition()));
 
     LogicalSelectionOffsetCaches cache(*this);
     LayoutUnit lastTop = 0;
@@ -1783,7 +1783,7 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
                     flipForWritingMode(localBounds);
                     gapRectsBounds = localToContainerQuad(FloatRect(localBounds), &layer->renderer()).enclosingBoundingBox();
                     if (layer->renderer().isBox())
-                        gapRectsBounds.move(layer->renderBox()->scrolledContentOffset());
+                        gapRectsBounds.moveBy(layer->renderBox()->scrollPosition());
                 }
                 layer->addBlockSelectionGapsBounds(gapRectsBounds);
             }
@@ -2487,7 +2487,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     bool checkChildren = !useClip || (hasControlClip() ? locationInContainer.intersects(controlClipRect(adjustedLocation)) : locationInContainer.intersects(overflowClipRect(adjustedLocation, namedFlowFragment, IncludeOverlayScrollbarSize)));
     if (checkChildren) {
         // Hit test descendants first.
-        LayoutSize scrolledOffset(localOffset - scrolledContentOffset());
+        LayoutSize scrolledOffset(localOffset - toLayoutSize(scrollPosition()));
 
         if (hitTestAction == HitTestFloat && hitTestFloats(request, result, locationInContainer, toLayoutPoint(scrolledOffset)))
             return true;
@@ -2659,7 +2659,7 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const Re
 void RenderBlock::offsetForContents(LayoutPoint& offset) const
 {
     offset = flipForWritingMode(offset);
-    offset += scrolledContentOffset();
+    offset += toLayoutSize(scrollPosition());
     offset = flipForWritingMode(offset);
 }
 

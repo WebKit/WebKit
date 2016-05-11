@@ -822,9 +822,8 @@ void RenderLayerBacking::updateGeometry()
 #else
     if (compAncestor && compAncestor->needsCompositedScrolling()) {
         auto& renderBox = downcast<RenderBox>(compAncestor->renderer());
-        LayoutSize scrollOffset = compAncestor->scrolledContentOffset();
         LayoutPoint scrollOrigin(renderBox.borderLeft(), renderBox.borderTop());
-        graphicsLayerParentLocation = scrollOrigin - scrollOffset;
+        graphicsLayerParentLocation = scrollOrigin - toLayoutSize(compAncestor->scrollOffset());
     }
 #endif
 

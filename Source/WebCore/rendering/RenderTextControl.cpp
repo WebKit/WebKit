@@ -119,7 +119,7 @@ void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutP
         return;
 
     LayoutPoint adjustedLocation = accumulatedOffset + location();
-    LayoutPoint localPoint = pointInContainer - toLayoutSize(adjustedLocation + innerText->renderBox()->location()) + scrolledContentOffset();
+    LayoutPoint localPoint = pointInContainer - toLayoutSize(adjustedLocation + innerText->renderBox()->location()) + toLayoutSize(scrollPosition());
     result.setInnerNode(innerText);
     result.setInnerNonSharedNode(innerText);
     result.setLocalPoint(localPoint);

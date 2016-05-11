@@ -1346,20 +1346,16 @@ bool RenderLayer::updateLayerPosition()
     RenderLayer* positionedParent;
     if (renderer().isOutOfFlowPositioned() && (positionedParent = enclosingAncestorForPosition(renderer().style().position()))) {
         // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
-        if (positionedParent->renderer().hasOverflowClip()) {
-            LayoutSize offset = positionedParent->scrolledContentOffset();
-            localPoint -= offset;
-        }
+        if (positionedParent->renderer().hasOverflowClip())
+            localPoint -= toLayoutSize(positionedParent->scrollPosition());
         
         if (renderer().isOutOfFlowPositioned() && positionedParent->renderer().isInFlowPositioned() && is<RenderInline>(positionedParent->renderer())) {
             LayoutSize offset = downcast<RenderInline>(positionedParent->renderer()).offsetForInFlowPositionedInline(&downcast<RenderBox>(renderer()));
             localPoint += offset;
         }
     } else if (parent()) {
-        if (parent()->renderer().hasOverflowClip()) {
-            IntSize scrollOffset = parent()->scrolledContentOffset();
-            localPoint -= scrollOffset;
-        }
+        if (parent()->renderer().hasOverflowClip())
+            localPoint -= toLayoutSize(parent()->scrollPosition());
     }
     
     bool positionOrOffsetChanged = false;
@@ -5444,7 +5440,7 @@ bool RenderLayer::mapLayerClipRectsToFragmentationLayer(ClipRects& clipRects) co
 
     LayoutPoint portionLocation = flowThreadPortionRect.location();
     LayoutRect regionContentBox = namedFlowFragment->fragmentContainer().contentBoxRect();
-    LayoutSize moveOffset = portionLocation - regionContentBox.location() + namedFlowFragment->fragmentContainer().scrolledContentOffset();
+    LayoutSize moveOffset = portionLocation - regionContentBox.location() + toLayoutSize(namedFlowFragment->fragmentContainer().scrollPosition());
 
     ClipRect newOverflowClipRect = clipRects.overflowClipRect();
     newOverflowClipRect.move(moveOffset);
@@ -5762,7 +5758,7 @@ void RenderLayer::repaintBlockSelectionGaps()
         return;
 
     LayoutRect rect = m_blockSelectionGapsBounds;
-    rect.move(-scrolledContentOffset());
+    rect.moveBy(-scrollPosition());
     if (renderer().hasOverflowClip() && !usesCompositedScrolling())
         rect.intersect(downcast<RenderBox>(renderer()).overflowClipRect(LayoutPoint(), nullptr)); // FIXME: Regions not accounted for.
     if (renderer().hasClip())
@@ -6958,7 +6954,7 @@ void RenderLayer::paintNamedFlowThreadInsideRegion(GraphicsContext& context, Ren
     CurrentRenderRegionMaintainer regionMaintainer(*region);
     region->setRegionObjectsRegionStyle();
 
-    LayoutSize moveOffset = region->flowThreadPortionLocation() - (paintOffset + regionContentBox.location()) + region->fragmentContainer().scrolledContentOffset();
+    LayoutSize moveOffset = region->flowThreadPortionLocation() - (paintOffset + regionContentBox.location()) + toLayoutSize(region->fragmentContainer().scrollPosition());
     FloatPoint adjustedPaintOffset = roundPointToDevicePixels(toLayoutPoint(moveOffset), renderer().document().deviceScaleFactor());
     context.save();
     context.translate(-adjustedPaintOffset.x(), -adjustedPaintOffset.y());
@@ -7046,7 +7042,7 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
         if (!fragment.backgroundRect.intersects(hitTestLocation))
             continue;
 
-        LayoutSize hitTestOffset = portionLocation - (fragment.layerBounds.location() + regionContentBox.location()) + region.fragmentContainer().scrolledContentOffset();
+        LayoutSize hitTestOffset = portionLocation - (fragment.layerBounds.location() + regionContentBox.location()) + toLayoutSize(region.fragmentContainer().scrollPosition());
 
         // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
         HitTestRequest newRequest(request.type() | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowUserAgentShadowContent);

@@ -75,7 +75,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
             m_clipped = true;
         }
 
-        m_paintOffset -= renderer->scrolledContentOffset();
+        m_paintOffset -= toLayoutSize(renderer->scrollPosition());
     }
 
     // If we establish a new page height, then cache the offset to the top of the first page.
@@ -141,7 +141,7 @@ LayoutState::LayoutState(RenderObject& root)
             m_clipped = true;
             auto& containerBox = downcast<RenderBox>(*container);
             m_clipRect = LayoutRect(toLayoutPoint(m_paintOffset), containerBox.cachedSizeForOverflowClip());
-            m_paintOffset -= containerBox.scrolledContentOffset();
+            m_paintOffset -= toLayoutSize(containerBox.scrollPosition());
         }
     }
 }

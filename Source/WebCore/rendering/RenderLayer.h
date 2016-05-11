@@ -758,10 +758,6 @@ private:
     typedef unsigned UpdateLayerPositionsAfterScrollFlags;
     void updateLayerPositionsAfterScroll(RenderGeometryMap*, UpdateLayerPositionsAfterScrollFlags = NoFlag);
 
-    friend IntSize RenderBox::scrolledContentOffset() const;
-    // FIXME: rename this toscrolledContentPosition(), or remove it.
-    IntSize scrolledContentOffset() const { return toIntSize(m_scrollPosition); }
-
     ScrollOffset clampScrollOffset(const ScrollOffset&) const;
 
     RenderLayer* enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer, PaginationInclusionMode) const;

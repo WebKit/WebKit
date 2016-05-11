@@ -574,7 +574,7 @@ public:
     virtual bool needsPreferredWidthsRecalculation() const;
     virtual void computeIntrinsicRatioInformation(FloatSize& /* intrinsicSize */, double& /* intrinsicRatio */) const { }
 
-    IntSize scrolledContentOffset() const;
+    ScrollPosition scrollPosition() const;
     LayoutSize cachedSizeForOverflowClip() const;
     void applyCachedClipAndScrollOffsetForRepaint(LayoutRect& paintRect) const;
 

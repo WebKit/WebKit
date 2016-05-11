@@ -1318,7 +1318,7 @@ LayoutSize RenderInline::offsetFromContainer(RenderElement& container, const Lay
         offset += offsetForInFlowPosition();
 
     if (is<RenderBox>(container))
-        offset -= downcast<RenderBox>(container).scrolledContentOffset();
+        offset -= toLayoutSize(downcast<RenderBox>(container).scrollPosition());
 
     if (offsetDependsOnPoint)
         *offsetDependsOnPoint = (is<RenderBox>(container) && container.style().isFlippedBlocksWritingMode()) || is<RenderFlowThread>(container);

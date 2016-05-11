@@ -727,8 +727,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         context.clip(thisBox.overflowClipRect(rect.location(), currentRenderNamedFlowFragment()));
         
         // Adjust the paint rect to reflect a scrolled content box with borders at the ends.
-        IntSize offset = thisBox.scrolledContentOffset();
-        scrolledPaintRect.move(-offset);
+        scrolledPaintRect.moveBy(-thisBox.scrollPosition());
         scrolledPaintRect.setWidth(bLeft + layer()->scrollWidth() + bRight);
         scrolledPaintRect.setHeight(borderTop() + layer()->scrollHeight() + borderBottom());
     }

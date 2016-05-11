@@ -1,5 +1,59 @@
 2016-05-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove scrolledContentOffset() from rendering code
+        https://bugs.webkit.org/show_bug.cgi?id=157552
+
+        Reviewed by Zalan Bujtas.
+
+        scrolledContentOffset() is misleading because it returns a scrollPosition().
+        Just use the name scrollPosition(), returning a ScrollPosition (IntPoint),
+        and fix callers that need to convert to layout size.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::absoluteLineDirectionPointToLocalPointInBlock):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        (WebCore::RenderBlock::paintSelection):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::offsetForContents):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrollPosition):
+        (WebCore::RenderBox::applyCachedClipAndScrollOffsetForRepaint):
+        (WebCore::isCandidateForOpaquenessTest):
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        (WebCore::RenderBox::scrolledContentOffset): Deleted.
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::offsetFromContainer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::mapLayerClipRectsToFragmentationLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::offsetFromContainer):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::pushMappingToContainer):
+        (WebCore::RenderObject::mapAbsoluteToLocalPoint):
+        (WebCore::RenderObject::offsetFromContainer):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::hitInnerTextElement):
+
+2016-05-10  Simon Fraser  <simon.fraser@apple.com>
+
         Horizontally-scrollable items with a 3d transform are rendered incorrectly in RTL when container has -webkit-overflow-scroll: touch
         https://bugs.webkit.org/show_bug.cgi?id=157482
         rdar://problem/26204794

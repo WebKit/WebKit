@@ -990,14 +990,13 @@ bool RenderBox::needsPreferredWidthsRecalculation() const
     return style().paddingStart().isPercentOrCalculated() || style().paddingEnd().isPercentOrCalculated();
 }
 
-IntSize RenderBox::scrolledContentOffset() const
+ScrollPosition RenderBox::scrollPosition() const
 {
     if (!hasOverflowClip())
-        return IntSize();
+        return { 0, 0 };
 
     ASSERT(hasLayer());
-    // FIXME: Renderer code needs scrollOffset/scrollPosition disambiguation.
-    return layer()->scrolledContentOffset();
+    return layer()->scrollPosition();
 }
 
 LayoutSize RenderBox::cachedSizeForOverflowClip() const
@@ -1010,7 +1009,7 @@ LayoutSize RenderBox::cachedSizeForOverflowClip() const
 void RenderBox::applyCachedClipAndScrollOffsetForRepaint(LayoutRect& paintRect) const
 {
     flipForWritingMode(paintRect);
-    paintRect.move(-scrolledContentOffset()); // For overflow:auto/scroll/hidden.
+    paintRect.moveBy(-scrollPosition()); // For overflow:auto/scroll/hidden.
 
     // Do not clip scroll layer contents to reduce the number of repaints while scrolling.
     if (usesCompositedScrolling()) {
@@ -1476,7 +1475,7 @@ static bool isCandidateForOpaquenessTest(const RenderBox& childBox)
             return false;
         if (childLayer->hasTransform() || childLayer->isTransparent() || childLayer->hasFilter())
             return false;
-        if (!childBox.scrolledContentOffset().isZero())
+        if (!childBox.scrollPosition().isZero())
             return false;
     }
     return true;
@@ -2108,7 +2107,7 @@ LayoutSize RenderBox::offsetFromContainer(RenderElement& renderer, const LayoutP
         offset += topLeftLocationOffset();
 
     if (is<RenderBox>(renderer))
-        offset -= downcast<RenderBox>(renderer).scrolledContentOffset();
+        offset -= toLayoutSize(downcast<RenderBox>(renderer).scrollPosition());
 
     if (style().position() == AbsolutePosition && renderer.isInFlowPositioned() && is<RenderInline>(renderer))
         offset += downcast<RenderInline>(renderer).offsetForInFlowPositionedInline(this);
@@ -4938,7 +4937,7 @@ LayoutRect RenderBox::overflowRectForPaintRejection(RenderNamedFlowFragment* nam
         return overflowRect;
 
     overflowRect.unite(layoutOverflowRect());
-    overflowRect.move(-scrolledContentOffset());
+    overflowRect.moveBy(-scrollPosition());
     return overflowRect;
 }
 

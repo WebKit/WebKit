@@ -1248,7 +1248,7 @@ void RenderObject::mapLocalToContainer(const RenderLayerModelObject* repaintCont
     }
 
     if (is<RenderBox>(*parent))
-        transformState.move(-downcast<RenderBox>(*parent).scrolledContentOffset());
+        transformState.move(-toLayoutSize(downcast<RenderBox>(*parent).scrollPosition()));
 
     parent->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
 }
@@ -1264,7 +1264,7 @@ const RenderObject* RenderObject::pushMappingToContainer(const RenderLayerModelO
     // FIXME: this should call offsetFromContainer to share code, but I'm not sure it's ever called.
     LayoutSize offset;
     if (is<RenderBox>(*container))
-        offset = -downcast<RenderBox>(*container).scrolledContentOffset();
+        offset = -toLayoutSize(downcast<RenderBox>(*container).scrollPosition());
 
     geometryMap.push(this, offset, false);
     
@@ -1276,7 +1276,7 @@ void RenderObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformSt
     if (auto* parent = this->parent()) {
         parent->mapAbsoluteToLocalPoint(mode, transformState);
         if (is<RenderBox>(*parent))
-            transformState.move(downcast<RenderBox>(*parent).scrolledContentOffset());
+            transformState.move(toLayoutSize(downcast<RenderBox>(*parent).scrollPosition()));
     }
 }
 
@@ -1342,7 +1342,7 @@ LayoutSize RenderObject::offsetFromContainer(RenderElement& container, const Lay
 
     LayoutSize offset;
     if (is<RenderBox>(container))
-        offset -= downcast<RenderBox>(container).scrolledContentOffset();
+        offset -= toLayoutSize(downcast<RenderBox>(container).scrollPosition());
 
     if (offsetDependsOnPoint)
         *offsetDependsOnPoint = is<RenderFlowThread>(container);
