@@ -332,20 +332,20 @@ void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdenti
     transaction->commit();
 }
 
-void IDBServer::didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier& transactionIdentifier)
+void IDBServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
-    LOG(IndexedDB, "IDBServer::didFinishHandlingVersionChangeTransaction");
+    LOG(IndexedDB, "IDBServer::didFinishHandlingVersionChangeTransaction - %s", transactionIdentifier.loggingString().utf8().data());
 
-    auto transaction = m_transactions.get(transactionIdentifier);
-    if (!transaction)
+    auto* connection = m_databaseConnections.get(databaseConnectionIdentifier);
+    if (!connection)
         return;
 
-    transaction->didFinishHandlingVersionChange();
+    connection->didFinishHandlingVersionChange(transactionIdentifier);
 }
 
 void IDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
-    LOG(IndexedDB, "IDBServer::databaseConnectionClosed");
+    LOG(IndexedDB, "IDBServer::databaseConnectionClosed - %" PRIu64, databaseConnectionIdentifier);
 
     auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
@@ -375,6 +375,17 @@ void IDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier,
 
     if (auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier))
         databaseConnection->didFireVersionChangeEvent(requestIdentifier);
+}
+
+void IDBServer::openDBRequestCancelled(const IDBRequestData& requestData)
+{
+    LOG(IndexedDB, "IDBServer::openDBRequestCancelled");
+
+    auto* uniqueIDBDatabase = m_uniqueIDBDatabaseMap.get(requestData.databaseIdentifier());
+    if (!uniqueIDBDatabase)
+        return;
+
+    uniqueIDBDatabase->openDBRequestCancelled(requestData.requestIdentifier());
 }
 
 void IDBServer::getAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID)

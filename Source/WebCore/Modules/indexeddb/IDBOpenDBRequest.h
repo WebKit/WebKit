@@ -56,6 +56,8 @@ private:
 
     bool dispatchEvent(Event&) final;
 
+    void cancelForStop() final;
+
     void onError(const IDBResultData&);
     void onSuccess(const IDBResultData&);
     void onUpgradeNeeded(const IDBResultData&);

@@ -268,12 +268,12 @@ void IDBConnectionToServer::didCommitTransaction(const IDBResourceIdentifier& tr
     m_proxy->didCommitTransaction(transactionIdentifier, error);
 }
 
-void IDBConnectionToServer::didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier& transactionIdentifier)
+void IDBConnectionToServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didFinishHandlingVersionChangeTransaction");
     ASSERT(isMainThread());
 
-    m_delegate->didFinishHandlingVersionChangeTransaction(transactionIdentifier);
+    m_delegate->didFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier);
 }
 
 void IDBConnectionToServer::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
@@ -322,6 +322,14 @@ void IDBConnectionToServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifi
     ASSERT(isMainThread());
 
     m_proxy->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
+}
+
+void IDBConnectionToServer::openDBRequestCancelled(const IDBRequestData& requestData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::openDBRequestCancelled");
+    ASSERT(isMainThread());
+
+    m_delegate->openDBRequestCancelled(requestData);
 }
 
 void IDBConnectionToServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)

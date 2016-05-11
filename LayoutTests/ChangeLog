@@ -1,3 +1,15 @@
+2016-05-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: IDBOpenDBRequests that are stop()'ed don't notify the IDBServer of that fact.
+        https://bugs.webkit.org/show_bug.cgi?id=157448
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * storage/indexeddb/pending-version-change-stuck-private-expected.txt:
+        * storage/indexeddb/pending-version-change-stuck-works-with-terminate-expected.txt:
+        * storage/indexeddb/pending-version-change-stuck-works-with-terminate-private-expected.txt:
+
 2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Improve error messages for accessing arguments.callee and similar getters in strict mode

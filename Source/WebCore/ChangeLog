@@ -1,3 +1,81 @@
+2016-05-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: IDBOpenDBRequests that are stop()'ed don't notify the IDBServer of that fact.
+        https://bugs.webkit.org/show_bug.cgi?id=157448
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Previously skipped tests cover new behavior, and are now unskipped).
+
+        There's two main parts to this patch:
+        
+        1 - When an IDBOpenDBRequest is stop()'ed due to page navigation or worker termination,
+            we now notify the IDBServer of that.
+        2 - Lot's of little tweaks to UniqueIDBDatabase to handle shutting down version change
+            transactions and/or connections related to the cancelled openDB request.
+            
+        Fortunately the changes to UniqueIDBDatabase were all well covered by existing tests.
+        
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit):
+        (WebCore::IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion):
+        (WebCore::IDBOpenDBRequest::cancelForStop):
+        (WebCore::IDBOpenDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBOpenDBRequest.h:
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::stop):
+        (WebCore::IDBRequest::cancelForStop):
+        * Modules/indexeddb/IDBRequest.h:
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::openDBRequestCancelled):
+        (WebCore::IDBClient::IDBConnectionProxy::didFinishHandlingVersionChangeTransaction):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::didFinishHandlingVersionChangeTransaction):
+        (WebCore::IDBClient::IDBConnectionToServer::openDBRequestCancelled):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::didFinishHandlingVersionChangeTransaction):
+        (WebCore::IDBServer::IDBServer::databaseConnectionClosed):
+        (WebCore::IDBServer::IDBServer::openDBRequestCancelled):
+        * Modules/indexeddb/server/IDBServer.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleCurrentOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::openDBRequestCancelled):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCommitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformCommitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::didFinishHandlingVersionChange):
+        (WebCore::IDBServer::UniqueIDBDatabase::performAbortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformAbortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabase::transactionCompleted):
+        (WebCore::IDBServer::UniqueIDBDatabase::forgetErrorCallback):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::abortTransactionWithoutCallback):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didFinishHandlingVersionChange):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::didFinishHandlingVersionChange): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::didFinishHandlingVersionChangeTransaction):
+        (WebCore::InProcessIDBServer::openDBRequestCancelled):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
 2016-05-11  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r200686.

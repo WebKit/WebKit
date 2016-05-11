@@ -293,6 +293,11 @@ void IDBConnectionProxy::notifyOpenDBRequestBlocked(const IDBResourceIdentifier&
     performCallbackOnCorrectThread(*request, &IDBOpenDBRequest::requestBlocked, oldVersion, newVersion);
 }
 
+void IDBConnectionProxy::openDBRequestCancelled(const IDBRequestData& requestData)
+{
+    callConnectionOnMainThread(&IDBConnectionToServer::openDBRequestCancelled, requestData);
+}
+
 void IDBConnectionProxy::establishTransaction(IDBTransaction& transaction)
 {
     {
@@ -373,9 +378,9 @@ bool IDBConnectionProxy::hasRecordOfTransaction(const IDBTransaction& transactio
     return m_pendingTransactions.contains(identifier) || m_committingTransactions.contains(identifier) || m_abortingTransactions.contains(identifier);
 }
 
-void IDBConnectionProxy::didFinishHandlingVersionChangeTransaction(IDBTransaction& transaction)
+void IDBConnectionProxy::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, IDBTransaction& transaction)
 {
-    callConnectionOnMainThread(&IDBConnectionToServer::didFinishHandlingVersionChangeTransaction, transaction.info().identifier());
+    callConnectionOnMainThread(&IDBConnectionToServer::didFinishHandlingVersionChangeTransaction, databaseConnectionIdentifier, transaction.info().identifier());
 }
 
 void IDBConnectionProxy::databaseConnectionClosed(IDBDatabase& database)

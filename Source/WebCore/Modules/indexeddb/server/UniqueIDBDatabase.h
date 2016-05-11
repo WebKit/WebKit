@@ -96,10 +96,11 @@ public:
     void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count, GetResultCallback);
     void commitTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
     void abortTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
-    void didFinishHandlingVersionChange(UniqueIDBDatabaseTransaction&);
+    void didFinishHandlingVersionChange(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& transactionIdentifier);
     void transactionDestroyed(UniqueIDBDatabaseTransaction&);
     void connectionClosedFromClient(UniqueIDBDatabaseConnection&);
     void didFireVersionChangeEvent(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier);
+    void openDBRequestCancelled(const IDBResourceIdentifier& requestIdentifier);
 
     void enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&&);
 
@@ -174,6 +175,8 @@ private:
     void performGetResultCallback(uint64_t callbackIdentifier, const IDBError&, const IDBGetResult&);
     void performCountCallback(uint64_t callbackIdentifier, const IDBError&, uint64_t);
 
+    void forgetErrorCallback(uint64_t callbackIdentifier);
+
     bool hasAnyPendingCallbacks() const;
     bool isCurrentlyInUse() const;
     bool hasUnfinishedTransactions() const;
@@ -187,7 +190,7 @@ private:
     IDBServer& m_server;
     IDBDatabaseIdentifier m_identifier;
     
-    Deque<Ref<ServerOpenDBRequest>> m_pendingOpenDBRequests;
+    ListHashSet<RefPtr<ServerOpenDBRequest>> m_pendingOpenDBRequests;
     RefPtr<ServerOpenDBRequest> m_currentOpenDBRequest;
 
     ListHashSet<RefPtr<UniqueIDBDatabaseConnection>> m_openDatabaseConnections;

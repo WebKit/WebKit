@@ -241,11 +241,11 @@ void InProcessIDBServer::commitTransaction(const IDBResourceIdentifier& resource
     });
 }
 
-void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier& transactionIdentifier)
+void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
     RefPtr<InProcessIDBServer> self(this);
-    RunLoop::current().dispatch([this, self, transactionIdentifier] {
-        m_server->didFinishHandlingVersionChangeTransaction(transactionIdentifier);
+    RunLoop::current().dispatch([this, self, databaseConnectionIdentifier, transactionIdentifier] {
+        m_server->didFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier);
     });
 }
 
@@ -396,6 +396,14 @@ void InProcessIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionId
     RefPtr<InProcessIDBServer> self(this);
     RunLoop::current().dispatch([this, self, databaseConnectionIdentifier, requestIdentifier] {
         m_server->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier);
+    });
+}
+
+void InProcessIDBServer::openDBRequestCancelled(const IDBRequestData& requestData)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, requestData] {
+        m_server->openDBRequestCancelled(requestData);
     });
 }
 

@@ -84,7 +84,7 @@ void IDBOpenDBRequest::versionChangeTransactionDidFinish()
 
 void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
 {
-    LOG(IndexedDB, "IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()");
+    LOG(IndexedDB, "IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit() - %s", resourceIdentifier().loggingString().utf8().data());
 
     ASSERT(currentThread() == originThreadID());
     ASSERT(hasPendingActivity());
@@ -98,7 +98,7 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
 
 void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
 {
-    LOG(IndexedDB, "IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()");
+    LOG(IndexedDB, "IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion() - %s", resourceIdentifier().loggingString().utf8().data());
 
     ASSERT(currentThread() == originThreadID());
     ASSERT(hasPendingActivity());
@@ -111,6 +111,11 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, true, true, *this));
 }
 
+void IDBOpenDBRequest::cancelForStop()
+{
+    connectionProxy().openDBRequestCancelled({ connectionProxy(), *this });
+}
+
 bool IDBOpenDBRequest::dispatchEvent(Event& event)
 {
     ASSERT(currentThread() == originThreadID());
@@ -118,7 +123,7 @@ bool IDBOpenDBRequest::dispatchEvent(Event& event)
     bool result = IDBRequest::dispatchEvent(event);
 
     if (m_transaction && m_transaction->isVersionChange() && (event.type() == eventNames().errorEvent || event.type() == eventNames().successEvent))
-        m_transaction->database().connectionProxy().didFinishHandlingVersionChangeTransaction(*m_transaction);
+        m_transaction->database().connectionProxy().didFinishHandlingVersionChangeTransaction(m_transaction->database().databaseConnectionIdentifier(), *m_transaction);
 
     return result;
 }

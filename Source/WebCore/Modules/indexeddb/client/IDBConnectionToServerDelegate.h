@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBConnectionToServerDelegate_h
-#define IDBConnectionToServerDelegate_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -60,7 +59,7 @@ public:
     virtual void openDatabase(const IDBRequestData&) = 0;
     virtual void abortTransaction(const IDBResourceIdentifier&) = 0;
     virtual void commitTransaction(const IDBResourceIdentifier&) = 0;
-    virtual void didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier&) = 0;
+    virtual void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier&) = 0;
     virtual void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) = 0;
     virtual void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) = 0;
     virtual void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier) = 0;
@@ -77,6 +76,7 @@ public:
     virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) = 0;
     virtual void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier) = 0;
     virtual void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier) = 0;
+    virtual void openDBRequestCancelled(const IDBRequestData&) = 0;
 
     virtual void getAllDatabaseNames(const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID) = 0;
 
@@ -88,4 +88,3 @@ public:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBConnectionToServerDelegate_h

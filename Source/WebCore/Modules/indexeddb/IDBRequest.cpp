@@ -242,9 +242,16 @@ void IDBRequest::stop()
     ASSERT(currentThread() == m_originThreadID);
     ASSERT(!m_contextStopped);
 
+    cancelForStop();
+
     removeAllEventListeners();
 
     m_contextStopped = true;
+}
+
+void IDBRequest::cancelForStop()
+{
+    // The base IDBRequest class has nothing additional to do here.
 }
 
 void IDBRequest::enqueueEvent(Ref<Event>&& event)

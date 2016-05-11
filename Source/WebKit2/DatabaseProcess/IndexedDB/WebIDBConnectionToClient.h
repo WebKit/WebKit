@@ -88,7 +88,7 @@ public:
     void openDatabase(const WebCore::IDBRequestData&);
     void abortTransaction(const WebCore::IDBResourceIdentifier&);
     void commitTransaction(const WebCore::IDBResourceIdentifier&);
-    void didFinishHandlingVersionChangeTransaction(const WebCore::IDBResourceIdentifier&);
+    void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&);
     void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&);
     void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName);
     void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier);
@@ -105,6 +105,7 @@ public:
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier);
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier);
+    void openDBRequestCancelled(const WebCore::IDBRequestData&);
 
     void getAllDatabaseNames(uint64_t serverConnectionIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID);
 

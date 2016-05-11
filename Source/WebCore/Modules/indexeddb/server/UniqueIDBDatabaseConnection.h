@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UniqueIDBDatabaseConnection_h
-#define UniqueIDBDatabaseConnection_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -74,6 +73,7 @@ public:
     void didCreateIndex(const IDBResultData&);
     void didDeleteIndex(const IDBResultData&);
     void didFireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier);
+    void didFinishHandlingVersionChange(const IDBResourceIdentifier& transactionIdentifier);
 
     void abortTransactionWithoutCallback(UniqueIDBDatabaseTransaction&);
 
@@ -94,4 +94,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // UniqueIDBDatabaseConnection_h

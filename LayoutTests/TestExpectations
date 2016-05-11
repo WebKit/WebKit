@@ -913,12 +913,6 @@ webkit.org/b/154619 storage/indexeddb/odd-strings.html [ Skip ]
 # Could be a SessionID difference? Something is giving the worker a different namespace.
 storage/indexeddb/dont-commit-on-blocked-private.html [ Failure ]
 
-# IDB workers tests that timeout
-storage/indexeddb/pending-version-change-stuck.html
-storage/indexeddb/pending-version-change-stuck-private.html
-storage/indexeddb/pending-version-change-stuck-works-with-terminate.html
-storage/indexeddb/pending-version-change-stuck-works-with-terminate-private.html
-
 # Test's behavior specific to Legacy IDB with LevelDB backend
 # Modern IDB is spec-compliant without supporting this behavior
 storage/indexeddb/transaction-starvation.html [ Skip ]

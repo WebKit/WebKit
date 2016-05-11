@@ -49,7 +49,7 @@ public:
     void openDatabase(const WebCore::IDBRequestData&) final;
     void abortTransaction(const WebCore::IDBResourceIdentifier&) final;
     void commitTransaction(const WebCore::IDBResourceIdentifier&) final;
-    void didFinishHandlingVersionChangeTransaction(const WebCore::IDBResourceIdentifier&) final;
+    void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&) final;
     void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&) final;
     void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName) final;
     void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier) final;
@@ -65,6 +65,8 @@ public:
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) final;
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier) final;
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier) final;
+    void openDBRequestCancelled(const WebCore::IDBRequestData&) final;
+
     void getAllDatabaseNames(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID) final;
 
     void ref() override { RefCounted<WebIDBConnectionToServer>::ref(); }

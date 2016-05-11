@@ -27,7 +27,7 @@ messages -> WebIDBConnectionToClient {
     OpenDatabase(WebCore::IDBRequestData requestData);
     AbortTransaction(WebCore::IDBResourceIdentifier transactionIdentifier);
     CommitTransaction(WebCore::IDBResourceIdentifier transactionIdentifier);
-    DidFinishHandlingVersionChangeTransaction(WebCore::IDBResourceIdentifier transactionIdentifier);
+    DidFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier);
     CreateObjectStore(WebCore::IDBRequestData requestData, WebCore::IDBObjectStoreInfo info);
     DeleteObjectStore(WebCore::IDBRequestData requestData, String objectStoreName);
     ClearObjectStore(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier);
@@ -44,6 +44,7 @@ messages -> WebIDBConnectionToClient {
     DatabaseConnectionClosed(uint64_t databaseConnectionIdentifier);
     AbortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier);
     DidFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier);
+    OpenDBRequestCancelled(WebCore::IDBRequestData requestData);
 
     GetAllDatabaseNames(uint64_t serverConnectionIdentifier, struct WebCore::SecurityOriginData topOrigin, struct WebCore::SecurityOriginData openingOrigin, uint64_t callbackID);
 }

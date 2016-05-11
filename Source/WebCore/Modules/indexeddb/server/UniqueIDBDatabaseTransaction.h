@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UniqueIDBDatabaseTransaction_h
-#define UniqueIDBDatabaseTransaction_h
+#pragma once
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -80,7 +79,6 @@ public:
     void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count);
 
     void didActivateInBackingStore(const IDBError&);
-    void didFinishHandlingVersionChange();
 
     const Vector<uint64_t>& objectStoreIdentifiers();
 
@@ -99,4 +97,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // UniqueIDBDatabaseTransaction_h
