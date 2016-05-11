@@ -484,12 +484,16 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     _scriptRemoved(event)
     {
-        let script = event.data.script;
-        let scriptTreeElement = this._breakpointsContentTreeOutline.getCachedTreeElement(script);
-        if (!scriptTreeElement)
-            return;
+        function removeScript(script, treeOutline)
+        {
+            let scriptTreeElement = treeOutline.getCachedTreeElement(script);
+            if (scriptTreeElement)
+                scriptTreeElement.parent.removeChild(scriptTreeElement);
+        }
 
-        scriptTreeElement.parent.removeChild(scriptTreeElement);
+        let script = event.data.script;
+        removeScript(script, this._breakpointsContentTreeOutline);
+        removeScript(script, this._scriptsContentTreeOutline);
     }
 
     _scriptsCleared(event)
