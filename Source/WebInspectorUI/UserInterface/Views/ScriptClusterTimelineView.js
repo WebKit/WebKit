@@ -62,6 +62,7 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
 
     // FIXME: Determine a better way to bridge TimelineView methods to the sub-timeline views.
     get showsLiveRecordingData() { return this._contentViewContainer.currentContentView.showsLiveRecordingData; }
+    get showsFilterBar() { return this._contentViewContainer.currentContentView.showsFilterBar; }
     get zeroTime() { return this._contentViewContainer.currentContentView.zeroTime; }
     set zeroTime(x) { this._contentViewContainer.currentContentView.zeroTime = x; }
     get startTime() { return this._contentViewContainer.currentContentView.startTime; }

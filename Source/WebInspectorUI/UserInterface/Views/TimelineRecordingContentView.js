@@ -275,6 +275,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._timelineOverview.viewMode = newViewMode;
         this._updateTimelineOverviewHeight();
         this._updateProgressView();
+        this._updateFilterBar();
 
         if (timelineView) {
             this._updateTimelineViewTimes(timelineView);
@@ -316,6 +317,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
     {
         if (event.target !== this._timelineContentBrowser.currentContentView)
             return;
+
+        this._updateFilterBar();
 
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
 
@@ -738,5 +741,10 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
     {
         let isCapturing = WebInspector.timelineManager.isCapturing();
         this._progressView.visible = isCapturing && this.currentTimelineView && !this.currentTimelineView.showsLiveRecordingData;
+    }
+
+    _updateFilterBar()
+    {
+        this._filterBarNavigationItem.hidden = !this.currentTimelineView || !this.currentTimelineView.showsFilterBar;
     }
 };

@@ -1,3 +1,45 @@
+2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Hide filter bar in TimelineViews where it is not needed or not yet working
+        https://bugs.webkit.org/show_bug.cgi?id=157583
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView.prototype.get showsFilterBar):
+        (WebInspector.HeapAllocationsTimelineView.prototype.layout):
+        (WebInspector.HeapAllocationsTimelineView.prototype.updateFilter):
+        Filter bar not yet hooked up for HeapSnapshot views.
+        Make filtering work for the main timeline grid.
+        It doesn't use the normal TimelineView filter based on selected range.
+        This is intentional because it may be the case that a snapshot happens
+        outside the selected time range (via the navigation bar button) and
+        we want to show it. Otherwise a user might be confused why it is not
+        showing up in the list.
+
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WebInspector.MemoryTimelineView.prototype.get showsFilterBar):
+        Filter bar not needed in the Memory timeline view.
+
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WebInspector.ScriptClusterTimelineView.prototype.get showsFilterBar):
+        Filter bar works for the Events timeline view.
+
+        * UserInterface/Views/ScriptProfileTimelineView.js:
+        (WebInspector.ScriptProfileTimelineView.prototype.get showsFilterBar):
+        Filter bar not yet hooked up for Profile views.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._contentViewSelectionPathComponentDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._updateFilterBar):
+        Update the filter bar when the selection path components change, since
+        that triggers when arbitrarily deep sub-content-views change.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.get showsFilterBar):
+        Default is yes.
+
 2016-05-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Avoid unnecessary timeout identifier churn in TimelineManager
