@@ -1,3 +1,16 @@
+2016-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Horizontally-scrollable items with a 3d transform are rendered incorrectly in RTL when container has -webkit-overflow-scroll: touch
+        https://bugs.webkit.org/show_bug.cgi?id=157482
+        rdar://problem/26204794
+
+        Reviewed by Zalan Bujtas.
+        
+        This can't be a ref test because on iOS ref test snapshots are doing by drawing, not by snapshotting layers.
+
+        * compositing/rtl/rtl-with-transformed-descendants-expected.txt: Added.
+        * compositing/rtl/rtl-with-transformed-descendants.html: Added.
+
 2016-05-10  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed EFL Gardening on 10th May.

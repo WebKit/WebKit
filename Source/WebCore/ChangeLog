@@ -1,3 +1,20 @@
+2016-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Horizontally-scrollable items with a 3d transform are rendered incorrectly in RTL when container has -webkit-overflow-scroll: touch
+        https://bugs.webkit.org/show_bug.cgi?id=157482
+        rdar://problem/26204794
+
+        Reviewed by Zalan Bujtas.
+
+        The compositing code was confused about scroll offsets vs. scroll positions, because
+        of the badly named scrolledContentOffset(); we used that in one place, and scrollOffset()
+        lower down. Change both to use scrollOffset().
+
+        Test: compositing/rtl/rtl-with-transformed-descendants.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+
 2016-05-10  Enrica Casucci  <enrica@apple.com>
 
         Numerous block selection issues on iOS.

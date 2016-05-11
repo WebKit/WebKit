@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <style type="text/css">
+        #scroller {
+            overflow-x: auto;
+            width: 400px;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            border: 2px solid black;
+        }
+
+        .tile {
+            position: relative;
+            width: 150px;
+            height: 200px;
+            background-color: silver;
+            display: inline-block;
+        }
+
+        .translated {
+            background-color: green;
+            transform: translateZ(0);
+            transform-origin: top left;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function dumpLayers()
+        {
+            document.getElementById('layertree').textContent = window.internals.layerTreeAsText(document);
+        }
+        window.addEventListener('load', dumpLayers, false);
+    </script>
+  </head>
+  <body>
+    <div id="scroller" dir="rtl">
+      <div class="tile"></div>
+      <div class="translated tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+    </div>
+    <pre id="layertree"></pre>
+  </body>
+</html>
