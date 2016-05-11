@@ -362,6 +362,11 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 
 RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
 {
+    if (Options::logExecutableAllocation()) {
+        MetaAllocator::Statistics stats = allocator->currentStatistics();
+        dataLog("Allocating ", sizeInBytes, " bytes of executable memory with ", stats.bytesAllocated, " bytes allocated, ", stats.bytesReserved, " bytes reserved, and ", stats.bytesCommitted, " committed.\n");
+    }
+    
     if (effort != JITCompilationCanFail && Options::reportMustSucceedExecutableAllocations()) {
         dataLog("Allocating ", sizeInBytes, " bytes of executable memory with JITCompilationMustSucceed.\n");
         WTFReportBacktrace();

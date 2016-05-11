@@ -123,7 +123,7 @@ RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBloc
 bool JITCode::checkIfOptimizationThresholdReached(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
-    return tierUpCounter.checkIfThresholdCrossedAndSet(codeBlock->baselineVersion());
+    return tierUpCounter.checkIfThresholdCrossedAndSet(codeBlock);
 }
 
 void JITCode::optimizeNextInvocation(CodeBlock* codeBlock)
@@ -131,7 +131,7 @@ void JITCode::optimizeNextInvocation(CodeBlock* codeBlock)
     ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
     if (Options::verboseOSR())
         dataLog(*codeBlock, ": FTL-optimizing next invocation.\n");
-    tierUpCounter.setNewThreshold(0, codeBlock->baselineVersion());
+    tierUpCounter.setNewThreshold(0, codeBlock);
 }
 
 void JITCode::dontOptimizeAnytimeSoon(CodeBlock* codeBlock)
@@ -161,7 +161,7 @@ void JITCode::optimizeSoon(CodeBlock* codeBlock)
     CodeBlock* baseline = codeBlock->baselineVersion();
     tierUpCounter.setNewThreshold(
         baseline->adjustedCounterValue(Options::thresholdForFTLOptimizeSoon()),
-        baseline);
+        codeBlock);
 }
 
 void JITCode::forceOptimizationSlowPathConcurrently(CodeBlock* codeBlock)

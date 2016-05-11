@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "CodeBlock.h"
 #include "ExecutableAllocator.h"
 #include "JSCInlines.h"
+#include "VMInlines.h"
 #include <wtf/StringExtras.h>
 
 namespace JSC {
@@ -78,7 +79,7 @@ double applyMemoryUsageHeuristics(int32_t value, CodeBlock* codeBlock)
 #if ENABLE(JIT)
     double multiplier =
         ExecutableAllocator::memoryPressureMultiplier(
-            codeBlock->predictedMachineCodeSize());
+            codeBlock->baselineAlternative()->predictedMachineCodeSize());
 #else
     // This code path will probably not be taken, but if it is, we fake it.
     double multiplier = 1.0;
@@ -123,9 +124,15 @@ bool ExecutionCounter<countingVariant>::hasCrossedThreshold(CodeBlock* codeBlock
     
     double modifiedThreshold = applyMemoryUsageHeuristics(m_activeThreshold, codeBlock);
     
-    return static_cast<double>(m_totalCount) + m_counter >=
-        modifiedThreshold - static_cast<double>(
-            std::min(m_activeThreshold, maximumExecutionCountsBetweenCheckpoints())) / 2;
+    double actualCount = static_cast<double>(m_totalCount) + m_counter;
+    double desiredCount = modifiedThreshold - static_cast<double>(
+        std::min(m_activeThreshold, maximumExecutionCountsBetweenCheckpoints())) / 2;
+    
+    bool result = actualCount >= desiredCount;
+    
+    CODEBLOCK_LOG_EVENT(codeBlock, "thresholdCheck", ("activeThreshold = ", m_activeThreshold, ", modifiedThreshold = ", modifiedThreshold, ", actualCount = ", actualCount, ", desiredCount = ", desiredCount));
+    
+    return result;
 }
 
 template<CountingVariant countingVariant>

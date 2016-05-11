@@ -1,3 +1,30 @@
+2016-05-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Beef up JSC profiler event log
+        https://bugs.webkit.org/show_bug.cgi?id=157584
+
+        Reviewed by Saam Barati.
+        
+        Also log more about compilation.
+
+        * bytecode/ExecutionCounter.cpp: Changed the meaning of codeBlock to be the codeBlock that is doing the profiling. This will now get the baseline version if it needs it. This is needed for logging the threshold checking event.
+        (JSC::applyMemoryUsageHeuristics):
+        (JSC::ExecutionCounter<countingVariant>::hasCrossedThreshold):
+        * dfg/DFGJITCode.cpp: Pass the right codeBlock.
+        (JSC::DFG::JITCode::checkIfOptimizationThresholdReached):
+        (JSC::DFG::JITCode::optimizeNextInvocation):
+        (JSC::DFG::JITCode::dontOptimizeAnytimeSoon):
+        (JSC::DFG::JITCode::optimizeSoon):
+        (JSC::DFG::JITCode::forceOptimizationSlowPathConcurrently):
+        * dfg/DFGPlan.cpp: Log things about compile times and whether the compiler succeeded or failed.
+        (JSC::DFG::Plan::computeCompileTimes):
+        (JSC::DFG::Plan::reportCompileTimes):
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        * jit/ExecutableAllocatorFixedVMPool.cpp: Make it possible to look at memory usage, though separately from the log, for now.
+        (JSC::ExecutableAllocator::allocate):
+        * runtime/Options.h:
+
 2016-05-11  Saam barati  <sbarati@apple.com>
 
         Air may decide to put the result register of an arithmetic snippet in the tag register

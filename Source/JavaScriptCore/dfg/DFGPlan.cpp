@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,6 +79,7 @@
 #include "OperandsInlines.h"
 #include "ProfilerDatabase.h"
 #include "TrackedReferences.h"
+#include "VMInlines.h"
 #include <wtf/CurrentTime.h>
 
 #if ENABLE(FTL_JIT)
@@ -158,7 +159,8 @@ Plan::~Plan()
 bool Plan::computeCompileTimes() const
 {
     return reportCompileTimes()
-        || Options::reportTotalCompileTimes();
+        || Options::reportTotalCompileTimes()
+        || vm.m_perBytecodeProfiler;
 }
 
 bool Plan::reportCompileTimes() const
@@ -202,28 +204,31 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
                 totalDFGCompileTime += after - before;
         }
     }
+    const char* pathName = nullptr;
+    switch (path) {
+    case FailPath:
+        pathName = "N/A (fail)";
+        break;
+    case DFGPath:
+        pathName = "DFG";
+        break;
+    case FTLPath:
+        pathName = "FTL";
+        break;
+    case CancelPath:
+        pathName = "Cancelled";
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+    if (codeBlock) { // codeBlock will be null if the compilation was cancelled.
+        if (path == FTLPath)
+            CODEBLOCK_LOG_EVENT(codeBlock, "ftlCompile", ("took ", after - before, " ms (DFG: ", m_timeBeforeFTL - before, ", B3: ", after - m_timeBeforeFTL, ") with ", pathName));
+        else
+            CODEBLOCK_LOG_EVENT(codeBlock, "dfgCompile", ("took ", after - before, " ms with ", pathName));
+    }
     if (UNLIKELY(reportCompileTimes())) {
-        const char* pathName;
-        switch (path) {
-        case FailPath:
-            pathName = "N/A (fail)";
-            break;
-        case DFGPath:
-            pathName = "DFG";
-            break;
-        case FTLPath:
-            pathName = "FTL";
-            break;
-        case CancelPath:
-            pathName = "Cancelled";
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
-            pathName = "";
-#endif
-            break;
-        }
         dataLog("Optimized ", codeBlockName, " using ", mode, " with ", pathName, " into ", finalizer ? finalizer->codeSize() : 0, " bytes in ", after - before, " ms");
         if (path == FTLPath)
             dataLog(" (DFG: ", m_timeBeforeFTL - before, ", B3: ", after - m_timeBeforeFTL, ")");
@@ -558,8 +563,10 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
     // We will establish new references from the code block to things. So, we need a barrier.
     vm.heap.writeBarrier(codeBlock);
     
-    if (!isStillValid())
+    if (!isStillValid()) {
+        CODEBLOCK_LOG_EVENT(codeBlock, "dfgFinalize", ("invalidated"));
         return CompilationInvalidated;
+    }
 
     bool result;
     if (codeBlock->codeType() == FunctionCode)
@@ -567,8 +574,10 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
     else
         result = finalizer->finalize();
     
-    if (!result)
+    if (!result) {
+        CODEBLOCK_LOG_EVENT(codeBlock, "dfgFinalize", ("failed"));
         return CompilationFailed;
+    }
     
     reallyAdd(codeBlock->jitCode()->dfgCommon());
     
@@ -587,6 +596,7 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
         codeBlock->jitCode()->validateReferences(trackedReferences);
     }
     
+    CODEBLOCK_LOG_EVENT(codeBlock, "dfgFinalize", ("succeeded"));
     return CompilationSuccessful;
 }
 
