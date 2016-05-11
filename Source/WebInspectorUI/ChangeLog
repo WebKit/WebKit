@@ -1,5 +1,26 @@
 2016-05-11  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r200608.
+
+    2016-05-09  Matt Baker  <mattbaker@apple.com>
+
+            Web Inspector: Filtering by Errors/Warnings should not filter Breakpoints list
+            https://bugs.webkit.org/show_bug.cgi?id=157481
+            <rdar://problem/26177346>
+
+            Reviewed by Timothy Hatcher.
+
+            * Localizations/en.lproj/localizedStrings.js:
+            New UI strings.
+
+            * UserInterface/Views/DebuggerSidebarPanel.js:
+            (WebInspector.DebuggerSidebarPanel.showResourcesWithIssuesOnlyFilterFunction):
+            Only filter tree elements belonging to the scripts tree outline.
+            (WebInspector.DebuggerSidebarPanel):
+            Drive-by cleanup of Issues filter button tooltips.
+
+2016-05-11  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r200600.
 
     2016-05-09  Matt Baker  <mattbaker@apple.com>
