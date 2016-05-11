@@ -83,7 +83,7 @@ typedef NS_OPTIONS(NSUInteger, WKDataDetectorTypes) {
  userInterfaceLayoutDirection property
  @discussion When WKUserInterfaceDirectionPolicyContent is specified, the directionality of user interface
  elements is affected by the "dir" attribute or the "direction" CSS property. When
- WKUserInterfaceDirectionPolicySystem is specified, the directionaltiy of user interface elements is
+ WKUserInterfaceDirectionPolicySystem is specified, the directionality of user interface elements is
  affected by the direction of the view.
 */
 typedef NS_ENUM(NSInteger, WKUserInterfaceDirectionPolicy) {
