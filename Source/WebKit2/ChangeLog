@@ -1,3 +1,14 @@
+2016-05-10  Sam Weinig  <sam@webkit.org>
+
+        Add SPI for Data Detectors to get ranges of text around an existing range.
+        <rdar://problem/26009749>
+
+        Reviewed by Enrica Casucci.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange rangeByExpandingToWordBoundaryByCharacters:inDirection:]):
+
 2016-05-10  Enrica Casucci  <enrica@apple.com>
 
         Numerous block selection issues on iOS.

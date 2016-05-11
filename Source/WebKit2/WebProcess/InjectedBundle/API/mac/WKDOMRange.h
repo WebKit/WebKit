@@ -31,6 +31,12 @@
 
 @class WKDOMNode, WKDOMDocument;
 
+typedef NS_ENUM(NSInteger, WKDOMRangeDirection) {
+    WKDOMRangeDirectionForward,
+    WKDOMRangeDirectionBackword
+};
+
+
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface WKDOMRange : NSObject
 
@@ -41,6 +47,8 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 - (void)collapse:(BOOL)toStart;
 - (void)selectNode:(WKDOMNode *)node;
 - (void)selectNodeContents:(WKDOMNode *)node;
+
+- (WKDOMRange *)rangeByExpandingToWordBoundaryByCharacters:(NSUInteger)characters inDirection:(WKDOMRangeDirection)direction;
 
 @property(readonly, retain) WKDOMNode *startContainer;
 @property(readonly) NSInteger startOffset;
