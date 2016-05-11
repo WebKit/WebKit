@@ -1,3 +1,13 @@
+2016-05-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Ensure DOM iterators remain done
+        https://bugs.webkit.org/show_bug.cgi?id=157453
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/nodeListIterator-expected.txt:
+        * fast/text/font-face-set-javascript-expected.txt:
+
 2016-05-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/aria-readonly.html is failing

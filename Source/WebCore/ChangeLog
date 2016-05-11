@@ -1,3 +1,23 @@
+2016-05-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Ensure DOM iterators remain done
+        https://bugs.webkit.org/show_bug.cgi?id=157453
+
+        Reviewed by Darin Adler.
+
+        Covered by updated test.
+
+        Making DOMWrapped::Iterator an Optional.
+        Setting it to Nullopt on the first time Iterator is returning null.
+
+        For set iterators, incrementing a counter which value is used in forEach callbacks and entries iterators.
+
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::JSDOMIterator<JSWrapper>::asJS):
+        (WebCore::appendForEachArguments):
+        (WebCore::iteratorForEach):
+        (WebCore::JSDOMIterator<JSWrapper>::next):
+
 2016-05-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/aria-readonly.html is failing

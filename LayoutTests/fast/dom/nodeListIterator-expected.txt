@@ -9,10 +9,10 @@ PASS item is children[index++]
 PASS pair[0] is children[0]
 PASS pair[1] is children[1]
 PASS forEachContainer is nodeList
-FAIL forEachIndex should be 0 (of type number). Was [object HTMLDivElement] (of type object).
+PASS forEachIndex is index
 PASS node is children[index++]
 PASS forEachContainer is nodeList
-FAIL forEachIndex should be 1 (of type number). Was [object HTMLOListElement] (of type object).
+PASS forEachIndex is index
 PASS node is children[index++]
 PASS iterator.next().value is children[0]
 PASS iterator.next().value is children[1]
@@ -23,15 +23,15 @@ PASS iterator.next().value is children[1]
 PASS end.done is true
 PASS end.value is undefined
 PASS pair.length is 2
-FAIL pair[0] should be 0 (of type number). Was [object HTMLDivElement] (of type object).
+PASS pair[0] is 0
 PASS pair[1] is children[0]
 PASS pair.length is 2
-FAIL pair[0] should be 1 (of type number). Was [object HTMLOListElement] (of type object).
+PASS pair[0] is 1
 PASS pair[1] is children[1]
 PASS end.done is true
 PASS end.value is undefined
-FAIL end.done should be true. Was false.
-FAIL end.value should be undefined (of type undefined). Was [object HTMLParagraphElement],[object HTMLParagraphElement] (of type object).
+PASS end.done is true
+PASS end.value is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE
