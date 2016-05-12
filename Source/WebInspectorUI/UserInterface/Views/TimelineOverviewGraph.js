@@ -39,6 +39,7 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
         this._selectedRecord = null;
         this._selectedRecordChanged = false;
         this._scheduledSelectedRecordLayoutUpdateIdentifier = undefined;
+        this._selected = false;
         this._visible = true;
     }
 
@@ -172,6 +173,17 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
     {
         // Overridden by sub-classes if needed.
         return 36;
+    }
+
+    get selected() { return this._selected; }
+
+    set selected(x)
+    {
+        if (this._selected === x)
+            return;
+
+        this._selected = x;
+        this.element.classList.toggle("selected", this._selected);
     }
 
     shown()
