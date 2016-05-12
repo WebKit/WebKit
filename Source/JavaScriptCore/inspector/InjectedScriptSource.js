@@ -1298,7 +1298,7 @@ InjectedScript.CallFrameProxy = function(ordinal, callFrame)
     this.functionName = callFrame.functionName;
     this.location = {scriptId: String(callFrame.sourceID), lineNumber: callFrame.line, columnNumber: callFrame.column};
     this.scopeChain = this._wrapScopeChain(callFrame);
-    this.this = injectedScript._wrapObject(callFrame.thisObject, "backtrace");
+    this.this = injectedScript._wrapObject(callFrame.thisObject, "backtrace", false, true);
 }
 
 InjectedScript.CallFrameProxy.prototype = {

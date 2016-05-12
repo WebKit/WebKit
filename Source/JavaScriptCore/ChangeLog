@@ -1,3 +1,14 @@
+2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: `this` in Scope Chain Sidebar does not have preview, looks poor
+        https://bugs.webkit.org/show_bug.cgi?id=157602
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.CallFrameProxy):
+        Include a preview when creating the RemoteObject for `this`.
+
 2016-05-11  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, correct the title of the ChangeLog for r200667.
