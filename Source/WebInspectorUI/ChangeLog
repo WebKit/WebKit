@@ -1,5 +1,23 @@
 2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Timeline Reset button only resets the one active Script TimelineView
+        https://bugs.webkit.org/show_bug.cgi?id=157638
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WebInspector.ScriptClusterTimelineView.prototype.reset):
+        Reset should reset all the views.
+
+        (WebInspector.ScriptClusterTimelineView.prototype.get navigationSidebarTreeOutline): Deleted.
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView.prototype.get navigationSidebarTreeOutline): Deleted.
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.get navigationSidebarTreeOutlineScopeBar): Deleted.
+        Remove dead code. Nobody calls these getters.
+
+2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Layout timeline popovers are inconsistently shown
         https://bugs.webkit.org/show_bug.cgi?id=157640
         <rdar://problem/26253394>

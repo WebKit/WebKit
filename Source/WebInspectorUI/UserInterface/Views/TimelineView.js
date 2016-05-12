@@ -60,11 +60,6 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
         return this._scopeBar ? [this._scopeBar] : [];
     }
 
-    get navigationSidebarTreeOutlineScopeBar()
-    {
-        return this._scopeBar;
-    }
-
     get selectionPathComponents()
     {
         // Implemented by sub-classes if needed.
