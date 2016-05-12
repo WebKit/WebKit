@@ -828,7 +828,10 @@ private:
         ASSERT(def);
         ASSERT(def->value());
         m_localMapping.add(location, def->value());
-        return def->value();
+        Node* result = def->value();
+        if (result->replacement())
+            result = result->replacement();
+        return result;
     }
 
     template<typename SinkCandidateFunctor, typename EscapeFunctor>
