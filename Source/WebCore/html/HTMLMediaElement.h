@@ -157,7 +157,7 @@ public:
 
 // DOM API
 // error state
-    PassRefPtr<MediaError> error() const;
+    MediaError* error() const;
 
     void setSrc(const String&);
     const URL& currentSrc() const { return m_currentSrc; }

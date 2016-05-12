@@ -66,7 +66,7 @@ public:
 
     // SourceBuffer.idl methods
     bool updating() const { return m_updating; }
-    PassRefPtr<TimeRanges> buffered(ExceptionCode&) const;
+    RefPtr<TimeRanges> buffered(ExceptionCode&) const;
     const RefPtr<TimeRanges>& buffered() const;
     double timestampOffset() const;
     void setTimestampOffset(double, ExceptionCode&);

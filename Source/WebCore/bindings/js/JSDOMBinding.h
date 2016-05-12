@@ -252,10 +252,8 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBuffer*);
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBufferView*);
 JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, JSC::ArrayBufferView*);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const RefPtr<T>&);
-template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const PassRefPtr<T>&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Ref<T>&);
 template<typename T> JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, const RefPtr<T>&);
-template<typename T> JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, const PassRefPtr<T>&);
 template<typename T> JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, const Ref<T>&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T>&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Vector<RefPtr<T>>&);
@@ -549,22 +547,12 @@ template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalO
     return toJS(exec, globalObject, ptr.get());
 }
 
-template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const PassRefPtr<T>& ptr)
-{
-    return toJS(exec, globalObject, ptr.get());
-}
-
 template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Ref<T>& ptr)
 {
     return toJS(exec, globalObject, const_cast<T&>(ptr.get()));
 }
 
 template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const RefPtr<T>& ptr)
-{
-    return toJSNewlyCreated(exec, globalObject, ptr.get());
-}
-
-template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const PassRefPtr<T>& ptr)
 {
     return toJSNewlyCreated(exec, globalObject, ptr.get());
 }

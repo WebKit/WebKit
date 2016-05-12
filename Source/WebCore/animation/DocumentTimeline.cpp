@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-PassRefPtr<DocumentTimeline> DocumentTimeline::create(double originTime)
+Ref<DocumentTimeline> DocumentTimeline::create(double originTime)
 {
-    return adoptRef(new DocumentTimeline(originTime));
+    return adoptRef(*new DocumentTimeline(originTime));
 }
 
 DocumentTimeline::DocumentTimeline(double originTime)

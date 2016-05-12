@@ -158,12 +158,12 @@ public:
     virtual void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border) = 0;
     void copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
 
-    PassRefPtr<WebGLBuffer> createBuffer();
-    PassRefPtr<WebGLFramebuffer> createFramebuffer();
-    PassRefPtr<WebGLProgram> createProgram();
-    PassRefPtr<WebGLRenderbuffer> createRenderbuffer();
-    PassRefPtr<WebGLShader> createShader(GC3Denum type, ExceptionCode&);
-    PassRefPtr<WebGLTexture> createTexture();
+    RefPtr<WebGLBuffer> createBuffer();
+    RefPtr<WebGLFramebuffer> createFramebuffer();
+    RefPtr<WebGLProgram> createProgram();
+    RefPtr<WebGLRenderbuffer> createRenderbuffer();
+    RefPtr<WebGLShader> createShader(GC3Denum type, ExceptionCode&);
+    RefPtr<WebGLTexture> createTexture();
 
     void cullFace(GC3Denum mode);
 
@@ -192,8 +192,8 @@ public:
     void frontFace(GC3Denum mode);
     void generateMipmap(GC3Denum target);
 
-    PassRefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram*, GC3Duint index, ExceptionCode&);
-    PassRefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram*, GC3Duint index, ExceptionCode&);
+    RefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram*, GC3Duint index, ExceptionCode&);
+    RefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram*, GC3Duint index, ExceptionCode&);
     bool getAttachedShaders(WebGLProgram*, Vector<RefPtr<WebGLShader>>&, ExceptionCode&);
     GC3Dint getAttribLocation(WebGLProgram*, const String& name);
     WebGLGetInfo getBufferParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);
@@ -207,12 +207,12 @@ public:
     WebGLGetInfo getRenderbufferParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);
     WebGLGetInfo getShaderParameter(WebGLShader*, GC3Denum pname, ExceptionCode&);
     String getShaderInfoLog(WebGLShader*, ExceptionCode&);
-    PassRefPtr<WebGLShaderPrecisionFormat> getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, ExceptionCode&);
+    RefPtr<WebGLShaderPrecisionFormat> getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, ExceptionCode&);
     String getShaderSource(WebGLShader*, ExceptionCode&);
     virtual Vector<String> getSupportedExtensions() = 0;
     WebGLGetInfo getTexParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);
     WebGLGetInfo getUniform(WebGLProgram*, const WebGLUniformLocation*, ExceptionCode&);
-    PassRefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram*, const String&, ExceptionCode&);
+    RefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram*, const String&, ExceptionCode&);
     WebGLGetInfo getVertexAttrib(GC3Duint index, GC3Denum pname, ExceptionCode&);
     long long getVertexAttribOffset(GC3Duint index, GC3Denum pname);
 
@@ -346,7 +346,7 @@ public:
 
     void markLayerComposited();
     void paintRenderingResultsToCanvas() override;
-    PassRefPtr<ImageData> paintRenderingResultsToImageData();
+    RefPtr<ImageData> paintRenderingResultsToImageData();
 
     void removeSharedObject(WebGLSharedObject*);
     void removeContextObject(WebGLContextObject*);
@@ -426,10 +426,10 @@ protected:
     // Adds a compressed texture format.
     void addCompressedTextureFormat(GC3Denum);
 
-    PassRefPtr<Image> drawImageIntoBuffer(Image&, int width, int height, int deviceScaleFactor);
+    RefPtr<Image> drawImageIntoBuffer(Image&, int width, int height, int deviceScaleFactor);
 
 #if ENABLE(VIDEO)
-    PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*, BackingStoreCopy, ExceptionCode&);
+    RefPtr<Image> videoFrameToImage(HTMLVideoElement*, BackingStoreCopy, ExceptionCode&);
 #endif
 
     WebGLTexture::TextureExtensionFlag textureExtensionFlags() const;

@@ -55,12 +55,12 @@ namespace WebCore {
 
 static const int invalidCueIndex = -1;
 
-PassRefPtr<TextTrackCue> TextTrackCue::create(ScriptExecutionContext& context, double start, double end, const String& content)
+Ref<TextTrackCue> TextTrackCue::create(ScriptExecutionContext& context, double start, double end, const String& content)
 {
     return create(context, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), content);
 }
 
-PassRefPtr<TextTrackCue> TextTrackCue::create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const String& content)
+Ref<TextTrackCue> TextTrackCue::create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const String& content)
 {
     return VTTCue::create(context, start, end, content);
 }

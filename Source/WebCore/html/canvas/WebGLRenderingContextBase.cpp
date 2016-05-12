@@ -752,7 +752,7 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
     m_context->paintRenderingResultsToCanvas(canvas()->buffer());
 }
 
-PassRefPtr<ImageData> WebGLRenderingContextBase::paintRenderingResultsToImageData()
+RefPtr<ImageData> WebGLRenderingContextBase::paintRenderingResultsToImageData()
 {
     if (isContextLostOrPending())
         return nullptr;
@@ -1386,52 +1386,52 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GC3Denum target, GC3Dint level
     }
 }
 
-PassRefPtr<WebGLBuffer> WebGLRenderingContextBase::createBuffer()
+RefPtr<WebGLBuffer> WebGLRenderingContextBase::createBuffer()
 {
     if (isContextLostOrPending())
         return nullptr;
-    RefPtr<WebGLBuffer> o = WebGLBuffer::create(this);
-    addSharedObject(o.get());
-    return o;
+    auto buffer = WebGLBuffer::create(this);
+    addSharedObject(buffer.ptr());
+    return WTFMove(buffer);
 }
 
-PassRefPtr<WebGLFramebuffer> WebGLRenderingContextBase::createFramebuffer()
+RefPtr<WebGLFramebuffer> WebGLRenderingContextBase::createFramebuffer()
 {
     if (isContextLostOrPending())
         return nullptr;
-    RefPtr<WebGLFramebuffer> o = WebGLFramebuffer::create(this);
-    addContextObject(o.get());
-    return o;
+    auto buffer = WebGLFramebuffer::create(this);
+    addContextObject(buffer.ptr());
+    return WTFMove(buffer);
 }
 
-PassRefPtr<WebGLTexture> WebGLRenderingContextBase::createTexture()
+RefPtr<WebGLTexture> WebGLRenderingContextBase::createTexture()
 {
     if (isContextLostOrPending())
         return nullptr;
-    RefPtr<WebGLTexture> o = WebGLTexture::create(this);
-    addSharedObject(o.get());
-    return o;
+    auto texture = WebGLTexture::create(this);
+    addSharedObject(texture.ptr());
+    return WTFMove(texture);
 }
 
-PassRefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
+RefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
 {
     if (isContextLostOrPending())
         return nullptr;
-    RefPtr<WebGLProgram> o = WebGLProgram::create(this);
-    addSharedObject(o.get());
-    return o;
+    auto program = WebGLProgram::create(this);
+    addSharedObject(program.ptr());
+    return WTFMove(program);
 }
 
-PassRefPtr<WebGLRenderbuffer> WebGLRenderingContextBase::createRenderbuffer()
+RefPtr<WebGLRenderbuffer> WebGLRenderingContextBase::createRenderbuffer()
 {
     if (isContextLostOrPending())
         return nullptr;
-    RefPtr<WebGLRenderbuffer> o = WebGLRenderbuffer::create(this);
-    addSharedObject(o.get());
-    return o;
+    auto buffer = WebGLRenderbuffer::create(this);
+    addSharedObject(buffer.ptr());
+    return WTFMove(buffer);
 }
 
-PassRefPtr<WebGLShader> WebGLRenderingContextBase::createShader(GC3Denum type, ExceptionCode&)
+RefPtr<WebGLShader> WebGLRenderingContextBase::createShader(GC3Denum type, ExceptionCode&)
 {
     if (isContextLostOrPending())
         return nullptr;
@@ -1440,9 +1440,9 @@ PassRefPtr<WebGLShader> WebGLRenderingContextBase::createShader(GC3Denum type, E
         return nullptr;
     }
 
-    RefPtr<WebGLShader> o = WebGLShader::create(this, type);
-    addSharedObject(o.get());
-    return o;
+    auto shader = WebGLShader::create(this, type);
+    addSharedObject(shader.ptr());
+    return WTFMove(shader);
 }
 
 void WebGLRenderingContextBase::cullFace(GC3Denum mode)
@@ -2116,7 +2116,7 @@ void WebGLRenderingContextBase::generateMipmap(GC3Denum target)
     tex->generateMipmapLevelInfo();
 }
 
-PassRefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveAttrib(WebGLProgram* program, GC3Duint index, ExceptionCode&)
+RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveAttrib(WebGLProgram* program, GC3Duint index, ExceptionCode&)
 {
     if (isContextLostOrPending() || !validateWebGLObject("getActiveAttrib", program))
         return nullptr;
@@ -2129,10 +2129,10 @@ PassRefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveAttrib(WebGLProg
     return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 
-PassRefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram* program, GC3Duint index, ExceptionCode&)
+RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram* program, GC3Duint index, ExceptionCode&)
 {
     if (isContextLostOrPending() || !validateWebGLObject("getActiveUniform", program))
-        return 0;
+        return nullptr;
     ActiveInfo info;
     if (!m_context->getActiveUniform(objectOrZero(program), index, info))
         return nullptr;
@@ -2352,7 +2352,7 @@ String WebGLRenderingContextBase::getShaderInfoLog(WebGLShader* shader, Exceptio
     return ensureNotNull(m_context->getShaderInfoLog(objectOrZero(shader)));
 }
 
-PassRefPtr<WebGLShaderPrecisionFormat> WebGLRenderingContextBase::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, ExceptionCode&)
+RefPtr<WebGLShaderPrecisionFormat> WebGLRenderingContextBase::getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, ExceptionCode&)
 {
     if (isContextLostOrPending())
         return nullptr;
@@ -2545,7 +2545,7 @@ WebGLGetInfo WebGLRenderingContextBase::getUniform(WebGLProgram* program, const 
     return WebGLGetInfo();
 }
 
-PassRefPtr<WebGLUniformLocation> WebGLRenderingContextBase::getUniformLocation(WebGLProgram* program, const String& name, ExceptionCode&)
+RefPtr<WebGLUniformLocation> WebGLRenderingContextBase::getUniformLocation(WebGLProgram* program, const String& name, ExceptionCode&)
 {
     if (isContextLostOrPending() || !validateWebGLObject("getUniformLocation", program))
         return nullptr;
@@ -3152,7 +3152,7 @@ void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3De
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
-PassRefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int width, int height, int deviceScaleFactor)
+RefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int width, int height, int deviceScaleFactor)
 {
     IntSize size(width, height);
     size.scale(deviceScaleFactor);
@@ -3220,7 +3220,7 @@ void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3De
 }
 
 #if ENABLE(VIDEO)
-PassRefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement* video, BackingStoreCopy backingStoreCopy, ExceptionCode&)
+RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement* video, BackingStoreCopy backingStoreCopy, ExceptionCode&)
 {
     IntSize size(video->videoWidth(), video->videoHeight());
     ImageBuffer* buf = m_generatedImageCache.imageBuffer(size);

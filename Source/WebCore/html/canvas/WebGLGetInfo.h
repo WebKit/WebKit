@@ -112,20 +112,20 @@ public:
     const String& getString() const;
     unsigned int getUnsignedInt() const;
     long long getInt64() const;
-    PassRefPtr<WebGLBuffer> getWebGLBuffer() const;
-    PassRefPtr<Float32Array> getWebGLFloatArray() const;
-    PassRefPtr<WebGLFramebuffer> getWebGLFramebuffer() const;
-    PassRefPtr<Int32Array> getWebGLIntArray() const;
+    WebGLBuffer* getWebGLBuffer() const;
+    Float32Array* getWebGLFloatArray() const;
+    WebGLFramebuffer* getWebGLFramebuffer() const;
+    Int32Array* getWebGLIntArray() const;
     // FIXME: implement WebGLObjectArray
-    // PassRefPtr<WebGLObjectArray> getWebGLObjectArray() const;
-    PassRefPtr<WebGLProgram> getWebGLProgram() const;
-    PassRefPtr<WebGLRenderbuffer> getWebGLRenderbuffer() const;
-    PassRefPtr<WebGLTexture> getWebGLTexture() const;
-    PassRefPtr<Uint8Array> getWebGLUnsignedByteArray() const;
-    PassRefPtr<Uint32Array> getWebGLUnsignedIntArray() const;
-    PassRefPtr<WebGLVertexArrayObjectOES> getWebGLVertexArrayObjectOES() const;
+    // WebGLObjectArray* getWebGLObjectArray() const;
+    WebGLProgram* getWebGLProgram() const;
+    WebGLRenderbuffer* getWebGLRenderbuffer() const;
+    WebGLTexture* getWebGLTexture() const;
+    Uint8Array* getWebGLUnsignedByteArray() const;
+    Uint32Array* getWebGLUnsignedIntArray() const;
+    WebGLVertexArrayObjectOES* getWebGLVertexArrayObjectOES() const;
 #if ENABLE(WEBGL2)
-    PassRefPtr<WebGLVertexArrayObject> getWebGLVertexArrayObject() const;
+    WebGLVertexArrayObject* getWebGLVertexArrayObject() const;
 #endif
 
 private:

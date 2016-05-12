@@ -463,9 +463,9 @@ DOMWindow* DOMWindow::toDOMWindow()
     return this;
 }
 
-PassRefPtr<MediaQueryList> DOMWindow::matchMedia(const String& media)
+RefPtr<MediaQueryList> DOMWindow::matchMedia(const String& media)
 {
-    return document() ? document()->mediaQueryMatcher().matchMedia(media) : 0;
+    return document() ? document()->mediaQueryMatcher().matchMedia(media) : nullptr;
 }
 
 Page* DOMWindow::page()
@@ -1405,16 +1405,16 @@ Document* DOMWindow::document() const
     return downcast<Document>(context);
 }
 
-PassRefPtr<StyleMedia> DOMWindow::styleMedia() const
+RefPtr<StyleMedia> DOMWindow::styleMedia() const
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_media)
         m_media = StyleMedia::create(m_frame);
-    return m_media.get();
+    return m_media;
 }
 
-PassRefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* element, const String& pseudoElt) const
+RefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* element, const String& pseudoElt) const
 {
     if (!element)
         return nullptr;
@@ -1422,15 +1422,15 @@ PassRefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* element, co
     return CSSComputedStyleDeclaration::create(element, false, pseudoElt);
 }
 
-PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const String& pseudoElement, bool authorOnly) const
+RefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const String& pseudoElement, bool authorOnly) const
 {
     if (!isCurrentlyDisplayedInFrame())
-        return 0;
+        return nullptr;
 
     unsigned colonStart = pseudoElement[0] == ':' ? (pseudoElement[1] == ':' ? 2 : 1) : 0;
     CSSSelector::PseudoElementType pseudoType = CSSSelector::parsePseudoElementType(pseudoElement.substringSharingImpl(colonStart));
     if (pseudoType == CSSSelector::PseudoElementUnknown && !pseudoElement.isEmpty())
-        return 0;
+        return nullptr;
 
     unsigned rulesToInclude = StyleResolver::AuthorCSSRules;
     if (!authorOnly)
@@ -1442,22 +1442,22 @@ PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const St
 
     auto matchedRules = m_frame->document()->ensureStyleResolver().pseudoStyleRulesForElement(element, pseudoId, rulesToInclude);
     if (matchedRules.isEmpty())
-        return 0;
+        return nullptr;
 
     RefPtr<StaticCSSRuleList> ruleList = StaticCSSRuleList::create();
     for (auto& rule : matchedRules)
         ruleList->rules().append(rule->createCSSOMWrapper());
 
-    return ruleList.release();
+    return ruleList;
 }
 
-PassRefPtr<WebKitPoint> DOMWindow::webkitConvertPointFromNodeToPage(Node* node, const WebKitPoint* p) const
+RefPtr<WebKitPoint> DOMWindow::webkitConvertPointFromNodeToPage(Node* node, const WebKitPoint* p) const
 {
     if (!node || !p)
-        return 0;
+        return nullptr;
 
     if (!document())
-        return 0;
+        return nullptr;
 
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -1466,13 +1466,13 @@ PassRefPtr<WebKitPoint> DOMWindow::webkitConvertPointFromNodeToPage(Node* node, 
     return WebKitPoint::create(pagePoint.x(), pagePoint.y());
 }
 
-PassRefPtr<WebKitPoint> DOMWindow::webkitConvertPointFromPageToNode(Node* node, const WebKitPoint* p) const
+RefPtr<WebKitPoint> DOMWindow::webkitConvertPointFromPageToNode(Node* node, const WebKitPoint* p) const
 {
     if (!node || !p)
-        return 0;
+        return nullptr;
 
     if (!document())
-        return 0;
+        return nullptr;
 
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -2140,7 +2140,7 @@ RefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicStrin
     return newFrame;
 }
 
-PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
+RefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
     DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!isCurrentlyDisplayedInFrame())

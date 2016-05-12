@@ -298,71 +298,71 @@ long long WebGLGetInfo::getInt64() const
     return m_int64;
 }
 
-PassRefPtr<WebGLBuffer> WebGLGetInfo::getWebGLBuffer() const
+WebGLBuffer* WebGLGetInfo::getWebGLBuffer() const
 {
     ASSERT(getType() == kTypeWebGLBuffer);
-    return m_webglBuffer;
+    return m_webglBuffer.get();
 }
 
-PassRefPtr<Float32Array> WebGLGetInfo::getWebGLFloatArray() const
+Float32Array* WebGLGetInfo::getWebGLFloatArray() const
 {
     ASSERT(getType() == kTypeWebGLFloatArray);
-    return m_webglFloatArray;
+    return m_webglFloatArray.get();
 }
 
-PassRefPtr<WebGLFramebuffer> WebGLGetInfo::getWebGLFramebuffer() const
+WebGLFramebuffer* WebGLGetInfo::getWebGLFramebuffer() const
 {
     ASSERT(getType() == kTypeWebGLFramebuffer);
-    return m_webglFramebuffer;
+    return m_webglFramebuffer.get();
 }
 
-PassRefPtr<Int32Array> WebGLGetInfo::getWebGLIntArray() const
+Int32Array* WebGLGetInfo::getWebGLIntArray() const
 {
     ASSERT(getType() == kTypeWebGLIntArray);
-    return m_webglIntArray;
+    return m_webglIntArray.get();
 }
 
-PassRefPtr<WebGLProgram> WebGLGetInfo::getWebGLProgram() const
+WebGLProgram* WebGLGetInfo::getWebGLProgram() const
 {
     ASSERT(getType() == kTypeWebGLProgram);
-    return m_webglProgram;
+    return m_webglProgram.get();
 }
 
-PassRefPtr<WebGLRenderbuffer> WebGLGetInfo::getWebGLRenderbuffer() const
+WebGLRenderbuffer* WebGLGetInfo::getWebGLRenderbuffer() const
 {
     ASSERT(getType() == kTypeWebGLRenderbuffer);
-    return m_webglRenderbuffer;
+    return m_webglRenderbuffer.get();
 }
 
-PassRefPtr<WebGLTexture> WebGLGetInfo::getWebGLTexture() const
+WebGLTexture* WebGLGetInfo::getWebGLTexture() const
 {
     ASSERT(getType() == kTypeWebGLTexture);
-    return m_webglTexture;
+    return m_webglTexture.get();
 }
 
-PassRefPtr<Uint8Array> WebGLGetInfo::getWebGLUnsignedByteArray() const
+Uint8Array* WebGLGetInfo::getWebGLUnsignedByteArray() const
 {
     ASSERT(getType() == kTypeWebGLUnsignedByteArray);
-    return m_webglUnsignedByteArray;
+    return m_webglUnsignedByteArray.get();
 }
 
-PassRefPtr<Uint32Array> WebGLGetInfo::getWebGLUnsignedIntArray() const
+Uint32Array* WebGLGetInfo::getWebGLUnsignedIntArray() const
 {
     ASSERT(getType() == kTypeWebGLUnsignedIntArray);
-    return m_webglUnsignedIntArray;
+    return m_webglUnsignedIntArray.get();
 }
 
-PassRefPtr<WebGLVertexArrayObjectOES> WebGLGetInfo::getWebGLVertexArrayObjectOES() const
+WebGLVertexArrayObjectOES* WebGLGetInfo::getWebGLVertexArrayObjectOES() const
 {
     ASSERT(getType() == kTypeWebGLVertexArrayObjectOES);
-    return m_webglVertexArrayObjectOES;
+    return m_webglVertexArrayObjectOES.get();
 }
 
 #if ENABLE(WEBGL2)
-PassRefPtr<WebGLVertexArrayObject> WebGLGetInfo::getWebGLVertexArrayObject() const
+WebGLVertexArrayObject* WebGLGetInfo::getWebGLVertexArrayObject() const
 {
     ASSERT(getType() == kTypeWebGLVertexArrayObject);
-    return m_webglVertexArrayObject;
+    return m_webglVertexArrayObject.get();
 }
 #endif
 

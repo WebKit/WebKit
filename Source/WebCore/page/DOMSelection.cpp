@@ -344,14 +344,14 @@ void DOMSelection::extend(Node& node, int offset, ExceptionCode& ec)
     m_frame->selection().setExtent(createLegacyEditingPosition(&node, offset), DOWNSTREAM);
 }
 
-PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
+RefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
 {
     if (!m_frame)
-        return 0;
+        return nullptr;
 
     if (index < 0 || index >= rangeCount()) {
         ec = INDEX_SIZE_ERR;
-        return 0;
+        return nullptr;
     }
 
     // If you're hitting this, you've added broken multi-range selection support

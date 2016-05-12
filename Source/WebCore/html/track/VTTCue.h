@@ -53,7 +53,7 @@ class WebVTTCueData;
 
 class VTTCueBox : public HTMLElement {
 public:
-    static PassRefPtr<VTTCueBox> create(Document&, VTTCue&);
+    static Ref<VTTCueBox> create(Document&, VTTCue&);
 
     VTTCue* getCue() const;
     virtual void applyCSSProperties(const IntSize& videoSize);

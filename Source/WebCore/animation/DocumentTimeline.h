@@ -37,7 +37,7 @@ namespace WebCore {
 
 class DocumentTimeline final : public AnimationTimeline {
 public:
-    static PassRefPtr<DocumentTimeline> create(double);
+    static Ref<DocumentTimeline> create(double);
     ~DocumentTimeline();
 
 protected:

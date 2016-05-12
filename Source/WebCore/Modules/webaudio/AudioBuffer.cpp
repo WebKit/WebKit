@@ -95,7 +95,7 @@ void AudioBuffer::releaseMemory()
     m_channels.clear();
 }
 
-PassRefPtr<Float32Array> AudioBuffer::getChannelData(unsigned channelIndex, ExceptionCode& ec)
+RefPtr<Float32Array> AudioBuffer::getChannelData(unsigned channelIndex, ExceptionCode& ec)
 {
     if (channelIndex >= m_channels.size()) {
         ec = SYNTAX_ERR;

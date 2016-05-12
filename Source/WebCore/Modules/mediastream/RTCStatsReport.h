@@ -45,9 +45,9 @@ public:
     Vector<String> names() const;
 
     // DEPRECATED
-    const PassRefPtr<RTCStatsReport> local();
+    RTCStatsReport& local();
     // DEPRECATED
-    const PassRefPtr<RTCStatsReport> remote();
+    RTCStatsReport& remote();
 
     void addStatistic(const String& name, const String& value);
 

@@ -124,14 +124,14 @@ String Location::origin() const
     return SecurityOrigin::create(url())->toString();
 }
 
-PassRefPtr<DOMStringList> Location::ancestorOrigins() const
+Ref<DOMStringList> Location::ancestorOrigins() const
 {
-    RefPtr<DOMStringList> origins = DOMStringList::create();
+    auto origins = DOMStringList::create();
     if (!m_frame)
-        return origins.release();
+        return origins;
     for (Frame* frame = m_frame->tree().parent(); frame; frame = frame->tree().parent())
         origins->append(frame->document()->securityOrigin()->toString());
-    return origins.release();
+    return origins;
 }
 
 String Location::hash() const

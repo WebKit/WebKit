@@ -53,14 +53,14 @@ Vector<String> RTCStatsReport::names() const
     return result;
 }
 
-const PassRefPtr<RTCStatsReport> RTCStatsReport::local()
+RTCStatsReport& RTCStatsReport::local()
 {
-    return this;
+    return *this;
 }
 
-const PassRefPtr<RTCStatsReport> RTCStatsReport::remote()
+RTCStatsReport& RTCStatsReport::remote()
 {
-    return this;
+    return *this;
 }
 
 void RTCStatsReport::addStatistic(const String& name, const String& value)

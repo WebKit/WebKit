@@ -123,7 +123,7 @@ namespace WebCore {
         void suspendForDocumentSuspension();
         void resumeFromDocumentSuspension();
 
-        PassRefPtr<MediaQueryList> matchMedia(const String&);
+        RefPtr<MediaQueryList> matchMedia(const String&);
 
         WEBCORE_EXPORT unsigned pendingUnloadEventListeners() const;
 
@@ -167,7 +167,7 @@ namespace WebCore {
         void print();
         void stop();
 
-        WEBCORE_EXPORT PassRefPtr<DOMWindow> open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
+        WEBCORE_EXPORT RefPtr<DOMWindow> open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
             DOMWindow& activeWindow, DOMWindow& firstWindow);
 
         void showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, std::function<void (DOMWindow&)> prepareDialogFunction);
@@ -223,19 +223,19 @@ namespace WebCore {
 
         // CSSOM View Module
 
-        PassRefPtr<StyleMedia> styleMedia() const;
+        RefPtr<StyleMedia> styleMedia() const;
 
         // DOM Level 2 Style Interface
 
-        PassRefPtr<CSSStyleDeclaration> getComputedStyle(Element*, const String& pseudoElt) const;
+        RefPtr<CSSStyleDeclaration> getComputedStyle(Element*, const String& pseudoElt) const;
 
         // WebKit extensions
 
-        PassRefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
+        RefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
         double devicePixelRatio() const;
 
-        PassRefPtr<WebKitPoint> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
-        PassRefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
+        RefPtr<WebKitPoint> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
+        RefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
 
         PageConsoleClient* console() const;
 

@@ -119,10 +119,10 @@ static const String& verticalGrowingRightKeyword()
 
 // ----------------------------
 
-PassRefPtr<VTTCueBox> VTTCueBox::create(Document& document, VTTCue& cue)
+Ref<VTTCueBox> VTTCueBox::create(Document& document, VTTCue& cue)
 {
-    VTTCueBox* cueBox = new VTTCueBox(document, cue);
-    cueBox->setPseudo(VTTCueBox::vttCueBoxShadowPseudoId());
+    VTTCueBox& cueBox = *new VTTCueBox(document, cue);
+    cueBox.setPseudo(VTTCueBox::vttCueBoxShadowPseudoId());
     return adoptRef(cueBox);
 }
 

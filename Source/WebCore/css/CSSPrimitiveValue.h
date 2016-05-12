@@ -347,7 +347,7 @@ public:
     LengthRepeat* getLengthRepeatValue() const { return m_primitiveUnitType != CSS_LENGTH_REPEAT ? 0 : m_value.lengthRepeat; }
 #endif
 
-    PassRefPtr<RGBColor> getRGBColorValue(ExceptionCode&) const;
+    RefPtr<RGBColor> getRGBColorValue(ExceptionCode&) const;
     RGBA32 getRGBA32Value() const { return m_primitiveUnitType != CSS_RGBCOLOR ? 0 : m_value.rgbcolor; }
 
     Pair* getPairValue(ExceptionCode&) const;

@@ -130,7 +130,7 @@ SourceBuffer::~SourceBuffer()
     m_private->setClient(nullptr);
 }
 
-PassRefPtr<TimeRanges> SourceBuffer::buffered(ExceptionCode& ec) const
+RefPtr<TimeRanges> SourceBuffer::buffered(ExceptionCode& ec) const
 {
     // Section 3.1 buffered attribute steps.
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#attributes-1

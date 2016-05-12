@@ -940,12 +940,11 @@ LengthRepeat* CSSPrimitiveValue::getLengthRepeatValue(ExceptionCode& ec) const
 }
 #endif
 
-PassRefPtr<RGBColor> CSSPrimitiveValue::getRGBColorValue(ExceptionCode& ec) const
+RefPtr<RGBColor> CSSPrimitiveValue::getRGBColorValue(ExceptionCode& ec) const
 {
-    ec = 0;
     if (m_primitiveUnitType != CSS_RGBCOLOR) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
 
     // FIMXE: This should not return a new object for each invocation.

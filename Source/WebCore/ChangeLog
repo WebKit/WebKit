@@ -1,3 +1,85 @@
+2016-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Drop toJS() overload taking a PassRefPtr<> parameter
+        https://bugs.webkit.org/show_bug.cgi?id=157627
+
+        Reviewed by Alex Christensen.
+
+        Update our implementation stop stop returning PassRefPtrs to the
+        JS bindings and drop the toJS() overload taking a PassRefPtr<>
+        parameter
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::buffered):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::getChannelData):
+        * Modules/webaudio/AudioBuffer.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::create):
+        * animation/DocumentTimeline.h:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS): Deleted.
+        (WebCore::toJSNewlyCreated): Deleted.
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::getRGBColorValue):
+        * css/CSSPrimitiveValue.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::error):
+        * html/HTMLMediaElement.h:
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels):
+        * html/LabelableElement.h:
+        * html/canvas/WebGLGetInfo.cpp:
+        (WebCore::WebGLGetInfo::getWebGLBuffer):
+        (WebCore::WebGLGetInfo::getWebGLFloatArray):
+        (WebCore::WebGLGetInfo::getWebGLFramebuffer):
+        (WebCore::WebGLGetInfo::getWebGLIntArray):
+        (WebCore::WebGLGetInfo::getWebGLProgram):
+        (WebCore::WebGLGetInfo::getWebGLRenderbuffer):
+        (WebCore::WebGLGetInfo::getWebGLTexture):
+        (WebCore::WebGLGetInfo::getWebGLUnsignedByteArray):
+        (WebCore::WebGLGetInfo::getWebGLUnsignedIntArray):
+        (WebCore::WebGLGetInfo::getWebGLVertexArrayObjectOES):
+        (WebCore::WebGLGetInfo::getWebGLVertexArrayObject):
+        * html/canvas/WebGLGetInfo.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::paintRenderingResultsToImageData):
+        (WebCore::WebGLRenderingContextBase::createBuffer):
+        (WebCore::WebGLRenderingContextBase::createFramebuffer):
+        (WebCore::WebGLRenderingContextBase::createTexture):
+        (WebCore::WebGLRenderingContextBase::createProgram):
+        (WebCore::WebGLRenderingContextBase::createRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::createShader):
+        (WebCore::WebGLRenderingContextBase::getActiveAttrib):
+        (WebCore::WebGLRenderingContextBase::getActiveUniform):
+        (WebCore::WebGLRenderingContextBase::getShaderPrecisionFormat):
+        (WebCore::WebGLRenderingContextBase::getUniformLocation):
+        (WebCore::WebGLRenderingContextBase::drawImageIntoBuffer):
+        (WebCore::WebGLRenderingContextBase::videoFrameToImage):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::create):
+        * html/track/TextTrackCue.h:
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::create):
+        * html/track/VTTCue.h:
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::getRangeAt):
+        * page/DOMSelection.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::matchMedia):
+        (WebCore::DOMWindow::styleMedia):
+        (WebCore::DOMWindow::getComputedStyle):
+        (WebCore::DOMWindow::getMatchedCSSRules):
+        (WebCore::DOMWindow::webkitConvertPointFromNodeToPage):
+        (WebCore::DOMWindow::webkitConvertPointFromPageToNode):
+        (WebCore::DOMWindow::open):
+        * page/DOMWindow.h:
+        * page/Location.cpp:
+        (WebCore::Location::ancestorOrigins):
+        * page/Location.h:
+
 2016-05-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Touch.prototype is undefined on iOS

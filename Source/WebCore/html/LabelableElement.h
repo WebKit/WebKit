@@ -40,7 +40,7 @@ class LabelableElement : public HTMLElement {
 public:
     virtual ~LabelableElement();
 
-    PassRefPtr<NodeList> labels();
+    RefPtr<NodeList> labels();
     virtual bool supportLabels() const { return false; }
 
 protected:

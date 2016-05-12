@@ -967,9 +967,9 @@ void HTMLMediaElement::pendingActionTimerFired()
         mediaEngineWasUpdated();
 }
 
-PassRefPtr<MediaError> HTMLMediaElement::error() const 
+MediaError* HTMLMediaElement::error() const
 {
-    return m_error;
+    return m_error.get();
 }
 
 void HTMLMediaElement::setSrc(const String& url)
