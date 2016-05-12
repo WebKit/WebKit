@@ -1,3 +1,15 @@
+2016-05-04  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r200376. rdar://problem/25991928
+
+    2016-05-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+            Unreviewed GTK+ gardening.
+
+            Adding a platform-specific expectations file for aria-text-role.html.
+
+            * platform/gtk/accessibility/aria-text-role-expected.txt: Added.
+
 2016-04-22  Matthew Hanson  <matthew_hanson@apple.com>
 
 	Merge r199881. rdar://problem/25879498
