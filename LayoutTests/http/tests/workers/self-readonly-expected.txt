@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 9: NaN
+Test passes if "NaN" is returned by the worker.

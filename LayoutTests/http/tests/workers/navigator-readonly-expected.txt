@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 9: Netscape
+Test passes if "Netscape" is returned by the worker.
