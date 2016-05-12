@@ -2214,8 +2214,9 @@
 
 2016-04-16  Matt Baker  <mattbaker@apple.com>
 
-        display:inline on the tbody is causing the width of the iframe to be shrunk to the minimum size of its text.
-        https://bugs.webkit.org/show_bug.cgi?id=15666
+        Web Inspector: Network timeline grid nodes aren't refreshed on LoadingFinished
+        https://bugs.webkit.org/show_bug.cgi?id=156666
+        <rdar://problem/25765811>
 
         Reviewed by Timothy Hatcher.
 
