@@ -158,6 +158,11 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
     URL previousURL = request().url();
     Ref<SubresourceLoader> protect(*this);
 
+    if (!newRequest.url().isValid()) {
+        cancel(cannotShowURLError());
+        return;
+    }
+
     ASSERT(!newRequest.isNull());
     if (!redirectResponse.isNull()) {
         // CachedResources are keyed off their original request URL.
