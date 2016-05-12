@@ -280,10 +280,11 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
 
     if (JSBoundFunction* boundFunction = jsDynamicCast<JSBoundFunction*>(value)) {
         unsigned index = 0;
-        JSArray* array = constructEmptyArray(exec, nullptr, 3);
+        JSArray* array = constructEmptyArray(exec, nullptr);
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "targetFunction", boundFunction->targetFunction()));
         array->putDirectIndex(exec, index++, constructInternalProperty(exec, "boundThis", boundFunction->boundThis()));
-        array->putDirectIndex(exec, index++, constructInternalProperty(exec, "boundArgs", boundFunction->boundArgs()));
+        if (boundFunction->boundArgs())
+            array->putDirectIndex(exec, index++, constructInternalProperty(exec, "boundArgs", boundFunction->boundArgs()));
         return array;
     }
 

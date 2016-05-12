@@ -1,3 +1,15 @@
+2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CRASH getting internal properties of function with no bound arguments causes
+        https://bugs.webkit.org/show_bug.cgi?id=157613
+        <rdar://problem/26238754>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/runtime/getProperties-expected.txt:
+        * inspector/runtime/getProperties.html:
+        Include coverage for a bound function with no bound arguments.
+
 2016-05-11  Zalan Bujtas  <zalan@apple.com>
 
         Absolute positioned element is not placed properly when parent becomes the containing block.

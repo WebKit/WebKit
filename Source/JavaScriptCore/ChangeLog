@@ -1,3 +1,17 @@
+2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CRASH getting internal properties of function with no bound arguments causes
+        https://bugs.webkit.org/show_bug.cgi?id=157613
+        <rdar://problem/26238754>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        Gracefully handle a JSBoundFunction with no bound arguments.
+        In this case boundArgs is JSValue() which we don't want to
+        expose as the value of the internal property.
+
 2016-05-11  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make sure StringRange is passed to Vector by register

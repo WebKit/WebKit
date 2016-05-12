@@ -24,6 +24,12 @@ function test()
         expression: "Number.bind({}, 5)",
     });
 
+    addGetPropertiesTestCase({
+        name: "CheckPropertiesOfBoundFunctionNoArguments",
+        description: "Check properties of a bound function with no bound arguments.",
+        expression: "(function(){}).bind(null)",
+    });
+
     suite.runTestCasesAndFinish();
 
     function addGetPropertiesTestCase(args) {

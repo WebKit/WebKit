@@ -32,3 +32,17 @@ Internal properties:
     [native code]
 }
 
+-- Running test case: CheckPropertiesOfBoundFunctionNoArguments
+Evaluating expression: (function(){}).bind(null)
+Properties:
+  __proto__ function function () {
+    [native code]
+}
+  arguments object TypeError: Type error
+  caller object TypeError: Type error
+  length number 0
+  name string bound 
+Internal properties:
+  boundThis object undefined
+  targetFunction function function (){}
+
