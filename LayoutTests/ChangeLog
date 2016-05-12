@@ -1,3 +1,34 @@
+2016-05-12  Antoine Quint  <graouts@apple.com>
+
+        Correctly handle prefixed and unprefixed variants in CSSStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=157569
+        <rdar://problem/26223115>
+
+        Reviewed by Dean Jackson.
+
+        * animations/fill-mode-forwards-zero-duration.html:
+        * animations/play-state-start-paused.html:
+        These two tests incorrectly expected a shorthand property not to reset
+        longhand properties that it covers to their initial values even if left
+        out of the shorthand.
+
+        * animations/unprefixed-properties-expected.txt:
+        * animations/unprefixed-properties.html:
+        This test incorrectly expected that setting an unprefixed property only would
+        lead to reading the prefixed property through the CSSOM return the empty string,
+        rather than the value set on the unprefixed property.
+
+        * fast/css/prefixed-unprefixed-variant-style-declaration-expected.txt: Added.
+        * fast/css/prefixed-unprefixed-variant-style-declaration.html: Added.
+        New test checking that setting one of two of a property's unprefixed and prefixed
+        variants correctly allows to read the style through the CSS OM for both variants,
+        while only serializing the property that was set through cssText.
+
+        * fast/css/shorthand-omitted-initial-value-overrides-shorthand-expected.txt: Added.
+        * fast/css/shorthand-omitted-initial-value-overrides-shorthand.html: Added.
+        New test checking that setting a longhand property and then the shorthand for that
+        longhand correctly resets the initial values, even if they were omitted in the shorthand.
+
 2016-05-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Incorrect parsing when using just 'span" as grid-line value

@@ -1637,24 +1637,6 @@ Ref<ImmutableStyleProperties> CSSParser::createStyleProperties()
     return ImmutableStyleProperties::create(results.data(), results.size(), m_context.mode);
 }
 
-void CSSParser::addPropertyWithPrefixingVariant(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important, bool implicit)
-{
-    RefPtr<CSSValue> val = value.get();
-    addProperty(propId, value, important, implicit);
-
-    CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(propId);
-    if (prefixingVariant == propId)
-        return;
-
-    if (m_currentShorthand) {
-        // We can't use ShorthandScope here as we can already be inside one (e.g we are parsing CSSTransition).
-        m_currentShorthand = prefixingVariantForPropertyId(m_currentShorthand);
-        addProperty(prefixingVariant, val.release(), important, implicit);
-        m_currentShorthand = prefixingVariantForPropertyId(m_currentShorthand);
-    } else
-        addProperty(prefixingVariant, val.release(), important, implicit);
-}
-
 void CSSParser::addProperty(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important, bool implicit)
 {
     // This property doesn't belong to a shorthand or is a CSS variable (which will be resolved later).
@@ -2766,7 +2748,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         RefPtr<CSSValue> val;
         AnimationParseContext context;
         if (parseAnimationProperty(propId, val, context)) {
-            addPropertyWithPrefixingVariant(propId, val.release(), important);
+            addProperty(propId, val.release(), important);
             return true;
         }
         return false;
@@ -3995,7 +3977,7 @@ bool CSSParser::parseTransitionShorthand(CSSPropertyID propId, bool important)
 
     // Now add all of the properties we found.
     for (i = 0; i < numProperties; ++i)
-        addPropertyWithPrefixingVariant(shorthand.properties()[i], values[i].release(), important);
+        addProperty(shorthand.properties()[i], values[i].release(), important);
 
     return true;
 }

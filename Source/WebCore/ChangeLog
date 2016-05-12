@@ -1,3 +1,63 @@
+2016-05-12  Antoine Quint  <graouts@apple.com>
+
+        Correctly handle prefixed and unprefixed variants in CSSStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=157569
+        <rdar://problem/26223115>
+
+        Reviewed by Dean Jackson.
+
+        Tests: fast/css/prefixed-unprefixed-variant-style-declaration.html
+               fast/css/shorthand-omitted-initial-value-overrides-shorthand.html
+
+        We essentially revert the code added with https://bugs.webkit.org/show_bug.cgi?id=110011
+        which duplicated properties that had a prefixed or unprefixed variant. What we do now is
+        to return the value of the prefixed or unprefixed variant through a CSSStyleDeclaration,
+        but only return the properties specified by the author when reading from the `cssText` property.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseTransitionShorthand):
+        (WebCore::CSSParser::addPropertyWithPrefixingVariant): Deleted.
+        * css/CSSParser.h:
+        Remove all code adding duplicated properties for the prefixed or unprefixed
+        variant of properties that exist in both forms.
+
+        * css/CSSPropertyNames.in:
+        Treat transition properties as we do animation properties. 
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValue):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValue):
+        Make these two methods call into the matching getXXXInternal() variant instead
+        of going through the property set directly so that they would correctly pick up
+        on the prefixed or unprefixed variant should there be one when the specified property
+        is not specified directly.
+
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValueInternal):
+        We used to simply return the value for the given property from the property set, which
+        we still do but now also check if there is prefixed or unprefixed variant for the provided
+        property in case it was absent.
+
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::removeShorthandProperty):
+        Remove all code adding duplicated properties for the prefixed or unprefixed
+        variant of properties that exist in both forms.
+
+        (WebCore::StyleProperties::asText):
+        Drive-by fix to also handle the animation-play-state and -webkit-animation-play-state properties
+        when serializing to the shorthand.
+
+        (WebCore::MutableStyleProperties::removeProperty): Deleted.
+        (WebCore::MutableStyleProperties::removePrefixedOrUnprefixedProperty): Deleted.
+        (WebCore::MutableStyleProperties::setProperty): Deleted.
+        (WebCore::getIndexInShorthandVectorForPrefixingVariant): Deleted.
+        (WebCore::MutableStyleProperties::appendPrefixingVariantProperty): Deleted.
+        (WebCore::MutableStyleProperties::setPrefixingVariantProperty): Deleted.
+        * css/StyleProperties.h:
+        Remove all code adding duplicated properties for the prefixed or unprefixed
+        variant of properties that exist in both forms.
+
 2016-05-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r200766.
