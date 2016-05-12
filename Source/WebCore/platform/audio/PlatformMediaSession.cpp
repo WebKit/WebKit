@@ -100,8 +100,10 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
     if (++m_interruptionCount > 1)
         return;
 
-    if (client().shouldOverrideBackgroundPlaybackRestriction(type))
+    if (client().shouldOverrideBackgroundPlaybackRestriction(type)) {
+        LOG(Media, "PlatformMediaSession::beginInterruption(%p), returning early because client says to override interruption", this);
         return;
+    }
 
     m_stateToRestore = state();
     m_notifyingClient = true;
@@ -171,6 +173,13 @@ void PlatformMediaSession::pauseSession()
     m_client.suspendPlayback();
 }
 
+void PlatformMediaSession::stopSession()
+{
+    LOG(Media, "PlatformMediaSession::stopSession(%p)", this);
+    m_client.suspendPlayback();
+    PlatformMediaSessionManager::sharedManager().removeSession(*this);
+}
+
 PlatformMediaSession::MediaType PlatformMediaSession::mediaType() const
 {
     return m_client.mediaType();
@@ -179,6 +188,11 @@ PlatformMediaSession::MediaType PlatformMediaSession::mediaType() const
 PlatformMediaSession::MediaType PlatformMediaSession::presentationType() const
 {
     return m_client.presentationType();
+}
+
+PlatformMediaSession::CharacteristicsFlags PlatformMediaSession::characteristics() const
+{
+    return m_client.characteristics();
 }
 
 String PlatformMediaSession::title() const
@@ -271,5 +285,11 @@ double PlatformMediaSessionClient::mediaSessionCurrentTime() const
 {
     return MediaPlayer::invalidTime();
 }
+
+void PlatformMediaSession::clientCharacteristicsChanged()
+{
+    PlatformMediaSessionManager::sharedManager().clientCharacteristicsChanged(*this);
+}
+
 }
 #endif

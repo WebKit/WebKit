@@ -718,6 +718,7 @@ private:
     virtual PlatformMediaSession::MediaType mediaType() const override;
     virtual PlatformMediaSession::MediaType presentationType() const override;
     virtual PlatformMediaSession::DisplayType displayType() const override;
+    PlatformMediaSession::CharacteristicsFlags characteristics() const final;
     virtual void suspendPlayback() override;
     virtual void mayResumePlayback(bool shouldResume) override;
     virtual String mediaSessionTitle() const override;

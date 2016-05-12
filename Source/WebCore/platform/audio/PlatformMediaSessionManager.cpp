@@ -143,7 +143,6 @@ void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
     LOG(Media, "PlatformMediaSessionManager::removeSession - %p", &session);
     
     size_t index = m_sessions.find(&session);
-    ASSERT(index != notFound);
     if (index == notFound)
         return;
     
@@ -372,7 +371,7 @@ void PlatformMediaSessionManager::stopAllMediaPlaybackForProcess()
 {
     Vector<PlatformMediaSession*> sessions = m_sessions;
     for (auto* session : sessions)
-        session->pauseSession();
+        session->stopSession();
 }
 
 }
