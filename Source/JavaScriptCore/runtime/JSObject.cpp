@@ -1932,7 +1932,7 @@ void JSObject::putByIndexBeyondVectorLengthWithoutAttributes(ExecState* exec, un
     
     VM& vm = exec->vm();
     
-    if (i >= MAX_ARRAY_INDEX - 1
+    if (i > MAX_STORAGE_VECTOR_INDEX
         || (i >= MIN_SPARSE_ARRAY_INDEX
             && !isDenseEnoughForVector(i, countElements<indexingShape>(butterfly())))
         || indexIsSufficientlyBeyondLengthForSparseMap(i, m_butterfly->vectorLength())) {
