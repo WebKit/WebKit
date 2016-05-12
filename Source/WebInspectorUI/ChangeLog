@@ -1,5 +1,24 @@
 2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Layout timeline popovers are inconsistently shown
+        https://bugs.webkit.org/show_bug.cgi?id=157640
+        <rdar://problem/26253394>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._showPopoverForSelectedNodeSoon):
+        Fix the bug by clearing _showPopoverTimeout when we show the popover.
+
+        (WebInspector.TimelineDataGrid.prototype._hidePopover):
+        Modernize the code to use arrow functions and avoid binds.
+
+        (WebInspector.TimelineDataGrid.prototype._updatePopoverForSelectedNode):
+        Updating with presentNewContentWithFrame animates the popover to the correct
+        position instead of jumping and ending up at the wrong location.
+
+2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove forced layouts caused by DOMTreeElement during Timeline recording
         https://bugs.webkit.org/show_bug.cgi?id=157641
 
