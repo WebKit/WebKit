@@ -1,3 +1,21 @@
+2016-05-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Incorrect parsing when using just 'span" as grid-line value
+        https://bugs.webkit.org/show_bug.cgi?id=157615
+
+        Reviewed by Sergio Villar Senin.
+
+        The spec is pretty clear about this:
+        https://drafts.csswg.org/css-grid/#typedef-grid-row-start-grid-line
+
+        The possible options when using "span" to reference a grid line are:
+          [ span && [ <integer> || <custom-ident> ] ]
+
+        Thus, "span" keyword alone produces an invalid declaration.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridPosition):
+
 2016-05-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(ES6_ARROWFUNCTION_SYNTAX) guards

@@ -81,7 +81,7 @@
     testColumnRowCSSParsing("gridItemWithNegativeInteger", "auto / -10", "auto / -15");
     testColumnRowCSSParsing("gridItemWithBeforeSpan", "auto / span 2", "auto / span 9");
     testColumnRowCSSParsing("gridItemWithAfterSpan", "auto / span 2", "auto / span 9");
-    testColumnRowCSSParsing("gridItemWithOnlySpan", "auto / span 1", "auto / span 1");
+    testColumnRowCSSParsing("gridItemWithOnlySpan", "auto / auto", "auto / auto");
     testColumnRowCSSParsing("gridItemWithAutoElement", "auto / auto", "auto / auto");
     testColumnRowCSSParsing("gridItemWithCustomIdent", "auto / first", "auto / last");
     testColumnRowCSSParsing("gridItemWithNumberCustomIdent", "auto / 2 first", "auto / 3 last");

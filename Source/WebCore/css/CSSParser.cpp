@@ -5503,6 +5503,10 @@ RefPtr<CSSValue> CSSParser::parseGridPosition()
     if (!hasSeenSpanKeyword && !gridLineName && !numericValue)
         return nullptr;
 
+    // If we have "span" keyword alone is invalid.
+    if (hasSeenSpanKeyword && !gridLineName && !numericValue)
+        return nullptr;
+
     // Negative numbers are not allowed for span (but are for <integer>).
     if (hasSeenSpanKeyword && numericValue && numericValue->getIntValue() < 0)
         return nullptr;

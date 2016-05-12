@@ -1,3 +1,26 @@
+2016-05-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Incorrect parsing when using just 'span" as grid-line value
+        https://bugs.webkit.org/show_bug.cgi?id=157615
+
+        Reviewed by Sergio Villar Senin.
+
+        Add new test case in grid-item-column-row-get-set.html.
+
+        Updated other tests that were using "span" alone, with 2 approaches:
+        - In some of them changing "span" by "span 1" making it valid.
+        - In other changing the expected result to "auto", as it's invalid now.
+
+        * fast/css-grid-layout/grid-item-area-get-set.html:
+        * fast/css-grid-layout/grid-item-bad-named-area-auto-placement.html:
+        * fast/css-grid-layout/grid-item-column-row-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-column-row-get-set.html:
+        * fast/css-grid-layout/grid-item-end-after-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-end-after-get-set.html:
+        * fast/css-grid-layout/grid-item-negative-position-resolution.html:
+        * fast/css-grid-layout/grid-item-start-before-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-start-before-get-set.html:
+
 2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CRASH getting internal properties of function with no bound arguments causes
