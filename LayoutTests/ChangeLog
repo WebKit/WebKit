@@ -1,3 +1,20 @@
+2016-05-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        REGRESSION (r199313): ICBC app: text field In the webview is not tappable
+        https://bugs.webkit.org/show_bug.cgi?id=157396
+        <rdar://problem/25931513>
+
+        Reviewed by David Kilzer.
+
+        The previous test is actually bogus, and therefore modify it to do the
+        real task.
+
+        * fast/loader/iframe-src-invalid-url-expected.txt:
+        * fast/loader/iframe-src-invalid-url.html:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2016-05-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         indexForVisiblePosition should use the root editable element as the scope

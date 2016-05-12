@@ -1,3 +1,17 @@
+2016-05-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        REGRESSION (r199313): ICBC app: text field In the webview is not tappable
+        https://bugs.webkit.org/show_bug.cgi?id=157396
+        <rdar://problem/25931513>
+
+        Reviewed by David Kilzer.
+
+        Add a quirk for WebKit1 apps.
+
+        * WebView/WebView.mm:
+        (shouldConvertInvalidURLsToBlank):
+        (-[WebView _preferencesChanged:]):
+
 2016-05-12  Beth Dakin  <bdakin@apple.com>
 
         WebKitAdditions needs to be notified before the WebView is dealloc'd

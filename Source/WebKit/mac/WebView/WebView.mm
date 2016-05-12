@@ -875,6 +875,19 @@ static bool shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol()
 #endif
 }
 
+static bool shouldConvertInvalidURLsToBlank()
+{
+#if PLATFORM(IOS)
+    static bool shouldConvertInvalidURLsToBlank = dyld_get_program_sdk_version() >= 0x000A0000;
+#elif PLATFORM(MAC)
+    static bool shouldConvertInvalidURLsToBlank = dyld_get_program_sdk_version() >= 0x000A0C00;
+#else
+    static bool shouldConvertInvalidURLsToBlank = true;
+#endif
+
+    return shouldConvertInvalidURLsToBlank;
+}
+
 #if ENABLE(GAMEPAD)
 static void WebKitInitializeGamepadProviderIfNecessary()
 {
@@ -2525,6 +2538,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
 
     settings.setAllowContentSecurityPolicySourceStarToMatchAnyProtocol(shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol());
+
+    settings.setShouldConvertInvalidURLsToBlank(shouldConvertInvalidURLsToBlank());
 }
 
 static inline IMP getMethod(id o, SEL s)

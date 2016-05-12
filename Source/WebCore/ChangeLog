@@ -1,3 +1,24 @@
+2016-05-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        REGRESSION (r199313): ICBC app: text field In the webview is not tappable
+        https://bugs.webkit.org/show_bug.cgi?id=157396
+        <rdar://problem/25931513>
+
+        Reviewed by David Kilzer.
+
+        Add a quirk for WebKit1 apps.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestFrame):
+        Even though the HTML spec suggests that we should navigate to about:blank
+        for subframes/iframes, of which the src cannot be resolved to an valid URL,
+        many existing WebKit1 apps are relying on invalid URLs to bridge their WebView
+        codes and their native Objective-C codes. Therefore, a quirk is added to
+        escape the URL validation for existing WebKit1 apps.
+        (WebCore::SubframeLoader::shouldConvertInvalidURLsToBlank):
+        * loader/SubframeLoader.h:
+        * page/Settings.in:
+
 2016-05-12  Ada Chan  <adachan@apple.com>
 
         Prevent clicks in the placeholder from playing or pausing the video in a MediaDocument.
