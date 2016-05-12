@@ -213,7 +213,7 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
     m_response.m_response = resourceResponse;
     m_response.m_headers->filterAndFill(resourceResponse.httpHeaderFields(), FetchHeaders::Guard::Response);
 
-    std::exchange(m_promise, Nullopt)->resolve(&m_response);
+    std::exchange(m_promise, Nullopt)->resolve(m_response);
 }
 
 void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)

@@ -109,7 +109,7 @@ public:
     using ActiveDOMObject::suspend;
     using ActiveDOMObject::resume;
 
-    typedef DOMPromise<std::nullptr_t, ExceptionCode> Promise;
+    typedef DOMPromise<std::nullptr_t> Promise;
 
     void suspend(Promise&&);
     void resume(Promise&&);

@@ -1,3 +1,74 @@
+2016-05-12  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        DOMPromise should only restrict the resolution type
+        https://bugs.webkit.org/show_bug.cgi?id=157307
+
+        Reviewed by Darin Adler.
+
+        Removing from DOMPromise the rejection template parameter.
+        Supported rejection types are integers (Exception codes) and DOM objects (DOMError typically).
+
+        Updated toJS and DeferredWrapper to accept Ref<>&& and RefPtr<>&&.
+        Previously Ref<>&& were not accepted and only "const RefPtr<>&" was accepted.
+        This in turn created an unecessary churn count when calling toJS.
+
+        Changes also allow in most cases to remove the need for explictly declaring the
+        rejection/resolution type.
+
+        Minor refactoring of FontFaceSet promise handling to use DOMPromise in lieu of DeferredWrapper.
+
+        Covered by existing tests.
+        Changes should not be visible from user scripts.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::consume):
+        (WebCore::FetchBody::consumeText):
+        (WebCore::blobFromArrayBuffer):
+        (WebCore::FetchBody::loadingFailed):
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::formData):
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::arrayBuffer):
+        (WebCore::FetchBodyOwner::blob):
+        (WebCore::FetchBodyOwner::formData):
+        (WebCore::FetchBodyOwner::json):
+        (WebCore::FetchBodyOwner::text):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didReceiveResponse):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::didCreateStream):
+        * Modules/streams/ReadableStreamSource.h:
+        * Modules/webaudio/AudioContext.h:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS):
+        (WebCore::jsPair):
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::fulfillPromiseWithJSON):
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::TypeInspector::decltype):
+        (WebCore::TypeInspector::testIsVector):
+        (WebCore::TypeInspector::testIsRefOrRefPtr):
+        (WebCore::DeferredWrapper::resolve):
+        (WebCore::DeferredWrapper::reject):
+        (WebCore::DOMPromise::resolve):
+        (WebCore::DOMPromise::reject):
+        (WebCore::DeferredWrapper::resolveWithValue):
+        (WebCore::DeferredWrapper::rejectWithValue):
+        (WebCore::callPromiseFunction):
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::JSSubtleCrypto::importKey):
+        (WebCore::JSSubtleCrypto::unwrapKey):
+        * css/FontFace.h:
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::PendingPromise::PendingPromise):
+        (WebCore::FontFaceSet::load):
+        (WebCore::FontFaceSet::registerReady):
+        * css/FontFaceSet.h:
+        * html/HTMLMediaElement.h:
+
 2016-05-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Incorrect parsing when using just 'span" as grid-line value
