@@ -915,7 +915,7 @@ void WebFrameLoaderClient::frameLoadCompleted()
 {
 }
 
-void WebFrameLoaderClient::saveViewStateToItem(HistoryItem*)
+void WebFrameLoaderClient::saveViewStateToItem(HistoryItem&)
 {
 }
 

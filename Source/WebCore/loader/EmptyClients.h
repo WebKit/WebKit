@@ -376,7 +376,7 @@ public:
     void updateGlobalHistoryRedirectLinks() override { }
     bool shouldGoToHistoryItem(HistoryItem*) const override { return false; }
     void updateGlobalHistoryItemForPage() override { }
-    void saveViewStateToItem(HistoryItem*) override { }
+    void saveViewStateToItem(HistoryItem&) override { }
     bool canCachePage() const override { return false; }
     void didDisplayInsecureContent() override { }
     void didRunInsecureContent(SecurityOrigin*, const URL&) override { }

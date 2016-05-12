@@ -1,3 +1,16 @@
+2016-05-12  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Use reference instead of pointer in FrameLoaderClient::saveViewStateToItem.
+        https://bugs.webkit.org/show_bug.cgi?id=157624
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::saveViewStateToItem):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _saveViewState]):
+
 2016-05-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(ES6_ARROWFUNCTION_SYNTAX) guards

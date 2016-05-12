@@ -191,7 +191,7 @@ private:
     WTF::String generatedMIMETypeForURLScheme(const WTF::String& URLScheme) const override;
 
     void frameLoadCompleted() override;
-    void saveViewStateToItem(WebCore::HistoryItem*) override;
+    void saveViewStateToItem(WebCore::HistoryItem&) override;
     void restoreViewState() override;
     void provisionalLoadStarted() override;
     void didFinishLoad() override;
