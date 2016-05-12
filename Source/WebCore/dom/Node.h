@@ -675,8 +675,6 @@ private:
     void refEventTarget() override;
     void derefEventTarget() override;
 
-    Element* ancestorElement() const;
-
     void trackForDebugging();
     void materializeRareData();
 
