@@ -1,3 +1,22 @@
+2016-05-12  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for r200387.
+
+    2016-05-03  Michael Saboff  <msaboff@apple.com>
+
+            Crash: Array.prototype.slice() and .splice() can call fastSlice() after an array is truncated
+            https://bugs.webkit.org/show_bug.cgi?id=157322
+
+            Reviewed by Filip Pizlo.
+
+            Check to see if the source array has changed length before calling fastSlice().
+            If it has, take the slow path.
+
+            * runtime/ArrayPrototype.cpp:
+            (JSC::arrayProtoFuncSlice):
+            (JSC::arrayProtoFuncSplice):
+            * tests/stress/regress-157322.js: New test.
+
 2016-05-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r199277. rdar://problem/26228815

@@ -729,7 +729,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
     unsigned end = argumentClampedIndexFromStartOrEnd(exec, 1, length, length);
 
-    if (isJSArray(thisObj)) {
+    if (isJSArray(thisObj) && length == getLength(exec, thisObj)) {
         if (JSArray* result = asArray(thisObj)->fastSlice(*exec, begin, end - begin))
             return JSValue::encode(result);
     }
@@ -777,7 +777,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
 
     JSArray* result = nullptr;
 
-    if (isJSArray(thisObj))
+    if (isJSArray(thisObj) && length == getLength(exec, thisObj))
         result = asArray(thisObj)->fastSlice(*exec, begin, deleteCount);
 
     if (!result) {
