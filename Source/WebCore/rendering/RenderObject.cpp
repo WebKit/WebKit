@@ -622,22 +622,19 @@ void RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout()
 
 RenderBlock* RenderObject::containingBlock() const
 {
-    auto parent = this->parent();
+    auto* parent = this->parent();
+    if (is<RenderText>(*this))
+        return containingBlockForObjectInFlow(parent);
+
     if (!parent && is<RenderScrollbarPart>(*this))
         parent = downcast<RenderScrollbarPart>(*this).rendererOwningScrollbar();
 
-    const RenderStyle& style = this->style();
-    if (!is<RenderText>(*this) && style.position() == FixedPosition)
-        parent = containingBlockForFixedPosition(parent);
-    else if (!is<RenderText>(*this) && style.position() == AbsolutePosition)
-        parent = containingBlockForAbsolutePosition(parent);
-    else
-        parent = containingBlockForObjectInFlow(parent);
-
-    // This can still happen in case of an detached tree
-    if (!parent)
-        return nullptr;
-    return downcast<RenderBlock>(parent);
+    auto& style = this->style();
+    if (style.position() == AbsolutePosition)
+        return containingBlockForAbsolutePosition(parent);
+    if (style.position() == FixedPosition)
+        return containingBlockForFixedPosition(parent);
+    return containingBlockForObjectInFlow(parent);
 }
 
 void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

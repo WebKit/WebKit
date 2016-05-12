@@ -1,3 +1,15 @@
+2016-05-12  Zalan Bujtas  <zalan@apple.com>
+
+        Cleanup RenderObject::containingBlock.
+        https://bugs.webkit.org/show_bug.cgi?id=157628
+
+        Reviewed by Chris Dumez.
+
+        No change in functionality.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+
 2016-05-12  Eric Carlson  <eric.carlson@apple.com>
 
         Adjust "main content" video heuristic
