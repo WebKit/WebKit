@@ -1,3 +1,25 @@
+2016-05-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Contents of Duration column are covered by always on (legacy) scroll bars
+        https://bugs.webkit.org/show_bug.cgi?id=157590
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid .data-container):
+        Always show vertical scrollbars.
+
+        (.data-grid > .header-wrapper):
+        (.data-grid > .header-wrapper::-webkit-scrollbar):
+        Show invisible scrollbar for DataGrid's header to align the header table with the content.
+
+        (.data-grid.no-header > .header-wrapper > table.header):
+        (.data-grid.no-header > table.header): Deleted.
+        (.data-grid th): Deleted.
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        `overflow-y: scroll` doesn't work on a table element. Wrap table in a div.
+
 2016-05-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Make it possible to do special styling on selected TimelineOverviewGraphs

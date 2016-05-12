@@ -61,8 +61,13 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this.element.addEventListener("keydown", this._keyDown.bind(this), false);
         this.element.copyHandler = this;
 
+        this._headerWrapperElement = document.createElement("div");
+        this._headerWrapperElement.classList.add("header-wrapper");
+
         this._headerTableElement = document.createElement("table");
         this._headerTableElement.className = "header";
+        this._headerWrapperElement.appendChild(this._headerTableElement);
+
         this._headerTableColumnGroupElement = this._headerTableElement.createChild("colgroup");
         this._headerTableBodyElement = this._headerTableElement.createChild("tbody");
         this._headerTableRowElement = this._headerTableBodyElement.createChild("tr");
@@ -103,7 +108,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         this._fillerRowElement = this.dataTableBodyElement.createChild("tr", "filler");
 
-        this.element.appendChild(this._headerTableElement);
+        this.element.appendChild(this._headerWrapperElement);
         this.element.appendChild(this._scrollContainerElement);
 
         if (preferredColumnOrder) {
