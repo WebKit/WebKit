@@ -1,3 +1,60 @@
+2016-05-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Improve snapshot selection in heap allocations overview graph
+        https://bugs.webkit.org/show_bug.cgi?id=157588
+        <rdar://problem/26231245>
+
+        Reviewed by Joseph Pecoraro.
+
+        Heap snapshot icon selection now uses the built-in record selection
+        behavior provided by TimelineOverview/TimelineOverviewGraph. The marker
+        representing the selected heap snapshot now has a "selected" style, and
+        clicking an icon when the HeapAllocationsTimeline is not selected causes
+        the timeline to become selected.
+
+        * UserInterface/Images/HeapSnapshotSelected.svg: Added.
+        New art for selected snapshot icon.
+
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.css:
+        (.timeline-overview-graph.heap-allocations > img.snapshot.selected):
+        (.timeline-overview-graph.heap-allocations:not(.selected) > img.snapshot.selected):
+        Selected icon styles for selected/unselected overview graph.
+
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.js:
+        (WebInspector.HeapAllocationsTimelineOverviewGraph):
+        Track selected image element.
+
+        (WebInspector.HeapAllocationsTimelineOverviewGraph.prototype.layout):
+        Associate image elements with their snapshot record, and reuse image
+        elements between layouts. Image element click handler can just set the
+        selectedRecord in the TimelineOverviewGraph base class.
+
+        (WebInspector.HeapAllocationsTimelineOverviewGraph.prototype.updateSelectedRecord):
+        (WebInspector.HeapAllocationsTimelineOverviewGraph.prototype._updateSnapshotMarkers):
+        Refresh snapshot icon styles when selected record changes.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WebInspector.HeapAllocationsTimelineView.prototype.selectRecord):
+        Show snapshot list if no record selected.
+        (WebInspector.HeapAllocationsTimelineView.prototype.userSelectedRecordFromOverview): Deleted.
+        No longer needed.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype._updateFrameMarker):
+        No need to call dispatchSelectedRecordChangedEvent manually anymore,
+        method has been removed from base class.
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph.prototype._needsSelectedRecordLayout):
+        (WebInspector.TimelineOverviewGraph):
+        (WebInspector.TimelineOverviewGraph.prototype.dispatchSelectedRecordChangedEvent): Deleted.
+        No longer needed. Event dispatched automatically by the rAF callback.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._recordSelected):
+        Allow switching to another timeline, if the selected record does not
+        belong to the current timeline.
+
 2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: 3.5% of time in toFixed in TimelineRecordBar updating element positions

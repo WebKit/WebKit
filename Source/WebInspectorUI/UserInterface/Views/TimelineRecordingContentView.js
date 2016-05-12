@@ -630,12 +630,13 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _recordSelected(event)
     {
-        let timelineView = this._timelineViewMap.get(event.data.timeline);
-        console.assert(timelineView === this.currentTimelineView, timelineView);
-        if (timelineView !== this.currentTimelineView)
-            return;
+        let {record, timeline} = event.data;
+        let timelineView = this._timelineViewMap.get(timeline);
 
-        timelineView.selectRecord(event.data.record);
+        if (record && timelineView !== this.currentTimelineView)
+            this.showTimelineViewForTimeline(timeline);
+
+        timelineView.selectRecord(record);
     }
 
     _timelineSelected()
