@@ -493,6 +493,8 @@ Controller.prototype = {
         var inlinePlaybackPlaceholder = this.controls.inlinePlaybackPlaceholder = document.createElement('div');
         inlinePlaybackPlaceholder.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-status');
         inlinePlaybackPlaceholder.setAttribute('aria-label', this.UIString('Video Playback Placeholder'));
+        this.listenFor(inlinePlaybackPlaceholder, 'click', this.handlePlaceholderClick);
+        this.listenFor(inlinePlaybackPlaceholder, 'dblclick', this.handlePlaceholderClick);
         if (!Controller.gSimulatePictureInPictureAvailable)
             inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
 
@@ -971,6 +973,12 @@ Controller.prototype = {
     handlePanelDragStart: function(event)
     {
         // Prevent drags in the panel from triggering a drag event on the <video> element.
+        event.preventDefault();
+    },
+
+    handlePlaceholderClick: function(event)
+    {
+        // Prevent clicks in the placeholder from playing or pausing the video in a MediaDocument.
         event.preventDefault();
     },
 
