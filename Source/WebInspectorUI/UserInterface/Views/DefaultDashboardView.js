@@ -29,7 +29,8 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
     {
         super(representedObject, "default");
 
-        representedObject.addEventListener(WebInspector.DefaultDashboard.Event.DataDidChange, window.requestAnimationFrame.bind(null, this._updateDisplay.bind(this)));
+        representedObject.addEventListener(WebInspector.DefaultDashboard.Event.DataDidChange, () => { this._updateDisplaySoon() });
+        this._scheduledUpdateIdentifier = undefined;
 
         this._items = {
             resourcesCount: {
@@ -64,8 +65,18 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
     
     // Private
 
+    _updateDisplaySoon()
+    {
+        if (this._scheduledUpdateIdentifier)
+            return;
+
+        this._scheduledUpdateIdentifier = requestAnimationFrame(this._updateDisplay.bind(this));
+    }
+
     _updateDisplay()
     {
+        this._scheduledUpdateIdentifier = undefined;
+
         var dashboard = this.representedObject;
 
         for (var category of ["logs", "issues", "errors"])
