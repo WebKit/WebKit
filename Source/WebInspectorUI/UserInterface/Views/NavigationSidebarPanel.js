@@ -489,6 +489,9 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
     _updateContentOverflowShadowVisibility()
     {
+        if (!this.visible)
+            return;
+
         this._updateContentOverflowShadowVisibility.cancelDebounce();
 
         let scrollHeight = this.contentView.element.scrollHeight;
@@ -628,7 +631,9 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         }
 
         this._checkForEmptyFilterResults();
-        this.soon._updateContentOverflowShadowVisibility();
+
+        if (this.visible)
+            this.soon._updateContentOverflowShadowVisibility();
 
         if (this.selected)
             this._checkElementsForPendingViewStateCookie([treeElement]);

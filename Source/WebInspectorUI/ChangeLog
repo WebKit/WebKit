@@ -1,5 +1,18 @@
 2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: 3.8% of timeline recording spent in NavigationSidebarPanel _updateContentOverflowShadowVisibility for background tab
+        https://bugs.webkit.org/show_bug.cgi?id=157616
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._updateContentOverflowShadowVisibility):
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        Don't update or schedule and update if we aren't visible.
+        When we are shown we will force an update.
+
+2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Reduce rAF churn in DefaultDashboardView on pages with lots of resources
         https://bugs.webkit.org/show_bug.cgi?id=157618
 
