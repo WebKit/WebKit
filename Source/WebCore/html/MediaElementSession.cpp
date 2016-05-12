@@ -54,11 +54,10 @@
 
 namespace WebCore {
 
-static const int elementMainContentMinimumWidth = 400;
-static const int elementMainContentMinimumHeight = 300;
 static const double elementMainContentCheckInterval = .250;
 
 static bool isMainContent(const HTMLMediaElement&);
+static bool isElementLargeEnoughForMainContent(const HTMLMediaElement&);
 
 #if !LOG_DISABLED
 static String restrictionName(MediaElementSession::BehaviorRestrictions restriction)
@@ -224,8 +223,8 @@ bool MediaElementSession::canControlControlsManager(const HTMLMediaElement& elem
     if (!renderer)
         return false;
 
-    if (element.hasVideo() && renderer->clientWidth() >= elementMainContentMinimumWidth && renderer->clientHeight() >= elementMainContentMinimumHeight)
-            return true;
+    if (isElementLargeEnoughForMainContent(element))
+        return true;
 
     if (ScriptController::processingUserGestureForMedia())
         return true;
@@ -506,8 +505,7 @@ static bool isMainContent(const HTMLMediaElement& element)
     if (!renderer)
         return false;
 
-    if (renderer->clientWidth() < elementMainContentMinimumWidth
-        || renderer->clientHeight() < elementMainContentMinimumHeight)
+    if (!isElementLargeEnoughForMainContent(element))
         return false;
 
     // Elements which are hidden by style, or have been scrolled out of view, cannot be main content.
@@ -539,11 +537,30 @@ static bool isMainContent(const HTMLMediaElement& element)
 
     // Elements which are obscured by other elements cannot be main content.
     mainRenderView.hitTest(request, result);
+    result.setToNonUserAgentShadowAncestor();
     Element* hitElement = result.innerElement();
     if (hitElement != &element)
         return false;
 
     return true;
+}
+
+static bool isElementLargeEnoughForMainContent(const HTMLMediaElement& element)
+{
+    static const double elementMainContentAreaMinimum = 400 * 300;
+    static const double maximumAspectRatio = 1.8; // Slightly larger than 16:9.
+    static const double minimumAspectRatio = .5; // Slightly smaller than 16:9.
+
+    // Elements which have not yet been laid out, or which are not yet in the DOM, cannot be main content.
+    RenderBox* renderer = downcast<RenderBox>(element.renderer());
+    if (!renderer)
+        return false;
+
+    double width = renderer->clientWidth();
+    double height = renderer->clientHeight();
+    double area = width * height;
+    double aspectRatio = width / height;
+    return area >= elementMainContentAreaMinimum && aspectRatio >= minimumAspectRatio && aspectRatio <= maximumAspectRatio;
 }
 
 void MediaElementSession::mainContentCheckTimerFired()

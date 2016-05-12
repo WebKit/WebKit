@@ -1,3 +1,15 @@
+2016-05-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Adjust "main content" video heuristic
+        https://bugs.webkit.org/show_bug.cgi?id=157532
+
+        Reviewed by Darin Adler.
+
+        * media/video-main-content-allow.html:
+        * media/video-main-content-autoplay-expected.txt: Added.
+        * media/video-main-content-autoplay.html: Added.
+        * media/video-main-content-deny-too-small.html:
+
 2016-05-12  Antoine Quint  <graouts@apple.com>
 
         Correctly handle prefixed and unprefixed variants in CSSStyleDeclaration

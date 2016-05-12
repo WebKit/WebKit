@@ -7,6 +7,7 @@
     <script>
     function go() {
         video = document.createElement('video');
+        video.controls = ""
         run('internals.setMediaElementRestrictions(video, "RequireUserGestureForVideoRateChange,OverrideUserGestureRequirementForMainContent")');
         document.body.appendChild(video);
 
@@ -27,8 +28,8 @@
     </script>
     <style>
     video {
-        width: 200px;
-        height: 100px;
+        width: 400px;
+        height: 299px;
     }
     </style>
 </head>
