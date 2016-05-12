@@ -199,7 +199,7 @@ public:
     WEBCORE_EXPORT virtual void cancel();
 
     // The client may be 0, in which case no callbacks will be made.
-    ResourceHandleClient* client() const;
+    WEBCORE_EXPORT ResourceHandleClient* client() const;
     WEBCORE_EXPORT void setClient(ResourceHandleClient*);
 
     // Called in response to ResourceHandleClient::willSendRequestAsync().
