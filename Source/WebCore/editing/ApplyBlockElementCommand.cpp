@@ -97,6 +97,11 @@ void ApplyBlockElementCommand::doApply()
     if (startScope == endScope && startIndex >= 0 && startIndex <= endIndex) {
         VisiblePosition start(visiblePositionForIndex(startIndex, startScope.get()));
         VisiblePosition end(visiblePositionForIndex(endIndex, endScope.get()));
+        // Work around the fact indexForVisiblePosition can return a larger index due to TextIterator
+        // using an extra newline to represent a large margin.
+        // FIXME: Add a new TextIteratorBehavior to suppress it.
+        if (start.isNotNull() && end.isNull())
+            end = lastPositionInNode(endScope.get());
         if (start.isNotNull() && end.isNotNull())
             setEndingSelection(VisibleSelection(start, end, endingSelection().isDirectional()));
     }

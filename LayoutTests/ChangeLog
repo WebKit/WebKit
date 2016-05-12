@@ -1,3 +1,19 @@
+2016-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        indexForVisiblePosition should use the root editable element as the scope
+        https://bugs.webkit.org/show_bug.cgi?id=157611
+
+        Reviewed by Darin Adler.
+
+        Rebaselined tests with progressions.
+
+        * editing/execCommand/crash-indenting-list-item-expected.txt: Now preseves the selection at the beginning of
+        the editable region instead of moving it to the end.
+        * editing/execCommand/format-block-multiple-paragraphs-in-pre-expected.txt: Now preserves selection in more test
+        cases. This test is the one that required the workaround in ApplyBlockElementCommand::doApply. One of the test
+        cases would regress and clear the selection without it.
+        * editing/execCommand/indent-pre-list-expected.txt: Now preserves the selection instead of clearing it.
+
 2016-05-12  Eric Carlson  <eric.carlson@apple.com>
 
         Adjust "main content" video heuristic

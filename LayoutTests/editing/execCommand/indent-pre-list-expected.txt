@@ -69,11 +69,11 @@ yields:
 |     <pre>
 |       <blockquote>
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
-|         "hello"
+|         "<#selection-anchor>hello"
 |         <br>
 |         "world"
 |         <br>
-|         "webkit"
+|         "webkit<#selection-focus>"
 | "
 "
 

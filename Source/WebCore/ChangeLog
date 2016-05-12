@@ -1,3 +1,24 @@
+2016-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        indexForVisiblePosition should use the root editable element as the scope
+        https://bugs.webkit.org/show_bug.cgi?id=157611
+
+        Reviewed by Darin Adler.
+
+        Use the highest editing host instead of the document node as the scope in indexForVisiblePosition
+        when it's called inside an editable region. This refactoring is necessary to unblock the work to support
+        undo/redo in VoiceOver after r199030.
+
+        We have to workaround a bug in indexForVisiblePosition that it could return a slightly higher index than
+        the expected value because TextIterator emits an extra new line after a block element with a large margin
+        at the bottom. Unfortunately, fixing this requires a lot of code changes since the rest of the editing
+        code assumes this behavior and/or happens to cancel it out with some other quirks.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::doApply):
+        * editing/htmlediting.cpp:
+        (WebCore::indexForVisiblePosition):
+
 2016-05-12  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup RenderObject::containingBlock.

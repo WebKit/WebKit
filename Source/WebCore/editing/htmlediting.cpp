@@ -1133,17 +1133,21 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Conta
     if (visiblePosition.isNull())
         return 0;
 
-    Position p(visiblePosition.deepEquivalent());
-    Document& document = p.anchorNode()->document();
-    ShadowRoot* shadowRoot = p.anchorNode()->containingShadowRoot();
+    Position position = visiblePosition.deepEquivalent();
+    auto& document = *position.document();
 
-    if (shadowRoot)
-        scope = shadowRoot;
-    else
-        scope = document.documentElement();
+    Node* editableRoot = highestEditableRoot(position, AXObjectCache::accessibilityEnabled() ? HasEditableAXRole : ContentIsEditable);
+    if (editableRoot && !document.inDesignMode())
+        scope = downcast<ContainerNode>(editableRoot);
+    else {
+        if (position.containerNode()->isInShadowTree())
+            scope = position.containerNode()->containingShadowRoot();
+        else
+            scope = &document;
+    }
 
-    RefPtr<Range> range = Range::create(document, firstPositionInNode(scope.get()), p.parentAnchoredEquivalent());
-    return TextIterator::rangeLength(range.get(), true);
+    auto range = Range::create(document, firstPositionInNode(scope.get()), position.parentAnchoredEquivalent());
+    return TextIterator::rangeLength(range.ptr(), true);
 }
 
 // FIXME: Merge these two functions.

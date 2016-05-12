@@ -4,7 +4,7 @@ Formatting all paragraphs by h3 yields:
 | "
 "
 | <h3>
-|   "hello"
+|   "<#selection-anchor>hello"
 |   <br>
 |   "
 "
@@ -12,7 +12,7 @@ Formatting all paragraphs by h3 yields:
 |   <br>
 |   "
 "
-|   "webkit"
+|   "webkit<#selection-focus>"
 | "
 "
 
@@ -65,12 +65,11 @@ Formatting all but the first paragraph by h3 yields:
 |   "hello
 "
 |   <h3>
-|     "
+|     "<#selection-anchor>
 "
 |     "world"
 |     "
 "
-|     "webkit"
-|   <#selection-caret>
+|     "webkit<#selection-focus>"
 | "
 "
