@@ -1,3 +1,22 @@
+2016-05-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r200700, r200703, and r200713.
+        https://bugs.webkit.org/show_bug.cgi?id=157601
+
+        Broke iOS builds (Requested by rniwa on #webkit).
+
+        Reverted changesets:
+
+        "Touch.prototype is undefined on iOS"
+        https://bugs.webkit.org/show_bug.cgi?id=157560
+        http://trac.webkit.org/changeset/200700
+
+        "iOS build fix attempt after r200700."
+        http://trac.webkit.org/changeset/200703
+
+        "iOS clean build fix after r200700."
+        http://trac.webkit.org/changeset/200713
+
 2016-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS clean build fix after r200700.
