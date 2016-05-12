@@ -1,3 +1,32 @@
+2016-05-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: 11% of time in TimelineRecording spent updating DataGrid that is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=157612
+        <rdar://problem/26239051>
+
+        Reviewed by Timothy Hatcher.
+
+        During recording, a timeline view is constantly having its cached time
+        values updated. These updates should only trigger forced layouts if the
+        view supports live data.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.set zeroTime):
+        Drive-by fix, add call to _filterTimesDidChange.
+        (WebInspector.TimelineView.prototype.set startTime):
+        (WebInspector.TimelineView.prototype.set endTime):
+        (WebInspector.TimelineView.prototype.set currentTime):
+        Don't update layout directly.
+        (WebInspector.TimelineView.prototype._timesDidChange):
+        Force a layout if the view supports live data. When not recording,
+        a layout is always performed.
+        (WebInspector.TimelineView):
+        (WebInspector.TimelineView.prototype._filterTimesDidChange.delayedWork): Deleted.
+        Changed to an arrow function.
+        (WebInspector.TimelineView.prototype._filterTimesDidChange): Deleted.
+        Renamed _timesDidChange, since the method now does more than throttle
+        a filterDidChange call.
+
 2016-05-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Web Inspector: Windows Perl fails to run copy-user-interface-resources.pl

@@ -85,7 +85,7 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
         this._zeroTime = x;
 
-        this.needsLayout();
+        this._timesDidChange();
     }
 
     get startTime()
@@ -102,8 +102,7 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
         this._startTime = x;
 
-        this._filterTimesDidChange();
-        this.needsLayout();
+        this._timesDidChange();
     }
 
     get endTime()
@@ -120,8 +119,7 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
         this._endTime = x;
 
-        this._filterTimesDidChange();
-        this.needsLayout();
+        this._timesDidChange();
     }
 
     get currentTime()
@@ -147,10 +145,8 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
             return this._startTime - wiggleTime <= currentTime && currentTime <= this._endTime + wiggleTime;
         }
 
-        if (checkIfLayoutIsNeeded.call(this, oldCurrentTime) || checkIfLayoutIsNeeded.call(this, this._currentTime)) {
-            this._filterTimesDidChange();
-            this.needsLayout();
-        }
+        if (checkIfLayoutIsNeeded.call(this, oldCurrentTime) || checkIfLayoutIsNeeded.call(this, this._currentTime))
+            this._timesDidChange();
     }
 
     get filterStartTime()
@@ -311,18 +307,18 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
     // Private
 
-    _filterTimesDidChange()
+    _timesDidChange()
     {
+        if (!WebInspector.timelineManager.isCapturing() || this.showsLiveRecordingData)
+            this.needsLayout();
+
         if (!this._timelineDataGrid || this._updateFilterTimeout)
             return;
 
-        function delayedWork()
-        {
+        this._updateFilterTimeout = setTimeout(() => {
             this._updateFilterTimeout = undefined;
             this._timelineDataGrid.filterDidChange();
-        }
-
-        this._updateFilterTimeout = setTimeout(delayedWork.bind(this), 0);
+        }, 0);
     }
 };
 
