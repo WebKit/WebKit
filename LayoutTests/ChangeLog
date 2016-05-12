@@ -1,5 +1,17 @@
 2016-05-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r200378. rdar://problem/26064990
+
+    2016-05-03  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, drop outdated layout test after r200375.
+
+            * fast/workers/resources/worker-replace-self.js: Removed.
+            * fast/workers/worker-replace-self-expected.txt: Removed.
+            * fast/workers/worker-replace-self.html: Removed.
+
+2016-05-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r200375. rdar://problem/26064990
 
     2016-05-03  Pranjal Jumde  <pjumde@apple.com>
