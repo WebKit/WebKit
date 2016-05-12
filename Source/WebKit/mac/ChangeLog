@@ -1,3 +1,16 @@
+2016-05-12  Beth Dakin  <bdakin@apple.com>
+
+        WebKitAdditions needs to be notified before the WebView is dealloc'd
+        https://bugs.webkit.org/show_bug.cgi?id=157633
+        -and corresponding-
+        rdar://problem/26134539
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebView.mm:
+        (-[WebView dealloc]):
+        * WebView/WebViewInternal.h:
+
 2016-05-12  Konstantin Tokarev  <annulen@yandex.ru>
 
         Use reference instead of pointer in FrameLoaderClient::saveViewStateToItem.

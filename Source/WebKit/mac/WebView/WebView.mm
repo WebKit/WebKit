@@ -5194,6 +5194,8 @@ static bool needsWebViewInitThreadWorkaround()
             [_private->_geolocationProvider stopTrackingWebView:self];
 #endif
 
+        [self webViewAdditionsWillDestroyView];
+
         // call close to ensure we tear-down completely
         // this maintains our old behavior for existing applications
         [self close];
@@ -6697,6 +6699,10 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 - (BOOL)shouldRequestCandidates
 {
     return NO;
+}
+
+- (void)webViewAdditionsWillDestroyView
+{
 }
 
 @end
