@@ -167,8 +167,6 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             console.assert(messageView.element instanceof Element);
             this._filterMessageElements([messageView.element]);
         }
-
-
     }
 
     get supportsSearch()
@@ -633,6 +631,9 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
 
     _logCleared(event)
     {
+        for (let item of this._scopeBar.items)
+            item.element.classList.remove("unread");
+
         this._logViewController.clear();
         this._nestingLevel = 0;
 
@@ -653,9 +654,6 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
 
     _clearLog()
     {
-        for (var item of this._scopeBar.items)
-            item.element.classList.remove("unread");
-
         WebInspector.logManager.requestClearMessages();
     }
 

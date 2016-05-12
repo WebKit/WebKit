@@ -1,3 +1,16 @@
+2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Console unread indicators should be cleared however the console clears
+        https://bugs.webkit.org/show_bug.cgi?id=157594
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._logCleared):
+        (WebInspector.LogContentView.prototype._clearLog):
+        Move code that clears unread indicators from clearLog to logCleared
+        to handle all possible clear cases.
+
 2016-05-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Contents of Duration column are covered by always on (legacy) scroll bars
