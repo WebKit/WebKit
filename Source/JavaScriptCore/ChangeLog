@@ -1,3 +1,13 @@
+2016-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Baseline and DFG's JSC_report...CompileTimes needs CodeBlock hashes.
+        https://bugs.webkit.org/show_bug.cgi?id=157643
+
+        Reviewed by Keith Miller.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2016-05-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(ES6_ARROWFUNCTION_SYNTAX) guards
