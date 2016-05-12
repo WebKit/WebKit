@@ -50,7 +50,7 @@
     left: 0;
     right: 0;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: overlay;
 }
 
 .data-grid.inline .data-container {
@@ -61,16 +61,7 @@
     border: 0.5px solid var(--border-color);
 }
 
-.data-grid > .header-wrapper {
-    border-bottom: 0.5px solid var(--border-color);
-    overflow-y: scroll;
-}
-
-.data-grid > .header-wrapper::-webkit-scrollbar {
-    -webkit-appearance: none;
-}
-
-.data-grid.no-header > .header-wrapper > table.header {
+.data-grid.no-header > table.header {
     display: none;
 }
 
@@ -83,6 +74,8 @@
     vertical-align: middle;
 
     background-color: white;
+
+    border-bottom: 0.5px solid var(--border-color);
 
     font-weight: normal;
 
