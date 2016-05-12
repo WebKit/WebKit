@@ -1,3 +1,17 @@
+2016-05-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r200766.
+        https://bugs.webkit.org/show_bug.cgi?id=157623
+
+        it is breaking yosemite builds (Requested by youenn on
+        #webkit).
+
+        Reverted changeset:
+
+        "DOMPromise should only restrict the resolution type"
+        https://bugs.webkit.org/show_bug.cgi?id=157307
+        http://trac.webkit.org/changeset/200766
+
 2016-05-12  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         DOMPromise should only restrict the resolution type

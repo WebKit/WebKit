@@ -75,7 +75,7 @@ void FetchBodyOwner::arrayBuffer(DeferredWrapper&& promise)
         return;
     }
     if (isDisturbed()) {
-        promise.reject(TypeError);
+        promise.reject<ExceptionCode>(TypeError);
         return;
     }
     m_isDisturbed = true;
@@ -85,11 +85,11 @@ void FetchBodyOwner::arrayBuffer(DeferredWrapper&& promise)
 void FetchBodyOwner::blob(DeferredWrapper&& promise)
 {
     if (m_body.isEmpty()) {
-        promise.resolve(Blob::create());
+        promise.resolve<RefPtr<Blob>>(Blob::create());
         return;
     }
     if (isDisturbed()) {
-        promise.reject(TypeError);
+        promise.reject<ExceptionCode>(TypeError);
         return;
     }
     m_isDisturbed = true;
@@ -99,11 +99,11 @@ void FetchBodyOwner::blob(DeferredWrapper&& promise)
 void FetchBodyOwner::formData(DeferredWrapper&& promise)
 {
     if (m_body.isEmpty()) {
-        promise.reject(0);
+        promise.reject<ExceptionCode>(0);
         return;
     }
     if (isDisturbed()) {
-        promise.reject(TypeError);
+        promise.reject<ExceptionCode>(TypeError);
         return;
     }
     m_isDisturbed = true;
@@ -113,11 +113,11 @@ void FetchBodyOwner::formData(DeferredWrapper&& promise)
 void FetchBodyOwner::json(DeferredWrapper&& promise)
 {
     if (m_body.isEmpty()) {
-        promise.reject(SYNTAX_ERR);
+        promise.reject<ExceptionCode>(SYNTAX_ERR);
         return;
     }
     if (isDisturbed()) {
-        promise.reject(TypeError);
+        promise.reject<ExceptionCode>(TypeError);
         return;
     }
     m_isDisturbed = true;
@@ -131,7 +131,7 @@ void FetchBodyOwner::text(DeferredWrapper&& promise)
         return;
     }
     if (isDisturbed()) {
-        promise.reject(TypeError);
+        promise.reject<ExceptionCode>(TypeError);
         return;
     }
     m_isDisturbed = true;

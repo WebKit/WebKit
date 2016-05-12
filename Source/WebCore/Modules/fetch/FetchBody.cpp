@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-static Ref<Blob> blobFromArrayBuffer(ArrayBuffer*, const String&);
+static RefPtr<Blob> blobFromArrayBuffer(ArrayBuffer*, const String&);
 
 FetchBody::FetchBody(Ref<Blob>&& blob)
     : m_type(Type::Blob)
@@ -141,7 +141,7 @@ void FetchBody::consume(FetchBodyOwner& owner, Consumer::Type type, DeferredWrap
     }
 
     // FIXME: Support other types.
-    promise.reject(0);
+    promise.reject<ExceptionCode>(0);
 }
 
 #if ENABLE(STREAMS_API)
@@ -200,7 +200,7 @@ void FetchBody::consumeText(Consumer::Type type, DeferredWrapper& promise)
         return;
     }
     String contentType = Blob::normalizedContentType(extractMIMETypeFromMediaType(m_mimeType));
-    promise.resolve(Blob::create(extractFromText(), contentType));
+    promise.resolve<RefPtr<Blob>>(Blob::create(extractFromText(), contentType));
 }
 
 FetchLoader::Type FetchBody::loadingType(Consumer::Type type)
@@ -236,7 +236,7 @@ Vector<uint8_t> FetchBody::extractFromText() const
     return value;
 }
 
-static inline Ref<Blob> blobFromArrayBuffer(ArrayBuffer* buffer, const String& contentType)
+static inline RefPtr<Blob> blobFromArrayBuffer(ArrayBuffer* buffer, const String& contentType)
 {
     if (!buffer)
         return Blob::create(Vector<uint8_t>(), contentType);
@@ -259,7 +259,7 @@ void FetchBody::fulfillTextPromise(FetchBody::Consumer::Type type, const String&
 void FetchBody::loadingFailed()
 {
     ASSERT(m_consumer);
-    m_consumer->promise.reject(0);
+    m_consumer->promise.reject<ExceptionCode>(0);
     m_consumer = Nullopt;
 }
 

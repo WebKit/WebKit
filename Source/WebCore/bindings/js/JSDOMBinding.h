@@ -251,8 +251,7 @@ JSC::JSObject* toJSSequence(JSC::ExecState*, JSC::JSValue, unsigned& length);
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBuffer*);
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBufferView*);
 JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, JSC::ArrayBufferView*);
-template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, RefPtr<T>&);
-template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, RefPtr<T>&&);
+template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, RefPtr<T>);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<T>);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T>&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Vector<RefPtr<T>>&);
@@ -268,7 +267,7 @@ template<typename T, size_t inlineCapacity> JSC::JSValue jsArray(JSC::ExecState*
 WEBCORE_EXPORT JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<DOMStringList>);
 
 JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, JSC::JSValue, JSC::JSValue);
-template<typename FirstType, typename SecondType> JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, FirstType&, SecondType&);
+template<typename FirstType, typename SecondType> JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, const FirstType&, const SecondType&);
 
 RefPtr<JSC::ArrayBufferView> toArrayBufferView(JSC::JSValue);
 RefPtr<JSC::Int8Array> toInt8Array(JSC::JSValue);
@@ -541,12 +540,7 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject
     return view->wrap(exec, globalObject);
 }
 
-template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, RefPtr<T>& ptr)
-{
-    return toJS(exec, globalObject, ptr.get());
-}
-
-template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, RefPtr<T>&& ptr)
+template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, RefPtr<T> ptr)
 {
     return toJS(exec, globalObject, ptr.get());
 }
@@ -650,7 +644,7 @@ inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject* globalObjec
     return constructArray(&state, 0, globalObject, args);
 }
 
-template<typename FirstType, typename SecondType> inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject* globalObject, FirstType& value1, SecondType& value2)
+template<typename FirstType, typename SecondType> inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject* globalObject, const FirstType& value1, const SecondType& value2)
 {
     return jsPair(state, globalObject, toJS(&state, globalObject, value1), toJS(&state, globalObject, value2));
 }
