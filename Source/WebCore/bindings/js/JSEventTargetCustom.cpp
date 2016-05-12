@@ -42,14 +42,11 @@ namespace WebCore {
 
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
     case interfaceName##EventTargetInterfaceType: \
-        return toJS(exec, globalObject, static_cast<interfaceName*>(target));
+        return toJS(exec, globalObject, static_cast<interfaceName&>(target));
 
-JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* target)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget& target)
 {
-    if (!target)
-        return jsNull();
-
-    switch (target->eventTargetInterface()) {
+    switch (target.eventTargetInterface()) {
     DOM_EVENT_TARGET_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
     }
 

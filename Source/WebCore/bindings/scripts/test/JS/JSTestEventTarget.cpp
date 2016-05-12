@@ -209,7 +209,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* s
     auto index = convert<uint32_t>(*state, state->argument(0), NormalConversion);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.item(WTFMove(index))));
+    JSValue result = toJS(state, castedThis->globalObject(), impl.item(WTFMove(index)));
     return JSValue::encode(result);
 }
 
@@ -230,22 +230,18 @@ extern "C" { extern void* _ZTVN7WebCore15TestEventTargetE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTarget* impl)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTarget& impl)
 {
-    if (!impl)
-        return jsNull();
-    return createNewWrapper<JSTestEventTarget>(globalObject, impl);
+    return createNewWrapper<JSTestEventTarget>(globalObject, &impl);
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTarget* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTarget& impl)
 {
-    if (!impl)
-        return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestEventTarget>(globalObject, impl))
+    if (JSValue result = getExistingWrapper<JSTestEventTarget>(globalObject, &impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+    void* actualVTablePointer = *(reinterpret_cast<void**>(&impl));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestEventTarget@WebCore@@6B@"));
 #else
@@ -262,7 +258,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTar
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestEventTarget>(globalObject, impl);
+    return createNewWrapper<JSTestEventTarget>(globalObject, &impl);
 }
 
 TestEventTarget* JSTestEventTarget::toWrapped(JSC::JSValue value)

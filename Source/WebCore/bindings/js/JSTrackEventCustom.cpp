@@ -42,7 +42,7 @@ JSValue JSTrackEvent::track(ExecState& state) const
     if (!track)
         return jsNull();
 
-    return toJS(&state, globalObject(), track);
+    return toJS(&state, globalObject(), *track);
 }
 
 } // namespace WebCore

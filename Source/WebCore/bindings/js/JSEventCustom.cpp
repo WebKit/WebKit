@@ -62,24 +62,21 @@ static inline JSValue createNewEventWrapper(JSDOMGlobalObject& globalObject, Eve
     return CREATE_DOM_WRAPPER(&globalObject, Event, &event);
 }
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Event* event)
+JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Event& event)
 {
     JSLockHolder lock(globalObject->vm());
 
-    if (!event)
-        return jsNull();
-
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), event);
+    JSObject* wrapper = getCachedWrapper(globalObject->world(), &event);
     if (wrapper)
         return wrapper;
 
-    return createNewEventWrapper(*globalObject, *event);
+    return createNewEventWrapper(*globalObject, event);
 }
 
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Event* event)
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Event& event)
 {
-    return event ? createNewEventWrapper(*globalObject, *event) : jsNull();
+    return createNewEventWrapper(*globalObject, event);
 }
 
 #undef TRY_TO_WRAP_WITH_INTERFACE

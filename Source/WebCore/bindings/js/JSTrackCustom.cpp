@@ -53,31 +53,28 @@ TrackBase* toTrack(JSValue value)
     return 0;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TrackBase* track)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TrackBase& track)
 {
-    if (!track)
-        return jsNull();
-    
-    switch (track->type()) {
+    switch (track.type()) {
     case TrackBase::BaseTrack:
         // This should never happen.
         ASSERT_NOT_REACHED();
         break;
         
     case TrackBase::AudioTrack:
-        if (auto* wrapper = getCachedWrapper(globalObject->world(), toAudioTrack(track)))
+        if (auto* wrapper = getCachedWrapper(globalObject->world(), toAudioTrack(&track)))
             return wrapper;
-        return CREATE_DOM_WRAPPER(globalObject, AudioTrack, track);
+        return CREATE_DOM_WRAPPER(globalObject, AudioTrack, &track);
 
     case TrackBase::VideoTrack:
-        if (auto* wrapper = getCachedWrapper(globalObject->world(), toVideoTrack(track)))
+        if (auto* wrapper = getCachedWrapper(globalObject->world(), toVideoTrack(&track)))
             return wrapper;
-        return CREATE_DOM_WRAPPER(globalObject, VideoTrack, track);
+        return CREATE_DOM_WRAPPER(globalObject, VideoTrack, &track);
 
     case TrackBase::TextTrack:
-        if (auto* wrapper = getCachedWrapper(globalObject->world(), toTextTrack(track)))
+        if (auto* wrapper = getCachedWrapper(globalObject->world(), toTextTrack(&track)))
             return wrapper;
-        return CREATE_DOM_WRAPPER(globalObject, TextTrack, track);
+        return CREATE_DOM_WRAPPER(globalObject, TextTrack, &track);
     }
     
     return jsNull();

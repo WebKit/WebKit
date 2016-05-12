@@ -41,7 +41,7 @@ bool JSNamedNodeMap::nameGetter(ExecState* exec, PropertyName propertyName, JSVa
     if (!item)
         return false;
 
-    value = toJS(exec, globalObject(), item);
+    value = toJS(exec, globalObject(), *item);
     return true;
 }
 

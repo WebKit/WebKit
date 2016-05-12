@@ -67,7 +67,7 @@ EncodedJSValue JSC_HOST_CALL constructJSWorker(ExecState* exec)
         return JSValue::encode(JSValue());
     }
 
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), worker.release())));
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), *worker)));
 }
 
 } // namespace WebCore

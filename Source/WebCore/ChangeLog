@@ -1,3 +1,368 @@
+2016-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Avoid unnecessary null checks in toJS() when the implementation returns a reference or Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=157604
+
+        Reviewed by Darin Adler.
+
+        Avoid unnecessary null checks in toJS() when the implementation returns
+        a C++ reference or Ref<>. To achieve this, the following changes were
+        made:
+        1. Have toJS() overload that takes a raw pointer call the one that
+           takes in a C++ reference, instead of the other way around. This way,
+           we only do the null check when passing a raw pointer in.
+        2. Stop calling WTF::getPtr() on the value returned by the
+           implementation because this causes us to call toJS() with a raw
+           pointer every time.
+        3. Add an toJS() overload in JSDOMBinding.h that takes a Ref<T> in and
+           that calls toJS() with a C++ reference internally. This way, we
+           bypass the null check if the implementation returns a Ref<T>.
+
+        Further refactoring could be done but I try to keep the size of this
+        patch as small as possible. toJS() should probably take the ExecState
+        and the globalObject by reference, for e.g.
+
+        * bindings/js/JSAnimationTimelineCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::constructJSBlob): Deleted.
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getPropertyCSSValue):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::attributeChanged):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSDOMFormDataCustom.cpp:
+        (WebCore::constructJSDOMFormData):
+        * bindings/js/JSDOMMimeTypeArrayCustom.cpp:
+        (WebCore::JSDOMMimeTypeArray::nameGetter):
+        * bindings/js/JSDOMNamedFlowCollectionCustom.cpp:
+        (WebCore::JSDOMNamedFlowCollection::nameGetter):
+        * bindings/js/JSDOMPluginArrayCustom.cpp:
+        (WebCore::JSDOMPluginArray::nameGetter):
+        * bindings/js/JSDOMPluginCustom.cpp:
+        (WebCore::JSDOMPlugin::nameGetter):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMWindowBase.h:
+        (WebCore::toJS):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotNamedItemGetter):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::JSDocument::createTouchList):
+        (WebCore::JSDocument::prepend): Deleted.
+        * bindings/js/JSDocumentFragmentCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSFileReaderCustom.cpp:
+        (WebCore::JSFileReader::result):
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::namedItems):
+        (WebCore::callHTMLAllCollection):
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::JSHTMLCollection::nameGetter):
+        (WebCore::toJS):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement):
+        (WebCore::JSHTMLElement::pushEventHandlerScope):
+        * bindings/js/JSHTMLFormControlsCollectionCustom.cpp:
+        (WebCore::namedItems):
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::nameGetter):
+        * bindings/js/JSIDBCursorCustom.cpp:
+        (WebCore::JSIDBCursor::source):
+        (WebCore::toJS):
+        * bindings/js/JSIDBDatabaseCustom.cpp:
+        (WebCore::JSIDBDatabase::createObjectStore):
+        (WebCore::JSIDBDatabase::transaction):
+        * bindings/js/JSIDBRequestCustom.cpp:
+        (WebCore::JSIDBRequest::result):
+        (WebCore::JSIDBRequest::source):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::construct):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/JSMediaSessionCustom.cpp:
+        (WebCore::constructJSMediaSession):
+        * bindings/js/JSMediaStreamCapabilitiesCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMap::nameGetter):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::willCreatePossiblyOrphanedTreeByRemovalSlowCase):
+        (WebCore::getOutOfLineCachedWrapper): Deleted.
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::toJS):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSNodeListCustom.h:
+        (WebCore::toJS):
+        * bindings/js/JSPerformanceEntryCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSPopStateEventCustom.cpp:
+        (WebCore::JSPopStateEvent::state):
+        * bindings/js/JSRTCStatsResponseCustom.cpp:
+        (WebCore::JSRTCStatsResponse::nameGetter):
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTrackCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTrackCustom.h:
+        * bindings/js/JSTrackEventCustom.cpp:
+        (WebCore::JSTrackEvent::track):
+        * bindings/js/JSUserMessageHandlersNamespaceCustom.cpp:
+        (WebCore::JSUserMessageHandlersNamespace::getOwnPropertySlotDelegate):
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::constructJSWorker):
+        * bindings/js/ReadableStreamController.cpp:
+        (WebCore::createReadableStream):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateCallbackHeader):
+        (GenerateCallbackImplementation):
+        (NativeToJSValue):
+        (GenerateConstructorDefinition):
+        (ceilingToPowerOf2): Deleted.
+        (ConstructorHasProperties): Deleted.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestActiveDOMObject::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::callbackWithArrayParam):
+        (WebCore::JSTestCallback::callbackWithStringList):
+        (WebCore::JSTestCallback::callbackRequiresThisToPass):
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestCallback.h:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        (WebCore::JSTestCallbackFunction::callbackWithArrayParam):
+        (WebCore::JSTestCallbackFunction::callbackWithStringList):
+        (WebCore::JSTestCallbackFunction::callbackRequiresThisToPass):
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestCallbackFunction.h:
+        (WebCore::toJS):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestClassWithJSBuiltinConstructor::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObject::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestCustomNamedGetter::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::construct):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestEventConstructor::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::jsTestEventTargetPrototypeFunctionItem):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestEventTarget::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestException::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestException.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestGenerateIsReachable::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestGlobalObject::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::construct):
+        (WebCore::jsTestInterfaceImplementsNode):
+        (WebCore::jsTestInterfaceSupplementalNode):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestInterface::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestMediaQueryListListener::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorNamedConstructor::construct):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestNamedConstructor::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::construct):
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestNondeterministic::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        (WebCore::jsTestObjReadOnlyTestObjAttr):
+        (WebCore::jsTestObjTestObjAttr):
+        (WebCore::jsTestObjTestNullableObjAttr):
+        (WebCore::jsTestObjLenientTestObjAttr):
+        (WebCore::jsTestObjXMLObjAttr):
+        (WebCore::jsTestObjTypedArrayAttr):
+        (WebCore::jsTestObjStrictTypeCheckingAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAttribute):
+        (WebCore::jsTestObjWithScriptStateAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::jsTestObjWithScriptArgumentsAndCallStackAttribute):
+        (WebCore::jsTestObjContentDocument):
+        (WebCore::jsTestObjMutablePoint):
+        (WebCore::jsTestObjImmutablePoint):
+        (WebCore::jsTestObjPutForwardsAttribute):
+        (WebCore::jsTestObjPutForwardsNullableAttribute):
+        (WebCore::jsTestObjPrototypeFunctionObjMethod):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObj):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        (WebCore::jsTestObjPrototypeFunctionDomStringListFunction):
+        (WebCore::jsTestObjPrototypeFunctionGetElementById):
+        (WebCore::jsTestObjPrototypeFunctionGetSVGDocument):
+        (WebCore::jsTestObjPrototypeFunctionMutablePointFunction):
+        (WebCore::jsTestObjPrototypeFunctionImmutablePointFunction):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestObj::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors1):
+        (WebCore::constructJSTestOverloadedConstructors2):
+        (WebCore::constructJSTestOverloadedConstructors3):
+        (WebCore::constructJSTestOverloadedConstructors4):
+        (WebCore::constructJSTestOverloadedConstructors5):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestOverloadedConstructors::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::jsTestOverrideBuiltinsPrototypeFunctionNamedItem):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestOverrideBuiltins::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestSerializedScriptValueInterface::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::construct):
+        (WebCore::jsTestTypedefsPrototypeFunctionImmutablePointFunction):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestTypedefs::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSattribute::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSattribute.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSreadonly::toWrapped): Deleted.
+        * bindings/scripts/test/JS/JSreadonly.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::controllerJSValue):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+
 2016-05-12  Konstantin Tokarev  <annulen@yandex.ru>
 
         Use reference instead of pointer in FrameLoaderClient::saveViewStateToItem.

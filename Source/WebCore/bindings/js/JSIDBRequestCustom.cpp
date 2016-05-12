@@ -50,9 +50,9 @@ JSValue JSIDBRequest::result(ExecState& state) const
     }
 
     if (auto* cursor = request.cursorResult())
-        return toJS(&state, globalObject(), cursor);
+        return toJS(&state, globalObject(), *cursor);
     if (auto* database = request.databaseResult())
-        return toJS(&state, globalObject(), database);
+        return toJS(&state, globalObject(), *database);
     if (auto result = request.scriptResult())
         return result;
     return jsNull();
@@ -62,9 +62,9 @@ JSValue JSIDBRequest::source(ExecState& state) const
 {
     auto& request = wrapped();
     if (auto* cursor = request.cursorSource())
-        return toJS(&state, globalObject(), cursor);
+        return toJS(&state, globalObject(), *cursor);
     if (auto* index = request.indexSource())
-        return toJS(&state, globalObject(), index);
+        return toJS(&state, globalObject(), *index);
     return toJS(&state, globalObject(), request.objectStoreSource());
 }
 

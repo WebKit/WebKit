@@ -1462,13 +1462,14 @@ sub GenerateHeader
         # Node and NodeList have custom inline implementations which thus cannot be exported.
         # FIXME: The special case for Node and NodeList should probably be implemented via an IDL attribute.
         if ($implType eq "Node" or $implType eq "NodeList") {
-            push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
+            push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType&);\n");
         } else {
-            push(@headerContent, $exportMacro."JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
+            push(@headerContent, $exportMacro."JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType&);\n");
         }
-        push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $implType& impl) { return toJS(state, globalObject, &impl); }\n");
+        push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $implType* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }\n");
 
-        push(@headerContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
+        push(@headerContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, $implType&);\n");
+        push(@headerContent, "inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $implType* impl) { return impl ? toJSNewlyCreated(state, globalObject, *impl) : JSC::jsNull(); }\n");
     }
 
     push(@headerContent, "\n");
@@ -3389,37 +3390,28 @@ extern "C" { extern void* ${vtableNameGnu}[]; }
 
 END
 
-        push(@implContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, $implType* impl)\n");
+        push(@implContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, $implType& impl)\n");
         push(@implContent, "{\n");
-push(@implContent, <<END);
-    if (!impl)
-        return jsNull();
-END
         if ($svgPropertyType) {
-            push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, impl);\n");
+            push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, &impl);\n");
         } else {
-            push(@implContent, "    return createNewWrapper<$className>(globalObject, impl);\n");
+            push(@implContent, "    return createNewWrapper<$className>(globalObject, &impl);\n");
         }
         push(@implContent, "}\n\n");
 
-        push(@implContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, $implType* impl)\n");
+        push(@implContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, $implType& impl)\n");
         push(@implContent, "{\n");
-        push(@implContent, <<END);
-    if (!impl)
-        return jsNull();
-END
-
         if ($svgPropertyType) {
-            push(@implContent, "    if (JSValue result = getExistingWrapper<$className, $implType>(globalObject, impl))\n");
+            push(@implContent, "    if (JSValue result = getExistingWrapper<$className, $implType>(globalObject, &impl))\n");
             push(@implContent, "        return result;\n");
         } else {
-            push(@implContent, "    if (JSValue result = getExistingWrapper<$className>(globalObject, impl))\n");
+            push(@implContent, "    if (JSValue result = getExistingWrapper<$className>(globalObject, &impl))\n");
             push(@implContent, "        return result;\n");
         }
         push(@implContent, <<END) if $vtableNameGnu;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+    void* actualVTablePointer = *(reinterpret_cast<void**>(&impl));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(${vtableRefWin});
 #else
@@ -3447,13 +3439,13 @@ END
 #endif
 END
         push(@implContent, <<END) if $interface->extendedAttributes->{"ReportExtraMemoryCost"};
-    globalObject->vm().heap.reportExtraMemoryAllocated(impl->memoryCost());
+    globalObject->vm().heap.reportExtraMemoryAllocated(impl.memoryCost());
 END
 
         if ($svgPropertyType) {
-            push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, impl);\n");
+            push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, &impl);\n");
         } else {
-            push(@implContent, "    return createNewWrapper<$className>(globalObject, impl);\n");
+            push(@implContent, "    return createNewWrapper<$className>(globalObject, &impl);\n");
         }
 
         push(@implContent, "}\n\n");
@@ -3914,8 +3906,8 @@ sub GenerateCallbackHeader
     push(@headerContent, "};\n\n");
 
     # toJS().
-    push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName*);\n");
-    push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $interfaceName& impl) { return toJS(state, globalObject, &impl); }\n\n");
+    push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName&);\n");
+    push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $interfaceName* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }\n\n");
 
     push(@headerContent, "} // namespace WebCore\n");
 
@@ -4092,11 +4084,11 @@ sub GenerateCallbackImplementation
     }
 
     # toJS() implementation.
-    push(@implContent, "\nJSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName* impl)\n");
+    push(@implContent, "\nJSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName& impl)\n");
     push(@implContent, "{\n");
-    push(@implContent, "    if (!impl || !static_cast<${className}&>(*impl).callbackData())\n");
+    push(@implContent, "    if (!static_cast<${className}&>(impl).callbackData())\n");
     push(@implContent, "        return jsNull();\n\n");
-    push(@implContent, "    return static_cast<${className}&>(*impl).callbackData()->callback();\n\n");
+    push(@implContent, "    return static_cast<${className}&>(impl).callbackData()->callback();\n\n");
     push(@implContent, "}\n");
 
     push(@implContent, "\n}\n");
@@ -4561,8 +4553,7 @@ sub NativeToJSValue
     }
 
     my $function = $signature->extendedAttributes->{"NewObject"} ? "toJSNewlyCreated" : "toJS";
-
-    return "$function(state, $globalObject, WTF::getPtr($value))";
+    return "$function(state, $globalObject, $value)";
 }
 
 sub ceilingToPowerOf2
@@ -5019,8 +5010,8 @@ template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecS
             return JSValue::encode(jsUndefined());
     }
 
-    RefPtr<${interfaceName}> event = ${interfaceName}::createForBindings(eventType, eventInit);
-    return JSValue::encode(toJS(state, jsConstructor->globalObject(), event.get()));
+    Ref<${interfaceName}> event = ${interfaceName}::createForBindings(eventType, eventInit);
+    return JSValue::encode(toJS(state, jsConstructor->globalObject(), event));
 }
 
 bool fill${interfaceName}Init(${interfaceName}Init& eventInit, JSDictionary& dictionary)
@@ -5133,9 +5124,9 @@ END
             }
             my $constructorArg = join(", ", @constructorArgList);
             if ($generatingNamedConstructor) {
-                push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::createForJSConstructor(${constructorArg});\n");
+                push(@$outputArray, "    auto object = ${interfaceName}::createForJSConstructor(${constructorArg});\n");
             } else {
-                push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::create(${constructorArg});\n");
+                push(@$outputArray, "    auto object = ${interfaceName}::create(${constructorArg});\n");
             }
 
             if ($interface->extendedAttributes->{"ConstructorRaisesException"}) {
@@ -5150,7 +5141,7 @@ END
                  push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
 
-            push(@$outputArray, "    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));\n");
+            push(@$outputArray, "    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));\n");
             push(@$outputArray, "}\n\n");
         }
     }

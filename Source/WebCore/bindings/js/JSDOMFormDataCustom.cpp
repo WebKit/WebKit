@@ -51,8 +51,8 @@ EncodedJSValue JSC_HOST_CALL constructJSDOMFormData(ExecState* exec)
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
 
     HTMLFormElement* form = toHTMLFormElementOrNull(exec->argument(0));
-    RefPtr<DOMFormData> domFormData = DOMFormData::create(form);
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), domFormData.get())));
+    auto domFormData = DOMFormData::create(form);
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), domFormData)));
 }
 
 JSValue JSDOMFormData::append(ExecState& state)

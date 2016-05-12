@@ -203,7 +203,7 @@ static bool jsDOMWindowGetOwnPropertySlotNamedItemGetter(JSDOMWindow* thisObject
             if (UNLIKELY(htmlDocument.windowNamedItemContainsMultipleElements(*atomicPropertyName))) {
                 Ref<HTMLCollection> collection = document->windowNamedItems(atomicPropertyName);
                 ASSERT(collection->length() > 1);
-                namedItem = toJS(exec, thisObject->globalObject(), collection.ptr());
+                namedItem = toJS(exec, thisObject->globalObject(), collection);
             } else
                 namedItem = toJS(exec, thisObject->globalObject(), htmlDocument.windowNamedItem(*atomicPropertyName));
             slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, namedItem);

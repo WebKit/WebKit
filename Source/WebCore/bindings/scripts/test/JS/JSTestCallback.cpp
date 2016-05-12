@@ -126,7 +126,7 @@ bool JSTestCallback::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
 
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(state, m_data->globalObject(), WTF::getPtr(arrayParam)));
+    args.append(toJS(state, m_data->globalObject(), arrayParam));
 
     NakedPtr<Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithArrayParam"), returnedException);
@@ -167,7 +167,7 @@ bool JSTestCallback::callbackWithStringList(PassRefPtr<DOMStringList> listParam)
 
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(state, m_data->globalObject(), WTF::getPtr(listParam)));
+    args.append(toJS(state, m_data->globalObject(), listParam));
 
     NakedPtr<Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithStringList"), returnedException);
@@ -208,7 +208,7 @@ bool JSTestCallback::callbackRequiresThisToPass(int32_t longParam, TestNode* tes
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
     args.append(jsNumber(longParam));
-    args.append(toJS(state, m_data->globalObject(), WTF::getPtr(testNodeParam)));
+    args.append(toJS(state, m_data->globalObject(), testNodeParam));
 
     NakedPtr<Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackRequiresThisToPass"), returnedException);
@@ -217,12 +217,12 @@ bool JSTestCallback::callbackRequiresThisToPass(int32_t longParam, TestNode* tes
     return !returnedException;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallback* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallback& impl)
 {
-    if (!impl || !static_cast<JSTestCallback&>(*impl).callbackData())
+    if (!static_cast<JSTestCallback&>(impl).callbackData())
         return jsNull();
 
-    return static_cast<JSTestCallback&>(*impl).callbackData()->callback();
+    return static_cast<JSTestCallback&>(impl).callbackData()->callback();
 
 }
 

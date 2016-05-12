@@ -75,8 +75,8 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* s
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!arrayBuffer))
         return throwArgumentTypeError(*state, 0, "arrayBuffer", "TestOverloadedConstructors", nullptr, "ArrayBuffer");
-    RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*arrayBuffer);
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
+    auto object = TestOverloadedConstructors::create(*arrayBuffer);
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
 }
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* state)
@@ -89,8 +89,8 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* s
         return JSValue::encode(jsUndefined());
     if (UNLIKELY(!arrayBufferView))
         return throwArgumentTypeError(*state, 0, "arrayBufferView", "TestOverloadedConstructors", nullptr, "ArrayBufferView");
-    RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*arrayBufferView);
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
+    auto object = TestOverloadedConstructors::create(*arrayBufferView);
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
 }
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* state)
@@ -101,8 +101,8 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* s
     auto blob = JSBlob::toWrapped(state->argument(0));
     if (UNLIKELY(!blob))
         return throwArgumentTypeError(*state, 0, "blob", "TestOverloadedConstructors", nullptr, "Blob");
-    RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(*blob);
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
+    auto object = TestOverloadedConstructors::create(*blob);
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
 }
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* state)
@@ -113,8 +113,8 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* s
     auto string = state->argument(0).toWTFString(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(string);
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
+    auto object = TestOverloadedConstructors::create(string);
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
 }
 
 static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* state)
@@ -123,8 +123,8 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* s
     Vector<int32_t> longArgs = toNativeArguments<int32_t>(state, 0);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(longArgs);
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
+    auto object = TestOverloadedConstructors::create(longArgs);
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
 }
 
 template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::construct(ExecState* state)
@@ -247,22 +247,18 @@ extern "C" { extern void* _ZTVN7WebCore26TestOverloadedConstructorsE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestOverloadedConstructors* impl)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestOverloadedConstructors& impl)
 {
-    if (!impl)
-        return jsNull();
-    return createNewWrapper<JSTestOverloadedConstructors>(globalObject, impl);
+    return createNewWrapper<JSTestOverloadedConstructors>(globalObject, &impl);
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestOverloadedConstructors* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestOverloadedConstructors& impl)
 {
-    if (!impl)
-        return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestOverloadedConstructors>(globalObject, impl))
+    if (JSValue result = getExistingWrapper<JSTestOverloadedConstructors>(globalObject, &impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+    void* actualVTablePointer = *(reinterpret_cast<void**>(&impl));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestOverloadedConstructors@WebCore@@6B@"));
 #else
@@ -279,7 +275,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestOverload
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestOverloadedConstructors>(globalObject, impl);
+    return createNewWrapper<JSTestOverloadedConstructors>(globalObject, &impl);
 }
 
 TestOverloadedConstructors* JSTestOverloadedConstructors::toWrapped(JSC::JSValue value)

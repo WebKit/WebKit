@@ -79,8 +79,8 @@ typedef JSDOMConstructor<JSTestNode> JSTestNodeConstructor;
 template<> EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::construct(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestNodeConstructor*>(state->callee());
-    RefPtr<TestNode> object = TestNode::create();
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
+    auto object = TestNode::create();
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
 }
 
 template<> JSValue JSTestNodeConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

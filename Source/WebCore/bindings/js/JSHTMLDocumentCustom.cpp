@@ -87,13 +87,13 @@ bool JSHTMLDocument::nameGetter(ExecState* exec, PropertyName propertyName, JSVa
     if (UNLIKELY(document.documentNamedItemContainsMultipleElements(*atomicPropertyName))) {
         Ref<HTMLCollection> collection = document.documentNamedItems(atomicPropertyName);
         ASSERT(collection->length() > 1);
-        value = toJS(exec, globalObject(), WTF::getPtr(collection));
+        value = toJS(exec, globalObject(), collection);
         return true;
     }
 
-    Element* element = document.documentNamedItem(*atomicPropertyName);
-    if (UNLIKELY(is<HTMLIFrameElement>(*element))) {
-        if (Frame* frame = downcast<HTMLIFrameElement>(*element).contentFrame()) {
+    Element& element = *document.documentNamedItem(*atomicPropertyName);
+    if (UNLIKELY(is<HTMLIFrameElement>(element))) {
+        if (Frame* frame = downcast<HTMLIFrameElement>(element).contentFrame()) {
             value = toJS(exec, frame);
             return true;
         }

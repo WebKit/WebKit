@@ -47,20 +47,17 @@ void JSCanvasRenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
     visitor.addOpaqueRoot(root(wrapped().canvas()));
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, CanvasRenderingContext* object)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, CanvasRenderingContext& object)
 {
-    if (!object)
-        return jsNull();
-
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContext>(*object))
-        return wrap<JSWebGLRenderingContext>(globalObject, downcast<WebGLRenderingContext>(*object));
+    if (is<WebGLRenderingContext>(object))
+        return wrap<JSWebGLRenderingContext>(globalObject, downcast<WebGLRenderingContext>(object));
 #if ENABLE(WEBGL2)
-    if (is<WebGL2RenderingContext>(*object))
-        return wrap<JSWebGL2RenderingContext>(globalObject, downcast<WebGL2RenderingContext>(*object));
+    if (is<WebGL2RenderingContext>(object))
+        return wrap<JSWebGL2RenderingContext>(globalObject, downcast<WebGL2RenderingContext>(object));
 #endif
 #endif
-    return wrap<JSCanvasRenderingContext2D>(globalObject, downcast<CanvasRenderingContext2D>(*object));
+    return wrap<JSCanvasRenderingContext2D>(globalObject, downcast<CanvasRenderingContext2D>(object));
 }
 
 } // namespace WebCore

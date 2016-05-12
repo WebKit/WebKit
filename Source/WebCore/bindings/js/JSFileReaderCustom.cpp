@@ -45,7 +45,7 @@ JSValue JSFileReader::result(ExecState& state) const
 {
     FileReader& imp = wrapped();
     if (imp.readType() == FileReaderLoader::ReadAsArrayBuffer)
-        return toJS(&state, globalObject(), WTF::getPtr(imp.arrayBufferResult()));
+        return toJS(&state, globalObject(), imp.arrayBufferResult().get());
     return jsOwnedStringOrNull(&state, imp.stringResult());
 }
 

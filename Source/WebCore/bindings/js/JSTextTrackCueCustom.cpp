@@ -59,23 +59,20 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     return visitor.containsOpaqueRoot(root(textTrackCue.track()));
 }
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, TextTrackCue* cue)
+JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, TextTrackCue& cue)
 {
-    if (!cue)
-        return jsNull();
-
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), cue);
+    JSObject* wrapper = getCachedWrapper(globalObject->world(), &cue);
 
     if (wrapper)
         return wrapper;
 
     // This switch will make more sense once we support DataCue
-    switch (cue->cueType()) {
+    switch (cue.cueType()) {
     case TextTrackCue::Data:
-        return CREATE_DOM_WRAPPER(globalObject, DataCue, cue);
+        return CREATE_DOM_WRAPPER(globalObject, DataCue, &cue);
     case TextTrackCue::WebVTT:
     case TextTrackCue::Generic:
-        return CREATE_DOM_WRAPPER(globalObject, VTTCue, cue);
+        return CREATE_DOM_WRAPPER(globalObject, VTTCue, &cue);
     default:
         ASSERT_NOT_REACHED();
         return jsNull();

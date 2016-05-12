@@ -228,7 +228,7 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
             break;
         case Node::DOCUMENT_NODE:
             // we don't want to cache the document itself in the per-document dictionary
-            return toJS(exec, globalObject, downcast<Document>(node));
+            return toJS(exec, globalObject, downcast<Document>(*node));
         case Node::DOCUMENT_TYPE_NODE:
             wrapper = CREATE_DOM_WRAPPER(globalObject, DocumentType, node);
             break;
@@ -252,12 +252,9 @@ JSValue createWrapper(ExecState* exec, JSDOMGlobalObject* globalObject, Node* no
     return createWrapperInline(exec, globalObject, node);
 }
     
-JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
+JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Node& node)
 {
-    if (!node)
-        return jsNull();
-    
-    return createWrapperInline(exec, globalObject, node);
+    return createWrapperInline(exec, globalObject, &node);
 }
 
 JSC::JSObject* getOutOfLineCachedWrapper(JSDOMGlobalObject* globalObject, Node* node)
@@ -273,7 +270,7 @@ void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node* root)
         return;
 
     JSLockHolder lock(scriptState);
-    toJS(scriptState, static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject()), root);
+    toJS(scriptState, static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject()), *root);
 }
 
 } // namespace WebCore

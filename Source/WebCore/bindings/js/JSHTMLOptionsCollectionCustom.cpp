@@ -43,7 +43,7 @@ bool JSHTMLOptionsCollection::nameGetter(ExecState* exec, PropertyName propertyN
     if (!item)
         return false;
 
-    value = toJS(exec, globalObject(), item);
+    value = toJS(exec, globalObject(), *item);
     return true;
 }
 

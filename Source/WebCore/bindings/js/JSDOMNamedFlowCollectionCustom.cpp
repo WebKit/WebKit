@@ -42,7 +42,7 @@ bool JSDOMNamedFlowCollection::nameGetter(ExecState* exec, PropertyName property
     if (!item)
         return false;
 
-    value = toJS(exec, globalObject(), item);
+    value = toJS(exec, globalObject(), *item);
     return true;
 }
 

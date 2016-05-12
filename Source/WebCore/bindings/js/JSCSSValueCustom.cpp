@@ -64,37 +64,34 @@ void JSCSSValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
     uncacheWrapper(world, &jsCSSValue->wrapped(), jsCSSValue);
 }
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, CSSValue* value)
+JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, CSSValue& value)
 {
-    if (!value)
-        return jsNull();
-
     // Scripts should only ever see cloned CSSValues, never the internal ones.
-    ASSERT(value->isCSSOMSafe());
+    ASSERT(value.isCSSOMSafe());
 
     // If we're here under erroneous circumstances, prefer returning null over a potentially insecure value.
-    if (!value->isCSSOMSafe())
+    if (!value.isCSSOMSafe())
         return jsNull();
 
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), value);
+    JSObject* wrapper = getCachedWrapper(globalObject->world(), &value);
 
     if (wrapper)
         return wrapper;
 
-    if (value->isWebKitCSSTransformValue())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSTransformValue, value);
-    else if (value->isWebKitCSSFilterValue())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSFilterValue, value);
-    else if (value->isValueList())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSValueList, value);
-    else if (value->isSVGPaint())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, SVGPaint, value);
-    else if (value->isSVGColor())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, SVGColor, value);
-    else if (value->isPrimitiveValue())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSPrimitiveValue, value);
+    if (value.isWebKitCSSTransformValue())
+        wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSTransformValue, &value);
+    else if (value.isWebKitCSSFilterValue())
+        wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSFilterValue, &value);
+    else if (value.isValueList())
+        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSValueList, &value);
+    else if (value.isSVGPaint())
+        wrapper = CREATE_DOM_WRAPPER(globalObject, SVGPaint, &value);
+    else if (value.isSVGColor())
+        wrapper = CREATE_DOM_WRAPPER(globalObject, SVGColor, &value);
+    else if (value.isPrimitiveValue())
+        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSPrimitiveValue, &value);
     else
-        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSValue, value);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSValue, &value);
 
     return wrapper;
 }

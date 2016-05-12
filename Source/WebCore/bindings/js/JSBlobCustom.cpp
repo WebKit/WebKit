@@ -48,15 +48,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Blob* blob)
+JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Blob& blob)
 {
-    if (!blob)
-        return jsNull();
+    if (is<File>(blob))
+        return wrap<JSFile>(globalObject, downcast<File>(blob));
 
-    if (is<File>(*blob))
-        return wrap<JSFile>(globalObject, downcast<File>(*blob));
-
-    return wrap<JSBlob>(globalObject, *blob);
+    return wrap<JSBlob>(globalObject, blob);
 }
 
 EncodedJSValue JSC_HOST_CALL constructJSBlob(ExecState* exec)

@@ -235,12 +235,12 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(Ex
     ScriptExecutionContext* context = castedThis->scriptExecutionContext();
     if (UNLIKELY(!context))
         return throwConstructorDocumentUnavailableError(*state, "TestInterface");
-    RefPtr<TestInterface> object = TestInterface::create(*context, str1, str2, ec);
+    auto object = TestInterface::create(*context, str1, str2, ec);
     if (UNLIKELY(ec)) {
         setDOMException(state, ec);
         return JSValue::encode(JSValue());
     }
-    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
+    return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object)));
 }
 
 template<> JSValue JSTestInterfaceConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -490,7 +490,7 @@ EncodedJSValue jsTestInterfaceImplementsNode(ExecState* state, EncodedJSValue th
         return throwGetterTypeError(*state, "TestInterface", "implementsNode");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.implementsNode()));
+    JSValue result = toJS(state, castedThis->globalObject(), impl.implementsNode());
     return JSValue::encode(result);
 }
 
@@ -578,7 +578,7 @@ EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue 
         return throwGetterTypeError(*state, "TestInterface", "supplementalNode");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(WebCore::TestSupplemental::supplementalNode(impl)));
+    JSValue result = toJS(state, castedThis->globalObject(), WebCore::TestSupplemental::supplementalNode(impl));
     return JSValue::encode(result);
 }
 
@@ -803,7 +803,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     auto objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(!objArg))
         return throwArgumentTypeError(*state, 1, "objArg", "TestInterface", "implementsMethod2", "TestObj");
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(*context, WTFMove(strArg), *objArg, ec)));
+    JSValue result = toJS(state, castedThis->globalObject(), impl.implementsMethod2(*context, WTFMove(strArg), *objArg, ec));
 
     setDOMException(state, ec);
     return JSValue::encode(result);
@@ -869,7 +869,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     auto objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(!objArg))
         return throwArgumentTypeError(*state, 1, "objArg", "TestInterface", "supplementalMethod2", "TestObj");
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(impl, *context, WTFMove(strArg), *objArg, ec)));
+    JSValue result = toJS(state, castedThis->globalObject(), WebCore::TestSupplemental::supplementalMethod2(impl, *context, WTFMove(strArg), *objArg, ec));
 
     setDOMException(state, ec);
     return JSValue::encode(result);
@@ -915,18 +915,14 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
     uncacheWrapper(world, &jsTestInterface->wrapped(), jsTestInterface);
 }
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface* impl)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface& impl)
 {
-    if (!impl)
-        return jsNull();
-    return createNewWrapper<JSTestInterface>(globalObject, impl);
+    return createNewWrapper<JSTestInterface>(globalObject, &impl);
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface& impl)
 {
-    if (!impl)
-        return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestInterface>(globalObject, impl))
+    if (JSValue result = getExistingWrapper<JSTestInterface>(globalObject, &impl))
         return result;
 #if COMPILER(CLANG)
     // If you hit this failure the interface definition has the ImplementationLacksVTable
@@ -935,7 +931,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterfac
     // attribute to TestInterface.
     static_assert(!__is_polymorphic(TestInterface), "TestInterface is polymorphic but the IDL claims it is not");
 #endif
-    return createNewWrapper<JSTestInterface>(globalObject, impl);
+    return createNewWrapper<JSTestInterface>(globalObject, &impl);
 }
 
 TestInterface* JSTestInterface::toWrapped(JSC::JSValue value)

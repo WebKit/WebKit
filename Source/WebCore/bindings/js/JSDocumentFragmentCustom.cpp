@@ -61,20 +61,17 @@ static inline JSValue createNewDocumentFragmentWrapper(JSDOMGlobalObject& global
     return createNewWrapper<JSDocumentFragment>(&globalObject, &impl);
 }
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, DocumentFragment* impl)
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, DocumentFragment& impl)
 {
-    return impl ? createNewDocumentFragmentWrapper(*globalObject, *impl) : jsNull();
+    return createNewDocumentFragmentWrapper(*globalObject, impl);
 }
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, DocumentFragment* impl)
+JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, DocumentFragment& impl)
 {
-    if (!impl)
-        return jsNull();
-
-    if (JSValue result = getExistingWrapper<JSDocumentFragment>(globalObject, impl))
+    if (JSValue result = getExistingWrapper<JSDocumentFragment>(globalObject, &impl))
         return result;
 
-    return createNewDocumentFragmentWrapper(*globalObject, *impl);
+    return createNewDocumentFragmentWrapper(*globalObject, impl);
 }
 
 } // namespace WebCore

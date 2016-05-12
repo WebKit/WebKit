@@ -60,55 +60,52 @@ void JSCSSRule::visitAdditionalChildren(SlotVisitor& visitor)
     visitor.addOpaqueRoot(root(&wrapped()));
 }
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, CSSRule* rule)
+JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, CSSRule& rule)
 {
-    if (!rule)
-        return jsNull();
-
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), rule);
+    JSObject* wrapper = getCachedWrapper(globalObject->world(), &rule);
     if (wrapper)
         return wrapper;
 
-    switch (rule->type()) {
+    switch (rule.type()) {
         case CSSRule::STYLE_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSStyleRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSStyleRule, &rule);
             break;
         case CSSRule::MEDIA_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSMediaRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSMediaRule, &rule);
             break;
         case CSSRule::FONT_FACE_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSFontFaceRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSFontFaceRule, &rule);
             break;
         case CSSRule::PAGE_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSPageRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSPageRule, &rule);
             break;
         case CSSRule::IMPORT_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSImportRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSImportRule, &rule);
             break;
         case CSSRule::CHARSET_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSCharsetRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSCharsetRule, &rule);
             break;
         case CSSRule::KEYFRAME_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSKeyframeRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSKeyframeRule, &rule);
             break;
         case CSSRule::KEYFRAMES_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSKeyframesRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSKeyframesRule, &rule);
             break;
         case CSSRule::SUPPORTS_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSSupportsRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSSupportsRule, &rule);
             break;
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         case CSSRule::WEBKIT_VIEWPORT_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSViewportRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSViewportRule, &rule);
             break;
 #endif
 #if ENABLE(CSS_REGIONS)
         case CSSRule::WEBKIT_REGION_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSRegionRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSRegionRule, &rule);
             break;
 #endif
         default:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSRule, rule);
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSRule, &rule);
     }
 
     return wrapper;

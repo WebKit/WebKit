@@ -79,29 +79,26 @@ static inline JSValue createNewDocumentWrapper(ExecState& state, JSDOMGlobalObje
     return wrapper;
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Document* document)
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Document& document)
 {
-    if (!document)
-        return jsNull();
-
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), document);
+    JSObject* wrapper = getCachedWrapper(globalObject->world(), &document);
     if (wrapper)
         return wrapper;
 
-    if (DOMWindow* domWindow = document->domWindow()) {
-        globalObject = toJSDOMWindow(toJS(state, domWindow));
+    if (DOMWindow* domWindow = document.domWindow()) {
+        globalObject = toJSDOMWindow(toJS(state, *domWindow));
         // Creating a wrapper for domWindow might have created a wrapper for document as well.
-        wrapper = getCachedWrapper(globalObject->world(), document);
+        wrapper = getCachedWrapper(globalObject->world(), &document);
         if (wrapper)
             return wrapper;
     }
 
-    return createNewDocumentWrapper(*state, *globalObject, *document);
+    return createNewDocumentWrapper(*state, *globalObject, document);
 }
 
-JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Document* document)
+JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Document& document)
 {
-    return document ? createNewDocumentWrapper(*state, *globalObject, *document) : jsNull();
+    return createNewDocumentWrapper(*state, *globalObject, document);
 }
 
 JSValue JSDocument::prepend(ExecState& state)
@@ -125,12 +122,12 @@ JSValue JSDocument::append(ExecState& state)
 #if ENABLE(TOUCH_EVENTS)
 JSValue JSDocument::createTouchList(ExecState& state)
 {
-    RefPtr<TouchList> touchList = TouchList::create();
+    auto touchList = TouchList::create();
 
     for (size_t i = 0; i < state.argumentCount(); i++)
         touchList->append(JSTouch::toWrapped(state.argument(i)));
 
-    return toJS(&state, globalObject(), touchList.release());
+    return toJS(&state, globalObject(), touchList);
 }
 #endif
 

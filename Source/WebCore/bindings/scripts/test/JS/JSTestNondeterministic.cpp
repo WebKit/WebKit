@@ -472,22 +472,18 @@ extern "C" { extern void* _ZTVN7WebCore20TestNondeterministicE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNondeterministic* impl)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNondeterministic& impl)
 {
-    if (!impl)
-        return jsNull();
-    return createNewWrapper<JSTestNondeterministic>(globalObject, impl);
+    return createNewWrapper<JSTestNondeterministic>(globalObject, &impl);
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNondeterministic* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNondeterministic& impl)
 {
-    if (!impl)
-        return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestNondeterministic>(globalObject, impl))
+    if (JSValue result = getExistingWrapper<JSTestNondeterministic>(globalObject, &impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+    void* actualVTablePointer = *(reinterpret_cast<void**>(&impl));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestNondeterministic@WebCore@@6B@"));
 #else
@@ -504,7 +500,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNondeter
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestNondeterministic>(globalObject, impl);
+    return createNewWrapper<JSTestNondeterministic>(globalObject, &impl);
 }
 
 TestNondeterministic* JSTestNondeterministic::toWrapped(JSC::JSValue value)

@@ -59,12 +59,9 @@ JSC::JSValue createWrapper(JSDOMGlobalObject& globalObject, NodeList& nodeList)
     return createNewWrapper<JSNodeList>(&globalObject, &nodeList);
 }
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, NodeList* nodeList)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, NodeList& nodeList)
 {
-    if (!nodeList)
-        return JSC::jsNull();
-
-    return createWrapper(*globalObject, *nodeList);
+    return createWrapper(*globalObject, nodeList);
 }
 
 } // namespace WebCore

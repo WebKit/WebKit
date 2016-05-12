@@ -91,7 +91,7 @@ bool JSTestCallbackFunction::callbackWithArrayParam(RefPtr<Float32Array> arrayPa
 
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(state, m_data->globalObject(), WTF::getPtr(arrayParam)));
+    args.append(toJS(state, m_data->globalObject(), arrayParam));
 
     NakedPtr<Exception> returnedException;
     UNUSED_PARAM(state);
@@ -134,7 +134,7 @@ bool JSTestCallbackFunction::callbackWithStringList(PassRefPtr<DOMStringList> li
 
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(state, m_data->globalObject(), WTF::getPtr(listParam)));
+    args.append(toJS(state, m_data->globalObject(), listParam));
 
     NakedPtr<Exception> returnedException;
     UNUSED_PARAM(state);
@@ -177,7 +177,7 @@ bool JSTestCallbackFunction::callbackRequiresThisToPass(int32_t longParam, TestN
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
     args.append(jsNumber(longParam));
-    args.append(toJS(state, m_data->globalObject(), WTF::getPtr(testNodeParam)));
+    args.append(toJS(state, m_data->globalObject(), testNodeParam));
 
     NakedPtr<Exception> returnedException;
     UNUSED_PARAM(state);
@@ -187,12 +187,12 @@ bool JSTestCallbackFunction::callbackRequiresThisToPass(int32_t longParam, TestN
     return !returnedException;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackFunction* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallbackFunction& impl)
 {
-    if (!impl || !static_cast<JSTestCallbackFunction&>(*impl).callbackData())
+    if (!static_cast<JSTestCallbackFunction&>(impl).callbackData())
         return jsNull();
 
-    return static_cast<JSTestCallbackFunction&>(*impl).callbackData()->callback();
+    return static_cast<JSTestCallbackFunction&>(impl).callbackData()->callback();
 
 }
 

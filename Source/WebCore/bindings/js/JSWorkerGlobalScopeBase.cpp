@@ -104,16 +104,14 @@ void JSWorkerGlobalScopeBase::queueTaskToEventLoop(const JSGlobalObject* object,
     thisObject->scriptExecutionContext()->postTask(JSGlobalObjectTask((JSDOMGlobalObject*)thisObject, task));
 }
 
-JSValue toJS(ExecState* exec, JSDOMGlobalObject*, WorkerGlobalScope* workerGlobalScope)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject*, WorkerGlobalScope& workerGlobalScope)
 {
     return toJS(exec, workerGlobalScope);
 }
 
-JSValue toJS(ExecState*, WorkerGlobalScope* workerGlobalScope)
+JSValue toJS(ExecState*, WorkerGlobalScope& workerGlobalScope)
 {
-    if (!workerGlobalScope)
-        return jsNull();
-    WorkerScriptController* script = workerGlobalScope->script();
+    WorkerScriptController* script = workerGlobalScope.script();
     if (!script)
         return jsNull();
     JSWorkerGlobalScope* contextWrapper = script->workerGlobalScopeWrapper();

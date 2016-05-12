@@ -358,7 +358,7 @@ JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState& state)
         return jsNull();
 
     globalObject()->world().m_cssValueRoots.add(cssValue.get(), root(&wrapped())); // Balanced by JSCSSValueOwner::finalize().
-    return toJS(&state, globalObject(), WTF::getPtr(cssValue));
+    return toJS(&state, globalObject(), *cssValue);
 }
 
 void JSCSSStyleDeclaration::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

@@ -88,7 +88,7 @@ JSC::JSValue createReadableStream(JSC::ExecState& state, JSDOMGlobalObject* glob
 {
     JSC::JSLockHolder lock(&state);
 
-    auto jsSource = source ? toJS(&state, globalObject, source) : JSC::jsUndefined();
+    auto jsSource = source ? toJS(&state, globalObject, *source) : JSC::jsUndefined();
     JSC::Strong<JSC::Unknown> protect(state.vm(), jsSource);
 
     JSC::MarkedArgumentBuffer arguments;

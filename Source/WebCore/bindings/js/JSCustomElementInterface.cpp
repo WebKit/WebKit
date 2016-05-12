@@ -168,7 +168,7 @@ void JSCustomElementInterface::attributeChanged(Element& element, const Qualifie
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, *m_isolatedWorld);
     ExecState* state = globalObject->globalExec();
 
-    JSObject* jsElement = asObject(toJS(state, globalObject, &element));
+    JSObject* jsElement = asObject(toJS(state, globalObject, element));
 
     PropertyName attributeChanged(Identifier::fromString(state, "attributeChangedCallback"));
     JSValue callback = jsElement->get(state, attributeChanged);

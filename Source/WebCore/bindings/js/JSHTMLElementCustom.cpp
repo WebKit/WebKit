@@ -78,7 +78,7 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState* state)
         return JSValue::encode(jsUndefined());
     }
 
-    JSValue elementWrapperValue = toJS(state, jsConstructor->globalObject(), elementToUpgrade);
+    JSValue elementWrapperValue = toJS(state, jsConstructor->globalObject(), *elementToUpgrade);
     ASSERT(elementWrapperValue.isObject());
 
     JSValue newPrototype = newTarget->get(state, vm.propertyNames->prototype);
@@ -108,14 +108,14 @@ JSScope* JSHTMLElement::pushEventHandlerScope(ExecState* exec, JSScope* scope) c
     VM& vm = exec->vm();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     
-    scope = JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), &element.document())), scope);
+    scope = JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), element.document())), scope);
 
     // The form is next, searched before the document, but after the element itself.
     if (HTMLFormElement* form = element.form())
-        scope = JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), form)), scope);
+        scope = JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), *form)), scope);
 
     // The element is on top, searched first.
-    return JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), &element)), scope);
+    return JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), element)), scope);
 }
 
 } // namespace WebCore

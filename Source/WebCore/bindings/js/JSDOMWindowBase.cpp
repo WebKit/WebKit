@@ -282,16 +282,14 @@ VM& JSDOMWindowBase::commonVM()
 
 // JSDOMGlobalObject* is ignored, accessing a window in any context will
 // use that DOMWindow's prototype chain.
-JSValue toJS(ExecState* exec, JSDOMGlobalObject*, DOMWindow* domWindow)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject*, DOMWindow& domWindow)
 {
     return toJS(exec, domWindow);
 }
 
-JSValue toJS(ExecState* exec, DOMWindow* domWindow)
+JSValue toJS(ExecState* exec, DOMWindow& domWindow)
 {
-    if (!domWindow)
-        return jsNull();
-    Frame* frame = domWindow->frame();
+    Frame* frame = domWindow.frame();
     if (!frame)
         return jsNull();
     return frame->script().windowShell(currentWorld(exec));

@@ -84,7 +84,7 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
     CanvasRenderingContext* context = canvas.getContext(contextId, attrs.get());
     if (!context)
         return jsNull();
-    return toJS(&state, globalObject(), WTF::getPtr(context));
+    return toJS(&state, globalObject(), *context);
 }
 
 JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState& state)

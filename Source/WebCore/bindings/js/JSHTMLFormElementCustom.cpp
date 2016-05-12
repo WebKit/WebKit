@@ -43,7 +43,7 @@ bool JSHTMLFormElement::nameGetter(ExecState* exec, PropertyName propertyName, J
     if (namedItems.isEmpty())
         return false;
     if (namedItems.size() == 1) {
-        value = toJS(exec, globalObject(), namedItems[0].ptr());
+        value = toJS(exec, globalObject(), namedItems[0]);
         return true;
     }
 

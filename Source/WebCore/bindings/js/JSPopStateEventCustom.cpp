@@ -84,7 +84,7 @@ JSValue JSPopStateEvent::state(ExecState& state) const
     JSValue result;
 
     if (isSameState) {
-        JSHistory* jsHistory = jsCast<JSHistory*>(toJS(&state, globalObject(), history).asCell());
+        JSHistory* jsHistory = jsCast<JSHistory*>(toJS(&state, globalObject(), *history).asCell());
         result = jsHistory->state(state);
     } else
         result = event.serializedState()->deserialize(&state, globalObject(), 0);

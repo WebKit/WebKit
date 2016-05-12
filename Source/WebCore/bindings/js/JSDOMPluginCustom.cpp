@@ -33,7 +33,7 @@ bool JSDOMPlugin::nameGetter(ExecState* exec, PropertyName propertyName, JSValue
     if (!item)
         return false;
 
-    value = toJS(exec, globalObject(), item);
+    value = toJS(exec, globalObject(), *item);
     return true;
 }
 

@@ -39,20 +39,17 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, AnimationTimeline* value)
+JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, AnimationTimeline& value)
 {
-    if (!value)
-        return jsNull();
-
-    JSObject* wrapper = getCachedWrapper(globalObject->world(), value);
+    JSObject* wrapper = getCachedWrapper(globalObject->world(), &value);
 
     if (wrapper)
         return wrapper;
 
-    if (value->isDocumentTimeline())
-        wrapper = CREATE_DOM_WRAPPER(globalObject, DocumentTimeline, value);
+    if (value.isDocumentTimeline())
+        wrapper = CREATE_DOM_WRAPPER(globalObject, DocumentTimeline, &value);
     else
-        wrapper = CREATE_DOM_WRAPPER(globalObject, AnimationTimeline, value);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, AnimationTimeline, &value);
 
     return wrapper;
 }

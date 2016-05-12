@@ -101,8 +101,8 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
             return JSValue::encode(jsUndefined());
     }
 
-    RefPtr<TestEventConstructor> event = TestEventConstructor::createForBindings(eventType, eventInit);
-    return JSValue::encode(toJS(state, jsConstructor->globalObject(), event.get()));
+    Ref<TestEventConstructor> event = TestEventConstructor::createForBindings(eventType, eventInit);
+    return JSValue::encode(toJS(state, jsConstructor->globalObject(), event));
 }
 
 bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, JSDictionary& dictionary)
@@ -271,22 +271,18 @@ extern "C" { extern void* _ZTVN7WebCore20TestEventConstructorE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventConstructor* impl)
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventConstructor& impl)
 {
-    if (!impl)
-        return jsNull();
-    return createNewWrapper<JSTestEventConstructor>(globalObject, impl);
+    return createNewWrapper<JSTestEventConstructor>(globalObject, &impl);
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventConstructor* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventConstructor& impl)
 {
-    if (!impl)
-        return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestEventConstructor>(globalObject, impl))
+    if (JSValue result = getExistingWrapper<JSTestEventConstructor>(globalObject, &impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(impl));
+    void* actualVTablePointer = *(reinterpret_cast<void**>(&impl));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestEventConstructor@WebCore@@6B@"));
 #else
@@ -303,7 +299,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventCon
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestEventConstructor>(globalObject, impl);
+    return createNewWrapper<JSTestEventConstructor>(globalObject, &impl);
 }
 
 TestEventConstructor* JSTestEventConstructor::toWrapped(JSC::JSValue value)

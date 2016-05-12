@@ -57,8 +57,8 @@ EncodedJSValue JSC_HOST_CALL constructJSMediaSession(ExecState* exec)
     } else
         kind = "content";
 
-    RefPtr<MediaSession> object = MediaSession::create(*context, kind);
-    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
+    auto object = MediaSession::create(*context, kind);
+    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object)));
 }
 
 } // namespace WebCore

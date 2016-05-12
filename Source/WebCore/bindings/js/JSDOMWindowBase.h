@@ -90,8 +90,10 @@ namespace WebCore {
     // Returns a JSDOMWindow or jsNull()
     // JSDOMGlobalObject* is ignored, accessing a window in any context will
     // use that DOMWindow's prototype chain.
-    WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, DOMWindow*);
-    JSC::JSValue toJS(JSC::ExecState*, DOMWindow*);
+    WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, DOMWindow&);
+    inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMWindow* window) { return window ? toJS(exec, globalObject, *window) : JSC::jsNull(); }
+    JSC::JSValue toJS(JSC::ExecState*, DOMWindow&);
+    inline JSC::JSValue toJS(JSC::ExecState* exec, DOMWindow* window) { return window ? toJS(exec, *window) : JSC::jsNull(); }
 
     // Returns JSDOMWindow or 0
     JSDOMWindow* toJSDOMWindow(Frame*, DOMWrapperWorld&);
