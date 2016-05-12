@@ -1,5 +1,21 @@
 2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: 4% of time in TimelineOverviewGraph adding/removing classList styles on TimelineRecordBar
+        https://bugs.webkit.org/show_bug.cgi?id=157607
+
+        Reviewed by Brian Burg.
+
+        This gets us down to about 0.5% of time.
+
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar.prototype.set records):
+        Only modify the classLists when the record changes.
+
+        (WebInspector.TimelineRecordBar.prototype.refresh):
+        Set unfinished once for either the uses active or not uses active cases.
+
+2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Unexpected unread notification icon next to Log after clearing via clear()
         https://bugs.webkit.org/show_bug.cgi?id=157598
 

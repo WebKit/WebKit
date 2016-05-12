@@ -190,23 +190,35 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
 
     set records(records)
     {
+        let oldRecordType;
+        let oldRecordEventType;
+        let oldRecordUsesActiveStartTime = false;
         if (this._records && this._records.length) {
-            this._element.classList.remove(this._records[0].type);
-            if (this._records[0].eventType)
-                this._element.classList.remove(this._records[0].eventType);
+            let oldRecord = this._records[0];
+            oldRecordType = oldRecord.type;
+            oldRecordEventType = oldRecord.eventType;
+            oldRecordUsesActiveStartTime = oldRecord.usesActiveStartTime;
         }
 
         records = records || [];
 
         this._records = records;
 
-        // Assume all records are the same type.
+        // Assume all records in the group are the same type.
         if (this._records.length) {
-            this._element.classList.add(this._records[0].type);
+            let newRecord = this._records[0];
+            if (newRecord.type !== oldRecordType) {
+                this._element.classList.remove(oldRecordType);
+                this._element.classList.add(newRecord.type);
+            }
             // Although all records may not have the same event type, the first record is
             // sufficient to determine the correct style for the record bar.
-            if (this._records[0].eventType)
-                this._element.classList.add(this._records[0].eventType);
+            if (newRecord.eventType !== oldRecordEventType) {
+                this._element.classList.remove(oldRecordEventType);
+                this._element.classList.add(newRecord.eventType);
+            }
+            if (newRecord.usesActiveStartTime !== oldRecordUsesActiveStartTime)
+                this._element.classList.toggle("has-inactive-segment", newRecord.usesActiveStartTime);
         }
     }
 
@@ -242,8 +254,6 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
 
         var graphDuration = graphEndTime - graphStartTime;
 
-        this._element.classList.toggle("unfinished", barUnfinished);
-
         var newBarLeftPosition = (barStartTime - graphStartTime) / graphDuration;
         this._updateElementPosition(this._element, newBarLeftPosition, "left");
 
@@ -256,7 +266,7 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
         }
 
         if (!firstRecord.usesActiveStartTime) {
-            this._element.classList.remove("has-inactive-segment");
+            this._element.classList.toggle("unfinished", barUnfinished);
 
             if (this._inactiveBarElement)
                 this._inactiveBarElement.remove();
@@ -277,8 +287,6 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
 
             return true;
         }
-
-        this._element.classList.add("has-inactive-segment");
 
         // Find the earliest active start time for active only rendering, and the latest for the other modes.
         // This matches the values that TimelineRecordBar.createCombinedBars uses when combining.
