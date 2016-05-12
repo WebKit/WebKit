@@ -45,7 +45,6 @@ my (
     $threeDTransformsSupport,
     $accelerated2DCanvasSupport,
     $allInOneBuild,
-    $arrowfunctionSyntax,
     $attachmentElementSupport,
     $batteryStatusSupport,
     $canvasPathSupport,
@@ -165,9 +164,6 @@ my @features = (
 
     { option => "allinone-build", desc => "Toggle all-in-one build",
       define => "ENABLE_ALLINONE_BUILD", default => isWindows(), value => \$allInOneBuild },
-
-    { option => "arrowfunction-syntax", desc => "Toggle ES6 arrow function syntax support",
-      define => "ENABLE_ES6_ARROWFUNCTION_SYNTAX", default => 1, value => \$arrowfunctionSyntax },
 
     { option => "attachment-element", desc => "Toggle Attachment Element support",
       define => "ENABLE_ATTACHMENT_ELEMENT", default => 0, value => \$attachmentElementSupport },

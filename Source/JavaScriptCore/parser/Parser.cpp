@@ -3045,7 +3045,6 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     int initialAssignmentCount = m_parserState.assignmentCount;
     int initialNonLHSCount = m_parserState.nonLHSCount;
     bool maybeAssignmentPattern = match(OPENBRACE) || match(OPENBRACKET);
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
     bool wasOpenParen = match(OPENPAREN);
     bool isValidArrowFunctionStart = match(OPENPAREN) || match(IDENT);
     SavePoint savePoint = createSavePoint();
@@ -3054,7 +3053,6 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         usedVariablesSize = currentScope()->currentUsedVariablesSize();
         currentScope()->pushUsedVariableSet();
     }
-#endif
 
 #if ENABLE(ES6_GENERATORS)
     if (match(YIELD) && !isYIELDMaskedAsIDENT(currentScope()->isGenerator()))
@@ -3063,7 +3061,6 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
 
     TreeExpression lhs = parseConditionalExpression(context);
 
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
     if (isValidArrowFunctionStart && !match(EOFTOK)) {
         bool isArrowFunctionToken = match(ARROWFUNCTION);
         if (!lhs || isArrowFunctionToken) {
@@ -3079,8 +3076,6 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
                 failDueToUnexpectedToken();
         }
     }
-
-#endif
 
     if (!lhs && (!maybeAssignmentPattern || !classifier.indicatesPossiblePattern()))
         propagateError();

@@ -1,3 +1,13 @@
+2016-05-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(ES6_ARROWFUNCTION_SYNTAX) guards
+        https://bugs.webkit.org/show_bug.cgi?id=157564
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * parser/Parser.cpp:
+
 2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CRASH getting internal properties of function with no bound arguments causes
