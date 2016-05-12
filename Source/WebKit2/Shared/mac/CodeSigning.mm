@@ -28,81 +28,40 @@
 
 #if PLATFORM(MAC)
 
-#include <Security/Security.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/cf/TypeCastsCF.h>
+#include <wtf/spi/cocoa/SecuritySPI.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-static RetainPtr<SecCodeRef> secCodeForCurrentProcess()
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+static String codeSigningIdentifier(SecTaskRef task)
 {
-    SecCodeRef code = nullptr;
-    RELEASE_ASSERT(!SecCodeCopySelf(kSecCSDefaultFlags, &code));
-    return adoptCF(code);
+    return adoptCF(SecTaskCopySigningIdentifier(task, nullptr)).get();
+}
+#endif
+
+String codeSigningIdentifierForCurrentProcess()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    return codeSigningIdentifier(adoptCF(SecTaskCreateFromSelf(kCFAllocatorDefault)).get());
+#else
+    return { };
+#endif
 }
 
-static RetainPtr<SecCodeRef> secCodeForProcess(pid_t pid)
+String codeSigningIdentifier(xpc_connection_t connection)
 {
-    RetainPtr<CFNumberRef> pidCFNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &pid));
-    const void* keys[] = { kSecGuestAttributePid };
-    const void* values[] = { pidCFNumber.get() };
-    RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    SecCodeRef code = nullptr;
-    OSStatus errorCode = noErr;
-    // FIXME: We should RELEASE_ASSERT() that SecCodeCopyGuestWithAttributes() returns without error. See <rdar://problem/25706517>.
-    if ((errorCode = SecCodeCopyGuestWithAttributes(nullptr, attributes.get(), kSecCSDefaultFlags, &code))) {
-        WTFLogAlways("SecCodeCopyGuestWithAttributes() failed with error: %ld\n", static_cast<long>(errorCode));
-        return nullptr;
-    }
-    return adoptCF(code);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    audit_token_t auditToken;
+    xpc_connection_get_audit_token(connection, &auditToken);
+    return codeSigningIdentifier(adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, auditToken)).get());
+#else
+    UNUSED_PARAM(connection);
+    return { };
+#endif
 }
 
-static RetainPtr<CFDictionaryRef> secCodeSigningInformation(SecCodeRef code)
-{
-    CFDictionaryRef signingInfo = nullptr;
-    RELEASE_ASSERT(!SecCodeCopySigningInformation(code, kSecCSDefaultFlags, &signingInfo));
-    return adoptCF(signingInfo);
-}
-
-static RetainPtr<SecRequirementRef> appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement()
-{
-    CFStringRef requirement = CFSTR("(anchor apple) or (anchor apple generic and certificate leaf[field.1.2.840.113635.100.6.1.9]) or (anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13])");
-    SecRequirementRef signingRequirement = nullptr;
-    RELEASE_ASSERT(!SecRequirementCreateWithString(requirement, kSecCSDefaultFlags, &signingRequirement));
-    return adoptCF(signingRequirement);
-}
-
-static String secCodeSigningIdentifier(SecCodeRef code)
-{
-    RetainPtr<SecRequirementRef> signingRequirement = appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement();
-    OSStatus errorCode = SecCodeCheckValidity(code, kSecCSDefaultFlags, signingRequirement.get());
-    if (errorCode == errSecCSUnsigned || errorCode == errSecCSReqFailed)
-        return String(); // Unsigned or signed by a third-party
-    RELEASE_ASSERT_WITH_MESSAGE(!errorCode, "SecCodeCheckValidity() failed with error: %ld", static_cast<long>(errorCode));
-    String codeSigningIdentifier;
-    RetainPtr<CFDictionaryRef> signingInfo = secCodeSigningInformation(code);
-    if (CFDictionaryRef plist = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(signingInfo.get(), kSecCodeInfoPList)))
-        codeSigningIdentifier = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(plist, kCFBundleIdentifierKey));
-    else
-        codeSigningIdentifier = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(signingInfo.get(), kSecCodeInfoIdentifier));
-    RELEASE_ASSERT(!codeSigningIdentifier.isEmpty());
-    return codeSigningIdentifier;
-}
-
-String codeSigningIdentifier()
-{
-    return secCodeSigningIdentifier(secCodeForCurrentProcess().get());
-}
-
-String codeSigningIdentifierForProcess(pid_t pid)
-{
-    auto code = secCodeForProcess(pid);
-    if (!code)
-        return String();
-    return secCodeSigningIdentifier(code.get());
-}
-    
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

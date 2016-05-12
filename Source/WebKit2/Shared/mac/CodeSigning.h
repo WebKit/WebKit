@@ -26,11 +26,12 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/spi/darwin/XPCSPI.h>
 
 namespace WebKit {
 
-// These functions return a null string if the process is either unsigned or signed by a third-party.
-String codeSigningIdentifier();
-String codeSigningIdentifierForProcess(pid_t);
+// These functions return a null string if the process is unsigned.
+String codeSigningIdentifierForCurrentProcess();
+String codeSigningIdentifier(xpc_connection_t);
 
 } // namespace WebKit

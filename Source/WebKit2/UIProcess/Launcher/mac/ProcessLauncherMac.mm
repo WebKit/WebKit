@@ -142,7 +142,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
 
     String clientIdentifier;
 #if PLATFORM(MAC)
-    clientIdentifier = codeSigningIdentifier();
+    clientIdentifier = codeSigningIdentifierForCurrentProcess();
 #endif
     if (clientIdentifier.isNull())
         clientIdentifier = [[NSBundle mainBundle] bundleIdentifier];

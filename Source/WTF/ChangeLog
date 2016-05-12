@@ -1,3 +1,15 @@
+2016-05-12  Daniel Bates  <dabates@apple.com>
+
+        Use SecTask SPI to retrieve code signing identifier for user directory suffix
+        https://bugs.webkit.org/show_bug.cgi?id=157570
+
+        Reviewed by Darin Adler.
+        <rdar://problem/25706517>
+
+        Forward declare SPI SecTaskCopySigningIdentifier().
+
+        * wtf/spi/cocoa/SecuritySPI.h:
+
 2016-05-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(ES6_ARROWFUNCTION_SYNTAX) guards

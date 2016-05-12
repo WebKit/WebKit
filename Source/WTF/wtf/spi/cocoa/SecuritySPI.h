@@ -58,6 +58,10 @@ EXTERN_C SecTaskRef SecTaskCreateWithAuditToken(CFAllocatorRef, audit_token_t);
 EXTERN_C SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef);
 EXTERN_C CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CFErrorRef *);
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+EXTERN_C CFStringRef SecTaskCopySigningIdentifier(SecTaskRef, CFErrorRef *);
+#endif
+
 #if HAVE(SEC_TRUST_SERIALIZATION)
 EXTERN_C CF_RETURNS_RETAINED CFDataRef SecTrustSerialize(SecTrustRef, CFErrorRef *);
 EXTERN_C CF_RETURNS_RETAINED SecTrustRef SecTrustDeserialize(CFDataRef serializedTrust, CFErrorRef *);

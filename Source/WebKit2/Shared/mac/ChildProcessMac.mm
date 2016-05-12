@@ -83,14 +83,15 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
     String defaultProfilePath = [webkit2Bundle pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
 
-    bool willUseUserDirectorySuffixInitializationParameter = false;
     if (sandboxParameters.userDirectorySuffix().isNull()) {
         auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
-        if (userDirectorySuffix != parameters.extraInitializationData.end()) {
-            willUseUserDirectorySuffixInitializationParameter = true;
+        if (userDirectorySuffix != parameters.extraInitializationData.end())
             sandboxParameters.setUserDirectorySuffix([makeString(userDirectorySuffix->value, '/', String([[NSBundle mainBundle] bundleIdentifier])) fileSystemRepresentation]);
-        } else {
-            String defaultUserDirectorySuffix = makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier);
+        else {
+            String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());
+            if (clientIdentifier.isNull())
+                clientIdentifier = parameters.clientIdentifier;
+            String defaultUserDirectorySuffix = makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', clientIdentifier);
             sandboxParameters.setUserDirectorySuffix(defaultUserDirectorySuffix);
         }
     }
@@ -172,15 +173,6 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     OSStatus error = WKEnableSandboxStyleFileQuarantine();
     if (error) {
         WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), static_cast<long>(error));
-        exit(EX_NOPERM);
-    }
-
-    if (willUseUserDirectorySuffixInitializationParameter)
-        return;
-    String clientCodeSigningIdentifier = codeSigningIdentifierForProcess(xpc_connection_get_pid(parameters.connectionIdentifier.xpcConnection.get()));
-    bool isClientCodeSigned = !clientCodeSigningIdentifier.isNull();
-    if (isClientCodeSigned && clientCodeSigningIdentifier != parameters.clientIdentifier) {
-        WTFLogAlways("%s: Code signing identifier of client differs from passed client identifier.\n", getprogname());
         exit(EX_NOPERM);
     }
 }
