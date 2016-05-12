@@ -1,3 +1,19 @@
+2016-05-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Web Inspector: Windows Perl fails to run copy-user-interface-resources.pl
+        https://bugs.webkit.org/show_bug.cgi?id=157620
+        <rdar://problem/26241548>
+
+        Reviewed by Timothy Hatcher.
+
+        There are two problems on Windows platform. 'cat' command is
+        missing and can not execute shebang.
+
+        * Scripts/copy-user-interface-resources.pl: Invoke Perl scripts
+        with explicitly specifying Perl command instead of relying on
+        shebang.  Add a new subroutine 'appendFile' to concatenate files
+        instread of 'cat' command.
+
 2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: 3.8% of timeline recording spent in NavigationSidebarPanel _updateContentOverflowShadowVisibility for background tab
