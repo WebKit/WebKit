@@ -1,5 +1,21 @@
 2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Unexpected unread notification icon next to Log after clearing via clear()
+        https://bugs.webkit.org/show_bug.cgi?id=157598
+
+        Reviewed by Timothy Hatcher.
+
+        We always show ConsoleCommand and ConsoleCommandResult messages no matter
+        what the filter is. So it doesn't make sense to mark the "log" filter
+        as having an unread notification for a ConsoleCommandResult when we can
+        see the result.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.didAppendConsoleMessageView):
+        (WebInspector.LogContentView.prototype._markScopeBarItemUnread):
+
+2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Console unread indicators should be cleared however the console clears
         https://bugs.webkit.org/show_bug.cgi?id=157594
 
