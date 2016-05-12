@@ -137,7 +137,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         if ([m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
 
-            CFHTTPMessageRef messageRef = CFURLResponseGetHTTPResponse([httpResponse _CFURLResponse]);
+            CFHTTPMessageRef messageRef = wkGetCFURLResponseHTTPResponse([httpResponse _CFURLResponse]);
             RetainPtr<CFStringRef> messageString = adoptCF(CFHTTPMessageCopyVersion(messageRef));
             m_httpVersion = String(messageString.get()).upper();
             m_httpStatusCode = [httpResponse statusCode];

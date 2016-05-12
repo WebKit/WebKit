@@ -1,5 +1,9 @@
 2016-05-12  Babak Shafiei  <bshafiei@apple.com>
 
+        Build fix after r195004/r200780.
+
+2016-05-12  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r195004.
 
     2016-01-13  Brent Fulgham  <bfulgham@apple.com>
