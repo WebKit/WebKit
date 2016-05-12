@@ -1332,7 +1332,7 @@ public:
             twoWordOp5i6Imm4Reg4EncodedImmSecond(right, lo16),
             twoWordOp5i6Imm4Reg4EncodedImmFirst(OP_MOVT, hi16),
             twoWordOp5i6Imm4Reg4EncodedImmSecond(right, hi16),
-            OP_CMP_reg_T2 | left
+            static_cast<uint16_t>(OP_CMP_reg_T2 | left)
         };
         performJITMemcpy(address, instruction, sizeof(uint16_t) * 5);
         cacheFlush(address, sizeof(uint16_t) * 5);

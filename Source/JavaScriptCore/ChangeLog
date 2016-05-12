@@ -1,3 +1,17 @@
+2016-05-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        ARMv7Assembler: suppress a -Wnarrowing warning when compiling with GCC
+        https://bugs.webkit.org/show_bug.cgi?id=157576
+
+        Reviewed by Csaba Osztrogonác.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::revertJumpTo_movT3movtcmpT2): Explicitly cast the
+        `OP_CMP_reg_T2 | left` value to uint16_t, avoiding a narrowing conversion
+        warning that's being reported when compiling with GCC. The warning is sprung
+        due to RegisterID (which is the type of `left`) being an enum based on int,
+        even when the enum itself only declares 23 values.
+
 2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: `this` in Scope Chain Sidebar does not have preview, looks poor
