@@ -336,11 +336,11 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
     _updateElementPosition(element, newPosition, property)
     {
         newPosition *= 100;
-        newPosition = newPosition.toFixed(2);
 
-        var currentPosition = parseFloat(element.style[property]).toFixed(2);
-        if (currentPosition !== newPosition)
-            element.style[property] = newPosition + "%";
+        let newPositionAprox = Math.round(newPosition * 100);
+        let currentPositionAprox = Math.round(parseFloat(element.style[property]) * 100);
+        if (currentPositionAprox !== newPositionAprox)
+            element.style[property] = (newPositionAprox / 100) + "%";
     }
 };
 

@@ -1,3 +1,23 @@
+2016-05-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: 3.5% of time in toFixed in TimelineRecordBar updating element positions
+        https://bugs.webkit.org/show_bug.cgi?id=157608
+
+        Reviewed by Timothy Hatcher.
+
+        Avoid using toFixed to do an approximation comparison of two floating point numbers.
+        Instead keep in Numbers by just doing the approximation with Math.round(num * 100).
+        Since toFixed was doing stringification it was very expensive.
+
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar.prototype._updateElementPosition):
+        (WebInspector.TimelineRecordBar):
+        * UserInterface/Views/TimelineRecordFrame.js:
+        (WebInspector.TimelineRecordFrame.prototype._updateElementPosition):
+        (WebInspector.TimelineRecordFrame):
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype._updatePositionOfElement):
+
 2016-05-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: 4% of time in TimelineOverviewGraph adding/removing classList styles on TimelineRecordBar
