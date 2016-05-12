@@ -402,17 +402,11 @@ void CurlDownload::didReceiveHeader(const String& header)
         CURLcode err = curl_easy_getinfo(m_curlHandle, CURLINFO_RESPONSE_CODE, &httpCode);
 
         if (httpCode >= 200 && httpCode < 300) {
-            const char* url = 0;
-            err = curl_easy_getinfo(m_curlHandle, CURLINFO_EFFECTIVE_URL, &url);
-
-            String strUrl(url);
-            StringCapture capturedUrl(strUrl);
-
+            URLCapture capturedUrl(getCurlEffectiveURL(m_curlHandle));
             RefPtr<CurlDownload> protectedDownload(this);
 
             callOnMainThread([this, capturedUrl, protectedDownload] {
-                m_response.setURL(URL(ParsedURLString, capturedUrl.string()));
-
+                m_response.setURL(capturedUrl.url());
                 m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
                 m_response.setTextEncodingName(extractCharsetFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
 

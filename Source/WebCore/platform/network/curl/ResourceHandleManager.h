@@ -104,6 +104,8 @@ private:
 #endif
 };
 
+URL getCurlEffectiveURL(CURL*);
+
 }
 
 #endif

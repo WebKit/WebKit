@@ -1,3 +1,28 @@
+2016-05-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] ASSERTION FAILED: isLocalFile() || url == m_string in fast/dom/34176.html
+        https://bugs.webkit.org/show_bug.cgi?id=157059
+
+        Reviewed by Darin Adler.
+
+        Fix incorrect usage of URL constructor. CURLINFO_EFFECTIVE_URL
+        does not conform to URL's ParsedURLString.  Created a new utility
+        function to convert CURLINFO_EFFECTIVE_URL to a URL, and replaced
+        all codes converting CURLINFO_EFFECTIVE_URL with it.
+
+        Test: fast/dom/34176.html
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::didReceiveHeader): Use getCurlEffectiveURL
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::getCurlEffectiveURL): Added.
+        (WebCore::handleLocalReceiveResponse): Use getCurlEffectiveURL
+        (WebCore::getProtectionSpace): Ditto.
+        (WebCore::headerCallback): Ditto.
+        (WebCore::ResourceHandleManager::downloadTimerCallback): Ditto.
+        * platform/network/curl/ResourceHandleManager.h: Add a declaration
+        of getCurlEffectiveURL.
+
 2016-05-12  Chris Dumez  <cdumez@apple.com>
 
         Avoid unnecessary null checks in toJS() when the implementation returns a reference or Ref<>

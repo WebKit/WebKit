@@ -80,6 +80,15 @@ const int selectTimeoutMS = 5;
 const double pollTimeSeconds = 0.05;
 const int maxRunningJobs = 128;
 
+URL getCurlEffectiveURL(CURL* handle)
+{
+    const char* url;
+    CURLcode err = curl_easy_getinfo(handle, CURLINFO_EFFECTIVE_URL, &url);
+    if (CURLE_OK != err)
+        return URL();
+    return URL(URL(), url);
+}
+
 static const bool ignoreSSLErrors = getenv("WEBKIT_IGNORE_SSL_ERRORS");
 
 static CString certificatePath()
@@ -292,10 +301,9 @@ static void handleLocalReceiveResponse (CURL* handle, ResourceHandle* job, Resou
     // which means the ResourceLoader's response does not contain the URL.
     // Run the code here for local files to resolve the issue.
     // TODO: See if there is a better approach for handling this.
-     const char* hdr;
-     CURLcode err = curl_easy_getinfo(handle, CURLINFO_EFFECTIVE_URL, &hdr);
-     ASSERT_UNUSED(err, CURLE_OK == err);
-     d->m_response.setURL(URL(ParsedURLString, hdr));
+    URL url = getCurlEffectiveURL(handle);
+    ASSERT(url.isValid());
+    d->m_response.setURL(url);
      if (d->client())
          d->client()->didReceiveResponse(job, d->m_response);
      d->m_response.setResponseFired(true);
@@ -404,12 +412,9 @@ static bool getProtectionSpace(CURL* h, const ResourceResponse& response, Protec
     if (err != CURLE_OK)
         return false;
 
-    const char* effectiveUrl = 0;
-    err = curl_easy_getinfo(h, CURLINFO_EFFECTIVE_URL, &effectiveUrl);
-    if (err != CURLE_OK)
+    URL url = getCurlEffectiveURL(h);
+    if (!url.isValid())
         return false;
-
-    URL url(ParsedURLString, effectiveUrl);
 
     String host = url.host();
     String protocol = url.protocol();
@@ -496,9 +501,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
         curl_easy_getinfo(h, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
         d->m_response.setExpectedContentLength(static_cast<long long int>(contentLength));
 
-        const char* hdr;
-        curl_easy_getinfo(h, CURLINFO_EFFECTIVE_URL, &hdr);
-        d->m_response.setURL(URL(ParsedURLString, hdr));
+        d->m_response.setURL(getCurlEffectiveURL(h));
 
         d->m_response.setHTTPStatusCode(httpCode);
         d->m_response.setMimeType(extractMIMETypeFromMediaType(d->m_response.httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
@@ -704,13 +707,12 @@ void ResourceHandleManager::downloadTimerCallback()
                 CurlCacheManager::getInstance().didFinishLoading(*job);
             }
         } else {
-            char* url = 0;
-            curl_easy_getinfo(d->m_handle, CURLINFO_EFFECTIVE_URL, &url);
+            URL url = getCurlEffectiveURL(d->m_handle);
 #ifndef NDEBUG
-            fprintf(stderr, "Curl ERROR for url='%s', error: '%s'\n", url, curl_easy_strerror(msg->data.result));
+            fprintf(stderr, "Curl ERROR for url='%s', error: '%s'\n", url.string().utf8().data(), curl_easy_strerror(msg->data.result));
 #endif
             if (d->client()) {
-                ResourceError resourceError(String(), msg->data.result, URL(ParsedURLString, String(url)), String(curl_easy_strerror(msg->data.result)));
+                ResourceError resourceError(String(), msg->data.result, url, String(curl_easy_strerror(msg->data.result)));
                 resourceError.setSSLErrors(d->m_sslErrors);
                 d->client()->didFail(job, resourceError);
                 CurlCacheManager::getInstance().didFail(*job);
