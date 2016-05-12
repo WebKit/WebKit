@@ -1,3 +1,26 @@
+2016-05-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Make sure StringRange is passed to Vector by register
+        https://bugs.webkit.org/show_bug.cgi?id=157603
+
+        Reviewed by Darin Adler.
+
+        This is bizarre, but on my SDK, Vector::append(StringRange)
+        is passing the values on the stack.
+        The two integers are written to the stack, the address given
+        to append(), then append() reads it back and store it.
+
+        This patch changes the code to use constructAndAppend(), ensuring
+        the values are used directly.
+
+        On my machine, this helps Sunspider and Octane.
+        This might be something wrong with my SDK but the fix is so easy
+        that we might as well do this.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::removeUsingRegExpSearch):
+        (JSC::replaceUsingRegExpSearch):
+
 2016-05-11  Zan Dobersek  <zdobersek@igalia.com>
 
         ARMv7Assembler: suppress a -Wnarrowing warning when compiling with GCC

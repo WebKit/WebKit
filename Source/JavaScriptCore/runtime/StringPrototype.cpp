@@ -448,7 +448,7 @@ static ALWAYS_INLINE EncodedJSValue removeUsingRegExpSearch(VM& vm, ExecState* e
             break;
 
         if (lastIndex < result.start)
-            sourceRanges.append(StringRange(lastIndex, result.start - lastIndex));
+            sourceRanges.constructAndAppend(lastIndex, result.start - lastIndex);
 
         lastIndex = result.end;
         startPosition = lastIndex;
@@ -465,7 +465,7 @@ static ALWAYS_INLINE EncodedJSValue removeUsingRegExpSearch(VM& vm, ExecState* e
         return JSValue::encode(string);
 
     if (static_cast<unsigned>(lastIndex) < sourceLen)
-        sourceRanges.append(StringRange(lastIndex, sourceLen - lastIndex));
+        sourceRanges.constructAndAppend(lastIndex, sourceLen - lastIndex);
 
     return JSValue::encode(jsSpliceSubstrings(exec, string, source, sourceRanges.data(), sourceRanges.size()));
 }
@@ -517,7 +517,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                 if (!result)
                     break;
 
-                sourceRanges.append(StringRange(lastIndex, result.start - lastIndex));
+                sourceRanges.constructAndAppend(lastIndex, result.start - lastIndex);
 
                 unsigned i = 0;
                 for (; i < regExp->numSubpatterns() + 1; ++i) {
@@ -556,7 +556,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                 if (!result)
                     break;
 
-                sourceRanges.append(StringRange(lastIndex, result.start - lastIndex));
+                sourceRanges.constructAndAppend(lastIndex, result.start - lastIndex);
 
                 unsigned i = 0;
                 for (; i < regExp->numSubpatterns() + 1; ++i) {
@@ -597,7 +597,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                 break;
 
             if (callType != CallType::None) {
-                sourceRanges.append(StringRange(lastIndex, result.start - lastIndex));
+                sourceRanges.constructAndAppend(lastIndex, result.start - lastIndex);
 
                 MarkedArgumentBuffer args;
 
@@ -620,7 +620,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
             } else {
                 int replLen = replacementString.length();
                 if (lastIndex < result.start || replLen) {
-                    sourceRanges.append(StringRange(lastIndex, result.start - lastIndex));
+                    sourceRanges.constructAndAppend(lastIndex, result.start - lastIndex);
 
                     if (replLen)
                         replacements.append(substituteBackreferences(replacementString, source, ovector, regExp));
@@ -645,7 +645,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
         return JSValue::encode(string);
 
     if (static_cast<unsigned>(lastIndex) < sourceLen)
-        sourceRanges.append(StringRange(lastIndex, sourceLen - lastIndex));
+        sourceRanges.constructAndAppend(lastIndex, sourceLen - lastIndex);
 
     return JSValue::encode(jsSpliceSubstringsWithSeparators(exec, string, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
 }
