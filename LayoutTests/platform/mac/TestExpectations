@@ -972,7 +972,6 @@ webkit.org/b/123099 media/media-controller-time-clamp.html [ Pass Timeout ]
 webkit.org/b/123522 media/track/track-in-band-legacy-api.html [ Pass Failure Crash ]
 webkit.org/b/128312 media/video-load-preload-metadata.html [ Pass Failure ]
 webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Failure ]
-webkit.org/b/130971 media/track/track-remove-track.html [ Pass Crash Failure Timeout ]
 webkit.org/b/131855 media/event-attributes.html [ Pass Failure Timeout ]
 webkit.org/b/133363 media/video-rtl.html [ Pass ImageOnlyFailure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/align.html [ Pass Failure ]
@@ -992,6 +991,7 @@ webkit.org/b/141084 [ Yosemite ] http/tests/media/video-preload.html [ Pass Time
 webkit.org/b/141294 compositing/reflections/masked-reflection-on-composited.html [ Pass Crash ]
 webkit.org/b/142152 media/track/track-in-band-cues-added-once.html [ Pass Failure ]
 webkit.org/b/147944 media/video-seek-to-current-time.html [ Pass Failure ]
+webkit.org/b/155956 media/track/track-remove-track.html [ Pass Failure Timeout ]
 ## --- End flaky media tests
 
 # Skipped while Eric Carlson works on a fix.
