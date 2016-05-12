@@ -236,38 +236,45 @@ bool RenderBlock::hasRareData() const
     return gRareDataMap ? gRareDataMap->contains(this) : false;
 }
 
+void RenderBlock::removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle)
+{
+    bool hadTransform = oldStyle.hasTransformRelatedProperty();
+    bool willHaveTransform = newStyle.hasTransformRelatedProperty();
+    if (oldStyle.position() == newStyle.position() && hadTransform == willHaveTransform)
+        return;
+
+    // We are no longer a containing block.
+    if (newStyle.position() == StaticPosition && !willHaveTransform) {
+        // Clear our positioned objects list. Our absolutely positioned descendants will be
+        // inserted into our containing block's positioned objects list during layout.
+        removePositionedObjects(nullptr, NewContainingBlock);
+        return;
+    }
+    
+    // We are a new containing block.
+    if (oldStyle.position() == StaticPosition && !hadTransform) {
+        // Remove our absolutely positioned descendants from their current containing block.
+        // They will be inserted into our positioned objects list during layout.
+        auto* containingBlock = parent();
+        while (containingBlock && !is<RenderView>(*containingBlock)
+            && (containingBlock->style().position() == StaticPosition || (containingBlock->isInline() && !containingBlock->isReplaced()))) {
+            if (containingBlock->style().position() == RelativePosition && containingBlock->isInline() && !containingBlock->isReplaced()) {
+                containingBlock = containingBlock->containingBlock();
+                break;
+            }
+            containingBlock = containingBlock->parent();
+        }
+        if (containingBlock && is<RenderBlock>(*containingBlock))
+            downcast<RenderBlock>(*containingBlock).removePositionedObjects(this, NewContainingBlock);
+    }
+}
+
 void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
     const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
-
     setReplaced(newStyle.isDisplayInlineType());
-
-    if (oldStyle && oldStyle->hasTransformRelatedProperty() && !newStyle.hasTransformRelatedProperty())
-        removePositionedObjects(nullptr, NewContainingBlock);
-
-    if (oldStyle && parent() && diff == StyleDifferenceLayout && oldStyle->position() != newStyle.position()) {
-        if (newStyle.position() == StaticPosition)
-            // Clear our positioned objects list. Our absolutely positioned descendants will be
-            // inserted into our containing block's positioned objects list during layout.
-            removePositionedObjects(nullptr, NewContainingBlock);
-        else if (oldStyle->position() == StaticPosition) {
-            // Remove our absolutely positioned descendants from their current containing block.
-            // They will be inserted into our positioned objects list during layout.
-            auto containingBlock = parent();
-            while (containingBlock && !is<RenderView>(*containingBlock)
-                && (containingBlock->style().position() == StaticPosition || (containingBlock->isInline() && !containingBlock->isReplaced()))) {
-                if (containingBlock->style().position() == RelativePosition && containingBlock->isInline() && !containingBlock->isReplaced()) {
-                    containingBlock = containingBlock->containingBlock();
-                    break;
-                }
-                containingBlock = containingBlock->parent();
-            }
-
-            if (is<RenderBlock>(*containingBlock))
-                downcast<RenderBlock>(*containingBlock).removePositionedObjects(this, NewContainingBlock);
-        }
-    }
-
+    if (oldStyle)
+        removePositionedObjectsIfNeeded(*oldStyle, newStyle);
     RenderBox::styleWillChange(diff, newStyle);
 }
 

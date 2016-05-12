@@ -1,3 +1,20 @@
+2016-05-11  Zalan Bujtas  <zalan@apple.com>
+
+        Absolute positioned element is not placed properly when parent becomes the containing block.
+        https://bugs.webkit.org/show_bug.cgi?id=157455
+        <rdar://problem/26212568>
+
+        Reviewed by Simon Fraser.
+
+        When a container becomes a containing block, we need to check if there are any positioned boxes in its subtree
+        in order to "re-parent" them. It basically means that we remove them from RenderBlock::positionedDescendants map
+        and they'll get re-inserted during the next layout correctly.
+        This patch fixes the case when a container becomes the containing block by setting the transform property and its positioned
+        child gets misplaced.  
+
+        * fast/block/containing-block-changes-expected.html: Added.
+        * fast/block/containing-block-changes.html: Added.
+
 2016-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a failing expectation on iOS for the test added in r200712
