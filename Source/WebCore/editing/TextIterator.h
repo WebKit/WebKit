@@ -188,7 +188,7 @@ private:
 // chunks so as to optimize for performance of the iteration.
 class SimplifiedBackwardsTextIterator {
 public:
-    explicit SimplifiedBackwardsTextIterator(const Range&, TextIteratorBehavior = TextIteratorDefaultBehavior);
+    explicit SimplifiedBackwardsTextIterator(const Range&);
 
     bool atEnd() const { return !m_positionNode; }
     void advance();
@@ -206,37 +206,37 @@ private:
     void emitCharacter(UChar, Node&, int startOffset, int endOffset);
     bool advanceRespectingRange(Node*);
 
-    const TextIteratorBehavior m_behavior;
+    const TextIteratorBehavior m_behavior { TextIteratorDefaultBehavior };
 
     // Current position, not necessarily of the text being returned, but position as we walk through the DOM tree.
-    Node* m_node;
-    int m_offset;
-    bool m_handledNode;
-    bool m_handledChildren;
+    Node* m_node { nullptr };
+    int m_offset { 0 };
+    bool m_handledNode { false };
+    bool m_handledChildren { false };
     BitStack m_fullyClippedStack;
 
     // The range.
-    Node* m_startContainer;
-    int m_startOffset;
-    Node* m_endContainer;
-    int m_endOffset;
+    Node* m_startContainer { nullptr };
+    int m_startOffset { 0 };
+    Node* m_endContainer { nullptr };
+    int m_endOffset { 0 };
     
     // The current text and its position, in the form to be returned from the iterator.
-    Node* m_positionNode;
-    int m_positionStartOffset;
-    int m_positionEndOffset;
+    Node* m_positionNode { nullptr };
+    int m_positionStartOffset { 0 };
+    int m_positionEndOffset { 0 };
     TextIteratorCopyableText m_copyableText;
     StringView m_text;
 
     // Used to do the whitespace logic.
-    Text* m_lastTextNode;
-    UChar m_lastCharacter;
+    Text* m_lastTextNode { nullptr };
+    UChar m_lastCharacter { 0 };
 
     // Whether m_node has advanced beyond the iteration range (i.e. m_startContainer).
-    bool m_havePassedStartContainer;
+    bool m_havePassedStartContainer { false };
 
     // Should handle first-letter renderer in the next call to handleTextNode.
-    bool m_shouldHandleFirstLetter;
+    bool m_shouldHandleFirstLetter { false };
 };
 
 // Builds on the text iterator, adding a character position so we can walk one

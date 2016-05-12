@@ -414,9 +414,6 @@ void TextIterator::advance()
     }
 
     while (m_node && m_node != m_pastEndNode) {
-        if ((m_behavior & TextIteratorStopsOnFormControls) && HTMLFormControlElement::enclosingFormControlElement(m_node))
-            return;
-
         // if the range ends at offset 0 of an element, represent the
         // position, but not the content, of that element e.g. if the
         // node is a blockflow element, emit a newline that
@@ -1188,26 +1185,8 @@ Node* TextIterator::node() const
 
 // --------
 
-SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range& range, TextIteratorBehavior behavior)
-    : m_behavior(behavior)
-    , m_node(nullptr)
-    , m_offset(0)
-    , m_handledNode(false)
-    , m_handledChildren(false)
-    , m_startContainer(nullptr)
-    , m_startOffset(0)
-    , m_endContainer(nullptr)
-    , m_endOffset(0)
-    , m_positionNode(nullptr)
-    , m_positionStartOffset(0)
-    , m_positionEndOffset(0)
-    , m_lastTextNode(nullptr)
-    , m_lastCharacter(0)
-    , m_havePassedStartContainer(false)
-    , m_shouldHandleFirstLetter(false)
+SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range& range)
 {
-    ASSERT(behavior == TextIteratorDefaultBehavior || behavior == TextIteratorStopsOnFormControls);
-
     range.ownerDocument().updateLayoutIgnorePendingStylesheets();
 
     Node* startNode = &range.startContainer();
@@ -1259,9 +1238,6 @@ void SimplifiedBackwardsTextIterator::advance()
     m_positionNode = nullptr;
     m_copyableText.reset();
     m_text = StringView();
-
-    if ((m_behavior & TextIteratorStopsOnFormControls) && HTMLFormControlElement::enclosingFormControlElement(m_node))
-        return;
 
     while (m_node && !m_havePassedStartContainer) {
         // Don't handle node if we start iterating at [node, 0].
@@ -1554,7 +1530,7 @@ static Ref<Range> characterSubrange(Document& document, CharacterIterator& it, i
 }
 
 BackwardsCharacterIterator::BackwardsCharacterIterator(const Range& range)
-    : m_underlyingIterator(range, TextIteratorDefaultBehavior)
+    : m_underlyingIterator(range)
     , m_offset(0)
     , m_runOffset(0)
     , m_atBreak(true)

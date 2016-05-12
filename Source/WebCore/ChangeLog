@@ -1,3 +1,24 @@
+2016-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        TextIteratorStopsOnFormControls is never used
+        https://bugs.webkit.org/show_bug.cgi?id=157609
+
+        Reviewed by Alex Christensen.
+
+        Removed SurroundingText.cpp and TextIteratorStopsOnFormControls from TextIterator as they're no longer used.
+
+        * editing/SurroundingText.cpp: Removed.
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+        (WebCore::TextIterator::exitNode):
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        (WebCore::SimplifiedBackwardsTextIterator::advance):
+        (WebCore::characterSubrange):
+        (WebCore::BackwardsCharacterIterator::BackwardsCharacterIterator):
+        * editing/TextIterator.h:
+        (WebCore::SimplifiedBackwardsTextIterator::atEnd):
+        * editing/TextIteratorBehavior.h:
+
 2016-05-11  Chris Dumez  <cdumez@apple.com>
 
         Kill Node::ancestorElement()

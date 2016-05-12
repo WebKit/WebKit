@@ -51,11 +51,9 @@ enum TextIteratorBehaviorFlag {
     // Used when pasting inside password field.
     TextIteratorEmitsOriginalText = 1 << 5,
 
-    TextIteratorStopsOnFormControls = 1 << 6,
+    TextIteratorEmitsImageAltText = 1 << 6,
 
-    TextIteratorEmitsImageAltText = 1 << 7,
-
-    TextIteratorBehavesAsIfNodesFollowing = 1 << 8,
+    TextIteratorBehavesAsIfNodesFollowing = 1 << 7,
 };
 
 typedef unsigned short TextIteratorBehavior;
