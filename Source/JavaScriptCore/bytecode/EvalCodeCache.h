@@ -46,9 +46,10 @@ namespace JSC {
     public:
         class CacheKey {
         public:
-            CacheKey(const String& source, bool isArrowFunctionContext)
+            CacheKey(const String& source, bool isArrowFunctionContext, DerivedContextType derivedContextType)
                 : m_source(source.impl())
                 , m_isArrowFunctionContext(isArrowFunctionContext)
+                , m_derivedContextType(derivedContextType)
             {
             }
 
@@ -65,7 +66,7 @@ namespace JSC {
 
             bool operator==(const CacheKey& other) const
             {
-                return m_source == other.m_source && m_isArrowFunctionContext == other.m_isArrowFunctionContext;
+                return m_source == other.m_source && m_isArrowFunctionContext == other.m_isArrowFunctionContext && m_derivedContextType == other.m_derivedContextType;
             }
 
             bool isHashTableDeletedValue() const { return m_source.isHashTableDeletedValue(); }
@@ -77,7 +78,7 @@ namespace JSC {
                 }
                 static bool equal(const CacheKey& lhs, const CacheKey& rhs)
                 {
-                    return StringHash::equal(lhs.m_source, rhs.m_source) && lhs.m_isArrowFunctionContext == rhs.m_isArrowFunctionContext;
+                    return StringHash::equal(lhs.m_source, rhs.m_source) && lhs.m_isArrowFunctionContext == rhs.m_isArrowFunctionContext && lhs.m_derivedContextType == rhs.m_derivedContextType;
                 }
                 static const bool safeToCompareToEmptyOrDeleted = false;
             };
@@ -87,13 +88,14 @@ namespace JSC {
         private:
             RefPtr<StringImpl> m_source;
             bool m_isArrowFunctionContext { false };
+            DerivedContextType m_derivedContextType { DerivedContextType::None };
         };
 
-        EvalExecutable* tryGet(bool inStrictContext, const String& evalSource, bool isArrowFunctionContext, JSScope* scope)
+        EvalExecutable* tryGet(bool inStrictContext, const String& evalSource, bool isArrowFunctionContext, DerivedContextType derivedContextType, JSScope* scope)
         {
             if (isCacheable(inStrictContext, evalSource, scope)) {
                 ASSERT(!inStrictContext);
-                return m_cacheMap.fastGet(CacheKey(evalSource, isArrowFunctionContext)).get();
+                return m_cacheMap.fastGet(CacheKey(evalSource, isArrowFunctionContext, derivedContextType)).get();
             }
             return nullptr;
         }
@@ -109,8 +111,7 @@ namespace JSC {
             if (isCacheable(inStrictContext, evalSource, scope) && m_cacheMap.size() < maxCacheEntries) {
                 ASSERT(!inStrictContext);
                 ASSERT_WITH_MESSAGE(thisTDZMode == ThisTDZMode::CheckIfNeeded, "Always CheckIfNeeded because the caching is enabled only in the sloppy mode.");
-                ASSERT_WITH_MESSAGE(derivedContextType == DerivedContextType::None, "derivedContextType is always None because class methods and class constructors are always evaluated as the strict code.");
-                m_cacheMap.set(CacheKey(evalSource, isArrowFunctionContext), WriteBarrier<EvalExecutable>(exec->vm(), owner, evalExecutable));
+                m_cacheMap.set(CacheKey(evalSource, isArrowFunctionContext, derivedContextType), WriteBarrier<EvalExecutable>(exec->vm(), owner, evalExecutable));
             }
             
             return evalExecutable;

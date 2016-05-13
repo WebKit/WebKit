@@ -1,3 +1,29 @@
+2016-05-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Assertion failure for direct eval in non-class method
+        https://bugs.webkit.org/show_bug.cgi?id=157138
+
+        Reviewed by Saam Barati.
+
+        This assertion was incorrect. In method definitions in object literals,
+        it can be sloppy mode, but its DerivedContextType may not be DerivedContextType::None.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::CacheKey::CacheKey):
+        (JSC::EvalCodeCache::CacheKey::operator==):
+        (JSC::EvalCodeCache::CacheKey::Hash::equal):
+        (JSC::EvalCodeCache::tryGet):
+        (JSC::EvalCodeCache::getSlow):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * tests/stress/direct-eval-in-object-literal-methods.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        (shouldBe.Parent.prototype.l):
+        (shouldBe.Parent):
+        (shouldBe.Derived.prototype.m):
+        (shouldBe.Derived):
+
 2016-05-13  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         Assertion failure for super() call in arrow function default parameters
