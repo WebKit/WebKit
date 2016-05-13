@@ -29,7 +29,7 @@
 #include "PlatformExportMacros.h"
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
+#if HAVE(SEC_TRUST_SERIALIZATION)
 #include <Security/SecTrust.h>
 #endif
 
