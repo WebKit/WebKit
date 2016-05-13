@@ -1,3 +1,14 @@
+2016-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        Do not reuse cache entries with conditional headers
+        https://bugs.webkit.org/show_bug.cgi?id=157205
+        rdar://problem/25856933
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/xmlhttprequest/if-modified-since-0-expected.txt: Added.
+        * http/tests/xmlhttprequest/if-modified-since-0.html: Added.
+
 2016-04-30  Zalan Bujtas  <zalan@apple.com>
 
         Some content causes deep recursion.
