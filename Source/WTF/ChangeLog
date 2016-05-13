@@ -1,3 +1,13 @@
+2016-05-13  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        DOMPromise should only restrict the resolution type
+        https://bugs.webkit.org/show_bug.cgi?id=157307
+
+        Reviewed by Darin Adler.
+
+        * wtf/Ref.h: Adding static constexpr to ease detection of Ref for templates.
+        * wtf/RefPtr.h: Ditto.
+
 2016-05-12  Daniel Bates  <dabates@apple.com>
 
         Use SecTask SPI to retrieve code signing identifier for user directory suffix

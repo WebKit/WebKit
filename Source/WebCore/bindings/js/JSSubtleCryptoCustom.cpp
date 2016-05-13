@@ -550,7 +550,7 @@ JSValue JSSubtleCrypto::importKey(ExecState& state)
     JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
     DeferredWrapper wrapper(&state, globalObject(), promiseDeferred);
     auto successCallback = [wrapper](CryptoKey& result) mutable {
-        wrapper.resolve(&result);
+        wrapper.resolve(result);
     };
     auto failureCallback = [wrapper]() mutable {
         wrapper.reject(nullptr);
@@ -785,7 +785,7 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState& state)
 
     auto decryptSuccessCallback = [domGlobalObject, keyFormat, unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr, extractable, keyUsages, wrapper](const Vector<uint8_t>& result) mutable {
         auto importSuccessCallback = [wrapper](CryptoKey& key) mutable {
-            wrapper.resolve(&key);
+            wrapper.resolve(key);
         };
         auto importFailureCallback = [wrapper]() mutable {
             wrapper.reject(nullptr);

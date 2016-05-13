@@ -58,8 +58,8 @@ public:
 
     Document* document() const;
 
-    typedef DOMPromise<RefPtr<MediaStream>, RefPtr<NavigatorUserMediaError>> Promise;
-    typedef DOMPromise<MediaDeviceInfoVector, ExceptionCode> EnumerateDevicesPromise;
+    typedef DOMPromise<MediaStream> Promise;
+    typedef DOMPromise<MediaDeviceInfoVector> EnumerateDevicesPromise;
 
     void getUserMedia(const Dictionary&, Promise&&, ExceptionCode&) const;
     void enumerateDevices(EnumerateDevicesPromise&&, ExceptionCode&) const;
