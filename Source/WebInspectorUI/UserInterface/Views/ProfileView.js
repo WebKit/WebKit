@@ -76,6 +76,7 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
     get callingContextTree() { return this._callingContextTree; }
     get startTime() { return this._startTime; }
     get endTime() { return this._endTime; }
+    get dataGrid() { return this._dataGrid; }
 
     setStartAndEndTime(startTime, endTime)
     {

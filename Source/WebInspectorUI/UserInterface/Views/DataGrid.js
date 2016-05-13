@@ -278,6 +278,8 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._updateScrollListeners();
     }
 
+    get filterText() { return this._filterText; }
+
     set filterText(x)
     {
         if (this._filterText === x)

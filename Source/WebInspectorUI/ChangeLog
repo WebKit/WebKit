@@ -1,3 +1,57 @@
+2016-05-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Script ProfileViews should be searchable
+        https://bugs.webkit.org/show_bug.cgi?id=157581
+        <rdar://problem/26228530>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.get filterText):
+        Make filterText readable.
+
+        * UserInterface/Views/ProfileDataGridNode.js:
+        (WebInspector.ProfileDataGridNode.prototype.get callingContextTreeNode):
+        (WebInspector.ProfileDataGridNode.prototype.filterableDataForColumn):
+        Add filterable data for the "function" column.
+        (WebInspector.ProfileDataGridNode.prototype._updateChildrenForModifiers):
+        (WebInspector.ProfileDataGridNode.prototype.get node): Deleted.
+        Renamed callingContextTreeNode to be less ambiguous.
+
+        * UserInterface/Views/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridTree.prototype._updateCurrentFocusDetails):
+
+        * UserInterface/Views/ProfileView.js:
+        (WebInspector.ProfileView.prototype.get dataGrid):
+        Expose data grid for use in parent view.
+
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WebInspector.ScriptClusterTimelineView.prototype.selectRecord):
+        Drive-by fix: forward property to current child TimelineView.
+
+        * UserInterface/Views/ScriptProfileTimelineView.js:
+        (WebInspector.ScriptProfileTimelineView):
+        (WebInspector.ScriptProfileTimelineView.prototype._scopeBarSelectionDidChange):
+        (WebInspector.ScriptProfileTimelineView.prototype._showProfileViewForOrientation):
+        Helper function to switch profile views. Persist filter text when
+        switching to the new profile view.
+
+        (WebInspector.ScriptProfileTimelineView.prototype.get showsFilterBar): Deleted.
+        Remove FIXME and show filter bar.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.setupDataGrid):
+        Support switching to a new data grid.
+        (WebInspector.TimelineView.prototype.dataGridMatchNodeAgainstCustomFilters):
+        Hooking up filtering causes data grid nodes to be filtered based on the
+        ruler selection. Although ScriptProfileTimelineView performs its own
+        time-based filtering, this is necessary to prevent an assert.
+
+        (WebInspector.TimelineView.prototype._timelineDataGridSelectedNodeChanged):
+        (WebInspector.TimelineView.prototype._timelineDataGridNodeWasFiltered):
+        Converted arrow functions to member functions to allow unregistering
+        event listeners on outgoing data grid when swapping grids.
+
 2016-05-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Remove "Extra Scripts" folder from Resources sidebar if all children removed

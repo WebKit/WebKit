@@ -158,25 +158,18 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
     setupDataGrid(dataGrid)
     {
-        console.assert(!this._timelineDataGrid);
+        if (this._timelineDataGrid) {
+            this._timelineDataGrid.filterDelegate = null;
+            this._timelineDataGrid.removeEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._timelineDataGridSelectedNodeChanged, this);
+            this._timelineDataGrid.removeEventListener(WebInspector.DataGrid.Event.NodeWasFiltered, this._timelineDataGridNodeWasFiltered, this);
+            this._timelineDataGrid.removeEventListener(WebInspector.DataGrid.Event.FilterDidChange, this.filterDidChange, this);
+        }
 
         this._timelineDataGrid = dataGrid;
         this._timelineDataGrid.filterDelegate = this;
-        this._timelineDataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, () => {
-            this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
-        });
-
-        this._timelineDataGrid.addEventListener(WebInspector.DataGrid.Event.NodeWasFiltered, (event) => {
-            let node = event.data.node;
-            if (!(node instanceof WebInspector.TimelineDataGridNode))
-                return;
-
-            this.dispatchEventToListeners(WebInspector.TimelineView.Event.RecordWasFiltered, {record: node.record, filtered: node.hidden});
-        });
-
-        this._timelineDataGrid.addEventListener(WebInspector.DataGrid.Event.FilterDidChange, (event) => {
-            this.filterDidChange();
-        });
+        this._timelineDataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._timelineDataGridSelectedNodeChanged, this);
+        this._timelineDataGrid.addEventListener(WebInspector.DataGrid.Event.NodeWasFiltered, this._timelineDataGridNodeWasFiltered, this);
+        this._timelineDataGrid.addEventListener(WebInspector.DataGrid.Event.FilterDidChange, this.filterDidChange, this);
     }
 
     selectRecord(record)
@@ -284,6 +277,9 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
             return checkTimeBounds(record.startTime, record.endTime);
         }
 
+        if (node instanceof WebInspector.ProfileDataGridNode)
+            return node.callingContextTreeNode.hasStackTraceInTimeRange(startTime, endTime);
+
         console.error("Unknown DataGridNode, can't filter by time.");
         return true;
     }
@@ -301,6 +297,20 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
     }
 
     // Private
+
+    _timelineDataGridSelectedNodeChanged(event)
+    {
+        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+    }
+
+    _timelineDataGridNodeWasFiltered(event)
+    {
+        let node = event.data.node;
+        if (!(node instanceof WebInspector.TimelineDataGridNode))
+            return;
+
+        this.dispatchEventToListeners(WebInspector.TimelineView.Event.RecordWasFiltered, {record: node.record, filtered: node.hidden});
+    }
 
     _timesDidChange()
     {

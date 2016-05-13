@@ -71,6 +71,8 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
     set endTime(x) { this._contentViewContainer.currentContentView.endTime = x; }
     get currentTime() { return this._contentViewContainer.currentContentView.currentTime; }
     set currentTime(x) { this._contentViewContainer.currentContentView.currentTime = x; }
+
+    selectRecord(record) { this._contentViewContainer.currentContentView.selectRecord(record); }
     updateFilter(filters) { return this._contentViewContainer.currentContentView.updateFilter(filters); }
     filterDidChange() { return this._contentViewContainer.currentContentView.filterDidChange(); }
     matchDataGridNodeAgainstCustomFilters(node) { return this._contentViewContainer.currentContentView.matchDataGridNodeAgainstCustomFilters(node); }
