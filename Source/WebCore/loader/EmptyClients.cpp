@@ -28,6 +28,7 @@
 #include "config.h"
 #include "EmptyClients.h"
 
+#include "ApplicationCacheStorage.h"
 #include "ColorChooser.h"
 #include "DatabaseProvider.h"
 #include "DocumentLoader.h"
@@ -130,6 +131,7 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
     static NeverDestroyed<EmptyDiagnosticLoggingClient> dummyDiagnosticLoggingClient;
     pageConfiguration.diagnosticLoggingClient = &dummyDiagnosticLoggingClient.get();
 
+    pageConfiguration.applicationCacheStorage = ApplicationCacheStorage::create(String(), String());
     pageConfiguration.databaseProvider = adoptRef(new EmptyDatabaseProvider);
     pageConfiguration.storageNamespaceProvider = adoptRef(new EmptyStorageNamespaceProvider);
     pageConfiguration.visitedLinkStore = adoptRef(new EmptyVisitedLinkStore);

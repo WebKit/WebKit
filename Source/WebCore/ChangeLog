@@ -1,3 +1,11 @@
+2016-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Fix crashes when loading SVG images.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients):
+        Give the SVG page its own application cache storage.
+
 2016-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Overlay scrollbars with steppers enabled render incorrectly
